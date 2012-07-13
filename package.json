@@ -16,8 +16,9 @@
     "test": "brunch test"
   },
   "dependencies": {
-    "d3": "> 2.9.0",
-    "yui": "> 3.5.0"
+    "d3": "> 2.9.5",
+    "yui": "> 3.5.0",
+    "cryptojs": "> 3.0.1"
   },
   "_comments_devDependencies": {
     "mocha": "0.14.0",
