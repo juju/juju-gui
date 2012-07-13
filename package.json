@@ -19,7 +19,7 @@
     "d3": "> 2.9.0",
     "yui": "> 3.5.0"
   },
-  "devDependencies": {
+  "_comments_devDependencies": {
     "mocha": "0.14.0",
     "expect.js": "0.1.2"
   },

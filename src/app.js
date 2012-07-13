@@ -61,6 +61,8 @@ ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
 
 Machine = Y.Base.create('machine', Y.Model, [], {
     ATTRS: {
+	public_address: {value: null},
+	private_address: {value: null}
     }
 });
 
