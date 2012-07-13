@@ -18,7 +18,7 @@
   "dependencies": {
     "d3": "> 2.9.5",
     "yui": "> 3.5.0",
-    "cryptojs": "> 3.0.1"
+    "cryptojs": ">= 2.5.3"
   },
   "_comments_devDependencies": {
     "mocha": "0.14.0",
