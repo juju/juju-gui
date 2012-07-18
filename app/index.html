@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Juju Admin</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="stylesheet" href="/assets/stylesheets/bootstrap-2.0.4.css">
+    <link rel="stylesheet" href="/assets/stylesheets/bootstrap-responsive-2.0.4.css">
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">
+            <img height="28" alt="Juju GUI" src="/assets/images/juju.png"></a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active">
+                <a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div id="main" class="container">
+    </div> <!-- /container -->
+
+    <svg id="can" xmlns="http://www.w3.org/2000/svg" version="1.1">
+      <path id="lineAB" d="M 100 350 l 150 -300" stroke="red" stroke-width="3" fill="none" />
+      <path id="lineBC" d="M 250 50 l 150 300" stroke="red" stroke-width="3" fill="none" />
+      <path id="lineBC" d="M 175 200 l 150 0" stroke="red" stroke-width="3" fill="none" />
+      <path id="quadcurveABC" d="M 100 350 q 150 -300 300 0" stroke="blue" stroke-width="5" fill="none" />
+      <!-- Mark relevant points -->
+      <g stroke="black" stroke-width="3" fill="black">
+        <circle id="pointA" cx="100" cy="350" r="3" />
+        <circle id="pointB" cx="250" cy="50" r="3" />
+        <circle id="pointC" cx="400" cy="350" r="3" />
+      </g>
+      <!-- Label the points -->
+      <g font-size="30" font="sans-serif" fill="black" stroke="none" text-anchor="middle">
+        <text x="100" y="350" dx="-30">A</text>
+        <text x="250" y="50" dy="-10">B</text>
+        <text x="400" y="350" dx="30">C</text>
+      </g>
+    </svg>
+
+    <script id="t-example" type="text/x-handlebars-template">
+    <h1>Example Template</h1>
+    <p>
+      <button class="yui3-button">Show Status</button>
+    </p>
+    </script>
+
+    <!-- javascript away -->
+    <script src="http://yui.yahooapis.com/3.5.0/build/yui/yui-min.js"></script>
+    <script src="/app.js"></script>
+    <script>
+      YUI().use("juju-gui", function(Y) {
+      app = new JujuGUI({
+              contain : '#main',
+              viewContainer: "#main",
+              transitions: true
+          }).render();
+      });
+
+    </script>
+  </body>
+</html>

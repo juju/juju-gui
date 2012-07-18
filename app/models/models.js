@@ -1,4 +1,4 @@
-YUI().use('app', 'handlebars', 'jsonp', function(Y) {
+YUI().use('app', function(Y) {
     
 var Charm, CharmList;
 var Service, ServiceList;
@@ -6,9 +6,6 @@ var ServiceUnit, ServiceUnitList;
 var Machine, MachineList;
 var Relation, RelationList;
 
-    
-var JujuGUI;
-   
 Charm = Y.Base.create('charm', Y.Model, [], {
     idAttribute: 'charm_id',
     ATTRS: {
