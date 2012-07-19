@@ -16,6 +16,7 @@
     "test": "brunch test"
   },
   "dependencies": {
+    "express": ">2.0.0",
     "d3": "> 2.9.5",
     "yui": "> 3.5.0",
     "cryptojs": ">= 2.5.3"
