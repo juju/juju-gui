@@ -37,6 +37,10 @@
       </div>
     </div>
 
+    <br>
+    <br>
+    <br>
+
     <div id="main" class="container">
     </div> <!-- /container -->
 
@@ -59,25 +63,27 @@
       </g>
     </svg>
 
+
     <script id="t-example" type="text/x-handlebars-template">
-    <h1>Example Template</h1>
-    <p>
-      <button class="yui3-button">Show Status</button>
-    </p>
+      <div>
+        <h1>Example Template</h1>
+        <p>
+          <button class="yui3-button">Show Status</button>
+        </p>
+      </div>
     </script>
 
     <!-- javascript away -->
     <script src="http://yui.yahooapis.com/3.5.0/build/yui/yui-min.js"></script>
-    <script src="/app.js"></script>
+    <script src="/modules.js"></script>
     <script>
       YUI().use("juju-gui", function(Y) {
-      app = new JujuGUI({
-              contain : '#main',
+      app = new Y.juju.App({
+              contain : "#main",
               viewContainer: "#main",
               transitions: true
-          }).render();
+          }).render().dispatch();
       });
-
     </script>
   </body>
 </html>

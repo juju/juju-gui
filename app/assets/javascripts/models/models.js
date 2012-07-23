@@ -1,12 +1,8 @@
-YUI().use('app', function(Y) {
-    
-var Charm, CharmList;
-var Service, ServiceList;
-var ServiceUnit, ServiceUnitList;
-var Machine, MachineList;
-var Relation, RelationList;
+YUI.add("juju-models", function(Y) {
 
-Charm = Y.Base.create('charm', Y.Model, [], {
+var models = Y.namespace("juju.models");
+
+var Charm = Y.Base.create('charm', Y.Model, [], {
     idAttribute: 'charm_id',
     ATTRS: {
 	charm_id: {},
@@ -19,13 +15,14 @@ Charm = Y.Base.create('charm', Y.Model, [], {
     }
 });
 
+models.Charm = Charm;
 
-CharmList = Y.Base.create('charmList', Y.ModelList, [], {
+var CharmList = Y.Base.create('charmList', Y.ModelList, [], {
     model: Charm,
     ATTRS: {
     }
 });
-
+models.CharmList = CharmList;
 
 Service = Y.Base.create('service', Y.Model, [], {
     idAttribute: 'name',
@@ -38,14 +35,14 @@ Service = Y.Base.create('service', Y.Model, [], {
 	relations: {}
     }
 });
-
+models.Service = Service;
 
 ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
     model: Service,
     ATTRS: {
     }
 });
-
+models.ServiceList = ServiceList;
 
 ServiceUnit = Y.Base.create('serviceUnit', Y.ModelList, [], {
     idAttribute: 'name',
@@ -103,4 +100,9 @@ RelationList = Y.Base.create('relationList', Y.ModelList, [], {
 });
 
 
+}, "0.1.0", {
+    requires: [
+        "model", 
+        "model-list"
+    ]
 });
