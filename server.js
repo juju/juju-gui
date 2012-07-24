@@ -18,4 +18,7 @@ server.get('*', function (req, res) {
 });
 
 
-server.listen(process.env.PORT || 8888);
+var port = process.env.PORT || 8888;
+server.listen(port, function () {
+    console.log('Server listening on ' + port);
+});
