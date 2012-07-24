@@ -13,7 +13,7 @@ server.configure(function () {
 
 // Handles requests to the root path ("/") my simply sending the "shell" page
 // which creates the `Y.App` instance.
-server.get('/', function (req, res) {
+server.get('*', function (req, res) {
     res.sendfile('app/index.html');
 });
 

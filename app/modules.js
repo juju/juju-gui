@@ -8,8 +8,11 @@ YUI.GlobalConfig = {
                 "juju-overview": {
                     fullpath: "/assets/javascripts/views/overview.js"
                 },
+                "juju-status": {
+                    fullpath: "/assets/javascripts/views/status.js"
+                },
                 "juju-views":  {
-                    use: ["juju-overview"]
+                    use: ["juju-overview", "juju-status"]
                 },
                 "juju-models": {
                     fullpath: "/assets/javascripts/models/models.js"

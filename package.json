@@ -11,19 +11,17 @@
   "engines": {
     "node": "~0.6.10 || 0.8 || 0.9"
   },
-  "_comments_scripts": {
-    "start": "brunch watch --server",
-    "test": "brunch test"
-  },
   "dependencies": {
-    "express": ">2.0.0",
-    "d3": "> 2.9.5",
-    "yui": "> 3.5.0",
     "cryptojs": ">= 2.5.3"
   },
-  "_comments_devDependencies": {
+  "devDependencies": {
+    "d3": "> 2.9.5",
+    "yui": "> 3.5.0",
+    "connect": ">2.3.9",
     "mocha": "0.14.0",
-    "expect.js": "0.1.2"
+    "express": ">2.0.0",
+    "expect.js": "0.1.2",
+    "should": ">=1.0.0"
   },
   "optionalDependencies": {}
 }

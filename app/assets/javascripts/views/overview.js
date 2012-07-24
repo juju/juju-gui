@@ -1,36 +1,35 @@
 YUI.add("juju-overview", function(Y) {
 
-var JUJU = Y.namespace("juju"),
-    views = Y.namespace("juju.views");
+var views = Y.namespace("juju.views");
             
-
 OverviewView = Y.Base.create('OverviewView', Y.View, [], {
    events: {
-        'button': {
-            click: 'changeUser'
-        },
-
-        'input': {
-            keypress: 'enter'
+        '#show-status': {
+            click: 'show_status'
         }
     },
 
     initializer: function () {
+        this.publish("showStatus", {preventable: false});
     },
+        
+    template: Y.Handlebars.compile(Y.one("#t-example").getHTML()),
 
     render: function () {
             OverviewView.superclass.render.apply(this, arguments);
 
-            var container = this.get('container'),
-                template = Y.Handlebars.compile(Y.one("#t-example").getHTML());
-                        
-            container.setHTML(template());
+            var container = this.get('container');
+            container.setHTML(this.template());
             var dd = new Y.DD.Drag({node: container});
             return this;
+    },
+
+    show_status: function(e) {
+        this.fire("showStatus");
     }
 });
 
-JUJU.views.overview = OverviewView;
+views.overview = OverviewView;
 }, "0.1.0", {
     requires: ['base-build', 'dd', 'handlebars', 'node', "view"]
 });

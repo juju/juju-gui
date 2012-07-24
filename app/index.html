@@ -16,24 +16,11 @@
   <body>
 
     <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
         <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
+          <a class="brand" href="/">
+            <img height="28" alt="Juju GUI" src="/assets/images/juju.png">
+            Admin GUI
           </a>
-          <a class="brand" href="#">
-            <img height="28" alt="Juju GUI" src="/assets/images/juju.png"></a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li class="active">
-                <a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-            </ul>
-          </div><!--/.nav-collapse -->
-        </div>
       </div>
     </div>
 
@@ -66,10 +53,26 @@
 
     <script id="t-example" type="text/x-handlebars-template">
       <div>
-        <h1>Example Template</h1>
+        <h1>Overview</h1>
         <p>
-          <button class="yui3-button">Show Status</button>
+          <button id="show-status" class="yui3-button">Show Status</button>
         </p>
+      </div>
+    </script>
+
+   <script id="t-status" type="text/x-handlebars-template">
+      <div>
+        <h1>Status View</h1>
+        <pre>
+          {{status}}
+        </pre>
+        <div>
+          <ul>
+          {{#each charms}}
+          <ul>{{name}} &ndash; {{description}}</ul>
+          {{/each}}
+          </ul>
+        </div>
       </div>
     </script>
 
@@ -79,6 +82,8 @@
     <script>
       YUI().use("juju-gui", function(Y) {
       app = new Y.juju.App({
+              serverRouting: false,
+              html5: true,
               contain : "#main",
               viewContainer: "#main",
               transitions: true

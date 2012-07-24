@@ -59,14 +59,14 @@ ServiceUnit = Y.Base.create('serviceUnit', Y.ModelList, [], {
 	private_address: {}
     }
 });
-
+models.ServiceUnit = ServiceUnit;
 
 ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
     model: ServiceUnit,
     ATTRS: {
     }
 });
-
+models.ServiceUnitList = ServiceUnitList;
 
 Machine = Y.Base.create('machine', Y.Model, [], {
     idAttribute: 'machine_id',
@@ -76,12 +76,16 @@ Machine = Y.Base.create('machine', Y.Model, [], {
 	private_address: {}
     }
 });
+models.Machine = Machine;
 
 MachineList = Y.Base.create('machineList', Y.ModelList, [], {
     model: Machine,
     ATTRS: {
     }
 });
+
+models.MachineList = MachineList;
+
 
 
 
