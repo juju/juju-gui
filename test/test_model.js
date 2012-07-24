@@ -13,7 +13,7 @@ describe("juju models", function() {
                 requires: ["model", "model-list"],
                 fullpath: path.join(
                     __dirname, 
-                    '../app/assets/javascripts/models/models.js')
+                    '../app/models/models.js')
             }
         }
         }).use("base", "juju-models", function (Y) {

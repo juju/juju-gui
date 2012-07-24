@@ -16,23 +16,22 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         }
     },
 
-    transitions: {
-        navigate: 'fade',
-        toChild: 'fade',
-        toParent: 'fade'
-    },
-                         
     initializer: function () {        
+        var self = this;
         this.get_sample_data();
         this.on("*:showStatus", this.navigate_to_status);
 
         this.once('ready', function (e) {
+//            self.ws = Y.ReconnectingWebSocket(
+//                    window.location.origin + this.socket_path);
+
             if (this.hasRoute(this.getPath())) {
                 this.dispatch();
             } else {
                 this.show_overview();
             }
         });
+
     },
 
     get_sample_data: function() {
@@ -41,8 +40,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         Y.io("status.json", {on: {
         complete: function(id, response) {
             var status = Y.JSON.parse(response.responseText);
-            self.status = status;
-            //self.status = self.parseStatus(status);
+            self.status = self.parseStatus(status);
         }}});
 
         var c1 = new models.Charm({name: "mysql",
@@ -99,6 +97,7 @@ Y.namespace("juju").App = JujuGUI;
        'app-base',
        'app-transitions',
        'base',
-       'node'
+       'node',
+       "reconnecting-websocket"
        ]
 });

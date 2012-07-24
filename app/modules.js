@@ -3,23 +3,28 @@ YUI.GlobalConfig = {
     combine: true,
     groups: {
         juju: {
-            base: "/assets/javascripts/",
             modules: {
+                "reconnecting-websocket": {
+                    fullpath: "/assets/javascripts/reconnecting-websocket.js"
+                },
                 "juju-overview": {
-                    fullpath: "/assets/javascripts/views/overview.js"
+                    fullpath: "/views/overview.js"
                 },
                 "juju-status": {
-                    fullpath: "/assets/javascripts/views/status.js"
+                    fullpath: "/views/status.js"
                 },
                 "juju-views":  {
                     use: ["juju-overview", "juju-status"]
                 },
                 "juju-models": {
-                    fullpath: "/assets/javascripts/models/models.js"
+                    fullpath: "/models/models.js"
                 },
                 "juju-gui": { 
-                    fullpath: "/assets/javascripts/app.js",
-                    requires: ["juju-views", "juju-models"]
+                    fullpath: "/app.js",
+                    requires: [
+                        "juju-views", 
+                        "juju-models", 
+                        "reconnecting-websocket"]
                 }
             }
         }
