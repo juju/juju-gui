@@ -15,10 +15,10 @@ StatusView = Y.Base.create('StatusView', Y.View, [], {
 
     render: function () {
         var container = this.get('container'),
-        domain = this.get("domain_models"),
-        charmData;
+            m = this.get('domain_models'),
+            charmData;
 
-        charmData = domain.charms.map(function (charm) {
+        charmData = m.charms.map(function (charm) {
             var data = charm.toJSON();
             console.log(charm, data);
             // Add `clientId` to the data, this is ignored by `toJSON()`. This

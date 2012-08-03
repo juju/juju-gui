@@ -1,5 +1,5 @@
 GlobalConfig = {
-    filter: 'debug',
+    filter: 'info',
     debug: false,
     combine: false,
     groups: {

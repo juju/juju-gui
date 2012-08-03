@@ -31,52 +31,63 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
             height = 640,
             width = 480;
 
-        Y.log(m);
-
         var fill = d3.scale.category20();
 
-        var tree = d3.layout.tree()
-        .separation(function(a, b) { return a.parent === b.parent ? 1 : .5; })
-        //.children(function(d) { return d.parents; })
-        .size([height, width]);
         
-        var services = m.services.toJSON();
+        var services = m.services.toArray();
         
-        var vis = d3.select("#canvas")
+        var tree = d3.layout.force()
+            .on("tick", tick)
+            .charge(-400)
+            .distance(25)
+            .size([height, width]);
+
+        var vis = d3.select(container.getDOMNode())
+            .selectAll("#canvas")
             .append("svg:svg")
             .attr("pointer-events", "all")
             .attr("width", width)
-            .attr("height", height)
-            .append("g");
+            .attr("height", height);
 
-        console.log("services", services);
+
+        function tick() {
+            // link.attr("x1", function(d) { return d.source.x; })
+            //     .attr("y1", function(d) { return d.source.y; })
+            //     .attr("x2", function(d) { return d.target.x; })
+            //     .attr("y2", function(d) { return d.target.y; });
+            
+            node.attr("transform", function(d) { 
+                          return "translate(" + d.x + "," + d.y + ")"; });
+
+        };
+
+        
+        tree.nodes(services);
         var node = vis.selectAll(".service")
-            .data(services, function(d) {
-                      console.log("Data", d);
-                      return d;
-                  })
+            .data(services)
             .enter().append("g")
-            .attr("class", "service")
-            .attr("transform", function(d) { 
-                      return "translate(" + d.y + "," + d.x + ")"; });
+            .call(tree.drag)
+            .attr("class", "service");
 
-        console.log(node);
+        node.append("rect")
+        .style("stroke", "black")
+        .style("fill", "#c9c9c9")
+        .attr("width", 120)
+        .attr("height", 48);
 
         node.append("text")
             .attr("class", "name")
-            .attr("x", 8)
-            .attr("y", -6)
-            .text(function(d) { 
-                      console.log("text", d); 
-                      return d.get("id"); });
+            .attr("x", 4)
+            .attr("y", "1em")
+            .text(function(d) {return d.get("id"); });
         
         node.append("text")
             .attr("x", 8)
-            .attr("y", 8)
+            .attr("y", "2em")
             .attr("dy", ".71em")
-            .text(function(d) { return d.get("charm").get("name"); });
+            .text(function(d) {return d.get("charm").get("id"); });
         
-                        
+        tree.start();
     },
 
     show_status: function(e) {
