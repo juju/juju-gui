@@ -1,7 +1,7 @@
 GlobalConfig = {
+    filter: 'debug',
     debug: true,
     combine: false,
-    minify: false,
     groups: {
         d3: {
             base: "http://d3js.org/",
@@ -22,8 +22,11 @@ GlobalConfig = {
                 "juju-status": {
                     fullpath: "views/status.js"
                 },
+		"juju-view-charmsearch": {
+		    fullpath: "views/search.js"
+		},
                 "juju-views":  {
-                    use: ["juju-overview", "juju-status"]
+                    use: ["juju-overview", "juju-status", "juju-view-charmsearch"]
                 },
                 "juju-models": {
                     requires: ["model", "model-list"],

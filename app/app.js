@@ -16,7 +16,11 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             type: "juju.views.status",
             preserve: true,
             parent: "overview"
-        }
+        },
+	charm_search: {
+	    type: "juju.views.charm_search",
+	    preserve: true,
+	},
     },
 
     initializer: function () {    
@@ -161,6 +165,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
     // Route handlers
     show_status: function(req) {
+	console.log('show status');
         this.showView("status", {
                           domain: this.domain
                       });
@@ -169,14 +174,26 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     show_overview: function (req) {
+	console.log('show overview');
         this.showView('overview', {domain: this.domain});
-    }
+    },
 
+    show_charm_search: function(req, res, next) {
+	console.log('show search');
+	var charm_search = this.get('charm_search');
+	if (!charm_search) {
+	    console.log('creating search');
+	    charm_search = this.createView('charm_search');
+	    this.set('charm_search', charm_search.render());
+	}
+	next();
+    },
 
 }, {
     ATTRS: {
         routes: {
             value: [
+		{path: "*", callback: 'show_charm_search'},
                 {path: "/", callback: 'show_overview'},
                 {path: "/status", callback: 'show_status'}
                 ]
