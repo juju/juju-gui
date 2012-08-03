@@ -22,8 +22,8 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         this.on("*:showStatus", this.navigate_to_status);
 
         this.once('ready', function (e) {
-//            self.ws = Y.ReconnectingWebSocket(
-//                    window.location.origin + this.socket_path);
+            self.ws = Y.ReconnectingWebSocket(
+                    "ws://" + window.location.host + this.get("socket_path"));
 
             if (this.hasRoute(this.getPath())) {
                 this.dispatch();

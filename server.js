@@ -3,12 +3,14 @@
 var connect = require("connect"),
     express = require("express"),
     server = express.createServer(),
-    pubDir = __dirname + "/app";
+    pubDir = __dirname + "/app",
+    port = process.env.PORT || 8888;
 
 server.configure(function () {
     server.use(express.logger("dev"));
     server.use(express.static(pubDir));
 });
+
 
 
 // Handles requests to the root path ("/") my simply sending the "shell" page
@@ -18,7 +20,7 @@ server.get('*', function (req, res) {
 });
 
 
-var port = process.env.PORT || 8888;
+
 server.listen(port, function () {
     console.log('Server listening on ' + port);
 });

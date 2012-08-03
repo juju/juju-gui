@@ -1,5 +1,6 @@
-var path = require("path"),
-    YUI = require("yui").YUI;
+var YUI = require("yui").YUI,
+    base= require("./base.js");
+
 
 (function () {
     
@@ -7,16 +8,7 @@ describe("juju models", function() {
     var Y, models;
 
     before(function (done) {
-        Y = YUI({
-        modules: {
-            'juju-models': {
-                requires: ["model", "model-list"],
-                fullpath: path.join(
-                    __dirname, 
-                    '../app/models/models.js')
-            }
-        }
-        }).use("base", "juju-models", function (Y) {
+        Y = YUI(base.TestConfig).use("base", "juju-models", function (Y) {
             models = Y.namespace("juju.models");
             done();
         });
@@ -34,7 +26,9 @@ describe("juju models", function() {
             c2 = new models.Charm({name: "logger",
                                   description: "Log sub"}),
             clist = new models.CharmList().add([c1, c2]);
-        
+           var names = clist.map(function(c) {return c.get("name");});
+           names[0].should.equal("mysql");
+           names[1].should.equal("logger");
        });
              
     });

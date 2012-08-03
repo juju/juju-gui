@@ -1,33 +1,38 @@
-YUI.GlobalConfig = {
-    debug: true,
+GlobalConfig = {
+    debug: false,
     combine: true,
     groups: {
         juju: {
             modules: {
                 "reconnecting-websocket": {
-                    fullpath: "/assets/javascripts/reconnecting-websocket.js"
+                    fullpath: "assets/javascripts/reconnecting-websocket.js"
                 },
                 "juju-overview": {
-                    fullpath: "/views/overview.js"
+                    fullpath: "views/overview.js"
                 },
                 "juju-status": {
-                    fullpath: "/views/status.js"
+                    fullpath: "views/status.js"
                 },
                 "juju-views":  {
                     use: ["juju-overview", "juju-status"]
                 },
                 "juju-models": {
-                    fullpath: "/models/models.js"
+                    requires: ["model", "model-list"],
+                    fullpath: "models/models.js"
                 },
                 "juju-gui": { 
-                    fullpath: "/app.js",
+                    fullpath: "app.js",
                     requires: [
                         "juju-views", 
-                        "juju-models", 
-                        "reconnecting-websocket"]
+                        "juju-models"
+                    ]
                 }
             }
         }
     }
 };
-        
+
+// Node compat for testing
+if (typeof(exports) !== "undefined") {
+    exports.GlobalConfig = GlobalConfig;    
+}

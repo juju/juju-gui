@@ -2,3 +2,4 @@
 --reporter dot
 --ui bdd
 --ignore-leaks 
+-G

@@ -3,7 +3,7 @@ all: install test
 install:
 	@npm install 
 test:
-	@mocha 
+	@mocha -w
 
 server:
 	@node server.js
