@@ -21,6 +21,9 @@
             <img height="28" alt="Juju GUI" src="/assets/images/juju.png">
             Admin GUI
           </a>
+	  <form class="navbar-search pull-left">
+	    <input type="text" class="search-query span2" placeholder="Search"/>
+	  </form>
         </div>
     </div>
 
@@ -66,7 +69,7 @@
       app = new Y.juju.App({
               serverRouting: false,
               html5: true,
-              socket_path: "/websocket",
+              socket_url: "ws://localhost:8082/ws",
               contain : "#main",
               viewContainer: "#main",
               transitions: true
