@@ -1,6 +1,6 @@
 GlobalConfig = {
     filter: 'debug',
-    debug: true,
+    debug: false,
     combine: false,
     groups: {
         d3: {
