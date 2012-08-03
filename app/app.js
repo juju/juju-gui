@@ -19,12 +19,20 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     initializer: function () {        
         var self = this;
         this.get_sample_data();
+
         this.on("*:showStatus", this.navigate_to_status);
 
         this.once('ready', function (e) {
+            // create event routing through the YUI custom event layer
             self.ws = Y.ReconnectingWebSocket(
                     "ws://" + window.location.host + this.get("socket_path"));
-
+            self.ws.onopen(self.fire("env:connect"));
+            self.ws.onclose(self.fire("env:disconnect"));
+            self.ws.onmessage(self.publish("env:message", {
+                                            emitFacade: true,
+                                            defaultFn: self.message_to_event
+                                           })
+                             );
             if (this.hasRoute(this.getPath())) {
                 this.dispatch();
             } else {
@@ -34,6 +42,17 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
     },
 
+    message_to_event: function(data) {
+        var event_kind = {
+            status: "env:status"
+        }[data.op];
+        self.fire(event_kind, {
+            data: data
+        });
+    },
+        
+    
+        
     get_sample_data: function() {
         var self = this;
 
