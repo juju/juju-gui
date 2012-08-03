@@ -15,13 +15,12 @@ StatusView = Y.Base.create('StatusView', Y.View, [], {
 
     render: function () {
         var container = this.get('container'),
-        status = this.get("status"),
-        charms = this.get("charms"),
+        domain = this.get("domain"),
         charmData;
 
-        charmData = charms.map(function (charm) {
+        charmData = domain.charms.map(function (charm) {
             var data = charm.toJSON();
-
+            console.log(charm, data);
             // Add `clientId` to the data, this is ignored by `toJSON()`. This
             // will be used by the template and is an easy way to regain access
             // to the associated Repo model.
@@ -30,7 +29,6 @@ StatusView = Y.Base.create('StatusView', Y.View, [], {
         });
 
         container.setHTML(this.template({
-            status: Y.JSON.stringify(status), 
             charms: charmData
         }));
         return this;
