@@ -119,6 +119,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
         
     parseStatus: function(status_json) {
+	console.log("parse status")
         var d = this.domain_models;
 
         // for now we reset the lists rather than sync/update
@@ -134,19 +135,22 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
                     public_address: machine_data["dns-name"]});
             d["machines"].add(machine);
         }, this);
+	
 
         Y.each(status_json["services"], 
             function(service_data, service_name) {
-            var charm = new models.Charm(
-                {charm_id: service_data["charm"]}
-            );
-            var service = new models.Service({
-                name: service_name,
-                charm: charm,
-                subordinate: service_data["subordinate"] || false
-            });
-            d["services"].add(service);
-            d["charms"].add(charm);
+		var charm = new models.Charm(
+                    {charm_id: service_data["charm"]}
+		);
+		var service = new models.Service({
+                    name: service_name,
+                    charm: charm,
+                    subordinate: service_data["subordinate"] || false
+		});
+		console.log('service data', service_data);
+		console.log("service", service);
+		d["services"].add(service);
+		d["charms"].add(charm);
             }, this);
 
         Y.each(status_json["services"], 

@@ -25,6 +25,7 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
     },
 
     render_canvas: function(){
+	console.log('render canvas');
         var container = this.get('container'),
             m = this.get('domain_models'),
             height = 640,
