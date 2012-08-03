@@ -1,5 +1,8 @@
 YUI.add("juju-gui", function(Y) {
 
+// Debug console access to YUI context.
+yui = Y;
+
 var models = Y.namespace("juju.models");
 
 JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
@@ -22,17 +25,21 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
         this.on("*:showStatus", this.navigate_to_status);
 
+	// Define custom events
+	this.publish("env:msg", {
+	    emitFacade: true, defaultFn: this.message_to_event
+	});
+	this.publish("env:connect", {emitFacade: true});
+	this.publish("env:disconnect", {emitFacade: true});
+
+
         this.once('ready', function (e) {
-            // create event routing through the YUI custom event layer
-            self.ws = Y.ReconnectingWebSocket(
-                    "ws://" + window.location.host + this.get("socket_path"));
-            self.ws.onopen(self.fire("env:connect"));
-            self.ws.onclose(self.fire("env:disconnect"));
-            self.ws.onmessage(self.publish("env:message", {
-                                            emitFacade: true,
-                                            defaultFn: self.message_to_event
-                                           })
-                             );
+            this.ws = new Y.ReconnectingWebSocket(this.get("socket_url"));
+	    this.ws.onmessage = Y.bind(this.on_message, this);
+	    this.ws.onopen = Y.bind(this.on_open, this);
+	    this.ws.onclose = Y.bind(this.on_close, this);
+	    console.log("websocket made");
+
             if (this.hasRoute(this.getPath())) {
                 this.dispatch();
             } else {
@@ -42,11 +49,35 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
     },
 
+    on_open: function(data) {
+	console.log("open", data);
+	this.fire('env:connect');
+    },
+
+    on_close: function(data) {
+	console.log("close", data);
+	this.fire('env:disconnect')
+    },
+
+    on_message: function(evt) {
+	last_msg = evt;
+	var msg = Y.JSON.parse(evt.data);
+	console.log("msg", msg);
+	if (msg.version == 0) {
+	    console.log("greeting");
+	    return
+	}
+	this.fire("env:msg", msg);
+    },
+
     message_to_event: function(data) {
+	console.log('invoked')
+	console.log(this);
+	console.log(data)
         var event_kind = {
             status: "env:status"
         }[data.op];
-        self.fire(event_kind, {
+        this.fire(event_kind, {
             data: data
         });
     },
