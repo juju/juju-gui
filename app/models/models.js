@@ -97,11 +97,14 @@ Relation = Y.Base.create('relation', Y.Model, [], {
 	endpoints: {}
     }
 });
+models.Relation = Relation;
+
 
 RelationList = Y.Base.create('relationList', Y.ModelList, [], {
     ATTRS: {
     }
 });
+models.RelationList = RelationList;
 
 
 }, "0.1.0", {

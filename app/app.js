@@ -19,8 +19,19 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         }
     },
 
-    initializer: function () {        
-        var self = this;
+    initializer: function () {    
+        var self = this,
+            service_list = new models.ServiceList(),
+            machine_list = new models.MachineList(),
+            charm_list = new models.CharmList(),
+            relation_list = new models.RelationList();
+        
+        this.domain = {
+            services: service_list,
+            machines: machine_list,
+            charms: charm_list,
+            relations: relation_list
+        };
         this.get_sample_data();
 
         this.on("*:showStatus", this.navigate_to_status);
@@ -45,7 +56,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             } else {
                 this.show_overview();
             }
-        });
+        }, this);
 
     },
 
@@ -86,12 +97,13 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         
     get_sample_data: function() {
         var self = this;
-
-        Y.io("status.json", {on: {
-        complete: function(id, response) {
-            var status = Y.JSON.parse(response.responseText);
-            self.status = self.parseStatus(status);
-        }}});
+        Y.io("status.json", {
+                 context: this, 
+                 on: {
+                     complete: function(id, response) {
+                         var status = Y.JSON.parse(response.responseText);
+                         this.status = this.parseStatus(status);
+                     }}});
 
         var c1 = new models.Charm({name: "mysql",
                                   description: "A DB"}),
@@ -102,7 +114,44 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
         
     parseStatus: function(status_json) {
-        
+        var d = this.domain;
+
+        // for now we reset the lists rather than sync/update
+        d["services"].reset();
+        d["machines"].reset();
+        d["charms"].reset();
+        d["relations"].reset();
+
+        Y.each(status_json["machines"], 
+            function(machine_data, machine_name) {
+            var machine = new models.Machine({
+                    machine_id: machine_name,
+                    public_address: machine_data["dns-name"]});
+            d["machines"].add(machine);
+        }, this);
+
+        Y.each(status_json["services"], 
+            function(service_data, service_name) {
+            var charm = new models.Charm(
+                {charm_id: service_data["charm"]}
+            );
+            var service = new models.Service({
+                name: service_name,
+                charm: charm,
+                subordinate: service_data["subordinate"] || false
+            });
+            d["services"].add(service);
+            d["charms"].add(charm);
+            }, this);
+
+        Y.each(status_json["services"], 
+              function(service_data, service_name) {
+                      Y.each(service_data["relations"],
+                            function(relation_data, relation_name) {
+                            // build relations
+                      }, this);
+              }, this);
+
     },
         
     // Event handlers
@@ -113,15 +162,14 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     // Route handlers
     show_status: function(req) {
         this.showView("status", {
-                          status:this.status, 
-                          charms:this.charms
+                          domain: this.domain
                       });
 
 
     },
 
     show_overview: function (req) {
-        this.showView('overview');
+        this.showView('overview', {domain: this.domain});
     }
 
 
