@@ -30,12 +30,13 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             charm_list = new models.CharmList(),
             relation_list = new models.RelationList();
         
-        this.domain = {
+        this.domain_models = {
             services: service_list,
             machines: machine_list,
             charms: charm_list,
             relations: relation_list
         };
+
         this.get_sample_data();
 
         this.on("*:showStatus", this.navigate_to_status);
@@ -118,7 +119,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
         
     parseStatus: function(status_json) {
-        var d = this.domain;
+        var d = this.domain_models;
 
         // for now we reset the lists rather than sync/update
         d["services"].reset();
@@ -167,7 +168,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     show_status: function(req) {
 	console.log('show status');
         this.showView("status", {
-                          domain: this.domain
+                          models: this.models
                       });
 
 
@@ -175,7 +176,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
     show_overview: function (req) {
 	console.log('show overview');
-        this.showView('overview', {domain: this.domain});
+        this.showView('overview', {domain_models: this.domain_models});
     },
 
     show_charm_search: function(req, res, next) {
@@ -187,7 +188,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	    this.set('charm_search', charm_search.render());
 	}
 	next();
-    },
+    }
 
 }, {
     ATTRS: {

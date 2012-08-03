@@ -16,23 +16,21 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
     template: Y.Handlebars.compile(Y.one("#t-example").getHTML()),
 
     render: function () {
-            var container = this.get('container');
-            OverviewView.superclass.render.apply(this, arguments);
-
-            container.setHTML(this.template());
-
-            this.render_canvas();
-            return this;
+        var container = this.get('container');
+        OverviewView.superclass.render.apply(this, arguments);
+                
+        container.setHTML(this.template());
+        this.render_canvas();
+        return this;
     },
 
     render_canvas: function(){
         var container = this.get('container'),
-            m = this.get('domain'),
+            m = this.get('domain_models'),
             height = 640,
             width = 480;
 
-        // container.one("#canvas").setHTML(
-        //     m.services.getAsHTML("id").toString());
+        Y.log(m);
 
         var fill = d3.scale.category20();
 
@@ -41,7 +39,7 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
         //.children(function(d) { return d.parents; })
         .size([height, width]);
         
-        var services = m.services.toArray();
+        var services = m.services.toJSON();
         
         var vis = d3.select("#canvas")
             .append("svg:svg")

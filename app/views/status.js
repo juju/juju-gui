@@ -15,7 +15,7 @@ StatusView = Y.Base.create('StatusView', Y.View, [], {
 
     render: function () {
         var container = this.get('container'),
-        domain = this.get("domain"),
+        domain = this.get("domain_models"),
         charmData;
 
         charmData = domain.charms.map(function (charm) {
