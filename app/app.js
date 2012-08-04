@@ -149,7 +149,6 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 		d["charms"].add(charm);
             
                 Y.each(service_data["units"], function(unit_data, unit_name) {
-                    console.log(unit_name, unit_data);
                     var unit = new models.ServiceUnit({
                             name: unit_data.name,
                             service: service,
@@ -172,9 +171,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
             }, this);
 
-        console.log("relations", relations);
         Y.each(relations, function(source, target) {
-                   console.log("relation", source, target);
                    var s = d["services"].getById(source);
                    var t = d["services"].getById(target);
                    var relation = new models.Relation({
@@ -194,7 +191,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     show_status: function(req) {
 	console.log('show status');
         this.showView("status", {
-                          models: this.models
+                          domain_models: this.domain_models
                       });
 
 

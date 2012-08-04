@@ -26,10 +26,11 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
 
     render_canvas: function(){
 	console.log('render canvas');
-        var container = this.get('container'),
+        var self = this,
+            container = this.get('container'),
             m = this.get('domain_models'),
-            height = 640,
-            width = 480;
+            height = 600,
+            width = 800;
 
         var fill = d3.scale.category20();
 
@@ -43,8 +44,8 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
         var tree = d3.layout.force()
             .on("tick", tick)
             .charge(-400)
-            .distance(100)
-            .size([height, width]);
+            .distance(150)
+            .size([width, height]);
 
         var vis = d3.select(container.getDOMNode())
             .selectAll("#canvas")
@@ -70,16 +71,11 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
             .links(relations);
         
         var link = vis.selectAll("line.relation")
-            .data(relations, function(d) {
-                    console.log(d);
-                    return d;
-                  });
+            .data(relations, function(d) {return d;});
 
         link.enter().insert("svg:line", "g.service")
             .attr("class", "relation")
-            .attr("x1", function(d) { 
-                      console.log("link info", d);
-                      return d.source.x; })
+            .attr("x1", function(d) {return d.source.x; })
             .attr("y1", function(d) { return d.source.y; })
             .attr("x2", function(d) { return d.target.x; })
             .attr("y2", function(d) { return d.target.y; });
@@ -89,27 +85,49 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
             .data(services)
             .enter().append("g")
             .call(tree.drag)
-            .attr("class", "service");
+            .attr("class", "service")
+            .on("click", function(m) {
+                    self.fire("showStatus");
+            });
+
 
         node.append("rect")
-        .style("stroke", "black")
-        .style("fill", "#c9c9c9")
-        .attr("width", 120)
-        .attr("height", 48);
+        .attr("width", 164)
+        .attr("height", 64);
 
-        node.append("text").append("tspan")
+        var service_labels = node.append("text").append("tspan")
             .attr("class", "name")
             .attr("x", 4)
             .attr("y", "1em")
             .text(function(d) {return d.get("id"); });
         
-        node.append("text").append("tspan")
-            .attr("x", 8)
-            .attr("y", "2em")
-            .attr("dy", ".71em")
+        var charm_labels = node.append("text").append("tspan")
+            .attr("x", 4)
+            .attr("y", "2.5em")
+            .attr("dy", "3em")
             .attr("class", "charm")
-            .text(function(d) {return d.get("charm").get("id"); });
-        
+            .text(function(d) {
+                      return d.get("charm").get("id"); });
+
+        var unit_count = node.append("text")
+        .attr("class", "units")
+        .attr("dx", "4em")
+        .attr("dy", "1em")
+        .text(function(d) {
+                  var units = m.units.get_units_for_service(d);
+                  console.log("units", units);
+                  return units.length;
+              });
+
+        // console.log("charm labels", charm_labels[0]);
+        // Y.each(charm_labels[0], function (e) {
+        //         console.log("e", e.getBoundingClientRect());
+        //         var node = Y.Node(e);
+        //         console.log("node", node);
+        //         console.log("rect", node.getClientRect());
+                
+        // });
+
         tree.start();
     },
 
