@@ -35,11 +35,15 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
 
         
         var services = m.services.toArray();
+        var relations = m.relations.getAttrs(["endpoints"])["endpoints"];
         
+        console.log("overview serv", services);
+        console.log("overview rels", relations);
+
         var tree = d3.layout.force()
             .on("tick", tick)
             .charge(-400)
-            .distance(25)
+            .distance(100)
             .size([height, width]);
 
         var vis = d3.select(container.getDOMNode())
@@ -51,18 +55,36 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
 
 
         function tick() {
-            // link.attr("x1", function(d) { return d.source.x; })
-            //     .attr("y1", function(d) { return d.source.y; })
-            //     .attr("x2", function(d) { return d.target.x; })
-            //     .attr("y2", function(d) { return d.target.y; });
+            link.attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
             
             node.attr("transform", function(d) { 
                           return "translate(" + d.x + "," + d.y + ")"; });
 
         };
 
+
+        tree.nodes(services)
+            .links(relations);
         
-        tree.nodes(services);
+        var link = vis.selectAll("line.relation")
+            .data(relations, function(d) {
+                    console.log(d);
+                    return d;
+                  });
+
+        link.enter().insert("svg:line", "g.service")
+            .attr("class", "relation")
+            .attr("x1", function(d) { 
+                      console.log("link info", d);
+                      return d.source.x; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { return d.target.x; })
+            .attr("y2", function(d) { return d.target.y; });
+
+
         var node = vis.selectAll(".service")
             .data(services)
             .enter().append("g")
@@ -75,16 +97,17 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
         .attr("width", 120)
         .attr("height", 48);
 
-        node.append("text")
+        node.append("text").append("tspan")
             .attr("class", "name")
             .attr("x", 4)
             .attr("y", "1em")
             .text(function(d) {return d.get("id"); });
         
-        node.append("text")
+        node.append("text").append("tspan")
             .attr("x", 8)
             .attr("y", "2em")
             .attr("dy", ".71em")
+            .attr("class", "charm")
             .text(function(d) {return d.get("charm").get("id"); });
         
         tree.start();
@@ -97,5 +120,10 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
 
 views.overview = OverviewView;
 }, "0.1.0", {
-    requires: ['d3', 'base-build', 'handlebars', 'node', 'view']
+    requires: ['d3', 
+               'svg-layouts', 
+               'base-build', 
+               'handlebars', 
+               'node', 
+               'view']
 });

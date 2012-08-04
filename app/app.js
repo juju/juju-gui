@@ -28,13 +28,15 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             service_list = new models.ServiceList(),
             machine_list = new models.MachineList(),
             charm_list = new models.CharmList(),
-            relation_list = new models.RelationList();
+            relation_list = new models.RelationList(),
+            unit_list = new models.ServiceUnitList();
         
         this.domain_models = {
             services: service_list,
             machines: machine_list,
             charms: charm_list,
-            relations: relation_list
+            relations: relation_list,
+            units: unit_list
         };
 
         this.get_sample_data();
@@ -108,25 +110,22 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
                      complete: function(id, response) {
                          var status = Y.JSON.parse(response.responseText);
                          this.status = this.parseStatus(status);
-                     }}});
+                     }}
+             });
 
-        var c1 = new models.Charm({name: "mysql",
-                                  description: "A DB"}),
-            c2 = new models.Charm({name: "logger",
-                                  description: "Log sub"});
-        var list = new models.CharmList().add([c1, c2]);
-        this.charms = list;
     },
         
     parseStatus: function(status_json) {
-	console.log("parse status")
-        var d = this.domain_models;
+	console.log("parse status");
+        var d = this.domain_models,
+            relations = {};
 
         // for now we reset the lists rather than sync/update
         d["services"].reset();
         d["machines"].reset();
         d["charms"].reset();
         d["relations"].reset();
+        d["units"].reset();
 
         Y.each(status_json["machines"], 
             function(machine_data, machine_name) {
@@ -136,7 +135,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             d["machines"].add(machine);
         }, this);
 	
-
+        
         Y.each(status_json["services"], 
             function(service_data, service_name) {
 		var charm = new models.Charm(
@@ -144,22 +143,45 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 		);
 		var service = new models.Service({
                     name: service_name,
-                    charm: charm,
-                    subordinate: service_data["subordinate"] || false
+                    charm: charm
 		});
-		console.log('service data', service_data);
-		console.log("service", service);
 		d["services"].add(service);
 		d["charms"].add(charm);
+            
+                Y.each(service_data["units"], function(unit_data, unit_name) {
+                    console.log(unit_name, unit_data);
+                    var unit = new models.ServiceUnit({
+                            name: unit_data.name,
+                            service: service,
+                            machine: d["machines"].getById(unit_data.machine),
+                            agent_state: unit_data["agent-state"],
+                            is_subordinate: ( 
+                                service_data["subordinate"] || false),
+                            public_address: unit_data["public-address"],
+                            private_address: unit_data["private-address"]});
+                    d["units"].add(unit);
+                }, this);
+
+                Y.each(service_data["relations"],
+                    function(relation_data, relation_name) {
+                        // XXX: only preocessing 1st element for now
+                        relations[service_name] = relation_data[0];
+                        // XXX: fixiing this will alter the build
+                        // in the relations block below
+                }, this);
+
             }, this);
 
-        Y.each(status_json["services"], 
-              function(service_data, service_name) {
-                      Y.each(service_data["relations"],
-                            function(relation_data, relation_name) {
-                            // build relations
-                      }, this);
-              }, this);
+        console.log("relations", relations);
+        Y.each(relations, function(source, target) {
+                   console.log("relation", source, target);
+                   var s = d["services"].getById(source);
+                   var t = d["services"].getById(target);
+                   var relation = new models.Relation({
+                           endpoints: {source: s, target: t}
+                           });
+                   d["relations"].add(relation);
+               });
 
     },
         

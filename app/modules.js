@@ -13,6 +13,9 @@ GlobalConfig = {
         },
         juju: {
             modules: {
+                "svg-layouts" : {
+                    fullpath: "assets/javascripts/svg-layouts.js"
+                },
                 "reconnecting-websocket": {
                     fullpath: "assets/javascripts/reconnecting-websocket.js"
                 },
@@ -36,7 +39,9 @@ GlobalConfig = {
                     fullpath: "app.js",
                     requires: [
                         "juju-views", 
-                        "juju-models"
+                        "juju-models",
+                        "svg-layouts",
+                        "reconnecting-websocket"
                     ]
                 }
             }
