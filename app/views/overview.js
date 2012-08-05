@@ -37,8 +37,8 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
         
         var tree = d3.layout.force()
             .on("tick", tick)
-            .charge(-400)
-            .distance(150)
+            .charge(-450)
+            .distance(200)
             .size([width, height]);
 
         var vis = d3.select(container.getDOMNode())
@@ -86,6 +86,13 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
 
 
         node.append("rect")
+        .attr("class", "service-border")
+        .style("stroke", function(d) {
+                   // scan the units looking for the 'worst' 
+                   // state we can see
+                   // XXX: todo
+                   return "black";
+               })
         .attr("width", 164)
         .attr("height", 64);
 

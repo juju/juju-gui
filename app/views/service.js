@@ -16,11 +16,16 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [], {
     render: function () {
         var container = this.get('container'),
             m = this.get('domain_models'),
-            service = this.get("service");
-      
+            service = this.get("service"),
+            units = m.units.get_units_for_service(
+                    service, true);
+        console.log("ser", service.getAttrs());
+        console.log("units", units.getAttrs());
         container.setHTML(this.template({
-                service: service.getAttrs()
+                service: service.getAttrs(),
+                units: units.getAttrs()
         }));
+
         return this;
     }
 });
