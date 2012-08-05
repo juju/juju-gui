@@ -44,7 +44,7 @@ ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
 });
 models.ServiceList = ServiceList;
 
-ServiceUnit = Y.Base.create('serviceUnit', Y.ModelList, [], {
+ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {
     idAttribute: 'name',
     ATTRS: {
 	name: {},
@@ -53,7 +53,9 @@ ServiceUnit = Y.Base.create('serviceUnit', Y.ModelList, [], {
 	agent_state: {},
 	// relations to unit relation state.
 	relations: {},
-	is_subordinate: {},
+	is_subordinate: {
+            value: false // default
+        },
 	open_ports: {},
 	public_address: {},
 	private_address: {}
@@ -63,13 +65,14 @@ models.ServiceUnit = ServiceUnit;
 
 ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
     model: ServiceUnit,
-    get_units_for_service: function(service) {
-        var units = this.filter(function(m) { 
-            console.log("filter", m.get("service"));
-            console.log("service", service);
+    get_units_for_service: function(service, asList) {
+        var options = {};
+        if (asList != undefined) {
+            options.asList = true;
+        }
+        var units = this.filter(options, function(m) { 
             return m.get("service").get("id") === service.get("id");
         });
-        console.log("units_for_service", units);
         return units;
     },
     ATTRS: {

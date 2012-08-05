@@ -130,17 +130,16 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         Y.each(status_json.machines, 
             function(machine_data, machine_name) {
             var machine = new models.Machine({
-                    machine_id: machine_name,
-                    public_address: machine_data["dns-name"]});
+                machine_id: machine_name,
+                public_address: machine_data["dns-name"]});
             d.machines.add(machine);
         }, this);
 	
         
         Y.each(status_json.services, 
             function(service_data, service_name) {
-		var charm = new models.Charm(
-                    {charm_id: service_data.charm}
-		);
+		var charm = new models.Charm({
+                        charm_id: service_data.charm});
 		var service = new models.Service({
                     name: service_name,
                     charm: charm
@@ -154,11 +153,9 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
                             service: service,
                             machine: d.machines.getById(unit_data.machine),
                             agent_state: unit_data["agent-state"],
-                            is_subordinate: ( 
-                                service_data.subordinate || false),
-                            public_address: unit_data["public-address"],
-                            private_address: unit_data["private-address"]});
-                    console.log("adding unit", JSON.stringify(unit.toJSON()));
+                            is_subordinate: (service_data.subordinate || false),
+                            public_address: unit_data["public-address"]
+                            });
                     d.units.add(unit);
                 }, this);
 
