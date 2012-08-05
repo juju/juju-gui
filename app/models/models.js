@@ -64,11 +64,13 @@ models.ServiceUnit = ServiceUnit;
 ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
     model: ServiceUnit,
     get_units_for_service: function(service) {
-        console.log("gufs", service, this);
-        return this.filter(function(m) { 
-            console.log("filter", m, m.get("service"));
+        var units = this.filter(function(m) { 
+            console.log("filter", m.get("service"));
+            console.log("service", service);
             return m.get("service").get("id") === service.get("id");
         });
+        console.log("units_for_service", units);
+        return units;
     },
     ATTRS: {
     }

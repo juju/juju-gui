@@ -4,16 +4,13 @@ var views = Y.namespace("juju.views");
             
 OverviewView = Y.Base.create('OverviewView', Y.View, [], {
    events: {
-        '#show-status': {
-            click: 'show_status'
-        }
     },
 
     initializer: function () {
-        this.publish("showStatus", {preventable: false});
+        this.publish("showService", {preventable: false});
     },
         
-    template: Y.Handlebars.compile(Y.one("#t-example").getHTML()),
+    template: Y.Handlebars.compile(Y.one("#t-overview").getHTML()),
 
     render: function () {
         var container = this.get('container');
@@ -36,11 +33,8 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
 
         
         var services = m.services.toArray();
-        var relations = m.relations.getAttrs(["endpoints"])["endpoints"];
+        var relations = m.relations.getAttrs(["endpoints"]).endpoints;
         
-        console.log("overview serv", services);
-        console.log("overview rels", relations);
-
         var tree = d3.layout.force()
             .on("tick", tick)
             .charge(-400)
@@ -87,7 +81,7 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
             .call(tree.drag)
             .attr("class", "service")
             .on("click", function(m) {
-                    self.fire("showStatus");
+                    self.fire("showService", {service: m});
             });
 
 
@@ -115,7 +109,6 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
         .attr("dy", "1em")
         .text(function(d) {
                   var units = m.units.get_units_for_service(d);
-                  console.log("units", units);
                   return units.length;
               });
 
@@ -129,11 +122,8 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
         // });
 
         tree.start();
-    },
-
-    show_status: function(e) {
-        this.fire("showStatus");
     }
+
 });
 
 views.overview = OverviewView;

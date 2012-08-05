@@ -42,29 +42,20 @@
     </div> <!-- /container -->
 
 
-    <script id="t-example" type="text/x-handlebars-template">
+    <script id="t-overview" type="text/x-handlebars-template">
       <div>
         <h1>Overview</h1>
         <p>
-          <button id="show-status" class="yui3-button">Show Status</button>
           <div id="canvas"></div>
         </p>
       </div>
     </script>
 
-   <script id="t-status" type="text/x-handlebars-template">
+   <script id="t-service" type="text/x-handlebars-template">
       <div>
-        <h1>Status View</h1>
-        <pre>
-          {{status}}
-        </pre>
-        <div>
-          <ul>
-          {{#each charms}}
-          <ul>{{name}} &ndash; {{description}}</ul>
-          {{/each}}
-          </ul>
-        </div>
+        {{#with service}}
+        <h1>{{id}} Details</h1>
+        {{/with}}
       </div>
     </script>
 

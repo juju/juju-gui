@@ -22,14 +22,14 @@ GlobalConfig = {
                 "juju-overview": {
                     fullpath: "views/overview.js"
                 },
-                "juju-status": {
-                    fullpath: "views/status.js"
+                "juju-service": {
+                    fullpath: "views/service.js"
                 },
 		"juju-view-charmsearch": {
 		    fullpath: "views/search.js"
 		},
                 "juju-views":  {
-                    use: ["juju-overview", "juju-status", "juju-view-charmsearch"]
+                    use: ["juju-overview", "juju-service", "juju-view-charmsearch"]
                 },
                 "juju-models": {
                     requires: ["model", "model-list"],
