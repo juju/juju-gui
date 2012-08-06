@@ -25,7 +25,7 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 		}
 		return result.owner + "/" + result.series + "/" + result.name;
 	    },
-	    source: "http://jujucharms.com/search/json?search_text={query}"
+	    source: "http://jujucharms.com:2464/search/json?search_text={query}"
 	});
         return this;
     }

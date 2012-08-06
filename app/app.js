@@ -9,21 +9,22 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     views: {
         overview: {
             type: "juju.views.overview",
-            preserve: true
+            preserve: false
         },
-        
+
         service: {
             type: "juju.views.service",
             preserve: false,
             parent: "overview"
         },
+
 	charm_search: {
             type: "juju.views.charm_search",
             preserve: true
 	}
     },
 
-    initializer: function () {    
+    initializer: function () {
         var self = this,
             service_list = new models.ServiceList(),
             machine_list = new models.MachineList(),
@@ -50,6 +51,9 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	this.publish("env:connect", {emitFacade: true});
 	this.publish("env:disconnect", {emitFacade: true});
 
+
+	// Update with status
+	this.on('env:status', this.on_status_changed);
 
         this.once('ready', function (e) {
             this.ws = new Y.ReconnectingWebSocket(this.get("socket_url"));
@@ -83,25 +87,52 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	console.log("msg", msg);
 	if (msg.version === 0) {
 	    console.log("greeting");
+	    // call out to status
+	    this.env_status()
 	    return;
 	}
 	this.fire("env:msg", msg);
     },
 
-    message_to_event: function(data) {
-	console.log('invoked')
-	console.log(this);
-	console.log(data)
+    message_to_event: function(evt) {
+	console.log('msg2evt invoked')
+	console.log('msg data', evt);
         var event_kind = {
-            status: "env:status"
-        }[data.op];
+            status: "env:status",
+	    deploy: "env:deploy",
+	    add_unit: "env:add_unit",
+	    destroy_service: "env:destroy_service"
+        }[evt.op];
         this.fire(event_kind, {
-            data: data
+            data: evt
         });
     },
         
-    
-        
+    // env methods
+    env_status: function() {
+	console.log("invoke env.status");
+	this.ws.send(Y.JSON.stringify({'op': 'status'}));
+    },
+
+    add_unit: function(charm_url) {
+	console.log("invoke env.deploy", charm_url);
+	this.ws.send(
+	    Y.JSON.stringify({'op': 'add_unit', 'charm_url': charm_url}));
+    },
+
+    deploy: function(charm_url) {
+	console.log("invoke env.deploy", charm_url);
+	this.ws.send(
+	    Y.JSON.stringify({'op': 'deploy', 'charm_url': charm_url}));
+    },
+    // end env methods
+
+    on_status_changed: function(evt) {
+	console.log('status changed', evt);
+	this.parse_status(evt.data.result);
+        this.showView('overview', {domain_models: this.domain_models});
+    },
+
     get_sample_data: function() {
         var self = this;
         Y.io("status.json", {
@@ -109,13 +140,13 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
                  on: {
                      complete: function(id, response) {
                          var status = Y.JSON.parse(response.responseText);
-                         this.status = this.parseStatus(status);
+                         this.status = this.parse_status(status);
                      }}
              });
 
     },
         
-    parseStatus: function(status_json) {
+    parse_status: function(status_json) {
 	console.log("parse status");
         var d = this.domain_models,
             relations = {};

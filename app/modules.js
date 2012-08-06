@@ -4,12 +4,12 @@ GlobalConfig = {
     combine: false,
     groups: {
         d3: {
-            base: "http://d3js.org/",
+//            base: "http://d3js.org/",
             modules: {
                "d3": {
-                   "path": "d3.v2.min.js"
+                   "fullpath": "assets/javascripts/d3.v2.min.js"
                }
-          }  
+          }
         },
         juju: {
             modules: {
@@ -25,9 +25,9 @@ GlobalConfig = {
                 "juju-service": {
                     fullpath: "views/service.js"
                 },
-		"juju-view-charmsearch": {
-		    fullpath: "views/search.js"
-		},
+                "juju-view-charmsearch": {
+                    fullpath: "views/search.js"
+                },
                 "juju-views":  {
                     use: ["juju-overview", "juju-service", "juju-view-charmsearch"]
                 },
@@ -35,10 +35,10 @@ GlobalConfig = {
                     requires: ["model", "model-list"],
                     fullpath: "models/models.js"
                 },
-                "juju-gui": { 
+                "juju-gui": {
                     fullpath: "app.js",
                     requires: [
-                        "juju-views", 
+                        "juju-views",
                         "juju-models",
                         "svg-layouts",
                         "reconnecting-websocket"
@@ -51,5 +51,5 @@ GlobalConfig = {
 
 // Node compat for testing
 if (typeof(exports) !== "undefined") {
-    exports.GlobalConfig = GlobalConfig;    
+    exports.GlobalConfig = GlobalConfig;
 }
