@@ -88,7 +88,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	if (msg.version === 0) {
 	    console.log("greeting");
 	    // call out to status
-	    this.env_status()
+	    // this.env_status()
 	    return;
 	}
 	this.fire("env:msg", msg);
