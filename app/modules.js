@@ -35,13 +35,18 @@ GlobalConfig = {
                     requires: ["model", "model-list"],
                     fullpath: "models/models.js"
                 },
+                "juju-env": {
+                    requires: ["reconnecting-websocket"],
+                    fullpath: "store/env.js"
+                },
+		
                 "juju-gui": {
                     fullpath: "app.js",
                     requires: [
+			"juju-env",
                         "juju-views",
                         "juju-models",
                         "svg-layouts",
-                        "reconnecting-websocket"
                     ]
                 }
             }
