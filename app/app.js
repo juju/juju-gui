@@ -101,6 +101,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             status: "env:status",
 	    deploy: "env:deploy",
 	    add_unit: "env:add_unit",
+	    add_relation: "env:add_relation",
 	    destroy_service: "env:destroy_service"
         }[evt.op];
         this.fire(event_kind, {
@@ -118,6 +119,15 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	console.log("invoke env.deploy", charm_url);
 	this.ws.send(
 	    Y.JSON.stringify({'op': 'add_unit', 'charm_url': charm_url}));
+    },
+
+    add_relation: function(endpoint_a, endpoint_b) {
+	//console.log("invoke env.deploy", charm_url);
+	this.ws.send(
+	    Y.JSON.stringify(
+		{'op': 'add_relation', 
+		 'endpoint_a': endpoint_a,
+		 'endpoint_b': endpoint_b}));
     },
 
     deploy: function(charm_url) {
@@ -239,7 +249,8 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	var charm_search = this.get('charm_search');
 	if (!charm_search) {
 	    console.log('creating search');
-	    charm_search = this.createView('charm_search');
+	    charm_search = this.createView(
+		'charm_search', {'app': this});
 	    this.set('charm_search', charm_search.render());
 	}
 	next();

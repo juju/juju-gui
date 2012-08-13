@@ -27,8 +27,24 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 	    },
 	    source: "http://jujucharms.com:2464/search/json?search_text={query}"
 	});
+
+	Y.one('#charm-deploy').on(
+	    'click', Y.bind(this.deploy_charm, this));
         return this;
+    },
+
+    deploy_charm: function(evt) {
+	evt.preventDefault();
+	evt.stopImmediatePropagation();
+//	evt.stop();
+	var app;
+	charm_url = Y.one('#charm-search').get('value');
+	console.log('deploying charm', this, charm_url);
+	app = this.get('app')
+	app.deploy(charm_url);
+
     }
+
 });
 
 views.charm_search = CharmStoreSearch
