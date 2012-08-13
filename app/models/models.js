@@ -75,6 +75,14 @@ ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
         });
         return units;
     },
+    /*
+     *  Return information about the state of all units focused on the 
+     * 'worst' status information available. In this way if any unit is in 
+     *  an error state we can report that for the whole list.
+     */
+    get_informative_state: function() {
+        
+    },
     ATTRS: {
     }
 });

@@ -56,11 +56,14 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	this.on('env:status', this.on_status_changed);
 
         this.once('ready', function (e) {
-            this.ws = new Y.ReconnectingWebSocket(this.get("socket_url"));
-	    this.ws.onmessage = Y.bind(this.on_message, this);
-	    this.ws.onopen = Y.bind(this.on_open, this);
-            this.ws.onclose = Y.bind(this.on_close, this);
-	    console.log("websocket made");
+            var socket_url = this.get("socket_url");
+            if (socket_url) {
+                this.ws = new Y.ReconnectingWebSocket(socket_url);
+	        this.ws.onmessage = Y.bind(this.on_message, this);
+	        this.ws.onopen = Y.bind(this.on_open, this);
+                this.ws.onclose = Y.bind(this.on_close, this);
+	        console.log("websocket made");
+            }
 
             if (this.hasRoute(this.getPath())) {
                 this.dispatch();
