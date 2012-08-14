@@ -9,6 +9,7 @@ var views = Y.namespace("juju.views");
 ServiceView = Y.Base.create('ServiceView', Y.View, [], {
 
     initializer: function () {
+	console.log("View: Initialized: Service");
         var template_src = Y.one("#t-service").getHTML();
         this.template = Y.Handlebars.compile(template_src); 
     },
@@ -49,14 +50,14 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [], {
             .attr("width", 100)
             .attr("height", 64)
             .style("fill", "#DA5616");
-        console.log("nodes", node);
+        console.log("View: Service: nodes", node);
 
         var unit_labels = node.append("text").append("tspan")
             .attr("class", "name")
             .attr("x", 4)
             .attr("y", "1em")
             .text(function(d) {
-                      console.log("label", d);
+                      console.log("View: Service: label", d);
                       return d.get("id"); });
         
 

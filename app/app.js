@@ -26,8 +26,8 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     initializer: function () {
-        var self = this,
-            service_list = new models.ServiceList(),
+
+        var service_list = new models.ServiceList(),
             machine_list = new models.MachineList(),
             charm_list = new models.CharmList(),
             relation_list = new models.RelationList(),
@@ -41,28 +41,32 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             units: unit_list
         };
 
-        this.get_sample_data();
-
-        this.on("*:showService", this.navigate_to_service);
-
 	// Create an environment facade to interact with.
         this.env = new juju.Environment({'socket_url': this.get('socket_url')});
-	// Update with status
-	this.env.on('status', this.on_status_changed, this);
 
+	// Event subscriptions
+        this.on("*:showService", this.navigate_to_service);
+	this.env.on('status', this.on_status_changed, this);
         this.once('ready', function (e) {
 
 	    if (this.get("socket_url")) {
 		// Connect to the environment.
-		console.log("Connecting to environment")
+		console.log("App: Connecting to environment")
 		this.env.connect();
 	    }
-
+	    
+	    var current_path = this.getPath();
+	    console.log("App: url path", current_path);
+	    console.log("App: Dispatching view route")
+            var result = this.dispatch();
+	    console.log("App: dispatch", result)
+/*
             if (this.hasRoute(this.getPath())) {
-                this.dispatch();
+
             } else {
+		console.log("App: Route default Overview");
                 this.show_overview();
-            }
+            } */
 
         }, this);
 
@@ -70,9 +74,10 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
          
     on_status_changed: function(evt) {
-	console.log('status changed', evt);
+	console.log('App: Status changed', evt);
 	this.parse_status(evt.data.result);
-        this.showView('overview', {domain_models: this.domain_models});
+	// Redispatch to current view to update.
+	this.dispatch();
     },
 
     get_sample_data: function() {
@@ -89,7 +94,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
         
     parse_status: function(status_json) {
-	console.log("parse status");
+	console.log("App: Parse status");
         var d = this.domain_models,
             relations = {};
 
@@ -172,15 +177,13 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     show_overview: function (req) {
-	console.log('show overview');
+	console.log("App: Route: Overview", req.path, req.pendingRoutes);
         this.showView('overview', {domain_models: this.domain_models});
     },
 
     show_charm_search: function(req, res, next) {
-	console.log('show search');
 	var charm_search = this.get('charm_search');
 	if (!charm_search) {
-	    console.log('creating search');
 	    charm_search = this.createView(
 		'charm_search', {'app': this});
 	    this.set('charm_search', charm_search.render());
@@ -193,8 +196,9 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         routes: {
             value: [
 		{path: "*", callback: 'show_charm_search'},
+                {path: "/service/:id/", callback: 'show_service'},
                 {path: "/", callback: 'show_overview'},
-                {path: "/service/:id/", callback: 'show_service'}
+
                 ]
             }
     }

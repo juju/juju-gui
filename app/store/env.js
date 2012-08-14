@@ -48,21 +48,21 @@ Y.extend(Environment, Y.Base, {
     },
 
     on_open: function(data) {
-	console.log("open", data);
+	console.log("Env: Connected");
 	this.fire('connect');
     },
 
     on_close: function(data) {
-	console.log("close", data);
+	console.log("Env: Disconnect");
 	this.fire('disconnect')
     },
 
     on_message: function(evt) {
 	last_msg = evt;
 	var msg = Y.JSON.parse(evt.data);
-	console.log("msg", msg);
+
 	if (msg.version === 0) {
-	    console.log("greeting");
+	    console.log("Env: Handshake Complete");
 	    // call out to status
 	    // this.env_status()
 	    return;
@@ -71,19 +71,20 @@ Y.extend(Environment, Y.Base, {
     },
 
     dispatch_event: function(evt) {
-	console.log('dispatch event invoked', evt)
 
-	if (!'op' in evt) {
-	    console.log('unknown evt kind');
+
+	if (!('op' in evt)) {
+	    console.warn('Env: Unknown evt kind');
 	    return
 	}
 
-	if (!evt.op in EVENT_DISPATCH_MAP) {
-	    console.warn('unknown evt op', evt.op);
+	if (!(evt.op in EVENT_DISPATCH_MAP)) {
+	    console.warn('Env: Unknown evt op', evt.op);
 	    return
 	}
 
         var event_kind = EVENT_DISPATCH_MAP[evt.op];
+	console.log('Env: Dispatch Evt', event_kind, evt)
         this.fire(event_kind, {data: evt});
     },
 
@@ -91,7 +92,7 @@ Y.extend(Environment, Y.Base, {
     // Environment API
 
     add_unit: function(service, num_units) {
-	console.log("invoke env.add_unit", service, num_units);
+	console.log("Env: Invoke: add_unit", service, num_units);
 	this.ws.send(
 	    Y.JSON.stringify(
 		{'op': 'add_unit', 
@@ -100,7 +101,7 @@ Y.extend(Environment, Y.Base, {
     },
 
     add_relation: function(endpoint_a, endpoint_b) {
-	console.log("invoke env.add_relation", endpoint_a, endpoint_b);
+	console.log("Env: Invoke: add_relation", endpoint_a, endpoint_b);
 	this.ws.send(
 	    Y.JSON.stringify(
 		{'op': 'add_relation', 
@@ -109,18 +110,18 @@ Y.extend(Environment, Y.Base, {
     },
 
     deploy: function(charm_url) {
-	console.log("invoke env.deploy", charm_url);
+	console.log("Env: Invoke: deploy", charm_url);
 	this.ws.send(
 	    Y.JSON.stringify({'op': 'deploy', 'charm_url': charm_url}));
     },
 
     status: function() {
-	console.log('invoke env.status');
+	console.log('Env: Invoke: status');
 	this.ws.send(Y.JSON.stringify({'op': 'status'}));
     },
 
     remove_relation: function(endpoint_a, endpoint_b) {
-	console.log('invoke env.remove_relation');
+	console.log('Env: Invoke: remove_relation');
 	this.ws.send(
 	    Y.JSON.stringify(
 		{'op': 'remove_relation',

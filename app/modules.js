@@ -7,41 +7,41 @@ GlobalConfig = {
 //            base: "http://d3js.org/",
             modules: {
                "d3": {
-                   "fullpath": "assets/javascripts/d3.v2.min.js"
+                   "fullpath": "/assets/javascripts/d3.v2.min.js"
                }
           }
         },
         juju: {
             modules: {
                 "svg-layouts" : {
-                    fullpath: "assets/javascripts/svg-layouts.js"
+                    fullpath: "/assets/javascripts/svg-layouts.js"
                 },
                 "reconnecting-websocket": {
-                    fullpath: "assets/javascripts/reconnecting-websocket.js"
+                    fullpath: "/assets/javascripts/reconnecting-websocket.js"
                 },
                 "juju-overview": {
-                    fullpath: "views/overview.js"
+                    fullpath: "/views/overview.js"
                 },
                 "juju-service": {
-                    fullpath: "views/service.js"
+                    fullpath: "/views/service.js"
                 },
                 "juju-view-charmsearch": {
-                    fullpath: "views/search.js"
+                    fullpath: "/views/search.js"
                 },
                 "juju-views":  {
                     use: ["juju-overview", "juju-service", "juju-view-charmsearch"]
                 },
                 "juju-models": {
                     requires: ["model", "model-list"],
-                    fullpath: "models/models.js"
+                    fullpath: "/models/models.js"
                 },
                 "juju-env": {
                     requires: ["reconnecting-websocket"],
-                    fullpath: "store/env.js"
+                    fullpath: "/store/env.js"
                 },
 		
                 "juju-gui": {
-                    fullpath: "app.js",
+                    fullpath: "/app.js",
                     requires: [
 			"juju-env",
                         "juju-views",

@@ -3,16 +3,17 @@ YUI.add("juju-overview", function(Y) {
 var views = Y.namespace("juju.views");
             
 OverviewView = Y.Base.create('OverviewView', Y.View, [], {
-   events: {
-    },
+    events: {},
 
     initializer: function () {
+	console.log("View: Initialized: Overview");
         this.publish("showService", {preventable: false});
     },
         
     template: Y.Handlebars.compile(Y.one("#t-overview").getHTML()),
 
     render: function () {
+	console.log('View: Render: Overview');
         var container = this.get('container');
         OverviewView.superclass.render.apply(this, arguments);
                 
@@ -22,7 +23,6 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
     },
 
     render_canvas: function(){
-	console.log('render canvas');
         var self = this,
             container = this.get('container'),
             m = this.get('domain_models'),
@@ -30,7 +30,6 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
             width = 800;
 
         var fill = d3.scale.category20();
-
         
         var services = m.services.toArray();
         var relations = m.relations.getAttrs(["endpoints"]).endpoints;

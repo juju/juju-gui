@@ -15,6 +15,14 @@ server.configure(function () {
 
 // Handles requests to the root path ("/") my simply sending the "shell" page
 // which creates the `Y.App` instance.
+
+server.get('/stats/', function(req, res) {
+    res.json({
+	uptime: process.uptime(),
+	memory: process.memoryUsage()
+    });
+});
+
 server.get('*', function (req, res) {
     res.sendfile('app/index.html');
 });

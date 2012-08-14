@@ -1,6 +1,3 @@
-// This is a temp view to get the router working
-// remove later, testing basic routing in App
-
 YUI.add("juju-view-charmsearch", function(Y) {
 
 var views = Y.namespace("juju.views");
@@ -9,11 +6,10 @@ var views = Y.namespace("juju.views");
 CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 
     initializer: function () {
-	console.log("initialized store search view");
+	console.log("View: Initialized: Charm Search")
     },
 
     render: function () {
-	console.log("rendering");  
 	Y.one('#charm-search').plug(Y.Plugin.AutoComplete, {
 	    resultHighlighter: 'phraseMatch',
 	    minQueryLength: 2,
