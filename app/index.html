@@ -72,19 +72,6 @@
       </div>
     </script>
 
-   <script id="t-service" type="text/x-handlebars-template">
-      <div>
-        {{#with service}}
-        <h1>{{id}} Details</h1>
-        {{#each units}}
-        <div class="unit">
-          {{this.id}}
-        </div>
-        {{/each}}
-        {{/with}}
-      </div>
-    </script>
-
     <!-- javascript away -->
     <script src="/assets/javascripts/yui/yui/yui-min.js"></script>
     <script src="/modules.js"></script>
@@ -97,7 +84,7 @@
               contain : "#main",
               viewContainer: "#main",
               transitions: true
-          }).render().dispatch();
+          }).render();
       });
     </script>
   </body>

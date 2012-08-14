@@ -1,7 +1,7 @@
 GlobalConfig = {
     filter: 'info',
     debug: false,
-    combine: false,
+    combine: true,
     groups: {
         d3: {
 //            base: "http://d3js.org/",
@@ -74,7 +74,7 @@ GlobalConfig = {
 			"juju-charm-store",
                         "juju-views",
                         "juju-models",
-                        "svg-layouts",
+                        "svg-layouts"
                     ]
                 }
             }

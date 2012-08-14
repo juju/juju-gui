@@ -2,7 +2,7 @@
 
 var connect = require("connect"),
     express = require("express"),
-    server = express.createServer(),
+    server = express(),
     pubDir = __dirname + "/app",
     port = process.env.PORT || 8888;
 
@@ -27,8 +27,11 @@ server.get('*', function (req, res) {
     res.sendfile('app/index.html');
 });
 
-
+server.get('*', function (req, res) {
+        res.redirect('/#' + req.url);
+});
 
 server.listen(port, function () {
     console.log('Server listening on ' + port);
+    console.log('Serving content from ' + pubDir);
 });

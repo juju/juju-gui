@@ -6,7 +6,7 @@ var views = Y.namespace("juju.views");
 CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 
     initializer: function () {
-	console.log("View: Initialized: Charm Search")
+	console.log("View: Initialized: Charm Search");
     },
 
     render: function () {
@@ -30,17 +30,21 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
     },
 
     deploy_charm: function(evt) {
+        var app = this.get('app');
 	evt.preventDefault();
 	evt.stopImmediatePropagation();
-//	evt.stop();
+
 	charm_url = Y.one('#charm-search').get('value');
 	console.log('deploying charm', this, charm_url);
-	this.get('app').env.deploy(charm_url);
+
+	app.env.deploy(charm_url);
     }
 
 });
 
-views.charm_search = CharmStoreSearch
+views.charm_search = CharmStoreSearch;
 }, "0.1.0", {
-    requires: ['autocomplete', 'autocomplete-filters', 'autocomplete-highlighters']
+    requires: ['autocomplete', 
+               'autocomplete-filters', 
+               'autocomplete-highlighters']
 });
