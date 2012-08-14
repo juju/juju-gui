@@ -60,6 +60,10 @@ Y.extend(Environment, Y.Base, {
     on_message: function(evt) {
 	last_msg = evt;
 	var msg = Y.JSON.parse(evt.data);
+	if (msg.version === 0) {
+	    console.log("Env: Handshake Complete");
+	    return;
+	}
 	this.fire("msg", msg);
     },
 
