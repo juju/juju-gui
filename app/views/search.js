@@ -33,12 +33,9 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 	evt.preventDefault();
 	evt.stopImmediatePropagation();
 //	evt.stop();
-	var app;
 	charm_url = Y.one('#charm-search').get('value');
 	console.log('deploying charm', this, charm_url);
-	app = this.get('app')
-	app.deploy(charm_url);
-
+	this.get('app').env.deploy(charm_url);
     }
 
 });

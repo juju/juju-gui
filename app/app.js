@@ -56,13 +56,11 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	    }
 	    
 	    var current_path = this.getPath();
-	    console.log("App: url path", current_path);
-	    console.log("App: Dispatching view route")
-            var result = this.dispatch();
-	    console.log("App: dispatch", result)
+	    console.log("App: Dispatching view route", current_path);
+	    this.dispatch();
 /*
+	    console.log("App: Dispatch", this.get('activeView'))
             if (this.hasRoute(this.getPath())) {
-
             } else {
 		console.log("App: Route default Overview");
                 this.show_overview();

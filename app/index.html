@@ -59,6 +59,19 @@
       </div>
     </script>
 
+    <script id="t-charm-collection" type="text/x-handlebars-template">
+      <div>
+        <h1>Charm Collection</h1>
+	<div class="colletion">
+	  {{#each charms}}
+	  <div class="charm">
+	    abc
+	  </div>
+	  {{/each}}
+	</div>
+      </div>
+    </script>
+
    <script id="t-service" type="text/x-handlebars-template">
       <div>
         {{#with service}}
@@ -80,7 +93,7 @@
       app = new Y.juju.App({
               serverRouting: false,
               html5: true,
-              socket_url: "ws://localhost:8081/ws",
+              socket_url: "ws://localhost:8082/ws",
               contain : "#main",
               viewContainer: "#main",
               transitions: true
