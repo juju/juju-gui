@@ -3,25 +3,31 @@ YUI.add("juju-gui", function(Y) {
 // Debug console access to YUI context.
 yui = Y;
 
-var models = Y.namespace("juju.models");
 var juju = Y.namespace('juju');
+var models = Y.namespace("juju.models");
 
 JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     views: {
-        overview: {
-            type: "juju.views.overview",
+        environment: {
+            type: "juju.views.environment",
             preserve: false
         },
 
         service: {
             type: "juju.views.service",
             preserve: false,
-            parent: "overview"
+            parent: "environment"
         },
 
 	charm_search: {
             type: "juju.views.charm_search",
             preserve: true
+	},
+	
+	charm_collection: {
+	    type: "juju.views.charm_collection",
+	    preserve: false,
+	    parent: "environment"
 	}
     },
 
@@ -33,7 +39,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             relation_list = new models.RelationList(),
             unit_list = new models.ServiceUnitList();
         
-        this.domain_models = {
+        this.db = {
             services: service_list,
             machines: machine_list,
             charms: charm_list,
@@ -46,6 +52,9 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
 	// Event subscriptions
         this.on("*:showService", this.navigate_to_service);
+	// this.on("*:showUnit", this.navigate_to_unit);
+	this.on("*:showCharmCollection", this.navigate_to_charm_collection);
+
 	this.env.on('status', this.on_status_changed, this);
         this.once('ready', function (e) {
 
@@ -58,7 +67,8 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	    var current_path = this.getPath();
 	    console.log("App: Dispatching view route", current_path);
 	    this.dispatch();
-/*
+
+	    /*
 	    console.log("App: Dispatch", this.get('activeView'))
             if (this.hasRoute(this.getPath())) {
             } else {
@@ -93,7 +103,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         
     parse_status: function(status_json) {
 	console.log("App: Parse status");
-        var d = this.domain_models,
+        var d = this.db,
             relations = {};
 
         // for now we reset the lists rather than sync/update
@@ -157,28 +167,45 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
         
     // Event handlers
+    /*
+    navigate_to_unit: function(e) {
+	console.log("Evt.Nav.Router unit target", e.unit.get('id'));
+        var unit = e.unit;
+        this.navigate("/unit/" + unit.get("id") + "/");
+    },
+    */
+
     navigate_to_service: function(e) {
+	console.log("Evt.Nav.Router service target", e.service.get('id'));
         var service = e.service;
         this.navigate("/service/" + service.get("id") + "/");
     },
 
+    navigate_to_charm_collection: function(e) {
+	console.log("Evt.Nav.Router charm collection");
+        this.navigate("/charm-collection/");
+    },
+
     // Route handlers
     show_service: function(req) {
-        var d = this.domain_models, 
-            service = d.services.getById(req.params.id);
-        this.showView("service", {
-                          service: service,
-                          domain_models: this.domain_models
-                      });
-
+	console.log(
+	    "App: Route: Service", req.params.id, req.path, req.pendingRoutes);
+        var service = this.db.services.getById(req.params.id);
+        this.showView("service", {service: service, domain_models: this.db});
 
     },
 
-    show_overview: function (req) {
-	console.log("App: Route: Overview", req.path, req.pendingRoutes);
-        this.showView('overview', {domain_models: this.domain_models});
+    show_environment: function (req) {
+	console.log("App: Route: Environment", req.path, req.pendingRoutes);
+        this.showView('environment', {domain_models: this.db});
     },
 
+    show_charm_collection: function(req) {
+	console.log("App: Route: Charm Collection", req.path, req.pendingRoutes);
+	this.showView('charm_collection');
+    },
+
+    /* Present on all views */
     show_charm_search: function(req, res, next) {
 	var charm_search = this.get('charm_search');
 	if (!charm_search) {
@@ -194,8 +221,9 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         routes: {
             value: [
 		{path: "*", callback: 'show_charm_search'},
+                {path: "/charm-collection/", callback: 'charm_collection'},
                 {path: "/service/:id/", callback: 'show_service'},
-                {path: "/", callback: 'show_overview'},
+                {path: "/", callback: 'show_environment'},
 
                 ]
             }
@@ -206,15 +234,14 @@ Y.namespace("juju").App = JujuGUI;
 
 }, "0.5.2", {
     requires: [
-	"io",
-	"json-parse",
 	"juju-models",
 	"juju-views",
-	"juju-env",
+	"juju-controllers",
+	"io",
+	"json-parse",
 	'app-base',
 	'app-transitions',
 	'base',
 	'node',
-	"reconnecting-websocket"
        ]
 });

@@ -4,6 +4,7 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 
     initializer: function () {
 	console.log("View: Initialized: Charm Collection");
+	this.set('charms', []);
     },
 
     template: Y.Handlebars.compile(Y.one("#t-charm-collection").getHTML()),

@@ -1,5 +1,7 @@
 GlobalConfig = {
-    filter: 'info',
+// 
+    filter: 'debug',
+//    filter: 'info',
     debug: false,
     combine: false,
     groups: {
@@ -25,11 +27,11 @@ GlobalConfig = {
 
 		// Views
 
-                "juju-overview": {
-                    fullpath: "/views/overview.js"
+                "juju-view-environment": {
+                    fullpath: "/views/environment.js"
                 },
 
-                "juju-service": {
+                "juju-view-service": {
                     fullpath: "/views/service.js"
                 },
 
@@ -42,8 +44,8 @@ GlobalConfig = {
                 },
 
                 "juju-views":  {
-                    use: ["juju-overview", 
-			  "juju-service", 
+                    use: ["juju-view-environment", 
+			  "juju-view-service", 
 			  "juju-view-charmsearch",
 			  "juju-view-charm-collection"]
                 },
@@ -55,8 +57,7 @@ GlobalConfig = {
                     fullpath: "/models/models.js"
                 },
 
-		// Connectivity
-		
+		// Connectivity		
                 "juju-env": {
                     requires: ["reconnecting-websocket"],
                     fullpath: "/store/env.js"
@@ -66,12 +67,16 @@ GlobalConfig = {
                     fullpath: "/store/charm.js"
                 },
 		
+
+		"juju-controllers": {
+		    use: ["juju-env", "juju-charm-store"],
+                },
+
 		// App
                 "juju-gui": {
                     fullpath: "/app.js",
                     requires: [
-			"juju-env",
-			"juju-charm-store",
+			"juju-controllers",
                         "juju-views",
                         "juju-models",
                         "svg-layouts",

@@ -1,7 +1,7 @@
 // This is a temp view to get the router working
 // remove later, testing basic routing in App
 
-YUI.add("juju-service", function(Y) {
+YUI.add("juju-view-service", function(Y) {
 
 var views = Y.namespace("juju.views");
             

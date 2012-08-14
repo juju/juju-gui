@@ -19,6 +19,7 @@ function Environment(config) {
 Environment.NAME = "env";
 Environment.ATTRS = {
     'socket_url': {},
+    'connected': {value: false},
     'debug': {value: false},
 }
 
@@ -30,8 +31,6 @@ Y.extend(Environment, Y.Base, {
 	this.publish("msg", {
 	    emitFacade: true, defaultFn: this.message_to_event
 	});
-	this.publish("connect", {emitFacade: true});
-	this.publish("disconnect", {emitFacade: true});
     },
 
     destructor: function(){
@@ -49,12 +48,12 @@ Y.extend(Environment, Y.Base, {
 
     on_open: function(data) {
 	console.log("Env: Connected");
-	this.fire('connect');
+	this.set('connected', true);
     },
 
     on_close: function(data) {
 	console.log("Env: Disconnect");
-	this.fire('disconnect')
+	this.set('connected', false);
     },
 
     on_message: function(evt) {
@@ -115,6 +114,11 @@ Y.extend(Environment, Y.Base, {
 	    Y.JSON.stringify({'op': 'deploy', 'charm_url': charm_url}));
     },
 
+    expose: function(service) {
+	console.log('Env: Invoke: expose', service);
+	// this.ws.send(Y.JSON.stringify({'op': 'expose', 
+    },
+
     status: function() {
 	console.log('Env: Invoke: status');
 	this.ws.send(Y.JSON.stringify({'op': 'status'}));
@@ -122,6 +126,15 @@ Y.extend(Environment, Y.Base, {
 
     remove_relation: function(endpoint_a, endpoint_b) {
 	console.log('Env: Invoke: remove_relation');
+	this.ws.send(
+	    Y.JSON.stringify(
+		{'op': 'remove_relation',
+		 'endpoint_a': endpoint_a,
+		 'endpoint_b': endpoint_b}));
+    },
+
+    destroy_service: function(service) {
+        console.log('Env: Invoke: destroy-service', service);
 	this.ws.send(
 	    Y.JSON.stringify(
 		{'op': 'remove_relation',

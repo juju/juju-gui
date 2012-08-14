@@ -1,21 +1,21 @@
-YUI.add("juju-overview", function(Y) {
+YUI.add("juju-view-environment", function(Y) {
 
 var views = Y.namespace("juju.views");
             
-OverviewView = Y.Base.create('OverviewView', Y.View, [], {
+EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [], {
     events: {},
 
     initializer: function () {
-	console.log("View: Initialized: Overview");
+	console.log("View: Initialized: Env");
         this.publish("showService", {preventable: false});
     },
         
     template: Y.Handlebars.compile(Y.one("#t-overview").getHTML()),
 
     render: function () {
-	console.log('View: Render: Overview');
+	console.log('View: Render: Env');
         var container = this.get('container');
-        OverviewView.superclass.render.apply(this, arguments);
+	EnvironmentView.superclass.render.apply(this, arguments);
                 
         container.setHTML(this.template());
         this.render_canvas();
@@ -132,7 +132,7 @@ OverviewView = Y.Base.create('OverviewView', Y.View, [], {
 
 });
 
-views.overview = OverviewView;
+views.environment = EnvironmentView;
 }, "0.1.0", {
     requires: ['d3', 
                'svg-layouts', 

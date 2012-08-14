@@ -7,6 +7,7 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 
     initializer: function () {
 	console.log("View: Initialized: Charm Search")
+	this.publish('showCharmCollection', {preventable: false});
     },
 
     render: function () {
@@ -32,10 +33,10 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
     deploy_charm: function(evt) {
 	evt.preventDefault();
 	evt.stopImmediatePropagation();
-//	evt.stop();
 	charm_url = Y.one('#charm-search').get('value');
-	console.log('deploying charm', this, charm_url);
-	this.get('app').env.deploy(charm_url);
+	console.log('Fire show charm collection', this, charm_url);
+	this.fire('showCharmCollection', {query: charm_url});
+//	this.get('app').env.deploy(charm_url);
     }
 
 });
