@@ -217,9 +217,9 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         routes: {
             value: [
 		{path: "*", callback: 'show_charm_search'},
-                {path: "/charm-collection/", callback: 'charm_collection'},
+                {path: "/charm-collection/", callback: 'show_charm_collection'},
                 {path: "/service/:id/", callback: 'show_service'},
-                {path: "/", callback: 'show_environment'},
+                {path: "/", callback: 'show_environment'}
                 ]
             }
     }

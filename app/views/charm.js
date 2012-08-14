@@ -4,7 +4,7 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 
     initializer: function () {
 	console.log("View: Initialized: Charm Collection");
-	this.set('charms', []);
+        //this.set('charms', this.get("domain_models").charms);
     },
 
     template: Y.Handlebars.compile(Y.one("#t-charm-collection").getHTML()),
@@ -14,7 +14,7 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
         CharmCollectionView.superclass.render.apply(this, arguments);
 	container.setHTML(this.template());
         return this;
-    },
+    }
 
 
 });
@@ -22,6 +22,8 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 Y.namespace("juju.views").charm_collection = CharmCollectionView;
 
 }, "0.1.0", {
-    requires: ['autocomplete', 'autocomplete-filters', 'autocomplete-highlighters']
+    requires: ['node', 
+               'handlebars',
+               'view']
 });
 
