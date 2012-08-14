@@ -10,8 +10,6 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [], {
 
     initializer: function () {
 	console.log("View: Initialized: Service");
-        var template_src = Y.one("#t-service").getHTML();
-        this.template = Y.Handlebars.compile(template_src); 
     },
 
     render: function () {

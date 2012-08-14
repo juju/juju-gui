@@ -56,26 +56,22 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	this.on("*:showCharmCollection", this.navigate_to_charm_collection);
 
 	this.env.on('status', this.on_status_changed, this);
+        this.on("navigate", function(req, resp) {
+                    console.log("App Navigate:", 
+                    req.path, req.pendingRoutes);
+        });
+
         this.once('ready', function (e) {
 
 	    if (this.get("socket_url")) {
 		// Connect to the environment.
-		console.log("App: Connecting to environment")
+		console.log("App: Connecting to environment");
 		this.env.connect();
 	    }
 	    
 	    var current_path = this.getPath();
 	    console.log("App: Dispatching view route", current_path);
 	    this.dispatch();
-
-	    /*
-	    console.log("App: Dispatch", this.get('activeView'))
-            if (this.hasRoute(this.getPath())) {
-            } else {
-		console.log("App: Route default Overview");
-                this.show_overview();
-            } */
-
         }, this);
 
     },
@@ -224,7 +220,6 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
                 {path: "/charm-collection/", callback: 'charm_collection'},
                 {path: "/service/:id/", callback: 'show_service'},
                 {path: "/", callback: 'show_environment'},
-
                 ]
             }
     }

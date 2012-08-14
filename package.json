@@ -19,7 +19,7 @@
     "yui": "> 3.5.0",
     "connect": ">2.3.9",
     "mocha": "0.14.0",
-    "express": ">2.0.0",
+    "express": "3.x",
     "expect.js": "0.1.2",
     "should": ">=1.0.0"
   },

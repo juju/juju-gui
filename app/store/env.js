@@ -59,11 +59,8 @@ Y.extend(Environment, Y.Base, {
     on_message: function(evt) {
 	last_msg = evt;
 	var msg = Y.JSON.parse(evt.data);
-
 	if (msg.version === 0) {
 	    console.log("Env: Handshake Complete");
-	    // call out to status
-	    // this.env_status()
 	    return;
 	}
 	this.fire("msg", msg);
@@ -83,7 +80,7 @@ Y.extend(Environment, Y.Base, {
 	}
 
         var event_kind = EVENT_DISPATCH_MAP[evt.op];
-	console.log('Env: Dispatch Evt', event_kind, evt)
+	console.log('Env: Dispatch Evt', event_kind, evt);
         this.fire(event_kind, {data: evt});
     },
 
@@ -145,7 +142,7 @@ Y.extend(Environment, Y.Base, {
 });
 
 
-Y.namespace("juju").Environment = Environment
+Y.namespace("juju").Environment = Environment;
 
 }, "0.1.0", {
        requires: [
