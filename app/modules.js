@@ -2,8 +2,8 @@ GlobalConfig = {
 // 
     filter: 'debug',
 //    filter: 'info',
-    debug: false,
-    combine: true,
+    debug: true,
+    combine: false,
     groups: {
         d3: {
 //            base: "http://d3js.org/",

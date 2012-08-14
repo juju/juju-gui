@@ -54,7 +54,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         this.on("*:showService", this.navigate_to_service);
 	// this.on("*:showUnit", this.navigate_to_unit);
 	this.on("*:showCharmCollection", this.navigate_to_charm_collection);
-
+	
 	this.env.on('status', this.on_status_changed, this);
         this.on("navigate", function(req, resp) {
                     console.log("App Navigate:", 
