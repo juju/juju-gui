@@ -12,8 +12,9 @@
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <style>
+      #main { border: 2px solid black; }
       g.service { fill: #a0a0a0; stroke: black; stoke-width: 4px;}
-      g.service .service-border { stroke-width: 2px; }
+      g.service .service-border {stroke-width: 2px;}
       g.service .name { stroke-width: 0; font-weight: bold;
                         font-family: "Ubuntu"; font-size: 1.6em; fill: #1626cf;}
 
@@ -46,17 +47,12 @@
     <br>
     <br>
 
-    <div id="main" style="background: gray" class="container">
+    <div id="main" class="container">
     </div> <!-- /container -->
 
 
     <script id="t-overview" type="text/x-handlebars-template">
-      <div>
-        <h1>Overview</h1>
-        <p>
-          <div id="canvas"></div>
-        </p>
-      </div>
+      <div id="canvas"></div>
     </script>
 
     <script id="t-charm-collection" type="text/x-handlebars-template">

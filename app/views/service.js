@@ -41,23 +41,15 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [], {
             .attr("class", "unit-border")
             .style("stroke", function(d) {
                        // XXX: add a class instead
-                   return "black";
-                   return {"running": "black"}[
-                           d.get("agent-state")] || "red";
-               })
+                   return "black";})
             .attr("width", 100)
-            .attr("height", 64)
-            .style("fill", "#DA5616");
-        console.log("View: Service: nodes", node);
+            .attr("height", 64);
 
         var unit_labels = node.append("text").append("tspan")
             .attr("class", "name")
             .attr("x", 4)
             .attr("y", "1em")
-            .text(function(d) {
-                      console.log("View: Service: label", d);
-                      return d.get("id"); });
-        
+            .text(function(d) {return d.get("id"); });
 
         return this;
     }
