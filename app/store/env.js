@@ -20,7 +20,7 @@ Environment.NAME = "env";
 Environment.ATTRS = {
     'socket_url': {},
     'connected': {value: false},
-    'debug': {value: false},
+    'debug': {value: false}
 }
 
 Y.extend(Environment, Y.Base, {

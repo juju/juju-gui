@@ -135,7 +135,6 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [], {
 views.environment = EnvironmentView;
 }, "0.1.0", {
     requires: ['d3', 
-               'svg-layouts', 
                'base-build', 
                'handlebars', 
                'node', 

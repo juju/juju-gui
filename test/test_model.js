@@ -1,5 +1,5 @@
 var YUI = require("yui").YUI,
-    base= require("./base.js");
+    base= require("../lib/base.js");
 
 
 (function () {

@@ -15,6 +15,8 @@
     "cryptojs": ">= 2.5.3"
   },
   "devDependencies": {
+    "jsdom": ">= 0.2.15",
+    "sizzle": ">= 1.1.x",
     "d3": "> 2.9.5",
     "yui": "> 3.5.0",
     "connect": ">2.3.9",

@@ -69,7 +69,7 @@ GlobalConfig = {
 		
 
 		"juju-controllers": {
-		    use: ["juju-env", "juju-charm-store"],
+		    use: ["juju-env", "juju-charm-store"]
                 },
 
 		// App
