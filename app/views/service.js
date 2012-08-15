@@ -1,6 +1,3 @@
-// This is a temp view to get the router working
-// remove later, testing basic routing in App
-
 YUI.add("juju-view-service", function(Y) {
 
 var views = Y.namespace("juju.views");
@@ -33,9 +30,28 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [], {
         var node = svg.selectAll("rect")
             .data(pack.nodes({children: units}).slice(1))
             .enter().append("g")
-            .attr("class", "unit")
+            .attr("class", function(d) {
+		// todo also check relations
+		switch (d.get('agent_state')) {
+		case "pending":
+		    return "state-pending unit";
+		case "started":
+		    return "state-started unit";
+		case "start_error":
+		    return "state-error unit";
+		case "install_error":
+		    return "state-error unit";
+		default:
+		    return "unit";
+		}})
             .attr("transform", function(d) {
-                    return "translate(" + d.x + ", " + d.y + ")";});
+                return "translate(" + d.x + ", " + d.y + ")";
+	    })
+	    .on("click", Y.bind(
+		function(m) {
+		    console.log("clicked me", this, m);
+		    this.fire("showUnit", {unit: m})},
+		this));
 
         node.append("rect")
             .attr("class", "unit-border")
@@ -67,6 +83,6 @@ views.service = ServiceView;
                'base-build', 
                'handlebars', 
                'node', 
-               "view", 
+               "view",
                "json-stringify"]
 });

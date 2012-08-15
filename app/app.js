@@ -19,6 +19,12 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             parent: "environment"
         },
 
+	unit: {
+	    type: "juju.views.unit",
+	    preserve: false,
+	    parent: "service"
+	},
+
 	charm_search: {
             type: "juju.views.charm_search",
             preserve: true
@@ -52,9 +58,8 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
 	// Event subscriptions
         this.on("*:showService", this.navigate_to_service);
-	// this.on("*:showUnit", this.navigate_to_unit);
+	this.on("*:showUnit", this.navigate_to_unit);
 	this.on("*:showCharmCollection", this.navigate_to_charm_collection);
-	
 	this.env.on('status', this.on_status_changed, this);
         this.on("navigate", function(e) {
                     Y.log("App Navigate: " + e, "debug");
@@ -149,13 +154,12 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
         
     // Event handlers
-    /*
     navigate_to_unit: function(e) {
 	console.log("Evt.Nav.Router unit target", e.unit.get('id'));
         var unit = e.unit;
-        this.navigate("/unit/" + unit.get("id") + "/");
+        this.navigate("/unit/" + unit.get("id").replace("/", "-") + "/");
     },
-    */
+
 
     navigate_to_service: function(e) {
 	Y.log(e.service.get("id"), "debug", "Evt.Nav.Router service target");
@@ -169,12 +173,19 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     // Route handlers
+    show_unit: function(req) {
+	Y.log(
+	    "App: Route: Unit", req.params.id, req.path, req.pendingRoutes);
+	var unit_id = req.params.id.replace('-', '/');
+        var unit = this.db.units.getById(unit_id);
+        this.showView("unit", {unit: unit, db: this.db});
+    },
+
     show_service: function(req) {
 	Y.log(
 	    "App: Route: Service", req.params.id, req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this.showView("service", {service: service, domain_models: this.db});
-
     },
 
     show_environment: function (req) {
@@ -205,6 +216,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 		{path: "*", callback: 'show_charm_search'},
                 {path: "/charm-collection/", callback: 'show_charm_collection'},
                 {path: "/service/:id/", callback: 'show_service'},
+                {path: "/unit/:id/", callback: 'show_unit'},
                 {path: "/", callback: 'show_environment'}
                 ]
             }

@@ -1,9 +1,13 @@
 GlobalConfig = {
-// 
-    filter: 'debug',
-//    filter: 'info',
+// Uncomment for debug versions of YUI.
+//    filter: 'debug',
+
+// Uncomment for verbose logging of YUI
     debug: false,
+
+// Use Rollups
     combine: false,
+
     groups: {
         d3: {
 //            base: "http://d3js.org/",
@@ -35,6 +39,10 @@ GlobalConfig = {
                     fullpath: "/views/service.js"
                 },
 
+                "juju-view-unit": {
+                    fullpath: "/views/unit.js"
+                },
+
                 "juju-view-charmsearch": {
                     fullpath: "/views/search.js"
                 },
@@ -46,6 +54,7 @@ GlobalConfig = {
                 "juju-views":  {
                     use: ["juju-view-environment", 
 			  "juju-view-service", 
+			  "juju-view-unit",
 			  "juju-view-charmsearch",
 			  "juju-view-charm-collection"]
                 },
@@ -79,7 +88,7 @@ GlobalConfig = {
 			"juju-controllers",
                         "juju-views",
                         "juju-models",
-                        "svg-layouts"
+//                        "svg-layouts"
                     ]
                 }
             }

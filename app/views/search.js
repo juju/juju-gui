@@ -16,16 +16,16 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
     render: function () {
 	Y.one('#charm-search').plug(Y.Plugin.AutoComplete, {
 	    resultHighlighter: 'phraseMatch',
-	    minQueryLength: 2,
-
+	    minQueryLength: 3,
 	    resultListLocator: 'results',
 	    resultTextLocator: function (result) {
+		console.log(result);
 		if (result.owner == 'charmers') {
 		    return result.series + "/" + result.name;
 		}
 		return result.owner + "/" + result.series + "/" + result.name;
 	    },
-	    source: "http://jujucharms.com:2464/search/json?search_text={query}"
+	    source: 'http://jujucharms.com:2464/search/json?search_text={query}'
 	});
 
 	Y.one('#charm-deploy').on(
