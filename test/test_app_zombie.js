@@ -6,7 +6,7 @@ describe("Headless Application", function() {
   before(function(done) {
     this.browser = new Browser();
     this.browser
-      .visit("http://localhost:8888/")
+      .visit(BASE_URL)
       .then(done, done);
   });
 
