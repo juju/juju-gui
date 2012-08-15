@@ -20,9 +20,9 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [], {
             width = 800,
             height = 600;
 
-        var pack = d3.layout.partition()
+        var pack = d3.layout.treemap()
             .sort(null)
-            .size([width/2, height/4])
+            .size([256, 64])
             .value(function(d) { return 1; });
 
 
