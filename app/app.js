@@ -56,21 +56,20 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	this.on("*:showCharmCollection", this.navigate_to_charm_collection);
 	
 	this.env.on('status', this.on_status_changed, this);
-        this.on("navigate", function(req, resp) {
-                    console.log("App Navigate:", 
-                    req.path, req.pendingRoutes);
+        this.on("navigate", function(e) {
+                    Y.log("App Navigate: " + e, "debug");
         });
 
         this.once('ready', function (e) {
 
 	    if (this.get("socket_url")) {
 		// Connect to the environment.
-		console.log("App: Connecting to environment");
+		Y.log("App: Connecting to environment");
 		this.env.connect();
 	    }
 	    
 	    var current_path = this.getPath();
-	    console.log("App: Dispatching view route", current_path);
+	    Y.log("App: Dispatching view route " + current_path, "info");
 	    this.dispatch();
         }, this);
 
@@ -78,25 +77,12 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
          
     on_status_changed: function(evt) {
-	console.log('App: Status changed', evt);
+	Y.log(evt, "debug", 'App: Status changed');
 	this.parse_status(evt.data.result);
 	// Redispatch to current view to update.
 	this.dispatch();
     },
 
-    get_sample_data: function() {
-        var self = this;
-        Y.io("status.json", {
-                 context: this, 
-                 on: {
-                     complete: function(id, response) {
-                         var status = Y.JSON.parse(response.responseText);
-                         this.status = this.parse_status(status);
-                     }}
-             });
-
-    },
-        
     parse_status: function(status_json) {
 	console.log("App: Parse status");
         var d = this.db,
@@ -172,19 +158,19 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     */
 
     navigate_to_service: function(e) {
-	console.log("Evt.Nav.Router service target", e.service.get('id'));
+	Y.log(e.service.get("id"), "debug", "Evt.Nav.Router service target");
         var service = e.service;
         this.navigate("/service/" + service.get("id") + "/");
     },
 
     navigate_to_charm_collection: function(e) {
-	console.log("Evt.Nav.Router charm collection");
+	Y.log("Evt.Nav.Router charm collection");
         this.navigate("/charm-collection/");
     },
 
     // Route handlers
     show_service: function(req) {
-	console.log(
+	Y.log(
 	    "App: Route: Service", req.params.id, req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this.showView("service", {service: service, domain_models: this.db});

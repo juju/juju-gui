@@ -16,6 +16,9 @@ describe("juju gui application", function() {
     it("app should have views", function() {
            app.views["service"].should.be.ok;
            app.views["environment"].should.be.ok;
+           
+           app.render().dispatch();
+           app.get("activeView").should.equal("environment");
        });
    
     });

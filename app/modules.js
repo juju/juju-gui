@@ -2,7 +2,7 @@ GlobalConfig = {
 // 
     filter: 'debug',
 //    filter: 'info',
-    debug: true,
+    debug: false,
     combine: false,
     groups: {
         d3: {

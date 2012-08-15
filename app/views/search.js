@@ -6,7 +6,7 @@ var views = Y.namespace("juju.views");
 CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 
     initializer: function () {
-	console.log("View: Initialized: Charm Search", this, this.get('app'))
+	Y.log("View: Initialized: Charm Search");
 	// This view is always attached / else remove this when no longer valid.
 	// The App framework only sets the activeView up as a target (v3.6.0)
 	this.addTarget(this.get('app'));

@@ -20,11 +20,11 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [], {
             width = 800,
             height = 600;
 
-        var pack = d3.layout.pack()
+        var pack = d3.layout.partition()
             .sort(null)
-            .size([width, height])
-            .value(function(d) { return 1; })
-            .padding(1.5);
+            .size([width/2, height/4])
+            .value(function(d) { return 1; });
+
 
         var svg = d3.select(container.getDOMNode()).append("svg")
         .attr("width", width)
@@ -42,14 +42,20 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [], {
             .style("stroke", function(d) {
                        // XXX: add a class instead
                    return "black";})
-            .attr("width", 100)
-            .attr("height", 64);
+            .attr("width", function(d) {return d.dx;})
+            .attr("height", function(d) {return d.dy;});
 
         var unit_labels = node.append("text").append("tspan")
             .attr("class", "name")
             .attr("x", 4)
             .attr("y", "1em")
             .text(function(d) {return d.get("id"); });
+
+        var addr_labels = node.append("text").append("tspan")
+            .attr("class", "address")
+            .attr("x", 4)
+            .attr("y", "2.1em")
+            .text(function(d) {return d.get("public_address"); });
 
         return this;
     }
