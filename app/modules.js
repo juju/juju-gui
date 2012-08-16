@@ -51,11 +51,16 @@ GlobalConfig = {
                     fullpath: "/views/charm.js"
                 },
 
+                "juju-view-charm": {
+                    fullpath: "/views/charm.js"
+                },
+
                 "juju-views":  {
                     use: ["juju-view-environment", 
 			  "juju-view-service", 
 			  "juju-view-unit",
 			  "juju-view-charmsearch",
+			  "juju-view-charm",
 			  "juju-view-charm-collection"]
                 },
 		

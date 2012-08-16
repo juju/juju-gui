@@ -25,16 +25,23 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	    parent: "service"
 	},
 
-	charm_search: {
-            type: "juju.views.charm_search",
-            preserve: true
-	},
-	
 	charm_collection: {
 	    type: "juju.views.charm_collection",
 	    preserve: false,
 	    parent: "environment"
-	}
+	},
+
+	charm: {
+	    type: "juju.views.charm",
+	    preserve: false,
+	    parent: "charm_collection"
+	},
+
+	charm_search: {
+            type: "juju.views.charm_search",
+            preserve: true
+	},
+
     },
 
     initializer: function () {
@@ -60,13 +67,14 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         this.on("*:showService", this.navigate_to_service);
 	this.on("*:showUnit", this.navigate_to_unit);
 	this.on("*:showCharmCollection", this.navigate_to_charm_collection);
+	this.on("*:showCharm", this.navigate_to_charm);
+
 	this.env.on('status', this.on_status_changed, this);
         this.on("navigate", function(e) {
-                    Y.log("App Navigate: " + e, "debug");
+	    console.log("app navigate", e);
         });
 
         this.once('ready', function (e) {
-
 	    if (this.get("socket_url")) {
 		// Connect to the environment.
 		Y.log("App: Connecting to environment");
@@ -164,21 +172,27 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         this.navigate("/unit/" + unit.get("id").replace("/", "-") + "/");
     },
 
-
     navigate_to_service: function(e) {
-	Y.log(e.service.get("id"), "debug", "Evt.Nav.Router service target");
+	console.log(e.service.get("id"), "debug", "Evt.Nav.Router service target");
         var service = e.service;
         this.navigate("/service/" + service.get("id") + "/");
     },
 
     navigate_to_charm_collection: function(e) {
-	Y.log("Evt.Nav.Router charm collection");
-        this.navigate("/charm-collection/");
+	console.log("Evt.Nav.Router charm collection");
+	query = Y.one('#charm-search').get('value')
+        this.navigate("/charms/?q=" + query);
+    },
+
+    navigate_to_charm: function(e) {
+	console.log("Evt.Nav.Router charm");
+	var charm_url = e.charm_data_url;
+        this.navigate("/charms/" + charm_url);
     },
 
     // Route handlers
     show_unit: function(req) {
-	Y.log(
+	console.log(
 	    "App: Route: Unit", req.params.id, req.path, req.pendingRoutes);
 	var unit_id = req.params.id.replace('-', '/');
         var unit = this.db.units.getById(unit_id);
@@ -186,7 +200,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     show_service: function(req) {
-	Y.log(
+	console.log(
 	    "App: Route: Service", req.params.id, req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this.showView("service", {service: service, domain_models: this.db});
@@ -198,8 +212,14 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     show_charm_collection: function(req) {
-	console.log("App: Route: Charm Collection", req.path, req.pendingRoutes);
-	this.showView('charm_collection');
+	console.log("App: Route: Charm Collection", req.path, req.query);
+	this.showView('charm_collection', {'query': req.query.q});
+    },
+
+    show_charm: function(req) {
+	console.log("App: Route: Charm", req.path, req.params);
+	var charm_url = req.params.charm_url;
+	this.showView("charm", {"charm_data_url": charm_url});
     },
 
     /* Present on all views */
@@ -218,7 +238,9 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         routes: {
             value: [
 		{path: "*", callback: 'show_charm_search'},
-                {path: "/charm-collection/", callback: 'show_charm_collection'},
+
+                {path: "/charms/", callback: 'show_charm_collection'},
+                {path: "/charms/*charm_url", callback: 'show_charm'},
                 {path: "/service/:id/", callback: 'show_service'},
                 {path: "/unit/:id/", callback: 'show_unit'},
                 {path: "/", callback: 'show_environment'}
