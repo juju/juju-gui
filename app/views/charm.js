@@ -13,6 +13,31 @@ charm_store.plug(
 charm_store.plug(Y.DataSourceCache, { max: 3});
 */
 
+  
+
+Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
+    // console.log('helper', iface_decl, options, this);
+    var result = [];
+    var ret = "";
+    for (i in iface_decl) {
+	if (!i)
+	    continue
+	result.push({
+	    'name': i, 
+	    'interface': iface_decl[i]['interface']});
+    }
+
+    if (result && result.length > 0) {
+	for (var i=0, j=result.length; i<j; i++) {
+	    ret = ret + options.fn(result[i]);
+	}
+    } else {
+	ret = "None";
+    }
+    return ret;
+});
+
+
 CharmView = Y.Base.create('CharmView', Y.View, [], {
     initializer: function () {
 	this.set('charm', null);
@@ -35,16 +60,17 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
 	if (this.get('charm')) {
 	    console.log('charm data render');
 	    container.setHTML(this.template({'charm': this.get('charm')}));	
+	    container.one('#charm-deploy').on(
+		'click', Y.bind(this.on_charm_deploy, this));
+
 	} else {
 	    container.setHTML('<div class="alert">Loading...</div>');
-	    container.one('charm-deploy').on(
-		'click', Y.bind(this.on_charm_deploy, this));
 	}
 	return this;
     },
 
     on_charm_data: function (io_request) {
-	var charm = Y.JSON.parse(
+	charm = Y.JSON.parse(
 	    io_request.response.results[0].responseText);
 	console.log('results update', charm, this);
 	this.set('charm', charm);
@@ -53,6 +79,7 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
 
     on_charm_deploy: function(evt) {
 	console.log('charm deploy', this.get('charm'));
+	// this.fire('');
     }
 });
 

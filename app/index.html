@@ -100,15 +100,33 @@
 	      </div>
 	      
 	      <div class="control-group">
-		{{#with charm.last_change}}
-		 {{created}} {{committer}} {{message}}
-		{{/with}}
+		<label class="control-label">Last Change</label>
+		<div class="controls">
+		  {{#with charm.last_change}}
+		  {{created}} <br/> {{committer}} <br/> {{message}}
+		  {{/with}}
+		</div>
 	      </div>
 	    </fieldset>
 	  </form>
 	</div>
 	<div class="span4">
-	  <input id="charm-deploy" type="submit" class="btn">Deploy</input>
+	  <input id="charm-deploy" value="Deploy" type="submit" class="btn btn-inverse"></input>
+
+	  <hr/>
+	  <b>Provides</b>
+	  <ul>
+	  {{#iflat charm.provides}}
+	     <li>{{interface}}</li>
+	  {{/iflat}}
+	  </ul>
+
+	  <b>Requires</b>
+	  <ul>
+	  {{#iflat charm.requires}}
+	     <li>{{interface}}</li>
+	  {{/iflat}}
+	  </ul>
 	</div>
       </div>
     </script>
