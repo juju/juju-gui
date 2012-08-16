@@ -2,7 +2,7 @@ YUI.add("juju-view-environment", function(Y) {
 
 var views = Y.namespace("juju.views");
             
-EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [], {
+EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
     events: {},
 
     initializer: function () {
@@ -85,13 +85,9 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [], {
 
 
         node.append("rect")
-        .attr("class", "service-border")
-        .style("stroke", function(d) {
-                   // scan the units looking for the 'worst' 
-                   // state we can see
-                   // XXX: todo
-                   return "black";
-               })
+        .attr("class", function(d) {
+                  return self.stateToStyle(
+                        d.get('agent_state'), 'service-border');})
         .attr("width", 164)
         .attr("height", 64);
 
@@ -105,12 +101,12 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [], {
             .attr("x", 4)
             .attr("y", "2.5em")
             .attr("dy", "3em")
-            .attr("class", "charm")
+            .attr("class", "charm-label")
             .text(function(d) {
                       return d.get("charm").get("id"); });
 
         var unit_count = node.append("text")
-        .attr("class", "units")
+        .attr("class", "unit-count")
         .attr("dx", "4em")
         .attr("dy", "1em")
         .text(function(d) {
@@ -134,7 +130,8 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [], {
 
 views.environment = EnvironmentView;
 }, "0.1.0", {
-    requires: ['d3', 
+    requires: ['juju-view-utils',
+               'd3', 
                'base-build', 
                'handlebars', 
                'node', 
