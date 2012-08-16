@@ -19,7 +19,6 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 	    minQueryLength: 3,
 	    resultListLocator: 'results',
 	    resultTextLocator: function (result) {
-		console.log(result);
 		if (result.owner == 'charmers') {
 		    return result.series + "/" + result.name;
 		}
@@ -28,7 +27,7 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 	    source: 'http://jujucharms.com:2464/search/json?search_text={query}'
 	});
 
-	Y.one('#charm-deploy').on(
+	Y.one('#omnibar-submit').on(
 	    'click', Y.bind(this.deploy_charm, this));
         return this;
     },
@@ -37,6 +36,10 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
         var app = this.get('app');
 	evt.preventDefault();
 	evt.stopImmediatePropagation();
+
+	if (app.get('activeView') == 'CharmCollectionView') 
+	    return
+
 	charm_url = Y.one('#charm-search').get('value');
 	console.log('Fire show charm collection', this, charm_url);
 	this.fire('showCharmCollection', {query: charm_url});

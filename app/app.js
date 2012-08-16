@@ -74,8 +74,12 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	    }
 	    
 	    var current_path = this.getPath();
-	    Y.log("App: Dispatching view route " + current_path, "info");
-	    this.dispatch();
+	    Y.log("App: Rerendering current view " + current_path, "info");
+	    if (this.get('activeView')) {
+		this.get('activeView').render();
+	    } else {
+		this.dispatch();
+	    }
         }, this);
 
     },

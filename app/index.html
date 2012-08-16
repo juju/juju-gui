@@ -31,16 +31,25 @@
   <body>
 
     <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+
         <div class="container">
           <a class="brand" href="/">
-            <img height="28" alt="Juju GUI" src="/assets/images/juju.png">
+            <img height="32" alt="Juju GUI" src="/assets/images/juju.png">
             Admin GUI
           </a>
-	  <form class="navbar-search pull-left yui3-skin-sam">
-	    <input id="charm-search" type="text" class="search-query span3" placeholder="Search"/>
-	    <input id="charm-deploy" class="btn" type="submit" value="deploy"/>
+	  <ul class="nav">
+	    <li><a href="">Deploy</a></li>
+	    <li><a href="">Add relation</a></li>
+	    <li><a href="">Destroy service</a></li>
+	  </ul>
+	    
+	  <form class="navbar-search pull-left yui3-skin-sam" method="GET">
+	    <input id="charm-search" name="query" type="text" class="search-query span3" placeholder="Search"/>
+	    <input id="omnibar-submit" class="btn" type="submit" value="deploy"/>
 	  </form>
         </div>
+      </div>
     </div>
 
     <br>
@@ -60,7 +69,20 @@
         <h1>Charm Collection</h1>
 	<div class="colletion">
 	  <div class="charm">
-	    abc
+
+	    <ul class="thumbnails">
+              {{#charms}}
+              <li class="span3">
+		<div class="thumbnail">
+		  <span>~{{owner}}/{{series}}/{{name}}</span>
+		  <i class="icon-user"></i><br/>
+		  
+		  <span>{{summary}}</span>
+		</div>
+	      </li>
+              {{/charms}}
+	    </ul>
+
 	  </div>
 	</div>
       </div>

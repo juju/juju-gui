@@ -67,8 +67,6 @@ Y.extend(Environment, Y.Base, {
     },
 
     dispatch_event: function(evt) {
-
-
 	if (!('op' in evt)) {
 	    console.warn('Env: Unknown evt kind');
 	    return
