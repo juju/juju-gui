@@ -26,6 +26,16 @@ models.CharmList = CharmList;
 
 Service = Y.Base.create('service', Y.Model, [], {
     idAttribute: 'name',
+
+    get_unit_agent_states: function() {
+        // return an object with keys set to each unique agent state
+        // in this services units
+        // XXX: for this to work we need access to the units 
+        // of this service, this either creates a dep on the 
+        // apps data store or requires explicit binding at
+        // creation
+    },
+
     ATTRS: {
 	name: {},
 	charm: {},
@@ -46,6 +56,7 @@ models.ServiceList = ServiceList;
 
 ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {
     idAttribute: 'name',
+
     ATTRS: {
 	name: {},
 	service: {},

@@ -14,18 +14,29 @@
     <style>
       #main { border: 2px solid black; }
       svg { border: 2px solid black; }
-      g.service { fill: #a0a0a0; stroke: black; stoke-width: 4px;}
-      g.service .service-border {stroke-width: 2px;}
-      g.service .name { stroke-width: 0; font-weight: bold;
-                        font-family: "Ubuntu"; font-size: 1.6em; fill: #1626cf;}
+      svg {stroke-width: 0;}
 
-      g.unit { stroke-width: 0; font-weight: bold;
-                font-family: "Ubuntu"; font-size: 1.2em; fill: #1626cf;}
-      g.unit .unit-border { stroke-width: 2px; fill: #DA5616;}
-
-      g.service .charm { stroke-width: 0; font-size: 0.7em; fill: #ffffff;}
       line.relation { stroke: #000000; stroke-width: 1px;}
-      g.service .units { font-family: "Ubuntu"; stroke-width: 0; fill: #ffffff; font-size: 2.5em;}
+      .state-error { stroke: #FF0000; }
+      .state-started { stroke: #000000;}
+      .state-pending { stroke: #6597E8;}
+
+      g.service .charm-label { font-size: 0.7em;
+                               fill: #ffffff;}
+      g.service .name { font-weight: bold;
+                        font-family: "Ubuntu";
+                        font-size: 1.6em; fill: #1626cf;}
+      g.service .service-border {stroke-width: 2px;}
+      g.service .unit-count {
+                stroke: #000000; stroke-width: 1px;
+                font-family: "Ubuntu";
+                fill: #ffffff; font-size: 2.5em;}
+      g.service { fill: #a0a0a0; stroke: black;}
+
+      g.unit .address {fill: #ffffff; font-size: 0.8em;}
+      g.unit .unit-border { stroke-width: 2px; fill: #a0a0a0;}
+      g.unit { stroke-width: 0; font-weight: bold;
+               font-family: "Ubuntu"; font-size: 1.2em; fill: #1626cf;}
     </style>
   </head>
 

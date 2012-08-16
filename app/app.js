@@ -203,7 +203,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 	console.log(
 	    "App: Route: Service", req.params.id, req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
-        this.showView("service", {service: service, domain_models: this.db});
+        this.showView("service", {model: service, domain_models: this.db});
     },
 
     show_environment: function (req) {

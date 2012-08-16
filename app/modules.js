@@ -10,7 +10,6 @@ GlobalConfig = {
 
     groups: {
         d3: {
-//            base: "http://d3js.org/",
             modules: {
                "d3": {
                    "fullpath": "/assets/javascripts/d3.v2.min.js"
@@ -30,7 +29,10 @@ GlobalConfig = {
                 },
 
 		// Views
-
+                "juju-view-utils": {
+                    fullpath: "/views/utils.js"
+                },
+                    
                 "juju-view-environment": {
                     fullpath: "/views/environment.js"
                 },
@@ -56,7 +58,8 @@ GlobalConfig = {
                 },
 
                 "juju-views":  {
-                    use: ["juju-view-environment", 
+                    use: ["juju-view-utils",
+                          "juju-view-environment", 
 			  "juju-view-service", 
 			  "juju-view-unit",
 			  "juju-view-charmsearch",
