@@ -3,6 +3,8 @@ all: install test
 install:
 	@npm install 
 test:
+	@if [ -e "server-8989.pid" ]; then kill `cat server-8989.pid`;fi
+	@PORT=8989 node server.js &
 	@mocha -w
 
 server:

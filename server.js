@@ -3,6 +3,7 @@
 var connect = require("connect"),
     express = require("express"),
     server = express(),
+    fs = require("fs"),
     pubDir = __dirname + "/app",
     port = process.env.PORT || 8888;
 
@@ -32,6 +33,10 @@ server.get('*', function (req, res) {
 });
 
 server.listen(port, function () {
+    // Write a pidfile
+    var pid_file = fs.openSync("server-" + port + ".pid", "w");
+    fs.write(pid_file, process.pid);
+    fs.close(pid_file);
     console.log('Server listening on ' + port);
     console.log('Serving content from ' + pubDir);
 });
