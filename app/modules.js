@@ -6,7 +6,7 @@ GlobalConfig = {
     debug: false,
 
 // Use Rollups
-    combine: false,
+    combine: true,
 
     groups: {
         d3: {

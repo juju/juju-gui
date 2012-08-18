@@ -9,7 +9,7 @@ UnitView = Y.Base.create('UnitView', Y.View, [], {
     },
 
     render: function () {
-	console.log("view.render.unit", this.get('unit'));
+	console.log("view.render.unit", this.get('unit').getAttrs());
         var container = this.get('container'),
 	    db = this.get('db'),
 	    unit = this.get("unit"),

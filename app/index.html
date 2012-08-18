@@ -12,10 +12,10 @@
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
     <style>
-      #main { border: 2px solid black; }
       svg { border: 2px solid black; }
       svg {stroke-width: 0;}
 
+      charms.thumbnails.li { height:4em; }
       line.relation { stroke: #000000; stroke-width: 1px;}
       .state-error { stroke: #FF0000; }
       .state-started { stroke: #000000;}
@@ -46,20 +46,31 @@
       <div class="navbar-inner">
 
         <div class="container">
-          <a class="brand" href="/">
-            <img height="32" alt="Juju GUI" src="/assets/images/juju.png">
-            Admin GUI
-          </a>
-	  <ul class="nav">
-	    <li><a href="">Deploy</a></li>
-	    <li><a href="">Add relation</a></li>
-	    <li><a href="">Destroy service</a></li>
-	  </ul>
 	    
-	  <form class="navbar-search pull-left yui3-skin-sam" method="GET">
-	    <input id="charm-search" name="query" type="text" class="search-query span3" placeholder="Search"/>
-	    <input id="omnibar-submit" class="btn" type="submit" value="deploy"/>
-	  </form>
+              <a class="brand" href="/">
+	        <img height="32" alt="Juju GUI" src="/assets/images/juju-white.png">
+              </a>
+
+	     <!--
+	    <div class="row">
+	      <div class="span7">
+	      </div>
+	    <div class="span3">
+	      <span class="btn-group input-tiny">
+		<a class="btn">1</a>
+		<a class="btn">2</a>
+		<a class="btn">3</a>
+	      </span>
+	    </div>
+	    <div class="span2">
+	    </div>
+	    -->
+	      <form id="omnibar" class="navbar-search pull-right yui3-skin-sam" method="GET">
+		<input id="charm-search" name="query" type="text" class="search-query span3" 
+		       placeholder="Search"/>
+		<!-- <input id="omnibar-submit" class="btn" type="submit" value="search"/> -->
+	      </form>
+
         </div>
       </div>
     </div>
@@ -74,6 +85,77 @@
 
     <script id="t-overview" type="text/x-handlebars-template">
       <div id="canvas"></div>
+    </script>
+
+    <script id="t-service" type="text/x-handlebars-template">
+
+      <div class="row">
+	<div class="span8">
+	  <h1> Service {{service.id}}</h1>
+	  <br/> <br/>
+
+	  <div class="btn-group">
+	    <button class="btn"><i class="icon-cog"></i> Settings </button>
+	    <button class="btn"><i class="icon-th"></i> Constraints</button>
+	    <a href="/charms/charms/{{charm.charm_name}}/json"
+	       class="btn"><i class="icon-book"></i> Charm </a>
+	    <button class="btn"><i class="icon-ban-circle"></i> Exposed </button>
+	    <button class="btn"><i class="icon-random"></i> Relations </button>
+	  </div>
+	</div>
+	<div class="span4">
+	  <div class="well">
+	    <span>
+	      <b>Charm:</b>
+	      <a href="/charms/charms/{{charm.charm_name}}/json">{{charm.id}}</a></span>
+	    <br/>
+	    <span> <b>Units:</b></span>
+	    <br/>
+	    <span> <b>Relations:</b></span>
+	    <br/>
+	    <span><b>Exposed:</b> {{service.exposed}}</span>
+	    <br/>
+	  </div>
+	</div>
+      </div>
+
+
+      <div class="row">
+	<!--
+	<div class="span8">
+	  <ul class="nav nav-tabs">
+	    <li class="active"><h5>Units</h5></li>
+	  </ul>
+	</div> -->
+	<div class="span12">
+
+	  <ul class="nav nav-tabs">
+	    <li class="active"><a href=".">All</a></li>
+	    <li><a href="?state=running">Running</a></li>
+	    <li><a href="?state=pending">Pending</a></li>
+	    <li><a href="?state=error">Error</a></li>
+	  </ul>
+	</div>
+      </div>
+
+
+
+      <div class="collection">
+	<div class="charm">
+	  <ul class="thumbnails">
+	    {{#units}}
+	    <li class="span3">
+	      <div class="thumbnail well" id="{{id}}">
+		<h5>{{id}}</h5>
+		<span>{{agent_state}}</span> <br/>
+		<span>{{public_address}}</span>
+	      </div>
+	    </li>
+	    {{/units}}	    
+	  </ul>
+	</div>
+      </div>
+
     </script>
 
     <script id="t-charm" type="text/x-handlebars-template">

@@ -123,8 +123,11 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         
         Y.each(status_json.services, 
             function(service_data, service_name) {
+		// XXX: only for charm store charms.
+		var charm_name = service_data.charm.split(":")[1].split("-")[0]
 		var charm = new models.Charm({
-                        charm_id: service_data.charm});
+                    charm_id: service_data.charm,
+		    charm_name: charm_name});
 		var service = new models.Service({
                     name: service_name,
                     charm: charm
@@ -167,9 +170,8 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         
     // Event handlers
     navigate_to_unit: function(e) {
-	console.log("Evt.Nav.Router unit target", e.unit.get('id'));
-        var unit = e.unit;
-        this.navigate("/unit/" + unit.get("id").replace("/", "-") + "/");
+	console.log("Evt.Nav.Router unit target", e.unit_id);
+        this.navigate("/unit/" + e.unit_id.replace("/", "-") + "/");
     },
 
     navigate_to_service: function(e) {

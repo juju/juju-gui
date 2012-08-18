@@ -41,7 +41,7 @@ Service = Y.Base.create('service', Y.Model, [], {
 	charm: {},
 	config: {},
 	constraints: {},
-	exposed: {},
+	exposed: {value: false},
 	relations: {}
     }
 });
@@ -90,9 +90,11 @@ ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
      *  Return information about the state of all units focused on the 
      * 'worst' status information available. In this way if any unit is in 
      *  an error state we can report that for the whole list.
+     *
+     * KT - Should return an aggregate count by state (map), so proproptional 
+     * representation can be done in various renderings.
      */
     get_informative_state: function() {
-        
     },
     ATTRS: {
     }

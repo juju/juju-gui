@@ -58,8 +58,12 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
 	var container = this.get('container');
         CharmCollectionView.superclass.render.apply(this, arguments);
 	if (this.get('charm')) {
+	    var charm = this.get('charm')
 	    console.log('charm data render');
-	    container.setHTML(this.template({'charm': this.get('charm')}));	
+	    var last_modified = charm.last_change.created;
+	    if (last_modified)
+		charm.last_change.created = new Date(last_modified * 1000)
+	    container.setHTML(this.template({'charm': charm}))
 	    container.one('#charm-deploy').on(
 		'click', Y.bind(this.on_charm_deploy, this));
 
@@ -89,7 +93,7 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 	console.log("View: Initialized: Charm Collection", this.get('query'));
         this.set("charms", []);
 	this.set('current_request', null);
-	Y.one('#omnibar-submit').on("click", Y.bind(this.on_results_change, this));
+	Y.one('#omnibar').on("submit", Y.bind(this.on_results_change, this));
 	this.on_search_change();
     },
 

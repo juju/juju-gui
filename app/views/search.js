@@ -27,8 +27,7 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 	    source: 'http://jujucharms.com:2464/search/json?search_text={query}'
 	});
 
-	Y.one('#omnibar-submit').on(
-	    'click', Y.bind(this.deploy_charm, this));
+	Y.one('#omnibar').on('submit', Y.bind(this.deploy_charm, this));
         return this;
     },
 

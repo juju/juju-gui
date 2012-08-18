@@ -7,10 +7,36 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     initializer: function () {
 	console.log("View: Initialized: Service");
-        this.bindModelView();
     },
 
+    template: Y.Handlebars.compile(Y.one("#t-service").getHTML()),
+
     render: function () {
+	var container = this.get('container'),
+	    self = this,
+            m = this.get('domain_models');
+
+        var service = this.get('model')
+	if (!service) {
+	    console.log('not connected / maybe')
+	}
+        var units = m.units.get_units_for_service(service);
+
+	container.setHTML(this.template(
+	    {'service': service.getAttrs(), 
+	     'charm': service.get('charm').getAttrs(),
+	     'units': units.map(function(u) {return u.getAttrs()}) 
+	    }));
+
+	container.all('div.thumbnail').each(function( el ) {
+	    el.on("click", function(evt) {
+		console.log("Click", this.getData('charm-url'));
+		self.fire("showUnit", {unit_id: this.get('id')})
+	    })});
+	return this;
+    },
+
+    render_canvas: function() {
         var self = this, 
             container = this.get('container'),
             m = this.get('domain_models'),
