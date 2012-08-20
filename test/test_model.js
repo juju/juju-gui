@@ -1,14 +1,16 @@
-var YUI = require("yui").YUI,
-    base= require("../lib/base.js");
+// var YUI = require("yui").YUI,
+//    base= require("../lib/base.js");
+
 
 
 (function () {
-    
+ 
+
 describe("juju models", function() {
     var Y, models;
 
     before(function (done) {
-        Y = YUI(base.TestConfig).use("base", "juju-models", function (Y) {
+        Y = YUI(GlobalConfig).use("base", "juju-models", function (Y) {
             models = Y.namespace("juju.models");
             done();
         });
@@ -16,8 +18,8 @@ describe("juju models", function() {
  
  
     it("must be able to create charm", function() {
-           var charm = new models.Charm({name: "mysql"});
-           charm.get("name").should.eql("mysql");
+        var charm = new models.Charm({name: "mysql"});
+        charm.get("name").should.eql("mysql");
        });
 
     it("must be able to create charm list", function() {

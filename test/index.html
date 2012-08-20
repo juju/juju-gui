@@ -1,0 +1,51 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="assets/mocha.css">
+  <script src="../app/assets/javascripts/yui/yui/yui-debug.js"></script>
+  <script src="../app/modules.js"></script>
+  <script src="assets/mocha.js"></script>
+  <script src="assets/chai.js"></script>
+  <script>
+    mocha.setup({'ui': 'bdd', 'ignoreLeaks': true})
+    var assert = chai.assert,
+        expect = chai.expect
+        should = chai.should();
+  </script>
+  <script src="test_env.js"></script>
+  <script src="test_model.js"></script>
+
+  <script>
+     YUI().use('node', 'event', function(Y) {
+         Y.on('domready', function() {
+     
+         var config = GlobalConfig;
+         for (m in config.groups.juju.modules) {
+            var resource = config.groups.juju.modules[m];
+            if (!m || !resource.fullpath) {
+              continue
+            }
+            console.log('before load', resource.fullpath);
+            resource.fullpath = resource.fullpath.replace('/', '../app/', 1);
+            console.log('after load', resource.fullpath);
+         }
+
+         console.log("global config", GlobalConfig)
+         // Load before test runner
+         YUI().use('juju-models', function(Y) {
+             console.log("Using MOdels")
+             var models = Y.namespace("juju.models");
+         });
+
+         mocha.run();
+
+         });
+     });
+  </script>
+
+</head>
+
+<body>
+  <div id="mocha"></div>
+</body>
+</html>

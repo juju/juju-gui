@@ -1,14 +1,15 @@
-var YUI = require("yui").YUI,
-    base= require("../lib/base.js");
+// YUI = require("yui").YUI,
+//   base= require("../lib/base.js");
 
 
 (function () {
     
-describe("juju env conn", function() {
+describe("Environment connection", function() {
     var Y, juju;
 
     before(function (done) {
-        Y = YUI(base.TestConfig).use("base", "node", "juju-models", function (Y) {
+	console.log('before test');
+        Y = YUI(GlobalConfig).use("base", "node", "juju-models", function (Y) {
             juju = Y.namespace("juju");
             done();
 	});
