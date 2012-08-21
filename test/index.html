@@ -12,6 +12,7 @@
         expect = chai.expect
         should = chai.should();
   </script>
+
   <script src="test_env.js"></script>
   <script src="test_model.js"></script>
 
@@ -22,6 +23,14 @@
          var config = GlobalConfig;
          for (m in config.groups.juju.modules) {
             var resource = config.groups.juju.modules[m];
+            if (!m || !resource.fullpath) {
+              continue
+            }
+            resource.fullpath = resource.fullpath.replace('/', '../app/', 1);
+         }
+
+         for (m in config.groups.d3.modules) {
+            var resource = config.groups.d3.modules[m];
             if (!m || !resource.fullpath) {
               continue
             }

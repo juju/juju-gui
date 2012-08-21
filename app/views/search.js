@@ -2,8 +2,7 @@ YUI.add("juju-view-charmsearch", function(Y) {
 
 var views = Y.namespace("juju.views");
             
-
-CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
+NavigationBarView = Y.Base.create('NavigationBarView', Y.View, [], {
 
     initializer: function () {
 	Y.log("View: Initialized: Charm Search");
@@ -14,6 +13,8 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
     },
 
     render: function () {
+	/* Navigation bar search defaults to show detailed charm collection results.
+
 	Y.one('#charm-search').plug(Y.Plugin.AutoComplete, {
 	    resultHighlighter: 'phraseMatch',
 	    minQueryLength: 3,
@@ -26,16 +27,20 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 	    },
 	    source: 'http://jujucharms.com:2464/search/json?search_text={query}'
 	});
+	*/
 
-	Y.one('#omnibar').on('submit', Y.bind(this.deploy_charm, this));
+	Y.one('#omnibar').on('submit', Y.bind(this.show_charm_store, this));
         return this;
     },
 
-    deploy_charm: function(evt) {
+    show_charm_store: function(evt) {
+
+	console.log("clicked search")
         var app = this.get('app');
 	evt.preventDefault();
 	evt.stopImmediatePropagation();
 
+	// if we're already on the page dont render.
 	if (app.get('activeView') == 'CharmCollectionView') 
 	    return
 
@@ -46,7 +51,7 @@ CharmStoreSearch = Y.Base.create('CharmStoreSearch', Y.View, [], {
 
 });
 
-views.charm_search = CharmStoreSearch;
+views.charm_search = NavigationBarView
 }, "0.1.0", {
     requires: ['autocomplete', 
                'autocomplete-filters', 

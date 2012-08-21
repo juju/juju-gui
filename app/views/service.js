@@ -3,6 +3,18 @@ YUI.add("juju-view-service", function(Y) {
 var views = Y.namespace("juju.views");
             
 
+  
+ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseView], {
+    initializer: function () {
+	console.log("View: initialized: ServiceConfig");
+    },
+
+    template: Y.Handlebars.compile(Y.one("#t-service-config").getHTML()),
+
+    render: function () {
+    },
+});
+
 ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     initializer: function () {

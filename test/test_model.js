@@ -1,4 +1,4 @@
-// var YUI = require("yui").YUI,
+// var 
 //    base= require("../lib/base.js");
 
 
