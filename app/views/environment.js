@@ -10,14 +10,12 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
         this.publish("showService", {preventable: false});
     },
         
-    template: Y.Handlebars.compile(Y.one("#t-overview").getHTML()),
-
     render: function () {
 	console.log('View: Render: Env');
         var container = this.get('container');
 	EnvironmentView.superclass.render.apply(this, arguments);
                 
-        container.setHTML(this.template());
+        container.setHTML(views.Templates.overview());
         this.render_canvas();
         return this;
     },
@@ -130,7 +128,8 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
 
 views.environment = EnvironmentView;
 }, "0.1.0", {
-    requires: ['juju-view-utils',
+    requires: ['juju-templates',
+               'juju-view-utils',
                'd3', 
                'base-build', 
                'handlebars', 

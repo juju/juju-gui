@@ -1,0 +1,11 @@
+YUI.add('juju-templates', function (Y) {
+
+    var Templates = Y.namespace('juju.views').Templates = {};
+
+  {{#templates}}
+    Templates['{{{name}}}'] = Y.Handlebars.template({{{template}}});
+  {{/templates}}
+
+}, '0.5.2', {
+    requires: ['handlebars-base']
+});
