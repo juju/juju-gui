@@ -11,12 +11,11 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
         this.publish("showService", {preventable: false});
     },
         
-    template: Templates.overview,
     render: function () {
         console.log('View: Render: Env');
         var container = this.get('container');
         EnvironmentView.superclass.render.apply(this, arguments);
-        container.setHTML(views.Templates.overview());
+        container.setHTML(Templates.overview());
         this.render_canvas();
         return this;
     },
@@ -37,6 +36,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
             .on("tick", tick)
             .charge(-450)
             .distance(200)
+            .friction(0)
             .size([width, height]);
 
         var vis = d3.select(container.getDOMNode())
