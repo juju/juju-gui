@@ -1,6 +1,7 @@
 YUI.add("juju-view-service", function(Y) {
 
-var views = Y.namespace("juju.views");
+var views = Y.namespace("juju.views"),
+    Templates = views.Templates;
             
 
   
@@ -9,7 +10,7 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
 	console.log("View: initialized: ServiceConfig");
     },
 
-    template: Y.Handlebars.compile(Y.one("#t-service-config").getHTML()),
+    template: Templates["service-config"],
 
     render: function () {
     },
@@ -21,29 +22,29 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 	console.log("View: Initialized: Service");
     },
 
-    template: Y.Handlebars.compile(Y.one("#t-service").getHTML()),
+    template: Templates.service,
 
     render: function () {
 	var container = this.get('container'),
 	    self = this,
             m = this.get('domain_models');
 
-        var service = this.get('model')
+        var service = this.get('model');
 	if (!service) {
-	    console.log('not connected / maybe')
+	    console.log('not connected / maybe');
 	}
         var units = m.units.get_units_for_service(service);
 
 	container.setHTML(this.template(
 	    {'service': service.getAttrs(), 
 	     'charm': service.get('charm').getAttrs(),
-	     'units': units.map(function(u) {return u.getAttrs()}) 
+	     'units': units.map(function(u) {return u.getAttrs();}) 
 	    }));
 
 	container.all('div.thumbnail').each(function( el ) {
 	    el.on("click", function(evt) {
 		console.log("Click", this.getData('charm-url'));
-		self.fire("showUnit", {unit_id: this.get('id')})
+		self.fire("showUnit", {unit_id: this.get('id')});
 	    })});
 	return this;
     },
