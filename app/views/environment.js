@@ -31,7 +31,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
         
         var services = m.services.toArray();
         var relations = m.relations.getAttrs(["endpoints"]).endpoints;
-        
+
         var tree = d3.layout.force()
             .on("tick", tick)
             .charge(-450)

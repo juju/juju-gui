@@ -1,8 +1,12 @@
 describe("Application", function() {
+  var Y, app;
+
   before(function(done) {
-      var Y, app;
       Y = YUI(GlobalConfig).use("juju-gui", function (Y) {
-          app = new Y.juju.App(AppConfig).render();
+          app = new Y.juju.App({
+                  container: "#main",
+                  viewContainer: "#main"
+                  }).render();
           done();
         });
 
@@ -10,6 +14,7 @@ describe("Application", function() {
 
   it("should produce a valid index", function() {
       container = app.get("container");
+      console.log("container", container);
       container.getAttribute("id").should.equal("main");
       container.getAttribute("class").should.eql("container");
   });

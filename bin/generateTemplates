@@ -1,0 +1,32 @@
+#!/usr/bin/env node
+
+templateDir = __dirname + "/../app/templates";
+
+
+var Templates = require("../lib/templates.js"),
+    Handlebars = require("yui/handlebars").HandleBars,
+    fs = require("fs"),
+    precompiled = Templates.getPrecompiled(),
+    view = require("../lib/view.js"),
+    YUI = require("yui").YUI,
+    templates = [];
+
+Y = YUI();
+Y.Object.each(precompiled, function (template, name) {
+    templates.push({
+        name    : name,
+        template: template
+    });
+});
+
+
+view.handlebars(__dirname + "/../views/templates.handlebars", 
+    {templates: templates},
+    function(err, str) {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        fs.writeFileSync(__dirname + "/../app/templates.js", str);    
+});
+
