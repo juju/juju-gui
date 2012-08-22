@@ -1,3 +1,5 @@
+
+// from nodejs runner
 // YUI = require("yui").YUI,
 //   base= require("../lib/base.js");
 
@@ -35,7 +37,6 @@ var SocketStub = function () {
 	this.messages.push(Y.JSON.parse(m));
     };
 
-    this.last
     this.onclose = function() {};
     this.onmessage = function() {};
     this.onopen = function() {};
@@ -43,7 +44,6 @@ var SocketStub = function () {
 };
     
 describe("Juju environment", function() {
-
     var juju, conn, env, msg;
 
     before(function (done) {
@@ -72,7 +72,6 @@ describe("Juju environment", function() {
 	done();
     });
 
-
     it("can add a unit", function(done) {
 	env.add_unit('mysql', 3);
 	msg = conn.last_message();
@@ -82,7 +81,6 @@ describe("Juju environment", function() {
 	done();
     });
 
-
     it("can accept a callback on its methods", function(done) {
 	env.get_charm('cs:precise/mysql', function(result) {
 	    console.log('invoked', result);
@@ -90,9 +88,9 @@ describe("Juju environment", function() {
 	    result.result.id.should.equal('cs:precise/mysql');
 	    done();
 	});
+
 	msg = conn.last_message()
 	console.log('msg', msg);
-	
 	conn.msg({
 	    'op': 'get_charm',
 	    'request_id': msg.request_id,

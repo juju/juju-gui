@@ -49,19 +49,21 @@
 		};
 		scrapper = function () {
 			var all, list, i, len;
-
+		   	console.log('scaper')
 			all = page.evaluate(function () {
 				var specs, i, len, results = [];
 				specs = document.querySelectorAll(".test");
+			        console.log('specs', specs, specs.length);
 				for (i = 0, len = specs.length; i < len; i += 1) {
+					console.log(specs[i]);
 					results.push(specs[i].getAttribute("class").search(/fail/) === -1);
 				}
 				return results;
 			});
-			
+			console.log('all', all.length, all);
 			// Outputs a '.' or 'F' for each test
-			console.log(all.reduce(function (str, a) {
-				return str += (a) ? "." : "F";
+		        console.log(all.reduce(function (str, a) {
+			    return str += (a) ? "." : "F";
 			}, ""));
 
 			list = page.evaluate(function () {

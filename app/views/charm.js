@@ -19,20 +19,21 @@ Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
     // console.log('helper', iface_decl, options, this);
     var result = [];
     var ret = "";
-    for (i in iface_decl) {
-	if (!i)
-	    continue
-	result.push({
-	    'name': i, 
-	    'interface': iface_decl[i]['interface']});
+    for (var i in iface_decl) {
+        if (!i)
+            continue;
+	
+        result.push({
+            'name': i,
+            'interface': iface_decl[i]['interface']});
     }
 
     if (result && result.length > 0) {
-	for (var i=0, j=result.length; i<j; i++) {
-	    ret = ret + options.fn(result[i]);
-	}
+        for (var x=0, j=result.length; x<j; x++) {
+            ret = ret + options.fn(result[x]);
+        }
     } else {
-	ret = "None";
+        ret = "None";
     }
     return ret;
 });
@@ -43,11 +44,11 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
 	this.set('charm', null);
 	console.log("Loading charm view", this.get('charm_data_url'));
 	charm_store.sendRequest({
-	    request: this.get('charm_data_url'),
-	    callback: {
-		'success': Y.bind(this.on_charm_data, this),
-		'failure': function er(e) { console.error(e.error) },
-	    }});
+        request: this.get('charm_data_url'),
+        callback: {
+            'success': Y.bind(this.on_charm_data, this),
+            'failure': function er(e) { console.error(e.error); }
+        }});
 
     },
 
@@ -57,25 +58,26 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
 	console.log('render', this.get('charm'));
 	var container = this.get('container');
         CharmCollectionView.superclass.render.apply(this, arguments);
-	if (this.get('charm')) {
-	    var charm = this.get('charm')
-	    console.log('charm data render');
-	    var last_modified = charm.last_change.created;
-	    if (last_modified)
-		charm.last_change.created = new Date(last_modified * 1000)
-	    container.setHTML(this.template({'charm': charm}))
-	    container.one('#charm-deploy').on(
-		'click', Y.bind(this.on_charm_deploy, this));
+	
+    if (this.get('charm')) {
+        var charm = this.get('charm');
+        console.log('charm data render');
+        var last_modified = charm.last_change.created;
+        if (last_modified)
+            charm.last_change.created = new Date(last_modified * 1000);
 
+        container.setHTML(this.template({'charm': charm}));
+        container.one('#charm-deploy').on(
+            'click', Y.bind(this.on_charm_deploy, this));
 	} else {
-	    container.setHTML('<div class="alert">Loading...</div>');
+        container.setHTML('<div class="alert">Loading...</div>');
 	}
 	return this;
     },
 
     on_charm_data: function (io_request) {
 	charm = Y.JSON.parse(
-	    io_request.response.results[0].responseText);
+        io_request.response.results[0].responseText);
 	console.log('results update', charm, this);
 	this.set('charm', charm);
 	this.render();
@@ -90,61 +92,63 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
 CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 
     initializer: function () {
-	console.log("View: Initialized: Charm Collection", this.get('query'));
+		console.log("View: Initialized: Charm Collection", this.get('query'));
         this.set("charms", []);
-	this.set('current_request', null);
-	Y.one('#omnibar').on("submit", Y.bind(this.on_results_change, this));
-	this.on_search_change();
+		this.set('current_request', null);
+		Y.one('#omnibar').on("submit", Y.bind(this.on_results_change, this));
+		this.on_search_change();
     },
 
     template: Y.Handlebars.compile(Y.one("#t-charm-collection").getHTML()),
 
     render: function () {
-	console.log('render');
-	var container = this.get('container'),
-	    self = this;
+		var container = this.get('container'),
+                 self = this;
 
         CharmCollectionView.superclass.render.apply(this, arguments);
-	container.setHTML(this.template({'charms': this.get('charms')}));
-	container.all('div.thumbnail').each(function( el ) {
-	    el.on("click", function(evt) {
-		//console.log("Click", this.getData('charm-url'));
-		self.fire("showCharm", {charm_data_url: this.getData('charm-url')})
-	    })});
+        container.setHTML(this.template({'charms': this.get('charms')}));
+        // TODO: Use view.events structure to attach this
+        container.all('div.thumbnail').each(function( el ) {
+            el.on("click", function(evt) {
+                //console.log("Click", this.getData('charm-url'));
+                self.fire("showCharm", {charm_data_url: this.getData('charm-url')});
+            });
+        });
+
         return this;
     },
 
     on_search_change: function(evt) {
-	console.log('search update');
-	if (evt) {
-	    evt.preventDefault();
-	    evt.stopImmediatePropagation();
-	}
+        console.log('search update');
+        if (evt) {
+            evt.preventDefault();
+            evt.stopImmediatePropagation();
+        }
 
-	var query = Y.one('#charm-search').get('value');
-	if (!query) {
-	    query = this.get('query');
-	} else {
-	    this.set('query')
-	};
+        var query = Y.one('#charm-search').get('value');
+        if (!query) {
+            query = this.get('query');
+        } else {
+            this.set('query');
+        }
 
-	// The handling in datasources-plugins is an example of doing this a bit better
-	// ie. io cancellation outstanding requests, it does seem to cause some interference
-	// with various datasource plugins though.
-	charm_store.sendRequest({
-	    request: 'search/json?search_text=' + query,
-	    callback: {
-		'success': Y.bind(this.on_results_change, this),
-		'failure': function er(e) { console.error(e.error) },
-	    }});
+        // The handling in datasources-plugins is an example of doing this a bit better
+        // ie. io cancellation outstanding requests, it does seem to cause some interference
+        // with various datasource plugins though.
+        charm_store.sendRequest({
+            request: 'search/json?search_text=' + query,
+            callback: {
+                'success': Y.bind(this.on_results_change, this),
+                'failure': function er(e) { console.error(e.error); }
+        }});
     },
 
     on_results_change: function (io_request) {
-	var result_set = Y.JSON.parse(
-	    io_request.response.results[0].responseText);
-	console.log('results update', result_set, this);
-	this.set('charms', result_set.results);
-	this.render();
+        var result_set = Y.JSON.parse(
+            io_request.response.results[0].responseText);
+        console.log('results update', result_set, this);
+        this.set('charms', result_set.results);
+        this.render();
     }
 
 });
@@ -153,12 +157,13 @@ Y.namespace("juju.views").charm_collection = CharmCollectionView;
 Y.namespace("juju.views").charm = CharmView;
 
 }, "0.1.0", {
-    requires: ['node', 
-               'handlebars',
-	       'datasource-io',
-	       'datasource-jsonschema',
-	       'io-base',
-	       'json-parse',
-               'view']
+    requires: [
+        'node',
+        'handlebars',
+        'datasource-io',
+        'datasource-jsonschema',
+        'io-base',
+        'json-parse',
+        'view']
 });
 
