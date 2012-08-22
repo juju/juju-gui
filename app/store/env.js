@@ -75,6 +75,8 @@ Y.extend(Environment, Y.Base, {
     },
 
     on_message: function(evt) {
+        console.log("Env: Receive", evt.data);
+
         var msg = Y.JSON.parse(evt.data);
         if (msg.version === 0) {
             console.log("Env: Handshake Complete");
@@ -91,7 +93,7 @@ Y.extend(Environment, Y.Base, {
 
     _dispatch_event: function(evt) {
         if (!('op' in evt)) {
-            console.warn('Env: Unknown evt kind');
+            console.warn('Env: Unknown evt kind', evt);
             return;
         }
 
@@ -123,7 +125,7 @@ Y.extend(Environment, Y.Base, {
         }
         op.request_id = tid;
         var msg = Y.JSON.stringify(op);
-        console.log("Env: send msg", tid, msg, callback);
+        console.log("Env: send msg", tid, msg, op, callback);
         this.ws.send(msg);
     },
 
@@ -149,7 +151,7 @@ Y.extend(Environment, Y.Base, {
     },
 
     get_service: function(service_name, callback) {
-        this._send_rpc({'op': 'get_service',  'service_name': service_name}, callback);
+        this._send_rpc({'op': 'get_service', 'service_name': service_name}, callback);
     },
 
     deploy: function(charm_url, callback) {

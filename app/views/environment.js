@@ -6,15 +6,14 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
     events: {},
 
     initializer: function () {
-	console.log("View: Initialized: Env");
+        console.log("View: Initialized: Env");
         this.publish("showService", {preventable: false});
     },
         
     render: function () {
-	console.log('View: Render: Env');
+        console.log('View: Render: Env');
         var container = this.get('container');
-	EnvironmentView.superclass.render.apply(this, arguments);
-                
+        EnvironmentView.superclass.render.apply(this, arguments);
         container.setHTML(views.Templates.overview());
         this.render_canvas();
         return this;
@@ -52,11 +51,9 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
                 .attr("x2", function(d) { return d.target.x; })
                 .attr("y2", function(d) { return d.target.y; });
             
-            node.attr("transform", function(d) { 
+            node.attr("transform", function(d) {
                           return "translate(" + d.x + "," + d.y + ")"; });
-
-        };
-
+        }
 
         tree.nodes(services)
             .links(relations);

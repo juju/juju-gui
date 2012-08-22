@@ -98,7 +98,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     parse_status: function(status_json) {
-	console.log("App: Parse status");
+        console.log("App: Parse status");
         var d = this.db,
             relations = {};
 
@@ -197,11 +197,49 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         this.showView("unit", {unit: unit, db: this.db});
     },
 
+    _prefetch_service: function(service) {
+        // Prefetch service details for service subviews.
+        if (service && !service.get('loaded')) {
+            this.env.get_service(
+                service.get('id'), Y.bind(this.load_service, this));
+        }
+
+        if (service) {
+            // TODO service charm reference should be by id.
+            var charm_id = service.get('charm').get('id');
+            var charm = this.db.charms.getById(charm_id);
+            console.log("prefetching charm", charm_id, charm);
+            if (charm && !charm.get('loaded')) {
+                console.log("Get charm", charm_id);
+                this.env.get_charm(charm_id, Y.bind(this.load_charm, this));
+            }
+        }
+    },
+
+    /* As alternative to this initialization being done by each service view,
+    a common view that matched on the entire service subpath could annotate
+    the request with the svc object and perform the prefetch */
+
     show_service: function(req) {
         console.log(
             "App: Route: Service", req.params.id, req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
+        this._prefetch_service(service);
         this.showView("service", {model: service, domain_models: this.db});
+    },
+
+    show_service_config: function(req) {
+        onsole.log("App: Route: Svc Config", req.path, req.pendingRoutes);
+        var service = this.db.services.getById(req.params.id);
+        this._prefetch_service(service);
+        this.showView("service-config", {model: service, domain_models: this.db});
+    },
+
+    show_service_constraints: function(req) {
+        console.log("App: Route: Svc Constraints", req.path, req.pendingRoutes);
+        var service = this.db.services.getById(req.params.id);
+        this._prefetch_service(service);
+        this.showView("service-constraints", {model: service, domain_models: this.db});
     },
 
     show_environment: function (req) {
@@ -229,6 +267,39 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             this.set('charm_search', charm_search.render());
         }
         next();
+    },
+
+    // Model interactions -> move to db layer
+    load_service: function(evt) {
+        console.log('load service', evt);
+        var svc_data = evt.result;
+        var svc = this.db.services.getById(svc_data.name);
+        if (!svc) {
+            console.warn("Could not load service data for", evt.service_name, evt);
+            return;
+        }
+        svc.set('config', svc_data.config);
+        svc.set('constraints', svc_data.constraints);
+        // TODO: need to unify with .relations from status parse.
+        svc.set('rels', svc_data.rels);
+        svc.set('loaded', true);
+    },
+
+    load_charm: function (evt) {
+        console.log('load charm', evt);
+        var charm_data = evt.result;
+        var charm = this.db.charms.getById(evt.charm_url);
+        if (!charm) {
+            console.warn("Could not load charm data for", evt.charm_url, evt);
+            return;
+        }
+
+        charm.set('provides', charm_data.provides);
+        charm.set('peers', charm_data.peers);
+        charm.set('requires', charm_data.requires);
+        charm.set('config', charm_data.config);
+        charm.set('is_subordinate', charm_data.subordinate);
+        charm.set('revision', charm_data.revision);
     }
 
 }, {

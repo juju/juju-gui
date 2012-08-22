@@ -8,9 +8,7 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
     initializer: function () {
         console.log("View: initialized: ServiceConfig");
     },
-
     template: Y.Handlebars.compile(Y.one("#t-service-config").getHTML()),
-
     render: function () {}
 });
 
