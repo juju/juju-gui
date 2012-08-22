@@ -19,6 +19,12 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             parent: "environment"
         },
 
+        service_config: {
+            type: "juju.views.service_config",
+            preserve: false,
+            parent: "service"
+        },
+
         unit: {
             type: "juju.views.unit",
             preserve: false,
@@ -229,17 +235,24 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     show_service_config: function(req) {
-        onsole.log("App: Route: Svc Config", req.path, req.pendingRoutes);
+        console.log("App: Route: Svc Config", req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView("service-config", {model: service, domain_models: this.db});
+        this.showView("service_config", {model: service, domain_models: this.db});
+    },
+
+    show_service_relations: function(req) {
+        console.log("App: Route: Svc Relations", req.path, req.pendingRoutes);
+        var service = this.db.services.getById(req.params.id);
+        this._prefetch_service(service);
+        this.showView("service_relations", {model: service, domain_models: this.db});
     },
 
     show_service_constraints: function(req) {
         console.log("App: Route: Svc Constraints", req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView("service-constraints", {model: service, domain_models: this.db});
+        this.showView("service_constraints", {model: service, domain_models: this.db});
     },
 
     show_environment: function (req) {
@@ -283,6 +296,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         // TODO: need to unify with .relations from status parse.
         svc.set('rels', svc_data.rels);
         svc.set('loaded', true);
+        this.dispatch();
     },
 
     load_charm: function (evt) {
@@ -301,6 +315,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         charm.set('is_subordinate', charm_data.subordinate);
         charm.set('revision', charm_data.revision);
         charm.set('loaded', true);
+        this.dispatch();
     }
 
 }, {
@@ -311,6 +326,9 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
                 {path: "/charms/", callback: 'show_charm_collection'},
                 {path: "/charms/*charm_url", callback: 'show_charm'},
+                {path: "/service/:id/config", callback: 'show_service_config'},
+                {path: "/service/:id/constraints", callback: 'show_service_constraints'},
+                {path: "/service/:id/relations", callback: 'show_service_relations'},
                 {path: "/service/:id/", callback: 'show_service'},
                 {path: "/unit/:id/", callback: 'show_unit'},
                 {path: "/", callback: 'show_environment'}

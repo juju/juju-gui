@@ -1,2 +1,5 @@
 node_modules
 .emacs.desktop
+gui.sublime-project
+.emacs.desktop.lock
+gui.sublime-workspace

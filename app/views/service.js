@@ -11,8 +11,26 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
     },
     template: Templates["service-config"],
     render: function () {
+        var container = this.get('container'),
+                 self = this,
+                    m = this.get('domain_models');
+        var service = this.get('model');
+        console.log("render view svc config", service);
+
+        if (!service || !service.get('loaded')) {
+            console.log('not connected / maybe');
+            return this;
+        }
+
+        container.setHTML(this.template(
+            {'service': service.getAttrs(),
+             'config': service.get('config'),
+             'charm': service.get('charm').getAttrs()}
+            ));
     }
 });
+
+views.service_config = ServiceConfigView;
 
 ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
@@ -76,7 +94,6 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         })
             .on("click", Y.bind(
 		function(m) {
-		    console.log("clicked me", this, m);
 		    this.fire("showUnit", {unit: m})},
 		this));
 
@@ -106,10 +123,10 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 views.service = ServiceView;
 }, "0.1.0", {
     requires: ['juju-views-utils',
-               'd3', 
-               'base-build', 
-               'handlebars', 
-               'node', 
+               'd3',
+               'base-build',
+               'handlebars',
+               'node',
                "view",
                "json-stringify"]
 });
