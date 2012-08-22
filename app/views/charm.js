@@ -1,5 +1,7 @@
 YUI.add("juju-view-charm-collection", function(Y) {
 
+var views = Y.namespace("juju.views"),
+    Templates = views.Templates;
 
 var charm_store = new Y.DataSource.IO({
     source: 'http://jujucharms.com:2464/'
@@ -22,7 +24,6 @@ Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
     for (var i in iface_decl) {
         if (!i)
             continue;
-	
         result.push({
             'name': i,
             'interface': iface_decl[i]['interface']});
@@ -49,38 +50,36 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
             'success': Y.bind(this.on_charm_data, this),
             'failure': function er(e) { console.error(e.error); }
         }});
-
     },
 
-    template: Y.Handlebars.compile(Y.one("#t-charm").getHTML()),
+    template: Templates.charm,
 
     render: function () {
-	console.log('render', this.get('charm'));
-	var container = this.get('container');
+        console.log('render', this.get('charm'));
+        var container = this.get('container');
         CharmCollectionView.superclass.render.apply(this, arguments);
 	
-    if (this.get('charm')) {
-        var charm = this.get('charm');
-        console.log('charm data render');
-        var last_modified = charm.last_change.created;
-        if (last_modified)
-            charm.last_change.created = new Date(last_modified * 1000);
-
-        container.setHTML(this.template({'charm': charm}));
-        container.one('#charm-deploy').on(
-            'click', Y.bind(this.on_charm_deploy, this));
-	} else {
-        container.setHTML('<div class="alert">Loading...</div>');
-	}
-	return this;
+        if (this.get('charm')) {
+            var charm = this.get('charm');
+            // Convert time stamp TODO: should be in db layer
+            var last_modified = charm.last_change.created;
+            if (last_modified)
+                charm.last_change.created = new Date(last_modified * 1000);
+            container.setHTML(this.template({'charm': charm}));
+            container.one('#charm-deploy').on(
+                'click', Y.bind(this.on_charm_deploy, this));
+        } else {
+            container.setHTML('<div class="alert">Loading...</div>');
+        }
+        return this;
     },
 
     on_charm_data: function (io_request) {
-	charm = Y.JSON.parse(
-        io_request.response.results[0].responseText);
-	console.log('results update', charm, this);
-	this.set('charm', charm);
-	this.render();
+        charm = Y.JSON.parse(
+            io_request.response.results[0].responseText);
+        console.log('results update', charm, this);
+        this.set('charm', charm);
+        this.render();
     },
 
     on_charm_deploy: function(evt) {
@@ -99,7 +98,7 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 		this.on_search_change();
     },
 
-    template: Y.Handlebars.compile(Y.one("#t-charm-collection").getHTML()),
+    template: Templates["charm-collection"],
 
     render: function () {
 		var container = this.get('container'),
@@ -153,8 +152,8 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 
 });
 
-Y.namespace("juju.views").charm_collection = CharmCollectionView;
-Y.namespace("juju.views").charm = CharmView;
+views.charm_collection = CharmCollectionView;
+views.charm = CharmView;
 
 }, "0.1.0", {
     requires: [

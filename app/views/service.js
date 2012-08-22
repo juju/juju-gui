@@ -1,6 +1,7 @@
 YUI.add("juju-view-service", function(Y) {
 
-var views = Y.namespace("juju.views");
+var views = Y.namespace("juju.views"),
+    Templates = views.Templates;
             
 
   
@@ -8,8 +9,9 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
     initializer: function () {
         console.log("View: initialized: ServiceConfig");
     },
-    template: Y.Handlebars.compile(Y.one("#t-service-config").getHTML()),
-    render: function () {}
+    template: Templates["service-config"],
+    render: function () {
+    }
 });
 
 ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
@@ -18,7 +20,7 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         console.log("View: Initialized: Service");
     },
 
-    template: Y.Handlebars.compile(Y.one("#t-service").getHTML()),
+    template: Templates.service,
 
     render: function () {
         var container = this.get('container'),
@@ -29,9 +31,7 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             console.log('not connected / maybe');
             return this;
         }
-
         var units = m.units.get_units_for_service(service);
-
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'charm': service.get('charm').getAttrs(),
@@ -73,8 +73,8 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             .attr("class",  "unit")
             .attr("transform", function(d) {
                 return "translate(" + d.x + ", " + d.y + ")";
-	    })
-	    .on("click", Y.bind(
+        })
+            .on("click", Y.bind(
 		function(m) {
 		    console.log("clicked me", this, m);
 		    this.fire("showUnit", {unit: m})},

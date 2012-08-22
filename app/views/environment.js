@@ -1,6 +1,7 @@
 YUI.add("juju-view-environment", function(Y) {
 
-var views = Y.namespace("juju.views");
+var views = Y.namespace("juju.views"),
+    Templates = views.Templates;
             
 EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
     events: {},
@@ -10,6 +11,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
         this.publish("showService", {preventable: false});
     },
         
+    template: Templates.overview,
     render: function () {
         console.log('View: Render: Env');
         var container = this.get('container');
@@ -127,9 +129,9 @@ views.environment = EnvironmentView;
 }, "0.1.0", {
     requires: ['juju-templates',
                'juju-view-utils',
-               'd3', 
-               'base-build', 
-               'handlebars', 
-               'node', 
+               'd3',
+               'base-build',
+               'handlebars-base',
+               'node',
                'view']
 });

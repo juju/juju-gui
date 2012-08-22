@@ -300,6 +300,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         charm.set('config', charm_data.config);
         charm.set('is_subordinate', charm_data.subordinate);
         charm.set('revision', charm_data.revision);
+        charm.set('loaded', true);
     }
 
 }, {
