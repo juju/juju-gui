@@ -37,6 +37,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
             .on("tick", tick)
             .charge(-450)
             .distance(200)
+            .friction(0)
             .size([width, height]);
 
         var vis = d3.select(container.getDOMNode())
