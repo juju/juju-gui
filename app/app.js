@@ -25,6 +25,18 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             parent: "service"
         },
 
+        service_constraints: {
+            type: "juju.views.service_constraints",
+            preserve: false,
+            parent: "service"
+        },
+
+        service_relations: {
+            type: "juju.views.service_relations",
+            preserve: false,
+            parent: "service"
+        },
+
         unit: {
             type: "juju.views.unit",
             preserve: false,
@@ -77,6 +89,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
         this.on("navigate", function(e) {
             console.log("app navigate", e);
+            //this.navigate(e.url);
         });
 
         this.once('ready', function (e) {
@@ -204,6 +217,13 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     _prefetch_service: function(service) {
+        // only prefetch once 
+        // we redispatch to the service view after we have status
+        if (!service || service.get('prefetch'))
+            return;
+
+        service.set('prefetch', true);
+
         // Prefetch service details for service subviews.
         if (service && !service.get('loaded')) {
             this.env.get_service(
@@ -296,6 +316,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         // TODO: need to unify with .relations from status parse.
         svc.set('rels', svc_data.rels);
         svc.set('loaded', true);
+        svc.set('prefetch', false);
         this.dispatch();
     },
 

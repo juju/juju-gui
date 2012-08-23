@@ -125,7 +125,7 @@ Y.extend(Environment, Y.Base, {
         }
         op.request_id = tid;
         var msg = Y.JSON.stringify(op);
-        console.log("Env: send msg", tid, msg, op, callback);
+        console.log("Env: send msg", tid, msg, op);
         this.ws.send(msg);
     },
 

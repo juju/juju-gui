@@ -4,27 +4,94 @@ var views = Y.namespace("juju.views"),
     Templates = views.Templates;
             
 
+ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
+
+    initializer: function() {
+        console.log("View: initialized: ServiceRelations");
+    },
+
+    template: Templates["service-relations"],
+
+    render: function() {
+        var container = this.get('container'),
+                 self = this,
+                    m = this.get('domain_models');
+        var service = this.get('model');
+        container.setHTML(this.template(
+            {'service': service.getAttrs(),
+             'charm': service.get('charm').getAttrs()}
+            ));
+    }
+});
   
+views.service_relations = ServiceRelations;
+
+
+ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.JujuBaseView], {
+    initializer: function() {
+        console.log("View: initialized: ServiceConstraints");
+    },
+
+    template: Templates["service-constraints"],
+
+    render: function() {
+        var container = this.get('container'),
+                 self = this,
+                    m = this.get('domain_models');
+        service = this.get('model');
+        constraints = service.get('constraints');
+        console.log('service constraints', constraints);
+        container.setHTML(this.template(
+            {'service': service.getAttrs(),
+             'charm': service.get('charm').getAttrs()}
+            ));
+    }
+
+});
+
+views.service_constraints = ServiceConstraints;
+
 ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseView], {
     initializer: function () {
         console.log("View: initialized: ServiceConfig");
     },
+
     template: Templates["service-config"],
+
     render: function () {
         var container = this.get('container'),
                  self = this,
                     m = this.get('domain_models');
         var service = this.get('model');
-        console.log("render view svc config", service);
 
         if (!service || !service.get('loaded')) {
             console.log('not connected / maybe');
             return this;
         }
 
+        console.log('config', service.get('config'));
+        var charm_url = service.get('charm').get('id');
+        console.log('charm', charm_url, m.charms.getById(charm_url));
+
+        // combine the charm schema and the service values for display.
+        var charm =  m.charms.getById(charm_url);
+        var config = service.get('config');
+        var schema = charm.get('config');
+
+        settings = [];
+        var field_def;
+
+        for (var field_name in config) {
+            field_def = schema[field_name];
+            settings.push(Y.mix(
+                {'name': field_name, 'value': config[field_name]}, field_def));
+        }
+
+        console.log("render view svc config", service.getAttrs(), settings);
+
         container.setHTML(this.template(
             {'service': service.getAttrs(),
-             'config': service.get('config'),
+             'settings': settings,
              'charm': service.get('charm').getAttrs()}
             ));
     }

@@ -1,16 +1,16 @@
 <div class="row">
-    <div class="span8">
-      <h1> Service {{service.id}}</h1>
-      <br/> <br/>
-      <div class="btn-group">
-        <button class="btn"><i class="icon-cog"></i> Settings </button>
-        <button class="btn"><i class="icon-th"></i> Constraints</button>
-        <a href="/charms/charms/{{charm.charm_name}}/json"
-           class="btn"><i class="icon-book"></i> Charm </a>
-        <button class="btn"><i class="icon-ban-circle"></i> Exposed </button>
-        <button class="btn"><i class="icon-random"></i> Relations </button>
-      </div>
+  <div class="span8">
+    <h1><a href="/services/{{service.id}}"> Service {{service.id}}</a></h1>
+    <br/> <br/>
+    <div class="btn-group">
+      <a href="config" class="btn"><i class="icon-cog"></i> Settings </a>
+      <a href="constraints" class="btn"><i class="icon-th"></i>Constraints</a>
+      <a href="/charms/charms/{{charm.charm_name}}/json"
+         class="btn"><i class="icon-book"></i> Charm </a>
+      <button class="btn"><i class="icon-ban-circle"></i> Exposed </button>
+      <a href="relations" class="btn"><i class="icon-random"></i> Relations </a>
     </div>
+  </div>
     <div class="span4">
       <div class="well">
         <span>
@@ -30,19 +30,26 @@
 <div class="row">
     <div class="span12">
     <form class="form-horizontal">
-      <legend>{{service.id}} Configuration</legend>
+      <legend>{{service.id}} settings</legend>
+
+       {{#settings}}
 
         <div class="control-group">
-          <div class="control-label" for=""></div>
+          <div class="well">
+            {{description}}
+          </div>
+          <div class="control-label" for="{{name}}">{{type}}: {{name}}</div>
           <div class="controls">
-             <input type="text" id=""/>
+             <input type="text" id="input-{{name}}" value="{{value}}"/>
           </div>          
         </div>
+ 
+      {{/settings}}
 
         <div class="control-group">
           <div class="controls">
             <button type="submit" cls="btn">Update</button>
           </div>
         </div>
-
+      </form> 
 </div>

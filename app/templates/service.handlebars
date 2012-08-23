@@ -1,6 +1,6 @@
-      <div class="row">
+ <div class="row">
 	<div class="span8">
-	  <h1> Service {{service.id}}</h1>
+	  <h1><a href="/services/{{service.id}}"> Service {{service.id}}</a></h1>
 	  <br/> <br/>
 	  <div class="btn-group">
 	    <a href="config" class="btn"><i class="icon-cog"></i> Settings </a>
@@ -8,7 +8,7 @@
 	    <a href="/charms/charms/{{charm.charm_name}}/json"
 	       class="btn"><i class="icon-book"></i> Charm </a>
 	    <button class="btn"><i class="icon-ban-circle"></i> Exposed </button>
-	    <button class="btn"><i class="icon-random"></i> Relations </button>
+	    <a href="relations" class="btn"><i class="icon-random"></i> Relations </a>
 	  </div>
 	</div>
 	<div class="span4">
@@ -25,15 +25,9 @@
 	    <br/>
 	  </div>
 	</div>
-      </div>
+ </div>
 
-      <div class="row">
-	<!--
-	<div class="span8">
-	  <ul class="nav nav-tabs">
-	    <li class="active"><h5>Units</h5></li>
-	  </ul>
-	</div> -->
+ <div class="row">
 	<div class="span12">
 	  <ul class="nav nav-tabs">
 	    <li class="active"><a href=".">All</a></li>
@@ -42,10 +36,10 @@
 	    <li><a href="?state=error">Error</a></li>
 	  </ul>
 	</div>
-      </div>
+ </div>
 
 
-      <div class="collection">
+ <div class="collection">
 	<div class="charm">
 	  <ul class="thumbnails">
 	    {{#units}}
@@ -59,5 +53,5 @@
 	    {{/units}}	    
 	  </ul>
 	</div>
-      </div>
+ </div>
 
