@@ -2,7 +2,7 @@ YUI.add("juju-view-environment", function(Y) {
 
 var views = Y.namespace("juju.views"),
     Templates = views.Templates;
-            
+
 EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
     events: {},
 
@@ -10,7 +10,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
         console.log("View: Initialized: Env");
         this.publish("showService", {preventable: false});
     },
-        
+
     render: function () {
         console.log('View: Render: Env');
         var container = this.get('container');
@@ -28,7 +28,6 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
             width = 800;
 
         var fill = d3.scale.category20();
-        
         var services = m.services.toArray();
         var relations = m.relations.getAttrs(["endpoints"]).endpoints;
 
@@ -52,14 +51,13 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
                 .attr("y1", function(d) { return d.source.y; })
                 .attr("x2", function(d) { return d.target.x; })
                 .attr("y2", function(d) { return d.target.y; });
-            
             node.attr("transform", function(d) {
                           return "translate(" + d.x + "," + d.y + ")"; });
         }
 
         tree.nodes(services)
             .links(relations);
-        
+
         var link = vis.selectAll("line.relation")
             .data(relations, function(d) {return d;});
 
@@ -93,7 +91,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
             .attr("x", 4)
             .attr("y", "1em")
             .text(function(d) {return d.get("id"); });
-        
+
         var charm_labels = node.append("text").append("tspan")
             .attr("x", 4)
             .attr("y", "2.5em")
@@ -117,7 +115,6 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
         //         var node = Y.Node(e);
         //         console.log("node", node);
         //         console.log("rect", node.getClientRect());
-                
         // });
 
         tree.start();

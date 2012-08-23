@@ -68,7 +68,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             charm_list = new models.CharmList(),
             relation_list = new models.RelationList(),
             unit_list = new models.ServiceUnitList();
-        
+
         this.db = {
             services: service_list,
             machines: machine_list,
@@ -108,7 +108,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         }, this);
 
     },
-         
+
     on_status_changed: function(evt) {
         Y.log(evt, "debug", 'App: Status changed');
         this.parse_status(evt.data.result);
@@ -135,21 +135,20 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
                 public_address: machine_data["dns-name"]});
             d.machines.add(machine);
         }, this);
-	
+
         Y.each(status_json.services,
             function(service_data, service_name) {
-		// XXX: only for charm store charms.
-		var charm_name = service_data.charm.split(":")[1].split("-")[0];
-		var charm = new models.Charm({
+                // XXX: only for charm store charms.
+                var charm_name = service_data.charm.split(":")[1].split("-")[0];
+                var charm = new models.Charm({
                     charm_id: service_data.charm,
-            charm_name: charm_name});
-		var service = new models.Service({
+                    charm_name: charm_name});
+                var service = new models.Service({
                     name: service_name,
-                    charm: charm
-		});
-		d.services.add(service);
-		d.charms.add(charm);
-                
+                    charm: charm});
+                d.services.add(service);
+                d.charms.add(charm);
+
                 Y.each(service_data.units, function(unit_data, unit_name) {
                     var unit = new models.ServiceUnit({
                             name: unit_name,

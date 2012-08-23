@@ -1,13 +1,11 @@
 YUI.add("juju-view-utils", function(Y) {
 
 var views = Y.namespace("juju.views");
-            
 
 JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
 
     bindModelView: function(model) {
         model = model || this.get('model');
-    
         // If this view has a model, bubble model events to the view.
         model && model.addTarget(this);
 
@@ -33,9 +31,9 @@ JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
     },
 
     stateToStyle: function(state, current) {
-	// todo also check relations
+        // todo also check relations
         var classes;
-	switch (state) {
+        switch (state) {
         case "pending":
             classes = "state-pending";
                 break;
@@ -54,8 +52,6 @@ JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
         classes = current && classes + " " + current || classes;
         return classes;
     }
-
-        
 });
 
 views.JujuBaseView = JujuBaseView;

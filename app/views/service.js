@@ -2,7 +2,6 @@ YUI.add("juju-view-service", function(Y) {
 
 var views = Y.namespace("juju.views"),
     Templates = views.Templates;
-            
 
 ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
@@ -24,7 +23,7 @@ ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBase
             ));
     }
 });
-  
+
 views.service_relations = ServiceRelations;
 
 
@@ -176,9 +175,9 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                 return "translate(" + d.x + ", " + d.y + ")";
         })
             .on("click", Y.bind(
-		function(m) {
-		    this.fire("showUnit", {unit: m})},
-		this));
+                function(m) {
+                    this.fire("showUnit", {unit: m})},
+                this));
 
         node.append("rect")
             .attr("class", function(d) {

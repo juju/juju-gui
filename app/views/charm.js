@@ -6,16 +6,15 @@ var views = Y.namespace("juju.views"),
 var charm_store = new Y.DataSource.IO({
     source: 'http://jujucharms.com:2464/'
 });
-   
+
 /*
 charm_store.plug(
     Y.Plugin.DataSourceJSONSchema, {
-	cfg: {schema: {resultListLocator: "results"}}
+       cfg: {schema: {resultListLocator: "results"}}
     });
 charm_store.plug(Y.DataSourceCache, { max: 3});
 */
 
-  
 
 Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
     // console.log('helper', iface_decl, options, this);
@@ -42,9 +41,9 @@ Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
 
 CharmView = Y.Base.create('CharmView', Y.View, [], {
     initializer: function () {
-	this.set('charm', null);
-	console.log("Loading charm view", this.get('charm_data_url'));
-	charm_store.sendRequest({
+        this.set('charm', null);
+        console.log("Loading charm view", this.get('charm_data_url'));
+        charm_store.sendRequest({
         request: this.get('charm_data_url'),
         callback: {
             'success': Y.bind(this.on_charm_data, this),
@@ -58,7 +57,6 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
         console.log('render', this.get('charm'));
         var container = this.get('container');
         CharmCollectionView.superclass.render.apply(this, arguments);
-	
         if (this.get('charm')) {
             var charm = this.get('charm');
             // Convert time stamp TODO: should be in db layer
@@ -83,25 +81,25 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
     },
 
     on_charm_deploy: function(evt) {
-	console.log('charm deploy', this.get('charm'));
-	// this.fire('');
+        console.log('charm deploy', this.get('charm'));
+        // this.fire('');
     }
 });
 
 CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 
     initializer: function () {
-		console.log("View: Initialized: Charm Collection", this.get('query'));
+        console.log("View: Initialized: Charm Collection", this.get('query'));
         this.set("charms", []);
-		this.set('current_request', null);
-		Y.one('#omnibar').on("submit", Y.bind(this.on_results_change, this));
-		this.on_search_change();
+        this.set('current_request', null);
+        Y.one('#omnibar').on("submit", Y.bind(this.on_results_change, this));
+        this.on_search_change();
     },
 
     template: Templates["charm-collection"],
 
     render: function () {
-		var container = this.get('container'),
+        var container = this.get('container'),
                  self = this;
 
         CharmCollectionView.superclass.render.apply(this, arguments);
