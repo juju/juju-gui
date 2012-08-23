@@ -1,6 +1,5 @@
 node_modules
 .emacs.desktop
-app/templates.js
 gui.sublime-project
 .emacs.desktop.lock
 gui.sublime-workspace
