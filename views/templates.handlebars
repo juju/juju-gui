@@ -6,6 +6,11 @@ YUI.add('juju-templates', function (Y) {
     Templates['{{{name}}}'] = Y.Handlebars.template({{{template}}});
   {{/templates}}
 
+  {{#partials}}
+    Y.Handlebars.registerPartial'({{{name}}}', 
+            Y.Handlebars.template({{{template}}});
+  {{/partials}}
+
 }, '0.5.2', {
     requires: ['handlebars-base']
 });

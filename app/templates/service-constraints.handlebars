@@ -33,14 +33,14 @@
     <form class="form-horizontal">
       <legend>{{service.id}} constraints</legend>
 
-       {{#constraints}}
+      {{#constraints}}
         <div class="control-group">
           <div class="control-label" for="{{name}}">{{name}}</div>
           <div class="controls">
              <input type="text" id="input-{{name}}" value="{{value}}"/>
           </div>          
         </div>
-        {{/constraints}}
+      {{/constraints}}
 
         <div class="control-group">
           <div class="controls">

@@ -9,11 +9,19 @@ var Templates = require("../lib/templates.js"),
     precompiled = Templates.getPrecompiled(),
     view = require("../lib/view.js"),
     YUI = require("yui").YUI,
-    templates = [];
+    templates = [],
+    partials = [];
 
 Y = YUI();
-Y.Object.each(precompiled, function (template, name) {
+Y.Object.each(precompiled.templates, function (template, name) {
     templates.push({
+        name    : name,
+        template: template
+    });
+});
+
+Y.Object.each(precompiled.partials, function (template, name) {
+    partials.push({
         name    : name,
         template: template
     });
@@ -21,7 +29,7 @@ Y.Object.each(precompiled, function (template, name) {
 
 
 view.handlebars(__dirname + "/../views/templates.handlebars", 
-    {templates: templates},
+    {templates: templates, partials: partials},
     function(err, str) {
         if (err) {
             console.log(err);
