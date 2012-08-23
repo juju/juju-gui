@@ -28,7 +28,7 @@ Y.Object.each(precompiled.partials, function (template, name) {
 });
 
 
-view.handlebars(__dirname + "/../views/templates.handlebars", 
+view.handlebars(__dirname + "/../lib/views/templates.handlebars", 
     {templates: templates, partials: partials},
     function(err, str) {
         if (err) {
