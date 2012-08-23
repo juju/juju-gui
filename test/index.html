@@ -21,7 +21,10 @@
      YUI().use('node', 'event', function(Y) {
          Y.on('domready', function() {
      
-         var config = GlobalConfig;
+         var config = GlobalConfig,
+             models, 
+             views;
+     
          for (m in config.groups.juju.modules) {
             var resource = config.groups.juju.modules[m];
             if (!m || !resource.fullpath) {
@@ -42,9 +45,9 @@
 
          console.log("global config", GlobalConfig)
          // Load before test runner
-         YUI().use('juju-models', function(Y) {
-             console.log("Using MOdels")
-             var models = Y.namespace("juju.models");
+         YUI().use('juju-gui', function(Y) {
+             models = Y.namespace("juju.models");
+             views = Y.namespace("juju.views");
          });
 
          mocha.run();
