@@ -1,10 +1,11 @@
 <div class="row">
   <div class="span8">
-    <h1><a href="/services/{{service.id}}"> Service {{service.id}}</a></h1>
+    <h1><a href="/service/{{service.id}}/"> Service {{service.id}}</a></h1>
     <br/> <br/>
     <div class="btn-group">
+      <a href="." class="btn"><i class="icon-th"></i> Units </a>
       <a href="config" class="btn"><i class="icon-cog"></i> Settings </a>
-      <a href="constraints" class="btn"><i class="icon-th"></i>Constraints</a>
+      <a href="constraints" class="btn"><i class="icon-leaf"></i> Constraints</a>
       <a href="/charms/charms/{{charm.charm_name}}/json"
          class="btn"><i class="icon-book"></i> Charm </a>
       <button class="btn"><i class="icon-ban-circle"></i> Exposed </button>
@@ -17,9 +18,9 @@
           <b>Charm:</b>
           <a href="/charms/charms/{{charm.charm_name}}/json">{{charm.id}}</a></span>
         <br/>
-        <span> <b>Units:</b></span>
+        <span><b>Units:</b></span>
         <br/>
-        <span> <b>Relations:</b></span>
+        <span><b>Relations:</b></span>
         <br/>
         <span><b>Exposed:</b> {{service.exposed}}</span>
         <br/>
@@ -29,6 +30,26 @@
 
 <div class="row">
     <div class="span12">
-      <b>Service Relations</b>
+      <h5>Service Relations</h5>
+      <table class="table table-striped">
+       <thead>
+         <tr>
+          <td>Id</td>
+          <td>Role</td>
+          <td>Remote</td>
+          <td>Scope</td>
+       </thead>
+
+       <tbody>
+         {{#relations}}
+         <tr>
+            <td>{{ident}}</td>
+            <td>{{role}}</td>
+            <td><a href="/service/{{endpoint}}/">{{endpoint}}</a></td>
+            <td>{{scope}}</td>
+         </tr>
+         {{/relations}}
+       </tbody>
+      </table>
     </div>
 </div>

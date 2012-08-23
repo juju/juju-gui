@@ -19,6 +19,7 @@ ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBase
         var service = this.get('model');
         container.setHTML(this.template(
             {'service': service.getAttrs(),
+             'relations': service.get('rels'),
              'charm': service.get('charm').getAttrs()}
             ));
     }
@@ -39,10 +40,25 @@ ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.Juju
                  self = this,
                     m = this.get('domain_models');
         service = this.get('model');
-        constraints = service.get('constraints');
-        console.log('service constraints', constraints);
+        var constraints = service.get('constraints');
+        var display_constraints = [];
+
+        for (var key in constraints) {
+            display_constraints.push({'name': key, 'value': constraints[key]});
+        }
+
+        var generics = ["cpu", "mem", "arch"];
+        for (var idx in generics) {
+            var gkey = generics[idx];
+            if (! (gkey in constraints)) {
+                display_constraints.push({'name': gkey, 'value': ""});
+            }
+        }
+
+        console.log('service constraints', display_constraints);
         container.setHTML(this.template(
             {'service': service.getAttrs(),
+             'constraints': display_constraints,
              'charm': service.get('charm').getAttrs()}
             ));
     }
