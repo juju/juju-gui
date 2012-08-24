@@ -3,3 +3,6 @@ node_modules
 gui.sublime-project
 .emacs.desktop.lock
 gui.sublime-workspace
+app/assets/javascripts/d3.v2.js
+app/assets/javascripts/d3.v2.min.js
+app/assets/javascripts/yui

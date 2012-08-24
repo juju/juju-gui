@@ -1,16 +1,4 @@
 #!/usr/bin/env node
 
-templateDir = __dirname + "/../app/templates";
-
-
-var Templates = require("../lib/templates.js"),
-    Handlebars = require("yui/handlebars").HandleBars,
-    fs = require("fs"),
-    precompiled = Templates.getPrecompiled(),
-    view = require("../lib/view.js"),
-    YUI = require("yui").YUI,
-    templates = [],
-    partials = [];
-
-
-Templates.renderTemplatejs(__dirname + "/../app/templates.js");
+var Templates = require("../lib/templates.js");
+Templates.renderTemplates();

@@ -51,6 +51,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
                 .attr("y1", function(d) { return d.source.y; })
                 .attr("x2", function(d) { return d.target.x; })
                 .attr("y2", function(d) { return d.target.y; });
+            
             node.attr("transform", function(d) {
                           return "translate(" + d.x + "," + d.y + ")"; });
         }
@@ -58,7 +59,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
         tree.nodes(services)
             .links(relations);
 
-        var link = vis.selectAll("line.relation")
+        var link = vis.selectAll("path.relation")
             .data(relations, function(d) {return d;});
 
         link.enter().insert("svg:line", "g.service")

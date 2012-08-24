@@ -9,11 +9,10 @@ install:
 
 
 test:
-	@if [ -e "server-8989.pid" ]; then kill `cat server-8989.pid`;fi
-	@PORT=8989 node server.js &
-	@mocha -w
+	@gnome-open test/index.html
 
 server:
+	@echo "Customize config.js to modify server settings"
 	@node server.js
 
 .PHONY: test
