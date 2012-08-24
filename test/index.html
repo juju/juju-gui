@@ -38,9 +38,7 @@
             if (!m || !resource.fullpath) {
               continue
             }
-            console.log('before load', resource.fullpath);
             resource.fullpath = resource.fullpath.replace('/', '../app/', 1);
-            console.log('after load', resource.fullpath);
          }
 
          console.log("global config", GlobalConfig)
@@ -48,9 +46,10 @@
          YUI().use('juju-gui', function(Y) {
              models = Y.namespace("juju.models");
              views = Y.namespace("juju.views");
+             mocha.run();
          });
 
-         mocha.run();
+
 
          });
      });
@@ -59,6 +58,8 @@
 </head>
 
 <body>
+  <div id="omnibar"> </div>
+  <div id="main" class="container"> </div> 
   <div id="mocha"></div>
 </body>
 </html>

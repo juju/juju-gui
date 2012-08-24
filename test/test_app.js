@@ -14,8 +14,8 @@ describe("Application", function() {
 
   it("should produce a valid index", function() {
       container = app.get("container");
-      console.log("container", container);
+
       container.getAttribute("id").should.equal("main");
-      container.getAttribute("class").should.eql("container");
+      container.getAttribute("class").should.include("container");
   });
 });
