@@ -1,17 +1,17 @@
-all: install test
+all: test
 
 install:
 	@npm install
-	@./bin/generateTemplates
 	@#link depends
 	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
+	@./bin/generateTemplates
 
 
-test:
+test: install 
 	@gnome-open test/index.html
 
-server:
+server: install 
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
