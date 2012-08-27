@@ -1,14 +1,17 @@
 YUI.add("juju-env", function(Y) {
 
 
-    
+
+/*    
 var EVENT_DISPATCH_MAP = {
     status: "env:status",
+    delta: "env:delta",
     deploy: "env:deploy",
     add_unit: "env:add_unit",
     add_relation: "env:add_relation",
     destroy_service: "env:destroy_service"
 };
+*/
 
     
 function Environment(config) {
@@ -96,15 +99,13 @@ Y.extend(Environment, Y.Base, {
             console.warn('Env: Unknown evt kind', evt);
             return;
         }
-
-        if (!(evt.op in EVENT_DISPATCH_MAP)) {
-            console.warn('Env: Unknown evt op', evt.op);
-            return;
-        }
-
-        var event_kind = EVENT_DISPATCH_MAP[evt.op];
-        console.log('Env: Dispatch Evt', event_kind, evt);
-        this.fire(event_kind, {data: evt});
+        //if (!(evt.op in EVENT_DISPATCH_MAP)) {
+        //    console.warn('Env: Unknown evt op', evt.op);
+        //    return;
+        //}
+        //var event_kind = EVENT_DISPATCH_MAP[evt.op];
+        console.log('Env: Dispatch Evt', evt.op);
+        this.fire(evt.op, {data: evt});
     },
 
     _dispatch_rpc_result: function(msg){

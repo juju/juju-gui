@@ -1,6 +1,5 @@
 YUI.add("juju-models", function(Y) {
 
-var juju = Y.namespace("juju");
 var models = Y.namespace("juju.models");
 
 var Charm = Y.Base.create('charm', Y.Model, [], {
@@ -27,7 +26,7 @@ models.CharmList = CharmList;
 
 
 Service = Y.Base.create('service', Y.Model, [], {
-    idAttribute: 'name',
+//    idAttribute: 'name',
 
     get_unit_agent_states: function() {
         // return an object with keys set to each unique agent state
@@ -57,7 +56,7 @@ ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
 models.ServiceList = ServiceList;
 
 ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {
-    idAttribute: 'name',
+//    idAttribute: 'name',
 
     ATTRS: {
 	name: {},
@@ -110,7 +109,9 @@ Machine = Y.Base.create('machine', Y.Model, [], {
     ATTRS: {
 	machine_id: {},
 	public_address: {},
-	private_address: {}
+	instance_id: {},
+    instance_state: {},
+    agent_state: {}
     }
 });
 models.Machine = Machine;
@@ -141,19 +142,29 @@ models.RelationList = RelationList;
     
 Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
-	this.services = new ServiceList();
-	this.machines = new MachineList();
-	this.charms = new CharmList();
-	this.relations = new RelationList();
+        this.services = new ServiceList();
+        this.machines = new MachineList();
+        this.charms = new CharmList();
+        this.relations = new RelationList();
 
-	// This one is dangerous.. we very well may not have capacity
-	// to store a 1-1 representation of units in js.
+        // This one is dangerous.. we very well may not have capacity
+        // to store a 1-1 representation of units in js.
+        // At least we should never assume the collection is complete, and
+        // have usage of some ephemeral slice/cursor of the collection.
+        // Indexed db might be interesting to explore here, with object delta
+        // and bulk transfer feeding directly into indexedb.
+        // Needs some experimentation with a large data set.
+        this.units = new ServiceUnitList();
 
-	// At least we should never assume the collection is complete, and
-	// have usage of some ephemeral slice/cursor of the collection.
-	// Indexed db might be interesting to explore here, with object delta
-	// and bulk transfer feeding directly into indexedb.
-	this.units = new ServiceUnitList();
+        // For model syncing by type. Charms aren't currently sync'd, only fetched
+        // on demand (their static).
+        this.model_map = {
+            'unit': ServiceUnit,
+            'machine': Machine,
+            'service': Service,
+            'relation': Relation,
+            'charm': Charm
+        };
     },
 
     reset: function() {
@@ -164,71 +175,58 @@ Database = Y.Base.create('database', Y.Base, [], {
         this.units.reset();
     },
 
-    parse_status: function(status_json) {
-        // for now we reset the lists rather than sync/update
-        this.services.reset();
-        this.machines.reset();
-        this.charms.reset();
-        this.relations.reset();
-        this.units.reset();
+    on_delta: function(delta_evt) {
+        var changes = delta_evt.data.result;
+        console.log("Delta", this, changes);
+        var change_type, model_class = null;
 
-        Y.each(status_json.machines,
-            function(machine_data, machine_name) {
-                var machine = new models.Machine({
-                    machine_id: machine_name,
-                    public_address: machine_data["dns-name"]});
-                d.machines.add(machine);
-            }, this);
-	
-        
-        Y.each(status_json.services,
-            function(service_data, service_name) {
-		       // XXX: only for charm store charms.
-                var charm_name = service_data.charm.split(":")[1].split("-")[0];
-                var charm = new models.Charm({
-                    charm_id: service_data.charm,
-                    charm_name: charm_name});
-                var service = new models.Service({
-                    name: service_name,
-                    charm: service_data.charm});
-                d.services.add(service);
-                d.charms.add(charm);
-                
-                Y.each(service_data.units, function(unit_data, unit_name) {
-                    var unit = new models.ServiceUnit({
-                            name: unit_name,
-                            service: service,
-                            machine: d.machines.getById(unit_data.machine),
-                            agent_state: unit_data["agent-state"],
-                            is_subordinate: (service_data.subordinate || false),
-                            public_address: unit_data["public-address"]
-                            });
-                    d.units.add(unit);
-                }, this);
+        changes.forEach(
+            Y.bind(function(change) {
+                change_type = change[0];
+                model_class = this.model_map[change_type];
 
-                Y.each(service_data.relations,
-                    function(relation_data, relation_name) {
-                        // XXX: only preocessing 1st element for now
-                        relations[service_name] = relation_data[0];
-                        // XXX: fixiing this will alter the build
-                        // in the relations block below
-                }, this);
+                if (!model_class) {
+                    console.log("Unknown Change", change);
+                }
+                console.log('change', this, change);
+                var model_list = this[change_type + 's'];
+                this.process_model_delta(change, model_class, model_list);
+            }, this));
+        this.fire('update');
+    },
 
-            }, this);
+    // utility method to sync a data object and a model object.
+    _sync_bag: function(bag, model) {
+        // TODO: need to bulk mutate and then send mutation event,
+        // as is this is doing per attribute events.
+        for (var vid in bag) {
+            value = bag[vid];
+            aid = vid.replace('-', "_");
+            if (model.get(aid) != value) {
+                model.set(aid, value);
+            }
+        }
+    },
 
-        Y.each(relations, function(source, target) {
-                   var s = d.services.getById(source);
-                   var t = d.services.getById(target);
-                   var relation = new models.Relation({
-                           endpoints: {source: s, target: t}
-                           });
-                   d.relations.add(relation);
-               });
-
+    process_model_delta: function(change, model_class, model_list) {
+        // console.log('model change', change);
+        var change_kind = change[1];
+        var data = change[2];
+        if (change_kind == 'add') {
+            o = new model_class({id: data['id']});
+            this._sync_bag(data, o);
+            model_list.add(o);
+        } else if (change_kind == 'delete') {
+            model_list.remove(model_list.getById(data));
+        } else if (change_kind == 'change') {
+            o = model_list.getById(data['id']);
+            this._sync_bag(data, o);
+        }
     }
+ 
 });
 
-juju.db = new Database({});
+models.Database = Database;
 
 Y.namespace("juju").db = new Database({});
 

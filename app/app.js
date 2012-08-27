@@ -62,39 +62,34 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     initializer: function () {
-
-        var service_list = new models.ServiceList(),
-            machine_list = new models.MachineList(),
-            charm_list = new models.CharmList(),
-            relation_list = new models.RelationList(),
-            unit_list = new models.ServiceUnitList();
-
-        this.db = {
-            services: service_list,
-            machines: machine_list,
-            charms: charm_list,
-            relations: relation_list,
-            units: unit_list
-        };
+        // Create a client side database to store state.
+        this.db = new models.Database();
 
         // Create an environment facade to interact with.
         this.env = new juju.Environment({'socket_url': this.get('socket_url')});
 
         // Event subscriptions
+
+        // TODO: refactor per event views into a generic show view event.
         this.on("*:showService", this.navigate_to_service);
         this.on("*:showUnit", this.navigate_to_unit);
         this.on("*:showCharmCollection", this.navigate_to_charm_collection);
         this.on("*:showCharm", this.navigate_to_charm);
-        this.env.on('status', this.on_status_changed, this);
+
+        // Feed environment changes directly into the database.
+        this.env.on('delta', this.db.on_delta, this.db);
+
+        // If the database updates redraw the view (distinct from model updates)
+        // TODO - Bound views will automatically update this on individual models
+        this.db.on('update', this.on_db_changed, this);
 
         this.on("navigate", function(e) {
             console.log("app navigate", e);
-            //this.navigate(e.url);
         });
 
         this.once('ready', function (e) {
             if (this.get("socket_url")) {
-            // Connect to the environment.
+                // Connect to the environment.
                 Y.log("App: Connecting to environment");
                 this.env.connect();
             }
@@ -109,79 +104,12 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
     },
 
-    on_status_changed: function(evt) {
-        Y.log(evt, "debug", 'App: Status changed');
-        this.parse_status(evt.data.result);
+    on_database_changed: function(evt) {
+        Y.log(evt, "debug", 'App: Database changed');
         // Redispatch to current view to update.
         this.dispatch();
     },
 
-    parse_status: function(status_json) {
-        console.log("App: Parse status");
-        var d = this.db,
-            relations = {};
-
-        // for now we reset the lists rather than sync/update
-        d.services.reset();
-        d.machines.reset();
-        d.charms.reset();
-        d.relations.reset();
-        d.units.reset();
-
-        Y.each(status_json.machines,
-            function(machine_data, machine_name) {
-            var machine = new models.Machine({
-                machine_id: machine_name,
-                public_address: machine_data["dns-name"]});
-            d.machines.add(machine);
-        }, this);
-
-        Y.each(status_json.services,
-            function(service_data, service_name) {
-                // XXX: only for charm store charms.
-                var charm_name = service_data.charm.split(":")[1].split("-")[0];
-                var charm = new models.Charm({
-                    charm_id: service_data.charm,
-                    charm_name: charm_name});
-                var service = new models.Service({
-                    name: service_name,
-                    charm: charm});
-                d.services.add(service);
-                d.charms.add(charm);
-
-                Y.each(service_data.units, function(unit_data, unit_name) {
-                    var unit = new models.ServiceUnit({
-                            name: unit_name,
-                            service: service,
-                            machine: d.machines.getById(unit_data.machine),
-                            agent_state: unit_data["agent-state"],
-                            is_subordinate: (service_data.subordinate || false),
-                            public_address: unit_data["public-address"]
-                            });
-                    d.units.add(unit);
-                }, this);
-
-                Y.each(service_data.relations,
-                    function(relation_data, relation_name) {
-                        // XXX: only preocessing 1st element for now
-                        relations[service_name] = relation_data[0];
-                        // XXX: fixiing this will alter the build
-                        // in the relations block below
-                }, this);
-
-            }, this);
-
-        Y.each(relations, function(source, target) {
-                   var s = d.services.getById(source);
-                   var t = d.services.getById(target);
-                   var relation = new models.Relation({
-                           endpoints: {source: s, target: t}
-                           });
-                   d.relations.add(relation);
-               });
-
-    },
-        
     // Event handlers
     navigate_to_unit: function(e) {
         console.log("Evt.Nav.Router unit target", e.unit_id);
@@ -216,7 +144,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     _prefetch_service: function(service) {
-        // only prefetch once 
+        // only prefetch once
         // we redispatch to the service view after we have status
         if (!service || service.get('prefetch'))
             return;
