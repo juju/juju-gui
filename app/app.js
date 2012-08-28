@@ -81,7 +81,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
         // If the database updates redraw the view (distinct from model updates)
         // TODO - Bound views will automatically update this on individual models
-        this.db.on('update', this.on_db_changed, this);
+        this.db.on('update', this.on_database_changed, this);
 
         this.on("navigate", function(e) {
             console.log("app navigate", e);
@@ -93,10 +93,8 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
                 Y.log("App: Connecting to environment");
                 this.env.connect();
             }
-        }, this);
-        this.onceAfter("ready", function(e) {
-            var current_path = this.getPath();
-            Y.log("App: Rerendering current view " + current_path, "info");
+
+            Y.log("App: Rerendering current view " + this.getPath(), "info");
             if (this.get('activeView')) {
                 this.get('activeView').render();
             } else {
@@ -161,7 +159,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
         if (service) {
             // TODO service charm reference should be by id.
-            var charm_id = service.get('charm').get('id');
+            var charm_id = service.get('charm');
             var charm = this.db.charms.getById(charm_id);
             console.log("prefetching charm", charm_id, charm);
             if (charm && !charm.get('loaded')) {

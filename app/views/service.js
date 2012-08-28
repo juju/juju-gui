@@ -131,10 +131,11 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             console.log('not connected / maybe');
             return this;
         }
-        var units = m.units.get_units_for_service(service);
+        var units = m.units.get_units_for_service(service),
+            charm = m.charms.getById(service.get("charm"));
         container.setHTML(this.template(
             {'service': service.getAttrs(),
-             'charm': service.get('charm').getAttrs(),
+             'charm': charm && charm.getAttrs() || {},
              'units': units.map(function(u) {
             return u.getAttrs();})
         }));

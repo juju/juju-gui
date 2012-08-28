@@ -56,9 +56,6 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
                           return "translate(" + d.x + "," + d.y + ")"; });
         }
 
-        tree.nodes(services)
-            .links(relations);
-
         function processRelation(r) {
             var endpoints = r.get('endpoints'),
             rel_services = [];
@@ -74,23 +71,28 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
                 var pair = processRelation(rel);
                 // skip peer for now
                 if (pair.length == 2) {
-                    pairs.push(pair);                    
+                    pairs.push({source: pair[0],
+                               target: pair[1]});                    
                 }
 
             });
             return pairs;
         }
 
+        var rel_data = processRelations(relations);
+        tree.nodes(services)
+            .links(rel_data);
+
         var link = vis.selectAll("path.relation")
-            .data(processRelations(relations), 
+            .data(rel_data, 
                   function(d) {return d;});
 
         link.enter().insert("svg:line", "g.service")
             .attr("class", "relation")
-            .attr("x1", function(d) {return d[0].x; })
-            .attr("y1", function(d) { return d[0].y; })
-            .attr("x2", function(d) { return d[1].x; })
-            .attr("y2", function(d) { return d[1].y; });
+            .attr("x1", function(d) { return d.source.x; })
+            .attr("y1", function(d) { return d.source.y; })
+            .attr("x2", function(d) { return d.target.x; })
+            .attr("y2", function(d) { return d.target.y; });
 
         var node = vis.selectAll(".service")
             .data(services)
@@ -131,14 +133,6 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
                   var units = m.units.get_units_for_service(d);
                   return units.length;
               });
-
-        // console.log("charm labels", charm_labels[0]);
-        // Y.each(charm_labels[0], function (e) {
-        //         console.log("e", e.getBoundingClientRect());
-        //         var node = Y.Node(e);
-        //         console.log("node", node);
-        //         console.log("rect", node.getClientRect());
-        // });
 
         tree.start();
     }

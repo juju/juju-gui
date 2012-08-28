@@ -1,6 +1,6 @@
 var config = { 
 "application": {
-    "socket_url": process.env.JUJU_WS || "ws://localhost:8082/ws"
+    "socket_url": process.env.JUJU_WS || "ws://localhost:8081/ws"
   },
 
 "server": {
