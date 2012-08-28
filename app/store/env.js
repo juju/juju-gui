@@ -1,19 +1,5 @@
 YUI.add("juju-env", function(Y) {
 
-
-
-/*    
-var EVENT_DISPATCH_MAP = {
-    status: "env:status",
-    delta: "env:delta",
-    deploy: "env:deploy",
-    add_unit: "env:add_unit",
-    add_relation: "env:add_relation",
-    destroy_service: "env:destroy_service"
-};
-*/
-
-    
 function Environment(config) {
     // Invoke Base constructor, passing through arguments
     Environment.superclass.constructor.apply(this, arguments);

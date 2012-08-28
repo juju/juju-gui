@@ -29,7 +29,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
 
         var fill = d3.scale.category20();
         var services = m.services.toArray();
-        var relations = m.relations.getAttrs(["endpoints"]).endpoints;
+        var relations = m.relations.toArray();
 
         var tree = d3.layout.force()
             .on("tick", tick)
@@ -59,16 +59,38 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
         tree.nodes(services)
             .links(relations);
 
+        function processRelation(r) {
+            var endpoints = r.get('endpoints'),
+            rel_services = [];
+            Y.each(endpoints, function(ep) {
+                rel_services.push(m.services.getById(ep[0]));
+            });
+            return rel_services;
+        }
+        
+        function processRelations(rels) {
+            var pairs = [];
+            Y.each(rels, function(rel) {
+                var pair = processRelation(rel);
+                // skip peer for now
+                if (pair.length == 2) {
+                    pairs.push(pair);                    
+                }
+
+            });
+            return pairs;
+        }
+
         var link = vis.selectAll("path.relation")
-            .data(relations, function(d) {return d;});
+            .data(processRelations(relations), 
+                  function(d) {return d;});
 
         link.enter().insert("svg:line", "g.service")
             .attr("class", "relation")
-            .attr("x1", function(d) {return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
-
+            .attr("x1", function(d) {return d[0].x; })
+            .attr("y1", function(d) { return d[0].y; })
+            .attr("x2", function(d) { return d[1].x; })
+            .attr("y2", function(d) { return d[1].y; });
 
         var node = vis.selectAll(".service")
             .data(services)
@@ -99,7 +121,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
             .attr("dy", "3em")
             .attr("class", "charm-label")
             .text(function(d) {
-                      return d.get("charm").get("id"); });
+                      return d.get("charm"); });
 
         var unit_count = node.append("text")
         .attr("class", "unit-count")

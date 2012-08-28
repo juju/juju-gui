@@ -9,7 +9,7 @@
     "url": "lp:juju-ui"
   },
   "engines": {
-    "node": "~0.6.10 || 0.8 || 0.9"
+    "node": "0.8 || 0.9"
   },
   "dependencies": {
     "cryptojs": ">= 2.5.3"
@@ -17,11 +17,11 @@
   "devDependencies": {
     "d3": "> 2.9.5",
     "yui": ">=3.6.0",
-    "connect": ">2.3.9",
     "mocha": "0.14.0",
     "express": "3.x",
     "expect.js": "0.1.2",
-    "should": ">=1.0.0"
+    "should": ">=1.0.0",
+    "chai": ">=1.2.0"
   },
   "optionalDependencies": {}
 }

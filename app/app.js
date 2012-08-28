@@ -93,6 +93,8 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
                 Y.log("App: Connecting to environment");
                 this.env.connect();
             }
+        }, this);
+        this.onceAfter("ready", function(e) {
             var current_path = this.getPath();
             Y.log("App: Rerendering current view " + current_path, "info");
             if (this.get('activeView')) {

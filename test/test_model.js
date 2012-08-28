@@ -1,8 +1,3 @@
-// var 
-//    base= require("../lib/base.js");
-
-
-
 (function () {
  
 
@@ -10,7 +5,7 @@ describe("juju models", function() {
     var Y, models;
 
     before(function (done) {
-        Y = YUI(GlobalConfig).use("base", "juju-models", function (Y) {
+        Y = YUI(GlobalConfig).use("juju-models", function (Y) {
             models = Y.namespace("juju.models");
             done();
         });
@@ -38,32 +33,34 @@ describe("juju models", function() {
        function() {
         var sl = new models.ServiceList();
         var sul = new models.ServiceUnitList();
-        var mysql = new models.Service({name: "mysql"});
-        var wordpress = new models.Service({name: "wordpress"});
+        var mysql = new models.Service({id: "mysql"});
+        var wordpress = new models.Service({id: "wordpress"});
         sl.add([mysql, wordpress]);
         sl.getById("mysql").should.equal(mysql);
         sl.getById("wordpress").should.equal(wordpress);
 
-        var my0 = new models.ServiceUnit({service:mysql,
-                                         name:"mysql/0"}),
-           my1 = new models.ServiceUnit({service:mysql,
-                                         name:"mysql/1"});
+        var my0 = new models.ServiceUnit({id:"mysql/0"}),
+           my1 = new models.ServiceUnit({id:"mysql/1"});
 
         sul.add([my0, my1]);
 
-        var wp0 = new models.ServiceUnit({service:wordpress,
-                                         name:"wordpress/0"}),
-           wp1 = new models.ServiceUnit({service:wordpress,
-                                         name:"wordpress/1"});
+        var wp0 = new models.ServiceUnit({id:"wordpress/0"}),
+           wp1 = new models.ServiceUnit({id:"wordpress/1"});
         sul.add([wp0, wp1]);
-        wp0.get("service").should.equal(wordpress);
+        wp0.get("service").should.equal("wordpress");
        
        sul.get_units_for_service(mysql, true).getAttrs(["id"]).id.should.eql(
            ["mysql/0", "mysql/1"]);
        sul.get_units_for_service(wordpress, true).getAttrs(
            ["id"]).id.should.eql(["wordpress/0", "wordpress/1"]);
     });
-             
+
+    it("service units should get service from unit name when missing", 
+       function() {
+           var service_unit = new models.ServiceUnit({id: "mysql/0"});
+           var service = service_unit.get("service");
+           service.should.equal("mysql");
+       });
              
     });
 })();

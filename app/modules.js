@@ -101,7 +101,7 @@ GlobalConfig = {
                     requires: [
 			"juju-controllers",
                         "juju-views",
-                        "juju-models",
+                        "juju-models"
 //                        "svg-layouts"
                     ]
                 }

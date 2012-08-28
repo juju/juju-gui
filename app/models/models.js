@@ -3,7 +3,8 @@ YUI.add("juju-models", function(Y) {
 var models = Y.namespace("juju.models");
 
 var Charm = Y.Base.create('charm', Y.Model, [], {
-    idAttribute: 'charm_id',
+    idAttribute: 'charm_id'
+    }, {
     ATTRS: {
 	charm_id: {},
 	name: {},
@@ -17,7 +18,8 @@ var Charm = Y.Base.create('charm', Y.Model, [], {
 models.Charm = Charm;
 
 var CharmList = Y.Base.create('charmList', Y.ModelList, [], {
-    model: Charm,
+    model: Charm
+    }, {
     ATTRS: {
     }
 });
@@ -36,7 +38,6 @@ Service = Y.Base.create('service', Y.Model, [], {
         // apps data store or requires explicit binding at
         // creation
     },
-
     ATTRS: {
 	name: {},
 	charm: {},
@@ -49,18 +50,23 @@ Service = Y.Base.create('service', Y.Model, [], {
 models.Service = Service;
 
 ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
-    model: Service,
+    model: Service
+    }, {
     ATTRS: {
     }
 });
 models.ServiceList = ServiceList;
 
-ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {
+ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
 //    idAttribute: 'name',
-
+    {
     ATTRS: {
-	name: {},
-	service: {},
+	service: {
+            valueFn: function(name) {
+                var unit_name = this.get("id");
+                return unit_name.split("/", 1)[0];
+            }
+        },
 	machine: {},
 	agent_state: {},
 	// relations to unit relation state.
@@ -80,12 +86,15 @@ models.ServiceUnit = ServiceUnit;
 ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
     model: ServiceUnit,
     get_units_for_service: function(service, asList) {
-        var options = {};
+        var options = {},
+            sid = service.get("id");
+
         if (asList !== undefined) {
             options.asList = true;
         }
+        
         var units = this.filter(options, function(m) {
-            return m.get("service").get("id") === service.get("id");
+            return m.get("service") == sid;
         });
         return units;
     },
@@ -105,7 +114,8 @@ ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
 models.ServiceUnitList = ServiceUnitList;
 
 Machine = Y.Base.create('machine', Y.Model, [], {
-    idAttribute: 'machine_id',
+    idAttribute: 'machine_id'
+    }, {
     ATTRS: {
 	machine_id: {},
 	public_address: {},
@@ -117,14 +127,16 @@ Machine = Y.Base.create('machine', Y.Model, [], {
 models.Machine = Machine;
 
 MachineList = Y.Base.create('machineList', Y.ModelList, [], {
-    model: Machine,
+    model: Machine
+    }, {
     ATTRS: {
     }
 });
 models.MachineList = MachineList;
 
 Relation = Y.Base.create('relation', Y.Model, [], {
-    idAttribute: 'relation_id',
+    idAttribute: 'relation_id'
+    }, {
     ATTRS: {
 	relation_id: {},
 	type: {},
@@ -133,7 +145,7 @@ Relation = Y.Base.create('relation', Y.Model, [], {
 });
 models.Relation = Relation;
 
-RelationList = Y.Base.create('relationList', Y.ModelList, [], {
+RelationList = Y.Base.create('relationList', Y.ModelList, [], {}, {
     ATTRS: {
     }
 });
@@ -233,6 +245,7 @@ Y.namespace("juju").db = new Database({});
 }, "0.1.0", {
     requires: [
         "model",
-        "model-list"
+        "model-list",
+        "model-list-lazy"
     ]
 });
