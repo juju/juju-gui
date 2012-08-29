@@ -3,11 +3,23 @@ YUI.add("juju-models", function(Y) {
 var models = Y.namespace("juju.models");
 
 var Charm = Y.Base.create('charm', Y.Model, [], {
-    idAttribute: 'charm_id'
+    idAttribute: 'charm_id',
+    charm_id_re: /((\w+):)?(\w+)\/(\w+)/,
+    parse_charm_id: function(id) {
+        if (!id) { id = this.get("id"); }
+        return this.charm_id_re.exec(id);
+        }
     }, {
     ATTRS: {
 	charm_id: {},
-	name: {},
+	name: {
+            valueFn: function(name) {
+                var match = this.parse_charm_id();
+                if (match) {
+                    return match[3] + "/" + match[4];
+                }
+            }
+        },
 	url: {},
 	description: {},
 	config: {},

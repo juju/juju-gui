@@ -13,8 +13,10 @@ describe("juju models", function() {
  
  
     it("must be able to create charm", function() {
-        var charm = new models.Charm({name: "mysql"});
-        charm.get("name").should.eql("mysql");
+        var charm = new models.Charm({id: "cs:precise/mysql-6"});
+        charm.get("id").should.equal("cs:precise/mysql-6");
+        // and verify the value function on the model
+        charm.get("name").should.equal("precise/mysql");
        });
 
     it("must be able to create charm list", function() {

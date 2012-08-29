@@ -79,6 +79,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         // Feed environment changes directly into the database.
         this.env.on('delta', this.db.on_delta, this.db);
 
+        
         // If the database updates redraw the view (distinct from model updates)
         // TODO - Bound views will automatically update this on individual models
         this.db.on('update', this.on_database_changed, this);
@@ -142,7 +143,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         var unit = this.db.units.getById(unit_id);
         this.showView("unit", {unit: unit, db: this.db});
     },
-
+        
     _prefetch_service: function(service) {
         // only prefetch once
         // we redispatch to the service view after we have status
@@ -162,7 +163,11 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             var charm_id = service.get('charm');
             var charm = this.db.charms.getById(charm_id);
             console.log("prefetching charm", charm_id, charm);
-            if (charm && !charm.get('loaded')) {
+            if (!charm) {
+                charm = new models.Charm({id: charm_id});
+                this.db.charms.add(charm);
+            }
+            if (!charm.get('loaded')) {
                 console.log("Get charm", charm_id);
                 this.env.get_charm(charm_id, Y.bind(this.load_charm, this));
             }
@@ -235,15 +240,16 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         var svc_data = evt.result;
         var svc = this.db.services.getById(svc_data.name);
         if (!svc) {
-            console.warn("Could not load service data for", evt.service_name, evt);
+            console.warn("Could not load service data for", 
+                evt.service_name, evt);
             return;
         }
-        svc.set('config', svc_data.config);
-        svc.set('constraints', svc_data.constraints);
-        // TODO: need to unify with .relations from status parse.
-        svc.set('rels', svc_data.rels);
-        svc.set('loaded', true);
-        svc.set('prefetch', false);
+        // TODO: need to unify with .relations from delta stream.
+        svc.setAttrs({'config': svc_data.config,
+                     'constraints': svc_data.constraints,
+                     'rels': svc_data.rels,
+                     'loaded': true,
+                     'prefetch': false});
         this.dispatch();
     },
 
@@ -255,14 +261,13 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             console.warn("Could not load charm data for", evt.charm_url, evt);
             return;
         }
-
-        charm.set('provides', charm_data.provides);
-        charm.set('peers', charm_data.peers);
-        charm.set('requires', charm_data.requires);
-        charm.set('config', charm_data.config);
-        charm.set('is_subordinate', charm_data.subordinate);
-        charm.set('revision', charm_data.revision);
-        charm.set('loaded', true);
+        charm.setAttrs({'provides': charm_data.provides,
+                        'peers': charm_data.peers,
+                        'requires': charm_data.requires,
+                        'config': charm_data.config,
+                        'is_subordinate': charm_data.subordinate,
+                        'revision': charm_data.revision,
+                        'loaded': true});
         this.dispatch();
     }
 

@@ -38,6 +38,12 @@ Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
     return ret;
 });
 
+Y.Handlebars.registerHelper('markdown', function(text) {
+    if (!text || text == undefined) {return '';}
+    return new Y.Handlebars.SafeString(
+        Y.Markdown.toHTML(text));
+});
+
 
 CharmView = Y.Base.create('CharmView', Y.View, [], {
     initializer: function () {
@@ -64,6 +70,7 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
             if (last_modified)
                 charm.last_change.created = new Date(last_modified * 1000);
             container.setHTML(this.template({'charm': charm}));
+
             container.one('#charm-deploy').on(
                 'click', Y.bind(this.on_charm_deploy, this));
         } else {
@@ -161,6 +168,7 @@ views.charm = CharmView;
         'datasource-jsonschema',
         'io-base',
         'json-parse',
+        'gallery-markdown',
         'view']
 });
 

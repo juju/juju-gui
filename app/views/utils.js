@@ -21,7 +21,7 @@ JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
 
     getApp: function() {
         var event_targets = this.getTargets();
-        console.log(event_targets)
+        console.log(event_targets);
         for (var et in event_targets) {
             if (et.name == "juju-gui") {
                 return et;
@@ -51,7 +51,28 @@ JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
         }
         classes = current && classes + " " + current || classes;
         return classes;
+    },
+
+    humanizeNumber: function(n) {
+        var units = [ [1000, 'K'], 
+                      [1000000, 'M'],
+                      [1000000000, 'B']],
+            result = n;
+
+        Y.each(units, function(sizer) {
+                var threshold = sizer[0],
+                    unit = sizer[1];
+                   if(n > threshold) {
+                    result = (n / threshold);
+                    if (n % threshold != 0) {
+                        result = result.toFixed(1);
+                    }
+                    result = result + unit;
+                }
+        });
+        return result;
     }
+
 });
 
 views.JujuBaseView = JujuBaseView;

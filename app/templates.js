@@ -127,7 +127,7 @@ function program1(depth0,data) {
   
     Templates['charm'] = Y.Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;
-  var buffer = "", stack1, foundHelper, functionType="function", escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
+  var buffer = "", stack1, foundHelper, functionType="function", escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing, self=this;
 
 function program1(depth0,data) {
   
@@ -182,7 +182,8 @@ function program5(depth0,data) {
   buffer += escapeExpression(stack1) + "</div>\n	      </div>\n	      <div class=\"control-group\">\n		<label class=\"control-label\">Description</label>\n		<div class=\"controls\">";
   stack1 = depth0.charm;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.description;
-  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  foundHelper = helpers.markdown;
+  stack1 = foundHelper ? foundHelper.call(depth0, stack1, {hash:{}}) : helperMissing.call(depth0, "markdown", stack1, {hash:{}});
   buffer += escapeExpression(stack1) + "</div>\n	      </div>\n	      \n	      <div class=\"control-group\">\n		<label class=\"control-label\">Last Change</label>\n		<div class=\"controls\">\n		  ";
   stack1 = depth0.charm;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.last_change;
@@ -412,11 +413,11 @@ function program1(depth0,data) {
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
   buffer += escapeExpression(stack1) + "</a></h1>\n	  <br/> <br/>\n    <div class=\"btn-group\">\n      <a href=\".\" class=\"btn\"><i class=\"icon-th\"></i> Units </a>\n      <a href=\"config\" class=\"btn\"><i class=\"icon-cog\"></i> Settings </a>\n      <a href=\"constraints\" class=\"btn\"><i class=\"icon-leaf\"></i> Constraints</a>\n      <a href=\"/charms/charms/";
   stack1 = depth0.charm;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.charm_name;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.name;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
   buffer += escapeExpression(stack1) + "/json\"\n         class=\"btn\"><i class=\"icon-book\"></i> Charm </a>\n      <button class=\"btn\"><i class=\"icon-ban-circle\"></i> Exposed </button>\n      <a href=\"relations\" class=\"btn\"><i class=\"icon-random\"></i> Relations </a>\n    </div>\n	</div>\n	<div class=\"span4\">\n	  <div class=\"well\">\n	    <span>\n	      <b>Charm:</b>\n	      <a href=\"/charms/charms/";
   stack1 = depth0.charm;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.charm_name;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.name;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
   buffer += escapeExpression(stack1) + "/json\">";
   stack1 = depth0.charm;

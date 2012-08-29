@@ -131,7 +131,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
         .attr("dy", "1em")
         .text(function(d) {
                   var units = m.units.get_units_for_service(d);
-                  return units.length;
+                  return self.humanizeNumber(units.length);
               });
 
         tree.start();
