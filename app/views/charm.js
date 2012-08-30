@@ -3,10 +3,7 @@ YUI.add("juju-view-charm-collection", function(Y) {
 var views = Y.namespace("juju.views"),
     Templates = views.Templates;
 
-var charm_store = new Y.DataSource.IO({
-    source: 'http://jujucharms.com:2464/'
-});
-
+var charm_store;
 /*
 charm_store.plug(
     Y.Plugin.DataSourceJSONSchema, {
@@ -48,6 +45,12 @@ Y.Handlebars.registerHelper('markdown', function(text) {
 CharmView = Y.Base.create('CharmView', Y.View, [], {
     initializer: function () {
         this.set('charm', null);
+        var app = Y.namespace("juju").AppInstance;
+        if (app && !charm_store) {
+            charm_store = new Y.DataSource.IO({
+                    source: app.get('charm_store_url')
+            });
+        }
         console.log("Loading charm view", this.get('charm_data_url'));
         charm_store.sendRequest({
         request: this.get('charm_data_url'),

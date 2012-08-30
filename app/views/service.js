@@ -5,10 +5,6 @@ var views = Y.namespace("juju.views"),
 
 ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
-    initializer: function() {
-        console.log("View: initialized: ServiceRelations");
-    },
-
     template: Templates["service-relations"],
 
     render: function() {
@@ -19,7 +15,7 @@ ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBase
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'relations': service.get('rels'),
-             'charm': service.get('charm').getAttrs()}
+             'charm': this.renderable_charm(service.get('charm'))}
             ));
     }
 });
@@ -28,9 +24,6 @@ views.service_relations = ServiceRelations;
 
 
 ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.JujuBaseView], {
-    initializer: function() {
-        console.log("View: initialized: ServiceConstraints");
-    },
 
     template: Templates["service-constraints"],
 
@@ -58,7 +51,7 @@ ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.Juju
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'constraints': display_constraints,
-             'charm': service.get('charm').getAttrs()}
+             "charm": this.renderable_charm(service.get('charm'))}
             ));
     }
 
@@ -67,9 +60,6 @@ ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.Juju
 views.service_constraints = ServiceConstraints;
 
 ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseView], {
-    initializer: function () {
-        console.log("View: initialized: ServiceConfig");
-    },
 
     template: Templates["service-config"],
 
@@ -85,8 +75,7 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
         }
 
         console.log('config', service.get('config'));
-        var charm_url = service.get('charm').get('id');
-        console.log('charm', charm_url, m.charms.getById(charm_url));
+        var charm_url = service.get('charm');
 
         // combine the charm schema and the service values for display.
         var charm =  m.charms.getById(charm_url);
@@ -107,7 +96,7 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'settings': settings,
-             'charm': service.get('charm').getAttrs()}
+             'charm': this.renderable_charm(service.get("charm"))}
             ));
     }
 });
@@ -115,10 +104,6 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
 views.service_config = ServiceConfigView;
 
 ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
-
-    initializer: function () {
-        console.log("View: Initialized: Service");
-    },
 
     template: Templates.service,
 
@@ -131,11 +116,11 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             console.log('not connected / maybe');
             return this;
         }
-        var units = m.units.get_units_for_service(service),
-            charm = m.charms.getById(service.get("charm"));
+        var units = m.units.get_units_for_service(service);
+
         container.setHTML(this.template(
             {'service': service.getAttrs(),
-             'charm': charm && charm.getAttrs() || {},
+             'charm': this.renderable_charm(service.get("charm")),
              'units': units.map(function(u) {
             return u.getAttrs();})
         }));
@@ -146,59 +131,6 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                 self.fire("showUnit", {unit_id: this.get('id')});
             });
         });
-        return this;
-    },
-
-    render_canvas: function() {
-        var self = this,
-            container = this.get('container'),
-            m = this.get('domain_models'),
-            service = this.get("model"),
-            units = m.units.get_units_for_service(service),
-            width = 800,
-            height = 600;
-
-        var pack = d3.layout.treemap()
-            .sort(null)
-            .size([256, 64])
-            .value(function(d) { return 1; });
-
-
-        var svg = d3.select(container.getDOMNode()).append("svg")
-        .attr("width", width)
-        .attr("height", height);
-
-        var node = svg.selectAll("rect")
-            .data(pack.nodes({children: units}).slice(1))
-            .enter().append("g")
-            .attr("class",  "unit")
-            .attr("transform", function(d) {
-                return "translate(" + d.x + ", " + d.y + ")";
-        })
-            .on("click", Y.bind(
-                function(m) {
-                    this.fire("showUnit", {unit: m})},
-                this));
-
-        node.append("rect")
-            .attr("class", function(d) {
-                    return self.stateToStyle(
-                        d.get('agent_state'), 'unit-border');})
-            .attr("width", function(d) {return d.dx;})
-            .attr("height", function(d) {return d.dy;});
-
-        var unit_labels = node.append("text").append("tspan")
-            .attr("class", "name")
-            .attr("x", 4)
-            .attr("y", "1em")
-            .text(function(d) {return d.get("id"); });
-
-        var addr_labels = node.append("text").append("tspan")
-            .attr("class", "address")
-            .attr("x", 4)
-            .attr("y", "3em")
-            .text(function(d) {return d.get("public_address"); });
-
         return this;
     }
 });

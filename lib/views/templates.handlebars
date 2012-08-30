@@ -1,3 +1,6 @@
+/*
+ * Generated code -- lib/views/templates.handlebars
+*/
 YUI.add('juju-templates', function (Y) {
 
     var Templates = Y.namespace('juju.views').Templates = {};

@@ -14,7 +14,7 @@ NavigationBarView = Y.Base.create('NavigationBarView', Y.View, [], {
 
     render: function () {
 	/* Navigation bar search defaults to show detailed charm collection results.
-
+        var app = Y.namespace("juju").AppInstance;
 	Y.one('#charm-search').plug(Y.Plugin.AutoComplete, {
 	    resultHighlighter: 'phraseMatch',
 	    minQueryLength: 3,
@@ -25,7 +25,7 @@ NavigationBarView = Y.Base.create('NavigationBarView', Y.View, [], {
 		}
 		return result.owner + "/" + result.series + "/" + result.name;
 	    },
-	    source: 'http://jujucharms.com:2464/search/json?search_text={query}'
+	    source: app.get('charm_search_url') + 'search/json?search_text={query}'
 	});
 	*/
 
@@ -35,7 +35,7 @@ NavigationBarView = Y.Base.create('NavigationBarView', Y.View, [], {
 
     show_charm_store: function(evt) {
 
-	console.log("clicked search")
+	console.log("clicked search");
         var app = this.get('app');
 	evt.preventDefault();
 	evt.stopImmediatePropagation();
@@ -51,7 +51,7 @@ NavigationBarView = Y.Base.create('NavigationBarView', Y.View, [], {
 
 });
 
-views.charm_search = NavigationBarView
+views.charm_search = NavigationBarView;
 }, "0.1.0", {
     requires: ['autocomplete', 
                'autocomplete-filters', 
