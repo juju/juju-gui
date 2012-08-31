@@ -79,7 +79,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         // Feed environment changes directly into the database.
         this.env.on('delta', this.db.on_delta, this.db);
 
-        
+
         // If the database updates redraw the view (distinct from model updates)
         // TODO - Bound views will automatically update this on individual models
         this.db.on('update', this.on_database_changed, this);
