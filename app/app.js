@@ -89,7 +89,6 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         });
 
         this.once('ready', function (e) {
-            Y.namespace("juju").AppInstance =  this;
             if (this.get("socket_url")) {
                 // Connect to the environment.
                 Y.log("App: Connecting to environment");

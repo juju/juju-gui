@@ -4,10 +4,6 @@ var views = Y.namespace("juju.views");
 
 JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
 
-    initializer: function() {
-        console.log("View: initialized: ", this.name);
-    },
-
     bindModelView: function(model) {
         model = model || this.get('model');
         // If this view has a model, bubble model events to the view.
@@ -23,20 +19,13 @@ JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
         this.after('*:change', this.render, this);
     },
 
-    getApp: function() {
-        return Y.namespace("juju").AppInstance;
-    },
-
-    renderable_charm: function(charm_name) {
-        var db = this.getApp().db, 
-            charm = db.charms.getById(charm_name);
+    renderable_charm: function(charm_name, db) {
+        var charm = db.charms.getById(charm_name);
         if (charm) {
-            console.log("RENDER CHARM", charm.getAttrs());
             return charm.getAttrs();
         }
         return null;
     },
-
 
     stateToStyle: function(state, current) {
         // todo also check relations

@@ -1,0 +1,24 @@
+{
+  "name": "Juju GUI",
+  "manifest_version": 2,
+  "version": "0.2.0",
+
+  "description": "Manage your Juju environment",
+  "icons": {
+    "128": "app/assets/images/juju-128.png"
+  },
+
+  "app": {
+    "urls": [
+      "*:///"
+    ],
+    "launch": {
+      "web_url": "http://:/"
+    }
+  },
+  "permissions": [
+    "unlimitedStorage",
+    "notifications",
+    "*"
+  ]
+}

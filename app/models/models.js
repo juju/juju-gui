@@ -258,6 +258,6 @@ Y.namespace("juju").db = new Database({});
     requires: [
         "model",
         "model-list",
-        "model-list-lazy"
+        "lazy-model-list"
     ]
 });

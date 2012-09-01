@@ -18,34 +18,25 @@
   <script src="test_app.js"></script>
 
   <script>
-     YUI().use('node', 'event', function(Y) {
-         Y.on('domready', function() {
+  YUI().use('node', 'event', function(Y) {
+     Y.on('domready', function() {
      
-         var config = GlobalConfig,
-             models, 
-             views;
-     
-         for (m in config.groups.juju.modules) {
-            var resource = config.groups.juju.modules[m];
+     var config = GlobalConfig;
+     for (group in config.groups) {
+          var group = config.groups[group];
+         for (m in group.modules) {
+            var resource = group.modules[m];
             if (!m || !resource.fullpath) {
               continue
             }
             resource.fullpath = resource.fullpath.replace('/', '../app/', 1);
          }
-
-         for (m in config.groups.d3.modules) {
-            var resource = config.groups.d3.modules[m];
-            if (!m || !resource.fullpath) {
-              continue
-            }
-            resource.fullpath = resource.fullpath.replace('/', '../app/', 1);
-         }
-
-         console.log("global config", GlobalConfig)
-         // Load before test runner
-         mocha.run();
-         });
+     }
+     console.log("global config", GlobalConfig)
+     // Load before test runner
+     mocha.run();
      });
+  });
   </script>
 
 </head>

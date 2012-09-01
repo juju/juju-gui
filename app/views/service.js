@@ -3,6 +3,16 @@ YUI.add("juju-view-service", function(Y) {
 var views = Y.namespace("juju.views"),
     Templates = views.Templates;
 
+BaseServiceView = Y.Base.create("BaseServiceView", Y.View, [views.JujuBaseView], {
+
+    initializer: function() {
+        console.log("View: initialized:", this.name);
+        this.bindModelView();
+    }
+
+});
+            
+
 ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
     template: Templates["service-relations"],
@@ -15,7 +25,7 @@ ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBase
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'relations': service.get('rels'),
-             'charm': this.renderable_charm(service.get('charm'))}
+             'charm': this.renderable_charm(service.get('charm'), m)}
             ));
     }
 });
@@ -51,7 +61,7 @@ ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.Juju
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'constraints': display_constraints,
-             "charm": this.renderable_charm(service.get('charm'))}
+             "charm": this.renderable_charm(service.get('charm'), m)}
             ));
     }
 
@@ -96,7 +106,7 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'settings': settings,
-             'charm': this.renderable_charm(service.get("charm"))}
+             'charm': this.renderable_charm(service.get("charm"), m)}
             ));
     }
 });
@@ -120,7 +130,7 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
         container.setHTML(this.template(
             {'service': service.getAttrs(),
-             'charm': this.renderable_charm(service.get("charm")),
+             'charm': this.renderable_charm(service.get("charm"), m),
              'units': units.map(function(u) {
             return u.getAttrs();})
         }));
@@ -137,7 +147,7 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
 views.service = ServiceView;
 }, "0.1.0", {
-    requires: ['juju-views-utils',
+    requires: ['juju-view-utils',
                'd3',
                'base-build',
                'handlebars',
