@@ -4,7 +4,7 @@ var models = Y.namespace("juju.models");
 
 var Charm = Y.Base.create('charm', Y.Model, [], {
     idAttribute: 'charm_id',
-    charm_id_re: /((\w+):)?(\w+)\/(\w+)/,
+    charm_id_re: /((\w+):)?(\w+)\/(\S+)-(\d+)/,
     parse_charm_id: function(id) {
         if (!id) { id = this.get("id"); }
         return this.charm_id_re.exec(id);

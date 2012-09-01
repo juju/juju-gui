@@ -19,6 +19,11 @@ describe("juju models", function() {
         charm.get("name").should.equal("precise/mysql");
        });
 
+    it("must be able to parse real-world charm names", function() {
+       var charm = new models.Charm({id:"cs:precise/openstack-dashboard-0"});
+       charm.get("name").should.equal("precise/openstack-dashboard");
+    });
+
     it("must be able to create charm list", function() {
         var c1 = new models.Charm({name: "mysql",
                                   description: "A DB"}),
