@@ -1,0 +1,62 @@
+
+
+
+
+Developer Install
+-----------------
+
+ Juju GUI uses nodejs based development tools.
+
+ You'll need nodejs & npm from the ppa::
+
+sudo add-apt-repository ppa:chris-lea/node.js
+sudo apt-get update
+sudo apt-get install nodejs npm
+
+
+ The gui frontend can be installed with::
+
+bzr branch lp:juju-ui trunk
+cd trunk
+make server
+
+
+ You'll also need to deploy a juju environment with REST api
+ access. Currently that work resides in a pipeline of juju
+ branches. The recommended branch to utilize as a server is
+ ``lp:~hazmat/juju/rapi-delta``.
+
+
+ You can utilize it with any environment, but for dev purposes, a
+ local environment works well. One environment option specific to this
+ branch is the api-port. A sample configuration appropriate::
+
+default: dev
+environments:
+  dev:
+    type: local
+    data-dir: /home/kapil/.juju/local
+    admin-secret: b3a5dee4fb8c4fc9a4db04751e5936f4
+    default-series: precise
+    juju-origin: ppa
+    api-port: 8081
+
+  Note juju-origin is set to the ppa, the api server runs outside of
+  the container, and is launched using whichever branch your using.
+  
+  Also note the api-port should be spec'd at 8081, which the gui's
+  initial environment connection currently defaults to.
+
+  You'll need to bootstrap the local environment, and deploy one
+  service. The api server needs access to the provisioning credentials
+  which are lazy initialized in juju upon usage.
+
+  After which the gui should be functional (it automatically polls the 
+  api server for establishing a websocket).
+ 
+
+   
+Running unit tests.
+-------------------
+
+ gnome-open tests/index.html
