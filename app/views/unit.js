@@ -1,22 +1,30 @@
 YUI.add("juju-view-unit", function(Y) {
 
-var views = Y.namespace("juju.views");
+var views = Y.namespace("juju.views"),
+    Templates = views.Templates;
 
 UnitView = Y.Base.create('UnitView', Y.View, [], {
     initializer: function () {
       console.log("view.init.unit", this.get('unit'));
     },
 
+    template: Templates["unit"],
+
     render: function () {
-      console.log("view.render.unit", this.get('unit').getAttrs());
-      var container = this.get('container'),
-          db = this.get('db'),
-          unit = this.get("unit"),
-          width = 800,
-          height = 600;
-      var svg = d3.select(container.getDOMNode()).append("svg")
-        .attr("width", width)
-        .attr("height", height);
+	console.log("view.render.unit", this.get('unit'));
+	var container = this.get('container'),
+            db = this.get('db'),
+            unit = this.get("unit");
+	UnitView.superclass.render.apply(this, arguments);
+
+	if (! this.get('unit')) {
+            container.setHTML('<div class="alert">Loading...</div>');
+	    return this;
+	}; 
+
+	container.setHTML(this.template(
+	    {'unit': this.get('unit')}));
+	return this;
     }
 });
 
