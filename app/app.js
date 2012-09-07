@@ -294,7 +294,6 @@ Y.namespace("juju").App = JujuGUI;
 
 }, "0.5.2", {
     requires: [
-        "juju-config",
 	"juju-models",
 	"juju-views",
 	"juju-controllers",
