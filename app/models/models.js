@@ -42,21 +42,15 @@ models.CharmList = CharmList;
 Service = Y.Base.create('service', Y.Model, [], {
 //    idAttribute: 'name',
 
-    get_unit_agent_states: function() {
-        // return an object with keys set to each unique agent state
-        // in this services units
-        // XXX: for this to work we need access to the units
-        // of this service, this either creates a dep on the
-        // apps data store or requires explicit binding at
-        // creation
-    },
     ATTRS: {
 	name: {},
 	charm: {},
 	config: {},
 	constraints: {},
 	exposed: {value: false},
-	relations: {}
+	relations: {},
+    unit_count: {},
+    aggregated_status: {}
     }
 });
 models.Service = Service;
@@ -119,6 +113,39 @@ ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
      * representation can be done in various renderings.
      */
     get_informative_state: function() {
+    },
+    /*
+     *  Return information about the state of the set of units for a
+     *  given service in the form of a map of agent states:
+     *  state => number of units in that state
+     */
+    get_informative_states_for_service: function(service) {
+        var aggregate_map = {}, aggregate_list = [],
+            units_for_service = this.get_units_for_service(service);
+
+        units_for_service.forEach(function(unit) {
+            var state = unit.get('agent_state');
+            aggregate_map[state] === undefined
+                ? aggregate_map[state] = 1
+                : aggregate_map[state]++;
+            
+        });
+
+        return aggregate_map;
+    },
+ 
+    /*
+     * Updates a service's unit count and aggregate state map during a
+     * delta, ensuring that they're up to date.
+     */
+    update_service_unit_aggregates: function(service) {
+        var aggregate = this.get_informative_states_for_service(service);
+        var sum = 0;
+        for (var agent_state in aggregate) {
+            sum += aggregate[agent_state];
+        }
+        service.set("unit_count", sum);
+        service.set("aggregated_status", aggregate);
     },
     ATTRS: {
     }
@@ -202,7 +229,7 @@ Database = Y.Base.create('database', Y.Base, [], {
     on_delta: function(delta_evt) {
         var changes = delta_evt.data.result;
         console.log("Delta", this, changes);
-        var change_type, model_class = null;
+        var change_type, model_class = null, self = this;
 
         changes.forEach(
             Y.bind(function(change) {
@@ -216,6 +243,9 @@ Database = Y.Base.create('database', Y.Base, [], {
                 var model_list = this[change_type + 's'];
                 this.process_model_delta(change, model_class, model_list);
             }, this));
+        this.services.each(function(service) {
+            self.units.update_service_unit_aggregates(service);
+        });
         this.fire('update');
     },
 
@@ -246,8 +276,8 @@ Database = Y.Base.create('database', Y.Base, [], {
             o = model_list.getById(data['id']);
             this._sync_bag(data, o);
         }
-    }
- 
+    },
+
 });
 
 models.Database = Database;
