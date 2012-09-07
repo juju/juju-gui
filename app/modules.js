@@ -102,7 +102,6 @@ GlobalConfig = {
                         "juju-controllers",
                         "juju-views",
                         "juju-models"
-//                        "svg-layouts"
                     ]
                 }
             }
