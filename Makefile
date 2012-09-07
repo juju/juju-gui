@@ -7,15 +7,14 @@ install:
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
 	@./bin/generateTemplates
 
+lint: install
+	@node_modules/jshint/bin/hint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
 
-test: install
-	@gnome-open test/index.html
+test: install 
+	@xdg-open test/index.html
 
 server: install
 	@echo "Customize config.js to modify server settings"
 	@node server.js
-
-lint:
-	@jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js`
 
 .PHONY: test lint server

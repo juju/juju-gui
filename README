@@ -1,7 +1,3 @@
-
-
-
-
 Developer Install
 -----------------
 
@@ -13,6 +9,14 @@ sudo add-apt-repository ppa:chris-lea/node.js
 sudo apt-get update
 sudo apt-get install nodejs npm
 
+ The linter will be installed locally per branch, but if you want editor
+ integration, you may want to install jshint globally in your system.
+
+sudo npm install -g jshint
+
+ For building the docs, you also need sphinx.
+
+sudo apt-get install python-sphinx
 
  The gui frontend can be installed with::
 
@@ -54,9 +58,15 @@ environments:
   After which the gui should be functional (it automatically polls the 
   api server for establishing a websocket).
  
-
    
 Running unit tests.
 -------------------
 
- gnome-open tests/index.html
+ xdg-open test/index.html
+
+
+Running lint
+------------
+
+ jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
+ 
