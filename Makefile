@@ -7,6 +7,8 @@ install:
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
 	@./bin/generateTemplates
 
+lint: install
+	@node_modules/jshint/bin/hint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
 
 test: install 
 	@xdg-open test/index.html
