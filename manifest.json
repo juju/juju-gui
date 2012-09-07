@@ -19,6 +19,6 @@
   "permissions": [
     "unlimitedStorage",
     "notifications",
-    "http://jujucharms.com/*"
+    "*"
   ]
 }

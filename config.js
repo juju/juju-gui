@@ -1,10 +1,7 @@
 var config = { 
 "application": {
-    "socket_url": process.env.JUJU_WS || "ws://localhost:8081/ws",
-    "charm_store_url": "http://jujucharms.com/",
-    "charm_search_url": "http://jujucharms.com/"
-    
-  },
+    "socket_url": process.env.JUJU_WS || "ws://localhost:8081/ws"
+    },
 
 "server": {
       "port": 8888,

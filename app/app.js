@@ -143,7 +143,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         var unit = this.db.units.getById(unit_id);
         this.showView("unit", {unit: unit, db: this.db});
     },
-        
+
     _prefetch_service: function(service) {
         // only prefetch once
         // we redispatch to the service view after we have status
@@ -240,7 +240,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         var svc_data = evt.result;
         var svc = this.db.services.getById(svc_data.name);
         if (!svc) {
-            console.warn("Could not load service data for", 
+            console.warn("Could not load service data for",
                 evt.service_name, evt);
             return;
         }
