@@ -8,11 +8,14 @@ install:
 	@./bin/generateTemplates
 
 
-test: install 
+test: install
 	@gnome-open test/index.html
 
-server: install 
+server: install
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
-.PHONY: test
+lint:
+	@jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
+
+.PHONY: test lint server
