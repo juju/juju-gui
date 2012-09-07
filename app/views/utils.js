@@ -1,13 +1,19 @@
+"use strict";
+
+var YUI = require("yui").YUI;
+
 YUI.add("juju-view-utils", function(Y) {
 
 var views = Y.namespace("juju.views");
 
-JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
+var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
 
     bindModelView: function(model) {
         model = model || this.get('model');
         // If this view has a model, bubble model events to the view.
-        model && model.addTarget(this);
+        if (model) {
+            model.addTarget(this);
+        }
 
         // If the model gets swapped out, reset targets accordingly.
         this.after('modelChange', function (ev) {
@@ -51,7 +57,7 @@ JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
     },
 
     humanizeNumber: function(n) {
-        var units = [ [1000, 'K'], 
+        var units = [ [1000, 'K'],
                       [1000000, 'M'],
                       [1000000000, 'B']],
             result = n;
@@ -61,7 +67,7 @@ JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
                     unit = sizer[1];
                    if(n > threshold) {
                     result = (n / threshold);
-                    if (n % threshold != 0) {
+                    if (n % threshold !== 0) {
                         result = result.toFixed(1);
                     }
                     result = result + unit;

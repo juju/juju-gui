@@ -1,8 +1,13 @@
+/*global d3: false */
+"use strict";
+
+var YUI = require("yui").YUI;
+
 YUI.add("juju-view-unit", function(Y) {
 
 var views = Y.namespace("juju.views");
 
-UnitView = Y.Base.create('UnitView', Y.View, [], {
+var UnitView = Y.Base.create('UnitView', Y.View, [], {
     initializer: function () {
       console.log("view.init.unit", this.get('unit'));
     },
@@ -28,6 +33,6 @@ views.unit = UnitView;
                'base',
                'handlebars',
                'node',
-               "view"]
+               'view']
 
 });
