@@ -1,9 +1,11 @@
+"use strict";
+/*global YUI:false */
 YUI.add("juju-view-service", function(Y) {
 
 var views = Y.namespace("juju.views"),
     Templates = views.Templates;
 
-BaseServiceView = Y.Base.create("BaseServiceView", Y.View, [views.JujuBaseView], {
+var BaseServiceView = Y.Base.create("BaseServiceView", Y.View, [views.JujuBaseView], {
 
     initializer: function() {
         console.log("View: initialized:", this.name);
@@ -11,9 +13,9 @@ BaseServiceView = Y.Base.create("BaseServiceView", Y.View, [views.JujuBaseView],
     }
 
 });
-            
 
-ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
+
+var ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
     template: Templates["service-relations"],
 
@@ -33,7 +35,7 @@ ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBase
 views.service_relations = ServiceRelations;
 
 
-ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.JujuBaseView], {
+var ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.JujuBaseView], {
 
     template: Templates["service-constraints"],
 
@@ -41,7 +43,7 @@ ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.Juju
         var container = this.get('container'),
                  self = this,
                     m = this.get('domain_models');
-        service = this.get('model');
+        var service = this.get('model');
         var constraints = service.get('constraints');
         var display_constraints = [];
 
@@ -69,7 +71,7 @@ ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.Juju
 
 views.service_constraints = ServiceConstraints;
 
-ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseView], {
+var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseView], {
 
     template: Templates["service-config"],
 
@@ -92,7 +94,7 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
         var config = service.get('config');
         var schema = charm.get('config');
 
-        settings = [];
+        var settings = [];
         var field_def;
 
         for (var field_name in config) {
@@ -113,7 +115,7 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
 
 views.service_config = ServiceConfigView;
 
-ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
+var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     template: Templates.service,
 

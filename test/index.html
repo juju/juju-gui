@@ -1,6 +1,7 @@
 <html>
 
 <head>
+  <meta charset="utf-8">
   <link rel="stylesheet" href="assets/mocha.css">
   <script src="../app/assets/javascripts/yui/yui/yui.js"></script>
   <script src="../app/modules.js"></script>
@@ -20,7 +21,7 @@
   <script>
   YUI().use('node', 'event', function(Y) {
      Y.on('domready', function() {
-     
+
      var config = GlobalConfig;
      for (group in config.groups) {
           var group = config.groups[group];
@@ -29,7 +30,8 @@
             if (!m || !resource.fullpath) {
               continue
             }
-            resource.fullpath = resource.fullpath.replace('/', '../app/', 1);
+            // resource.fullpath = resource.fullpath.replace('/\//', '../app/', 1);
+            resource.fullpath = '../app/' + resource.fullpath;
          }
      }
      console.log("global config", GlobalConfig)
@@ -43,7 +45,7 @@
 
 <body>
   <div id="omnibar"> </div>
-  <div id="main" class="container"> </div> 
+  <div id="main" class="container"> </div>
   <div id="mocha"></div>
 </body>
 </html>

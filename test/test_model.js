@@ -1,5 +1,10 @@
+"use strict";
+
+/*global after:false, before:false, describe:false, GlobalConfig:false,
+  it:false, YUI:false */
+
 (function () {
- 
+
 
 describe("juju models", function() {
     var Y, models;
@@ -10,8 +15,8 @@ describe("juju models", function() {
             done();
         });
     });
- 
- 
+
+
     it("must be able to create charm", function() {
         var charm = new models.Charm({id: "cs:precise/mysql-6"});
         charm.get("id").should.equal("cs:precise/mysql-6");
@@ -35,8 +40,8 @@ describe("juju models", function() {
            names[1].should.equal("logger");
        });
 
-             
-    it("service unit list should be able to get units of a given service", 
+
+    it("service unit list should be able to get units of a given service",
        function() {
         var sl = new models.ServiceList();
         var sul = new models.ServiceUnitList();
@@ -55,19 +60,19 @@ describe("juju models", function() {
            wp1 = new models.ServiceUnit({id:"wordpress/1"});
         sul.add([wp0, wp1]);
         wp0.get("service").should.equal("wordpress");
-       
+
        sul.get_units_for_service(mysql, true).getAttrs(["id"]).id.should.eql(
            ["mysql/0", "mysql/1"]);
        sul.get_units_for_service(wordpress, true).getAttrs(
            ["id"]).id.should.eql(["wordpress/0", "wordpress/1"]);
     });
 
-    it("service units should get service from unit name when missing", 
+    it("service units should get service from unit name when missing",
        function() {
            var service_unit = new models.ServiceUnit({id: "mysql/0"});
            var service = service_unit.get("service");
            service.should.equal("mysql");
        });
-             
+
     });
 })();

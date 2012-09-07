@@ -1,7 +1,5 @@
-/*global d3: false */
+/*global d3:false, YUI:false */
 "use strict";
-
-var YUI = require("yui").YUI;
 
 YUI.add("juju-view-unit", function(Y) {
 

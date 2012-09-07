@@ -1,16 +1,19 @@
+"use strict";
+/*global YUI:false, StatusView:false */
+
 // This is a temp view to get the router working
 // remove later, testing basic routing in App
 
 YUI.add("juju-status", function(Y) {
 
 var     views = Y.namespace("juju.views");
-            
 
-StatusView = Y.Base.create('StatusView', Y.View, [], {
+
+var StatusView = Y.Base.create('StatusView', Y.View, [], {
 
     initializer: function () {
         var template_src = Y.one("#t-status").getHTML();
-        this.template = Y.Handlebars.compile(template_src); 
+        this.template = Y.Handlebars.compile(template_src);
     },
 
     render: function () {

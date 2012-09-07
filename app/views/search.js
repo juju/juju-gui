@@ -1,6 +1,5 @@
 "use strict";
-
-var YUI = require("yui").YUI;
+/*global YUI:false */
 
 YUI.add("juju-view-charmsearch", function(Y) {
 

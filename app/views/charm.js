@@ -1,3 +1,6 @@
+"use strict";
+/*global YUI:false */
+
 YUI.add("juju-view-charm-collection", function(Y) {
 
 var views = Y.namespace("juju.views"),
@@ -36,13 +39,13 @@ Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
 });
 
 Y.Handlebars.registerHelper('markdown', function(text) {
-    if (!text || text == undefined) {return '';}
+    if (!text || text === undefined) {return '';}
     return new Y.Handlebars.SafeString(
         Y.Markdown.toHTML(text));
 });
 
 
-CharmView = Y.Base.create('CharmView', Y.View, [], {
+var CharmView = Y.Base.create('CharmView', Y.View, [], {
     initializer: function () {
         this.set('charm', null);
         var app = Y.namespace("juju").AppInstance;
@@ -83,7 +86,7 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
     },
 
     on_charm_data: function (io_request) {
-        charm = Y.JSON.parse(
+        var charm = Y.JSON.parse(
             io_request.response.results[0].responseText);
         console.log('results update', charm, this);
         this.set('charm', charm);
@@ -96,7 +99,7 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
     }
 });
 
-CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
+var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 
     initializer: function () {
         console.log("View: Initialized: Charm Collection", this.get('query'));
@@ -174,4 +177,3 @@ views.charm = CharmView;
         'gallery-markdown',
         'view']
 });
-
