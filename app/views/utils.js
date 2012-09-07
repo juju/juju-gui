@@ -15,8 +15,8 @@ var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
 
         // If the model gets swapped out, reset targets accordingly.
         this.after('modelChange', function (ev) {
-            ev.prevVal && ev.prevVal.removeTarget(this);
-            ev.newVal && ev.newVal.addTarget(this);
+            if (ev.prevVal) ev.prevVal.removeTarget(this);
+            if (ev.newVal) ev.newVal.addTarget(this);
         });
 
         // Re-render this view when the model changes.

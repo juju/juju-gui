@@ -1,3 +1,5 @@
+"use strict";
+
 YUI.add("juju-env", function(Y) {
 
 function Environment(config) {
@@ -96,7 +98,7 @@ Y.extend(Environment, Y.Base, {
 
     _dispatch_rpc_result: function(msg){
         if ('request_id' in msg) {
-            var tid = msg['request_id'];
+            var tid = msg.request_id;
             if (tid in this._txn_callbacks) {
                 console.log('Env: Dispatch Rpc');
                 this._txn_callbacks[tid].apply(this, [msg]);
@@ -130,7 +132,7 @@ Y.extend(Environment, Y.Base, {
             'op': 'add_relation',
             'endpoint_a': endpoint_a,
             'endpoint_b': endpoint_b}, callback);
-        
+
     },
 
     get_charm: function(charm_url, callback) {
@@ -162,9 +164,8 @@ Y.extend(Environment, Y.Base, {
 
     destroy_service: function(service, callback) {
         this._send_rpc({
-            'op': 'remove_relation',
-            'endpoint_a': endpoint_a,
-            'endpoint_b': endpoint_b}, callback);
+            'op': 'destroy_service',
+            'service': service}, callback);
     }
 
 });
