@@ -9,7 +9,7 @@ install:
 
 
 test: install 
-	@gnome-open test/index.html
+	@xdg-open test/index.html
 
 server: install 
 	@echo "Customize config.js to modify server settings"
