@@ -1,6 +1,5 @@
 "use strict";
-/*global after:false, before:false, describe:false, GlobalConfig:false,
-  it:false, YUI:false */
+
 // from nodejs runner
 // YUI = require("yui").YUI,
 //   base= require("../lib/base.js");

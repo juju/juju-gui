@@ -16,6 +16,6 @@ server: install
 	@node server.js
 
 lint:
-	@jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
+	@jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js`
 
 .PHONY: test lint server

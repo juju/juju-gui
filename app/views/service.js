@@ -1,5 +1,5 @@
 "use strict";
-/*global YUI:false */
+
 YUI.add("juju-view-service", function(Y) {
 
 var views = Y.namespace("juju.views"),

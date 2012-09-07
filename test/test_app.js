@@ -1,6 +1,4 @@
 "use strict";
-/*global after:false, before:false, describe:false, GlobalConfig:false,
-  it:false, YUI:false */
 
 function injectData(app, data) {
     var d = data || {"result": [["service", "add", {"charm": "cs:precise/wordpress-6", "id": "wordpress", "exposed": false}], ["service", "add", {"charm": "cs:precise/mysql-6", "id": "mysql"}], ["relation", "add", {"interface": "reversenginx", "scope": "global", "endpoints": [["wordpress", {"role": "peer", "name": "loadbalancer"}]], "id": "relation-0000000000"}], ["relation", "add", {"interface": "mysql", "scope": "global", "endpoints": [["mysql", {"role": "server", "name": "db"}], ["wordpress", {"role": "client", "name": "db"}]], "id": "relation-0000000001"}], ["machine", "add", {"agent-state": "running", "instance-state": "running", "id": 0, "instance-id": "local", "dns-name": "localhost"}], ["unit", "add", {"machine": 0, "agent-state": "started", "public-address": "192.168.122.113", "id": "wordpress/0"}], ["unit", "add", {"machine": 0, "agent-state": "started", "public-address": "192.168.122.222", "id": "mysql/0"}]], "op": "delta"};

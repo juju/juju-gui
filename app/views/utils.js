@@ -1,7 +1,5 @@
 "use strict";
 
-/*global YUI:false */
-
 YUI.add("juju-view-utils", function(Y) {
 
 var views = Y.namespace("juju.views");

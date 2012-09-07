@@ -1,5 +1,4 @@
 "use strict";
-/*global YUI:false, StatusView:false */
 
 // This is a temp view to get the router working
 // remove later, testing basic routing in App

@@ -1,8 +1,5 @@
 "use strict";
 
-/*global after:false, before:false, describe:false, GlobalConfig:false,
-  it:false, YUI:false */
-
 (function () {
 
 

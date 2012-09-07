@@ -1,5 +1,4 @@
 "use strict";
-/*global YUI:false, d3:false */
 
 YUI.add("juju-view-environment", function(Y) {
 

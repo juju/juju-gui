@@ -1,4 +1,3 @@
-/*global d3:false, YUI:false */
 "use strict";
 
 YUI.add("juju-view-unit", function(Y) {

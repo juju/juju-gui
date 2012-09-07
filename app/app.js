@@ -1,12 +1,14 @@
+"use strict";
+
 YUI.add("juju-gui", function(Y) {
 
 // Debug console access to YUI context.
-yui = Y;
+var yui = Y;
 
 var juju = Y.namespace('juju');
 var models = Y.namespace("juju.models");
 
-JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
+var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     views: {
         environment: {
             type: "juju.views.environment",
@@ -125,7 +127,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
     navigate_to_charm_collection: function(e) {
         console.log("Evt.Nav.Router charm collection");
-        query = Y.one('#charm-search').get('value');
+        var query = Y.one('#charm-search').get('value');
         this.navigate("/charms/?q=" + query);
     },
 
@@ -143,7 +145,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         var unit = this.db.units.getById(unit_id);
         this.showView("unit", {unit: unit, db: this.db});
     },
-        
+
     _prefetch_service: function(service) {
         // only prefetch once
         // we redispatch to the service view after we have status
@@ -240,7 +242,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         var svc_data = evt.result;
         var svc = this.db.services.getById(svc_data.name);
         if (!svc) {
-            console.warn("Could not load service data for", 
+            console.warn("Could not load service data for",
                 evt.service_name, evt);
             return;
         }
@@ -275,7 +277,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     ATTRS: {
         routes: {
             value: [
-		{path: "*", callback: 'show_charm_search'},
+                {path: "*", callback: 'show_charm_search'},
 
                 {path: "/charms/", callback: 'show_charm_collection'},
                 {path: "/charms/*charm_url", callback: 'show_charm'},
@@ -294,13 +296,13 @@ Y.namespace("juju").App = JujuGUI;
 
 }, "0.5.2", {
     requires: [
-	"juju-models",
-	"juju-views",
-	"juju-controllers",
-	"io",
-	"json-parse",
-	'app-base',
-	'app-transitions',
-	'base',
-	'node']
+        "juju-models",
+        "juju-views",
+        "juju-controllers",
+        "io",
+        "json-parse",
+        'app-base',
+        'app-transitions',
+        'base',
+        'node']
 });
