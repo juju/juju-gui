@@ -17,4 +17,4 @@ server: install
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
-.PHONY: test
+.PHONY: install lint server test
