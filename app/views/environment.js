@@ -1,9 +1,12 @@
+"use strict";
+/*global YUI:false, d3:false */
+
 YUI.add("juju-view-environment", function(Y) {
 
 var views = Y.namespace("juju.views"),
     Templates = views.Templates;
 
-EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
+var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
     events: {},
 
     initializer: function () {
@@ -51,7 +54,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
                 .attr("y1", function(d) { return d.source.y; })
                 .attr("x2", function(d) { return d.target.x; })
                 .attr("y2", function(d) { return d.target.y; });
-            
+
             node.attr("transform", function(d) {
                           return "translate(" + d.x + "," + d.y + ")"; });
         }
@@ -64,7 +67,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
             });
             return rel_services;
         }
-        
+
         function processRelations(rels) {
             var pairs = [];
             Y.each(rels, function(rel) {
@@ -72,7 +75,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
                 // skip peer for now
                 if (pair.length == 2) {
                     pairs.push({source: pair[0],
-                               target: pair[1]});                    
+                               target: pair[1]});
                 }
 
             });
@@ -84,7 +87,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
             .links(rel_data);
 
         var link = vis.selectAll("path.relation")
-            .data(rel_data, 
+            .data(rel_data,
                   function(d) {return d;});
 
         link.enter().insert("svg:line", "g.service")
