@@ -1,3 +1,5 @@
+"use strict";
+
 YUI.add("juju-models", function(Y) {
 
 var models = Y.namespace("juju.models");
@@ -11,8 +13,8 @@ var Charm = Y.Base.create('charm', Y.Model, [], {
         }
     }, {
     ATTRS: {
-	charm_id: {},
-	name: {
+        charm_id: {},
+        name: {
             valueFn: function(name) {
                 var match = this.parse_charm_id();
                 if (match) {
@@ -20,11 +22,11 @@ var Charm = Y.Base.create('charm', Y.Model, [], {
                 }
             }
         },
-	url: {},
-	description: {},
-	config: {},
-	metadata: {},
-	sha256: {}
+        url: {},
+        description: {},
+        config: {},
+        metadata: {},
+        sha256: {}
     }
 });
 models.Charm = Charm;
@@ -39,7 +41,7 @@ models.CharmList = CharmList;
 
 
 
-Service = Y.Base.create('service', Y.Model, [], {
+var Service = Y.Base.create('service', Y.Model, [], {
 //    idAttribute: 'name',
 
     get_unit_agent_states: function() {
@@ -51,17 +53,17 @@ Service = Y.Base.create('service', Y.Model, [], {
         // creation
     },
     ATTRS: {
-	name: {},
-	charm: {},
-	config: {},
-	constraints: {},
-	exposed: {value: false},
-	relations: {}
+        name: {},
+        charm: {},
+        config: {},
+        constraints: {},
+        exposed: {value: false},
+        relations: {}
     }
 });
 models.Service = Service;
 
-ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
+var ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
     model: Service
     }, {
     ATTRS: {
@@ -69,33 +71,33 @@ ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
 });
 models.ServiceList = ServiceList;
 
-ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
+var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
 //    idAttribute: 'name',
     {
     ATTRS: {
-	service: {
+        service: {
             valueFn: function(name) {
                 var unit_name = this.get("id");
                 return unit_name.split("/", 1)[0];
             }
         },
-	machine: {},
-	agent_state: {},
-	// relations to unit relation state.
-	relations: {},
-	
-	config: {},
-	is_subordinate: {
+        machine: {},
+        agent_state: {},
+        // relations to unit relation state.
+        relations: {},
+
+        config: {},
+        is_subordinate: {
             value: false // default
         },
-	open_ports: {},
-	public_address: {},
-	private_address: {}
+        open_ports: {},
+        public_address: {},
+        private_address: {}
     }
 });
 models.ServiceUnit = ServiceUnit;
 
-ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
+var ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
     model: ServiceUnit,
     get_units_for_service: function(service, asList) {
         var options = {},
@@ -104,18 +106,18 @@ ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
         if (asList !== undefined) {
             options.asList = true;
         }
-        
+
         var units = this.filter(options, function(m) {
             return m.get("service") == sid;
         });
         return units;
     },
     /*
-     *  Return information about the state of all units focused on the 
-     * 'worst' status information available. In this way if any unit is in 
+     *  Return information about the state of all units focused on the
+     * 'worst' status information available. In this way if any unit is in
      *  an error state we can report that for the whole list.
      *
-     * KT - Should return an aggregate count by state (map), so proproptional 
+     * KT - Should return an aggregate count by state (map), so proproptional
      * representation can be done in various renderings.
      */
     get_informative_state: function() {
@@ -125,20 +127,20 @@ ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
 });
 models.ServiceUnitList = ServiceUnitList;
 
-Machine = Y.Base.create('machine', Y.Model, [], {
+var Machine = Y.Base.create('machine', Y.Model, [], {
     idAttribute: 'machine_id'
     }, {
     ATTRS: {
-	machine_id: {},
-	public_address: {},
-	instance_id: {},
+        machine_id: {},
+        public_address: {},
+        instance_id: {},
     instance_state: {},
     agent_state: {}
     }
 });
 models.Machine = Machine;
 
-MachineList = Y.Base.create('machineList', Y.ModelList, [], {
+var MachineList = Y.Base.create('machineList', Y.ModelList, [], {
     model: Machine
     }, {
     ATTRS: {
@@ -146,25 +148,25 @@ MachineList = Y.Base.create('machineList', Y.ModelList, [], {
 });
 models.MachineList = MachineList;
 
-Relation = Y.Base.create('relation', Y.Model, [], {
+var Relation = Y.Base.create('relation', Y.Model, [], {
     idAttribute: 'relation_id'
     }, {
     ATTRS: {
-	relation_id: {},
-	type: {},
-	endpoints: {}
+        relation_id: {},
+        type: {},
+        endpoints: {}
     }
 });
 models.Relation = Relation;
 
-RelationList = Y.Base.create('relationList', Y.ModelList, [], {}, {
+var RelationList = Y.Base.create('relationList', Y.ModelList, [], {}, {
     ATTRS: {
     }
 });
 models.RelationList = RelationList;
 
-    
-Database = Y.Base.create('database', Y.Base, [], {
+
+var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
         this.services = new ServiceList();
         this.machines = new MachineList();
@@ -224,30 +226,31 @@ Database = Y.Base.create('database', Y.Base, [], {
         // TODO: need to bulk mutate and then send mutation event,
         // as is this is doing per attribute events.
         for (var vid in bag) {
-            value = bag[vid];
-            aid = vid.replace('-', "_");
+            var value = bag[vid];
+            var aid = vid.replace('-', "_");
             if (model.get(aid) != value) {
                 model.set(aid, value);
             }
         }
     },
 
-    process_model_delta: function(change, model_class, model_list) {
+    process_model_delta: function(change, ModelClass, model_list) {
         // console.log('model change', change);
         var change_kind = change[1];
         var data = change[2];
+        var o;
         if (change_kind == 'add') {
-            o = new model_class({id: data['id']});
+            o = new ModelClass({id: data.id});
             this._sync_bag(data, o);
             model_list.add(o);
         } else if (change_kind == 'delete') {
             model_list.remove(model_list.getById(data));
         } else if (change_kind == 'change') {
-            o = model_list.getById(data['id']);
+            o = model_list.getById(data.id);
             this._sync_bag(data, o);
         }
     }
- 
+
 });
 
 models.Database = Database;
