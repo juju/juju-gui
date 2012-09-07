@@ -229,7 +229,7 @@ Database = Y.Base.create('database', Y.Base, [], {
     on_delta: function(delta_evt) {
         var changes = delta_evt.data.result;
         console.log("Delta", this, changes);
-        var change_type, model_class = null, db = this;
+        var change_type, model_class = null, self = this;
 
         changes.forEach(
             Y.bind(function(change) {
@@ -244,7 +244,7 @@ Database = Y.Base.create('database', Y.Base, [], {
                 this.process_model_delta(change, model_class, model_list);
             }, this));
         this.services.each(function(service) {
-            db.units.update_service_unit_aggregates(service);
+            self.units.update_service_unit_aggregates(service);
         });
         this.fire('update');
     },
