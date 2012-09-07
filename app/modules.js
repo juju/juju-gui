@@ -19,9 +19,6 @@ GlobalConfig = {
         juju: {
             modules: {
 		// Primitives
-                "juju-config": {
-                  fullpath: "/config.js"
-                },
                 "svg-layouts" : {
                     fullpath: "/assets/javascripts/svg-layouts.js"
                 },
@@ -101,7 +98,6 @@ GlobalConfig = {
                 "juju-gui": {
                     fullpath: "/app.js",
                     requires: [
-                        "juju-config",
 			"juju-controllers",
                         "juju-views",
                         "juju-models"

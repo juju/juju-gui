@@ -43,9 +43,10 @@
     <!-- javascript away -->
     <script src="/assets/javascripts/yui/yui/yui-debug.js"></script>
     <script src="/modules.js"></script>
+    <script src="/config.js"></script>
     <script>
-      YUI(GlobalConfig).use(["juju-gui", "juju-config"], function(Y) {
-      app = new Y.juju.App(Y.namespace("juju").config);
+      YUI(GlobalConfig).use(["juju-gui"], function(Y) {
+      app = new Y.juju.App(juju_config);
       });
     </script>
   </body>
