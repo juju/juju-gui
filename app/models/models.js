@@ -45,12 +45,12 @@ var Service = Y.Base.create('service', Y.Model, [], {
 //    idAttribute: 'name',
 
     ATTRS: {
-	name: {},
-	charm: {},
-	config: {},
-	constraints: {},
-	exposed: {value: false},
-	relations: {},
+        name: {},
+        charm: {},
+        config: {},
+        constraints: {},
+        exposed: {value: false},
+        relations: {},
         unit_count: {},
         aggregated_status: {}
     }
@@ -127,15 +127,17 @@ var ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
 
         units_for_service.forEach(function(unit) {
             var state = unit.get('agent_state');
-            aggregate_map[state] === undefined
-                ? aggregate_map[state] = 1
-                : aggregate_map[state]++;
-            
+            if (aggregate_map[state] === undefined) {
+                aggregate_map[state] = 1;
+            } else {
+                aggregate_map[state]++;
+            }
+
         });
 
         return aggregate_map;
     },
- 
+
     /*
      * Updates a service's unit count and aggregate state map during a
      * delta, ensuring that they're up to date.

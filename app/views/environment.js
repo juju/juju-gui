@@ -38,7 +38,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         // the pan/zoom work
         var service_scale_width = d3.scale.log().range([164, 200]);
         var service_scale_height = d3.scale.log().range([64, 100]);
-        
+
         var tree = d3.layout.force()
             .on("tick", tick)
             .charge(-450)
@@ -115,7 +115,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 
         node.append("rect")
         .attr("class", "service-border")
-        .attr("width", function(d) { 
+        .attr("width", function(d) {
             return service_scale_width(d.get('unit_count')); })
         .attr("height", function(d) {
             return service_scale_height(d.get('unit_count')); });
@@ -142,17 +142,17 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 
         var status_chart = node.append("g")
             .attr("class", "service-status")
-            .attr("transform", "translate(30,32)")
+            .attr("transform", "translate(30,32)");
         var status_arcs = status_chart.selectAll("path")
             .data(function(d) {
                 var aggregate_map = d.get('aggregated_status'),
                     aggregate_list = [];
-                
+
                 for (var idx in aggregate_map) {
                     aggregate_list.push({name: idx, value: aggregate_map[idx]});
                 }
 
-                return status_chart_layout(aggregate_list)
+                return status_chart_layout(aggregate_list);
             })
             .enter().append("path")
             .attr("d", status_chart_arc)
@@ -166,10 +166,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         var unit_count = status_chart.append("text")
             .attr("class", "unit-count hide-count")
             .on("mouseover", function() {
-                d3.select(this).attr("class", "unit-count show-count")
+                d3.select(this).attr("class", "unit-count show-count");
             })
             .on("mouseout", function() {
-                d3.select(this).attr("class", "unit-count hide-count")
+                d3.select(this).attr("class", "unit-count hide-count");
             })
             .text(function(d) {
                 return self.humanizeNumber(d.get('unit_count'));
