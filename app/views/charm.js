@@ -94,6 +94,9 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
 CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 
     initializer: function () {
+        if (!this.get('charm_store')) {
+            this.set('charm_store', charm_store);
+        }
         console.log("View: Initialized: Charm Collection", this.get('query'));
         this.set("charms", []);
         this.set('current_request', null);
@@ -127,17 +130,21 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
             evt.stopImmediatePropagation();
         }
 
-        var query = Y.one('#charm-search').get('value');
-        if (!query) {
-            query = this.get('query');
-        } else {
+        var query;
+        var searchInput = Y.one('#charm-search');
+        if (searchInput) {
+            query = searchInput.get('value');
+        }
+        if (query) {
             this.set('query');
+        } else {
+            query = this.get('query');
         }
 
         // The handling in datasources-plugins is an example of doing this a bit better
         // ie. io cancellation outstanding requests, it does seem to cause some interference
         // with various datasource plugins though.
-        charm_store.sendRequest({
+        this.get('charm_store').sendRequest({
             request: 'search/json?search_text=' + query,
             callback: {
                 'success': Y.bind(this.on_results_change, this),

@@ -18,13 +18,13 @@ describe("Application", function() {
         });
 
   });
-             
+
   after(function(done) {
       var active_view = app.get("activeView");
       if (active_view) {
           active_view.destroy({remove: true});
       } else {
-          Y.one(app.get("container")).setHTML("");          
+          Y.one(app.get("container")).setHTML("");
       }
       done();
   });
@@ -35,11 +35,19 @@ describe("Application", function() {
       container.getAttribute("class").should.include("container");
   });
 
-  it("should be able to render the environment view with default data", 
+  it("should be able to render the environment view with default data",
      function() {
        var container = app.get("container");
        app.showView("environment", {domain_models: app.db});
        container.one("svg").should.not.equal(null);
   });
+
+    it('must show charm collection after performing search', function() {
+        // app.after('navigate', function() {
+        //     console.log('AFTER! =========================');
+        //     app.get('activeView').should.equal(app.views.charm_collection);
+        // });
+        app.navigate("/charms/?q=mongodb");
+    });
 
 });

@@ -16,11 +16,12 @@
   <script src="test_env.js"></script>
   <script src="test_model.js"></script>
   <script src="test_app.js"></script>
+  <script src="test_view.js"></script>
 
   <script>
   YUI().use('node', 'event', function(Y) {
      Y.on('domready', function() {
-     
+
      var config = GlobalConfig;
      for (group in config.groups) {
           var group = config.groups[group];
@@ -43,7 +44,7 @@
 
 <body>
   <div id="omnibar"> </div>
-  <div id="main" class="container"> </div> 
+  <div id="main" class="container"> </div>
   <div id="mocha"></div>
 </body>
 </html>
