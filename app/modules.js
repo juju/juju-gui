@@ -19,7 +19,6 @@ GlobalConfig = {
         juju: {
             modules: {
 		// Primitives
-
                 "svg-layouts" : {
                     fullpath: "/assets/javascripts/svg-layouts.js"
                 },
@@ -102,7 +101,6 @@ GlobalConfig = {
 			"juju-controllers",
                         "juju-views",
                         "juju-models"
-//                        "svg-layouts"
                     ]
                 }
             }
