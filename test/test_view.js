@@ -6,7 +6,8 @@
         before(function (done) {
             Y = YUI(GlobalConfig).use('juju-views', function (Y) {
                 views = Y.namespace('juju.views');
-                View = views.charm_collection;
+                CharmCollectionView = views.charm_collection;
+                // Use a local charm store.
                 localCharmStore = new Y.DataSource.Local({
                     source: [{
                         responseText: Y.JSON.stringify({
@@ -18,9 +19,12 @@
             });
         });
 
+        // Ensure the charm collection view correctly handles results.
         it('must be able to fetch search results', function() {
             var query = 'result';
-            MyView = Y.Base.create('MyView', View, [], {
+            MyView = Y.Base.create('MyView', CharmCollectionView, [], {
+                // Override to check the results returned by the local charm
+                // store.
                 on_results_change: function (io_request) {
                     MyView.superclass.on_results_change.apply(this, arguments);
                     var charms = this.get('charms');

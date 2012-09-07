@@ -54,6 +54,8 @@
               viewContainer: "#main",
               // FIXME: turn off transitions until they are fixed.
               transitions: false,
+              charm_store: new Y.DataSource.IO({
+                  source: 'http://jujucharms.com/'})
           });
       });
     </script>

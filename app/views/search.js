@@ -1,7 +1,7 @@
 YUI.add("juju-view-charmsearch", function(Y) {
 
 var views = Y.namespace("juju.views");
-            
+
 NavigationBarView = Y.Base.create('NavigationBarView', Y.View, [], {
 
     initializer: function () {
@@ -41,7 +41,7 @@ NavigationBarView = Y.Base.create('NavigationBarView', Y.View, [], {
 	evt.stopImmediatePropagation();
 
 	// if we're already on the page dont render.
-	if (app.get('activeView') == 'CharmCollectionView') 
+	if (app.get('activeView') == 'CharmCollectionView')
 	    return
 
 	charm_url = Y.one('#charm-search').get('value');
@@ -53,7 +53,7 @@ NavigationBarView = Y.Base.create('NavigationBarView', Y.View, [], {
 
 views.charm_search = NavigationBarView;
 }, "0.1.0", {
-    requires: ['autocomplete', 
-               'autocomplete-filters', 
+    requires: ['autocomplete',
+               'autocomplete-filters',
                'autocomplete-highlighters']
 });

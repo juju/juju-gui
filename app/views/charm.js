@@ -3,8 +3,6 @@ YUI.add("juju-view-charm-collection", function(Y) {
 var views = Y.namespace("juju.views"),
     Templates = views.Templates;
 
-var charm_store = new Y.DataSource.IO({source: 'http://jujucharms.com/'});
-
 /*
 charm_store.plug(
     Y.Plugin.DataSourceJSONSchema, {
@@ -47,11 +45,11 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
     initializer: function () {
         this.set('charm', null);
         console.log("Loading charm view", this.get('charm_data_url'));
-        charm_store.sendRequest({
-            request: this.get('charm_data_url'),
-            callback: {
-                'success': Y.bind(this.on_charm_data, this),
-                'failure': function er(e) { console.error(e.error); }
+        this.get('charm_store').sendRequest({
+        request: this.get('charm_data_url'),
+        callback: {
+            'success': Y.bind(this.on_charm_data, this),
+            'failure': function er(e) { console.error(e.error); }
         }});
     },
 
@@ -94,13 +92,10 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
 CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 
     initializer: function () {
-        if (!this.get('charm_store')) {
-            this.set('charm_store', charm_store);
-        }
         console.log("View: Initialized: Charm Collection", this.get('query'));
         this.set("charms", []);
         this.set('current_request', null);
-        Y.one('#omnibar').on("submit", Y.bind(this.on_results_change, this));
+        Y.one('#omnibar').on("submit", this.on_results_change, this);
         this.on_search_change();
     },
 
@@ -130,13 +125,9 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
             evt.stopImmediatePropagation();
         }
 
-        var query;
-        var searchInput = Y.one('#charm-search');
-        if (searchInput) {
-            query = searchInput.get('value');
-        }
+        var query = Y.one('#charm-search').get('value');
         if (query) {
-            this.set('query');
+            this.set('query', query);
         } else {
             query = this.get('query');
         }
