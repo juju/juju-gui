@@ -18,7 +18,8 @@ GlobalConfig = {
         },
         juju: {
             modules: {
-		// Primitives
+                // Primitives
+
                 "svg-layouts" : {
                     fullpath: "/assets/javascripts/svg-layouts.js"
                 },
@@ -27,11 +28,11 @@ GlobalConfig = {
                     fullpath: "/assets/javascripts/reconnecting-websocket.js"
                 },
 
-		// Views
+                // Views
                 "juju-view-utils": {
                     fullpath: "/views/utils.js"
                 },
-                    
+
                 "juju-view-environment": {
                     fullpath: "/views/environment.js"
                 },
@@ -55,7 +56,7 @@ GlobalConfig = {
                 "juju-view-charm": {
                     fullpath: "/views/charm.js"
                 },
-                        
+
                 "juju-templates": {
                   fullpath: "/templates.js"
                 },
@@ -64,22 +65,22 @@ GlobalConfig = {
                     use: [
                           "juju-templates",
                           "juju-view-utils",
-                          "juju-view-environment", 
-			  "juju-view-service", 
-			  "juju-view-unit",
-			  "juju-view-charmsearch",
-			  "juju-view-charm",
-			  "juju-view-charm-collection"]
+                          "juju-view-environment",
+                          "juju-view-service",
+                          "juju-view-unit",
+                          "juju-view-charmsearch",
+                          "juju-view-charm",
+                          "juju-view-charm-collection"]
                 },
-		
-		// Models
+
+                // Models
 
                 "juju-models": {
                     requires: ["model", "model-list"],
                     fullpath: "/models/models.js"
                 },
 
-		// Connectivity		
+                // Connectivity
                 "juju-env": {
                     requires: ["reconnecting-websocket"],
                     fullpath: "/store/env.js"
@@ -88,17 +89,17 @@ GlobalConfig = {
                 "juju-charm-store": {
                     fullpath: "/store/charm.js"
                 },
-		
 
-		"juju-controllers": {
-		    use: ["juju-env", "juju-charm-store"]
+
+                "juju-controllers": {
+                    use: ["juju-env", "juju-charm-store"]
                 },
 
-		// App
+                // App
                 "juju-gui": {
                     fullpath: "/app.js",
                     requires: [
-			"juju-controllers",
+                        "juju-controllers",
                         "juju-views",
                         "juju-models"
                     ]
