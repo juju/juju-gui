@@ -1,9 +1,12 @@
 "use strict";
 
+// Create a global for debug console access to YUI context.
+var yui;
+
 YUI.add("juju-gui", function(Y) {
 
-// Debug console access to YUI context.
-var yui = Y;
+// Assign the global for console access.
+yui = Y;
 
 var juju = Y.namespace('juju');
 var models = Y.namespace("juju.models");
