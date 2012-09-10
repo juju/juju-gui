@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 (function () {
 
@@ -19,19 +19,8 @@
                             testData.charmSearchResults)
                     }]
                 });
-                // Add a search input inside the `omnibar` element.
-                searchInput = Y.Node.create(
-                    '<input id="charm-search" name="query" type="text" />'
-                ).hide();
-                Y.one('#omnibar').append(searchInput);
                 done();
             });
-        });
-
-        after(function (done) {
-            // Clean up the search input added before.
-            searchInput.remove(true);
-            done();
         });
 
         // Ensure the charm collection view correctly handles results.
@@ -82,21 +71,3 @@
     });
 
 })();
-
-
-/*
-
-+ merge trunk
-+ controllare charm_store passato dinamicamente alla charm view
-+ controllare charm_store passato dinamicamente alla charm collection view
-+ modificare test_view in modo che aggiunga la search input dinamicamente
-  (da rimuovere in tearDown)
-+ modifica test in modo da usare dati veri:
-  http://jujucharms.com/search/json?search_text=mongodb
-- nuovo test con render e controllo charm in dom
-- fix mess in search.js e subscription in charm collection (deve puntare a un altro metodo)
-- controllare che la view non venga rigenerata quando è già attiva
-- controllare che la ricerca funzioni quando la view è già attiva
-
-
-*/

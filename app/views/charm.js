@@ -97,7 +97,7 @@ var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
         console.log("View: Initialized: Charm Collection", this.get('query'));
         this.set("charms", []);
         this.set('current_request', null);
-        Y.one('#omnibar').on("submit", this.on_results_change, this);
+        Y.one('#omnibar').on("submit", this.on_search_change, this);
         this.on_search_change();
     },
 

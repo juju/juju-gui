@@ -1,3 +1,4 @@
+'use strict';
 // Tests data.
 
 YUI(GlobalConfig).add('juju-tests-data', function(Y) {
