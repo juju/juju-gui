@@ -55,7 +55,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .attr("pointer-events", "all")
             .attr("width", width)
             .attr("height", height);
-
+        self.set('vis', vis);
 
         function tick() {
             link.attr("x1", function(d) { return d.source.x; })
@@ -111,7 +111,8 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .call(tree.drag)
             .attr("class", "service")
             .on("click", function(m) {
-                    self.fire("showService", {service: m});
+                (self.get('service_click_actions.' + 
+                          self.get('current_service_click_action')))(m, this, self);
             });
 
 
@@ -178,34 +179,116 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             });
 
         tree.start();
+        self.set('tree', tree);
     },
 
-    add_relation: function(e) {
-        this.set('current_service_click_action', add_relation_start);
-        // add .selectable-service to all .service-border
-        Y.all('.service-border').each(function() {
-            this.addClass('selectable-service');
-        });
+    /*
+     * Event handler for the add relation button
+     */
+    add_relation: function(evt) {
+        var curr_action = this.get('current_service_click_action');
+        if (curr_action == 'drill_down') {
+            this.set('current_service_click_action', 'add_relation_start');
+            // add .selectable-service to all .service-border
+            Y.all('.service-border').each(function() {
+                // cannot use addClass on SVG elements
+                this.setAttribute('class', 
+                    'service-border selectable-service');
+            });
+            Y.one('#add-relation-btn').addClass('active');
+        } else if (curr_action == 'add_relation_start' || 
+                curr_action == 'add_relation_end') {
+            this.set('current_service_click_action', 'drill_down');
+            // remove selectable border from all nodes
+            Y.all('.service-border').each(function() {
+                this.setAttribute('class', 'service-border');
+            });
+            Y.one('#add-relation-btn').removeClass('active');
+        } // otherwise do nothing
     }
 
 }, {
     ATTRS: {
-        current_service_click_action: 'drill_down',
+        current_service_click_action: { value: 'drill_down' },
         service_click_actions: {
-            drill_down: function(m) {
-                self.fire("showService", {service: m});
-            },
-            add_relation_start: function(m) {
-                // remove selectable border from current node
-                this.select('.service-border')
-                    .attr('class', 'service-border');
-                // store start service in attrs
-                self.set('add_relation_start_service', m);
-            },
-            add_relation_end: function(m) {
-                // remove selectable border from all nodes
-                // add temp relation between services
-                // fire event to add relation in juju
+            value: {
+                /*
+                 * Default action: view a service
+                 */
+                drill_down: function(m, context, view) {
+                    view.fire("showService", {service: m});
+                },
+
+                /*
+                 * Fired when clicking the first service in the add relation
+                 * flow.
+                 */
+                add_relation_start: function(m, context, view) {
+                    // remove selectable border from current node
+                    d3.select(context).select('.service-border')
+                        .attr('class', 'service-border');
+                    // store start service in attrs
+                    view.set('add_relation_start_service', m);
+                    // set click action
+                    view.set('current_service_click_action', 
+                            'add_relation_end');
+                },
+
+                /*
+                 * Fired when clicking the second service is clicked in the
+                 * add relation flow
+                 */
+                add_relation_end: function(m, context, view) {
+                    // remove selectable border from all nodes
+                    Y.all('.service-border').each(function() {
+                        this.setAttribute('class', 'service-border');
+                    });
+
+                    // Get the vis, tree, and links, build the new relation
+                    var vis = view.get('vis'),
+                        tree = view.get('tree'),
+                        store = view.get('store'),
+                        links = tree.links(),
+                        rel = {
+                            source: view.get('add_relation_start_service'),
+                            target: m
+                        };
+
+                    // add temp relation between services
+                    var link = vis.selectAll("path.pending-relation")
+                        .data([rel],
+                              function(d) {return d;});
+                    link.enter().insert("svg:line", "g.service")
+                        .attr("class", "relation pending-relation")
+                        .attr("x1", function(d) { return d.source.x; })
+                        .attr("y1", function(d) { return d.source.y; })
+                        .attr("x2", function(d) { return d.target.x; })
+                        .attr("y2", function(d) { return d.target.y; });
+                    links.push(rel);
+                    tree.links(links);
+
+                    // Animate the new line we've created to represent 
+                    // the relation
+                    tree.on('tick.pending-relation', function() {
+                        link.attr("x1", function(d) { return d.source.x; })
+                            .attr("y1", function(d) { return d.source.y; })
+                            .attr("x2", function(d) { return d.target.x; })
+                            .attr("y2", function(d) { return d.target.y; });
+                    });
+                    tree.start();
+                    // fire event to add relation in juju
+                    store.add_relation(
+                        rel.source.get('id'),
+                        rel.target.get('id'),
+                        function(resp) {
+                            Y.one('#add-relation-btn').removeClass('active');
+                            if (resp.err) {
+                                console.log('Error adding relation');
+                            }
+                        });
+                    // For now, set back to drill down
+                    view.set('current_service_click_action', 'drill_down');
+                }
             }
         }
     }
