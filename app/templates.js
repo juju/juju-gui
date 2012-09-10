@@ -59,26 +59,36 @@ function program1(depth0,data) {
 function program1(depth0,data) {
   
   var buffer = "", stack1, foundHelper;
-  buffer += "\n	    <li class=\"span3\">\n	      <div class=\"thumbnail well\" id=\"";
+  buffer += "\n            <li class=\"span3\">\n              <div class=\"thumbnail well\" id=\"";
   foundHelper = helpers.id;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.id; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "\">\n		<h5>";
+  buffer += escapeExpression(stack1) + "\">\n                <h5>";
   foundHelper = helpers.id;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.id; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</h5>\n		<span>";
+  buffer += escapeExpression(stack1) + "</h5>\n                <span>";
   foundHelper = helpers.agent_state;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.agent_state; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</span> <br/>\n		<span>";
+  buffer += escapeExpression(stack1) + "</span> <br/>\n                <span>";
   foundHelper = helpers.public_address;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.public_address; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</span>\n	      </div>\n	    </li>\n	    ";
+  buffer += escapeExpression(stack1) + "</span>\n              </div>\n            </li>\n            ";
   return buffer;}
 
-  buffer += " <div class=\"row\">\n	<div class=\"span8\">\n	  <h1><a href=\"/service/";
+function program3(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <form id=\"service-unit-control\">\n    <button type=\"button\" id=\"rm-service-unit\">-</button>\n    <input type=\"text\" id=\"num-service-units\" value=\"";
+  stack1 = depth0.service;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.unit_count;
+  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  buffer += escapeExpression(stack1) + "\" />\n    <button type=\"button\" id=\"add-service-unit\">+</button>\n  </form>\n";
+  return buffer;}
+
+  buffer += " <div class=\"row\">\n        <div class=\"span8\">\n          <h1><a href=\"/service/";
   stack1 = depth0.service;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.id;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
@@ -86,11 +96,11 @@ function program1(depth0,data) {
   stack1 = depth0.service;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.id;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</a></h1>\n	  <br/> <br/>\n    <div class=\"btn-group\">\n      <a href=\".\" class=\"btn\"><i class=\"icon-th\"></i> Units </a>\n      <a href=\"config\" class=\"btn\"><i class=\"icon-cog\"></i> Settings </a>\n      <a href=\"constraints\" class=\"btn\"><i class=\"icon-leaf\"></i> Constraints</a>\n      <a href=\"/charms/charms/";
+  buffer += escapeExpression(stack1) + "</a></h1>\n          <br/> <br/>\n    <div class=\"btn-group\">\n      <a href=\".\" class=\"btn\"><i class=\"icon-th\"></i> Units </a>\n      <a href=\"config\" class=\"btn\"><i class=\"icon-cog\"></i> Settings </a>\n      <a href=\"constraints\" class=\"btn\"><i class=\"icon-leaf\"></i> Constraints</a>\n      <a href=\"/charms/charms/";
   stack1 = depth0.charm;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.name;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "/json\"\n         class=\"btn\"><i class=\"icon-book\"></i> Charm </a>\n      <button class=\"btn\"><i class=\"icon-ban-circle\"></i> Exposed </button>\n      <a href=\"relations\" class=\"btn\"><i class=\"icon-random\"></i> Relations </a>\n    </div>\n	</div>\n	<div class=\"span4\">\n	  <div class=\"well\">\n	    <span>\n	      <b>Charm:</b>\n	      <a href=\"/charms/charms/";
+  buffer += escapeExpression(stack1) + "/json\"\n         class=\"btn\"><i class=\"icon-book\"></i> Charm </a>\n      <button class=\"btn\"><i class=\"icon-ban-circle\"></i> Exposed </button>\n      <a href=\"relations\" class=\"btn\"><i class=\"icon-random\"></i> Relations </a>\n    </div>\n        </div>\n        <div class=\"span4\">\n          <div class=\"well\">\n            <span>\n              <b>Charm:</b>\n              <a href=\"/charms/charms/";
   stack1 = depth0.charm;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.name;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
@@ -98,17 +108,22 @@ function program1(depth0,data) {
   stack1 = depth0.charm;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.id;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</a></span>\n	    <br/>\n	    <span> <b>Units:</b></span>\n	    <br/>\n	    <span> <b>Relations:</b></span>\n	    <br/>\n	    <span><b>Exposed:</b> ";
+  buffer += escapeExpression(stack1) + "</a></span>\n            <br/>\n            <span> <b>Units:</b></span>\n            <br/>\n            <span> <b>Relations:</b></span>\n            <br/>\n            <span><b>Exposed:</b> ";
   stack1 = depth0.service;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.exposed;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</span>\n	    <br/>\n	  </div>\n	</div>\n </div>\n\n <div class=\"row\">\n	<div class=\"span12\">\n	  <ul class=\"nav nav-tabs\">\n	    <li class=\"active\"><a href=\".\">All</a></li>\n	    <li><a href=\"?state=running\">Running</a></li>\n	    <li><a href=\"?state=pending\">Pending</a></li>\n	    <li><a href=\"?state=error\">Error</a></li>\n	  </ul>\n	</div>\n </div>\n\n\n <div class=\"collection\">\n	<div class=\"charm\">\n	  <ul class=\"thumbnails\">\n	    ";
+  buffer += escapeExpression(stack1) + "</span>\n            <br/>\n          </div>\n        </div>\n </div>\n\n <div class=\"row\">\n        <div class=\"span12\">\n          <ul class=\"nav nav-tabs\">\n            <li class=\"active\"><a href=\".\">All</a></li>\n            <li><a href=\"?state=running\">Running</a></li>\n            <li><a href=\"?state=pending\">Pending</a></li>\n            <li><a href=\"?state=error\">Error</a></li>\n          </ul>\n        </div>\n </div>\n\n\n <div class=\"collection\">\n        <div class=\"charm\">\n          <ul class=\"thumbnails\">\n            ";
   foundHelper = helpers.units;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)}); }
   else { stack1 = depth0.units; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
   if (!helpers.units) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "	    \n	  </ul>\n	</div>\n </div>\n\n";
+  buffer += "\n          </ul>\n        </div>\n </div>\n\n";
+  stack1 = depth0.charm;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.is_subordinate;
+  stack1 = helpers.unless.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(3, program3, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n";
   return buffer;});
   
     Templates['unit'] = Y.Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

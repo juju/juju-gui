@@ -129,20 +129,53 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             return this;
         }
         var units = m.units.get_units_for_service(service);
+	units.sort(function(a,b) {
+	    return a.get('number') - b.get('number');
+	});
+	var unit_ids = units.map(function(u) {
+	    return u.get('id');
+	});
+	unit_ids.reverse();
 
+        var charm_name = service.get("charm");
         container.setHTML(this.template(
             {'service': service.getAttrs(),
-             'charm': this.renderable_charm(service.get("charm"), m),
+             'charm': this.renderable_charm(charm_name, m),
              'units': units.map(function(u) {
-            return u.getAttrs();})
+                 return u.getAttrs();})
         }));
-        //console.log(service.charm.getAttrs(), service.getAttrs())
         container.all('div.thumbnail').each(function( el ) {
             el.on("click", function(evt) {
                 console.log("Click", this.getData('charm-url'));
                 self.fire("showUnit", {unit_id: this.get('id')});
             });
         });
+        // Hook up the service-unit-control.
+	// XXX: validation so that must have at least 1 unit.
+	var add_button = container.one('#add-service-unit');
+	if (add_button) {
+            add_button.on("click", function(evt) {
+                console.log("Click add-service-unit");
+		app.env.add_unit(service.get('id'), 1);
+            });
+	    var rm_button = container.one('#rm-service-unit');
+            rm_button.on("click", function(evt) {
+                console.log("Click rm-service-unit");
+		app.env.remove_units([unit_ids[0]]);
+            });
+	    var form = container.one('#service-unit-control');
+	    form.on('submit', function(evt) {
+		evt.preventDefault();
+		var field = container.one('#num-service-units');
+		var requested = parseInt(field.get('value'));
+		var num_delta = requested - service.get('unit_count');
+		if (num_delta > 0) {
+		    app.env.add_unit(service.get('id'), num_delta);
+		} else if (num_delta < 0) {
+		    app.env.remove_units(unit_ids.slice(0, Math.abs(num_delta)));
+		}
+	    });
+        };
         return this;
     }
 });

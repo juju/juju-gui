@@ -75,6 +75,12 @@ var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
                 return unit_name.split("/", 1)[0];
             }
         },
+	number: {
+            valueFn: function(name) {
+                var unit_name = this.get("id");
+                return parseInt(unit_name.split("/")[1]);
+            }
+	},
         machine: {},
         agent_state: {},
         // relations to unit relation state.
@@ -212,7 +218,7 @@ var Database = Y.Base.create('database', Y.Base, [], {
         this.units = new ServiceUnitList();
 
         // For model syncing by type. Charms aren't currently sync'd, only fetched
-        // on demand (their static).
+        // on demand (they are static).
         this.model_map = {
             'unit': ServiceUnit,
             'machine': Machine,
@@ -275,12 +281,15 @@ var Database = Y.Base.create('database', Y.Base, [], {
             o = new ModelClass({id: data.id});
             this._sync_bag(data, o);
             model_list.add(o);
-        } else if (change_kind == 'delete') {
+        } else if (change_kind == 'remove') {
             model_list.remove(model_list.getById(data));
         } else if (change_kind == 'change') {
             o = model_list.getById(data.id);
             this._sync_bag(data, o);
-        }
+        } else {
+	    console.log('Unknown change kind in process_model_delta: ',
+			change_kind);
+	}
     }
 
 });
