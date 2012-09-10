@@ -1,7 +1,9 @@
+"use strict";
+
 (function () {
 
     describe('juju charm collection view', function() {
-        var localCharmStore, View, views, Y;
+        var CharmCollectionView, localCharmStore, views, Y;
 
         before(function (done) {
             Y = YUI(GlobalConfig).use('juju-views', function (Y) {
@@ -22,7 +24,7 @@
         // Ensure the charm collection view correctly handles results.
         it('must be able to fetch search results', function() {
             var query = 'result';
-            MyView = Y.Base.create('MyView', CharmCollectionView, [], {
+            var MyView = Y.Base.create('MyView', CharmCollectionView, [], {
                 // Override to check the results returned by the local charm
                 // store.
                 on_results_change: function (io_request) {
@@ -44,10 +46,10 @@
 
 /*
 
-- merge trunk
-- controllare charm_store passato dinamicamente alla charm view
-- controllare charm_store passato dinamicamente alla charm collection view
-- fix mess in serach.js e subscription in charm collection (deve puntare a un altro metodo)
++ merge trunk
++ controllare charm_store passato dinamicamente alla charm view
++ controllare charm_store passato dinamicamente alla charm collection view
+- fix mess in search.js e subscription in charm collection (deve puntare a un altro metodo)
 - controllare che la view non venga rigenerata quando è già attiva
 - controllare che la ricerca funzioni quando la view è già attiva
 - modificare test_view in modo che aggiunga la search input dinamicamente
