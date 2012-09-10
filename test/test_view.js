@@ -37,8 +37,8 @@
         // Ensure the charm collection view correctly handles results.
         it('must be able to fetch search results', function() {
             var MyView = Y.Base.create('MyView', CharmCollectionView, [], {
-                // Override to check the results returned by the local charm
-                // store.
+                // Overriding to check the results returned by the local
+                // charm store.
                 on_results_change: function (io_request) {
                     MyView.superclass.on_results_change.apply(this, arguments);
                     var charms = this.get('charms');
@@ -48,7 +48,33 @@
                     }
                 }
             });
-            var view = new MyView({
+            new MyView({
+                query: testData.charmSearchQuery,
+                charm_store: localCharmStore});
+        });
+
+        // Ensure the search results are rendered inside the container.
+        it('must correctly render the search results', function() {
+            var container = Y.Node.create('<div id="test-container" />');
+            var MyView = Y.Base.create('MyView', CharmCollectionView, [], {
+                // Overriding to check the results as they are rendered in
+                // the container.
+                render: function () {
+                    MyView.superclass.render.apply(this, arguments);
+                    var charms = container.all('.thumbnails > li');
+                    // An element is rendered for each result.
+                    charms.size().should.equal(
+                        testData.charmSearchResults.results_size);
+                    // Each result contains the query string.
+                    charms.each(function(item) {
+                        item.getHTML().should.contain(
+                            testData.charmSearchQuery);
+                    });
+                    container.destroy();
+                }
+            });
+            new MyView({
+                container: container,
                 query: testData.charmSearchQuery,
                 charm_store: localCharmStore});
         });
@@ -65,7 +91,7 @@
 + controllare charm_store passato dinamicamente alla charm collection view
 + modificare test_view in modo che aggiunga la search input dinamicamente
   (da rimuovere in tearDown)
-- modifica test in modo da usare dati veri:
++ modifica test in modo da usare dati veri:
   http://jujucharms.com/search/json?search_text=mongodb
 - nuovo test con render e controllo charm in dom
 - fix mess in search.js e subscription in charm collection (deve puntare a un altro metodo)
