@@ -192,7 +192,7 @@ function program1(depth0,data) {
   
 
 
-  return "<div id=\"canvas\"></div>\n";});
+  return "<div id=\"canvas\"></div>\n<button id=\"add-relation-btn\">TEMP add relation button</button>\n";});
   
     Templates['service-config'] = Y.Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   helpers = helpers || Handlebars.helpers;

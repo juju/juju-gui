@@ -16,7 +16,15 @@ g.service {
     .name { font-weight: bold;
         font-family: "Ubuntu";
         font-size: 1.6em; fill: #333333;}
-    .service-border {stroke-width: 2px;}
+    .service-border {
+        stroke-width: 2px;
+
+        &.selectable-service {
+            -moz-box-shadow: 3px 3px 3px #008;
+            -webkit-box-shadow: 3px 3px 3px #008;
+            box-shadow: 3px 3px 3px #008;
+        }
+    }
     .unit-count {
         stroke-width: 0;
         text-anchor: middle;

@@ -4,7 +4,9 @@ var views = Y.namespace("juju.views"),
     Templates = views.Templates;
 
 EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
-    events: {},
+    events: {
+        '#add-relation-btn': {click: 'add_relation'}
+    },
 
     initializer: function () {
         console.log("View: Initialized: Env");
@@ -174,8 +176,37 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
             });
 
         tree.start();
+    },
+
+    add_relation: function(e) {
+        this.set('current_service_click_action', add_relation_start);
+        // add .selectable-service to all .service-border
+        Y.all('.service-border').each(function() {
+            this.addClass('selectable-service');
+        });
     }
 
+}, {
+    ATTRS: {
+        current_service_click_action: 'drill_down',
+        service_click_actions: {
+            drill_down: function(m) {
+                self.fire("showService", {service: m});
+            },
+            add_relation_start: function(m) {
+                // remove selectable border from current node
+                this.select('.service-border')
+                    .attr('class', 'service-border');
+                // store start service in attrs
+                self.set('add_relation_start_service', m);
+            },
+            add_relation_end: function(m) {
+                // remove selectable border from all nodes
+                // add temp relation between services
+                // fire event to add relation in juju
+            }
+        }
+    }
 });
 
 views.environment = EnvironmentView;
