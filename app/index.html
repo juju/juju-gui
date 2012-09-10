@@ -2,7 +2,6 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <!-- GENERATED FROM lib/views/index.handlebars -->
     <title>Juju Admin</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="description" content="">
@@ -44,19 +43,10 @@
     <!-- javascript away -->
     <script src="/assets/javascripts/yui/yui/yui-debug.js"></script>
     <script src="/modules.js"></script>
+    <script src="/config.js"></script>
     <script>
-      YUI(GlobalConfig).use("juju-gui", function(Y) {
-      app = new Y.juju.App({
-              serverRouting: false,
-              html5: true,
-              socket_url: 'ws://localhost:8081/ws',
-              contain : "#main",
-              viewContainer: "#main",
-              // FIXME: turn off transitions until they are fixed.
-              transitions: false,
-              charm_store: new Y.DataSource.IO({
-                  source: 'http://jujucharms.com/'})
-          });
+      YUI(GlobalConfig).use(["juju-gui"], function(Y) {
+        app = new Y.juju.App(juju_config);
       });
     </script>
   </body>

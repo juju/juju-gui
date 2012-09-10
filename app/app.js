@@ -1,12 +1,17 @@
+"use strict";
+
+// Create a global for debug console access to YUI context.
+var yui;
+
 YUI.add("juju-gui", function(Y) {
 
-// Debug console access to YUI context.
+// Assign the global for console access.
 yui = Y;
 
 var juju = Y.namespace('juju');
 var models = Y.namespace("juju.models");
 
-JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
+var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     views: {
         environment: {
             type: "juju.views.environment",
@@ -125,7 +130,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
     navigate_to_charm_collection: function(e) {
         console.log("Evt.Nav.Router charm collection");
-        query = Y.one('#charm-search').get('value');
+        var query = Y.one('#charm-search').get('value');
         this.navigate("/charms/?q=" + query);
     },
 
@@ -278,7 +283,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     ATTRS: {
         routes: {
             value: [
-		{path: "*", callback: 'show_charm_search'},
+                {path: "*", callback: 'show_charm_search'},
 
                 {path: "/charms/", callback: 'show_charm_collection'},
                 {path: "/charms/*charm_url", callback: 'show_charm'},
@@ -297,13 +302,13 @@ Y.namespace("juju").App = JujuGUI;
 
 }, "0.5.2", {
     requires: [
-	"juju-models",
-	"juju-views",
-	"juju-controllers",
-	"io",
-	"json-parse",
-	'app-base',
-	'app-transitions',
-	'base',
-	'node']
+        "juju-models",
+        "juju-views",
+        "juju-controllers",
+        "io",
+        "json-parse",
+        'app-base',
+        'app-transitions',
+        'base',
+        'node']
 });
