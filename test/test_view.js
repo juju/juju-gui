@@ -3,18 +3,20 @@
 (function () {
 
     describe('juju charm collection view', function() {
-        var CharmCollectionView, localCharmStore, searchInput, views, Y;
+        var CharmCollectionView, localCharmStore, searchInput,
+            testData, views, Y;
 
         before(function (done) {
-            Y = YUI(GlobalConfig).use('juju-views', function (Y) {
+            Y = YUI(GlobalConfig).use(
+                ['juju-views', 'juju-tests-data'], function (Y) {
+                testData = Y.namespace('juju-tests.data');
                 views = Y.namespace('juju.views');
                 CharmCollectionView = views.charm_collection;
                 // Use a local charm store.
                 localCharmStore = new Y.DataSource.Local({
                     source: [{
-                        responseText: Y.JSON.stringify({
-                            results: [{name: 'result 1'}, {name: 'result 2'}]
-                        })
+                        responseText: Y.JSON.stringify(
+                            testData.charmSearchResults)
                     }]
                 });
                 // Add a search input inside the `omnibar` element.
@@ -34,7 +36,6 @@
 
         // Ensure the charm collection view correctly handles results.
         it('must be able to fetch search results', function() {
-            var query = 'result';
             var MyView = Y.Base.create('MyView', CharmCollectionView, [], {
                 // Override to check the results returned by the local charm
                 // store.
@@ -42,12 +43,14 @@
                     MyView.superclass.on_results_change.apply(this, arguments);
                     var charms = this.get('charms');
                     for (var i = 0; i < charms.length; i++) {
-                        charms[i].name.should.contain(query);
+                        charms[i].name.should.contain(
+                            testData.charmSearchQuery);
                     }
                 }
             });
             var view = new MyView({
-                query: query, charm_store: localCharmStore});
+                query: testData.charmSearchQuery,
+                charm_store: localCharmStore});
         });
 
     });
