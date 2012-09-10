@@ -9,7 +9,7 @@ YUI.add("svg-layouts", function(Y) {
         }
         return rect;
     });
-            
+
 }, "0.0.1", {
     requires: ["node"]
 });

@@ -1,9 +1,11 @@
+"use strict";
+
 YUI.add("juju-view-environment", function(Y) {
 
 var views = Y.namespace("juju.views"),
     Templates = views.Templates;
 
-EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
+var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
     events: {
         '#add-relation-btn': {click: 'add_relation'}
     },
@@ -38,7 +40,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
         // the pan/zoom work
         var service_scale_width = d3.scale.log().range([164, 200]);
         var service_scale_height = d3.scale.log().range([64, 100]);
-        
+
         var tree = d3.layout.force()
             .on("tick", tick)
             .charge(-450)
@@ -60,7 +62,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
                 .attr("y1", function(d) { return d.source.y; })
                 .attr("x2", function(d) { return d.target.x; })
                 .attr("y2", function(d) { return d.target.y; });
-            
+
             node.attr("transform", function(d) {
                           return "translate(" + d.x + "," + d.y + ")"; });
         }
@@ -73,7 +75,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
             });
             return rel_services;
         }
-        
+
         function processRelations(rels) {
             var pairs = [];
             Y.each(rels, function(rel) {
@@ -81,7 +83,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
                 // skip peer for now
                 if (pair.length == 2) {
                     pairs.push({source: pair[0],
-                               target: pair[1]});                    
+                               target: pair[1]});
                 }
 
             });
@@ -93,7 +95,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
             .links(rel_data);
 
         var link = vis.selectAll("path.relation")
-            .data(rel_data, 
+            .data(rel_data,
                   function(d) {return d;});
 
         link.enter().insert("svg:line", "g.service")
@@ -115,7 +117,7 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
 
         node.append("rect")
         .attr("class", "service-border")
-        .attr("width", function(d) { 
+        .attr("width", function(d) {
             return service_scale_width(d.get('unit_count')); })
         .attr("height", function(d) {
             return service_scale_height(d.get('unit_count')); });
@@ -142,17 +144,17 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
 
         var status_chart = node.append("g")
             .attr("class", "service-status")
-            .attr("transform", "translate(30,32)")
+            .attr("transform", "translate(30,32)");
         var status_arcs = status_chart.selectAll("path")
             .data(function(d) {
                 var aggregate_map = d.get('aggregated_status'),
                     aggregate_list = [];
-                
+
                 for (var idx in aggregate_map) {
                     aggregate_list.push({name: idx, value: aggregate_map[idx]});
                 }
 
-                return status_chart_layout(aggregate_list)
+                return status_chart_layout(aggregate_list);
             })
             .enter().append("path")
             .attr("d", status_chart_arc)
@@ -166,10 +168,10 @@ EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView],
         var unit_count = status_chart.append("text")
             .attr("class", "unit-count hide-count")
             .on("mouseover", function() {
-                d3.select(this).attr("class", "unit-count show-count")
+                d3.select(this).attr("class", "unit-count show-count");
             })
             .on("mouseout", function() {
-                d3.select(this).attr("class", "unit-count hide-count")
+                d3.select(this).attr("class", "unit-count hide-count");
             })
             .text(function(d) {
                 return self.humanizeNumber(d.get('unit_count'));
