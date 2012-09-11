@@ -3,7 +3,7 @@
 (function () {
 
     describe('juju charm view', function() {
-        var CharmView, localCharmStore, views, Y;
+        var CharmView, juju, localCharmStore, testUtils, Y;
 
         var charmQuery = '/charms/precise/postgresql/json';
 
@@ -33,10 +33,13 @@
         };
 
         before(function (done) {
-            Y = YUI(GlobalConfig).use(['juju-views', 'node-event-simulate'],
-                function (Y) {
-                views = Y.namespace('juju.views');
-                CharmView = views.charm;
+            Y = YUI(GlobalConfig).use([
+                'juju-views', 'juju-tests-utils', 'juju-env',
+                'node-event-simulate'
+                ], function (Y) {
+                testUtils = Y.namespace('juju-tests.utils');
+                juju = Y.namespace('juju');
+                CharmView = juju.views.charm;
                 // Use a local charm store.
                 localCharmStore = new Y.DataSource.Local({
                     source: [{
@@ -48,18 +51,22 @@
         });
 
         // Ensure the charm view correctly requests a charm deploy.
-        it('must fire the deploy charm event when requested', function(done) {
+        it('must be able to deploy a charm', function(done) {
+            var conn = new testUtils.SocketStub();
+            var env = new juju.Environment({conn: conn});
+            env.connect();
+            conn.open();
             var charmView = new CharmView({
                 charm_data_url: charmQuery,
-                charm_store: localCharmStore
-            });
-            var deployCharmFired = false;
-            charmView.on('deployCharm', function() {
-                deployCharmFired = true;
+                charm_store: localCharmStore,
+                env: env
             });
             var deployInput = charmView.get('container').one('#charm-deploy');
             deployInput.after('click', function() {
-                deployCharmFired.should.equal(true);
+                console.log(conn.last_message());
+                var msg = conn.last_message();
+                msg.op.should.equal('deploy');
+                msg.charm_url.should.contain('postgresql');
                 done();
             });
             deployInput.simulate('click');
