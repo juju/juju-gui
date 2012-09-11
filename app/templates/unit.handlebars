@@ -1,12 +1,37 @@
-<h1> Unit View </h1>
-
 <br/>
-
 <br/>
 <br/>
 <br/>
 
- <p>
-      Hello world
- </p>
+<div class="row">
+  <div class="well">
+    <h1>{{unit.id}}</h1>
+    <b>{{service.charm}}</b>
+  </div>
+<div>
 
+<div class="row">
+  <div class="span12">
+    <h2>☷ Machine {{unit.machine}}</h2>
+    <table class="table table-striped table-bordered">
+      <tbody>
+        <tr>
+          <th>agent-state</th>
+          <td>{{machine.agent_state}}</td>
+        </tr>
+        <tr>
+          <th>instance-id</th>
+          <td>{{machine.instance_id}}</td>
+        </tr>
+        <tr>
+          <th>instance-state</th>
+          <td>{{machine.instance_state}}</td>
+        </tr>
+        <tr>
+          <th>public-address</th>
+          <td>{{machine.public_address}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
