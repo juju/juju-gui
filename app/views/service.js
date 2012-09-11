@@ -155,13 +155,22 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 	var add_button = container.one('#add-service-unit');
 	if (add_button) {
             add_button.on("click", function(evt) {
-                console.log("Click add-service-unit");
+		var field = container.one('#num-service-units');
+		var existing_value = parseInt(field.get('value'));
+                console.log("Click add-service-unit: ", existing_value);
+		field.set('value', existing_value + 1);
+		console.log("New value: ", parseInt(field.get('value')));
 		app.env.add_unit(service.get('id'), 1);
             });
 	    var rm_button = container.one('#rm-service-unit');
             rm_button.on("click", function(evt) {
-                console.log("Click rm-service-unit");
-		app.env.remove_units([unit_ids[0]]);
+		if (unit_ids.length > 1) {
+		    var field = container.one('#num-service-units');
+		    var existing_value = parseInt(field.get('value'));
+                    console.log("Click rm-service-unit");
+		    field.set('value', existing_value - 1);
+		    app.env.remove_units([unit_ids[0]]);
+		}
             });
 	    var form = container.one('#service-unit-control');
 	    form.on('submit', function(evt) {
@@ -172,7 +181,14 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 		if (num_delta > 0) {
 		    app.env.add_unit(service.get('id'), num_delta);
 		} else if (num_delta < 0) {
-		    app.env.remove_units(unit_ids.slice(0, Math.abs(num_delta)));
+		    if (requested < 1) {
+			console.log("Requested number of units < 1: ", requested);
+			// Reset the field to the previous value.
+			// Should show an alert.
+			field.set('value', units.length);
+		    } else {
+			app.env.remove_units(unit_ids.slice(0, Math.abs(num_delta)));
+		    }
 		}
 	    });
         };
