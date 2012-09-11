@@ -164,9 +164,9 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             });
             var rm_button = container.one('#rm-service-unit');
             rm_button.on("click", function(evt) {
-                if (unit_ids.length > 1) {
-                    var field = container.one('#num-service-units');
-                    var existing_value = parseInt(field.get('value'), 10);
+                var field = container.one('#num-service-units');
+                var existing_value = parseInt(field.get('value'), 10);
+                if (existing_value > 1) {
                     console.log("Click rm-service-unit");
                     field.set('value', existing_value - 1);
                     app.env.remove_units([unit_ids[0]]);
@@ -184,7 +184,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                     if (requested < 1) {
                         console.log("Requested number of units < 1: ", requested);
                         // Reset the field to the previous value.
-                        // Should show an alert.
+                        // Should show a warning.
                         field.set('value', units.length);
                     } else {
                         app.env.remove_units(unit_ids.slice(0, Math.abs(num_delta)));

@@ -1,7 +1,7 @@
- <div class="row">
-        <div class="span8">
-          <h1><a href="/service/{{service.id}}/"> Service {{service.id}}</a></h1>
-          <br/> <br/>
+<div class="row">
+  <div class="span8">
+    <h1><a href="/service/{{service.id}}/"> Service {{service.id}}</a></h1>
+    <br/> <br/>
     <div class="btn-group">
       <a href="." class="btn"><i class="icon-th"></i> Units </a>
       <a href="config" class="btn"><i class="icon-cog"></i> Settings </a>
@@ -11,50 +11,50 @@
       <button class="btn"><i class="icon-ban-circle"></i> Exposed </button>
       <a href="relations" class="btn"><i class="icon-random"></i> Relations </a>
     </div>
-        </div>
-        <div class="span4">
-          <div class="well">
-            <span>
-              <b>Charm:</b>
-              <a href="/charms/charms/{{charm.name}}/json">{{charm.id}}</a></span>
-            <br/>
-            <span> <b>Units:</b></span>
-            <br/>
-            <span> <b>Relations:</b></span>
-            <br/>
-            <span><b>Exposed:</b> {{service.exposed}}</span>
-            <br/>
-          </div>
-        </div>
- </div>
+  </div>
+  <div class="span4">
+    <div class="well">
+      <span>
+        <b>Charm:</b>
+        <a href="/charms/charms/{{charm.name}}/json">{{charm.id}}</a></span>
+      <br/>
+      <span> <b>Units:</b></span>
+      <br/>
+      <span> <b>Relations:</b></span>
+      <br/>
+      <span><b>Exposed:</b> {{service.exposed}}</span>
+      <br/>
+    </div>
+  </div>
+</div>
 
- <div class="row">
-        <div class="span12">
-          <ul class="nav nav-tabs">
-            <li class="active"><a href=".">All</a></li>
-            <li><a href="?state=running">Running</a></li>
-            <li><a href="?state=pending">Pending</a></li>
-            <li><a href="?state=error">Error</a></li>
-          </ul>
-        </div>
- </div>
+<div class="row">
+  <div class="span12">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href=".">All</a></li>
+      <li><a href="?state=running">Running</a></li>
+      <li><a href="?state=pending">Pending</a></li>
+      <li><a href="?state=error">Error</a></li>
+    </ul>
+  </div>
+</div>
 
 
- <div class="collection">
-        <div class="charm">
-          <ul class="thumbnails">
-            {{#units}}
-            <li class="span3">
-              <div class="thumbnail well" id="{{id}}">
-                <h5>{{id}}</h5>
-                <span>{{agent_state}}</span> <br/>
-                <span>{{public_address}}</span>
-              </div>
-            </li>
-            {{/units}}
-          </ul>
+<div class="collection">
+  <div class="charm">
+    <ul class="thumbnails">
+      {{#units}}
+      <li class="span3">
+        <div class="thumbnail well" id="{{id}}">
+          <h5>{{id}}</h5>
+          <span>{{agent_state}}</span> <br/>
+          <span>{{public_address}}</span>
         </div>
- </div>
+      </li>
+      {{/units}}
+    </ul>
+  </div>
+</div>
 
 {{#unless charm.is_subordinate}}
   <form id="service-unit-control">
