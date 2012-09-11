@@ -30,6 +30,21 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
             service = db.services.getById(unit.service).getAttrs(),
             machine = db.machines.getById(unit.machine).getAttrs();
 
+        var ip_description_chunks = [];
+        if (unit.public_address) {
+            ip_description_chunks.push(unit.public_address);
+        }
+        if (unit.private_address) {
+            ip_description_chunks.push(unit.private_address);
+        }
+        if (unit.open_ports) {
+            ip_description_chunks.push(unit.open_ports.join());
+        }
+        if (ip_description_chunks.length) {
+            unit.ip_description = ip_description_chunks.join(' | ');
+        }
+        unit.running = unit.agent_state == 'started';
+
         // XXX Why do I have to do this?  Is there a better way?
         if (!db.charms.getById(service.charm)) {
             charm = new models.Charm({id: service.charm});

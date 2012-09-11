@@ -1,4 +1,4 @@
-<br/>
+<br/> FIXME: The HTML is broken.  All pages have their tops cut off.
 <br/>
 <br/>
 <br/>
@@ -7,6 +7,18 @@
   <div class="well">
     <h1>{{unit.id}}</h1>
     <b>{{service.charm}}</b>
+    {{#unit.is_subordinate}} (subordinate){{/unit.is_subordinate}}
+    <div>
+      {{unit.ip_description}}
+      {{#unit.ip_description}}|{{/unit.ip_description}}
+      {{#unit.running}}
+        <span style="color: green">&#x25B6;</span>
+      {{/unit.running}}
+      {{^unit.running}}
+        <span style="color: red">&#x2b1b;</span>
+      {{/unit.running}}
+      {{unit.agent_state}}
+    </div>
   </div>
 <div>
 
