@@ -5,7 +5,6 @@ YUI.add("juju-view-charm-collection", function(Y) {
 var views = Y.namespace("juju.views"),
     Templates = views.Templates;
 
-var charm_store;
 /*
 charm_store.plug(
     Y.Plugin.DataSourceJSONSchema, {
@@ -47,19 +46,16 @@ Y.Handlebars.registerHelper('markdown', function(text) {
 var CharmView = Y.Base.create('CharmView', Y.View, [], {
     initializer: function () {
         this.set('charm', null);
-        var app = Y.namespace("juju").AppInstance;
-        if (app && !charm_store) {
-            charm_store = new Y.DataSource.IO({
-                    source: app.get('charm_store_url')
-            });
-        }
         console.log("Loading charm view", this.get('charm_data_url'));
-        charm_store.sendRequest({
-        request: this.get('charm_data_url'),
-        callback: {
-            'success': Y.bind(this.on_charm_data, this),
-            'failure': function er(e) { console.error(e.error); }
-        }});
+        this.get('charm_store').sendRequest({
+            request: this.get('charm_data_url'),
+            callback: {
+                'success': Y.bind(this.on_charm_data, this),
+                'failure': function er(e) {
+                    console.error(e.error);
+                }
+            }
+        });
     },
 
     template: Templates.charm,
@@ -104,7 +100,7 @@ var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
         console.log("View: Initialized: Charm Collection", this.get('query'));
         this.set("charms", []);
         this.set('current_request', null);
-        Y.one('#omnibar').on("submit", Y.bind(this.on_results_change, this));
+        Y.one('#omnibar').on("submit", this.on_search_change, this);
         this.on_search_change();
     },
 
@@ -135,16 +131,16 @@ var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
         }
 
         var query = Y.one('#charm-search').get('value');
-        if (!query) {
-            query = this.get('query');
+        if (query) {
+            this.set('query', query);
         } else {
-            this.set('query');
+            query = this.get('query');
         }
 
         // The handling in datasources-plugins is an example of doing this a bit better
         // ie. io cancellation outstanding requests, it does seem to cause some interference
         // with various datasource plugins though.
-        charm_store.sendRequest({
+        this.get('charm_store').sendRequest({
             request: 'search/json?search_text=' + query,
             callback: {
                 'success': Y.bind(this.on_results_change, this),

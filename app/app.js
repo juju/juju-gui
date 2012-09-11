@@ -219,13 +219,19 @@ var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
     show_charm_collection: function(req) {
         console.log("App: Route: Charm Collection", req.path, req.query);
-        this.showView('charm_collection', {'query': req.query.q});
+        this.showView('charm_collection', {
+            query: req.query.q,
+            charm_store: this.get('charm_store')
+        });
     },
 
     show_charm: function(req) {
-        console.log("App: Route: Charm", req.path, req.params);
+        console.log('App: Route: Charm', req.path, req.params);
         var charm_url = req.params.charm_url;
-        this.showView("charm", {"charm_data_url": charm_url});
+        this.showView('charm', {
+            charm_data_url: charm_url,
+            charm_store: this.get('charm_store')
+        });
     },
 
     /* Present on all views */
