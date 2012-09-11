@@ -30,21 +30,20 @@ var NavigationBarView = Y.Base.create('NavigationBarView', Y.View, [], {
             source: app.get('charm_search_url') + 'search/json?search_text={query}'
         });
         */
-
-        Y.one('#omnibar').on('submit', Y.bind(this.show_charm_store, this));
+        Y.one('#omnibar').on('submit', this.show_charm_store, this);
         return this;
     },
 
     show_charm_store: function(evt) {
-
         console.log("clicked search");
         var app = this.get('app');
+
+        // Do not render if we're already on the page.
+        if (app.get('activeView').name == 'CharmCollectionView')
+            return;
+
         evt.preventDefault();
         evt.stopImmediatePropagation();
-
-        // if we're already on the page dont render.
-        if (app.get('activeView') == 'CharmCollectionView')
-            return;
 
         var charm_url = Y.one('#charm-search').get('value');
         console.log('Fire show charm collection', this, charm_url);
