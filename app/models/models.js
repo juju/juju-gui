@@ -75,12 +75,12 @@ var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
                 return unit_name.split("/", 1)[0];
             }
         },
-	number: {
+        number: {
             valueFn: function(name) {
                 var unit_name = this.get("id");
-                return parseInt(unit_name.split("/")[1]);
+                return parseInt(unit_name.split("/")[1], 10);
             }
-	},
+        },
         machine: {},
         agent_state: {},
         // relations to unit relation state.
@@ -287,9 +287,9 @@ var Database = Y.Base.create('database', Y.Base, [], {
             o = model_list.getById(data.id);
             this._sync_bag(data, o);
         } else {
-	    console.log('Unknown change kind in process_model_delta: ',
-			change_kind);
-	}
+            console.log('Unknown change kind in process_model_delta: ',
+                        change_kind);
+        }
     }
 
 });

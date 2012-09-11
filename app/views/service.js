@@ -128,14 +128,15 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             console.log('not connected / maybe');
             return this;
         }
+        var app = Y.namespace("juju").AppInstance;
         var units = m.units.get_units_for_service(service);
-	units.sort(function(a,b) {
-	    return a.get('number') - b.get('number');
-	});
-	var unit_ids = units.map(function(u) {
-	    return u.get('id');
-	});
-	unit_ids.reverse();
+        units.sort(function(a,b) {
+            return a.get('number') - b.get('number');
+        });
+        var unit_ids = units.map(function(u) {
+            return u.get('id');
+        });
+        unit_ids.reverse();
 
         var charm_name = service.get("charm");
         container.setHTML(this.template(
@@ -151,47 +152,46 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             });
         });
         // Hook up the service-unit-control.
-	// XXX: validation so that must have at least 1 unit.
-	var add_button = container.one('#add-service-unit');
-	if (add_button) {
+        // XXX: validation so that must have at least 1 unit.
+        var add_button = container.one('#add-service-unit');
+        if (add_button) {
             add_button.on("click", function(evt) {
-		var field = container.one('#num-service-units');
-		var existing_value = parseInt(field.get('value'));
+                var field = container.one('#num-service-units');
+                var existing_value = parseInt(field.get('value'), 10);
                 console.log("Click add-service-unit: ", existing_value);
-		field.set('value', existing_value + 1);
-		console.log("New value: ", parseInt(field.get('value')));
-		app.env.add_unit(service.get('id'), 1);
+                field.set('value', existing_value + 1);
+                app.env.add_unit(service.get('id'), 1);
             });
-	    var rm_button = container.one('#rm-service-unit');
+            var rm_button = container.one('#rm-service-unit');
             rm_button.on("click", function(evt) {
-		if (unit_ids.length > 1) {
-		    var field = container.one('#num-service-units');
-		    var existing_value = parseInt(field.get('value'));
+                if (unit_ids.length > 1) {
+                    var field = container.one('#num-service-units');
+                    var existing_value = parseInt(field.get('value'), 10);
                     console.log("Click rm-service-unit");
-		    field.set('value', existing_value - 1);
-		    app.env.remove_units([unit_ids[0]]);
-		}
+                    field.set('value', existing_value - 1);
+                    app.env.remove_units([unit_ids[0]]);
+                }
             });
-	    var form = container.one('#service-unit-control');
-	    form.on('submit', function(evt) {
-		evt.preventDefault();
-		var field = container.one('#num-service-units');
-		var requested = parseInt(field.get('value'));
-		var num_delta = requested - service.get('unit_count');
-		if (num_delta > 0) {
-		    app.env.add_unit(service.get('id'), num_delta);
-		} else if (num_delta < 0) {
-		    if (requested < 1) {
-			console.log("Requested number of units < 1: ", requested);
-			// Reset the field to the previous value.
-			// Should show an alert.
-			field.set('value', units.length);
-		    } else {
-			app.env.remove_units(unit_ids.slice(0, Math.abs(num_delta)));
-		    }
-		}
-	    });
-        };
+            var form = container.one('#service-unit-control');
+            form.on('submit', function(evt) {
+                evt.preventDefault();
+                var field = container.one('#num-service-units');
+                var requested = parseInt(field.get('value'), 10);
+                var num_delta = requested - service.get('unit_count');
+                if (num_delta > 0) {
+                    app.env.add_unit(service.get('id'), num_delta);
+                } else if (num_delta < 0) {
+                    if (requested < 1) {
+                        console.log("Requested number of units < 1: ", requested);
+                        // Reset the field to the previous value.
+                        // Should show an alert.
+                        field.set('value', units.length);
+                    } else {
+                        app.env.remove_units(unit_ids.slice(0, Math.abs(num_delta)));
+                    }
+                }
+            });
+        }
         return this;
     }
 });
