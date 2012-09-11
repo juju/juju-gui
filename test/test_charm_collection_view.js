@@ -70,44 +70,4 @@
 
     });
 
-
-    describe('juju charm view', function() {
-        var CharmView, localCharmStore, testData, views, Y;
-
-        before(function (done) {
-            Y = YUI(GlobalConfig).use(
-                ['juju-views', 'juju-tests-data', 'node-event-simulate'],
-                function (Y) {
-                testData = Y.namespace('juju-tests.data');
-                views = Y.namespace('juju.views');
-                CharmView = views.charm;
-                // Use a local charm store.
-                localCharmStore = new Y.DataSource.Local({
-                    source: [{
-                        responseText: Y.JSON.stringify(testData.charmResults)
-                    }]
-                });
-                done();
-            });
-        });
-
-        // Ensure the charm view correctly requests a charm deploy.
-        it('must fire the deploy charm event when requested', function(done) {
-            var charmView = new CharmView({
-                charm_data_url: testData.charmQuery,
-                charm_store: localCharmStore});
-            var deployCharmFired = false;
-            charmView.on('deployCharm', function() {
-                deployCharmFired = true;
-            });
-            var deployInput = charmView.get('container').one('#charm-deploy');
-            deployInput.after('click', function() {
-                deployCharmFired.should.equal(true);
-                done();
-            });
-            deployInput.simulate('click');
-        });
-
-    });
-
 })();

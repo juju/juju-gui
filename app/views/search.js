@@ -38,7 +38,7 @@ var NavigationBarView = Y.Base.create('NavigationBarView', Y.View, [], {
         console.log("clicked search");
         var app = this.get('app');
 
-        // if we're already on the page dont render.
+        // Do not render if we're already on the page.
         if (app.get('activeView').name == 'CharmCollectionView')
             return;
 

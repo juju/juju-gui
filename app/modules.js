@@ -103,14 +103,6 @@ GlobalConfig = {
                         "juju-views",
                         "juju-models"
                     ]
-                },
-
-                // Configuration
-                "juju-config": {
-                    fullpath: "/config.js",
-                    requires: [
-                        "datasource-io"
-                    ]
                 }
             }
         }
