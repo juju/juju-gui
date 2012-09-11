@@ -124,11 +124,11 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                  self = this,
                     m = this.get('domain_models');
         var service = this.get('model');
+        var app = this.get('app');
         if (!service) {
             console.log('not connected / maybe');
             return this;
         }
-        var app = Y.namespace("juju").AppInstance;
         var units = m.units.get_units_for_service(service);
         units.sort(function(a,b) {
             return a.get('number') - b.get('number');

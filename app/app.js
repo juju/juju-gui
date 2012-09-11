@@ -69,7 +69,6 @@ var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     initializer: function () {
         // Create a client side database to store state.
         this.db = new models.Database();
-
         // Create an environment facade to interact with.
         this.env = new juju.Environment({'socket_url': this.get('socket_url')});
 
@@ -100,7 +99,7 @@ var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
                 this.env.connect();
             }
 
-            Y.log("App: Rerendering current view " + this.getPath(), "info");
+            Y.log("App: Re-rendering current view " + this.getPath(), "info");
             if (this.get('activeView')) {
                 this.get('activeView').render();
             } else {
@@ -188,7 +187,8 @@ var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             "App: Route: Service", req.params.id, req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView("service", {model: service, domain_models: this.db});
+        this.showView("service", {model: service, domain_models: this.db,
+				  app: this});
     },
 
     show_service_config: function(req) {
