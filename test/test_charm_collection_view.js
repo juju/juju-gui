@@ -108,7 +108,8 @@
             var container = Y.Node.create('<div id="test-container" />');
             var MyView = Y.Base.create('MyView', CharmCollectionView, [], {
                 // Overriding to check the results as they are rendered in
-                // the container.
+                // the container. Subclassing is required because render() is
+                // called by the `on_results_change` event handler.
                 render: function () {
                     MyView.superclass.render.apply(this, arguments);
                     var charms = container.all('.thumbnails > li');
