@@ -46,6 +46,7 @@ Y.Handlebars.registerHelper('markdown', function(text) {
 var CharmView = Y.Base.create('CharmView', Y.View, [], {
     initializer: function () {
         this.set('charm', null);
+        this.publish('deployCharm');
         console.log("Loading charm view", this.get('charm_data_url'));
         this.get('charm_store').sendRequest({
             request: this.get('charm_data_url'),
@@ -89,8 +90,9 @@ var CharmView = Y.Base.create('CharmView', Y.View, [], {
     },
 
     on_charm_deploy: function(evt) {
-        console.log('charm deploy', this.get('charm'));
-        // this.fire('');
+        var charm = this.get('charm');
+        console.log('charm deploy', charm);
+        this.fire('deployCharm');
     }
 });
 

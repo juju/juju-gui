@@ -91,19 +91,21 @@
             });
         });
 
-        // Ensure the charm collection view correctly handles results.
-        it('must be able to deploy a charm', function() {
-            console.log('++++++++++++++ CHARM +++++++++++++++++');
+        // Ensure the charm view correctly requests a charm deploy.
+        it('must fire the deploy charm event when requested', function(done) {
             var charmView = new CharmView({
                 charm_data_url: testData.charmQuery,
                 charm_store: localCharmStore});
+            var deployCharmFired = false;
+            charmView.on('deployCharm', function() {
+                deployCharmFired = true;
+            });
             var deployInput = charmView.get('container').one('#charm-deploy');
             deployInput.after('click', function() {
-                console.log('CLICKED!');
+                deployCharmFired.should.equal(true);
+                done();
             });
             deployInput.simulate('click');
-
-            console.log('++++++++++++++ CHARM +++++++++++++++++');
         });
 
     });
