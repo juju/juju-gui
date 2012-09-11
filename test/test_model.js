@@ -94,5 +94,7 @@ describe("juju models", function() {
            service.should.equal("mysql");
        });
 
+
+
     });
 })();

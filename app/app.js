@@ -8,8 +8,9 @@ YUI.add("juju-gui", function(Y) {
 // Assign the global for console access.
 yui = Y;
 
-var juju = Y.namespace('juju');
-var models = Y.namespace("juju.models");
+var juju = Y.namespace('juju'),
+    models = Y.namespace("juju.models"),
+    views = Y.namespace("juju.views");
 
 var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     views: {
@@ -63,7 +64,13 @@ var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         charm_search: {
             type: "juju.views.charm_search",
             preserve: true
+        },
+
+        notifications: {
+            type: "juju.views.NotificationsView",
+            preserve: true
         }
+
     },
 
     initializer: function () {
@@ -239,6 +246,19 @@ var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         next();
     },
 
+    show_notifications_view: function(req, res, next) {
+        var view = this.getViewInfo("notifications"),
+            instance = view.instance;
+        if (!instance) {
+            view.instance = new views.NotificationsView(
+                                {container: Y.one("#notifications"),
+                                 env: this.env,
+                                 model_list: this.db.notifications});
+            view.instance.render();
+        }
+        next();
+    },
+
     // Model interactions -> move to db layer
     load_service: function(evt) {
         console.log('load service', evt);
@@ -281,6 +301,7 @@ var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         routes: {
             value: [
                 {path: "*", callback: 'show_charm_search'},
+                {path: "*", callback: 'show_notifications_view'},
 
                 {path: "/charms/", callback: 'show_charm_collection'},
                 {path: "/charms/*charm_url", callback: 'show_charm'},

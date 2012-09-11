@@ -58,11 +58,13 @@ Y.extend(Environment, Y.Base, {
     on_open: function(data) {
         console.log("Env: Connected");
         this.set('connected', true);
+        this.fire("env:connect");
     },
 
     on_close: function(data) {
         console.log("Env: Disconnect");
         this.set('connected', false);
+        this.fire("env:disconnect");
     },
 
     on_message: function(evt) {

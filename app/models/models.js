@@ -195,12 +195,55 @@ var RelationList = Y.Base.create('relationList', Y.ModelList, [], {}, {
 models.RelationList = RelationList;
 
 
+var Notification = Y.Base.create('notification', Y.Model, [], {}, {
+    ATTRS: {
+        title: {},
+        message: {},
+        level: {value: "info"},
+        kind: {},
+        timestamp: {
+            valueFn: function() {return Y.Lang.now();}
+            },
+        seen: {value: false}
+    }
+});
+models.Notification = Notification;
+
+var NotificationList = Y.Base.create('notificationList', Y.ModelList, [], {
+    model: Notification,
+    comparator: function (model) {
+        // timestamp desc
+        return -model.get('timestamp');
+    },
+    get_unseen_count: function() {
+        return this.filter(function(m) {
+                return m.get("seen") == false;}).length;
+    },
+    get_notice_levels: function() {
+        var levels = {};
+        this.each(function(m) {
+            var level = m.get("level");
+            if (levels[level] !== undefined) {
+                levels[level]++;
+            } else {
+                levels[level] = 1;
+            }
+        });
+        return levels;
+    }
+      
+
+});
+models.NotificationList = NotificationList;
+
+
 var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
         this.services = new ServiceList();
         this.machines = new MachineList();
         this.charms = new CharmList();
         this.relations = new RelationList();
+        this.notifications = new NotificationList();
 
         // This one is dangerous.. we very well may not have capacity
         // to store a 1-1 representation of units in js.

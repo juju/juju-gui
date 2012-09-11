@@ -1,12 +1,12 @@
 GlobalConfig = {
 // Uncomment for debug versions of YUI.
-//    filter: 'debug',
+    filter: 'debug',
 
 // Uncomment for verbose logging of YUI
     debug: false,
 
 // Use Rollups
-    combine: true,
+    combine: false,
 
     groups: {
         d3: {
@@ -31,6 +31,10 @@ GlobalConfig = {
                 // Views
                 "juju-view-utils": {
                     fullpath: "/views/utils.js"
+                },
+                    
+                "juju-notifications": {
+                    fullpath: "/views/notifications.js"
                 },
 
                 "juju-view-environment": {
@@ -64,6 +68,7 @@ GlobalConfig = {
                 "juju-views":  {
                     use: [
                           "juju-templates",
+                          "juju-notifications",
                           "juju-view-utils",
                           "juju-view-environment",
                           "juju-view-service",

@@ -16,7 +16,9 @@
 
   <script src="test_env.js"></script>
   <script src="test_model.js"></script>
+  <script src="test_notifications.js"></script>
   <script src="test_app.js"></script>
+
 
   <script>
   YUI().use('node', 'event', function(Y) {
@@ -34,7 +36,6 @@
             resource.fullpath = '../app/' + resource.fullpath;
          }
      }
-     console.log("global config", GlobalConfig)
      // Load before test runner
      mocha.run();
      });
