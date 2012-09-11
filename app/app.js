@@ -73,6 +73,10 @@ var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         // Create an environment facade to interact with.
         this.env = new juju.Environment({'socket_url': this.get('socket_url')});
 
+        // Create a charm store.
+        this.charm_store = new Y.DataSource.IO({
+            source: this.get('charm_store_url')});
+
         // Event subscriptions
 
         // TODO: refactor per event views into a generic show view event.
@@ -221,7 +225,7 @@ var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         console.log("App: Route: Charm Collection", req.path, req.query);
         this.showView('charm_collection', {
             query: req.query.q,
-            charm_store: this.get('charm_store')
+            charm_store: this.charm_store
         });
     },
 
@@ -230,7 +234,7 @@ var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         var charm_url = req.params.charm_url;
         this.showView('charm', {
             charm_data_url: charm_url,
-            charm_store: this.get('charm_store')
+            charm_store: this.charm_store
         });
     },
 
