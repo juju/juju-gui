@@ -234,7 +234,8 @@ var JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         var charm_url = req.params.charm_url;
         this.showView('charm', {
             charm_data_url: charm_url,
-            charm_store: this.charm_store
+            charm_store: this.charm_store,
+            env: this.env
         });
     },
 

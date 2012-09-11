@@ -56,17 +56,20 @@
             var env = new juju.Environment({conn: conn});
             env.connect();
             conn.open();
+            // Create an instance of CharmView passing a customized env.
             var charmView = new CharmView({
                 charm_data_url: charmQuery,
                 charm_store: localCharmStore,
                 env: env
             });
+
             var deployInput = charmView.get('container').one('#charm-deploy');
             deployInput.after('click', function() {
                 console.log(conn.last_message());
                 var msg = conn.last_message();
                 msg.op.should.equal('deploy');
                 msg.charm_url.should.contain('postgresql');
+
                 done();
             });
             deployInput.simulate('click');
