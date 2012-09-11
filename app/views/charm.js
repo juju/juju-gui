@@ -48,11 +48,14 @@ var CharmView = Y.Base.create('CharmView', Y.View, [], {
         this.set('charm', null);
         console.log("Loading charm view", this.get('charm_data_url'));
         this.get('charm_store').sendRequest({
-        request: this.get('charm_data_url'),
-        callback: {
-            'success': Y.bind(this.on_charm_data, this),
-            'failure': function er(e) { console.error(e.error); }
-        }});
+            request: this.get('charm_data_url'),
+            callback: {
+                'success': Y.bind(this.on_charm_data, this),
+                'failure': function er(e) {
+                    console.error(e.error);
+                }
+            }
+        });
     },
 
     template: Templates.charm,
