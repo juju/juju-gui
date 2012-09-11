@@ -111,8 +111,16 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .call(tree.drag)
             .attr("class", "service")
             .on("click", function(m) {
+                // Get the current click action
+                var curr_click_action = 
+                    self.get('current_service_click_action');
+
+                // Fire the action named in the following scheme:
+                //  service_click_action.<action>
+                // with the service, the SVG node, and the view
+                // as arguments
                 (self.get('service_click_actions.' + 
-                          self.get('current_service_click_action')))(m, this, self);
+                      curr_click_action))(m, this, self);
             });
 
 
@@ -151,8 +159,11 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 var aggregate_map = d.get('aggregated_status'),
                     aggregate_list = [];
 
-                for (var idx in aggregate_map) {
-                    aggregate_list.push({name: idx, value: aggregate_map[idx]});
+                for (var status_name in aggregate_map) {
+                    aggregate_list.push({
+                        name: status_name, 
+                        value: aggregate_map[status_name]
+                    });
                 }
 
                 return status_chart_layout(aggregate_list);
@@ -191,9 +202,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             this.set('current_service_click_action', 'add_relation_start');
             // add .selectable-service to all .service-border
             Y.all('.service-border').each(function() {
-                // cannot use addClass on SVG elements
+                // cannot use addClass on SVG elements, so emulate it.
+                var currClasses = this.getAttribute('class');
                 this.setAttribute('class', 
-                    'service-border selectable-service');
+                    currClasses + ' selectable-service');
             });
             Y.one('#add-relation-btn').addClass('active');
         } else if (curr_action == 'add_relation_start' || 
@@ -201,7 +213,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             this.set('current_service_click_action', 'drill_down');
             // remove selectable border from all nodes
             Y.all('.service-border').each(function() {
-                this.setAttribute('class', 'service-border');
+                // Cannot use removeClass on SVG elements, so emulate it
+                var currClasses = this.getAttribute('class');
+                this.setAttribute('class',
+                    currClasses.replace('selectable-service', ''));
             });
             Y.one('#add-relation-btn').removeClass('active');
         } // otherwise do nothing
@@ -225,8 +240,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                  */
                 add_relation_start: function(m, context, view) {
                     // remove selectable border from current node
-                    d3.select(context).select('.service-border')
-                        .attr('class', 'service-border');
+                    var node = Y.one(context).one('.service-border');
+                    var currClasses = node.getAttribute('class');
+                    node.setAttribute('class', 
+                            currClasses.replace('selectable-service', ''));
                     // store start service in attrs
                     view.set('add_relation_start_service', m);
                     // set click action
@@ -241,7 +258,9 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 add_relation_end: function(m, context, view) {
                     // remove selectable border from all nodes
                     Y.all('.service-border').each(function() {
-                        this.setAttribute('class', 'service-border');
+                        var currClasses = this.getAttribute('class');
+                        this.setAttribute('class',
+                            currClasses.replace('selectable-service', ''));
                     });
 
                     // Get the vis, tree, and links, build the new relation
