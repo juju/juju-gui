@@ -1,10 +1,12 @@
-YUI.add('juju-view-unit', function(Y) {
+"use strict";
+
+YUI.add("juju-view-unit", function(Y) {
 
 var views = Y.namespace('juju.views'),
     models = Y.namespace("juju.models"),
     Templates = views.Templates;
 
-UnitView = Y.Base.create('UnitView', Y.View, [], {
+var UnitView = Y.Base.create('UnitView', Y.View, [], {
     initializer: function () {
         console.log('view.init.unit', this.get('unit'));
     },
@@ -51,11 +53,11 @@ UnitView = Y.Base.create('UnitView', Y.View, [], {
 
 views.unit = UnitView;
 
-}, '0.1.0', {
-    requires: [
-        'base',
-        'handlebars',
-        'node',
-        'view']
+}, "0.1.0", {
+    requires: ['d3',
+               'base',
+               'handlebars',
+               'node',
+               'view']
 
 });
