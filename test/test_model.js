@@ -94,14 +94,14 @@ describe('juju models', function() {
            service.should.equal('mysql');
        });
 
-    it("service units should report their number correctly",
+    it('service units should report their number correctly',
        function() {
-        var service_unit = new models.ServiceUnit({id: "mysql/5"});
+        var service_unit = new models.ServiceUnit({id: 'mysql/5'});
         var number = service_unit.get('number');
         number.should.equal(5);
        });
 
-    it("process_model_delta should handle remove changes correctly",
+    it('process_model_delta should handle remove changes correctly',
        function() {
         var db = new models.Database();
         var my0 = new models.ServiceUnit({id:'mysql/0', agent_state: 'pending'}),
@@ -109,7 +109,7 @@ describe('juju models', function() {
         db.units.add([my0, my1]);
         db.process_model_delta(
           ['unit', 'remove', 'mysql/1'], models.ServiceUnit, db.units);
-        var names = db.units.map(function(u) {return u.get("id");});
+        var names = db.units.map(function(u) {return u.get('id');});
         names.length.should.equal(1);
         names[0].should.equal('mysql/0');
        });

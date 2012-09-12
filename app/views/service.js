@@ -127,24 +127,24 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         var app = this.get('app');
 
         var add_units_cb = function(evt) {
-            console.log("add_units_cb with: ", evt.result);
+            console.log('add_units_cb with: ', evt.result);
             // Received acknowledgement message for the 'add_units' operation.
             // evt.results is an array of the new units to be created.  Pro-actively
             // add them to the database so they display as soon as possible.
-            var models = Y.namespace("juju.models");
+            var models = Y.namespace('juju.models');
             db.units.add(
                 Y.Array.map(evt.result, function(unit_name) {
                     return new models.ServiceUnit(
                         {id:unit_name, agent_state: 'pending', service:
-                         service.get('id')})}));
+                         service.get('id')});}));
             service.set('unit_count', service.get('unit_count') + evt.result.length);
             db.fire('update');
         };
 
         var remove_units_cb = function(evt) {
-            console.log("remove_units_cb with: ", arguments);
+            console.log('remove_units_cb with: ', arguments);
             Y.Array.each(evt.unit_names, function(unit_name) {
-                db.units.getById(unit_name).set('agent_state', 'stopping')
+                db.units.getById(unit_name).set('agent_state', 'stopping');
             });
             db.fire('update');
         };
@@ -179,19 +179,19 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         // Hook up the service-unit-control.
         var add_button = container.one('#add-service-unit');
         if (add_button) {
-            add_button.on("click", function(evt) {
+            add_button.on('click', function(evt) {
                 var field = container.one('#num-service-units');
                 var existing_value = parseInt(field.get('value'), 10);
-                console.log("Click add-service-unit: ", existing_value);
+                console.log('Click add-service-unit: ', existing_value);
                 field.set('value', existing_value + 1);
                 app.env.add_unit(service.get('id'), 1, add_units_cb);
             });
             var rm_button = container.one('#rm-service-unit');
-            rm_button.on("click", function(evt) {
+            rm_button.on('click', function(evt) {
                 var field = container.one('#num-service-units');
                 var existing_value = parseInt(field.get('value'), 10);
                 if (existing_value > 1) {
-                    console.log("Click rm-service-unit");
+                    console.log('Click rm-service-unit');
                     field.set('value', existing_value - 1);
                     app.env.remove_units([unit_ids[0]], remove_units_cb);
                 }
@@ -206,7 +206,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                     app.env.add_unit(service.get('id'), num_delta, add_units_cb);
                 } else if (num_delta < 0) {
                     if (requested < 1) {
-                        console.log("Requested number of units < 1: ", requested);
+                        console.log('Requested number of units < 1: ', requested);
                         // Reset the field to the previous value.
                         // Should show a warning.
                         field.set('value', units.length);

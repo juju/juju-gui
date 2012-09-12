@@ -23,7 +23,7 @@ var ENTER_KEY = 13;
       };
 
       this.msg = function(m) {
-          console.log("serializing env msg", m);
+          console.log('serializing env msg', m);
           this.onmessage({'data': Y.JSON.stringify(m)});
       };
 
@@ -48,10 +48,10 @@ var ENTER_KEY = 13;
         'juju-env', 'node-event-simulate',
         function (Y) {
           views = Y.namespace('juju.views');
-          models = Y.namespace("juju.models");
+          models = Y.namespace('juju.models');
           ServiceView = views.service;
           conn = new SocketStub();
-          juju = Y.namespace("juju");
+          juju = Y.namespace('juju');
           env = new juju.Environment({conn: conn});
           env.connect();
           conn.open();
@@ -67,21 +67,21 @@ var ENTER_KEY = 13;
     beforeEach(function (done) {
       container = Y.Node.create('<div id="test-container" />');
       db = new models.Database();
-      charm = new models.Charm({id: "mysql", name: "mysql",
-                                 description: "A DB"});
+      charm = new models.Charm({id: 'mysql', name: 'mysql',
+                                 description: 'A DB'});
       db.charms.add([charm]);
       my0 = new models.ServiceUnit({id:'mysql/0', agent_state: 'pending'}),
       my1 = new models.ServiceUnit({id:'mysql/1', agent_state: 'pending'}),
       my2 = new models.ServiceUnit({id:'mysql/2', agent_state: 'pending'});
       db.units.add([my1, my2, my0]);
-      service = new models.Service({id: "mysql", charm: "mysql", unit_count: db.units.size()});
-      db.services.add([service])
+      service = new models.Service({id: 'mysql', charm: 'mysql', unit_count: db.units.size()});
+      db.services.add([service]);
       done();
     });
 
     afterEach(function (done) {
       container.destroy();
-      service.destroy;
+      service.destroy();
       db.destroy();
       conn.messages = [];
       done();
@@ -99,7 +99,8 @@ var ENTER_KEY = 13;
       var view = new ServiceView(
         {container: container, model: service, domain_models: db, app: {env: env}});
       view.render();
-      expect(container.one('#service-unit-control')).to.not.exist;
+      // "var _ =" makes the linter happy.
+      var _ = expect(container.one('#service-unit-control')).to.not.exist;
     });
 
     it('should show the service units ordered by number', function () {
@@ -147,7 +148,8 @@ var ENTER_KEY = 13;
         container.all('div.thumbnail').get('id').length.should.equal(1);
         var control = container.one('#rm-service-unit');
         control.simulate('click');
-        expect(conn.last_message()).to.not.exist;
+        // "var _ =" makes the linter happy.
+        var _ = expect(conn.last_message()).to.not.exist;
       });
 
     it('should start with the proper number of units shown in the text field',
@@ -165,7 +167,7 @@ var ENTER_KEY = 13;
           {container: container, model: service, domain_models: db, app: {env: env}});
         view.render();
         var control = container.one('#num-service-units');
-        control.set('value', 1)
+        control.set('value', 1);
         var form = container.one('#service-unit-control');
         // form.submit() creates an event that is not intercepted.  As a
         // work-around we create a submit button so we can click it, which
@@ -184,7 +186,7 @@ var ENTER_KEY = 13;
           {container: container, model: service, domain_models: db, app: {env: env}});
         view.render();
         var control = container.one('#num-service-units');
-        control.set('value', 0)
+        control.set('value', 0);
         var form = container.one('#service-unit-control');
         // form.submit() creates an event that is not intercepted.  As a
         // work-around we create a submit button so we can click it, which
@@ -192,7 +194,8 @@ var ENTER_KEY = 13;
         var submit = Y.Node.create('<input type="submit"/>');
         form.append(submit);
         submit.simulate('click');
-        expect(conn.last_message()).to.not.exist;
+        // "var _ =" makes the linter happy.
+        var _ = expect(conn.last_message()).to.not.exist;
       });
 
     it('should add the correct number of units when entered via text field',
@@ -201,7 +204,7 @@ var ENTER_KEY = 13;
           {container: container, model: service, domain_models: db, app: {env: env}});
         view.render();
         var control = container.one('#num-service-units');
-        control.set('value', 7)
+        control.set('value', 7);
         var form = container.one('#service-unit-control');
         // form.submit() creates an event that is not intercepted.  As a
         // work-around we create a submit button so we can click it, which

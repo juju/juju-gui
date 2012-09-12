@@ -198,7 +198,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
         this.showView('service', {model: service, domain_models: this.db,
-				  app: this});
+                  app: this});
     },
 
     show_service_config: function(req) {

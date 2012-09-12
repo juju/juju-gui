@@ -77,8 +77,8 @@ var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
         },
         number: {
             valueFn: function(name) {
-                var unit_name = this.get("id");
-                return parseInt(unit_name.split("/")[1], 10);
+                var unit_name = this.get('id');
+                return parseInt(unit_name.split('/')[1], 10);
             }
         },
         machine: {},
