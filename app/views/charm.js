@@ -91,7 +91,13 @@ var CharmView = Y.Base.create('CharmView', Y.View, [], {
     on_charm_deploy: function(evt) {
         var charm = this.get('charm');
         console.log('charm deploy', charm);
+        // Generating charm url: see http://jujucharms.com/tools/store-missing
+        // for examples of charm addresses.
         var charmUrl = charm.series + '/' + charm.name;
+        if (charm.owner !== 'charmers') {
+            charmUrl = '~' + charm.owner + '/' + charmUrl;
+        }
+        charmUrl = 'cs:' + charmUrl;
         var env = this.get('env');
         // The deploy call generates an event chain leading to a call to
         // `app.on_database_changed()`, which re-dispatches the current view.

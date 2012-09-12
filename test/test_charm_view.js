@@ -71,7 +71,8 @@
                 var msg = conn.last_message();
                 // Ensure the websocket received the `deploy` message.
                 msg.op.should.equal('deploy');
-                msg.charm_url.should.contain('postgresql');
+                var expected = charmResults.series + '/' + charmResults.name;
+                msg.charm_url.should.contain(expected);
                 // A click to the deploy button redirects to the root page.
                 redirected.should.equal(true);
                 done();
