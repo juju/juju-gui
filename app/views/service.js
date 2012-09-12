@@ -141,6 +141,13 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             db.fire('update');
         };
 
+        var remove_units_cb = function(evt) {
+            console.log("remove_units_cb with: ", arguments);
+            Y.Array.each(evt.unit_names, function(unit_name) {
+                db.units.getById(unit_name).set('agent_state', 'stopping')
+            });
+            db.fire('update');
+        };
 
         if (!service) {
             console.log('not connected / maybe');
@@ -186,7 +193,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                 if (existing_value > 1) {
                     console.log("Click rm-service-unit");
                     field.set('value', existing_value - 1);
-                    app.env.remove_units([unit_ids[0]]);
+                    app.env.remove_units([unit_ids[0]], remove_units_cb);
                 }
             });
             var form = container.one('#service-unit-control');
@@ -204,7 +211,9 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                         // Should show a warning.
                         field.set('value', units.length);
                     } else {
-                        app.env.remove_units(unit_ids.slice(0, Math.abs(num_delta)));
+                        app.env.remove_units(
+                            unit_ids.slice(0, Math.abs(num_delta)),
+                            remove_units_cb);
                     }
                 }
             });
