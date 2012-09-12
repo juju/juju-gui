@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
 // from nodejs runner
-// YUI = require("yui").YUI,
-//   base= require("../lib/base.js");
+// YUI = require('yui').YUI,
+//   base= require('../lib/base.js');
 
 
 (function () {
@@ -25,7 +25,7 @@ var SocketStub = function () {
     };
 
     this.msg = function(m) {
-        console.log("serializing env msg", m);
+        console.log('serializing env msg', m);
         this.onmessage({'data': Y.JSON.stringify(m)});
     };
 
@@ -44,15 +44,15 @@ var SocketStub = function () {
 
 };
 
-describe("Juju environment", function() {
+describe('Juju environment', function() {
     var juju, conn, env, msg;
 
     before(function (done) {
         Y = YUI(GlobalConfig).use(
-            "base", "node", "json-parse", "juju-env",
+            'base', 'node', 'json-parse', 'juju-env',
             function (Y) {
                 conn = new SocketStub();
-                juju = Y.namespace("juju");
+                juju = Y.namespace('juju');
                 env = new juju.Environment({conn: conn});
                 env.connect();
                 conn.open();
@@ -65,7 +65,7 @@ describe("Juju environment", function() {
         done();
     });
 
-    it("can deploy a service", function(done) {
+    it('can deploy a service', function(done) {
         env.deploy('precise/mysql');
         msg = conn.last_message();
         msg.op.should.equal('deploy');
@@ -73,7 +73,7 @@ describe("Juju environment", function() {
         done();
     });
 
-    it("can add a unit", function(done) {
+    it('can add a unit', function(done) {
         env.add_unit('mysql', 3);
         msg = conn.last_message();
         msg.op.should.equal('add_unit');
@@ -82,7 +82,7 @@ describe("Juju environment", function() {
         done();
     });
 
-    it("can accept a callback on its methods", function(done) {
+    it('can accept a callback on its methods', function(done) {
         env.get_charm('cs:precise/mysql', function(result) {
             console.log('invoked', result);
             result.op.should.equal('get_charm');
