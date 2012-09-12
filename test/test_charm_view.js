@@ -62,15 +62,18 @@
                 charm_store: localCharmStore,
                 env: env
             });
+            var redirected = false;
+            charmView.on('showEnvironment', function() {
+                redirected = true;
+            });
             var deployInput = charmView.get('container').one('#charm-deploy');
             deployInput.after('click', function() {
                 var msg = conn.last_message();
                 // Ensure the websocket received the `deploy` message.
                 msg.op.should.equal('deploy');
                 msg.charm_url.should.contain('postgresql');
-                // Ensure a redirection to the environment view is performed
-                // once the charm is deployed.
-
+                // A click to the deploy button redirects to the root page.
+                redirected.should.equal(true);
                 done();
             });
             deployInput.simulate('click');
