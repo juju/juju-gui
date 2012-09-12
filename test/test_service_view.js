@@ -1,56 +1,29 @@
 'use strict';
 
-var ENTER_KEY = 13;
-
 (function () {
   describe('juju service view', function() {
     var ServiceView, views, models, Y, container, service, db, conn,
-      juju, env, charm, my0, my1, my2;
-    var SocketStub = function () {
-      this.messages = [];
+      juju, env, charm, my0, my1, my2, testUtils;
 
-      this.close = function() {
-          console.log('close stub');
-          this.messages = [];
-      };
-
-      this.transient_close = function() {
-          this.onclose();
-      };
-
-      this.open = function() {
-          this.onopen();
-      };
-
-      this.msg = function(m) {
-          console.log('serializing env msg', m);
-          this.onmessage({'data': Y.JSON.stringify(m)});
-      };
-
-      this.last_message = function(m) {
-          return this.messages[this.messages.length-1];
-      };
-
-      this.send = function(m) {
-          console.log('socket send', m);
-          this.messages.push(Y.JSON.parse(m));
-      };
-
-      this.onclose = function() {};
-      this.onmessage = function() {};
-      this.onopen = function() {};
-
-    };
+    var submit = function(form) {
+      // form.submit() creates an event that is not intercepted.  As a
+      // work-around we create a submit button so we can click it, which
+      // actually works!
+      var submit = Y.Node.create('<input type="submit"/>');
+      form.append(submit);
+      submit.simulate('click');
+    }
 
     before(function (done) {
       Y = YUI(GlobalConfig).use(
         'juju-views', 'juju-models', 'base', 'node', 'json-parse',
-        'juju-env', 'node-event-simulate',
+        'juju-env', 'node-event-simulate', 'juju-tests-utils',
         function (Y) {
           views = Y.namespace('juju.views');
           models = Y.namespace('juju.models');
+          testUtils = Y.namespace('juju-tests.utils');
           ServiceView = views.service;
-          conn = new SocketStub();
+          conn = new testUtils.SocketStub();
           juju = Y.namespace('juju');
           env = new juju.Environment({conn: conn});
           env.connect();
@@ -83,6 +56,7 @@ var ENTER_KEY = 13;
       container.destroy();
       service.destroy();
       db.destroy();
+      env._txn_callbacks = {};
       conn.messages = [];
       done();
     });
@@ -168,13 +142,7 @@ var ENTER_KEY = 13;
         view.render();
         var control = container.one('#num-service-units');
         control.set('value', 1);
-        var form = container.one('#service-unit-control');
-        // form.submit() creates an event that is not intercepted.  As a
-        // work-around we create a submit button so we can click it, which
-        // actually works!
-        var submit = Y.Node.create('<input type="submit"/>');
-        form.append(submit);
-        submit.simulate('click');
+        submit(container.one('form'));
         var message = conn.last_message();
         message.op.should.equal('remove_units');
         assert.deepEqual(message.unit_names, ['mysql/2', 'mysql/1']);
@@ -187,13 +155,7 @@ var ENTER_KEY = 13;
         view.render();
         var control = container.one('#num-service-units');
         control.set('value', 0);
-        var form = container.one('#service-unit-control');
-        // form.submit() creates an event that is not intercepted.  As a
-        // work-around we create a submit button so we can click it, which
-        // actually works!
-        var submit = Y.Node.create('<input type="submit"/>');
-        form.append(submit);
-        submit.simulate('click');
+        submit(container.one('form'));
         // "var _ =" makes the linter happy.
         var _ = expect(conn.last_message()).to.not.exist;
       });
@@ -205,17 +167,49 @@ var ENTER_KEY = 13;
         view.render();
         var control = container.one('#num-service-units');
         control.set('value', 7);
-        var form = container.one('#service-unit-control');
-        // form.submit() creates an event that is not intercepted.  As a
-        // work-around we create a submit button so we can click it, which
-        // actually works!
-        var submit = Y.Node.create('<input type="submit"/>');
-        form.append(submit);
-        submit.simulate('click');
+        submit(container.one('form'));
         var message = conn.last_message();
         message.op.should.equal('add_unit');
         message.service_name.should.equal('mysql');
         message.num_units.should.equal(4);
+      });
+
+    it('should add pending units as soon as it gets a reply back from the server',
+      function() {
+        var new_unit_id = 'mysql/5';
+        var expected_names = db.units.map(function(u) {return u.get('id');});
+        expected_names.push(new_unit_id);
+        expected_names.sort();
+        var view = new ServiceView(
+          {container: container, model: service, domain_models: db, app: {env: env}});
+        view.render();
+        var control = container.one('#add-service-unit');
+        control.simulate('click');
+        var callbacks = Y.Object.values(env._txn_callbacks);
+        callbacks.length.should.equal(1);
+        // Since we don't have an app to listen to this event and tell the view to
+        // re-render, we need to do it ourselves.
+        db.on('update', view.render, view);
+        callbacks[0]({result: [new_unit_id]});
+        var db_names = db.units.map(function(u) {return u.get('id');});
+        db_names.sort();
+        assert.deepEqual(db_names, expected_names);
+        service.get('unit_count').should.equal(4);
+        var rendered_names = container.all('div.thumbnail').get('id');
+        assert.deepEqual(rendered_names, expected_names);
+      });
+
+    it('should switch units to "stopping" as soon as it gets a reply back from the server',
+      function() {
+        var view = new ServiceView(
+          {container: container, model: service, domain_models: db, app: {env: env}});
+        view.render();
+        var control = container.one('#rm-service-unit');
+        control.simulate('click');
+        var callbacks = Y.Object.values(env._txn_callbacks);
+        callbacks.length.should.equal(1);
+        callbacks[0]({unit_names: ['mysql/2']});
+        db.units.getById('mysql/2').get('agent_state').should.equal('stopping');
       });
 
   });

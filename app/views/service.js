@@ -3,7 +3,8 @@
 YUI.add('juju-view-service', function(Y) {
 
 var views = Y.namespace('juju.views'),
-    Templates = views.Templates;
+    Templates = views.Templates,
+    models = Y.namespace('juju.models');
 
 var BaseServiceView = Y.Base.create('BaseServiceView', Y.View, [views.JujuBaseView], {
 
@@ -121,17 +122,15 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     render: function () {
         var container = this.get('container'),
-                 self = this,
-                   db = this.get('domain_models');
-        var service = this.get('model');
-        var app = this.get('app');
+                   db = this.get('domain_models'),
+              service = this.get('model'),
+                  app = this.get('app');
 
         var add_units_cb = function(evt) {
             console.log('add_units_cb with: ', evt.result);
             // Received acknowledgement message for the 'add_units' operation.
             // evt.results is an array of the new units to be created.  Pro-actively
             // add them to the database so they display as soon as possible.
-            var models = Y.namespace('juju.models');
             db.units.add(
                 Y.Array.map(evt.result, function(unit_name) {
                     return new models.ServiceUnit(
@@ -172,7 +171,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         container.all('div.thumbnail').each(function( el ) {
             el.on('click', function(evt) {
                 console.log('Click', this.getData('charm-url'));
-                self.fire('showUnit', {unit_id: this.get('id')});
+                this.fire('showUnit', {unit_id: this.get('id')});
             });
         });
 
@@ -225,6 +224,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 views.service = ServiceView;
 }, '0.1.0', {
     requires: ['juju-view-utils',
+               'juju-models',
                'd3',
                'base-build',
                'handlebars',

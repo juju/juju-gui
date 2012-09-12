@@ -9,3 +9,4 @@ app/assets/javascripts/yui
 docs/_build/doctrees
 docs/_build/html
 *~
+app/assets/stylesheets/juju-gui.css

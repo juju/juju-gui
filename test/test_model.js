@@ -114,5 +114,16 @@ describe('juju models', function() {
         names[0].should.equal('mysql/0');
        });
 
+    it('process_model_delta should be able to reuse existing models with an add',
+      function() {
+        var db = new models.Database();
+        var my0 = new models.ServiceUnit({id:'mysql/0', agent_state: 'pending'});
+        db.units.add([my0]);
+        db.process_model_delta(
+          ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}],
+          models.ServiceUnit,
+          db.units)
+        my0.get('agent_state').should.equal('another');
+      })
     });
 })();
