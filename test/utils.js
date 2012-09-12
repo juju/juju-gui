@@ -23,7 +23,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
             };
 
             this.msg = function(m) {
-                console.log("serializing env msg", m);
+                console.log('serializing env msg', m);
                 this.onmessage({'data': Y.JSON.stringify(m)});
             };
 

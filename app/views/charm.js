@@ -1,14 +1,14 @@
-"use strict";
+'use strict';
 
-YUI.add("juju-view-charm-collection", function(Y) {
+YUI.add('juju-view-charm-collection', function(Y) {
 
-var views = Y.namespace("juju.views"),
+var views = Y.namespace('juju.views'),
     Templates = views.Templates;
 
 /*
 charm_store.plug(
     Y.Plugin.DataSourceJSONSchema, {
-       cfg: {schema: {resultListLocator: "results"}}
+       cfg: {schema: {resultListLocator: 'results'}}
     });
 charm_store.plug(Y.DataSourceCache, { max: 3});
 */
@@ -17,7 +17,7 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
 Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
     // console.log('helper', iface_decl, options, this);
     var result = [];
-    var ret = "";
+    var ret = '';
     for (var i in iface_decl) {
         if (!i)
             continue;
@@ -31,7 +31,7 @@ Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
             ret = ret + options.fn(result[x]);
         }
     } else {
-        ret = "None";
+        ret = 'None';
     }
     return ret;
 });
@@ -46,7 +46,7 @@ Y.Handlebars.registerHelper('markdown', function(text) {
 var CharmView = Y.Base.create('CharmView', Y.View, [], {
     initializer: function () {
         this.set('charm', null);
-        console.log("Loading charm view", this.get('charm_data_url'));
+        console.log('Loading charm view', this.get('charm_data_url'));
         this.get('charm_store').sendRequest({
             request: this.get('charm_data_url'),
             callback: {
@@ -92,7 +92,7 @@ var CharmView = Y.Base.create('CharmView', Y.View, [], {
         console.log('charm deploy', charm);
         var charm = this.get('charm');
         var env = this.get('env');
-        env.deploy(charm.series + "/" + charm.name, function() {
+        env.deploy(charm.series + '/' + charm.name, function() {
             console.log('DEPLOYED');
         });
     }
@@ -101,14 +101,14 @@ var CharmView = Y.Base.create('CharmView', Y.View, [], {
 var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 
     initializer: function () {
-        console.log("View: Initialized: Charm Collection", this.get('query'));
-        this.set("charms", []);
+        console.log('View: Initialized: Charm Collection', this.get('query'));
+        this.set('charms', []);
         this.set('current_request', null);
-        Y.one('#omnibar').on("submit", this.on_search_change, this);
+        Y.one('#omnibar').on('submit', this.on_search_change, this);
         this.on_search_change();
     },
 
-    template: Templates["charm-collection"],
+    template: Templates['charm-collection'],
 
     render: function () {
         var container = this.get('container'),
@@ -118,9 +118,9 @@ var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
         container.setHTML(this.template({'charms': this.get('charms')}));
         // TODO: Use view.events structure to attach this
         container.all('div.thumbnail').each(function( el ) {
-            el.on("click", function(evt) {
-                //console.log("Click", this.getData('charm-url'));
-                self.fire("showCharm", {charm_data_url: this.getData('charm-url')});
+            el.on('click', function(evt) {
+                //console.log('Click', this.getData('charm-url'));
+                self.fire('showCharm', {charm_data_url: this.getData('charm-url')});
             });
         });
 
@@ -165,7 +165,7 @@ var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 views.charm_collection = CharmCollectionView;
 views.charm = CharmView;
 
-}, "0.1.0", {
+}, '0.1.0', {
     requires: [
         'node',
         'handlebars',

@@ -1,15 +1,15 @@
-"use strict";
+'use strict';
 
 // from nodejs runner
-// YUI = require("yui").YUI,
-//   base= require("../lib/base.js");
+// YUI = require('yui').YUI,
+//   base= require('../lib/base.js');
 
 
 (function () {
 
 var Y;
 
-describe("Juju environment", function() {
+describe('Juju environment', function() {
     var juju, conn, env, msg, testUtils;
 
     before(function (done) {
@@ -18,7 +18,7 @@ describe("Juju environment", function() {
             function (Y) {
                 testUtils = Y.namespace('juju-tests.utils');
                 conn = new testUtils.SocketStub();
-                juju = Y.namespace("juju");
+                juju = Y.namespace('juju');
                 env = new juju.Environment({conn: conn});
                 env.connect();
                 conn.open();
@@ -31,7 +31,7 @@ describe("Juju environment", function() {
         done();
     });
 
-    it("can deploy a service", function(done) {
+    it('can deploy a service', function(done) {
         env.deploy('precise/mysql');
         msg = conn.last_message();
         msg.op.should.equal('deploy');
@@ -39,7 +39,7 @@ describe("Juju environment", function() {
         done();
     });
 
-    it("can add a unit", function(done) {
+    it('can add a unit', function(done) {
         env.add_unit('mysql', 3);
         msg = conn.last_message();
         msg.op.should.equal('add_unit');
@@ -48,7 +48,7 @@ describe("Juju environment", function() {
         done();
     });
 
-    it("can accept a callback on its methods", function(done) {
+    it('can accept a callback on its methods', function(done) {
         env.get_charm('cs:precise/mysql', function(result) {
             console.log('invoked', result);
             result.op.should.equal('get_charm');
