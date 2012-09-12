@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-YUI.add("juju-env", function(Y) {
+YUI.add('juju-env', function(Y) {
 
 function Environment(config) {
     // Invoke Base constructor, passing through arguments
@@ -8,7 +8,7 @@ function Environment(config) {
 }
 
 
-Environment.NAME = "env";
+Environment.NAME = 'env';
 Environment.ATTRS = {
     'socket_url': {},
     'conn': {},
@@ -20,9 +20,9 @@ Y.extend(Environment, Y.Base, {
     // Prototype methods for your new class
 
     initializer: function(){
-        console.log("Env Init");
+        console.log('Env Init');
         // Define custom events
-        this.publish("msg", {
+        this.publish('msg', {
             emitFacade: true,
             defaultFn: this.dispatch_result
         });
@@ -38,17 +38,17 @@ Y.extend(Environment, Y.Base, {
     },
 
     connect: function(){
-        console.log("Env Connect");
+        console.log('Env Connect');
         // Allow an external websocket to be passed in.
         var conn = this.get('conn');
         console.log('ext ws', conn);
         if (conn) {
             this.ws = conn;
         } else {
-            console.log("Creating new websocket", this.get('socket_url'));
+            console.log('Creating new websocket', this.get('socket_url'));
             this.ws = new Y.ReconnectingWebSocket(this.get('socket_url'));
         }
-        this.ws.debug = this.get("debug");
+        this.ws.debug = this.get('debug');
         this.ws.onmessage = Y.bind(this.on_message, this);
         this.ws.onopen = Y.bind(this.on_open, this);
         this.ws.onclose = Y.bind(this.on_close, this);
@@ -56,28 +56,28 @@ Y.extend(Environment, Y.Base, {
     },
 
     on_open: function(data) {
-        console.log("Env: Connected");
+        console.log('Env: Connected');
         this.set('connected', true);
     },
 
     on_close: function(data) {
-        console.log("Env: Disconnect");
+        console.log('Env: Disconnect');
         this.set('connected', false);
     },
 
     on_message: function(evt) {
-        console.log("Env: Receive", evt.data);
+        console.log('Env: Receive', evt.data);
 
         var msg = Y.JSON.parse(evt.data);
         if (msg.version === 0) {
-            console.log("Env: Handshake Complete");
+            console.log('Env: Handshake Complete');
             return;
         }
-        this.fire("msg", msg);
+        this.fire('msg', msg);
     },
 
     dispatch_result: function(data) {
-        console.log("Env: Dispatch Result", data);
+        console.log('Env: Dispatch Result', data);
         this._dispatch_rpc_result(data);
         this._dispatch_event(data);
     },
@@ -114,7 +114,7 @@ Y.extend(Environment, Y.Base, {
         }
         op.request_id = tid;
         var msg = Y.JSON.stringify(op);
-        console.log("Env: send msg", tid, msg, op);
+        console.log('Env: send msg', tid, msg, op);
         this.ws.send(msg);
     },
 
@@ -171,14 +171,14 @@ Y.extend(Environment, Y.Base, {
 });
 
 
-Y.namespace("juju").Environment = Environment;
+Y.namespace('juju').Environment = Environment;
 
-}, "0.1.0", {
+}, '0.1.0', {
        requires: [
-       "io",
-       "json-parse",
-       "json-stringify",
+       'io',
+       'json-parse',
+       'json-stringify',
        'base',
-       "reconnecting-websocket"
+       'reconnecting-websocket'
        ]
 });

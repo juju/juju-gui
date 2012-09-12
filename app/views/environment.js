@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-YUI.add("juju-view-environment", function(Y) {
+YUI.add('juju-view-environment', function(Y) {
 
-var views = Y.namespace("juju.views"),
+var views = Y.namespace('juju.views'),
     Templates = views.Templates;
 
 var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
@@ -11,8 +11,8 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
     },
 
     initializer: function () {
-        console.log("View: Initialized: Env");
-        this.publish("showService", {preventable: false});
+        console.log('View: Initialized: Env');
+        this.publish('showService', {preventable: false});
     },
 
     render: function () {
@@ -42,7 +42,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         var service_scale_height = d3.scale.log().range([64, 100]);
 
         var tree = d3.layout.force()
-            .on("tick", tick)
+            .on('tick', tick)
             .charge(-450)
             .gravity(0.05)
             .distance(200)
@@ -58,13 +58,13 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         self.set('vis', vis);
 
         function tick() {
-            link.attr("x1", function(d) { return d.source.x; })
-                .attr("y1", function(d) { return d.source.y; })
-                .attr("x2", function(d) { return d.target.x; })
-                .attr("y2", function(d) { return d.target.y; });
+            link.attr('x1', function(d) { return d.source.x; })
+                .attr('y1', function(d) { return d.source.y; })
+                .attr('x2', function(d) { return d.target.x; })
+                .attr('y2', function(d) { return d.target.y; });
 
-            node.attr("transform", function(d) {
-                          return "translate(" + d.x + "," + d.y + ")"; });
+            node.attr('transform', function(d) {
+                          return 'translate(' + d.x + ',' + d.y + ')'; });
         }
 
         function processRelation(r) {
@@ -94,20 +94,20 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         tree.nodes(services)
             .links(rel_data);
 
-        var link = vis.selectAll("path.relation")
+        var link = vis.selectAll('path.relation')
             .data(rel_data,
                   function(d) {return d;});
 
-        link.enter().insert("svg:line", "g.service")
-            .attr("class", "relation")
-            .attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
+        link.enter().insert('svg:line', 'g.service')
+            .attr('class', 'relation')
+            .attr('x1', function(d) { return d.source.x; })
+            .attr('y1', function(d) { return d.source.y; })
+            .attr('x2', function(d) { return d.target.x; })
+            .attr('y2', function(d) { return d.target.y; });
 
-        var node = vis.selectAll(".service")
+        var node = vis.selectAll('.service')
             .data(services)
-            .enter().append("g")
+            .enter().append('g')
             .call(tree.drag)
             .attr("class", "service")
             .on("click", function(m) {
@@ -124,26 +124,26 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             });
 
 
-        node.append("rect")
-        .attr("class", "service-border")
-        .attr("width", function(d) {
+        node.append('rect')
+        .attr('class', 'service-border')
+        .attr('width', function(d) {
             return service_scale_width(d.get('unit_count')); })
-        .attr("height", function(d) {
+        .attr('height', function(d) {
             return service_scale_height(d.get('unit_count')); });
 
-        var service_labels = node.append("text").append("tspan")
-            .attr("class", "name")
-            .attr("x", 54)
-            .attr("y", "1em")
-            .text(function(d) {return d.get("id"); });
+        var service_labels = node.append('text').append('tspan')
+            .attr('class', 'name')
+            .attr('x', 54)
+            .attr('y', '1em')
+            .text(function(d) {return d.get('id'); });
 
-        var charm_labels = node.append("text").append("tspan")
-            .attr("x", 54)
-            .attr("y", "2.5em")
-            .attr("dy", "3em")
-            .attr("class", "charm-label")
+        var charm_labels = node.append('text').append('tspan')
+            .attr('x', 54)
+            .attr('y', '2.5em')
+            .attr('dy', '3em')
+            .attr('class', 'charm-label')
             .text(function(d) {
-                      return d.get("charm"); });
+                      return d.get('charm'); });
 
         var status_chart_arc = d3.svg.arc()
             .innerRadius(10)
@@ -151,10 +151,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         var status_chart_layout = d3.layout.pie()
             .value(function(d) { return (d.value ? d.value : 1); });
 
-        var status_chart = node.append("g")
-            .attr("class", "service-status")
-            .attr("transform", "translate(30,32)");
-        var status_arcs = status_chart.selectAll("path")
+        var status_chart = node.append('g')
+            .attr('class', 'service-status')
+            .attr('transform', 'translate(30,32)');
+        var status_arcs = status_chart.selectAll('path')
             .data(function(d) {
                 var aggregate_map = d.get('aggregated_status'),
                     aggregate_list = [];
@@ -168,22 +168,22 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 
                 return status_chart_layout(aggregate_list);
             })
-            .enter().append("path")
-            .attr("d", status_chart_arc)
-            .attr("class", function(d) { return "status-" + d.data.name; })
-            .attr("fill-rule", "evenodd")
-            .append("title").text(function(d) {
+            .enter().append('path')
+            .attr('d', status_chart_arc)
+            .attr('class', function(d) { return 'status-' + d.data.name; })
+            .attr('fill-rule', 'evenodd')
+            .append('title').text(function(d) {
                 return d.data.name;
             });
 
         // Add the unit counts, visible only on hover
-        var unit_count = status_chart.append("text")
-            .attr("class", "unit-count hide-count")
-            .on("mouseover", function() {
-                d3.select(this).attr("class", "unit-count show-count");
+        var unit_count = status_chart.append('text')
+            .attr('class', 'unit-count hide-count')
+            .on('mouseover', function() {
+                d3.select(this).attr('class', 'unit-count show-count');
             })
-            .on("mouseout", function() {
-                d3.select(this).attr("class", "unit-count hide-count");
+            .on('mouseout', function() {
+                d3.select(this).attr('class', 'unit-count hide-count');
             })
             .text(function(d) {
                 return self.humanizeNumber(d.get('unit_count'));
@@ -266,7 +266,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                     // Get the vis, tree, and links, build the new relation
                     var vis = view.get('vis'),
                         tree = view.get('tree'),
-                        store = view.get('store'),
+                        env = view.get('env'),
                         links = tree.links(),
                         rel = {
                             source: view.get('add_relation_start_service'),
@@ -296,7 +296,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                     });
                     tree.start();
                     // fire event to add relation in juju
-                    store.add_relation(
+                    env.add_relation(
                         rel.source.get('id'),
                         rel.target.get('id'),
                         function(resp) {
@@ -314,7 +314,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 });
 
 views.environment = EnvironmentView;
-}, "0.1.0", {
+}, '0.1.0', {
     requires: ['juju-templates',
                'juju-view-utils',
                'd3',
