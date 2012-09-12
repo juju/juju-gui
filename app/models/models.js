@@ -210,15 +210,33 @@ var Notification = Y.Base.create('notification', Y.Model, [], {}, {
 models.Notification = Notification;
 
 var NotificationList = Y.Base.create('notificationList', Y.ModelList, [], {
+    initializer: function() {
+        NotificationList.superclass.constructor.apply(this, arguments);
+        this.on('add', this.enforce_max_size);
+    },
     model: Notification,
     comparator: function (model) {
         // timestamp desc
         return -model.get('timestamp');
     },
+
+    enforce_max_size: function(e) {
+        if (this.size() == this.get("max_size")) {
+            this.remove_oldest_notification();
+        }
+    },
+        
+    remove_oldest_notification: function() {
+        // The list is maintained in sorted order due to this.comparator
+        // handle zero based index
+        this.remove(this.size() - 1);
+    },
+        
     get_unseen_count: function() {
         return this.filter(function(m) {
                 return m.get("seen") == false;}).length;
     },
+
     get_notice_levels: function() {
         var levels = {};
         this.each(function(m) {
@@ -233,6 +251,12 @@ var NotificationList = Y.Base.create('notificationList', Y.ModelList, [], {
     }
       
 
+}, {
+    ATTRS: {
+        max_size: {value: 10,
+                      writeOnce: "initOnly"
+                     }
+    }
 });
 models.NotificationList = NotificationList;
 

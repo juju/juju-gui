@@ -252,13 +252,19 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         });
     },
 
-    /* Present on all views */
+    /* 
+     * Persistent Views 
+     * 
+     * 'charm_search' and 'notifications' are preserved views that remain
+     * rendered on all main views.  we manually create an instance of this
+     * view and insert it into the App's view metadata.
+     */
     show_charm_search: function(req, res, next) {
-        var charm_search = this.get('charm_search');
-        if (!charm_search) {
-            charm_search = this.createView(
-                'charm_search', {'app': this});
-            this.set('charm_search', charm_search.render());
+        var view = this.getViewInfo('charm_search'),
+            instance = view.instance;
+        if (!instance) {
+            view.instance = new views.charm_search({app: this});
+            view.instance.render();
         }
         next();
     },
