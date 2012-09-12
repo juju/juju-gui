@@ -284,34 +284,34 @@ function program7(depth0,data) {
 function program9(depth0,data) {
   
   var buffer = "", stack1, foundHelper;
-  buffer += "\n          <tr>\n            <td>";
+  buffer += "\n          <tr>\n            <td class=\"relation-ident\">";
   foundHelper = helpers.ident;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.ident; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</td>\n            <td>";
+  buffer += escapeExpression(stack1) + "</td>\n            <td class=\"relation-endpoint\">";
   foundHelper = helpers.endpoint;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.endpoint; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</td>\n            <td>";
+  buffer += escapeExpression(stack1) + "</td>\n            <td class=\"relation-name\">";
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</td>\n            <td>";
+  buffer += escapeExpression(stack1) + "</td>\n            <td class=\"relation-role\">";
   foundHelper = helpers.role;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.role; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</td>\n            <td>";
+  buffer += escapeExpression(stack1) + "</td>\n            <td class=\"relation-scope\">";
   foundHelper = helpers.scope;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.scope; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
   buffer += escapeExpression(stack1) + "</td>\n          </tr>\n        ";
   return buffer;}
 
-  buffer += "<br/> FIXME: The HTML is broken.  All pages have their tops cut off.\n<br/>\n<br/>\n<br/>\n\n<div class=\"row\">\n  <div class=\"well\">\n    <h1>";
+  buffer += "<br/> FIXME: The HTML is broken.  All pages have their tops cut off.\n<br/>\n<br/>\n<br/>\n\n<div class=\"row\">\n  <div class=\"well\">\n    <h1 id=\"unit-id\">";
   stack1 = depth0.unit;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.id;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</h1>\n    <b>";
+  buffer += escapeExpression(stack1) + "</h1>\n    <b id=\"charm-uri\">";
   stack1 = depth0.service;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.charm;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
@@ -321,7 +321,7 @@ function program9(depth0,data) {
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
   stack1 = stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n    <div>\n      ";
+  buffer += "\n    <div id=\"unit-status\">\n      ";
   foundHelper = helpers.unit_ip_description;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.unit_ip_description; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
@@ -347,27 +347,27 @@ function program9(depth0,data) {
   stack1 = depth0.unit;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.agent_state;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "\n    </div>\n  </div>\n<div>\n\n<div class=\"row\">\n  <div class=\"span12\">\n    <h2>&#x2637; Machine ";
+  buffer += escapeExpression(stack1) + "\n    </div>\n  </div>\n<div>\n\n<div class=\"row\">\n  <div class=\"span12\">\n    <h2 id=\"machine-name\">&#x2637; Machine ";
   stack1 = depth0.unit;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.machine;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</h2>\n    <table class=\"table table-striped table-bordered\">\n      <tbody>\n        <tr>\n          <th>agent-state</th>\n          <td>";
+  buffer += escapeExpression(stack1) + "</h2>\n    <table class=\"table table-striped table-bordered\">\n      <tbody>\n        <tr>\n          <th>agent-state</th>\n          <td id=\"machine-agent-state\">";
   stack1 = depth0.machine;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.agent_state;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</td>\n        </tr>\n        <tr>\n          <th>instance-id</th>\n          <td>";
+  buffer += escapeExpression(stack1) + "</td>\n        </tr>\n        <tr>\n          <th>instance-id</th>\n          <td id=\"machine-instance-id\">";
   stack1 = depth0.machine;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.instance_id;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</td>\n        </tr>\n        <tr>\n          <th>instance-state</th>\n          <td>";
+  buffer += escapeExpression(stack1) + "</td>\n        </tr>\n        <tr>\n          <th>instance-state</th>\n          <td id=\"machine-instance-state\">";
   stack1 = depth0.machine;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.instance_state;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</td>\n        </tr>\n        <tr>\n          <th>public-address</th>\n          <td>";
+  buffer += escapeExpression(stack1) + "</td>\n        </tr>\n        <tr>\n          <th>public-address</th>\n          <td id=\"machine-public-address\">";
   stack1 = depth0.machine;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.public_address;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</td>\n        </tr>\n      </tbody>\n    </table>\n  </div>\n</div>\n\n<div class=\"row\">\n  <div class=\"span12\">\n    <h2>&#x26B9; Relations</h2>\n    <table class=\"table table-striped table-bordered\">\n      <tbody>\n        <tr>\n          <th>id</th>\n          <th>endpoint</th>\n          <th>name</th>\n          <th>role</th>\n          <th>scope</th>\n        </tr>\n        ";
+  buffer += escapeExpression(stack1) + "</td>\n        </tr>\n      </tbody>\n    </table>\n  </div>\n</div>\n\n<div id=\"relations\" class=\"row\">\n  <div class=\"span12\">\n    <h2>&#x26B9; Relations</h2>\n    <table class=\"table table-striped table-bordered\">\n      <tbody>\n        <tr>\n          <th>id</th>\n          <th>endpoint</th>\n          <th>name</th>\n          <th>role</th>\n          <th>scope</th>\n        </tr>\n        ";
   stack1 = depth0.service;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.rels;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;

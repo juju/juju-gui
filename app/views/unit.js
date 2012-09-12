@@ -32,10 +32,7 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
             return this;
         }
 
-        // TODO remove getAttrs
-        var unit = this.get('unit'),
-            ip_description_chunks = [];
-
+        var ip_description_chunks = [];
         if (unit.get('public_address')) {
             ip_description_chunks.push(unit.get('public_address'));
         }
@@ -49,16 +46,16 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
         if (ip_description_chunks.length) {
             unit_ip_description = ip_description_chunks.join(' | ');
         }
-        var unit_running = unit.get('agent_state') == 'started';
 
         UnitView.superclass.render.apply(this, arguments);
 
         container.setHTML(this.template({
             unit: unit.getAttrs(),
-            unit_running: unit_running,
             unit_ip_description: unit_ip_description,
             service: service.getAttrs(),
-            machine: db.machines.getById(unit.get('machine')).getAttrs()}));
+            machine: db.machines.getById(unit.get('machine')).getAttrs(),
+            unit_running: unit.get('agent_state') == 'started'}));
+
         return this;
     }
 });

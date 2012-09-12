@@ -7,3 +7,5 @@ app/assets/javascripts/d3.v2.js
 app/assets/javascripts/d3.v2.min.js
 app/assets/javascripts/yui
 *~
+tags
+Session.vim
