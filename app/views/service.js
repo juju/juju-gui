@@ -122,14 +122,31 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
     render: function () {
         var container = this.get('container'),
                  self = this,
-                    m = this.get('domain_models');
+                   db = this.get('domain_models');
         var service = this.get('model');
         var app = this.get('app');
+
+        var add_units_cb = function(evt) {
+            console.log("add_units_cb with: ", evt.result);
+            // Received acknowledgement message for the 'add_units' operation.
+            // evt.results is an array of the new units to be created.  Pro-actively
+            // add them to the database so they display as soon as possible.
+            var models = Y.namespace("juju.models");
+            db.units.add(
+                Y.Array.map(evt.result, function(unit_name) {
+                    return new models.ServiceUnit(
+                        {id:unit_name, agent_state: 'pending', service:
+                         service.get('id')})}));
+            service.set('unit_count', service.get('unit_count') + evt.result.length);
+            db.fire('update');
+        };
+
+
         if (!service) {
             console.log('not connected / maybe');
             return this;
         }
-        var units = m.units.get_units_for_service(service);
+        var units = db.units.get_units_for_service(service);
         units.sort(function(a,b) {
             return a.get('number') - b.get('number');
         });
@@ -141,7 +158,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         var charm_name = service.get("charm");
         container.setHTML(this.template(
             {'service': service.getAttrs(),
-             'charm': this.renderable_charm(charm_name, m),
+             'charm': this.renderable_charm(charm_name, db),
              'units': units.map(function(u) {
                  return u.getAttrs();})
         }));
@@ -151,8 +168,8 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                 self.fire("showUnit", {unit_id: this.get('id')});
             });
         });
+
         // Hook up the service-unit-control.
-        // XXX: validation so that must have at least 1 unit.
         var add_button = container.one('#add-service-unit');
         if (add_button) {
             add_button.on("click", function(evt) {
@@ -160,7 +177,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                 var existing_value = parseInt(field.get('value'), 10);
                 console.log("Click add-service-unit: ", existing_value);
                 field.set('value', existing_value + 1);
-                app.env.add_unit(service.get('id'), 1);
+                app.env.add_unit(service.get('id'), 1, add_units_cb);
             });
             var rm_button = container.one('#rm-service-unit');
             rm_button.on("click", function(evt) {
@@ -179,7 +196,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                 var requested = parseInt(field.get('value'), 10);
                 var num_delta = requested - service.get('unit_count');
                 if (num_delta > 0) {
-                    app.env.add_unit(service.get('id'), num_delta);
+                    app.env.add_unit(service.get('id'), num_delta, add_units_cb);
                 } else if (num_delta < 0) {
                     if (requested < 1) {
                         console.log("Requested number of units < 1: ", requested);

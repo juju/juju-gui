@@ -278,9 +278,16 @@ var Database = Y.Base.create('database', Y.Base, [], {
         var data = change[2];
         var o;
         if (change_kind == 'add') {
-            o = new ModelClass({id: data.id});
-            this._sync_bag(data, o);
-            model_list.add(o);
+            // ServiceUnits are added to the database at the point the user
+            // requests them as pending units.  If a unit exists re-use it.
+            o = model_list.getById(data.id);
+            if (Y.Lang.isNull(o)) {
+                o = new ModelClass({id: data.id});
+                this._sync_bag(data, o);
+                model_list.add(o);
+            } else {
+                this._sync_bag(data, o);
+            }
         } else if (change_kind == 'remove') {
             model_list.remove(model_list.getById(data));
         } else if (change_kind == 'change') {
