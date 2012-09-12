@@ -1,9 +1,9 @@
 #!/usr/bin/node
 
-"use strict";
+'use strict';
 
-var server = require("./lib/server.js"),
-    config = require("./config").config.server;
+var server = require('./lib/server.js'),
+    config = require('./config').config.server;
 
 var port = config.port || process.env.PORT || 8888;
 
