@@ -1,14 +1,14 @@
-"use strict";
+'use strict';
 
-YUI.add("juju-models", function(Y) {
+YUI.add('juju-models', function(Y) {
 
-var models = Y.namespace("juju.models");
+var models = Y.namespace('juju.models');
 
 var Charm = Y.Base.create('charm', Y.Model, [], {
     idAttribute: 'charm_id',
     charm_id_re: /((\w+):)?(\w+)\/(\S+)-(\d+)/,
     parse_charm_id: function(id) {
-        if (!id) { id = this.get("id"); }
+        if (!id) { id = this.get('id'); }
         return this.charm_id_re.exec(id);
         }
     }, {
@@ -18,7 +18,7 @@ var Charm = Y.Base.create('charm', Y.Model, [], {
             valueFn: function(name) {
                 var match = this.parse_charm_id();
                 if (match) {
-                    return match[3] + "/" + match[4];
+                    return match[3] + '/' + match[4];
                 }
             }
         },
@@ -71,8 +71,8 @@ var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
     ATTRS: {
         service: {
             valueFn: function(name) {
-                var unit_name = this.get("id");
-                return unit_name.split("/", 1)[0];
+                var unit_name = this.get('id');
+                return unit_name.split('/', 1)[0];
             }
         },
         number: {
@@ -101,14 +101,14 @@ var ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
     model: ServiceUnit,
     get_units_for_service: function(service, asList) {
         var options = {},
-            sid = service.get("id");
+            sid = service.get('id');
 
         if (asList !== undefined) {
             options.asList = true;
         }
 
         var units = this.filter(options, function(m) {
-            return m.get("service") == sid;
+            return m.get('service') == sid;
         });
         return units;
     },
@@ -154,8 +154,8 @@ var ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
         for (var agent_state in aggregate) {
             sum += aggregate[agent_state];
         }
-        service.set("unit_count", sum);
-        service.set("aggregated_status", aggregate);
+        service.set('unit_count', sum);
+        service.set('aggregated_status', aggregate);
     },
     ATTRS: {
     }
@@ -238,7 +238,7 @@ var Database = Y.Base.create('database', Y.Base, [], {
 
     on_delta: function(delta_evt) {
         var changes = delta_evt.data.result;
-        console.log("Delta", this, changes);
+        console.log('Delta', this, changes);
         var change_type, model_class = null, self = this;
 
         changes.forEach(
@@ -247,7 +247,7 @@ var Database = Y.Base.create('database', Y.Base, [], {
                 model_class = this.model_map[change_type];
 
                 if (!model_class) {
-                    console.log("Unknown Change", change);
+                    console.log('Unknown Change', change);
                 }
                 console.log('change', this, change);
                 var model_list = this[change_type + 's'];
@@ -265,7 +265,7 @@ var Database = Y.Base.create('database', Y.Base, [], {
         // as is this is doing per attribute events.
         for (var vid in bag) {
             var value = bag[vid];
-            var aid = vid.replace('-', "_");
+            var aid = vid.replace('-', '_');
             if (model.get(aid) != value) {
                 model.set(aid, value);
             }
@@ -303,12 +303,12 @@ var Database = Y.Base.create('database', Y.Base, [], {
 
 models.Database = Database;
 
-Y.namespace("juju").db = new Database({});
+Y.namespace('juju').db = new Database({});
 
-}, "0.1.0", {
+}, '0.1.0', {
     requires: [
-        "model",
-        "model-list",
-        "lazy-model-list"
+        'model',
+        'model-list',
+        'lazy-model-list'
     ]
 });
