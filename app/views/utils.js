@@ -1,8 +1,8 @@
-"use strict";
+'use strict';
 
-YUI.add("juju-view-utils", function(Y) {
+YUI.add('juju-view-utils', function(Y) {
 
-var views = Y.namespace("juju.views");
+var views = Y.namespace('juju.views');
 
 var timestrings = {
     prefixAgo: null,
@@ -100,22 +100,22 @@ var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
         // todo also check relations
         var classes;
         switch (state) {
-        case "pending":
-            classes = "state-pending";
+        case 'pending':
+            classes = 'state-pending';
                 break;
-        case "started":
-                classes = "state-started";
+        case 'started':
+                classes = 'state-started';
                 break;
-        case "start_error":
-            classes = "state-error";
+        case 'start_error':
+            classes = 'state-error';
                 break;
-        case "install_error":
-            classes = "state-error";
+        case 'install_error':
+            classes = 'state-error';
                 break;
         default:
-            Y.log("Unhandled agent state: " + state, "debug");
+            Y.log('Unhandled agent state: ' + state, 'debug');
         }
-        classes = current && classes + " " + current || classes;
+        classes = current && classes + ' ' + current || classes;
         return classes;
     },
 
@@ -143,10 +143,10 @@ var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
 });
 
 views.JujuBaseView = JujuBaseView;
-}, "0.1.0", {
+}, '0.1.0', {
     requires: ['base-build',
                'handlebars',
                'node',
-               "view",
-               "json-stringify"]
+               'view',
+               'json-stringify']
 });

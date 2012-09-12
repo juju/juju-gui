@@ -14,10 +14,13 @@
     mocha.setup({'ui': 'bdd', 'ignoreLeaks': true})
   </script>
 
+  <script src="utils.js"></script>
   <script src="test_env.js"></script>
   <script src="test_model.js"></script>
   <script src="test_notifications.js"></script>
   <script src="test_app.js"></script>
+  <script src="test_charm_collection_view.js"></script>
+  <script src="test_charm_view.js"></script>
 
 
   <script>
@@ -45,8 +48,11 @@
 </head>
 
 <body>
-  <div id="omnibar"> </div>
-  <div id="main" class="container"> </div>
+  <form id="omnibar" method="GET">
+    <input id="charm-search" type="hidden" />
+  </form>
+  <div id="main" class="container">
+  </div>
   <div id="mocha"></div>
 </body>
 </html>
