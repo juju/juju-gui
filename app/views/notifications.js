@@ -32,8 +32,7 @@ var NotificationsView = Y.Base.create('NotificationsView', Y.View,
         ml.after("reset", this.slow_render, this);
 
         // Env connection state watcher
-        env.on("env:connect", this.slow_render, this);
-        env.on("env:disconnect", this.slow_render, this);
+        env.on("connectedChange", this.slow_render, this);
         env.on("delta", this.generate_notices, this);
     },
       
@@ -45,7 +44,10 @@ var NotificationsView = Y.Base.create('NotificationsView', Y.View,
         service: {add: "change_to_notice",
                  "delete": "change_to_notice"}
     },
-        
+      
+    /* 
+     * Process new delta stream events and see if we need new notifications
+     */
     generate_notices: function(delta_evt) {
         var self = this,
             rules = this.notice_rules;
@@ -74,6 +76,10 @@ var NotificationsView = Y.Base.create('NotificationsView', Y.View,
         
     },
 
+
+    /*
+     * Event handler for clicking the notification icon.
+     */
     notify_toggle: function(evt) {
         var container = this.get("container"),
             ml = this.get("model_list"),
@@ -165,8 +171,14 @@ var NotificationsView = Y.Base.create('NotificationsView', Y.View,
              state: state,
              open: open
              }));
-        // XXX: it would be nice to deletegate a method that kept humanized
-        // timestamps up to date
+
+        // Periodically update timestamps
+        Y.later(6000, this, function(o) {
+            container.all(".timestamp").each(function(n){
+            n.setHTML(views.humanizeTimestamp(
+                    n.getAttribute("data-timestamp")));
+            });
+        }, [], true);
         return this;
     }
 

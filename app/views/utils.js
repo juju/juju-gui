@@ -40,7 +40,8 @@ var humanizeTimestamp = function(t) {
         years = days / 365;
 
     function substitute(stringOrFunction, number) {
-        var string = Y.Lang.isFunction(stringOrFunction) ? stringOrFunction(number, distanceMillis) : stringOrFunction,
+        var string = Y.Lang.isFunction(stringOrFunction) ? 
+            stringOrFunction(number, distanceMillis) : stringOrFunction,
             value = (l.numbers && l.numbers[number]) || number;
         return string.replace(/%d/i, value);
       }

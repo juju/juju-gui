@@ -82,7 +82,7 @@ describe("notifications", function() {
                                              });
           view.render();
           // Verify the expected elements appear in the view
-          container.one("#notify-list").should.be.ok;
+          container.one("#notify-list").should.exist;
           container.destroy();
     });
 
