@@ -138,6 +138,7 @@
     it('should not send a remove-unit message when (-) is clicked if we only have one unit',
       function () {
         db.units.remove([my1, my2]);
+        service.set('unit_count', 1);
         var view = new ServiceView(
           {container: container, model: service, domain_models: db, app: {env: env}});
         view.render();
@@ -145,7 +146,16 @@
         var control = container.one('#rm-service-unit');
         control.simulate('click');
         expect(conn.last_message()).to.not.exist;
-    });
+      });
+
+    it('should start with the proper number of units shown in the text field',
+       function() {
+         var view = new ServiceView(
+           {container: container, model: service, domain_models: db, app: {env: env}});
+         view.render();
+         var control = container.one('#num-service-units');
+         control.get('value').should.equal('3');
+       });
 
   });
 }) ();
