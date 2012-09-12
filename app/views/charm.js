@@ -1,13 +1,14 @@
-YUI.add("juju-view-charm-collection", function(Y) {
+'use strict';
 
-var views = Y.namespace("juju.views"),
+YUI.add('juju-view-charm-collection', function(Y) {
+
+var views = Y.namespace('juju.views'),
     Templates = views.Templates;
 
-var charm_store;
 /*
 charm_store.plug(
     Y.Plugin.DataSourceJSONSchema, {
-       cfg: {schema: {resultListLocator: "results"}}
+       cfg: {schema: {resultListLocator: 'results'}}
     });
 charm_store.plug(Y.DataSourceCache, { max: 3});
 */
@@ -16,7 +17,7 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
 Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
     // console.log('helper', iface_decl, options, this);
     var result = [];
-    var ret = "";
+    var ret = '';
     for (var i in iface_decl) {
         if (!i)
             continue;
@@ -30,34 +31,31 @@ Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
             ret = ret + options.fn(result[x]);
         }
     } else {
-        ret = "None";
+        ret = 'None';
     }
     return ret;
 });
 
 Y.Handlebars.registerHelper('markdown', function(text) {
-    if (!text || text == undefined) {return '';}
+    if (!text || text === undefined) {return '';}
     return new Y.Handlebars.SafeString(
         Y.Markdown.toHTML(text));
 });
 
 
-CharmView = Y.Base.create('CharmView', Y.View, [], {
+var CharmView = Y.Base.create('CharmView', Y.View, [], {
     initializer: function () {
         this.set('charm', null);
-        var app = Y.namespace("juju").AppInstance;
-        if (app && !charm_store) {
-            charm_store = new Y.DataSource.IO({
-                    source: app.get('charm_store_url')
-            });
-        }
-        console.log("Loading charm view", this.get('charm_data_url'));
-        charm_store.sendRequest({
-        request: this.get('charm_data_url'),
-        callback: {
-            'success': Y.bind(this.on_charm_data, this),
-            'failure': function er(e) { console.error(e.error); }
-        }});
+        console.log('Loading charm view', this.get('charm_data_url'));
+        this.get('charm_store').sendRequest({
+            request: this.get('charm_data_url'),
+            callback: {
+                'success': Y.bind(this.on_charm_data, this),
+                'failure': function er(e) {
+                    console.error(e.error);
+                }
+            }
+        });
     },
 
     template: Templates.charm,
@@ -83,7 +81,7 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
     },
 
     on_charm_data: function (io_request) {
-        charm = Y.JSON.parse(
+        var charm = Y.JSON.parse(
             io_request.response.results[0].responseText);
         console.log('results update', charm, this);
         this.set('charm', charm);
@@ -96,17 +94,17 @@ CharmView = Y.Base.create('CharmView', Y.View, [], {
     }
 });
 
-CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
+var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 
     initializer: function () {
-        console.log("View: Initialized: Charm Collection", this.get('query'));
-        this.set("charms", []);
+        console.log('View: Initialized: Charm Collection', this.get('query'));
+        this.set('charms', []);
         this.set('current_request', null);
-        Y.one('#omnibar').on("submit", Y.bind(this.on_results_change, this));
+        Y.one('#omnibar').on('submit', this.on_search_change, this);
         this.on_search_change();
     },
 
-    template: Templates["charm-collection"],
+    template: Templates['charm-collection'],
 
     render: function () {
         var container = this.get('container'),
@@ -116,9 +114,9 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
         container.setHTML(this.template({'charms': this.get('charms')}));
         // TODO: Use view.events structure to attach this
         container.all('div.thumbnail').each(function( el ) {
-            el.on("click", function(evt) {
-                //console.log("Click", this.getData('charm-url'));
-                self.fire("showCharm", {charm_data_url: this.getData('charm-url')});
+            el.on('click', function(evt) {
+                //console.log('Click', this.getData('charm-url'));
+                self.fire('showCharm', {charm_data_url: this.getData('charm-url')});
             });
         });
 
@@ -133,16 +131,16 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
         }
 
         var query = Y.one('#charm-search').get('value');
-        if (!query) {
-            query = this.get('query');
+        if (query) {
+            this.set('query', query);
         } else {
-            this.set('query');
+            query = this.get('query');
         }
 
         // The handling in datasources-plugins is an example of doing this a bit better
         // ie. io cancellation outstanding requests, it does seem to cause some interference
         // with various datasource plugins though.
-        charm_store.sendRequest({
+        this.get('charm_store').sendRequest({
             request: 'search/json?search_text=' + query,
             callback: {
                 'success': Y.bind(this.on_results_change, this),
@@ -163,7 +161,7 @@ CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 views.charm_collection = CharmCollectionView;
 views.charm = CharmView;
 
-}, "0.1.0", {
+}, '0.1.0', {
     requires: [
         'node',
         'handlebars',
@@ -174,4 +172,3 @@ views.charm = CharmView;
         'gallery-markdown',
         'view']
 });
-

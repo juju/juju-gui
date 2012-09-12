@@ -8,3 +8,4 @@ app/assets/javascripts/d3.v2.min.js
 app/assets/javascripts/yui
 docs/_build/doctrees
 docs/_build/html
+*~

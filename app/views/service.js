@@ -1,21 +1,23 @@
-YUI.add("juju-view-service", function(Y) {
+'use strict';
 
-var views = Y.namespace("juju.views"),
+YUI.add('juju-view-service', function(Y) {
+
+var views = Y.namespace('juju.views'),
     Templates = views.Templates;
 
-BaseServiceView = Y.Base.create("BaseServiceView", Y.View, [views.JujuBaseView], {
+var BaseServiceView = Y.Base.create('BaseServiceView', Y.View, [views.JujuBaseView], {
 
     initializer: function() {
-        console.log("View: initialized:", this.name);
+        console.log('View: initialized:', this.name);
         this.bindModelView();
     }
 
 });
-            
 
-ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
-    template: Templates["service-relations"],
+var ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
+
+    template: Templates['service-relations'],
 
     render: function() {
         var container = this.get('container'),
@@ -33,15 +35,15 @@ ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBase
 views.service_relations = ServiceRelations;
 
 
-ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.JujuBaseView], {
+var ServiceConstraints = Y.Base.create('ServiceConstraintsView', Y.View, [views.JujuBaseView], {
 
-    template: Templates["service-constraints"],
+    template: Templates['service-constraints'],
 
     render: function() {
         var container = this.get('container'),
                  self = this,
                     m = this.get('domain_models');
-        service = this.get('model');
+        var service = this.get('model');
         var constraints = service.get('constraints');
         var display_constraints = [];
 
@@ -49,11 +51,11 @@ ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.Juju
             display_constraints.push({'name': key, 'value': constraints[key]});
         }
 
-        var generics = ["cpu", "mem", "arch"];
+        var generics = ['cpu', 'mem', 'arch'];
         for (var idx in generics) {
             var gkey = generics[idx];
             if (! (gkey in constraints)) {
-                display_constraints.push({'name': gkey, 'value': ""});
+                display_constraints.push({'name': gkey, 'value': ''});
             }
         }
 
@@ -61,7 +63,7 @@ ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.Juju
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'constraints': display_constraints,
-             "charm": this.renderable_charm(service.get('charm'), m)}
+             'charm': this.renderable_charm(service.get('charm'), m)}
             ));
     }
 
@@ -69,9 +71,9 @@ ServiceConstraints = Y.Base.create("ServiceConstraintsView", Y.View, [views.Juju
 
 views.service_constraints = ServiceConstraints;
 
-ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseView], {
+var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseView], {
 
-    template: Templates["service-config"],
+    template: Templates['service-config'],
 
     render: function () {
         var container = this.get('container'),
@@ -92,7 +94,7 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
         var config = service.get('config');
         var schema = charm.get('config');
 
-        settings = [];
+        var settings = [];
         var field_def;
 
         for (var field_name in config) {
@@ -101,19 +103,19 @@ ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseVi
                 {'name': field_name, 'value': config[field_name]}, field_def));
         }
 
-        console.log("render view svc config", service.getAttrs(), settings);
+        console.log('render view svc config', service.getAttrs(), settings);
 
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'settings': settings,
-             'charm': this.renderable_charm(service.get("charm"), m)}
+             'charm': this.renderable_charm(service.get('charm'), m)}
             ));
     }
 });
 
 views.service_config = ServiceConfigView;
 
-ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
+var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     template: Templates.service,
 
@@ -130,15 +132,15 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
         container.setHTML(this.template(
             {'service': service.getAttrs(),
-             'charm': this.renderable_charm(service.get("charm"), m),
+             'charm': this.renderable_charm(service.get('charm'), m),
              'units': units.map(function(u) {
             return u.getAttrs();})
         }));
         //console.log(service.charm.getAttrs(), service.getAttrs())
         container.all('div.thumbnail').each(function( el ) {
-            el.on("click", function(evt) {
-                console.log("Click", this.getData('charm-url'));
-                self.fire("showUnit", {unit_id: this.get('id')});
+            el.on('click', function(evt) {
+                console.log('Click', this.getData('charm-url'));
+                self.fire('showUnit', {unit_id: this.get('id')});
             });
         });
         return this;
@@ -146,12 +148,12 @@ ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 });
 
 views.service = ServiceView;
-}, "0.1.0", {
+}, '0.1.0', {
     requires: ['juju-view-utils',
                'd3',
                'base-build',
                'handlebars',
                'node',
-               "view",
-               "json-stringify"]
+               'view',
+               'json-stringify']
 });

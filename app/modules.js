@@ -11,96 +11,97 @@ GlobalConfig = {
     groups: {
         d3: {
             modules: {
-               "d3": {
-                   "fullpath": "/assets/javascripts/d3.v2.min.js"
+               'd3': {
+                   'fullpath': '/assets/javascripts/d3.v2.min.js'
                }
           }
         },
         juju: {
             modules: {
-		// Primitives
-                "svg-layouts" : {
-                    fullpath: "/assets/javascripts/svg-layouts.js"
+                // Primitives
+
+                'svg-layouts' : {
+                    fullpath: '/assets/javascripts/svg-layouts.js'
                 },
 
-                "reconnecting-websocket": {
-                    fullpath: "/assets/javascripts/reconnecting-websocket.js"
+                'reconnecting-websocket': {
+                    fullpath: '/assets/javascripts/reconnecting-websocket.js'
                 },
 
-		// Views
-                "juju-view-utils": {
-                    fullpath: "/views/utils.js"
-                },
-                    
-                "juju-view-environment": {
-                    fullpath: "/views/environment.js"
+                // Views
+                'juju-view-utils': {
+                    fullpath: '/views/utils.js'
                 },
 
-                "juju-view-service": {
-                    fullpath: "/views/service.js"
+                'juju-view-environment': {
+                    fullpath: '/views/environment.js'
                 },
 
-                "juju-view-unit": {
-                    fullpath: "/views/unit.js"
+                'juju-view-service': {
+                    fullpath: '/views/service.js'
                 },
 
-                "juju-view-charmsearch": {
-                    fullpath: "/views/search.js"
+                'juju-view-unit': {
+                    fullpath: '/views/unit.js'
                 },
 
-                "juju-view-charm-collection": {
-                    fullpath: "/views/charm.js"
+                'juju-view-charmsearch': {
+                    fullpath: '/views/search.js'
                 },
 
-                "juju-view-charm": {
-                    fullpath: "/views/charm.js"
-                },
-                        
-                "juju-templates": {
-                  fullpath: "/templates.js"
+                'juju-view-charm-collection': {
+                    fullpath: '/views/charm.js'
                 },
 
-                "juju-views":  {
+                'juju-view-charm': {
+                    fullpath: '/views/charm.js'
+                },
+
+                'juju-templates': {
+                  fullpath: '/templates.js'
+                },
+
+                'juju-views':  {
                     use: [
-                          "juju-templates",
-                          "juju-view-utils",
-                          "juju-view-environment", 
-			  "juju-view-service", 
-			  "juju-view-unit",
-			  "juju-view-charmsearch",
-			  "juju-view-charm",
-			  "juju-view-charm-collection"]
-                },
-		
-		// Models
-
-                "juju-models": {
-                    requires: ["model", "model-list"],
-                    fullpath: "/models/models.js"
+                          'juju-templates',
+                          'juju-view-utils',
+                          'juju-view-environment',
+                          'juju-view-service',
+                          'juju-view-unit',
+                          'juju-view-charmsearch',
+                          'juju-view-charm',
+                          'juju-view-charm-collection']
                 },
 
-		// Connectivity		
-                "juju-env": {
-                    requires: ["reconnecting-websocket"],
-                    fullpath: "/store/env.js"
+                // Models
+
+                'juju-models': {
+                    requires: ['model', 'model-list'],
+                    fullpath: '/models/models.js'
                 },
 
-                "juju-charm-store": {
-                    fullpath: "/store/charm.js"
-                },
-		
-
-		"juju-controllers": {
-		    use: ["juju-env", "juju-charm-store"]
+                // Connectivity
+                'juju-env': {
+                    requires: ['reconnecting-websocket'],
+                    fullpath: '/store/env.js'
                 },
 
-		// App
-                "juju-gui": {
-                    fullpath: "/app.js",
+                'juju-charm-store': {
+                    fullpath: '/store/charm.js'
+                },
+
+
+                'juju-controllers': {
+                    use: ['juju-env', 'juju-charm-store']
+                },
+
+                // App
+                'juju-gui': {
+                    fullpath: '/app.js',
                     requires: [
-			"juju-controllers",
-                        "juju-views",
-                        "juju-models"
+                        'juju-controllers',
+                        'juju-views',
+                        'juju-models'
                     ]
                 }
             }
@@ -109,6 +110,6 @@ GlobalConfig = {
 };
 
 // Node compat for testing
-if (typeof(exports) !== "undefined") {
+if (typeof(exports) !== 'undefined') {
     exports.GlobalConfig = GlobalConfig;
 }

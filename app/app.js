@@ -1,62 +1,67 @@
-YUI.add("juju-gui", function(Y) {
+'use strict';
 
-// Debug console access to YUI context.
+// Create a global for debug console access to YUI context.
+var yui;
+
+YUI.add('juju-gui', function(Y) {
+
+// Assign the global for console access.
 yui = Y;
 
 var juju = Y.namespace('juju');
-var models = Y.namespace("juju.models");
+var models = Y.namespace('juju.models');
 
-JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
+var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     views: {
         environment: {
-            type: "juju.views.environment",
+            type: 'juju.views.environment',
             preserve: false
         },
 
         service: {
-            type: "juju.views.service",
+            type: 'juju.views.service',
             preserve: false,
-            parent: "environment"
+            parent: 'environment'
         },
 
         service_config: {
-            type: "juju.views.service_config",
+            type: 'juju.views.service_config',
             preserve: false,
-            parent: "service"
+            parent: 'service'
         },
 
         service_constraints: {
-            type: "juju.views.service_constraints",
+            type: 'juju.views.service_constraints',
             preserve: false,
-            parent: "service"
+            parent: 'service'
         },
 
         service_relations: {
-            type: "juju.views.service_relations",
+            type: 'juju.views.service_relations',
             preserve: false,
-            parent: "service"
+            parent: 'service'
         },
 
         unit: {
-            type: "juju.views.unit",
+            type: 'juju.views.unit',
             preserve: false,
-            parent: "service"
+            parent: 'service'
         },
 
         charm_collection: {
-            type: "juju.views.charm_collection",
+            type: 'juju.views.charm_collection',
             preserve: false,
-            parent: "environment"
+            parent: 'environment'
         },
 
         charm: {
-            type: "juju.views.charm",
+            type: 'juju.views.charm',
             preserve: false,
-            parent: "charm_collection"
+            parent: 'charm_collection'
         },
 
         charm_search: {
-            type: "juju.views.charm_search",
+            type: 'juju.views.charm_search',
             preserve: true
         }
     },
@@ -68,13 +73,17 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         // Create an environment facade to interact with.
         this.env = new juju.Environment({'socket_url': this.get('socket_url')});
 
+        // Create a charm store.
+        this.charm_store = new Y.DataSource.IO({
+            source: this.get('charm_store_url')});
+
         // Event subscriptions
 
         // TODO: refactor per event views into a generic show view event.
-        this.on("*:showService", this.navigate_to_service);
-        this.on("*:showUnit", this.navigate_to_unit);
-        this.on("*:showCharmCollection", this.navigate_to_charm_collection);
-        this.on("*:showCharm", this.navigate_to_charm);
+        this.on('*:showService', this.navigate_to_service);
+        this.on('*:showUnit', this.navigate_to_unit);
+        this.on('*:showCharmCollection', this.navigate_to_charm_collection);
+        this.on('*:showCharm', this.navigate_to_charm);
 
         // Feed environment changes directly into the database.
         this.env.on('delta', this.db.on_delta, this.db);
@@ -84,18 +93,18 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         // TODO - Bound views will automatically update this on individual models
         this.db.on('update', this.on_database_changed, this);
 
-        this.on("navigate", function(e) {
-            console.log("app navigate", e);
+        this.on('navigate', function(e) {
+            console.log('app navigate', e);
         });
 
         this.once('ready', function (e) {
-            if (this.get("socket_url")) {
+            if (this.get('socket_url')) {
                 // Connect to the environment.
-                Y.log("App: Connecting to environment");
+                Y.log('App: Connecting to environment');
                 this.env.connect();
             }
 
-            Y.log("App: Rerendering current view " + this.getPath(), "info");
+            Y.log('App: Rerendering current view ' + this.getPath(), 'info');
             if (this.get('activeView')) {
                 this.get('activeView').render();
             } else {
@@ -106,44 +115,44 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     },
 
     on_database_changed: function(evt) {
-        Y.log(evt, "debug", 'App: Database changed');
+        Y.log(evt, 'debug', 'App: Database changed');
         // Redispatch to current view to update.
         this.dispatch();
     },
 
     // Event handlers
     navigate_to_unit: function(e) {
-        console.log("Evt.Nav.Router unit target", e.unit_id);
-        this.navigate("/unit/" + e.unit_id.replace("/", "-") + "/");
+        console.log('Evt.Nav.Router unit target', e.unit_id);
+        this.navigate('/unit/' + e.unit_id.replace('/', '-') + '/');
     },
 
     navigate_to_service: function(e) {
-        console.log(e.service.get("id"), "debug", "Evt.Nav.Router service target");
+        console.log(e.service.get('id'), 'debug', 'Evt.Nav.Router service target');
         var service = e.service;
-        this.navigate("/service/" + service.get("id") + "/");
+        this.navigate('/service/' + service.get('id') + '/');
     },
 
     navigate_to_charm_collection: function(e) {
-        console.log("Evt.Nav.Router charm collection");
-        query = Y.one('#charm-search').get('value');
-        this.navigate("/charms/?q=" + query);
+        console.log('Evt.Nav.Router charm collection');
+        var query = Y.one('#charm-search').get('value');
+        this.navigate('/charms/?q=' + query);
     },
 
     navigate_to_charm: function(e) {
-        console.log("Evt.Nav.Router charm");
+        console.log('Evt.Nav.Router charm');
         var charm_url = e.charm_data_url;
-        this.navigate("/charms/" + charm_url);
+        this.navigate('/charms/' + charm_url);
     },
 
     // Route handlers
     show_unit: function(req) {
         console.log(
-            "App: Route: Unit", req.params.id, req.path, req.pendingRoutes);
+            'App: Route: Unit', req.params.id, req.path, req.pendingRoutes);
         var unit_id = req.params.id.replace('-', '/');
         var unit = this.db.units.getById(unit_id);
-        this.showView("unit", {unit: unit, db: this.db});
+        this.showView('unit', {unit: unit, db: this.db});
     },
-        
+
     _prefetch_service: function(service) {
         // only prefetch once
         // we redispatch to the service view after we have status
@@ -162,13 +171,13 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
             // TODO service charm reference should be by id.
             var charm_id = service.get('charm');
             var charm = this.db.charms.getById(charm_id);
-            console.log("prefetching charm", charm_id, charm);
+            console.log('prefetching charm', charm_id, charm);
             if (!charm) {
                 charm = new models.Charm({id: charm_id});
                 this.db.charms.add(charm);
             }
             if (!charm.get('loaded')) {
-                console.log("Get charm", charm_id);
+                console.log('Get charm', charm_id);
                 this.env.get_charm(charm_id, Y.bind(this.load_charm, this));
             }
         }
@@ -180,47 +189,53 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
 
     show_service: function(req) {
         console.log(
-            "App: Route: Service", req.params.id, req.path, req.pendingRoutes);
+            'App: Route: Service', req.params.id, req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView("service", {model: service, domain_models: this.db});
+        this.showView('service', {model: service, domain_models: this.db});
     },
 
     show_service_config: function(req) {
-        console.log("App: Route: Svc Config", req.path, req.pendingRoutes);
+        console.log('App: Route: Svc Config', req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView("service_config", {model: service, domain_models: this.db});
+        this.showView('service_config', {model: service, domain_models: this.db});
     },
 
     show_service_relations: function(req) {
-        console.log("App: Route: Svc Relations", req.path, req.pendingRoutes);
+        console.log('App: Route: Svc Relations', req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView("service_relations", {model: service, domain_models: this.db});
+        this.showView('service_relations', {model: service, domain_models: this.db});
     },
 
     show_service_constraints: function(req) {
-        console.log("App: Route: Svc Constraints", req.path, req.pendingRoutes);
+        console.log('App: Route: Svc Constraints', req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView("service_constraints", {model: service, domain_models: this.db});
+        this.showView('service_constraints', {model: service, domain_models: this.db});
     },
 
     show_environment: function (req) {
-        console.log("App: Route: Environment", req.path, req.pendingRoutes);
+        console.log('App: Route: Environment', req.path, req.pendingRoutes);
         this.showView('environment', {domain_models: this.db});
     },
 
     show_charm_collection: function(req) {
-        console.log("App: Route: Charm Collection", req.path, req.query);
-        this.showView('charm_collection', {'query': req.query.q});
+        console.log('App: Route: Charm Collection', req.path, req.query);
+        this.showView('charm_collection', {
+            query: req.query.q,
+            charm_store: this.charm_store
+        });
     },
 
     show_charm: function(req) {
-        console.log("App: Route: Charm", req.path, req.params);
+        console.log('App: Route: Charm', req.path, req.params);
         var charm_url = req.params.charm_url;
-        this.showView("charm", {"charm_data_url": charm_url});
+        this.showView('charm', {
+            charm_data_url: charm_url,
+            charm_store: this.charm_store
+        });
     },
 
     /* Present on all views */
@@ -240,7 +255,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         var svc_data = evt.result;
         var svc = this.db.services.getById(svc_data.name);
         if (!svc) {
-            console.warn("Could not load service data for", 
+            console.warn('Could not load service data for',
                 evt.service_name, evt);
             return;
         }
@@ -258,7 +273,7 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
         var charm_data = evt.result;
         var charm = this.db.charms.getById(evt.charm_url);
         if (!charm) {
-            console.warn("Could not load charm data for", evt.charm_url, evt);
+            console.warn('Could not load charm data for', evt.charm_url, evt);
             return;
         }
         charm.setAttrs({'provides': charm_data.provides,
@@ -275,32 +290,32 @@ JujuGUI = Y.Base.create("juju-gui", Y.App, [], {
     ATTRS: {
         routes: {
             value: [
-		{path: "*", callback: 'show_charm_search'},
+                {path: '*', callback: 'show_charm_search'},
 
-                {path: "/charms/", callback: 'show_charm_collection'},
-                {path: "/charms/*charm_url", callback: 'show_charm'},
-                {path: "/service/:id/config", callback: 'show_service_config'},
-                {path: "/service/:id/constraints", callback: 'show_service_constraints'},
-                {path: "/service/:id/relations", callback: 'show_service_relations'},
-                {path: "/service/:id/", callback: 'show_service'},
-                {path: "/unit/:id/", callback: 'show_unit'},
-                {path: "/", callback: 'show_environment'}
+                {path: '/charms/', callback: 'show_charm_collection'},
+                {path: '/charms/*charm_url', callback: 'show_charm'},
+                {path: '/service/:id/config', callback: 'show_service_config'},
+                {path: '/service/:id/constraints', callback: 'show_service_constraints'},
+                {path: '/service/:id/relations', callback: 'show_service_relations'},
+                {path: '/service/:id/', callback: 'show_service'},
+                {path: '/unit/:id/', callback: 'show_unit'},
+                {path: '/', callback: 'show_environment'}
                 ]
             }
     }
 });
 
-Y.namespace("juju").App = JujuGUI;
+Y.namespace('juju').App = JujuGUI;
 
-}, "0.5.2", {
+}, '0.5.2', {
     requires: [
-	"juju-models",
-	"juju-views",
-	"juju-controllers",
-	"io",
-	"json-parse",
-	'app-base',
-	'app-transitions',
-	'base',
-	'node']
+        'juju-models',
+        'juju-views',
+        'juju-controllers',
+        'io',
+        'json-parse',
+        'app-base',
+        'app-transitions',
+        'base',
+        'node']
 });
