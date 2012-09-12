@@ -199,7 +199,7 @@ var Notification = Y.Base.create('notification', Y.Model, [], {}, {
     ATTRS: {
         title: {},
         message: {},
-        level: {value: "info"},
+        level: {value: 'info'},
         kind: {},
         timestamp: {
             valueFn: function() {return Y.Lang.now();}
@@ -221,7 +221,7 @@ var NotificationList = Y.Base.create('notificationList', Y.ModelList, [], {
     },
 
     enforce_max_size: function(e) {
-        if (this.size() == this.get("max_size")) {
+        if (this.size() == this.get('max_size')) {
             this.remove_oldest_notification();
         }
     },
@@ -234,13 +234,13 @@ var NotificationList = Y.Base.create('notificationList', Y.ModelList, [], {
         
     get_unseen_count: function() {
         return this.filter(function(m) {
-                return m.get("seen") == false;}).length;
+                return m.get('seen') === false;}).length;
     },
 
     get_notice_levels: function() {
         var levels = {};
         this.each(function(m) {
-            var level = m.get("level");
+            var level = m.get('level');
             if (levels[level] !== undefined) {
                 levels[level]++;
             } else {
@@ -254,7 +254,7 @@ var NotificationList = Y.Base.create('notificationList', Y.ModelList, [], {
 }, {
     ATTRS: {
         max_size: {value: 10,
-                      writeOnce: "initOnly"
+                      writeOnce: 'initOnly'
                      }
     }
 });

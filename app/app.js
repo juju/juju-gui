@@ -67,7 +67,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         },
 
         notifications: {
-            type: "juju.views.NotificationsView",
+            type: 'juju.views.NotificationsView',
             preserve: true
         }
 
@@ -270,11 +270,11 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     },
 
     show_notifications_view: function(req, res, next) {
-        var view = this.getViewInfo("notifications"),
+        var view = this.getViewInfo('notifications'),
             instance = view.instance;
         if (!instance) {
             view.instance = new views.NotificationsView(
-                                {container: Y.one("#notifications"),
+                                {container: Y.one('#notifications'),
                                  env: this.env,
                                  model_list: this.db.notifications});
             view.instance.render();

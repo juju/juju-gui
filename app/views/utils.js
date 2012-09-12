@@ -7,20 +7,20 @@ var views = Y.namespace('juju.views');
 var timestrings = {
     prefixAgo: null,
     prefixFromNow: null,
-    suffixAgo: "ago",
-    suffixFromNow: "from now",
-    seconds: "less than a minute",
-    minute: "about a minute",
-    minutes: "%d minutes",
-    hour: "about an hour",
-    hours: "about %d hours",
-    day: "a day",
-    days: "%d days",
-    month: "about a month",
-    months: "%d months",
-    year: "about a year",
-    years: "%d years",
-    wordSeparator: " ",
+    suffixAgo: 'ago',
+    suffixFromNow: 'from now',
+    seconds: 'less than a minute',
+    minute: 'about a minute',
+    minutes: '%d minutes',
+    hour: 'about an hour',
+    hours: 'about %d hours',
+    day: 'a day',
+    days: '%d days',
+    month: 'about a month',
+    months: '%d months',
+    year: 'about a year',
+    years: '%d years',
+    wordSeparator: ' ',
     numbers: []
 };
 
@@ -58,7 +58,7 @@ var humanizeTimestamp = function(t) {
         years < 1.5 && substitute(l.year, 1) ||
         substitute(l.years, Math.round(years));
 
-      return Y.Lang.trim([prefix, words, suffix].join(" "));
+      return Y.Lang.trim([prefix, words, suffix].join(' '));
 };
 views.humanizeTimestamp = humanizeTimestamp;
 

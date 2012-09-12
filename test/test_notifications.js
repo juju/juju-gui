@@ -44,11 +44,10 @@ describe('notifications', function() {
        
           // the sort order on the list should be by 
           // timestamp
-          nl.sort();
           nl.get('title').should.eql(['test2', 'test1']);
       });
 
-    it('must be able to track unseen messsages and levels', function(){
+    it('must be able to track unseen messages and levels', function(){
           var note1 = new models.Notification({title: 'test1',
                                                message: 'Hello',
                                                seen: true
@@ -75,7 +74,7 @@ describe('notifications', function() {
           nl = new models.NotificationList(),
 
           container = Y.Node.create('<div id="test">'),
-          env = new juju.Environment({socket_url: 'ws://localhost:8081'}),
+          env = new juju.Environment(),
           view = new views.NotificationsView({container: container,
                                               model_list: nl,
                                               env: env
@@ -97,6 +96,6 @@ describe('notifications', function() {
            // Adding a new notification should pop the oldest from the list (we exceed max_size)
            nl.add(note3);
            nl.size().should.equal(2);
-           nl.get("title").should.eql(['test3', 'test2']);
+           nl.get('title').should.eql(['test3', 'test2']);
     });
 });
