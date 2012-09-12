@@ -1,5 +1,7 @@
 'use strict';
 
+var ENTER_KEY = 13;
+
 (function () {
   describe('juju service view', function() {
     var ServiceView, views, models, Y, container, service, db, conn,
@@ -156,6 +158,62 @@
          var control = container.one('#num-service-units');
          control.get('value').should.equal('3');
        });
+
+    it('should remove multiple units when the text input changes',
+      function() {
+        var view = new ServiceView(
+          {container: container, model: service, domain_models: db, app: {env: env}});
+        view.render();
+        var control = container.one('#num-service-units');
+        control.set('value', 1)
+        var form = container.one('#service-unit-control');
+        // form.submit() creates an event that is not intercepted.  As a
+        // work-around we create a submit button so we can click it, which
+        // actually works!
+        var submit = Y.Node.create('<input type="submit"/>');
+        form.append(submit);
+        submit.simulate('click');
+        var message = conn.last_message();
+        message.op.should.equal('remove_units');
+        assert.deepEqual(message.unit_names, ['mysql/2', 'mysql/1']);
+      });
+
+    it('should not do anything is the number of units is < 1',
+      function() {
+        var view = new ServiceView(
+          {container: container, model: service, domain_models: db, app: {env: env}});
+        view.render();
+        var control = container.one('#num-service-units');
+        control.set('value', 0)
+        var form = container.one('#service-unit-control');
+        // form.submit() creates an event that is not intercepted.  As a
+        // work-around we create a submit button so we can click it, which
+        // actually works!
+        var submit = Y.Node.create('<input type="submit"/>');
+        form.append(submit);
+        submit.simulate('click');
+        expect(conn.last_message()).to.not.exist;
+      });
+
+    it('should add the correct number of units when entered via text field',
+      function() {
+        var view = new ServiceView(
+          {container: container, model: service, domain_models: db, app: {env: env}});
+        view.render();
+        var control = container.one('#num-service-units');
+        control.set('value', 7)
+        var form = container.one('#service-unit-control');
+        // form.submit() creates an event that is not intercepted.  As a
+        // work-around we create a submit button so we can click it, which
+        // actually works!
+        var submit = Y.Node.create('<input type="submit"/>');
+        form.append(submit);
+        submit.simulate('click');
+        var message = conn.last_message();
+        message.op.should.equal('add_unit');
+        message.service_name.should.equal('mysql');
+        message.num_units.should.equal(4);
+      });
 
   });
 }) ();
