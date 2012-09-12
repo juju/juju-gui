@@ -84,6 +84,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         this.on('*:showUnit', this.navigate_to_unit);
         this.on('*:showCharmCollection', this.navigate_to_charm_collection);
         this.on('*:showCharm', this.navigate_to_charm);
+        this.on('*:showEnvironment', this.navigate_to_environment);
 
         // Feed environment changes directly into the database.
         this.env.on('delta', this.db.on_delta, this.db);
@@ -142,6 +143,11 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         console.log('Evt.Nav.Router charm');
         var charm_url = e.charm_data_url;
         this.navigate('/charms/' + charm_url);
+    },
+
+    navigate_to_environment: function(e) {
+        console.log('Evt.Nav.Router environment');
+        this.navigate('/');
     },
 
     // Route handlers
@@ -234,7 +240,8 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         var charm_url = req.params.charm_url;
         this.showView('charm', {
             charm_data_url: charm_url,
-            charm_store: this.charm_store
+            charm_store: this.charm_store,
+            env: this.env
         });
     },
 

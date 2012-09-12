@@ -119,8 +119,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 //  service_click_action.<action>
                 // with the service, the SVG node, and the view
                 // as arguments
-                (self.get('service_click_actions.' + 
-                      curr_click_action))(m, this, self);
+                (self.service_click_actions[curr_click_action])(m, this, self);
             });
 
 
@@ -197,119 +196,125 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
      * Event handler for the add relation button
      */
     add_relation: function(evt) {
-        var curr_action = this.get('current_service_click_action');
+        var curr_action = this.get('current_service_click_action'),
+            container = this.get('container');
         if (curr_action == 'drill_down') {
             this.set('current_service_click_action', 'add_relation_start');
             // add .selectable-service to all .service-border
-            Y.all('.service-border').each(function() {
+            container.all('.service-border').each(function() {
                 // cannot use addClass on SVG elements, so emulate it.
                 var currClasses = this.getAttribute('class');
                 this.setAttribute('class', 
                     currClasses + ' selectable-service');
             });
-            Y.one('#add-relation-btn').addClass('active');
+            container.one('#add-relation-btn').addClass('active');
         } else if (curr_action == 'add_relation_start' || 
                 curr_action == 'add_relation_end') {
             this.set('current_service_click_action', 'drill_down');
             // remove selectable border from all nodes
-            Y.all('.service-border').each(function() {
+            container.all('.service-border').each(function() {
                 // Cannot use removeClass on SVG elements, so emulate it
                 var currClasses = this.getAttribute('class');
                 this.setAttribute('class',
                     currClasses.replace('selectable-service', ''));
             });
-            Y.one('#add-relation-btn').removeClass('active');
+            container.one('#add-relation-btn').removeClass('active');
         } // otherwise do nothing
+    },
+
+    /*
+     * Actions to be called on clicking a service.
+     */
+    service_click_actions: {
+        /*
+         * Default action: view a service
+         */
+        drill_down: function(m, context, view) {
+            view.fire("showService", {service: m});
+        },
+
+        /*
+         * Fired when clicking the first service in the add relation
+         * flow.
+         */
+        add_relation_start: function(m, context, view) {
+            // remove selectable border from current node
+            // Cannot use removeClass on SVG elements, so emulate it
+            var node = Y.one(context).one('.service-border');
+            var currClasses = node.getAttribute('class');
+            node.setAttribute('class', 
+                    currClasses.replace('selectable-service', ''));
+            // store start service in attrs
+            view.set('add_relation_start_service', m);
+            // set click action
+            view.set('current_service_click_action', 
+                    'add_relation_end');
+        },
+
+        /*
+         * Fired when clicking the second service is clicked in the
+         * add relation flow
+         */
+        add_relation_end: function(m, context, view) {
+            // remove selectable border from all nodes
+            var container = view.get('container');
+            container.all('.service-border').each(function() {
+                // Cannot use removeClass on SVG elements, so emulate it
+                var currClasses = this.getAttribute('class');
+                this.setAttribute('class',
+                    currClasses.replace('selectable-service', ''));
+            });
+
+            // Get the vis, tree, and links, build the new relation
+            var vis = view.get('vis'),
+                tree = view.get('tree'),
+                env = view.get('env'),
+                links = tree.links(),
+                rel = {
+                    source: view.get('add_relation_start_service'),
+                    target: m
+                };
+
+            // add temp relation between services
+            var link = vis.selectAll("path.pending-relation")
+                .data([rel],
+                      function(d) {return d;});
+            link.enter().insert("svg:line", "g.service")
+                .attr("class", "relation pending-relation")
+                .attr("x1", function(d) { return d.source.x; })
+                .attr("y1", function(d) { return d.source.y; })
+                .attr("x2", function(d) { return d.target.x; })
+                .attr("y2", function(d) { return d.target.y; });
+            links.push(rel);
+            tree.links(links);
+
+            // Animate the new line we've created to represent 
+            // the relation
+            tree.on('tick.pending-relation', function() {
+                link.attr("x1", function(d) { return d.source.x; })
+                    .attr("y1", function(d) { return d.source.y; })
+                    .attr("x2", function(d) { return d.target.x; })
+                    .attr("y2", function(d) { return d.target.y; });
+            });
+            tree.start();
+            // fire event to add relation in juju
+            env.add_relation(
+                rel.source.get('id'),
+                rel.target.get('id'),
+                function(resp) {
+                    container.one('#add-relation-btn').removeClass('active');
+                    if (resp.err) {
+                        console.log('Error adding relation');
+                    }
+                });
+            // For now, set back to drill down
+            view.set('current_service_click_action', 'drill_down');
+        }
     }
 
 }, {
     ATTRS: {
         current_service_click_action: { value: 'drill_down' },
-        service_click_actions: {
-            value: {
-                /*
-                 * Default action: view a service
-                 */
-                drill_down: function(m, context, view) {
-                    view.fire("showService", {service: m});
-                },
-
-                /*
-                 * Fired when clicking the first service in the add relation
-                 * flow.
-                 */
-                add_relation_start: function(m, context, view) {
-                    // remove selectable border from current node
-                    var node = Y.one(context).one('.service-border');
-                    var currClasses = node.getAttribute('class');
-                    node.setAttribute('class', 
-                            currClasses.replace('selectable-service', ''));
-                    // store start service in attrs
-                    view.set('add_relation_start_service', m);
-                    // set click action
-                    view.set('current_service_click_action', 
-                            'add_relation_end');
-                },
-
-                /*
-                 * Fired when clicking the second service is clicked in the
-                 * add relation flow
-                 */
-                add_relation_end: function(m, context, view) {
-                    // remove selectable border from all nodes
-                    Y.all('.service-border').each(function() {
-                        var currClasses = this.getAttribute('class');
-                        this.setAttribute('class',
-                            currClasses.replace('selectable-service', ''));
-                    });
-
-                    // Get the vis, tree, and links, build the new relation
-                    var vis = view.get('vis'),
-                        tree = view.get('tree'),
-                        env = view.get('env'),
-                        links = tree.links(),
-                        rel = {
-                            source: view.get('add_relation_start_service'),
-                            target: m
-                        };
-
-                    // add temp relation between services
-                    var link = vis.selectAll("path.pending-relation")
-                        .data([rel],
-                              function(d) {return d;});
-                    link.enter().insert("svg:line", "g.service")
-                        .attr("class", "relation pending-relation")
-                        .attr("x1", function(d) { return d.source.x; })
-                        .attr("y1", function(d) { return d.source.y; })
-                        .attr("x2", function(d) { return d.target.x; })
-                        .attr("y2", function(d) { return d.target.y; });
-                    links.push(rel);
-                    tree.links(links);
-
-                    // Animate the new line we've created to represent 
-                    // the relation
-                    tree.on('tick.pending-relation', function() {
-                        link.attr("x1", function(d) { return d.source.x; })
-                            .attr("y1", function(d) { return d.source.y; })
-                            .attr("x2", function(d) { return d.target.x; })
-                            .attr("y2", function(d) { return d.target.y; });
-                    });
-                    tree.start();
-                    // fire event to add relation in juju
-                    env.add_relation(
-                        rel.source.get('id'),
-                        rel.target.get('id'),
-                        function(resp) {
-                            Y.one('#add-relation-btn').removeClass('active');
-                            if (resp.err) {
-                                console.log('Error adding relation');
-                            }
-                        });
-                    // For now, set back to drill down
-                    view.set('current_service_click_action', 'drill_down');
-                }
-            }
-        }
     }
 });
 

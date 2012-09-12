@@ -89,8 +89,23 @@ var CharmView = Y.Base.create('CharmView', Y.View, [], {
     },
 
     on_charm_deploy: function(evt) {
-        console.log('charm deploy', this.get('charm'));
-        // this.fire('');
+        var charm = this.get('charm');
+        console.log('charm deploy', charm);
+        // Generating charm url: see http://jujucharms.com/tools/store-missing
+        // for examples of charm addresses.
+        var charmUrl = charm.series + '/' + charm.name;
+        if (charm.owner !== 'charmers') {
+            charmUrl = '~' + charm.owner + '/' + charmUrl;
+        }
+        charmUrl = 'cs:' + charmUrl;
+        var env = this.get('env');
+        // The deploy call generates an event chain leading to a call to
+        // `app.on_database_changed()`, which re-dispatches the current view.
+        // For this reason we need to redirect to the root page right now.
+        this.fire('showEnvironment');
+        env.deploy(charmUrl, function(msg) {
+            console.log(charmUrl + ' deployed');
+        });
     }
 });
 

@@ -7,7 +7,7 @@ charms.thumbnails.li{height:4em;}
 .state-pending{stroke:#6597E8;}
 g.service{fill:#f5f5f5;stroke:black;}g.service .charm-label{font-size:0.7em;fill:#333333;}
 g.service .name{font-weight:bold;font-family:"Ubuntu";font-size:1.6em;fill:#333333;}
-g.service .service-border{stroke-width:2px;}g.service .service-border.selectable-service{-moz-box-shadow:5px 5px 5px #888;-webkit-box-shadow:5px 5px 5px #888;box-shadow:5px 5px 5px #888;stroke:#008;stroke-width:3px;}
+g.service .service-border{stroke-width:2px;}g.service .service-border.selectable-service{stroke:#008;stroke-width:3px;}
 g.service .unit-count{stroke-width:0;text-anchor:middle;dominant-baseline:central;fill:rgba(0, 0, 0, 0);font-family:"Ubuntu";font-size:2.5em;}g.service .unit-count.show-count{fill:#000000;}
 g.service .unit-count.hide-count{fill:rgba(0, 0, 0, 0);}
 g.service-status path{stroke-width:0;}g.service-status path.status-pending{fill:#fcd305;}
