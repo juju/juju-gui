@@ -68,12 +68,12 @@
       charm = new models.Charm({id: "mysql", name: "mysql",
                                  description: "A DB"});
       db.charms.add([charm]);
-      service = new models.Service({id: "mysql", charm: "mysql"});
-      db.services.add([service])
       my0 = new models.ServiceUnit({id:'mysql/0', agent_state: 'pending'}),
       my1 = new models.ServiceUnit({id:'mysql/1', agent_state: 'pending'}),
       my2 = new models.ServiceUnit({id:'mysql/2', agent_state: 'pending'});
       db.units.add([my1, my2, my0]);
+      service = new models.Service({id: "mysql", charm: "mysql", unit_count: db.units.size()});
+      db.services.add([service])
       done();
     });
 
