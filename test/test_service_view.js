@@ -5,15 +5,6 @@
     var ServiceView, views, models, Y, container, service, db, conn,
       juju, env, charm, my0, my1, my2, testUtils;
 
-    var submit = function(form) {
-      // form.submit() creates an event that is not intercepted.  As a
-      // work-around we create a submit button so we can click it, which
-      // actually works!
-      var submit = Y.Node.create('<input type="submit"/>');
-      form.append(submit);
-      submit.simulate('click');
-    }
-
     before(function (done) {
       Y = YUI(GlobalConfig).use(
         'juju-views', 'juju-models', 'base', 'node', 'json-parse',
@@ -39,6 +30,7 @@
 
     beforeEach(function (done) {
       container = Y.Node.create('<div id="test-container" />');
+      Y.one('#main').append(container);
       db = new models.Database();
       charm = new models.Charm({id: 'mysql', name: 'mysql',
                                  description: 'A DB'});
@@ -53,6 +45,7 @@
     });
 
     afterEach(function (done) {
+      container.remove()
       container.destroy();
       service.destroy();
       db.destroy();
@@ -73,6 +66,9 @@
       var view = new ServiceView(
         {container: container, model: service, domain_models: db, app: {env: env}});
       view.render();
+      // Prove that we can attach events without error even when there's
+      // nothing to which to attach.
+      view.attachEvents();
       // "var _ =" makes the linter happy.
       var _ = expect(container.one('#service-unit-control')).to.not.exist;
     });
@@ -82,6 +78,7 @@
       var view = new ServiceView(
         {container: container, model: service, domain_models: db, app: {env: env}});
       view.render();
+      view.attachEvents();
       var rendered_names = container.all('div.thumbnail').get('id');
       var expected_names = db.units.map(function(u) {return u.get('id');});
       expected_names.sort();
@@ -92,6 +89,7 @@
       var view = new ServiceView(
         {container: container, model: service, domain_models: db, app: {env: env}});
       view.render();
+      view.attachEvents();
       var control = container.one('#add-service-unit');
       control.simulate('click');
       var message = conn.last_message();
@@ -104,6 +102,7 @@
       var view = new ServiceView(
         {container: container, model: service, domain_models: db, app: {env: env}});
       view.render();
+      view.attachEvents();
       var control = container.one('#rm-service-unit');
       control.simulate('click');
       var message = conn.last_message();
@@ -119,6 +118,7 @@
         var view = new ServiceView(
           {container: container, model: service, domain_models: db, app: {env: env}});
         view.render();
+        view.attachEvents();
         container.all('div.thumbnail').get('id').length.should.equal(1);
         var control = container.one('#rm-service-unit');
         control.simulate('click');
@@ -142,7 +142,7 @@
         view.render();
         var control = container.one('#num-service-units');
         control.set('value', 1);
-        submit(container.one('form'));
+        control.simulate('keydown', { keyCode: 13 }); // Simulate Enter.
         var message = conn.last_message();
         message.op.should.equal('remove_units');
         assert.deepEqual(message.unit_names, ['mysql/2', 'mysql/1']);
@@ -155,7 +155,7 @@
         view.render();
         var control = container.one('#num-service-units');
         control.set('value', 0);
-        submit(container.one('form'));
+        control.simulate('keydown', { keyCode: 13 }); // Simulate Enter.
         // "var _ =" makes the linter happy.
         var _ = expect(conn.last_message()).to.not.exist;
       });
@@ -167,7 +167,7 @@
         view.render();
         var control = container.one('#num-service-units');
         control.set('value', 7);
-        submit(container.one('form'));
+        control.simulate('keydown', { keyCode: 13 }); // Simulate Enter.
         var message = conn.last_message();
         message.op.should.equal('add_unit');
         message.service_name.should.equal('mysql');

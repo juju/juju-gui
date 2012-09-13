@@ -122,8 +122,8 @@ describe('juju models', function() {
         db.process_model_delta(
           ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}],
           models.ServiceUnit,
-          db.units)
+          db.units);
         my0.get('agent_state').should.equal('another');
-      })
+      });
     });
 })();
