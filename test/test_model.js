@@ -104,8 +104,10 @@ describe('juju models', function() {
     it('process_model_delta should handle remove changes correctly',
        function() {
         var db = new models.Database();
-        var my0 = new models.ServiceUnit({id:'mysql/0', agent_state: 'pending'}),
-            my1 = new models.ServiceUnit({id:'mysql/1', agent_state: 'pending'});
+        var my0 = new models.ServiceUnit({id:'mysql/0',
+                                          agent_state: 'pending'}),
+            my1 = new models.ServiceUnit({id:'mysql/1',
+                                          agent_state: 'pending'});
         db.units.add([my0, my1]);
         db.process_model_delta(
           ['unit', 'remove', 'mysql/1'], models.ServiceUnit, db.units);
@@ -114,7 +116,7 @@ describe('juju models', function() {
         names[0].should.equal('mysql/0');
        });
 
-    it('process_model_delta should be able to reuse existing models with an add',
+    it('process_model_delta should be able to reuse existing models with add',
       function() {
         var db = new models.Database();
         var my0 = new models.ServiceUnit({id:'mysql/0', agent_state: 'pending'});
@@ -122,8 +124,8 @@ describe('juju models', function() {
         db.process_model_delta(
           ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}],
           models.ServiceUnit,
-          db.units)
+          db.units);
         my0.get('agent_state').should.equal('another');
-      })
+      });
     });
 })();
