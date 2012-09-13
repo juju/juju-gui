@@ -307,7 +307,7 @@ function program9(depth0,data) {
   buffer += escapeExpression(stack1) + "</td>\n          </tr>\n        ";
   return buffer;}
 
-  buffer += "<br/> FIXME: The HTML is broken.  All pages have their tops cut off.\n<br/>\n<br/>\n<br/>\n\n<div class=\"row\">\n  <div class=\"well\">\n    <h1 id=\"unit-id\">";
+  buffer += "<div class=\"row\">\n  <div class=\"well\">\n    <h1 id=\"unit-id\">";
   stack1 = depth0.unit;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.id;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;

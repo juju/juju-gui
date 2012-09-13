@@ -16,3 +16,4 @@ g.service-status path.status-installed{fill:#ffffff;}
 g.service-status path.status-error{fill:#c01c20;}
 g.unit{stroke-width:0;font-weight:bold;font-family:"Ubuntu";font-size:1.2em;fill:#1626cf;}g.unit .address{fill:#ffffff;font-size:0.8em;}
 g.unit .unit-border{stroke-width:2px;fill:#a0a0a0;}
+#main{margin-top:5em;}
