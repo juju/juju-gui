@@ -18,7 +18,7 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
         console.log('view.render.unit');
         var unit = this.get('unit');
         if (!unit) {
-            container.setHTML('<div class='alert'>Loading...</div>');
+            container.setHTML('<div class="alert">Loading...</div>');
             console.log('waiting on unit data');
             return this;
         }
@@ -27,7 +27,7 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
             service = db.services.getById(unit.get('service'));
 
         if (!service.get('loaded')) {
-            container.setHTML('<div class='alert'>Loading...</div>');
+            container.setHTML('<div class="alert">Loading...</div>');
             console.log('waiting on service data');
             return this;
         }

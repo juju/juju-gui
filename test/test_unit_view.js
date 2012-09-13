@@ -21,7 +21,7 @@
       };
 
       this.msg = function(m) {
-          console.log("serializing env msg", m);
+          console.log('serializing env msg', m);
           this.onmessage({'data': Y.JSON.stringify(m)});
       };
 
@@ -46,10 +46,10 @@
         'juju-env', 'node-event-simulate',
         function (Y) {
           views = Y.namespace('juju.views');
-          models = Y.namespace("juju.models");
+          models = Y.namespace('juju.models');
           UnitView = views.unit;
           conn = new SocketStub();
-          juju = Y.namespace("juju");
+          juju = Y.namespace('juju');
           env = new juju.Environment({conn: conn});
           env.connect();
           conn.open();
@@ -66,13 +66,13 @@
       container = Y.Node.create('<div id="test-container" />');
       db = new models.Database();
       charm = new models.Charm({
-        id: "mysql",
-        name: "mysql",
-        description: "A DB"});
+        id: 'mysql',
+        name: 'mysql',
+        description: 'A DB'});
       db.charms.add([charm]);
       service = new models.Service({
-        id: "mysql",
-        charm: "cs:mysql",
+        id: 'mysql',
+        charm: 'cs:mysql',
         loaded: true,
         rels: {
           ident: 'relation-0',
@@ -98,7 +98,9 @@
 
     afterEach(function (done) {
       container.destroy();
-      service.destroy;
+      service.destroy();
+      machine.destroy();
+      charm.destroy();
       db.destroy();
       conn.messages = [];
       done();
