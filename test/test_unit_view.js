@@ -3,7 +3,7 @@
 (function () {
   describe('juju unit view', function() {
     var UnitView, views, machine, models, Y, container, service, unit, db,
-      conn, juju, env, charm;
+      conn, juju, env, charm, testUtils;
     var SocketStub = function () {
       this.messages = [];
 
@@ -48,7 +48,8 @@
           views = Y.namespace('juju.views');
           models = Y.namespace('juju.models');
           UnitView = views.unit;
-          conn = new SocketStub();
+          testUtils = Y.namespace('juju-tests.utils');
+          conn = new testUtils.SocketStub();
           juju = Y.namespace('juju');
           env = new juju.Environment({conn: conn});
           env.connect();

@@ -151,6 +151,8 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         var unit_id = req.params.id.replace('-', '/');
         var unit = this.db.units.getById(unit_id);
         if (unit) {
+            // Once the unit is loaded we need to get the full details of the
+            // service.  Otherwise the relations data will not be available.
             var service = this.db.services.getById(unit.get('service'));
             this._prefetch_service(service);
         }
