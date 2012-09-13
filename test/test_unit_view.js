@@ -42,8 +42,8 @@
 
     before(function (done) {
       Y = YUI(GlobalConfig).use(
-        'juju-views', 'juju-models', 'base', 'node', 'json-parse',
-        'juju-env', 'node-event-simulate',
+        'juju-views', 'juju-models', 'base', 'node', 'json-parse', 'juju-env',
+        'node-event-simulate', 'juju-tests-utils',
         function (Y) {
           views = Y.namespace('juju.views');
           models = Y.namespace('juju.models');
