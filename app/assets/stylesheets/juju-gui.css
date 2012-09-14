@@ -18,3 +18,6 @@ g.unit{stroke-width:0;font-weight:bold;font-family:"Ubuntu";font-size:1.2em;fill
 g.unit .unit-border{stroke-width:2px;fill:#a0a0a0;}
 #overview-tasks{width:800px;margin:0;}#overview-tasks button{color:#2c2c2c;border:1px solid #999;}#overview-tasks button:disabled{background-color:#3d3d3d;color:#888;}
 #overview-tasks button.active{border:1px solid #fcd305;}
+#unit-status .running{color:green;}
+#unit-status .pending{color:yellow;}
+#unit-status .error{color:red;}

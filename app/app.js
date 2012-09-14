@@ -15,7 +15,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     views: {
         environment: {
             type: 'juju.views.environment',
-            preserve: false
+            preserve: true
         },
 
         service: {
@@ -156,6 +156,12 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
             'App: Route: Unit', req.params.id, req.path, req.pendingRoutes);
         var unit_id = req.params.id.replace('-', '/');
         var unit = this.db.units.getById(unit_id);
+        if (unit) {
+            // Once the unit is loaded we need to get the full details of the
+            // service.  Otherwise the relations data will not be available.
+            var service = this.db.services.getById(unit.get('service'));
+            this._prefetch_service(service);
+        }
         this.showView('unit', {unit: unit, db: this.db});
     },
 
@@ -224,7 +230,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
 
     show_environment: function (req) {
         console.log("App: Route: Environment", req.path, req.pendingRoutes);
-        this.showView('environment', {domain_models: this.db, env: this.env});
+        this.showView('environment', {domain_models: this.db, env: this.env}, {render: true});
     },
 
     show_charm_collection: function(req) {

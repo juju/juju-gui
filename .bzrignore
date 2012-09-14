@@ -9,3 +9,5 @@ app/assets/javascripts/yui
 docs/_build/doctrees
 docs/_build/html
 *~
+tags
+Session.vim

@@ -70,7 +70,6 @@ g.unit {
     stroke-width: 2px; fill: #a0a0a0;}
 }
 
-
 #overview-tasks {
     width: 800px;
     margin: 0;
@@ -86,5 +85,17 @@ g.unit {
         &.active {
             border: 1px solid #fcd305;
         }
+    }
+}
+
+#unit-status {
+    .running {
+        color: green;
+    }
+    .pending {
+        color: yellow;
+    }
+    .error {
+        color: red;
     }
 }
