@@ -35,16 +35,20 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         });
         var relations = m.relations.toArray();
         var fill = d3.scale.category20();
-        var zoom = d3.behavior.zoom();
+
+        var xscale = d3.scale.linear()
+            .domain([-width / 2, width / 2])
+            .range([0, width]);
+
+        var yscale = d3.scale.linear()
+            .domain([-height / 2, height / 2])
+            .range([height, 0]);
         
         // Scales for unit sizes
         // XXX magic numbers will have to change; likely during
         // the pan/zoom work
         var service_scale_width = d3.scale.log().range([164, 200]);
         var service_scale_height = d3.scale.log().range([64, 100]);
-
-
-
 
         // Set up the visualization with a pack layout
         var vis = d3.select(container.getDOMNode())
@@ -54,14 +58,18 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .attr('width', "100%")
             .attr('height', "100%")
             .append('svg:g')
-            .call(d3.behavior.zoom().on('zoom', redraw))
+            .call(d3.behavior.zoom()
+                  .x(xscale)
+                  .y(yscale)
+                  .scaleExtent([0.25, 1.75])
+                  .on('zoom', rescale))
             .append('svg:g');
         vis.append('svg:rect')
             .attr('width', width)
             .attr('height', height)
             .attr('fill', 'white');
 
-        function redraw() {
+        function rescale() {
             vis.attr("transform", "translate(" + d3.event.translate + ")"
                      + " scale(" + d3.event.scale + ")");
         }
