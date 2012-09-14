@@ -39,15 +39,12 @@ describe('notifications', function() {
           // defaults as expected
           note1.get('level').should.equal('info');
           note2.get('level').should.equal('info');
-          note1.get('seen').should.equal(false);
-          note2.get('seen').should.equal(false);
-       
           // the sort order on the list should be by 
           // timestamp
           nl.get('title').should.eql(['test2', 'test1']);
       });
 
-    it('must be able to track unseen messages and levels', function(){
+    it('must be able to track messages and levels', function(){
           var note1 = new models.Notification({title: 'test1',
                                                message: 'Hello',
                                                seen: true
@@ -59,7 +56,6 @@ describe('notifications', function() {
 
           nl.add([note1, note2]);
           nl.size().should.equal(2);
-          nl.get_unseen_count().should.equal(1);
           nl.get_notice_levels().should.eql({error: 1, info: 1});
         
     });

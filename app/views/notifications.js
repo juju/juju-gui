@@ -12,6 +12,15 @@ var views = Y.namespace('juju.views'),
 var NotificationsView = Y.Base.create('NotificationsView', Y.View,
     [views.JujuBaseView], {
     template: Templates.notifications,
+
+    /* Declarative indicators of desiried event->behavior bindings */
+    bindings: {
+      model_list: true,
+      connection: true,
+      delta_stream: true,
+      timestamps: true
+    },
+            
     events: {
         '#notify-indicator': {click: 'notify_toggle'},
         '.notice': {click: 'notice_select'}
@@ -24,23 +33,31 @@ var NotificationsView = Y.Base.create('NotificationsView', Y.View,
             env = this.get('env');
 
         // Bind view to model list in a number of ways
-        ml.addTarget(this);
-        // Re-render the model list changes
-        ml.after('add', this.slow_render, this);
-        ml.after('create', this.slow_render, this);
-        ml.after('remove', this.slow_render, this);
-        ml.after('reset', this.slow_render, this);
-
+        if (this.bindings.model_list) {
+            ml.addTarget(this);
+            // Re-render the model list changes
+            ml.after('add', this.slow_render, this);
+            ml.after('create', this.slow_render, this);
+            ml.after('remove', this.slow_render, this);
+            ml.after('reset', this.slow_render, this);
+        }
+        
+        
         // Env connection state watcher
-        env.on('connectedChange', this.slow_render, this);
-        env.on('delta', this.generate_notices, this);
+        if (this.bindings.connection) {
+            env.on('connectedChange', this.slow_render, this);            
+        }
+
+        if (this.bindings.delta_stream) {
+            env.on('delta', this.generate_notices, this);            
+        }
     },
-      
+
     /*
      * Parse the delta stream looking for interesting events to translate
      * into notices. This could get filtered through a per user/env ruleset.
      */
-    notice_rules: {
+    injest_rules: {
         service: {add: 'change_to_notice',
                  'delete': 'change_to_notice'}
     },
@@ -50,32 +67,37 @@ var NotificationsView = Y.Base.create('NotificationsView', Y.View,
      */
     generate_notices: function(delta_evt) {
         var self = this,
-            rules = this.notice_rules;
+            rules = this.notice_rules,
+            ml = this.get('model_list');
         
         delta_evt.data.result.forEach(function(change) {
             var change_type = change[0],
                 change_op = change[1],
-                change_data = change[2];
-            // see if there is a rule for this type of operation
-            if (rules[change_type] && rules[change_type][change_op]) {
-                var op = rules[change_type][change_op];
-                self[op](change_type, change_op, change_data);
-            }
+                change_data = change[2], 
+                notify_data = {};
+
+            /*
+             * Data injestion rules
+             *  Create events for seens deltas
+             *  Promote certain events to the "show me" list
+             *  Also: 
+             *  - for each change event see if there is an notice relating to
+             *  that object in the model list
+             *    -- see if the current change event invalidates the need 
+             *       to show the existing notices
+             *    -- make the new notice as 'must see' or not (errors, etc)
+             *  - add a notice for the event
+             */
+            
+            // Dispatch injestion rules (which may mutate either the current
+            // 'ml' or models within it (notice status)
+                                          
+            notify_data.title = change_op + ' ' + change_type;
+            notify_data.message = change_data.id + ' was added.';
+            ml.create(notify_data);
         });
     },
             
-    /*
-     * Convert a single change event to a new notice
-     */
-    change_to_notice: function(kind, op, data){
-        var ml = this.get('model_list');
-        ml.create({
-                title: op + ' ' + kind, 
-                message: data.id + ' was added.'
-        });
-        
-    },
-
 
     /*
      * Event handler for clicking the notification icon.
@@ -97,6 +119,25 @@ var NotificationsView = Y.Base.create('NotificationsView', Y.View,
         parent.toggleClass('open');
         el.toggleClass('active');
 
+    },
+        
+    /* 
+     * When the notify indicator menu is open and a click happens outside
+     * close the menu
+     *  TODO: on clickoutside this should hide the window, but event-outside
+     *  bindings seem quite intrusive 
+     */
+    notify_hide: function(evt){
+        var container = this.get('container'),
+            target = evt.target.getAttribute('data-target'),
+            el = container.one('#' + target),
+            parent = el.ancestor();
+        
+        if (parent.hasClass('open')) {
+            el.hide(true);
+            parent.removeClass('open');
+            el.removeClass('active');
+        }   
     },
 
     /*
@@ -161,36 +202,67 @@ var NotificationsView = Y.Base.create('NotificationsView', Y.View,
             var levels = ml.get_notice_levels();
             if (levels.error) {
                 state = 'btn-danger';
-            } else if (ml.get_unseen_count() > 0) {
+            } else if (ml.get_show_count() > 0) {
                 state = 'btn-info';                
             }
         } 
 
         container.setHTML(this.template(
-            {notifications: ml.map(function(n) {return n.getAttrs();}),
-             count: ml.size(),
+            {notifications: this.get_showable(),
+             count: ml.get_show_count(),
              state: state,
              open: open
              }));
 
         // Periodically update timestamps
-        Y.later(6000, this, function(o) {
-            container.all('.timestamp').each(function(n){
-            n.setHTML(views.humanizeTimestamp(
-                    n.getAttribute('data-timestamp')));
-            });
-        }, [], true);
+        if (this.bindings.timestamps) {
+            Y.later(6000, this, function(o) {
+                container.all('[data-timestamp]').each(function(n){
+                        n.setHTML(views.humanizeTimestamp(
+                                n.getAttribute('data-timestamp')));
+                        });
+                }, [], true);
+        }
         return this;
+    },
+
+    get_showable: function() {
+        var ml = this.get('model_list');
+        return ml.map(function(n) {return n.getAttrs();});
+    }
+}, {
+    ATTRS: {
+        display_size: {value: 8}
+    }
+});
+views.NotificationsView = NotificationsView;
+
+
+var NotificationsOverview = Y.Base.create('NotificationsOverview', NotificationsView, [], {
+    template: Templates.notifications_overview,
+    bindings: {
+      model_list: true,
+      connection: false,
+      delta_stream: false,
+      timestamps: true
+    },
+    events: {
+        '.notice': {click: 'notice_select'}
+    },
+
+    get_showable: function() {
+        var ml = this.get('model_list');
+        return ml.map(function(n) {return n.getAttrs();});
     }
 
 });
-views.NotificationsView = NotificationsView;
+
+views.NotificationsOverview = NotificationsOverview;
 
 }, '0.1.0', {
     requires: [
         'view',
         'juju-view-utils',
-        'event-hover',
         'node',
         'handlebars'
         ]

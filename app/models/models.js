@@ -20,6 +20,7 @@ var Charm = Y.Base.create('charm', Y.Model, [], {
                 if (match) {
                     return match[3] + '/' + match[4];
                 }
+                return undefined;
             }
         },
         url: {},
@@ -107,16 +108,6 @@ var ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
         return units;
     },
     /*
-     *  Return information about the state of all units focused on the
-     * 'worst' status information available. In this way if any unit is in
-     *  an error state we can report that for the whole list.
-     *
-     * KT - Should return an aggregate count by state (map), so proproptional
-     * representation can be done in various renderings.
-     */
-    get_informative_state: function() {
-    },
-    /*
      *  Return information about the state of the set of units for a
      *  given service in the form of a map of agent states:
      *  state => number of units in that state
@@ -201,10 +192,10 @@ var Notification = Y.Base.create('notification', Y.Model, [], {}, {
         message: {},
         level: {value: 'info'},
         kind: {},
+        priority: {value: 0},
         timestamp: {
             valueFn: function() {return Y.Lang.now();}
-            },
-        seen: {value: false}
+            }
     }
 });
 models.Notification = Notification;
@@ -231,10 +222,11 @@ var NotificationList = Y.Base.create('notificationList', Y.ModelList, [], {
         // handle zero based index
         this.remove(this.size() - 1);
     },
-        
-    get_unseen_count: function() {
+
+    get_show_count: function() {
         return this.filter(function(m) {
-                return m.get('seen') === false;}).length;
+            return m.get('priority') >= 1;
+        }).length;
     },
 
     get_notice_levels: function() {
@@ -253,9 +245,10 @@ var NotificationList = Y.Base.create('notificationList', Y.ModelList, [], {
 
 }, {
     ATTRS: {
-        max_size: {value: 10,
-                      writeOnce: 'initOnly'
-                     }
+        max_size: {
+            value: 150,
+            writeOnce: 'initOnly'
+        }
     }
 });
 models.NotificationList = NotificationList;

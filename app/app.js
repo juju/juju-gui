@@ -69,6 +69,10 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         notifications: {
             type: 'juju.views.NotificationsView',
             preserve: true
+        },
+        
+        notifications_overview: {
+            type: 'juju.views.NotificationsOverview'
         }
 
     },
@@ -252,6 +256,12 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         });
     },
 
+    show_notifications_overview: function(req) {
+        this.showView('notifications_overview', {
+                          env: this.env,
+                          model_list: this.db.notifications});
+    },
+
     /* 
      * Persistent Views 
      * 
@@ -317,8 +327,110 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
                         'revision': charm_data.revision,
                         'loaded': true});
         this.dispatch();
-    }
+    },
 
+    /*
+     *  Object routing support
+     *  This is a utility that helps map from model objects to routes
+     *  defined on the App object.
+     * 
+     * routeModel(model, [intent]) -> 'urlstring or known route' || undefined
+     * 
+     * Some models have more than one associated view, in some cases it 
+     * may still require additional knowledge of intent to map to the 
+     * proper view. In those cases passing a string 'intent' to the 
+     * routeModel call will check that the matched route contain reference
+     * to the supplied intent.
+     * 
+     * To support this ee suppliment our routing information with additional
+     * attributes as follows:
+     * 
+     * model: model.name (required)
+     * primary: boolean -- given mode than one match this becomes the default
+     * reverse_map: {route_path_key: str || function(value, model)}
+     *          reverse map can map :id in the path to either
+     *              another attribute name on the model
+     *          or 
+     *          a function(the attr value of the key,)
+     *              and returning the value to use in the URL
+     *              (the context is the model)
+     */
+    routeModel: function(model, intent) {
+        var matches = [],
+            attrs = model.getAttrs(),
+            routes = this.get('routes'),
+            regexPathParam = /([:*])([\w\-]+)?/g;
+
+        routes.forEach(function(route) {
+            var path = route.path,
+                required_model = route.model,
+                reverse_map = route.reverse_map;
+
+            // Fail fast on wildcard paths, routes w/o models
+            // and when the model doesn't match the route type
+            if (path === '*' || 
+               required_model === undefined ||
+               model.name != required_model) {
+               return;                
+            }
+
+            // Replace the path params with items from the 
+            // models attrs
+            path = path.replace(regexPathParam, 
+                    function (match, operator, key) {
+                        if (reverse_map !== undefined && reverse_map[key]) {
+                            var mapping = reverse_map[key];
+                            if (Y.Lang.isFunction(mapping)) {
+                                return mapping.call(model, attrs[key]);
+                            } else {
+                                key = mapping;
+                            }
+                        }
+                    return attrs[key];
+            });
+            matches.push({path: path, 
+                         route: route,
+                         model: model,
+                         intent: intent});
+        });
+
+        // see if intent is in the url
+        if (intent !== undefined) {
+            matches = Y.Array.filter(matches, function(match) {
+                return match.path.search(intent) > -1;
+            });
+        }
+        // if there is more than one match return the 'primary' if set
+        if (matches.length > 1) {
+            matches = Y.Array.filter(matches, function(match) {
+                return match.route.primary === true;
+            });
+        }
+        return matches[0] && matches[0].path;
+    },
+
+    // Override Y.Router.route (and setter) to allow inclusion 
+    // of additional routing params
+    _setRoutes: function(routes) {
+        this._routes = [];
+        Y.Array.each(routes, function (route) {
+            // additionally pass route as options
+            // needed to pass through the attribute setter
+            this.route(route.path, route.callback, route);
+        }, this);
+        return this._routes.concat();
+    },
+    route: function(path, callback, options) {
+        JujuGUI.superclass.route.call(this, path, callback);
+
+        // This is a whitelist to spare the extra juggling
+        if (options.model) {
+            var r = this._routes, 
+                idx = this._routes.length -1;
+            r[idx] = Y.mix(r[idx], options);
+        }
+    }
+    
 }, {
     ATTRS: {
         routes: {
@@ -326,12 +438,29 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
                 {path: '*', callback: 'show_charm_search'},
                 {path: '*', callback: 'show_notifications_view'},
                 {path: '/charms/', callback: 'show_charm_collection'},
-                {path: '/charms/*charm_url', callback: 'show_charm'},
-                {path: '/service/:id/config', callback: 'show_service_config'},
-                {path: '/service/:id/constraints', callback: 'show_service_constraints'},
-                {path: '/service/:id/relations', callback: 'show_service_relations'},
-                {path: '/service/:id/', callback: 'show_service'},
-                {path: '/unit/:id/', callback: 'show_unit'},
+                {path: '/charms/*charm_url', 
+                     callback: 'show_charm', 
+                     reverse_map: {charm_url: 'name'},
+                     model: 'charm'},
+                {path: '/notifications/',
+                     callback: 'show_notifications_overview'},
+                {path: '/service/:id/config', 
+                     callback: 'show_service_config',
+                     model: 'service'},
+                {path: '/service/:id/constraints', 
+                     callback: 'show_service_constraints', 
+                     model: 'service'},
+                {path: '/service/:id/relations', 
+                     callback: 'show_service_relations',
+                     model: 'service'},
+                {path: '/service/:id/', callback: 'show_service',
+                     model: 'service',
+                     primary: true},
+                {path: '/unit/:id/', callback: 'show_unit',
+                     reverse_map: {
+                        "id": function(value)  {
+                            return this.get("id").replace("/", "-");}},
+                     model: 'serviceUnit'},
                 {path: '/', callback: 'show_environment'}
                 ]
             }
