@@ -1,17 +1,23 @@
 <div class="row">
   <div class="well">
     <h1 id="unit-id">{{unit.id}}</h1>
-    <b id="charm-uri">{{service.charm}}</b>
-    {{#unit.is_subordinate}} (subordinate){{/unit.is_subordinate}}
+    <b id="charm-uri">
+      <a href="/charms/charms/{{charm.name}}/json">{{charm.id}}</a>
+    </span>
+
+    {{#if unit.is_subordinate}} (subordinate){{/if}}
     <div id="unit-status">
       {{unit_ip_description}}
       {{#unit_ip_description}}|{{/unit_ip_description}}
-      {{#unit_running}}
-        <span style="color: green">&#x25B6;</span>
-      {{/unit_running}}
-      {{^unit_running}}
-        <span style="color: red">&#x2b1b;</span>
-      {{/unit_running}}
+      {{#if unit_running}}
+        <span class="running">&#x25B6;</span>
+      {{/if}}
+      {{#if unit_pending}}
+        <span class="pending">&#x2b24;</span>
+      {{/if}}
+      {{#if unit_error}}
+        <span class="error">&#x2b1b;</span>
+      {{/if}}
       {{unit.agent_state}}
     </div>
   </div>
@@ -43,6 +49,11 @@
   </div>
 </div>
 
+{{#unless service.rels}}
+This unit has no relations.
+{{/unless}}
+
+{{#if service.rels}}
 <div id="relations" class="row">
   <div class="span12">
     <h2>&#x26B9; Relations</h2>
@@ -58,7 +69,9 @@
         {{#service.rels}}
           <tr>
             <td class="relation-ident">{{ident}}</td>
-            <td class="relation-endpoint">{{endpoint}}</td>
+            <td class="relation-endpoint">
+              <a href="/service/{{endpoint}}/">{{endpoint}}</a>
+            </td>
             <td class="relation-name">{{name}}</td>
             <td class="relation-role">{{role}}</td>
             <td class="relation-scope">{{scope}}</td>
@@ -68,3 +81,4 @@
     </table>
   </div>
 </div>
+{{/if}}

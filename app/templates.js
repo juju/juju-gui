@@ -274,25 +274,50 @@ function program3(depth0,data) {
 function program5(depth0,data) {
   
   
-  return "\n        <span style=\"color: green\">&#x25B6;</span>\n      ";}
+  return "\n        <span class=\"running\">&#x25B6;</span>\n      ";}
 
 function program7(depth0,data) {
   
   
-  return "\n        <span style=\"color: red\">&#x2b1b;</span>\n      ";}
+  return "\n        <span class=\"pending\">&#x2b24;</span>\n      ";}
 
 function program9(depth0,data) {
+  
+  
+  return "\n        <span class=\"error\">&#x2b1b;</span>\n      ";}
+
+function program11(depth0,data) {
+  
+  
+  return "\nThis unit has no relations.\n";}
+
+function program13(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n<div id=\"relations\" class=\"row\">\n  <div class=\"span12\">\n    <h2>&#x26B9; Relations</h2>\n    <table class=\"table table-striped table-bordered\">\n      <tbody>\n        <tr>\n          <th>id</th>\n          <th>endpoint</th>\n          <th>name</th>\n          <th>role</th>\n          <th>scope</th>\n        </tr>\n        ";
+  stack1 = depth0.service;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.rels;
+  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  stack1 = stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(14, program14, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n      </tbody>\n    </table>\n  </div>\n</div>\n";
+  return buffer;}
+function program14(depth0,data) {
   
   var buffer = "", stack1, foundHelper;
   buffer += "\n          <tr>\n            <td class=\"relation-ident\">";
   foundHelper = helpers.ident;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.ident; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</td>\n            <td class=\"relation-endpoint\">";
+  buffer += escapeExpression(stack1) + "</td>\n            <td class=\"relation-endpoint\">\n              <a href=\"/service/";
   foundHelper = helpers.endpoint;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.endpoint; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  buffer += escapeExpression(stack1) + "</td>\n            <td class=\"relation-name\">";
+  buffer += escapeExpression(stack1) + "/\">";
+  foundHelper = helpers.endpoint;
+  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
+  else { stack1 = depth0.endpoint; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
+  buffer += escapeExpression(stack1) + "</a>\n            </td>\n            <td class=\"relation-name\">";
   foundHelper = helpers.name;
   if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{}}); }
   else { stack1 = depth0.name; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
@@ -311,15 +336,18 @@ function program9(depth0,data) {
   stack1 = depth0.unit;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.id;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</h1>\n    <b id=\"charm-uri\">";
-  stack1 = depth0.service;
-  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.charm;
+  buffer += escapeExpression(stack1) + "</h1>\n    <b id=\"charm-uri\">\n      <a href=\"/charms/charms/";
+  stack1 = depth0.charm;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.name;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</b>\n    ";
+  buffer += escapeExpression(stack1) + "/json\">";
+  stack1 = depth0.charm;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.id;
+  stack1 = typeof stack1 === functionType ? stack1() : stack1;
+  buffer += escapeExpression(stack1) + "</a>\n    </span>\n\n    ";
   stack1 = depth0.unit;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.is_subordinate;
-  stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  stack1 = stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
+  stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(1, program1, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    <div id=\"unit-status\">\n      ";
   foundHelper = helpers.unit_ip_description;
@@ -332,16 +360,16 @@ function program9(depth0,data) {
   if (!helpers.unit_ip_description) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(3, program3, data)}); }
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n      ";
-  foundHelper = helpers.unit_running;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.noop,fn:self.program(5, program5, data)}); }
-  else { stack1 = depth0.unit_running; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  if (!helpers.unit_running) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(5, program5, data)}); }
+  stack1 = depth0.unit_running;
+  stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(5, program5, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n      ";
-  foundHelper = helpers.unit_running;
-  if (foundHelper) { stack1 = foundHelper.call(depth0, {hash:{},inverse:self.program(7, program7, data),fn:self.noop}); }
-  else { stack1 = depth0.unit_running; stack1 = typeof stack1 === functionType ? stack1() : stack1; }
-  if (!helpers.unit_running) { stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.program(7, program7, data),fn:self.noop}); }
+  stack1 = depth0.unit_pending;
+  stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(7, program7, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n      ";
+  stack1 = depth0.unit_error;
+  stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(9, program9, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n      ";
   stack1 = depth0.unit;
@@ -367,13 +395,17 @@ function program9(depth0,data) {
   stack1 = depth0.machine;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.public_address;
   stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  buffer += escapeExpression(stack1) + "</td>\n        </tr>\n      </tbody>\n    </table>\n  </div>\n</div>\n\n<div id=\"relations\" class=\"row\">\n  <div class=\"span12\">\n    <h2>&#x26B9; Relations</h2>\n    <table class=\"table table-striped table-bordered\">\n      <tbody>\n        <tr>\n          <th>id</th>\n          <th>endpoint</th>\n          <th>name</th>\n          <th>role</th>\n          <th>scope</th>\n        </tr>\n        ";
+  buffer += escapeExpression(stack1) + "</td>\n        </tr>\n      </tbody>\n    </table>\n  </div>\n</div>\n\n";
   stack1 = depth0.service;
   stack1 = stack1 == null || stack1 === false ? stack1 : stack1.rels;
-  stack1 = typeof stack1 === functionType ? stack1() : stack1;
-  stack1 = stack1 = blockHelperMissing.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(9, program9, data)});
+  stack1 = helpers.unless.call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(11, program11, data)});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n      </tbody>\n    </table>\n  </div>\n</div>\n";
+  buffer += "\n\n";
+  stack1 = depth0.service;
+  stack1 = stack1 == null || stack1 === false ? stack1 : stack1.rels;
+  stack1 = helpers['if'].call(depth0, stack1, {hash:{},inverse:self.noop,fn:self.program(13, program13, data)});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n";
   return buffer;});
   
     Templates['service'] = Y.Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {

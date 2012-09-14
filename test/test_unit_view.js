@@ -67,7 +67,7 @@
       container = Y.Node.create('<div id="test-container" />');
       db = new models.Database();
       charm = new models.Charm({
-        id: 'mysql',
+        id: 'cs:mysql',
         name: 'mysql',
         description: 'A DB'});
       db.charms.add([charm]);
@@ -103,7 +103,6 @@
       machine.destroy();
       charm.destroy();
       db.destroy();
-      conn.messages = [];
       done();
     });
 

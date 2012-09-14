@@ -32,6 +32,16 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
             return this;
         }
 
+        var charm = db.charms.getById(service.get('charm'));
+
+        if (!charm) {
+            container.setHTML('<div class="alert">Loading...</div>');
+            console.log('waiting on charm data');
+            return this;
+        }
+
+        UnitView.superclass.render.apply(this, arguments);
+
         var ip_description_chunks = [];
         if (unit.get('public_address')) {
             ip_description_chunks.push(unit.get('public_address'));
@@ -47,14 +57,19 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
             unit_ip_description = ip_description_chunks.join(' | ');
         }
 
-        UnitView.superclass.render.apply(this, arguments);
+        var unit_error = /-error/.test(unit.get('agent_state')),
+            unit_running = unit.get('agent_state') == 'started',
+            unit_pending = !(unit_running || unit_error);
 
         container.setHTML(this.template({
             unit: unit.getAttrs(),
             unit_ip_description: unit_ip_description,
             service: service.getAttrs(),
+            charm: charm.getAttrs(),
             machine: db.machines.getById(unit.get('machine')).getAttrs(),
-            unit_running: unit.get('agent_state') == 'started'}));
+            unit_error: unit_error,
+            unit_running: unit_running,
+            unit_pending: unit_pending}));
 
         return this;
     }
