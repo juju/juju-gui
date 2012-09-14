@@ -103,12 +103,13 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         // Generate a node for each service, draw it as a rect with
         // labels for service and charm
         var node = vis.selectAll('.service')
-            .data(tree.nodes({children: services})
-                .filter(function (d) { return !d.children; }))
+            .data(self._saved_coords(services) ? 
+                services : 
+                self._generate_coords(services, tree))
             .enter().append('g')
             .attr('class', 'service')
             .attr('transform', function (d) { 
-                return "translate(" + [d.x,d.y] + ")"; 
+                return 'translate(' + [d.x,d.y] + ')'; 
             })
             .on('click', function(m) {
                     self.fire('showService', {service: m});
@@ -206,7 +207,40 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         }
 
         update_links();
+    },
 
+    /*
+     * Check to make sure that every service has saved coordinates
+     */
+    _saved_coords: function(services) {
+        var saved_coords = true;
+        services.forEach(function(service) {
+            if (!service.x || !service.y) {
+                saved_coords = false;
+            }
+        });
+        return saved_coords;
+    },
+
+    /*
+     * Generates coordinates for those services that are missing them
+     */
+    _generate_coords: function(services, tree) {
+        services.forEach(function(service) {
+            if (service.x && service.y) {
+                service.set('x', service.x);
+                service.set('y', service.y);
+            }
+        });
+        var services_with_coords = tree.nodes({children: services})
+            .filter(function(d) { return !d.children; });
+        services_with_coords.forEach(function(service) {
+            if (service.get('x') && service.get('y')) {
+                service.x = service.get('x');
+                service.y = service.get('y');
+            }
+        });
+        return services_with_coords;
     },
 
     /*
