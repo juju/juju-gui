@@ -29,9 +29,12 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             height = 600,
             width = 800;
 
-        var fill = d3.scale.category20();
-        var services = m.services.toArray();
+        var services = m.services.toArray().map(function(s) {
+            s.value = s.get('unit_count');
+            return s;
+        });
         var relations = m.relations.toArray();
+        var fill = d3.scale.category20();
 
         // Scales for unit sizes
         // XXX magic numbers will have to change; likely during
@@ -39,14 +42,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         var service_scale_width = d3.scale.log().range([164, 200]);
         var service_scale_height = d3.scale.log().range([64, 100]);
 
-        var tree = d3.layout.force()
-            .on('tick', tick)
-            .charge(-450)
-            .gravity(0.05)
-            .distance(200)
-            .friction(0.5)
-            .size([width, height]);
-
+        // Set up the visualization with a pack layout
         var vis = d3.select(container.getDOMNode())
             .selectAll('#canvas')
             .append('svg:svg')
@@ -54,71 +50,54 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .attr('width', width)
             .attr('height', height);
 
-
-        function tick() {
-            link.attr('x1', function(d) { return d.source.x; })
-                .attr('y1', function(d) { return d.source.y; })
-                .attr('x2', function(d) { return d.target.x; })
-                .attr('y2', function(d) { return d.target.y; });
-
-            node.attr('transform', function(d) {
-                          return 'translate(' + d.x + ',' + d.y + ')'; });
-        }
-
-        function processRelation(r) {
-            var endpoints = r.get('endpoints'),
-            rel_services = [];
-            Y.each(endpoints, function(ep) {
-                rel_services.push(m.services.getById(ep[0]));
-            });
-            return rel_services;
-        }
-
-        function processRelations(rels) {
-            var pairs = [];
-            Y.each(rels, function(rel) {
-                var pair = processRelation(rel);
-                // skip peer for now
-                if (pair.length == 2) {
-                    pairs.push({source: pair[0],
-                               target: pair[1]});
-                }
-
-            });
-            return pairs;
-        }
+        var tree = d3.layout.pack()
+            .size([width, height])
+            .padding(200);
 
         var rel_data = processRelations(relations);
-        tree.nodes(services)
-            .links(rel_data);
 
-        var link = vis.selectAll('path.relation')
-            .data(rel_data,
-                  function(d) {return d;});
+        function update_links() {
+            var link = vis.selectAll('polyline.relation')
+                .remove();
+            link = vis.selectAll('polyline.relation')
+                .data(rel_data);
+            link.enter().insert('svg:polyline', 'g.service')
+                .attr('class', 'relation')
+                .attr('points', function(d) { return self.draw_relation(d); });
+        }
 
-        link.enter().insert('svg:line', 'g.service')
-            .attr('class', 'relation')
-            .attr('x1', function(d) { return d.source.x; })
-            .attr('y1', function(d) { return d.source.y; })
-            .attr('x2', function(d) { return d.target.x; })
-            .attr('y2', function(d) { return d.target.y; });
-
-        var node = vis.selectAll('.service')
-            .data(services)
-            .enter().append('g')
-            .call(tree.drag)
-            .attr('class', 'service')
-            .on('click', function(m) {
-                    self.fire('showService', {service: m});
+        var drag = d3.behavior.drag()
+            .on('drag', function(d,i) {
+                d.x += d3.event.dx;
+                d.y += d3.event.dy;
+                d3.select(this).attr('transform', function(d,i){
+                    return 'translate(' + [ d.x,d.y ] + ')';
+                });
+                update_links();                            
             });
 
+        // Generate a node for each service, draw it as a rect with
+        // labels for service and charm
+        var node = vis.selectAll('.service')
+            .data(self._saved_coords(services) ? 
+                services : 
+                self._generate_coords(services, tree))
+            .enter().append('g')
+            .attr('class', 'service')
+            .attr('transform', function (d) { 
+                return 'translate(' + [d.x,d.y] + ')'; 
+            })
+            .on('click', function(m) {
+                    self.fire('showService', {service: m});
+            })
+            .call(drag);
 
         node.append('rect')
-        .attr('class', 'service-border')
-        .attr('width', function(d) {
-            return service_scale_width(d.get('unit_count')); })
-        .attr('height', function(d) {
-            return service_scale_height(d.get('unit_count')); });
+            .attr('class', 'service-border')
+            .attr('width', function(d) {
+                return service_scale_width(d.get('unit_count')); })
+            .attr('height', function(d) {
+                return service_scale_height(d.get('unit_count')); });
 
         var service_labels = node.append('text').append('tspan')
             .attr('class', 'name')
@@ -131,14 +110,17 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .attr('y', '2.5em')
             .attr('dy', '3em')
             .attr('class', 'charm-label')
-            .text(function(d) {
-                      return d.get('charm'); });
+            .text(function(d) { return d.get('charm'); });
 
+        // Add the relative health of a service in the form of a pie chart
+        // comprised of units styled appropriately
+        // TODO aggregate statuses into good/bad/pending
         var status_chart_arc = d3.svg.arc()
             .innerRadius(10)
             .outerRadius(25);
         var status_chart_layout = d3.layout.pie()
             .value(function(d) { return (d.value ? d.value : 1); });
+
 
         var status_chart = node.append('g')
             .attr('class', 'service-status')
@@ -175,7 +157,80 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 return self.humanizeNumber(d.get('unit_count'));
             });
 
-        tree.start();
+        function processRelation(r) {
+            var endpoints = r.get('endpoints'),
+            rel_services = [];
+            Y.each(endpoints, function(ep) {
+                rel_services.push(services.filter(function(d) {
+                    return d.get('id') == ep[0];
+                })[0]);
+            });
+            return rel_services;
+        }
+
+        function processRelations(rels) {
+            var pairs = [];
+            Y.each(rels, function(rel) {
+                var pair = processRelation(rel);
+                // skip peer for now
+                if (pair.length == 2) {
+                    pairs.push({source: pair[0],
+                               target: pair[1]});
+                }
+
+            });
+            return pairs;
+        }
+
+        update_links();
+    },
+
+    /*
+     * Check to make sure that every service has saved coordinates
+     */
+    _saved_coords: function(services) {
+        var saved_coords = true;
+        services.forEach(function(service) {
+            if (!service.x || !service.y) {
+                saved_coords = false;
+            }
+        });
+        return saved_coords;
+    },
+
+    /*
+     * Generates coordinates for those services that are missing them
+     */
+    _generate_coords: function(services, tree) {
+        services.forEach(function(service) {
+            if (service.x && service.y) {
+                service.set('x', service.x);
+                service.set('y', service.y);
+            }
+        });
+        var services_with_coords = tree.nodes({children: services})
+            .filter(function(d) { return !d.children; });
+        services_with_coords.forEach(function(service) {
+            if (service.get('x') && service.get('y')) {
+                service.x = service.get('x');
+                service.y = service.get('y');
+            }
+        });
+        return services_with_coords;
+    },
+
+    /*
+     * Draw a relation between services.  Polylines take a list of points
+     * in the form "x y,( x y,)* x y"
+     *
+     * TODO For now, just draw a straight line; 
+     * will eventually use A* to route around other services
+     */
+    draw_relation: function(relation) {
+        return relation.source.x + ' ' +
+            relation.source.y + ', ' +
+            relation.target.x + ' ' + 
+            relation.target.y;
     }
 
 });

@@ -15,7 +15,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     views: {
         environment: {
             type: 'juju.views.environment',
-            preserve: false
+            preserve: true
         },
 
         service: {
@@ -230,7 +230,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
 
     show_environment: function (req) {
         console.log('App: Route: Environment', req.path, req.pendingRoutes);
-        this.showView('environment', {domain_models: this.db});
+        this.showView('environment', {domain_models: this.db}, {render: true});
     },
 
     show_charm_collection: function(req) {
