@@ -198,7 +198,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
     add_relation: function(evt) {
         var curr_action = this.get('current_service_click_action'),
             container = this.get('container');
-        if (curr_action == 'drill_down') {
+        if (curr_action == 'show_service') {
             this.set('current_service_click_action', 'add_relation_start');
             // add .selectable-service to all .service-border
             container.all('.service-border').each(function() {
@@ -210,7 +210,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             container.one('#add-relation-btn').addClass('active');
         } else if (curr_action == 'add_relation_start' || 
                 curr_action == 'add_relation_end') {
-            this.set('current_service_click_action', 'drill_down');
+            this.set('current_service_click_action', 'show_service');
             // remove selectable border from all nodes
             container.all('.service-border').each(function() {
                 // Cannot use removeClass on SVG elements, so emulate it
@@ -229,7 +229,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         /*
          * Default action: view a service
          */
-        drill_down: function(m, context, view) {
+        show_service: function(m, context, view) {
             view.fire("showService", {service: m});
         },
 
@@ -277,8 +277,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 
             // add temp relation between services
             var link = vis.selectAll("path.pending-relation")
-                .data([rel],
-                      function(d) {return d;});
+                .data([rel]);
             link.enter().insert("svg:line", "g.service")
                 .attr("class", "relation pending-relation")
                 .attr("x1", function(d) { return d.source.x; })
@@ -307,14 +306,14 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                         console.log('Error adding relation');
                     }
                 });
-            // For now, set back to drill down
-            view.set('current_service_click_action', 'drill_down');
+            // For now, set back to show_service 
+            view.set('current_service_click_action', 'show_service');
         }
     }
 
 }, {
     ATTRS: {
-        current_service_click_action: { value: 'drill_down' },
+        current_service_click_action: { value: 'show_service' },
     }
 });
 
