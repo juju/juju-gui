@@ -111,7 +111,8 @@ describe('juju models', function() {
         db.units.add([my0, my1]);
         db.process_model_delta(
           ['unit', 'remove', 'mysql/1'], models.ServiceUnit, db.units);
-        var names = db.units.map(function(u) {return u.get('id');});
+        //var names = db.units.map(function(u) {return u.get('id');});
+        var names = db.units.get('id');
         names.length.should.equal(1);
         names[0].should.equal('mysql/0');
        });

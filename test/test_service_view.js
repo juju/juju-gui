@@ -2,8 +2,8 @@
 
 (function () {
   describe('juju service view', function() {
-    var ServiceView, views, models, Y, container, service, db, conn,
-        juju, env, charm, my0, my1, my2, testUtils, ENTER;
+    var ServiceView, models, Y, container, service, db, conn,
+        env, charm, ENTER;
 
 
     before(function (done) {
@@ -12,13 +12,10 @@
         'juju-env', 'node-event-simulate', 'juju-tests-utils', 'event-key',
         function (Y) {
           ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
-          views = Y.namespace('juju.views');
           models = Y.namespace('juju.models');
-          testUtils = Y.namespace('juju-tests.utils');
-          ServiceView = views.service;
-          conn = new testUtils.SocketStub();
-          juju = Y.namespace('juju');
-          env = new juju.Environment({conn: conn});
+          ServiceView = Y.namespace('juju.views').service;
+          conn = new (Y.namespace('juju-tests.utils')).SocketStub();
+          env = new (Y.namespace('juju')).Environment({conn: conn});
           env.connect();
           conn.open();
           done();
