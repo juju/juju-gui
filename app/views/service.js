@@ -1,6 +1,10 @@
 'use strict';
 
+
 YUI.add('juju-view-service', function(Y) {
+
+var ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
+
 
 var views = Y.namespace('juju.views'),
     Templates = views.Templates,
@@ -240,7 +244,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     modifyUnits: function (ev) {
         // XXX: see event-key module.
-        if (ev && ev.keyCode != this.ENTER_KEY) { // If not Enter keyup...
+        if (ev && ev.keyCode != ENTER) { // If not Enter keyup...
             return;
         }
         ev.halt(true);
@@ -287,5 +291,6 @@ views.service = ServiceView;
                'handlebars',
                'node',
                'view',
+               'event-key',
                'json-stringify']
 });

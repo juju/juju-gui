@@ -6,8 +6,6 @@ var views = Y.namespace('juju.views');
 
 var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
 
-    ENTER_KEY: 13,
-
     bindModelView: function(model) {
         model = model || this.get('model');
         // If this view has a model, bubble model events to the view.

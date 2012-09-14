@@ -3,13 +3,15 @@
 (function () {
   describe('juju service view', function() {
     var ServiceView, views, models, Y, container, service, db, conn,
-      juju, env, charm, my0, my1, my2, testUtils;
+        juju, env, charm, my0, my1, my2, testUtils, ENTER;
+
 
     before(function (done) {
       Y = YUI(GlobalConfig).use(
         'juju-views', 'juju-models', 'base', 'node', 'json-parse',
-        'juju-env', 'node-event-simulate', 'juju-tests-utils',
+        'juju-env', 'node-event-simulate', 'juju-tests-utils', 'event-key',
         function (Y) {
+          ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
           views = Y.namespace('juju.views');
           models = Y.namespace('juju.models');
           testUtils = Y.namespace('juju-tests.utils');
@@ -153,7 +155,7 @@
         view.render();
         var control = container.one('#num-service-units');
         control.set('value', 1);
-        control.simulate('keydown', { keyCode: view.ENTER_KEY }); // Simulate Enter.
+        control.simulate('keydown', { keyCode: ENTER }); // Simulate Enter.
         var message = conn.last_message();
         message.op.should.equal('remove_units');
         assert.deepEqual(message.unit_names, ['mysql/2', 'mysql/1']);
@@ -167,7 +169,7 @@
         view.render();
         var control = container.one('#num-service-units');
         control.set('value', 0);
-        control.simulate('keydown', { keyCode: view.ENTER_KEY });
+        control.simulate('keydown', { keyCode: ENTER });
         // "var _ =" makes the linter happy.
         var _ = expect(conn.last_message()).to.not.exist;
       });
@@ -180,7 +182,7 @@
         view.render();
         var control = container.one('#num-service-units');
         control.set('value', 7);
-        control.simulate('keydown', { keyCode: view.ENTER_KEY });
+        control.simulate('keydown', { keyCode: ENTER });
         var message = conn.last_message();
         message.op.should.equal('add_unit');
         message.service_name.should.equal('mysql');
