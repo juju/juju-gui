@@ -5,7 +5,6 @@
     var ServiceView, models, Y, container, service, db, conn,
         env, charm, ENTER;
 
-
     before(function (done) {
       Y = YUI(GlobalConfig).use(
         'juju-views', 'juju-models', 'base', 'node', 'json-parse',
@@ -59,8 +58,7 @@
     it('should show controls to modify units by default', function () {
       var view = new ServiceView(
         {container: container, model: service, domain_models: db,
-         env: env});
-      view.render();
+         env: env}).render();
       container.one('#service-unit-control').should.not.equal(null);
     });
 
@@ -68,11 +66,7 @@
       charm.set('is_subordinate', true);
       var view = new ServiceView(
         {container: container, model: service, domain_models: db,
-         env: env});
-      view.render();
-      // Prove that we can attach events without error even when there's
-      // nothing to which to attach.
-      view.attachEvents();
+         env: env}).render();
       // "var _ =" makes the linter happy.
       var _ = expect(container.one('#service-unit-control')).to.not.exist;
     });
@@ -81,21 +75,18 @@
       // Note that the units are added in beforeEach in an ordered manner.
       var view = new ServiceView(
         {container: container, model: service, domain_models: db,
-         env: env});
-      view.render();
-      view.attachEvents();
+         env: env}).render();
       var rendered_names = container.all('div.thumbnail').get('id');
       var expected_names = db.units.map(function(u) {return u.get('id');});
       expected_names.sort();
-      assert.deepEqual(rendered_names, expected_names);
+      //assert.deepEqual(rendered_names, expected_names);
+      rendered_names.should.eql(expected_names);
     });
 
     it('should send an add-unit message when (+) is clicked', function () {
       var view = new ServiceView(
         {container: container, model: service, domain_models: db,
-         env: env});
-      view.render();
-      view.attachEvents();
+         env: env}).render();
       var control = container.one('#add-service-unit');
       control.simulate('click');
       var message = conn.last_message();
@@ -107,16 +98,26 @@
     it('should send a remove-unit message when (-) is clicked', function () {
       var view = new ServiceView(
         {container: container, model: service, domain_models: db,
-         env: env});
-      view.render();
-      view.attachEvents();
+         env: env}).render();
       var control = container.one('#rm-service-unit');
       control.simulate('click');
       var message = conn.last_message();
       message.op.should.equal('remove_units');
       // We always remove the unit with the largest number.
-      assert.deepEqual(message.unit_names, ['mysql/2']);
+      message.unit_names.should.eql(['mysql/2']);
     });
+
+    it('should show a disabled (-) if we only have one unit',
+       function() {
+         db.units.remove([1,2]);
+         service.set('unit_count', 1);
+         var view = new ServiceView(
+           {container: container, model: service, domain_models: db,
+            env: env}).render();
+         container.all('div.thumbnail').get('id').length.should.equal(1);
+         var control = container.one('#rm-service-unit');
+         control.get('disabled').should.equal(true);
+        });
 
     it('should not send a remove-unit message when (-) is clicked if we only have one unit',
       function () {
@@ -124,9 +125,7 @@
         service.set('unit_count', 1);
         var view = new ServiceView(
           {container: container, model: service, domain_models: db,
-           env: env});
-        view.render();
-        view.attachEvents();
+           env: env}).render();
         container.all('div.thumbnail').get('id').length.should.equal(1);
         var control = container.one('#rm-service-unit');
         control.simulate('click');
@@ -138,8 +137,7 @@
        function() {
          var view = new ServiceView(
            {container: container, model: service, domain_models: db,
-            env: env});
-         view.render();
+            env: env}).render();
          var control = container.one('#num-service-units');
          control.get('value').should.equal('3');
        });
@@ -148,22 +146,20 @@
       function() {
         var view = new ServiceView(
           {container: container, model: service, domain_models: db,
-           env: env});
-        view.render();
+           env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 1);
         control.simulate('keydown', { keyCode: ENTER }); // Simulate Enter.
         var message = conn.last_message();
         message.op.should.equal('remove_units');
-        assert.deepEqual(message.unit_names, ['mysql/2', 'mysql/1']);
+        message.unit_names.should.eql(['mysql/2', 'mysql/1']);
       });
 
-    it('should not do anything if the number of units is < 1',
+    it('should not do anything if the number of units is <= 1',
       function() {
         var view = new ServiceView(
           {container: container, model: service, domain_models: db,
-           env: env});
-        view.render();
+           env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 0);
         control.simulate('keydown', { keyCode: ENTER });
@@ -175,8 +171,7 @@
       function() {
         var view = new ServiceView(
           {container: container, model: service, domain_models: db,
-           env: env});
-        view.render();
+           env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 7);
         control.simulate('keydown', { keyCode: ENTER });
@@ -195,8 +190,7 @@
         expected_names.sort();
         var view = new ServiceView(
           {container: container, model: service, domain_models: db,
-           env: env});
-        view.render();
+           env: env}).render();
         var control = container.one('#add-service-unit');
         control.simulate('click');
         var callbacks = Y.Object.values(env._txn_callbacks);
@@ -207,7 +201,7 @@
         callbacks[0]({result: [new_unit_id]});
         var db_names = db.units.map(function(u) {return u.get('id');});
         db_names.sort();
-        assert.deepEqual(db_names, expected_names);
+        db_names.should.eql(expected_names);
         service.get('unit_count').should.equal(4);
         var rendered_names = container.all('div.thumbnail').get('id');
         assert.deepEqual(rendered_names, expected_names);
@@ -218,8 +212,7 @@
       function() {
         var view = new ServiceView(
           {container: container, model: service, domain_models: db,
-           env: env});
-        view.render();
+           env: env}).render();
         var control = container.one('#rm-service-unit');
         control.simulate('click');
         var callbacks = Y.Object.values(env._txn_callbacks);
