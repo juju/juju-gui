@@ -35,10 +35,12 @@
       charm = new models.Charm({id: 'mysql', name: 'mysql',
                                  description: 'A DB'});
       db.charms.add([charm]);
-      my0 = new models.ServiceUnit({id:'mysql/0', agent_state: 'pending'}),
-      my1 = new models.ServiceUnit({id:'mysql/1', agent_state: 'pending'}),
-      my2 = new models.ServiceUnit({id:'mysql/2', agent_state: 'pending'});
-      db.units.add([my1, my2, my0]);
+      // Add units sorted by id as that is what we expect from the server.
+      db.units.add([
+        new models.ServiceUnit({id:'mysql/0', agent_state: 'pending'}),
+        new models.ServiceUnit({id:'mysql/1', agent_state: 'pending'}),
+        new models.ServiceUnit({id:'mysql/2', agent_state: 'pending'})
+      ]);
       service = new models.Service({id: 'mysql', charm: 'mysql',
                                     unit_count: db.units.size()});
       db.services.add([service]);
@@ -119,7 +121,7 @@
 
     it('should not send a remove-unit message when (-) is clicked if we only have one unit',
       function () {
-        db.units.remove([my1, my2]);
+        db.units.remove([1,2]);
         service.set('unit_count', 1);
         var view = new ServiceView(
           {container: container, model: service, domain_models: db,

@@ -157,16 +157,26 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         '#num-service-units': {keydown: 'modifyUnits'}
     },
 
+    applyUnitDeltas: function(args) {
+        var env = this.get('env'),
+            service = this.get('model');
+        if (!Y.Lang.isUndefined(args.remove_units)) {
+            env.remove_units(
+                args.remove_units, Y.bind(this._removeUnitCallback, this));
+        } else if (!Y.Lang.isUndefined(args.add_num)) {
+            env.add_unit(
+                service.get('id'), args.add_num, Y.bind(this._addUnitCallback, this));
+        }
+
+
+    },
     addUnit: function(ev) {
         var container = this.get('container'),
             field = container.one('#num-service-units'),
-            existing_value = parseInt(field.get('value'), 10),
-            env = this.get('env'),
-            service = this.get('model');
+            existing_value = parseInt(field.get('value'), 10);
         console.log('Click add-service-unit: ', existing_value);
         field.set('value', existing_value + 1);
-        env.add_unit(
-            service.get('id'), 1, Y.bind(this._addUnitCallback, this));
+        this.applyUnitDeltas({add_num: 1});
     },
 
     _addUnitCallback: function(ev) {
@@ -197,23 +207,22 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             env = this.get('env'),
             db = this.get('domain_models'),
             service = this.get('model'),
-            units = db.units.get_units_for_service(service),
-            unit = Y.Array.reduce(
-                units,
-                null,
-                function(a, b) { // Return unit with biggest number.
-                    if (Y.Lang.isNull(a) || a.get('number') < b.get('number')) {
-                        return b;
-                    } else {
-                        return a;
-                    }
-                });
+            units = db.units.get_units_for_service(service);
         if (existing_value > 1) {
             console.log('Click rm-service-unit');
             // This resets after a juju diff, which is not a good UX.
             // field.set('value', existing_value - 1);
-            env.remove_units(
-                [unit.get('id')], Y.bind(this._removeUnitCallback, this));
+
+            // Assuming units is sorted in ascending order.  Find the highest
+            // numbered one that is not in 'stopping' state.
+            var unit, u;
+            while (Y.Lang.isUndefined(unit)) {
+                u = units.pop();
+                if (u.get('agent_state') != 'stopping') {
+                    unit = u;
+                }
+            }
+            this.applyUnitDeltas({remove_units: [unit.get('id')]});
         }
         // XXX else...notify the user that we won't do this! They should
         // delete the service instead.
@@ -230,6 +239,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
     },
 
     modifyUnits: function (ev) {
+        // XXX: see event-key module.
         if (ev && ev.keyCode != this.ENTER_KEY) { // If not Enter keyup...
             return;
         }
@@ -241,20 +251,12 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             num_delta = requested - service.get('unit_count'),
             env = this.get('env'),
             db = this.get('domain_models'),
-            units = db.units.get_units_for_service(service);
-        units.sort(function(a,b) {
-            // Sorts in reverse.
-            return b.get('number') - a.get('number');
-        });
-        var unit_ids = units.map(function(u) {
-            return u.get('id');
-        });
+            units = db.units.get_units_for_service(service).reverse();
         if (num_delta > 0) {
-            env.add_unit(
-                service.get('id'),
-                num_delta,
-                Y.bind(this._addUnitCallback, this));
+            // Add units.
+            this.applyUnitDeltas({add_num: num_delta});
         } else if (num_delta < 0) {
+            // Remove units.
             if (requested < 1) {
                 console.log('Requested number of units < 1: ', requested);
                 // Reset the field to the previous value.
@@ -262,9 +264,16 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                 // XXX Notify the user that we won't do this! They should
                 // delete the service instead.
             } else {
-                env.remove_units(
-                    unit_ids.slice(0, Math.abs(num_delta)),
-                    Y.bind(this._removeUnitCallback, this));
+                // XXX: we should ensure none of the units in the slice are in
+                // 'stopping' state.
+                var not_stopping_units = Y.Array.filter(units, function(u) {
+                    return u.get('agent_state') !== 'stopping';
+                });
+                var unit_ids = not_stopping_units.map(function(u) {
+                    var id = u.get('id');
+                    return id;
+                });
+                this.applyUnitDeltas({remove_units: unit_ids.slice(0, Math.abs(num_delta))});
             }
         }
     }
@@ -274,7 +283,6 @@ views.service = ServiceView;
 }, '0.1.0', {
     requires: ['juju-view-utils',
                'juju-models',
-               'd3',
                'base-build',
                'handlebars',
                'node',

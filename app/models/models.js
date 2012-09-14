@@ -277,9 +277,14 @@ var Database = Y.Base.create('database', Y.Base, [], {
         var change_kind = change[1];
         var data = change[2];
         var o;
-        if (change_kind == 'add') {
-            // ServiceUnits are added to the database at the point the user
-            // requests them as pending units.  If a unit exists re-use it.
+        if (change_kind == 'add' || change_kind == 'change') {
+            // Client-side requests may create temporary objects in the
+            // database in order to give the user more immediate feedback.
+            // The temporary objects are created after the ACK message from
+            // the server that contains their actual names.  When the delta
+            // arrives for those objects, they already exist in a skeleton
+            // form that needs to be fleshed out.  So, the existing objects
+            // are kept and re-used.
             o = model_list.getById(data.id);
             if (Y.Lang.isNull(o)) {
                 o = new ModelClass({id: data.id});
@@ -290,9 +295,6 @@ var Database = Y.Base.create('database', Y.Base, [], {
             }
         } else if (change_kind == 'remove') {
             model_list.remove(model_list.getById(data));
-        } else if (change_kind == 'change') {
-            o = model_list.getById(data.id);
-            this._sync_bag(data, o);
         } else {
             console.log('Unknown change kind in process_model_delta: ',
                         change_kind);
