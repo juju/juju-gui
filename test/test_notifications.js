@@ -83,9 +83,12 @@ describe('notifications', function() {
 
     it('must be able to limit the size of notification events', function(){
           var note1 = new models.Notification({title: 'test1', message: 'Hello'}),
-          note2 = new models.Notification({title: 'test2', message: 'I said goodnight!'}),
-          note3 = new models.Notification({title: 'test3', message: 'Never remember'}),
+          note2 = new models.Notification({title: 'test2', 
+                  message: 'I said goodnight!'}),
+          note3 = new models.Notification({title: 'test3', 
+                  message: 'Never remember'}),
           nl = new models.NotificationList({max_size: 2});
+
           nl.add([note1, note2]);
           nl.size().should.equal(2);
            
