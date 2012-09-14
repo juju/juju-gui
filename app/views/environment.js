@@ -79,12 +79,14 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         // Generate a node for each service, draw it as a rect with
         // labels for service and charm
         var node = vis.selectAll('.service')
-            .data(tree.nodes({children: services})
-                .filter(function (d) { return !d.children; }))
+            .data(this._saved_coords(services) ? 
+                services : 
+                tree.nodes({children: services})
+                    .filter(function (d) { return !d.children; }))
             .enter().append('g')
             .attr('class', 'service')
             .attr('transform', function (d) { 
-                return "translate(" + [d.x,d.y] + ")"; 
+                return 'translate(' + [d.x,d.y] + ')'; 
             })
             .on('click', function(m) {
                     self.fire('showService', {service: m});
@@ -182,7 +184,19 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         }
 
         update_links();
+    },
 
+    /*
+     * Check to make sure that every service has saved coordinates
+     */
+    _saved_coords: function(services) {
+        var saved_coords = true;
+        services.forEach(function(service) {
+            if (!service.x || !service.y) {
+                saved_coords = false;
+            }
+        });
+        return saved_coords;
     },
 
     /*
