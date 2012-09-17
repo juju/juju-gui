@@ -90,7 +90,6 @@ YUI.add('juju-notifications', function (Y) {
                     return (astate.search('error') > -1) && 'error' || 'info';
                 },
                 evict: function (old, new_data, change) {
-                    console.log('EVICT?', old, new_data, change);
                     if (new_data.level != 'error') {
                         if (old.get('seen') === false) {
                             // mark it as seen 
@@ -126,7 +125,6 @@ YUI.add('juju-notifications', function (Y) {
                     obj_list,
                     model;
                 console.group("lookup model");
-                console.log(change_type, model_id);
                 if (rule && rule.model_list) {
                     obj_list = app.db[rule.model_list];
                 }
@@ -134,15 +132,12 @@ YUI.add('juju-notifications', function (Y) {
                     obj_list = app.db[change_type + 's'];
                 }
 
-                console.log("rule", rule, rule.lookup);
                 if (rule && rule.lookup) {
                     model = rule.lookup(obj_list, model_id);
                 }
                 else {
                     model = obj_list.getById(model_id);
                 }
-                console.log("objlist", obj_list.name, obj_list.get('id'));
-                console.log("return model", model_id, model);
                 console.groupEnd();
                 return model;
             }
@@ -193,22 +188,16 @@ YUI.add('juju-notifications', function (Y) {
                 // see if there is an object associated with this
                 // message
                 console.groupCollapsed("Notice Model");
-                console.log("notice model work", change_data);
                 if (change_data.id) {
                     model = lookup_model(change_type, change_data.id);
-                    console.log("got model", model);
                     if (model) {
-                        console.log("NOTE for model", model.get('id'));
                         notify_data.model_id = model.get('clientId');
                         notify_data.link = app.routeModel(model);
-                        console.log("link for model", notify_data.link);
                         // If there are eviction rules for old notices 
                         // based on this model
                         var existing = ml.get_for_model(model);
-                        console.log("consider evict", existing);
                         if (existing && rule && rule.evict) {
                             existing.forEach(function (old) {
-                                console.log("run evict", old);
                                 rule.evict(old, notify_data, change, ml);
                             });
                         }
