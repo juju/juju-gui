@@ -7,7 +7,9 @@ var views = Y.namespace('juju.views'),
 
 var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
     events: {
-        '#add-relation-btn': {click: 'add_relation'}
+        '#add-relation-btn': {click: 'add_relation'},
+        '#zoom-out-btn': {click: 'zoom_out'},
+        '#zoom-in-btn': {click: 'zoom_in'}
     },
 
     initializer: function () {
@@ -40,7 +42,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 
         var xscale = d3.scale.linear()
             .domain([-width / 2, width / 2])
-            .range([0, width]);
+            .range([2, width]);
 
         var yscale = d3.scale.linear()
             .domain([-height / 2, height / 2])
@@ -64,17 +66,14 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                   .x(xscale)
                   .y(yscale)
                   .scaleExtent([0.25, 1.75])
-                  .on('zoom', rescale))
-            .append('svg:g');
+                  .on('zoom', function() { 
+                      self.rescale(vis, d3.event);
+                  }));
         vis.append('svg:rect')
             .attr('width', width)
             .attr('height', height)
             .attr('fill', 'white');
 
-        function rescale() {
-            vis.attr("transform", "translate(" + d3.event.translate + ")"
-                     + " scale(" + d3.event.scale + ")");
-        }
 
         var tree = d3.layout.pack()
             .size([width, height])
@@ -306,6 +305,54 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             });
             container.one('#add-relation-btn').removeClass('active');
         } // otherwise do nothing
+    },
+
+    /*
+     * Zoom in event handler
+     */
+    zoom_out: function(evt) {
+        this._fire_zoom(-.2);
+    },
+
+    /*
+     * Zoom out event handler
+     */
+    zoom_in: function(evt) {
+        this._fire_zoom(.2);
+    },
+
+    /*
+     * Wraper around the actual rescale method for zoom buttons
+     */
+    _fire_zoom: function(delta) {
+        var vis = this.get('vis'),  
+            evt = {
+                translate: '',
+                scale: 1
+            };
+
+        var transform = vis.attr('transform');
+        try { 
+            evt.translate = transform.split('(')[1].split(')')[0];
+        } catch (e) {
+            evt.translate ="0,0";
+        }
+        try {
+            evt.scale = parseFloat(
+                    transform.split('(')[2].split(')')[0]
+                ) + delta;
+        } catch (e) {
+            evt.scale = 1 + delta;
+        }
+        this.rescale(vis, evt)
+    },
+
+    /*
+     * Rescale the visualization on a zoom/pan event
+     */
+    rescale: function(vis, evt) {
+        vis.attr("transform", "translate(" + evt.translate + ")"
+                 + " scale(" + evt.scale + ")");
     },
 
     /*
