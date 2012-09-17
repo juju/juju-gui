@@ -294,7 +294,12 @@ var Database = Y.Base.create('database', Y.Base, [], {
                 this._sync_bag(data, o);
             }
         } else if (change_kind == 'remove') {
-            model_list.remove(model_list.getById(data));
+            o = model_list.getById(data);
+            // This should only be necessary while we are waiting on server
+            // side changes to have deltas aware of client requests.
+            if (!Y.Lang.isNull(o)) {
+                model_list.remove(o);
+            }
         } else {
             console.log('Unknown change kind in process_model_delta: ',
                         change_kind);
