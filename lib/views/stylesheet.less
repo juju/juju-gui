@@ -1,9 +1,15 @@
 /* Processed with LESS from lib/views/stylesheet.less */
-svg { border: 2px solid black; }
 svg {stroke-width: 0;}
 
 charms.thumbnails.li { height:4em; }
-.relation { stroke: #333333; stroke-width: 1px;}
+.relation {
+    stroke: #333333; 
+    stroke-width: 1px;
+
+    &.pending-relation {
+        stroke-dasharray: 2, 2;
+    }
+}
 .state-error { stroke: #FF0000; }
 .state-started { stroke: #000000;}
 .state-pending { stroke: #6597E8;}
@@ -16,7 +22,14 @@ g.service {
     .name { font-weight: bold;
         font-family: "Ubuntu";
         font-size: 1.6em; fill: #333333;}
-    .service-border {stroke-width: 2px;}
+    .service-border {
+        stroke-width: 2px;
+
+        &.selectable-service {
+            stroke: #008;
+            stroke-width: 3px;
+        }
+    }
     .unit-count {
         stroke-width: 0;
         text-anchor: middle;
@@ -66,4 +79,34 @@ g.unit {
     width: 3em;
     margin-bottom: 0;
   }
+}
+
+#overview-tasks {
+    width: 800px;
+    margin: 0;
+
+    button {
+        color: #2c2c2c;
+        border: 1px solid #999;
+
+        &:disabled {
+            background-color: #3d3d3d;
+            color: #888;
+        }
+        &.active {
+            border: 1px solid #fcd305;
+        }
+    }
+}
+
+#unit-status {
+    .running {
+        color: green;
+    }
+    .pending {
+        color: yellow;
+    }
+    .error {
+        color: red;
+    }
 }

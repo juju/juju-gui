@@ -4,6 +4,7 @@
 YUI.add('juju-view-service', function(Y) {
 
 var ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
+var ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
 
 
 var views = Y.namespace('juju.views'),
@@ -135,10 +136,6 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             return this;
         }
         var units = db.units.get_units_for_service(service);
-        units.sort(function(a,b) {
-            return a.get('number') - b.get('number');
-        });
-
         var charm_name = service.get('charm');
         container.setHTML(this.template(
             {'service': service.getAttrs(),
@@ -156,134 +153,111 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
     },
 
     events: {
-        '#add-service-unit': {click: 'addUnit'},
-        '#rm-service-unit': {click: 'removeUnit'},
-        '#num-service-units': {keydown: 'modifyUnits'}
+        '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'}
     },
 
-    applyUnitDeltas: function(prev_num_units, requested_num_units) {
-        var num_delta = requested_num_units - prev_num_units,
-            container = this.get('container'),
-            field = container.one('#num-service-units'),
-            service = this.get('model'),
-            env = this.get('env');
-
-        if (num_delta > 0) {
-            // Add units.
-            env.add_unit(
-                service.get('id'), num_delta, Y.bind(this._addUnitCallback,
-                                                     this));
-            field.set('value', requested_num_units);
-        } else if (num_delta < 0) {
-
-
-            if (requested_num_units < 1) {
-                console.log('Requested number of units < 1: ', requested);
-                // Reset the field to the previous value.
-                field.set('value', prev_num_units);
-            } else {
-                // Remove units.
-                var db = this.get('domain_models'),
-                    units = db.units.get_units_for_service(service),
-                    units_to_remove = [],
-                    delta = Math.abs(num_delta);
-
-                for (var i=units.length;
-                     units_to_remove.length < delta && i > 0;
-                     i--) {
-                    var unit = units[i - 1];
-                    if (unit.get('agent_state') !== 'stopping') {
-                        unit.set('agent_state', 'stopping');
-                        units_to_remove.push(unit.get('id'));
-                    }
-                }
-
-                // Set the widget value and the service unit count.
-                service.set('unit_count', requested_num_units);
-                field.set('value', requested_num_units);
-                env.remove_units(unit_to_remove);
-                db.fire('update');
-            }
-        }
-
-    },
-
-    addUnit: function(ev) {
+    resetUnits: function(ev) {
         var container = this.get('container'),
-            field = container.one('#num-service-units'),
-            existing_value = parseInt(field.get('value'), 10),
-            new_value = existing_value + 1;
-        console.log('Click add-service-unit');
-        this.applyUnitDeltas(existing_value, new_value);
-    },
-
-    _addUnitCallback: function(ev) {
-        var db = this.get('domain_models'),
-            service = this.get('model'),
-            service_id = service.get('id'),
-            unit_names = ev.result;
-        console.log('_addUnitCallback with: ', arguments);
-        // Received acknowledgement message for the 'add_units' operation.
-        // ev.results is an array of the new units to be created.  Pro-actively
-        // add them to the database so they display as soon as possible.
-        db.units.add(
-            Y.Array.map(unit_names, function(unit_name) {
-                return new models.ServiceUnit(
-                    {id: unit_name,
-                     agent_state: 'pending',
-                     service: service_id});
-            })
-        );
-        // Set the (-) button to be enabled (whether it needs it or not).
-        container.one('#rm-service-unit').set('disabled', false);
-        service.set('unit_count', service.get('unit_count') + unit_names.length);
-        db.fire('update');
-    },
-
-    removeUnit: function(ev) {
-        var container = this.get('container'),
-            field = container.one('#num-service-units'),
-            existing_value = parseInt(field.get('value'), 10),
-            env = this.get('env'),
-            db = this.get('domain_models'),
-            service = this.get('model'),
-            units = db.units.get_units_for_service(service);
-        if (existing_value > 1) {
-            console.log('Click rm-service-unit');
-            // This resets after a juju diff, which is not a good UX.
-            // field.set('value', existing_value - 1);
-
-            // Assuming units is sorted in ascending order.  Find the highest
-            // numbered one that is not in 'stopping' state.
-            var unit, u;
-            while (Y.Lang.isUndefined(unit)) {
-                u = units.pop();
-                if (u.get('agent_state') != 'stopping') {
-                    unit = u;
-                }
-            }
-            this.applyUnitDeltas({remove_units: [unit.get('id')]});
-        }
-        // XXX else...notify the user that we won't do this! They should
-        // delete the service instead.
+            field = container.one('#num-service-units');
+        field.set('value', this.get('model').get('unit_count'));
     },
 
     modifyUnits: function (ev) {
-        // XXX: see event-key module.
-        if (ev && ev.keyCode != ENTER) { // If not Enter keyup...
+        var container = this.get('container'),
+            field = container.one('#num-service-units');
+        if (ev.keyCode == ESC) {
+            field.set('value', this.get('model').get('unit_count'));
+        }
+        if (ev.keyCode != ENTER) { // If not Enter keyup...
             return;
         }
         ev.halt(true);
-        var container = this.get('container'),
-            field = container.one('#num-service-units'),
-            requested = parseInt(field.get('value'), 10),
-            service = this.get('model'),
-            env = this.get('env'),
+        this._modifyUnits(parseInt(field.get('value'), 10));
+    },
+
+    _modifyUnits: function(requested_unit_count) {
+        var service = this.get('model'),
+            unit_count = service.get('unit_count'),
+            delta = requested_unit_count - unit_count,
+            field = this.get('container').one('#num-service-units'),
+            env = this.get('env');
+        if (delta > 0) {
+            // Add units!
+            env.add_unit(
+                service.get('id'), delta,
+                Y.bind(this._addUnitCallback, this));
+        } else if (delta < 0) {
+            // Remove units, if we can.  We must keep at least one unit
+            // (otherwise the user should be removing the service instead).
+            delta = Math.abs(delta);
+            if (unit_count == 1) {
+                // XXX We should notify the user that we cannot do what they
+                // requested, and that we must keep at least one unit unless
+                // they delete the service.
+                console.log('No units available for removal');
+                field.set('value', unit_count);
+                return;
+            }
+            var unit_count_to_remove = Math.min(
+                delta, unit_count - 1);
+            if (unit_count_to_remove < delta) {
+                // XXX We should notify the user that we cannot remove all
+                // the units that they requested, and that we must keep at
+                // least one unit unless they delete the service.
+                console.log('Cannot remove as many units as requested',
+                            delta, unit_count_to_remove);
+                delta = unit_count_to_remove;
+            }
+            var db = this.get('domain_models'),
+                units = db.units.get_units_for_service(service),
+                unit_ids_to_remove = [];
+
+            for (var i=units.length - 1;
+                 unit_ids_to_remove.length < delta;
+                 i--) {
+                unit_ids_to_remove.push(units[i].get('id'));
+            }
+            env.remove_units(
+                unit_ids_to_remove,
+                Y.bind(this._removeUnitCallback, this)
+                );
+        }
+        field.set('disabled', true);
+    },
+
+    _addUnitCallback: function(ev) {
+        var service = this.get('model'),
+            service_id = service.get('id'),
             db = this.get('domain_models'),
-            units = db.units.get_units_for_service(service).reverse();
+            unit_names = ev.result || [];
+        console.log('_addUnitCallback with: ', arguments);
+        // Received acknowledgement message for the 'add_units' operation.
+        // ev.results is an array of the new unit ids to be created.
+        db.units.add(
+            Y.Array.map(unit_names, function (unit_id) {
+                return new models.ServiceUnit(
+                    {id: unit_id,
+                     agent_state: 'requested',
+                     service: service_id});
+            }));
+        service.set(
+            'unit_count', service.get('unit_count') + unit_names.length);
+        db.fire('update');
+        // View is redrawn so we do not need to enable field.
+    },
 
-        this.applyUnitDeltas(service.get('unit_count'), requested);
-
+    _removeUnitCallback: function(ev) {
+        var service = this.get('model'),
+            db = this.get('domain_models'),
+            unit_names = ev.unit_names;
+        console.log('_removeUnitCallback with: ', arguments);
+        Y.Array.each(unit_names, function(unit_name) {
+            db.units.remove(db.units.getById(unit_name));
+        });
+        service.set(
+            'unit_count', service.get('unit_count') - unit_names.length);
+        db.fire('update');
+        // View is redrawn so we do not need to enable field.
     }
 });
 

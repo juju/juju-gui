@@ -3,7 +3,7 @@
 (function () {
   describe('juju service view', function() {
     var ServiceView, models, Y, container, service, db, conn,
-        env, charm, ENTER;
+        env, charm, ENTER, ESC;
 
     before(function (done) {
       Y = YUI(GlobalConfig).use(
@@ -11,6 +11,7 @@
         'juju-env', 'node-event-simulate', 'juju-tests-utils', 'event-key',
         function (Y) {
           ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
+          ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
           models = Y.namespace('juju.models');
           ServiceView = Y.namespace('juju.views').service;
           conn = new (Y.namespace('juju-tests.utils')).SocketStub();
@@ -83,56 +84,6 @@
       rendered_names.should.eql(expected_names);
     });
 
-    it('should send an add-unit message when (+) is clicked', function () {
-      var view = new ServiceView(
-        {container: container, model: service, domain_models: db,
-         env: env}).render();
-      var control = container.one('#add-service-unit');
-      control.simulate('click');
-      var message = conn.last_message();
-      message.op.should.equal('add_unit');
-      message.service_name.should.equal('mysql');
-      message.num_units.should.equal(1);
-    });
-
-    it('should send a remove-unit message when (-) is clicked', function () {
-      var view = new ServiceView(
-        {container: container, model: service, domain_models: db,
-         env: env}).render();
-      var control = container.one('#rm-service-unit');
-      control.simulate('click');
-      var message = conn.last_message();
-      message.op.should.equal('remove_units');
-      // We always remove the unit with the largest number.
-      message.unit_names.should.eql(['mysql/2']);
-    });
-
-    it('should show a disabled (-) if we only have one unit',
-       function() {
-         db.units.remove([1,2]);
-         service.set('unit_count', 1);
-         var view = new ServiceView(
-           {container: container, model: service, domain_models: db,
-            env: env}).render();
-         container.all('div.thumbnail').get('id').length.should.equal(1);
-         var control = container.one('#rm-service-unit');
-         control.get('disabled').should.equal(true);
-        });
-
-    it('should not send a remove-unit message when (-) is clicked if we only have one unit',
-      function () {
-        db.units.remove([1,2]);
-        service.set('unit_count', 1);
-        var view = new ServiceView(
-          {container: container, model: service, domain_models: db,
-           env: env}).render();
-        container.all('div.thumbnail').get('id').length.should.equal(1);
-        var control = container.one('#rm-service-unit');
-        control.simulate('click');
-        // "var _ =" makes the linter happy.
-        var _ = expect(conn.last_message()).to.not.exist;
-      });
-
     it('should start with the proper number of units shown in the text field',
        function() {
          var view = new ServiceView(
@@ -155,7 +106,7 @@
         message.unit_names.should.eql(['mysql/2', 'mysql/1']);
       });
 
-    it('should not do anything if the number of units is <= 1',
+    it('should reduce to 1 if the number of units is <= 1',
       function() {
         var view = new ServiceView(
           {container: container, model: service, domain_models: db,
@@ -163,8 +114,23 @@
         var control = container.one('#num-service-units');
         control.set('value', 0);
         control.simulate('keydown', { keyCode: ENTER });
-        // "var _ =" makes the linter happy.
+        var message = conn.last_message();
+        message.op.should.equal('remove_units');
+        message.unit_names.should.eql(['mysql/2', 'mysql/1']);
+      });
+
+    it('should not do anything if the number of units is <= 1',
+      function() {
+        service.set('unit_count', 1);
+        db.units.remove([1, 2]);
+        var view = new ServiceView(
+          {container: container, model: service, domain_models: db,
+           env: env}).render();
+        var control = container.one('#num-service-units');
+        control.set('value', 0);
+        control.simulate('keydown', { keyCode: ENTER });
         var _ = expect(conn.last_message()).to.not.exist;
+        control.get('value').should.equal('1');
       });
 
     it('should add the correct number of units when entered via text field',
@@ -191,8 +157,9 @@
         var view = new ServiceView(
           {container: container, model: service, domain_models: db,
            env: env}).render();
-        var control = container.one('#add-service-unit');
-        control.simulate('click');
+        var control = container.one('#num-service-units');
+        control.set('value', 4);
+        control.simulate('keydown', { keyCode: ENTER });
         var callbacks = Y.Object.values(env._txn_callbacks);
         callbacks.length.should.equal(1);
         // Since we don't have an app to listen to this event and tell the
@@ -207,19 +174,40 @@
         assert.deepEqual(rendered_names, expected_names);
       });
 
-    it('should switch units to "stopping" as soon as it gets a ' +
+    it('should remove units as soon as it gets a ' +
        'reply back from the server',
       function() {
         var view = new ServiceView(
           {container: container, model: service, domain_models: db,
            env: env}).render();
-        var control = container.one('#rm-service-unit');
-        control.simulate('click');
+        var control = container.one('#num-service-units');
+        control.set('value', 2);
+        control.simulate('keydown', { keyCode: ENTER });
         var callbacks = Y.Object.values(env._txn_callbacks);
         callbacks.length.should.equal(1);
         callbacks[0]({unit_names: ['mysql/2']});
-        db.units.getById('mysql/2').get('agent_state').should.equal('stopping');
+        var _ = expect(db.units.getById('mysql/2')).to.not.exist;
       });
+
+    it('should reset values on the control when you press escape', function() {
+        var view = new ServiceView(
+          {container: container, model: service, domain_models: db,
+           env: env}).render();
+        var control = container.one('#num-service-units');
+        control.set('value', 2);
+        control.simulate('keydown', { keyCode: ESC });
+        control.get('value').should.equal('3');
+    });
+
+    it('should reset values on the control when you change focus', function() {
+        var view = new ServiceView(
+          {container: container, model: service, domain_models: db,
+           env: env}).render();
+        var control = container.one('#num-service-units');
+        control.set('value', 2);
+        control.simulate('blur');
+        control.get('value').should.equal('3');
+    });
 
   });
 }) ();
