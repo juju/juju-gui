@@ -1,7 +1,6 @@
 GlobalConfig = {
     // Uncomment for debug versions of YUI.
     filter: 'debug',
-
     // Uncomment for verbose logging of YUI
     debug: false,
 
@@ -114,7 +113,3 @@ GlobalConfig = {
     }
 };
 
-// Node compat for testing
-if (typeof (exports) !== 'undefined') {
-    exports.GlobalConfig = GlobalConfig;
-}
