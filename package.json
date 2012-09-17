@@ -15,7 +15,7 @@
     "cryptojs": ">= 2.5.3"
   },
   "devDependencies": {
-    "d3": "> 2.9.5",
+    "d3": ">=2.10.1",
     "yui": ">=3.6.0",
     "mocha": "1.4.2",
     "express": "3.x",
