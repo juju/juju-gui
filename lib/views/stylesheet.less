@@ -44,6 +44,17 @@ g.service {
         &.hide-count {
             fill: rgba(0,0,0,0);}
     }
+
+    .exposed-indicator {
+        fill: #00F;
+
+        &.off {
+            visibility: hidden;
+        }
+        &.on {
+            visibility: visible;
+        }
+    }
 }
 g.service-status {
     path {

@@ -122,6 +122,22 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .attr('class', 'charm-label')
             .text(function(d) { return d.get('charm'); });
 
+        // Show whether or not the service is exposed using an
+        // indicator (currently a simple circle
+        // TODO this will likely change to an image with UI uodates.
+        var exposed_indicator = node.append('circle')
+            .attr('cx', 0)
+            .attr('cy', 10)
+            .attr('r', 5)
+            .attr('class', function(d) {
+                return 'exposed-indicator ' + 
+                    (d.get('exposed') ? 'on' : 'off');
+            });
+        exposed_indicator.append('title')
+            .text(function(d) {
+                return d.get('exposed') ? 'Exposed' : '';
+            });
+
         // Add the relative health of a service in the form of a pie chart
         // comprised of units styled appropriately
         // TODO aggregate statuses into good/bad/pending
@@ -130,7 +146,6 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .outerRadius(25);
         var status_chart_layout = d3.layout.pie()
             .value(function(d) { return (d.value ? d.value : 1); });
-
 
         var status_chart = node.append('g')
             .attr('class', 'service-status')

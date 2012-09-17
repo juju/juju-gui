@@ -10,6 +10,8 @@ g.service .name{font-weight:bold;font-family:"Ubuntu";font-size:1.6em;fill:#3333
 g.service .service-border{stroke-width:2px;}g.service .service-border.selectable-service{stroke:#008;stroke-width:3px;}
 g.service .unit-count{stroke-width:0;text-anchor:middle;dominant-baseline:central;fill:rgba(0, 0, 0, 0);font-family:"Ubuntu";font-size:2.5em;}g.service .unit-count.show-count{fill:#000000;}
 g.service .unit-count.hide-count{fill:rgba(0, 0, 0, 0);}
+g.service .exposed-indicator{fill:#00F;}g.service .exposed-indicator.off{visibility:hidden;}
+g.service .exposed-indicator.on{visibility:visible;}
 g.service-status path{stroke-width:0;}g.service-status path.status-pending{fill:#fcd305;}
 g.service-status path.status-started{fill:#b7b7b7;}
 g.service-status path.status-installed{fill:#ffffff;}
