@@ -212,10 +212,10 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                 units = db.units.get_units_for_service(service),
                 unit_ids_to_remove = [];
 
-            for (var i=units.length;
+            for (var i=units.length - 1;
                  unit_ids_to_remove.length < delta;
                  i--) {
-                unit_ids_to_remove.push(units[i-1].get('id'));
+                unit_ids_to_remove.push(units[i].get('id'));
             }
             env.remove_units(
                 unit_ids_to_remove,
@@ -231,7 +231,6 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             db = this.get('domain_models'),
             unit_names = ev.result || [];
         console.log('_addUnitCallback with: ', arguments);
-        // XXX We don't get errors yet, so we can't handle them.
         // Received acknowledgement message for the 'add_units' operation.
         // ev.results is an array of the new unit ids to be created.
         db.units.add(
