@@ -26,7 +26,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         var self = this,
             container = this.get('container'),
             m = this.get('domain_models'),
-            height = 800,
+            height = 600,
             width = 640;
 
         var services = m.services.toArray().map(function(s) {
@@ -119,9 +119,14 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         node.append('rect')
             .attr('class', 'service-border')
             .attr('width', function(d) {
-                return service_scale_width(d.get('unit_count')); })
+                var w = service_scale_width(d.get('unit_count')); 
+                d.set('width', w);
+                return w;
+                })
             .attr('height', function(d) {
-                return service_scale_height(d.get('unit_count')); });
+                var h = service_scale_height(d.get('unit_count')); 
+                d.set('height', h);
+                return h;});
 
         var service_labels = node.append('text').append('tspan')
             .attr('class', 'name')
@@ -251,9 +256,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
      * will eventually use A* to route around other services
      */
     draw_relation: function(relation) {
-        return relation.source.x + ' ' +
+        return (relation.source.x  + (
+                    relation.source.get('width') / 2)) + ' ' +
             relation.source.y + ', ' +
-            relation.target.x + ' ' + 
+            (relation.target.x + (relation.target.get('width') / 2)) + ' ' + 
             relation.target.y;
     }
 
