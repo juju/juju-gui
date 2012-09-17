@@ -29,7 +29,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             container = this.get('container'),
             m = this.get('domain_models'),
             height = 600,
-            width = 800;
+            width = 640;
 
         var services = m.services.toArray().map(function(s) {
             s.value = s.get('unit_count');
@@ -38,6 +38,14 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         var relations = m.relations.toArray();
         var fill = d3.scale.category20();
 
+        var xscale = d3.scale.linear()
+            .domain([-width / 2, width / 2])
+            .range([0, width]);
+
+        var yscale = d3.scale.linear()
+            .domain([-height / 2, height / 2])
+            .range([height, 0]);
+        
         // Scales for unit sizes
         // XXX magic numbers will have to change; likely during
         // the pan/zoom work
@@ -49,8 +57,24 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .selectAll('#canvas')
             .append('svg:svg')
             .attr('pointer-events', 'all')
+            .attr('width', "100%")
+            .attr('height', "100%")
+            .append('svg:g')
+            .call(d3.behavior.zoom()
+                  .x(xscale)
+                  .y(yscale)
+                  .scaleExtent([0.25, 1.75])
+                  .on('zoom', rescale))
+            .append('svg:g');
+        vis.append('svg:rect')
             .attr('width', width)
-            .attr('height', height);
+            .attr('height', height)
+            .attr('fill', 'white');
+
+        function rescale() {
+            vis.attr("transform", "translate(" + d3.event.translate + ")"
+                     + " scale(" + d3.event.scale + ")");
+        }
 
         var tree = d3.layout.pack()
             .size([width, height])
@@ -105,9 +129,14 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         node.append('rect')
             .attr('class', 'service-border')
             .attr('width', function(d) {
-                return service_scale_width(d.get('unit_count')); })
+                var w = service_scale_width(d.get('unit_count')); 
+                d.set('width', w);
+                return w;
+                })
             .attr('height', function(d) {
-                return service_scale_height(d.get('unit_count')); });
+                var h = service_scale_height(d.get('unit_count')); 
+                d.set('height', h);
+                return h;});
 
         var service_labels = node.append('text').append('tspan')
             .attr('class', 'name')
@@ -257,9 +286,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
      * will eventually use A* to route around other services
      */
     draw_relation: function(relation) {
-        return relation.source.x + ' ' +
+        return (relation.source.x  + (
+                    relation.source.get('width') / 2)) + ' ' +
             relation.source.y + ', ' +
-            relation.target.x + ' ' + 
+            (relation.target.x + (relation.target.get('width') / 2)) + ' ' + 
             relation.target.y;
     },
 
