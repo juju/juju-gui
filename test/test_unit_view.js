@@ -64,7 +64,7 @@
     });
 
     beforeEach(function (done) {
-      container = Y.Node.create('<div id="test-container" />');
+      container = Y.Node.create('<div id=\"test-container\"/>');
       db = new models.Database();
       charm = new models.Charm({
         id: 'cs:mysql',

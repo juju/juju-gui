@@ -51,7 +51,7 @@ describe('Application', function() {
       app.routeModel(wp0).should.equal('/unit/wordpress-0/');
 
       // charms also require a mapping but only a name, not a function
-      app.routeModel(wp_charm).should.equal('/charms/' + wp_charm.get("name"));
+      app.routeModel(wp_charm).should.equal('/charms/' + wp_charm.get('name'));
 
   });
 

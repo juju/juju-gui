@@ -93,7 +93,22 @@ describe('juju models', function() {
            var service = service_unit.get('service');
            service.should.equal('mysql');
        });
+             
+    it('must be able to resolve models by clientId', function(){
+        var db = new models.Database();
 
+        db.services.add([{id: 'wordpress'},
+                         {id: 'mediawiki'}]);
+
+        db.units.add([{id: 'wordpress/0'},
+                      {id: 'wordpress/1'}]);
+
+        var cid = db.services.item(0).get('clientId');
+
+        db.getByClientId(cid).should.exist;
+        db.getByClientId(cid).get('id').should.equal('wordpress');
+        
+    });
 
 
     });

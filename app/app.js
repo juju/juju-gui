@@ -240,7 +240,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     },
 
     show_environment: function (req) {
-        console.log("App: Route: Environment", req.path, req.pendingRoutes);
+        console.log('App: Route: Environment', req.path, req.pendingRoutes);
         this.showView('environment', {domain_models: this.db, env: this.env}, {render: true});
     },
 
@@ -264,6 +264,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
 
     show_notifications_overview: function(req) {
         this.showView('notifications_overview', {
+                          app: this,
                           env: this.env,
                           model_list: this.db.notifications});
     },
@@ -291,6 +292,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         if (!instance) {
             view.instance = new views.NotificationsView(
                                 {container: Y.one('#notifications'),
+                                 app: this,
                                  env: this.env,
                                  model_list: this.db.notifications});
             view.instance.render();
@@ -464,8 +466,8 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
                      primary: true},
                 {path: '/unit/:id/', callback: 'show_unit',
                      reverse_map: {
-                        "id": function(value)  {
-                            return this.get("id").replace("/", "-");}},
+                        'id': function(value)  {
+                            return this.get('id').replace('/', '-');}},
                      model: 'serviceUnit'},
                 {path: '/', callback: 'show_environment'}
                 ]

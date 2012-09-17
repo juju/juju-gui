@@ -5,7 +5,8 @@ YUI.add('juju-view-environment', function(Y) {
 var views = Y.namespace('juju.views'),
     Templates = views.Templates;
 
-var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
+var EnvironmentView = Y.Base.create('EnvironmentView', 
+    Y.View, [views.JujuBaseView], {
     events: {
         '#add-relation-btn': {click: 'add_relation'}
     },
@@ -31,7 +32,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             height = 600,
             width = 800;
 
-        var services = m.services.toArray().map(function(s) {
+        var services = m.services.map(function(s) {
             s.value = s.get('unit_count');
             return s;
         });
@@ -56,7 +57,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .size([width, height])
             .padding(200);
 
-        var rel_data = processRelations(relations);
+        var rel_data = process_relations(relations);
 
         function update_links() {
             var link = vis.selectAll('polyline.relation')
@@ -65,7 +66,8 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 .data(rel_data);
             link.enter().insert('svg:polyline', 'g.service')
                 .attr('class', 'relation')
-                .attr('points', function(d) { return self.draw_relation(d); });
+                .attr('points', function(d) { 
+                          return self.draw_relation(d); });
         }
 
         var drag = d3.behavior.drag()
@@ -85,11 +87,11 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 services : 
                 self._generate_coords(services, tree))
             .enter().append('g')
-            .attr("class", "service")
+            .attr('class', 'service')
             .attr('transform', function (d) { 
                 return 'translate(' + [d.x,d.y] + ')'; 
             })
-            .on("click", function(m) {
+            .on('click', function(m) {
                 // Get the current click action
                 var curr_click_action = 
                     self.get('current_service_click_action');
@@ -170,7 +172,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 return self.humanizeNumber(d.get('unit_count'));
             });
 
-        function processRelation(r) {
+        function process_relation(r) {
             var endpoints = r.get('endpoints'),
             rel_services = [];
             Y.each(endpoints, function(ep) {
@@ -181,10 +183,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             return rel_services;
         }
 
-        function processRelations(rels) {
+        function process_relations(rels) {
             var pairs = [];
             Y.each(rels, function(rel) {
-                var pair = processRelation(rel);
+                var pair = process_relation(rel);
                 // skip peer for now
                 if (pair.length == 2) {
                     pairs.push({source: pair[0],
@@ -236,7 +238,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 
     /*
      * Draw a relation between services.  Polylines take a list of points
-     * in the form "x y,( x y,)* x y"
+     * in the form 'x y,( x y,)* x y'
      *
      * TODO For now, just draw a straight line; 
      * will eventually use A* to route around other services
@@ -286,7 +288,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
          * Default action: view a service
          */
         show_service: function(m, context, view) {
-            view.fire("showService", {service: m});
+            view.fire('showService', {service: m});
         },
 
         /*
@@ -331,10 +333,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 };
 
             // add temp relation between services
-            var link = vis.selectAll("path.pending-relation")
+            var link = vis.selectAll('path.pending-relation')
                 .data([rel]);
-            link.enter().insert("svg:polyline", "g.service")
-                .attr("class", "relation pending-relation")
+            link.enter().insert('svg:polyline', 'g.service')
+                .attr('class', 'relation pending-relation')
                 .attr('points', view.draw_relation(rel));
 
             // fire event to add relation in juju
@@ -354,7 +356,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 
 }, {
     ATTRS: {
-        current_service_click_action: { value: 'show_service' },
+        current_service_click_action: { value: 'show_service' }
     }
 });
 

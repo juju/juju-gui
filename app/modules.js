@@ -1,26 +1,26 @@
 GlobalConfig = {
-// Uncomment for debug versions of YUI.
+    // Uncomment for debug versions of YUI.
     filter: 'debug',
 
-// Uncomment for verbose logging of YUI
+    // Uncomment for verbose logging of YUI
     debug: false,
 
-// Use Rollups
+    // Use Rollups
     combine: false,
 
     groups: {
         d3: {
             modules: {
-               'd3': {
-                   'fullpath': '/assets/javascripts/d3.v2.min.js'
-               }
-          }
+                'd3': {
+                    'fullpath': '/assets/javascripts/d3.v2.min.js'
+                }
+            }
         },
         juju: {
             modules: {
                 // Primitives
 
-                'svg-layouts' : {
+                'svg-layouts': {
                     fullpath: '/assets/javascripts/svg-layouts.js'
                 },
 
@@ -32,7 +32,7 @@ GlobalConfig = {
                 'juju-view-utils': {
                     fullpath: '/views/utils.js'
                 },
-                    
+
                 'juju-notifications': {
                     fullpath: '/views/notifications.js'
                 },
@@ -62,20 +62,20 @@ GlobalConfig = {
                 },
 
                 'juju-templates': {
-                  fullpath: '/templates.js'
+                    fullpath: '/templates.js'
                 },
 
-                'juju-views':  {
+                'juju-views': {
                     use: [
-                          'juju-templates',
-                          'juju-notifications',
-                          'juju-view-utils',
-                          'juju-view-environment',
-                          'juju-view-service',
-                          'juju-view-unit',
-                          'juju-view-charmsearch',
-                          'juju-view-charm',
-                          'juju-view-charm-collection']
+                        'juju-templates',
+                        'juju-notifications',
+                        'juju-view-utils',
+                        'juju-view-environment',
+                        'juju-view-service',
+                        'juju-view-unit',
+                        'juju-view-charmsearch',
+                        'juju-view-charm',
+                        'juju-view-charm-collection']
                 },
 
                 // Models
@@ -107,7 +107,7 @@ GlobalConfig = {
                         'juju-controllers',
                         'juju-views',
                         'juju-models'
-                    ]
+                        ]
                 }
             }
         }
@@ -115,6 +115,6 @@ GlobalConfig = {
 };
 
 // Node compat for testing
-if (typeof(exports) !== 'undefined') {
+if (typeof (exports) !== 'undefined') {
     exports.GlobalConfig = GlobalConfig;
 }
