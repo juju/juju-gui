@@ -49,8 +49,17 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .selectAll('#canvas')
             .append('svg:svg')
             .attr('pointer-events', 'all')
-            .attr('width', width)
-            .attr('height', height);
+            .attr('width', '100%')
+            .attr('height', '100%');
+
+        try {
+            width = parseInt(Y.one('#canvas svg').getComputedStyle('width'), 10);
+            height = parseInt(Y.one('#canvas svg').getComputedStyle('height'), 10);
+        } catch (e) {
+            // Make sure sensible defaults are set
+            width = 800;
+            height = 600
+        }
 
         var tree = d3.layout.pack()
             .size([width, height])
