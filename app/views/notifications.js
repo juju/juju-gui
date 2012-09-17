@@ -308,7 +308,7 @@ YUI.add('juju-notifications', function (Y) {
             if (!connected) {
                 state = 'btn-warning';
             }
-            else if (ml.size() > 0) {
+            else if (show_count > 0) {
                 var levels = ml.get_notice_levels();
                 if (levels.error) {
                     state = 'btn-danger';
