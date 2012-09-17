@@ -143,17 +143,15 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
              'units': units.map(function(u) {
                  return u.getAttrs();})
         }));
-        container.all('div.thumbnail').each(function( el ) {
-            el.on('click', function(evt) {
-                console.log('Click', this.getData('charm-url'));
-                this.fire('showUnit', {unit_id: this.get('id')});
-            });
-        });
         return this;
     },
 
     events: {
-        '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'}
+        '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'},
+        'div.thumbnail': {click: function(ev) {
+            console.log('Click', ev.currentTarget.get('id'));
+            this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
+        }}
     },
 
     resetUnits: function(ev) {
