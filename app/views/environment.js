@@ -29,7 +29,8 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             container = this.get('container'),
             m = this.get('domain_models'),
             height = 600,
-            width = 800;
+            width = 640,
+            viewport_height = "100%";
 
         var services = m.services.toArray().map(function(s) {
             s.value = s.get('unit_count');
@@ -38,27 +39,58 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         var relations = m.relations.toArray();
         var fill = d3.scale.category20();
 
+        var xscale = d3.scale.linear()
+            .domain([-width / 2, width / 2])
+            .range([0, width]);
+
+        var yscale = d3.scale.linear()
+            .domain([-height / 2, height / 2])
+            .range([height, 0]);
+        
         // Scales for unit sizes
         // XXX magic numbers will have to change; likely during
         // the pan/zoom work
         var service_scale_width = d3.scale.log().range([164, 200]);
         var service_scale_height = d3.scale.log().range([64, 100]);
 
+        try {
+            // Attepmt to get the viewport height minus the navbar and
+            // control bar
+            viewport_height =  container.get('winHeight') - 100;
+        } catch (e) {
+            viewport_height = "100%";
+        }
         // Set up the visualization with a pack layout
         var vis = d3.select(container.getDOMNode())
             .selectAll('#canvas')
             .append('svg:svg')
             .attr('pointer-events', 'all')
-            .attr('width', '100%')
-            .attr('height', '100%');
-
+            .attr('width', "100%")
+            .attr('height', viewport_height)
+            .append('svg:g')
+            .call(d3.behavior.zoom()
+                  .x(xscale)
+                  .y(yscale)
+                  .scaleExtent([0.25, 1.75])
+                  .on('zoom', rescale))
+            .append('svg:g');
         try {
             width = parseInt(Y.one('#canvas svg').getComputedStyle('width'), 10);
             height = parseInt(Y.one('#canvas svg').getComputedStyle('height'), 10);
         } catch (e) {
             // Make sure sensible defaults are set
             width = 800;
-            height = 600
+            height = 600;
+        }
+
+        vis.append('svg:rect')
+            .attr('width', width)
+            .attr('height', height)
+            .attr('fill', 'white');
+
+        function rescale() {
+            vis.attr("transform", "translate(" + d3.event.translate + ")"
+                     + " scale(" + d3.event.scale + ")");
         }
 
         var tree = d3.layout.pack()
@@ -114,9 +146,14 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         node.append('rect')
             .attr('class', 'service-border')
             .attr('width', function(d) {
-                return service_scale_width(d.get('unit_count')); })
+                var w = service_scale_width(d.get('unit_count')); 
+                d.set('width', w);
+                return w;
+                })
             .attr('height', function(d) {
-                return service_scale_height(d.get('unit_count')); });
+                var h = service_scale_height(d.get('unit_count')); 
+                d.set('height', h);
+                return h;});
 
         var service_labels = node.append('text').append('tspan')
             .attr('class', 'name')
@@ -251,9 +288,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
      * will eventually use A* to route around other services
      */
     draw_relation: function(relation) {
-        return relation.source.x + ' ' +
+        return (relation.source.x  + (
+                    relation.source.get('width') / 2)) + ' ' +
             relation.source.y + ', ' +
-            relation.target.x + ' ' + 
+            (relation.target.x + (relation.target.get('width') / 2)) + ' ' + 
             relation.target.y;
     },
 
