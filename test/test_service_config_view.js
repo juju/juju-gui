@@ -149,7 +149,7 @@
             save_button.get('disabled').should.equal(false);
         });
 
-        it('should display errors to the user', function () {
+        it('should display a message when a server error occurs', function () {
             var view = new ServiceConfigView({
                 container: container,
                 service: service,
@@ -157,11 +157,7 @@
                 env: env
             }).render();
 
-            var error_message = 'Something bad happened.',
-                ev = {
-                    err: true,
-                    message: error_message
-                },
+            var ev = {err: true},
                 alert_ = container.one('#message-area>.alert');
 
             // Before an erronious event is processed, no alert exists.
@@ -170,7 +166,7 @@
             view._saveConfigCallback(ev);
             // The event handler should have created an alert box.
             alert_ = container.one('#message-area>.alert');
-            alert_.getHTML().should.contain(error_message);
+            alert_.getHTML().should.contain(view._serverErrorMessage);
         });
 
         it('should display an error when addErrorMessage is called',

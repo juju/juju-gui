@@ -148,14 +148,15 @@ var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBa
                 .set('text', '×');
     },
 
+    _serverErrorMessage: 'An error ocurred.',
+
     _saveConfigCallback: function(ev) {
-        //XXX: handle fail
         var service = this.get('service'),
             container = this.get('container'),
             db = this.get('db');
 
         if (ev && ev.err) {
-            this._addErrorMessage(container, ev.message);
+            this._addErrorMessage(container, this._serverErrorMessage);
             return;
         }
 
