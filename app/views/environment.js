@@ -321,7 +321,8 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
     setSizesFromViewport: function(vis, container, xscale, yscale) {
         // start with some reasonable defaults
         var viewport_height = '100%', 
-            viewport_width = '100%',
+            viewport_width = parseInt(
+                    container.getComputedStyle('width')),
             svg = Y.one('svg'), 
             width = 800, 
             height = 600;

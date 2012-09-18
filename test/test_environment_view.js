@@ -47,6 +47,11 @@
                 }], ['unit', 'add', {
                     'machine': 0, 
                     'agent-state': 'started', 
+                    'public-address': '192.168.122.113', 
+                    'id': 'mediawiki/0'
+                }], ['unit', 'add', {
+                    'machine': 0, 
+                    'agent-state': 'started', 
                     'public-address': '192.168.122.222', 
                     'id': 'mysql/0'
                 }]
@@ -81,6 +86,9 @@
         beforeEach(function (done) {
             container = Y.Node.create('<div id="test-container" />');
             Y.one('body').append(container);
+            var navbar = Y.Node.create('<div class="navbar" ' +
+                'style="height:70px;">Navbar</div>')
+            Y.one('body').append(navbar);
             db = new models.Database();
             db.on_delta({data: environment_delta});
             done();
@@ -89,6 +97,7 @@
         afterEach(function(done) {
             container.remove();
             container.destroy();
+            Y.one('body').removeChild(Y.one('.navbar'));
             db.destroy();
             env._txn_callbacks = {};
             conn.messages = [];
@@ -164,6 +173,29 @@
             }
         );
 
+        // Ensure that sizes are computed properly
+        it('must be able to compute sizes by the viewport with a minimum',
+            function(done) {
+                var view = new EnvironmentView({
+                    container: container,
+                    domain_models: db,
+                    env: env
+                }).render();
+                var svg = Y.one('svg');
+                parseInt(svg.getAttribute('height'))
+                    .should.equal(
+                        Math.max(600, 
+                            container.get('winHeight') -
+                            parseInt(Y.one('#overview-tasks')
+                                .getComputedStyle('height'), 10) -
+                            parseInt(Y.one('.navbar')
+                                .getComputedStyle('height'), 10) -
+                            parseInt(Y.one('.navbar')
+                                .getComputedStyle('margin-bottom'), 10)
+                        ));
+                done();
+            }
+        );
 
     });
 
