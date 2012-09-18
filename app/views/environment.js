@@ -53,12 +53,17 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         var service_scale_width = d3.scale.log().range([164, 200]);
         var service_scale_height = d3.scale.log().range([64, 100]);
 
-        try {
-            // Attepmt to get the viewport height minus the navbar and
-            // control bar
-            viewport_height =  container.get('winHeight') - 100;
-        } catch (e) {
-            viewport_height = "100%";
+        if (container.get('winHeight') &&
+                Y.one('#overview-tasks') &&
+                Y.one('.navbar')) {
+            // Attempt to get the viewport height minus the navbar at top and
+            // control bar at the bottom. Use Y.one() to ensure that the
+            // container is attached first.
+            viewport_height =  container.get('winHeight') - 
+                parseInt(Y.one('#overview-tasks')
+                        .getComputedStyle('height'), 10) - 
+                parseInt(Y.one('.navbar')
+                        .getComputedStyle('height'), 10);
         }
         // Set up the visualization with a pack layout
         var vis = d3.select(container.getDOMNode())
@@ -74,10 +79,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                   .scaleExtent([0.25, 1.75])
                   .on('zoom', rescale))
             .append('svg:g');
-        try {
-            width = parseInt(Y.one('#canvas svg').getComputedStyle('width'), 10);
-            height = parseInt(Y.one('#canvas svg').getComputedStyle('height'), 10);
-        } catch (e) {
+        if (Y.one('svg')) {
+            width = parseInt(Y.one('svg').getComputedStyle('width'), 10);
+            height = parseInt(Y.one('svg').getComputedStyle('height'), 10);
+        } else {
             // Make sure sensible defaults are set
             width = 800;
             height = 600;
