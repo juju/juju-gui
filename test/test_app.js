@@ -45,7 +45,8 @@ describe('Application', function() {
       // 'service/wordpress/' is the primary and so other URL are not returned
       app.routeModel(wordpress).should.equal('/service/wordpress/');
       // however passing 'intent' can force selection of another
-      app.routeModel(wordpress, 'config').should.equal('/service/wordpress/config');
+      app.routeModel(wordpress, 'config').should.equal(
+          '/service/wordpress/config');
 
       // service units use argument rewriting (thus not /u/wp/0)
       app.routeModel(wp0).should.equal('/unit/wordpress-0/');

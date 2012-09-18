@@ -67,7 +67,6 @@ YUI.add('juju-models', function (Y) {
     models.ServiceList = ServiceList;
 
     var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
-    //    idAttribute: 'name',
     {
         ATTRS: {
             service: {
@@ -75,6 +74,9 @@ YUI.add('juju-models', function (Y) {
                     var unit_name = this.get('id');
                     return unit_name.split('/', 1)[0];
                 }
+            },
+            urlName: {
+                valueFn: function() {return this.get('id').replace("/", "-");}
             },
             machine: {},
             agent_state: {},
@@ -192,9 +194,7 @@ YUI.add('juju-models', function (Y) {
                 value: 'info'
             },
             kind: {},
-            seen: {
-                value: false
-            },
+            seen: {value: false},
             timestamp: {
                 valueFn: function () {
                     return Y.Lang.now();
@@ -203,7 +203,10 @@ YUI.add('juju-models', function (Y) {
 
             // when a model id is set we can infer link (but only in the 
             // context of app's routing table)
-            model_id: {},
+            modelId: {
+                setter: function(model) {
+                    return Y.mix([model.name, model.get('id')]);
+            }},
             link: {},
             link_title: {
                 value: 'View Details'
@@ -235,28 +238,25 @@ YUI.add('juju-models', function (Y) {
             this.remove(this.size() - 1);
         },
 
-        get_notice_levels: function () {
-            var levels = {};
-            this.each(function (m) {
-                var level = m.get('level');
-                if (levels[level] !== undefined) {
-                    levels[level]++;
-                }
-                else {
-                    levels[level] = 1;
-                }
-            });
-            return levels;
-        },
-
-        get_for_model: function (model) {
-            var client_id = model;
-            if (Y.Lang.isObject(model)) {
-                client_id = model.get('clientId');
-            }
-
-            return this.filter(function (n) {
-                return n.get('model_id') == client_id;
+        /*
+         * Get Notifications relative to a given model.
+         * Currenly this depends on a mapping between the model 
+         * class as encoded by its clientId (see Database.getByModelId)
+         * 
+         * [model_list_name, id]
+         */
+        getNotificationsForModel: function (model) {
+            var modelKey = model.get('id');
+            return this.filter(function (notification) {
+                var modelId = notification.get('modelId'),
+                    modelList, modelId;
+                    if (modelId) {
+                        modelList = modelId[0],
+                        modelId = modelId[1];                        
+                        return (modelList == model.name) && (
+                                modelId == modelKey);
+                    }
+                    return false;
             });
         }
 
@@ -299,14 +299,22 @@ YUI.add('juju-models', function (Y) {
             };
         },
 
-        getByClientId: function (clientId) {
-            var ml_name = clientId.split('_', 1)[0],
-                ml;
-            if (ml_name == 'serviceUnit') {
-                ml_name = 'unit';
+        /* 
+         * Model Id is a [db[model_list_name], model.get('id')] 
+         * sequence that can be used to lookup models relative 
+         * to the Database.
+         */
+        getByModelId: function (modelId) {
+            var modelList = modelId[0],
+                id = modelId[1];
+
+            //Normalize the name and resolve the list
+            if (modelList == 'serviceUnit') {
+                modelList = 'unit';
             }
-            ml = this[ml_name + 's'];
-            return ml.getByClientId(clientId);
+            modelList = this[modelList + 's'];
+
+            return modelList.getById(id);
         },
 
         reset: function () {

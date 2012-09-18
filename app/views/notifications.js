@@ -9,18 +9,40 @@ YUI.add('juju-notifications', function (Y) {
     /*
      * View a ModelList  of notifications
      */
-    var NotificationsView = Y.Base.create('NotificationsView', Y.View, [views.JujuBaseView], {
+    var NotificationsView = Y.Base.create('NotificationsView', Y.View, [
+            views.JujuBaseView], {
         template: Templates.notifications,
 
-        /* Declarative indicators of desiried event->behavior bindings */
+        /* 
+         * Behavior toggles
+         * 
+         * Flags indicating which behaviors we expect
+         * to find in a given view. These toggle make subclassing 
+         * simple. 
+         * 
+         * This pattern stems from trying to collect behaviors for the view in
+         * one place but acts similar to declaritive controller logic.
+         * 
+         * :connection: Should the view be tied to websocket connection
+         *             events.
+         * 
+         * :delta_stream: Should the view subscribe to delta stream events.
+         * 
+         *               
+         */
         bindings: {
-            model_list: true,
             connection: true,
             delta_stream: true,
             timestamps: true
         },
 
-        // Actions for selecting a notice
+        /*
+         * Actions associated with events 
+         * in this case selection events represent 
+         * policy flags inside the 'notice_select' callback.
+         * 
+         * :hide: should the selected element be hidden on selection
+         */
         selection: {
             hide: true
         },
@@ -37,19 +59,16 @@ YUI.add('juju-notifications', function (Y) {
         initializer: function () {
             NotificationsView.superclass.constructor.apply(this, arguments);
 
-            var ml = this.get('model_list'),
+            var notifications = this.get('notifications'),
                 env = this.get('env');
 
             // Bind view to model list in a number of ways
-            if (this.bindings.model_list) {
-                ml.addTarget(this);
-                // Re-render the model list changes
-                ml.after('add', this.slow_render, this);
-                ml.after('create', this.slow_render, this);
-                ml.after('remove', this.slow_render, this);
-                ml.after('reset', this.slow_render, this);
-            }
-
+            notifications.addTarget(this);
+            // Re-render the model list changes
+            notifications.after('add', this.slow_render, this);
+            notifications.after('create', this.slow_render, this);
+            notifications.after('remove', this.slow_render, this);
+            notifications.after('reset', this.slow_render, this);
 
             // Env connection state watcher
             if (this.bindings.connection) {
@@ -63,13 +82,12 @@ YUI.add('juju-notifications', function (Y) {
 
         /*
          * Parse the delta stream looking for interesting events to translate
-         * into notices. This could get filtered through a per user/env ruleset.
+         * into notifications. 
          *
          *  change_type maps to a set of controls
          *     model_list: (string)
          *         where do objects of this type live in the app.db
-         *     lookup (optional):
-         *         function(change_type, model_id) -> model instance
+
          * Each attribute of notify is checked in the appropriate rule
          * for a function that can return its value, if no rule is defined
          * the function in a rule called 'default' will be used. The signature
@@ -87,7 +105,11 @@ YUI.add('juju-notifications', function (Y) {
                 model_list: 'units',
                 level: function (change_type, change_op, change_data) {
                     var astate = change_data['agent-state'];
-                    return (astate.search('error') > -1) && 'error' || 'info';
+                    if (astate !== undefined && 
+                        astate.search('error') > -1) {
+                            return 'error';
+                    }
+                    return 'info';
                 },
                 evict: function (old, new_data, change) {
                     if (new_data.level != 'error') {
@@ -96,7 +118,7 @@ YUI.add('juju-notifications', function (Y) {
                             old.set('seen', true);
                         }
                     }
-                },
+                }
             },
                 // Defaults when no special rules apply
             'default': {
@@ -118,7 +140,7 @@ YUI.add('juju-notifications', function (Y) {
             var self = this,
                 rules = this.injest_rules,
                 app = this.get('app'),
-                ml = this.get('model_list');
+                notifications = this.get('notifications');
 
             function lookup_model(change_type, model_id) {
                 var rule = rules[change_type],
@@ -132,12 +154,8 @@ YUI.add('juju-notifications', function (Y) {
                     obj_list = app.db[change_type + 's'];
                 }
 
-                if (rule && rule.lookup) {
-                    model = rule.lookup(obj_list, model_id);
-                }
-                else {
-                    model = obj_list.getById(model_id);
-                }
+                model = obj_list.getById(model_id);
+                console.log("Found model for notice", model, delta_evt);
                 console.groupEnd();
                 return model;
             }
@@ -152,19 +170,20 @@ YUI.add('juju-notifications', function (Y) {
 
                 /*
                  * Data injestion rules
-                 *  Create events for seens deltas
-                 *  Promote certain events to the 'show me' list
+                 *  Create notifications for incoming deltas
+                 *  Promote some notifications to the 'show me' list
                  *  Also:
-                 *  - for each change event see if there is an notice relating to
-                 *  that object in the model list
+                 *  - for each change event see if there is an notice 
+                 *   relating to that object in the model list
                  *    -- see if the current change event invalidates the need
                  *       to show the existing notices
-                 *    -- make the new notice as 'must see' or not (errors, etc)
-                 *  - add a notice for the event
+                 *    -- make the new notice as 'must see' or not (
+                 *       errors, etc)
+                 *  - add a notification for the event
                  */
 
-                // Dispatch injestion rules (which may mutate either the current
-                // 'ml' or models within it (notice status)
+                // Dispatch injestion rules (which may mutate either the 
+                // current 'notifications' or models within it (notice status)
 
                 ['title', 'message', 'level'].forEach(function (attr) {
                     var active_rule = rule;
@@ -187,18 +206,20 @@ YUI.add('juju-notifications', function (Y) {
                 notify_data.kind = change_type;
                 // see if there is an object associated with this
                 // message
-                console.groupCollapsed("Notice Model");
+                console.groupCollapsed("Notification Model Handling");
                 if (change_data.id) {
                     model = lookup_model(change_type, change_data.id);
                     if (model) {
-                        notify_data.model_id = model.get('clientId');
+                        notify_data.modelId = model;
                         notify_data.link = app.routeModel(model);
                         // If there are eviction rules for old notices 
                         // based on this model
-                        var existing = ml.get_for_model(model);
+                        var existing = notifications.getNotificationsForModel(
+                            model);
                         if (existing && rule && rule.evict) {
                             existing.forEach(function (old) {
-                                rule.evict(old, notify_data, change, ml);
+                                rule.evict(old, notify_data, change, 
+                                notifications);
                             });
                         }
                     }
@@ -208,7 +229,7 @@ YUI.add('juju-notifications', function (Y) {
                 // to add _something_
                 
                 if (notify_data.title) {
-                    ml.create(notify_data);
+                    notifications.create(notify_data);
                 }
             });
         },
@@ -219,12 +240,12 @@ YUI.add('juju-notifications', function (Y) {
          */
         notify_toggle: function (evt) {
             var container = this.get('container'),
-                ml = this.get('model_list'),
+                notifications = this.get('notifications'),
                 target = evt.target.getAttribute('data-target'),
                 el = container.one('#' + target),
                 parent = el.ancestor();
 
-            if (ml.size() === 0) {
+            if (notifications.size() === 0) {
                 return;
             }
 
@@ -248,7 +269,7 @@ YUI.add('juju-notifications', function (Y) {
          * model_list
          */
         notice_select: function (evt) {
-            var ml = this.get('model_list'),
+            var notifications = this.get('notifications'),
                 target = evt.target,
                 model;
 
@@ -259,7 +280,7 @@ YUI.add('juju-notifications', function (Y) {
                 target = target.ancestor('li');
             }
 
-            model = ml.getByClientId(target.get('id'));
+            model = notifications.getById(target.get('id'));
             model.set('seen', true);
             if (this.selection.hide) {
                 target.hide(true);
@@ -285,7 +306,7 @@ YUI.add('juju-notifications', function (Y) {
                 env = this.get('env'),
                 app = this.get('app'),
                 connected = env.get('connected'),
-                ml = this.get('model_list'),
+                notifications = this.get('notifications'),
                 state,
                 open = '',
                 btngroup = container.one('.btn-group');
@@ -298,7 +319,7 @@ YUI.add('juju-notifications', function (Y) {
 
             // However if the size of the message list is now
             // zero we can close the dialog
-            if (ml.size() === 0) {
+            if (notifications.size() === 0) {
                 open = '';
             }
 
@@ -309,13 +330,9 @@ YUI.add('juju-notifications', function (Y) {
                 state = 'btn-warning';
             }
             else if (show_count > 0) {
-                var levels = ml.get_notice_levels();
-                if (levels.error) {
-                    state = 'btn-danger';
-                }
-                else if (show_count > 0) {
-                    state = 'btn-info';
-                }
+                state = 'btn-danger';
+            } else {
+                state = 'btn-info';
             }
 
             container.setHTML(this.template({
@@ -338,8 +355,8 @@ YUI.add('juju-notifications', function (Y) {
         },
 
         get_showable: function () {
-            var ml = this.get('model_list');
-            return ml.filter(function (n) {
+            var notifications = this.get('notifications');
+            return notifications.filter(function (n) {
                 return n.get('level') == 'error' && n.get('seen') === false;
             }).map(function (n) {
                 return n.getAttrs();
@@ -358,7 +375,6 @@ YUI.add('juju-notifications', function (Y) {
     var NotificationsOverview = Y.Base.create('NotificationsOverview', NotificationsView, [], {
         template: Templates.notifications_overview,
         bindings: {
-            model_list: true,
             connection: false,
             delta_stream: false,
             timestamps: true
@@ -379,8 +395,8 @@ YUI.add('juju-notifications', function (Y) {
          *  when real filtering is present this will have to take options
          */
         get_showable: function () {
-            var ml = this.get('model_list');
-            return ml.map(function (n) {
+            var notifications = this.get('notifications');
+            return notifications.map(function (n) {
                 return n.getAttrs();
             });
         }

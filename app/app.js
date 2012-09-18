@@ -266,7 +266,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         this.showView('notifications_overview', {
                           app: this,
                           env: this.env,
-                          model_list: this.db.notifications});
+                          notifications: this.db.notifications});
     },
 
     /* 
@@ -294,7 +294,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
                                 {container: Y.one('#notifications'),
                                  app: this,
                                  env: this.env,
-                                 model_list: this.db.notifications});
+                                 notifications: this.db.notifications});
             view.instance.render();
         }
         next();
@@ -342,32 +342,32 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
      *  This is a utility that helps map from model objects to routes
      *  defined on the App object.
      * 
-     * routeModel(model, [intent]) -> 'urlstring or known route' || undefined
+     * routeModel(model, [intent])
+     *    :model: the model to determine a route url for
+     *    :intent: (optional) the name of an intent associated with
+     *             a route. When more than one route can match a model 
+     *             the route w/o an intent is matched when this attribute 
+     *             is missing. If intent is provided as a string it 
+     *             is matched to the 'intent' attribute specified on the 
+     *             route. This is effectively a tag.
      * 
-     * Some models have more than one associated view, in some cases it 
-     * may still require additional knowledge of intent to map to the 
-     * proper view. In those cases passing a string 'intent' to the 
-     * routeModel call will check that the matched route contain reference
-     * to the supplied intent.
+     * To support this we suppliment to our routing information with 
+     * additional attributes as follows:
      * 
-     * To support this ee suppliment our routing information with additional
-     * attributes as follows:
-     * 
-     * model: model.name (required)
-     * primary: boolean -- given mode than one match this becomes the default
-     * reverse_map: {route_path_key: str || function(value, model)}
-     *          reverse map can map :id in the path to either
-     *              another attribute name on the model
-     *          or 
-     *          a function(the attr value of the key,)
-     *              and returning the value to use in the URL
-     *              (the context is the model)
+     *   :model: model.name (required)
+     *   :reverse_map: (optional) route_path_key: str 
+     *          reverse map can map :id  to the name of attr on model
+     *          if no value is provided its used directly as attribute name 
+     *   :intent: (optional) A string named intent for which this route
+     *           should be used. This can be used to select which subview
+     *           is selected to resolve a models route.
      */
     routeModel: function(model, intent) {
         var matches = [],
             attrs = model.getAttrs(),
             routes = this.get('routes'),
-            regexPathParam = /([:*])([\w\-]+)?/g;
+            regexPathParam = /([:*])([\w\-]+)?/g,
+            idx = 0;
 
         routes.forEach(function(route) {
             var path = route.path,
@@ -387,34 +387,32 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
             path = path.replace(regexPathParam, 
                     function (match, operator, key) {
                         if (reverse_map !== undefined && reverse_map[key]) {
-                            var mapping = reverse_map[key];
-                            if (Y.Lang.isFunction(mapping)) {
-                                return mapping.call(model, attrs[key]);
-                            } else {
-                                key = mapping;
-                            }
+                            key = reverse_map[key];
                         }
                     return attrs[key];
             });
-            matches.push({path: path, 
-                         route: route,
-                         model: model,
-                         intent: intent});
+            matches.push(Y.mix({path: path, 
+                                route: route,
+                                model: model,
+                                intent: route.intent}));
         });
 
-        // see if intent is in the url
-        if (intent !== undefined) {
-            matches = Y.Array.filter(matches, function(match) {
-                return match.path.search(intent) > -1;
-            });
-        }
-        // if there is more than one match return the 'primary' if set
+        // See if intent is in the match. Because the default is
+        // to match routes without intent (undefined) this test
+        // can always be applied.
+        matches = Y.Array.filter(matches, function(match) {
+            return match.intent == intent;
+        });
+
         if (matches.length > 1) {
-            matches = Y.Array.filter(matches, function(match) {
-                return match.route.primary === true;
-            });
+            console.warn('Ambiguous routeModel',
+                         model.get('id'), 
+                         matches);
+            // Default to the last route in this configuration 
+            // error case.
+            idx = matches.length - 1;
         }
-        return matches[0] && matches[0].path;
+        return matches[idx] && matches[idx].path;
     },
 
     // Override Y.Router.route (and setter) to allow inclusion 
@@ -434,8 +432,16 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         // This is a whitelist to spare the extra juggling
         if (options.model) {
             var r = this._routes, 
-                idx = this._routes.length -1;
-            r[idx] = Y.mix(r[idx], options);
+                idx = r.length - 1;
+            if (r[idx].path == path) {
+                // Combine our options with the default
+                // computed route information
+                r[idx] = Y.mix(r[idx], options);                
+            } else {
+                console.error(
+                    "Underlying Y.Router not behaving as expected. " + 
+                    "Press the red button.");
+            }
         }
     }
     
@@ -454,21 +460,21 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
                      callback: 'show_notifications_overview'},
                 {path: '/service/:id/config', 
                      callback: 'show_service_config',
+                     intent: 'config',
                      model: 'service'},
                 {path: '/service/:id/constraints', 
                      callback: 'show_service_constraints', 
+                     intent: 'constraints',
                      model: 'service'},
                 {path: '/service/:id/relations', 
                      callback: 'show_service_relations',
+                     intent: 'relations',
                      model: 'service'},
                 {path: '/service/:id/', callback: 'show_service',
                      model: 'service',
                      primary: true},
                 {path: '/unit/:id/', callback: 'show_unit',
-                     reverse_map: {
-                        'id': function(value)  {
-                            return this.get('id').replace('/', '-');}},
-                     model: 'serviceUnit'},
+                reverse_map: {id: 'urlName'}, model: 'serviceUnit'},
                 {path: '/', callback: 'show_environment'}
                 ]
             }

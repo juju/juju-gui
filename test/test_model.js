@@ -94,7 +94,7 @@ describe('juju models', function() {
            service.should.equal('mysql');
        });
              
-    it('must be able to resolve models by clientId', function(){
+    it('must be able to resolve models by modelId', function(){
         var db = new models.Database();
 
         db.services.add([{id: 'wordpress'},
@@ -103,10 +103,10 @@ describe('juju models', function() {
         db.units.add([{id: 'wordpress/0'},
                       {id: 'wordpress/1'}]);
 
-        var cid = db.services.item(0).get('clientId');
+        var model = db.services.item(0);
 
-        db.getByClientId(cid).should.exist;
-        db.getByClientId(cid).get('id').should.equal('wordpress');
+        db.getByModelId([model.name, 
+            model.get('id')]).get('id').should.equal('wordpress');
         
     });
 
