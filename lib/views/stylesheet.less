@@ -43,6 +43,17 @@ g.service {
         &.hide-count {
             fill: rgba(0,0,0,0);}
     }
+
+    .exposed-indicator {
+        fill: #00F;
+
+        &.off {
+            visibility: hidden;
+        }
+        &.on {
+            visibility: visible;
+        }
+    }
 }
 g.service-status {
     path {
@@ -59,14 +70,26 @@ g.service-status {
     }
 }
 
-g.unit { 
+g.unit {
     stroke-width: 0; font-weight: bold;
     font-family: "Ubuntu"; font-size: 1.2em; fill: #1626cf;
 
     .address {
     fill: #ffffff; font-size: 0.8em;}
-    .unit-border { 
+    .unit-border {
     stroke-width: 2px; fill: #a0a0a0;}
+}
+
+#service-unit-control {
+  text-align: center;
+
+  button {
+    width: 2em;
+  }
+  input {
+    width: 3em;
+    margin-bottom: 0;
+  }
 }
 
 #overview-tasks {
