@@ -75,6 +75,12 @@ var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
                 return unit_name.split('/', 1)[0];
             }
         },
+        number: {
+            valueFn: function(name) {
+                var unit_name = this.get('id');
+                return parseInt(unit_name.split('/')[1], 10);
+            }
+        },
         machine: {},
         agent_state: {},
         // relations to unit relation state.
@@ -212,7 +218,7 @@ var Database = Y.Base.create('database', Y.Base, [], {
         this.units = new ServiceUnitList();
 
         // For model syncing by type. Charms aren't currently sync'd, only fetched
-        // on demand (their static).
+        // on demand (they are static).
         this.model_map = {
             'unit': ServiceUnit,
             'machine': Machine,
@@ -271,15 +277,32 @@ var Database = Y.Base.create('database', Y.Base, [], {
         var change_kind = change[1];
         var data = change[2];
         var o;
-        if (change_kind == 'add') {
-            o = new ModelClass({id: data.id});
-            this._sync_bag(data, o);
-            model_list.add(o);
-        } else if (change_kind == 'delete') {
-            model_list.remove(model_list.getById(data));
-        } else if (change_kind == 'change') {
+        if (change_kind == 'add' || change_kind == 'change') {
+            // Client-side requests may create temporary objects in the
+            // database in order to give the user more immediate feedback.
+            // The temporary objects are created after the ACK message from
+            // the server that contains their actual names.  When the delta
+            // arrives for those objects, they already exist in a skeleton
+            // form that needs to be fleshed out.  So, the existing objects
+            // are kept and re-used.
             o = model_list.getById(data.id);
-            this._sync_bag(data, o);
+            if (Y.Lang.isNull(o)) {
+                o = new ModelClass({id: data.id});
+                this._sync_bag(data, o);
+                model_list.add(o);
+            } else {
+                this._sync_bag(data, o);
+            }
+        } else if (change_kind == 'remove') {
+            o = model_list.getById(data);
+            // This should only be necessary while we are waiting on server
+            // side changes to have deltas aware of client requests.
+            if (!Y.Lang.isNull(o)) {
+                model_list.remove(o);
+            }
+        } else {
+            console.log('Unknown change kind in process_model_delta: ',
+                        change_kind);
         }
     }
 
