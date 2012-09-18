@@ -148,7 +148,23 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         'div.thumbnail': {click: function(ev) {
             console.log('Unit clicked', ev.currentTarget.get('id'));
             this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
-        }}
+        }},
+        '.unExposeService': {click: 'unExposeService'},
+        '.exposeService': {click: 'exposeService'}
+    },
+
+    unExposeService: function() {
+
+    },
+
+    exposeService: function() {
+        var service = this.get('service'),
+            env = this.get('env'),
+            db = this.get('db');
+
+        env.expose(service.get('name'), function() {
+            db.fire('update');
+        });
     },
 
     resetUnits: function(ev) {
