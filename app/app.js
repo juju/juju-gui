@@ -235,7 +235,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     },
 
     show_environment: function (req) {
-        console.log("App: Route: Environment", req.path, req.pendingRoutes);
+        console.log('App: Route: Environment', req.path, req.pendingRoutes);
         this.showView('environment', {domain_models: this.db, env: this.env}, {render: true});
     },
 
