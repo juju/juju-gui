@@ -208,7 +208,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
                 function (r) {
                     return Y.Array.some(r.get('endpoints'), function (ep) {
                         return ep[0] === service_id;
-                    })
+                    });
                 }
             ));
         this.panel.hide();
