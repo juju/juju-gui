@@ -150,7 +150,7 @@
         alert_ = container.one('#message-area>.alert');
 
       // Before an erronious event is processed, no alert exists.
-      expect(alert_).to.not.exist;
+      var _ = expect(alert_).to.not.exist;
       // Handle the error event.
       view._saveConfigCallback(ev);
       // The event handler should have created an alert box.
@@ -169,7 +169,7 @@
         alert_ = container.one('#message-area>.alert');
 
       // Before an erronious event is processed, no alert exists.
-      expect(alert_).to.not.exist;
+      var _ = expect(alert_).to.not.exist;
       // Display the error message.
       view._addErrorMessage(container, error_message);
       // The method should have created an alert box.

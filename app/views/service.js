@@ -125,29 +125,27 @@ var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBa
             service = this.get('service'),
             config = {};
 
-        console.log('Click saveConfig');
-
+        // Disable the "Update" button while the RPC call is outstanding.
         container.one('#save-service-config').set('disabled', 'disabled');
 
         container.all('.config-field').each(function(el) {
             config[el.get('name')] = el.get('value');
         });
 
-        console.log('service.get("id")', service.get('id'));
         env.set_config(service.get('id'), config,
-          Y.bind(this._saveConfigCallback, this));
+            Y.bind(this._saveConfigCallback, this));
 
     },
 
     _addErrorMessage: function(container, message) {
-      container.one('#message-area')
-        .appendChild(Y.Node.create('<div/>'))
-          .addClass('alert')
-          .addClass('alert-error')
-          .set('text', message)
-        .appendChild(Y.Node.create('<a/>'))
-          .addClass('close')
-          .set('text', '×');
+        container.one('#message-area')
+            .appendChild(Y.Node.create('<div/>'))
+                .addClass('alert')
+                .addClass('alert-error')
+                .set('text', message)
+            .appendChild(Y.Node.create('<a/>'))
+                .addClass('close')
+                .set('text', '×');
     },
 
     _saveConfigCallback: function(ev) {
@@ -157,8 +155,8 @@ var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBa
             db = this.get('db');
 
         if (ev && ev.err) {
-          this._addErrorMessage(container, ev.message);
-          return;
+            this._addErrorMessage(container, ev.message);
+            return;
         }
 
         container.all('.config-field').each(function(el) {
@@ -169,7 +167,7 @@ var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBa
     },
 
     closeAlert: function(ev) {
-      ev.target.get('parentNode').remove();
+        ev.target.get('parentNode').remove();
     }
 });
 
