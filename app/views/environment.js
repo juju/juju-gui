@@ -154,14 +154,14 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         // Show whether or not the service is exposed using an
         // indicator (currently a simple circle
         // TODO this will likely change to an image with UI uodates.
-        var exposed_indicator = node.append('circle')
+        var exposed_indicator = node.filter(function(d) {
+                return d.get('exposed');
+            })
+            .append('circle')
             .attr('cx', 0)
             .attr('cy', 10)
             .attr('r', 5)
-            .attr('class', function(d) {
-                return 'exposed-indicator ' + 
-                    (d.get('exposed') ? 'on' : 'off');
-            });
+            .attr('class', 'exposed-indicator on');
         exposed_indicator.append('title')
             .text(function(d) {
                 return d.get('exposed') ? 'Exposed' : '';
