@@ -206,7 +206,8 @@
         control.get('value').should.equal('3');
     });
 
-      it('should send an expose RPC call when exposeService function is invoked', function() {
+      it('should send an expose RPC call when exposeService is invoked',
+            function() {
           var view = new ServiceView(
               {container: container, service: service, db: db,
                   env: env});
@@ -215,7 +216,8 @@
           conn.last_message().op.should.equal('expose')
       });
 
-      it('should send an unexpose RPC call when unexposeService function is invoked', function() {
+      it('should send an unexpose RPC call when unexposeService is invoked',
+            function() {
           var view = new ServiceView(
               {container: container, service: service, db: db,
                   env: env});

@@ -218,7 +218,8 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         var service = this.get('service'),
             env = this.get('env');
 
-        env.unexpose(service.get('id'), Y.bind(this._unexposeServiceCallback, this));
+        env.unexpose(service.get('id'),
+            Y.bind(this._unexposeServiceCallback, this));
     },
 
     _unexposeServiceCallback: function() {
@@ -231,14 +232,13 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
     exposeService: function() {
         var service = this.get('service'),
             env = this.get('env');
-
-        env.expose(service.get('id'), Y.bind(this._exposeServiceCallback, this));
+        env.expose(service.get('id'),
+            Y.bind(this._exposeServiceCallback, this));
     },
 
     _exposeServiceCallback: function() {
         var service = this.get('service'),
             db = this.get('db');
-
         service.set('exposed', true);
         db.fire('update');
     },

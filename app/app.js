@@ -122,7 +122,6 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
 
     on_database_changed: function(evt) {
         Y.log(evt, 'debug', 'App: Database changed');
-        console.log()
         // Redispatch to current view to update.
         this.dispatch();
     },
