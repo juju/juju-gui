@@ -8,7 +8,7 @@ install:
 	@./bin/generateTemplates
 
 lint: install
-        @node_modules/jshint/bin/hint --config=jshint.config `bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js`
+	@node_modules/jshint/bin/hint --config=jshint.config `bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js`
 
 test: install
 	@xdg-open test/index.html

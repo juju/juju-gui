@@ -121,6 +121,12 @@ Y.extend(Environment, Y.Base, {
             'service_name': service,
             'num_units': num_units}, callback);
     },
+    remove_units: function(unit_names, callback) {
+        this._send_rpc({
+            'op': 'remove_units',
+            'unit_names': unit_names}, callback);
+
+    },
 
     add_relation: function(endpoint_a, endpoint_b, callback) {
         this._send_rpc({
