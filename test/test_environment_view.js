@@ -80,12 +80,14 @@
 
         beforeEach(function (done) {
             container = Y.Node.create('<div id="test-container" />');
+            Y.one('body').append(container);
             db = new models.Database();
             db.on_delta({data: environment_delta});
             done();
         });
 
         afterEach(function(done) {
+            container.remove();
             container.destroy();
             db.destroy();
             env._txn_callbacks = {};
@@ -141,6 +143,27 @@
                 add_relation.simulate('click');
             }
         );
+
+        // Ensure that sizes are computed properly
+        it('must be able to compute rect sizes based on the svg and' +
+                ' viewport size',
+            function(done) {
+                var view = new EnvironmentView({
+                    container: container,
+                    domain_models: db,
+                    env: env
+                }).render();
+                var svg = Y.one('svg');
+                parseInt(svg.one('rect').getAttribute('height'))
+                    .should.equal(
+                        parseInt(svg.getComputedStyle('height')));
+                parseInt(svg.one('rect').getAttribute('width'))
+                    .should.equal(
+                        parseInt(svg.getComputedStyle('width')));
+                done();
+            }
+        );
+
 
     });
 
