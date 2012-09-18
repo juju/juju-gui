@@ -54,7 +54,7 @@
       var view = new ServiceView(
         {container: container, model: service, db: db,
          env: env}).render();
-      container.one('#service-unit-control').should.not.equal(null);
+      container.one('#num-service-units').should.not.equal(null);
     });
 
     it('should not show controls if the charm is subordinate', function () {
@@ -63,7 +63,7 @@
         {container: container, model: service, db: db,
          env: env}).render();
       // "var _ =" makes the linter happy.
-      var _ = expect(container.one('#service-unit-control')).to.not.exist;
+      var _ = expect(container.one('#num-service-units')).to.not.exist;
     });
 
     it('should show the service units ordered by number', function () {

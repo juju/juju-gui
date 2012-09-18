@@ -9,48 +9,48 @@
         var environment_delta = {
             'result': [
                 ['service', 'add', {
-                    'charm': 'cs:precise/wordpress-6', 
-                    'id': 'wordpress', 
+                    'charm': 'cs:precise/wordpress-6',
+                    'id': 'wordpress',
                     'exposed': false
                 }], ['service', 'add', {
-                    'charm': 'cs:precise/mediawiki-3', 
+                    'charm': 'cs:precise/mediawiki-3',
                     'id': 'mediawiki',
                     'exposed': false
                 }], ['service', 'add', {
-                    'charm': 'cs:precise/mysql-6', 
+                    'charm': 'cs:precise/mysql-6',
                     'id': 'mysql'
                 }], ['relation', 'add', {
-                    'interface': 'reversenginx', 
-                    'scope': 'global', 
+                    'interface': 'reversenginx',
+                    'scope': 'global',
                     'endpoints': [
                         ['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]
-                    ], 
+                    ],
                     'id': 'relation-0000000000'
                 }], ['relation', 'add', {
-                    'interface': 'mysql', 
-                    'scope': 'global', 
+                    'interface': 'mysql',
+                    'scope': 'global',
                     'endpoints': [
-                        ['mysql', {'role': 'server', 'name': 'db'}], 
+                        ['mysql', {'role': 'server', 'name': 'db'}],
                         ['wordpress', {'role': 'client', 'name': 'db'}]
                     ], 'id': 'relation-0000000001'
                 }], ['machine', 'add', {
-                    'agent-state': 'running', 
-                    'instance-state': 'running', 
-                    'id': 0, 
-                    'instance-id': 'local', 
+                    'agent-state': 'running',
+                    'instance-state': 'running',
+                    'id': 0,
+                    'instance-id': 'local',
                     'dns-name': 'localhost'
                 }], ['unit', 'add', {
-                    'machine': 0, 
-                    'agent-state': 'started', 
-                    'public-address': '192.168.122.113', 
+                    'machine': 0,
+                    'agent-state': 'started',
+                    'public-address': '192.168.122.113',
                     'id': 'wordpress/0'
                 }], ['unit', 'add', {
-                    'machine': 0, 
-                    'agent-state': 'started', 
-                    'public-address': '192.168.122.222', 
+                    'machine': 0,
+                    'agent-state': 'started',
+                    'public-address': '192.168.122.222',
                     'id': 'mysql/0'
                 }]
-            ], 
+            ],
             'op': 'delta'
         };
 
@@ -80,13 +80,19 @@
 
         beforeEach(function (done) {
             container = Y.Node.create('<div id="test-container" />');
+            Y.one('body').append(container);
+            var navbar = Y.Node.create('<div class="navbar" ' +
+                'style="height:70px;">Navbar</div>');
+            Y.one('body').append(navbar);
             db = new models.Database();
             db.on_delta({data: environment_delta});
             done();
         });
 
         afterEach(function(done) {
+            container.remove();
             container.destroy();
+            Y.one('body').removeChild(Y.one('.navbar'));
             db.destroy();
             env._txn_callbacks = {};
             conn.messages = [];
@@ -94,7 +100,7 @@
         });
 
         // Ensure the environment view loads properly
-        it('must be able to render service blocks and relations', 
+        it('must be able to render service blocks and relations',
             function(done) {
                 // Create an instance of EnvironmentView with custom env
                 var view = new EnvironmentView({
