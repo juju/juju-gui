@@ -320,18 +320,14 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
      * Zoom in event handler
      */
     zoom_out: function(evt) {
-        this._fire_zoom(-.2);
+        this._fire_zoom(-0.2);
     },
 
     /*
      * Zoom out event handler
      */
     zoom_in: function(evt) {
-        /*var vis = this.get('vis'),
-            e = document.createEvent("SVGEvents");
-        e.initEvent('dblClick.zoom', true, true);
-        vis.node().parentElement.dispatchEvent(e);*/
-        this._fire_zoom(.2);
+        this._fire_zoom(0.2);
     },
 
     /*
@@ -353,7 +349,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         // update the scale in our zoom behavior manager to maintain state
         this.get('zoom').scale(evt.scale);
 
-        this.rescale(vis, evt)
+        this.rescale(vis, evt);
     },
 
     /*
@@ -361,8 +357,8 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
      */
     rescale: function(vis, evt) {
         this.set('scale', evt.scale);
-        vis.attr("transform", "translate(" + evt.translate + ")"
-                 + " scale(" + evt.scale + ")");
+        vis.attr('transform', 'translate(' + evt.translate + ')' +
+                 ' scale(' + evt.scale + ')');
     },
 
     /*
@@ -404,6 +400,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             var vis = view.get('vis'),
                 tree = view.get('tree'),
                 env = view.get('env'),
+                container = view.get('container'),
                 rel = {
                     source: view.get('add_relation_start_service'),
                     target: m

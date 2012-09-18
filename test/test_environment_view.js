@@ -82,7 +82,7 @@
             container = Y.Node.create('<div id="test-container" />');
             Y.one('body').append(container);
             var navbar = Y.Node.create('<div class="navbar" ' +
-                'style="height:70px;">Navbar</div>')
+                'style="height:70px;">Navbar</div>');
             Y.one('body').append(navbar);
             db = new models.Database();
             db.on_delta({data: environment_delta});
@@ -154,11 +154,14 @@
                 domain_models: db,
                 env: env
             }).render();
+            var svg = container.one('svg');
             var zoom_in = container.one('#zoom-in-btn'),
                 zoom_out = container.one('#zoom-out-btn'),
                 svg = container.one('svg');
             zoom_in.after('click', function() {
                 view.zoom_in();
+                var attr = svg.getAttribute('transform')
+                /scale(1.2)/.test(attr).should.equal(true);
                 done();
             });
             zoom_in.simulate('click');
