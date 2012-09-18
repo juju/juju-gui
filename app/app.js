@@ -88,6 +88,12 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         // Feed environment changes directly into the database.
         this.env.on('delta', this.db.on_delta, this.db);
 
+        // When the connection resets, reset the db.
+        this.env.on('connectionChange', function (ev) {
+            if (ev.changed.connection.newVal) {
+                this.db.reset();
+            }
+        }, this);
 
         // If the database updates redraw the view (distinct from model updates)
         // TODO - Bound views will automatically update this on individual models
@@ -203,7 +209,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
             'App: Route: Service', req.params.id, req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView('service', {model: service, domain_models: this.db,
+        this.showView('service', {model: service, db: this.db,
                                   env: this.env});
     },
 
