@@ -14,20 +14,15 @@
           ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
           models = Y.namespace('juju.models');
           ServiceView = Y.namespace('juju.views').service;
-          conn = new (Y.namespace('juju-tests.utils')).SocketStub();
-          env = new (Y.namespace('juju')).Environment({conn: conn});
-          env.connect();
-          conn.open();
           done();
       });
     });
 
-    after(function(done)  {
-        env.destroy();
-        done();
-    });
-
     beforeEach(function (done) {
+      conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
+      env = new (Y.namespace('juju')).Environment({conn: conn});
+      env.connect();
+      conn.open();
       container = Y.Node.create('<div id="test-container" />');
       Y.one('#main').append(container);
       db = new models.Database();
@@ -51,14 +46,13 @@
       container.destroy();
       service.destroy();
       db.destroy();
-      env._txn_callbacks = {};
-      conn.messages = [];
+      env.destroy();
       done();
     });
 
     it('should show controls to modify units by default', function () {
       var view = new ServiceView(
-        {container: container, model: service, domain_models: db,
+        {container: container, model: service, db: db,
          env: env}).render();
       container.one('#service-unit-control').should.not.equal(null);
     });
@@ -66,7 +60,7 @@
     it('should not show controls if the charm is subordinate', function () {
       charm.set('is_subordinate', true);
       var view = new ServiceView(
-        {container: container, model: service, domain_models: db,
+        {container: container, model: service, db: db,
          env: env}).render();
       // "var _ =" makes the linter happy.
       var _ = expect(container.one('#service-unit-control')).to.not.exist;
@@ -75,7 +69,7 @@
     it('should show the service units ordered by number', function () {
       // Note that the units are added in beforeEach in an ordered manner.
       var view = new ServiceView(
-        {container: container, model: service, domain_models: db,
+        {container: container, model: service, db: db,
          env: env}).render();
       var rendered_names = container.all('div.thumbnail').get('id');
       var expected_names = db.units.map(function(u) {return u.get('id');});
@@ -87,7 +81,7 @@
     it('should start with the proper number of units shown in the text field',
        function() {
          var view = new ServiceView(
-           {container: container, model: service, domain_models: db,
+           {container: container, model: service, db: db,
             env: env}).render();
          var control = container.one('#num-service-units');
          control.get('value').should.equal('3');
@@ -96,7 +90,7 @@
     it('should remove multiple units when the text input changes',
       function() {
         var view = new ServiceView(
-          {container: container, model: service, domain_models: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 1);
@@ -106,17 +100,16 @@
         message.unit_names.should.eql(['mysql/2', 'mysql/1']);
       });
 
-    it('should reduce to 1 if the number of units is <= 1',
+    it('should not do anything if requested is < 1',
       function() {
         var view = new ServiceView(
-          {container: container, model: service, domain_models: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 0);
         control.simulate('keydown', { keyCode: ENTER });
-        var message = conn.last_message();
-        message.op.should.equal('remove_units');
-        message.unit_names.should.eql(['mysql/2', 'mysql/1']);
+        var _ = expect(conn.last_message()).to.not.exist;
+        control.get('value').should.equal('3');
       });
 
     it('should not do anything if the number of units is <= 1',
@@ -124,7 +117,7 @@
         service.set('unit_count', 1);
         db.units.remove([1, 2]);
         var view = new ServiceView(
-          {container: container, model: service, domain_models: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 0);
@@ -136,7 +129,7 @@
     it('should add the correct number of units when entered via text field',
       function() {
         var view = new ServiceView(
-          {container: container, model: service, domain_models: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 7);
@@ -155,7 +148,7 @@
         expected_names.push(new_unit_id);
         expected_names.sort();
         var view = new ServiceView(
-          {container: container, model: service, domain_models: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 4);
@@ -178,7 +171,7 @@
        'reply back from the server',
       function() {
         var view = new ServiceView(
-          {container: container, model: service, domain_models: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 2);
@@ -191,7 +184,7 @@
 
     it('should reset values on the control when you press escape', function() {
         var view = new ServiceView(
-          {container: container, model: service, domain_models: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 2);
@@ -201,7 +194,7 @@
 
     it('should reset values on the control when you change focus', function() {
         var view = new ServiceView(
-          {container: container, model: service, domain_models: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 2);
