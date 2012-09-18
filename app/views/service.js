@@ -1,6 +1,5 @@
 'use strict';
 
-
 YUI.add('juju-view-service', function(Y) {
 
 var ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
@@ -20,7 +19,6 @@ var BaseServiceView = Y.Base.create('BaseServiceView', Y.View, [views.JujuBaseVi
 
 });
 
-
 var ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
     template: Templates['service-relations'],
@@ -39,7 +37,6 @@ var ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.Juju
 });
 
 views.service_relations = ServiceRelations;
-
 
 var ServiceConstraints = Y.Base.create('ServiceConstraintsView', Y.View, [views.JujuBaseView], {
 
@@ -127,7 +124,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     render: function () {
         var container = this.get('container'),
-                   db = this.get('domain_models'),
+                   db = this.get('db'),
               service = this.get('model'),
                   env = this.get('env');
 
@@ -149,7 +146,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
     events: {
         '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'},
         'div.thumbnail': {click: function(ev) {
-            console.log('Click', ev.currentTarget.get('id'));
+            console.log('Unit clicked', ev.currentTarget.get('id'));
             this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
         }}
     },
@@ -161,6 +158,9 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
     },
 
     modifyUnits: function (ev) {
+        if (ev.keyCode != ESC && ev.keyCode != ENTER) {
+            return;
+        }
         var container = this.get('container'),
             field = container.one('#num-service-units');
         if (ev.keyCode == ESC) {
@@ -174,39 +174,27 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
     },
 
     _modifyUnits: function(requested_unit_count) {
+
         var service = this.get('model'),
             unit_count = service.get('unit_count'),
-            delta = requested_unit_count - unit_count,
             field = this.get('container').one('#num-service-units'),
             env = this.get('env');
+
+        if (requested_unit_count < 1) {
+            console.log('You must have at least one unit');
+            field.set('value', unit_count);
+            return;
+        }
+
+        var delta = requested_unit_count - unit_count;
         if (delta > 0) {
             // Add units!
             env.add_unit(
                 service.get('id'), delta,
                 Y.bind(this._addUnitCallback, this));
         } else if (delta < 0) {
-            // Remove units, if we can.  We must keep at least one unit
-            // (otherwise the user should be removing the service instead).
             delta = Math.abs(delta);
-            if (unit_count == 1) {
-                // XXX We should notify the user that we cannot do what they
-                // requested, and that we must keep at least one unit unless
-                // they delete the service.
-                console.log('No units available for removal');
-                field.set('value', unit_count);
-                return;
-            }
-            var unit_count_to_remove = Math.min(
-                delta, unit_count - 1);
-            if (unit_count_to_remove < delta) {
-                // XXX We should notify the user that we cannot remove all
-                // the units that they requested, and that we must keep at
-                // least one unit unless they delete the service.
-                console.log('Cannot remove as many units as requested',
-                            delta, unit_count_to_remove);
-                delta = unit_count_to_remove;
-            }
-            var db = this.get('domain_models'),
+            var db = this.get('db'),
                 units = db.units.get_units_for_service(service),
                 unit_ids_to_remove = [];
 
@@ -226,7 +214,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
     _addUnitCallback: function(ev) {
         var service = this.get('model'),
             service_id = service.get('id'),
-            db = this.get('domain_models'),
+            db = this.get('db'),
             unit_names = ev.result || [];
         console.log('_addUnitCallback with: ', arguments);
         // Received acknowledgement message for the 'add_units' operation.
@@ -235,7 +223,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             Y.Array.map(unit_names, function (unit_id) {
                 return new models.ServiceUnit(
                     {id: unit_id,
-                     agent_state: 'requested',
+                     agent_state: 'pending',
                      service: service_id});
             }));
         service.set(
@@ -246,7 +234,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     _removeUnitCallback: function(ev) {
         var service = this.get('model'),
-            db = this.get('domain_models'),
+            db = this.get('db'),
             unit_names = ev.unit_names;
         console.log('_removeUnitCallback with: ', arguments);
         Y.Array.each(unit_names, function(unit_name) {
