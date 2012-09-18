@@ -47,10 +47,20 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         var yscale = d3.scale.linear()
             .domain([-height / 2, height / 2])
             .range([height, 0]);
+
+        // Create a pan/zoom behavior manager
+        var zoom = d3.behavior.zoom()
+            .x(xscale)
+            .y(yscale)
+            .scaleExtent([0.25, 1.75])
+            .on('zoom', function() { 
+                self.rescale(vis, d3.event);
+            });
+        self.set('zoom', zoom);
         
         // Scales for unit sizes
         // XXX magic numbers will have to change; likely during
-        // the pan/zoom work
+        // the UI work
         var service_scale_width = d3.scale.log().range([164, 200]);
         var service_scale_height = d3.scale.log().range([64, 100]);
 
@@ -62,18 +72,12 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .attr('width', "100%")
             .attr('height', "100%")
             .append('svg:g')
-            .call(d3.behavior.zoom()
-                  .x(xscale)
-                  .y(yscale)
-                  .scaleExtent([0.25, 1.75])
-                  .on('zoom', function() { 
-                      self.rescale(vis, d3.event);
-                  }));
+            .call(zoom)
+            .append('g');
         vis.append('svg:rect')
             .attr('width', width)
             .attr('height', height)
             .attr('fill', 'white');
-
 
         var tree = d3.layout.pack()
             .size([width, height])
@@ -318,6 +322,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
      * Zoom out event handler
      */
     zoom_in: function(evt) {
+        /*var vis = this.get('vis'),
+            e = document.createEvent("SVGEvents");
+        e.initEvent('dblClick.zoom', true, true);
+        vis.node().parentElement.dispatchEvent(e);*/
         this._fire_zoom(.2);
     },
 
@@ -326,24 +334,20 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
      */
     _fire_zoom: function(delta) {
         var vis = this.get('vis'),  
+            zoom = this.get('zoom'),
             evt = {
-                translate: '',
-                scale: 1
+                translate: [0,0],
+                scale: 1 + delta
             };
 
-        var transform = vis.attr('transform');
-        try { 
-            evt.translate = transform.split('(')[1].split(')')[0];
-        } catch (e) {
-            evt.translate ="0,0";
-        }
-        try {
-            evt.scale = parseFloat(
-                    transform.split('(')[2].split(')')[0]
-                ) + delta;
-        } catch (e) {
-            evt.scale = 1 + delta;
-        }
+        // Build a temporary event that rescale can use of a similar
+        // construction to d3.event
+        evt.translate = zoom.translate();
+        evt.scale = zoom.scale() + delta;
+
+        // update the scale in our zoom behavior manager to maintain state
+        this.get('zoom').scale(evt.scale);
+
         this.rescale(vis, evt)
     },
 
@@ -351,6 +355,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
      * Rescale the visualization on a zoom/pan event
      */
     rescale: function(vis, evt) {
+        this.set('scale', evt.scale);
         vis.attr("transform", "translate(" + evt.translate + ")"
                  + " scale(" + evt.scale + ")");
     },

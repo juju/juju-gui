@@ -116,8 +116,7 @@
                     container: container,
                     domain_models: db,
                     env: env
-                });
-                view.render();
+                }).render();
                 var add_relation = container.one('#add-relation-btn'),
                     service = container.one('.service');
                 add_relation.after('click', function() {
@@ -141,6 +140,23 @@
                 add_relation.simulate('click');
             }
         );
+
+        // Ensure that the zoom controls work
+        it('must be able to zoom using controls', function(done) {
+            var view = new EnvironmentView({
+                container: container,
+                domain_models: db,
+                env: env
+            }).render();
+            var zoom_in = container.one('#zoom-in-btn'),
+                zoom_out = container.one('#zoom-out-btn'),
+                svg = container.one('svg');
+            zoom_in.after('click', function() {
+                view.zoom_in();
+                done();
+            });
+            zoom_in.simulate('click');
+        });
 
     });
 
