@@ -122,6 +122,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
 
     on_database_changed: function(evt) {
         Y.log(evt, 'debug', 'App: Database changed');
+        console.log()
         // Redispatch to current view to update.
         this.dispatch();
     },
@@ -209,7 +210,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
             'App: Route: Service', req.params.id, req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView('service', {model: service, db: this.db,
+        this.showView('service', {service: service, db: this.db,
                                   env: this.env});
     },
 
@@ -217,7 +218,12 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         console.log('App: Route: Svc Config', req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView('service_config', {model: service, domain_models: this.db});
+        this.showView('service_config', {
+            service: service,
+            db: this.db,
+            env: this.env
+
+        });
     },
 
     show_service_relations: function(req) {
