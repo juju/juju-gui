@@ -3,7 +3,7 @@ svg {stroke-width: 0;}
 
 charms.thumbnails.li { height:4em; }
 .relation {
-    stroke: #333333; 
+    stroke: #333333;
     stroke-width: 1px;
 
     &.pending-relation {
@@ -69,16 +69,21 @@ g.unit {
     stroke-width: 2px; fill: #a0a0a0;}
 }
 
-#service-unit-control {
-  text-align: center;
-
-  button {
-    width: 2em;
-  }
-  input {
-    width: 3em;
-    margin-bottom: 0;
-  }
+#service-footer {
+    text-align: center;
+        .footer-left {
+        float: left;
+    }
+    .footer-right {
+        float: right;
+    }
+    .footer-left {
+        float: left;
+    }
+    input {
+        width: 3em;
+        margin-bottom: 0;
+    }
 }
 
 #overview-tasks {
@@ -110,3 +115,34 @@ g.unit {
         color: red;
     }
 }
+
+.yui3-panel {
+    background: white;
+    padding: 1.6em;
+    border: solid black 2px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding-box;
+    background-clip: padding-box;
+    outline: none;
+    .yui3-widget-bd {
+        margin-bottom: 1em;
+    }
+    .yui3-widget-buttons {
+        float: right;
+        .btn-danger {
+            margin-right: 1em;
+        }
+    }
+}
+
+.yui3-widget-mask {
+    background: black;
+    opacity: 0.4;
+}
+
