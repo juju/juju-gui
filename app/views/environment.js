@@ -323,7 +323,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         var viewport_height = '100%', 
             viewport_width = parseInt(
                     container.getComputedStyle('width')),
-            svg = Y.one('svg'), 
+            svg = container.one('svg'), 
             width = 800, 
             height = 600;
         if (container.get('winHeight') &&
@@ -346,25 +346,23 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 viewport_width = width;
             }
         }
-        if (svg) {
-            // Set the svg sizes
-            svg.setAttribute('width', viewport_width)
-                .setAttribute('height', viewport_height);
+        // Set the svg sizes
+        svg.setAttribute('width', viewport_width)
+            .setAttribute('height', viewport_height);
 
-            // Get the resulting computed sizes (in the case of 100%)
-            width = parseInt(svg.getComputedStyle('width'), 10);
-            height = parseInt(svg.getComputedStyle('height'), 10);
+        // Get the resulting computed sizes (in the case of 100%)
+        width = parseInt(svg.getComputedStyle('width'), 10);
+        height = parseInt(svg.getComputedStyle('height'), 10);
 
-            // Set the internal rect's size
-            svg.one('rect').setAttribute('width', width)
-                .setAttribute('height', height)
+        // Set the internal rect's size
+        svg.one('rect').setAttribute('width', width)
+            .setAttribute('height', height)
 
-            // Reset the scale parameters
-            xscale.domain([-width / 2, width / 2])
-                .range([0, width]);
-            yscale.domain([-height / 2, height / 2])
-                .range([height, 0]);
-        }
+        // Reset the scale parameters
+        xscale.domain([-width / 2, width / 2])
+            .range([0, width]);
+        yscale.domain([-height / 2, height / 2])
+            .range([height, 0]);
 
     },
 
