@@ -336,14 +336,14 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 Y.one('.navbar')) {
             // Attempt to get the viewport height minus the navbar at top and
             // control bar at the bottom. Use Y.one() to ensure that the
-            // container is attached first.
+            // container is attached first (provides some sensible defaults)
             viewport_height = container.get('winHeight') - 
                 parseInt(Y.one('#overview-tasks')
-                        .getComputedStyle('height'), 10) - 
+                        .getComputedStyle('height') || 22, 10) - 
                 parseInt(Y.one('.navbar')
-                        .getComputedStyle('height'), 10) -
+                        .getComputedStyle('height') || 70, 10) -
                 parseInt(Y.one('.navbar')
-                        .getComputedStyle('margin-bottom'), 10);
+                        .getComputedStyle('margin-bottom') || 18, 10);
             
             // Make sure we don't get sized any smaller than 800x600
             viewport_height = Math.max(viewport_height, height);
