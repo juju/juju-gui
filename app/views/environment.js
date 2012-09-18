@@ -109,11 +109,11 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 services : 
                 self._generate_coords(services, tree))
             .enter().append('g')
-            .attr("class", "service")
+            .attr('class', 'service')
             .attr('transform', function (d) { 
                 return 'translate(' + [d.x,d.y] + ')'; 
             })
-            .on("click", function(m) {
+            .on('click', function(m) {
                 // Get the current click action
                 var curr_click_action = 
                     self.get('current_service_click_action');
@@ -316,7 +316,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
          * Default action: view a service
          */
         show_service: function(m, context, view) {
-            view.fire("showService", {service: m});
+            view.fire('showService', {service: m});
         },
 
         /*
@@ -361,10 +361,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 };
 
             // add temp relation between services
-            var link = vis.selectAll("path.pending-relation")
+            var link = vis.selectAll('path.pending-relation')
                 .data([rel]);
-            link.enter().insert("svg:polyline", "g.service")
-                .attr("class", "relation pending-relation")
+            link.enter().insert('svg:polyline', 'g.service')
+                .attr('class', 'relation pending-relation')
                 .attr('points', view.draw_relation(rel));
 
             // fire event to add relation in juju
@@ -384,7 +384,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 
 }, {
     ATTRS: {
-        current_service_click_action: { value: 'show_service' },
+        current_service_click_action: { value: 'show_service' }
     }
 });
 
