@@ -209,7 +209,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
             'App: Route: Service', req.params.id, req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView('service', {model: service, db: this.db,
+        this.showView('service', {service: service, db: this.db,
                                   env: this.env});
     },
 

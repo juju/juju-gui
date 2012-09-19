@@ -181,7 +181,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
         var container = this.get('container'),
                    db = this.get('db'),
-              service = this.get('model'),
+              service = this.get('service'),
                   env = this.get('env');
 
         if (!service) {
@@ -204,13 +204,44 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         'div.thumbnail': {click: function(ev) {
             console.log('Unit clicked', ev.currentTarget.get('id'));
             this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
-        }}
+        }},
+        '.unexposeService': {click: 'unexposeService'},
+        '.exposeService': {click: 'exposeService'}
+    },
+
+    unexposeService: function() {
+        var service = this.get('service'),
+            env = this.get('env');
+
+        env.unexpose(service.get('id'),
+            Y.bind(this._unexposeServiceCallback, this));
+    },
+
+    _unexposeServiceCallback: function() {
+        var service = this.get('service'),
+            db = this.get('db');
+        service.set('exposed', false);
+        db.fire('update');
+    },
+
+    exposeService: function() {
+        var service = this.get('service'),
+            env = this.get('env');
+        env.expose(service.get('id'),
+            Y.bind(this._exposeServiceCallback, this));
+    },
+
+    _exposeServiceCallback: function() {
+        var service = this.get('service'),
+            db = this.get('db');
+        service.set('exposed', true);
+        db.fire('update');
     },
 
     resetUnits: function(ev) {
         var container = this.get('container'),
             field = container.one('#num-service-units');
-        field.set('value', this.get('model').get('unit_count'));
+        field.set('value', this.get('service').get('unit_count'));
     },
 
     modifyUnits: function (ev) {
@@ -220,7 +251,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         var container = this.get('container'),
             field = container.one('#num-service-units');
         if (ev.keyCode == ESC) {
-            field.set('value', this.get('model').get('unit_count'));
+            field.set('value', this.get('service').get('unit_count'));
         }
         if (ev.keyCode != ENTER) { // If not Enter keyup...
             return;
@@ -231,7 +262,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     _modifyUnits: function(requested_unit_count) {
 
-        var service = this.get('model'),
+        var service = this.get('service'),
             unit_count = service.get('unit_count'),
             field = this.get('container').one('#num-service-units'),
             env = this.get('env');
@@ -268,7 +299,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
     },
 
     _addUnitCallback: function(ev) {
-        var service = this.get('model'),
+        var service = this.get('service'),
             service_id = service.get('id'),
             db = this.get('db'),
             unit_names = ev.result || [];
@@ -289,7 +320,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
     },
 
     _removeUnitCallback: function(ev) {
-        var service = this.get('model'),
+        var service = this.get('service'),
             db = this.get('db'),
             unit_names = ev.unit_names;
         console.log('_removeUnitCallback with: ', arguments);

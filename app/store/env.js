@@ -152,6 +152,10 @@ Y.extend(Environment, Y.Base, {
         this._send_rpc({'op':'expose', 'service_name': service}, callback);
     },
 
+    unexpose: function(service, callback) {
+        this._send_rpc({'op':'unexpose', 'service_name': service}, callback);
+    },
+
     status: function(callback) {
         this._send_rpc({'op': 'status'}, callback);
     },
