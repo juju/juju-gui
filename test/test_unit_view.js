@@ -4,41 +4,6 @@
   describe('juju unit view', function() {
     var UnitView, views, machine, models, Y, container, service, unit, db,
       conn, juju, env, charm, testUtils;
-    var SocketStub = function () {
-      this.messages = [];
-
-      this.close = function() {
-          console.log('close stub');
-          this.messages = [];
-      };
-
-      this.transient_close = function() {
-          this.onclose();
-      };
-
-      this.open = function() {
-          this.onopen();
-      };
-
-      this.msg = function(m) {
-          console.log('serializing env msg', m);
-          this.onmessage({'data': Y.JSON.stringify(m)});
-      };
-
-      this.last_message = function(m) {
-          return this.messages[this.messages.length-1];
-      };
-
-      this.send = function(m) {
-          console.log('socket send', m);
-          this.messages.push(Y.JSON.parse(m));
-      };
-
-      this.onclose = function() {};
-      this.onmessage = function() {};
-      this.onopen = function() {};
-
-    };
 
     before(function (done) {
       Y = YUI(GlobalConfig).use(
@@ -65,6 +30,7 @@
 
     beforeEach(function (done) {
       container = Y.Node.create('<div id="test-container" />');
+      Y.one('#main').append(container);
       db = new models.Database();
       charm = new models.Charm({
         id: 'cs:mysql',
@@ -98,6 +64,7 @@
     });
 
     afterEach(function (done) {
+      container.remove();
       container.destroy();
       service.destroy();
       machine.destroy();
@@ -157,5 +124,39 @@
         'relation-scope');
     });
 
+    it('should not display Retry and Resolved buttons when ' +
+       'there is no error', function() {
+      var view = new UnitView(
+        {container: container, unit: unit, db: db}).render();
+      var _ = expect(container.one('#retry-unit-button')).to.not.exist;
+       _ = expect(container.one('#resolved-unit-button')).to.not.exist;
+    });
+
+    it('should display Retry and Resolved buttons when ' +
+       'there is an error', function() {
+      unit.set('agent_state', 'foo-error');
+      var view = new UnitView(
+        {container: container, unit: unit, db: db}).render();
+      container.one('#retry-unit-button').getHTML().should.equal('Retry');
+      container.one('#resolved-unit-button').getHTML().should.equal('Resolved');
+      container.one('#remove-unit-button').getHTML().should.equal('Remove');
+
+    });
+
+    it('should always display Remove button', function() {
+      var view = new UnitView(
+        {container: container, unit: unit, db: db}).render();
+      container.one('#remove-unit-button').getHTML().should.equal('Remove');
+    });
+
+    it('should show resolved confirmation when clicked', function() {
+      unit.set('agent_state', 'foo-error');
+      var view = new UnitView(
+        {container: container, unit: unit, db: db}).render();
+      container.one('#resolved-unit-button').simulate('click');
+      container.one('#resolved-modal-panel .btn-danger')
+            .getHTML().should.equal('Resolved Unit');
+
+    });
   });
 }) ();

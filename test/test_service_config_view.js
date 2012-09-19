@@ -175,7 +175,7 @@
             var ev = {err: true},
                 alert_ = container.one('#message-area>.alert');
 
-            // Before an erronious event is processed, no alert exists.
+            // Before an erroneous event is processed, no alert exists.
             var _ = expect(alert_).to.not.exist;
             // Handle the error event.
             view._saveConfigCallback(ev);
@@ -196,7 +196,7 @@
             var error_message = 'Something bad happened.',
                 alert_ = container.one('#message-area>.alert');
 
-            // Before an erronious event is processed, no alert exists.
+            // Before an erroneous event is processed, no alert exists.
             var _ = expect(alert_).to.not.exist;
             // Display the error message.
             view._addErrorMessage(container, error_message);

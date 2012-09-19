@@ -1,6 +1,16 @@
 <div class="row">
   <div class="well">
     <h1 id="unit-id">{{unit.id}}</h1>
+
+    <div class="unit-button-palette">
+      <form>
+        {{#if unit_error}}
+          <button type="button" class="btn" id="resolved-unit-button">Resolved</button>
+          <button type="button" class="btn" id="retry-unit-button">Retry</button>
+        {{/if}}
+        <button type="button" class="btn" id="remove-unit-button">Remove</button>
+      </form>
+    </div>
     <b id="charm-uri">
       <a href="/charms/charms/{{charm.name}}/json">{{charm.id}}</a>
     </span>
@@ -82,3 +92,5 @@ This unit has no relations.
   </div>
 </div>
 {{/if}}
+
+<div id="resolved-modal-panel"></div>
