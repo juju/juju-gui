@@ -10,28 +10,58 @@ var views = Y.namespace('juju.views'),
     Templates = views.Templates,
     models = Y.namespace('juju.models');
 
-var BaseServiceView = Y.Base.create('BaseServiceView', Y.View, [views.JujuBaseView], {
+var exposeButtonMixin = {
+    events: {
+        '.unexposeService': {click: 'unexposeService'},
+        '.exposeService': {click: 'exposeService'}
+    },
 
-    initializer: function() {
-        console.log('View: initialized:', this.name);
-        this.bindModelView();
+    unexposeService: function() {
+        var service = this.get('service'),
+            env = this.get('env');
+
+        env.unexpose(service.get('id'),
+            Y.bind(this._unexposeServiceCallback, this));
+    },
+
+    _unexposeServiceCallback: function() {
+        var service = this.get('service'),
+            db = this.get('db');
+        service.set('exposed', false);
+        db.fire('update');
+    },
+
+    exposeService: function() {
+        var service = this.get('service'),
+            env = this.get('env');
+        env.expose(service.get('id'),
+            Y.bind(this._exposeServiceCallback, this));
+    },
+
+    _exposeServiceCallback: function() {
+        var service = this.get('service'),
+            db = this.get('db');
+        service.set('exposed', true);
+        db.fire('update');
     }
-
-});
+};
 
 var ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
     template: Templates['service-relations'],
 
+    initializer: function() {
+        Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+    },
+
     render: function() {
         var container = this.get('container'),
-                 self = this,
-                    m = this.get('domain_models');
-        var service = this.get('model');
+            db = this.get('db'),
+            service = this.get('service');
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'relations': service.get('rels'),
-             'charm': this.renderable_charm(service.get('charm'), m)}
+             'charm': this.renderable_charm(service.get('charm'), db)}
             ));
     }
 });
@@ -42,11 +72,15 @@ var ServiceConstraints = Y.Base.create('ServiceConstraintsView', Y.View, [views.
 
     template: Templates['service-constraints'],
 
+    initializer: function() {
+        Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+    },
+
     render: function() {
         var container = this.get('container'),
-                 self = this,
-                    m = this.get('domain_models');
-        var service = this.get('model');
+            db = this.get('db'),
+            service = this.get('service');
+
         var constraints = service.get('constraints');
         var display_constraints = [];
 
@@ -66,7 +100,7 @@ var ServiceConstraints = Y.Base.create('ServiceConstraintsView', Y.View, [views.
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'constraints': display_constraints,
-             'charm': this.renderable_charm(service.get('charm'), m)}
+             'charm': this.renderable_charm(service.get('charm'), db)}
             ));
     }
 
@@ -78,11 +112,13 @@ var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBa
 
     template: Templates['service-config'],
 
+    initializer: function() {
+        Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+    },
 
     events: {
         '#save-service-config': {click: 'saveConfig'},
         '.alert > .close': {click: 'closeAlert'}},
-
 
     render: function () {
         var container = this.get('container'),
@@ -181,13 +217,17 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     template: Templates.service,
 
+    initializer: function() {
+        Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+    },
+
     render: function () {
         console.log('service view render');
 
         var container = this.get('container'),
-                   db = this.get('db'),
-              service = this.get('service'),
-                  env = this.get('env');
+            db = this.get('db'),
+            service = this.get('service'),
+            env = this.get('env');
 
         if (!service) {
             console.log('not connected / maybe');
