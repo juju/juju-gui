@@ -398,8 +398,7 @@ YUI.add('juju-models', function (Y) {
                 // form that needs to be fleshed out.  So, the existing objects
                 // are kept and re-used.
                 if (!Y.Lang.isValue(o)) {
-                    bag = this._get_bag(data);
-                    o = model_list.add(bag);
+                    o = model_list.add(this._get_bag(data));
                 } else {
                     o.setAttrs(this._get_bag(data));
                 }

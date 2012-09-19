@@ -30,7 +30,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView',
     render_canvas: function(){
         var self = this,
             container = this.get('container'),
-            m = this.get('domain_models'),
+            m = this.get('db'),
             height = 600,
             width = 640;
 
@@ -373,24 +373,27 @@ var EnvironmentView = Y.Base.create('EnvironmentView',
     setSizesFromViewport: function(vis, container, xscale, yscale) {
         // start with some reasonable defaults
         var viewport_height = '100%',
-            viewport_width = parseInt(
-                container.getComputedStyle('width'), 10),
+            viewport_width = parseInt(container.getComputedStyle('width')),
             svg = container.one('svg'),
             width = 800,
             height = 600;
+
+        var s2n = function (selector, style) {
+            style = style || 'height';
+            return parseInt(Y.one(selector).getComputedStyle(style));
+        }
+
         if (container.get('winHeight') &&
                 Y.one('#overview-tasks') &&
                 Y.one('.navbar')) {
             // Attempt to get the viewport height minus the navbar at top and
             // control bar at the bottom. Use Y.one() to ensure that the
             // container is attached first (provides some sensible defaults)
+
             viewport_height = container.get('winHeight') -
-                parseInt(Y.one('#overview-tasks')
-                        .getComputedStyle('height') || 22, 10) -
-                parseInt(Y.one('.navbar')
-                        .getComputedStyle('height') || 70, 10) -
-                parseInt(Y.one('.navbar')
-                        .getComputedStyle('margin-bottom') || 18, 10);
+                                  s2n('#overview-tasks') -
+                                  s2n('.navbar') -
+                                  s2n('.navbar', 'margin-bottom');
 
             // Make sure we don't get sized any smaller than 800x600
             viewport_height = Math.max(viewport_height, height);
@@ -403,11 +406,12 @@ var EnvironmentView = Y.Base.create('EnvironmentView',
             .setAttribute('height', viewport_height);
 
         // Get the resulting computed sizes (in the case of 100%)
-        width = parseInt(svg.getComputedStyle('width'), 10);
-        height = parseInt(svg.getComputedStyle('height'), 10);
+        width = parseInt(svg.getComputedStyle('width'));
+        height = parseInt(svg.getComputedStyle('height'));
 
         // Set the internal rect's size
-        svg.one('rect').setAttribute('width', width)
+        svg.one('rect')
+            .setAttribute('width', width)
             .setAttribute('height', height);
 
         // Reset the scale parameters

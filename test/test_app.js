@@ -31,7 +31,7 @@ describe('Application', function() {
 
   it('should be able to render the environment view with default data',
      function() {
-       app.showView('environment', {domain_models: app.db});
+       app.showView('environment', {db: app.db});
        container.one('svg').should.not.equal(null);
   });
 
