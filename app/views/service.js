@@ -12,11 +12,6 @@ var views = Y.namespace('juju.views'),
 
 var BaseServiceView = Y.Base.create('BaseServiceView', Y.View, [views.JujuBaseView], {
 
-    initializer: function() {
-        console.log('View: initialized:', this.name);
-        this.bindModelView();
-    }
-
 });
 
 var ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
