@@ -78,11 +78,16 @@ var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBa
 
     template: Templates['service-config'],
 
+
+    events: {
+        '#save-service-config': {click: 'saveConfig'},
+        '.alert > .close': {click: 'closeAlert'}},
+
+
     render: function () {
         var container = this.get('container'),
-                 self = this,
-                    m = this.get('domain_models');
-        var service = this.get('model');
+          db = this.get('db'),
+          service = this.get('service');
 
         if (!service || !service.get('loaded')) {
             console.log('not connected / maybe');
@@ -93,14 +98,14 @@ var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBa
         var charm_url = service.get('charm');
 
         // combine the charm schema and the service values for display.
-        var charm =  m.charms.getById(charm_url);
+        var charm = db.charms.getById(charm_url);
         var config = service.get('config');
         var schema = charm.get('config');
 
         var settings = [];
         var field_def;
 
-        for (var field_name in config) {
+        for (var field_name in schema) {
             field_def = schema[field_name];
             settings.push(Y.mix(
                 {'name': field_name, 'value': config[field_name]}, field_def));
@@ -109,10 +114,64 @@ var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBa
         console.log('render view svc config', service.getAttrs(), settings);
 
         container.setHTML(this.template(
-            {'service': service.getAttrs(),
-             'settings': settings,
-             'charm': this.renderable_charm(service.get('charm'), m)}
+            {service: service.getAttrs(),
+             settings: settings,
+             charm: this.renderable_charm(service.get('charm'), db)}
             ));
+
+        return this;
+    },
+
+    saveConfig: function() {
+        var env = this.get('env'),
+            container = this.get('container'),
+            service = this.get('service'),
+            config = {};
+
+        // Disable the "Update" button while the RPC call is outstanding.
+        container.one('#save-service-config').set('disabled', 'disabled');
+
+        container.all('.config-field').each(function(el) {
+            config[el.get('name')] = el.get('value');
+        });
+
+        env.set_config(service.get('id'), config,
+            Y.bind(this._saveConfigCallback, this));
+
+    },
+
+    _addErrorMessage: function(container, message) {
+        container.one('#message-area')
+            .appendChild(Y.Node.create('<div/>'))
+                .addClass('alert')
+                .addClass('alert-error')
+                .set('text', message)
+            .appendChild(Y.Node.create('<a/>'))
+                .addClass('close')
+                .set('text', '×');
+    },
+
+    _serverErrorMessage: 'An error ocurred.',
+
+    _saveConfigCallback: function(ev) {
+        var service = this.get('service'),
+            container = this.get('container'),
+            db = this.get('db');
+
+        if (ev && ev.err) {
+            this._addErrorMessage(container, this._serverErrorMessage);
+        } else {
+            var config = service.get('config');
+            container.all('.config-field').each(function(el) {
+                config[el.get('name')] = el.get('value');
+            });
+        }
+
+        container.one('#save-service-config').removeAttribute('disabled');
+    },
+
+    closeAlert: function(ev) {
+        ev.target.get('parentNode').remove();
     }
 });
 
@@ -123,6 +182,8 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
     template: Templates.service,
 
     render: function () {
+        console.log('service view render');
+
         var container = this.get('container'),
                    db = this.get('db'),
               service = this.get('model'),
@@ -186,6 +247,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             });
         }
         this.panel.show();
+        // The default YUI CSS conflicts with the CSS effect we want.
         Y.all('#destroy-modal-panel .yui3-button').removeClass('yui3-button');
     },
 

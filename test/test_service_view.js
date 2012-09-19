@@ -211,7 +211,7 @@
         var control = container.one('#destroy-service');
         control.simulate('click');
         container.one('#destroy-modal-panel .btn-danger')
-          .get('innerHTML').should.equal('Destroy Service');
+          .getHTML().should.equal('Destroy Service');
     });
 
     it('should hide the panel when the Cancel button is clicked', function() {
@@ -221,9 +221,11 @@
       var control = container.one('#destroy-service');
       control.simulate('click');
       var cancel = container.one('#destroy-modal-panel .btn:not(.btn-danger)');
-      cancel.get('innerHTML').should.equal('Cancel');
+      cancel.getHTML().should.equal('Cancel');
       cancel.simulate('click');
       view.panel.get('visible').should.equal(false);
+      // We did not send a message to destroy the service.
+      var _ = expect(conn.last_message()).to.not.exist;
     });
 
     it('should destroy the service when "Destroy Service" is clicked', function() {
