@@ -69,7 +69,6 @@
             container.destroy();
             service.destroy();
             db.destroy();
-            env._txn_callbacks = {};
             conn.messages = [];
             done();
         });
@@ -120,8 +119,6 @@
                 env: env
             }).render();
 
-            console.log(service);
-            console.log(service.getAttrs());
             service.get('config').option0.should.equal('value0');
             container.one('#input-option0').set('value', 'new value');
             service.get('config').option0.should.equal('value0');
@@ -130,7 +127,6 @@
         });
 
         it('should disable the "Update" button while the RPC is outstanding',
-
         function () {
             var view = new ServiceConfigView({
                 container: container,
@@ -146,6 +142,25 @@
             view.saveConfig();
             save_button.get('disabled').should.equal(true);
             view._saveConfigCallback();
+            save_button.get('disabled').should.equal(false);
+        });
+
+        it('should reenable the "Update" button if RPC fails', function () {
+            var view = new ServiceConfigView({
+                container: container,
+                service: service,
+                db: db,
+                env: env
+            }).render();
+
+            // Clicking on the "Update" button disables it until the RPC
+            // callback returns, then it is re-enabled.
+            var save_button = container.one('#save-service-config');
+            save_button.get('disabled').should.equal(false);
+            view.saveConfig();
+            save_button.get('disabled').should.equal(true);
+            var ev = {err: true};
+            view._saveConfigCallback(ev);
             save_button.get('disabled').should.equal(false);
         });
 

@@ -160,12 +160,12 @@ var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBa
 
         if (ev && ev.err) {
             this._addErrorMessage(container, this._serverErrorMessage);
-            return;
+        } else {
+            var config = service.get('config');
+            container.all('.config-field').each(function(el) {
+                config[el.get('name')] = el.get('value');
+            });
         }
-
-        container.all('.config-field').each(function(el) {
-            service.get('config')[el.get('name')] = el.get('value');
-        });
 
         container.one('#save-service-config').removeAttribute('disabled');
     },
