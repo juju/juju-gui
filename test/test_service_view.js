@@ -56,7 +56,7 @@
 
     it('should show controls to modify units by default', function () {
       var view = new ServiceView(
-        {container: container, service: service, db: db,
+        {container: container, model: service, db: db,
          env: env}).render();
       container.one('#num-service-units').should.not.equal(null);
     });
@@ -73,7 +73,7 @@
     it('should show the service units ordered by number', function () {
       // Note that the units are added in beforeEach in an ordered manner.
       var view = new ServiceView(
-        {container: container, service: service, db: db,
+        {container: container, model: service, db: db,
          env: env}).render();
       var rendered_names = container.all('div.thumbnail').get('id');
       var expected_names = db.units.map(function(u) {return u.get('id');});
@@ -85,7 +85,7 @@
     it('should start with the proper number of units shown in the text field',
        function() {
          var view = new ServiceView(
-           {container: container, service: service, db: db,
+           {container: container, model: service, db: db,
             env: env}).render();
          var control = container.one('#num-service-units');
          control.get('value').should.equal('3');
@@ -94,7 +94,7 @@
     it('should remove multiple units when the text input changes',
       function() {
         var view = new ServiceView(
-          {container: container, service: service, db: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 1);
@@ -107,7 +107,7 @@
     it('should not do anything if requested is < 1',
       function() {
         var view = new ServiceView(
-          {container: container, service: service, db: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 0);
@@ -121,7 +121,7 @@
         service.set('unit_count', 1);
         db.units.remove([1, 2]);
         var view = new ServiceView(
-          {container: container, service: service, db: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 0);
@@ -133,7 +133,7 @@
     it('should add the correct number of units when entered via text field',
       function() {
         var view = new ServiceView(
-          {container: container, service: service, db: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 7);
@@ -152,7 +152,7 @@
         expected_names.push(new_unit_id);
         expected_names.sort();
         var view = new ServiceView(
-          {container: container, service: service, db: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 4);
@@ -175,7 +175,7 @@
        'reply back from the server',
       function() {
         var view = new ServiceView(
-          {container: container, service: service, db: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 2);
@@ -188,7 +188,7 @@
 
     it('should reset values on the control when you press escape', function() {
         var view = new ServiceView(
-          {container: container, service: service, db: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 2);
@@ -198,7 +198,7 @@
 
     it('should reset values on the control when you change focus', function() {
         var view = new ServiceView(
-          {container: container, service: service, db: db,
+          {container: container, model: service, db: db,
            env: env}).render();
         var control = container.one('#num-service-units');
         control.set('value', 2);
@@ -278,7 +278,7 @@
       it('should send an expose RPC call when exposeService is invoked',
             function() {
           var view = new ServiceView(
-              {container: container, service: service, db: db,
+              {container: container, model: service, db: db,
                   env: env});
 
           view.exposeService();
@@ -288,7 +288,7 @@
       it('should send an unexpose RPC call when unexposeService is invoked',
             function() {
           var view = new ServiceView(
-              {container: container, service: service, db: db,
+              {container: container, model: service, db: db,
                   env: env});
 
           view.unexposeService();
@@ -297,7 +297,7 @@
 
       it('should invoke callback when expose RPC returns', function() {
           var view = new ServiceView(
-              {container: container, service: service, db: db,
+              {container: container, model: service, db: db,
                   env: env}).render();
 
           var test = function(selectorBefore, selectorAfter, callback) {
