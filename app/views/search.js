@@ -54,5 +54,5 @@ var NavigationBarView = Y.Base.create('NavigationBarView', Y.View, [], {
 
 views.charm_search = NavigationBarView;
 }, '0.1.0', {
-    requires: []
+    requires: ['autocomplete']
 });
