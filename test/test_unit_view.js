@@ -75,7 +75,7 @@
 
     it('should include unit identifier', function () {
       var view = new UnitView(
-        {container: container, unit: unit, db: db});
+          {container: container, unit: unit, db: db, env: env});
       view.render();
       container.one('#unit-id').getHTML().should.contain('mysql/0');
     });
@@ -89,14 +89,14 @@
 
     it('should include unit status', function () {
       var view = new UnitView(
-        {container: container, unit: unit, db: db});
+        {container: container, unit: unit, db: db, env: env});
       view.render();
       container.one('#unit-status').getHTML().should.contain('pending');
     });
 
     it('should include machine info', function () {
       var view = new UnitView(
-        {container: container, unit: unit, db: db});
+        {container: container, unit: unit, db: db, env: env});
       view.render();
       container.one('#machine-name').getHTML().should.contain(
         'Machine machine-0');
@@ -112,7 +112,7 @@
 
     it('should include relation info', function () {
       var view = new UnitView(
-        {container: container, unit: unit, db: db});
+        {container: container, unit: unit, db: db, env: env});
       view.render();
       container.one('#relations').getHTML().should.contain('Relations');
       container.one('.relation-ident').getHTML().should.contain('relation-0');
@@ -127,7 +127,7 @@
     it('should not display Retry and Resolved buttons when ' +
        'there is no error', function() {
       var view = new UnitView(
-        {container: container, unit: unit, db: db}).render();
+        {container: container, unit: unit, db: db, env: env}).render();
       var _ = expect(container.one('#retry-unit-button')).to.not.exist;
        _ = expect(container.one('#resolved-unit-button')).to.not.exist;
     });
@@ -136,7 +136,7 @@
        'there is an error', function() {
       unit.set('agent_state', 'foo-error');
       var view = new UnitView(
-        {container: container, unit: unit, db: db}).render();
+        {container: container, unit: unit, db: db, env: env}).render();
       container.one('#retry-unit-button').getHTML().should.equal('Retry');
       container.one('#resolved-unit-button').getHTML().should.equal('Resolved');
       container.one('#remove-unit-button').getHTML().should.equal('Remove');
@@ -145,7 +145,7 @@
 
     it('should always display Remove button', function() {
       var view = new UnitView(
-        {container: container, unit: unit, db: db}).render();
+        {container: container, unit: unit, db: db, env: env}).render();
       container.one('#remove-unit-button').getHTML().should.equal('Remove');
     });
 
@@ -153,7 +153,7 @@
        function() {
            unit.set('agent_state', 'foo-error');
            var view = new UnitView(
-               {container: container, unit: unit, db: db}).render();
+               {container: container, unit: unit, db: db, env: env}).render();
            container.one('#resolved-unit-button').simulate('click');
            container.one('#resolved-modal-panel .btn-danger')
                .simulate('click');

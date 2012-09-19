@@ -97,10 +97,11 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
             unit = this.get('unit');
         ev.target.set('disabled', true);
         env.resolved(unit.get('id'), null, false,
-                     Y.bind(this._resolvedUnitCallback, this));
+                     Y.bind(this._resolvedUnitCallback, this, ev.target));
     },
 
-    _resolvedUnitCallback: function(ev) {
+    _resolvedUnitCallback: function(button, ev) {
+        button.set('disabled', false);
         this.resolved_panel.hide();
     }
 
