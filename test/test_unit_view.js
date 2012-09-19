@@ -159,6 +159,18 @@
                .simulate('click');
            var msg = conn.last_message();
            msg.op.should.equal('resolved');
+           msg.retry.should.equal(false);
     });
+
+    it('should send resolved op with retry when retry clicked', function() {
+        unit.set('agent_state', 'foo-error');
+        var view = new UnitView(
+            {container: container, unit: unit, db: db, env: env}).render();
+        container.one('#retry-unit-button').simulate('click');
+        var msg = conn.last_message();
+        msg.op.should.equal('resolved');
+        msg.retry.should.equal(true);
+    });
+
   });
 }) ();

@@ -74,7 +74,8 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
     },
 
     events: {
-        '#resolved-unit-button': {click: 'confirmResolved'}
+        '#resolved-unit-button': {click: 'confirmResolved'},
+        '#retry-unit-button': {click: 'retry'}
     },
 
     confirmResolved: function (ev) {
@@ -103,6 +104,18 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
     _resolvedUnitCallback: function(button, ev) {
         button.set('disabled', false);
         this.resolved_panel.hide();
+    },
+
+    retry: function(ev) {
+        ev.preventDefault();
+        var env = this.get('env'),
+            unit = this.get('unit'),
+            button = ev.target;
+        button.set('disabled', true);
+        env.resolved(unit.get('id'), null, true,
+                     function(ev) {
+                         button.set('disabled', false);}
+                    );
     }
 
 });
