@@ -4,7 +4,7 @@
 
     describe('juju environment view', function() {
         var EnvironmentView, views, models, Y, container, service, db, conn,
-            juju, env, testUtils;
+            juju, env, testUtils, navbar;
 
         var environment_delta = {
             'result': [
@@ -81,7 +81,7 @@
         beforeEach(function (done) {
             container = Y.Node.create('<div id="test-container" />');
             Y.one('body').append(container);
-            var navbar = Y.Node.create('<div class="navbar" ' +
+            navbar = Y.Node.create('<div class="navbar" ' +
                 'style="height:70px;">Navbar</div>');
             Y.one('body').append(navbar);
             db = new models.Database();
@@ -92,7 +92,7 @@
         afterEach(function(done) {
             container.remove();
             container.destroy();
-            Y.one('body').removeChild(Y.one('.navbar'));
+            Y.one('body').removeChild(navbar);
             db.destroy();
             env._txn_callbacks = {};
             conn.messages = [];

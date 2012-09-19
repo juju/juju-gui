@@ -186,6 +186,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             });
         }
         this.panel.show();
+        // The default YUI CSS conflicts with the CSS effect we want.
         Y.all('#destroy-modal-panel .yui3-button').removeClass('yui3-button');
     },
 
