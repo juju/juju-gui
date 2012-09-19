@@ -137,6 +137,30 @@ var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
                 }
         });
         return result;
+    },
+
+    addSVGClass: function(selector, class_name) {
+        if (typeof(selector) == 'string') {
+            Y.all(selector).each(function(n) {
+                var classes = this.getAttribute('class');
+                this.setAttribute('class', classes + ' ' + class_name);
+            });
+        } else {
+            var classes = selector.getAttribute('class');
+            selector.setAttribute('class', classes + ' ' + class_name);
+        }
+    },
+
+    removeSVGClass: function(selector, class_name) {
+        if (typeof(selector) == 'string') {
+            Y.all(selector).each(function() {
+                var classes = this.getAttribute('class');
+                this.setAttribute('class', classes.replace(class_name, ''));
+            });
+        } else {
+            var classes = selector.getAttribute('class');
+            selector.setAttribute('class', classes.replace(class_name, ''));
+        }
     }
 
 

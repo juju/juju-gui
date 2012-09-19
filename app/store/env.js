@@ -88,11 +88,6 @@ Y.extend(Environment, Y.Base, {
             console.warn('Env: Unknown evt kind', evt);
             return;
         }
-        //if (!(evt.op in EVENT_DISPATCH_MAP)) {
-        //    console.warn('Env: Unknown evt op', evt.op);
-        //    return;
-        //}
-        //var event_kind = EVENT_DISPATCH_MAP[evt.op];
         console.log('Env: Dispatch Evt', evt.op);
         this.fire(evt.op, {data: evt});
     },
@@ -126,6 +121,12 @@ Y.extend(Environment, Y.Base, {
             'op': 'add_unit',
             'service_name': service,
             'num_units': num_units}, callback);
+    },
+    remove_units: function(unit_names, callback) {
+        this._send_rpc({
+            'op': 'remove_units',
+            'unit_names': unit_names}, callback);
+
     },
 
     add_relation: function(endpoint_a, endpoint_b, callback) {
@@ -166,7 +167,14 @@ Y.extend(Environment, Y.Base, {
     destroy_service: function(service, callback) {
         this._send_rpc({
             'op': 'destroy_service',
-            'service': service}, callback);
+            'service_name': service}, callback);
+    },
+
+    set_config: function(service, config, callback) {
+        this._send_rpc({
+            op: 'set_config',
+            service_name: service,
+            config: config}, callback);
     }
 
 });

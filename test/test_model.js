@@ -111,5 +111,37 @@ describe('juju models', function() {
     });
 
 
+    it('service units should report their number correctly',
+       function() {
+        var service_unit = new models.ServiceUnit({id: 'mysql/5'});
+        var number = service_unit.get('number');
+        number.should.equal(5);
+       });
+
+    it('process_model_delta should handle remove changes correctly',
+       function() {
+        var db = new models.Database();
+        var my0 = new models.ServiceUnit({id:'mysql/0',
+                                          agent_state: 'pending'}),
+            my1 = new models.ServiceUnit({id:'mysql/1',
+                                          agent_state: 'pending'});
+        db.units.add([my0, my1]);
+        db.process_model_delta(
+          ['unit', 'remove', 'mysql/1'], db.units);
+        var names = db.units.get('id');
+        names.length.should.equal(1);
+        names[0].should.equal('mysql/0');
+       });
+
+    it('process_model_delta should be able to reuse existing models with add',
+      function() {
+        var db = new models.Database();
+        var my0 = new models.ServiceUnit({id:'mysql/0', agent_state: 'pending'});
+        db.units.add([my0]);
+        db.process_model_delta(
+          ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}],
+          db.units);
+        my0.get('agent_state').should.equal('another');
+      });
     });
 })();

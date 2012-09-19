@@ -75,6 +75,12 @@ YUI.add('juju-models', function (Y) {
                     return unit_name.split('/', 1)[0];
                 }
             },
+            number: {
+                valueFn: function(name) {
+                    var unit_name = this.get('id');
+                    return parseInt(unit_name.split('/')[1], 10);
+                }
+            },
             urlName: {
                 valueFn: function() {return this.get('id').replace("/", "-");}
             },
@@ -333,7 +339,7 @@ YUI.add('juju-models', function (Y) {
             var change_type = change[0],
                 change_kind = change[1],
                 data = change[2],
-                model_id = change_kind == 'delete' &&
+                model_id = change_kind == 'remove' &&
                                data || data.id;
             return this.getModelById(change_type, model_id);
         },
@@ -344,6 +350,7 @@ YUI.add('juju-models', function (Y) {
             this.charms.reset();
             this.relations.reset();
             this.units.reset();
+            this.notifications.reset();
         },
 
         on_delta: function (delta_evt) {
@@ -356,14 +363,9 @@ YUI.add('juju-models', function (Y) {
             changes.forEach(
             Y.bind(function (change) {
                 change_type = change[0];
-                model_class = this.model_map[change_type];
-
-                if (!model_class) {
-                    console.log('Unknown Change', change);
-                }
                 console.log('change', this, change);
                 var model_list = this.getModelListForType(change_type);
-                this.process_model_delta(change, model_class, model_list);
+                this.process_model_delta(change, model_list);
             }, this));
             this.services.each(function (service) {
                 self.units.update_service_unit_aggregates(service);
@@ -373,35 +375,42 @@ YUI.add('juju-models', function (Y) {
         },
 
         // utility method to sync a data object and a model object.
-        _sync_bag: function (bag, model) {
-            // TODO: need to bulk mutate and then send mutation event,
-            // as is this is doing per attribute events.
-            var existing = model.getAttrs();
+        _get_bag: function (data) {
             var incoming = {};
-            Y.each(bag, function(value, aid) {
+            Y.each(data, function(value, aid) {
                 incoming[aid.replace('-', '_')] = value;
             });
-            // Combine the attr space
-            incoming = Y.merge(existing, incoming);
-            model.setAttrs(incoming);
+            return incoming;
         },
 
-        process_model_delta: function (change, ModelClass, model_list) {
+        process_model_delta: function (change, model_list) {
             // console.log('model change', change);
             var change_kind = change[1],
                 data = change[2],
                 o = this.getModelFromChange(change);
             
-            if (change_kind == 'add') {
-                o = new ModelClass({id: data.id});
-                this._sync_bag(data, o);
-                model_list.add(o);
+            if (change_kind == 'add' || change_kind == 'change') {
+                // Client-side requests may create temporary objects in the
+                // database in order to give the user more immediate feedback.
+                // The temporary objects are created after the ACK message from
+                // the server that contains their actual names.  When the delta
+                // arrives for those objects, they already exist in a skeleton
+                // form that needs to be fleshed out.  So, the existing objects
+                // are kept and re-used.
+                if (!Y.Lang.isValue(o)) {
+                    bag = this._get_bag(data);
+                    o = model_list.add(bag);
+                } else {
+                    o.setAttrs(this._get_bag(data));
+                }
             }
-            else if (change_kind == 'delete') {
-                model_list.remove(o);
-            }
-            else if (change_kind == 'change') {
-                this._sync_bag(data, o);
+            else if (change_kind == 'remove') {
+                if (Y.Lang.isValue(o)) {
+                    model_list.remove(o);
+                }
+            } else {
+                console.warn('Unknown change kind in process_model_delta:',
+                            change_kind);
             }
         }
 
