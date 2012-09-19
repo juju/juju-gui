@@ -76,17 +76,44 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         }
 
     },
+                                
+    /*
+     * Data driven behaviors
+     *  This is a placehold for real behaviors assocaited with 
+     *  node data-* declarations
+     */
+    behaviors: {
+      timestamp: {
+          callback: function() {
+              var self = this;
+              Y.later(6000, this, function (o) {
+                          self.get("container")
+                          .all('[data-timestamp]')
+                          .each(function (node) {
+                              node.setHTML(views.humanizeTimestamp(
+                              node.getAttribute('data-timestamp')));
+                          });
+                  }, [], true);}
+      }
+    },
 
     initializer: function () {
         // Create a client side database to store state.
         this.db = new models.Database();
 
         // Create an environment facade to interact with.
-        this.env = new juju.Environment({'socket_url': this.get('socket_url')});
+        this.env = new juju.Environment({
+                'socket_url': this.get('socket_url')});
+
+        // Create notifications controller
+        this.notifications = new juju.NotificationController({
+                app: this,
+                env: this.env,
+                notifications: this.db.notifications});
 
         // Create a charm store.
         this.charm_store = new Y.DataSource.IO({
-            source: this.get('charm_store_url')});
+                source: this.get('charm_store_url')});
 
         // Event subscriptions
 
@@ -100,6 +127,9 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         // Feed environment changes directly into the database.
         this.env.on('delta', this.db.on_delta, this.db);
 
+        // Feed delta changes to the notifications system
+        this.env.on('delta', this.notifications.generate_notices, 
+               this.notifications);
 
         // If the database updates redraw the view (distinct from model updates)
         // TODO - Bound views will automatically update this on individual models
@@ -109,20 +139,31 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
             console.log('app navigate', e);
         });
 
+        this.applyBehaviors();
+
         this.once('ready', function (e) {
             if (this.get('socket_url')) {
                 // Connect to the environment.
-                Y.log('App: Connecting to environment');
+                console.log('App: Connecting to environment');
                 this.env.connect();
             }
 
-            Y.log('App: Rerendering current view ' + this.getPath(), 'info');
+            console.log(
+                'App: Rerendering current view', this.getPath(), 'info');
             if (this.get('activeView')) {
                 this.get('activeView').render();
             } else {
                 this.dispatch();
             }
         }, this);
+
+    },
+
+    applyBehaviors: function() {
+      Y.each(this.behaviors, function(behavior) {
+          console.log("Behavior", behavior);
+          behavior.callback.call(this);
+      });  
 
     },
 
@@ -342,7 +383,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
      *  This is a utility that helps map from model objects to routes
      *  defined on the App object.
      * 
-     * routeModel(model, [intent])
+     * getModelURL(model, [intent])
      *    :model: the model to determine a route url for
      *    :intent: (optional) the name of an intent associated with
      *             a route. When more than one route can match a model 
@@ -362,7 +403,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
      *           should be used. This can be used to select which subview
      *           is selected to resolve a models route.
      */
-    routeModel: function(model, intent) {
+    getModelURL: function(model, intent) {
         var matches = [],
             attrs = model.getAttrs(),
             routes = this.get('routes'),
@@ -471,8 +512,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
                      intent: 'relations',
                      model: 'service'},
                 {path: '/service/:id/', callback: 'show_service',
-                     model: 'service',
-                     primary: true},
+                     model: 'service'},
                 {path: '/unit/:id/', callback: 'show_unit',
                 reverse_map: {id: 'urlName'}, model: 'serviceUnit'},
                 {path: '/', callback: 'show_environment'}

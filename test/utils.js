@@ -20,6 +20,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
 
             this.open = function() {
                 this.onopen();
+                return this;
             };
 
             this.msg = function(m) {

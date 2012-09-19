@@ -90,13 +90,17 @@ GlobalConfig = {
                     fullpath: '/store/env.js'
                 },
 
+                'juju-notification-controller': {
+                    fullpath: '/store/notifications.js'
+                },
+
                 'juju-charm-store': {
                     fullpath: '/store/charm.js'
                 },
 
-
                 'juju-controllers': {
-                    use: ['juju-env', 'juju-charm-store']
+                    use: ['juju-env', 'juju-charm-store', 
+                          'juju-notification-controller']
                 },
 
                 // App

@@ -43,16 +43,16 @@ describe('Application', function() {
           wp_charm = app.db.charms.create({charm_id: wordpress.get('charm')});
 
       // 'service/wordpress/' is the primary and so other URL are not returned
-      app.routeModel(wordpress).should.equal('/service/wordpress/');
+      app.getModelURL(wordpress).should.equal('/service/wordpress/');
       // however passing 'intent' can force selection of another
-      app.routeModel(wordpress, 'config').should.equal(
+      app.getModelURL(wordpress, 'config').should.equal(
           '/service/wordpress/config');
 
       // service units use argument rewriting (thus not /u/wp/0)
-      app.routeModel(wp0).should.equal('/unit/wordpress-0/');
+      app.getModelURL(wp0).should.equal('/unit/wordpress-0/');
 
       // charms also require a mapping but only a name, not a function
-      app.routeModel(wp_charm).should.equal('/charms/' + wp_charm.get('name'));
+      app.getModelURL(wp_charm).should.equal('/charms/' + wp_charm.get('name'));
 
   });
 

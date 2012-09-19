@@ -20,8 +20,7 @@ describe('notifications', function () {
     });
 
     it('must be able to make notification and lists of notifications',
-
-    function () {
+       function () {
         var note1 = new models.Notification({
             title: 'test1',
             message: 'Hello'
@@ -121,25 +120,24 @@ describe('notifications', function () {
 
     it('must be able to include and show object links', function () {
            var container = Y.Node.create('<div id="test">'),
-           app = new Y.juju.App({container: container}),
+           env = new juju.Environment(),
+           app = new Y.juju.App({env: env, container: container}),
            db = app.db,
            mw = db.services.create({id: 'mediawiki', 
                                     name: 'mediawiki'}),
            notifications = db.notifications,
-           env = new juju.Environment(),
            view = new views.NotificationsOverview({
-                                                      container: container,
-                                                      notifications: notifications,
-                                                      app: app,
-                                                      env: env}).render();
+                      container: container,
+                      notifications: notifications,
+                      app: app,
+                      env: env}).render();
            // we use overview here for testing as it defaults 
            // to showing all notices
 
            // we can use app's routing table to derive a link
-           notifications.create({
-                                    title: 'Service Down',
-                                    message: 'Your service has an error',
-                                    link: app.routeModel(mw)
+           notifications.create({title: 'Service Down',
+                                 message: 'Your service has an error',
+                                 link: app.getModelURL(mw)
                                 });
            view.render();
            var link = container.one('.notice').one('a');
@@ -149,18 +147,16 @@ describe('notifications', function () {
 
 
            // create a new notice passing the link_title
-           notifications.create({
-                                    title: 'Service Down',
-                                    message: 'Your service has an error',
-                                    link: app.routeModel(mw),
-                                    link_title: 'Resolve this'
+           notifications.create({title: 'Service Down',
+                                 message: 'Your service has an error',
+                                 link: app.getModelURL(mw),
+                                 link_title: 'Resolve this'
                                 });
            view.render();
            link = container.one('.notice').one('a');
            link.getAttribute('href').should.equal(
                '/service/mediawiki/');
            link.getHTML().should.contain('Resolve this');
-           container.destroy();
        });
 
     it('must be able not evict irrelevant notices', function () {

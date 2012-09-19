@@ -317,6 +317,27 @@ YUI.add('juju-models', function (Y) {
             return modelList.getById(id);
         },
 
+        getModelListForType: function(model_type) {
+            return this[model_type + 's'];
+        },
+
+        getModelById: function (model_type, model_id) {
+            var model_list = this.getModelListForType(model_type);
+            if (!model_list) {
+                console.error("No model list found for", model_type);
+            }
+            return model_list.getById(model_id);
+        },
+
+        getModelFromChange: function(change) {
+            var change_type = change[0],
+                change_kind = change[1],
+                data = change[2],
+                model_id = change_kind == 'delete' &&
+                               data || data.id;
+            return this.getModelById(change_type, model_id);
+        },
+
         reset: function () {
             this.services.reset();
             this.machines.reset();
@@ -327,6 +348,7 @@ YUI.add('juju-models', function (Y) {
 
         on_delta: function (delta_evt) {
             var changes = delta_evt.data.result;
+            console.groupCollapsed("Delta");
             console.log('Delta', this, changes);
             var change_type, model_class = null,
                 self = this;
@@ -340,45 +362,45 @@ YUI.add('juju-models', function (Y) {
                     console.log('Unknown Change', change);
                 }
                 console.log('change', this, change);
-                var model_list = this[change_type + 's'];
+                var model_list = this.getModelListForType(change_type);
                 this.process_model_delta(change, model_class, model_list);
             }, this));
             this.services.each(function (service) {
                 self.units.update_service_unit_aggregates(service);
             });
             this.fire('update');
+            console.groupEnd();
         },
 
         // utility method to sync a data object and a model object.
         _sync_bag: function (bag, model) {
             // TODO: need to bulk mutate and then send mutation event,
             // as is this is doing per attribute events.
-            for (var vid in bag) {
-                var value = bag[vid];
-                var aid = vid.replace('-', '_');
-                if (model.get(aid) != value) {
-                    model.set(aid, value);
-                }
-            }
+            var existing = model.getAttrs();
+            var incoming = {};
+            Y.each(bag, function(value, aid) {
+                incoming[aid.replace('-', '_')] = value;
+            });
+            // Combine the attr space
+            incoming = Y.merge(existing, incoming);
+            model.setAttrs(incoming);
         },
 
         process_model_delta: function (change, ModelClass, model_list) {
             // console.log('model change', change);
-            var change_kind = change[1];
-            var data = change[2];
-            var o;
+            var change_kind = change[1],
+                data = change[2],
+                o = this.getModelFromChange(change);
+            
             if (change_kind == 'add') {
-                o = new ModelClass({
-                    id: data.id
-                });
+                o = new ModelClass({id: data.id});
                 this._sync_bag(data, o);
                 model_list.add(o);
             }
             else if (change_kind == 'delete') {
-                model_list.remove(model_list.getById(data));
+                model_list.remove(o);
             }
             else if (change_kind == 'change') {
-                o = model_list.getById(data.id);
                 this._sync_bag(data, o);
             }
         }
