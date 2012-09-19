@@ -69,15 +69,21 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .selectAll('#canvas')
             .append('svg:svg')
             .attr('pointer-events', 'all')
-            .attr('width', '100%')
-            .attr('height', '100%')
             .append('svg:g')
             .call(zoom)
             .append('g');
         vis.append('svg:rect')
-            .attr('width', width)
-            .attr('height', height)
             .attr('fill', 'white');
+
+        // Bind visualization resizing on window resize
+        Y.on('windowresize', function() { 
+            self.setSizesFromViewport(vis, container, xscale, yscale); 
+        });
+
+        // If the view is bound to the dom, set sizes from viewport
+        if (Y.one('svg')) {
+            self.setSizesFromViewport(vis, container, xscale, yscale); 
+        }
 
         var tree = d3.layout.pack()
             .size([width, height])
@@ -361,6 +367,57 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
     },
 
     /*
+     * Set the visualization size based on the viewport
+     */
+    setSizesFromViewport: function(vis, container, xscale, yscale) {
+        // start with some reasonable defaults
+        var viewport_height = '100%', 
+            viewport_width = parseInt(
+                    container.getComputedStyle('width')),
+            svg = container.one('svg'), 
+            width = 800, 
+            height = 600;
+        if (container.get('winHeight') &&
+                Y.one('#overview-tasks') &&
+                Y.one('.navbar')) {
+            // Attempt to get the viewport height minus the navbar at top and
+            // control bar at the bottom. Use Y.one() to ensure that the
+            // container is attached first (provides some sensible defaults)
+            viewport_height = container.get('winHeight') - 
+                parseInt(Y.one('#overview-tasks')
+                        .getComputedStyle('height') || 22, 10) - 
+                parseInt(Y.one('.navbar')
+                        .getComputedStyle('height') || 70, 10) -
+                parseInt(Y.one('.navbar')
+                        .getComputedStyle('margin-bottom') || 18, 10);
+            
+            // Make sure we don't get sized any smaller than 800x600
+            viewport_height = Math.max(viewport_height, height);
+            if (container.get('winWidth') < width) {
+                viewport_width = width;
+            }
+        }
+        // Set the svg sizes
+        svg.setAttribute('width', viewport_width)
+            .setAttribute('height', viewport_height);
+
+        // Get the resulting computed sizes (in the case of 100%)
+        width = parseInt(svg.getComputedStyle('width'), 10);
+        height = parseInt(svg.getComputedStyle('height'), 10);
+
+        // Set the internal rect's size
+        svg.one('rect').setAttribute('width', width)
+            .setAttribute('height', height)
+
+        // Reset the scale parameters
+        xscale.domain([-width / 2, width / 2])
+            .range([0, width]);
+        yscale.domain([-height / 2, height / 2])
+            .range([height, 0]);
+
+    },
+
+    /*
      * Actions to be called on clicking a service.
      */
     service_click_actions: {
@@ -440,5 +497,6 @@ views.environment = EnvironmentView;
                'base-build',
                'handlebars-base',
                'node',
+               'event-resize',
                'view']
 });

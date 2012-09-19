@@ -47,6 +47,11 @@
                 }], ['unit', 'add', {
                     'machine': 0, 
                     'agent-state': 'started', 
+                    'public-address': '192.168.122.113', 
+                    'id': 'mediawiki/0'
+                }], ['unit', 'add', {
+                    'machine': 0, 
+                    'agent-state': 'started', 
                     'public-address': '192.168.122.222', 
                     'id': 'mysql/0'
                 }]
@@ -154,22 +159,65 @@
                 domain_models: db,
                 env: env
             }).render();
-            var svg = container.one('svg');
             var zoom_in = container.one('#zoom-in-btn'),
                 zoom_out = container.one('#zoom-out-btn'),
-                svg = container.one('svg');
+                svg = container.one('svg g g');
             zoom_in.after('click', function() {
                 view.zoom_in();
-                var attr = svg.getAttribute('transform')
+                var attr = svg.getAttribute('transform');
                 // Ensure that, after clicking the zoom in button, that the
                 // scale portion of the transform attribute of the svg
                 // element has been upped by 0.2.  The transform attribute
                 // also contains translate, so test via a regex.
-                /scale(1.2)/.test(attr).should.equal(true);
+                /scale\(1.2\)/.test(attr).should.equal(true);
                 done();
             });
             zoom_in.simulate('click');
         });
+
+        // Ensure that sizes are computed properly
+        it('must be able to compute rect sizes based on the svg and' +
+                ' viewport size',
+            function(done) {
+                var view = new EnvironmentView({
+                    container: container,
+                    domain_models: db,
+                    env: env
+                }).render();
+                var svg = Y.one('svg');
+                parseInt(svg.one('rect').getAttribute('height'))
+                    .should.equal(
+                        parseInt(svg.getComputedStyle('height')));
+                parseInt(svg.one('rect').getAttribute('width'))
+                    .should.equal(
+                        parseInt(svg.getComputedStyle('width')));
+                done();
+            }
+        );
+
+        // Ensure that sizes are computed properly
+        it('must be able to compute sizes by the viewport with a minimum',
+            function(done) {
+                var view = new EnvironmentView({
+                    container: container,
+                    domain_models: db,
+                    env: env
+                }).render();
+                var svg = Y.one('svg');
+                parseInt(svg.getAttribute('height'))
+                    .should.equal(
+                        Math.max(600, 
+                            container.get('winHeight') -
+                            parseInt(Y.one('#overview-tasks')
+                                .getComputedStyle('height'), 10) -
+                            parseInt(Y.one('.navbar')
+                                .getComputedStyle('height'), 10) -
+                            parseInt(Y.one('.navbar')
+                                .getComputedStyle('margin-bottom'), 10)
+                        ));
+                done();
+            }
+        );
 
     });
 

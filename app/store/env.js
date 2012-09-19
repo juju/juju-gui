@@ -87,11 +87,6 @@ Y.extend(Environment, Y.Base, {
             console.warn('Env: Unknown evt kind', evt);
             return;
         }
-        //if (!(evt.op in EVENT_DISPATCH_MAP)) {
-        //    console.warn('Env: Unknown evt op', evt.op);
-        //    return;
-        //}
-        //var event_kind = EVENT_DISPATCH_MAP[evt.op];
         console.log('Env: Dispatch Evt', evt.op);
         this.fire(evt.op, {data: evt});
     },
@@ -172,6 +167,13 @@ Y.extend(Environment, Y.Base, {
         this._send_rpc({
             'op': 'destroy_service',
             'service': service}, callback);
+    },
+
+    set_config: function(service, config, callback) {
+        this._send_rpc({
+            op: 'set_config',
+            service_name: service,
+            config: config}, callback);
     }
 
 });
