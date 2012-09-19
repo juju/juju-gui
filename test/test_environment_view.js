@@ -161,6 +161,10 @@
             zoom_in.after('click', function() {
                 view.zoom_in();
                 var attr = svg.getAttribute('transform')
+                // Ensure that, after clicking the zoom in button, that the
+                // scale portion of the transform attribute of the svg
+                // element has been upped by 0.2.  The transform attribute
+                // also contains translate, so test via a regex.
                 /scale(1.2)/.test(attr).should.equal(true);
                 done();
             });
