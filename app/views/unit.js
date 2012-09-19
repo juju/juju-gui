@@ -81,37 +81,14 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
         // We wait to make the panel until now, because in the render method
         // the container is not yet part of the document.
         if (Y.Lang.isUndefined(this.resolved_panel)) {
-            var panel = this.resolved_panel = new Y.Panel({
-                bodyContent: 'Are you sure you want to tell the system this '+
-                    'problem has been resolved? This action cannot be undone.',
-                width: 400,
-                zIndex: 5,
-                centered: true,
-                show: false,
-                classNames: 'modal',
-                modal: true,
-                render: '#resolved-modal-panel',
-                buttons: [
-                    {
-                        value  : 'Resolved Unit',
-                        section: Y.WidgetStdMod.FOOTER,
-                        action : Y.bind(this.resolvedUnit, this),
-                        classNames: ['btn-danger', 'btn']
-                    },
-                    {
-                        value  : 'Cancel',
-                        section: Y.WidgetStdMod.FOOTER,
-                        action : function (e) {
-                            e.preventDefault();
-                            panel.hide();
-                        },
-                        classNames: ['btn']
-                    }
-                ]
-            });
+            this.resolved_panel = views.createModalPanel(
+                'Are you sure you want to tell the system this problem has been ' +
+                    'resolved?  This action cannot be undone.',
+                '#resolved-modal-panel',
+                'Resolved Unit',
+                Y.bind(this.resolvedUnit, this));
         }
-        panel.show();
-        Y.all('#resolved-modal-panel .yui3-button').removeClass('yui3-button');
+        this.resolved_panel.show();
     },
 
     resolvedUnit: function(ev) {
@@ -120,12 +97,11 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
             unit = this.get('unit');
         ev.target.set('disabled', true);
         env.resolved(unit.get('id'), null, false,
-        Y.bind(this._resolvedUnitCallback, this));
+                     Y.bind(this._resolvedUnitCallback, this));
     },
 
     _resolvedUnitCallback: function(ev) {
         this.resolved_panel.hide();
-        this.resolved_panel.destroy();
     }
 
 });
@@ -140,4 +116,5 @@ views.unit = UnitView;
         'handlebars',
         'node',
         'panel',
+        'juju-view-utils',
         'view']});

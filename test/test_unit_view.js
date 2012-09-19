@@ -149,14 +149,16 @@
       container.one('#remove-unit-button').getHTML().should.equal('Remove');
     });
 
-    it('should show resolved confirmation when clicked', function() {
-      unit.set('agent_state', 'foo-error');
-      var view = new UnitView(
-        {container: container, unit: unit, db: db}).render();
-      container.one('#resolved-unit-button').simulate('click');
-      container.one('#resolved-modal-panel .btn-danger')
-            .getHTML().should.equal('Resolved Unit');
-
+    it('should send resolved op when confirmation button clicked',
+       function() {
+           unit.set('agent_state', 'foo-error');
+           var view = new UnitView(
+               {container: container, unit: unit, db: db}).render();
+           container.one('#resolved-unit-button').simulate('click');
+           container.one('#resolved-modal-panel .btn-danger')
+               .simulate('click');
+           var msg = conn.last_message();
+           msg.op.should.equal('resolved');
     });
   });
 }) ();
