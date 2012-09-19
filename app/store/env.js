@@ -166,7 +166,7 @@ Y.extend(Environment, Y.Base, {
     destroy_service: function(service, callback) {
         this._send_rpc({
             'op': 'destroy_service',
-            'service': service}, callback);
+            'service_name': service}, callback);
     },
 
     set_config: function(service, config, callback) {

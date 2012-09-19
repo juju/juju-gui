@@ -56,8 +56,16 @@
   </div>
 </div>
 
-{{#unless charm.is_subordinate}}
-  <form id="service-unit-control">
-    <input type="text" id="num-service-units" value="{{service.unit_count}}" />
-  </form>
-{{/unless}}
+<form>
+  <div id="service-footer" class="btn-group">
+    {{#unless charm.is_subordinate}}
+      <span class="footer-left">
+        Unit count:
+        <input type="text" id="num-service-units" value="{{service.unit_count}}" />
+      </span>
+    {{/unless}}
+    <a class="footer-right btn" id="destroy-service" data-toggle="modal" href="#destroy-service-modal">Destroy Service</a>
+  </div>
+</form>
+
+<div id="destroy-modal-panel"></div>
