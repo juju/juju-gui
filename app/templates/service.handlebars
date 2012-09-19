@@ -8,7 +8,13 @@
       <a href="constraints" class="btn"><i class="icon-leaf"></i> Constraints</a>
       <a href="/charms/charms/{{charm.name}}/json"
          class="btn"><i class="icon-book"></i> Charm </a>
-      <button class="btn"><i class="icon-ban-circle"></i> Exposed </button>
+
+      {{#if service.exposed}}
+          <button class="btn unexposeService"><i class="icon-play-circle"></i>Unexpose</button>
+      {{else}}
+          <button class="btn exposeService"><i class="icon-ban-circle"></i>Expose</button>
+      {{/if}}
+
       <a href="relations" class="btn"><i class="icon-random"></i> Relations </a>
     </div>
   </div>
