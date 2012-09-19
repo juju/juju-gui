@@ -87,7 +87,7 @@
             container = Y.Node.create('<div id="test-container" />');
             Y.one('body').append(container);
             var navbar = Y.Node.create('<div class="navbar" ' +
-                'style="height:70px;">Navbar</div>')
+                'style="height:70px;">Navbar</div>');
             Y.one('body').append(navbar);
             db = new models.Database();
             db.on_delta({data: environment_delta});
@@ -127,8 +127,7 @@
                     container: container,
                     domain_models: db,
                     env: env
-                });
-                view.render();
+                }).render();
                 var add_relation = container.one('#add-relation-btn'),
                     service = container.one('.service');
                 add_relation.after('click', function() {
@@ -152,6 +151,29 @@
                 add_relation.simulate('click');
             }
         );
+
+        // Ensure that the zoom controls work
+        it('must be able to zoom using controls', function(done) {
+            var view = new EnvironmentView({
+                container: container,
+                domain_models: db,
+                env: env
+            }).render();
+            var zoom_in = container.one('#zoom-in-btn'),
+                zoom_out = container.one('#zoom-out-btn'),
+                svg = container.one('svg g g');
+            zoom_in.after('click', function() {
+                view.zoom_in();
+                var attr = svg.getAttribute('transform');
+                // Ensure that, after clicking the zoom in button, that the
+                // scale portion of the transform attribute of the svg
+                // element has been upped by 0.2.  The transform attribute
+                // also contains translate, so test via a regex.
+                /scale\(1.2\)/.test(attr).should.equal(true);
+                done();
+            });
+            zoom_in.simulate('click');
+        });
 
         // Ensure that sizes are computed properly
         it('must be able to compute rect sizes based on the svg and' +

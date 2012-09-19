@@ -7,7 +7,9 @@ var views = Y.namespace('juju.views'),
 
 var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
     events: {
-        '#add-relation-btn': {click: 'add_relation'}
+        '#add-relation-btn': {click: 'add_relation'},
+        '#zoom-out-btn': {click: 'zoom_out'},
+        '#zoom-in-btn': {click: 'zoom_in'}
     },
 
     initializer: function () {
@@ -40,31 +42,36 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 
         var xscale = d3.scale.linear()
             .domain([-width / 2, width / 2])
-            .range([0, width]);
+            .range([2, width]);
 
         var yscale = d3.scale.linear()
             .domain([-height / 2, height / 2])
             .range([height, 0]);
 
-        // Scales for unit sizes
+        // Create a pan/zoom behavior manager.
+        var zoom = d3.behavior.zoom()
+            .x(xscale)
+            .y(yscale)
+            .scaleExtent([0.25, 1.75])
+            .on('zoom', function() { 
+                self.rescale(vis, d3.event);
+            });
+        self.set('zoom', zoom);
+        
+        // Scales for unit sizes.
         // XXX magic numbers will have to change; likely during
-        // the pan/zoom work
+        // the UI work
         var service_scale_width = d3.scale.log().range([164, 200]);
         var service_scale_height = d3.scale.log().range([64, 100]);
 
-        // Set up the visualization with a pack layout
+        // Set up the visualization with a pack layout.
         var vis = d3.select(container.getDOMNode())
             .selectAll('#canvas')
             .append('svg:svg')
             .attr('pointer-events', 'all')
             .append('svg:g')
-            .call(d3.behavior.zoom()
-                  .x(xscale)
-                  .y(yscale)
-                  .scaleExtent([0.25, 1.75])
-                  .on('zoom', rescale))
-            .append('svg:g');
-
+            .call(zoom)
+            .append('g');
         vis.append('svg:rect')
             .attr('fill', 'white');
 
@@ -76,11 +83,6 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         // If the view is bound to the dom, set sizes from viewport
         if (Y.one('svg')) {
             self.setSizesFromViewport(vis, container, xscale, yscale); 
-        }
-
-        function rescale() {
-            vis.attr('transform', 'translate(' + d3.event.translate + ')' +
-                     ' scale(' + d3.event.scale + ')');
         }
 
         var tree = d3.layout.pack()
@@ -110,7 +112,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             });
 
         // Generate a node for each service, draw it as a rect with
-        // labels for service and charm
+        // labels for service and charm.
         var node = vis.selectAll('.service')
             .data(self._saved_coords(services) ?
                 services :
@@ -121,14 +123,14 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 return 'translate(' + [d.x,d.y] + ')';
             })
             .on('click', function(m) {
-                // Get the current click action
+                // Get the current click action.
                 var curr_click_action =
                     self.get('current_service_click_action');
 
                 // Fire the action named in the following scheme:
                 //  service_click_action.<action>
                 // with the service, the SVG node, and the view
-                // as arguments
+                // as arguments.
                 (self.service_click_actions[curr_click_action])(m, this, self);
             })
             .call(drag);
@@ -159,7 +161,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .text(function(d) { return d.get('charm'); });
 
         // Show whether or not the service is exposed using an
-        // indicator (currently a simple circle
+        // indicator (currently a simple circle).
         // TODO this will likely change to an image with UI uodates.
         var exposed_indicator = node.filter(function(d) {
                 return d.get('exposed');
@@ -175,7 +177,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             });
 
         // Add the relative health of a service in the form of a pie chart
-        // comprised of units styled appropriately
+        // comprised of units styled appropriately.
         // TODO aggregate statuses into good/bad/pending
         var status_chart_arc = d3.svg.arc()
             .innerRadius(10)
@@ -208,7 +210,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 return d.data.name;
             });
 
-        // Add the unit counts, visible only on hover
+        // Add the unit counts, visible only on hover.
         var unit_count = status_chart.append('text')
             .attr('class', 'unit-count hide-count')
             .on('mouseover', function() {
@@ -236,7 +238,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             var pairs = [];
             Y.each(rels, function(rel) {
                 var pair = processRelation(rel);
-                // skip peer for now
+                // Skip peer for now.
                 if (pair.length == 2) {
                     pairs.push({source: pair[0],
                                target: pair[1]});
@@ -252,7 +254,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
     },
 
     /*
-     * Check to make sure that every service has saved coordinates
+     * Check to make sure that every service has saved coordinates.
      */
     _saved_coords: function(services) {
         var saved_coords = true;
@@ -265,7 +267,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
     },
 
     /*
-     * Generates coordinates for those services that are missing them
+     * Generates coordinates for those services that are missing them.
      */
     _generate_coords: function(services, tree) {
         services.forEach(function(service) {
@@ -287,10 +289,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 
     /*
      * Draw a relation between services.  Polylines take a list of points
-     * in the form 'x y,( x y,)* x y'
+     * in the form 'x y,( x y,)* x y'.
      *
      * TODO For now, just draw a straight line;
-     * will eventually use A* to route around other services
+     * will eventually use A* to route around other services.
      */
     draw_relation: function(relation) {
         return (relation.source.x  + (
@@ -301,23 +303,67 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
     },
 
     /*
-     * Event handler for the add relation button
+     * Event handler for the add relation button.
      */
     add_relation: function(evt) {
         var curr_action = this.get('current_service_click_action'),
             container = this.get('container');
         if (curr_action == 'show_service') {
             this.set('current_service_click_action', 'add_relation_start');
-            // add .selectable-service to all .service-border
+
+            // Add .selectable-service to all .service-border.
             this.addSVGClass('.service-border', 'selectable-service');
             container.one('#add-relation-btn').addClass('active');
         } else if (curr_action == 'add_relation_start' ||
                 curr_action == 'add_relation_end') {
             this.set('current_service_click_action', 'show_service');
-            // remove selectable border from all nodes
+
+            // Remove selectable border from all nodes.
             this.removeSVGClass('.service-border', 'selectable-service');
             container.one('#add-relation-btn').removeClass('active');
-        } // otherwise do nothing
+        } // Otherwise do nothing.
+    },
+
+    /*
+     * Zoom in event handler.
+     */
+    zoom_out: function(evt) {
+        this._fire_zoom(-0.2);
+    },
+
+    /*
+     * Zoom out event handler.
+     */
+    zoom_in: function(evt) {
+        this._fire_zoom(0.2);
+    },
+
+    /*
+     * Wraper around the actual rescale method for zoom buttons.
+     */
+    _fire_zoom: function(delta) {
+        var vis = this.get('vis'),  
+            zoom = this.get('zoom'),
+            evt = {};
+
+        // Build a temporary event that rescale can use of a similar
+        // construction to d3.event.
+        evt.translate = zoom.translate();
+        evt.scale = zoom.scale() + delta;
+
+        // Update the scale in our zoom behavior manager to maintain state.
+        this.get('zoom').scale(evt.scale);
+
+        this.rescale(vis, evt);
+    },
+
+    /*
+     * Rescale the visualization on a zoom/pan event.
+     */
+    rescale: function(vis, evt) {
+        this.set('scale', evt.scale);
+        vis.attr('transform', 'translate(' + evt.translate + ')' +
+                 ' scale(' + evt.scale + ')');
     },
 
     /*
@@ -387,42 +433,42 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
          * flow.
          */
         add_relation_start: function(m, context, view) {
-            // remove selectable border from current node
-            // Cannot use removeClass on SVG elements, so emulate it
+            // Remove selectable border from current node.
             var node = Y.one(context).one('.service-border');
             view.removeSVGClass(node, 'selectable-service');
-            // store start service in attrs
+            // Store start service in attrs.
             view.set('add_relation_start_service', m);
-            // set click action
+            // Set click action.
             view.set('current_service_click_action',
                     'add_relation_end');
         },
 
         /*
          * Fired when clicking the second service is clicked in the
-         * add relation flow
+         * add relation flow.
          */
         add_relation_end: function(m, context, view) {
-            // remove selectable border from all nodes
+            // Remove selectable border from all nodes
             view.removeSVGClass('.selectable-service', 'selectable-service');
 
-            // Get the vis, tree, and links, build the new relation
+            // Get the vis, tree, and links, build the new relation.
             var vis = view.get('vis'),
                 tree = view.get('tree'),
                 env = view.get('env'),
+                container = view.get('container'),
                 rel = {
                     source: view.get('add_relation_start_service'),
                     target: m
                 };
 
-            // add temp relation between services
+            // Add temp relation between services.
             var link = vis.selectAll('path.pending-relation')
                 .data([rel]);
             link.enter().insert('svg:polyline', 'g.service')
                 .attr('class', 'relation pending-relation')
                 .attr('points', view.draw_relation(rel));
 
-            // fire event to add relation in juju
+            // Fire event to add relation in juju.
             env.add_relation(
                 rel.source.get('id'),
                 rel.target.get('id'),
@@ -432,7 +478,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                         console.log('Error adding relation');
                     }
                 });
-            // For now, set back to show_service
+            // For now, set back to show_service.
             view.set('current_service_click_action', 'show_service');
         }
     }
