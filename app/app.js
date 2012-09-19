@@ -217,7 +217,12 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         console.log('App: Route: Svc Config', req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView('service_config', {model: service, domain_models: this.db});
+        this.showView('service_config', {
+            service: service,
+            db: this.db,
+            env: this.env
+
+        });
     },
 
     show_service_relations: function(req) {
