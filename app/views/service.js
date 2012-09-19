@@ -225,9 +225,9 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         console.log('service view render');
 
         var container = this.get('container'),
-                   db = this.get('db'),
-              service = this.get('service'),
-                  env = this.get('env');
+            db = this.get('db'),
+            service = this.get('service'),
+            env = this.get('env');
 
         if (!service) {
             console.log('not connected / maybe');

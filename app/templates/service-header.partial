@@ -2,8 +2,6 @@
   <div class="span8">
     <h1><a href="/service/{{service.id}}/"> Service {{service.id}}</a></h1>
 
-    <br/><br/> <!-- XXX NO NO NO -->
-
     <div class="btn-group">
       <a href="." class="btn"><i class="icon-th"></i> Units </a>
       <a href="config" class="btn"><i class="icon-cog"></i> Settings </a>
@@ -15,15 +13,12 @@
   </div>
   <div class="span4">
     <div class="well">
-      <span>
+      <div>
         <b>Charm:</b>
         <a href="/charms/charms/{{charm.name}}/json">{{charm.id}}</a>
-      </span>
-      <br/>
-      <span><b>Units:</b></span>
-      <br/>
-      <span><b>Relations:</b></span>
-      <br/>
+      </div>
+      <div><b>Units:</b></div>
+      <div><b>Relations:</b></div>
 
       {{#if service.exposed}}
         <button class="btn unexposeService">
@@ -34,8 +29,6 @@
           <i class="icon-ban-circle"></i>Expose
         </button>
       {{/if}}
-
-      <br/>
     </div>
   </div>
 </div>
