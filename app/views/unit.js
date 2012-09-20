@@ -176,6 +176,5 @@ views.unit = UnitView;
         'base',
         'handlebars',
         'node',
-        'panel',
         'juju-view-utils',
         'view']});
