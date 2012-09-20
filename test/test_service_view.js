@@ -75,7 +75,7 @@
         {container: container, model: service, db: db,
          env: env}).render();
       var rendered_names = container.all('div.thumbnail').get('id');
-      var expected_names = db.units.getAttrs('id');
+      var expected_names = db.units.map(function(u) {return u.id;});
       expected_names.sort();
       //assert.deepEqual(rendered_names, expected_names);
       rendered_names.should.eql(expected_names);
@@ -147,7 +147,7 @@
        'from the server',
       function() {
         var new_unit_id = 'mysql/5';
-        var expected_names = db.units.getAttrs('id'));
+        var expected_names = db.units.map(function(u) {return u.id;});
         expected_names.push(new_unit_id);
         expected_names.sort();
         var view = new ServiceView(
@@ -162,7 +162,7 @@
         // view to re-render, we need to do it ourselves.
         db.on('update', view.render, view);
         callbacks[0]({result: [new_unit_id]});
-        var db_names = db.units..getAttrs('id');
+        var db_names = db.units.map(function(u) {return u.id;});
         db_names.sort();
         db_names.should.eql(expected_names);
         service.get('unit_count').should.equal(4);
@@ -281,7 +281,7 @@
                   env: env});
 
           view.exposeService();
-          conn.last_message().op.should.equal('expose');
+          conn.last_message().op.should.equal('expose')
       });
 
       it('should send an unexpose RPC call when unexposeService is invoked',
@@ -291,7 +291,7 @@
                   env: env});
 
           view.unexposeService();
-          conn.last_message().op.should.equal('unexpose');
+          conn.last_message().op.should.equal('unexpose')
       });
 
       it('should invoke callback when expose RPC returns', function() {

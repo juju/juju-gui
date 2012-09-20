@@ -238,7 +238,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'charm': this.renderable_charm(charm_name, db),
-             'units': units)
+             'units': units
         }));
         return this;
     },
@@ -417,8 +417,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         db.units.add(
             Y.Array.map(unit_names, function (unit_id) {
                 return {id: unit_id,
-                        agent_state: 'pending',
-                        service: service_id};
+                        agent_state: 'pending'};
             }));
         service.set(
             'unit_count', service.get('unit_count') + unit_names.length);

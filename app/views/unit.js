@@ -24,7 +24,7 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
         }
 
         var db = this.get('db'),
-            service = db.services.getById(unit.get('service'));
+            service = db.services.getById(unit.service());
 
         if (!service.get('loaded')) {
             container.setHTML('<div class="alert">Loading...</div>');
@@ -43,30 +43,30 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
         UnitView.superclass.render.apply(this, arguments);
 
         var ip_description_chunks = [];
-        if (unit.get('public_address')) {
-            ip_description_chunks.push(unit.get('public_address'));
+        if (unit.public_address) {
+            ip_description_chunks.push(unit.public_address);
         }
-        if (unit.get('private_address')) {
-            ip_description_chunks.push(unit.get('private_address'));
+        if (unit.private_address) {
+            ip_description_chunks.push(unit.private_address);
         }
-        if (unit.get('open_ports')) {
-            ip_description_chunks.push(unit.get('open_ports').join());
+        if (unit.open_ports) {
+            ip_description_chunks.push(unit.open_ports.join());
         }
         var unit_ip_description;
         if (ip_description_chunks.length) {
             unit_ip_description = ip_description_chunks.join(' | ');
         }
 
-        var unit_error = /-error/.test(unit.get('agent_state')),
-            unit_running = unit.get('agent_state') == 'started',
+        var unit_error = /-error/.test(unit.agent_state),
+            unit_running = unit.agent_state == 'started',
             unit_pending = !(unit_running || unit_error);
 
         container.setHTML(this.template({
-            unit: unit.getAttrs(),
+            unit: unit,
             unit_ip_description: unit_ip_description,
             service: service.getAttrs(),
             charm: charm.getAttrs(),
-            machine: db.machines.getById(unit.get('machine')).getAttrs(),
+            machine: db.machines.getById(unit.machine).getAttrs(),
             unit_error: unit_error,
             unit_running: unit_running,
             unit_pending: unit_pending}));

@@ -82,10 +82,10 @@
           role: 'relation-role',
           scope: 'relation-scope'}});
       db.services.add([service]);
-      unit = new models.ServiceUnit({
+      unit = {
         id:'mysql/0',
         agent_state: 'pending',
-        machine: 'machine-0'});
+        machine: 'machine-0'};
       db.units.add([unit]);
       machine = new models.Machine({
         id: 'machine-0',

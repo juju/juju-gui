@@ -53,14 +53,14 @@ describe('juju models', function() {
 
         sul.add([my0, my1]);
 
-        var wp0 = new models.ServiceUnit({id:'wordpress/0'}),
-           wp1 = new models.ServiceUnit({id:'wordpress/1'});
+        var wp0 = {id:'wordpress/0'},
+           wp1 = {id:'wordpress/1'};
         sul.add([wp0, wp1]);
-        wp0.get('service').should.equal('wordpress');
+        wp0.service().should.equal('wordpress');
 
-       sul.get_units_for_service(mysql, true).getAttrs(['id']).id.should.eql(
+        sul.get_units_for_service(mysql, true).getAttrs(['id']).id.should.eql(
            ['mysql/0', 'mysql/1']);
-       sul.get_units_for_service(wordpress, true).getAttrs(
+        sul.get_units_for_service(wordpress, true).getAttrs(
            ['id']).id.should.eql(['wordpress/0', 'wordpress/1']);
     });
 
@@ -87,19 +87,21 @@ describe('juju models', function() {
            {'pending': 1, 'error': 1});
     });
 
-    it('service units should get service from unit name when missing',
-       function() {
-           var service_unit = new models.ServiceUnit({id: 'mysql/0'});
-           var service = service_unit.get('service');
-           service.should.equal('mysql');
-       });
+    it('service unit objects should parse the service name from unit id',
+      function() {
+        var service_unit = {id: 'mysql/0'},
+          db = new models.Database();
+        db.units.add(service_unit);
+        service_unit.service().should.equal('mysql');
+    });
 
-    it('service units should report their number correctly',
-       function() {
-        var service_unit = new models.ServiceUnit({id: 'mysql/5'});
-        var number = service_unit.get('number');
-        number.should.equal(5);
-       });
+    it('service unit objects should report their number correctly',
+      function() {
+        var service_unit = {id: 'mysql/5'},
+          db = new models.Database();
+        db.units.add(service_unit);
+        service_unit.number().should.equal(5);
+      });
 
     it('process_model_delta should handle remove changes correctly',
        function() {
@@ -120,13 +122,26 @@ describe('juju models', function() {
     it('process_model_delta should be able to reuse existing models with add',
       function() {
         var db = new models.Database();
-        var my0 = new models.ServiceUnit({id:'mysql/0', agent_state: 'pending'});
+        var my0 = new models.Service({id:'mysql', exposed: false});
+        db.services.add([my0]);
+        db.process_model_delta(
+          ['service', 'add', {id: 'mysql', exposed: true}],
+          models.ServiceUnit,
+          db.services);
+        my0.get('exposed').should.equal(true);
+      });
+
+    it('process_model_delta should be able to reuse existing units with add',
+      // Units are special because they use the LazyModelList.
+      function() {
+        var db = new models.Database();
+        var my0 = {id:'mysql/0', agent_state: 'pending'};
         db.units.add([my0]);
         db.process_model_delta(
           ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}],
           models.ServiceUnit,
           db.units);
-        my0.get('agent_state').should.equal('another');
+        my0.agent_state.should.equal('another');
       });
     });
 })();

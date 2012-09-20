@@ -69,27 +69,13 @@ var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
 //    idAttribute: 'name',
     {
     ATTRS: {
-        service: {
-            valueFn: function(name) {
-                var unit_name = this.get('id');
-                return unit_name.split('/', 1)[0];
-            }
-        },
-        number: {
-            valueFn: function(name) {
-                var unit_name = this.get('id');
-                return parseInt(unit_name.split('/')[1], 10);
-            }
-        },
         machine: {},
         agent_state: {},
         // relations to unit relation state.
         relations: {},
 
         config: {},
-        is_subordinate: {
-            value: false // default
-        },
+        is_subordinate: {},
         open_ports: {},
         public_address: {},
         private_address: {}
@@ -97,8 +83,34 @@ var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
 });
 models.ServiceUnit = ServiceUnit;
 
+var _unit_proto = {
+    service: function() {
+        return this.id.split('/', 1)[0];
+    },
+    number: function() {
+        var raw = this.id.split('/')[1];
+        return parseInt(raw, 10);
+    },
+    is_subordinate: false
+}
+
 var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
     model: ServiceUnit,
+
+    _setDefaultsAndCalculatedValues: function (model) {
+        model.__proto__ = _unit_proto;
+    },
+
+    add: function() {
+        var result = ServiceUnitList.superclass.add.apply(this, arguments);
+        if (Y.Lang.isArray(result)) {
+            Y.Array.each(result, this._setDefaultsAndCalculatedValues);
+        } else {
+            this._setDefaultsAndCalculatedValues(result);
+        }
+        return result;
+    },
+
     get_units_for_service: function(service, asList) {
         var options = {},
             sid = service.get('id');
@@ -108,7 +120,7 @@ var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
         }
 
         var units = this.filter(options, function(m) {
-            return m.service == sid;
+            return m.service() == sid;
         });
         return units;
     },
@@ -266,8 +278,14 @@ var Database = Y.Base.create('database', Y.Base, [], {
         for (var vid in bag) {
             var value = bag[vid];
             var aid = vid.replace('-', '_');
-            if (model.get(aid) != value) {
-                model.set(aid, value);
+            if (model instanceof Y.Model) {
+                if (model.get(aid) != value) {
+                    model.set(aid, value);
+                }
+            } else {
+                if (model[aid] != value) {
+                    model[aid] = value;
+                }
             }
         }
     },
@@ -287,7 +305,7 @@ var Database = Y.Base.create('database', Y.Base, [], {
             // are kept and re-used.
             o = model_list.getById(data.id);
             if (Y.Lang.isNull(o)) {
-                o = new ModelClass({id: data.id});
+                o = {id: data.id};
                 this._sync_bag(data, o);
                 model_list.add(o);
             } else {
