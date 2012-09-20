@@ -155,7 +155,7 @@
                 })()
             }).render();
 
-            // Before an erronious event is processed, no alert exists.
+            // Before an erroneous event is processed, no alert exists.
             var _ = expect(alert_).to.not.exist;
             // Handle the error event.
             Y.namespace('juju.views.utils').buildServerCallbackHandler({
@@ -178,7 +178,7 @@
             var error_message = Y.namespace('juju.views.utils')._serverErrorMessage,
                 alert_ = container.one('#message-area>.alert');
 
-            // Before an erronious event is processed, no alert exists.
+            // Before an erroneous event is processed, no alert exists.
             var _ = expect(alert_).to.not.exist;
             // Display the error message.
             Y.namespace('juju.views.utils').buildServerCallbackHandler({

@@ -334,47 +334,24 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'},
         'div.thumbnail': {click: function(ev) {
             console.log('Unit clicked', ev.currentTarget.get('id'));
-            this.fire('showUnit', {unit_id: ev.currentTarget.get('id')})
+            this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
         }},
-        'a#destroy-service': {click: 'confirmDestroy'},
-        '#destroy-service-modal.btn-danger': {click: 'destroyService'}
+        'a#destroy-service': {click: 'confirmDestroy'}
     },
 
     confirmDestroy: function (ev) {
         // We wait to make the panel until now, because in the render method
         // the container is not yet part of the document.
         if (Y.Lang.isUndefined(this.panel)) {
-            var panel = this.panel = new Y.Panel({
-                bodyContent: 'Are you sure you want to destroy the service? This cannot be undone.',
-                width: 400,
-                zIndex: 5,
-                centered: true,
-                show: false,
-                classNames: 'modal',
-                modal: true,
-                render: '#destroy-modal-panel',
-                buttons: [
-                    {
-                        value  : 'Destroy Service',
-                        section: Y.WidgetStdMod.FOOTER,
-                        action : Y.bind(this.destroyService, this),
-                        classNames: ['btn-danger', 'btn']
-                    },
-                    {
-                        value  : 'Cancel',
-                        section: Y.WidgetStdMod.FOOTER,
-                        action : function (e) {
-                            e.preventDefault();
-                            panel.hide();
-                        },
-                        classNames: ['btn']
-                    }
-                ]
-            });
+            this.panel = views.createModalPanel(
+                'Are you sure you want to destroy the service?  ' +
+                    'This cannot be undone.',
+                '#destroy-modal-panel',
+                'Destroy Service',
+                Y.bind(this.destroyService, this)
+            );
         }
         this.panel.show();
-        // The default YUI CSS conflicts with the CSS effect we want.
-        Y.all('#destroy-modal-panel .yui3-button').removeClass('yui3-button');
     },
 
     destroyService: function(ev) {
