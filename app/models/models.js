@@ -82,7 +82,8 @@ YUI.add('juju-models', function (Y) {
                 }
             },
             urlName: {
-                valueFn: function() {return this.get('id').replace("/", "-");}
+                valueFn: function() {return this.get('id')
+                                     .replace('/', '-');}
             },
             machine: {},
             agent_state: {},
@@ -262,7 +263,7 @@ YUI.add('juju-models', function (Y) {
             var modelKey = model.get('id');
             return this.filter(function (notification) {
                 var modelId = notification.get('modelId'),
-                    modelList, modelId;
+                    modelList;
                     if (modelId) {
                         modelList = modelId[0],
                         modelId = modelId[1];                        
@@ -357,7 +358,7 @@ YUI.add('juju-models', function (Y) {
 
         on_delta: function (delta_evt) {
             var changes = delta_evt.data.result;
-            console.groupCollapsed("Delta");
+            console.groupCollapsed('Delta');
             console.log('Delta', this, changes);
             var change_type, model_class = null,
                 self = this;

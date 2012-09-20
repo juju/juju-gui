@@ -87,7 +87,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
           callback: function() {
               var self = this;
               Y.later(6000, this, function (o) {
-                          Y.one("body")
+                          Y.one('body')
                           .all('[data-timestamp]')
                           .each(function (node) {
                               node.setHTML(views.humanizeTimestamp(
@@ -481,8 +481,8 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
                 r[idx] = Y.mix(r[idx], options);                
             } else {
                 console.error(
-                    "Underlying Y.Router not behaving as expected. " + 
-                    "Press the red button.");
+                    'Underlying Y.Router not behaving as expected. ' + 
+                    'Press the red button.');
             }
         }
     }

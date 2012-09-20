@@ -66,7 +66,7 @@ describe('notifications', function () {
                    env: env});
            view.render();
            // Verify the expected elements appear in the view
-           container.one('#notify-list').should.exist;
+           container.one('#notify-list').should.not.equal(undefined);
            container.destroy();
        });
 
@@ -99,7 +99,7 @@ describe('notifications', function () {
              
     it('must be able to get notifications for a given model',
        function() {
-           var m = new models.Service({id: "mediawiki"}),
+           var m = new models.Service({id: 'mediawiki'}),
            note1 = new models.Notification({
                                                title: 'test1',
                                                message: 'Hello',
@@ -238,14 +238,12 @@ describe('notifications', function () {
 
            // now fire another delta event marking that node as
            // started
-           console.groupCollapsed("Dispatch evicting model");
            app.env.dispatch_result({result: [['unit', 'change', {
                                                   'machine': 0,
                                                   'agent-state': 'started',
                                                   'public-address': '192.168.122.222',
                                                   'id': 'mysql/0'
                                               }]], op: 'delta'});
-           console.groupEnd();
            notifications.size().should.equal(8);
            // This should have evicted the prior notice from seen
            view.get_showable().length.should.equal(0);

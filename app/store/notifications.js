@@ -2,7 +2,7 @@
 
 YUI.add('juju-notification-controller', function (Y) {
 
-    var juju = Y.namespace("juju");
+    var juju = Y.namespace('juju');
 
     /*
      * NotificationController 
@@ -85,7 +85,7 @@ YUI.add('juju-notification-controller', function (Y) {
          * Process new delta stream events and see if we need new notifications
          */
         generate_notices: function (delta_evt) {
-            console.log("Generating Notices", this, this.getAttrs());
+            console.log('Generating Notices', this, this.getAttrs());
             var self = this,
                 rules = this.ingest_rules,
                 app = this.get('app'),
@@ -137,8 +137,8 @@ YUI.add('juju-notification-controller', function (Y) {
                 notify_data.kind = change_type;
                 // see if there is an object associated with this
                 // message
-                console.groupCollapsed("Notification Model Handling");
-                console.log("resolve model from change", app, change);
+                console.groupCollapsed('Notification Model Handling');
+                console.log('resolve model from change', app, change);
                 model = app.db.getModelFromChange(change);
                 if (model) {
                     // modelId setter pulls the modelId reference from a
@@ -169,7 +169,7 @@ YUI.add('juju-notification-controller', function (Y) {
 
 juju.NotificationController = NotificationController;
 
-}, "0.1.0", {
+}, '0.1.0', {
     requires: ['juju-models']
 });
 

@@ -135,18 +135,15 @@
 
     it('should display Retry and Resolved buttons when ' +
        'there is an error', function() {
-           console.group("RETRY");
       unit.set('agent_state', 'foo-error');
       var view = new UnitView({container: container, 
                                unit: unit, 
                                db: db, 
                                env: env}).render();
-      console.log(container.getHTML());
       container.one('#retry-unit-button').getHTML().should.equal('Retry');
       container.one('#resolved-unit-button').getHTML().should.equal(
           'Resolved');
       container.one('#remove-unit-button').getHTML().should.equal('Remove');
-      console.groupEnd();
     });
 
     it('should always display Remove button', function() {

@@ -186,10 +186,12 @@
                 }).render();
                 var svg = Y.one('svg');
 
-                parseInt(svg.one('rect').getAttribute('height'))
-                    .should.equal(parseInt(svg.getComputedStyle('height')));
-                parseInt(svg.one('rect').getAttribute('width'))
-                    .should.equal(parseInt(svg.getComputedStyle('width')));
+                parseInt(svg.one('rect').getAttribute('height'), 10)
+                    .should.equal(parseInt(svg.getComputedStyle('height'), 
+                    10));
+                parseInt(svg.one('rect').getAttribute('width'), 10)
+                    .should.equal(parseInt(svg.getComputedStyle('width'), 
+                    10));
                 done();
             }
         );
@@ -203,7 +205,7 @@
                     env: env
                 }).render();
                 var svg = Y.one('svg');
-                parseInt(svg.getAttribute('height')).should.be.above(599);
+                parseInt(svg.getAttribute('height'), 10).should.be.above(599);
                 done();
             }
         );

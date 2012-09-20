@@ -8,7 +8,7 @@ var views = Y.namespace('juju.views'),
 function styleToNumber(selector, style) {
     style = style || 'height';
     return parseInt(Y.one(selector).getComputedStyle(style), 10);
-};
+}
 
 var EnvironmentView = Y.Base.create('EnvironmentView', 
     Y.View, [views.JujuBaseView], {
