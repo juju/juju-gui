@@ -1,10 +1,19 @@
 <div class="row-fluid">
   <div class="well">
+    <div class="unit-button-palette">
+      <form>
+        {{#if unit_error}}
+          <button type="button" class="btn" id="resolved-unit-button">Resolved</button>
+          <button type="button" class="btn" id="retry-unit-button">Retry</button>
+        {{/if}}
+        <button type="button" {{#if disabled_remove}}disabled="true"{{/if}}
+         class="btn" id="remove-unit-button">Remove</button>
+      </form>
+    </div>
     <h1 id="unit-id">{{unit.id}}</h1>
     <b id="charm-uri">
       <a href="/charms/charms/{{charm.name}}/json">{{charm.id}}</a>
     </span>
-
     {{#if unit.is_subordinate}} (subordinate){{/if}}
     <div id="unit-status">
       {{unit_ip_description}}
@@ -82,3 +91,6 @@ This unit has no relations.
   </div>
 </div>
 {{/if}}
+
+<div id="resolved-modal-panel"></div>
+<div id="remove-modal-panel"></div>
