@@ -88,7 +88,7 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
                 'Are you sure you want to tell the system this problem has been ' +
                     'resolved?  This action cannot be undone.',
                 '#resolved-modal-panel',
-                'Unit Error Has Been Resolved',
+                'Error Has Been Resolved',
                 Y.bind(this.resolvedUnit, this));
         }
         this.resolved_panel.show();
@@ -104,6 +104,8 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
     },
 
     _resolvedUnitCallback: function(button, ev) {
+        // XXX Once we have a way of showing notifications, if ev.err exists,
+        // report it.
         button.set('disabled', false);
         this.resolved_panel.hide();
     },
@@ -136,6 +138,8 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
     },
 
     _removeUnitCallback: function(ev) {
+        // XXX Once we have a way of showing notifications, if ev.err exists,
+        // report it.
         var unit = this.get('unit'),
             db = this.get('db'),
             service = db.services.getById(unit.get('service')),
@@ -153,8 +157,11 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
             button = ev.target;
         button.set('disabled', true);
         env.resolved(unit.get('id'), null, true,
-                     function(ev) {
-                         button.set('disabled', false);}
+                    function(ev) {
+                        // XXX Once we have a way of showing notifications, if
+                        // ev.err exists, report it.  Similarly, otherwise,
+                        // generate a success notification.
+                        button.set('disabled', false);}
                     );
     }
 
