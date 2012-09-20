@@ -223,10 +223,10 @@ describe('notifications', function () {
 
            var notifications = app.db.notifications,
            view = new views.NotificationsView({
-                                                  container: container,
-                                                  notifications: notifications,
-                                                  app: app,
-                                                  env: app.env}).render();
+                      container: container,
+                      notifications: notifications,
+                      app: app,
+                      env: app.env}).render();
 
 
            app.env.dispatch_result(environment_delta);

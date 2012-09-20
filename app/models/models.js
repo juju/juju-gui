@@ -222,11 +222,13 @@ YUI.add('juju-models', function (Y) {
     models.Notification = Notification;
 
     var NotificationList = Y.Base.create('notificationList', Y.ModelList, [], {
-        initializer: function () {
-            NotificationList.superclass.constructor.apply(this, arguments);
-            this.on('add', this.enforce_max_size);
-        },
         model: Notification,
+
+        add: function() {
+            this.enforce_max_size();
+            return NotificationList.superclass.add.apply(this, arguments);
+        },
+
         comparator: function (model) {
             // timestamp desc
             return -model.get('timestamp');
