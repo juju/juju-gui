@@ -105,12 +105,21 @@ describe('juju models', function() {
 
         var model = db.services.item(0);
 
-        db.getByModelId([model.name, 
-            model.get('id')]).get('id').should.equal('wordpress');
+        // Single Paramerter calling
+        db.getModelById([model.name, model.get('id')])
+               .get('id').should.equal('wordpress');
+           
+        // Two parameter interface
+        db.getModelById(model.name, model.get('id'))
+               .get('id').should.equal('wordpress');
+
 
         var unit = db.units.item(0);
-        db.getByModelId([unit.name, 
-            unit.get('id')]).get('id').should.equal('wordpress/0');
+        db.getModelById([unit.name, unit.get('id')])
+               .get('id').should.equal('wordpress/0');
+
+        db.getModelById(unit.name, unit.get('id'))
+               .get('id').should.equal('wordpress/0');
         
     });
 

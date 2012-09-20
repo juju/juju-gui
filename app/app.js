@@ -79,8 +79,8 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
                                 
     /*
      * Data driven behaviors
-     *  This is a placehold for real behaviors assocaited with 
-     *  node data-* declarations
+     *  This is a placehold for real behaviors associated with 
+     *  DOM Node  data-* attributes.
      */
     behaviors: {
       timestamp: {
@@ -145,7 +145,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
             console.log('app navigate', e);
         });
 
-        this.applyBehaviors();
+        this.enableBehaviors();
 
         this.once('ready', function (e) {
             if (this.get('socket_url')) {
@@ -166,9 +166,8 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
 
     },
 
-    applyBehaviors: function() {
+    enableBehaviors: function() {
       Y.each(this.behaviors, function(behavior) {
-          console.log("Behavior", behavior);
           behavior.callback.call(this);
       }, this);  
 

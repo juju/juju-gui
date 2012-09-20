@@ -5,6 +5,11 @@ YUI.add('juju-view-environment', function(Y) {
 var views = Y.namespace('juju.views'),
     Templates = views.Templates;
 
+function styleToNumber(selector, style) {
+    style = style || 'height';
+    return parseInt(Y.one(selector).getComputedStyle(style), 10);
+};
+
 var EnvironmentView = Y.Base.create('EnvironmentView', 
     Y.View, [views.JujuBaseView], {
     events: {
@@ -373,15 +378,11 @@ var EnvironmentView = Y.Base.create('EnvironmentView',
     setSizesFromViewport: function(vis, container, xscale, yscale) {
         // start with some reasonable defaults
         var viewport_height = '100%',
-            viewport_width = parseInt(container.getComputedStyle('width')),
+            viewport_width = parseInt(container.getComputedStyle('width'), 10),
             svg = container.one('svg'),
             width = 800,
             height = 600;
 
-        var s2n = function (selector, style) {
-            style = style || 'height';
-            return parseInt(Y.one(selector).getComputedStyle(style));
-        }
 
         if (container.get('winHeight') &&
                 Y.one('#overview-tasks') &&
@@ -391,9 +392,9 @@ var EnvironmentView = Y.Base.create('EnvironmentView',
             // container is attached first (provides some sensible defaults)
 
             viewport_height = container.get('winHeight') -
-                                  s2n('#overview-tasks') -
-                                  s2n('.navbar') -
-                                  s2n('.navbar', 'margin-bottom');
+                                  styleToNumber('#overview-tasks') -
+                                  styleToNumber('.navbar') -
+                                  styleToNumber('.navbar', 'margin-bottom');
 
             // Make sure we don't get sized any smaller than 800x600
             viewport_height = Math.max(viewport_height, height);
@@ -406,8 +407,8 @@ var EnvironmentView = Y.Base.create('EnvironmentView',
             .setAttribute('height', viewport_height);
 
         // Get the resulting computed sizes (in the case of 100%)
-        width = parseInt(svg.getComputedStyle('width'));
-        height = parseInt(svg.getComputedStyle('height'));
+        width = parseInt(svg.getComputedStyle('width'), 10);
+        height = parseInt(svg.getComputedStyle('height'), 10);
 
         // Set the internal rect's size
         svg.one('rect')

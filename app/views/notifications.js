@@ -6,7 +6,7 @@ YUI.add('juju-notifications', function (Y) {
         Templates = views.Templates;
 
     /*
-     * Abstract Base class usef to biew a ModelList  of notifications
+     * Abstract Base class used to view a ModelList  of notifications
      */
     var NotificationsBaseView = Y.Base.create('NotificationsBaseView', 
         Y.View, [views.JujuBaseView], {

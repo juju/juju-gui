@@ -159,7 +159,7 @@ describe('notifications', function () {
            link.getHTML().should.contain('Resolve this');
        });
 
-    it('must be able not evict irrelevant notices', function () {
+    it('must be able to evict irrelevant notices', function () {
            var container = Y.Node.create(
                '<div id="test" class="container"></div>'),
            app = new Y.juju.App({

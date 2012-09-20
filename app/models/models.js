@@ -211,6 +211,7 @@ YUI.add('juju-models', function (Y) {
             // context of app's routing table)
             modelId: {
                 setter: function(model) {
+                    if (Y.Lang.isArray(model)) {return model;}
                     return Y.mix([model.name, model.get('id')]);
             }},
             link: {},
@@ -315,30 +316,25 @@ YUI.add('juju-models', function (Y) {
          * Model Id is a [db[model_list_name], model.get('id')] 
          * sequence that can be used to lookup models relative 
          * to the Database.
+         * 
+         * getModelById can be called with either a modelId
+         * or model_type, model_id as individual parameters
          */
-        getByModelId: function (modelId) {
-            var modelList = modelId[0],
-                id = modelId[1];
-
-            //Normalize the name and resolve the list
-            if (modelList == 'serviceUnit') {
-                modelList = 'unit';
+        getModelById: function (modelList, id) {
+            if (!Y.Lang.isValue(id)) {
+                id = modelList[1];                
+                modelList = modelList[0];
             }
-            modelList = this[modelList + 's'];
-
+            modelList = this.getModelListByModelName(modelList);
             return modelList.getById(id);
         },
 
-        getModelListForType: function(model_type) {
-            return this[model_type + 's'];
-        },
-
-        getModelById: function (model_type, model_id) {
-            var model_list = this.getModelListForType(model_type);
-            if (!model_list) {
-                console.error("No model list found for", model_type);
+        getModelListByModelName: function(modelName) {
+            if (modelName == 'serviceUnit') {
+                modelName = 'unit';
             }
-            return model_list.getById(model_id);
+            return this[modelName + 's'];
+
         },
 
         getModelFromChange: function(change) {
@@ -370,7 +366,7 @@ YUI.add('juju-models', function (Y) {
             Y.bind(function (change) {
                 change_type = change[0];
                 console.log('change', this, change);
-                var model_list = this.getModelListForType(change_type);
+                var model_list = this.getModelListByModelName(change_type);
                 this.process_model_delta(change, model_list);
             }, this));
             this.services.each(function (service) {

@@ -6,11 +6,11 @@ YUI.add('juju-notification-controller', function (Y) {
 
     /*
      * NotificationController 
-     * This controller manages the relationship between incoming delta
-     * stream events and the notication models the view use for display and
-     * interaction.
-     * 
-     * NotificationController({env: Environment, notications: ModelList})
+     *
+     * This controller manages the relationship between incoming delta stream
+     * events and the notification models the views use for display and
+     * interaction.  NotificationController({env: Environment, 
+     * notifications: ModelList})
      */
 
     var NotificationController = Y.Base.create('NotificationController', 
@@ -18,9 +18,7 @@ YUI.add('juju-notification-controller', function (Y) {
 
         /**
          This tells `Y.Base` that it should create ad-hoc attributes for config
-         properties passed to View's constructor. This makes it possible to
-         instantiate a view and set a bunch of attributes without having to subclass
-         `Y.View` and declare all those attributes first.
+         properties. 
 
          @property _allowAdHocAttrs
          @type Boolean
@@ -44,7 +42,7 @@ YUI.add('juju-notification-controller', function (Y) {
          * of all such methods will be::
          *     function(change_type, change_op, change_data) -> value
          */
-        injest_rules: {
+        ingest_rules: {
             service: {
                 model_list: 'services'
             },
@@ -87,9 +85,9 @@ YUI.add('juju-notification-controller', function (Y) {
          * Process new delta stream events and see if we need new notifications
          */
         generate_notices: function (delta_evt) {
-            console.log("GENERATE", this, this.getAttrs());
+            console.log("Generating Notices", this, this.getAttrs());
             var self = this,
-                rules = this.injest_rules,
+                rules = this.ingest_rules,
                 app = this.get('app'),
                 notifications = this.get('notifications');
 
@@ -102,7 +100,7 @@ YUI.add('juju-notification-controller', function (Y) {
                     model;
 
                 /*
-                 * Data injestion rules
+                 * Data ingestion rules
                  *  Create notifications for incoming deltas
                  *  Promote some notifications to the 'show me' list
                  *  Also:
@@ -115,7 +113,7 @@ YUI.add('juju-notification-controller', function (Y) {
                  *  - add a notification for the event
                  */
 
-                // Dispatch injestion rules (which may mutate either the 
+                // Dispatch ingestion rules (which may mutate either the 
                 // current 'notifications' or models within it (notice status)
 
                 ['title', 'message', 'level'].forEach(function (attr) {
@@ -143,6 +141,8 @@ YUI.add('juju-notification-controller', function (Y) {
                 console.log("resolve model from change", app, change);
                 model = app.db.getModelFromChange(change);
                 if (model) {
+                    // modelId setter pulls the modelId reference from a
+                    // motel automatically
                     notify_data.modelId = model;
                     notify_data.link = app.getModelURL(model);
                     // If there are eviction rules for old notices 
