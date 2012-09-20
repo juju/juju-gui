@@ -89,21 +89,21 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
                     'resolved?  This action cannot be undone.',
                 '#resolved-modal-panel',
                 'Error Has Been Resolved',
-                Y.bind(this.resolvedUnit, this));
+                Y.bind(this.doResolvedUnit, this));
         }
         this.resolved_panel.show();
     },
 
-    resolvedUnit: function(ev) {
+    doResolvedUnit: function(ev) {
         ev.preventDefault();
         var env = this.get('env'),
             unit = this.get('unit');
         ev.target.set('disabled', true);
         env.resolved(unit.get('id'), null, false,
-                     Y.bind(this._resolvedUnitCallback, this, ev.target));
+                     Y.bind(this._doResolvedUnitCallback, this, ev.target));
     },
 
-    _resolvedUnitCallback: function(button, ev) {
+    _doResolvedUnitCallback: function(button, ev) {
         // XXX Once we have a way of showing notifications, if ev.err exists,
         // report it.
         button.set('disabled', false);
@@ -122,22 +122,22 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
                 'simply add another unit later.',
                 '#remove-modal-panel',
                 'Remove Unit',
-                Y.bind(this.removeUnit, this));
+                Y.bind(this.doRemoveUnit, this));
         }
         this.remove_panel.show();
     },
 
-    removeUnit: function(ev) {
+    doRemoveUnit: function(ev) {
         ev.preventDefault();
         var env = this.get('env'),
             unit = this.get('unit');
         ev.target.set('disabled', true);
         env.remove_units(
             [unit.get('id')],
-            Y.bind(this._removeUnitCallback, this));
+            Y.bind(this._doRemoveUnitCallback, this));
     },
 
-    _removeUnitCallback: function(ev) {
+    _doRemoveUnitCallback: function(ev) {
         // XXX Once we have a way of showing notifications, if ev.err exists,
         // report it.
         var unit = this.get('unit'),
