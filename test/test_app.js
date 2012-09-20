@@ -7,41 +7,53 @@ function injectData(app, data) {
 }
 
 describe('Application', function() {
-  var Y, app;
+  var Y, app, container;
 
   before(function(done) {
       Y = YUI(GlobalConfig).use('juju-gui', function (Y) {
+          container = Y.Node.create('<div id="test" class="container"></div>');
           app = new Y.juju.App({
-                  container: '#main',
-                  viewContainer: '#main'
+                  container: container,
+                  viewContainer: container
                   });
-          injectData(app).render();
+          injectData(app);
           done();
         });
 
   });
 
-  after(function(done) {
-      var active_view = app.get('activeView');
-      if (active_view) {
-          active_view.destroy({remove: true});
-      } else {
-          Y.one(app.get('container')).setHTML('');
-      }
-      done();
-  });
-
   it('should produce a valid index', function() {
       var container = app.get('container');
-      container.getAttribute('id').should.equal('main');
+      app.render();
+      container.getAttribute('id').should.equal('test');
       container.getAttribute('class').should.include('container');
   });
 
   it('should be able to render the environment view with default data',
      function() {
-       var container = app.get('container');
-       app.showView('environment', {domain_models: app.db});
+       app.showView('environment', {db: app.db});
        container.one('svg').should.not.equal(null);
+  });
+
+  it('should be able to route objects to internal URLs', function() {
+      // take handles to database objects and ensure we can route to the view
+      // needed to show them
+      var wordpress = app.db.services.getById('wordpress'),
+          wp0 = app.db.units.get_units_for_service(wordpress)[0],
+          wp_charm = app.db.charms.create({charm_id: wordpress.get('charm')});
+
+      // 'service/wordpress/' is the primary and so other URL are not returned
+      app.getModelURL(wordpress).should.equal('/service/wordpress/');
+      // however passing 'intent' can force selection of another
+      app.getModelURL(wordpress, 'config').should.equal(
+          '/service/wordpress/config');
+
+      // service units use argument rewriting (thus not /u/wp/0)
+      app.getModelURL(wp0).should.equal('/unit/wordpress-0/');
+
+      // charms also require a mapping but only a name, not a function
+      app.getModelURL(wp_charm).should.equal('/charms/' + wp_charm.get('name'));
+
   });
 
 });

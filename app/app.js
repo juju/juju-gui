@@ -8,8 +8,9 @@ YUI.add('juju-gui', function(Y) {
 // Assign the global for console access.
 yui = Y;
 
-var juju = Y.namespace('juju');
-var models = Y.namespace('juju.models');
+var juju = Y.namespace('juju'),
+    models = Y.namespace('juju.models'),
+    views = Y.namespace('juju.views');
 
 var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     views: {
@@ -63,18 +64,55 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         charm_search: {
             type: 'juju.views.charm_search',
             preserve: true
+        },
+
+        notifications: {
+            type: 'juju.views.NotificationsView',
+            preserve: true
+        },
+        
+        notifications_overview: {
+            type: 'juju.views.NotificationsOverview'
         }
+
+    },
+                                
+    /*
+     * Data driven behaviors
+     *  This is a placehold for real behaviors associated with 
+     *  DOM Node  data-* attributes.
+     */
+    behaviors: {
+      timestamp: {
+          callback: function() {
+              var self = this;
+              Y.later(6000, this, function (o) {
+                          Y.one('body')
+                          .all('[data-timestamp]')
+                          .each(function (node) {
+                              node.setHTML(views.humanizeTimestamp(
+                              node.getAttribute('data-timestamp')));
+                          });
+                  }, [], true);}
+      }
     },
 
     initializer: function () {
         // Create a client side database to store state.
         this.db = new models.Database();
         // Create an environment facade to interact with.
-        this.env = new juju.Environment({'socket_url': this.get('socket_url')});
+        this.env = new juju.Environment({
+                'socket_url': this.get('socket_url')});
+
+        // Create notifications controller
+        this.notifications = new juju.NotificationController({
+                app: this,
+                env: this.env,
+                notifications: this.db.notifications});
 
         // Create a charm store.
         this.charm_store = new Y.DataSource.IO({
-            source: this.get('charm_store_url')});
+                source: this.get('charm_store_url')});
 
         // Event subscriptions
 
@@ -87,6 +125,10 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
 
         // Feed environment changes directly into the database.
         this.env.on('delta', this.db.on_delta, this.db);
+
+        // Feed delta changes to the notifications system
+        this.env.on('delta', this.notifications.generate_notices, 
+               this.notifications);
 
         // When the connection resets, reset the db.
         this.env.on('connectionChange', function (ev) {
@@ -103,20 +145,31 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
             console.log('app navigate', e);
         });
 
+        this.enableBehaviors();
+
         this.once('ready', function (e) {
             if (this.get('socket_url')) {
                 // Connect to the environment.
-                Y.log('App: Connecting to environment');
+                console.log('App: Connecting to environment');
                 this.env.connect();
             }
 
-            Y.log('App: Re-rendering current view ' + this.getPath(), 'info');
+            console.log(
+                'App: Rerendering current view', this.getPath(), 'info');
+
             if (this.get('activeView')) {
                 this.get('activeView').render();
             } else {
                 this.dispatch();
             }
         }, this);
+
+    },
+
+    enableBehaviors: function() {
+      Y.each(this.behaviors, function(behavior) {
+          behavior.callback.call(this);
+      }, this);  
 
     },
 
@@ -230,7 +283,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
 
     show_environment: function (req) {
         console.log('App: Route: Environment', req.path, req.pendingRoutes);
-        this.showView('environment', {domain_models: this.db, env: this.env}, {render: true});
+        this.showView('environment', {db: this.db, env: this.env}, {render: true});
     },
 
     show_charm_collection: function(req) {
@@ -251,13 +304,40 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         });
     },
 
-    /* Present on all views */
+    show_notifications_overview: function(req) {
+        this.showView('notifications_overview', {
+                          app: this,
+                          env: this.env,
+                          notifications: this.db.notifications});
+    },
+
+    /* 
+     * Persistent Views 
+     * 
+     * 'charm_search' and 'notifications' are preserved views that remain
+     * rendered on all main views.  we manually create an instance of this
+     * view and insert it into the App's view metadata.
+     */
     show_charm_search: function(req, res, next) {
-        var charm_search = this.get('charm_search');
-        if (!charm_search) {
-            charm_search = this.createView(
-                'charm_search', {'app': this});
-            this.set('charm_search', charm_search.render());
+        var view = this.getViewInfo('charm_search'),
+            instance = view.instance;
+        if (!instance) {
+            view.instance = new views.charm_search({app: this});
+            view.instance.render();
+        }
+        next();
+    },
+
+    show_notifications_view: function(req, res, next) {
+        var view = this.getViewInfo('notifications'),
+            instance = view.instance;
+        if (!instance) {
+            view.instance = new views.NotificationsView(
+                                {container: Y.one('#notifications'),
+                                 app: this,
+                                 env: this.env,
+                                 notifications: this.db.notifications});
+            view.instance.render();
         }
         next();
     },
@@ -297,21 +377,145 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
                         'revision': charm_data.revision,
                         'loaded': true});
         this.dispatch();
-    }
+    },
 
+    /*
+     *  Object routing support
+     *  This is a utility that helps map from model objects to routes
+     *  defined on the App object.
+     * 
+     * getModelURL(model, [intent])
+     *    :model: the model to determine a route url for
+     *    :intent: (optional) the name of an intent associated with
+     *             a route. When more than one route can match a model 
+     *             the route w/o an intent is matched when this attribute 
+     *             is missing. If intent is provided as a string it 
+     *             is matched to the 'intent' attribute specified on the 
+     *             route. This is effectively a tag.
+     * 
+     * To support this we suppliment to our routing information with 
+     * additional attributes as follows:
+     * 
+     *   :model: model.name (required)
+     *   :reverse_map: (optional) route_path_key: str 
+     *          reverse map can map :id  to the name of attr on model
+     *          if no value is provided its used directly as attribute name 
+     *   :intent: (optional) A string named intent for which this route
+     *           should be used. This can be used to select which subview
+     *           is selected to resolve a models route.
+     */
+    getModelURL: function(model, intent) {
+        var matches = [],
+            attrs = model.getAttrs(),
+            routes = this.get('routes'),
+            regexPathParam = /([:*])([\w\-]+)?/g,
+            idx = 0;
+
+        routes.forEach(function(route) {
+            var path = route.path,
+                required_model = route.model,
+                reverse_map = route.reverse_map;
+
+            // Fail fast on wildcard paths, routes w/o models
+            // and when the model doesn't match the route type
+            if (path === '*' || 
+               required_model === undefined ||
+               model.name != required_model) {
+               return;                
+            }
+
+            // Replace the path params with items from the 
+            // models attrs
+            path = path.replace(regexPathParam, 
+                    function (match, operator, key) {
+                        if (reverse_map !== undefined && reverse_map[key]) {
+                            key = reverse_map[key];
+                        }
+                    return attrs[key];
+            });
+            matches.push(Y.mix({path: path, 
+                                route: route,
+                                model: model,
+                                intent: route.intent}));
+        });
+
+        // See if intent is in the match. Because the default is
+        // to match routes without intent (undefined) this test
+        // can always be applied.
+        matches = Y.Array.filter(matches, function(match) {
+            return match.intent == intent;
+        });
+
+        if (matches.length > 1) {
+            console.warn('Ambiguous routeModel',
+                         model.get('id'), 
+                         matches);
+            // Default to the last route in this configuration 
+            // error case.
+            idx = matches.length - 1;
+        }
+        return matches[idx] && matches[idx].path;
+    },
+
+    // Override Y.Router.route (and setter) to allow inclusion 
+    // of additional routing params
+    _setRoutes: function(routes) {
+        this._routes = [];
+        Y.Array.each(routes, function (route) {
+            // additionally pass route as options
+            // needed to pass through the attribute setter
+            this.route(route.path, route.callback, route);
+        }, this);
+        return this._routes.concat();
+    },
+    route: function(path, callback, options) {
+        JujuGUI.superclass.route.call(this, path, callback);
+
+        // This is a whitelist to spare the extra juggling
+        if (options.model) {
+            var r = this._routes, 
+                idx = r.length - 1;
+            if (r[idx].path == path) {
+                // Combine our options with the default
+                // computed route information
+                r[idx] = Y.mix(r[idx], options);                
+            } else {
+                console.error(
+                    'Underlying Y.Router not behaving as expected. ' + 
+                    'Press the red button.');
+            }
+        }
+    }
+    
 }, {
     ATTRS: {
         routes: {
             value: [
                 {path: '*', callback: 'show_charm_search'},
-
+                {path: '*', callback: 'show_notifications_view'},
                 {path: '/charms/', callback: 'show_charm_collection'},
-                {path: '/charms/*charm_url', callback: 'show_charm'},
-                {path: '/service/:id/config', callback: 'show_service_config'},
-                {path: '/service/:id/constraints', callback: 'show_service_constraints'},
-                {path: '/service/:id/relations', callback: 'show_service_relations'},
-                {path: '/service/:id/', callback: 'show_service'},
-                {path: '/unit/:id/', callback: 'show_unit'},
+                {path: '/charms/*charm_url', 
+                     callback: 'show_charm', 
+                     reverse_map: {charm_url: 'name'},
+                     model: 'charm'},
+                {path: '/notifications/',
+                     callback: 'show_notifications_overview'},
+                {path: '/service/:id/config', 
+                     callback: 'show_service_config',
+                     intent: 'config',
+                     model: 'service'},
+                {path: '/service/:id/constraints', 
+                     callback: 'show_service_constraints', 
+                     intent: 'constraints',
+                     model: 'service'},
+                {path: '/service/:id/relations', 
+                     callback: 'show_service_relations',
+                     intent: 'relations',
+                     model: 'service'},
+                {path: '/service/:id/', callback: 'show_service',
+                     model: 'service'},
+                {path: '/unit/:id/', callback: 'show_unit',
+                reverse_map: {id: 'urlName'}, model: 'serviceUnit'},
                 {path: '/', callback: 'show_environment'}
                 ]
             }

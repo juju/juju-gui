@@ -93,6 +93,36 @@ describe('juju models', function() {
            var service = service_unit.get('service');
            service.should.equal('mysql');
        });
+             
+    it('must be able to resolve models by modelId', function(){
+        var db = new models.Database();
+
+        db.services.add([{id: 'wordpress'},
+                         {id: 'mediawiki'}]);
+
+        db.units.add([{id: 'wordpress/0'},
+                      {id: 'wordpress/1'}]);
+
+        var model = db.services.item(0);
+
+        // Single Paramerter calling
+        db.getModelById([model.name, model.get('id')])
+               .get('id').should.equal('wordpress');
+           
+        // Two parameter interface
+        db.getModelById(model.name, model.get('id'))
+               .get('id').should.equal('wordpress');
+
+
+        var unit = db.units.item(0);
+        db.getModelById([unit.name, unit.get('id')])
+               .get('id').should.equal('wordpress/0');
+
+        db.getModelById(unit.name, unit.get('id'))
+               .get('id').should.equal('wordpress/0');
+        
+    });
+
 
     it('service units should report their number correctly',
        function() {
@@ -110,8 +140,7 @@ describe('juju models', function() {
                                           agent_state: 'pending'});
         db.units.add([my0, my1]);
         db.process_model_delta(
-          ['unit', 'remove', 'mysql/1'], models.ServiceUnit, db.units);
-        //var names = db.units.map(function(u) {return u.get('id');});
+          ['unit', 'remove', 'mysql/1'], db.units);
         var names = db.units.get('id');
         names.length.should.equal(1);
         names[0].should.equal('mysql/0');
@@ -124,7 +153,6 @@ describe('juju models', function() {
         db.units.add([my0]);
         db.process_model_delta(
           ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}],
-          models.ServiceUnit,
           db.units);
         my0.get('agent_state').should.equal('another');
       });

@@ -8,7 +8,7 @@ var views = Y.namespace('juju.views'),
 
 var UnitView = Y.Base.create('UnitView', Y.View, [], {
     initializer: function () {
-      console.log('view.init.unit', this.get('unit'));
+      console.log('view.init.unit', this.get('unit').getAttrs());
     },
 
     template: Templates.unit,
