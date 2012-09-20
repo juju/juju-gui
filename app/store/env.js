@@ -153,6 +153,10 @@ Y.extend(Environment, Y.Base, {
         this._send_rpc({'op':'expose', 'service_name': service}, callback);
     },
 
+    unexpose: function(service, callback) {
+        this._send_rpc({'op':'unexpose', 'service_name': service}, callback);
+    },
+
     status: function(callback) {
         this._send_rpc({'op': 'status'}, callback);
     },
@@ -167,7 +171,7 @@ Y.extend(Environment, Y.Base, {
     destroy_service: function(service, callback) {
         this._send_rpc({
             'op': 'destroy_service',
-            'service_name': service}, callback);
+            'service': service}, callback);
     },
 
     set_config: function(service, config, callback) {

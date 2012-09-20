@@ -254,43 +254,32 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         }
     },
 
-    /* As alternative to this initialization being done by each service view,
-    a common view that matched on the entire service subpath could annotate
-    the request with the svc object and perform the prefetch */
+    _buildServiceView: function(req, viewName) {
+        console.log('App: Route: Service',
+            viewName, req.params.id, req.path, req.pendingRoutes);
 
-    show_service: function(req) {
-        console.log(
-            'App: Route: Service', req.params.id, req.path, req.pendingRoutes);
         var service = this.db.services.getById(req.params.id);
         this._prefetch_service(service);
-        this.showView('service', {model: service, db: this.db,
-                                  env: this.env});
+        this.showView(viewName, {
+            model: service,
+            db: this.db,
+            env: this.env});
+    },
+
+    show_service: function(req) {
+        this._buildServiceView(req, 'service');
     },
 
     show_service_config: function(req) {
-        console.log('App: Route: Svc Config', req.path, req.pendingRoutes);
-        var service = this.db.services.getById(req.params.id);
-        this._prefetch_service(service);
-        this.showView('service_config', {
-            service: service,
-            db: this.db,
-            env: this.env
-
-        });
+        this._buildServiceView(req, 'service_config');
     },
 
     show_service_relations: function(req) {
-        console.log('App: Route: Svc Relations', req.path, req.pendingRoutes);
-        var service = this.db.services.getById(req.params.id);
-        this._prefetch_service(service);
-        this.showView('service_relations', {model: service, domain_models: this.db});
+        this._buildServiceView(req, 'service_relations');
     },
 
     show_service_constraints: function(req) {
-        console.log('App: Route: Svc Constraints', req.path, req.pendingRoutes);
-        var service = this.db.services.getById(req.params.id);
-        this._prefetch_service(service);
-        this.showView('service_constraints', {model: service, domain_models: this.db});
+        this._buildServiceView(req, 'service_constraints');
     },
 
     show_environment: function (req) {

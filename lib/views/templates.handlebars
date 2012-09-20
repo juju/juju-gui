@@ -10,8 +10,8 @@ YUI.add('juju-templates', function (Y) {
   {{/templates}}
 
   {{#partials}}
-    Y.Handlebars.registerPartial'({{{name}}}',
-            Y.Handlebars.template({{{template}}});
+    Y.Handlebars.registerPartial('{{{name}}}',
+            Y.Handlebars.template({{{template}}}));
   {{/partials}}
 
 }, '3.6.0', {
