@@ -64,7 +64,9 @@ body {
     }
 }
 
-.container {
+#content {
+    position: relative;
+    background-color: #fff;
     width: 100%;
 }
 
@@ -72,10 +74,13 @@ body {
     padding: 5px;
 }
 
-svg {stroke-width: 0;}
+svg {
+    stroke-width: 0;
+}
 
 .crosshatch-background {
     background: url(/assets/images/pattern_tile.png) repeat;
+    margin: 0 -20px 0 -20px;
 }
 
 charms.thumbnails.li { height:4em; }
@@ -138,10 +143,8 @@ g.service-status {
 
         &.status-pending {
             fill: #fcd305;}
-        &.status-started {
+        &.status-good {
             fill: #b7b7b7;}
-        &.status-installed {
-            fill: #ffffff;}
         &.status-error {
             fill: #c01c20;}
     }
@@ -173,6 +176,7 @@ g.unit {
 
 #overview-tasks {
     background: url(/assets/images/bottom_bar.png) repeat-x;
+    margin: 0 -20px 0 -20px;
     height: 50px;
     position: relative;
     color: #2d2d2d!important;
@@ -210,12 +214,12 @@ g.unit {
 
     .picker-edge {
         position: absolute;
-        top: 10px;
+        top: 8px;
         left: 0;
     }
     .picker-body {
         position: absolute;
-        top: 10px;
+        top: 8px;
         left: 4px;
         background: url(/assets/images/picker_1px.png) repeat-x;
         height: 20px;
@@ -223,7 +227,7 @@ g.unit {
     }
     .picker-button {
         position: absolute;
-        top: 10px;
+        top: 8px;
         right: 0;
     }
 }

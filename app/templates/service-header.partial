@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row-fluid">
   <div class="span8">
     <h1><a href="/service/{{service.id}}/"> Service {{service.id}}</a></h1>
 
