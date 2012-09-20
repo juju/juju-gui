@@ -1,14 +1,82 @@
 /* Processed with LESS from lib/views/stylesheet.less */
 body {
-    margin-top: 70px;
+    margin-top: 87px;
+    background-color: #302b28;
+}
+
+#viewport-wrapper {
+    position: relative;
+    width: 85%;
+    margin: 0 auto;
+    padding: 0 12px;
+}
+
+#vp-left-border {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: url(/assets/images/left_shadow.png) repeat-y;
+    margin-left: -12px;
+    width: 12px;
+}
+
+#vp-right-border {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: url(/assets/images/right_shadow.png) repeat-y;
+    margin-right: -12px;
+    width: 12px;
 }
 
 .navbar {
-    margin-top: -70px;
+    margin-top: -87px;
+    margin-bottom: 0;
+    height: 87px;
     min-width: 800px;
+    background: url(/assets/images/top_bar.png) repeat-x;
+    padding: 0;
+    position: relative;
+    color: #2d2d2d!important;
+
+    .brand {
+        padding: 0;
+        position: absolute;
+        display: block;
+        top: 12px;
+        left: 30px;
+    }
+    .nav-environment {
+        position: absolute;
+        top: 5px;
+        left: 128px;
+        padding: 12px;
+    }
+    .nav-alerts-charms {
+        position: absolute;
+        top: 5px;
+        right: 11px;
+        padding: 12px;
+    }
+
+    #omnibar {
+        display: none;
+    }
+}
+
+.container {
+    width: 100%;
+}
+
+.divider {
+    padding: 5px;
 }
 
 svg {stroke-width: 0;}
+
+.crosshatch-background {
+    background: url(/assets/images/pattern_tile.png) repeat;
+}
 
 charms.thumbnails.li { height:4em; }
 .relation {
@@ -104,19 +172,59 @@ g.unit {
 }
 
 #overview-tasks {
-    /*position: relative;*/
+    background: url(/assets/images/bottom_bar.png) repeat-x;
+    height: 50px;
+    position: relative;
+    color: #2d2d2d!important;
 
-    button {
-        color: #2c2c2c;
-        border: 1px solid #999;
+    .controls {
+        position: absolute;
+        top: 1px;
+        left: 11px;
+    }
+    .destroy-control {
+        position: absolute;
+        top: 1px;
+        right: 11px;
+    }
+}
 
-        &:disabled {
-            background-color: #3d3d3d;
-            color: #888;
+.picker {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    height: 24px;
+    &.graph-list-picker {
+        width: 100px;
+        .picker-body {
+            width: 78px;
         }
-        &.active {
-            border: 1px solid #fcd305;
+    }
+    &.zoom-picker {
+        width: 60px;
+        .picker-body {
+            width: 40px;
         }
+    }
+
+    .picker-edge {
+        position: absolute;
+        top: 10px;
+        left: 0;
+    }
+    .picker-body {
+        position: absolute;
+        top: 10px;
+        left: 4px;
+        background: url(/assets/images/picker_1px.png) repeat-x;
+        height: 20px;
+        padding: 4px 0 0 4px;
+    }
+    .picker-button {
+        position: absolute;
+        top: 10px;
+        right: 0;
     }
 }
 

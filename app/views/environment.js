@@ -73,7 +73,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .call(zoom)
             .append('g');
         vis.append('svg:rect')
-            .attr('fill', 'white');
+            .attr('fill', 'rgba(255,255,255,0)');
 
         // Bind visualization resizing on window resize
         Y.on('windowresize', function() {
@@ -387,13 +387,11 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 parseInt(Y.one('#overview-tasks')
                         .getComputedStyle('height') || 22, 10) -
                 parseInt(Y.one('.navbar')
-                        .getComputedStyle('height') || 70, 10) -
-                parseInt(Y.one('.navbar')
-                        .getComputedStyle('margin-bottom') || 18, 10);
+                        .getComputedStyle('height') || 87, 10);
 
             // Make sure we don't get sized any smaller than 800x600
             viewport_height = Math.max(viewport_height, height);
-            if (container.get('winWidth') < width) {
+            if (container.getComputedStyle('width') < width) {
                 viewport_width = width;
             }
         }
