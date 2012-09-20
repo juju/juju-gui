@@ -28,6 +28,7 @@ var exposeButtonMixin = {
         var service = this.get('model'),
             db = this.get('db');
         service.set('exposed', false);
+        this.get('env').get_service(service.get('id'));
         db.fire('update');
     },
 
@@ -42,6 +43,7 @@ var exposeButtonMixin = {
         var service = this.get('model'),
             db = this.get('db');
         service.set('exposed', true);
+        this.get('env').get_service(service.get('id'));
         db.fire('update');
     }
 };
@@ -248,7 +250,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'},
         'div.thumbnail': {click: function(ev) {
             console.log('Unit clicked', ev.currentTarget.get('id'));
-            this.fire('showUnit', {unit_id: ev.currentTarget.get('id')})
+            this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
         }},
         'a#destroy-service': {click: 'confirmDestroy'},
         '#destroy-service-modal.btn-danger': {click: 'destroyService'}
@@ -316,35 +318,6 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         this.panel.hide();
         this.panel.destroy();
         this.fire('showEnvironment');
-    },
-
-    unexposeService: function() {
-        var service = this.get('model'),
-            env = this.get('env');
-
-        env.unexpose(service.get('id'),
-            Y.bind(this._unexposeServiceCallback, this));
-    },
-
-    _unexposeServiceCallback: function() {
-        var service = this.get('model'),
-            db = this.get('db');
-        service.set('exposed', false);
-        db.fire('update');
-    },
-
-    exposeService: function() {
-        var service = this.get('model'),
-            env = this.get('env');
-        env.expose(service.get('id'),
-            Y.bind(this._exposeServiceCallback, this));
-    },
-
-    _exposeServiceCallback: function() {
-        var service = this.get('model'),
-            db = this.get('db');
-        service.set('exposed', true);
-        db.fire('update');
     },
 
     resetUnits: function(ev) {
