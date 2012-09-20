@@ -87,7 +87,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
           callback: function() {
               var self = this;
               Y.later(6000, this, function (o) {
-                          self.get("container")
+                          Y.one("body")
                           .all('[data-timestamp]')
                           .each(function (node) {
                               node.setHTML(views.humanizeTimestamp(
