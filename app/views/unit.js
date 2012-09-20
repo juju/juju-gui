@@ -65,6 +65,7 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
             unit: unit.getAttrs(),
             unit_ip_description: unit_ip_description,
             service: service.getAttrs(),
+            disabled_remove: service.get('unit_count') <= 1,
             charm: charm.getAttrs(),
             machine: db.machines.getById(unit.get('machine')).getAttrs(),
             unit_error: unit_error,
@@ -75,7 +76,8 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
 
     events: {
         '#resolved-unit-button': {click: 'confirmResolved'},
-        '#retry-unit-button': {click: 'retry'}
+        '#retry-unit-button': {click: 'retry'},
+        '#remove-unit-button': {click: 'confirmRemoved'}
     },
 
     confirmResolved: function (ev) {
@@ -86,7 +88,7 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
                 'Are you sure you want to tell the system this problem has been ' +
                     'resolved?  This action cannot be undone.',
                 '#resolved-modal-panel',
-                'Resolved Unit',
+                'Unit Error Has Been Resolved',
                 Y.bind(this.resolvedUnit, this));
         }
         this.resolved_panel.show();
@@ -104,6 +106,44 @@ var UnitView = Y.Base.create('UnitView', Y.View, [], {
     _resolvedUnitCallback: function(button, ev) {
         button.set('disabled', false);
         this.resolved_panel.hide();
+    },
+
+    confirmRemoved: function (ev) {
+        // We wait to make the panel until now, because in the render method
+        // the container is not yet part of the document.
+        var unit = this.get('unit'),
+            service = this.get('db').services.getById(unit.get('service'));
+        if (Y.Lang.isUndefined(this.remove_panel)) {
+            this.remove_panel = views.createModalPanel(
+                'Are you sure you want to remove this unit?  ' +
+                'This action cannot be undone, though you can ' +
+                'simply add another unit later.',
+                '#remove-modal-panel',
+                'Remove Unit',
+                Y.bind(this.removeUnit, this));
+        }
+        this.remove_panel.show();
+    },
+
+    removeUnit: function(ev) {
+        ev.preventDefault();
+        var env = this.get('env'),
+            unit = this.get('unit');
+        ev.target.set('disabled', true);
+        env.remove_units(
+            [unit.get('id')],
+            Y.bind(this._removeUnitCallback, this));
+    },
+
+    _removeUnitCallback: function(ev) {
+        var unit = this.get('unit'),
+            db = this.get('db'),
+            service = db.services.getById(unit.get('service')),
+            unit_name = ev.unit_names[0];
+        db.units.remove(db.units.getById(unit_name));
+        service.set('unit_count', service.get('unit_count') - 1);
+        this.remove_panel.destroy();
+        this.fire('showService', {service: service});
     },
 
     retry: function(ev) {

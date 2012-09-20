@@ -40,6 +40,7 @@
       service = new models.Service({
         id: 'mysql',
         charm: 'cs:mysql',
+        unit_count: 1,
         loaded: true,
         rels: {
           ident: 'relation-0',
@@ -145,8 +146,11 @@
 
     it('should always display Remove button', function() {
       var view = new UnitView(
-        {container: container, unit: unit, db: db, env: env}).render();
-      container.one('#remove-unit-button').getHTML().should.equal('Remove');
+        {container: container, unit: unit, db: db, env: env}).render(),
+        button = container.one('#remove-unit-button');
+      button.getHTML().should.equal('Remove');
+      // Control is disabled with only one unit for the given service.
+      button.get('disabled').should.equal(true);
     });
 
     it('should send resolved op when confirmation button clicked',
@@ -170,6 +174,36 @@
         var msg = conn.last_message();
         msg.op.should.equal('resolved');
         msg.retry.should.equal(true);
+    });
+
+    it('should send remove_units op when confirmation clicked', function() {
+      // Enable removal button by giving the service more than one unit.
+      service.set('unit_count', 2);
+      var view = new UnitView(
+         {container: container, unit: unit, db: db, env: env}).render();
+      container.one('#remove-unit-button').simulate('click');
+      container.one('#remove-modal-panel .btn-danger').simulate('click');
+      var msg = conn.last_message();
+      msg.op.should.equal('remove_units');
+    });
+
+    it('should clear out the database after a unit is removed', function() {
+      // Enable removal button by giving the service more than one unit.
+      service.set('unit_count', 2);
+      var view = new UnitView(
+         {container: container, unit: unit, db: db, env: env}).render();
+      container.one('#remove-unit-button').simulate('click');
+      container.one('#remove-modal-panel .btn-danger')
+         .simulate('click');
+      var called_event = null;
+      view.on('showService', function(ev) {
+        called_event = ev;
+      });
+      var msg = conn.last_message();
+      msg.result = true;
+      env.dispatch_result(msg);
+      var _ = expect(db.units.getById(unit.get('id'))).to.not.exist;
+      called_event.service.should.equal(service);
     });
 
   });
