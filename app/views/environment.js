@@ -53,11 +53,11 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .x(xscale)
             .y(yscale)
             .scaleExtent([0.25, 1.75])
-            .on('zoom', function() { 
+            .on('zoom', function() {
                 self.rescale(vis, d3.event);
             });
         self.set('zoom', zoom);
-        
+
         // Scales for unit sizes.
         // XXX magic numbers will have to change; likely during
         // the UI work
@@ -76,13 +76,13 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .attr('fill', 'white');
 
         // Bind visualization resizing on window resize
-        Y.on('windowresize', function() { 
-            self.setSizesFromViewport(vis, container, xscale, yscale); 
+        Y.on('windowresize', function() {
+            self.setSizesFromViewport(vis, container, xscale, yscale);
         });
 
         // If the view is bound to the dom, set sizes from viewport
         if (Y.one('svg')) {
-            self.setSizesFromViewport(vis, container, xscale, yscale); 
+            self.setSizesFromViewport(vis, container, xscale, yscale);
         }
 
         var tree = d3.layout.pack()
@@ -342,7 +342,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
      * Wraper around the actual rescale method for zoom buttons.
      */
     _fire_zoom: function(delta) {
-        var vis = this.get('vis'),  
+        var vis = this.get('vis'),
             zoom = this.get('zoom'),
             evt = {};
 
@@ -373,7 +373,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         // start with some reasonable defaults
         var viewport_height = '100%',
             viewport_width = parseInt(
-                container.getComputedStyle('width'), 10),
+                    container.getComputedStyle('width'), 10),
             svg = container.one('svg'),
             width = 800,
             height = 600;

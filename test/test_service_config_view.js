@@ -76,7 +76,7 @@
         it('should display the configuration', function () {
             var view = new ServiceConfigView({
                 container: container,
-                service: service,
+                model: service,
                 db: db,
                 env: env
             });
@@ -95,7 +95,7 @@
         it('should let the user change a configuration value', function () {
             var view = new ServiceConfigView({
                 container: container,
-                service: service,
+                model: service,
                 db: db,
                 env: env
             }).render();
@@ -114,7 +114,7 @@
         it('should update the model when the callback is called', function () {
             var view = new ServiceConfigView({
                 container: container,
-                service: service,
+                model: service,
                 db: db,
                 env: env
             }).render();
@@ -130,7 +130,7 @@
         function () {
             var view = new ServiceConfigView({
                 container: container,
-                service: service,
+                model: service,
                 db: db,
                 env: env
             }).render();
@@ -148,7 +148,7 @@
         it('should reenable the "Update" button if RPC fails', function () {
             var view = new ServiceConfigView({
                 container: container,
-                service: service,
+                model: service,
                 db: db,
                 env: env
             }).render();
@@ -167,7 +167,7 @@
         it('should display a message when a server error occurs', function () {
             var view = new ServiceConfigView({
                 container: container,
-                service: service,
+                model: service,
                 db: db,
                 env: env
             }).render();
@@ -188,7 +188,7 @@
                 function () {
             var view = new ServiceConfigView({
                 container: container,
-                service: service,
+                model: service,
                 db: db,
                 env: env
             }).render();

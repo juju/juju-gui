@@ -35,9 +35,13 @@
         new models.ServiceUnit({id:'mysql/1', agent_state: 'pending'}),
         new models.ServiceUnit({id:'mysql/2', agent_state: 'pending'})
       ]);
-      service = new models.Service({id: 'mysql', charm: 'mysql',
-                                    unit_count: db.units.size()});
-      db.services.add([service]);
+      service = new models.Service({
+          id: 'mysql',
+          charm: 'mysql',
+          unit_count: db.units.size(),
+          exposed: false});
+
+        db.services.add([service]);
       done();
     });
 
@@ -60,7 +64,7 @@
     it('should not show controls if the charm is subordinate', function () {
       charm.set('is_subordinate', true);
       var view = new ServiceView(
-        {container: container, model: service, db: db,
+        {container: container, service: service, db: db,
          env: env}).render();
       // "var _ =" makes the linter happy.
       var _ = expect(container.one('#num-service-units')).to.not.exist;
@@ -245,6 +249,58 @@
       // Catch show environment event.
       called.should.equal(true);
     });
+
+      it('should send an expose RPC call when exposeService is invoked',
+            function() {
+          var view = new ServiceView(
+              {container: container, model: service, db: db,
+                  env: env});
+
+          view.exposeService();
+          conn.last_message().op.should.equal('expose');
+      });
+
+      it('should send an unexpose RPC call when unexposeService is invoked',
+            function() {
+          var view = new ServiceView(
+              {container: container, model: service, db: db,
+                  env: env});
+
+          view.unexposeService();
+          conn.last_message().op.should.equal('unexpose');
+      });
+
+      it('should invoke callback when expose RPC returns', function() {
+          var view = new ServiceView(
+              {container: container, model: service, db: db,
+                  env: env}).render();
+
+          var test = function(selectorBefore, selectorAfter, callback) {
+              console.log('Service is exposed: ' + service.get('exposed'));
+              console.log('selectorBefore: ' + selectorBefore);
+              console.log('selectorAfter: ' + selectorAfter);
+
+              assert.isNotNull(container.one(selectorBefore));
+              assert.isNull(container.one(selectorAfter));
+
+              var dbUpdated = false;
+              db.on('update', function() {
+                  dbUpdated = true;
+              });
+              callback();
+              // In the real code, the view should be updated by the db change
+              // event. Here we should call it manually because we have no
+              // "route" for this test.
+              view.render();
+
+              assert.isTrue(dbUpdated);
+              assert.isNotNull(container.one(selectorAfter));
+              assert.isNull(container.one(selectorBefore));
+          };
+
+          test('.exposeService', '.unexposeService', Y.bind(view._exposeServiceCallback, view));
+          test('.unexposeService', '.exposeService', Y.bind(view._unexposeServiceCallback, view));
+      });
 
   });
 }) ();
