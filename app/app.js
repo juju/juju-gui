@@ -209,7 +209,8 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         this.showView(viewName, {
             model: service,
             db: this.db,
-            env: this.env});
+            env: this.env,
+            app: this});
     },
 
     show_service: function(req) {

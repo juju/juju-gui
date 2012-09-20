@@ -111,77 +111,59 @@
             message.config.option1.should.equal('value1');
         });
 
-        it('should update the model when the callback is called', function () {
-            var view = new ServiceConfigView({
-                container: container,
-                model: service,
-                db: db,
-                env: env
-            }).render();
-
-            service.get('config').option0.should.equal('value0');
-            container.one('#input-option0').set('value', 'new value');
-            service.get('config').option0.should.equal('value0');
-            view._saveConfigCallback();
-            service.get('config').option0.should.equal('new value');
-        });
-
-        it('should disable the "Update" button while the RPC is outstanding',
-        function () {
-            var view = new ServiceConfigView({
-                container: container,
-                model: service,
-                db: db,
-                env: env
-            }).render();
-
-            // Clicking on the "Update" button disables it until the RPC
-            // callback returns, then it is re-enabled.
-            var save_button = container.one('#save-service-config');
-            save_button.get('disabled').should.equal(false);
-            view.saveConfig();
-            save_button.get('disabled').should.equal(true);
-            view._saveConfigCallback();
-            save_button.get('disabled').should.equal(false);
-        });
-
         it('should reenable the "Update" button if RPC fails', function () {
+            var assertButtonState = function(shouldBe) {
+                var save_button = container.one('#save-service-config');
+                save_button.get('disabled').should.equal(shouldBe);
+            };
+
             var view = new ServiceConfigView({
                 container: container,
                 model: service,
                 db: db,
-                env: env
+                env: (function() {
+                    env.set_config = function(service, config, callback) {
+                        assertButtonState(true);
+                        callback({
+                            err: true
+                        });
+                    };
+                    return env;
+                })()
             }).render();
 
             // Clicking on the "Update" button disables it until the RPC
             // callback returns, then it is re-enabled.
-            var save_button = container.one('#save-service-config');
-            save_button.get('disabled').should.equal(false);
+            assertButtonState(false);
             view.saveConfig();
-            save_button.get('disabled').should.equal(true);
-            var ev = {err: true};
-            view._saveConfigCallback(ev);
-            save_button.get('disabled').should.equal(false);
+            assertButtonState(false);
         });
 
         it('should display a message when a server error occurs', function () {
+            var ev = {err: true},
+                alert_ = container.one('#message-area>.alert');
+
             var view = new ServiceConfigView({
                 container: container,
                 model: service,
                 db: db,
-                env: env
+                env: (function() {
+                    env.set_config = function(service, config, callback) {
+                        callback(ev);
+                    };
+                    return env;
+                })()
             }).render();
-
-            var ev = {err: true},
-                alert_ = container.one('#message-area>.alert');
 
             // Before an erronious event is processed, no alert exists.
             var _ = expect(alert_).to.not.exist;
             // Handle the error event.
-            view._saveConfigCallback(ev);
+            Y.namespace('juju.views.utils').buildServerCallbackHandler({
+                container: container
+            })(ev);
             // The event handler should have created an alert box.
             alert_ = container.one('#message-area>.alert');
-            alert_.getHTML().should.contain(view._serverErrorMessage);
+            alert_.getHTML().should.contain('An error ocurred.');
         });
 
         it('should display an error when addErrorMessage is called',
@@ -193,13 +175,17 @@
                 env: env
             }).render();
 
-            var error_message = 'Something bad happened.',
+            var error_message = Y.namespace('juju.views.utils')._serverErrorMessage,
                 alert_ = container.one('#message-area>.alert');
 
             // Before an erronious event is processed, no alert exists.
             var _ = expect(alert_).to.not.exist;
             // Display the error message.
-            view._addErrorMessage(container, error_message);
+            Y.namespace('juju.views.utils').buildServerCallbackHandler({
+                container: container
+            })({
+                err: true
+            });
             // The method should have created an alert box.
             alert_ = container.one('#message-area>.alert');
             alert_.getHTML().should.contain(error_message);

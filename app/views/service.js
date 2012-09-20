@@ -46,6 +46,63 @@ var exposeButtonMixin = {
     }
 };
 
+var getElementsValuesMap = function(container, cls, originalMap) {
+    var result = (originalMap? originalMap : {});
+    container.all(cls).each(function(el) {
+        result[el.get('name')] = el.get('value');
+    });
+
+    return result;
+};
+
+var buildServerCallbackHandler = function(config) {
+    var _serverErrorMessage = Y.namespace('juju.views.utils')._serverErrorMessage,
+        container = config.container,
+        scope = config.scope,
+        initHandler = config.initHandler,
+        finalizeHandler = config.finalizeHandler,
+        successHandler = config.successHandler,
+        errorHandler = config.errorHandler;
+
+    function _addErrorMessage (message) {
+        var div = container.one('#message-area')
+            .appendChild(Y.Node.create('<div/>'))
+            .addClass('alert')
+            .addClass('alert-error')
+            .set('text', message);
+
+        var close = div.appendChild(Y.Node.create('<a/>'))
+           .addClass('close')
+           .set('text', '×');
+
+        close.on('click', function(){
+            div.remove();
+        });
+    }
+
+    function invokeCallback(callback) {
+        if(callback) {
+            if(scope) {
+                callback.apply(scope);
+            } else {
+                callback();
+            }
+        }
+    }
+
+    return function(ev) {
+        if (ev && ev.err) {
+            _addErrorMessage(_serverErrorMessage);
+            invokeCallback(errorHandler);
+        } else {
+            invokeCallback(successHandler);
+        }
+        invokeCallback(finalizeHandler);
+    };
+};
+Y.namespace('juju.views.utils').buildServerCallbackHandler = buildServerCallbackHandler;
+Y.namespace('juju.views.utils')._serverErrorMessage = 'An error ocurred.';
+
 var ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
     template: Templates['service-relations'],
@@ -76,6 +133,46 @@ var ServiceConstraints = Y.Base.create('ServiceConstraintsView', Y.View, [views.
         Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
     },
 
+    events: {
+        '#save-service-constraints': {click: 'updateConstraints'}
+    },
+
+    updateConstraints: function() {
+        var service = this.get('model'),
+            container = this.get('container'),
+            env = this.get('env');
+
+        var values = (function() {
+            var result = [],
+                map = getElementsValuesMap(container, '.constraint-field');
+
+            for(var key in map) {
+                result.push(key + '=' + map[key]);
+            }
+
+            return result;
+        })();
+
+        // Disable the "Update" button while the RPC call is outstanding.
+        container.one('#save-service-constraints').set('disabled', 'disabled');
+        env.set_constraints(service.get('id'),
+            values,
+            buildServerCallbackHandler({
+                container: container,
+                successHandler: function()  {
+                    var service = this.get('model'),
+                        env = this.get('env'),
+                        app = this.get('app');
+
+                    env.get_service(service.get('id'), Y.bind(app.load_service, app));
+                },
+                errorHandler: function() {
+                    container.one('#save-service-constraints').removeAttribute('disabled');
+                },
+                scope: this}
+            ));
+    },
+
     render: function() {
         var container = this.get('container'),
             db = this.get('db'),
@@ -84,8 +181,16 @@ var ServiceConstraints = Y.Base.create('ServiceConstraintsView', Y.View, [views.
         var constraints = service.get('constraints');
         var display_constraints = [];
 
+        //these are read-only values
+        var readOnly = {
+            'provider-type': constraints['provider-type'],
+            'ubuntu-series': constraints['ubuntu-series']
+        };
+
         for (var key in constraints) {
-            display_constraints.push({'name': key, 'value': constraints[key]});
+            if(!readOnly[key]) {
+                display_constraints.push({'name': key, 'value': constraints[key]});
+            }
         }
 
         var generics = ['cpu', 'mem', 'arch'];
@@ -100,6 +205,13 @@ var ServiceConstraints = Y.Base.create('ServiceConstraintsView', Y.View, [views.
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'constraints': display_constraints,
+             'readOnly': (function() {
+                 var arr = [];
+                 for (var key in readOnly) {
+                     arr.push({'name': key, 'value': readOnly[key]});
+                 }
+                 return arr;
+             })(),
              'charm': this.renderable_charm(service.get('charm'), db)}
             ));
     }
@@ -117,8 +229,8 @@ var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBa
     },
 
     events: {
-        '#save-service-config': {click: 'saveConfig'},
-        '.alert > .close': {click: 'closeAlert'}},
+        '#save-service-config': {click: 'saveConfig'}
+    },
 
     render: function () {
         var container = this.get('container'),
@@ -161,53 +273,27 @@ var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBa
     saveConfig: function() {
         var env = this.get('env'),
             container = this.get('container'),
-            service = this.get('model'),
-            config = {};
+            service = this.get('model');
 
         // Disable the "Update" button while the RPC call is outstanding.
         container.one('#save-service-config').set('disabled', 'disabled');
 
-        container.all('.config-field').each(function(el) {
-            config[el.get('name')] = el.get('value');
-        });
+        env.set_config(service.get('id'),
+            getElementsValuesMap(container, '.config-field'),
+            buildServerCallbackHandler({
+                container: container,
+                successHandler: function()  {
+                    var service = this.get('model'),
+                        env = this.get('env'),
+                        app = this.get('app');
 
-        env.set_config(service.get('id'), config,
-            Y.bind(this._saveConfigCallback, this));
-
-    },
-
-    _addErrorMessage: function(container, message) {
-        container.one('#message-area')
-            .appendChild(Y.Node.create('<div/>'))
-                .addClass('alert')
-                .addClass('alert-error')
-                .set('text', message)
-            .appendChild(Y.Node.create('<a/>'))
-                .addClass('close')
-                .set('text', '×');
-    },
-
-    _serverErrorMessage: 'An error ocurred.',
-
-    _saveConfigCallback: function(ev) {
-        var service = this.get('model'),
-            container = this.get('container'),
-            db = this.get('db');
-
-        if (ev && ev.err) {
-            this._addErrorMessage(container, this._serverErrorMessage);
-        } else {
-            var config = service.get('config');
-            container.all('.config-field').each(function(el) {
-                config[el.get('name')] = el.get('value');
-            });
-        }
-
-        container.one('#save-service-config').removeAttribute('disabled');
-    },
-
-    closeAlert: function(ev) {
-        ev.target.get('parentNode').remove();
+                    env.get_service(service.get('id'), Y.bind(app.load_service, app));
+                },
+                errorHandler: function() {
+                    container.one('#save-service-config').removeAttribute('disabled');
+                },
+                scope: this}
+            ));
     }
 });
 

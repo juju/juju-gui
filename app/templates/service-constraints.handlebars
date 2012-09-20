@@ -4,18 +4,28 @@
     <form class="form-horizontal">
       <legend>{{service.id}} constraints</legend>
 
+      {{#readOnly}}
+        <div class="control-group">
+          <div class="control-label" for="{{name}}">{{name}}</div>
+          <div class="controls">
+            <div class="read-only">{{value}}</div>
+          </div>
+        </div>
+      {{/readOnly}}
+
       {{#constraints}}
         <div class="control-group">
           <div class="control-label" for="{{name}}">{{name}}</div>
           <div class="controls">
-             <input type="text" id="input-{{name}}" value="{{value}}"/>
+             <input class="constraint-field" type="text" name="{{name}}"
+                id="input-{{name}}" value="{{value}}"/>
           </div>          
         </div>
       {{/constraints}}
 
         <div class="control-group">
           <div class="controls">
-            <button type="submit" cls="btn">Update</button>
+            <button type="button" cls="btn" id="save-service-constraints">Update</button>
           </div>
         </div>
 

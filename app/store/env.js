@@ -178,8 +178,14 @@ Y.extend(Environment, Y.Base, {
             op: 'set_config',
             service_name: service,
             config: config}, callback);
-    }
+    },
 
+    set_constraints: function(service, constraints, callback) {
+        this._send_rpc({
+            op: 'set_constraints',
+            service_name: service,
+            constraints: constraints}, callback);
+    }
 });
 
 
