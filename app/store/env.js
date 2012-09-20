@@ -170,7 +170,7 @@ Y.extend(Environment, Y.Base, {
     destroy_service: function(service, callback) {
         this._send_rpc({
             'op': 'destroy_service',
-            'service': service}, callback);
+            'service_name': service}, callback);
     },
 
     set_config: function(service, config, callback) {
@@ -178,6 +178,14 @@ Y.extend(Environment, Y.Base, {
             op: 'set_config',
             service_name: service,
             config: config}, callback);
+    },
+
+    resolved: function(unit_name, relation_name, retry, callback) {
+        this._send_rpc({
+            op: 'resolved',
+            unit_name: unit_name,
+            relation_name: relation_name || null,
+            retry: retry || false}, callback);
     }
 
 });

@@ -73,7 +73,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .call(zoom)
             .append('g');
         vis.append('svg:rect')
-            .attr('fill', 'white');
+            .attr('fill', 'white')
+            .on('click', function() {
+                self.removeSVGClass('.service-control-panel.active', 'active');
+            });
 
         // Bind visualization resizing on window resize
         Y.on('windowresize', function() {
@@ -138,6 +141,10 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 // as arguments.
                 (self.service_click_actions[curr_click_action])(d, this, self);
             })
+            .on('dblclick', function(d) {
+                // Just show the service on double-click.
+                (self.service_click_actions.show_service)(d, this, self);
+            })
             .call(drag);
 
         node.append('rect')
@@ -154,7 +161,8 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .on('mouseover', function(d) {
                 // Save this as the current potential drop-point for drag
                 // targets if it's selectable.
-                if (d3.event.relatedTarget.nodeName == 'rect' &&
+                if ((d3.event.relatedTarget &&
+                        d3.event.relatedTarget.nodeName == 'rect') &&
                         self.hasSVGClass(this, 'selectable-service')) {
                     console.log('mouseover', d3.event);
                     self.set('potential_drop_point_service', d);
@@ -602,43 +610,18 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             view.set('destroy_service', m);
 
             // show dialog
-            if (Y.Lang.isUndefined(view.panel)) {
-                var panel = view.panel = new Y.Panel({
-                    bodyContent: 'Are you sure you want to destroy the service? This cannot be undone.',
-                    width: 400,
-                    zIndex: 5,
-                    centered: true,
-                    show: false,
-                    classNames: 'modal',
-                    modal: true,
-                    render: '#destroy-modal-panel',
-                    buttons: [
-                        {
-                            value  : 'Destroy Service',
-                            section: Y.WidgetStdMod.FOOTER,
-                            action : Y.bind(function(ev) {
-                                    ev.preventDefault();
-                                    ev.target.set('disabled', true);
-                                    view.service_click_actions
-                                        .destroyService(m, context, view);
-                                },
-                                this),
-                            classNames: ['btn-danger', 'btn']
-                        },
-                        {
-                            value  : 'Cancel',
-                            section: Y.WidgetStdMod.FOOTER,
-                            action : function (e) {
-                                e.preventDefault();
-                                panel.hide();
-                            },
-                            classNames: ['btn']
-                        }
-                    ]
-                });
-            }
-            view.panel.show();
-            Y.all('#destroy-modal-panel .yui3-button').removeClass('yui3-button');
+            view.set('destroy_dialog', views.createModalPanel(
+                'Are you sure you want to destroy the service? ' +
+                'This cannot be undone.',
+                '#destroy-modal-panel',
+                'Destroy Service',
+                Y.bind(function(ev) {
+                        ev.preventDefault();
+                        ev.target.set('disabled', true);
+                        view.service_click_actions
+                            .destroyService(m, context, view);
+                    },
+                    this)));
         },
 
         /*
@@ -649,14 +632,9 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 service = view.get('destroy_service');
             env.destroy_service(
                 service.get('id'), Y.bind(function(ev) {
-                    console.log(ev);
+                    view.get('destroy_dialog').hide();
                 }, this));
         },
-
-        /*
-         * Cancel destroying a service
-         */
-        destroy_service_cancel: function(m, context, view) {},
 
         /*
          * Fired when clicking the first service in the add relation
