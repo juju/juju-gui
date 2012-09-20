@@ -97,7 +97,7 @@ var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
 });
 models.ServiceUnit = ServiceUnit;
 
-var ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
+var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
     model: ServiceUnit,
     get_units_for_service: function(service, asList) {
         var options = {},
@@ -108,7 +108,7 @@ var ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
         }
 
         var units = this.filter(options, function(m) {
-            return m.get('service') == sid;
+            return m.service == sid;
         });
         return units;
     },
@@ -132,7 +132,7 @@ var ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
             units_for_service = this.get_units_for_service(service);
 
         units_for_service.forEach(function(unit) {
-            var state = unit.get('agent_state');
+            var state = unit.agent_state;
             if (aggregate_map[state] === undefined) {
                 aggregate_map[state] = 1;
             } else {

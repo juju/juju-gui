@@ -238,8 +238,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         container.setHTML(this.template(
             {'service': service.getAttrs(),
              'charm': this.renderable_charm(charm_name, db),
-             'units': units.map(function(u) {
-                 return u.getAttrs();})
+             'units': units)
         }));
         return this;
     },
@@ -397,7 +396,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
             for (var i=units.length - 1;
                  unit_ids_to_remove.length < delta;
                  i--) {
-                unit_ids_to_remove.push(units[i].get('id'));
+                unit_ids_to_remove.push(units[i].id);
             }
             env.remove_units(
                 unit_ids_to_remove,
@@ -417,10 +416,9 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         // ev.results is an array of the new unit ids to be created.
         db.units.add(
             Y.Array.map(unit_names, function (unit_id) {
-                return new models.ServiceUnit(
-                    {id: unit_id,
-                     agent_state: 'pending',
-                     service: service_id});
+                return {id: unit_id,
+                        agent_state: 'pending',
+                        service: service_id};
             }));
         service.set(
             'unit_count', service.get('unit_count') + unit_names.length);
