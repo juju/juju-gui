@@ -97,7 +97,7 @@ var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
 });
 models.ServiceUnit = ServiceUnit;
 
-var ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
+var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
     model: ServiceUnit,
     get_units_for_service: function(service, asList) {
         var options = {},

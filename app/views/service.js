@@ -248,7 +248,7 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'},
         'div.thumbnail': {click: function(ev) {
             console.log('Unit clicked', ev.currentTarget.get('id'));
-            this.fire('showUnit', {unit_id: ev.currentTarget.get('id')})
+            this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
         }},
         'a#destroy-service': {click: 'confirmDestroy'},
         '#destroy-service-modal.btn-danger': {click: 'destroyService'}
