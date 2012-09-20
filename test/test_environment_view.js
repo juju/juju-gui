@@ -47,6 +47,11 @@
                 }], ['unit', 'add', {
                     'machine': 0, 
                     'agent-state': 'started', 
+                    'public-address': '192.168.122.113', 
+                    'id': 'mediawiki/0'
+                }], ['unit', 'add', {
+                    'machine': 0, 
+                    'agent-state': 'started', 
                     'public-address': '192.168.122.222', 
                     'id': 'mysql/0'
                 }]
@@ -80,13 +85,19 @@
 
         beforeEach(function (done) {
             container = Y.Node.create('<div id="test-container" />');
+            Y.one('body').append(container);
+            var navbar = Y.Node.create('<div class="navbar" ' +
+                'style="height:70px;">Navbar</div>');
+            Y.one('body').append(navbar);
             db = new models.Database();
             db.on_delta({data: environment_delta});
             done();
         });
 
         afterEach(function(done) {
+            container.remove();
             container.destroy();
+            Y.one('body').removeChild(Y.one('.navbar'));
             db.destroy();
             env._txn_callbacks = {};
             conn.messages = [];
@@ -104,20 +115,24 @@
                 });
                 view.render();
                 container.all('.service-border').size().should.equal(3);
-                container.all('.relation').size().should.equal(1);
+
+                // Count all the real relations.
+                (container.all('.relation').size() -
+                 container.all('.pending-relation').size())
+                    .should.equal(1);
                 done();
             }
         );
 
         // Ensure that we can add a relation
-        it('must be able to add a relation between services',
+        // SKIP: the add-relation-btn is going away
+        it.skip('must be able to add a relation between services',
             function(done) {
                 var view = new EnvironmentView({
                     container: container,
                     domain_models: db,
                     env: env
-                });
-                view.render();
+                }).render();
                 var add_relation = container.one('#add-relation-btn'),
                     service = container.one('.service');
                 add_relation.after('click', function() {
@@ -142,6 +157,119 @@
             }
         );
 
+        // Ensure that the zoom controls work
+        it('must be able to zoom using controls', function(done) {
+            var view = new EnvironmentView({
+                container: container,
+                domain_models: db,
+                env: env
+            }).render();
+            var zoom_in = container.one('#zoom-in-btn'),
+                zoom_out = container.one('#zoom-out-btn'),
+                svg = container.one('svg g g');
+            zoom_in.after('click', function() {
+                view.zoom_in();
+                var attr = svg.getAttribute('transform');
+                // Ensure that, after clicking the zoom in button, that the
+                // scale portion of the transform attribute of the svg
+                // element has been upped by 0.2.  The transform attribute
+                // also contains translate, so test via a regex.
+                /scale\(1.2\)/.test(attr).should.equal(true);
+                done();
+            });
+            zoom_in.simulate('click');
+        });
+
+        // Ensure that sizes are computed properly
+        it('must be able to compute rect sizes based on the svg and' +
+                ' viewport size',
+            function(done) {
+                var view = new EnvironmentView({
+                    container: container,
+                    domain_models: db,
+                    env: env
+                }).render();
+                var svg = Y.one('svg');
+                parseInt(svg.one('rect').getAttribute('height'))
+                    .should.equal(
+                        parseInt(svg.getComputedStyle('height')));
+                parseInt(svg.one('rect').getAttribute('width'))
+                    .should.equal(
+                        parseInt(svg.getComputedStyle('width')));
+                done();
+            }
+        );
+
+        // Ensure that sizes are computed properly
+        it('must be able to compute sizes by the viewport with a minimum',
+            function(done) {
+                var view = new EnvironmentView({
+                    container: container,
+                    domain_models: db,
+                    env: env
+                }).render();
+                var svg = Y.one('svg');
+                parseInt(svg.getAttribute('height'))
+                    .should.equal(
+                        Math.max(600, 
+                            container.get('winHeight') -
+                            parseInt(Y.one('#overview-tasks')
+                                .getComputedStyle('height'), 10) -
+                            parseInt(Y.one('.navbar')
+                                .getComputedStyle('height'), 10) -
+                            parseInt(Y.one('.navbar')
+                                .getComputedStyle('margin-bottom'), 10)
+                        ));
+                done();
+            }
+        );
+
+        // Tests for control panel
+        it('must be able to toggle a control panel', function(done) {
+            var view = new EnvironmentView({
+                container: container,
+                domain_models: db,
+                env: env
+            }).render();
+            container.all('.service').each(function(node, i) {
+                node.after('click', function() {
+                    view.hasSVGClass(
+                        node.one('.service-control-panel'),
+                        'active').should.equal(true);
+                    container.all('.service-control-panel.active').size()
+                        .should.equal(1);
+                });
+            });
+            done();
+        });
+
+        it("must be able to add a relation from the control panel",
+            function(done) {
+                var view = new EnvironmentView({
+                    container: container,
+                    domain_models: db,
+                    env: env
+                }).render();
+                var service = container.one('.service'),
+                    add_rel = service.one('.add-relation'),
+                    after_evt;
+                after_evt = service.after('click', function() {
+                    after_evt.detach();
+                    add_rel.simulate('click');
+                });
+                add_rel.after('click', function() {
+                    container.all('.selectable-service').size()
+                        .should.equal(2);
+                    service.next().simulate('click');
+                });
+                service.next('.service').after('click', function() {
+                    container.all('.selectable-service').size()
+                        .should.equal(0);
+                    done();
+                });
+                service.simulate('click');
+            }
+        );
     });
 
 })();

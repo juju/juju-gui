@@ -74,6 +74,14 @@ var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
         return result;
     },
 
+    /*
+     * Utility methods for SVG regarding classes
+     */
+    hasSVGClass: function(selector, class_name) {
+        var classes = selector.getAttribute('class');
+        return classes.indexOf(class_name) != -1;
+    },
+
     addSVGClass: function(selector, class_name) {
         if (typeof(selector) == 'string') {
             Y.all(selector).each(function(n) {
@@ -96,6 +104,12 @@ var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
             var classes = selector.getAttribute('class');
             selector.setAttribute('class', classes.replace(class_name, ''));
         }
+    },
+
+    toggleSVGClass: function(selector, class_name) {
+        this.hasSVGClass(selector, class_name) ?
+            this.removeSVGClass(selector, class_name) :
+            this.addSVGClass(selector, class_name);
     }
 
 });

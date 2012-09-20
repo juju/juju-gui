@@ -1,13 +1,31 @@
 /* Processed with LESS from lib/views/stylesheet.less */
+body {
+    margin-top: 70px;
+}
+
+.navbar {
+    margin-top: -70px;
+    min-width: 800px;
+}
+
 svg {stroke-width: 0;}
 
 charms.thumbnails.li { height:4em; }
 .relation {
     stroke: #333333; 
-    stroke-width: 1px;
+    stroke-width: 3px;
+
+    &.error {
+        stroke: #cc3333;
+    }
 
     &.pending-relation {
+        stroke-width: 2px;
         stroke-dasharray: 2, 2;
+    }
+
+    &.unused {
+        visibility: hidden;
     }
 }
 .state-error { stroke: #FF0000; }
@@ -28,6 +46,9 @@ g.service {
         &.selectable-service {
             stroke: #008;
             stroke-width: 3px;
+        }
+        &.hover {
+            stroke: #55f;
         }
     }
     .unit-count {
@@ -52,6 +73,18 @@ g.service {
         }
         &.on {
             visibility: visible;
+        }
+    }
+
+    .service-control-panel {
+        visibility: hidden;
+
+        &.active {
+            visibility: visible;
+        }
+
+        image {
+            cursor: pointer;
         }
     }
 }
@@ -93,8 +126,7 @@ g.unit {
 }
 
 #overview-tasks {
-    width: 800px;
-    margin: 0;
+    /*position: relative;*/
 
     button {
         color: #2c2c2c;
@@ -121,3 +153,34 @@ g.unit {
         color: red;
     }
 }
+
+.yui3-panel {
+    background: white;
+    padding: 1.6em;
+    border: solid black 2px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding-box;
+    background-clip: padding-box;
+    outline: none;
+    .yui3-widget-bd {
+        margin-bottom: 1em;
+    }
+    .yui3-widget-buttons {
+        float: right;
+        .btn-danger {
+            margin-right: 1em;
+        }
+    }
+}
+
+.yui3-widget-mask {
+    background: black;
+    opacity: 0.4;
+}
+
