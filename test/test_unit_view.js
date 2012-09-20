@@ -4,41 +4,6 @@
   describe('juju unit view', function() {
     var UnitView, views, machine, models, Y, container, service, unit, db,
       conn, juju, env, charm, testUtils;
-    var SocketStub = function () {
-      this.messages = [];
-
-      this.close = function() {
-          console.log('close stub');
-          this.messages = [];
-      };
-
-      this.transient_close = function() {
-          this.onclose();
-      };
-
-      this.open = function() {
-          this.onopen();
-      };
-
-      this.msg = function(m) {
-          console.log('serializing env msg', m);
-          this.onmessage({'data': Y.JSON.stringify(m)});
-      };
-
-      this.last_message = function(m) {
-          return this.messages[this.messages.length-1];
-      };
-
-      this.send = function(m) {
-          console.log('socket send', m);
-          this.messages.push(Y.JSON.parse(m));
-      };
-
-      this.onclose = function() {};
-      this.onmessage = function() {};
-      this.onopen = function() {};
-
-    };
 
     before(function (done) {
       Y = YUI(GlobalConfig).use(
@@ -65,6 +30,7 @@
 
     beforeEach(function (done) {
       container = Y.Node.create('<div id=\"test-container\"/>');
+      Y.one('#main').append(container);
       db = new models.Database();
       charm = new models.Charm({
         id: 'cs:mysql',
@@ -74,6 +40,7 @@
       service = new models.Service({
         id: 'mysql',
         charm: 'cs:mysql',
+        unit_count: 1,
         loaded: true,
         rels: {
           ident: 'relation-0',
@@ -98,6 +65,7 @@
     });
 
     afterEach(function (done) {
+      container.remove();
       container.destroy();
       service.destroy();
       machine.destroy();
@@ -108,7 +76,7 @@
 
     it('should include unit identifier', function () {
       var view = new UnitView(
-        {container: container, unit: unit, db: db});
+          {container: container, unit: unit, db: db, env: env});
       view.render();
       container.one('#unit-id').getHTML().should.contain('mysql/0');
     });
@@ -122,14 +90,14 @@
 
     it('should include unit status', function () {
       var view = new UnitView(
-        {container: container, unit: unit, db: db});
+        {container: container, unit: unit, db: db, env: env});
       view.render();
       container.one('#unit-status').getHTML().should.contain('pending');
     });
 
     it('should include machine info', function () {
       var view = new UnitView(
-        {container: container, unit: unit, db: db});
+        {container: container, unit: unit, db: db, env: env});
       view.render();
       container.one('#machine-name').getHTML().should.contain(
         'Machine machine-0');
@@ -145,7 +113,7 @@
 
     it('should include relation info', function () {
       var view = new UnitView(
-        {container: container, unit: unit, db: db});
+        {container: container, unit: unit, db: db, env: env});
       view.render();
       container.one('#relations').getHTML().should.contain('Relations');
       container.one('.relation-ident').getHTML().should.contain('relation-0');
@@ -155,6 +123,92 @@
         'relation-role');
       container.one('.relation-scope').getHTML().should.contain(
         'relation-scope');
+    });
+
+    it('should not display Retry and Resolved buttons when ' +
+       'there is no error', function() {
+      var view = new UnitView(
+        {container: container, unit: unit, db: db, env: env}).render();
+      var _ = expect(container.one('#retry-unit-button')).to.not.exist;
+       _ = expect(container.one('#resolved-unit-button')).to.not.exist;
+    });
+
+    it('should display Retry and Resolved buttons when ' +
+       'there is an error', function() {
+           console.group("RETRY");
+      unit.set('agent_state', 'foo-error');
+      var view = new UnitView({container: container, 
+                               unit: unit, 
+                               db: db, 
+                               env: env}).render();
+      console.log(container.getHTML());
+      container.one('#retry-unit-button').getHTML().should.equal('Retry');
+      container.one('#resolved-unit-button').getHTML().should.equal(
+          'Resolved');
+      container.one('#remove-unit-button').getHTML().should.equal('Remove');
+      console.groupEnd();
+    });
+
+    it('should always display Remove button', function() {
+      var view = new UnitView(
+        {container: container, unit: unit, db: db, env: env}).render(),
+        button = container.one('#remove-unit-button');
+      button.getHTML().should.equal('Remove');
+      // Control is disabled with only one unit for the given service.
+      button.get('disabled').should.equal(true);
+    });
+
+    it('should send resolved op when confirmation button clicked',
+       function() {
+           unit.set('agent_state', 'foo-error');
+           var view = new UnitView(
+               {container: container, unit: unit, db: db, env: env}).render();
+           container.one('#resolved-unit-button').simulate('click');
+           container.one('#resolved-modal-panel .btn-danger')
+               .simulate('click');
+           var msg = conn.last_message();
+           msg.op.should.equal('resolved');
+           msg.retry.should.equal(false);
+    });
+
+    it('should send resolved op with retry when retry clicked', function() {
+        unit.set('agent_state', 'foo-error');
+        var view = new UnitView(
+            {container: container, unit: unit, db: db, env: env}).render();
+        container.one('#retry-unit-button').simulate('click');
+        var msg = conn.last_message();
+        msg.op.should.equal('resolved');
+        msg.retry.should.equal(true);
+    });
+
+    it('should send remove_units op when confirmation clicked', function() {
+      // Enable removal button by giving the service more than one unit.
+      service.set('unit_count', 2);
+      var view = new UnitView(
+         {container: container, unit: unit, db: db, env: env}).render();
+      container.one('#remove-unit-button').simulate('click');
+      container.one('#remove-modal-panel .btn-danger').simulate('click');
+      var msg = conn.last_message();
+      msg.op.should.equal('remove_units');
+    });
+
+    it('should clear out the database after a unit is removed', function() {
+      // Enable removal button by giving the service more than one unit.
+      service.set('unit_count', 2);
+      var view = new UnitView(
+         {container: container, unit: unit, db: db, env: env}).render();
+      container.one('#remove-unit-button').simulate('click');
+      container.one('#remove-modal-panel .btn-danger')
+         .simulate('click');
+      var called_event = null;
+      view.on('showService', function(ev) {
+        called_event = ev;
+      });
+      var msg = conn.last_message();
+      msg.result = true;
+      env.dispatch_result(msg);
+      var _ = expect(db.units.getById(unit.get('id'))).to.not.exist;
+      called_event.service.should.equal(service);
     });
 
   });

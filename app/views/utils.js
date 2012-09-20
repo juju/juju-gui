@@ -167,10 +167,45 @@ var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
 });
 
 views.JujuBaseView = JujuBaseView;
+
+views.createModalPanel = function(body_content, render_target, action_label, action_cb) {
+    var panel = new Y.Panel({
+        bodyContent: body_content,
+        width: 400,
+        zIndex: 5,
+        centered: true,
+        show: false,
+        classNames: 'modal',
+        modal: true,
+        render: render_target,
+        buttons: [
+            {
+                value  : action_label,
+                section: Y.WidgetStdMod.FOOTER,
+                action : action_cb,
+                classNames: ['btn-danger', 'btn']
+            },
+            {
+                value  : 'Cancel',
+                section: Y.WidgetStdMod.FOOTER,
+                action : function (e) {
+                    e.preventDefault();
+                    panel.hide();
+                },
+                classNames: ['btn']
+            }
+        ]
+    });
+    // The default YUI CSS conflicts with the CSS effect we want.
+    panel.get('boundingBox').all('.yui3-button').removeClass('yui3-button');
+    return panel;
+};
+
 }, '0.1.0', {
     requires: ['base-build',
                'handlebars',
                'node',
                'view',
+               'panel',
                'json-stringify']
 });
