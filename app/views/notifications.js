@@ -6,32 +6,11 @@ YUI.add('juju-notifications', function (Y) {
         Templates = views.Templates;
 
     /*
-     * View a ModelList  of notifications
+     * Abstract Base class usef to biew a ModelList  of notifications
      */
-    var NotificationsView = Y.Base.create('NotificationsView', Y.View, [
-            views.JujuBaseView], {
-        template: Templates.notifications,
-
-        /*
-         * Actions associated with events 
-         * in this case selection events represent 
-         * policy flags inside the 'notice_select' callback.
-         * 
-         * :hide: should the selected element be hidden on selection
-         */
-        selection: {
-            hide: true
-        },
-
-        events: {
-            '#notify-indicator': {
-                click: 'notify_toggle'
-            },
-            '.notice': {
-                click: 'notice_select'
-            }
-        },
-
+    var NotificationsBaseView = Y.Base.create('NotificationsBaseView', 
+        Y.View, [views.JujuBaseView], {
+        
         initializer: function () {
             NotificationsView.superclass.constructor.apply(this, arguments);
 
@@ -96,7 +75,7 @@ YUI.add('juju-notifications', function (Y) {
                 target = target.ancestor('li');
             }
 
-            model = notifications.getById(target.get('id'));
+            model = notifications.getByClientId(target.get('id'));
             model.set('seen', true);
             if (this.selection.hide) {
                 target.hide(true);
@@ -159,6 +138,31 @@ YUI.add('juju-notifications', function (Y) {
             }));
 
             return this;
+        }
+    });
+
+    /*
+     * This is the view associated with the notifications indicator
+     */
+    var NotificationsView = Y.Base.create('NotificationsView', 
+        NotificationsBaseView, [], {
+        template: Templates.notifications,
+        /*
+         * Actions associated with events 
+         * in this case selection events represent 
+         * policy flags inside the 'notice_select' callback.
+         * 
+         * :hide: should the selected element be hidden on selection
+         */
+        selection: {hide: true},
+
+        events: {
+            '#notify-indicator': {
+                click: 'notify_toggle'
+            },
+            '.notice': {
+                click: 'notice_select'
+            }
         },
 
         get_showable: function () {
@@ -170,17 +174,15 @@ YUI.add('juju-notifications', function (Y) {
             });
         }
 
-    }, {
-        ATTRS: {
-            display_size: {
-                value: 8
-            }
-        }
-    });
-    views.NotificationsView = NotificationsView;
 
+     });
+     views.NotificationsView = NotificationsView;
 
-    var NotificationsOverview = Y.Base.create('NotificationsOverview', NotificationsView, [], {
+     /*
+      * This is the 'View All Notifications' view
+      */
+    var NotificationsOverview = Y.Base.create('NotificationsOverview', 
+        NotificationsBaseView, [], {
         template: Templates.notifications_overview,
         events: {
             '.notice': {
@@ -188,9 +190,7 @@ YUI.add('juju-notifications', function (Y) {
             }
         },
         // Actions for selecting a notice
-        selection: {
-            hide: false
-        },
+        selection: {hide: false},
 
         /*
          *  The overview shows all events by default
