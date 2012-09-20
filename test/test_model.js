@@ -107,6 +107,10 @@ describe('juju models', function() {
 
         db.getByModelId([model.name, 
             model.get('id')]).get('id').should.equal('wordpress');
+
+        var unit = db.units.item(0);
+        db.getByModelId([unit.name, 
+            unit.get('id')]).get('id').should.equal('wordpress/0');
         
     });
 

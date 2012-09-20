@@ -225,7 +225,7 @@ YUI.add('juju-models', function (Y) {
         model: Notification,
 
         add: function() {
-            this.enforce_max_size();
+            this.trim();
             return NotificationList.superclass.add.apply(this, arguments);
         },
 
@@ -234,13 +234,17 @@ YUI.add('juju-models', function (Y) {
             return -model.get('timestamp');
         },
 
-        enforce_max_size: function (e) {
-            if (this.size() == this.get('max_size')) {
-                this.remove_oldest_notification();
+        /*
+         * Trim the list removing oldest elements till we are 
+         * below max_size
+         */
+        trim: function (e) {
+            while (this.size() >= this.get('max_size')) {
+                this.removeOldest();
             }
         },
 
-        remove_oldest_notification: function () {
+        removeOldest: function () {
             // The list is maintained in sorted order due to this.comparator
             // handle zero based index
             this.remove(this.size() - 1);
