@@ -28,7 +28,6 @@ var exposeButtonMixin = {
         var service = this.get('model'),
             db = this.get('db');
         service.set('exposed', false);
-        this.get('env').get_service(service.get('id'));
         db.fire('update');
     },
 
@@ -43,7 +42,6 @@ var exposeButtonMixin = {
         var service = this.get('model'),
             db = this.get('db');
         service.set('exposed', true);
-        this.get('env').get_service(service.get('id'));
         db.fire('update');
     }
 };
