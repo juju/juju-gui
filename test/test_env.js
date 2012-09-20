@@ -64,5 +64,52 @@ describe('Juju environment', function() {
             'result': {'id': 'cs:precise/mysql'}});
     });
 
+    it('can resolve a problem with a unit', function(done) {
+        var unit_name = 'mysql/0';
+        env.resolved(unit_name);
+        msg = conn.last_message();
+        msg.op.should.equal('resolved');
+        msg.unit_name.should.equal(unit_name);
+        var _ = expect(msg.relation_name).to.not.exist;
+        msg.retry.should.equal(false);
+        done();
+    });
+
+    it('can resolve a problem with a unit relation', function(done) {
+        var unit_name = 'mysql/0';
+        var rel_name = 'relation-0000000000';
+        env.resolved(unit_name, rel_name);
+        msg = conn.last_message();
+        msg.op.should.equal('resolved');
+        msg.unit_name.should.equal(unit_name);
+        msg.relation_name.should.equal(rel_name);
+        msg.retry.should.equal(false);
+        done();
+    });
+
+    it('can retry a problem with a unit', function(done) {
+        var unit_name = 'mysql/0';
+        env.resolved(unit_name, null, true);
+        msg = conn.last_message();
+        msg.op.should.equal('resolved');
+        msg.unit_name.should.equal(unit_name);
+        var _ = expect(msg.relation_name).to.not.exist;
+        msg.retry.should.equal(true);
+        done();
+    });
+    it('can retry a problem with a unit using a callback', function(done) {
+        var unit_name = 'mysql/0';
+        env.resolved(unit_name, null, true, function(result) {
+            result.op.should.equal('resolved');
+            result.result.should.equal(true);
+            done();
+        });
+        msg = conn.last_message();
+        conn.msg({
+            op: 'resolved',
+            result: true,
+            request_id: msg.request_id});
+    });
+
 });
 })();
