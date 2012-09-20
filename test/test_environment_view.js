@@ -4,58 +4,58 @@
 
     describe('juju environment view', function() {
         var EnvironmentView, views, models, Y, container, service, db, conn,
-            juju, env, testUtils;
+            juju, env, testUtils, navbar;
 
         var environment_delta = {
             'result': [
                 ['service', 'add', {
-                    'charm': 'cs:precise/wordpress-6', 
-                    'id': 'wordpress', 
+                    'charm': 'cs:precise/wordpress-6',
+                    'id': 'wordpress',
                     'exposed': false
                 }], ['service', 'add', {
-                    'charm': 'cs:precise/mediawiki-3', 
+                    'charm': 'cs:precise/mediawiki-3',
                     'id': 'mediawiki',
                     'exposed': false
                 }], ['service', 'add', {
-                    'charm': 'cs:precise/mysql-6', 
+                    'charm': 'cs:precise/mysql-6',
                     'id': 'mysql'
                 }], ['relation', 'add', {
-                    'interface': 'reversenginx', 
-                    'scope': 'global', 
+                    'interface': 'reversenginx',
+                    'scope': 'global',
                     'endpoints': [
                         ['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]
-                    ], 
+                    ],
                     'id': 'relation-0000000000'
                 }], ['relation', 'add', {
-                    'interface': 'mysql', 
-                    'scope': 'global', 
+                    'interface': 'mysql',
+                    'scope': 'global',
                     'endpoints': [
-                        ['mysql', {'role': 'server', 'name': 'db'}], 
+                        ['mysql', {'role': 'server', 'name': 'db'}],
                         ['wordpress', {'role': 'client', 'name': 'db'}]
                     ], 'id': 'relation-0000000001'
                 }], ['machine', 'add', {
-                    'agent-state': 'running', 
-                    'instance-state': 'running', 
-                    'id': 0, 
-                    'instance-id': 'local', 
+                    'agent-state': 'running',
+                    'instance-state': 'running',
+                    'id': 0,
+                    'instance-id': 'local',
                     'dns-name': 'localhost'
                 }], ['unit', 'add', {
-                    'machine': 0, 
-                    'agent-state': 'started', 
-                    'public-address': '192.168.122.113', 
+                    'machine': 0,
+                    'agent-state': 'started',
+                    'public-address': '192.168.122.113',
                     'id': 'wordpress/0'
                 }], ['unit', 'add', {
-                    'machine': 0, 
-                    'agent-state': 'started', 
-                    'public-address': '192.168.122.113', 
+                    'machine': 0,
+                    'agent-state': 'started',
+                    'public-address': '192.168.122.113',
                     'id': 'mediawiki/0'
                 }], ['unit', 'add', {
-                    'machine': 0, 
-                    'agent-state': 'started', 
-                    'public-address': '192.168.122.222', 
+                    'machine': 0,
+                    'agent-state': 'started',
+                    'public-address': '192.168.122.222',
                     'id': 'mysql/0'
                 }]
-            ], 
+            ],
             'op': 'delta'
         };
 
@@ -86,7 +86,7 @@
         beforeEach(function (done) {
             container = Y.Node.create('<div id="test-container" />');
             Y.one('body').append(container);
-            var navbar = Y.Node.create('<div class="navbar" ' +
+            navbar = Y.Node.create('<div class="navbar" ' +
                 'style="height:70px;">Navbar</div>');
             Y.one('body').append(navbar);
             db = new models.Database();
@@ -97,7 +97,7 @@
         afterEach(function(done) {
             container.remove();
             container.destroy();
-            Y.one('body').removeChild(Y.one('.navbar'));
+            Y.one('body').removeChild(navbar);
             db.destroy();
             env._txn_callbacks = {};
             conn.messages = [];
@@ -105,7 +105,7 @@
         });
 
         // Ensure the environment view loads properly
-        it('must be able to render service blocks and relations', 
+        it('must be able to render service blocks and relations',
             function(done) {
                 // Create an instance of EnvironmentView with custom env
                 var view = new EnvironmentView({
@@ -190,12 +190,12 @@
                     env: env
                 }).render();
                 var svg = Y.one('svg');
-                parseInt(svg.one('rect').getAttribute('height'))
+                parseInt(svg.one('rect').getAttribute('height'), 10)
                     .should.equal(
-                        parseInt(svg.getComputedStyle('height')));
-                parseInt(svg.one('rect').getAttribute('width'))
+                        parseInt(svg.getComputedStyle('height'), 10));
+                parseInt(svg.one('rect').getAttribute('width'), 10)
                     .should.equal(
-                        parseInt(svg.getComputedStyle('width')));
+                        parseInt(svg.getComputedStyle('width'), 10));
                 done();
             }
         );
@@ -209,9 +209,9 @@
                     env: env
                 }).render();
                 var svg = Y.one('svg');
-                parseInt(svg.getAttribute('height'))
+                parseInt(svg.getAttribute('height'), 10)
                     .should.equal(
-                        Math.max(600, 
+                        Math.max(600,
                             container.get('winHeight') -
                             parseInt(Y.one('#overview-tasks')
                                 .getComputedStyle('height'), 10) -

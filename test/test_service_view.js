@@ -35,9 +35,13 @@
         new models.ServiceUnit({id:'mysql/1', agent_state: 'pending'}),
         new models.ServiceUnit({id:'mysql/2', agent_state: 'pending'})
       ]);
-      service = new models.Service({id: 'mysql', charm: 'mysql',
-                                    unit_count: db.units.size()});
-      db.services.add([service]);
+      service = new models.Service({
+          id: 'mysql',
+          charm: 'mysql',
+          unit_count: db.units.size(),
+          exposed: false});
+
+        db.services.add([service]);
       done();
     });
 
@@ -54,16 +58,16 @@
       var view = new ServiceView(
         {container: container, model: service, db: db,
          env: env}).render();
-      container.one('#service-unit-control').should.not.equal(null);
+      container.one('#num-service-units').should.not.equal(null);
     });
 
     it('should not show controls if the charm is subordinate', function () {
       charm.set('is_subordinate', true);
       var view = new ServiceView(
-        {container: container, model: service, db: db,
+        {container: container, service: service, db: db,
          env: env}).render();
       // "var _ =" makes the linter happy.
-      var _ = expect(container.one('#service-unit-control')).to.not.exist;
+      var _ = expect(container.one('#num-service-units')).to.not.exist;
     });
 
     it('should show the service units ordered by number', function () {
@@ -201,6 +205,127 @@
         control.simulate('blur');
         control.get('value').should.equal('3');
     });
+
+    // Test for destroying services.
+    it('should open a confirmation panel when clicking on "Destroy service"',
+      function() {
+        var view = new ServiceView(
+          {container: container, model: service, db: db,
+           env: env}).render();
+        var control = container.one('#destroy-service');
+        control.simulate('click');
+        container.one('#destroy-modal-panel .btn-danger')
+          .getHTML().should.equal('Destroy Service');
+    });
+
+    it('should hide the panel when the Cancel button is clicked', function() {
+      var view = new ServiceView(
+        {container: container, model: service, db: db,
+         env: env}).render();
+      var control = container.one('#destroy-service');
+      control.simulate('click');
+      var cancel = container.one('#destroy-modal-panel .btn:not(.btn-danger)');
+      cancel.getHTML().should.equal('Cancel');
+      cancel.simulate('click');
+      view.panel.get('visible').should.equal(false);
+      // We did not send a message to destroy the service.
+      var _ = expect(conn.last_message()).to.not.exist;
+    });
+
+    it('should destroy the service when "Destroy Service" is clicked', function() {
+      var view = new ServiceView(
+        {container: container, model: service, db: db,
+         env: env}).render();
+      var control = container.one('#destroy-service');
+      control.simulate('click');
+      var destroy = container.one('#destroy-modal-panel .btn-danger');
+      destroy.simulate('click');
+      var message = conn.last_message();
+      message.op.should.equal('destroy_service');
+      destroy.get('disabled').should.equal(true);
+    });
+
+    it('should remove the service from the db after server ack', function() {
+      var view = new ServiceView(
+        {container: container, model: service, db: db,
+         env: env}).render();
+      db.relations.add(
+        [new models.Relation({id: 'relation-0000000000',
+                              endpoints: [['mysql', {}],['wordpress',{}]]}),
+         new models.Relation({id: 'relation-0000000001',
+                              endpoints: [['squid', {}],['apache',{}]]})]);
+      var control = container.one('#destroy-service');
+      control.simulate('click');
+      var destroy = container.one('#destroy-modal-panel .btn-danger');
+      destroy.simulate('click');
+      var called = false;
+      view.on('showEnvironment', function(ev) {
+        called = true;
+      });
+      var callbacks = Y.Object.values(env._txn_callbacks);
+      callbacks.length.should.equal(1);
+      // Since we don't have an app to listen to this event and tell the
+      // view to re-render, we need to do it ourselves.
+      db.on('update', view.render, view);
+      callbacks[0]({result: true});
+      var _ = expect(db.services.getById(service.get('id'))).to.not.exist;
+      db.relations.map(function(u) {return u.get('id');})
+        .should.eql(['relation-0000000001']);
+      // Catch show environment event.
+      called.should.equal(true);
+    });
+
+      it('should send an expose RPC call when exposeService is invoked',
+            function() {
+          var view = new ServiceView(
+              {container: container, model: service, db: db,
+                  env: env});
+
+          view.exposeService();
+          conn.last_message().op.should.equal('expose');
+      });
+
+      it('should send an unexpose RPC call when unexposeService is invoked',
+            function() {
+          var view = new ServiceView(
+              {container: container, model: service, db: db,
+                  env: env});
+
+          view.unexposeService();
+          conn.last_message().op.should.equal('unexpose');
+      });
+
+      it('should invoke callback when expose RPC returns', function() {
+          var view = new ServiceView(
+              {container: container, model: service, db: db,
+                  env: env}).render();
+
+          var test = function(selectorBefore, selectorAfter, callback) {
+              console.log('Service is exposed: ' + service.get('exposed'));
+              console.log('selectorBefore: ' + selectorBefore);
+              console.log('selectorAfter: ' + selectorAfter);
+
+              assert.isNotNull(container.one(selectorBefore));
+              assert.isNull(container.one(selectorAfter));
+
+              var dbUpdated = false;
+              db.on('update', function() {
+                  dbUpdated = true;
+              });
+              callback();
+              // In the real code, the view should be updated by the db change
+              // event. Here we should call it manually because we have no
+              // "route" for this test.
+              view.render();
+
+              assert.isTrue(dbUpdated);
+              assert.isNotNull(container.one(selectorAfter));
+              assert.isNull(container.one(selectorBefore));
+          };
+
+          test('.exposeService', '.unexposeService', Y.bind(view._exposeServiceCallback, view));
+          test('.unexposeService', '.exposeService', Y.bind(view._unexposeServiceCallback, view));
+      });
 
   });
 }) ();
