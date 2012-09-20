@@ -256,7 +256,7 @@
                   env: env});
 
           view.exposeService();
-          conn.last_message().op.should.equal('expose')
+          conn.last_message().op.should.equal('expose');
       });
 
       it('should send an unexpose RPC call when unexposeService is invoked',
@@ -266,7 +266,7 @@
                   env: env});
 
           view.unexposeService();
-          conn.last_message().op.should.equal('unexpose')
+          conn.last_message().op.should.equal('unexpose');
       });
 
       it('should invoke callback when expose RPC returns', function() {

@@ -83,22 +83,13 @@ var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
 });
 models.ServiceUnit = ServiceUnit;
 
-var _unit_proto = {
-    service: function() {
-        return this.id.split('/', 1)[0];
-    },
-    number: function() {
-        var raw = this.id.split('/')[1];
-        return parseInt(raw, 10);
-    },
-    is_subordinate: false
-}
-
 var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
     model: ServiceUnit,
 
-    _setDefaultsAndCalculatedValues: function (model) {
-        model.__proto__ = _unit_proto;
+    _setDefaultsAndCalculatedValues: function (obj) {
+        var raw = obj.id.split('/');
+        obj.service = raw[0];
+        obj.number = parseInt(raw[1], 10);
     },
 
     add: function() {
@@ -120,7 +111,7 @@ var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
         }
 
         var units = this.filter(options, function(m) {
-            return m.service() == sid;
+            return m.service == sid;
         });
         return units;
     },

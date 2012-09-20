@@ -56,7 +56,7 @@ describe('juju models', function() {
         var wp0 = {id:'wordpress/0'},
            wp1 = {id:'wordpress/1'};
         sul.add([wp0, wp1]);
-        wp0.service().should.equal('wordpress');
+        wp0.service.should.equal('wordpress');
 
         sul.get_units_for_service(mysql, true).getAttrs(['id']).id.should.eql(
            ['mysql/0', 'mysql/1']);
@@ -92,7 +92,7 @@ describe('juju models', function() {
         var service_unit = {id: 'mysql/0'},
           db = new models.Database();
         db.units.add(service_unit);
-        service_unit.service().should.equal('mysql');
+        service_unit.service.should.equal('mysql');
     });
 
     it('service unit objects should report their number correctly',
@@ -100,7 +100,7 @@ describe('juju models', function() {
         var service_unit = {id: 'mysql/5'},
           db = new models.Database();
         db.units.add(service_unit);
-        service_unit.number().should.equal(5);
+        service_unit.number.should.equal(5);
       });
 
     it('process_model_delta should handle remove changes correctly',
