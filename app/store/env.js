@@ -178,6 +178,14 @@ Y.extend(Environment, Y.Base, {
             op: 'set_config',
             service_name: service,
             config: config}, callback);
+    },
+
+    resolved: function(unit_name, relation_name, retry, callback) {
+        this._send_rpc({
+            op: 'resolved',
+            unit_name: unit_name,
+            relation_name: relation_name || null,
+            retry: retry || false}, callback);
     }
 
 });

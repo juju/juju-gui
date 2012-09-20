@@ -167,8 +167,7 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
             var service = this.db.services.getById(unit.service);
             this._prefetch_service(service);
         }
-        this.showView(
-            'unit', {unit: unit, db: this.db});
+        this.showView('unit', {unit: unit, db: this.db, env: this.env});
     },
 
     _prefetch_service: function(service) {
