@@ -65,17 +65,94 @@ YUI.add('juju-view-service', function(Y) {
           Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
         },
 
+        events: {
+          '#service-relations .btn': {click: 'confirmRemoved'}
+        },
+
         render: function() {
           var container = this.get('container'),
               db = this.get('db'),
               service = this.get('model');
+          if (!service) {
+            container.setHTML('<div class="alert">Loading...</div>');
+            console.log('waiting on service data');
+            return this;
+          }
+
+          var rels = db.relations.get_relations_for_service(service);
+          var relations = [];
+          rels.forEach(function(rel) {
+            var endpoints = rel.get('endpoints');
+            var near, far;
+            var map = {};
+            if (endpoints[0][0] === service.name) {
+              near = endpoints[0];
+              far = endpoints[1];
+            } else {
+              near = endpoints[1];
+              far = endpoints[0];
+            }
+            map['relation_id'] = rel.get('relation_id');
+            map['role'] = near[1].role;
+            map['scope'] = rel.get('scope');
+            var rel_id = rel.get('relation_id').split('-')[1];
+            map['ident'] = near[1].name + ':' + parseInt(rel_id, 10);
+            map['far'] = far[0];
+            relations.push(map);
+          });
+
           container.setHTML(this.template(
               {'service': service.getAttrs(),
-                'relations': service.get('rels'),
-                'charm': this.renderable_charm(service.get('charm'), db)}
+               'relations': relations,
+               'charm': this.renderable_charm(service.get('charm'), db)}
               ));
-        }
-      });
+        },
+
+    confirmRemoved: function(ev) {
+      // We wait to make the panel until now, because in the render method
+      // the container is not yet part of the document.
+      ev.preventDefault();
+      var rel_id = ev.target.get('value');
+      if (Y.Lang.isUndefined(this.remove_panel)) {
+        this.remove_panel = views.createModalPanel(
+            'Are you sure you want to remove this service relation?  ' +
+                'This action cannot be undone, though you can ' +
+                'recreate it later.',
+            '#remove-modal-panel',
+            'Remove Service Relation',
+            Y.bind(this.doRemoveRelation, this, rel_id));
+      }
+      this.remove_panel.show();
+    },
+
+    doRemoveRelation: function(rel_id, ev) {
+      ev.preventDefault();
+      var env = this.get('env'),
+          db = this.get('db'),
+          service = this.get('model'),
+          relation = db.relations.getById(rel_id),
+          endpoints = relation.get('endpoints'),
+          endpoint_a = endpoints[0][0] + ':' + endpoints[0][1].name,
+          endpoint_b = endpoints[1][0] + ':' + endpoints[1][1].name;
+
+      ev.target.set('disabled', true);
+
+      env.remove_relation(
+        endpoint_a,
+        endpoint_b,
+        Y.bind(this._doRemoveRelationCallback, this, relation));
+    },
+
+    _doRemoveRelationCallback: function(relation, ev) {
+      // XXX Once we have a way of showing notifications, if ev.err exists,
+      // report it.
+      var db = this.get('db'),
+          service = this.get('model');
+      db.relations.remove(relation);
+      this.remove_panel.hide();
+      db.fire('update');
+    }
+  });
 
   views.service_relations = ServiceRelations;
 

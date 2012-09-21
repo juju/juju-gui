@@ -2,25 +2,32 @@
 <div class="row-fluid">
     <div class="span12">
       <h5>Service Relations</h5>
-      <table class="table table-striped table-bordered">
-       <thead>
-         <tr>
-          <th>Id</th>
-          <th>Role</th>
-          <th>Remote</th>
-          <th>Scope</th>
-       </thead>
+      <form id="service-relations">
+        <table class="table table-striped table-bordered">
+         <thead>
+           <tr>
+            <th>Id</th>
+            <th>Role</th>
+            <th>Remote</th>
+            <th>Scope</th>
+         </thead>
 
-       <tbody>
-         {{#relations}}
-         <tr>
-            <td>{{ident}}</td>
-            <td>{{role}}</td>
-            <td><a href="/service/{{endpoint}}/">{{endpoint}}</a></td>
-            <td>{{scope}}</td>
-         </tr>
-         {{/relations}}
-       </tbody>
-      </table>
+         <tbody>
+           {{#relations}}
+           <tr>
+              <td>
+                {{ident}}
+                <button type="submit" class="btn" value="{{relation_id}}">
+                    Remove
+                </button>
+              </td>
+              <td>{{role}}</td>
+              <td><a href="/service/{{far}}/">{{far}}</a></td>
+              <td>{{scope}}</td>
+           </tr>
+           {{/relations}}
+         </tbody>
+        </table>
+      </form>
     </div>
 </div>

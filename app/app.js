@@ -155,7 +155,7 @@ YUI.add('juju-gui', function(Y) {
         }
 
         console.log(
-            'App: Rerendering current view', this.getPath(), 'info');
+            'App: Re-rendering current view', this.getPath(), 'info');
 
         if (this.get('activeView')) {
           this.get('activeView').render();
