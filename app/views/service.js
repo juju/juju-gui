@@ -381,35 +381,6 @@ var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
         this.fire('showEnvironment');
     },
 
-    unexposeService: function() {
-        var service = this.get('model'),
-            env = this.get('env');
-
-        env.unexpose(service.get('id'),
-            Y.bind(this._unexposeServiceCallback, this));
-    },
-
-    _unexposeServiceCallback: function() {
-        var service = this.get('model'),
-            db = this.get('db');
-        service.set('exposed', false);
-        db.fire('update');
-    },
-
-    exposeService: function() {
-        var service = this.get('model'),
-            env = this.get('env');
-        env.expose(service.get('id'),
-            Y.bind(this._exposeServiceCallback, this));
-    },
-
-    _exposeServiceCallback: function() {
-        var service = this.get('model'),
-            db = this.get('db');
-        service.set('exposed', true);
-        db.fire('update');
-    },
-
     resetUnits: function(ev) {
         var container = this.get('container'),
             field = container.one('#num-service-units');
