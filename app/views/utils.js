@@ -2,7 +2,8 @@
 
 YUI.add('juju-view-utils', function(Y) {
 
-  var views = Y.namespace('juju.views');
+  var views = Y.namespace('juju.views'),
+      utils = Y.namespace('juju.views.utils');
 
   var timestrings = {
     prefixAgo: null,
@@ -220,6 +221,53 @@ YUI.add('juju-view-utils', function(Y) {
     panel.get('boundingBox').all('.yui3-button').removeClass('yui3-button');
     return panel;
   };
+
+  utils.buildRpcHandler = function(config) {
+    var utils = Y.namespace('juju.views.utils'),
+        container = config.container,
+        scope = config.scope,
+        finalizeHandler = config.finalizeHandler,
+        successHandler = config.successHandler,
+        errorHandler = config.errorHandler;
+
+    function _addErrorMessage(message) {
+      var div = container.one('#message-area')
+            .appendChild(Y.Node.create('<div/>'))
+            .addClass('alert')
+            .addClass('alert-error')
+            .set('text', message);
+
+      var close = div.appendChild(Y.Node.create('<a/>'))
+        .addClass('close')
+        .set('text', '×');
+
+      close.on('click', function() {
+        div.remove();
+      });
+    }
+
+    function invokeCallback(callback) {
+      if (callback) {
+        if (scope) {
+          callback.apply(scope);
+        } else {
+          callback();
+        }
+      }
+    }
+
+    return function(ev) {
+      if (ev && ev.err) {
+        _addErrorMessage(utils.SERVER_ERROR_MESSAGE);
+        invokeCallback(errorHandler);
+      } else {
+        invokeCallback(successHandler);
+      }
+      invokeCallback(finalizeHandler);
+    };
+  };
+
+  utils.SERVER_ERROR_MESSAGE = 'An error ocurred.';
 
 }, '0.1.0', {
   requires: ['base-build',

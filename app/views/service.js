@@ -8,7 +8,8 @@ YUI.add('juju-view-service', function(Y) {
 
   var views = Y.namespace('juju.views'),
       Templates = views.Templates,
-      models = Y.namespace('juju.models');
+      models = Y.namespace('juju.models'),
+      utils = Y.namespace('juju.views.utils');
 
   var exposeButtonMixin = {
     events: {
@@ -46,13 +47,24 @@ YUI.add('juju-view-service', function(Y) {
     }
   };
 
+  var getElementsValuesMap = function(container, cls) {
+    var result = {};
+    container.all(cls).each(function(el) {
+      result[el.get('name')] = el.get('value');
+    });
+
+    return result;
+  };
+
   var ServiceRelations = Y.Base.create(
       'ServiceRelationsView', Y.View, [views.JujuBaseView], {
+
         template: Templates['service-relations'],
+
         initializer: function() {
-          Y.mix(
-              this, exposeButtonMixin, undefined, undefined, undefined, true);
+          Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
         },
+
         render: function() {
           var container = this.get('container'),
               db = this.get('db'),
@@ -73,8 +85,50 @@ YUI.add('juju-view-service', function(Y) {
         template: Templates['service-constraints'],
 
         initializer: function() {
-          Y.mix(this, exposeButtonMixin,
-                undefined, undefined, undefined, true);
+          Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+        },
+
+        events: {
+          '#save-service-constraints': {click: 'updateConstraints'}
+        },
+
+        updateConstraints: function() {
+          var service = this.get('model'),
+              container = this.get('container'),
+              env = this.get('env');
+
+          var values = (function() {
+            var result = [],
+                map = getElementsValuesMap(container, '.constraint-field');
+
+            Y.Object.each(map, function(value, name) {
+              result.push(name + '=' + value);
+            });
+
+            return result;
+          })();
+
+          // Disable the "Update" button while the RPC call is outstanding.
+          container.one('#save-service-constraints')
+            .set('disabled', 'disabled');
+          env.set_constraints(service.get('id'),
+              values,
+              utils.buildRpcHandler({
+                container: container,
+                successHandler: function()  {
+                  var service = this.get('model'),
+                      env = this.get('env'),
+                      app = this.get('app');
+
+                  env.get_service(
+                      service.get('id'), Y.bind(app.load_service, app));
+                },
+                errorHandler: function() {
+                  container.one('#save-service-constraints')
+                    .removeAttribute('disabled');
+                },
+                scope: this}
+              ));
         },
 
         render: function() {
@@ -84,21 +138,41 @@ YUI.add('juju-view-service', function(Y) {
 
           var constraints = service.get('constraints');
           var display_constraints = [];
-          Y.Object.each(constraints, function(value, key) {
-            display_constraints.push({name: key, value: value});
+
+          //these are read-only values
+          var readOnlyConstraints = {
+            'provider-type': constraints['provider-type'],
+            'ubuntu-series': constraints['ubuntu-series']
+          };
+
+          Y.Object.each(constraints, function(value, name) {
+            if (!(name in readOnlyConstraints)) {
+              display_constraints.push({
+                'name': name,
+                'value': value});
+            }
           });
-          Y.Array.each(['cpu', 'mem', 'arch'], function(key) {
-            if (! (key in constraints)) {
-              display_constraints.push({name: key, value: ''});
+
+          var generics = ['cpu', 'mem', 'arch'];
+          Y.Object.each(generics, function(idx, gkey) {
+            if (!(gkey in constraints)) {
+              display_constraints.push({'name': gkey, 'value': ''});
             }
           });
 
           console.log('service constraints', display_constraints);
-          container.setHTML(this.template(
-              {'service': service.getAttrs(),
-                'constraints': display_constraints,
-                'charm': this.renderable_charm(service.get('charm'), db)}
-              ));
+          container.setHTML(this.template({
+            service: service.getAttrs(),
+            constraints: display_constraints,
+            readOnlyConstraints: (function() {
+              var arr = [];
+              Y.Object.each(readOnlyConstraints, function(name, value) {
+                arr.push({'name': name, 'value': value});
+              });
+              return arr;
+            })(),
+            charm: this.renderable_charm(service.get('charm'), db)}
+          ));
         }
 
       });
@@ -115,8 +189,8 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         events: {
-          '#save-service-config': {click: 'saveConfig'},
-          '.alert > .close': {click: 'closeAlert'}},
+          '#save-service-config': {click: 'saveConfig'}
+        },
 
         render: function() {
           var container = this.get('container'),
@@ -132,13 +206,16 @@ YUI.add('juju-view-service', function(Y) {
           var charm_url = service.get('charm');
 
           // combine the charm schema and the service values for display.
-          var charm = db.charms.getById(charm_url),
-              config = service.get('config');
+          var charm = db.charms.getById(charm_url);
+          var config = service.get('config');
+          var schema = charm.get('config');
 
           var settings = [];
-          Y.Object.each(charm.get('config'), function(field_def, field_name) {
+          var field_def;
+
+          Y.Object.each(schema, function(field_def, field_name) {
             settings.push(Y.mix(
-                {name: field_name, value: config[field_name]}, field_def));
+                {'name': field_name, 'value': config[field_name]}, field_def));
           });
 
           console.log('render view svc config', service.getAttrs(), settings);
@@ -155,53 +232,29 @@ YUI.add('juju-view-service', function(Y) {
         saveConfig: function() {
           var env = this.get('env'),
               container = this.get('container'),
-              service = this.get('model'),
-              config = {};
+              service = this.get('model');
 
           // Disable the "Update" button while the RPC call is outstanding.
           container.one('#save-service-config').set('disabled', 'disabled');
 
-          container.all('.config-field').each(function(el) {
-            config[el.get('name')] = el.get('value');
-          });
+          env.set_config(service.get('id'),
+              getElementsValuesMap(container, '.config-field'),
+              utils.buildRpcHandler({
+                container: container,
+                successHandler: function()  {
+                  var service = this.get('model'),
+                      env = this.get('env'),
+                      app = this.get('app');
 
-          env.set_config(service.get('id'), config,
-              Y.bind(this._saveConfigCallback, this));
-
-        },
-
-        _addErrorMessage: function(container, message) {
-          container.one('#message-area')
-            .appendChild(Y.Node.create('<div/>'))
-                .addClass('alert')
-                .addClass('alert-error')
-                .set('text', message)
-            .appendChild(Y.Node.create('<a/>'))
-                .addClass('close')
-                .set('text', '×');
-        },
-
-        _serverErrorMessage: 'An error ocurred.',
-
-        _saveConfigCallback: function(ev) {
-          var service = this.get('model'),
-              container = this.get('container'),
-              db = this.get('db');
-
-          if (ev && ev.err) {
-            this._addErrorMessage(container, this._serverErrorMessage);
-          } else {
-            var config = service.get('config');
-            container.all('.config-field').each(function(el) {
-              config[el.get('name')] = el.get('value');
-            });
-          }
-
-          container.one('#save-service-config').removeAttribute('disabled');
-        },
-
-        closeAlert: function(ev) {
-          ev.target.get('parentNode').remove();
+                  env.get_service(
+                      service.get('id'), Y.bind(app.load_service, app));
+                },
+                errorHandler: function() {
+                  container.one('#save-service-config')
+                    .removeAttribute('disabled');
+                },
+                scope: this}
+              ));
         }
       });
 
@@ -284,35 +337,6 @@ YUI.add('juju-view-service', function(Y) {
       this.panel.hide();
       this.panel.destroy();
       this.fire('showEnvironment');
-    },
-
-    unexposeService: function() {
-      var service = this.get('model'),
-          env = this.get('env');
-
-      env.unexpose(service.get('id'),
-          Y.bind(this._unexposeServiceCallback, this));
-    },
-
-    _unexposeServiceCallback: function() {
-      var service = this.get('model'),
-          db = this.get('db');
-      service.set('exposed', false);
-      db.fire('update');
-    },
-
-    exposeService: function() {
-      var service = this.get('model'),
-          env = this.get('env');
-      env.expose(service.get('id'),
-          Y.bind(this._exposeServiceCallback, this));
-    },
-
-    _exposeServiceCallback: function() {
-      var service = this.get('model'),
-          db = this.get('db');
-      service.set('exposed', true);
-      db.fire('update');
     },
 
     resetUnits: function(ev) {
