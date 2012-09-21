@@ -232,6 +232,7 @@ var Database = Y.Base.create('database', Y.Base, [], {
 
     on_delta: function(delta_evt) {
         var changes = delta_evt.data.result;
+        console.group("Delta");
         console.log('Delta', this, changes);
         var change_type, model_class = null, self = this;
 
@@ -251,6 +252,7 @@ var Database = Y.Base.create('database', Y.Base, [], {
             self.units.update_service_unit_aggregates(service);
         });
         this.fire('update');
+        console.groupEnd();
     },
 
     // utility method to sync a data object and a model object.

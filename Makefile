@@ -11,7 +11,8 @@ lint: install
         @node_modules/jshint/bin/hint --config=jshint.config `bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js`
 
 test: install
-	@xdg-open test/index.html
+	@./test-server.sh
+
 
 server: install
 	@echo "Customize config.js to modify server settings"

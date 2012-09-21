@@ -2,10 +2,21 @@
 
 YUI.add('juju-view-environment', function(Y) {
 
+
+/* 
+ * ViewModel container for a model object
+ * This object allows d3 to annotate it while leaving the 
+ * unerlying domain pristine. This provides additional support
+ * for view specific functionality including such things as:
+ *   - where to place connection points
+ *   - computing the connection target relative to another bounding box
+ *   - detecting collision with another bounding box
+ */
 var views = Y.namespace('juju.views'),
     Templates = views.Templates;
 
-var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseView], {
+var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, 
+    [views.JujuBaseView], {
     events: {
         '#add-relation-btn': {click: 'add_relation'}
     },
@@ -20,37 +31,32 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
         var container = this.get('container');
         EnvironmentView.superclass.render.apply(this, arguments);
         container.setHTML(Templates.overview());
-        this.render_canvas();
+        this.build_scene();
         return this;
     },
-
-    render_canvas: function(){
-        var self = this,
-            container = this.get('container'),
-            m = this.get('domain_models'),
+    
+    /*
+     * Construct a persistent scene that is managed in update
+     */
+    build_scene: function() {
+        var container= this.get('container'),
             height = 600,
-            width = 640;
+            width = 640,
+            fill = d3.scale.category20(),
+            xscale = d3.scale.linear()
+                         .domain([-width / 2, width / 2])
+                         .range([0, width]),
+            yscale = d3.scale.linear()
+                         .domain([-height / 2, height / 2])
+                                 .range([height, 0]);
 
-        var services = m.services.toArray().map(function(s) {
-            s.value = s.get('unit_count');
-            return s;
-        });
-        var relations = m.relations.toArray();
-        var fill = d3.scale.category20();
-
-        var xscale = d3.scale.linear()
-            .domain([-width / 2, width / 2])
-            .range([0, width]);
-
-        var yscale = d3.scale.linear()
-            .domain([-height / 2, height / 2])
-            .range([height, 0]);
-        
-        // Scales for unit sizes
-        // XXX magic numbers will have to change; likely during
-        // the pan/zoom work
-        var service_scale_width = d3.scale.log().range([164, 200]);
-        var service_scale_height = d3.scale.log().range([64, 100]);
+        this.service_scale_width = d3.scale.log().range([164, 200]),
+        this.service_scale_height = d3.scale.log().range([64, 100]);
+      
+        function rescale() {
+            vis.attr("transform", "translate(" + d3.event.translate + ")"
+                     + " scale(" + d3.event.scale + ")");
+        }
 
         // Set up the visualization with a pack layout
         var vis = d3.select(container.getDOMNode())
@@ -71,85 +77,150 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .attr('height', height)
             .attr('fill', 'white');
 
-        function rescale() {
-            vis.attr("transform", "translate(" + d3.event.translate + ")"
-                     + " scale(" + d3.event.scale + ")");
-        }
+        this.vis = vis;
+        this.tree = d3.layout.pack()
+                .size([width, height])
+                .padding(200);
 
-        var tree = d3.layout.pack()
-            .size([width, height])
-            .padding(200);
+        this.update_canvas();
+    },
+        
+    /* 
+     * Sync our data arrays to the current data
+     */
+    update_data: function() {
+        //model data
+        var vis = this.vis,
+            m = this.get('domain_models'),
+            services = m.services.map(views.toBoundingBox).map(
+                function(s) {
+                    s.value = s.unit_count;
+                    return s;
+                }),
+            relations = m.relations.map(views.toBoundingBox);
 
-        var rel_data = processRelations(relations);
+        this.services = services;
+        this.rel_data = this.processRelations(relations);
+        
+        this.node = vis.selectAll('.service')
+                       .data(services, function(d) {
+                           return d.get("modelId");});
 
-        function update_links() {
-            var link = vis.selectAll('polyline.relation')
-                .remove();
-            link = vis.selectAll('polyline.relation')
-                .data(rel_data);
-            link.enter().insert('svg:polyline', 'g.service')
-                .attr('class', 'relation')
-                .attr('points', function(d) { return self.draw_relation(d); });
-        }
+        this.link = vis.selectAll('polyline.relation')
+                        .data(this.rel_data, function(d) {
+                                  return d.source.get('modelId') 
+                                  + ':' 
+                                  + d.target.get('modelId');
+                        });
+    },
+
+    update_canvas: function(){
+        var self = this,
+            tree = this.tree,
+            vis = this.vis;
+
+        // Process any changed data
+        this.update_data();
 
         var drag = d3.behavior.drag()
             .on('drag', function(d,i) {
                 d.x += d3.event.dx;
                 d.y += d3.event.dy;
                 d3.select(this).attr('transform', function(d,i){
-                    return 'translate(' + [ d.x,d.y ] + ')';
+                    return d.translateStr();
                 });
                 update_links();                            
             });
 
         // Generate a node for each service, draw it as a rect with
         // labels for service and charm
-        var node = vis.selectAll('.service')
-            .data(self._saved_coords(services) ? 
-                services : 
-                self._generate_coords(services, tree))
+        var node = this.node,
+            link = this.link;
+
+        // rerun the pack layout
+        this.tree.nodes({children: this.services});
+
+        // enter
+        node
             .enter().append('g')
             .attr("class", "service")
-            .attr('transform', function (d) { 
-                return 'translate(' + [d.x,d.y] + ')'; 
-            })
             .on("click", function(m) {
                 // Get the current click action
-                var curr_click_action = 
-                    self.get('current_service_click_action');
-
+                var curr_click_action = self.get(
+                    'current_service_click_action');
                 // Fire the action named in the following scheme:
                 //  service_click_action.<action>
                 // with the service, the SVG node, and the view
                 // as arguments
-                (self.service_click_actions[curr_click_action])(m, this, self);
+                (self.service_click_actions[curr_click_action])(
+                    m, this, self);
             })
-            .call(drag);
+            .call(drag)
+            .transition()
+            .duration(500) 
+            .attr('transform', function (d) {
+                      return d.translateStr();});
+                   
+        // Update
+        this.draw_service(node);
+
+        // Exit
+        node.exit()
+            .transition()
+            .duration(500)
+            .attr('x', 0)
+            .remove();
+        
+        function update_links() {
+            // Link persistence hasn't worked properly
+            // this removes and redraws links
+            self.link.remove();
+            self.link = vis.selectAll('polyline.relation')
+                .data(self.rel_data, function(d) {
+                          return d.source.get('modelId') + ':' + d.target.get('modelId');});
+
+            self.link.enter().insert('svg:polyline', 'g.service')
+                .attr('class', 'relation')
+                .attr('points', self.draw_relation);
+        }
+
+        update_links();
+        self.set('tree', tree);
+        self.set('vis', vis);
+
+    },
+
+
+    // Called to draw a service in the 'update' phase
+    draw_service: function(node) {
+        var self = this, 
+            service_scale_width = this.service_scale_width,
+            service_scale_height = this.service_scale_height;
 
         node.append('rect')
             .attr('class', 'service-border')
             .attr('width', function(d) {
-                var w = service_scale_width(d.get('unit_count')); 
-                d.set('width', w);
+                var w = service_scale_width(d.unit_count); 
+                d.w = w;
                 return w;
                 })
             .attr('height', function(d) {
-                var h = service_scale_height(d.get('unit_count')); 
-                d.set('height', h);
+                var h = service_scale_height(d.unit_count); 
+                d.h = h;
                 return h;});
 
         var service_labels = node.append('text').append('tspan')
             .attr('class', 'name')
             .attr('x', 54)
             .attr('y', '1em')
-            .text(function(d) {return d.get('id'); });
+            .text(function(d) {return d.id; });
 
         var charm_labels = node.append('text').append('tspan')
             .attr('x', 54)
             .attr('y', '2.5em')
             .attr('dy', '3em')
             .attr('class', 'charm-label')
-            .text(function(d) { return d.get('charm'); });
+            .text(function(d) { return d.charm; });
 
         // Add the relative health of a service in the form of a pie chart
         // comprised of units styled appropriately
@@ -166,7 +237,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
             .attr('transform', 'translate(30,32)');
         var status_arcs = status_chart.selectAll('path')
             .data(function(d) {
-                var aggregate_map = d.get('aggregated_status'),
+                var aggregate_map = d.aggregated_status,
                     aggregate_list = [];
 
                 for (var status_name in aggregate_map) {
@@ -196,71 +267,38 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 d3.select(this).attr('class', 'unit-count hide-count');
             })
             .text(function(d) {
-                return self.humanizeNumber(d.get('unit_count'));
+                return self.humanizeNumber(d.unit_count);
             });
+    },
 
-        function processRelation(r) {
-            var endpoints = r.get('endpoints'),
+    processRelation: function(r) {
+        var self = this,
+            endpoints = r.endpoints,
             rel_services = [];
-            Y.each(endpoints, function(ep) {
-                rel_services.push(services.filter(function(d) {
-                    return d.get('id') == ep[0];
+        Y.each(endpoints, function(ep) {
+            console.log("Process EP", r, ep);
+            rel_services.push(
+                self.services.filter(function(d) {
+                    return d.id == ep[0];
                 })[0]);
             });
             return rel_services;
-        }
+        },
 
-        function processRelations(rels) {
-            var pairs = [];
-            Y.each(rels, function(rel) {
-                var pair = processRelation(rel);
-                // skip peer for now
-                if (pair.length == 2) {
-                    pairs.push({source: pair[0],
-                               target: pair[1]});
-                }
-
-            });
-            return pairs;
-        }
-
-        self.set('tree', tree);
-        self.set('vis', vis);
-        update_links();
-    },
-
-    /*
-     * Check to make sure that every service has saved coordinates
-     */
-    _saved_coords: function(services) {
-        var saved_coords = true;
-        services.forEach(function(service) {
-            if (!service.x || !service.y) {
-                saved_coords = false;
+    processRelations: function(rels) {
+        var self = this, 
+            pairs = [];
+        console.group("Process Rels");
+        Y.each(rels, function(rel) {
+                var pair = self.processRelation(rel);
+        // skip peer for now
+        if (pair.length == 2) {
+            pairs.push({source: pair[0],
+                        target: pair[1]});
             }
         });
-        return saved_coords;
-    },
-
-    /*
-     * Generates coordinates for those services that are missing them
-     */
-    _generate_coords: function(services, tree) {
-        services.forEach(function(service) {
-            if (service.x && service.y) {
-                service.set('x', service.x);
-                service.set('y', service.y);
-            }
-        });
-        var services_with_coords = tree.nodes({children: services})
-            .filter(function(d) { return !d.children; });
-        services_with_coords.forEach(function(service) {
-            if (service.get('x') && service.get('y')) {
-                service.x = service.get('x');
-                service.y = service.get('y');
-            }
-        });
-        return services_with_coords;
+        console.groupEnd();
+        return pairs;
     },
 
     /*
@@ -268,14 +306,13 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
      * in the form "x y,( x y,)* x y"
      *
      * TODO For now, just draw a straight line; 
-     * will eventually use A* to route around other services
      */
     draw_relation: function(relation) {
-        return (relation.source.x  + (
-                    relation.source.get('width') / 2)) + ' ' +
-            relation.source.y + ', ' +
-            (relation.target.x + (relation.target.get('width') / 2)) + ' ' + 
-            relation.target.y;
+        console.log("draw_relation", relation);
+        var connectors = relation.source.getConnectorPair(relation.target),
+            s = connectors[0],
+            t = connectors[1];
+        return s[0] + ',' + s[1] + ' ' + t[0] + ',' + t[1];
     },
 
     /*
@@ -361,11 +398,11 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 };
 
             // add temp relation between services
-            var link = vis.selectAll("path.pending-relation")
+            var link = vis.selectAll("polyline.pending-relation")
                 .data([rel]);
             link.enter().insert("svg:polyline", "g.service")
                 .attr("class", "relation pending-relation")
-                .attr('points', view.draw_relation(rel));
+                .attr('d', view.draw_relation(rel));
 
             // fire event to add relation in juju
             env.add_relation(
@@ -384,7 +421,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
 
 }, {
     ATTRS: {
-        current_service_click_action: { value: 'show_service' },
+        current_service_click_action: {value: 'show_service'}
     }
 });
 

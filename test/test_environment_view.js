@@ -105,6 +105,16 @@
                 view.render();
                 container.all('.service-border').size().should.equal(3);
                 container.all('.relation').size().should.equal(1);
+                // Verify that the paths render 'properly' where this 
+                // means no NaN in the paths
+                var lines = container.all('polyline');
+                
+                Y.each(lines, function(line) { 
+                    var points = line.points;
+                    Y.each(points, function(p) {
+                        Y.Lang.isNumber(p).should.equal(true);
+                    });
+                });
                 done();
             }
         );
@@ -143,5 +153,67 @@
         );
 
     });
+
+     describe('view model support infrastructure', function() {
+     var Y, views, models;
+
+     before(function (done) {
+         Y = YUI(GlobalConfig).use(['juju-views', 'juju-models'], 
+             function (Y) {
+                 views = Y.namespace('juju.views');
+                 models = Y.namespace('juju.models');
+                 done();
+             });
+         });
+
+     it('must be able to get us nearest connectors', 
+        function () {
+            var b1 = new views.BoundingBox(),
+            b2 = new views.BoundingBox();
+
+            b1.setXY(0, 0)
+                .setWH(100, 200);
+
+            b2.setXY(200, 300)
+            .setWH(100, 200);
+
+            b1.getXY().should.eql([0, 0]);
+            b2.getWH().should.eql([100, 200]);
+
+            b1.getNearestConnector([0, 0]);
+
+            b1.getNearestConnector(b2).should.eql([50, 200]);
+            b2.getNearestConnector(b1).should.eql([250, 300]);
+
+            b1.getConnectorPair(b2).should.eql([[50, 200], [250, 300]]);
+            });
+
+     it('must be able to access model attributes easily', function() {
+           var service = new models.Service({id: 'mediawiki',
+                                            exposed: true}),
+               b1 = new views.BoundingBox();
+            b1.set('model', service);
+            b1.id.should.equal('mediawiki');
+            b1.exposed.should.equal(true);
+     });
+
+     it('must be able to map from sequence of models to boundingboxes',
+       function() {
+           var units = new models.ServiceUnitList();
+           units.add([{id: 'mysql/0'},
+                      {id: 'mysql/1'},
+                      {id: 'mysql/2'},
+                      {id: 'mysql/3'}]);
+           
+           units.size().should.equal(4);
+           var boxes = units.map(views.toBoundingBox);
+           boxes.length.should.equal(4);
+           boxes[0].id.should.equal('mysql/0');
+
+           // Also extract the computed mysql
+           boxes[3].id.should.equal('mysql/3');
+           boxes[3].service.should.equal('mysql');
+       });
+});
 
 })();
