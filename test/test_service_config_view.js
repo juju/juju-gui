@@ -88,8 +88,9 @@
       Y.Object.each(config, function(value, name) {
         container_html.should.contain(name);
 
-        if(value === true || value === false) {
-          container_html.should.contain("checked");
+        if (value === true || value === false) {
+          // testing boolean values (checkbox)
+          container_html.should.contain('checked');
         } else {
           container_html.should.contain(value);
         }

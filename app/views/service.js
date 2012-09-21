@@ -51,10 +51,10 @@ YUI.add('juju-view-service', function(Y) {
     var result = {};
     container.all(cls).each(function(el) {
       var value = null;
-      if(el.getAttribute('type') === 'checkbox') {
+      if (el.getAttribute('type') === 'checkbox') {
         value = el.get('checked');
       } else {
-          value = el.get('value');
+        value = el.get('value');
       }
       result[el.get('name')] = value;
     });
@@ -224,17 +224,20 @@ YUI.add('juju-view-service', function(Y) {
               'name': field_name
             };
 
-            if(schema[field_name]['type'] === 'boolean') {
-              entry['isBool'] = true;
+            if (schema[field_name].type === 'boolean') {
+              entry.isBool = true;
 
-              if(config[field_name]) {
-                entry['value'] = 'checked';
+              if (config[field_name]) {
+                // this will be used inside the input tag
+                // like <input id="id" type="checkbox" checked>
+                entry.value = 'checked';
               } else {
-                entry['value'] = '';
+                // The output will be <input id="id" type="checkbox">
+                entry.value = '';
               }
 
             } else {
-              entry['value'] = config[field_name];
+              entry.value = config[field_name];
             }
 
             settings.push(Y.mix(entry, field_def));
