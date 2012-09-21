@@ -190,18 +190,18 @@ YUI.add('juju-view-service', function(Y) {
           var display_constraints = [];
 
           //these are read-only values
-          var readOnly = {
+          var readOnlyConstraints = {
             'provider-type': constraints['provider-type'],
             'ubuntu-series': constraints['ubuntu-series']
           };
 
-          for (var key in constraints) {
-            if (!readOnly[key]) {
+          Y.Object.each(constraints, function(value, name) {
+            if (!(name in readOnlyConstraints)) {
               display_constraints.push({
-                'name': key,
-                'value': constraints[key]});
+                'name': name,
+                'value': value});
             }
-          }
+          });
 
           var generics = ['cpu', 'mem', 'arch'];
           Y.Object.each(generics, function(idx, gkey) {
@@ -211,18 +211,18 @@ YUI.add('juju-view-service', function(Y) {
           });
 
           console.log('service constraints', display_constraints);
-          container.setHTML(this.template(
-              {'service': service.getAttrs(),
-                'constraints': display_constraints,
-                'readOnly': (function() {
-                  var arr = [];
-                  Y.Object.each(readOnly, function(name, value) {
-                    arr.push({'name': name, 'value': value});
-                  });
-                  return arr;
-                })(),
-                'charm': this.renderable_charm(service.get('charm'), db)}
-              ));
+          container.setHTML(this.template({
+            service: service.getAttrs(),
+            constraints: display_constraints,
+            readOnlyConstraints: (function() {
+              var arr = [];
+              Y.Object.each(readOnlyConstraints, function(name, value) {
+                arr.push({'name': name, 'value': value});
+              });
+              return arr;
+            })(),
+            charm: this.renderable_charm(service.get('charm'), db)}
+          ));
         }
 
       });
