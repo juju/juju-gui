@@ -8,7 +8,8 @@ YUI.add('juju-view-service', function(Y) {
 
   var views = Y.namespace('juju.views'),
       Templates = views.Templates,
-      models = Y.namespace('juju.models');
+      models = Y.namespace('juju.models'),
+      utils = Y.namespace('juju.views.utils');
 
   var exposeButtonMixin = {
     events: {
@@ -56,7 +57,8 @@ YUI.add('juju-view-service', function(Y) {
   };
 
   var buildServerCallbackHandler = function(config) {
-    var _serverErrorMessage = Y.namespace('juju.views.utils')._serverErrorMessage,
+    var utils = Y.namespace('juju.views.utils'),
+        _serverErrorMessage = utils._serverErrorMessage,
         container = config.container,
         scope = config.scope,
         initHandler = config.initHandler,
@@ -101,202 +103,210 @@ YUI.add('juju-view-service', function(Y) {
     };
   };
 
-  Y.namespace('juju.views.utils').buildServerCallbackHandler = buildServerCallbackHandler;
-  Y.namespace('juju.views.utils')._serverErrorMessage = 'An error ocurred.';
+  utils.buildServerCallbackHandler = buildServerCallbackHandler;
+  utils._serverErrorMessage = 'An error ocurred.';
 
-  var ServiceRelations = Y.Base.create('ServiceRelationsView', Y.View, [views.JujuBaseView], {
+  var ServiceRelations = Y.Base.create(
+      'ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
-    template: Templates['service-relations'],
+        template: Templates['service-relations'],
 
-    initializer: function() {
-      Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
-    },
+        initializer: function() {
+          Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+        },
 
-    render: function() {
-      var container = this.get('container'),
-          db = this.get('db'),
-          service = this.get('model');
-      container.setHTML(this.template(
-          {'service': service.getAttrs(),
-            'relations': service.get('rels'),
-            'charm': this.renderable_charm(service.get('charm'), db)}
-          ));
-    }
-  });
+        render: function() {
+          var container = this.get('container'),
+              db = this.get('db'),
+              service = this.get('model');
+          container.setHTML(this.template(
+              {'service': service.getAttrs(),
+                'relations': service.get('rels'),
+                'charm': this.renderable_charm(service.get('charm'), db)}
+              ));
+        }
+      });
 
   views.service_relations = ServiceRelations;
 
-  var ServiceConstraints = Y.Base.create('ServiceConstraintsView', Y.View, [views.JujuBaseView], {
+  var ServiceConstraints = Y.Base.create(
+      'ServiceConstraintsView', Y.View, [views.JujuBaseView], {
 
-    template: Templates['service-constraints'],
+        template: Templates['service-constraints'],
 
-    initializer: function() {
-      Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
-    },
+        initializer: function() {
+          Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+        },
 
-    events: {
-      '#save-service-constraints': {click: 'updateConstraints'}
-    },
+        events: {
+          '#save-service-constraints': {click: 'updateConstraints'}
+        },
 
-    updateConstraints: function() {
-      var service = this.get('model'),
-          container = this.get('container'),
-          env = this.get('env');
+        updateConstraints: function() {
+          var service = this.get('model'),
+              container = this.get('container'),
+              env = this.get('env');
 
-      var values = (function() {
-        var result = [],
+          var values = (function() {
+            var result = [],
                 map = getElementsValuesMap(container, '.constraint-field');
 
-        for (var key in map) {
-          result.push(key + '=' + map[key]);
+            Y.Object.each(map, function(value, name) {
+              result.push(name + '=' + value);
+            });
+
+            return result;
+          })();
+
+          // Disable the "Update" button while the RPC call is outstanding.
+          container.one('#save-service-constraints')
+            .set('disabled', 'disabled');
+          env.set_constraints(service.get('id'),
+              values,
+              buildServerCallbackHandler({
+                container: container,
+                successHandler: function()  {
+                  var service = this.get('model'),
+                      env = this.get('env'),
+                      app = this.get('app');
+
+                  env.get_service(
+                      service.get('id'), Y.bind(app.load_service, app));
+                },
+                errorHandler: function() {
+                  container.one('#save-service-constraints')
+                .removeAttribute('disabled');
+                },
+                scope: this}
+              ));
+        },
+
+        render: function() {
+          var container = this.get('container'),
+              db = this.get('db'),
+              service = this.get('model');
+
+          var constraints = service.get('constraints');
+          var display_constraints = [];
+
+          //these are read-only values
+          var readOnly = {
+            'provider-type': constraints['provider-type'],
+            'ubuntu-series': constraints['ubuntu-series']
+          };
+
+          for (var key in constraints) {
+            if (!readOnly[key]) {
+              display_constraints.push({
+                'name': key,
+                'value': constraints[key]});
+            }
+          }
+
+          var generics = ['cpu', 'mem', 'arch'];
+          Y.Object.each(generics, function(idx, gkey) {
+            if (!(gkey in constraints)) {
+              display_constraints.push({'name': gkey, 'value': ''});
+            }
+          });
+
+          console.log('service constraints', display_constraints);
+          container.setHTML(this.template(
+              {'service': service.getAttrs(),
+                'constraints': display_constraints,
+                'readOnly': (function() {
+                  var arr = [];
+                  Y.Object.each(readOnly, function(name, value) {
+                    arr.push({'name': name, 'value': value});
+                  });
+                  return arr;
+                })(),
+                'charm': this.renderable_charm(service.get('charm'), db)}
+              ));
         }
 
-        return result;
-      })();
-
-      // Disable the "Update" button while the RPC call is outstanding.
-      container.one('#save-service-constraints').set('disabled', 'disabled');
-      env.set_constraints(service.get('id'),
-          values,
-          buildServerCallbackHandler({
-            container: container,
-            successHandler: function()  {
-              var service = this.get('model'),
-                  env = this.get('env'),
-                        app = this.get('app');
-
-              env.get_service(service.get('id'), Y.bind(app.load_service, app));
-            },
-            errorHandler: function() {
-              container.one('#save-service-constraints').removeAttribute('disabled');
-            },
-            scope: this}
-          ));
-    },
-
-    render: function() {
-      var container = this.get('container'),
-          db = this.get('db'),
-          service = this.get('model');
-
-      var constraints = service.get('constraints');
-      var display_constraints = [];
-
-      //these are read-only values
-      var readOnly = {
-        'provider-type': constraints['provider-type'],
-        'ubuntu-series': constraints['ubuntu-series']
-      };
-
-      for (var key in constraints) {
-        if (!readOnly[key]) {
-          display_constraints.push({'name': key, 'value': constraints[key]});
-        }
-      }
-
-      var generics = ['cpu', 'mem', 'arch'];
-      for (var idx in generics) {
-        var gkey = generics[idx];
-        if (! (gkey in constraints)) {
-          display_constraints.push({'name': gkey, 'value': ''});
-        }
-      }
-
-      console.log('service constraints', display_constraints);
-      container.setHTML(this.template(
-          {'service': service.getAttrs(),
-            'constraints': display_constraints,
-            'readOnly': (function() {
-              var arr = [];
-              for (var key in readOnly) {
-                arr.push({'name': key, 'value': readOnly[key]});
-              }
-              return arr;
-            })(),
-            'charm': this.renderable_charm(service.get('charm'), db)}
-          ));
-    }
-
-  });
+      });
 
   views.service_constraints = ServiceConstraints;
 
-  var ServiceConfigView = Y.Base.create('ServiceConfigView', Y.View, [views.JujuBaseView], {
+  var ServiceConfigView = Y.Base.create(
+      'ServiceConfigView', Y.View, [views.JujuBaseView], {
 
-    template: Templates['service-config'],
+        template: Templates['service-config'],
 
-    initializer: function() {
-      Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
-    },
+        initializer: function() {
+          Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+        },
 
-    events: {
-      '#save-service-config': {click: 'saveConfig'}
-    },
+        events: {
+          '#save-service-config': {click: 'saveConfig'}
+        },
 
-    render: function() {
-      var container = this.get('container'),
-          db = this.get('db'),
-          service = this.get('model');
+        render: function() {
+          var container = this.get('container'),
+              db = this.get('db'),
+              service = this.get('model');
 
-      if (!service || !service.get('loaded')) {
-        console.log('not connected / maybe');
-        return this;
-      }
+          if (!service || !service.get('loaded')) {
+            console.log('not connected / maybe');
+            return this;
+          }
 
-      console.log('config', service.get('config'));
-      var charm_url = service.get('charm');
+          console.log('config', service.get('config'));
+          var charm_url = service.get('charm');
 
-      // combine the charm schema and the service values for display.
-      var charm = db.charms.getById(charm_url);
-      var config = service.get('config');
-      var schema = charm.get('config');
+          // combine the charm schema and the service values for display.
+          var charm = db.charms.getById(charm_url);
+          var config = service.get('config');
+          var schema = charm.get('config');
 
-      var settings = [];
-      var field_def;
+          var settings = [];
+          var field_def;
 
-      for (var field_name in schema) {
-        field_def = schema[field_name];
-        settings.push(Y.mix(
-            {'name': field_name, 'value': config[field_name]}, field_def));
-      }
+          Y.Object.each(schema, function(field_def, field_name) {
+            settings.push(Y.mix(
+                {'name': field_name, 'value': config[field_name]}, field_def));
+          });
 
-      console.log('render view svc config', service.getAttrs(), settings);
+          console.log('render view svc config', service.getAttrs(), settings);
 
-      container.setHTML(this.template(
-          {service: service.getAttrs(),
-            settings: settings,
-            charm: this.renderable_charm(service.get('charm'), db)}
-          ));
+          container.setHTML(this.template(
+              {service: service.getAttrs(),
+                settings: settings,
+                charm: this.renderable_charm(service.get('charm'), db)}
+              ));
 
-      return this;
-    },
+          return this;
+        },
 
-    saveConfig: function() {
-      var env = this.get('env'),
-          container = this.get('container'),
-          service = this.get('model');
+        saveConfig: function() {
+          var env = this.get('env'),
+              container = this.get('container'),
+              service = this.get('model');
 
-      // Disable the "Update" button while the RPC call is outstanding.
-      container.one('#save-service-config').set('disabled', 'disabled');
+          // Disable the "Update" button while the RPC call is outstanding.
+          container.one('#save-service-config').set('disabled', 'disabled');
 
-      env.set_config(service.get('id'),
-          getElementsValuesMap(container, '.config-field'),
-          buildServerCallbackHandler({
-            container: container,
-            successHandler: function()  {
-              var service = this.get('model'),
-                  env = this.get('env'),
-                        app = this.get('app');
+          env.set_config(service.get('id'),
+              getElementsValuesMap(container, '.config-field'),
+              buildServerCallbackHandler({
+                container: container,
+                successHandler: function()  {
+                  var service = this.get('model'),
+                      env = this.get('env'),
+                      app = this.get('app');
 
-              env.get_service(service.get('id'), Y.bind(app.load_service, app));
-            },
-            errorHandler: function() {
-              container.one('#save-service-config').removeAttribute('disabled');
-            },
-            scope: this}
-          ));
-    }
-  });
+                  env.get_service(
+                      service.get('id'), Y.bind(app.load_service, app));
+                },
+                errorHandler: function() {
+                  container.one('#save-service-config')
+                    .removeAttribute('disabled');
+                },
+                scope: this}
+              ));
+        }
+      });
 
   views.service_config = ServiceConfigView;
 

@@ -166,14 +166,15 @@
 
     it('should display an error when addErrorMessage is called',
        function() {
-         var view = new ServiceConfigView({
-           container: container,
-           model: service,
-           db: db,
-           env: env
+         var utils = Y.namespace('juju.views.utils'),
+             view = new ServiceConfigView({
+                container: container,
+                model: service,
+                db: db,
+                env: env
          }).render();
 
-         var error_message = Y.namespace('juju.views.utils')._serverErrorMessage,
+         var error_message = utils._serverErrorMessage,
          alert_ = container.one('#message-area>.alert');
 
          // Before an erroneous event is processed, no alert exists.
