@@ -14,7 +14,6 @@ YUI.add('juju-view-environment', function(Y) {
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View,
                                       [views.JujuBaseView], {
         events: {
-          '#add-relation-btn': {click: 'add_relation'},
           '#zoom-out-btn': {click: 'zoom_out'},
           '#zoom-in-btn': {click: 'zoom_in'}
         },
@@ -104,9 +103,10 @@ YUI.add('juju-view-environment', function(Y) {
             Y.each(rels, function(rel) {
               var pair = processRelation(rel);
               // Skip peer for now.
-              if (pair.length === 2) {
-                pairs.push({source: pair[0],
-                  target: pair[1]});
+              if (pair.length === 3) {
+                pairs.push({source: pair[1],
+                  target: pair[2],
+                  type: pair[0]});
               }
 
             });
@@ -116,14 +116,55 @@ YUI.add('juju-view-environment', function(Y) {
           var rel_data = processRelations(relations);
 
           function update_links() {
-            var link = vis.selectAll('polyline.relation')
-          .remove();
-            link = vis.selectAll('polyline.relation')
-          .data(rel_data);
-            link.enter().insert('svg:polyline', 'g.service')
-          .attr('class', 'relation')
-          .attr('points', function(d) {
-                  return self.draw_relation(d); });
+            // Remove all rel-groups.
+            vis.selectAll('g.rel-group')
+              .remove();
+
+            // Add new relation groups
+            var g = vis.selectAll('g.rel-group')
+              .data(rel_data)
+              .enter().insert('g', 'g.service')
+              .attr('class', 'rel-group');
+
+            // Add relation lines.
+            var link = g.append('polyline')
+              .attr('class', 'relation')
+              .attr('points', function(d) {
+                  return self.draw_relation(d).map(function(point) {
+                    return point.join(' ');
+                  });
+                });
+
+            // Add a labelgroup
+            var label = g.append('g')
+              .attr('class', 'rel-label')
+              .attr('transform', function(d) {
+                  var points = self.draw_relation(d);
+                  return 'translate(' +
+                      [Math.max(points[0][0], points[1][0]) -
+                       Math.abs((points[0][0] - points[1][0]) / 2),
+                       Math.max(points[0][1], points[1][1]) -
+                       Math.abs((points[0][1] - points[1][1]) / 2)] + ')';
+                })
+              .on('click', function(d) {
+                  // On click, offer to remove the relation
+                  self.removeRelationConfirm(d, this, self);
+                });
+            label.append('text')
+              .append('tspan')
+              .text(function(d) { return d.type; });
+            label.insert('rect', 'text')
+              .attr('width', function() {
+                  return Y.one(this.parentNode)
+                  .one('text').getClientRect().width + 10;
+                })
+              .attr('height', 20)
+              .attr('x', function() {
+                  return -parseInt(d3.select(this).attr('width'), 10) / 2;
+                })
+              .attr('y', -10)
+              .attr('rx', 10)
+              .attr('ry', 10);
           }
 
           var drag = d3.behavior.drag()
@@ -404,6 +445,7 @@ YUI.add('juju-view-environment', function(Y) {
             var endpoints = r.get('endpoints'),
                 rel_services = [];
             Y.each(endpoints, function(ep) {
+              rel_services[0] = ep[1].name;
               rel_services.push(services.filter(function(d) {
                 return d.get('id') === ep[0];
               })[0]);
@@ -457,11 +499,11 @@ YUI.add('juju-view-environment', function(Y) {
      * TODO For now, just draw a straight line;
      */
         draw_relation: function(relation) {
-          return (relation.source.x + (
-              relation.source.get('width') / 2)) + ' ' +
-              relation.source.y + ', ' +
-              (relation.target.x + (relation.target.get('width') / 2)) + ' ' +
-              relation.target.y;
+          return [[(relation.source.x + (
+              relation.source.get('width') / 2)),
+              relation.source.y],
+            [(relation.target.x + (relation.target.get('width') / 2)),
+              relation.target.y]];
         },
 
         /*
@@ -475,15 +517,39 @@ YUI.add('juju-view-environment', function(Y) {
 
             // Add .selectable-service to all .service-border.
             this.addSVGClass('.service-border', 'selectable-service');
-            container.one('#add-relation-btn').addClass('active');
           } else if (curr_action === 'add_relation_start' ||
               curr_action === 'add_relation_end') {
             this.set('current_service_click_action', 'toggle_control_panel');
 
             // Remove selectable border from all nodes.
             this.removeSVGClass('.service-border', 'selectable-service');
-            container.one('#add-relation-btn').removeClass('active');
           } // Otherwise do nothing.
+        },
+
+        removeRelation: function(d, context, view) {
+          var env = this.get('env');
+          view.addSVGClass(Y.one(context.parentNode).one('polyline'),
+              'to-remove pending-relation');
+          env.remove_relation(
+              d.source.get('id'),
+              d.target.get('id'),
+              Y.bind(function(ev) {
+                view.get('rmrelation_dialog').hide();
+              }, this));
+        },
+
+        removeRelationConfirm: function(d, context, view) {
+          view.set('rmrelation_dialog', views.createModalPanel(
+              'Are you sure you want to remove this relation? ' +
+              'This cannot be undone.',
+              '#rmrelation-modal-panel',
+              'Remove Relation',
+              Y.bind(function(ev) {
+                ev.preventDefault();
+                ev.target.set('disabled', true);
+                view.removeRelation(d, context, view);
+              },
+              this)));
         },
 
         /*
@@ -687,7 +753,6 @@ YUI.add('juju-view-environment', function(Y) {
                 rel.source.get('id'),
                 rel.target.get('id'),
                 function(resp) {
-                  container.one('#add-relation-btn').removeClass('active');
                   if (resp.err) {
                     console.log('Error adding relation');
                   }
@@ -711,6 +776,7 @@ YUI.add('juju-view-environment', function(Y) {
     'base-build',
     'handlebars-base',
     'node',
+    'svg-layouts',
     'event-resize',
     'view']
 });
