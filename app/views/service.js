@@ -280,13 +280,10 @@ YUI.add('juju-view-service', function(Y) {
         console.log('not connected / maybe');
         return this;
       }
-      var units = db.units.get_units_for_service(service);
-      var charm_name = service.get('charm');
       container.setHTML(this.template(
           {'service': service.getAttrs(),
-            'charm': this.renderable_charm(charm_name, db),
-            'units': units.map(function(u) {
-              return u.getAttrs();})
+            'charm': this.renderable_charm(service.get('charm'), db),
+            'units': db.units.get_units_for_service(service)
           }));
       return this;
     },
@@ -392,7 +389,7 @@ YUI.add('juju-view-service', function(Y) {
         for (var i = units.length - 1;
             unit_ids_to_remove.length < delta;
             i -= 1) {
-          unit_ids_to_remove.push(units[i].get('id'));
+          unit_ids_to_remove.push(units[i].id);
         }
         env.remove_units(
             unit_ids_to_remove,
@@ -412,10 +409,8 @@ YUI.add('juju-view-service', function(Y) {
       // ev.results is an array of the new unit ids to be created.
       db.units.add(
           Y.Array.map(unit_names, function(unit_id) {
-            return new models.ServiceUnit(
-                {id: unit_id,
-                  agent_state: 'pending',
-                  service: service_id});
+            return {id: unit_id,
+              agent_state: 'pending'};
           }));
       service.set(
           'unit_count', service.get('unit_count') + unit_names.length);

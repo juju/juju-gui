@@ -218,7 +218,7 @@ YUI.add('juju-gui', function(Y) {
       if (unit) {
         // Once the unit is loaded we need to get the full details of the
         // service.  Otherwise the relations data will not be available.
-        var service = this.db.services.getById(unit.get('service'));
+        var service = this.db.services.getById(unit.service);
         this._prefetch_service(service);
       }
       this.showView('unit', {unit: unit, db: this.db, env: this.env});
@@ -408,15 +408,15 @@ YUI.add('juju-gui', function(Y) {
      */
     getModelURL: function(model, intent) {
       var matches = [],
-          attrs = model.getAttrs(),
+          attrs = (model instanceof Y.Model) ? model.getAttrs() : model,
           routes = this.get('routes'),
           regexPathParam = /([:*])([\w\-]+)?/g,
           idx = 0;
 
       routes.forEach(function(route) {
         var path = route.path,
-                required_model = route.model,
-                reverse_map = route.reverse_map;
+            required_model = route.model,
+            reverse_map = route.reverse_map;
 
         // Fail fast on wildcard paths, routes w/o models
         // and when the model doesn't match the route type
@@ -437,7 +437,7 @@ YUI.add('juju-gui', function(Y) {
             });
         matches.push(Y.mix({path: path,
           route: route,
-          model: model,
+          attrs: attrs,
           intent: route.intent}));
       });
 
@@ -449,9 +449,7 @@ YUI.add('juju-gui', function(Y) {
       });
 
       if (matches.length > 1) {
-        console.warn('Ambiguous routeModel',
-            model.get('id'),
-            matches);
+        console.warn('Ambiguous routeModel', attrs.id, matches);
         // Default to the last route in this configuration
         // error case.
         idx = matches.length - 1;
@@ -539,5 +537,6 @@ YUI.add('juju-gui', function(Y) {
     'app-base',
     'app-transitions',
     'base',
-    'node']
+    'node',
+    'model']
 });
