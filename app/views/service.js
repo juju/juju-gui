@@ -48,13 +48,11 @@ YUI.add('juju-view-service', function(Y) {
 
   var ServiceRelations = Y.Base.create(
       'ServiceRelationsView', Y.View, [views.JujuBaseView], {
-
         template: Templates['service-relations'],
-
         initializer: function() {
-          Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+          Y.mix(
+              this, exposeButtonMixin, undefined, undefined, undefined, true);
         },
-
         render: function() {
           var container = this.get('container'),
               db = this.get('db'),

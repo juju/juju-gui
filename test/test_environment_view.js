@@ -25,17 +25,17 @@
         ['relation', 'add', {
           'interface': 'reversenginx',
           'scope': 'global',
-          'endpoints': [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]
-          ],
+          'endpoints':
+           [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
           'id': 'relation-0000000000'
         }],
         ['relation', 'add', {
           'interface': 'mysql',
           'scope': 'global',
-          'endpoints': [
-                        ['mysql', {'role': 'server', 'name': 'db'}],
-                        ['wordpress', {'role': 'client', 'name': 'db'}]
-          ], 'id': 'relation-0000000001'
+          'endpoints':
+           [['mysql', {'role': 'server', 'name': 'db'}],
+            ['wordpress', {'role': 'client', 'name': 'db'}]],
+           'id': 'relation-0000000001'
         }],
         ['machine', 'add', {
           'agent-state': 'running',

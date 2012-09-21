@@ -1,6 +1,6 @@
 FILES=$(shell bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js | grep -v server.js)
 NODE_TARGETS=node_modules/chai node_modules/d3 node_modules/jshint \
-	node_modules/yui bin/generateTemplates
+	node_modules/yui
 TEMPLATE_TARGETS=app/templates/charm-collection.handlebars \
 	app/templates/notifications_overview.handlebars \
 	app/templates/service-constraints.handlebars \
@@ -10,13 +10,12 @@ TEMPLATE_TARGETS=app/templates/charm-collection.handlebars \
 	app/templates/service-config.handlebars \
 	app/templates/service-header.partial
 
-
-all: install
+all: prep test
 
 app/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	@./bin/generateTemplates
 
-$(NODE_TARGETS): package.json 
+$(NODE_TARGETS): package.json
 	@npm install
 	@#link depends
 	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
