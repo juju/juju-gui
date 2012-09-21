@@ -47,64 +47,14 @@ YUI.add('juju-view-service', function(Y) {
     }
   };
 
-  var getElementsValuesMap = function(container, cls, originalMap) {
-    var result = (originalMap ? originalMap : {});
+  var getElementsValuesMap = function(container, cls) {
+    var result = {};
     container.all(cls).each(function(el) {
       result[el.get('name')] = el.get('value');
     });
 
     return result;
   };
-
-  var buildServerCallbackHandler = function(config) {
-    var utils = Y.namespace('juju.views.utils'),
-        _serverErrorMessage = utils._serverErrorMessage,
-        container = config.container,
-        scope = config.scope,
-        initHandler = config.initHandler,
-        finalizeHandler = config.finalizeHandler,
-        successHandler = config.successHandler,
-        errorHandler = config.errorHandler;
-
-    function _addErrorMessage(message) {
-      var div = container.one('#message-area')
-            .appendChild(Y.Node.create('<div/>'))
-            .addClass('alert')
-            .addClass('alert-error')
-            .set('text', message);
-
-      var close = div.appendChild(Y.Node.create('<a/>'))
-           .addClass('close')
-           .set('text', '×');
-
-      close.on('click', function() {
-        div.remove();
-      });
-    }
-
-    function invokeCallback(callback) {
-      if (callback) {
-        if (scope) {
-          callback.apply(scope);
-        } else {
-          callback();
-        }
-      }
-    }
-
-    return function(ev) {
-      if (ev && ev.err) {
-        _addErrorMessage(_serverErrorMessage);
-        invokeCallback(errorHandler);
-      } else {
-        invokeCallback(successHandler);
-      }
-      invokeCallback(finalizeHandler);
-    };
-  };
-
-  utils.buildServerCallbackHandler = buildServerCallbackHandler;
-  utils._serverErrorMessage = 'An error ocurred.';
 
   var ServiceRelations = Y.Base.create(
       'ServiceRelationsView', Y.View, [views.JujuBaseView], {
@@ -163,7 +113,7 @@ YUI.add('juju-view-service', function(Y) {
             .set('disabled', 'disabled');
           env.set_constraints(service.get('id'),
               values,
-              buildServerCallbackHandler({
+              utils.buildRpcHandler({
                 container: container,
                 successHandler: function()  {
                   var service = this.get('model'),
@@ -175,7 +125,7 @@ YUI.add('juju-view-service', function(Y) {
                 },
                 errorHandler: function() {
                   container.one('#save-service-constraints')
-                .removeAttribute('disabled');
+                    .removeAttribute('disabled');
                 },
                 scope: this}
               ));
@@ -289,7 +239,7 @@ YUI.add('juju-view-service', function(Y) {
 
           env.set_config(service.get('id'),
               getElementsValuesMap(container, '.config-field'),
-              buildServerCallbackHandler({
+              utils.buildRpcHandler({
                 container: container,
                 successHandler: function()  {
                   var service = this.get('model'),

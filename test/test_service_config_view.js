@@ -3,7 +3,7 @@
 (function() {
   describe('juju service config view', function() {
     var ServiceConfigView, models, Y, container, service, db, conn,
-        env, charm, ENTER;
+        env, charm, ENTER, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-views', 'juju-models', 'base',
@@ -14,6 +14,7 @@
             ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
             models = Y.namespace('juju.models');
             ServiceConfigView = Y.namespace('juju.views').service_config;
+            utils = Y.namespace('juju.views.utils');
             conn = new(Y.namespace('juju-tests.utils')).SocketStub();
             env = new(Y.namespace('juju')).Environment({
                     conn: conn
@@ -110,31 +111,32 @@
     });
 
     it('should reenable the "Update" button if RPC fails', function() {
-      var assertButtonState = function(shouldBe) {
+      var assertButtonDisabled = function(shouldBe) {
         var save_button = container.one('#save-service-config');
         save_button.get('disabled').should.equal(shouldBe);
       };
 
-      var view = new ServiceConfigView({
-        container: container,
-        model: service,
-        db: db,
-        env: (function() {
-          env.set_config = function(service, config, callback) {
-            assertButtonState(true);
-            callback({
-              err: true
-            });
-          };
-          return env;
-        })()
-      }).render();
+      var ev = {err: true},
+          view = new ServiceConfigView({
+            container: container,
+            model: service,
+            db: db,
+            env: (function() {
+              // We provide a fake env module that both makes test assertions
+              // and mocks out network traffic.
+              env.set_config = function(service, config, callback) {
+                assertButtonDisabled(true);
+                callback(ev);
+              };
+              return env;
+            })()
+          }).render();
 
       // Clicking on the "Update" button disables it until the RPC
       // callback returns, then it is re-enabled.
-      assertButtonState(false);
+      assertButtonDisabled(false);
       view.saveConfig();
-      assertButtonState(false);
+      assertButtonDisabled(false);
     });
 
     it('should display a message when a server error occurs', function() {
@@ -156,7 +158,7 @@
       // Before an erroneous event is processed, no alert exists.
       var _ = expect(alert_).to.not.exist;
       // Handle the error event.
-      Y.namespace('juju.views.utils').buildServerCallbackHandler({
+      utils.buildRpcHandler({
         container: container
       })(ev);
       // The event handler should have created an alert box.
@@ -166,21 +168,20 @@
 
     it('should display an error when addErrorMessage is called',
        function() {
-         var utils = Y.namespace('juju.views.utils'),
-             view = new ServiceConfigView({
-                container: container,
-                model: service,
-                db: db,
-                env: env
+          var view = new ServiceConfigView({
+           container: container,
+           model: service,
+           db: db,
+           env: env
          }).render();
 
-         var error_message = utils._serverErrorMessage,
+         var error_message = utils.SERVER_ERROR_MESSAGE,
          alert_ = container.one('#message-area>.alert');
 
          // Before an erroneous event is processed, no alert exists.
          var _ = expect(alert_).to.not.exist;
          // Display the error message.
-         Y.namespace('juju.views.utils').buildServerCallbackHandler({
+         utils.buildRpcHandler({
            container: container
          })({
            err: true
