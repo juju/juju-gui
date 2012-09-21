@@ -175,5 +175,49 @@
          unit_data.service.should.eql(['mysql', 'mysql']);
          unit_data.number.should.eql([0, 1]);
        });
+
+    it('RelationList.get_relations_for_service should do what it says',
+        function() {
+          var db = new models.Database(),
+             service = new models.Service({id: 'mysql', exposed: false}),
+             rel0 = new models.Relation(
+             { id: 'relation-0',
+               endpoints:
+               [['mediawiki', {name: 'cache', role: 'source'}],
+                 ['squid', {name: 'cache', role: 'front'}]],
+               'interface': 'cache'
+             }),
+             rel1 = new models.Relation(
+             { id: 'relation-1',
+               endpoints:
+               [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
+               'interface': 'reversenginx'
+             }),
+             rel2 = new models.Relation(
+             { id: 'relation-2',
+               endpoints:
+               [['mysql', {name: 'db', role: 'db'}],
+                 ['mediawiki', {name: 'storage', role: 'app'}]],
+               'interface': 'db'
+             }),
+             rel3 = new models.Relation(
+             { id: 'relation-3',
+               endpoints:
+               [['mysql', {'role': 'peer', 'name': 'loadbalancer'}]],
+               'interface': 'mysql-loadbalancer'
+             }),
+             rel4 = new models.Relation(
+             { id: 'relation-4',
+               endpoints:
+               [['something', {name: 'foo', role: 'bar'}],
+                 ['mysql', {name: 'la', role: 'lee'}]],
+               'interface': 'thing'
+             });
+          db.relations.add([rel0, rel1, rel2, rel3, rel4]);
+          Y.Array.map(
+              db.relations.get_relations_for_service(service),
+              function(r) { return r.get('id'); })
+                .should.eql(['relation-2', 'relation-3', 'relation-4']);
+        });
   });
 })();

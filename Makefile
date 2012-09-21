@@ -23,9 +23,13 @@ $(NODE_TARGETS): package.json
 
 install: $(NODE_TARGETS) app/templates.js
 
-lint: virtualenv/bin/gjslint node_modules/jshint
+gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --custom_jsdoc_tags=property,default,since --jslint_error=all $(FILES)
+
+jshint: node_modules/jshint
 	@node_modules/jshint/bin/hint --config=jshint.config $(FILES)
+
+lint: gjslint jshint
 
 virtualenv/bin/gjslint virtualenv/bin/fixjsstyle:
 	@virtualenv virtualenv
@@ -47,4 +51,4 @@ clean:
 	@rm -rf node_modules virtualenv
 	@make -C docs clean
 
-.PHONY: test lint beautify server install clean prep
+.PHONY: test lint beautify server install clean prep jshint gjslint
