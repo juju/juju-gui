@@ -58,7 +58,7 @@
         loaded: true,
         config: {
                     option0: 'value0',
-                    option1: 'value1'
+                    option1: true
         }
       });
       db.services.add([service]);
@@ -87,7 +87,13 @@
           container_html = container.one('#service-config').getHTML();
       Y.Object.each(config, function(value, name) {
         container_html.should.contain(name);
-        container_html.should.contain(value);
+
+        if(value === true || value === false) {
+          container_html.should.contain("checked");
+        } else {
+          container_html.should.contain(value);
+        }
+
       });
     });
 
@@ -107,7 +113,7 @@
       message.op.should.equal('set_config');
       message.service_name.should.equal('mysql');
       message.config.option0.should.equal('new value');
-      message.config.option1.should.equal('value1');
+      message.config.option1.should.equal(true);
     });
 
     it('should reenable the "Update" button if RPC fails', function() {

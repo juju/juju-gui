@@ -50,7 +50,13 @@ YUI.add('juju-view-service', function(Y) {
   var getElementsValuesMap = function(container, cls) {
     var result = {};
     container.all(cls).each(function(el) {
-      result[el.get('name')] = el.get('value');
+      var value = null;
+      if(el.getAttribute('type') === 'checkbox') {
+        value = el.get('checked');
+      } else {
+          value = el.get('value');
+      }
+      result[el.get('name')] = value;
     });
 
     return result;
@@ -214,8 +220,24 @@ YUI.add('juju-view-service', function(Y) {
           var field_def;
 
           Y.Object.each(schema, function(field_def, field_name) {
-            settings.push(Y.mix(
-                {'name': field_name, 'value': config[field_name]}, field_def));
+            var entry = {
+              'name': field_name
+            };
+
+            if(schema[field_name]['type'] === 'boolean') {
+              entry['isBool'] = true;
+
+              if(config[field_name]) {
+                entry['value'] = 'checked';
+              } else {
+                entry['value'] = '';
+              }
+
+            } else {
+              entry['value'] = config[field_name];
+            }
+
+            settings.push(Y.mix(entry, field_def));
           });
 
           console.log('render view svc config', service.getAttrs(), settings);
