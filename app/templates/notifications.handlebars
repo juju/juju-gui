@@ -1,7 +1,9 @@
-<div class="btn-group {{open}}">
+<span class="{{open}}">
   <button id="notify-indicator"
           data-target="notify-list"
-          class="btn dropdown-toggle {{state}}">{{count}}</button>
+          class="btn dropdown-toggle {{state}}">
+          {{count}}
+  </button>
      <ul id="notify-list" class="dropdown-menu">
        <li style="header">
          <a href="/notifications/">
@@ -24,7 +26,7 @@
        </li>
        {{/notifications}}
      </ul>
-</div>
+</span>
 
 
 
