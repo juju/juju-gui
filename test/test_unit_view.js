@@ -29,7 +29,7 @@
     });
 
     beforeEach(function(done) {
-      container = Y.Node.create('<div id="test-container" />');
+      container = Y.Node.create('<div id=\"test-container\"/>');
       Y.one('#main').append(container);
       db = new models.Database();
       charm = new models.Charm({
@@ -136,14 +136,14 @@
     it('should display Retry and Resolved buttons when ' +
        'there is an error', function() {
          unit.set('agent_state', 'foo-error');
-         var view = new UnitView(
-         {container: container, unit: unit, db: db, env: env}).render();
+         var view = new UnitView({container: container,
+           unit: unit,
+           db: db,
+           env: env}).render();
          container.one('#retry-unit-button').getHTML().should.equal('Retry');
-         container.one(
-         '#resolved-unit-button').getHTML().should.equal('Resolved');
-         container.one(
-         '#remove-unit-button').getHTML().should.equal('Remove');
-
+         container.one('#resolved-unit-button').getHTML().should.equal(
+         'Resolved');
+         container.one('#remove-unit-button').getHTML().should.equal('Remove');
        });
 
     it('should always display Remove button', function() {

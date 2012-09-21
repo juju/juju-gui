@@ -5,8 +5,13 @@ YUI.add('juju-view-environment', function(Y) {
   var views = Y.namespace('juju.views'),
       Templates = views.Templates;
 
+  function styleToNumber(selector, style) {
+    style = style || 'height';
+    return parseInt(Y.one(selector).getComputedStyle(style), 10);
+  }
+
   var EnvironmentView = Y.Base.create('EnvironmentView',
-                                      Y.View, [views.JujuBaseView], {
+      Y.View, [views.JujuBaseView], {
         events: {
           '#add-relation-btn': {click: 'add_relation'},
           '#zoom-out-btn': {click: 'zoom_out'},
@@ -29,7 +34,7 @@ YUI.add('juju-view-environment', function(Y) {
 
         render_canvas: function() {
 
-          function processRelation(r) {
+          function process_relation(r) {
             var endpoints = r.get('endpoints'),
                 rel_services = [];
             Y.each(endpoints, function(ep) {
@@ -40,11 +45,11 @@ YUI.add('juju-view-environment', function(Y) {
             return rel_services;
           }
 
-          function processRelations(rels) {
+          function process_relations(rels) {
             var pairs = [];
             Y.each(rels, function(rel) {
-              var pair = processRelation(rel);
-              // Skip peer for now.
+              var pair = process_relation(rel);
+              // skip peer for now
               if (pair.length === 2) {
                 pairs.push({source: pair[0],
                   target: pair[1]});
@@ -56,11 +61,11 @@ YUI.add('juju-view-environment', function(Y) {
 
           var self = this,
               container = this.get('container'),
-              m = this.get('domain_models'),
+              m = this.get('db'),
               height = 600,
               width = 640;
 
-          var services = m.services.toArray().map(function(s) {
+          var services = m.services.map(function(s) {
             s.value = s.get('unit_count');
             return s;
           });
@@ -116,7 +121,7 @@ YUI.add('juju-view-environment', function(Y) {
             .size([width, height])
             .padding(200);
 
-          var rel_data = processRelations(relations);
+          var rel_data = process_relations(relations);
 
           function update_links() {
             var link = vis.selectAll('polyline.relation')
@@ -125,7 +130,8 @@ YUI.add('juju-view-environment', function(Y) {
                 .data(rel_data);
             link.enter().insert('svg:polyline', 'g.service')
                 .attr('class', 'relation')
-                .attr('points', function(d) { return self.draw_relation(d); });
+                .attr('points', function(d) {
+                  return self.draw_relation(d); });
           }
 
           var drag = d3.behavior.drag()
@@ -219,8 +225,8 @@ YUI.add('juju-view-environment', function(Y) {
             .data(function(d) {
                 var aggregate_map = d.get('aggregated_status'),
                     aggregate_list = [];
-                Y.Object.each(aggregate_map, function(value, name) {
-                  aggregate_list.push({name: name, value: value});
+                Y.Object.each(aggregate_map, function(value, key) {
+                  aggregate_list.push({name: key, value: value});
                 });
 
                 return status_chart_layout(aggregate_list);
@@ -290,7 +296,6 @@ YUI.add('juju-view-environment', function(Y) {
      * in the form 'x y,( x y,)* x y'.
      *
      * TODO For now, just draw a straight line;
-     * will eventually use A* to route around other services.
      */
         draw_relation: function(relation) {
           return (relation.source.x + (
@@ -375,19 +380,19 @@ YUI.add('juju-view-environment', function(Y) {
               svg = container.one('svg'),
               width = 800,
               height = 600;
+
+
           if (container.get('winHeight') &&
               Y.one('#overview-tasks') &&
               Y.one('.navbar')) {
             // Attempt to get the viewport height minus the navbar at top and
             // control bar at the bottom. Use Y.one() to ensure that the
             // container is attached first (provides some sensible defaults)
+
             viewport_height = container.get('winHeight') -
-                parseInt(Y.one('#overview-tasks')
-                        .getComputedStyle('height') || 22, 10) -
-                parseInt(Y.one('.navbar')
-                        .getComputedStyle('height') || 70, 10) -
-                parseInt(Y.one('.navbar')
-                        .getComputedStyle('margin-bottom') || 18, 10);
+                                  styleToNumber('#overview-tasks') -
+                                  styleToNumber('.navbar') -
+                                  styleToNumber('.navbar', 'margin-bottom');
 
             // Make sure we don't get sized any smaller than 800x600
             viewport_height = Math.max(viewport_height, height);
@@ -404,7 +409,8 @@ YUI.add('juju-view-environment', function(Y) {
           height = parseInt(svg.getComputedStyle('height'), 10);
 
           // Set the internal rect's size
-          svg.one('rect').setAttribute('width', width)
+          svg.one('rect')
+            .setAttribute('width', width)
             .setAttribute('height', height);
 
           // Reset the scale parameters

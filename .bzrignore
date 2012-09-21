@@ -8,6 +8,8 @@ app/assets/stylesheets/juju-gui.css
 app/assets/javascripts/d3.v2.js
 app/assets/javascripts/d3.v2.min.js
 app/assets/javascripts/yui
+app/templates.js
+app/assets/stylesheets/juju-gui.css
 docs/_build/doctrees
 docs/_build/html
 *~

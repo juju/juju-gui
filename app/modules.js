@@ -1,7 +1,6 @@
 GlobalConfig = {
   // Uncomment for debug versions of YUI.
-  //    filter: 'debug',
-
+  filter: 'debug',
   // Uncomment for verbose logging of YUI
   debug: false,
 
@@ -31,6 +30,10 @@ GlobalConfig = {
         // Views
         'juju-view-utils': {
           fullpath: '/views/utils.js'
+        },
+
+        'juju-notifications': {
+          fullpath: '/views/notifications.js'
         },
 
         'juju-view-environment': {
@@ -64,6 +67,7 @@ GlobalConfig = {
         'juju-views': {
           use: [
             'juju-templates',
+            'juju-notifications',
             'juju-view-utils',
             'juju-view-environment',
             'juju-view-service',
@@ -86,13 +90,17 @@ GlobalConfig = {
           fullpath: '/store/env.js'
         },
 
+        'juju-notification-controller': {
+          fullpath: '/store/notifications.js'
+        },
+
         'juju-charm-store': {
           fullpath: '/store/charm.js'
         },
 
-
         'juju-controllers': {
-          use: ['juju-env', 'juju-charm-store']
+          use: ['juju-env', 'juju-charm-store',
+            'juju-notification-controller']
         },
 
         // App
@@ -108,3 +116,4 @@ GlobalConfig = {
     }
   }
 };
+

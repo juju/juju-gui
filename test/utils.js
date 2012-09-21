@@ -10,7 +10,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       this.messages = [];
 
       this.close = function() {
-        console.log('close stub');
+        //console.log('close stub');
         this.messages = [];
       };
 
@@ -20,6 +20,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
 
       this.open = function() {
         this.onopen();
+        return this;
       };
 
       this.msg = function(m) {

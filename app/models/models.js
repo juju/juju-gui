@@ -8,7 +8,9 @@ YUI.add('juju-models', function(Y) {
     idAttribute: 'charm_id',
     charm_id_re: /((\w+):)?(\w+)\/(\S+)-(\d+)/,
     parse_charm_id: function(id) {
-      if (!id) { id = this.get('id'); }
+      if (!id) {
+        id = this.get('id');
+      }
       return this.charm_id_re.exec(id);
     }
   }, {
@@ -18,8 +20,9 @@ YUI.add('juju-models', function(Y) {
         valueFn: function(name) {
           var match = this.parse_charm_id();
           if (match) {
-            return match[3] + '/' + match[4];
+                        return match[3] + '/' + match[4];
           }
+          return undefined;
         }
       },
       url: {},
@@ -34,22 +37,21 @@ YUI.add('juju-models', function(Y) {
   var CharmList = Y.Base.create('charmList', Y.ModelList, [], {
     model: Charm
   }, {
-    ATTRS: {
-    }
+    ATTRS: {}
   });
   models.CharmList = CharmList;
 
 
 
   var Service = Y.Base.create('service', Y.Model, [], {
-    //    idAttribute: 'name',
-
     ATTRS: {
       name: {},
       charm: {},
       config: {},
       constraints: {},
-      exposed: {value: false},
+      exposed: {
+        value: false
+      },
       relations: {},
       unit_count: {},
       aggregated_status: {}
@@ -60,26 +62,28 @@ YUI.add('juju-models', function(Y) {
   var ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
     model: Service
   }, {
-    ATTRS: {
-    }
+    ATTRS: {}
   });
   models.ServiceList = ServiceList;
 
   var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
-      //    idAttribute: 'name',
       {
         ATTRS: {
           service: {
-            valueFn: function(name) {
+                valueFn: function(name) {
               var unit_name = this.get('id');
               return unit_name.split('/', 1)[0];
-            }
+                }
           },
           number: {
-            valueFn: function(name) {
+                valueFn: function(name) {
               var unit_name = this.get('id');
               return parseInt(unit_name.split('/')[1], 10);
-            }
+                }
+          },
+          urlName: {
+                valueFn: function() {return this.get('id')
+                                     .replace('/', '-');}
           },
           machine: {},
           agent_state: {},
@@ -88,7 +92,7 @@ YUI.add('juju-models', function(Y) {
 
           config: {},
           is_subordinate: {
-            value: false // default
+                value: false // default
           },
           open_ports: {},
           public_address: {},
@@ -113,20 +117,10 @@ YUI.add('juju-models', function(Y) {
       return units;
     },
     /*
-     *  Return information about the state of all units focused on the
-     * 'worst' status information available. In this way if any unit is in
-     *  an error state we can report that for the whole list.
-     *
-     * KT - Should return an aggregate count by state (map), so proproptional
-     * representation can be done in various renderings.
-     */
-    get_informative_state: function() {
-    },
-    /*
-     *  Return information about the state of the set of units for a
-     *  given service in the form of a map of agent states:
-     *  state => number of units in that state
-     */
+         *  Return information about the state of the set of units for a
+         *  given service in the form of a map of agent states:
+         *  state => number of units in that state
+         */
     get_informative_states_for_service: function(service) {
       var aggregate_map = {}, aggregate_list = [],
           units_for_service = this.get_units_for_service(service);
@@ -135,7 +129,8 @@ YUI.add('juju-models', function(Y) {
         var state = unit.get('agent_state');
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
-        } else {
+        }
+        else {
           aggregate_map[state] += 1;
         }
 
@@ -145,9 +140,9 @@ YUI.add('juju-models', function(Y) {
     },
 
     /*
-     * Updates a service's unit count and aggregate state map during a
-     * delta, ensuring that they're up to date.
-     */
+         * Updates a service's unit count and aggregate state map during a
+         * delta, ensuring that they're up to date.
+         */
     update_service_unit_aggregates: function(service) {
       var aggregate = this.get_informative_states_for_service(service);
       var sum = Y.Array.reduce(
@@ -155,8 +150,7 @@ YUI.add('juju-models', function(Y) {
       service.set('unit_count', sum);
       service.set('aggregated_status', aggregate);
     },
-    ATTRS: {
-    }
+    ATTRS: {}
   });
   models.ServiceUnitList = ServiceUnitList;
 
@@ -176,8 +170,7 @@ YUI.add('juju-models', function(Y) {
   var MachineList = Y.Base.create('machineList', Y.ModelList, [], {
     model: Machine
   }, {
-    ATTRS: {
-    }
+    ATTRS: {}
   });
   models.MachineList = MachineList;
 
@@ -193,10 +186,101 @@ YUI.add('juju-models', function(Y) {
   models.Relation = Relation;
 
   var RelationList = Y.Base.create('relationList', Y.ModelList, [], {}, {
-    ATTRS: {
-    }
+    ATTRS: {}
   });
   models.RelationList = RelationList;
+
+
+  var Notification = Y.Base.create('notification', Y.Model, [], {}, {
+    ATTRS: {
+      title: {},
+      message: {},
+      level: {
+        value: 'info'
+      },
+      kind: {},
+      seen: {value: false},
+      timestamp: {
+        valueFn: function() {
+          return Y.Lang.now();
+        }
+      },
+
+      // when a model id is set we can infer link (but only in the
+      // context of app's routing table)
+      modelId: {
+        setter: function(model) {
+          if (Y.Lang.isArray(model)) {return model;}
+          return Y.mix([model.name, model.get('id')]);
+        }},
+      link: {},
+      link_title: {
+        value: 'View Details'
+      }
+    }
+  });
+  models.Notification = Notification;
+
+  var NotificationList = Y.Base.create('notificationList', Y.ModelList, [], {
+    model: Notification,
+
+    add: function() {
+      this.trim();
+      return NotificationList.superclass.add.apply(this, arguments);
+    },
+
+    comparator: function(model) {
+      // timestamp desc
+      return -model.get('timestamp');
+    },
+
+    /*
+         * Trim the list removing oldest elements till we are
+         * below max_size
+         */
+    trim: function(e) {
+      while (this.size() >= this.get('max_size')) {
+        this.removeOldest();
+      }
+    },
+
+    removeOldest: function() {
+      // The list is maintained in sorted order due to this.comparator
+      // handle zero based index
+      this.remove(this.size() - 1);
+    },
+
+    /*
+         * Get Notifications relative to a given model.
+         * Currenly this depends on a mapping between the model
+         * class as encoded by its clientId (see Database.getByModelId)
+         *
+         * [model_list_name, id]
+         */
+    getNotificationsForModel: function(model) {
+      var modelKey = model.get('id');
+      return this.filter(function(notification) {
+        var modelId = notification.get('modelId'),
+            modelList;
+        if (modelId) {
+          modelList = modelId[0],
+          modelId = modelId[1];
+          return (modelList === model.name) && (
+              modelId === modelKey);
+        }
+        return false;
+      });
+    }
+
+  }, {
+    ATTRS: {
+      max_size: {
+        value: 150,
+        writeOnce: 'initOnly'
+      }
+    }
+  });
+  models.NotificationList = NotificationList;
 
 
   var Database = Y.Base.create('database', Y.Base, [], {
@@ -205,6 +289,7 @@ YUI.add('juju-models', function(Y) {
       this.machines = new MachineList();
       this.charms = new CharmList();
       this.relations = new RelationList();
+      this.notifications = new NotificationList();
 
       // This one is dangerous.. we very well may not have capacity
       // to store a 1-1 representation of units in js.
@@ -215,8 +300,8 @@ YUI.add('juju-models', function(Y) {
       // Needs some experimentation with a large data set.
       this.units = new ServiceUnitList();
 
-      // For model syncing by type. Charms aren't currently sync'd, only fetched
-      // on demand (they are static).
+      // For model syncing by type. Charms aren't currently sync'd, only
+      // fetched on demand (their static).
       this.model_map = {
         'unit': ServiceUnit,
         'machine': Machine,
@@ -226,54 +311,85 @@ YUI.add('juju-models', function(Y) {
       };
     },
 
+    /*
+         * Model Id is a [db[model_list_name], model.get('id')]
+         * sequence that can be used to lookup models relative
+         * to the Database.
+         *
+         * getModelById can be called with either a modelId
+         * or model_type, model_id as individual parameters
+         */
+    getModelById: function(modelList, id) {
+      if (!Y.Lang.isValue(id)) {
+        id = modelList[1];
+        modelList = modelList[0];
+      }
+      modelList = this.getModelListByModelName(modelList);
+      return modelList.getById(id);
+    },
+
+    getModelListByModelName: function(modelName) {
+      if (modelName === 'serviceUnit') {
+        modelName = 'unit';
+      }
+      return this[modelName + 's'];
+
+    },
+
+    getModelFromChange: function(change) {
+      var change_type = change[0],
+          change_kind = change[1],
+          data = change[2],
+          model_id = change_kind === 'remove' &&
+          data || data.id;
+      return this.getModelById(change_type, model_id);
+    },
+
     reset: function() {
       this.services.reset();
       this.machines.reset();
       this.charms.reset();
       this.relations.reset();
       this.units.reset();
+      this.notifications.reset();
     },
 
     on_delta: function(delta_evt) {
       var changes = delta_evt.data.result;
+      console.groupCollapsed('Delta');
       console.log('Delta', this, changes);
-      var change_type, model_class = null, self = this;
+      var change_type, model_class = null,
+          self = this;
 
       changes.forEach(
           Y.bind(function(change) {
             change_type = change[0];
-            model_class = this.model_map[change_type];
-
-            if (!model_class) {
-              console.log('Unknown Change', change);
-            }
             console.log('change', this, change);
-            var model_list = this[change_type + 's'];
-            this.process_model_delta(change, model_class, model_list);
+            var model_list = this.getModelListByModelName(change_type);
+            this.process_model_delta(change, model_list);
           }, this));
       this.services.each(function(service) {
         self.units.update_service_unit_aggregates(service);
       });
       this.fire('update');
+      console.groupEnd();
     },
 
     // utility method to sync a data object and a model object.
-    _sync_bag: function(bag, model) {
-      // TODO: need to bulk mutate and then send mutation event,
-      // as is this is doing per attribute events.
-      Y.Object.each(bag, function(value, key) {
-        key = key.replace('-', '_');
-        if (model.get(key) !== value) {
-          model.set(key, value);
-        }
+    _get_bag: function(data) {
+      var incoming = {};
+      Y.each(data, function(value, aid) {
+        incoming[aid.replace('-', '_')] = value;
       });
+      return incoming;
     },
 
-    process_model_delta: function(change, ModelClass, model_list) {
+    process_model_delta: function(change, model_list) {
       // console.log('model change', change);
-      var change_kind = change[1];
-      var data = change[2];
-      var o;
+      var change_kind = change[1],
+          data = change[2],
+          o = this.getModelFromChange(change);
+
       if (change_kind === 'add' || change_kind === 'change') {
         // Client-side requests may create temporary objects in the
         // database in order to give the user more immediate feedback.
@@ -282,23 +398,18 @@ YUI.add('juju-models', function(Y) {
         // arrives for those objects, they already exist in a skeleton
         // form that needs to be fleshed out.  So, the existing objects
         // are kept and re-used.
-        o = model_list.getById(data.id);
-        if (Y.Lang.isNull(o)) {
-          o = new ModelClass({id: data.id});
-          this._sync_bag(data, o);
-          model_list.add(o);
+        if (!Y.Lang.isValue(o)) {
+          o = model_list.add(this._get_bag(data));
         } else {
-          this._sync_bag(data, o);
+          o.setAttrs(this._get_bag(data));
         }
-      } else if (change_kind === 'remove') {
-        o = model_list.getById(data);
-        // This should only be necessary while we are waiting on server
-        // side changes to have deltas aware of client requests.
-        if (!Y.Lang.isNull(o)) {
+      }
+      else if (change_kind === 'remove') {
+        if (Y.Lang.isValue(o)) {
           model_list.remove(o);
         }
       } else {
-        console.log('Unknown change kind in process_model_delta: ',
+        console.warn('Unknown change kind in process_model_delta:',
             change_kind);
       }
     }

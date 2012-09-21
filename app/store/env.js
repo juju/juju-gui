@@ -53,6 +53,7 @@ YUI.add('juju-env', function(Y) {
       this.ws.onopen = Y.bind(this.on_open, this);
       this.ws.onclose = Y.bind(this.on_close, this);
       this.on('msg', this.dispatch_event);
+      return this;
     },
 
     on_open: function(data) {

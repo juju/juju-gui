@@ -25,18 +25,17 @@
         ['relation', 'add', {
           'interface': 'reversenginx',
           'scope': 'global',
-          'endpoints':
-           [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]
-           ],
+          'endpoints': [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]
+          ],
           'id': 'relation-0000000000'
         }],
         ['relation', 'add', {
           'interface': 'mysql',
           'scope': 'global',
-          'endpoints':
-           [['mysql', {'role': 'server', 'name': 'db'}],
-            ['wordpress', {'role': 'client', 'name': 'db'}]
-           ], 'id': 'relation-0000000001'
+          'endpoints': [
+                        ['mysql', {'role': 'server', 'name': 'db'}],
+                        ['wordpress', {'role': 'client', 'name': 'db'}]
+          ], 'id': 'relation-0000000001'
         }],
         ['machine', 'add', {
           'agent-state': 'running',
@@ -118,7 +117,7 @@
          // Create an instance of EnvironmentView with custom env
          var view = new EnvironmentView({
            container: container,
-           domain_models: db,
+           db: db,
            env: env
          });
          view.render();
@@ -133,7 +132,7 @@
        function(done) {
          var view = new EnvironmentView({
            container: container,
-           domain_models: db,
+           db: db,
            env: env
          }).render();
          var add_relation = container.one('#add-relation-btn'),
@@ -164,7 +163,7 @@
     it('must be able to zoom using controls', function(done) {
       var view = new EnvironmentView({
         container: container,
-        domain_models: db,
+        db: db,
         env: env
       }).render();
       var zoom_in = container.one('#zoom-in-btn'),
@@ -189,16 +188,17 @@
        function(done) {
          var view = new EnvironmentView({
            container: container,
-           domain_models: db,
+           db: db,
            env: env
          }).render();
          var svg = Y.one('svg');
+
          parseInt(svg.one('rect').getAttribute('height'), 10)
-                    .should.equal(
-         parseInt(svg.getComputedStyle('height'), 10));
+                    .should.equal(parseInt(svg.getComputedStyle('height'),
+         10));
          parseInt(svg.one('rect').getAttribute('width'), 10)
-                    .should.equal(
-         parseInt(svg.getComputedStyle('width'), 10));
+                    .should.equal(parseInt(svg.getComputedStyle('width'),
+         10));
          done();
        }
     );
@@ -208,21 +208,11 @@
        function(done) {
          var view = new EnvironmentView({
            container: container,
-           domain_models: db,
+           db: db,
            env: env
          }).render();
          var svg = Y.one('svg');
-         parseInt(svg.getAttribute('height'), 10)
-                    .should.equal(
-         Math.max(600,
-         container.get('winHeight') -
-         parseInt(Y.one('#overview-tasks')
-                                .getComputedStyle('height'), 10) -
-         parseInt(Y.one('.navbar')
-                                .getComputedStyle('height'), 10) -
-         parseInt(Y.one('.navbar')
-                                .getComputedStyle('margin-bottom'), 10)
-         ));
+         parseInt(svg.getAttribute('height'), 10).should.be.above(599);
          done();
        }
     );
