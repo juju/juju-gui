@@ -54,12 +54,6 @@ describe('Application', function() {
     container.getAttribute('class').should.include('container');
   });
 
-  it('should be able to render the environment view with default data',
-     function() {
-       app.showView('environment', {db: app.db});
-       container.one('svg').should.not.equal(null);
-     });
-
   it('should be able to route objects to internal URLs', function() {
     // take handles to database objects and ensure we can route to the view
     // needed to show them

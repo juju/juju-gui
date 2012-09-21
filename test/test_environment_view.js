@@ -277,6 +277,27 @@
          service.simulate('click');
        }
     );
+
+    it('must be able to remove a relation between services', function(done) {
+      var view = new EnvironmentView({
+        container: container,
+          db: db,
+          env: env
+      }).render();
+      var relation = container.one('.rel-label'),
+          dialog_btn;
+      relation.after('click', function() {
+        var rel = this;
+        dialog_btn = Y.one('.btn-danger');
+        dialog_btn.after('click', function() {
+          container.all('.to-remove').size()
+            .should.equal(1);
+          done();
+        });
+        dialog_btn.simulate('click');
+      });
+      relation.simulate('click');
+    });
   });
 
 })();
