@@ -15,7 +15,7 @@ var juju = Y.namespace('juju'),
 var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     views: {
         environment: {
-            type: 'juju.views.environment',
+            type: 'juju.views.EnvironmentView',
             preserve: true
         },
 
@@ -281,11 +281,6 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
         this._buildServiceView(req, 'service_constraints');
     },
 
-    show_environment: function (req) {
-        console.log('App: Route: Environment', req.path, req.pendingRoutes);
-        this.showView('environment', {db: this.db, env: this.env}, {render: true});
-    },
-
     show_charm_collection: function(req) {
         console.log('App: Route: Charm Collection', req.path, req.query);
         this.showView('charm_collection', {
@@ -338,6 +333,26 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
                                  env: this.env,
                                  notifications: this.db.notifications});
             view.instance.render();
+        }
+        next();
+    },
+
+    show_environment: function (req, res, next) {
+        var view = this.getViewInfo('environment'),
+                instance = view.instance;
+        if (!instance) {
+            console.log('new env view');
+            this.showView('environment', {
+                                     db: this.db, 
+                                     env: this.env}, 
+                                     {render: true});
+        } else {
+            this.showView('environment', {db: this.db, env: this.env}, {
+            update: false, 
+            callback: function(view) {
+                view.update_canvas();
+                view.attachView();                    
+                }});
         }
         next();
     },

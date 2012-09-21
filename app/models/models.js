@@ -357,7 +357,7 @@ YUI.add('juju-models', function(Y) {
 
     on_delta: function(delta_evt) {
       var changes = delta_evt.data.result;
-      console.groupCollapsed('Delta');
+      console.group('Delta');
       console.log('Delta', this, changes);
       var change_type, model_class = null,
           self = this;

@@ -32,6 +32,7 @@ YUI.add('juju-view-environment', function(Y) {
           var container = this.get('container');
           EnvironmentView.superclass.render.apply(this, arguments);
           container.setHTML(Templates.overview());
+          this.svg = container.one('#overview');
           this.build_scene();
           return this;
         },
@@ -102,6 +103,20 @@ YUI.add('juju-view-environment', function(Y) {
           this.update_canvas(true);
         },
 
+        attachView: function(target) {
+            // attach view to target
+            // if target is an ancestor of the view
+            // this is a no-oop
+            if (Y.Lang.isString(target)) {
+                target = Y.one(target);
+            } else if (!Y.Lang.isValue(target)) {
+                target = this.get('container');
+            }
+            if (!this.svg.inDoc() || !this.svg.inRegion(target)) {
+                target.append(this.svg);
+            }
+        },
+
         /*
          * Sync our data arrays to the current data
          */
@@ -124,15 +139,19 @@ YUI.add('juju-view-environment', function(Y) {
                 return d.get('modelId');});
 
           this.link = vis.selectAll('polyline.relation')
-                        .data(this.rel_data, relationToId);
+                .data(this.rel_data, relationToId);
+
         },
 
         update_canvas: function(initial) {
           var self = this,
               tree = this.tree,
               vis = this.vis;
+            
+          // If our container element isn't attached to the DOM
+          // do so
 
-          // Process any changed data
+          //Process any changed data
           this.update_data();
 
           var drag = d3.behavior.drag()
@@ -147,8 +166,8 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Generate a node for each service, draw it as a rect with
           // labels for service and charm
-          var node = this.node,
-              link = this.link;
+          var node = this.node;
+
 
           // rerun the pack layout
           this.tree.nodes({children: this.services});
@@ -197,11 +216,10 @@ YUI.add('juju-view-environment', function(Y) {
           }
             
             if (initial) {
-                Y.later(500, this, update_links);
+                Y.later(600, this, update_links);
             } else {
                 update_links();                
             }
-
 
           self.set('tree', tree);
           self.set('vis', vis);
@@ -337,7 +355,7 @@ YUI.add('juju-view-environment', function(Y) {
 
         /*
      * Draw a relation between services.  Polylines take a list of points
-     * in the form "x y,( x y,)* x y"
+     * in the form 'x y,( x y,)* x y'
      *
      * TODO For now, just draw a straight line;
      */
@@ -544,7 +562,7 @@ YUI.add('juju-view-environment', function(Y) {
         }
       });
 
-  views.environment = EnvironmentView;
+views.EnvironmentView = EnvironmentView;
 }, '0.1.0', {
   requires: ['juju-templates',
     'juju-view-utils',
