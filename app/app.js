@@ -262,7 +262,8 @@ YUI.add('juju-gui', function(Y) {
       this.showView(viewName, {
         model: service,
         db: this.db,
-        env: this.env});
+        env: this.env,
+        app: this});
     },
 
     show_service: function(req) {
