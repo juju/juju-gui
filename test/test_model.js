@@ -119,10 +119,8 @@
                .get('id').should.equal('wordpress');
 
       var unit = db.units.item(0);
-      db.getModelById([unit.name, unit.get('id')])
-               .get('id').should.equal('wordpress/0');
-      db.getModelById(unit.name, unit.get('id'))
-               .get('id').should.equal('wordpress/0');
+      db.getModelById([unit.name, unit.id]).id.should.equal('wordpress/0');
+      db.getModelById(unit.name, unit.id).id.should.equal('wordpress/0');
 
     });
 

@@ -8,7 +8,7 @@ YUI.add('juju-view-unit', function(Y) {
 
   var UnitView = Y.Base.create('UnitView', Y.View, [], {
     initializer: function() {
-      console.log('view.init.unit', this.get('unit').getAttrs());
+      console.log('view.init.unit', this.get('unit'));
     },
 
     template: Templates.unit,

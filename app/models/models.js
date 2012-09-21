@@ -91,6 +91,7 @@ YUI.add('juju-models', function(Y) {
       obj.service = raw[0];
       obj.number = parseInt(raw[1], 10);
       obj.urlName = obj.id.replace('/', '-');
+      obj.name = 'serviceUnit'; // This lets us more easily mimic models.
     },
 
     add: function() {
@@ -212,7 +213,9 @@ YUI.add('juju-models', function(Y) {
       modelId: {
         setter: function(model) {
           if (Y.Lang.isArray(model)) {return model;}
-          return Y.mix([model.name, model.get('id')]);
+          return Y.mix(
+              [model.name,
+               (model instanceof Y.Model) ? model.get('id') : model.id]);
         }},
       link: {},
       link_title: {
@@ -259,7 +262,7 @@ YUI.add('juju-models', function(Y) {
      * [model_list_name, id]
      */
     getNotificationsForModel: function(model) {
-      var modelKey = model.get('id');
+      var modelKey = (model instanceof Y.Model) ? model.get('id') : model.id;
       return this.filter(function(notification) {
         var modelId = notification.get('modelId'),
             modelList;
