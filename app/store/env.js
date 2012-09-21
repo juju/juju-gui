@@ -183,10 +183,10 @@ YUI.add('juju-env', function(Y) {
     },
 
     set_constraints: function(service, constraints, callback) {
-        this._send_rpc({
-            op: 'set_constraints',
-            service_name: service,
-            constraints: constraints}, callback);
+      this._send_rpc({
+        op: 'set_constraints',
+        service_name: service,
+        constraints: constraints}, callback);
     },
 
     resolved: function(unit_name, relation_name, retry, callback) {
