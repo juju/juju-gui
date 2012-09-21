@@ -18,26 +18,43 @@
 
   <body>
 
-    <div class="navbar">
-      <div class="navbar-inner">
-
-        <div class="container">
-
+      <div id="viewport-wrapper">
+        <div id="vp-left-border"></div>
+        <div id="viewport">
+            <div class="navbar">
               <a class="brand" href="/">
-	        <img height="32" alt="Juju GUI" src="/assets/images/juju-white.png">
+                  <img alt="Juju GUI" src="/assets/images/juju_logo.png" />
               </a>
-	      <form id="omnibar" class="navbar-search pull-right yui3-skin-sam" method="GET">
-		<input id="charm-search" name="query" type="text" class="search-query span3"
-		       placeholder="Search"/>
-	      </form>
-              <span class="pull-right" id="notifications"/>
+              <div class="nav-environment">
+                <img class="divider" src="/assets/images/top_bar_div.png" />
+                <img src="/assets/images/environment_icon.png" />
+                Environment
+              </div>
+              <div class="nav-alerts-charms">
+                  <img src="/assets/images/alert_icon.png" />
+                  Alerts
+                  <img src="/assets/images/chevron_down.png" />
+                  <img class="divider" src="/assets/images/top_bar_div.png" />
+                  <img src="/assets/images/charm_icon.png" />
+                  Charms
+                  <img src="/assets/images/chevron_down.png" />
+              </div>
+
+                  <form id="omnibar" class="navbar-search pull-right yui3-skin-sam" method="GET">
+                <input id="charm-search" name="query" type="text" class="search-query span3"
+                       placeholder="Search"/>
+                <!-- <input id="omnibar-submit" class="btn" type="submit" value="search"/> -->
+                  </form>
+            </div>
+
+            <div id="content">
+                <div id="main" class="container-fluid">
+                </div> <!-- /container -->
+            </div>
+
         </div>
-      </div>
+        <div id="vp-right-border"></div>
     </div>
-
-    <div id="main" class="container">
-    </div> <!-- /container -->
-
     <!-- javascript away -->
     <script src="/assets/javascripts/yui/yui/yui-debug.js"></script>
     <script src="/modules.js"></script>

@@ -5,9 +5,10 @@ YUI.add('juju-view-environment', function(Y) {
   var views = Y.namespace('juju.views'),
       Templates = views.Templates;
 
-  function styleToNumber(selector, style) {
+  function styleToNumber(selector, style, default_size) {
     style = style || 'height';
-    return parseInt(Y.one(selector).getComputedStyle(style), 10);
+    default_size = default_size || 0;
+    return parseInt(Y.one(selector).getComputedStyle(style) || default_size, 10);
   }
 
   var EnvironmentView = Y.Base.create('EnvironmentView',
@@ -104,8 +105,8 @@ YUI.add('juju-view-environment', function(Y) {
             .append('svg:g')
             .call(zoom)
             .append('g');
-          vis.append('svg:rect')
-            .attr('fill', 'white');
+        vis.append('svg:rect')
+            .attr('fill', 'rgba(255,255,255,0)');
 
           // Bind visualization resizing on window resize
           Y.on('windowresize', function() {
@@ -258,8 +259,8 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-     * Check to make sure that every service has saved coordinates.
-     */
+         * Check to make sure that every service has saved coordinates.
+         */
         _saved_coords: function(services) {
           var saved_coords = true;
           services.forEach(function(service) {
@@ -271,8 +272,8 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-     * Generates coordinates for those services that are missing them.
-     */
+         * Generates coordinates for those services that are missing them.
+         */
         _generate_coords: function(services, tree) {
           services.forEach(function(service) {
             if (service.x && service.y) {
@@ -292,11 +293,11 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-     * Draw a relation between services.  Polylines take a list of points
-     * in the form 'x y,( x y,)* x y'.
-     *
-     * TODO For now, just draw a straight line;
-     */
+         * Draw a relation between services.  Polylines take a list of points
+         * in the form 'x y,( x y,)* x y'.
+         *
+         * TODO For now, just draw a straight line;
+         */
         draw_relation: function(relation) {
           return (relation.source.x + (
               relation.source.get('width') / 2)) + ' ' +
@@ -306,8 +307,8 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-     * Event handler for the add relation button.
-     */
+         * Event handler for the add relation button.
+         */
         add_relation: function(evt) {
           var curr_action = this.get('current_service_click_action'),
               container = this.get('container');
@@ -328,22 +329,22 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-     * Zoom in event handler.
-     */
+         * Zoom in event handler.
+         */
         zoom_out: function(evt) {
           this._fire_zoom(-0.2);
         },
 
         /*
-     * Zoom out event handler.
-     */
+         * Zoom out event handler.
+         */
         zoom_in: function(evt) {
           this._fire_zoom(0.2);
         },
 
         /*
-     * Wraper around the actual rescale method for zoom buttons.
-     */
+         * Wraper around the actual rescale method for zoom buttons.
+         */
         _fire_zoom: function(delta) {
           var vis = this.get('vis'),
               zoom = this.get('zoom'),
@@ -361,8 +362,8 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-     * Rescale the visualization on a zoom/pan event.
-     */
+         * Rescale the visualization on a zoom/pan event.
+         */
         rescale: function(vis, evt) {
           this.set('scale', evt.scale);
           vis.attr('transform', 'translate(' + evt.translate + ')' +
@@ -370,8 +371,8 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-     * Set the visualization size based on the viewport
-     */
+         * Set the visualization size based on the viewport
+         */
         setSizesFromViewport: function(vis, container, xscale, yscale) {
           // start with some reasonable defaults
           var viewport_height = '100%',
@@ -390,14 +391,13 @@ YUI.add('juju-view-environment', function(Y) {
             // container is attached first (provides some sensible defaults)
 
             viewport_height = container.get('winHeight') -
-                                  styleToNumber('#overview-tasks') -
-                                  styleToNumber('.navbar') -
-                                  styleToNumber('.navbar', 'margin-bottom');
+              styleToNumber('#overview-tasks', 'height', 22) -
+              styleToNumber('.navbar', 'height', 87);
 
             // Make sure we don't get sized any smaller than 800x600
             viewport_height = Math.max(viewport_height, height);
-            if (container.get('winWidth') < width) {
-              viewport_width = width;
+            if (container.getComputedStyle('width') < width) {
+                viewport_width = width;
             }
           }
           // Set the svg sizes
@@ -422,20 +422,20 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-     * Actions to be called on clicking a service.
-     */
+         * Actions to be called on clicking a service.
+         */
         service_click_actions: {
           /*
-         * Default action: view a service
-         */
+           * Default action: view a service
+           */
           show_service: function(m, context, view) {
             view.fire('showService', {service: m});
           },
 
           /*
-         * Fired when clicking the first service in the add relation
-         * flow.
-         */
+           * Fired when clicking the first service in the add relation
+           * flow.
+           */
           add_relation_start: function(m, context, view) {
             // Remove selectable border from current node.
             var node = Y.one(context).one('.service-border');
@@ -448,9 +448,9 @@ YUI.add('juju-view-environment', function(Y) {
           },
 
           /*
-         * Fired when clicking the second service is clicked in the
-         * add relation flow.
-         */
+           * Fired when clicking the second service is clicked in the
+           * add relation flow.
+           */
           add_relation_end: function(m, context, view) {
             // Remove selectable border from all nodes
             view.removeSVGClass('.selectable-service', 'selectable-service');
