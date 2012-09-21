@@ -100,6 +100,7 @@ YUI.add('juju-view-service', function(Y) {
       invokeCallback(finalizeHandler);
     };
   };
+
   Y.namespace('juju.views.utils').buildServerCallbackHandler = buildServerCallbackHandler;
   Y.namespace('juju.views.utils')._serverErrorMessage = 'An error ocurred.';
 
@@ -388,15 +389,15 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     modifyUnits: function(ev) {
-      if (ev.keyCode != ESC && ev.keyCode != ENTER) {
+      if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
         return;
       }
       var container = this.get('container'),
           field = container.one('#num-service-units');
-      if (ev.keyCode == ESC) {
+      if (ev.keyCode === ESC) {
         field.set('value', this.get('model').get('unit_count'));
       }
-      if (ev.keyCode != ENTER) { // If not Enter keyup...
+      if (ev.keyCode !== ENTER) { // If not Enter keyup...
         return;
       }
       ev.halt(true);
@@ -430,7 +431,7 @@ YUI.add('juju-view-service', function(Y) {
 
         for (var i = units.length - 1;
             unit_ids_to_remove.length < delta;
-            i--) {
+            i -= 1) {
           unit_ids_to_remove.push(units[i].get('id'));
         }
         env.remove_units(

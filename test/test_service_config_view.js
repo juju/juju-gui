@@ -82,14 +82,12 @@
       });
       view.render();
 
-      var config = service.get('config');
-      var container_html;
-      for (var name in config) {
-        var value = config[name];
-        container_html = container.one('#service-config').getHTML();
+      var config = service.get('config'),
+          container_html = container.one('#service-config').getHTML();
+      Y.Object.each(config, function(value, name) {
         container_html.should.contain(name);
         container_html.should.contain(value);
-      }
+      });
     });
 
     it('should let the user change a configuration value', function() {
