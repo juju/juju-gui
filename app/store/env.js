@@ -171,8 +171,8 @@ YUI.add('juju-env', function(Y) {
 
     destroy_service: function(service, callback) {
       this._send_rpc({
-          'op': 'destroy_service',
-          'service_name': service}, callback);
+        'op': 'destroy_service',
+        'service_name': service}, callback);
     },
 
     set_config: function(service, config, callback) {

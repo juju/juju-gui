@@ -147,8 +147,8 @@ YUI.add('juju-view-utils', function(Y) {
      * Utility methods for SVG regarding classes
      */
     hasSVGClass: function(selector, class_name) {
-        var classes = selector.getAttribute('class');
-        return classes.indexOf(class_name) != -1;
+      var classes = selector.getAttribute('class');
+      return classes.indexOf(class_name) != -1;
     },
 
     addSVGClass: function(selector, class_name) {
