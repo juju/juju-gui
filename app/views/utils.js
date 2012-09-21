@@ -143,6 +143,14 @@ YUI.add('juju-view-utils', function(Y) {
       return result;
     },
 
+    /*
+     * Utility methods for SVG regarding classes
+     */
+    hasSVGClass: function(selector, class_name) {
+      var classes = selector.getAttribute('class');
+      return classes.indexOf(class_name) != -1;
+    },
+
     addSVGClass: function(selector, class_name) {
       if (typeof(selector) === 'string') {
         Y.all(selector).each(function(n) {
@@ -156,7 +164,7 @@ YUI.add('juju-view-utils', function(Y) {
     },
 
     removeSVGClass: function(selector, class_name) {
-      if (typeof(selector) === 'string') {
+      if (typeof(selector) == 'string') {
         Y.all(selector).each(function() {
           var classes = this.getAttribute('class');
           this.setAttribute('class', classes.replace(class_name, ''));
@@ -164,6 +172,14 @@ YUI.add('juju-view-utils', function(Y) {
       } else {
         var classes = selector.getAttribute('class');
         selector.setAttribute('class', classes.replace(class_name, ''));
+      }
+    },
+
+    toggleSVGClass: function(selector, class_name) {
+      if (this.hasSVGClass(selector, class_name)) {
+        this.removeSVGClass(selector, class_name);
+      } else {
+        this.addSVGClass(selector, class_name);
       }
     }
 

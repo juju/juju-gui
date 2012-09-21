@@ -85,11 +85,20 @@ svg {
 
 charms.thumbnails.li { height:4em; }
 .relation {
-    stroke: #333333;
-    stroke-width: 1px;
+    stroke: #333333; 
+    stroke-width: 3px;
+
+    &.error {
+        stroke: #cc3333;
+    }
 
     &.pending-relation {
+        stroke-width: 2px;
         stroke-dasharray: 2, 2;
+    }
+
+    &.unused {
+        visibility: hidden;
     }
 }
 .state-error { stroke: #FF0000; }
@@ -110,6 +119,9 @@ g.service {
         &.selectable-service {
             stroke: #008;
             stroke-width: 3px;
+        }
+        &.hover {
+            stroke: #55f;
         }
     }
     .unit-count {
@@ -134,6 +146,18 @@ g.service {
         }
         &.on {
             visibility: visible;
+        }
+    }
+
+    .service-control-panel {
+        visibility: hidden;
+
+        &.active {
+            visibility: visible;
+        }
+
+        image {
+            cursor: pointer;
         }
     }
 }
