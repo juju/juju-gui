@@ -155,13 +155,13 @@ YUI.add('juju-view-environment', function(Y) {
               .text(function(d) { return d.type; });
             label.insert('rect', 'text')
               .attr('width', function() {
-                return Y.one(this.parentNode)
+                  return Y.one(this.parentNode)
                   .one('text').getClientRect().width + 10;
-              })
+                })
               .attr('height', 20)
               .attr('x', function() {
-                return -parseInt(d3.select(this).attr('width'), 10) / 2;
-              })
+                  return -parseInt(d3.select(this).attr('width'), 10) / 2;
+                })
               .attr('y', -10)
               .attr('rx', 10)
               .attr('ry', 10);
@@ -529,7 +529,7 @@ YUI.add('juju-view-environment', function(Y) {
         removeRelation: function(d, context, view) {
           var env = this.get('env');
           view.addSVGClass(Y.one(context.parentNode).one('polyline'),
-            'to-remove pending-relation');
+              'to-remove pending-relation');
           env.remove_relation(
               d.source.get('id'),
               d.target.get('id'),

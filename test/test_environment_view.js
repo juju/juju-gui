@@ -281,8 +281,8 @@
     it('must be able to remove a relation between services', function(done) {
       var view = new EnvironmentView({
         container: container,
-          db: db,
-          env: env
+        db: db,
+        env: env
       }).render();
       var relation = container.one('.rel-label'),
           dialog_btn;
