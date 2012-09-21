@@ -113,50 +113,55 @@
 
     // Ensure the environment view loads properly
     it('must be able to render service blocks and relations',
-       function(done) {
-         // Create an instance of EnvironmentView with custom env
-         var view = new EnvironmentView({
-           container: container,
-           db: db,
-           env: env
-         });
-         view.render();
-         container.all('.service-border').size().should.equal(3);
-         container.all('.relation').size().should.equal(1);
-         done();
-       }
+        function(done) {
+          // Create an instance of EnvironmentView with custom env
+          var view = new EnvironmentView({
+            container: container,
+            db: db,
+            env: env
+          });
+          view.render();
+          container.all('.service-border').size().should.equal(3);
+
+          // Count all the real relations.
+          (container.all('.relation').size() -
+           container.all('.pending-relation').size())
+            .should.equal(1);
+          done();
+        }
     );
 
     // Ensure that we can add a relation
-    it('must be able to add a relation between services',
-       function(done) {
-         var view = new EnvironmentView({
-           container: container,
-           db: db,
-           env: env
-         }).render();
-         var add_relation = container.one('#add-relation-btn'),
-         service = container.one('.service');
-         add_relation.after('click', function() {
-           // view doesn't capture click event from test, so fire
-           // this manually
-           view.add_relation();
-           container.all('.selectable-service').size()
-                        .should.equal(3);
-           service.simulate('click');
-         });
-         service.after('click', function() {
-           container.all('.selectable-service').size()
+    // SKIP: the add-relation-btn is going away
+    it.skip('must be able to add a relation between services',
+        function(done) {
+          var view = new EnvironmentView({
+            container: container,
+            db: db,
+            env: env
+          }).render();
+          var add_relation = container.one('#add-relation-btn'),
+              service = container.one('.service');
+          add_relation.after('click', function() {
+            // view doesn't capture click event from test, so fire
+            // this manually
+            view.add_relation();
+            container.all('.selectable-service').size()
+              .should.equal(3);
+            service.simulate('click');
+          });
+          service.after('click', function() {
+            container.all('.selectable-service').size()
                         .should.equal(2);
-           service.next().simulate('click');
-         });
-         service.next().after('click', function() {
-           container.all('.selectable-service').size()
+            service.next().simulate('click');
+          });
+          service.next().after('click', function() {
+            container.all('.selectable-service').size()
                         .should.equal(0);
-           done();
-         });
-         add_relation.simulate('click');
-       }
+            done();
+          });
+          add_relation.simulate('click');
+        }
     );
 
     // Ensure that the zoom controls work
@@ -184,21 +189,20 @@
 
     // Ensure that sizes are computed properly
     it('must be able to compute rect sizes based on the svg and' +
-       ' viewport size',
+        ' viewport size',
        function(done) {
          var view = new EnvironmentView({
-           container: container,
-           db: db,
-           env: env
+            container: container,
+            db: db,
+            env: env
          }).render();
          var svg = Y.one('svg');
-
          parseInt(svg.one('rect').getAttribute('height'), 10)
-                    .should.equal(parseInt(svg.getComputedStyle('height'),
-         10));
+          .should.equal(
+         parseInt(svg.getComputedStyle('height'), 10));
          parseInt(svg.one('rect').getAttribute('width'), 10)
-                    .should.equal(parseInt(svg.getComputedStyle('width'),
-         10));
+          .should.equal(
+         parseInt(svg.getComputedStyle('width'), 10));
          done();
        }
     );
@@ -207,16 +211,72 @@
     it('must be able to compute sizes by the viewport with a minimum',
        function(done) {
          var view = new EnvironmentView({
-           container: container,
-           db: db,
-           env: env
+            container: container,
+            db: db,
+            env: env
          }).render();
          var svg = Y.one('svg');
-         parseInt(svg.getAttribute('height'), 10).should.be.above(599);
+         parseInt(svg.getAttribute('height'), 10)
+          .should.equal(
+         Math.max(600,
+              container.get('winHeight') -
+              parseInt(Y.one('#overview-tasks')
+                .getComputedStyle('height'), 10) -
+              parseInt(Y.one('.navbar')
+                .getComputedStyle('height'), 10) -
+              parseInt(Y.one('.navbar')
+                .getComputedStyle('margin-bottom'), 10)
+              ));
          done();
        }
     );
 
+    // Tests for control panel
+    it('must be able to toggle a control panel', function(done) {
+      var view = new EnvironmentView({
+        container: container,
+        db: db,
+        env: env
+      }).render();
+      container.all('.service').each(function(node, i) {
+        node.after('click', function() {
+          view.hasSVGClass(
+              node.one('.service-control-panel'),
+              'active').should.equal(true);
+          container.all('.service-control-panel.active').size()
+              .should.equal(1);
+        });
+      });
+      done();
+    });
+
+    it('must be able to add a relation from the control panel',
+       function(done) {
+         var view = new EnvironmentView({
+            container: container,
+            db: db,
+            env: env
+         }).render();
+         var service = container.one('.service'),
+         add_rel = service.one('.add-relation'),
+         after_evt;
+         after_evt = service.after('click', function() {
+           after_evt.detach();
+           add_rel.simulate('click');
+         });
+         add_rel.after('click', function() {
+           container.all('.selectable-service').size()
+            .should.equal(2);
+           service.next().simulate('click');
+         });
+         service.next('.service').after('click', function() {
+           container.all('.selectable-service').size()
+            .should.equal(0);
+           done();
+         });
+         service.simulate('click');
+       }
+    );
   });
 
 })();
