@@ -46,7 +46,11 @@
           option1: {
             description: 'The second option.',
             type: 'boolean'
-          }
+          },
+                  option2: {
+                    description: 'The third option.',
+                    type: 'boolean'
+                  }
                 }
       });
 
@@ -58,7 +62,8 @@
         loaded: true,
         config: {
                     option0: 'value0',
-                    option1: true
+                    option1: true,
+                    option2: false
         }
       });
       db.services.add([service]);
@@ -84,17 +89,20 @@
       view.render();
 
       var config = service.get('config'),
-          container_html = container.one('#service-config').getHTML();
+          serviceConfigDiv = container.one('#service-config');
+
       Y.Object.each(config, function(value, name) {
-        container_html.should.contain(name);
+        var input = serviceConfigDiv.one('#input-' + name);
 
-        if (value === true || value === false) {
-          // testing boolean values (checkbox)
-          container_html.should.contain('checked');
+        if (value === true) {
+          // testing TRUE values (checkbox)
+          assert.isTrue(input.get('checked'));
+        } else if (value === false) {
+          // testing FALSE values (checkbox);
+          assert.isFalse(input.get('checked'));
         } else {
-          container_html.should.contain(value);
+          input.get('value').should.equal(value);
         }
-
       });
     });
 

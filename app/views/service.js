@@ -228,7 +228,7 @@ YUI.add('juju-view-service', function(Y) {
               entry.isBool = true;
 
               if (config[field_name]) {
-                // this will be used inside the input tag
+                // The "checked" string will be used inside an input tag
                 // like <input id="id" type="checkbox" checked>
                 entry.value = 'checked';
               } else {
