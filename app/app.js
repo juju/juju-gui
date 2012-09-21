@@ -354,10 +354,10 @@ YUI.add('juju-gui', function(Y) {
             evt.service_name, evt);
         return;
       }
-      // TODO: need to unify with .relations from delta stream.
+      // We intentionally ignore svc_data.rels.  We rely on the delta stream
+      // for relation data instead.
       svc.setAttrs({'config': svc_data.config,
         'constraints': svc_data.constraints,
-        'rels': svc_data.rels,
         'loaded': true,
         'prefetch': false});
       this.dispatch();
