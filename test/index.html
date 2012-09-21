@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="assets/mocha.css">
-  <script src="../app/assets/javascripts/yui/yui/yui.js"></script>
+  <script src="../app/assets/javascripts/yui/yui/yui-debug.js"></script>
   <script src="../app/modules.js"></script>
   <script src="assets/chai.js"></script>
   <script src="assets/mocha.js"></script>
@@ -11,17 +11,22 @@
     var assert = chai.assert,
         expect = chai.expect
         should = chai.should();
-    mocha.setup({'ui': 'bdd', 'ignoreLeaks': true})
+    mocha.setup({'ui': 'bdd', 'ignoreLeaks': false})
   </script>
 
   <script src="utils.js"></script>
   <script src="test_env.js"></script>
   <script src="test_model.js"></script>
+  <script src="test_notifications.js"></script>
   <script src="test_app.js"></script>
   <script src="test_unit_view.js"></script>
   <script src="test_charm_collection_view.js"></script>
   <script src="test_charm_view.js"></script>
+  <script src="test_utils.js"></script>
   <script src="test_environment_view.js"></script>
+  <script src="test_service_config_view.js"></script>
+  <script src="test_service_view.js"></script>
+  <script src="test_utils.js"></script>
 
   <script>
   YUI().use('node', 'event', function(Y) {

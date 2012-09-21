@@ -8,11 +8,10 @@ install:
 	@./bin/generateTemplates
 
 lint: install
-        @node_modules/jshint/bin/hint --config=jshint.config `bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js`
+	@node_modules/jshint/bin/hint --config=jshint.config `bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js`
 
 test: install
 	@./test-server.sh
-
 
 server: install
 	@echo "Customize config.js to modify server settings"

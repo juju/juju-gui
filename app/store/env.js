@@ -53,6 +53,7 @@ Y.extend(Environment, Y.Base, {
         this.ws.onopen = Y.bind(this.on_open, this);
         this.ws.onclose = Y.bind(this.on_close, this);
         this.on('msg', this.dispatch_event);
+        return this;
     },
 
     on_open: function(data) {
@@ -87,11 +88,6 @@ Y.extend(Environment, Y.Base, {
             console.warn('Env: Unknown evt kind', evt);
             return;
         }
-        //if (!(evt.op in EVENT_DISPATCH_MAP)) {
-        //    console.warn('Env: Unknown evt op', evt.op);
-        //    return;
-        //}
-        //var event_kind = EVENT_DISPATCH_MAP[evt.op];
         console.log('Env: Dispatch Evt', evt.op);
         this.fire(evt.op, {data: evt});
     },
@@ -126,6 +122,12 @@ Y.extend(Environment, Y.Base, {
             'service_name': service,
             'num_units': num_units}, callback);
     },
+    remove_units: function(unit_names, callback) {
+        this._send_rpc({
+            'op': 'remove_units',
+            'unit_names': unit_names}, callback);
+
+    },
 
     add_relation: function(endpoint_a, endpoint_b, callback) {
         this._send_rpc({
@@ -151,6 +153,10 @@ Y.extend(Environment, Y.Base, {
         this._send_rpc({'op':'expose', 'service_name': service}, callback);
     },
 
+    unexpose: function(service, callback) {
+        this._send_rpc({'op':'unexpose', 'service_name': service}, callback);
+    },
+
     status: function(callback) {
         this._send_rpc({'op': 'status'}, callback);
     },
@@ -166,6 +172,21 @@ Y.extend(Environment, Y.Base, {
         this._send_rpc({
             'op': 'destroy_service',
             'service': service}, callback);
+    },
+
+    set_config: function(service, config, callback) {
+        this._send_rpc({
+            op: 'set_config',
+            service_name: service,
+            config: config}, callback);
+    },
+
+    resolved: function(unit_name, relation_name, retry, callback) {
+        this._send_rpc({
+            op: 'resolved',
+            unit_name: unit_name,
+            relation_name: relation_name || null,
+            retry: retry || false}, callback);
     }
 
 });
