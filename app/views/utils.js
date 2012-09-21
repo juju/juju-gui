@@ -107,9 +107,11 @@ var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
     },
 
     toggleSVGClass: function(selector, class_name) {
-        this.hasSVGClass(selector, class_name) ?
-            this.removeSVGClass(selector, class_name) :
+        if (this.hasSVGClass(selector, class_name)) {
+            this.removeSVGClass(selector, class_name);
+        } else {
             this.addSVGClass(selector, class_name);
+        }
     }
 
 });

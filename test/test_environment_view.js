@@ -243,7 +243,7 @@
             done();
         });
 
-        it("must be able to add a relation from the control panel",
+        it('must be able to add a relation from the control panel',
             function(done) {
                 var view = new EnvironmentView({
                     container: container,

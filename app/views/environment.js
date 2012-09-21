@@ -271,7 +271,7 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                     .toggle_control_panel(d, context, self);
                 self.service_click_actions
                     .add_relation_start(d, context, self);
-            })
+            });
 
         // Drag controls on the add relation button, allowing
         // one to drag a line to create a relation
@@ -287,8 +287,8 @@ var EnvironmentView = Y.Base.create('EnvironmentView', Y.View, [views.JujuBaseVi
                 var context = this.parentNode.parentNode.parentNode;
 
                 // Start the line at our image
-                dragline.attr('x1', parseInt(img.attr('x')) + 16)
-                    .attr('y1', parseInt(img.attr('y')) + 16);
+                dragline.attr('x1', parseInt(img.attr('x'), 10) + 16)
+                    .attr('y1', parseInt(img.attr('y'), 10) + 16);
                 self.removeSVGClass(dragline.node(), 'unused');
 
                 // Start the add-relation process
