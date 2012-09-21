@@ -163,5 +163,17 @@
          db.units);
          my0.agent_state.should.equal('another');
        });
+
+    it('ServiceUnitList should accept a list of units at instantiation and ' +
+       'decorate them', function() {
+         var mysql = new models.Service({id: 'mysql'});
+         var objs = [{id: 'mysql/0'},
+                     {id: 'mysql/1'}];
+         var sul = new models.ServiceUnitList({items: objs});
+         var unit_data = sul.get_units_for_service(
+                 mysql, true).getAttrs(['service', 'number']);
+         unit_data.service.should.eql(['mysql', 'mysql']);
+         unit_data.number.should.eql([0, 1]);
+       });
   });
 })();
