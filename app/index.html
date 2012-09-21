@@ -52,17 +52,17 @@
                 </div> <!-- /container -->
             </div>
 
-            <!-- javascript away -->
-            <script src="/assets/javascripts/yui/yui/yui-debug.js"></script>
-            <script src="/modules.js"></script>
-            <script src="/config.js"></script>
-            <script>
-              YUI(GlobalConfig).use(["juju-gui"], function(Y) {
-                app = new Y.juju.App(juju_config);
-              });
-            </script>
         </div>
         <div id="vp-right-border"></div>
     </div>
+    <!-- javascript away -->
+    <script src="/assets/javascripts/yui/yui/yui-debug.js"></script>
+    <script src="/modules.js"></script>
+    <script src="/config.js"></script>
+    <script>
+      YUI(GlobalConfig).use(["juju-gui"], function(Y) {
+        app = new Y.juju.App(juju_config);
+      });
+    </script>
   </body>
 </html>

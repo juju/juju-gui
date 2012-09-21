@@ -160,6 +160,38 @@ g.unit {
     stroke-width: 2px; fill: #a0a0a0;}
 }
 
+/*
+ * Notification system
+ */
+.notice {
+    border-top: 1px solid #D0D0D0;
+    padding: 1em 4px;
+    margin: 1em 0 0 2px;
+    cursor: pointer;
+
+    .seen {
+        background-color: rgba(222, 222, 222, 0.33);
+    }
+    
+    &:first-child {
+        border: none;
+        padding-top: 0;
+    }
+
+    small {
+        margin-left: 1em;
+        font-size: 0.7em;
+        color: #d0d0d0;
+    }
+
+    .header {
+        background-color: #c0c0c0;
+        font-size: 0.9em;
+        margin: 0;
+        padding: 0;
+    }
+}
+
 #service-footer {
     text-align: center;
     .footer-right {
@@ -174,6 +206,9 @@ g.unit {
     }
 }
 
+/*
+ * Overview Module
+ */
 #overview-tasks {
     background: url(/assets/images/bottom_bar.png) repeat-x;
     margin: 0 -20px 0 -20px;
@@ -278,3 +313,4 @@ g.unit {
 .unit-button-palette {
     float: right;
 }
+
