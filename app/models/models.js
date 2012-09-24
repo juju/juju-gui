@@ -65,6 +65,12 @@ YUI.add('juju-models', function(Y) {
   });
   models.ServiceList = ServiceList;
 
+  // This model is barely used.  Units are in a lazy model list, so we
+  // usually only use objects.  However, the model is used to generate ids, and
+  // can be expected by some code.  The thing to be most wary of is the
+  // attributes.  There is nothing keeping them in sync with reality other than
+  // human maintenance, so verify your assumptions before proceeding from
+  // reading this code.
   var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
       //    idAttribute: 'name',
       {
@@ -156,6 +162,12 @@ YUI.add('juju-models', function(Y) {
   });
   models.ServiceUnitList = ServiceUnitList;
 
+  // This model is barely used.  Machines are in a lazy model list, so we
+  // usually only use objects.  However, the model is used to generate ids, and
+  // can be expected by some code.  The thing to be most wary of is the
+  // attributes.  There is nothing keeping them in sync with reality other than
+  // human maintenance, so verify your assumptions before proceeding from
+  // reading this code.
   var Machine = Y.Base.create('machine', Y.Model, [], {
     idAttribute: 'machine_id'
   }, {
