@@ -386,7 +386,7 @@ YUI.add('juju-view-service', function(Y) {
       }
       ev.halt(true);
 
-      if(/^\d+$/.test(field.get('value'))) {
+      if (/^\d+$/.test(field.get('value'))) {
         this._modifyUnits(parseInt(field.get('value'), 10));
       } else {
         this.resetUnits();
