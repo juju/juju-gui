@@ -190,7 +190,7 @@
              rel1 = new models.Relation(
              { id: 'relation-1',
                endpoints:
-               [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
+               [['wordpress', {role: 'peer', name: 'loadbalancer'}]],
                'interface': 'reversenginx'
              }),
              rel2 = new models.Relation(
@@ -203,7 +203,7 @@
              rel3 = new models.Relation(
              { id: 'relation-3',
                endpoints:
-               [['mysql', {'role': 'peer', 'name': 'loadbalancer'}]],
+               [['mysql', {role: 'peer', name: 'loadbalancer'}]],
                'interface': 'mysql-loadbalancer'
              }),
              rel4 = new models.Relation(

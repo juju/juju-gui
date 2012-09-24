@@ -82,23 +82,25 @@ YUI.add('juju-view-service', function(Y) {
           var rels = db.relations.get_relations_for_service(service);
           var relations = [];
           rels.forEach(function(rel) {
-            var endpoints = rel.get('endpoints');
-            var near, far;
-            var map = {};
-            if (endpoints[0][0] === service.name) {
+            var endpoints = rel.get('endpoints'),
+                near,
+                far,
+                service_name = service.get('id'),
+                rel_data = {};
+            if (endpoints[0][0] === service_name) {
               near = endpoints[0];
               far = endpoints[1];
             } else {
               near = endpoints[1];
               far = endpoints[0];
             }
-            map['relation_id'] = rel.get('relation_id');
-            map['role'] = near[1].role;
-            map['scope'] = rel.get('scope');
+            rel_data.relation_id = rel.get('relation_id');
+            rel_data.role = near[1].role;
+            rel_data.scope = rel.get('scope');
             var rel_id = rel.get('relation_id').split('-')[1];
-            map['ident'] = near[1].name + ':' + parseInt(rel_id, 10);
-            map['far'] = far[0];
-            relations.push(map);
+            rel_data.ident = near[1].name + ':' + parseInt(rel_id, 10);
+            rel_data.far = (far && far[0]) || undefined;
+            relations.push(rel_data);
           });
 
           container.setHTML(this.template(
@@ -133,7 +135,14 @@ YUI.add('juju-view-service', function(Y) {
           relation = db.relations.getById(rel_id),
           endpoints = relation.get('endpoints'),
           endpoint_a = endpoints[0][0] + ':' + endpoints[0][1].name,
-          endpoint_b = endpoints[1][0] + ':' + endpoints[1][1].name;
+          endpoint_b;
+
+      if (endpoints.length === 1) {
+        // For a peer relationship, both endpoints are the same.
+        endpoint_b = endpoint_a;
+      } else {
+        endpoint_b = endpoints[1][0] + ':' + endpoints[1][1].name;
+      }
 
       ev.target.set('disabled', true);
 

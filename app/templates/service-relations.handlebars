@@ -17,12 +17,16 @@
            <tr>
               <td>
                 {{ident}}
-                <button type="submit" class="btn" value="{{relation_id}}">
+                <button type="submit" class="btn" id="{{relation_id}}" value="{{relation_id}}">
                     Remove
                 </button>
               </td>
               <td>{{role}}</td>
-              <td><a href="/service/{{far}}/">{{far}}</a></td>
+              <td>
+                {{#if far}}
+                  <a href="/service/{{far}}/">{{far}}</a>
+                {{/if}}
+              </td>
               <td>{{scope}}</td>
            </tr>
            {{/relations}}
@@ -31,3 +35,5 @@
       </form>
     </div>
 </div>
+
+<div id="remove-modal-panel"></div>
