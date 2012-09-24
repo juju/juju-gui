@@ -47,6 +47,10 @@
             description: 'The second option.',
             type: 'boolean'
           },
+                  option2: {
+                    description: 'The third option.',
+                    type: 'boolean'
+                  },
           intOption: {
             description: 'An int option with no default value.',
             type: 'int'
@@ -66,7 +70,8 @@
         loaded: true,
         config: {
                     option0: 'value0',
-                    option1: 'value1',
+                    option1: true,
+                    option2: false,
                     intOption: 1,
                     floatOption: 1.1
         }
@@ -94,10 +99,20 @@
       view.render();
 
       var config = service.get('config'),
-          container_html = container.one('#service-config').getHTML();
+          serviceConfigDiv = container.one('#service-config');
+
       Y.Object.each(config, function(value, name) {
-        container_html.should.contain(name);
-        container_html.should.contain(value);
+        var input = serviceConfigDiv.one('#input-' + name);
+
+        if (value === true) {
+          // testing TRUE values (checkbox)
+          assert.isTrue(input.get('checked'));
+        } else if (value === false) {
+          // testing FALSE values (checkbox);
+          assert.isFalse(input.get('checked'));
+        } else {
+          input.get('value').should.equal(value + '');
+        }
       });
     });
 
@@ -117,7 +132,7 @@
       message.op.should.equal('set_config');
       message.service_name.should.equal('mysql');
       message.config.option0.should.equal('new value');
-      message.config.option1.should.equal('value1');
+      message.config.option1.should.equal(true);
     });
 
     it('should reenable the "Update" button if RPC fails', function() {
@@ -177,26 +192,28 @@
     });
 
     it('should display an error when addErrorMessage is called',
-        function() {
-          var ev = {err: true},
-              view = new ServiceConfigView({
-                container: container,
-                model: service,
-                db: db,
-                env: env
-              }).render(),
-              error_message = utils.SERVER_ERROR_MESSAGE,
-              alert_ = container.one('#message-area>.alert');
+       function() {
+          var view = new ServiceConfigView({
+           container: container,
+           model: service,
+           db: db,
+           env: env
+         }).render();
 
-          // Before an erroneous event is processed, no alert exists.
-          var _ = expect(alert_).to.not.exist;
-          // Display the error message.
-          utils.buildRpcHandler({
-            container: container
-          })(ev);
-          // The method should have created an alert box.
-          alert_ = container.one('#message-area>.alert');
-          alert_.getHTML().should.contain(error_message);
+         var error_message = utils.SERVER_ERROR_MESSAGE,
+         alert_ = container.one('#message-area>.alert');
+
+         // Before an erroneous event is processed, no alert exists.
+         var _ = expect(alert_).to.not.exist;
+         // Display the error message.
+         utils.buildRpcHandler({
+           container: container
+         })({
+           err: true
+         });
+         // The method should have created an alert box.
+         alert_ = container.one('#message-area>.alert');
+         alert_.getHTML().should.contain(error_message);
         });
 
     it('should display an error when a validation error occurs', function() {
