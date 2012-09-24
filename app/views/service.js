@@ -105,63 +105,63 @@ YUI.add('juju-view-service', function(Y) {
 
           container.setHTML(this.template(
               {'service': service.getAttrs(),
-               'relations': relations,
-               'charm': this.renderable_charm(service.get('charm'), db)}
+                'relations': relations,
+                'charm': this.renderable_charm(service.get('charm'), db)}
               ));
         },
 
-    confirmRemoved: function(ev) {
-      // We wait to make the panel until now, because in the render method
-      // the container is not yet part of the document.
-      ev.preventDefault();
-      var rel_id = ev.target.get('value');
-      if (Y.Lang.isUndefined(this.remove_panel)) {
-        this.remove_panel = views.createModalPanel(
-            'Are you sure you want to remove this service relation?  ' +
+        confirmRemoved: function(ev) {
+          // We wait to make the panel until now, because in the render method
+          // the container is not yet part of the document.
+          ev.preventDefault();
+          var rel_id = ev.target.get('value');
+          if (Y.Lang.isUndefined(this.remove_panel)) {
+            this.remove_panel = views.createModalPanel(
+                'Are you sure you want to remove this service relation?  ' +
                 'This action cannot be undone, though you can ' +
                 'recreate it later.',
-            '#remove-modal-panel',
-            'Remove Service Relation',
-            Y.bind(this.doRemoveRelation, this, rel_id));
-      }
-      this.remove_panel.show();
-    },
+                '#remove-modal-panel',
+                'Remove Service Relation',
+                Y.bind(this.doRemoveRelation, this, rel_id));
+          }
+          this.remove_panel.show();
+        },
 
-    doRemoveRelation: function(rel_id, ev) {
-      ev.preventDefault();
-      var env = this.get('env'),
-          db = this.get('db'),
-          service = this.get('model'),
-          relation = db.relations.getById(rel_id),
-          endpoints = relation.get('endpoints'),
-          endpoint_a = endpoints[0][0] + ':' + endpoints[0][1].name,
-          endpoint_b;
+        doRemoveRelation: function(rel_id, ev) {
+          ev.preventDefault();
+          var env = this.get('env'),
+              db = this.get('db'),
+              service = this.get('model'),
+              relation = db.relations.getById(rel_id),
+              endpoints = relation.get('endpoints'),
+              endpoint_a = endpoints[0][0] + ':' + endpoints[0][1].name,
+              endpoint_b;
 
-      if (endpoints.length === 1) {
-        // For a peer relationship, both endpoints are the same.
-        endpoint_b = endpoint_a;
-      } else {
-        endpoint_b = endpoints[1][0] + ':' + endpoints[1][1].name;
-      }
+          if (endpoints.length === 1) {
+            // For a peer relationship, both endpoints are the same.
+            endpoint_b = endpoint_a;
+          } else {
+            endpoint_b = endpoints[1][0] + ':' + endpoints[1][1].name;
+          }
 
-      ev.target.set('disabled', true);
+          ev.target.set('disabled', true);
 
-      env.remove_relation(
-        endpoint_a,
-        endpoint_b,
-        Y.bind(this._doRemoveRelationCallback, this, relation));
-    },
+          env.remove_relation(
+              endpoint_a,
+              endpoint_b,
+              Y.bind(this._doRemoveRelationCallback, this, relation));
+        },
 
-    _doRemoveRelationCallback: function(relation, ev) {
-      // XXX Once we have a way of showing notifications, if ev.err exists,
-      // report it.
-      var db = this.get('db'),
-          service = this.get('model');
-      db.relations.remove(relation);
-      this.remove_panel.hide();
-      db.fire('update');
-    }
-  });
+        _doRemoveRelationCallback: function(relation, ev) {
+          // XXX Once we have a way of showing notifications, if ev.err exists,
+          // report it.
+          var db = this.get('db'),
+              service = this.get('model');
+          db.relations.remove(relation);
+          this.remove_panel.hide();
+          db.fire('update');
+        }
+      });
 
   views.service_relations = ServiceRelations;
 

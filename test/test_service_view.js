@@ -315,13 +315,13 @@
 
          var service_name = service.get('id'),
              rel0 = new models.Relation(
-               { id: 'relation-0',
-                 endpoints:
-                 [[service_name, {name: 'db', role: 'source'}],
-                  ['squid', {name: 'cache', role: 'front'}]],
-                 'interface': 'cache',
-                 scope: 'global'
-               }),
+         { id: 'relation-0',
+           endpoints:
+           [[service_name, {name: 'db', role: 'source'}],
+            ['squid', {name: 'cache', role: 'front'}]],
+           'interface': 'cache',
+           scope: 'global'
+         }),
              rel1 = new models.Relation(
              { id: 'relation-1',
                endpoints:
@@ -333,7 +333,7 @@
          db.relations.add([rel0, rel1]);
 
          var view = new ServiceRelationsView(
-           {container: container, model: service, db: db, env: env}).render();
+         {container: container, model: service, db: db, env: env}).render();
 
          var control = container.one('#relation-0');
          control.simulate('click');
@@ -349,13 +349,13 @@
 
          var service_name = service.get('id'),
              rel0 = new models.Relation(
-               { id: 'relation-0',
-                 endpoints:
-                 [[service_name, {name: 'db', role: 'source'}],
-                  ['squid', {name: 'cache', role: 'front'}]],
-                 'interface': 'cache',
-                 scope: 'global'
-               }),
+         { id: 'relation-0',
+           endpoints:
+           [[service_name, {name: 'db', role: 'source'}],
+            ['squid', {name: 'cache', role: 'front'}]],
+           'interface': 'cache',
+           scope: 'global'
+         }),
              rel1 = new models.Relation(
              { id: 'relation-1',
                endpoints:
@@ -367,7 +367,7 @@
          db.relations.add([rel0, rel1]);
 
          var view = new ServiceRelationsView(
-           {container: container, model: service, db: db, env: env}).render();
+         {container: container, model: service, db: db, env: env}).render();
 
          var control = container.one('#relation-1');
          control.simulate('click');

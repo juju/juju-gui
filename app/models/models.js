@@ -189,12 +189,12 @@ YUI.add('juju-models', function(Y) {
   var RelationList = Y.Base.create('relationList', Y.ModelList, [], {
     model: Relation,
 
-    get_relations_for_service: function (service, asList) {
+    get_relations_for_service: function(service, asList) {
       var service_id = service.get('id');
       return this.filter({asList: Boolean(asList)}, function(relation) {
         return Y.Array.some(
-          relation.get('endpoints'),
-          function (endpoint) { return endpoint[0] === service_id; });
+            relation.get('endpoints'),
+            function(endpoint) { return endpoint[0] === service_id; });
       });
     }
   }, {
