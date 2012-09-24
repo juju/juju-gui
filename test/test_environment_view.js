@@ -195,7 +195,10 @@
             container: container,
             db: db,
             env: env
-         }).render().postRender();
+         }).render()
+          // Attach the view to the DOM so that sizes get set properly 
+          // from the viewport.
+          .postRender();
          var svg = Y.one('svg');
          parseInt(svg.one('rect').getAttribute('height'), 10)
           .should.equal(
@@ -214,7 +217,10 @@
             container: container,
             db: db,
             env: env
-         }).render().postRender();
+         }).render()
+          // Attach the view to the DOM so that sizes get set properly 
+          // from the viewport.
+          .postRender();
          var svg = Y.one('svg');
          parseInt(svg.getAttribute('height'), 10)
           .should.equal(
