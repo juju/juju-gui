@@ -169,7 +169,7 @@ YUI.add('juju-models', function(Y) {
   });
   models.Machine = Machine;
 
-  var MachineList = Y.Base.create('machineList', Y.ModelList, [], {
+  var MachineList = Y.Base.create('machineList', Y.LazyModelList, [], {
     model: Machine
   }, {
     ATTRS: {}
@@ -290,19 +290,20 @@ YUI.add('juju-models', function(Y) {
   var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
       this.services = new ServiceList();
-      this.machines = new MachineList();
       this.charms = new CharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
 
-      // This one is dangerous.. we very well may not have capacity
-      // to store a 1-1 representation of units in js.
+      // These two are dangerous.. we very well may not have capacity
+      // to store a 1-1 representation of units and machines in js.
       // At least we should never assume the collection is complete, and
       // have usage of some ephemeral slice/cursor of the collection.
       // Indexed db might be interesting to explore here, with object delta
       // and bulk transfer feeding directly into indexedb.
-      // Needs some experimentation with a large data set.
+      // Needs some experimentation with a large data set.  For now, we are
+      // simply using LazyModelList.
       this.units = new ServiceUnitList();
+      this.machines = new MachineList();
 
       // For model syncing by type. Charms aren't currently sync'd, only
       // fetched on demand (their static).

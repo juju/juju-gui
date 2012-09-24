@@ -54,12 +54,12 @@
         agent_state: 'pending',
         machine: 'machine-0'};
       db.units.add([unit]);
-      machine = new models.Machine({
+      machine = {
         id: 'machine-0',
         agent_state: 'pending',
         instance_id: 'instance-0',
         instance_state: 'running',
-        public_address: '1.2.3.4'});
+        public_address: '1.2.3.4'};
       db.machines.add([machine]);
       done();
     });
@@ -68,7 +68,6 @@
       container.remove();
       container.destroy();
       service.destroy();
-      machine.destroy();
       charm.destroy();
       db.destroy();
       done();
