@@ -46,6 +46,14 @@
           option1: {
             description: 'The second option.',
             type: 'boolean'
+          },
+          option2: {
+            description: 'An int option with no default value.',
+            type: 'int'
+          },
+          option3: {
+            description: 'A float option with no default value.',
+            type: 'float'
           }
                 }
       });
@@ -58,7 +66,9 @@
         loaded: true,
         config: {
                     option0: 'value0',
-                    option1: 'value1'
+                    option1: 'value1',
+                    option2: 1,
+                    option3: 1.1
         }
       });
       db.services.add([service]);
@@ -188,5 +198,54 @@
           alert_ = container.one('#message-area>.alert');
           alert_.getHTML().should.contain(error_message);
         });
+
+    it('should display an error when a validation error occurs', function() {
+      var assertError = function(key, value, message) {
+        var ev = {err: false},
+            view = new ServiceConfigView({
+              app: {
+                load_service: function() {
+                  // Mock function
+                  // view.saveConfig() calls it as part of its internal
+                  // "success" callback
+                }
+              },
+              container: container,
+              model: service,
+              db: db,
+              env: (function() {
+                // We provide a fake env module that both makes test assertions
+                // and mocks out network traffic.
+                env.set_config = function(service, config, callback) {
+                  callback(ev);
+                };
+
+                return env;
+              })()
+            }).render();
+
+        container.one('#input-' + key).set('value', value);
+
+        view.saveConfig();
+
+        var errorSpan = container.one('#error-' + key);
+        if (message) {
+          assert.isNotNull(errorSpan);
+
+        } else {
+          assert.isNull(errorSpan);
+        }
+      };
+
+      assertError('option2', '', 'This field is required.');
+      assertError('option2', '1', null);
+      assertError('option2', '1.1', 'The value "1.1" is not an integer.');
+      assertError('option2', 'a', 'The value "a" is not an integer.');
+
+      assertError('option3', '', 'This field is required.');
+      assertError('option3', '1', null);
+      assertError('option3', '1.1', null);
+      assertError('option3', 'a', 'The value "a" is not a float.');
+    });
   });
 })();

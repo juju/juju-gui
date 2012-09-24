@@ -229,6 +229,21 @@ YUI.add('juju-view-service', function(Y) {
           return this;
         },
 
+        showErrors: function(errors) {
+          var container = this.get('container');
+          container.one('#save-service-config').removeAttribute('disabled');
+
+          Y.Object.each(errors, function(value, key) {
+            var field = container.one('#input-' + key);
+            // Add the "error" class to the wrapping "control-group" div
+            field.get('parentNode').get('parentNode').addClass('error');
+
+            var errorTag = Y.Node.create('<span id="error-' + key +
+                '" class="help-inline">' + value + '</span>');
+            errorTag.appendTo(field.get('parentNode'));
+          });
+        },
+
         saveConfig: function() {
           var env = this.get('env'),
               db = this.get('db'),
@@ -243,13 +258,10 @@ YUI.add('juju-view-service', function(Y) {
           var new_values = getElementsValuesMap(container, '.config-field'),
               errors = utils.validate(new_values, charm.get('config'));
 
-          if (errors) {
-            showErrors(errors);
-          } else {
+          if (Y.Object.isEmpty(errors)) {
             env.set_config(
                 service.get('id'),
                 new_values,
-                '.config-field',
                 utils.buildRpcHandler({
                   container: container,
                   successHandler: function()  {
@@ -262,10 +274,14 @@ YUI.add('juju-view-service', function(Y) {
                   },
                   errorHandler: function() {
                     container.one('#save-service-config')
-                    .removeAttribute('disabled');
+                      .removeAttribute('disabled');
                   },
                   scope: this}
-                ));
+                )
+            );
+
+          } else {
+            this.showErrors(errors);
           }
         }
       });
