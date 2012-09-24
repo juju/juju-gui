@@ -231,30 +231,42 @@ YUI.add('juju-view-service', function(Y) {
 
         saveConfig: function() {
           var env = this.get('env'),
-              container = this.get('container'),
-              service = this.get('model');
+              db = this.get('db'),
+              service = this.get('model'),
+              charm_url = service.get('charm'),
+              charm = db.charms.getById(charm_url),
+              container = this.get('container');
 
           // Disable the "Update" button while the RPC call is outstanding.
           container.one('#save-service-config').set('disabled', 'disabled');
 
-          env.set_config(service.get('id'),
-              getElementsValuesMap(container, '.config-field'),
-              utils.buildRpcHandler({
-                container: container,
-                successHandler: function()  {
-                  var service = this.get('model'),
-                      env = this.get('env'),
-                      app = this.get('app');
+          var new_values = getElementsValuesMap(container, '.config-field'),
+              errors = utils.validate(new_values, charm.get('config'));
 
-                  env.get_service(
-                      service.get('id'), Y.bind(app.load_service, app));
-                },
-                errorHandler: function() {
-                  container.one('#save-service-config')
+          if (errors) {
+            showErrors(errors);
+          } else {
+            env.set_config(
+                service.get('id'),
+                new_values,
+                '.config-field',
+                utils.buildRpcHandler({
+                  container: container,
+                  successHandler: function()  {
+                    var service = this.get('model'),
+                        env = this.get('env'),
+                        app = this.get('app');
+
+                    env.get_service(
+                        service.get('id'), Y.bind(app.load_service, app));
+                  },
+                  errorHandler: function() {
+                    container.one('#save-service-config')
                     .removeAttribute('disabled');
-                },
-                scope: this}
-              ));
+                  },
+                  scope: this}
+                ));
+          }
         }
       });
 

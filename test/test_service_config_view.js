@@ -167,28 +167,26 @@
     });
 
     it('should display an error when addErrorMessage is called',
-       function() {
-          var view = new ServiceConfigView({
-           container: container,
-           model: service,
-           db: db,
-           env: env
-         }).render();
+        function() {
+          var ev = {err: true},
+              view = new ServiceConfigView({
+                container: container,
+                model: service,
+                db: db,
+                env: env
+              }).render(),
+              error_message = utils.SERVER_ERROR_MESSAGE,
+              alert_ = container.one('#message-area>.alert');
 
-         var error_message = utils.SERVER_ERROR_MESSAGE,
-         alert_ = container.one('#message-area>.alert');
-
-         // Before an erroneous event is processed, no alert exists.
-         var _ = expect(alert_).to.not.exist;
-         // Display the error message.
-         utils.buildRpcHandler({
-           container: container
-         })({
-           err: true
-         });
-         // The method should have created an alert box.
-         alert_ = container.one('#message-area>.alert');
-         alert_.getHTML().should.contain(error_message);
+          // Before an erroneous event is processed, no alert exists.
+          var _ = expect(alert_).to.not.exist;
+          // Display the error message.
+          utils.buildRpcHandler({
+            container: container
+          })(ev);
+          // The method should have created an alert box.
+          alert_ = container.one('#message-area>.alert');
+          alert_.getHTML().should.contain(error_message);
         });
   });
 })();

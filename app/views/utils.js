@@ -269,6 +269,37 @@ YUI.add('juju-view-utils', function(Y) {
 
   utils.SERVER_ERROR_MESSAGE = 'An error ocurred.';
 
+  utils.validate = function(values, schema) {
+    console.group('view.utils.validate');
+    console.log('validating', values, 'against', schema);
+    var errors = {};
+    Y.Object.each(schema, function(field_definition, name) {
+      var value = values[name];
+      console.log('validating field', name, 'with value', value);
+      if (field_definition.type === 'int') {
+        if (!value) {
+          if (field_definition['default'] === undefined) {
+            errors[name] = 'This field is required.';
+          }
+        } else if (!/^[0-9]+$/.test(value)) {
+          errors[name] = 'The value "' + value + '" is not an integer.';
+        }
+      } else if (field_definition.type === 'float') {
+        if (!value) {
+          if (field_definition['default'] === undefined) {
+            errors[name] = 'This field is required.';
+          }
+        } else if (!/^[0-9]*\.?[0-9]*$/.test(value)) {
+          errors[name] = 'The value "' + value + '" is not a float.';
+        }
+      }
+      console.log('generated this error (possibly undefined)', errors[name]);
+    });
+    console.log('returning', errors);
+    console.groupEnd();
+    return errors;
+  };
+
 }, '0.1.0', {
   requires: ['base-build',
     'handlebars',

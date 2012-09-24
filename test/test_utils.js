@@ -70,3 +70,101 @@ describe('utilities', function() {
   });
 
 });
+
+(function() {
+  describe('form validateion', function() {
+
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views',
+
+          function(Y) {
+            utils = Y.namespace('juju.views.utils');
+            done();
+          });
+    });
+
+    it('should handle int fields', function() {
+      var schema = { an_int: { type: 'int'}};
+
+      // If an int field has a valid value, no error is given.
+      assert.equal(utils.validate({an_int: '0'}, schema).an_int, undefined);
+      // If an int field has an invalid value, an error is reported.
+      assert.equal(utils.validate({an_int: 'nope!'}, schema).an_int,
+          'The value "nope!" is not an integer.');
+      // Floating point numbers are not valid ints.
+      assert.equal(utils.validate({an_int: '3.14159'}, schema).an_int,
+          'The value "3.14159" is not an integer.');
+      // Just starting with a number is not enough.
+      assert.equal(utils.validate({an_int: '3peat'}, schema).an_int,
+          'The value "3peat" is not an integer.');
+    });
+
+    it('should handle float fields', function() {
+      var schema = { a_float: { type: 'float'}};
+
+      // Floating point numbers are valid floats.
+      assert.equal(utils.validate({a_float: '3.14159'}, schema).a_float,
+          undefined);
+      // Decimal points are not strictly required.
+      assert.equal(utils.validate({a_float: '42'}, schema).a_float, undefined);
+      // Digits before the decimal point are not strictly required.
+      assert.equal(utils.validate({a_float: '.5'}, schema).a_float, undefined);
+      // If a float field has an invalid value, an error is reported.
+      assert.equal(utils.validate({a_float: 'nope!'}, schema).a_float,
+          'The value "nope!" is not a float.');
+      // Just starting with a number is not enough.
+      assert.equal(utils.validate({a_float: '3peat'}, schema).a_float,
+          'The value "3peat" is not a float.');
+    });
+
+    it('should handle fields with defaults', function() {
+      var defaults_schema =
+          { an_int:
+                { type: 'int',
+                  'default': '7'},
+            a_float:
+                { type: 'float',
+                  'default': '2.5'},
+            a_string:
+                { type: 'string',
+                  'default': 'default'}};
+
+      // If a field has a default and it is a numeric field and the value is an
+      // empty string, then no error is generated.
+
+      // Int:
+      assert.equal(utils.validate({an_int: ''}, defaults_schema).an_int,
+          undefined);
+      // Float:
+      assert.equal(utils.validate({a_float: ''}, defaults_schema).a_float,
+          undefined);
+    });
+
+    it('should handle fields without defaults', function() {
+      var no_defaults_schema =
+          { an_int:
+                { type: 'int'},
+            a_float:
+                { type: 'float'},
+            a_string:
+                { type: 'string'}};
+
+      // If a field has no default and it is a numeric field and the value is
+      // an empty string, then an error is generated.
+
+      // Int without default:
+      assert.equal(utils.validate({an_int: ''}, no_defaults_schema).an_int,
+          'This field is required.');
+      // Float without default
+      assert.equal(utils.validate({a_float: ''}, no_defaults_schema).a_float,
+          'This field is required.');
+      // String fields do not generate errors when they are empty and do not
+      // have a default because an empty string is still a string.
+      assert.equal(utils.validate({a_string: ''}, no_defaults_schema).a_string,
+          undefined);
+    });
+
+  });
+})();
