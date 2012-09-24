@@ -197,7 +197,7 @@
             env: env
          }).render();
          // Attach the view to the DOM so that sizes get set properly
-         // from the viewport.
+         // from the viewport (only available from DOM).
          view.postRender();
          var svg = Y.one('svg');
          parseInt(svg.one('rect').getAttribute('height'), 10)
@@ -219,7 +219,7 @@
             env: env
          }).render();
          // Attach the view to the DOM so that sizes get set properly
-         // from the viewport.
+         // from the viewport (only available from DOM).
          view.postRender();
          var svg = Y.one('svg');
          parseInt(svg.getAttribute('height'), 10)
