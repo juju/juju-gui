@@ -364,7 +364,7 @@ YUI.add('juju-view-service', function(Y) {
       this.fire('showEnvironment');
     },
 
-    resetUnits: function() {
+    resetUnits: function(ev) {
       var container = this.get('container'),
           field = container.one('#num-service-units');
       field.set('value', this.get('model').get('unit_count'));
@@ -376,21 +376,14 @@ YUI.add('juju-view-service', function(Y) {
       }
       var container = this.get('container'),
           field = container.one('#num-service-units');
-
       if (ev.keyCode === ESC) {
-        this.resetUnits();
+        field.set('value', this.get('model').get('unit_count'));
       }
       if (ev.keyCode !== ENTER) { // If not Enter keyup...
         return;
       }
       ev.halt(true);
-
-      var fieldValue = parseInt(field.get('value'), 10);
-      if (isNaN(fieldValue)) {
-        this.resetUnits();
-      } else {
-        this._modifyUnits(fieldValue);
-      }
+      this._modifyUnits(parseInt(field.get('value'), 10));
     },
 
     _modifyUnits: function(requested_unit_count) {
