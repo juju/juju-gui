@@ -80,28 +80,39 @@ YUI.add('juju-view-service', function(Y) {
           }
 
           var rels = db.relations.get_relations_for_service(service);
-          var relations = [];
-          rels.forEach(function(rel) {
-            var endpoints = rel.get('endpoints'),
-                near,
-                far,
-                service_name = service.get('id'),
-                rel_data = {};
-            if (endpoints[0][0] === service_name) {
-              near = endpoints[0];
-              far = endpoints[1];
-            } else {
-              near = endpoints[1];
-              far = endpoints[0];
-            }
-            rel_data.relation_id = rel.get('relation_id');
-            rel_data.role = near[1].role;
-            rel_data.scope = rel.get('scope');
-            var rel_id = rel.get('relation_id').split('-')[1];
-            rel_data.ident = near[1].name + ':' + parseInt(rel_id, 10);
-            rel_data.far = (far && far[0]) || undefined;
-            relations.push(rel_data);
-          });
+
+          var getRelations = function(rels) {
+            // Return a list of objects representing the `near` and `far`
+            // endpoints for all of the relationships `rels`.  If it is a peer
+            // relationship, then `far` will be undefined.
+            var relations = [],
+                service_name = service.get('id');
+
+            rels.forEach(function(rel) {
+              var endpoints = rel.get('endpoints'),
+                  near,
+                  far,
+                  rel_data = {};
+              if (endpoints[0][0] === service_name) {
+                near = endpoints[0];
+                far = endpoints[1]; // undefined if a peer relationship.
+              } else {
+                near = endpoints[1];
+                far = endpoints[0]; // undefined if a peer relationship.
+              }
+              rel_data.relation_id = rel.get('relation_id');
+              rel_data.role = near[1].role;
+              rel_data.scope = rel.get('scope');
+              var rel_id = rel.get('relation_id').split('-')[1];
+              rel_data.ident = near[1].name + ':' + parseInt(rel_id, 10);
+              // far will be undefined or the far endpoint.
+              rel_data.far = far && far[0];
+              relations.push(rel_data);
+            });
+            return relations;
+          };
+
+          var relations = getRelations(rels);
 
           container.setHTML(this.template(
               {'service': service.getAttrs(),
