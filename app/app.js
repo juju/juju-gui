@@ -286,11 +286,11 @@ YUI.add('juju-gui', function(Y) {
       console.log('App: Route: Environment', req.path, req.pendingRoutes);
       this.showView(
           'environment', {db: this.db, env: this.env}, {render: true},
-          function(view) { 
+          function(view) {
             // After the view has been attached to the DOM, perform any
             // rendering that is reliant on that fact, such as getting
             // computed styles or clientRects.
-            view.postRender(); 
+            view.postRender();
           });
     },
 
