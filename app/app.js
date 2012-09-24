@@ -285,7 +285,8 @@ YUI.add('juju-gui', function(Y) {
     show_environment: function(req) {
       console.log('App: Route: Environment', req.path, req.pendingRoutes);
       this.showView(
-          'environment', {db: this.db, env: this.env}, {render: true});
+          'environment', {db: this.db, env: this.env}, {render: true},
+          function(view) { view.postRender(); });
     },
 
     show_charm_collection: function(req) {
