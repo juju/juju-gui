@@ -46,7 +46,11 @@
           option1: {
             description: 'The second option.',
             type: 'boolean'
-          }
+          },
+                  option2: {
+                    description: 'The third option.',
+                    type: 'boolean'
+                  }
                 }
       });
 
@@ -58,7 +62,8 @@
         loaded: true,
         config: {
                     option0: 'value0',
-                    option1: 'value1'
+                    option1: true,
+                    option2: false
         }
       });
       db.services.add([service]);
@@ -84,10 +89,20 @@
       view.render();
 
       var config = service.get('config'),
-          container_html = container.one('#service-config').getHTML();
+          serviceConfigDiv = container.one('#service-config');
+
       Y.Object.each(config, function(value, name) {
-        container_html.should.contain(name);
-        container_html.should.contain(value);
+        var input = serviceConfigDiv.one('#input-' + name);
+
+        if (value === true) {
+          // testing TRUE values (checkbox)
+          assert.isTrue(input.get('checked'));
+        } else if (value === false) {
+          // testing FALSE values (checkbox);
+          assert.isFalse(input.get('checked'));
+        } else {
+          input.get('value').should.equal(value);
+        }
       });
     });
 
@@ -107,7 +122,7 @@
       message.op.should.equal('set_config');
       message.service_name.should.equal('mysql');
       message.config.option0.should.equal('new value');
-      message.config.option1.should.equal('value1');
+      message.config.option1.should.equal(true);
     });
 
     it('should reenable the "Update" button if RPC fails', function() {
