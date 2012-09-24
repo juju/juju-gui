@@ -47,11 +47,11 @@
             description: 'The second option.',
             type: 'boolean'
           },
-          option2: {
+          intOption: {
             description: 'An int option with no default value.',
             type: 'int'
           },
-          option3: {
+          floatOption: {
             description: 'A float option with no default value.',
             type: 'float'
           }
@@ -67,8 +67,8 @@
         config: {
                     option0: 'value0',
                     option1: 'value1',
-                    option2: 1,
-                    option3: 1.1
+                    intOption: 1,
+                    floatOption: 1.1
         }
       });
       db.services.add([service]);
@@ -237,15 +237,15 @@
         }
       };
 
-      assertError('option2', '', 'This field is required.');
-      assertError('option2', '1', null);
-      assertError('option2', '1.1', 'The value "1.1" is not an integer.');
-      assertError('option2', 'a', 'The value "a" is not an integer.');
+      assertError('intOption', '', 'This field is required.');
+      assertError('intOption', '1', null);
+      assertError('intOption', '1.1', 'The value "1.1" is not an integer.');
+      assertError('intOption', 'a', 'The value "a" is not an integer.');
 
-      assertError('option3', '', 'This field is required.');
-      assertError('option3', '1', null);
-      assertError('option3', '1.1', null);
-      assertError('option3', 'a', 'The value "a" is not a float.');
+      assertError('floatOption', '', 'This field is required.');
+      assertError('floatOption', '1', null);
+      assertError('floatOption', '1.1', null);
+      assertError('floatOption', 'a', 'The value "a" is not a float.');
     });
   });
 })();

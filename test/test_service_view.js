@@ -30,11 +30,10 @@
         description: 'A DB'});
       db.charms.add([charm]);
       // Add units sorted by id as that is what we expect from the server.
-      db.units.add([
-        new models.ServiceUnit({id: 'mysql/0', agent_state: 'pending'}),
-        new models.ServiceUnit({id: 'mysql/1', agent_state: 'pending'}),
-        new models.ServiceUnit({id: 'mysql/2', agent_state: 'pending'})
-      ]);
+      db.units.add([{id: 'mysql/0', agent_state: 'pending'},
+                    {id: 'mysql/1', agent_state: 'pending'},
+                    {id: 'mysql/2', agent_state: 'pending'}
+          ]);
       service = new models.Service({
         id: 'mysql',
         charm: 'mysql',
@@ -76,7 +75,7 @@
           {container: container, model: service, db: db,
             env: env}).render();
       var rendered_names = container.all('div.thumbnail').get('id');
-      var expected_names = db.units.map(function(u) {return u.get('id');});
+      var expected_names = db.units.map(function(u) {return u.id;});
       expected_names.sort();
       // XXX Why is this commented out? (JBY)
       //assert.deepEqual(rendered_names, expected_names);
@@ -149,7 +148,7 @@
        'from the server',
        function() {
          var new_unit_id = 'mysql/5';
-         var expected_names = db.units.map(function(u) {return u.get('id');});
+         var expected_names = db.units.map(function(u) {return u.id;});
          expected_names.push(new_unit_id);
          expected_names.sort();
          var view = new ServiceView(
@@ -164,7 +163,7 @@
          // view to re-render, we need to do it ourselves.
          db.on('update', view.render, view);
          callbacks[0]({result: [new_unit_id]});
-         var db_names = db.units.map(function(u) {return u.get('id');});
+         var db_names = db.units.map(function(u) {return u.id;});
          db_names.sort();
          db_names.should.eql(expected_names);
          service.get('unit_count').should.equal(4);
@@ -207,6 +206,23 @@
          control.set('value', 2);
          control.simulate('blur');
          control.get('value').should.equal('3');
+       });
+
+    it('should reset values on the control when you type invalid value',
+       function() {
+         var view = new ServiceView(
+         {container: container, model: service, db: db,
+           env: env}).render();
+         var control = container.one('#num-service-units');
+
+         var pressKey = function(key) {
+           control.set('value', key);
+           control.simulate('keydown', { keyCode: ENTER });
+           control.get('value').should.equal('3');
+         };
+         pressKey('a');
+         pressKey('2w');
+         pressKey('w2');
        });
 
     // Test for destroying services.

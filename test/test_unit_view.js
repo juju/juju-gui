@@ -49,17 +49,17 @@
           role: 'relation-role',
           scope: 'relation-scope'}});
       db.services.add([service]);
-      unit = new models.ServiceUnit({
+      unit = {
         id: 'mysql/0',
         agent_state: 'pending',
-        machine: 'machine-0'});
+        machine: 'machine-0'};
       db.units.add([unit]);
-      machine = new models.Machine({
+      machine = {
         id: 'machine-0',
         agent_state: 'pending',
         instance_id: 'instance-0',
         instance_state: 'running',
-        public_address: '1.2.3.4'});
+        public_address: '1.2.3.4'};
       db.machines.add([machine]);
       done();
     });
@@ -68,7 +68,6 @@
       container.remove();
       container.destroy();
       service.destroy();
-      machine.destroy();
       charm.destroy();
       db.destroy();
       done();
@@ -135,11 +134,9 @@
 
     it('should display Retry and Resolved buttons when ' +
        'there is an error', function() {
-         unit.set('agent_state', 'foo-error');
-         var view = new UnitView({container: container,
-           unit: unit,
-           db: db,
-           env: env}).render();
+         unit.agent_state = 'foo-error';
+         var view = new UnitView(
+         {container: container, unit: unit, db: db, env: env}).render();
          container.one('#retry-unit-button').getHTML().should.equal('Retry');
          container.one('#resolved-unit-button').getHTML().should.equal(
          'Resolved');
@@ -157,19 +154,18 @@
 
     it('should send resolved op when confirmation button clicked',
        function() {
-         unit.set('agent_state', 'foo-error');
+         unit.agent_state = 'foo-error';
          var view = new UnitView(
-         {container: container, unit: unit, db: db, env: env}).render();
+             {container: container, unit: unit, db: db, env: env}).render();
          container.one('#resolved-unit-button').simulate('click');
-         container.one('#resolved-modal-panel .btn-danger')
-               .simulate('click');
+         container.one('#resolved-modal-panel .btn-danger').simulate('click');
          var msg = conn.last_message();
          msg.op.should.equal('resolved');
          msg.retry.should.equal(false);
        });
 
     it('should send resolved op with retry when retry clicked', function() {
-      unit.set('agent_state', 'foo-error');
+      unit.agent_state = 'foo-error';
       var view = new UnitView(
           {container: container, unit: unit, db: db, env: env}).render();
       container.one('#retry-unit-button').simulate('click');
@@ -204,7 +200,7 @@
       var msg = conn.last_message();
       msg.result = true;
       env.dispatch_result(msg);
-      var _ = expect(db.units.getById(unit.get('id'))).to.not.exist;
+      var _ = expect(db.units.getById(unit.id)).to.not.exist;
       called_event.service.should.equal(service);
     });
 

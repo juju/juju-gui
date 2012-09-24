@@ -8,7 +8,7 @@ YUI.add('juju-view-unit', function(Y) {
 
   var UnitView = Y.Base.create('UnitView', Y.View, [], {
     initializer: function() {
-      console.log('view.init.unit', this.get('unit').getAttrs());
+      console.log('view.init.unit', this.get('unit'));
     },
 
     template: Templates.unit,
@@ -24,7 +24,7 @@ YUI.add('juju-view-unit', function(Y) {
       }
 
       var db = this.get('db'),
-          service = db.services.getById(unit.get('service'));
+          service = db.services.getById(unit.service);
 
       if (!service.get('loaded')) {
         container.setHTML('<div class="alert">Loading...</div>');
@@ -43,31 +43,31 @@ YUI.add('juju-view-unit', function(Y) {
       UnitView.superclass.render.apply(this, arguments);
 
       var ip_description_chunks = [];
-      if (unit.get('public_address')) {
-        ip_description_chunks.push(unit.get('public_address'));
+      if (unit.public_address) {
+        ip_description_chunks.push(unit.public_address);
       }
-      if (unit.get('private_address')) {
-        ip_description_chunks.push(unit.get('private_address'));
+      if (unit.private_address) {
+        ip_description_chunks.push(unit.private_address);
       }
-      if (unit.get('open_ports')) {
-        ip_description_chunks.push(unit.get('open_ports').join());
+      if (unit.open_ports) {
+        ip_description_chunks.push(unit.open_ports.join());
       }
       var unit_ip_description;
       if (ip_description_chunks.length) {
         unit_ip_description = ip_description_chunks.join(' | ');
       }
 
-      var unit_error = /-error/.test(unit.get('agent_state')),
-          unit_running = unit.get('agent_state') === 'started',
+      var unit_error = /-error/.test(unit.agent_state),
+          unit_running = unit.agent_state === 'started',
           unit_pending = !(unit_running || unit_error);
 
       container.setHTML(this.template({
-        unit: unit.getAttrs(),
+        unit: unit,
         unit_ip_description: unit_ip_description,
         service: service.getAttrs(),
         disabled_remove: service.get('unit_count') <= 1,
         charm: charm.getAttrs(),
-        machine: db.machines.getById(unit.get('machine')).getAttrs(),
+        machine: db.machines.getById(unit.machine),
         unit_error: unit_error,
         unit_running: unit_running,
         unit_pending: unit_pending}));
@@ -99,8 +99,8 @@ YUI.add('juju-view-unit', function(Y) {
       var env = this.get('env'),
           unit = this.get('unit');
       ev.target.set('disabled', true);
-      env.resolved(unit.get('id'), null, false,
-          Y.bind(this._doResolvedUnitCallback, this, ev.target));
+      env.resolved(unit.id, null, false,
+                     Y.bind(this._doResolvedUnitCallback, this, ev.target));
     },
 
     _doResolvedUnitCallback: function(button, ev) {
@@ -114,7 +114,7 @@ YUI.add('juju-view-unit', function(Y) {
       // We wait to make the panel until now, because in the render method
       // the container is not yet part of the document.
       var unit = this.get('unit'),
-          service = this.get('db').services.getById(unit.get('service'));
+          service = this.get('db').services.getById(unit.service);
       if (Y.Lang.isUndefined(this.remove_panel)) {
         this.remove_panel = views.createModalPanel(
             'Are you sure you want to remove this unit?  ' +
@@ -133,7 +133,7 @@ YUI.add('juju-view-unit', function(Y) {
           unit = this.get('unit');
       ev.target.set('disabled', true);
       env.remove_units(
-          [unit.get('id')],
+          [unit.id],
           Y.bind(this._doRemoveUnitCallback, this));
     },
 
@@ -142,7 +142,7 @@ YUI.add('juju-view-unit', function(Y) {
       // report it.
       var unit = this.get('unit'),
           db = this.get('db'),
-          service = db.services.getById(unit.get('service')),
+          service = db.services.getById(unit.service),
           unit_name = ev.unit_names[0];
       db.units.remove(db.units.getById(unit_name));
       service.set('unit_count', service.get('unit_count') - 1);
@@ -156,7 +156,7 @@ YUI.add('juju-view-unit', function(Y) {
           unit = this.get('unit'),
           button = ev.target;
       button.set('disabled', true);
-      env.resolved(unit.get('id'), null, true,
+      env.resolved(unit.id, null, true,
           function(ev) {
             // XXX Once we have a way of showing notifications, if
             // ev.err exists, report it.  Similarly, otherwise,

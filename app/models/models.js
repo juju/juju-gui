@@ -41,8 +41,6 @@ YUI.add('juju-models', function(Y) {
   });
   models.CharmList = CharmList;
 
-
-
   var Service = Y.Base.create('service', Y.Model, [], {
     ATTRS: {
       name: {},
@@ -62,38 +60,28 @@ YUI.add('juju-models', function(Y) {
   var ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
     model: Service
   }, {
-    ATTRS: {}
+    ATTRS: {
+    }
   });
   models.ServiceList = ServiceList;
 
+  // This model is barely used.  Units are in a lazy model list, so we
+  // usually only use objects.  However, the model is used to generate ids, and
+  // can be expected by some code.  The thing to be most wary of is the
+  // attributes.  There is nothing keeping them in sync with reality other than
+  // human maintenance, so verify your assumptions before proceeding from
+  // reading this code.
   var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
+      //    idAttribute: 'name',
       {
         ATTRS: {
-          service: {
-                valueFn: function(name) {
-              var unit_name = this.get('id');
-              return unit_name.split('/', 1)[0];
-                }
-          },
-          number: {
-                valueFn: function(name) {
-              var unit_name = this.get('id');
-              return parseInt(unit_name.split('/')[1], 10);
-                }
-          },
-          urlName: {
-                valueFn: function() {return this.get('id')
-                                     .replace('/', '-');}
-          },
           machine: {},
           agent_state: {},
           // relations to unit relation state.
           relations: {},
 
           config: {},
-          is_subordinate: {
-                value: false // default
-          },
+          is_subordinate: {},
           open_ports: {},
           public_address: {},
           private_address: {}
@@ -101,8 +89,27 @@ YUI.add('juju-models', function(Y) {
       });
   models.ServiceUnit = ServiceUnit;
 
-  var ServiceUnitList = Y.Base.create('serviceUnitList', Y.ModelList, [], {
+  var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
     model: ServiceUnit,
+
+    _setDefaultsAndCalculatedValues: function(obj) {
+      var raw = obj.id.split('/');
+      obj.service = raw[0];
+      obj.number = parseInt(raw[1], 10);
+      obj.urlName = obj.id.replace('/', '-');
+      obj.name = 'serviceUnit'; // This lets us more easily mimic models.
+    },
+
+    add: function() {
+      var result = ServiceUnitList.superclass.add.apply(this, arguments);
+      if (Y.Lang.isArray(result)) {
+        Y.Array.each(result, this._setDefaultsAndCalculatedValues);
+      } else {
+        this._setDefaultsAndCalculatedValues(result);
+      }
+      return result;
+    },
+
     get_units_for_service: function(service, asList) {
       var options = {},
           sid = service.get('id');
@@ -112,21 +119,22 @@ YUI.add('juju-models', function(Y) {
       }
 
       var units = this.filter(options, function(m) {
-        return m.get('service') === sid;
+        return m.service === sid;
       });
       return units;
     },
+
     /*
-         *  Return information about the state of the set of units for a
-         *  given service in the form of a map of agent states:
-         *  state => number of units in that state
-         */
+     *  Return information about the state of the set of units for a
+     *  given service in the form of a map of agent states:
+     *  state => number of units in that state
+     */
     get_informative_states_for_service: function(service) {
       var aggregate_map = {}, aggregate_list = [],
           units_for_service = this.get_units_for_service(service);
 
       units_for_service.forEach(function(unit) {
-        var state = unit.get('agent_state');
+        var state = unit.agent_state;
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
         }
@@ -140,9 +148,9 @@ YUI.add('juju-models', function(Y) {
     },
 
     /*
-         * Updates a service's unit count and aggregate state map during a
-         * delta, ensuring that they're up to date.
-         */
+     * Updates a service's unit count and aggregate state map during a
+     * delta, ensuring that they're up to date.
+     */
     update_service_unit_aggregates: function(service) {
       var aggregate = this.get_informative_states_for_service(service);
       var sum = Y.Array.reduce(
@@ -154,6 +162,12 @@ YUI.add('juju-models', function(Y) {
   });
   models.ServiceUnitList = ServiceUnitList;
 
+  // This model is barely used.  Machines are in a lazy model list, so we
+  // usually only use objects.  However, the model is used to generate ids, and
+  // can be expected by some code.  The thing to be most wary of is the
+  // attributes.  There is nothing keeping them in sync with reality other than
+  // human maintenance, so verify your assumptions before proceeding from
+  // reading this code.
   var Machine = Y.Base.create('machine', Y.Model, [], {
     idAttribute: 'machine_id'
   }, {
@@ -167,7 +181,7 @@ YUI.add('juju-models', function(Y) {
   });
   models.Machine = Machine;
 
-  var MachineList = Y.Base.create('machineList', Y.ModelList, [], {
+  var MachineList = Y.Base.create('machineList', Y.LazyModelList, [], {
     model: Machine
   }, {
     ATTRS: {}
@@ -211,7 +225,9 @@ YUI.add('juju-models', function(Y) {
       modelId: {
         setter: function(model) {
           if (Y.Lang.isArray(model)) {return model;}
-          return Y.mix([model.name, model.get('id')]);
+          return Y.mix(
+              [model.name,
+               (model instanceof Y.Model) ? model.get('id') : model.id]);
         }},
       link: {},
       link_title: {
@@ -251,14 +267,14 @@ YUI.add('juju-models', function(Y) {
     },
 
     /*
-         * Get Notifications relative to a given model.
-         * Currenly this depends on a mapping between the model
-         * class as encoded by its clientId (see Database.getByModelId)
-         *
-         * [model_list_name, id]
-         */
+     * Get Notifications relative to a given model.
+     * Currenly this depends on a mapping between the model
+     * class as encoded by its clientId (see Database.getByModelId)
+     *
+     * [model_list_name, id]
+     */
     getNotificationsForModel: function(model) {
-      var modelKey = model.get('id');
+      var modelKey = (model instanceof Y.Model) ? model.get('id') : model.id;
       return this.filter(function(notification) {
         var modelId = notification.get('modelId'),
             modelList;
@@ -286,19 +302,20 @@ YUI.add('juju-models', function(Y) {
   var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
       this.services = new ServiceList();
-      this.machines = new MachineList();
       this.charms = new CharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
 
-      // This one is dangerous.. we very well may not have capacity
-      // to store a 1-1 representation of units in js.
+      // These two are dangerous.. we very well may not have capacity
+      // to store a 1-1 representation of units and machines in js.
       // At least we should never assume the collection is complete, and
       // have usage of some ephemeral slice/cursor of the collection.
       // Indexed db might be interesting to explore here, with object delta
       // and bulk transfer feeding directly into indexedb.
-      // Needs some experimentation with a large data set.
+      // Needs some experimentation with a large data set.  For now, we are
+      // simply using LazyModelList.
       this.units = new ServiceUnitList();
+      this.machines = new MachineList();
 
       // For model syncing by type. Charms aren't currently sync'd, only
       // fetched on demand (their static).
@@ -312,13 +329,13 @@ YUI.add('juju-models', function(Y) {
     },
 
     /*
-         * Model Id is a [db[model_list_name], model.get('id')]
-         * sequence that can be used to lookup models relative
-         * to the Database.
-         *
-         * getModelById can be called with either a modelId
-         * or model_type, model_id as individual parameters
-         */
+     * Model Id is a [db[model_list_name], model.get('id')]
+     * sequence that can be used to lookup models relative
+     * to the Database.
+     *
+     * getModelById can be called with either a modelId
+     * or model_type, model_id as individual parameters
+     */
     getModelById: function(modelList, id) {
       if (!Y.Lang.isValue(id)) {
         id = modelList[1];
@@ -375,19 +392,9 @@ YUI.add('juju-models', function(Y) {
       console.groupEnd();
     },
 
-    // utility method to sync a data object and a model object.
-    _get_bag: function(data) {
-      var incoming = {};
-      Y.each(data, function(value, aid) {
-        incoming[aid.replace('-', '_')] = value;
-      });
-      return incoming;
-    },
-
     process_model_delta: function(change, model_list) {
       // console.log('model change', change);
       var change_kind = change[1],
-          data = change[2],
           o = this.getModelFromChange(change);
 
       if (change_kind === 'add' || change_kind === 'change') {
@@ -398,10 +405,22 @@ YUI.add('juju-models', function(Y) {
         // arrives for those objects, they already exist in a skeleton
         // form that needs to be fleshed out.  So, the existing objects
         // are kept and re-used.
+        var data = {};
+        Y.each(change[2], function(value, name) {
+          data[name.replace('-', '_')] = value;
+        });
         if (!Y.Lang.isValue(o)) {
-          o = model_list.add(this._get_bag(data));
+          o = model_list.add(data);
         } else {
-          o.setAttrs(this._get_bag(data));
+          if (o instanceof Y.Model) {
+            o.setAttrs(data);
+          } else {
+            // This must be from a LazyModelList.
+            Y.each(data, function(value, key) {
+              o[key] = value;
+            });
+            // XXX Fire model changed event manually if we need it later?
+          }
         }
       }
       else if (change_kind === 'remove') {

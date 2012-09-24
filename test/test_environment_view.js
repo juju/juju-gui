@@ -196,6 +196,9 @@
             db: db,
             env: env
          }).render();
+         // Attach the view to the DOM so that sizes get set properly
+         // from the viewport (only available from DOM).
+         view.postRender();
          var svg = Y.one('svg');
          parseInt(svg.one('rect').getAttribute('height'), 10)
           .should.equal(
@@ -215,6 +218,9 @@
             db: db,
             env: env
          }).render();
+         // Attach the view to the DOM so that sizes get set properly
+         // from the viewport (only available from DOM).
+         view.postRender();
          var svg = Y.one('svg');
          parseInt(svg.getAttribute('height'), 10)
           .should.equal(
@@ -277,6 +283,27 @@
          service.simulate('click');
        }
     );
+
+    it('must be able to remove a relation between services', function(done) {
+      var view = new EnvironmentView({
+        container: container,
+        db: db,
+        env: env
+      }).render();
+      var relation = container.one('.rel-label'),
+          dialog_btn;
+      relation.after('click', function() {
+        var rel = this;
+        dialog_btn = Y.one('.btn-danger');
+        dialog_btn.after('click', function() {
+          container.all('.to-remove').size()
+            .should.equal(1);
+          done();
+        });
+        dialog_btn.simulate('click');
+      });
+      relation.simulate('click');
+    });
   });
 
 })();
