@@ -207,6 +207,23 @@
          control.get('value').should.equal('3');
        });
 
+    it('should reset values on the control when you type invalid value',
+       function() {
+         var view = new ServiceView(
+         {container: container, model: service, db: db,
+           env: env}).render();
+         var control = container.one('#num-service-units');
+
+         var pressKey = function(key) {
+           control.set('value', key);
+           control.simulate('keydown', { keyCode: ENTER });
+           control.get('value').should.equal('3');
+         };
+         pressKey('a');
+         pressKey('2w');
+         pressKey('w2');
+       });
+
     // Test for destroying services.
     it('should destroy the service when "Destroy Service" is clicked',
        function() {
