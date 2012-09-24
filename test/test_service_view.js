@@ -213,9 +213,15 @@
          {container: container, model: service, db: db,
            env: env}).render();
          var control = container.one('#num-service-units');
-         control.set('value', 'a');
-         control.simulate('keydown', { keyCode: ESC });
-         control.get('value').should.equal('3');
+
+         var pressKey = function(key) {
+           control.set('value', key);
+           control.simulate('keydown', { keyCode: ENTER });
+           control.get('value').should.equal('3');
+         };
+         pressKey('a');
+         pressKey('2w');
+         pressKey('w2');
        });
 
     // Test for destroying services.

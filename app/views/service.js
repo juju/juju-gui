@@ -368,6 +368,7 @@ YUI.add('juju-view-service', function(Y) {
       var container = this.get('container'),
           field = container.one('#num-service-units');
       field.set('value', this.get('model').get('unit_count'));
+      field.set('disabled', false);
     },
 
     modifyUnits: function(ev) {
@@ -385,11 +386,10 @@ YUI.add('juju-view-service', function(Y) {
       }
       ev.halt(true);
 
-      var fieldValue = parseInt(field.get('value'), 10);
-      if (isNaN(fieldValue)) {
-        this.resetUnits();
+      if(/^\d+$/.test(field.get('value'))) {
+        this._modifyUnits(parseInt(field.get('value'), 10));
       } else {
-        this._modifyUnits(fieldValue);
+        this.resetUnits();
       }
     },
 
