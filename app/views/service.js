@@ -329,9 +329,9 @@ YUI.add('juju-view-service', function(Y) {
 
     filterUnits: function(filter_state, units) {
       var state_matchers = {
-        running: function(s) { return s === 'running'; },
+        running: function(s) { return s === 'started'; },
         pending: function(s) {
-          return ['installed', 'started', 'pending'].indexOf(s) > -1; },
+          return ['installed', 'pending'].indexOf(s) > -1; },
         // Errors: install-, start-, stop-, charm-upgrade-, configure-.
         error: function(s) { return (/-error$/).test(s); }},
           matcher = filter_state && state_matchers[filter_state];

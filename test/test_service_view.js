@@ -360,9 +360,9 @@
     });
 
     it('should show some running units when filtered', function() {
-      db.units.getById('mysql/0').agent_state = 'running';
+      db.units.getById('mysql/0').agent_state = 'started';
       // 1 is pending.
-      db.units.getById('mysql/2').agent_state = 'running';
+      db.units.getById('mysql/2').agent_state = 'started';
       var view = new ServiceView(
           { container: container, model: service, db: db,
             env: env, querystring: {state: 'running'}}).render();
@@ -373,7 +373,7 @@
     it('should show zero pending units when filtered', function() {
       db.units.getById('mysql/0').agent_state = 'install-error';
       db.units.getById('mysql/1').agent_state = 'stopping';
-      db.units.getById('mysql/2').agent_state = 'running';
+      db.units.getById('mysql/2').agent_state = 'started';
       var view = new ServiceView(
           { container: container, model: service, db: db,
             env: env, querystring: {state: 'pending'}}).render(),
@@ -392,15 +392,14 @@
 
     it('should show some pending units when filtered', function() {
       // 0 is pending already.
-      db.units.getById('mysql/1').agent_state = 'running';
-      // We include started and installed with pending.
-      db.units.getById('mysql/2').agent_state = 'started';
-      db.units.add([{id: 'mysql/3', agent_state: 'installed'}]);
+      db.units.getById('mysql/1').agent_state = 'started';
+      // We include  installed with pending.
+      db.units.getById('mysql/2').agent_state = 'installed';
       var view = new ServiceView(
           { container: container, model: service, db: db,
             env: env, querystring: {state: 'pending'}}).render();
       container.all('div.thumbnail').get('id').should.eql(
-          ['mysql/0', 'mysql/2', 'mysql/3']);
+          ['mysql/0', 'mysql/2']);
     });
 
     it('should show zero error units when filtered', function() {
