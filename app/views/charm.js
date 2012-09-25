@@ -62,6 +62,9 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
 
     render: function() {
       console.log('render', this.get('charm'));
+      // XXX: re-enable the charm search input on the charms page.
+      Y.one('#omnibar').show();
+
       var container = this.get('container');
       CharmCollectionView.superclass.render.apply(this, arguments);
       if (this.get('charm')) {
@@ -123,6 +126,9 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
     template: Templates['charm-collection'],
 
     render: function() {
+      // XXX: re-enable the charm search input on the charms page.
+      Y.one('#omnibar').show();
+
       var container = this.get('container'),
           self = this;
 
