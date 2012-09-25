@@ -15,7 +15,19 @@ YUI.add('juju-view-environment', function(Y) {
                                       [views.JujuBaseView], {
         events: {
           '#zoom-out-btn': {click: 'zoom_out'},
-          '#zoom-in-btn': {click: 'zoom_in'}
+          '#zoom-in-btn': {click: 'zoom_in'},
+          '#zoom-picker-btn': {
+            mousedown: 'zoomPickerMouseDown',
+            mouseup: 'zoomPickerMouseUp'
+          }
+          /*'#zoom-btn-up': {
+            mousedown: 'pickerZoomInMouseDown',
+            mouseup: 'pickerZoomInMouseUp'
+          },
+          '#zoom-btn-down': {
+            mousedown: 'pickerZoomOutMouseDown',
+            mouseup: 'pickerZoomOutMouseUp'
+          }*/
         },
 
         initializer: function() {
@@ -54,13 +66,20 @@ YUI.add('juju-view-environment', function(Y) {
         .domain([-height / 2, height / 2])
         .range([height, 0]);
 
-          // Create a pan/zoom behavior manager.
+          // Create a pan/zoom behavior manager with a range of 25%-200%
           var zoom = d3.behavior.zoom()
         .x(xscale)
         .y(yscale)
-        .scaleExtent([0.25, 1.75])
+        .scaleExtent([0.25, 2.0])
         .on('zoom', function() {
-                self.rescale(vis, d3.event);
+          // If we're just panning (old_scale == new_scale), then don't
+          // worry about updating the slider
+          var old_scale = self.get('scale');
+          if (d3.event.scale != old_scale) {
+            var s = self.get('slider');
+            s.set('value', Math.floor(d3.event.scale * 100));
+          }
+          self.rescale(vis, d3.event);
               });
           self.set('zoom', zoom);
 
@@ -449,13 +468,31 @@ YUI.add('juju-view-environment', function(Y) {
           }
 
           self.setAttrs({
-            'tree': tree,
-            'vis': vis,
-            'xscale': xscale,
-            'yscale': yscale
+            tree: tree,
+            vis: vis,
+            xscale: xscale,
+            yscale: yscale
           });
           update_links();
         },
+
+        renderSlider: function() {
+          var self = this;
+          // Build a slider to control zoom level
+          // TODO once we have a stored value in view models, use that
+          // for the value property, but for now, zoom to 100%
+          var slider = new Y.Slider({
+            min: 25,
+            max: 200,
+            value: 100
+          });
+          slider.render('#slider-parent');
+          slider.after('valueChange', function(evt) {
+            self._fire_zoom((evt.newVal - evt.prevVal) / 100);
+          });
+          self.set('slider', slider);
+        },
+
 
         /*
          * Finish DOM-dependent rendering
@@ -480,6 +517,13 @@ YUI.add('juju-view-environment', function(Y) {
             label.one('rect').setAttribute('width', width)
               .setAttribute('x', -width / 2);
           });
+
+          // Render the slider after the view is attached.
+          // Although there is a .syncUI() method on sliders, it does not
+          // seem to play well with the app framework: the slider will render
+          // the first time, but on navigation away and back, will not
+          // re-render within the view.
+          this.renderSlider();
 
           // Chainable method.
           return this;
@@ -583,14 +627,18 @@ YUI.add('juju-view-environment', function(Y) {
      * Zoom in event handler.
      */
         zoom_out: function(evt) {
-          this._fire_zoom(-0.2);
+          var slider = this.get('slider'),
+              val = slider.get('value');
+          slider.set('value', val - 25);
         },
 
         /*
      * Zoom out event handler.
      */
         zoom_in: function(evt) {
-          this._fire_zoom(0.2);
+          var slider = this.get('slider'),
+              val = slider.get('value');
+          slider.set('value', val + 25);
         },
 
         /*
@@ -616,6 +664,14 @@ YUI.add('juju-view-environment', function(Y) {
      * Rescale the visualization on a zoom/pan event.
      */
         rescale: function(vis, evt) {
+          // Make sure we don't scale outside of our bounds.
+          // This check is needed because we're messing with d3's zoom
+          // behavior outside of mouse events (e.g.: with the slider)
+          var new_scale = Math.floor(evt.scale * 100);
+          if (new_scale < 25 || new_scale > 200) {
+            console.log(evt.scale);
+            return;
+          }
           this.set('scale', evt.scale);
           vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
@@ -809,5 +865,6 @@ YUI.add('juju-view-environment', function(Y) {
     'node',
     'svg-layouts',
     'event-resize',
+    'slider',
     'view']
 });
