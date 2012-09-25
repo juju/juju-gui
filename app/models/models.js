@@ -64,6 +64,12 @@ YUI.add('juju-models', function(Y) {
   });
   models.ServiceList = ServiceList;
 
+  // This model is barely used.  Units are in a lazy model list, so we
+  // usually only use objects.  However, the model is used to generate ids, and
+  // can be expected by some code.  The thing to be most wary of is the
+  // attributes.  There is nothing keeping them in sync with reality other than
+  // human maintenance, so verify your assumptions before proceeding from
+  // reading this code.
   var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
       //    idAttribute: 'name',
       {
@@ -155,6 +161,12 @@ YUI.add('juju-models', function(Y) {
   });
   models.ServiceUnitList = ServiceUnitList;
 
+  // This model is barely used.  Machines are in a lazy model list, so we
+  // usually only use objects.  However, the model is used to generate ids, and
+  // can be expected by some code.  The thing to be most wary of is the
+  // attributes.  There is nothing keeping them in sync with reality other than
+  // human maintenance, so verify your assumptions before proceeding from
+  // reading this code.
   var Machine = Y.Base.create('machine', Y.Model, [], {
     idAttribute: 'machine_id'
   }, {
@@ -168,7 +180,7 @@ YUI.add('juju-models', function(Y) {
   });
   models.Machine = Machine;
 
-  var MachineList = Y.Base.create('machineList', Y.ModelList, [], {
+  var MachineList = Y.Base.create('machineList', Y.LazyModelList, [], {
     model: Machine
   }, {
     ATTRS: {}
@@ -300,19 +312,20 @@ YUI.add('juju-models', function(Y) {
   var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
       this.services = new ServiceList();
-      this.machines = new MachineList();
       this.charms = new CharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
 
-      // This one is dangerous.. we very well may not have capacity
-      // to store a 1-1 representation of units in js.
+      // These two are dangerous.. we very well may not have capacity
+      // to store a 1-1 representation of units and machines in js.
       // At least we should never assume the collection is complete, and
       // have usage of some ephemeral slice/cursor of the collection.
       // Indexed db might be interesting to explore here, with object delta
       // and bulk transfer feeding directly into indexedb.
-      // Needs some experimentation with a large data set.
+      // Needs some experimentation with a large data set.  For now, we are
+      // simply using LazyModelList.
       this.units = new ServiceUnitList();
+      this.machines = new MachineList();
 
       // For model syncing by type. Charms aren't currently sync'd, only
       // fetched on demand (their static).

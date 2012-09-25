@@ -13,8 +13,13 @@
 
         <div class="control-label" for="{{name}}">{{type}}: {{name}}</div>
         <div class="controls">
+          {{#if isBool}}
+          <input class="config-field" type="checkbox" name="{{name}}"
+              id="input-{{name}}" {{value}}/>
+          {{else}}
           <input class="config-field" type="text" name="{{name}}"
               id="input-{{name}}" value="{{value}}"/>
+          {{/if}}
         </div>
       </div>
 

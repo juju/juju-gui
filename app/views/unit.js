@@ -67,7 +67,7 @@ YUI.add('juju-view-unit', function(Y) {
         service: service.getAttrs(),
         disabled_remove: service.get('unit_count') <= 1,
         charm: charm.getAttrs(),
-        machine: db.machines.getById(unit.machine).getAttrs(),
+        machine: db.machines.getById(unit.machine),
         unit_error: unit_error,
         unit_running: unit_running,
         unit_pending: unit_pending}));

@@ -86,13 +86,8 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Bind visualization resizing on window resize
           Y.on('windowresize', function() {
-            self.setSizesFromViewport(vis, container, xscale, yscale);
+            self.setSizesFromViewport();
           });
-
-          // If the view is bound to the dom, set sizes from viewport
-          if (Y.one('svg')) {
-            self.setSizesFromViewport(vis, container, xscale, yscale);
-          }
 
           var tree = d3.layout.pack()
         .size([width, height])
@@ -154,9 +149,9 @@ YUI.add('juju-view-environment', function(Y) {
               .append('tspan')
               .text(function(d) { return d.type; });
             label.insert('rect', 'text')
-              .attr('width', function() {
-                  return Y.one(this.parentNode)
-                  .one('text').getClientRect().width + 10;
+              .attr('width', function(d) {
+                  return (Y.one(this.parentNode)
+                  .one('text').getClientRect() || {width: 0}).width + 10;
                 })
               .attr('height', 20)
               .attr('x', function() {
@@ -453,9 +448,41 @@ YUI.add('juju-view-environment', function(Y) {
             return rel_services;
           }
 
-          self.set('tree', tree);
-          self.set('vis', vis);
+          self.setAttrs({
+            'tree': tree,
+            'vis': vis,
+            'xscale': xscale,
+            'yscale': yscale
+          });
           update_links();
+        },
+
+        /*
+         * Finish DOM-dependent rendering
+         *
+         * Some portions of the visualization require information pulled
+         * from the DOM, such as the clientRects used for sizing relation
+         * labels and the viewport size used for sizing the whole graph. This
+         * is called after the view is attached to the DOM in order to
+         * perform all of that work.  In the app, it's called as a callback
+         * in app.showView(), and in testing, it needs to be called manually,
+         * if the test relies on any of this data.
+         */
+        postRender: function() {
+          var container = this.get('container');
+
+          // Set the sizes from the viewport
+          this.setSizesFromViewport();
+
+          // Ensure relation labels are sized properly.
+          container.all('.rel-label').each(function(label) {
+            var width = label.one('text').getClientRect().width + 10;
+            label.one('rect').setAttribute('width', width)
+              .setAttribute('x', -width / 2);
+          });
+
+          // Chainable method.
+          return this;
         },
 
         /*
@@ -597,9 +624,13 @@ YUI.add('juju-view-environment', function(Y) {
         /*
      * Set the visualization size based on the viewport
      */
-        setSizesFromViewport: function(vis, container, xscale, yscale) {
+        setSizesFromViewport: function() {
           // start with some reasonable defaults
-          var viewport_height = '100%',
+          var vis = this.get('vis'),
+              container = this.get('container'),
+              xscale = this.get('xscale'),
+              yscale = this.get('yscale'),
+              viewport_height = '100%',
               viewport_width = parseInt(
               container.getComputedStyle('width'), 10),
               svg = container.one('svg'),
