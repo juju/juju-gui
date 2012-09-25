@@ -2,8 +2,8 @@
 
 (function() {
   describe('juju service view', function() {
-    var ServiceView, models, Y, container, service, db, conn,
-        env, charm, ENTER, ESC;
+    var ServiceView, ServiceRelationsView, models, Y, container, service, db,
+        conn, env, charm, ENTER, ESC;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -14,6 +14,7 @@
             ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
             models = Y.namespace('juju.models');
             ServiceView = Y.namespace('juju.views').service;
+            ServiceRelationsView = Y.namespace('juju.views').service_relations;
             done();
           });
     });
@@ -430,6 +431,150 @@
       container.all('div.thumbnail').get('id').should.eql(
           ['mysql/0', 'mysql/2']);
     });
+
+    it('should remove the relation when requested',
+       function() {
+
+         var service_name = service.get('id'),
+             rel0 = new models.Relation(
+         { id: 'relation-0',
+           endpoints:
+           [[service_name, {name: 'db', role: 'source'}],
+            ['squid', {name: 'cache', role: 'front'}]],
+           'interface': 'cache',
+           scope: 'global'
+         }),
+             rel1 = new models.Relation(
+             { id: 'relation-1',
+               endpoints:
+               [[service_name, {name: 'db', role: 'peer'}]],
+               'interface': 'db',
+               scope: 'global'
+             });
+
+         db.relations.add([rel0, rel1]);
+
+         var view = new ServiceRelationsView(
+         {container: container, model: service, db: db, env: env,
+           querystring: {}}).render();
+
+         var control = container.one('#relation-0');
+         control.simulate('click');
+         var remove = container.one('#remove-modal-panel .btn-danger');
+         remove.simulate('click');
+         var message = conn.last_message();
+         message.op.should.equal('remove_relation');
+         remove.get('disabled').should.equal(true);
+       });
+
+    it('should remove peer relations when requested',
+       function() {
+
+         var service_name = service.get('id'),
+             rel0 = new models.Relation(
+         { id: 'relation-0',
+           endpoints:
+           [[service_name, {name: 'db', role: 'source'}],
+            ['squid', {name: 'cache', role: 'front'}]],
+           'interface': 'cache',
+           scope: 'global'
+         }),
+             rel1 = new models.Relation(
+             { id: 'relation-1',
+               endpoints:
+               [[service_name, {name: 'db', role: 'peer'}]],
+               'interface': 'db',
+               scope: 'global'
+             });
+
+         db.relations.add([rel0, rel1]);
+
+         var view = new ServiceRelationsView(
+         {container: container, model: service, db: db, env: env,
+           querystring: {}}).render();
+
+         var control = container.one('#relation-1');
+         control.simulate('click');
+         var remove = container.one('#remove-modal-panel .btn-danger');
+         remove.simulate('click');
+         var message = conn.last_message();
+         message.op.should.equal('remove_relation');
+         remove.get('disabled').should.equal(true);
+       });
+
+    it('should highlight the correct relation when passed as the query ' +
+       'string', function() {
+         var service_name = service.get('id'),
+         rel0 = new models.Relation(
+         { id: 'relation-0',
+           endpoints:
+           [[service_name, {name: 'db', role: 'source'}],
+                 ['squid', {name: 'cache', role: 'front'}]],
+           'interface': 'cache',
+           scope: 'global'
+         }),
+         rel1 = new models.Relation(
+         { id: 'relation-1',
+           endpoints:
+           [[service_name, {name: 'db', role: 'peer'}]],
+           'interface': 'db',
+           scope: 'global'
+         });
+
+         db.relations.add([rel0, rel1]);
+
+         var view = new ServiceRelationsView(
+         {container: container, model: service, db: db, env: env,
+           querystring: {rel_id: 'relation-0'}}).render();
+
+         var row = container.one('.highlighted');
+         row.one('a').getHTML().should.equal('squid');
+         row.one('.btn').get('disabled').should.equal(false);
+       });
+
+    it('should handle errors properly in the callback',
+       function() {
+         var service_name = service.get('id'),
+         rel0 = new models.Relation(
+         { id: 'relation-0',
+           endpoints:
+           [[service_name, {name: 'db', role: 'source'}],
+                 ['squid', {name: 'cache', role: 'front'}]],
+           'interface': 'cache',
+           scope: 'global'
+         }),
+         rel1 = new models.Relation(
+         { id: 'relation-1',
+           endpoints:
+           [[service_name, {name: 'db', role: 'peer'}]],
+           'interface': 'db',
+           scope: 'global'
+         });
+
+         var fake_app = {
+           getModelURL: function(svc) {
+             return 'http://localhost/' + service.get('id');}
+         };
+         db.relations.add([rel0, rel1]);
+         var view = new ServiceRelationsView(
+         {container: container, model: service, db: db, env: env,
+           app: fake_app, querystring: {}});
+         view.render();
+         var control = container.one('#relation-0');
+         control.simulate('click');
+         var remove = container.one('#remove-modal-panel .btn-danger');
+         remove.simulate('click');
+
+         var callbacks = Y.Object.values(env._txn_callbacks);
+         callbacks.length.should.equal(1);
+         var existing_notice_count = db.notifications.size();
+         callbacks[0]({err: true, endpoint_a: service_name,
+           endpoint_b: 'squid'});
+         remove.get('disabled').should.equal(false);
+         db.notifications.size().should.equal(existing_notice_count + 1);
+         var row = control.ancestor('tr');
+         var _ = expect(row.one('.highlighted')).to.not.exist;
+       });
 
   });
 }) ();
