@@ -193,10 +193,10 @@ YUI.add('juju-view-service', function(Y) {
                 })
             );
             var row = rm_button.ancestor('tr');
-            row.removeClass('highlighted');
+            row.removeClass('highlighted'); // Whether we need to or not.
             var old_color = row.getStyle('backgroundColor');
             row.setStyle('backgroundColor', 'pink');
-            row.transition({easing: 'ease-out', duration: 2.75,
+            row.transition({easing: 'ease-out', duration: 3,
               backgroundColor: old_color});
           } else {
             db.relations.remove(relation);
@@ -599,7 +599,6 @@ YUI.add('juju-view-service', function(Y) {
     'node',
     'view',
     'event-key',
-    'querystring',
     'transition',
     'json-stringify']
 });
