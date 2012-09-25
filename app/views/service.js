@@ -176,8 +176,6 @@ YUI.add('juju-view-service', function(Y) {
 
         _doRemoveRelationCallback: function(relation, rm_button,
             confirm_button, ev) {
-          // XXX Once we have a way of showing notifications, if ev.err exists,
-          // report it.
           var db = this.get('db'),
               app = this.get('app'),
               service = this.get('model');
