@@ -3,7 +3,7 @@
 (function() {
   describe('juju service view', function() {
     var ServiceView, ServiceRelationsView, models, Y, container, service, db,
-    conn, env, charm, ENTER, ESC;
+        conn, env, charm, ENTER, ESC;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -446,11 +446,14 @@
            scope: 'global'
          });
 
-         var fake_app = {getModelURL: function(svc) {return 'http://localhost/' + service.get('id')}};
+         var fake_app = {
+           getModelURL: function(svc) {
+             return 'http://localhost/' + service.get('id');}
+         };
          db.relations.add([rel0, rel1]);
          var view = new ServiceRelationsView(
-           {container: container, model: service, db: db, env: env,
-            app: fake_app, querystring: {}});
+         {container: container, model: service, db: db, env: env,
+           app: fake_app, querystring: {}});
          view.render();
          var control = container.one('#relation-0');
          control.simulate('click');
@@ -459,8 +462,9 @@
 
          var callbacks = Y.Object.values(env._txn_callbacks);
          callbacks.length.should.equal(1);
-         var existing_notice_count = db.notifications.size()
-         callbacks[0]({err: true, endpoint_a: service_name, endpoint_b: 'squid'});
+         var existing_notice_count = db.notifications.size();
+         callbacks[0]({err: true, endpoint_a: service_name,
+           endpoint_b: 'squid'});
          remove.get('disabled').should.equal(false);
          db.notifications.size().should.equal(existing_notice_count + 1);
          var row = control.ancestor('tr');
