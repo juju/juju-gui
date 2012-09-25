@@ -24,8 +24,6 @@ YUI.add('juju-view-environment', function(Y) {
 
           // build a service.id -> BoundingBox map for services
           this.service_map = {};
-          // ep-strings -> BoxPairs
-          this.relation_map = {};
         },
 
         render: function() {
@@ -146,8 +144,6 @@ YUI.add('juju-view-environment', function(Y) {
             
           this.rel_data = this.processRelations(relations);
                   
-          console.dir(this.rel_data);
-          console.dir(this.services);
           // Nodes are mapped by modelId tuples
           this.node = vis.selectAll('.service')
                        .data(services, 
@@ -159,9 +155,6 @@ YUI.add('juju-view-environment', function(Y) {
           var self = this,
               tree = this.tree,
               vis = this.vis;
-
-          // If our container element isn't attached to the DOM
-          // do so
 
           //Process any changed data
           this.update_data();
@@ -180,9 +173,16 @@ YUI.add('juju-view-environment', function(Y) {
           // labels for service and charm
           var node = this.node;
 
-
           // rerun the pack layout
-          this.tree.nodes({children: this.services});
+          // Pack doesn't honor existing positions and will 
+          // re-layout the entire graph. As a short term work
+          // around we layout only new nodes. This has the side 
+          // effect that node nodes can overlap and will
+          // be fixed later
+          var new_services = this.services.filter(function(bb) {
+              return !Y.Lang.isNumber(bb.x);
+              });
+          this.tree.nodes({children: new_services});
 
           // enter
           node
@@ -210,6 +210,10 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Exit
           node.exit()
+            .call(function(d) {
+            // TODO: update the service_map
+            // removing the bound data
+            })
             .transition()
             .duration(500)
             .attr('x', 0)

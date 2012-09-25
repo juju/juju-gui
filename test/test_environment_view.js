@@ -108,7 +108,7 @@
         it('must be able to render service blocks and relations',
             function(done) {
                 // Create an instance of EnvironmentView with custom env
-                var view = new EnvironmentView({
+                var view = new views.EnvironmentView({
                     container: container,
                     db: db,
                     env: env
@@ -222,7 +222,7 @@
 
     });
 
-     describe('view model support infrastructure', function() {
+describe('view model support infrastructure', function() {
      var Y, views, models;
 
      before(function (done) {
@@ -257,6 +257,30 @@
             b1.getConnectorPair(b2).should.eql([[50, 200], [250, 300]]);
             });
 
+     it('must be able to save and restore old position information',
+        function() {
+            var b1 = views.BoundingBox(),
+            b2 = views.BoundingBox();
+                     
+            // raw poperty access
+            b1.x = 0; b1.y = 0;
+            b1.w = 100; b1.h = 200;
+
+            // Use pos to set b2
+            b2.pos = {x: 200, y: 300, w: 100, h: 200};
+
+            // update using property
+            b1.x = 100;
+            b1.x.should.equal(100);
+            b1.px.should.equal(0);
+
+            // update using pos
+            b2.pos = {x:300};
+            b2.x.should.equal(300);
+            b2.px.should.equal(200);
+
+        });
+                  
      it('must be able to access model attributes easily', function() {
            var service = new models.Service({id: 'mediawiki',
                                             exposed: true}),

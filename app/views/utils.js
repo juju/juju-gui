@@ -218,6 +218,21 @@ YUI.add('juju-view-utils', function(Y) {
          Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
      });
 
+     Box.__defineGetter__('x', function() {return x;});
+     Box.__defineSetter__('x', function(value) {
+         this.px = this.x;
+         x = value;
+         return this;
+     });
+
+     Box.__defineGetter__('y', function() {return y;});
+     Box.__defineSetter__('y', function(value) {
+         this.py = this.y;
+         y = value;
+         return this;
+     });
+
+
 
     Box.getXY = function() {return [this.x, this.y];};
     Box.getWH = function() {return [this.w, this.h];};
