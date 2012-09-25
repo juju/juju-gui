@@ -56,7 +56,7 @@
     it('should show controls to modify units by default', function() {
       var view = new ServiceView(
           {container: container, model: service, db: db,
-            env: env}).render();
+            env: env, querystring: {}}).render();
       container.one('#num-service-units').should.not.equal(null);
     });
 
@@ -64,7 +64,7 @@
       charm.set('is_subordinate', true);
       var view = new ServiceView(
           {container: container, service: service, db: db,
-            env: env}).render();
+            env: env, querystring: {}}).render();
       // "var _ =" makes the linter happy.
       var _ = expect(container.one('#num-service-units')).to.not.exist;
     });
@@ -73,7 +73,7 @@
       // Note that the units are added in beforeEach in an ordered manner.
       var view = new ServiceView(
           {container: container, model: service, db: db,
-            env: env}).render();
+            env: env, querystring: {}}).render();
       var rendered_names = container.all('div.thumbnail').get('id');
       var expected_names = db.units.map(function(u) {return u.id;});
       expected_names.sort();
@@ -85,7 +85,7 @@
        function() {
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.get('value').should.equal('3');
        });
@@ -94,7 +94,7 @@
        function() {
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 1);
          control.simulate('keydown', { keyCode: ENTER }); // Simulate Enter.
@@ -107,7 +107,7 @@
        function() {
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 0);
          control.simulate('keydown', { keyCode: ENTER });
@@ -121,7 +121,7 @@
          db.units.remove([1, 2]);
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 0);
          control.simulate('keydown', { keyCode: ENTER });
@@ -133,7 +133,7 @@
        function() {
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 7);
          control.simulate('keydown', { keyCode: ENTER });
@@ -152,7 +152,7 @@
          expected_names.sort();
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 4);
          control.simulate('keydown', { keyCode: ENTER });
@@ -175,7 +175,7 @@
        function() {
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 2);
          control.simulate('keydown', { keyCode: ENTER });
@@ -189,7 +189,7 @@
        function() {
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 2);
          control.simulate('keydown', { keyCode: ESC });
@@ -200,7 +200,7 @@
        function() {
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 2);
          control.simulate('blur');
@@ -211,7 +211,7 @@
        function() {
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          var control = container.one('#num-service-units');
 
          var pressKey = function(key) {
@@ -229,7 +229,7 @@
        function() {
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          var control = container.one('#destroy-service');
          control.simulate('click');
          var destroy = container.one('#destroy-modal-panel .btn-danger');
@@ -243,7 +243,7 @@
        function() {
          var view = new ServiceView(
          {container: container, model: service, db: db,
-           env: env}).render();
+           env: env, querystring: {}}).render();
          db.relations.add(
          [new models.Relation({id: 'relation-0000000000',
             endpoints: [['mysql', {}], ['wordpress', {}]]}),
@@ -272,9 +272,9 @@
 
     it('should send an expose RPC call when exposeService is invoked',
        function() {
-          var view = new ServiceView(
-              {container: container, model: service, db: db,
-           env: env});
+          var view = new ServiceView({
+            container: container, model: service, db: db,
+            env: env, querystring: {}});
 
           view.exposeService();
           conn.last_message().op.should.equal('expose');
@@ -282,9 +282,9 @@
 
     it('should send an unexpose RPC call when unexposeService is invoked',
        function() {
-          var view = new ServiceView(
-              {container: container, model: service, db: db,
-           env: env});
+          var view = new ServiceView({
+            container: container, model: service, db: db,
+            env: env, querystring: {}});
 
           view.unexposeService();
           conn.last_message().op.should.equal('unexpose');
@@ -292,9 +292,9 @@
 
     it('should invoke callback when expose RPC returns',
        function() {
-         var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env}).render();
+          var view = new ServiceView({
+            container: container, model: service, db: db,
+            env: env, querystring: {}}).render();
 
          var test = function(selectorBefore, selectorAfter, callback) {
            console.log('Service is exposed: ' + service.get('exposed'));

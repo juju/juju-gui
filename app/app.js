@@ -263,7 +263,9 @@ YUI.add('juju-gui', function(Y) {
         model: service,
         db: this.db,
         env: this.env,
-        app: this});
+        app: this,
+        querystring: Y.QueryString.parse(location.search.slice(1))
+      });
     },
 
     show_service: function(req) {
@@ -544,5 +546,6 @@ YUI.add('juju-gui', function(Y) {
     'app-transitions',
     'base',
     'node',
-    'model']
+    'model',
+    'querystring']
 });
