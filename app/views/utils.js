@@ -222,6 +222,32 @@ YUI.add('juju-view-utils', function(Y) {
     return panel;
   };
 
+  function _addAlertMessage(container, alertClass, message) {
+    var div = container.one('#message-area'),
+        errorDiv = div.one('#alert-area');
+
+    if (!errorDiv) {
+      errorDiv = Y.Node.create('<div id="alert-area" class="alert ' +
+          alertClass + '"><span id="alert-area-text"></span></div>');
+
+      var close = Y.Node.create('<a class="close">x</a>');
+
+      errorDiv.appendTo(div);
+      close.appendTo(errorDiv);
+
+      close.on('click', function() {
+        errorDiv.remove();
+      });
+    }
+
+    errorDiv.one('#alert-area-text').setHTML(message);
+    window.scrollTo(errorDiv.getX(), errorDiv.getY());
+  }
+
+  utils.showSuccessMessage = function(container, message) {
+    _addAlertMessage(container, 'alert-success', message);
+  };
+
   utils.buildRpcHandler = function(config) {
     var utils = Y.namespace('juju.views.utils'),
         container = config.container,
@@ -229,22 +255,6 @@ YUI.add('juju-view-utils', function(Y) {
         finalizeHandler = config.finalizeHandler,
         successHandler = config.successHandler,
         errorHandler = config.errorHandler;
-
-    function _addErrorMessage(message) {
-      var div = container.one('#message-area')
-            .appendChild(Y.Node.create('<div/>'))
-            .addClass('alert')
-            .addClass('alert-error')
-            .set('text', message);
-
-      var close = div.appendChild(Y.Node.create('<a/>'))
-        .addClass('close')
-        .set('text', '×');
-
-      close.on('click', function() {
-        div.remove();
-      });
-    }
 
     function invokeCallback(callback) {
       if (callback) {
@@ -258,9 +268,16 @@ YUI.add('juju-view-utils', function(Y) {
 
     return function(ev) {
       if (ev && ev.err) {
-        _addErrorMessage(utils.SERVER_ERROR_MESSAGE);
+        _addAlertMessage(container, 'alert-error', utils.SERVER_ERROR_MESSAGE);
         invokeCallback(errorHandler);
       } else {
+        // The usual result of a successful request is a page refresh.
+        // Therefore, we need to set this delay in order to show the "success"
+        // message after the page page refresh.
+        setTimeout(function() {
+          utils.showSuccessMessage(container, 'Successful update');
+        }, 1000);
+
         invokeCallback(successHandler);
       }
       invokeCallback(finalizeHandler);
@@ -273,6 +290,10 @@ YUI.add('juju-view-utils', function(Y) {
     console.group('view.utils.validate');
     console.log('validating', values, 'against', schema);
     var errors = {};
+    var getString = function(value) {
+      var result = value + '';
+      return result.trim();
+    };
     Y.Object.each(schema, function(field_definition, name) {
       var value = values[name];
       console.log('validating field', name, 'with value', value);
@@ -282,7 +303,7 @@ YUI.add('juju-view-utils', function(Y) {
           if (field_definition['default'] === undefined) {
             errors[name] = 'This field is required.';
           }
-        } else if (!/^[-+]?[0-9]+$/.test(value)) {
+        } else if (!/^[-+]?[0-9]+$/.test(getString(value))) {
           errors[name] = 'The value "' + value + '" is not an integer.';
         }
       } else if (field_definition.type === 'float') {
@@ -290,7 +311,7 @@ YUI.add('juju-view-utils', function(Y) {
           if (field_definition['default'] === undefined) {
             errors[name] = 'This field is required.';
           }
-        } else if (!/^[-+]?[0-9]*\.?[0-9]*$/.test(value)) {
+        } else if (!/^[-+]?[0-9]*\.?[0-9]*$/.test(getString(value))) {
           errors[name] = 'The value "' + value + '" is not a float.';
         }
       }

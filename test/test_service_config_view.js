@@ -255,11 +255,13 @@
       };
 
       assertError('intOption', '', 'This field is required.');
+      assertError('intOption', '  ', 'This field is required.');
       assertError('intOption', '1', null);
       assertError('intOption', '1.1', 'The value "1.1" is not an integer.');
       assertError('intOption', 'a', 'The value "a" is not an integer.');
 
       assertError('floatOption', '', 'This field is required.');
+      assertError('floatOption', '  ', 'This field is required.');
       assertError('floatOption', '1', null);
       assertError('floatOption', '1.1', null);
       assertError('floatOption', 'a', 'The value "a" is not a float.');

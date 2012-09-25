@@ -56,6 +56,11 @@ YUI.add('juju-view-service', function(Y) {
       } else {
         value = el.get('value');
       }
+
+      if(value && typeof value === 'string' && value.trim() === '') {
+        value = null;
+      }
+
       result[el.get('name')] = value;
     });
 
@@ -258,15 +263,43 @@ YUI.add('juju-view-service', function(Y) {
           var container = this.get('container');
           container.one('#save-service-config').removeAttribute('disabled');
 
-          Y.Object.each(errors, function(value, key) {
-            var field = container.one('#input-' + key);
-            // Add the "error" class to the wrapping "control-group" div
-            field.get('parentNode').get('parentNode').addClass('error');
 
-            var errorTag = Y.Node.create('<span id="error-' + key +
-                '" class="help-inline">' + value + '</span>');
-            errorTag.appendTo(field.get('parentNode'));
+          // Remove old error messages
+          container.all('.help-inline').each(function(node) {
+            node.remove();
           });
+
+          // Remove old error messages
+          container.all('.error').each(function(node) {
+            node.removeClass('error');
+          });
+
+          var firstErrorKey = null;
+          Y.Object.each(errors, function(value, key) {
+            var errorTag = container.one('#error-' + key);
+            if (!errorTag) {
+              // This is the first time we have an error for this field.
+              // Create the new error "span" tag.
+              errorTag = Y.Node.create('<span id="error-' + key +
+                  '" class="help-inline"></span>');
+
+              var field = container.one('#input-' + key);
+              // Add the "error" class to the wrapping "control-group" div
+              field.get('parentNode').get('parentNode').addClass('error');
+
+              errorTag.appendTo(field.get('parentNode'));
+            }
+
+            errorTag.setHTML(value);
+            if(!firstErrorKey) {
+              firstErrorKey = key;
+            }
+          });
+
+          if(firstErrorKey) {
+            var field = container.one('#input-' + firstErrorKey);
+            field.focus();
+          }
         },
 
         saveConfig: function() {
