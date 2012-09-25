@@ -57,7 +57,7 @@ YUI.add('juju-view-service', function(Y) {
         value = el.get('value');
       }
 
-      if(value && typeof value === 'string' && value.trim() === '') {
+      if (value && typeof value === 'string' && value.trim() === '') {
         value = null;
       }
 
@@ -291,12 +291,12 @@ YUI.add('juju-view-service', function(Y) {
             }
 
             errorTag.setHTML(value);
-            if(!firstErrorKey) {
+            if (!firstErrorKey) {
               firstErrorKey = key;
             }
           });
 
-          if(firstErrorKey) {
+          if (firstErrorKey) {
             var field = container.one('#input-' + firstErrorKey);
             field.focus();
           }
