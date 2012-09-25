@@ -326,6 +326,111 @@
               Y.bind(view._unexposeServiceCallback, view));
        });
 
+    it('should show proper tabs initially', function() {
+      var view = new ServiceView(
+          { container: container, model: service, db: db,
+            env: env, querystring: {}}).render(),
+          active_navtabs = [];
+      container.all('ul.nav-tabs li').each(
+          function(n) {
+            active_navtabs.push([n.get('text').trim(), n.hasClass('active')]);
+          });
+      active_navtabs.should.eql(
+          [['All', true],
+           ['Running', false],
+           ['Pending', false],
+           ['Error', false]]);
+    });
+
+    it('should show zero running units when filtered', function() {
+      // All units are pending.
+      var view = new ServiceView(
+          { container: container, model: service, db: db,
+            env: env, querystring: {state: 'running'}}).render(),
+          active_navtabs = [];
+      container.all('ul.nav-tabs li').each(
+          function(n) {
+            active_navtabs.push([n.get('text').trim(), n.hasClass('active')]);
+          });
+      active_navtabs.should.eql(
+          [['All', false],
+           ['Running', true],
+           ['Pending', false],
+           ['Error', false]]);
+      container.all('div.thumbnail').get('id').length.should.equal(0);
+    });
+
+    it('should show some running units when filtered', function() {
+      db.units.getById('mysql/0').agent_state = 'started';
+      // 1 is pending.
+      db.units.getById('mysql/2').agent_state = 'started';
+      var view = new ServiceView(
+          { container: container, model: service, db: db,
+            env: env, querystring: {state: 'running'}}).render();
+      container.all('div.thumbnail').get('id').should.eql(
+          ['mysql/0', 'mysql/2']);
+    });
+
+    it('should show zero pending units when filtered', function() {
+      db.units.getById('mysql/0').agent_state = 'install-error';
+      db.units.getById('mysql/1').agent_state = 'stopping';
+      db.units.getById('mysql/2').agent_state = 'started';
+      var view = new ServiceView(
+          { container: container, model: service, db: db,
+            env: env, querystring: {state: 'pending'}}).render(),
+          active_navtabs = [];
+      container.all('ul.nav-tabs li').each(
+          function(n) {
+            active_navtabs.push([n.get('text').trim(), n.hasClass('active')]);
+          });
+      active_navtabs.should.eql(
+          [['All', false],
+           ['Running', false],
+           ['Pending', true],
+           ['Error', false]]);
+      container.all('div.thumbnail').get('id').length.should.equal(0);
+    });
+
+    it('should show some pending units when filtered', function() {
+      // 0 is pending already.
+      db.units.getById('mysql/1').agent_state = 'started';
+      // We include  installed with pending.
+      db.units.getById('mysql/2').agent_state = 'installed';
+      var view = new ServiceView(
+          { container: container, model: service, db: db,
+            env: env, querystring: {state: 'pending'}}).render();
+      container.all('div.thumbnail').get('id').should.eql(
+          ['mysql/0', 'mysql/2']);
+    });
+
+    it('should show zero error units when filtered', function() {
+      var view = new ServiceView(
+          { container: container, model: service, db: db,
+            env: env, querystring: {state: 'error'}}).render(),
+          active_navtabs = [];
+      container.all('ul.nav-tabs li').each(
+          function(n) {
+            active_navtabs.push([n.get('text').trim(), n.hasClass('active')]);
+          });
+      active_navtabs.should.eql(
+          [['All', false],
+           ['Running', false],
+           ['Pending', false],
+           ['Error', true]]);
+      container.all('div.thumbnail').get('id').length.should.equal(0);
+    });
+
+    it('should show some error units when filtered', function() {
+      // Any -error is included.
+      db.units.getById('mysql/0').agent_state = 'install-error';
+      // 1 is pending.
+      db.units.getById('mysql/2').agent_state = 'foo-error';
+      var view = new ServiceView(
+          { container: container, model: service, db: db,
+            env: env, querystring: {state: 'error'}}).render();
+      container.all('div.thumbnail').get('id').should.eql(
+          ['mysql/0', 'mysql/2']);
+    });
 
     it('should remove the relation when requested',
        function() {
