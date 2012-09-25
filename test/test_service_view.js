@@ -350,7 +350,8 @@
          db.relations.add([rel0, rel1]);
 
          var view = new ServiceRelationsView(
-         {container: container, model: service, db: db, env: env}).render();
+         {container: container, model: service, db: db, env: env,
+           querystring: {}}).render();
 
          var control = container.one('#relation-0');
          control.simulate('click');
@@ -384,7 +385,8 @@
          db.relations.add([rel0, rel1]);
 
          var view = new ServiceRelationsView(
-         {container: container, model: service, db: db, env: env}).render();
+         {container: container, model: service, db: db, env: env,
+           querystring: {}}).render();
 
          var control = container.one('#relation-1');
          control.simulate('click');
@@ -394,5 +396,39 @@
          message.op.should.equal('remove_relation');
          remove.get('disabled').should.equal(true);
        });
+
+    it('should highlight the correct relation when passed as the query ' +
+       'string', function() {
+         var service_name = service.get('id'),
+         rel0 = new models.Relation(
+         { id: 'relation-0',
+           endpoints:
+           [[service_name, {name: 'db', role: 'source'}],
+                 ['squid', {name: 'cache', role: 'front'}]],
+           'interface': 'cache',
+           scope: 'global'
+         }),
+         rel1 = new models.Relation(
+         { id: 'relation-1',
+           endpoints:
+           [[service_name, {name: 'db', role: 'peer'}]],
+           'interface': 'db',
+           scope: 'global'
+         });
+
+         db.relations.add([rel0, rel1]);
+
+         var view = new ServiceRelationsView(
+         {container: container, model: service, db: db, env: env,
+           querystring: {rel_id: 'relation-0'}});
+         view.render();
+
+         var row = container.one('.highlighted');
+         row.one('a').getHTML().should.equal('squid');
+       });
+
+    //    it('', function() {
+    //    });
+    //
   });
 }) ();

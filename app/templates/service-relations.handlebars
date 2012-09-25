@@ -14,7 +14,7 @@
 
          <tbody>
            {{#relations}}
-           <tr>
+           <tr {{#if highlight}}class="highlighted"{{/if}}>
               <td>
                 {{ident}}
                 <button type="submit" class="btn" id="{{relation_id}}" value="{{relation_id}}">

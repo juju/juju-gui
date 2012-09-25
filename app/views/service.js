@@ -78,7 +78,8 @@ YUI.add('juju-view-service', function(Y) {
         render: function() {
           var container = this.get('container'),
               db = this.get('db'),
-              service = this.get('model');
+              service = this.get('model'),
+              querystring = this.get('querystring');
           if (!service) {
             container.setHTML('<div class="alert">Loading...</div>');
             console.log('waiting on service data');
@@ -107,6 +108,9 @@ YUI.add('juju-view-service', function(Y) {
                 far = endpoints[0]; // undefined if a peer relationship.
               }
               rel_data.relation_id = rel.get('relation_id');
+              if (rel_data.relation_id === querystring.rel_id) {
+                rel_data.highlight = true;
+              }
               rel_data.role = near[1].role;
               rel_data.scope = rel.get('scope');
               var rel_id = rel.get('relation_id').split('-')[1];
@@ -139,12 +143,12 @@ YUI.add('juju-view-service', function(Y) {
                 'recreate it later.',
                 '#remove-modal-panel',
                 'Remove Service Relation',
-                Y.bind(this.doRemoveRelation, this, rel_id));
+                Y.bind(this.doRemoveRelation, this, rel_id, ev.target));
           }
           this.remove_panel.show();
         },
 
-        doRemoveRelation: function(rel_id, ev) {
+        doRemoveRelation: function(rel_id, button, ev) {
           ev.preventDefault();
           var env = this.get('env'),
               db = this.get('db'),
@@ -166,17 +170,40 @@ YUI.add('juju-view-service', function(Y) {
           env.remove_relation(
               endpoint_a,
               endpoint_b,
-              Y.bind(this._doRemoveRelationCallback, this, relation));
+              Y.bind(this._doRemoveRelationCallback, this,
+                     relation, button, ev.target));
         },
 
-        _doRemoveRelationCallback: function(relation, ev) {
+        _doRemoveRelationCallback: function(relation, rm_button,
+            confirm_button, ev) {
           // XXX Once we have a way of showing notifications, if ev.err exists,
           // report it.
           var db = this.get('db'),
+              app = this.get('app'),
               service = this.get('model');
-          db.relations.remove(relation);
+          if (ev.err) {
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Error deleting relation',
+                  message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
+                  level: 'error',
+                  link: app.getModelURL(service) + 'relations?rel_id=' +
+                      relation.get('id'),
+                  modelId: relation
+                })
+            );
+            var row = rm_button.ancestor('tr');
+            row.removeClass('highlighted');
+            var old_color = row.getStyle('backgroundColor');
+            row.setStyle('backgroundColor', 'pink');
+            row.transition({easing: 'ease-out', duration: 2.75,
+              backgroundColor: old_color});
+          } else {
+            db.relations.remove(relation);
+            db.fire('update');
+          }
+          confirm_button.set('disabled', false);
           this.remove_panel.hide();
-          db.fire('update');
         }
       });
 
@@ -572,5 +599,7 @@ YUI.add('juju-view-service', function(Y) {
     'node',
     'view',
     'event-key',
+    'querystring',
+    'transition',
     'json-stringify']
 });
