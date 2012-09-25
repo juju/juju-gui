@@ -350,8 +350,9 @@ var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
             this.showView('environment', {db: this.db, env: this.env}, {
             update: false, 
             callback: function(view) {
-                view.update_canvas();
                 view.attachView();                    
+                view.update_canvas();
+
                 }});
         }
         next();

@@ -210,9 +210,14 @@ YUI.add('juju-view-utils', function(Y) {
           return Box;
       };
       
-      Box.__defineGetter__('pos', function() {
+     Box.__defineGetter__('pos', function() {
        return {x: this.x, y: this.y, w: this.w, h: this.h};
       });
+
+     Box.__defineSetter__('pos', function(value) {
+         Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
+     });
+
 
     Box.getXY = function() {return [this.x, this.y];};
     Box.getWH = function() {return [this.w, this.h];};
@@ -242,7 +247,8 @@ YUI.add('juju-view-utils', function(Y) {
         var connectors = this.getConnectors(),
             result = null, shortest_d = Infinity,
             source = other_box;
-      if (other_box instanceof BoundingBox) {
+      // duck typing
+      if ('getXY' in other_box) {
         source = other_box.getXY();
       }
 
@@ -271,8 +277,7 @@ YUI.add('juju-view-utils', function(Y) {
         Y.each(oc, function(ep2) {
           // Take the distance of each XY pair
           var d = this._distance(ep1, ep2);
-          console.log("distance", ep1, ep2, d);
-          if (!result || d < shortest_d) {
+          if (!Y.Lang.isValue(result) || d < shortest_d) {
             shortest_d = d;
             result = [ep1, ep2];
           }
@@ -285,7 +290,14 @@ YUI.add('juju-view-utils', function(Y) {
       return 'translate(' + this.getXY() + ')';
     };
 
+    Box.toString = function() {
+        return modelId[0] + '-' + modelId[1];
+    };
       
+    Box.modelId = function() {
+        return this.toString();
+    };
+
     return Box;
   }
 
@@ -306,30 +318,27 @@ views.BoundingBox = BoundingBox;
 
   function BoxPair() {
       var source, target;
-      var x1, y1, x2, y2;
 
       function pair(source, target) {}
 
       pair.source = function(_) {
-              if(!arguments.length) return source;
-              source = _;
-              return pair;
+          if(!arguments.length) return source;
+          source = _;
+          return pair;
       };
 
       pair.target = function(_) {
-              if(!arguments.length) return target;
-              target = _;
-              return pair;
+          if(!arguments.length) return target;
+          target = _;
+          return pair;
       };
 
-      pair.x1 = function(_) {
-              if(!arguments.length) return x1;
-              x1 = _;
-              return pair;
+      pair.modelIds = function() {
+          return source.toString() + ':' + target.toString();
       };
 
-      pair.modelId = function() {
-              return source.get('modelId') + ':' + target.get('modelId');
+      pair.toString = function() {
+          return this.modelIds();
       };
           
       return pair;

@@ -238,12 +238,13 @@
         function () {
             var b1 = views.BoundingBox(),
             b2 = views.BoundingBox();
-
+                     
+            // raw poperty access
             b1.x = 0; b1.y = 0;
             b1.w = 100; b1.h = 200;
 
-            b2.x = 200; b2.y = 300;
-            b2.w = 100; b2.h = 200;
+            // Use pos to set b2
+            b2.pos = {x: 200, y: 300, w: 100, h: 200};
 
             b1.getXY().should.eql([0, 0]);
             b2.getWH().should.eql([100, 200]);
@@ -259,11 +260,33 @@
      it('must be able to access model attributes easily', function() {
            var service = new models.Service({id: 'mediawiki',
                                             exposed: true}),
-               b1 = new views.BoundingBox();
-            b1.model(service);
-            b1.id.should.equal('mediawiki');
-            b1.exposed.should.equal(true);
+           b1 = new views.BoundingBox();
+           b1.model(service);
+            
+           b1.modelId().should.equal('service-mediawiki');
+           b1.toString().should.equal('service-mediawiki');
+
+           // properties of the model have mapped to the box
+           b1.id.should.equal('mediawiki');
+           b1.exposed.should.equal(true);
      });
+
+     it('must be able to update position data and not touch model data',
+        function() {
+           var service = new models.Service({id: 'mediawiki',
+                                            exposed: true}),
+           b1 = new views.BoundingBox();
+           b1.model(service);
+           b1.x = 0; b1.y = 0;
+           b1.w = 100; b1.h = 200;
+           b1.id.should.equal('mediawiki');
+
+           // X/Y updated, other keys ignored
+           b1.pos = {x:100, y:100, id: 'mediawiki'};
+           b1.x.should.equal(100);
+           b1.id.should.equal('mediawiki');
+           
+        });
 
      it('must be able to map from sequence of models to boundingboxes',
        function() {
@@ -299,6 +322,23 @@
 
             pair.source().getXY().should.eql([0,0]);
             pair.target().getXY().should.eql([200, 300]);
+       });
+
+       it('must support composite modelIds on BoxPairs', function() {
+            var b1 = new views.BoundingBox(),
+                b2 = new views.BoundingBox(),
+                service1 = new models.Service({id: 'mediawiki'}),
+                service2 = new models.Service({id: 'haproxy'});
+
+            b1.model(service1);
+            b2.model(service2);
+
+            var pair = views.BoxPair()
+                           .source(b1)
+                           .target(b2);
+            pair.modelIds().should.not.contain(',');
+            pair.modelIds().should.equal(
+                'service-mediawiki:service-haproxy');
        });
 
 });

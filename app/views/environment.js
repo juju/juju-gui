@@ -21,6 +21,11 @@ YUI.add('juju-view-environment', function(Y) {
         initializer: function() {
           console.log('View: Initialized: Env');
           this.publish('showService', {preventable: false});
+
+          // build a service.id -> BoundingBox map for services
+          this.service_map = {};
+          // ep-strings -> BoxPairs
+          this.relation_map = {};
         },
 
         render: function() {
@@ -126,15 +131,27 @@ YUI.add('juju-view-environment', function(Y) {
                     s.value = s.unit_count;
                     return s;
               }),
-              relations = db.relations.map(views.toBoundingBox);
+              relations = db.relations.toArray();
 
           this.services = services;
-          this.rel_data = this.processRelations(relations);
             
+          Y.each(services, function(service) {
+              // Update services  with existing positions
+              var existing = this.service_map[service.id];
+              if (existing) {
+                  service.pos = existing.pos;
+                  }
+              this.service_map[service.id] = service;
+          }, this);
+            
+          this.rel_data = this.processRelations(relations);
+                  
+          console.dir(this.rel_data);
+          console.dir(this.services);
           // Nodes are mapped by modelId tuples
           this.node = vis.selectAll('.service')
-                       .data(services, function(d) {
-                return d.get('modelId');});
+                       .data(services, 
+                       function(d) {return d.model();});
 
         },
 
@@ -207,12 +224,11 @@ YUI.add('juju-view-environment', function(Y) {
               
             var link = vis.selectAll('line.relation')
                 .data(self.rel_data, function(r) {
-                          return r.modelId();});
+                          return r.modelIds();});
 
             //enter
             link.enter().insert('svg:line', 'g.service')
                 .attr('class', 'relation');
-
 
             //update (+ enter)
             // we have to use YUI's iteration as we can make sure
@@ -222,15 +238,15 @@ YUI.add('juju-view-environment', function(Y) {
             // exit
             link.exit().remove();
 
-            Y.each(link, function(relation) {
-                var source = relation.source(),
-                    target = relation.target(),
-                    link = d3.select(this);
+            // Y.each(link, function(relation) {
+            //     var source = relation.source(),
+            //         target = relation.target(),
+            //         link = d3.select(this);
                 
-                //link.attr("x1")
-                //source.setAttrs({x:attrs.x1, y:attrs.y1});
-                //target.setAttrs({x:attrs.x2, y:attrs.y2});
-            });
+            //     //link.attr("x1")
+            //     //source.setAttrs({x:attrs.x1, y:attrs.y1});
+            //     //target.setAttrs({x:attrs.x2, y:attrs.y2});
+            // });
           }
 
           // Draw or schedule redraw of links
@@ -299,7 +315,7 @@ YUI.add('juju-view-environment', function(Y) {
           // indicator (currently a simple circle).
           // TODO this will likely change to an image with UI uodates.
           var exposed_indicator = node.filter(function(d) {
-            return d.get('exposed');
+            return d.exposed;
           })
             .append('circle')
             .attr('cx', 0)
@@ -362,13 +378,11 @@ YUI.add('juju-view-environment', function(Y) {
 
         processRelation: function(r) {
           var self = this,
-              endpoints = r.endpoints,
+              endpoints = r.get('endpoints'),
               rel_services = [];
+
           Y.each(endpoints, function(ep) {
-            rel_services.push(
-                self.services.filter(function(d) {
-                  return d.id == ep[0];
-                })[0]);
+            rel_services.push(self.service_map[ep[0]]);
           });
           return rel_services;
         },
@@ -383,6 +397,9 @@ YUI.add('juju-view-environment', function(Y) {
               var bpair = views.BoxPair()
                                  .source(pair[0])
                                  .target(pair[1]);
+              // Look up this new pair. If we have one
+              // with the same composite id apply the old 
+              // position
               pairs.push(bpair);
             }
           });
@@ -567,8 +584,8 @@ YUI.add('juju-view-environment', function(Y) {
 
             // Fire event to add relation in juju.
             env.add_relation(
-                rel.source.get('id'),
-                rel.target.get('id'),
+                rel.source().id,
+                rel.target().id,
                 function(resp) {
                   container.one('#add-relation-btn').removeClass('active');
                   if (resp.err) {
