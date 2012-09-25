@@ -10,10 +10,6 @@ YUI.add('juju-view-environment', function(Y) {
     return parseInt(Y.one(selector).getComputedStyle(style), 10);
   }
 
-  function relationToId(d) {
-      return d.source.get('modelId') + ':' + d.target.get('modelId');
-  }
-
   var EnvironmentView = Y.Base.create('EnvironmentView',
       Y.View, [views.JujuBaseView], {
         events: {
@@ -41,7 +37,7 @@ YUI.add('juju-view-environment', function(Y) {
      * Construct a persistent scene that is managed in update
      */
         build_scene: function() {
-          var self = this, 
+          var self = this,
               container = this.get('container'),
               height = 600,
               width = 640,
@@ -67,8 +63,9 @@ YUI.add('juju-view-environment', function(Y) {
           this.set('zoom', zoom);
 
           function rescale() {
-            vis.attr('transform', 
-                    'translate(' + d3.event.translate + ')' + ' scale(' + d3.event.scale + ')');
+            vis.attr('transform',
+                'translate(' + d3.event.translate + ')' 
+                     + ' scale(' + d3.event.scale + ')');
           }
 
           // Set up the visualization with a pack layout
@@ -104,17 +101,17 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         attachView: function(target) {
-            // attach view to target
-            // if target is an ancestor of the view
-            // this is a no-oop
-            if (Y.Lang.isString(target)) {
-                target = Y.one(target);
-            } else if (!Y.Lang.isValue(target)) {
-                target = this.get('container');
-            }
-            if (!this.svg.inDoc() || !this.svg.inRegion(target)) {
-                target.append(this.svg);
-            }
+          // attach view to target
+          // if target is an ancestor of the view
+          // this is a no-oop
+          if (Y.Lang.isString(target)) {
+            target = Y.one(target);
+          } else if (!Y.Lang.isValue(target)) {
+            target = this.get('container');
+          }
+          if (!this.svg.inDoc() || !this.svg.inRegion(target)) {
+            target.append(this.svg);
+          }
         },
 
         /*
@@ -133,13 +130,11 @@ YUI.add('juju-view-environment', function(Y) {
 
           this.services = services;
           this.rel_data = this.processRelations(relations);
-
+            
+          // Nodes are mapped by modelId tuples
           this.node = vis.selectAll('.service')
                        .data(services, function(d) {
                 return d.get('modelId');});
-
-          this.link = vis.selectAll('polyline.relation')
-                .data(this.rel_data, relationToId);
 
         },
 
@@ -147,7 +142,7 @@ YUI.add('juju-view-environment', function(Y) {
           var self = this,
               tree = this.tree,
               vis = this.vis;
-            
+
           // If our container element isn't attached to the DOM
           // do so
 
@@ -206,26 +201,68 @@ YUI.add('juju-view-environment', function(Y) {
           function update_links() {
             // Link persistence hasn't worked properly
             // this removes and redraws links
-            self.link.remove();
-            self.link = vis.selectAll('polyline.relation')
-                .data(self.rel_data, relationToId);
+            // update links from current relations data
+            // this is an array ob BoxPairs, source and target
+            // being bounding boxes
+              
+            var link = vis.selectAll('line.relation')
+                .data(self.rel_data, function(r) {
+                          return r.modelId();});
 
-            self.link.enter().insert('svg:polyline', 'g.service')
-                .attr('class', 'relation')
-                .attr('points', self.draw_relation);
+            //enter
+            link.enter().insert('svg:line', 'g.service')
+                .attr('class', 'relation');
+
+
+            //update (+ enter)
+            // we have to use YUI's iteration as we can make sure
+            // not to lose reference to 'self' 
+             Y.each(link, self.draw_relation, self);
+
+            // exit
+            link.exit().remove();
+
+            Y.each(link, function(relation) {
+                var source = relation.source(),
+                    target = relation.target(),
+                    link = d3.select(this);
+                
+                //link.attr("x1")
+                //source.setAttrs({x:attrs.x1, y:attrs.y1});
+                //target.setAttrs({x:attrs.x2, y:attrs.y2});
+            });
           }
-            
-            if (initial) {
-                Y.later(600, this, update_links);
-            } else {
-                update_links();                
-            }
+
+          // Draw or schedule redraw of links
+          if (initial) {
+            Y.later(600, this, update_links);
+          } else {
+            update_links();
+          }
 
           self.set('tree', tree);
           self.set('vis', vis);
 
         },
 
+        /*
+         * Draw a relation between services.  Polylines take a list of points
+         * in the form 'x y,( x y,)* x y'
+         *
+         */
+        draw_relation: function(relation) {
+            var connectors = relation.source()
+                    .getConnectorPair(relation.target()),
+            s = connectors[0],
+            t = connectors[1],
+            link = d3.select(this);
+            
+            link
+                .attr('x1', s[0])
+                .attr('y1', s[1])
+                .attr('x2', t[0])
+                .attr('y2', t[1]);
+        },
 
         // Called to draw a service in the 'update' phase
         draw_service: function(node) {
@@ -328,7 +365,6 @@ YUI.add('juju-view-environment', function(Y) {
               endpoints = r.endpoints,
               rel_services = [];
           Y.each(endpoints, function(ep) {
-            console.log('Process EP', r, ep);
             rel_services.push(
                 self.services.filter(function(d) {
                   return d.id == ep[0];
@@ -340,31 +376,19 @@ YUI.add('juju-view-environment', function(Y) {
         processRelations: function(rels) {
           var self = this,
               pairs = [];
-          console.group('Process Rels');
           Y.each(rels, function(rel) {
             var pair = self.processRelation(rel);
             // skip peer for now
             if (pair.length == 2) {
-              pairs.push({source: pair[0],
-                target: pair[1]});
+              var bpair = views.BoxPair()
+                                 .source(pair[0])
+                                 .target(pair[1]);
+              pairs.push(bpair);
             }
           });
-          console.groupEnd();
           return pairs;
         },
 
-        /*
-     * Draw a relation between services.  Polylines take a list of points
-     * in the form 'x y,( x y,)* x y'
-     *
-     * TODO For now, just draw a straight line;
-     */
-        draw_relation: function(relation) {
-          var connectors = relation.source.getConnectorPair(relation.target),
-              s = connectors[0],
-              t = connectors[1];
-          return s[0] + ',' + s[1] + ' ' + t[0] + ',' + t[1];
-        },
 
         /*
      * Event handler for the add relation button
@@ -496,8 +520,8 @@ YUI.add('juju-view-environment', function(Y) {
          * Default action: view a service
          */
           show_service: function(m, context, view) {
-              var services = view.get('db').services,
-                  service = services.getById(m.id);
+            var services = view.get('db').services,
+                service = services.getById(m.id);
             view.fire('showService', {service: service});
           },
 
@@ -562,7 +586,7 @@ YUI.add('juju-view-environment', function(Y) {
         }
       });
 
-views.EnvironmentView = EnvironmentView;
+  views.EnvironmentView = EnvironmentView;
 }, '0.1.0', {
   requires: ['juju-templates',
     'juju-view-utils',

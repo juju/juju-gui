@@ -236,14 +236,14 @@
 
      it('must be able to get us nearest connectors', 
         function () {
-            var b1 = new views.BoundingBox(),
-            b2 = new views.BoundingBox();
+            var b1 = views.BoundingBox(),
+            b2 = views.BoundingBox();
 
-            b1.setXY(0, 0)
-                .setWH(100, 200);
+            b1.x = 0; b1.y = 0;
+            b1.w = 100; b1.h = 200;
 
-            b2.setXY(200, 300)
-            .setWH(100, 200);
+            b2.x = 200; b2.y = 300;
+            b2.w = 100; b2.h = 200;
 
             b1.getXY().should.eql([0, 0]);
             b2.getWH().should.eql([100, 200]);
@@ -260,7 +260,7 @@
            var service = new models.Service({id: 'mediawiki',
                                             exposed: true}),
                b1 = new views.BoundingBox();
-            b1.set('model', service);
+            b1.model(service);
             b1.id.should.equal('mediawiki');
             b1.exposed.should.equal(true);
      });
@@ -282,6 +282,25 @@
            boxes[3].id.should.equal('mysql/3');
            boxes[3].service.should.equal('mysql');
        });
+
+       it('must be able to support pairs of boundingBoxes', function() {
+            var b1 = new views.BoundingBox(),
+                b2 = new views.BoundingBox();
+
+            b1.x = 0; b1.y = 0;
+            b1.w = 100; b1.h = 200;
+
+            b2.x = 200; b2.y = 300;
+            b2.w = 100; b2.h = 200;
+
+            var pair = views.BoxPair()
+                           .source(b1)
+                           .target(b2);
+
+            pair.source().getXY().should.eql([0,0]);
+            pair.target().getXY().should.eql([200, 300]);
+       });
+
 });
 
 })();

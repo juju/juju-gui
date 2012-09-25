@@ -198,148 +198,146 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   function BoundingBox() {
-    BoundingBox.superclass.constructor.apply(this, arguments);
-  }
+      var x, y, w, h, value, modelId;
+      function Box() {}
 
-  BoundingBox.NAME = 'BoundingBox';
+      Box.model = function(_) {
+          if(!arguments.length) return modelId;
+          modelId = [_.name, _.get('id')];
 
-  BoundingBox.ATTRS = {
-    model: {
-      setter: function(model) {
-        this._model = [model.name, model.get('id')];
-        Y.aggregate(this, model.getAttrs());
-      },
-      getter: function() { return this._model;}
-    },
-    modelId: {
-      getter: function() {
-        var model = this.get('model');
-        return model[0] + '-' + model[1];
-      }
-    },
+          // Copy all the attrs from model to Box
+          Y.mix(Box, _.getAttrs());
+          return Box;
+      };
+      
+      Box.__defineGetter__('pos', function() {
+       return {x: this.x, y: this.y, w: this.w, h: this.h};
+      });
 
-    x: {value: 0,
-      setter: function(value) {
-        this.x0 = this.x;
-        console.log('setting x from', this.x0, value);
-        return value;
-      }
-    },
-    y: {
-      value: 0,
-      setter: function(value) {
-        this.y0 = this.y;
-        return value;
-      }
-    },
-    w: {value: 0},
-    h: {value: 0},
-    value: {value: 0}
-
-
-  };
-
-  views.BoundingBox = Y.extend(BoundingBox, Y.Base, {
-    initializer: function(model) {
-      var self = this;
-    },
-
-    getXY: function() {
-      return [this.x, this.y];
-    },
-
-    setXY: function(x, y) {
-      this.x = x; this.y = y;
-      return this;
-    },
-
-    getWH: function() {
-      return [this.w, this.h];
-    },
-
-    setWH: function(w, h) {
-      this.w = w; this.h = h;
-      return this;
-    },
-
-
+    Box.getXY = function() {return [this.x, this.y];};
+    Box.getWH = function() {return [this.w, this.h];};
+    
     /*
      * Return the 50% points along each side as xy pairs
      */
-    getConnectors: function() {
+    Box.getConnectors = function() {
       return {
         top: [this.x + (this.w / 2), this.y],
         right: [this.x + this.w, this.y + (this.h / 2)],
         bottom: [this.x + (this.w / 2), this.y + this.h],
         left: [this.x, this.y + (this.h / 2)]
       };
-    },
+    };
 
-    _distance: function(xy1, xy2) {
+    Box._distance = function(xy1, xy2) {
       return Math.sqrt(Math.pow(xy1[0] - xy2[0], 2) +
-          Math.pow(xy1[1] - xy2[1], 2));
-    },
+                       Math.pow(xy1[1] - xy2[1], 2));
+    };
 
     /*
      * Connectors are defined on four borders, find the one closes to
      * another BoundingBox
      */
-    getNearestConnector: function(other_box) {
-      var self = this,
-          connectors = this.getConnectors(),
-          result = null, shortest_d = Infinity,
-          source = other_box;
-      if ('getXY' in other_box) {
+    Box.getNearestConnector = function(other_box) {
+        var connectors = this.getConnectors(),
+            result = null, shortest_d = Infinity,
+            source = other_box;
+      if (other_box instanceof BoundingBox) {
         source = other_box.getXY();
       }
 
       Y.each(connectors, function(ep) {
         // Take the distance of each XY pair
-        var d = self._distance(source, ep);
-        if (!result || d < shortest_d) {
+        var d = this._distance(source, ep);
+        if (!Y.Lang.isValue(result) || d < shortest_d) {
           shortest_d = d;
           result = ep;
         }
-      });
+      }, this);
       return result;
-    },
+    };
 
     /*
      * Return [this.connector.XY, other.connector.XY] (in that order)
      * that as nearest to each other. This can be used to define start-end
      * points for routing.
      */
-    getConnectorPair: function(other_box) {
-      var self = this,
-          sc = this.getConnectors(),
+    Box.getConnectorPair = function(other_box) {
+      var sc = Box.getConnectors(),
           oc = other_box.getConnectors(),
           result = null, shortest_d = Infinity;
 
       Y.each(sc, function(ep1) {
         Y.each(oc, function(ep2) {
           // Take the distance of each XY pair
-          var d = self._distance(ep1, ep2);
+          var d = this._distance(ep1, ep2);
+          console.log("distance", ep1, ep2, d);
           if (!result || d < shortest_d) {
             shortest_d = d;
             result = [ep1, ep2];
           }
-        });
-      });
+        }, other_box);
+      }, this);
       return result;
+    };
 
-    },
-
-    translateStr: function() {
+    Box.translateStr = function() {
       return 'translate(' + this.getXY() + ')';
-    }
+    };
+
+      
+    return Box;
+  }
+
+views.BoundingBox = BoundingBox;
+
+  views.BoundingBox = Y.extend(BoundingBox, Y.Base, {
+
+
 
   });
 
   views.toBoundingBox = function(model) {
     var box = new BoundingBox();
-    box.set('model', model);
+    box.model(model);
     return box;
   };
+
+
+  function BoxPair() {
+      var source, target;
+      var x1, y1, x2, y2;
+
+      function pair(source, target) {}
+
+      pair.source = function(_) {
+              if(!arguments.length) return source;
+              source = _;
+              return pair;
+      };
+
+      pair.target = function(_) {
+              if(!arguments.length) return target;
+              target = _;
+              return pair;
+      };
+
+      pair.x1 = function(_) {
+              if(!arguments.length) return x1;
+              x1 = _;
+              return pair;
+      };
+
+      pair.modelId = function() {
+              return source.get('modelId') + ':' + target.get('modelId');
+      };
+          
+      return pair;
+  }
+
+  views.BoxPair = BoxPair;
+
+
 }, '0.1.0', {
   requires: ['base-build',
     'handlebars',
