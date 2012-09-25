@@ -299,18 +299,48 @@ YUI.add('juju-view-service', function(Y) {
       var container = this.get('container'),
           db = this.get('db'),
           service = this.get('model'),
-          env = this.get('env');
+          env = this.get('env'),
+          filter_state = this.get('querystring').state,
+          state_data = [{title: 'All', active: !filter_state, link: '.'}];
 
       if (!service) {
-        console.log('not connected / maybe');
+        container.setHTML('<div class="alert">Loading...</div>');
+        console.log('waiting on service data');
         return this;
       }
-      container.setHTML(this.template(
-          {'service': service.getAttrs(),
-            'charm': this.renderable_charm(service.get('charm'), db),
-            'units': db.units.get_units_for_service(service)
-          }));
+      Y.each(['Running', 'Pending', 'Error'], function(title) {
+        var lower = title.toLowerCase();
+        state_data.push({
+          title: title,
+          active: lower === filter_state,
+          link: '?state=' + lower});
+      });
+      container.setHTML(this.template({
+        service: service.getAttrs(),
+        charm: this.renderable_charm(service.get('charm'), db),
+        state: filter_state,
+        units: this.filterUnits(
+            filter_state, db.units.get_units_for_service(service)),
+        states: state_data,
+        filtered: !!filter_state
+      }));
       return this;
+    },
+
+    filterUnits: function(filter_state, units) {
+      var state_matchers = {
+        running: function(s) { return s === 'running'; },
+        pending: function(s) {
+          return ['installed', 'started', 'pending'].indexOf(s) > -1; },
+        // Errors: install-, start-, stop-, charm-upgrade-, configure-.
+        error: function(s) { return (/-error$/).test(s); }},
+          matcher = filter_state && state_matchers[filter_state];
+      if (matcher) {
+        return Y.Array.filter(units, function(u) {
+          return matcher(u.agent_state); });
+      } else {
+        return units;
+      }
     },
 
     events: {
