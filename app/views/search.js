@@ -33,7 +33,6 @@ YUI.add('juju-view-charmsearch', function(Y) {
                    'search/json?search_text={query}'
         });
         */
-      Y.one('#omnibar').on('submit', this.show_charm_store, this);
       return this;
     },
 

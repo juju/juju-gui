@@ -25,8 +25,6 @@ YUI.add('juju-view-environment', function(Y) {
 
         render: function() {
           console.log('View: Render: Env');
-          // XXX: disable the charm search input on the front page only.
-          Y.one('#omnibar').hide();
           var container = this.get('container');
           EnvironmentView.superclass.render.apply(this, arguments);
           container.setHTML(Templates.overview());
