@@ -151,7 +151,7 @@ YUI.add('juju-view-environment', function(Y) {
 
         },
 
-       update_canvas: function() {
+        update_canvas: function() {
           var self = this,
               tree = this.tree,
               vis = this.vis;
@@ -563,17 +563,17 @@ YUI.add('juju-view-environment', function(Y) {
                 container = view.get('container'),
                 rel = views.BoxPair();
 
-              rel.source(view.get('add_relation_start_service'));
-              rel.target(m);
+            rel.source(view.get('add_relation_start_service'));
+            rel.target(m);
 
             // add temp relation between services
             var link = vis.selectAll('line.pending-relation')
                 .data([rel]);
             link.enter().insert('svg:line', 'g.service')
                 .attr('class', 'relation pending-relation');
-             // Unwrap the <line> obj and use it as this
-             // for draw_relation. Mimics the traditional call interface
-             view.draw_relation.call(link[0][0], rel);
+            // Unwrap the <line> obj and use it as this
+            // for draw_relation. Mimics the traditional call interface
+            view.draw_relation.call(link[0][0], rel);
 
             // Fire event to add relation in juju.
             // This needs to specify interface

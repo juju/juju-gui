@@ -198,45 +198,45 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   function BoundingBox() {
-      var x, y, w, h, value, modelId;
-      function Box() {}
+    var x, y, w, h, value, modelId;
+    function Box() {}
 
-      Box.model = function(_) {
-          if(!arguments.length) return modelId;
-          modelId = [_.name, _.get('id')];
+    Box.model = function(_) {
+      if (!arguments.length) return modelId;
+      modelId = [_.name, _.get('id')];
 
-          // Copy all the attrs from model to Box
-          Y.mix(Box, _.getAttrs());
-          return Box;
-      };
-      
-     Box.__defineGetter__('pos', function() {
-       return {x: this.x, y: this.y, w: this.w, h: this.h};
-      });
+      // Copy all the attrs from model to Box
+      Y.mix(Box, _.getAttrs());
+      return Box;
+    };
 
-     Box.__defineSetter__('pos', function(value) {
-         Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
-     });
+    Box.__defineGetter__('pos', function() {
+      return {x: this.x, y: this.y, w: this.w, h: this.h};
+    });
 
-     Box.__defineGetter__('x', function() {return x;});
-     Box.__defineSetter__('x', function(value) {
-         this.px = this.x;
-         x = value;
-         return this;
-     });
+    Box.__defineSetter__('pos', function(value) {
+      Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
+    });
 
-     Box.__defineGetter__('y', function() {return y;});
-     Box.__defineSetter__('y', function(value) {
-         this.py = this.y;
-         y = value;
-         return this;
-     });
+    Box.__defineGetter__('x', function() {return x;});
+    Box.__defineSetter__('x', function(value) {
+      this.px = this.x;
+      x = value;
+      return this;
+    });
+
+    Box.__defineGetter__('y', function() {return y;});
+    Box.__defineSetter__('y', function(value) {
+      this.py = this.y;
+      y = value;
+      return this;
+    });
 
 
 
     Box.getXY = function() {return [this.x, this.y];};
     Box.getWH = function() {return [this.w, this.h];};
-    
+
     /*
      * Return the 50% points along each side as xy pairs
      */
@@ -259,9 +259,9 @@ YUI.add('juju-view-utils', function(Y) {
      * another BoundingBox
      */
     Box.getNearestConnector = function(other_box) {
-        var connectors = this.getConnectors(),
-            result = null, shortest_d = Infinity,
-            source = other_box;
+      var connectors = this.getConnectors(),
+          result = null, shortest_d = Infinity,
+          source = other_box;
       // duck typing
       if ('getXY' in other_box) {
         source = other_box.getXY();
@@ -306,17 +306,17 @@ YUI.add('juju-view-utils', function(Y) {
     };
 
     Box.toString = function() {
-        return modelId[0] + '-' + modelId[1];
+      return modelId[0] + '-' + modelId[1];
     };
-      
+
     Box.modelId = function() {
-        return this.toString();
+      return this.toString();
     };
 
     return Box;
   }
 
-views.BoundingBox = BoundingBox;
+  views.BoundingBox = BoundingBox;
 
   views.BoundingBox = Y.extend(BoundingBox, Y.Base, {
 
@@ -332,31 +332,31 @@ views.BoundingBox = BoundingBox;
 
 
   function BoxPair() {
-      var source, target;
+    var source, target;
 
-      function pair(source, target) {}
+    function pair(source, target) {}
 
-      pair.source = function(_) {
-          if(!arguments.length) return source;
-          source = _;
-          return pair;
-      };
-
-      pair.target = function(_) {
-          if(!arguments.length) return target;
-          target = _;
-          return pair;
-      };
-
-      pair.modelIds = function() {
-          return source.toString() + ':' + target.toString();
-      };
-
-      pair.toString = function() {
-          return this.modelIds();
-      };
-          
+    pair.source = function(_) {
+      if (!arguments.length) return source;
+      source = _;
       return pair;
+    };
+
+    pair.target = function(_) {
+      if (!arguments.length) return target;
+      target = _;
+      return pair;
+    };
+
+    pair.modelIds = function() {
+      return source.toString() + ':' + target.toString();
+    };
+
+    pair.toString = function() {
+      return this.modelIds();
+    };
+
+    return pair;
   }
 
   views.BoxPair = BoxPair;
