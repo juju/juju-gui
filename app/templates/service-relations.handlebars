@@ -1,26 +1,39 @@
 {{> service-header}}
-<div class="row">
+<div class="row-fluid">
     <div class="span12">
       <h5>Service Relations</h5>
-      <table class="table table-striped table-bordered">
-       <thead>
-         <tr>
-          <th>Id</th>
-          <th>Role</th>
-          <th>Remote</th>
-          <th>Scope</th>
-       </thead>
+      <form id="service-relations">
+        <table class="table table-striped table-bordered">
+         <thead>
+           <tr>
+            <th>Id</th>
+            <th>Role</th>
+            <th>Remote</th>
+            <th>Scope</th>
+         </thead>
 
-       <tbody>
-         {{#relations}}
-         <tr>
-            <td>{{ident}}</td>
-            <td>{{role}}</td>
-            <td><a href="/service/{{endpoint}}/">{{endpoint}}</a></td>
-            <td>{{scope}}</td>
-         </tr>
-         {{/relations}}
-       </tbody>
-      </table>
+         <tbody>
+           {{#relations}}
+           <tr {{#if highlight}}class="highlighted"{{/if}}>
+              <td>
+                {{ident}}
+                <button type="submit" class="btn" id="{{relation_id}}" value="{{relation_id}}">
+                    Remove
+                </button>
+              </td>
+              <td>{{role}}</td>
+              <td>
+                {{#if far}}
+                  <a href="/service/{{far}}/">{{far}}</a>
+                {{/if}}
+              </td>
+              <td>{{scope}}</td>
+           </tr>
+           {{/relations}}
+         </tbody>
+        </table>
+      </form>
     </div>
 </div>
+
+<div id="remove-modal-panel"></div>

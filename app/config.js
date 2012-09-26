@@ -1,4 +1,4 @@
-juju_config = {
+var juju_config = {
   serverRouting: false,
   html5: true,
   container: '#main',

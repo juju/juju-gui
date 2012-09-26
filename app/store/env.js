@@ -104,7 +104,7 @@ YUI.add('juju-env', function(Y) {
     },
 
     _send_rpc: function(op, callback) {
-      var tid = this._counter++;
+      var tid = this._counter += 1;
       if (callback) {
         this._txn_callbacks[tid] = callback;
       }
@@ -142,7 +142,8 @@ YUI.add('juju-env', function(Y) {
     },
 
     get_service: function(service_name, callback) {
-      this._send_rpc({'op': 'get_service', 'service_name': service_name}, callback);
+      this._send_rpc(
+          {'op': 'get_service', 'service_name': service_name}, callback);
     },
 
     deploy: function(charm_url, callback) {
@@ -171,7 +172,7 @@ YUI.add('juju-env', function(Y) {
     destroy_service: function(service, callback) {
       this._send_rpc({
         'op': 'destroy_service',
-        'service': service}, callback);
+        'service_name': service}, callback);
     },
 
     set_config: function(service, config, callback) {
@@ -179,6 +180,13 @@ YUI.add('juju-env', function(Y) {
         op: 'set_config',
         service_name: service,
         config: config}, callback);
+    },
+
+    set_constraints: function(service, constraints, callback) {
+      this._send_rpc({
+        op: 'set_constraints',
+        service_name: service,
+        constraints: constraints}, callback);
     },
 
     resolved: function(unit_name, relation_name, retry, callback) {

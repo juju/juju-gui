@@ -18,16 +18,16 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
     // console.log('helper', iface_decl, options, this);
     var result = [];
     var ret = '';
-    for (var i in iface_decl) {
-      if (!i)
-        continue;
+    Y.Object.each(iface_decl, function(value, name) {
+      if (name) {
       result.push({
-        'name': i,
-        'interface': iface_decl[i]['interface']});
+          name: name, 'interface': value['interface']
+        });
     }
+    });
 
     if (result && result.length > 0) {
-      for (var x = 0, j = result.length; x < j; x++) {
+      for (var x = 0, j = result.length; x < j; x += 1) {
         ret = ret + options.fn(result[x]);
       }
     } else {
@@ -130,7 +130,6 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
       // TODO: Use view.events structure to attach this
       container.all('div.thumbnail').each(function(el ) {
         el.on('click', function(evt) {
-          //console.log('Click', this.getData('charm-url'));
           self.fire('showCharm', {charm_data_url: this.getData('charm-url')});
         });
       });
@@ -152,9 +151,9 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
         query = this.get('query');
       }
 
-      // The handling in datasources-plugins is an example of doing this a bit better
-      // ie. io cancellation outstanding requests, it does seem to cause some interference
-      // with various datasource plugins though.
+      // The handling in datasources-plugins is an example of doing this a bit
+      // better ie. io cancellation outstanding requests, it does seem to
+      // cause some interference with various datasource plugins though.
       this.get('charm_store').sendRequest({
         request: 'search/json?search_text=' + query,
         callback: {

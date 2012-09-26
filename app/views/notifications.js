@@ -6,8 +6,8 @@ YUI.add('juju-notifications', function(Y) {
       Templates = views.Templates;
 
   /*
-     * Abstract Base class used to view a ModelList  of notifications
-     */
+   * Abstract Base class used to view a ModelList  of notifications
+   */
   var NotificationsBaseView = Y.Base.create('NotificationsBaseView',
       Y.View, [views.JujuBaseView], {
 
@@ -142,8 +142,8 @@ YUI.add('juju-notifications', function(Y) {
       });
 
   /*
-     * This is the view associated with the notifications indicator
-     */
+   * This is the view associated with the notifications indicator
+   */
   var NotificationsView = Y.Base.create('NotificationsView',
       NotificationsBaseView, [], {
         template: Templates.notifications,
@@ -168,19 +168,17 @@ YUI.add('juju-notifications', function(Y) {
         get_showable: function() {
           var notifications = this.get('notifications');
           return notifications.filter(function(n) {
-            return n.get('level') == 'error' && n.get('seen') === false;
+            return n.get('level') === 'error' && n.get('seen') === false;
           }).map(function(n) {
             return n.getAttrs();
           });
         }
-
-
       });
   views.NotificationsView = NotificationsView;
 
   /*
-      * This is the 'View All Notifications' view
-      */
+   * This is the 'View All Notifications' view
+   */
   var NotificationsOverview = Y.Base.create('NotificationsOverview',
       NotificationsBaseView, [], {
         template: Templates.notifications_overview,

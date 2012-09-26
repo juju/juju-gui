@@ -60,7 +60,7 @@ YUI.add('juju-notification-controller', function(Y) {
               return 'info';
             },
             evict: function(old, new_data, change) {
-              if (new_data.level != 'error') {
+              if (new_data.level !== 'error') {
                 if (old.get('seen') === false) {
                   // mark it as seen
                   old.set('seen', true);
@@ -142,7 +142,7 @@ YUI.add('juju-notification-controller', function(Y) {
             model = app.db.getModelFromChange(change);
             if (model) {
               // modelId setter pulls the modelId reference from a
-              // motel automatically
+              // model automatically
               notify_data.modelId = model;
               notify_data.link = app.getModelURL(model);
               // If there are eviction rules for old notices

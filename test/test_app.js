@@ -1,7 +1,32 @@
 'use strict';
 
 function injectData(app, data) {
-  var d = data || {'result': [['service', 'add', {'charm': 'cs:precise/wordpress-6', 'id': 'wordpress', 'exposed': false}], ['service', 'add', {'charm': 'cs:precise/mysql-6', 'id': 'mysql'}], ['relation', 'add', {'interface': 'reversenginx', 'scope': 'global', 'endpoints': [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]], 'id': 'relation-0000000000'}], ['relation', 'add', {'interface': 'mysql', 'scope': 'global', 'endpoints': [['mysql', {'role': 'server', 'name': 'db'}], ['wordpress', {'role': 'client', 'name': 'db'}]], 'id': 'relation-0000000001'}], ['machine', 'add', {'agent-state': 'running', 'instance-state': 'running', 'id': 0, 'instance-id': 'local', 'dns-name': 'localhost'}], ['unit', 'add', {'machine': 0, 'agent-state': 'started', 'public-address': '192.168.122.113', 'id': 'wordpress/0'}], ['unit', 'add', {'machine': 0, 'agent-state': 'started', 'public-address': '192.168.122.222', 'id': 'mysql/0'}]], 'op': 'delta'};
+  var d = data || {
+    'result': [
+      ['service', 'add',
+       {'charm': 'cs:precise/wordpress-6',
+         'id': 'wordpress', 'exposed': false}],
+      ['service', 'add', {'charm': 'cs:precise/mysql-6', 'id': 'mysql'}],
+      ['relation', 'add',
+       {'interface': 'reversenginx', 'scope': 'global',
+         'endpoints': [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
+         'id': 'relation-0000000000'}],
+      ['relation', 'add',
+       {'interface': 'mysql',
+         'scope': 'global', 'endpoints':
+         [['mysql', {'role': 'server', 'name': 'db'}],
+           ['wordpress', {'role': 'client', 'name': 'db'}]],
+         'id': 'relation-0000000001'}],
+      ['machine', 'add',
+       {'agent-state': 'running', 'instance-state': 'running',
+         'id': 0, 'instance-id': 'local', 'dns-name': 'localhost'}],
+               ['unit', 'add',
+                {'machine': 0, 'agent-state': 'started',
+          'public-address': '192.168.122.113', 'id': 'wordpress/0'}],
+      ['unit', 'add',
+       {'machine': 0, 'agent-state': 'started',
+                  'public-address': '192.168.122.222', 'id': 'mysql/0'}]],
+    'op': 'delta'};
   app.env.dispatch_result(d);
   return app;
 }
@@ -28,12 +53,6 @@ describe('Application', function() {
     container.getAttribute('id').should.equal('test');
     container.getAttribute('class').should.include('container');
   });
-
-  it('should be able to render the environment view with default data',
-     function() {
-       app.showView('environment', {db: app.db});
-       container.one('svg').should.not.equal(null);
-     });
 
   it('should be able to route objects to internal URLs', function() {
     // take handles to database objects and ensure we can route to the view

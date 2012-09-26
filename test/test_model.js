@@ -48,15 +48,12 @@
          sl.getById('mysql').should.equal(mysql);
          sl.getById('wordpress').should.equal(wordpress);
 
-         var my0 = new models.ServiceUnit({id: 'mysql/0'}),
-         my1 = new models.ServiceUnit({id: 'mysql/1'});
+         sul.add([{id: 'mysql/0'}, {id: 'mysql/1'}]);
 
-         sul.add([my0, my1]);
-
-         var wp0 = new models.ServiceUnit({id: 'wordpress/0'}),
-         wp1 = new models.ServiceUnit({id: 'wordpress/1'});
+         var wp0 = {id: 'wordpress/0'},
+         wp1 = {id: 'wordpress/1'};
          sul.add([wp0, wp1]);
-         wp0.get('service').should.equal('wordpress');
+         wp0.service.should.equal('wordpress');
 
          sul.get_units_for_service(mysql, true).getAttrs(['id']).id.should.eql(
          ['mysql/0', 'mysql/1']);
@@ -72,13 +69,17 @@
          var wordpress = new models.Service({id: 'wordpress'});
          sl.add([mysql, wordpress]);
 
-         var my0 = new models.ServiceUnit({id: 'mysql/0', agent_state: 'pending'}),
-         my1 = new models.ServiceUnit({id: 'mysql/1', agent_state: 'pending'});
+         var my0 = new models.ServiceUnit(
+         {id: 'mysql/0', agent_state: 'pending'}),
+         my1 = new models.ServiceUnit(
+         {id: 'mysql/1', agent_state: 'pending'});
 
          sul.add([my0, my1]);
 
-         var wp0 = new models.ServiceUnit({id: 'wordpress/0', agent_state: 'pending'}),
-         wp1 = new models.ServiceUnit({id: 'wordpress/1', agent_state: 'error'});
+         var wp0 = new models.ServiceUnit(
+         {id: 'wordpress/0', agent_state: 'pending'}),
+         wp1 = new models.ServiceUnit(
+         {id: 'wordpress/1', agent_state: 'error'});
          sul.add([wp0, wp1]);
 
          sul.get_informative_states_for_service(mysql).should.eql(
@@ -87,49 +88,41 @@
          {'pending': 1, 'error': 1});
        });
 
-    it('service units should get service from unit name when missing',
+    it('service unit objects should parse the service name from unit id',
        function() {
-         var service_unit = new models.ServiceUnit({id: 'mysql/0'});
-         var service = service_unit.get('service');
-         service.should.equal('mysql');
+         var service_unit = {id: 'mysql/0'},
+         db = new models.Database();
+         db.units.add(service_unit);
+         service_unit.service.should.equal('mysql');
+       });
+
+    it('service unit objects should report their number correctly',
+       function() {
+         var service_unit = {id: 'mysql/5'},
+         db = new models.Database();
+         db.units.add(service_unit);
+         service_unit.number.should.equal(5);
        });
 
     it('must be able to resolve models by modelId', function() {
       var db = new models.Database();
 
-      db.services.add([{id: 'wordpress'},
-            {id: 'mediawiki'}]);
-
-      db.units.add([{id: 'wordpress/0'},
-            {id: 'wordpress/1'}]);
+      db.services.add([{id: 'wordpress'}, {id: 'mediawiki'}]);
+      db.units.add([{id: 'wordpress/0'}, {id: 'wordpress/1'}]);
 
       var model = db.services.item(0);
-
-      // Single Paramerter calling
+      // Single parameter calling
       db.getModelById([model.name, model.get('id')])
                .get('id').should.equal('wordpress');
-
       // Two parameter interface
       db.getModelById(model.name, model.get('id'))
                .get('id').should.equal('wordpress');
 
-
       var unit = db.units.item(0);
-      db.getModelById([unit.name, unit.get('id')])
-               .get('id').should.equal('wordpress/0');
-
-      db.getModelById(unit.name, unit.get('id'))
-               .get('id').should.equal('wordpress/0');
+      db.getModelById([unit.name, unit.id]).id.should.equal('wordpress/0');
+      db.getModelById(unit.name, unit.id).id.should.equal('wordpress/0');
 
     });
-
-
-    it('service units should report their number correctly',
-       function() {
-         var service_unit = new models.ServiceUnit({id: 'mysql/5'});
-         var number = service_unit.get('number');
-         number.should.equal(5);
-       });
 
     it('process_model_delta should handle remove changes correctly',
        function() {
@@ -149,12 +142,82 @@
     it('process_model_delta should be able to reuse existing models with add',
        function() {
          var db = new models.Database();
-         var my0 = new models.ServiceUnit({id: 'mysql/0', agent_state: 'pending'});
+         var my0 = new models.Service({id: 'mysql', exposed: false});
+         db.services.add([my0]);
+         db.process_model_delta(
+         ['service', 'add', {id: 'mysql', exposed: true}],
+         models.ServiceUnit,
+         db.services);
+         my0.get('exposed').should.equal(true);
+       });
+
+    it('process_model_delta should be able to reuse existing units with add',
+       // Units are special because they use the LazyModelList.
+       function() {
+         var db = new models.Database();
+         var my0 = {id: 'mysql/0', agent_state: 'pending'};
          db.units.add([my0]);
          db.process_model_delta(
          ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}],
+         models.ServiceUnit,
          db.units);
-         my0.get('agent_state').should.equal('another');
+         my0.agent_state.should.equal('another');
        });
+
+    it('ServiceUnitList should accept a list of units at instantiation and ' +
+       'decorate them', function() {
+         var mysql = new models.Service({id: 'mysql'});
+         var objs = [{id: 'mysql/0'},
+                     {id: 'mysql/1'}];
+         var sul = new models.ServiceUnitList({items: objs});
+         var unit_data = sul.get_units_for_service(
+                 mysql, true).getAttrs(['service', 'number']);
+         unit_data.service.should.eql(['mysql', 'mysql']);
+         unit_data.number.should.eql([0, 1]);
+       });
+
+    it('RelationList.get_relations_for_service should do what it says',
+        function() {
+          var db = new models.Database(),
+             service = new models.Service({id: 'mysql', exposed: false}),
+             rel0 = new models.Relation(
+             { id: 'relation-0',
+               endpoints:
+               [['mediawiki', {name: 'cache', role: 'source'}],
+                 ['squid', {name: 'cache', role: 'front'}]],
+               'interface': 'cache'
+             }),
+             rel1 = new models.Relation(
+             { id: 'relation-1',
+               endpoints:
+               [['wordpress', {role: 'peer', name: 'loadbalancer'}]],
+               'interface': 'reversenginx'
+             }),
+             rel2 = new models.Relation(
+             { id: 'relation-2',
+               endpoints:
+               [['mysql', {name: 'db', role: 'db'}],
+                 ['mediawiki', {name: 'storage', role: 'app'}]],
+               'interface': 'db'
+             }),
+             rel3 = new models.Relation(
+             { id: 'relation-3',
+               endpoints:
+               [['mysql', {role: 'peer', name: 'loadbalancer'}]],
+               'interface': 'mysql-loadbalancer'
+             }),
+             rel4 = new models.Relation(
+             { id: 'relation-4',
+               endpoints:
+               [['something', {name: 'foo', role: 'bar'}],
+                 ['mysql', {name: 'la', role: 'lee'}]],
+               'interface': 'thing'
+             });
+          db.relations.add([rel0, rel1, rel2, rel3, rel4]);
+          Y.Array.map(
+              db.relations.get_relations_for_service(service),
+              function(r) { return r.get('id'); })
+                .should.eql(['relation-2', 'relation-3', 'relation-4']);
+        });
   });
 })();

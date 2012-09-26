@@ -88,10 +88,10 @@ YUI.add('juju-gui', function(Y) {
           var self = this;
           Y.later(6000, this, function(o) {
             Y.one('body')
-                          .all('[data-timestamp]')
-                          .each(function(node) {
-                              node.setHTML(views.humanizeTimestamp(
-                              node.getAttribute('data-timestamp')));
+              .all('[data-timestamp]')
+              .each(function(node) {
+                  node.setHTML(views.humanizeTimestamp(
+                      node.getAttribute('data-timestamp')));
                 });
           }, [], true);}
       }
@@ -155,7 +155,7 @@ YUI.add('juju-gui', function(Y) {
         }
 
         console.log(
-            'App: Rerendering current view', this.getPath(), 'info');
+            'App: Re-rendering current view', this.getPath(), 'info');
 
         if (this.get('activeView')) {
           this.get('activeView').render();
@@ -186,7 +186,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     navigate_to_service: function(e) {
-      console.log(e.service.get('id'), 'debug', 'Evt.Nav.Router service target');
+      console.log(e.service.get('id'), 'Evt.Nav.Router service target');
       var service = e.service;
       this.navigate('/service/' + service.get('id') + '/');
     },
@@ -217,7 +217,7 @@ YUI.add('juju-gui', function(Y) {
       if (unit) {
         // Once the unit is loaded we need to get the full details of the
         // service.  Otherwise the relations data will not be available.
-        var service = this.db.services.getById(unit.get('service'));
+        var service = this.db.services.getById(unit.service);
         this._prefetch_service(service);
       }
       this.showView('unit', {unit: unit, db: this.db, env: this.env});
@@ -226,9 +226,7 @@ YUI.add('juju-gui', function(Y) {
     _prefetch_service: function(service) {
       // only prefetch once
       // we redispatch to the service view after we have status
-      if (!service || service.get('prefetch'))
-        return;
-
+      if (!service || service.get('prefetch')) { return; }
       service.set('prefetch', true);
 
       // Prefetch service details for service subviews.
@@ -262,7 +260,10 @@ YUI.add('juju-gui', function(Y) {
       this.showView(viewName, {
         model: service,
         db: this.db,
-        env: this.env});
+        env: this.env,
+        app: this,
+        querystring: req.query
+      });
     },
 
     show_service: function(req) {
@@ -351,8 +352,9 @@ YUI.add('juju-gui', function(Y) {
           update: false,
           callback: function(view) {
             view.attachView();
+            view.postRender();
             view.update_canvas();
-
+              
           }});
       }
       next();
@@ -368,10 +370,10 @@ YUI.add('juju-gui', function(Y) {
             evt.service_name, evt);
         return;
       }
-      // TODO: need to unify with .relations from delta stream.
+      // We intentionally ignore svc_data.rels.  We rely on the delta stream
+      // for relation data instead.
       svc.setAttrs({'config': svc_data.config,
         'constraints': svc_data.constraints,
-        'rels': svc_data.rels,
         'loaded': true,
         'prefetch': false});
       this.dispatch();
@@ -386,12 +388,12 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       charm.setAttrs({'provides': charm_data.provides,
-                        'peers': charm_data.peers,
-                        'requires': charm_data.requires,
-                        'config': charm_data.config,
-                        'is_subordinate': charm_data.subordinate,
-                        'revision': charm_data.revision,
-                        'loaded': true});
+        'peers': charm_data.peers,
+        'requires': charm_data.requires,
+        'config': charm_data.config,
+        'is_subordinate': charm_data.subordinate,
+        'revision': charm_data.revision,
+        'loaded': true});
       this.dispatch();
     },
 
@@ -422,21 +424,21 @@ YUI.add('juju-gui', function(Y) {
      */
     getModelURL: function(model, intent) {
       var matches = [],
-          attrs = model.getAttrs(),
+          attrs = (model instanceof Y.Model) ? model.getAttrs() : model,
           routes = this.get('routes'),
           regexPathParam = /([:*])([\w\-]+)?/g,
           idx = 0;
 
       routes.forEach(function(route) {
         var path = route.path,
-                required_model = route.model,
-                reverse_map = route.reverse_map;
+            required_model = route.model,
+            reverse_map = route.reverse_map;
 
         // Fail fast on wildcard paths, routes w/o models
         // and when the model doesn't match the route type
         if (path === '*' ||
             required_model === undefined ||
-            model.name != required_model) {
+            model.name !== required_model) {
           return;
         }
 
@@ -445,13 +447,13 @@ YUI.add('juju-gui', function(Y) {
         path = path.replace(regexPathParam,
             function(match, operator, key) {
               if (reverse_map !== undefined && reverse_map[key]) {
-                            key = reverse_map[key];
+                key = reverse_map[key];
               }
               return attrs[key];
             });
         matches.push(Y.mix({path: path,
           route: route,
-          model: model,
+          attrs: attrs,
           intent: route.intent}));
       });
 
@@ -459,13 +461,11 @@ YUI.add('juju-gui', function(Y) {
       // to match routes without intent (undefined) this test
       // can always be applied.
       matches = Y.Array.filter(matches, function(match) {
-        return match.intent == intent;
+        return match.intent === intent;
       });
 
       if (matches.length > 1) {
-        console.warn('Ambiguous routeModel',
-            model.get('id'),
-            matches);
+        console.warn('Ambiguous routeModel', attrs.id, matches);
         // Default to the last route in this configuration
         // error case.
         idx = matches.length - 1;
@@ -491,7 +491,7 @@ YUI.add('juju-gui', function(Y) {
       if (options.model) {
         var r = this._routes,
                 idx = r.length - 1;
-        if (r[idx].path == path) {
+        if (r[idx].path === path) {
           // Combine our options with the default
           // computed route information
           r[idx] = Y.mix(r[idx], options);
@@ -507,32 +507,35 @@ YUI.add('juju-gui', function(Y) {
     ATTRS: {
       routes: {
         value: [
-                {path: '*', callback: 'show_charm_search'},
-                {path: '*', callback: 'show_notifications_view'},
-                {path: '/charms/', callback: 'show_charm_collection'},
-                {path: '/charms/*charm_url',
+          {path: '*', callback: 'show_charm_search'},
+          {path: '*', callback: 'show_notifications_view'},
+          {path: '/charms/', callback: 'show_charm_collection'},
+          {path: '/charms/*charm_url',
             callback: 'show_charm',
             reverse_map: {charm_url: 'name'},
             model: 'charm'},
-                {path: '/notifications/',
+          {path: '/notifications/',
             callback: 'show_notifications_overview'},
-                {path: '/service/:id/config',
+          {path: '/service/:id/config',
             callback: 'show_service_config',
             intent: 'config',
             model: 'service'},
-                {path: '/service/:id/constraints',
+          {path: '/service/:id/constraints',
             callback: 'show_service_constraints',
             intent: 'constraints',
             model: 'service'},
-                {path: '/service/:id/relations',
+          {path: '/service/:id/relations',
             callback: 'show_service_relations',
             intent: 'relations',
             model: 'service'},
-                {path: '/service/:id/', callback: 'show_service',
+          {path: '/service/:id/',
+            callback: 'show_service',
             model: 'service'},
-                {path: '/unit/:id/', callback: 'show_unit',
-            reverse_map: {id: 'urlName'}, model: 'serviceUnit'},
-                {path: '/', callback: 'show_environment'}
+          {path: '/unit/:id/',
+            callback: 'show_unit',
+            reverse_map: {id: 'urlName'},
+            model: 'serviceUnit'},
+          {path: '/', callback: 'show_environment'}
         ]
       }
     }
@@ -550,5 +553,6 @@ YUI.add('juju-gui', function(Y) {
     'app-base',
     'app-transitions',
     'base',
-    'node']
+    'node',
+    'model']
 });

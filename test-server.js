@@ -11,6 +11,8 @@ server.configure(function () {
     // 'static' is a reserved word so dot notation is not used to
     // avoid annoying the linter.
     server.use(express['static'](__dirname));
+    // fallback to looking in assets
+    server.use(express['static'](__dirname + '/app/'));
     server.use(express.bodyParser());
     server.use(express.methodOverride());
 });

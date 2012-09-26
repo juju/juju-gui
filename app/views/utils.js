@@ -2,7 +2,8 @@
 
 YUI.add('juju-view-utils', function(Y) {
 
-  var views = Y.namespace('juju.views');
+  var views = Y.namespace('juju.views'),
+      utils = Y.namespace('juju.views.utils');
 
   var timestrings = {
     prefixAgo: null,
@@ -77,8 +78,12 @@ YUI.add('juju-view-utils', function(Y) {
 
       // If the model gets swapped out, reset targets accordingly.
       this.after('modelChange', function(ev) {
-        if (ev.prevVal) ev.prevVal.removeTarget(this);
-        if (ev.newVal) ev.newVal.addTarget(this);
+        if (ev.prevVal) {
+          ev.prevVal.removeTarget(this);
+        }
+        if (ev.newVal) {
+          ev.newVal.addTarget(this);
+        }
       });
 
       // Re-render this view when the model changes.
@@ -136,8 +141,16 @@ YUI.add('juju-view-utils', function(Y) {
       return result;
     },
 
+    /*
+     * Utility methods for SVG regarding classes
+     */
+    hasSVGClass: function(selector, class_name) {
+      var classes = selector.getAttribute('class');
+      return classes.indexOf(class_name) !== -1;
+    },
+
     addSVGClass: function(selector, class_name) {
-      if (typeof(selector) == 'string') {
+      if (typeof(selector) === 'string') {
         Y.all(selector).each(function(n) {
           var classes = this.getAttribute('class');
           this.setAttribute('class', classes + ' ' + class_name);
@@ -149,7 +162,7 @@ YUI.add('juju-view-utils', function(Y) {
     },
 
     removeSVGClass: function(selector, class_name) {
-      if (typeof(selector) == 'string') {
+      if (typeof(selector) === 'string') {
         Y.all(selector).each(function() {
           var classes = this.getAttribute('class');
           this.setAttribute('class', classes.replace(class_name, ''));
@@ -158,13 +171,22 @@ YUI.add('juju-view-utils', function(Y) {
         var classes = selector.getAttribute('class');
         selector.setAttribute('class', classes.replace(class_name, ''));
       }
+    },
+
+    toggleSVGClass: function(selector, class_name) {
+      if (this.hasSVGClass(selector, class_name)) {
+        this.removeSVGClass(selector, class_name);
+      } else {
+        this.addSVGClass(selector, class_name);
+      }
     }
 
   });
 
   views.JujuBaseView = JujuBaseView;
 
-  views.createModalPanel = function(body_content, render_target, action_label, action_cb) {
+  views.createModalPanel = function(
+      body_content, render_target, action_label, action_cb) {
     var panel = new Y.Panel({
       bodyContent: body_content,
       width: 400,
@@ -196,6 +218,54 @@ YUI.add('juju-view-utils', function(Y) {
     panel.get('boundingBox').all('.yui3-button').removeClass('yui3-button');
     return panel;
   };
+
+  utils.buildRpcHandler = function(config) {
+    var utils = Y.namespace('juju.views.utils'),
+        container = config.container,
+        scope = config.scope,
+        finalizeHandler = config.finalizeHandler,
+        successHandler = config.successHandler,
+        errorHandler = config.errorHandler;
+
+    function _addErrorMessage(message) {
+      var div = container.one('#message-area')
+            .appendChild(Y.Node.create('<div/>'))
+            .addClass('alert')
+            .addClass('alert-error')
+            .set('text', message);
+
+      var close = div.appendChild(Y.Node.create('<a/>'))
+        .addClass('close')
+        .set('text', '×');
+
+      close.on('click', function() {
+        div.remove();
+      });
+    }
+
+    function invokeCallback(callback) {
+      if (callback) {
+        if (scope) {
+          callback.apply(scope);
+        } else {
+          callback();
+        }
+      }
+    }
+
+    return function(ev) {
+      if (ev && ev.err) {
+        _addErrorMessage(utils.SERVER_ERROR_MESSAGE);
+        invokeCallback(errorHandler);
+      } else {
+        invokeCallback(successHandler);
+      }
+      invokeCallback(finalizeHandler);
+    };
+  };
+
+  utils.SERVER_ERROR_MESSAGE = 'An error ocurred.';
+
 
   function BoundingBox() {
     var x, y, w, h, value, modelId;
@@ -305,12 +375,8 @@ YUI.add('juju-view-utils', function(Y) {
       return 'translate(' + this.getXY() + ')';
     };
 
-    Box.toString = function() {
-      return modelId[0] + '-' + modelId[1];
-    };
-
     Box.modelId = function() {
-      return this.toString();
+      return modelId[0] + '-' + modelId[1];
     };
 
     return Box;
@@ -349,11 +415,7 @@ YUI.add('juju-view-utils', function(Y) {
     };
 
     pair.modelIds = function() {
-      return source.toString() + ':' + target.toString();
-    };
-
-    pair.toString = function() {
-      return this.modelIds();
+      return source.modelId() + ':' + target.modelId();
     };
 
     return pair;

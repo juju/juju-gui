@@ -12,51 +12,58 @@
           'charm': 'cs:precise/wordpress-6',
           'id': 'wordpress',
           'exposed': false
-        }], ['service', 'add', {
+        }],
+        ['service', 'add', {
           'charm': 'cs:precise/mediawiki-3',
           'id': 'mediawiki',
           'exposed': false
-        }], ['service', 'add', {
+        }],
+        ['service', 'add', {
           'charm': 'cs:precise/mysql-6',
           'id': 'mysql'
-        }], ['relation', 'add', {
+        }],
+        ['relation', 'add', {
           'interface': 'reversenginx',
           'scope': 'global',
-          'endpoints': [
-                        ['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]
-          ],
+          'endpoints':
+           [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
           'id': 'relation-0000000000'
-        }], ['relation', 'add', {
+        }],
+        ['relation', 'add', {
           'interface': 'mysql',
           'scope': 'global',
-          'endpoints': [
-                        ['mysql', {'role': 'server', 'name': 'db'}],
-                        ['wordpress', {'role': 'client', 'name': 'db'}]
-          ], 'id': 'relation-0000000001'
-        }], ['machine', 'add', {
+          'endpoints':
+           [['mysql', {'role': 'server', 'name': 'db'}],
+            ['wordpress', {'role': 'client', 'name': 'db'}]],
+           'id': 'relation-0000000001'
+        }],
+        ['machine', 'add', {
           'agent-state': 'running',
           'instance-state': 'running',
           'id': 0,
           'instance-id': 'local',
           'dns-name': 'localhost'
-        }], ['unit', 'add', {
+        }],
+        ['unit', 'add', {
           'machine': 0,
           'agent-state': 'started',
           'public-address': '192.168.122.113',
           'id': 'wordpress/0'
-        }], ['unit', 'add', {
+        }],
+        ['unit', 'add', {
           'machine': 0,
           'agent-state': 'started',
           'public-address': '192.168.122.113',
           'id': 'mediawiki/0'
-        }], ['unit', 'add', {
+        }],
+        ['unit', 'add', {
           'machine': 0,
           'agent-state': 'started',
           'public-address': '192.168.122.222',
           'id': 'mysql/0'
         }]
-      ],
-      'op': 'delta'
+        ],
+        'op': 'delta'
     };
 
     before(function(done) {
@@ -175,7 +182,7 @@
         // scale portion of the transform attribute of the svg
         // element has been upped by 0.2.  The transform attribute
         // also contains translate, so test via a regex.
-        /scale\(1.2\)/.test(attr).should.equal(true);
+        /scale\(1\.2\)/.test(attr).should.equal(true);
         done();
       });
       zoom_in.simulate('click');
@@ -190,14 +197,17 @@
            db: db,
            env: env
          }).render();
+         // Attach the view to the DOM so that sizes get set properly
+         // from the viewport (only available from DOM).
+         view.postRender();
          var svg = Y.one('svg');
 
          parseInt(svg.one('rect').getAttribute('height'), 10)
-                    .should.equal(parseInt(svg.getComputedStyle('height'),
-         10));
+          .should.equal(
+         parseInt(svg.getComputedStyle('height'), 10));
          parseInt(svg.one('rect').getAttribute('width'), 10)
-                    .should.equal(parseInt(svg.getComputedStyle('width'),
-         10));
+          .should.equal(
+         parseInt(svg.getComputedStyle('width'), 10));
          done();
        }
     );
@@ -210,12 +220,91 @@
            db: db,
            env: env
          }).render();
+         // Attach the view to the DOM so that sizes get set properly
+         // from the viewport (only available from DOM).
+         view.postRender();
          var svg = Y.one('svg');
-         parseInt(svg.getAttribute('height'), 10).should.be.above(599);
+         parseInt(svg.getAttribute('height'), 10)
+          .should.equal(
+         Math.max(600,
+              container.get('winHeight') -
+              parseInt(Y.one('#overview-tasks')
+                .getComputedStyle('height'), 10) -
+              parseInt(Y.one('.navbar')
+                .getComputedStyle('height'), 10) -
+              parseInt(Y.one('.navbar')
+                .getComputedStyle('margin-bottom'), 10)
+              ));
          done();
        }
     );
 
+    // Tests for control panel
+    it('must be able to toggle a control panel', function(done) {
+      var view = new views.EnvironmentView({
+        container: container,
+        db: db,
+        env: env
+      }).render();
+      container.all('.service').each(function(node, i) {
+        node.after('click', function() {
+          view.hasSVGClass(
+              node.one('.service-control-panel'),
+              'active').should.equal(true);
+          container.all('.service-control-panel.active').size()
+              .should.equal(1);
+          });
+        });
+    });
+
+    it.only('must be able to add a relation from the control panel',
+       function(done) {
+         var view = new views.EnvironmentView({
+            container: container,
+            db: db,
+            env: env
+         }).render();
+         var service = container.one('.service'),
+         add_rel = service.one('.add-relation'),
+         after_evt;
+         after_evt = service.after('click', function() {
+           after_evt.detach();
+           add_rel.simulate('click');
+         });
+         add_rel.after('click', function() {
+           container.all('.selectable-service').size()
+            .should.equal(2);
+           service.next().simulate('click');
+         });
+         service.next('.service').after('click', function() {
+           container.all('.selectable-service').size()
+            .should.equal(0);
+           done();
+         });
+         service.simulate('click');
+       }
+    );
+
+    it('must be able to remove a relation between services', function(done) {
+      var view = new views.EnvironmentView({
+        container: container,
+        db: db,
+        env: env
+      }).render();
+      var relation = container.one('.rel-label'),
+          dialog_btn;
+      relation.after('click', function() {
+        var rel = this;
+        dialog_btn = Y.one('.btn-danger');
+        dialog_btn.after('click', function() {
+          container.all('.to-remove').size()
+            .should.equal(1);
+          done();
+        });
+        dialog_btn.simulate('click');
+      });
+      relation.simulate('click');
+    });
   });
 
   describe('view model support infrastructure', function() {
@@ -310,20 +399,17 @@
 
     it('must be able to map from sequence of models to boundingboxes',
        function() {
-         var units = new models.ServiceUnitList();
-         units.add([{id: 'mysql/0'},
-           {id: 'mysql/1'},
-           {id: 'mysql/2'},
-           {id: 'mysql/3'}]);
+         var services = new models.ServiceList();
+         services.add([{id: 'mysql'},
+           {id: 'haproxy'},
+           {id: 'memcache'},
+           {id: 'wordpress'}]);
 
-         units.size().should.equal(4);
-         var boxes = units.map(views.toBoundingBox);
+         services.size().should.equal(4);
+         var boxes = services.map(views.toBoundingBox);
          boxes.length.should.equal(4);
-         boxes[0].id.should.equal('mysql/0');
-
-         // Also extract the computed mysql
-         boxes[3].id.should.equal('mysql/3');
-         boxes[3].service.should.equal('mysql');
+         boxes[0].id.should.equal('mysql');
+         boxes[3].id.should.equal('wordpress');
        });
 
     it('must be able to support pairs of boundingBoxes', function() {
@@ -361,6 +447,5 @@
           'service-mediawiki:service-haproxy');
     });
 
-  });
-
+});
 })();

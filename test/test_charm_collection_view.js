@@ -92,12 +92,12 @@
         on_results_change: function(io_request) {
           MyView.superclass.on_results_change.apply(this, arguments);
           var charms = this.get('charms');
-          for (var i = 0; i < charms.length; i++) {
+          for (var i = 0; i < charms.length; i += 1) {
             charms[i].name.should.contain(charmSearchQuery);
           }
         }
       });
-      new MyView({
+      var side_effects = new MyView({
         query: charmSearchQuery,
         charm_store: localCharmStore
       });
@@ -123,7 +123,7 @@
           container.destroy();
         }
       });
-      new MyView({
+      var side_effects = new MyView({
         container: container,
         query: charmSearchQuery,
         charm_store: localCharmStore

@@ -7,6 +7,6 @@ var server = require('./lib/server.js'),
 
 var port = config.port || process.env.PORT || 8888;
 
-server.server.listen(port, function () {
-    console.log('Server listening on ' + port);
+server.server.listen(port, function() {
+  console.log('Server listening on ' + port);
 });

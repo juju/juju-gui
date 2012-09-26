@@ -1,10 +1,32 @@
-<div id="overview">
-  <div id="canvas"></div>
+<div id="canvas" class="crosshatch-background"></div>
   <div id="overview-tasks">
-    Environment:
-    <button id="add-relation-btn">Add Relation</button>
-    Zoom:
-    <button id="zoom-out-btn">-</button>
-    <button id="zoom-in-btn">+</button>
+    <div class="controls">
+        <img src="/assets/images/cmd_icon.png" />
+        Command line
+        <img class="divider" src="/assets/images/bottom_bar_small_div.png" />
+        <img src="/assets/images/view_icon.png" />
+        <div class="picker graph-list-picker">
+            <img class="picker-edge" src="/assets/images/picker_left_edge.png" />
+            <div class="picker-body">
+                Graph view
+            </div>
+            <img class="picker-button" src="/assets/images/picker_view_right_button.png" />
+        </div>
+        <img class="divider" src="/assets/images/bottom_bar_small_div.png" />
+        <img id="zoom-out-btn" src="/assets/images/zoom_minus.png" />
+        <img id="zoom-in-btn" src="/assets/images/zoom_plus.png" />
+        <div class="picker zoom-picker">
+            <img class="picker-edge" src="/assets/images/picker_left_edge.png" />
+            <div class="picker-body">
+                100%
+            </div>
+            <img class="picker-button" src="/assets/images/picker_zoom_right_button.png" />
+        </div>
+        <img class="divider" src="/assets/images/bottom_bar_big_div.png" />
+    </div>
+    <div class="destroy-control">
+        <img class="divider" src="/assets/images/bottom_bar_big_div.png" />
+        <img src="/assets/images/destroy_icon.png" />
+        Destroy
   </div>
 </div>

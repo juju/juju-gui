@@ -11,11 +11,13 @@ YUI.add('juju-view-charmsearch', function(Y) {
       // This view is always attached / else remove this when no longer valid.
       // The App framework only sets the activeView up as a target (v3.6.0)
       this.addTarget(this.get('app'));
-      this.publish('showCharmCollection', {preventable: false, broadcast: true});
+      this.publish(
+          'showCharmCollection', {preventable: false, broadcast: true});
     },
 
     render: function() {
-      /* Navigation bar search defaults to show detailed charm collection results.
+      /* Navigation bar search defaults to show detailed charm collection
+         results.
         var app = Y.namespace('juju').AppInstance;
         Y.one('#charm-search').plug(Y.Plugin.AutoComplete, {
             resultHighlighter: 'phraseMatch',
@@ -27,7 +29,8 @@ YUI.add('juju-view-charmsearch', function(Y) {
                 }
                 return result.owner + '/' + result.series + '/' + result.name;
             },
-            source: app.get('charm_search_url') + 'search/json?search_text={query}'
+            source: app.get('charm_search_url') +
+                   'search/json?search_text={query}'
         });
         */
       Y.one('#omnibar').on('submit', this.show_charm_store, this);
@@ -39,8 +42,9 @@ YUI.add('juju-view-charmsearch', function(Y) {
       var app = this.get('app');
 
       // Do not render if we're already on the page.
-      if (app.get('activeView').name == 'CharmCollectionView')
+      if (app.get('activeView').name === 'CharmCollectionView') {
         return;
+      }
 
       evt.preventDefault();
       evt.stopImmediatePropagation();
