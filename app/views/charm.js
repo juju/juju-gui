@@ -13,6 +13,21 @@ charm_store.plug(
 charm_store.plug(Y.DataSourceCache, { max: 3});
   */
 
+  // TODO dedupe this relative to service.js
+  var getElementsValuesMap = function(container, selector) {
+    var result = {};
+    container.all(selector).each(function(el) {
+      var value = null;
+      if (el.getAttribute('type') === 'checkbox') {
+        value = el.get('checked');
+      } else {
+        value = el.get('value');
+      }
+      result[el.get('name')] = value;
+    });
+
+    return result;
+  };
 
   Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
     // console.log('helper', iface_decl, options, this);
@@ -61,23 +76,55 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
     template: Templates.charm,
 
     render: function() {
-      console.log('render', this.get('charm'));
-      var container = this.get('container');
+      var charm = this.get('charm'),
+          container = this.get('container');
+      console.log('render', charm);
       CharmCollectionView.superclass.render.apply(this, arguments);
-      if (this.get('charm')) {
-        var charm = this.get('charm');
-        // Convert time stamp TODO: should be in db layer
-        var last_modified = charm.last_change.created;
-        if (last_modified) {
-          charm.last_change.created = new Date(last_modified * 1000);
-        }
-        container.setHTML(this.template({'charm': charm}));
-
-        container.one('#charm-deploy').on(
-            'click', Y.bind(this.on_charm_deploy, this));
-      } else {
+      if (!charm) {
         container.setHTML('<div class="alert">Loading...</div>');
+        return;
       }
+      // Convert time stamp TODO: should be in db layer
+      var last_modified = charm.last_change.created;
+      if (last_modified) {
+        charm.last_change.created = new Date(last_modified * 1000);
+      }
+
+      // TODO extract "userEditableConstraints" function and use it to filter
+      // the constraints here.
+
+      // TODO dedupe this code against service.js
+      var schema = charm.config.options,
+          settings = [];
+      Y.Object.each(schema, function(field_def, field_name) {
+        var entry = {
+          'name': field_name
+        };
+
+        if (schema[field_name].type === 'boolean') {
+          entry.isBool = true;
+
+          if (schema[field_name]['default']) {
+            // The "checked" string will be used inside an input tag
+            // like <input id="id" type="checkbox" checked>
+            entry.value = 'checked';
+          } else {
+            // The output will be <input id="id" type="checkbox">
+            entry.value = '';
+          }
+        } else {
+          entry.value = schema[field_name]['default'];
+        }
+
+        settings.push(Y.mix(entry, field_def));
+      });
+
+      container.setHTML(this.template({
+        charm: charm,
+        settings: settings}));
+
+      container.one('#charm-deploy').on(
+          'click', Y.bind(this.on_charm_deploy, this));
       return this;
     },
 
@@ -90,21 +137,30 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
     },
 
     on_charm_deploy: function(evt) {
-      var charm = this.get('charm');
+      var charm = this.get('charm'),
+          container = this.get('container'),
+          charmUrl = charm.series + '/' + charm.name,
+          env = this.get('env');
       console.log('charm deploy', charm);
       // Generating charm url: see http://jujucharms.com/tools/store-missing
       // for examples of charm addresses.
-      var charmUrl = charm.series + '/' + charm.name;
       if (charm.owner !== 'charmers') {
         charmUrl = '~' + charm.owner + '/' + charmUrl;
       }
       charmUrl = 'cs:' + charmUrl;
-      var env = this.get('env');
+
+      // Gather the configuration values from the form.
+      var serviceName = container.one('#service-name').get('value'),
+          config = getElementsValuesMap(container,
+          '#service-config .config-field');
+      console.log('requested charm configuration', config);
+
+
       // The deploy call generates an event chain leading to a call to
       // `app.on_database_changed()`, which re-dispatches the current view.
       // For this reason we need to redirect to the root page right now.
       this.fire('showEnvironment');
-      env.deploy(charmUrl, function(msg) {
+      env.deploy(charmUrl, serviceName, config, function(msg) {
         console.log(charmUrl + ' deployed');
       });
     }
@@ -124,14 +180,15 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
 
     render: function() {
       var container = this.get('container'),
-          self = this;
+          charm = this.get('charm'); // TODO change attribute name to "model"
 
       CharmCollectionView.superclass.render.apply(this, arguments);
-      container.setHTML(this.template({'charms': this.get('charms')}));
+      container.setHTML(this.template({charms: this.get('charms')}));
+
       // TODO: Use view.events structure to attach this
       container.all('div.thumbnail').each(function(el) {
         el.on('click', function(evt) {
-          self.fire('showCharm', {charm_data_url: this.getData('charm-url')});
+          this.fire('showCharm', {charm_data_url: this.getData('charm-url')});
         });
       });
 

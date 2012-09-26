@@ -154,15 +154,15 @@ YUI.add('juju-view-service', function(Y) {
           Y.Object.each(constraints, function(value, name) {
             if (!(name in readOnlyConstraints)) {
               display_constraints.push({
-                'name': name,
-                'value': value});
+                name: name,
+                value: value});
             }
           });
 
           var generics = ['cpu', 'mem', 'arch'];
           Y.Object.each(generics, function(idx, gkey) {
             if (!(gkey in constraints)) {
-              display_constraints.push({'name': gkey, 'value': ''});
+              display_constraints.push({name: gkey, value: ''});
             }
           });
 
@@ -173,7 +173,7 @@ YUI.add('juju-view-service', function(Y) {
             readOnlyConstraints: (function() {
               var arr = [];
               Y.Object.each(readOnlyConstraints, function(name, value) {
-                arr.push({'name': name, 'value': value});
+                arr.push({name: name, value: value});
               });
               return arr;
             })(),

@@ -34,25 +34,20 @@
       container = Y.Node.create('<div id="test-container" />');
       Y.one('#main').append(container);
       db = new models.Database();
-      charm = new models.Charm({
-                id: 'mysql',
-                name: 'mysql',
-                description: 'A DB',
-                config: {
-          option0: {
-            description: 'The first option.',
-            type: 'string'
-          },
-          option1: {
-            description: 'The second option.',
-            type: 'boolean'
-          },
-                  option2: {
-                    description: 'The third option.',
-                    type: 'boolean'
-                  }
-                }
-      });
+      charm = new models.Charm(
+          { id: 'mysql',
+            name: 'mysql',
+            description: 'A DB',
+            config:
+                { option0:
+                      { description: 'The first option.',
+                        type: 'string'},
+                  option1:
+                      { description: 'The second option.',
+                        type: 'boolean'},
+                  option2:
+                      { description: 'The third option.',
+                        type: 'boolean'}}});
 
       db.charms.add([charm]);
       service = new models.Service({
