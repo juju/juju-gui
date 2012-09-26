@@ -155,7 +155,7 @@ YUI.add('juju-gui', function(Y) {
         }
 
         console.log(
-            'App: Rerendering current view', this.getPath(), 'info');
+            'App: Re-rendering current view', this.getPath(), 'info');
 
         if (this.get('activeView')) {
           this.get('activeView').render();
@@ -263,7 +263,9 @@ YUI.add('juju-gui', function(Y) {
         model: service,
         db: this.db,
         env: this.env,
-        app: this});
+        app: this,
+        querystring: req.query
+      });
     },
 
     show_service: function(req) {
@@ -360,10 +362,10 @@ YUI.add('juju-gui', function(Y) {
             evt.service_name, evt);
         return;
       }
-      // TODO: need to unify with .relations from delta stream.
+      // We intentionally ignore svc_data.rels.  We rely on the delta stream
+      // for relation data instead.
       svc.setAttrs({'config': svc_data.config,
         'constraints': svc_data.constraints,
-        'rels': svc_data.rels,
         'loaded': true,
         'prefetch': false});
       this.dispatch();
