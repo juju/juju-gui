@@ -146,7 +146,6 @@ YUI.add('juju-view-environment', function(Y) {
           this.node = vis.selectAll('.service')
                        .data(services,
               function(d) {return d.model();});
-
         },
 
         update_canvas: function() {
@@ -236,10 +235,9 @@ YUI.add('juju-view-environment', function(Y) {
             // not to lose reference to 'self'
             //Y.each(link, self.update_relation_group, self);
             link.each(self.draw_relation);
-            //Y.each(link, self.draw_relation, self);
 
             // exit
-            link.exit().remove();
+            //g.exit().remove();
           }
 
           // Draw or schedule redraw of links
@@ -257,9 +255,10 @@ YUI.add('juju-view-environment', function(Y) {
             // Add a labelgroup
             var self = this, 
                 g = self.vis.selectAll('g.rel-group')
-                  .data(self.rel_data, function(r) {return r.modelIds();})
-                  .enter().insert('g', 'g.service')
-                  .attr('class', 'rel-group');
+                  .data(self.rel_data, function(r) {return r.modelIds();});
+             
+             g.enter().insert('g', 'g.service')
+              .attr('class', 'rel-group');
 
             var link = g.append('svg:line', 'g.service')
                  .attr('class', 'relation');
@@ -445,6 +444,8 @@ YUI.add('juju-view-environment', function(Y) {
 
         addControlPanel: function(node) {
             // Add a control panel around the service
+            var self = this;
+            console.log("addControlPanel", self, node);
           var control_panel = node.append('g')
         .attr('class', 'service-control-panel');
 

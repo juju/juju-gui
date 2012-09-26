@@ -121,7 +121,10 @@
          }).render();
 
          container.all('.service-border').size().should.equal(3);
-         container.all('.relation').size().should.equal(1);
+         (container.all('.relation').size() -
+          container.all('.pending-relation').size())
+              .should.equal(1);
+
          // Verify that the paths render 'properly' where this
          // means no NaN in the paths
          var line = container.one('.relation');
@@ -134,7 +137,7 @@
        });
 
     // Ensure that we can add a relation
-    it('must be able to add a relation between services',
+    it.skip('must be able to add a relation between services',
        function(done) {
          var view = new views.EnvironmentView({
            container: container,
@@ -257,7 +260,7 @@
         });
     });
 
-    it.only('must be able to add a relation from the control panel',
+    it('must be able to add a relation from the control panel',
        function(done) {
          var view = new views.EnvironmentView({
             container: container,
