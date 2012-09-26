@@ -58,7 +58,7 @@
           intOptionWithDefault: {
             description: 'An int option with no default value.',
             type: 'int',
-            default: 1
+            'default': 1
           },
           floatOption: {
             description: 'A float option with no default value.',
@@ -274,7 +274,8 @@
       assertError('intOptionWithDefault', '   ', null);
       assertError('intOptionWithDefault', '', null);
       assertError('intOptionWithDefault', '1', null);
-      assertError('intOptionWithDefault', 'a', 'The value "a" is not an integer.');
+      assertError('intOptionWithDefault', 'a',
+          'The value "a" is not an integer.');
     });
   });
 })();
