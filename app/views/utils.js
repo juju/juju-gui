@@ -275,7 +275,7 @@ YUI.add('juju-view-utils', function(Y) {
         // Therefore, we need to set this delay in order to show the "success"
         // message after the page page refresh.
         setTimeout(function() {
-          utils.showSuccessMessage(container, 'Successful update');
+          utils.showSuccessMessage(container, 'Settings updated');
         }, 1000);
 
         invokeCallback(successHandler);
