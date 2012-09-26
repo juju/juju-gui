@@ -578,7 +578,6 @@ YUI.add('juju-view-environment', function(Y) {
           Y.each(endpoints, function(ep) {
             rel_services.push([ep[1].name, self.service_map[ep[0]]]);
           });
-          console.log("rel", r, rel_services);
           return rel_services;
         },
 
@@ -586,15 +585,14 @@ YUI.add('juju-view-environment', function(Y) {
           var self = this,
               pairs = [];
           Y.each(rels, function(rel) {
-            var result = self.processRelation(rel),
-                rel_type = result[0],
-                pair = result[1];
+            var pair = self.processRelation(rel);
 
             // skip peer for now
-            if (result.length == 2) {
+            if (pair.length == 2) {
+                console.log("boxing pair", pair);
               var bpair = views.BoxPair()
-                                 .source(pair[1])
-                                 .target(pair[2]);
+                                 .source(pair[0][1])
+                                 .target(pair[1][1]);
               // Look up this new pair. If we have one
               // with the same composite id apply the old
               // position
