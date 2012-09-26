@@ -12,7 +12,7 @@
       series: 'precise',
       owner: 'charmers',
       provides: {
-        db - admin: {
+        'db - admin': {
           'interface': 'pgsql'
         },
         db: {
@@ -20,15 +20,16 @@
         }
       },
       config:
-          { option0:
-                { description: 'The first option.',
-                  type: 'string'},
-            option1:
-                { description: 'The second option.',
-                  type: 'boolean'},
-            option2:
-                { description: 'The third option.',
-                  type: 'boolean'}},
+          { options:
+                { option0:
+                      { description: 'The first option.',
+                        type: 'string'},
+                  option1:
+                      { description: 'The second option.',
+                        type: 'boolean'},
+                  option2:
+                      { description: 'The third option.',
+                        type: 'int'}}},
       description: 'PostgreSQL is a fully featured RDBMS.',
       name: 'postgresql',
       summary: 'object-relational SQL database (supported version)',
@@ -38,8 +39,7 @@
             message: 'Only reload for pg_hba updates',
             revno: 24,
             created: 1340206387.539},
-      proof: {};
-    };
+      proof: {}};
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -78,8 +78,7 @@
       var charmView = new CharmView({
         charm_data_url: charmQuery,
         charm_store: localCharmStore,
-        env: env
-      });
+        env: env});
       var redirected = false;
       charmView.on('showEnvironment', function() {
         redirected = true;
@@ -103,21 +102,37 @@
           { charm_data_url: charmQuery,
             charm_store: localCharmStore,
             container: container,
-            env: env
-          }).render();
+            env: env}).render();
       var serviceName = 'my custom service name';
       var deployButton = container.one('#charm-deploy');
       // Assertions are in a callback, so set them up first.
       deployButton.after('click', function() {
         var msg = conn.last_message();
-        // Ensure the websocket received the `deploy` message.
         assert.equal(msg.op, 'deploy');
         assert.equal(msg.service_name, serviceName);
-        assert.equal(msg.config, {});
-        assert.equal(true, false);
         done();
       });
       container.one('#service-name').set('value', serviceName);
+      deployButton.simulate('click');
+    });
+
+    it('should allow for the user to specify a config', function(done) {
+      var charmView = new CharmView(
+          { charm_data_url: charmQuery,
+            charm_store: localCharmStore,
+            container: container,
+            env: env}).render();
+      var option0Value = 'the value for option0';
+      var deployButton = container.one('#charm-deploy');
+      // Assertions are in a callback, so set them up first.
+      deployButton.after('click', function() {
+        var msg = conn.last_message();
+        assert.equal(msg.op, 'deploy');
+        assert.property(msg.config, 'option0');
+        assert.equal(msg.config.option0, option0Value);
+        done();
+      });
+      container.one('#input-option0').set('value', option0Value);
       deployButton.simulate('click');
     });
 
