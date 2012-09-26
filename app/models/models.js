@@ -50,6 +50,7 @@ YUI.add('juju-models', function(Y) {
       exposed: {
         value: false
       },
+      relations: {},
       unit_count: {},
       aggregated_status: {}
     }
@@ -198,18 +199,7 @@ YUI.add('juju-models', function(Y) {
   });
   models.Relation = Relation;
 
-  var RelationList = Y.Base.create('relationList', Y.ModelList, [], {
-    model: Relation,
-
-    get_relations_for_service: function(service, asList) {
-      var service_id = service.get('id');
-      return this.filter({asList: Boolean(asList)}, function(relation) {
-        return Y.Array.some(
-            relation.get('endpoints'),
-            function(endpoint) { return endpoint[0] === service_id; });
-      });
-    }
-  }, {
+  var RelationList = Y.Base.create('relationList', Y.ModelList, [], {}, {
     ATTRS: {}
   });
   models.RelationList = RelationList;
@@ -261,9 +251,9 @@ YUI.add('juju-models', function(Y) {
     },
 
     /*
-     * Trim the list removing oldest elements till we are
-     * below max_size
-     */
+         * Trim the list removing oldest elements till we are
+         * below max_size
+         */
     trim: function(e) {
       while (this.size() >= this.get('max_size')) {
         this.removeOldest();

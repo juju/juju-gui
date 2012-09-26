@@ -2,11 +2,10 @@
 <div class="row-fluid">
   <div class="span12">
     <ul class="nav nav-tabs">
-      {{#states}}
-      <li {{#if active}}class="active"{{/if}}>
-        <a href="{{link}}">{{title}}</a>
-      </li>
-      {{/states}}
+      <li class="active"><a href=".">All</a></li>
+      <li><a href="?state=running">Running</a></li>
+      <li><a href="?state=pending">Pending</a></li>
+      <li><a href="?state=error">Error</a></li>
     </ul>
   </div>
 </div>
@@ -34,9 +33,6 @@
       <span class="footer-left">
         Unit count:
         <input type="text" id="num-service-units" value="{{service.unit_count}}" />
-        {{#if filtered}}
-        (Filtered count: {{units.length}})
-        {{/if}}
       </span>
     {{/unless}}
     <a class="footer-right btn" id="destroy-service" data-toggle="modal" href="#destroy-service-modal">Destroy Service</a>

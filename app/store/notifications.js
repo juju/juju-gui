@@ -142,7 +142,7 @@ YUI.add('juju-notification-controller', function(Y) {
             model = app.db.getModelFromChange(change);
             if (model) {
               // modelId setter pulls the modelId reference from a
-              // model automatically
+              // motel automatically
               notify_data.modelId = model;
               notify_data.link = app.getModelURL(model);
               // If there are eviction rules for old notices
@@ -172,3 +172,4 @@ YUI.add('juju-notification-controller', function(Y) {
 }, '0.1.0', {
   requires: ['juju-models']
 });
+
