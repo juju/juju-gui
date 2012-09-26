@@ -16,18 +16,12 @@ YUI.add('juju-view-environment', function(Y) {
         events: {
           '#zoom-out-btn': {click: 'zoom_out'},
           '#zoom-in-btn': {click: 'zoom_in'},
-          '#zoom-picker-btn': {
-            mousedown: 'zoomPickerMouseDown',
-            mouseup: 'zoomPickerMouseUp'
-          }
-          /*'#zoom-btn-up': {
-            mousedown: 'pickerZoomInMouseDown',
-            mouseup: 'pickerZoomInMouseUp'
+          '.graph-list-picker .picker-button': {
+            click: 'showGraphListPicker'
           },
-          '#zoom-btn-down': {
-            mousedown: 'pickerZoomOutMouseDown',
-            mouseup: 'pickerZoomOutMouseUp'
-          }*/
+          '.graph-list-picker .picker-expanded': {
+            click: 'hideGraphListPicker'
+          }
         },
 
         initializer: function() {
@@ -64,7 +58,7 @@ YUI.add('juju-view-environment', function(Y) {
 
           var yscale = d3.scale.linear()
         .domain([-height / 2, height / 2])
-        .range([height, 0]);
+        .range([height, 0.27]);
 
           // Create a pan/zoom behavior manager with a range of 25%-200%
           var zoom = d3.behavior.zoom()
@@ -72,14 +66,11 @@ YUI.add('juju-view-environment', function(Y) {
         .y(yscale)
         .scaleExtent([0.25, 2.0])
         .on('zoom', function() {
-          // If we're just panning (old_scale == new_scale), then don't
-          // worry about updating the slider
-          var old_scale = self.get('scale');
-          if (d3.event.scale != old_scale) {
-            var s = self.get('slider');
-            s.set('value', Math.floor(d3.event.scale * 100));
-          }
-          self.rescale(vis, d3.event);
+                // Keep the slider up to date with the scale on other sorts
+                // of zoom interactions
+                var s = self.get('slider');
+                s.set('value', Math.floor(d3.event.scale * 100));
+                self.rescale(vis, d3.event);
               });
           self.set('zoom', zoom);
 
@@ -488,6 +479,11 @@ YUI.add('juju-view-environment', function(Y) {
           });
           slider.render('#slider-parent');
           slider.after('valueChange', function(evt) {
+            // Don't fire a zoom if there's a zoom event already in progress;
+            // that will run rescale for us.
+            if (d3.event && d3.event.scale && d3.event.translate) {
+              return;
+            }
             self._fire_zoom((evt.newVal - evt.prevVal) / 100);
           });
           self.set('slider', slider);
@@ -655,7 +651,7 @@ YUI.add('juju-view-environment', function(Y) {
           evt.scale = zoom.scale() + delta;
 
           // Update the scale in our zoom behavior manager to maintain state.
-          this.get('zoom').scale(evt.scale);
+          zoom.scale(evt.scale);
 
           this.rescale(vis, evt);
         },
@@ -666,15 +662,35 @@ YUI.add('juju-view-environment', function(Y) {
         rescale: function(vis, evt) {
           // Make sure we don't scale outside of our bounds.
           // This check is needed because we're messing with d3's zoom
-          // behavior outside of mouse events (e.g.: with the slider)
+          // behavior outside of mouse events (e.g.: with the slider),
+          // and can't trust that zoomExtent will play well.
           var new_scale = Math.floor(evt.scale * 100);
           if (new_scale < 25 || new_scale > 200) {
-            console.log(evt.scale);
-            return;
+            evt.scale = this.get('scale');
           }
           this.set('scale', evt.scale);
           vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
+        },
+
+        /*
+         * Event handler to show the graph-list picker
+         */
+        showGraphListPicker: function(evt) {
+          var container = this.get('container'),
+              picker = container.one('.graph-list-picker');
+          picker.addClass('inactive');
+          picker.one('.picker-expanded').addClass('active');
+        },
+
+        /*
+         * Event handler to hide the graph-list picker
+         */
+        hideGraphListPicker: function(evt) {
+          var container = this.get('container'),
+              picker = container.one('.graph-list-picker');
+          picker.removeClass('inactive');
+          picker.one('.picker-expanded').removeClass('active');
         },
 
         /*

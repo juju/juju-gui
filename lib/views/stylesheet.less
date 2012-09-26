@@ -273,7 +273,61 @@ g.unit {
     &.graph-list-picker {
         width: 116px;
         .picker-body {
-            width: 90px;
+            width: 91px;
+        }
+
+
+        .picker-expanded {
+            display: none;
+
+            &.active {
+                z-index: 100;
+                display: block;
+            }
+            .picker-edge {
+                display: block;
+                top: auto;
+                bottom: -10px;
+                margin-left: -3px;
+            }
+            .picker-edge-right {
+                left: auto;
+                right: 0;
+                margin-left: 0;
+                margin-right: -3px;
+            }
+            .picker-list {
+                position: absolute;
+                bottom: -12px;
+                left: 4px;
+                height: 100%;
+                background: url(/assets/images/view_1px.png) repeat-x;
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+                height: 54px;
+                width: 108px;
+
+                ul {
+                    list-style-type: none;
+                    padding: 0;
+                    padding-top: 5px;
+                    margin: 0;
+                    
+                    li {
+                        padding: 1px;
+
+                        .activetick {
+                            width: 12px;
+                            height: 14px;
+                            float: right;
+                            background: url(/assets/images/selected_tick.png) 
+                                no-repeat
+                                bottom left;
+                        }
+                    }
+                }
+            }
         }
     }
     &.zoom-picker {
@@ -318,6 +372,17 @@ g.unit {
         position: absolute;
         top: 8px;
         right: 0;
+    }
+    &.inactive {
+        .picker-edge {
+            display: none;
+        }
+        .picker-body {
+            display: none;
+        }
+        .picker-button {
+            display: none;
+        }
     }
 }
 
