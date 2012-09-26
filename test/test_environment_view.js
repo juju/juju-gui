@@ -171,9 +171,9 @@
         db: db,
         env: env
       }).render();
-     // Attach the view to the DOM so that sizes get set properly
-     // from the viewport (only available from DOM).
-     view.postRender();
+      // Attach the view to the DOM so that sizes get set properly
+      // from the viewport (only available from DOM).
+      view.postRender();
       var zoom_in = container.one('#zoom-in-btn'),
           zoom_out = container.one('#zoom-out-btn'),
           slider = view.get('slider'),
@@ -186,7 +186,7 @@
         // element has been upped by 0.2.  The transform attribute
         // also contains translate, so test via a regex.
         /scale\(1\.25\)/.test(attr).should.equal(true);
-        
+
         // Ensure that the slider agrees.
         slider.get('value').should.equal(125);
 
@@ -321,21 +321,21 @@
     // TODO: This will be fully testable once we have specification on the
     // list view itself.  Skipped until then.
     it.skip('must be able to switch between graph and list views',
-      function(done) {
-        var view = new EnvironmentView({
-          container: container,
-          db: db,
-          env: env
-        }).render();
-        view.postRender();
-        var picker = container.one('.graph-list-picker'),
-            button = picker.one('.picker-button');
-        button.after('click', function() {
-          // Simulate click on list view, ensure that the view is displayed.
-          done();
-        });
-        button.simulate('click');
-      }
+        function(done) {
+          var view = new EnvironmentView({
+            container: container,
+            db: db,
+            env: env
+          }).render();
+          view.postRender();
+          var picker = container.one('.graph-list-picker'),
+              button = picker.one('.picker-button');
+          button.after('click', function() {
+            // Simulate click on list view, ensure that the view is displayed.
+            done();
+          });
+          button.simulate('click');
+        }
     );
   });
 
