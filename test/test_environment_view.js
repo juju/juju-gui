@@ -317,6 +317,28 @@
       });
       relation.simulate('click');
     });
+
+    // TODO: This will be fully testable once we have specification on the
+    // list view itself.  Skipped until then.
+    it.skip('must be able to switch between graph and list views',
+      function(done) {
+        var view = new EnvironmentView({
+          container: container,
+          db: db,
+          env: env
+        }).render();
+        view.postRender();
+        var picker = container.one('.graph-list-picker'),
+            button = picker.one('.picker-button');
+        button.after('click', function() {
+          picker.hasClass('inactive').should.equal(true);
+          picker.all('.picker-expanded.active').size()
+            .should.equal(1);
+          done();
+        });
+        button.simulate('click');
+      }
+    );
   });
 
 })();
