@@ -3,7 +3,7 @@
 (function () {
 
     describe('juju environment view', function() {
-        var EnvironmentView, views, models, Y, container, service, db, conn,
+        var views, models, Y, container, service, db, conn,
             juju, env, testUtils, navbar;
 
         var environment_delta = {
@@ -73,7 +73,6 @@
                 env.connect();
                 conn.open();
                 env.dispatch_result(environment_delta);
-                EnvironmentView = views.environment;
                 done();
             });
         });
@@ -106,34 +105,31 @@
 
         // Ensure the environment view loads properly
         it('must be able to render service blocks and relations',
-            function(done) {
+            function() {
                 // Create an instance of EnvironmentView with custom env
                 var view = new views.EnvironmentView({
                     container: container,
                     db: db,
                     env: env
-                });
-                view.render();
+                }).render();
+
                 container.all('.service-border').size().should.equal(3);
                 container.all('.relation').size().should.equal(1);
                 // Verify that the paths render 'properly' where this 
                 // means no NaN in the paths
-                var lines = container.all('polyline');
-                
-                Y.each(lines, function(line) { 
-                    var points = line.points;
-                    Y.each(points, function(p) {
-                        Y.Lang.isNumber(p).should.equal(true);
-                    });
-                });
-                done();
-            }
-        );
+                var line = container.one('.relation');
+                Y.each(['x1', 'y1', 'x2', 'y2'], 
+                    function(e) {
+                    Y.Lang.isNumber(
+                        parseInt(this.getAttribute(e), 10))
+                            .should.equal(true);
+                }, line);
+         });
 
         // Ensure that we can add a relation
         it('must be able to add a relation between services',
             function(done) {
-                var view = new EnvironmentView({
+                var view = new views.EnvironmentView({
                     container: container,
                     db: db,
                     env: env
@@ -164,7 +160,7 @@
 
         // Ensure that the zoom controls work
         it('must be able to zoom using controls', function(done) {
-            var view = new EnvironmentView({
+            var view = new views.EnvironmentView({
                 container: container,
                 db: db,
                 env: env
@@ -189,7 +185,7 @@
         it('must be able to compute rect sizes based on the svg and' +
                 ' viewport size',
             function(done) {
-                var view = new EnvironmentView({
+                var view = new views.EnvironmentView({
                     container: container,
                     db: db,
                     env: env
@@ -209,7 +205,7 @@
         // Ensure that sizes are computed properly
         it('must be able to compute sizes by the viewport with a minimum',
             function(done) {
-                var view = new EnvironmentView({
+                var view = new views.EnvironmentView({
                     container: container,
                     db: db,
                     env: env

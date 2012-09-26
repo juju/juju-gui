@@ -37,8 +37,8 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-     * Construct a persistent scene that is managed in update
-     */
+         * Construct a persistent scene that is managed in update
+         */
         build_scene: function() {
           var self = this,
               container = this.get('container'),
@@ -67,7 +67,7 @@ YUI.add('juju-view-environment', function(Y) {
 
           function rescale() {
             vis.attr('transform',
-                'translate(' + d3.event.translate + ')' 
+                'translate(' + d3.event.translate + ')'
                      + ' scale(' + d3.event.scale + ')');
           }
 
@@ -132,26 +132,26 @@ YUI.add('juju-view-environment', function(Y) {
               relations = db.relations.toArray();
 
           this.services = services;
-            
+
           Y.each(services, function(service) {
-              // Update services  with existing positions
-              var existing = this.service_map[service.id];
-              if (existing) {
-                  service.pos = existing.pos;
-                  }
-              this.service_map[service.id] = service;
+            // Update services  with existing positions
+            var existing = this.service_map[service.id];
+            if (existing) {
+              service.pos = existing.pos;
+            }
+            this.service_map[service.id] = service;
           }, this);
-            
+
           this.rel_data = this.processRelations(relations);
-                  
+
           // Nodes are mapped by modelId tuples
           this.node = vis.selectAll('.service')
-                       .data(services, 
-                       function(d) {return d.model();});
+                       .data(services,
+              function(d) {return d.model();});
 
         },
 
-        update_canvas: function(initial) {
+       update_canvas: function() {
           var self = this,
               tree = this.tree,
               vis = this.vis;
@@ -174,14 +174,14 @@ YUI.add('juju-view-environment', function(Y) {
           var node = this.node;
 
           // rerun the pack layout
-          // Pack doesn't honor existing positions and will 
+          // Pack doesn't honor existing positions and will
           // re-layout the entire graph. As a short term work
-          // around we layout only new nodes. This has the side 
+          // around we layout only new nodes. This has the side
           // effect that node nodes can overlap and will
           // be fixed later
           var new_services = this.services.filter(function(bb) {
-              return !Y.Lang.isNumber(bb.x);
-              });
+            return !Y.Lang.isNumber(bb.x);
+          });
           this.tree.nodes({children: new_services});
 
           // enter
@@ -211,9 +211,9 @@ YUI.add('juju-view-environment', function(Y) {
           // Exit
           node.exit()
             .call(function(d) {
-            // TODO: update the service_map
-            // removing the bound data
-            })
+                // TODO: update the service_map
+                // removing the bound data
+              })
             .transition()
             .duration(500)
             .attr('x', 0)
@@ -225,10 +225,10 @@ YUI.add('juju-view-environment', function(Y) {
             // update links from current relations data
             // this is an array ob BoxPairs, source and target
             // being bounding boxes
-              
+
             var link = vis.selectAll('line.relation')
                 .data(self.rel_data, function(r) {
-                          return r.modelIds();});
+                  return r.modelIds();});
 
             //enter
             link.enter().insert('svg:line', 'g.service')
@@ -236,29 +236,15 @@ YUI.add('juju-view-environment', function(Y) {
 
             //update (+ enter)
             // we have to use YUI's iteration as we can make sure
-            // not to lose reference to 'self' 
-             Y.each(link, self.draw_relation, self);
+            // not to lose reference to 'self'
+            Y.each(link, self.draw_relation, self);
 
             // exit
             link.exit().remove();
-
-            // Y.each(link, function(relation) {
-            //     var source = relation.source(),
-            //         target = relation.target(),
-            //         link = d3.select(this);
-                
-            //     //link.attr("x1")
-            //     //source.setAttrs({x:attrs.x1, y:attrs.y1});
-            //     //target.setAttrs({x:attrs.x2, y:attrs.y2});
-            // });
           }
 
           // Draw or schedule redraw of links
-          if (initial) {
-            Y.later(600, this, update_links);
-          } else {
-            update_links();
-          }
+          update_links();
 
           self.set('tree', tree);
           self.set('vis', vis);
@@ -271,17 +257,18 @@ YUI.add('juju-view-environment', function(Y) {
          *
          */
         draw_relation: function(relation) {
-            var connectors = relation.source()
+          var connectors = relation.source()
                     .getConnectorPair(relation.target()),
-            s = connectors[0],
-            t = connectors[1],
-            link = d3.select(this);
-            
-            link
+              s = connectors[0],
+              t = connectors[1],
+              link = d3.select(this);
+
+          link
                 .attr('x1', s[0])
                 .attr('y1', s[1])
                 .attr('x2', t[0])
                 .attr('y2', t[1]);
+          return link;
         },
 
         // Called to draw a service in the 'update' phase
@@ -402,7 +389,7 @@ YUI.add('juju-view-environment', function(Y) {
                                  .source(pair[0])
                                  .target(pair[1]);
               // Look up this new pair. If we have one
-              // with the same composite id apply the old 
+              // with the same composite id apply the old
               // position
               pairs.push(bpair);
             }
@@ -574,19 +561,22 @@ YUI.add('juju-view-environment', function(Y) {
                 tree = view.get('tree'),
                 env = view.get('env'),
                 container = view.get('container'),
-                rel = {
-                  source: view.get('add_relation_start_service'),
-                  target: m
-                };
+                rel = views.BoxPair();
+
+              rel.source(view.get('add_relation_start_service'));
+              rel.target(m);
 
             // add temp relation between services
-            var link = vis.selectAll('polyline.pending-relation')
+            var link = vis.selectAll('line.pending-relation')
                 .data([rel]);
-            link.enter().insert('svg:polyline', 'g.service')
-                .attr('class', 'relation pending-relation')
-                .attr('d', view.draw_relation(rel));
+            link.enter().insert('svg:line', 'g.service')
+                .attr('class', 'relation pending-relation');
+             // Unwrap the <line> obj and use it as this
+             // for draw_relation. Mimics the traditional call interface
+             view.draw_relation.call(link[0][0], rel);
 
             // Fire event to add relation in juju.
+            // This needs to specify interface
             env.add_relation(
                 rel.source().id,
                 rel.target().id,
