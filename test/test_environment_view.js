@@ -258,6 +258,7 @@
               .should.equal(1);
           });
         });
+        done();
     });
 
     it('must be able to add a relation from the control panel',
@@ -288,7 +289,7 @@
        }
     );
 
-    it('must be able to remove a relation between services', function(done) {
+    it.only('must be able to remove a relation between services', function(done) {
       var view = new views.EnvironmentView({
         container: container,
         db: db,
@@ -376,7 +377,6 @@
       b1.model(service);
 
       b1.modelId().should.equal('service-mediawiki');
-      b1.toString().should.equal('service-mediawiki');
 
       // properties of the model have mapped to the box
       b1.id.should.equal('mediawiki');
