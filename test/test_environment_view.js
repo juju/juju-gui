@@ -171,8 +171,12 @@
         db: db,
         env: env
       }).render();
+     // Attach the view to the DOM so that sizes get set properly
+     // from the viewport (only available from DOM).
+     view.postRender();
       var zoom_in = container.one('#zoom-in-btn'),
           zoom_out = container.one('#zoom-out-btn'),
+          slider = view.get('slider'),
           svg = container.one('svg g g');
       zoom_in.after('click', function() {
         view.zoom_in();
@@ -181,7 +185,15 @@
         // scale portion of the transform attribute of the svg
         // element has been upped by 0.2.  The transform attribute
         // also contains translate, so test via a regex.
-        /scale\(1\.2\)/.test(attr).should.equal(true);
+        /scale\(1\.25\)/.test(attr).should.equal(true);
+        
+        // Ensure that the slider agrees.
+        slider.get('value').should.equal(125);
+
+        // Ensure that zooming via slider sets scale.
+        slider.set('value', 150);
+        attr = svg.getAttribute('transform');
+        /scale\(1\.5\)/.test(attr).should.equal(true);
         done();
       });
       zoom_in.simulate('click');
@@ -298,6 +310,7 @@
         dialog_btn.after('click', function() {
           container.all('.to-remove').size()
             .should.equal(1);
+          view.get('rmrelation_dialog').hide();
           done();
         });
         dialog_btn.simulate('click');
