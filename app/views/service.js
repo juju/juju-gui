@@ -212,7 +212,8 @@ YUI.add('juju-view-service', function(Y) {
 
           var values = (function() {
             var result = [],
-                map = utils.getElementsValuesMapping(container, '.constraint-field');
+                map = utils.getElementsValuesMapping(
+                    container, '.constraint-field');
 
             Y.Object.each(map, function(value, name) {
               result.push(name + '=' + value);
