@@ -136,7 +136,7 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
       this.render();
     },
 
-    on_charm_deploy: function() {
+    on_charm_deploy: function(evt) {
       var charm = this.get('charm'),
           container = this.get('container'),
           charmUrl = charm.series + '/' + charm.name,

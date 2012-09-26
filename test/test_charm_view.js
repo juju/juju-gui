@@ -12,7 +12,7 @@
       series: 'precise',
       owner: 'charmers',
       provides: {
-        'db - admin': {
+        db - admin: {
           'interface': 'pgsql'
         },
         db: {
@@ -20,16 +20,15 @@
         }
       },
       config:
-          { options:
-                { option0:
-                      { description: 'The first option.',
-                        type: 'string'},
-                  option1:
-                      { description: 'The second option.',
-                        type: 'boolean'},
-                  option2:
-                      { description: 'The third option.',
-                        type: 'boolean'}}},
+          { option0:
+                { description: 'The first option.',
+                  type: 'string'},
+            option1:
+                { description: 'The second option.',
+                  type: 'boolean'},
+            option2:
+                { description: 'The third option.',
+                  type: 'boolean'}},
       description: 'PostgreSQL is a fully featured RDBMS.',
       name: 'postgresql',
       summary: 'object-relational SQL database (supported version)',
@@ -39,7 +38,8 @@
             message: 'Only reload for pg_hba updates',
             revno: 24,
             created: 1340206387.539},
-      proof: {}};
+      proof: {};
+    };
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
@@ -75,17 +75,16 @@
     // Ensure the charm view correctly requests a charm deploy.
     it('should be able to deploy a charm', function(done) {
       // Create an instance of CharmView passing a customized env.
-      var view = new CharmView({
+      var charmView = new CharmView({
         charm_data_url: charmQuery,
         charm_store: localCharmStore,
         env: env
       });
-      assert.equal(true, false);
       var redirected = false;
-      view.on('showEnvironment', function() {
+      charmView.on('showEnvironment', function() {
         redirected = true;
       });
-      var deployInput = view.get('container').one('#charm-deploy');
+      var deployInput = charmView.get('container').one('#charm-deploy');
       deployInput.after('click', function() {
         var msg = conn.last_message();
         // Ensure the websocket received the `deploy` message.
@@ -96,21 +95,7 @@
         redirected.should.equal(true);
         done();
       });
-      assert.equal(true, false);
-      // XXX This doesn't work:
-      // deployInput.simulate('click');
-      // So we do this instead:
-      view.on_charm_deploy();
-
-      var msg = conn.last_message();
-      // Ensure the websocket received the `deploy` message.
-      msg.op.should.equal('deploy');
-      var expected = charmResults.series + '/' + charmResults.name;
-      msg.charm_url.should.contain(expected);
-      // A click to the deploy button redirects to the root page.
-      redirected.should.equal(true);
-      redirected.should.equal(false);
-      done();
+      deployInput.simulate('click');
     });
 
     it('should allow for the user to specify a service name', function(done) {
