@@ -134,7 +134,8 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
         });
       });
 
-      container.one('#charm-search-form').on('submit', this.on_search_change, this);
+      container.one('#charm-search-form').on(
+          'submit', this.on_search_change, this);
       return this;
     },
 
