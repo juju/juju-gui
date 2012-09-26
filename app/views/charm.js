@@ -3,31 +3,8 @@
 YUI.add('juju-view-charm-collection', function(Y) {
 
   var views = Y.namespace('juju.views'),
-      Templates = views.Templates;
-
-  /*
-charm_store.plug(
-    Y.Plugin.DataSourceJSONSchema, {
-       cfg: {schema: {resultListLocator: 'results'}}
-    });
-charm_store.plug(Y.DataSourceCache, { max: 3});
-  */
-
-  // TODO dedupe this relative to service.js
-  var getElementsValuesMap = function(container, selector) {
-    var result = {};
-    container.all(selector).each(function(el) {
-      var value = null;
-      if (el.getAttribute('type') === 'checkbox') {
-        value = el.get('checked');
-      } else {
-        value = el.get('value');
-      }
-      result[el.get('name')] = value;
-    });
-
-    return result;
-  };
+      Templates = views.Templates,
+      utils = Y.namespace('juju.views.utils');
 
   Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
     // console.log('helper', iface_decl, options, this);
@@ -90,34 +67,7 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
         charm.last_change.created = new Date(last_modified * 1000);
       }
 
-      // TODO extract "userEditableConstraints" function and use it to filter
-      // the constraints here.
-
-      // TODO dedupe this code against service.js
-      var schema = charm.config.options,
-          settings = [];
-      Y.Object.each(schema, function(field_def, field_name) {
-        var entry = {
-          'name': field_name
-        };
-
-        if (schema[field_name].type === 'boolean') {
-          entry.isBool = true;
-
-          if (schema[field_name]['default']) {
-            // The "checked" string will be used inside an input tag
-            // like <input id="id" type="checkbox" checked>
-            entry.value = 'checked';
-          } else {
-            // The output will be <input id="id" type="checkbox">
-            entry.value = '';
-          }
-        } else {
-          entry.value = schema[field_name]['default'];
-        }
-
-        settings.push(Y.mix(entry, field_def));
-      });
+      var settings = utils.extractServiceSettings(charm.config.options);
 
       container.setHTML(this.template({
         charm: charm,
@@ -151,7 +101,7 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
 
       // Gather the configuration values from the form.
       var serviceName = container.one('#service-name').get('value'),
-          config = getElementsValuesMap(container,
+          config = utils.getElementsValuesMapping(container,
           '#service-config .config-field');
       console.log('requested charm configuration', config);
 

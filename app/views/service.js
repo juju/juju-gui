@@ -47,21 +47,6 @@ YUI.add('juju-view-service', function(Y) {
     }
   };
 
-  var getElementsValuesMap = function(container, cls) {
-    var result = {};
-    container.all(cls).each(function(el) {
-      var value = null;
-      if (el.getAttribute('type') === 'checkbox') {
-        value = el.get('checked');
-      } else {
-        value = el.get('value');
-      }
-      result[el.get('name')] = value;
-    });
-
-    return result;
-  };
-
   var ServiceRelations = Y.Base.create(
       'ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
@@ -227,7 +212,7 @@ YUI.add('juju-view-service', function(Y) {
 
           var values = (function() {
             var result = [],
-                map = getElementsValuesMap(container, '.constraint-field');
+                map = utils.getElementsValuesMapping(container, '.constraint-field');
 
             Y.Object.each(map, function(value, name) {
               result.push(name + '=' + value);
@@ -385,7 +370,7 @@ YUI.add('juju-view-service', function(Y) {
           container.one('#save-service-config').set('disabled', 'disabled');
 
           env.set_config(service.get('id'),
-              getElementsValuesMap(container, '.config-field'),
+              utils.getElementsValuesMapping(container, '.config-field'),
               utils.buildRpcHandler({
                 container: container,
                 successHandler: function()  {
