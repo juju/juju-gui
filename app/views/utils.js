@@ -30,6 +30,11 @@ YUI.add('juju-view-utils', function(Y) {
 
     return {
       delay: function(callback, ms) {
+        if(!ms) {
+          callback();
+          return;
+        }
+
         if (currentTask !== null && currentTask !== undefined) {
           clearTimeout(currentTask);
         }
