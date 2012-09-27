@@ -600,7 +600,7 @@ YUI.add('juju-view-environment', function(Y) {
               // copy the acutual relation data to the box
               Y.mix(bpair, rel.getAttrs());
               if (bpair.type === undefined) {
-                  bpair.type = pair[0];
+                  bpair.type = pair[0][0];
               }
               pairs.push(bpair);
             }
