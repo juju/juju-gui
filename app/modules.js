@@ -27,6 +27,10 @@ GlobalConfig = {
           fullpath: '/assets/javascripts/reconnecting-websocket.js'
         },
 
+        'juju-charm-search': {
+          fullpath: '/views/charm-search.js'
+        },
+
         // Views
         'juju-view-utils': {
           fullpath: '/views/utils.js'
@@ -46,10 +50,6 @@ GlobalConfig = {
 
         'juju-view-unit': {
           fullpath: '/views/unit.js'
-        },
-
-        'juju-view-charm-search': {
-          fullpath: '/views/charm-search.js'
         },
 
         'juju-view-charm-collection': {
@@ -74,8 +74,8 @@ GlobalConfig = {
             'juju-view-unit',
             'juju-view-charmsearch',
             'juju-view-charm',
-            'juju-view-charm-collection',
-            'juju-view-charm-search']
+            'juju-view-charm-collection'
+          ]
         },
 
         // Models

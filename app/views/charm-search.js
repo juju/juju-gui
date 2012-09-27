@@ -1,12 +1,15 @@
 'use strict';
 
-YUI.add('juju-view-charm-search', function(Y) {
+YUI.add('juju-charm-search', function(Y) {
 
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
-      Templates = views.Templates;
+      Templates = views.Templates,
 
-  var buildCharmSearchPopup = function(config) {
+      // Singleton
+      _instance = null;
+
+  var createInstance = function(config) {
 
     var charmStore = config.charm_store,
         env = config.env,
@@ -93,6 +96,27 @@ YUI.add('juju-view-charm-search', function(Y) {
       }
     }
 
+    function showPanel(showIt) {
+      if(showIt && isPopupVisible) {
+        return;
+      }
+
+      if(!showIt && !isPopupVisible) {
+        return;
+      }
+
+      if (showIt) {
+        Y.one('#content').append(container);
+        isPopupVisible = true;
+        updatePopupPosition();
+
+      } else {
+        isPopupVisible = false;
+        container.remove(false);
+
+      }
+    }
+
     function removeSearchEntries(destroy) {
       var list = charmsList.one('.search-result-div');
       var children = list.get('childNodes').remove(destroy);
@@ -163,34 +187,29 @@ YUI.add('juju-view-charm-search', function(Y) {
       });
     }
 
+    if(Y.one('#charm-search-trigger')) {
+      Y.one('#charm-search-trigger').on('click', togglePanel);
+    }
+
     return {
-      togglePanel: togglePanel,
-      getNode: function() {
-        return container;
-      }
+      showPanel: showPanel
     };
   };
 
-  var CharmSearchPopup = Y.Base.create(
-      'CharmSearchPopup', Y.View, [views.JujuBaseView], {
-
-        notifyToggle: function(evt) {
-          this._instance.togglePanel();
-        },
-
-        render: function() {
-          if (!this._instance) {
-            this._instance = buildCharmSearchPopup({
-              charm_store: this.get('charm_store'),
-              env: this.get('env')
-            });
-            Y.one('#charm-search-trigger').on('click', Y.bind(this.notifyToggle, this));
-          }
-        }
-
-      });
-  views.CharmSearchPopupView = CharmSearchPopup;
+  views.CharmSearchPopup = {
+    getInstance: function(config) {
+      if(!_instance) {
+        _instance = createInstance(config);
+      }
+      return _instance;
+    }
+  };
 
 }, '0.1.0', {
-  requires: []
+  requires: [
+    'view',
+    'juju-view-utils',
+    'node',
+    'handlebars'
+  ]
 });

@@ -164,6 +164,11 @@ YUI.add('juju-gui', function(Y) {
           this.dispatch();
         }
       }, this);
+
+      views.CharmSearchPopup.getInstance({
+        charm_store: this.charm_store,
+        env: this.env
+      });
     },
 
     enableBehaviors: function() {
@@ -329,17 +334,6 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
-    show_charm_search_view: function(req, res, next) {
-      if (!this.charmSearchPopInstance) {
-        this.charmSearchPopInstance = new views.CharmSearchPopupView({
-          charm_store: this.charm_store,
-          env: this.env
-        });
-        this.charmSearchPopInstance.render();
-      }
-      next();
-    },
-
     // Model interactions -> move to db layer
     load_service: function(evt) {
       console.log('load service', evt);
@@ -488,7 +482,6 @@ YUI.add('juju-gui', function(Y) {
       routes: {
         value: [
           {path: '*', callback: 'show_notifications_view'},
-          {path: '*', callback: 'show_charm_search_view'},
           {path: '/charms/', callback: 'show_charm_collection'},
           {path: '/charms/*charm_url',
             callback: 'show_charm',
@@ -534,5 +527,6 @@ YUI.add('juju-gui', function(Y) {
     'app-transitions',
     'base',
     'node',
-    'model']
+    'model',
+    'juju-charm-search']
 });
