@@ -187,8 +187,8 @@ YUI.add('juju-gui', function(Y) {
 
     navigate_to_service: function(e) {
       var service = e.service;
-      console.log(service.id, 'Evt.Nav.Router service target');
-      this.navigate('/service/' + service.id + '/');
+      console.log(service.get('id'), 'Evt.Nav.Router service target');
+      this.navigate('/service/' + service.get('id') + '/');
     },
 
     navigate_to_charm_collection: function(e) {

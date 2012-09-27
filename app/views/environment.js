@@ -202,7 +202,8 @@ YUI.add('juju-view-environment', function(Y) {
               })
             .on('dblclick', function(d) {
                 // Just show the service on double-click.
-                (self.service_click_actions.show_service)(d, this, self);
+                var service = self.serviceForBB(d);
+                (self.service_click_actions.show_service)(service, this, self);
               })
             .call(drag)
             .transition()
@@ -456,7 +457,8 @@ YUI.add('juju-view-environment', function(Y) {
                 .attr('class', 'add-relation')
                 .on('click.cp', function(d) {
                 // Get the service element
-                var context = this.parentNode.parentNode;
+                var context = this.parentNode.parentNode,
+                    service = self.serviceForBB(d);
                 self.service_click_actions
                     .toggle_control_panel(d, context, self);
                 self.service_click_actions
@@ -474,7 +476,8 @@ YUI.add('juju-view-environment', function(Y) {
                     .select('.relation');
                 var img = d3.select(this.parentNode)
                     .select('image');
-                var context = this.parentNode.parentNode.parentNode;
+                var context = this.parentNode.parentNode.parentNode,
+                    service = self.serviceForBB(d);
 
                 // Start the line at our image
                 dragline.attr('x1', parseInt(img.attr('x'), 10) + 16)
@@ -483,7 +486,7 @@ YUI.add('juju-view-environment', function(Y) {
 
                 // Start the add-relation process
                 self.service_click_actions
-                .add_relation_start(d, context, self);
+                .add_relation_start(service, context, self);
               })
               .on('drag', function() {
                 // Rubberband our potential relation line
@@ -532,11 +535,12 @@ YUI.add('juju-view-environment', function(Y) {
         .attr('class', 'view-service')
         .on('click.cp', function(d) {
                 // Get the service element
-                var context = this.parentNode.parentNode;
+                var context = this.parentNode.parentNode,
+                    service = self.serviceForBB(d);
                 self.service_click_actions
             .toggle_control_panel(d, context, self);
                 self.service_click_actions
-            .show_service(d, context, self);
+            .show_service(service, context, self);
               });
           view_service.append('image')
         .attr('xlink:href', '/assets/images/icons/icon_noshadow_view.png')
@@ -553,11 +557,12 @@ YUI.add('juju-view-environment', function(Y) {
         .attr('class', 'destroy-service')
         .on('click.cp', function(d) {
                 // Get the service element
-                var context = this.parentNode.parentNode;
+                var context = this.parentNode.parentNode,
+                    service = self.serviceForBB(d);
                 self.service_click_actions
             .toggle_control_panel(d, context, self);
                 self.service_click_actions
-            .destroyServiceConfirm(d, context, self);
+            .destroyServiceConfirm(service, context, self);
               });
           destroy_service.append('image')
         .attr('xlink:href', '/assets/images/icons/icon_noshadow_destroy.png')
@@ -608,6 +613,15 @@ YUI.add('juju-view-environment', function(Y) {
             }
           });
           return pairs;
+        },
+        
+        /*
+         * Utility method to get a service object from the DB
+         * given a BoundingBox.
+         */
+        serviceForBB: function(bb) {
+          var db = this.get('db');
+          return db.services.getById(bb.id);
         },
         /*
          * Finish DOM-dependent rendering
@@ -886,7 +900,6 @@ YUI.add('juju-view-environment', function(Y) {
                 rel.source().id,
                 rel.target().id,
                 function(resp) {
-                  container.one('#add-relation-btn').removeClass('active');
                   if (resp.err) {
                     console.log('Error adding relation');
                   }
