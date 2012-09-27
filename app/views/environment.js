@@ -237,7 +237,7 @@ YUI.add('juju-view-environment', function(Y) {
             link.each(self.draw_relation);
 
             // exit
-            //g.exit().remove();
+            g.exit().remove();
           }
 
           // Draw or schedule redraw of links
@@ -255,7 +255,8 @@ YUI.add('juju-view-environment', function(Y) {
             // Add a labelgroup
             var self = this, 
                 g = self.vis.selectAll('g.rel-group')
-                  .data(self.rel_data, function(r) {return r.modelIds();});
+                  .data(self.rel_data, 
+                  function(r) {return r.modelIds();});
              
              g.enter().insert('g', 'g.service')
               .attr('class', 'rel-group');
