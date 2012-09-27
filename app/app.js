@@ -119,7 +119,6 @@ YUI.add('juju-gui', function(Y) {
       // TODO: refactor per event views into a generic show view event.
       this.on('*:showService', this.navigate_to_service);
       this.on('*:showUnit', this.navigate_to_unit);
-      this.on('*:showCharmCollection', this.navigate_to_charm_collection);
       this.on('*:showCharm', this.navigate_to_charm);
       this.on('*:showEnvironment', this.navigate_to_environment);
 
