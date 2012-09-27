@@ -68,8 +68,8 @@ YUI.add('juju-view-environment', function(Y) {
 
           function rescale() {
             vis.attr('transform',
-                'translate(' + d3.event.translate + ')'
-                     + ' scale(' + d3.event.scale + ')');
+                'translate(' + d3.event.translate + ')' +
+                     ' scale(' + d3.event.scale + ')');
           }
 
           // Set up the visualization with a pack layout
@@ -157,10 +157,10 @@ YUI.add('juju-view-environment', function(Y) {
           this.update_data();
 
           var drag = d3.behavior.drag()
-            .on('drag', function(d,i) {
+            .on('drag', function(d, i) {
                 d.x += d3.event.dx;
                 d.y += d3.event.dy;
-                d3.select(this).attr('transform', function(d,i) {
+                d3.select(this).attr('transform', function(d, i) {
                   return d.translateStr();
                 });
                 update_links();
@@ -227,7 +227,7 @@ YUI.add('juju-view-environment', function(Y) {
 
           function update_links() {
             //enter
-            var g = self.draw_relation_group(g),
+            var g = self.draw_relation_group(),
                 link = g.selectAll('line.relation');
 
             //update (+ enter selection)
@@ -248,63 +248,63 @@ YUI.add('juju-view-environment', function(Y) {
         /*
          * Draw a new relation link with label and controls
          */
-         draw_relation_group: function(g) {
-            // Add a labelgroup
-            var self = this, 
-                g = self.vis.selectAll('g.rel-group')
-                  .data(self.rel_data, 
+        draw_relation_group: function() {
+          // Add a labelgroup
+          var self = this,
+              g = self.vis.selectAll('g.rel-group')
+                  .data(self.rel_data,
                   function(r) {return r.modelIds();});
-             
-             var enter = g.enter();
-                 
-             enter.insert('g', 'g.service')
+
+          var enter = g.enter();
+
+          enter.insert('g', 'g.service')
               .attr('class', 'rel-group')
               .append('svg:line', 'g.service')
               .attr('class', 'relation');
 
-             // TODO:: figure out a clean way to update position
-             g.selectAll('rel-label').remove();
-             g.selectAll('text').remove();
-             g.selectAll('rect').remove();
-             var label = g.append('g')
+          // TODO:: figure out a clean way to update position
+          g.selectAll('rel-label').remove();
+          g.selectAll('text').remove();
+          g.selectAll('rect').remove();
+          var label = g.append('g')
               .attr('class', 'rel-label')
               .attr('transform', function(d) {
-                  // XXX: This has to happen on update, not enter
-                  var connectors = d.source().getConnectorPair(d.target()),
-                      s = connectors[0],
-                      t = connectors[1];
-                  return 'translate(' +
-                      [Math.max(s[0], t[0]) -
-                       Math.abs((s[0] - t[0]) / 2),
-                       Math.max(s[1], t[1]) -
-                       Math.abs((s[1] - t[1]) / 2)] + ')';
-                })
+                // XXX: This has to happen on update, not enter
+                var connectors = d.source().getConnectorPair(d.target()),
+                    s = connectors[0],
+                    t = connectors[1];
+                return 'translate(' +
+                    [Math.max(s[0], t[0]) -
+                     Math.abs((s[0] - t[0]) / 2),
+                     Math.max(s[1], t[1]) -
+                     Math.abs((s[1] - t[1]) / 2)] + ')';
+              })
               .on('click', function(d) {
-                  // On click, offer to remove the relation
-                  self.removeRelationConfirm(d, this, self);
-                });
-            label.append('text')
+                // On click, offer to remove the relation
+                self.removeRelationConfirm(d, this, self);
+              });
+          label.append('text')
               .append('tspan')
               .text(function(d) {return d.type; });
-            label.insert('rect', 'text')
+          label.insert('rect', 'text')
               .attr('width', function(d) {
-                  return (Y.one(this.parentNode)
+                return (Y.one(this.parentNode)
                   .one('text').getClientRect() || {width: 0}).width + 10;
-                })
+              })
               .attr('height', 20)
               .attr('x', function() {
-                  return -parseInt(d3.select(this).attr('width'), 10) / 2;
-                })
+                return -parseInt(d3.select(this).attr('width'), 10) / 2;
+              })
               .attr('y', -10)
               .attr('rx', 10)
               .attr('ry', 10);
 
-             return g;
-         },
+          return g;
+        },
 
-         update_relation_group: function(group) {
-             
-         },
+        update_relation_group: function(group) {
+
+        },
 
         /*
          * Draw a relation between services.  Polylines take a list of points
@@ -415,7 +415,7 @@ YUI.add('juju-view-environment', function(Y) {
 
                 Y.Object.each(aggregate_map, function(value, key) {
                   aggregate_list.push({name: key, value: value});
-                  });
+                });
 
                 return status_chart_layout(aggregate_list);
               })
@@ -440,14 +440,14 @@ YUI.add('juju-view-environment', function(Y) {
                 return self.humanizeNumber(d.unit_count);
               });
 
-         this.addControlPanel(node);
+          this.addControlPanel(node);
 
         },
 
         addControlPanel: function(node) {
-            // Add a control panel around the service
-            var self = this;
-            var control_panel = node.append('g')
+          // Add a control panel around the service
+          var self = this;
+          var control_panel = node.append('g')
                 .attr('class', 'service-control-panel');
 
           // A button to add a relation between two services
@@ -461,7 +461,7 @@ YUI.add('juju-view-environment', function(Y) {
                     .toggle_control_panel(d, context, self);
                 self.service_click_actions
                     .add_relation_start(d, context, self);
-                    });
+              });
 
           // Drag controls on the add relation button, allowing
           // one to drag a line to create a relation
@@ -594,7 +594,7 @@ YUI.add('juju-view-environment', function(Y) {
             var pair = self.processRelation(rel);
 
             // skip peer for now
-            if (pair.length == 2) {
+            if (pair.length === 2) {
               var bpair = views.BoxPair()
                                  .source(pair[0][1])
                                  .target(pair[1][1]);
@@ -604,14 +604,14 @@ YUI.add('juju-view-environment', function(Y) {
               // copy the acutual relation data to the box
               Y.mix(bpair, rel.getAttrs());
               if (bpair.type === undefined) {
-                  bpair.type = pair[0][0];
+                bpair.type = pair[0][0];
               }
               pairs.push(bpair);
             }
           });
           return pairs;
         },
-        
+
         /*
          * Utility method to get a service object from the DB
          * given a BoundingBox.
@@ -750,7 +750,7 @@ YUI.add('juju-view-environment', function(Y) {
               width = 800,
               height = 600;
 
-            if (container.get('winHeight') &&
+          if (container.get('winHeight') &&
               Y.one('#overview-tasks') &&
               Y.one('.navbar')) {
             // Attempt to get the viewport height minus the navbar at top and

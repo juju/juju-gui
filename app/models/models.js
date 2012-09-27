@@ -427,8 +427,8 @@ YUI.add('juju-models', function(Y) {
               o[key] = value;
             });
             // XXX Fire model changed event manually if we need it later?
+          }
         }
-      }
       }
       else if (change_kind === 'remove') {
         if (Y.Lang.isValue(o)) {

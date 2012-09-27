@@ -62,8 +62,8 @@
           'public-address': '192.168.122.222',
           'id': 'mysql/0'
         }]
-        ],
-        'op': 'delta'
+      ],
+      'op': 'delta'
     };
 
     before(function(done) {
@@ -138,34 +138,34 @@
 
     // Ensure that we can add a relation
     it.skip('must be able to add a relation between services',
-       function(done) {
-         var view = new views.EnvironmentView({
-           container: container,
-           db: db,
-           env: env
-         }).render();
-         var add_relation = container.one('#add-relation-btn'),
-         service = container.one('.service');
-         add_relation.after('click', function() {
-           // view doesn't capture click event from test, so fire
-           // this manually
-           view.add_relation();
-           container.all('.selectable-service').size()
+        function(done) {
+          var view = new views.EnvironmentView({
+            container: container,
+            db: db,
+            env: env
+          }).render();
+          var add_relation = container.one('#add-relation-btn'),
+              service = container.one('.service');
+          add_relation.after('click', function() {
+            // view doesn't capture click event from test, so fire
+            // this manually
+            view.add_relation();
+            container.all('.selectable-service').size()
                         .should.equal(3);
-           service.simulate('click');
-         });
-         service.after('click', function() {
-           container.all('.selectable-service').size()
+            service.simulate('click');
+          });
+          service.after('click', function() {
+            container.all('.selectable-service').size()
                         .should.equal(2);
-           service.next().simulate('click');
-         });
-         service.next().after('click', function() {
-           container.all('.selectable-service').size()
+            service.next().simulate('click');
+          });
+          service.next().after('click', function() {
+            container.all('.selectable-service').size()
                         .should.equal(0);
-           done();
-         });
-         add_relation.simulate('click');
-       }
+            done();
+          });
+          add_relation.simulate('click');
+        }
     );
 
     // Ensure that the zoom controls work
@@ -256,9 +256,9 @@
               'active').should.equal(true);
           container.all('.service-control-panel.active').size()
               .should.equal(1);
-          });
         });
-        done();
+      });
+      done();
     });
 
     it('must be able to add a relation from the control panel',
@@ -450,5 +450,5 @@
           'service-mediawiki:service-haproxy');
     });
 
-});
+  });
 })();

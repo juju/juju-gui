@@ -20,10 +20,10 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
     var ret = '';
     Y.Object.each(iface_decl, function(value, name) {
       if (name) {
-      result.push({
+        result.push({
           name: name, 'interface': value['interface']
         });
-    }
+      }
     });
 
     if (result && result.length > 0) {
@@ -68,8 +68,9 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
         var charm = this.get('charm');
         // Convert time stamp TODO: should be in db layer
         var last_modified = charm.last_change.created;
-        if (last_modified)
+        if (last_modified) {
           charm.last_change.created = new Date(last_modified * 1000);
+        }
         container.setHTML(this.template({'charm': charm}));
 
         container.one('#charm-deploy').on(
@@ -128,7 +129,7 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
       CharmCollectionView.superclass.render.apply(this, arguments);
       container.setHTML(this.template({'charms': this.get('charms')}));
       // TODO: Use view.events structure to attach this
-      container.all('div.thumbnail').each(function(el ) {
+      container.all('div.thumbnail').each(function(el) {
         el.on('click', function(evt) {
           self.fire('showCharm', {charm_data_url: this.getData('charm-url')});
         });

@@ -272,7 +272,9 @@ YUI.add('juju-view-utils', function(Y) {
     function Box() {}
 
     Box.model = function(_) {
-      if (!arguments.length) return modelId;
+      if (!arguments.length) {
+        return modelId;
+      }
       modelId = [_.name, _.get('id')];
 
       // Copy all the attrs from model to Box
@@ -403,13 +405,13 @@ YUI.add('juju-view-utils', function(Y) {
     function pair(source, target) {}
 
     pair.source = function(_) {
-      if (!arguments.length) return source;
+      if (!arguments.length) { return source;}
       source = _;
       return pair;
     };
 
     pair.target = function(_) {
-      if (!arguments.length) return target;
+      if (!arguments.length) { return target;}
       target = _;
       return pair;
     };
