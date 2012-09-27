@@ -48,6 +48,10 @@ GlobalConfig = {
           fullpath: '/views/unit.js'
         },
 
+        'juju-view-charm-search': {
+          fullpath: '/views/charm-search.js'
+        },
+
         'juju-view-charmsearch': {
           fullpath: '/views/search.js'
         },
