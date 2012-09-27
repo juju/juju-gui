@@ -101,24 +101,24 @@ describe('utilities', function() {
           'The value "3peat" is not an integer.');
 
       assert.equal(utils.validate({an_int: ''}, schema).an_int,
-        'This field is required.');
+          'This field is required.');
       assert.equal(utils.validate({an_int: '  '}, schema).an_int,
-        'This field is required.');
+          'This field is required.');
 
       // Floating point numbers are not valid ints.
       assert.equal(utils.validate({an_int: '+'}, schema).an_int,
-        'The value "+" is not an integer.');
+          'The value "+" is not an integer.');
       assert.equal(utils.validate({an_int: '+1'}, schema).an_int,
-        undefined);
+          undefined);
       assert.equal(utils.validate({an_int: ' +1 '}, schema).an_int,
-        undefined);
+          undefined);
       // Just starting with a number is not enough.
       assert.equal(utils.validate({an_int: '-'}, schema).an_int,
-        'The value "-" is not an integer.');
+          'The value "-" is not an integer.');
       assert.equal(utils.validate({an_int: '-1'}, schema).an_int,
-        undefined);
+          undefined);
       assert.equal(utils.validate({an_int: ' -1 '}, schema).an_int,
-        undefined);
+          undefined);
 
     });
 
@@ -130,13 +130,26 @@ describe('utilities', function() {
           undefined);
       // Decimal points are not strictly required.
       assert.equal(utils.validate({a_float: '42'}, schema).a_float, undefined);
-      assert.equal(utils.validate({a_float: '-42'}, schema).a_float, undefined);
-      assert.equal(utils.validate({a_float: '+42'}, schema).a_float, undefined);
-      assert.equal(utils.validate({a_float: ' +42 '}, schema).a_float, undefined);
+
+      // Test numbers with - + and spaces
+      assert.equal(utils.validate({a_float: '-42'}, schema).a_float,
+          undefined);
+      assert.equal(utils.validate({a_float: '+42'}, schema).a_float,
+          undefined);
+      assert.equal(utils.validate({a_float: ' +42 '}, schema).a_float,
+          undefined);
+
       // Digits before the decimal point are not strictly required.
       assert.equal(utils.validate({a_float: '.5'}, schema).a_float, undefined);
-      assert.equal(utils.validate({a_float: '-0.5'}, schema).a_float, undefined);
-      assert.equal(utils.validate({a_float: ' -0.5 '}, schema).a_float, undefined);
+
+      // Test numbers with - + and spaces
+      assert.equal(utils.validate({a_float: '-0.5'}, schema).a_float,
+          undefined);
+      assert.equal(utils.validate({a_float: '+0.5'}, schema).a_float,
+          undefined);
+      assert.equal(utils.validate({a_float: ' -0.5 '}, schema).a_float,
+          undefined);
+
       // If a float field has an invalid value, an error is reported.
       assert.equal(utils.validate({a_float: 'nope!'}, schema).a_float,
           'The value "nope!" is not a float.');
@@ -145,16 +158,16 @@ describe('utilities', function() {
           'The value "3peat" is not a float.');
 
       assert.equal(utils.validate({a_float: ''}, schema).a_float,
-        'This field is required.');
+          'This field is required.');
       assert.equal(utils.validate({a_float: '  '}, schema).a_float,
-        'This field is required.');
+          'This field is required.');
 
       assert.equal(utils.validate({a_float: '+'}, schema).a_float,
-        'The value "+" is not a float.');
+          'The value "+" is not a float.');
       assert.equal(utils.validate({a_float: '-'}, schema).a_float,
-        'The value "-" is not a float.');
+          'The value "-" is not a float.');
       assert.equal(utils.validate({a_float: '.'}, schema).a_float,
-        'The value "." is not a float.');
+          'The value "." is not a float.');
     });
 
     it('should handle fields with defaults', function() {

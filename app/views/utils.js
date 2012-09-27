@@ -298,18 +298,18 @@ YUI.add('juju-view-utils', function(Y) {
     var errors = {};
 
     function toString(value) {
-      if(value === null || value === undefined) {
+      if (value === null || value === undefined) {
         return '';
       }
       return (String(value)).trim();
     }
 
     function isInt(value) {
-      return /^[-+]?[0-9]+$/.test(value);
+      return (/^[-+]?[0-9]+$/).test(value);
     }
 
     function isFloat(value) {
-      return /^[-+]?[0-9]+\.?[0-9]*$|^[0-9]*\.?[0-9]+$/.test(value);
+      return (/^[-+]?[0-9]+\.?[0-9]*$|^[0-9]*\.?[0-9]+$/).test(value);
     }
 
     Y.Object.each(schema, function(field_definition, name) {

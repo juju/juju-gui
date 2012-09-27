@@ -399,9 +399,9 @@ YUI.add('juju-view-service', function(Y) {
 
           var firstErrorKey = null;
           Y.Object.each(errors, function(value, key) {
-            var errorTag = Y.Node.create('<span/>');
-            errorTag.set('id', 'error-' + key);
-            errorTag.addClass('help-inline');
+            var errorTag = Y.Node.create('<span/>')
+              .set('id', 'error-' + key)
+              .addClass('help-inline');
 
             var field = container.one('#input-' + key);
             // Add the "error" class to the wrapping "control-group" div
