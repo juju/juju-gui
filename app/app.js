@@ -191,12 +191,6 @@ YUI.add('juju-gui', function(Y) {
       this.navigate('/service/' + service.get('id') + '/');
     },
 
-    navigate_to_charm_collection: function(e) {
-      console.log('Evt.Nav.Router charm collection');
-      var query = Y.one('#charm-search').get('value');
-      this.navigate('/charms/?q=' + query);
-    },
-
     navigate_to_charm: function(e) {
       console.log('Evt.Nav.Router charm');
       var charm_url = e.charm_data_url;
