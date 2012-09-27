@@ -227,8 +227,14 @@ YUI.add('juju-view-utils', function(Y) {
         errorDiv = div.one('#alert-area');
 
     if (!errorDiv) {
-      errorDiv = Y.Node.create('<div id="alert-area" class="alert ' +
-          alertClass + '"><span id="alert-area-text"></span></div>');
+      errorDiv = Y.Node.create('<div/>')
+        .set('id', 'alert-area')
+        .addClass('alert')
+        .addClass(alertClass);
+
+      Y.Node.create('<span/>')
+        .set('id', 'alert-area-text')
+        .appendTo(errorDiv);
 
       var close = Y.Node.create('<a class="close">x</a>');
 

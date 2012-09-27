@@ -391,26 +391,23 @@ YUI.add('juju-view-service', function(Y) {
             node.remove();
           });
 
-          // Remove old error messages
+          // Remove remove the "error" class from the "div"
+          // that previously had "help-inline" tags
           container.all('.error').each(function(node) {
             node.removeClass('error');
           });
 
           var firstErrorKey = null;
           Y.Object.each(errors, function(value, key) {
-            var errorTag = container.one('#error-' + key);
-            if (!errorTag) {
-              // This is the first time we have an error for this field.
-              // Create the new error "span" tag.
-              errorTag = Y.Node.create('<span id="error-' + key +
-                  '" class="help-inline"></span>');
+            var errorTag = Y.Node.create('<span/>');
+            errorTag.set('id', 'error-' + key);
+            errorTag.addClass('help-inline');
 
-              var field = container.one('#input-' + key);
-              // Add the "error" class to the wrapping "control-group" div
-              field.get('parentNode').get('parentNode').addClass('error');
+            var field = container.one('#input-' + key);
+            // Add the "error" class to the wrapping "control-group" div
+            field.get('parentNode').get('parentNode').addClass('error');
 
-              errorTag.appendTo(field.get('parentNode'));
-            }
+            errorTag.appendTo(field.get('parentNode'));
 
             errorTag.setHTML(value);
             if (!firstErrorKey) {
