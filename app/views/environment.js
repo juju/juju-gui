@@ -50,19 +50,19 @@ YUI.add('juju-view-environment', function(Y) {
           this.service_scale_width = d3.scale.log().range([164, 200]),
           this.service_scale_height = d3.scale.log().range([64, 100]);
           this.xscale = d3.scale.linear()
-                         .domain([-width / 2, width / 2])
-                         .range([0, width]),
+              .domain([-width / 2, width / 2])
+              .range([0, width]),
           this.yscale = d3.scale.linear()
-                         .domain([-height / 2, height / 2])
-                         .range([height, 0]);
+              .domain([-height / 2, height / 2])
+              .range([height, 0]);
 
           // Create a pan/zoom behavior manager.
           var zoom = d3.behavior.zoom()
-            .x(this.xscale)
-            .y(this.yscale)
-            .scaleExtent([0.25, 1.75])
-            .on('zoom', function() {
-                self.rescale(vis, d3.event);
+              .x(this.xscale)
+              .y(this.yscale)
+              .scaleExtent([0.25, 1.75])
+              .on('zoom', function() {
+                  self.rescale(vis, d3.event);
               });
           self.set('zoom', zoom);
 
@@ -101,10 +101,11 @@ YUI.add('juju-view-environment', function(Y) {
           this.update_canvas();
         },
 
+        /*
+         * Attach view to target, if target is an ancestor of the view
+         * this is a no-oop.
+         */
         attachView: function(target) {
-          // attach view to target
-          // if target is an ancestor of the view
-          // this is a no-oop
           if (Y.Lang.isString(target)) {
             target = Y.one(target);
           } else if (!Y.Lang.isValue(target)) {
@@ -148,6 +149,10 @@ YUI.add('juju-view-environment', function(Y) {
               function(d) {return d.model();});
         },
 
+        /*
+         * Attempt to reuse as much of the existing graph and view models
+         * as possible to re-render the graph
+         */
         update_canvas: function() {
           var self = this,
               tree = this.tree,
@@ -176,8 +181,8 @@ YUI.add('juju-view-environment', function(Y) {
           // around we layout only new nodes. This has the side
           // effect that node nodes can overlap and will
           // be fixed later
-          var new_services = this.services.filter(function(bb) {
-            return !Y.Lang.isNumber(bb.x);
+          var new_services = this.services.filter(function(boundingBox) {
+            return !Y.Lang.isNumber(boundingBox.x);
           });
           this.tree.nodes({children: new_services});
 
@@ -202,7 +207,7 @@ YUI.add('juju-view-environment', function(Y) {
               })
             .on('dblclick', function(d) {
                 // Just show the service on double-click.
-                var service = self.serviceForBB(d);
+                var service = self.serviceForBoundingBox(d);
                 (self.service_click_actions.show_service)(service, this, self);
               })
             .call(drag)
@@ -252,8 +257,9 @@ YUI.add('juju-view-environment', function(Y) {
           // Add a labelgroup
           var self = this,
               g = self.vis.selectAll('g.rel-group')
-                  .data(self.rel_data,
-                  function(r) {return r.modelIds();});
+                  .data(self.rel_data, function(r) {
+                      return r.modelIds();
+                  });
 
           var enter = g.enter();
 
@@ -307,9 +313,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-         * Draw a relation between services.  Polylines take a list of points
-         * in the form 'x y,( x y,)* x y'
-         *
+         * Draw a relation between services.  
          */
         draw_relation: function(relation) {
           var connectors = relation.source()
@@ -456,7 +460,7 @@ YUI.add('juju-view-environment', function(Y) {
                 .on('click.cp', function(d) {
                 // Get the service element
                 var context = this.parentNode.parentNode,
-                    service = self.serviceForBB(d);
+                    service = self.serviceForBoundingBox(d);
                 self.service_click_actions
                     .toggle_control_panel(d, context, self);
                 self.service_click_actions
@@ -475,7 +479,7 @@ YUI.add('juju-view-environment', function(Y) {
                 var img = d3.select(this.parentNode)
                     .select('image');
                 var context = this.parentNode.parentNode.parentNode,
-                    service = self.serviceForBB(d);
+                    service = self.serviceForBoundingBox(d);
 
                 // Start the line at our image
                 dragline.attr('x1', parseInt(img.attr('x'), 10) + 16)
@@ -534,7 +538,7 @@ YUI.add('juju-view-environment', function(Y) {
         .on('click.cp', function(d) {
                 // Get the service element
                 var context = this.parentNode.parentNode,
-                    service = self.serviceForBB(d);
+                    service = self.serviceForBoundingBox(d);
                 self.service_click_actions
             .toggle_control_panel(d, context, self);
                 self.service_click_actions
@@ -556,7 +560,7 @@ YUI.add('juju-view-environment', function(Y) {
         .on('click.cp', function(d) {
                 // Get the service element
                 var context = this.parentNode.parentNode,
-                    service = self.serviceForBB(d);
+                    service = self.serviceForBoundingBox(d);
                 self.service_click_actions
             .toggle_control_panel(d, context, self);
                 self.service_click_actions
@@ -616,9 +620,9 @@ YUI.add('juju-view-environment', function(Y) {
          * Utility method to get a service object from the DB
          * given a BoundingBox.
          */
-        serviceForBB: function(bb) {
+        serviceForBoundingBox: function(boundingBox) {
           var db = this.get('db');
-          return db.services.getById(bb.id);
+          return db.services.getById(boundingBox.id);
         },
         /*
          * Finish DOM-dependent rendering
@@ -692,7 +696,7 @@ YUI.add('juju-view-environment', function(Y) {
               },
               this)));
         },
-        /*
+     /*
      * Zoom in event handler.
      */
         zoom_out: function(evt) {

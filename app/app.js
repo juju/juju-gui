@@ -341,15 +341,15 @@ YUI.add('juju-gui', function(Y) {
           env: this.env},
         {render: true});
       } else {
+        /* The current impl makes extensive use of
+         * event handlers which are not being properly rebound
+         * when the view is attached.  There is a workable pattern
+         * to enable this but we have to land the basics of this branch
+         * first.
+         */
         this.showView('environment', {db: this.db, env: this.env}, {
           update: false,
           render: true,
-          /* The current impl makes extensive use of
-           * event handlers which are not being properly rebound
-           * when the view is attached.  There is a workable pattern
-           * to enable this but we have to land the basics of this branch
-           * first.
-           */
           callback: function(view) {
             //   view.attachView();
             view.postRender();

@@ -436,18 +436,22 @@
     it('must support composite modelIds on BoxPairs', function() {
       var b1 = new views.BoundingBox(),
           b2 = new views.BoundingBox(),
+          relation = new models.Relation({endpoints: [
+                  ['haproxy', {name: 'app'}],
+                  ['mediawiki', {name: 'proxy'}]]}),
           service1 = new models.Service({id: 'mediawiki'}),
           service2 = new models.Service({id: 'haproxy'});
 
       b1.model(service1);
       b2.model(service2);
-
       var pair = views.BoxPair()
                            .source(b1)
-                           .target(b2);
+                           .target(b2)
+                           .model(relation);
+      console.dir(pair);
       pair.modelIds().should.not.contain(',');
       pair.modelIds().should.equal(
-          'service-mediawiki:service-haproxy');
+          'service-mediawiki:app-service-haproxy:proxy');
     });
 
   });

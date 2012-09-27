@@ -185,6 +185,7 @@ YUI.add('juju-view-utils', function(Y) {
 
   views.JujuBaseView = JujuBaseView;
 
+
   views.createModalPanel = function(
       body_content, render_target, action_label, action_cb) {
     var panel = new Y.Panel({
@@ -267,6 +268,13 @@ YUI.add('juju-view-utils', function(Y) {
   utils.SERVER_ERROR_MESSAGE = 'An error ocurred.';
 
 
+  /*
+   * Utility class that encapsulates Y.Models and keeps their positional
+   * state within an svg canvas. 
+   * 
+   * As a convenience attributes of the encapsulated model are exposed 
+   * directly as attributes.
+   */
   function BoundingBox() {
     var x, y, w, h, value, modelId;
     function Box() {}
@@ -332,7 +340,8 @@ YUI.add('juju-view-utils', function(Y) {
      */
     Box.getNearestConnector = function(other_box) {
       var connectors = this.getConnectors(),
-          result = null, shortest_d = Infinity,
+          result = null, 
+          shortest_d = Infinity,
           source = other_box;
       // duck typing
       if ('getXY' in other_box) {
@@ -358,7 +367,8 @@ YUI.add('juju-view-utils', function(Y) {
     Box.getConnectorPair = function(other_box) {
       var sc = Box.getConnectors(),
           oc = other_box.getConnectors(),
-          result = null, shortest_d = Infinity;
+          result = null, 
+          shortest_d = Infinity;
 
       Y.each(sc, function(ep1) {
         Y.each(oc, function(ep2) {
@@ -386,12 +396,6 @@ YUI.add('juju-view-utils', function(Y) {
 
   views.BoundingBox = BoundingBox;
 
-  views.BoundingBox = Y.extend(BoundingBox, Y.Base, {
-
-
-
-  });
-
   views.toBoundingBox = function(model) {
     var box = new BoundingBox();
     box.model(model);
@@ -402,7 +406,15 @@ YUI.add('juju-view-utils', function(Y) {
   function BoxPair() {
     var source, target;
 
-    function pair(source, target) {}
+    function pair() {}
+      
+    /*
+     * Bind an actual model object
+     */
+    pair.model = function (_) {
+      Y.mix(pair, _.getAttrs());
+      return pair;
+    };
 
     pair.source = function(_) {
       if (!arguments.length) { return source;}
@@ -417,7 +429,11 @@ YUI.add('juju-view-utils', function(Y) {
     };
 
     pair.modelIds = function() {
-      return source.modelId() + ':' + target.modelId();
+      if (this.endpoints !== undefined) {
+      return source.modelId() + ':' +  this.endpoints[0][1].name +
+            '-' + target.modelId() + ':' + this.endpoints[1][1].name;
+      } 
+      return source.modelId() + '-' + target.modelId();
     };
 
     return pair;
