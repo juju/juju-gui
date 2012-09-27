@@ -226,14 +226,10 @@ YUI.add('juju-view-environment', function(Y) {
 
           function update_links() {
             //enter
-            var result = self.draw_relation_group(g),
-              g = result.g,
-              link = g.selectAll('line.relation');
+            var g = self.draw_relation_group(g),
+                link = g.selectAll('line.relation');
 
             //update (+ enter selection)
-            // we have to use YUI's iteration as we can make sure
-            // not to lose reference to 'self'
-            //Y.each(link, self.update_relation_group, self);
             link.each(self.draw_relation);
 
             // exit
@@ -258,15 +254,22 @@ YUI.add('juju-view-environment', function(Y) {
                   .data(self.rel_data, 
                   function(r) {return r.modelIds();});
              
-             g.enter().insert('g', 'g.service')
+             var enter = g.enter();
+                 
+             enter.insert('g', 'g.service')
               .attr('class', 'rel-group')
               .append('svg:line', 'g.service')
               .attr('class', 'relation');
 
-            var label = g.append('g')
+             // TODO:: figure out a clean way to update position
+             g.selectAll('rel-label').remove();
+             g.selectAll('text').remove();
+             g.selectAll('rect').remove();
+             var label = g.append('g')
               .attr('class', 'rel-label')
               .attr('transform', function(d) {
                   // XXX: This has to happen on update, not enter
+                      console.log("label", this, d);
                   var connectors = d.source().getConnectorPair(d.target()),
                       s = connectors[0],
                       t = connectors[1];
@@ -296,7 +299,7 @@ YUI.add('juju-view-environment', function(Y) {
               .attr('rx', 10)
               .attr('ry', 10);
 
-             return {g: g, label: label};
+             return g;
          },
 
          update_relation_group: function(group) {
@@ -309,7 +312,6 @@ YUI.add('juju-view-environment', function(Y) {
          *
          */
         draw_relation: function(relation) {
-            console.log("draw_rel", this, relation);
           var connectors = relation.source()
                     .getConnectorPair(relation.target()),
               s = connectors[0],
@@ -347,7 +349,6 @@ YUI.add('juju-view-environment', function(Y) {
                 if ((d3.event.relatedTarget &&
                     d3.event.relatedTarget.nodeName === 'rect') &&
                     self.hasSVGClass(this, 'selectable-service')) {
-                  console.log('mouseover', d3.event);
                   self.set('potential_drop_point_service', d);
                   self.set('potential_drop_point_rect', this);
                   self.addSVGClass(this, 'hover');
@@ -447,66 +448,66 @@ YUI.add('juju-view-environment', function(Y) {
             // Add a control panel around the service
             var self = this;
             console.log("addControlPanel", self, node);
-          var control_panel = node.append('g')
-        .attr('class', 'service-control-panel');
+            var control_panel = node.append('g')
+                .attr('class', 'service-control-panel');
 
           // A button to add a relation between two services
           var add_rel = control_panel.append('g')
-        .attr('class', 'add-relation')
-        .on('click.cp', function(d) {
+                .attr('class', 'add-relation')
+                .on('click.cp', function(d) {
                 // Get the service element
                 var context = this.parentNode.parentNode;
                 self.service_click_actions
-                .toggle_control_panel(d, context, self);
+                    .toggle_control_panel(d, context, self);
                 self.service_click_actions
-                .add_relation_start(d, context, self);
-              });
+                    .add_relation_start(d, context, self);
+                    });
 
           // Drag controls on the add relation button, allowing
           // one to drag a line to create a relation
           var drag_relation = add_rel.append('line')
-        .attr('class', 'relation pending-relation unused');
+              .attr('class', 'relation pending-relation unused');
           var drag_relation_behavior = d3.behavior.drag()
-        .on('dragstart', function(d) {
+              .on('dragstart', function(d) {
                 // Get our line, the image, and the current service
                 var dragline = d3.select(this.parentNode)
-            .select('.relation');
+                    .select('.relation');
                 var img = d3.select(this.parentNode)
-            .select('image');
+                    .select('image');
                 var context = this.parentNode.parentNode.parentNode;
 
                 // Start the line at our image
                 dragline.attr('x1', parseInt(img.attr('x'), 10) + 16)
-            .attr('y1', parseInt(img.attr('y'), 10) + 16);
+                    .attr('y1', parseInt(img.attr('y'), 10) + 16);
                 self.removeSVGClass(dragline.node(), 'unused');
 
                 // Start the add-relation process
                 self.service_click_actions
-            .add_relation_start(d, context, self);
+                .add_relation_start(d, context, self);
               })
-        .on('drag', function() {
+              .on('drag', function() {
                 // Rubberband our potential relation line
                 var dragline = d3.select(this.parentNode)
-            .select('.relation');
+                    .select('.relation');
                 dragline.attr('x2', d3.event.x)
-            .attr('y2', d3.event.y);
+                    .attr('y2', d3.event.y);
               })
-        .on('dragend', function(d) {
+              .on('dragend', function(d) {
                 // Get the line, the endpoint service, and the target <rect>.
                 var dragline = d3.select(this.parentNode)
-            .select('.relation');
+                    .select('.relation');
                 var context = self.get('potential_drop_point_rect');
                 var endpoint = self.get('potential_drop_point_service');
 
                 // Get rid of our drag line
                 dragline.attr('x2', dragline.attr('x1'))
-            .attr('y2', dragline.attr('y1'));
+                    .attr('y2', dragline.attr('y1'));
                 self.addSVGClass(dragline.node(), 'unused');
 
                 // If we landed on a rect, add relation, otherwise, cancel.
                 if (context) {
                   self.service_click_actions
-              .add_relation_end(endpoint, context, self);
+                  .add_relation_end(endpoint, context, self);
                 } else {
                   // TODO clean up, abstract
                   self.add_relation(); // will clear the state
