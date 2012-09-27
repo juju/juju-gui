@@ -228,7 +228,7 @@ YUI.add('juju-view-environment', function(Y) {
             //enter
             var result = self.draw_relation_group(g),
               g = result.g,
-              link = result.link;
+              link = g.selectAll('line.relation');
 
             //update (+ enter selection)
             // we have to use YUI's iteration as we can make sure
@@ -259,10 +259,10 @@ YUI.add('juju-view-environment', function(Y) {
                   function(r) {return r.modelIds();});
              
              g.enter().insert('g', 'g.service')
-              .attr('class', 'rel-group');
+              .attr('class', 'rel-group')
+              .append('svg:line', 'g.service')
+              .attr('class', 'relation');
 
-            var link = g.append('svg:line', 'g.service')
-                 .attr('class', 'relation');
             var label = g.append('g')
               .attr('class', 'rel-label')
               .attr('transform', function(d) {
@@ -296,7 +296,7 @@ YUI.add('juju-view-environment', function(Y) {
               .attr('rx', 10)
               .attr('ry', 10);
 
-             return {g: g, link: link, label: label};
+             return {g: g, label: label};
          },
 
          update_relation_group: function(group) {
