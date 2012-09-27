@@ -270,7 +270,6 @@ YUI.add('juju-view-environment', function(Y) {
               .attr('class', 'rel-label')
               .attr('transform', function(d) {
                   // XXX: This has to happen on update, not enter
-                      console.log("label", this, d);
                   var connectors = d.source().getConnectorPair(d.target()),
                       s = connectors[0],
                       t = connectors[1];
@@ -448,7 +447,6 @@ YUI.add('juju-view-environment', function(Y) {
         addControlPanel: function(node) {
             // Add a control panel around the service
             var self = this;
-            console.log("addControlPanel", self, node);
             var control_panel = node.append('g')
                 .attr('class', 'service-control-panel');
 
@@ -597,7 +595,6 @@ YUI.add('juju-view-environment', function(Y) {
 
             // skip peer for now
             if (pair.length == 2) {
-                console.log("boxing pair", pair);
               var bpair = views.BoxPair()
                                  .source(pair[0][1])
                                  .target(pair[1][1]);
@@ -833,7 +830,7 @@ YUI.add('juju-view-environment', function(Y) {
                   ev.preventDefault();
                   ev.target.set('disabled', true);
                   view.service_click_actions
-          .destroyService(m, context, view);
+                      .destroyService(m, context, view);
                 },
                 this)));
           },
