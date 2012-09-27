@@ -290,12 +290,24 @@ YUI.add('juju-view-utils', function(Y) {
     console.group('view.utils.validate');
     console.log('validating', values, 'against', schema);
     var errors = {};
-    var getString = function(value) {
-      var result = value + '';
-      return result.trim();
-    };
+
+    function toString(value) {
+      if(value === null || value === undefined) {
+        return '';
+      }
+      return (String(value)).trim();
+    }
+
+    function isInt(value) {
+      return /^[-+]?[0-9]+$/.test(value);
+    }
+
+    function isFloat(value) {
+      return /^[-+]?[0-9]+\.?[0-9]*$|^[0-9]*\.?[0-9]+$/.test(value);
+    }
+
     Y.Object.each(schema, function(field_definition, name) {
-      var value = values[name];
+      var value = toString(values[name]);
       console.log('validating field', name, 'with value', value);
 
       if (field_definition.type === 'int') {
@@ -303,7 +315,10 @@ YUI.add('juju-view-utils', function(Y) {
           if (field_definition['default'] === undefined) {
             errors[name] = 'This field is required.';
           }
-        } else if (!/^[-+]?[0-9]+$/.test(getString(value))) {
+        } else if (!isInt(value)) {
+          // We don't use parseInt to validate integers because
+          // it is far too lenient and the back-end code will generate
+          // errors on some of the things it lets through.
           errors[name] = 'The value "' + value + '" is not an integer.';
         }
       } else if (field_definition.type === 'float') {
@@ -311,7 +326,7 @@ YUI.add('juju-view-utils', function(Y) {
           if (field_definition['default'] === undefined) {
             errors[name] = 'This field is required.';
           }
-        } else if (!/^[-+]?[0-9]*\.?[0-9]*$/.test(getString(value))) {
+        } else if (!isFloat(value)) {
           errors[name] = 'The value "' + value + '" is not a float.';
         }
       }

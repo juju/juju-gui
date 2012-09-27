@@ -78,8 +78,7 @@
       var rendered_names = container.all('div.thumbnail').get('id');
       var expected_names = db.units.map(function(u) {return u.id;});
       expected_names.sort();
-      // XXX Why is this commented out? (JBY)
-      //assert.deepEqual(rendered_names, expected_names);
+      assert.deepEqual(rendered_names, expected_names);
       rendered_names.should.eql(expected_names);
     });
 

@@ -116,7 +116,7 @@
           // testing FALSE values (checkbox);
           assert.isFalse(input.get('checked'));
         } else {
-          input.get('value').should.equal(value + '');
+          input.get('value').should.equal(String(value));
         }
       });
     });
