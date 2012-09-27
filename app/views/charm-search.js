@@ -9,6 +9,7 @@ YUI.add('juju-view-charm-search', function(Y) {
   var buildCharmSearchPopup = function(config) {
 
     var charmStore = config.charm_store,
+        env = config.env,
 
         container = Y.Node.create(views.Templates['charm-search-pop']({
           title: 'All Charms'
@@ -59,7 +60,12 @@ YUI.add('juju-view-charm-search', function(Y) {
     // The panes starts with the "charmsList" visible
     container.one('.popover-content').append(charmsList);
 
-    charmsList.one('.search-field').on('keypress', function(ev) {
+    charmsList.one('.clear').on('click', function() {
+      updateList(null);
+      charmsList.one('.charms-search-field').set('value', '');
+    });
+
+    charmsList.one('.charms-search-field').on('keyup', function(ev) {
       updateList(null);
 
       var field = ev.target;
@@ -107,7 +113,17 @@ YUI.add('juju-view-charm-search', function(Y) {
         result.list.all('.charm-result-entry').on('click', function(ev) {
           showCharmDetails(ev.target.getAttribute('name'));
         });
+
+        result.list.all('.charm-result-entry-deploy').on('click', function(ev) {
+          deployCharm(ev.target.getAttribute('data-charm-url'));
+        });
       }
+    }
+
+    function deployCharm(url) {
+      env.deploy(url, function(msg) {
+        console.log(url + ' deployed');
+      });
     }
 
     function updatePopupPosition() {
@@ -165,7 +181,8 @@ YUI.add('juju-view-charm-search', function(Y) {
         render: function() {
           if (!this._instance) {
             this._instance = buildCharmSearchPopup({
-              charm_store: this.get('charm_store')
+              charm_store: this.get('charm_store'),
+              env: this.get('env')
             });
             Y.one('#charm-search-trigger').on('click', Y.bind(this.notifyToggle, this));
           }

@@ -1,11 +1,15 @@
 <div>
     <div>
-        <ul>
+        <ul  class="unstyled">
             {{#charms}}
-            <li>
-                <div data-charm-url="{{data_url}}">
-                    <h5>~{{owner}}/{{series}}/{{name}} <i class="icon-user"></i></h5>
-                    <span>{{summary}}</span>
+            <li class="notice">
+                <div>
+                    <h3>~{{owner}}/{{series}}/{{name}}</h3>
+                    <div>{{summary}}</div>
+                    <a  data-charm-url="{{data_url}}"
+                        class="btn btn-inverse charm-result-entry-deploy">
+                        Deploy
+                    </a>
                 </div>
             </li>
             {{/charms}}

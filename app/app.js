@@ -332,7 +332,8 @@ YUI.add('juju-gui', function(Y) {
     show_charm_search_view: function(req, res, next) {
       if (!this.charmSearchPopInstance) {
         this.charmSearchPopInstance = new views.CharmSearchPopupView({
-          charm_store: this.charm_store
+          charm_store: this.charm_store,
+          env: this.env
         });
         this.charmSearchPopInstance.render();
       }
