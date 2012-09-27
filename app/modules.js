@@ -52,10 +52,6 @@ GlobalConfig = {
           fullpath: '/views/charm-search.js'
         },
 
-        'juju-view-charmsearch': {
-          fullpath: '/views/search.js'
-        },
-
         'juju-view-charm-collection': {
           fullpath: '/views/charm.js'
         },
@@ -113,7 +109,8 @@ GlobalConfig = {
           requires: [
             'juju-controllers',
             'juju-views',
-            'juju-models'
+            'juju-models',
+            'juju-view-charm-search'
           ]
         }
       }
