@@ -61,11 +61,6 @@ YUI.add('juju-gui', function(Y) {
         parent: 'charm_collection'
       },
 
-      charm_search: {
-        type: 'juju.views.charm_search',
-        preserve: true
-      },
-
       notifications: {
         type: 'juju.views.NotificationsView',
         preserve: true
@@ -317,20 +312,10 @@ YUI.add('juju-gui', function(Y) {
     /*
      * Persistent Views
      *
-     * 'charm_search' and 'notifications' are preserved views that remain
-     * rendered on all main views.  we manually create an instance of this
-     * view and insert it into the App's view metadata.
+     * 'notifications' is a preserved views that remains rendered on all main
+     * views.  we manually create an instance of this view and insert it into
+     * the App's view metadata.
      */
-    show_charm_search: function(req, res, next) {
-      var view = this.getViewInfo('charm_search'),
-          instance = view.instance;
-      if (!instance) {
-        view.instance = new views.charm_search({app: this});
-        view.instance.render();
-      }
-      next();
-    },
-
     show_notifications_view: function(req, res, next) {
       var view = this.getViewInfo('notifications'),
           instance = view.instance;
@@ -492,7 +477,6 @@ YUI.add('juju-gui', function(Y) {
     ATTRS: {
       routes: {
         value: [
-          {path: '*', callback: 'show_charm_search'},
           {path: '*', callback: 'show_notifications_view'},
           {path: '/charms/', callback: 'show_charm_collection'},
           {path: '/charms/*charm_url',
