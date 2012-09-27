@@ -74,7 +74,8 @@ GlobalConfig = {
             'juju-view-unit',
             'juju-view-charmsearch',
             'juju-view-charm',
-            'juju-view-charm-collection']
+            'juju-view-charm-collection',
+            'juju-view-charm-search']
         },
 
         // Models

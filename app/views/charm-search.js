@@ -4,200 +4,176 @@ YUI.add('juju-view-charm-search', function (Y) {
 
   var views = Y.namespace('juju.views'),
     utils = Y.namespace('juju.views.utils'),
+      Templates = views.Templates;
 
-    container = Y.Node.create(views.Templates['charm-search-pop']({
-      title:'All Charms'
-    })),
-    charmsList = Y.Node.create(views.Templates['charm-search-result']({})),
-    charmDetailTemplate = views.Templates['charm-search-detail'],
+  var buildCharmSearchPopup = function (config) {
 
-    isPopupVisible = false,
+    var charmStore = config.charm_store,
 
-  //XXX replace it by the real thing
-    model = TEMP_FAKE_MODEL,
+      container = Y.Node.create(views.Templates['charm-search-pop']({
+        title:'All Charms'
+      })),
+      charmsList = Y.Node.create(views.Templates['charm-search-result']({})),
+      charmDetailTemplate = views.Templates['charm-search-detail'],
 
-    delayedFilter = utils.buildDelayedTask();
+      isPopupVisible = false,
 
-  // The panes starts with the "charmsList" visible
-  container.one('.popover-content').append(charmsList);
+      model = (function () {
 
-  charmsList.one('.search-field').on('keypress', function(ev) {
-    updateList(null);
+        function filterRequest(query, callback) {
 
-    var field = ev.target;
-    delayedFilter.delay(function() {
-      filterCharms(field.get('value'));
-    }, 500);
-  });
+          charmStore.sendRequest({
+            request:'search/json?search_text=' + query,
+            callback:{
+              'success':function (io_request) {
+                var result_set = Y.JSON.parse(
+                  io_request.response.results[0].responseText);
+                console.log('results update', result_set, this);
+                callback(result_set.results);
+              },
+              'failure':function er(e) {
+                console.error(e.error);
+              }
+            }});
+        }
 
-  // Toggle the charm search panel
-  Y.all('.charm-search-trigger').on('click', function (e) {
-    if (isPopupVisible) {
-      isPopupVisible = false;
-      container.remove(false);
 
-    } else {
-      Y.one('#content').append(container);
-      isPopupVisible = true;
-      updatePopupPosition();
+        return {
+          filter:function (query, callback) {
+            filterRequest(query, callback);
+          },
+          getByName:function (name, callback) {
+            filterRequest(name, function (results) {
+              if (results && results.length) {
+                callback(results[0]);
+              } else {
+                callback(null);
+              }
+            });
+          }
+        };
+      })(),
+
+      delayedFilter = utils.buildDelayedTask();
+
+    // The panes starts with the "charmsList" visible
+    container.one('.popover-content').append(charmsList);
+
+    charmsList.one('.search-field').on('keypress', function (ev) {
+      updateList(null);
+
+      var field = ev.target;
+      delayedFilter.delay(function () {
+        filterCharms(field.get('value'));
+      }, 500);
+    });
+
+    // Update position if we resize the window
+    Y.on('windowresize', function (e) {
+      if (isPopupVisible) {
+        updatePopupPosition();
+      }
+    });
+
+    function togglePanel() {
+      if (isPopupVisible) {
+        isPopupVisible = false;
+        container.remove(false);
+
+      } else {
+        Y.one('#content').append(container);
+        isPopupVisible = true;
+        updatePopupPosition();
+      }
     }
-  });
 
-  // Update position if we resize the window
-  Y.on('windowresize', function(e) {
-    if(isPopupVisible) {
-      updatePopupPosition();
+    function removeSearchEntries(destroy) {
+      var list = charmsList.one('.search-result-div');
+      var children = list.get('childNodes').remove(destroy);
+      return {
+        list:list,
+        children:children
+      };
     }
-  });
 
-  function removeSearchEntries(destroy) {
-    var list = charmsList.one('.search-result-div');
-    var children = list.get('childNodes').remove(destroy);
-    return {
-      list: list,
-      children: children
-    };
-  }
+    function updateList(entries) {
+      var result = removeSearchEntries(false);
 
-  function updateList(entries) {
-    var result = removeSearchEntries(false);
+      if (updateList) {
+        result.list.append(views.Templates['charm-search-result-entries']({
+          charms:entries
+        }));
 
-    if(updateList) {
-      result.list.append(views.Templates['charm-search-result-entries']({
-        items: entries
-      }));
+        result.list.all('.charm-result-entry').on('click', function (ev) {
+          showCharmDetails(ev.target.getAttribute('name'));
+        });
+      }
+    }
 
-      result.list.all('.charm-result-entry').on('click', function (ev) {
-        showCharmDetails(ev.target.getAttribute('name'));
+    function updatePopupPosition() {
+      var pos = getCalculatePanelPosition();
+      container.setXY([pos.x, pos.y]);
+      container.one('.arrow').setX(pos.arrowX);
+    }
+
+    function getCalculatePanelPosition() {
+      //Y.one('#content')
+      var icon = Y.one('#charm-search-icon'),
+        pos = icon.getXY(),
+        content = Y.one('#content'),
+        contentWidth = content.getDOMNode().offsetWidth,
+        containerWidth = container.getDOMNode().offsetWidth;
+
+      return {
+        x:content.getX() + contentWidth - containerWidth,
+        y:pos[1] + 30,
+        arrowX:icon.getX() + (icon.getDOMNode().offsetWidth / 2)
+      };
+    }
+
+    function showCharmDetails(name) {
+      updateList(null);
+
+      model.getByName(name, function (bean) {
+        var result = Y.Node.create(charmDetailTemplate(bean));
+
+        charmsList.append(result);
       });
     }
-  }
 
-  function updatePopupPosition() {
-    var pos = getCalculatePanelPosition();
-    container.setXY([pos.x, pos.y]);
-    container.one('.arrow').setX(pos.arrowX);
-  }
-
-  function getCalculatePanelPosition() {
-    //Y.one('#content')
-    var icon = Y.one('#charm-search-icon'),
-      pos = icon.getXY(),
-      content = Y.one('#content'),
-      contentWidth = content.getDOMNode().offsetWidth,
-      containerWidth = container.getDOMNode().offsetWidth;
+    function filterCharms(name) {
+      model.filter(name, function (beans) {
+        updateList(beans);
+      });
+    }
 
     return {
-      x:content.getX() + contentWidth - containerWidth,
-      y:pos[1] + 30,
-      arrowX: icon.getX() + (icon.getDOMNode().offsetWidth / 2)
+      togglePanel:togglePanel,
+      getNode:function () {
+        return container;
+      }
     };
-  }
+  };
 
-  function showCharmDetails(name) {
-    updateList(null);
+  var CharmSearchPopup = Y.Base.create(
+    'CharmSearchPopup', Y.View, [views.JujuBaseView], {
 
-    model.getByName(name, function (bean) {
-      var result = Y.Node.create(charmDetailTemplate(bean));
+      notifyToggle:function (evt) {
+        this._instance.togglePanel();
+      },
 
-      charmsList.append(result);
+      render:function () {
+        if(!this._instance) {
+          this._instance = buildCharmSearchPopup({
+            charm_store: this.get('charm_store')
+          });
+          Y.one('#charm-search-trigger').on('click', Y.bind(this.notifyToggle, this));
+        }
+      }
+
     });
-  }
-
-  function filterCharms(name) {
-    model.filter(name, function (beans) {
-      updateList(beans);
-    });
-  }
+  views.CharmSearchPopupView = CharmSearchPopup;
 
 }, '0.1.0', {
   requires:[]
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//XXX replace it by the real thing
-var TEMP_FAKE_MODEL = (function () {
-
-  var data = [
-    {
-      name:'name a',
-      detail:'detail a'
-    },
-    {
-      name:'name b',
-      detail:'detail b'
-    },
-    {
-      name:'name c',
-      detail:'detail c'
-    },
-    {
-      name:'name d',
-      detail:'detail d'
-    },
-    {
-      name:'name e',
-      detail:'detail e'
-    }
-  ];
-
-  return {
-    filter:function (name, callback) {
-      var regex = new RegExp('^' + name, 'i');
-      var result = [];
-      for (var i = 0; i < data.length; i++) {
-        if (regex.test(data[i].name)) {
-          result.push(data[i]);
-        }
-      }
-      callback(result);
-    },
-    getByName:function (name, callback) {
-      for (var i = 0; i < data.length; i++) {
-        if (name === data[i].name) {
-          callback(data[i]);
-          return;
-        }
-      }
-    }
-  };
-})();

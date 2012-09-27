@@ -114,12 +114,13 @@ YUI.add('juju-gui', function(Y) {
       this.charm_store = new Y.DataSource.IO({
         source: this.get('charm_store_url')});
 
+
+
       // Event subscriptions
 
       // TODO: refactor per event views into a generic show view event.
       this.on('*:showService', this.navigate_to_service);
       this.on('*:showUnit', this.navigate_to_unit);
-      this.on('*:showCharmCollection', this.navigate_to_charm_collection);
       this.on('*:showCharm', this.navigate_to_charm);
       this.on('*:showEnvironment', this.navigate_to_environment);
 
@@ -163,7 +164,6 @@ YUI.add('juju-gui', function(Y) {
           this.dispatch();
         }
       }, this);
-
     },
 
     enableBehaviors: function() {
@@ -190,12 +190,6 @@ YUI.add('juju-gui', function(Y) {
           e.service.get('id'), 'debug', 'Evt.Nav.Router service target');
       var service = e.service;
       this.navigate('/service/' + service.get('id') + '/');
-    },
-
-    navigate_to_charm_collection: function(e) {
-      console.log('Evt.Nav.Router charm collection');
-      var query = Y.one('#charm-search').get('value');
-      this.navigate('/charms/?q=' + query);
     },
 
     navigate_to_charm: function(e) {
@@ -331,6 +325,16 @@ YUI.add('juju-gui', function(Y) {
               env: this.env,
               notifications: this.db.notifications});
         view.instance.render();
+      }
+      next();
+    },
+
+    show_charm_search_view: function(req, res, next) {
+      if (!this.charmSearchPopInstance) {
+        this.charmSearchPopInstance = new views.CharmSearchPopupView({
+          charm_store: this.charm_store
+        });
+        this.charmSearchPopInstance.render();
       }
       next();
     },
@@ -483,6 +487,7 @@ YUI.add('juju-gui', function(Y) {
       routes: {
         value: [
           {path: '*', callback: 'show_notifications_view'},
+          {path: '*', callback: 'show_charm_search_view'},
           {path: '/charms/', callback: 'show_charm_collection'},
           {path: '/charms/*charm_url',
             callback: 'show_charm',

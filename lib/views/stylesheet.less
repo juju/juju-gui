@@ -55,12 +55,8 @@ body {
     .nav-alerts-charms {
         position: absolute;
         top: 5px;
-        right: 11px;
+        right: 21px;
         padding: 12px;
-    }
-
-    #omnibar {
-        display: none;
     }
 }
 
@@ -367,10 +363,12 @@ g.unit {
 
 #juju-search-charm-panel {
     display: block;
+    padding-top: 1px;
+    padding-bottom: 1px;
     padding-left: 0px;
     padding-right: 0px;
 
-    .popover-inner {
+    .search-charm-inner {
         width: 394px;
         height: 500px;
     }
@@ -392,6 +390,7 @@ g.unit {
         }
     }
     .search-result-div {
-
+        height: 424px;
+        overflow: auto;
     }
 }

@@ -1,5 +1,14 @@
-<ul>
-    {{#each items}}
-    <li name="{{this.name}}" class="charm-result-entry">{{this.name}}</li>
-    {{/each}}
-</ul>
+<div>
+    <div>
+        <ul>
+            {{#charms}}
+            <li>
+                <div data-charm-url="{{data_url}}">
+                    <h5>~{{owner}}/{{series}}/{{name}} <i class="icon-user"></i></h5>
+                    <span>{{summary}}</span>
+                </div>
+            </li>
+            {{/charms}}
+        </ul>
+    </div>
+</div>
