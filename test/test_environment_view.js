@@ -289,7 +289,7 @@
        }
     );
 
-    it.only('must be able to remove a relation between services', function(done) {
+    it('must be able to remove a relation between services', function(done) {
       var view = new views.EnvironmentView({
         container: container,
         db: db,

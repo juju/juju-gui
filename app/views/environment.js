@@ -658,7 +658,7 @@ YUI.add('juju-view-environment', function(Y) {
 
         removeRelation: function(d, context, view) {
           var env = this.get('env');
-          view.addSVGClass(Y.one(context.parentNode).one('polyline'),
+          view.addSVGClass(Y.one(context.parentNode).one('.relation'),
               'to-remove pending-relation');
           env.remove_relation(
               d.source().id,

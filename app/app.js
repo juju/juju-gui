@@ -186,9 +186,9 @@ YUI.add('juju-gui', function(Y) {
     },
 
     navigate_to_service: function(e) {
-      console.log(e.service.get('id'), 'Evt.Nav.Router service target');
       var service = e.service;
-      this.navigate('/service/' + service.get('id') + '/');
+      console.log(service.id, 'Evt.Nav.Router service target');
+      this.navigate('/service/' + service.id + '/');
     },
 
     navigate_to_charm_collection: function(e) {
