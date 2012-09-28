@@ -20,11 +20,29 @@ describe('charm search', function() {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
+
+      // The "charms search" feature needs these elements
+      var docBody = Y.one(document.body);
+      Y.Node.create('<div id="charm-search-icon"/>').appendTo(docBody);
+      Y.Node.create('<div id="content"/>').appendTo(docBody);
+
       done();
     });
   });
 
-  it('must be able to show and hide the panel', function() {
+  afterEach(function(done) {
+    Y.namespace('juju.views').CharmSearchPopup.killInstance();
+    done();
+  });
+
+  after(function(done) {
+    Y.one('#charm-search-icon').remove();
+    Y.one('#content').remove();
+
+    done();
+  });
+
+  it('must be able to show and hide the panel', function(done) {
     var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({});
 
     panel.showPanel(true);
@@ -38,11 +56,11 @@ describe('charm search', function() {
 
     panel.togglePanel();
     assert.isNull(Y.one('#juju-search-charm-panel'));
+
+    done();
   });
 
-  it('must be able to search', function() {
-    Y.namespace('juju.views').CharmSearchPopup.killInstance();
-
+  it('must be able to search', function(done) {
     var searchTriggered = false,
         panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
           charm_store: {
@@ -71,11 +89,27 @@ describe('charm search', function() {
     field.simulate('keyup');
     assert.isTrue(searchTriggered);
 
-    node.getHTML().should.contain('this is my URL');
+    assert.equal('this is my URL',
+        node.one('.charm-detail').getAttribute('data-charm-url'));
+
+    done();
   });
 
-  it('must be able to reset the search result', function() {
-    var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({}),
+  it('must be able to reset the search result', function(done) {
+    var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
+      charm_store: {
+        sendRequest: function(params) {
+          // Mocking the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: searchResult
+              }]
+            }
+          });
+        }
+      }
+    }),
         node = panel.getNode();
 
     panel.showPanel(true);
@@ -83,18 +117,23 @@ describe('charm search', function() {
     var field = Y.one('.charms-search-field'),
         buttonX = Y.one('.clear');
 
-    node.getHTML().should.contain('this is my URL');
+    field.set('value', 'aaa');
+    panel.setSearchDelay(0);
+    field.simulate('keyup');
+
+    assert.equal('this is my URL',
+        node.one('.charm-detail').getAttribute('data-charm-url'));
     assert.equal('aaa', field.get('value'));
 
     buttonX.simulate('click');
 
-    node.getHTML().should.not.contain('this is my URL');
+    assert.isTrue(node.all('.charm-detail').isEmpty());
     assert.equal('', field.get('value'));
+
+    done();
   });
 
-  it('must be able to trigger charm details', function() {
-    Y.namespace('juju.views').CharmSearchPopup.killInstance();
-
+  it('must be able to trigger charm details', function(done) {
     var navigateTriggered = false,
         panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
           charm_store: {
@@ -128,6 +167,6 @@ describe('charm search', function() {
     Y.one('.charm-detail').simulate('click');
     assert.isTrue(navigateTriggered);
 
-    panel.showPanel(false);
+    done();
   });
 });
