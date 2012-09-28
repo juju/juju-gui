@@ -181,8 +181,8 @@ YUI.add('juju-view-environment', function(Y) {
               self._generate_coords(services, tree))
         .enter().append('g')
         .attr('class', function(d) {
-          return (d.get('subordinate') ? 'subordinate ' : '') + 'service';
-        })
+                return (d.get('subordinate') ? 'subordinate ' : '') + 'service';
+              })
         .attr('transform', function(d) {
                 return 'translate(' + [d.x, d.y] + ')';
               })
@@ -208,46 +208,59 @@ YUI.add('juju-view-environment', function(Y) {
               })
         .call(drag);
 
-        // Draw subordinate services
-        node.filter(function(d) {
-          return d.get('subordinate');
-        })
-        .append('image')
-        .attr('class', 'service-border')
-        .attr('xlink:href', '/assets/svgs/sub_module.svg')
-        .attr('width', function(d) {
-                var w = service_scale(d.get('unit_count') || 1);
-                d.set('width', w);
-                return w;
-        })
-        .attr('height', function(d) {
-                var w = service_scale(d.get('unit_count') || 1);
-                d.set('height', w);
-                return w;
-        })
-        .attr('x', function(d) { return d.get('width') * 0; })
-        .attr('y', function(d) { return d.get('width') * 0; });
-
-        // Draw services
-          node.filter(function(d) { 
-            return !d.get('subordinate'); 
-          })
-          .append('image')
-            .attr('xlink:href', '/assets/svgs/service_module.svg')
+          // Append a rect for capturing events.
+          // TODO: this currently acts as the selectable-service element,
+          // and acts as the indicator for whether a service may be used for
+          // creating relations.  This will only be the case until there is
+          // UI around showing selectable services.
+          node.append('rect')
         .attr('class', 'service-border')
         .attr('width', function(d) {
-                var w = //service_scale_width(d.get('unit_count') || 1);
-                  service_scale(d.get('unit_count') || 1);
+                var w = service_scale(d.get('unit_count') || 1);
                 d.set('width', w);
                 return w;
               })
         .attr('height', function(d) {
-                var h = //service_scale_height(d.get('unit_count') || 1);
-                  service_scale(d.get('unit_count') || 1);
+                var h = service_scale(d.get('unit_count') || 1);
                 d.set('height', h);
-                return h;});
+                return h;
+              });
 
-        node.select('.service-border')
+          // Draw subordinate services
+          node.filter(function(d) {
+            return d.get('subordinate');
+          })
+        .append('image')
+        .attr('xlink:href', '/assets/svgs/sub_module.svg')
+        .attr('width', function(d) {
+                // NB: add the option to default to one unit, as there is some
+                // pending work around returning an accurate unit count for
+                // subordinate services.
+                var w = service_scale(d.get('unit_count') || 1);
+                d.set('width', w);
+                return w;
+              })
+        .attr('height', function(d) {
+                var w = service_scale(d.get('unit_count') || 1);
+                d.set('height', w);
+                return w;
+              });
+
+
+          // Draw non-subordinate services services
+          node.filter(function(d) {
+            return !d.get('subordinate');
+          })
+          .append('image')
+            .attr('xlink:href', '/assets/svgs/service_module.svg')
+        .attr('width', function(d) {
+                return d.get('width');
+              })
+        .attr('height', function(d) {
+                return d.get('height');
+              });
+
+          node.select('.service-border')
           .on('mouseover', function(d) {
                 // Save this as the current potential drop-point for drag
                 // targets if it's selectable.
@@ -274,30 +287,30 @@ YUI.add('juju-view-environment', function(Y) {
           var service_labels = node.append('text').append('tspan')
         .attr('class', 'name')
         .attr('x', function(d) {
-          return d.get('width') / 2;
-        })
+                return d.get('width') / 2;
+              })
         .attr('y', function(d) {
-          if (d.get('subordinate')) {
-            return d.get('height') / 2 - 10;
-          } else {
-            return '1.5em';
-          }
-        })
+                if (d.get('subordinate')) {
+                  return d.get('height') / 2 - 10;
+                } else {
+                  return '1.5em';
+                }
+              })
         .text(function(d) {return d.get('id'); });
 
           var charm_labels = node.append('text').append('tspan')
         .attr('x', function(d) {
-          return d.get('width') / 2;
-        })
+                return d.get('width') / 2;
+              })
         .attr('y', function(d) {
-          // TODO this will need to be set based on the size of the service
-          // health panel, but for now, this works.
-          if (d.get('subordinate')) {
-            return d.get('height') / 2 - 10;
-          } else {
-            return d.get('height') / 2 + 10;
-          }
-        })
+                // TODO this will need to be set based on the size of the
+                // service health panel, but for now, this works.
+                if (d.get('subordinate')) {
+                  return d.get('height') / 2 - 10;
+                } else {
+                  return d.get('height') / 2 + 10;
+                }
+              })
         .attr('dy', '3em')
         .attr('class', 'charm-label')
         .text(function(d) { return d.get('charm'); });
@@ -324,39 +337,45 @@ YUI.add('juju-view-environment', function(Y) {
           var status_chart_arc = d3.svg.arc()
         .innerRadius(0)
         .outerRadius(function(d) {
-          return parseInt(
-            d3.select(this.parentNode)
+                // Make sure it's exactly as wide as the mask
+                return parseInt(
+                    d3.select(this.parentNode)
             .select('image')
-            .attr('width')) / 2;
-        });
+            .attr('width'), 10) / 2;
+              });
+
           var status_chart_layout = d3.layout.pie()
         .value(function(d) { return (d.value ? d.value : 1); });
 
+          // Append to status charts to non-subordinate services
           var status_chart = node.filter(function(d) {
             return !d.get('subordinate');
           })
           .append('g')
         .attr('class', 'service-status')
-        .attr('transform', function (d) {
-          return 'translate(' + [(d.get('width') / 2),
-            d.get('height') / 2 * 0.86] + ')'
-          });
+        .attr('transform', function(d) {
+                return 'translate(' + [(d.get('width') / 2),
+                  d.get('height') / 2 * 0.86] + ')';
+              });
 
+          // Add a mask svg
           status_chart.append('image')
           .attr('xlink:href', '/assets/svgs/service_health_mask.svg')
           .attr('width', function(d) {
-            return d.get('width') / 3;
-          })
+                return d.get('width') / 3;
+              })
           .attr('height', function(d) {
-            return d.get('height') / 3;
-          })
+                return d.get('height') / 3;
+              })
           .attr('x', function() {
-            return -d3.select(this).attr('width') / 2;
-          })
+                return -d3.select(this).attr('width') / 2;
+              })
           .attr('y', function() {
-            return -d3.select(this).attr('height') / 2;
-          });
+                return -d3.select(this).attr('height') / 2;
+              });
 
+          // Add the path after the mask image (since it requires the mask's
+          // width to set its own).
           var status_arcs = status_chart.selectAll('path')
         .data(function(d) {
                 var aggregate_map = d.get('aggregated_status'),

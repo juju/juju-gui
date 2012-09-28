@@ -149,6 +149,9 @@ YUI.add('juju-view-utils', function(Y) {
      */
     hasSVGClass: function(selector, class_name) {
       var classes = selector.getAttribute('class');
+      if (!classes) {
+        return false;
+      }
       return classes.indexOf(class_name) !== -1;
     },
 
