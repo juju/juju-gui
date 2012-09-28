@@ -1,51 +1,53 @@
 'use strict';
 
-var setConsoleDisabled = (function () {
-  'use strict';
+var consoleManager = (function() {
 
   var winConsole = window.console,
 
-    // These are the available methods.
-    // Add more to this list if necessary.
-    consoleMock = {
-      group: function() {},
-      groupEnd: function() {},
-      groupCollapsed: function() {},
-      log:function () {}
-    },
-    consoleProxy = (function () {
+      // These are the available methods.
+      // Add more to this list if necessary.
+      consoleMock = {
+        group: function() {},
+        groupEnd: function() {},
+        groupCollapsed: function() {},
+        log: function() {}
+      },
+      consoleProxy = (function() {
 
-      // This object wraps the "window.console"
-      var consoleWrapper = {};
+        // This object wraps the "window.console"
+        var consoleWrapper = {};
 
-      function buildMethodProxy(key) {
-        if (winConsole[key]
-          && typeof winConsole[key] === 'function') {
-          consoleWrapper[key] = function () {
-            var cFunc = winConsole[key];
-            cFunc.apply(null, ["llalalalala"]);
+        function buildMethodProxy(key) {
+          if (winConsole[key] && typeof winConsole[key] === 'function') {
+            consoleWrapper[key] = function() {
+              var cFunc = winConsole[key];
+              cFunc.call(winConsole, arguments);
+            };
+          } else {
+            consoleWrapper[key] = function() {
+              consoleMock[key]();
+            };
+          }
+        }
+
+        // Checking if the browser has the "console" object
+        if (winConsole) {
+
+          // Only the methods defined by the consoleMock
+          // are available for use.
+          for (var key in consoleMock) {
+            if (consoleMock.hasOwnProperty(key)) {
+              buildMethodProxy(key);
+            }
           }
         } else {
-          consoleWrapper[key] = function () {
-            consoleMock[key]();
-          }
+          consoleWrapper = consoleMock;
         }
-      }
 
-      // Checking if the browser has the "console" object
-      if (winConsole) {
+        return consoleWrapper;
+      })();
 
-        // Only the methods defined by the consoleMock
-        // are available for use.
-        for (var key in consoleMock) {
-          buildMethodProxy(key);
-        }
-      }
-
-      return consoleWrapper;
-    })();
-
-  // We start the application with a fake console
+  // If in debug mode , start the application with the console activated
   if (GlobalConfig.debug) {
     window.console = consoleProxy;
 
@@ -53,18 +55,21 @@ var setConsoleDisabled = (function () {
     window.console = consoleMock;
   }
 
-  window.console.log('Call "javascript:setConsoleDisabled(false)"' +
-    ' to enable the console');
-
   // In order to enable the console in production the user can
-  // call "javascript:setConsoleDisabled(false)" in the address bar
-  return function (disabled) {
-    if (disabled) {
-      window.console = consoleMock;
-    } else {
+  // call "javascript:consoleManager.enable()" in the address bar
+  return {
+    enable: function() {
       window.console = consoleProxy;
+    },
+    disable: function() {
+      window.console = consoleMock;
+    },
+    getConsoleMock: function() {
+      // Useful for unit tests
+      return consoleMock;
     }
   };
+
 })();
 
 YUI.add('juju-view-utils', function(Y) {
