@@ -47,26 +47,6 @@ YUI.add('juju-view-service', function(Y) {
     }
   };
 
-  var getElementsValuesMap = function(container, cls) {
-    var result = {};
-    container.all(cls).each(function(el) {
-      var value = null;
-      if (el.getAttribute('type') === 'checkbox') {
-        value = el.get('checked');
-      } else {
-        value = el.get('value');
-      }
-
-      if (value && typeof value === 'string' && value.trim() === '') {
-        value = null;
-      }
-
-      result[el.get('name')] = value;
-    });
-
-    return result;
-  };
-
   var ServiceRelations = Y.Base.create(
       'ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
@@ -232,7 +212,8 @@ YUI.add('juju-view-service', function(Y) {
 
           var values = (function() {
             var result = [],
-                map = getElementsValuesMap(container, '.constraint-field');
+                map = utils.getElementsValuesMapping(
+                    container, '.constraint-field');
 
             Y.Object.each(map, function(value, name) {
               result.push(name + '=' + value);
@@ -281,15 +262,15 @@ YUI.add('juju-view-service', function(Y) {
           Y.Object.each(constraints, function(value, name) {
             if (!(name in readOnlyConstraints)) {
               display_constraints.push({
-                'name': name,
-                'value': value});
+                name: name,
+                value: value});
             }
           });
 
           var generics = ['cpu', 'mem', 'arch'];
           Y.Object.each(generics, function(idx, gkey) {
             if (!(gkey in constraints)) {
-              display_constraints.push({'name': gkey, 'value': ''});
+              display_constraints.push({name: gkey, value: ''});
             }
           });
 
@@ -300,7 +281,7 @@ YUI.add('juju-view-service', function(Y) {
             readOnlyConstraints: (function() {
               var arr = [];
               Y.Object.each(readOnlyConstraints, function(name, value) {
-                arr.push({'name': name, 'value': value});
+                arr.push({name: name, value: value});
               });
               return arr;
             })(),
@@ -432,7 +413,8 @@ YUI.add('juju-view-service', function(Y) {
           // Disable the "Update" button while the RPC call is outstanding.
           container.one('#save-service-config').set('disabled', 'disabled');
 
-          var new_values = getElementsValuesMap(container, '.config-field'),
+          var new_values = utils.getElementsValuesMapping(
+                                            container, '.config-field'),
               errors = utils.validate(new_values, charm.get('config'));
 
           if (Y.Object.isEmpty(errors)) {
