@@ -8,6 +8,7 @@ var setConsoleDisabled = (function () {
     // These are the available methods.
     // Add more to this list if necessary.
     consoleMock = {
+      group: function() {},
       groupEnd: function() {},
       groupCollapsed: function() {},
       log:function () {}
