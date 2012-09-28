@@ -17,7 +17,6 @@ YUI.add('juju-charm-search', function(Y) {
 
     var charmStore = config.charm_store,
         app = config.app,
-        env = config.env,
 
         container = Y.Node.create(views.Templates['charm-search-pop']({
           title: 'All Charms'
@@ -153,20 +152,10 @@ YUI.add('juju-charm-search', function(Y) {
           charms: entries
         }));
 
-        result.list.all('.charm-result-entry-deploy').on('click', function(ev) {
-          deployCharm(ev.target.getAttribute('data-charm-url'));
-        });
-
         result.list.all('.charm-detail').on('click', function(ev) {
           showCharm(ev.target.getAttribute('data-charm-url'));
         });
       }
-    }
-
-    function deployCharm(url) {
-      env.deploy(url, function(msg) {
-        console.log(url + ' deployed');
-      });
     }
 
     function showCharm(url) {

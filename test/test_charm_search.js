@@ -92,10 +92,10 @@ describe('charm search', function() {
     assert.equal('', field.get('value'));
   });
 
-  it('must be able to trigger charm deploy', function() {
+  it('must be able to trigger charm details', function() {
     Y.namespace('juju.views').CharmSearchPopup.killInstance();
 
-    var deployTriggered = false,
+    var navigateTriggered = false,
         panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
           charm_store: {
             sendRequest: function(params) {
@@ -109,9 +109,9 @@ describe('charm search', function() {
               });
             }
           },
-          env: {
-            deploy: function() {
-              deployTriggered = true;
+          app: {
+            navigate: function() {
+              navigateTriggered = true;
             }
           }
         }),
@@ -125,8 +125,8 @@ describe('charm search', function() {
 
     field.simulate('keyup');
 
-    Y.one('.charm-result-entry-deploy').simulate('click');
-    assert.isTrue(deployTriggered);
+    Y.one('.charm-detail').simulate('click');
+    assert.isTrue(navigateTriggered);
 
     panel.showPanel(false);
   });
