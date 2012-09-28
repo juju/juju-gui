@@ -112,7 +112,10 @@
         assert.equal(msg.service_name, serviceName);
         done();
       });
-      container.one('#service-name').set('value', serviceName);
+      var serviceNameField = container.one('#service-name');
+      // Be sure the retrieved node is really an INPUT tag.
+      assert.equal(serviceNameField.get('tagName'), 'INPUT');
+      serviceNameField.set('value', serviceName);
       deployButton.simulate('click');
     });
 
