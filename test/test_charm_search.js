@@ -2,7 +2,7 @@
 
 describe('charm search', function() {
   var Y, juju, models, views,
-    searchResult = '{"results": [{"data_url": "this is my URL", ' +
+      searchResult = '{"results": [{"data_url": "this is my URL", ' +
       '"name": "membase", "series": "precise", "summary": ' +
       '"Membase Server", "relevance": 8.728194117350437, ' +
       '"owner": "charmers"}]}';
@@ -116,7 +116,7 @@ describe('charm search', function() {
           }
         }),
 
-      node = panel.getNode();
+        node = panel.getNode();
 
     panel.showPanel(true);
     var field = Y.one('.charms-search-field');
