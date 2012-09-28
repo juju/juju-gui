@@ -9,6 +9,7 @@ body {
     width: 85%;
     margin: 0 auto;
     padding: 0 12px;
+    min-width: 960px;
 }
 
 #vp-left-border {
@@ -55,12 +56,8 @@ body {
     .nav-alerts-charms {
         position: absolute;
         top: 5px;
-        right: 11px;
+        right: 21px;
         padding: 12px;
-    }
-
-    #omnibar {
-        display: none;
     }
 }
 
@@ -68,6 +65,10 @@ body {
     position: relative;
     background-color: #fff;
     width: 100%;
+}
+
+#main {
+    padding: 0 20px !important;
 }
 
 .divider {
@@ -85,7 +86,7 @@ svg {
 
 charms.thumbnails.li { height:4em; }
 .relation {
-    stroke: #333333; 
+    stroke: #333333;
     stroke-width: 3px;
 
     &.error {
@@ -208,7 +209,7 @@ g.unit {
     .seen {
         background-color: rgba(222, 222, 222, 0.33);
     }
-    
+
     &:first-child {
         border: none;
         padding-top: 0;
@@ -225,6 +226,10 @@ g.unit {
         font-size: 0.9em;
         margin: 0;
         padding: 0;
+    }
+
+    .error {
+        background-color: rgba(255, 0, 0, 0.1);
     }
 }
 
@@ -354,4 +359,17 @@ g.unit {
 
 .unit-button-palette {
     float: right;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+#service-relations {
+    .btn {
+        float: right;
+    }
+    .highlighted {
+       background: pink;
+    }
 }

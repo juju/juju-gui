@@ -61,11 +61,6 @@ YUI.add('juju-gui', function(Y) {
         parent: 'charm_collection'
       },
 
-      charm_search: {
-        type: 'juju.views.charm_search',
-        preserve: true
-      },
-
       notifications: {
         type: 'juju.views.NotificationsView',
         preserve: true
@@ -119,7 +114,6 @@ YUI.add('juju-gui', function(Y) {
       // TODO: refactor per event views into a generic show view event.
       this.on('*:showService', this.navigate_to_service);
       this.on('*:showUnit', this.navigate_to_unit);
-      this.on('*:showCharmCollection', this.navigate_to_charm_collection);
       this.on('*:showCharm', this.navigate_to_charm);
       this.on('*:showEnvironment', this.navigate_to_environment);
 
@@ -155,7 +149,7 @@ YUI.add('juju-gui', function(Y) {
         }
 
         console.log(
-            'App: Rerendering current view', this.getPath(), 'info');
+            'App: Re-rendering current view', this.getPath(), 'info');
 
         if (this.get('activeView')) {
           this.get('activeView').render();
@@ -190,12 +184,6 @@ YUI.add('juju-gui', function(Y) {
           e.service.get('id'), 'debug', 'Evt.Nav.Router service target');
       var service = e.service;
       this.navigate('/service/' + service.get('id') + '/');
-    },
-
-    navigate_to_charm_collection: function(e) {
-      console.log('Evt.Nav.Router charm collection');
-      var query = Y.one('#charm-search').get('value');
-      this.navigate('/charms/?q=' + query);
     },
 
     navigate_to_charm: function(e) {
@@ -263,7 +251,9 @@ YUI.add('juju-gui', function(Y) {
         model: service,
         db: this.db,
         env: this.env,
-        app: this});
+        app: this,
+        querystring: req.query
+      });
     },
 
     show_service: function(req) {
@@ -322,20 +312,10 @@ YUI.add('juju-gui', function(Y) {
     /*
      * Persistent Views
      *
-     * 'charm_search' and 'notifications' are preserved views that remain
-     * rendered on all main views.  we manually create an instance of this
-     * view and insert it into the App's view metadata.
+     * 'notifications' is a preserved views that remains rendered on all main
+     * views.  we manually create an instance of this view and insert it into
+     * the App's view metadata.
      */
-    show_charm_search: function(req, res, next) {
-      var view = this.getViewInfo('charm_search'),
-          instance = view.instance;
-      if (!instance) {
-        view.instance = new views.charm_search({app: this});
-        view.instance.render();
-      }
-      next();
-    },
-
     show_notifications_view: function(req, res, next) {
       var view = this.getViewInfo('notifications'),
           instance = view.instance;
@@ -360,10 +340,10 @@ YUI.add('juju-gui', function(Y) {
             evt.service_name, evt);
         return;
       }
-      // TODO: need to unify with .relations from delta stream.
+      // We intentionally ignore svc_data.rels.  We rely on the delta stream
+      // for relation data instead.
       svc.setAttrs({'config': svc_data.config,
         'constraints': svc_data.constraints,
-        'rels': svc_data.rels,
         'loaded': true,
         'prefetch': false});
       this.dispatch();
@@ -497,35 +477,34 @@ YUI.add('juju-gui', function(Y) {
     ATTRS: {
       routes: {
         value: [
-          {path: '*', callback: 'show_charm_search'},
-          {path: '*', callback: 'show_notifications_view'},
-          {path: '/charms/', callback: 'show_charm_collection'},
-          {path: '/charms/*charm_url',
+          { path: '*', callback: 'show_notifications_view'},
+          { path: '/charms/', callback: 'show_charm_collection'},
+          { path: '/charms/*charm_url',
             callback: 'show_charm',
             reverse_map: {charm_url: 'name'},
             model: 'charm'},
-          {path: '/notifications/',
+          { path: '/notifications/',
             callback: 'show_notifications_overview'},
-          {path: '/service/:id/config',
+          { path: '/service/:id/config',
             callback: 'show_service_config',
             intent: 'config',
             model: 'service'},
-          {path: '/service/:id/constraints',
+          { path: '/service/:id/constraints',
             callback: 'show_service_constraints',
             intent: 'constraints',
             model: 'service'},
-          {path: '/service/:id/relations',
+          { path: '/service/:id/relations',
             callback: 'show_service_relations',
             intent: 'relations',
             model: 'service'},
-          {path: '/service/:id/',
+          { path: '/service/:id/',
             callback: 'show_service',
             model: 'service'},
-          {path: '/unit/:id/',
+          { path: '/unit/:id/',
             callback: 'show_unit',
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit'},
-          {path: '/', callback: 'show_environment'}
+          { path: '/', callback: 'show_environment'}
         ]
       }
     }
