@@ -437,8 +437,8 @@
       var b1 = new views.BoundingBox(),
           b2 = new views.BoundingBox(),
           relation = new models.Relation({endpoints: [
-                  ['haproxy', {name: 'app'}],
-                  ['mediawiki', {name: 'proxy'}]]}),
+                ['haproxy', {name: 'app'}],
+                ['mediawiki', {name: 'proxy'}]]}),
           service1 = new models.Service({id: 'mediawiki'}),
           service2 = new models.Service({id: 'haproxy'});
 

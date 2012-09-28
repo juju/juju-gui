@@ -270,9 +270,9 @@ YUI.add('juju-view-utils', function(Y) {
 
   /*
    * Utility class that encapsulates Y.Models and keeps their positional
-   * state within an svg canvas. 
-   * 
-   * As a convenience attributes of the encapsulated model are exposed 
+   * state within an svg canvas.
+   *
+   * As a convenience attributes of the encapsulated model are exposed
    * directly as attributes.
    */
   function BoundingBox() {
@@ -340,7 +340,7 @@ YUI.add('juju-view-utils', function(Y) {
      */
     Box.getNearestConnector = function(other_box) {
       var connectors = this.getConnectors(),
-          result = null, 
+          result = null,
           shortest_d = Infinity,
           source = other_box;
       // duck typing
@@ -367,7 +367,7 @@ YUI.add('juju-view-utils', function(Y) {
     Box.getConnectorPair = function(other_box) {
       var sc = Box.getConnectors(),
           oc = other_box.getConnectors(),
-          result = null, 
+          result = null,
           shortest_d = Infinity;
 
       Y.each(sc, function(ep1) {
@@ -407,11 +407,10 @@ YUI.add('juju-view-utils', function(Y) {
     var source, target;
 
     function pair() {}
-      
     /*
      * Bind an actual model object
      */
-    pair.model = function (_) {
+    pair.model = function(_) {
       Y.mix(pair, _.getAttrs());
       return pair;
     };
@@ -430,9 +429,9 @@ YUI.add('juju-view-utils', function(Y) {
 
     pair.modelIds = function() {
       if (this.endpoints !== undefined) {
-      return source.modelId() + ':' +  this.endpoints[0][1].name +
-            '-' + target.modelId() + ':' + this.endpoints[1][1].name;
-      } 
+        return source.modelId() + ':' + this.endpoints[0][1].name +
+               '-' + target.modelId() + ':' + this.endpoints[1][1].name;
+      }
       return source.modelId() + '-' + target.modelId();
     };
 

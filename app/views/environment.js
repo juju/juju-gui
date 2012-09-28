@@ -62,7 +62,7 @@ YUI.add('juju-view-environment', function(Y) {
               .y(this.yscale)
               .scaleExtent([0.25, 1.75])
               .on('zoom', function() {
-                  self.rescale(vis, d3.event);
+                    self.rescale(vis, d3.event);
               });
           self.set('zoom', zoom);
 
@@ -258,7 +258,7 @@ YUI.add('juju-view-environment', function(Y) {
           var self = this,
               g = self.vis.selectAll('g.rel-group')
                   .data(self.rel_data, function(r) {
-                      return r.modelIds();
+                    return r.modelIds();
                   });
 
           var enter = g.enter();
@@ -313,7 +313,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-         * Draw a relation between services.  
+         * Draw a relation between services.
          */
         draw_relation: function(relation) {
           var connectors = relation.source()
@@ -696,9 +696,10 @@ YUI.add('juju-view-environment', function(Y) {
               },
               this)));
         },
-     /*
-     * Zoom in event handler.
-     */
+
+        /*
+         * Zoom in event handler.
+         */
         zoom_out: function(evt) {
           this._fire_zoom(-0.2);
         },
