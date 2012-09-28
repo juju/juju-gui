@@ -653,8 +653,8 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-     * Event handler for the add relation button
-     */
+         * Event handler for the add relation button
+         */
         add_relation: function(evt) {
           var curr_action = this.get('current_service_click_action'),
               container = this.get('container');
