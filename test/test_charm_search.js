@@ -75,4 +75,23 @@ describe('charm search', function () {
 
     node.getHTML().should.contain('this is my URL');
   });
+
+  it('must be able to reset the search result', function () {
+    var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({}),
+      node = panel.getNode();
+
+    panel.showPanel(true);
+
+
+    var field = Y.one('.charms-search-field'),
+      buttonX = Y.one('.clear');
+
+    node.getHTML().should.contain('this is my URL');
+    assert.equal('aaa', field.get('value'));
+
+    buttonX.simulate('click');
+
+    node.getHTML().should.not.contain('this is my URL');
+    assert.equal('', field.get('value'));
+  });
 });
