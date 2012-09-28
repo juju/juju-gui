@@ -48,23 +48,23 @@
        });
 
     it('should allow you to reset the buttons', function() {
-          var confirmed = false;
-          var panel = views.createModalPanel(
-              'Description',
-              '#main',
-              'First Action Label',
-              function() {confirmed = false;});
-          panel.get('buttons').footer.length.should.equal(2);
-          views.setModalButtons(
-            panel, 'Second Action Label', function() { confirmed=true; });
-          panel.get('buttons').footer.length.should.equal(2);
-          panel.show();
-          var panel_node = panel.get('boundingBox'),
+      var confirmed = false;
+      var panel = views.createModalPanel(
+          'Description',
+          '#main',
+          'First Action Label',
+          function() {confirmed = false;});
+      panel.get('buttons').footer.length.should.equal(2);
+      views.setModalButtons(
+          panel, 'Second Action Label', function() { confirmed = true; });
+      panel.get('buttons').footer.length.should.equal(2);
+      panel.show();
+      var panel_node = panel.get('boundingBox'),
               button = panel_node.one('.btn-danger');
-          button.getHTML().should.equal('Second Action Label');
-          button.simulate('click');
-          confirmed.should.equal(true);
-          panel.destroy();
+      button.getHTML().should.equal('Second Action Label');
+      button.simulate('click');
+      confirmed.should.equal(true);
+      panel.destroy();
     });
 
   });

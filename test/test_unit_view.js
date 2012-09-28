@@ -129,12 +129,12 @@
 
     it('should not display Retry and Resolved buttons when ' +
        'there is no error', function() {
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
-      var _ = expect(container.one('#retry-unit-button')).to.not.exist;
-      _ = expect(container.one('#resolved-unit-button')).to.not.exist;
-    });
+         var view = new UnitView(
+             { container: container, unit: unit, db: db, env: env,
+               querystring: {}}).render();
+         var _ = expect(container.one('#retry-unit-button')).to.not.exist;
+         _ = expect(container.one('#resolved-unit-button')).to.not.exist;
+       });
 
     it('should display Retry and Resolved buttons when ' +
        'there is an error', function() {
@@ -144,7 +144,7 @@
                 querystring: {}}).render();
           container.one('#retry-unit-button').getHTML().should.equal('Retry');
           container.one('#resolved-unit-button').getHTML().should.equal(
-          'Resolved');
+              'Resolved');
           container.one('#remove-unit-button').getHTML().should.equal('Remove');
        });
 
@@ -220,7 +220,7 @@
           { container: container, unit: unit, db: db, env: env,
             querystring: {}}).render();
       container.one('.relation-status').get('text').trim().should.contain(
-        'error');
+          'error');
       container.one('.relation-status').all('button').get('text')
         .should.eql(['Resolved', 'Retry']);
     });
@@ -229,7 +229,8 @@
       var view = new UnitView(
           { container: container, unit: unit, db: db, env: env,
             querystring: {rel_id: 'relation-0000000002'}}).render();
-      container.one('#relations tbody tr').hasClass('highlighted').should.equal(true);
+      container.one('#relations tbody tr').hasClass('highlighted')
+        .should.equal(true);
     });
 
     it('should be able to send a resolve relation message', function() {
@@ -277,7 +278,7 @@
       db.notifications.size().should.equal(1);
       var notification = db.notifications.toArray()[0];
       notification.get('modelId').should.eql(
-        ['relation', 'relation-0000000002']);
+          ['relation', 'relation-0000000002']);
     });
 
     it('should create an error notification if a retry fails', function() {
@@ -295,7 +296,7 @@
       db.notifications.size().should.equal(1);
       var notification = db.notifications.toArray()[0];
       notification.get('modelId').should.eql(
-        ['relation', 'relation-0000000002']);
+          ['relation', 'relation-0000000002']);
     });
 
   });

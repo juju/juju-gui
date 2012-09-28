@@ -222,9 +222,9 @@ YUI.add('juju-gui', function(Y) {
         this._prefetch_service(service);
       }
       this.showView(
-        'unit',
-        { unit: unit, db: this.db, env: this.env, app: this,
-          querystring: req.query });
+          'unit',
+          { unit: unit, db: this.db, env: this.env, app: this,
+            querystring: req.query });
     },
 
     _prefetch_service: function(service) {

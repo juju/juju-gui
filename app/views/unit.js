@@ -72,7 +72,7 @@ YUI.add('juju-view-unit', function(Y) {
             far = rel.far || rel.near;
         rel.has_error = !!(match && match.indexOf(far.service) > -1);
         rel.highlight = !!(
-          querystring.rel_id && querystring.rel_id === rel.relation_id);
+            querystring.rel_id && querystring.rel_id === rel.relation_id);
       });
 
       container.setHTML(this.template({
@@ -195,9 +195,9 @@ YUI.add('juju-view-unit', function(Y) {
       // We set the buttons separately every time because we want to bind the
       // target, which can vary.
       views.setModalButtons(
-        this.resolved_relation_panel,
-        'Relation Error Has Been Resolved',
-        Y.bind(this.doResolvedRelation, this, ev.target));
+          this.resolved_relation_panel,
+          'Relation Error Has Been Resolved',
+          Y.bind(this.doResolvedRelation, this, ev.target));
       this.resolved_relation_panel.show();
     },
 
@@ -208,8 +208,8 @@ YUI.add('juju-view-unit', function(Y) {
           relation_name = button.ancestor('form').get('id');
       ev.target.set('disabled', true);
       env.resolved(
-        unit.id, relation_name, false,
-        Y.bind(this._doResolvedRelationCallback, this, button, ev.target));
+          unit.id, relation_name, false,
+          Y.bind(this._doResolvedRelationCallback, this, button, ev.target));
     },
 
     _doResolvedRelationCallback: function(button, confirm_button, ev) {
@@ -244,24 +244,24 @@ YUI.add('juju-view-unit', function(Y) {
           relation_name = button.ancestor('form').get('id');
       button.set('disabled', true);
       env.resolved(
-        unit.id, relation_name, true,
-        function(ev) {
-          views.highlightRow(button.ancestor('tr'), ev.err);
-          if (ev.err) {
-            var relation_id = button.ancestor('tr').get('id'),
-                relation = db.relations.getById(relation_id);
-            db.notifications.add(
-                new models.Notification({
-                  title: 'Error retrying relation',
-                  message: 'Could not retry a unit relation',
-                  level: 'error',
-                  link: app.getModelURL(unit) + '?rel_id=' + relation_id,
-                  modelId: relation
-                })
-            );
+          unit.id, relation_name, true,
+          function(ev) {
+            views.highlightRow(button.ancestor('tr'), ev.err);
+            if (ev.err) {
+              var relation_id = button.ancestor('tr').get('id'),
+                  relation = db.relations.getById(relation_id);
+              db.notifications.add(
+                  new models.Notification({
+                    title: 'Error retrying relation',
+                    message: 'Could not retry a unit relation',
+                    level: 'error',
+                    link: app.getModelURL(unit) + '?rel_id=' + relation_id,
+                    modelId: relation
+                  })
+              );
+            }
+            button.set('disabled', false);
           }
-          button.set('disabled', false);
-        }
       );
     }
 

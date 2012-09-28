@@ -115,9 +115,9 @@ YUI.add('juju-view-service', function(Y) {
           // relation is removed, this is technically unnecessary in this
           // particular case, but a good pattern to get into.
           views.setModalButtons(
-            this.remove_panel,
-            'Remove Service Relation',
-            Y.bind(this.doRemoveRelation, this, ev.target));
+              this.remove_panel,
+              'Remove Service Relation',
+              Y.bind(this.doRemoveRelation, this, ev.target));
           this.remove_panel.show();
         },
 

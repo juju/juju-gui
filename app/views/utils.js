@@ -207,23 +207,23 @@ YUI.add('juju-view-utils', function(Y) {
     return panel;
   };
 
-  views.setModalButtons = function (panel, action_label, action_cb) {
+  views.setModalButtons = function(panel, action_label, action_cb) {
     panel.set('buttons', []);
     panel.addButton(
-      { value: action_label,
-        section: Y.WidgetStdMod.FOOTER,
-        action: action_cb,
-        classNames: ['btn-danger', 'btn']
-      });
+        { value: action_label,
+          section: Y.WidgetStdMod.FOOTER,
+          action: action_cb,
+          classNames: ['btn-danger', 'btn']
+        });
     panel.addButton(
-      { value: 'Cancel',
-        section: Y.WidgetStdMod.FOOTER,
-        action: function(e) {
-                  e.preventDefault();
-                  panel.hide();
-        },
-        classNames: ['btn']
-      });
+        { value: 'Cancel',
+          section: Y.WidgetStdMod.FOOTER,
+          action: function(e) {
+            e.preventDefault();
+            panel.hide();
+          },
+          classNames: ['btn']
+        });
     // The default YUI CSS conflicts with the CSS effect we want.
     panel.get('boundingBox').all('.yui3-button').removeClass('yui3-button');
   };
@@ -239,13 +239,13 @@ YUI.add('juju-view-utils', function(Y) {
     row.all('td').setStyle('backgroundColor', 'transparent');
     row.setStyle('backgroundColor', backgroundColor);
     row.transition(
-      { easing: 'ease-out', duration: 3, backgroundColor: oldColor},
-      function () {
-        // Revert to following normal stylesheet rules.
-        row.setStyle('backgroundColor', '');
-        // Undo hover workaround.
-        row.all('td').setStyle('backgroundColor', '');
-      });
+        { easing: 'ease-out', duration: 3, backgroundColor: oldColor},
+        function() {
+          // Revert to following normal stylesheet rules.
+          row.setStyle('backgroundColor', '');
+          // Undo hover workaround.
+          row.all('td').setStyle('backgroundColor', '');
+        });
   };
 
   utils.buildRpcHandler = function(config) {
@@ -301,26 +301,26 @@ YUI.add('juju-view-utils', function(Y) {
     // relationship, then `far` will be undefined.
     var service_name = service.get('id');
     return Y.Array.map(
-      db.relations.get_relations_for_service(service),
-      function(relation) {
-        var rel = relation.getAttrs(),
-            near,
-            far;
-        if (rel.endpoints[0][0] === service_name) {
-          near = rel.endpoints[0];
-          far = rel.endpoints[1]; // undefined if a peer relationship.
-        } else {
-          near = rel.endpoints[1];
-          far = rel.endpoints[0];
-        }
-        rel.near = {service: near[0], role: near[1].role, name: near[1].name};
-        // far will be undefined or the far endpoint service.
-        rel.far = far && {
-          service: far[0], role: far[1].role, name: far[1].name};
-        var rel_id = rel.relation_id.split('-')[1];
-        rel.ident = near[1].name + ':' + parseInt(rel_id, 10);
-        return rel;
-      });
+        db.relations.get_relations_for_service(service),
+        function(relation) {
+          var rel = relation.getAttrs(),
+              near,
+              far;
+          if (rel.endpoints[0][0] === service_name) {
+            near = rel.endpoints[0];
+            far = rel.endpoints[1]; // undefined if a peer relationship.
+          } else {
+            near = rel.endpoints[1];
+            far = rel.endpoints[0];
+          }
+          rel.near = {service: near[0], role: near[1].role, name: near[1].name};
+          // far will be undefined or the far endpoint service.
+          rel.far = far && {
+            service: far[0], role: far[1].role, name: far[1].name};
+          var rel_id = rel.relation_id.split('-')[1];
+          rel.ident = near[1].name + ':' + parseInt(rel_id, 10);
+          return rel;
+        });
   };
 
 }, '0.1.0', {
