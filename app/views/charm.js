@@ -67,7 +67,10 @@ YUI.add('juju-view-charm-collection', function(Y) {
         charm.last_change.created = new Date(last_modified * 1000);
       }
 
-      var settings = utils.extractServiceSettings(charm.config.options);
+      var settings;
+      if (charm.config) {
+        settings = utils.extractServiceSettings(charm.config.options);
+      }
 
       container.setHTML(this.template({
         charm: charm,
@@ -128,7 +131,8 @@ YUI.add('juju-view-charm-collection', function(Y) {
 
     render: function() {
       var container = this.get('container'),
-          charm = this.get('charm'); // TODO change attribute name to "model"
+          charm = this.get('charm'), // TODO change attribute name to "model"
+          self = this;
 
       CharmCollectionView.superclass.render.apply(this, arguments);
       container.setHTML(this.template({charms: this.get('charms')}));
@@ -136,7 +140,7 @@ YUI.add('juju-view-charm-collection', function(Y) {
       // TODO: Use view.events structure to attach this
       container.all('div.thumbnail').each(function(el) {
         el.on('click', function(evt) {
-          this.fire('showCharm', {charm_data_url: this.getData('charm-url')});
+          self.fire('showCharm', {charm_data_url: this.getData('charm-url')});
         });
       });
 
