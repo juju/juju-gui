@@ -221,7 +221,10 @@ YUI.add('juju-gui', function(Y) {
         var service = this.db.services.getById(unit.service);
         this._prefetch_service(service);
       }
-      this.showView('unit', {unit: unit, db: this.db, env: this.env});
+      this.showView(
+        'unit',
+        { unit: unit, db: this.db, env: this.env, app: this,
+          querystring: req.query });
     },
 
     _prefetch_service: function(service) {

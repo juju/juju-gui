@@ -502,6 +502,52 @@
          remove.get('disabled').should.equal(true);
        });
 
+    it('should remove two consecutive relations when requested',
+        function() {
+          // This shows that the panel buttons are not reused, after being
+          // incorrectly bound.
+          var service_name = service.get('id'),
+              rel0 = new models.Relation(
+                { id: 'relation-0',
+                  endpoints:
+                  [[service_name, {name: 'db', role: 'source'}],
+                   ['squid', {name: 'cache', role: 'front'}]],
+                  'interface': 'cache',
+                  scope: 'global'
+                }),
+              rel1 = new models.Relation(
+                { id: 'relation-1',
+                  endpoints:
+                  [[service_name, {name: 'db', role: 'peer'}]],
+                  'interface': 'db',
+                  scope: 'global'
+                });
+ 
+          db.relations.add([rel0, rel1]);
+          db.relations.get_relations_for_service(
+            service).length.should.equal(2);
+ 
+          var view = new ServiceRelationsView(
+          {container: container, model: service, db: db, env: env,
+            querystring: {}}).render();
+
+          var control = container.one('#relation-0');
+          control.simulate('click');
+          var remove = container.one('#remove-modal-panel .btn-danger');
+          remove.simulate('click');
+          env.dispatch_result(conn.last_message());
+          db.relations.get_relations_for_service(
+            service).length.should.equal(1);
+ 
+          control = container.one('#relation-1');
+          control.simulate('click');
+          remove = container.one('#remove-modal-panel .btn-danger');
+          remove.simulate('click');
+          env.dispatch_result(conn.last_message());
+          db.relations.get_relations_for_service(
+            service).length.should.equal(0);
+        });
+
     it('should highlight the correct relation when passed as the query ' +
        'string', function() {
          var service_name = service.get('id'),

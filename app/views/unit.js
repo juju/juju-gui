@@ -4,6 +4,7 @@ YUI.add('juju-view-unit', function(Y) {
 
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
+      utils = Y.namespace('juju.views.utils'),
       Templates = views.Templates;
 
   var UnitView = Y.Base.create('UnitView', Y.View, [], {
@@ -61,6 +62,19 @@ YUI.add('juju-view-unit', function(Y) {
           unit_running = unit.agent_state === 'started',
           unit_pending = !(unit_running || unit_error);
 
+      var relation_errors = unit.relation_errors || {},
+          relations = utils.getRelationDataForService(db, service),
+          querystring = this.get('querystring');
+
+      Y.each(relations, function(rel) {
+        // relation_errors example: {'website': ['haproxy'], 'db': ['mysql']}
+        var match = relation_errors[rel.near.name],
+            far = rel.far || rel.near;
+        rel.has_error = !!(match && match.indexOf(far.service) > -1);
+        rel.highlight = !!(
+          querystring.rel_id && querystring.rel_id === rel.relation_id);
+      });
+
       container.setHTML(this.template({
         unit: unit,
         unit_ip_description: unit_ip_description,
@@ -70,14 +84,17 @@ YUI.add('juju-view-unit', function(Y) {
         machine: db.machines.getById(unit.machine),
         unit_error: unit_error,
         unit_running: unit_running,
-        unit_pending: unit_pending}));
+        unit_pending: unit_pending,
+        relations: relations}));
       return this;
     },
 
     events: {
       '#resolved-unit-button': {click: 'confirmResolved'},
       '#retry-unit-button': {click: 'retry'},
-      '#remove-unit-button': {click: 'confirmRemoved'}
+      '#remove-unit-button': {click: 'confirmRemoved'},
+      '.resolved-relation-button': {click: 'confirmResolvedRelation'},
+      '.retry-relation-button': {click: 'retryRelation'}
     },
 
     confirmResolved: function(ev) {
@@ -163,6 +180,88 @@ YUI.add('juju-view-unit', function(Y) {
             // ev.err exists, report it.  Similarly, otherwise,
             // generate a success notification.
             button.set('disabled', false);}
+      );
+    },
+
+    confirmResolvedRelation: function(ev) {
+      // We wait to make the panel until now, because in the render method
+      // the container is not yet part of the document.
+      if (Y.Lang.isUndefined(this.resolved_relation_panel)) {
+        this.resolved_relation_panel = views.createModalPanel(
+            'Are you sure you want to tell the system this problem has been ' +
+            'resolved?  This action cannot be undone.',
+            '#resolved-relation-modal-panel');
+      }
+      // We set the buttons separately every time because we want to bind the
+      // target, which can vary.
+      views.setModalButtons(
+        this.resolved_relation_panel,
+        'Relation Error Has Been Resolved',
+        Y.bind(this.doResolvedRelation, this, ev.target));
+      this.resolved_relation_panel.show();
+    },
+
+    doResolvedRelation: function(button, ev) {
+      ev.preventDefault();
+      var env = this.get('env'),
+          unit = this.get('unit'),
+          relation_name = button.ancestor('form').get('id');
+      ev.target.set('disabled', true);
+      env.resolved(
+        unit.id, relation_name, false,
+        Y.bind(this._doResolvedRelationCallback, this, button, ev.target));
+    },
+
+    _doResolvedRelationCallback: function(button, confirm_button, ev) {
+      views.highlightRow(button.ancestor('tr'), ev.err);
+      if (ev.err) {
+        var db = this.get('db'),
+            app = this.get('app'),
+            unit = this.get('unit'),
+            relation_id = button.ancestor('tr').get('id'),
+            relation = db.relations.getById(relation_id);
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error resolving relation',
+              message: 'Could not resolve a unit relation',
+              level: 'error',
+              link: app.getModelURL(unit) + '?rel_id=' + relation_id,
+              modelId: relation
+            })
+        );
+      }
+      confirm_button.set('disabled', false);
+      this.resolved_relation_panel.hide();
+    },
+
+    retryRelation: function(ev) {
+      ev.preventDefault();
+      var env = this.get('env'),
+          unit = this.get('unit'),
+          db = this.get('db'),
+          app = this.get('app'),
+          button = ev.target,
+          relation_name = button.ancestor('form').get('id');
+      button.set('disabled', true);
+      env.resolved(
+        unit.id, relation_name, true,
+        function(ev) {
+          views.highlightRow(button.ancestor('tr'), ev.err);
+          if (ev.err) {
+            var relation_id = button.ancestor('tr').get('id'),
+                relation = db.relations.getById(relation_id);
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Error retrying relation',
+                  message: 'Could not retry a unit relation',
+                  level: 'error',
+                  link: app.getModelURL(unit) + '?rel_id=' + relation_id,
+                  modelId: relation
+                })
+            );
+          }
+          button.set('disabled', false);
+        }
       );
     }
 
