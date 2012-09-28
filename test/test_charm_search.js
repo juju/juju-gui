@@ -1,7 +1,11 @@
 'use strict';
 
 describe('charm search', function() {
-  var Y, juju, models, views;
+  var Y, juju, models, views,
+    searchResult = '{"results": [{"data_url": "this is my URL", ' +
+      '"name": "membase", "series": "precise", "summary": ' +
+      '"Membase Server", "relevance": 8.728194117350437, ' +
+      '"owner": "charmers"}]}';
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -40,12 +44,6 @@ describe('charm search', function() {
     Y.namespace('juju.views').CharmSearchPopup.killInstance();
 
     var searchTriggered = false,
-
-        searchResult = '{"results": [{"data_url": "this is my URL", ' +
-        '"name": "membase", "series": "precise", "summary": ' +
-        '"Membase Server", "relevance": 8.728194117350437, ' +
-        '"owner": "charmers"}]}',
-
         panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
           charm_store: {
             sendRequest: function(params) {
@@ -92,5 +90,44 @@ describe('charm search', function() {
 
     node.getHTML().should.not.contain('this is my URL');
     assert.equal('', field.get('value'));
+  });
+
+  it('must be able to trigger charm deploy', function() {
+    Y.namespace('juju.views').CharmSearchPopup.killInstance();
+
+    var deployTriggered = false,
+        panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
+          charm_store: {
+            sendRequest: function(params) {
+              // Mocking the server callback value
+              params.callback.success({
+                response: {
+                  results: [{
+                    responseText: searchResult
+                  }]
+                }
+              });
+            }
+          },
+          env: {
+            deploy: function() {
+              deployTriggered = true;
+            }
+          }
+        }),
+
+      node = panel.getNode();
+
+    panel.showPanel(true);
+    var field = Y.one('.charms-search-field');
+    field.set('value', 'aaa');
+    panel.setSearchDelay(0);
+
+    field.simulate('keyup');
+
+    Y.one('.charm-result-entry-deploy').simulate('click');
+    assert.isTrue(deployTriggered);
+
+    panel.showPanel(false);
   });
 });
