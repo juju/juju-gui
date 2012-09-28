@@ -154,13 +154,13 @@ YUI.add('juju-notifications', function(Y) {
          *
          * :hide: should the selected element be hidden on selection
          */
-        selection: {hide: true},
+        selection: {hide: false},
 
         events: {
           '#notify-indicator': {
             click: 'notify_toggle'
           },
-          '.notice': {
+          'li.notice': {
             click: 'notice_select'
           }
         },
@@ -183,7 +183,7 @@ YUI.add('juju-notifications', function(Y) {
       NotificationsBaseView, [], {
         template: Templates.notifications_overview,
         events: {
-          '.notice': {
+          'li.notice': {
             click: 'notice_select'
           }
         },
