@@ -62,7 +62,6 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
 
     render: function() {
       console.log('render', this.get('charm'));
-
       var container = this.get('container');
       CharmCollectionView.superclass.render.apply(this, arguments);
       if (this.get('charm')) {
@@ -117,6 +116,8 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
       console.log('View: Initialized: Charm Collection', this.get('query'));
       this.set('charms', []);
       this.set('current_request', null);
+      Y.one('#omnibar').on('submit', this.on_search_change, this);
+      this.on_search_change();
     },
 
     template: Templates['charm-collection'],
@@ -134,8 +135,6 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
         });
       });
 
-      container.one('#charm-search-form').on(
-          'submit', this.on_search_change, this);
       return this;
     },
 

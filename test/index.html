@@ -27,6 +27,7 @@
   <script src="test_service_config_view.js"></script>
   <script src="test_service_view.js"></script>
   <script src="test_utils.js"></script>
+  <script src="test_charm_search.js"></script>
 
   <script>
   YUI().use('node', 'event', function(Y) {
@@ -53,8 +54,13 @@
 </head>
 
 <body>
+  <form id="omnibar" method="GET">
+    <input id="charm-search" type="hidden" />
+  </form>
   <div id="main" class="container">
   </div>
   <div id="mocha"></div>
+  <div id="charm-search-icon"></div>
+  <div id="content"></div>
 </body>
 </html>

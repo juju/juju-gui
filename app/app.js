@@ -158,6 +158,11 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
+      // Create the CharmSearchPopup instance once the app.js is initialized
+      views.CharmSearchPopup.getInstance({
+        charm_store: this.charm_store,
+        env: this.env
+      });
     },
 
     enableBehaviors: function() {
@@ -523,5 +528,6 @@ YUI.add('juju-gui', function(Y) {
     'app-transitions',
     'base',
     'node',
-    'model']
+    'model',
+    'juju-charm-search']
 });

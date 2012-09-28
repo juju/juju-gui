@@ -1,0 +1,56 @@
+<div>
+    <h2>{{charm.name}}</h2>
+    <form class="form-horizontal">
+        <fieldset>
+            <div class="control-group">
+                <label class="control-label">Series</label>
+                <div class="controls">{{charm.series}}</div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Summary</label>
+                <div class="controls">{{charm.summary}}</div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Description</label>
+                <div class="controls">{{markdown charm.description}}</div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Last Change</label>
+                <div class="controls">
+                    {{#with charm.last_change}}
+                    {{created}} <br/> {{committer}} <br/> {{message}}
+                    {{/with}}
+                </div>
+            </div>
+        </fieldset>
+    </form>
+
+    {{name}} -- {{detail}}
+</div>
+
+
+<h1> Charm </h1>
+<div class="row">
+    <div class="span8">
+
+    </div>
+    <div class="span4">
+        <input id="charm-deploy" value="Deploy" type="submit" class="btn btn-inverse"></input>
+
+        <hr/>
+        <b>Provides</b>
+        <ul>
+            {{#iflat charm.provides}}
+            <li>{{interface}}</li>
+            {{/iflat}}
+        </ul>
+
+        <b>Requires</b>
+        <ul>
+            {{#iflat charm.requires}}
+            <li>{{interface}}</li>
+            {{/iflat}}
+        </ul>
+    </div>
+</div>

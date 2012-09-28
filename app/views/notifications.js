@@ -40,6 +40,9 @@ YUI.add('juju-notifications', function(Y) {
               el = container.one('#' + target),
               parent = el.ancestor();
 
+          Y.namespace('juju.views').CharmSearchPopup
+            .getInstance().showPanel(false);
+
           if (notifications.size() === 0) {
             return;
           }

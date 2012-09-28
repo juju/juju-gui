@@ -25,6 +25,28 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
+  var buildDelayedTask = function() {
+    var currentTask = null;
+
+    return {
+      delay: function(callback, ms) {
+        if (!ms) {
+          callback();
+          return;
+        }
+
+        if (currentTask !== null && currentTask !== undefined) {
+          clearTimeout(currentTask);
+        }
+        setTimeout(function() {
+          currentTask = null;
+          callback();
+        }, ms);
+      }
+    };
+  };
+  utils.buildDelayedTask = buildDelayedTask;
+
   /*
  * Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
  * w/o the watch/refresh code
