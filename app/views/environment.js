@@ -67,6 +67,7 @@ YUI.add('juju-view-environment', function(Y) {
           // Scales for unit sizes.
           // XXX magic numbers will have to change; likely during
           // the UI work
+          var service_scale = d3.scale.log().range([150, 200]);
           var service_scale_width = d3.scale.log().range([164, 200]);
           var service_scale_height = d3.scale.log().range([64, 100]);
 
@@ -86,13 +87,8 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Bind visualization resizing on window resize
           Y.on('windowresize', function() {
-            self.setSizesFromViewport(vis, container, xscale, yscale);
+            self.setSizesFromViewport();
           });
-
-          // If the view is bound to the dom, set sizes from viewport
-          if (Y.one('svg')) {
-            self.setSizesFromViewport(vis, container, xscale, yscale);
-          }
 
           var tree = d3.layout.pack()
         .size([width, height])
@@ -154,9 +150,9 @@ YUI.add('juju-view-environment', function(Y) {
               .append('tspan')
               .text(function(d) { return d.type; });
             label.insert('rect', 'text')
-              .attr('width', function() {
-                  return Y.one(this.parentNode)
-                  .one('text').getClientRect().width + 10;
+              .attr('width', function(d) {
+                  return (Y.one(this.parentNode)
+                  .one('text').getClientRect() || {width: 0}).width + 10;
                 })
               .attr('height', 20)
               .attr('x', function() {
@@ -184,7 +180,9 @@ YUI.add('juju-view-environment', function(Y) {
               services :
               self._generate_coords(services, tree))
         .enter().append('g')
-        .attr('class', 'service')
+        .attr('class', function(d) {
+          return (d.get('subordinate') ? 'subordinate ' : '') + 'service';
+        })
         .attr('transform', function(d) {
                 return 'translate(' + [d.x, d.y] + ')';
               })
@@ -210,18 +208,47 @@ YUI.add('juju-view-environment', function(Y) {
               })
         .call(drag);
 
-          node.append('rect')
+        // Draw subordinate services
+        node.filter(function(d) {
+          return d.get('subordinate');
+        })
+        .append('image')
+        .attr('class', 'service-border')
+        .attr('xlink:href', '/assets/svgs/sub_module.svg')
+        .attr('width', function(d) {
+                var w = service_scale(d.get('unit_count') || 1);
+                d.set('width', w);
+                return w;
+        })
+        .attr('height', function(d) {
+                var w = service_scale(d.get('unit_count') || 1);
+                d.set('height', w);
+                return w;
+        })
+        .attr('x', function(d) { return d.get('width') * 0; })
+        .attr('y', function(d) { return d.get('width') * 0; });
+
+        // Draw services
+          node.filter(function(d) { 
+            return !d.get('subordinate'); 
+          })
+          .append('image')
+            .attr('xlink:href', '/assets/svgs/service_module.svg')
         .attr('class', 'service-border')
         .attr('width', function(d) {
-                var w = service_scale_width(d.get('unit_count'));
+                var w = //service_scale_width(d.get('unit_count') || 1);
+                  service_scale(d.get('unit_count') || 1);
                 d.set('width', w);
                 return w;
               })
         .attr('height', function(d) {
-                var h = service_scale_height(d.get('unit_count'));
+                var h = //service_scale_height(d.get('unit_count') || 1);
+                  service_scale(d.get('unit_count') || 1);
                 d.set('height', h);
-                return h;})
-        .on('mouseover', function(d) {
+                return h;});
+
+        node.select('.service-border')
+          .on('mouseover', function(d) {
                 // Save this as the current potential drop-point for drag
                 // targets if it's selectable.
                 if ((d3.event.relatedTarget &&
@@ -246,13 +273,31 @@ YUI.add('juju-view-environment', function(Y) {
 
           var service_labels = node.append('text').append('tspan')
         .attr('class', 'name')
-        .attr('x', 54)
-        .attr('y', '1em')
+        .attr('x', function(d) {
+          return d.get('width') / 2;
+        })
+        .attr('y', function(d) {
+          if (d.get('subordinate')) {
+            return d.get('height') / 2 - 10;
+          } else {
+            return '1.5em';
+          }
+        })
         .text(function(d) {return d.get('id'); });
 
           var charm_labels = node.append('text').append('tspan')
-        .attr('x', 54)
-        .attr('y', '2.5em')
+        .attr('x', function(d) {
+          return d.get('width') / 2;
+        })
+        .attr('y', function(d) {
+          // TODO this will need to be set based on the size of the service
+          // health panel, but for now, this works.
+          if (d.get('subordinate')) {
+            return d.get('height') / 2 - 10;
+          } else {
+            return d.get('height') / 2 + 10;
+          }
+        })
         .attr('dy', '3em')
         .attr('class', 'charm-label')
         .text(function(d) { return d.get('charm'); });
@@ -282,9 +327,15 @@ YUI.add('juju-view-environment', function(Y) {
           var status_chart_layout = d3.layout.pie()
         .value(function(d) { return (d.value ? d.value : 1); });
 
-          var status_chart = node.append('g')
+          var status_chart = node.filter(function(d) {
+            return !d.get('subordinate');
+          })
+          .append('g')
         .attr('class', 'service-status')
-        .attr('transform', 'translate(30,32)');
+        .attr('transform', function (d) {
+          return 'translate(' + [(d.get('width') / 2),
+            d.get('height') / 2 * 0.86] + ')'
+          });
           var status_arcs = status_chart.selectAll('path')
         .data(function(d) {
                 var aggregate_map = d.get('aggregated_status'),
@@ -384,7 +435,7 @@ YUI.add('juju-view-environment', function(Y) {
               });
           add_rel.append('image')
         .attr('xlink:href',
-              '/assets/images/icons/icon_noshadow_relation.png')
+              '/assets/svgs/Build_button.svg')
         .attr('class', 'cp-button')
         .attr('x', function(d) {
                 return d.get('width') + 8;
@@ -408,7 +459,7 @@ YUI.add('juju-view-environment', function(Y) {
             .show_service(d, context, self);
               });
           view_service.append('image')
-        .attr('xlink:href', '/assets/images/icons/icon_noshadow_view.png')
+        .attr('xlink:href', '/assets/svgs/view_button.svg')
         .attr('class', 'cp-button')
         .attr('x', -40)
         .attr('y', function(d) {
@@ -429,7 +480,7 @@ YUI.add('juju-view-environment', function(Y) {
             .destroyServiceConfirm(d, context, self);
               });
           destroy_service.append('image')
-        .attr('xlink:href', '/assets/images/icons/icon_noshadow_destroy.png')
+        .attr('xlink:href', '/assets/svgs/destroy_button.svg')
         .attr('class', 'cp-button')
         .attr('x', function(d) {
                 return (d.get('width') / 2) - 16;
@@ -453,9 +504,41 @@ YUI.add('juju-view-environment', function(Y) {
             return rel_services;
           }
 
-          self.set('tree', tree);
-          self.set('vis', vis);
+          self.setAttrs({
+            'tree': tree,
+            'vis': vis,
+            'xscale': xscale,
+            'yscale': yscale
+          });
           update_links();
+        },
+
+        /*
+         * Finish DOM-dependent rendering
+         *
+         * Some portions of the visualization require information pulled
+         * from the DOM, such as the clientRects used for sizing relation
+         * labels and the viewport size used for sizing the whole graph. This
+         * is called after the view is attached to the DOM in order to
+         * perform all of that work.  In the app, it's called as a callback
+         * in app.showView(), and in testing, it needs to be called manually,
+         * if the test relies on any of this data.
+         */
+        postRender: function() {
+          var container = this.get('container');
+
+          // Set the sizes from the viewport
+          this.setSizesFromViewport();
+
+          // Ensure relation labels are sized properly.
+          container.all('.rel-label').each(function(label) {
+            var width = label.one('text').getClientRect().width + 10;
+            label.one('rect').setAttribute('width', width)
+              .setAttribute('x', -width / 2);
+          });
+
+          // Chainable method.
+          return this;
         },
 
         /*
@@ -597,9 +680,13 @@ YUI.add('juju-view-environment', function(Y) {
         /*
      * Set the visualization size based on the viewport
      */
-        setSizesFromViewport: function(vis, container, xscale, yscale) {
+        setSizesFromViewport: function() {
           // start with some reasonable defaults
-          var viewport_height = '100%',
+          var vis = this.get('vis'),
+              container = this.get('container'),
+              xscale = this.get('xscale'),
+              yscale = this.get('yscale'),
+              viewport_height = '100%',
               viewport_width = parseInt(
               container.getComputedStyle('width'), 10),
               svg = container.one('svg'),

@@ -85,7 +85,7 @@ svg {
 
 charms.thumbnails.li { height:4em; }
 .relation {
-    stroke: #333333; 
+    stroke: #333333;
     stroke-width: 3px;
 
     &.error {
@@ -120,11 +120,17 @@ charms.thumbnails.li { height:4em; }
 g.service {
     fill: #f5f5f5; stroke: black;
 
+    text {
+        text-anchor: middle;
+    }
+
     .charm-label { font-size: 0.7em;
         fill: #333333;}
-    .name { font-weight: bold;
+    .name { 
+        font-weight: bold;
         font-family: "Ubuntu";
-        font-size: 1.6em; fill: #333333;}
+        font-size: 1.6em; fill: #333333;
+    }
     .service-border {
         stroke-width: 2px;
 
@@ -208,7 +214,7 @@ g.unit {
     .seen {
         background-color: rgba(222, 222, 222, 0.33);
     }
-    
+
     &:first-child {
         border: none;
         padding-top: 0;
@@ -354,4 +360,13 @@ g.unit {
 
 .unit-button-palette {
     float: right;
+}
+
+#service-relations {
+    .btn {
+        float: right;
+    }
+    .highlighted {
+       background: pink;
+    }
 }

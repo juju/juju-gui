@@ -67,7 +67,7 @@ YUI.add('juju-view-unit', function(Y) {
         service: service.getAttrs(),
         disabled_remove: service.get('unit_count') <= 1,
         charm: charm.getAttrs(),
-        machine: db.machines.getById(unit.machine).getAttrs(),
+        machine: db.machines.getById(unit.machine),
         unit_error: unit_error,
         unit_running: unit_running,
         unit_pending: unit_pending}));
@@ -113,6 +113,7 @@ YUI.add('juju-view-unit', function(Y) {
     confirmRemoved: function(ev) {
       // We wait to make the panel until now, because in the render method
       // the container is not yet part of the document.
+      ev.preventDefault();
       var unit = this.get('unit'),
           service = this.get('db').services.getById(unit.service);
       if (Y.Lang.isUndefined(this.remove_panel)) {
