@@ -344,7 +344,7 @@ YUI.add('juju-view-utils', function(Y) {
       settings.push(Y.mix(entry, field_def));
     });
     return settings;
-  }
+  };
 
   utils.validate = function(values, schema) {
     console.group('view.utils.validate');
