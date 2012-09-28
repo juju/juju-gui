@@ -322,8 +322,13 @@ YUI.add('juju-view-environment', function(Y) {
           // comprised of units styled appropriately.
           // TODO aggregate statuses into good/bad/pending
           var status_chart_arc = d3.svg.arc()
-        .innerRadius(10)
-        .outerRadius(25);
+        .innerRadius(0)
+        .outerRadius(function(d) {
+          return parseInt(
+            d3.select(this.parentNode)
+            .select('image')
+            .attr('width')) / 2;
+        });
           var status_chart_layout = d3.layout.pie()
         .value(function(d) { return (d.value ? d.value : 1); });
 
@@ -336,6 +341,22 @@ YUI.add('juju-view-environment', function(Y) {
           return 'translate(' + [(d.get('width') / 2),
             d.get('height') / 2 * 0.86] + ')'
           });
+
+          status_chart.append('image')
+          .attr('xlink:href', '/assets/svgs/service_health_mask.svg')
+          .attr('width', function(d) {
+            return d.get('width') / 3;
+          })
+          .attr('height', function(d) {
+            return d.get('height') / 3;
+          })
+          .attr('x', function() {
+            return -d3.select(this).attr('width') / 2;
+          })
+          .attr('y', function() {
+            return -d3.select(this).attr('height') / 2;
+          });
+
           var status_arcs = status_chart.selectAll('path')
         .data(function(d) {
                 var aggregate_map = d.get('aggregated_status'),
@@ -345,8 +366,7 @@ YUI.add('juju-view-environment', function(Y) {
                 });
 
                 return status_chart_layout(aggregate_list);
-              })
-        .enter().append('path')
+              }).enter().insert('path', 'image')
         .attr('d', status_chart_arc)
         .attr('class', function(d) { return 'status-' + d.data.name; })
         .attr('fill-rule', 'evenodd')
