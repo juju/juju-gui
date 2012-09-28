@@ -48,10 +48,6 @@ GlobalConfig = {
           fullpath: '/views/unit.js'
         },
 
-        'juju-view-charmsearch': {
-          fullpath: '/views/search.js'
-        },
-
         'juju-view-charm-collection': {
           fullpath: '/views/charm.js'
         },
@@ -116,4 +112,3 @@ GlobalConfig = {
     }
   }
 };
-
