@@ -66,7 +66,10 @@ YUI.add('juju-charm-search', function (Y) {
 
     charmsList.one('.clear').on('click', function () {
       updateList(null);
-      charmsList.one('.charms-search-field').set('value', '');
+
+      var searchField = charmsList.one('.charms-search-field');
+      searchField.set('value', '');
+      searchField.focus();
     });
 
     charmsList.one('.charms-search-field').on('keyup', function (ev) {
