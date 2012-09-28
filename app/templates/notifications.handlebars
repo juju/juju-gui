@@ -9,10 +9,10 @@
          <a href="/notifications/">
            <i class="icon-list"></i>View All Notifications</a>
        </li>
-       
+
        {{#notifications}}
        <li id="{{clientId}}" class="notice">
-         <div>
+         <div class="{{level}}">
            <h4>{{title}}</h4>
            <div>
              {{message}}
@@ -27,6 +27,3 @@
        {{/notifications}}
      </ul>
 </span>
-
-
-
