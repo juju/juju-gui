@@ -108,6 +108,8 @@ YUI.add('juju-charm-search', function (Y) {
         isPopupVisible = true;
         updatePopupPosition();
 
+        charmsList.one('.charms-search-field').focus();
+
       } else {
         isPopupVisible = false;
         container.remove(false);
