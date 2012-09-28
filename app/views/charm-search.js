@@ -8,23 +8,29 @@ YUI.add('juju-charm-search', function(Y) {
 
       // Singleton
       _instance = null,
+
+      // Delay between a "keyup" event and the service request
       _searchDelay = 500;
 
+  // Creates the "_instance" object
   function createInstance(config) {
 
     var charmStore = config.charm_store,
+        // app.env object
         env = config.env,
 
         container = Y.Node.create(views.Templates['charm-search-pop']({
           title: 'All Charms'
         })),
         charmsList = Y.Node.create(views.Templates['charm-search-result']({})),
-        charmDetailTemplate = views.Templates['charm-search-detail'],
 
         isPopupVisible = false,
 
+        // This is the internal model object.
+        // It handles the charm_store requests.
         model = (function() {
 
+          // It applies special formatting rules
           function normalizeBeans(beans) {
             if (!beans) {
               return beans;
@@ -42,7 +48,6 @@ YUI.add('juju-charm-search', function(Y) {
           }
 
           function filterRequest(query, callback) {
-
             charmStore.sendRequest({
               request: 'search/json?search_text=' + query,
               callback: {
@@ -58,28 +63,21 @@ YUI.add('juju-charm-search', function(Y) {
               }});
           }
 
-
           return {
             filter: function(query, callback) {
               filterRequest(query, callback);
-            },
-            getByName: function(name, callback) {
-              filterRequest(name, function(results) {
-                if (results && results.length) {
-                  callback(results[0]);
-                } else {
-                  callback(null);
-                }
-              });
             }
           };
         })(),
 
         delayedFilter = utils.buildDelayedTask();
 
-    // The panes starts with the "charmsList" visible
+    // The panes starts with the "charmsList" visible.
+    // Eventually we will be able to swap internal
+    // panels (details panel for example).
     container.one('.popover-content').append(charmsList);
 
+    // Clear the current search results
     charmsList.one('.clear').on('click', function() {
       updateList(null);
 
@@ -92,12 +90,14 @@ YUI.add('juju-charm-search', function(Y) {
       updateList(null);
 
       var field = ev.target;
+      // It delays the search request until the last key is pressed
       delayedFilter.delay(function() {
         filterCharms(field.get('value'));
       }, _searchDelay);
     });
 
-    // Update position if we resize the window
+    // Update position if we resize the window.
+    // It tries to keep the popup arrow under the charms search icon.
     Y.on('windowresize', function(e) {
       if (isPopupVisible) {
         updatePopupPosition();
@@ -153,10 +153,6 @@ YUI.add('juju-charm-search', function(Y) {
           charms: entries
         }));
 
-        result.list.all('.charm-result-entry').on('click', function(ev) {
-          showCharmDetails(ev.target.getAttribute('name'));
-        });
-
         result.list.all('.charm-result-entry-deploy').on('click', function(ev) {
           deployCharm(ev.target.getAttribute('data-charm-url'));
         });
@@ -190,16 +186,6 @@ YUI.add('juju-charm-search', function(Y) {
       };
     }
 
-    function showCharmDetails(name) {
-      updateList(null);
-
-      model.getByName(name, function(bean) {
-        var result = Y.Node.create(charmDetailTemplate(bean));
-
-        charmsList.append(result);
-      });
-    }
-
     function filterCharms(name) {
       model.filter(name, function(beans) {
         updateList(beans);
@@ -210,6 +196,7 @@ YUI.add('juju-charm-search', function(Y) {
       Y.one('#charm-search-trigger').on('click', togglePanel);
     }
 
+    // The public methods
     return {
       showPanel: showPanel,
       togglePanel: togglePanel,
@@ -222,6 +209,7 @@ YUI.add('juju-charm-search', function(Y) {
     };
   }
 
+  // The public methods
   views.CharmSearchPopup = {
     getInstance: function(config) {
       if (!_instance) {

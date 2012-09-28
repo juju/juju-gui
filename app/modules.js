@@ -27,13 +27,13 @@ GlobalConfig = {
           fullpath: '/assets/javascripts/reconnecting-websocket.js'
         },
 
-        'juju-charm-search': {
-          fullpath: '/views/charm-search.js'
-        },
-
         // Views
         'juju-view-utils': {
           fullpath: '/views/utils.js'
+        },
+
+        'juju-charm-search': {
+          fullpath: '/views/charm-search.js'
         },
 
         'juju-notifications': {
@@ -72,7 +72,6 @@ GlobalConfig = {
             'juju-view-environment',
             'juju-view-service',
             'juju-view-unit',
-            'juju-view-charmsearch',
             'juju-view-charm',
             'juju-view-charm-collection'
           ]

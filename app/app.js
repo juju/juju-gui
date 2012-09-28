@@ -114,8 +114,6 @@ YUI.add('juju-gui', function(Y) {
       this.charm_store = new Y.DataSource.IO({
         source: this.get('charm_store_url')});
 
-
-
       // Event subscriptions
 
       // TODO: refactor per event views into a generic show view event.
@@ -165,6 +163,7 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
+      // Create the CharmSearchPopup instance once the app.js is initialized
       views.CharmSearchPopup.getInstance({
         charm_store: this.charm_store,
         env: this.env
