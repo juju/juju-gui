@@ -154,7 +154,7 @@ YUI.add('juju-notifications', function(Y) {
          *
          * :hide: should the selected element be hidden on selection
          */
-        selection: {hide: true},
+        selection: {hide: false},
 
         events: {
           '#notify-indicator': {
