@@ -120,8 +120,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
       console.log('View: Initialized: Charm Collection', this.get('query'));
       this.set('charms', []);
       this.set('current_request', null);
-      Y.one('#omnibar').on('submit', this.on_search_change, this);
-      this.on_search_change();
     },
 
     template: Templates['charm-collection'],
@@ -140,6 +138,8 @@ YUI.add('juju-view-charm-collection', function(Y) {
         });
       });
 
+      container.one('#charm-search-form').on(
+          'submit', this.on_search_change, this);
       return this;
     },
 

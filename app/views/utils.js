@@ -222,6 +222,38 @@ YUI.add('juju-view-utils', function(Y) {
     return panel;
   };
 
+  function _addAlertMessage(container, alertClass, message) {
+    var div = container.one('#message-area'),
+        errorDiv = div.one('#alert-area');
+
+    if (!errorDiv) {
+      errorDiv = Y.Node.create('<div/>')
+        .set('id', 'alert-area')
+        .addClass('alert')
+        .addClass(alertClass);
+
+      Y.Node.create('<span/>')
+        .set('id', 'alert-area-text')
+        .appendTo(errorDiv);
+
+      var close = Y.Node.create('<a class="close">x</a>');
+
+      errorDiv.appendTo(div);
+      close.appendTo(errorDiv);
+
+      close.on('click', function() {
+        errorDiv.remove();
+      });
+    }
+
+    errorDiv.one('#alert-area-text').setHTML(message);
+    window.scrollTo(errorDiv.getX(), errorDiv.getY());
+  }
+
+  utils.showSuccessMessage = function(container, message) {
+    _addAlertMessage(container, 'alert-success', message);
+  };
+
   utils.buildRpcHandler = function(config) {
     var utils = Y.namespace('juju.views.utils'),
         container = config.container,
@@ -229,22 +261,6 @@ YUI.add('juju-view-utils', function(Y) {
         finalizeHandler = config.finalizeHandler,
         successHandler = config.successHandler,
         errorHandler = config.errorHandler;
-
-    function _addErrorMessage(message) {
-      var div = container.one('#message-area')
-            .appendChild(Y.Node.create('<div/>'))
-            .addClass('alert')
-            .addClass('alert-error')
-            .set('text', message);
-
-      var close = div.appendChild(Y.Node.create('<a/>'))
-        .addClass('close')
-        .set('text', '×');
-
-      close.on('click', function() {
-        div.remove();
-      });
-    }
 
     function invokeCallback(callback) {
       if (callback) {
@@ -258,9 +274,16 @@ YUI.add('juju-view-utils', function(Y) {
 
     return function(ev) {
       if (ev && ev.err) {
-        _addErrorMessage(utils.SERVER_ERROR_MESSAGE);
+        _addAlertMessage(container, 'alert-error', utils.SERVER_ERROR_MESSAGE);
         invokeCallback(errorHandler);
       } else {
+        // The usual result of a successful request is a page refresh.
+        // Therefore, we need to set this delay in order to show the "success"
+        // message after the page page refresh.
+        setTimeout(function() {
+          utils.showSuccessMessage(container, 'Settings updated');
+        }, 1000);
+
         invokeCallback(successHandler);
       }
       invokeCallback(finalizeHandler);
@@ -282,12 +305,20 @@ YUI.add('juju-view-utils', function(Y) {
       } else {
         value = el.get('value');
       }
+
+      if (value && typeof value === 'string' && value.trim() === '') {
+        value = null;
+      }
+
       result[el.get('name')] = value;
     });
 
     return result;
   };
 
+  /*
+   * Given a charm schema, return a template-friendly array describing it.
+   */
   utils.extractServiceSettings = function(schema) {
     var settings = [];
     Y.Object.each(schema, function(field_def, field_name) {
@@ -313,6 +344,58 @@ YUI.add('juju-view-utils', function(Y) {
       settings.push(Y.mix(entry, field_def));
     });
     return settings;
+  }
+
+  utils.validate = function(values, schema) {
+    console.group('view.utils.validate');
+    console.log('validating', values, 'against', schema);
+    var errors = {};
+
+    function toString(value) {
+      if (value === null || value === undefined) {
+        return '';
+      }
+      return (String(value)).trim();
+    }
+
+    function isInt(value) {
+      return (/^[-+]?[0-9]+$/).test(value);
+    }
+
+    function isFloat(value) {
+      return (/^[-+]?[0-9]+\.?[0-9]*$|^[0-9]*\.?[0-9]+$/).test(value);
+    }
+
+    Y.Object.each(schema, function(field_definition, name) {
+      var value = toString(values[name]);
+      console.log('validating field', name, 'with value', value);
+
+      if (field_definition.type === 'int') {
+        if (!value) {
+          if (field_definition['default'] === undefined) {
+            errors[name] = 'This field is required.';
+          }
+        } else if (!isInt(value)) {
+          // We don't use parseInt to validate integers because
+          // it is far too lenient and the back-end code will generate
+          // errors on some of the things it lets through.
+          errors[name] = 'The value "' + value + '" is not an integer.';
+        }
+      } else if (field_definition.type === 'float') {
+        if (!value) {
+          if (field_definition['default'] === undefined) {
+            errors[name] = 'This field is required.';
+          }
+        } else if (!isFloat(value)) {
+          errors[name] = 'The value "' + value + '" is not a float.';
+        }
+      }
+
+      console.log('generated this error (possibly undefined)', errors[name]);
+    });
+    console.log('returning', errors);
+    console.groupEnd();
+    return errors;
   };
 
 }, '0.1.0', {

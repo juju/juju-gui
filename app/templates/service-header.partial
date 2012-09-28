@@ -33,5 +33,5 @@
   </div>
 </div>
 <div class="row">
-  <div id="message-area" class="span12"></div>
+  <div id="message-area" class="span10"></div>
 </div>
