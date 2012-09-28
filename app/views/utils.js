@@ -1,5 +1,71 @@
 'use strict';
 
+var setConsoleDisabled = (function () {
+  'use strict';
+
+  var winConsole = window.console,
+
+    // These are the available methods.
+    // Add more to this list if necessary.
+    consoleMock = {
+      groupEnd: function() {},
+      groupCollapsed: function() {},
+      log:function () {}
+    },
+    consoleProxy = (function () {
+
+      // This object wraps the "window.console"
+      var consoleWrapper = {};
+
+      function buildMethodProxy(key) {
+        if (winConsole[key]
+          && typeof winConsole[key] === 'function') {
+          consoleWrapper[key] = function () {
+            var cFunc = winConsole[key];
+            cFunc.apply(null, ["llalalalala"]);
+          }
+        } else {
+          consoleWrapper[key] = function () {
+            consoleMock[key]();
+          }
+        }
+      }
+
+      // Checking if the browser has the "console" object
+      if (winConsole) {
+
+        // Only the methods defined by the consoleMock
+        // are available for use.
+        for (var key in consoleMock) {
+          buildMethodProxy(key);
+        }
+      }
+
+      return consoleWrapper;
+    })();
+
+  // We start the application with a fake console
+  if (GlobalConfig.debug) {
+    window.console = consoleProxy;
+
+  } else {
+    window.console = consoleMock;
+  }
+
+  window.console.log('Call "javascript:setConsoleDisabled(false)"' +
+    ' to enable the console');
+
+  // In order to enable the console in production the user can
+  // call "javascript:setConsoleDisabled(false)" in the address bar
+  return function (disabled) {
+    if (disabled) {
+      window.console = consoleMock;
+    } else {
+      window.console = consoleProxy;
+    }
+  };
+})();
+
 YUI.add('juju-view-utils', function(Y) {
 
   var views = Y.namespace('juju.views'),
