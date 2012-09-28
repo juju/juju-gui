@@ -1,0 +1,17 @@
+{{#settings}}
+  <div class="control-group">
+    <div class="well">
+      {{description}}
+    </div>
+    <div class="control-label" for="{{name}}">{{name}} ({{type}})</div>
+    <div class="controls">
+      {{#if isBool}}
+      <input class="config-field" type="checkbox" name="{{name}}"
+          id="input-{{name}}" {{value}}/>
+      {{else}}
+      <input class="config-field" type="text" name="{{name}}"
+          id="input-{{name}}" value="{{value}}"/>
+      {{/if}}
+    </div>
+  </div>
+{{/settings}}

@@ -82,7 +82,6 @@ describe('charm search', function() {
 
     panel.showPanel(true);
 
-
     var field = Y.one('.charms-search-field'),
         buttonX = Y.one('.clear');
 
