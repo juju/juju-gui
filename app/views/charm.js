@@ -102,9 +102,7 @@ YUI.add('juju-view-charm-collection', function(Y) {
       // Gather the configuration values from the form.
       var serviceName = container.one('#service-name').get('value'),
           config = utils.getElementsValuesMapping(container,
-          '#service-config .config-field');
-      console.log('requested charm configuration', config);
-
+              '#service-config .config-field');
 
       // The deploy call generates an event chain leading to a call to
       // `app.on_database_changed()`, which re-dispatches the current view.

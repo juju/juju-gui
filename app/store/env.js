@@ -147,6 +147,7 @@ YUI.add('juju-env', function(Y) {
     },
 
     deploy: function(charm_url, service_name, config, callback) {
+      console.log(charm_url, service_name, config);
       this._send_rpc(
           { op: 'deploy',
             service_name: service_name,
