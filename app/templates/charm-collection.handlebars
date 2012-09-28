@@ -1,33 +1,24 @@
       <div>
         <h1>Charm Collection</h1>
-	<form class="well form-inline">
-	  <label>Series <input type="text" class="input-small" placeholder="Precise"></label>
-	  <label>Owner <input type="text" class="input-small" placeholder="Ubuntu"></label>
-	  <label>Provides <input type="text" class="input-small" placeholder="Owner"></label>
-	  <label>Requires <input type="text" class="input-small" placeholder="Owner"></label>
-	  <label>
-	    Sort 
-	    <select class="input-small">
-	      <option>Match</option>
-	      <option>Modified</option>
-	      <option>Owner</option>
-	      <option>Series</option>
-	    </select>
-	  </label>
-	  <button type="submit" class="btn">Search</button>
-	</form>
-	<div class="collection">
-	  <div class="charm">
-	    <ul class="thumbnails">
-              {{#charms}}
-              <li class="span3">
-		<div class="thumbnail" data-charm-url="{{data_url}}">
-		  <h5>~{{owner}}/{{series}}/{{name}} <i class="icon-user"></i></h5>
-		  <span>{{summary}}</span>
-		</div>
-	      </li>
-              {{/charms}}
-	    </ul>
-	  </div>
-	</div>
+          <form class="well form-inline" id="charm-search-form">
+            <label>Charm Name
+              <input id="charm-search" name="query" type="text" class="search-query span2"
+                     placeholder="Search"/>
+            </label>
+            <button type="submit" class="btn">Search</button>
+          </form>
+          <div class="collection">
+            <div class="charm">
+              <ul class="thumbnails">
+                {{#charms}}
+                <li class="span3">
+                  <div class="thumbnail" data-charm-url="{{data_url}}">
+                    <h5>~{{owner}}/{{series}}/{{name}} <i class="icon-user"></i></h5>
+                    <span>{{summary}}</span>
+                  </div>
+                </li>
+                {{/charms}}
+              </ul>
+            </div>
+          </div>
       </div>
