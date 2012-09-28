@@ -1,9 +1,9 @@
 'use strict';
 
-describe('charm search', function () {
+describe('charm search', function() {
   var Y, juju, models, views;
 
-  before(function (done) {
+  before(function(done) {
     Y = YUI(GlobalConfig).use([
       'juju-models',
       'juju-views',
@@ -12,15 +12,15 @@ describe('charm search', function () {
       'juju-tests-utils',
       'node-event-simulate'],
 
-      function (Y) {
-        juju = Y.namespace('juju');
-        models = Y.namespace('juju.models');
-        views = Y.namespace('juju.views');
-        done();
-      });
+    function(Y) {
+      juju = Y.namespace('juju');
+      models = Y.namespace('juju.models');
+      views = Y.namespace('juju.views');
+      done();
+    });
   });
 
-  it('must be able to show and hide the panel', function () {
+  it('must be able to show and hide the panel', function() {
     var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({});
 
     panel.showPanel(true);
@@ -36,15 +36,15 @@ describe('charm search', function () {
     assert.isNull(Y.one('#juju-search-charm-panel'));
   });
 
-  it('must be able to search', function () {
+  it('must be able to search', function() {
     Y.namespace('juju.views').CharmSearchPopup.killInstance();
 
     var searchTriggered = false,
 
         searchResult = '{"results": [{"data_url": "this is my URL", ' +
-          '"name": "membase", "series": "precise", "summary": ' +
-          '"Membase Server", "relevance": 8.728194117350437, ' +
-          '"owner": "charmers"}]}',
+        '"name": "membase", "series": "precise", "summary": ' +
+        '"Membase Server", "relevance": 8.728194117350437, ' +
+        '"owner": "charmers"}]}',
 
         panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
           charm_store: {
@@ -76,15 +76,15 @@ describe('charm search', function () {
     node.getHTML().should.contain('this is my URL');
   });
 
-  it('must be able to reset the search result', function () {
+  it('must be able to reset the search result', function() {
     var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({}),
-      node = panel.getNode();
+        node = panel.getNode();
 
     panel.showPanel(true);
 
 
     var field = Y.one('.charms-search-field'),
-      buttonX = Y.one('.clear');
+        buttonX = Y.one('.clear');
 
     node.getHTML().should.contain('this is my URL');
     assert.equal('aaa', field.get('value'));

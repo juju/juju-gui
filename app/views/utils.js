@@ -30,7 +30,7 @@ YUI.add('juju-view-utils', function(Y) {
 
     return {
       delay: function(callback, ms) {
-        if(!ms) {
+        if (!ms) {
           callback();
           return;
         }

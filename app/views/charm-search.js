@@ -1,86 +1,86 @@
 'use strict';
 
-YUI.add('juju-charm-search', function (Y) {
+YUI.add('juju-charm-search', function(Y) {
 
   var views = Y.namespace('juju.views'),
-    utils = Y.namespace('juju.views.utils'),
-    Templates = views.Templates,
+      utils = Y.namespace('juju.views.utils'),
+      Templates = views.Templates,
 
-  // Singleton
-    _instance = null,
-    _searchDelay = 500;
+      // Singleton
+      _instance = null,
+      _searchDelay = 500;
 
   function createInstance(config) {
 
     var charmStore = config.charm_store,
-      env = config.env,
+        env = config.env,
 
-      container = Y.Node.create(views.Templates['charm-search-pop']({
-        title:'All Charms'
-      })),
-      charmsList = Y.Node.create(views.Templates['charm-search-result']({})),
-      charmDetailTemplate = views.Templates['charm-search-detail'],
+        container = Y.Node.create(views.Templates['charm-search-pop']({
+          title: 'All Charms'
+        })),
+        charmsList = Y.Node.create(views.Templates['charm-search-result']({})),
+        charmDetailTemplate = views.Templates['charm-search-detail'],
 
-      isPopupVisible = false,
+        isPopupVisible = false,
 
-      model = (function () {
+        model = (function() {
 
-        function normalizeBeans(beans) {
-          if(!beans) {
+          function normalizeBeans(beans) {
+            if (!beans) {
+              return beans;
+            }
+
+            var bean = null;
+            for (var index = 0; index < beans.length; index = index + 1) {
+              bean = beans[index];
+              if (bean.owner === 'charmers') {
+                bean.owner = null;
+              }
+            }
+
             return beans;
           }
 
-          var bean = null;
-          for (var i = 0; i < beans.length; i++) {
-            bean = beans[i];
-            if (bean.owner === 'charmers') {
-              bean.owner = null;
+          function filterRequest(query, callback) {
+
+            charmStore.sendRequest({
+              request: 'search/json?search_text=' + query,
+              callback: {
+                'success': function(io_request) {
+                  var result_set = Y.JSON.parse(
+                      io_request.response.results[0].responseText);
+                  console.log('results update', result_set, this);
+                  callback(normalizeBeans(result_set.results));
+                },
+                'failure': function er(e) {
+                  console.error(e.error);
+                }
+              }});
+          }
+
+
+          return {
+            filter: function(query, callback) {
+              filterRequest(query, callback);
+            },
+            getByName: function(name, callback) {
+              filterRequest(name, function(results) {
+                if (results && results.length) {
+                  callback(results[0]);
+                } else {
+                  callback(null);
+                }
+              });
             }
-          }
+          };
+        })(),
 
-          return beans;
-        }
-
-        function filterRequest(query, callback) {
-
-          charmStore.sendRequest({
-            request:'search/json?search_text=' + query,
-            callback:{
-              'success':function (io_request) {
-                var result_set = Y.JSON.parse(
-                  io_request.response.results[0].responseText);
-                console.log('results update', result_set, this);
-                callback(normalizeBeans(result_set.results));
-              },
-              'failure':function er(e) {
-                console.error(e.error);
-              }
-            }});
-        }
-
-
-        return {
-          filter:function (query, callback) {
-            filterRequest(query, callback);
-          },
-          getByName:function (name, callback) {
-            filterRequest(name, function (results) {
-              if (results && results.length) {
-                callback(results[0]);
-              } else {
-                callback(null);
-              }
-            });
-          }
-        };
-      })(),
-
-      delayedFilter = utils.buildDelayedTask();
+        delayedFilter = utils.buildDelayedTask();
 
     // The panes starts with the "charmsList" visible
     container.one('.popover-content').append(charmsList);
 
-    charmsList.one('.clear').on('click', function () {
+    charmsList.one('.clear').on('click', function() {
       updateList(null);
 
       var searchField = charmsList.one('.charms-search-field');
@@ -88,17 +88,17 @@ YUI.add('juju-charm-search', function (Y) {
       searchField.focus();
     });
 
-    charmsList.one('.charms-search-field').on('keyup', function (ev) {
+    charmsList.one('.charms-search-field').on('keyup', function(ev) {
       updateList(null);
 
       var field = ev.target;
-      delayedFilter.delay(function () {
+      delayedFilter.delay(function() {
         filterCharms(field.get('value'));
       }, _searchDelay);
     });
 
     // Update position if we resize the window
-    Y.on('windowresize', function (e) {
+    Y.on('windowresize', function(e) {
       if (isPopupVisible) {
         updatePopupPosition();
       }
@@ -140,8 +140,8 @@ YUI.add('juju-charm-search', function (Y) {
       var list = charmsList.one('.search-result-div');
       var children = list.get('childNodes').remove(destroy);
       return {
-        list:list,
-        children:children
+        list: list,
+        children: children
       };
     }
 
@@ -150,21 +150,21 @@ YUI.add('juju-charm-search', function (Y) {
 
       if (updateList) {
         result.list.append(views.Templates['charm-search-result-entries']({
-          charms:entries
+          charms: entries
         }));
 
-        result.list.all('.charm-result-entry').on('click', function (ev) {
+        result.list.all('.charm-result-entry').on('click', function(ev) {
           showCharmDetails(ev.target.getAttribute('name'));
         });
 
-        result.list.all('.charm-result-entry-deploy').on('click', function (ev) {
+        result.list.all('.charm-result-entry-deploy').on('click', function(ev) {
           deployCharm(ev.target.getAttribute('data-charm-url'));
         });
       }
     }
 
     function deployCharm(url) {
-      env.deploy(url, function (msg) {
+      env.deploy(url, function(msg) {
         console.log(url + ' deployed');
       });
     }
@@ -178,22 +178,22 @@ YUI.add('juju-charm-search', function (Y) {
     function getCalculatePanelPosition() {
 
       var icon = Y.one('#charm-search-icon'),
-        pos = icon.getXY(),
-        content = Y.one('#content'),
-        contentWidth = content.getDOMNode().offsetWidth,
-        containerWidth = container.getDOMNode().offsetWidth;
+          pos = icon.getXY(),
+          content = Y.one('#content'),
+          contentWidth = content.getDOMNode().offsetWidth,
+          containerWidth = container.getDOMNode().offsetWidth;
 
       return {
-        x:content.getX() + contentWidth - containerWidth,
-        y:pos[1] + 30,
-        arrowX:icon.getX() + (icon.getDOMNode().offsetWidth / 2)
+        x: content.getX() + contentWidth - containerWidth,
+        y: pos[1] + 30,
+        arrowX: icon.getX() + (icon.getDOMNode().offsetWidth / 2)
       };
     }
 
     function showCharmDetails(name) {
       updateList(null);
 
-      model.getByName(name, function (bean) {
+      model.getByName(name, function(bean) {
         var result = Y.Node.create(charmDetailTemplate(bean));
 
         charmsList.append(result);
@@ -201,7 +201,7 @@ YUI.add('juju-charm-search', function (Y) {
     }
 
     function filterCharms(name) {
-      model.filter(name, function (beans) {
+      model.filter(name, function(beans) {
         updateList(beans);
       });
     }
@@ -211,25 +211,25 @@ YUI.add('juju-charm-search', function (Y) {
     }
 
     return {
-      showPanel:showPanel,
-      togglePanel:togglePanel,
-      setSearchDelay:function (delay) {
+      showPanel: showPanel,
+      togglePanel: togglePanel,
+      setSearchDelay: function(delay) {
         _searchDelay = delay;
       },
-      getNode:function () {
+      getNode: function() {
         return container;
       }
     };
   }
 
   views.CharmSearchPopup = {
-    getInstance:function (config) {
+    getInstance: function(config) {
       if (!_instance) {
         _instance = createInstance(config);
       }
       return _instance;
     },
-    killInstance:function () {
+    killInstance: function() {
       if (_instance) {
         _instance.getNode().remove(true);
         _instance = null;
@@ -238,7 +238,7 @@ YUI.add('juju-charm-search', function (Y) {
   };
 
 }, '0.1.0', {
-  requires:[
+  requires: [
     'view',
     'juju-view-utils',
     'node',
