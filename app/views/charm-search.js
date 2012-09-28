@@ -6,7 +6,7 @@ YUI.add('juju-charm-search', function (Y) {
     utils = Y.namespace('juju.views.utils'),
     Templates = views.Templates,
 
-    // Singleton
+  // Singleton
     _instance = null,
     _searchDelay = 500;
 
@@ -25,6 +25,22 @@ YUI.add('juju-charm-search', function (Y) {
 
       model = (function () {
 
+        function normalizeBeans(beans) {
+          if(!beans) {
+            return beans;
+          }
+
+          var bean = null;
+          for (var i = 0; i < beans.length; i++) {
+            bean = beans[i];
+            if (bean.owner === 'charmers') {
+              bean.owner = null;
+            }
+          }
+
+          return beans;
+        }
+
         function filterRequest(query, callback) {
 
           charmStore.sendRequest({
@@ -34,7 +50,7 @@ YUI.add('juju-charm-search', function (Y) {
                 var result_set = Y.JSON.parse(
                   io_request.response.results[0].responseText);
                 console.log('results update', result_set, this);
-                callback(result_set.results);
+                callback(normalizeBeans(result_set.results));
               },
               'failure':function er(e) {
                 console.error(e.error);
@@ -196,11 +212,11 @@ YUI.add('juju-charm-search', function (Y) {
 
     return {
       showPanel:showPanel,
-      togglePanel: togglePanel,
-      setSearchDelay: function(delay) {
+      togglePanel:togglePanel,
+      setSearchDelay:function (delay) {
         _searchDelay = delay;
       },
-      getNode: function() {
+      getNode:function () {
         return container;
       }
     };
