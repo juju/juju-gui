@@ -112,29 +112,29 @@
 
     // Ensure the environment view loads properly
     it.only('must be able to render service blocks and relations',
-       function() {
-         // Create an instance of EnvironmentView with custom env
-         var view = new views.EnvironmentView({
-           container: container,
-           db: db,
-           env: env
-         }).render();
+        function() {
+          // Create an instance of EnvironmentView with custom env
+          var view = new views.EnvironmentView({
+            container: container,
+            db: db,
+            env: env
+          }).render();
 
-         container.all('.service-border').size().should.equal(3);
-         (container.all('.relation').size() -
-          container.all('.pending-relation').size())
+          container.all('.service-border').size().should.equal(3);
+          (container.all('.relation').size() -
+           container.all('.pending-relation').size())
               .should.equal(1);
 
-         // Verify that the paths render 'properly' where this
-         // means no NaN in the paths
-         var line = container.one('.relation');
-         Y.each(['x1', 'y1', 'x2', 'y2'],
-         function(e) {
-           Y.Lang.isNumber(
-           parseInt(this.getAttribute(e), 10))
+          // Verify that the paths render 'properly' where this
+          // means no NaN in the paths
+          var line = container.one('.relation');
+          Y.each(['x1', 'y1', 'x2', 'y2'],
+              function(e) {
+                Y.Lang.isNumber(
+                parseInt(this.getAttribute(e), 10))
                             .should.equal(true);
-                }, line);
-       });
+              }, line);
+        });
 
     // Ensure that we can add a relation
     it.skip('must be able to add a relation between services',

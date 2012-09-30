@@ -289,34 +289,34 @@ YUI.add('juju-view-utils', function(Y) {
       Y.mix(Box, _.getAttrs());
       return Box;
     };
-      
+
     Object.defineProperties(Box, {
-        pos: {
-            writeable: true,
-            get: function() {
-                return {x: this.x, y: this.y, w: this.w, h: this.h};
-            },
-            set: function(value) { 
-                Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
-            }
+      pos: {
+        writeable: true,
+        get: function() {
+          return {x: this.x, y: this.y, w: this.w, h: this.h};
         },
-        x: {
-            writeable: true,
-            get: function() { return x;},
-            set: function(value) { 
-               this.px = this.x; 
-               x = value; 
-               return this;}
-        },
-        y: {
-            writeable: true,
-            get: function() { return y;},
-            set: function(value) { 
-               this.py = this.y; 
-               y = value; 
-               return this;
-            }
+        set: function(value) {
+          Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
         }
+      },
+      x: {
+        writeable: true,
+        get: function() { return x;},
+        set: function(value) {
+          this.px = this.x;
+          x = value;
+          return this;}
+      },
+      y: {
+        writeable: true,
+        get: function() { return y;},
+        set: function(value) {
+          this.py = this.y;
+          y = value;
+          return this;
+        }
+      }
     });
 
     Box.getXY = function() {return [this.x, this.y];};

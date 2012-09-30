@@ -105,9 +105,9 @@ YUI.add('juju-view-environment', function(Y) {
         /*
          * Attach view to target, if target is an ancestor of the view
          * this is a no-oop.
-         * 
-         * Currently disabled till the redaw pattern is syned with all the 
-         * event code. 
+         *
+         * Currently disabled till the redaw pattern is syned with all the
+         * event code.
          */
         attachView: function(target) {
           if (Y.Lang.isString(target)) {
@@ -146,7 +146,7 @@ YUI.add('juju-view-environment', function(Y) {
           // Nodes are mapped by modelId tuples.
           this.node = vis.selectAll('.service')
                        .data(services, function(d) {
-                                 return d.modelId();});
+                return d.modelId();});
         },
 
         /*
@@ -442,12 +442,12 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         addControlPanel: function(node) {
-          // Add a control panel around the service
+          // Add a control panel around the service.
           var self = this;
           var control_panel = node.append('g')
                 .attr('class', 'service-control-panel');
 
-          // A button to add a relation between two services
+          // A button to add a relation between two services.
           var add_rel = control_panel.append('g')
                 .attr('class', 'add-relation')
                 .on('click.cp', function(d) {
@@ -508,7 +508,7 @@ YUI.add('juju-view-environment', function(Y) {
                   .addRelationEnd(endpoint, context, self);
                 } else {
                   // TODO clean up, abstract
-                  self.addRelation(); // will clear the state
+                  self.addRelation(); // Will clear the state.
                 }
               });
           add_rel.append('image')
