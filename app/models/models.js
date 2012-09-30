@@ -41,8 +41,6 @@ YUI.add('juju-models', function(Y) {
   });
   models.CharmList = CharmList;
 
-
-
   var Service = Y.Base.create('service', Y.Model, [], {
     ATTRS: {
       name: {},
@@ -73,6 +71,7 @@ YUI.add('juju-models', function(Y) {
   // human maintenance, so verify your assumptions before proceeding from
   // reading this code.
   var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
+      //    idAttribute: 'name',
       {
         ATTRS: {
           machine: {},
@@ -91,6 +90,7 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
     model: ServiceUnit,
+
     _setDefaultsAndCalculatedValues: function(obj) {
       var raw = obj.id.split('/');
       obj.service = raw[0];
@@ -108,6 +108,7 @@ YUI.add('juju-models', function(Y) {
       }
       return result;
     },
+
     get_units_for_service: function(service, asList) {
       var options = {},
           sid = service.get('id');
@@ -121,11 +122,12 @@ YUI.add('juju-models', function(Y) {
       });
       return units;
     },
+
     /*
-         *  Return information about the state of the set of units for a
-         *  given service in the form of a map of agent states:
-         *  state => number of units in that state
-         */
+     *  Return information about the state of the set of units for a
+     *  given service in the form of a map of agent states:
+     *  state => number of units in that state
+     */
     get_informative_states_for_service: function(service) {
       var aggregate_map = {}, aggregate_list = [],
           units_for_service = this.get_units_for_service(service);
@@ -145,9 +147,9 @@ YUI.add('juju-models', function(Y) {
     },
 
     /*
-         * Updates a service's unit count and aggregate state map during a
-         * delta, ensuring that they're up to date.
-         */
+     * Updates a service's unit count and aggregate state map during a
+     * delta, ensuring that they're up to date.
+     */
     update_service_unit_aggregates: function(service) {
       var aggregate = this.get_informative_states_for_service(service);
       var sum = Y.Array.reduce(
@@ -259,9 +261,9 @@ YUI.add('juju-models', function(Y) {
     },
 
     /*
-         * Trim the list removing oldest elements till we are
-         * below max_size
-         */
+     * Trim the list removing oldest elements till we are
+     * below max_size
+     */
     trim: function(e) {
       while (this.size() >= this.get('max_size')) {
         this.removeOldest();
@@ -275,12 +277,12 @@ YUI.add('juju-models', function(Y) {
     },
 
     /*
-         * Get Notifications relative to a given model.
-         * Currenly this depends on a mapping between the model
-         * class as encoded by its clientId (see Database.getByModelId)
-         *
-         * [model_list_name, id]
-         */
+     * Get Notifications relative to a given model.
+     * Currenly this depends on a mapping between the model
+     * class as encoded by its clientId (see Database.getByModelId)
+     *
+     * [model_list_name, id]
+     */
     getNotificationsForModel: function(model) {
       var modelKey = (model instanceof Y.Model) ? model.get('id') : model.id;
       return this.filter(function(notification) {
@@ -358,6 +360,7 @@ YUI.add('juju-models', function(Y) {
         modelName = 'unit';
       }
       return this[modelName + 's'];
+
     },
 
     getModelFromChange: function(change) {

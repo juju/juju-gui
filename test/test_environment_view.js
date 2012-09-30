@@ -111,7 +111,7 @@
     });
 
     // Ensure the environment view loads properly
-    it('must be able to render service blocks and relations',
+    it.only('must be able to render service blocks and relations',
        function() {
          // Create an instance of EnvironmentView with custom env
          var view = new views.EnvironmentView({
@@ -242,7 +242,7 @@
        }
     );
 
-    // Tests for control panel
+    // Tests for control panel.
     it('must be able to toggle a control panel', function(done) {
       var view = new views.EnvironmentView({
         container: container,
@@ -448,7 +448,6 @@
                            .source(b1)
                            .target(b2)
                            .model(relation);
-      console.dir(pair);
       pair.modelIds().should.not.contain(',');
       pair.modelIds().should.equal(
           'service-mediawiki:app-service-haproxy:proxy');

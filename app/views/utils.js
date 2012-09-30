@@ -289,30 +289,35 @@ YUI.add('juju-view-utils', function(Y) {
       Y.mix(Box, _.getAttrs());
       return Box;
     };
-
-    Box.__defineGetter__('pos', function() {
-      return {x: this.x, y: this.y, w: this.w, h: this.h};
+      
+    Object.defineProperties(Box, {
+        pos: {
+            writeable: true,
+            get: function() {
+                return {x: this.x, y: this.y, w: this.w, h: this.h};
+            },
+            set: function(value) { 
+                Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
+            }
+        },
+        x: {
+            writeable: true,
+            get: function() { return x;},
+            set: function(value) { 
+               this.px = this.x; 
+               x = value; 
+               return this;}
+        },
+        y: {
+            writeable: true,
+            get: function() { return y;},
+            set: function(value) { 
+               this.py = this.y; 
+               y = value; 
+               return this;
+            }
+        }
     });
-
-    Box.__defineSetter__('pos', function(value) {
-      Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
-    });
-
-    Box.__defineGetter__('x', function() {return x;});
-    Box.__defineSetter__('x', function(value) {
-      this.px = this.x;
-      x = value;
-      return this;
-    });
-
-    Box.__defineGetter__('y', function() {return y;});
-    Box.__defineSetter__('y', function(value) {
-      this.py = this.y;
-      y = value;
-      return this;
-    });
-
-
 
     Box.getXY = function() {return [this.x, this.y];};
     Box.getWH = function() {return [this.w, this.h];};

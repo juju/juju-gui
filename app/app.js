@@ -351,9 +351,9 @@ YUI.add('juju-gui', function(Y) {
           update: false,
           render: true,
           callback: function(view) {
-            //   view.attachView();
+            //view.attachView();
             view.postRender();
-            //   view.update_canvas();
+            //view.updateCanvas();
           }
         });
       }
