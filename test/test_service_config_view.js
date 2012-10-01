@@ -34,25 +34,29 @@
       container = Y.Node.create('<div id="test-container" />');
       Y.one('#main').append(container);
       db = new models.Database();
-      charm = new models.Charm({
-                id: 'mysql',
-                name: 'mysql',
-                description: 'A DB',
-                config: {
-          option0: {
-            description: 'The first option.',
-            type: 'string'
-          },
-          option1: {
-            description: 'The second option.',
-            type: 'boolean'
-          },
-                  option2: {
-                    description: 'The third option.',
-                    type: 'boolean'
-                  }
-                }
-      });
+      charm = new models.Charm(
+          { id: 'mysql',
+            name: 'mysql',
+            description: 'A DB',
+            config:
+                { option0:
+                      { description: 'The first option.',
+                        type: 'string'},
+                  option1: { description: 'The second option.',
+                    type: 'boolean'},
+                  option2:
+                      { description: 'The third option.',
+                        type: 'boolean'},
+                  intOption:
+                      { description: 'An int option with no default value.',
+                        type: 'int'},
+                  intOptionWithDefault:
+                      { description: 'An int option with no default value.',
+                        type: 'int',
+                        'default': 1},
+                  floatOption:
+                      { description: 'A float option with no default value.',
+                        type: 'float'}}});
 
       db.charms.add([charm]);
       service = new models.Service({
@@ -63,7 +67,9 @@
         config: {
                     option0: 'value0',
                     option1: true,
-                    option2: false
+                    option2: false,
+                    intOption: 1,
+                    floatOption: 1.1
         }
       });
       db.services.add([service]);
@@ -101,7 +107,7 @@
           // testing FALSE values (checkbox);
           assert.isFalse(input.get('checked'));
         } else {
-          input.get('value').should.equal(value);
+          input.get('value').should.equal(String(value));
         }
       });
     });
@@ -205,5 +211,62 @@
          alert_ = container.one('#message-area>.alert');
          alert_.getHTML().should.contain(error_message);
         });
+
+    it('should display an error when a validation error occurs', function() {
+      var assertError = function(key, value, message) {
+        var ev = {err: false},
+            view = new ServiceConfigView({
+              app: {
+                load_service: function() {
+                  // Mock function
+                  // view.saveConfig() calls it as part of its internal
+                  // "success" callback
+                }
+              },
+              container: container,
+              model: service,
+              db: db,
+              env: (function() {
+                // We provide a fake env module that both makes test assertions
+                // and mocks out network traffic.
+                env.set_config = function(service, config, callback) {
+                  callback(ev);
+                };
+
+                return env;
+              })()
+            }).render();
+
+        container.one('#input-' + key).set('value', value);
+
+        view.saveConfig();
+
+        var errorSpan = container.one('#error-' + key);
+        if (message) {
+          assert.isNotNull(errorSpan);
+
+        } else {
+          assert.isNull(errorSpan);
+        }
+      };
+
+      assertError('intOption', '', 'This field is required.');
+      assertError('intOption', '  ', 'This field is required.');
+      assertError('intOption', '1', null);
+      assertError('intOption', '1.1', 'The value "1.1" is not an integer.');
+      assertError('intOption', 'a', 'The value "a" is not an integer.');
+
+      assertError('floatOption', '', 'This field is required.');
+      assertError('floatOption', '  ', 'This field is required.');
+      assertError('floatOption', '1', null);
+      assertError('floatOption', '1.1', null);
+      assertError('floatOption', 'a', 'The value "a" is not a float.');
+
+      assertError('intOptionWithDefault', '   ', null);
+      assertError('intOptionWithDefault', '', null);
+      assertError('intOptionWithDefault', '1', null);
+      assertError('intOptionWithDefault', 'a',
+          'The value "a" is not an integer.');
+    });
   });
 })();

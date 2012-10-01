@@ -59,6 +59,19 @@ YUI.add('juju-notification-controller', function(Y) {
               }
               return 'info';
             },
+            message: function(change_type, change_op, change_data,
+                              notify_data) {
+              var level = notify_data.level,
+                  astate = change_data['agent-state'],
+                  msg = 'Action required for ';
+              if (astate !== undefined) {
+                msg += change_data.id + ' (agent-state=' +
+                    astate + ').';
+              } else {
+                msg += change_data.id + '.';
+              }
+              return msg;
+            },
             evict: function(old, new_data, change) {
               if (new_data.level !== 'error') {
                 if (old.get('seen') === false) {
@@ -70,8 +83,13 @@ YUI.add('juju-notification-controller', function(Y) {
           },
           // Defaults when no special rules apply
           'default': {
-            title: function(change_type, change_op, change_data) {
-              return change_op + ' ' + change_type;
+            title: function(change_type, change_op, change_data, notify_data) {
+              var level = notify_data.level,
+                  msg = 'Problem with ';
+              if (level === 'error') {
+                msg = 'Error with ';
+              }
+              return msg + change_op + ' ' + change_type;
             },
             message: function(change_type, change_op, change_data) {
               return 'User actions suggested for ' + change_data.id;
@@ -116,7 +134,9 @@ YUI.add('juju-notification-controller', function(Y) {
             // Dispatch ingestion rules (which may mutate either the
             // current 'notifications' or models within it (notice status)
 
-            ['title', 'message', 'level'].forEach(function(attr) {
+            // 'level' must be called first as 'title' and 'message' may
+            // depend on it being set.
+            ['level', 'title', 'message'].forEach(function(attr) {
               var active_rule = rule;
               if (!active_rule) {
                 return;
@@ -130,7 +150,7 @@ YUI.add('juju-notification-controller', function(Y) {
               // Assign the attribute by the rule
               if (attr in active_rule) {
                 notify_data[attr] = active_rule[attr](
-                    change_type, change_op, change_data);
+                    change_type, change_op, change_data, notify_data);
               }
             });
 
