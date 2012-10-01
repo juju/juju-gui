@@ -171,6 +171,10 @@ YUI.add('juju-notifications', function(Y) {
           'li.notice': {
             click: 'notice_select'
           },
+
+          '#notify-list li.header a': {
+              click: 'closeIndicator'
+          }
         },
 
         get_showable: function() {
@@ -182,19 +186,20 @@ YUI.add('juju-notifications', function(Y) {
           });
         },
           
+        closeIndicator: function() {
+            var indicator = Y.one('#notify-indicator'),
+                list = Y.one('#notify-list'),
+                parent = indicator.ancestor();
+            
+            console.log('Close indicator');
+            if (parent && parent.hasClass('open')) {
+                indicator.ancestor().removeClass('open');
+                list.hide();
+            }
+        },
         render: function() {
             NotificationsView.superclass.render.apply(this, arguments);
-            this.get('container').on('clickoutside', function(e) {
-                console.log("outside", e);
-                var indicator = Y.one('#notify-indicator'),
-                    list = Y.one("#notify-list"),
-                    parent = indicator.ancestor();
-
-                if (parent && parent.hasClass('open')) {
-                    indicator.ancestor().removeClass('open');
-                    list.hide();
-                }
-            });
+            this.get('container').on('clickoutside', this.closeIndicator);
         }
 
       });
