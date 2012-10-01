@@ -35,7 +35,7 @@ YUI.add('juju-view-utils', function(Y) {
 
     return {
       delay: function(callback, ms) {
-        if (currentTask !== null && currentTask !== undefined) {
+        if (Y.Lang.isValue(currentTask)) {
           clearTimeout(currentTask);
         }
 
@@ -45,10 +45,7 @@ YUI.add('juju-view-utils', function(Y) {
           return;
         }
 
-        currentTask = setTimeout(function() {
-          currentTask = null;
-          callback();
-        }, ms);
+        currentTask = setTimeout(callback, ms);
       }
     };
   };

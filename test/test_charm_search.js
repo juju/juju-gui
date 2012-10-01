@@ -28,8 +28,8 @@ describe('charm search', function() {
     // The "charms search" feature needs these elements
     var docBody = Y.one(document.body);
     Y.Node.create('<div id="charm-search-test">' +
-      '<div id="charm-search-icon"></div>' +
-      '<div id="content"></div></div>').appendTo(docBody);
+        '<div id="charm-search-icon"></div>' +
+        '<div id="content"></div></div>').appendTo(docBody);
   });
 
   afterEach(function() {
@@ -52,7 +52,7 @@ describe('charm search', function() {
     panel.toggle();
     assert.isNull(Y.one('#juju-search-charm-panel'));
 
-    
+
   });
 
   it('must be able to search', function() {
@@ -87,7 +87,7 @@ describe('charm search', function() {
     assert.equal('this is my URL',
         node.one('.charm-detail').getAttribute('data-charm-url'));
 
-    
+
   });
 
   it('must be able to reset the search result', function() {
@@ -125,7 +125,7 @@ describe('charm search', function() {
     assert.isTrue(node.all('.charm-detail').isEmpty());
     assert.equal('', field.get('value'));
 
-    
+
   });
 
   it('must be able to trigger charm details', function() {
