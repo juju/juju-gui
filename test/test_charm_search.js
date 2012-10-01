@@ -25,8 +25,8 @@ describe('charm search', function() {
     // The "charms search" feature needs these elements
     var docBody = Y.one(document.body);
     Y.Node.create('<div id="charm-search-test">' +
-      '<div id="charm-search-icon" />' +
-      '<div id="content" /></div>').appendTo(docBody);
+        '<div id="charm-search-icon" />' +
+        '<div id="content" /></div>').appendTo(docBody);
 
     done();
   });
