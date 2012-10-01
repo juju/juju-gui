@@ -216,6 +216,8 @@ YUI.add('juju-gui', function(Y) {
       }
       this.showView(
           'unit',
+          // The querystring is used to handle highlighting relation rows in
+          // links from notifications about errors.
           { unit: unit, db: this.db, env: this.env, app: this,
             querystring: req.query });
     },
