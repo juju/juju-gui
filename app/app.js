@@ -95,10 +95,15 @@ YUI.add('juju-gui', function(Y) {
     initializer: function() {
       // Create a client side database to store state.
       this.db = new models.Database();
-      // Create an environment facade to interact with.
-      this.env = new juju.Environment({
-        'socket_url': this.get('socket_url')});
 
+      // Create an environment facade to interact with.
+      // allow env as an attr/option to ease testing
+      if (this.get('env')) {
+        this.env = this.get('env');
+      } else {
+        this.env = new juju.Environment({
+          'socket_url': this.get('socket_url')});
+      }
       // Create notifications controller
       this.notifications = new juju.NotificationController({
         app: this,
@@ -125,8 +130,8 @@ YUI.add('juju-gui', function(Y) {
           this.notifications);
 
       // When the connection resets, reset the db.
-      this.env.on('connectionChange', function(ev) {
-        if (ev.changed.connection.newVal) {
+      this.env.on('connectedChange', function(ev) {
+        if (ev.newVal === true) {
           this.db.reset();
         }
       }, this);
