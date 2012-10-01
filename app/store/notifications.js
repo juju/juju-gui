@@ -106,12 +106,9 @@ YUI.add('juju-notification-controller', function(Y) {
                               notify_data) {
               var level = notify_data.level,
                   astate = change_data['agent-state'],
-                  msg = 'Action required for ';
+                  msg = '';
               if (astate !== undefined) {
-                msg += change_data.id + ' (agent-state=' +
-                    astate + ').';
-              } else {
-                msg += change_data.id + '.';
+                msg = 'Agent-state = ' + astate + '.';
               }
               return msg;
             },
@@ -132,10 +129,10 @@ YUI.add('juju-notification-controller', function(Y) {
               if (level === 'error') {
                 msg = 'Error with ';
               }
-              return msg + change_op + ' ' + change_type;
+              return msg + change_data.id;
             },
             message: function(change_type, change_op, change_data) {
-              return 'User actions suggested for ' + change_data.id;
+              return 'Action required to resolve the problem.';
             },
             level: function() {
               return 'info';

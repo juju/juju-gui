@@ -303,25 +303,23 @@ describe('notifications', function() {
        showable.length.should.equal(2);
        // The first showable notification should indicate an error.
        showable[0].level.should.equal('error');
-       showable[0].title.should.equal('Error with add unit');
-       showable[0].message.should.equal(
-       'Action required for mysql/0 (agent-state=error).');
+       showable[0].title.should.equal('Error with mysql/0');
+       showable[0].message.should.equal('Agent-state = error.');
        // The second showable notification should also indicate an error.
        showable[1].level.should.equal('error');
-       showable[1].title.should.equal('Error with add unit');
-       showable[1].message.should.equal(
-       'Action required for wordpress/0 (agent-state=install-error).');
+       showable[1].title.should.equal('Error with wordpress/0');
+       showable[1].message.should.equal('Agent-state = install-error.');
        // The first non-error notice should have an 'info' level and less
        // severe messaging.
        var notice = notifications.item(0);
        notice.get('level').should.equal('info');
-       notice.get('title').should.equal('Problem with add unit');
-       notice.get('message').should.equal('Action required for mysql/2.');
+       notice.get('title').should.equal('Problem with mysql/2');
+       notice.get('message').should.equal('');
      });
 });
 
 
-describe('_changeNotificationOpToWords', function() {
+describe('changing notifications to words', function() {
   var Y, juju;
 
   before(function(done) {
@@ -341,7 +339,7 @@ describe('_changeNotificationOpToWords', function() {
      });
 });
 
-describe('_relationNotifications', function() {
+describe('relation notifications', function() {
   var Y, juju;
 
   before(function(done) {
@@ -356,20 +354,32 @@ describe('_relationNotifications', function() {
   it('should produce reasonable titles',
      function() {
        assert.equal(
-         juju._relationNotifications.title(undefined, 'add'),
-         'Relation added');
+       juju._relationNotifications.title(undefined, 'add'),
+       'Relation added');
        assert.equal(
-         juju._relationNotifications.title(undefined, 'remove'),
-         'Relation removed');
+       juju._relationNotifications.title(undefined, 'remove'),
+       'Relation removed');
      });
 
   it('should generate messages about two-party relations',
-     function() {
-       assert.equal(
-         juju._relationNotifications.message(undefined, 'add'),
-         'Relation added');
-       assert.equal(
-         juju._relationNotifications.title(undefined, 'remove'),
-         'Relation removed');
-     });
+    function() {
+      var changeData =
+      { endpoints:
+        [['endpoint0', {name: 'relation0'}],
+        ['endpoint1', {name: 'relation1'}]]};
+      assert.equal(
+        juju._relationNotifications.message(undefined, 'add', changeData),
+        'Relation between endpoint0 (relation type "relation0") and ' + 
+        'endpoint1 (relation type "relation1") was added');
+    });
+
+  it('should generate messages about one-party relations',
+    function() {
+      var changeData =
+      { endpoints:
+        [['endpoint1', {name: 'relation1'}]]};
+      assert.equal(
+        juju._relationNotifications.message(undefined, 'add', changeData),
+        'Relation with endpoint1 (relation type "relation1") was added');
+    });
 });

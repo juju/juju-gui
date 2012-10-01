@@ -209,7 +209,12 @@ YUI.add('juju-gui', function(Y) {
         var service = this.db.services.getById(unit.service);
         this._prefetch_service(service);
       }
-      this.showView('unit', {unit: unit, db: this.db, env: this.env});
+      this.showView(
+          'unit',
+          // The querystring is used to handle highlighting relation rows in
+          // links from notifications about errors.
+          { unit: unit, db: this.db, env: this.env, app: this,
+            querystring: req.query });
     },
 
     _prefetch_service: function(service) {
@@ -477,34 +482,34 @@ YUI.add('juju-gui', function(Y) {
     ATTRS: {
       routes: {
         value: [
-          {path: '*', callback: 'show_notifications_view'},
-          {path: '/charms/', callback: 'show_charm_collection'},
-          {path: '/charms/*charm_url',
+          { path: '*', callback: 'show_notifications_view'},
+          { path: '/charms/', callback: 'show_charm_collection'},
+          { path: '/charms/*charm_url',
             callback: 'show_charm',
             reverse_map: {charm_url: 'name'},
             model: 'charm'},
-          {path: '/notifications/',
+          { path: '/notifications/',
             callback: 'show_notifications_overview'},
-          {path: '/service/:id/config',
+          { path: '/service/:id/config',
             callback: 'show_service_config',
             intent: 'config',
             model: 'service'},
-          {path: '/service/:id/constraints',
+          { path: '/service/:id/constraints',
             callback: 'show_service_constraints',
             intent: 'constraints',
             model: 'service'},
-          {path: '/service/:id/relations',
+          { path: '/service/:id/relations',
             callback: 'show_service_relations',
             intent: 'relations',
             model: 'service'},
-          {path: '/service/:id/',
+          { path: '/service/:id/',
             callback: 'show_service',
             model: 'service'},
-          {path: '/unit/:id/',
+          { path: '/unit/:id/',
             callback: 'show_unit',
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit'},
-          {path: '/', callback: 'show_environment'}
+          { path: '/', callback: 'show_environment'}
         ]
       }
     }
