@@ -15,7 +15,7 @@ YUI.add('juju-gui', function(Y) {
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     views: {
       environment: {
-        type: 'juju.views.EnvironmentView',
+        type: 'juju.views.environment',
         preserve: true
       },
 

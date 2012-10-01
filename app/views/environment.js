@@ -106,19 +106,17 @@ YUI.add('juju-view-environment', function(Y) {
          * Attach view to target, if target is an ancestor of the view
          * this is a no-oop.
          *
-         * Currently disabled till the redaw pattern is syned with all the
-         * event code.
          */
-        attachView: function(target) {
-          if (Y.Lang.isString(target)) {
-            target = Y.one(target);
-          } else if (!Y.Lang.isValue(target)) {
-            target = this.get('container');
-          }
-          if (!this.svg.inDoc() || !this.svg.inRegion(target)) {
-            target.append(this.svg);
-          }
-        },
+        // attachView: function(target) {
+        //   if (Y.Lang.isString(target)) {
+        //     target = Y.one(target);
+        //   } else if (!Y.Lang.isValue(target)) {
+        //     target = this.get('container');
+        //   }
+        //   if (!this.svg.inDoc() || !this.svg.inRegion(target)) {
+        //     target.append(this.svg);
+        //   }
+        // },
 
         /*
          * Sync view models with curent db.models.
@@ -906,7 +904,7 @@ YUI.add('juju-view-environment', function(Y) {
         }
       });
 
-  views.EnvironmentView = EnvironmentView;
+  views.environment = EnvironmentView;
 }, '0.1.0', {
   requires: ['juju-templates',
     'juju-view-utils',
