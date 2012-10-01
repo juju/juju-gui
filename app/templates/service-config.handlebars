@@ -3,30 +3,7 @@
   <div class="span12">
   <form id="service-config" class="form-horizontal">
     <legend>{{service.id}} settings</legend>
-
-      {{#settings}}
-
-      <div class="control-group">
-        <div class="well">
-          {{description}}
-        </div>
-
-        <div class="control-label" for="{{name}}">{{type}}: {{name}}</div>
-        <div class="controls">
-          {{#if isBool}}
-          <input class="config-field" type="checkbox" name="{{name}}"
-              id="input-{{name}}" {{value}}/>
-          {{else}}
-          <input class="config-field" type="text" name="{{name}}"
-              id="input-{{name}}" value="{{value}}"/>
-          {{/if}}
-        </div>
-      </div>
-
-
-
-    {{/settings}}
-
+      {{> service-config}}
       <div class="control-group">
         <div class="controls">
           <button type="button" id="save-service-config">Update</button>

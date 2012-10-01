@@ -47,21 +47,6 @@ YUI.add('juju-view-service', function(Y) {
     }
   };
 
-  var getElementsValuesMap = function(container, cls) {
-    var result = {};
-    container.all(cls).each(function(el) {
-      var value = null;
-      if (el.getAttribute('type') === 'checkbox') {
-        value = el.get('checked');
-      } else {
-        value = el.get('value');
-      }
-      result[el.get('name')] = value;
-    });
-
-    return result;
-  };
-
   var ServiceRelations = Y.Base.create(
       'ServiceRelationsView', Y.View, [views.JujuBaseView], {
 
@@ -85,49 +70,17 @@ YUI.add('juju-view-service', function(Y) {
             console.log('waiting on service data');
             return this;
           }
-
-          var rels = db.relations.get_relations_for_service(service);
-
-          var getRelations = function(rels) {
-            // Return a list of objects representing the `near` and `far`
-            // endpoints for all of the relationships `rels`.  If it is a peer
-            // relationship, then `far` will be undefined.
-            var relations = [],
-                service_name = service.get('id');
-
-            rels.forEach(function(rel) {
-              var endpoints = rel.get('endpoints'),
-                  near,
-                  far,
-                  rel_data = {};
-              if (endpoints[0][0] === service_name) {
-                near = endpoints[0];
-                far = endpoints[1]; // undefined if a peer relationship.
-              } else {
-                near = endpoints[1];
-                far = endpoints[0]; // undefined if a peer relationship.
-              }
-              rel_data.relation_id = rel.get('relation_id');
-              if (rel_data.relation_id === querystring.rel_id) {
-                rel_data.highlight = true;
-              }
-              rel_data.role = near[1].role;
-              rel_data.scope = rel.get('scope');
-              var rel_id = rel.get('relation_id').split('-')[1];
-              rel_data.ident = near[1].name + ':' + parseInt(rel_id, 10);
-              // far will be undefined or the far endpoint.
-              rel_data.far = far && far[0];
-              relations.push(rel_data);
-            });
-            return relations;
-          };
-
-          var relations = getRelations(rels);
+          var relation_data = utils.getRelationDataForService(db, service);
+          Y.each(relation_data, function(rel) {
+            if (rel.relation_id === querystring.rel_id) {
+              rel.highlight = true;
+            }
+          });
 
           container.setHTML(this.template(
-              {'service': service.getAttrs(),
-                'relations': relations,
-                'charm': this.renderable_charm(service.get('charm'), db)}
+              { service: service.getAttrs(),
+                relations: relation_data,
+                charm: this.renderable_charm(service.get('charm'), db)}
               ));
         },
 
@@ -135,22 +88,28 @@ YUI.add('juju-view-service', function(Y) {
           // We wait to make the panel until now, because in the render method
           // the container is not yet part of the document.
           ev.preventDefault();
-          var rel_id = ev.target.get('value');
           if (Y.Lang.isUndefined(this.remove_panel)) {
             this.remove_panel = views.createModalPanel(
                 'Are you sure you want to remove this service relation?  ' +
                 'This action cannot be undone, though you can ' +
                 'recreate it later.',
-                '#remove-modal-panel',
-                'Remove Service Relation',
-                Y.bind(this.doRemoveRelation, this, rel_id, ev.target));
+                '#remove-modal-panel');
           }
+          // We set the buttons separately every time because we want to bind
+          // the target, which can vary.  Since the page is redrawn after a
+          // relation is removed, this is technically unnecessary in this
+          // particular case, but a good pattern to get into.
+          views.setModalButtons(
+              this.remove_panel,
+              'Remove Service Relation',
+              Y.bind(this.doRemoveRelation, this, ev.target));
           this.remove_panel.show();
         },
 
-        doRemoveRelation: function(rel_id, button, ev) {
+        doRemoveRelation: function(button, ev) {
           ev.preventDefault();
-          var env = this.get('env'),
+          var rel_id = button.get('value'),
+              env = this.get('env'),
               db = this.get('db'),
               service = this.get('model'),
               relation = db.relations.getById(rel_id),
@@ -179,6 +138,7 @@ YUI.add('juju-view-service', function(Y) {
           var db = this.get('db'),
               app = this.get('app'),
               service = this.get('model');
+          views.highlightRow(rm_button.ancestor('tr'), ev.err);
           if (ev.err) {
             db.notifications.add(
                 new models.Notification({
@@ -190,12 +150,6 @@ YUI.add('juju-view-service', function(Y) {
                   modelId: relation
                 })
             );
-            var row = rm_button.ancestor('tr');
-            row.removeClass('highlighted'); // Whether we need to or not.
-            var old_color = row.getStyle('backgroundColor');
-            row.setStyle('backgroundColor', 'pink');
-            row.transition({easing: 'ease-out', duration: 3,
-              backgroundColor: old_color});
           } else {
             db.relations.remove(relation);
             db.fire('update');
@@ -227,7 +181,8 @@ YUI.add('juju-view-service', function(Y) {
 
           var values = (function() {
             var result = [],
-                map = getElementsValuesMap(container, '.constraint-field');
+                map = utils.getElementsValuesMapping(
+                    container, '.constraint-field');
 
             Y.Object.each(map, function(value, name) {
               result.push(name + '=' + value);
@@ -276,15 +231,15 @@ YUI.add('juju-view-service', function(Y) {
           Y.Object.each(constraints, function(value, name) {
             if (!(name in readOnlyConstraints)) {
               display_constraints.push({
-                'name': name,
-                'value': value});
+                name: name,
+                value: value});
             }
           });
 
           var generics = ['cpu', 'mem', 'arch'];
           Y.Object.each(generics, function(idx, gkey) {
             if (!(gkey in constraints)) {
-              display_constraints.push({'name': gkey, 'value': ''});
+              display_constraints.push({name: gkey, value: ''});
             }
           });
 
@@ -295,7 +250,7 @@ YUI.add('juju-view-service', function(Y) {
             readOnlyConstraints: (function() {
               var arr = [];
               Y.Object.each(readOnlyConstraints, function(name, value) {
-                arr.push({'name': name, 'value': value});
+                arr.push({name: name, value: value});
               });
               return arr;
             })(),
@@ -376,32 +331,86 @@ YUI.add('juju-view-service', function(Y) {
           return this;
         },
 
+        showErrors: function(errors) {
+          var container = this.get('container');
+          container.one('#save-service-config').removeAttribute('disabled');
+
+
+          // Remove old error messages
+          container.all('.help-inline').each(function(node) {
+            node.remove();
+          });
+
+          // Remove remove the "error" class from the "div"
+          // that previously had "help-inline" tags
+          container.all('.error').each(function(node) {
+            node.removeClass('error');
+          });
+
+          var firstErrorKey = null;
+          Y.Object.each(errors, function(value, key) {
+            var errorTag = Y.Node.create('<span/>')
+              .set('id', 'error-' + key)
+              .addClass('help-inline');
+
+            var field = container.one('#input-' + key);
+            // Add the "error" class to the wrapping "control-group" div
+            field.get('parentNode').get('parentNode').addClass('error');
+
+            errorTag.appendTo(field.get('parentNode'));
+
+            errorTag.setHTML(value);
+            if (!firstErrorKey) {
+              firstErrorKey = key;
+            }
+          });
+
+          if (firstErrorKey) {
+            var field = container.one('#input-' + firstErrorKey);
+            field.focus();
+          }
+        },
+
         saveConfig: function() {
           var env = this.get('env'),
-              container = this.get('container'),
-              service = this.get('model');
+              db = this.get('db'),
+              service = this.get('model'),
+              charm_url = service.get('charm'),
+              charm = db.charms.getById(charm_url),
+              container = this.get('container');
 
           // Disable the "Update" button while the RPC call is outstanding.
           container.one('#save-service-config').set('disabled', 'disabled');
 
-          env.set_config(service.get('id'),
-              getElementsValuesMap(container, '.config-field'),
-              utils.buildRpcHandler({
-                container: container,
-                successHandler: function()  {
-                  var service = this.get('model'),
-                      env = this.get('env'),
-                      app = this.get('app');
+          var new_values = utils.getElementsValuesMapping(
+                                            container, '.config-field'),
+              errors = utils.validate(new_values, charm.get('config'));
 
-                  env.get_service(
-                      service.get('id'), Y.bind(app.load_service, app));
-                },
-                errorHandler: function() {
-                  container.one('#save-service-config')
-                    .removeAttribute('disabled');
-                },
-                scope: this}
-              ));
+          if (Y.Object.isEmpty(errors)) {
+            env.set_config(
+                service.get('id'),
+                new_values,
+                utils.buildRpcHandler({
+                  container: container,
+                  successHandler: function()  {
+                    var service = this.get('model'),
+                        env = this.get('env'),
+                        app = this.get('app');
+
+                    env.get_service(
+                        service.get('id'), Y.bind(app.load_service, app));
+                  },
+                  errorHandler: function() {
+                    container.one('#save-service-config')
+                      .removeAttribute('disabled');
+                  },
+                  scope: this}
+                )
+            );
+
+          } else {
+            this.showErrors(errors);
+          }
         }
       });
 
