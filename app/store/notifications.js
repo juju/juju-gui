@@ -63,11 +63,9 @@ YUI.add('juju-notification-controller', function(Y) {
                               notify_data) {
               var level = notify_data.level,
                   astate = change_data['agent-state'],
-                  msg = 'Action required to resolve the problem';
+                  msg = '';;
               if (astate !== undefined) {
-                msg += ' (agent-state=' + astate + ').';
-              } else {
-                msg += '.';
+                msg = 'Agent-state = ' + astate + '.';
               }
               return msg;
             },
