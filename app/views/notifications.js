@@ -76,7 +76,11 @@ YUI.add('juju-notifications', function(Y) {
           }
 
           model = notifications.getByClientId(target.get('id'));
-          model.set('seen', true);
+
+          if (this.selection.seen) {
+              model.set('seen', true);
+          }
+
           if (this.selection.hide) {
             target.hide(true);
           }
@@ -88,10 +92,12 @@ YUI.add('juju-notifications', function(Y) {
          * we debounce render requests with this method
          */
         slow_render: function() {
-          var self = this;
+          var self = this,
+              container = self.get('container');
 
           clearTimeout(this._renderTimeout);
           this._renderTimeout = setTimeout(function() {
+            if (!container) return;
             self.render();
           }, 200);
         },
@@ -154,7 +160,9 @@ YUI.add('juju-notifications', function(Y) {
          *
          * :hide: should the selected element be hidden on selection
          */
-        selection: {hide: false},
+        selection: {hide: false,
+                    seen: false
+                   },
 
         events: {
           '#notify-indicator': {
@@ -162,7 +170,7 @@ YUI.add('juju-notifications', function(Y) {
           },
           'li.notice': {
             click: 'notice_select'
-          }
+          },
         },
 
         get_showable: function() {
@@ -172,7 +180,23 @@ YUI.add('juju-notifications', function(Y) {
           }).map(function(n) {
             return n.getAttrs();
           });
+        },
+          
+        render: function() {
+            NotificationsView.superclass.render.apply(this, arguments);
+            this.get('container').on('clickoutside', function(e) {
+                console.log("outside", e);
+                var indicator = Y.one('#notify-indicator'),
+                    list = Y.one("#notify-list"),
+                    parent = indicator.ancestor();
+
+                if (parent && parent.hasClass('open')) {
+                    indicator.ancestor().removeClass('open');
+                    list.hide();
+                }
+            });
         }
+
       });
   views.NotificationsView = NotificationsView;
 
