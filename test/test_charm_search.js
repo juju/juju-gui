@@ -79,6 +79,7 @@ describe('charm search', function() {
     panel.show();
     var field = Y.one('.charms-search-field');
     field.set('value', 'aaa');
+    panel.getDelayedTask().setEmptyDelayValid(true);
     panel.setSearchDelay(0);
 
     field.simulate('keyup');
@@ -113,6 +114,7 @@ describe('charm search', function() {
         buttonX = Y.one('.clear');
 
     field.set('value', 'aaa');
+    panel.getDelayedTask().setEmptyDelayValid(true);
     panel.setSearchDelay(0);
     field.simulate('keyup');
 
@@ -155,6 +157,7 @@ describe('charm search', function() {
     panel.show();
     var field = Y.one('.charms-search-field');
     field.set('value', 'aaa');
+    panel.getDelayedTask().setEmptyDelayValid(true);
     panel.setSearchDelay(0);
 
     field.simulate('keyup');

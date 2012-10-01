@@ -162,6 +162,10 @@ YUI.add('juju-charm-search', function(Y) {
 
     // The public methods
     return {
+      getDelayedTask: function() {
+        return delayedFilter;
+      },
+
       hide: hidePanel,
       toggle: togglePanel,
       show: showPanel,

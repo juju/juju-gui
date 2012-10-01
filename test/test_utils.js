@@ -268,10 +268,59 @@ describe('utilities', function() {
           undefined);
     });
 
-    it('should execute only the last method', function() {
+    it('should execute only the last method', function(done) {
 
       var track = [],
           delayTask = utils.buildDelayedTask();
+
+      delayTask.setEmptyDelayValid(true);
+      try {
+
+        delayTask.delay(function() {
+          // no-op
+        }, null);
+
+      } catch (e) {
+        assert.isTrue(false, 'should NOT fail here');
+
+      }
+
+      delayTask.setEmptyDelayValid(false);
+
+      try {
+
+        delayTask.delay(function() {
+          track.push('error');
+        }, null);
+
+        assert.isTrue(false, 'should fail here');
+
+      } catch (e) {
+        assert.equal('The timeout should be bigger than 0', e);
+
+      }
+
+      try {
+        delayTask.delay(function() {
+          track.push('error');
+        }, 0);
+
+        assert.isTrue(false, 'should fail here');
+      } catch (e) {
+        assert.equal('The timeout should be bigger than 0', e);
+
+      }
+
+      try {
+        delayTask.delay(function() {
+          track.push('error');
+        }, -1);
+
+        assert.isTrue(false, 'should fail here');
+      } catch (e) {
+        assert.equal('The timeout should be bigger than 0', e);
+
+      }
 
       delayTask.delay(function() {
         track.push('a');
@@ -281,9 +330,12 @@ describe('utilities', function() {
       }, 50);
       delayTask.delay(function() {
         track.push('c');
-      }, 0);
+      }, 1);
 
-      assert.equal('c', track.join(''));
+      setTimeout(function() {
+        assert.equal('c', track.join(''));
+        done();
+      }, 10);
     });
 
   });

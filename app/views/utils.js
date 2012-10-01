@@ -31,18 +31,26 @@ YUI.add('juju-view-utils', function(Y) {
   // before the execution of the "functionA", the "functionA" will be canceled
   // and the "functionB" will be scheduled to run after 1000ms.
   utils.buildDelayedTask = function() {
-    var currentTask = null;
+    var currentTask = null,
+        isEmptyDelayValid = false;
 
     return {
+      setEmptyDelayValid: function(value) {
+        isEmptyDelayValid = value;
+      },
+
       delay: function(callback, ms) {
         if (Y.Lang.isValue(currentTask)) {
           clearTimeout(currentTask);
         }
 
-        // The user didn't set a timeout. Just execute the function.
-        if (!ms) {
-          callback();
-          return;
+        if (!ms || ms < 1) {
+          if (isEmptyDelayValid) {
+            callback();
+            return;
+          } else {
+            throw 'The timeout should be bigger than 0';
+          }
         }
 
         currentTask = setTimeout(callback, ms);
