@@ -268,5 +268,23 @@ describe('utilities', function() {
           undefined);
     });
 
+    it('should execute only the last method', function() {
+
+      var track = [],
+          delayTask = utils.buildDelayedTask();
+
+      delayTask.delay(function() {
+        track.push('a');
+      }, 50);
+      delayTask.delay(function() {
+        track.push('b');
+      }, 50);
+      delayTask.delay(function() {
+        track.push('c');
+      }, 0);
+
+      assert.equal('c', track.join(''));
+    });
+
   });
 })();

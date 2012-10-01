@@ -35,14 +35,16 @@ YUI.add('juju-view-utils', function(Y) {
 
     return {
       delay: function(callback, ms) {
+        if (currentTask !== null && currentTask !== undefined) {
+          clearTimeout(currentTask);
+        }
+
+        // The user didn't set a timeout. Just execute the function.
         if (!ms) {
           callback();
           return;
         }
 
-        if (currentTask !== null && currentTask !== undefined) {
-          clearTimeout(currentTask);
-        }
         currentTask = setTimeout(function() {
           currentTask = null;
           callback();
