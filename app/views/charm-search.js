@@ -47,8 +47,8 @@ YUI.add('juju-charm-search', function(Y) {
       var field = ev.target;
       // It delays the search request until the last key is pressed
       delayedFilter.delay(function() {
-        filterRequest(field.get('value'), function(beans) {
-          updateList(beans);
+        findCharms(field.get('value'), function(charms) {
+          updateList(charms);
         });
       }, _searchDelay);
     });
@@ -76,7 +76,7 @@ YUI.add('juju-charm-search', function(Y) {
       return charms;
     }
 
-    function filterRequest(query, callback) {
+    function findCharms(query, callback) {
       charmStore.sendRequest({
         request: 'search/json?search_text=' + query,
         callback: {
@@ -92,30 +92,27 @@ YUI.add('juju-charm-search', function(Y) {
         }});
     }
 
-    function togglePanel() {
-      hidePanel(isPopupVisible);
+    function hidePanel() {
+      if (isPopupVisible) {
+        container.remove();
+        isPopupVisible = false;
+      }
     }
 
-    function hidePanel(hideIt) {
-      if (hideIt && !isPopupVisible) {
-        return;
-      }
-
-      if (!hideIt && isPopupVisible) {
-        return;
-      }
-
-      if (hideIt) {
-        isPopupVisible = false;
-        container.remove(false);
-
-      } else {
+    function showPanel() {
+      if (!isPopupVisible) {
         Y.one(document.body).append(container);
-        isPopupVisible = true;
         updatePopupPosition();
-
         charmsList.one('.charms-search-field').focus();
+        isPopupVisible = true;
+      }
+    }
 
+    function togglePanel() {
+      if (isPopupVisible) {
+        hidePanel();
+      } else {
+        showPanel();
       }
     }
 
@@ -165,8 +162,9 @@ YUI.add('juju-charm-search', function(Y) {
 
     // The public methods
     return {
-      hidePanel: hidePanel,
-      togglePanel: togglePanel,
+      hide: hidePanel,
+      toggle: togglePanel,
+      show: showPanel,
       setSearchDelay: function(delay) {
         _searchDelay = delay;
       },

@@ -45,16 +45,16 @@ describe('charm search', function() {
   it('must be able to show and hide the panel', function(done) {
     var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({});
 
-    panel.hidePanel(false);
+    panel.show();
     assert.isNotNull(Y.one('#juju-search-charm-panel'));
 
-    panel.hidePanel(true);
+    panel.hide();
     assert.isNull(Y.one('#juju-search-charm-panel'));
 
-    panel.togglePanel();
+    panel.toggle();
     assert.isNotNull(Y.one('#juju-search-charm-panel'));
 
-    panel.togglePanel();
+    panel.toggle();
     assert.isNull(Y.one('#juju-search-charm-panel'));
 
     done();
@@ -81,7 +81,7 @@ describe('charm search', function() {
 
         node = panel.getNode();
 
-    panel.hidePanel(false);
+    panel.show();
     var field = Y.one('.charms-search-field');
     field.set('value', 'aaa');
     panel.setSearchDelay(0);
@@ -112,7 +112,7 @@ describe('charm search', function() {
     }),
         node = panel.getNode();
 
-    panel.hidePanel(false);
+    panel.show();
 
     var field = Y.one('.charms-search-field'),
         buttonX = Y.one('.clear');
@@ -157,7 +157,7 @@ describe('charm search', function() {
 
         node = panel.getNode();
 
-    panel.hidePanel(false);
+    panel.show();
     var field = Y.one('.charms-search-field');
     field.set('value', 'aaa');
     panel.setSearchDelay(0);
