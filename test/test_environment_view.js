@@ -95,16 +95,17 @@
       Y.one('body').append(container);
       navbar = Y.Node.create('<div class="navbar" ' +
           'style="height:70px;">Navbar</div>');
-      Y.one('body').append(navbar);
+      container.append(navbar);
       db = new models.Database();
       db.on_delta({data: environment_delta});
       done();
     });
 
     afterEach(function(done) {
+      navbar.remove();
+      navbar.destroy();
       container.remove();
       container.destroy();
-      Y.one('body').removeChild(navbar);
       db.destroy();
       env._txn_callbacks = {};
       conn.messages = [];
