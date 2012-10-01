@@ -21,21 +21,22 @@ describe('charm search', function() {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
 
-      // The "charms search" feature needs these elements
-      var docBody = Y.one(document.body);
-      Y.Node.create('<div id="charm-search-icon"/>').appendTo(docBody);
-      Y.Node.create('<div id="content"/>').appendTo(docBody);
-
       done();
     });
   });
 
-  afterEach(function(done) {
-    Y.namespace('juju.views').CharmSearchPopup.killInstance();
+  beforeEach(function(done) {
+    // The "charms search" feature needs these elements
+    var docBody = Y.one(document.body);
+    Y.Node.create('<div id="charm-search-icon"/>').appendTo(docBody);
+    Y.Node.create('<div id="content"/>').appendTo(docBody);
+
     done();
   });
 
-  after(function(done) {
+  afterEach(function(done) {
+    Y.namespace('juju.views').CharmSearchPopup.killInstance();
+
     Y.one('#charm-search-icon').remove();
     Y.one('#content').remove();
 
