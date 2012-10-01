@@ -97,7 +97,9 @@ YUI.add('juju-notifications', function(Y) {
 
           clearTimeout(this._renderTimeout);
           this._renderTimeout = setTimeout(function() {
-            if (!container) return;
+            if (!container) {
+                return;
+            }
             self.render();
           }, 200);
         },
