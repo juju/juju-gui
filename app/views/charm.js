@@ -3,16 +3,8 @@
 YUI.add('juju-view-charm-collection', function(Y) {
 
   var views = Y.namespace('juju.views'),
-      Templates = views.Templates;
-
-  /*
-charm_store.plug(
-    Y.Plugin.DataSourceJSONSchema, {
-       cfg: {schema: {resultListLocator: 'results'}}
-    });
-charm_store.plug(Y.DataSourceCache, { max: 3});
-  */
-
+      Templates = views.Templates,
+      utils = Y.namespace('juju.views.utils');
 
   Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
     // console.log('helper', iface_decl, options, this);
@@ -61,24 +53,31 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
     template: Templates.charm,
 
     render: function() {
-      console.log('render', this.get('charm'));
-
-      var container = this.get('container');
+      var charm = this.get('charm'),
+          container = this.get('container');
+      console.log('render', charm);
       CharmCollectionView.superclass.render.apply(this, arguments);
-      if (this.get('charm')) {
-        var charm = this.get('charm');
-        // Convert time stamp TODO: should be in db layer
-        var last_modified = charm.last_change.created;
-        if (last_modified) {
-          charm.last_change.created = new Date(last_modified * 1000);
-        }
-        container.setHTML(this.template({'charm': charm}));
-
-        container.one('#charm-deploy').on(
-            'click', Y.bind(this.on_charm_deploy, this));
-      } else {
+      if (!charm) {
         container.setHTML('<div class="alert">Loading...</div>');
+        return;
       }
+      // Convert time stamp TODO: should be in db layer
+      var last_modified = charm.last_change.created;
+      if (last_modified) {
+        charm.last_change.created = new Date(last_modified * 1000);
+      }
+
+      var settings;
+      if (charm.config) {
+        settings = utils.extractServiceSettings(charm.config.options);
+      }
+
+      container.setHTML(this.template({
+        charm: charm,
+        settings: settings}));
+
+      container.one('#charm-deploy').on(
+          'click', Y.bind(this.on_charm_deploy, this));
       return this;
     },
 
@@ -91,21 +90,28 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
     },
 
     on_charm_deploy: function(evt) {
-      var charm = this.get('charm');
+      var charm = this.get('charm'),
+          container = this.get('container'),
+          charmUrl = charm.series + '/' + charm.name,
+          env = this.get('env');
       console.log('charm deploy', charm);
       // Generating charm url: see http://jujucharms.com/tools/store-missing
       // for examples of charm addresses.
-      var charmUrl = charm.series + '/' + charm.name;
       if (charm.owner !== 'charmers') {
         charmUrl = '~' + charm.owner + '/' + charmUrl;
       }
       charmUrl = 'cs:' + charmUrl;
-      var env = this.get('env');
+
+      // Gather the configuration values from the form.
+      var serviceName = container.one('#service-name').get('value'),
+          config = utils.getElementsValuesMapping(container,
+              '#service-config .config-field');
+
       // The deploy call generates an event chain leading to a call to
       // `app.on_database_changed()`, which re-dispatches the current view.
       // For this reason we need to redirect to the root page right now.
       this.fire('showEnvironment');
-      env.deploy(charmUrl, function(msg) {
+      env.deploy(charmUrl, serviceName, config, function(msg) {
         console.log(charmUrl + ' deployed');
       });
     }
@@ -123,10 +129,12 @@ charm_store.plug(Y.DataSourceCache, { max: 3});
 
     render: function() {
       var container = this.get('container'),
+          charm = this.get('charm'), // TODO change attribute name to "model"
           self = this;
 
       CharmCollectionView.superclass.render.apply(this, arguments);
-      container.setHTML(this.template({'charms': this.get('charms')}));
+      container.setHTML(this.template({charms: this.get('charms')}));
+
       // TODO: Use view.events structure to attach this
       container.all('div.thumbnail').each(function(el) {
         el.on('click', function(evt) {

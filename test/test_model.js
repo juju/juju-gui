@@ -121,10 +121,9 @@
       var unit = db.units.item(0);
       db.getModelById([unit.name, unit.id]).id.should.equal('wordpress/0');
       db.getModelById(unit.name, unit.id).id.should.equal('wordpress/0');
-
     });
 
-    it('process_model_delta should handle remove changes correctly',
+    it('on_delta should handle remove changes correctly',
        function() {
          var db = new models.Database();
          var my0 = new models.ServiceUnit({id: 'mysql/0',
@@ -132,36 +131,48 @@
          my1 = new models.ServiceUnit({id: 'mysql/1',
            agent_state: 'pending'});
          db.units.add([my0, my1]);
-         db.process_model_delta(
-         ['unit', 'remove', 'mysql/1'], db.units);
+         db.on_delta({data: {result: [
+           ['unit', 'remove', 'mysql/1']
+          ]}});
          var names = db.units.get('id');
          names.length.should.equal(1);
          names[0].should.equal('mysql/0');
        });
 
-    it('process_model_delta should be able to reuse existing models with add',
+    it('on_delta should be able to reuse existing services with add',
        function() {
          var db = new models.Database();
-         var my0 = new models.Service({id: 'mysql', exposed: false});
+         var my0 = new models.Service({id: 'mysql', exposed: true});
          db.services.add([my0]);
-         db.process_model_delta(
-         ['service', 'add', {id: 'mysql', exposed: true}],
-         models.ServiceUnit,
-         db.services);
-         my0.get('exposed').should.equal(true);
+         // Note that exposed is not set explicitly to false.
+         db.on_delta({data: {result: [
+           ['service', 'add', {id: 'mysql'}]
+          ]}});
+         my0.get('exposed').should.equal(false);
        });
 
-    it('process_model_delta should be able to reuse existing units with add',
+    it('on_delta should be able to reuse existing units with add',
        // Units are special because they use the LazyModelList.
        function() {
          var db = new models.Database();
          var my0 = {id: 'mysql/0', agent_state: 'pending'};
          db.units.add([my0]);
-         db.process_model_delta(
-         ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}],
-         models.ServiceUnit,
-         db.units);
+         db.on_delta({data: {result: [
+           ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}]
+          ]}});
          my0.agent_state.should.equal('another');
+       });
+
+    it('on_delta should reset relation_errors',
+       function() {
+         var db = new models.Database();
+         var my0 = {id: 'mysql/0', relation_errors: {'cache': ['memcached']}};
+         db.units.add([my0]);
+         // Note that relation_errors is not set.
+         db.on_delta({data: {result: [
+           ['unit', 'change', {id: 'mysql/0'}]
+          ]}});
+         my0.relation_errors.should.eql({});
        });
 
     it('ServiceUnitList should accept a list of units at instantiation and ' +
