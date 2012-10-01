@@ -41,7 +41,7 @@ YUI.add('juju-notifications', function(Y) {
               parent = el.ancestor();
 
           Y.namespace('juju.views').CharmSearchPopup
-            .getInstance().showPanel(false);
+            .getInstance().hidePanel(true);
 
           if (notifications.size() === 0) {
             return;

@@ -25,50 +25,6 @@ YUI.add('juju-charm-search', function(Y) {
 
         isPopupVisible = false,
 
-        // This is the internal model object.
-        // It handles the charm_store requests.
-        model = (function() {
-
-          // It applies special formatting rules
-          function normalizeBeans(beans) {
-            if (!beans) {
-              return beans;
-            }
-
-            var bean = null;
-            for (var index = 0; index < beans.length; index = index + 1) {
-              bean = beans[index];
-              if (bean.owner === 'charmers') {
-                bean.owner = null;
-              }
-            }
-
-            return beans;
-          }
-
-          function filterRequest(query, callback) {
-            charmStore.sendRequest({
-              request: 'search/json?search_text=' + query,
-              callback: {
-                'success': function(io_request) {
-                  var result_set = Y.JSON.parse(
-                      io_request.response.results[0].responseText);
-                  console.log('results update', result_set, this);
-                  callback(normalizeBeans(result_set.results));
-                },
-                'failure': function er(e) {
-                  console.error(e.error);
-                }
-              }});
-          }
-
-          return {
-            filter: function(query, callback) {
-              filterRequest(query, callback);
-            }
-          };
-        })(),
-
         delayedFilter = utils.buildDelayedTask();
 
     // The panes starts with the "charmsList" visible.
@@ -91,7 +47,9 @@ YUI.add('juju-charm-search', function(Y) {
       var field = ev.target;
       // It delays the search request until the last key is pressed
       delayedFilter.delay(function() {
-        filterCharms(field.get('value'));
+        filterRequest(field.get('value'), function(beans) {
+          updateList(beans);
+        });
       }, _searchDelay);
     });
 
@@ -103,59 +61,77 @@ YUI.add('juju-charm-search', function(Y) {
       }
     });
 
-    function togglePanel() {
-      if (isPopupVisible) {
-        showPanel(false);
-
-      } else {
-        showPanel(true);
+    // It applies special formatting rules
+    function normalizeCharms(charms) {
+      if (!charms) {
+        return charms;
       }
+
+      Y.each(charms, function (charm) {
+        if (charm.owner === 'charmers') {
+          charm.owner = null;
+        }
+      });
+
+      return charms;
     }
 
-    function showPanel(showIt) {
-      if (showIt && isPopupVisible) {
+    function filterRequest(query, callback) {
+      charmStore.sendRequest({
+        request: 'search/json?search_text=' + query,
+        callback: {
+          'success': function(io_request) {
+            var result_set = Y.JSON.parse(
+              io_request.response.results[0].responseText);
+            console.log('results update', result_set);
+            callback(normalizeCharms(result_set.results));
+          },
+          'failure': function er(e) {
+            console.error(e.error);
+          }
+        }});
+    }
+
+    function togglePanel() {
+      hidePanel(isPopupVisible);
+    }
+
+    function hidePanel(hideIt) {
+      if (hideIt && !isPopupVisible) {
         return;
       }
 
-      if (!showIt && !isPopupVisible) {
+      if (!hideIt && isPopupVisible) {
         return;
       }
 
-      if (showIt) {
+      if (hideIt) {
+        isPopupVisible = false;
+        container.remove(false);
+
+      } else {
         Y.one(document.body).append(container);
         isPopupVisible = true;
         updatePopupPosition();
 
         charmsList.one('.charms-search-field').focus();
 
-      } else {
-        isPopupVisible = false;
-        container.remove(false);
-
       }
-    }
-
-    function removeSearchEntries(destroy) {
-      var list = charmsList.one('.search-result-div');
-      var children = list.get('childNodes').remove(destroy);
-      return {
-        list: list,
-        children: children
-      };
     }
 
     function updateList(entries) {
-      var result = removeSearchEntries(false);
+      var list = charmsList.one('.search-result-div');
 
-      if (updateList) {
-        result.list.append(views.Templates['charm-search-result-entries']({
-          charms: entries
-        }));
+      // Destroy old entries
+      list.get('childNodes').remove(true);
 
-        result.list.all('.charm-detail').on('click', function(ev) {
-          showCharm(ev.target.getAttribute('data-charm-url'));
-        });
-      }
+      list.append(views.Templates['charm-search-result-entries']({
+        charms: entries
+      }));
+
+      list.all('.charm-detail').on('click', function(ev) {
+        showCharm(ev.target.getAttribute('data-charm-url'));
+      });
     }
 
     function showCharm(url) {
@@ -163,12 +139,12 @@ YUI.add('juju-charm-search', function(Y) {
     }
 
     function updatePopupPosition() {
-      var pos = getCalculatePanelPosition();
+      var pos = calculatePanelPosition();
       container.setXY([pos.x, pos.y]);
       container.one('.arrow').setX(pos.arrowX);
     }
 
-    function getCalculatePanelPosition() {
+    function calculatePanelPosition() {
 
       var icon = Y.one('#charm-search-icon'),
           pos = icon.getXY(),
@@ -183,19 +159,13 @@ YUI.add('juju-charm-search', function(Y) {
       };
     }
 
-    function filterCharms(name) {
-      model.filter(name, function(beans) {
-        updateList(beans);
-      });
-    }
-
     if (Y.one('#charm-search-trigger')) {
       Y.one('#charm-search-trigger').on('click', togglePanel);
     }
 
     // The public methods
     return {
-      showPanel: showPanel,
+      hidePanel: hidePanel,
       togglePanel: togglePanel,
       setSearchDelay: function(delay) {
         _searchDelay = delay;
