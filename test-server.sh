@@ -2,6 +2,6 @@
 
 set -m
 
-python -m SimpleHTTPServer 8084 &
+node ./test-server.js &
 xdg-open http://localhost:8084/test/
 fg %1

@@ -185,9 +185,8 @@ YUI.add('juju-gui', function(Y) {
     },
 
     navigate_to_service: function(e) {
-      console.log(
-          e.service.get('id'), 'debug', 'Evt.Nav.Router service target');
       var service = e.service;
+      console.log(service.get('id'), 'Evt.Nav.Router service target');
       this.navigate('/service/' + service.get('id') + '/');
     },
 
@@ -226,7 +225,6 @@ YUI.add('juju-gui', function(Y) {
       // only prefetch once
       // we redispatch to the service view after we have status
       if (!service || service.get('prefetch')) { return; }
-
       service.set('prefetch', true);
 
       // Prefetch service details for service subviews.
@@ -282,18 +280,6 @@ YUI.add('juju-gui', function(Y) {
       this._buildServiceView(req, 'service_constraints');
     },
 
-    show_environment: function(req) {
-      console.log('App: Route: Environment', req.path, req.pendingRoutes);
-      this.showView(
-          'environment', {db: this.db, env: this.env}, {render: true},
-          function(view) {
-            // After the view has been attached to the DOM, perform any
-            // rendering that is reliant on that fact, such as getting
-            // computed styles or clientRects.
-            view.postRender();
-          });
-    },
-
     show_charm_collection: function(req) {
       console.log('App: Route: Charm Collection', req.path, req.query);
       this.showView('charm_collection', {
@@ -336,6 +322,35 @@ YUI.add('juju-gui', function(Y) {
               env: this.env,
               notifications: this.db.notifications});
         view.instance.render();
+      }
+      next();
+    },
+
+    show_environment: function(req, res, next) {
+      var view = this.getViewInfo('environment'),
+          instance = view.instance;
+      if (!instance) {
+        console.log('new env view');
+        this.showView('environment', {
+          db: this.db,
+          env: this.env},
+        {render: true});
+      } else {
+        /* The current impl makes extensive use of
+         * event handlers which are not being properly rebound
+         * when the view is attached.  There is a workable pattern
+         * to enable this but we have to land the basics of this branch
+         * first.
+         */
+        this.showView('environment', {db: this.db, env: this.env}, {
+          update: false,
+          render: true,
+          callback: function(view) {
+            //view.attachView();
+            view.postRender();
+            //view.updateCanvas();
+          }
+        });
       }
       next();
     },

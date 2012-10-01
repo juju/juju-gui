@@ -154,8 +154,6 @@ YUI.add('juju-notification-controller', function(Y) {
             notify_data.kind = change_type;
             // see if there is an object associated with this
             // message
-            console.groupCollapsed('Notification Model Handling');
-            console.log('resolve model from change', app, change);
             model = app.db.getModelFromChange(change);
             if (model) {
               // modelId setter pulls the modelId reference from a
@@ -173,10 +171,9 @@ YUI.add('juju-notification-controller', function(Y) {
                 });
               }
             }
-            console.groupEnd();
+
             // If we have a title set we have enough info
             // to add _something_
-
             if (notify_data.title) {
               notifications.create(notify_data);
             }
@@ -189,3 +186,4 @@ YUI.add('juju-notification-controller', function(Y) {
 }, '0.1.0', {
   requires: ['juju-models']
 });
+
