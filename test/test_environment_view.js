@@ -131,7 +131,7 @@
           Y.each(['x1', 'y1', 'x2', 'y2'],
               function(e) {
                 Y.Lang.isNumber(
-                parseInt(this.getAttribute(e), 10))
+                    parseInt(this.getAttribute(e), 10))
                             .should.equal(true);
               }, line);
         });
