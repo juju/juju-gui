@@ -249,8 +249,15 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   function _addAlertMessage(container, alertClass, message) {
-    var div = container.one('#message-area'),
-        errorDiv = div.one('#alert-area');
+    var div = container.one('#message-area');
+
+    // If the div cannot be found (often an issue with testing), give up and
+    // return.
+    if (!div) {
+      return
+    }
+
+    var errorDiv = div.one('#alert-area');
 
     if (!errorDiv) {
       errorDiv = Y.Node.create('<div/>')
