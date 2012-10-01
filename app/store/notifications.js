@@ -4,6 +4,51 @@ YUI.add('juju-notification-controller', function(Y) {
 
   var juju = Y.namespace('juju');
 
+
+  var _changeNotificationOpToWords = function(op) {
+    if (op === 'add') {
+      return 'added';
+    }
+    else if (op === 'remove') {
+      return 'removed';
+    }
+    else { // Unexpected operation.
+      console.log('Unexpected operation.', op);
+      return 'changed';
+    }
+  };
+
+  var _relationNotifications = {
+    model_list: 'relations',
+    title: function(change_type, change_op, change_data, notify_data) {
+      return 'Relation ' + _changeNotificationOpToWords(change_op);
+    },
+    message: function(change_type, change_op, change_data,
+        notify_data) {
+      if (change_data.endpoints.length === 2) {
+        var endpoint0 = change_data.endpoints[0][0],
+            endpoint1 = change_data.endpoints[1][0],
+            relationType0 = change_data.endpoints[0][1].name,
+            relationType1 = change_data.endpoints[1][1].name,
+            action = _changeNotificationOpToWords(change_op);
+        return ('Relation between ' +
+            endpoint0 + ' (relation type "' + relationType0 + '") ' +
+            'and ' +
+            endpoint1 + ' (relation type "' + relationType1 + '") ' +
+            'was ' + action);
+      } else {
+        var endpoint = change_data.endpoints[0][0],
+            relationType = change_data.endpoints[0][1].name,
+            action = _changeNotificationOpToWords(change_op);
+        return ('Relation with ' +
+            endpoint + ' (relation type "' + relationType + '") ' +
+            'was ' + action);
+      }
+    }
+    // There is no relation eviction because relation errors are
+    // reported on units, there are no relation errors to evict.
+  };
+
   /*
      * NotificationController
      *
@@ -46,9 +91,7 @@ YUI.add('juju-notification-controller', function(Y) {
           service: {
             model_list: 'services'
           },
-          relation: {
-            model_list: 'relations'
-          },
+          relation: _relationNotifications,
           unit: {
             model_list: 'units',
             level: function(change_type, change_op, change_data) {
@@ -188,6 +231,8 @@ YUI.add('juju-notification-controller', function(Y) {
       });
 
   juju.NotificationController = NotificationController;
+  juju._changeNotificationOpToWords = _changeNotificationOpToWords;
+  juju._relationNotifications = _relationNotifications;
 
 }, '0.1.0', {
   requires: ['juju-models']

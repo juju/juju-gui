@@ -319,3 +319,57 @@ describe('notifications', function() {
        notice.get('message').should.equal('Action required for mysql/2.');
      });
 });
+
+
+describe('_changeNotificationOpToWords', function() {
+  var Y, juju;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        ['juju-notification-controller'],
+        function(Y) {
+          juju = Y.namespace('juju');
+          done();
+        });
+  });
+
+  it('should correctly translate notification operations into English',
+     function() {
+       assert.equal(juju._changeNotificationOpToWords('add'), 'added');
+       assert.equal(juju._changeNotificationOpToWords('remove'), 'removed');
+       assert.equal(juju._changeNotificationOpToWords('not-an-op'), 'changed');
+     });
+});
+
+describe('_relationNotifications', function() {
+  var Y, juju;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        ['juju-notification-controller'],
+        function(Y) {
+          juju = Y.namespace('juju');
+          done();
+        });
+  });
+
+  it('should produce reasonable titles',
+     function() {
+       assert.equal(
+         juju._relationNotifications.title(undefined, 'add'),
+         'Relation added');
+       assert.equal(
+         juju._relationNotifications.title(undefined, 'remove'),
+         'Relation removed');
+     });
+
+  it('should generate messages about two-party relations',
+     function() {
+       assert.equal(
+         juju._relationNotifications.message(undefined, 'add'),
+         'Relation added');
+       assert.equal(
+         juju._relationNotifications.title(undefined, 'remove'),
+         'Relation removed');
+     });
+});
