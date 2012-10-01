@@ -254,7 +254,7 @@ YUI.add('juju-view-utils', function(Y) {
     // If the div cannot be found (often an issue with testing), give up and
     // return.
     if (!div) {
-      return
+      return;
     }
 
     var errorDiv = div.one('#alert-area');
