@@ -11,8 +11,6 @@ YUI.add('juju-view-charmsearch', function(Y) {
       // This view is always attached / else remove this when no longer valid.
       // The App framework only sets the activeView up as a target (v3.6.0)
       this.addTarget(this.get('app'));
-      this.publish(
-          'showCharmCollection', {preventable: false, broadcast: true});
     },
 
     render: function() {
@@ -33,7 +31,6 @@ YUI.add('juju-view-charmsearch', function(Y) {
                    'search/json?search_text={query}'
         });
         */
-      Y.one('#omnibar').on('submit', this.show_charm_store, this);
       return this;
     },
 
@@ -50,8 +47,6 @@ YUI.add('juju-view-charmsearch', function(Y) {
       evt.stopImmediatePropagation();
 
       var charm_url = Y.one('#charm-search').get('value');
-      console.log('Fire show charm collection', this, charm_url);
-      this.fire('showCharmCollection', {query: charm_url});
     }
 
   });

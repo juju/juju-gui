@@ -653,6 +653,13 @@ YUI.add('juju-view-environment', function(Y) {
           // Update the scale in our zoom behavior manager to maintain state.
           zoom.scale(evt.scale);
 
+          // Update the translate so that we scale from the center
+          // instead of the origin.
+          var rect = vis.select('rect');
+          evt.translate[0] -= parseInt(rect.attr('width'), 10) / 2 * delta;
+          evt.translate[1] -= parseInt(rect.attr('height'), 10) / 2 * delta;
+          zoom.translate(evt.translate);
+
           this.rescale(vis, evt);
         },
 
