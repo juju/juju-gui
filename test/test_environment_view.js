@@ -111,10 +111,10 @@
     });
 
     // Ensure the environment view loads properly
-    it.only('must be able to render service blocks and relations',
+    it('must be able to render service blocks and relations',
         function() {
           // Create an instance of EnvironmentView with custom env
-          var view = new views.EnvironmentView({
+          var view = new views.environment({
             container: container,
             db: db,
             env: env
@@ -139,7 +139,7 @@
     // Ensure that we can add a relation
     it.skip('must be able to add a relation between services',
         function(done) {
-          var view = new views.EnvironmentView({
+          var view = new views.environment({
             container: container,
             db: db,
             env: env
@@ -170,7 +170,7 @@
 
     // Ensure that the zoom controls work
     it('must be able to zoom using controls', function(done) {
-      var view = new views.EnvironmentView({
+      var view = new views.environment({
         container: container,
         db: db,
         env: env
@@ -195,7 +195,7 @@
     it('must be able to compute rect sizes based on the svg and' +
        ' viewport size',
        function(done) {
-         var view = new views.EnvironmentView({
+         var view = new views.environment({
            container: container,
            db: db,
            env: env
@@ -218,7 +218,7 @@
     // Ensure that sizes are computed properly
     it('must be able to compute sizes by the viewport with a minimum',
        function(done) {
-         var view = new views.EnvironmentView({
+         var view = new views.environment({
            container: container,
            db: db,
            env: env
@@ -244,7 +244,7 @@
 
     // Tests for control panel.
     it('must be able to toggle a control panel', function(done) {
-      var view = new views.EnvironmentView({
+      var view = new views.environment({
         container: container,
         db: db,
         env: env
@@ -263,7 +263,7 @@
 
     it('must be able to add a relation from the control panel',
        function(done) {
-         var view = new views.EnvironmentView({
+         var view = new views.environment({
             container: container,
             db: db,
             env: env
@@ -290,7 +290,7 @@
     );
 
     it('must be able to remove a relation between services', function(done) {
-      var view = new views.EnvironmentView({
+      var view = new views.environment({
         container: container,
         db: db,
         env: env

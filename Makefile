@@ -27,7 +27,7 @@ gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --custom_jsdoc_tags=property,default,since --jslint_error=all $(FILES)
 
 jshint: node_modules/jshint
-	@node_modules/jshint/bin/hint --config=jshint.config $(FILES)
+	@node_modules/jshint/bin/hint $(FILES)
 
 lint: gjslint jshint
 
