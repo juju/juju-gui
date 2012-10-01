@@ -61,11 +61,6 @@ YUI.add('juju-gui', function(Y) {
         parent: 'charm_collection'
       },
 
-      charm_search: {
-        type: 'juju.views.charm_search',
-        preserve: true
-      },
-
       notifications: {
         type: 'juju.views.NotificationsView',
         preserve: true
@@ -219,7 +214,12 @@ YUI.add('juju-gui', function(Y) {
         var service = this.db.services.getById(unit.service);
         this._prefetch_service(service);
       }
-      this.showView('unit', {unit: unit, db: this.db, env: this.env});
+      this.showView(
+          'unit',
+          // The querystring is used to handle highlighting relation rows in
+          // links from notifications about errors.
+          { unit: unit, db: this.db, env: this.env, app: this,
+            querystring: req.query });
     },
 
     _prefetch_service: function(service) {
@@ -322,20 +322,10 @@ YUI.add('juju-gui', function(Y) {
     /*
      * Persistent Views
      *
-     * 'charm_search' and 'notifications' are preserved views that remain
-     * rendered on all main views.  we manually create an instance of this
-     * view and insert it into the App's view metadata.
+     * 'notifications' is a preserved views that remains rendered on all main
+     * views.  we manually create an instance of this view and insert it into
+     * the App's view metadata.
      */
-    show_charm_search: function(req, res, next) {
-      var view = this.getViewInfo('charm_search'),
-          instance = view.instance;
-      if (!instance) {
-        view.instance = new views.charm_search({app: this});
-        view.instance.render();
-      }
-      next();
-    },
-
     show_notifications_view: function(req, res, next) {
       var view = this.getViewInfo('notifications'),
           instance = view.instance;
@@ -497,35 +487,34 @@ YUI.add('juju-gui', function(Y) {
     ATTRS: {
       routes: {
         value: [
-          {path: '*', callback: 'show_charm_search'},
-          {path: '*', callback: 'show_notifications_view'},
-          {path: '/charms/', callback: 'show_charm_collection'},
-          {path: '/charms/*charm_url',
+          { path: '*', callback: 'show_notifications_view'},
+          { path: '/charms/', callback: 'show_charm_collection'},
+          { path: '/charms/*charm_url',
             callback: 'show_charm',
             reverse_map: {charm_url: 'name'},
             model: 'charm'},
-          {path: '/notifications/',
+          { path: '/notifications/',
             callback: 'show_notifications_overview'},
-          {path: '/service/:id/config',
+          { path: '/service/:id/config',
             callback: 'show_service_config',
             intent: 'config',
             model: 'service'},
-          {path: '/service/:id/constraints',
+          { path: '/service/:id/constraints',
             callback: 'show_service_constraints',
             intent: 'constraints',
             model: 'service'},
-          {path: '/service/:id/relations',
+          { path: '/service/:id/relations',
             callback: 'show_service_relations',
             intent: 'relations',
             model: 'service'},
-          {path: '/service/:id/',
+          { path: '/service/:id/',
             callback: 'show_service',
             model: 'service'},
-          {path: '/unit/:id/',
+          { path: '/unit/:id/',
             callback: 'show_unit',
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit'},
-          {path: '/', callback: 'show_environment'}
+          { path: '/', callback: 'show_environment'}
         ]
       }
     }

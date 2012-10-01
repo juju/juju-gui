@@ -4,6 +4,46 @@ YUI.add('juju-models', function(Y) {
 
   var models = Y.namespace('juju.models');
 
+  // This is a helper function used by all of the process_delta methods.
+  var _process_delta = function(list, action, change_data, change_base) {
+    var model_id = (action === 'remove') && change_data || change_data.id,
+        o = list.getById(model_id);
+
+    if (action === 'add' || action === 'change') {
+      // Client-side requests may create temporary objects in the
+      // database in order to give the user more immediate feedback.
+      // The temporary objects are created after the ACK message from
+      // the server that contains their actual names.  When the delta
+      // arrives for those objects, they already exist in a skeleton
+      // form that needs to be fleshed out.  So, the existing objects
+      // are kept and re-used.
+      var data = change_base || {};
+      Y.each(change_data, function(value, name) {
+        data[name.replace('-', '_')] = value;
+      });
+      if (!Y.Lang.isValue(o)) {
+        o = list.add(data);
+      } else {
+        if (o instanceof Y.Model) {
+          o.setAttrs(data);
+        } else {
+          // This must be from a LazyModelList.
+          Y.each(data, function(value, key) {
+            o[key] = value;
+          });
+          // XXX Fire model changed event manually if we need it later?
+        }
+      }
+    }
+    else if (action === 'remove') {
+      if (Y.Lang.isValue(o)) {
+        list.remove(o);
+      }
+    } else {
+      console.warn('Unknown change kind in _process_delta:', action);
+    }
+  };
+
   var Charm = Y.Base.create('charm', Y.Model, [], {
     idAttribute: 'charm_id',
     charm_id_re: /((\w+):)?(\w+)\/(\S+)-(\d+)/,
@@ -57,7 +97,11 @@ YUI.add('juju-models', function(Y) {
   models.Service = Service;
 
   var ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
-    model: Service
+    model: Service,
+
+    process_delta: function(action, data) {
+      _process_delta(this, action, data, {exposed: false});
+    }
   }, {
     ATTRS: {
     }
@@ -76,8 +120,11 @@ YUI.add('juju-models', function(Y) {
         ATTRS: {
           machine: {},
           agent_state: {},
-          // relations to unit relation state.
-          relations: {},
+          // This is empty if there are no relation errors, and otherwise
+          // shows only the relations with errors.  The data structure in that
+          // case is a hash mapping a local relation name to a list of services
+          // on the other end, like {'cache': ['memcached']}.
+          relation_errors: {},
 
           config: {},
           is_subordinate: {},
@@ -90,6 +137,10 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
     model: ServiceUnit,
+
+    process_delta: function(action, data) {
+      _process_delta(this, action, data, {relation_errors: {}});
+    },
 
     _setDefaultsAndCalculatedValues: function(obj) {
       var raw = obj.id.split('/');
@@ -181,7 +232,11 @@ YUI.add('juju-models', function(Y) {
   models.Machine = Machine;
 
   var MachineList = Y.Base.create('machineList', Y.LazyModelList, [], {
-    model: Machine
+    model: Machine,
+
+    process_delta: function(action, data) {
+      _process_delta(this, action, data, {});
+    }
   }, {
     ATTRS: {}
   });
@@ -200,6 +255,10 @@ YUI.add('juju-models', function(Y) {
 
   var RelationList = Y.Base.create('relationList', Y.ModelList, [], {
     model: Relation,
+
+    process_delta: function(action, data) {
+      _process_delta(this, action, data, {});
+    },
 
     get_relations_for_service: function(service, asList) {
       var service_id = service.get('id');
@@ -360,7 +419,6 @@ YUI.add('juju-models', function(Y) {
         modelName = 'unit';
       }
       return this[modelName + 's'];
-
     },
 
     getModelFromChange: function(change) {
@@ -393,55 +451,14 @@ YUI.add('juju-models', function(Y) {
           Y.bind(function(change) {
             change_type = change[0];
             console.log('change', this, change);
-            var model_list = this.getModelListByModelName(change_type);
-            this.process_model_delta(change, model_list);
+            this.getModelListByModelName(change_type).process_delta(
+                change[1], change[2]);
           }, this));
       this.services.each(function(service) {
         self.units.update_service_unit_aggregates(service);
       });
       this.fire('update');
       console.groupEnd();
-    },
-
-    process_model_delta: function(change, model_list) {
-      // console.log('model change', change);
-      var change_kind = change[1],
-          o = this.getModelFromChange(change);
-
-      if (change_kind === 'add' || change_kind === 'change') {
-        // Client-side requests may create temporary objects in the
-        // database in order to give the user more immediate feedback.
-        // The temporary objects are created after the ACK message from
-        // the server that contains their actual names.  When the delta
-        // arrives for those objects, they already exist in a skeleton
-        // form that needs to be fleshed out.  So, the existing objects
-        // are kept and re-used.
-        var data = {};
-        Y.each(change[2], function(value, name) {
-          data[name.replace('-', '_')] = value;
-        });
-        if (!Y.Lang.isValue(o)) {
-          o = model_list.add(data);
-        } else {
-          if (o instanceof Y.Model) {
-            o.setAttrs(data);
-          } else {
-            // This must be from a LazyModelList.
-            Y.each(data, function(value, key) {
-              o[key] = value;
-            });
-            // XXX Fire model changed event manually if we need it later?
-          }
-        }
-      }
-      else if (change_kind === 'remove') {
-        if (Y.Lang.isValue(o)) {
-          model_list.remove(o);
-        }
-      } else {
-        console.warn('Unknown change kind in process_model_delta:',
-            change_kind);
-      }
     }
 
   });

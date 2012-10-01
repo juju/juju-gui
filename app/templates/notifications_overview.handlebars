@@ -1,7 +1,7 @@
 <ul class="unstyled">
     {{#notifications}}
   <li id="{{clientId}}" class="notice">
-    <div{{#if seen}} class="seen"{{/if}}>
+    <div{{#if seen}} class="seen" {{/if}} class="{{level}}">
       <h4>{{title}}</h4>
       <div>
         {{message}}
@@ -14,6 +14,3 @@
   </li>
   {{/notifications}}
 </ul>
-
-
-
