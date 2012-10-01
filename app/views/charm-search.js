@@ -67,7 +67,7 @@ YUI.add('juju-charm-search', function(Y) {
         return charms;
       }
 
-      Y.each(charms, function (charm) {
+      Y.each(charms, function(charm) {
         if (charm.owner === 'charmers') {
           charm.owner = null;
         }
@@ -82,7 +82,7 @@ YUI.add('juju-charm-search', function(Y) {
         callback: {
           'success': function(io_request) {
             var result_set = Y.JSON.parse(
-              io_request.response.results[0].responseText);
+                io_request.response.results[0].responseText);
             console.log('results update', result_set);
             callback(normalizeCharms(result_set.results));
           },
