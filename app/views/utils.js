@@ -25,7 +25,12 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
-  var buildDelayedTask = function() {
+  // It creates an object that delays the execution of a given callback.
+  // If the user calls "delay(functionA, 1000)", the "functionA" will be
+  // executed after 1000ms. If the user calls "delay(functionB, 1000)"
+  // before the execution of the "functionA", the "functionA" will be canceled
+  // and the "functionB" will be scheduled to run after 1000ms.
+  utils.buildDelayedTask = function() {
     var currentTask = null;
 
     return {
@@ -38,14 +43,13 @@ YUI.add('juju-view-utils', function(Y) {
         if (currentTask !== null && currentTask !== undefined) {
           clearTimeout(currentTask);
         }
-        setTimeout(function() {
+        currentTask = setTimeout(function() {
           currentTask = null;
           callback();
         }, ms);
       }
     };
   };
-  utils.buildDelayedTask = buildDelayedTask;
 
   /*
    * Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
