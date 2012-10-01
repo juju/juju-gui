@@ -351,35 +351,32 @@ describe('relation notifications', function() {
         });
   });
 
-  it('should produce reasonable titles',
-     function() {
-       assert.equal(
-       juju._relationNotifications.title(undefined, 'add'),
-       'Relation added');
-       assert.equal(
-       juju._relationNotifications.title(undefined, 'remove'),
-       'Relation removed');
-     });
+  it('should produce reasonable titles', function() {
+    assert.equal(
+        juju._relationNotifications.title(undefined, 'add'),
+        'Relation added');
+    assert.equal(
+        juju._relationNotifications.title(undefined, 'remove'),
+        'Relation removed');
+  });
 
-  it('should generate messages about two-party relations',
-    function() {
-      var changeData =
-      { endpoints:
-        [['endpoint0', {name: 'relation0'}],
-        ['endpoint1', {name: 'relation1'}]]};
-      assert.equal(
+  it('should generate messages about two-party relations', function() {
+    var changeData =
+        { endpoints:
+              [['endpoint0', {name: 'relation0'}],
+                ['endpoint1', {name: 'relation1'}]]};
+    assert.equal(
         juju._relationNotifications.message(undefined, 'add', changeData),
-        'Relation between endpoint0 (relation type "relation0") and ' + 
+        'Relation between endpoint0 (relation type "relation0") and ' +
         'endpoint1 (relation type "relation1") was added');
-    });
+  });
 
-  it('should generate messages about one-party relations',
-    function() {
-      var changeData =
-      { endpoints:
-        [['endpoint1', {name: 'relation1'}]]};
-      assert.equal(
+  it('should generate messages about one-party relations', function() {
+    var changeData =
+        { endpoints:
+              [['endpoint1', {name: 'relation1'}]]};
+    assert.equal(
         juju._relationNotifications.message(undefined, 'add', changeData),
         'Relation with endpoint1 (relation type "relation1") was added');
-    });
+  });
 });
