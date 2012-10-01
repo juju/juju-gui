@@ -4,7 +4,7 @@
 
   describe('juju environment view', function() {
     var EnvironmentView, views, models, Y, container, service, db, conn,
-        juju, env, testUtils, navbar;
+        juju, env, testUtils;
 
     var environment_delta = {
       'result': [
@@ -93,17 +93,12 @@
     beforeEach(function(done) {
       container = Y.Node.create('<div id="test-container" />');
       Y.one('body').append(container);
-      navbar = Y.Node.create('<div class="navbar" ' +
-          'style="height:70px;">Navbar</div>');
-      container.append(navbar);
       db = new models.Database();
       db.on_delta({data: environment_delta});
       done();
     });
 
     afterEach(function(done) {
-      navbar.remove();
-      navbar.destroy();
       container.remove();
       container.destroy();
       db.destroy();
@@ -130,6 +125,65 @@
             .should.equal(1);
           done();
         }
+    );
+
+    // Ensure that sizes are computed properly
+    it('must be able to compute rect sizes based on the svg and' +
+        ' viewport size',
+       function(done) {
+         var view = new EnvironmentView({
+            container: container,
+            db: db,
+            env: env
+         }).render();
+         // Attach the view to the DOM so that sizes get set properly
+         // from the viewport (only available from DOM).
+         view.postRender();
+         var svg = Y.one('svg');
+         parseInt(svg.one('rect').getAttribute('height'), 10)
+          .should.equal(
+         parseInt(svg.getComputedStyle('height'), 10));
+         parseInt(svg.one('rect').getAttribute('width'), 10)
+          .should.equal(
+         parseInt(svg.getComputedStyle('width'), 10));
+         done();
+       }
+    );
+
+    // Ensure that sizes are computed properly
+    it('must be able to compute sizes by the viewport with a minimum',
+       function(done) {
+         // The height of a navbar is used in calculating the viewport size,
+         // so add a temporary one to the DOM
+         var navbar = Y.Node.create('<div class="navbar" ' +
+             'style="height:70px;">Navbar</div>');
+         Y.one('body').append(navbar);
+         var view = new EnvironmentView({
+            container: container,
+            db: db,
+            env: env
+         }).render();
+         // Attach the view to the DOM so that sizes get set properly
+         // from the viewport (only available from DOM).
+         view.postRender();
+         var svg = Y.one('svg');
+         // Ensure that calculations are being done correctly on the viewport.
+         parseInt(svg.getAttribute('height'), 10)
+          .should.equal(
+         Math.max(600,
+              container.get('winHeight') -
+              parseInt(Y.one('#overview-tasks')
+                .getComputedStyle('height'), 10) -
+              parseInt(Y.one('.navbar')
+                .getComputedStyle('height'), 10) -
+              parseInt(Y.one('.navbar')
+                .getComputedStyle('margin-bottom'), 10)
+              ));
+         // Destroy the navbar
+         navbar.remove();
+         navbar.destroy();
+         done();
+       }
     );
 
     // Ensure that we can add a relation
@@ -199,56 +253,6 @@
       });
       zoom_in.simulate('click');
     });
-
-    // Ensure that sizes are computed properly
-    it('must be able to compute rect sizes based on the svg and' +
-        ' viewport size',
-       function(done) {
-         var view = new EnvironmentView({
-            container: container,
-            db: db,
-            env: env
-         }).render();
-         // Attach the view to the DOM so that sizes get set properly
-         // from the viewport (only available from DOM).
-         view.postRender();
-         var svg = Y.one('svg');
-         parseInt(svg.one('rect').getAttribute('height'), 10)
-          .should.equal(
-         parseInt(svg.getComputedStyle('height'), 10));
-         parseInt(svg.one('rect').getAttribute('width'), 10)
-          .should.equal(
-         parseInt(svg.getComputedStyle('width'), 10));
-         done();
-       }
-    );
-
-    // Ensure that sizes are computed properly
-    it('must be able to compute sizes by the viewport with a minimum',
-       function(done) {
-         var view = new EnvironmentView({
-            container: container,
-            db: db,
-            env: env
-         }).render();
-         // Attach the view to the DOM so that sizes get set properly
-         // from the viewport (only available from DOM).
-         view.postRender();
-         var svg = Y.one('svg');
-         parseInt(svg.getAttribute('height'), 10)
-          .should.equal(
-         Math.max(600,
-              container.get('winHeight') -
-              parseInt(Y.one('#overview-tasks')
-                .getComputedStyle('height'), 10) -
-              parseInt(Y.one('.navbar')
-                .getComputedStyle('height'), 10) -
-              parseInt(Y.one('.navbar')
-                .getComputedStyle('margin-bottom'), 10)
-              ));
-         done();
-       }
-    );
 
     // Tests for control panel
     it('must be able to toggle a control panel', function(done) {
