@@ -7,7 +7,7 @@ describe('charm search', function() {
       '"Membase Server", "relevance": 8.728194117350437, ' +
       '"owner": "charmers"}]}';
 
-  before(function(done) {
+  before(function() {
     Y = YUI(GlobalConfig).use([
       'juju-models',
       'juju-views',
@@ -22,22 +22,22 @@ describe('charm search', function() {
       views = Y.namespace('juju.views');
     });
 
+  });
+
+  beforeEach(function() {
     // The "charms search" feature needs these elements
     var docBody = Y.one(document.body);
     Y.Node.create('<div id="charm-search-test">' +
-        '<div id="charm-search-icon" />' +
-        '<div id="content" /></div>').appendTo(docBody);
-
-    done();
+      '<div id="charm-search-icon"></div>' +
+      '<div id="content"></div></div>').appendTo(docBody);
   });
 
-  afterEach(function(done) {
+  afterEach(function() {
     Y.namespace('juju.views').CharmSearchPopup.killInstance();
-
-    done();
+    Y.one('#charm-search-test').remove(true);
   });
 
-  it('must be able to show and hide the panel', function(done) {
+  it('must be able to show and hide the panel', function() {
     var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({});
 
     panel.show();
@@ -52,10 +52,10 @@ describe('charm search', function() {
     panel.toggle();
     assert.isNull(Y.one('#juju-search-charm-panel'));
 
-    done();
+    
   });
 
-  it('must be able to search', function(done) {
+  it('must be able to search', function() {
     var searchTriggered = false,
         panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
           charm_store: {
@@ -87,10 +87,10 @@ describe('charm search', function() {
     assert.equal('this is my URL',
         node.one('.charm-detail').getAttribute('data-charm-url'));
 
-    done();
+    
   });
 
-  it('must be able to reset the search result', function(done) {
+  it('must be able to reset the search result', function() {
     var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
       charm_store: {
         sendRequest: function(params) {
@@ -125,10 +125,10 @@ describe('charm search', function() {
     assert.isTrue(node.all('.charm-detail').isEmpty());
     assert.equal('', field.get('value'));
 
-    done();
+    
   });
 
-  it('must be able to trigger charm details', function(done) {
+  it('must be able to trigger charm details', function() {
     var navigateTriggered = false,
         panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
           charm_store: {
@@ -162,6 +162,5 @@ describe('charm search', function() {
     Y.one('.charm-detail').simulate('click');
     assert.isTrue(navigateTriggered);
 
-    done();
   });
 });

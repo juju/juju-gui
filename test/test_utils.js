@@ -2,19 +2,18 @@
 
 (function() {
   describe('juju-views-utils', function() {
-    var utils, views, Y;
+    var views, Y;
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'juju-view-utils', 'node-event-simulate',
           function(Y) {
             views = Y.namespace('juju.views');
-            utils = Y.namespace('juju.views.utils');
             done();
           });
     });
 
     it('should create a confirmation panel',
-       function(done) {
+       function() {
           var confirmed = false;
           var panel = views.createModalPanel(
               'Description',
@@ -29,12 +28,10 @@
           button.simulate('click');
           confirmed.should.equal(true);
           panel.destroy();
-
-         done();
        });
 
     it('should hide the panel when the Cancel button is clicked',
-       function(done) {
+       function() {
           var confirmed = false;
           var panel = views.createModalPanel(
               'Description',
@@ -48,11 +45,9 @@
           button.simulate('click');
           confirmed.should.equal(false);
           panel.destroy();
-
-         done();
        });
 
-    it('should allow you to reset the buttons', function(done) {
+    it('should allow you to reset the buttons', function() {
       var confirmed = false;
       var panel = views.createModalPanel(
           'Description',
@@ -70,8 +65,6 @@
       button.simulate('click');
       confirmed.should.equal(true);
       panel.destroy();
-
-      done();
     });
 
   });
@@ -89,16 +82,14 @@ describe('utilities', function() {
     });
   });
 
-  it('must be able to display humanize time ago messages', function(done) {
+  it('must be able to display humanize time ago messages', function() {
     var now = Y.Lang.now();
     // Javascript timestamps are in milliseconds
     views.humanizeTimestamp(now).should.equal('less than a minute ago');
     views.humanizeTimestamp(now + 600000).should.equal('10 minutes ago');
-
-    done();
   });
 
-  it('shows a relation from the perspective of a service', function(done) {
+  it('shows a relation from the perspective of a service', function() {
     var db = new models.Database(),
         service = new models.Service({
           id: 'mysql',
@@ -127,14 +118,12 @@ describe('utilities', function() {
     res.far.service.should.equal('mediawiki');
     res.far.role.should.equal('client');
     res.far.name.should.equal('db');
-
-    done();
   });
 
 });
 
 (function() {
-  describe('form validation', function() {
+  describe('form validateion', function() {
 
     var utils, Y;
 
@@ -147,7 +136,7 @@ describe('utilities', function() {
           });
     });
 
-    it('should handle int fields', function(done) {
+    it('should handle int fields', function() {
       var schema = {an_int: {type: 'int'}};
 
       // If an int field has a valid value, no error is given.
@@ -182,10 +171,9 @@ describe('utilities', function() {
       assert.equal(utils.validate({an_int: ' -1 '}, schema).an_int,
           undefined);
 
-      done();
     });
 
-    it('should handle float fields', function(done) {
+    it('should handle float fields', function() {
       var schema = {a_float: {type: 'float'}};
 
       // Floating point numbers are valid floats.
@@ -231,11 +219,9 @@ describe('utilities', function() {
           'The value "-" is not a float.');
       assert.equal(utils.validate({a_float: '.'}, schema).a_float,
           'The value "." is not a float.');
-
-      done();
     });
 
-    it('should handle fields with defaults', function(done) {
+    it('should handle fields with defaults', function() {
       var defaults_schema =
           { an_int:
                 { type: 'int',
@@ -256,11 +242,9 @@ describe('utilities', function() {
       // Float:
       assert.equal(utils.validate({a_float: ''}, defaults_schema).a_float,
           undefined);
-
-      done();
     });
 
-    it('should handle fields without defaults', function(done) {
+    it('should handle fields without defaults', function() {
       var no_defaults_schema =
           { an_int:
                 { type: 'int'},
@@ -282,30 +266,6 @@ describe('utilities', function() {
       // have a default because an empty string is still a string.
       assert.equal(utils.validate({a_string: ''}, no_defaults_schema).a_string,
           undefined);
-
-      done();
-    });
-
-    it('should execute only the last method', function(done) {
-
-      var executed = false,
-          delayTask = utils.buildDelayedTask();
-
-      delayTask.delay(function() {
-        assert.isTrue(false, 'Not supposed to run this function. (a)');
-      }, 50);
-      delayTask.delay(function() {
-        assert.isTrue(false, 'Not supposed to run this function. (b)');
-      }, 50);
-      delayTask.delay(function() {
-        executed = true;
-      }, 10);
-
-      setTimeout(function() {
-        assert.isTrue(executed);
-        done();
-      }, 100);
-
     });
 
   });
