@@ -78,7 +78,7 @@ YUI.add('juju-notifications', function(Y) {
           model = notifications.getByClientId(target.get('id'));
 
           if (this.selection.seen) {
-              model.set('seen', true);
+            model.set('seen', true);
           }
 
           if (this.selection.hide) {
@@ -161,8 +161,8 @@ YUI.add('juju-notifications', function(Y) {
          * :hide: should the selected element be hidden on selection
          */
         selection: {hide: false,
-                    seen: false
-                   },
+          seen: false
+        },
 
         events: {
           '#notify-indicator': {
@@ -173,7 +173,7 @@ YUI.add('juju-notifications', function(Y) {
           },
 
           '#notify-list li.header a': {
-              click: 'closeIndicator'
+            click: 'closeIndicator'
           }
         },
 
@@ -185,21 +185,21 @@ YUI.add('juju-notifications', function(Y) {
             return n.getAttrs();
           });
         },
-          
+
         closeIndicator: function() {
-            var indicator = Y.one('#notify-indicator'),
-                list = Y.one('#notify-list'),
-                parent = indicator.ancestor();
-            
-            console.log('Close indicator');
-            if (parent && parent.hasClass('open')) {
-                indicator.ancestor().removeClass('open');
-                list.hide();
-            }
+          var indicator = Y.one('#notify-indicator'),
+              list = Y.one('#notify-list'),
+              parent = indicator.ancestor();
+
+          console.log('Close indicator');
+          if (parent && parent.hasClass('open')) {
+            indicator.ancestor().removeClass('open');
+            list.hide();
+          }
         },
         render: function() {
-            NotificationsView.superclass.render.apply(this, arguments);
-            this.get('container').on('clickoutside', this.closeIndicator);
+          NotificationsView.superclass.render.apply(this, arguments);
+          this.get('container').on('clickoutside', this.closeIndicator);
         }
 
       });
