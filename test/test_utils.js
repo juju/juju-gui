@@ -123,7 +123,7 @@ describe('utilities', function() {
 });
 
 (function() {
-  describe('form validateion', function() {
+  describe('form validation', function() {
 
     var utils, Y;
 
