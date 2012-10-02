@@ -3,7 +3,8 @@
 YUI.add('juju-view-environment', function(Y) {
 
   var views = Y.namespace('juju.views'),
-      Templates = views.Templates;
+      Templates = views.Templates,
+      models = Y.namespace('juju.models');
 
   function styleToNumber(selector, style, defaultSize) {
     style = style || 'height';
@@ -888,13 +889,25 @@ YUI.add('juju-view-environment', function(Y) {
             env.add_relation(
                 rel.source().id,
                 rel.target().id,
-                function(resp) {
-                  if (resp.err) {
-                    console.log('Error adding relation');
-                  }
-                });
+                Y.bind(this._doAddRelationCallback, view)
+            );
             // For now, set back to show_service.
             view.set('currentServiceClickAction', 'toggleControlPanel');
+          },
+
+          _doAddRelationCallback: function(ev) {
+            var db = this.get('db');
+
+            if (ev.err) {
+              db.notifications.add(
+                new models.Notification({
+                  title: 'Error adding relation',
+                  message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
+                  level: 'error',
+                  link: '/'
+                })
+              );
+            }
           }
         }
 
@@ -908,6 +921,7 @@ YUI.add('juju-view-environment', function(Y) {
 }, '0.1.0', {
   requires: ['juju-templates',
     'juju-view-utils',
+    'juju-models',
     'd3',
     'base-build',
     'handlebars-base',

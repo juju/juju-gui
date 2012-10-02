@@ -595,32 +595,55 @@ YUI.add('juju-view-service', function(Y) {
     _addUnitCallback: function(ev) {
       var service = this.get('model'),
           service_id = service.get('id'),
+          app = this.get('app'),
           db = this.get('db'),
           unit_names = ev.result || [];
-      console.log('_addUnitCallback with: ', arguments);
-      // Received acknowledgement message for the 'add_units' operation.
-      // ev.results is an array of the new unit ids to be created.
-      db.units.add(
+
+      if (ev.err) {
+        db.notifications.add(
+          new models.Notification({
+            title: 'Error adding unit',
+            message: ev.num_units + ' units',
+            level: 'error',
+            link: app.getModelURL(service)
+          })
+        );
+      } else {
+        db.units.add(
           Y.Array.map(unit_names, function(unit_id) {
             return {id: unit_id,
               agent_state: 'pending'};
           }));
-      service.set(
+        service.set(
           'unit_count', service.get('unit_count') + unit_names.length);
+      }
       db.fire('update');
       // View is redrawn so we do not need to enable field.
     },
 
     _removeUnitCallback: function(ev) {
       var service = this.get('model'),
+          app = this.get('app'),
           db = this.get('db'),
           unit_names = ev.unit_names;
       console.log('_removeUnitCallback with: ', arguments);
-      Y.Array.each(unit_names, function(unit_name) {
-        db.units.remove(db.units.getById(unit_name));
-      });
-      service.set(
+
+      if (ev.err) {
+        db.notifications.add(
+          new models.Notification({
+            title: 'Error removing unit',
+            message: 'Units: ' + ev.unit_names,
+            level: 'error',
+            link: app.getModelURL(service)
+          })
+        );
+      } else {
+        Y.Array.each(unit_names, function(unit_name) {
+          db.units.remove(db.units.getById(unit_name));
+        });
+        service.set(
           'unit_count', service.get('unit_count') - unit_names.length);
+      }
       db.fire('update');
       // View is redrawn so we do not need to enable field.
     }
