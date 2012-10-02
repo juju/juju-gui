@@ -660,7 +660,7 @@ YUI.add('juju-view-environment', function(Y) {
           } // Otherwise do nothing.
         },
 
-        removeRelation: function(d, context, view) {
+        removeRelation: function(d, context, view, confirmButton) {
           var env = this.get('env'),
               relationElement = Y.one(context.parentNode).one('.relation');
           view.addSVGClass(relationElement, 'to-remove pending-relation');
@@ -670,7 +670,8 @@ YUI.add('juju-view-environment', function(Y) {
               Y.bind(this._doRemoveRelationCallback, {
                 scope: this,
                 view: view,
-                relationElement: relationElement
+                relationElement: relationElement,
+                confirmButton: confirmButton
               }));
         },
 
@@ -689,9 +690,12 @@ YUI.add('juju-view-environment', function(Y) {
             );
             this.view.removeSVGClass(this.relationElement,
                 'to-remove pending-relation');
+
+            this.confirmButton.set('disabled', false);
+          } else {
+            this.view.get('rmrelation_dialog').hide();
           }
 
-          this.view.get('rmrelation_dialog').hide();
         },
 
         removeRelationConfirm: function(d, context, view) {
@@ -702,8 +706,10 @@ YUI.add('juju-view-environment', function(Y) {
               'Remove Relation',
               Y.bind(function(ev) {
                 ev.preventDefault();
-                ev.target.set('disabled', true);
-                view.removeRelation(d, context, view);
+
+                var confirmButton = ev.target;
+                confirmButton.set('disabled', true);
+                view.removeRelation(d, context, view, confirmButton);
               },
               this)));
         },
@@ -863,7 +869,7 @@ YUI.add('juju-view-environment', function(Y) {
                 }, this));
           },
 
-          _doDestroyServiceCallback: function(ev) {
+          _doDestroyServiceCallback: function () {
 
           },
 
