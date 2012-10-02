@@ -300,7 +300,8 @@ YUI.add('juju-gui', function(Y) {
       this.showView('charm', {
         charm_data_url: charm_url,
         charm_store: this.charm_store,
-        env: this.env
+        env: this.env,
+        db: this.db
       });
     },
 
