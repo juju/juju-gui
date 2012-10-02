@@ -35,7 +35,7 @@ describe('Application', function() {
   var Y, app, container;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use('juju-gui', function(Y) {
+    Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
           container = Y.Node.create('<div id="test" class="container"></div>');
           app = new Y.juju.App({
                   container: container,
@@ -73,6 +73,56 @@ describe('Application', function() {
     // charms also require a mapping but only a name, not a function
     app.getModelURL(wp_charm).should.equal('/charms/' + wp_charm.get('name'));
 
+  });
+
+
+});
+
+
+describe('Application Connection State', function() {
+  var Y, container;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+      container = Y.Node.create('<div id="test" class="container"></div>');
+      done();
+        });
+
+  });
+
+  it('should be able to handle env connection status changes', function() {
+    var juju = Y.namespace('juju'),
+        conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
+        env = new juju.Environment({conn: conn}),
+        app = new Y.juju.App({env: env, container: container}),
+        reset_called = false,
+        noop = function() {return this;};
+
+
+    // mock the db
+    app.db = {
+      // mock out notifications
+      // so app can start normally
+      notifications: {
+        addTarget: noop,
+        after: noop,
+        filter: noop,
+        map: noop,
+        on: noop,
+        size: function() {return 0;}
+      },
+      reset: function() {
+        reset_called = true;
+               }
+    };
+    env.connect();
+    conn.open();
+    reset_called.should.equal(true);
+
+    // trigger a second time and verify
+    reset_called = false;
+    conn.open();
+    reset_called.should.equal(true);
   });
 
 });

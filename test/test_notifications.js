@@ -303,19 +303,17 @@ describe('notifications', function() {
        showable.length.should.equal(2);
        // The first showable notification should indicate an error.
        showable[0].level.should.equal('error');
-       showable[0].title.should.equal('Error with add unit');
-       showable[0].message.should.equal(
-       'Action required for mysql/0 (agent-state=error).');
+       showable[0].title.should.equal('Error with mysql/0');
+       showable[0].message.should.equal('Agent-state = error.');
        // The second showable notification should also indicate an error.
        showable[1].level.should.equal('error');
-       showable[1].title.should.equal('Error with add unit');
-       showable[1].message.should.equal(
-       'Action required for wordpress/0 (agent-state=install-error).');
+       showable[1].title.should.equal('Error with wordpress/0');
+       showable[1].message.should.equal('Agent-state = install-error.');
        // The first non-error notice should have an 'info' level and less
        // severe messaging.
        var notice = notifications.item(0);
        notice.get('level').should.equal('info');
-       notice.get('title').should.equal('Problem with add unit');
-       notice.get('message').should.equal('Action required for mysql/2.');
+       notice.get('title').should.equal('Problem with mysql/2');
+       notice.get('message').should.equal('');
      });
 });
