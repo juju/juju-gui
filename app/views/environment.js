@@ -900,12 +900,13 @@ YUI.add('juju-view-environment', function(Y) {
 
             if (ev.err) {
               db.notifications.add(
-                new models.Notification({
-                  title: 'Error adding relation',
-                  message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
-                  level: 'error',
-                  link: '/'
-                })
+                  new models.Notification({
+                    title: 'Error adding relation',
+                    message: 'Relation ' + ev.endpoint_a +
+                        ' to ' + ev.endpoint_b,
+                    level: 'error',
+                    link: '/'
+                  })
               );
             }
           }

@@ -601,21 +601,21 @@ YUI.add('juju-view-service', function(Y) {
 
       if (ev.err) {
         db.notifications.add(
-          new models.Notification({
-            title: 'Error adding unit',
-            message: ev.num_units + ' units',
-            level: 'error',
-            link: app.getModelURL(service)
-          })
+            new models.Notification({
+              title: 'Error adding unit',
+              message: ev.num_units + ' units',
+              level: 'error',
+              link: app.getModelURL(service)
+            })
         );
       } else {
         db.units.add(
-          Y.Array.map(unit_names, function(unit_id) {
-            return {id: unit_id,
-              agent_state: 'pending'};
-          }));
+            Y.Array.map(unit_names, function(unit_id) {
+              return {id: unit_id,
+                agent_state: 'pending'};
+            }));
         service.set(
-          'unit_count', service.get('unit_count') + unit_names.length);
+            'unit_count', service.get('unit_count') + unit_names.length);
       }
       db.fire('update');
       // View is redrawn so we do not need to enable field.
@@ -630,19 +630,19 @@ YUI.add('juju-view-service', function(Y) {
 
       if (ev.err) {
         db.notifications.add(
-          new models.Notification({
-            title: 'Error removing unit',
-            message: 'Units: ' + ev.unit_names,
-            level: 'error',
-            link: app.getModelURL(service)
-          })
+            new models.Notification({
+              title: 'Error removing unit',
+              message: 'Units: ' + ev.unit_names,
+              level: 'error',
+              link: app.getModelURL(service)
+            })
         );
       } else {
         Y.Array.each(unit_names, function(unit_name) {
           db.units.remove(db.units.getById(unit_name));
         });
         service.set(
-          'unit_count', service.get('unit_count') - unit_names.length);
+            'unit_count', service.get('unit_count') - unit_names.length);
       }
       db.fire('update');
       // View is redrawn so we do not need to enable field.

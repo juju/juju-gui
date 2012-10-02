@@ -369,18 +369,18 @@ YUI.add('juju-gui', function(Y) {
 
       if (evt.err) {
         db.notifications.add(
-          new models.Notification({
-            title: 'Error loading service',
-            message: 'Service name: ' + evt.service_name,
-            level: 'error'
-          })
+            new models.Notification({
+              title: 'Error loading service',
+              message: 'Service name: ' + evt.service_name,
+              level: 'error'
+            })
         );
-      }  else {
+      } else {
         var svc_data = evt.result;
         var svc = this.db.services.getById(svc_data.name);
         if (!svc) {
           console.warn('Could not load service data for',
-            evt.service_name, evt);
+              evt.service_name, evt);
           return;
         }
         // We intentionally ignore svc_data.rels.  We rely on the delta stream
@@ -401,13 +401,13 @@ YUI.add('juju-gui', function(Y) {
 
       if (evt.err) {
         db.notifications.add(
-          new models.Notification({
-            title: 'Error loading charm',
-            message: 'Charm url: ' + evt.charm_url,
-            level: 'error'
-          })
+            new models.Notification({
+              title: 'Error loading charm',
+              message: 'Charm url: ' + evt.charm_url,
+              level: 'error'
+            })
         );
-      }  else {
+      } else {
         var charm_data = evt.result;
         var charm = this.db.charms.getById(evt.charm_url);
         if (!charm) {
