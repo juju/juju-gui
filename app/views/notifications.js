@@ -20,20 +20,20 @@ YUI.add('juju-notifications', function(Y) {
           // Bind view to model list in a number of ways
           notifications.addTarget(this);
           // Re-render the model list changes
-          notifications.after('add', this.slow_render, this);
-          notifications.after('create', this.slow_render, this);
-          notifications.after('remove', this.slow_render, this);
-          notifications.after('reset', this.slow_render, this);
+          notifications.after('add', this.slowRender, this);
+          notifications.after('create', this.slowRender, this);
+          notifications.after('remove', this.slowRender, this);
+          notifications.after('reset', this.slowRender, this);
 
           // Env connection state watcher
-          env.on('connectedChange', this.slow_render, this);
+          env.on('connectedChange', this.slowRender, this);
 
         },
 
         /*
          * Event handler for clicking the notification icon.
          */
-        notify_toggle: function(evt) {
+        notifyToggle: function(evt) {
           var container = this.get('container'),
               notifications = this.get('notifications'),
               target = evt.target.getAttribute('data-target'),
@@ -63,7 +63,7 @@ YUI.add('juju-notifications', function(Y) {
          * Select/click on a notice. Currently this just removes it from the
          * model_list
          */
-        notice_select: function(evt) {
+        notificationSelect: function(evt) {
           var notifications = this.get('notifications'),
               target = evt.target,
               model;
@@ -84,14 +84,14 @@ YUI.add('juju-notifications', function(Y) {
           if (this.selection.hide) {
             target.hide(true);
           }
-          this.slow_render();
+          this.slowRender();
         },
 
         /*
          * A flow of events can trigger many renders, from the event system
          * we debounce render requests with this method
          */
-        slow_render: function() {
+        slowRender: function() {
           var self = this,
               container = self.get('container');
 
@@ -126,7 +126,7 @@ YUI.add('juju-notifications', function(Y) {
             open = '';
           }
 
-          var showable = this.get_showable(),
+          var showable = this.getShowable(),
               show_count = showable.length || 0;
 
           if (!connected) {
@@ -158,28 +158,29 @@ YUI.add('juju-notifications', function(Y) {
         /*
          * Actions associated with events
          * in this case selection events represent
-         * policy flags inside the 'notice_select' callback.
+         * policy flags inside the 'notificationSelect' callback.
          *
          * :hide: should the selected element be hidden on selection
          */
-        selection: {hide: false,
+        selection: {
+          hide: false,
           seen: false
         },
 
         events: {
           '#notify-indicator': {
-            click: 'notify_toggle'
+            click: 'notifyToggle'
           },
           'li.notice': {
-            click: 'notice_select'
+            click: 'notificationSelect'
           },
 
           '#notify-list li.header a': {
-            click: 'closeIndicator'
+            click: 'close'
           }
         },
 
-        get_showable: function() {
+        getShowable: function() {
           var notifications = this.get('notifications');
           return notifications.filter(function(n) {
             return n.get('level') === 'error' && n.get('seen') === false;
@@ -188,7 +189,7 @@ YUI.add('juju-notifications', function(Y) {
           });
         },
 
-        closeIndicator: function() {
+        close: function() {
           var indicator = Y.one('#notify-indicator'),
               list = Y.one('#notify-list'),
               parent = indicator.ancestor();
@@ -201,7 +202,8 @@ YUI.add('juju-notifications', function(Y) {
         },
         render: function() {
           NotificationsView.superclass.render.apply(this, arguments);
-          this.get('container').on('clickoutside', this.closeIndicator);
+          this.get('container').on('clickoutside', this.close);
+          return this;
         }
 
       });
@@ -215,7 +217,7 @@ YUI.add('juju-notifications', function(Y) {
         template: Templates.notifications_overview,
         events: {
           'li.notice': {
-            click: 'notice_select'
+            click: 'notificationSelect'
           }
         },
         // Actions for selecting a notice
@@ -225,7 +227,7 @@ YUI.add('juju-notifications', function(Y) {
          *  The overview shows all events by default
          *  when real filtering is present this will have to take options
          */
-        get_showable: function() {
+        getShowable: function() {
           var notifications = this.get('notifications');
           return notifications.map(function(n) {
             return n.getAttrs();

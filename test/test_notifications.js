@@ -120,7 +120,8 @@ describe('notifications', function() {
 
   it('must be able to include and show object links', function() {
     var container = Y.Node.create('<div id="test">'),
-        env = new juju.Environment(),
+        conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
+        env = new juju.Environment({conn: conn}),
         app = new Y.juju.App({env: env, container: container}),
         db = app.db,
         mw = db.services.create({id: 'mediawiki',
@@ -162,7 +163,10 @@ describe('notifications', function() {
   it('must be able to evict irrelevant notices', function() {
     var container = Y.Node.create(
         '<div id="test" class="container"></div>'),
+        conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
+        env = new juju.Environment({conn: conn}),
         app = new Y.juju.App({
+          env: env,
           container: container,
           viewContainer: container
         });
@@ -220,11 +224,12 @@ describe('notifications', function() {
       'op': 'delta'
     };
 
+
     var notifications = app.db.notifications,
         view = new views.NotificationsView({
           container: container,
           notifications: notifications,
-          app: app,
+          app: app, 
           env: app.env}).render();
 
 
@@ -233,7 +238,7 @@ describe('notifications', function() {
 
     notifications.size().should.equal(7);
     // we have one unit in error
-    view.get_showable().length.should.equal(1);
+    view.getShowable().length.should.equal(1);
 
     // now fire another delta event marking that node as
     // started
@@ -245,7 +250,7 @@ describe('notifications', function() {
     }]], op: 'delta'});
     notifications.size().should.equal(8);
     // This should have evicted the prior notice from seen
-    view.get_showable().length.should.equal(0);
+    view.getShowable().length.should.equal(0);
   });
 
   it('must properly construct title and message based on level from ' +
@@ -299,7 +304,7 @@ describe('notifications', function() {
 
        notifications.size().should.equal(6);
        // we have one unit in error
-       var showable = view.get_showable();
+       var showable = view.getShowable();
        showable.length.should.equal(2);
        // The first showable notification should indicate an error.
        showable[0].level.should.equal('error');
