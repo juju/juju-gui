@@ -364,37 +364,65 @@ YUI.add('juju-gui', function(Y) {
     // Model interactions -> move to db layer
     load_service: function(evt) {
       console.log('load service', evt);
-      var svc_data = evt.result;
-      var svc = this.db.services.getById(svc_data.name);
-      if (!svc) {
-        console.warn('Could not load service data for',
+
+      var db = this.db;
+
+      if (evt.err) {
+        db.notifications.add(
+          new models.Notification({
+            title: 'Error loading service',
+            message: 'Service name: ' + evt.service_name,
+            level: 'error'
+          })
+        );
+      }  else {
+        var svc_data = evt.result;
+        var svc = this.db.services.getById(svc_data.name);
+        if (!svc) {
+          console.warn('Could not load service data for',
             evt.service_name, evt);
-        return;
+          return;
+        }
+        // We intentionally ignore svc_data.rels.  We rely on the delta stream
+        // for relation data instead.
+        svc.setAttrs({'config': svc_data.config,
+          'constraints': svc_data.constraints,
+          'loaded': true,
+          'prefetch': false});
       }
-      // We intentionally ignore svc_data.rels.  We rely on the delta stream
-      // for relation data instead.
-      svc.setAttrs({'config': svc_data.config,
-        'constraints': svc_data.constraints,
-        'loaded': true,
-        'prefetch': false});
+
       this.dispatch();
     },
 
     load_charm: function(evt) {
       console.log('load charm', evt);
-      var charm_data = evt.result;
-      var charm = this.db.charms.getById(evt.charm_url);
-      if (!charm) {
-        console.warn('Could not load charm data for', evt.charm_url, evt);
-        return;
+
+      var db = this.db;
+
+      if (evt.err) {
+        db.notifications.add(
+          new models.Notification({
+            title: 'Error loading charm',
+            message: 'Charm url: ' + evt.charm_url,
+            level: 'error'
+          })
+        );
+      }  else {
+        var charm_data = evt.result;
+        var charm = this.db.charms.getById(evt.charm_url);
+        if (!charm) {
+          console.warn('Could not load charm data for', evt.charm_url, evt);
+          return;
+        }
+        charm.setAttrs({'provides': charm_data.provides,
+          'peers': charm_data.peers,
+          'requires': charm_data.requires,
+          'config': charm_data.config,
+          'is_subordinate': charm_data.subordinate,
+          'revision': charm_data.revision,
+          'loaded': true});
       }
-      charm.setAttrs({'provides': charm_data.provides,
-        'peers': charm_data.peers,
-        'requires': charm_data.requires,
-        'config': charm_data.config,
-        'is_subordinate': charm_data.subordinate,
-        'revision': charm_data.revision,
-        'loaded': true});
+
       this.dispatch();
     },
 
