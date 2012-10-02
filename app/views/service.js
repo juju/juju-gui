@@ -25,11 +25,24 @@ YUI.add('juju-view-service', function(Y) {
           Y.bind(this._unexposeServiceCallback, this));
     },
 
-    _unexposeServiceCallback: function() {
+    _unexposeServiceCallback: function(ev) {
       var service = this.get('model'),
-          db = this.get('db');
-      service.set('exposed', false);
-      db.fire('update');
+          db = this.get('db'),
+          app = this.get('app');
+
+      if (ev.err) {
+        db.notifications.add(
+          new models.Notification({
+            title: 'Error un-exposing service',
+            message: 'Service name: ' + ev.service_name,
+            level: 'error',
+            link: app.getModelURL(service)
+          })
+        );
+      } else {
+        service.set('exposed', false);
+        db.fire('update');
+      }
     },
 
     exposeService: function() {
@@ -39,11 +52,24 @@ YUI.add('juju-view-service', function(Y) {
           Y.bind(this._exposeServiceCallback, this));
     },
 
-    _exposeServiceCallback: function() {
+    _exposeServiceCallback: function(ev) {
       var service = this.get('model'),
-          db = this.get('db');
-      service.set('exposed', true);
-      db.fire('update');
+          db = this.get('db'),
+          app = this.get('app');
+
+      if (ev.err) {
+        db.notifications.add(
+          new models.Notification({
+            title: 'Error exposing service',
+            message: 'Service name: ' + ev.service_name,
+            level: 'error',
+            link: app.getModelURL(service)
+          })
+        );
+      } else {
+        service.set('exposed', true);
+        db.fire('update');
+      }
     }
   };
 
