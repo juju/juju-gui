@@ -333,7 +333,7 @@ describe('changing notifications to words', function() {
 
   it('should correctly translate notification operations into English',
      function() {
-       assert.equal(juju._changeNotificationOpToWords('add'), 'added');
+       assert.equal(juju._changeNotificationOpToWords('add'), 'created');
        assert.equal(juju._changeNotificationOpToWords('remove'), 'removed');
        assert.equal(juju._changeNotificationOpToWords('not-an-op'), 'changed');
      });
@@ -354,7 +354,7 @@ describe('relation notifications', function() {
   it('should produce reasonable titles', function() {
     assert.equal(
         juju._relationNotifications.title(undefined, 'add'),
-        'Relation added');
+        'Relation created');
     assert.equal(
         juju._relationNotifications.title(undefined, 'remove'),
         'Relation removed');
@@ -368,7 +368,7 @@ describe('relation notifications', function() {
     assert.equal(
         juju._relationNotifications.message(undefined, 'add', changeData),
         'Relation between endpoint0 (relation type "relation0") and ' +
-        'endpoint1 (relation type "relation1") was added');
+        'endpoint1 (relation type "relation1") was created');
   });
 
   it('should generate messages about one-party relations', function() {
@@ -377,6 +377,6 @@ describe('relation notifications', function() {
               [['endpoint1', {name: 'relation1'}]]};
     assert.equal(
         juju._relationNotifications.message(undefined, 'add', changeData),
-        'Relation with endpoint1 (relation type "relation1") was added');
+        'Relation with endpoint1 (relation type "relation1") was created');
   });
 });

@@ -7,7 +7,7 @@ YUI.add('juju-notification-controller', function(Y) {
 
   var _changeNotificationOpToWords = function(op) {
     if (op === 'add') {
-      return 'added';
+      return 'created';
     }
     else if (op === 'remove') {
       return 'removed';
