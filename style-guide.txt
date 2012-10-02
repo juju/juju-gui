@@ -1,0 +1,43 @@
+===========
+Style Guide
+===========
+
+This guide is an attempt to describe a code style that both works well with the
+JavaScript beautifier and helps developers avoid pitfalls.
+
+
+For loops
+=========
+
+Unless you are counting something, for loops (and for-in loops) are a trap.
+Use Y.Object.each instead.
+
+
+Whitespace
+==========
+
+No trailing whitespace on lines or at the end of the file (i.e., the file
+should end with a non-blank line).
+
+
+Object literal formatting
+=========================
+
+Things you should do:
+
+- object literals have their opening brace on a new line and the first
+  value (if any) is on the same line (i.e., the opening brace is not on
+  a line by itself)
+- there is a space after the opening brace of an object literal
+- object literals have their closing brace on the same line as their
+  last value (i.e., the closing brace is not on a line by itself)
+
+Things the beautifier should do (given an input line with no indentation at
+all):
+
+- all of the keys of an object literal line up (the second and
+  subsequent key names are indented 2 spaces more than the indentation
+  of the opening brace of the object literal
+- lines after a line that ends in an equals sign are indented 4 (more)
+  spaces
+- lines after a line that ends in a colon are indented 6 (more) spaces
