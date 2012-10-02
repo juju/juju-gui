@@ -24,7 +24,8 @@ YUI.add('juju-charm-search', function(Y) {
         charmsList = Y.Node.create(views.Templates['charm-search-result']({})),
         isPopupVisible = false,
         delayFilter = utils.Delayer(),
-        trigger = Y.one('#charm-search-trigger');
+        trigger = Y.one('#charm-search-trigger'),
+        testing = !!config.testing;
 
     Y.one(document.body).append(container);
     container.hide();
@@ -115,7 +116,7 @@ YUI.add('juju-charm-search', function(Y) {
         findCharms(field.get('value'), function(charms) {
           updateList(charms);
         });
-      }, _searchDelay);
+      }, testing ? 0 : _searchDelay);
     });
 
     // Update position if we resize the window.
@@ -175,9 +176,9 @@ YUI.add('juju-charm-search', function(Y) {
         }});
     }
 
-    function hidePanel(now) {
+    function hidePanel() {
       if (isPopupVisible) {
-        container.hide(true, {duration: 0.25});
+        container.hide((testing ? false : true), {duration: 0.25});
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i').replaceClass(
             'icon-chevron-up', 'icon-chevron-down');
@@ -186,11 +187,11 @@ YUI.add('juju-charm-search', function(Y) {
       }
     }
 
-    function showPanel(now) {
+    function showPanel() {
       if (!isPopupVisible) {
         container.setStyles({opacity: 0, display: 'block'});
         updatePopupPosition();
-        container.show(true, {duration: 0.25});
+        container.show((testing ? false : true), {duration: 0.25});
         charmsList.one('.charms-search-field').focus();
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i').replaceClass(
@@ -200,11 +201,11 @@ YUI.add('juju-charm-search', function(Y) {
       }
     }
 
-    function togglePanel(now) {
+    function togglePanel() {
       if (isPopupVisible) {
-        hidePanel(now);
+        hidePanel();
       } else {
-        showPanel(now);
+        showPanel();
       }
     }
 
@@ -251,12 +252,7 @@ YUI.add('juju-charm-search', function(Y) {
       hide: hidePanel,
       toggle: togglePanel,
       show: showPanel,
-      setSearchDelay: function(delay) {
-        _searchDelay = delay;
-      },
-      getNode: function() {
-        return container;
-      }
+      node: container
     };
   }
 
@@ -270,7 +266,7 @@ YUI.add('juju-charm-search', function(Y) {
     },
     killInstance: function() {
       if (_instance) {
-        _instance.getNode().remove(true);
+        _instance.node.remove(true);
         _instance = null;
       }
     }

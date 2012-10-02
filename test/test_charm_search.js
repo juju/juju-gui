@@ -38,16 +38,17 @@ describe('charm search', function() {
   });
 
   it('must be able to show and hide the panel', function() {
-    var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({}),
-        container = panel.getNode();
+    var panel = Y.namespace('juju.views').CharmSearchPopup
+          .getInstance({testing: true}),
+        container = panel.node;
     container.getStyle('display').should.equal('none');
-    panel.show(true);
+    panel.show();
     container.getStyle('display').should.equal('block');
-    panel.hide(true);
+    panel.hide();
     container.getStyle('display').should.equal('none');
-    panel.toggle(true);
+    panel.toggle();
     container.getStyle('display').should.equal('block');
-    panel.toggle(true);
+    panel.toggle();
     container.getStyle('display').should.equal('none');
 
 
@@ -68,59 +69,45 @@ describe('charm search', function() {
                 }
               });
             }
-          }
+          },
+          testing: true
         }),
-        node = panel.getNode();
-    panel.show();
-    var field = Y.one('.charms-search-field');
+        node = panel.node;
+    panel.show(true);
+    var field = node.one('.charms-search-field');
     field.set('value', 'aaa');
-    panel.setSearchDelay(0);
-
     field.simulate('keyup');
-    assert.isTrue(searchTriggered);
 
-    assert.equal('this is my URL',
-        node.one('.charm-detail').getAttribute('data-charm-url'));
-
-
+    searchTriggered.should.equal(true);
+    node.one('.charm-entry .btn').getData('info-url').should.equal(
+      'this is my URL');
   });
 
   it('must be able to reset the search result', function() {
-    var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
-      charm_store: {
-        sendRequest: function(params) {
-          // Mocking the server callback value
-          params.callback.success({
-            response: {
-              results: [{
-                responseText: searchResult
-              }]
-            }
-          });
-        }
-      }
-    }),
-        node = panel.getNode();
-
+    var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance(
+        { charm_store:
+          { sendRequest: function(params) {
+            // Mocking the server callback value
+            params.callback.success({
+              response: {
+                results: [{
+                  responseText: searchResult
+                }]
+              }
+            });
+          }},
+          testing: true
+        }),
+        node = panel.node;
     panel.show();
-
-    var field = Y.one('.charms-search-field'),
-        buttonX = Y.one('.clear');
-
+    var field = node.one('.charms-search-field'),
+        clearButton = node.one('.clear');
     field.set('value', 'aaa');
-    panel.setSearchDelay(0);
     field.simulate('keyup');
+    clearButton.simulate('click');
 
-    assert.equal('this is my URL',
-        node.one('.charm-detail').getAttribute('data-charm-url'));
-    assert.equal('aaa', field.get('value'));
-
-    buttonX.simulate('click');
-
-    assert.isTrue(node.all('.charm-detail').isEmpty());
-    assert.equal('', field.get('value'));
-
-
+    node.all('.charm-detail').isEmpty().should.equal(true);
+    field.get('value').should.equal('');
   });
 
   it('must be able to trigger charm details', function() {
@@ -142,20 +129,17 @@ describe('charm search', function() {
             navigate: function() {
               navigateTriggered = true;
             }
-          }
+          },
+          testing: true
         }),
-
-        node = panel.getNode();
+        node = panel.node;
 
     panel.show();
-    var field = Y.one('.charms-search-field');
+    var field = node.one('.charms-search-field');
     field.set('value', 'aaa');
-    panel.setSearchDelay(0);
-
     field.simulate('keyup');
+    node.one('a.charm-detail').simulate('click');
 
-    Y.one('.charm-detail').simulate('click');
-    assert.isTrue(navigateTriggered);
-
+    navigateTriggered.should.equal(true);
   });
 });
