@@ -511,7 +511,7 @@ YUI.add('juju-view-environment', function(Y) {
               });
           add_rel.append('image')
         .attr('xlink:href',
-              '/assets/images/icons/icon_noshadow_relation.png')
+              '/juju-ui/assets/images/icons/icon_noshadow_relation.png')
         .attr('class', 'cp-button')
         .attr('x', function(d) {
                 return d.w + 8;
@@ -536,7 +536,8 @@ YUI.add('juju-view-environment', function(Y) {
             .show_service(service, context, self);
               });
           view_service.append('image')
-        .attr('xlink:href', '/assets/images/icons/icon_noshadow_view.png')
+        .attr('xlink:href',
+              '/juju-ui/assets/images/icons/icon_noshadow_view.png')
         .attr('class', 'cp-button')
         .attr('x', -40)
         .attr('y', function(d) {
@@ -558,7 +559,8 @@ YUI.add('juju-view-environment', function(Y) {
             .destroyServiceConfirm(service, context, self);
               });
           destroy_service.append('image')
-        .attr('xlink:href', '/assets/images/icons/icon_noshadow_destroy.png')
+        .attr('xlink:href',
+              '/juju-ui/assets/images/icons/icon_noshadow_destroy.png')
         .attr('class', 'cp-button')
         .attr('x', function(d) {
                 return (d.w / 2) - 16;
