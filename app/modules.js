@@ -33,7 +33,7 @@ GlobalConfig = {
         },
 
         'juju-charm-search': {
-          fullpath: '/views/charm-search.js'
+          fullpath: '/juju-ui/views/charm-search.js'
         },
 
         'juju-notifications': {
