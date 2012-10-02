@@ -401,10 +401,14 @@
 
          b1.getNearestConnector([0, 0]);
 
-         b1.getNearestConnector(b2).should.eql([50, 200]);
-         b2.getNearestConnector(b1).should.eql([250, 300]);
+         b1.getNearestConnector(b2).should
+          .eql(b1.getConnectors().bottom);
+         b2.getNearestConnector(b1).should
+          .eql(b2.getConnectors().top);
 
-         b1.getConnectorPair(b2).should.eql([[50, 200], [250, 300]]);
+         b1.getConnectorPair(b2).should.eql([
+           b1.getConnectors().bottom,
+           b2.getConnectors().top]);
        });
 
     it('must be able to save and restore old position information',
