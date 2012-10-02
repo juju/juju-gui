@@ -30,22 +30,19 @@ YUI.add('juju-view-service', function(Y) {
           db = this.get('db'),
           app = this.get('app');
 
-// XXX implement me
-//      if (ev.err) {
-//        db.notifications.add(
-//            new models.Notification({
-//              title: 'Error un-exposing service',
-//              message: 'Service name: ' + ev.service_name,
-//              level: 'error',
-//              link: app.getModelURL(service)
-//            })
-//        );
-//      } else {
-//
-//      }
-
-      service.set('exposed', false);
-      db.fire('update');
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error un-exposing service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: app.getModelURL(service)
+            })
+        );
+      } else {
+        service.set('exposed', false);
+        db.fire('update');
+      }
     },
 
     exposeService: function() {
@@ -60,22 +57,19 @@ YUI.add('juju-view-service', function(Y) {
           db = this.get('db'),
           app = this.get('app');
 
-      // XXX implement me
-//      if (ev.err) {
-//        db.notifications.add(
-//            new models.Notification({
-//              title: 'Error exposing service',
-//              message: 'Service name: ' + ev.service_name,
-//              level: 'error',
-//              link: app.getModelURL(service)
-//            })
-//        );
-//      } else {
-//
-//      }
-
-      service.set('exposed', true);
-      db.fire('update');
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error exposing service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: app.getModelURL(service)
+            })
+        );
+      } else {
+        service.set('exposed', true);
+        db.fire('update');
+      }
     }
   };
 
