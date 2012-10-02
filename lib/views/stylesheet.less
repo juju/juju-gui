@@ -276,16 +276,88 @@ g.unit {
     padding: 0;
     height: 24px;
     &.graph-list-picker {
-        width: 100px;
+        width: 116px;
         .picker-body {
-            width: 78px;
+            width: 91px;
+        }
+
+
+        .picker-expanded {
+            display: none;
+
+            &.active {
+                z-index: 100;
+                display: block;
+            }
+            .picker-edge {
+                display: block;
+                top: auto;
+                bottom: -10px;
+                margin-left: -3px;
+            }
+            .picker-edge-right {
+                left: auto;
+                right: 0;
+                margin-left: 0;
+                margin-right: -3px;
+            }
+            .picker-list {
+                position: absolute;
+                bottom: -12px;
+                left: 4px;
+                height: 100%;
+                background: url(/juju-ui/assets/images/view_1px.png) repeat-x;
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+                height: 54px;
+                width: 108px;
+
+                ul {
+                    list-style-type: none;
+                    padding: 0;
+                    padding-top: 5px;
+                    margin: 0;
+
+                    li {
+                        padding: 1px;
+
+                        .activetick {
+                            width: 12px;
+                            height: 14px;
+                            float: right;
+                            background: url(/juju-ui/assets/images/selected_tick.png)
+                                no-repeat
+                                bottom left;
+                        }
+                    }
+                }
+            }
         }
     }
     &.zoom-picker {
-        width: 60px;
+        width: 56px;
         .picker-body {
-            width: 40px;
+            width: 36px;
         }
+        /*#zoom-btn-up {
+            position: absolute;
+            top: 8px;
+            right: 0px;
+            opacity: 0;
+            &.active {
+                opacity: 1;
+            }
+        }
+        #zoom-btn-down {
+            position: absolute;
+            bottom: -8px;
+            right: 0px;
+            opacity: 0;
+            &.active {
+                opacity: 1;
+            }
+        }*/
     }
 
     .picker-edge {
@@ -299,12 +371,23 @@ g.unit {
         left: 4px;
         background: url(/juju-ui/assets/images/picker_1px.png) repeat-x;
         height: 20px;
-        padding: 4px 0 0 4px;
+        padding: 3px 0 0 3px;
     }
     .picker-button {
         position: absolute;
         top: 8px;
         right: 0;
+    }
+    &.inactive {
+        .picker-edge {
+            display: none;
+        }
+        .picker-body {
+            display: none;
+        }
+        .picker-button {
+            display: none;
+        }
     }
 }
 

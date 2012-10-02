@@ -16,7 +16,13 @@ YUI.add('juju-view-environment', function(Y) {
                                       [views.JujuBaseView], {
         events: {
           '#zoom-out-btn': {click: 'zoom_out'},
-          '#zoom-in-btn': {click: 'zoom_in'}
+          '#zoom-in-btn': {click: 'zoom_in'},
+          '.graph-list-picker .picker-button': {
+            click: 'showGraphListPicker'
+          },
+          '.graph-list-picker .picker-expanded': {
+            click: 'hideGraphListPicker'
+          }
         },
 
         initializer: function() {
@@ -58,19 +64,17 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Create a pan/zoom behavior manager.
           var zoom = d3.behavior.zoom()
-              .x(this.xscale)
-              .y(this.yscale)
-              .scaleExtent([0.25, 1.75])
-              .on('zoom', function() {
-                    self.rescale(vis, d3.event);
+        .x(this.xscale)
+        .y(this.yscale)
+        .scaleExtent([0.25, 2.0])
+        .on('zoom', function() {
+                // Keep the slider up to date with the scale on other sorts
+                // of zoom interactions
+                var s = self.slider;
+                s.set('value', Math.floor(d3.event.scale * 100));
+                self.rescale(vis, d3.event);
               });
           self.zoom = zoom;
-
-          function rescale() {
-            vis.attr('transform',
-                'translate(' + d3.event.translate + ')' +
-                     ' scale(' + d3.event.scale + ')');
-          }
 
           // Set up the visualization with a pack layout.
           var vis = d3.select(container.getDOMNode())
@@ -606,6 +610,28 @@ YUI.add('juju-view-environment', function(Y) {
           return pairs;
         },
 
+        renderSlider: function() {
+          var self = this;
+          // Build a slider to control zoom level
+          // TODO once we have a stored value in view models, use that
+          // for the value property, but for now, zoom to 100%
+          var slider = new Y.Slider({
+            min: 25,
+            max: 200,
+            value: 100
+          });
+          slider.render('#slider-parent');
+          slider.after('valueChange', function(evt) {
+            // Don't fire a zoom if there's a zoom event already in progress;
+            // that will run rescale for us.
+            if (d3.event && d3.event.scale && d3.event.translate) {
+              return;
+            }
+            self._fire_zoom((evt.newVal - evt.prevVal) / 100);
+          });
+          self.slider = slider;
+        },
+
         /*
          * Utility method to get a service object from the DB
          * given a BoundingBox.
@@ -637,6 +663,13 @@ YUI.add('juju-view-environment', function(Y) {
             label.one('rect').setAttribute('width', width)
               .setAttribute('x', -width / 2);
           });
+
+          // Render the slider after the view is attached.
+          // Although there is a .syncUI() method on sliders, it does not
+          // seem to play well with the app framework: the slider will render
+          // the first time, but on navigation away and back, will not
+          // re-render within the view.
+          this.renderSlider();
 
           // Chainable method.
           return this;
@@ -691,14 +724,18 @@ YUI.add('juju-view-environment', function(Y) {
          * Zoom in event handler.
          */
         zoom_out: function(evt) {
-          this._fire_zoom(-0.2);
+          var slider = this.slider,
+              val = slider.get('value');
+          slider.set('value', val - 25);
         },
 
         /*
          * Zoom out event handler.
          */
         zoom_in: function(evt) {
-          this._fire_zoom(0.2);
+          var slider = this.slider,
+              val = slider.get('value');
+          slider.set('value', val + 25);
         },
 
         /*
@@ -715,7 +752,14 @@ YUI.add('juju-view-environment', function(Y) {
           evt.scale = zoom.scale() + delta;
 
           // Update the scale in our zoom behavior manager to maintain state.
-          this.zoom.scale(evt.scale);
+          zoom.scale(evt.scale);
+
+          // Update the translate so that we scale from the center
+          // instead of the origin.
+          var rect = vis.select('rect');
+          evt.translate[0] -= parseInt(rect.attr('width'), 10) / 2 * delta;
+          evt.translate[1] -= parseInt(rect.attr('height'), 10) / 2 * delta;
+          zoom.translate(evt.translate);
 
           this.rescale(vis, evt);
         },
@@ -724,9 +768,37 @@ YUI.add('juju-view-environment', function(Y) {
          * Rescale the visualization on a zoom/pan event.
          */
         rescale: function(vis, evt) {
+          // Make sure we don't scale outside of our bounds.
+          // This check is needed because we're messing with d3's zoom
+          // behavior outside of mouse events (e.g.: with the slider),
+          // and can't trust that zoomExtent will play well.
+          var new_scale = Math.floor(evt.scale * 100);
+          if (new_scale < 25 || new_scale > 200) {
+            evt.scale = this.get('scale');
+          }
           this.set('scale', evt.scale);
           vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
+        },
+
+        /*
+         * Event handler to show the graph-list picker
+         */
+        showGraphListPicker: function(evt) {
+          var container = this.get('container'),
+              picker = container.one('.graph-list-picker');
+          picker.addClass('inactive');
+          picker.one('.picker-expanded').addClass('active');
+        },
+
+        /*
+         * Event handler to hide the graph-list picker
+         */
+        hideGraphListPicker: function(evt) {
+          var container = this.get('container'),
+              picker = container.one('.graph-list-picker');
+          picker.removeClass('inactive');
+          picker.one('.picker-expanded').removeClass('active');
         },
 
         /*
@@ -849,9 +921,11 @@ YUI.add('juju-view-environment', function(Y) {
           addRelationStart: function(m, context, view) {
             // Add .selectable-service to all .service-border.
             view.addSVGClass('.service-border', 'selectable-service');
+
             // Remove selectable border from current node.
             var node = Y.one(context).one('.service-border');
             view.removeSVGClass(node, 'selectable-service');
+
             // Store start service in attrs.
             view.set('addRelationStart_service', m);
             // Set click action.
@@ -916,5 +990,6 @@ YUI.add('juju-view-environment', function(Y) {
     'node',
     'svg-layouts',
     'event-resize',
+    'slider',
     'view']
 });
