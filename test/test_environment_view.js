@@ -22,6 +22,11 @@
           'charm': 'cs:precise/mysql-6',
           'id': 'mysql'
         }],
+        ['service', 'add', {
+          'subordinate': true,
+          'charm': 'cs:precise/puppet-2',
+          'id': 'puppet'
+        }],
         ['relation', 'add', {
           'interface': 'reversenginx',
           'scope': 'global',
@@ -114,9 +119,9 @@
             container: container,
             db: db,
             env: env
-          }).render();
-
-          container.all('.service-border').size().should.equal(3);
+          });
+          view.render();
+          container.all('.service-border').size().should.equal(4);
 
           // Count all the real relations.
           (container.all('.relation').size() -
@@ -133,6 +138,22 @@
                             .should.equal(true);
               }, line);
         });
+
+    it('must be able to render subordinate and normal services',
+        function(done) {
+          // Create an instance of EnvironmentView with custom env
+          var view = new views.environment({
+            container: container,
+            db: db,
+            env: env
+          });
+          view.render();
+          container.all('.service').size().should.equal(4);
+          container.all('.subordinate.service').size().should.equal(1);
+
+          done();
+        }
+    );
 
     // Ensure that we can add a relation
     // SKIP: the add-relation-btn is going away
@@ -297,7 +318,7 @@
          });
          add_rel.after('click', function() {
            container.all('.selectable-service').size()
-            .should.equal(2);
+            .should.equal(3);
            service.next().simulate('click');
          });
          service.next('.service').after('click', function() {

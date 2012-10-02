@@ -179,6 +179,9 @@ YUI.add('juju-view-utils', function(Y) {
      */
     hasSVGClass: function(selector, class_name) {
       var classes = selector.getAttribute('class');
+      if (!classes) {
+        return false;
+      }
       return classes.indexOf(class_name) !== -1;
     },
 
@@ -553,6 +556,18 @@ YUI.add('juju-view-utils', function(Y) {
      * Return the 50% points along each side as xy pairs
      */
     Box.getConnectors = function() {
+      // TODO - Since the service nodes have a shadow that takes up a bit of
+      // space on the sides and bottom of the actual node itself, add a bit
+      // of a margin to the actual connecting points. The margin is specified
+      // as a percentage of the width or height, as those are affected by the
+      // scale.
+      /*
+      relation_margins = {
+        top: 0,
+        bottom: 0.1667,
+        left: 0.075758,
+        right: 0.075758};
+      */
       return {
         top: [this.x + (this.w / 2), this.y],
         right: [this.x + this.w, this.y + (this.h / 2)],

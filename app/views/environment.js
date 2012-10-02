@@ -53,6 +53,7 @@ YUI.add('juju-view-environment', function(Y) {
               width = 640,
               fill = d3.scale.category20();
 
+          this.service_scale = d3.scale.log().range([150, 200]);
           this.service_scale_width = d3.scale.log().range([164, 200]),
           this.service_scale_height = d3.scale.log().range([64, 100]);
           this.xscale = d3.scale.linear()
@@ -191,7 +192,9 @@ YUI.add('juju-view-environment', function(Y) {
           // enter
           node
             .enter().append('g')
-            .attr('class', 'service')
+            .attr('class', function(d) {
+                    return (d.subordinate ? 'subordinate ' : '') + 'service';
+                  })
             .on('click', function(d) {
                 // Ignore if we clicked on a control panel image.
                 if (self.hasSVGClass(d3.event.target, 'cp-button')) {
@@ -328,20 +331,59 @@ YUI.add('juju-view-environment', function(Y) {
         // Called to draw a service in the 'update' phase
         drawService: function(node) {
           var self = this,
+              service_scale = this.service_scale,
               service_scale_width = this.service_scale_width,
               service_scale_height = this.service_scale_height;
 
+          // Append a rect for capturing events.
+          // TODO: this currently acts as the selectable-service element,
+          // and acts as the indicator for whether a service may be used for
+          // creating relations.  This will only be the case until there is
+          // UI around showing selectable services.
           node.append('rect')
             .attr('class', 'service-border')
             .attr('width', function(d) {
-                var w = service_scale_width(d.unit_count);
+                // NB: if a service has zero units, as is possible with
+                // subordinates, then default to 1 for proper scaling, as
+                // a value of 0 will return a scale of 0 (this does not
+                // affect the unit count, just the scale of the service).
+                var w = service_scale(d.unit_count || 1);
                 d.w = w;
                 return w;
               })
             .attr('height', function(d) {
-                var h = service_scale_height(d.unit_count);
+                var h = service_scale(d.unit_count || 1);
                 d.h = h;
-                return h;})
+                return h;
+              });
+
+          // Draw subordinate services
+          node.filter(function(d) {
+            return d.subordinate;
+          })
+            .append('image')
+            .attr('xlink:href', '/assets/svgs/sub_module.svg')
+            .attr('width', function(d) {
+                    return d.w;
+                  })
+            .attr('height', function(d) {
+                    return d.h;
+                  });
+
+          // Draw non-subordinate services services
+          node.filter(function(d) {
+            return !d.subordinate;
+          })
+            .append('image')
+            .attr('xlink:href', '/assets/svgs/service_module.svg')
+            .attr('width', function(d) {
+                    return d.w;
+                  })
+            .attr('height', function(d) {
+                    return d.h;
+                  });
+
+          node.select('.service-border')
             .on('mouseover', function(d) {
                 // Save this as the current potential drop-point for drag
                 // targets if it's selectable.
@@ -364,16 +406,33 @@ YUI.add('juju-view-environment', function(Y) {
                 }
               });
 
-
           var service_labels = node.append('text').append('tspan')
             .attr('class', 'name')
-            .attr('x', 54)
-            .attr('y', '1em')
+            .attr('x', function(d) {
+                    return d.w / 2;
+                  })
+            .attr('y', function(d) {
+                    if (d.subordinate) {
+                      return d.h / 2 - 10;
+                    } else {
+                      return '1.5em';
+                    }
+                  })
             .text(function(d) {return d.id; });
 
           var charm_labels = node.append('text').append('tspan')
-            .attr('x', 54)
-            .attr('y', '2.5em')
+            .attr('x', function(d) {
+                    return d.w / 2;
+                  })
+            .attr('y', function(d) {
+                    // TODO this will need to be set based on the size of the
+                    // service health panel, but for now, this works.
+                    if (d.subordinate) {
+                      return d.h / 2 - 10;
+                    } else {
+                      return d.h / 2 + 10;
+                    }
+                  })
             .attr('dy', '3em')
             .attr('class', 'charm-label')
             .text(function(d) { return d.charm; });
@@ -395,30 +454,60 @@ YUI.add('juju-view-environment', function(Y) {
               });
 
           // Add the relative health of a service in the form of a pie chart
-          // comprised of units styled appropriately
+          // comprised of units styled appropriately.
           // TODO aggregate statuses into good/bad/pending
           var status_chart_arc = d3.svg.arc()
-            .innerRadius(10)
-            .outerRadius(25);
+            .innerRadius(0)
+            .outerRadius(function(d) {
+                // Make sure it's exactly as wide as the mask
+                return parseInt(
+                    d3.select(this.parentNode)
+                  .select('image')
+                  .attr('width'), 10) / 2;
+              });
+
           var status_chart_layout = d3.layout.pie()
             .value(function(d) { return (d.value ? d.value : 1); });
 
-
-          var status_chart = node.append('g')
+          // Append to status charts to non-subordinate services
+          var status_chart = node.filter(function(d) {
+            return !d.subordinate;
+          })
+            .append('g')
             .attr('class', 'service-status')
-            .attr('transform', 'translate(30,32)');
+            .attr('transform', function(d) {
+                return 'translate(' + [(d.w / 2),
+                  d.h / 2 * 0.86] + ')';
+              });
+
+          // Add a mask svg
+          status_chart.append('image')
+            .attr('xlink:href', '/assets/svgs/service_health_mask.svg')
+            .attr('width', function(d) {
+                return d.w / 3;
+              })
+            .attr('height', function(d) {
+                return d.h / 3;
+              })
+            .attr('x', function() {
+                return -d3.select(this).attr('width') / 2;
+              })
+            .attr('y', function() {
+                return -d3.select(this).attr('height') / 2;
+              });
+
+          // Add the path after the mask image (since it requires the mask's
+          // width to set its own).
           var status_arcs = status_chart.selectAll('path')
             .data(function(d) {
                 var aggregate_map = d.aggregated_status,
                     aggregate_list = [];
-
                 Y.Object.each(aggregate_map, function(value, key) {
                   aggregate_list.push({name: key, value: value});
                 });
 
                 return status_chart_layout(aggregate_list);
-              })
-            .enter().append('path')
+              }).enter().insert('path', 'image')
             .attr('d', status_chart_arc)
             .attr('class', function(d) { return 'status-' + d.data.name; })
             .attr('fill-rule', 'evenodd')
@@ -515,7 +604,7 @@ YUI.add('juju-view-environment', function(Y) {
               });
           add_rel.append('image')
         .attr('xlink:href',
-              '/assets/images/icons/icon_noshadow_relation.png')
+              '/assets/svgs/Build_button.svg')
         .attr('class', 'cp-button')
         .attr('x', function(d) {
                 return d.w + 8;
@@ -540,7 +629,7 @@ YUI.add('juju-view-environment', function(Y) {
             .show_service(service, context, self);
               });
           view_service.append('image')
-        .attr('xlink:href', '/assets/images/icons/icon_noshadow_view.png')
+        .attr('xlink:href', '/assets/svgs/view_button.svg')
         .attr('class', 'cp-button')
         .attr('x', -40)
         .attr('y', function(d) {
@@ -562,7 +651,7 @@ YUI.add('juju-view-environment', function(Y) {
             .destroyServiceConfirm(service, context, self);
               });
           destroy_service.append('image')
-        .attr('xlink:href', '/assets/images/icons/icon_noshadow_destroy.png')
+        .attr('xlink:href', '/assets/svgs/destroy_button.svg')
         .attr('class', 'cp-button')
         .attr('x', function(d) {
                 return (d.w / 2) - 16;
