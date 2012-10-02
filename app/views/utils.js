@@ -271,27 +271,53 @@ YUI.add('juju-view-utils', function(Y) {
       classNames: 'modal',
       modal: true,
       render: render_target,
-      buttons: [
-        {
-          value: action_label,
+      buttons: []
+    });
+    if (action_label && action_cb) {
+      views.setModalButtons(panel, action_label, action_cb);
+    }
+    return panel;
+  };
+
+  views.setModalButtons = function(panel, action_label, action_cb) {
+    panel.set('buttons', []);
+    panel.addButton(
+        { value: action_label,
           section: Y.WidgetStdMod.FOOTER,
           action: action_cb,
           classNames: ['btn-danger', 'btn']
-        },
-        {
-          value: 'Cancel',
+        });
+    panel.addButton(
+        { value: 'Cancel',
           section: Y.WidgetStdMod.FOOTER,
           action: function(e) {
-                    e.preventDefault();
-                    panel.hide();
+            e.preventDefault();
+            panel.hide();
           },
           classNames: ['btn']
-        }
-      ]
-    });
+        });
     // The default YUI CSS conflicts with the CSS effect we want.
     panel.get('boundingBox').all('.yui3-button').removeClass('yui3-button');
-    return panel;
+  };
+
+  views.highlightRow = function(row, err) {
+    row.removeClass('highlighted'); // Whether we need to or not.
+    var backgroundColor = 'palegreen',
+        oldColor = row.one('td').getStyle('backgroundColor');
+    if (err) {
+      backgroundColor = 'pink';
+    }
+    // Handle tr:hover in bootstrap css.
+    row.all('td').setStyle('backgroundColor', 'transparent');
+    row.setStyle('backgroundColor', backgroundColor);
+    row.transition(
+        { easing: 'ease-out', duration: 3, backgroundColor: oldColor},
+        function() {
+          // Revert to following normal stylesheet rules.
+          row.setStyle('backgroundColor', '');
+          // Undo hover workaround.
+          row.all('td').setStyle('backgroundColor', '');
+        });
   };
 
   function _addAlertMessage(container, alertClass, message) {
@@ -363,6 +389,34 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   utils.SERVER_ERROR_MESSAGE = 'An error ocurred.';
+
+  utils.getRelationDataForService = function(db, service) {
+    // Return a list of objects representing the `near` and `far`
+    // endpoints for all of the relationships `rels`.  If it is a peer
+    // relationship, then `far` will be undefined.
+    var service_name = service.get('id');
+    return Y.Array.map(
+        db.relations.get_relations_for_service(service),
+        function(relation) {
+          var rel = relation.getAttrs(),
+              near,
+              far;
+          if (rel.endpoints[0][0] === service_name) {
+            near = rel.endpoints[0];
+            far = rel.endpoints[1]; // undefined if a peer relationship.
+          } else {
+            near = rel.endpoints[1];
+            far = rel.endpoints[0];
+          }
+          rel.near = {service: near[0], role: near[1].role, name: near[1].name};
+          // far will be undefined or the far endpoint service.
+          rel.far = far && {
+            service: far[0], role: far[1].role, name: far[1].name};
+          var rel_id = rel.relation_id.split('-')[1];
+          rel.ident = near[1].name + ':' + parseInt(rel_id, 10);
+          return rel;
+        });
+  };
 
   /*
    * Given a CSS selector, gather up form values and return in a mapping
