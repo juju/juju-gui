@@ -40,6 +40,9 @@ YUI.add('juju-notifications', function(Y) {
               el = container.one('#' + target),
               parent = el.ancestor();
 
+          Y.namespace('juju.views').CharmSearchPopup
+            .getInstance().hide();
+
           if (notifications.size() === 0) {
             return;
           }
@@ -154,7 +157,7 @@ YUI.add('juju-notifications', function(Y) {
          *
          * :hide: should the selected element be hidden on selection
          */
-        selection: {hide: true},
+        selection: {hide: false},
 
         events: {
           '#notify-indicator': {
