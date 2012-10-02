@@ -30,19 +30,22 @@ YUI.add('juju-view-service', function(Y) {
           db = this.get('db'),
           app = this.get('app');
 
-      if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error un-exposing service',
-              message: 'Service name: ' + ev.service_name,
-              level: 'error',
-              link: app.getModelURL(service)
-            })
-        );
-      } else {
-        service.set('exposed', false);
-        db.fire('update');
-      }
+// XXX implement me
+//      if (ev.err) {
+//        db.notifications.add(
+//            new models.Notification({
+//              title: 'Error un-exposing service',
+//              message: 'Service name: ' + ev.service_name,
+//              level: 'error',
+//              link: app.getModelURL(service)
+//            })
+//        );
+//      } else {
+//
+//      }
+
+      service.set('exposed', false);
+      db.fire('update');
     },
 
     exposeService: function() {
@@ -57,19 +60,22 @@ YUI.add('juju-view-service', function(Y) {
           db = this.get('db'),
           app = this.get('app');
 
-      if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error exposing service',
-              message: 'Service name: ' + ev.service_name,
-              level: 'error',
-              link: app.getModelURL(service)
-            })
-        );
-      } else {
-        service.set('exposed', true);
-        db.fire('update');
-      }
+      // XXX implement me
+//      if (ev.err) {
+//        db.notifications.add(
+//            new models.Notification({
+//              title: 'Error exposing service',
+//              message: 'Service name: ' + ev.service_name,
+//              level: 'error',
+//              link: app.getModelURL(service)
+//            })
+//        );
+//      } else {
+//
+//      }
+
+      service.set('exposed', true);
+      db.fire('update');
     }
   };
 
@@ -537,18 +543,29 @@ YUI.add('juju-view-service', function(Y) {
       var db = this.get('db'),
           service = this.get('model'),
           service_id = service.get('id');
-      db.services.remove(service);
-      db.relations.remove(
+
+      if (ev.err) {
+        db.notifications.add(
+          new models.Notification({
+            title: 'Error destroying service',
+            message: 'Service name: ' + ev.service_name,
+            level: 'error'
+          })
+        );
+      } else {
+        db.services.remove(service);
+        db.relations.remove(
           db.relations.filter(
-          function(r) {
-            return Y.Array.some(r.get('endpoints'), function(ep) {
-              return ep[0] === service_id;
-            });
-          }
+            function(r) {
+              return Y.Array.some(r.get('endpoints'), function(ep) {
+                return ep[0] === service_id;
+              });
+            }
           ));
-      this.panel.hide();
-      this.panel.destroy();
-      this.fire('showEnvironment');
+        this.panel.hide();
+        this.panel.destroy();
+        this.fire('showEnvironment');
+      }
     },
 
     resetUnits: function() {

@@ -108,6 +108,7 @@ YUI.add('juju-view-charm-collection', function(Y) {
           config = utils.getElementsValuesMapping(container,
               '#service-config .config-field');
 
+      this.fire('showEnvironment');
       env.deploy(charmUrl, serviceName, config,
           Y.bind(this._doDeployCallback, this)
       );
@@ -127,11 +128,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
         );
       } else {
         console.log(ev.charm_url + ' deployed');
-
-        // The deploy call generates an event chain leading to a call to
-        // `app.on_database_changed()`, which re-dispatches the current view.
-        // For this reason we need to redirect to the root page right now.
-        this.fire('showEnvironment');
       }
     }
   });

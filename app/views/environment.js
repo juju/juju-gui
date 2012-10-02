@@ -863,6 +863,10 @@ YUI.add('juju-view-environment', function(Y) {
                 }, this));
           },
 
+          _doDestroyServiceCallback: function(ev) {
+
+          },
+
           /*
            * Fired when clicking the first service in the add relation
            * flow.
