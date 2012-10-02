@@ -4,7 +4,7 @@
 
   describe('application console', function() {
 
-    it('should disable the console', function(done) {
+    it('should disable the console', function() {
       var mock = consoleManager.getConsoleMock(),
           logCalled = false,
           message = null;
@@ -23,7 +23,7 @@
       assert.isTrue(logCalled);
       assert.equal('TEST', message);
 
-      done();
+      consoleManager.enable();
     });
 
   });
