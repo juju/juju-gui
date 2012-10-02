@@ -32,6 +32,10 @@ GlobalConfig = {
           fullpath: '/juju-ui/views/utils.js'
         },
 
+        'juju-charm-search': {
+          fullpath: '/views/charm-search.js'
+        },
+
         'juju-notifications': {
           fullpath: '/juju-ui/views/notifications.js'
         },
@@ -68,9 +72,9 @@ GlobalConfig = {
             'juju-view-environment',
             'juju-view-service',
             'juju-view-unit',
-            'juju-view-charmsearch',
             'juju-view-charm',
-            'juju-view-charm-collection']
+            'juju-view-charm-collection'
+          ]
         },
 
         // Models
@@ -105,7 +109,8 @@ GlobalConfig = {
           requires: [
             'juju-controllers',
             'juju-views',
-            'juju-models'
+            'juju-models',
+            'juju-view-charm-search'
           ]
         }
       }
