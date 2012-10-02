@@ -142,8 +142,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
         });
       });
 
-      container.one('#charm-search-form').on(
-          'submit', this.on_search_change, this);
       return this;
     },
 
