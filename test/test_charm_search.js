@@ -28,7 +28,7 @@ describe('charm search', function() {
     // The "charms search" feature needs these elements
     var docBody = Y.one(document.body);
     Y.Node.create('<div id="charm-search-test">' +
-        '<div id="charm-search-icon"></div>' +
+        '<div id="charm-search-icon"><i></i></div>' +
         '<div id="content"></div></div>').appendTo(docBody);
   });
 
@@ -38,19 +38,17 @@ describe('charm search', function() {
   });
 
   it('must be able to show and hide the panel', function() {
-    var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({});
-
-    panel.show();
-    assert.isNotNull(Y.one('#juju-search-charm-panel'));
-
-    panel.hide();
-    assert.isNull(Y.one('#juju-search-charm-panel'));
-
-    panel.toggle();
-    assert.isNotNull(Y.one('#juju-search-charm-panel'));
-
-    panel.toggle();
-    assert.isNull(Y.one('#juju-search-charm-panel'));
+    var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({}),
+        container = panel.getNode();
+    container.getStyle('display').should.equal('none');
+    panel.show(true);
+    container.getStyle('display').should.equal('block');
+    panel.hide(true);
+    container.getStyle('display').should.equal('none');
+    panel.toggle(true);
+    container.getStyle('display').should.equal('block');
+    panel.toggle(true);
+    container.getStyle('display').should.equal('none');
 
 
   });
@@ -61,7 +59,6 @@ describe('charm search', function() {
           charm_store: {
             sendRequest: function(params) {
               searchTriggered = true;
-
               // Mocking the server callback value
               params.callback.success({
                 response: {
@@ -73,13 +70,10 @@ describe('charm search', function() {
             }
           }
         }),
-
         node = panel.getNode();
-
     panel.show();
     var field = Y.one('.charms-search-field');
     field.set('value', 'aaa');
-    panel.getDelayedTask().setEmptyDelayValid(true);
     panel.setSearchDelay(0);
 
     field.simulate('keyup');
@@ -114,7 +108,6 @@ describe('charm search', function() {
         buttonX = Y.one('.clear');
 
     field.set('value', 'aaa');
-    panel.getDelayedTask().setEmptyDelayValid(true);
     panel.setSearchDelay(0);
     field.simulate('keyup');
 
@@ -157,7 +150,6 @@ describe('charm search', function() {
     panel.show();
     var field = Y.one('.charms-search-field');
     field.set('value', 'aaa');
-    panel.getDelayedTask().setEmptyDelayValid(true);
     panel.setSearchDelay(0);
 
     field.simulate('keyup');

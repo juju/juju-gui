@@ -4,6 +4,7 @@ YUI.add('juju-charm-search', function(Y) {
 
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
+      models = Y.namespace('juju.models'),
       Templates = views.Templates,
 
       // Singleton
@@ -17,15 +18,79 @@ YUI.add('juju-charm-search', function(Y) {
 
     var charmStore = config.charm_store,
         app = config.app,
-
         container = Y.Node.create(views.Templates['charm-search-pop']({
           title: 'All Charms'
         })),
         charmsList = Y.Node.create(views.Templates['charm-search-result']({})),
-
         isPopupVisible = false,
+        delayFilter = utils.Delayer(),
+        trigger = Y.one('#charm-search-trigger');
 
-        delayedFilter = utils.buildDelayedTask();
+    Y.one(document.body).append(container);
+    container.hide();
+
+    // When you click the charm name, show the details.
+    charmsList.delegate(
+        'click',
+        function(ev) {
+          ev.preventDefault();
+          showCharm(ev.target.getAttribute('href'));
+        },
+        'a.charm-detail');
+    // When you click the deploy button, deploy.
+    charmsList.delegate(
+        'click',
+        function(ev) {
+          var url = ev.currentTarget.getData('url'),
+              name = ev.currentTarget.getData('name'),
+              info_url = ev.currentTarget.getData('info-url');
+          if (Y.Lang.isValue(app.db.services.getById(name))) {
+            // A service with the same name already exists.  Send the
+            // user to a configuration page.
+            app.db.notifications.add(
+                new models.Notification({
+                  title: 'Name already used: ' + name,
+                  message: 'The service\'s default name is already in ' +
+                           'use. Please configure another.',
+                  level: 'info'
+                })
+            );
+            app.fire('showCharm', {charm_data_url: info_url});
+            return;
+          }
+          app.env.deploy(url, name, {}, function(ev) {
+            if (ev.err) {
+              console.log(url + ' deployment failed');
+              app.db.notifications.add(
+                  new models.Notification({
+                    title: 'Error deploying ' + name,
+                    message: 'Could not deploy the requested service.',
+                    level: 'error'
+                  })
+              );
+            } else {
+              console.log(url + ' deployed');
+              app.db.notifications.add(
+                  new models.Notification({
+                    title: 'Deployed ' + name,
+                    message: 'Successfully deployed the requested service.',
+                    level: 'info'
+                  })
+              );
+            }
+          });
+        },
+        '.charm-entry .btn');
+    // When you hover over the charm, show the deploy button.
+    charmsList.delegate(
+        'hover',
+        function(ev) {
+          ev.currentTarget.one('.btn').transition({opacity: 1, duration: 0.25});
+        },
+        function(ev) {
+          ev.currentTarget.one('.btn').transition({opacity: 0, duration: 0.25});
+        },
+        '.charm-entry');
 
     // The panes starts with the "charmsList" visible.
     // Eventually we will be able to swap internal
@@ -46,7 +111,7 @@ YUI.add('juju-charm-search', function(Y) {
 
       var field = ev.target;
       // It delays the search request until the last key is pressed
-      delayedFilter.delay(function() {
+      delayFilter(function() {
         findCharms(field.get('value'), function(charms) {
           updateList(charms);
         });
@@ -61,19 +126,30 @@ YUI.add('juju-charm-search', function(Y) {
       }
     });
 
-    // It applies special formatting rules
+    // Create a data structrure friendly to the view
     function normalizeCharms(charms) {
-      if (!charms) {
-        return charms;
-      }
-
+      var hash = {};
       Y.each(charms, function(charm) {
+        charm.url = charm.series + '/' + charm.name;
         if (charm.owner === 'charmers') {
           charm.owner = null;
+        } else {
+          charm.url = '~' + charm.owner + '/' + charm.url;
         }
+        charm.url = 'cs:' + charm.url;
+        if (!Y.Lang.isValue(hash[charm.series])) {
+          hash[charm.series] = [];
+        }
+        hash[charm.series].push(charm);
       });
-
-      return charms;
+      var series_names = Y.Object.keys(hash);
+      series_names.sort();
+      series_names.reverse();
+      return Y.Array.map(series_names, function(name) {
+        var charms = hash[name];
+        charms.sort(function(a, b) { return [a.owner || '', a.name]; });
+        return {series: name, charms: hash[name]};
+      });
     }
 
     function findCharms(query, callback) {
@@ -88,47 +164,57 @@ YUI.add('juju-charm-search', function(Y) {
           },
           'failure': function er(e) {
             console.error(e.error);
+            app.db.notifications.add(
+                new models.Notification({
+                  title: 'Could not retrieve charms',
+                  message: e.error,
+                  level: 'error'
+                })
+            );
           }
         }});
     }
 
-    function hidePanel() {
+    function hidePanel(now) {
       if (isPopupVisible) {
-        container.remove();
+        container.hide(true, {duration: 0.25});
+        if (Y.Lang.isValue(trigger)) {
+          trigger.one('i').replaceClass(
+            'icon-chevron-up', 'icon-chevron-down');
+        }
         isPopupVisible = false;
       }
     }
 
-    function showPanel() {
+    function showPanel(now) {
       if (!isPopupVisible) {
-        Y.one(document.body).append(container);
+        container.setStyles({opacity: 0, display: 'block'});
         updatePopupPosition();
+        container.show(true, {duration: 0.25});
         charmsList.one('.charms-search-field').focus();
+        if (Y.Lang.isValue(trigger)) {
+          trigger.one('i').replaceClass(
+            'icon-chevron-down', 'icon-chevron-up');
+        }
         isPopupVisible = true;
       }
     }
 
-    function togglePanel() {
+    function togglePanel(now) {
       if (isPopupVisible) {
-        hidePanel();
+        hidePanel(now);
       } else {
-        showPanel();
+        showPanel(now);
       }
     }
 
     function updateList(entries) {
       var list = charmsList.one('.search-result-div');
-
       // Destroy old entries
       list.get('childNodes').remove(true);
-
       list.append(views.Templates['charm-search-result-entries']({
         charms: entries
       }));
-
-      list.all('.charm-detail').on('click', function(ev) {
-        showCharm(ev.target.getAttribute('data-charm-url'));
-      });
     }
 
     function showCharm(url) {
@@ -146,26 +232,22 @@ YUI.add('juju-charm-search', function(Y) {
       var icon = Y.one('#charm-search-icon'),
           pos = icon.getXY(),
           content = Y.one('#content'),
-          contentWidth = content.getDOMNode().offsetWidth,
-          containerWidth = container.getDOMNode().offsetWidth;
-
+          contentWidth = parseInt(content.getComputedStyle('width'), 10),
+          containerWidth = parseInt(container.getComputedStyle('width'), 10),
+          iconWidth = parseInt(icon.getComputedStyle('width'), 10);
       return {
         x: content.getX() + contentWidth - containerWidth,
         y: pos[1] + 30,
-        arrowX: icon.getX() + (icon.getDOMNode().offsetWidth / 2)
+        arrowX: icon.getX() + (iconWidth / 2)
       };
     }
 
-    if (Y.one('#charm-search-trigger')) {
-      Y.one('#charm-search-trigger').on('click', togglePanel);
+    if (Y.Lang.isValue(trigger)) {
+      trigger.on('click', togglePanel);
     }
 
     // The public methods
     return {
-      getDelayedTask: function() {
-        return delayedFilter;
-      },
-
       hide: hidePanel,
       toggle: togglePanel,
       show: showPanel,
@@ -199,6 +281,8 @@ YUI.add('juju-charm-search', function(Y) {
     'view',
     'juju-view-utils',
     'node',
-    'handlebars'
+    'handlebars',
+    'event-hover',
+    'transition'
   ]
 });
