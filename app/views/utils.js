@@ -98,9 +98,9 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   /*
-   * Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
-   * w/o the watch/refresh code
-   */
+ * Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
+ * w/o the watch/refresh code
+ */
   var humanizeTimestamp = function(t) {
     var l = timestrings,
         prefix = l.prefixAgo,
@@ -139,9 +139,6 @@ YUI.add('juju-view-utils', function(Y) {
     if (!text || text === undefined) {return '';}
     return new Y.Handlebars.SafeString(humanizeTimestamp(Number(text)));
   });
-
-
-
   var JujuBaseView = Y.Base.create('JujuBaseView', Y.Base, [], {
 
     bindModelView: function(model) {
@@ -260,6 +257,7 @@ YUI.add('juju-view-utils', function(Y) {
 
   views.JujuBaseView = JujuBaseView;
 
+
   views.createModalPanel = function(
       body_content, render_target, action_label, action_cb) {
     var panel = new Y.Panel({
@@ -296,8 +294,10 @@ YUI.add('juju-view-utils', function(Y) {
           },
           classNames: ['btn']
         });
+
     // The default YUI CSS conflicts with the CSS effect we want.
     panel.get('boundingBox').all('.yui3-button').removeClass('yui3-button');
+    return panel;
   };
 
   views.highlightRow = function(row, err) {
@@ -321,8 +321,15 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   function _addAlertMessage(container, alertClass, message) {
-    var div = container.one('#message-area'),
-        errorDiv = div.one('#alert-area');
+    var div = container.one('#message-area');
+
+    // If the div cannot be found (often an issue with testing), give up and
+    // return.
+    if (!div) {
+      return;
+    }
+
+    var errorDiv = div.one('#alert-area');
 
     if (!errorDiv) {
       errorDiv = Y.Node.create('<div/>')
@@ -351,6 +358,7 @@ YUI.add('juju-view-utils', function(Y) {
   utils.showSuccessMessage = function(container, message) {
     _addAlertMessage(container, 'alert-success', message);
   };
+
 
   utils.buildRpcHandler = function(config) {
     var utils = Y.namespace('juju.views.utils'),
@@ -381,7 +389,6 @@ YUI.add('juju-view-utils', function(Y) {
         setTimeout(function() {
           utils.showSuccessMessage(container, 'Settings updated');
         }, 1000);
-
         invokeCallback(successHandler);
       }
       invokeCallback(finalizeHandler);
@@ -389,6 +396,7 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   utils.SERVER_ERROR_MESSAGE = 'An error ocurred.';
+
 
   utils.getRelationDataForService = function(db, service) {
     // Return a list of objects representing the `near` and `far`
@@ -524,12 +532,191 @@ YUI.add('juju-view-utils', function(Y) {
     return errors;
   };
 
+
+
+  /*
+   * Utility class that encapsulates Y.Models and keeps their positional
+   * state within an svg canvas.
+   *
+   * As a convenience attributes of the encapsulated model are exposed
+   * directly as attributes.
+   */
+  function BoundingBox() {
+    var x, y, w, h, value, modelId;
+    function Box() {}
+
+    Box.model = function(_) {
+      if (!arguments.length) {
+        return modelId;
+      }
+      modelId = [_.name, _.get('id')];
+
+      // Copy all the attrs from model to Box
+      Y.mix(Box, _.getAttrs());
+      return Box;
+    };
+
+    Object.defineProperties(Box, {
+      pos: {
+        writeable: true,
+        get: function() {
+          return {x: this.x, y: this.y, w: this.w, h: this.h};
+        },
+        set: function(value) {
+          Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
+        }
+      },
+      x: {
+        writeable: true,
+        get: function() { return x;},
+        set: function(value) {
+          this.px = this.x;
+          x = value;
+          return this;}
+      },
+      y: {
+        writeable: true,
+        get: function() { return y;},
+        set: function(value) {
+          this.py = this.y;
+          y = value;
+          return this;
+        }
+      }
+    });
+
+    Box.getXY = function() {return [this.x, this.y];};
+    Box.getWH = function() {return [this.w, this.h];};
+
+    /*
+     * Return the 50% points along each side as xy pairs
+     */
+    Box.getConnectors = function() {
+      return {
+        top: [this.x + (this.w / 2), this.y],
+        right: [this.x + this.w, this.y + (this.h / 2)],
+        bottom: [this.x + (this.w / 2), this.y + this.h],
+        left: [this.x, this.y + (this.h / 2)]
+      };
+    };
+
+    Box._distance = function(xy1, xy2) {
+      return Math.sqrt(Math.pow(xy1[0] - xy2[0], 2) +
+                       Math.pow(xy1[1] - xy2[1], 2));
+    };
+
+    /*
+     * Connectors are defined on four borders, find the one closes to
+     * another BoundingBox
+     */
+    Box.getNearestConnector = function(other_box) {
+      var connectors = this.getConnectors(),
+          result = null,
+          shortest_d = Infinity,
+          source = other_box;
+      // duck typing
+      if ('getXY' in other_box) {
+        source = other_box.getXY();
+      }
+
+      Y.each(connectors, function(ep) {
+        // Take the distance of each XY pair
+        var d = this._distance(source, ep);
+        if (!Y.Lang.isValue(result) || d < shortest_d) {
+          shortest_d = d;
+          result = ep;
+        }
+      }, this);
+      return result;
+    };
+
+    /*
+     * Return [this.connector.XY, other.connector.XY] (in that order)
+     * that as nearest to each other. This can be used to define start-end
+     * points for routing.
+     */
+    Box.getConnectorPair = function(other_box) {
+      var sc = Box.getConnectors(),
+          oc = other_box.getConnectors(),
+          result = null,
+          shortest_d = Infinity;
+
+      Y.each(sc, function(ep1) {
+        Y.each(oc, function(ep2) {
+          // Take the distance of each XY pair
+          var d = this._distance(ep1, ep2);
+          if (!Y.Lang.isValue(result) || d < shortest_d) {
+            shortest_d = d;
+            result = [ep1, ep2];
+          }
+        }, other_box);
+      }, this);
+      return result;
+    };
+
+    Box.translateStr = function() {
+      return 'translate(' + this.getXY() + ')';
+    };
+
+    Box.modelId = function() {
+      return modelId[0] + '-' + modelId[1];
+    };
+
+    return Box;
+  }
+
+  views.BoundingBox = BoundingBox;
+
+  views.toBoundingBox = function(model) {
+    var box = new BoundingBox();
+    box.model(model);
+    return box;
+  };
+
+
+  function BoxPair() {
+    var source, target;
+
+    function pair() {}
+    /*
+     * Bind an actual model object
+     */
+    pair.model = function(_) {
+      Y.mix(pair, _.getAttrs());
+      return pair;
+    };
+
+    pair.source = function(_) {
+      if (!arguments.length) { return source;}
+      source = _;
+      return pair;
+    };
+
+    pair.target = function(_) {
+      if (!arguments.length) { return target;}
+      target = _;
+      return pair;
+    };
+
+    pair.modelIds = function() {
+      if (this.endpoints !== undefined) {
+        return source.modelId() + ':' + this.endpoints[0][1].name +
+               '-' + target.modelId() + ':' + this.endpoints[1][1].name;
+      }
+      return source.modelId() + '-' + target.modelId();
+    };
+
+    return pair;
+  }
+
+  views.BoxPair = BoxPair;
+
+
 }, '0.1.0', {
-  requires:
-      ['base-build',
-       'handlebars',
-       'node',
-       'view',
-       'panel',
-       'json-stringify']
+  requires: ['base-build',
+    'handlebars',
+    'node',
+    'view',
+    'panel',
+    'json-stringify']
 });
