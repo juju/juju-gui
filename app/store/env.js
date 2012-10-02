@@ -165,6 +165,7 @@ YUI.add('juju-env', function(Y) {
       this._send_rpc({'op': 'unexpose', 'service_name': service}, callback);
     },
 
+    // XXX Who is using this function?
     status: function(callback) {
       this._send_rpc({'op': 'status'}, callback);
     },

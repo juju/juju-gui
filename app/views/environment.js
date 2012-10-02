@@ -661,15 +661,37 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         removeRelation: function(d, context, view) {
-          var env = this.get('env');
-          view.addSVGClass(Y.one(context.parentNode).one('.relation'),
-              'to-remove pending-relation');
+          var env = this.get('env'),
+              relationElement = Y.one(context.parentNode).one('.relation');
+          view.addSVGClass(relationElement, 'to-remove pending-relation');
           env.remove_relation(
               d.source().id,
               d.target().id,
-              Y.bind(function(ev) {
-                view.get('rmrelation_dialog').hide();
-              }, this));
+              Y.bind(this._doRemoveRelationCallback, {
+                scope: this,
+                view: view,
+                relationElement: relationElement
+              }));
+        },
+
+        _doRemoveRelationCallback: function(ev) {
+          var db = this.scope.get('db'),
+              service = this.scope.get('model');
+
+          if (ev.err) {
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Error deleting relation',
+                  message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
+                  level: 'error',
+                  link: '/'
+                })
+            );
+            this.view.removeSVGClass(this.relationElement,
+                'to-remove pending-relation');
+          }
+
+          this.view.get('rmrelation_dialog').hide();
         },
 
         removeRelationConfirm: function(d, context, view) {

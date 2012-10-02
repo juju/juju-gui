@@ -32,12 +32,12 @@ YUI.add('juju-view-service', function(Y) {
 
       if (ev.err) {
         db.notifications.add(
-          new models.Notification({
-            title: 'Error un-exposing service',
-            message: 'Service name: ' + ev.service_name,
-            level: 'error',
-            link: app.getModelURL(service)
-          })
+            new models.Notification({
+              title: 'Error un-exposing service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: app.getModelURL(service)
+            })
         );
       } else {
         service.set('exposed', false);
@@ -59,12 +59,12 @@ YUI.add('juju-view-service', function(Y) {
 
       if (ev.err) {
         db.notifications.add(
-          new models.Notification({
-            title: 'Error exposing service',
-            message: 'Service name: ' + ev.service_name,
-            level: 'error',
-            link: app.getModelURL(service)
-          })
+            new models.Notification({
+              title: 'Error exposing service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: app.getModelURL(service)
+            })
         );
       } else {
         service.set('exposed', true);
