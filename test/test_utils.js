@@ -123,7 +123,7 @@ describe('utilities', function() {
 });
 
 (function() {
-  describe('form validateion', function() {
+  describe('form validation', function() {
 
     var utils, Y;
 
@@ -266,6 +266,76 @@ describe('utilities', function() {
       // have a default because an empty string is still a string.
       assert.equal(utils.validate({a_string: ''}, no_defaults_schema).a_string,
           undefined);
+    });
+
+    it('should execute only the last method', function(done) {
+
+      var track = [],
+          delayTask = utils.buildDelayedTask();
+
+      delayTask.setEmptyDelayValid(true);
+      try {
+
+        delayTask.delay(function() {
+          // no-op
+        }, null);
+
+      } catch (e) {
+        assert.isTrue(false, 'should NOT fail here');
+
+      }
+
+      delayTask.setEmptyDelayValid(false);
+
+      try {
+
+        delayTask.delay(function() {
+          track.push('error');
+        }, null);
+
+        assert.isTrue(false, 'should fail here');
+
+      } catch (e) {
+        assert.equal('The timeout should be bigger than 0', e);
+
+      }
+
+      try {
+        delayTask.delay(function() {
+          track.push('error');
+        }, 0);
+
+        assert.isTrue(false, 'should fail here');
+      } catch (e) {
+        assert.equal('The timeout should be bigger than 0', e);
+
+      }
+
+      try {
+        delayTask.delay(function() {
+          track.push('error');
+        }, -1);
+
+        assert.isTrue(false, 'should fail here');
+      } catch (e) {
+        assert.equal('The timeout should be bigger than 0', e);
+
+      }
+
+      delayTask.delay(function() {
+        track.push('a');
+      }, 50);
+      delayTask.delay(function() {
+        track.push('b');
+      }, 50);
+      delayTask.delay(function() {
+        track.push('c');
+      }, 1);
+
+      setTimeout(function() {
+        assert.equal('c', track.join(''));
+        done();
+      }, 10);
     });
 
   });
