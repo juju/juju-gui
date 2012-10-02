@@ -40,6 +40,9 @@ YUI.add('juju-notifications', function(Y) {
               el = container.one('#' + target),
               parent = el.ancestor();
 
+          Y.namespace('juju.views').CharmSearchPopup
+            .getInstance().hide();
+
           if (notifications.size() === 0) {
             return;
           }
@@ -191,10 +194,13 @@ YUI.add('juju-notifications', function(Y) {
 
         close: function() {
           var indicator = Y.one('#notify-indicator'),
-              list = Y.one('#notify-list'),
-              parent = indicator.ancestor();
+              list = Y.one('#notify-list');
+            
+          if (!indicator) {
+            return;
+          }
+          var parent = indicator.ancestor();
 
-          console.log('Close indicator');
           if (parent && parent.hasClass('open')) {
             indicator.ancestor().removeClass('open');
             list.hide();

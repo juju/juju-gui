@@ -90,6 +90,9 @@ YUI.add('juju-models', function(Y) {
       exposed: {
         value: false
       },
+      subordinate: {
+        value: false
+      },
       unit_count: {},
       aggregated_status: {}
     }

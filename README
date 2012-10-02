@@ -70,3 +70,8 @@ Running lint
 
  jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
  
+
+Style
+-----
+
+See the style-guide.txt file for the project style guide.

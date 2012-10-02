@@ -25,6 +25,39 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
+  // It creates an object that delays the execution of a given callback.
+  // If the user calls "delay(functionA, 1000)", the "functionA" will be
+  // executed after 1000ms. If the user calls "delay(functionB, 1000)"
+  // before the execution of the "functionA", the "functionA" will be canceled
+  // and the "functionB" will be scheduled to run after 1000ms.
+  utils.buildDelayedTask = function() {
+    var currentTask = null,
+        isEmptyDelayValid = false;
+
+    return {
+      setEmptyDelayValid: function(value) {
+        isEmptyDelayValid = value;
+      },
+
+      delay: function(callback, ms) {
+        if (Y.Lang.isValue(currentTask)) {
+          clearTimeout(currentTask);
+        }
+
+        if (!ms || ms < 1) {
+          if (isEmptyDelayValid) {
+            callback();
+            return;
+          } else {
+            throw 'The timeout should be bigger than 0';
+          }
+        }
+
+        currentTask = setTimeout(callback, ms);
+      }
+    };
+  };
+
   /*
  * Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
  * w/o the watch/refresh code
@@ -146,6 +179,9 @@ YUI.add('juju-view-utils', function(Y) {
      */
     hasSVGClass: function(selector, class_name) {
       var classes = selector.getAttribute('class');
+      if (!classes) {
+        return false;
+      }
       return classes.indexOf(class_name) !== -1;
     },
 
@@ -520,6 +556,18 @@ YUI.add('juju-view-utils', function(Y) {
      * Return the 50% points along each side as xy pairs
      */
     Box.getConnectors = function() {
+      // TODO - Since the service nodes have a shadow that takes up a bit of
+      // space on the sides and bottom of the actual node itself, add a bit
+      // of a margin to the actual connecting points. The margin is specified
+      // as a percentage of the width or height, as those are affected by the
+      // scale.
+      /*
+      relation_margins = {
+        top: 0,
+        bottom: 0.1667,
+        left: 0.075758,
+        right: 0.075758};
+      */
       return {
         top: [this.x + (this.w / 2), this.y],
         right: [this.x + this.w, this.y + (this.h / 2)],
