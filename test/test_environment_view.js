@@ -335,7 +335,7 @@
     // list view itself.  Skipped until then.
     it.skip('must be able to switch between graph and list views',
         function(done) {
-          var view = new EnvironmentView({
+          var view = new views.environment({
             container: container,
             db: db,
             env: env
