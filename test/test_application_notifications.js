@@ -7,7 +7,11 @@ describe('juju application notifications', function() {
       viewContainer,
       db,
 
-      _setTimeout, _viewsHighlightRow;
+      _setTimeout, _viewsHighlightRow,
+      ERR_EV = {
+          err: true
+      },
+      NO_OP = function() {};
 
   function assertNotificationNumber(value) {
     assert.equal(
@@ -46,7 +50,7 @@ describe('juju application notifications', function() {
       container: notificationsContainer,
       app: {},
       env: {
-        on: function() {},
+        on: NO_OP,
         get: function(key) {
           if (key === 'connected') {
             return true;
@@ -69,7 +73,7 @@ describe('juju application notifications', function() {
 
     // We skip this part because we have no row to highlight
     _viewsHighlightRow = views.highlightRow;
-    views.highlightRow = function() {};
+    views.highlightRow = NO_OP;
 
   });
 
@@ -91,18 +95,14 @@ describe('juju application notifications', function() {
          db: db,
          env: {
            add_unit: function(serviceId, delta, callback) {
-             callback({
-               err: true
-             });
+             callback(ERR_EV);
            },
            remove_units: function(param, callback) {
-             callback({
-               err: true
-             });
+             callback(ERR_EV);
            }
          },
          model: {
-           getAttrs: function() {},
+           getAttrs: NO_OP,
            get: function(key) {
              if ('unit_count' === key) {
                return 2;
@@ -144,9 +144,7 @@ describe('juju application notifications', function() {
              });
            },
            resolved: function(unit_name, relation_name, retry, callback) {
-             callback({
-               err: true
-             });
+             callback(ERR_EV);
            }
          },
          unit: {},
@@ -169,7 +167,7 @@ describe('juju application notifications', function() {
        view.render();
 
        view.confirmRemoved({
-         preventDefault: function() {}
+         preventDefault: NO_OP
        });
 
        view.remove_panel.footerNode.one('.btn-danger').simulate('click');
@@ -183,14 +181,14 @@ describe('juju application notifications', function() {
        };
 
        view.retryRelation({
-         preventDefault: function() {},
+         preventDefault: NO_OP,
 
          // This is a mock object of the relation button
          target: {
            ancestor: function() {
-             return {get: function() {}};
+             return {get: NO_OP};
            },
-           set: function() {}
+           set: NO_OP
          }
        });
 
@@ -203,23 +201,19 @@ describe('juju application notifications', function() {
          db: db,
          container: viewContainer}).render();
 
-       view.service_click_actions._doAddRelationCallback.apply(view, [{
-         err: true
-       }]);
+       view.service_click_actions._doAddRelationCallback.apply(view, [ERR_EV]);
 
        assertNotificationNumber('1');
 
        view._doRemoveRelationCallback.apply({
          scope: view,
          view: {
-           removeSVGClass: function() {}
+           removeSVGClass: NO_OP
          },
          confirmButton: {
-           set: function() {}
+           set: NO_OP
          }
-       }, [{
-         err: true
-       }]);
+       }, [ERR_EV]);
 
        assertNotificationNumber('2');
      });
@@ -230,34 +224,22 @@ describe('juju application notifications', function() {
        var view = new views.environment({
          db: db,
          destroy_service: {
-           get: function() {}
+           get: NO_OP
          },
          env: {
            destroy_service: function(service, callback) {
-             callback({err: true});
+             callback(ERR_EV);
            }
          },
          container: viewContainer}).render();
 
-       view.service_click_actions._doAddRelationCallback.apply(view, [{
-         err: true
-       }]);
+       view.service_click_actions._doAddRelationCallback.apply(view, [ERR_EV]);
 
        assertNotificationNumber('1');
 
        view.service_click_actions.destroyService.apply(
-           view.service_click_actions, [
-         // Fake m object
-         {},
-
-         // Fake context object
-         {},
-
-         view,
-
-         // Fake btn object
-         {set: function() {}}
-           ]);
+           //destroyService function signature > (m, context, view, btn)
+           view.service_click_actions, [{}, {}, view, {set: NO_OP}]);
 
        assertNotificationNumber('2');
      });
@@ -268,7 +250,7 @@ describe('juju application notifications', function() {
        var view = new views.service_constraints({
          db: db,
          model: {
-           getAttrs: function() {},
+           getAttrs: NO_OP,
            get: function(key) {
              if ('constraints' === key) {
                return {};
@@ -278,9 +260,7 @@ describe('juju application notifications', function() {
          },
          env: {
            set_constraints: function(id, values, callback) {
-             callback({
-               err: true
-             });
+             callback(ERR_EV);
            }
          },
          container: viewContainer}).render();
@@ -296,10 +276,10 @@ describe('juju application notifications', function() {
        var view = new views.service_config({
          db: db,
          app: {
-           getModelURL: function() {}
+           getModelURL: NO_OP
          },
          model: {
-           getAttrs: function() {},
+           getAttrs: NO_OP,
            get: function(key) {
              if ('loaded' === key) {
                return true;
@@ -312,26 +292,20 @@ describe('juju application notifications', function() {
          },
          env: {
            set_config: function(id, newValues, callback) {
-             callback({
-               err: true
-             });
+             callback(ERR_EV);
            },
            expose: function(id, callback) {
-             callback({
-               err: true
-             });
+             callback(ERR_EV);
            },
            unexpose: function(id, callback) {
-             callback({
-               err: true
-             });
+             callback(ERR_EV);
            }
          },
          container: viewContainer});
 
        db.charms.getById = function() {
          return {
-           getAttrs: function() {},
+           getAttrs: NO_OP,
            get: function(key) {
              if ('config' === key) {
                return {};
@@ -362,13 +336,11 @@ describe('juju application notifications', function() {
        var view = new views.service_relations({
          db: db,
          app: {
-           getModelURL: function() {}
+           getModelURL: NO_OP
          },
          env: {
            remove_relation: function(id, newValues, callback) {
-             callback({
-               err: true
-             });
+             callback(ERR_EV);
            }
          },
          container: viewContainer});
@@ -389,12 +361,12 @@ describe('juju application notifications', function() {
        view.render();
 
        view.confirmRemoved({
-         preventDefault: function() {},
+         preventDefault: NO_OP,
 
          // This is a mock object of the relation button
          target: {
-           ancestor: function() {},
-           get: function() {}
+           ancestor: NO_OP,
+           get: NO_OP
          }
        });
        view.remove_panel.footerNode.one('.btn-danger').simulate('click');
