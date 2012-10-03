@@ -41,17 +41,17 @@ describe('Application', function() {
   });
 
   beforeEach(function(done) {
-      container = Y.one('#main')
-        .appendChild(Y.Node.create('<div/>'))
-          .set('id', 'test-container')
-          .addClass('container')
-          .append(Y.Node.create('<span>/')
-            .set('id', 'environment-name'));
-      app = new Y.juju.App(
+    container = Y.one('#main')
+      .appendChild(Y.Node.create('<div/>'))
+        .set('id', 'test-container')
+        .addClass('container')
+        .append(Y.Node.create('<span>/')
+          .set('id', 'environment-name'));
+    app = new Y.juju.App(
         { container: container,
           viewContainer: container});
-      injectData(app);
-      done();
+    injectData(app);
+    done();
   });
 
   afterEach(function(done) {
@@ -90,22 +90,22 @@ describe('Application', function() {
   it('should display the configured environment name', function() {
     var environment_name = 'This is the environment name.  Deal with it.';
     app = new Y.juju.App(
-      { container: container,
-        viewContainer: container,
-        environment_name: environment_name});
+        { container: container,
+          viewContainer: container,
+          environment_name: environment_name});
     assert.equal(
-      container.one('#environment-name').get('text'),
-      environment_name);
+        container.one('#environment-name').get('text'),
+        environment_name);
   });
 
   it('should show a generic environment name if none configured', function() {
     app.set('environment_name', undefined);
     app = new Y.juju.App(
-      { container: container,
-        viewContainer: container});
+        { container: container,
+          viewContainer: container});
     assert.equal(
-      container.one('#environment-name').get('text'),
-      'Environment');
+        container.one('#environment-name').get('text'),
+        'Environment');
   });
 
 });
