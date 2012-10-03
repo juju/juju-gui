@@ -57,6 +57,7 @@ YUI.add('juju-charm-search', function(Y) {
           this.get('searchDelay'));
     },
     showDetails: function(ev) {
+      ev.stopPropagation();
       ev.preventDefault();
       this.showCharm(ev.target.getAttribute('href'));
     },

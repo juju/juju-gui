@@ -245,6 +245,7 @@ describe('charm search', function() {
        var deployButton = node.one('.charm-entry .btn');
        deployButton.simulate('click');
        deployed.should.equal(false);
+       showCharmCalled.should.equal(true);
      });
 
 });
