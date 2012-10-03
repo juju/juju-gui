@@ -226,6 +226,7 @@ YUI.add('juju-charm-search', function(Y) {
         isPopupVisible = false;
       }
     }
+    container.on('clickoutside', hide);
 
     function show() {
       if (!isPopupVisible) {
@@ -241,7 +242,12 @@ YUI.add('juju-charm-search', function(Y) {
       }
     }
 
-    function toggle() {
+    function toggle(ev) {
+      if (Y.Lang.isValue(ev)) {
+        // This is important to not have the clickoutside handler immediately
+        // undo a "show".
+        ev.halt();
+      }
       if (isPopupVisible) {
         hide();
       } else {
@@ -305,6 +311,7 @@ YUI.add('juju-charm-search', function(Y) {
     'node',
     'handlebars',
     'event-hover',
-    'transition'
+    'transition',
+    'event-outside'
   ]
 });
