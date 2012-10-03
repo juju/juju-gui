@@ -6,7 +6,8 @@ describe('juju application notifications', function() {
       notificationsContainer,
       viewContainer,
       db,
-      _setTimeout = window.setTimeout;
+
+      _setTimeout, _viewsHighlightRow;
 
   before(function() {
     Y = YUI(GlobalConfig).use([
@@ -55,14 +56,21 @@ describe('juju application notifications', function() {
     // The notifications.js delays the notification update.
     // We are going to avoid this timeout to make it possible to test
     // the notification callback synchronously.
+    _setTimeout = window.setTimeout;
     window.setTimeout = function(callback) {
       callback();
     };
+
+    // We skip this part because we have no row to highlight
+    _viewsHighlightRow = views.highlightRow;
+    views.highlightRow = function() {};
+
   });
 
   afterEach(function() {
     applicationContainer.remove(true);
     window.setTimeout = _setTimeout;
+    views.highlightRow = _viewsHighlightRow;
   });
 
   it('should show notification for "add_unit" and "remove_units" exceptions' +
@@ -315,6 +323,58 @@ describe('juju application notifications', function() {
            applicationContainer.one('#notify-indicator').getHTML().trim(),
            '3', 'The system didnt show the alert');
      });
+
+  it('should show notification for "remove_relation"' +
+      ' exceptions (service relations view)', function() {
+
+       var view = new views.service_relations({
+         db: db,
+         app: {
+           getModelURL: function() {}
+         },
+         env: {
+           remove_relation: function(id, newValues, callback) {
+             callback({
+               err: true
+             });
+           }
+         },
+         container: viewContainer});
+
+       db.relations.getById = function() {
+         return {
+           get: function(key) {
+             if ('endpoints' === key) {
+               return [
+                       [{}, {name: ''}]
+               ];
+             }
+             return null;
+           }
+         };
+       };
+
+
+       view.render();
+
+       view.confirmRemoved({
+         preventDefault: function() {},
+
+         // This is a mock object of the relation button
+         target: {
+           ancestor: function() {},
+           get: function() {}
+         }
+       });
+       view.remove_panel.footerNode.one('.btn-danger').simulate('click');
+       view.remove_panel.destroy();
+
+       assert.equal(
+           applicationContainer.one('#notify-indicator').getHTML().trim(),
+           '1', 'The system didnt show the alert');
+
+     });
+
 
 
 
