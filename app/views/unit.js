@@ -121,10 +121,27 @@ YUI.add('juju-view-unit', function(Y) {
     },
 
     _doResolvedUnitCallback: function(button, ev) {
-      // XXX Once we have a way of showing notifications, if ev.err exists,
-      // report it.
+      var unit = this.get('unit'),
+          db = this.get('db'),
+          app = this.get('app'),
+          service = db.services.getById(unit.service);
+
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error resolving unit',
+              message: 'Unit name: ' + ev.unit_name,
+              level: 'error',
+              link: app.getModelURL(service)
+            })
+        );
+
+      } else {
+        this.resolved_panel.hide();
+      }
+
       button.set('disabled', false);
-      this.resolved_panel.hide();
+
     },
 
     confirmRemoved: function(ev) {
@@ -152,34 +169,66 @@ YUI.add('juju-view-unit', function(Y) {
       ev.target.set('disabled', true);
       env.remove_units(
           [unit.id],
-          Y.bind(this._doRemoveUnitCallback, this));
+          Y.bind(this._doRemoveUnitCallback, this, ev.target));
     },
 
-    _doRemoveUnitCallback: function(ev) {
-      // XXX Once we have a way of showing notifications, if ev.err exists,
-      // report it.
+    _doRemoveUnitCallback: function(btn, ev) {
       var unit = this.get('unit'),
           db = this.get('db'),
+          app = this.get('app'),
           service = db.services.getById(unit.service),
           unit_name = ev.unit_names[0];
-      db.units.remove(db.units.getById(unit_name));
-      service.set('unit_count', service.get('unit_count') - 1);
-      this.remove_panel.destroy();
-      this.fire('showService', {service: service});
+
+      function getNames() {
+        if (ev.unit_names) {
+          return ev.unit_names.join(', ');
+        }
+        return '';
+      }
+
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error removing unit',
+              message: 'Unit names: ' + getNames(),
+              level: 'error',
+              link: app.getModelURL(service)
+            })
+        );
+      } else {
+        db.units.remove(db.units.getById(unit_name));
+        service.set('unit_count', service.get('unit_count') - 1);
+        this.remove_panel.destroy();
+        this.fire('showService', {service: service});
+      }
+
+      btn.set('disabled', false);
     },
 
     retry: function(ev) {
       ev.preventDefault();
       var env = this.get('env'),
           unit = this.get('unit'),
+          db = this.get('db'),
+          app = this.get('app'),
+          service = db.services.getById(unit.service),
           button = ev.target;
       button.set('disabled', true);
       env.resolved(unit.id, null, true,
           function(ev) {
-            // XXX Once we have a way of showing notifications, if
-            // ev.err exists, report it.  Similarly, otherwise,
-            // generate a success notification.
-            button.set('disabled', false);}
+            if (ev.err) {
+              db.notifications.add(
+                  new models.Notification({
+                    title: 'Error retrying unit',
+                    message: 'Unit name: ' + ev.unit_name,
+                    level: 'error',
+                    link: app.getModelURL(service)
+                  })
+              );
+
+            }
+            button.set('disabled', false);
+          }
       );
     },
 
