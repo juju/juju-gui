@@ -540,22 +540,22 @@ YUI.add('juju-view-service', function(Y) {
 
       if (ev.err) {
         db.notifications.add(
-          new models.Notification({
-            title: 'Error destroying service',
-            message: 'Service name: ' + ev.service_name,
-            level: 'error'
-          })
+            new models.Notification({
+              title: 'Error destroying service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error'
+            })
         );
       } else {
         db.services.remove(service);
         db.relations.remove(
-          db.relations.filter(
+            db.relations.filter(
             function(r) {
               return Y.Array.some(r.get('endpoints'), function(ep) {
                 return ep[0] === service_id;
               });
             }
-          ));
+            ));
         this.panel.hide();
         this.panel.destroy();
         this.fire('showEnvironment');

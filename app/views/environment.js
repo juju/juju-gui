@@ -850,10 +850,10 @@ YUI.add('juju-view-environment', function(Y) {
                 'Destroy Service',
                 Y.bind(function(ev) {
                   ev.preventDefault();
-                  
+
                   var btn = ev.target;
                   btn.set('disabled', true);
-                  
+
                   view.service_click_actions
                       .destroyService(m, context, view, btn);
                 },
@@ -868,26 +868,26 @@ YUI.add('juju-view-environment', function(Y) {
                 service = view.get('destroy_service');
             env.destroy_service(
                 service.get('id'), Y.bind(this._destroyCallback, {
-                	view: view,
-                	btn: btn
+                  view: view,
+                  btn: btn
                 }));
           },
 
           _destroyCallback: function(ev) {
-              var db = this.view.get('db');
+            var db = this.view.get('db');
 
-              if (ev.err) {
-                db.notifications.add(
+            if (ev.err) {
+              db.notifications.add(
                   new models.Notification({
                     title: 'Error destroying service',
                     message: 'Service name: ' + ev.service_name,
                     level: 'error'
                   })
-                );
-                this.btn.set('disabled', false);
-              } else {
-            	  this.view.get('destroy_dialog').hide();
-              }
+              );
+              this.btn.set('disabled', false);
+            } else {
+              this.view.get('destroy_dialog').hide();
+            }
           },
 
           /*
