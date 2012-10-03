@@ -317,3 +317,66 @@ describe('notifications', function() {
        notice.get('message').should.equal('');
      });
 });
+
+
+describe('changing notifications to words', function() {
+  var Y, juju;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        ['juju-notification-controller'],
+        function(Y) {
+          juju = Y.namespace('juju');
+          done();
+        });
+  });
+
+  it('should correctly translate notification operations into English',
+     function() {
+       assert.equal(juju._changeNotificationOpToWords('add'), 'created');
+       assert.equal(juju._changeNotificationOpToWords('remove'), 'removed');
+       assert.equal(juju._changeNotificationOpToWords('not-an-op'), 'changed');
+     });
+});
+
+describe('relation notifications', function() {
+  var Y, juju;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        ['juju-notification-controller'],
+        function(Y) {
+          juju = Y.namespace('juju');
+          done();
+        });
+  });
+
+  it('should produce reasonable titles', function() {
+    assert.equal(
+        juju._relationNotifications.title(undefined, 'add'),
+        'Relation created');
+    assert.equal(
+        juju._relationNotifications.title(undefined, 'remove'),
+        'Relation removed');
+  });
+
+  it('should generate messages about two-party relations', function() {
+    var changeData =
+        { endpoints:
+              [['endpoint0', {name: 'relation0'}],
+                ['endpoint1', {name: 'relation1'}]]};
+    assert.equal(
+        juju._relationNotifications.message(undefined, 'add', changeData),
+        'Relation between endpoint0 (relation type "relation0") and ' +
+        'endpoint1 (relation type "relation1") was created');
+  });
+
+  it('should generate messages about one-party relations', function() {
+    var changeData =
+        { endpoints:
+              [['endpoint1', {name: 'relation1'}]]};
+    assert.equal(
+        juju._relationNotifications.message(undefined, 'add', changeData),
+        'Relation with endpoint1 (relation type "relation1") was created');
+  });
+});

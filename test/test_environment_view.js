@@ -4,7 +4,7 @@
 
   describe('juju environment view', function() {
     var views, models, Y, container, service, db, conn,
-        juju, env, testUtils, navbar;
+        juju, env, testUtils;
 
     var environment_delta = {
       'result': [
@@ -21,6 +21,11 @@
         ['service', 'add', {
           'charm': 'cs:precise/mysql-6',
           'id': 'mysql'
+        }],
+        ['service', 'add', {
+          'subordinate': true,
+          'charm': 'cs:precise/puppet-2',
+          'id': 'puppet'
         }],
         ['relation', 'add', {
           'interface': 'reversenginx',
@@ -92,9 +97,6 @@
     beforeEach(function(done) {
       container = Y.Node.create('<div id="test-container" />');
       Y.one('body').append(container);
-      navbar = Y.Node.create('<div class="navbar" ' +
-          'style="height:70px;">Navbar</div>');
-      Y.one('body').append(navbar);
       db = new models.Database();
       db.on_delta({data: environment_delta});
       done();
@@ -103,7 +105,6 @@
     afterEach(function(done) {
       container.remove();
       container.destroy();
-      Y.one('body').removeChild(navbar);
       db.destroy();
       env._txn_callbacks = {};
       conn.messages = [];
@@ -118,9 +119,11 @@
             container: container,
             db: db,
             env: env
-          }).render();
+          });
+          view.render();
+          container.all('.service-border').size().should.equal(4);
 
-          container.all('.service-border').size().should.equal(3);
+          // Count all the real relations.
           (container.all('.relation').size() -
            container.all('.pending-relation').size())
               .should.equal(1);
@@ -136,7 +139,24 @@
               }, line);
         });
 
+    it('must be able to render subordinate and normal services',
+        function(done) {
+          // Create an instance of EnvironmentView with custom env
+          var view = new views.environment({
+            container: container,
+            db: db,
+            env: env
+          });
+          view.render();
+          container.all('.service').size().should.equal(4);
+          container.all('.subordinate.service').size().should.equal(1);
+
+          done();
+        }
+    );
+
     // Ensure that we can add a relation
+    // SKIP: the add-relation-btn is going away
     it.skip('must be able to add a relation between services',
         function(done) {
           var view = new views.environment({
@@ -175,8 +195,12 @@
         db: db,
         env: env
       }).render();
+      // Attach the view to the DOM so that sizes get set properly
+      // from the viewport (only available from DOM).
+      view.postRender();
       var zoom_in = container.one('#zoom-in-btn'),
           zoom_out = container.one('#zoom-out-btn'),
+          slider = view.slider,
           svg = container.one('svg g g');
       zoom_in.after('click', function() {
         view.zoom_in();
@@ -185,7 +209,15 @@
         // scale portion of the transform attribute of the svg
         // element has been upped by 0.2.  The transform attribute
         // also contains translate, so test via a regex.
-        /scale\(1\.2\)/.test(attr).should.equal(true);
+        /scale\(1\.25\)/.test(attr).should.equal(true);
+
+        // Ensure that the slider agrees.
+        slider.get('value').should.equal(125);
+
+        // Ensure that zooming via slider sets scale.
+        slider.set('value', 150);
+        attr = svg.getAttribute('transform');
+        /scale\(1\.5\)/.test(attr).should.equal(true);
         done();
       });
       zoom_in.simulate('click');
@@ -218,6 +250,11 @@
     // Ensure that sizes are computed properly
     it('must be able to compute sizes by the viewport with a minimum',
        function(done) {
+         // The height of a navbar is used in calculating the viewport size,
+         // so add a temporary one to the DOM
+         var navbar = Y.Node.create('<div class="navbar" ' +
+             'style="height:70px;">Navbar</div>');
+         Y.one('body').append(navbar);
          var view = new views.environment({
            container: container,
            db: db,
@@ -227,6 +264,7 @@
          // from the viewport (only available from DOM).
          view.postRender();
          var svg = Y.one('svg');
+         // Ensure that calculations are being done correctly on the viewport.
          parseInt(svg.getAttribute('height'), 10)
           .should.equal(
          Math.max(600,
@@ -238,6 +276,9 @@
               parseInt(Y.one('.navbar')
                 .getComputedStyle('margin-bottom'), 10)
               ));
+         // Destroy the navbar
+         navbar.remove();
+         navbar.destroy();
          done();
        }
     );
@@ -277,7 +318,7 @@
          });
          add_rel.after('click', function() {
            container.all('.selectable-service').size()
-            .should.equal(2);
+            .should.equal(3);
            service.next().simulate('click');
          });
          service.next('.service').after('click', function() {
@@ -303,14 +344,34 @@
         dialog_btn.after('click', function() {
           container.all('.to-remove').size()
             .should.equal(1);
+          view.get('rmrelation_dialog').hide();
           done();
         });
         dialog_btn.simulate('click');
       });
       relation.simulate('click');
     });
-  });
 
+    // TODO: This will be fully testable once we have specification on the
+    // list view itself.  Skipped until then.
+    it.skip('must be able to switch between graph and list views',
+        function(done) {
+          var view = new views.environment({
+            container: container,
+            db: db,
+            env: env
+          }).render();
+          view.postRender();
+          var picker = container.one('.graph-list-picker'),
+              button = picker.one('.picker-button');
+          button.after('click', function() {
+            // Simulate click on list view, ensure that the view is displayed.
+            done();
+          });
+          button.simulate('click');
+        }
+    );
+  });
   describe('view model support infrastructure', function() {
     var Y, views, models;
 
@@ -454,4 +515,5 @@
     });
 
   });
+
 })();

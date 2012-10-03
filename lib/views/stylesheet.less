@@ -16,7 +16,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    background: url(/assets/images/left_shadow.png) repeat-y;
+    background: url(/juju-ui/assets/images/left_shadow.png) repeat-y;
     margin-left: -12px;
     width: 12px;
 }
@@ -25,7 +25,7 @@ body {
     position: absolute;
     top: 0;
     right: 0;
-    background: url(/assets/images/right_shadow.png) repeat-y;
+    background: url(/juju-ui/assets/images/right_shadow.png) repeat-y;
     margin-right: -12px;
     width: 12px;
 }
@@ -35,7 +35,7 @@ body {
     margin-bottom: 0;
     height: 87px;
     min-width: 800px;
-    background: url(/assets/images/top_bar.png) repeat-x;
+    background: url(/juju-ui/assets/images/top_bar.png) repeat-x;
     padding: 0;
     position: relative;
     color: #2d2d2d!important;
@@ -80,7 +80,7 @@ svg {
 }
 
 .crosshatch-background {
-    background: url(/assets/images/pattern_tile.png) repeat;
+    background: url(/juju-ui/assets/images/pattern_tile.png) repeat;
     margin: 0 -20px 0 -20px;
 }
 
@@ -88,7 +88,6 @@ charms.thumbnails.li { height:4em; }
 .relation {
     stroke: #333333;
     stroke-width: 3px;
-
     &.error {
         stroke: #cc3333;
     }
@@ -117,17 +116,26 @@ charms.thumbnails.li { height:4em; }
 .state-error { stroke: #FF0000; }
 .state-started { stroke: #000000;}
 .state-pending { stroke: #6597E8;}
+.thumbnail { min-height: 54px;}
 
 g.service {
-    fill: #f5f5f5; stroke: black;
+    fill: none; 
+    stroke: none;
+
+    text {
+        text-anchor: middle;
+    }
 
     .charm-label { font-size: 0.7em;
         fill: #333333;}
-    .name { font-weight: bold;
+    .name { 
+        font-weight: bold;
         font-family: "Ubuntu";
-        font-size: 1.6em; fill: #333333;}
+        font-size: 1.6em; fill: #333333;
+    }
     .service-border {
         stroke-width: 2px;
+        stroke: none;
 
         &.selectable-service {
             stroke: #008;
@@ -177,6 +185,7 @@ g.service {
 g.service-status {
     path {
         stroke-width: 0;
+        fill: #fff;
 
         &.status-pending {
             fill: #fcd305;}
@@ -251,7 +260,7 @@ g.unit {
  * Overview Module
  */
 #overview-tasks {
-    background: url(/assets/images/bottom_bar.png) repeat-x;
+    background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
     margin: 0 -20px 0 -20px;
     height: 50px;
     position: relative;
@@ -276,16 +285,88 @@ g.unit {
     padding: 0;
     height: 24px;
     &.graph-list-picker {
-        width: 100px;
+        width: 116px;
         .picker-body {
-            width: 78px;
+            width: 91px;
+        }
+
+
+        .picker-expanded {
+            display: none;
+
+            &.active {
+                z-index: 100;
+                display: block;
+            }
+            .picker-edge {
+                display: block;
+                top: auto;
+                bottom: -10px;
+                margin-left: -3px;
+            }
+            .picker-edge-right {
+                left: auto;
+                right: 0;
+                margin-left: 0;
+                margin-right: -3px;
+            }
+            .picker-list {
+                position: absolute;
+                bottom: -12px;
+                left: 4px;
+                height: 100%;
+                background: url(/juju-ui/assets/images/view_1px.png) repeat-x;
+                list-style-type: none;
+                padding: 0;
+                margin: 0;
+                height: 54px;
+                width: 108px;
+
+                ul {
+                    list-style-type: none;
+                    padding: 0;
+                    padding-top: 5px;
+                    margin: 0;
+
+                    li {
+                        padding: 1px;
+
+                        .activetick {
+                            width: 12px;
+                            height: 14px;
+                            float: right;
+                            background: url(/juju-ui/assets/images/selected_tick.png)
+                                no-repeat
+                                bottom left;
+                        }
+                    }
+                }
+            }
         }
     }
     &.zoom-picker {
-        width: 60px;
+        width: 56px;
         .picker-body {
-            width: 40px;
+            width: 36px;
         }
+        /*#zoom-btn-up {
+            position: absolute;
+            top: 8px;
+            right: 0px;
+            opacity: 0;
+            &.active {
+                opacity: 1;
+            }
+        }
+        #zoom-btn-down {
+            position: absolute;
+            bottom: -8px;
+            right: 0px;
+            opacity: 0;
+            &.active {
+                opacity: 1;
+            }
+        }*/
     }
 
     .picker-edge {
@@ -297,14 +378,25 @@ g.unit {
         position: absolute;
         top: 8px;
         left: 4px;
-        background: url(/assets/images/picker_1px.png) repeat-x;
+        background: url(/juju-ui/assets/images/picker_1px.png) repeat-x;
         height: 20px;
-        padding: 4px 0 0 4px;
+        padding: 3px 0 0 3px;
     }
     .picker-button {
         position: absolute;
         top: 8px;
         right: 0;
+    }
+    &.inactive {
+        .picker-edge {
+            display: none;
+        }
+        .picker-body {
+            display: none;
+        }
+        .picker-button {
+            display: none;
+        }
     }
 }
 
