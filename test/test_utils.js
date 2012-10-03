@@ -120,6 +120,37 @@ describe('utilities', function() {
     res.far.name.should.equal('db');
   });
 
+  it('should execute only the last method, and is reusable', function(done) {
+    var track = [],
+        delay = utils.Delayer();
+
+    delay(function() {
+      track.push('a');
+    }, 50);
+    delay(function() {
+      track.push('b');
+    }, 50);
+    delay(function() {
+      // This is done immediately.
+      delay(function() { track.push('c'); });
+      assert.equal('c', track.join(''));
+      done();
+    }, 1);
+  });
+
+  it('should execute only the last method, once', function(done) {
+    var delay = utils.Delayer(true);
+    delay(function() {
+      try {
+        delay(function() { });
+        assert.fail('did not throw an error', 'should have.');
+      } catch (e) {
+        e.should.equal('already performed a task.');
+      }
+      done();
+    }, 1);
+  });
+
 });
 
 (function() {
@@ -266,76 +297,6 @@ describe('utilities', function() {
       // have a default because an empty string is still a string.
       assert.equal(utils.validate({a_string: ''}, no_defaults_schema).a_string,
           undefined);
-    });
-
-    it('should execute only the last method', function(done) {
-
-      var track = [],
-          delayTask = utils.buildDelayedTask();
-
-      delayTask.setEmptyDelayValid(true);
-      try {
-
-        delayTask.delay(function() {
-          // no-op
-        }, null);
-
-      } catch (e) {
-        assert.isTrue(false, 'should NOT fail here');
-
-      }
-
-      delayTask.setEmptyDelayValid(false);
-
-      try {
-
-        delayTask.delay(function() {
-          track.push('error');
-        }, null);
-
-        assert.isTrue(false, 'should fail here');
-
-      } catch (e) {
-        assert.equal('The timeout should be bigger than 0', e);
-
-      }
-
-      try {
-        delayTask.delay(function() {
-          track.push('error');
-        }, 0);
-
-        assert.isTrue(false, 'should fail here');
-      } catch (e) {
-        assert.equal('The timeout should be bigger than 0', e);
-
-      }
-
-      try {
-        delayTask.delay(function() {
-          track.push('error');
-        }, -1);
-
-        assert.isTrue(false, 'should fail here');
-      } catch (e) {
-        assert.equal('The timeout should be bigger than 0', e);
-
-      }
-
-      delayTask.delay(function() {
-        track.push('a');
-      }, 50);
-      delayTask.delay(function() {
-        track.push('b');
-      }, 50);
-      delayTask.delay(function() {
-        track.push('c');
-      }, 1);
-
-      setTimeout(function() {
-        assert.equal('c', track.join(''));
-        done();
-      }, 10);
     });
 
   });
