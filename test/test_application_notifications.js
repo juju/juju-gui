@@ -9,7 +9,7 @@ describe('juju application notifications', function() {
 
       _setTimeout, _viewsHighlightRow,
       ERR_EV = {
-          err: true
+        err: true
       },
       NO_OP = function() {};
 
