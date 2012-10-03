@@ -193,6 +193,11 @@ YUI.add('juju-notifications', function(Y) {
         },
 
         close: function() {
+          var container = this.get('container');
+          if (!container) {
+              return;
+          }
+
           var indicator = Y.one('#notify-indicator'),
               list = Y.one('#notify-list');
             
@@ -208,7 +213,7 @@ YUI.add('juju-notifications', function(Y) {
         },
         render: function() {
           NotificationsView.superclass.render.apply(this, arguments);
-          this.get('container').on('clickoutside', this.close);
+          this.get('container').on('clickoutside', this.close, this);
           return this;
         }
 

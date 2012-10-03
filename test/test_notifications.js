@@ -3,12 +3,68 @@
 describe('notifications', function() {
   var Y, juju, models, views;
 
+var default_env = {
+      'result': [
+        ['service', 'add', {
+          'charm': 'cs:precise/wordpress-6',
+          'id': 'wordpress',
+          'exposed': false
+        }],
+        ['service', 'add', {
+          'charm': 'cs:precise/mediawiki-3',
+          'id': 'mediawiki',
+          'exposed': false
+        }],
+        ['service', 'add', {
+          'charm': 'cs:precise/mysql-6',
+          'id': 'mysql'
+        }],
+        ['relation', 'add', {
+          'interface': 'reversenginx',
+          'scope': 'global',
+          'endpoints':
+           [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
+          'id': 'relation-0000000000'
+        }],
+        ['relation', 'add', {
+          'interface': 'mysql',
+          'scope': 'global',
+          'endpoints':
+           [['mysql', {'role': 'server', 'name': 'db'}],
+            ['wordpress', {'role': 'client', 'name': 'db'}]],
+          'id': 'relation-0000000001'
+        }],
+        ['machine', 'add', {
+          'agent-state': 'running',
+          'instance-state': 'running',
+          'id': 0,
+          'instance-id': 'local',
+          'dns-name': 'localhost'
+        }],
+        ['unit', 'add', {
+          'machine': 0,
+          'agent-state': 'started',
+          'public-address': '192.168.122.113',
+          'id': 'wordpress/0'
+        }],
+        ['unit', 'add', {
+          'machine': 0,
+          'agent-state': 'error',
+          'public-address': '192.168.122.222',
+          'id': 'mysql/0'
+        }]
+      ],
+      'op': 'delta'
+    };
+
+
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'juju-models',
       'juju-views',
       'juju-gui',
       'juju-env',
+      'node-event-simulate',
       'juju-tests-utils'],
 
     function(Y) {
@@ -170,60 +226,7 @@ describe('notifications', function() {
           container: container,
           viewContainer: container
         });
-    var environment_delta = {
-      'result': [
-        ['service', 'add', {
-          'charm': 'cs:precise/wordpress-6',
-          'id': 'wordpress',
-          'exposed': false
-        }],
-        ['service', 'add', {
-          'charm': 'cs:precise/mediawiki-3',
-          'id': 'mediawiki',
-          'exposed': false
-        }],
-        ['service', 'add', {
-          'charm': 'cs:precise/mysql-6',
-          'id': 'mysql'
-        }],
-        ['relation', 'add', {
-          'interface': 'reversenginx',
-          'scope': 'global',
-          'endpoints':
-           [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
-          'id': 'relation-0000000000'
-        }],
-        ['relation', 'add', {
-          'interface': 'mysql',
-          'scope': 'global',
-          'endpoints':
-           [['mysql', {'role': 'server', 'name': 'db'}],
-            ['wordpress', {'role': 'client', 'name': 'db'}]],
-          'id': 'relation-0000000001'
-        }],
-        ['machine', 'add', {
-          'agent-state': 'running',
-          'instance-state': 'running',
-          'id': 0,
-          'instance-id': 'local',
-          'dns-name': 'localhost'
-        }],
-        ['unit', 'add', {
-          'machine': 0,
-          'agent-state': 'started',
-          'public-address': '192.168.122.113',
-          'id': 'wordpress/0'
-        }],
-        ['unit', 'add', {
-          'machine': 0,
-          'agent-state': 'error',
-          'public-address': '192.168.122.222',
-          'id': 'mysql/0'
-        }]
-      ],
-      'op': 'delta'
-    };
-
+    var environment_delta = default_env;
 
     var notifications = app.db.notifications,
         view = new views.NotificationsView({
@@ -321,4 +324,41 @@ describe('notifications', function() {
        notice.get('title').should.equal('Problem with mysql/2');
        notice.get('message').should.equal('');
      });
+
+
+   it.only('should open on click and close on clickoutside', function(done) {
+       var container = Y.Node.create(
+           '<div id="test" style="display: none" class="container"></div>'),
+       app = new Y.juju.App({
+         container: container,
+         viewContainer: container
+       }),
+       notifications = app.db.notifications,
+       view = new views.NotificationsView({
+         container: container,
+         notifications: notifications,
+         app: app,
+         env: app.env}).render(), 
+       indicator;
+
+       Y.one('body').append(container);
+       app.views.notifications.instance = view;
+       app.dispatch();
+       indicator = container.one('#notify-indicator');
+
+       app.env.dispatch_result(default_env);
+       view.render();
+
+       indicator.simulate('click');
+       view.render();
+       indicator.ancestor().hasClass('open').should.equal(true);           
+
+       container.simulate('click');
+       view.render();
+       indicator.ancestor().hasClass('open').should.equal(false);
+
+       container.remove();
+       done();
+   });
+             
 });
