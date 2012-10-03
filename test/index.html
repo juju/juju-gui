@@ -40,8 +40,8 @@
             if (!m || !resource.fullpath) {
               continue
             }
-            // resource.fullpath = resource.fullpath.replace('/\//', '../app/', 1);
-            resource.fullpath = '../app/' + resource.fullpath;
+            resource.fullpath = resource.fullpath.replace(
+              '/juju-ui/', '../app/', 1);
          }
      }
      // Load before test runner
