@@ -93,6 +93,28 @@ YUI.add('juju-view-environment', function(Y) {
                 self.removeSVGClass('.service-control-panel.active', 'active');
               });
 
+        // Drop-shadow filter
+        var filter = vis.append('defs')
+          .append('filter')
+          .attr('id', 'svg-drop-shadow')
+          .attr('height', '130%')
+          .attr('width', '130%');
+        filter.append('feOffset')
+          .attr('in', 'SourceGraphic')
+          .attr('result', 'offOut')
+          .attr('dx', 1)
+          .attr('dy', 1);
+        filter.append('feColorMatrix')
+          .attr('in', 'offOut')
+          .attr('result', 'colorOut')
+          .attr('type', 'matrix')
+          .attr('values',
+              '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.4 0');
+        filter.append('feBlend')
+          .attr('in', 'SourceGraphic')
+          .attr('in2', 'colorOut')
+          .attr('mode', 'normal');
+
           // Bind visualization resizing on window resize.
           Y.on('windowresize', function() {
             self.setSizesFromViewport();
@@ -141,9 +163,19 @@ YUI.add('juju-view-environment', function(Y) {
             if (existing) {
               service.pos = existing.pos;
             }
-            this.service_boxes[service.id] = service;
-          }, this);
-
+            service.margins(service.subordinate ? 
+              {
+                top: 0.05,
+                bottom: 0.1,
+                left: 0.084848,
+                right: 0.084848} :
+              {
+                top: 0,
+                bottom: 0.1667,
+                left: 0.086758,
+                right: 0.086758});
+                this.service_boxes[service.id] = service;
+              }, this);
           this.rel_pairs = this.processRelations(relations);
 
           // Nodes are mapped by modelId tuples.
@@ -321,6 +353,7 @@ YUI.add('juju-view-environment', function(Y) {
               link = d3.select(this);
 
           link
+                .attr('filter', 'url(#svg-drop-shadow)')
                 .attr('x1', s[0])
                 .attr('y1', s[1])
                 .attr('x2', t[0])

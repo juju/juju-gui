@@ -506,7 +506,7 @@ YUI.add('juju-view-utils', function(Y) {
    * directly as attributes.
    */
   function BoundingBox() {
-    var x, y, w, h, value, modelId;
+    var x, y, w, h, value, modelId, boxMargins;
     function Box() {}
 
     Box.model = function(_) {
@@ -519,6 +519,14 @@ YUI.add('juju-view-utils', function(Y) {
       Y.mix(Box, _.getAttrs());
       return Box;
     };
+
+    Box.margins = function(_) {
+      if (!arguments.length) {
+        return boxMargins
+      }
+      boxMargins = _;
+      return this;
+    }
 
     Object.defineProperties(Box, {
       pos: {
@@ -563,17 +571,7 @@ YUI.add('juju-view-utils', function(Y) {
       // scale. This is calculated by taking the distance of the shadow from
       // the edge of the actual shape and calculating it as a percentage of
       // the total height of the shape.
-      var relation_margins = this.subordinate ?
-          {
-            top: 0.05,
-            bottom: 0.1,
-            left: 0.084848,
-            right: 0.084848} :
-          {
-            top: 0,
-            bottom: 0.1667,
-            left: 0.086758,
-            right: 0.086758};
+      var relation_margins = this.margins();
       return {
         top: [
           this.x + (this.w / 2),
