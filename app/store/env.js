@@ -138,6 +138,7 @@ YUI.add('juju-env', function(Y) {
 
     },
 
+    //XXX How to test the rpc exception notification for this function
     get_charm: function(charm_url, callback) {
       this._send_rpc({'op': 'get_charm', 'charm_url': charm_url}, callback);
     },
