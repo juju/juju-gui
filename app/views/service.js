@@ -416,26 +416,36 @@ YUI.add('juju-view-service', function(Y) {
             env.set_config(
                 service.get('id'),
                 new_values,
-                utils.buildRpcHandler({
-                  container: container,
-                  successHandler: function()  {
-                    var service = this.get('model'),
-                        env = this.get('env'),
-                        app = this.get('app');
-
-                    env.get_service(
-                        service.get('id'), Y.bind(app.load_service, app));
-                  },
-                  errorHandler: function() {
-                    container.one('#save-service-config')
-                      .removeAttribute('disabled');
-                  },
-                  scope: this}
-                )
+                Y.bind(this._doSetConfigCallback, {
+                  scope: this,
+                  container: container
+                })
             );
 
           } else {
             this.showErrors(errors);
+          }
+        },
+        
+        _doSetConfigCallback: function(ev) {
+        	var service = this.scope.get('model'),
+              env = this.scope.get('env'),
+              app = this.scope.get('app'),
+              db = this.scope.get('db');
+
+          if(ev.err) {
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Error setting service config',
+                  message: 'Service name: ' + ev.service_name,
+                  level: 'error'
+                })
+            );
+            this.container.one('#save-service-config')
+              .removeAttribute('disabled');
+
+          } else {
+            env.get_service(service.get('id'), Y.bind(app.load_service, app));	
           }
         }
       });
