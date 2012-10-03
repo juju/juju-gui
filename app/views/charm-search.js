@@ -49,12 +49,12 @@ YUI.add('juju-charm-search', function(Y) {
       this.updateList(null);
       // It delays the search request until the last key is pressed.
       this.delay(
-        Y.bind(function() {
-          this.findCharms(field.get('value'), Y.bind(function(charms) {
-            this.updateList(charms);
-          }, this));
-        }, this),
-        this.get('searchDelay'));
+          Y.bind(function() {
+            this.findCharms(field.get('value'), Y.bind(function(charms) {
+              this.updateList(charms);
+            }, this));
+          }, this),
+          this.get('searchDelay'));
     },
     showDetails: function(ev) {
       ev.preventDefault();
@@ -72,7 +72,7 @@ YUI.add('juju-charm-search', function(Y) {
             new models.Notification({
               title: 'Name already used: ' + name,
               message: 'The service\'s default name is already in ' +
-                       'use. Please configure another.',
+                  'use. Please configure another.',
               level: 'info'
             })
         );
@@ -179,7 +179,7 @@ YUI.add('juju-charm-search', function(Y) {
         charmsSearchPanel = new CharmCollectionView(
               { container: charmsSearchPanelNode,
                 app: app,
-                searchDelay: testing? 0 : _searchDelay,
+                searchDelay: testing ? 0 : _searchDelay,
                 charmStore: charmStore }),
         panels =
               { charms: charmsSearchPanel},
