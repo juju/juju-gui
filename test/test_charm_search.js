@@ -193,7 +193,7 @@ describe('charm search', function() {
        deployed.should.equal(true);
      });
 
-  it('must not deploy a charm for an existing service when the button is clicked',
+  it('must not deploy a charm for an existing service when deploy is clicked',
      function() {
        var deployed = false,
            showCharmCalled = false,
