@@ -162,7 +162,7 @@ YUI.add('juju-charm-search', function(Y) {
     },
     showCharm: function(url) {
       var app = this.get('app');
-      app.navigate('/charms/' + url);
+      app.navigate(url);
     }
   });
 
