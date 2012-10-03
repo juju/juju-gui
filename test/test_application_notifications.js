@@ -166,8 +166,8 @@ describe('juju application notifications', function() {
            '1', 'The system didnt show the alert');
      });
 
-  it('should show notification for "add_relation" exceptions' +
-      ' (environment view)', function() {
+  it('should show notification for "add_relation" and "remove_relation"' +
+      ' exceptions (environment view)', function() {
        var view = new views.environment({
          db: db,
          container: viewContainer}).render();
@@ -179,6 +179,22 @@ describe('juju application notifications', function() {
        assert.equal(
            applicationContainer.one('#notify-indicator').getHTML().trim(),
            '1', 'The system didnt show the alert');
+
+       view._doRemoveRelationCallback.apply({
+         scope: view,
+         view: {
+           removeSVGClass: function() {}
+         },
+         confirmButton: {
+           set: function() {}
+         }
+       }, [{
+         err: true
+       }]);
+
+       assert.equal(
+           applicationContainer.one('#notify-indicator').getHTML().trim(),
+           '2', 'The system didnt show the alert');
      });
 
 
