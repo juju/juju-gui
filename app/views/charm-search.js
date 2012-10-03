@@ -102,7 +102,7 @@ YUI.add('juju-charm-search', function(Y) {
         }
       });
     },
-    // Create a data structrure friendly to the view
+    // Create a data structure friendly to the view
     normalizeCharms: function(charms) {
       var hash = {};
       Y.each(charms, function(charm) {

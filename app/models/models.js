@@ -60,9 +60,22 @@ YUI.add('juju-models', function(Y) {
         valueFn: function(name) {
           var match = this.parse_charm_id();
           if (match) {
-                        return match[3] + '/' + match[4];
+            return match[3] + '/' + match[4];
           }
           return undefined;
+        }
+      },
+      details_url: {
+        valueFn: function() {
+          var name = this.get('name'),
+              parts = name.split('/'),
+              prefix;
+          if (parts.length == 2) {
+            prefix = 'charms/';
+          } else {
+            prefix = '~';
+          }
+          return '/charms/' + prefix + name + '/json';
         }
       },
       url: {},
