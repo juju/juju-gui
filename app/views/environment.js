@@ -141,9 +141,19 @@ YUI.add('juju-view-environment', function(Y) {
             if (existing) {
               service.pos = existing.pos;
             }
+            service.margins(service.subordinate ?
+                {
+                  top: 0.05,
+                  bottom: 0.1,
+                  left: 0.084848,
+                  right: 0.084848} :
+                {
+                  top: 0,
+                  bottom: 0.1667,
+                  left: 0.086758,
+                  right: 0.086758});
             this.service_boxes[service.id] = service;
           }, this);
-
           this.rel_pairs = this.processRelations(relations);
 
           // Nodes are mapped by modelId tuples.
