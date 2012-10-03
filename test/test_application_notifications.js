@@ -64,37 +64,56 @@ describe('juju application notifications', function() {
     window.setTimeout = _setTimeout;
   });
 
-  it('should show notification for "add_unit" exceptions', function() {
-    var view = new views.service({
-      container: viewContainer,
-      app: {
-        getModelURL: function() {
-          return 'my url';
-        }
-      },
-      db: db,
-      env: {
-        add_unit: function(serviceId, delta, callback) {
-          callback({
-            err: true
-          });
-        }
-      },
-      model: {
-        getAttrs: function() {},
-        get: function(key) {
-          if ('unit_count' === key) {
-            return 1;
-          }
-          return null;
-        }
-      },
-      querystring: {}
-    }).render();
+  it('should show notification for "add_unit" and "remove_units" exceptions',
+      function() {
+       var view = new views.service({
+         container: viewContainer,
+         app: {
+           getModelURL: function() {
+             return 'my url';
+           }
+         },
+         db: db,
+         env: {
+           add_unit: function(serviceId, delta, callback) {
+             callback({
+               err: true
+             });
+           },
+           remove_units: function(param, callback) {
+             callback({
+               err: true
+             });
+           }
+         },
+         model: {
+           getAttrs: function() {},
+           get: function(key) {
+             if ('unit_count' === key) {
+               return 2;
+             }
+             return null;
+           }
+         },
+         querystring: {}
+       }).render();
 
-    view._modifyUnits(2);
-    assert.equal(applicationContainer.one('#notify-indicator').getHTML().trim(),
-        '1', 'The system didnt show the alert');
-  });
+       db.units.get_units_for_service = function() {
+         return [{
+           id: 1
+         }];
+       };
+
+       view._modifyUnits(3);
+       assert.equal(
+           applicationContainer.one('#notify-indicator').getHTML().trim(),
+           '1', 'The system didnt show the alert');
+
+       view._modifyUnits(1);
+       assert.equal(
+           applicationContainer.one('#notify-indicator').getHTML().trim(),
+           '2', 'The system didnt show the alert');
+
+     });
 
 });
