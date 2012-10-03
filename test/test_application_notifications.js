@@ -14,7 +14,8 @@ describe('juju application notifications', function() {
       'juju-views',
       'juju-gui',
       'juju-env',
-      'juju-tests-utils'],
+      'juju-tests-utils',
+      'node-event-simulate'],
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
@@ -117,6 +118,55 @@ describe('juju application notifications', function() {
 
      });
 
+  it('should show notification for "remove_units" exceptions' +
+      ' (unit view)',
+      function() {
+       var view = new views.unit({
+         container: viewContainer,
+         app: {
+           getModelURL: function() {
+             return 'my url';
+           }
+         },
+         db: db,
+         env: {
+           remove_units: function(param, callback) {
+             callback({
+               err: true,
+               unit_names: ['aaa']
+             });
+           }
+         },
+         unit: {},
+         querystring: {}
+       });
+
+       // Used my unit.js inside the "render" function
+       db.services.getById = function() {
+         // Mock service
+         return {
+           get: function(key) {
+             if (key === 'loaded') {
+               return true;
+             }
+             return null;
+           }
+         };
+       };
+
+       view.render();
+
+       view.confirmRemoved({
+         preventDefault: function() {}
+       });
+
+       view.remove_panel.footerNode.one('.btn-danger').simulate('click');
+       view.remove_panel.destroy();
+
+       assert.equal(
+           applicationContainer.one('#notify-indicator').getHTML().trim(),
+           '1', 'The system didnt show the alert');
+     });
 
   it('should show notification for "add_relation" exceptions' +
       ' (environment view)',
