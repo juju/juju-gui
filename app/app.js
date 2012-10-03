@@ -93,10 +93,10 @@ YUI.add('juju-gui', function(Y) {
     },
 
     initializer: function() {
-      // Update the on-screen environment name provided in the configuration
-      // (if any).
-      var environment_name = this.get('environment_name');
-      if (Y.Lang.isValue(environment_name)) {
+      // Update the on-screen environment name provided in the configuration or
+      // a default if none is configured.
+      var environment_name = this.get('environment_name') || 'Environment';
+      if (Y.Lang.isValue(Y.one('#environment-name'))) {
         Y.one('#environment-name').set('text', environment_name);
       }
 
