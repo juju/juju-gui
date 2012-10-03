@@ -70,7 +70,7 @@ YUI.add('juju-models', function(Y) {
           var name = this.get('name'),
               parts = name.split('/'),
               prefix;
-          if (parts.length == 2) {
+          if (parts.length === 2) {
             prefix = 'charms/';
           } else {
             prefix = '~';
