@@ -294,6 +294,8 @@ YUI.add('juju-view-service', function(Y) {
             })(),
             charm: this.renderable_charm(service.get('charm'), db)}
           ));
+
+          return this;
         }
 
       });

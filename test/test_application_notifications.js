@@ -66,8 +66,7 @@ describe('juju application notifications', function() {
   });
 
   it('should show notification for "add_unit" and "remove_units" exceptions' +
-      ' (service view)',
-      function() {
+      ' (service view)', function() {
        var view = new views.service({
          container: viewContainer,
          app: {
@@ -119,8 +118,7 @@ describe('juju application notifications', function() {
      });
 
   it('should show notification for "remove_units" exceptions' +
-      ' (unit view)',
-      function() {
+      ' (unit view)', function() {
        var view = new views.unit({
          container: viewContainer,
          app: {
@@ -169,8 +167,7 @@ describe('juju application notifications', function() {
      });
 
   it('should show notification for "add_relation" exceptions' +
-      ' (environment view)',
-      function() {
+      ' (environment view)', function() {
        var view = new views.environment({
          db: db,
          container: viewContainer}).render();
@@ -184,5 +181,51 @@ describe('juju application notifications', function() {
            '1', 'The system didnt show the alert');
      });
 
+
+  it('should show notification for "add_relation" exceptions' +
+      ' (environment view)', function() {
+       var view = new views.environment({
+         db: db,
+         container: viewContainer}).render();
+
+       view.service_click_actions._doAddRelationCallback.apply(view, [{
+         err: true
+       }]);
+
+       assert.equal(
+           applicationContainer.one('#notify-indicator').getHTML().trim(),
+           '1', 'The system didnt show the alert');
+     });
+
+  it('should show notification for "get_service" exceptions' +
+      ' (service constraints view)', function() {
+
+       var view = new views.service_constraints({
+         db: db,
+         model: {
+           getAttrs: function() {},
+           get: function(key) {
+             if ('constraints' === key) {
+               return {};
+             }
+             return null;
+           }
+         },
+         env: {
+           set_constraints: function(id, values, callback) {
+             callback({
+               err: true
+             });
+           }
+         },
+         container: viewContainer}).render();
+
+       view.updateConstraints();
+
+       assert.equal(
+           applicationContainer.one('#notify-indicator').getHTML().trim(),
+           '1', 'The system didnt show the alert');
+
+     });
 
 });
