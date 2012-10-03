@@ -362,7 +362,7 @@ YUI.add('juju-view-environment', function(Y) {
             return d.subordinate;
           })
             .append('image')
-            .attr('xlink:href', '/assets/svgs/sub_module.svg')
+            .attr('xlink:href', '/juju-ui/assets/svgs/sub_module.svg')
             .attr('width', function(d) {
                     return d.w;
                   })
@@ -375,7 +375,7 @@ YUI.add('juju-view-environment', function(Y) {
             return !d.subordinate;
           })
             .append('image')
-            .attr('xlink:href', '/assets/svgs/service_module.svg')
+            .attr('xlink:href', '/juju-ui/assets/svgs/service_module.svg')
             .attr('width', function(d) {
                     return d.w;
                   })
@@ -482,7 +482,7 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Add a mask svg
           status_chart.append('image')
-            .attr('xlink:href', '/assets/svgs/service_health_mask.svg')
+            .attr('xlink:href', '/juju-ui/assets/svgs/service_health_mask.svg')
             .attr('width', function(d) {
                 return d.w / 3;
               })
