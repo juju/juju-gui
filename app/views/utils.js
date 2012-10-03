@@ -522,11 +522,11 @@ YUI.add('juju-view-utils', function(Y) {
 
     Box.margins = function(_) {
       if (!arguments.length) {
-        return boxMargins
+        return boxMargins;
       }
       boxMargins = _;
-      return this;
-    }
+      return Box;
+    };
 
     Object.defineProperties(Box, {
       pos: {
