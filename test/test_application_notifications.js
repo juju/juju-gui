@@ -8,12 +8,12 @@ describe('juju application notifications', function() {
       db,
 
       _setTimeout, _viewsHighlightRow;
-  
-  function assertNotificationNumber (value) {
+
+  function assertNotificationNumber(value) {
     assert.equal(
         applicationContainer.one('#notify-indicator').getHTML().trim(),
         value, 'The system didnt show the alert');
-  } 
+  }
 
   before(function() {
     Y = YUI(GlobalConfig).use([
@@ -176,7 +176,7 @@ describe('juju application notifications', function() {
        view.remove_panel.destroy();
 
        assertNotificationNumber('1');
-       
+
        // Fake relation
        db.relations.getById = function() {
          return {name: ''};
@@ -244,7 +244,7 @@ describe('juju application notifications', function() {
        }]);
 
        assertNotificationNumber('1');
-       
+
        view.service_click_actions.destroyService.apply(
            view.service_click_actions, [
          // Fake m object
@@ -346,11 +346,11 @@ describe('juju application notifications', function() {
        view.saveConfig();
 
        assertNotificationNumber('1');
-       
+
        view.exposeService();
 
        assertNotificationNumber('2');
-       
+
        view.unexposeService();
 
        assertNotificationNumber('3');
