@@ -72,7 +72,18 @@ describe('Application', function() {
 
     // charms also require a mapping but only a name, not a function
     app.getModelURL(wp_charm).should.equal('/charms/' + wp_charm.get('name'));
+  });
 
+  it('should display the configured environment name', function() {
+//      app = new Y.juju.App({
+//              container: container,
+//              viewContainer: container
+//  });
+    var environment_name = 'This is the environment name, deal with it.';
+
+    app.set('environment_name',environment_name);
+    app.render();
+    assert.equal(Y.one('#environment-name').get('text'), environment_name);
   });
 
 
