@@ -148,6 +148,7 @@ YUI.add('juju-env', function(Y) {
           {'op': 'get_service', 'service_name': service_name}, callback);
     },
 
+    // XXX Wait for the new charm deploy page
     deploy: function(charm_url, service_name, config, callback) {
       console.log(charm_url, service_name, config);
       this._send_rpc(

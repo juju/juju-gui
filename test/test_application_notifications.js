@@ -228,11 +228,14 @@ describe('juju application notifications', function() {
 
      });
 
-  it('should show notification for "get_service" exceptions' +
-      ' (service config view)', function() {
+  it('should show notification for "get_service", "expose" and "unexpose"' +
+      ' exceptions (service config view)', function() {
 
        var view = new views.service_config({
          db: db,
+         app: {
+           getModelURL: function() {}
+         },
          model: {
            getAttrs: function() {},
            get: function(key) {
@@ -247,6 +250,16 @@ describe('juju application notifications', function() {
          },
          env: {
            set_config: function(id, newValues, callback) {
+             callback({
+               err: true
+             });
+           },
+           expose: function(id, callback) {
+             callback({
+               err: true
+             });
+           },
+           unexpose: function(id, callback) {
              callback({
                err: true
              });
@@ -274,6 +287,19 @@ describe('juju application notifications', function() {
            applicationContainer.one('#notify-indicator').getHTML().trim(),
            '1', 'The system didnt show the alert');
 
+       view.exposeService();
+
+       assert.equal(
+           applicationContainer.one('#notify-indicator').getHTML().trim(),
+           '2', 'The system didnt show the alert');
+
+       view.unexposeService();
+
+       assert.equal(
+           applicationContainer.one('#notify-indicator').getHTML().trim(),
+           '3', 'The system didnt show the alert');
      });
+
+
 
 });
