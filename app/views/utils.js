@@ -571,27 +571,27 @@ YUI.add('juju-view-utils', function(Y) {
       // scale. This is calculated by taking the distance of the shadow from
       // the edge of the actual shape and calculating it as a percentage of
       // the total height of the shape.
-      var relation_margins = this.margins();
+      var margins = this.margins();
       return {
         top: [
           this.x + (this.w / 2),
-          this.y + (relation_margins.top * this.h)
+          this.y + (margins.top * this.h)
         ],
         right: [
-          this.x + this.w - (relation_margins.right * this.w),
+          this.x + this.w - (margins.right * this.w),
           this.y + (this.h / 2) - (
-              relation_margins.bottom * this.h / 2 -
-              relation_margins.top * this.h / 2)
+              margins.bottom * this.h / 2 -
+              margins.top * this.h / 2)
         ],
         bottom: [
           this.x + (this.w / 2),
-          this.y + this.h - (relation_margins.bottom * this.h)
+          this.y + this.h - (margins.bottom * this.h)
         ],
         left: [
-          this.x + (relation_margins.left * this.w),
+          this.x + (margins.left * this.w),
           this.y + (this.h / 2) - (
-              relation_margins.bottom * this.h / 2 -
-              relation_margins.top * this.h / 2)
+              margins.bottom * this.h / 2 -
+              margins.top * this.h / 2)
         ]
       };
     };
