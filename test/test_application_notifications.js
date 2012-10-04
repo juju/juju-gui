@@ -396,7 +396,7 @@ describe('juju application notifications', function() {
         // Executiong the "juju.AppConfig.load_charm" function instead.
         // The "juju.AppConfig.load_charm" is the one that will trigger the
         // notification process.
-        juju.AppConfig.load_charm.apply(this, arguments);
+        juju.App.prototype.load_charm.apply(this, arguments);
       },
       dispatch: NO_OP
     };
@@ -406,7 +406,7 @@ describe('juju application notifications', function() {
     // test it. I moved the config object of the "juju.App" to an external
     // object. This way I can call the function I want without the need of
     // handling all the initialization issues of the App class.
-    juju.AppConfig._prefetch_service.apply(mockView, [{
+    juju.App.prototype._prefetch_service.apply(mockView, [{
       get: NO_OP,
       set: NO_OP
     }]);

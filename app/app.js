@@ -12,7 +12,7 @@ YUI.add('juju-gui', function(Y) {
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views');
 
-  var JUJU_GUI_CONFIG = {
+  var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     views: {
       environment: {
         type: 'juju.views.environment',
@@ -73,18 +73,18 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /*
-       * Data driven behaviors
-       *  This is a placehold for real behaviors associated with
-       *  DOM Node  data-* attributes.
-       */
+     * Data driven behaviors
+     *  This is a placehold for real behaviors associated with
+     *  DOM Node  data-* attributes.
+     */
     behaviors: {
       timestamp: {
         callback: function() {
           var self = this;
           Y.later(6000, this, function(o) {
             Y.one('body')
-                .all('[data-timestamp]')
-                .each(function(node) {
+              .all('[data-timestamp]')
+              .each(function(node) {
                   node.setHTML(views.humanizeTimestamp(
                       node.getAttribute('data-timestamp')));
                 });
@@ -300,8 +300,7 @@ YUI.add('juju-gui', function(Y) {
       this.showView('charm', {
         charm_data_url: charm_url,
         charm_store: this.charm_store,
-        env: this.env,
-        db: this.db
+        env: this.env
       });
     },
 
@@ -313,12 +312,12 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /*
-       * Persistent Views
-       *
-       * 'notifications' is a preserved views that remains rendered on all main
-       * views.  we manually create an instance of this view and insert it into
-       * the App's view metadata.
-       */
+     * Persistent Views
+     *
+     * 'notifications' is a preserved views that remains rendered on all main
+     * views.  we manually create an instance of this view and insert it into
+     * the App's view metadata.
+     */
     show_notifications_view: function(req, res, next) {
       var view = this.getViewInfo('notifications'),
           instance = view.instance;
@@ -344,11 +343,11 @@ YUI.add('juju-gui', function(Y) {
         {render: true});
       } else {
         /* The current impl makes extensive use of
-           * event handlers which are not being properly rebound
-           * when the view is attached.  There is a workable pattern
-           * to enable this but we have to land the basics of this branch
-           * first.
-           */
+         * event handlers which are not being properly rebound
+         * when the view is attached.  There is a workable pattern
+         * to enable this but we have to land the basics of this branch
+         * first.
+         */
         this.showView('environment', {db: this.db, env: this.env}, {
           update: false,
           render: true,
@@ -391,7 +390,6 @@ YUI.add('juju-gui', function(Y) {
           'loaded': true,
           'prefetch': false});
       }
-
       this.dispatch();
     },
 
@@ -423,35 +421,34 @@ YUI.add('juju-gui', function(Y) {
           'revision': charm_data.revision,
           'loaded': true});
       }
-
       this.dispatch();
     },
 
     /*
-       *  Object routing support
-       *  This is a utility that helps map from model objects to routes
-       *  defined on the App object.
-       *
-       * getModelURL(model, [intent])
-       *    :model: the model to determine a route url for
-       *    :intent: (optional) the name of an intent associated with
-       *             a route. When more than one route can match a model
-       *             the route w/o an intent is matched when this attribute
-       *             is missing. If intent is provided as a string it
-       *             is matched to the 'intent' attribute specified on the
-       *             route. This is effectively a tag.
-       *
-       * To support this we suppliment to our routing information with
-       * additional attributes as follows:
-       *
-       *   :model: model.name (required)
-       *   :reverse_map: (optional) route_path_key: str
-       *          reverse map can map :id  to the name of attr on model
-       *          if no value is provided its used directly as attribute name
-       *   :intent: (optional) A string named intent for which this route
-       *           should be used. This can be used to select which subview
-       *           is selected to resolve a models route.
-       */
+     *  Object routing support
+     *  This is a utility that helps map from model objects to routes
+     *  defined on the App object.
+     *
+     * getModelURL(model, [intent])
+     *    :model: the model to determine a route url for
+     *    :intent: (optional) the name of an intent associated with
+     *             a route. When more than one route can match a model
+     *             the route w/o an intent is matched when this attribute
+     *             is missing. If intent is provided as a string it
+     *             is matched to the 'intent' attribute specified on the
+     *             route. This is effectively a tag.
+     *
+     * To support this we suppliment to our routing information with
+     * additional attributes as follows:
+     *
+     *   :model: model.name (required)
+     *   :reverse_map: (optional) route_path_key: str
+     *          reverse map can map :id  to the name of attr on model
+     *          if no value is provided its used directly as attribute name
+     *   :intent: (optional) A string named intent for which this route
+     *           should be used. This can be used to select which subview
+     *           is selected to resolve a models route.
+     */
     getModelURL: function(model, intent) {
       var matches = [],
           attrs = (model instanceof Y.Model) ? model.getAttrs() : model,
@@ -520,7 +517,7 @@ YUI.add('juju-gui', function(Y) {
       // This is a whitelist to spare the extra juggling
       if (options.model) {
         var r = this._routes,
-            idx = r.length - 1;
+                idx = r.length - 1;
         if (r[idx].path === path) {
           // Combine our options with the default
           // computed route information
@@ -533,10 +530,7 @@ YUI.add('juju-gui', function(Y) {
       }
     }
 
-  };
-  Y.namespace('juju').AppConfig = JUJU_GUI_CONFIG;
-
-  var JujuGUI = Y.Base.create('juju-gui', Y.App, [], JUJU_GUI_CONFIG, {
+  }, {
     ATTRS: {
       routes: {
         value: [
