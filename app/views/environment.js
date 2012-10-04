@@ -226,8 +226,6 @@ YUI.add('juju-view-environment', function(Y) {
                 (self.service_click_actions.show_service)(service, this, self);
               })
             .call(drag)
-              /*.transition()
-            .duration(500)*/
             .attr('transform', function(d) {
                 return d.translateStr();});
 
@@ -240,9 +238,6 @@ YUI.add('juju-view-environment', function(Y) {
                 // TODO: update the service_boxes
                 // removing the bound data
               })
-              /*.transition()
-            .duration(500)
-            .attr('x', 0)*/
             .remove();
 
           function updateLinks() {
@@ -574,8 +569,7 @@ YUI.add('juju-view-environment', function(Y) {
                     .select('.relation');
                 var img = d3.select(this.parentNode)
                     .select('image');
-                var context = this.parentNode.parentNode.parentNode,
-                    service = self.serviceForBox(d);
+                var context = this.parentNode.parentNode.parentNode;
 
                 // Start the line at our image
                 dragline.attr('x1', parseInt(img.attr('x'), 10) + 16)
@@ -584,7 +578,7 @@ YUI.add('juju-view-environment', function(Y) {
 
                 // Start the add-relation process.
                 self.service_click_actions
-                .addRelationStart(service, context, self);
+                .addRelationStart(d, context, self);
               })
               .on('drag', function() {
                 // Rubberband our potential relation line.
