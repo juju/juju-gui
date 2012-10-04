@@ -402,10 +402,10 @@ describe('juju application notifications', function() {
     };
 
     // I need to test if a callback to "get_charm" will trigger a notification
-    // in case of failure. We dont need to have the application running to
-    // test it. I moved the config object of the "juju.App" to an external
-    // object. This way I can call the function I want without the need of
-    // handling all the initialization issues of the App class.
+    // in case of failure. We an application running to test it. Therefore,
+    // I use the prototype object of the "juju.App". This way I can call the
+    // function I want without the need of handling all the initialization
+    // issues of the App class.
     juju.App.prototype._prefetch_service.apply(mockView, [{
       get: NO_OP,
       set: NO_OP
