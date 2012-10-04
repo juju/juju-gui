@@ -347,11 +347,11 @@ YUI.add('juju-gui', function(Y) {
      * display from the environment code (a separation of concerns violation)
      * we update it here.
      */
-    show_provider_type: function(req, res, next) {
+    show_provider_type: function(ignored, ignored_harder, next) {
       var provider_type = this.env.get('provider_type'),
           provider_node = Y.one('#provider-type');
       if (Y.Lang.isValue(provider_type)) {
-        provider_node.set('text', ' on ' + provider_type);
+        provider_node.set('text', 'on ' + provider_type);
       }
       next();
     },

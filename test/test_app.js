@@ -46,7 +46,9 @@ describe('Application', function() {
         .set('id', 'test-container')
         .addClass('container')
         .append(Y.Node.create('<span/>')
-          .set('id', 'environment-name'));
+          .set('id', 'environment-name'))
+        .append(Y.Node.create('<span/>')
+          .set('id', 'provider-type'));
     app = new Y.juju.App(
         { container: container,
           viewContainer: container});
@@ -104,6 +106,21 @@ describe('Application', function() {
     assert.equal(
         container.one('#environment-name').get('text'),
         'Environment');
+  });
+
+  it('should show the provider type, when available', function() {
+    var provider_type = 'excellent provider';
+    app.env.set('provider_type', provider_type);
+    // Since no provider type has been communicated from the server yet, none
+    // is displayed.
+    assert.equal(
+        container.one('#provider-type').get('text'),
+        '');
+    app.show_provider_type(undefined, undefined, function() {});
+    // The provider type has been displayed.
+    assert.equal(
+        container.one('#provider-type').get('text'),
+        'on ' + provider_type);
   });
 
 });
