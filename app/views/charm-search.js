@@ -80,8 +80,19 @@ YUI.add('juju-charm-search', function(Y) {
         app.fire('showCharm', {charm_data_url: info_url});
         return;
       }
+      // Disable the deploy button.
+      var button = ev.currentTarget,
+          div = button.ancestor('div'),
+          backgroundColor = 'lightgrey',
+          oldColor = div.getStyle('backgroundColor');
+
+      button.set('disabled', true);
+      div.setStyle('backgroundColor', backgroundColor);
+
       app.env.deploy(url, name, {}, function(ev) {
+        button.set('disabled', false);
         if (ev.err) {
+          div.setStyle('backgroundColor', 'pink');
           console.log(url + ' deployment failed');
           app.db.notifications.add(
               new models.Notification({
@@ -100,6 +111,12 @@ YUI.add('juju-charm-search', function(Y) {
               })
           );
         }
+        div.transition(
+          { easing: 'ease-out', duration: 3, backgroundColor: oldColor},
+          function() {
+            // Revert to following normal stylesheet rules.
+            div.setStyle('backgroundColor', '');
+          });
       });
     },
     // Create a data structure friendly to the view
