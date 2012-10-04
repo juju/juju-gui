@@ -329,24 +329,22 @@ var default_env = {
    it.only('should open on click and close on clickoutside', function(done) {
        var container = Y.Node.create(
            '<div id="test" style="display: none" class="container"></div>'),
-       app = new Y.juju.App({
-         container: container,
-         viewContainer: container
-       }),
-       notifications = app.db.notifications,
+       notifications = new models.NotificationList(),
+       env = new juju.Environment(),
        view = new views.NotificationsView({
          container: container,
          notifications: notifications,
-         app: app,
-         env: app.env}).render(), 
-       indicator;
-
-       Y.one('body').append(container);
-       app.views.notifications.instance = view;
-       app.dispatch();
+         env: env}).render(), 
+         indicator;
+         
+       Y.one("body").append(container);
+       view.attachEvents();
+       notifications.add({title: 'testing', 'level': 'error'});
        indicator = container.one('#notify-indicator');
+       // Manually bind event.
+//       indicator.on('click', view.notifyToggle, view);
+       Y.delegate('click', view.notifyToggle, container, '#notify-indicator');
 
-       app.env.dispatch_result(default_env);
        view.render();
 
        indicator.simulate('click');
@@ -357,7 +355,7 @@ var default_env = {
        view.render();
        indicator.ancestor().hasClass('open').should.equal(false);
 
-       container.remove();
+       container.destroy();
        done();
    });
              

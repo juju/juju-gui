@@ -40,8 +40,8 @@ YUI.add('juju-notifications', function(Y) {
               el = container.one('#' + target),
               parent = el.ancestor();
 
-          Y.namespace('juju.views').CharmSearchPopup
-            .getInstance().hide();
+//          Y.namespace('juju.views').CharmSearchPopup
+//            .getInstance().hide();
 
           if (notifications.size() === 0) {
             return;
@@ -110,7 +110,6 @@ YUI.add('juju-notifications', function(Y) {
         render: function() {
           var container = this.get('container'),
               env = this.get('env'),
-              app = this.get('app'),
               connected = env.get('connected'),
               notifications = this.get('notifications'),
               state,
@@ -192,14 +191,35 @@ YUI.add('juju-notifications', function(Y) {
           });
         },
 
+        open: function() {
+          var container = this.get('container');
+          if (!container) {
+              return;
+          }
+
+          var indicator = container.one('#notify-indicator'),
+              list = container.one('#notify-list');
+            
+          if (!indicator) {
+            return;
+          }
+          var parent = indicator.ancestor();
+
+          if (parent && !parent.hasClass('open')) {
+            indicator.ancestor().addClass('open');
+            list.show();
+            indicator.addClass('active');
+          }
+        },
+
         close: function() {
           var container = this.get('container');
           if (!container) {
               return;
           }
 
-          var indicator = Y.one('#notify-indicator'),
-              list = Y.one('#notify-list');
+          var indicator = container.one('#notify-indicator'),
+              list = container.one('#notify-list');
             
           if (!indicator) {
             return;
@@ -209,8 +229,10 @@ YUI.add('juju-notifications', function(Y) {
           if (parent && parent.hasClass('open')) {
             indicator.ancestor().removeClass('open');
             list.hide();
+            indicator.removeClass('active');
           }
         },
+
         render: function() {
           NotificationsView.superclass.render.apply(this, arguments);
           this.get('container').on('clickoutside', this.close, this);
