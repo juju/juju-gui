@@ -112,11 +112,11 @@ YUI.add('juju-charm-search', function(Y) {
           );
         }
         div.transition(
-          { easing: 'ease-out', duration: 3, backgroundColor: oldColor},
-          function() {
-            // Revert to following normal stylesheet rules.
-            div.setStyle('backgroundColor', '');
-          });
+            { easing: 'ease-out', duration: 3, backgroundColor: oldColor},
+            function() {
+              // Revert to following normal stylesheet rules.
+              div.setStyle('backgroundColor', '');
+            });
       });
     },
     // Create a data structure friendly to the view
