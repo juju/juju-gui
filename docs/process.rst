@@ -1,13 +1,23 @@
+=====================
 Juju UI Process Notes
----------------------
+=====================
 
 Checklist for Reviewing
 =======================
 
 - Get an idea of what the branch is doing from the diff.
-- Run ``make test`` and confirm that tests pass. (This step can be removed once we have tarmac.)
-- Run ``make lint`` and confirm that the output is clean. (This step can be removed once we have tarmac.)
-- Run ``python improv.py -f sample.json`` in the rapi-delta juju branch, and run ``make server`` with the juju-ui branch.  QA the changes if appropriate, and then do some exploratory testing to make sure everything seems to work.  For extra points, try a few different browsers.  TODO: Document some manual QA scripts for some of the basic paths.
+- Run ``make test`` and confirm that tests pass. (This step can be removed once
+  we have tarmac.)
+- Run ``make lint`` and confirm that the output is clean. (This step can be
+  removed once we have tarmac.)
+
+- Run ``python improv.py -f sample.json`` in the rapi-delta juju branch,
+  and run ``make server`` with the juju-ui branch.  QA the changes if
+  appropriate, and then do some exploratory testing to make sure
+  everything seems to work.  For extra points, try a few different
+  browsers.  TODO: Document some manual QA scripts for some of the basic
+  paths.
+
 - Review the diff, including notes from the above as appropriate.
 
 Checklist for Running a Daily Meeting
@@ -15,7 +25,8 @@ Checklist for Running a Daily Meeting
 
 Move quickly if possible. :-)
 
-First part: Where are we right now?  We move over the kanban board roughly right to left.
+First part: Where are we right now?  We move over the kanban board roughly
+right to left.
 
 - Review Done Done cards.  For each card...
 
@@ -39,7 +50,9 @@ Second part: what are we going to do?
 Checklist for Running a Weekly Retrospective
 ============================================
 
-Do not go over allotted time.  Try to move quickly to discuss all desired topics while they are still fresh on everyone's mind.  Consider letting interested parties discuss later.
+Do not go over allotted time.  Try to move quickly to discuss all
+desired topics while they are still fresh on everyone's mind.  Consider
+letting interested parties discuss later.
 
 - Briefly review where we are in project plan.
 
@@ -47,6 +60,7 @@ Do not go over allotted time.  Try to move quickly to discuss all desired topics
   - Review last week's goals.  Did we meet them?
   - Review availability and capacity of team members for the upcoming week.
   - Set goals for next week.  Mark cards with goals on kanban board with "high".
+
 - Review cards in "Weekly review" lane.
 
   - If a card with a problem (e.g. active more than 24 hours), why did it happen?  Consider applying five whys or similar analysis.
@@ -60,6 +74,7 @@ Suggested sources for topic cards:
   - Debugging tricks?
   - Communication tricks?
   - Checklists? Processes?
+
 - Any nice successes?
 
   - Can you attribute your success to anything beyond the innate brilliance of yourself and your coworkers?
@@ -70,6 +85,7 @@ Suggested sources for topic cards:
     - Are they blocked?
     - Are we spinning our wheels?
     - How long is too long?
+
   - Are we not delivering value incrementally?
   - Are we not collaborating?
   - Did we duplicate any work?
@@ -77,6 +93,7 @@ Suggested sources for topic cards:
 
     - Did we misunderstand the technical requirements, the goal, or a process?
     - Was the ordering of tasks that we chose broken?
+
 - Can we learn from it?
 
   - Checklist?
