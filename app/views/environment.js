@@ -141,9 +141,19 @@ YUI.add('juju-view-environment', function(Y) {
             if (existing) {
               service.pos = existing.pos;
             }
+            service.margins(service.subordinate ?
+                {
+                  top: 0.05,
+                  bottom: 0.1,
+                  left: 0.084848,
+                  right: 0.084848} :
+                {
+                  top: 0,
+                  bottom: 0.1667,
+                  left: 0.086758,
+                  right: 0.086758});
             this.service_boxes[service.id] = service;
           }, this);
-
           this.rel_pairs = this.processRelations(relations);
 
           // Nodes are mapped by modelId tuples.
@@ -362,7 +372,7 @@ YUI.add('juju-view-environment', function(Y) {
             return d.subordinate;
           })
             .append('image')
-            .attr('xlink:href', '/assets/svgs/sub_module.svg')
+            .attr('xlink:href', '/juju-ui/assets/svgs/sub_module.svg')
             .attr('width', function(d) {
                     return d.w;
                   })
@@ -375,7 +385,7 @@ YUI.add('juju-view-environment', function(Y) {
             return !d.subordinate;
           })
             .append('image')
-            .attr('xlink:href', '/assets/svgs/service_module.svg')
+            .attr('xlink:href', '/juju-ui/assets/svgs/service_module.svg')
             .attr('width', function(d) {
                     return d.w;
                   })
@@ -482,7 +492,7 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Add a mask svg
           status_chart.append('image')
-            .attr('xlink:href', '/assets/svgs/service_health_mask.svg')
+            .attr('xlink:href', '/juju-ui/assets/svgs/service_health_mask.svg')
             .attr('width', function(d) {
                 return d.w / 3;
               })
@@ -604,7 +614,7 @@ YUI.add('juju-view-environment', function(Y) {
               });
           add_rel.append('image')
         .attr('xlink:href',
-              '/assets/svgs/Build_button.svg')
+              '/juju-ui/assets/svgs/Build_button.svg')
         .attr('class', 'cp-button')
         .attr('x', function(d) {
                 return d.w + 8;
@@ -629,7 +639,7 @@ YUI.add('juju-view-environment', function(Y) {
             .show_service(service, context, self);
               });
           view_service.append('image')
-        .attr('xlink:href', '/assets/svgs/view_button.svg')
+        .attr('xlink:href', '/juju-ui/assets/svgs/view_button.svg')
         .attr('class', 'cp-button')
         .attr('x', -40)
         .attr('y', function(d) {
@@ -651,7 +661,7 @@ YUI.add('juju-view-environment', function(Y) {
             .destroyServiceConfirm(service, context, self);
               });
           destroy_service.append('image')
-        .attr('xlink:href', '/assets/svgs/destroy_button.svg')
+        .attr('xlink:href', '/juju-ui/assets/svgs/destroy_button.svg')
         .attr('class', 'cp-button')
         .attr('x', function(d) {
                 return (d.w / 2) - 16;

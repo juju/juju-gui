@@ -326,9 +326,9 @@ var default_env = {
      });
 
 
-   it.only('should open on click and close on clickoutside', function(done) {
+   it('should open on click and close on clickoutside', function(done) {
        var container = Y.Node.create(
-           '<div id="test" style="display: none" class="container"></div>'),
+           '<div id="test-container" style="display: none" class="container"/>'),
        notifications = new models.NotificationList(),
        env = new juju.Environment(),
        view = new views.NotificationsView({
@@ -338,25 +338,80 @@ var default_env = {
          indicator;
          
        Y.one("body").append(container);
-       view.attachEvents();
        notifications.add({title: 'testing', 'level': 'error'});
        indicator = container.one('#notify-indicator');
-       // Manually bind event.
-//       indicator.on('click', view.notifyToggle, view);
-       Y.delegate('click', view.notifyToggle, container, '#notify-indicator');
-
-       view.render();
 
        indicator.simulate('click');
-       view.render();
        indicator.ancestor().hasClass('open').should.equal(true);           
 
-       container.simulate('click');
-       view.render();
+       Y.one('body').simulate('click');
        indicator.ancestor().hasClass('open').should.equal(false);
 
-       container.destroy();
+       container.remove();
        done();
    });
              
+});
+
+
+describe('changing notifications to words', function() {
+  var Y, juju;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        ['juju-notification-controller'],
+        function(Y) {
+          juju = Y.namespace('juju');
+          done();
+        });
+  });
+
+  it('should correctly translate notification operations into English',
+     function() {
+       assert.equal(juju._changeNotificationOpToWords('add'), 'created');
+       assert.equal(juju._changeNotificationOpToWords('remove'), 'removed');
+       assert.equal(juju._changeNotificationOpToWords('not-an-op'), 'changed');
+     });
+});
+
+describe('relation notifications', function() {
+  var Y, juju;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        ['juju-notification-controller'],
+        function(Y) {
+          juju = Y.namespace('juju');
+          done();
+        });
+  });
+
+  it('should produce reasonable titles', function() {
+    assert.equal(
+        juju._relationNotifications.title(undefined, 'add'),
+        'Relation created');
+    assert.equal(
+        juju._relationNotifications.title(undefined, 'remove'),
+        'Relation removed');
+  });
+
+  it('should generate messages about two-party relations', function() {
+    var changeData =
+        { endpoints:
+              [['endpoint0', {name: 'relation0'}],
+                ['endpoint1', {name: 'relation1'}]]};
+    assert.equal(
+        juju._relationNotifications.message(undefined, 'add', changeData),
+        'Relation between endpoint0 (relation type "relation0") and ' +
+        'endpoint1 (relation type "relation1") was created');
+  });
+
+  it('should generate messages about one-party relations', function() {
+    var changeData =
+        { endpoints:
+              [['endpoint1', {name: 'relation1'}]]};
+    assert.equal(
+        juju._relationNotifications.message(undefined, 'add', changeData),
+        'Relation with endpoint1 (relation type "relation1") was created');
+  });
 });

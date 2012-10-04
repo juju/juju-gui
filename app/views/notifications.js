@@ -40,8 +40,10 @@ YUI.add('juju-notifications', function(Y) {
               el = container.one('#' + target),
               parent = el.ancestor();
 
-//          Y.namespace('juju.views').CharmSearchPopup
-//            .getInstance().hide();
+          // This can't belong here. If anything this would be an event.
+          // This level of coupling is wrong and interferes with testing. 
+          //Y.namespace('juju.views').CharmSearchPopup
+          //.getInstance().hide();
 
           if (notifications.size() === 0) {
             return;
