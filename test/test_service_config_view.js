@@ -139,6 +139,9 @@
 
       var ev = {err: true},
           view = new ServiceConfigView({
+            app: {
+              getModelURL: function() {}
+            },
             container: container,
             model: service,
             db: db,

@@ -20,7 +20,6 @@ YUI.add('juju-view-service', function(Y) {
     unexposeService: function() {
       var service = this.get('model'),
           env = this.get('env');
-
       env.unexpose(service.get('id'),
           Y.bind(this._unexposeServiceCallback, this));
     },
@@ -29,14 +28,14 @@ YUI.add('juju-view-service', function(Y) {
       var service = this.get('model'),
           db = this.get('db'),
           app = this.get('app');
-
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
               title: 'Error un-exposing service',
               message: 'Service name: ' + ev.service_name,
               level: 'error',
-              link: app.getModelURL(service)
+              link: app.getModelURL(service),
+              modelId: service
             })
         );
       } else {
@@ -63,7 +62,8 @@ YUI.add('juju-view-service', function(Y) {
               title: 'Error exposing service',
               message: 'Service name: ' + ev.service_name,
               level: 'error',
-              link: app.getModelURL(service)
+              link: app.getModelURL(service),
+              modelId: service
             })
         );
       } else {
@@ -222,11 +222,11 @@ YUI.add('juju-view-service', function(Y) {
             .set('disabled', 'disabled');
           env.set_constraints(service.get('id'),
               values,
-              Y.bind(this._doSetConstraintsCallback, this, container)
+              Y.bind(this._setConstraintsCallback, this, container)
           );
         },
 
-        _doSetConstraintsCallback: function(container, ev) {
+        _setConstraintsCallback: function(container, ev) {
           var service = this.get('model'),
               env = this.get('env'),
               app = this.get('app'),
@@ -237,7 +237,9 @@ YUI.add('juju-view-service', function(Y) {
                 new models.Notification({
                   title: 'Error setting service constraints',
                   message: 'Service name: ' + ev.service_name,
-                  level: 'error'
+                  level: 'error',
+                  link: app.getModelURL(service) + 'constraints',
+                  modelId: service
                 })
             );
             container.one('#save-service-constraints')
@@ -446,7 +448,9 @@ YUI.add('juju-view-service', function(Y) {
                 new models.Notification({
                   title: 'Error setting service config',
                   message: 'Service name: ' + ev.service_name,
-                  level: 'error'
+                  level: 'error',
+                  link: app.getModelURL(service) + 'config',
+                  modelId: service
                 })
             );
             container.one('#save-service-config')
@@ -553,6 +557,7 @@ YUI.add('juju-view-service', function(Y) {
 
     _destroyCallback: function(ev) {
       var db = this.get('db'),
+          app = this.get('app'),
           service = this.get('model'),
           service_id = service.get('id');
 
@@ -561,7 +566,9 @@ YUI.add('juju-view-service', function(Y) {
             new models.Notification({
               title: 'Error destroying service',
               message: 'Service name: ' + ev.service_name,
-              level: 'error'
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
             })
         );
       } else {
@@ -660,7 +667,8 @@ YUI.add('juju-view-service', function(Y) {
               title: 'Error adding unit',
               message: ev.num_units + ' units',
               level: 'error',
-              link: app.getModelURL(service)
+              link: app.getModelURL(service),
+              modelId: service
             })
         );
       } else {
@@ -689,7 +697,8 @@ YUI.add('juju-view-service', function(Y) {
               title: 'Error removing unit',
               message: 'Units: ' + ev.unit_names,
               level: 'error',
-              link: app.getModelURL(service)
+              link: app.getModelURL(service),
+              modelId: service
             })
         );
       } else {

@@ -191,7 +191,7 @@ YUI.add('juju-env', function(Y) {
     set_constraints: function(service, constraints, callback) {
       this._send_rpc({
         op: 'set_constraints',
-        service_name: service,
+        service_name: 'asdsad',
         constraints: constraints}, callback);
     },
 

@@ -257,6 +257,9 @@
                return null;
              }
            },
+           app: {
+             getModelURL: NO_OP
+           },
            env: {
              set_constraints: function(id, values, callback) {
                callback(ERR_EV);
@@ -297,11 +300,12 @@
                callback(ERR_EV);
              },
              unexpose: function(id, callback) {
-               callback(ERR_EV);
+               callback({err: true, service_name: '1234'});
              }
            },
            container: viewContainer});
 
+         db.services.getById = NO_OP;
          db.charms.getById = function() {
            return {
              getAttrs: NO_OP,
