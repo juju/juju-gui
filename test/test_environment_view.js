@@ -103,8 +103,7 @@
     });
 
     afterEach(function(done) {
-      container.remove();
-      container.destroy();
+      container.remove(true);
       db.destroy();
       env._txn_callbacks = {};
       conn.messages = [];

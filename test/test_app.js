@@ -45,7 +45,7 @@ describe('Application', function() {
       .appendChild(Y.Node.create('<div/>'))
         .set('id', 'test-container')
         .addClass('container')
-        .append(Y.Node.create('<span>/')
+        .append(Y.Node.create('<span/>')
           .set('id', 'environment-name'));
     app = new Y.juju.App(
         { container: container,
@@ -55,8 +55,7 @@ describe('Application', function() {
   });
 
   afterEach(function(done) {
-    container.remove();
-    container.destroy();
+    container.remove(true);
     done();
   });
 
@@ -99,7 +98,6 @@ describe('Application', function() {
   });
 
   it('should show a generic environment name if none configured', function() {
-    app.set('environment_name', undefined);
     app = new Y.juju.App(
         { container: container,
           viewContainer: container});

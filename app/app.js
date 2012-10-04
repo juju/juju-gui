@@ -95,9 +95,11 @@ YUI.add('juju-gui', function(Y) {
     initializer: function() {
       // Update the on-screen environment name provided in the configuration or
       // a default if none is configured.
-      var environment_name = this.get('environment_name') || 'Environment';
-      if (Y.Lang.isValue(Y.one('#environment-name'))) {
-        Y.one('#environment-name').set('text', environment_name);
+      var environment_name = this.get('environment_name') || 'Environment',
+          environment_node = Y.one('#environment-name');
+      // Some tests do not fully populate the DOM, so we check to be sure.
+      if (Y.Lang.isValue(environment_node)) {
+        environment_node.set('text', environment_name);
       }
 
       // Create a client side database to store state.
@@ -339,6 +341,21 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
+    /* Display the provider type.
+     *
+     * The provider type arrives asynchronously.  Instead of updating the
+     * display from the environment code (a separation of concerns violation)
+     * we update it here.
+     */
+    show_provider_type: function(req, res, next) {
+      var provider_type = this.env.get('provider_type'),
+          provider_node = Y.one('#provider-type');
+      if (Y.Lang.isValue(provider_type)) {
+        provider_node.set('text', '(' + 'OpenStack' + ')');
+      }
+      next();
+    },
+
     show_environment: function(req, res, next) {
       var view = this.getViewInfo('environment'),
           instance = view.instance;
@@ -516,6 +533,7 @@ YUI.add('juju-gui', function(Y) {
       routes: {
         value: [
           { path: '*', callback: 'show_notifications_view'},
+          { path: '*', callback: 'show_provider_type'},
           { path: '/charms/', callback: 'show_charm_collection'},
           { path: '/charms/*charm_url',
             callback: 'show_charm',
