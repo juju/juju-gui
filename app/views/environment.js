@@ -26,95 +26,95 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         sceneEvents: {
-            // Service Related 
-            '.service': {
-                click: 'serviceClick',
-                dblclick: 'serviceDblClick'
+          // Service Related
+          '.service': {
+            click: 'serviceClick',
+            dblclick: 'serviceDblClick'
+          },
+          '.subordinateservice': {
+            click: 'serviceClick',
+            dblclick: 'serviceDblClick'
+          },
+          '.service-borer': {
+            mouseover: function(d, self) {
+              if ((d3.event.relatedTarget &&
+                  d3.event.relatedTarget.nodeName === 'rect') &&
+                  self.hasSVGClass(this, 'selectable-service')) {
+                self.set('potential_drop_point_service', d);
+                self.set('potential_drop_point_rect', this);
+                self.addSVGClass(this, 'hover');
+              }
             },
-            '.subordinateservice': {
-                click: 'serviceClick',
-              dblclick: 'serviceDblClick'
-            },
-            '.service-borer': {
-                mouseover: function(d, self) {
-                    if ((d3.event.relatedTarget &&
-                         d3.event.relatedTarget.nodeName === 'rect') &&
-                        self.hasSVGClass(this, 'selectable-service')) {
-                        self.set('potential_drop_point_service', d);
-                        self.set('potential_drop_point_rect', this);
-                        self.addSVGClass(this, 'hover');
-                    }
-                },
-                mouseout: function(d, self) {
-                    if (d3.event.relatedTarget.nodeName === 'rect' &&
-                        self.hasSVGClass(this, 'hover')) {
-                        self.set('potential_drop_point_service', null);
-                        self.set('potential_drop_point_rect', null);
-                        self.removeSVGClass(this, 'hover');
-                    }
-                }
-            },
-            '.unit-count': {
-                mouseover: function(d, self) {
-                    d3.select(this).attr('class', 'unit-count show-count');
-                },
-                mouseout: function(d, self) {
-                    d3.select(this).attr('class', 'unit-count hide-count');
-                }
-            },
-            // Menu/Controls
-            '.add-relation': {
-                click: function(d, self) {
-                    var context = Y.Node(this)
-                                      .ancestor('.service')
-                                      .getDOMNode(),
-                        service = self.serviceForBox(d);
-                    self.service_click_actions
-                        .toggleControlPanel(d, context, self);
-                    self.service_click_actions
-                        .addRelationStart(d, context, self);
-                }
-            },
-            '.view-service': {
-                click: function(d, self) {
-                    // Get the service element
-                    var context = Y.Node(this)
-                                      .ancestor('.service')
-                                      .getDOMNode(),
-                        service = self.serviceForBox(d);
-                    self.service_click_actions
-                        .toggleControlPanel(d, context, self);
-                    self.service_click_actions
-                        .show_service(service, context, self);
-                }
-            },
-            '.destroy-service': {
-                click: function(d, self) {
-                    // Get the service element
-                    var context = Y.Node(this)
-                                      .ancestor('.service')
-                                      .getDOMNode(),
-                        service = self.serviceForBox(d);
-                    self.service_click_actions
-                        .toggleControlPanel(d, context, self);
-                    self.service_click_actions
-                        .destroyServiceConfirm(service, context, self);
-                }
-            },
-
-            // Relation Related
-            '.rel-label': {
-                click: 'relationClick'
-            },
-            
-            // Canvas related
-            '#canvas rect:first-child': {
-                click: function(d, self) {
-                    self.removeSVGClass(
-                        '.service-control-panel.active', 'active');
-                }
+            mouseout: function(d, self) {
+              if (d3.event.relatedTarget.nodeName === 'rect' &&
+                  self.hasSVGClass(this, 'hover')) {
+                self.set('potential_drop_point_service', null);
+                self.set('potential_drop_point_rect', null);
+                self.removeSVGClass(this, 'hover');
+              }
             }
-            
+          },
+          '.unit-count': {
+            mouseover: function(d, self) {
+              d3.select(this).attr('class', 'unit-count show-count');
+            },
+            mouseout: function(d, self) {
+              d3.select(this).attr('class', 'unit-count hide-count');
+            }
+          },
+          // Menu/Controls
+          '.add-relation': {
+            click: function(d, self) {
+              var context = Y.Node(this)
+                                      .ancestor('.service')
+                                      .getDOMNode(),
+                  service = self.serviceForBox(d);
+              self.service_click_actions
+                        .toggleControlPanel(d, context, self);
+              self.service_click_actions
+                        .addRelationStart(d, context, self);
+            }
+          },
+          '.view-service': {
+            click: function(d, self) {
+              // Get the service element
+              var context = Y.Node(this)
+                                      .ancestor('.service')
+                                      .getDOMNode(),
+                  service = self.serviceForBox(d);
+              self.service_click_actions
+                        .toggleControlPanel(d, context, self);
+              self.service_click_actions
+                        .show_service(service, context, self);
+            }
+          },
+          '.destroy-service': {
+            click: function(d, self) {
+              // Get the service element
+              var context = Y.Node(this)
+                                      .ancestor('.service')
+                                      .getDOMNode(),
+                  service = self.serviceForBox(d);
+              self.service_click_actions
+                        .toggleControlPanel(d, context, self);
+              self.service_click_actions
+                        .destroyServiceConfirm(service, context, self);
+            }
+          },
+
+          // Relation Related
+          '.rel-label': {
+            click: 'relationClick'
+          },
+
+          // Canvas related
+          '#canvas rect:first-child': {
+            click: function(d, self) {
+              self.removeSVGClass(
+                  '.service-control-panel.active', 'active');
+            }
+          }
+
         },
 
         initializer: function() {
@@ -225,98 +225,98 @@ YUI.add('juju-view-environment', function(Y) {
          * Inspired by View.attachEvents
          */
         attachSceneEvents: function(events) {
-            var container = this.get('container'),
-                self = this,
-                owns = Y.Object.owns,
-                selector,
-                name,
-                handlers, 
-                handler;
+          var container = this.get('container'),
+              self = this,
+              owns = Y.Object.owns,
+              selector,
+              name,
+              handlers,
+              handler;
 
-            function _bindEvent(name, handler, container, selector, context) {
-              // Call event handlers with:
-              //   this = DOMNode of currentTarget
-              //   handler(d, view)
-                var d3Adaptor = function(evt) {
-                  var selection = d3.select(
-                        evt.currentTarget.getDOMNode()),
+          function _bindEvent(name, handler, container, selector, context) {
+            // Call event handlers with:
+            //   this = DOMNode of currentTarget
+            //   handler(d, view)
+            var d3Adaptor = function(evt) {
+              var selection = d3.select(
+                  evt.currentTarget.getDOMNode()),
                       d = selection.data()[0];
-                      // This is a minor violation (extension)
-                      // of the interface, but suits us well.
-                      d3.event = evt;
-                      return handler.call(
-                      evt.currentTarget.getDOMNode(), d, context);
-                };
-                context._sceneEvents.push(
+              // This is a minor violation (extension)
+              // of the interface, but suits us well.
+              d3.event = evt;
+              return handler.call(
+                  evt.currentTarget.getDOMNode(), d, context);
+            };
+            context._sceneEvents.push(
                 Y.delegate(name, d3Adaptor, container, selector, context));
+          }
+
+          this.detachSceneEvents();
+          events = events || this.sceneEvents;
+
+          for (selector in events) {
+            if (!owns(events, selector)) {
+              continue;
             }
 
-            this.detachSceneEvents();
-            events = events || this.sceneEvents;
+            handlers = events[selector];
+            for (name in handlers) {
+              if (!owns(handlers, name)) {
+                continue;
+              }
 
-            for (selector in events) {
-                if (!owns(events, selector)) { 
-                    continue; 
-                }
+              handler = handlers[name];
+              if (typeof handler === 'string') {
+                handler = this[handler];
+              }
+              if (!handler) {
+                console.error(
+                    'No Event handler for',
+                    selector,
+                    name);
+                continue;
+              }
 
-                handlers = events[selector];
-                for (name in handlers) {
-                    if (!owns(handlers, name)) { 
-                        continue; 
-                    }
-
-                    handler = handlers[name];
-                    if (typeof handler === 'string') {
-                        handler = this[handler];
-                    }
-                    if (!handler) {
-                        console.error(
-                            'No Event handler for', 
-                            selector, 
-                            name);
-                        continue;
-                    }
-
-                 _bindEvent(name, handler, container, selector, this);
-                }
+              _bindEvent(name, handler, container, selector, this);
             }
-            return this;
+          }
+          return this;
         },
 
         detachSceneEvents: function() {
-            Y.each(this._sceneEvents, function (handle) {
-                    if (handle) {
-                        handle.detach();
-                    }
-            });
+          Y.each(this._sceneEvents, function(handle) {
+            if (handle) {
+              handle.detach();
+            }
+          });
 
-            this._sceneEvents = [];
-            return this;
+          this._sceneEvents = [];
+          return this;
         },
 
         serviceClick: function(d, self) {
-            // Ignore if we clicked on a control panel image.
-            if (self.hasSVGClass(d3.event.target, 'cp-button')) {
-                  return;
-            }
-            // Get the current click action
-            var curr_click_action = self.get('currentServiceClickAction');
-            // Fire the action named in the following scheme:
-            //   service_click_action.<action>
-            // with the service, the SVG node, and the view
-            // as arguments.
-            (self.service_click_actions[curr_click_action])(
+          // Ignore if we clicked on a control panel image.
+          if (self.hasSVGClass(d3.event.target, 'cp-button')) {
+            return;
+          }
+          // Get the current click action
+          var curr_click_action = self.get('currentServiceClickAction');
+          // Fire the action named in the following scheme:
+          //   service_click_action.<action>
+          // with the service, the SVG node, and the view
+          // as arguments.
+          (self.service_click_actions[curr_click_action])(
               d, this, self);
         },
 
         serviceDblClick: function(d, self) {
-            // Just show the service on double-click.
-            var service = self.serviceForBox(d);
-            (self.service_click_actions.show_service)(service, this, self);
+          // Just show the service on double-click.
+          var service = self.serviceForBox(d);
+          (self.service_click_actions.show_service)(service, this, self);
         },
 
-        relationClick: function(d, self) { 
-            self.removeRelationConfirm(d,this, self);
+        relationClick: function(d, self) {
+          self.removeRelationConfirm(d, this, self);
         },
 
         /*

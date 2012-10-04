@@ -286,30 +286,30 @@
                .size()
                .should.equal(3);
          service.next().simulate('click');
-           container.all('.selectable-service').size()
+         container.all('.selectable-service').size()
             .should.equal(0);
-    });
+       });
 
-    it('must be able to remove a relation between services', 
+    it('must be able to remove a relation between services',
         function() {
-            var view = new views.environment({
-                container: container,
-                db: db,
-                env: env}).render();
+         var view = new views.environment({
+           container: container,
+           db: db,
+           env: env}).render();
 
-            var relation = container.one('.rel-label'),
-                dialog_btn,
-                panel;
+         var relation = container.one('.rel-label'),
+         dialog_btn,
+         panel;
 
-            relation.simulate('click');
-            panel = Y.one('.yui3-panel');
-            dialog_btn = panel.one('.btn-danger');
-            dialog_btn.simulate('click');
-            container.all('.to-remove')
+         relation.simulate('click');
+         panel = Y.one('.yui3-panel');
+         dialog_btn = panel.one('.btn-danger');
+         dialog_btn.simulate('click');
+         container.all('.to-remove')
               .size()
               .should.equal(1);
-            view.get('rmrelation_dialog').hide();
-    });
+         view.get('rmrelation_dialog').hide();
+       });
 
     // TODO: This will be fully testable once we have specification on the
     // list view itself.  Skipped until then.
