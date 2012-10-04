@@ -506,7 +506,7 @@ YUI.add('juju-view-utils', function(Y) {
    * directly as attributes.
    */
   function BoundingBox() {
-    var x, y, w, h, value, modelId;
+    var x, y, w, h, value, modelId, boxMargins;
     function Box() {}
 
     Box.model = function(_) {
@@ -517,6 +517,14 @@ YUI.add('juju-view-utils', function(Y) {
 
       // Copy all the attrs from model to Box
       Y.mix(Box, _.getAttrs());
+      return Box;
+    };
+
+    Box.margins = function(_) {
+      if (!arguments.length) {
+        return boxMargins;
+      }
+      boxMargins = _;
       return Box;
     };
 
@@ -556,23 +564,35 @@ YUI.add('juju-view-utils', function(Y) {
      * Return the 50% points along each side as xy pairs
      */
     Box.getConnectors = function() {
-      // TODO - Since the service nodes have a shadow that takes up a bit of
+      // Since the service nodes have a shadow that takes up a bit of
       // space on the sides and bottom of the actual node itself, add a bit
       // of a margin to the actual connecting points. The margin is specified
       // as a percentage of the width or height, as those are affected by the
-      // scale.
-      /*
-      relation_margins = {
-        top: 0,
-        bottom: 0.1667,
-        left: 0.075758,
-        right: 0.075758};
-      */
+      // scale. This is calculated by taking the distance of the shadow from
+      // the edge of the actual shape and calculating it as a percentage of
+      // the total height of the shape.
+      var margins = this.margins();
       return {
-        top: [this.x + (this.w / 2), this.y],
-        right: [this.x + this.w, this.y + (this.h / 2)],
-        bottom: [this.x + (this.w / 2), this.y + this.h],
-        left: [this.x, this.y + (this.h / 2)]
+        top: [
+          this.x + (this.w / 2),
+          this.y + (margins.top * this.h)
+        ],
+        right: [
+          this.x + this.w - (margins.right * this.w),
+          this.y + (this.h / 2) - (
+              margins.bottom * this.h / 2 -
+              margins.top * this.h / 2)
+        ],
+        bottom: [
+          this.x + (this.w / 2),
+          this.y + this.h - (margins.bottom * this.h)
+        ],
+        left: [
+          this.x + (margins.left * this.w),
+          this.y + (this.h / 2) - (
+              margins.bottom * this.h / 2 -
+              margins.top * this.h / 2)
+        ]
       };
     };
 
