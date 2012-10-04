@@ -575,23 +575,23 @@ YUI.add('juju-view-utils', function(Y) {
       return {
         top: [
           this.x + (this.w / 2),
-          this.y + (margins.top * this.h)
+          this.y + (margins && (margins.top * this.h) || 0)
         ],
         right: [
-          this.x + this.w - (margins.right * this.w),
+          this.x + this.w - (margins && (margins.right * this.w) || 0),
           this.y + (this.h / 2) - (
-              margins.bottom * this.h / 2 -
-              margins.top * this.h / 2)
+              margins && (margins.bottom * this.h / 2 -
+                          margins.top * this.h / 2) || 0)
         ],
         bottom: [
           this.x + (this.w / 2),
-          this.y + this.h - (margins.bottom * this.h)
+          this.y + this.h - (margins && (margins.bottom * this.h) || 0)
         ],
         left: [
-          this.x + (margins.left * this.w),
+          this.x + (margins && (margins.left * this.w) || 0),
           this.y + (this.h / 2) - (
-              margins.bottom * this.h / 2 -
-              margins.top * this.h / 2)
+              margins && (margins.bottom * this.h / 2 -
+                          margins.top * this.h / 2) || 0)
         ]
       };
     };

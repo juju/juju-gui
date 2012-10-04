@@ -399,10 +399,23 @@
          b1.getXY().should.eql([0, 0]);
          b2.getWH().should.eql([100, 200]);
 
+         b1.margins({
+           top: 0,
+           bottom: 0,
+           right: 0,
+           left: 0
+         });
          b1.getNearestConnector([0, 0]);
 
          b1.getNearestConnector(b2).should
           .eql(b1.getConnectors().bottom);
+
+         b2.margins({
+           top: 0,
+           bottom: 0,
+           right: 0,
+           left: 0
+         });
          b2.getNearestConnector(b1).should
           .eql(b2.getConnectors().top);
 
