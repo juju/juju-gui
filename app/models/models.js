@@ -251,7 +251,10 @@ YUI.add('juju-models', function(Y) {
     ATTRS: {
       relation_id: {},
       type: {},
-      endpoints: {}
+      endpoints: {},
+      pending: {
+        value: false
+      }
     }
   });
   models.Relation = Relation;

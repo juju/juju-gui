@@ -311,6 +311,8 @@
          }).render();
          var service = container.one('.service'),
          add_rel = service.one('.add-relation'),
+         pending_rel_id = 'pending:' +
+         service.one('.name').getDOMNode().firstChild.nodeValue,
          after_evt;
          after_evt = service.after('click', function() {
            after_evt.detach();
@@ -322,6 +324,11 @@
            service.next().simulate('click');
          });
          service.next('.service').after('click', function() {
+           pending_rel_id += this.one('.name').getDOMNode()
+              .firstChild.nodeValue;
+           // There should be a pending relation in the DB now.
+           db.relations.getById(pending_rel_id).get('pending')
+              .should.equal(true);
            container.all('.selectable-service').size()
             .should.equal(0);
            done();
