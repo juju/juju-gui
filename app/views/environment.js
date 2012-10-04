@@ -32,7 +32,7 @@ YUI.add('juju-view-environment', function(Y) {
             },
             '.subordinateservice': {
                 click: 'serviceClick',
-                dblclick: 'serviceDblClick'
+              dblclick: 'serviceDblClick'
             }
         },
 
@@ -155,6 +155,24 @@ YUI.add('juju-view-environment', function(Y) {
                 handlers, 
                 handler;
 
+            function _bindEvent(name, handler, container, selector, context) {
+              // Call event handlers with:
+              //   this = DOMNode of currentTarget
+              //   handler(d, view)
+                var d3Adaptor = function(evt) {
+                  var selection = d3.select(
+                        evt.currentTarget.getDOMNode()),
+                      d = selection.data()[0];
+                      // This is a minor violation (extension)
+                      // of the interface, but suits us well.
+                      d3.event = evt;
+                      return handler.call(
+                      evt.currentTarget.getDOMNode(), d, context);
+                };
+                context._sceneEvents.push(
+                Y.delegate(name, d3Adaptor, container, selector, context));
+            }
+
             this.detachSceneEvents();
             events = events || this.sceneEvents;
 
@@ -180,24 +198,10 @@ YUI.add('juju-view-environment', function(Y) {
                             name);
                         continue;
                     }
-                    // Call event handlers with:
-                    //   this = DOMNode of currentTarget
-                    //   handler(d, view)
-                    var d3Adaptor = function(evt) {
-                        var selection = d3.select(
-                              evt.currentTarget.getDOMNode()),
-                            d = selection.data()[0];
-                            // This is a minor violation (extension)
-                            // of the interface, but suits us well.
-                            d3.event = evt;
-                            return handler.call(
-                            evt.currentTarget.getDOMNode(), d, this);
-                    };
-                    this._sceneEvents.push(
-                      Y.delegate(name, d3Adaptor, container, selector, this));
+
+                 _bindEvent(name, handler, container, selector, this);
                 }
             }
-
             return this;
         },
 
