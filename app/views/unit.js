@@ -117,10 +117,10 @@ YUI.add('juju-view-unit', function(Y) {
           unit = this.get('unit');
       ev.target.set('disabled', true);
       env.resolved(unit.id, null, false,
-                     Y.bind(this._doResolvedUnitCallback, this, ev.target));
+                     Y.bind(this._resolvedUnitCallback, this, ev.target));
     },
 
-    _doResolvedUnitCallback: function(button, ev) {
+    _resolvedUnitCallback: function(button, ev) {
       var unit = this.get('unit'),
           db = this.get('db'),
           app = this.get('app'),
@@ -132,7 +132,8 @@ YUI.add('juju-view-unit', function(Y) {
               title: 'Error resolving unit',
               message: 'Unit name: ' + ev.unit_name,
               level: 'error',
-              link: app.getModelURL(service)
+              link: app.getModelURL(service),
+              modelId: service
             })
         );
 
@@ -169,10 +170,10 @@ YUI.add('juju-view-unit', function(Y) {
       ev.target.set('disabled', true);
       env.remove_units(
           [unit.id],
-          Y.bind(this._doRemoveUnitCallback, this, ev.target));
+          Y.bind(this._removeUnitCallback, this, ev.target));
     },
 
-    _doRemoveUnitCallback: function(btn, ev) {
+    _removeUnitCallback: function(btn, ev) {
       var unit = this.get('unit'),
           db = this.get('db'),
           app = this.get('app'),
@@ -190,7 +191,8 @@ YUI.add('juju-view-unit', function(Y) {
                 return '';
               })(),
               level: 'error',
-              link: app.getModelURL(service)
+              link: app.getModelURL(service),
+              modelId: service
             })
         );
       } else {
