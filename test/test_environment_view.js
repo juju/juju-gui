@@ -155,39 +155,6 @@
         }
     );
 
-    // Ensure that we can add a relation
-    // SKIP: the add-relation-btn is going away
-    it.skip('must be able to add a relation between services',
-        function(done) {
-          var view = new views.environment({
-            container: container,
-            db: db,
-            env: env
-          }).render();
-          var add_relation = container.one('#add-relation-btn'),
-              service = container.one('.service');
-          add_relation.after('click', function() {
-            // view doesn't capture click event from test, so fire
-            // this manually
-            view.add_relation();
-            container.all('.selectable-service').size()
-                        .should.equal(3);
-            service.simulate('click');
-          });
-          service.after('click', function() {
-            container.all('.selectable-service').size()
-                        .should.equal(2);
-            service.next().simulate('click');
-          });
-          service.next().after('click', function() {
-            container.all('.selectable-service').size()
-                        .should.equal(0);
-            done();
-          });
-          add_relation.simulate('click');
-        }
-    );
-
     // Ensure that the zoom controls work
     it('must be able to zoom using controls', function(done) {
       var view = new views.environment({
@@ -303,7 +270,7 @@
     });
 
     it('must be able to add a relation from the control panel',
-       function(done) {
+       function() {
          var view = new views.environment({
             container: container,
             db: db,
@@ -312,44 +279,36 @@
          var service = container.one('.service'),
          add_rel = service.one('.add-relation'),
          after_evt;
-         after_evt = service.after('click', function() {
-           after_evt.detach();
-           add_rel.simulate('click');
-         });
-         add_rel.after('click', function() {
-           container.all('.selectable-service').size()
-            .should.equal(3);
-           service.next().simulate('click');
-         });
-         service.next('.service').after('click', function() {
+
+         service.simulate('click');
+         add_rel.simulate('click');
+         container.all('.selectable-service')
+               .size()
+               .should.equal(3);
+         service.next().simulate('click');
            container.all('.selectable-service').size()
             .should.equal(0);
-           done();
-         });
-         service.simulate('click');
-       }
-    );
+    });
 
-    it('must be able to remove a relation between services', function(done) {
-      var view = new views.environment({
-        container: container,
-        db: db,
-        env: env
-      }).render();
-      var relation = container.one('.rel-label'),
-          dialog_btn;
-      relation.after('click', function() {
-        var rel = this;
-        dialog_btn = Y.one('.btn-danger');
-        dialog_btn.after('click', function() {
-          container.all('.to-remove').size()
-            .should.equal(1);
-          view.get('rmrelation_dialog').hide();
-          done();
-        });
-        dialog_btn.simulate('click');
-      });
-      relation.simulate('click');
+    it('must be able to remove a relation between services', 
+        function() {
+            var view = new views.environment({
+                container: container,
+                db: db,
+                env: env}).render();
+
+            var relation = container.one('.rel-label'),
+                dialog_btn,
+                panel;
+
+            relation.simulate('click');
+            panel = Y.one('.yui3-panel');
+            dialog_btn = panel.one('.btn-danger');
+            dialog_btn.simulate('click');
+            container.all('.to-remove')
+              .size()
+              .should.equal(1);
+            view.get('rmrelation_dialog').hide();
     });
 
     // TODO: This will be fully testable once we have specification on the

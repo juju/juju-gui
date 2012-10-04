@@ -65,7 +65,9 @@ YUI.add('juju-view-environment', function(Y) {
             // Menu/Controls
             '.add-relation': {
                 click: function(d, self) {
-                    var context = this.parentNode.parentNode,
+                    var context = Y.Node(this)
+                                      .ancestor('.service')
+                                      .getDOMNode(),
                         service = self.serviceForBox(d);
                     self.service_click_actions
                         .toggleControlPanel(d, context, self);
@@ -76,7 +78,9 @@ YUI.add('juju-view-environment', function(Y) {
             '.view-service': {
                 click: function(d, self) {
                     // Get the service element
-                    var context = this.parentNode.parentNode,
+                    var context = Y.Node(this)
+                                      .ancestor('.service')
+                                      .getDOMNode(),
                         service = self.serviceForBox(d);
                     self.service_click_actions
                         .toggleControlPanel(d, context, self);
@@ -87,7 +91,9 @@ YUI.add('juju-view-environment', function(Y) {
             '.destroy-service': {
                 click: function(d, self) {
                     // Get the service element
-                    var context = this.parentNode.parentNode,
+                    var context = Y.Node(this)
+                                      .ancestor('.service')
+                                      .getDOMNode(),
                         service = self.serviceForBox(d);
                     self.service_click_actions
                         .toggleControlPanel(d, context, self);
