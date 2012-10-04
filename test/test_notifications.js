@@ -3,59 +3,59 @@
 describe('notifications', function() {
   var Y, juju, models, views;
 
-var default_env = {
-      'result': [
-        ['service', 'add', {
-          'charm': 'cs:precise/wordpress-6',
-          'id': 'wordpress',
-          'exposed': false
-        }],
-        ['service', 'add', {
-          'charm': 'cs:precise/mediawiki-3',
-          'id': 'mediawiki',
-          'exposed': false
-        }],
-        ['service', 'add', {
-          'charm': 'cs:precise/mysql-6',
-          'id': 'mysql'
-        }],
-        ['relation', 'add', {
-          'interface': 'reversenginx',
-          'scope': 'global',
-          'endpoints':
-           [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
-          'id': 'relation-0000000000'
-        }],
-        ['relation', 'add', {
-          'interface': 'mysql',
-          'scope': 'global',
-          'endpoints':
-           [['mysql', {'role': 'server', 'name': 'db'}],
-            ['wordpress', {'role': 'client', 'name': 'db'}]],
-          'id': 'relation-0000000001'
-        }],
-        ['machine', 'add', {
-          'agent-state': 'running',
-          'instance-state': 'running',
-          'id': 0,
-          'instance-id': 'local',
-          'dns-name': 'localhost'
-        }],
-        ['unit', 'add', {
-          'machine': 0,
-          'agent-state': 'started',
-          'public-address': '192.168.122.113',
-          'id': 'wordpress/0'
-        }],
-        ['unit', 'add', {
-          'machine': 0,
-          'agent-state': 'error',
-          'public-address': '192.168.122.222',
-          'id': 'mysql/0'
-        }]
-      ],
-      'op': 'delta'
-    };
+  var default_env = {
+    'result': [
+      ['service', 'add', {
+        'charm': 'cs:precise/wordpress-6',
+        'id': 'wordpress',
+        'exposed': false
+      }],
+      ['service', 'add', {
+        'charm': 'cs:precise/mediawiki-3',
+        'id': 'mediawiki',
+        'exposed': false
+      }],
+      ['service', 'add', {
+        'charm': 'cs:precise/mysql-6',
+        'id': 'mysql'
+      }],
+      ['relation', 'add', {
+        'interface': 'reversenginx',
+        'scope': 'global',
+        'endpoints':
+         [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
+        'id': 'relation-0000000000'
+      }],
+      ['relation', 'add', {
+        'interface': 'mysql',
+        'scope': 'global',
+        'endpoints':
+         [['mysql', {'role': 'server', 'name': 'db'}],
+          ['wordpress', {'role': 'client', 'name': 'db'}]],
+        'id': 'relation-0000000001'
+      }],
+      ['machine', 'add', {
+        'agent-state': 'running',
+        'instance-state': 'running',
+        'id': 0,
+        'instance-id': 'local',
+        'dns-name': 'localhost'
+      }],
+      ['unit', 'add', {
+        'machine': 0,
+        'agent-state': 'started',
+        'public-address': '192.168.122.113',
+        'id': 'wordpress/0'
+      }],
+      ['unit', 'add', {
+        'machine': 0,
+        'agent-state': 'error',
+        'public-address': '192.168.122.222',
+        'id': 'mysql/0'
+      }]
+    ],
+    'op': 'delta'
+  };
 
 
   before(function(done) {
@@ -232,7 +232,7 @@ var default_env = {
         view = new views.NotificationsView({
           container: container,
           notifications: notifications,
-          app: app, 
+          app: app,
           env: app.env}).render();
 
 
@@ -326,31 +326,31 @@ var default_env = {
      });
 
 
-   it('should open on click and close on clickoutside', function(done) {
-       var container = Y.Node.create(
-           '<div id="test-container" style="display: none" class="container"/>'),
-       notifications = new models.NotificationList(),
-       env = new juju.Environment(),
-       view = new views.NotificationsView({
-         container: container,
-         notifications: notifications,
-         env: env}).render(), 
-         indicator;
-         
-       Y.one("body").append(container);
-       notifications.add({title: 'testing', 'level': 'error'});
-       indicator = container.one('#notify-indicator');
+  it('should open on click and close on clickoutside', function(done) {
+    var container = Y.Node.create(
+        '<div id="test-container" style="display: none" class="container"/>'),
+        notifications = new models.NotificationList(),
+        env = new juju.Environment(),
+        view = new views.NotificationsView({
+          container: container,
+          notifications: notifications,
+          env: env}).render(),
+        indicator;
 
-       indicator.simulate('click');
-       indicator.ancestor().hasClass('open').should.equal(true);           
+    Y.one('body').append(container);
+    notifications.add({title: 'testing', 'level': 'error'});
+    indicator = container.one('#notify-indicator');
 
-       Y.one('body').simulate('click');
-       indicator.ancestor().hasClass('open').should.equal(false);
+    indicator.simulate('click');
+    indicator.ancestor().hasClass('open').should.equal(true);
 
-       container.remove();
-       done();
-   });
-             
+    Y.one('body').simulate('click');
+    indicator.ancestor().hasClass('open').should.equal(false);
+
+    container.remove();
+    done();
+  });
+
 });
 
 

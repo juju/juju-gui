@@ -41,7 +41,7 @@ YUI.add('juju-notifications', function(Y) {
               parent = el.ancestor();
 
           // This can't belong here. If anything this would be an event.
-          // This level of coupling is wrong and interferes with testing. 
+          // This level of coupling is wrong and interferes with testing
           //Y.namespace('juju.views').CharmSearchPopup
           //.getInstance().hide();
 
@@ -193,36 +193,15 @@ YUI.add('juju-notifications', function(Y) {
           });
         },
 
-        open: function() {
-          var container = this.get('container');
-          if (!container) {
-              return;
-          }
-
-          var indicator = container.one('#notify-indicator'),
-              list = container.one('#notify-list');
-            
-          if (!indicator) {
-            return;
-          }
-          var parent = indicator.ancestor();
-
-          if (parent && !parent.hasClass('open')) {
-            indicator.ancestor().addClass('open');
-            list.show();
-            indicator.addClass('active');
-          }
-        },
-
         close: function() {
           var container = this.get('container');
           if (!container) {
-              return;
+            return;
           }
 
           var indicator = container.one('#notify-indicator'),
               list = container.one('#notify-list');
-            
+
           if (!indicator) {
             return;
           }
