@@ -1,7 +1,7 @@
 'use strict';
 
 describe('juju application notifications', function() {
-  var Y, juju, models, views, applicationContainer, notificationsContainer, 
+  var Y, juju, models, views, applicationContainer, notificationsContainer,
       viewContainer, db, _setTimeout, _viewsHighlightRow, ERR_EV, NO_OP;
 
   function assertNotificationNumber(value) {
@@ -23,11 +23,11 @@ describe('juju application notifications', function() {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
     });
-    
+
     ERR_EV = {
       err: true
     };
-    NO_OP = function() {}      
+    NO_OP = function() {};
   });
 
   beforeEach(function() {
@@ -120,7 +120,7 @@ describe('juju application notifications', function() {
        view._modifyUnits(3);
        assertNotificationNumber('1');
 
-      // It triggers the "remove unit" logic
+       // It triggers the "remove unit" logic
        view._modifyUnits(1);
        assertNotificationNumber('2');
      });
@@ -314,7 +314,7 @@ describe('juju application notifications', function() {
          };
        };
        view.render();
-       
+
        view.saveConfig();
        assertNotificationNumber('1');
 
