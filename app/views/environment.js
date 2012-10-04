@@ -25,20 +25,36 @@ YUI.add('juju-view-environment', function(Y) {
           }
         },
 
+        sceneEvents: {
+            '.service': {
+                click: 'serviceClick',
+                dblclick: 'serviceDblClick'
+            },
+            '.subordinateservice': {
+                click: 'serviceClick',
+                dblclick: 'serviceDblClick'
+            }
+        },
+
         initializer: function() {
           console.log('View: Initialized: Env');
           this.publish('showService', {preventable: false});
 
           // Build a service.id -> BoundingBox map for services.
           this.service_boxes = {};
+
+          // Track events bound ot the canvas
+          this._sceneEvents = [];
         },
 
         render: function() {
-          console.log('View: Render: Env');
           var container = this.get('container');
           EnvironmentView.superclass.render.apply(this, arguments);
           container.setHTML(Templates.overview());
           this.svg = container.one('#overview');
+
+          // Setup delegated event handlers.
+          this.attachSceneEvents();
           this.buildScene();
           return this;
         },
@@ -87,11 +103,12 @@ YUI.add('juju-view-environment', function(Y) {
             .append('svg:g')
             .call(zoom)
             .append('g');
+
           vis.append('svg:rect')
-        .attr('fill', 'rgba(255,255,255,0)')
-        .on('click', function() {
-                self.removeSVGClass('.service-control-panel.active', 'active');
-              });
+                .attr('fill', 'rgba(255,255,255,0)')
+                .on('click', function() {
+                    self.removeSVGClass('.service-control-panel.active', 'active');
+                });
 
           // Bind visualization resizing on window resize.
           Y.on('windowresize', function() {
@@ -121,7 +138,101 @@ YUI.add('juju-view-environment', function(Y) {
         //   if (!this.svg.inDoc() || !this.svg.inRegion(target)) {
         //     target.append(this.svg);
         //   }
+        //   this.attachSceneEvents();
         // },
+
+        /*
+         * Bind declarative events to the root of the scene.
+         * This is both more efficient and easier to refresh.
+         * Inspired by View.attachEvents
+         */
+        attachSceneEvents: function(events) {
+            var container = this.get('container'),
+                self = this,
+                owns      = Y.Object.owns,
+                selector,
+                name,
+                handlers, 
+                handler;
+
+            this.detachSceneEvents();
+            events = events || this.sceneEvents;
+
+            for (selector in events) {
+                if (!owns(events, selector)) { 
+                    continue; 
+                }
+
+                handlers = events[selector];
+                for (name in handlers) {
+                    if (!owns(handlers, name)) { 
+                        continue; 
+                    }
+
+                    handler = handlers[name];
+                    if (typeof handler === 'string') {
+                        handler = this[handler];
+                    }
+                    if (!handler) {
+                        console.error(
+                            'No Event handler for', 
+                            selector, 
+                            name);
+                        continue;
+                    }
+                    // Call event handlers with:
+                    //   this = DOMNode of currentTarget
+                    //   handler(d, view)
+                    this._sceneEvents.push(
+                        Y.delegate(
+                            name, 
+                            function(evt) {
+                                var selection = d3.select(
+                                        evt.currentTarget.getDOMNode()),
+                                    d = selection.data()[0];
+                                // This is a minor violation (extension)
+                                // of the interface, but suits us well.
+                                d3.event = evt;
+                                return handler.call(
+                                    evt.currentTarget.getDOMNode(), d, this);
+                            }, container, selector, this));
+                }
+            }
+
+            return this;
+        },
+
+        detachSceneEvents: function() {
+            Y.each(this._sceneEvents, function (handle) {
+                    if (handle) {
+                        handle.detach();
+                    }
+            });
+
+            this._sceneEvents = [];
+            return this;
+        },
+
+        serviceClick: function(d, self) {
+            // Ignore if we clicked on a control panel image.
+            if (self.hasSVGClass(d3.event.target, 'cp-button')) {
+                  return;
+            }
+            // Get the current click action
+            var curr_click_action = self.get('currentServiceClickAction');
+            // Fire the action named in the following scheme:
+            //   service_click_action.<action>
+            // with the service, the SVG node, and the view
+            // as arguments.
+            (self.service_click_actions[curr_click_action])(
+              d, this, self);
+        },
+
+        serviceDblClick: function(d, self) {
+            // Just show the service on double-click.
+            var service = self.serviceForBox(d);
+            (self.service_click_actions.show_service)(service, this, self);
+        },
 
         /*
          * Sync view models with curent db.models.
@@ -205,26 +316,6 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('class', function(d) {
                     return (d.subordinate ? 'subordinate ' : '') + 'service';
                   })
-            .on('click', function(d) {
-                // Ignore if we clicked on a control panel image.
-                if (self.hasSVGClass(d3.event.target, 'cp-button')) {
-                  return;
-                }
-                // Get the current click action
-                var curr_click_action = self.get(
-                    'currentServiceClickAction');
-                // Fire the action named in the following scheme:
-                //   service_click_action.<action>
-                // with the service, the SVG node, and the view
-                // as arguments.
-                (self.service_click_actions[curr_click_action])(
-                    d, this, self);
-              })
-            .on('dblclick', function(d) {
-                // Just show the service on double-click.
-                var service = self.serviceForBox(d);
-                (self.service_click_actions.show_service)(service, this, self);
-              })
             .call(drag)
             .transition()
             .duration(500)
