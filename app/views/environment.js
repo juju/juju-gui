@@ -149,7 +149,7 @@ YUI.add('juju-view-environment', function(Y) {
         attachSceneEvents: function(events) {
             var container = this.get('container'),
                 self = this,
-                owns      = Y.Object.owns,
+                owns = Y.Object.owns,
                 selector,
                 name,
                 handlers, 
@@ -183,19 +183,18 @@ YUI.add('juju-view-environment', function(Y) {
                     // Call event handlers with:
                     //   this = DOMNode of currentTarget
                     //   handler(d, view)
+                    var d3Adaptor = function(evt) {
+                        var selection = d3.select(
+                              evt.currentTarget.getDOMNode()),
+                            d = selection.data()[0];
+                            // This is a minor violation (extension)
+                            // of the interface, but suits us well.
+                            d3.event = evt;
+                            return handler.call(
+                            evt.currentTarget.getDOMNode(), d, this);
+                    };
                     this._sceneEvents.push(
-                        Y.delegate(
-                            name, 
-                            function(evt) {
-                                var selection = d3.select(
-                                        evt.currentTarget.getDOMNode()),
-                                    d = selection.data()[0];
-                                // This is a minor violation (extension)
-                                // of the interface, but suits us well.
-                                d3.event = evt;
-                                return handler.call(
-                                    evt.currentTarget.getDOMNode(), d, this);
-                            }, container, selector, this));
+                      Y.delegate(name, d3Adaptor, container, selector, this));
                 }
             }
 
