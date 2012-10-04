@@ -179,18 +179,16 @@ YUI.add('juju-view-unit', function(Y) {
           service = db.services.getById(unit.service),
           unit_name = ev.unit_names[0];
 
-      function getNames() {
-        if (ev.unit_names) {
-          return ev.unit_names.join(', ');
-        }
-        return '';
-      }
-
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
               title: 'Error removing unit',
-              message: 'Unit names: ' + getNames(),
+              message: 'Unit names: ' + (function() {
+                if (ev.unit_names) {
+                  return ev.unit_names.join(', ');
+                }
+                return '';
+              })(),
               level: 'error',
               link: app.getModelURL(service)
             })

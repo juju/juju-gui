@@ -367,4 +367,51 @@ describe('juju application notifications', function() {
        assertNotificationNumber('1');
      });
 
+  it('should show notification for "get_charm" exceptions (app)', function() {
+    var notified = false, mockView = {
+      env: {
+        get_service: NO_OP,
+        get_charm: function(id, callback) {
+          // Simulating a callback with an error
+          callback(ERR_EV);
+        }
+      },
+      db: {
+        notifications: {
+          add: function() {
+            // The this method should be called just once.
+            assert.isFalse(notified);
+            notified = true;
+          }
+        },
+        charms: {
+          getById: function() {
+            return {
+              get: NO_OP
+            };
+          }
+        }
+      },
+      load_charm: function() {
+        // Executiong the "juju.AppConfig.load_charm" function instead.
+        // The "juju.AppConfig.load_charm" is the one that will trigger the
+        // notification process.
+        juju.AppConfig.load_charm.apply(this, arguments);
+      },
+      dispatch: NO_OP
+    };
+
+    // I need to test if a callback to "get_charm" will trigger a notification
+    // in case of failure. We dont need to have the application running to
+    // test it. I moved the config object of the "juju.App" to an external
+    // object. This way I can call the function I want without the need of
+    // handling all the initialization issues of the App class.
+    juju.AppConfig._prefetch_service.apply(mockView, [{
+      get: NO_OP,
+      set: NO_OP
+    }]);
+
+    assert.isTrue(notified);
+  });
+
 });
