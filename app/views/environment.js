@@ -255,29 +255,24 @@ YUI.add('juju-view-environment', function(Y) {
           events = events || this.sceneEvents;
 
           for (selector in events) {
-            if (!owns(events, selector)) {
-              continue;
-            }
-
-            handlers = events[selector];
-            for (name in handlers) {
-              if (!owns(handlers, name)) {
-                continue;
+            if (owns(events, selector)) {
+              handlers = events[selector];
+              for (name in handlers) {
+                if (owns(handlers, name)) {
+                  handler = handlers[name];
+                  if (typeof handler === 'string') {
+                    handler = this[handler];
+                  }
+                  if (!handler) {
+                    console.error(
+                        'No Event handler for',
+                        selector,
+                        name);
+                    continue;
+                  }
+                  _bindEvent(name, handler, container, selector, this);
+                }
               }
-
-              handler = handlers[name];
-              if (typeof handler === 'string') {
-                handler = this[handler];
-              }
-              if (!handler) {
-                console.error(
-                    'No Event handler for',
-                    selector,
-                    name);
-                continue;
-              }
-
-              _bindEvent(name, handler, container, selector, this);
             }
           }
           return this;
