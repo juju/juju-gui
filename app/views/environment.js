@@ -835,7 +835,6 @@ YUI.add('juju-view-environment', function(Y) {
               'Remove Relation',
               Y.bind(function(ev) {
                 ev.preventDefault();
-
                 var confirmButton = ev.target;
                 confirmButton.set('disabled', true);
                 view.removeRelation(d, context, view, confirmButton);
@@ -1018,10 +1017,8 @@ YUI.add('juju-view-environment', function(Y) {
                 'Destroy Service',
                 Y.bind(function(ev) {
                   ev.preventDefault();
-
                   var btn = ev.target;
                   btn.set('disabled', true);
-
                   view.service_click_actions
                       .destroyService(m, context, view, btn);
                 },
@@ -1043,7 +1040,6 @@ YUI.add('juju-view-environment', function(Y) {
 
           _doDestroyCallback: function(ev) {
             var db = this.view.get('db');
-
             if (ev.err) {
               db.notifications.add(
                   new models.Notification({
@@ -1052,10 +1048,10 @@ YUI.add('juju-view-environment', function(Y) {
                     level: 'error'
                   })
               );
-              this.btn.set('disabled', false);
             } else {
               this.view.get('destroy_dialog').hide();
             }
+            this.btn.set('disabled', false);
           },
 
           /*
@@ -1108,14 +1104,14 @@ YUI.add('juju-view-environment', function(Y) {
             env.add_relation(
                 rel.source().id,
                 rel.target().id,
-                Y.bind(this._doAddRelationCallback, view)
+                Y.bind(this._doAddRelationCallback, this, view)
             );
             // For now, set back to show_service.
             view.set('currentServiceClickAction', 'toggleControlPanel');
           },
 
-          _doAddRelationCallback: function(ev) {
-            var db = this.get('db');
+          _doAddRelationCallback: function(view, ev) {
+            var db = view.get('db');
 
             if (ev.err) {
               db.notifications.add(

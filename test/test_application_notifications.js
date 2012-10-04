@@ -202,7 +202,7 @@
            container: viewContainer}).render();
 
          view.service_click_actions._doAddRelationCallback.apply(view,
-             [ERR_EV]);
+             [view, ERR_EV]);
 
          assertNotificationNumber('1');
 
@@ -232,7 +232,7 @@
            container: viewContainer}).render();
 
          view.service_click_actions._doAddRelationCallback.apply(view,
-             [ERR_EV]);
+             [view, ERR_EV]);
 
          assertNotificationNumber('1');
 
