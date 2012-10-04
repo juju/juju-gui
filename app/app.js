@@ -351,7 +351,7 @@ YUI.add('juju-gui', function(Y) {
       var provider_type = this.env.get('provider_type'),
           provider_node = Y.one('#provider-type');
       if (Y.Lang.isValue(provider_type)) {
-        provider_node.set('text', '(' + 'OpenStack' + ')');
+        provider_node.set('text', ' on ' + provider_type);
       }
       next();
     },
