@@ -427,10 +427,7 @@ YUI.add('juju-view-service', function(Y) {
             env.set_config(
                 service.get('id'),
                 new_values,
-                Y.bind(this._doSetConfigCallback, {
-                  scope: this,
-                  container: container
-                })
+                Y.bind(this._doSetConfigCallback, this, container)
             );
 
           } else {
@@ -438,11 +435,11 @@ YUI.add('juju-view-service', function(Y) {
           }
         },
 
-        _doSetConfigCallback: function(ev) {
-          var service = this.scope.get('model'),
-              env = this.scope.get('env'),
-              app = this.scope.get('app'),
-              db = this.scope.get('db');
+        _doSetConfigCallback: function(container, ev) {
+          var service = this.get('model'),
+              env = this.get('env'),
+              app = this.get('app'),
+              db = this.get('db');
 
           if (ev.err) {
             db.notifications.add(
@@ -452,7 +449,7 @@ YUI.add('juju-view-service', function(Y) {
                   level: 'error'
                 })
             );
-            this.container.one('#save-service-config')
+            container.one('#save-service-config')
               .removeAttribute('disabled');
 
           } else {
