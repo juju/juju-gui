@@ -1,22 +1,13 @@
 'use strict';
 
 describe('juju application notifications', function() {
-  var Y, juju, models, views,
-      applicationContainer,
-      notificationsContainer,
-      viewContainer,
-      db,
-
-      _setTimeout, _viewsHighlightRow,
-      ERR_EV = {
-        err: true
-      },
-      NO_OP = function() {};
+  var Y, juju, models, views, applicationContainer, notificationsContainer, 
+      viewContainer, db, _setTimeout, _viewsHighlightRow, ERR_EV, NO_OP;
 
   function assertNotificationNumber(value) {
     assert.equal(
         applicationContainer.one('#notify-indicator').getHTML().trim(),
-        value, 'The system didnt show the alert');
+        value, 'The system didn\'t show the alert');
   }
 
   before(function() {
@@ -32,11 +23,16 @@ describe('juju application notifications', function() {
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
     });
+    
+    ERR_EV = {
+      err: true
+    };
+    NO_OP = function() {}      
   });
 
   beforeEach(function() {
     applicationContainer = Y.Node.create('<div id="test-container" />');
-    applicationContainer.appendTo(Y.one(Y.one(document.body)));
+    applicationContainer.appendTo(Y.one('body'));
 
     notificationsContainer = Y.Node.create('<div id="notifications" />');
     notificationsContainer.appendTo(applicationContainer);
@@ -105,6 +101,7 @@ describe('juju application notifications', function() {
            getAttrs: NO_OP,
            get: function(key) {
              if ('unit_count' === key) {
+               // We simulate a model with 2 units
                return 2;
              }
              return null;
@@ -119,9 +116,11 @@ describe('juju application notifications', function() {
          }];
        };
 
+       // It triggers the "add unit" logic
        view._modifyUnits(3);
        assertNotificationNumber('1');
 
+      // It triggers the "remove unit" logic
        view._modifyUnits(1);
        assertNotificationNumber('2');
      });
@@ -151,7 +150,7 @@ describe('juju application notifications', function() {
          querystring: {}
        });
 
-       // Used my unit.js inside the "render" function
+       // Used by "unit.js" inside the "render" function
        db.services.getById = function() {
          // Mock service
          return {
@@ -314,19 +313,15 @@ describe('juju application notifications', function() {
            }
          };
        };
-
        view.render();
-
+       
        view.saveConfig();
-
        assertNotificationNumber('1');
 
        view.exposeService();
-
        assertNotificationNumber('2');
 
        view.unexposeService();
-
        assertNotificationNumber('3');
      });
 

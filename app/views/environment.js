@@ -142,9 +142,19 @@ YUI.add('juju-view-environment', function(Y) {
             if (existing) {
               service.pos = existing.pos;
             }
+            service.margins(service.subordinate ?
+                {
+                  top: 0.05,
+                  bottom: 0.1,
+                  left: 0.084848,
+                  right: 0.084848} :
+                {
+                  top: 0,
+                  bottom: 0.1667,
+                  left: 0.086758,
+                  right: 0.086758});
             this.service_boxes[service.id] = service;
           }, this);
-
           this.rel_pairs = this.processRelations(relations);
 
           // Nodes are mapped by modelId tuples.
@@ -1028,13 +1038,13 @@ YUI.add('juju-view-environment', function(Y) {
             var env = view.get('env'),
                 service = view.get('destroy_service');
             env.destroy_service(
-                service.get('id'), Y.bind(this._destroyCallback, {
+                service.get('id'), Y.bind(this._doDestroyCallback, {
                   view: view,
                   btn: btn
                 }));
           },
 
-          _destroyCallback: function(ev) {
+          _doDestroyCallback: function(ev) {
             var db = this.view.get('db');
 
             if (ev.err) {
