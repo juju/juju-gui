@@ -222,18 +222,15 @@ YUI.add('juju-view-service', function(Y) {
             .set('disabled', 'disabled');
           env.set_constraints(service.get('id'),
               values,
-              Y.bind(this._doSetConstraintsCallback, {
-                scope: this,
-                container: container
-              })
+              Y.bind(this._doSetConstraintsCallback, this, container)
           );
         },
 
-        _doSetConstraintsCallback: function(ev) {
-          var service = this.scope.get('model'),
-              env = this.scope.get('env'),
-              app = this.scope.get('app'),
-              db = this.scope.get('db');
+        _doSetConstraintsCallback: function(container, ev) {
+          var service = this.get('model'),
+              env = this.get('env'),
+              app = this.get('app'),
+              db = this.get('db');
 
           if (ev.err) {
             db.notifications.add(
@@ -243,7 +240,7 @@ YUI.add('juju-view-service', function(Y) {
                   level: 'error'
                 })
             );
-            this.container.one('#save-service-constraints')
+            container.one('#save-service-constraints')
               .removeAttribute('disabled');
 
           } else {

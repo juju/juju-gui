@@ -819,12 +819,12 @@ YUI.add('juju-view-environment', function(Y) {
             );
             view.removeSVGClass(this.relationElement,
                 'to-remove pending-relation');
-
-            confirmButton.set('disabled', false);
+            
           } else {
             view.get('rmrelation_dialog').hide();
           }
-
+          
+          confirmButton.set('disabled', false);
         },
 
         removeRelationConfirm: function(d, context, view) {
