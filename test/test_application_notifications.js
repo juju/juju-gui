@@ -204,15 +204,12 @@ describe('juju application notifications', function() {
 
        assertNotificationNumber('1');
 
-       view._doRemoveRelationCallback.apply({
-         scope: view,
-         view: {
-           removeSVGClass: NO_OP
-         },
-         confirmButton: {
-           set: NO_OP
-         }
-       }, [ERR_EV]);
+       //view, relationElement, confirmButton, ev
+       view._doRemoveRelationCallback.apply(view, [{
+         removeSVGClass: NO_OP
+       }, {}, {
+         set: NO_OP
+       }, ERR_EV]);
 
        assertNotificationNumber('2');
      });

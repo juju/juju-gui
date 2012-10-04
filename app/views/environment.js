@@ -799,17 +799,14 @@ YUI.add('juju-view-environment', function(Y) {
           env.remove_relation(
               d.source().id,
               d.target().id,
-              Y.bind(this._doRemoveRelationCallback, {
-                scope: this,
-                view: view,
-                relationElement: relationElement,
-                confirmButton: confirmButton
-              }));
+              Y.bind(this._doRemoveRelationCallback, this, view, 
+                  relationElement, confirmButton));
         },
 
-        _doRemoveRelationCallback: function(ev) {
-          var db = this.scope.get('db'),
-              service = this.scope.get('model');
+        _doRemoveRelationCallback: function(view, 
+            relationElement, confirmButton, ev) {
+          var db = this.get('db'),
+              service = this.get('model');
 
           if (ev.err) {
             db.notifications.add(
@@ -820,12 +817,12 @@ YUI.add('juju-view-environment', function(Y) {
                   link: '/'
                 })
             );
-            this.view.removeSVGClass(this.relationElement,
+            view.removeSVGClass(this.relationElement,
                 'to-remove pending-relation');
 
-            this.confirmButton.set('disabled', false);
+            confirmButton.set('disabled', false);
           } else {
-            this.view.get('rmrelation_dialog').hide();
+            view.get('rmrelation_dialog').hide();
           }
 
         },
