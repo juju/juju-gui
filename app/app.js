@@ -338,6 +338,7 @@ YUI.add('juju-gui', function(Y) {
       if (!instance) {
         console.log('new env view');
         this.showView('environment', {
+          app: this,
           db: this.db,
           env: this.env},
         {render: true});
