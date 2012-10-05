@@ -1216,9 +1216,8 @@ YUI.add('juju-view-environment', function(Y) {
           },
 
           _addRelationCallback: function(view, ev) {
-            var db = view.get('db');
             if (ev.err) {
-              db.notifications.add(
+              view.get('db').notifications.add(
                   new models.Notification({
                     title: 'Error adding relation',
                     message: 'Relation ' + ev.endpoint_a +
@@ -1226,6 +1225,7 @@ YUI.add('juju-view-environment', function(Y) {
                     level: 'error'
                   })
               );
+              return;
             }
           }
         }
