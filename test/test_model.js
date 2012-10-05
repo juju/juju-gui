@@ -2,7 +2,7 @@
 
 (function() {
 
-  describe('charm list modified functions', function () {
+  describe('charm list modified functions', function() {
     var Y, models;
 
     before(function(done) {
@@ -29,7 +29,7 @@
 
   });
 
-  describe('charm id helper functions', function () {
+  describe('charm id helper functions', function() {
     var Y, models;
 
     before(function(done) {
@@ -346,12 +346,12 @@
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-        'juju-models', 'juju-gui', 'datasource-local', 'juju-tests-utils',
-        'json-stringify',
-        function(Y) {
-          models = Y.namespace('juju.models');
-          done();
-        });
+          'juju-models', 'juju-gui', 'datasource-local', 'juju-tests-utils',
+          'json-stringify',
+          function(Y) {
+            models = Y.namespace('juju.models');
+            done();
+          });
     });
 
     beforeEach(function() {
@@ -363,10 +363,10 @@
       data = [];
       charm_store = new Y.DataSource.Local({source: data});
       app = new Y.juju.App(
-        { container: container,
-          viewContainer: container,
-          env: env,
-          charm_store: charm_store });
+          { container: container,
+            viewContainer: container,
+            env: env,
+            charm_store: charm_store });
     });
 
     afterEach(function() {
@@ -378,7 +378,7 @@
       try {
         app.db.charms.loadById('foobar');
         assert.fail('Should have thrown an error.');
-      } catch(e) {
+      } catch (e) {
         e.should.equal('invalid charm_id: foobar');
       }
     });
@@ -426,9 +426,9 @@
       // The test in the callback above should run.
     });
 
-    it('must handle success from the charm store', function(){
+    it('must handle success from the charm store', function() {
       data.push(
-        { responseText: Y.JSON.stringify(
+          { responseText: Y.JSON.stringify(
           { summary: 'wowza', subordinate: true })});
       app.db.charms.loadById('cs:precise/foo-7', function(charm) {
         charm.get('summary').should.equal('wowza');
@@ -438,7 +438,7 @@
       });
     });
 
-    it('must handle failure from the charm store', function(){
+    it('must handle failure from the charm store', function() {
       // This is the only reasonable hook point into the local data store that
       // I found to set an error.  Fragile, to some unknown degree.
       var original = charm_store._defResponseFn;

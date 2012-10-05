@@ -253,7 +253,8 @@ YUI.add('juju-gui', function(Y) {
           this.env.get_service(
               service.get('id'), Y.bind(this.load_service, this));
         }
-        this.db.charms.loadById(service.get('charm'), Y.bind(this.dispatch, this));
+        this.db.charms.loadById(
+            service.get('charm'), Y.bind(this.dispatch, this));
       }
     },
 

@@ -145,15 +145,15 @@ YUI.add('juju-models', function(Y) {
       // but the charm store can't handle it, so we stick with the lowest
       // common denominator: ids without revision numbers.
       return CharmList.superclass.getById.apply(
-        this, [normalize_charm_id(id)]);
+          this, [normalize_charm_id(id)]);
     },
     _setDefaultsAndCalculatedValues: function(charm) {
       var charm_id = charm.get('id'),
           raw_data = {};
       Y.each(Y.Array.zip(
-        ['scheme', 'owner', 'series', 'name', 'revision'],
-        parse_charm_id(charm_id)),
-        function(pair) { raw_data[pair[0]] = pair[1]; });
+          ['scheme', 'owner', 'series', 'name', 'revision'],
+          parse_charm_id(charm_id)),
+          function(pair) { raw_data[pair[0]] = pair[1]; });
       // Normalize ids.
       raw_data.id = normalize_charm_id(charm_id);
       // Normalize scheme.  This way does a little bit more work but keeps the
