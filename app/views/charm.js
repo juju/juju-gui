@@ -113,11 +113,11 @@ YUI.add('juju-view-charm-collection', function(Y) {
       // For this reason we need to redirect to the root page right now.
       this.fire('showEnvironment');
       env.deploy(charmUrl, serviceName, config,
-          Y.bind(this._doDeployCallback, this)
+          Y.bind(this._deployCallback, this)
       );
     },
 
-    _doDeployCallback: function(ev) {
+    _deployCallback: function(ev) {
       var db = this.get('db');
 
       if (ev.err) {

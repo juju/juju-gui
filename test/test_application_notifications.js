@@ -449,11 +449,11 @@
          },
          mockView = {
            fire: NO_OP,
-           _doDeployCallback: function() {
+           _deployCallback: function() {
              // Executing the "views.charm.prototype._doDeployCallback"
              // function instead. The "views.charm.prototype._doDeployCallback"
              // is the one that will trigger the notification process.
-             views.charm.prototype._doDeployCallback.apply(this, arguments);
+             views.charm.prototype._deployCallback.apply(this, arguments);
            },
            get: function(key) {
              if ('charm' === key) {

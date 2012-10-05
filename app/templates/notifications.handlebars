@@ -2,28 +2,28 @@
   <button id="notify-indicator"
           data-target="notify-list"
           class="btn dropdown-toggle {{state}}">
-          {{count}}
+    {{count}}
   </button>
-     <ul id="notify-list" class="dropdown-menu">
-       <li style="header">
-         <a href="/notifications/">
-           <i class="icon-list"></i>View All Notifications</a>
-       </li>
+  <ul id="notify-list" class="dropdown-menu">
+    <li class="header">
+      <a href="/notifications/">
+        <i class="icon-list"></i>View All Notifications</a>
+    </li>
 
-       {{#notifications}}
-       <li id="{{clientId}}" class="notice">
-         <div">
-           <h4>{{title}}</h4>
-           <div>
-             {{message}}
-           </div>
-           {{#if link}}
-           <a href="{{link}}"><i class="icon-arrow-right"></i>{{link_title}}</a>
-           {{/if}}
-           <small data-timestamp="{{timestamp}}"
-                  class="timestamp">{{humanizeTime timestamp}}</small>
-         </div>
-       </li>
-       {{/notifications}}
-     </ul>
+    {{#notifications}}
+    <li id="{{clientId}}" class="notice">
+      <div>
+        <h4>{{title}}</h4>
+        <div>
+          {{message}}
+        </div>
+        {{#if link}}
+        <a href="{{link}}"><i class="icon-arrow-right"></i>{{link_title}}</a>
+        {{/if}}
+        <small data-timestamp="{{timestamp}}"
+               class="timestamp">{{humanizeTime timestamp}}</small>
+      </div>
+    </li>
+    {{/notifications}}
+  </ul>
 </span>

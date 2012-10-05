@@ -20,28 +20,25 @@ YUI.add('juju-notifications', function(Y) {
           // Bind view to model list in a number of ways
           notifications.addTarget(this);
           // Re-render the model list changes
-          notifications.after('add', this.slow_render, this);
-          notifications.after('create', this.slow_render, this);
-          notifications.after('remove', this.slow_render, this);
-          notifications.after('reset', this.slow_render, this);
+          notifications.after('add', this.slowRender, this);
+          notifications.after('create', this.slowRender, this);
+          notifications.after('remove', this.slowRender, this);
+          notifications.after('reset', this.slowRender, this);
 
           // Env connection state watcher
-          env.on('connectedChange', this.slow_render, this);
+          env.on('connectedChange', this.slowRender, this);
 
         },
 
         /*
          * Event handler for clicking the notification icon.
          */
-        notify_toggle: function(evt) {
+        notifyToggle: function(evt) {
           var container = this.get('container'),
               notifications = this.get('notifications'),
               target = evt.target.getAttribute('data-target'),
               el = container.one('#' + target),
               parent = el.ancestor();
-
-          Y.namespace('juju.views').CharmSearchPopup
-            .getInstance().hide();
 
           if (notifications.size() === 0) {
             return;
@@ -66,7 +63,7 @@ YUI.add('juju-notifications', function(Y) {
          * Select/click on a notice. Currently this just removes it from the
          * model_list
          */
-        notice_select: function(evt) {
+        notificationSelect: function(evt) {
           var notifications = this.get('notifications'),
               target = evt.target,
               model;
@@ -79,22 +76,30 @@ YUI.add('juju-notifications', function(Y) {
           }
 
           model = notifications.getByClientId(target.get('id'));
-          model.set('seen', true);
+
+          if (this.selection.seen) {
+            model.set('seen', true);
+          }
+
           if (this.selection.hide) {
             target.hide(true);
           }
-          this.slow_render();
+          this.slowRender();
         },
 
         /*
          * A flow of events can trigger many renders, from the event system
          * we debounce render requests with this method
          */
-        slow_render: function() {
-          var self = this;
+        slowRender: function() {
+          var self = this,
+              container = self.get('container');
 
           clearTimeout(this._renderTimeout);
           this._renderTimeout = setTimeout(function() {
+            if (!container) {
+              return;
+            }
             self.render();
           }, 200);
         },
@@ -102,7 +107,6 @@ YUI.add('juju-notifications', function(Y) {
         render: function() {
           var container = this.get('container'),
               env = this.get('env'),
-              app = this.get('app'),
               connected = env.get('connected'),
               notifications = this.get('notifications'),
               state,
@@ -121,7 +125,7 @@ YUI.add('juju-notifications', function(Y) {
             open = '';
           }
 
-          var showable = this.get_showable(),
+          var showable = this.getShowable(),
               show_count = showable.length || 0;
 
           if (!connected) {
@@ -153,29 +157,64 @@ YUI.add('juju-notifications', function(Y) {
         /*
          * Actions associated with events
          * in this case selection events represent
-         * policy flags inside the 'notice_select' callback.
+         * policy flags inside the 'notificationSelect' callback.
          *
          * :hide: should the selected element be hidden on selection
          */
-        selection: {hide: false},
+        selection: {
+          hide: false,
+          seen: false
+        },
 
         events: {
           '#notify-indicator': {
-            click: 'notify_toggle'
+            click: 'notifyToggle'
           },
-          '.notice': {
-            click: 'notice_select'
+          'li.notice': {
+            click: 'notificationSelect'
+          },
+
+          '#notify-list li.header a': {
+            click: 'close'
           }
         },
 
-        get_showable: function() {
+        getShowable: function() {
           var notifications = this.get('notifications');
           return notifications.filter(function(n) {
             return n.get('level') === 'error' && n.get('seen') === false;
           }).map(function(n) {
             return n.getAttrs();
           });
+        },
+
+        close: function() {
+          var container = this.get('container');
+          if (!container) {
+            return;
+          }
+
+          var indicator = container.one('#notify-indicator'),
+              list = container.one('#notify-list');
+
+          if (!indicator) {
+            return;
+          }
+          var parent = indicator.ancestor();
+
+          if (parent && parent.hasClass('open')) {
+            indicator.ancestor().removeClass('open');
+            list.hide();
+            indicator.removeClass('active');
+          }
+        },
+
+        render: function() {
+          NotificationsView.superclass.render.apply(this, arguments);
+          this.get('container').on('clickoutside', this.close, this);
+          return this;
         }
+
       });
   views.NotificationsView = NotificationsView;
 
@@ -186,8 +225,8 @@ YUI.add('juju-notifications', function(Y) {
       NotificationsBaseView, [], {
         template: Templates.notifications_overview,
         events: {
-          '.notice': {
-            click: 'notice_select'
+          'li.notice': {
+            click: 'notificationSelect'
           }
         },
         // Actions for selecting a notice
@@ -197,7 +236,7 @@ YUI.add('juju-notifications', function(Y) {
          *  The overview shows all events by default
          *  when real filtering is present this will have to take options
          */
-        get_showable: function() {
+        getShowable: function() {
           var notifications = this.get('notifications');
           return notifications.map(function(n) {
             return n.getAttrs();
