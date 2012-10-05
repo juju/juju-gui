@@ -132,8 +132,8 @@ YUI.add('juju-view-unit', function(Y) {
               title: 'Error resolving unit',
               message: 'Unit name: ' + ev.unit_name,
               level: 'error',
-              link: app.getModelURL(service),
-              modelId: service
+              link: app.getModelURL(unit),
+              modelId: unit
             })
         );
 
@@ -191,8 +191,8 @@ YUI.add('juju-view-unit', function(Y) {
                 return '';
               })(),
               level: 'error',
-              link: app.getModelURL(service),
-              modelId: service
+              link: app.getModelURL(unit),
+              modelId: unit
             })
         );
       } else {
@@ -222,7 +222,8 @@ YUI.add('juju-view-unit', function(Y) {
                     title: 'Error retrying unit',
                     message: 'Unit name: ' + ev.unit_name,
                     level: 'error',
-                    link: app.getModelURL(service)
+                    link: app.getModelURL(unit),
+                    modelId: unit
                   })
               );
 
