@@ -118,9 +118,8 @@ YUI.add('juju-view-charm-collection', function(Y) {
     },
 
     _deployCallback: function(ev) {
-      var db = this.get('db');
       if (ev.err) {
-        db.notifications.add(
+        this.get('db').notifications.add(
             new models.Notification({
               title: 'Error deploying charm',
               message: 'Service name: ' + ev.service_name +
@@ -128,9 +127,9 @@ YUI.add('juju-view-charm-collection', function(Y) {
               level: 'error'
             })
         );
-      } else {
-        console.log(ev.charm_url + ' deployed');
+        return;
       }
+      console.log(ev.charm_url + ' deployed');
     }
   });
 
