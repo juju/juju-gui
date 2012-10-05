@@ -19,11 +19,22 @@
       charm.get('id').should.equal('cs:precise/mysql-6');
       // and verify the value function on the model
       charm.get('name').should.equal('precise/mysql');
+      charm.get('details_url').should.equal(
+          '/charms/charms/precise/mysql/json');
     });
 
     it('must be able to parse real-world charm names', function() {
       var charm = new models.Charm({id: 'cs:precise/openstack-dashboard-0'});
       charm.get('name').should.equal('precise/openstack-dashboard');
+      charm.get('details_url').should.equal(
+          '/charms/charms/precise/openstack-dashboard/json');
+    });
+
+    it('must be able to parse individually owned charms', function() {
+      var charm = new models.Charm({id: 'cs:~marcoceppi/precise/wordpress-17'});
+      charm.get('name').should.equal('marcoceppi/precise/wordpress');
+      charm.get('details_url').should.equal(
+          '/charms/~marcoceppi/precise/wordpress/json');
     });
 
     it('must be able to create charm list', function() {
