@@ -3,7 +3,6 @@
 YUI.add('juju-view-environment', function(Y) {
 
   var views = Y.namespace('juju.views'),
-      utils = Y.namespace('juju.views.utils'),
       Templates = views.Templates;
 
   function styleToNumber(selector, style, defaultSize) {
@@ -513,9 +512,7 @@ YUI.add('juju-view-environment', function(Y) {
                 var aggregate_map = d.aggregated_status,
                     aggregate_list = [];
                 Y.Object.each(aggregate_map, function(count, state) {
-                  aggregate_list.push(
-                    { name: utils.simplifyState(state),
-                      value: count});
+                  aggregate_list.push({name: state, value: count});
                 });
 
                 return status_chart_layout(aggregate_list);

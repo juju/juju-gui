@@ -459,18 +459,15 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     filterUnits: function(filter_state, units) {
-      var state_matchers = {
-        running: function(s) { return s === 'started'; },
-        pending: function(s) {
-          return ['installed', 'pending'].indexOf(s) > -1;
-        },
-        // Errors: install-, start-, stop-, charm-upgrade-, configure-.
-        error: function(s) { return (/-error$/).test(s); }},
-          matcher = filter_state && state_matchers[filter_state];
-      if (matcher) {
-        return Y.Array.filter(units, function(u) {
-          return matcher(u.agent_state); });
-      } else {
+      // If filtering was requested, do it.
+      if (filter_state) {
+        // Build a matcher that will identify units of the requested state.
+        var matcher = function(unit) {
+          // Is this unit's (simplified) state the one we are looking for?
+          return utils.simplifyState(unit.agent_state) === filter_state;
+        };
+        return Y.Array.filter(units, matcher);
+      } else { // Otherwise just return all the units we were given.
         return units;
       }
     },
