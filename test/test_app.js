@@ -36,21 +36,37 @@ describe('Application', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-          container = Y.Node.create('<div id="test" class="container"></div>');
-          app = new Y.juju.App({
-                  container: container,
-                  viewContainer: container
-      });
-          injectData(app);
-          done();
-        });
+      done();
+    });
+  });
 
+  beforeEach(function(done) {
+    //  XXX Apparently removing a DOM node is asynchronous (on Chrome at least)
+    //  and we occasionally loose the race if this code is in the afterEach
+    //  function, so instead we do it here, but only if one has previously been
+    //  created.
+    if (container) {
+      container.remove(true);
+    }
+    container = Y.one('#main')
+      .appendChild(Y.Node.create('<div/>'))
+        .set('id', 'test-container')
+        .addClass('container')
+        .append(Y.Node.create('<span/>')
+          .set('id', 'environment-name'))
+        .append(Y.Node.create('<span/>')
+          .set('id', 'provider-type'));
+    app = new Y.juju.App(
+        { container: container,
+          viewContainer: container});
+    injectData(app);
+    done();
   });
 
   it('should produce a valid index', function() {
     var container = app.get('container');
     app.render();
-    container.getAttribute('id').should.equal('test');
+    container.getAttribute('id').should.equal('test-container');
     container.getAttribute('class').should.include('container');
   });
 
@@ -72,9 +88,40 @@ describe('Application', function() {
 
     // charms also require a mapping but only a name, not a function
     app.getModelURL(wp_charm).should.equal('/charms/' + wp_charm.get('name'));
-
   });
 
+  it('should display the configured environment name', function() {
+    var environment_name = 'This is the environment name.  Deal with it.';
+    app = new Y.juju.App(
+        { container: container,
+          viewContainer: container,
+          environment_name: environment_name});
+    assert.equal(
+        container.one('#environment-name').get('text'),
+        environment_name);
+  });
+
+  it('should show a generic environment name if none configured', function() {
+    app = new Y.juju.App(
+        { container: container,
+          viewContainer: container});
+    assert.equal(
+        container.one('#environment-name').get('text'),
+        'Environment');
+  });
+
+  it('should show the provider type, when available', function() {
+    var providerType = 'excellent provider';
+    // Since no provider type has been set yet, none is displayed.
+    assert.equal(
+        container.one('#provider-type').get('text'),
+        '');
+    app.env.set('providerType', providerType);
+    // The provider type has been displayed.
+    assert.equal(
+        container.one('#provider-type').get('text'),
+        'on ' + providerType);
+  });
 
 });
 
