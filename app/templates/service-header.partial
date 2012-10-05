@@ -6,7 +6,7 @@
       <a href="." class="btn"><i class="icon-th"></i> Units </a>
       <a href="config" class="btn"><i class="icon-cog"></i> Settings </a>
       <a href="constraints" class="btn"><i class="icon-leaf"></i> Constraints</a>
-      <a href="/charms/charms/{{charm.name}}/json"
+      <a href="{{charm.details_url}}"
           class="btn"><i class="icon-book"></i> Charm </a>
       <a href="relations" class="btn"><i class="icon-random"></i> Relations </a>
     </div>
@@ -15,7 +15,7 @@
     <div class="well">
       <div>
         <b>Charm:</b>
-        <a href="/charms/charms/{{charm.name}}/json">{{charm.id}}</a>
+        <a href="{{charm.details_url}}">{{charm.id}}</a>
       </div>
       <div><b>Units:</b></div>
       <div><b>Relations:</b></div>

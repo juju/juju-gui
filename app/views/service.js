@@ -486,6 +486,7 @@ YUI.add('juju-view-service', function(Y) {
     confirmDestroy: function(ev) {
       // We wait to make the panel until now, because in the render method
       // the container is not yet part of the document.
+      ev.preventDefault();
       if (Y.Lang.isUndefined(this.panel)) {
         this.panel = views.createModalPanel(
             'Are you sure you want to destroy the service?  ' +
