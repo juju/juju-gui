@@ -41,6 +41,13 @@ describe('Application', function() {
   });
 
   beforeEach(function(done) {
+    //  XXX Apparently removing a DOM node is asynchronous (on Chrome at least)
+    //  and we occasionally loose the race if this code is in the afterEach
+    //  function, so instead we do it here, but only if one has previously been
+    //  created.
+    if (container) {
+      container.remove(true);
+    }
     container = Y.one('#main')
       .appendChild(Y.Node.create('<div/>'))
         .set('id', 'test-container')
@@ -57,7 +64,6 @@ describe('Application', function() {
   });
 
   afterEach(function(done) {
-    container.remove(true);
     done();
   });
 
