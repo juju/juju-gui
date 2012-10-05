@@ -63,10 +63,6 @@ describe('Application', function() {
     done();
   });
 
-  afterEach(function(done) {
-    done();
-  });
-
   it('should produce a valid index', function() {
     var container = app.get('container');
     app.render();
