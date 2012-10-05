@@ -281,15 +281,20 @@ YUI.add('juju-view-service', function(Y) {
               service = this.get('model');
 
           if (!service || !service.get('loaded')) {
-            console.log('not connected / maybe');
+            container.setHTML('<div class="alert">Loading...</div>');
+            console.log('waiting on service data');
             return this;
           }
 
           console.log('config', service.get('config'));
-          var charm_url = service.get('charm');
 
           // combine the charm schema and the service values for display.
-          var charm = db.charms.getById(charm_url);
+          var charm = db.charms.getById(service.get('charm'));
+          if (!charm) {
+            container.setHTML('<div class="alert">Loading...</div>');
+            console.log('waiting on charm data');
+            return this;
+          }
           var config = service.get('config');
           var schema = charm.get('config');
 

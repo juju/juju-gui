@@ -27,7 +27,7 @@
       container = Y.Node.create('<div id="test-container" />');
       Y.one('#main').append(container);
       db = new models.Database();
-      charm = new models.Charm({id: 'mysql', name: 'mysql',
+      charm = new models.Charm({id: 'cs:precise/mysql',
         description: 'A DB'});
       db.charms.add([charm]);
       // Add units sorted by id as that is what we expect from the server.
@@ -37,7 +37,7 @@
           ]);
       service = new models.Service({
         id: 'mysql',
-        charm: 'mysql',
+        charm: 'cs:precise/mysql',
         unit_count: db.units.size(),
         exposed: false});
 

@@ -101,10 +101,6 @@ YUI.add('juju-gui', function(Y) {
       if (Y.Lang.isValue(environment_node)) {
         environment_node.set('text', environment_name);
       }
-
-      // Create a client side database to store state.
-      this.db = new models.Database();
-
       // Create an environment facade to interact with.
       // allow env as an attr/option to ease testing
       if (this.get('env')) {
@@ -113,15 +109,21 @@ YUI.add('juju-gui', function(Y) {
         this.env = new juju.Environment({
           'socket_url': this.get('socket_url')});
       }
+      // Create a charm store.
+      if (this.get('charm_store')) {
+        this.charm_store = this.get('charm_store');
+      } else {
+        this.charm_store = new Y.DataSource.IO({
+          source: this.get('charm_store_url')});
+      }
+      // Create a client side database to store state.
+      this.db = new models.Database(
+          { env: this.env, charm_store: this.charm_store });
       // Create notifications controller
       this.notifications = new juju.NotificationController({
         app: this,
         env: this.env,
         notifications: this.db.notifications});
-
-      // Create a charm store.
-      this.charm_store = new Y.DataSource.IO({
-        source: this.get('charm_store_url')});
 
       // Event subscriptions
 
@@ -246,24 +248,12 @@ YUI.add('juju-gui', function(Y) {
       service.set('prefetch', true);
 
       // Prefetch service details for service subviews.
-      if (service && !service.get('loaded')) {
-        this.env.get_service(
-            service.get('id'), Y.bind(this.load_service, this));
-      }
-
-      if (service) {
-        // TODO service charm reference should be by id.
-        var charm_id = service.get('charm');
-        var charm = this.db.charms.getById(charm_id);
-        console.log('prefetching charm', charm_id, charm);
-        if (!charm) {
-          charm = new models.Charm({id: charm_id});
-          this.db.charms.add(charm);
+      if (Y.Lang.isValue(service)) {
+        if (!service.get('loaded')) {
+          this.env.get_service(
+              service.get('id'), Y.bind(this.load_service, this));
         }
-        if (!charm.get('loaded')) {
-          console.log('Get charm', charm_id);
-          this.env.get_charm(charm_id, Y.bind(this.load_charm, this));
-        }
+        this.db.charms.loadById(service.get('charm'), Y.bind(this.dispatch, this));
       }
     },
 
@@ -406,24 +396,6 @@ YUI.add('juju-gui', function(Y) {
       this.dispatch();
     },
 
-    load_charm: function(evt) {
-      console.log('load charm', evt);
-      var charm_data = evt.result;
-      var charm = this.db.charms.getById(evt.charm_url);
-      if (!charm) {
-        console.warn('Could not load charm data for', evt.charm_url, evt);
-        return;
-      }
-      charm.setAttrs({'provides': charm_data.provides,
-        'peers': charm_data.peers,
-        'requires': charm_data.requires,
-        'config': charm_data.config,
-        'is_subordinate': charm_data.subordinate,
-        'revision': charm_data.revision,
-        'loaded': true});
-      this.dispatch();
-    },
-
     /*
      *  Object routing support
      *  This is a utility that helps map from model objects to routes
@@ -532,6 +504,7 @@ YUI.add('juju-gui', function(Y) {
 
   }, {
     ATTRS: {
+      charm_store: {},
       routes: {
         value: [
           { path: '*', callback: 'show_notifications_view'},

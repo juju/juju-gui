@@ -44,53 +44,215 @@ YUI.add('juju-models', function(Y) {
     }
   };
 
+  // This is how the charm_id_re regex works for various inputs.  The first
+  // element is always the initial string, which we have elided in the
+  // examples.
+  // 'cs:~marcoceppi/precise/word-press-17' ->
+  // [..."cs", "marcoceppi", "precise", "word-press", "17"]
+  // 'cs:~marcoceppi/precise/word-press' ->
+  // [..."cs", "marcoceppi", "precise", "word-press", undefined]
+  // 'cs:precise/word-press' ->
+  // [..."cs", undefined, "precise", "word-press", undefined]
+  // 'cs:precise/word-press-17'
+  // [..."cs", undefined, "precise", "word-press", "17"]
+  var charm_id_re = /^(?:(\w+):)?(?:~(\w+)\/)?(\w+)\/(\S+?)(?:-(\d+))?$/,
+      parse_charm_id = function(id) {
+        var result = charm_id_re.exec(id);
+        if (result) {
+          result.shift();
+          // scheme, owner, series, name, revision
+        }
+        return result;
+      },
+      _calculate_full_name = function(elements) {
+        var tmp = [elements[2], elements[3]];
+        if (elements[1]) {
+          tmp.unshift('~' + elements[1]);
+        }
+        return tmp.join('/');
+      },
+      calculate_full_name = function(id) {
+        var match = parse_charm_id(id);
+        if (match) {
+          return _calculate_full_name(match);
+        }
+        return undefined;
+      },
+      normalize_charm_id = function(id) {
+        var match = parse_charm_id(id),
+            scheme = match[0] || 'cs';
+        if (match) {
+          return scheme + ':' + _calculate_full_name(match);
+        }
+        return undefined;
+
+      },
+      calculate_path = function(id) {
+        var match = parse_charm_id(id);
+        if (match) {
+          var tmp = [match[2], match[3], 'json'];
+          if (match[1]) {
+            tmp.unshift('~' + match[1]);
+          } else {
+            tmp.unshift('charms');
+          }
+          return tmp.join('/');
+        }
+        return undefined;
+      };
+  // These are exposed for testing purposes.
+  models.parse_charm_id = parse_charm_id;
+  models.calculate_full_name = calculate_full_name;
+  models.normalize_charm_id = normalize_charm_id;
+  models.calculate_path = calculate_path;
+
   var Charm = Y.Base.create('charm', Y.Model, [], {
-    idAttribute: 'charm_id',
-    charm_id_re: /((\w+):)?(\w+)\/(\S+)-(\d+)/,
-    parse_charm_id: function(id) {
-      if (!id) {
-        id = this.get('id');
-      }
-      return this.charm_id_re.exec(id);
-    }
   }, {
     ATTRS: {
-      charm_id: {},
-      name: {
-        valueFn: function(name) {
-          var match = this.parse_charm_id();
-          if (match) {
-            return match[3] + '/' + match[4];
-          }
-          return undefined;
-        }
-      },
-      details_url: {
-        valueFn: function() {
-          var name = this.get('name'),
-              parts = name.split('/'),
-              prefix;
-          if (parts.length === 2) {
-            prefix = 'charms/';
-          } else {
-            prefix = '~';
-          }
-          return '/charms/' + prefix + name + '/json';
-        }
-      },
-      url: {},
-      description: {},
+      bzr_branch: {},
       config: {},
+      description: {},
+      details_url: {}, // calculated
+      full_name: {}, // calculated
+      is_subordinate: {},
+      last_change: {},
+      maintainer: {},
       metadata: {},
-      sha256: {}
+      name: {}, // calculated
+      owner: {}, // calculated
+      peers: {},
+      proof: {},
+      provides: {},
+      requires: {},
+      revision: {}, // calculated
+      scheme: {}, // calculated
+      series: {}, // calculated
+      summary: {},
+      url: {}
     }
   });
   models.Charm = Charm;
 
   var CharmList = Y.Base.create('charmList', Y.ModelList, [], {
-    model: Charm
+    model: Charm,
+    initializer: function(config) {
+      this.setAttrs(config);
+      this.loading_callbacks = {};
+    },
+    getById: function(id) {
+      // Normalize ids to not have revision numbers.
+      // Eventually it would be nice to be able to use revision numbers,
+      // but the charm store can't handle it, so we stick with the lowest
+      // common denominator: ids without revision numbers.
+      return CharmList.superclass.getById.apply(
+        this, [normalize_charm_id(id)]);
+    },
+    _setDefaultsAndCalculatedValues: function(charm) {
+      var charm_id = charm.get('id'),
+          raw_data = {};
+      Y.each(Y.Array.zip(
+        ['scheme', 'owner', 'series', 'name', 'revision'],
+        parse_charm_id(charm_id)),
+        function(pair) { raw_data[pair[0]] = pair[1]; });
+      // Normalize ids.
+      raw_data.id = normalize_charm_id(charm_id);
+      // Normalize scheme.  This way does a little bit more work but keeps the
+      // scheme normalization to one piece of code (normalize_charm_id).
+      raw_data.scheme = parse_charm_id(raw_data.id)[0];
+      // Do not override an existing revision number on the charm.
+      if (Y.Lang.isValue(charm.get('revision'))) {
+        delete raw_data.revision;
+      }
+      // Make calculated values that do not change.
+      raw_data.details_url = calculate_path(charm_id);
+      raw_data.full_name = calculate_full_name(charm_id);
+      // Set all the attrs we have specified.
+      charm.setAttrs(raw_data);
+    },
+    add: function() {
+      var result = CharmList.superclass.add.apply(this, arguments);
+      if (Y.Lang.isArray(result)) {
+        Y.Array.each(result, this._setDefaultsAndCalculatedValues);
+      } else {
+        this._setDefaultsAndCalculatedValues(result);
+      }
+      return result;
+    },
+    loadById: function(charm_id, callback) {
+      var parts = parse_charm_id(charm_id);
+      if (!parts) {
+        throw 'invalid charm_id: ' + charm_id;
+      }
+      var normalized_id = normalize_charm_id(charm_id),
+          scheme = parse_charm_id(normalized_id)[0];
+      // If we are already loading, just add to the callback list.
+      if (Y.Lang.isValue(this.loading_callbacks[normalized_id])) {
+        this.loading_callbacks[normalized_id].push(callback);
+        return;
+      }
+      // First, we try to get the charm from ourselves.
+      var charm = this.getById(normalized_id);
+      if (Y.Lang.isValue(charm)) {
+        callback(charm);
+        return;
+      }
+      // OK, we will have to load and call back later.
+      this.loading_callbacks[normalized_id] = [callback];
+      // Now, is the id local: or cs: ?
+      if (scheme === 'local') {
+        // Warning!  We don't have experience with local charms yet.
+        // This will likely need tweaking.
+        this.get('env').get_charm(charm_id, Y.bind(
+            function(ev) {
+              if (ev.err) {
+                console.error('Error loading charm', ev);
+                this._dispatchLoadCharmResult(charm_id, ev);
+              } else {
+                // The environment had the charm.
+                this._loadCharm(charm_id, ev.result);
+              }
+            }, this));
+      } else if (scheme === 'cs') {
+        // Convert id to charmstore path.
+        this.get('charm_store').sendRequest({
+          request: calculate_path(normalized_id),
+          callback: {
+            'success': Y.bind(function(io_request) {
+              var result = Y.JSON.parse(
+                  io_request.response.results[0].responseText);
+              this._loadCharm(charm_id, result);
+            }, this),
+            'failure': Y.bind(function(ev) {
+              // Make a compatibility hack to mimic env errors.  Also
+              // convenient for tests.
+              ev.err = true;
+              console.error('Error loading charm', ev);
+              this._dispatchLoadCharmResult(charm_id, ev);
+            }, this)
+          }
+        });
+      } else {
+        console.error('unknown charm id scheme: ' + parts[0], charm_id);
+      }
+    },
+    _dispatchLoadCharmResult: function(charm_id, result) {
+      var callbacks = this.loading_callbacks[charm_id];
+      delete this.loading_callbacks[charm_id];
+      Y.each(callbacks, function(callback) { callback(result); });
+    },
+    _loadCharm: function(charm_id, charm_data) {
+      charm_data.id = charm_id;
+      charm_data.is_subordinate = charm_data.subordinate;
+      delete charm_data.subordinate;
+      delete charm_data.name;
+      var charm = this.add(charm_data);
+      this._dispatchLoadCharmResult(charm.get('id'), charm);
+    }
   }, {
-    ATTRS: {}
+    ATTRS: {
+      env: {},
+      charm_store: {}
+    }
   });
   models.CharmList = CharmList;
 
@@ -388,11 +550,11 @@ YUI.add('juju-models', function(Y) {
 
 
   var Database = Y.Base.create('database', Y.Base, [], {
-    initializer: function() {
-      this.services = new ServiceList();
-      this.charms = new CharmList();
-      this.relations = new RelationList();
-      this.notifications = new NotificationList();
+    initializer: function(config) {
+      this.services = new ServiceList(config);
+      this.charms = new CharmList(config);
+      this.relations = new RelationList(config);
+      this.notifications = new NotificationList(config);
 
       // These two are dangerous.. we very well may not have capacity
       // to store a 1-1 representation of units and machines in js.
@@ -402,8 +564,8 @@ YUI.add('juju-models', function(Y) {
       // and bulk transfer feeding directly into indexedb.
       // Needs some experimentation with a large data set.  For now, we are
       // simply using LazyModelList.
-      this.units = new ServiceUnitList();
-      this.machines = new MachineList();
+      this.units = new ServiceUnitList(config);
+      this.machines = new MachineList(config);
 
       // For model syncing by type. Charms aren't currently sync'd, only
       // fetched on demand (their static).
@@ -484,12 +646,14 @@ YUI.add('juju-models', function(Y) {
 
   models.Database = Database;
 
-  Y.namespace('juju').db = new Database({});
-
 }, '0.1.0', {
   requires: [
     'model',
     'model-list',
-    'lazy-model-list'
+    'lazy-model-list',
+    'datasource-io',
+    'datasource-jsonschema',
+    'io-base',
+    'json-parse'
   ]
 });
