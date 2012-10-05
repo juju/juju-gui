@@ -692,7 +692,15 @@ YUI.add('juju-view-service', function(Y) {
         db.notifications.add(
             new models.Notification({
               title: 'Error removing unit',
-              message: 'Units: ' + ev.unit_names,
+              message: (function() {
+                if (!ev.unit_names || ev.unit_names.length === 0) {
+                  return '';
+                }
+                if (ev.unit_names.length > 1) {
+                  return 'Unit names: ' + ev.unit_names.join(', ');
+                }
+                return 'Unit name: ' + ev.unit_names[0];
+              })(),
               level: 'error',
               link: app.getModelURL(service),
               modelId: service

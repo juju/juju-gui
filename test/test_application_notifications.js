@@ -542,5 +542,55 @@
          assert.isTrue(notified);
        });
 
+    it('should show errors for no unit, one unit and multiple ' +
+        'units (service view)', function() {
+
+         //_removeUnitCallback
+         var db = {
+               fire: NO_OP,
+               notifications: {
+                 add: function(notification) {
+                   trace.push(notification.get('message'));
+                 }
+               }
+             },
+             mockView = {
+               get: function(key) {
+                 if ('db' === key) {
+                   return db;
+                 }
+                 if ('app' === key) {
+                   return {
+                     getModelURL: NO_OP
+                   };
+                 }
+                 return null;
+               }
+             },
+             trace = [];
+
+         views.service.prototype._removeUnitCallback.apply(mockView, [{
+           err: true,
+           unit_names: null
+         }]);
+
+         views.service.prototype._removeUnitCallback.apply(mockView, [{
+           err: true,
+           unit_names: []
+         }]);
+
+         views.service.prototype._removeUnitCallback.apply(mockView, [{
+           err: true,
+           unit_names: ['a']
+         }]);
+
+         views.service.prototype._removeUnitCallback.apply(mockView, [{
+           err: true,
+           unit_names: ['b', 'c']
+         }]);
+
+         assert.equal(';;Unit name: a;Unit names: b, c', trace.join(';'));
+       });
+
   });
 })();

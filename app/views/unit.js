@@ -180,12 +180,7 @@ YUI.add('juju-view-unit', function(Y) {
         db.notifications.add(
             new models.Notification({
               title: 'Error removing unit',
-              message: 'Unit names: ' + (function() {
-                if (ev.unit_names) {
-                  return ev.unit_names.join(', ');
-                }
-                return '';
-              })(),
+              message: 'Unit name: ' + unit_name,
               level: 'error',
               link: app.getModelURL(unit),
               modelId: unit
