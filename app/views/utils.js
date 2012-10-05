@@ -94,35 +94,35 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
-  // It creates an object that delays the execution of a given callback.
-  // If the user calls "delay(functionA, 1000)", the "functionA" will be
-  // executed after 1000ms. If the user calls "delay(functionB, 1000)"
-  // before the execution of the "functionA", the "functionA" will be canceled
-  // and the "functionB" will be scheduled to run after 1000ms.
-  utils.buildDelayedTask = function() {
+
+  // This creates a closure that delays the execution of a given callback. If
+  // the user creates a Delayer with "delay = utils.Delayer()" and then calls
+  // "delay(functionA, 1000)", "functionA" will be executed after 1000ms.
+  // However, if the user calls "delay(functionB, 1000)" before the execution
+  // of "functionA", "functionA" will be canceled and "functionB" will be
+  // scheduled to run after 1000ms.
+  utils.Delayer = function(once) {
     var currentTask = null,
-        isEmptyDelayValid = false;
-
-    return {
-      setEmptyDelayValid: function(value) {
-        isEmptyDelayValid = value;
-      },
-
-      delay: function(callback, ms) {
-        if (Y.Lang.isValue(currentTask)) {
-          clearTimeout(currentTask);
-        }
-
-        if (!ms || ms < 1) {
-          if (isEmptyDelayValid) {
-            callback();
-            return;
-          } else {
-            throw 'The timeout should be bigger than 0';
-          }
-        }
-
-        currentTask = setTimeout(callback, ms);
+        performed = false;
+    once = !!once;
+    return function(callback, milliseconds) {
+      if (Y.Lang.isValue(currentTask) && !performed) {
+        clearTimeout(currentTask);
+      }
+      if (performed && once) {
+        throw 'already performed a task.';
+      }
+      milliseconds = Math.max(0, milliseconds || 0);
+      performed = false;
+      var f = function() {
+        performed = true;
+        callback();
+      };
+      if (milliseconds > 0) {
+        currentTask = setTimeout(f, milliseconds);
+      } else {
+        // Doing it directly in this case makes tests easier.
+        f();
       }
     };
   };
@@ -644,23 +644,23 @@ YUI.add('juju-view-utils', function(Y) {
       return {
         top: [
           this.x + (this.w / 2),
-          this.y + (margins.top * this.h)
+          this.y + (margins && (margins.top * this.h) || 0)
         ],
         right: [
-          this.x + this.w - (margins.right * this.w),
+          this.x + this.w - (margins && (margins.right * this.w) || 0),
           this.y + (this.h / 2) - (
-              margins.bottom * this.h / 2 -
-              margins.top * this.h / 2)
+              margins && (margins.bottom * this.h / 2 -
+                          margins.top * this.h / 2) || 0)
         ],
         bottom: [
           this.x + (this.w / 2),
-          this.y + this.h - (margins.bottom * this.h)
+          this.y + this.h - (margins && (margins.bottom * this.h) || 0)
         ],
         left: [
-          this.x + (margins.left * this.w),
+          this.x + (margins && (margins.left * this.w) || 0),
           this.y + (this.h / 2) - (
-              margins.bottom * this.h / 2 -
-              margins.top * this.h / 2)
+              margins && (margins.bottom * this.h / 2 -
+                          margins.top * this.h / 2) || 0)
         ]
       };
     };

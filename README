@@ -47,7 +47,7 @@ environments:
 
   Note juju-origin is set to the ppa, the api server runs outside of
   the container, and is launched using whichever branch your using.
-  
+
   Also note the api-port should be spec'd at 8081, which the gui's
   initial environment connection currently defaults to.
 
@@ -55,10 +55,10 @@ environments:
   service. The api server needs access to the provisioning credentials
   which are lazy initialized in juju upon usage.
 
-  After which the gui should be functional (it automatically polls the 
+  After which the gui should be functional (it automatically polls the
   api server for establishing a websocket).
- 
-   
+
+
 Running unit tests.
 -------------------
 
@@ -69,9 +69,9 @@ Running lint
 ------------
 
  jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
- 
+
 
 Style
 -----
 
-See the style-guide.txt file for the project style guide.
+See the docs/style-guide.rst file for the project style guide.
