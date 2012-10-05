@@ -43,12 +43,7 @@ var consoleManager = (function() {
         return consoleWrapper;
       })();
 
-  // If in debug mode , start the application with the console activated
-  if (GlobalConfig.debug) {
-    window.console = consoleProxy;
-  } else {
-    window.console = consoleEmpty;
-  }
+  window.console = consoleEmpty;
 
   // In order to enable the console in production the user can
   // call "javascript:consoleManager.enable()" in the address bar
