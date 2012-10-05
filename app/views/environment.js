@@ -3,6 +3,7 @@
 YUI.add('juju-view-environment', function(Y) {
 
   var views = Y.namespace('juju.views'),
+      utils = Y.namespace('juju.views.utils'),
       Templates = views.Templates;
 
   function styleToNumber(selector, style, defaultSize) {
@@ -465,15 +466,14 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Add the relative health of a service in the form of a pie chart
           // comprised of units styled appropriately.
-          // TODO aggregate statuses into good/bad/pending
           var status_chart_arc = d3.svg.arc()
             .innerRadius(0)
             .outerRadius(function(d) {
                 // Make sure it's exactly as wide as the mask
                 return parseInt(
                     d3.select(this.parentNode)
-                  .select('image')
-                  .attr('width'), 10) / 2;
+                      .select('image')
+                      .attr('width'), 10) / 2;
               });
 
           var status_chart_layout = d3.layout.pie()
@@ -512,8 +512,10 @@ YUI.add('juju-view-environment', function(Y) {
             .data(function(d) {
                 var aggregate_map = d.aggregated_status,
                     aggregate_list = [];
-                Y.Object.each(aggregate_map, function(value, key) {
-                  aggregate_list.push({name: key, value: value});
+                Y.Object.each(aggregate_map, function(count, state) {
+                  aggregate_list.push(
+                    { name: utils.simplifyState(state),
+                      value: count});
                 });
 
                 return status_chart_layout(aggregate_list);
