@@ -26,6 +26,7 @@
   <script src="test_service_config_view.js"></script>
   <script src="test_service_view.js"></script>
   <script src="test_utils.js"></script>
+  <script src="test_charm_search.js"></script>
   <script src="test_console.js"></script>
 
   <script>
@@ -40,8 +41,8 @@
             if (!m || !resource.fullpath) {
               continue
             }
-            // resource.fullpath = resource.fullpath.replace('/\//', '../app/', 1);
-            resource.fullpath = '../app/' + resource.fullpath;
+            resource.fullpath = resource.fullpath.replace(
+              '/juju-ui/', '../app/', 1);
          }
      }
      // Load before test runner
