@@ -29,25 +29,24 @@ YUI.add('juju-view-environment', function(Y) {
           // Service Related
           '.service': {
             click: 'serviceClick',
-            dblclick: 'serviceDblClick'
-          },
-          '.service-border': {
-            mouseover: function(d, self) {
-              if ((d3.event.relatedTarget &&
-                  d3.event.relatedTarget.nodeName === 'rect') &&
-                  self.hasSVGClass(this, 'selectable-service')) {
+            dblclick: 'serviceDblClick',
+            mouseenter: function(d, self) {
+              var rect = Y.one(this).one('.service-border');
+              if (self.hasSVGClass(rect, 'selectable-service')) {
                 self.set('potential_drop_point_service', d);
-                self.set('potential_drop_point_rect', this);
-                self.addSVGClass(this, 'hover');
+                self.set('potential_drop_point_rect', rect);
+                self.addSVGClass(rect, 'hover');
               }
             },
-            mouseout: function(d, self) {
-              if (d3.event.relatedTarget.nodeName === 'rect' &&
-                  self.hasSVGClass(this, 'hover')) {
+            mouseleave: function(d, self) {
+              console.log(d3.event.relatedTarget.get('nodeName'));
+              var rect = Y.one(this).one('.service-border');
+              //if (//d3.event.relatedTarget == d3.event.currentTarget && 
+              //    self.hasSVGClass(d3.event.relatedTarget, 'hover')) {
                 self.set('potential_drop_point_service', null);
                 self.set('potential_drop_point_rect', null);
-                self.removeSVGClass(this, 'hover');
-              }
+                self.removeSVGClass(rect, 'hover');
+              //}
             }
           },
           '.unit-count': {
