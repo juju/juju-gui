@@ -11,7 +11,7 @@ GlobalConfig = {
     d3: {
       modules: {
         'd3': {
-          'fullpath': '/assets/javascripts/d3.v2.min.js'
+          'fullpath': '/juju-ui/assets/javascripts/d3.v2.min.js'
         }
       }
     },
@@ -20,44 +20,48 @@ GlobalConfig = {
         // Primitives
 
         'svg-layouts': {
-          fullpath: '/assets/javascripts/svg-layouts.js'
+          fullpath: '/juju-ui/assets/javascripts/svg-layouts.js'
         },
 
         'reconnecting-websocket': {
-          fullpath: '/assets/javascripts/reconnecting-websocket.js'
+          fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },
 
         // Views
         'juju-view-utils': {
-          fullpath: '/views/utils.js'
+          fullpath: '/juju-ui/views/utils.js'
+        },
+
+        'juju-charm-search': {
+          fullpath: '/juju-ui/views/charm-search.js'
         },
 
         'juju-notifications': {
-          fullpath: '/views/notifications.js'
+          fullpath: '/juju-ui/views/notifications.js'
         },
 
         'juju-view-environment': {
-          fullpath: '/views/environment.js'
+          fullpath: '/juju-ui/views/environment.js'
         },
 
         'juju-view-service': {
-          fullpath: '/views/service.js'
+          fullpath: '/juju-ui/views/service.js'
         },
 
         'juju-view-unit': {
-          fullpath: '/views/unit.js'
+          fullpath: '/juju-ui/views/unit.js'
         },
 
         'juju-view-charm-collection': {
-          fullpath: '/views/charm.js'
+          fullpath: '/juju-ui/views/charm.js'
         },
 
         'juju-view-charm': {
-          fullpath: '/views/charm.js'
+          fullpath: '/juju-ui/views/charm.js'
         },
 
         'juju-templates': {
-          fullpath: '/templates.js'
+          fullpath: '/juju-ui/templates.js'
         },
 
         'juju-views': {
@@ -68,30 +72,30 @@ GlobalConfig = {
             'juju-view-environment',
             'juju-view-service',
             'juju-view-unit',
-            'juju-view-charmsearch',
             'juju-view-charm',
-            'juju-view-charm-collection']
+            'juju-view-charm-collection'
+          ]
         },
 
         // Models
 
         'juju-models': {
           requires: ['model', 'model-list'],
-          fullpath: '/models/models.js'
+          fullpath: '/juju-ui/models/models.js'
         },
 
         // Connectivity
         'juju-env': {
           requires: ['reconnecting-websocket'],
-          fullpath: '/store/env.js'
+          fullpath: '/juju-ui/store/env.js'
         },
 
         'juju-notification-controller': {
-          fullpath: '/store/notifications.js'
+          fullpath: '/juju-ui/store/notifications.js'
         },
 
         'juju-charm-store': {
-          fullpath: '/store/charm.js'
+          fullpath: '/juju-ui/store/charm.js'
         },
 
         'juju-controllers': {
@@ -101,11 +105,12 @@ GlobalConfig = {
 
         // App
         'juju-gui': {
-          fullpath: '/app.js',
+          fullpath: '/juju-ui/app.js',
           requires: [
             'juju-controllers',
             'juju-views',
-            'juju-models'
+            'juju-models',
+            'juju-view-charm-search'
           ]
         }
       }

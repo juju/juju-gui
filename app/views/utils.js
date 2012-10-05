@@ -3,10 +3,9 @@
 var consoleManager = (function() {
 
   var winConsole = window.console,
-
       // These are the available methods.
       // Add more to this list if necessary.
-      consoleMock = {
+      consoleEmpty = {
         group: function() {},
         groupEnd: function() {},
         groupCollapsed: function() {},
@@ -25,23 +24,22 @@ var consoleManager = (function() {
             };
           } else {
             consoleWrapper[key] = function() {
-              consoleMock[key]();
+              consoleEmpty[key]();
             };
           }
         }
 
         // Checking if the browser has the "console" object
         if (winConsole) {
-
           // Only the methods defined by the consoleMock
           // are available for use.
-          for (var key in consoleMock) {
-            if (consoleMock.hasOwnProperty(key)) {
+          for (var key in consoleEmpty) {
+            if (consoleEmpty.hasOwnProperty(key)) {
               buildMethodProxy(key);
             }
           }
         } else {
-          consoleWrapper = consoleMock;
+          consoleWrapper = consoleEmpty;
         }
 
         return consoleWrapper;
@@ -50,9 +48,8 @@ var consoleManager = (function() {
   // If in debug mode , start the application with the console activated
   if (GlobalConfig.debug) {
     window.console = consoleProxy;
-
   } else {
-    window.console = consoleMock;
+    window.console = consoleEmpty;
   }
 
   // In order to enable the console in production the user can
@@ -62,11 +59,11 @@ var consoleManager = (function() {
       window.console = consoleProxy;
     },
     disable: function() {
-      window.console = consoleMock;
+      window.console = consoleEmpty;
     },
-    getConsoleMock: function() {
+    getConsoleEmpty: function() {
       // Useful for unit tests
-      return consoleMock;
+      return consoleEmpty;
     }
   };
 
@@ -95,6 +92,39 @@ YUI.add('juju-view-utils', function(Y) {
     years: '%d years',
     wordSeparator: ' ',
     numbers: []
+  };
+
+  // It creates an object that delays the execution of a given callback.
+  // If the user calls "delay(functionA, 1000)", the "functionA" will be
+  // executed after 1000ms. If the user calls "delay(functionB, 1000)"
+  // before the execution of the "functionA", the "functionA" will be canceled
+  // and the "functionB" will be scheduled to run after 1000ms.
+  utils.buildDelayedTask = function() {
+    var currentTask = null,
+        isEmptyDelayValid = false;
+
+    return {
+      setEmptyDelayValid: function(value) {
+        isEmptyDelayValid = value;
+      },
+
+      delay: function(callback, ms) {
+        if (Y.Lang.isValue(currentTask)) {
+          clearTimeout(currentTask);
+        }
+
+        if (!ms || ms < 1) {
+          if (isEmptyDelayValid) {
+            callback();
+            return;
+          } else {
+            throw 'The timeout should be bigger than 0';
+          }
+        }
+
+        currentTask = setTimeout(callback, ms);
+      }
+    };
   };
 
   /*
@@ -218,6 +248,9 @@ YUI.add('juju-view-utils', function(Y) {
      */
     hasSVGClass: function(selector, class_name) {
       var classes = selector.getAttribute('class');
+      if (!classes) {
+        return false;
+      }
       return classes.indexOf(class_name) !== -1;
     },
 
@@ -542,7 +575,7 @@ YUI.add('juju-view-utils', function(Y) {
    * directly as attributes.
    */
   function BoundingBox() {
-    var x, y, w, h, value, modelId;
+    var x, y, w, h, value, modelId, boxMargins;
     function Box() {}
 
     Box.model = function(_) {
@@ -553,6 +586,14 @@ YUI.add('juju-view-utils', function(Y) {
 
       // Copy all the attrs from model to Box
       Y.mix(Box, _.getAttrs());
+      return Box;
+    };
+
+    Box.margins = function(_) {
+      if (!arguments.length) {
+        return boxMargins;
+      }
+      boxMargins = _;
       return Box;
     };
 
@@ -592,11 +633,35 @@ YUI.add('juju-view-utils', function(Y) {
      * Return the 50% points along each side as xy pairs
      */
     Box.getConnectors = function() {
+      // Since the service nodes have a shadow that takes up a bit of
+      // space on the sides and bottom of the actual node itself, add a bit
+      // of a margin to the actual connecting points. The margin is specified
+      // as a percentage of the width or height, as those are affected by the
+      // scale. This is calculated by taking the distance of the shadow from
+      // the edge of the actual shape and calculating it as a percentage of
+      // the total height of the shape.
+      var margins = this.margins();
       return {
-        top: [this.x + (this.w / 2), this.y],
-        right: [this.x + this.w, this.y + (this.h / 2)],
-        bottom: [this.x + (this.w / 2), this.y + this.h],
-        left: [this.x, this.y + (this.h / 2)]
+        top: [
+          this.x + (this.w / 2),
+          this.y + (margins.top * this.h)
+        ],
+        right: [
+          this.x + this.w - (margins.right * this.w),
+          this.y + (this.h / 2) - (
+              margins.bottom * this.h / 2 -
+              margins.top * this.h / 2)
+        ],
+        bottom: [
+          this.x + (this.w / 2),
+          this.y + this.h - (margins.bottom * this.h)
+        ],
+        left: [
+          this.x + (margins.left * this.w),
+          this.y + (this.h / 2) - (
+              margins.bottom * this.h / 2 -
+              margins.top * this.h / 2)
+        ]
       };
     };
 
