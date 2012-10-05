@@ -258,10 +258,10 @@ YUI.add('juju-view-unit', function(Y) {
       ev.target.set('disabled', true);
       env.resolved(
           unit.id, relation_name, false,
-          Y.bind(this._doResolvedRelationCallback, this, button, ev.target));
+          Y.bind(this._resolvedRelationCallback, this, button, ev.target));
     },
 
-    _doResolvedRelationCallback: function(button, confirm_button, ev) {
+    _resolvedRelationCallback: function(button, confirm_button, ev) {
       views.highlightRow(button.ancestor('tr'), ev.err);
       if (ev.err) {
         var db = this.get('db'),

@@ -201,13 +201,13 @@
            db: db,
            container: viewContainer}).render();
 
-         view.service_click_actions._doAddRelationCallback.apply(view,
+         view.service_click_actions._addRelationCallback.apply(view,
              [view, ERR_EV]);
 
          assertNotificationNumber('1');
 
          //view, relationElement, confirmButton, ev
-         view._doRemoveRelationCallback.apply(view, [{
+         view._removeRelationCallback.apply(view, [{
            removeSVGClass: NO_OP
          }, {}, {
            set: NO_OP
@@ -231,7 +231,7 @@
            },
            container: viewContainer}).render();
 
-         view.service_click_actions._doAddRelationCallback.apply(view,
+         view.service_click_actions._addRelationCallback.apply(view,
              [view, ERR_EV]);
 
          assertNotificationNumber('1');
@@ -450,8 +450,8 @@
          mockView = {
            fire: NO_OP,
            _deployCallback: function() {
-             // Executing the "views.charm.prototype._doDeployCallback"
-             // function instead. The "views.charm.prototype._doDeployCallback"
+             // Executing the "views.charm.prototype._deployCallback"
+             // function instead. The "views.charm.prototype._deployCallback"
              // is the one that will trigger the notification process.
              views.charm.prototype._deployCallback.apply(this, arguments);
            },

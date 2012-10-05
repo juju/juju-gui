@@ -155,11 +155,11 @@ YUI.add('juju-view-service', function(Y) {
           env.remove_relation(
               endpoint_a,
               endpoint_b,
-              Y.bind(this._doRemoveRelationCallback, this,
+              Y.bind(this._removeRelationCallback, this,
                      relation, button, ev.target));
         },
 
-        _doRemoveRelationCallback: function(relation, rm_button,
+        _removeRelationCallback: function(relation, rm_button,
             confirm_button, ev) {
           var db = this.get('db'),
               app = this.get('app'),
@@ -429,7 +429,7 @@ YUI.add('juju-view-service', function(Y) {
             env.set_config(
                 service.get('id'),
                 new_values,
-                Y.bind(this._doSetConfigCallback, this, container)
+                Y.bind(this._setConfigCallback, this, container)
             );
 
           } else {
@@ -437,7 +437,7 @@ YUI.add('juju-view-service', function(Y) {
           }
         },
 
-        _doSetConfigCallback: function(container, ev) {
+        _setConfigCallback: function(container, ev) {
           var service = this.get('model'),
               env = this.get('env'),
               app = this.get('app'),

@@ -799,11 +799,11 @@ YUI.add('juju-view-environment', function(Y) {
           env.remove_relation(
               d.source().id,
               d.target().id,
-              Y.bind(this._doRemoveRelationCallback, this, view,
+              Y.bind(this._removeRelationCallback, this, view,
                   relationElement, confirmButton));
         },
 
-        _doRemoveRelationCallback: function(view,
+        _removeRelationCallback: function(view,
             relationElement, confirmButton, ev) {
           var db = this.get('db'),
               service = this.get('model');
@@ -1032,13 +1032,13 @@ YUI.add('juju-view-environment', function(Y) {
             var env = view.get('env'),
                 service = view.get('destroy_service');
             env.destroy_service(
-                service.get('id'), Y.bind(this._doDestroyCallback, {
+                service.get('id'), Y.bind(this._destroyCallback, {
                   view: view,
                   btn: btn
                 }));
           },
 
-          _doDestroyCallback: function(ev) {
+          _destroyCallback: function(ev) {
             var db = this.view.get('db');
             if (ev.err) {
               db.notifications.add(
@@ -1104,13 +1104,13 @@ YUI.add('juju-view-environment', function(Y) {
             env.add_relation(
                 rel.source().id,
                 rel.target().id,
-                Y.bind(this._doAddRelationCallback, this, view)
+                Y.bind(this._addRelationCallback, this, view)
             );
             // For now, set back to show_service.
             view.set('currentServiceClickAction', 'toggleControlPanel');
           },
 
-          _doAddRelationCallback: function(view, ev) {
+          _addRelationCallback: function(view, ev) {
             var db = view.get('db');
 
             if (ev.err) {
