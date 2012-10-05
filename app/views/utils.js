@@ -1,7 +1,6 @@
 'use strict';
 
 var consoleManager = (function() {
-
   var winConsole = window.console,
       // These are the available methods.
       // Add more to this list if necessary.
@@ -12,7 +11,6 @@ var consoleManager = (function() {
         log: function() {}
       },
       consoleProxy = (function() {
-
         // This object wraps the "window.console"
         var consoleWrapper = {};
 
@@ -66,7 +64,6 @@ var consoleManager = (function() {
       return consoleEmpty;
     }
   };
-
 })();
 
 YUI.add('juju-view-utils', function(Y) {
