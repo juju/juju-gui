@@ -219,26 +219,91 @@
 
     it('should show notification for "add_relation" and "destroy_service"' +
         ' exceptions (environment view)', function() {
-         var view = new views.environment({
-           db: db,
-           destroy_service: {
-             get: NO_OP
-           },
-           env: {
-             destroy_service: function(service, callback) {
-               callback(ERR_EV);
-             }
-           },
-           container: viewContainer}).render();
+         var fakeLink = (function() {
+               var link = [{}, {}];
+               link.enter = function() {
+                 return {
+                   insert: function() {
+                     return {
+                       attr: NO_OP
+                     };
+                   }
+                 };
+               };
+               return link;
+             })(),
+             app = {
+               getModelURL: NO_OP
+             },
+             env = {
+               destroy_service: function(service, callback) {
+                 callback(ERR_EV);
+               },
+               add_relation: function(endpoint_a, endpoint_b, callback) {
+                 callback(ERR_EV);
+               }
+             },
+             view = {
+               set: NO_OP,
+               drawRelation: NO_OP,
+               vis: {
+                 selectAll: function() {
+                   return {
+                     data: function() {return fakeLink;}
+                   };
+                 }
+               },
+               removeSVGClass: NO_OP,
+               db: db,
+               destroy_service: {
+                 get: NO_OP
+               },
+               env: env,
+               get: function(key) {
+                 if ('app' === key) {
+                   return app;
+                 }
+                 if ('env' === key) {
+                   return env;
+                 }
+                 if ('addRelationStart_service' === key) {
+                   return {};
+                 }
+                 if ('db' === key) {
+                   return db;
+                 }
+                 if ('destroy_service' === key) {
+                   return {
+                     get: NO_OP
+                   };
+                 }
+                 return null;
+               },
+               container: viewContainer,
+               _addRelationCallback: function() {
+                 // Executing the "views.environment.prototype
+                 // .service_click_actions._addRelationCallback" function
+                 //instead.
+                 views.environment.prototype.service_click_actions
+                   ._addRelationCallback.apply(this, arguments);
+               },
+               _destroyCallback: function() {
+                 // Executing the "views.environment.prototype
+                 // .service_click_actions._destroyCallback" function
+                 //instead.
+                 views.environment.prototype.service_click_actions
+                   ._destroyCallback.apply(this, arguments);
+               }
+             };
 
-         view.service_click_actions._addRelationCallback.apply(view,
-             [view, ERR_EV]);
+         views.environment.prototype.service_click_actions.addRelationEnd
+           .apply(view, [{}, {}, view]);
 
          assertNotificationNumber('1');
 
-         view.service_click_actions.destroyService.apply(
+         views.environment.prototype.service_click_actions.destroyService.apply(
              //destroyService function signature > (m, context, view, btn)
-             view.service_click_actions, [{}, {}, view, {set: NO_OP}]);
+             view, [{}, {}, view, {set: NO_OP}]);
 
          assertNotificationNumber('2');
        });
