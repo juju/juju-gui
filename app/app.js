@@ -93,6 +93,15 @@ YUI.add('juju-gui', function(Y) {
     },
 
     initializer: function() {
+      // Update the on-screen environment name provided in the configuration or
+      // a default if none is configured.
+      var environment_name = this.get('environment_name') || 'Environment',
+          environment_node = Y.one('#environment-name');
+      // Some tests do not fully populate the DOM, so we check to be sure.
+      if (Y.Lang.isValue(environment_node)) {
+        environment_node.set('text', environment_name);
+      }
+
       // Create a client side database to store state.
       this.db = new models.Database();
 
@@ -115,6 +124,9 @@ YUI.add('juju-gui', function(Y) {
         source: this.get('charm_store_url')});
 
       // Event subscriptions
+
+      // When the provider type becomes available, display it.
+      this.env.after('providerTypeChange', this.onProviderTypeChange);
 
       // TODO: refactor per event views into a generic show view event.
       this.on('*:showService', this.navigate_to_service);
@@ -330,6 +342,20 @@ YUI.add('juju-gui', function(Y) {
         view.instance.render();
       }
       next();
+    },
+
+    /* Display the provider type.
+     *
+     * The provider type arrives asynchronously.  Instead of updating the
+     * display from the environment code (a separation of concerns violation)
+     * we update it here.
+     */
+    onProviderTypeChange: function(evt) {
+      var providerType = evt.newVal,
+          providerNode = Y.one('#provider-type');
+      if (Y.Lang.isValue(providerType)) {
+        providerNode.set('text', 'on ' + providerType);
+      }
     },
 
     show_environment: function(req, res, next) {

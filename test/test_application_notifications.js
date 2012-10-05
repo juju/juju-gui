@@ -200,9 +200,11 @@
          var view = new views.environment({
            db: db,
            container: viewContainer}).render();
+         
+         db.relations.remove = NO_OP;
 
          view.service_click_actions._addRelationCallback.apply(view,
-             [view, ERR_EV]);
+             [view, 'relation_id', ERR_EV]);
 
          assertNotificationNumber('1');
 

@@ -46,8 +46,7 @@
     });
 
     afterEach(function(done) {
-      container.remove();
-      container.destroy();
+      container.remove(true);
       service.destroy();
       db.destroy();
       env.destroy();

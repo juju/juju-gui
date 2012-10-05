@@ -393,8 +393,6 @@ YUI.add('juju-view-environment', function(Y) {
                     return (d.subordinate ? 'subordinate ' : '') + 'service';
                   })
             .call(drag)
-            .transition()
-            .duration(500)
             .attr('transform', function(d) {
                 return d.translateStr();});
 
@@ -407,9 +405,6 @@ YUI.add('juju-view-environment', function(Y) {
                 // TODO: update the service_boxes
                 // removing the bound data
               })
-            .transition()
-            .duration(500)
-            .attr('x', 0)
             .remove();
 
           function updateLinks() {
@@ -445,7 +440,9 @@ YUI.add('juju-view-environment', function(Y) {
           enter.insert('g', 'g.service')
               .attr('class', 'rel-group')
               .append('svg:line', 'g.service')
-              .attr('class', 'relation');
+              .attr('class', function(d) {
+                return (d.pending ? 'pending-relation ' : '') + 'relation';
+              });
 
           // TODO:: figure out a clean way to update position
           g.selectAll('rel-label').remove();
@@ -698,8 +695,7 @@ YUI.add('juju-view-environment', function(Y) {
                     .select('.relation');
                 var img = d3.select(this.parentNode)
                     .select('image');
-                var context = this.parentNode.parentNode.parentNode,
-                    service = self.serviceForBox(d);
+                var context = this.parentNode.parentNode.parentNode;
 
                 // Start the line at our image
                 dragline.attr('x1', parseInt(img.attr('x'), 10) + 16)
@@ -708,7 +704,7 @@ YUI.add('juju-view-environment', function(Y) {
 
                 // Start the add-relation process.
                 self.service_click_actions
-                .addRelationStart(service, context, self);
+                .addRelationStart(d, context, self);
               })
               .on('drag', function() {
                 // Rubberband our potential relation line.
@@ -1189,35 +1185,44 @@ YUI.add('juju-view-environment', function(Y) {
             // Get the vis, and links, build the new relation.
             var vis = view.vis,
                 env = view.get('env'),
-                container = view.get('container'),
-                rel = views.BoxPair();
+                db = view.get('db'),
+                source = view.get('addRelationStart_service'),
+                relation_id = 'pending:' + source.id + m.id;
 
-            rel.source(view.get('addRelationStart_service'));
-            rel.target(m);
+            // Create a pending relation in the database between the
+            // two services.
+            db.relations.create({
+              relation_id: relation_id,
+              type: 'pending',
+              endpoints: [
+                [source.id, {name: 'pending', role: 'server'}],
+                [m.id, {name: 'pending', role: 'client'}]
+              ],
+              pending: true
+            });
 
-            // Add temp relation between services.
-            var link = vis.selectAll('line.pending-relation')
-                .data([rel]);
-            link.enter().insert('svg:line', 'g.service')
-                .attr('class', 'relation pending-relation');
-            // Unwrap the <line> obj and use it as this
-            // for drawRelation. Mimics the traditional call interface
-            view.drawRelation.call(link[0][0], rel);
+            // Firing the update event on the db will properly redraw the
+            // graph and reattach events.
+            db.fire('update');
 
             // Fire event to add relation in juju.
             // This needs to specify interface in the future.
             env.add_relation(
-                rel.source().id,
-                rel.target().id,
-                Y.bind(this._addRelationCallback, this, view)
+                source.id,
+                m.id,
+                Y.bind(this._addRelationCallback, this, view, relation_id)
             );
             // For now, set back to show_service.
             view.set('currentServiceClickAction', 'toggleControlPanel');
           },
 
-          _addRelationCallback: function(view, ev) {
+          _addRelationCallback: function(view, relation_id, ev) {
+            var db = view.get('db');
+            // Remove our pending relation from the DB, error or no.
+            db.relations.remove(
+                db.relations.getById(relation_id));
             if (ev.err) {
-              view.get('db').notifications.add(
+              db.notifications.add(
                   new models.Notification({
                     title: 'Error adding relation',
                     message: 'Relation ' + ev.endpoint_a +
