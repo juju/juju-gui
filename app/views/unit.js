@@ -125,7 +125,6 @@ YUI.add('juju-view-unit', function(Y) {
           db = this.get('db'),
           app = this.get('app'),
           service = db.services.getById(unit.service);
-
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
@@ -136,13 +135,10 @@ YUI.add('juju-view-unit', function(Y) {
               modelId: unit
             })
         );
-
       } else {
         this.resolved_panel.hide();
       }
-
       button.set('disabled', false);
-
     },
 
     confirmRemoved: function(ev) {

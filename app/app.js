@@ -364,9 +364,7 @@ YUI.add('juju-gui', function(Y) {
     // Model interactions -> move to db layer
     load_service: function(evt) {
       console.log('load service', evt);
-
       var db = this.db;
-
       if (evt.err) {
         db.notifications.add(
             new models.Notification({
@@ -395,9 +393,7 @@ YUI.add('juju-gui', function(Y) {
 
     load_charm: function(evt) {
       console.log('load charm', evt);
-
       var db = this.db;
-
       if (evt.err) {
         db.notifications.add(
             new models.Notification({

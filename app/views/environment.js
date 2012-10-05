@@ -807,7 +807,6 @@ YUI.add('juju-view-environment', function(Y) {
             relationElement, confirmButton, ev) {
           var db = this.get('db'),
               service = this.get('model');
-
           if (ev.err) {
             db.notifications.add(
                 new models.Notification({
@@ -818,11 +817,9 @@ YUI.add('juju-view-environment', function(Y) {
             );
             view.removeSVGClass(this.relationElement,
                 'to-remove pending-relation');
-
           } else {
             view.get('rmrelation_dialog').hide();
           }
-
           confirmButton.set('disabled', false);
         },
 
@@ -1111,7 +1108,6 @@ YUI.add('juju-view-environment', function(Y) {
 
           _addRelationCallback: function(view, ev) {
             var db = view.get('db');
-
             if (ev.err) {
               db.notifications.add(
                   new models.Notification({

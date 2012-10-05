@@ -55,7 +55,6 @@ YUI.add('juju-view-service', function(Y) {
       var service = this.get('model'),
           db = this.get('db'),
           app = this.get('app');
-
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
@@ -231,7 +230,6 @@ YUI.add('juju-view-service', function(Y) {
               env = this.get('env'),
               app = this.get('app'),
               db = this.get('db');
-
           if (ev.err) {
             db.notifications.add(
                 new models.Notification({
@@ -442,7 +440,6 @@ YUI.add('juju-view-service', function(Y) {
               env = this.get('env'),
               app = this.get('app'),
               db = this.get('db');
-
           if (ev.err) {
             db.notifications.add(
                 new models.Notification({
@@ -661,7 +658,6 @@ YUI.add('juju-view-service', function(Y) {
           app = this.get('app'),
           db = this.get('db'),
           unit_names = ev.result || [];
-
       if (ev.err) {
         db.notifications.add(
             new models.Notification({

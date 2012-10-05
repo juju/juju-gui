@@ -119,7 +119,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
 
     _deployCallback: function(ev) {
       var db = this.get('db');
-
       if (ev.err) {
         db.notifications.add(
             new models.Notification({

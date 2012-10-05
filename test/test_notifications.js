@@ -57,12 +57,14 @@ describe('notifications', function() {
     'op': 'delta'
   };
 
+
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'juju-models',
       'juju-views',
       'juju-gui',
       'juju-env',
+      'node-event-simulate',
       'juju-tests-utils'],
 
     function(Y) {
@@ -174,7 +176,8 @@ describe('notifications', function() {
 
   it('must be able to include and show object links', function() {
     var container = Y.Node.create('<div id="test">'),
-        env = new juju.Environment(),
+        conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
+        env = new juju.Environment({conn: conn}),
         app = new Y.juju.App({env: env, container: container}),
         db = app.db,
         mw = db.services.create({id: 'mediawiki',
@@ -216,7 +219,10 @@ describe('notifications', function() {
   it('must be able to evict irrelevant notices', function() {
     var container = Y.Node.create(
         '<div id="test" class="container"></div>'),
+        conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
+        env = new juju.Environment({conn: conn}),
         app = new Y.juju.App({
+          env: env,
           container: container,
           viewContainer: container
         });
@@ -318,6 +324,33 @@ describe('notifications', function() {
        notice.get('title').should.equal('Problem with mysql/2');
        notice.get('message').should.equal('');
      });
+
+
+  it('should open on click and close on clickoutside', function(done) {
+    var container = Y.Node.create(
+        '<div id="test-container" style="display: none" class="container"/>'),
+        notifications = new models.NotificationList(),
+        env = new juju.Environment(),
+        view = new views.NotificationsView({
+          container: container,
+          notifications: notifications,
+          env: env}).render(),
+        indicator;
+
+    Y.one('body').append(container);
+    notifications.add({title: 'testing', 'level': 'error'});
+    indicator = container.one('#notify-indicator');
+
+    indicator.simulate('click');
+    indicator.ancestor().hasClass('open').should.equal(true);
+
+    Y.one('body').simulate('click');
+    indicator.ancestor().hasClass('open').should.equal(false);
+
+    container.remove();
+    done();
+  });
+
 });
 
 
