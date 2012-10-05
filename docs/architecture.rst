@@ -56,13 +56,15 @@ Scenarios
 Requirements
 ------------
 
-connect  sync disconnect
-   |       |        |
+::
 
-api
--- sync (ids+hashes)
--- subscribe()
--- delta
+  connect  sync disconnect
+     |       |        |
+
+  api
+  -- sync (ids+hashes)
+  -- subscribe()
+  -- delta
 
 Questions
 ~~~~~~~~~
@@ -73,8 +75,6 @@ relations by id
 
 We have multiple object states for a given.
 
-Inline combo handler for yui
-https://github.com/rgrove/combohandler
+Inline combo handler for yui: https://github.com/rgrove/combohandler
 
-more complicated but similiar
-https://github.com/jafl/YUI-3-Stockpile
+More complicated but similiar: https://github.com/jafl/YUI-3-Stockpile
