@@ -31,11 +31,7 @@ YUI.add('juju-view-environment', function(Y) {
             click: 'serviceClick',
             dblclick: 'serviceDblClick'
           },
-          '.subordinateservice': {
-            click: 'serviceClick',
-            dblclick: 'serviceDblClick'
-          },
-          '.service-borer': {
+          '.service-border': {
             mouseover: function(d, self) {
               if ((d3.event.relatedTarget &&
                   d3.event.relatedTarget.nodeName === 'rect') &&
@@ -238,9 +234,8 @@ YUI.add('juju-view-environment', function(Y) {
             //   this = DOMNode of currentTarget
             //   handler(d, view)
             var d3Adaptor = function(evt) {
-              var selection = d3.select(
-                  evt.currentTarget.getDOMNode()),
-                      d = selection.data()[0];
+              var selection = d3.select(evt.currentTarget.getDOMNode()),
+                  d = selection.data()[0];
               // This is a minor violation (extension)
               // of the interface, but suits us well.
               d3.event = evt;
