@@ -125,6 +125,9 @@ YUI.add('juju-gui', function(Y) {
 
       // Event subscriptions
 
+      // When the provider type becomes available, display it.
+      this.env.after('providerTypeChange', this.onProviderTypeChange);
+
       // TODO: refactor per event views into a generic show view event.
       this.on('*:showService', this.navigate_to_service);
       this.on('*:showUnit', this.navigate_to_unit);
@@ -347,13 +350,12 @@ YUI.add('juju-gui', function(Y) {
      * display from the environment code (a separation of concerns violation)
      * we update it here.
      */
-    show_provider_type: function(ignored, ignored_harder, next) {
-      var provider_type = this.env.get('provider_type'),
-          provider_node = Y.one('#provider-type');
-      if (Y.Lang.isValue(provider_type)) {
-        provider_node.set('text', 'on ' + provider_type);
+    onProviderTypeChange: function(evt) {
+      var providerType = evt.newVal,
+          providerNode = Y.one('#provider-type');
+      if (Y.Lang.isValue(providerType)) {
+        providerNode.set('text', 'on ' + providerType);
       }
-      next();
     },
 
     show_environment: function(req, res, next) {
@@ -533,7 +535,6 @@ YUI.add('juju-gui', function(Y) {
       routes: {
         value: [
           { path: '*', callback: 'show_notifications_view'},
-          { path: '*', callback: 'show_provider_type'},
           { path: '/charms/', callback: 'show_charm_collection'},
           { path: '/charms/*charm_url',
             callback: 'show_charm',

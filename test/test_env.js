@@ -113,18 +113,18 @@
     });
 
     it('will populate the provider type when recieved', function(done) {
-      var provider_type = 'super provider',
+      var providerType = 'super provider',
           evt =
               { data:
                 '{"ready": true, ' +
                 ' "version": 0,' +
-                ' "provider_type": "' + provider_type + '"}'};
+                ' "provider_type": "' + providerType + '"}'};
 
       // Before the message arrives there is no provider type set.
-      assert.equal(env.get('provider_type', undefined));
+      assert.equal(env.get('providerType', undefined));
       env.on_message(evt);
       // After the message arrives the provider type is set.
-      assert.equal(env.get('provider_type'), provider_type);
+      assert.equal(env.get('providerType'), providerType);
       done();
     });
   });

@@ -111,18 +111,16 @@ describe('Application', function() {
   });
 
   it('should show the provider type, when available', function() {
-    var provider_type = 'excellent provider';
-    app.env.set('provider_type', provider_type);
-    // Since no provider type has been communicated from the server yet, none
-    // is displayed.
+    var providerType = 'excellent provider';
+    // Since no provider type has been set yet, none is displayed.
     assert.equal(
         container.one('#provider-type').get('text'),
         '');
-    app.show_provider_type(undefined, undefined, function() {});
+    app.env.set('providerType', providerType);
     // The provider type has been displayed.
     assert.equal(
         container.one('#provider-type').get('text'),
-        'on ' + provider_type);
+        'on ' + providerType);
   });
 
 });

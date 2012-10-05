@@ -71,7 +71,7 @@ YUI.add('juju-env', function(Y) {
 
       var msg = Y.JSON.parse(evt.data);
       if (msg.ready) {
-        this.set('provider_type', msg.provider_type);
+        this.set('providerType', msg.provider_type);
       }
       if (msg.version === 0) {
         console.log('Env: Handshake Complete');
