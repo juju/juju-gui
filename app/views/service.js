@@ -416,6 +416,22 @@ YUI.add('juju-view-service', function(Y) {
 
   views.service_config = ServiceConfigView;
 
+  // Display a unit list based on the total number of units.
+  Y.Handlebars.registerHelper('show_units', function(units) {
+    var templates = {
+      large: Templates.show_units_large,
+      medium: Templates.show_units_medium,
+      small: Templates.show_units_small,
+      tiny: Templates.show_units_tiny
+    };
+    var numUnits = units.length;
+    // TODO: different visualization based on the viewport size.
+    // var winHeight = Y.DOM.winHeight();
+    // var winWidth = Y.DOM.winWidth();
+    var template = templates.medium;
+    return template({units: units});
+  });
+
   var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     template: Templates.service,
