@@ -200,7 +200,6 @@
          var view = new views.environment({
            db: db,
            container: viewContainer}).render();
-         
          db.relations.remove = NO_OP;
 
          view.service_click_actions._addRelationCallback.apply(view,
@@ -540,7 +539,6 @@
          };
 
          views.charm.prototype.on_charm_deploy.apply(mockView, [ERR_EV]);
-
          assert.isTrue(notified);
        });
 
