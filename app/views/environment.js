@@ -813,8 +813,7 @@ YUI.add('juju-view-environment', function(Y) {
                 new models.Notification({
                   title: 'Error deleting relation',
                   message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
-                  level: 'error',
-                  link: '/'
+                  level: 'error'
                 })
             );
             view.removeSVGClass(this.relationElement,
@@ -1119,8 +1118,7 @@ YUI.add('juju-view-environment', function(Y) {
                     title: 'Error adding relation',
                     message: 'Relation ' + ev.endpoint_a +
                         ' to ' + ev.endpoint_b,
-                    level: 'error',
-                    link: '/'
+                    level: 'error'
                   })
               );
             }
