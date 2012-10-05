@@ -124,7 +124,7 @@ YUI.add('juju-view-environment', function(Y) {
           // Build a service.id -> BoundingBox map for services.
           this.service_boxes = {};
 
-          // Track events bound ot the canvas
+          // Track events bound to the canvas
           this._sceneEvents = [];
         },
 
