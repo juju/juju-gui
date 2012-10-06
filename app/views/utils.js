@@ -707,7 +707,6 @@ YUI.add('juju-view-utils', function(Y) {
 
   views.BoxPair = BoxPair;
 
-
 }, '0.1.0', {
   requires: ['base-build',
     'handlebars',

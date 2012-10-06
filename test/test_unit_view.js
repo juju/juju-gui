@@ -67,8 +67,7 @@
     });
 
     afterEach(function(done) {
-      container.remove();
-      container.destroy();
+      container.remove(true);
       service.destroy();
       charm.destroy();
       db.destroy();

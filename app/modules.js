@@ -23,6 +23,10 @@ GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/svg-layouts.js'
         },
 
+        'drag-events': {
+          fullpath: '/juju-ui/assets/javascripts/drag-events.js'
+        },
+
         'reconnecting-websocket': {
           fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },

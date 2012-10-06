@@ -38,8 +38,8 @@ YUI.add('juju-view-environment', function(Y) {
                 self.addSVGClass(rect, 'hover');
               }
             },
-            mouseleave: function(d, self) {
-              console.log(d3.event.relatedTarget.get('nodeName'));
+            dragleave: function(d, self) {
+              //console.log(d3.event.relatedTarget.get('nodeName'));
               var rect = Y.one(this).one('.service-border');
               //if (//d3.event.relatedTarget == d3.event.currentTarget && 
               //    self.hasSVGClass(d3.event.relatedTarget, 'hover')) {
@@ -1197,6 +1197,7 @@ YUI.add('juju-view-environment', function(Y) {
     'handlebars-base',
     'node',
     'svg-layouts',
+    'drag-events',
     'event-resize',
     'slider',
     'view']
