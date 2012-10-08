@@ -301,3 +301,32 @@ describe('utilities', function() {
 
   });
 })();
+
+(function() {
+  describe('service state simplification', function() {
+
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('should translate service states correctly', function() {
+      // "started" is turned into "running"
+      assert.equal(utils.simplifyState('started'), 'running');
+      // Any state that ends in "-error" is simplified to just "error".
+      assert.equal(utils.simplifyState('install-error'), 'error');
+      assert.equal(utils.simplifyState('foo-error'), 'error');
+      assert.equal(utils.simplifyState('-error'), 'error');
+      // Any other state (should just be "pending" and "installed") are
+      // "pending".
+      assert.equal(utils.simplifyState('pending'), 'pending');
+      assert.equal(utils.simplifyState('installed'), 'pending');
+      assert.equal(utils.simplifyState('waiting'), 'pending');
+      assert.equal(utils.simplifyState('schlepping'), 'pending');
+    });
+  });
+})();
