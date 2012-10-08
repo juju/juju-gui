@@ -31,7 +31,7 @@ function injectData(app, data) {
   return app;
 }
 
-describe('Application', function() {
+describe('Application basics', function() {
   var Y, app, container;
 
   before(function(done) {
@@ -75,7 +75,7 @@ describe('Application', function() {
     // needed to show them
     var wordpress = app.db.services.getById('wordpress'),
         wp0 = app.db.units.get_units_for_service(wordpress)[0],
-        wp_charm = app.db.charms.create({id: wordpress.get('charm')});
+        wp_charm = app.db.charms.add({id: wordpress.get('charm')});
 
     // 'service/wordpress/' is the primary and so other URL are not returned
     app.getModelURL(wordpress).should.equal('/service/wordpress/');
@@ -87,7 +87,8 @@ describe('Application', function() {
     app.getModelURL(wp0).should.equal('/unit/wordpress-0/');
 
     // charms also require a mapping but only a name, not a function
-    app.getModelURL(wp_charm).should.equal('/charms/' + wp_charm.get('name'));
+    app.getModelURL(wp_charm).should.equal(
+      '/charms/' + wp_charm.get('charm_store_path'));
   });
 
   it('should display the configured environment name', function() {

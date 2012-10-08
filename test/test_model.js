@@ -366,7 +366,7 @@
 
     afterEach(function() {
       container.destroy();
-      app.destroy();
+      // app.destroy();
     });
 
     it('will throw an exception with non-read sync', function() {
@@ -457,11 +457,11 @@
         {env: env, charm_store: charm_store},
         function(err, response) {
           assert(!err);
-          charm.get('summary').should.equal('wowza');
-          charm.get('is_subordinate').should.equal(true);
-          charm.get('scheme').should.equal('cs');
-          charm.get('revision').should.equal('7');
         });
+      charm.get('summary').should.equal('wowza');
+      charm.get('is_subordinate').should.equal(true);
+      charm.get('scheme').should.equal('cs');
+      charm.get('revision').should.equal('7');
     });
 
     it('must handle failure from the charm store', function() {

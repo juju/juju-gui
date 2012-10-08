@@ -3,7 +3,7 @@
 (function() {
   describe('juju service config view', function() {
     var ServiceConfigView, models, Y, container, service, db, conn,
-        env, charm, ENTER, utils, app;
+        env, charm, ENTER, utils, app, testUtils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-views', 'juju-models', 'base',
@@ -15,6 +15,7 @@
             models = Y.namespace('juju.models');
             ServiceConfigView = Y.namespace('juju.views').service_config;
             utils = Y.namespace('juju.views.utils');
+            testUtils = Y.namespace('juju-tests.utils');
             done();
           });
     });
@@ -25,7 +26,7 @@
     });
 
     beforeEach(function(done) {
-      conn = new utils.SocketStub(),
+      conn = new testUtils.SocketStub(),
       env = new (Y.namespace('juju')).Environment({conn: conn});
       env.connect();
       conn.open();
