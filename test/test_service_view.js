@@ -622,5 +622,23 @@
           var _ = expect(row.one('.highlighted')).to.not.exist;
         });
 
+    it('should show started units in the Error tab if they contain relation ' +
+        'errors', function() {
+         var units = [{
+           agent_state: 'started',
+           relation_errors: {
+             'db': {},
+             'mem': {}
+           }
+         }, {
+           agent_state: 'started',
+           relation_errors: {}
+         }, {
+           agent_state: 'start-error'
+         }], filtered = ServiceView.prototype.filterUnits('error', units);
+
+         assert.equal(2, filtered.length);
+       });
+
   });
 }) ();

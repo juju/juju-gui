@@ -19,7 +19,11 @@
       <li class="span3">
         <div class="thumbnail well" id="{{id}}">
           <h5>{{id}}</h5>
-          <span>{{agent_state}}</span> <br/>
+          {{#if hasRelationError}}
+            <span><i class="icon-exclamation-sign"></i> Relation error</span>
+            <br/>
+          {{/if}}  
+          <span>{{agent_state}}</span><br/>
           <span>{{public_address}}</span>
         </div>
       </li>

@@ -459,16 +459,40 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     filterUnits: function(filter_state, units) {
-      var state_matchers = {
-        running: function(s) { return s === 'started'; },
-        pending: function(s) {
-          return ['installed', 'pending'].indexOf(s) > -1; },
-        // Errors: install-, start-, stop-, charm-upgrade-, configure-.
-        error: function(s) { return (/-error$/).test(s); }},
-          matcher = filter_state && state_matchers[filter_state];
+      var matcher = (function() {
+        if (!filter_state) {
+          return null;
+        }
+        var state_matchers = {
+          running: function(unit) {
+            return unit.agent_state === 'started' &&
+                !unit.hasRelationError;
+          },
+          pending: function(unit) {
+            return ['installed', 'pending'].indexOf(unit.agent_state) > -1 &&
+                !unit.hasRelationError;
+          },
+          // Errors: install-, start-, stop-, charm-upgrade-, configure-.
+          error: function(unit) {
+            return (/-error$/).test(unit.agent_state) ||
+                unit.hasRelationError;
+          }
+        };
+        return state_matchers[filter_state];
+      })();
+
+      Y.each(units, function(unit) {
+        unit.hasRelationError = false;
+        if (unit.relation_errors &&
+            Y.Object.keys(unit.relation_errors).length) {
+          unit.hasRelationError = true;
+        }
+      });
+
       if (matcher) {
         return Y.Array.filter(units, function(u) {
-          return matcher(u.agent_state); });
+          return matcher(u);
+        });
       } else {
         return units;
       }
