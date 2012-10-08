@@ -71,8 +71,7 @@
     });
 
     afterEach(function(done) {
-      container.remove();
-      container.destroy();
+      container.remove(true);
       env.destroy();
       done();
     });
