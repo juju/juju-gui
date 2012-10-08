@@ -683,7 +683,12 @@ YUI.add('juju-view-service', function(Y) {
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
-              title: 'Error removing unit',
+              title: (function() {
+                if (!ev.unit_names || ev.unit_names.length < 2) {
+                  return 'Error removing unit';
+                }
+                return 'Error removing units';
+              })(),
               message: (function() {
                 if (!ev.unit_names || ev.unit_names.length === 0) {
                   return '';

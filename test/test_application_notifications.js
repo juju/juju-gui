@@ -511,7 +511,8 @@
                        fire: NO_OP,
                        notifications: {
                          add: function(notification) {
-                           trace.push(notification.get('message'));
+                           messages.push(notification.get('message'));
+                           titles.push(notification.get('title'));
                          }
                        }
                      }
@@ -520,7 +521,8 @@
                  return null;
                }
              },
-             trace = [];
+             messages = [],
+             titles = [];
 
          views.service.prototype._removeUnitCallback.apply(mockView, [{
            err: true,
@@ -542,7 +544,13 @@
            unit_names: ['b', 'c']
          }]);
 
-         assert.equal(';;Unit name: a;Unit names: b, c', trace.join(';'));
+         function assertTrace(expected, trace) {
+           assert.equal(expected.join(';'), trace.join(';'));
+         }
+
+         assertTrace(['Error removing unit', 'Error removing unit',
+           'Error removing unit', 'Error removing units'], titles);
+         assertTrace(['', '', 'Unit name: a', 'Unit names: b, c'], messages);
        });
 
   });
