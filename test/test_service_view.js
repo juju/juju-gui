@@ -75,7 +75,7 @@
           {container: container, model: service, db: db,
             env: env, querystring: {}}).render();
       var rendered_names = container.one(
-        'ul.thumbnails').all('div.well').get('id');
+          'ul.thumbnails').all('div.well').get('id');
       var expected_names = db.units.map(function(u) {return u.id;});
       expected_names.sort();
       assert.deepEqual(rendered_names, expected_names);
@@ -213,7 +213,7 @@
          db_names.should.eql(expected_names);
          service.get('unit_count').should.equal(4);
          var rendered_names = container.one(
-           'ul.thumbnails').all('div.well').get('id');
+         'ul.thumbnails').all('div.well').get('id');
          assert.deepEqual(rendered_names, expected_names);
        });
 
@@ -414,7 +414,7 @@
           { container: container, model: service, db: db,
             env: env, querystring: {state: 'running'}}).render();
       var rendered_names = container.one(
-        'ul.thumbnails').all('div.well').get('id');
+          'ul.thumbnails').all('div.well').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
     });
 
@@ -447,7 +447,7 @@
           { container: container, model: service, db: db,
             env: env, querystring: {state: 'pending'}}).render();
       var rendered_names = container.one(
-        'ul.thumbnails').all('div.well').get('id');
+          'ul.thumbnails').all('div.well').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
     });
 
@@ -477,7 +477,7 @@
           { container: container, model: service, db: db,
             env: env, querystring: {state: 'error'}}).render();
       var rendered_names = container.one(
-        'ul.thumbnails').all('div.well').get('id');
+          'ul.thumbnails').all('div.well').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
     });
 
