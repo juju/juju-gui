@@ -88,7 +88,7 @@ describe('Application basics', function() {
 
     // charms also require a mapping but only a name, not a function
     app.getModelURL(wp_charm).should.equal(
-      '/charms/' + wp_charm.get('charm_store_path'));
+        '/charms/' + wp_charm.get('charm_store_path'));
   });
 
   it('should display the configured environment name', function() {

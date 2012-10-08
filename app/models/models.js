@@ -62,9 +62,10 @@ YUI.add('juju-models', function(Y) {
         if (parts) {
           parts.shift();
           Y.each(
-            Y.Array.zip(
-              ['scheme', 'owner', 'series', 'package_name', 'revision'], parts),
-            function(pair) { result[pair[0]] = pair[1]; });
+              Y.Array.zip(
+                  ['scheme', 'owner', 'series', 'package_name', 'revision'],
+                  parts),
+              function(pair) { result[pair[0]] = pair[1]; });
           if (!Y.Lang.isValue(result.scheme)) {
             result.scheme = 'cs'; // This is the default.
           }
@@ -86,7 +87,7 @@ YUI.add('juju-models', function(Y) {
     sync: function(action, options, callback) {
       if (action !== 'read') {
         throw (
-          'Only use the "read" action; "' + action + '" not supported.');
+            'Only use the "read" action; "' + action + '" not supported.');
       }
       if (!Y.Lang.isValue(options.env) ||
           !Y.Lang.isValue(options.charm_store)) {
@@ -134,8 +135,8 @@ YUI.add('juju-models', function(Y) {
       var result = Charm.superclass.parse.apply(this, arguments);
       result.is_subordinate = result.subordinate;
       Y.each(
-        ['subordinate', 'name', 'revision'],
-        function(nm) { delete result[nm]; });
+          ['subordinate', 'name', 'revision'],
+          function(nm) { delete result[nm]; });
       return result;
     }
   }, {
@@ -152,9 +153,9 @@ YUI.add('juju-models', function(Y) {
             self._set(key, value);
           });
           this._set(
-            'charm_store_path',
-            [(parts.owner ? '~' + parts.owner : 'charms'),
-             parts.series, parts.package_name, 'json']
+              'charm_store_path',
+              [(parts.owner ? '~' + parts.owner : 'charms'),
+               parts.series, parts.package_name, 'json']
             .join('/'));
           this._set('full_name', _calculate_full_charm_name(parts));
           return parts.scheme + ':' + this.get('full_name');

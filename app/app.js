@@ -256,10 +256,10 @@ YUI.add('juju-gui', function(Y) {
             self = this;
         if (!Y.Lang.isValue(this.db.charms.getById(charm_id))) {
           this.db.charms.add({id: charm_id}).load(
-            {env: this.env, charm_store: this.charm_store},
-            // If views are bound to the charm model, firing "update" is
-            // unnecessary, and potentially even mildly harmful.
-            function(err, result) { self.db.fire('update'); });
+              {env: this.env, charm_store: this.charm_store},
+              // If views are bound to the charm model, firing "update" is
+              // unnecessary, and potentially even mildly harmful.
+              function(err, result) { self.db.fire('update'); });
         }
       }
     },
