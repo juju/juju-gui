@@ -2,7 +2,7 @@
 
 (function() {
 
-  describe('charm list modified functions', function() {
+  describe('charm id normalization', function() {
     var Y, models;
 
     before(function(done) {
@@ -12,9 +12,8 @@
       });
     });
 
-    it('must normalize charm ids when adding', function() {
-      var charms = new models.CharmList(),
-          charm = charms.add({id: 'precise/openstack-dashboard-0'});
+    it('must normalize charm ids when creating', function() {
+      var charm = new models.Charm({id: 'precise/openstack-dashboard-0'});
       charm.get('id').should.equal('cs:precise/openstack-dashboard');
       // It also normalizes scheme value.
       charm.get('scheme').should.equal('cs');
@@ -25,6 +24,16 @@
           original = charms.add({id: 'cs:precise/openstack-dashboard'}),
           charm = charms.getById('precise/openstack-dashboard-0');
       charm.should.equal(original);
+    });
+
+    it('must create derived attributes from official charm id', function() {
+      var charm = new models.Charm(
+        {id: 'cs:precise/openstack-dashboard-0'});
+      charm.get('scheme').should.equal('cs');
+      var _ = expect(charm.get('owner')).to.not.exist;
+      charm.get('full_name').should.equal('precise/openstack-dashboard');
+      charm.get('charm_store_path').should.equal(
+        'charms/precise/openstack-dashboard/json');
     });
 
   });
@@ -42,49 +51,32 @@
     it('must parse fully qualified names', function() {
       // undefined never equals undefined.
       var res = models.parse_charm_id('cs:precise/openstack-dashboard-0');
-      res[0].should.equal('cs');
-      var _ = expect(res[1]).to.not.exist;
-      res.slice(2).should.eql(['precise', 'openstack-dashboard', '0']);
+      res.scheme.should.equal('cs');
+      var _ = expect(res.owner).to.not.exist;
+      res.series.should.equal('precise');
+      res.scheme.should.equal('cs');
+      res.package_name.should.equal('openstack-dashboard');
+      res.revision.should.equal('0');
     });
 
     it('must parse names without revisions', function() {
-      var res = models.parse_charm_id('cs:precise/openstack-dashboard');
-      var _ = expect(res[4]).to.not.exist;
+      var res = models.parse_charm_id('cs:precise/openstack-dashboard'),
+          _ = expect(res.revision).to.not.exist;
     });
 
     it('must parse fully qualified names with owners', function() {
-      models.parse_charm_id('cs:~bac/precise/openstack-dashboard-0')[1]
+      models.parse_charm_id('cs:~bac/precise/openstack-dashboard-0').owner
         .should.equal('bac');
     });
 
-    it('must give calculate a full name from an official id', function() {
-      models.calculate_full_name('cs:precise/openstack-dashboard-0')
-        .should.equal('precise/openstack-dashboard');
-    });
-
-    it('must give calculate a full name from an owned id', function() {
-      models.calculate_full_name('cs:~bac/precise/openstack-dashboard-0')
-        .should.equal('~bac/precise/openstack-dashboard');
-    });
-
     it('must normalize a charm id without a scheme', function() {
-      models.normalize_charm_id('precise/openstack-dashboard')
+      new models.CharmList().normalizeCharmId('precise/openstack-dashboard')
         .should.equal('cs:precise/openstack-dashboard');
     });
 
     it('must normalize a charm id with a revision', function() {
-      models.normalize_charm_id('local:precise/openstack-dashboard-5')
+      new models.CharmList().normalizeCharmId('local:precise/openstack-dashboard-5')
         .should.equal('local:precise/openstack-dashboard');
-    });
-
-    it('must calculate paths for official ids', function() {
-      models.calculate_path('cs:precise/openstack-dashboard-0')
-        .should.equal('charms/precise/openstack-dashboard/json');
-    });
-
-    it('must calculate paths for owned ids', function() {
-      models.calculate_path('cs:~bac/precise/openstack-dashboard-0')
-        .should.equal('~bac/precise/openstack-dashboard/json');
     });
 
   });
@@ -101,36 +93,39 @@
 
 
     it('must be able to create charm', function() {
-      var db = new models.Database(),
-          charm = db.charms.add({id: 'cs:~bac/precise/mysql-6'});
-      // and verify calculated attributes on the model
-      charm.get('id').should.equal('cs:~bac/precise/mysql');
-      charm.get('series').should.equal('precise');
+      var charm = new models.Charm(
+        {id: 'cs:~bac/precise/openstack-dashboard-0'});
       charm.get('scheme').should.equal('cs');
       charm.get('owner').should.equal('bac');
-      charm.get('revision').should.equal('6');
-      charm.get('full_name').should.equal('~bac/precise/mysql');
-      charm.get('name').should.equal('mysql');
-      charm.get('details_url').should.equal(
-          '~bac/precise/mysql/json');
+      charm.get('series').should.equal('precise');
+      charm.get('package_name').should.equal('openstack-dashboard');
+      charm.get('revision').should.equal('0');
+      charm.get('full_name').should.equal('~bac/precise/openstack-dashboard');
+      charm.get('charm_store_path').should.equal(
+        '~bac/precise/openstack-dashboard/json');
     });
 
     it('must be able to parse real-world charm names', function() {
-      var db = new models.Database(),
-          charm = db.charms.add({id: 'cs:precise/openstack-dashboard-0'});
+      var charm = new models.Charm({id: 'cs:precise/openstack-dashboard-0'});
       charm.get('full_name').should.equal('precise/openstack-dashboard');
-      charm.get('name').should.equal('openstack-dashboard');
-      charm.get('details_url').should.equal(
+      charm.get('package_name').should.equal('openstack-dashboard');
+      charm.get('charm_store_path').should.equal(
           'charms/precise/openstack-dashboard/json');
     });
 
     it('must be able to parse individually owned charms', function() {
-      var db = new models.Database(),
-          charm = db.charms.add({id: 'cs:~marcoceppi/precise/wordpress-17'});
+      var charm = new models.Charm({id: 'cs:~marcoceppi/precise/wordpress-17'});
       charm.get('full_name').should.equal('~marcoceppi/precise/wordpress');
-      charm.get('name').should.equal('wordpress');
-      charm.get('details_url').should.equal(
+      charm.get('package_name').should.equal('wordpress');
+      charm.get('charm_store_path').should.equal(
           '~marcoceppi/precise/wordpress/json');
+    });
+
+    it('must reject bad charm ids.', function() {
+      var charm = new models.Charm({id: 'foobar'});
+      var _ = expect(charm.get('id')).to.not.exist;
+      charm.set('id', 'barfoo');
+      _ = expect(charm.get('id')).to.not.exist;
     });
 
     it('must be able to create charm list', function() {
@@ -141,7 +136,7 @@
           { id: 'cs:precise/logger',
             description: 'Log sub'}),
           clist = new models.CharmList().add([c1, c2]);
-      var names = clist.map(function(c) {return c.get('name');});
+      var names = clist.map(function(c) {return c.get('package_name');});
       names[0].should.equal('mysql');
       names[1].should.equal('logger');
     });
@@ -341,7 +336,7 @@
         });
   });
 
-  describe('juju charm list loadById', function() {
+  describe('juju charm load', function() {
     var Y, models, conn, env, app, container, charm_store, data;
 
     before(function(done) {
@@ -362,11 +357,11 @@
       container = Y.Node.create('<div id="test" class="container"></div>');
       data = [];
       charm_store = new Y.DataSource.Local({source: data});
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            env: env,
-            charm_store: charm_store });
+      // app = new Y.juju.App(
+      //     { container: container,
+      //       viewContainer: container,
+      //       env: env,
+      //       charm_store: charm_store });
     });
 
     afterEach(function() {
@@ -374,41 +369,67 @@
       app.destroy();
     });
 
-    it('must throw an exception for bad ids.', function() {
+    it('will throw an exception with non-read sync', function() {
+      var charm = new models.Charm({id: 'local:precise/foo'});
       try {
-        app.db.charms.loadById('foobar');
-        assert.fail('Should have thrown an error.');
+        charm.sync('create');
+        assert.fail('Should have thrown an error');
       } catch (e) {
-        e.should.equal('invalid charm_id: foobar');
+        e.should.equal('Only use the "read" action; "create" not supported.');
+      }
+      try {
+        charm.sync('update');
+        assert.fail('Should have thrown an error');
+      } catch (e) {
+        e.should.equal('Only use the "read" action; "update" not supported.');
+      }
+      try {
+        charm.sync('delete');
+        assert.fail('Should have thrown an error');
+      } catch (e) {
+        e.should.equal('Only use the "read" action; "delete" not supported.');
       }
     });
 
-    it('must aggregate callbacks for the same id', function() {
-      app.db.charms.loading_callbacks['cs:precise/foo'] = [0];
-      app.db.charms.loadById('precise/foo-3', 1);
-      app.db.charms.loading_callbacks['cs:precise/foo'].should.eql([0, 1]);
-    });
-
-    it('must first try to get the charm from itself', function() {
-      app.db.charms.add({id: 'local:precise/foo'});
-      app.db.charms.loadById('local:precise/foo-17', function(charm) {
-        charm.get('id').should.equal('local:precise/foo');
-      });
-      var _ = expect(conn.last_message()).to.not.exist;
+    it('throws an error if you do not pass env and charm_store', function() {
+      var charm = new models.Charm({id: 'local:precise/foo'});
+      try {
+        charm.sync('read', {});
+        assert.fail('Should have thrown an error');
+      } catch (e) {
+        e.should.equal(
+          'You must supply both the env and the charm_store as options.');
+      }
+      try {
+        charm.sync('read', {env: 42});
+        assert.fail('Should have thrown an error');
+      } catch (e) {
+        e.should.equal(
+          'You must supply both the env and the charm_store as options.');
+      }
+      try {
+        charm.sync('read', {charm_store: 42});
+        assert.fail('Should have thrown an error');
+      } catch (e) {
+        e.should.equal(
+          'You must supply both the env and the charm_store as options.');
+      }
     });
 
     it('must send request to juju environment for local charms', function() {
-      app.db.charms.loadById('local:precise/foo', 'I am a marker!');
+      var charm = new models.Charm({id: 'local:precise/foo'}).load(
+        {env: env, charm_store: charm_store});
       conn.last_message().op.should.equal('get_charm');
-      app.db.charms.loading_callbacks['local:precise/foo']
-        .should.eql(['I am a marker!']);
     });
 
     it('must handle success from local charm request', function(done) {
-      app.db.charms.loadById('local:precise/foo', function(charm) {
-        charm.get('summary').should.equal('wowza');
-        done();
-      });
+      var charm = new models.Charm({id: 'local:precise/foo'}).load(
+        {env: env, charm_store: charm_store},
+        function(err, response) {
+          assert(!err);
+          charm.get('summary').should.equal('wowza');
+          done();
+        });
       var response = conn.last_message();
       response.result = {summary: 'wowza'};
       env.dispatch_result(response);
@@ -416,10 +437,12 @@
     });
 
     it('must handle failure from local charm request', function(done) {
-      app.db.charms.loadById('local:precise/foo', function(ev) {
-        ev.err.should.equal(true);
-        done();
-      });
+      var charm = new models.Charm({id: 'local:precise/foo'}).load(
+        {env: env, charm_store: charm_store},
+        function(err, response) {
+          assert(err);
+          done();
+        });
       var response = conn.last_message();
       response.err = true;
       env.dispatch_result(response);
@@ -430,27 +453,32 @@
       data.push(
           { responseText: Y.JSON.stringify(
           { summary: 'wowza', subordinate: true })});
-      app.db.charms.loadById('cs:precise/foo-7', function(charm) {
-        charm.get('summary').should.equal('wowza');
-        charm.get('is_subordinate').should.equal(true);
-        charm.get('scheme').should.equal('cs');
-        charm.get('revision').should.equal('7');
-      });
+      var charm = new models.Charm({id: 'cs:precise/foo-7'}).load(
+        {env: env, charm_store: charm_store},
+        function(err, response) {
+          assert(!err);
+          charm.get('summary').should.equal('wowza');
+          charm.get('is_subordinate').should.equal(true);
+          charm.get('scheme').should.equal('cs');
+          charm.get('revision').should.equal('7');
+        });
     });
 
     it('must handle failure from the charm store', function() {
-      // This is the only reasonable hook point into the local data store that
-      // I found to set an error.  Fragile, to some unknown degree.
+      // _defRequestFn is designed to be overridden to achieve more complex
+      // behavior when a request is received.  We simply declare that an
+      // error occurred.
       var original = charm_store._defResponseFn;
       charm_store._defResponseFn = function(e) {
         e.error = true;
         original.apply(charm_store, [e]);
       };
       data.push({responseText: Y.JSON.stringify({darn_it: 'uh oh!'})});
-      app.db.charms.loadById('cs:precise/foo', function(error) {
-        // The code sets "err" for the error path to mimic env errors.
-        error.err.should.equal(true);
-      });
+      var charm = new models.Charm({id: 'cs:precise/foo'}).load(
+        {env: env, charm_store: charm_store},
+        function(err, response) {
+          assert(err);
+        });
     });
 
   });

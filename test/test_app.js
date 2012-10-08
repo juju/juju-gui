@@ -207,11 +207,6 @@ describe('Application prefetching', function() {
     app.destroy();
   });
 
-  it('must send env and charm_store to db', function() {
-    app.db.charms.get('env').should.equal(env);
-    app.db.charms.get('charm_store').should.equal(charm_store);
-  });
-
   it('must prefetch charm and service for service pages', function() {
     injectData(app);
     data.push({responseText: Y.JSON.stringify({summary: 'wowza'})});

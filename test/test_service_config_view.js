@@ -3,7 +3,7 @@
 (function() {
   describe('juju service config view', function() {
     var ServiceConfigView, models, Y, container, service, db, conn,
-        env, charm, ENTER, utils;
+        env, charm, ENTER, utils, app;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-views', 'juju-models', 'base',
@@ -15,12 +15,6 @@
             models = Y.namespace('juju.models');
             ServiceConfigView = Y.namespace('juju.views').service_config;
             utils = Y.namespace('juju.views.utils');
-            conn = new(Y.namespace('juju-tests.utils')).SocketStub();
-            env = new(Y.namespace('juju')).Environment({
-                    conn: conn
-            });
-            env.connect();
-            conn.open();
             done();
           });
     });
@@ -31,6 +25,10 @@
     });
 
     beforeEach(function(done) {
+      conn = new utils.SocketStub(),
+      env = new (Y.namespace('juju')).Environment({conn: conn});
+      env.connect();
+      conn.open();
       container = Y.Node.create('<div id="test-container" />');
       Y.one('#main').append(container);
       db = new models.Database();
@@ -58,6 +56,9 @@
                         type: 'float'}}});
 
       db.charms.add([charm]);
+      app = { env: env, db: db,
+              getModelURL: function(model, intent) {
+                return model.get('name'); }};
       service = new models.Service({
         id: 'mysql',
         charm: 'cs:precise/mysql',
@@ -87,8 +88,7 @@
       var view = new ServiceConfigView({
         container: container,
         model: service,
-        db: db,
-        env: env
+        app: app
       });
       view.render();
 
@@ -114,8 +114,7 @@
       var view = new ServiceConfigView({
         container: container,
         model: service,
-        db: db,
-        env: env
+        app: app
       }).render();
 
       container.one('#input-option0').set('value', 'new value');
@@ -134,21 +133,16 @@
         var save_button = container.one('#save-service-config');
         save_button.get('disabled').should.equal(shouldBe);
       };
+      env.set_config = function(service, config, callback) {
+        assertButtonDisabled(true);
+        callback(ev);
+      };
 
       var ev = {err: true},
           view = new ServiceConfigView({
             container: container,
             model: service,
-            db: db,
-            env: (function() {
-              // We provide a fake env module that both makes test assertions
-              // and mocks out network traffic.
-              env.set_config = function(service, config, callback) {
-                assertButtonDisabled(true);
-                callback(ev);
-              };
-              return env;
-            })()
+            app: app
           }).render();
 
       // Clicking on the "Update" button disables it until the RPC
@@ -161,17 +155,14 @@
     it('should display a message when a server error occurs', function() {
       var ev = {err: true},
           alert_ = container.one('#message-area>.alert');
+      env.set_config = function(service, config, callback) {
+        callback(ev);
+      };
 
       var view = new ServiceConfigView({
         container: container,
         model: service,
-        db: db,
-        env: (function() {
-          env.set_config = function(service, config, callback) {
-            callback(ev);
-          };
-          return env;
-        })()
+        app: app
       }).render();
 
       // Before an erroneous event is processed, no alert exists.
@@ -190,8 +181,7 @@
           var view = new ServiceConfigView({
            container: container,
            model: service,
-           db: db,
-           env: env
+           app: app
          }).render();
 
          var error_message = utils.SERVER_ERROR_MESSAGE,
@@ -212,27 +202,18 @@
 
     it('should display an error when a validation error occurs', function() {
       var assertError = function(key, value, message) {
+        // Mock function
+        // view.saveConfig() calls it as part of its internal
+        // "success" callback
+        app.load_service = function() {};
+        env.set_config = function(service, config, callback) {
+          callback(ev);
+        };
         var ev = {err: false},
             view = new ServiceConfigView({
-              app: {
-                load_service: function() {
-                  // Mock function
-                  // view.saveConfig() calls it as part of its internal
-                  // "success" callback
-                }
-              },
+              app: app,
               container: container,
-              model: service,
-              db: db,
-              env: (function() {
-                // We provide a fake env module that both makes test assertions
-                // and mocks out network traffic.
-                env.set_config = function(service, config, callback) {
-                  callback(ev);
-                };
-
-                return env;
-              })()
+              model: service
             }).render();
 
         container.one('#input-' + key).set('value', value);
