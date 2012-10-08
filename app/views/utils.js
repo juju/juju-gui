@@ -25,35 +25,35 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
-  // It creates an object that delays the execution of a given callback.
-  // If the user calls "delay(functionA, 1000)", the "functionA" will be
-  // executed after 1000ms. If the user calls "delay(functionB, 1000)"
-  // before the execution of the "functionA", the "functionA" will be canceled
-  // and the "functionB" will be scheduled to run after 1000ms.
-  utils.buildDelayedTask = function() {
+
+  // This creates a closure that delays the execution of a given callback. If
+  // the user creates a Delayer with "delay = utils.Delayer()" and then calls
+  // "delay(functionA, 1000)", "functionA" will be executed after 1000ms.
+  // However, if the user calls "delay(functionB, 1000)" before the execution
+  // of "functionA", "functionA" will be canceled and "functionB" will be
+  // scheduled to run after 1000ms.
+  utils.Delayer = function(once) {
     var currentTask = null,
-        isEmptyDelayValid = false;
-
-    return {
-      setEmptyDelayValid: function(value) {
-        isEmptyDelayValid = value;
-      },
-
-      delay: function(callback, ms) {
-        if (Y.Lang.isValue(currentTask)) {
-          clearTimeout(currentTask);
-        }
-
-        if (!ms || ms < 1) {
-          if (isEmptyDelayValid) {
-            callback();
-            return;
-          } else {
-            throw 'The timeout should be bigger than 0';
-          }
-        }
-
-        currentTask = setTimeout(callback, ms);
+        performed = false;
+    once = !!once;
+    return function(callback, milliseconds) {
+      if (Y.Lang.isValue(currentTask) && !performed) {
+        clearTimeout(currentTask);
+      }
+      if (performed && once) {
+        throw 'already performed a task.';
+      }
+      milliseconds = Math.max(0, milliseconds || 0);
+      performed = false;
+      var f = function() {
+        performed = true;
+        callback();
+      };
+      if (milliseconds > 0) {
+        currentTask = setTimeout(f, milliseconds);
+      } else {
+        // Doing it directly in this case makes tests easier.
+        f();
       }
     };
   };
@@ -123,10 +123,12 @@ YUI.add('juju-view-utils', function(Y) {
       this.after('*:change', this.render, this);
     },
 
-    renderable_charm: function(charm_name, db) {
-      var charm = db.charms.getById(charm_name);
+    renderable_charm: function(charm_name, app) {
+      var charm = app.db.charms.getById(charm_name);
       if (charm) {
-        return charm.getAttrs();
+        var result = charm.getAttrs();
+        result.app_url = app.getModelURL(charm);
+        return result;
       }
       return null;
     },
@@ -706,6 +708,22 @@ YUI.add('juju-view-utils', function(Y) {
   }
 
   views.BoxPair = BoxPair;
+
+  /* Given one of the many "real" states return a "UI" state.
+   *
+   * If a state ends in "-error" or is simply "error" then it is an error
+   * state, if it is "started" then it is "running", otherwise it is "pending".
+   */
+  utils.simplifyState = function(state) {
+    if (state === 'started') {
+      return 'running';
+    }
+    if ((/-?error$/).test(state)) {
+      return 'error';
+    }
+    // "pending", "installed", and "stopped", plus anything unforseen
+    return 'pending';
+  };
 
 
 }, '0.1.0', {

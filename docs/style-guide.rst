@@ -5,7 +5,6 @@ Style Guide
 This guide is an attempt to describe a code style that both works well with the
 JavaScript beautifier and helps developers avoid pitfalls.
 
-
 Indentation
 ===========
 
@@ -14,20 +13,17 @@ doubt, completely dedent the section of code in question and run it through the
 beautifier ("make beautify").  The lowest (least leading whitespace) acceptable
 indention will be applied.
 
-
 For loops
 =========
 
 Unless you are counting something, for loops (and for-in loops) are a trap.
 Use Y.Object.each instead.
 
-
 Whitespace
 ==========
 
 No trailing whitespace on lines or at the end of the file (i.e., the file
 should end with a non-blank line).
-
 
 Object literal formatting
 =========================
@@ -41,8 +37,8 @@ Things you should do:
 - object literals have their closing brace on the same line as their
   last value (i.e., the closing brace is not on a line by itself)
 
-Things the beautifier should do (given an input line with no indentation at
-all):
+Things the beautifier should do (given an input line with no indentation
+at all):
 
 - all of the keys of an object literal line up (the second and
   subsequent key names are indented 2 spaces more than the indentation
@@ -51,7 +47,7 @@ all):
   spaces
 - lines after a line that ends in a colon are indented 6 (more) spaces
 
-An example:
+An example::
 
     var values =
         { int_good: '1',
@@ -65,7 +61,6 @@ An example:
                 type: 'int'}},
         errors = utils.validate(values, schema);
 
-
 Chaining method calls
 =====================
 
@@ -75,7 +70,7 @@ offers chainable method calls they should be chained when possible.
 
 The expression that evaluates to the object being mutated should be placed on
 the first line of the chain and each method call should be placed on its own
-line:
+line::
 
     getFoo()
         .frob()
@@ -84,7 +79,7 @@ line:
 
 The "expression" rule above applies if the object is already available in a
 variable.  In that case the variable should be the sole entity on the first
-line:
+line::
 
     foo
         .frob()
@@ -93,7 +88,7 @@ line:
 
 Some more advanced method chaining APIs provide for returning an object other
 than the original "root" object.  If a new object is returned then the
-subsequent chained calls should be indented:
+subsequent chained calls should be indented::
 
     getFoo()
         .frob()
@@ -103,7 +98,7 @@ subsequent chained calls should be indented:
 
 If instead, the .add() method does not return the object added, we can still
 use method chaining, but we would instead place the chained method calls
-*inside* the call to .add():
+*inside* the call to .add()::
 
     getFoo()
         .frob()
@@ -112,7 +107,7 @@ use method chaining, but we would instead place the chained method calls
             .squish());
 
 The above scenario would then allow us to add multiple objects to the "root"
-object without breaking the method chain:
+object without breaking the method chain::
 
     getFoo()
         .frob()
@@ -123,11 +118,10 @@ object without breaking the method chain:
             .bing()
             .zing());
 
-
 Creating HTML
 =============
 
-Don't.  Generating HTML is fraught with danger.  Instead build DOM nodes:
+Don't.  Generating HTML is fraught with danger.  Instead build DOM nodes::
 
     container.one('#message-area')
         .appendChild(Y.Node.create('<div/>'))
@@ -139,7 +133,7 @@ Don't.  Generating HTML is fraught with danger.  Instead build DOM nodes:
                 .set('text', '×');
 
 More complex structures can also be created.  For example, if you want a <div>
-with two spans inside it:
+with two spans inside it::
 
     var thing = Y.Node.create('<div/>')
         .append(Y.Node.create('<span/>')

@@ -120,6 +120,37 @@ describe('utilities', function() {
     res.far.name.should.equal('db');
   });
 
+  it('should execute only the last method, and is reusable', function(done) {
+    var track = [],
+        delay = utils.Delayer();
+
+    delay(function() {
+      track.push('a');
+    }, 50);
+    delay(function() {
+      track.push('b');
+    }, 50);
+    delay(function() {
+      // This is done immediately.
+      delay(function() { track.push('c'); });
+      assert.equal('c', track.join(''));
+      done();
+    }, 1);
+  });
+
+  it('should execute only the last method, once', function(done) {
+    var delay = utils.Delayer(true);
+    delay(function() {
+      try {
+        delay(function() { });
+        assert.fail('did not throw an error', 'should have.');
+      } catch (e) {
+        e.should.equal('already performed a task.');
+      }
+      done();
+    }, 1);
+  });
+
 });
 
 (function() {
@@ -268,75 +299,34 @@ describe('utilities', function() {
           undefined);
     });
 
-    it('should execute only the last method', function(done) {
+  });
+})();
 
-      var track = [],
-          delayTask = utils.buildDelayedTask();
+(function() {
+  describe('service state simplification', function() {
 
-      delayTask.setEmptyDelayValid(true);
-      try {
+    var utils, Y;
 
-        delayTask.delay(function() {
-          // no-op
-        }, null);
-
-      } catch (e) {
-        assert.isTrue(false, 'should NOT fail here');
-
-      }
-
-      delayTask.setEmptyDelayValid(false);
-
-      try {
-
-        delayTask.delay(function() {
-          track.push('error');
-        }, null);
-
-        assert.isTrue(false, 'should fail here');
-
-      } catch (e) {
-        assert.equal('The timeout should be bigger than 0', e);
-
-      }
-
-      try {
-        delayTask.delay(function() {
-          track.push('error');
-        }, 0);
-
-        assert.isTrue(false, 'should fail here');
-      } catch (e) {
-        assert.equal('The timeout should be bigger than 0', e);
-
-      }
-
-      try {
-        delayTask.delay(function() {
-          track.push('error');
-        }, -1);
-
-        assert.isTrue(false, 'should fail here');
-      } catch (e) {
-        assert.equal('The timeout should be bigger than 0', e);
-
-      }
-
-      delayTask.delay(function() {
-        track.push('a');
-      }, 50);
-      delayTask.delay(function() {
-        track.push('b');
-      }, 50);
-      delayTask.delay(function() {
-        track.push('c');
-      }, 1);
-
-      setTimeout(function() {
-        assert.equal('c', track.join(''));
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
         done();
-      }, 10);
+      });
     });
 
+    it('should translate service states correctly', function() {
+      // "started" is turned into "running"
+      assert.equal(utils.simplifyState('started'), 'running');
+      // Any state that ends in "-error" is simplified to just "error".
+      assert.equal(utils.simplifyState('install-error'), 'error');
+      assert.equal(utils.simplifyState('foo-error'), 'error');
+      assert.equal(utils.simplifyState('-error'), 'error');
+      // Any other state (should just be "pending" and "installed") are
+      // "pending".
+      assert.equal(utils.simplifyState('pending'), 'pending');
+      assert.equal(utils.simplifyState('installed'), 'pending');
+      assert.equal(utils.simplifyState('waiting'), 'pending');
+      assert.equal(utils.simplifyState('schlepping'), 'pending');
+    });
   });
 })();

@@ -25,20 +25,113 @@ YUI.add('juju-view-environment', function(Y) {
           }
         },
 
+        sceneEvents: {
+          // Service Related
+          '.service': {
+            click: 'serviceClick',
+            dblclick: 'serviceDblClick'
+          },
+          '.service-border': {
+            mouseover: function(d, self) {
+              if ((d3.event.relatedTarget &&
+                  d3.event.relatedTarget.nodeName === 'rect') &&
+                  self.hasSVGClass(this, 'selectable-service')) {
+                self.set('potential_drop_point_service', d);
+                self.set('potential_drop_point_rect', this);
+                self.addSVGClass(this, 'hover');
+              }
+            },
+            mouseout: function(d, self) {
+              if (d3.event.relatedTarget.nodeName === 'rect' &&
+                  self.hasSVGClass(this, 'hover')) {
+                self.set('potential_drop_point_service', null);
+                self.set('potential_drop_point_rect', null);
+                self.removeSVGClass(this, 'hover');
+              }
+            }
+          },
+          '.unit-count': {
+            mouseover: function(d, self) {
+              d3.select(this).attr('class', 'unit-count show-count');
+            },
+            mouseout: function(d, self) {
+              d3.select(this).attr('class', 'unit-count hide-count');
+            }
+          },
+          // Menu/Controls
+          '.add-relation': {
+            click: function(d, self) {
+              var context = Y.Node(this)
+                                      .ancestor('.service')
+                                      .getDOMNode(),
+                  service = self.serviceForBox(d);
+              self.service_click_actions
+                        .toggleControlPanel(d, context, self);
+              self.service_click_actions
+                        .addRelationStart(d, context, self);
+            }
+          },
+          '.view-service': {
+            click: function(d, self) {
+              // Get the service element
+              var context = Y.Node(this)
+                                      .ancestor('.service')
+                                      .getDOMNode(),
+                  service = self.serviceForBox(d);
+              self.service_click_actions
+                        .toggleControlPanel(d, context, self);
+              self.service_click_actions
+                        .show_service(service, context, self);
+            }
+          },
+          '.destroy-service': {
+            click: function(d, self) {
+              // Get the service element
+              var context = Y.Node(this)
+                                      .ancestor('.service')
+                                      .getDOMNode(),
+                  service = self.serviceForBox(d);
+              self.service_click_actions
+                        .toggleControlPanel(d, context, self);
+              self.service_click_actions
+                        .destroyServiceConfirm(service, context, self);
+            }
+          },
+
+          // Relation Related
+          '.rel-label': {
+            click: 'relationClick'
+          },
+
+          // Canvas related
+          '#canvas rect:first-child': {
+            click: function(d, self) {
+              self.removeSVGClass(
+                  '.service-control-panel.active', 'active');
+            }
+          }
+
+        },
+
         initializer: function() {
           console.log('View: Initialized: Env');
           this.publish('showService', {preventable: false});
 
           // Build a service.id -> BoundingBox map for services.
           this.service_boxes = {};
+
+          // Track events bound to the canvas
+          this._sceneEvents = [];
         },
 
         render: function() {
-          console.log('View: Render: Env');
           var container = this.get('container');
           EnvironmentView.superclass.render.apply(this, arguments);
           container.setHTML(Templates.overview());
           this.svg = container.one('#overview');
+
+          // Setup delegated event handlers.
+          this.attachSceneEvents();
           this.buildScene();
           return this;
         },
@@ -87,11 +180,9 @@ YUI.add('juju-view-environment', function(Y) {
             .append('svg:g')
             .call(zoom)
             .append('g');
+
           vis.append('svg:rect')
-        .attr('fill', 'rgba(255,255,255,0)')
-        .on('click', function() {
-                self.removeSVGClass('.service-control-panel.active', 'active');
-              });
+                .attr('fill', 'rgba(255,255,255,0)');
 
           // Bind visualization resizing on window resize.
           Y.on('windowresize', function() {
@@ -121,7 +212,102 @@ YUI.add('juju-view-environment', function(Y) {
         //   if (!this.svg.inDoc() || !this.svg.inRegion(target)) {
         //     target.append(this.svg);
         //   }
+        //   this.attachSceneEvents();
         // },
+
+        /*
+         * Bind declarative events to the root of the scene.
+         * This is both more efficient and easier to refresh.
+         * Inspired by View.attachEvents
+         */
+        attachSceneEvents: function(events) {
+          var container = this.get('container'),
+              self = this,
+              owns = Y.Object.owns,
+              selector,
+              name,
+              handlers,
+              handler;
+
+          function _bindEvent(name, handler, container, selector, context) {
+            // Call event handlers with:
+            //   this = DOMNode of currentTarget
+            //   handler(d, view)
+            var d3Adaptor = function(evt) {
+              var selection = d3.select(evt.currentTarget.getDOMNode()),
+                  d = selection.data()[0];
+              // This is a minor violation (extension)
+              // of the interface, but suits us well.
+              d3.event = evt;
+              return handler.call(
+                  evt.currentTarget.getDOMNode(), d, context);
+            };
+            context._sceneEvents.push(
+                Y.delegate(name, d3Adaptor, container, selector, context));
+          }
+
+          this.detachSceneEvents();
+          events = events || this.sceneEvents;
+
+          for (selector in events) {
+            if (owns(events, selector)) {
+              handlers = events[selector];
+              for (name in handlers) {
+                if (owns(handlers, name)) {
+                  handler = handlers[name];
+                  if (typeof handler === 'string') {
+                    handler = this[handler];
+                  }
+                  if (!handler) {
+                    console.error(
+                        'No Event handler for',
+                        selector,
+                        name);
+                    continue;
+                  }
+                  _bindEvent(name, handler, container, selector, this);
+                }
+              }
+            }
+          }
+          return this;
+        },
+
+        detachSceneEvents: function() {
+          Y.each(this._sceneEvents, function(handle) {
+            if (handle) {
+              handle.detach();
+            }
+          });
+
+          this._sceneEvents = [];
+          return this;
+        },
+
+        serviceClick: function(d, self) {
+          // Ignore if we clicked on a control panel image.
+          if (self.hasSVGClass(d3.event.target, 'cp-button')) {
+            return;
+          }
+          // Get the current click action
+          var curr_click_action = self.get('currentServiceClickAction');
+          // Fire the action named in the following scheme:
+          //   service_click_action.<action>
+          // with the service, the SVG node, and the view
+          // as arguments.
+          (self.service_click_actions[curr_click_action])(
+              d, this, self);
+        },
+
+        serviceDblClick: function(d, self) {
+          // Just show the service on double-click.
+          var service = self.serviceForBox(d);
+          (self.service_click_actions.show_service)(service, this, self);
+        },
+
+        relationClick: function(d, self) {
+          self.removeRelationConfirm(d, this, self);
+        },
 
         /*
          * Sync view models with curent db.models.
@@ -205,29 +391,7 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('class', function(d) {
                     return (d.subordinate ? 'subordinate ' : '') + 'service';
                   })
-            .on('click', function(d) {
-                // Ignore if we clicked on a control panel image.
-                if (self.hasSVGClass(d3.event.target, 'cp-button')) {
-                  return;
-                }
-                // Get the current click action
-                var curr_click_action = self.get(
-                    'currentServiceClickAction');
-                // Fire the action named in the following scheme:
-                //   service_click_action.<action>
-                // with the service, the SVG node, and the view
-                // as arguments.
-                (self.service_click_actions[curr_click_action])(
-                    d, this, self);
-              })
-            .on('dblclick', function(d) {
-                // Just show the service on double-click.
-                var service = self.serviceForBox(d);
-                (self.service_click_actions.show_service)(service, this, self);
-              })
             .call(drag)
-            .transition()
-            .duration(500)
             .attr('transform', function(d) {
                 return d.translateStr();});
 
@@ -240,9 +404,6 @@ YUI.add('juju-view-environment', function(Y) {
                 // TODO: update the service_boxes
                 // removing the bound data
               })
-            .transition()
-            .duration(500)
-            .attr('x', 0)
             .remove();
 
           function updateLinks() {
@@ -278,7 +439,9 @@ YUI.add('juju-view-environment', function(Y) {
           enter.insert('g', 'g.service')
               .attr('class', 'rel-group')
               .append('svg:line', 'g.service')
-              .attr('class', 'relation');
+              .attr('class', function(d) {
+                return (d.pending ? 'pending-relation ' : '') + 'relation';
+              });
 
           // TODO:: figure out a clean way to update position
           g.selectAll('rel-label').remove();
@@ -296,10 +459,6 @@ YUI.add('juju-view-environment', function(Y) {
                      Math.abs((s[0] - t[0]) / 2),
                      Math.max(s[1], t[1]) -
                      Math.abs((s[1] - t[1]) / 2)] + ')';
-              })
-              .on('click', function(d) {
-                // On click, offer to remove the relation
-                self.removeRelationConfirm(d, this, self);
               });
           label.append('text')
               .append('tspan')
@@ -393,28 +552,6 @@ YUI.add('juju-view-environment', function(Y) {
                     return d.h;
                   });
 
-          node.select('.service-border')
-            .on('mouseover', function(d) {
-                // Save this as the current potential drop-point for drag
-                // targets if it's selectable.
-                if ((d3.event.relatedTarget &&
-                    d3.event.relatedTarget.nodeName === 'rect') &&
-                    self.hasSVGClass(this, 'selectable-service')) {
-                  self.set('potential_drop_point_service', d);
-                  self.set('potential_drop_point_rect', this);
-                  self.addSVGClass(this, 'hover');
-                }
-              })
-            .on('mouseout', function(d) {
-                // Remove this node as the current potential drop-point
-                // for drag targets.
-                if (d3.event.relatedTarget.nodeName === 'rect' &&
-                    self.hasSVGClass(this, 'hover')) {
-                  self.set('potential_drop_point_service', null);
-                  self.set('potential_drop_point_rect', null);
-                  self.removeSVGClass(this, 'hover');
-                }
-              });
 
           var service_labels = node.append('text').append('tspan')
             .attr('class', 'name')
@@ -422,11 +559,7 @@ YUI.add('juju-view-environment', function(Y) {
                     return d.w / 2;
                   })
             .attr('y', function(d) {
-                    if (d.subordinate) {
-                      return d.h / 2 - 10;
-                    } else {
-                      return '1.5em';
-                    }
+                    return '1.5em';
                   })
             .text(function(d) {return d.id; });
 
@@ -437,11 +570,8 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('y', function(d) {
                     // TODO this will need to be set based on the size of the
                     // service health panel, but for now, this works.
-                    if (d.subordinate) {
-                      return d.h / 2 - 10;
-                    } else {
-                      return d.h / 2 + 10;
-                    }
+                    var hoffset_factor = d.subordinate ? 0.65 : 0.55;
+                    return d.h * hoffset_factor;
                   })
             .attr('dy', '3em')
             .attr('class', 'charm-label')
@@ -453,10 +583,20 @@ YUI.add('juju-view-environment', function(Y) {
           var exposed_indicator = node.filter(function(d) {
             return d.exposed;
           })
-            .append('circle')
-            .attr('cx', 0)
-            .attr('cy', 10)
-            .attr('r', 5)
+            .append('image')
+            .attr('xlink:href', '/juju-ui/assets/svgs/exposed.svg')
+            .attr('width', function(d) {
+              return d.w / 6;
+            })
+            .attr('height', function(d) {
+              return d.w / 6;
+            })
+            .attr('x', function(d) {
+              return d.w / 10 * 7;
+            })
+            .attr('y', function(d) {
+              return d.h / 3 * 1.05;
+            })
             .attr('class', 'exposed-indicator on');
           exposed_indicator.append('title')
             .text(function(d) {
@@ -465,29 +605,26 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Add the relative health of a service in the form of a pie chart
           // comprised of units styled appropriately.
-          // TODO aggregate statuses into good/bad/pending
           var status_chart_arc = d3.svg.arc()
             .innerRadius(0)
             .outerRadius(function(d) {
                 // Make sure it's exactly as wide as the mask
                 return parseInt(
                     d3.select(this.parentNode)
-                  .select('image')
-                  .attr('width'), 10) / 2;
+                      .select('image')
+                      .attr('width'), 10) / 2;
               });
 
           var status_chart_layout = d3.layout.pie()
             .value(function(d) { return (d.value ? d.value : 1); });
 
           // Append to status charts to non-subordinate services
-          var status_chart = node.filter(function(d) {
-            return !d.subordinate;
-          })
-            .append('g')
+          var status_chart = node.append('g')
             .attr('class', 'service-status')
             .attr('transform', function(d) {
+                var hoffset_factor = d.subordinate ? 1 : 0.86;
                 return 'translate(' + [(d.w / 2),
-                  d.h / 2 * 0.86] + ')';
+                  d.h / 2 * hoffset_factor] + ')';
               });
 
           // Add a mask svg
@@ -512,8 +649,8 @@ YUI.add('juju-view-environment', function(Y) {
             .data(function(d) {
                 var aggregate_map = d.aggregated_status,
                     aggregate_list = [];
-                Y.Object.each(aggregate_map, function(value, key) {
-                  aggregate_list.push({name: key, value: value});
+                Y.Object.each(aggregate_map, function(count, state) {
+                  aggregate_list.push({name: state, value: count});
                 });
 
                 return status_chart_layout(aggregate_list);
@@ -528,12 +665,6 @@ YUI.add('juju-view-environment', function(Y) {
           // Add the unit counts, visible only on hover.
           var unit_count = status_chart.append('text')
             .attr('class', 'unit-count hide-count')
-            .on('mouseover', function() {
-                d3.select(this).attr('class', 'unit-count show-count');
-              })
-            .on('mouseout', function() {
-                d3.select(this).attr('class', 'unit-count hide-count');
-              })
             .text(function(d) {
                 return self.humanizeNumber(d.unit_count);
               });
@@ -550,16 +681,7 @@ YUI.add('juju-view-environment', function(Y) {
 
           // A button to add a relation between two services.
           var add_rel = control_panel.append('g')
-                .attr('class', 'add-relation')
-                .on('click.cp', function(d) {
-                // Get the service element
-                var context = this.parentNode.parentNode,
-                    service = self.serviceForBox(d);
-                self.service_click_actions
-                    .toggleControlPanel(d, context, self);
-                self.service_click_actions
-                    .addRelationStart(d, context, self);
-              });
+                .attr('class', 'add-relation');
 
           // Drag controls on the add relation button, allowing
           // one to drag a line to create a relation.
@@ -572,8 +694,7 @@ YUI.add('juju-view-environment', function(Y) {
                     .select('.relation');
                 var img = d3.select(this.parentNode)
                     .select('image');
-                var context = this.parentNode.parentNode.parentNode,
-                    service = self.serviceForBox(d);
+                var context = this.parentNode.parentNode.parentNode;
 
                 // Start the line at our image
                 dragline.attr('x1', parseInt(img.attr('x'), 10) + 16)
@@ -582,7 +703,7 @@ YUI.add('juju-view-environment', function(Y) {
 
                 // Start the add-relation process.
                 self.service_click_actions
-                .addRelationStart(service, context, self);
+                .addRelationStart(d, context, self);
               })
               .on('drag', function() {
                 // Rubberband our potential relation line.
@@ -628,16 +749,8 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Add a button to view the service.
           var view_service = control_panel.append('g')
-        .attr('class', 'view-service')
-        .on('click.cp', function(d) {
-                // Get the service element
-                var context = this.parentNode.parentNode,
-                    service = self.serviceForBox(d);
-                self.service_click_actions
-            .toggleControlPanel(d, context, self);
-                self.service_click_actions
-            .show_service(service, context, self);
-              });
+        .attr('class', 'view-service');
+
           view_service.append('image')
         .attr('xlink:href', '/juju-ui/assets/svgs/view_button.svg')
         .attr('class', 'cp-button')
@@ -650,16 +763,7 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Add a button to destroy a service
           var destroy_service = control_panel.append('g')
-        .attr('class', 'destroy-service')
-        .on('click.cp', function(d) {
-                // Get the service element
-                var context = this.parentNode.parentNode,
-                    service = self.serviceForBox(d);
-                self.service_click_actions
-            .toggleControlPanel(d, context, self);
-                self.service_click_actions
-            .destroyServiceConfirm(service, context, self);
-              });
+        .attr('class', 'destroy-service');
           destroy_service.append('image')
         .attr('xlink:href', '/juju-ui/assets/svgs/destroy_button.svg')
         .attr('class', 'cp-button')
@@ -1041,27 +1145,35 @@ YUI.add('juju-view-environment', function(Y) {
             // Get the vis, and links, build the new relation.
             var vis = view.vis,
                 env = view.get('env'),
-                container = view.get('container'),
-                rel = views.BoxPair();
+                db = view.get('db'),
+                source = view.get('addRelationStart_service'),
+                relation_id = 'pending:' + source.id + m.id;
 
-            rel.source(view.get('addRelationStart_service'));
-            rel.target(m);
+            // Create a pending relation in the database between the
+            // two services.
+            db.relations.create({
+              relation_id: relation_id,
+              type: 'pending',
+              endpoints: [
+                [source.id, {name: 'pending', role: 'server'}],
+                [m.id, {name: 'pending', role: 'client'}]
+              ],
+              pending: true
+            });
 
-            // Add temp relation between services.
-            var link = vis.selectAll('line.pending-relation')
-                .data([rel]);
-            link.enter().insert('svg:line', 'g.service')
-                .attr('class', 'relation pending-relation');
-            // Unwrap the <line> obj and use it as this
-            // for drawRelation. Mimics the traditional call interface
-            view.drawRelation.call(link[0][0], rel);
+            // Firing the update event on the db will properly redraw the
+            // graph and reattach events.
+            db.fire('update');
 
             // Fire event to add relation in juju.
             // This needs to specify interface in the future.
             env.add_relation(
-                rel.source().id,
-                rel.target().id,
+                source.id,
+                m.id,
                 function(resp) {
+                  // Remove our pending relation from the DB, error or no.
+                  db.relations.remove(
+                      db.relations.getById(relation_id));
                   if (resp.err) {
                     console.log('Error adding relation');
                   }

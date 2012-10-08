@@ -97,6 +97,7 @@
       msg.retry.should.equal(true);
       done();
     });
+
     it('can retry a problem with a unit using a callback', function(done) {
       var unit_name = 'mysql/0';
       env.resolved(unit_name, null, true, function(result) {
@@ -111,5 +112,20 @@
         request_id: msg.request_id});
     });
 
+    it('will populate the provider type when recieved', function(done) {
+      var providerType = 'super provider',
+          evt =
+              { data:
+                '{"ready": true, ' +
+                ' "version": 0,' +
+                ' "provider_type": "' + providerType + '"}'};
+
+      // Before the message arrives there is no provider type set.
+      assert.equal(env.get('providerType', undefined));
+      env.on_message(evt);
+      // After the message arrives the provider type is set.
+      assert.equal(env.get('providerType'), providerType);
+      done();
+    });
   });
 })();
