@@ -435,6 +435,7 @@
           {env: env, charm_store: charm_store},
           function(err, response) {
             assert(err);
+            assert(response.err);
             done();
           });
       var response = conn.last_message();

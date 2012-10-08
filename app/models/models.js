@@ -102,7 +102,7 @@ YUI.add('juju-models', function(Y) {
         // Warning!  We don't have experience with local charms yet.
         // This will likely need tweaking.
         if (Y.Lang.isValue(revision)) {
-          // Local charms can honor the revision.  We think.
+          // Local charms can honor the revision.
           charm_id += '-' + revision;
         }
         options.env.get_charm(charm_id, function(ev) {
