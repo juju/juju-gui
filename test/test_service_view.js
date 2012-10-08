@@ -192,28 +192,28 @@
     it('should add pending units as soon as it gets a reply back ' +
        'from the server',
        function() {
-          var new_unit_id = 'mysql/5';
-          var expected_names = db.units.map(function(u) {return u.id;});
-          expected_names.push(new_unit_id);
-          expected_names.sort();
-          var view = new ServiceView(
-          {container: container, model: service, db: db,
-            env: env, querystring: {}}).render();
-          var control = container.one('#num-service-units');
-          control.set('value', 4);
-          control.simulate('keydown', { keyCode: ENTER });
-          var callbacks = Y.Object.values(env._txn_callbacks);
-          callbacks.length.should.equal(1);
-          // Since we don't have an app to listen to this event and tell the
-          // view to re-render, we need to do it ourselves.
-          db.on('update', view.render, view);
-          callbacks[0]({result: [new_unit_id]});
-          var db_names = db.units.map(function(u) {return u.id;});
-          db_names.sort();
-          db_names.should.eql(expected_names);
-          service.get('unit_count').should.equal(4);
-          var rendered_names = container.one(
-            'ul.thumbnails').all('div.well').get('id');
+         var new_unit_id = 'mysql/5';
+         var expected_names = db.units.map(function(u) {return u.id;});
+         expected_names.push(new_unit_id);
+         expected_names.sort();
+         var view = new ServiceView(
+         {container: container, model: service, db: db,
+           env: env, querystring: {}}).render();
+         var control = container.one('#num-service-units');
+         control.set('value', 4);
+         control.simulate('keydown', { keyCode: ENTER });
+         var callbacks = Y.Object.values(env._txn_callbacks);
+         callbacks.length.should.equal(1);
+         // Since we don't have an app to listen to this event and tell the
+         // view to re-render, we need to do it ourselves.
+         db.on('update', view.render, view);
+         callbacks[0]({result: [new_unit_id]});
+         var db_names = db.units.map(function(u) {return u.id;});
+         db_names.sort();
+         db_names.should.eql(expected_names);
+         service.get('unit_count').should.equal(4);
+         var rendered_names = container.one(
+           'ul.thumbnails').all('div.well').get('id');
          assert.deepEqual(rendered_names, expected_names);
        });
 

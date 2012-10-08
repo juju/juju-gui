@@ -416,7 +416,7 @@ YUI.add('juju-view-service', function(Y) {
 
   views.service_config = ServiceConfigView;
 
-  // Display a unit list based on the total number of units.
+  // Display a unit grid based on the total number of units.
   Y.Handlebars.registerHelper('show_units', function(units) {
     var template;
     var numUnits = units.length;
