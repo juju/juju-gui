@@ -586,17 +586,17 @@ YUI.add('juju-view-environment', function(Y) {
             .append('image')
             .attr('xlink:href', '/juju-ui/assets/svgs/exposed.svg')
             .attr('width', function(d) {
-              return d.w / 6;
-            })
+                return d.w / 6;
+              })
             .attr('height', function(d) {
-              return d.w / 6;
-            })
+                return d.w / 6;
+              })
             .attr('x', function(d) {
-              return d.w / 10 * 7;
-            })
+                return d.w / 10 * 7;
+              })
             .attr('y', function(d) {
-              return d.h / 3 * 1.05;
-            })
+                return d.h / 3 * 1.05;
+              })
             .attr('class', 'exposed-indicator on');
           exposed_indicator.append('title')
             .text(function(d) {
