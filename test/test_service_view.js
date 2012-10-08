@@ -74,11 +74,57 @@
       var view = new ServiceView(
           {container: container, model: service, db: db,
             env: env, querystring: {}}).render();
-      var rendered_names = container.all('div.thumbnail').get('id');
+      var rendered_names = container.one(
+        'ul.thumbnails').all('div.well').get('id');
       var expected_names = db.units.map(function(u) {return u.id;});
       expected_names.sort();
       assert.deepEqual(rendered_names, expected_names);
       rendered_names.should.eql(expected_names);
+    });
+
+    it('should use the show_units_large template if required', function() {
+      // Note that the units are added in beforeEach in an ordered manner.
+      var view = new ServiceView(
+          {container: container, model: service, db: db,
+            env: env, querystring: {}}).render();
+      container.one('ul.thumbnails').get('id').should.equal('unit-large');
+    });
+
+    var addUnits = function(number) {
+      var units = [];
+      // Starting from the number of already present units.
+      var starting_from = db.units.size();
+      for (var i = starting_from; i < number + starting_from; i += 1) {
+        units.push({id: 'mysql/' + i, agent_state: 'pending'});
+      }
+      db.units.add(units);
+    };
+
+    it('should use the show_units_medium template if required', function() {
+      // Note that the units are added in beforeEach in an ordered manner.
+      addUnits(30);
+      var view = new ServiceView(
+          {container: container, model: service, db: db,
+            env: env, querystring: {}}).render();
+      container.one('ul.thumbnails').get('id').should.equal('unit-medium');
+    });
+
+    it('should use the show_units_small template if required', function() {
+      // Note that the units are added in beforeEach in an ordered manner.
+      addUnits(60);
+      var view = new ServiceView(
+          {container: container, model: service, db: db,
+            env: env, querystring: {}}).render();
+      container.one('ul.thumbnails').get('id').should.equal('unit-small');
+    });
+
+    it('should use the show_units_tiny template if required', function() {
+      // Note that the units are added in beforeEach in an ordered manner.
+      addUnits(260);
+      var view = new ServiceView(
+          {container: container, model: service, db: db,
+            env: env, querystring: {}}).render();
+      container.one('ul.thumbnails').get('id').should.equal('unit-tiny');
     });
 
     it('should start with the proper number of units shown in the text field',
@@ -146,27 +192,28 @@
     it('should add pending units as soon as it gets a reply back ' +
        'from the server',
        function() {
-         var new_unit_id = 'mysql/5';
-         var expected_names = db.units.map(function(u) {return u.id;});
-         expected_names.push(new_unit_id);
-         expected_names.sort();
-         var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
-         var control = container.one('#num-service-units');
-         control.set('value', 4);
-         control.simulate('keydown', { keyCode: ENTER });
-         var callbacks = Y.Object.values(env._txn_callbacks);
-         callbacks.length.should.equal(1);
-         // Since we don't have an app to listen to this event and tell the
-         // view to re-render, we need to do it ourselves.
-         db.on('update', view.render, view);
-         callbacks[0]({result: [new_unit_id]});
-         var db_names = db.units.map(function(u) {return u.id;});
-         db_names.sort();
-         db_names.should.eql(expected_names);
-         service.get('unit_count').should.equal(4);
-         var rendered_names = container.all('div.thumbnail').get('id');
+          var new_unit_id = 'mysql/5';
+          var expected_names = db.units.map(function(u) {return u.id;});
+          expected_names.push(new_unit_id);
+          expected_names.sort();
+          var view = new ServiceView(
+          {container: container, model: service, db: db,
+            env: env, querystring: {}}).render();
+          var control = container.one('#num-service-units');
+          control.set('value', 4);
+          control.simulate('keydown', { keyCode: ENTER });
+          var callbacks = Y.Object.values(env._txn_callbacks);
+          callbacks.length.should.equal(1);
+          // Since we don't have an app to listen to this event and tell the
+          // view to re-render, we need to do it ourselves.
+          db.on('update', view.render, view);
+          callbacks[0]({result: [new_unit_id]});
+          var db_names = db.units.map(function(u) {return u.id;});
+          db_names.sort();
+          db_names.should.eql(expected_names);
+          service.get('unit_count').should.equal(4);
+          var rendered_names = container.one(
+            'ul.thumbnails').all('div.well').get('id');
          assert.deepEqual(rendered_names, expected_names);
        });
 
@@ -366,8 +413,9 @@
       var view = new ServiceView(
           { container: container, model: service, db: db,
             env: env, querystring: {state: 'running'}}).render();
-      container.all('div.thumbnail').get('id').should.eql(
-          ['mysql/0', 'mysql/2']);
+      var rendered_names = container.one(
+        'ul.thumbnails').all('div.well').get('id');
+      rendered_names.should.eql(['mysql/0', 'mysql/2']);
     });
 
     it('should show zero pending units when filtered', function() {
@@ -398,8 +446,9 @@
       var view = new ServiceView(
           { container: container, model: service, db: db,
             env: env, querystring: {state: 'pending'}}).render();
-      container.all('div.thumbnail').get('id').should.eql(
-          ['mysql/0', 'mysql/2']);
+      var rendered_names = container.one(
+        'ul.thumbnails').all('div.well').get('id');
+      rendered_names.should.eql(['mysql/0', 'mysql/2']);
     });
 
     it('should show zero error units when filtered', function() {
@@ -427,8 +476,9 @@
       var view = new ServiceView(
           { container: container, model: service, db: db,
             env: env, querystring: {state: 'error'}}).render();
-      container.all('div.thumbnail').get('id').should.eql(
-          ['mysql/0', 'mysql/2']);
+      var rendered_names = container.one(
+        'ul.thumbnails').all('div.well').get('id');
+      rendered_names.should.eql(['mysql/0', 'mysql/2']);
     });
 
     it('should remove the relation when requested',
