@@ -54,7 +54,6 @@
       res.scheme.should.equal('cs');
       var _ = expect(res.owner).to.not.exist;
       res.series.should.equal('precise');
-      res.scheme.should.equal('cs');
       res.package_name.should.equal('openstack-dashboard');
       res.revision.should.equal('0');
     });
@@ -357,16 +356,10 @@
       container = Y.Node.create('<div id="test" class="container"></div>');
       data = [];
       charm_store = new Y.DataSource.Local({source: data});
-      // app = new Y.juju.App(
-      //     { container: container,
-      //       viewContainer: container,
-      //       env: env,
-      //       charm_store: charm_store });
     });
 
     afterEach(function() {
       container.destroy();
-      // app.destroy();
     });
 
     it('will throw an exception with non-read sync', function() {
