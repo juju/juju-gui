@@ -375,7 +375,7 @@
 
     it('should show zero pending units when filtered', function() {
       db.units.getById('mysql/0').agent_state = 'install-error';
-      db.units.getById('mysql/1').agent_state = 'stopping';
+      db.units.getById('mysql/1').agent_state = 'error';
       db.units.getById('mysql/2').agent_state = 'started';
       var view = new ServiceView(
           { container: container, model: service, app: app,

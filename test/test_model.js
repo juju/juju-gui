@@ -91,7 +91,6 @@
       });
     });
 
-
     it('must be able to create charm', function() {
       var charm = new models.Charm(
           {id: 'cs:~bac/precise/openstack-dashboard-0'});
@@ -181,9 +180,11 @@
          sul.add([my0, my1]);
 
          var wp0 = new models.ServiceUnit(
-         {id: 'wordpress/0', agent_state: 'pending'}),
+         { id: 'wordpress/0',
+           agent_state: 'pending'}),
          wp1 = new models.ServiceUnit(
-         {id: 'wordpress/1', agent_state: 'error'});
+         { id: 'wordpress/1',
+           agent_state: 'error'});
          sul.add([wp0, wp1]);
 
          sul.get_informative_states_for_service(mysql).should.eql(
