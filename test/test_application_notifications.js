@@ -87,15 +87,15 @@
            app: {
              getModelURL: function() {
                return 'my url';
-             }
-           },
-           db: db,
-           env: {
-             add_unit: function(serviceId, delta, callback) {
-               callback(ERR_EV);
              },
-             remove_units: function(param, callback) {
-               callback(ERR_EV);
+             db: db,
+             env: {
+               add_unit: function(serviceId, delta, callback) {
+                 callback(ERR_EV);
+               },
+               remove_units: function(param, callback) {
+                 callback(ERR_EV);
+               }
              }
            },
            model: {
@@ -313,7 +313,6 @@
         ' (service constraints view)', function() {
 
          var view = new views.service_constraints({
-           db: db,
            model: {
              getAttrs: NO_OP,
              get: function(key) {
@@ -324,13 +323,15 @@
              }
            },
            app: {
-             getModelURL: NO_OP
-           },
-           env: {
-             set_constraints: function(id, values, callback) {
-               callback(ERR_EV);
+             getModelURL: NO_OP,
+             db: db,
+             env: {
+               set_constraints: function(id, values, callback) {
+                 callback(ERR_EV);
+               }
              }
            },
+
            container: viewContainer}).render();
 
          view.updateConstraints();
@@ -342,8 +343,19 @@
         ' exceptions (service config view)', function() {
 
          var view = new views.service_config({
-           db: db,
            app: {
+             db: db,
+             env: {
+               set_config: function(id, newValues, callback) {
+                 callback(ERR_EV);
+               },
+               expose: function(id, callback) {
+                 callback(ERR_EV);
+               },
+               unexpose: function(id, callback) {
+                 callback({err: true, service_name: '1234'});
+               }
+             },
              getModelURL: NO_OP
            },
            model: {
@@ -358,23 +370,14 @@
                return null;
              }
            },
-           env: {
-             set_config: function(id, newValues, callback) {
-               callback(ERR_EV);
-             },
-             expose: function(id, callback) {
-               callback(ERR_EV);
-             },
-             unexpose: function(id, callback) {
-               callback({err: true, service_name: '1234'});
-             }
-           },
            container: viewContainer});
 
          db.services.getById = NO_OP;
          db.charms.getById = function() {
            return {
-             getAttrs: NO_OP,
+             getAttrs: function() {
+               return {};
+             },
              get: function(key) {
                if ('config' === key) {
                  return {};
@@ -399,14 +402,14 @@
         ' exceptions (service relations view)', function() {
 
          var view = new views.service_relations({
-           db: db,
            app: {
+             db: db,
+             env: {
+               remove_relation: function(id, newValues, callback) {
+                 callback(ERR_EV);
+               }
+             },
              getModelURL: NO_OP
-           },
-           env: {
-             remove_relation: function(id, newValues, callback) {
-               callback(ERR_EV);
-             }
            },
            container: viewContainer});
 
@@ -439,53 +442,6 @@
 
          assertNotificationNumber('1');
        });
-
-    it('should show notification for "get_charm" exceptions (app)', function() {
-      var notified = false, mockView = {
-        env: {
-          get_service: NO_OP,
-          get_charm: function(id, callback) {
-            // Simulating a callback with an error
-            callback(ERR_EV);
-          }
-        },
-        db: {
-          notifications: {
-            add: function() {
-              // This method should be called just once.
-              assert.isFalse(notified);
-              notified = true;
-            }
-          },
-          charms: {
-            getById: function() {
-              return {
-                get: NO_OP
-              };
-            }
-          }
-        },
-        load_charm: function() {
-          // Executing the "juju.App.prototype.load_charm" function instead.
-          // The "juju.App.prototype.load_charm" is the one that will trigger
-          // the notification process.
-          juju.App.prototype.load_charm.apply(this, arguments);
-        },
-        dispatch: NO_OP
-      };
-
-      // I need to test if a callback to "get_charm" will trigger a notification
-      // in case of failure. We don't need an application running to test it.
-      // Therefore, I use the prototype object of the "juju.App". This way
-      // I can call the function I want without the need of handling all the
-      // initialization issues of the App class.
-      juju.App.prototype._prefetch_service.apply(mockView, [{
-        get: NO_OP,
-        set: NO_OP
-      }]);
-
-      assert.isTrue(notified);
-    });
 
     it('should show notification for "deploy" exceptions (charm view)',
         function() {
@@ -546,22 +502,19 @@
         'units (service view)', function() {
 
          //_removeUnitCallback
-         var db = {
-               fire: NO_OP,
-               notifications: {
-                 add: function(notification) {
-                   trace.push(notification.get('message'));
-                 }
-               }
-             },
-             mockView = {
+         var mockView = {
                get: function(key) {
-                 if ('db' === key) {
-                   return db;
-                 }
                  if ('app' === key) {
                    return {
-                     getModelURL: NO_OP
+                     getModelURL: NO_OP,
+                     db: {
+                       fire: NO_OP,
+                       notifications: {
+                         add: function(notification) {
+                           trace.push(notification.get('message'));
+                         }
+                       }
+                     }
                    };
                  }
                  return null;

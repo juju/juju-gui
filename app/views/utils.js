@@ -123,10 +123,12 @@ YUI.add('juju-view-utils', function(Y) {
       this.after('*:change', this.render, this);
     },
 
-    renderable_charm: function(charm_name, db) {
-      var charm = db.charms.getById(charm_name);
+    renderable_charm: function(charm_name, app) {
+      var charm = app.db.charms.getById(charm_name);
       if (charm) {
-        return charm.getAttrs();
+        var result = charm.getAttrs();
+        result.app_url = app.getModelURL(charm);
+        return result;
       }
       return null;
     },
@@ -706,6 +708,22 @@ YUI.add('juju-view-utils', function(Y) {
   }
 
   views.BoxPair = BoxPair;
+
+  /* Given one of the many "real" states return a "UI" state.
+   *
+   * If a state ends in "-error" or is simply "error" then it is an error
+   * state, if it is "started" then it is "running", otherwise it is "pending".
+   */
+  utils.simplifyState = function(state) {
+    if (state === 'started') {
+      return 'running';
+    }
+    if ((/-?error$/).test(state)) {
+      return 'error';
+    }
+    // "pending", "installed", and "stopped", plus anything unforseen
+    return 'pending';
+  };
 
 
 }, '0.1.0', {
