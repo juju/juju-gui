@@ -719,7 +719,8 @@ YUI.add('juju-view-utils', function(Y) {
     if ((/-?error$/).test(state)) {
       return 'error';
     }
-    return 'pending'; // ("pending" and "installed", plus anything unforseen)
+    // "pending", "installed", and "stopped", plus anything unforseen
+    return 'pending';
   };
 
 
