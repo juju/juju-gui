@@ -707,6 +707,22 @@ YUI.add('juju-view-utils', function(Y) {
 
   views.BoxPair = BoxPair;
 
+  /* Given one of the many "real" states return a "UI" state.
+   *
+   * If a state ends in "-error" or is simply "error" then it is an error
+   * state, if it is "started" then it is "running", otherwise it is "pending".
+   */
+  utils.simplifyState = function(state) {
+    if (state === 'started') {
+      return 'running';
+    }
+    if ((/-?error$/).test(state)) {
+      return 'error';
+    }
+    // "pending", "installed", and "stopped", plus anything unforseen
+    return 'pending';
+  };
+
 
 }, '0.1.0', {
   requires: ['base-build',

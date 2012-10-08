@@ -2,7 +2,8 @@
 
 YUI.add('juju-models', function(Y) {
 
-  var models = Y.namespace('juju.models');
+  var models = Y.namespace('juju.models'),
+      utils = Y.namespace('juju.views.utils');
 
   // This is a helper function used by all of the process_delta methods.
   var _process_delta = function(list, action, change_data, change_base) {
@@ -200,7 +201,7 @@ YUI.add('juju-models', function(Y) {
           units_for_service = this.get_units_for_service(service);
 
       units_for_service.forEach(function(unit) {
-        var state = unit.agent_state;
+        var state = utils.simplifyState(unit.agent_state);
         if (aggregate_map[state] === undefined) {
           aggregate_map[state] = 1;
         }
@@ -490,6 +491,7 @@ YUI.add('juju-models', function(Y) {
   requires: [
     'model',
     'model-list',
-    'lazy-model-list'
+    'lazy-model-list',
+    'juju-view-utils'
   ]
 });
