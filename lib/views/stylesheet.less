@@ -118,8 +118,37 @@ charms.thumbnails.li { height:4em; }
 .state-pending { stroke: #6597E8;}
 .thumbnail { min-height: 54px;}
 
+.unit (@min_height: 20px) {
+    padding: 5px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    margin-bottom: 0px;
+    min-height: @min_height;
+}
+
+ul#unit-large div {
+    .unit(40px);
+}
+
+ul#unit-medium div,
+ul#unit-small div {
+    .unit;
+}
+
+ul#unit-tiny {
+    margin-left: 0px;
+    > li {
+        margin-bottom: 5px;
+        margin-left: 5px;
+        > div {
+            .unit(10px);
+        }
+    }
+}
+
 g.service {
-    fill: none; 
+    fill: none;
     stroke: none;
 
     text {
@@ -128,7 +157,7 @@ g.service {
 
     .charm-label { font-size: 0.7em;
         fill: #333333;}
-    .name { 
+    .name {
         font-weight: bold;
         font-family: "Ubuntu";
         font-size: 1.6em; fill: #333333;

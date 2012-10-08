@@ -418,17 +418,18 @@ YUI.add('juju-view-service', function(Y) {
 
   // Display a unit list based on the total number of units.
   Y.Handlebars.registerHelper('show_units', function(units) {
-    var templates = {
-      large: Templates.show_units_large,
-      medium: Templates.show_units_medium,
-      small: Templates.show_units_small,
-      tiny: Templates.show_units_tiny
-    };
+    var template;
     var numUnits = units.length;
     // TODO: different visualization based on the viewport size.
-    // var winHeight = Y.DOM.winHeight();
-    // var winWidth = Y.DOM.winWidth();
-    var template = templates.medium;
+    if (numUnits <= 25) {
+      template = Templates.show_units_large;
+    } else if (numUnits <= 50) {
+      template = Templates.show_units_medium;
+    } else if (numUnits <= 200) {
+      template = Templates.show_units_small;
+    } else {
+      template = Templates.show_units_tiny;
+    }
     return template({units: units});
   });
 

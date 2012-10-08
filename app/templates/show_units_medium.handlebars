@@ -1,10 +1,8 @@
-<ul class="thumbnails">
+<ul id="unit-medium" class="thumbnails">
   {{#units}}
-  <li class="span3">
-    <div class="thumbnail well" id="{{id}}">
-      <h5>{{number}}: {{id}}</h5>
-      <span>{{agent_state}}</span> <br/>
-      <span>{{public_address}}</span>
+  <li class="span2">
+    <div class="well" id="{{id}}">
+      <h5>{{number}}: {{agent_state}}</h5>
     </div>
   </li>
   {{/units}}
