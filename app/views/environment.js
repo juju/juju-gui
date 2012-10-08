@@ -25,10 +25,10 @@ YUI.add('juju-view-environment', function(Y) {
           left: canvas_rect.left + box.x,
           width: box.w,
           height: box.h};
-    if (d3.event.clientX > bounding_box.left &&
-        d3.event.clientX < bounding_box.left + bounding_box.width &&
-        d3.event.clientY > bounding_box.top &&
-        d3.event.clientY < bounding_box.top + bounding_box.height) {
+    if (x > bounding_box.left &&
+        x < bounding_box.left + bounding_box.width &&
+        y > bounding_box.top &&
+        y < bounding_box.top + bounding_box.height) {
       return true;
     }
     return false;
