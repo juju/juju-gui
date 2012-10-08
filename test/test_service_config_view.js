@@ -143,7 +143,10 @@
           view = new ServiceConfigView({
             container: container,
             model: service,
-            app: app
+            app: (function() {
+              app.getModelURL = function() {};
+              return app;
+            })()
           }).render();
 
       // Clicking on the "Update" button disables it until the RPC
