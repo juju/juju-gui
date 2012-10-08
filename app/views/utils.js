@@ -186,14 +186,19 @@ YUI.add('juju-view-utils', function(Y) {
     },
 
     addSVGClass: function(selector, class_name) {
+      var self = this;
       if (typeof(selector) === 'string') {
         Y.all(selector).each(function(n) {
           var classes = this.getAttribute('class');
-          this.setAttribute('class', classes + ' ' + class_name);
+          if (!self.hasSVGClass(this, class_name)) {
+            this.setAttribute('class', classes + ' ' + class_name);
+          }
         });
       } else {
         var classes = selector.getAttribute('class');
-        selector.setAttribute('class', classes + ' ' + class_name);
+        if (!self.hasSVGClass(selector, class_name)) {
+          selector.setAttribute('class', classes + ' ' + class_name);
+        }
       }
     },
 

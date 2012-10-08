@@ -5,11 +5,33 @@ YUI.add('juju-view-environment', function(Y) {
   var views = Y.namespace('juju.views'),
       Templates = views.Templates;
 
+  /*
+   * Utility function to get a number from a computed style.
+   */
   function styleToNumber(selector, style, defaultSize) {
     style = style || 'height';
     defaultSize = defaultSize || 0;
     return parseInt(Y.one(selector).getComputedStyle(style) || defaultSize,
                     10);
+  }
+
+  /*
+   * Utility function to check if a point is within a bounding box.
+   */
+  function within(box, x, y) {
+    var canvas_rect = Y.one('#canvas').getClientRect(),
+        bounding_box = {
+          top: canvas_rect.top + box.y,
+          left: canvas_rect.left + box.x,
+          width: box.w,
+          height: box.h};
+    if (d3.event.clientX > bounding_box.left &&
+        d3.event.clientX < bounding_box.left + bounding_box.width &&
+        d3.event.clientY > bounding_box.top &&
+        d3.event.clientY < bounding_box.top + bounding_box.height) {
+      return true;
+    }
+    return false;
   }
 
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View,
@@ -32,21 +54,33 @@ YUI.add('juju-view-environment', function(Y) {
             dblclick: 'serviceDblClick',
             mouseenter: function(d, self) {
               var rect = Y.one(this).one('.service-border');
-              if (self.hasSVGClass(rect, 'selectable-service')) {
-                self.set('potential_drop_point_service', d);
-                self.set('potential_drop_point_rect', rect);
-                self.addSVGClass(rect, 'hover');
+              // Do not fire if this service isn't selectable.
+              if (!self.hasSVGClass(rect, 'selectable-service')) {
+                return;
               }
+
+              // Do not fire unless we're within the service box.
+              if (!within(d, d3.event.clientX, d3.event.clientY)) {
+                return;
+              }
+              self.set('potential_drop_point_service', d);
+              self.set('potential_drop_point_rect', rect);
+              self.addSVGClass(rect, 'hover');
             },
-            dragleave: function(d, self) {
-              //console.log(d3.event.relatedTarget.get('nodeName'));
+            mouseleave: function(d, self) {
+              // Do not fire if we aren't looking for a relation endpoint.
+              if (self.get('potential_drop_point_rect') === null) {
+                return;
+              }
+
+              // Do not fire if we're within the service box.
+              if (within(d, d3.event.clientX, d3.event.clientY)) {
+                return;
+              }
               var rect = Y.one(this).one('.service-border');
-              //if (//d3.event.relatedTarget == d3.event.currentTarget && 
-              //    self.hasSVGClass(d3.event.relatedTarget, 'hover')) {
-                self.set('potential_drop_point_service', null);
-                self.set('potential_drop_point_rect', null);
-                self.removeSVGClass(rect, 'hover');
-              //}
+              self.set('potential_drop_point_service', null);
+              self.set('potential_drop_point_rect', null);
+              self.removeSVGClass(rect, 'hover');
             }
           },
           '.unit-count': {
@@ -181,7 +215,8 @@ YUI.add('juju-view-environment', function(Y) {
             .append('g');
 
           vis.append('svg:rect')
-                .attr('fill', 'rgba(255,255,255,0)');
+            .attr('class', 'graph')
+            .attr('fill', 'rgba(255,255,255,0)');
 
           // Bind visualization resizing on window resize.
           Y.on('windowresize', function() {
@@ -685,7 +720,7 @@ YUI.add('juju-view-environment', function(Y) {
           // Drag controls on the add relation button, allowing
           // one to drag a line to create a relation.
           var drag_relation = add_rel.append('line')
-              .attr('class', 'relation pending-relation unused');
+              .attr('class', 'relation pending-relation dragline unused');
           var drag_relation_behavior = d3.behavior.drag()
               .on('dragstart', function(d) {
                 // Get our line, the image, and the current service.
