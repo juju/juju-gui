@@ -425,7 +425,7 @@ YUI.add('juju-view-service', function(Y) {
       template = Templates.show_units_large;
     } else if (numUnits <= 50) {
       template = Templates.show_units_medium;
-    } else if (numUnits <= 200) {
+    } else if (numUnits <= 250) {
       template = Templates.show_units_small;
     } else {
       template = Templates.show_units_tiny;

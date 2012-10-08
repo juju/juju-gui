@@ -121,11 +121,11 @@ charms.thumbnails.li { height:4em; }
 .state-pending { stroke: #6597E8;}
 .thumbnail { min-height: 54px;}
 
-.unit (@min_height: 20px) {
+.unit (@min_height: 20px, @border_radius:3px) {
     padding: 5px;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
+    -webkit-border-radius: @border_radius;
+    -moz-border-radius: @border_radius;
+    border-radius: @border_radius;
     margin-bottom: 0px;
     min-height: @min_height;
 }
@@ -134,18 +134,28 @@ ul#unit-large div {
     .unit(40px);
 }
 
-ul#unit-medium div,
-ul#unit-small div {
+ul#unit-medium div {
     .unit;
 }
 
-ul#unit-tiny {
+ul#unit-small {
     margin-left: 0px;
     > li {
         margin-bottom: 5px;
         margin-left: 5px;
         > div {
-            .unit(10px);
+            .unit;
+        }
+    }
+}
+
+ul#unit-tiny {
+    margin-left: 0px;
+    > li {
+        margin-bottom: 3px;
+        margin-left: 3px;
+        > div {
+            .unit(0px, 1px);
         }
     }
 }
