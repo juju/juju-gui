@@ -560,11 +560,7 @@ YUI.add('juju-view-environment', function(Y) {
                     return d.w / 2;
                   })
             .attr('y', function(d) {
-                    if (d.subordinate) {
-                      return d.h / 2 - 10;
-                    } else {
-                      return '1.5em';
-                    }
+                    return '1.5em';
                   })
             .text(function(d) {return d.id; });
 
@@ -575,11 +571,8 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('y', function(d) {
                     // TODO this will need to be set based on the size of the
                     // service health panel, but for now, this works.
-                    if (d.subordinate) {
-                      return d.h / 2 - 10;
-                    } else {
-                      return d.h / 2 + 10;
-                    }
+                    var hoffset_factor = d.subordinate ? 0.65 : 0.55;
+                    return d.h * hoffset_factor;
                   })
             .attr('dy', '3em')
             .attr('class', 'charm-label')
@@ -591,10 +584,20 @@ YUI.add('juju-view-environment', function(Y) {
           var exposed_indicator = node.filter(function(d) {
             return d.exposed;
           })
-            .append('circle')
-            .attr('cx', 0)
-            .attr('cy', 10)
-            .attr('r', 5)
+            .append('image')
+            .attr('xlink:href', '/juju-ui/assets/svgs/exposed.svg')
+            .attr('width', function(d) {
+                return d.w / 6;
+              })
+            .attr('height', function(d) {
+                return d.w / 6;
+              })
+            .attr('x', function(d) {
+                return d.w / 10 * 7;
+              })
+            .attr('y', function(d) {
+                return d.h / 3 * 1.05;
+              })
             .attr('class', 'exposed-indicator on');
           exposed_indicator.append('title')
             .text(function(d) {
@@ -617,14 +620,12 @@ YUI.add('juju-view-environment', function(Y) {
             .value(function(d) { return (d.value ? d.value : 1); });
 
           // Append to status charts to non-subordinate services
-          var status_chart = node.filter(function(d) {
-            return !d.subordinate;
-          })
-            .append('g')
+          var status_chart = node.append('g')
             .attr('class', 'service-status')
             .attr('transform', function(d) {
+                var hoffset_factor = d.subordinate ? 1 : 0.86;
                 return 'translate(' + [(d.w / 2),
-                  d.h / 2 * 0.86] + ')';
+                  d.h / 2 * hoffset_factor] + ')';
               });
 
           // Add a mask svg
