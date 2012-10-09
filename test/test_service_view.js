@@ -78,11 +78,25 @@
           { container: container, model: service, app: app,
             querystring: {}}).render();
       var rendered_names = container.one(
-          'ul.thumbnails').all('div.well').get('id');
+          'ul.thumbnails').all('div.unit').get('id');
       var expected_names = db.units.map(function(u) {return u.id;});
       expected_names.sort();
       assert.deepEqual(rendered_names, expected_names);
       rendered_names.should.eql(expected_names);
+    });
+
+    it('should show unit details when a unit is clicked', function() {
+      // Note that the units are added in beforeEach in an ordered manner.
+      var view = new ServiceView(
+          {container: container, model: service, app: app,
+            querystring: {}}).render();
+      var unit = container.one('ul.thumbnails').one('div.unit');
+      var showUnitCalled = false;
+      view.on('*:showUnit', function() {
+        showUnitCalled = true;
+      });
+      unit.simulate('click');
+      assert.isTrue(showUnitCalled);
     });
 
     it('should use the show_units_large template if required', function() {
@@ -216,7 +230,7 @@
          db_names.should.eql(expected_names);
          service.get('unit_count').should.equal(4);
          var rendered_names = container.one(
-         'ul.thumbnails').all('div.well').get('id');
+         'ul.thumbnails').all('div.unit').get('id');
          assert.deepEqual(rendered_names, expected_names);
        });
 
@@ -417,7 +431,7 @@
           { container: container, model: service, app: app,
             querystring: {state: 'running'}}).render();
       var rendered_names = container.one(
-          'ul.thumbnails').all('div.well').get('id');
+          'ul.thumbnails').all('div.unit').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
     });
 
@@ -450,7 +464,7 @@
           { container: container, model: service, app: app,
             querystring: {state: 'pending'}}).render();
       var rendered_names = container.one(
-          'ul.thumbnails').all('div.well').get('id');
+          'ul.thumbnails').all('div.unit').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
     });
 
@@ -480,7 +494,7 @@
           { container: container, model: service, app: app,
             querystring: {state: 'error'}}).render();
       var rendered_names = container.one(
-          'ul.thumbnails').all('div.well').get('id');
+          'ul.thumbnails').all('div.unit').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
     });
 

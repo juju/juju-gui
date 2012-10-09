@@ -531,7 +531,7 @@ YUI.add('juju-view-service', function(Y) {
 
     events: {
       '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'},
-      'div.thumbnail': {click: function(ev) {
+      'div.unit': {click: function(ev) {
         console.log('Unit clicked', ev.currentTarget.get('id'));
         this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
       }},
