@@ -225,7 +225,7 @@ YUI.add('juju-charm-search', function(Y) {
           if (!model || modelId !== model.get('id')) {
             var newModel = app.db.charms.getById(modelId);
             if (!newModel) {
-              newModel = new models.Charm({id: modelId})
+              newModel = app.db.charms.add({id: modelId})
                 .load({env: app.env, charm_store: app.charm_store});
             }
             this.set('model', newModel);

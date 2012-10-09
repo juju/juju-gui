@@ -387,6 +387,8 @@ describe('charm description', function() {
     view.get('model').get('package_name').should.equal('whatever');
     view.get('model').get('summary').should.equal('wowza');
     container.one('#charm-description').get('text').should.contain('wowza');
+    app.db.charms.getById(
+        'cs:precise/whatever').get('summary').should.equal('wowza');
   });
 
 });
