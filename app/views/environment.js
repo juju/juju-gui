@@ -368,6 +368,9 @@ YUI.add('juju-view-environment', function(Y) {
                 d3.select(this).attr('transform', function(d, i) {
                   return d.translateStr();
                 });
+                if (self.get('active_service') == d) {
+                  self.updateServiceMenuLocation();
+                }
                 updateLinks();
               });
 
@@ -670,7 +673,7 @@ YUI.add('juju-view-environment', function(Y) {
                 return self.humanizeNumber(d.unit_count);
               });
 
-          this.addControlPanel(node);
+          //this.addControlPanel(node);
 
         },
 
@@ -923,7 +926,7 @@ YUI.add('juju-view-environment', function(Y) {
                 'to-remove pending-relation');
           } else {
             view.get('rmrelation_dialog').hide();
-          }
+        }
           confirmButton.set('disabled', false);
         },
 
@@ -1001,6 +1004,7 @@ YUI.add('juju-view-environment', function(Y) {
           this.set('scale', evt.scale);
           vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
+          this.updateServiceMenuLocation();
         },
 
         /*
@@ -1077,6 +1081,22 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
+         * Update the location of the active service panel
+         */
+        updateServiceMenuLocation: function() {
+          var container = this.get('container'),
+              cp = container.one('#service-menu'),
+              service = this.get('active_service'),
+              tr = this.zoom.translate(),
+              z = this.zoom.scale();
+          if (service) {
+            cp.setStyle('top', service.y * z + tr[1]);
+            cp.setStyle('left', service.x * z + service.w * z + tr[0]);
+          }
+        },
+
+
+        /*
          * Actions to be called on clicking a service.
          */
         service_click_actions: {
@@ -1084,15 +1104,16 @@ YUI.add('juju-view-environment', function(Y) {
            * Default action: show or hide control panel.
            */
           toggleControlPanel: function(m, context, view) {
-            var cp = Y.one(context).one('.service-control-panel');
-
-            // If we're toggling another element, remove all .actives
-            if (!view.hasSVGClass(cp, 'active')) {
-              view.removeSVGClass('.service-control-panel.active', 'active');
+            var container = view.get('container'),
+                cp = container.one('#service-menu');
+            if (cp.hasClass('active')) {
+              cp.removeClass('active');
+              view.set('active_service', null);
+            } else {
+              view.set('active_service', m);
+              view.updateServiceMenuLocation();
+              cp.addClass('active');
             }
-
-            // Toggle the current node's class.
-            view.toggleSVGClass(cp, 'active');
           },
 
           /*
