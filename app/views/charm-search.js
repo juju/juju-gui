@@ -14,7 +14,7 @@ YUI.add('juju-charm-search', function(Y) {
     template: views.Templates['charm-search-result'],
     resultsTemplate: views.Templates['charm-search-result-entries'],
     charmPreConfigurationTemplate:
-        views.Templates['charm-search-result-entries'],
+        views.Templates['charm-pre-configuration'],
     initializer: function() {
       this.delay = utils.Delayer();
     },
@@ -154,8 +154,9 @@ YUI.add('juju-charm-search', function(Y) {
       if (!Y.Lang.isValue(charm)) {
         app.db.charms.add({id: url}).load(
             {env: app.env, charm_store: app.charm_store},
-            function(err, result) {
+            function(err) {
               // XXX check for errors
+              charm = app.db.charms.getById(url);
               self.showConfigurePane(charm);
             });
       } else {
@@ -164,11 +165,42 @@ YUI.add('juju-charm-search', function(Y) {
     },
     showConfigurePane: function(charm) {
       var container = this.get('container'),
-          list = container.one('.search-result-div');
+          pane = container.one('.search-result-div');
       // Destroy old entries
-      list.get('childNodes').remove(true);
-      list.append(this.charmPreConfigurationTemplate(
+      pane.get('childNodes').remove(true);
+      pane.append(this.charmPreConfigurationTemplate(
           {charm: charm.getAttrs()}));
+      console.log('======', charm);
+      container.one('#charm-deploy').on(
+          'click', Y.bind(this.onCharmDeployClicked, this), charm);
+    },
+    onCharmDeployClicked: function(evt, charm) {
+      var container = this.get('container'),
+          serviceName = container.one('#service-name').get('value');
+//          config = utils.getElementsValuesMapping(container,
+//              '#service-config .config-field');
+      console.log('--------', charm);
+      app.env.deploy(charm.get('url'), charm.get('full_name'), {}, function(ev) {
+        if (ev.err) {
+          console.log(url + ' deployment failed');
+          app.db.notifications.add(
+              new models.Notification({
+                title: 'Error deploying ' + name,
+                message: 'Could not deploy the requested service.',
+                level: 'error'
+              })
+          );
+        } else {
+          console.log(url + ' deployed');
+          app.db.notifications.add(
+              new models.Notification({
+                title: 'Deployed ' + name,
+                message: 'Successfully deployed the requested service.',
+                level: 'info'
+              })
+          );
+        }
+      });
     },
     // Create a data structure friendly to the view
     normalizeCharms: function(charms) {

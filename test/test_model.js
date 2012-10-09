@@ -114,11 +114,14 @@
     });
 
     it('must be able to parse individually owned charms', function() {
-      var charm = new models.Charm({id: 'cs:~marcoceppi/precise/wordpress-17'});
-      charm.get('full_name').should.equal('~marcoceppi/precise/wordpress');
+      // Note that an earlier version of the parsing code did not handle
+      // hyphens in user names, so this test intentionally includes one.
+      var charm = new models.Charm(
+          {id: 'cs:~marco-ceppi/precise/wordpress-17'});
+      charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
       charm.get('package_name').should.equal('wordpress');
       charm.get('charm_store_path').should.equal(
-          '~marcoceppi/precise/wordpress/json');
+          '~marco-ceppi/precise/wordpress/json');
     });
 
     it('must reject bad charm ids.', function() {

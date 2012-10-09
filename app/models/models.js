@@ -55,7 +55,7 @@ YUI.add('juju-models', function(Y) {
   // [..."cs", undefined, "precise", "word-press", undefined]
   // 'cs:precise/word-press-17'
   // [..."cs", undefined, "precise", "word-press", "17"]
-  var charm_id_re = /^(?:(\w+):)?(?:~(\w+)\/)?(\w+)\/(\S+?)(?:-(\d+))?$/,
+  var charm_id_re = /^(?:(\w+):)?(?:~([^\/]+)\/)?(\w+)\/(\S+?)(?:-(\d+))?$/,
       parse_charm_id = function(id) {
         var parts = charm_id_re.exec(id),
             result = {};
