@@ -326,7 +326,8 @@ YUI.add('juju-view-service', function(Y) {
           // combine the charm schema and the service values for display.
           var charm = app.db.charms.getById(service.get('charm')),
               config = service.get('config'),
-              schema = charm.get('config'),
+              charm_config = charm.get('config'),
+              schema = charm_config && charm_config.options,
               settings = [],
               field_def;
 
