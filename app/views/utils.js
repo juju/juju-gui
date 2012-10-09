@@ -568,6 +568,19 @@ YUI.add('juju-view-utils', function(Y) {
     Box.getWH = function() {return [this.w, this.h];};
 
     /*
+     * Returns true if a given point in the form [x, y] is within the box.
+     */
+    Box.containsPoint = function(point) {
+      if (point[0] > this.x &&
+          point[0] < this.x + this.w &&
+          point[1] > this.y &&
+          point[1] < this.y + this.h) {
+        return true;
+      }
+      return false;
+    };
+
+    /*
      * Return the 50% points along each side as xy pairs
      */
     Box.getConnectors = function() {

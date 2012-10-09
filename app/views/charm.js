@@ -4,7 +4,8 @@ YUI.add('juju-view-charm-collection', function(Y) {
 
   var views = Y.namespace('juju.views'),
       Templates = views.Templates,
-      utils = Y.namespace('juju.views.utils');
+      utils = Y.namespace('juju.views.utils'),
+      models = Y.namespace('juju.models');
 
   Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
     // console.log('helper', iface_decl, options, this);
@@ -111,9 +112,24 @@ YUI.add('juju-view-charm-collection', function(Y) {
       // `app.on_database_changed()`, which re-dispatches the current view.
       // For this reason we need to redirect to the root page right now.
       this.fire('showEnvironment');
-      env.deploy(charmUrl, serviceName, config, function(msg) {
-        console.log(charmUrl + ' deployed');
-      });
+      env.deploy(charmUrl, serviceName, config,
+          Y.bind(this._deployCallback, this)
+      );
+    },
+
+    _deployCallback: function(ev) {
+      if (ev.err) {
+        this.get('db').notifications.add(
+            new models.Notification({
+              title: 'Error deploying charm',
+              message: 'Service name: ' + ev.service_name +
+                  '; Charm url: ' + ev.charm_url,
+              level: 'error'
+            })
+        );
+        return;
+      }
+      console.log(ev.charm_url + ' deployed');
     }
   });
 

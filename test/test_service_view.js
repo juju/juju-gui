@@ -311,7 +311,7 @@
            db.on('update', function() {
              dbUpdated = true;
            });
-           callback();
+           callback({});
            // In the real code, the view should be updated by the db change
            // event. Here we should call it manually because we have no
            // "route" for this test.

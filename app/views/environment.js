@@ -3,7 +3,8 @@
 YUI.add('juju-view-environment', function(Y) {
 
   var views = Y.namespace('juju.views'),
-      Templates = views.Templates;
+      Templates = views.Templates,
+      models = Y.namespace('juju.models');
 
   /*
    * Utility function to get a number from a computed style.
@@ -13,20 +14,6 @@ YUI.add('juju-view-environment', function(Y) {
     defaultSize = defaultSize || 0;
     return parseInt(Y.one(selector).getComputedStyle(style) || defaultSize,
                     10);
-  }
-
-  /*
-   * Utility function to check if a point is within a bounding box.
-   */
-  function cursorWithin(box) {
-    var coords = d3.mouse(Y.one('svg').getDOMNode());
-    if (coords[0] > box.x &&
-        coords[0] < box.x + box.w &&
-        coords[1] > box.y &&
-        coords[1] < box.y + box.h) {
-      return true;
-    }
-    return false;
   }
 
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View,
@@ -55,7 +42,9 @@ YUI.add('juju-view-environment', function(Y) {
               }
 
               // Do not fire unless we're within the service box.
-              if (!cursorWithin(d)) {
+              var container = self.get('container'),
+                  mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+              if (!d.containsPoint(mouse_coords)) {
                 return;
               }
               self.set('potential_drop_point_service', d);
@@ -69,7 +58,9 @@ YUI.add('juju-view-environment', function(Y) {
               }
 
               // Do not fire if we're within the service box.
-              if (cursorWithin(d)) {
+              var container = self.get('container'),
+                  mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+              if (d.containsPoint(mouse_coords)) {
                 return;
               }
               var rect = Y.one(this).one('.service-border');
@@ -924,16 +915,35 @@ YUI.add('juju-view-environment', function(Y) {
           } // Otherwise do nothing.
         },
 
-        removeRelation: function(d, context, view) {
-          var env = this.get('env');
-          view.addSVGClass(Y.one(context.parentNode).one('.relation'),
-              'to-remove pending-relation');
+        removeRelation: function(d, context, view, confirmButton) {
+          var env = this.get('env'),
+              relationElement = Y.one(context.parentNode).one('.relation');
+          view.addSVGClass(relationElement, 'to-remove pending-relation');
           env.remove_relation(
               d.source().id,
               d.target().id,
-              Y.bind(function(ev) {
-                view.get('rmrelation_dialog').hide();
-              }, this));
+              Y.bind(this._removeRelationCallback, this, view,
+                  relationElement, confirmButton));
+        },
+
+        _removeRelationCallback: function(view,
+            relationElement, confirmButton, ev) {
+          var db = this.get('db'),
+              service = this.get('model');
+          if (ev.err) {
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Error deleting relation',
+                  message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
+                  level: 'error'
+                })
+            );
+            view.removeSVGClass(this.relationElement,
+                'to-remove pending-relation');
+          } else {
+            view.get('rmrelation_dialog').hide();
+          }
+          confirmButton.set('disabled', false);
         },
 
         removeRelationConfirm: function(d, context, view) {
@@ -944,8 +954,9 @@ YUI.add('juju-view-environment', function(Y) {
               'Remove Relation',
               Y.bind(function(ev) {
                 ev.preventDefault();
-                ev.target.set('disabled', true);
-                view.removeRelation(d, context, view);
+                var confirmButton = ev.target;
+                confirmButton.set('disabled', true);
+                view.removeRelation(d, context, view, confirmButton);
               },
               this)));
         },
@@ -1125,9 +1136,10 @@ YUI.add('juju-view-environment', function(Y) {
                 'Destroy Service',
                 Y.bind(function(ev) {
                   ev.preventDefault();
-                  ev.target.set('disabled', true);
+                  var btn = ev.target;
+                  btn.set('disabled', true);
                   view.service_click_actions
-                      .destroyService(m, context, view);
+                      .destroyService(m, context, view, btn);
                 },
                 this)));
           },
@@ -1135,13 +1147,31 @@ YUI.add('juju-view-environment', function(Y) {
           /*
            * Destroy a service.
            */
-          destroyService: function(m, context, view) {
+          destroyService: function(m, context, view, btn) {
             var env = view.get('env'),
                 service = view.get('destroy_service');
             env.destroy_service(
-                service.get('id'), Y.bind(function(ev) {
-                  view.get('destroy_dialog').hide();
-                }, this));
+                service.get('id'), Y.bind(this._destroyCallback, this,
+                    service, view, btn));
+          },
+
+          _destroyCallback: function(service, view, btn, ev) {
+            var app = view.get('app'),
+                db = view.get('db');
+            if (ev.err) {
+              db.notifications.add(
+                  new models.Notification({
+                    title: 'Error destroying service',
+                    message: 'Service name: ' + ev.service_name,
+                    level: 'error',
+                    link: app.getModelURL(service),
+                    modelId: service
+                  })
+              );
+            } else {
+              view.get('destroy_dialog').hide();
+            }
+            btn.set('disabled', false);
           },
 
           /*
@@ -1199,16 +1229,28 @@ YUI.add('juju-view-environment', function(Y) {
             env.add_relation(
                 source.id,
                 m.id,
-                function(resp) {
-                  // Remove our pending relation from the DB, error or no.
-                  db.relations.remove(
-                      db.relations.getById(relation_id));
-                  if (resp.err) {
-                    console.log('Error adding relation');
-                  }
-                });
+                Y.bind(this._addRelationCallback, this, view, relation_id)
+            );
             // For now, set back to show_service.
             view.set('currentServiceClickAction', 'toggleControlPanel');
+          },
+
+          _addRelationCallback: function(view, relation_id, ev) {
+            var db = view.get('db');
+            // Remove our pending relation from the DB, error or no.
+            db.relations.remove(
+                db.relations.getById(relation_id));
+            if (ev.err) {
+              db.notifications.add(
+                  new models.Notification({
+                    title: 'Error adding relation',
+                    message: 'Relation ' + ev.endpoint_a +
+                        ' to ' + ev.endpoint_b,
+                    level: 'error'
+                  })
+              );
+              return;
+            }
           }
         }
 
@@ -1222,6 +1264,7 @@ YUI.add('juju-view-environment', function(Y) {
 }, '0.1.0', {
   requires: ['juju-templates',
     'juju-view-utils',
+    'juju-models',
     'd3',
     'base-build',
     'handlebars-base',

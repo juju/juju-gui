@@ -430,6 +430,7 @@ YUI.add('juju-models', function(Y) {
       // context of app's routing table)
       modelId: {
         setter: function(model) {
+          if (!model) {return null;}
           if (Y.Lang.isArray(model)) {return model;}
           return Y.mix(
               [model.name,
