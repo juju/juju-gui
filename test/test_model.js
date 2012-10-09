@@ -2,7 +2,7 @@
 
 (function() {
 
-  describe('charm id normalization', function() {
+  describe('charm normalization', function() {
     var Y, models;
 
     before(function(done) {
@@ -36,6 +36,14 @@
           'charms/precise/openstack-dashboard/json');
     });
 
+    it('must convert timestamps into time objects', function() {
+      var time = 1349797266.032,
+          date = new Date(time),
+          charm = new models.Charm(
+          { id: 'precise/foo', last_change: {created: time / 1000} });
+      charm.get('last_change').created.should.eql(date);
+    });
+
   });
 
   describe('charm id helper functions', function() {
@@ -66,6 +74,11 @@
     it('must parse fully qualified names with owners', function() {
       models.parse_charm_id('cs:~bac/precise/openstack-dashboard-0').owner
         .should.equal('bac');
+    });
+
+    it('must parse fully qualified names with hyphenated owners', function() {
+      models.parse_charm_id('cs:~alt-bac/precise/openstack-dashboard-0').owner
+        .should.equal('alt-bac');
     });
 
     it('must normalize a charm id without a scheme', function() {

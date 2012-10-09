@@ -60,8 +60,7 @@ YUI.add('juju-charm-search', function(Y) {
           this.get('searchDelay'));
     },
     showDetails: function(ev) {
-      ev.stopPropagation();
-      ev.preventDefault();
+      ev.halt();
       this.fire(
           'changePanel',
           { name: 'description',
@@ -194,6 +193,7 @@ YUI.add('juju-charm-search', function(Y) {
       list.append(this.resultsTemplate({charms: entries}));
     }
   });
+  views.CharmCollectionView = CharmCollectionView;
 
   // This extension makes changes to "modelId" set a charm "model" with that
   // id, creating and loading it if needed.  When a new charm is set, or when
@@ -209,6 +209,7 @@ YUI.add('juju-charm-search', function(Y) {
       if (Y.Lang.isValue(model)) {
         // set target so we can subscribe locally to change events.
         model.addTarget(this);
+        this.set('modelId', model.get('id'));
       }
       // If the model gets swapped out, reset target and re-render.
       this.after('modelChange', Y.bind(function(ev) {
@@ -237,7 +238,7 @@ YUI.add('juju-charm-search', function(Y) {
           if (!model || modelId !== model.get('id')) {
             var newModel = app.db.charms.getById(modelId);
             if (!newModel) {
-              newModel = new models.Charm({id: modelId})
+              newModel = app.db.charms.add({id: modelId})
                 .load({env: app.env, charm_store: app.charm_store});
             }
             this.set('model', newModel);
@@ -250,28 +251,30 @@ YUI.add('juju-charm-search', function(Y) {
   });
 
   var CharmDescriptionView = Y.Base.create(
-      'CharmCollectionView', Y.View, [CharmPanelBaseView], {
+      'CharmDescriptionView', Y.View, [CharmPanelBaseView], {
         template: views.Templates['charm-description'],
-        // model, modelId, app
+        // container, model, modelId, app
         render: function() {
           var container = this.get('container'),
               charm = this.get('model');
           if (Y.Lang.isValue(charm)) {
             container.setHTML(this.template(charm.getAttrs()));
-            container.all('i.icon-chevron-down').each(function(el) {
+            container.all('i.icon-chevron-right').each(function(el) {
               el.ancestor('.charm-section').one('div').hide();
             });
           } else {
-            container.setHTML('<div class="alert">Waiting on charm data...</div>');
+            container.setHTML(
+                '<div class="alert">Waiting on charm data...</div>');
           }
+          return this;
         },
         events: {
           '.charm-nav-back': {click: 'goBack'},
           '.btn': {click: 'deploy'},
           '.charm-section h4': {click: 'toggleVisibility'}
-        }, // XXX add toggle of sections.
+        },
         focus: function() {
-          // We don't have anything to focus on.
+          // No op: we don't have anything to focus on.
         },
         goBack: function(ev) {
           ev.halt();
@@ -298,10 +301,10 @@ YUI.add('juju-charm-search', function(Y) {
             // Now we need to set our starting point.
             el.setStyles({height: 0, width: config.width});
             el.show('sizeIn', config);
-            icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
+            icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
           } else {
             el.hide('sizeOut', {duration: 0.25});
-            icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
+            icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
           }
         }
       });
@@ -404,7 +407,6 @@ YUI.add('juju-charm-search', function(Y) {
     Y.one(document.body).append(container);
     container.hide();
 
-    // XXX Is history needed, for "back"?
     function setPanel(config) {
       if (config.name !== activePanelName) {
         var newPanel = panels[config.name];

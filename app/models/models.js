@@ -56,7 +56,7 @@ YUI.add('juju-models', function(Y) {
   // [..."cs", undefined, "precise", "word-press", undefined]
   // 'cs:precise/word-press-17'
   // [..."cs", undefined, "precise", "word-press", "17"]
-  var charm_id_re = /^(?:(\w+):)?(?:~([^\/]+)\/)?(\w+)\/(\S+?)(?:-(\d+))?$/,
+  var charm_id_re = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)(?:-(\d+))?$/,
       parse_charm_id = function(id) {
         var parts = charm_id_re.exec(id),
             result = {};
@@ -172,7 +172,17 @@ YUI.add('juju-models', function(Y) {
       description: {writeOnce: true},
       full_name: {readOnly: true}, // calculated
       is_subordinate: {writeOnce: true},
-      last_change: {writeOnce: true},
+      last_change:
+          { writeOnce: true,
+            setter: function(val) {
+              if (val && val.created) {
+                // Mutating in place should be fine since this should only
+                // come from loading over the wire.
+                val.created = new Date(val.created * 1000);
+              }
+              return val;
+            }
+          },
       maintainer: {writeOnce: true},
       metadata: {writeOnce: true},
       package_name: {readOnly: true}, // calculated
