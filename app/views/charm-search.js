@@ -182,65 +182,18 @@ YUI.add('juju-charm-search', function(Y) {
   });
   views.CharmCollectionView = CharmCollectionView;
 
-  // This extension makes changes to "modelId" set a charm "model" with that
-  // id, creating and loading it if needed.  When a new charm is set, or when
-  // a charm changes internally (because of being loaded), the view's render
-  // method is called.  The render method therefore needs to be able to handle
-  // three cases: there is no charm; the charm exists but has not been loaded;
-  // and the charm exists and has been fully loaded.  See usage in
-  // CharmDescriptionView.
-  var CharmPanelBaseView = Y.Base.create('CharmPanelBaseView', Y.Base, [], {
-    initializer: function() {
-      var app = this.get('app'),
-          model = this.get('model');
-      if (Y.Lang.isValue(model)) {
-        // set target so we can subscribe locally to change events.
-        model.addTarget(this);
-        this.set('modelId', model.get('id'));
-      }
-      // If the model gets swapped out, reset target and re-render.
-      this.after('modelChange', Y.bind(function(ev) {
-        if (ev.prevVal) { ev.prevVal.removeTarget(this); }
-        if (ev.newVal) {
-          ev.newVal.addTarget(this);
-          if (ev.newVal.get('id') !== this.get('modelId')) {
-            // keep modelId up-to-date for cleanliness.
-            this.set('modelId', ev.newVal.get('id'));
-          }
-        } else if (this.get('modelId')) {
-          this.set('modelId', null);
-        }
-        this.render();
-      }, this));
-      // Whenever there is an attribute change in the model, redraw.
-      // This should only happen when the model is loaded.
-      this.after('*:change', this.render, this);
-
-      // If the modelId gets changed, change the model.
-      this.after('modelIdChange', Y.bind(function(ev) {
-        var app = this.get('app'),
-            model = this.get('model'),
-            modelId = ev.newVal;
-        if (Y.Lang.isValue(modelId)) {
-          if (!model || modelId !== model.get('id')) {
-            var newModel = app.db.charms.getById(modelId);
-            if (!newModel) {
-              newModel = app.db.charms.add({id: modelId})
-                .load({env: app.env, charm_store: app.charm_store});
-            }
-            this.set('model', newModel);
-          }
-        } else if (model) {
-          this.set('model', null);
-        }
-      }, this));
-    }
-  });
-
   var CharmDescriptionView = Y.Base.create(
-      'CharmDescriptionView', Y.View, [CharmPanelBaseView], {
+      'CharmDescriptionView', Y.View, [views.JujuBaseView], {
         template: views.Templates['charm-description'],
+        events: {
+          '.charm-nav-back': {click: 'goBack'},
+          '.btn': {click: 'deploy'},
+          '.charm-section h4': {click: 'toggleSectionVisibility'}
+        },
         // container, model, modelId, app
+        initializer: function() {
+          this.bindModelView(this.get('model'));
+        },
         render: function() {
           var container = this.get('container'),
               charm = this.get('model');
@@ -255,11 +208,6 @@ YUI.add('juju-charm-search', function(Y) {
           }
           return this;
         },
-        events: {
-          '.charm-nav-back': {click: 'goBack'},
-          '.btn': {click: 'deploy'},
-          '.charm-section h4': {click: 'toggleVisibility'}
-        },
         focus: function() {
           // No op: we don't have anything to focus on.
         },
@@ -273,7 +221,7 @@ YUI.add('juju-charm-search', function(Y) {
               info_url = ev.currentTarget.getData('info-url');
           app.fire('showCharm', {charm_data_url: info_url});
         },
-        toggleVisibility: function(ev) {
+        toggleSectionVisibility: function(ev) {
           var el = ev.currentTarget.ancestor('.charm-section').one('div'),
               icon = ev.currentTarget.one('i');
           if (el.getStyle('display') === 'none') {
@@ -336,8 +284,14 @@ YUI.add('juju-charm-search', function(Y) {
         activePanelName = config.name;
         contentNode.get('children').remove();
         contentNode.append(panels[config.name].get('container'));
-        delete config.name;
-        newPanel.setAttrs(config);
+        if (config.modelId) {
+          var newModel = app.db.charms.getById(config.modelId);
+          if (!newModel) {
+            newModel = app.db.charms.add({id: config.modelId})
+              .load({env: app.env, charm_store: app.charm_store});
+          }
+          newPanel.set('model', newModel);
+        }
         newPanel.focus();
       }
     }
@@ -453,6 +407,7 @@ YUI.add('juju-charm-search', function(Y) {
     'handlebars',
     'event-hover',
     'transition',
-    'event-outside'
+    'event-outside',
+    'datatype'
   ]
 });

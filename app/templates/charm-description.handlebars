@@ -1,7 +1,7 @@
 <div>
   <div class="charm-nav-back"><i class="icon-arrow-left icon-white"></i> Back</div>
 
-  <div id="charm-description">
+  <div class="charm-description">
     <button class="btn btn-primary"
             data-info-url="{{charm_store_path}}">Deploy</button>
     <h3>{{package_name}}</h3>
@@ -40,10 +40,9 @@
       <div>
         {{#if last_change}}
         {{#with last_change}}
-        <div>{{humanizeTime created}}</div>
-        <div>{{created}}</div>
+        <div>{{dateformat created "%F"}}</div>
         <div>{{committer}}</div>
-        <blockquote>{{message}}</blockquote>
+        <div class="commitmessage">{{message}}</div>
         {{/with}}
         {{/if}}
       </div>

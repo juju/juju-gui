@@ -109,7 +109,7 @@ YUI.add('juju-view-utils', function(Y) {
         model.addTarget(this);
       }
 
-      // If the model gets swapped out, reset targets accordingly.
+      // If the model gets swapped out, reset targets accordingly and rerender.
       this.after('modelChange', function(ev) {
         if (ev.prevVal) {
           ev.prevVal.removeTarget(this);
@@ -117,6 +117,7 @@ YUI.add('juju-view-utils', function(Y) {
         if (ev.newVal) {
           ev.newVal.addTarget(this);
         }
+        this.render();
       });
 
       // Re-render this view when the model changes.
@@ -725,6 +726,14 @@ YUI.add('juju-view-utils', function(Y) {
     return 'pending';
   };
 
+  Y.Handlebars.registerHelper('dateformat', function(date, format) {
+    // See http://yuilibrary.com/yui/docs/datatype/ for formatting options.
+    if (date) {
+      return Y.Date.format(date, {format: format});
+    }
+    return '';
+  });
+
   Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
     // console.log('helper', iface_decl, options, this);
     var result = [];
@@ -761,5 +770,6 @@ YUI.add('juju-view-utils', function(Y) {
     'view',
     'panel',
     'json-stringify',
-    'gallery-markdown']
+    'gallery-markdown',
+    'datatype-date-format']
 });
