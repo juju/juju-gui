@@ -1,0 +1,17 @@
+<div>
+  <ul class="unstyled">
+    {{#with charm}}
+    <li class="charm-entry">
+      <div class="control-group">
+        <div class="control-label" for="service-name">Service name:</div>
+        <div class="controls">
+          <input class="config-field" type="text" name="service-name"
+              id="service-name" value="{{charm.name}}"/>
+        </div>
+      </div>
+    </li>
+    {{/with}}
+  </ul>
+  <input id="charm-deploy" value="Deploy" type="submit"
+      class="btn btn-inverse"></input>
+</div>
