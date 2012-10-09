@@ -1270,7 +1270,6 @@ YUI.add('juju-view-environment', function(Y) {
     'handlebars-base',
     'node',
     'svg-layouts',
-    'drag-events',
     'event-resize',
     'slider',
     'view']
