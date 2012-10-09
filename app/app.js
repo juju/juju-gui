@@ -96,6 +96,8 @@ YUI.add('juju-gui', function(Y) {
       // If this flag is true, start the application with the console activated
       if (this.get('consoleEnabled')) {
         consoleManager.enable();
+      } else {
+        consoleManager.disable();        
       }
       // Update the on-screen environment name provided in the configuration or
       // a default if none is configured.

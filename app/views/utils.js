@@ -1,66 +1,5 @@
 'use strict';
 
-var consoleManager = (function() {
-  var winConsole = window.console,
-      // These are the available methods.
-      // Add more to this list if necessary.
-      consoleEmpty = {
-        group: function() {},
-        groupEnd: function() {},
-        groupCollapsed: function() {},
-        log: function() {}
-      },
-      consoleProxy = (function() {
-        // This object wraps the "window.console"
-        var consoleWrapper = {};
-
-        function buildMethodProxy(key) {
-          if (winConsole[key] && typeof winConsole[key] === 'function') {
-            consoleWrapper[key] = function() {
-              var cFunc = winConsole[key];
-              cFunc.call(winConsole, arguments);
-            };
-          } else {
-            consoleWrapper[key] = function() {
-              consoleEmpty[key]();
-            };
-          }
-        }
-
-        // Checking if the browser has the "console" object
-        if (winConsole) {
-          // Only the methods defined by the consoleMock
-          // are available for use.
-          for (var key in consoleEmpty) {
-            if (consoleEmpty.hasOwnProperty(key)) {
-              buildMethodProxy(key);
-            }
-          }
-        } else {
-          consoleWrapper = consoleEmpty;
-        }
-
-        return consoleWrapper;
-      })();
-
-  window.console = consoleEmpty;
-
-  // In order to enable the console in production the user can
-  // call "javascript:consoleManager.enable()" in the address bar
-  return {
-    enable: function() {
-      window.console = consoleProxy;
-    },
-    disable: function() {
-      window.console = consoleEmpty;
-    },
-    getConsoleEmpty: function() {
-      // Useful for unit tests
-      return consoleEmpty;
-    }
-  };
-})();
-
 YUI.add('juju-view-utils', function(Y) {
 
   var views = Y.namespace('juju.views'),
@@ -86,6 +25,57 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
+  window.consoleManager = (function() {
+    var winConsole = window.console,
+        // These are the available methods.
+        // Add more to this list if necessary.
+        consoleEmpty = {
+          group: function() {},
+          groupEnd: function() {},
+          groupCollapsed: function() {},
+          log: function() {}
+        },
+        consoleProxy = (function() {
+          // This object wraps the "window.console"
+          var consoleWrapper = {};
+          function buildMethodProxy(key) {
+            if (winConsole[key] && typeof winConsole[key] === 'function') {
+              consoleWrapper[key] = function() {
+                var cFunc = winConsole[key];
+                cFunc.call(winConsole, arguments);
+              };
+            } else {
+              consoleWrapper[key] = function() {
+                consoleEmpty[key]();
+              };
+            }
+          }
+          // Checking if the browser has the "console" object
+          if (winConsole) {
+            Y.each(consoleEmpty, function(value, key) {
+              buildMethodProxy(key);
+            });
+          } else {
+            consoleWrapper = consoleEmpty;
+          }
+
+          return consoleWrapper;
+        })();
+    // In order to enable the console in production the user can
+    // call "javascript:consoleManager.enable()" in the address bar
+    return {
+      enable: function() {
+        window.console = consoleProxy;
+      },
+      disable: function() {
+        window.console = consoleEmpty;
+      },
+      getConsoleEmpty: function() {
+        // Useful for unit tests
+        return consoleEmpty;
+      }
+    };
+  })();
 
   // This creates a closure that delays the execution of a given callback. If
   // the user creates a Delayer with "delay = utils.Delayer()" and then calls
