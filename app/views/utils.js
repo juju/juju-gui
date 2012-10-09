@@ -165,14 +165,19 @@ YUI.add('juju-view-utils', function(Y) {
     },
 
     addSVGClass: function(selector, class_name) {
+      var self = this;
       if (typeof(selector) === 'string') {
         Y.all(selector).each(function(n) {
           var classes = this.getAttribute('class');
-          this.setAttribute('class', classes + ' ' + class_name);
+          if (!self.hasSVGClass(this, class_name)) {
+            this.setAttribute('class', classes + ' ' + class_name);
+          }
         });
       } else {
         var classes = selector.getAttribute('class');
-        selector.setAttribute('class', classes + ' ' + class_name);
+        if (!self.hasSVGClass(selector, class_name)) {
+          selector.setAttribute('class', classes + ' ' + class_name);
+        }
       }
     },
 
@@ -562,6 +567,24 @@ YUI.add('juju-view-utils', function(Y) {
 
     Box.getXY = function() {return [this.x, this.y];};
     Box.getWH = function() {return [this.w, this.h];};
+
+    /*
+     * Returns true if a given point in the form [x, y] is within the box.
+     */
+    Box.containsPoint = function(point, transform) {
+      transform = transform || {
+        scale: function() { return 1; },
+        translate: function() { return [0, 0]; }
+      };
+      var s = transform.scale(), tr = transform.translate();
+      if (point[0] > this.x * s + tr[0] &&
+          point[0] < this.x * s + this.w * s + tr[0] &&
+          point[1] > this.y * s + tr[1] &&
+          point[1] < this.y * s + this.h * s + tr[1]) {
+        return true;
+      }
+      return false;
+    };
 
     /*
      * Return the 50% points along each side as xy pairs

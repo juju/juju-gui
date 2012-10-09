@@ -382,6 +382,14 @@
            b2.getConnectors().top]);
        });
 
+    it('must be able to tell if a point is inside a box', function() {
+      var b = views.BoundingBox();
+      b.pos = {x: 100, y: 100, w: 50, h: 50};
+
+      b.containsPoint([125, 125]).should.equal(true);
+      b.containsPoint([25, 25]).should.equal(false);
+    });
+
     it('must be able to save and restore old position information',
         function() {
          var b1 = views.BoundingBox(),
