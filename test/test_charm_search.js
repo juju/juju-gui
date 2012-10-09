@@ -7,19 +7,21 @@ describe('charm search', function() {
       '"Membase Server", "relevance": 8.728194117350437, ' +
       '"owner": "charmers"}]}';
 
-  before(function() {
-    Y = YUI(GlobalConfig).use([
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
       'juju-models',
       'juju-views',
       'juju-gui',
       'juju-env',
       'juju-tests-utils',
-      'node-event-simulate'],
+      'node-event-simulate',
+      'node',
 
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
+      done();
     });
 
   });
@@ -111,7 +113,7 @@ describe('charm search', function() {
   });
 
   it('must be able to trigger charm details', function() {
-    var navigateTriggered = false,
+    var db = new models.Database(),
         panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
           charm_store: {
             sendRequest: function(params) {
@@ -125,22 +127,19 @@ describe('charm search', function() {
               });
             }
           },
-          app: {
-            navigate: function() {
-              navigateTriggered = true;
-            }
-          },
+          app: {db: db},
           testing: true
         }),
         node = panel.node;
+    db.charms.add({id: 'cs:precise/membase'});
 
     panel.show();
     var field = node.one('.charms-search-field');
     field.set('value', 'aaa');
     field.simulate('keyup');
     node.one('a.charm-detail').simulate('click');
-
-    navigateTriggered.should.equal(true);
+    node.one('#charm-description > h3').get('text').trim()
+      .should.equal('membase');
   });
 
   it('must deploy a charm for a new service when the button is clicked',
