@@ -474,6 +474,12 @@ YUI.add('juju-view-service', function(Y) {
     return template({units: units});
   });
 
+  // Translate the given state to the matching style.
+  Y.Handlebars.registerHelper('state_to_style', function(state) {
+    // Using a closure to avoid the second argument to be passed through.
+    return utils.stateToStyle(state);
+  });
+
   var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     template: Templates.service,
@@ -512,11 +518,6 @@ YUI.add('juju-view-service', function(Y) {
         states: state_data,
         filtered: !!filter_state
       }));
-      // Customize units visualization based on their agent state.
-      container.all('div.unit').each(function(node) {
-        var agentState = node.one('span.agent-state').get('text');
-        node.addClass(this.stateToStyle(agentState));
-      }, this);
       return this;
     },
 

@@ -332,14 +332,13 @@ describe('utilities', function() {
 })();
 
 (function() {
-  describe('juju base view', function() {
+  describe('state to style', function() {
 
-    var jujuBaseView, views, Y;
+    var utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-views', function(Y) {
-        views = Y.namespace('juju.views');
-        jujuBaseView = new views.JujuBaseView();
+        utils = Y.namespace('juju.views.utils');
         done();
       });
     });
@@ -347,20 +346,20 @@ describe('utilities', function() {
     it('should translate unit states to styles correctly', function() {
       // The states 'installed', 'pending' and 'stopped' are turned
       // into 'state-pending'.
-      assert.equal('state-pending', jujuBaseView.stateToStyle('installed'));
-      assert.equal('state-pending', jujuBaseView.stateToStyle('pending'));
-      assert.equal('state-pending', jujuBaseView.stateToStyle('stopped'));
+      assert.equal('state-pending', utils.stateToStyle('installed'));
+      assert.equal('state-pending', utils.stateToStyle('pending'));
+      assert.equal('state-pending', utils.stateToStyle('stopped'));
       // The state 'started' is turned into 'state-started'.
-      assert.equal('state-started', jujuBaseView.stateToStyle('started'));
+      assert.equal('state-started', utils.stateToStyle('started'));
       // The states 'install-error', 'start-error' and 'stop-error' are turned
       // into 'state-error'.
-      assert.equal('state-error', jujuBaseView.stateToStyle('install-error'));
-      assert.equal('state-error', jujuBaseView.stateToStyle('start-error'));
-      assert.equal('state-error', jujuBaseView.stateToStyle('stop-error'));
+      assert.equal('state-error', utils.stateToStyle('install-error'));
+      assert.equal('state-error', utils.stateToStyle('start-error'));
+      assert.equal('state-error', utils.stateToStyle('stop-error'));
     });
 
     it('should add the computed class to the existing ones', function() {
-      var classes = jujuBaseView.stateToStyle('pending', 'existing');
+      var classes = utils.stateToStyle('pending', 'existing');
       assert.include(classes, 'state-pending');
       assert.include(classes, 'existing');
     });

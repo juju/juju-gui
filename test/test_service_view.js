@@ -90,8 +90,8 @@
       var view = new ServiceView(
           {container: container, model: service, app: app,
             querystring: {}}).render();
-      var unit = container.one('ul.thumbnails').one('div.unit');
-      var showUnitCalled = false;
+      var unit = container.one('ul.thumbnails').one('div.unit'),
+          showUnitCalled = false;
       view.on('*:showUnit', function() {
         showUnitCalled = true;
       });

@@ -133,30 +133,6 @@ YUI.add('juju-view-utils', function(Y) {
       return null;
     },
 
-    stateToStyle: function(state, current) {
-      // todo also check relations
-      var classes;
-      switch (state) {
-        case 'installed':
-        case 'pending':
-        case 'stopped':
-          classes = 'state-pending';
-          break;
-        case 'started':
-          classes = 'state-started';
-          break;
-        case 'install-error':
-        case 'start-error':
-        case 'stop-error':
-          classes = 'state-error';
-          break;
-        default:
-          Y.log('Unhandled agent state: ' + state, 'debug');
-      }
-      classes = current && classes + ' ' + current || classes;
-      return classes;
-    },
-
     humanizeNumber: function(n) {
       var units = [[1000, 'K'],
             [1000000, 'M'],
@@ -445,6 +421,30 @@ YUI.add('juju-view-utils', function(Y) {
       settings.push(Y.mix(entry, field_def));
     });
     return settings;
+  };
+
+  utils.stateToStyle = function(state, current) {
+    // TODO: also check relations.
+    var classes;
+    switch (state) {
+      case 'installed':
+      case 'pending':
+      case 'stopped':
+        classes = 'state-pending';
+        break;
+      case 'started':
+        classes = 'state-started';
+        break;
+      case 'install-error':
+      case 'start-error':
+      case 'stop-error':
+        classes = 'state-error';
+        break;
+      default:
+        Y.log('Unhandled agent state: ' + state, 'debug');
+    }
+    classes = current && classes + ' ' + current || classes;
+    return classes;
   };
 
   utils.validate = function(values, schema) {
