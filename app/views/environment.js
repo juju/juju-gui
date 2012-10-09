@@ -3,7 +3,8 @@
 YUI.add('juju-view-environment', function(Y) {
 
   var views = Y.namespace('juju.views'),
-      Templates = views.Templates;
+      Templates = views.Templates,
+      models = Y.namespace('juju.models');
 
   function styleToNumber(selector, style, defaultSize) {
     style = style || 'height';
@@ -559,11 +560,7 @@ YUI.add('juju-view-environment', function(Y) {
                     return d.w / 2;
                   })
             .attr('y', function(d) {
-                    if (d.subordinate) {
-                      return d.h / 2 - 10;
-                    } else {
-                      return '1.5em';
-                    }
+                    return '1.5em';
                   })
             .text(function(d) {return d.id; });
 
@@ -574,11 +571,8 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('y', function(d) {
                     // TODO this will need to be set based on the size of the
                     // service health panel, but for now, this works.
-                    if (d.subordinate) {
-                      return d.h / 2 - 10;
-                    } else {
-                      return d.h / 2 + 10;
-                    }
+                    var hoffset_factor = d.subordinate ? 0.65 : 0.55;
+                    return d.h * hoffset_factor;
                   })
             .attr('dy', '3em')
             .attr('class', 'charm-label')
@@ -590,10 +584,20 @@ YUI.add('juju-view-environment', function(Y) {
           var exposed_indicator = node.filter(function(d) {
             return d.exposed;
           })
-            .append('circle')
-            .attr('cx', 0)
-            .attr('cy', 10)
-            .attr('r', 5)
+            .append('image')
+            .attr('xlink:href', '/juju-ui/assets/svgs/exposed.svg')
+            .attr('width', function(d) {
+                return d.w / 6;
+              })
+            .attr('height', function(d) {
+                return d.w / 6;
+              })
+            .attr('x', function(d) {
+                return d.w / 10 * 7;
+              })
+            .attr('y', function(d) {
+                return d.h / 3 * 1.05;
+              })
             .attr('class', 'exposed-indicator on');
           exposed_indicator.append('title')
             .text(function(d) {
@@ -616,14 +620,12 @@ YUI.add('juju-view-environment', function(Y) {
             .value(function(d) { return (d.value ? d.value : 1); });
 
           // Append to status charts to non-subordinate services
-          var status_chart = node.filter(function(d) {
-            return !d.subordinate;
-          })
-            .append('g')
+          var status_chart = node.append('g')
             .attr('class', 'service-status')
             .attr('transform', function(d) {
+                var hoffset_factor = d.subordinate ? 1 : 0.86;
                 return 'translate(' + [(d.w / 2),
-                  d.h / 2 * 0.86] + ')';
+                  d.h / 2 * hoffset_factor] + ')';
               });
 
           // Add a mask svg
@@ -894,16 +896,35 @@ YUI.add('juju-view-environment', function(Y) {
           } // Otherwise do nothing.
         },
 
-        removeRelation: function(d, context, view) {
-          var env = this.get('env');
-          view.addSVGClass(Y.one(context.parentNode).one('.relation'),
-              'to-remove pending-relation');
+        removeRelation: function(d, context, view, confirmButton) {
+          var env = this.get('env'),
+              relationElement = Y.one(context.parentNode).one('.relation');
+          view.addSVGClass(relationElement, 'to-remove pending-relation');
           env.remove_relation(
               d.source().id,
               d.target().id,
-              Y.bind(function(ev) {
-                view.get('rmrelation_dialog').hide();
-              }, this));
+              Y.bind(this._removeRelationCallback, this, view,
+                  relationElement, confirmButton));
+        },
+
+        _removeRelationCallback: function(view,
+            relationElement, confirmButton, ev) {
+          var db = this.get('db'),
+              service = this.get('model');
+          if (ev.err) {
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Error deleting relation',
+                  message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
+                  level: 'error'
+                })
+            );
+            view.removeSVGClass(this.relationElement,
+                'to-remove pending-relation');
+          } else {
+            view.get('rmrelation_dialog').hide();
+          }
+          confirmButton.set('disabled', false);
         },
 
         removeRelationConfirm: function(d, context, view) {
@@ -914,8 +935,9 @@ YUI.add('juju-view-environment', function(Y) {
               'Remove Relation',
               Y.bind(function(ev) {
                 ev.preventDefault();
-                ev.target.set('disabled', true);
-                view.removeRelation(d, context, view);
+                var confirmButton = ev.target;
+                confirmButton.set('disabled', true);
+                view.removeRelation(d, context, view, confirmButton);
               },
               this)));
         },
@@ -1095,9 +1117,10 @@ YUI.add('juju-view-environment', function(Y) {
                 'Destroy Service',
                 Y.bind(function(ev) {
                   ev.preventDefault();
-                  ev.target.set('disabled', true);
+                  var btn = ev.target;
+                  btn.set('disabled', true);
                   view.service_click_actions
-                      .destroyService(m, context, view);
+                      .destroyService(m, context, view, btn);
                 },
                 this)));
           },
@@ -1105,13 +1128,31 @@ YUI.add('juju-view-environment', function(Y) {
           /*
            * Destroy a service.
            */
-          destroyService: function(m, context, view) {
+          destroyService: function(m, context, view, btn) {
             var env = view.get('env'),
                 service = view.get('destroy_service');
             env.destroy_service(
-                service.get('id'), Y.bind(function(ev) {
-                  view.get('destroy_dialog').hide();
-                }, this));
+                service.get('id'), Y.bind(this._destroyCallback, this,
+                    service, view, btn));
+          },
+
+          _destroyCallback: function(service, view, btn, ev) {
+            var app = view.get('app'),
+                db = view.get('db');
+            if (ev.err) {
+              db.notifications.add(
+                  new models.Notification({
+                    title: 'Error destroying service',
+                    message: 'Service name: ' + ev.service_name,
+                    level: 'error',
+                    link: app.getModelURL(service),
+                    modelId: service
+                  })
+              );
+            } else {
+              view.get('destroy_dialog').hide();
+            }
+            btn.set('disabled', false);
           },
 
           /*
@@ -1169,16 +1210,28 @@ YUI.add('juju-view-environment', function(Y) {
             env.add_relation(
                 source.id,
                 m.id,
-                function(resp) {
-                  // Remove our pending relation from the DB, error or no.
-                  db.relations.remove(
-                      db.relations.getById(relation_id));
-                  if (resp.err) {
-                    console.log('Error adding relation');
-                  }
-                });
+                Y.bind(this._addRelationCallback, this, view, relation_id)
+            );
             // For now, set back to show_service.
             view.set('currentServiceClickAction', 'toggleControlPanel');
+          },
+
+          _addRelationCallback: function(view, relation_id, ev) {
+            var db = view.get('db');
+            // Remove our pending relation from the DB, error or no.
+            db.relations.remove(
+                db.relations.getById(relation_id));
+            if (ev.err) {
+              db.notifications.add(
+                  new models.Notification({
+                    title: 'Error adding relation',
+                    message: 'Relation ' + ev.endpoint_a +
+                        ' to ' + ev.endpoint_b,
+                    level: 'error'
+                  })
+              );
+              return;
+            }
           }
         }
 
@@ -1192,6 +1245,7 @@ YUI.add('juju-view-environment', function(Y) {
 }, '0.1.0', {
   requires: ['juju-templates',
     'juju-view-utils',
+    'juju-models',
     'd3',
     'base-build',
     'handlebars-base',

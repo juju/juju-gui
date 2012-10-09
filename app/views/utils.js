@@ -123,10 +123,12 @@ YUI.add('juju-view-utils', function(Y) {
       this.after('*:change', this.render, this);
     },
 
-    renderable_charm: function(charm_name, db) {
-      var charm = db.charms.getById(charm_name);
+    renderable_charm: function(charm_name, app) {
+      var charm = app.db.charms.getById(charm_name);
       if (charm) {
-        return charm.getAttrs();
+        var result = charm.getAttrs();
+        result.app_url = app.getModelURL(charm);
+        return result;
       }
       return null;
     },

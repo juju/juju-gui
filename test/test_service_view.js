@@ -3,7 +3,7 @@
 (function() {
   describe('juju service view', function() {
     var ServiceView, ServiceRelationsView, models, Y, container, service, db,
-        conn, env, charm, ENTER, ESC;
+        conn, env, app, charm, ENTER, ESC;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -27,7 +27,10 @@
       container = Y.Node.create('<div id="test-container" />');
       Y.one('#main').append(container);
       db = new models.Database();
-      charm = new models.Charm({id: 'mysql', name: 'mysql',
+      app = { env: env, db: db,
+              getModelURL: function(model, intent) {
+                return model.get('name'); }};
+      charm = new models.Charm({id: 'cs:precise/mysql',
         description: 'A DB'});
       db.charms.add([charm]);
       // Add units sorted by id as that is what we expect from the server.
@@ -37,7 +40,7 @@
           ]);
       service = new models.Service({
         id: 'mysql',
-        charm: 'mysql',
+        charm: 'cs:precise/mysql',
         unit_count: db.units.size(),
         exposed: false});
 
@@ -55,16 +58,16 @@
 
     it('should show controls to modify units by default', function() {
       var view = new ServiceView(
-          {container: container, model: service, db: db,
-            env: env, querystring: {}}).render();
+          { container: container, model: service,
+            app: app, querystring: {}}).render();
       container.one('#num-service-units').should.not.equal(null);
     });
 
     it('should not show controls if the charm is subordinate', function() {
       charm.set('is_subordinate', true);
       var view = new ServiceView(
-          {container: container, service: service, db: db,
-            env: env, querystring: {}}).render();
+          { container: container, service: service, app: app,
+            querystring: {}}).render();
       // "var _ =" makes the linter happy.
       var _ = expect(container.one('#num-service-units')).to.not.exist;
     });
@@ -72,8 +75,8 @@
     it('should show the service units ordered by number', function() {
       // Note that the units are added in beforeEach in an ordered manner.
       var view = new ServiceView(
-          {container: container, model: service, db: db,
-            env: env, querystring: {}}).render();
+          { container: container, model: service, app: app,
+            querystring: {}}).render();
       var rendered_names = container.one(
           'ul.thumbnails').all('div.well').get('id');
       var expected_names = db.units.map(function(u) {return u.id;});
@@ -85,8 +88,8 @@
     it('should use the show_units_large template if required', function() {
       // Note that the units are added in beforeEach in an ordered manner.
       var view = new ServiceView(
-          {container: container, model: service, db: db,
-            env: env, querystring: {}}).render();
+          {container: container, model: service, app: app,
+            querystring: {}}).render();
       container.one('ul.thumbnails').get('id').should.equal('unit-large');
     });
 
@@ -104,8 +107,8 @@
       // Note that the units are added in beforeEach in an ordered manner.
       addUnits(30);
       var view = new ServiceView(
-          {container: container, model: service, db: db,
-            env: env, querystring: {}}).render();
+          {container: container, model: service, app: app,
+            querystring: {}}).render();
       container.one('ul.thumbnails').get('id').should.equal('unit-medium');
     });
 
@@ -113,8 +116,8 @@
       // Note that the units are added in beforeEach in an ordered manner.
       addUnits(60);
       var view = new ServiceView(
-          {container: container, model: service, db: db,
-            env: env, querystring: {}}).render();
+          {container: container, model: service, app: app,
+            querystring: {}}).render();
       container.one('ul.thumbnails').get('id').should.equal('unit-small');
     });
 
@@ -122,16 +125,16 @@
       // Note that the units are added in beforeEach in an ordered manner.
       addUnits(260);
       var view = new ServiceView(
-          {container: container, model: service, db: db,
-            env: env, querystring: {}}).render();
+          {container: container, model: service, app: app,
+            querystring: {}}).render();
       container.one('ul.thumbnails').get('id').should.equal('unit-tiny');
     });
 
     it('should start with the proper number of units shown in the text field',
        function() {
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.get('value').should.equal('3');
        });
@@ -139,8 +142,8 @@
     it('should remove multiple units when the text input changes',
        function() {
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 1);
          control.simulate('keydown', { keyCode: ENTER }); // Simulate Enter.
@@ -152,8 +155,8 @@
     it('should not do anything if requested is < 1',
        function() {
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 0);
          control.simulate('keydown', { keyCode: ENTER });
@@ -166,8 +169,8 @@
          service.set('unit_count', 1);
          db.units.remove([1, 2]);
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 0);
          control.simulate('keydown', { keyCode: ENTER });
@@ -178,8 +181,8 @@
     it('should add the correct number of units when entered via text field',
        function() {
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 7);
          control.simulate('keydown', { keyCode: ENTER });
@@ -197,8 +200,8 @@
          expected_names.push(new_unit_id);
          expected_names.sort();
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 4);
          control.simulate('keydown', { keyCode: ENTER });
@@ -221,8 +224,8 @@
        'reply back from the server',
        function() {
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 2);
          control.simulate('keydown', { keyCode: ENTER });
@@ -235,8 +238,8 @@
     it('should reset values on the control when you press escape',
        function() {
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 2);
          control.simulate('keydown', { keyCode: ESC });
@@ -246,8 +249,8 @@
     it('should reset values on the control when you change focus',
        function() {
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          var control = container.one('#num-service-units');
          control.set('value', 2);
          control.simulate('blur');
@@ -257,8 +260,8 @@
     it('should reset values on the control when you type invalid value',
        function() {
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          var control = container.one('#num-service-units');
 
          var pressKey = function(key) {
@@ -275,8 +278,8 @@
     it('should destroy the service when "Destroy Service" is clicked',
        function() {
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          var control = container.one('#destroy-service');
          control.simulate('click');
          var destroy = container.one('#destroy-modal-panel .btn-danger');
@@ -289,8 +292,8 @@
     it('should remove the service from the db after server ack',
        function() {
          var view = new ServiceView(
-         {container: container, model: service, db: db,
-           env: env, querystring: {}}).render();
+         { container: container, model: service, app: app,
+           querystring: {}}).render();
          db.relations.add(
          [new models.Relation({id: 'relation-0000000000',
             endpoints: [['mysql', {}], ['wordpress', {}]]}),
@@ -320,8 +323,8 @@
     it('should send an expose RPC call when exposeService is invoked',
        function() {
           var view = new ServiceView({
-            container: container, model: service, db: db,
-            env: env, querystring: {}});
+            container: container, model: service, app: app,
+            querystring: {}});
 
           view.exposeService();
           conn.last_message().op.should.equal('expose');
@@ -330,8 +333,8 @@
     it('should send an unexpose RPC call when unexposeService is invoked',
        function() {
           var view = new ServiceView({
-            container: container, model: service, db: db,
-            env: env, querystring: {}});
+            container: container, model: service, app: app,
+            querystring: {}});
 
           view.unexposeService();
           conn.last_message().op.should.equal('unexpose');
@@ -340,8 +343,8 @@
     it('should invoke callback when expose RPC returns',
        function() {
           var view = new ServiceView({
-            container: container, model: service, db: db,
-            env: env, querystring: {}}).render();
+            container: container, model: service, app: app,
+            querystring: {}}).render();
 
          var test = function(selectorBefore, selectorAfter, callback) {
            console.log('Service is exposed: ' + service.get('exposed'));
@@ -355,7 +358,7 @@
            db.on('update', function() {
              dbUpdated = true;
            });
-           callback();
+           callback({});
            // In the real code, the view should be updated by the db change
            // event. Here we should call it manually because we have no
            // "route" for this test.
@@ -374,8 +377,8 @@
 
     it('should show proper tabs initially', function() {
       var view = new ServiceView(
-          { container: container, model: service, db: db,
-            env: env, querystring: {}}).render(),
+          { container: container, model: service, app: app,
+            querystring: {}}).render(),
           active_navtabs = [];
       container.all('ul.nav-tabs li').each(
           function(n) {
@@ -391,8 +394,8 @@
     it('should show zero running units when filtered', function() {
       // All units are pending.
       var view = new ServiceView(
-          { container: container, model: service, db: db,
-            env: env, querystring: {state: 'running'}}).render(),
+          { container: container, model: service, app: app,
+            querystring: {state: 'running'}}).render(),
           active_navtabs = [];
       container.all('ul.nav-tabs li').each(
           function(n) {
@@ -411,8 +414,8 @@
       // 1 is pending.
       db.units.getById('mysql/2').agent_state = 'started';
       var view = new ServiceView(
-          { container: container, model: service, db: db,
-            env: env, querystring: {state: 'running'}}).render();
+          { container: container, model: service, app: app,
+            querystring: {state: 'running'}}).render();
       var rendered_names = container.one(
           'ul.thumbnails').all('div.well').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
@@ -423,8 +426,8 @@
       db.units.getById('mysql/1').agent_state = 'error';
       db.units.getById('mysql/2').agent_state = 'started';
       var view = new ServiceView(
-          { container: container, model: service, db: db,
-            env: env, querystring: {state: 'pending'}}).render(),
+          { container: container, model: service, app: app,
+            querystring: {state: 'pending'}}).render(),
           active_navtabs = [];
       container.all('ul.nav-tabs li').each(
           function(n) {
@@ -444,8 +447,8 @@
       // We include  installed with pending.
       db.units.getById('mysql/2').agent_state = 'installed';
       var view = new ServiceView(
-          { container: container, model: service, db: db,
-            env: env, querystring: {state: 'pending'}}).render();
+          { container: container, model: service, app: app,
+            querystring: {state: 'pending'}}).render();
       var rendered_names = container.one(
           'ul.thumbnails').all('div.well').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
@@ -453,8 +456,8 @@
 
     it('should show zero error units when filtered', function() {
       var view = new ServiceView(
-          { container: container, model: service, db: db,
-            env: env, querystring: {state: 'error'}}).render(),
+          { container: container, model: service, app: app,
+            querystring: {state: 'error'}}).render(),
           active_navtabs = [];
       container.all('ul.nav-tabs li').each(
           function(n) {
@@ -474,8 +477,8 @@
       // 1 is pending.
       db.units.getById('mysql/2').agent_state = 'foo-error';
       var view = new ServiceView(
-          { container: container, model: service, db: db,
-            env: env, querystring: {state: 'error'}}).render();
+          { container: container, model: service, app: app,
+            querystring: {state: 'error'}}).render();
       var rendered_names = container.one(
           'ul.thumbnails').all('div.well').get('id');
       rendered_names.should.eql(['mysql/0', 'mysql/2']);
@@ -504,8 +507,8 @@
          db.relations.add([rel0, rel1]);
 
          var view = new ServiceRelationsView(
-         {container: container, model: service, db: db, env: env,
-           querystring: {}}).render();
+              { container: container, model: service, app: app,
+                querystring: {}}).render();
 
          var control = container.one('#relation-0');
          control.simulate('click');
@@ -539,7 +542,7 @@
           db.relations.add([rel0, rel1]);
 
           var view = new ServiceRelationsView(
-              { container: container, model: service, db: db, env: env,
+              { container: container, model: service, app: app,
                 querystring: {}}).render();
 
           var control = container.one('#relation-1');
@@ -577,7 +580,7 @@
          service).length.should.equal(2);
 
           var view = new ServiceRelationsView(
-              {container: container, model: service, db: db, env: env,
+              { container: container, model: service, app: app,
                 querystring: {}}).render();
 
           var control = container.one('#relation-0');
@@ -619,7 +622,7 @@
           db.relations.add([rel0, rel1]);
 
           var view = new ServiceRelationsView(
-              { container: container, model: service, db: db, env: env,
+              { container: container, model: service, app: app,
                 querystring: {rel_id: 'relation-0'}}).render();
 
           var row = container.one('.highlighted');
@@ -645,15 +648,10 @@
                     'interface': 'db',
                     scope: 'global'
                   });
-
-          var fake_app = {
-            getModelURL: function(svc) {
-              return 'http://localhost/' + service.get('id');}
-          };
           db.relations.add([rel0, rel1]);
           var view = new ServiceRelationsView(
-              { container: container, model: service, db: db, env: env,
-                app: fake_app, querystring: {}});
+              { container: container, model: service, app: app,
+                querystring: {}});
           view.render();
           var control = container.one('#relation-0');
           control.simulate('click');
