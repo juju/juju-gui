@@ -337,12 +337,14 @@ YUI.add('juju-charm-search', function(Y) {
           this.fire('changePanel', { name: 'charms' });
         },
         onCharmDeployClicked: function(evt, charm) {
+          // XXX: Look in utils for validator called 'validate'.
           var container = this.get('container'),
               serviceName = container.one('#service-name').get('value'),
               charm = this.get('model'),
-              url = charm.get('id');
-          console.log('--------', charm);
-          app.env.deploy(url, charm.get('package_name'), {}, function(ev) {
+              url = charm.get('id'),
+              config = utils.getElementsValuesMapping(container,
+                  '#service-config .config-field');
+          app.env.deploy(url, serviceName, config, function(ev) {
             if (ev.err) {
               console.log(url + ' deployment failed');
               app.db.notifications.add(
