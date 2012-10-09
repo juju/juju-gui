@@ -326,7 +326,8 @@ YUI.add('juju-view-service', function(Y) {
           // combine the charm schema and the service values for display.
           var charm = app.db.charms.getById(service.get('charm')),
               config = service.get('config'),
-              schema = charm.get('config'),
+              charm_config = charm.get('config'),
+              schema = charm_config && charm_config.options,
               settings = [],
               field_def;
 
@@ -410,6 +411,8 @@ YUI.add('juju-view-service', function(Y) {
               service = this.get('model'),
               charm_url = service.get('charm'),
               charm = app.db.charms.getById(charm_url),
+              charm_config = charm.get('config'),
+              schema = charm_config && charm_config.options,
               container = this.get('container');
 
           // Disable the "Update" button while the RPC call is outstanding.
@@ -417,7 +420,7 @@ YUI.add('juju-view-service', function(Y) {
 
           var new_values = utils.getElementsValuesMapping(
                                             container, '.config-field'),
-              errors = utils.validate(new_values, charm.get('config'));
+              errors = utils.validate(new_values, schema);
 
           if (Y.Object.isEmpty(errors)) {
             app.env.set_config(
