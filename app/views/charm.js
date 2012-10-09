@@ -6,35 +6,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
       Templates = views.Templates,
       utils = Y.namespace('juju.views.utils');
 
-  Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
-    // console.log('helper', iface_decl, options, this);
-    var result = [];
-    var ret = '';
-    Y.Object.each(iface_decl, function(value, name) {
-      if (name) {
-        result.push({
-          name: name, 'interface': value['interface']
-        });
-      }
-    });
-
-    if (result && result.length > 0) {
-      for (var x = 0, j = result.length; x < j; x += 1) {
-        ret = ret + options.fn(result[x]);
-      }
-    } else {
-      ret = 'None';
-    }
-    return ret;
-  });
-
-  Y.Handlebars.registerHelper('markdown', function(text) {
-    if (!text || text === undefined) {return '';}
-    return new Y.Handlebars.SafeString(
-        Y.Markdown.toHTML(text));
-  });
-
-
   var CharmView = Y.Base.create('CharmView', Y.View, [], {
     initializer: function() {
       this.set('charm', null);
@@ -191,6 +162,5 @@ YUI.add('juju-view-charm-collection', function(Y) {
     'datasource-jsonschema',
     'io-base',
     'json-parse',
-    'gallery-markdown',
     'view']
 });

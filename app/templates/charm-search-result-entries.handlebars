@@ -10,8 +10,8 @@
             <button class="btn deploy"
              data-url="{{url}}"
              data-name="{{name}}"
-             data-info-url="{{data_url}}">Deploy</button>
-            <a class="charm-detail" href="/charms{{data_url}}">
+             data-info-url="{{charm_store_path}}">Deploy</button>
+            <a class="charm-detail" href="{{url}}">
               {{#if owner}}{{owner}}/{{/if}}{{name}}</a>
             <button class="btn configure"
              data-url="{{url}}"
