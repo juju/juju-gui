@@ -330,3 +330,40 @@ describe('utilities', function() {
     });
   });
 })();
+
+(function() {
+  describe('juju base view', function() {
+
+    var jujuBaseView, views, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        views = Y.namespace('juju.views');
+        jujuBaseView = new views.JujuBaseView();
+        done();
+      });
+    });
+
+    it('should translate unit states to styles correctly', function() {
+      // The states 'installed', 'pending' and 'stopped' are turned
+      // into 'state-pending'.
+      assert.equal('state-pending', jujuBaseView.stateToStyle('installed'));
+      assert.equal('state-pending', jujuBaseView.stateToStyle('pending'));
+      assert.equal('state-pending', jujuBaseView.stateToStyle('stopped'));
+      // The state 'started' is turned into 'state-started'.
+      assert.equal('state-started', jujuBaseView.stateToStyle('started'));
+      // The states 'install-error', 'start-error' and 'stop-error' are turned
+      // into 'state-error'.
+      assert.equal('state-error', jujuBaseView.stateToStyle('install-error'));
+      assert.equal('state-error', jujuBaseView.stateToStyle('start-error'));
+      assert.equal('state-error', jujuBaseView.stateToStyle('stop-error'));
+    });
+
+    it('should add the computed class to the existing ones', function() {
+      var classes = jujuBaseView.stateToStyle('pending', 'existing');
+      assert.include(classes, 'state-pending');
+      assert.include(classes, 'existing');
+    });
+
+  });
+})();

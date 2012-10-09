@@ -104,15 +104,15 @@
       var view = new ServiceView(
           {container: container, model: service, app: app,
             querystring: {}}).render();
-      container.one('ul.thumbnails').get('id').should.equal('unit-large');
+      assert.equal('unit-large', container.one('ul.thumbnails').get('id'));
     });
 
-    var addUnits = function(number) {
+    var addUnits = function(number, state) {
       var units = [];
       // Starting from the number of already present units.
       var starting_from = db.units.size();
       for (var i = starting_from; i < number + starting_from; i += 1) {
-        units.push({id: 'mysql/' + i, agent_state: 'pending'});
+        units.push({id: 'mysql/' + i, agent_state: state || 'pending'});
       }
       db.units.add(units);
     };
@@ -123,7 +123,7 @@
       var view = new ServiceView(
           {container: container, model: service, app: app,
             querystring: {}}).render();
-      container.one('ul.thumbnails').get('id').should.equal('unit-medium');
+      assert.equal('unit-medium', container.one('ul.thumbnails').get('id'));
     });
 
     it('should use the show_units_small template if required', function() {
@@ -132,7 +132,7 @@
       var view = new ServiceView(
           {container: container, model: service, app: app,
             querystring: {}}).render();
-      container.one('ul.thumbnails').get('id').should.equal('unit-small');
+      assert.equal('unit-small', container.one('ul.thumbnails').get('id'));
     });
 
     it('should use the show_units_tiny template if required', function() {
@@ -141,7 +141,21 @@
       var view = new ServiceView(
           {container: container, model: service, app: app,
             querystring: {}}).render();
-      container.one('ul.thumbnails').get('id').should.equal('unit-tiny');
+      assert.equal('unit-tiny', container.one('ul.thumbnails').get('id'));
+    });
+
+    it('should display units based on their agent state', function() {
+      // Note that the units are added in beforeEach in an ordered manner
+      // with ``pending`` status.
+      addUnits(1, 'started');
+      addUnits(2, 'start-error');
+      var view = new ServiceView(
+          {container: container, model: service, app: app,
+            querystring: {}}).render();
+      var thumbnails = container.one('ul.thumbnails');
+      assert.equal(1, thumbnails.all('.state-started').size());
+      assert.equal(2, thumbnails.all('.state-error').size());
+      assert.equal(3, thumbnails.all('.state-pending').size());
     });
 
     it('should start with the proper number of units shown in the text field',
