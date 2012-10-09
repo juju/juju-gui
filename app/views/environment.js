@@ -44,7 +44,7 @@ YUI.add('juju-view-environment', function(Y) {
               // Do not fire unless we're within the service box.
               var container = self.get('container'),
                   mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-              if (!d.containsPoint(mouse_coords)) {
+              if (!d.containsPoint(mouse_coords, self.zoom)) {
                 return;
               }
               self.set('potential_drop_point_service', d);
@@ -60,7 +60,7 @@ YUI.add('juju-view-environment', function(Y) {
               // Do not fire if we're within the service box.
               var container = self.get('container'),
                   mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-              if (d.containsPoint(mouse_coords)) {
+              if (d.containsPoint(mouse_coords, self.zoom)) {
                 return;
               }
               var rect = Y.one(this).one('.service-border');
