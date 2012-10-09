@@ -13,6 +13,8 @@ YUI.add('juju-charm-search', function(Y) {
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
     resultsTemplate: views.Templates['charm-search-result-entries'],
+    charmPreConfigurationTemplate:
+        views.Templates['charm-search-result-entries'],
     initializer: function() {
       this.delay = utils.Delayer();
     },
@@ -21,15 +23,16 @@ YUI.add('juju-charm-search', function(Y) {
     },
     events: {
       'a.charm-detail': {click: 'showDetails'},
-      '.charm-entry .btn': {click: 'deploy'},
+      '.charm-entry .btn.deploy': {click: 'deploy'},
+      '.charm-entry .btn.configure': {click: 'configure'},
       '.charms-search-field-div button.clear': {click: 'clearSearch'},
       '.charms-search-field': {keyup: 'search'},
       '.charm-entry': {
         mouseenter: function(ev) {
-          ev.currentTarget.one('.btn').transition({opacity: 1, duration: 0.25});
+          ev.currentTarget.all('.btn').transition({opacity: 1, duration: 0.25});
         },
         mouseleave: function(ev) {
-          ev.currentTarget.one('.btn').transition({opacity: 0, duration: 0.25});
+          ev.currentTarget.all('.btn').transition({opacity: 0, duration: 0.25});
         }
       }
     },
@@ -118,6 +121,54 @@ YUI.add('juju-charm-search', function(Y) {
               div.setStyle('backgroundColor', '');
             });
       });
+    },
+    configure: function(ev) {
+      var url = ev.currentTarget.getData('url'),
+          name = ev.currentTarget.getData('name'),
+          info_url = ev.currentTarget.getData('info-url'),
+          app = this.get('app');
+
+      app.env.deploy(url, name, {}, function(ev) {
+        if (ev.err) {
+          console.log(url + ' deployment failed');
+          app.db.notifications.add(
+              new models.Notification({
+                title: 'Error deploying ' + name,
+                message: 'Could not deploy the requested service.',
+                level: 'error'
+              })
+          );
+        } else {
+          console.log(url + ' deployed');
+          app.db.notifications.add(
+              new models.Notification({
+                title: 'Deployed ' + name,
+                message: 'Successfully deployed the requested service.',
+                level: 'info'
+              })
+          );
+        }
+      });
+      var self = this,
+          charm = app.db.charms.getById(url);
+      if (!Y.Lang.isValue(charm)) {
+        app.db.charms.add({id: url}).load(
+            {env: app.env, charm_store: app.charm_store},
+            function(err, result) {
+              // XXX check for errors
+              self.showConfigurePane(charm);
+            });
+      } else {
+        this.showConfigurePane(charm);
+      }
+    },
+    showConfigurePane: function(charm) {
+      var container = this.get('container'),
+          list = container.one('.search-result-div');
+      // Destroy old entries
+      list.get('childNodes').remove(true);
+      list.append(this.charmPreConfigurationTemplate(
+          {charm: charm.getAttrs()}));
     },
     // Create a data structure friendly to the view
     normalizeCharms: function(charms) {
