@@ -1,7 +1,8 @@
 <ul id="unit-small" class="thumbnails">
   {{#units}}
   <li>
-    <div class="well unit" id="{{id}}">
+    <div class="well unit" id="{{id}}"
+      title="{{agent_state}}{{#if public_address}} - {{public_address}}{{/if}}">
       <span class="agent-state">{{agent_state}}</span>
       <h5>{{number}}</h5>
     </div>

@@ -1,7 +1,7 @@
 <ul id="unit-medium" class="thumbnails">
   {{#units}}
   <li class="span2">
-    <div class="well unit" id="{{id}}">
+    <div class="well unit" id="{{id}}"{{#if public_address}} title="{{public_address}}"{{/if}}>
       <span class="agent-state">{{agent_state}}</span>
       <h5>{{number}}: {{agent_state}}</h5>
     </div>
