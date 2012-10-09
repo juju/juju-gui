@@ -502,6 +502,10 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     filterUnits: function(filter_state, units) {
+      // We set the 'relation-error' state for any unit with relation errors
+      // even if the unit is healthy (running or pending, for example).
+      // Units with relation errors should be shown in the Error tab, and
+      // should show the 'relation-error' state.
       Y.each(units, function(unit) {
         if (unit.relation_errors &&
             Y.Object.keys(unit.relation_errors).length) {
