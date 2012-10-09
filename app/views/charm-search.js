@@ -327,7 +327,6 @@ YUI.add('juju-charm-search', function(Y) {
     Y.one(document.body).append(container);
     container.hide();
 
-    // XXX Is history needed, for "back"?
     function setPanel(config) {
       if (config.name !== activePanelName) {
         var newPanel = panels[config.name];
