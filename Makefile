@@ -8,7 +8,11 @@ TEMPLATE_TARGETS=app/templates/charm-collection.handlebars \
 	app/templates/overview.handlebars app/templates/service.handlebars \
 	app/templates/unit.handlebars app/templates/notifications.handlebars \
 	app/templates/service-config.handlebars \
-	app/templates/service-header.partial
+	app/templates/service-header.partial \
+	app/templates/show_units_large.handlebars \
+	app/templates/show_units_medium.handlebars \
+	app/templates/show_units_small.handlebars \
+	app/templates/show_units_tiny.handlebars
 
 all: prep test
 
