@@ -2,4 +2,9 @@ dedupe data-* attributes in charm-search-result-entries.handlebars
 fix button style (weird layout)
 add a spinner for when the "Deploy" button is clicked
 figure out service config page
+tell the truth about "charm configuration", which does not really
+   happen.
+move goBack to base
 
+why does charm initialization get called twice, first with only id and
+   derived and later with data from the server?

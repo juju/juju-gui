@@ -24,7 +24,7 @@ YUI.add('juju-charm-search', function(Y) {
     events: {
       'a.charm-detail': {click: 'showDetails'},
       '.charm-entry .btn.deploy': {click: 'deploy'},
-      '.charm-entry .btn.configure': {click: 'configure'},
+      '.charm-entry .btn.configure': {click: 'showConfiguration'},
       '.charms-search-field-div button.clear': {click: 'clearSearch'},
       '.charms-search-field': {keyup: 'search'},
       '.charm-entry': {
@@ -63,9 +63,9 @@ YUI.add('juju-charm-search', function(Y) {
       ev.stopPropagation();
       ev.preventDefault();
       this.fire(
-        'changePanel',
-        { name: 'description',
-          modelId: ev.target.getAttribute('href') });
+          'changePanel',
+          { name: 'description',
+            modelId: ev.target.getAttribute('href') });
     },
     deploy: function(ev) {
       var url = ev.currentTarget.getData('url'),
@@ -125,85 +125,15 @@ YUI.add('juju-charm-search', function(Y) {
             });
       });
     },
-    configure: function(ev) {
-      var url = ev.currentTarget.getData('url'),
-          name = ev.currentTarget.getData('name'),
-          info_url = ev.currentTarget.getData('info-url'),
-          app = this.get('app');
-
-      app.env.deploy(url, name, {}, function(ev) {
-        if (ev.err) {
-          console.log(url + ' deployment failed');
-          app.db.notifications.add(
-              new models.Notification({
-                title: 'Error deploying ' + name,
-                message: 'Could not deploy the requested service.',
-                level: 'error'
-              })
-          );
-        } else {
-          console.log(url + ' deployed');
-          app.db.notifications.add(
-              new models.Notification({
-                title: 'Deployed ' + name,
-                message: 'Successfully deployed the requested service.',
-                level: 'info'
-              })
-          );
-        }
-      });
-      var self = this,
-          charm = app.db.charms.getById(url);
-      if (!Y.Lang.isValue(charm)) {
-        app.db.charms.add({id: url}).load(
-            {env: app.env, charm_store: app.charm_store},
-            function(err) {
-              // XXX check for errors
-              charm = app.db.charms.getById(url);
-              self.showConfigurePane(charm);
-            });
-      } else {
-        this.showConfigurePane(charm);
-      }
-    },
-    showConfigurePane: function(charm) {
-      var container = this.get('container'),
-          pane = container.one('.search-result-div');
-      // Destroy old entries
-      pane.get('childNodes').remove(true);
-      pane.append(this.charmPreConfigurationTemplate(
-          {charm: charm.getAttrs()}));
-      console.log('======', charm);
-      container.one('#charm-deploy').on(
-          'click', Y.bind(this.onCharmDeployClicked, this), charm);
-    },
-    onCharmDeployClicked: function(evt, charm) {
-      var container = this.get('container'),
-          serviceName = container.one('#service-name').get('value');
-//          config = utils.getElementsValuesMapping(container,
-//              '#service-config .config-field');
-      console.log('--------', charm);
-      app.env.deploy(charm.get('url'), charm.get('full_name'), {}, function(ev) {
-        if (ev.err) {
-          console.log(url + ' deployment failed');
-          app.db.notifications.add(
-              new models.Notification({
-                title: 'Error deploying ' + name,
-                message: 'Could not deploy the requested service.',
-                level: 'error'
-              })
-          );
-        } else {
-          console.log(url + ' deployed');
-          app.db.notifications.add(
-              new models.Notification({
-                title: 'Deployed ' + name,
-                message: 'Successfully deployed the requested service.',
-                level: 'info'
-              })
-          );
-        }
-      });
+    showConfiguration: function(ev) {
+      // Without the stopPropagation the 'outside' click handler is getting
+      // called which immediately closes the panel.
+      ev.stopPropagation();
+      ev.preventDefault();
+      this.fire(
+          'changePanel',
+          { name: 'configuration',
+            modelId: ev.currentTarget.getData('url')});
     },
     // Create a data structure friendly to the view
     normalizeCharms: function(charms) {
@@ -299,7 +229,7 @@ YUI.add('juju-charm-search', function(Y) {
       this.after('*:change', this.render, this);
 
       // If the modelId gets changed, change the model.
-      this.after('modelIdChange', Y.bind(function(ev){
+      this.after('modelIdChange', Y.bind(function(ev) {
         var app = this.get('app'),
             model = this.get('model'),
             modelId = ev.newVal;
@@ -320,61 +250,122 @@ YUI.add('juju-charm-search', function(Y) {
   });
 
   var CharmDescriptionView = Y.Base.create(
-    'CharmCollectionView', Y.View, [CharmPanelBaseView], {
-      template: views.Templates['charm-description'],
-      // model, modelId, app
-      render: function() {
-        var container = this.get('container'),
-            charm = this.get('model');
-        if (Y.Lang.isValue(charm)) {
-          container.setHTML(this.template(charm.getAttrs()));
-          container.all('i.icon-chevron-down').each(function(el) {
-            el.ancestor('.charm-section').one('div').hide();
+      'CharmCollectionView', Y.View, [CharmPanelBaseView], {
+        template: views.Templates['charm-description'],
+        // model, modelId, app
+        render: function() {
+          var container = this.get('container'),
+              charm = this.get('model');
+          if (Y.Lang.isValue(charm)) {
+            container.setHTML(this.template(charm.getAttrs()));
+            container.all('i.icon-chevron-down').each(function(el) {
+              el.ancestor('.charm-section').one('div').hide();
+            });
+          } else {
+            container.setHTML('<div class="alert">Waiting on charm data...</div>');
+          }
+        },
+        events: {
+          '.charm-nav-back': {click: 'goBack'},
+          '.btn': {click: 'deploy'},
+          '.charm-section h4': {click: 'toggleVisibility'}
+        }, // XXX add toggle of sections.
+        focus: function() {
+          // We don't have anything to focus on.
+        },
+        goBack: function(ev) {
+          ev.halt();
+          this.fire('changePanel', { name: 'charms' });
+        },
+        deploy: function(ev) {
+          // Show configuration page for this charm.  For now, this is external.
+          var app = this.get('app'),
+              info_url = ev.currentTarget.getData('info-url');
+          app.fire('showCharm', {charm_data_url: info_url});
+        },
+        toggleVisibility: function(ev) {
+          var el = ev.currentTarget.ancestor('.charm-section').one('div'),
+              icon = ev.currentTarget.one('i');
+          if (el.getStyle('display') === 'none') {
+            // sizeIn doesn't work smoothly without this bit of jiggery to get
+            // accurate heights and widths.
+            el.setStyles({height: null, width: null, display: 'block'});
+            var config =
+                { duration: 0.25,
+                  height: el.get('scrollHeight') + 'px',
+                  width: el.get('scrollWidth') + 'px'
+                };
+            // Now we need to set our starting point.
+            el.setStyles({height: 0, width: config.width});
+            el.show('sizeIn', config);
+            icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
+          } else {
+            el.hide('sizeOut', {duration: 0.25});
+            icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
+          }
+        }
+      });
+
+  var CharmConfigurationView = Y.Base.create(
+      'CharmCollectionView', Y.View, [CharmPanelBaseView], {
+        template: views.Templates['charm-pre-configuration'],
+        render: function() {
+          var container = this.get('container'),
+              charm = this.get('model');
+          if (Y.Lang.isValue(charm)) {
+            var settings,
+                config = charm.get('config');
+            if (Y.Lang.isValue(config)) {
+              settings = utils.extractServiceSettings(config.options);
+            }
+            container.setHTML(this.template(
+              { charm: charm.getAttrs(),
+                settings: settings}));
+          } else {
+            container.setHTML('<div class="alert">Waiting on charm data...</div>');
+          }
+        },
+        focus: function() {
+          // We don't have anything to focus on.
+        },
+        events: {
+          '.charm-nav-back': {click: 'goBack'},
+          '.btn': {click: 'onCharmDeployClicked'}
+        },
+        goBack: function(ev) {
+          ev.halt();
+          this.fire('changePanel', { name: 'charms' });
+        },
+        onCharmDeployClicked: function(evt, charm) {
+          var container = this.get('container'),
+              serviceName = container.one('#service-name').get('value'),
+              charm = this.get('model'),
+              url = charm.get('id');
+          console.log('--------', charm);
+          app.env.deploy(url, charm.get('package_name'), {}, function(ev) {
+            if (ev.err) {
+              console.log(url + ' deployment failed');
+              app.db.notifications.add(
+                  new models.Notification({
+                    title: 'Error deploying ' + name,
+                    message: 'Could not deploy the requested service.',
+                    level: 'error'
+                  })
+              );
+            } else {
+              console.log(url + ' deployed');
+              app.db.notifications.add(
+                  new models.Notification({
+                    title: 'Deployed ' + name,
+                    message: 'Successfully deployed the requested service.',
+                    level: 'info'
+                  })
+              );
+            }
           });
-        } else {
-          container.setHTML('<div class="alert">Waiting on charm data...</div>');
         }
-      },
-      events: {
-        '.charm-nav-back': {click: 'goBack'},
-        '.btn': {click: 'deploy'},
-        '.charm-section h4': {click: 'toggleVisibility'}
-      }, // XXX add toggle of sections.
-      focus: function() {
-        // We don't have anything to focus on.
-      },
-      goBack: function(ev) {
-        ev.halt();
-        this.fire('changePanel', { name: 'charms' });
-      },
-      deploy: function(ev) {
-        // Show configuration page for this charm.  For now, this is external.
-        var app = this.get('app'),
-            info_url = ev.currentTarget.getData('info-url');
-        app.fire('showCharm', {charm_data_url: info_url});
-      },
-      toggleVisibility: function(ev) {
-        var el = ev.currentTarget.ancestor('.charm-section').one('div'),
-            icon = ev.currentTarget.one('i');
-        if (el.getStyle('display') === 'none') {
-          // sizeIn doesn't work smoothly without this bit of jiggery to get
-          // accurate heights and widths.
-          el.setStyles({height: null, width: null, display: 'block'});
-          var config =
-              { duration: 0.25,
-                height: el.get('scrollHeight') + 'px',
-                width: el.get('scrollWidth') + 'px'
-              };
-          // Now we need to set our starting point.
-          el.setStyles({height: 0, width: config.width});
-          el.show('sizeIn', config);
-          icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
-        } else {
-          el.hide('sizeOut', {duration: 0.25});
-          icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
-        }
-      }
-  });
+      });
+
 
   // Creates the "_instance" object
   function createInstance(config) {
@@ -396,9 +387,14 @@ YUI.add('juju-charm-search', function(Y) {
         descriptionPanel = new CharmDescriptionView(
               { container: descriptionPanelNode,
                 app: app }),
+        configurationPanelNode = Y.Node.create(),
+        configurationPanel = new CharmConfigurationView(
+              { container: configurationPanelNode,
+                app: app }),
         panels =
               { charms: charmsSearchPanel,
-                description: descriptionPanel },
+                description: descriptionPanel,
+                configuration: configurationPanel },
         isPopupVisible = false,
         trigger = Y.one('#charm-search-trigger'),
         activePanelName;
