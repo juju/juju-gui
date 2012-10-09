@@ -97,7 +97,7 @@ YUI.add('juju-gui', function(Y) {
       if (this.get('consoleEnabled')) {
         consoleManager.enable();
       } else {
-        consoleManager.disable();        
+        consoleManager.disable();
       }
       // Update the on-screen environment name provided in the configuration or
       // a default if none is configured.
