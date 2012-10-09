@@ -117,14 +117,28 @@ YUI.add('juju-view-unit', function(Y) {
           unit = this.get('unit');
       ev.target.set('disabled', true);
       env.resolved(unit.id, null, false,
-                     Y.bind(this._doResolvedUnitCallback, this, ev.target));
+                     Y.bind(this._resolvedUnitCallback, this, ev.target));
     },
 
-    _doResolvedUnitCallback: function(button, ev) {
-      // XXX Once we have a way of showing notifications, if ev.err exists,
-      // report it.
+    _resolvedUnitCallback: function(button, ev) {
+      var unit = this.get('unit'),
+          db = this.get('db'),
+          app = this.get('app'),
+          service = db.services.getById(unit.service);
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error resolving unit',
+              message: 'Unit name: ' + ev.unit_name,
+              level: 'error',
+              link: app.getModelURL(unit),
+              modelId: unit
+            })
+        );
+      } else {
+        this.resolved_panel.hide();
+      }
       button.set('disabled', false);
-      this.resolved_panel.hide();
     },
 
     confirmRemoved: function(ev) {
@@ -152,34 +166,61 @@ YUI.add('juju-view-unit', function(Y) {
       ev.target.set('disabled', true);
       env.remove_units(
           [unit.id],
-          Y.bind(this._doRemoveUnitCallback, this));
+          Y.bind(this._removeUnitCallback, this, ev.target));
     },
 
-    _doRemoveUnitCallback: function(ev) {
-      // XXX Once we have a way of showing notifications, if ev.err exists,
-      // report it.
+    _removeUnitCallback: function(btn, ev) {
       var unit = this.get('unit'),
           db = this.get('db'),
+          app = this.get('app'),
           service = db.services.getById(unit.service),
           unit_name = ev.unit_names[0];
-      db.units.remove(db.units.getById(unit_name));
-      service.set('unit_count', service.get('unit_count') - 1);
-      this.remove_panel.destroy();
-      this.fire('showService', {service: service});
+
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error removing unit',
+              message: 'Unit name: ' + unit_name,
+              level: 'error',
+              link: app.getModelURL(unit),
+              modelId: unit
+            })
+        );
+      } else {
+        db.units.remove(db.units.getById(unit_name));
+        service.set('unit_count', service.get('unit_count') - 1);
+        this.remove_panel.destroy();
+        this.fire('showService', {service: service});
+      }
+
+      btn.set('disabled', false);
     },
 
     retry: function(ev) {
       ev.preventDefault();
       var env = this.get('env'),
           unit = this.get('unit'),
+          db = this.get('db'),
+          app = this.get('app'),
+          service = db.services.getById(unit.service),
           button = ev.target;
       button.set('disabled', true);
       env.resolved(unit.id, null, true,
           function(ev) {
-            // XXX Once we have a way of showing notifications, if
-            // ev.err exists, report it.  Similarly, otherwise,
-            // generate a success notification.
-            button.set('disabled', false);}
+            if (ev.err) {
+              db.notifications.add(
+                  new models.Notification({
+                    title: 'Error retrying unit',
+                    message: 'Unit name: ' + ev.unit_name,
+                    level: 'error',
+                    link: app.getModelURL(unit),
+                    modelId: unit
+                  })
+              );
+
+            }
+            button.set('disabled', false);
+          }
       );
     },
 
@@ -209,10 +250,10 @@ YUI.add('juju-view-unit', function(Y) {
       ev.target.set('disabled', true);
       env.resolved(
           unit.id, relation_name, false,
-          Y.bind(this._doResolvedRelationCallback, this, button, ev.target));
+          Y.bind(this._resolvedRelationCallback, this, button, ev.target));
     },
 
-    _doResolvedRelationCallback: function(button, confirm_button, ev) {
+    _resolvedRelationCallback: function(button, confirm_button, ev) {
       views.highlightRow(button.ancestor('tr'), ev.err);
       if (ev.err) {
         var db = this.get('db'),

@@ -33,13 +33,13 @@
       Y.one('#main').append(container);
       db = new models.Database();
       charm = new models.Charm({
-        id: 'cs:mysql',
+        id: 'cs:precise/mysql',
         name: 'mysql',
         description: 'A DB'});
       db.charms.add([charm]);
       service = new models.Service({
         id: 'mysql',
-        charm: 'cs:mysql',
+        charm: 'cs:precise/mysql',
         unit_count: 1,
         loaded: true});
       db.relations.add({
@@ -85,7 +85,7 @@
       var view = new UnitView(
           { container: container, unit: unit, db: db, env: env,
             querystring: {}}).render();
-      container.one('#charm-uri').getHTML().should.contain('cs:mysql');
+      container.one('#charm-uri').getHTML().should.contain('cs:precise/mysql');
     });
 
     it('should include unit status', function() {

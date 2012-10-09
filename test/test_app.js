@@ -31,7 +31,7 @@ function injectData(app, data) {
   return app;
 }
 
-describe('Application', function() {
+describe('Application basics', function() {
   var Y, app, container;
 
   before(function(done) {
@@ -75,7 +75,7 @@ describe('Application', function() {
     // needed to show them
     var wordpress = app.db.services.getById('wordpress'),
         wp0 = app.db.units.get_units_for_service(wordpress)[0],
-        wp_charm = app.db.charms.create({charm_id: wordpress.get('charm')});
+        wp_charm = app.db.charms.add({id: wordpress.get('charm')});
 
     // 'service/wordpress/' is the primary and so other URL are not returned
     app.getModelURL(wordpress).should.equal('/service/wordpress/');
@@ -87,7 +87,8 @@ describe('Application', function() {
     app.getModelURL(wp0).should.equal('/unit/wordpress-0/');
 
     // charms also require a mapping but only a name, not a function
-    app.getModelURL(wp_charm).should.equal('/charms/' + wp_charm.get('name'));
+    app.getModelURL(wp_charm).should.equal(
+        '/charms/charms/precise/wordpress/json');
   });
 
   it('should display the configured environment name', function() {
@@ -172,4 +173,51 @@ describe('Application Connection State', function() {
     reset_called.should.equal(true);
   });
 
+});
+
+describe('Application prefetching', function() {
+  var Y, models, conn, env, app, container, charm_store, data;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        'juju-models', 'juju-gui', 'datasource-local', 'juju-tests-utils',
+        'json-stringify',
+        function(Y) {
+          models = Y.namespace('juju.models');
+          done();
+        });
+  });
+
+  beforeEach(function() {
+    conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
+    env = new (Y.namespace('juju')).Environment({conn: conn});
+    env.connect();
+    conn.open();
+    container = Y.Node.create('<div id="test" class="container"></div>');
+    data = [];
+    charm_store = new Y.DataSource.Local({source: data});
+    app = new Y.juju.App(
+        { container: container,
+          viewContainer: container,
+          env: env,
+          charm_store: charm_store });
+  });
+
+  afterEach(function() {
+    container.destroy();
+    app.destroy();
+  });
+
+  it('must prefetch charm and service for service pages', function() {
+    injectData(app);
+    data.push({responseText: Y.JSON.stringify({summary: 'wowza'})});
+    var _ = expect(
+        app.db.charms.getById('cs:precise/wordpress')).to.not.exist;
+    app.show_service({params: {id: 'wordpress'}, query: {}});
+    // The db loaded the charm information from the datastore.
+    app.db.charms.getById(
+        'cs:precise/wordpress').get('summary').should.equal('wowza');
+    // The app made a request of juju for the service info.
+    conn.last_message().op.should.equal('get_service');
+  });
 });

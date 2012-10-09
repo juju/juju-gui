@@ -125,6 +125,7 @@ YUI.add('juju-env', function(Y) {
         'service_name': service,
         'num_units': num_units}, callback);
     },
+
     remove_units: function(unit_names, callback) {
       this._send_rpc({
         'op': 'remove_units',
@@ -137,7 +138,6 @@ YUI.add('juju-env', function(Y) {
         'op': 'add_relation',
         'endpoint_a': endpoint_a,
         'endpoint_b': endpoint_b}, callback);
-
     },
 
     get_charm: function(charm_url, callback) {
