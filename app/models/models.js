@@ -173,16 +173,16 @@ YUI.add('juju-models', function(Y) {
       full_name: {readOnly: true}, // calculated
       is_subordinate: {writeOnce: true},
       last_change:
-            { writeOnce: true,
-              setter: function(val) {
-                if (val && val.created) {
-                  // Mutating in place should be fine since this should only
-                  // come from loading over the wire.
-                  val.created = new Date(val.created * 1000);
-                }
-                return val;
+          { writeOnce: true,
+            setter: function(val) {
+              if (val && val.created) {
+                // Mutating in place should be fine since this should only
+                // come from loading over the wire.
+                val.created = new Date(val.created * 1000);
               }
-            },
+              return val;
+            }
+          },
       maintainer: {writeOnce: true},
       metadata: {writeOnce: true},
       package_name: {readOnly: true}, // calculated

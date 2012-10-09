@@ -59,9 +59,9 @@ YUI.add('juju-charm-search', function(Y) {
     showDetails: function(ev) {
       ev.halt();
       this.fire(
-        'changePanel',
-        { name: 'description',
-          modelId: ev.target.getAttribute('href') });
+          'changePanel',
+          { name: 'description',
+            modelId: ev.target.getAttribute('href') });
     },
     deploy: function(ev) {
       var url = ev.currentTarget.getData('url'),
@@ -217,7 +217,7 @@ YUI.add('juju-charm-search', function(Y) {
       this.after('*:change', this.render, this);
 
       // If the modelId gets changed, change the model.
-      this.after('modelIdChange', Y.bind(function(ev){
+      this.after('modelIdChange', Y.bind(function(ev) {
         var app = this.get('app'),
             model = this.get('model'),
             modelId = ev.newVal;
@@ -238,62 +238,63 @@ YUI.add('juju-charm-search', function(Y) {
   });
 
   var CharmDescriptionView = Y.Base.create(
-    'CharmDescriptionView', Y.View, [CharmPanelBaseView], {
-      template: views.Templates['charm-description'],
-      // container, model, modelId, app
-      render: function() {
-        var container = this.get('container'),
-            charm = this.get('model');
-        if (Y.Lang.isValue(charm)) {
-          container.setHTML(this.template(charm.getAttrs()));
-          container.all('i.icon-chevron-right').each(function(el) {
-            el.ancestor('.charm-section').one('div').hide();
-          });
-        } else {
-          container.setHTML('<div class="alert">Waiting on charm data...</div>');
+      'CharmDescriptionView', Y.View, [CharmPanelBaseView], {
+        template: views.Templates['charm-description'],
+        // container, model, modelId, app
+        render: function() {
+          var container = this.get('container'),
+              charm = this.get('model');
+          if (Y.Lang.isValue(charm)) {
+            container.setHTML(this.template(charm.getAttrs()));
+            container.all('i.icon-chevron-right').each(function(el) {
+              el.ancestor('.charm-section').one('div').hide();
+            });
+          } else {
+            container.setHTML(
+                '<div class="alert">Waiting on charm data...</div>');
+          }
+          return this;
+        },
+        events: {
+          '.charm-nav-back': {click: 'goBack'},
+          '.btn': {click: 'deploy'},
+          '.charm-section h4': {click: 'toggleVisibility'}
+        },
+        focus: function() {
+          // No op: we don't have anything to focus on.
+        },
+        goBack: function(ev) {
+          ev.halt();
+          this.fire('changePanel', { name: 'charms' });
+        },
+        deploy: function(ev) {
+          // Show configuration page for this charm.  For now, this is external.
+          var app = this.get('app'),
+              info_url = ev.currentTarget.getData('info-url');
+          app.fire('showCharm', {charm_data_url: info_url});
+        },
+        toggleVisibility: function(ev) {
+          var el = ev.currentTarget.ancestor('.charm-section').one('div'),
+              icon = ev.currentTarget.one('i');
+          if (el.getStyle('display') === 'none') {
+            // sizeIn doesn't work smoothly without this bit of jiggery to get
+            // accurate heights and widths.
+            el.setStyles({height: null, width: null, display: 'block'});
+            var config =
+                { duration: 0.25,
+                  height: el.get('scrollHeight') + 'px',
+                  width: el.get('scrollWidth') + 'px'
+                };
+            // Now we need to set our starting point.
+            el.setStyles({height: 0, width: config.width});
+            el.show('sizeIn', config);
+            icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+          } else {
+            el.hide('sizeOut', {duration: 0.25});
+            icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+          }
         }
-        return this;
-      },
-      events: {
-        '.charm-nav-back': {click: 'goBack'},
-        '.btn': {click: 'deploy'},
-        '.charm-section h4': {click: 'toggleVisibility'}
-      },
-      focus: function() {
-        // No op: we don't have anything to focus on.
-      },
-      goBack: function(ev) {
-        ev.halt();
-        this.fire('changePanel', { name: 'charms' });
-      },
-      deploy: function(ev) {
-        // Show configuration page for this charm.  For now, this is external.
-        var app = this.get('app'),
-            info_url = ev.currentTarget.getData('info-url');
-        app.fire('showCharm', {charm_data_url: info_url});
-      },
-      toggleVisibility: function(ev) {
-        var el = ev.currentTarget.ancestor('.charm-section').one('div'),
-            icon = ev.currentTarget.one('i');
-        if (el.getStyle('display') === 'none') {
-          // sizeIn doesn't work smoothly without this bit of jiggery to get
-          // accurate heights and widths.
-          el.setStyles({height: null, width: null, display: 'block'});
-          var config =
-              { duration: 0.25,
-                height: el.get('scrollHeight') + 'px',
-                width: el.get('scrollWidth') + 'px'
-              };
-          // Now we need to set our starting point.
-          el.setStyles({height: 0, width: config.width});
-          el.show('sizeIn', config);
-          icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
-        } else {
-          el.hide('sizeOut', {duration: 0.25});
-          icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
-        }
-      }
-  });
+      });
   views.CharmDescriptionView = CharmDescriptionView;
 
   // Creates the "_instance" object

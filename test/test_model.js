@@ -40,7 +40,7 @@
       var time = 1349797266.032,
           date = new Date(time),
           charm = new models.Charm(
-            { id: 'precise/foo', last_change: {created: time/1000} });
+          { id: 'precise/foo', last_change: {created: time / 1000} });
       charm.get('last_change').created.should.eql(date);
     });
 
