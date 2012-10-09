@@ -137,16 +137,17 @@ YUI.add('juju-view-utils', function(Y) {
       // todo also check relations
       var classes;
       switch (state) {
+        case 'installed':
         case 'pending':
+        case 'stopped':
           classes = 'state-pending';
           break;
         case 'started':
           classes = 'state-started';
           break;
-        case 'start_error':
-          classes = 'state-error';
-          break;
-        case 'install_error':
+        case 'install-error':
+        case 'start-error':
+        case 'stop-error':
           classes = 'state-error';
           break;
         default:

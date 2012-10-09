@@ -119,6 +119,29 @@ charms.thumbnails.li { height:4em; }
 .state-error { stroke: #FF0000; }
 .state-started { stroke: #000000;}
 .state-pending { stroke: #6597E8;}
+div.state-error {
+    @error-color: #c01c20;
+    background-color: @error-color;
+    color: #FFFFFF;
+    &:hover {
+        background-color: lighten(@error-color, 10%);
+    }
+}
+div.state-started {
+    @started-color: #d8d8d8;
+    background-color: @started-color;
+    &:hover {
+        background-color: lighten(@started-color, 10%);
+    }
+}
+div.state-pending {
+    @pending-color: #fcd305;
+    background-color: @pending-color;
+    &:hover {
+        background-color: lighten(@pending-color, 20%);
+    }
+}
+
 .thumbnail { min-height: 54px;}
 
 .unit (@min_height: 20px, @border_radius:3px) {
@@ -128,13 +151,17 @@ charms.thumbnails.li { height:4em; }
     border-radius: @border_radius;
     margin-bottom: 0px;
     min-height: @min_height;
+    cursor: pointer;
+    .agent-state {
+        display: none;
+    }
 }
 
-ul#unit-large div {
+ul#unit-large div.unit {
     .unit(40px);
 }
 
-ul#unit-medium div {
+ul#unit-medium div.unit {
     .unit;
 }
 
@@ -143,8 +170,10 @@ ul#unit-small {
     > li {
         margin-bottom: 5px;
         margin-left: 5px;
-        > div {
+        > div.unit {
             .unit;
+            width: 1.7em;
+            text-align: center;
         }
     }
 }
@@ -154,7 +183,7 @@ ul#unit-tiny {
     > li {
         margin-bottom: 3px;
         margin-left: 3px;
-        > div {
+        > div.unit {
             .unit(0px, 1px);
         }
     }

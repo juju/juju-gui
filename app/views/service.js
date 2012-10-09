@@ -512,6 +512,11 @@ YUI.add('juju-view-service', function(Y) {
         states: state_data,
         filtered: !!filter_state
       }));
+      // Customize units visualization based on their agent state.
+      container.all('div.unit').each(function(node) {
+        var agentState = node.one('span.agent-state').get('text');
+        node.addClass(this.stateToStyle(agentState));
+      }, this);
       return this;
     },
 
