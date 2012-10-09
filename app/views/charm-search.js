@@ -59,7 +59,10 @@ YUI.add('juju-charm-search', function(Y) {
     showDetails: function(ev) {
       ev.stopPropagation();
       ev.preventDefault();
-      this.showCharm(ev.target.getAttribute('href'));
+      this.fire(
+        'changePanel',
+        { name: 'description',
+          modelId: ev.target.getAttribute('href') });
     },
     deploy: function(ev) {
       var url = ev.currentTarget.getData('url'),
@@ -176,11 +179,118 @@ YUI.add('juju-charm-search', function(Y) {
       // Destroy old entries
       list.get('childNodes').remove(true);
       list.append(this.resultsTemplate({charms: entries}));
-    },
-    showCharm: function(url) {
-      var app = this.get('app');
-      app.navigate(url);
     }
+  });
+
+  // This extension makes changes to "modelId" set a charm "model" with that
+  // id, creating and loading it if needed.  When a new charm is set, or when
+  // a charm changes internally (because of being loaded), the view's render
+  // method is called.  The render method therefore needs to be able to handle
+  // three cases: there is no charm; the charm exists but has not been loaded;
+  // and the charm exists and has been fully loaded.  See usage in
+  // CharmDescriptionView.
+  var CharmPanelBaseView = Y.Base.create('CharmPanelBaseView', Y.Base, [], {
+    initializer: function() {
+      var app = this.get('app'),
+          model = this.get('model');
+      if (Y.Lang.isValue(model)) {
+        // set target so we can subscribe locally to change events.
+        model.addTarget(this);
+      }
+      // If the model gets swapped out, reset target and re-render.
+      this.after('modelChange', Y.bind(function(ev) {
+        if (ev.prevVal) { ev.prevVal.removeTarget(this); }
+        if (ev.newVal) {
+          ev.newVal.addTarget(this);
+          if (ev.newVal.get('id') !== this.get('modelId')) {
+            // keep modelId up-to-date for cleanliness.
+            this.set('modelId', ev.newVal.get('id'));
+          }
+        } else if (this.get('modelId')) {
+          this.set('modelId', null);
+        }
+        this.render();
+      }, this));
+      // Whenever there is an attribute change in the model, redraw.
+      // This should only happen when the model is loaded.
+      this.after('*:change', this.render, this);
+
+      // If the modelId gets changed, change the model.
+      this.after('modelIdChange', Y.bind(function(ev){
+        var app = this.get('app'),
+            model = this.get('model'),
+            modelId = ev.newVal;
+        if (Y.Lang.isValue(modelId)) {
+          if (!model || modelId !== model.get('id')) {
+            var newModel = app.db.charms.getById(modelId);
+            if (!newModel) {
+              newModel = new models.Charm({id: modelId})
+                .load({env: app.env, charm_store: app.charm_store});
+            }
+            this.set('model', newModel);
+          }
+        } else if (model) {
+          this.set('model', null);
+        }
+      }, this));
+    }
+  });
+
+  var CharmDescriptionView = Y.Base.create(
+    'CharmCollectionView', Y.View, [CharmPanelBaseView], {
+      template: views.Templates['charm-description'],
+      // model, modelId, app
+      render: function() {
+        var container = this.get('container'),
+            charm = this.get('model');
+        if (Y.Lang.isValue(charm)) {
+          container.setHTML(this.template(charm.getAttrs()));
+          container.all('i.icon-chevron-down').each(function(el) {
+            el.ancestor('.charm-section').one('div').hide();
+          });
+        } else {
+          container.setHTML('<div class="alert">Waiting on charm data...</div>');
+        }
+      },
+      events: {
+        '.charm-nav-back': {click: 'goBack'},
+        '.btn': {click: 'deploy'},
+        '.charm-section h4': {click: 'toggleVisibility'}
+      }, // XXX add toggle of sections.
+      focus: function() {
+        // We don't have anything to focus on.
+      },
+      goBack: function(ev) {
+        ev.halt();
+        this.fire('changePanel', { name: 'charms' });
+      },
+      deploy: function(ev) {
+        // Show configuration page for this charm.  For now, this is external.
+        var app = this.get('app'),
+            info_url = ev.currentTarget.getData('info-url');
+        app.fire('showCharm', {charm_data_url: info_url});
+      },
+      toggleVisibility: function(ev) {
+        var el = ev.currentTarget.ancestor('.charm-section').one('div'),
+            icon = ev.currentTarget.one('i');
+        if (el.getStyle('display') === 'none') {
+          // sizeIn doesn't work smoothly without this bit of jiggery to get
+          // accurate heights and widths.
+          el.setStyles({height: null, width: null, display: 'block'});
+          var config =
+              { duration: 0.25,
+                height: el.get('scrollHeight') + 'px',
+                width: el.get('scrollWidth') + 'px'
+              };
+          // Now we need to set our starting point.
+          el.setStyles({height: 0, width: config.width});
+          el.show('sizeIn', config);
+          icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
+        } else {
+          el.hide('sizeOut', {duration: 0.25});
+          icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
+        }
+      }
   });
 
   // Creates the "_instance" object
@@ -199,8 +309,13 @@ YUI.add('juju-charm-search', function(Y) {
                 app: app,
                 searchDelay: testing ? 0 : _searchDelay,
                 charmStore: charmStore }),
+        descriptionPanelNode = Y.Node.create(),
+        descriptionPanel = new CharmDescriptionView(
+              { container: descriptionPanelNode,
+                app: app }),
         panels =
-              { charms: charmsSearchPanel},
+              { charms: charmsSearchPanel,
+                description: descriptionPanel },
         isPopupVisible = false,
         trigger = Y.one('#charm-search-trigger'),
         activePanelName;
@@ -208,23 +323,28 @@ YUI.add('juju-charm-search', function(Y) {
     Y.one(document.body).append(container);
     container.hide();
 
-    // The panels starts with the "charmsSearchPanel" visible.
-    // Eventually we will be able to swap internal
-    // panels (details panel for example).
-    function setPanel(name) {
-      if (name !== activePanelName) {
-        var newPanel = panels[name];
+    // XXX Is history needed, for "back"?
+    function setPanel(config) {
+      if (config.name !== activePanelName) {
+        var newPanel = panels[config.name];
         if (!Y.Lang.isValue(newPanel)) {
-          throw 'Developer error: Unknown panel name ' + name;
+          throw 'Developer error: Unknown panel name ' + config.name;
         }
-        activePanelName = name;
+        activePanelName = config.name;
         contentNode.get('children').remove();
-        newPanel.render();
-        contentNode.append(panels[name].get('container'));
+        contentNode.append(panels[config.name].get('container'));
+        delete config.name;
+        newPanel.setAttrs(config);
         newPanel.focus();
       }
     }
-    setPanel('charms');
+
+    Y.Object.each(panels, function(panel) {
+      panel.render();
+      panel.on('changePanel', setPanel);
+    });
+    // The panel starts with the "charmsSearchPanel" visible.
+    setPanel({name: 'charms'});
 
     // Update position if we resize the window.
     // It tries to keep the popup arrow under the charms search icon.

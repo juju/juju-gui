@@ -1,0 +1,52 @@
+<div>
+  <div class="charm-nav-back"><i class="icon-arrow-left icon-white"></i> Back</div>
+
+  <div id="charm-description">
+    <h3>{{package_name}}</h3>
+    <div class="charm-section">
+      <h4><i class="icon-chevron-up"></i> Description</h4>
+      <div>
+        <h5>Summary</h5>
+        <p>{{summary}}</p>
+        <h5>Series</h5>
+        <p>{{series}}</p>
+        <h5>Description</h5>
+        <div>{{markdown description}}</div>
+        <h5>Owner</h5>
+        <p>{{#if owner}}{{owner}}{{else}}<em>Official "Charmers" Charm</em>{{/if}}</p>
+      </div>
+    </div>
+    <div class="charm-section">
+      <h4><i class="icon-chevron-down"></i> Interfaces</h4>
+      <div>
+        <h5>Provides</h5>
+        <ul>
+        {{#iflat provides}}
+          <li>{{interface}}</li>
+        {{/iflat}}
+        </ul>
+        <h5>Requires</h5>
+        <ul>
+        {{#iflat requires}}
+          <li>{{interface}}</li>
+        {{/iflat}}
+        </ul>
+      </div>
+    </div>
+    <div class="charm-section">
+      <h4><i class="icon-chevron-down"></i> Last Change</h4>
+      <div>
+        {{#if last_change}}
+        {{#with last_change}}
+        {{created}} <br /> {{committer}} <br /> {{message}}
+        {{/with}}
+        {{/if}}
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <button class="btn"
+            data-info-url="{{charm_store_path}}">Deploy</button>
+  </div>
+</div>
