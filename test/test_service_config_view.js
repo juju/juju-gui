@@ -48,16 +48,16 @@
                               type: 'boolean'},
                         intOption:
                             { description:
-                              'An int option with no default value.',
+                                  'An int option with no default value.',
                               type: 'int'},
                         intOptionWithDefault:
                             { description:
-                              'An int option with no default value.',
+                                  'An int option with no default value.',
                               type: 'int',
                               'default': 1},
                         floatOption:
                             { description:
-                              'A float option with no default value.',
+                                  'A float option with no default value.',
                               type: 'float'}}}});
 
       db.charms.add([charm]);

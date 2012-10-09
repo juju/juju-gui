@@ -460,6 +460,29 @@ YUI.add('juju-view-service', function(Y) {
 
   views.service_config = ServiceConfigView;
 
+  // Display a unit grid based on the total number of units.
+  Y.Handlebars.registerHelper('show_units', function(units) {
+    var template;
+    var numUnits = units.length;
+    // TODO: different visualization based on the viewport size.
+    if (numUnits <= 25) {
+      template = Templates.show_units_large;
+    } else if (numUnits <= 50) {
+      template = Templates.show_units_medium;
+    } else if (numUnits <= 250) {
+      template = Templates.show_units_small;
+    } else {
+      template = Templates.show_units_tiny;
+    }
+    return template({units: units});
+  });
+
+  // Translate the given state to the matching style.
+  Y.Handlebars.registerHelper('state_to_style', function(state) {
+    // Using a closure to avoid the second argument to be passed through.
+    return utils.stateToStyle(state);
+  });
+
   var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
     template: Templates.service,
@@ -517,7 +540,7 @@ YUI.add('juju-view-service', function(Y) {
 
     events: {
       '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'},
-      'div.thumbnail': {click: function(ev) {
+      'div.unit': {click: function(ev) {
         console.log('Unit clicked', ev.currentTarget.get('id'));
         this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
       }},
