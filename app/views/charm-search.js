@@ -17,7 +17,12 @@ YUI.add('juju-charm-search', function(Y) {
       this.delay = utils.Delayer();
     },
     render: function() {
-      this.get('container').setHTML(this.template({}));
+      // We only need to render once.
+      if (!this._rendered) {
+        this.get('container').setHTML(this.template({}));
+        this._rendered = true;
+      }
+      return this;
     },
     events: {
       'a.charm-detail': {click: 'showDetails'},
@@ -57,9 +62,11 @@ YUI.add('juju-charm-search', function(Y) {
           this.get('searchDelay'));
     },
     showDetails: function(ev) {
-      ev.stopPropagation();
-      ev.preventDefault();
-      this.showCharm(ev.target.getAttribute('href'));
+      ev.halt();
+      this.fire(
+          'changePanel',
+          { name: 'description',
+            charmId: ev.target.getAttribute('href') });
     },
     deploy: function(ev) {
       var url = ev.currentTarget.getData('url'),
@@ -176,12 +183,71 @@ YUI.add('juju-charm-search', function(Y) {
       // Destroy old entries
       list.get('childNodes').remove(true);
       list.append(this.resultsTemplate({charms: entries}));
-    },
-    showCharm: function(url) {
-      var app = this.get('app');
-      app.navigate(url);
     }
   });
+  views.CharmCollectionView = CharmCollectionView;
+
+  var CharmDescriptionView = Y.Base.create(
+      'CharmDescriptionView', Y.View, [views.JujuBaseView], {
+        template: views.Templates['charm-description'],
+        events: {
+          '.charm-nav-back': {click: 'goBack'},
+          '.btn': {click: 'deploy'},
+          '.charm-section h4': {click: 'toggleSectionVisibility'}
+        },
+        initializer: function() {
+          this.bindModelView(this.get('model'));
+        },
+        render: function() {
+          var container = this.get('container'),
+              charm = this.get('model');
+          if (Y.Lang.isValue(charm)) {
+            container.setHTML(this.template(charm.getAttrs()));
+            container.all('i.icon-chevron-right').each(function(el) {
+              el.ancestor('.charm-section').one('div').hide();
+            });
+          } else {
+            container.setHTML(
+                '<div class="alert">Waiting on charm data...</div>');
+          }
+          return this;
+        },
+        focus: function() {
+          // No op: we don't have anything to focus on.
+        },
+        goBack: function(ev) {
+          ev.halt();
+          this.fire('changePanel', { name: 'charms' });
+        },
+        deploy: function(ev) {
+          // Show configuration page for this charm.  For now, this is external.
+          var app = this.get('app'),
+              info_url = ev.currentTarget.getData('info-url');
+          app.fire('showCharm', {charm_data_url: info_url});
+        },
+        toggleSectionVisibility: function(ev) {
+          var el = ev.currentTarget.ancestor('.charm-section').one('div'),
+              icon = ev.currentTarget.one('i');
+          if (el.getStyle('display') === 'none') {
+            // sizeIn doesn't work smoothly without this bit of jiggery to get
+            // accurate heights and widths.
+            el.setStyles({height: null, width: null, display: 'block'});
+            var config =
+                { duration: 0.25,
+                  height: el.get('scrollHeight') + 'px',
+                  width: el.get('scrollWidth') + 'px'
+                };
+            // Now we need to set our starting point.
+            el.setStyles({height: 0, width: config.width});
+            el.show('sizeIn', config);
+            icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+          } else {
+            el.hide('sizeOut', {duration: 0.25});
+            icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+          }
+        }
+      });
+  views.CharmDescriptionView = CharmDescriptionView;
 
   // Creates the "_instance" object
   function createInstance(config) {
@@ -199,8 +265,13 @@ YUI.add('juju-charm-search', function(Y) {
                 app: app,
                 searchDelay: testing ? 0 : _searchDelay,
                 charmStore: charmStore }),
+        descriptionPanelNode = Y.Node.create(),
+        descriptionPanel = new CharmDescriptionView(
+              { container: descriptionPanelNode,
+                app: app }),
         panels =
-              { charms: charmsSearchPanel},
+              { charms: charmsSearchPanel,
+                description: descriptionPanel },
         isPopupVisible = false,
         trigger = Y.one('#charm-search-trigger'),
         activePanelName;
@@ -208,23 +279,34 @@ YUI.add('juju-charm-search', function(Y) {
     Y.one(document.body).append(container);
     container.hide();
 
-    // The panels starts with the "charmsSearchPanel" visible.
-    // Eventually we will be able to swap internal
-    // panels (details panel for example).
-    function setPanel(name) {
-      if (name !== activePanelName) {
-        var newPanel = panels[name];
+    function setPanel(config) {
+      if (config.name !== activePanelName) {
+        var newPanel = panels[config.name];
         if (!Y.Lang.isValue(newPanel)) {
-          throw 'Developer error: Unknown panel name ' + name;
+          throw 'Developer error: Unknown panel name ' + config.name;
         }
-        activePanelName = name;
+        activePanelName = config.name;
         contentNode.get('children').remove();
-        newPanel.render();
-        contentNode.append(panels[name].get('container'));
+        contentNode.append(panels[config.name].get('container'));
+        if (config.charmId) {
+          var newModel = app.db.charms.getById(config.charmId);
+          if (!newModel) {
+            newModel = app.db.charms.add({id: config.charmId})
+              .load({env: app.env, charm_store: app.charm_store});
+          }
+          newPanel.set('model', newModel);
+        } else { // This is the search panel.
+          newPanel.render();
+        }
         newPanel.focus();
       }
     }
-    setPanel('charms');
+
+    Y.Object.each(panels, function(panel) {
+      panel.on('changePanel', setPanel);
+    });
+    // The panel starts with the "charmsSearchPanel" visible.
+    setPanel({name: 'charms'});
 
     // Update position if we resize the window.
     // It tries to keep the popup arrow under the charms search icon.
