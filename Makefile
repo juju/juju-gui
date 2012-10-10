@@ -1,47 +1,47 @@
 FILES=$(shell bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js | grep -v server.js)
 NODE_TARGETS=node_modules/chai node_modules/d3 node_modules/jshint \
-	node_modules/yui
+        node_modules/yui
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 
 all: prep test
 
 app/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
-	@./bin/generateTemplates
+        @./bin/generateTemplates
 
 $(NODE_TARGETS): package.json
-	@npm install
-	@#link depends
-	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
-	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
+        @npm install
+        @#link depends
+        @ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
+        @ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
 
 install: $(NODE_TARGETS) app/templates.js
 
 gjslint: virtualenv/bin/gjslint
-	@virtualenv/bin/gjslint --strict --nojsdoc --custom_jsdoc_tags=property,default,since --jslint_error=all $(FILES)
+        @virtualenv/bin/gjslint --strict --nojsdoc --custom_jsdoc_tags=property,default,since --jslint_error=all $(FILES)
 
 jshint: node_modules/jshint
-	@node_modules/jshint/bin/hint $(FILES)
+        @node_modules/jshint/bin/hint $(FILES)
 
 lint: gjslint jshint
 
 virtualenv/bin/gjslint virtualenv/bin/fixjsstyle:
-	@virtualenv virtualenv
-	@virtualenv/bin/easy_install archives/closure_linter-latest.tar.gz
+        @virtualenv virtualenv
+        @virtualenv/bin/easy_install archives/closure_linter-latest.tar.gz
 
 beautify: virtualenv/bin/fixjsstyle
-	@virtualenv/bin/fixjsstyle --strict --nojsdoc --jslint_error=all $(FILES)
+        @virtualenv/bin/fixjsstyle --strict --nojsdoc --jslint_error=all $(FILES)
 
 prep: beautify lint
 
 test: install
-	@./test-server.sh
+        @./test-server.sh
 
 server: install
-	@echo "Customize config.js to modify server settings"
-	@node server.js
+        @echo "Customize config.js to modify server settings"
+        @node server.js
 
 clean:
-	@rm -rf node_modules virtualenv
-	@make -C docs clean
+        @rm -rf node_modules virtualenv
+        @make -C docs clean
 
 .PHONY: test lint beautify server install clean prep jshint gjslint

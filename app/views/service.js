@@ -20,16 +20,28 @@ YUI.add('juju-view-service', function(Y) {
     unexposeService: function() {
       var service = this.get('model'),
           env = this.get('app').env;
-
       env.unexpose(service.get('id'),
           Y.bind(this._unexposeServiceCallback, this));
     },
 
-    _unexposeServiceCallback: function() {
+    _unexposeServiceCallback: function(ev) {
       var service = this.get('model'),
-          db = this.get('app').db;
-      service.set('exposed', false);
-      db.fire('update');
+          db = this.get('app').db,
+          app = this.get('app');
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error un-exposing service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        service.set('exposed', false);
+        db.fire('update');
+      }
     },
 
     exposeService: function() {
@@ -39,11 +51,24 @@ YUI.add('juju-view-service', function(Y) {
           Y.bind(this._exposeServiceCallback, this));
     },
 
-    _exposeServiceCallback: function() {
+    _exposeServiceCallback: function(ev) {
       var service = this.get('model'),
-          db = this.get('app').db;
-      service.set('exposed', true);
-      db.fire('update');
+          db = this.get('app').db,
+          app = this.get('app');
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error exposing service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        service.set('exposed', true);
+        db.fire('update');
+      }
     }
   };
 
@@ -128,11 +153,11 @@ YUI.add('juju-view-service', function(Y) {
           app.env.remove_relation(
               endpoint_a,
               endpoint_b,
-              Y.bind(this._doRemoveRelationCallback, this,
+              Y.bind(this._removeRelationCallback, this,
                      relation, button, ev.target));
         },
 
-        _doRemoveRelationCallback: function(relation, rm_button,
+        _removeRelationCallback: function(relation, rm_button,
             confirm_button, ev) {
           var app = this.get('app'),
               service = this.get('model');
@@ -194,21 +219,32 @@ YUI.add('juju-view-service', function(Y) {
             .set('disabled', 'disabled');
           env.set_constraints(service.get('id'),
               values,
-              utils.buildRpcHandler({
-                container: container,
-                successHandler: function()  {
-                  var service = this.get('model'),
-                      app = this.get('app');
+              Y.bind(this._setConstraintsCallback, this, container)
+          );
+        },
 
-                  app.env.get_service(
-                      service.get('id'), Y.bind(app.load_service, app));
-                },
-                errorHandler: function() {
-                  container.one('#save-service-constraints')
-                    .removeAttribute('disabled');
-                },
-                scope: this}
-              ));
+        _setConstraintsCallback: function(container, ev) {
+          var service = this.get('model'),
+              env = this.get('app').env,
+              app = this.get('app'),
+              db = this.get('app').db;
+          if (ev.err) {
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Error setting service constraints',
+                  message: 'Service name: ' + ev.service_name,
+                  level: 'error',
+                  link: app.getModelURL(service) + 'constraints',
+                  modelId: service
+                })
+            );
+            container.one('#save-service-constraints')
+              .removeAttribute('disabled');
+
+          } else {
+            env.get_service(
+                service.get('id'), Y.bind(app.load_service, app));
+          }
         },
 
         render: function() {
@@ -253,6 +289,8 @@ YUI.add('juju-view-service', function(Y) {
             })(),
             charm: this.renderable_charm(service.get('charm'), app)}
           ));
+
+          return this;
         }
 
       });
@@ -288,9 +326,8 @@ YUI.add('juju-view-service', function(Y) {
           // combine the charm schema and the service values for display.
           var charm = app.db.charms.getById(service.get('charm')),
               config = service.get('config'),
-              //charm_config = charm.get('config'),
-              //schema = charm_config && charm_config.options,
-              schema = charm.get('config'),
+              charm_config = charm.get('config'),
+              schema = charm_config && charm_config.options,
               settings = [],
               field_def;
 
@@ -374,6 +411,8 @@ YUI.add('juju-view-service', function(Y) {
               service = this.get('model'),
               charm_url = service.get('charm'),
               charm = app.db.charms.getById(charm_url),
+              charm_config = charm.get('config'),
+              schema = charm_config && charm_config.options,
               container = this.get('container');
 
           // Disable the "Update" button while the RPC call is outstanding.
@@ -381,36 +420,68 @@ YUI.add('juju-view-service', function(Y) {
 
           var new_values = utils.getElementsValuesMapping(
                                             container, '.config-field'),
-              errors = utils.validate(new_values, charm.get('config'));
+              errors = utils.validate(new_values, schema);
 
           if (Y.Object.isEmpty(errors)) {
             app.env.set_config(
                 service.get('id'),
                 new_values,
-                utils.buildRpcHandler({
-                  container: container,
-                  successHandler: function()  {
-                    var service = this.get('model'),
-                        app = this.get('app');
-
-                    app.env.get_service(
-                        service.get('id'), Y.bind(app.load_service, app));
-                  },
-                  errorHandler: function() {
-                    container.one('#save-service-config')
-                      .removeAttribute('disabled');
-                  },
-                  scope: this}
-                )
+                Y.bind(this._setConfigCallback, this, container)
             );
 
           } else {
             this.showErrors(errors);
           }
+        },
+
+        _setConfigCallback: function(container, ev) {
+          var service = this.get('model'),
+              env = this.get('app').env,
+              app = this.get('app'),
+              db = this.get('app').db;
+          if (ev.err) {
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Error setting service config',
+                  message: 'Service name: ' + ev.service_name,
+                  level: 'error',
+                  link: app.getModelURL(service) + 'config',
+                  modelId: service
+                })
+            );
+            container.one('#save-service-config')
+              .removeAttribute('disabled');
+
+          } else {
+            env.get_service(service.get('id'), Y.bind(app.load_service, app));
+          }
         }
       });
 
   views.service_config = ServiceConfigView;
+
+  // Display a unit grid based on the total number of units.
+  Y.Handlebars.registerHelper('show_units', function(units) {
+    var template;
+    var numUnits = units.length;
+    // TODO: different visualization based on the viewport size.
+    if (numUnits <= 25) {
+      template = Templates.show_units_large;
+    } else if (numUnits <= 50) {
+      template = Templates.show_units_medium;
+    } else if (numUnits <= 250) {
+      template = Templates.show_units_small;
+    } else {
+      template = Templates.show_units_tiny;
+    }
+    return template({units: units});
+  });
+
+  // Translate the given state to the matching style.
+  Y.Handlebars.registerHelper('state_to_style', function(state) {
+    // Using a closure to avoid the second argument to be passed through.
+    return utils.stateToStyle(state);
+  });
 
   var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
 
@@ -469,7 +540,7 @@ YUI.add('juju-view-service', function(Y) {
 
     events: {
       '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'},
-      'div.thumbnail': {click: function(ev) {
+      'div.unit': {click: function(ev) {
         console.log('Unit clicked', ev.currentTarget.get('id'));
         this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
       }},
@@ -503,20 +574,34 @@ YUI.add('juju-view-service', function(Y) {
 
     _destroyCallback: function(ev) {
       var db = this.get('app').db,
+          app = this.get('app'),
           service = this.get('model'),
           service_id = service.get('id');
-      db.services.remove(service);
-      db.relations.remove(
-          db.relations.filter(
-          function(r) {
-            return Y.Array.some(r.get('endpoints'), function(ep) {
-              return ep[0] === service_id;
-            });
-          }
-          ));
-      this.panel.hide();
-      this.panel.destroy();
-      this.fire('showEnvironment');
+
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error destroying service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        db.services.remove(service);
+        db.relations.remove(
+            db.relations.filter(
+            function(r) {
+              return Y.Array.some(r.get('endpoints'), function(ep) {
+                return ep[0] === service_id;
+              });
+            }
+            ));
+        this.panel.hide();
+        this.panel.destroy();
+        this.fire('showEnvironment');
+      }
     },
 
     resetUnits: function() {
@@ -588,32 +673,69 @@ YUI.add('juju-view-service', function(Y) {
     _addUnitCallback: function(ev) {
       var service = this.get('model'),
           service_id = service.get('id'),
+          app = this.get('app'),
           db = this.get('app').db,
           unit_names = ev.result || [];
-      console.log('_addUnitCallback with: ', arguments);
-      // Received acknowledgement message for the 'add_units' operation.
-      // ev.results is an array of the new unit ids to be created.
-      db.units.add(
-          Y.Array.map(unit_names, function(unit_id) {
-            return {id: unit_id,
-              agent_state: 'pending'};
-          }));
-      service.set(
-          'unit_count', service.get('unit_count') + unit_names.length);
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error adding unit',
+              message: ev.num_units + ' units',
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        db.units.add(
+            Y.Array.map(unit_names, function(unit_id) {
+              return {id: unit_id,
+                agent_state: 'pending'};
+            }));
+        service.set(
+            'unit_count', service.get('unit_count') + unit_names.length);
+      }
       db.fire('update');
       // View is redrawn so we do not need to enable field.
     },
 
     _removeUnitCallback: function(ev) {
       var service = this.get('model'),
+          app = this.get('app'),
           db = this.get('app').db,
           unit_names = ev.unit_names;
       console.log('_removeUnitCallback with: ', arguments);
-      Y.Array.each(unit_names, function(unit_name) {
-        db.units.remove(db.units.getById(unit_name));
-      });
-      service.set(
-          'unit_count', service.get('unit_count') - unit_names.length);
+
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: (function() {
+                if (!ev.unit_names || ev.unit_names.length < 2) {
+                  return 'Error removing unit';
+                }
+                return 'Error removing units';
+              })(),
+              message: (function() {
+                if (!ev.unit_names || ev.unit_names.length === 0) {
+                  return '';
+                }
+                if (ev.unit_names.length > 1) {
+                  return 'Unit names: ' + ev.unit_names.join(', ');
+                }
+                return 'Unit name: ' + ev.unit_names[0];
+              })(),
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        Y.Array.each(unit_names, function(unit_name) {
+          db.units.remove(db.units.getById(unit_name));
+        });
+        service.set(
+            'unit_count', service.get('unit_count') - unit_names.length);
+      }
       db.fire('update');
       // View is redrawn so we do not need to enable field.
     }

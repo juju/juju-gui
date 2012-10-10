@@ -19,7 +19,11 @@ YUI.add('juju-charm-search', function(Y) {
       this.delay = utils.Delayer();
     },
     render: function() {
-      this.get('container').setHTML(this.template({}));
+      // We only need to render once.
+      if (!this._rendered) {
+        this.get('container').setHTML(this.template({}));
+        this._rendered = true;
+      }
       return this;
     },
     events: {

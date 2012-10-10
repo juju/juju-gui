@@ -37,24 +37,28 @@
           { id: 'cs:precise/mysql',
             description: 'A DB',
             config:
-                { option0:
-                      { description: 'The first option.',
-                        type: 'string'},
-                  option1: { description: 'The second option.',
-                    type: 'boolean'},
-                  option2:
-                      { description: 'The third option.',
-                        type: 'boolean'},
-                  intOption:
-                      { description: 'An int option with no default value.',
-                        type: 'int'},
-                  intOptionWithDefault:
-                      { description: 'An int option with no default value.',
-                        type: 'int',
-                        'default': 1},
-                  floatOption:
-                      { description: 'A float option with no default value.',
-                        type: 'float'}}});
+                { options:
+                      { option0:
+                            { description: 'The first option.',
+                              type: 'string'},
+                        option1: { description: 'The second option.',
+                          type: 'boolean'},
+                        option2:
+                            { description: 'The third option.',
+                              type: 'boolean'},
+                        intOption:
+                            { description:
+                                  'An int option with no default value.',
+                              type: 'int'},
+                        intOptionWithDefault:
+                            { description:
+                                  'An int option with no default value.',
+                              type: 'int',
+                              'default': 1},
+                        floatOption:
+                            { description:
+                                  'A float option with no default value.',
+                              type: 'float'}}}});
 
       db.charms.add([charm]);
       app = { env: env, db: db,
@@ -143,7 +147,10 @@
           view = new ServiceConfigView({
             container: container,
             model: service,
-            app: app
+            app: (function() {
+              app.getModelURL = function() {};
+              return app;
+            })()
           }).render();
 
       // Clicking on the "Update" button disables it until the RPC
