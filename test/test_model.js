@@ -304,7 +304,7 @@
          unit_data.service.should.eql(['mysql', 'mysql']);
          unit_data.number.should.eql([0, 1]);
        });
-    it.only('RelationList.has_relations_for_endpoint should do what it says',
+    it('RelationList.has_relations_for_endpoint should do what it says',
         function() {
           var db = new models.Database(),
               service = new models.Service({id: 'mysql', exposed: false}),
@@ -323,13 +323,13 @@
                 'interface': 'thing'
               });
           db.relations.add([rel0, rel1]);
-          db.relations.has_relations_for_endpoint(
+          db.relations.has_relation_for_endpoint(
               {service: 'squid', name: 'cache', type: 'cache'}
           ).should.equal(true);
-          db.relations.has_relations_for_endpoint(
+          db.relations.has_relation_for_endpoint(
               {service: 'mysql', name: 'la', type: 'thing'}
           ).should.equal(true);
-          db.relations.has_relations_for_endpoint(
+          db.relations.has_relation_for_endpoint(
               {service: 'squid', name: 'cache', type: 'http'}
           ).should.equal(false);
         });

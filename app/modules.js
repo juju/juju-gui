@@ -78,9 +78,12 @@ GlobalConfig = {
         },
 
         // Models
+        'juju-endpoints': {
+          fullpath: '/juju-ui/models/endpoints.js'
+        },
 
         'juju-models': {
-          requires: ['model', 'model-list'],
+          requires: ['model', 'model-list', 'juju-endpoints'],
           fullpath: '/juju-ui/models/models.js'
         },
 

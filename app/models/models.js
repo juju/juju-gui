@@ -408,7 +408,7 @@ YUI.add('juju-models', function(Y) {
       _process_delta(this, action, data, {});
     },
 
-    has_relations_for_endpoint: function(ep) {
+    has_relation_for_endpoint: function(ep) {
 	var result = this.toArray().some(function(rel) {
           return Y.Array.some(rel.get('endpoints'), function(rep) {
 	      
