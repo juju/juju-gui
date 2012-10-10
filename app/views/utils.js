@@ -741,7 +741,6 @@ YUI.add('juju-view-utils', function(Y) {
    */
   utils.simplifyState = function(unit) {
     var state = unit.agent_state;
-    // Is this unit's (simplified) state the one we are looking for?
     if ('started' !== state && unit.relation_errors &&
         Y.Object.keys(unit.relation_errors).length) {
       state = 'relation-error';

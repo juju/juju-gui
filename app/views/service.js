@@ -529,6 +529,7 @@ YUI.add('juju-view-service', function(Y) {
       if (filter_state) {
         // Build a matcher that will identify units of the requested state.
         var matcher = function(unit) {
+          // Is this unit's (simplified) state the one we are looking for?
           return utils.simplifyState(unit) === filter_state;
         };
         return Y.Array.filter(units, matcher);

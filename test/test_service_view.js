@@ -705,7 +705,11 @@
         agent_state: 'started',
         relation_errors: {}
       }, {
-        agent_state: 'start-error'
+        agent_state: 'pending',
+        relation_errors: {
+          a: '',
+          b: ''
+        }
       }], filtered = ServiceView.prototype.filterUnits('error', units);
 
       assert.equal(1, filtered.length);
