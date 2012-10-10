@@ -136,7 +136,7 @@ describe('charm configuration', function() {
     container.one('#charm-deploy').simulate('click');
     received_service_name.should.equal('aaa');
     received_charm_url.should.equal('cs:precise/mysql');
-    received_num_units.should.equal('24');
+    received_num_units.should.equal(24);
     received_config.should.eql({option0: 'cows'});
   });
 

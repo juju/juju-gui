@@ -5,6 +5,6 @@ figure out service config page
 tell the truth about "charm configuration", which does not really
    happen.
 move goBack to base
-
 why does charm initialization get called twice, first with only id and
    derived and later with data from the server?
+fix template re-rendering

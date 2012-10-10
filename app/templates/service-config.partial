@@ -1,17 +1,19 @@
 {{#settings}}
   <div class="control-group">
-    <div class="well">
+    <div class="well control-description">
       {{description}}
     </div>
     <div class="control-label" for="{{name}}">{{name}} ({{type}})</div>
-    <div class="controls">
-      {{#if isBool}}
+    {{#if isBool}}
+    <div class="controls boolean">
       <input class="config-field" type="checkbox" name="{{name}}"
           id="input-{{name}}" {{value}}/>
-      {{else}}
+    </div>
+    {{else}}
+    <div class="controls">
       <input class="config-field" type="text" name="{{name}}"
           id="input-{{name}}" value="{{value}}"/>
-      {{/if}}
     </div>
+    {{/if}}
   </div>
 {{/settings}}
