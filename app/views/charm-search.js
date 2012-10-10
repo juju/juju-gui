@@ -307,6 +307,7 @@ YUI.add('juju-charm-search', function(Y) {
               url = charm.get('id'),
               config = utils.getElementsValuesMapping(container,
                   '#service-config .config-field');
+          numUnits = parseInt(numUnits, 10);
           app.env.deploy(url, serviceName, config, numUnits, function(ev) {
             if (ev.err) {
               console.log(url + ' deployment failed');
