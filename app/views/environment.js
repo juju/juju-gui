@@ -28,6 +28,17 @@ YUI.add('juju-view-environment', function(Y) {
             click: 'hideGraphListPicker'
           },
           // Menu/Controls
+          '.add-relation': {
+            click: function() {
+              var box = this.get('active_service'),
+                  service = this.serviceForBox(box),
+                  context = this.get('active_context');
+              this.service_click_actions
+                        .toggleControlPanel(box, this, context);
+              this.service_click_actions
+                        .addRelationStart(box, this, context);
+            }
+          },
           '.view-service': {
             click: function() {
               // Get the service element
@@ -48,17 +59,6 @@ YUI.add('juju-view-environment', function(Y) {
                         .toggleControlPanel(box, this);
               this.service_click_actions
                         .destroyServiceConfirm(service, this);
-            }
-          },
-          '.add-relation': {
-            click: function() {
-              var box = this.get('active_service'),
-                  service = this.serviceForBox(box),
-                  context = this.get('active_context');
-              this.service_click_actions
-                        .toggleControlPanel(box, this, context);
-              this.service_click_actions
-                        .addRelationStart(box, this, context);
             }
           }
         },
@@ -687,6 +687,7 @@ YUI.add('juju-view-environment', function(Y) {
                 return self.humanizeNumber(d.unit_count);
               });
 
+          // TODO: remove this call and the whole definition
           //this.addControlPanel(node);
 
         },
