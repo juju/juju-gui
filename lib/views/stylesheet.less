@@ -119,10 +119,76 @@ charms.thumbnails.li { height:4em; }
 .state-error { stroke: #FF0000; }
 .state-started { stroke: #000000;}
 .state-pending { stroke: #6597E8;}
-.thumbnail { min-height: 54px;}
+div.state-error {
+    @error-color: #c01c20;
+    background-color: @error-color;
+    color: #FFFFFF;
+    &:hover {
+        background-color: lighten(@error-color, 10%);
+    }
+}
+div.state-started {
+    @started-color: #d8d8d8;
+    background-color: @started-color;
+    &:hover {
+        background-color: lighten(@started-color, 10%);
+    }
+}
+div.state-pending {
+    @pending-color: #fcd305;
+    background-color: @pending-color;
+    &:hover {
+        background-color: lighten(@pending-color, 20%);
+    }
+}
+
+.unit (@min_height: 20px, @border_radius:3px) {
+    padding: 5px;
+    -webkit-border-radius: @border_radius;
+    -moz-border-radius: @border_radius;
+    border-radius: @border_radius;
+    margin-bottom: 0px;
+    min-height: @min_height;
+    cursor: pointer;
+    .agent-state {
+        display: none;
+    }
+}
+
+ul#unit-large div.unit {
+    .unit(40px);
+}
+
+ul#unit-medium div.unit {
+    .unit;
+}
+
+ul#unit-small {
+    margin-left: 0px;
+    > li {
+        margin-bottom: 5px;
+        margin-left: 5px;
+        > div.unit {
+            .unit;
+            width: 1.7em;
+            text-align: center;
+        }
+    }
+}
+
+ul#unit-tiny {
+    margin-left: 0px;
+    > li {
+        margin-bottom: 3px;
+        margin-left: 3px;
+        > div.unit {
+            .unit(0px, 1px);
+        }
+    }
+}
 
 g.service {
-    fill: none; 
+    fill: none;
     stroke: none;
 
     text {
@@ -131,7 +197,7 @@ g.service {
 
     .charm-label { font-size: 0.7em;
         fill: #333333;}
-    .name { 
+    .name {
         font-weight: bold;
         font-family: "Ubuntu";
         font-size: 1.6em; fill: #333333;

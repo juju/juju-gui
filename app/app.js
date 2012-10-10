@@ -359,6 +359,7 @@ YUI.add('juju-gui', function(Y) {
       if (!instance) {
         console.log('new env view');
         this.showView('environment', {
+          app: this,
           db: this.db,
           env: this.env},
         {render: true});
@@ -385,6 +386,16 @@ YUI.add('juju-gui', function(Y) {
     // Model interactions -> move to db layer
     load_service: function(evt) {
       console.log('load service', evt);
+      if (evt.err) {
+        this.db.notifications.add(
+            new models.Notification({
+              title: 'Error loading service',
+              message: 'Service name: ' + evt.service_name,
+              level: 'error'
+            })
+        );
+        return;
+      }
       var svc_data = evt.result;
       var svc = this.db.services.getById(svc_data.name);
       if (!svc) {
