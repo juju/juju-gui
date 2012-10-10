@@ -69,6 +69,20 @@ YUI.add('juju-view-environment', function(Y) {
               self.removeSVGClass(rect, 'hover');
             }
           },
+          '.service image': {
+            mousedown: function(d, self) {
+              console.log('mousedown');
+              /*self.longClickTimer = Y.later(1000, this, function(d, self) {
+                alert('foo');
+              }, [d, self], false);*/
+            },
+            mouseup: function(d, self) {
+              console.log('mouseup');
+              if (self.longClickTimer) {
+                self.longClickTimer.cancel();
+              }
+            }
+          },
           '.unit-count': {
             mouseover: function(d, self) {
               d3.select(this).attr('class', 'unit-count show-count');
@@ -412,6 +426,7 @@ YUI.add('juju-view-environment', function(Y) {
                     return (d.subordinate ? 'subordinate ' : '') + 'service';
                   })
             .call(drag)
+            .on('mousedown', function(d) { console.log("mousedown from d3"); })
             .attr('transform', function(d) {
                 return d.translateStr();});
 
