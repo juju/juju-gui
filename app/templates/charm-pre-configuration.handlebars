@@ -1,5 +1,11 @@
-<div id="charm-description">
-  <div class="charm-nav-back"><i class="icon-arrow-left icon-white"></i> Back</div>
+<div class="charm-nav-back"><i class="icon-arrow-left icon-white"></i> Back</div>
+<div class="charm-description">
+  <div class="charm-section">
+    <h4><i class="icon-chevron-right"></i> foo</h4>
+    <div class="collapsible">
+      stuff
+    </div>
+  </div>
   <div id="charm-configuration">
     <ul class="unstyled">
       {{#with charm}}
@@ -24,10 +30,13 @@
       {{/with}}
     </ul>
     <!-- Service configuration form -->
-    <form id="service-config" class="form-horizontal">
-        {{> service-config}}
-    </form>
-    <input id="charm-deploy" value="Deploy" type="submit"
-        class="btn btn-inverse"></input>
+    <div class="charm-section">
+      <h4><i class="icon-chevron-right"></i> Service Settings</h4>
+      <form id="service-config" class="form-horizontal collapsible">
+          {{> service-config}}
+      </form>
+      <input id="charm-deploy" value="Deploy" type="submit"
+          class="btn btn-inverse"></input>
+    </div>
   </div>
 </div>
