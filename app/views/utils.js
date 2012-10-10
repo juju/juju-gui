@@ -726,6 +726,16 @@ YUI.add('juju-view-utils', function(Y) {
     return 'pending';
   };
 
+  Y.Handlebars.registerHelper('any', function() {
+    var conditions = Y.Array(arguments, 0, true),
+        options = conditions.pop();
+    if (Y.Array.some(conditions, function(c) { return !!c; })) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
   Y.Handlebars.registerHelper('dateformat', function(date, format) {
     // See http://yuilibrary.com/yui/docs/datatype/ for formatting options.
     if (date) {

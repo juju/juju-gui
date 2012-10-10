@@ -302,17 +302,18 @@ describe('charm description', function() {
         { container: container, app: app, model: charm }).render(),
         html = container.one('.charm-description'),
         description_div = html.one('.charm-section div'),
-        interface_div = html.one('div.charm-section:nth-of-type(2) div'),
-        last_change_div = html.one('div.charm-section:nth-of-type(3) div');
+        interface_div = html.one('div.charm-section:nth-of-type(2)'),
+        last_change_div = html.one('div.charm-section:nth-of-type(3)');
     html.one('h3').get('text').trim().should.equal('mysql');
     description_div.getStyle('display').should.equal('block');
-    interface_div.getStyle('display').should.equal('none');
-    last_change_div.getStyle('display').should.equal('none');
+    var _ = expect(interface_div).to.not.exist;
+    _ = expect(last_change_div).to.not.exist;
   });
 
   it('can render fuller charm', function() {
     charm.setAttrs(
         { summary: 'A DB',
+          provides: {munin: {'interface': 'munin-node'}},
           last_change:
               { created: 1349797266.032,
                 committer: 'fred',
@@ -321,13 +322,24 @@ describe('charm description', function() {
         { container: container, app: app, model: charm }).render(),
         html = container.one('.charm-description'),
         description_div = html.one('.charm-section div'),
+        interface_div = html.one('div.charm-section:nth-of-type(2) div'),
         last_change_div = html.one('div.charm-section:nth-of-type(3) div');
     description_div.get('text').should.contain('A DB');
+    interface_div.getStyle('display').should.equal('none');
+    interface_div.get('text').should.contain('munin');
+    last_change_div.getStyle('display').should.equal('none');
     last_change_div.get('text').should.contain('fixed EVERYTHING');
     last_change_div.get('text').should.contain('2012-10-09');
   });
 
   it('can toggle visibility of subsections', function() {
+    charm.setAttrs(
+        { summary: 'A DB',
+          provides: {munin: {'interface': 'munin-node'}},
+          last_change:
+              { created: 1349797266.032,
+                committer: 'fred',
+                message: 'fixed EVERYTHING'}});
     var view = new views.CharmDescriptionView(
         { container: container, app: app, model: charm }).render(),
         html = container.one('.charm-description'),

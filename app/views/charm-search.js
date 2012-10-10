@@ -18,6 +18,7 @@ YUI.add('juju-charm-search', function(Y) {
     },
     render: function() {
       this.get('container').setHTML(this.template({}));
+      return this;
     },
     events: {
       'a.charm-detail': {click: 'showDetails'},
@@ -61,7 +62,7 @@ YUI.add('juju-charm-search', function(Y) {
       this.fire(
           'changePanel',
           { name: 'description',
-            modelId: ev.target.getAttribute('href') });
+            charmId: ev.target.getAttribute('href') });
     },
     deploy: function(ev) {
       var url = ev.currentTarget.getData('url'),
@@ -190,7 +191,6 @@ YUI.add('juju-charm-search', function(Y) {
           '.btn': {click: 'deploy'},
           '.charm-section h4': {click: 'toggleSectionVisibility'}
         },
-        // container, model, modelId, app
         initializer: function() {
           this.bindModelView(this.get('model'));
         },
@@ -284,20 +284,21 @@ YUI.add('juju-charm-search', function(Y) {
         activePanelName = config.name;
         contentNode.get('children').remove();
         contentNode.append(panels[config.name].get('container'));
-        if (config.modelId) {
-          var newModel = app.db.charms.getById(config.modelId);
+        if (config.charmId) {
+          var newModel = app.db.charms.getById(config.charmId);
           if (!newModel) {
-            newModel = app.db.charms.add({id: config.modelId})
+            newModel = app.db.charms.add({id: config.charmId})
               .load({env: app.env, charm_store: app.charm_store});
           }
           newPanel.set('model', newModel);
+        } else { // This is the search panel.
+          newPanel.render();
         }
         newPanel.focus();
       }
     }
 
     Y.Object.each(panels, function(panel) {
-      panel.render();
       panel.on('changePanel', setPanel);
     });
     // The panel starts with the "charmsSearchPanel" visible.
@@ -407,7 +408,6 @@ YUI.add('juju-charm-search', function(Y) {
     'handlebars',
     'event-hover',
     'transition',
-    'event-outside',
-    'datatype'
+    'event-outside'
   ]
 });
