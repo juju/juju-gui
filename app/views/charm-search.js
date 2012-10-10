@@ -302,11 +302,12 @@ YUI.add('juju-charm-search', function(Y) {
           var container = this.get('container'),
               app = this.get('app'),
               serviceName = container.one('#service-name').get('value'),
+              numUnits = container.one('#number-units').get('value'),
               charm = this.get('model'),
               url = charm.get('id'),
               config = utils.getElementsValuesMapping(container,
                   '#service-config .config-field');
-          app.env.deploy(url, serviceName, config, function(ev) {
+          app.env.deploy(url, serviceName, config, numUnits, function(ev) {
             if (ev.err) {
               console.log(url + ' deployment failed');
               app.db.notifications.add(

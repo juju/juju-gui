@@ -371,7 +371,7 @@ describe('charm description', function() {
         { container: container, app: app, model: charm }).render(),
         app_events = [];
     app.fire = function() { app_events.push(arguments); };
-    container.one('.btn.deploy').simulate('click');
+    container.one('.btn-primary').simulate('click');
     app_events[0][0].should.equal('showCharm');
     app_events[0][1].charm_data_url.should.equal('charms/precise/mysql/json');
   });
