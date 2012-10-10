@@ -6,6 +6,9 @@ YUI.add('juju-view-environment', function(Y) {
       Templates = views.Templates,
       models = Y.namespace('juju.models');
 
+  /*
+   * Utility function to get a number from a computed style.
+   */
   function styleToNumber(selector, style, defaultSize) {
     style = style || 'height';
     defaultSize = defaultSize || 0;
@@ -30,25 +33,40 @@ YUI.add('juju-view-environment', function(Y) {
           // Service Related
           '.service': {
             click: 'serviceClick',
-            dblclick: 'serviceDblClick'
-          },
-          '.service-border': {
-            mouseover: function(d, self) {
-              if ((d3.event.relatedTarget &&
-                  d3.event.relatedTarget.nodeName === 'rect') &&
-                  self.hasSVGClass(this, 'selectable-service')) {
-                self.set('potential_drop_point_service', d);
-                self.set('potential_drop_point_rect', this);
-                self.addSVGClass(this, 'hover');
+            dblclick: 'serviceDblClick',
+            mouseenter: function(d, self) {
+              var rect = Y.one(this).one('.service-border');
+              // Do not fire if this service isn't selectable.
+              if (!self.hasSVGClass(rect, 'selectable-service')) {
+                return;
               }
+
+              // Do not fire unless we're within the service box.
+              var container = self.get('container'),
+                  mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+              if (!d.containsPoint(mouse_coords, self.zoom)) {
+                return;
+              }
+              self.set('potential_drop_point_service', d);
+              self.set('potential_drop_point_rect', rect);
+              self.addSVGClass(rect, 'hover');
             },
-            mouseout: function(d, self) {
-              if (d3.event.relatedTarget.nodeName === 'rect' &&
-                  self.hasSVGClass(this, 'hover')) {
-                self.set('potential_drop_point_service', null);
-                self.set('potential_drop_point_rect', null);
-                self.removeSVGClass(this, 'hover');
+            mouseleave: function(d, self) {
+              // Do not fire if we aren't looking for a relation endpoint.
+              if (!self.get('potential_drop_point_rect')) {
+                return;
               }
+
+              // Do not fire if we're within the service box.
+              var container = self.get('container'),
+                  mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+              if (d.containsPoint(mouse_coords, self.zoom)) {
+                return;
+              }
+              var rect = Y.one(this).one('.service-border');
+              self.set('potential_drop_point_service', null);
+              self.set('potential_drop_point_rect', null);
+              self.removeSVGClass(rect, 'hover');
             }
           },
           '.unit-count': {
@@ -176,14 +194,15 @@ YUI.add('juju-view-environment', function(Y) {
             .selectAll('#canvas')
             .append('svg:svg')
             .attr('pointer-events', 'all')
-            .attr('width', '100%')
-            .attr('height', '100%')
+            .attr('width', width)
+            .attr('height', height)
             .append('svg:g')
             .call(zoom)
             .append('g');
 
           vis.append('svg:rect')
-                .attr('fill', 'rgba(255,255,255,0)');
+            .attr('class', 'graph')
+            .attr('fill', 'rgba(255,255,255,0)');
 
           // Bind visualization resizing on window resize.
           Y.on('windowresize', function() {
@@ -687,7 +706,7 @@ YUI.add('juju-view-environment', function(Y) {
           // Drag controls on the add relation button, allowing
           // one to drag a line to create a relation.
           var drag_relation = add_rel.append('line')
-              .attr('class', 'relation pending-relation unused');
+              .attr('class', 'relation pending-relation dragline unused');
           var drag_relation_behavior = d3.behavior.drag()
               .on('dragstart', function(d) {
                 // Get our line, the image, and the current service.
@@ -1033,8 +1052,7 @@ YUI.add('juju-view-environment', function(Y) {
               xscale = this.xscale,
               yscale = this.yscale,
               viewport_height = '100%',
-              viewport_width = parseInt(
-              container.getComputedStyle('width'), 10),
+              viewport_width = '100%',
               svg = container.one('svg'),
               width = 800,
               height = 600;
@@ -1048,13 +1066,14 @@ YUI.add('juju-view-environment', function(Y) {
 
             viewport_height = container.get('winHeight') -
                 styleToNumber('#overview-tasks', 'height', 22) -
-                styleToNumber('.navbar', 'height', 87);
+                styleToNumber('.navbar', 'height', 87) - 1;
+
+            // Attempt to get the viewport width from the overview-tasks bar.
+            viewport_width = styleToNumber('#viewport', 'width', 800);
 
             // Make sure we don't get sized any smaller than 800x600
             viewport_height = Math.max(viewport_height, height);
-            if (container.getComputedStyle('width') < width) {
-              viewport_width = width;
-            }
+            viewport_width = Math.max(viewport_width, width);
           }
           // Set the svg sizes.
           svg.setAttribute('width', viewport_width)
@@ -1068,6 +1087,8 @@ YUI.add('juju-view-environment', function(Y) {
           svg.one('rect')
             .setAttribute('width', width)
             .setAttribute('height', height);
+          container.one('#canvas').setStyle('height', height);
+          container.one('#canvas').setStyle('width', width);
 
           // Reset the scale parameters
           this.xscale.domain([-width / 2, width / 2])

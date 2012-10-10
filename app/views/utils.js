@@ -109,7 +109,7 @@ YUI.add('juju-view-utils', function(Y) {
         model.addTarget(this);
       }
 
-      // If the model gets swapped out, reset targets accordingly.
+      // If the model gets swapped out, reset targets accordingly and rerender.
       this.after('modelChange', function(ev) {
         if (ev.prevVal) {
           ev.prevVal.removeTarget(this);
@@ -117,6 +117,7 @@ YUI.add('juju-view-utils', function(Y) {
         if (ev.newVal) {
           ev.newVal.addTarget(this);
         }
+        this.render();
       });
 
       // Re-render this view when the model changes.
@@ -131,29 +132,6 @@ YUI.add('juju-view-utils', function(Y) {
         return result;
       }
       return null;
-    },
-
-    stateToStyle: function(state, current) {
-      // todo also check relations
-      var classes;
-      switch (state) {
-        case 'pending':
-          classes = 'state-pending';
-          break;
-        case 'started':
-          classes = 'state-started';
-          break;
-        case 'start_error':
-          classes = 'state-error';
-          break;
-        case 'install_error':
-          classes = 'state-error';
-          break;
-        default:
-          Y.log('Unhandled agent state: ' + state, 'debug');
-      }
-      classes = current && classes + ' ' + current || classes;
-      return classes;
     },
 
     humanizeNumber: function(n) {
@@ -188,14 +166,19 @@ YUI.add('juju-view-utils', function(Y) {
     },
 
     addSVGClass: function(selector, class_name) {
+      var self = this;
       if (typeof(selector) === 'string') {
         Y.all(selector).each(function(n) {
           var classes = this.getAttribute('class');
-          this.setAttribute('class', classes + ' ' + class_name);
+          if (!self.hasSVGClass(this, class_name)) {
+            this.setAttribute('class', classes + ' ' + class_name);
+          }
         });
       } else {
         var classes = selector.getAttribute('class');
-        selector.setAttribute('class', classes + ' ' + class_name);
+        if (!self.hasSVGClass(selector, class_name)) {
+          selector.setAttribute('class', classes + ' ' + class_name);
+        }
       }
     },
 
@@ -446,6 +429,30 @@ YUI.add('juju-view-utils', function(Y) {
     return settings;
   };
 
+  utils.stateToStyle = function(state, current) {
+    // TODO: also check relations.
+    var classes;
+    switch (state) {
+      case 'installed':
+      case 'pending':
+      case 'stopped':
+        classes = 'state-pending';
+        break;
+      case 'started':
+        classes = 'state-started';
+        break;
+      case 'install-error':
+      case 'start-error':
+      case 'stop-error':
+        classes = 'state-error';
+        break;
+      default:
+        Y.log('Unhandled agent state: ' + state, 'debug');
+    }
+    classes = current && classes + ' ' + current || classes;
+    return classes;
+  };
+
   utils.validate = function(values, schema) {
     console.group('view.utils.validate');
     console.log('validating', values, 'against', schema);
@@ -561,6 +568,24 @@ YUI.add('juju-view-utils', function(Y) {
 
     Box.getXY = function() {return [this.x, this.y];};
     Box.getWH = function() {return [this.w, this.h];};
+
+    /*
+     * Returns true if a given point in the form [x, y] is within the box.
+     */
+    Box.containsPoint = function(point, transform) {
+      transform = transform || {
+        scale: function() { return 1; },
+        translate: function() { return [0, 0]; }
+      };
+      var s = transform.scale(), tr = transform.translate();
+      if (point[0] > this.x * s + tr[0] &&
+          point[0] < this.x * s + this.w * s + tr[0] &&
+          point[1] > this.y * s + tr[1] &&
+          point[1] < this.y * s + this.h * s + tr[1]) {
+        return true;
+      }
+      return false;
+    };
 
     /*
      * Return the 50% points along each side as xy pairs
@@ -741,11 +766,59 @@ YUI.add('juju-view-utils', function(Y) {
         return agent_state;
       });
 
+  Y.Handlebars.registerHelper('any', function() {
+    var conditions = Y.Array(arguments, 0, true),
+        options = conditions.pop();
+    if (Y.Array.some(conditions, function(c) { return !!c; })) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
+  Y.Handlebars.registerHelper('dateformat', function(date, format) {
+    // See http://yuilibrary.com/yui/docs/datatype/ for formatting options.
+    if (date) {
+      return Y.Date.format(date, {format: format});
+    }
+    return '';
+  });
+
+  Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
+    // console.log('helper', iface_decl, options, this);
+    var result = [];
+    var ret = '';
+    Y.Object.each(iface_decl, function(value, name) {
+      if (name) {
+        result.push({
+          name: name, 'interface': value['interface']
+        });
+      }
+    });
+
+    if (result && result.length > 0) {
+      for (var x = 0, j = result.length; x < j; x += 1) {
+        ret = ret + options.fn(result[x]);
+      }
+    } else {
+      ret = 'None';
+    }
+    return ret;
+  });
+
+  Y.Handlebars.registerHelper('markdown', function(text) {
+    if (!text || text === undefined) {return '';}
+    return new Y.Handlebars.SafeString(
+        Y.Markdown.toHTML(text));
+  });
+
 }, '0.1.0', {
   requires: ['base-build',
     'handlebars',
     'node',
     'view',
     'panel',
-    'json-stringify']
+    'json-stringify',
+    'gallery-markdown',
+    'datatype-date-format']
 });
