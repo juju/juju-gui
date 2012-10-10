@@ -80,7 +80,7 @@ describe('charm search', function() {
     field.simulate('keyup');
 
     searchTriggered.should.equal(true);
-    node.one('.charm-entry .btn').getData('info-url').should.equal(
+    node.one('.charm-entry .btn.deploy').getData('info-url').should.equal(
         'this is my URL');
   });
 
@@ -240,7 +240,7 @@ describe('charm search', function() {
        // Now the deploy button should appear and is clickable.  Since the
        // service is already deployed, the showCharm event should be fired
        // instead of the deploy method.
-       var deployButton = node.one('.charm-entry .btn');
+       var deployButton = node.one('.charm-entry .btn.deploy');
        deployButton.simulate('click');
        deployed.should.equal(false);
        showCharmCalled.should.equal(true);
@@ -362,7 +362,7 @@ describe('charm description', function() {
         { container: container, app: app, model: charm }).render(),
         app_events = [];
     app.fire = function() { app_events.push(arguments); };
-    container.one('.btn').simulate('click');
+    container.one('.btn.deploy').simulate('click');
     app_events[0][0].should.equal('showCharm');
     app_events[0][1].charm_data_url.should.equal('charms/precise/mysql/json');
   });

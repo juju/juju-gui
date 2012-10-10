@@ -322,10 +322,11 @@ YUI.add('juju-charm-search', function(Y) {
               settings = utils.extractServiceSettings(config.options);
             }
             container.setHTML(this.template(
-              { charm: charm.getAttrs(),
-                settings: settings}));
+                { charm: charm.getAttrs(),
+                  settings: settings}));
           } else {
-            container.setHTML('<div class="alert">Waiting on charm data...</div>');
+            container.setHTML(
+                '<div class="alert">Waiting on charm data...</div>');
           }
         },
         focus: function() {
@@ -339,9 +340,10 @@ YUI.add('juju-charm-search', function(Y) {
           ev.halt();
           this.fire('changePanel', { name: 'charms' });
         },
-        onCharmDeployClicked: function(evt, charm) {
+        onCharmDeployClicked: function(evt) {
           // XXX: Look in utils for validator called 'validate'.
           var container = this.get('container'),
+              app = this.get('app'),
               serviceName = container.one('#service-name').get('value'),
               charm = this.get('model'),
               url = charm.get('id'),

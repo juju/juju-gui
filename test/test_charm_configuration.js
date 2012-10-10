@@ -23,10 +23,11 @@ describe('charm configuration', function() {
 
   it('must show loading message if the charm is not loaded', function() {
     var container = Y.Node.create(),
-        charm = new models.Charm({id: 'precise/mysql'});
-    view = views.CharmConfigurationView(
-      { container: container,
-        model: charm});
+        charm = new models.Charm({id: 'precise/mysql'}),
+        view = views.CharmConfigurationView(
+        { container: container,
+          model: charm});
     view.render();
     assert.include(container.getHTML(), 'Waiting on charm data');
   });
+});
