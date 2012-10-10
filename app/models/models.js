@@ -194,6 +194,7 @@ YUI.add('juju-models', function(Y) {
       revision: {readOnly: true}, // calculated
       scheme: {readOnly: true}, // calculated
       series: {readOnly: true}, // calculated
+      store_revision: {writeOnce: true},
       summary: {writeOnce: true},
       url: {writeOnce: true}
     }

@@ -513,8 +513,9 @@ g.unit {
         text-transform: uppercase;
         color: white;
         font-weight: bold;
+        cursor: pointer;
     }
-    #charm-description {
+    .charm-description {
         padding: 1ex 1em;
         h3 {
             text-transform: capitalize;
@@ -527,11 +528,10 @@ g.unit {
             h4 {
                 text-transform: uppercase;
                 border-bottom: 1px dotted black;
-                font-size: x-small
+                cursor: pointer;
+                margin-top: 1ex;
             }
-            font-size: x-small;
             h5 {
-                font-size: x-small;
                 margin-top: 1ex;
                 &:first-child {
                     margin-top: 0;
@@ -540,9 +540,16 @@ g.unit {
             > div {
                 overflow: hidden;
             }
+            .commitmessage {
+                padding-top: 0.8ex;
+                padding-left: 1em;
+                font-style: italic;
+                white-space: pre-wrap;
+            }
         }
         height: 430px;
         overflow-y: auto;
+        overflow-x: hidden;
     }
     #charm-configuration {
         padding: 1ex 1em;

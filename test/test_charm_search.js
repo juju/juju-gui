@@ -51,8 +51,6 @@ describe('charm search', function() {
     container.getStyle('display').should.equal('block');
     panel.toggle();
     container.getStyle('display').should.equal('none');
-
-
   });
 
   it('must be able to search', function() {
@@ -137,7 +135,7 @@ describe('charm search', function() {
     field.set('value', 'aaa');
     field.simulate('keyup');
     node.one('a.charm-detail').simulate('click');
-    node.one('#charm-description > h3').get('text').trim()
+    node.one('.charm-description > h3').get('text').trim()
       .should.equal('membase');
   });
 
@@ -302,38 +300,49 @@ describe('charm description', function() {
   it('can render incomplete charm', function() {
     var view = new views.CharmDescriptionView(
         { container: container, app: app, model: charm }).render(),
-        html = container.one('#charm-description'),
+        html = container.one('.charm-description'),
         description_div = html.one('.charm-section div'),
-        interface_div = html.one('div.charm-section:nth-of-type(2) div'),
-        last_change_div = html.one('div.charm-section:nth-of-type(3) div');
-    view.get('modelId').should.equal(charm.get('id'));
+        interface_div = html.one('div.charm-section:nth-of-type(2)'),
+        last_change_div = html.one('div.charm-section:nth-of-type(3)');
     html.one('h3').get('text').trim().should.equal('mysql');
     description_div.getStyle('display').should.equal('block');
-    interface_div.getStyle('display').should.equal('none');
-    last_change_div.getStyle('display').should.equal('none');
+    var _ = expect(interface_div).to.not.exist;
+    _ = expect(last_change_div).to.not.exist;
   });
 
   it('can render fuller charm', function() {
     charm.setAttrs(
         { summary: 'A DB',
+          provides: {munin: {'interface': 'munin-node'}},
           last_change:
               { created: 1349797266.032,
                 committer: 'fred',
                 message: 'fixed EVERYTHING'}});
     var view = new views.CharmDescriptionView(
         { container: container, app: app, model: charm }).render(),
-        html = container.one('#charm-description'),
+        html = container.one('.charm-description'),
         description_div = html.one('.charm-section div'),
+        interface_div = html.one('div.charm-section:nth-of-type(2) div'),
         last_change_div = html.one('div.charm-section:nth-of-type(3) div');
     description_div.get('text').should.contain('A DB');
+    interface_div.getStyle('display').should.equal('none');
+    interface_div.get('text').should.contain('munin');
+    last_change_div.getStyle('display').should.equal('none');
     last_change_div.get('text').should.contain('fixed EVERYTHING');
-    last_change_div.get('text').should.contain('2012');
+    last_change_div.get('text').should.contain('2012-10-09');
   });
 
   it('can toggle visibility of subsections', function() {
+    charm.setAttrs(
+        { summary: 'A DB',
+          provides: {munin: {'interface': 'munin-node'}},
+          last_change:
+              { created: 1349797266.032,
+                committer: 'fred',
+                message: 'fixed EVERYTHING'}});
     var view = new views.CharmDescriptionView(
         { container: container, app: app, model: charm }).render(),
-        html = container.one('#charm-description'),
+        html = container.one('.charm-description'),
         section_container = html.one('div.charm-section:nth-of-type(3)');
     section_container.one('div').getStyle('display').should.equal('none');
     assert(section_container.one('h4 i').hasClass('icon-chevron-right'));
@@ -365,30 +374,6 @@ describe('charm description', function() {
     container.one('.btn.deploy').simulate('click');
     app_events[0][0].should.equal('showCharm');
     app_events[0][1].charm_data_url.should.equal('charms/precise/mysql/json');
-  });
-
-  // CharmPanelBaseView
-  it('can get a charm by setting the modelId', function() {
-    var view = new views.CharmDescriptionView(
-        { container: container, app: app });
-    view.set('modelId', charm.get('id'));
-    view.get('model').should.equal(charm);
-    // The view rendered automatically.
-    container.one('#charm-description h3').get('text').trim()
-          .should.equal('mysql');
-  });
-
-  it('can load a charm by setting the modelId', function() {
-    charm_store_data.push(
-        { responseText: Y.JSON.stringify({ summary: 'wowza' }) });
-    var view = new views.CharmDescriptionView(
-        { container: container, app: app });
-    view.set('modelId', 'cs:precise/whatever');
-    view.get('model').get('package_name').should.equal('whatever');
-    view.get('model').get('summary').should.equal('wowza');
-    container.one('#charm-description').get('text').should.contain('wowza');
-    app.db.charms.getById(
-        'cs:precise/whatever').get('summary').should.equal('wowza');
   });
 
 });
