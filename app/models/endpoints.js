@@ -11,6 +11,7 @@ YUI.add('juju-endpoints', function(Y) {
 
     console.group("Endpoints for", sid);
     console.time("Endpoint Match");
+
     function epic(svcName, relInfo) {
       return {service: svcName,
         name: relInfo.name,
@@ -37,7 +38,12 @@ YUI.add('juju-endpoints', function(Y) {
           provides.push(epic(sid, pdata));
         });
 
-    console.log("available requires", requires, "provides", provides);
+    // Every non subordinate implicitly provides this.
+      if (!svc.get('subordinate')) {
+      provides.push(epic(sid, {'interface': 'juju-info', 'name': 'juju-info'}));
+    }
+
+    console.log("Available requires", requires, "provides", provides);
 
     db.services.each(function(tgt) {
       var tid = tgt.get('id');
@@ -53,9 +59,13 @@ YUI.add('juju-endpoints', function(Y) {
           ep_map[tid]['requires'],
           function(rdata) {
             var ep = epic(tid, rdata);
-            console.log(" checking required", ep);
+            //console.log(" checking required", ep);
 
+            // This block is handling a strange case, that probably
+            // never happens. A subordinate relation where the
+            // subordinate provides to the container.
             if (tgt.get('subordinate') && rdata.scope === 'container') {
+              // TODO: sid isn't used by the has_relation implementation
               if (db.relations.has_relation_for_endpoint(ep, sid)) {
                 return;
               }
@@ -65,7 +75,6 @@ YUI.add('juju-endpoints', function(Y) {
             if (db.relations.has_relation_for_endpoint(ep)) {
               return;
             }
-
 
             Y.Array.each(provides, function(oep) {
               if (oep.type === ep.type) {
@@ -78,13 +87,29 @@ YUI.add('juju-endpoints', function(Y) {
          ep_map[tid]['provides'],
          function(pdata) {
            var ep = epic(tid, pdata);
-           console.log(" checking provided", ep);
-           Y.Array.each(requires, function(oep) {
-             if (oep.type === ep.type) {
-               targets.push(ep);
-             }
+           //console.log(" checking provided", ep);
+           Y.Array.each(requires,
+             function(oep) {
+               if (oep.type === ep.type) {
+                 targets.push(ep);
+               }
            });
+       });
 
+       // Check if we're a subordinate matching to other services.
+       // TODO: Think through again with more sleep.
+       // TODO: we need to match on name for ep, else we'll end up not allowing
+       //       more than one subordinate relation.
+       var ep = epic(tid, {'interface': 'juju-info', 'name': 'juju-info'});
+       Y.Array.each(requires,
+         function(oep) {
+           if (oep.type === ep.type) {
+             // Filter existing subordinates
+             if (db.relations.has_relation_for_endpoint(ep, sid)) {
+                return;
+             }
+             targets.push(ep);
+           }
        });
 
     });
