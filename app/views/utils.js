@@ -109,7 +109,7 @@ YUI.add('juju-view-utils', function(Y) {
         model.addTarget(this);
       }
 
-      // If the model gets swapped out, reset targets accordingly.
+      // If the model gets swapped out, reset targets accordingly and rerender.
       this.after('modelChange', function(ev) {
         if (ev.prevVal) {
           ev.prevVal.removeTarget(this);
@@ -117,6 +117,7 @@ YUI.add('juju-view-utils', function(Y) {
         if (ev.newVal) {
           ev.newVal.addTarget(this);
         }
+        this.render();
       });
 
       // Re-render this view when the model changes.
@@ -749,6 +750,52 @@ YUI.add('juju-view-utils', function(Y) {
     return 'pending';
   };
 
+  Y.Handlebars.registerHelper('any', function() {
+    var conditions = Y.Array(arguments, 0, true),
+        options = conditions.pop();
+    if (Y.Array.some(conditions, function(c) { return !!c; })) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+
+  Y.Handlebars.registerHelper('dateformat', function(date, format) {
+    // See http://yuilibrary.com/yui/docs/datatype/ for formatting options.
+    if (date) {
+      return Y.Date.format(date, {format: format});
+    }
+    return '';
+  });
+
+  Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
+    // console.log('helper', iface_decl, options, this);
+    var result = [];
+    var ret = '';
+    Y.Object.each(iface_decl, function(value, name) {
+      if (name) {
+        result.push({
+          name: name, 'interface': value['interface']
+        });
+      }
+    });
+
+    if (result && result.length > 0) {
+      for (var x = 0, j = result.length; x < j; x += 1) {
+        ret = ret + options.fn(result[x]);
+      }
+    } else {
+      ret = 'None';
+    }
+    return ret;
+  });
+
+  Y.Handlebars.registerHelper('markdown', function(text) {
+    if (!text || text === undefined) {return '';}
+    return new Y.Handlebars.SafeString(
+        Y.Markdown.toHTML(text));
+  });
+
 
 }, '0.1.0', {
   requires: ['base-build',
@@ -756,5 +803,7 @@ YUI.add('juju-view-utils', function(Y) {
     'node',
     'view',
     'panel',
-    'json-stringify']
+    'json-stringify',
+    'gallery-markdown',
+    'datatype-date-format']
 });
