@@ -309,6 +309,8 @@ YUI.add('juju-charm-search', function(Y) {
         }
       });
 
+  views.CharmDescriptionView = CharmDescriptionView;
+
   var CharmConfigurationView = Y.Base.create(
       'CharmCollectionView', Y.View, [CharmPanelBaseView], {
         template: views.Templates['charm-pre-configuration'],
@@ -373,6 +375,7 @@ YUI.add('juju-charm-search', function(Y) {
         }
       });
 
+  views.CharmConfigurationView = CharmConfigurationView;
 
   // Creates the "_instance" object
   function createInstance(config) {

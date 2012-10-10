@@ -1,25 +1,7 @@
 FILES=$(shell bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js | grep -v server.js)
 NODE_TARGETS=node_modules/chai node_modules/d3 node_modules/jshint \
 	node_modules/yui
-TEMPLATE_TARGETS=\
-	app/templates/charm-collection.handlebars \
-	app/templates/charm-description.handlebars \
-	app/templates/charm.handlebars \
-	app/templates/charm-pre-configuration.handlebars \
-	app/templates/charm-search-pop.handlebars \
-	app/templates/charm-search-result-entries.handlebars \
-	app/templates/charm-search-result.handlebars \
-	app/templates/notifications.handlebars \
-	app/templates/notifications_overview.handlebars \
-	app/templates/overview.handlebars \
-	app/templates/service-config.handlebars \
-	app/templates/service-config.partial \
-	app/templates/service-constraints.handlebars \
-	app/templates/service-constraints.partial \
-	app/templates/service.handlebars \
-	app/templates/service-header.partial \
-	app/templates/service-relations.handlebars \
-	app/templates/unit.handlebars
+TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 
 all: prep test
 
