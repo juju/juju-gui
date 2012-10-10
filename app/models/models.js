@@ -408,6 +408,20 @@ YUI.add('juju-models', function(Y) {
       _process_delta(this, action, data, {});
     },
 
+    has_relations_for_endpoint: function(ep) {
+	var result = this.toArray().some(function(rel) {
+          return Y.Array.some(rel.get('endpoints'), function(rep) {
+	      
+	      var x = (ep.service === rep[0] &&
+		      ep.name === rep[1].name &&
+		      ep.type === rel.get('interface'));
+	      console.log("Compare", x, rep, ep);
+	      return x;
+	  });
+	});
+	return result;
+    },
+
     get_relations_for_service: function(service, asList) {
       var service_id = service.get('id');
       return this.filter({asList: Boolean(asList)}, function(relation) {
