@@ -84,14 +84,7 @@ describe('Relation mapping logic', function() {
   });
 
   function loadFixture(url) {
-    var parseJSON = {
-      // In tests we wait for the fixture
-      sync: true,
-      failure: function(x, o) {
-        console.warn('Failed to load fixture');
-      }
-    };
-    return Y.JSON.parse(Y.io(url, parseJSON).responseText);
+    return Y.JSON.parse(Y.io(url, {sync: true}).responseText);
   }
 
   afterEach(function(done) {
