@@ -64,7 +64,7 @@ describe('Relation mapping logic', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-        'io', 'json-parse', 'array-extras'], function(Y) {
+      'io', 'json-parse', 'array-extras'], function(Y) {
       function loadFixture(url) {
         return Y.JSON.parse(Y.io(url, {sync: true}).responseText);
       }
@@ -74,9 +74,9 @@ describe('Relation mapping logic', function() {
     });
   });
 
-  
+
   beforeEach(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-models',    
+    Y = YUI(GlobalConfig).use(['juju-models',
                                'juju-tests-utils',
                                'juju-controllers'],
     function(Y) {

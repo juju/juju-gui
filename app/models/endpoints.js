@@ -43,7 +43,7 @@ YUI.add('juju-endpoints', function(Y) {
 
 
     Y.each(
-        ep_map[sid]['requires'],
+        ep_map[sid].requires,
         function(rdata) {
           var ep = epic(sid, rdata);
           if (svc.get('subordinate') &&
@@ -57,7 +57,7 @@ YUI.add('juju-endpoints', function(Y) {
         });
 
     Y.each(
-        ep_map[sid]['provides'],
+        ep_map[sid].provides,
         function(pdata) {
           provides.push(epic(sid, pdata));
         });
@@ -77,10 +77,10 @@ YUI.add('juju-endpoints', function(Y) {
 
       console.log(
           'Matching against service', tid,
-          ep_map[tid]['requires'], ep_map[tid]['provides']);
+          ep_map[tid].requires, ep_map[tid].provides);
 
       Y.each(
-          ep_map[tid]['requires'],
+          ep_map[tid].requires,
           function(rdata) {
             var ep = epic(tid, rdata);
             //console.log(" checking required", ep);
@@ -108,7 +108,7 @@ YUI.add('juju-endpoints', function(Y) {
           });
 
       Y.each(
-          ep_map[tid]['provides'],
+          ep_map[tid].provides,
           function(pdata) {
             var ep = epic(tid, pdata);
             //console.log(" checking provided", ep);
