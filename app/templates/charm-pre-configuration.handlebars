@@ -11,6 +11,9 @@
       {{#with charm}}
       <li class="charm-entry">
         <div class="control-group">
+          <div class="well control-description">
+            Name of the service to be deployed.  Must be unique.
+          </div>
           <div class="control-label" for="service-name">Service name:</div>
           <div class="controls">
             <input class="config-field" type="text" name="service-name"
@@ -20,6 +23,9 @@
       </li>
       <li class="charm-entry">
         <div class="control-group">
+          <div class="well control-description">
+            Number of units to deploy for this service.
+          </div>
           <div class="control-label" for="number-units">Number of units:</div>
           <div class="controls">
             <input class="config-field" type="text" name="number-units"
@@ -36,7 +42,7 @@
           {{> service-config}}
       </form>
       <input id="charm-deploy" value="Deploy" type="submit"
-          class="btn btn-inverse"></input>
+          class="btn btn-primary"></input>
     </div>
   </div>
 </div>
