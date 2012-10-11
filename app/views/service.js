@@ -228,6 +228,7 @@ YUI.add('juju-view-service', function(Y) {
               env = this.get('app').env,
               app = this.get('app'),
               db = this.get('app').db;
+
           if (ev.err) {
             db.notifications.add(
                 new models.Notification({
@@ -244,6 +245,13 @@ YUI.add('juju-view-service', function(Y) {
           } else {
             env.get_service(
                 service.get('id'), Y.bind(app.load_service, app));
+            
+            // The usual result of a successful request is a page refresh.
+            // Therefore, we need to set this delay in order to show the "success"
+            // message after the page page refresh.
+            setTimeout(function() {
+              utils.showSuccessMessage(container, 'Settings updated');
+            }, 1000);
           }
         },
 
@@ -439,6 +447,7 @@ YUI.add('juju-view-service', function(Y) {
               env = this.get('app').env,
               app = this.get('app'),
               db = this.get('app').db;
+
           if (ev.err) {
             db.notifications.add(
                 new models.Notification({
@@ -454,6 +463,13 @@ YUI.add('juju-view-service', function(Y) {
 
           } else {
             env.get_service(service.get('id'), Y.bind(app.load_service, app));
+
+            // The usual result of a successful request is a page refresh.
+            // Therefore, we need to set this delay in order to show the "success"
+            // message after the page page refresh.
+            setTimeout(function() {
+              utils.showSuccessMessage(container, 'Settings updated');
+            }, 1000);
           }
         }
       });
