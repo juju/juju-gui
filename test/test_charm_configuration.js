@@ -176,13 +176,13 @@ describe('charm configuration', function() {
     view.waitingToShow.should.equal(false);
     controls.item(0).simulate('mousemove');
     tooltip.get('srcNode').get('text').should.equal(
-      'Name of the service to be deployed.  Must be unique.');
+        'Name of the service to be deployed.  Must be unique.');
     view.waitingToShow.should.equal(true);
     // Reset the 'waitingToShow' since mouseleave cannot be simulated.
     view.waitingToShow = false;
     controls.item(1).simulate('mousemove');
     tooltip.get('srcNode').get('text').should.equal(
-      'Number of units to deploy for this service.');
+        'Number of units to deploy for this service.');
     view.waitingToShow.should.equal(true);
     view.waitingToShow = false;
     controls.item(2).simulate('mousemove');

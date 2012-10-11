@@ -420,7 +420,7 @@ YUI.add('juju-charm-search', function(Y) {
         configurationPanel = new CharmConfigurationView(
               { container: configurationPanelNode,
                 app: app,
-                tooltipDelay: testing ? 0: _tooltipDelay}),
+                tooltipDelay: testing ? 0 : _tooltipDelay}),
         panels =
               { charms: charmsSearchPanel,
                 description: descriptionPanel,
