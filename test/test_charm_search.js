@@ -1,26 +1,27 @@
 'use strict';
 
 describe('charm search', function() {
-  var Y, juju, models, views,
+  var Y, models, views,
       searchResult = '{"results": [{"data_url": "this is my URL", ' +
       '"name": "membase", "series": "precise", "summary": ' +
       '"Membase Server", "relevance": 8.728194117350437, ' +
       '"owner": "charmers"}]}';
 
-  before(function() {
-    Y = YUI(GlobalConfig).use([
-      'juju-models',
-      'juju-views',
-      'juju-gui',
-      'juju-env',
-      'juju-tests-utils',
-      'node-event-simulate'],
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        'juju-models',
+        'juju-views',
+        'juju-gui',
+        'juju-env',
+        'juju-tests-utils',
+        'node-event-simulate',
+        'node',
 
-    function(Y) {
-      juju = Y.namespace('juju');
-      models = Y.namespace('juju.models');
-      views = Y.namespace('juju.views');
-    });
+        function(Y) {
+          models = Y.namespace('juju.models');
+          views = Y.namespace('juju.views');
+          done();
+        });
 
   });
 
@@ -50,8 +51,6 @@ describe('charm search', function() {
     container.getStyle('display').should.equal('block');
     panel.toggle();
     container.getStyle('display').should.equal('none');
-
-
   });
 
   it('must be able to search', function() {
@@ -111,7 +110,7 @@ describe('charm search', function() {
   });
 
   it('must be able to trigger charm details', function() {
-    var navigateTriggered = false,
+    var db = new models.Database(),
         panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
           charm_store: {
             sendRequest: function(params) {
@@ -125,22 +124,19 @@ describe('charm search', function() {
               });
             }
           },
-          app: {
-            navigate: function() {
-              navigateTriggered = true;
-            }
-          },
+          app: {db: db},
           testing: true
         }),
         node = panel.node;
+    db.charms.add({id: 'cs:precise/membase'});
 
     panel.show();
     var field = node.one('.charms-search-field');
     field.set('value', 'aaa');
     field.simulate('keyup');
     node.one('a.charm-detail').simulate('click');
-
-    navigateTriggered.should.equal(true);
+    node.one('.charm-description > h3').get('text').trim()
+      .should.equal('membase');
   });
 
   it('must deploy a charm for a new service when the button is clicked',
@@ -247,5 +243,137 @@ describe('charm search', function() {
        deployed.should.equal(false);
        showCharmCalled.should.equal(true);
      });
+
+});
+
+describe('charm description', function() {
+  var Y, models, views, conn, env, container, db, app, charm,
+      charm_store_data, charm_store;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        'juju-models',
+        'juju-views',
+        'juju-gui',
+        'juju-env',
+        'juju-tests-utils',
+        'node-event-simulate',
+        'node',
+        'datasource-local',
+        'json-stringify',
+
+        function(Y) {
+          models = Y.namespace('juju.models');
+          views = Y.namespace('juju.views');
+          done();
+        });
+
+  });
+
+  beforeEach(function() {
+    conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
+    env = new (Y.namespace('juju')).Environment({conn: conn});
+    env.connect();
+    conn.open();
+    container = Y.Node.create('<div id="test-container" />');
+    Y.one('#main').append(container);
+    db = new models.Database();
+    charm = db.charms.add({ id: 'cs:precise/mysql' });
+    charm_store_data = [];
+    charm_store = new Y.DataSource.Local({source: charm_store_data});
+    app = { db: db, env: env, charm_store: charm_store };
+  });
+
+  afterEach(function() {
+    container.remove(true);
+    db.destroy();
+    env.destroy();
+  });
+
+  it('can render no charm', function() {
+    var view = new views.CharmDescriptionView(
+        { container: container, app: app }).render();
+    container.one('div.alert').get('text').trim().should.equal(
+        'Waiting on charm data...');
+  });
+
+  it('can render incomplete charm', function() {
+    var view = new views.CharmDescriptionView(
+        { container: container, app: app, model: charm }).render(),
+        html = container.one('.charm-description'),
+        description_div = html.one('.charm-section div'),
+        interface_div = html.one('div.charm-section:nth-of-type(2)'),
+        last_change_div = html.one('div.charm-section:nth-of-type(3)');
+    html.one('h3').get('text').trim().should.equal('mysql');
+    description_div.getStyle('display').should.equal('block');
+    var _ = expect(interface_div).to.not.exist;
+    _ = expect(last_change_div).to.not.exist;
+  });
+
+  it('can render fuller charm', function() {
+    charm.setAttrs(
+        { summary: 'A DB',
+          provides: {munin: {'interface': 'munin-node'}},
+          last_change:
+              { created: 1349797266.032,
+                committer: 'fred',
+                message: 'fixed EVERYTHING'}});
+    var view = new views.CharmDescriptionView(
+        { container: container, app: app, model: charm }).render(),
+        html = container.one('.charm-description'),
+        description_div = html.one('.charm-section div'),
+        interface_div = html.one('div.charm-section:nth-of-type(2) div'),
+        last_change_div = html.one('div.charm-section:nth-of-type(3) div');
+    description_div.get('text').should.contain('A DB');
+    interface_div.getStyle('display').should.equal('none');
+    interface_div.get('text').should.contain('munin');
+    last_change_div.getStyle('display').should.equal('none');
+    last_change_div.get('text').should.contain('fixed EVERYTHING');
+    last_change_div.get('text').should.contain('2012-10-09');
+  });
+
+  it('can toggle visibility of subsections', function() {
+    charm.setAttrs(
+        { summary: 'A DB',
+          provides: {munin: {'interface': 'munin-node'}},
+          last_change:
+              { created: 1349797266.032,
+                committer: 'fred',
+                message: 'fixed EVERYTHING'}});
+    var view = new views.CharmDescriptionView(
+        { container: container, app: app, model: charm }).render(),
+        html = container.one('.charm-description'),
+        section_container = html.one('div.charm-section:nth-of-type(3)');
+    section_container.one('div').getStyle('display').should.equal('none');
+    assert(section_container.one('h4 i').hasClass('icon-chevron-right'));
+    section_container.one('h4').simulate('click');
+    assert(section_container.one('h4 i').hasClass('icon-chevron-down'));
+    section_container.one('div').getStyle('display').should.equal('block');
+    section_container.one('h4').simulate('click');
+    assert(section_container.one('h4 i').hasClass('icon-chevron-right'));
+    // The transition is still running, so we can't check display.
+  });
+
+  it('can respond to the "back" link', function(done) {
+    var view = new views.CharmDescriptionView(
+        { container: container, app: app, model: charm }).render();
+    view.on('changePanel', function(ev) {
+      ev.name.should.equal('charms');
+      done();
+    });
+    container.one('.charm-nav-back').simulate('click');
+  });
+
+  it('deploys by sending the user to the configuration page', function() {
+    // For now, we simply go to the charm page.  Later, we will fire an
+    // event locally to show the config panel.
+    var view = new views.CharmDescriptionView(
+        { container: container, app: app, model: charm }).render(),
+        app_events = [];
+    app.fire = function() { app_events.push(arguments); };
+    container.one('.btn').simulate('click');
+    app_events[0][0].should.equal('showCharm');
+    app_events[0][1].charm_data_url.should.equal('charms/precise/mysql/json');
+  });
 
 });

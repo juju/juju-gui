@@ -301,3 +301,72 @@ describe('utilities', function() {
 
   });
 })();
+
+(function() {
+  describe('service state simplification', function() {
+
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('should translate service states correctly', function() {
+      function assertState(state, expected) {
+        var unit = {agent_state: state};
+        assert.equal(utils.simplifyState(unit), expected);
+      }
+      // "started" is turned into "running"
+      assertState('started', 'running');
+      // Any state that ends in "-error" is simplified to just "error".
+      assertState('install-error', 'error');
+      assertState('foo-error', 'error');
+      assertState('-error', 'error');
+      // Any other state (should just be "pending" and "installed") are
+      // "pending".
+      assertState('pending', 'pending');
+      assertState('installed', 'pending');
+      assertState('waiting', 'pending');
+      assertState('schlepping', 'pending');
+    });
+  });
+})();
+
+(function() {
+  describe('state to style', function() {
+
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('should translate unit states to styles correctly', function() {
+      // The states 'installed', 'pending' and 'stopped' are turned
+      // into 'state-pending'.
+      assert.equal('state-pending', utils.stateToStyle('installed'));
+      assert.equal('state-pending', utils.stateToStyle('pending'));
+      assert.equal('state-pending', utils.stateToStyle('stopped'));
+      // The state 'started' is turned into 'state-started'.
+      assert.equal('state-started', utils.stateToStyle('started'));
+      // The states 'install-error', 'start-error' and 'stop-error' are turned
+      // into 'state-error'.
+      assert.equal('state-error', utils.stateToStyle('install-error'));
+      assert.equal('state-error', utils.stateToStyle('start-error'));
+      assert.equal('state-error', utils.stateToStyle('stop-error'));
+    });
+
+    it('should add the computed class to the existing ones', function() {
+      var classes = utils.stateToStyle('pending', 'existing');
+      assert.include(classes, 'state-pending');
+      assert.include(classes, 'existing');
+    });
+
+  });
+})();
