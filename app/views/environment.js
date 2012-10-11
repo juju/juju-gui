@@ -980,7 +980,7 @@ YUI.add('juju-view-environment', function(Y) {
         resetRelationBuild: function() {
           this.set('currentServiceClickAction', 'toggleControlPanel');
           this.show(this.vis.selectAll('.service'))
-                  .classed('selectable-service', true);
+                  .classed('selectable-service', false);
         },
 
 
@@ -1216,7 +1216,7 @@ YUI.add('juju-view-environment', function(Y) {
                 service,
                 app.serviceEndpoints,
                 db))), function(ep) {
-                                                  return ep.service;
+                    return ep.service;
                 }),
                 impossibleRelations = {};
 
@@ -1246,8 +1246,7 @@ YUI.add('juju-view-environment', function(Y) {
            */
           addRelationEnd: function(m, context, view) {
             // Redisplay all services
-            view.show(view.vis.selectAll('.service'))
-                .classed('selectable-service', false);
+            view.resetRelationBuild();
 
             // Get the vis, and links, build the new relation.
             var vis = view.vis,

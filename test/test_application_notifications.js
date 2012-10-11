@@ -32,47 +32,56 @@
       NO_OP = function() {};
     });
 
-    beforeEach(function() {
-      applicationContainer = Y.Node.create('<div id="test-container" />');
-      applicationContainer.appendTo(Y.one('body'));
-
-      notificationsContainer = Y.Node.create('<div id="notifications" />');
-      notificationsContainer.appendTo(applicationContainer);
-
-      viewContainer = Y.Node.create('<div />');
-      viewContainer.appendTo(applicationContainer);
-
-      db = new models.Database();
-
-      var notificationsView = new views.NotificationsView({
-        container: notificationsContainer,
-        app: {},
-        env: {
-          on: NO_OP,
-          get: function(key) {
-            if (key === 'connected') {
-              return true;
+    beforeEach(function(done) {
+      Y = YUI(GlobalConfig).use([
+        'node',
+        'juju-models',
+        'juju-views',
+        'juju-gui',
+        'juju-env',
+        'juju-tests-utils',
+        'node-event-simulate'], function(Y) {
+        applicationContainer = Y.Node.create('<div id="test-container" />');
+        applicationContainer.appendTo(Y.one('body'));
+  
+        notificationsContainer = Y.Node.create('<div id="notifications" />');
+        notificationsContainer.appendTo(applicationContainer);
+  
+        viewContainer = Y.Node.create('<div />');
+        viewContainer.appendTo(applicationContainer);
+  
+        db = new models.Database();
+  
+        var notificationsView = new views.NotificationsView({
+          container: notificationsContainer,
+          app: {},
+          env: {
+            on: NO_OP,
+            get: function(key) {
+              if (key === 'connected') {
+                return true;
+              }
+              return null;
             }
-            return null;
-          }
-        },
-        notifications: db.notifications
+          },
+          notifications: db.notifications
+        });
+  
+        notificationsView.render();
+  
+        // The notifications.js delays the notification update.
+        // We are going to avoid this timeout to make it possible to test
+        // the notification callback synchronously.
+        _setTimeout = window.setTimeout;
+        window.setTimeout = function(callback) {
+          callback();
+        };
+  
+        // We skip this part because we have no row to highlight
+        _viewsHighlightRow = views.highlightRow;
+        views.highlightRow = NO_OP;
+        done();
       });
-
-      notificationsView.render();
-
-      // The notifications.js delays the notification update.
-      // We are going to avoid this timeout to make it possible to test
-      // the notification callback synchronously.
-      _setTimeout = window.setTimeout;
-      window.setTimeout = function(callback) {
-        callback();
-      };
-
-      // We skip this part because we have no row to highlight
-      _viewsHighlightRow = views.highlightRow;
-      views.highlightRow = NO_OP;
-
     });
 
     afterEach(function() {
@@ -200,7 +209,8 @@
         ' exceptions (environment view)', function() {
          var view = new views.environment({
            db: db,
-           container: viewContainer}).render();
+           container: viewContainer});
+         view.render();
          db.relations.remove = NO_OP;
 
          view.service_click_actions._addRelationCallback.apply(view,
@@ -210,7 +220,7 @@
 
          //view, relationElement, confirmButton, ev
          view._removeRelationCallback.apply(view, [{
-           removeSVGClass: NO_OP
+           removeSVGClass: NO_OP,
          }, {}, {
            set: NO_OP
          }, ERR_EV]);
@@ -249,6 +259,8 @@
              view = {
                set: NO_OP,
                drawRelation: NO_OP,
+               resetRelationBuild: NO_OP,
+
                vis: {
                  selectAll: function() {
                    return {

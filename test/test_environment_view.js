@@ -120,7 +120,7 @@
             env: env
           });
           view.render();
-          container.all('.service-border').size().should.equal(4);
+          container.all('.service').size().should.equal(4);
 
           // Count all the real relations.
           (container.all('.relation').size() -
@@ -271,8 +271,13 @@
 
     it('must be able to add a relation from the control panel',
        function() {
+         // Mock endpoints
+         models.getEndpoints = function() {
+             return {requires: [], provides: []}};
+
          var view = new views.environment({
            container: container,
+           app: {serviceEndpoints: {}},
            db: db,
            env: env
          }).render();

@@ -95,6 +95,8 @@ YUI.add('juju-gui', function(Y) {
     initializer: function() {
       // Create a client side database to store state.
       this.db = new models.Database();
+      this.serviceEndpoints = {};
+
       // Update the on-screen environment name provided in the configuration or
       // a default if none is configured.
       var environment_name = this.get('environment_name') || 'Environment',
