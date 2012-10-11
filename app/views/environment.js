@@ -382,7 +382,7 @@ YUI.add('juju-view-environment', function(Y) {
                 d3.select(this).attr('transform', function(d, i) {
                   return d.translateStr();
                 });
-                if (self.get('active_service') == d) {
+                if (self.get('active_service') === d) {
                   self.updateServiceMenuLocation();
                 }
                 updateLinks();
@@ -941,7 +941,7 @@ YUI.add('juju-view-environment', function(Y) {
                 'to-remove pending-relation');
           } else {
             view.get('rmrelation_dialog').hide();
-        }
+          }
           confirmButton.set('disabled', false);
         },
 
