@@ -739,7 +739,13 @@ YUI.add('juju-view-utils', function(Y) {
    * If a state ends in "-error" or is simply "error" then it is an error
    * state, if it is "started" then it is "running", otherwise it is "pending".
    */
-  utils.simplifyState = function(state) {
+  utils.simplifyState = function(unit) {
+    var state = unit.agent_state;
+    if ('started' === state && unit.relation_errors &&
+        Y.Object.keys(unit.relation_errors).length) {
+      state = 'relation-error';
+    }
+
     if (state === 'started') {
       return 'running';
     }
@@ -749,6 +755,15 @@ YUI.add('juju-view-utils', function(Y) {
     // "pending", "installed", and "stopped", plus anything unforseen
     return 'pending';
   };
+
+  Y.Handlebars.registerHelper('unitState', function(relation_errors,
+      agent_state) {
+        if ('started' === agent_state && relation_errors &&
+            Y.Object.keys(relation_errors).length) {
+          return 'relation-error';
+        }
+        return agent_state;
+      });
 
   Y.Handlebars.registerHelper('any', function() {
     var conditions = Y.Array(arguments, 0, true),
@@ -795,7 +810,6 @@ YUI.add('juju-view-utils', function(Y) {
     return new Y.Handlebars.SafeString(
         Y.Markdown.toHTML(text));
   });
-
 
 }, '0.1.0', {
   requires: ['base-build',
