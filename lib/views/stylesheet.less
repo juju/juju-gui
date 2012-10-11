@@ -581,8 +581,7 @@ g.unit {
         font-weight: bold;
         cursor: pointer;
     }
-    .charm-description {
-        padding: 1ex 1em;
+    .charm-panel {
         h3 {
             text-transform: capitalize;
             color: blue;
@@ -590,19 +589,25 @@ g.unit {
             margin-top: 1ex;
             margin-bottom: 1ex;
         }
+        h4 {
+            text-transform: uppercase;
+            border-bottom: 1px dotted black;
+            cursor: pointer;
+            margin-top: 1ex;
+        }
+        h5 {
+            margin-top: 1ex;
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+        height: 430px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    .charm-description {
+        padding: 1ex 1em;
         .charm-section {
-            h4 {
-                text-transform: uppercase;
-                border-bottom: 1px dotted black;
-                cursor: pointer;
-                margin-top: 1ex;
-            }
-            h5 {
-                margin-top: 1ex;
-                &:first-child {
-                    margin-top: 0;
-                }
-            }
             > div {
                 overflow: hidden;
             }
@@ -613,9 +618,6 @@ g.unit {
                 white-space: pre-wrap;
             }
         }
-        height: 430px;
-        overflow-y: auto;
-        overflow-x: hidden;
     }
     #charm-configuration {
         padding: 1ex 1em;
