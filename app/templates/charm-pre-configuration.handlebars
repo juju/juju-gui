@@ -1,13 +1,13 @@
 <div class="charm-nav-back"><i class="icon-arrow-left icon-white"></i> Back</div>
-<div class="charm-panel">
-  <div id="charm-configuration">
+<div class="charm-panel config-variant">
+  <div class="charm-configuration">
       {{#with charm}}
       <div class="charm-entry">
         <div class="control-group">
           <div class="well control-description">
             Name of the service to be deployed.  Must be unique.
           </div>
-          <div class="control-label" for="service-name">Service name:</div>
+          <div class="control-label" for="service-name">Service name</div>
           <div class="controls">
             <input class="config-field" type="text" name="service-name"
                 id="service-name" value="{{package_name}}"/>
@@ -19,7 +19,7 @@
           <div class="well control-description">
             Number of units to deploy for this service.
           </div>
-          <div class="control-label" for="number-units">Number of units:</div>
+          <div class="control-label" for="number-units">Number of units</div>
           <div class="controls">
             <input class="config-field" type="text" name="number-units"
                 id="number-units" value="1"/>
@@ -27,14 +27,16 @@
         </div>
       </div>
       {{/with}}
+    {{#if settings}}
     <!-- Service configuration form -->
     <div class="charm-section">
       <h4><i class="icon-chevron-right"></i> Service Settings</h4>
       <form id="service-config" class="form-horizontal collapsible">
           {{> service-config}}
       </form>
-      <input id="charm-deploy" value="Deploy" type="submit"
-          class="btn btn-primary"></input>
     </div>
+    {{/if}}
+    <input id="charm-deploy" value="Deploy" type="submit"
+        class="btn btn-primary"></input>
   </div>
 </div>
