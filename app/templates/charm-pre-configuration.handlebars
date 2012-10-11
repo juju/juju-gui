@@ -1,32 +1,33 @@
 <div class="charm-nav-back"><i class="icon-arrow-left icon-white"></i> Back</div>
 <div class="charm-panel config-variant">
   <div class="charm-configuration">
-      {{#with charm}}
-      <div class="charm-entry">
-        <div class="control-group">
-          <div class="well control-description">
-            Name of the service to be deployed.  Must be unique.
-          </div>
-          <div class="control-label" for="service-name">Service name</div>
-          <div class="controls">
-            <input class="config-field" type="text" name="service-name"
-                id="service-name" value="{{package_name}}"/>
-          </div>
+    {{#with charm}}
+    <div class="charm-entry">
+      <div class="control-group">
+        <div class="well control-description">
+          Name of the service to be deployed.  Must be unique.
+        </div>
+        <div class="control-label" for="service-name">Service name</div>
+        <div class="controls">
+          <input class="config-field" type="text" name="service-name"
+              id="service-name" value="{{package_name}}"/>
         </div>
       </div>
-      <div class="charm-entry">
-        <div class="control-group">
-          <div class="well control-description">
-            Number of units to deploy for this service.
-          </div>
-          <div class="control-label" for="number-units">Number of units</div>
-          <div class="controls">
-            <input class="config-field" type="text" name="number-units"
-                id="number-units" value="1"/>
-          </div>
+    </div>
+    <div class="charm-entry">
+      <div class="control-group">
+        <div class="well control-description">
+          Number of units to deploy for this service.
+        </div>
+        <div class="control-label" for="number-units">Number of units</div>
+        <div class="controls">
+          <input class="config-field" type="text" name="number-units"
+              id="number-units" value="1"/>
         </div>
       </div>
-      {{/with}}
+    </div>
+    {{/with}}
+    <input class="config-file-upload" type="file">
     {{#if settings}}
     <!-- Service configuration form -->
     <div class="charm-section">

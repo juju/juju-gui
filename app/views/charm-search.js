@@ -299,7 +299,10 @@ YUI.add('juju-charm-search', function(Y) {
         events: {
           '.charm-nav-back': {click: 'goBack'},
           '.btn': {click: 'onCharmDeployClicked'},
-          '.charm-section h4': {click: 'toggleSectionVisibility'}
+          '.charm-section h4': {click: 'toggleSectionVisibility'},
+          '.config-file-upload': {change: 'onFileChange'}
+        },
+        onFileChange: function(ev) {
         },
         // TODO this is (almost) a duplicate of the same function in the search
         // pane, unify them.
