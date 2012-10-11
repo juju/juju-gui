@@ -45,20 +45,36 @@
 <div class="juju-service-info-container-menu">
   <div class="juju-service-info-container-menu-wrapper">
     <div class="inline juju-menu-item">
-     <a href="."><strong>Units</strong></a>
-     {{setPageActive viewName "units"}}
+      <div>
+        <a href="."><strong>Units</strong></a> 
+      </div>
+      <div>
+        {{setPageActive viewName "units"}}
+      </div>
     </div>
     <div class="inline juju-menu-item">
-     <a href="relations"><strong>Relations</strong></a>
-     {{setPageActive viewName "relations"}}
+      <div>
+        <a href="relations"><strong>Relations</strong></a> 
+      </div>
+      <div>
+        {{setPageActive viewName "relations"}}
+      </div>
     </div>
     <div class="inline juju-menu-item">
-     <a href="config"><strong>Settings</strong></a>
-     {{setPageActive viewName "config"}}
+      <div>
+        <a href="config"><strong>Settings</strong></a> 
+      </div>
+      <div>
+        {{setPageActive viewName "config"}}
+      </div>
     </div>
     <div class="inline juju-menu-item">
-     <a href="constraints"><strong>Constraints</strong></a>
-     {{setPageActive viewName "constraints"}}
+      <div>
+        <a href="constraints"><strong>Constraints</strong></a> 
+      </div>
+      <div>
+        {{setPageActive viewName "constraints"}}
+      </div>
     </div>
   </div>
 </div>

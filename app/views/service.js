@@ -820,7 +820,7 @@ YUI.add('juju-view-service', function(Y) {
       menuItem) {
         if (currentPage === menuItem) {
           return new Y.Handlebars.SafeString(
-              '<div class="arrow-up-white"></div>');
+              '<img src="/juju-ui/assets/images/white-triangle-16X8.png" />');
         }
         return '';
       });
