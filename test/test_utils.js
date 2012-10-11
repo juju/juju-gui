@@ -120,37 +120,6 @@ describe('utilities', function() {
     res.far.name.should.equal('db');
   });
 
-  it('should execute only the last method, and is reusable', function(done) {
-    var track = [],
-        delay = utils.Delayer();
-
-    delay(function() {
-      track.push('a');
-    }, 50);
-    delay(function() {
-      track.push('b');
-    }, 50);
-    delay(function() {
-      // This is done immediately.
-      delay(function() { track.push('c'); });
-      assert.equal('c', track.join(''));
-      done();
-    }, 1);
-  });
-
-  it('should execute only the last method, once', function(done) {
-    var delay = utils.Delayer(true);
-    delay(function() {
-      try {
-        delay(function() { });
-        assert.fail('did not throw an error', 'should have.');
-      } catch (e) {
-        e.should.equal('already performed a task.');
-      }
-      done();
-    }, 1);
-  });
-
 });
 
 (function() {

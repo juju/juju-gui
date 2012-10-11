@@ -1,7 +1,7 @@
 'use strict';
 
 describe('charm search', function() {
-  var Y, models, views,
+  var Y, models, views, ENTER, ESC,
       searchResult = '{"results": [{"data_url": "this is my URL", ' +
       '"name": "membase", "series": "precise", "summary": ' +
       '"Membase Server", "relevance": 8.728194117350437, ' +
@@ -16,10 +16,12 @@ describe('charm search', function() {
         'juju-tests-utils',
         'node-event-simulate',
         'node',
+        'event-key',
 
         function(Y) {
           models = Y.namespace('juju.models');
           views = Y.namespace('juju.views');
+          ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
           done();
         });
 
@@ -30,7 +32,9 @@ describe('charm search', function() {
     var docBody = Y.one(document.body);
     Y.Node.create('<div id="charm-search-test">' +
         '<div id="charm-search-icon"><i></i></div>' +
-        '<div id="content"></div></div>').appendTo(docBody);
+        '<div id="content"></div>' +
+        '<input type="text" id="charm-search-field" />' +
+        '</div>').appendTo(docBody);
   });
 
   afterEach(function() {
@@ -73,40 +77,13 @@ describe('charm search', function() {
         }),
         node = panel.node;
     panel.show(true);
-    var field = node.one('.charms-search-field');
+    var field = Y.one('#charm-search-field');
     field.set('value', 'aaa');
-    field.simulate('keyup');
+    field.simulate('keydown', { keyCode: ENTER });
 
     searchTriggered.should.equal(true);
     node.one('.charm-entry .btn').getData('info-url').should.equal(
         'this is my URL');
-  });
-
-  it('must be able to reset the search result', function() {
-    var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance(
-        { charm_store:
-              { sendRequest: function(params) {
-                // Mocking the server callback value
-                params.callback.success({
-                  response: {
-                    results: [{
-                      responseText: searchResult
-                    }]
-                  }
-                });
-              }},
-          testing: true
-        }),
-        node = panel.node;
-    panel.show();
-    var field = node.one('.charms-search-field'),
-        clearButton = node.one('.clear');
-    field.set('value', 'aaa');
-    field.simulate('keyup');
-    clearButton.simulate('click');
-
-    node.all('.charm-detail').isEmpty().should.equal(true);
-    field.get('value').should.equal('');
   });
 
   it('must be able to trigger charm details', function() {
@@ -131,9 +108,9 @@ describe('charm search', function() {
     db.charms.add({id: 'cs:precise/membase'});
 
     panel.show();
-    var field = node.one('.charms-search-field');
+    var field = Y.one('#charm-search-field');
     field.set('value', 'aaa');
-    field.simulate('keyup');
+    field.simulate('keydown', { keyCode: ENTER });
     node.one('a.charm-detail').simulate('click');
     node.one('.charm-description > h3').get('text').trim()
       .should.equal('membase');
@@ -179,7 +156,7 @@ describe('charm search', function() {
        panel.show();
 
        // Search for something.
-       var field = node.one('.charms-search-field');
+       var field = Y.one('#charm-search-field');
        field.set('value', 'membase');
        field.simulate('keyup');
        // Now the deploy button should appear and is clickable which causes
@@ -187,61 +164,6 @@ describe('charm search', function() {
        var deployButton = node.one('.charm-entry .btn');
        deployButton.simulate('click');
        deployed.should.equal(true);
-     });
-
-  it('must not deploy a charm for an existing service when deploy is clicked',
-     function() {
-       var deployed = false,
-           showCharmCalled = false,
-           panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
-             charm_store: {
-               sendRequest: function(params) {
-                 // Mocking the server callback value
-                 params.callback.success({
-                   response: {
-                     results: [{
-                       responseText: searchResult
-                     }]
-                   }
-                 });
-               }
-             },
-             app: {
-               env: {
-                 deploy: function() { deployed = true; }
-               },
-               db: {
-                 services: {
-                   getById: function(name) {
-                     // Simulate the deployed service already exists.
-                     return true;
-                   }
-                 },
-                 notifications: {
-                   add: function() { return; }
-                 }
-               },
-               fire: function(name) {
-                 showCharmCalled = (name === 'showCharm');
-                 return; }
-             },
-             testing: true
-           }),
-           node = panel.node;
-
-       panel.show();
-
-       // Search for something.
-       var field = node.one('.charms-search-field');
-       field.set('value', 'membase');
-       field.simulate('keyup');
-       // Now the deploy button should appear and is clickable.  Since the
-       // service is already deployed, the showCharm event should be fired
-       // instead of the deploy method.
-       var deployButton = node.one('.charm-entry .btn');
-       deployButton.simulate('click');
-       deployed.should.equal(false);
-       showCharmCalled.should.equal(true);
      });
 
 });

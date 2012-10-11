@@ -6,29 +6,19 @@ YUI.add('juju-charm-search', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
       // Singleton
-      _instance = null,
-      // Delay between a "keyup" event and the service request
-      _searchDelay = 500;
+      _instance = null;
 
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
-    resultsTemplate: views.Templates['charm-search-result-entries'],
-    initializer: function() {
-      this.delay = utils.Delayer();
-    },
-    render: function() {
-      // We only need to render once.
-      if (!this._rendered) {
-        this.get('container').setHTML(this.template({}));
-        this._rendered = true;
-      }
-      return this;
-    },
     events: {
       'a.charm-detail': {click: 'showDetails'},
-      '.charm-entry .btn': {click: 'deploy'},
-      '.charms-search-field-div button.clear': {click: 'clearSearch'},
-      '.charms-search-field': {keyup: 'search'},
+      '.charm-entry .btn': {
+        click: function(ev) {
+          var info_url = ev.currentTarget.getData('info-url');
+          // In the future, fire an event to show the configure pane instead.
+          this.get('app').fire('showCharm', {charm_data_url: info_url});
+        }
+      },
       '.charm-entry': {
         mouseenter: function(ev) {
           ev.currentTarget.one('.btn').transition({opacity: 1, duration: 0.25});
@@ -38,28 +28,45 @@ YUI.add('juju-charm-search', function(Y) {
         }
       }
     },
-    // This is an interface function.
-    focus: function(ev) {
-      this.get('container').one('.charms-search-field').focus();
+    // Set searchText to cause the results to be found and rendered.
+    // Set defaultSeries to cause all the results for the default series to be
+    // found and rendered.
+    initializer: function() {
+      var self = this;
+      this.after('searchTextChange', function(ev) {
+        this.set('resultEntries', null);
+        if (ev.newVal) {
+          this.findCharms(ev.newVal, function(charms) {
+            self.set('resultEntries', charms);
+          });
+        }
+      });
+      this.after('defaultSeriesChange', function(ev) {
+        this.set('defaultEntries', null);
+        if (ev.newVal) {
+          var searchString = 'series%3A'+ev.newVal+'+owner%3Acharmers';
+          this.findCharms(searchString, function(charms) {
+            self.set('defaultEntries', charms);
+          });
+        }
+      });
+      this.after('defaultEntriesChange', function() {
+        if (!this.get('searchText')) {
+          this.render();
+        }
+      });
+      this.after('resultEntriesChange', function() {
+        this.render();
+      });
     },
-    clearSearch: function(ev) {
+    render: function() {
       var container = this.get('container'),
-          searchField = container.one('.charms-search-field');
-      this.updateList(null);
-      searchField.set('value', '');
-      searchField.focus();
-    },
-    search: function(ev) {
-      var field = ev.target;
-      this.updateList(null);
-      // It delays the search request until the last key is pressed.
-      this.delay(
-          Y.bind(function() {
-            this.findCharms(field.get('value'), Y.bind(function(charms) {
-              this.updateList(charms);
-            }, this));
-          }, this),
-          this.get('searchDelay'));
+          searchText = this.get('searchText'),
+          defaultEntries = this.get('defaultEntries'),
+          resultEntries = this.get('resultEntries'),
+          entries = searchText ? resultEntries : defaultEntries;
+      container.setHTML(this.template({charms: entries}));
+      return this;
     },
     showDetails: function(ev) {
       ev.halt();
@@ -68,67 +75,10 @@ YUI.add('juju-charm-search', function(Y) {
           { name: 'description',
             charmId: ev.target.getAttribute('href') });
     },
-    deploy: function(ev) {
-      var url = ev.currentTarget.getData('url'),
-          name = ev.currentTarget.getData('name'),
-          info_url = ev.currentTarget.getData('info-url'),
-          app = this.get('app');
-      if (Y.Lang.isValue(app.db.services.getById(name))) {
-        // A service with the same name already exists.  Send the
-        // user to a configuration page.
-        app.db.notifications.add(
-            new models.Notification({
-              title: 'Name already used: ' + name,
-              message: 'The service\'s default name is already in ' +
-                  'use. Please configure another.',
-              level: 'info'
-            })
-        );
-        app.fire('showCharm', {charm_data_url: info_url});
-        return;
-      }
-      // Disable the deploy button.
-      var button = ev.currentTarget,
-          div = button.ancestor('div'),
-          backgroundColor = 'lightgrey',
-          oldColor = div.getStyle('backgroundColor');
-
-      button.set('disabled', true);
-      div.setStyle('backgroundColor', backgroundColor);
-
-      app.env.deploy(url, name, {}, function(ev) {
-        button.set('disabled', false);
-        if (ev.err) {
-          div.setStyle('backgroundColor', 'pink');
-          console.log(url + ' deployment failed');
-          app.db.notifications.add(
-              new models.Notification({
-                title: 'Error deploying ' + name,
-                message: 'Could not deploy the requested service.',
-                level: 'error'
-              })
-          );
-        } else {
-          console.log(url + ' deployed');
-          app.db.notifications.add(
-              new models.Notification({
-                title: 'Deployed ' + name,
-                message: 'Successfully deployed the requested service.',
-                level: 'info'
-              })
-          );
-        }
-        div.transition(
-            { easing: 'ease-out', duration: 3, backgroundColor: oldColor},
-            function() {
-              // Revert to following normal stylesheet rules.
-              div.setStyle('backgroundColor', '');
-            });
-      });
-    },
     // Create a data structure friendly to the view
     normalizeCharms: function(charms) {
-      var hash = {};
+      var hash = {},
+          defaultSeries = this.get('defaultSeries');
       Y.each(charms, function(charm) {
         charm.url = charm.series + '/' + charm.name;
         if (charm.owner === 'charmers') {
@@ -143,11 +93,31 @@ YUI.add('juju-charm-search', function(Y) {
         hash[charm.series].push(charm);
       });
       var series_names = Y.Object.keys(hash);
-      series_names.sort();
-      series_names.reverse();
+      series_names.sort(function(a, b) {
+        if ((a === defaultSeries && b !== defaultSeries) || a > b) {
+          return -1;
+        } else if ((a !== defaultSeries && b === defaultSeries) || a < b) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
       return Y.Array.map(series_names, function(name) {
         var charms = hash[name];
-        charms.sort(function(a, b) { return [a.owner || '', a.name]; });
+        charms.sort(function(a, b) {
+          // If !a.owner, that means it is owned by charmers.
+          if ((!a.owner && b.owner) || (a.owner < b.owner)) {
+            return -1;
+          } else if ((a.owner && !b.owner) || (a.owner > b.owner)) {
+            return 1;
+          } else if (a.name < b.name) {
+            return -1;
+          } else if (a.name > b.name) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
         return {series: name, charms: hash[name]};
       });
     },
@@ -176,13 +146,6 @@ YUI.add('juju-charm-search', function(Y) {
             );
           }
         }});
-    },
-    updateList: function(entries) {
-      var container = this.get('container'),
-          list = container.one('.search-result-div');
-      // Destroy old entries
-      list.get('childNodes').remove(true);
-      list.append(this.resultsTemplate({charms: entries}));
     }
   });
   views.CharmCollectionView = CharmCollectionView;
@@ -211,9 +174,6 @@ YUI.add('juju-charm-search', function(Y) {
                 '<div class="alert">Waiting on charm data...</div>');
           }
           return this;
-        },
-        focus: function() {
-          // No op: we don't have anything to focus on.
         },
         goBack: function(ev) {
           ev.halt();
@@ -263,7 +223,6 @@ YUI.add('juju-charm-search', function(Y) {
         charmsSearchPanel = new CharmCollectionView(
               { container: charmsSearchPanelNode,
                 app: app,
-                searchDelay: testing ? 0 : _searchDelay,
                 charmStore: charmStore }),
         descriptionPanelNode = Y.Node.create(),
         descriptionPanel = new CharmDescriptionView(
@@ -274,6 +233,8 @@ YUI.add('juju-charm-search', function(Y) {
                 description: descriptionPanel },
         isPopupVisible = false,
         trigger = Y.one('#charm-search-trigger'),
+        searchField = Y.one('#charm-search-field'),
+        ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter,
         activePanelName;
 
     Y.one(document.body).append(container);
@@ -298,7 +259,6 @@ YUI.add('juju-charm-search', function(Y) {
         } else { // This is the search panel.
           newPanel.render();
         }
-        newPanel.focus();
       }
     }
 
@@ -326,14 +286,12 @@ YUI.add('juju-charm-search', function(Y) {
         isPopupVisible = false;
       }
     }
-    container.on('clickoutside', hide);
 
     function show() {
       if (!isPopupVisible) {
         container.setStyles({opacity: 0, display: 'block'});
         updatePopupPosition();
         container.show(!testing, {duration: 0.25});
-        panels[activePanelName].focus();
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i').replaceClass(
               'icon-chevron-down', 'icon-chevron-up');
@@ -379,12 +337,43 @@ YUI.add('juju-charm-search', function(Y) {
       trigger.on('click', toggle);
     }
 
+    var handleKeyDown = function (ev) {
+      if (ev.keyCode === ENTER) {
+        ev.halt(true);
+        show();
+        charmsSearchPanel.set('searchText', ev.target.get('value'));
+        setPanel({name: 'charms'});
+      }
+    };
+
+    var handleFocus = function(ev) {
+      if (ev.target.get('value').trim() === 'Search for a charm') {
+        ev.target.set('value', '');
+      }
+    };
+
+    var handleBlur = function(ev) {
+      if (ev.target.get('value').trim() === '') {
+        ev.target.set('value', 'Search for a charm');
+        charmsSearchPanel.set('searchText', '');
+      }
+    };
+
+    if (searchField) {
+      searchField.on('keydown', handleKeyDown);
+      searchField.on('blur', handleBlur);
+      searchField.on('focus', handleFocus);
+    }
+
     // The public methods
     return {
       hide: hide,
       toggle: toggle,
       show: show,
-      node: container
+      node: container,
+      setDefaultSeries: function(series) {
+        charmsSearchPanel.set('defaultSeries', series);
+      }
     };
   }
 
@@ -412,6 +401,6 @@ YUI.add('juju-charm-search', function(Y) {
     'handlebars',
     'event-hover',
     'transition',
-    'event-outside'
+    'event-key'
   ]
 });
