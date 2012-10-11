@@ -1216,7 +1216,7 @@ YUI.add('juju-view-environment', function(Y) {
                 service,
                 app.serviceEndpoints,
                 db))), function(ep) {
-                    return ep.service;
+                  return ep.service;
                 }),
                 impossibleRelations = {};
 

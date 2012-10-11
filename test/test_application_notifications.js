@@ -43,15 +43,15 @@
         'node-event-simulate'], function(Y) {
         applicationContainer = Y.Node.create('<div id="test-container" />');
         applicationContainer.appendTo(Y.one('body'));
-  
+
         notificationsContainer = Y.Node.create('<div id="notifications" />');
         notificationsContainer.appendTo(applicationContainer);
-  
+
         viewContainer = Y.Node.create('<div />');
         viewContainer.appendTo(applicationContainer);
-  
+
         db = new models.Database();
-  
+
         var notificationsView = new views.NotificationsView({
           container: notificationsContainer,
           app: {},
@@ -66,9 +66,9 @@
           },
           notifications: db.notifications
         });
-  
+
         notificationsView.render();
-  
+
         // The notifications.js delays the notification update.
         // We are going to avoid this timeout to make it possible to test
         // the notification callback synchronously.
@@ -76,7 +76,7 @@
         window.setTimeout = function(callback) {
           callback();
         };
-  
+
         // We skip this part because we have no row to highlight
         _viewsHighlightRow = views.highlightRow;
         views.highlightRow = NO_OP;
@@ -220,7 +220,7 @@
 
          //view, relationElement, confirmButton, ev
          view._removeRelationCallback.apply(view, [{
-           removeSVGClass: NO_OP,
+           removeSVGClass: NO_OP
          }, {}, {
            set: NO_OP
          }, ERR_EV]);
