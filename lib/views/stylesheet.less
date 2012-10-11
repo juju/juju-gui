@@ -105,38 +105,50 @@ svg {
     -moz-border-radius: @border_radius;
     -webkit-border-radius: @border_radius;
 
+    box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
+
     top: 0;
-    left: 0;
+    left: 50px;
     position: absolute;
 
     &.active {
         display: block;
     }
 
+    #service-menu-triangle {
+        position: relative;
+        top: 30px;
+        left: -10px;
+        width: 12px;
+//        height: 21px;
+        background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle.png);
+        background-repeat: no-repeat;
+    }
+
     ul {
         margin: 10px;
         list-style-type: none;
-        list-style-position: inside;
         li {
+            background-position: 5px center;
+            background-repeat: no-repeat;
             border-bottom: 1px #5f594f solid;
             cursor: pointer;
-            height: 32px;
             line-height: 32px;
-            padding: 5px;
-            vertical-align: top;
-
+            padding: 5px 5px 5px 42px;
             border-radius: @border_radius;
             -moz-border-radius: @border_radius;
             -webkit-border-radius: @border_radius;
 
             &.view-service {
-                list-style-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
             }
             &.add-relation {
-                list-style-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
             }
             &.add-remove-units {
-                list-style-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
                 color: gray;
                 cursor: default;
                 &:hover {
@@ -144,7 +156,7 @@ svg {
                 }
             }
             &.destroy-service {
-                list-style-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
             }
 
             &:last-child {
