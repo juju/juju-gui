@@ -63,15 +63,20 @@ describe('Relation mapping logic', function() {
   var Y, juju, db, models;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['io', 'json-parse'], function(Y) {
+    Y = YUI(GlobalConfig).use([
+      'io', 'json-parse', 'array-extras'], function(Y) {
+      function loadFixture(url) {
+        return Y.JSON.parse(Y.io(url, {sync: true}).responseText);
+      }
       sample_env = loadFixture('sample_env.json');
       sample_endpoints = loadFixture('sample_endpoints.json');
       done();
     });
   });
 
+
   beforeEach(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-models',    
+    Y = YUI(GlobalConfig).use(['juju-models',
                                'juju-tests-utils',
                                'juju-controllers'],
     function(Y) {
@@ -91,10 +96,6 @@ describe('Relation mapping logic', function() {
     db.destroy();
     done();
   });
-
-  function loadFixture(url) {
-    return Y.JSON.parse(Y.io(url, {sync: true}).responseText);
-  }
 
   it('should be able find relatable services', function() {
     var service = db.services.getById('blog'),

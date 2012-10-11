@@ -108,7 +108,7 @@ YUI.add('juju-endpoints', function(Y) {
           });
 
       Y.each(
-          ep_map[tid]['provides'],
+          ep_map[tid].provides,
           function(pdata) {
             var ep = epic(tid, pdata);
             //console.log(" checking provided", ep);
@@ -144,6 +144,6 @@ YUI.add('juju-endpoints', function(Y) {
     console.timeEnd('Endpoint Match');
     console.groupEnd();
     return targets;
-  }
+  };
 });
 
