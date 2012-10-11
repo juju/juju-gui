@@ -28,8 +28,7 @@ YUI.add('juju-charm-search', function(Y) {
     },
     events: {
       'a.charm-detail': {click: 'showDetails'},
-      '.charm-entry .btn.deploy': {click: 'deploy'},
-      '.charm-entry .btn.configure': {click: 'showConfiguration'},
+      '.charm-entry .btn.deploy': {click: 'showConfiguration'},
       '.charms-search-field-div button.clear': {click: 'clearSearch'},
       '.charms-search-field': {keyup: 'search'},
       '.charm-entry': {
