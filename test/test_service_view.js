@@ -705,14 +705,26 @@
         agent_state: 'started',
         relation_errors: {}
       }, {
+        testKey: 'error1',
+        agent_state: 'started',
+        relation_errors: {
+          a: '',
+          b: ''
+        }
+      }, {
         agent_state: 'pending',
         relation_errors: {
           a: '',
           b: ''
         }
+      }, {
+        testKey: 'error2',
+        agent_state: 'error'
       }], filtered = ServiceView.prototype.filterUnits('error', units);
 
-      assert.equal(1, filtered.length);
+      assert.equal(2, filtered.length);
+      assert.equal('error1', filtered[0].testKey);
+      assert.equal('error2', filtered[1].testKey);
     });
 
   });
