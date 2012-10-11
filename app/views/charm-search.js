@@ -239,7 +239,8 @@ YUI.add('juju-charm-search', function(Y) {
           app.fire('showCharm', {charm_data_url: info_url});
         },
         toggleSectionVisibility: function(ev) {
-          var el = ev.currentTarget.ancestor('.charm-section').one('.collapsible'),
+          var el = ev.currentTarget.ancestor('.charm-section')
+                     .one('.collapsible'),
               icon = ev.currentTarget.one('i');
           if (el.getStyle('display') === 'none') {
             // sizeIn doesn't work smoothly without this bit of jiggery to get
@@ -304,7 +305,8 @@ YUI.add('juju-charm-search', function(Y) {
         // TODO this is (almost) a duplicate of the same function in the search
         // pane, unify them.
         toggleSectionVisibility: function(ev) {
-          var el = ev.currentTarget.ancestor('.charm-section').one('.collapsible'),
+          var el = ev.currentTarget.ancestor('.charm-section')
+                     .one('.collapsible'),
               icon = ev.currentTarget.one('i');
           if (el.getStyle('display') === 'none') {
             // sizeIn doesn't work smoothly without this bit of jiggery to get
