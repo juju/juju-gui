@@ -6,7 +6,7 @@
     <div class="control-label" for="{{name}}">{{name}} ({{type}})</div>
     {{#if isBool}}
     <div class="controls boolean">
-      <input class="config-field" type="checkbox" name="{{name}}"
+      <input class="config-field boolean" type="checkbox" name="{{name}}"
           id="input-{{name}}" {{value}}/>
     </div>
     {{else}}

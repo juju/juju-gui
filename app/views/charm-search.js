@@ -15,8 +15,6 @@ YUI.add('juju-charm-search', function(Y) {
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
     resultsTemplate: views.Templates['charm-search-result-entries'],
-    charmPreConfigurationTemplate:
-        views.Templates['charm-pre-configuration'],
     initializer: function() {
       this.delay = utils.Delayer();
     },
@@ -241,7 +239,7 @@ YUI.add('juju-charm-search', function(Y) {
           app.fire('showCharm', {charm_data_url: info_url});
         },
         toggleSectionVisibility: function(ev) {
-          var el = ev.currentTarget.ancestor('.charm-section').one('div'),
+          var el = ev.currentTarget.ancestor('.charm-section').one('.collapsible'),
               icon = ev.currentTarget.one('i');
           if (el.getStyle('display') === 'none') {
             // sizeIn doesn't work smoothly without this bit of jiggery to get
@@ -300,9 +298,31 @@ YUI.add('juju-charm-search', function(Y) {
         },
         events: {
           '.charm-nav-back': {click: 'goBack'},
-          '.btn': {click: 'onCharmDeployClicked'}
-          //'.control-group': { mousemove: Y.bind(this.onMousemove, this),
-          //                    mouseleave: 'onMouseleave'}
+          '.btn': {click: 'onCharmDeployClicked'},
+          '.charm-section h4': {click: 'toggleSectionVisibility'}
+        },
+        // TODO this is (almost) a duplicate of the same function in the search
+        // pane, unify them.
+        toggleSectionVisibility: function(ev) {
+          var el = ev.currentTarget.ancestor('.charm-section').one('.collapsible'),
+              icon = ev.currentTarget.one('i');
+          if (el.getStyle('display') === 'none') {
+            // sizeIn doesn't work smoothly without this bit of jiggery to get
+            // accurate heights and widths.
+            el.setStyles({height: null, width: null, display: 'block'});
+            var config =
+                { duration: 0.25,
+                  height: el.get('scrollHeight') + 'px',
+                  width: el.get('scrollWidth') + 'px'
+                };
+            // Now we need to set our starting point.
+            el.setStyles({height: 0, width: config.width});
+            el.show('sizeIn', config);
+            icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+          } else {
+            el.hide('sizeOut', {duration: 0.25});
+            icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+          }
         },
         goBack: function(ev) {
           ev.halt();
