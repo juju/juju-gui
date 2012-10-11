@@ -215,7 +215,7 @@ YUI.add('juju-view-environment', function(Y) {
           this.tree = d3.layout.pack()
                 .size([width, height])
                 .value(function(d) {return d.unit_count;})
-                .padding(200);
+                .padding(300);
 
           this.updateCanvas();
         },
@@ -337,12 +337,13 @@ YUI.add('juju-view-environment', function(Y) {
         updateData: function() {
           //model data
           var vis = this.vis,
+              app = this.get('app'),
               db = this.get('db'),
               relations = db.relations.toArray(),
               services = db.services.map(views.toBoundingBox);
 
           this.services = services;
-
+            
           Y.each(services, function(service) {
             // Update services  with existing positions.
             var existing = this.service_boxes[service.id];
@@ -1206,26 +1207,18 @@ YUI.add('juju-view-environment', function(Y) {
           addRelationStart: function(m, context, view) {
               view.show(view.vis.selectAll('.service'));
   
-              var app = view.get('app'),
-                db = view.get('db'),
-                relMap = models.getEndpoints(m.id, ,
-                possibleRelations = {},
-                impossibleRelations = {};
+              var db = view.get('db'),
+                  app = view.get('app'),
+                  service = view.serviceForBox(m),
+                  relMap = models.getEndpoints(service, 
+                                               app.serviceEndpoints,
+                                               db),
+                  impossibleRelations = {};
               
-              // Create a map of possible relations
-              if (relMap[m.id]) {
-                  Y.Array.each(relMap[m.id], function(s) {
-                      possibleRelations[s] = true;
-                  });
-              } else {
-                  // TODO: Indicate to user there are no relations
-                  return;
-              }
-
               // Iterate services and invert the possibles list.
               db.services.each(function(s) {
-                  if (!(s.get('id') in possibleRelations)) {
-                      impossibleRelations[s.get('id')] = true;
+                  if (!(s.get('id') in relMap)) {
+                    impossibleRelations[s.get('id')] = true;
                   }
               });
               

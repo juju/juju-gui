@@ -202,23 +202,23 @@ YUI.add('juju-gui', function(Y) {
      * When services or relations change we must get a new endpoints list.
      * This is used by the environment view.
      */
-    updateEndpoints:function() {
+    updateEndpoints:function(callback) {
       var self = this;
+        
+      if (!Y.Lang.isValue(this.serviceEndpoints)) {
+          this.serviceEndpoints = {};
+      }
       // Defensive code to aid tests. Other systems
       // don't have to mock enough to get_endpoints below.
       if (!this.env.get('connected')) {
           return;
       }
       self.env.get_endpoints([], function(evt) {
-          self.serviceRelationOptions = models.getEndpoints(
-              evt.result, self.db.services, self.db.relations);
-          self.serviceRelationMap = Y.juju.processServiceMap(
-              self.serviceRelationOptions);
-        });
-      }, 200);
-    },
-
-
+          self.serviceEndpoints = evt.result;
+          if (Y.Lang.isFunction(callback)) {
+              callback(self.serviceEndpoints);
+          }
+      });
     },
 
     // Event handlers
