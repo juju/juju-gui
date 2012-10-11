@@ -301,7 +301,7 @@ YUI.add('juju-view-utils', function(Y) {
     }
 
     errorDiv.one('#alert-area-text').setHTML(message);
-    window.scrollTo(errorDiv.getX(), errorDiv.getY());
+    window.scrollTo(0, 0);
   }
 
   utils.showSuccessMessage = function(container, message) {
