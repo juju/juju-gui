@@ -120,11 +120,13 @@ YUI.add('juju-view-environment', function(Y) {
           // Canvas related
           '#canvas rect:first-child': {
             click: function(d, self) {
-              self.removeSVGClass(
-                  '.service-control-panel.active', 'active');
+              var container = self.get('container'),
+                  cp = container.one('#service-menu');
+              cp.removeClass('active');
+              self.set('active_service', null);
+              self.set('active_context', null);
             }
           }
-
         },
 
         initializer: function() {
@@ -686,115 +688,6 @@ YUI.add('juju-view-environment', function(Y) {
             .text(function(d) {
                 return self.humanizeNumber(d.unit_count);
               });
-
-          // TODO: remove this call and the whole definition
-          //this.addControlPanel(node);
-
-        },
-
-        addControlPanel: function(node) {
-          // Add a control panel around the service.
-          var self = this;
-          var control_panel = node.append('g')
-                .attr('class', 'service-control-panel');
-
-          // A button to add a relation between two services.
-          var add_rel = control_panel.append('g')
-                .attr('class', 'add-relation');
-
-          // Drag controls on the add relation button, allowing
-          // one to drag a line to create a relation.
-          var drag_relation = add_rel.append('line')
-              .attr('class', 'relation pending-relation dragline unused');
-          var drag_relation_behavior = d3.behavior.drag()
-              .on('dragstart', function(d) {
-                // Get our line, the image, and the current service.
-                var dragline = d3.select(this.parentNode)
-                    .select('.relation');
-                var img = d3.select(this.parentNode)
-                    .select('image');
-                var context = this.parentNode.parentNode.parentNode;
-
-                // Start the line at our image
-                dragline.attr('x1', parseInt(img.attr('x'), 10) + 16)
-                    .attr('y1', parseInt(img.attr('y'), 10) + 16);
-                self.removeSVGClass(dragline.node(), 'unused');
-
-                // Start the add-relation process.
-                self.service_click_actions
-                .addRelationStart(d, self, context);
-              })
-              .on('drag', function() {
-                // Rubberband our potential relation line.
-                var dragline = d3.select(this.parentNode)
-                    .select('.relation');
-                dragline.attr('x2', d3.event.x)
-                    .attr('y2', d3.event.y);
-              })
-              .on('dragend', function(d) {
-                // Get the line, the endpoint service, and the target <rect>.
-                var dragline = d3.select(this.parentNode)
-                    .select('.relation');
-                var context = self.get('potential_drop_point_rect');
-                var endpoint = self.get('potential_drop_point_service');
-
-                // Get rid of our drag line
-                dragline.attr('x2', dragline.attr('x1'))
-                    .attr('y2', dragline.attr('y1'));
-                self.addSVGClass(dragline.node(), 'unused');
-
-                // If we landed on a rect, add relation, otherwise, cancel.
-                if (context) {
-                  self.service_click_actions
-                  .addRelationEnd(endpoint, self);
-                } else {
-                  // TODO clean up, abstract
-                  self.addRelation(); // Will clear the state.
-                }
-              });
-          add_rel.append('image')
-        .attr('xlink:href',
-              '/juju-ui/assets/svgs/Build_button.svg')
-        .attr('class', 'cp-button')
-        .attr('x', function(d) {
-                return d.w + 8;
-              })
-        .attr('y', function(d) {
-                return (d.h / 2) - 16;
-              })
-        .attr('width', 32)
-        .attr('height', 32)
-        .call(drag_relation_behavior);
-
-          // Add a button to view the service.
-          var view_service = control_panel.append('g')
-        .attr('class', 'view-service');
-
-          view_service.append('image')
-        .attr('xlink:href', '/juju-ui/assets/svgs/view_button.svg')
-        .attr('class', 'cp-button')
-        .attr('x', -40)
-        .attr('y', function(d) {
-                return (d.h / 2) - 16;
-              })
-        .attr('width', 32)
-        .attr('height', 32);
-
-          // Add a button to destroy a service
-          var destroy_service = control_panel.append('g')
-        .attr('class', 'destroy-service');
-          destroy_service.append('image')
-        .attr('xlink:href', '/juju-ui/assets/svgs/destroy_button.svg')
-        .attr('class', 'cp-button')
-        .attr('x', function(d) {
-                return (d.w / 2) - 16;
-              })
-        .attr('y', -40)
-        .attr('width', 32)
-        .attr('height', 32);
-          var add_rm_units = control_panel.append('g')
-        .attr('class', 'add-rm-units');
-
         },
 
         processRelation: function(r) {
