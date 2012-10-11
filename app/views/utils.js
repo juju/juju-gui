@@ -792,7 +792,7 @@ YUI.add('juju-view-utils', function(Y) {
    */
   utils.simplifyState = function(unit) {
     var state = unit.agent_state;
-    if ('started' !== state && unit.relation_errors &&
+    if ('started' === state && unit.relation_errors &&
         Y.Object.keys(unit.relation_errors).length) {
       state = 'relation-error';
     }
@@ -809,7 +809,7 @@ YUI.add('juju-view-utils', function(Y) {
 
   Y.Handlebars.registerHelper('unitState', function(relation_errors,
       agent_state) {
-        if ('started' !== agent_state && relation_errors &&
+        if ('started' === agent_state && relation_errors &&
             Y.Object.keys(relation_errors).length) {
           return 'relation-error';
         }
