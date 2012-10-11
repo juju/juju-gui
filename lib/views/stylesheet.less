@@ -97,7 +97,7 @@ svg {
     @border_radius: 20px;
     @background_color: #282421;
 
-/*    display: none; */
+    display: none;
     background-color: @background_color;
     color: #fdf6e3;
 
@@ -110,7 +110,7 @@ svg {
     -webkit-box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
 
     top: 0;
-    left: 50px;
+    left: 0;
     position: absolute;
 
     &.active {
@@ -118,11 +118,11 @@ svg {
     }
 
     #service-menu-triangle {
-        position: relative;
-        top: 30px;
-        left: -10px;
+        position: absolute;
+        top: 62px;
+        left: -12px;
         width: 12px;
-//        height: 21px;
+        line-height: 21px;
         background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle.png);
         background-repeat: no-repeat;
     }
