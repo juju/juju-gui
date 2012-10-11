@@ -13,6 +13,7 @@
 
     before(function() {
       Y = YUI(GlobalConfig).use([
+        'node',
         'juju-models',
         'juju-views',
         'juju-gui',
@@ -234,7 +235,8 @@
                return link;
              })(),
              app = {
-               getModelURL: NO_OP
+               getModelURL: NO_OP,
+               updateEndpoints: NO_OP
              },
              env = {
                destroy_service: function(service, callback) {
