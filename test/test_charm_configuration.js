@@ -5,20 +5,20 @@ describe('charm configuration', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-      'juju-models',
-      'juju-views',
-      'juju-gui',
-      'juju-env',
-      'juju-tests-utils',
-      'node-event-simulate',
-      'node',
+        'juju-models',
+        'juju-views',
+        'juju-gui',
+        'juju-env',
+        'juju-tests-utils',
+        'node-event-simulate',
+        'node',
 
-    function(Y) {
-      juju = Y.namespace('juju');
-      models = Y.namespace('juju.models');
-      views = Y.namespace('juju.views');
-      done();
-    });
+        function(Y) {
+          juju = Y.namespace('juju');
+          models = Y.namespace('juju.models');
+          views = Y.namespace('juju.views');
+          done();
+        });
   });
 
   beforeEach(function() {
@@ -43,8 +43,8 @@ describe('charm configuration', function() {
   it('must have inputs for service and number of units', function() {
     var charm = new models.Charm({id: 'precise/mysql'}),
         view = new views.CharmConfigurationView(
-          { container: container,
-            model: charm});
+        { container: container,
+          model: charm});
     // If the charm has no config options it is still handled.
     assert.isTrue(!Y.Lang.isValue(charm.config));
     view.render();
@@ -55,28 +55,28 @@ describe('charm configuration', function() {
   it('must have inputs for items in the charm schema', function() {
     var charm = new models.Charm({id: 'precise/mysql'});
     charm.setAttrs(
-      { config:
-        { options:
-          { option0:
-            { name: 'option0',
-              type: 'string'},
-            option1:
-            { name: 'option1',
-              type: 'boolean'},
-            option2:
-            { name: 'option2',
-              type: 'int'}
-          }
-        }
-      });
+        { config:
+              { options:
+                    { option0:
+                         { name: 'option0',
+                           type: 'string'},
+                      option1:
+                         { name: 'option1',
+                           type: 'boolean'},
+                      option2:
+                         { name: 'option2',
+                           type: 'int'}
+                    }
+              }
+        });
     var view = new views.CharmConfigurationView(
-          { container: container,
-            model: charm});
+        { container: container,
+          model: charm});
     view.render();
     var labels = container.all('div.control-label');
     labels.get('text').should.eql(
-      ['Service name:', 'Number of units:', 'option0 (string)',
-       'option1 (boolean)', 'option2 (int)']);
+        ['Service name:', 'Number of units:', 'option0 (string)',
+         'option1 (boolean)', 'option2 (int)']);
   });
 
   it('must deploy a charm with default value', function() {
@@ -84,15 +84,15 @@ describe('charm configuration', function() {
         received_charm_url,
         received_service_name,
         env = {deploy: function(charm_url, service_name) {
-           deployed = true;
-           received_charm_url = charm_url;
-           received_service_name = service_name;
-           }},
+          deployed = true;
+          received_charm_url = charm_url;
+          received_service_name = service_name;
+        }},
         charm = new models.Charm({id: 'precise/mysql'}),
         view = new views.CharmConfigurationView(
-          { container: container,
-            model: charm,
-            app: app});
+        { container: container,
+          model: charm,
+          app: app});
     app.env = env;
     view.render();
     container.one('#service-name').get('value').should.equal('mysql');
@@ -108,27 +108,27 @@ describe('charm configuration', function() {
         received_config,
         received_num_units,
         env = {deploy: function(charm_url, service_name, config, num_units) {
-           deployed = true;
-           received_charm_url = charm_url;
-           received_service_name = service_name;
-           received_config = config;
-           received_num_units = num_units;
-           }},
+          deployed = true;
+          received_charm_url = charm_url;
+          received_service_name = service_name;
+          received_config = config;
+          received_num_units = num_units;
+        }},
         charm = new models.Charm({id: 'precise/mysql'});
     app.env = env;
     charm.setAttrs(
-      { config:
-        { options:
-          { option0:
-            { name: 'option0',
-              type: 'string'}
-          }
-        }
-      });
+        { config:
+              { options:
+                    { option0:
+                         { name: 'option0',
+                           type: 'string'}
+                    }
+              }
+        });
     var view = new views.CharmConfigurationView(
-          { container: container,
-            model: charm,
-            app: app});
+        { container: container,
+          model: charm,
+          app: app});
     view.render();
     container.one('#service-name').set('value', 'aaa');
     container.one('#number-units').set('value', '24');
@@ -138,6 +138,55 @@ describe('charm configuration', function() {
     received_charm_url.should.equal('cs:precise/mysql');
     received_num_units.should.equal(24);
     received_config.should.eql({option0: 'cows'});
+  });
+
+  it('must show the description in a tooltip', function() {
+    var charm = new models.Charm({id: 'precise/mysql'});
+    charm.setAttrs(
+        { config:
+              { options:
+                    { option0:
+                         { name: 'option0',
+                           type: 'string',
+                           description: 'Option Zero'},
+                      option1:
+                         { name: 'option1',
+                           type: 'boolean',
+                           description: 'Option One'},
+                      option2:
+                         { name: 'option2',
+                           type: 'int',
+                           description: 'Option Two'}
+                    }
+              }
+        });
+    var view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm,
+          tooltipDelay: 0 });
+    view.render();
+    var tooltip = view.tooltip,
+        controls = container.all('.control-group');
+    tooltip.get('srcNode').get('text').should.equal('');
+
+    // There are five control groups, the three corresponding to the options
+    // shown above and two preceding, service name and number of units.
+    // Simulate mouse moves into the different control groups and see the tool
+    // tip text change.
+    view.waitingToShow.should.equal(false);
+    controls.item(0).simulate('mousemove');
+    tooltip.get('srcNode').get('text').should.equal(
+      'Name of the service to be deployed.  Must be unique.');
+    view.waitingToShow.should.equal(true);
+    // Reset the 'waitingToShow' since mouseleave cannot be simulated.
+    view.waitingToShow = false;
+    controls.item(1).simulate('mousemove');
+    tooltip.get('srcNode').get('text').should.equal(
+      'Number of units to deploy for this service.');
+    view.waitingToShow.should.equal(true);
+    view.waitingToShow = false;
+    controls.item(2).simulate('mousemove');
+    tooltip.get('srcNode').get('text').should.equal('Option Zero');
   });
 
 });

@@ -368,7 +368,7 @@ describe('charm description', function() {
     // For now, we simply go to the charm page.  Later, we will fire an
     // event locally to show the config panel.
     var view = new views.CharmDescriptionView(
-        { container: container, app: app, model: charm }).render(),
+        { container: container, app: app, model: charm}).render(),
         app_events = [];
     app.fire = function() { app_events.push(arguments); };
     container.one('.btn-primary').simulate('click');
