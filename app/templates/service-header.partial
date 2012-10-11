@@ -8,7 +8,8 @@
       <div>
         <span><strong>{{charm.id}}</strong></span>
         <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <a class="juju-service-charm-link" href="{{charm.app_url}}">Show Charm</a>
+        <a class="juju-service-charm-link" 
+           href="{{charm.app_url}}">Show Charm</a>
       </div>
     </div>
   </div>
@@ -34,7 +35,8 @@
     {{#unless charm.is_subordinate}}
 			<form class="unit-count-form">
         <label class="control-label" for="num-service-units">Unit count</label>
-        <input type="text" style="width: 95%" id="num-service-units" value="{{service.unit_count}}">
+        <input type="text" style="width: 95%" id="num-service-units" 
+               value="{{service.unit_count}}">
 			</form>    
     {{/unless}}
     </div>

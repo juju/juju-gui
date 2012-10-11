@@ -11,11 +11,13 @@
 	<div>
 	  <div class="inline">
 	   <a class="btn" id="destroy-service" data-toggle="modal" 
-	     href="#destroy-service-modal" style="margin-top: 10px; margin-left: 10px; margin-right: 10px;">Destroy Service</a>
+	      href="#destroy-service-modal" style="margin-top: 10px; 
+	      margin-left: 10px; margin-right: 10px;">Destroy Service</a>
 	  </div>
-    <div class="inline juju-service-info-container-separator" style="height: 48px;"></div>
+    <div class="inline juju-service-info-container-separator" 
+         style="height: 48px;"></div>
 	  <div class="inline">
-		  <div style="margin-top: 10px; margin-left: 10px;">
+		  <div class="juju-service-info-container-bottom-menu-wrapper">
 	      <span class="state-filter-label"><strong>Filter</strong>&nbsp;</span>
 	      {{#states}}
 	      <a class="state-btn btn {{#if active}}btn-primary{{/if}}" 
