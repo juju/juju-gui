@@ -92,15 +92,39 @@ svg {
     position: relative;
 }
 
+
 #service-menu {
-    display: none;
+    @border_radius: 20px;
+/*    display: none; */
     position: absolute;
     top: 0;
     left: 0;
+    background-color: #282421;
+    color: #fdf6e3;
+    -webkit-border-radius: @border_radius;
+    -moz-border-radius: @border_radius;
+    border-radius: @border_radius;
 
     &.active {
         display: block;
     }
+
+    ul {
+        margin: 10px;
+
+        li {
+            border-bottom: 1px #5f594f solid;
+            padding: 5px;
+            &.add-service {
+                list-style-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
+            }
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+
+    }
+
 }
 
 charms.thumbnails.li { height:4em; }
