@@ -311,14 +311,14 @@
               rel0 = new models.Relation(
               { id: 'relation-0',
                 endpoints:
-                [['mediawiki', {name: 'cache', role: 'source'}],
+           [['mediawiki', {name: 'cache', role: 'source'}],
                  ['squid', {name: 'cache', role: 'front'}]],
                 'interface': 'cache'
               }),
               rel1 = new models.Relation(
               { id: 'relation-4',
                 endpoints:
-                [['something', {name: 'foo', role: 'bar'}],
+           [['something', {name: 'foo', role: 'bar'}],
                  ['mysql', {name: 'la', role: 'lee'}]],
                 'interface': 'thing'
               });

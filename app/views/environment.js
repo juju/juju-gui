@@ -343,7 +343,7 @@ YUI.add('juju-view-environment', function(Y) {
               services = db.services.map(views.toBoundingBox);
 
           this.services = services;
-            
+
           Y.each(services, function(service) {
             // Update services  with existing positions.
             var existing = this.service_boxes[service.id];
@@ -526,7 +526,7 @@ YUI.add('juju-view-environment', function(Y) {
               service_scale = this.service_scale,
               service_scale_width = this.service_scale_width,
               service_scale_height = this.service_scale_height;
-          
+
           // Size the node for drawing.
           node
             .attr('width', function(d) {
@@ -861,27 +861,27 @@ YUI.add('juju-view-environment', function(Y) {
           return db.services.getById(boundingBox.id);
         },
 
-                
+
         /*
          * Show/hide/fade selection.
          */
         show: function(selection) {
-            selection.attr('opacity', '1.0');
-            return selection;
+          selection.attr('opacity', '1.0');
+          return selection;
         },
 
         hide: function(selection) {
-            selection.attr('opacity', '0');
-            return selection;
+          selection.attr('opacity', '0');
+          return selection;
         },
 
         fade: function(selection, alpha) {
-            selection.transition()
+          selection.transition()
             .duration(400)
             .attr('opacity', alpha !== undefined && alpha || '0.2');
-            return selection;
+          return selection;
         },
-            
+
         /*
          * Finish DOM-dependent rendering
          *
@@ -977,11 +977,11 @@ YUI.add('juju-view-environment', function(Y) {
               this)));
         },
 
-         resetRelationBuild: function() {
-              this.set('currentServiceClickAction', 'toggleControlPanel');
-              this.show(this.vis.selectAll('.service'))
+        resetRelationBuild: function() {
+          this.set('currentServiceClickAction', 'toggleControlPanel');
+          this.show(this.vis.selectAll('.service'))
                   .classed('selectable-service', true);
-         },
+        },
 
 
         /*
@@ -1205,34 +1205,34 @@ YUI.add('juju-view-environment', function(Y) {
            * flow.
            */
           addRelationStart: function(m, context, view) {
-              view.show(view.vis.selectAll('.service'));
-  
-              var db = view.get('db'),
-                  app = view.get('app'),
-                  service = view.serviceForBox(m),
-                  relMap = Y.Array.map(
-                               Y.Array.flatten(
-                                   Y.Object.values(models.getEndpoints(
-                                           service, 
-                                           app.serviceEndpoints,
-                                           db))), function(ep) {
+            view.show(view.vis.selectAll('.service'));
+
+            var db = view.get('db'),
+                app = view.get('app'),
+                service = view.serviceForBox(m),
+                relMap = Y.Array.map(
+                Y.Array.flatten(
+                Y.Object.values(models.getEndpoints(
+                service,
+                app.serviceEndpoints,
+                db))), function(ep) {
                                                   return ep.service;
-                                           }),
-                  impossibleRelations = {};
-              
-              // Iterate services and invert the possibles list.
-              db.services.each(function(s) {
-                  if (Y.Array.indexOf(relMap, s.get('id')) === -1) {
-                    impossibleRelations[s.get('id')] = true;
-                  }
-              });
-              
+                }),
+                impossibleRelations = {};
+
+            // Iterate services and invert the possibles list.
+            db.services.each(function(s) {
+              if (Y.Array.indexOf(relMap, s.get('id')) === -1) {
+                impossibleRelations[s.get('id')] = true;
+              }
+            });
+
             // Fade elements which can't be related to.
             view.fade(view.vis.selectAll('.service')
               .filter(function(d) {
-                  return (d.id in impossibleRelations && 
+                  return (d.id in impossibleRelations &&
                           d.id !== m.id);
-              })).classed('selectable-service', true);
+                })).classed('selectable-service', true);
 
             // Store start service in attrs.
             view.set('addRelationStart_service', m);

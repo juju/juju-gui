@@ -137,7 +137,7 @@ YUI.add('juju-gui', function(Y) {
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);
-        
+
       // Feed delta changes to the notifications system
       this.env.on('delta', this.notifications.generate_notices,
           this.notifications);
@@ -202,22 +202,22 @@ YUI.add('juju-gui', function(Y) {
      * When services or relations change we must get a new endpoints list.
      * This is used by the environment view.
      */
-    updateEndpoints:function(callback) {
+    updateEndpoints: function(callback) {
       var self = this;
-        
+
       if (!Y.Lang.isValue(this.serviceEndpoints)) {
-          this.serviceEndpoints = {};
+        this.serviceEndpoints = {};
       }
       // Defensive code to aid tests. Other systems
       // don't have to mock enough to get_endpoints below.
       if (!this.env.get('connected')) {
-          return;
+        return;
       }
       self.env.get_endpoints([], function(evt) {
-          self.serviceEndpoints = evt.result;
-          if (Y.Lang.isFunction(callback)) {
-              callback(self.serviceEndpoints);
-          }
+        self.serviceEndpoints = evt.result;
+        if (Y.Lang.isFunction(callback)) {
+          callback(self.serviceEndpoints);
+        }
       });
     },
 
@@ -394,9 +394,9 @@ YUI.add('juju-gui', function(Y) {
          * to enable this but we have to land the basics of this branch
          * first.
          */
-        this.showView('environment', {app: this, 
-                                      db: this.db, 
-                                      env: this.env}, {
+        this.showView('environment', {app: this,
+          db: this.db,
+          env: this.env}, {
           update: false,
           render: true,
           callback: function(view) {
