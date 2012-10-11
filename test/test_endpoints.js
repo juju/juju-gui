@@ -87,40 +87,47 @@ describe('Relation mapping logic', function() {
 
   it('should be able find relatable services', function() {
     var service = db.services.getById('blog'),
-        available = models.getEndpoints(
-            service, default_endpoints, db);
-    available[0].service.should.equal('my_db');
+        available = Y.Object.keys(models.getEndpoints(
+            service, default_endpoints, db));
+
+    available[0].should.equal('my_db');
     available.length.should.equal(1);
 
     service = db.services.getById('my_db');
-    available = models.getEndpoints(service, default_endpoints, db);
+    // Lookup by Value
+    available = Y.Array.flatten(Y.Object.values(
+        models.getEndpoints(service, default_endpoints, db)));
     available[0].service.should.equal('blog');
     available.length.should.equal(1);
   });
 
-  it.only('should be able to find valid targets', function() {
+  it('should be able to find valid targets', function() {
     // populate with some sample relations
-    db.reset()
+    db.reset();
     db.on_delta({data: {'op': 'delta', result: sample_env}});
     var service = db.services.getById('haproxy'),
-      available = models.getEndpoints(service, sample_endpoints, db);
-    available.length.should.equal(2);
-    available[0].service.should.equal('mediawiki');
-    available[1].service.should.equal('wordpress');
-
-    var service = db.services.getById('puppet'),
       available = models.getEndpoints(service, sample_endpoints, db),
-      available_svcs = [];
-    Y.Array.each(available, function(ep) {available_svcs.push(ep.service)});
-    available_svcs.should.eql(["mediawiki", "mysql", "wordpress", "memcached"]);
+      available_svcs;
+    available_svcs = Y.Object.keys(available);
+    available_svcs.length.should.equal(2);
+    available_svcs[0].should.equal('mediawiki');
+    available_svcs[1].should.equal('wordpress');
+
+    service = db.services.getById('puppet'),
+    available = models.getEndpoints(service, sample_endpoints, db),
+    available_svcs = Y.Object.keys(available);
+    Y.Array.each(available, function(ep) {available_svcs.push(ep.service);});
+    available_svcs.should.eql(
+        ["mediawiki", "mysql", "wordpress", "memcached"]);
   });
 
   it('should be able find ignore existing relations services', function() {
     var blog = db.services.getById('blog'),
-        endpoints = models.getEndpoints(blog, default_endpoints, db);
+        endpoints = Y.Object.keys(
+            models.getEndpoints(blog, default_endpoints, db));
 
     // Validate service level mappings
-    endpoints[0].service.should.equal('my_db');
+    endpoints[0].should.equal('my_db');
 
     // Force a relation delta
     db.on_delta({data: {
@@ -135,7 +142,8 @@ describe('Relation mapping logic', function() {
     }});
 
     // Which means no valid endpoints.
-    endpoints = models.getEndpoints(blog, default_endpoints, db);
+    endpoints = Y.Object.keys(
+        models.getEndpoints(blog, default_endpoints, db));
     endpoints.length.should.equal(0);
   });
 
