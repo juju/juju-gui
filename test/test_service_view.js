@@ -698,5 +698,22 @@
           var _ = expect(row.one('.highlighted')).to.not.exist;
         });
 
+    it('should filter units with relation errors', function() {
+      var units = [{
+        agent_state: 'started'
+      }, {
+        agent_state: 'started',
+        relation_errors: {}
+      }, {
+        agent_state: 'pending',
+        relation_errors: {
+          a: '',
+          b: ''
+        }
+      }], filtered = ServiceView.prototype.filterUnits('error', units);
+
+      assert.equal(1, filtered.length);
+    });
+
   });
 }) ();
