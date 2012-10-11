@@ -250,7 +250,7 @@ YUI.add('juju-view-service', function(Y) {
             // Therefore, we need to set this delay in order to show the
             // "success" message after the page page refresh.
             setTimeout(function() {
-              utils.showSuccessMessage(container, 'Settings updated');
+              utils.showSuccessMessage(container, 'Constraints updated');
             }, 1000);
           }
         },
