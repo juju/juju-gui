@@ -533,30 +533,37 @@ YUI.add('juju-view-service', function(Y) {
       var container = this.get('container'),
           app = this.get('app'),
           service = this.get('model'),
-          filter_state = this.get('querystring').state,
-          state_data = [{title: 'All', active: !filter_state, link: '.'}];
+          filter_state = this.get('querystring').state;
 
       if (!service) {
         container.setHTML('<div class="alert">Loading...</div>');
         console.log('waiting on service data');
         return this;
       }
+
+      var units = app.db.units.get_units_for_service(service),
+          state_data = [{
+            title: 'All',
+            link: '.',
+            active: !filter_state,
+            count: this.filterUnits(null, units).length
+          }];
+
       Y.each(['Running', 'Pending', 'Error'], function(title) {
         var lower = title.toLowerCase();
         state_data.push({
           title: title,
           active: lower === filter_state,
+          count: this.filterUnits(lower, units).length,
           link: '?state=' + lower});
-      });
+      }, this);
       container.setHTML(this.template({
         viewName: 'units',
         service: service.getAttrs(),
         charm: this.renderable_charm(service.get('charm'), app),
         state: filter_state,
-        units: this.filterUnits(
-            filter_state, app.db.units.get_units_for_service(service)),
-        states: state_data,
-        filtered: !!filter_state
+        units: this.filterUnits(filter_state, units),
+        states: state_data
       }));
       return this;
     },

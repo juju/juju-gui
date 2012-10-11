@@ -410,7 +410,7 @@
           active_navtabs = [];
       container.all('.state-btn').each(
           function(n) {
-            active_navtabs.push([n.get('text').trim(),
+            active_navtabs.push([n.one('.state-title').get('text').trim(),
                                  n.hasClass('btn-primary')]);
           });
       active_navtabs.should.eql(
@@ -428,7 +428,7 @@
           active_navtabs = [];
       container.all('.state-btn').each(
           function(n) {
-            active_navtabs.push([n.get('text').trim(),
+            active_navtabs.push([n.one('.state-title').get('text').trim(),
                                  n.hasClass('btn-primary')]);
           });
       active_navtabs.should.eql(
@@ -461,7 +461,7 @@
           active_navtabs = [];
       container.all('.state-btn').each(
           function(n) {
-            active_navtabs.push([n.get('text').trim(),
+            active_navtabs.push([n.one('.state-title').get('text').trim(),
                                  n.hasClass('btn-primary')]);
           });
       active_navtabs.should.eql(
@@ -492,7 +492,7 @@
           active_navtabs = [];
       container.all('.state-btn').each(
           function(n) {
-            active_navtabs.push([n.get('text').trim(),
+            active_navtabs.push([n.one('.state-title').get('text').trim(),
                                  n.hasClass('btn-primary')]);
           });
       active_navtabs.should.eql(

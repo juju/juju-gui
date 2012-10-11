@@ -15,7 +15,8 @@
 	  <div class="inline" style="width: 800x">
       {{#states}}
       <a class="state-btn btn {{#if active}}btn-primary{{/if}}" 
-        data-toggle="modal" href="{{link}}">{{title}}</a>
+        data-toggle="modal" href="{{link}}">
+        <span class="state-title">{{title}}</span> ({{count}})</a>
       {{/states}}	  
 	  </div>
 	</div>

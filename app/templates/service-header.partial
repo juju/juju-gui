@@ -33,8 +33,7 @@
     <div class="juju-sevice-container-header-c">
     {{#unless charm.is_subordinate}}
 			<form class="unit-count-form">
-        <label class="control-label" for="num-service-units">Unit count 
-        {{#if filtered}}(Filtered count: {{units.length}}){{/if}}</label>
+        <label class="control-label" for="num-service-units">Unit count</label>
         <input type="text" id="num-service-units" value="{{service.unit_count}}">
 			</form>    
     {{/unless}}
