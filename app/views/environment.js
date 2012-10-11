@@ -1210,14 +1210,19 @@ YUI.add('juju-view-environment', function(Y) {
               var db = view.get('db'),
                   app = view.get('app'),
                   service = view.serviceForBox(m),
-                  relMap = models.getEndpoints(service, 
-                                               app.serviceEndpoints,
-                                               db),
+                  relMap = Y.Array.map(
+                               Y.Array.flatten(
+                                   Y.Object.values(models.getEndpoints(
+                                           service, 
+                                           app.serviceEndpoints,
+                                           db))), function(ep) {
+                                                  return ep.service;
+                                           }),
                   impossibleRelations = {};
               
               // Iterate services and invert the possibles list.
               db.services.each(function(s) {
-                  if (!(s.get('id') in relMap)) {
+                  if (Y.Array.indexOf(relMap, s.get('id')) === -1) {
                     impossibleRelations[s.get('id')] = true;
                   }
               });
