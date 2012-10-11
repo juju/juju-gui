@@ -34,7 +34,7 @@
     {{#unless charm.is_subordinate}}
 			<form class="unit-count-form">
         <label class="control-label" for="num-service-units">Unit count</label>
-        <input type="text" id="num-service-units" value="{{service.unit_count}}">
+        <input type="text" style="width: 95%" id="num-service-units" value="{{service.unit_count}}">
 			</form>    
     {{/unless}}
     </div>
