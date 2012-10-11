@@ -82,6 +82,14 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         events: {
+          '#num-service-units': {
+            keydown: function(ev) {
+              unitCountHandler(this).modifyUnits(ev);
+            },
+            blur: function() {
+              unitCountHandler(this).resetUnits();
+            }
+          },
           '#service-relations .btn': {click: 'confirmRemoved'},
           'a#destroy-service': {
             click: function(ev) {removeServiceHandler(this).confirmDestroy(ev);}
@@ -198,6 +206,14 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         events: {
+          '#num-service-units': {
+            keydown: function(ev) {
+              unitCountHandler(this).modifyUnits(ev);
+            },
+            blur: function() {
+              unitCountHandler(this).resetUnits();
+            }
+          },
           '#save-service-constraints': {click: 'updateConstraints'},
           'a#destroy-service': {click: function(ev) {
             removeServiceHandler(this).confirmDestroy(ev);
@@ -315,6 +331,14 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         events: {
+          '#num-service-units': {
+            keydown: function(ev) {
+              unitCountHandler(this).modifyUnits(ev);
+            },
+            blur: function() {
+              unitCountHandler(this).resetUnits();
+            }
+          },
           '#save-service-config': {click: 'saveConfig'},
           'a#destroy-service': {click: function(ev) {
             removeServiceHandler(this).confirmDestroy(ev);
