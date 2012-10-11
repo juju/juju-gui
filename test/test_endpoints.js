@@ -55,9 +55,9 @@ var default_endpoints = {
 
 // These are nominally based on improv sample.json delta stream with
 // the addition of puppet subordinate relations.
-
 var sample_endpoints,
     sample_env;
+
 
 describe('Relation mapping logic', function() {
   var Y, juju, db, models;
@@ -71,7 +71,7 @@ describe('Relation mapping logic', function() {
   });
 
   beforeEach(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-models',
+    Y = YUI(GlobalConfig).use(['juju-models',    
                                'juju-tests-utils',
                                'juju-controllers'],
     function(Y) {
@@ -91,6 +91,10 @@ describe('Relation mapping logic', function() {
     db.destroy();
     done();
   });
+
+  function loadFixture(url) {
+    return Y.JSON.parse(Y.io(url, {sync: true}).responseText);
+  }
 
   it('should be able find relatable services', function() {
     var service = db.services.getById('blog'),
