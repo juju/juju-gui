@@ -144,6 +144,6 @@ YUI.add('juju-endpoints', function(Y) {
     console.timeEnd('Endpoint Match');
     console.groupEnd();
     return targets;
-  }
+  };
 });
 
