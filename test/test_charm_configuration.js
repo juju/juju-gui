@@ -49,7 +49,7 @@ describe('charm configuration', function() {
     assert.isTrue(!Y.Lang.isValue(charm.config));
     view.render();
     var labels = container.all('div.control-label');
-    labels.get('text').should.eql(['Service name:', 'Number of units:']);
+    labels.get('text').should.eql(['Service name', 'Number of units']);
   });
 
   it('must have inputs for items in the charm schema', function() {
@@ -75,7 +75,7 @@ describe('charm configuration', function() {
     view.render();
     var labels = container.all('div.control-label');
     labels.get('text').should.eql(
-        ['Service name:', 'Number of units:', 'option0 (string)',
+        ['Service name', 'Number of units', 'option0 (string)',
          'option1 (boolean)', 'option2 (int)']);
   });
 

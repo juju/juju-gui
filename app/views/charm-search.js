@@ -360,6 +360,7 @@ YUI.add('juju-charm-search', function(Y) {
               );
             }
           });
+          this.goBack(evt);
         },
         setupOverlay: function(container) {
           var self = this;
