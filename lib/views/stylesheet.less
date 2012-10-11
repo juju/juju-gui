@@ -367,6 +367,11 @@ g.unit {
 /*
  * Overview Module
  */
+#overview {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
 #overview-tasks {
     background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
     margin: 0 -20px 0 -20px;
@@ -587,6 +592,10 @@ g.unit {
     padding-left: 0px;
     padding-right: 0px;
 
+    .btn {
+        float: right;
+    }
+
     .search-charm-inner {
         width: 394px;
         height: 500px;
@@ -608,6 +617,49 @@ g.unit {
             margin: 0px;
             width: 230px;
         }
+    }
+    .charm-nav-back {
+        background-color: black;
+        text-transform: uppercase;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    .charm-description {
+        padding: 1ex 1em;
+        h3 {
+            text-transform: capitalize;
+            color: blue;
+            font-weight: bold;
+            margin-top: 1ex;
+            margin-bottom: 1ex;
+        }
+        .charm-section {
+            h4 {
+                text-transform: uppercase;
+                border-bottom: 1px dotted black;
+                cursor: pointer;
+                margin-top: 1ex;
+            }
+            h5 {
+                margin-top: 1ex;
+                &:first-child {
+                    margin-top: 0;
+                }
+            }
+            > div {
+                overflow: hidden;
+            }
+            .commitmessage {
+                padding-top: 0.8ex;
+                padding-left: 1em;
+                font-style: italic;
+                white-space: pre-wrap;
+            }
+        }
+        height: 430px;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
     .search-result-div {
         height: 424px;

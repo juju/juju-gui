@@ -221,6 +221,9 @@
          var navbar = Y.Node.create('<div class="navbar" ' +
              'style="height:70px;">Navbar</div>');
          Y.one('body').append(navbar);
+         var viewport = Y.Node.create('<div id="viewport" ' +
+             'style="width:800px;">viewport</div>');
+         Y.one('body').append(viewport);
          var view = new views.environment({
            container: container,
            db: db,
@@ -238,13 +241,11 @@
               parseInt(Y.one('#overview-tasks')
                 .getComputedStyle('height'), 10) -
               parseInt(Y.one('.navbar')
-                .getComputedStyle('height'), 10) -
-              parseInt(Y.one('.navbar')
-                .getComputedStyle('margin-bottom'), 10)
+                .getComputedStyle('height'), 10) - 1
               ));
          // Destroy the navbar
-         navbar.remove();
-         navbar.destroy();
+         navbar.remove(true);
+         viewport.remove(true);
          done();
        }
     );
@@ -271,9 +272,9 @@
     it('must be able to add a relation from the control panel',
        function() {
          var view = new views.environment({
-            container: container,
-            db: db,
-            env: env
+           container: container,
+           db: db,
+           env: env
          }).render();
          var service = container.one('.service'),
            add_rel = container.one('#service-menu .add-relation'),
@@ -290,7 +291,7 @@
        });
 
     it('must be able to remove a relation between services',
-        function() {
+       function() {
          var view = new views.environment({
            container: container,
            db: db,
@@ -343,7 +344,7 @@
     });
 
     it('must be able to get us nearest connectors',
-        function() {
+       function() {
          var b1 = views.BoundingBox(),
          b2 = views.BoundingBox();
 
@@ -391,7 +392,7 @@
     });
 
     it('must be able to save and restore old position information',
-        function() {
+       function() {
          var b1 = views.BoundingBox(),
          b2 = views.BoundingBox();
 
@@ -412,7 +413,7 @@
          b2.x.should.equal(300);
          b2.px.should.equal(200);
 
-        });
+       });
 
     it('must be able to access model attributes easily', function() {
       var service = new models.Service({id: 'mediawiki',
@@ -428,7 +429,7 @@
     });
 
     it('must be able to update position data and not touch model data',
-        function() {
+       function() {
          var service = new models.Service({id: 'mediawiki',
            exposed: true}),
          b1 = new views.BoundingBox();
@@ -442,7 +443,7 @@
          b1.x.should.equal(100);
          b1.id.should.equal('mediawiki');
 
-        });
+       });
 
     it('must be able to map from sequence of models to boundingboxes',
        function() {
@@ -481,8 +482,8 @@
       var b1 = new views.BoundingBox(),
           b2 = new views.BoundingBox(),
           relation = new models.Relation({endpoints: [
-                ['haproxy', {name: 'app'}],
-                ['mediawiki', {name: 'proxy'}]]}),
+            ['haproxy', {name: 'app'}],
+            ['mediawiki', {name: 'proxy'}]]}),
           service1 = new models.Service({id: 'mediawiki'}),
           service2 = new models.Service({id: 'haproxy'});
 
