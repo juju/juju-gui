@@ -33,11 +33,11 @@
   <div class="inline" style="width: 20%;">
     <div class="juju-sevice-container-header-c">
     {{#unless charm.is_subordinate}}
-			<form class="unit-count-form">
+      <form class="unit-count-form">
         <label class="control-label" for="num-service-units">Unit count</label>
         <input type="text" style="width: 95%" id="num-service-units" 
                value="{{service.unit_count}}">
-			</form>    
+      </form>    
     {{/unless}}
     </div>
   </div>  
