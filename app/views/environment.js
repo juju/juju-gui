@@ -35,7 +35,7 @@ YUI.add('juju-view-environment', function(Y) {
             click: 'serviceClick',
             dblclick: 'serviceDblClick',
             mouseenter: function(d, self) {
-              var rect = Y.one(this).one('.service-border');
+              var rect = Y.one(this);
               // Do not fire if this service isn't selectable.
               if (!self.hasSVGClass(rect, 'selectable-service')) {
                 return;
@@ -127,6 +127,8 @@ YUI.add('juju-view-environment', function(Y) {
             click: function(d, self) {
               self.removeSVGClass(
                   '.service-control-panel.active', 'active');
+
+              self.resetRelationBuild();
             }
           }
 
@@ -523,14 +525,9 @@ YUI.add('juju-view-environment', function(Y) {
               service_scale = this.service_scale,
               service_scale_width = this.service_scale_width,
               service_scale_height = this.service_scale_height;
-
-          // Append a rect for capturing events.
-          // TODO: this currently acts as the selectable-service element,
-          // and acts as the indicator for whether a service may be used for
-          // creating relations.  This will only be the case until there is
-          // UI around showing selectable services.
-          node.append('rect')
-            .attr('class', 'service-border')
+          
+          // Size the node for drawing.
+          node
             .attr('width', function(d) {
                 // NB: if a service has zero units, as is possible with
                 // subordinates, then default to 1 for proper scaling, as
@@ -750,6 +747,7 @@ YUI.add('juju-view-environment', function(Y) {
                   .addRelationEnd(endpoint, context, self);
                 } else {
                   // TODO clean up, abstract
+                  self.resetRelationBuild();
                   self.addRelation(); // Will clear the state.
                 }
               });
@@ -861,6 +859,28 @@ YUI.add('juju-view-environment', function(Y) {
           var db = this.get('db');
           return db.services.getById(boundingBox.id);
         },
+
+                
+        /*
+         * Show/hide/fade selection.
+         */
+        show: function(selection) {
+            selection.attr('opacity', '1.0');
+            return selection;
+        },
+
+        hide: function(selection) {
+            selection.attr('opacity', '0');
+            return selection;
+        },
+
+        fade: function(selection, alpha) {
+            selection.transition()
+            .duration(400)
+            .attr('opacity', alpha !== undefined && alpha || '0.2');
+            return selection;
+        },
+            
         /*
          * Finish DOM-dependent rendering
          *
@@ -904,14 +924,9 @@ YUI.add('juju-view-environment', function(Y) {
               container = this.get('container');
           if (curr_action === 'show_service') {
             this.set('currentServiceClickAction', 'addRelationStart');
-            // Add .selectable-service to all .service-border.
-            this.addSVGClass('.service-border', 'selectable-service');
           } else if (curr_action === 'addRelationStart' ||
               curr_action === 'addRelationEnd') {
             this.set('currentServiceClickAction', 'toggleControlPanel');
-
-            // Remove selectable border from all nodes.
-            this.removeSVGClass('.service-border', 'selectable-service');
           } // Otherwise do nothing.
         },
 
@@ -960,6 +975,13 @@ YUI.add('juju-view-environment', function(Y) {
               },
               this)));
         },
+
+         resetRelationBuild: function() {
+              this.set('currentServiceClickAction', 'toggleControlPanel');
+              this.show(this.vis.selectAll('.service'))
+                  .classed('selectable-service', true);
+         },
+
 
         /*
          * Zoom in event handler.
@@ -1176,23 +1198,48 @@ YUI.add('juju-view-environment', function(Y) {
             btn.set('disabled', false);
           },
 
+
           /*
            * Fired when clicking the first service in the add relation
            * flow.
            */
           addRelationStart: function(m, context, view) {
-            // Add .selectable-service to all .service-border.
-            view.addSVGClass('.service-border', 'selectable-service');
+              view.show(view.vis.selectAll('.service'));
+  
+              var app = view.get('app'),
+                db = view.get('db'),
+                relMap = models.getEndpoints(m.id, ,
+                possibleRelations = {},
+                impossibleRelations = {};
+              
+              // Create a map of possible relations
+              if (relMap[m.id]) {
+                  Y.Array.each(relMap[m.id], function(s) {
+                      possibleRelations[s] = true;
+                  });
+              } else {
+                  // TODO: Indicate to user there are no relations
+                  return;
+              }
 
-            // Remove selectable border from current node.
-            var node = Y.one(context).one('.service-border');
-            view.removeSVGClass(node, 'selectable-service');
+              // Iterate services and invert the possibles list.
+              db.services.each(function(s) {
+                  if (!(s.get('id') in possibleRelations)) {
+                      impossibleRelations[s.get('id')] = true;
+                  }
+              });
+              
+            // Fade elements which can't be related to.
+            view.fade(view.vis.selectAll('.service')
+              .filter(function(d) {
+                  return (d.id in impossibleRelations && 
+                          d.id !== m.id);
+              })).classed('selectable-service', true);
 
             // Store start service in attrs.
             view.set('addRelationStart_service', m);
             // Set click action.
-            view.set('currentServiceClickAction',
-                'addRelationEnd');
+            view.set('currentServiceClickAction', 'addRelationEnd');
           },
 
           /*
@@ -1200,8 +1247,9 @@ YUI.add('juju-view-environment', function(Y) {
            * add relation flow.
            */
           addRelationEnd: function(m, context, view) {
-            // Remove selectable border from all nodes.
-            view.removeSVGClass('.selectable-service', 'selectable-service');
+            // Redisplay all services
+            view.show(view.vis.selectAll('.service'))
+                .classed('selectable-service', false);
 
             // Get the vis, and links, build the new relation.
             var vis = view.vis,

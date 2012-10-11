@@ -204,7 +204,16 @@ YUI.add('juju-env', function(Y) {
         unit_name: unit_name,
         relation_name: relation_name || null,
         retry: retry || false}, callback);
+    },
+
+    get_endpoints: function(services, callback) {
+      if (!Y.Lang.isArray(services)) {
+        services = [services];
+      }
+      this._send_rpc({'op': 'get_endpoints', 'service_names': services},
+                     callback);
     }
+
 
   });
 

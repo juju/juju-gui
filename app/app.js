@@ -137,7 +137,7 @@ YUI.add('juju-gui', function(Y) {
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);
-
+        
       // Feed delta changes to the notifications system
       this.env.on('delta', this.notifications.generate_notices,
           this.notifications);
@@ -152,6 +152,7 @@ YUI.add('juju-gui', function(Y) {
       // If the database updates redraw the view (distinct from model updates)
       // TODO - Bound views will automatically update this on individual models
       this.db.on('update', this.on_database_changed, this);
+      this.db.on('update', this.updateEndpoints, this);
 
       this.on('navigate', function(e) {
         console.log('app navigate', e);
@@ -195,6 +196,29 @@ YUI.add('juju-gui', function(Y) {
       Y.log(evt, 'debug', 'App: Database changed');
       // Redispatch to current view to update.
       this.dispatch();
+    },
+
+    /*
+     * When services or relations change we must get a new endpoints list.
+     * This is used by the environment view.
+     */
+    updateEndpoints:function() {
+      var self = this;
+      // Defensive code to aid tests. Other systems
+      // don't have to mock enough to get_endpoints below.
+      if (!this.env.get('connected')) {
+          return;
+      }
+      self.env.get_endpoints([], function(evt) {
+          self.serviceRelationOptions = models.getEndpoints(
+              evt.result, self.db.services, self.db.relations);
+          self.serviceRelationMap = Y.juju.processServiceMap(
+              self.serviceRelationOptions);
+        });
+      }, 200);
+    },
+
+
     },
 
     // Event handlers
@@ -370,7 +394,9 @@ YUI.add('juju-gui', function(Y) {
          * to enable this but we have to land the basics of this branch
          * first.
          */
-        this.showView('environment', {db: this.db, env: this.env}, {
+        this.showView('environment', {app: this, 
+                                      db: this.db, 
+                                      env: this.env}, {
           update: false,
           render: true,
           callback: function(view) {
