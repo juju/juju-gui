@@ -299,39 +299,36 @@ YUI.add('juju-charm-search', function(Y) {
         },
         events: {
           '.charm-nav-back': {click: 'goBack'},
-          '.btn': {click: 'onCharmDeployClicked'},
+          '.btn#charm-deploy': {click: 'onCharmDeployClicked'},
+          '.remove-config-file': {click: 'onFileRemove'},
           '.charm-section h4': {click: 'toggleSectionVisibility'},
           '.config-file-upload': {change: 'onFileChange'},
-          '.config-file-remove': {click: 'onFileRemove'}
         },
         onFileChange: function(evt) {
           console.log("onFileChange:", evt);
           this.fileInput = evt.target;
-          this.onUploadStarted(this.fileInput);
           var file = this.fileInput.get('files').shift(),
               reader = new FileReader();
           reader.onerror = Y.bind(this.onFileError, this);
           reader.onload = Y.bind(this.onFileLoaded, this);
           reader.readAsText(file);
         },
-        onUploadStarted: function(fileInput) {
-          fileInput.ancestor().insertBefore(Y.Node.create('<div/>')
-              .set('text', 'Processing file...'), fileInput);
-          fileInput.hide();
-        },
         onFileRemove: function(evt) {
           this.configFileContent = null;
+          // TODO tell the file input that the file is gone
           // TODO hide "Remove configuration file" button
           // TODO show file input element
+          this.get('container').one('charm-settings').show();
         },
         onFileLoaded: function(evt) {
           this.configFileContent = evt.target.result;
-          // TODO hide config area
+          this.get('container').one('.charm-settings').hide();
+          this.get('container').one('.remove-config-file')
+            .removeClass('hidden');
           // TODO add "Remove configuration file" button
           console.log(this.configFileContent);
         },
         onFileError: function(evt) {
-          // TODO show file input element
           // TODO show error message
         },
         // TODO this is (almost) a duplicate of the same function in the
