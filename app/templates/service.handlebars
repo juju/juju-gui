@@ -9,16 +9,18 @@
 </div>
 <div class="juju-service-info-container-bottom-menu">
 	<div style="margin-top: 10px; margin-left: 10px;">
-	  <div class="inline" style="width: 200px">
+	  <div class="inline" style="width: 200px;">
 	   <a class="btn" id="destroy-service" data-toggle="modal" href="#destroy-service-modal">Destroy Service</a>
 	  </div>
-	  <div class="inline" style="width: 800x">
-	    <span class="state-filter-label"><strong>Filter</strong>&nbsp;</span>
-      {{#states}}
-      <a class="state-btn btn {{#if active}}btn-primary{{/if}}" 
-        data-toggle="modal" href="{{link}}">
-        <span class="state-title">{{title}}</span> ({{count}})</a>
-      {{/states}}	  
+	  <div class="inline" style="width: 800x; text-align: center;">
+		  <div style="display: inline-block; width: 800px;">
+	      <span class="state-filter-label"><strong>Filter</strong>&nbsp;</span>
+	      {{#states}}
+	      <a class="state-btn btn {{#if active}}btn-primary{{/if}}" 
+	        data-toggle="modal" href="{{link}}">
+	        <span class="state-title">{{title}}</span> ({{count}})</a>
+	      {{/states}}
+		  </div>
 	  </div>
 	</div>
 </div>  
