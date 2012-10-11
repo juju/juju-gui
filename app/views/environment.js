@@ -419,25 +419,25 @@ YUI.add('juju-view-environment', function(Y) {
 
           var drag = d3.behavior.drag()
             .on('drag', function(d, i) {
-              if (self.buildingRelation) {
-                self.addRelationDrag.call(self, d, this);
-              } else {
-                if (self.longClickTimer) {
-                  self.longClickTimer.cancel();
+                if (self.buildingRelation) {
+                  self.addRelationDrag.call(self, d, this);
+                } else {
+                  if (self.longClickTimer) {
+                    self.longClickTimer.cancel();
+                  }
+                  d.x += d3.event.dx;
+                  d.y += d3.event.dy;
+                  d3.select(this).attr('transform', function(d, i) {
+                    return d.translateStr();
+                  });
+                  updateLinks();
                 }
-                d.x += d3.event.dx;
-                d.y += d3.event.dy;
-                d3.select(this).attr('transform', function(d, i) {
-                  return d.translateStr();
-                });
-                updateLinks();
-              }
-            })
+              })
             .on('dragend', function(d, i) {
-              if (self.buildingRelation) {
-                self.addRelationDragEnd.call(self, d, this)
-              }
-            });
+                if (self.buildingRelation) {
+                  self.addRelationDragEnd.call(self, d, this);
+                }
+              });
 
           // Generate a node for each service, draw it as a rect with
           // labels for service and charm.
@@ -462,14 +462,14 @@ YUI.add('juju-view-environment', function(Y) {
                   })
             .call(drag)
             .on('mousedown.addrel', function(d) {
-              console.log(d3.event);
-              self.d3Events['.service']['mousedown.addrel']
+                console.log(d3.event);
+                self.d3Events['.service']['mousedown.addrel']
                 .call(this, d, self, d3.event);
-            })
+              })
             .on('mouseup.addrel', function(d) {
-              self.d3Events['.service']['mouseup.addrel']
+                self.d3Events['.service']['mouseup.addrel']
                 .call(this, d, self, d3.event);
-            })
+              })
             .attr('transform', function(d) {
                 return d.translateStr();});
 
@@ -774,8 +774,7 @@ YUI.add('juju-view-environment', function(Y) {
                 return (d.h / 2) - 16;
               })
         .attr('width', 32)
-        .attr('height', 32)
-        .call(drag_relation_behavior);
+        .attr('height', 32);
 
           // Add a button to view the service.
           var view_service = control_panel.append('g')
@@ -953,7 +952,7 @@ YUI.add('juju-view-environment', function(Y) {
         addRelationDragEnd: function(d, context) {
           // Get the line, the endpoint service, and the target <rect>.
           var self = this;
-          var context = self.get('potential_drop_point_rect');
+          var rect = self.get('potential_drop_point_rect');
           var endpoint = self.get('potential_drop_point_service');
 
           // Get rid of our drag line
@@ -961,9 +960,9 @@ YUI.add('juju-view-environment', function(Y) {
           this.buildingRelation = false;
 
           // If we landed on a rect, add relation, otherwise, cancel.
-          if (context) {
+          if (rect) {
             self.service_click_actions
-            .addRelationEnd(endpoint, context, self);
+            .addRelationEnd(endpoint, rect, self);
           } else {
             // TODO clean up, abstract
             self.addRelation(); // Will clear the state.
