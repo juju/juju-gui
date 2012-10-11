@@ -64,9 +64,9 @@ describe('Relation mapping logic', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['io', 'json-parse'], function(Y) {
-        sample_env = loadFixture('sample_env.json');
-        sample_endpoints = loadFixture('sample_endpoints.json');
-        done();
+      sample_env = loadFixture('sample_env.json');
+      sample_endpoints = loadFixture('sample_endpoints.json');
+      done();
     });
   });
 
@@ -85,12 +85,12 @@ describe('Relation mapping logic', function() {
 
   function loadFixture(url) {
     var parseJSON = {
-        // In tests we wait for the fixture
-        sync: true,
-          failure: function(x, o) {
-            console.warn('Failed to load fixture');
-          }
-        };
+      // In tests we wait for the fixture
+      sync: true,
+      failure: function(x, o) {
+        console.warn('Failed to load fixture');
+      }
+    };
     return Y.JSON.parse(Y.io(url, parseJSON).responseText);
   }
 
