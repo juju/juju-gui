@@ -82,7 +82,10 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         events: {
-          '#service-relations .btn': {click: 'confirmRemoved'}
+          '#service-relations .btn': {click: 'confirmRemoved'},
+          'a#destroy-service': {
+            click: function(ev) {removeServiceHandler(this).confirmDestroy(ev);}
+          }
         },
 
         render: function() {
@@ -103,7 +106,8 @@ YUI.add('juju-view-service', function(Y) {
           });
 
           container.setHTML(this.template(
-              { service: service.getAttrs(),
+              { viewName: 'relations',
+                service: service.getAttrs(),
                 relations: relation_data,
                 charm: this.renderable_charm(service.get('charm'), app)}
               ));
@@ -194,7 +198,10 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         events: {
-          '#save-service-constraints': {click: 'updateConstraints'}
+          '#save-service-constraints': {click: 'updateConstraints'},
+          'a#destroy-service': {click: function(ev) {
+            removeServiceHandler(this).confirmDestroy(ev);
+          }}
         },
 
         updateConstraints: function() {
@@ -278,6 +285,7 @@ YUI.add('juju-view-service', function(Y) {
 
           console.log('service constraints', display_constraints);
           container.setHTML(this.template({
+            viewName: 'constraints',
             service: service.getAttrs(),
             constraints: display_constraints,
             readOnlyConstraints: (function() {
@@ -307,7 +315,10 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         events: {
-          '#save-service-config': {click: 'saveConfig'}
+          '#save-service-config': {click: 'saveConfig'},
+          'a#destroy-service': {click: function(ev) {
+            removeServiceHandler(this).confirmDestroy(ev);
+          }}
         },
 
         render: function() {
@@ -358,7 +369,8 @@ YUI.add('juju-view-service', function(Y) {
           console.log('render view svc config', service.getAttrs(), settings);
 
           container.setHTML(this.template(
-              {service: service.getAttrs(),
+              { viewName: 'config',
+                service: service.getAttrs(),
                 settings: settings,
                 charm: this.renderable_charm(service.get('charm'), app)}
               ));
@@ -513,6 +525,7 @@ YUI.add('juju-view-service', function(Y) {
           link: '?state=' + lower});
       });
       container.setHTML(this.template({
+        viewName: 'units',
         service: service.getAttrs(),
         charm: this.renderable_charm(service.get('charm'), app),
         state: filter_state,
@@ -539,87 +552,43 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     events: {
-      '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'},
+      '#num-service-units': {
+        keydown: function(ev) {
+          unitCountHandler(this).modifyUnits(ev);
+        },
+        blur: function() {
+          unitCountHandler(this).resetUnits();
+        }
+      },
       'div.unit': {click: function(ev) {
         console.log('Unit clicked', ev.currentTarget.get('id'));
         this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
       }},
-      'a#destroy-service': {click: 'confirmDestroy'}
-    },
+      'a#destroy-service': {click: function(ev) {
+        removeServiceHandler(this).confirmDestroy(ev);
+      }}
+    }
+  });
 
-    confirmDestroy: function(ev) {
-      // We wait to make the panel until now, because in the render method
-      // the container is not yet part of the document.
-      ev.preventDefault();
-      if (Y.Lang.isUndefined(this.panel)) {
-        this.panel = views.createModalPanel(
-            'Are you sure you want to destroy the service?  ' +
-            'This cannot be undone.',
-            '#destroy-modal-panel',
-            'Destroy Service',
-            Y.bind(this.destroyService, this)
-            );
-      }
-      this.panel.show();
-    },
+  views.service = ServiceView;
 
-    destroyService: function(ev) {
-      ev.preventDefault();
-      var env = this.get('app').env,
-          service = this.get('model');
-      ev.target.set('disabled', true);
-      env.destroy_service(
-          service.get('id'), Y.bind(this._destroyCallback, this));
-    },
-
-    _destroyCallback: function(ev) {
-      var db = this.get('app').db,
-          app = this.get('app'),
-          service = this.get('model'),
-          service_id = service.get('id');
-
-      if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error destroying service',
-              message: 'Service name: ' + ev.service_name,
-              level: 'error',
-              link: app.getModelURL(service),
-              modelId: service
-            })
-        );
-      } else {
-        db.services.remove(service);
-        db.relations.remove(
-            db.relations.filter(
-            function(r) {
-              return Y.Array.some(r.get('endpoints'), function(ep) {
-                return ep[0] === service_id;
-              });
-            }
-            ));
-        this.panel.hide();
-        this.panel.destroy();
-        this.fire('showEnvironment');
-      }
-    },
-
-    resetUnits: function() {
-      var container = this.get('container'),
+  var unitCountHandler = function(view) {
+    function resetUnits() {
+      var container = view.get('container'),
           field = container.one('#num-service-units');
-      field.set('value', this.get('model').get('unit_count'));
+      field.set('value', view.get('model').get('unit_count'));
       field.set('disabled', false);
-    },
+    }
 
-    modifyUnits: function(ev) {
+    function modifyUnits(ev) {
       if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
         return;
       }
-      var container = this.get('container'),
+      var container = view.get('container'),
           field = container.one('#num-service-units');
 
       if (ev.keyCode === ESC) {
-        this.resetUnits();
+        resetUnits();
       }
       if (ev.keyCode !== ENTER) { // If not Enter keyup...
         return;
@@ -627,18 +596,18 @@ YUI.add('juju-view-service', function(Y) {
       ev.halt(true);
 
       if (/^\d+$/.test(field.get('value'))) {
-        this._modifyUnits(parseInt(field.get('value'), 10));
+        _modifyUnits(parseInt(field.get('value'), 10));
       } else {
-        this.resetUnits();
+        resetUnits();
       }
-    },
+    }
 
-    _modifyUnits: function(requested_unit_count) {
+    function _modifyUnits(requested_unit_count) {
 
-      var service = this.get('model'),
+      var service = view.get('model'),
           unit_count = service.get('unit_count'),
-          field = this.get('container').one('#num-service-units'),
-          env = this.get('app').env;
+          field = view.get('container').one('#num-service-units'),
+          env = view.get('app').env;
 
       if (requested_unit_count < 1) {
         console.log('You must have at least one unit');
@@ -651,10 +620,10 @@ YUI.add('juju-view-service', function(Y) {
         // Add units!
         env.add_unit(
             service.get('id'), delta,
-            Y.bind(this._addUnitCallback, this));
+            _addUnitCallback);
       } else if (delta < 0) {
         delta = Math.abs(delta);
-        var units = this.get('app').db.units.get_units_for_service(service),
+        var units = view.get('app').db.units.get_units_for_service(service),
             unit_ids_to_remove = [];
 
         for (var i = units.length - 1;
@@ -664,17 +633,17 @@ YUI.add('juju-view-service', function(Y) {
         }
         env.remove_units(
             unit_ids_to_remove,
-            Y.bind(this._removeUnitCallback, this)
+            _removeUnitCallback
         );
       }
       field.set('disabled', true);
-    },
+    }
 
-    _addUnitCallback: function(ev) {
-      var service = this.get('model'),
+    function _addUnitCallback(ev) {
+      var service = view.get('model'),
           service_id = service.get('id'),
-          app = this.get('app'),
-          db = this.get('app').db,
+          app = view.get('app'),
+          db = view.get('app').db,
           unit_names = ev.result || [];
       if (ev.err) {
         db.notifications.add(
@@ -697,12 +666,12 @@ YUI.add('juju-view-service', function(Y) {
       }
       db.fire('update');
       // View is redrawn so we do not need to enable field.
-    },
+    }
 
-    _removeUnitCallback: function(ev) {
-      var service = this.get('model'),
-          app = this.get('app'),
-          db = this.get('app').db,
+    function _removeUnitCallback(ev) {
+      var service = view.get('model'),
+          app = view.get('app'),
+          db = view.get('app').db,
           unit_names = ev.unit_names;
       console.log('_removeUnitCallback with: ', arguments);
 
@@ -739,9 +708,92 @@ YUI.add('juju-view-service', function(Y) {
       db.fire('update');
       // View is redrawn so we do not need to enable field.
     }
-  });
 
-  views.service = ServiceView;
+    return {
+      resetUnits: resetUnits,
+      modifyUnits: modifyUnits,
+
+      // It is public for unit tests purposes
+      _modifyUnits: _modifyUnits,
+      _removeUnitCallback: _removeUnitCallback
+    };
+  };
+  views.UnitCountHandler = unitCountHandler;
+
+  var removeServiceHandler = function(view) {
+
+    function confirmDestroy(ev) {
+      // We wait to make the panel until now, because in the render method
+      // the container is not yet part of the document.
+      ev.preventDefault();
+      if (Y.Lang.isUndefined(view.panel)) {
+        view.panel = views.createModalPanel(
+            'Are you sure you want to destroy the service?  ' +
+            'This cannot be undone.',
+            '#destroy-modal-panel',
+            'Destroy Service',
+            destroyService
+            );
+      }
+      view.panel.show();
+    }
+
+    function destroyService(ev) {
+      ev.preventDefault();
+      var env = view.get('app').env,
+          service = view.get('model');
+      ev.target.set('disabled', true);
+      env.destroy_service(
+          service.get('id'), _destroyCallback);
+    }
+
+    function _destroyCallback(ev) {
+      var db = view.get('app').db,
+          app = view.get('app'),
+          service = view.get('model'),
+          service_id = service.get('id');
+
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error destroying service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        db.services.remove(service);
+        db.relations.remove(
+            db.relations.filter(
+            function(r) {
+              return Y.Array.some(r.get('endpoints'), function(ep) {
+                return ep[0] === service_id;
+              });
+            }
+            ));
+        view.panel.hide();
+        view.panel.destroy();
+        view.fire('showEnvironment');
+      }
+    }
+
+    return {
+      confirmDestroy: confirmDestroy
+    };
+  };
+
+  // Display a arrow under the service page name.
+  Y.Handlebars.registerHelper('setPageActive', function(currentPage,
+      menuItem) {
+        if (currentPage === menuItem) {
+          return new Y.Handlebars.SafeString(
+              '<div class="arrow-up-white"></div>');
+        }
+        return '';
+      });
+
 }, '0.1.0', {
   requires: ['panel',
     'juju-view-utils',

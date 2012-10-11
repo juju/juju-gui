@@ -274,6 +274,26 @@ YUI.add('juju-gui', function(Y) {
         model: service,
         app: this,
         querystring: req.query
+      }, {}, function(view) {
+        function getHeight(node) {
+          if (!node) {
+            return 0;
+          }
+          return node.getDOMNode().clientHeight;
+        }
+
+        var navbarHeight = getHeight(Y.one('.navbar')),
+            windowHeight = window.innerHeight,
+            container = view.get('container'),
+            viewContainer = container.one('.view-container'),
+            headerHeight = getHeight(container.one('.service-header-partial')),
+            footerHeight = getHeight(container.one(
+                '.juju-service-info-container-bottom-menu'));
+
+        if (viewContainer) {
+          viewContainer.set('offsetHeight', windowHeight - navbarHeight -
+              headerHeight - footerHeight - 1);
+        }
       });
     },
 

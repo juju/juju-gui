@@ -1,5 +1,6 @@
 {{> service-header}}
-<div class="row-fluid">
+<div class="view-container">
+<div>
   <div class="span12">
     <ul class="nav nav-tabs">
       {{#states}}
@@ -17,19 +18,19 @@
   </div>
 </div>
 
-<form>
-  <div id="service-footer" class="btn-group">
-    {{#unless charm.is_subordinate}}
-      <span class="footer-left">
-        Unit count:
-        <input type="text" id="num-service-units" value="{{service.unit_count}}" />
-        {{#if filtered}}
-        (Filtered count: {{units.length}})
-        {{/if}}
-      </span>
-    {{/unless}}
-    <a class="footer-right btn" id="destroy-service" data-toggle="modal" href="#destroy-service-modal">Destroy Service</a>
-  </div>
-</form>
-
 <div id="destroy-modal-panel"></div>
+</div>
+
+<div class="juju-service-info-container-bottom-menu">
+	<div style="margin-top: 10px; margin-left: 10px;">
+	  <div class="inline" style="width: 200px">
+	   <a class="btn" id="destroy-service" data-toggle="modal" href="#destroy-service-modal">Destroy Service</a>
+	  </div>
+	  <div class="inline" style="width: 800x">
+	   <a class="btn {{#if active}}{{/if}}" data-toggle="modal" href="#">All</a>
+	   <a class="btn" data-toggle="modal" href="#">Running</a>
+	   <a class="btn" data-toggle="modal" href="#">Pending</a>
+	   <a class="btn" data-toggle="modal" href="#">Error</a>
+	  </div>
+	</div>
+</div>  

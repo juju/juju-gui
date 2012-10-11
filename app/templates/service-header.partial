@@ -1,37 +1,69 @@
-<div class="row-fluid">
-  <div class="span8">
-    <h1><a href="/service/{{service.id}}/"> Service {{service.id}}</a></h1>
-
-    <div class="btn-group">
-      <a href="." class="btn"><i class="icon-th"></i> Units </a>
-      <a href="config" class="btn"><i class="icon-cog"></i> Settings </a>
-      <a href="constraints" class="btn"><i class="icon-leaf"></i> Constraints</a>
-      <a href="{{charm.app_url}}"
-          class="btn"><i class="icon-book"></i> Charm </a>
-      <a href="relations" class="btn"><i class="icon-random"></i> Relations </a>
+<div class="service-header-partial">
+<div class="hero-unit juju-service-info-container">
+  <div class="inline" style="width: 58%;">
+    <div class="juju-sevice-container-header-a">
+      <div class="juju-sevice-container-name">
+        <span style="font-size: 3em;"><strong>{{service.id}}</strong></span>
+      </div>
+      <div>
+        <span><strong>{{charm.id}}</strong></span>
+        <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+        <a class="juju-service-charm-link" href="{{charm.app_url}}">Show Charm</a>
+      </div>
     </div>
   </div>
-  <div class="span4">
-    <div class="well">
-      <div>
-        <b>Charm:</b>
-        <a href="{{charm.app_url}}">{{charm.id}}</a>
-      </div>
-      <div><b>Units:</b></div>
-      <div><b>Relations:</b></div>
-
-      {{#if service.exposed}}
-        <button class="btn unexposeService">
-          <i class="icon-play-circle"></i>Unexpose
-        </button>
-      {{else}}
-        <button class="btn exposeService">
-          <i class="icon-ban-circle"></i>Expose
-        </button>
-      {{/if}}
+  <div class="inline juju-service-info-container-separator"></div>
+  <div class="inline juju-service-info-container-separator"></div>
+  <div class="inline" style="width: 20%;">
+    <div class="juju-sevice-container-header-b">
+    {{#if service.exposed}}
+      <button class="btn unexposeService">
+        <i class="icon-play-circle"></i>Unexpose
+      </button>
+    {{else}}
+      <button class="btn exposeService">
+        <i class="icon-ban-circle"></i>Expose
+      </button>
+    {{/if}}
+    </div>
+  </div>
+  <div class="inline juju-service-info-container-separator"></div>
+  <div class="inline juju-service-info-container-separator"></div>
+  <div class="inline" style="width: 20%;">
+    <div class="juju-sevice-container-header-c">
+    {{#unless charm.is_subordinate}}
+			<form class="unit-count-form">
+        <label class="control-label" for="num-service-units">Unit count 
+        {{#if filtered}}(Filtered count: {{units.length}}){{/if}}</label>
+        <input type="text" id="num-service-units" value="{{service.unit_count}}">
+			</form>    
+    {{/unless}}
+    </div>
+  </div>  
+  
+  
+</div>
+<div class="juju-service-info-container-menu">
+  <div class="juju-service-info-container-menu-wrapper">
+    <div class="inline juju-menu-item">
+     <a href="."><strong>Units</strong></a>
+     {{setPageActive viewName "units"}}
+    </div>
+    <div class="inline juju-menu-item">
+     <a href="relations"><strong>Relations</strong></a>
+     {{setPageActive viewName "relations"}}
+    </div>
+    <div class="inline juju-menu-item">
+     <a href="config"><strong>Settings</strong></a>
+     {{setPageActive viewName "config"}}
+    </div>
+    <div class="inline juju-menu-item">
+     <a href="constraints"><strong>Constraints</strong></a>
+     {{setPageActive viewName "constraints"}}
     </div>
   </div>
 </div>
 <div class="row">
   <div id="message-area" class="span10"></div>
 </div>
+</div>  
