@@ -410,13 +410,13 @@ YUI.add('juju-models', function(Y) {
 
     has_relation_for_endpoint: function(ep) {
       var result = this.toArray().some(
-        function(rel) {
-          return Y.Array.some(rel.get('endpoints'), function(rep) {
-            return (ep.service === rep[0] &&
-                    ep.name === rep[1].name &&
-                    ep.type === rel.get('interface'));
+          function(rel) {
+            return Y.Array.some(rel.get('endpoints'), function(rep) {
+              return (ep.service === rep[0] &&
+                  ep.name === rep[1].name &&
+                  ep.type === rel.get('interface'));
+            });
           });
-        });
       return result;
     },
 
