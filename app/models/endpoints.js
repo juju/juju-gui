@@ -4,7 +4,7 @@ YUI.add('juju-endpoints', function(Y) {
 
   var models = Y.namespace('juju.models');
   models.getEndpoints = function(svc, ep_map, db) {
-    var targets = [],
+    var targets = {},
         requires = [],
         provides = [],
         sid = svc.get('id');
@@ -17,6 +17,14 @@ YUI.add('juju-endpoints', function(Y) {
         name: relInfo.name,
         type: relInfo['interface']};
     }
+      
+    function addTarget(svcName, ep) {
+        if (!Y.Object.owns(targets, svcName)) {
+            targets[svcName] = [];
+        }
+        targets[svcName].push(ep);
+    }
+
 
     Y.each(
         ep_map[sid]['requires'],
@@ -69,7 +77,7 @@ YUI.add('juju-endpoints', function(Y) {
               if (db.relations.has_relation_for_endpoint(ep, sid)) {
                 return;
               }
-              return targets.push(ep);
+              return addTarget(sid, ep);
             }
 
             if (db.relations.has_relation_for_endpoint(ep)) {
@@ -78,7 +86,7 @@ YUI.add('juju-endpoints', function(Y) {
 
             Y.Array.each(provides, function(oep) {
               if (oep.type === ep.type) {
-                targets.push(ep);
+                addTarget(sid, ep);
               }
             });
        });
@@ -91,7 +99,7 @@ YUI.add('juju-endpoints', function(Y) {
            Y.Array.each(requires,
              function(oep) {
                if (oep.type === ep.type) {
-                 targets.push(ep);
+                 addTarget(tid, ep);
                }
            });
        });
@@ -108,7 +116,7 @@ YUI.add('juju-endpoints', function(Y) {
              if (db.relations.has_relation_for_endpoint(ep, sid)) {
                 return;
              }
-             targets.push(ep);
+             addTarget(tid, ep);
            }
        });
 
