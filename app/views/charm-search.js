@@ -268,6 +268,7 @@ YUI.add('juju-charm-search', function(Y) {
         template: views.Templates['charm-pre-configuration'],
         tooltip: null,
         waitingToShow: false,
+        configFileContent: null,
         initializer: function() {
           this.bindModelView(this.get('model'));
         },
@@ -303,6 +304,24 @@ YUI.add('juju-charm-search', function(Y) {
           '.config-file-upload': {change: 'onFileChange'}
         },
         onFileChange: function(ev) {
+          console.log("onFileChange: ", ev);
+          // ev.target.get('files') is a NodeList, so why doesn't
+          // file = ev.target.get('files').item(0)
+          // work?
+          var file = ev.target.get('files').shift(),
+              name = file.name,
+              size = file.size,
+              type = file.type;
+          console.log(name, size, type);
+          this.configFile = file;
+          // Read the file.
+          // XXX: May not be supported by all browsers.  Check first if you care.
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            this.configFileContent = e.target.result;
+            console.log(this.configFileContent);
+          };
+          reader.readAsText(file);
         },
         // TODO this is (almost) a duplicate of the same function in the search
         // pane, unify them.
