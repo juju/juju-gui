@@ -12,6 +12,30 @@ YUI.add('juju-charm-search', function(Y) {
       // Delay before showing tooltip.
       _tooltipDelay = 500;
 
+
+  var toggleSectionVisibility = function(ev) {
+    var el = ev.currentTarget.ancestor('.charm-section')
+      .one('.collapsible'),
+    icon = ev.currentTarget.one('i');
+    if (el.getStyle('display') === 'none') {
+      // sizeIn doesn't work smoothly without this bit of jiggery to get
+      // accurate heights and widths.
+      el.setStyles({height: null, width: null, display: 'block'});
+      var config =
+        { duration: 0.25,
+          height: el.get('scrollHeight') + 'px',
+          width: el.get('scrollWidth') + 'px'
+        };
+      // Now we need to set our starting point.
+      el.setStyles({height: 0, width: config.width});
+      el.show('sizeIn', config);
+      icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+    } else {
+      el.hide('sizeOut', {duration: 0.25});
+      icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+    }
+  }
+
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
     resultsTemplate: views.Templates['charm-search-result-entries'],
@@ -146,7 +170,7 @@ YUI.add('juju-charm-search', function(Y) {
         events: {
           '.charm-nav-back': {click: 'goBack'},
           '.btn': {click: 'deploy'},
-          '.charm-section h4': {click: 'toggleSectionVisibility'}
+          '.charm-section h4': {click: toggleSectionVisibility}
         },
         initializer: function() {
           this.bindModelView(this.get('model'));
@@ -179,28 +203,6 @@ YUI.add('juju-charm-search', function(Y) {
               'changePanel',
               { name: 'configuration',
                 charmId: ev.currentTarget.getData('url')});
-        },
-        toggleSectionVisibility: function(ev) {
-          var el = ev.currentTarget.ancestor('.charm-section')
-                     .one('.collapsible'),
-              icon = ev.currentTarget.one('i');
-          if (el.getStyle('display') === 'none') {
-            // sizeIn doesn't work smoothly without this bit of jiggery to get
-            // accurate heights and widths.
-            el.setStyles({height: null, width: null, display: 'block'});
-            var config =
-                { duration: 0.25,
-                  height: el.get('scrollHeight') + 'px',
-                  width: el.get('scrollWidth') + 'px'
-                };
-            // Now we need to set our starting point.
-            el.setStyles({height: 0, width: config.width});
-            el.show('sizeIn', config);
-            icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
-          } else {
-            el.hide('sizeOut', {duration: 0.25});
-            icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
-          }
         }
       });
 
@@ -242,39 +244,13 @@ YUI.add('juju-charm-search', function(Y) {
         events: {
           '.charm-nav-back': {click: 'goBack'},
           '.btn': {click: 'onCharmDeployClicked'},
-          '.charm-section h4': {click: 'toggleSectionVisibility'}
-        },
-        // TODO this is (almost) a duplicate of the same function in the search
-        // pane, unify them.
-        toggleSectionVisibility: function(ev) {
-          var el = ev.currentTarget.ancestor('.charm-section')
-                     .one('.collapsible'),
-              icon = ev.currentTarget.one('i');
-          if (el.getStyle('display') === 'none') {
-            // sizeIn doesn't work smoothly without this bit of jiggery to get
-            // accurate heights and widths.
-            el.setStyles({height: null, width: null, display: 'block'});
-            var config =
-                { duration: 0.25,
-                  height: el.get('scrollHeight') + 'px',
-                  width: el.get('scrollWidth') + 'px'
-                };
-            // Now we need to set our starting point.
-            el.setStyles({height: 0, width: config.width});
-            el.show('sizeIn', config);
-            icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
-          } else {
-            el.hide('sizeOut', {duration: 0.25,
-                                width: el.get('scrollWidth') + 'px'});
-            icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
-          }
+          '.charm-section h4': {click: toggleSectionVisibility}
         },
         goBack: function(ev) {
           ev.halt();
           this.fire('changePanel', { name: 'charms' });
         },
         onCharmDeployClicked: function(evt) {
-          // XXX: Look in utils for validator called 'validate'.
           var container = this.get('container'),
               app = this.get('app'),
               serviceName = container.one('#service-name').get('value'),
