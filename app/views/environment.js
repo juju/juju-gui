@@ -161,7 +161,7 @@ YUI.add('juju-view-environment', function(Y) {
                   .attr('class', 'mouse-down-indicator')
                   .transition()
                   .duration(750)
-                  .ease(d3.ease('bounce'))
+                  .ease('bounce')
                   .attr('r', 0)
                   .remove();
 
@@ -477,7 +477,6 @@ YUI.add('juju-view-environment', function(Y) {
                   })
             .call(drag)
             .on('mousedown.addrel', function(d) {
-                console.log(d3.event);
                 self.d3Events['.service']['mousedown.addrel']
                 .call(this, d, self, d3.event);
               })
