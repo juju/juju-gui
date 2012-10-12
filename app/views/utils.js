@@ -41,6 +41,7 @@ YUI.add('juju-view-utils', function(Y) {
 
     if (winConsole === undefined) {
       window.console = consoleNoop;
+      winConsole = consoleNoop;
     }
     return {
       native: function() {
