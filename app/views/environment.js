@@ -136,7 +136,15 @@ YUI.add('juju-view-environment', function(Y) {
           '.service': {
             'mousedown.addrel': function(d, self) {
               var evt = d3.event;
-              self.longClickTimer = Y.later(1000, this, function(d, e) {
+              self.longClickTimer = Y.later(750, this, function(d, e) {
+                self.longClickTimer = null;
+
+                // Provide some leeway for accidental dragging.
+                if ((Math.abs(d.x - d.oldX) + Math.abs(d.y - d.oldY)) /
+                    2 > 5) {
+                  return;
+                }
+
                 // set a flag on the view that we're building a relation
                 self.buildingRelation = true;
 
@@ -149,10 +157,11 @@ YUI.add('juju-view-environment', function(Y) {
                 self.vis.append('circle')
                   .attr('cx', mouse[0])
                   .attr('cy', mouse[1])
-                  .attr('r', 25)
+                  .attr('r', 100)
                   .attr('class', 'mouse-down-indicator')
                   .transition()
-                  .duration(500)
+                  .duration(750)
+                  .ease(d3.ease('bounce'))
                   .attr('r', 0)
                   .remove();
 
@@ -164,6 +173,7 @@ YUI.add('juju-view-environment', function(Y) {
               // Cancel the long-click timer if it exists.
               if (self.longClickTimer) {
                 self.longClickTimer.cancel();
+                self.longClickTimer = null;
               }
             }
           }
@@ -418,13 +428,18 @@ YUI.add('juju-view-environment', function(Y) {
           this.updateData();
 
           var drag = d3.behavior.drag()
+            .on('dragstart', function(d) {
+                d.oldX = d.x;
+                d.oldY = d.y;
+              })
             .on('drag', function(d, i) {
                 if (self.buildingRelation) {
                   self.addRelationDrag.call(self, d, this);
                 } else {
-                  if (self.longClickTimer) {
+                  /*if (self.longClickTimer) {
                     self.longClickTimer.cancel();
-                  }
+                    self.longClickTimer = null;
+                  }*/
                   d.x += d3.event.dx;
                   d.y += d3.event.dy;
                   d3.select(this).attr('transform', function(d, i) {
