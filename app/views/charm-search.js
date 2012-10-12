@@ -16,16 +16,16 @@ YUI.add('juju-charm-search', function(Y) {
   var toggleSectionVisibility = function(ev) {
     var el = ev.currentTarget.ancestor('.charm-section')
       .one('.collapsible'),
-    icon = ev.currentTarget.one('i');
+        icon = ev.currentTarget.one('i');
     if (el.getStyle('display') === 'none') {
       // sizeIn doesn't work smoothly without this bit of jiggery to get
       // accurate heights and widths.
       el.setStyles({height: null, width: null, display: 'block'});
       var config =
-        { duration: 0.25,
-          height: el.get('scrollHeight') + 'px',
-          width: el.get('scrollWidth') + 'px'
-        };
+          { duration: 0.25,
+            height: el.get('scrollHeight') + 'px',
+            width: el.get('scrollWidth') + 'px'
+          };
       // Now we need to set our starting point.
       el.setStyles({height: 0, width: config.width});
       el.show('sizeIn', config);
@@ -34,7 +34,7 @@ YUI.add('juju-charm-search', function(Y) {
       el.hide('sizeOut', {duration: 0.25});
       icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
     }
-  }
+  };
 
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
