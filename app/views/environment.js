@@ -895,7 +895,7 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Start the add-relation process.
           self.service_click_actions
-          .addRelationStart(d, context, self);
+          .addRelationStart(d, self, context);
         },
 
         addRelationDrag: function(d, context) {
@@ -917,7 +917,7 @@ YUI.add('juju-view-environment', function(Y) {
           // If we landed on a rect, add relation, otherwise, cancel.
           if (rect) {
             self.service_click_actions
-            .addRelationEnd(endpoint, rect, self);
+            .addRelationEnd(endpoint, self, rect);
           } else {
             // TODO clean up, abstract
             self.addRelation(); // Will clear the state.
