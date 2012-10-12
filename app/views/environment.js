@@ -132,6 +132,53 @@ YUI.add('juju-view-environment', function(Y) {
 
         },
 
+        d3Events: {
+          '.service': {
+            'mousedown.addrel': function(d, self) {
+              var evt = d3.event;
+              self.longClickTimer = Y.later(750, this, function(d, e) {
+                self.longClickTimer = null;
+
+                // Provide some leeway for accidental dragging.
+                if ((Math.abs(d.x - d.oldX) + Math.abs(d.y - d.oldY)) /
+                    2 > 5) {
+                  return;
+                }
+
+                // set a flag on the view that we're building a relation
+                self.buildingRelation = true;
+
+                // Sometimes mouseover is fired after the mousedown, so ensure
+                // we have the correct event in d3.event for d3.mouse().
+                d3.event = e;
+
+                // Get the cursor and flash an indicator beneath it.
+                var mouse = d3.mouse(self.vis.node());
+                self.vis.append('circle')
+                  .attr('cx', mouse[0])
+                  .attr('cy', mouse[1])
+                  .attr('r', 100)
+                  .attr('class', 'mouse-down-indicator')
+                  .transition()
+                  .duration(750)
+                  .ease('bounce')
+                  .attr('r', 0)
+                  .remove();
+
+                // Start the process of adding a relation
+                self.addRelationDragStart.call(self, d, this);
+              }, [d, evt], false);
+            },
+            'mouseup.addrel': function(d, self) {
+              // Cancel the long-click timer if it exists.
+              if (self.longClickTimer) {
+                self.longClickTimer.cancel();
+                self.longClickTimer = null;
+              }
+            }
+          }
+        },
+
         initializer: function() {
           console.log('View: Initialized: Env');
           this.publish('showService', {preventable: false});
@@ -381,13 +428,30 @@ YUI.add('juju-view-environment', function(Y) {
           this.updateData();
 
           var drag = d3.behavior.drag()
+            .on('dragstart', function(d) {
+                d.oldX = d.x;
+                d.oldY = d.y;
+              })
             .on('drag', function(d, i) {
-                d.x += d3.event.dx;
-                d.y += d3.event.dy;
-                d3.select(this).attr('transform', function(d, i) {
-                  return d.translateStr();
-                });
-                updateLinks();
+                if (self.buildingRelation) {
+                  self.addRelationDrag.call(self, d, this);
+                } else {
+                  /*if (self.longClickTimer) {
+                    self.longClickTimer.cancel();
+                    self.longClickTimer = null;
+                  }*/
+                  d.x += d3.event.dx;
+                  d.y += d3.event.dy;
+                  d3.select(this).attr('transform', function(d, i) {
+                    return d.translateStr();
+                  });
+                  updateLinks();
+                }
+              })
+            .on('dragend', function(d, i) {
+                if (self.buildingRelation) {
+                  self.addRelationDragEnd.call(self, d, this);
+                }
               });
 
           // Generate a node for each service, draw it as a rect with
@@ -412,6 +476,14 @@ YUI.add('juju-view-environment', function(Y) {
                     return (d.subordinate ? 'subordinate ' : '') + 'service';
                   })
             .call(drag)
+            .on('mousedown.addrel', function(d) {
+                self.d3Events['.service']['mousedown.addrel']
+                .call(this, d, self, d3.event);
+              })
+            .on('mouseup.addrel', function(d) {
+                self.d3Events['.service']['mouseup.addrel']
+                .call(this, d, self, d3.event);
+              })
             .attr('transform', function(d) {
                 return d.translateStr();});
 
@@ -705,54 +777,6 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Drag controls on the add relation button, allowing
           // one to drag a line to create a relation.
-          var drag_relation = add_rel.append('line')
-              .attr('class', 'relation pending-relation dragline unused');
-          var drag_relation_behavior = d3.behavior.drag()
-              .on('dragstart', function(d) {
-                // Get our line, the image, and the current service.
-                var dragline = d3.select(this.parentNode)
-                    .select('.relation');
-                var img = d3.select(this.parentNode)
-                    .select('image');
-                var context = this.parentNode.parentNode.parentNode;
-
-                // Start the line at our image
-                dragline.attr('x1', parseInt(img.attr('x'), 10) + 16)
-                    .attr('y1', parseInt(img.attr('y'), 10) + 16);
-                self.removeSVGClass(dragline.node(), 'unused');
-
-                // Start the add-relation process.
-                self.service_click_actions
-                .addRelationStart(d, context, self);
-              })
-              .on('drag', function() {
-                // Rubberband our potential relation line.
-                var dragline = d3.select(this.parentNode)
-                    .select('.relation');
-                dragline.attr('x2', d3.event.x)
-                    .attr('y2', d3.event.y);
-              })
-              .on('dragend', function(d) {
-                // Get the line, the endpoint service, and the target <rect>.
-                var dragline = d3.select(this.parentNode)
-                    .select('.relation');
-                var context = self.get('potential_drop_point_rect');
-                var endpoint = self.get('potential_drop_point_service');
-
-                // Get rid of our drag line
-                dragline.attr('x2', dragline.attr('x1'))
-                    .attr('y2', dragline.attr('y1'));
-                self.addSVGClass(dragline.node(), 'unused');
-
-                // If we landed on a rect, add relation, otherwise, cancel.
-                if (context) {
-                  self.service_click_actions
-                  .addRelationEnd(endpoint, context, self);
-                } else {
-                  // TODO clean up, abstract
-                  self.addRelation(); // Will clear the state.
-                }
-              });
           add_rel.append('image')
         .attr('xlink:href',
               '/juju-ui/assets/svgs/Build_button.svg')
@@ -764,8 +788,7 @@ YUI.add('juju-view-environment', function(Y) {
                 return (d.h / 2) - 16;
               })
         .attr('width', 32)
-        .attr('height', 32)
-        .call(drag_relation_behavior);
+        .attr('height', 32);
 
           // Add a button to view the service.
           var view_service = control_panel.append('g')
@@ -913,6 +936,51 @@ YUI.add('juju-view-environment', function(Y) {
             // Remove selectable border from all nodes.
             this.removeSVGClass('.service-border', 'selectable-service');
           } // Otherwise do nothing.
+        },
+
+        addRelationDragStart: function(d, context) {
+          // Create a pending drag-line behind services.
+          var dragline = this.vis.insert('line', '.service')
+              .attr('class', 'relation pending-relation dragline'),
+              self = this;
+
+          // Start the line in the middle of the service.
+          var point = [d.x + d.h / 2, d.y + d.w / 2];
+          dragline.attr('x1', point[0])
+              .attr('y1', point[1])
+              .attr('x2', point[0])
+              .attr('y2', point[1]);
+          self.dragline = dragline;
+
+          // Start the add-relation process.
+          self.service_click_actions
+          .addRelationStart(d, context, self);
+        },
+
+        addRelationDrag: function(d, context) {
+          // Rubberband our potential relation line.
+          this.dragline.attr('x2', d3.event.x)
+              .attr('y2', d3.event.y);
+        },
+
+        addRelationDragEnd: function(d, context) {
+          // Get the line, the endpoint service, and the target <rect>.
+          var self = this;
+          var rect = self.get('potential_drop_point_rect');
+          var endpoint = self.get('potential_drop_point_service');
+
+          // Get rid of our drag line
+          this.dragline.remove();
+          this.buildingRelation = false;
+
+          // If we landed on a rect, add relation, otherwise, cancel.
+          if (rect) {
+            self.service_click_actions
+            .addRelationEnd(endpoint, rect, self);
+          } else {
+            // TODO clean up, abstract
+            self.addRelation(); // Will clear the state.
+          }
         },
 
         removeRelation: function(d, context, view, confirmButton) {
