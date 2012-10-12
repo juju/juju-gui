@@ -299,32 +299,40 @@ YUI.add('juju-charm-search', function(Y) {
         },
         events: {
           '.charm-nav-back': {click: 'goBack'},
-          '.btn': {click: 'onCharmDeployClicked'},
+          '.btn#charm-deploy': {click: 'onCharmDeployClicked'},
+          '.remove-config-file': {click: 'onFileRemove'},
           '.charm-section h4': {click: 'toggleSectionVisibility'},
-          '.config-file-upload': {change: 'onFileChange'}
+          '.config-file-upload': {change: 'onFileChange'},
         },
-        onFileChange: function(ev) {
-          console.log("onFileChange: ", ev);
-          // ev.target.get('files') is a NodeList, so why doesn't
-          // file = ev.target.get('files').item(0)
-          // work?
-          var file = ev.target.get('files').shift(),
-              name = file.name,
-              size = file.size,
-              type = file.type;
-          console.log(name, size, type);
-          this.configFile = file;
-          // Read the file.
-          // XXX: May not be supported by all browsers.  Check first if you care.
-          var reader = new FileReader();
-          reader.onload = function(e) {
-            this.configFileContent = e.target.result;
-            console.log(this.configFileContent);
-          };
+        onFileChange: function(evt) {
+          console.log("onFileChange:", evt);
+          this.fileInput = evt.target;
+          var file = this.fileInput.get('files').shift(),
+              reader = new FileReader();
+          reader.onerror = Y.bind(this.onFileError, this);
+          reader.onload = Y.bind(this.onFileLoaded, this);
           reader.readAsText(file);
         },
-        // TODO this is (almost) a duplicate of the same function in the search
-        // pane, unify them.
+        onFileRemove: function(evt) {
+          this.configFileContent = null;
+          // TODO tell the file input that the file is gone
+          // TODO hide "Remove configuration file" button
+          // TODO show file input element
+          this.get('container').one('charm-settings').show();
+        },
+        onFileLoaded: function(evt) {
+          this.configFileContent = evt.target.result;
+          this.get('container').one('.charm-settings').hide();
+          this.get('container').one('.remove-config-file')
+            .removeClass('hidden');
+          // TODO add "Remove configuration file" button
+          console.log(this.configFileContent);
+        },
+        onFileError: function(evt) {
+          // TODO show error message
+        },
+        // TODO this is (almost) a duplicate of the same function in the
+        // search pane, unify them.
         toggleSectionVisibility: function(ev) {
           var el = ev.currentTarget.ancestor('.charm-section')
                      .one('.collapsible'),
@@ -353,6 +361,8 @@ YUI.add('juju-charm-search', function(Y) {
         },
         onCharmDeployClicked: function(evt) {
           // XXX: Look in utils for validator called 'validate'.
+          // TODO select the right config, use a file if they uploaded one,
+          // otherwise scrape out the config form and use those values
           var container = this.get('container'),
               app = this.get('app'),
               serviceName = container.one('#service-name').get('value'),
