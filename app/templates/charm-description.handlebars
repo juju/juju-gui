@@ -1,13 +1,13 @@
 <div>
   <div class="charm-nav-back"><i class="icon-arrow-left icon-white"></i> Back</div>
 
-  <div class="charm-description">
+  <div class="charm-description charm-panel">
     <button class="btn btn-primary"
-            data-info-url="{{charm_store_path}}">Deploy</button>
+            data-url="{{id}}">Deploy</button>
     <h3>{{package_name}}</h3>
     <div class="charm-section">
       <h4><i class="icon-chevron-down"></i> Description</h4>
-      <div>
+      <div class="collapsible">
         <h5>Summary</h5>
         <p>{{summary}}</p>
         <h5>Series</h5>
@@ -25,7 +25,7 @@
     {{#any requires provides}}
     <div class="charm-section">
       <h4><i class="icon-chevron-right"></i> Interfaces</h4>
-      <div>
+      <div class="collapsible">
         {{#if provides}}
         <h5>Provides</h5>
         <ul>
@@ -48,7 +48,7 @@
     {{#if last_change}}
     <div class="charm-section">
       <h4><i class="icon-chevron-right"></i> Last Change</h4>
-      <div>
+      <div class="collapsible">
         {{#with last_change}}
         <div>{{dateformat created "%F"}}</div>
         <div>{{committer}}</div>
