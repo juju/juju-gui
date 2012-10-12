@@ -23,9 +23,9 @@ YUI.add('juju-notification-controller', function(Y) {
     title: function(change_type, change_op, change_data, notify_data) {
       return 'Relation ' + _changeNotificationOpToWords(change_op);
     },
-    message: function(change_type, change_op, change_data,
-        notify_data) {
+    message: function(change_type, change_op, change_data, notify_data) {
       var action = _changeNotificationOpToWords(change_op);
+      console.log('CHANGE_DATA:', change_data);
       if (change_data.endpoints.length === 2) {
         var endpoint0 = change_data.endpoints[0][0],
             endpoint1 = change_data.endpoints[1][0],

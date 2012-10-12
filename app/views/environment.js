@@ -1278,8 +1278,22 @@ YUI.add('juju-view-environment', function(Y) {
                     level: 'error'
                   })
               );
-              return;
+            } else {
+              // Create a relation in the database between the two services.
+              var endpoints = Y.Array.map(ev.result.endpoints, function(item) {
+                var id = Y.Object.keys(item)[0];
+                return [id, item[id]];
+              })
+              db.relations.create({
+                relation_id: ev.result.id,
+                // endpoints[1][1].name should be the same
+                type: endpoints[0][1].name,
+                endpoints: endpoints,
+                pending: false
+              });
             }
+            // Redraw the graph and reattach events.
+            db.fire('update');
           }
         }
 
