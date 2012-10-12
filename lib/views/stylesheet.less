@@ -172,6 +172,12 @@ svg {
 }
 
 charms.thumbnails.li { height:4em; }
+.subordinate-rel-group {
+    display: none;
+    &.active {
+        display: inline;
+    }
+}
 .relation {
     stroke: #333333;
     stroke-width: 3px;
@@ -185,6 +191,10 @@ charms.thumbnails.li { height:4em; }
 
     &.unused {
         visibility: hidden;
+    }
+
+    &.subordinate-relation {
+        stroke: #3333cc;
     }
 }
 .rel-label {
@@ -316,6 +326,14 @@ g.service {
             fill: rgba(0,0,0,1);}
         &.hide-count {
             fill: rgba(0,0,0,0);}
+    }
+
+    .sub-rel-count {
+        text-anchor: middle;
+        dominant_baseline: central;
+        fill: #4f4f4f;
+        font-family: "Ubuntu";
+        font-size: 1.2em;
     }
 
     .exposed-indicator {
