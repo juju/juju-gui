@@ -194,8 +194,8 @@ YUI.add('juju-view-environment', function(Y) {
             .selectAll('#canvas')
             .append('svg:svg')
             .attr('pointer-events', 'all')
-            .attr('width', '100%')
-            .attr('height', '100%')
+            .attr('width', width)
+            .attr('height', height)
             .append('svg:g')
             .call(zoom)
             .append('g');
@@ -1052,8 +1052,7 @@ YUI.add('juju-view-environment', function(Y) {
               xscale = this.xscale,
               yscale = this.yscale,
               viewport_height = '100%',
-              viewport_width = parseInt(
-              container.getComputedStyle('width'), 10),
+              viewport_width = '100%',
               svg = container.one('svg'),
               width = 800,
               height = 600;
@@ -1067,13 +1066,14 @@ YUI.add('juju-view-environment', function(Y) {
 
             viewport_height = container.get('winHeight') -
                 styleToNumber('#overview-tasks', 'height', 22) -
-                styleToNumber('.navbar', 'height', 87);
+                styleToNumber('.navbar', 'height', 87) - 1;
+
+            // Attempt to get the viewport width from the overview-tasks bar.
+            viewport_width = styleToNumber('#viewport', 'width', 800);
 
             // Make sure we don't get sized any smaller than 800x600
             viewport_height = Math.max(viewport_height, height);
-            if (container.getComputedStyle('width') < width) {
-              viewport_width = width;
-            }
+            viewport_width = Math.max(viewport_width, width);
           }
           // Set the svg sizes.
           svg.setAttribute('width', viewport_width)
@@ -1087,6 +1087,8 @@ YUI.add('juju-view-environment', function(Y) {
           svg.one('rect')
             .setAttribute('width', width)
             .setAttribute('height', height);
+          container.one('#canvas').setStyle('height', height);
+          container.one('#canvas').setStyle('width', width);
 
           // Reset the scale parameters
           this.xscale.domain([-width / 2, width / 2])

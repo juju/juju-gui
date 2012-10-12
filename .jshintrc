@@ -120,6 +120,7 @@
     "describe",
     "expect",
     "GlobalConfig",
+    "consoleManager",
     "it",
     "YUI"
   ],

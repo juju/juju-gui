@@ -139,6 +139,36 @@ describe('charm search', function() {
       .should.equal('membase');
   });
 
+  it('must be able to deploy from the description panel by going to the ' +
+     'configuration panel', function() {
+       var db = new models.Database(),
+       panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
+         charm_store: {
+           sendRequest: function(params) {
+             // Mocking the server callback value
+             params.callback.success({
+               response: {
+                 results: [{
+                   responseText: searchResult
+                 }]
+               }
+             });
+           }
+         },
+         app: {db: db},
+         testing: true
+       }),
+       node = panel.node;
+       db.charms.add({id: 'cs:precise/membase'});
+       panel.show();
+       var field = node.one('.charms-search-field');
+       field.set('value', 'aaa');
+       field.simulate('keyup');
+       node.one('a.charm-detail').simulate('click');
+       node.one('.btn-primary').simulate('click');
+       node.one('.control-label').get('text').trim()
+        .should.equal('Service name');
+     });
 });
 
 describe('charm description', function() {
@@ -257,18 +287,6 @@ describe('charm description', function() {
       done();
     });
     container.one('.charm-nav-back').simulate('click');
-  });
-
-  it('deploys by sending the user to the configuration page', function() {
-    // For now, we simply go to the charm page.  Later, we will fire an
-    // event locally to show the config panel.
-    var view = new views.CharmDescriptionView(
-        { container: container, app: app, model: charm}).render(),
-        app_events = [];
-    app.fire = function() { app_events.push(arguments); };
-    container.one('.btn-primary').simulate('click');
-    app_events[0][0].should.equal('showCharm');
-    app_events[0][1].charm_data_url.should.equal('charms/precise/mysql/json');
   });
 
 });

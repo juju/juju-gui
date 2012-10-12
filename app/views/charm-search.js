@@ -70,69 +70,10 @@ YUI.add('juju-charm-search', function(Y) {
           { name: 'description',
             charmId: ev.target.getAttribute('href') });
     },
-    deploy: function(ev) {
-      var url = ev.currentTarget.getData('url'),
-          name = ev.currentTarget.getData('name'),
-          info_url = ev.currentTarget.getData('info-url'),
-          app = this.get('app');
-      if (Y.Lang.isValue(app.db.services.getById(name))) {
-        // A service with the same name already exists.  Send the
-        // user to a configuration page.
-        app.db.notifications.add(
-            new models.Notification({
-              title: 'Name already used: ' + name,
-              message: 'The service\'s default name is already in ' +
-                  'use. Please configure another.',
-              level: 'info'
-            })
-        );
-        app.fire('showCharm', {charm_data_url: info_url});
-        return;
-      }
-      // Disable the deploy button.
-      var button = ev.currentTarget,
-          div = button.ancestor('div'),
-          backgroundColor = 'lightgrey',
-          oldColor = div.getStyle('backgroundColor');
-
-      button.set('disabled', true);
-      div.setStyle('backgroundColor', backgroundColor);
-
-      app.env.deploy(url, name, {}, function(ev) {
-        button.set('disabled', false);
-        if (ev.err) {
-          div.setStyle('backgroundColor', 'pink');
-          console.log(url + ' deployment failed');
-          app.db.notifications.add(
-              new models.Notification({
-                title: 'Error deploying ' + name,
-                message: 'Could not deploy the requested service.',
-                level: 'error'
-              })
-          );
-        } else {
-          console.log(url + ' deployed');
-          app.db.notifications.add(
-              new models.Notification({
-                title: 'Deployed ' + name,
-                message: 'Successfully deployed the requested service.',
-                level: 'info'
-              })
-          );
-        }
-        div.transition(
-            { easing: 'ease-out', duration: 3, backgroundColor: oldColor},
-            function() {
-              // Revert to following normal stylesheet rules.
-              div.setStyle('backgroundColor', '');
-            });
-      });
-    },
     showConfiguration: function(ev) {
       // Without the stopPropagation the 'outside' click handler is getting
       // called which immediately closes the panel.
-      ev.stopPropagation();
-      ev.preventDefault();
+      ev.halt(true);
       this.fire(
           'changePanel',
           { name: 'configuration',
@@ -233,9 +174,11 @@ YUI.add('juju-charm-search', function(Y) {
         },
         deploy: function(ev) {
           // Show configuration page for this charm.  For now, this is external.
-          var app = this.get('app'),
-              info_url = ev.currentTarget.getData('info-url');
-          app.fire('showCharm', {charm_data_url: info_url});
+          ev.halt(true);
+          this.fire(
+              'changePanel',
+              { name: 'configuration',
+                charmId: ev.currentTarget.getData('url')});
         },
         toggleSectionVisibility: function(ev) {
           var el = ev.currentTarget.ancestor('.charm-section')
@@ -390,6 +333,18 @@ YUI.add('juju-charm-search', function(Y) {
                     level: 'info'
                   })
               );
+              // Add service to the db and re-render for immediate display on
+              // the front page.
+              var service = new models.Service({
+                id: charm.get('package_name'),
+                charm: charm.get('id'),
+                unit_count: numUnits,
+                loaded: false,
+                config: config
+              });
+              app.db.services.add([service]);
+              // Force refresh.
+              app.db.fire('update');
             }
           });
           this.goBack(evt);
