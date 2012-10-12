@@ -95,9 +95,9 @@ YUI.add('juju-gui', function(Y) {
     initializer: function() {
       // If this flag is true, start the application with the console activated
       if (this.get('consoleEnabled')) {
-        consoleManager.enable();
+        consoleManager.native();
       } else {
-        consoleManager.disable();
+        consoleManager.null();
       }
       // Create a client side database to store state.
       this.db = new models.Database();

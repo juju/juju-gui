@@ -25,7 +25,7 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
-  window.consoleManager = (function() {
+  var consoleManager = function() {
     var winConsole = window.console,
         // These are the available methods.
         // Add more to this list if necessary.
@@ -37,18 +37,30 @@ YUI.add('juju-view-utils', function(Y) {
           log: noop
         };
 
-    if(!winConsole) {
+    if (winConsole === undefined) {
         window.console = consoleNoop;
     }
     return {
-      enable: function() {
+      native: function() {
         window.console = winConsole;
       },
-      disable: function() {
+      null: function() {
         window.console = consoleNoop;
+      },
+      console: function(x) {
+          if (!arguments.length) {
+              return consoleNoop;
+          }
+          consoleNoop = x;
+          return x;
       }
     };
-  })();
+  };
+
+  utils.consoleManager = consoleManager;
+  // Also assign globally to manage the actual console.
+  window.consoleManager = consoleManager();
+
 
   // This creates a closure that delays the execution of a given callback. If
   // the user creates a Delayer with "delay = utils.Delayer()" and then calls
