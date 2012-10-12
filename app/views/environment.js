@@ -107,11 +107,7 @@ YUI.add('juju-view-environment', function(Y) {
             mouseenter: function(d, self) {
               // Add an 'active' class to all of the subordinate relations
               // belonging to this service.
-              self.rel_pairs
-                .filter(function(p) {
-                    return p.modelIds().indexOf(d.modelId()) !== -1 &&
-                        p.scope === 'container';
-                  })
+              self.subordinateRelationsForService(d)
                 .forEach(function(p) {
                     self.addSVGClass('#' + p.id, 'active');
                   });
@@ -168,9 +164,10 @@ YUI.add('juju-view-environment', function(Y) {
                 d3.event = e;
 
                 // Flash an indicator around the center of the service block.
+                var center = d.getCenter();
                 self.vis.append('circle')
-                  .attr('cx', d.x + d.w / 2)
-                  .attr('cy', d.y + d.h / 2 * 0.86)
+                  .attr('cx', center[0])
+                  .attr('cy', center[1])
                   .attr('r', 100)
                   .attr('class', 'mouse-down-indicator')
                   .transition()
@@ -552,8 +549,7 @@ YUI.add('juju-view-environment', function(Y) {
               .attr('class', function(d) {
                 // Mark the rel-group as a subordinate relation if need be.
                 return (d.scope === 'container' ?
-                    'subordinate-rel-group ' :
-                    '') +
+                    'subordinate-rel-group ' : '') +
                     'rel-group';
               })
               .append('svg:line', 'g.service')
@@ -667,7 +663,9 @@ YUI.add('juju-view-environment', function(Y) {
             .append('g')
             .attr('class', 'sub-rel-block')
             .attr('transform', function(d) {
-                return 'translate(' + [d.w, d.h / 2 - 23] + ')';
+                // Position the block so that the relation indicator will
+                // appear at the right connector.
+                return 'translate(' + [d.w, d.h / 2 - 26] + ')';
               });
 
           sub_relation.append('image')
@@ -679,10 +677,7 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('x', 64)
             .attr('y', 47 * 0.8)
             .text(function(d) {
-                return self.rel_pairs.filter(function(p) {
-                  return p.modelIds().indexOf(d.modelId()) !== -1 &&
-                      p.scope === 'container';
-                }).length;
+                return self.subordinateRelationsForService(d).length;
               });
 
           // Draw non-subordinate services services
@@ -698,13 +693,23 @@ YUI.add('juju-view-environment', function(Y) {
                     return d.h;
                   });
 
+          // The following are sizes in pixels of the SVG assets used to
+          // render a service, and are used to in calculating the vertical
+          // positioning of text down along the service block.
+          var service_height = 224,
+              name_size = 22,
+              charm_label_size = 16,
+              name_padding = 26,
+              charm_label_padding = 118;
+
           var service_labels = node.append('text').append('tspan')
             .attr('class', 'name')
             .attr('style', function(d) {
                 // Programmatically size the font.
                 // Number derived from service assets:
                 // font-size 22px when asset is 224px.
-                return 'font-size:' + d.h * 0.0982;
+                return 'font-size:' + d.h * 
+                  (name_size / service_height) + 'px';
               })
             .attr('x', function(d) {
                     return d.w / 2;
@@ -712,7 +717,8 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('y', function(d) {
                 // Number derived from service assets:
                 // padding-top 26px when asset is 224px.
-                return d.h * 0.1161 + d.h * 0.0982 / 2;
+                return d.h * (name_padding / service_height) + d.h * 
+                  (name_size / service_height) / 2;
               })
             .text(function(d) {return d.id; });
 
@@ -722,7 +728,8 @@ YUI.add('juju-view-environment', function(Y) {
                 // Programmatically size the font.
                 // Number derived from service assets:
                 // font-size 16px when asset is 224px.
-                return 'font-size:' + d.h * 0.0714;
+                return 'font-size:' + d.h * 
+                  (charm_label_size / service_height) + 'px';
               })
             .attr('x', function(d) {
                     return d.w / 2;
@@ -730,7 +737,8 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('y', function(d) {
                 // Number derived from service assets:
                 // padding-top: 118px when asset is 224px.
-                return d.h * 0.5268 - d.h * 0.0714 / 2;
+                return d.h * (charm_label_padding / service_height) - d.h * 
+                  (charm_label_size / service_height) / 2;
               })
             .attr('dy', '3em')
             .text(function(d) { return d.charm; });
@@ -753,7 +761,7 @@ YUI.add('juju-view-environment', function(Y) {
                 return d.w / 10 * 7;
               })
             .attr('y', function(d) {
-                return d.h / 3 * 1.05;
+                return d.getRelativeCenter()[1] - (d.w / 6) / 2;
               })
             .attr('class', 'exposed-indicator on');
           exposed_indicator.append('title')
@@ -780,9 +788,7 @@ YUI.add('juju-view-environment', function(Y) {
           var status_chart = node.append('g')
             .attr('class', 'service-status')
             .attr('transform', function(d) {
-                var hoffset_factor = d.subordinate ? 1 : 0.86;
-                return 'translate(' + [(d.w / 2),
-                  d.h / 2 * hoffset_factor] + ')';
+                return 'translate(' + d.getRelativeCenter() + ')';
               });
 
           // Add a mask svg
@@ -859,6 +865,16 @@ YUI.add('juju-view-environment', function(Y) {
             }
           });
           return pairs;
+        },
+
+        /*
+         * Utility function to get subordinate relations for a service.
+         */
+        subordinateRelationsForService: function(service) {
+          return this.rel_pairs.filter(function(p) {
+                return p.modelIds().indexOf(service.modelId()) !== -1 &&
+                    p.scope === 'container';
+              })
         },
 
         renderSlider: function() {
@@ -952,7 +968,7 @@ YUI.add('juju-view-environment', function(Y) {
               self = this;
 
           // Start the line in the middle of the service.
-          var point = [d.x + d.h / 2, d.y + d.w / 2];
+          var point = d.getCenter();
           dragline.attr('x1', point[0])
               .attr('y1', point[1])
               .attr('x2', point[0])
