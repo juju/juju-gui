@@ -366,7 +366,7 @@ YUI.add('juju-view-environment', function(Y) {
         serviceDblClick: function(d, self) {
           // Just show the service on double-click.
           var service = self.serviceForBox(d);
-          (self.service_click_actions.show_service)(service, this, self);
+          (self.service_click_actions.show_service)(service, self);
         },
 
         relationClick: function(d, self) {
@@ -452,7 +452,6 @@ YUI.add('juju-view-environment', function(Y) {
                 if (self.buildingRelation) {
                   self.addRelationDragEnd.call(self, d, this);
                 }
->>>>>>> MERGE-SOURCE
               });
 
           // Generate a node for each service, draw it as a rect with
@@ -761,68 +760,6 @@ YUI.add('juju-view-environment', function(Y) {
             .text(function(d) {
                 return self.humanizeNumber(d.unit_count);
               });
-<<<<<<< TREE
-=======
-
-          this.addControlPanel(node);
-
-        },
-
-        addControlPanel: function(node) {
-          // Add a control panel around the service.
-          var self = this;
-          var control_panel = node.append('g')
-                .attr('class', 'service-control-panel');
-
-          // A button to add a relation between two services.
-          var add_rel = control_panel.append('g')
-                .attr('class', 'add-relation');
-
-          // Drag controls on the add relation button, allowing
-          // one to drag a line to create a relation.
-          add_rel.append('image')
-        .attr('xlink:href',
-              '/juju-ui/assets/svgs/Build_button.svg')
-        .attr('class', 'cp-button')
-        .attr('x', function(d) {
-                return d.w + 8;
-              })
-        .attr('y', function(d) {
-                return (d.h / 2) - 16;
-              })
-        .attr('width', 32)
-        .attr('height', 32);
-
-          // Add a button to view the service.
-          var view_service = control_panel.append('g')
-        .attr('class', 'view-service');
-
-          view_service.append('image')
-        .attr('xlink:href', '/juju-ui/assets/svgs/view_button.svg')
-        .attr('class', 'cp-button')
-        .attr('x', -40)
-        .attr('y', function(d) {
-                return (d.h / 2) - 16;
-              })
-        .attr('width', 32)
-        .attr('height', 32);
-
-          // Add a button to destroy a service
-          var destroy_service = control_panel.append('g')
-        .attr('class', 'destroy-service');
-          destroy_service.append('image')
-        .attr('xlink:href', '/juju-ui/assets/svgs/destroy_button.svg')
-        .attr('class', 'cp-button')
-        .attr('x', function(d) {
-                return (d.w / 2) - 16;
-              })
-        .attr('y', -40)
-        .attr('width', 32)
-        .attr('height', 32);
-          var add_rm_units = control_panel.append('g')
-        .attr('class', 'add-rm-units');
-
->>>>>>> MERGE-SOURCE
         },
 
         processRelation: function(r) {
