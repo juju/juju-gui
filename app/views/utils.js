@@ -25,58 +25,45 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
-  window.consoleManager = (function() {
+  var consoleManager = function() {
     var winConsole = window.console,
         // These are the available methods.
         // Add more to this list if necessary.
-        consoleEmpty = {
-          group: function() {},
-          groupEnd: function() {},
-          groupCollapsed: function() {},
-          log: function() {},
-          error: function() {}
-        },
-        consoleProxy = (function() {
-          // This object wraps the "window.console"
-          var consoleWrapper = {};
-          function buildMethodProxy(key) {
-            if (winConsole[key] && typeof winConsole[key] === 'function') {
-              consoleWrapper[key] = function() {
-                var cFunc = winConsole[key];
-                cFunc.call(winConsole, arguments);
-              };
-            } else {
-              consoleWrapper[key] = function() {
-                consoleEmpty[key]();
-              };
-            }
-          }
-          // Checking if the browser has the "console" object
-          if (winConsole) {
-            Y.each(consoleEmpty, function(value, key) {
-              buildMethodProxy(key);
-            });
-          } else {
-            consoleWrapper = consoleEmpty;
-          }
+        noop = function() {},
+        consoleNoop = {
+          group: noop,
+          groupEnd: noop,
+          groupCollapsed: noop,
+          time: noop,
+          timeEnd: noop,
+          log: noop
+        };
 
-          return consoleWrapper;
-        })();
-    // In order to enable the console in production the user can
-    // call "javascript:consoleManager.enable()" in the address bar
+    if (winConsole === undefined) {
+      window.console = consoleNoop;
+      winConsole = consoleNoop;
+    }
     return {
-      enable: function() {
-        window.console = consoleProxy;
+      native: function() {
+        window.console = winConsole;
       },
-      disable: function() {
-        window.console = consoleEmpty;
+      noop: function() {
+        window.console = consoleNoop;
       },
-      getConsoleEmpty: function() {
-        // Useful for unit tests
-        return consoleEmpty;
+      console: function(x) {
+        if (!arguments.length) {
+          return consoleNoop;
+        }
+        consoleNoop = x;
+        return x;
       }
     };
-  })();
+  };
+
+  utils.consoleManager = consoleManager;
+  // Also assign globally to manage the actual console.
+  window.consoleManager = consoleManager();
+
 
   // This creates a closure that delays the execution of a given callback. If
   // the user creates a Delayer with "delay = utils.Delayer()" and then calls
@@ -172,8 +159,9 @@ YUI.add('juju-view-utils', function(Y) {
         this.render();
       });
 
-      // Re-render this view when the model changes.
-      this.after('*:change', this.render, this);
+      // Re-render this view when the model changes, and after it is loaded,
+      // to support "loaded" flags.
+      this.after(['*:change', '*:load'], this.render, this);
     },
 
     renderable_charm: function(charm_name, app) {
