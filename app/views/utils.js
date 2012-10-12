@@ -33,7 +33,8 @@ YUI.add('juju-view-utils', function(Y) {
           group: function() {},
           groupEnd: function() {},
           groupCollapsed: function() {},
-          log: function() {}
+          log: function() {},
+          error: function() {}
         },
         consoleProxy = (function() {
           // This object wraps the "window.console"

@@ -11,7 +11,7 @@ YUI.add('juju-view-service', function(Y) {
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
-  var unitCountMixin = {
+  var manageUnitsMixin = {
     // Mixin attributes
     events: {
       '#num-service-units': {
@@ -287,7 +287,7 @@ YUI.add('juju-view-service', function(Y) {
 
         initializer: function() {
           Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
-          Y.mix(this, unitCountMixin, undefined, undefined, undefined, true);
+          Y.mix(this, manageUnitsMixin, undefined, undefined, undefined, true);
           Y.mix(this, removeServiceMixin, undefined, undefined, undefined,
               true);
 
@@ -837,5 +837,6 @@ YUI.add('juju-view-service', function(Y) {
     'view',
     'event-key',
     'transition',
+    'event-resize',
     'json-stringify']
 });
