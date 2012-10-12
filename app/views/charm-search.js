@@ -304,9 +304,9 @@ YUI.add('juju-charm-search', function(Y) {
               // Add service to the db and re-render for immediate display on
               // the front page.
               var service = new models.Service({
-                id: charm.get('package_name'),
+                id: serviceName,
                 charm: charm.get('id'),
-                unit_count: numUnits,
+                unit_count: 0,  // No units yet.
                 loaded: false,
                 config: config
               });
