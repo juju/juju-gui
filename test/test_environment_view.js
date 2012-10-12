@@ -273,7 +273,9 @@
        function() {
          // Mock endpoints
          models.getEndpoints = function() {
-           return {requires: [], provides: []};};
+           return {requires: [],
+             provides: []};
+         };
 
          var view = new views.environment({
            container: container,

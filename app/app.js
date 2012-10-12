@@ -154,7 +154,8 @@ YUI.add('juju-gui', function(Y) {
       // If the database updates redraw the view (distinct from model updates)
       // TODO - Bound views will automatically update this on individual models
       this.db.on('update', this.on_database_changed, this);
-      this.db.on('update', this.updateEndpoints, this);
+
+      this.db.services.on('add', this.updateEndpoints, this);
 
       this.on('navigate', function(e) {
         console.log('app navigate', e);
@@ -201,8 +202,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /*
-     * When services or relations change we must get a new endpoints list.
-     * This is used by the environment view.
+     * When services are added we update endpoints here.
      */
     updateEndpoints: function(callback) {
       var self = this;

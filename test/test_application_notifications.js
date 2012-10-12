@@ -12,14 +12,13 @@
     }
 
     before(function() {
-      Y = YUI(GlobalConfig).use([
-        'node',
-        'juju-models',
-        'juju-views',
-        'juju-gui',
-        'juju-env',
-        'juju-tests-utils',
-        'node-event-simulate'],
+      Y = YUI(GlobalConfig).use(['node',
+                                 'juju-models',
+                                 'juju-views',
+                                 'juju-gui',
+                                 'juju-env',
+                                 'juju-tests-utils',
+                                 'node-event-simulate'],
       function(Y) {
         juju = Y.namespace('juju');
         models = Y.namespace('juju.models');
@@ -33,14 +32,14 @@
     });
 
     beforeEach(function(done) {
-      Y = YUI(GlobalConfig).use([
-        'node',
-        'juju-models',
-        'juju-views',
-        'juju-gui',
-        'juju-env',
-        'juju-tests-utils',
-        'node-event-simulate'], function(Y) {
+      Y = YUI(GlobalConfig).use(['node',
+                                 'juju-models',
+                                 'juju-views',
+                                 'juju-gui',
+                                 'juju-env',
+                                 'juju-tests-utils',
+                                 'node-event-simulate'],
+      function(Y) {
         applicationContainer = Y.Node.create('<div id="test-container" />');
         applicationContainer.appendTo(Y.one('body'));
 

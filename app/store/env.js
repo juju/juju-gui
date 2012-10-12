@@ -207,9 +207,6 @@ YUI.add('juju-env', function(Y) {
     },
 
     get_endpoints: function(services, callback) {
-      if (!Y.Lang.isArray(services)) {
-        services = [services];
-      }
       this._send_rpc({'op': 'get_endpoints', 'service_names': services},
                      callback);
     }
