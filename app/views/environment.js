@@ -932,11 +932,11 @@ YUI.add('juju-view-environment', function(Y) {
               d.source().id,
               d.target().id,
               Y.bind(this._removeRelationCallback, this, view,
-                  relationElement, confirmButton));
+                  relationElement, d.relation_id, confirmButton));
         },
 
         _removeRelationCallback: function(view,
-            relationElement, confirmButton, ev) {
+            relationElement, relationId, confirmButton, ev) {
           var db = this.get('db'),
               service = this.get('model');
           if (ev.err) {
@@ -950,8 +950,12 @@ YUI.add('juju-view-environment', function(Y) {
             view.removeSVGClass(this.relationElement,
                 'to-remove pending-relation');
           } else {
-            view.get('rmrelation_dialog').hide();
+            // Remove the relation from the DB.
+            db.relations.remove(db.relations.getById(relationId));
+            // Redraw the graph and reattach events.
+            db.fire('update');
           }
+          view.get('rmrelation_dialog').hide();
           confirmButton.set('disabled', false);
         },
 
@@ -1283,7 +1287,7 @@ YUI.add('juju-view-environment', function(Y) {
               var endpoints = Y.Array.map(ev.result.endpoints, function(item) {
                 var id = Y.Object.keys(item)[0];
                 return [id, item[id]];
-              })
+              });
               db.relations.create({
                 relation_id: ev.result.id,
                 // endpoints[1][1].name should be the same

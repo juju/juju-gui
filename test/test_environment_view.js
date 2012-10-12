@@ -288,6 +288,8 @@
          service.next().simulate('click');
          container.all('.selectable-service').size()
             .should.equal(0);
+         // The database is initialized with two relations in beforeEach.
+         assert.equal(3, db.relations.size());
        });
 
     it('must be able to remove a relation between services',

@@ -25,7 +25,9 @@ YUI.add('juju-notification-controller', function(Y) {
     },
     message: function(change_type, change_op, change_data, notify_data) {
       var action = _changeNotificationOpToWords(change_op);
-      console.log('CHANGE_DATA:', change_data);
+      if (!change_data.endpoints) {
+        return ('Relation was ' + action);
+      }
       if (change_data.endpoints.length === 2) {
         var endpoint0 = change_data.endpoints[0][0],
             endpoint1 = change_data.endpoints[1][0],
@@ -36,13 +38,12 @@ YUI.add('juju-notification-controller', function(Y) {
             'and ' +
             endpoint1 + ' (relation type "' + relationType1 + '") ' +
             'was ' + action);
-      } else {
-        var endpoint = change_data.endpoints[0][0],
-            relationType = change_data.endpoints[0][1].name;
-        return ('Relation with ' +
-            endpoint + ' (relation type "' + relationType + '") ' +
-            'was ' + action);
       }
+      var endpoint = change_data.endpoints[0][0],
+          relationType = change_data.endpoints[0][1].name;
+      return ('Relation with ' +
+          endpoint + ' (relation type "' + relationType + '") ' +
+          'was ' + action);
     }
     // There is no relation eviction because relation errors are
     // reported on units, there are no relation errors to evict.

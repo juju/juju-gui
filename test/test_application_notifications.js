@@ -207,10 +207,11 @@
 
          assertNotificationNumber('1');
 
-         //view, relationElement, confirmButton, ev
+         //view, relationElement, relationId, confirmButton, ev
          view._removeRelationCallback.apply(view, [{
+           get: function () {return {hide: NO_OP};},
            removeSVGClass: NO_OP
-         }, {}, {
+         }, {}, '', {
            set: NO_OP
          }, ERR_EV]);
 
