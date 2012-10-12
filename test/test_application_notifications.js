@@ -209,7 +209,7 @@
 
          //view, relationElement, relationId, confirmButton, ev
          view._removeRelationCallback.apply(view, [{
-           get: function () {return {hide: NO_OP};},
+           get: function() {return {hide: NO_OP};},
            removeSVGClass: NO_OP
          }, {}, '', {
            set: NO_OP
