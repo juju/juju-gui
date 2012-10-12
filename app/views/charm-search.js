@@ -234,11 +234,11 @@ YUI.add('juju-charm-search', function(Y) {
           '.charm-nav-back': {click: 'goBack'},
           '.btn#charm-deploy': {click: 'onCharmDeployClicked'},
           '.remove-config-file': {click: 'onFileRemove'},
-          '.charm-section h4': {click: 'toggleSectionVisibility'},
-          '.config-file-upload': {change: 'onFileChange'},
+          '.charm-section h4': {click: toggleSectionVisibility},
+          '.config-file-upload': {change: 'onFileChange'}
         },
         onFileChange: function(evt) {
-          console.log("onFileChange:", evt);
+          console.log('onFileChange:', evt);
           this.fileInput = evt.target;
           var file = this.fileInput.get('files').shift(),
               reader = new FileReader();
@@ -247,11 +247,16 @@ YUI.add('juju-charm-search', function(Y) {
           reader.readAsText(file);
         },
         onFileRemove: function(evt) {
+          var container = this.get('container');
           this.configFileContent = null;
-          // TODO tell the file input that the file is gone
-          // TODO hide "Remove configuration file" button
-          // TODO show file input element
-          this.get('container').one('charm-settings').show();
+          container.one('.remove-config-file').addClass('hidden');
+          container.one('.charm-settings').show();
+          // TODO: Reset fileInput.  The following does not work.
+          // Replace the file input node.
+          var button = container.one('.remove-config-file');
+          this.fileInput.replace(Y.Node.create('<input type="file"/>')
+                                 .addClass('config-file-upload'));
+          this.fileInput = container.one('.remove-config-file');
         },
         onFileLoaded: function(evt) {
           this.configFileContent = evt.target.result;
@@ -264,37 +269,11 @@ YUI.add('juju-charm-search', function(Y) {
         onFileError: function(evt) {
           // TODO show error message
         },
-        // TODO this is (almost) a duplicate of the same function in the
-        // search pane, unify them.
-        toggleSectionVisibility: function(ev) {
-          var el = ev.currentTarget.ancestor('.charm-section')
-                     .one('.collapsible'),
-              icon = ev.currentTarget.one('i');
-          if (el.getStyle('display') === 'none') {
-            // sizeIn doesn't work smoothly without this bit of jiggery to get
-            // accurate heights and widths.
-            el.setStyles({height: null, width: null, display: 'block'});
-            var config =
-                { duration: 0.25,
-                  height: el.get('scrollHeight') + 'px',
-                  width: el.get('scrollWidth') + 'px'
-                };
-            // Now we need to set our starting point.
-            el.setStyles({height: 0, width: config.width});
-            el.show('sizeIn', config);
-            icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
-          } else {
-            el.hide('sizeOut', {duration: 0.25});
-            icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
-          }
-        },
         goBack: function(ev) {
           ev.halt();
           this.fire('changePanel', { name: 'charms' });
         },
         onCharmDeployClicked: function(evt) {
-          // TODO select the right config, use a file if they uploaded one,
-          // otherwise scrape out the config form and use those values
           var container = this.get('container'),
               app = this.get('app'),
               serviceName = container.one('#service-name').get('value'),
@@ -317,8 +296,12 @@ YUI.add('juju-charm-search', function(Y) {
                 }));
             return;
           }
+          if (this.configFileContent) {
+            config = null;
+          }
           numUnits = parseInt(numUnits, 10);
-          app.env.deploy(url, serviceName, config, numUnits, function(ev) {
+          app.env.deploy(url, serviceName, config, this.configFileContent,
+                         numUnits, function(ev) {
             if (ev.err) {
               console.log(url + ' deployment failed');
               app.db.notifications.add(

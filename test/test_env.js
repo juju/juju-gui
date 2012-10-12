@@ -39,6 +39,18 @@
       done();
     });
 
+    it('can deploy a service with a config file', function(done) {
+      var config_raw = ' \
+            tuning-level: \
+              expert-mojo';
+      env.deploy('precise/mysql', null, null, config_raw);
+      msg = conn.last_message();
+      msg.op.should.equal('deploy');
+      msg.charm_url.should.equal('precise/mysql');
+      msg.config_raw.should.equal(config_raw);
+      done();
+    });
+
     it('can add a unit', function(done) {
       env.add_unit('mysql', 3);
       msg = conn.last_message();
