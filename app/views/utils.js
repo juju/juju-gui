@@ -34,6 +34,8 @@ YUI.add('juju-view-utils', function(Y) {
           group: noop,
           groupEnd: noop,
           groupCollapsed: noop,
+          time: noop,
+          timeEnd: noop,
           log: noop
         };
 
