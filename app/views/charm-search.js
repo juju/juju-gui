@@ -301,6 +301,18 @@ YUI.add('juju-charm-search', function(Y) {
                     level: 'info'
                   })
               );
+              // Add service to the db and re-render for immediate display on
+              // the front page.
+              var service = new models.Service({
+                id: charm.get('package_name'),
+                charm: charm.get('id'),
+                unit_count: numUnits,
+                loaded: false,
+                config: config
+              });
+              app.db.services.add([service]);
+              // Force refresh.
+              app.db.fire('update');
             }
           });
           this.goBack(evt);
