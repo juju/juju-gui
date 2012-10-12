@@ -118,11 +118,11 @@
          };
 
          // It triggers the "add unit" logic
-         views.UnitCountHandler(view)._modifyUnits(3);
+         views.unitCountMixin._modifyUnits.call(view, 3);
          assertNotificationNumber('1');
 
          // It triggers the "remove unit" logic
-         views.UnitCountHandler(view)._modifyUnits(1);
+         views..unitCountMixin._modifyUnits.call(view, 1);
          assertNotificationNumber('2');
        });
 
@@ -524,22 +524,22 @@
              messages = [],
              titles = [];
 
-         views.UnitCountHandler(mockView)._removeUnitCallback.apply(mockView, [{
+         views.unitCountMixin._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: null
          }]);
 
-         views.UnitCountHandler(mockView)._removeUnitCallback.apply(mockView, [{
+         views.unitCountMixin._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: []
          }]);
 
-         views.UnitCountHandler(mockView)._removeUnitCallback.apply(mockView, [{
+         views.unitCountMixin._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: ['a']
          }]);
 
-         views.UnitCountHandler(mockView)._removeUnitCallback.apply(mockView, [{
+         views.unitCountMixin._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: ['b', 'c']
          }]);

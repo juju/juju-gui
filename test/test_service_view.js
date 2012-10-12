@@ -238,7 +238,7 @@
          // Since we don't have an app to listen to this event and tell the
          // view to re-render, we need to do it ourselves.
          db.on('update', view.render, view);
-         callbacks[0]({result: [new_unit_id]});
+         callbacks[0].call(view, {result: [new_unit_id]});
          var db_names = db.units.map(function(u) {return u.id;});
          db_names.sort();
          db_names.should.eql(expected_names);
@@ -259,7 +259,7 @@
          control.simulate('keydown', { keyCode: ENTER });
          var callbacks = Y.Object.values(env._txn_callbacks);
          callbacks.length.should.equal(1);
-         callbacks[0]({unit_names: ['mysql/2']});
+         callbacks[0].call(view, {unit_names: ['mysql/2']});
          var _ = expect(db.units.getById('mysql/2')).to.not.exist;
        });
 

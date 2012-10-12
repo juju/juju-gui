@@ -11,6 +11,217 @@ YUI.add('juju-view-service', function(Y) {
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
+  var unitCountMixin = {
+    // Mixin attributes
+    events: {
+      '#num-service-units': {
+        keydown: 'modifyUnits',
+        blur: 'resetUnits'
+      }
+    },
+    
+    resetUnits: function() {
+      var container = this.get('container'),
+          field = container.one('#num-service-units');
+      field.set('value', this.get('model').get('unit_count'));
+      field.set('disabled', false);
+    },
+
+    modifyUnits: function(ev) {
+      if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
+        return;
+      }
+      var container = this.get('container'),
+          field = container.one('#num-service-units');
+
+      if (ev.keyCode === ESC) {
+        this.resetUnits();
+      }
+      if (ev.keyCode !== ENTER) { // If not Enter keyup...
+        return;
+      }
+      ev.halt(true);
+
+      if (/^\d+$/.test(field.get('value'))) {
+        this._modifyUnits(parseInt(field.get('value'), 10));
+      } else {
+        this.resetUnits();
+      }
+    },
+
+    _modifyUnits: function(requested_unit_count) {
+      var service = this.get('model'),
+          unit_count = service.get('unit_count'),
+          field = this.get('container').one('#num-service-units'),
+          env = this.get('app').env;
+
+      if (requested_unit_count < 1) {
+        console.log('You must have at least one unit');
+        field.set('value', unit_count);
+        return;
+      }
+
+      var delta = requested_unit_count - unit_count;
+      if (delta > 0) {
+        // Add units!
+        env.add_unit(
+            service.get('id'), delta,
+            this._addUnitCallback);
+      } else if (delta < 0) {
+        delta = Math.abs(delta);
+        var units = this.get('app').db.units.get_units_for_service(service),
+            unit_ids_to_remove = [];
+
+        for (var i = units.length - 1;
+            unit_ids_to_remove.length < delta;
+            i -= 1) {
+          unit_ids_to_remove.push(units[i].id);
+        }
+        env.remove_units(
+            unit_ids_to_remove,
+            this._removeUnitCallback
+        );
+      }
+      field.set('disabled', true);
+    },
+
+    _addUnitCallback: function(ev) {
+      var service = this.get('model'),
+          app = this.get('app'),
+          db = this.get('app').db,
+          unit_names = ev.result || [];
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error adding unit',
+              message: ev.num_units + ' units',
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        db.units.add(
+            Y.Array.map(unit_names, function(unit_id) {
+              return {id: unit_id,
+                agent_state: 'pending'};
+            }));
+        service.set(
+            'unit_count', service.get('unit_count') + unit_names.length);
+      }
+      db.fire('update');
+      // View is redrawn so we do not need to enable field.
+    },
+
+    _removeUnitCallback: function(ev) {
+      var service = this.get('model'),
+          app = this.get('app'),
+          db = this.get('app').db,
+          unit_names = ev.unit_names;
+      console.log('_removeUnitCallback with: ', arguments);
+
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: (function() {
+                if (!ev.unit_names || ev.unit_names.length < 2) {
+                  return 'Error removing unit';
+                }
+                return 'Error removing units';
+              })(),
+              message: (function() {
+                if (!ev.unit_names || ev.unit_names.length === 0) {
+                  return '';
+                }
+                if (ev.unit_names.length > 1) {
+                  return 'Unit names: ' + ev.unit_names.join(', ');
+                }
+                return 'Unit name: ' + ev.unit_names[0];
+              })(),
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        Y.Array.each(unit_names, function(unit_name) {
+          db.units.remove(db.units.getById(unit_name));
+        });
+        service.set(
+            'unit_count', service.get('unit_count') - unit_names.length);
+      }
+      db.fire('update');
+      // View is redrawn so we do not need to enable field.
+    }
+  };
+  views.unitCountMixin = unitCountMixin;
+
+  var removeServiceMixin = {
+      // Mixin attributes
+      events: {
+        'a#destroy-service': {
+          click: 'confirmDestroy'
+        }
+      },
+      
+      confirmDestroy: function(ev) {
+      // We wait to make the panel until now, because in the render method
+      // the container is not yet part of the document.
+      ev.preventDefault();
+      if (Y.Lang.isUndefined(this.panel)) {
+        this.panel = views.createModalPanel(
+            'Are you sure you want to destroy the service?  ' +
+            'This cannot be undone.',
+            '#destroy-modal-panel',
+            'Destroy Service',
+            Y.bind(this.destroyService, this)
+            );
+      }
+      this.panel.show();
+    },
+
+    destroyService: function(ev) {
+      ev.preventDefault();
+      var env = this.get('app').env,
+          service = this.get('model');
+      ev.target.set('disabled', true);
+      env.destroy_service(
+          service.get('id'), Y.bind(this._destroyCallback, this));
+    },
+
+    _destroyCallback: function(ev) {
+      var db = this.get('app').db,
+          app = this.get('app'),
+          service = this.get('model'),
+          service_id = service.get('id');
+
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error destroying service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        db.services.remove(service);
+        db.relations.remove(
+            db.relations.filter(
+            function(r) {
+              return Y.Array.some(r.get('endpoints'), function(ep) {
+                return ep[0] === service_id;
+              });
+            }
+            ));
+        this.panel.hide();
+        this.panel.destroy();
+        this.fire('showEnvironment');
+      }
+    }
+  };
+  
   var exposeButtonMixin = {
     events: {
       '.unexposeService': {click: 'unexposeService'},
@@ -79,21 +290,12 @@ YUI.add('juju-view-service', function(Y) {
 
         initializer: function() {
           Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+          Y.mix(this, unitCountMixin, undefined, undefined, undefined, true);
+          Y.mix(this, removeServiceMixin, undefined, undefined, undefined, true);
         },
 
         events: {
-          '#num-service-units': {
-            keydown: function(ev) {
-              unitCountHandler(this).modifyUnits(ev);
-            },
-            blur: function() {
-              unitCountHandler(this).resetUnits();
-            }
-          },
-          '#service-relations .btn': {click: 'confirmRemoved'},
-          'a#destroy-service': {
-            click: function(ev) {removeServiceHandler(this).confirmDestroy(ev);}
-          }
+          '#service-relations .btn': {click: 'confirmRemoved'}
         },
 
         render: function() {
@@ -203,21 +405,12 @@ YUI.add('juju-view-service', function(Y) {
 
         initializer: function() {
           Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+          Y.mix(this, unitCountMixin, undefined, undefined, undefined, true);
+          Y.mix(this, removeServiceMixin, undefined, undefined, undefined, true);
         },
 
         events: {
-          '#num-service-units': {
-            keydown: function(ev) {
-              unitCountHandler(this).modifyUnits(ev);
-            },
-            blur: function() {
-              unitCountHandler(this).resetUnits();
-            }
-          },
-          '#save-service-constraints': {click: 'updateConstraints'},
-          'a#destroy-service': {click: function(ev) {
-            removeServiceHandler(this).confirmDestroy(ev);
-          }}
+          '#save-service-constraints': {click: 'updateConstraints'}
         },
 
         updateConstraints: function() {
@@ -328,21 +521,12 @@ YUI.add('juju-view-service', function(Y) {
 
         initializer: function() {
           Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+          Y.mix(this, unitCountMixin, undefined, undefined, undefined, true);
+          Y.mix(this, removeServiceMixin, undefined, undefined, undefined, true);
         },
 
         events: {
-          '#num-service-units': {
-            keydown: function(ev) {
-              unitCountHandler(this).modifyUnits(ev);
-            },
-            blur: function() {
-              unitCountHandler(this).resetUnits();
-            }
-          },
-          '#save-service-config': {click: 'saveConfig'},
-          'a#destroy-service': {click: function(ev) {
-            removeServiceHandler(this).confirmDestroy(ev);
-          }}
+          '#save-service-config': {click: 'saveConfig'}
         },
 
         render: function() {
@@ -525,6 +709,8 @@ YUI.add('juju-view-service', function(Y) {
 
     initializer: function() {
       Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+      Y.mix(this, unitCountMixin, undefined, undefined, undefined, true);
+      Y.mix(this, removeServiceMixin, undefined, undefined, undefined, true);
     },
 
     render: function() {
@@ -583,237 +769,14 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     events: {
-      '#num-service-units': {
-        keydown: function(ev) {
-          unitCountHandler(this).modifyUnits(ev);
-        },
-        blur: function() {
-          unitCountHandler(this).resetUnits();
-        }
-      },
       'div.unit': {click: function(ev) {
         console.log('Unit clicked', ev.currentTarget.get('id'));
         this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
-      }},
-      'a#destroy-service': {click: function(ev) {
-        removeServiceHandler(this).confirmDestroy(ev);
       }}
     }
   });
 
   views.service = ServiceView;
-
-  var unitCountHandler = function(view) {
-    function resetUnits() {
-      var container = view.get('container'),
-          field = container.one('#num-service-units');
-      field.set('value', view.get('model').get('unit_count'));
-      field.set('disabled', false);
-    }
-
-    function modifyUnits(ev) {
-      if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
-        return;
-      }
-      var container = view.get('container'),
-          field = container.one('#num-service-units');
-
-      if (ev.keyCode === ESC) {
-        resetUnits();
-      }
-      if (ev.keyCode !== ENTER) { // If not Enter keyup...
-        return;
-      }
-      ev.halt(true);
-
-      if (/^\d+$/.test(field.get('value'))) {
-        _modifyUnits(parseInt(field.get('value'), 10));
-      } else {
-        resetUnits();
-      }
-    }
-
-    function _modifyUnits(requested_unit_count) {
-
-      var service = view.get('model'),
-          unit_count = service.get('unit_count'),
-          field = view.get('container').one('#num-service-units'),
-          env = view.get('app').env;
-
-      if (requested_unit_count < 1) {
-        console.log('You must have at least one unit');
-        field.set('value', unit_count);
-        return;
-      }
-
-      var delta = requested_unit_count - unit_count;
-      if (delta > 0) {
-        // Add units!
-        env.add_unit(
-            service.get('id'), delta,
-            _addUnitCallback);
-      } else if (delta < 0) {
-        delta = Math.abs(delta);
-        var units = view.get('app').db.units.get_units_for_service(service),
-            unit_ids_to_remove = [];
-
-        for (var i = units.length - 1;
-            unit_ids_to_remove.length < delta;
-            i -= 1) {
-          unit_ids_to_remove.push(units[i].id);
-        }
-        env.remove_units(
-            unit_ids_to_remove,
-            _removeUnitCallback
-        );
-      }
-      field.set('disabled', true);
-    }
-
-    function _addUnitCallback(ev) {
-      var service = view.get('model'),
-          service_id = service.get('id'),
-          app = view.get('app'),
-          db = view.get('app').db,
-          unit_names = ev.result || [];
-      if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error adding unit',
-              message: ev.num_units + ' units',
-              level: 'error',
-              link: app.getModelURL(service),
-              modelId: service
-            })
-        );
-      } else {
-        db.units.add(
-            Y.Array.map(unit_names, function(unit_id) {
-              return {id: unit_id,
-                agent_state: 'pending'};
-            }));
-        service.set(
-            'unit_count', service.get('unit_count') + unit_names.length);
-      }
-      db.fire('update');
-      // View is redrawn so we do not need to enable field.
-    }
-
-    function _removeUnitCallback(ev) {
-      var service = view.get('model'),
-          app = view.get('app'),
-          db = view.get('app').db,
-          unit_names = ev.unit_names;
-      console.log('_removeUnitCallback with: ', arguments);
-
-      if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: (function() {
-                if (!ev.unit_names || ev.unit_names.length < 2) {
-                  return 'Error removing unit';
-                }
-                return 'Error removing units';
-              })(),
-              message: (function() {
-                if (!ev.unit_names || ev.unit_names.length === 0) {
-                  return '';
-                }
-                if (ev.unit_names.length > 1) {
-                  return 'Unit names: ' + ev.unit_names.join(', ');
-                }
-                return 'Unit name: ' + ev.unit_names[0];
-              })(),
-              level: 'error',
-              link: app.getModelURL(service),
-              modelId: service
-            })
-        );
-      } else {
-        Y.Array.each(unit_names, function(unit_name) {
-          db.units.remove(db.units.getById(unit_name));
-        });
-        service.set(
-            'unit_count', service.get('unit_count') - unit_names.length);
-      }
-      db.fire('update');
-      // View is redrawn so we do not need to enable field.
-    }
-
-    return {
-      resetUnits: resetUnits,
-      modifyUnits: modifyUnits,
-
-      // It is public for unit tests purposes
-      _modifyUnits: _modifyUnits,
-      _removeUnitCallback: _removeUnitCallback
-    };
-  };
-  views.UnitCountHandler = unitCountHandler;
-
-  var removeServiceHandler = function(view) {
-
-    function confirmDestroy(ev) {
-      // We wait to make the panel until now, because in the render method
-      // the container is not yet part of the document.
-      ev.preventDefault();
-      if (Y.Lang.isUndefined(view.panel)) {
-        view.panel = views.createModalPanel(
-            'Are you sure you want to destroy the service?  ' +
-            'This cannot be undone.',
-            '#destroy-modal-panel',
-            'Destroy Service',
-            destroyService
-            );
-      }
-      view.panel.show();
-    }
-
-    function destroyService(ev) {
-      ev.preventDefault();
-      var env = view.get('app').env,
-          service = view.get('model');
-      ev.target.set('disabled', true);
-      env.destroy_service(
-          service.get('id'), _destroyCallback);
-    }
-
-    function _destroyCallback(ev) {
-      var db = view.get('app').db,
-          app = view.get('app'),
-          service = view.get('model'),
-          service_id = service.get('id');
-
-      if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error destroying service',
-              message: 'Service name: ' + ev.service_name,
-              level: 'error',
-              link: app.getModelURL(service),
-              modelId: service
-            })
-        );
-      } else {
-        db.services.remove(service);
-        db.relations.remove(
-            db.relations.filter(
-            function(r) {
-              return Y.Array.some(r.get('endpoints'), function(ep) {
-                return ep[0] === service_id;
-              });
-            }
-            ));
-        view.panel.hide();
-        view.panel.destroy();
-        view.fire('showEnvironment');
-      }
-    }
-
-    return {
-      confirmDestroy: confirmDestroy
-    };
-  };
 
   // Display a arrow under the service page name.
   Y.Handlebars.registerHelper('setPageActive', function(currentPage,
