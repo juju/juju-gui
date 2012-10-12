@@ -118,11 +118,11 @@
          };
 
          // It triggers the "add unit" logic
-         views.unitCountMixin._modifyUnits.call(view, 3);
+         view._modifyUnits(3);
          assertNotificationNumber('1');
 
          // It triggers the "remove unit" logic
-         views..unitCountMixin._modifyUnits.call(view, 1);
+         view._modifyUnits(1);
          assertNotificationNumber('2');
        });
 
@@ -522,24 +522,27 @@
                }
              },
              messages = [],
-             titles = [];
+             titles = [],
+             baseView = new views.serviceBase({});
 
-         views.unitCountMixin._removeUnitCallback.apply(mockView, [{
+
+
+         baseView._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: null
          }]);
 
-         views.unitCountMixin._removeUnitCallback.apply(mockView, [{
+         baseView._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: []
          }]);
 
-         views.unitCountMixin._removeUnitCallback.apply(mockView, [{
+         baseView._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: ['a']
          }]);
 
-         views.unitCountMixin._removeUnitCallback.apply(mockView, [{
+         baseView._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: ['b', 'c']
          }]);

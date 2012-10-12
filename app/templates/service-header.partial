@@ -1,9 +1,9 @@
 <div class="service-header-partial">
 <div class="hero-unit juju-service-info-container">
-  <div class="inline" style="width: 58%;">
-    <div class="juju-sevice-container-header-a">
+  <div class="inline juju-service-info-container-big">
+    <div class="juju-service-container-header-name">
       <div class="juju-sevice-container-name">
-        <span style="font-size: 3em;"><strong>{{service.id}}</strong></span>
+        <span><strong>{{service.id}}</strong></span>
       </div>
       <div>
         <span><strong>{{charm.id}}</strong></span>
@@ -15,8 +15,8 @@
   </div>
   <div class="inline juju-service-info-container-separator"></div>
   <div class="inline juju-service-info-container-separator"></div>
-  <div class="inline" style="width: 20%;">
-    <div class="juju-sevice-container-header-b">
+  <div class="inline juju-service-info-container-small">
+    <div class="juju-service-container-header-expose">
     {{#if service.exposed}}
       <button class="btn unexposeService">
         <i class="icon-play-circle"></i>Unexpose
@@ -30,12 +30,12 @@
   </div>
   <div class="inline juju-service-info-container-separator"></div>
   <div class="inline juju-service-info-container-separator"></div>
-  <div class="inline" style="width: 20%;">
-    <div class="juju-sevice-container-header-c">
+  <div class="inline juju-service-info-container-small">
+    <div class="juju-service-container-header-unit-count">
     {{#unless charm.is_subordinate}}
       <form class="unit-count-form">
         <label class="control-label" for="num-service-units">Unit count</label>
-        <input type="text" style="width: 95%" id="num-service-units" 
+        <input type="text" id="num-service-units" 
                value="{{service.unit_count}}">
       </form>    
     {{/unless}}
@@ -46,38 +46,18 @@
 </div>
 <div class="juju-service-info-container-menu">
   <div class="juju-service-info-container-menu-wrapper">
+    {{#tabs}}
     <div class="inline juju-menu-item">
       <div>
-        <a href="."><strong>Units</strong></a> 
+        <a href="{{href}}"><strong>{{title}}</strong></a> 
       </div>
       <div>
-        {{setPageActive viewName "units"}}
+        {{#if active}}
+        <img src="/juju-ui/assets/images/white-triangle-16X8.png" />
+        {{/if}}
       </div>
     </div>
-    <div class="inline juju-menu-item">
-      <div>
-        <a href="relations"><strong>Relations</strong></a> 
-      </div>
-      <div>
-        {{setPageActive viewName "relations"}}
-      </div>
-    </div>
-    <div class="inline juju-menu-item">
-      <div>
-        <a href="config"><strong>Settings</strong></a> 
-      </div>
-      <div>
-        {{setPageActive viewName "config"}}
-      </div>
-    </div>
-    <div class="inline juju-menu-item">
-      <div>
-        <a href="constraints"><strong>Constraints</strong></a> 
-      </div>
-      <div>
-        {{setPageActive viewName "constraints"}}
-      </div>
-    </div>
+    {{/tabs}}
   </div>
 </div>
 <div class="row">

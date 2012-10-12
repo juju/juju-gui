@@ -779,6 +779,39 @@ table tr.highlighted {
   -webkit-border-top-right-radius: 6px;
   -moz-border-top-right-radius: 6px;
   border-top-right-radius: 6px;
+  
+  .juju-service-info-container-big {
+    width: 58%;
+
+    .juju-service-container-header-name {
+      padding-top: 15px;
+      padding-left: 10px;
+
+      .juju-sevice-container-name {
+        padding-bottom: 5px;
+        
+        span {
+          font-size: 3em;
+        }
+      }
+    }
+  }
+  
+  .juju-service-info-container-small {
+    width: 20%;
+    
+    .juju-service-container-header-expose {
+      padding: 20px;
+    }
+
+    .juju-service-container-header-unit-count {
+      padding: 5px;
+      
+      input {
+        width: 95%
+      }
+    }    
+  }
 }
 
 .juju-service-info-container-menu {
@@ -810,25 +843,8 @@ table tr.highlighted {
   }  
 }
 
-.juju-sevice-container-header-a {
-  padding-top: 15px;
-  padding-left: 10px;
-}
-
-.juju-sevice-container-header-b {
-  padding: 20px;
-}
-
-.juju-sevice-container-header-c {
-  padding: 5px;
-}
-
 .unit-count-form {
   margin-bottom: 0px;
-}
-
-.juju-sevice-container-name {
-  padding-bottom: 5px;
 }
 
 .juju-service-charm-link,.juju-service-charm-link:HOVER {
@@ -847,12 +863,18 @@ table tr.highlighted {
   border-top: 1px solid #737373;
   background-color: black;
   height: 50px;
+
+  .juju-service-info-container-bottom-menu-wrapper {
+    margin-top: 10px; 
+    margin-left: 10px;
+    
+    div {
+      width: 200px
+    }
+  }
 }
 
-.juju-service-info-container-bottom-menu-wrapper {
-  margin-top: 10px; 
-  margin-left: 10px;
-}
+
 
 .state-filter-label {
   color: white

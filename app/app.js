@@ -281,24 +281,10 @@ YUI.add('juju-gui', function(Y) {
         app: this,
         querystring: req.query
       }, {}, function(view) {
-        function getHeight(node) {
-          if (!node) {
-            return 0;
-          }
-          return node.getDOMNode().clientHeight;
-        }
-
-        var navbarHeight = getHeight(Y.one('.navbar')),
-            windowHeight = window.innerHeight,
-            container = view.get('container'),
-            viewContainer = container.one('.view-container'),
-            headerHeight = getHeight(container.one('.service-header-partial')),
-            footerHeight = getHeight(container.one(
-                '.juju-service-info-container-bottom-menu'));
-
-        if (viewContainer) {
-          viewContainer.set('offsetHeight', windowHeight - navbarHeight -
-              headerHeight - footerHeight - 1);
+        // If the view contains a method call fitToWindow,
+        // we will execute it after getting the view rendered
+        if (view.fitToWindow) {
+          view.fitToWindow();
         }
       });
     },
