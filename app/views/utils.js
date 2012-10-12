@@ -29,50 +29,23 @@ YUI.add('juju-view-utils', function(Y) {
     var winConsole = window.console,
         // These are the available methods.
         // Add more to this list if necessary.
-        consoleEmpty = {
-          group: function() {},
-          groupEnd: function() {},
-          groupCollapsed: function() {},
-          log: function() {}
-        },
-        consoleProxy = (function() {
-          // This object wraps the "window.console"
-          var consoleWrapper = {};
-          function buildMethodProxy(key) {
-            if (winConsole[key] && typeof winConsole[key] === 'function') {
-              consoleWrapper[key] = function() {
-                var cFunc = winConsole[key];
-                cFunc.call(winConsole, arguments);
-              };
-            } else {
-              consoleWrapper[key] = function() {
-                consoleEmpty[key]();
-              };
-            }
-          }
-          // Checking if the browser has the "console" object
-          if (winConsole) {
-            Y.each(consoleEmpty, function(value, key) {
-              buildMethodProxy(key);
-            });
-          } else {
-            consoleWrapper = consoleEmpty;
-          }
+        noop = function() {},
+        consoleNoop = {
+          group: noop,
+          groupEnd: noop,
+          groupCollapsed: noop,
+          log: noop
+        };
 
-          return consoleWrapper;
-        })();
-    // In order to enable the console in production the user can
-    // call "javascript:consoleManager.enable()" in the address bar
+    if(!winConsole) {
+        window.console = consoleNoop;
+    }
     return {
       enable: function() {
-        window.console = consoleProxy;
+        window.console = winConsole;
       },
       disable: function() {
-        window.console = consoleEmpty;
-      },
-      getConsoleEmpty: function() {
-        // Useful for unit tests
-        return consoleEmpty;
+        window.console = consoleNoop;
       }
     };
   })();
