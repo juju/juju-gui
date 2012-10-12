@@ -12,6 +12,21 @@ YUI.add('juju-charm-search', function(Y) {
       // Delay before showing tooltip.
       _tooltipDelay = 500;
 
+
+  var toggleSectionVisibility = function(ev) {
+    var el = ev.currentTarget.ancestor('.charm-section')
+                .one('.collapsible'),
+        icon = ev.currentTarget.one('i');
+    icon = ev.currentTarget.one('i');
+    if (el.getStyle('height') === '0px') {
+      el.show('sizeIn', {duration: 0.25, width: null});
+      icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+    } else {
+      el.hide('sizeOut', {duration: 0.25, width: null});
+      icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+    }
+  };
+
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
     resultsTemplate: views.Templates['charm-search-result-entries'],
@@ -71,9 +86,9 @@ YUI.add('juju-charm-search', function(Y) {
             charmId: ev.target.getAttribute('href') });
     },
     showConfiguration: function(ev) {
-      // Without the stopPropagation the 'outside' click handler is getting
+      // Without the ev.halt the 'outside' click handler is getting
       // called which immediately closes the panel.
-      ev.halt(true);
+      ev.halt();
       this.fire(
           'changePanel',
           { name: 'configuration',
@@ -146,7 +161,7 @@ YUI.add('juju-charm-search', function(Y) {
         events: {
           '.charm-nav-back': {click: 'goBack'},
           '.btn': {click: 'deploy'},
-          '.charm-section h4': {click: 'toggleSectionVisibility'}
+          '.charm-section h4': {click: toggleSectionVisibility}
         },
         initializer: function() {
           this.bindModelView(this.get('model'));
@@ -157,7 +172,8 @@ YUI.add('juju-charm-search', function(Y) {
           if (Y.Lang.isValue(charm)) {
             container.setHTML(this.template(charm.getAttrs()));
             container.all('i.icon-chevron-right').each(function(el) {
-              el.ancestor('.charm-section').one('div').hide();
+              el.ancestor('.charm-section').one('div')
+                .setStyle('height', '0px');
             });
           } else {
             container.setHTML(
@@ -173,34 +189,11 @@ YUI.add('juju-charm-search', function(Y) {
           this.fire('changePanel', { name: 'charms' });
         },
         deploy: function(ev) {
-          // Show configuration page for this charm.  For now, this is external.
-          ev.halt(true);
+          ev.halt();
           this.fire(
               'changePanel',
               { name: 'configuration',
                 charmId: ev.currentTarget.getData('url')});
-        },
-        toggleSectionVisibility: function(ev) {
-          var el = ev.currentTarget.ancestor('.charm-section')
-                     .one('.collapsible'),
-              icon = ev.currentTarget.one('i');
-          if (el.getStyle('display') === 'none') {
-            // sizeIn doesn't work smoothly without this bit of jiggery to get
-            // accurate heights and widths.
-            el.setStyles({height: null, width: null, display: 'block'});
-            var config =
-                { duration: 0.25,
-                  height: el.get('scrollHeight') + 'px',
-                  width: el.get('scrollWidth') + 'px'
-                };
-            // Now we need to set our starting point.
-            el.setStyles({height: 0, width: config.width});
-            el.show('sizeIn', config);
-            icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
-          } else {
-            el.hide('sizeOut', {duration: 0.25});
-            icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
-          }
         }
       });
 
@@ -218,24 +211,21 @@ YUI.add('juju-charm-search', function(Y) {
         render: function() {
           var container = this.get('container'),
               charm = this.get('model'),
+              config = charm && charm.get('config'),
+              settings = config && utils.extractServiceSettings(
+                  config.options),
               self = this;
-          if (Y.Lang.isValue(charm)) {
-            var settings,
-                config = charm.get('config');
-            if (Y.Lang.isValue(config)) {
-              settings = utils.extractServiceSettings(config.options);
-            }
-
+          if (charm && charm.loaded) {
             container.setHTML(this.template(
                 { charm: charm.getAttrs(),
                   settings: settings}));
-
             // Set up entry description overlay.
             this.setupOverlay(container);
           } else {
             container.setHTML(
                 '<div class="alert">Waiting on charm data...</div>');
           }
+          return this;
         },
         focus: function() {
           // We don't have anything to focus on.
@@ -303,7 +293,6 @@ YUI.add('juju-charm-search', function(Y) {
           this.fire('changePanel', { name: 'charms' });
         },
         onCharmDeployClicked: function(evt) {
-          // XXX: Look in utils for validator called 'validate'.
           // TODO select the right config, use a file if they uploaded one,
           // otherwise scrape out the config form and use those values
           var container = this.get('container'),
@@ -314,6 +303,20 @@ YUI.add('juju-charm-search', function(Y) {
               url = charm.get('id'),
               config = utils.getElementsValuesMapping(container,
                   '#service-config .config-field');
+          // The service names must be unique.  It is an error to deploy a
+          // service with same name.
+          var existing_service = app.db.services.getById(serviceName);
+          if (Y.Lang.isValue(existing_service)) {
+            console.log('Attempting to add service of the same name: ' +
+                        serviceName);
+            app.db.notifications.add(
+                new models.Notification({
+                  title: 'Attempting to deploy service ' + serviceName,
+                  message: 'A service with that name already exists.',
+                  level: 'error'
+                }));
+            return;
+          }
           numUnits = parseInt(numUnits, 10);
           app.env.deploy(url, serviceName, config, numUnits, function(ev) {
             if (ev.err) {
@@ -336,9 +339,9 @@ YUI.add('juju-charm-search', function(Y) {
               // Add service to the db and re-render for immediate display on
               // the front page.
               var service = new models.Service({
-                id: charm.get('package_name'),
+                id: serviceName,
                 charm: charm.get('id'),
-                unit_count: numUnits,
+                unit_count: 0,  // No units yet.
                 loaded: false,
                 config: config
               });

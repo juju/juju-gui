@@ -85,6 +85,10 @@ YUI.add('juju-models', function(Y) {
   models.parse_charm_id = parse_charm_id;
 
   var Charm = Y.Base.create('charm', Y.Model, [], {
+    initializer: function() {
+      this.loaded = false;
+      this.on('load', function() { this.loaded = true; });
+    },
     sync: function(action, options, callback) {
       if (action !== 'read') {
         throw (

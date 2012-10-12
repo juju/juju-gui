@@ -45,6 +45,7 @@ describe('charm configuration', function() {
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm});
+    charm.loaded = true;
     // If the charm has no config options it is still handled.
     assert.isTrue(!Y.Lang.isValue(charm.config));
     view.render();
@@ -53,7 +54,10 @@ describe('charm configuration', function() {
   });
 
   it('must have inputs for items in the charm schema', function() {
-    var charm = new models.Charm({id: 'precise/mysql'});
+    var charm = new models.Charm({id: 'precise/mysql'}),
+        view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm});
     charm.setAttrs(
         { config:
               { options:
@@ -69,12 +73,9 @@ describe('charm configuration', function() {
                     }
               }
         });
-    var view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm});
+    charm.loaded = true;
     view.render();
-    var labels = container.all('div.control-label');
-    labels.get('text').should.eql(
+    container.all('div.control-label').get('text').should.eql(
         ['Service name', 'Number of units', 'option0 (string)',
          'option1 (boolean)', 'option2 (int)']);
   });
@@ -94,6 +95,7 @@ describe('charm configuration', function() {
           model: charm,
           app: app});
     app.env = env;
+    charm.loaded = true;
     view.render();
     container.one('#service-name').get('value').should.equal('mysql');
     container.one('#charm-deploy').simulate('click');
@@ -114,7 +116,11 @@ describe('charm configuration', function() {
           received_config = config;
           received_num_units = num_units;
         }},
-        charm = new models.Charm({id: 'precise/mysql'});
+        charm = new models.Charm({id: 'precise/mysql'}),
+        view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm,
+          app: app});
     app.env = env;
     charm.setAttrs(
         { config:
@@ -125,10 +131,7 @@ describe('charm configuration', function() {
                     }
               }
         });
-    var view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          app: app});
+    charm.loaded = true;
     view.render();
     container.one('#service-name').set('value', 'aaa');
     container.one('#number-units').set('value', '24');
@@ -140,8 +143,37 @@ describe('charm configuration', function() {
     received_config.should.eql({option0: 'cows'});
   });
 
+  it('must not deploy a charm with same name as an existing service',
+     function() {
+       var deployed = false,
+       env = {deploy: function(charm_url, service_name, config, num_units) {
+         deployed = true;
+       }},
+       charm = new models.Charm({id: 'precise/mysql'}),
+       view = new views.CharmConfigurationView(
+       { container: container,
+         model: charm,
+         app: app});
+       db.services.add([{id: 'wordpress'}]);
+       app.env = env;
+       charm.loaded = true;
+       view.render();
+       container.one('#service-name').set('value', 'wordpress');
+       container.one('#charm-deploy').simulate('click');
+       deployed.should.equal(false);
+       var notification = db.notifications.toArray()[0];
+       notification.get('title').should.equal(
+       'Attempting to deploy service wordpress');
+       notification.get('message').should.equal(
+       'A service with that name already exists.');
+     });
+
   it('must show the description in a tooltip', function() {
-    var charm = new models.Charm({id: 'precise/mysql'});
+    var charm = new models.Charm({id: 'precise/mysql'}),
+        view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm,
+          tooltipDelay: 0 });
     charm.setAttrs(
         { config:
               { options:
@@ -160,10 +192,7 @@ describe('charm configuration', function() {
                     }
               }
         });
-    var view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          tooltipDelay: 0 });
+    charm.loaded = true;
     view.render();
     var tooltip = view.tooltip,
         controls = container.all('.control-group');
