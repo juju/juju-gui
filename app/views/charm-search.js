@@ -264,7 +264,8 @@ YUI.add('juju-charm-search', function(Y) {
             el.show('sizeIn', config);
             icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
           } else {
-            el.hide('sizeOut', {duration: 0.25});
+            el.hide('sizeOut', {duration: 0.25,
+                                width: el.get('scrollWidth') + 'px'});
             icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
           }
         },
