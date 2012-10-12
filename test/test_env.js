@@ -128,7 +128,7 @@
       env.on_message(evt);
       // After the message arrives the provider type is set.
       assert.equal(env.get('providerType'), providerType);
-      assert.equal(env.get('defaultSeries'), providerType);
+      assert.equal(env.get('defaultSeries'), defaultSeries);
       done();
     });
   });

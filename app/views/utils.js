@@ -25,6 +25,44 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
+  var consoleManager = function() {
+    var winConsole = window.console,
+        // These are the available methods.
+        // Add more to this list if necessary.
+        noop = function() {},
+        consoleNoop = {
+          group: noop,
+          groupEnd: noop,
+          groupCollapsed: noop,
+          time: noop,
+          timeEnd: noop,
+          log: noop
+        };
+
+    if (winConsole === undefined) {
+      window.console = consoleNoop;
+      winConsole = consoleNoop;
+    }
+    return {
+      native: function() {
+        window.console = winConsole;
+      },
+      noop: function() {
+        window.console = consoleNoop;
+      },
+      console: function(x) {
+        if (!arguments.length) {
+          return consoleNoop;
+        }
+        consoleNoop = x;
+        return x;
+      }
+    };
+  };
+  utils.consoleManager = consoleManager;
+  // Also assign globally to manage the actual console.
+  window.consoleManager = consoleManager();
+
   /*
  * Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
  * w/o the watch/refresh code
@@ -87,8 +125,9 @@ YUI.add('juju-view-utils', function(Y) {
         this.render();
       });
 
-      // Re-render this view when the model changes.
-      this.after('*:change', this.render, this);
+      // Re-render this view when the model changes, and after it is loaded,
+      // to support "loaded" flags.
+      this.after(['*:change', '*:load'], this.render, this);
     },
 
     renderable_charm: function(charm_name, app) {
@@ -706,7 +745,13 @@ YUI.add('juju-view-utils', function(Y) {
    * If a state ends in "-error" or is simply "error" then it is an error
    * state, if it is "started" then it is "running", otherwise it is "pending".
    */
-  utils.simplifyState = function(state) {
+  utils.simplifyState = function(unit) {
+    var state = unit.agent_state;
+    if ('started' === state && unit.relation_errors &&
+        Y.Object.keys(unit.relation_errors).length) {
+      state = 'relation-error';
+    }
+
     if (state === 'started') {
       return 'running';
     }
@@ -716,6 +761,15 @@ YUI.add('juju-view-utils', function(Y) {
     // "pending", "installed", and "stopped", plus anything unforseen
     return 'pending';
   };
+
+  Y.Handlebars.registerHelper('unitState', function(relation_errors,
+      agent_state) {
+        if ('started' === agent_state && relation_errors &&
+            Y.Object.keys(relation_errors).length) {
+          return 'relation-error';
+        }
+        return agent_state;
+      });
 
   Y.Handlebars.registerHelper('any', function() {
     var conditions = Y.Array(arguments, 0, true),
@@ -762,7 +816,6 @@ YUI.add('juju-view-utils', function(Y) {
     return new Y.Handlebars.SafeString(
         Y.Markdown.toHTML(text));
   });
-
 
 }, '0.1.0', {
   requires: ['base-build',

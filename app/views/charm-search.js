@@ -6,25 +6,36 @@ YUI.add('juju-charm-search', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
       // Singleton
-      _instance = null;
+      _instance = null,
+      // Delay before showing tooltip.
+      _tooltipDelay = 500;
+
+
+  var toggleSectionVisibility = function(ev) {
+    var el = ev.currentTarget.ancestor('.charm-section')
+                .one('.collapsible'),
+        icon = ev.currentTarget.one('i');
+    icon = ev.currentTarget.one('i');
+    if (el.getStyle('height') === '0px') {
+      el.show('sizeIn', {duration: 0.25, width: null});
+      icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+    } else {
+      el.hide('sizeOut', {duration: 0.25, width: null});
+      icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+    }
+  };
 
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
     events: {
       'a.charm-detail': {click: 'showDetails'},
-      '.charm-entry .btn': {
-        click: function(ev) {
-          var info_url = ev.currentTarget.getData('info-url');
-          // In the future, fire an event to show the configure pane instead.
-          this.get('app').fire('showCharm', {charm_data_url: info_url});
-        }
-      },
+      '.charm-entry .btn.deploy': {click: 'showConfiguration'},
       '.charm-entry': {
         mouseenter: function(ev) {
-          ev.currentTarget.one('.btn').transition({opacity: 1, duration: 0.25});
+          ev.currentTarget.all('.btn').transition({opacity: 1, duration: 0.25});
         },
         mouseleave: function(ev) {
-          ev.currentTarget.one('.btn').transition({opacity: 0, duration: 0.25});
+          ev.currentTarget.all('.btn').transition({opacity: 0, duration: 0.25});
         }
       }
     },
@@ -74,6 +85,15 @@ YUI.add('juju-charm-search', function(Y) {
           'changePanel',
           { name: 'description',
             charmId: ev.target.getAttribute('href') });
+    },
+    showConfiguration: function(ev) {
+      // Without the ev.halt the 'outside' click handler is getting
+      // called which immediately closes the panel.
+      ev.halt();
+      this.fire(
+          'changePanel',
+          { name: 'configuration',
+            charmId: ev.currentTarget.getData('url')});
     },
     // Create a data structure friendly to the view
     normalizeCharms: function(charms) {
@@ -156,7 +176,7 @@ YUI.add('juju-charm-search', function(Y) {
         events: {
           '.charm-nav-back': {click: 'goBack'},
           '.btn': {click: 'deploy'},
-          '.charm-section h4': {click: 'toggleSectionVisibility'}
+          '.charm-section h4': {click: toggleSectionVisibility}
         },
         initializer: function() {
           this.bindModelView(this.get('model'));
@@ -167,7 +187,8 @@ YUI.add('juju-charm-search', function(Y) {
           if (Y.Lang.isValue(charm)) {
             container.setHTML(this.template(charm.getAttrs()));
             container.all('i.icon-chevron-right').each(function(el) {
-              el.ancestor('.charm-section').one('div').hide();
+              el.ancestor('.charm-section').one('div')
+                .setStyle('height', '0px');
             });
           } else {
             container.setHTML(
@@ -180,34 +201,169 @@ YUI.add('juju-charm-search', function(Y) {
           this.fire('changePanel', { name: 'charms' });
         },
         deploy: function(ev) {
-          // Show configuration page for this charm.  For now, this is external.
-          var app = this.get('app'),
-              info_url = ev.currentTarget.getData('info-url');
-          app.fire('showCharm', {charm_data_url: info_url});
-        },
-        toggleSectionVisibility: function(ev) {
-          var el = ev.currentTarget.ancestor('.charm-section').one('div'),
-              icon = ev.currentTarget.one('i');
-          if (el.getStyle('display') === 'none') {
-            // sizeIn doesn't work smoothly without this bit of jiggery to get
-            // accurate heights and widths.
-            el.setStyles({height: null, width: null, display: 'block'});
-            var config =
-                { duration: 0.25,
-                  height: el.get('scrollHeight') + 'px',
-                  width: el.get('scrollWidth') + 'px'
-                };
-            // Now we need to set our starting point.
-            el.setStyles({height: 0, width: config.width});
-            el.show('sizeIn', config);
-            icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
-          } else {
-            el.hide('sizeOut', {duration: 0.25});
-            icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
-          }
+          ev.halt();
+          this.fire(
+              'changePanel',
+              { name: 'configuration',
+                charmId: ev.currentTarget.getData('url')});
         }
       });
+
   views.CharmDescriptionView = CharmDescriptionView;
+
+  var CharmConfigurationView = Y.Base.create(
+      'CharmCollectionView', Y.View, [views.JujuBaseView], {
+        template: views.Templates['charm-pre-configuration'],
+        tooltip: null,
+        tooltipDelay: 0,
+        waitingToShow: false,
+        initializer: function() {
+          this.bindModelView(this.get('model'));
+        },
+        render: function() {
+          var container = this.get('container'),
+              charm = this.get('model'),
+              config = charm && charm.get('config'),
+              settings = config && utils.extractServiceSettings(
+                  config.options),
+              self = this;
+          if (charm && charm.loaded) {
+            container.setHTML(this.template(
+                { charm: charm.getAttrs(),
+                  settings: settings}));
+            // Set up entry description overlay.
+            this.setupOverlay(container);
+          } else {
+            container.setHTML(
+                '<div class="alert">Waiting on charm data...</div>');
+          }
+          return this;
+        },
+        events: {
+          '.charm-nav-back': {click: 'goBack'},
+          '.btn': {click: 'onCharmDeployClicked'},
+          '.charm-section h4': {click: toggleSectionVisibility}
+        },
+        goBack: function(ev) {
+          ev.halt();
+          this.fire('changePanel', { name: 'charms' });
+        },
+        onCharmDeployClicked: function(evt) {
+          var container = this.get('container'),
+              app = this.get('app'),
+              serviceName = container.one('#service-name').get('value'),
+              numUnits = container.one('#number-units').get('value'),
+              charm = this.get('model'),
+              url = charm.get('id'),
+              config = utils.getElementsValuesMapping(container,
+                  '#service-config .config-field');
+          // The service names must be unique.  It is an error to deploy a
+          // service with same name.
+          var existing_service = app.db.services.getById(serviceName);
+          if (Y.Lang.isValue(existing_service)) {
+            console.log('Attempting to add service of the same name: ' +
+                        serviceName);
+            app.db.notifications.add(
+                new models.Notification({
+                  title: 'Attempting to deploy service ' + serviceName,
+                  message: 'A service with that name already exists.',
+                  level: 'error'
+                }));
+            return;
+          }
+          numUnits = parseInt(numUnits, 10);
+          app.env.deploy(url, serviceName, config, numUnits, function(ev) {
+            if (ev.err) {
+              console.log(url + ' deployment failed');
+              app.db.notifications.add(
+                  new models.Notification({
+                    title: 'Error deploying ' + name,
+                    message: 'Could not deploy the requested service.',
+                    level: 'error'
+                  }));
+            } else {
+              console.log(url + ' deployed');
+              app.db.notifications.add(
+                  new models.Notification({
+                    title: 'Deployed ' + name,
+                    message: 'Successfully deployed the requested service.',
+                    level: 'info'
+                  })
+              );
+              // Add service to the db and re-render for immediate display on
+              // the front page.
+              var service = new models.Service({
+                id: serviceName,
+                charm: charm.get('id'),
+                unit_count: 0,  // No units yet.
+                loaded: false,
+                config: config
+              });
+              app.db.services.add([service]);
+              // Force refresh.
+              app.db.fire('update');
+            }
+          });
+          this.goBack(evt);
+        },
+        setupOverlay: function(container) {
+          var self = this;
+          container.appendChild(Y.Node.create('<div/>'))
+            .set('id', 'tooltip')
+            .addClass('yui3-widget-bd');
+
+          self.tooltip = new Y.Overlay({ srcNode: '#tooltip',
+            visible: false}).plug(Y.Plugin.WidgetAnim);
+          self.tooltip.anim.get('animHide').set('duration', 0.01);
+          self.tooltip.anim.get('animShow').set('duration', 0.3);
+          var cg = container.all('.control-group');
+          cg.on('mousemove', function(evt) {
+            // Control tool-tips.
+            if (self.tooltip.get('visible') === false) {
+              Y.one('#tooltip').setStyle('opacity', '0');
+              self.tooltip.move([(evt.pageX + 5), (evt.pageY + 5)]);
+              Y.one('#tooltip').setStyle('opacity', '1');
+            }
+            if (self.waitingToShow === false) {
+              // Wait half a second, then show tooltip.
+              self.tooltip.show();
+              setTimeout(function() {
+                var tooltip = Y.one('#tooltip');
+                if (tooltip) {
+                  tooltip.setStyle('opacity', '1');
+                  self.tooltip.show();
+                }
+              }, self.get('tooltipDelay'));
+
+              // While waiting to show tooltip, don't let other
+              // mousemoves try to show tooltip too.
+              self.waitingToShow = true;
+
+              // Find the tooltip text, the control-description.
+              var cg = (evt.target.hasClass('control-group')) ?
+                  evt.target :
+                  evt.target.ancestor('.control-group'),
+                  node = cg.one('.control-description'),
+                  text = node.get('text').trim();
+              self.tooltip.setStdModContent('body', text);
+            }
+          });
+
+          cg.on('mouseleave', function(evt) {
+            // this check prevents hiding the tooltip
+            // when the cursor moves over the tooltip itself
+            if ((evt.relatedTarget) &&
+                (evt.relatedTarget.hasClass('yui3-widget-bd') === false)) {
+              self.tooltip.hide();
+              self.waitingToShow = false;
+            }
+          });
+
+          this.tooltip.render();
+        }
+      });
+
+  views.CharmConfigurationView = CharmConfigurationView;
 
   // Creates the "_instance" object
   function createInstance(config) {
@@ -228,9 +384,15 @@ YUI.add('juju-charm-search', function(Y) {
         descriptionPanel = new CharmDescriptionView(
               { container: descriptionPanelNode,
                 app: app }),
+        configurationPanelNode = Y.Node.create(),
+        configurationPanel = new CharmConfigurationView(
+              { container: configurationPanelNode,
+                app: app,
+                tooltipDelay: testing ? 0 : _tooltipDelay}),
         panels =
               { charms: charmsSearchPanel,
-                description: descriptionPanel },
+                description: descriptionPanel,
+                configuration: configurationPanel },
         isPopupVisible = false,
         trigger = Y.one('#charm-search-trigger'),
         searchField = Y.one('#charm-search-field'),
@@ -401,6 +563,9 @@ YUI.add('juju-charm-search', function(Y) {
     'handlebars',
     'event-hover',
     'transition',
-    'event-key'
+    'event-key',
+    'event-outside',
+    'widget-anim',
+    'overlay'
   ]
 });

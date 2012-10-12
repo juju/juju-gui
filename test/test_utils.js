@@ -284,18 +284,22 @@ describe('utilities', function() {
     });
 
     it('should translate service states correctly', function() {
+      function assertState(state, expected) {
+        var unit = {agent_state: state};
+        assert.equal(utils.simplifyState(unit), expected);
+      }
       // "started" is turned into "running"
-      assert.equal(utils.simplifyState('started'), 'running');
+      assertState('started', 'running');
       // Any state that ends in "-error" is simplified to just "error".
-      assert.equal(utils.simplifyState('install-error'), 'error');
-      assert.equal(utils.simplifyState('foo-error'), 'error');
-      assert.equal(utils.simplifyState('-error'), 'error');
+      assertState('install-error', 'error');
+      assertState('foo-error', 'error');
+      assertState('-error', 'error');
       // Any other state (should just be "pending" and "installed") are
       // "pending".
-      assert.equal(utils.simplifyState('pending'), 'pending');
-      assert.equal(utils.simplifyState('installed'), 'pending');
-      assert.equal(utils.simplifyState('waiting'), 'pending');
-      assert.equal(utils.simplifyState('schlepping'), 'pending');
+      assertState('pending', 'pending');
+      assertState('installed', 'pending');
+      assertState('waiting', 'pending');
+      assertState('schlepping', 'pending');
     });
   });
 })();
