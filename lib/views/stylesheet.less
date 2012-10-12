@@ -674,8 +674,7 @@ g.unit {
         font-weight: bold;
         cursor: pointer;
     }
-    .charm-description {
-        padding: 1ex 1em;
+    .charm-panel {
         h3 {
             text-transform: capitalize;
             color: blue;
@@ -683,19 +682,28 @@ g.unit {
             margin-top: 1ex;
             margin-bottom: 1ex;
         }
+        h4 {
+            text-transform: uppercase;
+            border-bottom: 1px dotted black;
+            cursor: pointer;
+            margin-top: 1ex;
+        }
+        h5 {
+            margin-top: 1ex;
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+        height: 430px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        .collapsible {
+            overflow: hidden;
+        }
+    }
+    .charm-description {
+        padding: 1ex 1em;
         .charm-section {
-            h4 {
-                text-transform: uppercase;
-                border-bottom: 1px dotted black;
-                cursor: pointer;
-                margin-top: 1ex;
-            }
-            h5 {
-                margin-top: 1ex;
-                &:first-child {
-                    margin-top: 0;
-                }
-            }
             > div {
                 overflow: hidden;
             }
@@ -706,9 +714,40 @@ g.unit {
                 white-space: pre-wrap;
             }
         }
-        height: 430px;
-        overflow-y: auto;
-        overflow-x: hidden;
+    }
+    .charm-panel.config-variant {
+        padding: 1ex 1em;
+
+        .control-group {
+            width: auto;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .control-description {
+            display: none;
+        }
+        .control-label {
+            width: auto;
+            margin-bottom: 1ex;
+        }
+        .control-label:after {
+            content: ":";
+        }
+        .controls {
+            margin-left: auto;
+            margin-right: 0;
+            clear: both;
+        }
+        .controls.boolean {
+            clear: none;
+            input {
+                margin-left: 1ex;
+                margin-top: 0.7ex;
+            }
+        }
+        .btn {
+             margin-top: 5px;
+        }
     }
     .search-result-div {
         height: 424px;
@@ -753,4 +792,15 @@ g.unit {
 
 table tr.highlighted {
    background: pink;
+}
+
+#tooltip {
+    text-align: left;
+    background-color: #FFF6D5;
+    border: solid 1px black;
+    //padding: 0.2em 0.5em 0.3em;
+    padding: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }

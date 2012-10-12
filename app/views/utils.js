@@ -171,8 +171,9 @@ YUI.add('juju-view-utils', function(Y) {
         this.render();
       });
 
-      // Re-render this view when the model changes.
-      this.after('*:change', this.render, this);
+      // Re-render this view when the model changes, and after it is loaded,
+      // to support "loaded" flags.
+      this.after(['*:change', '*:load'], this.render, this);
     },
 
     renderable_charm: function(charm_name, app) {
