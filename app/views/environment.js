@@ -708,8 +708,8 @@ YUI.add('juju-view-environment', function(Y) {
                 // Programmatically size the font.
                 // Number derived from service assets:
                 // font-size 22px when asset is 224px.
-                return 'font-size:' + d.h * 
-                  (name_size / service_height) + 'px';
+                return 'font-size:' + d.h *
+                    (name_size / service_height) + 'px';
               })
             .attr('x', function(d) {
                     return d.w / 2;
@@ -717,8 +717,8 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('y', function(d) {
                 // Number derived from service assets:
                 // padding-top 26px when asset is 224px.
-                return d.h * (name_padding / service_height) + d.h * 
-                  (name_size / service_height) / 2;
+                return d.h * (name_padding / service_height) + d.h *
+                    (name_size / service_height) / 2;
               })
             .text(function(d) {return d.id; });
 
@@ -728,8 +728,8 @@ YUI.add('juju-view-environment', function(Y) {
                 // Programmatically size the font.
                 // Number derived from service assets:
                 // font-size 16px when asset is 224px.
-                return 'font-size:' + d.h * 
-                  (charm_label_size / service_height) + 'px';
+                return 'font-size:' + d.h *
+                    (charm_label_size / service_height) + 'px';
               })
             .attr('x', function(d) {
                     return d.w / 2;
@@ -737,8 +737,8 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('y', function(d) {
                 // Number derived from service assets:
                 // padding-top: 118px when asset is 224px.
-                return d.h * (charm_label_padding / service_height) - d.h * 
-                  (charm_label_size / service_height) / 2;
+                return d.h * (charm_label_padding / service_height) - d.h *
+                    (charm_label_size / service_height) / 2;
               })
             .attr('dy', '3em')
             .text(function(d) { return d.charm; });
@@ -872,9 +872,9 @@ YUI.add('juju-view-environment', function(Y) {
          */
         subordinateRelationsForService: function(service) {
           return this.rel_pairs.filter(function(p) {
-                return p.modelIds().indexOf(service.modelId()) !== -1 &&
-                    p.scope === 'container';
-              })
+            return p.modelIds().indexOf(service.modelId()) !== -1 &&
+                p.scope === 'container';
+          });
         },
 
         renderSlider: function() {
