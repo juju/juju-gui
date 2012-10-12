@@ -290,6 +290,11 @@ YUI.add('juju-view-service', function(Y) {
           Y.mix(this, unitCountMixin, undefined, undefined, undefined, true);
           Y.mix(this, removeServiceMixin, undefined, undefined, undefined,
               true);
+
+          // Bind visualization resizing on window resize.
+          Y.on('windowresize', Y.bind(function() {
+            this.fitToWindow();
+          }, this));
         },
 
         getServiceTabs: function(href) {
@@ -335,11 +340,12 @@ YUI.add('juju-view-service', function(Y) {
               headerHeight = getHeight(container.one(
                   '.service-header-partial')),
               footerHeight = getHeight(container.one(
-              '.juju-service-info-container-bottom-menu'));
+              '.juju-service-info-container-bottom-menu')),
+              size = Math.max(windowHeight, 600) - navbarHeight -
+              headerHeight - footerHeight - 1;
 
           if (viewContainer) {
-            viewContainer.set('offsetHeight', windowHeight - navbarHeight -
-                headerHeight - footerHeight - 1);
+            viewContainer.set('offsetHeight', size);
           }
         }
       });
