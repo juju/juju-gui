@@ -6,11 +6,11 @@ describe('application console', function() {
     Y = YUI(GlobalConfig).use(['juju-views',
                                'juju-view-utils',
                                'juju-tests-utils'],
-      function(Y) {
-        consoleManager = Y.namespace('juju.views.utils')
+    function(Y) {
+      consoleManager = Y.namespace('juju.views.utils')
                           .consoleManager();
-        done();
-      });
+      done();
+    });
   });
 
   afterEach(function() {
@@ -21,18 +21,18 @@ describe('application console', function() {
     var logCalled = false,
         message = null;
 
-       
+
     consoleManager.console({
-            log: function() {
-                logCalled = true;
-                message = arguments[0];
-            }});
+      log: function() {
+        logCalled = true;
+        message = arguments[0];
+      }});
 
     consoleManager.native();
     console.log('TEST');
     assert.isFalse(logCalled);
 
-    consoleManager.null();
+    consoleManager.noop();
     console.log('TEST');
     assert.isTrue(logCalled);
     assert.equal('TEST', message);

@@ -38,21 +38,21 @@ YUI.add('juju-view-utils', function(Y) {
         };
 
     if (winConsole === undefined) {
-        window.console = consoleNoop;
+      window.console = consoleNoop;
     }
     return {
       native: function() {
         window.console = winConsole;
       },
-      null: function() {
+      noop: function() {
         window.console = consoleNoop;
       },
       console: function(x) {
-          if (!arguments.length) {
-              return consoleNoop;
-          }
-          consoleNoop = x;
-          return x;
+        if (!arguments.length) {
+          return consoleNoop;
+        }
+        consoleNoop = x;
+        return x;
       }
     };
   };

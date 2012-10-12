@@ -97,7 +97,7 @@ YUI.add('juju-gui', function(Y) {
       if (this.get('consoleEnabled')) {
         consoleManager.native();
       } else {
-        consoleManager.null();
+        consoleManager.noop();
       }
       // Create a client side database to store state.
       this.db = new models.Database();
