@@ -430,12 +430,14 @@ YUI.add('juju-view-environment', function(Y) {
             // Enter.
             var g = self.drawRelationGroup(),
                 link = g.selectAll('line.relation');
+                //subs = self.drawSubordinateRelationGroup();
 
             // Update (+ enter selection).
             link.each(self.drawRelation);
 
             // Exit
             g.exit().remove();
+            //subs.exit().remove();
           }
 
           // Draw or schedule redraw of links.
@@ -450,7 +452,9 @@ YUI.add('juju-view-environment', function(Y) {
           // Add a labelgroup.
           var self = this,
               g = self.vis.selectAll('g.rel-group')
-                  .data(self.rel_pairs, function(r) {
+                  .data(self.rel_pairs.filter(function(d) {
+                    return d.scope !== 'container';
+                  }), function(r) {
                     return r.modelIds();
                   });
 
@@ -499,6 +503,48 @@ YUI.add('juju-view-environment', function(Y) {
           return g;
         },
 
+        /*
+         * Draw a new relation link with label and controls.
+         */
+        drawSubordinateRelationGroup: function() {
+          // Add a labelgroup.
+          var self = this,
+              g = self.vis.selectAll('g.sub-rel-group')
+                  .data(self.rel_pairs.filter(function(d) {
+                    return d.scope === 'container';
+                  }), function(r) {
+                    return r.modelIds();
+                  });
+
+          var enter = g.enter();
+
+          enter.insert('g', 'g.service')
+              .attr('class', 'sub-rel-group');
+
+          g.selectAll('image').remove();
+          g.append('image')
+            .attr('xlink:href', '/juju-ui/assets/svgs/sub_relation.svg')
+            .attr('width', 87)
+            .attr('height', 47)
+            .attr('x', function(d) {
+              return d.source().getConnectors().right[0];
+            })
+            .attr('y', function(d) {
+              return d.source().getConnectors().right[1] - 23;
+            });
+          g.append('image')
+            .attr('xlink:href', '/juju-ui/assets/svgs/sub_relation.svg')
+            .attr('width', 87)
+            .attr('height', 47)
+            .attr('x', function(d) {
+              return d.target().getConnectors().right[0];
+            })
+            .attr('y', function(d) {
+              return d.target().getConnectors().right[1] - 23;
+            });
+
+            return g;
+        },
         /*
          * Draw a relation between services.
          */
@@ -558,6 +604,19 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('height', function(d) {
                     return d.h;
                   });
+          node.filter(function(d) {
+            return d.subordinate;
+          })
+            .append('image')
+            .attr('xlink:href', '/juju-ui/assets/svgs/sub_relation.svg')
+            .attr('width', 87)
+            .attr('height', 47)
+            .attr('x', function(d) {
+              return d.w;
+            })
+            .attr('y', function(d) {
+              return d.h / 2 - 23;
+            });
 
           // Draw non-subordinate services services
           node.filter(function(d) {
