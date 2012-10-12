@@ -247,6 +247,20 @@ YUI.add('juju-charm-search', function(Y) {
               url = charm.get('id'),
               config = utils.getElementsValuesMapping(container,
                   '#service-config .config-field');
+          // The service names must be unique.  It is an error to deploy a
+          // service with same name.
+          var existing_service = app.db.services.getById(serviceName);
+          if (Y.Lang.isValue(existing_service)) {
+            console.log('Attempting to add service of the same name: ' +
+                        serviceName);
+            app.db.notifications.add(
+                new models.Notification({
+                  title: 'Attempting to deploy service ' + serviceName,
+                  message: 'A service with that name already exists.',
+                  level: 'error'
+                }));
+            return;
+          }
           numUnits = parseInt(numUnits, 10);
           app.env.deploy(url, serviceName, config, numUnits, function(ev) {
             if (ev.err) {

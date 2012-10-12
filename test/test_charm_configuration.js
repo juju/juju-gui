@@ -143,6 +143,31 @@ describe('charm configuration', function() {
     received_config.should.eql({option0: 'cows'});
   });
 
+  it('must not deploy a charm with same name as an existing service',
+     function() {
+       var deployed = false,
+       env = {deploy: function(charm_url, service_name, config, num_units) {
+         deployed = true;
+       }},
+       charm = new models.Charm({id: 'precise/mysql'}),
+       view = new views.CharmConfigurationView(
+       { container: container,
+         model: charm,
+         app: app});
+       db.services.add([{id: 'wordpress'}]);
+       app.env = env;
+       charm.loaded = true;
+       view.render();
+       container.one('#service-name').set('value', 'wordpress');
+       container.one('#charm-deploy').simulate('click');
+       deployed.should.equal(false);
+       var notification = db.notifications.toArray()[0];
+       notification.get('title').should.equal(
+       'Attempting to deploy service wordpress');
+       notification.get('message').should.equal(
+       'A service with that name already exists.');
+     });
+
   it('must show the description in a tooltip', function() {
     var charm = new models.Charm({id: 'precise/mysql'}),
         view = new views.CharmConfigurationView(
