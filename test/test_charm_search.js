@@ -141,34 +141,35 @@ describe('charm search', function() {
 
   it('must be able to deploy from the description panel by going to the ' +
      'configuration panel', function() {
-       var db = new models.Database(),
-       panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
-         charm_store: {
-           sendRequest: function(params) {
-             // Mocking the server callback value
-             params.callback.success({
-               response: {
-                 results: [{
-                   responseText: searchResult
-                 }]
-               }
-             });
-           }
-         },
-         app: {db: db},
-         testing: true
-       }),
-       node = panel.node;
-       db.charms.add({id: 'cs:precise/membase'});
-       panel.show();
-       var field = node.one('.charms-search-field');
-       field.set('value', 'aaa');
-       field.simulate('keyup');
-       node.one('a.charm-detail').simulate('click');
-       node.one('.btn-primary').simulate('click');
-       node.one('.control-label').get('text').trim()
-        .should.equal('Service name');
-     });
+        var db = new models.Database(),
+            panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
+              charm_store: {
+                sendRequest: function(params) {
+                  // Mocking the server callback value
+                  params.callback.success({
+                    response: {
+                      results: [{
+                        responseText: searchResult
+                      }]
+                    }
+                  });
+                }
+              },
+              app: {db: db},
+              testing: true
+            }),
+            node = panel.node,
+            charm = db.charms.add({id: 'cs:precise/membase'});
+        charm.loaded = true;
+        panel.show();
+        var field = node.one('.charms-search-field');
+        field.set('value', 'aaa');
+        field.simulate('keyup');
+        node.one('a.charm-detail').simulate('click');
+        node.one('.btn-primary').simulate('click');
+        node.one('.control-label').get('text').trim()
+         .should.equal('Service name');
+      });
 });
 
 describe('charm description', function() {
@@ -230,7 +231,7 @@ describe('charm description', function() {
         interface_div = html.one('div.charm-section:nth-of-type(2)'),
         last_change_div = html.one('div.charm-section:nth-of-type(3)');
     html.one('h3').get('text').trim().should.equal('mysql');
-    description_div.getStyle('display').should.equal('block');
+    description_div.getStyle('height').should.not.equal('0px');
     var _ = expect(interface_div).to.not.exist;
     _ = expect(last_change_div).to.not.exist;
   });
@@ -250,9 +251,9 @@ describe('charm description', function() {
         interface_div = html.one('div.charm-section:nth-of-type(2) div'),
         last_change_div = html.one('div.charm-section:nth-of-type(3) div');
     description_div.get('text').should.contain('A DB');
-    interface_div.getStyle('display').should.equal('none');
+    interface_div.getStyle('height').should.equal('0px');
     interface_div.get('text').should.contain('munin');
-    last_change_div.getStyle('display').should.equal('none');
+    last_change_div.getStyle('height').should.equal('0px');
     last_change_div.get('text').should.contain('fixed EVERYTHING');
     last_change_div.get('text').should.contain('2012-10-09');
   });
@@ -269,11 +270,11 @@ describe('charm description', function() {
         { container: container, app: app, model: charm }).render(),
         html = container.one('.charm-description'),
         section_container = html.one('div.charm-section:nth-of-type(3)');
-    section_container.one('div').getStyle('display').should.equal('none');
+    section_container.one('div').getStyle('height').should.equal('0px');
     assert(section_container.one('h4 i').hasClass('icon-chevron-right'));
     section_container.one('h4').simulate('click');
     assert(section_container.one('h4 i').hasClass('icon-chevron-down'));
-    section_container.one('div').getStyle('display').should.equal('block');
+    section_container.one('div').getStyle('height').should.not.equal('0px');
     section_container.one('h4').simulate('click');
     assert(section_container.one('h4 i').hasClass('icon-chevron-right'));
     // The transition is still running, so we can't check display.

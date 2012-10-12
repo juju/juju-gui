@@ -15,23 +15,14 @@ YUI.add('juju-charm-search', function(Y) {
 
   var toggleSectionVisibility = function(ev) {
     var el = ev.currentTarget.ancestor('.charm-section')
-      .one('.collapsible'),
+                .one('.collapsible'),
         icon = ev.currentTarget.one('i');
-    if (el.getStyle('display') === 'none') {
-      // sizeIn doesn't work smoothly without this bit of jiggery to get
-      // accurate heights and widths.
-      el.setStyles({height: null, width: null, display: 'block'});
-      var config =
-          { duration: 0.25,
-            height: el.get('scrollHeight') + 'px',
-            width: el.get('scrollWidth') + 'px'
-          };
-      // Now we need to set our starting point.
-      el.setStyles({height: 0, width: config.width});
-      el.show('sizeIn', config);
+    icon = ev.currentTarget.one('i');
+    if (el.getStyle('height') === '0px') {
+      el.show('sizeIn', {duration: 0.25, width: null});
       icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
     } else {
-      el.hide('sizeOut', {duration: 0.25});
+      el.hide('sizeOut', {duration: 0.25, width: null});
       icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
     }
   };
@@ -95,9 +86,9 @@ YUI.add('juju-charm-search', function(Y) {
             charmId: ev.target.getAttribute('href') });
     },
     showConfiguration: function(ev) {
-      // Without the stopPropagation the 'outside' click handler is getting
+      // Without the ev.halt the 'outside' click handler is getting
       // called which immediately closes the panel.
-      ev.halt(true);
+      ev.halt();
       this.fire(
           'changePanel',
           { name: 'configuration',
@@ -181,7 +172,8 @@ YUI.add('juju-charm-search', function(Y) {
           if (Y.Lang.isValue(charm)) {
             container.setHTML(this.template(charm.getAttrs()));
             container.all('i.icon-chevron-right').each(function(el) {
-              el.ancestor('.charm-section').one('div').hide();
+              el.ancestor('.charm-section').one('div')
+                .setStyle('height', '0px');
             });
           } else {
             container.setHTML(
@@ -197,8 +189,7 @@ YUI.add('juju-charm-search', function(Y) {
           this.fire('changePanel', { name: 'charms' });
         },
         deploy: function(ev) {
-          // Show configuration page for this charm.  For now, this is external.
-          ev.halt(true);
+          ev.halt();
           this.fire(
               'changePanel',
               { name: 'configuration',
@@ -219,24 +210,21 @@ YUI.add('juju-charm-search', function(Y) {
         render: function() {
           var container = this.get('container'),
               charm = this.get('model'),
+              config = charm && charm.get('config'),
+              settings = config && utils.extractServiceSettings(
+                  config.options),
               self = this;
-          if (Y.Lang.isValue(charm)) {
-            var settings,
-                config = charm.get('config');
-            if (Y.Lang.isValue(config)) {
-              settings = utils.extractServiceSettings(config.options);
-            }
-
+          if (charm && charm.loaded) {
             container.setHTML(this.template(
                 { charm: charm.getAttrs(),
                   settings: settings}));
-
             // Set up entry description overlay.
             this.setupOverlay(container);
           } else {
             container.setHTML(
                 '<div class="alert">Waiting on charm data...</div>');
           }
+          return this;
         },
         focus: function() {
           // We don't have anything to focus on.

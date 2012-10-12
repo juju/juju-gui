@@ -430,6 +430,7 @@
     it('must send request to juju environment for local charms', function() {
       var charm = new models.Charm({id: 'local:precise/foo'}).load(
           {env: env, charm_store: charm_store});
+      assert(!charm.loaded);
       conn.last_message().op.should.equal('get_charm');
     });
 
@@ -439,6 +440,7 @@
           function(err, response) {
             assert(!err);
             charm.get('summary').should.equal('wowza');
+            assert(charm.loaded);
             done();
           });
       var response = conn.last_message();
@@ -453,6 +455,7 @@
           function(err, response) {
             assert(err);
             assert(response.err);
+            assert(!charm.loaded);
             done();
           });
       var response = conn.last_message();
@@ -470,6 +473,7 @@
           function(err, response) {
             assert(!err);
           });
+      assert(charm.loaded);
       charm.get('summary').should.equal('wowza');
       charm.get('is_subordinate').should.equal(true);
       charm.get('scheme').should.equal('cs');
@@ -491,6 +495,7 @@
           function(err, response) {
             assert(err);
           });
+      assert(!charm.loaded);
     });
 
   });
