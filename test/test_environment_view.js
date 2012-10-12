@@ -277,7 +277,7 @@
            env: env
          }).render();
          var service = container.one('.service'),
-         add_rel = service.one('.add-relation'),
+         add_rel = container.one('#service-menu .add-relation'),
          after_evt;
 
          service.simulate('click');

@@ -298,13 +298,13 @@
              };
 
          views.environment.prototype.service_click_actions.addRelationEnd
-           .apply(view, [{}, {}, view]);
+           .apply(view, [{}, view]);
 
          assertNotificationNumber('1');
 
          views.environment.prototype.service_click_actions.destroyService.apply(
-             //destroyService function signature > (m, context, view, btn)
-             view, [{}, {}, view, {set: NO_OP}]);
+             //destroyService function signature > (m, view, btn)
+             view, [{}, view, {set: NO_OP}]);
 
          assertNotificationNumber('2');
        });
