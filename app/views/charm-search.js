@@ -55,7 +55,7 @@ YUI.add('juju-charm-search', function(Y) {
       this.after('defaultSeriesChange', function(ev) {
         this.set('defaultEntries', null);
         if (ev.newVal) {
-          var searchString = 'series%3A'+ev.newVal+'+owner%3Acharmers';
+          var searchString = 'series%3A' + ev.newVal + '+owner%3Acharmers';
           this.findCharms(searchString, function(charms) {
             self.set('defaultEntries', charms);
           });
@@ -499,7 +499,7 @@ YUI.add('juju-charm-search', function(Y) {
       trigger.on('click', toggle);
     }
 
-    var handleKeyDown = function (ev) {
+    var handleKeyDown = function(ev) {
       if (ev.keyCode === ENTER) {
         ev.halt(true);
         show();
