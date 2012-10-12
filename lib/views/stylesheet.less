@@ -88,6 +88,89 @@ svg {
     margin: 0 -20px 0 -20px;
 }
 
+#canvas {
+    position: relative;
+}
+
+
+#service-menu {
+    @border_radius: 20px;
+    @background_color: #282421;
+
+    display: none;
+    background-color: @background_color;
+    color: #fdf6e3;
+
+    border-radius: @border_radius;
+    -moz-border-radius: @border_radius;
+    -webkit-border-radius: @border_radius;
+
+    box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
+
+    top: 0;
+    left: 0;
+    position: absolute;
+
+    &.active {
+        display: block;
+    }
+
+    #service-menu-triangle {
+        position: absolute;
+        top: 62px;
+        left: -12px;
+        width: 12px;
+        line-height: 21px;
+        background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle.png);
+        background-repeat: no-repeat;
+    }
+
+    ul {
+        margin: 10px;
+        list-style-type: none;
+        li {
+            background-position: 5px center;
+            background-repeat: no-repeat;
+            border-bottom: 1px #5f594f solid;
+            cursor: pointer;
+            line-height: 32px;
+            padding: 5px 5px 5px 42px;
+            border-radius: @border_radius;
+            -moz-border-radius: @border_radius;
+            -webkit-border-radius: @border_radius;
+
+            &.view-service {
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
+            }
+            &.add-relation {
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
+            }
+            &.add-remove-units {
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
+                color: gray;
+                cursor: default;
+                &:hover {
+                    background-color: inherit;
+                }
+            }
+            &.destroy-service {
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
+            }
+
+            &:last-child {
+                border-bottom: none;
+            }
+            &:hover {
+                background-color: lighten(@background_color, 10%);
+            }
+        }
+
+    }
+
+}
+
 charms.thumbnails.li { height:4em; }
 .relation {
     stroke: #333333;
