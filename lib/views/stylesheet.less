@@ -586,9 +586,6 @@ g.unit {
         font-weight: bold;
         cursor: pointer;
     }
-    .charm-panel.config-variant {
-        height: 444px !important;
-    }
     .charm-panel {
         h3 {
             text-transform: capitalize;
@@ -612,6 +609,9 @@ g.unit {
         height: 430px;
         overflow-y: auto;
         overflow-x: hidden;
+        .collapsible {
+            overflow: hidden;
+        }
     }
     .charm-description {
         padding: 1ex 1em;
@@ -627,7 +627,7 @@ g.unit {
             }
         }
     }
-    .charm-configuration {
+    .charm-panel.config-variant {
         padding: 1ex 1em;
 
         .control-group {
