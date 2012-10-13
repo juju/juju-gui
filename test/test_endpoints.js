@@ -112,16 +112,31 @@ describe('Relation endpoints logic', function() {
         ['puppet', 'rsyslog-forwarder', 'wordpress']);
   });
 
-  it('should find valid targets for a provides', function() {
+  it('should find ambigious targets', function() {
     // Mysql already has both subordinates related.
     var service = db.services.getById('mysql'),
         available = models.getEndpoints(service, sample_endpoints, db),
         available_svcs = Y.Object.keys(available);
-    // Even though mediawiki already has one mysql relation, it supports
-    // more than one (write master, and read slave).
     available_svcs.sort();
-    available_svcs.should.eql(['mediawiki', 'wordpress']);
-    available.mediawiki[0].name.should.equal('slave');
+    available_svcs.should.eql(['mediawiki']);
+    // mediawiki has two possible relations (read slave or write master)
+    // it can establish with mysql.
+    available.mediawiki.should.eql([
+      [{name: 'db', service: 'mysql', type: 'mysql'},
+       {name: 'slave', service: 'mediawiki', type: 'mysql'}],
+      [{name: 'db', service: 'mysql', type: 'mysql'},
+       {name: 'db', service: 'mediawiki', type: 'mysql'}]
+    ]);
+
+    // Demonstrate the inverse retrieval of the same.
+    available = models.getEndpoints(
+        db.services.getById('mediawiki'), sample_endpoints, db),
+    available.mysql.should.eql([
+      [{name: 'slave', service: 'mediawiki', type: 'mysql'},
+       {name: 'db', service: 'mysql', type: 'mysql'}],
+      [{name: 'db', service: 'mediawiki', type: 'mysql'},
+       {name: 'db', service: 'mysql', type: 'mysql'}]
+    ]);
   });
 
   it('should find valid targets for a requires', function() {
@@ -132,7 +147,7 @@ describe('Relation endpoints logic', function() {
         available_svcs = Y.Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(
-        ['blog-lb', 'memcached', 'mysql', 'rsyslog-forwarder']);
+        ['blog-lb', 'memcached', 'rsyslog-forwarder']);
   });
 
   it('should find valid targets for subordinates', function() {

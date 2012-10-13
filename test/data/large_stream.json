@@ -314,7 +314,7 @@
           }
         ], 
         [
-          "mediawiki", 
+          "wordpress", 
           {
             "role": "client", 
             "name": "db"

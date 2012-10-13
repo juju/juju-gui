@@ -36,12 +36,15 @@ YUI.add('juju-endpoints', function(Y) {
         type: relInfo['interface']};
     }
 
-    /* Store a new relation endpoint target for the given service. */
-    function add(svcName, ep, tep) {
+    /* Store endpoints for a relation to target the given service.
+       :param tep: target endpoint
+       :param oep: origin endpoint
+    */
+    function add(svcName, oep, tep) {
       if (!Y.Object.owns(targets, svcName)) {
         targets[svcName] = [];
       }
-      targets[svcName].push(ep);
+      targets[svcName].push([oep, tep]);
     }
 
     // First we process all the endpoints of the origin service.
@@ -122,7 +125,7 @@ YUI.add('juju-endpoints', function(Y) {
             // If the origin provides it then its a valid target.
             Y.Array.filter(provides, function(oep) {
               if (oep.type === ep.type) {
-                add(tid, ep);
+                add(tid, oep, ep);
               }
             });
           });
@@ -140,10 +143,10 @@ YUI.add('juju-endpoints', function(Y) {
             Y.Array.each(requires,
                function(oep) {
                  if (oep.type !== ep.type ||
-                 db.relations.has_relation_for_endpoint(ep, sid)) {
+                     db.relations.has_relation_for_endpoint(ep, sid)) {
                    return;
                  }
-                 add(tid, ep);
+                 add(tid, oep, ep);
                });
           });
     });
