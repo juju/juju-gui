@@ -1,0 +1,352 @@
+[
+  [
+    "service", 
+    "add", 
+    {
+      "subordinate": true, 
+      "charm": "cs:precise/rsyslog-forwarder-0", 
+      "id": "rsyslog-forwarder"
+    }
+  ], 
+  [
+    "service", 
+    "add", 
+    {
+      "charm": "cs:precise/haproxy-11", 
+      "id": "wiki-lb"
+    }
+  ], 
+  [
+    "service", 
+    "add", 
+    {
+      "charm": "cs:precise/mediawiki-3", 
+      "id": "mediawiki"
+    }
+  ], 
+  [
+    "service", 
+    "add", 
+    {
+      "charm": "cs:precise/wordpress-7", 
+      "id": "wordpress"
+    }
+  ], 
+  [
+    "service", 
+    "add", 
+    {
+      "charm": "cs:precise/rsyslog-1", 
+      "id": "rsyslog"
+    }
+  ], 
+  [
+    "service", 
+    "add", 
+    {
+      "charm": "cs:precise/mysql-6", 
+      "id": "mysql"
+    }
+  ], 
+  [
+    "service", 
+    "add", 
+    {
+      "charm": "cs:precise/haproxy-11", 
+      "id": "blog-lb"
+    }
+  ], 
+  [
+    "service", 
+    "add", 
+    {
+      "subordinate": true, 
+      "charm": "cs:precise/puppet-2", 
+      "id": "puppet"
+    }
+  ], 
+  [
+    "service", 
+    "add", 
+    {
+      "charm": "cs:precise/memcached-1", 
+      "id": "memcached"
+    }
+  ], 
+  [
+    "service", 
+    "add", 
+    {
+      "charm": "cs:precise/puppetmaster-2", 
+      "id": "puppetmaster"
+    }
+  ], 
+  [
+    "relation", 
+    "add", 
+    {
+      "interface": "reversenginx", 
+      "scope": "global", 
+      "endpoints": [
+        [
+          "wordpress", 
+          {
+            "role": "peer", 
+            "name": "loadbalancer"
+          }
+        ]
+      ], 
+      "id": "relation-0000000011"
+    }
+  ], 
+  [
+    "relation", 
+    "add", 
+    {
+      "interface": "juju-info", 
+      "scope": "container", 
+      "endpoints": [
+        [
+          "mediawiki", 
+          {
+            "role": "server", 
+            "name": "juju-info"
+          }
+        ], 
+        [
+          "puppet", 
+          {
+            "role": "client", 
+            "name": "juju-info"
+          }
+        ]
+      ], 
+      "id": "relation-0000000010"
+    }
+  ], 
+  [
+    "relation", 
+    "add", 
+    {
+      "interface": "puppet", 
+      "scope": "global", 
+      "endpoints": [
+        [
+          "puppet", 
+          {
+            "role": "client", 
+            "name": "puppetmaster"
+          }
+        ], 
+        [
+          "puppetmaster", 
+          {
+            "role": "server", 
+            "name": "puppetmaster"
+          }
+        ]
+      ], 
+      "id": "relation-0000000002"
+    }
+  ], 
+  [
+    "relation", 
+    "add", 
+    {
+      "interface": "juju-info", 
+      "scope": "container", 
+      "endpoints": [
+        [
+          "mysql", 
+          {
+            "role": "server", 
+            "name": "juju-info"
+          }
+        ], 
+        [
+          "rsyslog-forwarder", 
+          {
+            "role": "client", 
+            "name": "juju-info"
+          }
+        ]
+      ], 
+      "id": "relation-0000000003"
+    }
+  ], 
+  [
+    "relation", 
+    "add", 
+    {
+      "interface": "juju-info", 
+      "scope": "container", 
+      "endpoints": [
+        [
+          "wordpress", 
+          {
+            "role": "server", 
+            "name": "juju-info"
+          }
+        ], 
+        [
+          "puppet", 
+          {
+            "role": "client", 
+            "name": "juju-info"
+          }
+        ]
+      ], 
+      "id": "relation-0000000000"
+    }
+  ], 
+  [
+    "relation", 
+    "add", 
+    {
+      "interface": "syslog", 
+      "scope": "global", 
+      "endpoints": [
+        [
+          "rsyslog-forwarder", 
+          {
+            "role": "client", 
+            "name": "syslog"
+          }
+        ], 
+        [
+          "rsyslog", 
+          {
+            "role": "server", 
+            "name": "aggregator"
+          }
+        ]
+      ], 
+      "id": "relation-0000000001"
+    }
+  ], 
+  [
+    "relation", 
+    "add", 
+    {
+      "interface": "juju-info", 
+      "scope": "container", 
+      "endpoints": [
+        [
+          "mediawiki", 
+          {
+            "role": "server", 
+            "name": "juju-info"
+          }
+        ], 
+        [
+          "rsyslog-forwarder", 
+          {
+            "role": "client", 
+            "name": "juju-info"
+          }
+        ]
+      ], 
+      "id": "relation-0000000006"
+    }
+  ], 
+  [
+    "relation", 
+    "add", 
+    {
+      "interface": "http", 
+      "scope": "global", 
+      "endpoints": [
+        [
+          "mediawiki", 
+          {
+            "role": "server", 
+            "name": "website"
+          }
+        ], 
+        [
+          "wiki-lb", 
+          {
+            "role": "client", 
+            "name": "reverseproxy"
+          }
+        ]
+      ], 
+      "id": "relation-0000000007"
+    }
+  ], 
+  [
+    "relation", 
+    "add", 
+    {
+      "interface": "memcache", 
+      "scope": "global", 
+      "endpoints": [
+        [
+          "memcached", 
+          {
+            "role": "server", 
+            "name": "cache"
+          }
+        ], 
+        [
+          "mediawiki", 
+          {
+            "role": "client", 
+            "name": "cache"
+          }
+        ]
+      ], 
+      "id": "relation-0000000005"
+    }
+  ], 
+  [
+    "relation", 
+    "add", 
+    {
+      "interface": "mysql", 
+      "scope": "global", 
+      "endpoints": [
+        [
+          "mysql", 
+          {
+            "role": "server", 
+            "name": "db"
+          }
+        ], 
+        [
+          "mediawiki", 
+          {
+            "role": "client", 
+            "name": "db"
+          }
+        ]
+      ], 
+      "id": "relation-0000000009"
+    }
+  ],
+  [
+    "relation", 
+    "add", 
+    {
+      "interface": "juju-info", 
+      "scope": "container", 
+      "endpoints": [
+        [
+          "mysql", 
+          {
+            "role": "server", 
+            "name": "juju-info"
+          }
+        ], 
+        [
+          "puppet", 
+          {
+            "role": "client", 
+            "name": "juju-info"
+          }
+        ]
+      ], 
+      "id": "relation-0000000012"
+    }
+  ]
+]

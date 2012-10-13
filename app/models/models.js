@@ -425,17 +425,19 @@ YUI.add('juju-models', function(Y) {
           Y.Array.each(
             rel.get('endpoints'), 
             function(rep) {
+	      if (ep.type != rel.get('interface')) { 
+                return;
+              }
               if (!ep_matched) {
-                ep_matched = (ep.service === rep[0] &&
-                  ep.name === rep[1].name &&
-                  ep.type === rel.get('interface'));
-	       } else if (svc_name && rep[0] == svc_name) {
+                ep_matched = (ep.service === rep[0] && ep.name === rep[1].name)
+			      
+	      } 
+              if (!svc_matched && svc_name && rep[0] == svc_name) {
 		svc_matched = true;
 	      }
 	  });
-
           if (!svc_name && ep_matched) {
-            return true;
+             return true;
 	  } else if (svc_name && ep_matched && svc_matched) {
 	    return true;
 	  }

@@ -59,7 +59,7 @@ var sample_endpoints,
     sample_env;
 
 
-describe('Relation mapping logic', function() {
+describe.only('Relation endpoints logic', function() {
   var Y, juju, db, models;
 
   before(function(done) {
@@ -68,8 +68,8 @@ describe('Relation mapping logic', function() {
       function loadFixture(url) {
         return Y.JSON.parse(Y.io(url, {sync: true}).responseText);
       }
-      sample_env = loadFixture('sample_env.json');
-      sample_endpoints = loadFixture('sample_endpoints.json');
+      sample_env = loadFixture('data/large_stream.json');
+      sample_endpoints = loadFixture('data/large_endpoints.json');
       done();
     });
   });
@@ -83,7 +83,7 @@ describe('Relation mapping logic', function() {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       db = new (Y.namespace('juju.models')).Database();
-      db.on_delta({data: default_env});
+      db.on_delta({data: {'op': 'delta', result: sample_env}});
       done();
     });
   });
@@ -94,67 +94,64 @@ describe('Relation mapping logic', function() {
   });
 
   it('should be able find relatable services', function() {
-    var service = db.services.getById('blog'),
-        available = Y.Object.keys(models.getEndpoints(
-            service, default_endpoints, db));
-
-    available[0].should.equal('my_db');
-    available.length.should.equal(1);
-
-    service = db.services.getById('my_db');
-    // Lookup by Value
-    available = Y.Array.flatten(Y.Object.values(
-        models.getEndpoints(service, default_endpoints, db)));
-    available[0].service.should.equal('blog');
-    available.length.should.equal(1);
+    var service = db.services.getById('blog-lb'),
+        available_svcs = Y.Object.keys(models.getEndpoints(
+            service, sample_endpoints, db));
+    available_svcs.sort();
+    available_svcs.should.eql(
+	["mediawiki", "puppet", "rsyslog-forwarder", "wiki-lb", "wordpress"]);
   });
 
-  it('should be able to find valid targets', function() {
-    // populate with some sample relations
-    db.reset();
-    db.on_delta({data: {'op': 'delta', result: sample_env}});
-    var service = db.services.getById('haproxy'),
+  it('should find valid targets for a provides including subordinates', function() {
+    var service = db.services.getById('memcached'),
         available = models.getEndpoints(service, sample_endpoints, db),
         available_svcs;
     available_svcs = Y.Object.keys(available);
-    available_svcs.length.should.equal(2);
-    available_svcs[0].should.equal('mediawiki');
-    available_svcs[1].should.equal('wordpress');
-
-    service = db.services.getById('puppet'),
-    available = models.getEndpoints(service, sample_endpoints, db),
-    available_svcs = Y.Object.keys(available);
-    Y.Array.each(available, function(ep) {available_svcs.push(ep.service);});
+    available_svcs.sort();
     available_svcs.should.eql(
-        ['mediawiki', 'mysql', 'wordpress', 'memcached']);
+	["puppet", "rsyslog-forwarder", "wordpress"])
   });
 
-  it('should be able find ignore existing relations services', function() {
-    var blog = db.services.getById('blog'),
-        endpoints = Y.Object.keys(
-            models.getEndpoints(blog, default_endpoints, db));
-
-    // Validate service level mappings
-    endpoints[0].should.equal('my_db');
-
-    // Force a relation delta
-    db.on_delta({data: {
-      result: [[
-        'relation', 'add',
-        {'interface': 'mysql',
-          'scope': 'global', 'endpoints':
-              [['my_db', {'role': 'server', 'name': 'db'}],
-               ['blog', {'role': 'client', 'name': 'db'}]],
-          'id': 'relation-0000000001'}]],
-      op: 'delta'
-    }});
-
-    // Which means no valid endpoints.
-    endpoints = Y.Object.keys(
-        models.getEndpoints(blog, default_endpoints, db));
-    endpoints.length.should.equal(0);
+  it('should find valid targets for a provides', function() {
+    // Mysql already has both subordinates related.
+    var service = db.services.getById('mysql'),
+        available = models.getEndpoints(service, sample_endpoints, db),
+        available_svcs = Y.Object.keys(available);
+    // Even though mediawiki already has one mysql relation, it supports
+    // more than one (write master, and read slave).
+    available_svcs.sort();
+    available_svcs.should.eql(['mediawiki', 'wordpress'])
+    available.mediawiki[0].name.should.equal('slave');
   });
 
+  it('should find valid targets for a requires', function() {
+    // Wordpress already has one subordinates related (puppet)
+    // ..the picture is wrong.. wordpress only has one subordinate
+    var service = db.services.getById('wordpress'),
+        available = models.getEndpoints(service, sample_endpoints, db),
+        available_svcs = Y.Object.keys(available);
+    available_svcs.sort();
+    available_svcs.should.eql(
+	["blog-lb", "memcached", "mysql", "rsyslog-forwarder"] );
+  });
+
+  it('should find valid targets for subordinates', function() {
+    var service = db.services.getById('puppet'),
+        available = models.getEndpoints(service, sample_endpoints, db),
+        available_svcs = Y.Object.keys(available);
+  
+    available_svcs.sort();
+    available_svcs.should.eql(
+        ["blog-lb", "memcached", "puppetmaster", "rsyslog", "wiki-lb"])
+
+    var service = db.services.getById('rsyslog-forwarder'),
+        available = models.getEndpoints(service, sample_endpoints, db),
+        available_svcs = Y.Object.keys(available);
+
+    available_svcs.sort();
+    available_svcs.should.eql(
+	["blog-lb", "memcached", "puppetmaster", "rsyslog", "wiki-lb", "wordpress"]);
+  });
 
 });
 
