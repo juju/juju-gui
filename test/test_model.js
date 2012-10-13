@@ -126,11 +126,14 @@
     });
 
     it('must be able to parse individually owned charms', function() {
-      var charm = new models.Charm({id: 'cs:~marcoceppi/precise/wordpress-17'});
-      charm.get('full_name').should.equal('~marcoceppi/precise/wordpress');
+      // Note that an earlier version of the parsing code did not handle
+      // hyphens in user names, so this test intentionally includes one.
+      var charm = new models.Charm(
+          {id: 'cs:~marco-ceppi/precise/wordpress-17'});
+      charm.get('full_name').should.equal('~marco-ceppi/precise/wordpress');
       charm.get('package_name').should.equal('wordpress');
       charm.get('charm_store_path').should.equal(
-          '~marcoceppi/precise/wordpress/json');
+          '~marco-ceppi/precise/wordpress/json');
     });
 
     it('must reject bad charm ids.', function() {
@@ -455,6 +458,7 @@
     it('must send request to juju environment for local charms', function() {
       var charm = new models.Charm({id: 'local:precise/foo'}).load(
           {env: env, charm_store: charm_store});
+      assert(!charm.loaded);
       conn.last_message().op.should.equal('get_charm');
     });
 
@@ -464,6 +468,7 @@
           function(err, response) {
             assert(!err);
             charm.get('summary').should.equal('wowza');
+            assert(charm.loaded);
             done();
           });
       var response = conn.last_message();
@@ -478,6 +483,7 @@
           function(err, response) {
             assert(err);
             assert(response.err);
+            assert(!charm.loaded);
             done();
           });
       var response = conn.last_message();
@@ -495,6 +501,7 @@
           function(err, response) {
             assert(!err);
           });
+      assert(charm.loaded);
       charm.get('summary').should.equal('wowza');
       charm.get('is_subordinate').should.equal(true);
       charm.get('scheme').should.equal('cs');
@@ -516,6 +523,7 @@
           function(err, response) {
             assert(err);
           });
+      assert(!charm.loaded);
     });
 
   });

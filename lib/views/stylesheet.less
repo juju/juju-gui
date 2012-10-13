@@ -30,6 +30,11 @@ body {
     width: 12px;
 }
 
+.view-container {
+  overflow: auto;
+  padding: 10px;
+}
+
 .navbar {
     margin-top: -87px;
     margin-bottom: 0;
@@ -72,7 +77,11 @@ body {
 }
 
 #main {
-    padding: 0 20px !important;
+
+}
+
+#overview {
+
 }
 
 .divider {
@@ -85,10 +94,98 @@ svg {
 
 .crosshatch-background {
     background: url(/juju-ui/assets/images/pattern_tile.png) repeat;
-    margin: 0 -20px 0 -20px;
+}
+
+#canvas {
+    position: relative;
+}
+
+
+#service-menu {
+    @border_radius: 20px;
+    @background_color: #282421;
+
+    display: none;
+    background-color: @background_color;
+    color: #fdf6e3;
+
+    border-radius: @border_radius;
+    -moz-border-radius: @border_radius;
+    -webkit-border-radius: @border_radius;
+
+    box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
+    -moz-box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
+    -webkit-box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
+
+    top: 0;
+    left: 0;
+    position: absolute;
+
+    &.active {
+        display: block;
+    }
+
+    #service-menu-triangle {
+        position: absolute;
+        top: 62px;
+        left: -12px;
+        width: 12px;
+        line-height: 21px;
+        background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle.png);
+        background-repeat: no-repeat;
+    }
+
+    ul {
+        margin: 10px;
+        list-style-type: none;
+        li {
+            background-position: 5px center;
+            background-repeat: no-repeat;
+            border-bottom: 1px #5f594f solid;
+            cursor: pointer;
+            line-height: 32px;
+            padding: 5px 5px 5px 42px;
+            border-radius: @border_radius;
+            -moz-border-radius: @border_radius;
+            -webkit-border-radius: @border_radius;
+
+            &.view-service {
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
+            }
+            &.add-relation {
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
+            }
+            &.add-remove-units {
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
+                color: gray;
+                cursor: default;
+                &:hover {
+                    background-color: inherit;
+                }
+            }
+            &.destroy-service {
+                background-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
+            }
+
+            &:last-child {
+                border-bottom: none;
+            }
+            &:hover {
+                background-color: lighten(@background_color, 10%);
+            }
+        }
+
+    }
+
 }
 
 charms.thumbnails.li { height:4em; }
+.subordinate-rel-group {
+    display: none;
+    &.active {
+        display: inline;
+    }
+}
 .relation {
     stroke: #333333;
     stroke-width: 3px;
@@ -102,6 +199,10 @@ charms.thumbnails.li { height:4em; }
 
     &.unused {
         visibility: hidden;
+    }
+
+    &.subordinate-relation {
+        stroke: #3333cc;
     }
 }
 .rel-label {
@@ -187,6 +288,11 @@ ul#unit-tiny {
     }
 }
 
+circle.mouse-down-indicator {
+    stroke: #040404;
+    stroke-width: 2px;
+    fill: none;
+}
 g.service {
     fill: none;
     stroke: none;
@@ -195,12 +301,14 @@ g.service {
         text-anchor: middle;
     }
 
-    .charm-label { font-size: 0.7em;
-        fill: #333333;}
+    .charm-label { 
+        font-family: "Ubuntu", sans-serif;
+        font-style: italic;
+        fill: #4c4c4c;
+    }
     .name {
-        font-weight: bold;
-        font-family: "Ubuntu";
-        font-size: 1.6em; fill: #333333;
+        font-family: "Ubuntu", sans-serif;
+        fill: #4c4c4c;
     }
     
     .unit-count {
@@ -215,6 +323,14 @@ g.service {
             fill: rgba(0,0,0,1);}
         &.hide-count {
             fill: rgba(0,0,0,0);}
+    }
+
+    .sub-rel-count {
+        text-anchor: middle;
+        dominant_baseline: central;
+        fill: #4f4f4f;
+        font-family: "Ubuntu";
+        font-size: 1.2em;
     }
 
     .exposed-indicator {
@@ -324,7 +440,6 @@ g.unit {
 }
 #overview-tasks {
     background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
-    margin: 0 -20px 0 -20px;
     height: 50px;
     position: relative;
     color: #2d2d2d!important;
@@ -575,8 +690,7 @@ g.unit {
         font-weight: bold;
         cursor: pointer;
     }
-    .charm-description {
-        padding: 1ex 1em;
+    .charm-panel {
         h3 {
             text-transform: capitalize;
             color: blue;
@@ -584,19 +698,28 @@ g.unit {
             margin-top: 1ex;
             margin-bottom: 1ex;
         }
+        h4 {
+            text-transform: uppercase;
+            border-bottom: 1px dotted black;
+            cursor: pointer;
+            margin-top: 1ex;
+        }
+        h5 {
+            margin-top: 1ex;
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+        height: 430px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        .collapsible {
+            overflow: hidden;
+        }
+    }
+    .charm-description {
+        padding: 1ex 1em;
         .charm-section {
-            h4 {
-                text-transform: uppercase;
-                border-bottom: 1px dotted black;
-                cursor: pointer;
-                margin-top: 1ex;
-            }
-            h5 {
-                margin-top: 1ex;
-                &:first-child {
-                    margin-top: 0;
-                }
-            }
             > div {
                 overflow: hidden;
             }
@@ -607,9 +730,40 @@ g.unit {
                 white-space: pre-wrap;
             }
         }
-        height: 430px;
-        overflow-y: auto;
-        overflow-x: hidden;
+    }
+    .charm-panel.config-variant {
+        padding: 1ex 1em;
+
+        .control-group {
+            width: auto;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .control-description {
+            display: none;
+        }
+        .control-label {
+            width: auto;
+            margin-bottom: 1ex;
+        }
+        .control-label:after {
+            content: ":";
+        }
+        .controls {
+            margin-left: auto;
+            margin-right: 0;
+            clear: both;
+        }
+        .controls.boolean {
+            clear: none;
+            input {
+                margin-left: 1ex;
+                margin-top: 0.7ex;
+            }
+        }
+        .btn {
+             margin-top: 5px;
+        }
     }
     .search-result-div {
         height: 424px;
@@ -654,4 +808,151 @@ g.unit {
 
 table tr.highlighted {
    background: pink;
+}
+
+.juju-service-info-container {
+  padding: 0px;
+  margin-bottom: 0px;
+  background-color: #515151;
+  color: white;
+  height: 70px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  -webkit-border-top-left-radius: 6px;
+  -moz-border-top-left-radius: 6px;
+  border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+  -moz-border-top-right-radius: 6px;
+  border-top-right-radius: 6px;
+  
+  .juju-service-info-container-big {
+    width: 58%;
+
+    .juju-service-container-header-name {
+      padding-top: 15px;
+      padding-left: 10px;
+
+      .juju-sevice-container-name {
+        padding-bottom: 5px;
+        
+        span {
+          font-size: 3em;
+        }
+      }
+    }
+  }
+  
+  .juju-service-info-container-small {
+    width: 20%;
+    
+    .juju-service-container-header-expose {
+      padding: 20px;
+    }
+
+    .juju-service-container-header-unit-count {
+      padding: 5px;
+      
+      input {
+        width: 95%
+      }
+    }    
+  }
+}
+
+.juju-service-info-container-menu {
+  border-top: 1px solid #737373;
+  background-color: black;
+  height: 40px;
+  text-align: center;
+}
+
+.juju-service-info-container-menu-wrapper {
+  display: inline-block;
+}
+
+.juju-menu-item {
+  color: white;
+  padding: 10px;
+  padding-bottom: 0px;
+  padding-top: 10px;
+  text-align: center;
+  
+  a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  a:HOVER {
+    color: white;
+    text-decoration: none;
+  }  
+}
+
+.unit-count-form {
+  margin-bottom: 0px;
+}
+
+.juju-service-charm-link,.juju-service-charm-link:HOVER {
+  color: #919191;
+  text-decoration: underline;
+}
+
+.juju-service-info-container-separator {
+  width: 0px;
+  height: 68px;
+  border: 1px solid #737373;
+  margin-left: 1px;
+}
+
+.juju-service-info-container-separator-footer {
+  height: 48px;
+}
+
+.juju-service-info-container-bottom-menu {
+  border-top: 1px solid #737373;
+  background-color: black;
+  height: 50px;
+
+  .juju-service-info-container-bottom-menu-wrapper {
+    margin-left: 10px;
+    
+    div {
+      width: 200px
+    }
+  }
+  
+  .juju-service-info-container-bottom-menu-wrapper-service {
+    margin-top: 10px;
+    margin-left: 10px;
+    
+    div {
+      width: 200px
+    }
+  }      
+  
+  #destroy-service {
+    margin-top: 10px; 
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+.state-filter-label {
+  color: white
+}
+
+div.inline {
+  float: left;
+}
+
+#tooltip {
+    text-align: left;
+    background-color: #FFF6D5;
+    border: solid 1px black;
+    //padding: 0.2em 0.5em 0.3em;
+    padding: 0;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
 }

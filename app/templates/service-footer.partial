@@ -1,0 +1,8 @@
+<div class="juju-service-info-container-bottom-menu">
+  <div class="juju-service-info-container-bottom-menu-wrapper">
+    <div class="inline">
+     <a class="btn" id="destroy-service" data-toggle="modal" 
+       href="#destroy-service-modal">Destroy Service</a>
+    </div>
+  </div>
+</div> 

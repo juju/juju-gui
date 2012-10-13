@@ -1,35 +1,28 @@
 {{> service-header}}
-<div class="row-fluid">
-  <div class="span12">
-    <ul class="nav nav-tabs">
-      {{#states}}
-      <li {{#if active}}class="active"{{/if}}>
-        <a href="{{link}}">{{title}}</a>
-      </li>
-      {{/states}}
-    </ul>
-  </div>
-</div>
-
+<div class="view-container">
 <div class="collection">
   <div class="charm">
     {{{show_units units}}}
   </div>
 </div>
-
-<form>
-  <div id="service-footer" class="btn-group">
-    {{#unless charm.is_subordinate}}
-      <span class="footer-left">
-        Unit count:
-        <input type="text" id="num-service-units" value="{{service.unit_count}}" />
-        {{#if filtered}}
-        (Filtered count: {{units.length}})
-        {{/if}}
-      </span>
-    {{/unless}}
-    <a class="footer-right btn" id="destroy-service" data-toggle="modal" href="#destroy-service-modal">Destroy Service</a>
-  </div>
-</form>
-
 <div id="destroy-modal-panel"></div>
+</div>
+<div class="juju-service-info-container-bottom-menu">
+	<div>
+	  <div class="inline">
+	   <a class="btn" id="destroy-service" data-toggle="modal" 
+	      href="#destroy-service-modal">Destroy Service</a>
+	  </div>
+    <div class="inline juju-service-info-container-separator-footer"></div>
+	  <div class="inline">
+		  <div class="juju-service-info-container-bottom-menu-wrapper-service">
+	      <span class="state-filter-label"><strong>Filter</strong>&nbsp;</span>
+	      {{#states}}
+	      <a class="state-btn btn {{#if active}}btn-primary{{/if}}" 
+	        data-toggle="modal" href="{{link}}">
+	        <span class="state-title">{{title}}</span> ({{count}})</a>
+	      {{/states}}
+		  </div>
+	  </div>
+	</div>
+</div>  

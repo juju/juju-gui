@@ -1,0 +1,11 @@
+CACHE MANIFEST
+# 2012-10-12 14:10
+
+CACHE:
+/juju-ui/assets/svgs/service_module.svg
+/juju-ui/assets/svgs/service_health_mask.svg
+/juju-ui/assets/svgs/sub_module.svg
+/juju-ui/assets/svgs/sub_relation.svg
+
+NETWORK:
+*

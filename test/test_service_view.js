@@ -408,9 +408,10 @@
           { container: container, model: service, app: app,
             querystring: {}}).render(),
           active_navtabs = [];
-      container.all('ul.nav-tabs li').each(
+      container.all('.state-btn').each(
           function(n) {
-            active_navtabs.push([n.get('text').trim(), n.hasClass('active')]);
+            active_navtabs.push([n.one('.state-title').get('text').trim(),
+                                 n.hasClass('btn-primary')]);
           });
       active_navtabs.should.eql(
           [['All', true],
@@ -425,9 +426,10 @@
           { container: container, model: service, app: app,
             querystring: {state: 'running'}}).render(),
           active_navtabs = [];
-      container.all('ul.nav-tabs li').each(
+      container.all('.state-btn').each(
           function(n) {
-            active_navtabs.push([n.get('text').trim(), n.hasClass('active')]);
+            active_navtabs.push([n.one('.state-title').get('text').trim(),
+                                 n.hasClass('btn-primary')]);
           });
       active_navtabs.should.eql(
           [['All', false],
@@ -457,9 +459,10 @@
           { container: container, model: service, app: app,
             querystring: {state: 'pending'}}).render(),
           active_navtabs = [];
-      container.all('ul.nav-tabs li').each(
+      container.all('.state-btn').each(
           function(n) {
-            active_navtabs.push([n.get('text').trim(), n.hasClass('active')]);
+            active_navtabs.push([n.one('.state-title').get('text').trim(),
+                                 n.hasClass('btn-primary')]);
           });
       active_navtabs.should.eql(
           [['All', false],
@@ -487,9 +490,10 @@
           { container: container, model: service, app: app,
             querystring: {state: 'error'}}).render(),
           active_navtabs = [];
-      container.all('ul.nav-tabs li').each(
+      container.all('.state-btn').each(
           function(n) {
-            active_navtabs.push([n.get('text').trim(), n.hasClass('active')]);
+            active_navtabs.push([n.one('.state-title').get('text').trim(),
+                                 n.hasClass('btn-primary')]);
           });
       active_navtabs.should.eql(
           [['All', false],
@@ -697,6 +701,35 @@
           var row = control.ancestor('tr');
           var _ = expect(row.one('.highlighted')).to.not.exist;
         });
+
+    it('should filter units with relation errors', function() {
+      var units = [{
+        agent_state: 'started'
+      }, {
+        agent_state: 'started',
+        relation_errors: {}
+      }, {
+        testKey: 'error1',
+        agent_state: 'started',
+        relation_errors: {
+          a: '',
+          b: ''
+        }
+      }, {
+        agent_state: 'pending',
+        relation_errors: {
+          a: '',
+          b: ''
+        }
+      }, {
+        testKey: 'error2',
+        agent_state: 'error'
+      }], filtered = ServiceView.prototype.filterUnits('error', units);
+
+      assert.equal(2, filtered.length);
+      assert.equal('error1', filtered[0].testKey);
+      assert.equal('error2', filtered[1].testKey);
+    });
 
   });
 }) ();
