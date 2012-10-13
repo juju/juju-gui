@@ -59,7 +59,7 @@ var sample_endpoints,
     sample_env;
 
 
-describe.only('Relation endpoints logic', function() {
+describe('Relation endpoints logic', function() {
   var Y, juju, db, models;
 
   before(function(done) {
@@ -99,17 +99,17 @@ describe.only('Relation endpoints logic', function() {
             service, sample_endpoints, db));
     available_svcs.sort();
     available_svcs.should.eql(
-	["mediawiki", "puppet", "rsyslog-forwarder", "wiki-lb", "wordpress"]);
+        ['mediawiki', 'puppet', 'rsyslog-forwarder', 'wiki-lb', 'wordpress']);
   });
 
-  it('should find valid targets for a provides including subordinates', function() {
+  it('should find valid targets including subordinates', function() {
     var service = db.services.getById('memcached'),
         available = models.getEndpoints(service, sample_endpoints, db),
         available_svcs;
     available_svcs = Y.Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(
-	["puppet", "rsyslog-forwarder", "wordpress"])
+        ['puppet', 'rsyslog-forwarder', 'wordpress']);
   });
 
   it('should find valid targets for a provides', function() {
@@ -120,7 +120,7 @@ describe.only('Relation endpoints logic', function() {
     // Even though mediawiki already has one mysql relation, it supports
     // more than one (write master, and read slave).
     available_svcs.sort();
-    available_svcs.should.eql(['mediawiki', 'wordpress'])
+    available_svcs.should.eql(['mediawiki', 'wordpress']);
     available.mediawiki[0].name.should.equal('slave');
   });
 
@@ -132,25 +132,26 @@ describe.only('Relation endpoints logic', function() {
         available_svcs = Y.Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(
-	["blog-lb", "memcached", "mysql", "rsyslog-forwarder"] );
+        ['blog-lb', 'memcached', 'mysql', 'rsyslog-forwarder']);
   });
 
   it('should find valid targets for subordinates', function() {
     var service = db.services.getById('puppet'),
         available = models.getEndpoints(service, sample_endpoints, db),
         available_svcs = Y.Object.keys(available);
-  
-    available_svcs.sort();
-    available_svcs.should.eql(
-        ["blog-lb", "memcached", "puppetmaster", "rsyslog", "wiki-lb"])
-
-    var service = db.services.getById('rsyslog-forwarder'),
-        available = models.getEndpoints(service, sample_endpoints, db),
-        available_svcs = Y.Object.keys(available);
 
     available_svcs.sort();
     available_svcs.should.eql(
-	["blog-lb", "memcached", "puppetmaster", "rsyslog", "wiki-lb", "wordpress"]);
+        ['blog-lb', 'memcached', 'puppetmaster', 'rsyslog', 'wiki-lb']);
+
+    service = db.services.getById('rsyslog-forwarder');
+    available = models.getEndpoints(service, sample_endpoints, db);
+    available_svcs = Y.Object.keys(available);
+
+    available_svcs.sort();
+    available_svcs.should.eql(
+        ['blog-lb', 'memcached',
+         'puppetmaster', 'rsyslog', 'wiki-lb', 'wordpress']);
   });
 
 });

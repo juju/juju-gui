@@ -305,7 +305,7 @@
          unit_data.number.should.eql([0, 1]);
        });
 
-    it('RelationList.has_relations.. should return true if a relation has an endpoint',
+    it('RelationList.has_relations.. should return true if rel found.',
         function() {
           var db = new models.Database(),
               service = new models.Service({id: 'mysql', exposed: false}),
@@ -334,7 +334,9 @@
               {service: 'squid', name: 'cache', type: 'http'}
           ).should.equal(false);
 
-          // We can also pass a service name which must match for the same relation.
+          // We can also pass a service name which must match for the
+          // same relation.
+
           db.relations.has_relation_for_endpoint(
               {service: 'squid', name: 'cache', type: 'cache'},
               'kafka'
