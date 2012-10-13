@@ -576,6 +576,33 @@ YUI.add('juju-view-utils', function(Y) {
     Box.getWH = function() {return [this.w, this.h];};
 
     /*
+     * Returns the center of the box with the origin being the upper-left
+     * corner of the box.
+     */
+    Box.getRelativeCenter = function() {
+      var margins = this.margins();
+      return [
+        (this.w / 2) + (margins &&
+              (margins.left * this.w / 2 -
+                margins.right * this.w / 2) || 0),
+        (this.h / 2) - (margins &&
+              (margins.bottom * this.h / 2 -
+                margins.top * this.h / 2) || 0)
+      ];
+    };
+
+    /*
+     * Returns the absolute center of the box on the canvas.
+     */
+    Box.getCenter = function() {
+      var center = this.getRelativeCenter();
+      center[0] += this.x;
+      center[1] += this.y;
+      return center;
+    };
+
+
+    /*
      * Returns true if a given point in the form [x, y] is within the box.
      */
     Box.containsPoint = function(point, transform) {

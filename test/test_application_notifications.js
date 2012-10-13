@@ -522,24 +522,27 @@
                }
              },
              messages = [],
-             titles = [];
+             titles = [],
+             baseView = new views.serviceBase({});
 
-         views.service.prototype._removeUnitCallback.apply(mockView, [{
+
+
+         baseView._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: null
          }]);
 
-         views.service.prototype._removeUnitCallback.apply(mockView, [{
+         baseView._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: []
          }]);
 
-         views.service.prototype._removeUnitCallback.apply(mockView, [{
+         baseView._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: ['a']
          }]);
 
-         views.service.prototype._removeUnitCallback.apply(mockView, [{
+         baseView._removeUnitCallback.apply(mockView, [{
            err: true,
            unit_names: ['b', 'c']
          }]);
