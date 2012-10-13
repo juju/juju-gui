@@ -448,6 +448,7 @@ YUI.add('juju-charm-search', function(Y) {
         isPopupVisible = false;
       }
     }
+    container.on('clickoutside', hide);
 
     function show() {
       if (!isPopupVisible) {
