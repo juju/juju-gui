@@ -30,6 +30,11 @@ body {
     width: 12px;
 }
 
+.view-container {
+  overflow: auto;
+  padding: 10px;
+}
+
 .navbar {
     margin-top: -87px;
     margin-bottom: 0;
@@ -72,7 +77,11 @@ body {
 }
 
 #main {
-    padding: 0 20px !important;
+
+}
+
+#overview {
+
 }
 
 .divider {
@@ -85,7 +94,6 @@ svg {
 
 .crosshatch-background {
     background: url(/juju-ui/assets/images/pattern_tile.png) repeat;
-    margin: 0 -20px 0 -20px;
 }
 
 #canvas {
@@ -443,7 +451,6 @@ g.unit {
 }
 #overview-tasks {
     background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
-    margin: 0 -20px 0 -20px;
     height: 50px;
     position: relative;
     color: #2d2d2d!important;
@@ -812,6 +819,142 @@ g.unit {
 
 table tr.highlighted {
    background: pink;
+}
+
+.juju-service-info-container {
+  padding: 0px;
+  margin-bottom: 0px;
+  background-color: #515151;
+  color: white;
+  height: 70px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  -webkit-border-top-left-radius: 6px;
+  -moz-border-top-left-radius: 6px;
+  border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+  -moz-border-top-right-radius: 6px;
+  border-top-right-radius: 6px;
+  
+  .juju-service-info-container-big {
+    width: 58%;
+
+    .juju-service-container-header-name {
+      padding-top: 15px;
+      padding-left: 10px;
+
+      .juju-sevice-container-name {
+        padding-bottom: 5px;
+        
+        span {
+          font-size: 3em;
+        }
+      }
+    }
+  }
+  
+  .juju-service-info-container-small {
+    width: 20%;
+    
+    .juju-service-container-header-expose {
+      padding: 20px;
+    }
+
+    .juju-service-container-header-unit-count {
+      padding: 5px;
+      
+      input {
+        width: 95%
+      }
+    }    
+  }
+}
+
+.juju-service-info-container-menu {
+  border-top: 1px solid #737373;
+  background-color: black;
+  height: 40px;
+  text-align: center;
+}
+
+.juju-service-info-container-menu-wrapper {
+  display: inline-block;
+}
+
+.juju-menu-item {
+  color: white;
+  padding: 10px;
+  padding-bottom: 0px;
+  padding-top: 10px;
+  text-align: center;
+  
+  a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  a:HOVER {
+    color: white;
+    text-decoration: none;
+  }  
+}
+
+.unit-count-form {
+  margin-bottom: 0px;
+}
+
+.juju-service-charm-link,.juju-service-charm-link:HOVER {
+  color: #919191;
+  text-decoration: underline;
+}
+
+.juju-service-info-container-separator {
+  width: 0px;
+  height: 68px;
+  border: 1px solid #737373;
+  margin-left: 1px;
+}
+
+.juju-service-info-container-separator-footer {
+  height: 48px;
+}
+
+.juju-service-info-container-bottom-menu {
+  border-top: 1px solid #737373;
+  background-color: black;
+  height: 50px;
+
+  .juju-service-info-container-bottom-menu-wrapper {
+    margin-left: 10px;
+    
+    div {
+      width: 200px
+    }
+  }
+  
+  .juju-service-info-container-bottom-menu-wrapper-service {
+    margin-top: 10px;
+    margin-left: 10px;
+    
+    div {
+      width: 200px
+    }
+  }      
+  
+  #destroy-service {
+    margin-top: 10px; 
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+.state-filter-label {
+  color: white
+}
+
+div.inline {
+  float: left;
 }
 
 #tooltip {

@@ -280,6 +280,12 @@ YUI.add('juju-gui', function(Y) {
         model: service,
         app: this,
         querystring: req.query
+      }, {}, function(view) {
+        // If the view contains a method call fitToWindow,
+        // we will execute it after getting the view rendered
+        if (view.fitToWindow) {
+          view.fitToWindow();
+        }
       });
     },
 
