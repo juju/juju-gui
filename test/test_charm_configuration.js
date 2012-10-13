@@ -112,12 +112,12 @@ describe('charm configuration', function() {
         received_num_units,
         env = {deploy: function(charm_url, service_name, config, config_raw,
                                 num_units) {
-          deployed = true;
-          received_charm_url = charm_url;
-          received_service_name = service_name;
-          received_config = config;
-          received_num_units = num_units;
-        }},
+            deployed = true;
+            received_charm_url = charm_url;
+            received_service_name = service_name;
+            received_config = config;
+            received_num_units = num_units;
+          }},
         charm = new models.Charm({id: 'precise/mysql'}),
         view = new views.CharmConfigurationView(
         { container: container,
@@ -151,8 +151,8 @@ describe('charm configuration', function() {
        var deployed = false,
        env = {deploy: function(charm_url, service_name, config, config_raw,
                                num_units) {
-         deployed = true;
-       }},
+           deployed = true;
+         }},
        charm = new models.Charm({id: 'precise/mysql'}),
        view = new views.CharmConfigurationView(
        { container: container,
@@ -247,9 +247,9 @@ describe('charm configuration', function() {
              }
            });
        var view = new views.CharmConfigurationView(
-         { container: container,
-           model: charm,
-           tooltipDelay: 0 }
+       { container: container,
+         model: charm,
+         tooltipDelay: 0 }
        );
        charm.loaded = true;
        view.render();
@@ -311,13 +311,14 @@ describe('charm configuration', function() {
   it('must be able to deploy with configuration from a file', function() {
     var received_config,
         received_config_raw,
-    charm = new models.Charm({id: 'precise/mysql'}),
-    app = {db: {services: {getById: function(name) {return null;}}},
-           env: {deploy: function(charm_url, service_name, config, config_raw, num_units) {
-             received_config = config;
-             received_config_raw = config_raw;
-           }}},
-    view = new views.CharmConfigurationView(
+        charm = new models.Charm({id: 'precise/mysql'}),
+        app = {db: {services: {getById: function(name) {return null;}}},
+          env: {deploy: function(charm_url, service_name, config, config_raw,
+                                 num_units) {
+              received_config = config;
+              received_config_raw = config_raw;
+            }}},
+        view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
           app: app,
@@ -333,9 +334,7 @@ describe('charm configuration', function() {
         });
     charm.loaded = true;
     view.render();
-    var config_raw = '\
-       tuning-level: \
-          expert';
+    var config_raw = 'tuning-level: \n expert';
     view.configFileContent = config_raw;
     container.one('#charm-deploy').simulate('click');
     var _ = expect(received_config).to.not.exist;

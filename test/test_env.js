@@ -40,9 +40,9 @@
     });
 
     it('can deploy a service with a config file', function(done) {
-      var config_raw = ' \
-            tuning-level: \
-              expert-mojo';
+      /*jshint multistr:true */
+      var config_raw = 'tuning-level: \nexpert-mojo';
+      /*jshint multistr:false */
       env.deploy('precise/mysql', null, null, config_raw);
       msg = conn.last_message();
       msg.op.should.equal('deploy');

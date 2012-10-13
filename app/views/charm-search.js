@@ -302,37 +302,37 @@ YUI.add('juju-charm-search', function(Y) {
           numUnits = parseInt(numUnits, 10);
           app.env.deploy(url, serviceName, config, this.configFileContent,
                          numUnits, function(ev) {
-            if (ev.err) {
-              console.log(url + ' deployment failed');
-              app.db.notifications.add(
-                  new models.Notification({
-                    title: 'Error deploying ' + name,
-                    message: 'Could not deploy the requested service.',
-                    level: 'error'
-                  }));
-            } else {
-              console.log(url + ' deployed');
-              app.db.notifications.add(
-                  new models.Notification({
-                    title: 'Deployed ' + name,
-                    message: 'Successfully deployed the requested service.',
-                    level: 'info'
-                  })
-              );
-              // Add service to the db and re-render for immediate display on
-              // the front page.
-              var service = new models.Service({
-                id: serviceName,
-                charm: charm.get('id'),
-                unit_count: 0,  // No units yet.
-                loaded: false,
-                config: config
+                if (ev.err) {
+                  console.log(url + ' deployment failed');
+                  app.db.notifications.add(
+                      new models.Notification({
+                        title: 'Error deploying ' + name,
+                        message: 'Could not deploy the requested service.',
+                        level: 'error'
+                      }));
+                } else {
+                  console.log(url + ' deployed');
+                  app.db.notifications.add(
+                      new models.Notification({
+                        title: 'Deployed ' + name,
+                        message: 'Successfully deployed the requested service.',
+                        level: 'info'
+                      })
+                  );
+                  // Add service to the db and re-render for immediate display
+                  // on the front page.
+                  var service = new models.Service({
+                    id: serviceName,
+                    charm: charm.get('id'),
+                    unit_count: 0,  // No units yet.
+                    loaded: false,
+                    config: config
+                  });
+                  app.db.services.add([service]);
+                  // Force refresh.
+                  app.db.fire('update');
+                }
               });
-              app.db.services.add([service]);
-              // Force refresh.
-              app.db.fire('update');
-            }
-          });
           this.goBack(evt);
         },
         setupOverlay: function(container) {
