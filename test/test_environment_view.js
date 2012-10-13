@@ -35,6 +35,14 @@
           'id': 'relation-0000000000'
         }],
         ['relation', 'add', {
+          'interface': 'juju-info',
+          'scope': 'container',
+          'endpoints':
+           [['wordpress', {'role': 'server', 'name': 'juju-info'}],
+            ['puppet', {'role': 'client', 'name': 'juju-info'}]],
+          'id': 'relation-0000000007'
+        }],
+        ['relation', 'add', {
           'interface': 'mysql',
           'scope': 'global',
           'endpoints':
@@ -125,6 +133,10 @@
           // Count all the real relations.
           (container.all('.relation').size() -
            container.all('.pending-relation').size())
+              .should.equal(2);
+
+          // Count all the subordinate relations.
+          container.all('.subordinate-rel-group').size()
               .should.equal(1);
 
           // Verify that the paths render 'properly' where this
@@ -152,6 +164,22 @@
 
           done();
         }
+    );
+
+    it('must be able to render subordinate relation indicators',
+       function() {
+         var view = new views.environment({
+           container: container,
+           db: db,
+           env: env
+         }).render();
+         var rel_block = container.one('.sub-rel-count').getDOMNode();
+
+         // Get the contents of the subordinate relation count; YUI cannot
+         // get this directly as the node is not an HTMLElement, so use
+         // native SVG methods.
+         rel_block.firstChild.nodeValue.should.equal('1');
+       }
     );
 
     // Ensure that the zoom controls work

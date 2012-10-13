@@ -103,6 +103,20 @@ YUI.add('juju-view-environment', function(Y) {
               self.removeSVGClass(rect, 'hover');
             }
           },
+          '.sub-rel-block': {
+            mouseenter: function(d, self) {
+              // Add an 'active' class to all of the subordinate relations
+              // belonging to this service.
+              self.subordinateRelationsForService(d)
+                .forEach(function(p) {
+                    self.addSVGClass('#' + p.id, 'active');
+                  });
+            },
+            mouseleave: function(d, self) {
+              // Remove 'active' class from all subordinate relations.
+              self.removeSVGClass('.subordinate-rel-group', 'active');
+            }
+          },
           '.unit-count': {
             mouseover: function(d, self) {
               d3.select(this).attr('class', 'unit-count show-count');
@@ -149,11 +163,11 @@ YUI.add('juju-view-environment', function(Y) {
                 // we have the correct event in d3.event for d3.mouse().
                 d3.event = e;
 
-                // Get the cursor and flash an indicator beneath it.
-                var mouse = d3.mouse(self.vis.node());
+                // Flash an indicator around the center of the service block.
+                var center = d.getCenter();
                 self.vis.append('circle')
-                  .attr('cx', mouse[0])
-                  .attr('cy', mouse[1])
+                  .attr('cx', center[0])
+                  .attr('cy', center[1])
                   .attr('r', 100)
                   .attr('class', 'mouse-down-indicator')
                   .transition()
@@ -529,10 +543,21 @@ YUI.add('juju-view-environment', function(Y) {
           var enter = g.enter();
 
           enter.insert('g', 'g.service')
-              .attr('class', 'rel-group')
+              .attr('id', function(d) {
+                return d.id;
+              })
+              .attr('class', function(d) {
+                // Mark the rel-group as a subordinate relation if need be.
+                return (d.scope === 'container' ?
+                    'subordinate-rel-group ' : '') +
+                    'rel-group';
+              })
               .append('svg:line', 'g.service')
               .attr('class', function(d) {
-                return (d.pending ? 'pending-relation ' : '') + 'relation';
+                // Style relation lines differently depending on status.
+                return (d.pending ? 'pending-relation ' : '') +
+                    (d.scope === 'container' ? 'subordinate-relation ' : '') +
+                    'relation';
               });
 
           // TODO:: figure out a clean way to update position
@@ -631,6 +656,30 @@ YUI.add('juju-view-environment', function(Y) {
                     return d.h;
                   });
 
+          // Draw a subordinate relation indicator.
+          var sub_relation = node.filter(function(d) {
+            return d.subordinate;
+          })
+            .append('g')
+            .attr('class', 'sub-rel-block')
+            .attr('transform', function(d) {
+                // Position the block so that the relation indicator will
+                // appear at the right connector.
+                return 'translate(' + [d.w, d.h / 2 - 26] + ')';
+              });
+
+          sub_relation.append('image')
+            .attr('xlink:href', '/juju-ui/assets/svgs/sub_relation.svg')
+            .attr('width', 87)
+            .attr('height', 47);
+          sub_relation.append('text').append('tspan')
+            .attr('class', 'sub-rel-count')
+            .attr('x', 64)
+            .attr('y', 47 * 0.8)
+            .text(function(d) {
+                return self.subordinateRelationsForService(d).length;
+              });
+
           // Draw non-subordinate services services
           node.filter(function(d) {
             return !d.subordinate;
@@ -644,29 +693,54 @@ YUI.add('juju-view-environment', function(Y) {
                     return d.h;
                   });
 
+          // The following are sizes in pixels of the SVG assets used to
+          // render a service, and are used to in calculating the vertical
+          // positioning of text down along the service block.
+          var service_height = 224,
+              name_size = 22,
+              charm_label_size = 16,
+              name_padding = 26,
+              charm_label_padding = 118;
 
           var service_labels = node.append('text').append('tspan')
             .attr('class', 'name')
+            .attr('style', function(d) {
+                // Programmatically size the font.
+                // Number derived from service assets:
+                // font-size 22px when asset is 224px.
+                return 'font-size:' + d.h *
+                    (name_size / service_height) + 'px';
+              })
             .attr('x', function(d) {
                     return d.w / 2;
                   })
             .attr('y', function(d) {
-                    return '1.5em';
-                  })
+                // Number derived from service assets:
+                // padding-top 26px when asset is 224px.
+                return d.h * (name_padding / service_height) + d.h *
+                    (name_size / service_height) / 2;
+              })
             .text(function(d) {return d.id; });
 
           var charm_labels = node.append('text').append('tspan')
+            .attr('class', 'charm-label')
+            .attr('style', function(d) {
+                // Programmatically size the font.
+                // Number derived from service assets:
+                // font-size 16px when asset is 224px.
+                return 'font-size:' + d.h *
+                    (charm_label_size / service_height) + 'px';
+              })
             .attr('x', function(d) {
                     return d.w / 2;
                   })
             .attr('y', function(d) {
-                    // TODO this will need to be set based on the size of the
-                    // service health panel, but for now, this works.
-                    var hoffset_factor = d.subordinate ? 0.65 : 0.55;
-                    return d.h * hoffset_factor;
-                  })
+                // Number derived from service assets:
+                // padding-top: 118px when asset is 224px.
+                return d.h * (charm_label_padding / service_height) - d.h *
+                    (charm_label_size / service_height) / 2;
+              })
             .attr('dy', '3em')
-            .attr('class', 'charm-label')
             .text(function(d) { return d.charm; });
 
           // Show whether or not the service is exposed using an
@@ -687,7 +761,7 @@ YUI.add('juju-view-environment', function(Y) {
                 return d.w / 10 * 7;
               })
             .attr('y', function(d) {
-                return d.h / 3 * 1.05;
+                return d.getRelativeCenter()[1] - (d.w / 6) / 2;
               })
             .attr('class', 'exposed-indicator on');
           exposed_indicator.append('title')
@@ -714,9 +788,7 @@ YUI.add('juju-view-environment', function(Y) {
           var status_chart = node.append('g')
             .attr('class', 'service-status')
             .attr('transform', function(d) {
-                var hoffset_factor = d.subordinate ? 1 : 0.86;
-                return 'translate(' + [(d.w / 2),
-                  d.h / 2 * hoffset_factor] + ')';
+                return 'translate(' + d.getRelativeCenter() + ')';
               });
 
           // Add a mask svg
@@ -793,6 +865,16 @@ YUI.add('juju-view-environment', function(Y) {
             }
           });
           return pairs;
+        },
+
+        /*
+         * Utility function to get subordinate relations for a service.
+         */
+        subordinateRelationsForService: function(service) {
+          return this.rel_pairs.filter(function(p) {
+            return p.modelIds().indexOf(service.modelId()) !== -1 &&
+                p.scope === 'container';
+          });
         },
 
         renderSlider: function() {
@@ -886,7 +968,7 @@ YUI.add('juju-view-environment', function(Y) {
               self = this;
 
           // Start the line in the middle of the service.
-          var point = [d.x + d.h / 2, d.y + d.w / 2];
+          var point = d.getCenter();
           dragline.attr('x1', point[0])
               .attr('y1', point[1])
               .attr('x2', point[0])
