@@ -1,0 +1,197 @@
+{
+  "haproxy": {
+    "requires": [
+      {
+        "interface": "http", 
+        "optional": false, 
+        "limit": 1, 
+        "name": "reverseproxy", 
+        "scope": "global"
+      }
+    ], 
+    "provides": [
+      {
+        "interface": "munin-node", 
+        "optional": false, 
+        "limit": null, 
+        "name": "munin", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "http", 
+        "optional": false, 
+        "limit": null, 
+        "name": "website", 
+        "scope": "global"
+      }
+    ]
+  }, 
+  "mediawiki": {
+    "requires": [
+      {
+        "interface": "mysql", 
+        "optional": false, 
+        "limit": 1, 
+        "name": "slave", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "memcache", 
+        "optional": false, 
+        "limit": 1, 
+        "name": "cache", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "mysql", 
+        "optional": false, 
+        "limit": 1, 
+        "name": "db", 
+        "scope": "global"
+      }
+    ], 
+    "provides": [
+      {
+        "interface": "http", 
+        "optional": false, 
+        "limit": null, 
+        "name": "website", 
+        "scope": "global"
+      }
+    ]
+  }, 
+  "puppet": {
+    "requires": [
+      {
+        "interface": "puppet", 
+        "optional": false, 
+        "limit": 1, 
+        "name": "puppetmaster", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "juju-info", 
+        "optional": false, 
+        "limit": 1, 
+        "name": "juju-info", 
+        "scope": "container"
+      }
+    ], 
+    "provides": []
+  }, 
+  "mysql": {
+    "requires": [
+      {
+        "interface": "mysql-oneway-replication", 
+        "optional": false, 
+        "limit": 1, 
+        "name": "slave", 
+        "scope": "global"
+      }
+    ], 
+    "provides": [
+      {
+        "interface": "munin-node", 
+        "optional": false, 
+        "limit": null, 
+        "name": "munin", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "mysql", 
+        "optional": false, 
+        "limit": null, 
+        "name": "db", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "mysql-oneway-replication", 
+        "optional": false, 
+        "limit": null, 
+        "name": "master", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "mysql-shared", 
+        "optional": false, 
+        "limit": null, 
+        "name": "shared-db", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "local-monitors", 
+        "optional": false, 
+        "limit": null, 
+        "name": "local-monitors", 
+        "scope": "container"
+      }, 
+      {
+        "interface": "mysql-root", 
+        "optional": false, 
+        "limit": null, 
+        "name": "db-admin", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "monitors", 
+        "optional": false, 
+        "limit": null, 
+        "name": "monitors", 
+        "scope": "global"
+      }
+    ]
+  }, 
+  "wordpress": {
+    "requires": [
+      {
+        "interface": "mount", 
+        "optional": false, 
+        "limit": 1, 
+        "name": "nfs", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "memcache", 
+        "optional": false, 
+        "limit": 1, 
+        "name": "cache", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "mysql", 
+        "optional": false, 
+        "limit": 1, 
+        "name": "db", 
+        "scope": "global"
+      }
+    ], 
+    "provides": [
+      {
+        "interface": "http", 
+        "optional": false, 
+        "limit": null, 
+        "name": "website", 
+        "scope": "global"
+      }
+    ]
+  }, 
+  "memcached": {
+    "requires": [], 
+    "provides": [
+      {
+        "interface": "munin-node", 
+        "optional": false, 
+        "limit": null, 
+        "name": "munin", 
+        "scope": "global"
+      }, 
+      {
+        "interface": "memcache", 
+        "optional": false, 
+        "limit": null, 
+        "name": "cache", 
+        "scope": "global"
+      }
+    ]
+  }
+}

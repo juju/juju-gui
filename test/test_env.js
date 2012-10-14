@@ -131,5 +131,14 @@
       assert.equal(env.get('defaultSeries'), defaultSeries);
       done();
     });
+
+    it('can get endpoints for a service', function() {
+      env.get_endpoints(['mysql']);
+      msg = conn.last_message();
+      msg.op.should.equal('get_endpoints');
+      msg.service_names.should.eql(['mysql']);
+    });
+
+
   });
 })();

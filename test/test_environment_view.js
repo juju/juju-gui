@@ -128,7 +128,7 @@
             env: env
           });
           view.render();
-          container.all('.service-border').size().should.equal(4);
+          container.all('.service').size().should.equal(4);
 
           // Count all the real relations.
           (container.all('.relation').size() -
@@ -299,8 +299,16 @@
 
     it('must be able to add a relation from the control panel',
        function() {
+         // Mock endpoints
+         var existing = models.getEndpoints;
+         models.getEndpoints = function() {
+           return {requires: [],
+             provides: []};
+         };
+
          var view = new views.environment({
            container: container,
+           app: {serviceEndpoints: {}},
            db: db,
            env: env
          }).render();
@@ -312,10 +320,12 @@
          add_rel.simulate('click');
          container.all('.selectable-service')
                .size()
-               .should.equal(3);
+               .should.equal(1);
          service.next().simulate('click');
          container.all('.selectable-service').size()
             .should.equal(0);
+
+         models.getEndpoints = existing;
        });
 
     it('must be able to remove a relation between services',

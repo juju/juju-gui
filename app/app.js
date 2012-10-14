@@ -101,6 +101,8 @@ YUI.add('juju-gui', function(Y) {
       }
       // Create a client side database to store state.
       this.db = new models.Database();
+      this.serviceEndpoints = {};
+
       // Update the on-screen environment name provided in the configuration or
       // a default if none is configured.
       var environment_name = this.get('environment_name') || 'Environment',
@@ -159,6 +161,8 @@ YUI.add('juju-gui', function(Y) {
       // TODO - Bound views will automatically update this on individual models
       this.db.on('update', this.on_database_changed, this);
 
+      this.db.services.on('add', this.updateEndpoints, this);
+
       this.on('navigate', function(e) {
         console.log('app navigate', e);
       });
@@ -205,6 +209,28 @@ YUI.add('juju-gui', function(Y) {
       Y.log(evt, 'debug', 'App: Database changed');
       // Redispatch to current view to update.
       this.dispatch();
+    },
+
+    /*
+     * When services are added we update endpoints here.
+     */
+    updateEndpoints: function(callback) {
+      var self = this;
+
+      if (!Y.Lang.isValue(this.serviceEndpoints)) {
+        this.serviceEndpoints = {};
+      }
+      // Defensive code to aid tests. Other systems
+      // don't have to mock enough to get_endpoints below.
+      if (!this.env.get('connected')) {
+        return;
+      }
+      self.env.get_endpoints([], function(evt) {
+        self.serviceEndpoints = evt.result;
+        if (Y.Lang.isFunction(callback)) {
+          callback(self.serviceEndpoints);
+        }
+      });
     },
 
     // Event handlers
@@ -386,7 +412,9 @@ YUI.add('juju-gui', function(Y) {
          * to enable this but we have to land the basics of this branch
          * first.
          */
-        this.showView('environment', {db: this.db, env: this.env}, {
+        this.showView('environment', {app: this,
+          db: this.db,
+          env: this.env}, {
           update: false,
           render: true,
           callback: function(view) {
