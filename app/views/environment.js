@@ -1311,11 +1311,11 @@ YUI.add('juju-view-environment', function(Y) {
           },
 
 
-          /*
+         /*
            * Fired when clicking the first service in the add relation
            * flow.
            */
-          addRelationStart: function(m, context, view) {
+          addRelationStart: function(m, view, context) {
             view.show(view.vis.selectAll('.service'));
 
             var db = view.get('db'),
@@ -1330,20 +1330,20 @@ YUI.add('juju-view-environment', function(Y) {
                         models.getEndpoints(
                             service, app.serviceEndpoints, db))),
                             function(ep) {return ep.service;}),
-                impossibleRelations = {};
+                invalidRelationTargets = {};
 
             // Iterate services and invert the possibles list.
             db.services.each(function(s) {
               if (Y.Array.indexOf(possible_relations,
                   s.get('id')) === -1) {
-                impossibleRelations[s.get('id')] = true;
+                invalidRelationTargets[s.get('id')] = true;
               }
             });
 
             // Fade elements to which we can't relate.
             view.fade(view.vis.selectAll('.service')
               .filter(function(d) {
-                  return (d.id in impossibleRelations &&
+                  return (d.id in invalidRelationTargets &&
                           d.id !== m.id);
                 }))
               .classed('selectable-service', true);
@@ -1358,7 +1358,7 @@ YUI.add('juju-view-environment', function(Y) {
            * Fired when clicking the second service is clicked in the
            * add relation flow.
            */
-          addRelationEnd: function(m, context, view) {
+          addRelationEnd: function(m, view, context) {
             // Redisplay all services
             view.cancelRelationBuild();
 

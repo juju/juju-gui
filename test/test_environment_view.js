@@ -300,6 +300,7 @@
     it('must be able to add a relation from the control panel',
        function() {
          // Mock endpoints
+         var existing = models.getEndpoints;
          models.getEndpoints = function() {
            return {requires: [],
              provides: []};
@@ -323,6 +324,8 @@
          service.next().simulate('click');
          container.all('.selectable-service').size()
             .should.equal(0);
+
+         models.getEndpoints = existing;
        });
 
     it('must be able to remove a relation between services',
