@@ -1016,6 +1016,7 @@ YUI.add('juju-view-environment', function(Y) {
             .addRelationEnd(endpoint, self, rect);
           } else {
             // TODO clean up, abstract
+            self.cancelRelationBuild();
             self.addRelation(); // Will clear the state.
           }
         },
