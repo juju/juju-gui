@@ -257,7 +257,7 @@ describe('juju application notifications', function() {
              view = {
                set: NO_OP,
                drawRelation: NO_OP,
-               cancelRelationBuild NO_OP,
+               cancelRelationBuild: NO_OP,
 
                vis: {
                  selectAll: function() {
@@ -569,4 +569,4 @@ describe('juju application notifications', function() {
      });
 
 });
-}
+
