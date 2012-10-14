@@ -205,6 +205,7 @@ YUI.add('juju-charm-search', function(Y) {
         tooltip: null,
         waitingToShow: false,
         configFileContent: null,
+        configFileLoaded: false,
         initializer: function() {
           this.bindModelView(this.get('model'));
         },
@@ -249,6 +250,7 @@ YUI.add('juju-charm-search', function(Y) {
         onFileRemove: function(evt) {
           var container = this.get('container');
           this.configFileContent = null;
+          this.configFileLoaded = false;
           container.one('.remove-config-file').addClass('hidden');
           container.one('.charm-settings').show();
           // TODO: Reset fileInput.  The following does not work.
@@ -260,6 +262,7 @@ YUI.add('juju-charm-search', function(Y) {
         },
         onFileLoaded: function(evt) {
           this.configFileContent = evt.target.result;
+          this.configFileLoaded = true;
           this.get('container').one('.charm-settings').hide();
           this.get('container').one('.remove-config-file')
             .removeClass('hidden');
@@ -268,6 +271,29 @@ YUI.add('juju-charm-search', function(Y) {
         },
         onFileError: function(evt) {
           // TODO show error message
+          console.log('onFileError:', evt);
+          var msg;
+          switch (evt.target.error.code) {
+            case evt.target.error.NOT_FOUND_ERR:
+              msg = 'File not found';
+              break;
+            case evt.target.error.NOT_READABLE_ERR:
+              msg = 'File is not readable';
+              break;
+            case evt.target.error.ABORT_ERR:
+              break; // noop
+            default:
+              msg = 'An error occurred reading this file.';
+          };
+          if (msg) {
+            app.db.notifications.add(
+              new models.Notification({
+                title: 'Error reading configuration file',
+                message: msg,
+                level: 'error'
+              }));
+          }
+          return;
         },
         goBack: function(ev) {
           ev.halt();
@@ -296,7 +322,7 @@ YUI.add('juju-charm-search', function(Y) {
                 }));
             return;
           }
-          if (this.configFileContent) {
+          if (this.configFileLoaded) {
             config = null;
           }
           numUnits = parseInt(numUnits, 10);
@@ -306,7 +332,7 @@ YUI.add('juju-charm-search', function(Y) {
                   console.log(url + ' deployment failed');
                   app.db.notifications.add(
                       new models.Notification({
-                        title: 'Error deploying ' + name,
+                        title: 'Error deploying ' + serviceName,
                         message: 'Could not deploy the requested service.',
                         level: 'error'
                       }));
@@ -314,7 +340,7 @@ YUI.add('juju-charm-search', function(Y) {
                   console.log(url + ' deployed');
                   app.db.notifications.add(
                       new models.Notification({
-                        title: 'Deployed ' + name,
+                        title: 'Deployed ' + serviceName,
                         message: 'Successfully deployed the requested service.',
                         level: 'info'
                       })

@@ -279,6 +279,7 @@ describe('charm configuration', function() {
     view.render();
     view.onFileLoaded({target: {result: 'yaml yaml yaml'}});
     view.configFileContent.should.equal('yaml yaml yaml');
+    view.configFileLoaded.should.equal(true);
     container.one('.charm-settings').getStyle('display').should.equal('none');
     container.one('.remove-config-file').hasClass('hidden').should.equal(false);
   });
@@ -301,6 +302,7 @@ describe('charm configuration', function() {
     charm.loaded = true;
     view.render();
     view.fileInput = container.one('.config-file-upload');
+    view.configFileLoaded = true;
     view.configFileContent = 'how now brown cow';
     container.one('.remove-config-file').simulate('click');
     var _ = expect(view.configFileContent).to.not.exist;
@@ -335,12 +337,53 @@ describe('charm configuration', function() {
     charm.loaded = true;
     view.render();
     var config_raw = 'tuning-level: \n expert';
+    view.configFileLoaded = true;
     view.configFileContent = config_raw;
     container.one('#charm-deploy').simulate('click');
     var _ = expect(received_config).to.not.exist;
     received_config_raw.should.equal(config_raw);
   });
 
-
+  it('must show file read errors', function() {
+    //db.services = {getById: function(name) {return null;}};
+    var received_config,
+        received_config_raw,
+        charm = new models.Charm({id: 'precise/mysql'}),
+        app = {
+          db: db,
+          env: {deploy: function(charm_url, service_name, config, config_raw,
+                                 num_units) {
+              received_config = config;
+              received_config_raw = config_raw;
+            }}},
+        view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm,
+          app: app,
+          tooltipDelay: 0 });
+    charm.setAttrs(
+        { config:
+              { options:
+                    { tuninglevel:
+                         { name: 'tuning-level',
+                           type: 'string'}
+                    }
+              }
+        });
+    charm.loaded = true;
+    view.render();
+    var fileInput = {
+      target: {}.setAttrs(
+        { files: [
+          {name: '/tmp/i/really/hope/this/path/does/not/exist.txt',
+           size: 0,
+           type: 'application/x-yaml'}]})};
+    view.onFileChange(fileInput);
+    var notification = db.notifications.toArray()[0];
+    notification.get('title').should.equal(
+      'Error reading configuration file');
+    notification.get('message').should.equal(
+      'File not found');
+  });
 
 });
