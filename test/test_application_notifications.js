@@ -258,7 +258,7 @@
              view = {
                set: NO_OP,
                drawRelation: NO_OP,
-               resetRelationBuild: NO_OP,
+               cancelRelationBuild NO_OP,
 
                vis: {
                  selectAll: function() {
