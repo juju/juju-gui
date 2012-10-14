@@ -320,7 +320,7 @@
          add_rel.simulate('click');
          container.all('.selectable-service')
                .size()
-               .should.equal(3);
+               .should.equal(1);
          service.next().simulate('click');
          container.all('.selectable-service').size()
             .should.equal(0);
