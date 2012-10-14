@@ -25,89 +25,43 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
-  window.consoleManager = (function() {
+  var consoleManager = function() {
     var winConsole = window.console,
         // These are the available methods.
         // Add more to this list if necessary.
-        consoleEmpty = {
-          group: function() {},
-          groupEnd: function() {},
-          groupCollapsed: function() {},
-          log: function() {}
-        },
-        consoleProxy = (function() {
-          // This object wraps the "window.console"
-          var consoleWrapper = {};
-          function buildMethodProxy(key) {
-            if (winConsole[key] && typeof winConsole[key] === 'function') {
-              consoleWrapper[key] = function() {
-                var cFunc = winConsole[key];
-                cFunc.call(winConsole, arguments);
-              };
-            } else {
-              consoleWrapper[key] = function() {
-                consoleEmpty[key]();
-              };
-            }
-          }
-          // Checking if the browser has the "console" object
-          if (winConsole) {
-            Y.each(consoleEmpty, function(value, key) {
-              buildMethodProxy(key);
-            });
-          } else {
-            consoleWrapper = consoleEmpty;
-          }
+        noop = function() {},
+        consoleNoop = {
+          group: noop,
+          groupEnd: noop,
+          groupCollapsed: noop,
+          time: noop,
+          timeEnd: noop,
+          log: noop
+        };
 
-          return consoleWrapper;
-        })();
-    // In order to enable the console in production the user can
-    // call "javascript:consoleManager.enable()" in the address bar
+    if (winConsole === undefined) {
+      window.console = consoleNoop;
+      winConsole = consoleNoop;
+    }
     return {
-      enable: function() {
-        window.console = consoleProxy;
+      native: function() {
+        window.console = winConsole;
       },
-      disable: function() {
-        window.console = consoleEmpty;
+      noop: function() {
+        window.console = consoleNoop;
       },
-      getConsoleEmpty: function() {
-        // Useful for unit tests
-        return consoleEmpty;
-      }
-    };
-  })();
-
-  // This creates a closure that delays the execution of a given callback. If
-  // the user creates a Delayer with "delay = utils.Delayer()" and then calls
-  // "delay(functionA, 1000)", "functionA" will be executed after 1000ms.
-  // However, if the user calls "delay(functionB, 1000)" before the execution
-  // of "functionA", "functionA" will be canceled and "functionB" will be
-  // scheduled to run after 1000ms.
-  utils.Delayer = function(once) {
-    var currentTask = null,
-        performed = false;
-    once = !!once;
-    return function(callback, milliseconds) {
-      if (Y.Lang.isValue(currentTask) && !performed) {
-        clearTimeout(currentTask);
-      }
-      if (performed && once) {
-        throw 'already performed a task.';
-      }
-      milliseconds = Math.max(0, milliseconds || 0);
-      performed = false;
-      var f = function() {
-        performed = true;
-        callback();
-      };
-      if (milliseconds > 0) {
-        currentTask = setTimeout(f, milliseconds);
-      } else {
-        // Doing it directly in this case makes tests easier.
-        f();
+      console: function(x) {
+        if (!arguments.length) {
+          return consoleNoop;
+        }
+        consoleNoop = x;
+        return x;
       }
     };
   };
+  utils.consoleManager = consoleManager;
+  // Also assign globally to manage the actual console.
+  window.consoleManager = consoleManager();
 
   /*
  * Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
@@ -353,7 +307,7 @@ YUI.add('juju-view-utils', function(Y) {
     }
 
     errorDiv.one('#alert-area-text').setHTML(message);
-    window.scrollTo(errorDiv.getX(), errorDiv.getY());
+    window.scrollTo(0, 0);
   }
 
   utils.showSuccessMessage = function(container, message) {
@@ -620,6 +574,33 @@ YUI.add('juju-view-utils', function(Y) {
 
     Box.getXY = function() {return [this.x, this.y];};
     Box.getWH = function() {return [this.w, this.h];};
+
+    /*
+     * Returns the center of the box with the origin being the upper-left
+     * corner of the box.
+     */
+    Box.getRelativeCenter = function() {
+      var margins = this.margins();
+      return [
+        (this.w / 2) + (margins &&
+              (margins.left * this.w / 2 -
+                margins.right * this.w / 2) || 0),
+        (this.h / 2) - (margins &&
+              (margins.bottom * this.h / 2 -
+                margins.top * this.h / 2) || 0)
+      ];
+    };
+
+    /*
+     * Returns the absolute center of the box on the canvas.
+     */
+    Box.getCenter = function() {
+      var center = this.getRelativeCenter();
+      center[0] += this.x;
+      center[1] += this.y;
+      return center;
+    };
+
 
     /*
      * Returns true if a given point in the form [x, y] is within the box.

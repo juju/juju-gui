@@ -1,7 +1,11 @@
 /* Processed with LESS from lib/views/stylesheet.less */
+
+@font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
 body {
     margin-top: 87px;
     background-color: #302b28;
+    font-family: @font-family;
 }
 
 #viewport-wrapper {
@@ -30,6 +34,11 @@ body {
     width: 12px;
 }
 
+.view-container {
+  overflow: auto;
+  padding: 10px;
+}
+
 .navbar {
     margin-top: -87px;
     margin-bottom: 0;
@@ -39,29 +48,63 @@ body {
     padding: 0;
     position: relative;
     color: #2d2d2d!important;
-
     .brand {
+        margin: 12px 26px 6px 10px;
         padding: 0;
-        position: absolute;
-        display: block;
-        top: 12px;
-        left: 30px;
     }
-    .nav-environment {
-        position: absolute;
-        top: 5px;
-        left: 128px;
-        padding: 12px;
+    > div {
+        padding: 0;
+        .nav-container {
+            display: inline-block;
+            height: 44px;
+            margin: 2px 0 0 0;
+            padding: 20px 0 4px;
+            &#charm-search-trigger-container {
+                width: 292px;
+            }
+            .nav-section {
+                border-left: 1px solid lightgray;
+                display: inline-block;
+                padding: 4px 10px;
+                #charm-search-trigger {
+                    cursor: pointer;
+                }
+                .btn {
+                    margin: 0 5px;
+                }
+                input {
+                    width: 128px;
+                    background: url(/juju-ui/assets/images/searchbox_icon.png) no-repeat 2px 1px whiteSmoke;
+                    margin: 0 10px;
+                    padding: 3px 3px 3px 26px;
+                    font-style: italic;
+                    font-family: @font-family;
+                    font-size: 0.9em; fill: #333333;
+                    &:focus {
+                        background: white;
+                        padding: 3px;
+                        width: 151px;
+                    }
+                }
 
-        .provider-type {
-            font-size: 0.7em;
+            }
         }
-    }
-    .nav-alerts-charms {
-        position: absolute;
-        top: 5px;
-        right: 21px;
-        padding: 12px;
+        span:first-child .nav-section {
+            border-left: none;
+            padding: 0 6px;
+        }
+        &#nav-alerts-charms {
+            float: right;
+            .nav-container:first-child .nav-section {
+                position: relative;
+            }
+        }
+        &#nav-brand-env .nav-container {
+            float: left;
+            .provider-type {
+                font-size: 0.7em;
+            }
+        }
     }
 }
 
@@ -72,7 +115,11 @@ body {
 }
 
 #main {
-    padding: 0 20px !important;
+
+}
+
+#overview {
+
 }
 
 .divider {
@@ -85,7 +132,6 @@ svg {
 
 .crosshatch-background {
     background: url(/juju-ui/assets/images/pattern_tile.png) repeat;
-    margin: 0 -20px 0 -20px;
 }
 
 #canvas {
@@ -172,6 +218,12 @@ svg {
 }
 
 charms.thumbnails.li { height:4em; }
+.subordinate-rel-group {
+    display: none;
+    &.active {
+        display: inline;
+    }
+}
 .relation {
     stroke: #333333;
     stroke-width: 3px;
@@ -185,6 +237,10 @@ charms.thumbnails.li { height:4em; }
 
     &.unused {
         visibility: hidden;
+    }
+
+    &.subordinate-relation {
+        stroke: #3333cc;
     }
 }
 .rel-label {
@@ -283,37 +339,36 @@ g.service {
         text-anchor: middle;
     }
 
-    .charm-label { font-size: 0.7em;
-        fill: #333333;}
+    .charm-label {
+        font-family: @font-family;
+        font-style: italic;
+        fill: #4c4c4c;
+    }
     .name {
-        font-weight: bold;
-        font-family: "Ubuntu";
-        font-size: 1.6em; fill: #333333;
+        font-family: @font-family;
+        fill: #4c4c4c;
     }
-    .service-border {
-        stroke-width: 2px;
-        stroke: none;
 
-        &.selectable-service {
-            stroke: #008;
-            stroke-width: 3px;
-        }
-        &.hover {
-            stroke: #55f;
-        }
-    }
-    .unit-count {
+   .unit-count {
         stroke-width: 0;
         text-anchor: middle;
         dominant-baseline: central;
         fill: rgba(0,0,0,0);
-        font-family: "Ubuntu";
+        font-family: @font-family;
         font-size: 2.5em;
 
         &.show-count {
             fill: rgba(0,0,0,1);}
         &.hide-count {
             fill: rgba(0,0,0,0);}
+    }
+
+    .sub-rel-count {
+        text-anchor: middle;
+        dominant_baseline: central;
+        fill: #4f4f4f;
+        font-family: @font-family;
+        font-size: 1.2em;
     }
 
     .exposed-indicator {
@@ -355,7 +410,7 @@ g.service-status {
 
 g.unit {
     stroke-width: 0; font-weight: bold;
-    font-family: "Ubuntu"; font-size: 1.2em; fill: #1626cf;
+    font-family: @font-family; font-size: 1.2em; fill: #1626cf;
 
     .address {
     fill: #ffffff; font-size: 0.8em;}
@@ -423,7 +478,6 @@ g.unit {
 }
 #overview-tasks {
     background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
-    margin: 0 -20px 0 -20px;
     height: 50px;
     position: relative;
     color: #2d2d2d!important;
@@ -632,40 +686,23 @@ g.unit {
     }
 }
 
-#charm-search-trigger {
-    cursor: pointer;
-}
-
 #juju-search-charm-panel {
     display: block;
     padding-left: 0px;
     padding-right: 0px;
+    z-index: 999;
 
     .btn {
         float: right;
     }
 
     .search-charm-inner {
-        width: 394px;
+        width: 100%;
         height: 500px;
     }
     .popover-content {
         padding: 0px;
         height: 462px;
-    }
-    .charm-list-selector {
-        position: absolute;
-        top: 25px;
-        right: 15px;
-    }
-    .charms-search-field-div {
-        padding: 5px;
-        margin-bottom: 0px;
-        background-color: #1a1a1a;
-        .charms-search-field {
-            margin: 0px;
-            width: 230px;
-        }
     }
     .charm-nav-back {
         background-color: black;
@@ -694,64 +731,61 @@ g.unit {
                 margin-top: 0;
             }
         }
-        height: 430px;
+        height: 432px;
         overflow-y: auto;
         overflow-x: hidden;
         .collapsible {
             overflow: hidden;
         }
-    }
-    .charm-description {
-        padding: 1ex 1em;
-        .charm-section {
-            > div {
-                overflow: hidden;
-            }
-            .commitmessage {
-                padding-top: 0.8ex;
-                padding-left: 1em;
-                font-style: italic;
-                white-space: pre-wrap;
+        &.charm-description {
+            padding: 1ex 1em;
+            .charm-section {
+                .commitmessage {
+                    padding-top: 0.8ex;
+                    padding-left: 1em;
+                    font-style: italic;
+                    white-space: pre-wrap;
+                }
             }
         }
-    }
-    .charm-panel.config-variant {
-        padding: 1ex 1em;
+        &.config-variant {
+            padding: 1ex 1em;
 
-        .control-group {
-            width: auto;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        .control-description {
-            display: none;
-        }
-        .control-label {
-            width: auto;
-            margin-bottom: 1ex;
-        }
-        .control-label:after {
-            content: ":";
-        }
-        .controls {
-            margin-left: auto;
-            margin-right: 0;
-            clear: both;
-        }
-        .controls.boolean {
-            clear: none;
-            input {
-                margin-left: 1ex;
-                margin-top: 0.7ex;
+            .control-group {
+                width: auto;
+                margin-bottom: 0;
+                padding-bottom: 0;
             }
-        }
-        .btn {
-             margin-top: 5px;
+            .control-description {
+                display: none;
+            }
+            .control-label {
+                width: auto;
+                margin-bottom: 1ex;
+            }
+            .control-label:after {
+                content: ":";
+            }
+            .controls {
+                margin-left: auto;
+                margin-right: 0;
+                clear: both;
+            }
+            .controls.boolean {
+                clear: none;
+                input {
+                    margin-left: 1ex;
+                    margin-top: 0.7ex;
+                }
+            }
+            .btn {
+                 margin-top: 5px;
+            }
         }
     }
     .search-result-div {
-        height: 424px;
-        overflow:auto;
+        height: 462px;
+        overflow-y:auto;
         overflow-x:hidden;
         .series-charms {
             border-top: 4px solid #D0D0D0;
@@ -792,6 +826,142 @@ g.unit {
 
 table tr.highlighted {
    background: pink;
+}
+
+.juju-service-info-container {
+  padding: 0px;
+  margin-bottom: 0px;
+  background-color: #515151;
+  color: white;
+  height: 70px;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  -webkit-border-top-left-radius: 6px;
+  -moz-border-top-left-radius: 6px;
+  border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+  -moz-border-top-right-radius: 6px;
+  border-top-right-radius: 6px;
+  
+  .juju-service-info-container-big {
+    width: 58%;
+
+    .juju-service-container-header-name {
+      padding-top: 15px;
+      padding-left: 10px;
+
+      .juju-sevice-container-name {
+        padding-bottom: 5px;
+        
+        span {
+          font-size: 3em;
+        }
+      }
+    }
+  }
+  
+  .juju-service-info-container-small {
+    width: 20%;
+    
+    .juju-service-container-header-expose {
+      padding: 20px;
+    }
+
+    .juju-service-container-header-unit-count {
+      padding: 5px;
+      
+      input {
+        width: 95%
+      }
+    }    
+  }
+}
+
+.juju-service-info-container-menu {
+  border-top: 1px solid #737373;
+  background-color: black;
+  height: 40px;
+  text-align: center;
+}
+
+.juju-service-info-container-menu-wrapper {
+  display: inline-block;
+}
+
+.juju-menu-item {
+  color: white;
+  padding: 10px;
+  padding-bottom: 0px;
+  padding-top: 10px;
+  text-align: center;
+  
+  a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  a:HOVER {
+    color: white;
+    text-decoration: none;
+  }  
+}
+
+.unit-count-form {
+  margin-bottom: 0px;
+}
+
+.juju-service-charm-link,.juju-service-charm-link:HOVER {
+  color: #919191;
+  text-decoration: underline;
+}
+
+.juju-service-info-container-separator {
+  width: 0px;
+  height: 68px;
+  border: 1px solid #737373;
+  margin-left: 1px;
+}
+
+.juju-service-info-container-separator-footer {
+  height: 48px;
+}
+
+.juju-service-info-container-bottom-menu {
+  border-top: 1px solid #737373;
+  background-color: black;
+  height: 50px;
+
+  .juju-service-info-container-bottom-menu-wrapper {
+    margin-left: 10px;
+    
+    div {
+      width: 200px
+    }
+  }
+  
+  .juju-service-info-container-bottom-menu-wrapper-service {
+    margin-top: 10px;
+    margin-left: 10px;
+    
+    div {
+      width: 200px
+    }
+  }      
+  
+  #destroy-service {
+    margin-top: 10px; 
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+.state-filter-label {
+  color: white
+}
+
+div.inline {
+  float: left;
 }
 
 #tooltip {

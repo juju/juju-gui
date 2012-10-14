@@ -412,6 +412,44 @@ YUI.add('juju-models', function(Y) {
       _process_delta(this, action, data, {});
     },
 
+    /* Return true if a relation exists for the given endpoint.
+
+       Optionally the relation must also match include the given
+       service name.
+     */
+    has_relation_for_endpoint: function(ep, svc_name) {
+      var svc_matched = false,
+          ep_matched = false;
+
+      return this.some(
+          function(rel) {
+            svc_matched = ep_matched = false;
+
+            // Match endpoint and svc name across endpoints of a relation.
+            Y.Array.each(
+                rel.get('endpoints'),
+                function(rep) {
+                  if (ep.type !== rel.get('interface')) {
+                    return;
+                  }
+                  if (!ep_matched) {
+                    ep_matched = (ep.service === rep[0] &&
+                        ep.name === rep[1].name);
+                  }
+                  if (svc_name && !svc_matched && rep[0] === svc_name) {
+                    svc_matched = true;
+                  }
+                });
+
+            if (!svc_name && ep_matched) {
+              return true;
+            } else if (svc_name && ep_matched && svc_matched) {
+              return true;
+            }
+            return false;
+          });
+    },
+
     get_relations_for_service: function(service, asList) {
       var service_id = service.get('id');
       return this.filter({asList: Boolean(asList)}, function(relation) {

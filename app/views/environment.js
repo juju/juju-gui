@@ -69,7 +69,7 @@ YUI.add('juju-view-environment', function(Y) {
             click: 'serviceClick',
             dblclick: 'serviceDblClick',
             mouseenter: function(d, self) {
-              var rect = Y.one(this).one('.service-border');
+              var rect = Y.one(this);
               // Do not fire if this service isn't selectable.
               if (!self.hasSVGClass(rect, 'selectable-service')) {
                 return;
@@ -103,6 +103,20 @@ YUI.add('juju-view-environment', function(Y) {
               self.removeSVGClass(rect, 'hover');
             }
           },
+          '.sub-rel-block': {
+            mouseenter: function(d, self) {
+              // Add an 'active' class to all of the subordinate relations
+              // belonging to this service.
+              self.subordinateRelationsForService(d)
+                .forEach(function(p) {
+                    self.addSVGClass('#' + p.id, 'active');
+                  });
+            },
+            mouseleave: function(d, self) {
+              // Remove 'active' class from all subordinate relations.
+              self.removeSVGClass('.subordinate-rel-group', 'active');
+            }
+          },
           '.unit-count': {
             mouseover: function(d, self) {
               d3.select(this).attr('class', 'unit-count show-count');
@@ -120,11 +134,10 @@ YUI.add('juju-view-environment', function(Y) {
           // Canvas related
           '#canvas rect:first-child': {
             click: function(d, self) {
-              var container = self.get('container'),
-                  cp = container.one('#service-menu');
-              cp.removeClass('active');
-              self.set('active_service', null);
-              self.set('active_context', null);
+              self.removeSVGClass(
+                  '.service-control-panel.active', 'active');
+
+              self.cancelRelationBuild();
             }
           }
         },
@@ -149,11 +162,11 @@ YUI.add('juju-view-environment', function(Y) {
                 // we have the correct event in d3.event for d3.mouse().
                 d3.event = e;
 
-                // Get the cursor and flash an indicator beneath it.
-                var mouse = d3.mouse(self.vis.node());
+                // Flash an indicator around the center of the service block.
+                var center = d.getCenter();
                 self.vis.append('circle')
-                  .attr('cx', mouse[0])
-                  .attr('cy', mouse[1])
+                  .attr('cx', center[0])
+                  .attr('cy', center[1])
                   .attr('r', 100)
                   .attr('class', 'mouse-down-indicator')
                   .transition()
@@ -257,7 +270,7 @@ YUI.add('juju-view-environment', function(Y) {
           this.tree = d3.layout.pack()
                 .size([width, height])
                 .value(function(d) {return d.unit_count;})
-                .padding(200);
+                .padding(300);
 
           this.updateCanvas();
         },
@@ -379,6 +392,7 @@ YUI.add('juju-view-environment', function(Y) {
         updateData: function() {
           //model data
           var vis = this.vis,
+              app = this.get('app'),
               db = this.get('db'),
               relations = db.relations.toArray(),
               services = db.services.map(views.toBoundingBox);
@@ -529,10 +543,21 @@ YUI.add('juju-view-environment', function(Y) {
           var enter = g.enter();
 
           enter.insert('g', 'g.service')
-              .attr('class', 'rel-group')
+              .attr('id', function(d) {
+                return d.id;
+              })
+              .attr('class', function(d) {
+                // Mark the rel-group as a subordinate relation if need be.
+                return (d.scope === 'container' ?
+                    'subordinate-rel-group ' : '') +
+                    'rel-group';
+              })
               .append('svg:line', 'g.service')
               .attr('class', function(d) {
-                return (d.pending ? 'pending-relation ' : '') + 'relation';
+                // Style relation lines differently depending on status.
+                return (d.pending ? 'pending-relation ' : '') +
+                    (d.scope === 'container' ? 'subordinate-relation ' : '') +
+                    'relation';
               });
 
           // TODO:: figure out a clean way to update position
@@ -596,13 +621,8 @@ YUI.add('juju-view-environment', function(Y) {
               service_scale_width = this.service_scale_width,
               service_scale_height = this.service_scale_height;
 
-          // Append a rect for capturing events.
-          // TODO: this currently acts as the selectable-service element,
-          // and acts as the indicator for whether a service may be used for
-          // creating relations.  This will only be the case until there is
-          // UI around showing selectable services.
-          node.append('rect')
-            .attr('class', 'service-border')
+          // Size the node for drawing.
+          node
             .attr('width', function(d) {
                 // NB: if a service has zero units, as is possible with
                 // subordinates, then default to 1 for proper scaling, as
@@ -631,6 +651,29 @@ YUI.add('juju-view-environment', function(Y) {
                     return d.h;
                   });
 
+          // Draw a subordinate relation indicator.
+          var sub_relation = node.filter(function(d) {
+            return d.subordinate;
+          })
+            .append('g')
+            .attr('class', 'sub-rel-block')
+            .attr('transform', function(d) {
+                // Position the block so that the relation indicator will
+                // appear at the right connector.
+                return 'translate(' + [d.w, d.h / 2 - 26] + ')';
+              });
+
+          sub_relation.append('image')
+            .attr('xlink:href', '/juju-ui/assets/svgs/sub_relation.svg')
+            .attr('width', 87)
+            .attr('height', 47);
+          sub_relation.append('text').append('tspan')
+            .attr('class', 'sub-rel-count')
+            .attr('x', 64)
+            .attr('y', 47 * 0.8)
+            .text(function(d) {
+                return self.subordinateRelationsForService(d).length;
+              });
           // Draw non-subordinate services services
           node.filter(function(d) {
             return !d.subordinate;
@@ -644,29 +687,54 @@ YUI.add('juju-view-environment', function(Y) {
                     return d.h;
                   });
 
+          // The following are sizes in pixels of the SVG assets used to
+          // render a service, and are used to in calculating the vertical
+          // positioning of text down along the service block.
+          var service_height = 224,
+              name_size = 22,
+              charm_label_size = 16,
+              name_padding = 26,
+              charm_label_padding = 118;
 
           var service_labels = node.append('text').append('tspan')
             .attr('class', 'name')
+            .attr('style', function(d) {
+                // Programmatically size the font.
+                // Number derived from service assets:
+                // font-size 22px when asset is 224px.
+                return 'font-size:' + d.h *
+                    (name_size / service_height) + 'px';
+              })
             .attr('x', function(d) {
                     return d.w / 2;
                   })
             .attr('y', function(d) {
-                    return '1.5em';
+                // Number derived from service assets:
+                // padding-top 26px when asset is 224px.
+                return d.h * (name_padding / service_height) + d.h *
+                    (name_size / service_height) / 2;
                   })
             .text(function(d) {return d.id; });
 
           var charm_labels = node.append('text').append('tspan')
+            .attr('class', 'charm-label')
+            .attr('style', function(d) {
+                // Programmatically size the font.
+                // Number derived from service assets:
+                // font-size 16px when asset is 224px.
+                return 'font-size:' + d.h *
+                    (charm_label_size / service_height) + 'px';
+              })
             .attr('x', function(d) {
                     return d.w / 2;
                   })
             .attr('y', function(d) {
-                    // TODO this will need to be set based on the size of the
-                    // service health panel, but for now, this works.
-                    var hoffset_factor = d.subordinate ? 0.65 : 0.55;
-                    return d.h * hoffset_factor;
+                // Number derived from service assets:
+                // padding-top: 118px when asset is 224px.
+                return d.h * (charm_label_padding / service_height) - d.h *
+                    (charm_label_size / service_height) / 2;
                   })
             .attr('dy', '3em')
-            .attr('class', 'charm-label')
             .text(function(d) { return d.charm; });
 
           // Show whether or not the service is exposed using an
@@ -687,7 +755,7 @@ YUI.add('juju-view-environment', function(Y) {
                 return d.w / 10 * 7;
               })
             .attr('y', function(d) {
-                return d.h / 3 * 1.05;
+                return d.getRelativeCenter()[1] - (d.w / 6) / 2;
               })
             .attr('class', 'exposed-indicator on');
           exposed_indicator.append('title')
@@ -714,9 +782,7 @@ YUI.add('juju-view-environment', function(Y) {
           var status_chart = node.append('g')
             .attr('class', 'service-status')
             .attr('transform', function(d) {
-                var hoffset_factor = d.subordinate ? 1 : 0.86;
-                return 'translate(' + [(d.w / 2),
-                  d.h / 2 * hoffset_factor] + ')';
+                return 'translate(' + d.getRelativeCenter() + ')';
               });
 
           // Add a mask svg
@@ -760,6 +826,8 @@ YUI.add('juju-view-environment', function(Y) {
             .text(function(d) {
                 return self.humanizeNumber(d.unit_count);
               });
+
+
         },
 
         processRelation: function(r) {
@@ -795,6 +863,15 @@ YUI.add('juju-view-environment', function(Y) {
           return pairs;
         },
 
+        /*
+         * Utility function to get subordinate relations for a service.
+         */
+        subordinateRelationsForService: function(service) {
+          return this.rel_pairs.filter(function(p) {
+            return p.modelIds().indexOf(service.modelId()) !== -1 &&
+                p.scope === 'container';
+          });
+        },
         renderSlider: function() {
           var self = this;
           // Build a slider to control zoom level
@@ -825,6 +902,30 @@ YUI.add('juju-view-environment', function(Y) {
           var db = this.get('db');
           return db.services.getById(boundingBox.id);
         },
+
+
+        /*
+         * Show/hide/fade selection.
+         */
+        show: function(selection) {
+          selection.attr('opacity', '1.0')
+                .style('display', 'block');
+          return selection;
+        },
+
+        hide: function(selection) {
+          selection.attr('opacity', '0')
+            .style('display', 'none');
+          return selection;
+        },
+
+        fade: function(selection, alpha) {
+          selection.transition()
+            .duration(400)
+            .attr('opacity', alpha !== undefined && alpha || '0.2');
+          return selection;
+        },
+
         /*
          * Finish DOM-dependent rendering
          *
@@ -868,14 +969,9 @@ YUI.add('juju-view-environment', function(Y) {
               container = this.get('container');
           if (curr_action === 'show_service') {
             this.set('currentServiceClickAction', 'addRelationStart');
-            // Add .selectable-service to all .service-border.
-            this.addSVGClass('.service-border', 'selectable-service');
           } else if (curr_action === 'addRelationStart' ||
               curr_action === 'addRelationEnd') {
             this.set('currentServiceClickAction', 'toggleControlPanel');
-
-            // Remove selectable border from all nodes.
-            this.removeSVGClass('.service-border', 'selectable-service');
           } // Otherwise do nothing.
         },
 
@@ -886,7 +982,7 @@ YUI.add('juju-view-environment', function(Y) {
               self = this;
 
           // Start the line in the middle of the service.
-          var point = [d.x + d.h / 2, d.y + d.w / 2];
+          var point = d.getCenter();
           dragline.attr('x1', point[0])
               .attr('y1', point[1])
               .attr('x2', point[0])
@@ -923,7 +1019,6 @@ YUI.add('juju-view-environment', function(Y) {
             self.addRelation(); // Will clear the state.
           }
         },
-
         removeRelation: function(d, context, view, confirmButton) {
           var env = this.get('env'),
               relationElement = Y.one(context.parentNode).one('.relation');
@@ -969,6 +1064,13 @@ YUI.add('juju-view-environment', function(Y) {
               },
               this)));
         },
+
+        cancelRelationBuild: function() {
+          this.set('currentServiceClickAction', 'toggleControlPanel');
+          this.show(this.vis.selectAll('.service'))
+                  .classed('selectable-service', false);
+        },
+
 
         /*
          * Zoom in event handler.
@@ -1143,6 +1245,9 @@ YUI.add('juju-view-environment', function(Y) {
               view.updateServiceMenuLocation();
               cp.addClass('active');
             }
+
+            // Toggle the current node's class.
+            view.toggleSVGClass(cp, 'active');
           },
 
           /*
@@ -1205,17 +1310,49 @@ YUI.add('juju-view-environment', function(Y) {
             btn.set('disabled', false);
           },
 
+
           /*
            * Fired when clicking the first service in the add relation
            * flow.
            */
           addRelationStart: function(m, view, context) {
-            // Add .selectable-service to all .service-border.
-            view.addSVGClass('.service-border', 'selectable-service');
+            view.show(view.vis.selectAll('.service'));
 
-            // Remove selectable border from current node.
-            var node = Y.one(context).one('.service-border');
-            view.removeSVGClass(node, 'selectable-service');
+            var db = view.get('db'),
+                app = view.get('app'),
+                service = view.serviceForBox(m),
+
+                /* Transform endpoints into a list of
+                 * relatable services (to the service in m)
+                 */
+                possible_relations = Y.Array.map(
+                    Y.Array.flatten(Y.Object.values(
+                        models.getEndpoints(
+                            service, app.serviceEndpoints, db))),
+                            function(ep) {return ep.service;}),
+                invalidRelationTargets = {};
+
+            // Iterate services and invert the possibles list.
+            db.services.each(function(s) {
+              if (Y.Array.indexOf(possible_relations,
+                  s.get('id')) === -1) {
+                invalidRelationTargets[s.get('id')] = true;
+              }
+            });
+
+            // Fade elements to which we can't relate.
+            // Rather than two loops this marks
+            // all services as selecable and then
+            // removes the invalid ones
+            view.fade(view.vis.selectAll('.service')
+              .classed('selectable-service', true)
+              .filter(function(d) {
+                  return (d.id in invalidRelationTargets &&
+                          d.id !== m.id);
+                }))
+              .classed('selectable-service', false);
+
+
 
             // Store start service in attrs.
             view.set('addRelationStart_service', m);
@@ -1227,9 +1364,9 @@ YUI.add('juju-view-environment', function(Y) {
            * Fired when clicking the second service is clicked in the
            * add relation flow.
            */
-          addRelationEnd: function(m, view) {
-            // Remove selectable border from all nodes.
-            view.removeSVGClass('.selectable-service', 'selectable-service');
+          addRelationEnd: function(m, view, context) {
+            // Redisplay all services
+            view.cancelRelationBuild();
 
             // Get the vis, and links, build the new relation.
             var vis = view.vis,

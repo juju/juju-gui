@@ -201,6 +201,9 @@ describe('Application prefetching', function() {
           viewContainer: container,
           env: env,
           charm_store: charm_store });
+
+    app.updateEndpoints = function() {};
+    env.get_endpoints = function() {};
   });
 
   afterEach(function() {
