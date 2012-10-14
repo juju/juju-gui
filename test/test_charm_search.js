@@ -1,7 +1,7 @@
 'use strict';
 
 describe('charm search', function() {
-  var Y, models, views,
+  var Y, models, views, ENTER, ESC,
       searchResult = '{"results": [{"data_url": "this is my URL", ' +
       '"name": "membase", "series": "precise", "summary": ' +
       '"Membase Server", "relevance": 8.728194117350437, ' +
@@ -16,10 +16,12 @@ describe('charm search', function() {
         'juju-tests-utils',
         'node-event-simulate',
         'node',
+        'event-key',
 
         function(Y) {
           models = Y.namespace('juju.models');
           views = Y.namespace('juju.views');
+          ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
           done();
         });
 
@@ -30,7 +32,9 @@ describe('charm search', function() {
     var docBody = Y.one(document.body);
     Y.Node.create('<div id="charm-search-test">' +
         '<div id="charm-search-icon"><i></i></div>' +
-        '<div id="content"></div></div>').appendTo(docBody);
+        '<div id="content"></div>' +
+        '<input type="text" id="charm-search-field" />' +
+        '</div>').appendTo(docBody);
   });
 
   afterEach(function() {
@@ -73,40 +77,13 @@ describe('charm search', function() {
         }),
         node = panel.node;
     panel.show(true);
-    var field = node.one('.charms-search-field');
+    var field = Y.one('#charm-search-field');
     field.set('value', 'aaa');
-    field.simulate('keyup');
+    field.simulate('keydown', { keyCode: ENTER });
 
     searchTriggered.should.equal(true);
-    node.one('.charm-entry .btn').getData('info-url').should.equal(
+    node.one('.charm-entry .btn.deploy').getData('info-url').should.equal(
         'this is my URL');
-  });
-
-  it('must be able to reset the search result', function() {
-    var panel = Y.namespace('juju.views').CharmSearchPopup.getInstance(
-        { charm_store:
-              { sendRequest: function(params) {
-                // Mocking the server callback value
-                params.callback.success({
-                  response: {
-                    results: [{
-                      responseText: searchResult
-                    }]
-                  }
-                });
-              }},
-          testing: true
-        }),
-        node = panel.node;
-    panel.show();
-    var field = node.one('.charms-search-field'),
-        clearButton = node.one('.clear');
-    field.set('value', 'aaa');
-    field.simulate('keyup');
-    clearButton.simulate('click');
-
-    node.all('.charm-detail').isEmpty().should.equal(true);
-    field.get('value').should.equal('');
   });
 
   it('must be able to trigger charm details', function() {
@@ -131,119 +108,45 @@ describe('charm search', function() {
     db.charms.add({id: 'cs:precise/membase'});
 
     panel.show();
-    var field = node.one('.charms-search-field');
+    var field = Y.one('#charm-search-field');
     field.set('value', 'aaa');
-    field.simulate('keyup');
+    field.simulate('keydown', { keyCode: ENTER });
     node.one('a.charm-detail').simulate('click');
     node.one('.charm-description > h3').get('text').trim()
       .should.equal('membase');
   });
 
-  it('must deploy a charm for a new service when the button is clicked',
-     function() {
-       var deployed = false,
-           panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
-             charm_store: {
-               sendRequest: function(params) {
-                 // Mocking the server callback value
-                 params.callback.success({
-                   response: {
-                     results: [{
-                       responseText: searchResult
-                     }]
-                   }
-                 });
-               }
-             },
-             app: {
-               env: {
-                 deploy: function() { deployed = true; }
-               },
-               db: {
-                 services: {
-                   getById: function(name) {
-                     // Simulate the deployed service does not exist.
-                     return undefined;
-                   }
-                 },
-                 notifications: {
-                   add: function() { return; }
-                 }
-               },
-               fire: function() { return; }
-             },
-             testing: true
-           }),
-           node = panel.node;
-
-       panel.show();
-
-       // Search for something.
-       var field = node.one('.charms-search-field');
-       field.set('value', 'membase');
-       field.simulate('keyup');
-       // Now the deploy button should appear and is clickable which causes
-       // the deploying.
-       var deployButton = node.one('.charm-entry .btn');
-       deployButton.simulate('click');
-       deployed.should.equal(true);
-     });
-
-  it('must not deploy a charm for an existing service when deploy is clicked',
-     function() {
-       var deployed = false,
-           showCharmCalled = false,
-           panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
-             charm_store: {
-               sendRequest: function(params) {
-                 // Mocking the server callback value
-                 params.callback.success({
-                   response: {
-                     results: [{
-                       responseText: searchResult
-                     }]
-                   }
-                 });
-               }
-             },
-             app: {
-               env: {
-                 deploy: function() { deployed = true; }
-               },
-               db: {
-                 services: {
-                   getById: function(name) {
-                     // Simulate the deployed service already exists.
-                     return true;
-                   }
-                 },
-                 notifications: {
-                   add: function() { return; }
-                 }
-               },
-               fire: function(name) {
-                 showCharmCalled = (name === 'showCharm');
-                 return; }
-             },
-             testing: true
-           }),
-           node = panel.node;
-
-       panel.show();
-
-       // Search for something.
-       var field = node.one('.charms-search-field');
-       field.set('value', 'membase');
-       field.simulate('keyup');
-       // Now the deploy button should appear and is clickable.  Since the
-       // service is already deployed, the showCharm event should be fired
-       // instead of the deploy method.
-       var deployButton = node.one('.charm-entry .btn');
-       deployButton.simulate('click');
-       deployed.should.equal(false);
-       showCharmCalled.should.equal(true);
-     });
-
+  it('must be able to deploy from the description panel by going to the ' +
+     'configuration panel', function() {
+        var db = new models.Database(),
+            panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
+              charm_store: {
+                sendRequest: function(params) {
+                  // Mocking the server callback value
+                  params.callback.success({
+                    response: {
+                      results: [{
+                        responseText: searchResult
+                      }]
+                    }
+                  });
+                }
+              },
+              app: {db: db},
+              testing: true
+            }),
+            node = panel.node,
+            charm = db.charms.add({id: 'cs:precise/membase'});
+        charm.loaded = true;
+        panel.show();
+        var field = Y.one('#charm-search-field');
+        field.set('value', 'aaa');
+        field.simulate('keydown', { keyCode: ENTER });
+        node.one('a.charm-detail').simulate('click');
+        node.one('.btn-primary').simulate('click');
+        node.one('.control-label').get('text').trim()
+         .should.equal('Service name');
+      });
 });
 
 describe('charm description', function() {
@@ -305,7 +208,7 @@ describe('charm description', function() {
         interface_div = html.one('div.charm-section:nth-of-type(2)'),
         last_change_div = html.one('div.charm-section:nth-of-type(3)');
     html.one('h3').get('text').trim().should.equal('mysql');
-    description_div.getStyle('display').should.equal('block');
+    description_div.getStyle('height').should.not.equal('0px');
     var _ = expect(interface_div).to.not.exist;
     _ = expect(last_change_div).to.not.exist;
   });
@@ -325,9 +228,9 @@ describe('charm description', function() {
         interface_div = html.one('div.charm-section:nth-of-type(2) div'),
         last_change_div = html.one('div.charm-section:nth-of-type(3) div');
     description_div.get('text').should.contain('A DB');
-    interface_div.getStyle('display').should.equal('none');
+    interface_div.getStyle('height').should.equal('0px');
     interface_div.get('text').should.contain('munin');
-    last_change_div.getStyle('display').should.equal('none');
+    last_change_div.getStyle('height').should.equal('0px');
     last_change_div.get('text').should.contain('fixed EVERYTHING');
     last_change_div.get('text').should.contain('2012-10-09');
   });
@@ -344,11 +247,11 @@ describe('charm description', function() {
         { container: container, app: app, model: charm }).render(),
         html = container.one('.charm-description'),
         section_container = html.one('div.charm-section:nth-of-type(3)');
-    section_container.one('div').getStyle('display').should.equal('none');
+    section_container.one('div').getStyle('height').should.equal('0px');
     assert(section_container.one('h4 i').hasClass('icon-chevron-right'));
     section_container.one('h4').simulate('click');
     assert(section_container.one('h4 i').hasClass('icon-chevron-down'));
-    section_container.one('div').getStyle('display').should.equal('block');
+    section_container.one('div').getStyle('height').should.not.equal('0px');
     section_container.one('h4').simulate('click');
     assert(section_container.one('h4 i').hasClass('icon-chevron-right'));
     // The transition is still running, so we can't check display.
@@ -362,18 +265,6 @@ describe('charm description', function() {
       done();
     });
     container.one('.charm-nav-back').simulate('click');
-  });
-
-  it('deploys by sending the user to the configuration page', function() {
-    // For now, we simply go to the charm page.  Later, we will fire an
-    // event locally to show the config panel.
-    var view = new views.CharmDescriptionView(
-        { container: container, app: app, model: charm }).render(),
-        app_events = [];
-    app.fire = function() { app_events.push(arguments); };
-    container.one('.btn').simulate('click');
-    app_events[0][0].should.equal('showCharm');
-    app_events[0][1].charm_data_url.should.equal('charms/precise/mysql/json');
   });
 
 });

@@ -1,6 +1,6 @@
 {{> service-header}}
-<div class="row-fluid">
-    <div class="span12">
+<div class="view-container">
+  <div>
     <form class="form-horizontal">
       <legend>{{service.id}} constraints</legend>
 
@@ -17,11 +17,13 @@
 
         <div class="control-group">
           <div class="controls">
-            <button type="button" cls="btn" id="save-service-constraints">Update</button>
+            <button type="button" cls="btn" 
+              id="save-service-constraints">Update</button>
           </div>
         </div>
 
       </form>
+  </div>
 </div>
+{{> service-footer}}
 
-</div>

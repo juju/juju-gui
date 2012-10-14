@@ -93,6 +93,12 @@ YUI.add('juju-gui', function(Y) {
     },
 
     initializer: function() {
+      // If this flag is true, start the application with the console activated
+      if (this.get('consoleEnabled')) {
+        consoleManager.native();
+      } else {
+        consoleManager.noop();
+      }
       // Create a client side database to store state.
       this.db = new models.Database();
       // Update the on-screen environment name provided in the configuration or
@@ -177,10 +183,14 @@ YUI.add('juju-gui', function(Y) {
       }, this);
 
       // Create the CharmSearchPopup instance once the app.js is initialized
-      views.CharmSearchPopup.getInstance({
+      var popup = views.CharmSearchPopup.getInstance({
         charm_store: this.charm_store,
         env: this.env,
         app: this
+      });
+      popup.setDefaultSeries(this.env.get('defaultSeries'));
+      this.env.after('defaultSeriesChange', function(ev) {
+        popup.setDefaultSeries(ev.newVal);
       });
     },
 
@@ -274,6 +284,12 @@ YUI.add('juju-gui', function(Y) {
         model: service,
         app: this,
         querystring: req.query
+      }, {}, function(view) {
+        // If the view contains a method call fitToWindow,
+        // we will execute it after getting the view rendered
+        if (view.fitToWindow) {
+          view.fitToWindow();
+        }
       });
     },
 

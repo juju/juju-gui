@@ -1,6 +1,6 @@
 GlobalConfig = {
   // Uncomment for debug versions of YUI.
-  filter: 'debug',
+  //filter: 'debug',
   // Uncomment for verbose logging of YUI
   debug: false,
 
@@ -78,9 +78,12 @@ GlobalConfig = {
         },
 
         // Models
+        'juju-endpoints': {
+          fullpath: '/juju-ui/models/endpoints.js'
+        },
 
         'juju-models': {
-          requires: ['model', 'model-list'],
+          requires: ['model', 'model-list', 'juju-endpoints'],
           fullpath: '/juju-ui/models/models.js'
         },
 
