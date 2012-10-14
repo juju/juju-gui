@@ -253,8 +253,9 @@ YUI.add('juju-charm-search', function(Y) {
           this.configFileLoaded = false;
           container.one('.remove-config-file').addClass('hidden');
           container.one('.charm-settings').show();
-          // TODO: Reset fileInput.  The following does not work.
-          // Replace the file input node.
+          // Replace the file input node.  There does not appear to be any way
+          // to reset the element, so the only option is this rather crude
+          // replacement.  It actually works well in practice.
           var button = container.one('.remove-config-file');
           this.fileInput.replace(Y.Node.create('<input type="file"/>')
                                  .addClass('config-file-upload'));
@@ -266,7 +267,6 @@ YUI.add('juju-charm-search', function(Y) {
           this.get('container').one('.charm-settings').hide();
           this.get('container').one('.remove-config-file')
             .removeClass('hidden');
-          // TODO add "Remove configuration file" button
           console.log(this.configFileContent);
         },
         onFileError: function(evt) {
@@ -284,14 +284,15 @@ YUI.add('juju-charm-search', function(Y) {
               break; // noop
             default:
               msg = 'An error occurred reading this file.';
-          };
+          }
           if (msg) {
+            var app = this.get('app');
             app.db.notifications.add(
-              new models.Notification({
-                title: 'Error reading configuration file',
-                message: msg,
-                level: 'error'
-              }));
+                new models.Notification({
+                  title: 'Error reading configuration file',
+                  message: msg,
+                  level: 'error'
+                }));
           }
           return;
         },
@@ -375,15 +376,24 @@ YUI.add('juju-charm-search', function(Y) {
           cg.on('mousemove', function(evt) {
             // Control tool-tips.
             if (self.tooltip.get('visible') === false) {
-              Y.one('#tooltip').setStyle('opacity', '0');
-              self.tooltip.move([(evt.pageX + 5), (evt.pageY + 5)]);
-              Y.one('#tooltip').setStyle('opacity', '1');
+              // The tooltip element should always exist but sometimes during
+              // testing it is not found, resulting in spurious errors.
+              // Defensive programming here and below solves the problem.
+              var tooltip = Y.one('#tooltip');
+              if (tooltip) {
+                tooltip.setStyle('opacity', '0');
+                self.tooltip.move([(evt.pageX + 5), (evt.pageY + 5)]);
+                tooltip.setStyle('opacity', '1');
+              }
             }
             if (self.waitingToShow === false) {
               // Wait half a second, then show tooltip.
               self.tooltip.show();
               setTimeout(function() {
-                Y.one('#tooltip').setStyle('opacity', '1');
+                var tooltip = Y.one('#tooltip');
+                if (tooltip) {
+                  tooltip.setStyle('opacity', '1');
+                }
                 self.tooltip.show();
               }, this.get('tooltipDelay'));
 
