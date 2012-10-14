@@ -308,6 +308,50 @@
          unit_data.number.should.eql([0, 1]);
        });
 
+    it('RelationList.has_relations.. should return true if rel found.',
+        function() {
+          var db = new models.Database(),
+              service = new models.Service({id: 'mysql', exposed: false}),
+              rel0 = new models.Relation({
+                id: 'relation-0',
+                endpoints: [
+                  ['mediawiki', {name: 'cache', role: 'source'}],
+                  ['squid', {name: 'cache', role: 'front'}]],
+                'interface': 'cache'
+              }),
+              rel1 = new models.Relation({
+                id: 'relation-4',
+                endpoints: [
+                  ['something', {name: 'foo', role: 'bar'}],
+                  ['mysql', {name: 'la', role: 'lee'}]],
+                'interface': 'thing'
+              });
+          db.relations.add([rel0, rel1]);
+          db.relations.has_relation_for_endpoint(
+              {service: 'squid', name: 'cache', type: 'cache'}
+          ).should.equal(true);
+          db.relations.has_relation_for_endpoint(
+              {service: 'mysql', name: 'la', type: 'thing'}
+          ).should.equal(true);
+          db.relations.has_relation_for_endpoint(
+              {service: 'squid', name: 'cache', type: 'http'}
+          ).should.equal(false);
+
+          // We can also pass a service name which must match for the
+          // same relation.
+
+          db.relations.has_relation_for_endpoint(
+              {service: 'squid', name: 'cache', type: 'cache'},
+              'kafka'
+          ).should.equal(false);
+
+          db.relations.has_relation_for_endpoint(
+              {service: 'squid', name: 'cache', type: 'cache'},
+              'mediawiki'
+          ).should.equal(true);
+
+        });
+
     it('RelationList.get_relations_for_service should do what it says',
         function() {
           var db = new models.Database(),
