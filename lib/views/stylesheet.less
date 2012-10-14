@@ -1,7 +1,11 @@
 /* Processed with LESS from lib/views/stylesheet.less */
+
+@font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
 body {
     margin-top: 87px;
     background-color: #302b28;
+    font-family: @font-family;
 }
 
 #viewport-wrapper {
@@ -44,29 +48,63 @@ body {
     padding: 0;
     position: relative;
     color: #2d2d2d!important;
-
     .brand {
+        margin: 12px 26px 6px 10px;
         padding: 0;
-        position: absolute;
-        display: block;
-        top: 12px;
-        left: 30px;
     }
-    .nav-environment {
-        position: absolute;
-        top: 5px;
-        left: 128px;
-        padding: 12px;
+    > div {
+        padding: 0;
+        .nav-container {
+            display: inline-block;
+            height: 44px;
+            margin: 2px 0 0 0;
+            padding: 20px 0 4px;
+            &#charm-search-trigger-container {
+                width: 292px;
+            }
+            .nav-section {
+                border-left: 1px solid lightgray;
+                display: inline-block;
+                padding: 4px 10px;
+                #charm-search-trigger {
+                    cursor: pointer;
+                }
+                .btn {
+                    margin: 0 5px;
+                }
+                input {
+                    width: 128px;
+                    background: url(/juju-ui/assets/images/searchbox_icon.png) no-repeat 2px 1px whiteSmoke;
+                    margin: 0 10px;
+                    padding: 3px 3px 3px 26px;
+                    font-style: italic;
+                    font-family: @font-family;
+                    font-size: 0.9em; fill: #333333;
+                    &:focus {
+                        background: white;
+                        padding: 3px;
+                        width: 151px;
+                    }
+                }
 
-        .provider-type {
-            font-size: 0.7em;
+            }
         }
-    }
-    .nav-alerts-charms {
-        position: absolute;
-        top: 5px;
-        right: 21px;
-        padding: 12px;
+        span:first-child .nav-section {
+            border-left: none;
+            padding: 0 6px;
+        }
+        &#nav-alerts-charms {
+            float: right;
+            .nav-container:first-child .nav-section {
+                position: relative;
+            }
+        }
+        &#nav-brand-env .nav-container {
+            float: left;
+            .provider-type {
+                font-size: 0.7em;
+            }
+        }
     }
 }
 
@@ -301,22 +339,22 @@ g.service {
         text-anchor: middle;
     }
 
-    .charm-label { 
-        font-family: "Ubuntu", sans-serif;
+    .charm-label {
+        font-family: @font-family;
         font-style: italic;
         fill: #4c4c4c;
     }
     .name {
-        font-family: "Ubuntu", sans-serif;
+        font-family: @font-family;
         fill: #4c4c4c;
     }
-    
-    .unit-count {
+
+   .unit-count {
         stroke-width: 0;
         text-anchor: middle;
         dominant-baseline: central;
         fill: rgba(0,0,0,0);
-        font-family: "Ubuntu";
+        font-family: @font-family;
         font-size: 2.5em;
 
         &.show-count {
@@ -329,7 +367,7 @@ g.service {
         text-anchor: middle;
         dominant_baseline: central;
         fill: #4f4f4f;
-        font-family: "Ubuntu";
+        font-family: @font-family;
         font-size: 1.2em;
     }
 
@@ -372,7 +410,7 @@ g.service-status {
 
 g.unit {
     stroke-width: 0; font-weight: bold;
-    font-family: "Ubuntu"; font-size: 1.2em; fill: #1626cf;
+    font-family: @font-family; font-size: 1.2em; fill: #1626cf;
 
     .address {
     fill: #ffffff; font-size: 0.8em;}
@@ -648,40 +686,23 @@ g.unit {
     }
 }
 
-#charm-search-trigger {
-    cursor: pointer;
-}
-
 #juju-search-charm-panel {
     display: block;
     padding-left: 0px;
     padding-right: 0px;
+    z-index: 999;
 
     .btn {
         float: right;
     }
 
     .search-charm-inner {
-        width: 394px;
+        width: 100%;
         height: 500px;
     }
     .popover-content {
         padding: 0px;
         height: 462px;
-    }
-    .charm-list-selector {
-        position: absolute;
-        top: 25px;
-        right: 15px;
-    }
-    .charms-search-field-div {
-        padding: 5px;
-        margin-bottom: 0px;
-        background-color: #1a1a1a;
-        .charms-search-field {
-            margin: 0px;
-            width: 230px;
-        }
     }
     .charm-nav-back {
         background-color: black;
@@ -710,64 +731,61 @@ g.unit {
                 margin-top: 0;
             }
         }
-        height: 430px;
+        height: 432px;
         overflow-y: auto;
         overflow-x: hidden;
         .collapsible {
             overflow: hidden;
         }
-    }
-    .charm-description {
-        padding: 1ex 1em;
-        .charm-section {
-            > div {
-                overflow: hidden;
-            }
-            .commitmessage {
-                padding-top: 0.8ex;
-                padding-left: 1em;
-                font-style: italic;
-                white-space: pre-wrap;
+        &.charm-description {
+            padding: 1ex 1em;
+            .charm-section {
+                .commitmessage {
+                    padding-top: 0.8ex;
+                    padding-left: 1em;
+                    font-style: italic;
+                    white-space: pre-wrap;
+                }
             }
         }
-    }
-    .charm-panel.config-variant {
-        padding: 1ex 1em;
+        &.config-variant {
+            padding: 1ex 1em;
 
-        .control-group {
-            width: auto;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-        .control-description {
-            display: none;
-        }
-        .control-label {
-            width: auto;
-            margin-bottom: 1ex;
-        }
-        .control-label:after {
-            content: ":";
-        }
-        .controls {
-            margin-left: auto;
-            margin-right: 0;
-            clear: both;
-        }
-        .controls.boolean {
-            clear: none;
-            input {
-                margin-left: 1ex;
-                margin-top: 0.7ex;
+            .control-group {
+                width: auto;
+                margin-bottom: 0;
+                padding-bottom: 0;
             }
-        }
-        .btn {
-             margin-top: 5px;
+            .control-description {
+                display: none;
+            }
+            .control-label {
+                width: auto;
+                margin-bottom: 1ex;
+            }
+            .control-label:after {
+                content: ":";
+            }
+            .controls {
+                margin-left: auto;
+                margin-right: 0;
+                clear: both;
+            }
+            .controls.boolean {
+                clear: none;
+                input {
+                    margin-left: 1ex;
+                    margin-top: 0.7ex;
+                }
+            }
+            .btn {
+                 margin-top: 5px;
+            }
         }
     }
     .search-result-div {
-        height: 424px;
-        overflow:auto;
+        height: 462px;
+        overflow-y:auto;
         overflow-x:hidden;
         .series-charms {
             border-top: 4px solid #D0D0D0;

@@ -125,45 +125,6 @@ YUI.add('juju-view-environment', function(Y) {
               d3.select(this).attr('class', 'unit-count hide-count');
             }
           },
-          // Menu/Controls
-          '.add-relation': {
-            click: function(d, self) {
-              var context = Y.Node(this)
-                                      .ancestor('.service')
-                                      .getDOMNode(),
-                  service = self.serviceForBox(d);
-              self.service_click_actions
-                        .toggleControlPanel(d, context, self);
-              self.service_click_actions
-                        .addRelationStart(d, context, self);
-            }
-          },
-          '.view-service': {
-            click: function(d, self) {
-              // Get the service element
-              var context = Y.Node(this)
-                                      .ancestor('.service')
-                                      .getDOMNode(),
-                  service = self.serviceForBox(d);
-              self.service_click_actions
-                        .toggleControlPanel(d, context, self);
-              self.service_click_actions
-                        .show_service(service, context, self);
-            }
-          },
-          '.destroy-service': {
-            click: function(d, self) {
-              // Get the service element
-              var context = Y.Node(this)
-                                      .ancestor('.service')
-                                      .getDOMNode(),
-                  service = self.serviceForBox(d);
-              self.service_click_actions
-                        .toggleControlPanel(d, context, self);
-              self.service_click_actions
-                        .destroyServiceConfirm(service, context, self);
-            }
-          },
 
           // Relation Related
           '.rel-label': {

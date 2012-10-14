@@ -59,43 +59,9 @@ YUI.add('juju-view-utils', function(Y) {
       }
     };
   };
-
   utils.consoleManager = consoleManager;
   // Also assign globally to manage the actual console.
   window.consoleManager = consoleManager();
-
-
-  // This creates a closure that delays the execution of a given callback. If
-  // the user creates a Delayer with "delay = utils.Delayer()" and then calls
-  // "delay(functionA, 1000)", "functionA" will be executed after 1000ms.
-  // However, if the user calls "delay(functionB, 1000)" before the execution
-  // of "functionA", "functionA" will be canceled and "functionB" will be
-  // scheduled to run after 1000ms.
-  utils.Delayer = function(once) {
-    var currentTask = null,
-        performed = false;
-    once = !!once;
-    return function(callback, milliseconds) {
-      if (Y.Lang.isValue(currentTask) && !performed) {
-        clearTimeout(currentTask);
-      }
-      if (performed && once) {
-        throw 'already performed a task.';
-      }
-      milliseconds = Math.max(0, milliseconds || 0);
-      performed = false;
-      var f = function() {
-        performed = true;
-        callback();
-      };
-      if (milliseconds > 0) {
-        currentTask = setTimeout(f, milliseconds);
-      } else {
-        // Doing it directly in this case makes tests easier.
-        f();
-      }
-    };
-  };
 
   /*
  * Ported from https://github.com/rmm5t/jquery-timeago.git to YUI
