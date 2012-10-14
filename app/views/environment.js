@@ -451,15 +451,15 @@ YUI.add('juju-view-environment', function(Y) {
                     self.longClickTimer.cancel();
                     self.longClickTimer = null;
                   }*/
-                d.x += d3.event.dx;
-                d.y += d3.event.dy;
-                d3.select(this).attr('transform', function(d, i) {
-                  return d.translateStr();
-                });
+                  d.x += d3.event.dx;
+                  d.y += d3.event.dy;
+                  d3.select(this).attr('transform', function(d, i) {
+                    return d.translateStr();
+                  });
                   if (self.get('active_service') === d) {
                     self.updateServiceMenuLocation();
                   }
-                updateLinks();
+                  updateLinks();
                 }
               })
             .on('dragend', function(d, i) {
@@ -1311,7 +1311,7 @@ YUI.add('juju-view-environment', function(Y) {
           },
 
 
-         /*
+          /*
            * Fired when clicking the first service in the add relation
            * flow.
            */
@@ -1342,7 +1342,7 @@ YUI.add('juju-view-environment', function(Y) {
 
             // Fade elements to which we can't relate.
             // Rather than two loops this marks
-            // all services as selecable and then 
+            // all services as selecable and then
             // removes the invalid ones
             view.fade(view.vis.selectAll('.service')
               .classed('selectable-service', true)

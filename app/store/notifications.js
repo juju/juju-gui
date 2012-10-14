@@ -25,10 +25,10 @@ YUI.add('juju-notification-controller', function(Y) {
     },
     message: function(change_type, change_op, change_data,
         notify_data) {
-        var action = _changeNotificationOpToWords(change_op);
-      if (change_op === "remove") {
+      var action = _changeNotificationOpToWords(change_op);
+      if (change_op === 'remove') {
         // We don't have endpoint data on removed.
-        return 'Relation removed'; 
+        return 'Relation removed';
       }
       if (change_data.endpoints && change_data.endpoints.length === 2) {
         var endpoint0 = change_data.endpoints[0][0],
