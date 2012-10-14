@@ -93,7 +93,7 @@ describe('Relation endpoints logic', function() {
     done();
   });
 
-  it('should be able find relatable services', function() {
+  it('should be able to find relatable services', function() {
     var service = db.services.getById('blog-lb'),
         available_svcs = Y.Object.keys(models.getEndpoints(
             service, sample_endpoints, db));
