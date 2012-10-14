@@ -1341,12 +1341,18 @@ YUI.add('juju-view-environment', function(Y) {
             });
 
             // Fade elements to which we can't relate.
+            // Rather than two loops this marks
+            // all services as selecable and then 
+            // removes the invalid ones
             view.fade(view.vis.selectAll('.service')
+              .classed('selectable-service', true)
               .filter(function(d) {
                   return (d.id in invalidRelationTargets &&
                           d.id !== m.id);
                 }))
-              .classed('selectable-service', true);
+              .classed('selectable-service', false);
+
+
 
             // Store start service in attrs.
             view.set('addRelationStart_service', m);
