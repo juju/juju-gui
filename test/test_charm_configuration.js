@@ -25,12 +25,10 @@ describe('charm configuration', function() {
     container = Y.Node.create('<div id="test-container" />');
     Y.one('#main').append(container);
     db = new models.Database();
-    app = { db: db};
+    app = { db: db };
   });
   afterEach(function() {
     container.remove(true);
-    //db.destroy();
-    //env.destroy();
   });
 
   it('must show loading message if the charm is not loaded', function() {

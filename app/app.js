@@ -183,10 +183,14 @@ YUI.add('juju-gui', function(Y) {
       }, this);
 
       // Create the CharmSearchPopup instance once the app.js is initialized
-      views.CharmSearchPopup.getInstance({
+      var popup = views.CharmSearchPopup.getInstance({
         charm_store: this.charm_store,
         env: this.env,
         app: this
+      });
+      popup.setDefaultSeries(this.env.get('defaultSeries'));
+      this.env.after('defaultSeriesChange', function(ev) {
+        popup.setDefaultSeries(ev.newVal);
       });
     },
 

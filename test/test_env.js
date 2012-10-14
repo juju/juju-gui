@@ -112,19 +112,23 @@
         request_id: msg.request_id});
     });
 
-    it('will populate the provider type when recieved', function(done) {
+    it('will populate the provider type and default series', function(done) {
       var providerType = 'super provider',
+          defaultSeries = 'oneiric',
           evt =
               { data:
                 '{"ready": true, ' +
                 ' "version": 0,' +
-                ' "provider_type": "' + providerType + '"}'};
+                ' "provider_type": "' + providerType + '",' +
+                ' "default_series": "' + defaultSeries + '"}'};
 
-      // Before the message arrives there is no provider type set.
+      // Before the message arrives these are not set.
       assert.equal(env.get('providerType', undefined));
+      assert.equal(env.get('defaultSeries', undefined));
       env.on_message(evt);
       // After the message arrives the provider type is set.
       assert.equal(env.get('providerType'), providerType);
+      assert.equal(env.get('defaultSeries'), defaultSeries);
       done();
     });
   });
