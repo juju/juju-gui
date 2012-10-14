@@ -1245,9 +1245,6 @@ YUI.add('juju-view-environment', function(Y) {
               view.updateServiceMenuLocation();
               cp.addClass('active');
             }
-
-            // Toggle the current node's class.
-            view.toggleSVGClass(cp, 'active');
           },
 
           /*
