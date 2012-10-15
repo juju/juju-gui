@@ -6,10 +6,7 @@ YUI.add('juju-charm-search', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
       // Singleton
-      _instance = null,
-      // Delay before showing tooltip.
-      _tooltipDelay = 500;
-
+      _instance = null;
 
   var toggleSectionVisibility = function(ev) {
     var el = ev.currentTarget.ancestor('.charm-section')
@@ -215,8 +212,6 @@ YUI.add('juju-charm-search', function(Y) {
       'CharmCollectionView', Y.View, [views.JujuBaseView], {
         template: views.Templates['charm-pre-configuration'],
         tooltip: null,
-        tooltipDelay: 0,
-        waitingToShow: false,
         configFileContent: null,
         initializer: function() {
           this.bindModelView(this.get('model'));
@@ -245,7 +240,32 @@ YUI.add('juju-charm-search', function(Y) {
           '.btn#charm-deploy': {click: 'onCharmDeployClicked'},
           '.remove-config-file': {click: 'onFileRemove'},
           '.charm-section h4': {click: toggleSectionVisibility},
-          '.config-file-upload': {change: 'onFileChange'}
+          '.config-file-upload': {change: 'onFileChange'},
+          '.config-field': {focus: 'showDescription',
+            blur: 'hideDescription'},
+          'input.config-field[type=checkbox]':
+              {click: function(evt) {evt.target.focus();}}
+        },
+        showDescription: function(evt) {
+          //console.log('focus', evt, evt.target.getXY());
+          var controlGroup = evt.target.ancestor('.control-group'),
+              node = controlGroup.one('.control-description'),
+              panel = evt.target.ancestor('#juju-search-charm-panel'),
+              text = node.get('text').trim();
+          //console.log(text);
+          this.tooltip.setStdModContent('body', text);
+          var x = panel.getX(),
+              targetRect = evt.target.getClientRect(),
+              widget = this.tooltip.get('boundingBox'),
+              tooltipWidth = parseInt(widget.getStyle('width'), 10),
+              tooltipHeight = parseInt(widget.getStyle('height'), 10),
+              y_offset = (tooltipHeight - targetRect.height) / 2;
+          this.tooltip.move([x - tooltipWidth - 15, targetRect.top - y_offset]);
+          this.tooltip.show();
+        },
+        hideDescription: function(evt) {
+          //console.log('focus', evt, evt.target.getXY());
+          this.tooltip.hide();
         },
         onFileChange: function(evt) {
           console.log('onFileChange:', evt);
@@ -385,62 +405,9 @@ YUI.add('juju-charm-search', function(Y) {
         setupOverlay: function(container) {
           var self = this;
           container.appendChild(Y.Node.create('<div/>'))
-            .set('id', 'tooltip')
-            .addClass('yui3-widget-bd');
-
+            .set('id', 'tooltip');
           self.tooltip = new Y.Overlay({ srcNode: '#tooltip',
-            visible: false}).plug(Y.Plugin.WidgetAnim);
-          self.tooltip.anim.get('animHide').set('duration', 0.01);
-          self.tooltip.anim.get('animShow').set('duration', 0.3);
-          var cg = container.all('.control-group');
-          cg.on('mousemove', function(evt) {
-            // Control tool-tips.
-            if (self.tooltip.get('visible') === false) {
-              // The tooltip element should always exist but sometimes during
-              // testing it is not found, resulting in spurious errors.
-              // Defensive programming here and below solves the problem.
-              var tooltip = Y.one('#tooltip');
-              if (tooltip) {
-                tooltip.setStyle('opacity', '0');
-                self.tooltip.move([(evt.pageX + 5), (evt.pageY + 5)]);
-                tooltip.setStyle('opacity', '1');
-              }
-            }
-            if (self.waitingToShow === false) {
-              // Wait half a second, then show tooltip.
-              self.tooltip.show();
-              setTimeout(function() {
-                var tooltip = Y.one('#tooltip');
-                if (tooltip) {
-                  tooltip.setStyle('opacity', '1');
-                }
-                self.tooltip.show();
-              }, this.get('tooltipDelay'));
-
-              // While waiting to show tooltip, don't let other
-              // mousemoves try to show tooltip too.
-              self.waitingToShow = true;
-
-              // Find the tooltip text, the control-description.
-              var cg = (evt.target.hasClass('control-group')) ?
-                  evt.target :
-                  evt.target.ancestor('.control-group'),
-                  node = cg.one('.control-description'),
-                  text = node.get('text').trim();
-              self.tooltip.setStdModContent('body', text);
-            }
-          });
-
-          cg.on('mouseleave', function(evt) {
-            // this check prevents hiding the tooltip
-            // when the cursor moves over the tooltip itself
-            if ((evt.relatedTarget) &&
-                (evt.relatedTarget.hasClass('yui3-widget-bd') === false)) {
-              self.tooltip.hide();
-              self.waitingToShow = false;
-            }
-          });
-
+            visible: false});
           this.tooltip.render();
         }
       });
@@ -469,8 +436,7 @@ YUI.add('juju-charm-search', function(Y) {
         configurationPanelNode = Y.Node.create(),
         configurationPanel = new CharmConfigurationView(
               { container: configurationPanelNode,
-                app: app,
-                tooltipDelay: testing ? 0 : _tooltipDelay}),
+                app: app}),
         panels =
               { charms: charmsSearchPanel,
                 description: descriptionPanel,
@@ -649,6 +615,7 @@ YUI.add('juju-charm-search', function(Y) {
     'event-key',
     'event-outside',
     'widget-anim',
-    'overlay'
+    'overlay',
+    'svg-layouts'
   ]
 });
