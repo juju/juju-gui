@@ -17,7 +17,7 @@
   <div class="inline juju-service-info-container-separator"></div>
   <div class="inline juju-service-info-container-small">
     <div class="juju-service-container-header-expose">
-     <div class="inline expose-label"><span>Expose</span></div>
+     <div class="inline"><span>Expose</span></div>
      <div class="inline">
      {{#if service.exposed}}
          <img class="unexposeService"
