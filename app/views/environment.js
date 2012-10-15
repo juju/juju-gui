@@ -134,9 +134,7 @@ YUI.add('juju-view-environment', function(Y) {
           // Canvas related
           '#canvas rect:first-child': {
             click: function(d, self) {
-              self.removeSVGClass(
-                  '.service-control-panel.active', 'active');
-
+              self.service_click_actions.toggleControlPanel(null, self);
               self.cancelRelationBuild();
             }
           }
@@ -442,6 +440,7 @@ YUI.add('juju-view-environment', function(Y) {
             .on('dragstart', function(d) {
                 d.oldX = d.x;
                 d.oldY = d.y;
+                self.service_click_actions.toggleControlPanel(null, self);
               })
             .on('drag', function(d, i) {
                 if (self.buildingRelation) {
@@ -1236,7 +1235,13 @@ YUI.add('juju-view-environment', function(Y) {
           toggleControlPanel: function(m, view, context) {
             var container = view.get('container'),
                 cp = container.one('#service-menu');
-            if (cp.hasClass('active')) {
+            // Handle the event here, don't let it
+            // rise to the canvas.
+            if (d3.event.stopPropagation) {
+              d3.event.stopPropagation();
+            }
+
+            if (cp.hasClass('active') || !m) {
               cp.removeClass('active');
               view.set('active_service', null);
               view.set('active_context', null);
