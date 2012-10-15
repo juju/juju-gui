@@ -42,7 +42,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       this.onopen = function() {};
 
     }
-
   };
 
 });

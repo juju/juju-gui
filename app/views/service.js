@@ -11,6 +11,216 @@ YUI.add('juju-view-service', function(Y) {
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
+  var manageUnitsMixin = {
+    // Mixin attributes
+    events: {
+      '#num-service-units': {
+        keydown: 'modifyUnits',
+        blur: 'resetUnits'
+      }
+    },
+
+    resetUnits: function() {
+      var container = this.get('container'),
+          field = container.one('#num-service-units');
+      field.set('value', this.get('model').get('unit_count'));
+      field.set('disabled', false);
+    },
+
+    modifyUnits: function(ev) {
+      if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
+        return;
+      }
+      var container = this.get('container'),
+          field = container.one('#num-service-units');
+
+      if (ev.keyCode === ESC) {
+        this.resetUnits();
+      }
+      if (ev.keyCode !== ENTER) { // If not Enter keyup...
+        return;
+      }
+      ev.halt(true);
+
+      if (/^\d+$/.test(field.get('value'))) {
+        this._modifyUnits(parseInt(field.get('value'), 10));
+      } else {
+        this.resetUnits();
+      }
+    },
+
+    _modifyUnits: function(requested_unit_count) {
+      var service = this.get('model'),
+          unit_count = service.get('unit_count'),
+          field = this.get('container').one('#num-service-units'),
+          env = this.get('app').env;
+
+      if (requested_unit_count < 1) {
+        console.log('You must have at least one unit');
+        field.set('value', unit_count);
+        return;
+      }
+
+      var delta = requested_unit_count - unit_count;
+      if (delta > 0) {
+        // Add units!
+        env.add_unit(
+            service.get('id'), delta,
+            Y.bind(this._addUnitCallback, this));
+      } else if (delta < 0) {
+        delta = Math.abs(delta);
+        var units = this.get('app').db.units.get_units_for_service(service),
+            unit_ids_to_remove = [];
+
+        for (var i = units.length - 1;
+            unit_ids_to_remove.length < delta;
+            i -= 1) {
+          unit_ids_to_remove.push(units[i].id);
+        }
+        env.remove_units(
+            unit_ids_to_remove,
+            Y.bind(this._removeUnitCallback, this)
+        );
+      }
+      field.set('disabled', true);
+    },
+
+    _addUnitCallback: function(ev) {
+      var service = this.get('model'),
+          app = this.get('app'),
+          db = this.get('app').db,
+          unit_names = ev.result || [];
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error adding unit',
+              message: ev.num_units + ' units',
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        db.units.add(
+            Y.Array.map(unit_names, function(unit_id) {
+              return {id: unit_id,
+                agent_state: 'pending'};
+            }));
+        service.set(
+            'unit_count', service.get('unit_count') + unit_names.length);
+      }
+      db.fire('update');
+      // View is redrawn so we do not need to enable field.
+    },
+
+    _removeUnitCallback: function(ev) {
+      var service = this.get('model'),
+          app = this.get('app'),
+          db = this.get('app').db,
+          unit_names = ev.unit_names;
+      console.log('_removeUnitCallback with: ', arguments);
+
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: (function() {
+                if (!ev.unit_names || ev.unit_names.length < 2) {
+                  return 'Error removing unit';
+                }
+                return 'Error removing units';
+              })(),
+              message: (function() {
+                if (!ev.unit_names || ev.unit_names.length === 0) {
+                  return '';
+                }
+                if (ev.unit_names.length > 1) {
+                  return 'Unit names: ' + ev.unit_names.join(', ');
+                }
+                return 'Unit name: ' + ev.unit_names[0];
+              })(),
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        Y.Array.each(unit_names, function(unit_name) {
+          db.units.remove(db.units.getById(unit_name));
+        });
+        service.set(
+            'unit_count', service.get('unit_count') - unit_names.length);
+      }
+      db.fire('update');
+      // View is redrawn so we do not need to enable field.
+    }
+  };
+
+  var removeServiceMixin = {
+    // Mixin attributes
+    events: {
+      '#destroy-service': {
+        click: 'confirmDestroy'
+      }
+    },
+
+    confirmDestroy: function(ev) {
+      // We wait to make the panel until now, because in the render method
+      // the container is not yet part of the document.
+      ev.preventDefault();
+      if (Y.Lang.isUndefined(this.panel)) {
+        this.panel = views.createModalPanel(
+            'Are you sure you want to destroy the service?  ' +
+            'This cannot be undone.',
+            '#destroy-modal-panel',
+            'Destroy Service',
+            Y.bind(this.destroyService, this)
+            );
+      }
+      this.panel.show();
+    },
+
+    destroyService: function(ev) {
+      ev.preventDefault();
+      var env = this.get('app').env,
+          service = this.get('model');
+      ev.target.set('disabled', true);
+      env.destroy_service(
+          service.get('id'), Y.bind(this._destroyCallback, this));
+    },
+
+    _destroyCallback: function(ev) {
+      var db = this.get('app').db,
+          app = this.get('app'),
+          service = this.get('model'),
+          service_id = service.get('id');
+
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error destroying service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: app.getModelURL(service),
+              modelId: service
+            })
+        );
+      } else {
+        db.services.remove(service);
+        db.relations.remove(
+            db.relations.filter(
+            function(r) {
+              return Y.Array.some(r.get('endpoints'), function(ep) {
+                return ep[0] === service_id;
+              });
+            }
+            ));
+        this.panel.hide();
+        this.panel.destroy();
+        this.fire('showEnvironment');
+      }
+    }
+  };
+
   var exposeButtonMixin = {
     events: {
       '.unexposeService': {click: 'unexposeService'},
@@ -72,14 +282,79 @@ YUI.add('juju-view-service', function(Y) {
     }
   };
 
-  var ServiceRelations = Y.Base.create(
-      'ServiceRelationsView', Y.View, [views.JujuBaseView], {
-
-        template: Templates['service-relations'],
+  var ServiceViewBase = Y.Base.create('ServiceViewBase', Y.View,
+      [views.JujuBaseView], {
 
         initializer: function() {
           Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
+          Y.mix(this, manageUnitsMixin, undefined, undefined, undefined, true);
+          Y.mix(this, removeServiceMixin, undefined, undefined, undefined,
+              true);
+
+          // Bind visualization resizing on window resize.
+          Y.on('windowresize', Y.bind(function() {
+            this.fitToWindow();
+          }, this));
         },
+
+        getServiceTabs: function(href) {
+          var tabs = [{
+            href: '.',
+            title: 'Units',
+            active: false
+          }, {
+            href: 'relations',
+            title: 'Relations',
+            active: false
+          }, {
+            href: 'config',
+            title: 'Settings',
+            active: false
+          }, {
+            href: 'constraints',
+            title: 'Constraints',
+            active: false
+          }];
+
+          Y.each(tabs, function(value) {
+            if (value.href === href) {
+              value.active = true;
+            }
+          });
+
+          return tabs;
+        },
+
+        fitToWindow: function() {
+          function getHeight(node) {
+            if (!node) {
+              return 0;
+            }
+            return node.getDOMNode().clientHeight;
+          }
+
+          var navbarHeight = getHeight(Y.one('.navbar')),
+              windowHeight = window.innerHeight,
+              container = this.get('container'),
+              viewContainer = container.one('.view-container'),
+              headerHeight = getHeight(container.one(
+                  '.service-header-partial')),
+              footerHeight = getHeight(container.one(
+              '.juju-service-info-container-bottom-menu')),
+              size = Math.max(windowHeight, 600) - navbarHeight -
+              headerHeight - footerHeight - 1;
+
+          if (viewContainer) {
+            viewContainer.set('offsetHeight', size);
+          }
+        }
+      });
+  views.serviceBase = ServiceViewBase;
+
+  var ServiceRelations = Y.Base.create(
+      'ServiceRelationsView', ServiceViewBase, [views.JujuBaseView], {
+
+        template: Templates['service-relations'],
 
         events: {
           '#service-relations .btn': {click: 'confirmRemoved'}
@@ -103,7 +378,9 @@ YUI.add('juju-view-service', function(Y) {
           });
 
           container.setHTML(this.template(
-              { service: service.getAttrs(),
+              { viewName: 'relations',
+                tabs: this.getServiceTabs('relations'),
+                service: service.getAttrs(),
                 relations: relation_data,
                 charm: this.renderable_charm(service.get('charm'), app)}
               ));
@@ -185,13 +462,9 @@ YUI.add('juju-view-service', function(Y) {
   views.service_relations = ServiceRelations;
 
   var ServiceConstraints = Y.Base.create(
-      'ServiceConstraintsView', Y.View, [views.JujuBaseView], {
+      'ServiceConstraintsView', ServiceViewBase, [views.JujuBaseView], {
 
         template: Templates['service-constraints'],
-
-        initializer: function() {
-          Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
-        },
 
         events: {
           '#save-service-constraints': {click: 'updateConstraints'}
@@ -228,6 +501,7 @@ YUI.add('juju-view-service', function(Y) {
               env = this.get('app').env,
               app = this.get('app'),
               db = this.get('app').db;
+
           if (ev.err) {
             db.notifications.add(
                 new models.Notification({
@@ -244,6 +518,13 @@ YUI.add('juju-view-service', function(Y) {
           } else {
             env.get_service(
                 service.get('id'), Y.bind(app.load_service, app));
+
+            // The usual result of a successful request is a page refresh.
+            // Therefore, we need to set this delay in order to show the
+            // "success" message after the page page refresh.
+            setTimeout(function() {
+              utils.showSuccessMessage(container, 'Constraints updated');
+            }, 1000);
           }
         },
 
@@ -278,6 +559,8 @@ YUI.add('juju-view-service', function(Y) {
 
           console.log('service constraints', display_constraints);
           container.setHTML(this.template({
+            viewName: 'constraints',
+            tabs: this.getServiceTabs('constraints'),
             service: service.getAttrs(),
             constraints: display_constraints,
             readOnlyConstraints: (function() {
@@ -298,13 +581,9 @@ YUI.add('juju-view-service', function(Y) {
   views.service_constraints = ServiceConstraints;
 
   var ServiceConfigView = Y.Base.create(
-      'ServiceConfigView', Y.View, [views.JujuBaseView], {
+      'ServiceConfigView', ServiceViewBase, [views.JujuBaseView], {
 
         template: Templates['service-config'],
-
-        initializer: function() {
-          Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
-        },
 
         events: {
           '#save-service-config': {click: 'saveConfig'}
@@ -358,7 +637,9 @@ YUI.add('juju-view-service', function(Y) {
           console.log('render view svc config', service.getAttrs(), settings);
 
           container.setHTML(this.template(
-              {service: service.getAttrs(),
+              { viewName: 'config',
+                tabs: this.getServiceTabs('config'),
+                service: service.getAttrs(),
                 settings: settings,
                 charm: this.renderable_charm(service.get('charm'), app)}
               ));
@@ -439,6 +720,7 @@ YUI.add('juju-view-service', function(Y) {
               env = this.get('app').env,
               app = this.get('app'),
               db = this.get('app').db;
+
           if (ev.err) {
             db.notifications.add(
                 new models.Notification({
@@ -454,6 +736,13 @@ YUI.add('juju-view-service', function(Y) {
 
           } else {
             env.get_service(service.get('id'), Y.bind(app.load_service, app));
+
+            // The usual result of a successful request is a page refresh.
+            // Therefore, we need to set this delay in order to show the
+            // "success" message after the page page refresh.
+            setTimeout(function() {
+              utils.showSuccessMessage(container, 'Settings updated');
+            }, 1000);
           }
         }
       });
@@ -483,265 +772,77 @@ YUI.add('juju-view-service', function(Y) {
     return utils.stateToStyle(state);
   });
 
-  var ServiceView = Y.Base.create('ServiceView', Y.View, [views.JujuBaseView], {
+  var ServiceView = Y.Base.create('ServiceView', ServiceViewBase,
+      [views.JujuBaseView], {
 
-    template: Templates.service,
+        template: Templates.service,
 
-    initializer: function() {
-      Y.mix(this, exposeButtonMixin, undefined, undefined, undefined, true);
-    },
+        render: function() {
+          console.log('service view render');
 
-    render: function() {
-      console.log('service view render');
+          var container = this.get('container'),
+              app = this.get('app'),
+              service = this.get('model'),
+              filter_state = this.get('querystring').state;
 
-      var container = this.get('container'),
-          app = this.get('app'),
-          service = this.get('model'),
-          filter_state = this.get('querystring').state,
-          state_data = [{title: 'All', active: !filter_state, link: '.'}];
+          if (!service) {
+            container.setHTML('<div class="alert">Loading...</div>');
+            console.log('waiting on service data');
+            return this;
+          }
 
-      if (!service) {
-        container.setHTML('<div class="alert">Loading...</div>');
-        console.log('waiting on service data');
-        return this;
-      }
-      Y.each(['Running', 'Pending', 'Error'], function(title) {
-        var lower = title.toLowerCase();
-        state_data.push({
-          title: title,
-          active: lower === filter_state,
-          link: '?state=' + lower});
-      });
-      container.setHTML(this.template({
-        service: service.getAttrs(),
-        charm: this.renderable_charm(service.get('charm'), app),
-        state: filter_state,
-        units: this.filterUnits(
-            filter_state, app.db.units.get_units_for_service(service)),
-        states: state_data,
-        filtered: !!filter_state
-      }));
-      return this;
-    },
+          var units = app.db.units.get_units_for_service(service),
+              state_data = [{
+                title: 'All',
+                link: '.',
+                active: !filter_state,
+                count: this.filterUnits(null, units).length
+              }];
 
-    filterUnits: function(filter_state, units) {
-      // If filtering was requested, do it.
-      if (filter_state) {
-        // Build a matcher that will identify units of the requested state.
-        var matcher = function(unit) {
-          // Is this unit's (simplified) state the one we are looking for?
-          return utils.simplifyState(unit) === filter_state;
-        };
-        return Y.Array.filter(units, matcher);
-      } else { // Otherwise just return all the units we were given.
-        return units;
-      }
-    },
+          Y.each(['Running', 'Pending', 'Error'], function(title) {
+            var lower = title.toLowerCase();
+            state_data.push({
+              title: title,
+              active: lower === filter_state,
+              count: this.filterUnits(lower, units).length,
+              link: '?state=' + lower});
+          }, this);
+          container.setHTML(this.template({
+            viewName: 'units',
+            tabs: this.getServiceTabs('.'),
+            service: service.getAttrs(),
+            charm: this.renderable_charm(service.get('charm'), app),
+            state: filter_state,
+            units: this.filterUnits(filter_state, units),
+            states: state_data
+          }));
+          return this;
+        },
 
-    events: {
-      '#num-service-units': {keydown: 'modifyUnits', blur: 'resetUnits'},
-      'div.unit': {click: function(ev) {
-        console.log('Unit clicked', ev.currentTarget.get('id'));
-        this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
-      }},
-      'a#destroy-service': {click: 'confirmDestroy'}
-    },
+        filterUnits: function(filter_state, units) {
+          // If filtering was requested, do it.
+          if (filter_state) {
+            // Build a matcher that will identify units of the requested state.
+            var matcher = function(unit) {
+              // Is this unit's (simplified) state the one we are looking for?
+              return utils.simplifyState(unit) === filter_state;
+            };
+            return Y.Array.filter(units, matcher);
+          } else { // Otherwise just return all the units we were given.
+            return units;
+          }
+        },
 
-    confirmDestroy: function(ev) {
-      // We wait to make the panel until now, because in the render method
-      // the container is not yet part of the document.
-      ev.preventDefault();
-      if (Y.Lang.isUndefined(this.panel)) {
-        this.panel = views.createModalPanel(
-            'Are you sure you want to destroy the service?  ' +
-            'This cannot be undone.',
-            '#destroy-modal-panel',
-            'Destroy Service',
-            Y.bind(this.destroyService, this)
-            );
-      }
-      this.panel.show();
-    },
-
-    destroyService: function(ev) {
-      ev.preventDefault();
-      var env = this.get('app').env,
-          service = this.get('model');
-      ev.target.set('disabled', true);
-      env.destroy_service(
-          service.get('id'), Y.bind(this._destroyCallback, this));
-    },
-
-    _destroyCallback: function(ev) {
-      var db = this.get('app').db,
-          app = this.get('app'),
-          service = this.get('model'),
-          service_id = service.get('id');
-
-      if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error destroying service',
-              message: 'Service name: ' + ev.service_name,
-              level: 'error',
-              link: app.getModelURL(service),
-              modelId: service
-            })
-        );
-      } else {
-        db.services.remove(service);
-        db.relations.remove(
-            db.relations.filter(
-            function(r) {
-              return Y.Array.some(r.get('endpoints'), function(ep) {
-                return ep[0] === service_id;
-              });
-            }
-            ));
-        this.panel.hide();
-        this.panel.destroy();
-        this.fire('showEnvironment');
-      }
-    },
-
-    resetUnits: function() {
-      var container = this.get('container'),
-          field = container.one('#num-service-units');
-      field.set('value', this.get('model').get('unit_count'));
-      field.set('disabled', false);
-    },
-
-    modifyUnits: function(ev) {
-      if (ev.keyCode !== ESC && ev.keyCode !== ENTER) {
-        return;
-      }
-      var container = this.get('container'),
-          field = container.one('#num-service-units');
-
-      if (ev.keyCode === ESC) {
-        this.resetUnits();
-      }
-      if (ev.keyCode !== ENTER) { // If not Enter keyup...
-        return;
-      }
-      ev.halt(true);
-
-      if (/^\d+$/.test(field.get('value'))) {
-        this._modifyUnits(parseInt(field.get('value'), 10));
-      } else {
-        this.resetUnits();
-      }
-    },
-
-    _modifyUnits: function(requested_unit_count) {
-
-      var service = this.get('model'),
-          unit_count = service.get('unit_count'),
-          field = this.get('container').one('#num-service-units'),
-          env = this.get('app').env;
-
-      if (requested_unit_count < 1) {
-        console.log('You must have at least one unit');
-        field.set('value', unit_count);
-        return;
-      }
-
-      var delta = requested_unit_count - unit_count;
-      if (delta > 0) {
-        // Add units!
-        env.add_unit(
-            service.get('id'), delta,
-            Y.bind(this._addUnitCallback, this));
-      } else if (delta < 0) {
-        delta = Math.abs(delta);
-        var units = this.get('app').db.units.get_units_for_service(service),
-            unit_ids_to_remove = [];
-
-        for (var i = units.length - 1;
-            unit_ids_to_remove.length < delta;
-            i -= 1) {
-          unit_ids_to_remove.push(units[i].id);
+        events: {
+          'div.unit': {click: function(ev) {
+            console.log('Unit clicked', ev.currentTarget.get('id'));
+            this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
+          }}
         }
-        env.remove_units(
-            unit_ids_to_remove,
-            Y.bind(this._removeUnitCallback, this)
-        );
-      }
-      field.set('disabled', true);
-    },
-
-    _addUnitCallback: function(ev) {
-      var service = this.get('model'),
-          service_id = service.get('id'),
-          app = this.get('app'),
-          db = this.get('app').db,
-          unit_names = ev.result || [];
-      if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: 'Error adding unit',
-              message: ev.num_units + ' units',
-              level: 'error',
-              link: app.getModelURL(service),
-              modelId: service
-            })
-        );
-      } else {
-        db.units.add(
-            Y.Array.map(unit_names, function(unit_id) {
-              return {id: unit_id,
-                agent_state: 'pending'};
-            }));
-        service.set(
-            'unit_count', service.get('unit_count') + unit_names.length);
-      }
-      db.fire('update');
-      // View is redrawn so we do not need to enable field.
-    },
-
-    _removeUnitCallback: function(ev) {
-      var service = this.get('model'),
-          app = this.get('app'),
-          db = this.get('app').db,
-          unit_names = ev.unit_names;
-      console.log('_removeUnitCallback with: ', arguments);
-
-      if (ev.err) {
-        db.notifications.add(
-            new models.Notification({
-              title: (function() {
-                if (!ev.unit_names || ev.unit_names.length < 2) {
-                  return 'Error removing unit';
-                }
-                return 'Error removing units';
-              })(),
-              message: (function() {
-                if (!ev.unit_names || ev.unit_names.length === 0) {
-                  return '';
-                }
-                if (ev.unit_names.length > 1) {
-                  return 'Unit names: ' + ev.unit_names.join(', ');
-                }
-                return 'Unit name: ' + ev.unit_names[0];
-              })(),
-              level: 'error',
-              link: app.getModelURL(service),
-              modelId: service
-            })
-        );
-      } else {
-        Y.Array.each(unit_names, function(unit_name) {
-          db.units.remove(db.units.getById(unit_name));
-        });
-        service.set(
-            'unit_count', service.get('unit_count') - unit_names.length);
-      }
-      db.fire('update');
-      // View is redrawn so we do not need to enable field.
-    }
-  });
+      });
 
   views.service = ServiceView;
+
 }, '0.1.0', {
   requires: ['panel',
     'juju-view-utils',
@@ -752,5 +853,6 @@ YUI.add('juju-view-service', function(Y) {
     'view',
     'event-key',
     'transition',
+    'event-resize',
     'json-stringify']
 });

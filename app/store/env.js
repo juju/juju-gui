@@ -71,7 +71,10 @@ YUI.add('juju-env', function(Y) {
 
       var msg = Y.JSON.parse(evt.data);
       if (msg.ready) {
+        // The "ready" attribute indicates that this is a server's initial
+        // greeting.  It provides a few initial values that we care about.
         this.set('providerType', msg.provider_type);
+        this.set('defaultSeries', msg.default_series);
       }
       if (msg.version === 0) {
         console.log('Env: Handshake Complete');
@@ -149,13 +152,14 @@ YUI.add('juju-env', function(Y) {
           {'op': 'get_service', 'service_name': service_name}, callback);
     },
 
-    deploy: function(charm_url, service_name, config, callback) {
-      console.log(charm_url, service_name, config);
+    deploy: function(charm_url, service_name, config, num_units, callback) {
+      console.log(charm_url, service_name, config, num_units);
       this._send_rpc(
           { op: 'deploy',
             service_name: service_name,
             config: config,
-            charm_url: charm_url},
+            charm_url: charm_url,
+            num_units: num_units},
           callback);
     },
 
@@ -204,7 +208,13 @@ YUI.add('juju-env', function(Y) {
         unit_name: unit_name,
         relation_name: relation_name || null,
         retry: retry || false}, callback);
+    },
+
+    get_endpoints: function(services, callback) {
+      this._send_rpc({'op': 'get_endpoints', 'service_names': services},
+                     callback);
     }
+
 
   });
 

@@ -4,7 +4,6 @@ YUI.add('juju-notification-controller', function(Y) {
 
   var juju = Y.namespace('juju');
 
-
   var _changeNotificationOpToWords = function(op) {
     if (op === 'add') {
       return 'created';
@@ -25,6 +24,10 @@ YUI.add('juju-notification-controller', function(Y) {
     },
     message: function(change_type, change_op, change_data, notify_data) {
       var action = _changeNotificationOpToWords(change_op);
+      if (change_op === 'remove') {
+        // We don't have endpoint data on removed.
+        return 'Relation removed';
+      }
       if (!change_data.endpoints) {
         return ('Relation was ' + action);
       }
@@ -231,4 +234,3 @@ YUI.add('juju-notification-controller', function(Y) {
 }, '0.1.0', {
   requires: ['juju-models']
 });
-

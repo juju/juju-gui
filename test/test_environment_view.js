@@ -35,6 +35,14 @@
           'id': 'relation-0000000000'
         }],
         ['relation', 'add', {
+          'interface': 'juju-info',
+          'scope': 'container',
+          'endpoints':
+           [['wordpress', {'role': 'server', 'name': 'juju-info'}],
+            ['puppet', {'role': 'client', 'name': 'juju-info'}]],
+          'id': 'relation-0000000007'
+        }],
+        ['relation', 'add', {
           'interface': 'mysql',
           'scope': 'global',
           'endpoints':
@@ -120,11 +128,15 @@
             env: env
           });
           view.render();
-          container.all('.service-border').size().should.equal(4);
+          container.all('.service').size().should.equal(4);
 
           // Count all the real relations.
           (container.all('.relation').size() -
            container.all('.pending-relation').size())
+              .should.equal(2);
+
+          // Count all the subordinate relations.
+          container.all('.subordinate-rel-group').size()
               .should.equal(1);
 
           // Verify that the paths render 'properly' where this
@@ -152,6 +164,22 @@
 
           done();
         }
+    );
+
+    it('must be able to render subordinate relation indicators',
+       function() {
+         var view = new views.environment({
+           container: container,
+           db: db,
+           env: env
+         }).render();
+         var rel_block = container.one('.sub-rel-count').getDOMNode();
+
+         // Get the contents of the subordinate relation count; YUI cannot
+         // get this directly as the node is not an HTMLElement, so use
+         // native SVG methods.
+         rel_block.firstChild.nodeValue.should.equal('1');
+       }
     );
 
     // Ensure that the zoom controls work
@@ -271,8 +299,16 @@
 
     it('must be able to add a relation from the control panel',
        function() {
+         // Mock endpoints
+         var existing = models.getEndpoints;
+         models.getEndpoints = function() {
+           return {requires: [],
+             provides: []};
+         };
+
          var view = new views.environment({
            container: container,
+           app: {serviceEndpoints: {}},
            db: db,
            env: env
          }).render();
@@ -284,12 +320,14 @@
          add_rel.simulate('click');
          container.all('.selectable-service')
                .size()
-               .should.equal(3);
+               .should.equal(1);
          service.next().simulate('click');
          container.all('.selectable-service').size()
             .should.equal(0);
-         // The database is initialized with two relations in beforeEach.
-         assert.equal(3, db.relations.size());
+         // The database is initialized with three relations in beforeEach.
+         assert.equal(4, db.relations.size());
+         // restore original getEndpoints function
+         models.getEndpoints = existing;
        });
 
     it('must be able to remove a relation between services',
