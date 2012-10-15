@@ -134,9 +134,7 @@ YUI.add('juju-view-environment', function(Y) {
           // Canvas related
           '#canvas rect:first-child': {
             click: function(d, self) {
-              self.removeSVGClass(
-                  '.service-control-panel.active', 'active');
-
+              self.service_click_actions.toggleControlPanel(null, self);
               self.cancelRelationBuild();
             }
           }
@@ -459,6 +457,7 @@ YUI.add('juju-view-environment', function(Y) {
                   if (self.get('active_service') === d) {
                     self.updateServiceMenuLocation();
                   }
+                  self.service_click_actions.toggleControlPanel(null, self);
                   updateLinks();
                 }
               })
@@ -1236,7 +1235,8 @@ YUI.add('juju-view-environment', function(Y) {
           toggleControlPanel: function(m, view, context) {
             var container = view.get('container'),
                 cp = container.one('#service-menu');
-            if (cp.hasClass('active')) {
+
+            if (cp.hasClass('active') || !m) {
               cp.removeClass('active');
               view.set('active_service', null);
               view.set('active_context', null);
@@ -1372,6 +1372,11 @@ YUI.add('juju-view-environment', function(Y) {
                 db = view.get('db'),
                 source = view.get('addRelationStart_service'),
                 relation_id = 'pending:' + source.id + m.id;
+
+            if (m.id === source.id) {
+              view.set('currentServiceClickAction', 'toggleControlPanel');
+              return;
+            }
 
             // Create a pending relation in the database between the
             // two services.

@@ -724,6 +724,7 @@ g.unit {
             border-bottom: 1px dotted black;
             cursor: pointer;
             margin-top: 1ex;
+            margin-bottom: 1ex;
         }
         h5 {
             margin-top: 1ex;
@@ -754,7 +755,9 @@ g.unit {
             .control-group {
                 width: auto;
                 margin-bottom: 0;
+                margin-top: 1ex;
                 padding-bottom: 0;
+                clear: both;
             }
             .control-description {
                 display: none;
@@ -762,6 +765,7 @@ g.unit {
             .control-label {
                 width: auto;
                 margin-bottom: 1ex;
+                float: left;
             }
             .control-label:after {
                 content: ":";
@@ -769,10 +773,8 @@ g.unit {
             .controls {
                 margin-left: auto;
                 margin-right: 0;
-                clear: both;
             }
             .controls.boolean {
-                clear: none;
                 input {
                     margin-left: 1ex;
                     margin-top: 0.7ex;
