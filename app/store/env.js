@@ -154,6 +154,11 @@ YUI.add('juju-env', function(Y) {
 
     deploy: function(charm_url, service_name, config, config_raw, num_units,
                      callback) {
+      // Only one of config and config_raw should be provided, though
+      // config_raw takes precedence if it is given.
+      // config is an object holding the charm configuration options.
+      // config_raw is a string containing a YAML representation of the charm
+      // configuration options.
       console.log(charm_url, service_name, config, config_raw, num_units);
       this._send_rpc(
           { op: 'deploy',
@@ -191,6 +196,11 @@ YUI.add('juju-env', function(Y) {
     },
 
     set_config: function(service, config, data, callback) {
+      // Only one of config and data should be provided, though
+      // data takes precedence if it is given.
+      // config is an object holding the charm configuration options.
+      // data is a string containing a YAML representation of the charm
+      // configuration options.
       this._send_rpc({
         op: 'set_config',
         service_name: service,

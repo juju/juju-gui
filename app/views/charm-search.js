@@ -218,7 +218,6 @@ YUI.add('juju-charm-search', function(Y) {
         tooltipDelay: 0,
         waitingToShow: false,
         configFileContent: null,
-        configFileLoaded: false,
         initializer: function() {
           this.bindModelView(this.get('model'));
         },
@@ -260,7 +259,6 @@ YUI.add('juju-charm-search', function(Y) {
         onFileRemove: function(evt) {
           var container = this.get('container');
           this.configFileContent = null;
-          this.configFileLoaded = false;
           container.one('.remove-config-file').addClass('hidden');
           container.one('.charm-settings').show();
           // Replace the file input node.  There does not appear to be any way
@@ -273,14 +271,25 @@ YUI.add('juju-charm-search', function(Y) {
         },
         onFileLoaded: function(evt) {
           this.configFileContent = evt.target.result;
-          this.configFileLoaded = true;
+
+          if (!this.configFileContent) {
+            // Some file read errors don't go through the error handler as
+            // expected but instead return an empty string.  Warn the user if
+            // this happens.
+            app.db.notifications.add(
+                new models.Notification({
+                  title: 'Configuration file error',
+                  message: 'The configuration file loaded is empty.  ' +
+                    'Do you have read access?',
+                  level: 'error'
+                }));
+          }
           this.get('container').one('.charm-settings').hide();
           this.get('container').one('.remove-config-file')
             .removeClass('hidden');
           console.log(this.configFileContent);
         },
         onFileError: function(evt) {
-          // TODO show error message
           console.log('onFileError:', evt);
           var msg;
           switch (evt.target.error.code) {
@@ -333,7 +342,7 @@ YUI.add('juju-charm-search', function(Y) {
                 }));
             return;
           }
-          if (this.configFileLoaded) {
+          if (this.configFileContent) {
             config = null;
           }
           numUnits = parseInt(numUnits, 10);
