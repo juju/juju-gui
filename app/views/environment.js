@@ -1373,6 +1373,11 @@ YUI.add('juju-view-environment', function(Y) {
                 source = view.get('addRelationStart_service'),
                 relation_id = 'pending:' + source.id + m.id;
 
+            if (m.id === source.id) {
+             view.set('currentServiceClickAction', 'toggleControlPanel');
+             return;
+            }
+
             // Create a pending relation in the database between the
             // two services.
             db.relations.create({
