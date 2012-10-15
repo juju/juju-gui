@@ -310,7 +310,7 @@ describe('juju application notifications', function() {
              };
 
        views.environment.prototype.service_click_actions.addRelationEnd
-           .apply(view, [{}, view]);
+           .apply(view, [{id: 1}, view]);
 
        assertNotificationNumber('1');
 
