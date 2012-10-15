@@ -1374,8 +1374,8 @@ YUI.add('juju-view-environment', function(Y) {
                 relation_id = 'pending:' + source.id + m.id;
 
             if (m.id === source.id) {
-             view.set('currentServiceClickAction', 'toggleControlPanel');
-             return;
+              view.set('currentServiceClickAction', 'toggleControlPanel');
+              return;
             }
 
             // Create a pending relation in the database between the
