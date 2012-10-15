@@ -22,7 +22,7 @@ describe('charm configuration', function() {
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div id="test-container" />');
+    container = Y.Node.create('<div id="juju-search-charm-panel" />');
     Y.one('#main').append(container);
     db = new models.Database();
     app = { db: db };
@@ -195,7 +195,7 @@ describe('charm configuration', function() {
     charm.loaded = true;
     view.render();
     var tooltip = view.tooltip,
-        controls = container.all('.control-group');
+        controls = container.all('.control-group input');
     tooltip.get('srcNode').get('text').should.equal('');
 
     // There are five control groups, the three corresponding to the options

@@ -242,9 +242,9 @@ YUI.add('juju-charm-search', function(Y) {
           '.charm-section h4': {click: toggleSectionVisibility},
           '.config-file-upload': {change: 'onFileChange'},
           '.config-field': {focus: 'showDescription',
-                            blur: 'hideDescription'},
+            blur: 'hideDescription'},
           'input.config-field[type=checkbox]':
-              {click: function(evt) {evt.target.focus()}}
+              {click: function(evt) {evt.target.focus();}}
         },
         showDescription: function(evt) {
           console.log('focus', evt, evt.target.getXY());
@@ -256,11 +256,11 @@ YUI.add('juju-charm-search', function(Y) {
           this.tooltip.setStdModContent('body', text);
           var x = panel.getX(),
               targetRect = evt.target.getClientRect(),
-              widget = this.tooltip.bodyNode.ancestor('.yui3-widget'),
+              widget = this.tooltip.get('boundingBox'),
               tooltipWidth = parseInt(widget.getStyle('width'), 10),
               tooltipHeight = parseInt(widget.getStyle('height'), 10),
               y_offset = (tooltipHeight - targetRect.height) / 2;
-          this.tooltip.move([x-tooltipWidth-15, targetRect.top - y_offset]);
+          this.tooltip.move([x - tooltipWidth - 15, targetRect.top - y_offset]);
           this.tooltip.show();
         },
         hideDescription: function(evt) {
@@ -407,7 +407,7 @@ YUI.add('juju-charm-search', function(Y) {
           container.appendChild(Y.Node.create('<div/>'))
             .set('id', 'tooltip');
           self.tooltip = new Y.Overlay({ srcNode: '#tooltip',
-                                         visible: false});
+            visible: false});
           this.tooltip.render();
         }
       });
