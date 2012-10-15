@@ -145,8 +145,6 @@ YUI.add('juju-view-environment', function(Y) {
             'mousedown.addrel': function(d, self) {
               var evt = d3.event;
               self.longClickTimer = Y.later(750, this, function(d, e) {
-                self.longClickTimer = null;
-
                 // Provide some leeway for accidental dragging.
                 if ((Math.abs(d.x - d.oldX) + Math.abs(d.y - d.oldY)) /
                     2 > 5) {
@@ -181,7 +179,6 @@ YUI.add('juju-view-environment', function(Y) {
               // Cancel the long-click timer if it exists.
               if (self.longClickTimer) {
                 self.longClickTimer.cancel();
-                self.longClickTimer = null;
               }
             }
           }
@@ -445,10 +442,9 @@ YUI.add('juju-view-environment', function(Y) {
                 if (self.buildingRelation) {
                   self.addRelationDrag.call(self, d, this);
                 } else {
-                  /*if (self.longClickTimer) {
+                  if (self.longClickTimer) {
                     self.longClickTimer.cancel();
-                    self.longClickTimer = null;
-                  }*/
+                  }
                   d.x += d3.event.dx;
                   d.y += d3.event.dy;
                   d3.select(this).attr('transform', function(d, i) {
