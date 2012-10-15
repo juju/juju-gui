@@ -3,17 +3,18 @@
     <div class="well control-description">
       {{description}}
     </div>
-    <div class="control-label" for="{{name}}">{{name}} ({{type}})</div>
     {{#if isBool}}
-    <div class="controls boolean">
-      <input class="config-field boolean" type="checkbox" name="{{name}}"
-          id="input-{{name}}" {{value}}/>
-    </div>
+    <div class="control-label" for="{{name}}">{{name}}</div>
+      <div class="controls boolean">
+        <input class="config-field boolean" type="checkbox" name="{{name}}"
+            id="input-{{name}}" {{value}}/>
+      </div>
     {{else}}
-    <div class="controls">
-      <input class="config-field" type="text" name="{{name}}"
-          id="input-{{name}}" value="{{value}}"/>
-    </div>
+    <div class="control-label" for="{{name}}">{{name}} ({{type}})</div>
+      <div class="controls">
+        <input class="config-field" type="text" name="{{name}}"
+            id="input-{{name}}" value="{{value}}"/>
+      </div>
     {{/if}}
   </div>
 {{/settings}}

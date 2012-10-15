@@ -75,7 +75,7 @@ describe('charm configuration', function() {
     view.render();
     container.all('div.control-label').get('text').should.eql(
         ['Service name', 'Number of units', 'option0 (string)',
-         'option1 (boolean)', 'option2 (int)']);
+         'option1', 'option2 (int)']);
   });
 
   it('must deploy a charm with default value', function() {
@@ -277,7 +277,6 @@ describe('charm configuration', function() {
     view.render();
     view.onFileLoaded({target: {result: 'yaml yaml yaml'}});
     view.configFileContent.should.equal('yaml yaml yaml');
-    view.configFileLoaded.should.equal(true);
     container.one('.charm-settings').getStyle('display').should.equal('none');
     container.one('.remove-config-file').hasClass('hidden').should.equal(false);
   });
@@ -300,7 +299,6 @@ describe('charm configuration', function() {
     charm.loaded = true;
     view.render();
     view.fileInput = container.one('.config-file-upload');
-    view.configFileLoaded = true;
     view.configFileContent = 'how now brown cow';
     container.one('.remove-config-file').simulate('click');
     var _ = expect(view.configFileContent).to.not.exist;
@@ -335,7 +333,6 @@ describe('charm configuration', function() {
     charm.loaded = true;
     view.render();
     var config_raw = 'tuning-level: \n expert';
-    view.configFileLoaded = true;
     view.configFileContent = config_raw;
     container.one('#charm-deploy').simulate('click');
     var _ = expect(received_config).to.not.exist;

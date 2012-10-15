@@ -31,16 +31,18 @@
       {{/with}}
 
       {{#if settings}}
-      <input class="config-file-upload" type="file">
-      <button class="remove-config-file hidden">Remove File</button>
       <!-- Service configuration form -->
-      <div class="charm-section charm-settings">
+      <div class="charm-section">
         <h4><i class="icon-chevron-right"></i> Service Settings</h4>
+        <input class="config-file-upload" type="file">
+        <button class="remove-config-file hidden">Remove File</button>
+        <div class="charm-settings">
         <form>
           <div id="service-config" class="collapsible">
             {{> service-config}}
           </div>
         </form>
+        </div>
       </div>
       {{/if}}
 

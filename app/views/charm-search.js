@@ -276,11 +276,12 @@ YUI.add('juju-charm-search', function(Y) {
             // Some file read errors don't go through the error handler as
             // expected but instead return an empty string.  Warn the user if
             // this happens.
+            var app = this.get('app');
             app.db.notifications.add(
                 new models.Notification({
                   title: 'Configuration file error',
                   message: 'The configuration file loaded is empty.  ' +
-                    'Do you have read access?',
+                      'Do you have read access?',
                   level: 'error'
                 }));
           }
