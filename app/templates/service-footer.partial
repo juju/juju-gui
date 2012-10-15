@@ -1,8 +1,7 @@
 <div class="juju-service-info-container-bottom-menu">
-  <div class="juju-service-info-container-bottom-menu-wrapper">
-    <div class="inline">
-     <a class="btn" id="destroy-service" data-toggle="modal" 
-       href="#destroy-service-modal">Destroy Service</a>
-    </div>
+  <div class="destroy-control">
+    <a id="destroy-service" data-toggle="modal" href="#destroy-service-modal">
+    <img src="/juju-ui/assets/images/destroy_icon.png">Destroy</a>
+    <img class="divider" src="/juju-ui/assets/images/bottom_bar_big_div.png">
   </div>
 </div> 
