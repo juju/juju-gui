@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "d3": ">=2.10.1",
-    "yui": ">=3.6.0",
+    "yui": ">=3.7.0",
     "mocha": "1.5.x",
     "express": "3.x",
     "expect.js": "0.1.2",
