@@ -75,7 +75,7 @@ describe('charm configuration', function() {
     view.render();
     container.all('div.control-label').get('text').should.eql(
         ['Service name', 'Number of units', 'option0 (string)',
-         'option1 (boolean)', 'option2 (int)']);
+         'option1', 'option2 (int)']);
   });
 
   it('must deploy a charm with default value', function() {
@@ -91,6 +91,7 @@ describe('charm configuration', function() {
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
+          tooltipDelay: 0,
           app: app});
     app.env = env;
     charm.loaded = true;
@@ -107,17 +108,19 @@ describe('charm configuration', function() {
         received_service_name,
         received_config,
         received_num_units,
-        env = {deploy: function(charm_url, service_name, config, num_units) {
-          deployed = true;
-          received_charm_url = charm_url;
-          received_service_name = service_name;
-          received_config = config;
-          received_num_units = num_units;
-        }},
+        env = {deploy: function(charm_url, service_name, config, config_raw,
+                                num_units) {
+            deployed = true;
+            received_charm_url = charm_url;
+            received_service_name = service_name;
+            received_config = config;
+            received_num_units = num_units;
+          }},
         charm = new models.Charm({id: 'precise/mysql'}),
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
+          tooltipDelay: 0,
           app: app});
     app.env = env;
     charm.setAttrs(
@@ -144,9 +147,10 @@ describe('charm configuration', function() {
   it('must not deploy a charm with same name as an existing service',
      function() {
        var deployed = false,
-       env = {deploy: function(charm_url, service_name, config, num_units) {
-         deployed = true;
-       }},
+       env = {deploy: function(charm_url, service_name, config, config_raw,
+                               num_units) {
+           deployed = true;
+         }},
        charm = new models.Charm({id: 'precise/mysql'}),
        view = new views.CharmConfigurationView(
        { container: container,
@@ -215,5 +219,125 @@ describe('charm configuration', function() {
     controls.item(2).simulate('mousemove');
     tooltip.get('srcNode').get('text').should.equal('Option Zero');
   });
+
+  it('must not show a configuration file upload button if the charm ' +
+      'has no settings', function() {
+       var charm = new models.Charm({id: 'precise/mysql'}),
+       view = new views.CharmConfigurationView(
+       { container: container,
+         model: charm,
+         tooltipDelay: 0 });
+       view.render();
+       var _ = expect(container.one('.config-file-upload')).to.not.exist;
+       _ = expect(container.one('.remove-config-file')).to.not.exist;
+      });
+
+  it('must show a configuration file upload button if the charm ' +
+      'has settings', function() {
+        var charm = new models.Charm({id: 'precise/mysql'});
+        charm.setAttrs(
+           { config:
+             { options:
+               { option0:
+                 { name: 'option0',
+                   type: 'string'}
+               }
+             }
+           });
+       var view = new views.CharmConfigurationView(
+       { container: container,
+         model: charm,
+         tooltipDelay: 0 }
+       );
+       charm.loaded = true;
+       view.render();
+       var _ = expect(container.one('.config-file-upload')).to.exist;
+       // The remove button is conditional and should exist but be hidden.
+       var remove_button = container.one('.remove-config-file');
+       remove_button.hasClass('hidden').should.equal(true);
+     });
+
+  it('must hide configuration panel when a file is uploaded', function() {
+    var charm = new models.Charm({id: 'precise/mysql'});
+    charm.setAttrs(
+        { config:
+              { options:
+                    { option0:
+                         { name: 'option0',
+                           type: 'string'}
+                    }
+              }
+        });
+
+    var view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm,
+          tooltipDelay: 0 });
+    charm.loaded = true;
+    view.render();
+    view.onFileLoaded({target: {result: 'yaml yaml yaml'}});
+    view.configFileContent.should.equal('yaml yaml yaml');
+    container.one('.charm-settings').getStyle('display').should.equal('none');
+    container.one('.remove-config-file').hasClass('hidden').should.equal(false);
+  });
+
+  it('must remove configuration data when the button is pressed', function() {
+    var charm = new models.Charm({id: 'precise/mysql'});
+    charm.setAttrs(
+        { config:
+              { options:
+                    { option0:
+                         { name: 'option0',
+                           type: 'string'}
+                    }
+              }
+        });
+    var view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm,
+          tooltipDelay: 0 });
+    charm.loaded = true;
+    view.render();
+    view.fileInput = container.one('.config-file-upload');
+    view.configFileContent = 'how now brown cow';
+    container.one('.remove-config-file').simulate('click');
+    var _ = expect(view.configFileContent).to.not.exist;
+    container.one('.remove-config-file').hasClass('hidden').should.equal(true);
+    container.one('.config-file-upload').get('files').size().should.equal(0);
+  });
+
+  it('must be able to deploy with configuration from a file', function() {
+    var received_config,
+        received_config_raw,
+        charm = new models.Charm({id: 'precise/mysql'}),
+        app = {db: {services: {getById: function(name) {return null;}}},
+          env: {deploy: function(charm_url, service_name, config, config_raw,
+                                 num_units) {
+              received_config = config;
+              received_config_raw = config_raw;
+            }}},
+        view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm,
+          app: app,
+          tooltipDelay: 0 });
+    charm.setAttrs(
+        { config:
+              { options:
+                    { tuninglevel:
+                         { name: 'tuning-level',
+                           type: 'string'}
+                    }
+              }
+        });
+    charm.loaded = true;
+    view.render();
+    var config_raw = 'tuning-level: \n expert';
+    view.configFileContent = config_raw;
+    container.one('#charm-deploy').simulate('click');
+    var _ = expect(received_config).to.not.exist;
+    received_config_raw.should.equal(config_raw);
+  });
+
 
 });

@@ -217,6 +217,7 @@ YUI.add('juju-charm-search', function(Y) {
         tooltip: null,
         tooltipDelay: 0,
         waitingToShow: false,
+        configFileContent: null,
         initializer: function() {
           this.bindModelView(this.get('model'));
         },
@@ -241,8 +242,79 @@ YUI.add('juju-charm-search', function(Y) {
         },
         events: {
           '.charm-nav-back': {click: 'goBack'},
-          '.btn': {click: 'onCharmDeployClicked'},
-          '.charm-section h4': {click: toggleSectionVisibility}
+          '.btn#charm-deploy': {click: 'onCharmDeployClicked'},
+          '.remove-config-file': {click: 'onFileRemove'},
+          '.charm-section h4': {click: toggleSectionVisibility},
+          '.config-file-upload': {change: 'onFileChange'}
+        },
+        onFileChange: function(evt) {
+          console.log('onFileChange:', evt);
+          this.fileInput = evt.target;
+          var file = this.fileInput.get('files').shift(),
+              reader = new FileReader();
+          reader.onerror = Y.bind(this.onFileError, this);
+          reader.onload = Y.bind(this.onFileLoaded, this);
+          reader.readAsText(file);
+        },
+        onFileRemove: function(evt) {
+          var container = this.get('container');
+          this.configFileContent = null;
+          container.one('.remove-config-file').addClass('hidden');
+          container.one('.charm-settings').show();
+          // Replace the file input node.  There does not appear to be any way
+          // to reset the element, so the only option is this rather crude
+          // replacement.  It actually works well in practice.
+          var button = container.one('.remove-config-file');
+          this.fileInput.replace(Y.Node.create('<input type="file"/>')
+                                 .addClass('config-file-upload'));
+          this.fileInput = container.one('.remove-config-file');
+        },
+        onFileLoaded: function(evt) {
+          this.configFileContent = evt.target.result;
+
+          if (!this.configFileContent) {
+            // Some file read errors don't go through the error handler as
+            // expected but instead return an empty string.  Warn the user if
+            // this happens.
+            var app = this.get('app');
+            app.db.notifications.add(
+                new models.Notification({
+                  title: 'Configuration file error',
+                  message: 'The configuration file loaded is empty.  ' +
+                      'Do you have read access?',
+                  level: 'error'
+                }));
+          }
+          this.get('container').one('.charm-settings').hide();
+          this.get('container').one('.remove-config-file')
+            .removeClass('hidden');
+          console.log(this.configFileContent);
+        },
+        onFileError: function(evt) {
+          console.log('onFileError:', evt);
+          var msg;
+          switch (evt.target.error.code) {
+            case evt.target.error.NOT_FOUND_ERR:
+              msg = 'File not found';
+              break;
+            case evt.target.error.NOT_READABLE_ERR:
+              msg = 'File is not readable';
+              break;
+            case evt.target.error.ABORT_ERR:
+              break; // noop
+            default:
+              msg = 'An error occurred reading this file.';
+          }
+          if (msg) {
+            var app = this.get('app');
+            app.db.notifications.add(
+                new models.Notification({
+                  title: 'Error reading configuration file',
+                  message: msg,
+                  level: 'error'
+                }));
+          }
+          return;
         },
         goBack: function(ev) {
           ev.halt();
@@ -271,39 +343,43 @@ YUI.add('juju-charm-search', function(Y) {
                 }));
             return;
           }
+          if (this.configFileContent) {
+            config = null;
+          }
           numUnits = parseInt(numUnits, 10);
-          app.env.deploy(url, serviceName, config, numUnits, function(ev) {
-            if (ev.err) {
-              console.log(url + ' deployment failed');
-              app.db.notifications.add(
-                  new models.Notification({
-                    title: 'Error deploying ' + name,
-                    message: 'Could not deploy the requested service.',
-                    level: 'error'
-                  }));
-            } else {
-              console.log(url + ' deployed');
-              app.db.notifications.add(
-                  new models.Notification({
-                    title: 'Deployed ' + name,
-                    message: 'Successfully deployed the requested service.',
-                    level: 'info'
-                  })
-              );
-              // Add service to the db and re-render for immediate display on
-              // the front page.
-              var service = new models.Service({
-                id: serviceName,
-                charm: charm.get('id'),
-                unit_count: 0,  // No units yet.
-                loaded: false,
-                config: config
+          app.env.deploy(url, serviceName, config, this.configFileContent,
+                         numUnits, function(ev) {
+                if (ev.err) {
+                  console.log(url + ' deployment failed');
+                  app.db.notifications.add(
+                      new models.Notification({
+                        title: 'Error deploying ' + serviceName,
+                        message: 'Could not deploy the requested service.',
+                        level: 'error'
+                      }));
+                } else {
+                  console.log(url + ' deployed');
+                  app.db.notifications.add(
+                      new models.Notification({
+                        title: 'Deployed ' + serviceName,
+                        message: 'Successfully deployed the requested service.',
+                        level: 'info'
+                      })
+                  );
+                  // Add service to the db and re-render for immediate display
+                  // on the front page.
+                  var service = new models.Service({
+                    id: serviceName,
+                    charm: charm.get('id'),
+                    unit_count: 0,  // No units yet.
+                    loaded: false,
+                    config: config
+                  });
+                  app.db.services.add([service]);
+                  // Force refresh.
+                  app.db.fire('update');
+                }
               });
-              app.db.services.add([service]);
-              // Force refresh.
-              app.db.fire('update');
-            }
-          });
           this.goBack(evt);
         },
         setupOverlay: function(container) {
@@ -320,9 +396,15 @@ YUI.add('juju-charm-search', function(Y) {
           cg.on('mousemove', function(evt) {
             // Control tool-tips.
             if (self.tooltip.get('visible') === false) {
-              Y.one('#tooltip').setStyle('opacity', '0');
-              self.tooltip.move([(evt.pageX + 5), (evt.pageY + 5)]);
-              Y.one('#tooltip').setStyle('opacity', '1');
+              // The tooltip element should always exist but sometimes during
+              // testing it is not found, resulting in spurious errors.
+              // Defensive programming here and below solves the problem.
+              var tooltip = Y.one('#tooltip');
+              if (tooltip) {
+                tooltip.setStyle('opacity', '0');
+                self.tooltip.move([(evt.pageX + 5), (evt.pageY + 5)]);
+                tooltip.setStyle('opacity', '1');
+              }
             }
             if (self.waitingToShow === false) {
               // Wait half a second, then show tooltip.
@@ -331,9 +413,9 @@ YUI.add('juju-charm-search', function(Y) {
                 var tooltip = Y.one('#tooltip');
                 if (tooltip) {
                   tooltip.setStyle('opacity', '1');
-                  self.tooltip.show();
                 }
-              }, self.get('tooltipDelay'));
+                self.tooltip.show();
+              }, this.get('tooltipDelay'));
 
               // While waiting to show tooltip, don't let other
               // mousemoves try to show tooltip too.

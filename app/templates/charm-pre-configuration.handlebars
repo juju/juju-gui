@@ -2,6 +2,7 @@
   <div class="charm-nav-back"><i class="icon-arrow-left icon-white"></i> Back</div>
 
   <div class="charm-panel config-variant">
+
       {{#with charm}}
       <div class="charm-entry">
         <div class="control-group">
@@ -28,18 +29,24 @@
         </div>
       </div>
       {{/with}}
-    {{#if settings}}
-    <!-- Service configuration form -->
-    <div class="charm-section">
-      <h4><i class="icon-chevron-right"></i> Service Settings</h4>
-      <form>
-        <div id="service-config" class="collapsible">
-          {{> service-config}}
+
+      {{#if settings}}
+      <!-- Service configuration form -->
+      <div class="charm-section">
+        <h4><i class="icon-chevron-right"></i> Service Settings</h4>
+        <input class="config-file-upload" type="file">
+        <button class="remove-config-file hidden">Remove File</button>
+        <div class="charm-settings">
+        <form>
+          <div id="service-config" class="collapsible">
+            {{> service-config}}
+          </div>
+        </form>
         </div>
-      </form>
-    </div>
-    {{/if}}
-    <input id="charm-deploy" value="Deploy" type="submit"
-        class="btn btn-primary"></input>
+      </div>
+      {{/if}}
+
+      <input id="charm-deploy" value="Deploy" type="submit"
+          class="btn btn-primary"></input>
   </div>
 </div>
