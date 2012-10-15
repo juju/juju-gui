@@ -145,8 +145,6 @@ YUI.add('juju-view-environment', function(Y) {
             'mousedown.addrel': function(d, self) {
               var evt = d3.event;
               self.longClickTimer = Y.later(750, this, function(d, e) {
-                self.longClickTimer = null;
-
                 // Provide some leeway for accidental dragging.
                 if ((Math.abs(d.x - d.oldX) + Math.abs(d.y - d.oldY)) /
                     2 > 5) {
@@ -181,7 +179,6 @@ YUI.add('juju-view-environment', function(Y) {
               // Cancel the long-click timer if it exists.
               if (self.longClickTimer) {
                 self.longClickTimer.cancel();
-                self.longClickTimer = null;
               }
             }
           }
@@ -445,10 +442,9 @@ YUI.add('juju-view-environment', function(Y) {
                 if (self.buildingRelation) {
                   self.addRelationDrag.call(self, d, this);
                 } else {
-                  /*if (self.longClickTimer) {
+                  if (self.longClickTimer) {
                     self.longClickTimer.cancel();
-                    self.longClickTimer = null;
-                  }*/
+                  }
                   d.x += d3.event.dx;
                   d.y += d3.event.dy;
                   d3.select(this).attr('transform', function(d, i) {
@@ -578,7 +574,7 @@ YUI.add('juju-view-environment', function(Y) {
               });
           label.append('text')
               .append('tspan')
-              .text(function(d) {return d.type; });
+              .text(function(d) {return d.display_name; });
           label.insert('rect', 'text')
               .attr('width', function(d) {
                 return (Y.one(this.parentNode)
@@ -853,8 +849,8 @@ YUI.add('juju-view-environment', function(Y) {
                                  .source(pair[0][1])
                                  .target(pair[1][1]);
               // Copy the relation type to the box.
-              if (bpair.type === undefined) {
-                bpair.type = pair[0][0];
+              if (bpair.display_name === undefined) {
+                bpair.display_name = pair[0][0];
               }
               pairs.push(bpair);
             }
@@ -1021,17 +1017,18 @@ YUI.add('juju-view-environment', function(Y) {
         },
         removeRelation: function(d, context, view, confirmButton) {
           var env = this.get('env'),
+              endpoints = d.endpoints,
               relationElement = Y.one(context.parentNode).one('.relation');
           view.addSVGClass(relationElement, 'to-remove pending-relation');
           env.remove_relation(
-              d.source().id,
-              d.target().id,
+              endpoints[0][0] + ':' + endpoints[0][1].name,
+              endpoints[1][0] + ':' + endpoints[1][1].name,
               Y.bind(this._removeRelationCallback, this, view,
-                  relationElement, confirmButton));
+                  relationElement, d.relation_id, confirmButton));
         },
 
         _removeRelationCallback: function(view,
-            relationElement, confirmButton, ev) {
+            relationElement, relationId, confirmButton, ev) {
           var db = this.get('db'),
               service = this.get('model');
           if (ev.err) {
@@ -1045,8 +1042,12 @@ YUI.add('juju-view-environment', function(Y) {
             view.removeSVGClass(this.relationElement,
                 'to-remove pending-relation');
           } else {
-            view.get('rmrelation_dialog').hide();
+            // Remove the relation from the DB.
+            db.relations.remove(db.relations.getById(relationId));
+            // Redraw the graph and reattach events.
+            db.fire('update');
           }
+          view.get('rmrelation_dialog').hide();
           confirmButton.set('disabled', false);
         },
 
@@ -1303,7 +1304,13 @@ YUI.add('juju-view-environment', function(Y) {
                   })
               );
             } else {
+              var relations = db.relations.get_relations_for_service(service);
+              Y.each(relations, function(relation) {
+                relation.destroy();
+              });
+              service.destroy();
               view.get('destroy_dialog').hide();
+              db.fire('update');
             }
             btn.set('disabled', false);
           },
@@ -1382,7 +1389,7 @@ YUI.add('juju-view-environment', function(Y) {
             // two services.
             db.relations.create({
               relation_id: relation_id,
-              type: 'pending',
+              display_name: 'pending',
               endpoints: [
                 [source.id, {name: 'pending', role: 'server'}],
                 [m.id, {name: 'pending', role: 'client'}]
@@ -1418,8 +1425,25 @@ YUI.add('juju-view-environment', function(Y) {
                     level: 'error'
                   })
               );
-              return;
+            } else {
+              // Create a relation in the database between the two services.
+              var result = ev.result,
+                  endpoints = Y.Array.map(result.endpoints, function(item) {
+                    var id = Y.Object.keys(item)[0];
+                    return [id, item[id]];
+                  });
+              db.relations.create({
+                relation_id: ev.result.id,
+                type: result['interface'],
+                endpoints: endpoints,
+                pending: false,
+                scope: result.scope,
+                // endpoints[1][1].name should be the same
+                display_name: endpoints[0][1].name
+              });
             }
+            // Redraw the graph and reattach events.
+            db.fire('update');
           }
         }
 
