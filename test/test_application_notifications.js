@@ -216,16 +216,16 @@ describe('juju application notifications', function() {
 
        assertNotificationNumber('1');
 
-       //view, relationElement, confirmButton, ev
+       //view, relationElement, relationId, confirmButton, ev
        view._removeRelationCallback.apply(view, [{
+         get: function() {return {hide: NO_OP};},
          removeSVGClass: NO_OP
-       }, {}, {
+       }, {}, '', {
          set: NO_OP
        }, ERR_EV]);
 
        assertNotificationNumber('2');
      });
-
 
   it('should show notification for "add_relation" and "destroy_service"' +
      ' exceptions (environment view)', function() {
@@ -310,7 +310,7 @@ describe('juju application notifications', function() {
              };
 
        views.environment.prototype.service_click_actions.addRelationEnd
-           .apply(view, [{}, view]);
+           .apply(view, [{id: 1}, view]);
 
        assertNotificationNumber('1');
 
@@ -569,4 +569,3 @@ describe('juju application notifications', function() {
      });
 
 });
-

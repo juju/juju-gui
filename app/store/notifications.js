@@ -4,7 +4,6 @@ YUI.add('juju-notification-controller', function(Y) {
 
   var juju = Y.namespace('juju');
 
-
   var _changeNotificationOpToWords = function(op) {
     if (op === 'add') {
       return 'created';
@@ -23,14 +22,16 @@ YUI.add('juju-notification-controller', function(Y) {
     title: function(change_type, change_op, change_data, notify_data) {
       return 'Relation ' + _changeNotificationOpToWords(change_op);
     },
-    message: function(change_type, change_op, change_data,
-        notify_data) {
+    message: function(change_type, change_op, change_data, notify_data) {
       var action = _changeNotificationOpToWords(change_op);
       if (change_op === 'remove') {
         // We don't have endpoint data on removed.
         return 'Relation removed';
       }
-      if (change_data.endpoints && change_data.endpoints.length === 2) {
+      if (!change_data.endpoints) {
+        return ('Relation was ' + action);
+      }
+      if (change_data.endpoints.length === 2) {
         var endpoint0 = change_data.endpoints[0][0],
             endpoint1 = change_data.endpoints[1][0],
             relationType0 = change_data.endpoints[0][1].name,
@@ -40,13 +41,12 @@ YUI.add('juju-notification-controller', function(Y) {
             'and ' +
             endpoint1 + ' (relation type "' + relationType1 + '") ' +
             'was ' + action);
-      } else {
-        var endpoint = change_data.endpoints[0][0],
-            relationType = change_data.endpoints[0][1].name;
-        return ('Relation with ' +
-            endpoint + ' (relation type "' + relationType + '") ' +
-            'was ' + action);
       }
+      var endpoint = change_data.endpoints[0][0],
+          relationType = change_data.endpoints[0][1].name;
+      return ('Relation with ' +
+          endpoint + ' (relation type "' + relationType + '") ' +
+          'was ' + action);
     }
     // There is no relation eviction because relation errors are
     // reported on units, there are no relation errors to evict.
@@ -234,4 +234,3 @@ YUI.add('juju-notification-controller', function(Y) {
 }, '0.1.0', {
   requires: ['juju-models']
 });
-
