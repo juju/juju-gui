@@ -324,7 +324,9 @@
          service.next().simulate('click');
          container.all('.selectable-service').size()
             .should.equal(0);
-
+         // The database is initialized with three relations in beforeEach.
+         assert.equal(4, db.relations.size());
+         // restore original getEndpoints function
          models.getEndpoints = existing;
        });
 
