@@ -440,7 +440,6 @@ YUI.add('juju-view-environment', function(Y) {
             .on('dragstart', function(d) {
                 d.oldX = d.x;
                 d.oldY = d.y;
-                self.service_click_actions.toggleControlPanel(null, self);
               })
             .on('drag', function(d, i) {
                 if (self.buildingRelation) {
@@ -458,6 +457,7 @@ YUI.add('juju-view-environment', function(Y) {
                   if (self.get('active_service') === d) {
                     self.updateServiceMenuLocation();
                   }
+                  self.service_click_actions.toggleControlPanel(null, self);
                   updateLinks();
                 }
               })
@@ -1235,11 +1235,6 @@ YUI.add('juju-view-environment', function(Y) {
           toggleControlPanel: function(m, view, context) {
             var container = view.get('container'),
                 cp = container.one('#service-menu');
-            // Handle the event here, don't let it
-            // rise to the canvas.
-            if (d3.event.stopPropagation) {
-              d3.event.stopPropagation();
-            }
 
             if (cp.hasClass('active') || !m) {
               cp.removeClass('active');
