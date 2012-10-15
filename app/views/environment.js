@@ -579,7 +579,7 @@ YUI.add('juju-view-environment', function(Y) {
               });
           label.append('text')
               .append('tspan')
-              .text(function(d) {return d.type; });
+              .text(function(d) {return d.display_name; });
           label.insert('rect', 'text')
               .attr('width', function(d) {
                 return (Y.one(this.parentNode)
@@ -854,8 +854,8 @@ YUI.add('juju-view-environment', function(Y) {
                                  .source(pair[0][1])
                                  .target(pair[1][1]);
               // Copy the relation type to the box.
-              if (bpair.type === undefined) {
-                bpair.type = pair[0][0];
+              if (bpair.display_name === undefined) {
+                bpair.display_name = pair[0][0];
               }
               pairs.push(bpair);
             }
@@ -1022,11 +1022,12 @@ YUI.add('juju-view-environment', function(Y) {
         },
         removeRelation: function(d, context, view, confirmButton) {
           var env = this.get('env'),
+              endpoints = d.endpoints,
               relationElement = Y.one(context.parentNode).one('.relation');
           view.addSVGClass(relationElement, 'to-remove pending-relation');
           env.remove_relation(
-              d.source().id,
-              d.target().id,
+              endpoints[0][0] + ':' + endpoints[0][1].name,
+              endpoints[1][0] + ':' + endpoints[1][1].name,
               Y.bind(this._removeRelationCallback, this, view,
                   relationElement, d.relation_id, confirmButton));
         },
@@ -1381,7 +1382,7 @@ YUI.add('juju-view-environment', function(Y) {
             // two services.
             db.relations.create({
               relation_id: relation_id,
-              type: 'pending',
+              display_name: 'pending',
               endpoints: [
                 [source.id, {name: 'pending', role: 'server'}],
                 [m.id, {name: 'pending', role: 'client'}]
@@ -1419,16 +1420,19 @@ YUI.add('juju-view-environment', function(Y) {
               );
             } else {
               // Create a relation in the database between the two services.
-              var endpoints = Y.Array.map(ev.result.endpoints, function(item) {
-                var id = Y.Object.keys(item)[0];
-                return [id, item[id]];
-              });
+              var result = ev.result,
+                  endpoints = Y.Array.map(result.endpoints, function(item) {
+                    var id = Y.Object.keys(item)[0];
+                    return [id, item[id]];
+                  });
               db.relations.create({
                 relation_id: ev.result.id,
-                // endpoints[1][1].name should be the same
-                type: endpoints[0][1].name,
+                type: result['interface'],
                 endpoints: endpoints,
-                pending: false
+                pending: false,
+                scope: result.scope,
+                // endpoints[1][1].name should be the same
+                display_name: endpoints[0][1].name
               });
             }
             // Redraw the graph and reattach events.

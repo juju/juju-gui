@@ -400,7 +400,9 @@ YUI.add('juju-models', function(Y) {
       endpoints: {},
       pending: {
         value: false
-      }
+      },
+      scope: {},
+      display_name: {}
     }
   });
   models.Relation = Relation;
