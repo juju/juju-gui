@@ -17,18 +17,18 @@
   <div class="inline juju-service-info-container-separator"></div>
   <div class="inline juju-service-info-container-small">
     <div class="juju-service-container-header-expose">
-	    <div class="inline"><span>Expose&nbsp;&nbsp;</span></div>
-	    <div class="inline">
-	    {{#if service.exposed}}
-	        <img class="unexposeService"
-	             src="/juju-ui/assets/images/slider_on.png" />
-	        <span class="on">On</span>
-	    {{else}}
-	        <img class="exposeService"
-	             src="/juju-ui/assets/images/slider_off.png" />
-	        <span class="off">Off</span>
-	    {{/if}}
-	    </div>
+     <div class="inline"><span>Expose&nbsp;&nbsp;</span></div>
+     <div class="inline">
+     {{#if service.exposed}}
+         <img class="unexposeService"
+              src="/juju-ui/assets/images/slider_on.png" />
+         <span class="on">On</span>
+     {{else}}
+         <img class="exposeService"
+              src="/juju-ui/assets/images/slider_off.png" />
+         <span class="off">Off</span>
+     {{/if}}
+     </div>
     </div>
   </div>
   <div class="inline juju-service-info-container-separator"></div>
