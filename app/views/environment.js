@@ -1308,7 +1308,13 @@ YUI.add('juju-view-environment', function(Y) {
                   })
               );
             } else {
+              var relations = db.relations.get_relations_for_service(service);
+              Y.each(relations, function(relation) {
+                relation.destroy();
+              });
+              service.destroy();
               view.get('destroy_dialog').hide();
+              db.fire('update');
             }
             btn.set('disabled', false);
           },
