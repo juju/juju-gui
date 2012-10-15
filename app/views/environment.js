@@ -131,12 +131,16 @@ YUI.add('juju-view-environment', function(Y) {
               self.removeSVGClass('.subordinate-rel-group', 'active');
             }
           },
-          '.unit-count': {
+          '.service-status': {
             mouseover: function(d, self) {
-              d3.select(this).attr('class', 'unit-count show-count');
+              d3.select(this)
+                .select('.unit-count')
+                .attr('class', 'unit-count show-count');
             },
             mouseout: function(d, self) {
-              d3.select(this).attr('class', 'unit-count hide-count');
+              d3.select(this)
+                .select('.unit-count')
+                .attr('class', 'unit-count hide-count');
             }
           },
 
