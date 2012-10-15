@@ -173,6 +173,10 @@ YUI.add('juju-view-utils', function(Y) {
 
     addSVGClass: function(selector, class_name) {
       var self = this;
+      if (!selector) {
+        return;
+      }
+
       if (typeof(selector) === 'string') {
         Y.all(selector).each(function(n) {
           var classes = this.getAttribute('class');
@@ -189,6 +193,10 @@ YUI.add('juju-view-utils', function(Y) {
     },
 
     removeSVGClass: function(selector, class_name) {
+      if (!selector) {
+        return;
+      }
+
       if (typeof(selector) === 'string') {
         Y.all(selector).each(function() {
           var classes = this.getAttribute('class');
