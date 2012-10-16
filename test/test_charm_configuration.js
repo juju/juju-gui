@@ -22,7 +22,7 @@ describe('charm configuration', function() {
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div id="test-container" />');
+    container = Y.Node.create('<div id="juju-search-charm-panel" />');
     Y.one('#main').append(container);
     db = new models.Database();
     app = { db: db };
@@ -91,7 +91,6 @@ describe('charm configuration', function() {
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
-          tooltipDelay: 0,
           app: app});
     app.env = env;
     charm.loaded = true;
@@ -120,7 +119,6 @@ describe('charm configuration', function() {
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
-          tooltipDelay: 0,
           app: app});
     app.env = env;
     charm.setAttrs(
@@ -197,27 +195,27 @@ describe('charm configuration', function() {
     charm.loaded = true;
     view.render();
     var tooltip = view.tooltip,
-        controls = container.all('.control-group');
+        controls = container.all('.control-group input');
     tooltip.get('srcNode').get('text').should.equal('');
 
     // There are five control groups, the three corresponding to the options
     // shown above and two preceding, service name and number of units.
     // Simulate mouse moves into the different control groups and see the tool
     // tip text change.
-    view.waitingToShow.should.equal(false);
-    controls.item(0).simulate('mousemove');
+    controls.item(0).focus();
     tooltip.get('srcNode').get('text').should.equal(
         'Name of the service to be deployed.  Must be unique.');
-    view.waitingToShow.should.equal(true);
-    // Reset the 'waitingToShow' since mouseleave cannot be simulated.
-    view.waitingToShow = false;
-    controls.item(1).simulate('mousemove');
+    tooltip.get('visible').should.equal(true);
+    controls.item(0).blur();
+    tooltip.get('visible').should.equal(false);
+    controls.item(1).focus();
     tooltip.get('srcNode').get('text').should.equal(
         'Number of units to deploy for this service.');
-    view.waitingToShow.should.equal(true);
-    view.waitingToShow = false;
-    controls.item(2).simulate('mousemove');
+    tooltip.get('visible').should.equal(true);
+    controls.item(1).blur();
+    controls.item(2).focus();
     tooltip.get('srcNode').get('text').should.equal('Option Zero');
+    tooltip.get('visible').should.equal(true);
   });
 
   it('must not show a configuration file upload button if the charm ' +
