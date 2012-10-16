@@ -775,7 +775,13 @@ YUI.add('juju-view-environment', function(Y) {
               });
 
           var status_chart_layout = d3.layout.pie()
-            .value(function(d) { return (d.value ? d.value : 1); });
+            .value(function(d) { return (d.value ? d.value : 1); })
+            .sort(function(a, b) {
+                // Ensure that the service health graphs will be renders in
+                // the correct order: error - pending - running.
+                var states = {error: 0, pending: 1, running: 2};
+                return states[a.name] - states[b.name];
+              });
 
           // Append to status charts to non-subordinate services
           var status_chart = node.append('g')
