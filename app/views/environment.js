@@ -96,7 +96,8 @@ YUI.add('juju-view-environment', function(Y) {
                 self.dragline.attr('x1', t[0])
                   .attr('y1', t[1])
                   .attr('x2', s[0])
-                  .attr('y2', s[1]);
+                  .attr('y2', s[1])
+                  .attr('class', 'relation pending-relation dragline');
               }
             },
             mouseleave: function(d, self) {
@@ -115,6 +116,11 @@ YUI.add('juju-view-environment', function(Y) {
               self.set('potential_drop_point_service', null);
               self.set('potential_drop_point_rect', null);
               self.removeSVGClass(rect, 'hover');
+              
+              if (self.dragline) {
+                self.dragline.attr('class', 
+                    'relation pending-relation dragline dragging');
+              }
             }
           },
           '.sub-rel-block': {
@@ -991,7 +997,7 @@ YUI.add('juju-view-environment', function(Y) {
         addRelationDragStart: function(d, context) {
           // Create a pending drag-line behind services.
           var dragline = this.vis.insert('line', '.service')
-              .attr('class', 'relation pending-relation dragline'),
+              .attr('class', 'relation pending-relation dragline dragging'),
               self = this;
 
           // Start the line in the middle of the service.
