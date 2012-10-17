@@ -386,7 +386,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-         * Sync view models with curent db.models.
+         * Sync view models with current db.models.
          */
         updateData: function() {
           //model data
@@ -872,14 +872,17 @@ YUI.add('juju-view-environment', function(Y) {
           });
         },
         renderSlider: function() {
-          var self = this;
+          var self = this,
+              value = 100,
+              currentScale = this.get('scale');
           // Build a slider to control zoom level
-          // TODO once we have a stored value in view models, use that
-          // for the value property, but for now, zoom to 100%
+          if (currentScale) {
+            value = currentScale * 100;
+          }
           var slider = new Y.Slider({
             min: 25,
             max: 200,
-            value: 100
+            value: value
           });
           slider.render('#slider-parent');
           slider.after('valueChange', function(evt) {
@@ -948,6 +951,22 @@ YUI.add('juju-view-environment', function(Y) {
             label.one('rect').setAttribute('width', width)
               .setAttribute('x', -width / 2);
           });
+
+          // Preserve zoom when the scene is updated.
+          var changed = false,
+              currentScale = this.get('scale'),
+              currentTranslate = this.get('translate');
+          if (currentTranslate && currentTranslate !== this.zoom.translate()) {
+            this.zoom.translate(currentTranslate);
+            changed = true;
+          }
+          if (currentScale && currentScale !== this.zoom.scale()) {
+            this.zoom.scale(currentScale);
+            changed = true;
+          }
+          if (changed) {
+            this._fire_zoom(0);
+          }
 
           // Render the slider after the view is attached.
           // Although there is a .syncUI() method on sliders, it does not
@@ -1134,6 +1153,7 @@ YUI.add('juju-view-environment', function(Y) {
             evt.scale = this.get('scale');
           }
           this.set('scale', evt.scale);
+          this.set('translate', evt.translate);
           vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
           this.updateServiceMenuLocation();
