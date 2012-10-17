@@ -1159,9 +1159,10 @@ YUI.add('juju-view-environment', function(Y) {
           if (new_scale < 25 || new_scale > 200) {
             evt.scale = this.get('scale');
           }
+          // Store the current value of scale so that it can be restored later.
           this.set('scale', evt.scale);
-          // Store the current value of translate by copying the event array
-          // in order to avoid reference sharing.
+          // Store the current value of translate as well, by copying the event
+          // array in order to avoid reference sharing.
           this.set('translate', evt.translate.slice(0));
           vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
