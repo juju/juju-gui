@@ -237,6 +237,13 @@ YUI.add('juju-view-environment', function(Y) {
         .y(this.yscale)
         .scaleExtent([0.25, 2.0])
         .on('zoom', function() {
+                var sourceEvent = d3.event.sourceEvent;
+                // Avoid spurious zooming if the event is a double click inside
+                // a service box.
+                if (sourceEvent.type === 'dblclick' &&
+                    Y.one(sourceEvent.target).ancestor('.service')) {
+                  return;
+                }
                 // Keep the slider up to date with the scale on other sorts
                 // of zoom interactions
                 var s = self.slider;
@@ -1153,7 +1160,9 @@ YUI.add('juju-view-environment', function(Y) {
             evt.scale = this.get('scale');
           }
           this.set('scale', evt.scale);
-          this.set('translate', evt.translate);
+          // Store the current value of translate by copying the event array
+          // in order to avoid reference sharing.
+          this.set('translate', evt.translate.slice(0));
           vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
           this.updateServiceMenuLocation();
