@@ -254,7 +254,7 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('height', height)
             .append('svg:g')
             .call(zoom)
-            // Disable zoom on double click.
+              // Disable zoom on double click.
             .on('dblclick.zoom', null)
             .append('g');
 
