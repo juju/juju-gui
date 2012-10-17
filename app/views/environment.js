@@ -237,13 +237,6 @@ YUI.add('juju-view-environment', function(Y) {
         .y(this.yscale)
         .scaleExtent([0.25, 2.0])
         .on('zoom', function() {
-                var sourceEvent = d3.event.sourceEvent;
-                // Avoid spurious zooming if the event is a double click inside
-                // a service box.
-                if (sourceEvent.type === 'dblclick' &&
-                    Y.one(sourceEvent.target).ancestor('.service')) {
-                  return;
-                }
                 // Keep the slider up to date with the scale on other sorts
                 // of zoom interactions
                 var s = self.slider;
@@ -261,6 +254,8 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('height', height)
             .append('svg:g')
             .call(zoom)
+            // Disable zoom on double click.
+            .on('dblclick.zoom', null)
             .append('g');
 
           vis.append('svg:rect')
