@@ -952,9 +952,24 @@ table tr.highlighted {
 }
 
 .juju-service-info-container-bottom-menu {
-  border-top: 1px solid #737373;
-  background-color: black;
+  background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
   height: 50px;
+  position: relative;
+  color: #2d2d2d!important;
+
+  .destroy-control {
+    position: absolute;
+    top: 1px;
+    left: 10px;
+    
+    a {
+      color: #2D2D2D!important;
+    }
+    
+    a:link, a:visited, a:active, a:hover {
+      text-decoration: none
+    }
+  }
 
   .juju-service-info-container-bottom-menu-wrapper {
     margin-left: 10px;
@@ -966,8 +981,8 @@ table tr.highlighted {
 
   .juju-service-info-container-bottom-menu-wrapper-service {
     margin-top: 10px;
-    margin-left: 10px;
-
+    margin-left: 80px;
+    
     div {
       width: 200px
     }
