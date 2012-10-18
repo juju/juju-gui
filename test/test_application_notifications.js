@@ -50,20 +50,20 @@ describe('juju application notifications', function() {
 
       db = new models.Database();
 
-      var notificationsView = new views.NotificationsView({
-        container: notificationsContainer,
-        app: {},
-        env: {
-          on: NO_OP,
-          get: function(key) {
-            if (key === 'connected') {
-              return true;
-            }
-            return null;
-          }
-        },
-        notifications: db.notifications
-      });
+      var notificationsView = new views.NotificationsView(
+          { container: notificationsContainer,
+            db: db,
+            env: {
+              on: NO_OP,
+              get: function(key) {
+                if (key === 'connected') {
+                  return true;
+                }
+                return null;
+              }
+            },
+            notifications: db.notifications
+          });
 
       notificationsView.render();
 
@@ -90,20 +90,18 @@ describe('juju application notifications', function() {
 
   it('should show notification for "add_unit" and "remove_units" exceptions' +
      ' (service view)', function() {
-       var view = new views.service({
-         container: viewContainer,
-         app: {
-           getModelURL: function() {
-             return 'my url';
+       var view = new views.service(
+       { container: viewContainer,
+         getModelURL: function() {
+           return 'my url';
+         },
+         db: db,
+         env: {
+           add_unit: function(serviceId, delta, callback) {
+             callback(ERR_EV);
            },
-           db: db,
-           env: {
-             add_unit: function(serviceId, delta, callback) {
-               callback(ERR_EV);
-             },
-             remove_units: function(param, callback) {
-               callback(ERR_EV);
-             }
+           remove_units: function(param, callback) {
+             callback(ERR_EV);
            }
          },
          model: {
@@ -116,8 +114,7 @@ describe('juju application notifications', function() {
              return null;
            }
          },
-         querystring: {}
-       }).render();
+         querystring: {}}).render();
 
        db.units.get_units_for_service = function() {
          return [{
@@ -135,7 +132,8 @@ describe('juju application notifications', function() {
      });
 
   it('should show notification for "remove_units" and "resolved" exceptions' +
-     ' (unit view)', function() {
+      ' (unit view)', function()
+     {
        var view = new views.unit(
        { container: viewContainer,
          getModelURL: function() {return 'my url';},
@@ -153,94 +151,90 @@ describe('juju application notifications', function() {
          querystring: {}
        });
 
-       // Used by "unit.js" inside the "render" function
-       db.services.getById = function() {
-         // Mock service
-         return {
-           get: function(key) {
-             if (key === 'loaded') {
-               return true;
-             }
-             return null;
-           }
-         };
-       };
+        // Used by "unit.js" inside the "render" function
+        db.services.getById = function() {
+          // Mock service
+          return {
+            get: function(key) {
+              if (key === 'loaded') {
+                return true;
+              }
+              return null;
+            }
+          };
+        };
 
-       view.render();
+        view.render();
 
-       view.confirmRemoved({
-         preventDefault: NO_OP
-       });
+        view.confirmRemoved({
+          preventDefault: NO_OP
+        });
 
-       view.remove_panel.footerNode.one('.btn-danger').simulate('click');
-       view.remove_panel.destroy();
+        view.remove_panel.footerNode.one('.btn-danger').simulate('click');
+        view.remove_panel.destroy();
 
-       assertNotificationNumber('1');
+        assertNotificationNumber('1');
 
-       // Fake relation
-       db.relations.getById = function() {
-         return {name: ''};
-       };
+        // Fake relation
+        db.relations.getById = function() {
+          return {name: ''};
+        };
 
-       view.retryRelation({
-         preventDefault: NO_OP,
+        view.retryRelation({
+          preventDefault: NO_OP,
 
-         // This is a mock object of the relation button
-         target: {
-           ancestor: function() {
-             return {get: NO_OP};
-           },
-           set: NO_OP
-         }
-       });
+          // This is a mock object of the relation button
+          target: {
+            ancestor: function() {
+              return {get: NO_OP};
+            },
+            set: NO_OP
+          }
+        });
 
-       assertNotificationNumber('2');
-     });
+        assertNotificationNumber('2');
+      });
 
   it('should show notification for "add_relation" and "remove_relation"' +
-     ' exceptions (environment view)', function() {
-       var view = new views.environment({
-         db: db,
-         container: viewContainer});
-       view.render();
-       db.relations.remove = NO_OP;
+      ' exceptions (environment view)', function() {
+        var view = new views.environment({
+          db: db,
+          container: viewContainer});
+        view.render();
+        db.relations.remove = NO_OP;
 
-       view.service_click_actions._addRelationCallback.apply(view,
+        view.service_click_actions._addRelationCallback.apply(view,
        [view, 'relation_id', ERR_EV]);
 
-       assertNotificationNumber('1');
+        assertNotificationNumber('1');
 
-       //view, relationElement, relationId, confirmButton, ev
-       view._removeRelationCallback.apply(view, [{
-         get: function() {return {hide: NO_OP};},
-         removeSVGClass: NO_OP
-       }, {}, '', {
-         set: NO_OP
-       }, ERR_EV]);
+        //view, relationElement, relationId, confirmButton, ev
+        view._removeRelationCallback.apply(view, [{
+          get: function() {return {hide: NO_OP};},
+          removeSVGClass: NO_OP
+        }, {}, '', {
+          set: NO_OP
+        }, ERR_EV]);
 
-       assertNotificationNumber('2');
-     });
+        assertNotificationNumber('2');
+      });
 
   it('should show notification for "add_relation" and "destroy_service"' +
-     ' exceptions (environment view)', function() {
-       var fakeLink = (function() {
-         var link = [{}, {}];
-         link.enter = function() {
-           return {
-             insert: function() {
-               return {
-                 attr: NO_OP
-               };
-             }
-           };
-         };
-         return link;
-       })(),
-       app = {
-               getModelURL: NO_OP,
-               updateEndpoints: NO_OP
-             },
-             env = {
+      ' exceptions (environment view)', function() {
+        var fakeLink = (function() {
+          var link = [{}, {}];
+          link.enter = function() {
+            return {
+              insert: function() {
+                return {
+                  attr: NO_OP
+                };
+              }
+            };
+          };
+          return link;
+        })(),
+       env = {
                destroy_service: function(service, callback) {
                  callback(ERR_EV);
                },
@@ -267,8 +261,11 @@ describe('juju application notifications', function() {
                },
                env: env,
                get: function(key) {
-                 if ('app' === key) {
-                   return app;
+                 if ('getModelURL' === key) {
+                   return NO_OP;
+                 }
+                 if ('updateEndpoints' === key) {
+                   return NO_OP;
                  }
                  if ('env' === key) {
                    return env;
@@ -303,67 +300,60 @@ describe('juju application notifications', function() {
                }
              };
 
-       views.environment.prototype.service_click_actions.addRelationEnd
+        views.environment.prototype.service_click_actions.addRelationEnd
            .apply(view, [{id: 1}, view]);
 
-       assertNotificationNumber('1');
+        assertNotificationNumber('1');
 
-       views.environment.prototype.service_click_actions.destroyService.apply(
+        views.environment.prototype.service_click_actions.destroyService.apply(
        //destroyService function signature > (m, view, btn)
        view, [{}, view, {set: NO_OP}]);
 
-       assertNotificationNumber('2');
-     });
+        assertNotificationNumber('2');
+      });
 
   it('should show notification for "get_service" exceptions' +
-     ' (service constraints view)', function() {
+      ' (service constraints view)', function() {
 
-       var view = new views.service_constraints({
-         model: {
-           getAttrs: NO_OP,
-           get: function(key) {
-             if ('constraints' === key) {
-               return {};
-             }
-             return null;
-           }
-         },
-         app: {
-           getModelURL: NO_OP,
-           db: db,
-           env: {
-             set_constraints: function(id, values, callback) {
-               callback(ERR_EV);
-             }
-           }
-         },
+        var view = new views.service_constraints(
+            { model:
+             { getAttrs: NO_OP,
+               get: function(key) {
+                 if ('constraints' === key) {
+                   return {};
+                 }
+                 return null;
+               }},
+              getModelURL: NO_OP,
+              db: db,
+              env:
+                  { set_constraints: function(id, values, callback) {
+                    callback(ERR_EV);
+                  }},
+              container: viewContainer}).render();
 
-         container: viewContainer}).render();
+        view.updateConstraints();
 
-       view.updateConstraints();
-
-       assertNotificationNumber('1');
-     });
+        assertNotificationNumber('1');
+      });
 
   it('should show notification for "get_service", "expose" and "unexpose"' +
-     ' exceptions (service config view)', function() {
+      ' exceptions (service config view)', function() {
 
-       var view = new views.service_config({
-         app: {
-           db: db,
-           env: {
-             set_config: function(id, newValues, callback) {
-               callback(ERR_EV);
-             },
-             expose: function(id, callback) {
-               callback(ERR_EV);
-             },
-             unexpose: function(id, callback) {
-               callback({err: true, service_name: '1234'});
-             }
+        var view = new views.service_config(
+       { db: db,
+         env: {
+           set_config: function(id, newValues, callback) {
+             callback(ERR_EV);
            },
-           getModelURL: NO_OP
+           expose: function(id, callback) {
+             callback(ERR_EV);
+           },
+           unexpose: function(id, callback) {
+             callback({err: true, service_name: '1234'});
+           }
          },
+         getModelURL: NO_OP,
          model: {
            getAttrs: NO_OP,
            get: function(key) {
@@ -374,84 +364,81 @@ describe('juju application notifications', function() {
                return {};
              }
              return null;
-           }
-         },
+           }},
          container: viewContainer});
 
-       db.services.getById = NO_OP;
-       db.charms.getById = function() {
-         return {
-           getAttrs: function() {
-             return {};
-           },
-           get: function(key) {
-             if ('config' === key) {
-               return {};
-             }
-             return null;
-           }
-         };
-       };
-       view.render();
+        db.services.getById = NO_OP;
+        db.charms.getById = function() {
+          return {
+            getAttrs: function() {
+              return {};
+            },
+            get: function(key) {
+              if ('config' === key) {
+                return {};
+              }
+              return null;
+            }
+          };
+        };
+        view.render();
 
-       view.saveConfig();
-       assertNotificationNumber('1');
+        view.saveConfig();
+        assertNotificationNumber('1');
 
-       view.exposeService();
-       assertNotificationNumber('2');
+        view.exposeService();
+        assertNotificationNumber('2');
 
-       view.unexposeService();
-       assertNotificationNumber('3');
-     });
+        view.unexposeService();
+        assertNotificationNumber('3');
+      });
 
   it('should show notification for "remove_relation"' +
-     ' exceptions (service relations view)', function() {
+      ' exceptions (service relations view)', function() {
 
-       var view = new views.service_relations({
-         app: {
-           db: db,
-           env: {
-             remove_relation: function(id, newValues, callback) {
-               callback(ERR_EV);
-             }
-           },
-           getModelURL: NO_OP
+        var view = new views.service_relations(
+       { db: db,
+         env: {
+           remove_relation: function(id, newValues, callback) {
+             callback(ERR_EV);
+           }
          },
+         getModelURL: NO_OP,
          container: viewContainer});
 
-       db.relations.getById = function() {
-         return {
-           get: function(key) {
-             if ('endpoints' === key) {
-               return [
-                 [{}, {name: ''}]
-               ];
-             }
-             return null;
-           }
-         };
-       };
+        db.relations.getById = function() {
+          return {
+            get: function(key) {
+              if ('endpoints' === key) {
+                return [
+                  [{}, {name: ''}]
+                ];
+              }
+              return null;
+            }
+          };
+        };
 
-       view.render();
+        view.render();
 
-       view.confirmRemoved({
-         preventDefault: NO_OP,
+        view.confirmRemoved({
+          preventDefault: NO_OP,
 
-         // This is a mock object of the relation button
-         target: {
-           ancestor: NO_OP,
-           get: NO_OP
-         }
-       });
-       view.remove_panel.footerNode.one('.btn-danger').simulate('click');
-       view.remove_panel.destroy();
+          // This is a mock object of the relation button
+          target: {
+            ancestor: NO_OP,
+            get: NO_OP
+          }
+        });
+        view.remove_panel.footerNode.one('.btn-danger').simulate('click');
+        view.remove_panel.destroy();
 
-       assertNotificationNumber('1');
-     });
+        assertNotificationNumber('1');
+      });
 
   it('should show notification for "deploy" exceptions (charm view)',
-     function() {
-       var notified = false,
+      function() {
+        var notified = false,
        db = {
          notifications: {
            add: function() {
@@ -500,66 +487,56 @@ describe('juju application notifications', function() {
          }
        };
 
-       views.charm.prototype.on_charm_deploy.apply(mockView, [ERR_EV]);
-       assert.isTrue(notified);
-     });
+        views.charm.prototype.on_charm_deploy.apply(mockView, [ERR_EV]);
+        assert.isTrue(notified);
+      });
 
   it('should show errors for no unit, one unit and multiple ' +
-     'units (service view)', function() {
-
-       //_removeUnitCallback
-       var mockView = {
-         get: function(key) {
-           if ('app' === key) {
-             return {
-               getModelURL: NO_OP,
-               db: {
-                 fire: NO_OP,
-                 notifications: {
-                   add: function(notification) {
-                     messages.push(notification.get('message'));
-                     titles.push(notification.get('title'));
-                   }
-                 }
-               }
-             };
-           }
-           return null;
-         }
-       },
+      'units (service view)', function() {
+        //_removeUnitCallback
+        var mockView =
+            { get: function(key) {
+              return {
+           getModelURL: NO_OP,
+           db:
+           { fire: NO_OP,
+             notifications:
+             { add: function(notification) {
+               messages.push(notification.get('message'));
+               titles.push(notification.get('title'));
+             }}}}[key];
+       }},
        messages = [],
        titles = [],
        baseView = new views.serviceBase({});
 
+        baseView._removeUnitCallback.apply(mockView, [{
+          err: true,
+          unit_names: null
+        }]);
 
+        baseView._removeUnitCallback.apply(mockView, [{
+          err: true,
+          unit_names: []
+        }]);
 
-       baseView._removeUnitCallback.apply(mockView, [{
-         err: true,
-         unit_names: null
-       }]);
+        baseView._removeUnitCallback.apply(mockView, [{
+          err: true,
+          unit_names: ['a']
+        }]);
 
-       baseView._removeUnitCallback.apply(mockView, [{
-         err: true,
-         unit_names: []
-       }]);
+        baseView._removeUnitCallback.apply(mockView, [{
+          err: true,
+          unit_names: ['b', 'c']
+        }]);
 
-       baseView._removeUnitCallback.apply(mockView, [{
-         err: true,
-         unit_names: ['a']
-       }]);
+        function assertTrace(expected, trace) {
+          assert.equal(expected.join(';'), trace.join(';'));
+        }
 
-       baseView._removeUnitCallback.apply(mockView, [{
-         err: true,
-         unit_names: ['b', 'c']
-       }]);
-
-       function assertTrace(expected, trace) {
-         assert.equal(expected.join(';'), trace.join(';'));
-       }
-
-       assertTrace(['Error removing unit', 'Error removing unit',
-         'Error removing unit', 'Error removing units'], titles);
-       assertTrace(['', '', 'Unit name: a', 'Unit names: b, c'], messages);
-     });
+        assertTrace(['Error removing unit', 'Error removing unit',
+          'Error removing unit', 'Error removing units'], titles);
+        assertTrace(['', '', 'Unit name: a', 'Unit names: b, c'], messages);
+      });
 
 });

@@ -44,12 +44,12 @@
         exposed: false});
 
       db.services.add([service]);
-      var viewMaker = function(viewPrototype) {
+      var viewMaker = function(ViewPrototype) {
         return function(querystring) {
           if (!Y.Lang.isValue(querystring)) {
             querystring = {};
           }
-          return new viewPrototype(
+          return new ViewPrototype(
               { container: container,
                 model: service,
                 db: db,
@@ -524,7 +524,7 @@
 
           db.relations.add([rel0, rel1]);
 
-          var view = new makeServiceRelationsView(),
+          var view = makeServiceRelationsView(),
               control = container.one('#relation-1');
           control.simulate('click');
           var remove = container.one('#remove-modal-panel .btn-danger');
