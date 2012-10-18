@@ -286,7 +286,7 @@ YUI.add('juju-gui', function(Y) {
       if (Y.Lang.isValue(service)) {
         if (!service.get('loaded')) {
           this.env.get_service(
-              service.get('id'), Y.bind(this.load_service, this));
+              service.get('id'), Y.bind(this.loadService, this));
         }
         var charm_id = service.get('charm'),
             self = this;
@@ -308,7 +308,8 @@ YUI.add('juju-gui', function(Y) {
       this._prefetch_service(service);
       this.showView(viewName, {
         model: service,
-        app: this,
+        db: this.db,
+        getModelURL: Y.bind(this.getModelURL, this),
         querystring: req.query
       }, {}, function(view) {
         // If the view contains a method call fitToWindow,
@@ -400,11 +401,13 @@ YUI.add('juju-gui', function(Y) {
           instance = view.instance;
       if (!instance) {
         console.log('new env view');
-        this.showView('environment', {
-          app: this,
-          db: this.db,
-          env: this.env},
-        {render: true});
+        this.showView('environment',
+            { getModelURL: Y.bind(this.getModelURL, this),
+              serviceEndpoints: this.serviceEndpoints,
+              loadService: this.loadService,
+              db: this.db,
+              env: this.env},
+            {render: true});
       } else {
         /* The current impl makes extensive use of
          * event handlers which are not being properly rebound
@@ -412,23 +415,21 @@ YUI.add('juju-gui', function(Y) {
          * to enable this but we have to land the basics of this branch
          * first.
          */
-        this.showView('environment', {app: this,
-          db: this.db,
-          env: this.env}, {
-          update: false,
-          render: true,
-          callback: function(view) {
-            //view.attachView();
-            view.postRender();
-            //view.updateCanvas();
-          }
-        });
+        this.showView('environment',
+            { getModelURL: Y.bind(this.getModelURL, this),
+              serviceEndpoints: this.serviceEndpoints,
+              loadService: this.loadService,
+              db: this.db,
+              env: this.env},
+            { update: false,
+              render: true,
+              callback: function(view) {view.postRender();}});
       }
       next();
     },
 
     // Model interactions -> move to db layer
-    load_service: function(evt) {
+    loadService: function(evt) {
       console.log('load service', evt);
       if (evt.err) {
         this.db.notifications.add(

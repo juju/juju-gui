@@ -136,25 +136,19 @@ describe('juju application notifications', function() {
 
   it('should show notification for "remove_units" and "resolved" exceptions' +
      ' (unit view)', function() {
-       var view = new views.unit({
-         container: viewContainer,
-         app: {
-           getModelURL: function() {
-             return 'my url';
-           }
-         },
+       var view = new views.unit(
+       { container: viewContainer,
+         getModelURL: function() {return 'my url';},
          db: db,
          env: {
            remove_units: function(param, callback) {
-             callback({
-               err: true,
-               unit_names: ['aaa']
-             });
+             callback(
+             { err: true,
+               unit_names: ['aaa']});
            },
            resolved: function(unit_name, relation_name, retry, callback) {
              callback(ERR_EV);
-           }
-         },
+           }},
          unit: {},
          querystring: {}
        });

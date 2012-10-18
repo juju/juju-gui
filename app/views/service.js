@@ -53,7 +53,7 @@ YUI.add('juju-view-service', function(Y) {
       var service = this.get('model'),
           unit_count = service.get('unit_count'),
           field = this.get('container').one('#num-service-units'),
-          env = this.get('app').env;
+          env = this.get('env');
 
       if (requested_unit_count < 1) {
         console.log('You must have at least one unit');
@@ -69,7 +69,7 @@ YUI.add('juju-view-service', function(Y) {
             Y.bind(this._addUnitCallback, this));
       } else if (delta < 0) {
         delta = Math.abs(delta);
-        var units = this.get('app').db.units.get_units_for_service(service),
+        var units = this.get('db').units.get_units_for_service(service),
             unit_ids_to_remove = [];
 
         for (var i = units.length - 1;
@@ -87,8 +87,8 @@ YUI.add('juju-view-service', function(Y) {
 
     _addUnitCallback: function(ev) {
       var service = this.get('model'),
-          app = this.get('app'),
-          db = this.get('app').db,
+          getModelURL = this.get('getModelURL'),
+          db = this.get('db'),
           unit_names = ev.result || [];
       if (ev.err) {
         db.notifications.add(
@@ -96,7 +96,7 @@ YUI.add('juju-view-service', function(Y) {
               title: 'Error adding unit',
               message: ev.num_units + ' units',
               level: 'error',
-              link: app.getModelURL(service),
+              link: getModelURL(service),
               modelId: service
             })
         );
@@ -115,8 +115,8 @@ YUI.add('juju-view-service', function(Y) {
 
     _removeUnitCallback: function(ev) {
       var service = this.get('model'),
-          app = this.get('app'),
-          db = this.get('app').db,
+          getModelURL = this.get('getModelURL'),
+          db = this.get('db'),
           unit_names = ev.unit_names;
       console.log('_removeUnitCallback with: ', arguments);
 
@@ -139,7 +139,7 @@ YUI.add('juju-view-service', function(Y) {
                 return 'Unit name: ' + ev.unit_names[0];
               })(),
               level: 'error',
-              link: app.getModelURL(service),
+              link: getModelURL(service),
               modelId: service
             })
         );
@@ -181,7 +181,7 @@ YUI.add('juju-view-service', function(Y) {
 
     destroyService: function(ev) {
       ev.preventDefault();
-      var env = this.get('app').env,
+      var env = this.get('env'),
           service = this.get('model');
       ev.target.set('disabled', true);
       env.destroy_service(
@@ -189,8 +189,8 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     _destroyCallback: function(ev) {
-      var db = this.get('app').db,
-          app = this.get('app'),
+      var db = this.get('db'),
+          getModelURL = this.get('getModelURL'),
           service = this.get('model'),
           service_id = service.get('id');
 
@@ -200,7 +200,7 @@ YUI.add('juju-view-service', function(Y) {
               title: 'Error destroying service',
               message: 'Service name: ' + ev.service_name,
               level: 'error',
-              link: app.getModelURL(service),
+              link: getModelURL(service),
               modelId: service
             })
         );
@@ -229,22 +229,22 @@ YUI.add('juju-view-service', function(Y) {
 
     unexposeService: function() {
       var service = this.get('model'),
-          env = this.get('app').env;
+          env = this.get('env');
       env.unexpose(service.get('id'),
           Y.bind(this._unexposeServiceCallback, this));
     },
 
     _unexposeServiceCallback: function(ev) {
       var service = this.get('model'),
-          db = this.get('app').db,
-          app = this.get('app');
+          db = this.get('db'),
+          getModelURL = this.get('getModelURL');
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
               title: 'Error un-exposing service',
               message: 'Service name: ' + ev.service_name,
               level: 'error',
-              link: app.getModelURL(service),
+              link: getModelURL(service),
               modelId: service
             })
         );
@@ -256,22 +256,22 @@ YUI.add('juju-view-service', function(Y) {
 
     exposeService: function() {
       var service = this.get('model'),
-          env = this.get('app').env;
+          env = this.get('env');
       env.expose(service.get('id'),
           Y.bind(this._exposeServiceCallback, this));
     },
 
     _exposeServiceCallback: function(ev) {
       var service = this.get('model'),
-          db = this.get('app').db,
-          app = this.get('app');
+          db = this.get('db'),
+          getModelURL = this.get('getModelURL');
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
               title: 'Error exposing service',
               message: 'Service name: ' + ev.service_name,
               level: 'error',
-              link: app.getModelURL(service),
+              link: getModelURL(service),
               modelId: service
             })
         );
@@ -362,15 +362,16 @@ YUI.add('juju-view-service', function(Y) {
 
         render: function() {
           var container = this.get('container'),
-              app = this.get('app'),
+              getModelURL = this.get('getModelURL'),
               service = this.get('model'),
+              db = this.get('db'),
               querystring = this.get('querystring');
           if (!service) {
             container.setHTML('<div class="alert">Loading...</div>');
             console.log('waiting on service data');
             return this;
           }
-          var relation_data = utils.getRelationDataForService(app.db, service);
+          var relation_data = utils.getRelationDataForService(db, service);
           Y.each(relation_data, function(rel) {
             if (rel.relation_id === querystring.rel_id) {
               rel.highlight = true;
@@ -382,8 +383,8 @@ YUI.add('juju-view-service', function(Y) {
                 tabs: this.getServiceTabs('relations'),
                 service: service.getAttrs(),
                 relations: relation_data,
-                charm: this.renderable_charm(service.get('charm'), app)}
-              ));
+                charm: this.renderable_charm(
+                    service.get('charm'), db, getModelURL)}));
         },
 
         confirmRemoved: function(ev) {
@@ -411,9 +412,10 @@ YUI.add('juju-view-service', function(Y) {
         doRemoveRelation: function(button, ev) {
           ev.preventDefault();
           var rel_id = button.get('value'),
-              app = this.get('app'),
+              db = this.get('db'),
+              env = this.get('env'),
               service = this.get('model'),
-              relation = app.db.relations.getById(rel_id),
+              relation = db.relations.getById(rel_id),
               endpoints = relation.get('endpoints'),
               endpoint_a = endpoints[0][0] + ':' + endpoints[0][1].name,
               endpoint_b;
@@ -427,7 +429,7 @@ YUI.add('juju-view-service', function(Y) {
 
           ev.target.set('disabled', true);
 
-          app.env.remove_relation(
+          env.remove_relation(
               endpoint_a,
               endpoint_b,
               Y.bind(this._removeRelationCallback, this,
@@ -436,23 +438,24 @@ YUI.add('juju-view-service', function(Y) {
 
         _removeRelationCallback: function(relation, rm_button,
             confirm_button, ev) {
-          var app = this.get('app'),
+          var db = this.get('db'),
+              getModelURL = this.get('getModelURL'),
               service = this.get('model');
           views.highlightRow(rm_button.ancestor('tr'), ev.err);
           if (ev.err) {
-            app.db.notifications.add(
+            db.notifications.add(
                 new models.Notification({
                   title: 'Error deleting relation',
                   message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
                   level: 'error',
-                  link: app.getModelURL(service) + 'relations?rel_id=' +
+                  link: getModelURL(service) + 'relations?rel_id=' +
                       relation.get('id'),
                   modelId: relation
                 })
             );
           } else {
-            app.db.relations.remove(relation);
-            app.db.fire('update');
+            db.relations.remove(relation);
+            db.fire('update');
           }
           confirm_button.set('disabled', false);
           this.remove_panel.hide();
@@ -473,7 +476,7 @@ YUI.add('juju-view-service', function(Y) {
         updateConstraints: function() {
           var service = this.get('model'),
               container = this.get('container'),
-              env = this.get('app').env;
+              env = this.get('env');
 
           var values = (function() {
             var result = [],
@@ -498,9 +501,10 @@ YUI.add('juju-view-service', function(Y) {
 
         _setConstraintsCallback: function(container, ev) {
           var service = this.get('model'),
-              env = this.get('app').env,
-              app = this.get('app'),
-              db = this.get('app').db;
+              env = this.get('env'),
+              getModelURL = this.get('getModelURL'),
+              loadService = this.get('loadService'),
+              db = this.get('db');
 
           if (ev.err) {
             db.notifications.add(
@@ -508,7 +512,7 @@ YUI.add('juju-view-service', function(Y) {
                   title: 'Error setting service constraints',
                   message: 'Service name: ' + ev.service_name,
                   level: 'error',
-                  link: app.getModelURL(service) + 'constraints',
+                  link: getModelURL(service) + 'constraints',
                   modelId: service
                 })
             );
@@ -517,7 +521,7 @@ YUI.add('juju-view-service', function(Y) {
 
           } else {
             env.get_service(
-                service.get('id'), Y.bind(app.load_service, app));
+                service.get('id'), loadService);
 
             // The usual result of a successful request is a page refresh.
             // Therefore, we need to set this delay in order to show the
@@ -530,11 +534,11 @@ YUI.add('juju-view-service', function(Y) {
 
         render: function() {
           var container = this.get('container'),
-              app = this.get('app'),
-              service = this.get('model');
-
-          var constraints = service.get('constraints');
-          var display_constraints = [];
+              service = this.get('model'),
+              getModelURL = this.get('getModelURL'),
+              db = this.get('db'),
+              constraints = service.get('constraints'),
+              display_constraints = [];
 
           //these are read-only values
           var readOnlyConstraints = {
@@ -570,8 +574,8 @@ YUI.add('juju-view-service', function(Y) {
               });
               return arr;
             })(),
-            charm: this.renderable_charm(service.get('charm'), app)}
-          ));
+            charm: this.renderable_charm(
+                service.get('charm'), db, getModelURL)}));
 
           return this;
         }
@@ -591,7 +595,7 @@ YUI.add('juju-view-service', function(Y) {
 
         render: function() {
           var container = this.get('container'),
-              app = this.get('app'),
+              db = this.get('db'),
               service = this.get('model');
 
           if (!service || !service.get('loaded')) {
@@ -603,8 +607,9 @@ YUI.add('juju-view-service', function(Y) {
           console.log('config', service.get('config'));
 
           // combine the charm schema and the service values for display.
-          var charm = app.db.charms.getById(service.get('charm')),
+          var charm = db.charms.getById(service.get('charm')),
               config = service.get('config'),
+              getModelURL = this.get('getModelURL'),
               charm_config = charm.get('config'),
               schema = charm_config && charm_config.options,
               settings = [],
@@ -641,8 +646,8 @@ YUI.add('juju-view-service', function(Y) {
                 tabs: this.getServiceTabs('config'),
                 service: service.getAttrs(),
                 settings: settings,
-                charm: this.renderable_charm(service.get('charm'), app)}
-              ));
+                charm: this.renderable_charm(
+                    service.get('charm'), db, getModelURL)}));
 
           return this;
         },
@@ -688,10 +693,12 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         saveConfig: function() {
-          var app = this.get('app'),
+          var env = this.get('env'),
+              db = this.get('db'),
+              getModelURL = this.get('getModelURL'),
               service = this.get('model'),
               charm_url = service.get('charm'),
-              charm = app.db.charms.getById(charm_url),
+              charm = db.charms.getById(charm_url),
               charm_config = charm.get('config'),
               schema = charm_config && charm_config.options,
               container = this.get('container');
@@ -704,7 +711,7 @@ YUI.add('juju-view-service', function(Y) {
               errors = utils.validate(new_values, schema);
 
           if (Y.Object.isEmpty(errors)) {
-            app.env.set_config(
+            env.set_config(
                 service.get('id'),
                 new_values,
                 Y.bind(this._setConfigCallback, this, container)
@@ -717,9 +724,10 @@ YUI.add('juju-view-service', function(Y) {
 
         _setConfigCallback: function(container, ev) {
           var service = this.get('model'),
-              env = this.get('app').env,
-              app = this.get('app'),
-              db = this.get('app').db;
+              env = this.get('env'),
+              getModelURL = this.get('getModelURL'),
+              loadService = this.get('loadService'),
+              db = this.get('db');
 
           if (ev.err) {
             db.notifications.add(
@@ -727,7 +735,7 @@ YUI.add('juju-view-service', function(Y) {
                   title: 'Error setting service config',
                   message: 'Service name: ' + ev.service_name,
                   level: 'error',
-                  link: app.getModelURL(service) + 'config',
+                  link: getModelURL(service) + 'config',
                   modelId: service
                 })
             );
@@ -735,7 +743,7 @@ YUI.add('juju-view-service', function(Y) {
               .removeAttribute('disabled');
 
           } else {
-            env.get_service(service.get('id'), Y.bind(app.load_service, app));
+            env.get_service(service.get('id'), loadService);
 
             // The usual result of a successful request is a page refresh.
             // Therefore, we need to set this delay in order to show the
@@ -781,7 +789,8 @@ YUI.add('juju-view-service', function(Y) {
           console.log('service view render');
 
           var container = this.get('container'),
-              app = this.get('app'),
+              getModelURL = this.get('getModelURL'),
+              db = this.get('db'),
               service = this.get('model'),
               filter_state = this.get('querystring').state;
 
@@ -791,7 +800,7 @@ YUI.add('juju-view-service', function(Y) {
             return this;
           }
 
-          var units = app.db.units.get_units_for_service(service),
+          var units = db.units.get_units_for_service(service),
               state_data = [{
                 title: 'All',
                 link: '.',
@@ -807,15 +816,15 @@ YUI.add('juju-view-service', function(Y) {
               count: this.filterUnits(lower, units).length,
               link: '?state=' + lower});
           }, this);
-          container.setHTML(this.template({
-            viewName: 'units',
-            tabs: this.getServiceTabs('.'),
-            service: service.getAttrs(),
-            charm: this.renderable_charm(service.get('charm'), app),
-            state: filter_state,
-            units: this.filterUnits(filter_state, units),
-            states: state_data
-          }));
+          container.setHTML(this.template(
+              { viewName: 'units',
+                tabs: this.getServiceTabs('.'),
+                service: service.getAttrs(),
+                charm: this.renderable_charm(
+                    service.get('charm'), db, getModelURL),
+                state: filter_state,
+                units: this.filterUnits(filter_state, units),
+                states: state_data}));
           return this;
         },
 

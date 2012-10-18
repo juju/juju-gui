@@ -3,7 +3,7 @@
 (function() {
   describe('juju service config view', function() {
     var ServiceConfigView, models, Y, container, service, db, conn,
-        env, charm, ENTER, utils, app, testUtils;
+        env, charm, ENTER, utils, app, testUtils, makeView;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-views', 'juju-models', 'base',
@@ -16,6 +16,14 @@
             ServiceConfigView = Y.namespace('juju.views').service_config;
             utils = Y.namespace('juju.views.utils');
             testUtils = Y.namespace('juju-tests.utils');
+            makeView = function() {
+              return new ServiceConfigView(
+                  { container: container,
+                    model: service,
+                    db: app.db,
+                    env: app.env,
+                    getModelURL: function() {}}).render();
+            };
             done();
           });
     });
@@ -90,14 +98,8 @@
     });
 
     it('should display the configuration', function() {
-      var view = new ServiceConfigView({
-        container: container,
-        model: service,
-        app: app
-      });
-      view.render();
-
-      var config = service.get('config'),
+      var view = makeView(),
+          config = service.get('config'),
           serviceConfigDiv = container.one('#service-config');
 
       Y.Object.each(config, function(value, name) {
@@ -116,12 +118,7 @@
     });
 
     it('should let the user change a configuration value', function() {
-      var view = new ServiceConfigView({
-        container: container,
-        model: service,
-        app: app
-      }).render();
-
+      var view = makeView();
       container.one('#input-option0').set('value', 'new value');
       // In tests the events are not wired up right so we will call this
       // event handler manually.
@@ -144,14 +141,7 @@
       };
 
       var ev = {err: true},
-          view = new ServiceConfigView({
-            container: container,
-            model: service,
-            app: (function() {
-              app.getModelURL = function() {};
-              return app;
-            })()
-          }).render();
+          view = makeView();
 
       // Clicking on the "Update" button disables it until the RPC
       // callback returns, then it is re-enabled.
@@ -162,16 +152,11 @@
 
     it('should display a message when a server error occurs', function() {
       var ev = {err: true},
+          view = makeView(),
           alert_ = container.one('#message-area>.alert');
       env.set_config = function(service, config, callback) {
         callback(ev);
       };
-
-      var view = new ServiceConfigView({
-        container: container,
-        model: service,
-        app: app
-      }).render();
 
       // Before an erroneous event is processed, no alert exists.
       var _ = expect(alert_).to.not.exist;
@@ -186,13 +171,8 @@
 
     it('should display an error when addErrorMessage is called',
        function() {
-          var view = new ServiceConfigView({
-           container: container,
-           model: service,
-           app: app
-         }).render();
-
-         var error_message = utils.SERVER_ERROR_MESSAGE,
+         var view = makeView(),
+             error_message = utils.SERVER_ERROR_MESSAGE,
          alert_ = container.one('#message-area>.alert');
 
          // Before an erroneous event is processed, no alert exists.
@@ -213,16 +193,11 @@
         // Mock function
         // view.saveConfig() calls it as part of its internal
         // "success" callback
-        app.load_service = function() {};
         env.set_config = function(service, config, callback) {
           callback(ev);
         };
         var ev = {err: false},
-            view = new ServiceConfigView({
-              app: app,
-              container: container,
-              model: service
-            }).render();
+            view = makeView();
 
         container.one('#input-' + key).set('value', value);
 

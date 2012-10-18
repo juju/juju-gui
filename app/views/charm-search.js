@@ -140,7 +140,7 @@ YUI.add('juju-charm-search', function(Y) {
     },
     findCharms: function(query, callback) {
       var charmStore = this.get('charmStore'),
-          app = this.get('app');
+          db = this.get('db');
       charmStore.sendRequest({
         request: 'search/json?search_text=' + query,
         callback: {
@@ -154,7 +154,7 @@ YUI.add('juju-charm-search', function(Y) {
           }, this),
           'failure': function er(e) {
             console.error(e.error);
-            app.db.notifications.add(
+            db.notifications.add(
                 new models.Notification({
                   title: 'Could not retrieve charms',
                   message: e.error,
@@ -296,8 +296,8 @@ YUI.add('juju-charm-search', function(Y) {
             // Some file read errors don't go through the error handler as
             // expected but instead return an empty string.  Warn the user if
             // this happens.
-            var app = this.get('app');
-            app.db.notifications.add(
+            var db = this.get('db');
+            db.notifications.add(
                 new models.Notification({
                   title: 'Configuration file error',
                   message: 'The configuration file loaded is empty.  ' +
@@ -326,8 +326,8 @@ YUI.add('juju-charm-search', function(Y) {
               msg = 'An error occurred reading this file.';
           }
           if (msg) {
-            var app = this.get('app');
-            app.db.notifications.add(
+            var db = this.get('db');
+            db.notifications.add(
                 new models.Notification({
                   title: 'Error reading configuration file',
                   message: msg,
@@ -342,7 +342,8 @@ YUI.add('juju-charm-search', function(Y) {
         },
         onCharmDeployClicked: function(evt) {
           var container = this.get('container'),
-              app = this.get('app'),
+              db = this.get('db'),
+              env = this.get('env'),
               serviceName = container.one('#service-name').get('value'),
               numUnits = container.one('#number-units').get('value'),
               charm = this.get('model'),
@@ -351,11 +352,11 @@ YUI.add('juju-charm-search', function(Y) {
                   '#service-config .config-field');
           // The service names must be unique.  It is an error to deploy a
           // service with same name.
-          var existing_service = app.db.services.getById(serviceName);
+          var existing_service = db.services.getById(serviceName);
           if (Y.Lang.isValue(existing_service)) {
             console.log('Attempting to add service of the same name: ' +
                         serviceName);
-            app.db.notifications.add(
+            db.notifications.add(
                 new models.Notification({
                   title: 'Attempting to deploy service ' + serviceName,
                   message: 'A service with that name already exists.',
@@ -367,11 +368,11 @@ YUI.add('juju-charm-search', function(Y) {
             config = null;
           }
           numUnits = parseInt(numUnits, 10);
-          app.env.deploy(url, serviceName, config, this.configFileContent,
-                         numUnits, function(ev) {
+          env.deploy(url, serviceName, config, this.configFileContent,
+              numUnits, function(ev) {
                 if (ev.err) {
                   console.log(url + ' deployment failed');
-                  app.db.notifications.add(
+                  db.notifications.add(
                       new models.Notification({
                         title: 'Error deploying ' + serviceName,
                         message: 'Could not deploy the requested service.',
@@ -379,7 +380,7 @@ YUI.add('juju-charm-search', function(Y) {
                       }));
                 } else {
                   console.log(url + ' deployed');
-                  app.db.notifications.add(
+                  db.notifications.add(
                       new models.Notification({
                         title: 'Deployed ' + serviceName,
                         message: 'Successfully deployed the requested service.',
@@ -395,9 +396,9 @@ YUI.add('juju-charm-search', function(Y) {
                     loaded: false,
                     config: config
                   });
-                  app.db.services.add([service]);
+                  db.services.add([service]);
                   // Force refresh.
-                  app.db.fire('update');
+                  db.fire('update');
                 }
               });
           this.goBack(evt);

@@ -232,7 +232,6 @@ describe('notifications', function() {
         view = new views.NotificationsView({
           container: container,
           notifications: notifications,
-          app: app,
           env: app.env}).render();
 
 

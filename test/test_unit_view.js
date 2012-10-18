@@ -2,8 +2,8 @@
 
 (function() {
   describe('juju unit view', function() {
-    var UnitView, views, machine, models, Y, container, service, unit, db,
-        conn, juju, env, charm, testUtils;
+    var views, machine, models, Y, container, service, unit, db,
+        conn, juju, env, charm, testUtils, makeView;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -12,13 +12,24 @@
           function(Y) {
             views = Y.namespace('juju.views');
             models = Y.namespace('juju.models');
-            UnitView = views.unit;
             testUtils = Y.namespace('juju-tests.utils');
             conn = new testUtils.SocketStub();
             juju = Y.namespace('juju');
             env = new juju.Environment({conn: conn});
             env.connect();
             conn.open();
+            makeView = function(querystring) {
+              if (!Y.Lang.isValue(querystring)) {
+                querystring = {};
+              }
+              return new views.unit(
+                  { container: container,
+                    unit: unit,
+                    db: db,
+                    env: env,
+                    getModelURL: function(u) { return u.id; },
+                    querystring: querystring}).render();
+            };
             done();
           });
     });
@@ -75,30 +86,22 @@
     });
 
     it('should include unit identifier', function() {
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
+      var view = makeView();
       container.one('#unit-id').getHTML().should.contain('mysql/0');
     });
 
     it('should include charm URI', function() {
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
+      var view = makeView();
       container.one('#charm-uri').getHTML().should.contain('cs:precise/mysql');
     });
 
     it('should include unit status', function() {
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
+      var view = makeView();
       container.one('#unit-status').getHTML().should.contain('pending');
     });
 
     it('should include machine info', function() {
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
+      var view = makeView();
       container.one('#machine-name').getHTML().should.contain(
           'Machine machine-0');
       container.one('#machine-agent-state').getHTML().should.contain(
@@ -112,9 +115,7 @@
     });
 
     it('should include relation info', function() {
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
+      var view = makeView();
       container.one('#relations').getHTML().should.contain('Relations');
       container.one('.relation-ident').get('text').trim().should.equal('db:2');
       container.one('.relation-endpoint').get('text').trim().should.equal(
@@ -128,19 +129,15 @@
 
     it('should not display Retry and Resolved buttons when ' +
        'there is no error', function() {
-         var view = new UnitView(
-             { container: container, unit: unit, db: db, env: env,
-               querystring: {}}).render();
-         var _ = expect(container.one('#retry-unit-button')).to.not.exist;
-         _ = expect(container.one('#resolved-unit-button')).to.not.exist;
+          var view = makeView();
+          var _ = expect(container.one('#retry-unit-button')).to.not.exist;
+          _ = expect(container.one('#resolved-unit-button')).to.not.exist;
        });
 
     it('should display Retry and Resolved buttons when ' +
        'there is an error', function() {
           unit.agent_state = 'foo-error';
-          var view = new UnitView(
-              { container: container, unit: unit, db: db, env: env,
-                querystring: {}}).render();
+          var view = makeView();
           container.one('#retry-unit-button').getHTML().should.equal('Retry');
           container.one('#resolved-unit-button').getHTML().should.equal(
               'Resolved');
@@ -148,33 +145,26 @@
        });
 
     it('should always display Remove button', function() {
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render(),
+      var view = makeView(),
           button = container.one('#remove-unit-button');
       button.getHTML().should.equal('Remove');
       // Control is disabled with only one unit for the given service.
       button.get('disabled').should.equal(true);
     });
 
-    it('should send resolved op when confirmation button clicked',
-       function() {
-          unit.agent_state = 'foo-error';
-          var view = new UnitView(
-              { container: container, unit: unit, db: db, env: env,
-                querystring: {}}).render();
-          container.one('#resolved-unit-button').simulate('click');
-          container.one('#resolved-modal-panel .btn-danger').simulate('click');
-          var msg = conn.last_message();
-          msg.op.should.equal('resolved');
-          msg.retry.should.equal(false);
-       });
+    it('should send resolved op when confirmation button clicked', function() {
+      unit.agent_state = 'foo-error';
+      var view = makeView();
+      container.one('#resolved-unit-button').simulate('click');
+      container.one('#resolved-modal-panel .btn-danger').simulate('click');
+      var msg = conn.last_message();
+      msg.op.should.equal('resolved');
+      msg.retry.should.equal(false);
+    });
 
     it('should send resolved op with retry when retry clicked', function() {
       unit.agent_state = 'foo-error';
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
+      var view = makeView();
       container.one('#retry-unit-button').simulate('click');
       var msg = conn.last_message();
       msg.op.should.equal('resolved');
@@ -184,9 +174,7 @@
     it('should send remove_units op when confirmation clicked', function() {
       // Enable removal button by giving the service more than one unit.
       service.set('unit_count', 2);
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
+      var view = makeView();
       container.one('#remove-unit-button').simulate('click');
       container.one('#remove-modal-panel .btn-danger').simulate('click');
       var msg = conn.last_message();
@@ -196,9 +184,7 @@
     it('should clear out the database after a unit is removed', function() {
       // Enable removal button by giving the service more than one unit.
       service.set('unit_count', 2);
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
+      var view = makeView();
       container.one('#remove-unit-button').simulate('click');
       container.one('#remove-modal-panel .btn-danger')
          .simulate('click');
@@ -215,9 +201,7 @@
 
     it('should show unit errors on the page with action buttons', function() {
       unit.relation_errors = {'db': ['mediawiki']};
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
+      var view = makeView();
       container.one('.relation-status').get('text').trim().should.contain(
           'error');
       container.one('.relation-status').all('button').get('text')
@@ -225,18 +209,14 @@
     });
 
     it('should show highlighted relation rows', function() {
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {rel_id: 'relation-0000000002'}}).render();
+      var view = makeView({rel_id: 'relation-0000000002'});
       container.one('#relations tbody tr').hasClass('highlighted')
         .should.equal(true);
     });
 
     it('should be able to send a resolve relation message', function() {
       unit.relation_errors = {'db': ['mediawiki']};
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
+      var view = makeView();
       container.one('.resolved-relation-button').simulate('click');
       container.one('#resolved-relation-modal-panel .btn-danger')
          .simulate('click');
@@ -249,9 +229,7 @@
 
     it('should be able to send a retry relation message', function() {
       unit.relation_errors = {'db': ['mediawiki']};
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {}}).render();
+      var view = makeView();
       container.one('.retry-relation-button').simulate('click');
       var msg = conn.last_message();
       msg.op.should.equal('resolved');
@@ -262,11 +240,7 @@
 
     it('should create an error notification if a resolve fails', function() {
       unit.relation_errors = {'db': ['mediawiki']};
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {},
-            app: {getModelURL: function(u) { return u.id; }}})
-        .render();
+      var view = makeView();
       container.one('.resolved-relation-button').simulate('click');
       container.one('#resolved-relation-modal-panel .btn-danger')
          .simulate('click');
@@ -282,11 +256,7 @@
 
     it('should create an error notification if a retry fails', function() {
       unit.relation_errors = {'db': ['mediawiki']};
-      var view = new UnitView(
-          { container: container, unit: unit, db: db, env: env,
-            querystring: {},
-            app: {getModelURL: function(u) { return u.id; }}})
-        .render();
+      var view = makeView();
       container.one('.retry-relation-button').simulate('click');
       var msg = conn.last_message();
       msg.err = true;

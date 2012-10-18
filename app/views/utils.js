@@ -130,11 +130,11 @@ YUI.add('juju-view-utils', function(Y) {
       this.after(['*:change', '*:load'], this.render, this);
     },
 
-    renderable_charm: function(charm_name, app) {
-      var charm = app.db.charms.getById(charm_name);
+    renderable_charm: function(charm_name, db, getModelURL) {
+      var charm = db.charms.getById(charm_name);
       if (charm) {
         var result = charm.getAttrs();
-        result.app_url = app.getModelURL(charm);
+        result.app_url = getModelURL(charm);
         return result;
       }
       return null;
