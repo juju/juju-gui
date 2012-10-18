@@ -96,7 +96,8 @@ YUI.add('juju-view-environment', function(Y) {
                 self.dragline.attr('x1', t[0])
                   .attr('y1', t[1])
                   .attr('x2', s[0])
-                  .attr('y2', s[1]);
+                  .attr('y2', s[1])
+                  .attr('class', 'relation pending-relation dragline');
               }
             },
             mouseleave: function(d, self) {
@@ -115,6 +116,11 @@ YUI.add('juju-view-environment', function(Y) {
               self.set('potential_drop_point_service', null);
               self.set('potential_drop_point_rect', null);
               self.removeSVGClass(rect, 'hover');
+              
+              if (self.dragline) {
+                self.dragline.attr('class', 
+                    'relation pending-relation dragline dragging');
+              }
             }
           },
           '.sub-rel-block': {
@@ -1017,7 +1023,7 @@ YUI.add('juju-view-environment', function(Y) {
         addRelationDragStart: function(d, context) {
           // Create a pending drag-line behind services.
           var dragline = this.vis.insert('line', '.service')
-              .attr('class', 'relation pending-relation dragline'),
+              .attr('class', 'relation pending-relation dragline dragging'),
               self = this;
 
           // Start the line in the middle of the service.
@@ -1027,6 +1033,7 @@ YUI.add('juju-view-environment', function(Y) {
               .attr('x2', point[0])
               .attr('y2', point[1]);
           self.dragline = dragline;
+          self.cursorBox = views.BoundingBox();
 
           // Start the add-relation process.
           self.service_click_actions
@@ -1038,12 +1045,11 @@ YUI.add('juju-view-environment', function(Y) {
           // hovering over a potential drop-point.
           if (!this.get('potential_drop_point_service')) {
             // Create a BoundingBox for our cursor.
-            var cursor_box = views.BoundingBox();
-            cursor_box.pos = {x: d3.event.x, y: d3.event.y, w: 0, h: 0};
+            this.cursorBox.pos = {x: d3.event.x, y: d3.event.y, w: 0, h: 0};
 
             // Draw the relation line from the connector point nearest the
             // cursor to the cursor itself.
-            var connectors = cursor_box.getConnectorPair(d),
+            var connectors = this.cursorBox.getConnectorPair(d),
                 s = connectors[1];
             this.dragline.attr('x1', s[0])
               .attr('y1', s[1])
@@ -1059,8 +1065,9 @@ YUI.add('juju-view-environment', function(Y) {
           var endpoint = self.get('potential_drop_point_service');
 
           // Get rid of our drag line
-          this.dragline.remove();
-          this.buildingRelation = false;
+          self.dragline.remove();
+          self.buildingRelation = false;
+          self.cursorBox = null
 
           // If we landed on a rect, add relation, otherwise, cancel.
           if (rect) {
