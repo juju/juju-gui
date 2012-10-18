@@ -84,6 +84,20 @@ YUI.add('juju-view-environment', function(Y) {
               self.set('potential_drop_point_service', d);
               self.set('potential_drop_point_rect', rect);
               self.addSVGClass(rect, 'hover');
+
+              // If we have an active dragline, stop redrawing it on mousemove
+              // and draw the line between the two nearest connector points of
+              // the two services.
+              if (self.dragline) {
+                var connectors = d.getConnectorPair(
+                    self.get('addRelationStart_service')),
+                    s = connectors[0],
+                    t = connectors[1];
+                self.dragline.attr('x1', t[0])
+                  .attr('y1', t[1])
+                  .attr('x2', s[0])
+                  .attr('y2', s[1]);
+              }
             },
             mouseleave: function(d, self) {
               // Do not fire if we aren't looking for a relation endpoint.
@@ -994,9 +1008,22 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         addRelationDrag: function(d, context) {
-          // Rubberband our potential relation line.
-          this.dragline.attr('x2', d3.event.x)
+          // Rubberband our potential relation line if we're not currently
+          // hovering over a potential drop-point.
+          if (!this.get('potential_drop_point_service')) {
+            // Create a BoundingBox for our cursor.
+            var cursor_box = views.BoundingBox();
+            cursor_box.pos = {x: d3.event.x, y: d3.event.y, w: 0, h: 0};
+
+            // Draw the relation line from the connector point nearest the
+            // cursor to the cursor itself.
+            var connectors = cursor_box.getConnectorPair(d),
+                s = connectors[1];
+            this.dragline.attr('x1', s[0])
+              .attr('y1', s[1])
+              .attr('x2', d3.event.x)
               .attr('y2', d3.event.y);
+          }
         },
 
         addRelationDragEnd: function(d, context) {
