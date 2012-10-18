@@ -242,7 +242,7 @@ charms.thumbnails.li { height:4em; }
 
     &.pending-relation {
         stroke: #faaf40;
-        
+
         &.dragging {
             stroke: #fa6a40
         }
@@ -708,6 +708,35 @@ g.unit {
         float: right;
     }
 
+    .btn.deploy {
+        margin-top: 5px;
+        margin-left: 5px;
+        float: none;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        border: none;
+        vertical-align: middle;
+        background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
+        background-image: url(/juju-ui/assets/images/deploy-button.png);
+        &:active {
+          background-image: url(/juju-ui/assets/images/deploy-button-pressed.png);
+        }
+    }
+    .btn.cancel {
+        margin-top: 5px;
+        margin-left: 5px;
+        float: none;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        border: none;
+        vertical-align: middle;
+        background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
+        background-image: url(/juju-ui/assets/images/cancel-button.png);
+        &:active {
+          background-image: url(/juju-ui/assets/images/cancel-button-pressed.png);
+        }
+    }
+
     .search-charm-inner {
         width: 100%;
         height: 500px;
@@ -1025,16 +1054,4 @@ div.inline {
     border-radius: 3px;
     min-width: 20px;
     max-width: 400px;
-}
-
-.btn.deploy {
-  background-image: url(/juju-ui/assets/images/deploy-button.png);
-  background-repeat: no-repeat;
-  background-color: transparent;
-  border: none;
-  vertical-align: middle;
-  background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-  &:active {
-    background-image: url(/juju-ui/assets/images/deploy-button-pressed.png);
-  }
 }

@@ -239,13 +239,13 @@ YUI.add('juju-charm-search', function(Y) {
           return this;
         },
         events: {
-          '.charm-nav-back': {click: 'goBack'},
-          '.btn#charm-deploy': {click: 'onCharmDeployClicked'},
+          '.btn.cancel': {click: 'goBack'},
+          '.btn.deploy': {click: 'onCharmDeployClicked'},
           '.remove-config-file': {click: 'onFileRemove'},
           '.charm-section h4': {click: toggleSectionVisibility},
           '.config-file-upload': {change: 'onFileChange'},
           '.config-field': {focus: 'showDescription',
-            blur: 'hideDescription'},
+                            blur: 'hideDescription'},
           'input.config-field[type=checkbox]':
               {click: function(evt) {evt.target.focus();}}
         },
