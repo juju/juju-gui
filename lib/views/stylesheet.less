@@ -86,11 +86,13 @@ body {
                     padding: 3px 3px 3px 26px;
                     font-style: italic;
                     font-family: @font-family;
-                    font-size: 0.9em; fill: #333333;
+                    font-size: 0.9em;
                     &:focus {
                         background: white;
                         padding: 3px;
                         width: 151px;
+                        font-style: normal;
+                        font-size: 1em;
                     }
                 }
 
@@ -240,6 +242,10 @@ charms.thumbnails.li { height:4em; }
 
     &.pending-relation {
         stroke: #faaf40;
+        
+        &.dragging {
+            stroke: #fa6a40
+        }
     }
 
     &.unused {
