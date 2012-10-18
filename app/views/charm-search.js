@@ -229,6 +229,9 @@ YUI.add('juju-charm-search', function(Y) {
                   settings: settings}));
             // Set up entry description overlay.
             this.setupOverlay(container);
+            // This does not work via delegation.
+            container.one('.charm-panel').after(
+                'scroll', Y.bind(this._moveTooltip, this));
           } else {
             container.setHTML(
                 '<div class="alert">Waiting on charm data...</div>');
@@ -246,22 +249,42 @@ YUI.add('juju-charm-search', function(Y) {
           'input.config-field[type=checkbox]':
               {click: function(evt) {evt.target.focus();}}
         },
+        _moveTooltip: function() {
+          if (Y.DOM.inRegion(
+              this.tooltip.field.getDOMNode(),
+              this.tooltip.panelRegion,
+              true)) {
+            var targetRect = this.tooltip.field.getClientRect();
+            if (targetRect) {
+              var widget = this.tooltip.get('boundingBox'),
+                  tooltipWidth = widget.get('clientWidth'),
+                  tooltipHeight = widget.get('clientHeight'),
+                  y_offset = (tooltipHeight - targetRect.height) / 2;
+              this.tooltip.move(  // These are the x, y coordinates.
+                  [this.tooltip.panel.getX() - tooltipWidth - 15,
+                   targetRect.top - y_offset]);
+              if (!this.tooltip.get('visible')) {
+                this.tooltip.show();
+              }
+            }
+          } else if (this.tooltip.get('visible')) {
+            this.tooltip.hide();
+          }
+        },
         showDescription: function(evt) {
           //console.log('focus', evt, evt.target.getXY());
           var controlGroup = evt.target.ancestor('.control-group'),
               node = controlGroup.one('.control-description'),
-              panel = evt.target.ancestor('#juju-search-charm-panel'),
               text = node.get('text').trim();
           //console.log(text);
           this.tooltip.setStdModContent('body', text);
-          var x = panel.getX(),
-              targetRect = evt.target.getClientRect(),
-              widget = this.tooltip.get('boundingBox'),
-              tooltipWidth = parseInt(widget.getStyle('width'), 10),
-              tooltipHeight = parseInt(widget.getStyle('height'), 10),
-              y_offset = (tooltipHeight - targetRect.height) / 2;
-          this.tooltip.move([x - tooltipWidth - 15, targetRect.top - y_offset]);
-          this.tooltip.show();
+          this.tooltip.field = evt.target;
+          this.tooltip.panel = this.tooltip.field.ancestor(
+              '#juju-search-charm-panel');
+          // Stash for speed.
+          this.tooltip.panelRegion = Y.DOM.region(
+              this.tooltip.panel.getDOMNode());
+          this._moveTooltip();
         },
         hideDescription: function(evt) {
           //console.log('focus', evt, evt.target.getXY());
@@ -616,6 +639,7 @@ YUI.add('juju-charm-search', function(Y) {
     'event-outside',
     'widget-anim',
     'overlay',
-    'svg-layouts'
+    'svg-layouts',
+    'dom-core'
   ]
 });
