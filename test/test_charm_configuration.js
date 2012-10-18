@@ -1,7 +1,25 @@
 'use strict';
 
 describe('charm configuration', function() {
-  var Y, juju, db, models, views, makeView, container;
+  var Y, juju, db, models, views, makeView, container,
+      charmConfig =
+          { config:
+                { options:
+                      { option0:
+                            { name: 'option0',
+                              type: 'string',
+                              description: 'Option Zero'},
+                        option1:
+                            { name: 'option1',
+                              type: 'boolean',
+                              description: 'Option One'},
+                        option2:
+                            { name: 'option2',
+                              type: 'int',
+                              description: 'Option Two'}
+                      }
+                }
+          };
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -61,21 +79,7 @@ describe('charm configuration', function() {
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm});
-    charm.setAttrs(
-        { config:
-              { options:
-                    { option0:
-                         { name: 'option0',
-                           type: 'string'},
-                      option1:
-                         { name: 'option1',
-                           type: 'boolean'},
-                      option2:
-                         { name: 'option2',
-                           type: 'int'}
-                    }
-              }
-        });
+    charm.setAttrs(charmConfig);
     charm.loaded = true;
     view.render();
     container.all('div.control-label').get('text').should.eql(
@@ -168,24 +172,7 @@ describe('charm configuration', function() {
         { container: container,
           model: charm,
           tooltipDelay: 0 });
-    charm.setAttrs(
-        { config:
-              { options:
-                    { option0:
-                         { name: 'option0',
-                           type: 'string',
-                           description: 'Option Zero'},
-                      option1:
-                         { name: 'option1',
-                           type: 'boolean',
-                           description: 'Option One'},
-                      option2:
-                         { name: 'option2',
-                           type: 'int',
-                           description: 'Option Two'}
-                    }
-              }
-        });
+    charm.setAttrs(charmConfig);
     charm.loaded = true;
     view.render();
     var tooltip = view.tooltip,
@@ -210,6 +197,62 @@ describe('charm configuration', function() {
     controls.item(2).focus();
     tooltip.get('srcNode').get('text').should.equal('Option Zero');
     tooltip.get('visible').should.equal(true);
+  });
+
+  it('must keep the tooltip aligned with its field', function() {
+    var charm = new models.Charm({id: 'precise/mysql'}),
+        view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm,
+          tooltipDelay: 0 });
+    charm.setAttrs(charmConfig);
+    charm.loaded = true;
+    view.render();
+    var tooltip = view.tooltip,
+        controls = container.all('.control-group input'),
+        panel = container.one('.charm-panel');
+    // The panel needs to be scrollable and smaller than what it contains.  We
+    // do this by setting a height to the panel and then setting the height to
+    // one of the controls to something much bigger.
+    panel.setStyles({height: '400px', overflowY: 'auto'});
+    controls.item(2).set('height', '4000px');
+    // We need to have the field visible or else the call to "focus" will
+    // change the positioning after our calculation has occurred, thus
+    // changing our Y field.
+    controls.item(1).scrollIntoView();
+    controls.item(1).focus();
+    var originalY = tooltip.get('boundingBox').getY();
+    panel.set('scrollTop', panel.get('scrollTop') + 10);
+    // The simulate module does not support firing scroll events so we call
+    // the associated method directly.
+    view._moveTooltip();
+    tooltip.get('boundingBox').getY().should.equal(originalY - 10);
+  });
+
+  it('must hide the tooltip when its field scrolls away', function() {
+    var charm = new models.Charm({id: 'precise/mysql'}),
+        view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm,
+          tooltipDelay: 0 });
+    charm.setAttrs(charmConfig);
+    charm.loaded = true;
+    view.render();
+    var tooltip = view.tooltip,
+        controls = container.all('.control-group input'),
+        panel = container.one('.charm-panel');
+    // The panel needs to be scrollable and smaller than what it contains.  We
+    // do this by setting a height to the panel and then setting the height to
+    // one of the controls to something much bigger.
+    panel.setStyles({height: '400px', overflowY: 'auto'});
+    controls.item(1).set('height', '4000px');
+    controls.item(0).focus();
+    tooltip.get('visible').should.equal(true);
+    panel.set('scrollTop', panel.get('scrollTop') + 100);
+    // The simulate module does not support firing scroll events so we call
+    // the associated method directly.
+    view._moveTooltip();
+    tooltip.get('visible').should.equal(false);
   });
 
   it('must not show a configuration file upload button if the charm ' +

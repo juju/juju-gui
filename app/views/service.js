@@ -223,8 +223,8 @@ YUI.add('juju-view-service', function(Y) {
 
   var exposeButtonMixin = {
     events: {
-      '.unexposeService': {click: 'unexposeService'},
-      '.exposeService': {click: 'exposeService'}
+      '.unexposeService': {mousedown: 'unexposeService'},
+      '.exposeService': {mousedown: 'exposeService'}
     },
 
     unexposeService: function() {

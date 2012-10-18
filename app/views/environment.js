@@ -84,6 +84,20 @@ YUI.add('juju-view-environment', function(Y) {
               self.set('potential_drop_point_service', d);
               self.set('potential_drop_point_rect', rect);
               self.addSVGClass(rect, 'hover');
+
+              // If we have an active dragline, stop redrawing it on mousemove
+              // and draw the line between the two nearest connector points of
+              // the two services.
+              if (self.dragline) {
+                var connectors = d.getConnectorPair(
+                    self.get('addRelationStart_service')),
+                    s = connectors[0],
+                    t = connectors[1];
+                self.dragline.attr('x1', t[0])
+                  .attr('y1', t[1])
+                  .attr('x2', s[0])
+                  .attr('y2', s[1]);
+              }
             },
             mouseleave: function(d, self) {
               // Do not fire if we aren't looking for a relation endpoint.
@@ -254,6 +268,8 @@ YUI.add('juju-view-environment', function(Y) {
             .attr('height', height)
             .append('svg:g')
             .call(zoom)
+              // Disable zoom on double click.
+            .on('dblclick.zoom', null)
             .append('g');
 
           vis.append('svg:rect')
@@ -386,7 +402,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /*
-         * Sync view models with curent db.models.
+         * Sync view models with current db.models.
          */
         updateData: function() {
           //model data
@@ -774,7 +790,13 @@ YUI.add('juju-view-environment', function(Y) {
               });
 
           var status_chart_layout = d3.layout.pie()
-            .value(function(d) { return (d.value ? d.value : 1); });
+            .value(function(d) { return (d.value ? d.value : 1); })
+            .sort(function(a, b) {
+                // Ensure that the service health graphs will be renders in
+                // the correct order: error - pending - running.
+                var states = {error: 0, pending: 1, running: 2};
+                return states[a.name] - states[b.name];
+              });
 
           // Append to status charts to non-subordinate services
           var status_chart = node.append('g')
@@ -871,14 +893,17 @@ YUI.add('juju-view-environment', function(Y) {
           });
         },
         renderSlider: function() {
-          var self = this;
+          var self = this,
+              value = 100,
+              currentScale = this.get('scale');
           // Build a slider to control zoom level
-          // TODO once we have a stored value in view models, use that
-          // for the value property, but for now, zoom to 100%
+          if (currentScale) {
+            value = currentScale * 100;
+          }
           var slider = new Y.Slider({
             min: 25,
             max: 200,
-            value: 100
+            value: value
           });
           slider.render('#slider-parent');
           slider.after('valueChange', function(evt) {
@@ -948,6 +973,22 @@ YUI.add('juju-view-environment', function(Y) {
               .setAttribute('x', -width / 2);
           });
 
+          // Preserve zoom when the scene is updated.
+          var changed = false,
+              currentScale = this.get('scale'),
+              currentTranslate = this.get('translate');
+          if (currentTranslate && currentTranslate !== this.zoom.translate()) {
+            this.zoom.translate(currentTranslate);
+            changed = true;
+          }
+          if (currentScale && currentScale !== this.zoom.scale()) {
+            this.zoom.scale(currentScale);
+            changed = true;
+          }
+          if (changed) {
+            this._fire_zoom(0);
+          }
+
           // Render the slider after the view is attached.
           // Although there is a .syncUI() method on sliders, it does not
           // seem to play well with the app framework: the slider will render
@@ -993,9 +1034,22 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         addRelationDrag: function(d, context) {
-          // Rubberband our potential relation line.
-          this.dragline.attr('x2', d3.event.x)
+          // Rubberband our potential relation line if we're not currently
+          // hovering over a potential drop-point.
+          if (!this.get('potential_drop_point_service')) {
+            // Create a BoundingBox for our cursor.
+            var cursor_box = views.BoundingBox();
+            cursor_box.pos = {x: d3.event.x, y: d3.event.y, w: 0, h: 0};
+
+            // Draw the relation line from the connector point nearest the
+            // cursor to the cursor itself.
+            var connectors = cursor_box.getConnectorPair(d),
+                s = connectors[1];
+            this.dragline.attr('x1', s[0])
+              .attr('y1', s[1])
+              .attr('x2', d3.event.x)
               .attr('y2', d3.event.y);
+          }
         },
 
         addRelationDragEnd: function(d, context) {
@@ -1132,7 +1186,11 @@ YUI.add('juju-view-environment', function(Y) {
           if (new_scale < 25 || new_scale > 200) {
             evt.scale = this.get('scale');
           }
+          // Store the current value of scale so that it can be restored later.
           this.set('scale', evt.scale);
+          // Store the current value of translate as well, by copying the event
+          // array in order to avoid reference sharing.
+          this.set('translate', evt.translate.slice(0));
           vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
           this.updateServiceMenuLocation();
