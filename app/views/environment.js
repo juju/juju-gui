@@ -1449,35 +1449,31 @@ YUI.add('juju-view-environment', function(Y) {
               var menu = container.one('#ambiguous-relation-menu'),
                   list = menu.one('ul');
               list.empty();
+              menu.one('ul').remove(true);
+
+              menu.append(Templates
+                  .ambiguousRelationList({endpoints: endpoints[m.id]}));
+
+              // For each endpoint choice, bind an an event to 'click' to
+              // add the specified relation.
+              menu.all('li').on('click', function(evt) {
+                var el = evt.currentTarget,
+                    endpoints_item = [
+                      [el.getData('startservice'), {
+                        name: el.getData('startname'),
+                        role: 'server' }],
+                      [el.getData('endservice'), {
+                        name: el.getData('endname'),
+                        role: 'client' }]];
+                menu.removeClass('active');
+                view.service_click_actions
+                  .addRelationEnd(endpoints_item, view, context);
+              });
 
               // Add a cancel item.
-              var none_item = Y.Node.create('<li>None</li>');
-              none_item.on('click', function(evt) {
+              menu.one('.cancel').on('click', function(evt) {
                 menu.removeClass('active');
                 view.cancelRelationBuild();
-              });
-              list.append(none_item);
-
-              // Add each endpoint choice, and bind an an event to 'click' to
-              // add the specified relation.
-              endpoints[m.id].forEach(function(endpoint) {
-                var li = Y.Node.create('<li>' + endpoint[0].service + ':' +
-                    endpoint[0].name + ' &rarr; ' +
-                    endpoint[1].service + ':' +
-                    endpoint[1].name + '</li>');
-                li.on('click', function(evt) {
-                  var endpoints_item = [
-                    [endpoint[0].service, {
-                      name: endpoint[0].name,
-                      role: 'server' }],
-                    [endpoint[1].service, {
-                      name: endpoint[1].name,
-                      role: 'client' }]];
-                  menu.removeClass('active');
-                  view.service_click_actions
-                    .addRelationEnd(endpoints_item, view, context);
-                });
-                list.append(li);
               });
 
               // Display the menu at the service endpoint.
