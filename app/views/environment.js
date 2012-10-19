@@ -1457,6 +1457,9 @@ YUI.add('juju-view-environment', function(Y) {
               // For each endpoint choice, bind an an event to 'click' to
               // add the specified relation.
               menu.all('li').on('click', function(evt) {
+                if (evt.currentTarget.hasClass('cancel')) {
+                  return;
+                }
                 var el = evt.currentTarget,
                     endpoints_item = [
                       [el.getData('startservice'), {
