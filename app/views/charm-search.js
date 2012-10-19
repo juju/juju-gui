@@ -280,7 +280,7 @@ YUI.add('juju-charm-search', function(Y) {
           this.tooltip.setStdModContent('body', text);
           this.tooltip.field = evt.target;
           this.tooltip.panel = this.tooltip.field.ancestor(
-              '#juju-search-charm-panel');
+              '.charm-panel');
           // Stash for speed.
           this.tooltip.panelRegion = Y.DOM.region(
               this.tooltip.panel.getDOMNode());
