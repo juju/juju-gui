@@ -1016,7 +1016,7 @@ YUI.add('juju-view-environment', function(Y) {
           if (curr_action === 'show_service') {
             this.set('currentServiceClickAction', 'addRelationStart');
           } else if (curr_action === 'addRelationStart' ||
-              curr_action === 'addRelationEnd') {
+              curr_action === 'ambiguousAddRelationTest') {
             this.set('currentServiceClickAction', 'toggleControlPanel');
           } // Otherwise do nothing.
         },
@@ -1073,7 +1073,7 @@ YUI.add('juju-view-environment', function(Y) {
           // If we landed on a rect, add relation, otherwise, cancel.
           if (rect) {
             self.service_click_actions
-            .addRelationEnd(endpoint, self, rect);
+            .ambiguousAddRelationTest(endpoint, self, rect);
           } else {
             // TODO clean up, abstract
             self.cancelRelationBuild();
@@ -1395,15 +1395,16 @@ YUI.add('juju-view-environment', function(Y) {
             var db = view.get('db'),
                 app = view.get('app'),
                 service = view.serviceForBox(m),
+                endpoints = models.getEndpoints(
+                    service, app.serviceEndpoints, db),
 
                 /* Transform endpoints into a list of
                  * relatable services (to the service in m)
                  */
                 possible_relations = Y.Array.map(
                     Y.Array.flatten(Y.Object.values(
-                        models.getEndpoints(
-                            service, app.serviceEndpoints, db))),
-                            function(ep) {return ep.service;}),
+                        endpoints)),
+                    function(ep) {return ep.service;}),
                 invalidRelationTargets = {};
 
             // Iterate services and invert the possibles list.
@@ -1430,15 +1431,87 @@ YUI.add('juju-view-environment', function(Y) {
 
             // Store start service in attrs.
             view.set('addRelationStart_service', m);
+            // Store possible endpoints.
+            view.set('addRelationStart_possibleEndpoints', endpoints);
             // Set click action.
-            view.set('currentServiceClickAction', 'addRelationEnd');
+            view.set('currentServiceClickAction', 'ambiguousAddRelationTest');
+          },
+
+          /*
+           * Test if the pending relation is ambiguous.  Display a menu if so,
+           * create the relation if not.
+           */
+          ambiguousAddRelationTest: function(m, view, context) {
+            var endpoints = view.get('addRelationStart_possibleEndpoints'),
+                container = view.get('container');
+            if (endpoints[m.id].length > 1) {
+              // Display menu with available endpoints.
+              var menu = container.one('#ambiguous-relation-menu'),
+                  list = menu.one('ul');
+              list.empty();
+
+              // Add a cancel item.
+              var none_item = Y.Node.create('<li>None</li>');
+              none_item.on('click', function(evt) {
+                menu.removeClass('active');
+                view.cancelRelationBuild();
+              });
+              list.append(none_item);
+
+              // Add each endpoint choice, and bind an an event to 'click' to
+              // add the specified relation.
+              endpoints[m.id].forEach(function(endpoint) {
+                var li = Y.Node.create('<li>' + endpoint[0].service + ':' +
+                    endpoint[0].name + ' &rarr; ' +
+                    endpoint[1].service + ':' +
+                    endpoint[1].name + '</li>');
+                li.on('click', function(evt) {
+                  var endpoints_item = [
+                    [endpoint[0].service, {
+                      name: endpoint[0].name,
+                      role: 'server' }],
+                    [endpoint[1].service, {
+                      name: endpoint[1].name,
+                      role: 'client' }]];
+                  menu.removeClass('active');
+                  view.service_click_actions
+                    .addRelationEnd(endpoints_item, view, context);
+                });
+                list.append(li);
+              });
+
+              // Display the menu at the service endpoint.
+              var tr = view.zoom.translate(),
+                  z = view.zoom.scale();
+              menu.setStyle('top', m.y * z + tr[1]);
+              menu.setStyle('left', m.x * z + m.w * z + tr[0]);
+              menu.addClass('active');
+            } else {
+              // Create a relation with the only available endpoint.
+              var ep = endpoints[m.id][0],
+                  endpoints_item = [
+                    [ep[0].service, {
+                      name: ep[0].name,
+                      role: 'server' }],
+                    [ep[1].service, {
+                      name: ep[1].name,
+                      role: 'client' }]];
+              view.service_click_actions
+                .addRelationEnd(endpoints_item, view, context);
+            }
           },
 
           /*
            * Fired when clicking the second service is clicked in the
            * add relation flow.
+           *
+           * :param endpoints: array of two endpoints, each in the form
+           *   ['service name', {
+           *     name: 'endpoint type',
+           *     role: 'client or server'
+           *   }]
            */
-          addRelationEnd: function(m, view, context) {
+          addRelationEnd: function(endpoints, view, context) {
             // Redisplay all services
             view.cancelRelationBuild();
 
@@ -1447,9 +1520,9 @@ YUI.add('juju-view-environment', function(Y) {
                 env = view.get('env'),
                 db = view.get('db'),
                 source = view.get('addRelationStart_service'),
-                relation_id = 'pending:' + source.id + m.id;
+                relation_id = 'pending:' + endpoints[0][0] + endpoints[1][0];
 
-            if (m.id === source.id) {
+            if (endpoints[0][0] === endpoints[1][0]) {
               view.set('currentServiceClickAction', 'toggleControlPanel');
               return;
             }
@@ -1459,10 +1532,7 @@ YUI.add('juju-view-environment', function(Y) {
             db.relations.create({
               relation_id: relation_id,
               display_name: 'pending',
-              endpoints: [
-                [source.id, {name: 'pending', role: 'server'}],
-                [m.id, {name: 'pending', role: 'client'}]
-              ],
+              endpoints: endpoints,
               pending: true
             });
 
@@ -1473,8 +1543,8 @@ YUI.add('juju-view-environment', function(Y) {
             // Fire event to add relation in juju.
             // This needs to specify interface in the future.
             env.add_relation(
-                source.id,
-                m.id,
+                endpoints[0][0] + ':' + endpoints[0][1].name,
+                endpoints[1][0] + ':' + endpoints[1][1].name,
                 Y.bind(this._addRelationCallback, this, view, relation_id)
             );
             view.set('currentServiceClickAction', 'toggleControlPanel');

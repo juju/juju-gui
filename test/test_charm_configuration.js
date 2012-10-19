@@ -232,7 +232,8 @@ describe('charm configuration', function() {
     // The simulate module does not support firing scroll events so we call
     // the associated method directly.
     view._moveTooltip();
-    tooltip.get('boundingBox').getY().should.equal(originalY - 10);
+    Math.floor(tooltip.get('boundingBox').getY())
+      .should.equal(Math.floor(originalY - 10));
   });
 
   it('must hide the tooltip when its field scrolls away', function() {
