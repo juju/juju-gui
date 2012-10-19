@@ -245,7 +245,7 @@ YUI.add('juju-charm-search', function(Y) {
           '.charm-section h4': {click: toggleSectionVisibility},
           '.config-file-upload': {change: 'onFileChange'},
           '.config-field': {focus: 'showDescription',
-                            blur: 'hideDescription'},
+            blur: 'hideDescription'},
           'input.config-field[type=checkbox]':
               {click: function(evt) {evt.target.focus();}}
         },
