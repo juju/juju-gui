@@ -59,13 +59,13 @@
       CharmView = juju.views.charm;
       // Use a local charm store.
       localCharmStore = new juju.CharmStore(
-        { datasource: new Y.DataSource.Local({
+          { datasource: new Y.DataSource.Local({
             source: [{
               responseText: Y.JSON.stringify(charmResults)
             }]
           })
-        }
-      );
+          }
+          );
       conn = new testUtils.SocketStub();
       env = new juju.Environment({conn: conn});
       env.connect();
@@ -151,11 +151,11 @@
       // for the next test in beforeEach.
       delete charmResults.config;
       var charmStore = new juju.CharmStore(
-            { datasource: new Y.DataSource.Local(
-                { source:
-                      [{responseText: Y.JSON.stringify(charmResults)}]
-                })
-            }
+          { datasource: new Y.DataSource.Local(
+          { source:
+                [{responseText: Y.JSON.stringify(charmResults)}]
+          })
+          }
           ),
           view = new CharmView(
           { charm_data_url: charmQuery,

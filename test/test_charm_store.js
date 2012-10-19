@@ -18,7 +18,7 @@
     beforeEach(function() {
       data = [];
       charm_store = new juju.CharmStore(
-        {datasource: new Y.DataSource.Local({source: data})});
+          {datasource: new Y.DataSource.Local({source: data})});
     });
 
     it('creates a remote datasource if you simply supply a uri', function() {
@@ -33,13 +33,13 @@
           { responseText: Y.JSON.stringify(
           { summary: 'wowza' })});
       charm_store.loadByPath(
-        'whatever',
-        { success: function(data) {
+          'whatever',
+          { success: function(data) {
             data.summary.should.equal('wowza');
             done();
           },
           failure: assert.fail
-        }
+          }
       );
     });
 
@@ -55,13 +55,13 @@
       };
       data.push({responseText: Y.JSON.stringify({darn_it: 'uh oh!'})});
       charm_store.loadByPath(
-        'whatever',
-        { success: assert.fail,
-          failure: function(e) {
-            e.error.should.equal(true);
-            done();
+          'whatever',
+          { success: assert.fail,
+            failure: function(e) {
+              e.error.should.equal(true);
+              done();
+            }
           }
-        }
       );
     });
 
@@ -95,7 +95,8 @@
         }
       });
       charm_store.find({foo: 'bar', sha: 'zam'}, {});
-      args.request.should.equal('search/json?search_text=' + escape('foo:bar sha:zam'));
+      args.request.should.equal(
+          'search/json?search_text=' + escape('foo:bar sha:zam'));
     });
 
     it('processes and orders search text requests properly', function(done) {
@@ -103,7 +104,7 @@
       // http://jujucharms.com/search/json?search_text=cassandra .
       data.push(Y.io('data/search_results.json', {sync: true}));
       charm_store.find('cassandra',
-        { success: function(results) {
+          { success: function(results) {
             results.length.should.equal(2);
             results[0].series.should.equal('precise');
             Y.Array.map(results[0].charms, function(charm) {
@@ -120,7 +121,7 @@
             done();
           },
           failure: assert.fail
-        });
+          });
     });
 
     it('honors defaultSeries in sorting search results', function(done) {
@@ -128,22 +129,23 @@
       // http://jujucharms.com/search/json?search_text=cassandra .
       data.push(Y.io('data/search_results.json', {sync: true}));
       charm_store.find('cassandra',
-        { defaultSeries: 'oneiric',
-          success: function(results) {
-            results.length.should.equal(2);
-            results[0].series.should.equal('oneiric');
-            done();
-          },
-          failure: assert.fail
-        });
+          { defaultSeries: 'oneiric',
+            success: function(results) {
+              results.length.should.equal(2);
+              results[0].series.should.equal('oneiric');
+              done();
+            },
+            failure: assert.fail
+          });
     });
 
     it('processes and orders search series requests properly', function(done) {
       // This is data from
-      // http://jujucharms.com/search/json?search_text=series:quantal+owner:charmers .
+      // http://jujucharms.com/search/json [CONTINUED ON NEXT LINE]
+      // ?search_text=series:quantal+owner:charmers .
       data.push(Y.io('data/series_search_results.json', {sync: true}));
       charm_store.find('cassandra',
-        { success: function(results) {
+          { success: function(results) {
             results.length.should.equal(1);
             results[0].series.should.equal('quantal');
             Y.Array.map(results[0].charms, function(charm) {
@@ -157,7 +159,7 @@
             done();
           },
           failure: assert.fail
-        });
+          });
     });
 
   });

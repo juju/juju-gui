@@ -395,7 +395,7 @@
       container = Y.Node.create('<div id="test" class="container"></div>');
       data = [];
       charm_store = new juju.CharmStore(
-        {datasource: new Y.DataSource.Local({source: data})});
+          {datasource: new Y.DataSource.Local({source: data})});
     });
 
     afterEach(function() {
@@ -457,13 +457,13 @@
 
     it('must handle success from local charm request', function(done) {
       var charm = new models.Charm({id: 'local:precise/foo'}).load(
-        env,
-        function(err, response) {
-          assert(!err);
-          charm.get('summary').should.equal('wowza');
-          assert(charm.loaded);
-          done();
-        });
+          env,
+          function(err, response) {
+            assert(!err);
+            charm.get('summary').should.equal('wowza');
+            assert(charm.loaded);
+            done();
+          });
       var response = conn.last_message();
       response.result = {summary: 'wowza'};
       env.dispatch_result(response);
@@ -472,13 +472,13 @@
 
     it('must handle failure from local charm request', function(done) {
       var charm = new models.Charm({id: 'local:precise/foo'}).load(
-        env,
-        function(err, response) {
-          assert(err);
-          assert(response.err);
-          assert(!charm.loaded);
-          done();
-        });
+          env,
+          function(err, response) {
+            assert(err);
+            assert(response.err);
+            assert(!charm.loaded);
+            done();
+          });
       var response = conn.last_message();
       response.err = true;
       env.dispatch_result(response);
@@ -492,8 +492,8 @@
 
       var list = new models.CharmList();
       list.loadOneByBaseId(
-        'cs:precise/foo',
-        { success: function(charm) {
+          'cs:precise/foo',
+          { success: function(charm) {
             assert(charm.loaded);
             charm.get('summary').should.equal('wowza');
             charm.get('is_subordinate').should.equal(true);
@@ -506,7 +506,7 @@
           },
           failure: assert.fail,
           charm_store: charm_store
-        });
+          });
     });
 
     it('must handle failure from the charm store', function(done) {
@@ -522,14 +522,15 @@
       };
       data.push({responseText: Y.JSON.stringify({darn_it: 'uh oh!'})});
       list.loadOneByBaseId(
-        'cs:precise/foo',
-        { success: assert.fail,
-          failure: function(err) {
-            var _ = expect(list.getOneByBaseId('cs:precise/foo')).to.not.exist;
-            done();
-          },
-          charm_store: charm_store
-        });
+          'cs:precise/foo',
+          { success: assert.fail,
+            failure: function(err) {
+              var _ = expect(list.getOneByBaseId('cs:precise/foo'))
+                .to.not.exist;
+              done();
+            },
+            charm_store: charm_store
+          });
     });
 
   });

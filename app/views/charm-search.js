@@ -45,26 +45,26 @@ YUI.add('juju-charm-search', function(Y) {
         this.set('resultEntries', null);
         if (ev.newVal) {
           this.get('charmStore').find(
-            ev.newVal,
-            { success: function(charms) {
-                          self.set('resultEntries', charms);
-                        },
+              ev.newVal,
+              { success: function(charms) {
+                self.set('resultEntries', charms);
+              },
               failure: Y.bind(this._showErrors, this),
               defaultSeries: this.get('defaultSeries')
-            });
+              });
         }
       });
       this.after('defaultSeriesChange', function(ev) {
         this.set('defaultEntries', null);
         if (ev.newVal) {
           this.get('charmStore').find(
-            {series: ev.newVal, owner: 'charmers'},
-            { success: function(charms) {
-                          self.set('defaultEntries', charms);
-                        },
+              {series: ev.newVal, owner: 'charmers'},
+              { success: function(charms) {
+                self.set('defaultEntries', charms);
+              },
               failure: Y.bind(this._showErrors, this),
               defaultSeries: this.get('defaultSeries')
-            });
+              });
         }
       });
       this.after('defaultEntriesChange', function() {
@@ -433,14 +433,14 @@ YUI.add('juju-charm-search', function(Y) {
         if (config.charmId) {
           newPanel.set('model', null); // Clear out the old.
           charms.loadOneByBaseId(
-            config.charmId,
-            { success: function(charm) {newPanel.set('model', charm);},
-              failure: function(data) {
-                console.log('error loading charm', data);
-                newPanel.fire('changePanel', {name: 'charms'});
-              },
-              charm_store: charmStore
-            });
+              config.charmId,
+              { success: function(charm) {newPanel.set('model', charm);},
+                failure: function(data) {
+                  console.log('error loading charm', data);
+                  newPanel.fire('changePanel', {name: 'charms'});
+                },
+                charm_store: charmStore
+              });
         } else { // This is the search panel.
           newPanel.render();
         }

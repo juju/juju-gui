@@ -216,7 +216,7 @@ describe('Application prefetching', function() {
         app.db.charms.getById('cs:precise/wordpress-6')).to.not.exist;
     app.show_service({params: {id: 'wordpress'}, query: {}});
     // The app made a request of juju for the service info.
-    conn.messages[conn.messages.length-2].op.should.equal('get_service');
+    conn.messages[conn.messages.length - 2].op.should.equal('get_service');
     // The app also requested juju (not the charm store--see discussion in
     // app/models/charm.js) for the charm info.
     conn.last_message().op.should.equal('get_charm');

@@ -188,7 +188,7 @@ describe('charm description', function() {
     charm = db.charms.add({ id: 'cs:precise/mysql-7' });
     charm_store_data = [];
     charm_store = new juju.CharmStore(
-      {datasource: new Y.DataSource.Local({source: charm_store_data})});
+        {datasource: new Y.DataSource.Local({source: charm_store_data})});
     app = { db: db, env: env, charm_store: charm_store };
   });
 

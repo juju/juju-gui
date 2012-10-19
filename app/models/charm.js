@@ -67,7 +67,7 @@ YUI.add('juju-charm-models', function(Y) {
   // Charm instances can represent both environment charms and charm store
   // charms.  A charm id is reliably and uniquely associated with a given
   // charm only within a given context--the environment or the charm store.
-  
+
   // Therefore, the database keeps these charms separate in two different
   // CharmList instances.  One is db.charms, representing the environment
   // charms.  The other is maintained by and within the persistent charm panel
@@ -88,7 +88,7 @@ YUI.add('juju-charm-models', function(Y) {
   // "charm.load(env, optionalCallback)".  The get_charm method is expected to
   // return what the env version does: either an object with a "result" object
   // containing the charm data, or an object with an "err" attribute.
-  
+
   // The charms in the charm store have a significant difference, beyond the
   // source of their data: they are addressed in the charm store by a path
   // that does not include the revision number, and charm store searches do
@@ -135,24 +135,24 @@ YUI.add('juju-charm-models', function(Y) {
         throw 'You must supply a get_charm function.';
       }
       options.get_charm(
-        this.get('id'),
-        // This is the success callback, or the catch-all callback for
-        // get_charm.
-        function(response) {
-          // Handle the env.get_charm response specially, for ease of use.  If
-          // it doesn't match that pattern, pass it through.
-          if (response.err) {
+          this.get('id'),
+          // This is the success callback, or the catch-all callback for
+          // get_charm.
+          function(response) {
+            // Handle the env.get_charm response specially, for ease of use.  If
+            // it doesn't match that pattern, pass it through.
+            if (response.err) {
+              callback(true, response);
+            } else if (response.result) {
+              callback(false, response.result);
+            } else { // This would typically be a string.
+              callback(false, response);
+            }
+          },
+          // This is the optional error callback.
+          function(response) {
             callback(true, response);
-          } else if (response.result) {
-            callback(false, response.result);
-          } else { // This would typically be a string.
-            callback(false, response);
           }
-        },
-        // This is the optional error callback.
-        function(response) {
-          callback(true, response);
-        }
       );
     },
     parse: function() {
@@ -274,23 +274,23 @@ YUI.add('juju-charm-models', function(Y) {
         var path = _calculate_charm_store_path(match),
             self = this;
         options.charm_store.loadByPath(
-          path,
-          { success: function(data) {
-            // We fall back to 0 for revision.  Some records do not have one
-            // still in the charm store, such as
-            // http://jujucharms.com/charms/precise/appflower/json (as of this
-            // writing).
-            match.revision = data.store_revision || 0;
-            id = _reconsititute_charm_id(match);
-            charm = self.getById(id);
-            if (!charm) {
-              charm = self.add({id: id});
-              charm.setAttrs(_clean_charm_data(data));
-              charm.loaded = true;
-            }
-            if (options.success) {
-              options.success(charm);
-            }
+            path,
+            { success: function(data) {
+              // We fall back to 0 for revision.  Some records do not have one
+              // still in the charm store, such as
+              // http://jujucharms.com/charms/precise/appflower/json (as of this
+              // writing).
+              match.revision = data.store_revision || 0;
+              id = _reconsititute_charm_id(match);
+              charm = self.getById(id);
+              if (!charm) {
+                charm = self.add({id: id});
+                charm.setAttrs(_clean_charm_data(data));
+                charm.loaded = true;
+              }
+              if (options.success) {
+                options.success(charm);
+              }
             },
             failure: options.failure });
       } else {
