@@ -619,10 +619,10 @@ YUI.add('juju-view-utils', function(Y) {
         translate: function() { return [0, 0]; }
       };
       var s = transform.scale(), tr = transform.translate();
-      if (point[0] > this.x * s + tr[0] &&
-          point[0] < this.x * s + this.w * s + tr[0] &&
-          point[1] > this.y * s + tr[1] &&
-          point[1] < this.y * s + this.h * s + tr[1]) {
+      if (point[0] >= this.x * s + tr[0] &&
+          point[0] <= this.x * s + this.w * s + tr[0] &&
+          point[1] >= this.y * s + tr[1] &&
+          point[1] <= this.y * s + this.h * s + tr[1]) {
         return true;
       }
       return false;
