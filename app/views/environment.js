@@ -116,9 +116,9 @@ YUI.add('juju-view-environment', function(Y) {
               self.set('potential_drop_point_service', null);
               self.set('potential_drop_point_rect', null);
               self.removeSVGClass(rect, 'hover');
-              
+
               if (self.dragline) {
-                self.dragline.attr('class', 
+                self.dragline.attr('class',
                     'relation pending-relation dragline dragging');
               }
             }
@@ -1067,7 +1067,7 @@ YUI.add('juju-view-environment', function(Y) {
           // Get rid of our drag line
           self.dragline.remove();
           self.buildingRelation = false;
-          self.cursorBox = null
+          self.cursorBox = null;
 
           // If we landed on a rect, add relation, otherwise, cancel.
           if (rect) {

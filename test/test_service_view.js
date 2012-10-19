@@ -44,7 +44,7 @@
         exposed: false});
 
       db.services.add([service]);
-      var viewMaker = function(ViewPrototype) {
+      var viewMakerMaker = function(ViewPrototype) {
         return function(querystring) {
           if (!Y.Lang.isValue(querystring)) {
             querystring = {};
@@ -60,8 +60,8 @@
                 querystring: querystring}).render();
         };
       };
-      makeServiceView = viewMaker(views.service);
-      makeServiceRelationsView = viewMaker(views.service_relations);
+      makeServiceView = viewMakerMaker(views.service);
+      makeServiceRelationsView = viewMakerMaker(views.service_relations);
       done();
     });
 
