@@ -4,8 +4,8 @@
 /* Define common colors. */
 @label-color: #292929;
 @text-entry-color: #6d6e70;
-@charm-header-text-color: #eee7d5;
-@charm-description-text-color: #8f8f88;
+@charm-panel-configure-title-color: #eee7d5;
+@charm-panel-configure-name-color: #8f8f88;
 
 
 body {
@@ -736,7 +736,14 @@ g.unit {
           background-image: url(/juju-ui/assets/images/cancel-button-pressed.png);
         }
     }
-
+    .charm-panel-configure-buttons {
+      background: url(/juju-ui/assets/images/configure_toolbar_div.png) repeat-x;
+      height: 52px;
+      vertical-align: middle;
+      .btn {
+          margin-top: 12px;
+      }
+    }
     .search-charm-inner {
         width: 100%;
         height: 500px;
@@ -1054,4 +1061,32 @@ div.inline {
     border-radius: 3px;
     min-width: 20px;
     max-width: 400px;
+}
+
+/* XXX: The positioning here feels like a big hack.  Suggestions welcome. */
+.charm-panel-configure {
+  background: url(/juju-ui/assets/images/configure_title_div.png) repeat-x;
+  height: 93px;
+  position: relative;
+  .title {
+    font-weight: lighter;
+    font-size: 22px;
+    color: @charm-panel-configure-title-color;
+    position: absolute;
+    bottom: 22px;
+  }
+  .name {
+    font-size: 12px;
+    color: @charm-panel-configure-name-color;
+    position: absolute;
+    bottom: 0;
+  }
+  .cog {
+    position: absolute;
+    background: url(/juju-ui/assets/images/configure-cog.png);
+    bottom: 0;
+    right: 0;
+    height: 40px;
+    width: 40px;
+  }
 }
