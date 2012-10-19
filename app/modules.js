@@ -1,6 +1,6 @@
 GlobalConfig = {
   // Uncomment for debug versions of YUI.
-  filter: 'debug',
+  //filter: 'debug',
   // Uncomment for verbose logging of YUI
   debug: false,
 
