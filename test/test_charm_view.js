@@ -11,7 +11,7 @@
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'juju-env',
-        'node-event-simulate'
+        'node-event-simulate', 'juju-charm-store'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         juju = Y.namespace('juju');
@@ -58,11 +58,14 @@
       Y.one('#main').append(container);
       CharmView = juju.views.charm;
       // Use a local charm store.
-      localCharmStore = new Y.DataSource.Local({
-        source: [{
-          responseText: Y.JSON.stringify(charmResults)
-        }]
-      });
+      localCharmStore = new juju.CharmStore(
+        { datasource: new Y.DataSource.Local({
+            source: [{
+              responseText: Y.JSON.stringify(charmResults)
+            }]
+          })
+        }
+      );
       conn = new testUtils.SocketStub();
       env = new juju.Environment({conn: conn});
       env.connect();
@@ -147,9 +150,13 @@
       // We appear to mutate a global here, but charmResults will be recreated
       // for the next test in beforeEach.
       delete charmResults.config;
-      var charmStore = new Y.DataSource.Local(
-          { source:
-                [{responseText: Y.JSON.stringify(charmResults)}]}),
+      var charmStore = new juju.CharmStore(
+            { datasource: new Y.DataSource.Local(
+                { source:
+                      [{responseText: Y.JSON.stringify(charmResults)}]
+                })
+            }
+          ),
           view = new CharmView(
           { charm_data_url: charmQuery,
             charm_store: charmStore,
