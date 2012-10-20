@@ -9,10 +9,8 @@
           <div>
 
             <button class="btn btn-primary deploy"
-             data-url="{{url}}"
-             data-name="{{name}}"
-             data-info-url="{{data_url}}">Deploy</button>
-            <a class="charm-detail" href="{{url}}">
+             data-url="{{baseId}}">Deploy</button>
+            <a class="charm-detail" href="{{baseId}}">
               {{#if owner}}{{owner}}/{{/if}}{{name}}</a>
 
             <div class="charm-summary">{{summary}}</div>

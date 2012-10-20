@@ -1,7 +1,7 @@
 'use strict';
 
 describe('charm search', function() {
-  var Y, models, views, ENTER, ESC,
+  var Y, models, views, juju, ENTER,
       searchResult = '{"results": [{"data_url": "this is my URL", ' +
       '"name": "membase", "series": "precise", "summary": ' +
       '"Membase Server", "relevance": 8.728194117350437, ' +
@@ -17,10 +17,12 @@ describe('charm search', function() {
         'node-event-simulate',
         'node',
         'event-key',
+        'juju-charm-store',
 
         function(Y) {
           models = Y.namespace('juju.models');
           views = Y.namespace('juju.views');
+          juju = Y.namespace('juju');
           ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
           done();
         });
@@ -60,7 +62,7 @@ describe('charm search', function() {
   it('must be able to search', function() {
     var searchTriggered = false,
         panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
-          charm_store: {
+          charm_store: new juju.CharmStore({datasource: {
             sendRequest: function(params) {
               searchTriggered = true;
               // Mocking the server callback value
@@ -72,7 +74,7 @@ describe('charm search', function() {
                 }
               });
             }
-          },
+          }}),
           testing: true
         }),
         node = panel.node;
@@ -82,14 +84,14 @@ describe('charm search', function() {
     field.simulate('keydown', { keyCode: ENTER });
 
     searchTriggered.should.equal(true);
-    node.one('.charm-entry .btn.deploy').getData('info-url').should.equal(
-        'this is my URL');
+    node.one('.charm-entry .btn.deploy').getData('url').should.equal(
+        'cs:precise/membase');
   });
 
   it('must be able to trigger charm details', function() {
     var db = new models.Database(),
         panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
-          charm_store: {
+          charm_store: new juju.CharmStore({datasource: {
             sendRequest: function(params) {
               // Mocking the server callback value
               params.callback.success({
@@ -100,7 +102,7 @@ describe('charm search', function() {
                 }
               });
             }
-          },
+          }}),
           app: {db: db},
           testing: true
         }),
@@ -120,7 +122,7 @@ describe('charm search', function() {
      'configuration panel', function() {
         var db = new models.Database(),
             panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
-              charm_store: {
+              charm_store: new juju.CharmStore({datasource: {
                 sendRequest: function(params) {
                   // Mocking the server callback value
                   params.callback.success({
@@ -131,7 +133,7 @@ describe('charm search', function() {
                     }
                   });
                 }
-              },
+              }}),
               app: {db: db},
               testing: true
             }),
@@ -150,7 +152,7 @@ describe('charm search', function() {
 });
 
 describe('charm description', function() {
-  var Y, models, views, conn, env, container, db, app, charm,
+  var Y, models, views, juju, conn, env, container, db, app, charm,
       charm_store_data, charm_store;
 
   before(function(done) {
@@ -164,10 +166,12 @@ describe('charm description', function() {
         'node',
         'datasource-local',
         'json-stringify',
+        'juju-charm-store',
 
         function(Y) {
           models = Y.namespace('juju.models');
           views = Y.namespace('juju.views');
+          juju = Y.namespace('juju');
           done();
         });
 
@@ -181,9 +185,10 @@ describe('charm description', function() {
     container = Y.Node.create('<div id="test-container" />');
     Y.one('#main').append(container);
     db = new models.Database();
-    charm = db.charms.add({ id: 'cs:precise/mysql' });
+    charm = db.charms.add({ id: 'cs:precise/mysql-7' });
     charm_store_data = [];
-    charm_store = new Y.DataSource.Local({source: charm_store_data});
+    charm_store = new juju.CharmStore(
+        {datasource: new Y.DataSource.Local({source: charm_store_data})});
     app = { db: db, env: env, charm_store: charm_store };
   });
 

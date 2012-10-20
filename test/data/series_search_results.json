@@ -1,0 +1,48 @@
+{
+  "matches": 5, 
+  "charm_total": 466, 
+  "results_size": 5, 
+  "search_time": 0.0008029937744140625, 
+  "results": [
+    {
+      "data_url": "/charms/quantal/glance/json", 
+      "name": "glance", 
+      "series": "quantal", 
+      "summary": "OpenStack Image Registry and Delivery Service", 
+      "relevance": 0.0, 
+      "owner": "charmers"
+    }, 
+    {
+      "data_url": "/charms/quantal/nova-cloud-controller/json", 
+      "name": "nova-cloud-controller", 
+      "series": "quantal", 
+      "summary": "Openstack nova controller node.", 
+      "relevance": 0.0, 
+      "owner": "charmers"
+    }, 
+    {
+      "data_url": "/charms/quantal/nova-volume/json", 
+      "name": "nova-volume", 
+      "series": "quantal", 
+      "summary": "OpenStack Compute - storage", 
+      "relevance": 0.0, 
+      "owner": "charmers"
+    }, 
+    {
+      "data_url": "/charms/quantal/nova-compute/json", 
+      "name": "nova-compute", 
+      "series": "quantal", 
+      "summary": "OpenStack compute", 
+      "relevance": 0.0, 
+      "owner": "charmers"
+    }, 
+    {
+      "data_url": "/charms/quantal/nyancat/json", 
+      "name": "nyancat", 
+      "series": "quantal", 
+      "summary": "Nyancat telnet server", 
+      "relevance": 0.0, 
+      "owner": "charmers"
+    }
+  ]
+}
