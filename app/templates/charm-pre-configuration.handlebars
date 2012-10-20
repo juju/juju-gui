@@ -1,8 +1,10 @@
 <div>
   <div class="charm-panel-configure">
-    <div class="title">AppFlower</div>
-    <div class="name">cs:precise/appflower-7</div>
+    {{#with charm}}
+    <div class="title">{{package_name}}</div>
+    <div class="name">{{id}}</div>
     <div class="cog"></div>
+    {{/with}}
   </div>
   <div class="charm-panel-configure-buttons">
     <button class="btn cancel">Cancel</button>
