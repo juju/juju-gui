@@ -306,8 +306,8 @@
            env: env
          }).render();
          var service = container.one('.service'),
-         add_rel = container.one('#service-menu .add-relation'),
-         after_evt;
+             add_rel = container.one('#service-menu .add-relation'),
+             after_evt;
 
          // Mock endpoints
          var existing = models.getEndpoints;
