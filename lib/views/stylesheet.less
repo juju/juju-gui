@@ -985,12 +985,70 @@ table tr.highlighted {
     }
   }
 
+
+
   .juju-service-info-container-bottom-menu-wrapper-service {
-    margin-top: 10px;
-    margin-left: 80px;
+    position: absolute;
+    left: 200px;
+    top: 12px;
+    height: 25px;
+    text-align: center;
     
-    div {
-      width: 200px
+    .filter-toggles {
+      display: inline-block;
+      width: 400px;
+      
+      div {
+        padding-top: 3px
+      }
+      
+      .white {
+        a {color: white !important;}
+      }
+
+      a {
+        color: #2D2D2D!important;
+        
+        &:link, &:visited, &:active, &:hover {
+          text-decoration: none
+        }
+      }
+      
+      @width: 70px;
+      @height: 21px;
+
+      .left {
+        width: @width;
+        height: @height;
+        background:url(/juju-ui/assets/images/toggles.png) 0 0px;
+      }
+
+      .active-left {
+        background:url(/juju-ui/assets/images/on_left.png) 0 0;
+        .white; 
+      }
+
+      .center {
+        width: @width;
+        height: @height;
+        background:url(/juju-ui/assets/images/toggles.png) -70px 0;
+      }
+
+      .active-center {
+        background:url(/juju-ui/assets/images/on_middle.png) 0 0;
+        .white;
+      }
+
+      .right {
+        width: @width;
+        height: @height;
+        background:url(/juju-ui/assets/images/toggles.png) -210px 0;
+      }
+
+      .active-right {
+        background:url(/juju-ui/assets/images/on_right.png) 0 0;
+        .white;
+      }
     }
   }
 

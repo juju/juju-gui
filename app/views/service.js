@@ -794,15 +794,26 @@ YUI.add('juju-view-service', function(Y) {
           var units = app.db.units.get_units_for_service(service),
               state_data = [{
                 title: 'All',
+                position: 'left',
                 link: '.',
                 active: !filter_state,
                 count: this.filterUnits(null, units).length
               }];
 
-          Y.each(['Running', 'Pending', 'Error'], function(title) {
-            var lower = title.toLowerCase();
+          Y.each([{
+                    title: 'Running',
+                    position: 'center'
+                  }, {
+                    title: 'Pending',
+                    position: 'center'
+                  }, {
+                    title: 'Error',
+                    position: 'right'
+                  }], function(filterBtn) {
+            var lower = filterBtn.title.toLowerCase();
             state_data.push({
-              title: title,
+              title: filterBtn.title,
+              position: filterBtn.position,
               active: lower === filter_state,
               count: this.filterUnits(lower, units).length,
               link: '?state=' + lower});

@@ -16,12 +16,13 @@
   </div>
   <div class="inline">
     <div class="juju-service-info-container-bottom-menu-wrapper-service">
-      <span class="state-filter-label"><strong>Filter</strong>&nbsp;</span>
+      <div class="filter-toggles">
       {{#states}}
-      <a class="state-btn btn {{#if active}}btn-primary{{/if}}" 
-        data-toggle="modal" href="{{link}}">
-        <span class="state-title">{{title}}</span> ({{count}})</a>
+      <div class="inline {{position}} {{#if active}}active-{{position}}{{/if}}">
+        <a href="{{link}}"><span class="state-title">{{title}}</span></a>
+      </div>
       {{/states}}
+      </div>
     </div>
   </div>
 </div> 
