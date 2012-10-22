@@ -468,7 +468,7 @@ YUI.add('juju-view-environment', function(Y) {
                 self.get('container').all('.environment-menu.active')
                   .removeClass('active');
                 self.service_click_actions.toggleControlPanel(null, self);
-                self.cancelRelationBuild();
+                //self.cancelRelationBuild();
               })
             .on('drag', function(d, i) {
                 if (self.buildingRelation) {
@@ -1074,8 +1074,6 @@ YUI.add('juju-view-environment', function(Y) {
           var rect = self.get('potential_drop_point_rect');
           var endpoint = self.get('potential_drop_point_service');
 
-          // Get rid of our drag line
-          self.dragline.remove();
           self.buildingRelation = false;
           self.cursorBox = null;
 
@@ -1141,6 +1139,11 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         cancelRelationBuild: function() {
+          if (this.dragline) {
+            // Get rid of our drag line
+            this.dragline.remove();
+            this.dragline = null;
+          }
           this.set('currentServiceClickAction', 'toggleControlPanel');
           this.show(this.vis.selectAll('.service'))
                   .classed('selectable-service', false);
@@ -1467,6 +1470,19 @@ YUI.add('juju-view-environment', function(Y) {
               view.service_click_actions
                 .addRelationEnd(endpoints_item, view, context);
               return;
+            }
+
+            // Create a pending line if it doesn't exist, as in the case of
+            // clicking to add relation.
+            if (!view.dragline) {
+              var dragline = view.vis.insert('line', '.service')
+                  .attr('class', 'relation pending-relation dragline'),
+                  points = m.getConnectorPair(view.get('addRelationStart_service'));
+              dragline.attr('x1', points[0][0])
+                .attr('y1', points[0][1])
+                .attr('x2', points[1][0])
+                .attr('y2', points[1][1]);
+              view.dragline = dragline;
             }
 
             // Display menu with available endpoints.
