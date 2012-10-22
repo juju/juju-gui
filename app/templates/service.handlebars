@@ -13,13 +13,17 @@
     <div class="filter-control">
       <div class="inline"><span>Filter</span></div>
       {{#states}}
-      <div class="inline {{position}} {{#if active}}active-{{position}}{{/if}}">
-        <a href="{{link}}"><span class="state-title">{{title}}</span></a>
+      <div 
+        class="inline {{position}} {{#if active}}active-{{position}}{{/if}}">
+        <a href="{{link}}">{{title}}</a>
       </div>
       {{/states}}
+      <div class="inline">
+        <img class="divider" 
+             src="/juju-ui/assets/images/bottom_bar_big_div.png" />
+      </div>
     </div>
   {{> service-footer-common-controls}}
 </div>
 </div>
-
 
