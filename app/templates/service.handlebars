@@ -15,7 +15,10 @@
       {{#states}}
       <div 
         class="inline {{position}} {{#if active}}active-{{position}}{{/if}}">
-        <a href="{{link}}">{{title}}</a>
+        <a href="{{link}}">
+          <span class="state-title {{#if active}}active{{/if}}">{{title}}
+          </span>
+        </a>
       </div>
       {{/states}}
       <div class="inline">
