@@ -845,173 +845,143 @@ table tr.highlighted {
    background: pink;
 }
 
-.juju-service-info-container {
-  padding: 0px;
-  margin-bottom: 0px;
-  background-color: #515151;
-  color: white;
-  height: 70px;
-  -webkit-border-radius: 0px;
-  -moz-border-radius: 0px;
-  border-radius: 0px;
-  -webkit-border-top-left-radius: 6px;
-  -moz-border-top-left-radius: 6px;
-  border-top-left-radius: 6px;
-  -webkit-border-top-right-radius: 6px;
-  -moz-border-top-right-radius: 6px;
-  border-top-right-radius: 6px;
-
-  .juju-service-info-container-big {
-    width: 58%;
-
-    .juju-service-container-header-name {
-      padding-top: 15px;
-      padding-left: 10px;
-
-      .juju-sevice-container-name {
-        padding-bottom: 5px;
-
-        span {
-          font-size: 3em;
-        }
-      }
-    }
-  }
-
-  .juju-service-info-container-small {
-    width: 20%;
-
-    .juju-service-container-header-expose {
-      padding: 20px;
-
-      .inline:first-child {
-        padding-right: 10px
-      }
-
-      div {
-        position: relative;
-
-        .on {
-          font: Ubuntu regular 12px #ffffff;
-          position: absolute; 
-          left: 27px; 
-          top: 2px;
-        }
-
-        .off {
-          font: Ubuntu regular 12px #292929;
-          position: absolute; 
-          left: 8px;
-          top: 2px;
-        }
-      }
-    }
-
-    .juju-service-container-header-unit-count {
-      padding: 5px;
-
-      input {
-        width: 95%
-      }
-    }
-  }
-}
-
-.juju-service-info-container-menu {
-  border-top: 1px solid #737373;
-  background-color: black;
-  height: 40px;
-  text-align: center;
-}
-
-.juju-service-info-container-menu-wrapper {
-  display: inline-block;
-}
-
-.juju-menu-item {
-  color: white;
-  padding: 10px;
-  padding-bottom: 0px;
-  padding-top: 10px;
-  text-align: center;
-
-  a {
-    color: white;
-    text-decoration: none;
-  }
-
-  a:HOVER {
-    color: white;
-    text-decoration: none;
-  }
-}
-
-.unit-count-form {
-  margin-bottom: 0px;
-}
-
-.juju-service-charm-link,.juju-service-charm-link:HOVER {
-  color: #919191;
-  text-decoration: underline;
-}
-
-.juju-service-info-container-separator {
-  width: 0px;
-  height: 68px;
-  border: 1px solid #737373;
-  margin-left: 1px;
-}
-
-.juju-service-info-container-separator-footer {
-  height: 48px;
-}
-
-.juju-service-info-container-bottom-menu {
-  background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
-  height: 50px;
-  position: relative;
-  color: #2d2d2d!important;
-
-  .destroy-control {
-    position: absolute;
-    top: 1px;
-    left: 10px;
-    
-    a {
-      color: #2D2D2D!important;
-    }
-    
-    a:link, a:visited, a:active, a:hover {
-      text-decoration: none
-    }
-  }
-
-  .juju-service-info-container-bottom-menu-wrapper {
-    margin-left: 10px;
-
-    div {
-      width: 200px
-    }
-  }
-
-  .juju-service-info-container-bottom-menu-wrapper-service {
-    margin-top: 10px;
-    margin-left: 80px;
-    
-    div {
-      width: 200px
-    }
-  }
-
-  #destroy-service {
+#destroy-service {
     margin-top: 10px;
     margin-left: 10px;
     margin-right: 10px;
-  }
 }
 
-.state-filter-label {
-  color: white
+.service-view {
+    .juju-service-info-container-bottom-menu {
+        background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
+        height: 50px;
+        position: relative;
+        color: #2d2d2d!important;
+  
+        .destroy-control {
+            position: absolute;
+            top: 1px;
+            left: 10px;
+  
+            a {
+                color: #2D2D2D!important;
+            }
+        
+            a:link, a:visited, a:active, a:hover {
+                text-decoration: none
+            }
+        }
+    }
+
+    .filter-control {
+        position: absolute;
+        left: 120px;
+        top: 10px;
+      
+        span:first-child {
+            padding-right: 5px;
+        }
+    }
+
+    .service-header-partial {
+      .name {
+          padding-top: 38px;
+          padding-left: 46px;
+          height: 73px;
+
+          div:nth-child(1) {
+              font-style: normal;
+              height: 28px;
+              font-size: 24px;
+              color: #292929;
+          }
+
+          div:nth-child(2) {
+              font-style: italic;
+              font-size: 16px;
+              color: #6a737b;
+          }
+        }
+
+        .menu-items {
+            height: 26px;
+            padding-top: 2px;
+            padding-left: 38px;
+            background: url(/juju-ui/assets/images/tab_div.png) repeat;
+    
+            .item {
+                a {
+                     font-size: 12px;
+                     padding-left: 10px;
+                     padding-right: 10px;
+                     color: #292929;
+                }
+                a:link, a:visited, a:active, a:hover {
+                     text-decoration: none
+                }
+
+                .link-active {
+                    color: #dd4814 !important;
+                }
+                .active {
+                     margin-top: 3px;
+                     height: 4px;
+                     background: url(/juju-ui/assets/images/tab_marker.png) 
+                       repeat;
+                }
+            }
+        }
+    }
+
+    .service-common-controls {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+
+        .control-unit-count {
+            position: absolute;
+            right: 120px;
+            top: 0px;
+            width: 305px;
+            
+            img {
+                padding-top: 0px;
+            }
+            
+            div {
+                padding-left: 5px;
+            }
+            
+            div:first-child {
+                padding-top: 4px;
+            }
+        }
+
+        .control-expose {
+            position: absolute;
+            right: 0px;
+            top: 4px;
+            width: 120px;
+            
+            div {
+                padding-left: 5px;
+            }
+    
+            .on {
+                font-size: 12px; fill: #ffffff;
+                position: absolute; 
+                right: 20px;
+                top: 3px;
+            }
+        
+            .off {
+                font-size: 12px; fill: #292929;
+                position: absolute; 
+                right: 40px;
+                top: 3px;
+            }
+          }
+    }
 }
 
 div.inline {
