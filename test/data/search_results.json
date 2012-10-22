@@ -1,0 +1,64 @@
+{
+  "matches": 7, 
+  "charm_total": 466, 
+  "results_size": 7, 
+  "search_time": 0.0011610984802246094, 
+  "results": [
+    {
+      "data_url": "/charms/precise/cassandra/json", 
+      "name": "cassandra", 
+      "series": "precise", 
+      "summary": "distributed storage system for structured data", 
+      "relevance": 29.552706339212623, 
+      "owner": "charmers"
+    }, 
+    {
+      "data_url": "/charms/oneiric/cassandra/json", 
+      "name": "cassandra", 
+      "series": "oneiric", 
+      "summary": "distributed storage system for structured data", 
+      "relevance": 29.429741180715094, 
+      "owner": "charmers"
+    }, 
+    {
+      "data_url": "/~jjo/precise/cassandra/json", 
+      "name": "cassandra", 
+      "series": "precise", 
+      "summary": "distributed storage system for structured data", 
+      "relevance": 28.060048153642214, 
+      "owner": "jjo"
+    }, 
+    {
+      "data_url": "/~ev/precise/errors/json", 
+      "name": "errors", 
+      "series": "precise", 
+      "summary": "https://errors.ubuntu.com", 
+      "relevance": 13.168754948011127, 
+      "owner": "ev"
+    }, 
+    {
+      "data_url": "/~ev/precise/daisy/json", 
+      "name": "daisy", 
+      "series": "precise", 
+      "summary": "Daisy error reporting server", 
+      "relevance": 12.721871518319244, 
+      "owner": "ev"
+    }, 
+    {
+      "data_url": "/~ev/precise/daisy-retracer/json", 
+      "name": "daisy-retracer", 
+      "series": "precise", 
+      "summary": "Daisy error reporting server retracer", 
+      "relevance": 12.662102672474589, 
+      "owner": "ev"
+    }, 
+    {
+      "data_url": "/~negronjl/oneiric/cassandra/json", 
+      "name": "cassandra", 
+      "series": "oneiric", 
+      "summary": "distributed storage system for structured data", 
+      "relevance": 30.40622159052724, 
+      "owner": "negronjl"
+    }
+  ]
+}

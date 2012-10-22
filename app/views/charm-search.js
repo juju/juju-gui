@@ -44,18 +44,27 @@ YUI.add('juju-charm-search', function(Y) {
       this.after('searchTextChange', function(ev) {
         this.set('resultEntries', null);
         if (ev.newVal) {
-          this.findCharms(ev.newVal, function(charms) {
-            self.set('resultEntries', charms);
-          });
+          this.get('charmStore').find(
+              ev.newVal,
+              { success: function(charms) {
+                self.set('resultEntries', charms);
+              },
+              failure: Y.bind(this._showErrors, this),
+              defaultSeries: this.get('defaultSeries')
+              });
         }
       });
       this.after('defaultSeriesChange', function(ev) {
         this.set('defaultEntries', null);
         if (ev.newVal) {
-          var searchString = 'series%3A' + ev.newVal + '+owner%3Acharmers';
-          this.findCharms(searchString, function(charms) {
-            self.set('defaultEntries', charms);
-          });
+          this.get('charmStore').find(
+              {series: ev.newVal, owner: 'charmers'},
+              { success: function(charms) {
+                self.set('defaultEntries', charms);
+              },
+              failure: Y.bind(this._showErrors, this),
+              defaultSeries: this.get('defaultSeries')
+              });
         }
       });
       this.after('defaultEntriesChange', function() {
@@ -92,77 +101,15 @@ YUI.add('juju-charm-search', function(Y) {
           { name: 'configuration',
             charmId: ev.currentTarget.getData('url')});
     },
-    // Create a data structure friendly to the view
-    normalizeCharms: function(charms) {
-      var hash = {},
-          defaultSeries = this.get('defaultSeries');
-      Y.each(charms, function(charm) {
-        charm.url = charm.series + '/' + charm.name;
-        if (charm.owner === 'charmers') {
-          charm.owner = null;
-        } else {
-          charm.url = '~' + charm.owner + '/' + charm.url;
-        }
-        charm.url = 'cs:' + charm.url;
-        if (!Y.Lang.isValue(hash[charm.series])) {
-          hash[charm.series] = [];
-        }
-        hash[charm.series].push(charm);
-      });
-      var series_names = Y.Object.keys(hash);
-      series_names.sort(function(a, b) {
-        if ((a === defaultSeries && b !== defaultSeries) || a > b) {
-          return -1;
-        } else if ((a !== defaultSeries && b === defaultSeries) || a < b) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
-      return Y.Array.map(series_names, function(name) {
-        var charms = hash[name];
-        charms.sort(function(a, b) {
-          // If !a.owner, that means it is owned by charmers.
-          if ((!a.owner && b.owner) || (a.owner < b.owner)) {
-            return -1;
-          } else if ((a.owner && !b.owner) || (a.owner > b.owner)) {
-            return 1;
-          } else if (a.name < b.name) {
-            return -1;
-          } else if (a.name > b.name) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
-        return {series: name, charms: hash[name]};
-      });
-    },
-    findCharms: function(query, callback) {
-      var charmStore = this.get('charmStore'),
-          app = this.get('app');
-      charmStore.sendRequest({
-        request: 'search/json?search_text=' + query,
-        callback: {
-          'success': Y.bind(function(io_request) {
-            // To see an example of what is being obtained, look at
-            // http://jujucharms.com/search/json?search_text=mysql .
-            var result_set = Y.JSON.parse(
-                io_request.response.results[0].responseText);
-            console.log('results update', result_set);
-            callback(this.normalizeCharms(result_set.results));
-          }, this),
-          'failure': function er(e) {
-            console.error(e.error);
-            app.db.notifications.add(
-                new models.Notification({
-                  title: 'Could not retrieve charms',
-                  message: e.error,
-                  level: 'error'
-                })
-            );
-          }
-        }});
+    _showErrors: function(e) {
+      console.error(e.error);
+      this.get('app').db.notifications.add(
+          new models.Notification({
+            title: 'Could not retrieve charms',
+            message: e.error,
+            level: 'error'
+          })
+      );
     }
   });
   views.CharmCollectionView = CharmCollectionView;
@@ -441,6 +388,7 @@ YUI.add('juju-charm-search', function(Y) {
   function createInstance(config) {
 
     var charmStore = config.charm_store,
+        charms = new models.CharmList(),
         app = config.app,
         testing = !!config.testing,
         container = Y.Node.create(views.Templates['charm-search-pop']({
@@ -483,12 +431,16 @@ YUI.add('juju-charm-search', function(Y) {
         contentNode.get('children').remove();
         contentNode.append(panels[config.name].get('container'));
         if (config.charmId) {
-          var newModel = app.db.charms.getById(config.charmId);
-          if (!newModel) {
-            newModel = app.db.charms.add({id: config.charmId})
-              .load({env: app.env, charm_store: app.charm_store});
-          }
-          newPanel.set('model', newModel);
+          newPanel.set('model', null); // Clear out the old.
+          charms.loadOneByBaseId(
+              config.charmId,
+              { success: function(charm) {newPanel.set('model', charm);},
+                failure: function(data) {
+                  console.log('error loading charm', data);
+                  newPanel.fire('changePanel', {name: 'charms'});
+                },
+                charm_store: charmStore
+              });
         } else { // This is the search panel.
           newPanel.render();
         }
@@ -640,6 +592,7 @@ YUI.add('juju-charm-search', function(Y) {
     'widget-anim',
     'overlay',
     'svg-layouts',
-    'dom-core'
+    'dom-core',
+    'juju-models'
   ]
 });

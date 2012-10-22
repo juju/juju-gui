@@ -82,8 +82,13 @@ GlobalConfig = {
           fullpath: '/juju-ui/models/endpoints.js'
         },
 
+        'juju-charm-models': {
+          fullpath: '/juju-ui/models/charm.js'
+        },
+
         'juju-models': {
-          requires: ['model', 'model-list', 'juju-endpoints'],
+          requires: [
+            'model', 'model-list', 'juju-endpoints', 'juju-charm-models'],
           fullpath: '/juju-ui/models/models.js'
         },
 

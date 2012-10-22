@@ -57,7 +57,7 @@ describe('charm configuration', function() {
   });
 
   it('must have inputs for service and number of units', function() {
-    var charm = new models.Charm({id: 'precise/mysql'}),
+    var charm = new models.Charm({id: 'precise/mysql-7'}),
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm});
@@ -70,7 +70,7 @@ describe('charm configuration', function() {
   });
 
   it('must have inputs for items in the charm schema', function() {
-    var charm = new models.Charm({id: 'precise/mysql'}),
+    var charm = new models.Charm({id: 'precise/mysql-7'}),
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm});
@@ -91,7 +91,7 @@ describe('charm configuration', function() {
           received_charm_url = charm_url;
           received_service_name = service_name;
         }},
-        charm = new models.Charm({id: 'precise/mysql'}),
+        charm = new models.Charm({id: 'precise/mysql-7'}),
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
@@ -102,7 +102,7 @@ describe('charm configuration', function() {
     container.one('#service-name').get('value').should.equal('mysql');
     container.one('#charm-deploy').simulate('click');
     received_service_name.should.equal('mysql');
-    received_charm_url.should.equal('cs:precise/mysql');
+    received_charm_url.should.equal('cs:precise/mysql-7');
   });
 
   it('must deploy a charm with the custom configuration', function() {
@@ -119,7 +119,7 @@ describe('charm configuration', function() {
             received_config = config;
             received_num_units = num_units;
           }},
-        charm = new models.Charm({id: 'precise/mysql'}),
+        charm = new models.Charm({id: 'precise/mysql-7'}),
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
@@ -141,7 +141,7 @@ describe('charm configuration', function() {
     container.one('#input-option0').set('value', 'cows');
     container.one('#charm-deploy').simulate('click');
     received_service_name.should.equal('aaa');
-    received_charm_url.should.equal('cs:precise/mysql');
+    received_charm_url.should.equal('cs:precise/mysql-7');
     received_num_units.should.equal(24);
     received_config.should.eql({option0: 'cows'});
   });
@@ -153,7 +153,7 @@ describe('charm configuration', function() {
                                num_units) {
            deployed = true;
          }},
-       charm = new models.Charm({id: 'precise/mysql'}),
+       charm = new models.Charm({id: 'precise/mysql-7'}),
        view = new views.CharmConfigurationView(
        { container: container,
          model: charm,
@@ -173,7 +173,7 @@ describe('charm configuration', function() {
      });
 
   it('must show the description in a tooltip', function() {
-    var charm = new models.Charm({id: 'precise/mysql'}),
+    var charm = new models.Charm({id: 'precise/mysql-7'}),
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
@@ -206,7 +206,7 @@ describe('charm configuration', function() {
   });
 
   it('must keep the tooltip aligned with its field', function() {
-    var charm = new models.Charm({id: 'precise/mysql'}),
+    var charm = new models.Charm({id: 'precise/mysql-7'}),
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
@@ -232,11 +232,12 @@ describe('charm configuration', function() {
     // The simulate module does not support firing scroll events so we call
     // the associated method directly.
     view._moveTooltip();
-    tooltip.get('boundingBox').getY().should.equal(originalY - 10);
+    Math.floor(tooltip.get('boundingBox').getY())
+      .should.equal(Math.floor(originalY - 10));
   });
 
   it('must hide the tooltip when its field scrolls away', function() {
-    var charm = new models.Charm({id: 'precise/mysql'}),
+    var charm = new models.Charm({id: 'precise/mysql-7'}),
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
@@ -263,7 +264,7 @@ describe('charm configuration', function() {
 
   it('must not show a configuration file upload button if the charm ' +
       'has no settings', function() {
-       var charm = new models.Charm({id: 'precise/mysql'}),
+       var charm = new models.Charm({id: 'precise/mysql-7'}),
        view = new views.CharmConfigurationView(
        { container: container,
          model: charm,
@@ -275,7 +276,7 @@ describe('charm configuration', function() {
 
   it('must show a configuration file upload button if the charm ' +
       'has settings', function() {
-        var charm = new models.Charm({id: 'precise/mysql'});
+        var charm = new models.Charm({id: 'precise/mysql-7'});
         charm.setAttrs(
            { config:
              { options:
@@ -299,7 +300,7 @@ describe('charm configuration', function() {
      });
 
   it('must hide configuration panel when a file is uploaded', function() {
-    var charm = new models.Charm({id: 'precise/mysql'});
+    var charm = new models.Charm({id: 'precise/mysql-7'});
     charm.setAttrs(
         { config:
               { options:
@@ -323,7 +324,7 @@ describe('charm configuration', function() {
   });
 
   it('must remove configuration data when the button is pressed', function() {
-    var charm = new models.Charm({id: 'precise/mysql'});
+    var charm = new models.Charm({id: 'precise/mysql-7'});
     charm.setAttrs(
         { config:
               { options:
@@ -350,7 +351,7 @@ describe('charm configuration', function() {
   it('must be able to deploy with configuration from a file', function() {
     var received_config,
         received_config_raw,
-        charm = new models.Charm({id: 'precise/mysql'}),
+        charm = new models.Charm({id: 'precise/mysql-7'}),
         app = {db: {services: {getById: function(name) {return null;}}},
           env: {deploy: function(charm_url, service_name, config, config_raw,
                                  num_units) {

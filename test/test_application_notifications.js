@@ -310,7 +310,11 @@ describe('juju application notifications', function() {
              };
 
        views.environment.prototype.service_click_actions.addRelationEnd
-           .apply(view, [{id: 1}, view]);
+           .apply(view, [
+         [
+          ['s1', {name: 'n', role: 'client'}],
+          ['s2', {name: 'n', role: 'server'}]],
+         view]);
 
        assertNotificationNumber('1');
 

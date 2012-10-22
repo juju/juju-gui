@@ -299,13 +299,6 @@
 
     it('must be able to add a relation from the control panel',
        function() {
-         // Mock endpoints
-         var existing = models.getEndpoints;
-         models.getEndpoints = function() {
-           return {requires: [],
-             provides: []};
-         };
-
          var view = new views.environment({
            container: container,
            app: {serviceEndpoints: {}},
@@ -313,14 +306,39 @@
            env: env
          }).render();
          var service = container.one('.service'),
-         add_rel = container.one('#service-menu .add-relation'),
-         after_evt;
+             add_rel = container.one('#service-menu .add-relation'),
+             after_evt;
+
+         // Mock endpoints
+         var existing = models.getEndpoints;
+         models.getEndpoints = function() {
+           var endpoints = {},
+               serviceName = service.one('.name')
+                 .getDOMNode().firstChild.nodeValue,
+               nextServiceName = service.next().one('.name')
+                 .getDOMNode().firstChild.nodeValue;
+           endpoints[nextServiceName] = [
+             [
+              {
+                service: serviceName,
+                name: 'relName',
+                type: 'relType'
+              },
+              {
+                service: nextServiceName,
+                name: 'relName',
+                type: 'relType'
+              }
+             ]
+           ];
+           return endpoints;
+         };
 
          service.simulate('click');
          add_rel.simulate('click');
          container.all('.selectable-service')
                .size()
-               .should.equal(1);
+               .should.equal(2);
          service.next().simulate('click');
          container.all('.selectable-service').size()
             .should.equal(0);
