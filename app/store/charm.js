@@ -59,7 +59,7 @@ YUI.add('juju-charm-store', function(Y) {
         var charm = list.getById(result.store_url);
         if (!charm) {
           charm = list.add(
-            { id: result.store_url, summary: result.summary });
+              { id: result.store_url, summary: result.summary });
         }
         var series = charm.get('series');
         if (!Y.Lang.isValue(hash[series])) {
@@ -82,7 +82,7 @@ YUI.add('juju-charm-store', function(Y) {
         var charms = hash[name];
         charms.sort(function(a, b) {
           return a.compare(
-            b, relevances[a.get('id')], relevances[b.get('id')]);
+              b, relevances[a.get('id')], relevances[b.get('id')]);
         });
         return {series: name, charms: hash[name]};
       });

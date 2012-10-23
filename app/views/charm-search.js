@@ -85,13 +85,13 @@ YUI.add('juju-charm-search', function(Y) {
           resultEntries = this.get('resultEntries'),
           raw_entries = searchText ? resultEntries : defaultEntries,
           entries = raw_entries && raw_entries.map(
-            function(data) {
-              return {
-                series: data.series,
-                charms: data.charms.map(
-                  function(charm) { return charm.getAttrs(); })
-              };
-            }
+              function(data) {
+                return {
+                  series: data.series,
+                  charms: data.charms.map(
+                      function(charm) { return charm.getAttrs(); })
+                };
+              }
           );
       container.setHTML(this.template({ charms: entries }));
       return this;

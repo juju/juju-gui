@@ -50,7 +50,8 @@
       charm.get('series').should.equal('precise');
       charm.get('package_name').should.equal('openstack-dashboard');
       charm.get('revision').should.equal(0);
-      charm.get('full_name').should.equal('~alt-bac/precise/openstack-dashboard');
+      charm.get('full_name').should.equal(
+          '~alt-bac/precise/openstack-dashboard');
       charm.get('charm_store_path').should.equal(
           '~alt-bac/precise/openstack-dashboard-0/json');
     });
@@ -86,7 +87,7 @@
         assert.fail('Should have thrown an error');
       } catch (e) {
         e.should.equal(
-          'Developers must initialize charms with a well-formed id.');
+            'Developers must initialize charms with a well-formed id.');
       }
     });
 
@@ -96,7 +97,7 @@
         assert.fail('Should have thrown an error');
       } catch (e) {
         e.should.equal(
-          'Developers must initialize charms with a well-formed id.');
+            'Developers must initialize charms with a well-formed id.');
       }
     });
 
@@ -408,29 +409,29 @@
 
     it('throws an error if you do not pass get_charm or loadByPath function',
        function() {
-        var charm = new models.Charm({id: 'local:precise/foo-4'});
-        try {
-          charm.sync('read', {});
-          assert.fail('Should have thrown an error');
-        } catch (e) {
-          e.should.equal(
-              'You must supply a get_charm or loadByPath function.');
-        }
-        try {
-          charm.sync('read', {env: 42});
-          assert.fail('Should have thrown an error');
-        } catch (e) {
-          e.should.equal(
-              'You must supply a get_charm or loadByPath function.');
-        }
-        try {
-          charm.sync('read', {charm_store: 42});
-          assert.fail('Should have thrown an error');
-        } catch (e) {
-          e.should.equal(
-              'You must supply a get_charm or loadByPath function.');
-        }
-    });
+         var charm = new models.Charm({id: 'local:precise/foo-4'});
+         try {
+           charm.sync('read', {});
+           assert.fail('Should have thrown an error');
+         } catch (e) {
+           e.should.equal(
+           'You must supply a get_charm or loadByPath function.');
+         }
+         try {
+           charm.sync('read', {env: 42});
+           assert.fail('Should have thrown an error');
+         } catch (e) {
+           e.should.equal(
+           'You must supply a get_charm or loadByPath function.');
+         }
+         try {
+           charm.sync('read', {charm_store: 42});
+           assert.fail('Should have thrown an error');
+         } catch (e) {
+           e.should.equal(
+           'You must supply a get_charm or loadByPath function.');
+         }
+       });
 
     it('must send request to juju environment for local charms', function() {
       var charm = new models.Charm({id: 'local:precise/foo-4'}).load(env);
@@ -475,17 +476,17 @@
 
       var charm = new models.Charm({id: 'cs:precise/foo-7'});
       charm.load(
-        charm_store,
-        function(err, data) {
-          if (err) { assert.fail('should succeed!'); }
-          assert(charm.loaded);
-          charm.get('summary').should.equal('wowza');
-          charm.get('is_subordinate').should.equal(true);
-          charm.get('scheme').should.equal('cs');
-          charm.get('revision').should.equal(7);
-          charm.get('id').should.equal('cs:precise/foo-7');
-          done();
-        });
+          charm_store,
+          function(err, data) {
+            if (err) { assert.fail('should succeed!'); }
+            assert(charm.loaded);
+            charm.get('summary').should.equal('wowza');
+            charm.get('is_subordinate').should.equal(true);
+            charm.get('scheme').should.equal('cs');
+            charm.get('revision').should.equal(7);
+            charm.get('id').should.equal('cs:precise/foo-7');
+            done();
+          });
     });
 
     it('must handle failure from the charm store', function(done) {
@@ -502,13 +503,13 @@
       data.push({responseText: Y.JSON.stringify({darn_it: 'uh oh!'})});
       var charm = new models.Charm({id: 'cs:precise/foo-7'});
       charm.load(
-        charm_store,
-        function(err, data) {
-          if (!err) {
-            assert.fail('should fail!');
-          }
-          done();
-        });
+          charm_store,
+          function(err, data) {
+            if (!err) {
+              assert.fail('should fail!');
+            }
+            done();
+          });
     });
 
   });

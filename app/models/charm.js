@@ -45,165 +45,167 @@ YUI.add('juju-charm-models', function(Y) {
   var charm_id_re = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)-(\d+)$/,
       id_elements = ['scheme', 'owner', 'series', 'package_name', 'revision'],
       Charm = Y.Base.create('charm', Y.Model, [], {
-    initializer: function() {
-      var id = this.get('id'),
-          parts = id && charm_id_re.exec(id),
-          self = this;
-      if (!Y.Lang.isValue(id) || !parts) {
-        throw 'Developers must initialize charms with a well-formed id.';
-      }
-      this.loaded = false;
-      this.on('load', function() { this.loaded = true; });
-      parts.shift();
-      Y.each(
-          Y.Array.zip(id_elements, parts),
-          function(pair) { self.set(pair[0], pair[1]); });
-      // full_name
-      var tmp = [this.get('series'), this.get('package_name')],
-          owner = this.get('owner');
-      if (owner) {
-        tmp.unshift('~' + owner);
-      }
-      this.set('full_name', tmp.join('/'));
-      // charm_store_path
-      this.set(
-        'charm_store_path',
-        [ (owner ? '~' + owner : 'charms'),
-          this.get('series'),
-          (this.get('package_name') + '-' + this.get('revision')),
-          'json'
-        ].join('/'));
-    },
-    sync: function(action, options, callback) {
-      if (action !== 'read') {
-        throw (
-            'Only use the "read" action; "' + action + '" not supported.');
-      }
-      if (Y.Lang.isValue(options.get_charm)) {
-        // This is an env.
-        options.get_charm(
-            this.get('id'),
-            function(response) {
-              if (response.err) {
-                callback(true, response);
-              } else if (response.result) {
-                callback(false, response.result);
-              } else {
-                // What's going on?  This does not look like either of our
-                // expected signatures.  Declare a loading error.
-                callback(true, response);
-              }
-            }
-        );
-      } else if (Y.Lang.isValue(options.loadByPath)) {
-        // This is a charm store.
-        options.loadByPath(
-          this.get('charm_store_path'),
-          { success: function(response) {
-              callback(false, response);
-            },
-            failure: function(response) {
-              callback(true, response);
+        initializer: function() {
+          var id = this.get('id'),
+              parts = id && charm_id_re.exec(id),
+              self = this;
+          if (!Y.Lang.isValue(id) || !parts) {
+            throw 'Developers must initialize charms with a well-formed id.';
+          }
+          this.loaded = false;
+          this.on('load', function() { this.loaded = true; });
+          parts.shift();
+          Y.each(
+              Y.Array.zip(id_elements, parts),
+              function(pair) { self.set(pair[0], pair[1]); });
+          // full_name
+          var tmp = [this.get('series'), this.get('package_name')],
+              owner = this.get('owner');
+          if (owner) {
+            tmp.unshift('~' + owner);
+          }
+          this.set('full_name', tmp.join('/'));
+          // charm_store_path
+          this.set(
+              'charm_store_path',
+              [(owner ? '~' + owner : 'charms'),
+               this.get('series'),
+               (this.get('package_name') + '-' + this.get('revision')),
+               'json'
+              ].join('/'));
+        },
+        sync: function(action, options, callback) {
+          if (action !== 'read') {
+            throw (
+                'Only use the "read" action; "' + action + '" not supported.');
+          }
+          if (Y.Lang.isValue(options.get_charm)) {
+            // This is an env.
+            options.get_charm(
+                this.get('id'),
+                function(response) {
+                  if (response.err) {
+                    callback(true, response);
+                  } else if (response.result) {
+                    callback(false, response.result);
+                  } else {
+                    // What's going on?  This does not look like either of our
+                    // expected signatures.  Declare a loading error.
+                    callback(true, response);
+                  }
+                }
+            );
+          } else if (Y.Lang.isValue(options.loadByPath)) {
+            // This is a charm store.
+            options.loadByPath(
+                this.get('charm_store_path'),
+                { success: function(response) {
+                  callback(false, response);
+                },
+                failure: function(response) {
+                  callback(true, response);
+                }
+                });
+          } else {
+            throw 'You must supply a get_charm or loadByPath function.';
+          }
+        },
+        parse: function() {
+          var data = Charm.superclass.parse.apply(this, arguments),
+              self = this;
+          data.is_subordinate = data.subordinate;
+          Y.each(data, function(value, key) {
+            if (!value ||
+                !self.attrAdded(key) ||
+                Y.Lang.isValue(self.get(key))) {
+              delete data[key];
             }
           });
-      } else {
-        throw 'You must supply a get_charm or loadByPath function.';
-      }
-    },
-    parse: function() {
-      var data = Charm.superclass.parse.apply(this, arguments),
-          self = this;
-      data.is_subordinate = data.subordinate;
-      Y.each(data, function(value, key) {
-        if (!value || !self.attrAdded(key) || Y.Lang.isValue(self.get(key))) {
-          delete data[key];
+          if (data.owner === 'charmers') {
+            delete data.owner;
+          }
+          return data;
+        },
+        compare: function(other, relevance, otherRelevance) {
+          // Official charms sort before owned charms.
+          // If !X.owner, that means it is owned by charmers.
+          var owner = this.get('owner'),
+              otherOwner = other.get('owner');
+          if (!owner && otherOwner) {
+            return -1;
+          } else if (owner && !otherOwner) {
+            return 1;
+          // Relevance is next most important.
+          } else if (relevance && (relevance !== otherRelevance)) {
+            // Higher relevance comes first.
+            return otherRelevance - relevance;
+          // Otherwise sort by package name, then by owner, then by revision.
+          } else {
+            return (
+                (this.get('package_name').localeCompare(
+                other.get('package_name'))) ||
+                (owner ? owner.localeCompare(otherOwner) : 0) ||
+                (this.get('revision') - other.get('revision')));
+          }
+        }
+      }, {
+        ATTRS: {
+          id: {
+            writeOnce: true,
+            validator: function(val) {
+              return Y.Lang.isString(val) && !!charm_id_re.exec(val);
+            }
+          },
+          bzr_branch: {writeOnce: true},
+          charm_store_path: {writeOnce: true},
+          config: {writeOnce: true},
+          description: {writeOnce: true},
+          full_name: {writeOnce: true},
+          is_subordinate: {writeOnce: true},
+          last_change: {
+            writeOnce: true,
+            setter: function(val) {
+              // Normalize created value from float to date object.
+              if (val && val.created) {
+                // Mutating in place should be fine since this should only
+                // come from loading over the wire.
+                val.created = new Date(val.created * 1000);
+              }
+              return val;
+            }
+          },
+          maintainer: {writeOnce: true},
+          metadata: {writeOnce: true},
+          package_name: {writeOnce: true},
+          owner: {writeOnce: true},
+          peers: {writeOnce: true},
+          proof: {writeOnce: true},
+          provides: {writeOnce: true},
+          requires: {writeOnce: true},
+          revision: {
+            writeOnce: true,
+            setter: function(val) {
+              if (Y.Lang.isValue(val)) {
+                val = parseInt(val, 10);
+              }
+              return val;
+            }
+          },
+          scheme: {
+            value: 'cs',
+            writeOnce: true,
+            setter: function(val) {
+              if (!Y.Lang.isValue(val)) {
+                val = 'cs';
+              }
+              return val;
+            }
+          },
+          series: {writeOnce: true},
+          summary: {writeOnce: true},
+          url: {writeOnce: true}
         }
       });
-      if (data.owner === 'charmers') {
-        delete data.owner;
-      }
-      return data;
-    },
-    compare: function(other, relevance, otherRelevance) {
-      // Official charms sort before owned charms.
-      // If !X.owner, that means it is owned by charmers.
-      var owner = this.get('owner'),
-          otherOwner = other.get('owner');
-      if (!owner && otherOwner) {
-        return -1;
-      } else if (owner && !otherOwner) {
-        return 1;
-      // Relevance is next most important.
-      } else if (relevance && (relevance !== otherRelevance)) {
-        // Higher relevance comes first.
-        return otherRelevance - relevance;
-      // Otherwise sort by package name, then by owner, then by revision.
-      } else {
-        return (
-          (this.get('package_name').localeCompare(
-            other.get('package_name'))) ||
-          (owner ? owner.localeCompare(otherOwner) : 0) ||
-          (this.get('revision') - other.get('revision')));
-      }
-    }
-  }, {
-    ATTRS: {
-      id: {
-        writeOnce: true,
-        validator: function(val) {
-          return Y.Lang.isString(val) && !!charm_id_re.exec(val);
-        }
-      },
-      bzr_branch: {writeOnce: true},
-      charm_store_path: {writeOnce: true},
-      config: {writeOnce: true},
-      description: {writeOnce: true},
-      full_name: {writeOnce: true},
-      is_subordinate: {writeOnce: true},
-      last_change: {
-        writeOnce: true,
-        setter: function(val) {
-          // Normalize created value from float to date object.
-          if (val && val.created) {
-            // Mutating in place should be fine since this should only
-            // come from loading over the wire.
-            val.created = new Date(val.created * 1000);
-          }
-          return val;
-        }
-      },
-      maintainer: {writeOnce: true},
-      metadata: {writeOnce: true},
-      package_name: {writeOnce: true},
-      owner: {writeOnce: true},
-      peers: {writeOnce: true},
-      proof: {writeOnce: true},
-      provides: {writeOnce: true},
-      requires: {writeOnce: true},
-      revision: {
-        writeOnce: true,
-        setter: function(val) {
-          if (Y.Lang.isValue(val)) {
-            val = parseInt(val, 10);
-          }
-          return val;
-        }
-      },
-      scheme: {
-        value: 'cs',
-        writeOnce: true,
-        setter: function(val) {
-          if (!Y.Lang.isValue(val)) {
-            val = 'cs';
-          }
-          return val;
-        }
-      },
-      series: {writeOnce: true},
-      summary: {writeOnce: true},
-      url: {writeOnce: true}
-    }
-  });
   models.Charm = Charm;
 
   var CharmList = Y.Base.create('charmList', Y.ModelList, [], {
