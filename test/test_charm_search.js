@@ -5,7 +5,7 @@ describe('charm search', function() {
       searchResult = '{"results": [{"data_url": "this is my URL", ' +
       '"name": "membase", "series": "precise", "summary": ' +
       '"Membase Server", "relevance": 8.728194117350437, ' +
-      '"owner": "charmers"}]}';
+      '"owner": "charmers", "store_url": "cs:precise/membase-6"}]}';
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -85,7 +85,7 @@ describe('charm search', function() {
 
     searchTriggered.should.equal(true);
     node.one('.charm-entry .btn.deploy').getData('url').should.equal(
-        'cs:precise/membase');
+        'cs:precise/membase-6');
   });
 
   it('must be able to trigger charm details', function() {
@@ -107,7 +107,7 @@ describe('charm search', function() {
           testing: true
         }),
         node = panel.node;
-    db.charms.add({id: 'cs:precise/membase'});
+    db.charms.add({id: 'cs:precise/membase-6'});
 
     panel.show();
     var field = Y.one('#charm-search-field');
@@ -138,7 +138,7 @@ describe('charm search', function() {
               testing: true
             }),
             node = panel.node,
-            charm = db.charms.add({id: 'cs:precise/membase'});
+            charm = db.charms.add({id: 'cs:precise/membase-6'});
         charm.loaded = true;
         panel.show();
         var field = Y.one('#charm-search-field');
