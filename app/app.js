@@ -309,6 +309,7 @@ YUI.add('juju-gui', function(Y) {
       this.showView(viewName, {
         model: service,
         db: this.db,
+        env: this.env,
         getModelURL: Y.bind(this.getModelURL, this),
         querystring: req.query
       }, {}, function(view) {
