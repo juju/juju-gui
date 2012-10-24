@@ -711,8 +711,8 @@ g.unit {
     }
 
     .button-colors(@color) {
-        @gradient-start: lighten(@color, 20%);
-	@gradient-end: darken(@color, 20%);
+        @gradient-start: lighten(@color, 5%);
+	@gradient-end: darken(@color, 5%);
         background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
         background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
         background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
