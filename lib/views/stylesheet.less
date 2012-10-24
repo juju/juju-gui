@@ -709,14 +709,24 @@ g.unit {
     }
 
     .btn.deploy {
+        @gradient-start: lighten(@charm-panel-deploy-button-color, 10%);
+	@gradient-end: darken(@charm-panel-deploy-button-color, 10%);
         margin-top: 5px;
         margin-left: 5px;
         float: none;
         border: none;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
+        background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
+        background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
+        background-image: -o-linear-gradient(top, @gradient-start, @gradient-end);
+        background-image: -moz-linear-gradient(top, @gradient-start, @gradient-end);
+        background-image: linear-gradient(top, @gradient-start, @gradient-end);
+        background-repeat: repeat-x;
+        border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
         &, &:hover, &:active, &.active, &.disabled, &[disabled] {
-  	  background-color: @charm-panel-deploy-button-color;
+          background-color: @charm-panel-deploy-button-color;
 	}
     }
     .btn.cancel {
