@@ -6,7 +6,7 @@
 @text-entry-color: #6d6e70;
 @charm-panel-configure-title-color: #eee7d5;
 @charm-panel-configure-name-color: #8f8f88;
-
+@charm-panel-deploy-button-color: #E45718;
 
 body {
     margin-top: 87px;
@@ -712,15 +712,12 @@ g.unit {
         margin-top: 5px;
         margin-left: 5px;
         float: none;
-        background-repeat: no-repeat;
-        background-color: transparent;
         border: none;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-        background-image: url(/juju-ui/assets/images/deploy-button.png);
-        &:active {
-          background-image: url(/juju-ui/assets/images/deploy-button-pressed.png);
-        }
+        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
+  	  background-color: @charm-panel-deploy-button-color;
+	}
     }
     .btn.cancel {
         margin-top: 5px;
@@ -1066,28 +1063,23 @@ div.inline {
 
 /* XXX: The positioning here feels like a big hack.  Suggestions welcome. */
 .charm-panel-configure {
-  background: url(/juju-ui/assets/images/configure_title_div.png) repeat-x;
+  background-image: url(/juju-ui/assets/images/configure-cog.png);
+  background-repeat: no-repeat;
+  background-position: 230px 42px;
+  border-top: 2px solid #dd4814;
+  background-color: #2F2A27;
   height: 93px;
-  position: relative;
   .title {
     font-weight: lighter;
     font-size: 22px;
     color: @charm-panel-configure-title-color;
-    position: absolute;
-    bottom: 22px;
+    margin-top: 20px;
+    z-index:1;
   }
   .name {
     font-size: 12px;
     color: @charm-panel-configure-name-color;
-    position: absolute;
-    bottom: 0;
-  }
-  .cog {
-    position: absolute;
-    background: url(/juju-ui/assets/images/configure-cog.png);
-    bottom: 0;
-    right: 0;
-    height: 40px;
-    width: 40px;
+    margin-top: 5px;
+    z-index:1;
   }
 }
