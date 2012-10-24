@@ -45,188 +45,6 @@ YUI.add('juju-models', function(Y) {
     }
   };
 
-  // This is how the charm_id_re regex works for various inputs.  The first
-  // element is always the initial string, which we have elided in the
-  // examples.
-  // 'cs:~marcoceppi/precise/word-press-17' ->
-  // [..."cs", "marcoceppi", "precise", "word-press", "17"]
-  // 'cs:~marcoceppi/precise/word-press' ->
-  // [..."cs", "marcoceppi", "precise", "word-press", undefined]
-  // 'cs:precise/word-press' ->
-  // [..."cs", undefined, "precise", "word-press", undefined]
-  // 'cs:precise/word-press-17'
-  // [..."cs", undefined, "precise", "word-press", "17"]
-  var charm_id_re = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)(?:-(\d+))?$/,
-      parse_charm_id = function(id) {
-        var parts = charm_id_re.exec(id),
-            result = {};
-        if (parts) {
-          parts.shift();
-          Y.each(
-              Y.Array.zip(
-                  ['scheme', 'owner', 'series', 'package_name', 'revision'],
-                  parts),
-              function(pair) { result[pair[0]] = pair[1]; });
-          if (!Y.Lang.isValue(result.scheme)) {
-            result.scheme = 'cs'; // This is the default.
-          }
-          return result;
-        }
-        // return undefined;
-      },
-      _calculate_full_charm_name = function(elements) {
-        var tmp = [elements.series, elements.package_name];
-        if (elements.owner) {
-          tmp.unshift('~' + elements.owner);
-        }
-        return tmp.join('/');
-      };
-  // This is exposed for testing purposes.
-  models.parse_charm_id = parse_charm_id;
-
-  var Charm = Y.Base.create('charm', Y.Model, [], {
-    initializer: function() {
-      this.loaded = false;
-      this.on('load', function() { this.loaded = true; });
-    },
-    sync: function(action, options, callback) {
-      if (action !== 'read') {
-        throw (
-            'Only use the "read" action; "' + action + '" not supported.');
-      }
-      if (!Y.Lang.isValue(options.env) ||
-          !Y.Lang.isValue(options.charm_store)) {
-        throw 'You must supply both the env and the charm_store as options.';
-      }
-      var scheme = this.get('scheme'),
-          charm_id = this.get('id'),
-          revision = this.get('revision'),
-          self = this; // cheap, fast bind.
-      // Now, is the id local: or cs: ?
-      if (scheme === 'local') {
-        // Warning!  We don't have experience with local charms yet.
-        // This will likely need tweaking.
-        if (Y.Lang.isValue(revision)) {
-          // Local charms can honor the revision.
-          charm_id += '-' + revision;
-        }
-        options.env.get_charm(charm_id, function(ev) {
-          if (ev.err) {
-            console.log('error loading local charm', self, ev);
-            callback(true, ev);
-          } else {
-            callback(false, ev.result); // Result is already parsed.
-          }
-        });
-      } else if (scheme === 'cs') {
-        // Convert id to charmstore path.
-        options.charm_store.sendRequest({
-          request: this.get('charm_store_path'),
-          callback: {
-            'success': function(io_request) {
-              callback(false, io_request.response.results[0].responseText);
-            },
-            'failure': function(ev) {
-              console.log('error loading cs charm', self, ev);
-              callback(true, ev);
-            }
-          }
-        });
-      } else {
-        console.error('unknown charm id scheme: ' + scheme, this);
-      }
-    },
-    parse: function() {
-      var result = Charm.superclass.parse.apply(this, arguments);
-      result.is_subordinate = result.subordinate;
-      Y.each(
-          ['subordinate', 'name', 'revision'],
-          function(nm) { delete result[nm]; });
-      return result;
-    }
-  }, {
-    ATTRS: {
-      id: {
-        lazyAdd: false,
-        setter: function(val) {
-          var parts = parse_charm_id(val),
-              self = this;
-          if (!parts) {
-            return null;
-          }
-          Y.each(parts, function(value, key) {
-            self._set(key, value);
-          });
-          this._set(
-              'charm_store_path',
-              [(parts.owner ? '~' + parts.owner : 'charms'),
-               parts.series, parts.package_name, 'json']
-            .join('/'));
-          this._set('full_name', _calculate_full_charm_name(parts));
-          return parts.scheme + ':' + this.get('full_name');
-        },
-        validator: function(val) {
-          return Y.Lang.isValue(charm_id_re.exec(val));
-        }
-      },
-      // All of the below are loaded except as noted.
-      bzr_branch: {writeOnce: true},
-      charm_store_path: {readOnly: true}, // calculated
-      config: {writeOnce: true},
-      description: {writeOnce: true},
-      full_name: {readOnly: true}, // calculated
-      is_subordinate: {writeOnce: true},
-      last_change:
-          { writeOnce: true,
-            setter: function(val) {
-              if (val && val.created) {
-                // Mutating in place should be fine since this should only
-                // come from loading over the wire.
-                val.created = new Date(val.created * 1000);
-              }
-              return val;
-            }
-          },
-      maintainer: {writeOnce: true},
-      metadata: {writeOnce: true},
-      package_name: {readOnly: true}, // calculated
-      owner: {readOnly: true}, // calculated
-      peers: {writeOnce: true},
-      proof: {writeOnce: true},
-      provides: {writeOnce: true},
-      requires: {writeOnce: true},
-      revision: {readOnly: true}, // calculated
-      scheme: {readOnly: true}, // calculated
-      series: {readOnly: true}, // calculated
-      store_revision: {writeOnce: true},
-      summary: {writeOnce: true},
-      url: {writeOnce: true}
-    }
-  });
-  models.Charm = Charm;
-
-  var CharmList = Y.Base.create('charmList', Y.ModelList, [], {
-    model: Charm,
-    getById: function(id) {
-      // Normalize ids to not have revision numbers.
-      // Eventually it would be nice to be able to use revision numbers,
-      // but the charm store can't handle it, so we stick with the lowest
-      // common denominator: ids without revision numbers.
-      return CharmList.superclass.getById.apply(
-          this, [this.normalizeCharmId(id)]);
-    },
-    normalizeCharmId: function(id) {
-      var match = parse_charm_id(id);
-      if (match) {
-        return match.scheme + ':' + _calculate_full_charm_name(match);
-      }
-      return undefined;
-    }
-  }, {
-    ATTRS: {}
-  });
-  models.CharmList = CharmList;
-
   var Service = Y.Base.create('service', Y.Model, [], {
     ATTRS: {
       name: {},
@@ -564,7 +382,7 @@ YUI.add('juju-models', function(Y) {
   var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
       this.services = new ServiceList();
-      this.charms = new CharmList();
+      this.charms = new models.CharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
 
@@ -580,13 +398,13 @@ YUI.add('juju-models', function(Y) {
       this.machines = new MachineList();
 
       // For model syncing by type. Charms aren't currently sync'd, only
-      // fetched on demand (their static).
+      // fetched on demand (they're static).
       this.model_map = {
         'unit': ServiceUnit,
         'machine': Machine,
         'service': Service,
         'relation': Relation,
-        'charm': Charm
+        'charm': models.Charm
       };
     },
 
@@ -667,6 +485,7 @@ YUI.add('juju-models', function(Y) {
     'datasource-jsonschema',
     'io-base',
     'json-parse',
-    'juju-view-utils'
+    'juju-view-utils',
+    'juju-charm-models'
   ]
 });

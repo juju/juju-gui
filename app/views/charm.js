@@ -1,5 +1,10 @@
 'use strict';
 
+// Both of these views should probably either be deleted or converted to only
+// show environment charms.  My (GP) favorite option is to convert CharmView
+// into a service tab (viewing the environment's charm) and delete
+// CharmCollectionView.
+
 YUI.add('juju-view-charm-collection', function(Y) {
 
   var views = Y.namespace('juju.views'),
@@ -11,7 +16,7 @@ YUI.add('juju-view-charm-collection', function(Y) {
     initializer: function() {
       this.set('charm', null);
       console.log('Loading charm view', this.get('charm_data_url'));
-      this.get('charm_store').sendRequest({
+      this.get('charm_store').get('datasource').sendRequest({
         request: this.get('charm_data_url'),
         callback: {
           'success': Y.bind(this.on_charm_data, this),
@@ -149,7 +154,7 @@ YUI.add('juju-view-charm-collection', function(Y) {
       // The handling in datasources-plugins is an example of doing this a bit
       // better ie. io cancellation outstanding requests, it does seem to
       // cause some interference with various datasource plugins though.
-      this.get('charm_store').sendRequest({
+      this.get('charm_store').get('datasource').sendRequest({
         request: 'search/json?search_text=' + query,
         callback: {
           'success': Y.bind(this.on_results_change, this),
