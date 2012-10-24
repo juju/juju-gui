@@ -741,7 +741,6 @@ g.unit {
     }
     .btn.cancel {
         margin-top: 5px;
-        margin-left: 5px;
         background-repeat: no-repeat;
         background-color: transparent;
         vertical-align: middle;
@@ -755,7 +754,7 @@ g.unit {
     .charm-panel-configure-buttons {
       border-bottom: 1px solid @charm-panel-separator-color;
       height: 52px;
-      vertical-align: middle;
+      padding-left: 8px;
       .btn {
           margin-top: 12px;
       }
@@ -1060,6 +1059,140 @@ table tr.highlighted {
   }
 }
 
+.service-view {
+    .juju-service-info-container-bottom-menu {        border: none;
+
+        background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
+        height: 50px;
+        position: relative;
+        color: #2d2d2d!important;
+
+        .destroy-control {
+            position: absolute;
+            top: 1px;
+            left: 10px;
+
+            a {
+                color: #2D2D2D!important;
+            }
+
+            a:link, a:visited, a:active, a:hover {
+                text-decoration: none
+            }
+        }
+    }
+
+    .filter-control {
+        position: absolute;
+        left: 120px;
+        top: 10px;
+
+        span:first-child {
+            padding-right: 5px;
+        }
+    }
+
+    .service-header-partial {
+      .name {
+          padding-top: 38px;
+          padding-left: 46px;
+          height: 73px;
+
+          div:nth-child(1) {
+              font-style: normal;
+              height: 28px;
+              font-size: 24px;
+              color: #292929;
+          }
+
+          div:nth-child(2) {
+              font-style: italic;
+              font-size: 16px;
+              color: #6a737b;
+          }
+        }
+
+        .menu-items {
+            height: 26px;
+            padding-top: 2px;
+            padding-left: 38px;
+            background: url(/juju-ui/assets/images/tab_div.png) repeat;
+
+            .item {
+                a {
+                     font-size: 12px;
+                     padding-left: 10px;
+                     padding-right: 10px;
+                     color: #292929;
+                }
+                a:link, a:visited, a:active, a:hover {
+                     text-decoration: none
+                }
+
+                .link-active {
+                    color: #dd4814 !important;
+                }
+                .active {
+                     margin-top: 3px;
+                     height: 4px;
+                     background: url(/juju-ui/assets/images/tab_marker.png)
+                       repeat;
+                }
+            }
+        }
+    }
+
+    .service-common-controls {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+
+        .control-unit-count {
+            position: absolute;
+            right: 120px;
+            top: 0px;
+            width: 305px;
+
+            img {
+                padding-top: 0px;
+            }
+
+            div {
+                padding-left: 5px;
+            }
+
+            div:first-child {
+                padding-top: 4px;
+            }
+        }
+
+        .control-expose {
+            position: absolute;
+            right: 0px;
+            top: 4px;
+            width: 120px;
+
+            div {
+                padding-left: 5px;
+            }
+
+            .on {
+                font-size: 12px; fill: #ffffff;
+                position: absolute;
+                right: 20px;
+                top: 3px;
+            }
+
+            .off {
+                font-size: 12px; fill: #292929;
+                position: absolute;
+                right: 40px;
+                top: 3px;
+            }
+          }
+    }
+}
+
 .state-filter-label {
   color: white
 }
@@ -1080,7 +1213,6 @@ div.inline {
     max-width: 400px;
 }
 
-/* XXX: The positioning here feels like a big hack.  Suggestions welcome. */
 .charm-panel-configure {
   background-image: url(/juju-ui/assets/images/configure-cog.png);
   background-repeat: no-repeat;
@@ -1088,11 +1220,12 @@ div.inline {
   border-top: 2px solid #dd4814;
   background-color: #2F2A27;
   height: 93px;
+  padding-left: 8px;
   .title {
     font-weight: lighter;
     font-size: 22px;
     color: @charm-panel-configure-title-color;
-    margin-top: 25px;
+    margin-top: 35px;
     z-index:1;
   }
   .name {
