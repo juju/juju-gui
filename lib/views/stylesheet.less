@@ -6,7 +6,9 @@
 @text-entry-color: #6d6e70;
 @charm-panel-configure-title-color: #eee7d5;
 @charm-panel-configure-name-color: #8f8f88;
-@charm-panel-deploy-button-color: #E45718;
+@charm-panel-deploy-button-color: #e45718;
+@charm-panel-cancel-button-color: #979694;
+@charm-panel-separator-color: #aeaeae;
 
 body {
     margin-top: 87px;
@@ -708,15 +710,9 @@ g.unit {
         float: right;
     }
 
-    .btn.deploy {
-        @gradient-start: lighten(@charm-panel-deploy-button-color, 10%);
-	@gradient-end: darken(@charm-panel-deploy-button-color, 10%);
-        margin-top: 5px;
-        margin-left: 5px;
-        float: none;
-        border: none;
-        vertical-align: middle;
-        background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
+    .button-colors(@color) {
+        @gradient-start: lighten(@color, 20%);
+	@gradient-end: darken(@color, 20%);
         background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
         background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
         background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
@@ -725,6 +721,15 @@ g.unit {
         background-image: linear-gradient(top, @gradient-start, @gradient-end);
         background-repeat: repeat-x;
         border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    }
+    .btn.deploy {
+        margin-top: 5px;
+        margin-left: 5px;
+        float: none;
+        border: none;
+        vertical-align: middle;
+        background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
+	.button-colors(@charm-panel-deploy-button-color);
         &, &:hover, &:active, &.active, &.disabled, &[disabled] {
           background-color: @charm-panel-deploy-button-color;
 	}
@@ -739,12 +744,13 @@ g.unit {
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
-        &:active {
-          background-image: url(/juju-ui/assets/images/cancel-button-pressed.png);
-        }
+	.button-colors(@charm-panel-cancel-button-color);
+        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
+          background-color: @charm-panel-cancel-button-color;
+	}
     }
     .charm-panel-configure-buttons {
-      background: url(/juju-ui/assets/images/configure_toolbar_div.png) repeat-x;
+      border-bottom: 1px solid @charm-panel-separator-color;
       height: 52px;
       vertical-align: middle;
       .btn {
@@ -1083,7 +1089,7 @@ div.inline {
     font-weight: lighter;
     font-size: 22px;
     color: @charm-panel-configure-title-color;
-    margin-top: 20px;
+    margin-top: 25px;
     z-index:1;
   }
   .name {
