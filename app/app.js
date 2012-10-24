@@ -92,7 +92,79 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
+    setupHotkeys: function() {
+      var myWindow = Y.one(window);
+      myWindow.on('keydown', function(ev) {
+        var key = [],
+            keyStr = null,
+            data = {
+                  preventDefault: false
+            };
+        if (ev.altKey) {
+          key.push('alt');
+        } else if (ev.ctrlKey) {
+          key.push('ctrl');
+        } else if (ev.shiftKey) {
+          key.push('shift');
+        }
+        if (key.length === 0 &&
+            // F1...F12 or esc
+            !(ev.keyCode >= 112 && ev.keyCode <= 123 || ev.keyCode === 27)) {
+          return; //nothing to do
+        }
+        keyStr = keyCodeToString(ev.keyCode);
+        if (!keyStr) {
+          keyStr = ev.keyCode;
+        }
+        key.push(keyStr);
+        Y.fire('window-' + key.join('-') + '-pressed', data);
+        if (data.preventDefault) {
+          ev.preventDefault();
+        }
+      });
+
+      // http://www.quirksmode.org/js/keys.html
+      function keyCodeToString(keyCode) {
+        if (keyCode === 16) {
+          return 'shift';
+        }
+        if (keyCode === 17) {
+          return 'control';
+        }
+        if (keyCode === 18) {
+          return 'alt';
+        }
+        if (keyCode === 27) {
+          return 'esc';
+        }
+        // Numbers or Letters
+        if (keyCode >= 48 && keyCode <= 57 || //Numbers
+            keyCode >= 65 && keyCode <= 90) { //Letters
+          return String.fromCharCode(keyCode);
+        }
+        //F1 -> F12
+        if (keyCode >= 112 && keyCode <= 123) {
+          return 'F' + (keyCode - 111);
+        }
+        return null;
+      }
+    },
+
     initializer: function() {
+      //
+      this.setupHotkeys();
+      Y.on('window-alt-E-pressed', function(data) {
+        this.show_environment();
+        data.preventDefault = true;
+      }, this);
+      Y.on('window-alt-S-pressed', function(data) {
+        var field = Y.one('#charm-search-field');
+        if (field) {
+          field.focus();
+        }
+        data.preventDefault = true;
+      }, this);
+
       // If this flag is true, start the application with the console activated
       if (this.get('consoleEnabled')) {
         consoleManager.native();
@@ -424,7 +496,9 @@ YUI.add('juju-gui', function(Y) {
           }
         });
       }
-      next();
+      if (next) {
+        next();
+      }
     },
 
     // Model interactions -> move to db layer
