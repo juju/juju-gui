@@ -710,6 +710,10 @@ g.unit {
         float: right;
     }
 
+    .btn.left {
+        float: none;
+    }
+
     .button-colors(@color) {
         @gradient-start: lighten(@color, 5%);
 	@gradient-end: darken(@color, 5%);
@@ -725,8 +729,6 @@ g.unit {
     .btn.deploy {
         margin-top: 5px;
         margin-left: 5px;
-        float: none;
-        border: none;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
 	.button-colors(@charm-panel-deploy-button-color);
@@ -734,13 +736,14 @@ g.unit {
           background-color: @charm-panel-deploy-button-color;
 	}
     }
+    .charm-description btn.deploy {
+       float: right;
+    }
     .btn.cancel {
         margin-top: 5px;
         margin-left: 5px;
-        float: none;
         background-repeat: no-repeat;
         background-color: transparent;
-        border: none;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
