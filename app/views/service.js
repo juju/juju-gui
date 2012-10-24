@@ -298,6 +298,12 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         getServiceTabs: function(href) {
+          var app = this.get('app'),
+              service = this.get('model'),
+              charmId = service.get('charm'),
+              charm = app.db.charms.getById(charmId),
+              charmUrl = (charm ? app.getModelURL(charm) : '#');
+
           var tabs = [{
             href: '.',
             title: 'Units',
@@ -309,6 +315,10 @@ YUI.add('juju-view-service', function(Y) {
           }, {
             href: 'config',
             title: 'Settings',
+            active: false
+          }, {
+            href: charmUrl,
+            title: 'Charm',
             active: false
           }, {
             href: 'constraints',
@@ -383,8 +393,7 @@ YUI.add('juju-view-service', function(Y) {
                 tabs: this.getServiceTabs('relations'),
                 service: service.getAttrs(),
                 relations: relation_data,
-                charm: this.renderable_charm(
-                    service.get('charm'), db, getModelURL)}));
+                charm_id: service.get('charm')}));
         },
 
         confirmRemoved: function(ev) {
@@ -574,8 +583,8 @@ YUI.add('juju-view-service', function(Y) {
               });
               return arr;
             })(),
-            charm: this.renderable_charm(
-                service.get('charm'), db, getModelURL)}));
+            charm_id: service.get('charm')}
+          ));
 
           return this;
         }
@@ -646,8 +655,8 @@ YUI.add('juju-view-service', function(Y) {
                 tabs: this.getServiceTabs('config'),
                 service: service.getAttrs(),
                 settings: settings,
-                charm: this.renderable_charm(
-                    service.get('charm'), db, getModelURL)}));
+                charm_id: service.get('charm')}
+              ));
 
           return this;
         },
@@ -820,8 +829,7 @@ YUI.add('juju-view-service', function(Y) {
               { viewName: 'units',
                 tabs: this.getServiceTabs('.'),
                 service: service.getAttrs(),
-                charm: this.renderable_charm(
-                    service.get('charm'), db, getModelURL),
+                charm_id: service.get('charm'),
                 state: filter_state,
                 units: this.filterUnits(filter_state, units),
                 states: state_data}));

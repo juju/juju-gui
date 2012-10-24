@@ -44,13 +44,13 @@
       Y.one('#main').append(container);
       db = new models.Database();
       charm = new models.Charm({
-        id: 'cs:precise/mysql',
+        id: 'cs:precise/mysql-5',
         name: 'mysql',
         description: 'A DB'});
       db.charms.add([charm]);
       service = new models.Service({
         id: 'mysql',
-        charm: 'cs:precise/mysql',
+        charm: 'cs:precise/mysql-5',
         unit_count: 1,
         loaded: true});
       db.relations.add({

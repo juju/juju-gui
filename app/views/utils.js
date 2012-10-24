@@ -619,10 +619,10 @@ YUI.add('juju-view-utils', function(Y) {
         translate: function() { return [0, 0]; }
       };
       var s = transform.scale(), tr = transform.translate();
-      if (point[0] > this.x * s + tr[0] &&
-          point[0] < this.x * s + this.w * s + tr[0] &&
-          point[1] > this.y * s + tr[1] &&
-          point[1] < this.y * s + this.h * s + tr[1]) {
+      if (point[0] >= this.x * s + tr[0] &&
+          point[0] <= this.x * s + this.w * s + tr[0] &&
+          point[1] >= this.y * s + tr[1] &&
+          point[1] <= this.y * s + this.h * s + tr[1]) {
         return true;
       }
       return false;
@@ -850,6 +850,17 @@ YUI.add('juju-view-utils', function(Y) {
     if (!text || text === undefined) {return '';}
     return new Y.Handlebars.SafeString(
         Y.Markdown.toHTML(text));
+  });
+
+  /*
+   * Build a list of relation types given a list of endpoints.
+   */
+  Y.Handlebars.registerHelper('relationslist', function(endpoints, options) {
+    var out = '';
+    endpoints.forEach(function(ep) {
+      out += options.fn({start: ep[0], end: ep[1]});
+    });
+    return out;
   });
 
 }, '0.1.0', {

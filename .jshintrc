@@ -118,6 +118,7 @@
     "beforeEach",
     "d3",
     "describe",
+    "escape",
     "expect",
     "GlobalConfig",
     "consoleManager",

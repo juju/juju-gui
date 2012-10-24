@@ -42,7 +42,7 @@
       Y.one('#main').append(container);
       db = new models.Database();
       charm = new models.Charm(
-          { id: 'cs:precise/mysql',
+          { id: 'cs:precise/mysql-7',
             description: 'A DB',
             config:
                 { options:
@@ -74,7 +74,7 @@
                 return model.get('name'); }};
       service = new models.Service({
         id: 'mysql',
-        charm: 'cs:precise/mysql',
+        charm: 'cs:precise/mysql-7',
         unit_count: db.units.size(),
         loaded: true,
         config: {
