@@ -14,6 +14,7 @@ describe('application console', function() {
             TestApp.superclass.constructor.apply(this, arguments);
           }
 
+          // Mocking the "show_environment" function.
           Y.extend(TestApp, Y.juju.App, {
             show_environment: function() {
               altEtriggered = true;
@@ -53,9 +54,10 @@ describe('application console', function() {
   it('should listen for alt-S events', function() {
     app.render();
     windowNode.simulate('keydown', {
-      keyCode: 83,
+      keyCode: 83, // "S" key
       altKey: true
     });
+    // Did charm-search-field get the focus?
     assert.equal(Y.one('#charm-search-field'), Y.one(document.activeElement));
   });
 
@@ -63,7 +65,7 @@ describe('application console', function() {
     assert.isFalse(altEtriggered);
     app.render();
     windowNode.simulate('keydown', {
-      keyCode: 69,
+      keyCode: 69, // "E" key
       altKey: true
     });
     assert.isTrue(altEtriggered);

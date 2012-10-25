@@ -74,6 +74,8 @@
     <script>
       YUI(GlobalConfig).use(["juju-gui"], function(Y) {
         app = new Y.juju.App(juju_config);
+        // We need to activate the hotkeys when running the application
+        // in production. Unit tests should call it manually.
         app.activateHotkeys();
       });
     </script>
