@@ -197,25 +197,27 @@ YUI.add('juju-charm-search', function(Y) {
               {click: function(evt) {evt.target.focus();}}
         },
         _moveTooltip: function() {
-          if (Y.DOM.inRegion(
-              this.tooltip.field.getDOMNode(),
-              this.tooltip.panelRegion,
-              true)) {
-            var targetRect = this.tooltip.field.getClientRect();
-            if (targetRect) {
-              var widget = this.tooltip.get('boundingBox'),
-                  tooltipWidth = widget.get('clientWidth'),
-                  tooltipHeight = widget.get('clientHeight'),
-                  y_offset = (tooltipHeight - targetRect.height) / 2;
-              this.tooltip.move(  // These are the x, y coordinates.
-                  [this.tooltip.panel.getX() - tooltipWidth - 15,
-                   targetRect.top - y_offset]);
-              if (!this.tooltip.get('visible')) {
-                this.tooltip.show();
+          if (this.tooltip.get('visible')) {
+            if (Y.DOM.inRegion(
+                this.tooltip.field.getDOMNode(),
+                this.tooltip.panelRegion,
+                true)) {
+              var targetRect = this.tooltip.field.getClientRect();
+              if (targetRect) {
+                var widget = this.tooltip.get('boundingBox'),
+                    tooltipWidth = widget.get('clientWidth'),
+                    tooltipHeight = widget.get('clientHeight'),
+                    y_offset = (tooltipHeight - targetRect.height) / 2;
+                this.tooltip.move(  // These are the x, y coordinates.
+                    [this.tooltip.panel.getX() - tooltipWidth - 15,
+                     targetRect.top - y_offset]);
+                if (!this.tooltip.get('visible')) {
+                  this.tooltip.show();
+                }
               }
+            } else {
+              this.tooltip.hide();
             }
-          } else if (this.tooltip.get('visible')) {
-            this.tooltip.hide();
           }
         },
         showDescription: function(evt) {
