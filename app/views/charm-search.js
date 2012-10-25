@@ -197,7 +197,8 @@ YUI.add('juju-charm-search', function(Y) {
               {click: function(evt) {evt.target.focus();}}
         },
         _moveTooltip: function() {
-          if (Y.DOM.inRegion(
+          if (this.tooltip.field &&
+              Y.DOM.inRegion(
               this.tooltip.field.getDOMNode(),
               this.tooltip.panelRegion,
               true)) {
@@ -236,6 +237,7 @@ YUI.add('juju-charm-search', function(Y) {
         hideDescription: function(evt) {
           //console.log('focus', evt, evt.target.getXY());
           this.tooltip.hide();
+          delete this.tooltip.field;
         },
         onFileChange: function(evt) {
           console.log('onFileChange:', evt);
