@@ -1401,10 +1401,9 @@ YUI.add('juju-view-environment', function(Y) {
             view.show(view.vis.selectAll('.service'));
 
             var db = view.get('db'),
-                serviceEndpoints = view.get('serviceEndpoints'),
                 service = view.serviceForBox(m),
                 endpoints = models.getEndpoints(
-                    service, serviceEndpoints, db),
+                    service, view.get('serviceEndpoints'), db),
 
                 /* Transform endpoints into a list of
                  * relatable services (to the service in m)
