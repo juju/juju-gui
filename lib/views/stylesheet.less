@@ -1,6 +1,14 @@
 /* Processed with LESS from lib/views/stylesheet.less */
-
 @font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+/* Define common colors. */
+@label-color: #292929;
+@text-entry-color: #6d6e70;
+@charm-panel-configure-title-color: #eee7d5;
+@charm-panel-configure-name-color: #8f8f88;
+@charm-panel-deploy-button-color: #e45718;
+@charm-panel-cancel-button-color: #979694;
+@charm-panel-separator-color: #aeaeae;
 
 body {
     margin-top: 87px;
@@ -245,7 +253,7 @@ charms.thumbnails.li { height:4em; }
 
     &.pending-relation {
         stroke: #faaf40;
-        
+
         &.dragging {
             stroke: #fa6a40
         }
@@ -706,18 +714,65 @@ g.unit {
     padding-left: 0px;
     padding-right: 0px;
     z-index: 999;
+    float: none;
 
-    .btn {
+    .charm-panel-configure .btn {
         float: right;
     }
 
+    .button-colors(@color) {
+        @gradient-start: lighten(@color, 5%);
+	@gradient-end: darken(@color, 5%);
+        background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
+        background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
+        background-image: -o-linear-gradient(top, @gradient-start, @gradient-end);
+        background-image: -moz-linear-gradient(top, @gradient-start, @gradient-end);
+        background-image: linear-gradient(top, @gradient-start, @gradient-end);
+        background-repeat: repeat-x;
+        border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    }
+    .btn.deploy {
+        margin-top: 5px;
+        margin-left: 5px;
+        vertical-align: middle;
+        background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
+	.button-colors(@charm-panel-deploy-button-color);
+        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
+          background-color: @charm-panel-deploy-button-color;
+	}
+    }
+    .charm-description btn.deploy {
+       float: right;
+    }
+    .btn.cancel {
+        margin-top: 5px;
+        background-repeat: no-repeat;
+        background-color: transparent;
+        vertical-align: middle;
+        background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
+        background-image: url(/juju-ui/assets/images/cancel-button.png);
+	.button-colors(@charm-panel-cancel-button-color);
+        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
+          background-color: @charm-panel-cancel-button-color;
+	}
+    }
+    .charm-panel-configure-buttons {
+      border-bottom: 1px solid @charm-panel-separator-color;
+      height: 52px;
+      padding-left: 8px;
+      .btn {
+          margin-top: 12px;
+      }
+    }
     .search-charm-inner {
         width: 100%;
         height: 500px;
     }
+    @popover-height: 607px;
     .popover-content {
         padding: 0px;
-        height: 462px;
+        height: @popover-height;
     }
     .charm-nav-back {
         background-color: black;
@@ -801,7 +856,7 @@ g.unit {
         }
     }
     .search-result-div {
-        height: 462px;
+        height: @popover-height;
         overflow-y:auto;
         overflow-x:hidden;
         .series-charms {
@@ -857,16 +912,16 @@ table tr.highlighted {
         height: 50px;
         position: relative;
         color: #2d2d2d!important;
-  
+
         .destroy-control {
             position: absolute;
             top: 1px;
             left: 10px;
-  
+
             a {
                 color: #2D2D2D!important;
             }
-        
+
             a:link, a:visited, a:active, a:hover {
                 text-decoration: none
             }
@@ -877,7 +932,7 @@ table tr.highlighted {
         position: absolute;
         left: 120px;
         top: 10px;
-      
+
         span:first-child {
             padding-right: 5px;
         }
@@ -908,7 +963,7 @@ table tr.highlighted {
             padding-top: 2px;
             padding-left: 38px;
             background: url(/juju-ui/assets/images/tab_div.png) repeat;
-    
+
             .item {
                 a {
                      font-size: 12px;
@@ -926,7 +981,7 @@ table tr.highlighted {
                 .active {
                      margin-top: 3px;
                      height: 4px;
-                     background: url(/juju-ui/assets/images/tab_marker.png) 
+                     background: url(/juju-ui/assets/images/tab_marker.png)
                        repeat;
                 }
             }
@@ -943,15 +998,15 @@ table tr.highlighted {
             right: 120px;
             top: 0px;
             width: 305px;
-            
+
             img {
                 padding-top: 0px;
             }
-            
+
             div {
                 padding-left: 5px;
             }
-            
+
             div:first-child {
                 padding-top: 4px;
             }
@@ -962,21 +1017,21 @@ table tr.highlighted {
             right: 0px;
             top: 4px;
             width: 120px;
-            
+
             div {
                 padding-left: 5px;
             }
-    
+
             .on {
                 font-size: 12px; fill: #ffffff;
-                position: absolute; 
+                position: absolute;
                 right: 20px;
                 top: 3px;
             }
-        
+
             .off {
                 font-size: 12px; fill: #292929;
-                position: absolute; 
+                position: absolute;
                 right: 40px;
                 top: 3px;
             }
@@ -998,4 +1053,25 @@ div.inline {
     border-radius: 3px;
     min-width: 20px;
     max-width: 400px;
+}
+
+.charm-panel-configure {
+  background-image: url(/juju-ui/assets/images/configure-cog.png);
+  background-repeat: no-repeat;
+  background-position: 230px 42px;
+  border-top: 2px solid #dd4814;
+  background-color: #2F2A27;
+  height: 93px;
+  padding-left: 8px;
+  .title {
+    font-weight: lighter;
+    font-size: 22px;
+    color: @charm-panel-configure-title-color;
+    margin-top: 35px;
+  }
+  .name {
+    font-size: 12px;
+    color: @charm-panel-configure-name-color;
+    margin-top: 5px;
+  }
 }
