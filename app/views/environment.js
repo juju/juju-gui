@@ -1483,7 +1483,8 @@ YUI.add('juju-view-environment', function(Y) {
             if (!view.dragline) {
               var dragline = view.vis.insert('line', '.service')
                   .attr('class', 'relation pending-relation dragline'),
-                  points = m.getConnectorPair(view.get('addRelationStart_service'));
+                  points = m.getConnectorPair(
+                      view.get('addRelationStart_service'));
               dragline.attr('x1', points[0][0])
                 .attr('y1', points[0][1])
                 .attr('x2', points[1][0])
