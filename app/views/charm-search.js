@@ -199,9 +199,9 @@ YUI.add('juju-charm-search', function(Y) {
         _moveTooltip: function() {
           if (this.tooltip.get('visible')) {
             if (Y.DOM.inRegion(
-                  this.tooltip.field.getDOMNode(),
-                  this.tooltip.panelRegion,
-                  true)) {
+                this.tooltip.field.getDOMNode(),
+                this.tooltip.panelRegion,
+                true)) {
               var targetRect = this.tooltip.field.getClientRect();
               if (targetRect) {
                 var widget = this.tooltip.get('boundingBox'),
