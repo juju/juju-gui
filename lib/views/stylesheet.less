@@ -177,11 +177,17 @@ svg {
     .triangle {
         position: absolute;
         top: 62px;
-        left: -12px;
         width: 12px;
         line-height: 21px;
-        background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle.png);
         background-repeat: no-repeat;
+    }
+    &.left .triangle {
+        right: -12px;
+        background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle_right.png);
+    }
+    &.right .triangle {
+        left: -12px;
+        background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle.png);
     }
 
     .menu-title {
