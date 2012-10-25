@@ -123,6 +123,18 @@ YUI.add('juju-gui', function(Y) {
         }
       });
 
+      Y.on('window-alt-E-pressed', function(data) {
+        this.show_environment();
+        data.preventDefault = true;
+      }, this);
+      Y.on('window-alt-S-pressed', function(data) {
+        var field = Y.one('#charm-search-field');
+        if (field) {
+          field.focus();
+        }
+        data.preventDefault = true;
+      }, this);
+
       // http://www.quirksmode.org/js/keys.html
       function keyCodeToString(keyCode) {
         if (keyCode === 16) {
@@ -151,19 +163,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     initializer: function() {
-      //
       this.setupHotkeys();
-      Y.on('window-alt-E-pressed', function(data) {
-        this.show_environment();
-        data.preventDefault = true;
-      }, this);
-      Y.on('window-alt-S-pressed', function(data) {
-        var field = Y.one('#charm-search-field');
-        if (field) {
-          field.focus();
-        }
-        data.preventDefault = true;
-      }, this);
 
       // If this flag is true, start the application with the console activated
       if (this.get('consoleEnabled')) {
