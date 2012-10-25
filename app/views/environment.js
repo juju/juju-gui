@@ -1300,7 +1300,7 @@ YUI.add('juju-view-environment', function(Y) {
               service = this.get('active_service'),
               tr = this.zoom.translate(),
               z = this.zoom.scale();
-          if (service) {
+          if (service && cp) {
             cp.setStyle('top', service.y * z + tr[1]);
             cp.setStyle('left', service.x * z + service.w * z + tr[0]);
           }
@@ -1454,12 +1454,13 @@ YUI.add('juju-view-environment', function(Y) {
            * create the relation if not.
            */
           ambiguousAddRelationCheck: function(m, view, context) {
-            var endpoints = view.get('addRelationStart_possibleEndpoints'),
+            var endpoints = view
+                  .get('addRelationStart_possibleEndpoints')[m.id],
                 container = view.get('container');
 
-            if (endpoints[m.id].length === 1) {
+            if (endpoints.length === 1) {
               // Create a relation with the only available endpoint.
-              var ep = endpoints[m.id][0],
+              var ep = endpoints[0],
                   endpoints_item = [
                     [ep[0].service, {
                       name: ep[0].name,
@@ -1471,6 +1472,11 @@ YUI.add('juju-view-environment', function(Y) {
                 .addRelationEnd(endpoints_item, view, context);
               return;
             }
+
+            // Sort the endpoints alphabetically by relation name.
+            endpoints = endpoints.sort(function(a, b) {
+              return a[0].name + a[1].name < b[0].name + b[1].name;
+            });
 
             // Create a pending line if it doesn't exist, as in the case of
             // clicking to add relation.
@@ -1492,7 +1498,7 @@ YUI.add('juju-view-environment', function(Y) {
             }
 
             menu.append(Templates
-                .ambiguousRelationList({endpoints: endpoints[m.id]}));
+                .ambiguousRelationList({endpoints: endpoints}));
 
             // For each endpoint choice, bind an an event to 'click' to
             // add the specified relation.
