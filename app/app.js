@@ -123,10 +123,13 @@ YUI.add('juju-gui', function(Y) {
         }
       });
 
+      Y.detachAll('window-alt-E-pressed');
       Y.on('window-alt-E-pressed', function(data) {
         this.show_environment();
         data.preventDefault = true;
       }, this);
+
+      Y.detachAll('window-alt-S-pressed');
       Y.on('window-alt-S-pressed', function(data) {
         var field = Y.one('#charm-search-field');
         if (field) {
