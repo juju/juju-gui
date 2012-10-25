@@ -15,10 +15,10 @@ YUI.add('juju-charm-search', function(Y) {
     icon = ev.currentTarget.one('i');
     if (el.getStyle('height') === '0px') {
       el.show('sizeIn', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+      icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
     } else {
       el.hide('sizeOut', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+      icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
     }
   };
 
