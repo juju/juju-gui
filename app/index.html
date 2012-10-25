@@ -76,7 +76,9 @@
         app = new Y.juju.App(juju_config);
         // We need to activate the hotkeys when running the application
         // in production. Unit tests should call it manually.
-        app.activateHotkeys();
+        app.on('init', function() {
+          app.activateHotkeys();
+        });
       });
     </script>
   </body>
