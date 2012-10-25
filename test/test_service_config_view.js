@@ -3,7 +3,7 @@
 (function() {
   describe('juju service config view', function() {
     var ServiceConfigView, models, Y, container, service, db, conn,
-        env, charm, ENTER, utils, app, testUtils, makeView;
+        env, charm, ENTER, utils, testUtils, makeView;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use('juju-views', 'juju-models', 'base',
@@ -20,8 +20,8 @@
               return new ServiceConfigView(
                   { container: container,
                     model: service,
-                    db: app.db,
-                    env: app.env,
+                    db: db,
+                    env: env,
                     getModelURL: function() {}}).render();
             };
             done();
@@ -69,9 +69,6 @@
                               type: 'float'}}}});
 
       db.charms.add([charm]);
-      app = { env: env, db: db,
-              getModelURL: function(model, intent) {
-                return model.get('name'); }};
       service = new models.Service({
         id: 'mysql',
         charm: 'cs:precise/mysql-7',
