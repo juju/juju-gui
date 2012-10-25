@@ -730,5 +730,6 @@
       assert.equal('error1', filtered[0].testKey);
       assert.equal('error2', filtered[1].testKey);
     });
+
   });
 }) ();
