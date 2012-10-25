@@ -1,12 +1,33 @@
 'use strict';
 
 describe('application console', function() {
-  var Y, app, container, env, conn, testUtils, App, windowNode;
+  var Y, app, container, env, conn, testUtils, windowNode, altEtriggered;
 
   before(function() {
     Y = YUI(GlobalConfig).use(
-        [ 'juju-gui', 'juju-tests-utils', 'node-event-simulate' ], function(Y) {
+        ['juju-gui', 'juju-tests-utils',
+          'node-event-simulate'], function(Y) {
           windowNode = Y.one(window);
+
+          function TestApp(config) {
+            // Invoke Base constructor, passing through arguments
+            TestApp.superclass.constructor.apply(this, arguments);
+          }
+
+          Y.extend(TestApp, Y.juju.App, {
+            show_environment: function() {
+              altEtriggered = true;
+            }
+          });
+
+          app = new TestApp({
+            env: env,
+            container: container,
+            viewContainer: container
+          });
+          app.activateHotkeys();
+
+          altEtriggered = false;
         });
   });
 
@@ -20,55 +41,31 @@ describe('application console', function() {
         Y.Node.create('<input />').set('id', 'charm-search-field'));
     testUtils = Y.namespace('juju-tests.utils');
     env = {
-      get : function() {
+      get: function() {
       },
-      on : function() {
+      on: function() {
       },
-      after : function() {
+      after: function() {
       }
     };
   });
 
   it('should listen for alt-S events', function() {
-    var app = new Y.juju.App({
-      env : env,
-      container : container,
-      viewContainer : container
-    });
     app.render();
-
     windowNode.simulate('keydown', {
-      keyCode : 83,
-      altKey : true
+      keyCode: 83,
+      altKey: true
     });
     assert.equal(Y.one('#charm-search-field'), Y.one(document.activeElement));
   });
 
   it('should listen for alt-E events', function() {
-    var app, triggered = false;
-
-    function TestApp(config) {
-      // Invoke Base constructor, passing through arguments
-      TestApp.superclass.constructor.apply(this, arguments);
-    }
-
-    Y.extend(TestApp, Y.juju.App, {
-      show_environment : function() {
-        triggered = true;
-      }
-    });
-
-    app = new TestApp({
-      env : env,
-      container : container,
-      viewContainer : container
-    });
-
+    assert.isFalse(altEtriggered);
     app.render();
     windowNode.simulate('keydown', {
-      keyCode : 69,
-      altKey : true
+      keyCode: 69,
+      altKey: true
     });
-    assert.isTrue(triggered);
+    assert.isTrue(altEtriggered);
   });
 });

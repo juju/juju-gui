@@ -92,7 +92,7 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
-    setupHotkeys: function() {
+    activateHotkeys: function() {
       var myWindow = Y.one(window);
       myWindow.on('keydown', function(ev) {
         var key = [],
@@ -166,8 +166,6 @@ YUI.add('juju-gui', function(Y) {
     },
 
     initializer: function() {
-      this.setupHotkeys();
-
       // If this flag is true, start the application with the console activated
       if (this.get('consoleEnabled')) {
         consoleManager.native();
