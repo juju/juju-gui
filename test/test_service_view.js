@@ -34,11 +34,11 @@
                     {id: 'mysql/2', agent_state: 'pending'}
           ]);
       service = new models.Service(
-        { id: 'mysql',
-          charm: 'cs:precise/mysql-7',
-          unit_count: db.units.size(),
-          loaded: true,
-          exposed: false});
+          { id: 'mysql',
+            charm: 'cs:precise/mysql-7',
+            unit_count: db.units.size(),
+            loaded: true,
+            exposed: false});
 
       db.services.add([service]);
       var viewMakerMaker = function(ViewPrototype) {
