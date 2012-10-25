@@ -190,7 +190,8 @@ YUI.add('juju-charm-search', function(Y) {
           '.btn.deploy': {click: 'onCharmDeployClicked'},
           '.remove-config-file': {click: 'onFileRemove'},
           '.charm-section h4': {click: toggleSectionVisibility},
-          '.config-file-upload': {change: 'onFileChange'},
+          '.config-file-upload-widget': {change: 'onFileChange'},
+          '.config-file-upload-overlay': {click: 'onOverlayClick'},
           '.config-field': {focus: 'showDescription',
             blur: 'hideDescription'},
           'input.config-field[type=checkbox]':
@@ -239,11 +240,15 @@ YUI.add('juju-charm-search', function(Y) {
           this.tooltip.hide();
           delete this.tooltip.field;
         },
+        onOverlayClick: function(evt){
+          Y.one('.config-file-upload-widget').getDOMNode().click();
+        },
         onFileChange: function(evt) {
           console.log('onFileChange:', evt);
           this.fileInput = evt.target;
           var file = this.fileInput.get('files').shift(),
               reader = new FileReader();
+          Y.one('.config-file-upload-overlay').setContent(file.name);
           reader.onerror = Y.bind(this.onFileError, this);
           reader.onload = Y.bind(this.onFileLoaded, this);
           reader.readAsText(file);
@@ -258,8 +263,9 @@ YUI.add('juju-charm-search', function(Y) {
           // replacement.  It actually works well in practice.
           var button = container.one('.remove-config-file');
           this.fileInput.replace(Y.Node.create('<input type="file"/>')
-                                 .addClass('config-file-upload'));
+                                 .addClass('config-file-upload-widget'));
           this.fileInput = container.one('.remove-config-file');
+          Y.one('.config-file-upload-overlay').setContent('Use configuration file');
         },
         onFileLoaded: function(evt) {
           this.configFileContent = evt.target.result;

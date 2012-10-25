@@ -723,7 +723,7 @@ g.unit {
 
     .button-colors(@color) {
         @gradient-start: lighten(@color, 5%);
-	@gradient-end: darken(@color, 5%);
+        @gradient-end: darken(@color, 5%);
         background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
         background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
         background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
@@ -738,10 +738,10 @@ g.unit {
         margin-left: 5px;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-	.button-colors(@charm-panel-deploy-button-color);
+        .button-colors(@charm-panel-deploy-button-color);
         &, &:hover, &:active, &.active, &.disabled, &[disabled] {
           background-color: @charm-panel-deploy-button-color;
-	}
+        }
     }
     .charm-description btn.deploy {
        float: right;
@@ -753,10 +753,10 @@ g.unit {
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
-	.button-colors(@charm-panel-cancel-button-color);
+        .button-colors(@charm-panel-cancel-button-color);
         &, &:hover, &:active, &.active, &.disabled, &[disabled] {
           background-color: @charm-panel-cancel-button-color;
-	}
+        }
     }
     .charm-panel-configure-buttons {
       border-bottom: 1px solid @charm-panel-separator-color;
@@ -795,9 +795,9 @@ g.unit {
             cursor: pointer;
             margin-top: 1ex;
             margin-bottom: 1ex;
-	    i {
-	    float: right;
-	    }
+            i {
+            float: right;
+            }
         }
         h5 {
             margin-top: 1ex;
@@ -824,8 +824,8 @@ g.unit {
         }
         &.config-variant {
             padding: 1ex 1em;
-	    background-color: @charm-panel-background-color;
-	    font-size: 14px;
+            background-color: @charm-panel-background-color;
+            font-size: 14px;
             .control-group {
                 width: auto;
                 margin-bottom: 0;
@@ -840,17 +840,39 @@ g.unit {
                 width: auto;
                 margin-bottom: 1ex;
                 float: left;
-		color: @label-color;
-		font-size: 14px;
+                color: @label-color;
+                font-size: 14px;
             }
             .controls {
                 margin-left: auto;
                 margin-right: 0;
             }
-	    .config-field {
-		font-size: 16px;
-		color: text-entry-color;
-	    }
+            .config-field {
+                font-size: 16px;
+                color: text-entry-color;
+            }
+            .config-file-upload {
+                position: relative;
+                width: 252px;
+                height: 25px;
+            }
+            .config-file-upload-widget {
+                position: absolute;
+                top: 0;
+                left: 0;
+                visibility: hidden;
+                z-index: 0;
+            }
+            .config-file-upload-overlay {
+                background: url(/juju-ui/assets/images/getfile_button.png) no-repeat;
+                position: absolute;
+                top: 0;
+                left: 0;
+                padding-left: 5px;
+                height: 25px;
+                width: 149px;
+                z-index: 1;
+            }
             .controls.boolean {
                 input {
                     margin-left: 1ex;
