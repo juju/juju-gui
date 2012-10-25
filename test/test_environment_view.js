@@ -301,7 +301,7 @@
        function() {
          var view = new views.environment({
            container: container,
-           serviceEndpoints: {},
+           getServiceEndpoints: function() {return {};},
            db: db,
            env: env
          }).render();

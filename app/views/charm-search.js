@@ -472,16 +472,19 @@ YUI.add('juju-charm-search', function(Y) {
         charmsSearchPanelNode = Y.Node.create(),
         charmsSearchPanel = new CharmCollectionView(
               { container: charmsSearchPanelNode,
-                app: app,
+                env: app.env,
+                db: app.db,
                 charmStore: charmStore }),
         descriptionPanelNode = Y.Node.create(),
         descriptionPanel = new CharmDescriptionView(
               { container: descriptionPanelNode,
-                app: app }),
+                env: app.env,
+                db: app.db}),
         configurationPanelNode = Y.Node.create(),
         configurationPanel = new CharmConfigurationView(
               { container: configurationPanelNode,
-                app: app}),
+                env: app.env,
+                db: app.db}),
         panels =
               { charms: charmsSearchPanel,
                 description: descriptionPanel,
