@@ -186,8 +186,8 @@ YUI.add('juju-charm-search', function(Y) {
           return this;
         },
         events: {
-          '.charm-nav-back': {click: 'goBack'},
-          '.btn#charm-deploy': {click: 'onCharmDeployClicked'},
+          '.btn.cancel': {click: 'goBack'},
+          '.btn.deploy': {click: 'onCharmDeployClicked'},
           '.remove-config-file': {click: 'onFileRemove'},
           '.charm-section h4': {click: toggleSectionVisibility},
           '.config-file-upload': {change: 'onFileChange'},
@@ -197,7 +197,8 @@ YUI.add('juju-charm-search', function(Y) {
               {click: function(evt) {evt.target.focus();}}
         },
         _moveTooltip: function() {
-          if (Y.DOM.inRegion(
+          if (this.tooltip.field &&
+              Y.DOM.inRegion(
               this.tooltip.field.getDOMNode(),
               this.tooltip.panelRegion,
               true)) {
@@ -227,7 +228,7 @@ YUI.add('juju-charm-search', function(Y) {
           this.tooltip.setStdModContent('body', text);
           this.tooltip.field = evt.target;
           this.tooltip.panel = this.tooltip.field.ancestor(
-              '#juju-search-charm-panel');
+              '.charm-panel');
           // Stash for speed.
           this.tooltip.panelRegion = Y.DOM.region(
               this.tooltip.panel.getDOMNode());
@@ -236,6 +237,7 @@ YUI.add('juju-charm-search', function(Y) {
         hideDescription: function(evt) {
           //console.log('focus', evt, evt.target.getXY());
           this.tooltip.hide();
+          delete this.tooltip.field;
         },
         onFileChange: function(evt) {
           console.log('onFileChange:', evt);
