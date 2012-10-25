@@ -43,7 +43,7 @@ describe('charm configuration', function() {
     container = Y.Node.create('<div id="juju-search-charm-panel" />');
     Y.one('#main').append(container);
     db = new models.Database();
-    makeView = function(charm, env, db_given) {
+    makeView = function(charm, env) {
       return new views.CharmConfigurationView(
           { container: container,
             db: db,
@@ -64,7 +64,7 @@ describe('charm configuration', function() {
   });
 
   it('must have inputs for service and number of units', function() {
-    var charm = new models.Charm({id: 'precise/mysql'}),
+    var charm = new models.Charm({id: 'precise/mysql-7'}),
         view = makeView(charm);
     charm.loaded = true;
     // If the charm has no config options it is still handled.
@@ -96,17 +96,8 @@ describe('charm configuration', function() {
           received_charm_url = charm_url;
           received_service_name = service_name;
         }},
-<<<<<<< TREE
-        charm = new models.Charm({id: 'precise/mysql'}),
-        view = makeView(charm, env);
-=======
         charm = new models.Charm({id: 'precise/mysql-7'}),
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          app: app});
-    app.env = env;
->>>>>>> MERGE-SOURCE
+        view = makeView(charm, env);
     charm.loaded = true;
     view.render();
     container.one('#service-name').get('value').should.equal('mysql');
@@ -129,17 +120,8 @@ describe('charm configuration', function() {
             received_config = config;
             received_num_units = num_units;
           }},
-<<<<<<< TREE
-        charm = new models.Charm({id: 'precise/mysql'}),
-        view = makeView(charm, env);
-=======
         charm = new models.Charm({id: 'precise/mysql-7'}),
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          app: app});
-    app.env = env;
->>>>>>> MERGE-SOURCE
+        view = makeView(charm, env);
     charm.setAttrs(
         { config:
               { options:
@@ -169,16 +151,8 @@ describe('charm configuration', function() {
          function(charm_url, service_name, config, config_raw, num_units) {
            deployed = true;
          }},
-<<<<<<< TREE
-       charm = new models.Charm({id: 'precise/mysql'}),
-       view = makeView(charm, env);
-=======
        charm = new models.Charm({id: 'precise/mysql-7'}),
-       view = new views.CharmConfigurationView(
-       { container: container,
-         model: charm,
-         app: app});
->>>>>>> MERGE-SOURCE
+       view = makeView(charm, env);
        db.services.add([{id: 'wordpress'}]);
        charm.loaded = true;
        view.render();
@@ -371,8 +345,7 @@ describe('charm configuration', function() {
   it('must be able to deploy with configuration from a file', function() {
     var received_config,
         received_config_raw,
-<<<<<<< TREE
-        charm = new models.Charm({id: 'precise/mysql'}),
+        charm = new models.Charm({id: 'precise/mysql-7'}),
         db = {services: {getById: function(name) {return null;}}},
         env =
         { deploy:
@@ -381,20 +354,6 @@ describe('charm configuration', function() {
                 received_config_raw = config_raw;
               }},
         view = makeView(charm, env, db);
-=======
-        charm = new models.Charm({id: 'precise/mysql-7'}),
-        app = {db: {services: {getById: function(name) {return null;}}},
-          env: {deploy: function(charm_url, service_name, config, config_raw,
-                                 num_units) {
-              received_config = config;
-              received_config_raw = config_raw;
-            }}},
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          app: app,
-          tooltipDelay: 0 });
->>>>>>> MERGE-SOURCE
     charm.setAttrs(
         { config:
               { options:

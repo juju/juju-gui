@@ -170,11 +170,11 @@ YUI.add('juju-charm-search', function(Y) {
                   level: 'error'
                 })
             );
-          }
-        }});
+          }}});
+    },
     _showErrors: function(e) {
       console.error(e.error);
-      this.get('app').db.notifications.add(
+      this.get('db').notifications.add(
           new models.Notification({
             title: 'Could not retrieve charms',
             message: e.error,

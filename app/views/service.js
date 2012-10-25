@@ -298,11 +298,11 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         getServiceTabs: function(href) {
-          var app = this.get('app'),
+          var db = this.get('db'),
               service = this.get('model'),
               charmId = service.get('charm'),
-              charm = app.db.charms.getById(charmId),
-              charmUrl = (charm ? app.getModelURL(charm) : '#');
+              charm = db.charms.getById(charmId),
+              charmUrl = (charm ? this.get('getModelURL')(charm) : '#');
 
           var tabs = [{
             href: '.',
@@ -376,7 +376,7 @@ YUI.add('juju-view-service', function(Y) {
               service = this.get('model'),
               db = this.get('db'),
               querystring = this.get('querystring');
-          if (!service) {
+          if (!service || !service.get('loaded')) {
             container.setHTML('<div class="alert">Loading...</div>');
             console.log('waiting on service data');
             return this;
@@ -387,13 +387,17 @@ YUI.add('juju-view-service', function(Y) {
               rel.highlight = true;
             }
           });
-
+          var charm_id = service.get('charm'),
+              charm = db.charms.getById(charm_id),
+              charm_attrs = charm ? charm.getAttrs() : undefined;
           container.setHTML(this.template(
               { viewName: 'relations',
                 tabs: this.getServiceTabs('relations'),
                 service: service.getAttrs(),
                 relations: relation_data,
-                charm_id: service.get('charm')}));
+                charm: charm_attrs,
+                charm_id: charm_id}));
+
         },
 
         confirmRemoved: function(ev) {
@@ -825,11 +829,15 @@ YUI.add('juju-view-service', function(Y) {
               count: this.filterUnits(lower, units).length,
               link: '?state=' + lower});
           }, this);
+          var charm_id = service.get('charm'),
+              charm = db.charms.getById(charm_id),
+              charm_attrs = charm ? charm.getAttrs() : undefined;
           container.setHTML(this.template(
               { viewName: 'units',
                 tabs: this.getServiceTabs('.'),
                 service: service.getAttrs(),
-                charm_id: service.get('charm'),
+                charm_id: charm_id,
+                charm: charm_attrs,
                 state: filter_state,
                 units: this.filterUnits(filter_state, units),
                 states: state_data}));

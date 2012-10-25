@@ -2,7 +2,7 @@
 
 (function() {
   describe('juju service view', function() {
-    var models, Y, container, service, db, conn, env, app, charm, ENTER, ESC,
+    var models, Y, container, service, db, conn, env, charm, ENTER, ESC,
         makeServiceView, makeServiceRelationsView, views, unit;
 
     before(function(done) {
@@ -26,22 +26,19 @@
       container = Y.Node.create('<div id="test-container" />');
       Y.one('#main').append(container);
       db = new models.Database();
-      app = { env: env, db: db,
-              getModelURL: function(model, intent) {
-                return model.get('name'); }};
-      charm = new models.Charm({id: 'cs:precise/mysql',
-        description: 'A DB'});
+      charm = new models.Charm({id: 'cs:precise/mysql-7', description: 'A DB'});
       db.charms.add([charm]);
       // Add units sorted by id as that is what we expect from the server.
       db.units.add([{id: 'mysql/0', agent_state: 'pending'},
                     {id: 'mysql/1', agent_state: 'pending'},
                     {id: 'mysql/2', agent_state: 'pending'}
           ]);
-      service = new models.Service({
-        id: 'mysql',
-        charm: 'cs:precise/mysql',
-        unit_count: db.units.size(),
-        exposed: false});
+      service = new models.Service(
+        { id: 'mysql',
+          charm: 'cs:precise/mysql-7',
+          unit_count: db.units.size(),
+          loaded: true,
+          exposed: false});
 
       db.services.add([service]);
       var viewMakerMaker = function(ViewPrototype) {
