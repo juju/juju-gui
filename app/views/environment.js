@@ -1288,7 +1288,7 @@ YUI.add('juju-view-environment', function(Y) {
             .range([height, 0]);
 
           this.width = width;
-          this.height = height
+          this.height = height;
         },
 
         /*
@@ -1302,8 +1302,8 @@ YUI.add('juju-view-environment', function(Y) {
               z = this.zoom.scale();
           if (service) {
             var cp_width = cp.getClientRect().width,
-                menu_left = service.x * z + service.w * z / 2 < 
-                  this.width * z / 2,
+                menu_left = service.x * z + service.w * z / 2 <
+                this.width * z / 2,
                 service_center = service.getRelativeCenter();
             if (menu_left) {
               cp.removeClass('left');
@@ -1314,14 +1314,14 @@ YUI.add('juju-view-environment', function(Y) {
             }
             // Set the position of the div in the following way:
             // top: aligned to the scaled/panned service minus the
-            //   location of the tip of the arrow (68px down the menu, 
+            //   location of the tip of the arrow (68px down the menu,
             //   via css) such that the arrow always points at the service.
-            // left: aligned to the scaled/panned service; if the 
+            // left: aligned to the scaled/panned service; if the
             //   service is left of the midline, display it to the
             //   right, and vice versa.
             cp.setStyles({
               'top': service.y * z + tr[1] + (service_center[1] * z) - 68,
-              'left': service.x * z + 
+              'left': service.x * z +
                   (menu_left ? service.w * z : -(cp_width)) + tr[0]
             });
           }
