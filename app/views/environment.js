@@ -468,7 +468,6 @@ YUI.add('juju-view-environment', function(Y) {
                 self.get('container').all('.environment-menu.active')
                   .removeClass('active');
                 self.service_click_actions.toggleControlPanel(null, self);
-                self.cancelRelationBuild();
               })
             .on('drag', function(d, i) {
                 if (self.buildingRelation) {
@@ -1074,8 +1073,6 @@ YUI.add('juju-view-environment', function(Y) {
           var rect = self.get('potential_drop_point_rect');
           var endpoint = self.get('potential_drop_point_service');
 
-          // Get rid of our drag line
-          self.dragline.remove();
           self.buildingRelation = false;
           self.cursorBox = null;
 
@@ -1141,6 +1138,11 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         cancelRelationBuild: function() {
+          if (this.dragline) {
+            // Get rid of our drag line
+            this.dragline.remove();
+            this.dragline = null;
+          }
           this.set('currentServiceClickAction', 'toggleControlPanel');
           this.show(this.vis.selectAll('.service'))
                   .classed('selectable-service', false);
@@ -1286,6 +1288,9 @@ YUI.add('juju-view-environment', function(Y) {
             .range([0, width]);
           this.yscale.domain([-height / 2, height / 2])
             .range([height, 0]);
+
+          this.width = width;
+          this.height = height;
         },
 
         /*
@@ -1297,9 +1302,30 @@ YUI.add('juju-view-environment', function(Y) {
               service = this.get('active_service'),
               tr = this.zoom.translate(),
               z = this.zoom.scale();
-          if (service) {
-            cp.setStyle('top', service.y * z + tr[1]);
-            cp.setStyle('left', service.x * z + service.w * z + tr[0]);
+          if (service && cp) {
+            var cp_width = cp.getClientRect().width,
+                menu_left = service.x * z + service.w * z / 2 <
+                this.width * z / 2,
+                service_center = service.getRelativeCenter();
+            if (menu_left) {
+              cp.removeClass('left')
+                .addClass('right');
+            } else {
+              cp.removeClass('right')
+                .addClass('left');
+            }
+            // Set the position of the div in the following way:
+            // top: aligned to the scaled/panned service minus the
+            //   location of the tip of the arrow (68px down the menu,
+            //   via css) such that the arrow always points at the service.
+            // left: aligned to the scaled/panned service; if the
+            //   service is left of the midline, display it to the
+            //   right, and vice versa.
+            cp.setStyles({
+              'top': service.y * z + tr[1] + (service_center[1] * z) - 68,
+              'left': service.x * z +
+                  (menu_left ? service.w * z : -(cp_width)) + tr[0]
+            });
           }
         },
 
@@ -1451,12 +1477,13 @@ YUI.add('juju-view-environment', function(Y) {
            * create the relation if not.
            */
           ambiguousAddRelationCheck: function(m, view, context) {
-            var endpoints = view.get('addRelationStart_possibleEndpoints'),
+            var endpoints = view
+                  .get('addRelationStart_possibleEndpoints')[m.id],
                 container = view.get('container');
 
-            if (endpoints[m.id].length === 1) {
+            if (endpoints.length === 1) {
               // Create a relation with the only available endpoint.
-              var ep = endpoints[m.id][0],
+              var ep = endpoints[0],
                   endpoints_item = [
                     [ep[0].service, {
                       name: ep[0].name,
@@ -1469,6 +1496,25 @@ YUI.add('juju-view-environment', function(Y) {
               return;
             }
 
+            // Sort the endpoints alphabetically by relation name.
+            endpoints = endpoints.sort(function(a, b) {
+              return a[0].name + a[1].name < b[0].name + b[1].name;
+            });
+
+            // Create a pending line if it doesn't exist, as in the case of
+            // clicking to add relation.
+            if (!view.dragline) {
+              var dragline = view.vis.insert('line', '.service')
+                  .attr('class', 'relation pending-relation dragline'),
+                  points = m.getConnectorPair(
+                      view.get('addRelationStart_service'));
+              dragline.attr('x1', points[0][0])
+                .attr('y1', points[0][1])
+                .attr('x2', points[1][0])
+                .attr('y2', points[1][1]);
+              view.dragline = dragline;
+            }
+
             // Display menu with available endpoints.
             var menu = container.one('#ambiguous-relation-menu');
             if (menu.one('.menu')) {
@@ -1476,7 +1522,7 @@ YUI.add('juju-view-environment', function(Y) {
             }
 
             menu.append(Templates
-                .ambiguousRelationList({endpoints: endpoints[m.id]}));
+                .ambiguousRelationList({endpoints: endpoints}));
 
             // For each endpoint choice, bind an an event to 'click' to
             // add the specified relation.
