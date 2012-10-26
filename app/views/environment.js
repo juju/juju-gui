@@ -1308,11 +1308,11 @@ YUI.add('juju-view-environment', function(Y) {
                 this.width * z / 2,
                 service_center = service.getRelativeCenter();
             if (menu_left) {
-              cp.removeClass('left');
-              cp.addClass('right');
+              cp.removeClass('left')
+                .addClass('right');
             } else {
-              cp.removeClass('right');
-              cp.addClass('left');
+              cp.removeClass('right')
+                .addClass('left');
             }
             // Set the position of the div in the following way:
             // top: aligned to the scaled/panned service minus the
