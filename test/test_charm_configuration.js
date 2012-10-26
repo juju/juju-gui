@@ -345,7 +345,8 @@ describe('charm configuration', function() {
     container.one('.config-file-upload-overlay').simulate('click');
     var _ = expect(view.configFileContent).to.not.exist;
     container.one('.config-file-name').getContent().should.equal('');
-    container.one('.config-file-upload-widget').get('files').size().should.equal(0);
+    container.one('.config-file-upload-widget').get('files').size()
+         .should.equal(0);
   });
 
   it('must be able to deploy with configuration from a file', function() {
