@@ -239,7 +239,7 @@ YUI.add('juju-charm-search', function(Y) {
           this.tooltip.hide();
           delete this.tooltip.field;
         },
-        onOverlayClick: function(evt){
+        onOverlayClick: function(evt) {
           var container = this.get('container');
           if (this.configFileContent) {
             this.onFileRemove();
@@ -257,7 +257,8 @@ YUI.add('juju-charm-search', function(Y) {
           reader.onerror = Y.bind(this.onFileError, this);
           reader.onload = Y.bind(this.onFileLoaded, this);
           reader.readAsText(file);
-          container.one('.config-file-upload-overlay').setContent('Remove file');
+          container.one('.config-file-upload-overlay')
+            .setContent('Remove file');
         },
         onFileRemove: function() {
           var container = this.get('container');
@@ -271,7 +272,8 @@ YUI.add('juju-charm-search', function(Y) {
           this.fileInput.replace(Y.Node.create('<input type="file"/>')
                                  .addClass('config-file-upload-widget'));
           this.fileInput = container.one('.config-file-upload-widget');
-          container.one('.config-file-upload-overlay').setContent('Use configuration file');
+          container.one('.config-file-upload-overlay')
+            .setContent('Use configuration file');
         },
         onFileLoaded: function(evt) {
           this.configFileContent = evt.target.result;
