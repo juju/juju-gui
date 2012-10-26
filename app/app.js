@@ -21,7 +21,6 @@ YUI.add('juju-gui', function(Y) {
    * The main app class.
    *
    * @class App
-   * @namespace juju
    */
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     views: {
@@ -559,9 +558,9 @@ YUI.add('juju-gui', function(Y) {
      *   resolve a models route.
      *
      * @method getModelURL
-     * @param model the model to determine a route url for
-     * @param [intent] the name of an intent associated with a route.  When
-     *   more than one route can match a model the route w/o an intent is
+     * @param {object} model The model to determine a route url for.
+     * @param {object} [intent] the name of an intent associated with a route.
+     *   When more than one route can match a model the route w/o an intent is
      *   matched when this attribute is missing.  If intent is provided as a
      *   string it is matched to the 'intent' attribute specified on the route.
      *   This is effectively a tag.

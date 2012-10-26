@@ -1,12 +1,15 @@
 FILES=$(shell bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js | grep -v server.js)
 NODE_TARGETS=node_modules/chai node_modules/d3 node_modules/jshint \
-	node_modules/yui
+	node_modules/yui node_modules/yuidoc
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 
-all: prep test
+all: install
 
 app/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	@./bin/generateTemplates
+
+yuidoc: $(FILES)
+	@node_modules/.bin/yuidoc -o yuidoc -x assets app
 
 $(NODE_TARGETS): package.json
 	@npm install
@@ -14,10 +17,13 @@ $(NODE_TARGETS): package.json
 	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
 
-install: $(NODE_TARGETS) app/templates.js
+install: $(NODE_TARGETS) app/templates.js yuidoc
 
 gjslint: virtualenv/bin/gjslint
-	@virtualenv/bin/gjslint --strict --nojsdoc --custom_jsdoc_tags=property,default,since --jslint_error=all $(FILES)
+	@virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
+	    --custom_jsdoc_tags \
+	    	property,default,since,method,module,submodule,namespace \
+	    $(FILES)
 
 jshint: node_modules/jshint
 	@node_modules/jshint/bin/hint $(FILES)
