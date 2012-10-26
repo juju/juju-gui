@@ -77,6 +77,8 @@ To regenerate the docs run this command::
 
     make yuidoc
 
+The documentation for yuidoc markup is at http://yui.github.com/yuidoc/syntax/.
+
 
 Running lint
 ------------
