@@ -42,12 +42,12 @@ YUI.add('juju-charm-models', function(Y) {
   // "loaded" attribute is set to true once it has all the data from its
   // environment.
 
-  var charm_id_re = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)-(\d+)$/,
-      id_elements = ['scheme', 'owner', 'series', 'package_name', 'revision'],
+  var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)-(\d+)$/,
+      idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'],
       Charm = Y.Base.create('charm', Y.Model, [], {
         initializer: function() {
           var id = this.get('id'),
-              parts = id && charm_id_re.exec(id),
+              parts = id && charmIdRe.exec(id),
               self = this;
           if (!Y.Lang.isValue(id) || !parts) {
             throw 'Developers must initialize charms with a well-formed id.';
@@ -56,7 +56,7 @@ YUI.add('juju-charm-models', function(Y) {
           this.on('load', function() { this.loaded = true; });
           parts.shift();
           Y.each(
-              Y.Array.zip(id_elements, parts),
+              Y.Array.zip(idElements, parts),
               function(pair) { self.set(pair[0], pair[1]); });
           // full_name
           var tmp = [this.get('series'), this.get('package_name')],
@@ -153,7 +153,7 @@ YUI.add('juju-charm-models', function(Y) {
           id: {
             writeOnce: true,
             validator: function(val) {
-              return Y.Lang.isString(val) && !!charm_id_re.exec(val);
+              return Y.Lang.isString(val) && !!charmIdRe.exec(val);
             }
           },
           bzr_branch: {writeOnce: true},
