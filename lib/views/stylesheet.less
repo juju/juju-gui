@@ -178,11 +178,17 @@ svg {
     .triangle {
         position: absolute;
         top: 62px;
-        left: -12px;
         width: 12px;
         line-height: 21px;
-        background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle.png);
         background-repeat: no-repeat;
+    }
+    &.left .triangle {
+        right: -12px;
+        background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle_right.png);
+    }
+    &.right .triangle {
+        left: -12px;
+        background-image: url(/juju-ui/assets/images/icons/icon_shadow_triangle.png);
     }
 
     .menu-title {
@@ -203,7 +209,7 @@ svg {
             border-bottom: 1px #5f594f solid;
             cursor: pointer;
             line-height: 32px;
-            padding: 5px 5px 5px 42px;
+            padding: 5px 5px 5px 5px;
             border-radius: @border_radius;
             -moz-border-radius: @border_radius;
             -webkit-border-radius: @border_radius;
@@ -234,6 +240,10 @@ svg {
             }
         }
 
+    }
+
+    &#service-menu ul li {
+        padding-left: 42px;
     }
 
 }
