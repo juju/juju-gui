@@ -263,7 +263,6 @@ YUI.add('juju-charm-search', function(Y) {
         onFileRemove: function() {
           var container = this.get('container');
           this.configFileContent = null;
-          //container.one('.config-file-name').addClass('hidden');
           container.one('.config-file-name').setContent('');
           container.one('.charm-settings').show();
           // Replace the file input node.  There does not appear to be any way
@@ -292,7 +291,6 @@ YUI.add('juju-charm-search', function(Y) {
                 }));
           }
           this.get('container').one('.charm-settings').hide();
-          console.log(this.configFileContent);
         },
         onFileError: function(evt) {
           console.log('onFileError:', evt);
