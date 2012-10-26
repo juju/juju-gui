@@ -468,7 +468,6 @@ YUI.add('juju-view-environment', function(Y) {
                 self.get('container').all('.environment-menu.active')
                   .removeClass('active');
                 self.service_click_actions.toggleControlPanel(null, self);
-                //self.cancelRelationBuild();
               })
             .on('drag', function(d, i) {
                 if (self.buildingRelation) {
