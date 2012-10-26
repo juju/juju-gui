@@ -8,9 +8,10 @@
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'datasource-local', 'json-stringify', 'juju-charm-store',
-          'datasource-io', 'io', 'array-extras',
+          'datasource-io', 'io', 'array-extras', 'juju-charm-models',
           function(Y) {
             juju = Y.namespace('juju');
+            models = Y.namespace('juju.models');
             done();
           });
     });
@@ -108,19 +109,20 @@
             results.length.should.equal(2);
             results[0].series.should.equal('precise');
             Y.Array.map(results[0].charms, function(charm) {
-              return charm.owner;
-            }).should.eql([null, 'jjo', 'ev', 'ev', 'ev']);
+              return charm.get('owner');
+            }).should.eql([undefined, 'jjo', 'ev', 'ev', 'ev']);
             Y.Array.map(results[0].charms, function(charm) {
-              return charm.baseId;
+              return charm.get('id');
             }).should.eql([
-              'cs:precise/cassandra',
-              'cs:~jjo/precise/cassandra',
-              'cs:~ev/precise/errors',
-              'cs:~ev/precise/daisy',
-              'cs:~ev/precise/daisy-retracer']);
+              'cs:precise/cassandra-2',
+              'cs:~jjo/precise/cassandra-12',
+              'cs:~ev/precise/errors-0',
+              'cs:~ev/precise/daisy-15',
+              'cs:~ev/precise/daisy-retracer-8']);
             done();
           },
-          failure: assert.fail
+          failure: assert.fail,
+          list: new models.CharmList()
           });
     });
 
@@ -135,7 +137,8 @@
               results[0].series.should.equal('oneiric');
               done();
             },
-            failure: assert.fail
+            failure: assert.fail,
+            list: new models.CharmList()
           });
     });
 
@@ -149,7 +152,7 @@
             results.length.should.equal(1);
             results[0].series.should.equal('quantal');
             Y.Array.map(results[0].charms, function(charm) {
-              return charm.name;
+              return charm.get('package_name');
             }).should.eql([
               'glance',
               'nova-cloud-controller',
@@ -158,9 +161,9 @@
               'nyancat']);
             done();
           },
-          failure: assert.fail
+          failure: assert.fail,
+          list: new models.CharmList()
           });
     });
-
   });
 })();

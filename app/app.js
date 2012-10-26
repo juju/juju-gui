@@ -261,7 +261,8 @@ YUI.add('juju-gui', function(Y) {
     show_unit: function(req) {
       console.log(
           'App: Route: Unit', req.params.id, req.path, req.pendingRoutes);
-      var unit_id = req.params.id.replace('-', '/');
+      // This replacement honors service names that have a hyphen in them.
+      var unit_id = req.params.id.replace(/^(\S+)-(\d+)$/, '$1/$2');
       var unit = this.db.units.getById(unit_id);
       if (unit) {
         // Once the unit is loaded we need to get the full details of the
