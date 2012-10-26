@@ -33,6 +33,8 @@ YUI.add('juju-view-environment', function(Y) {
               var box = this.get('active_service'),
                   service = this.serviceForBox(box),
                   context = this.get('active_context');
+              this.addRelationDragStart.call(this, box, context);
+              this.clickAddRelation = true;
               this.service_click_actions
                         .toggleControlPanel(box, this, context);
               this.service_click_actions
@@ -81,6 +83,12 @@ YUI.add('juju-view-environment', function(Y) {
               if (!d.containsPoint(mouse_coords, self.zoom)) {
                 return;
               }
+
+              // Do not fire if we're on the same service.
+              if (d == self.get('addRelationStart_service')) {
+                return;
+              }
+
               self.set('potential_drop_point_service', d);
               self.set('potential_drop_point_rect', rect);
               self.addSVGClass(rect, 'hover');
@@ -162,6 +170,13 @@ YUI.add('juju-view-environment', function(Y) {
               container.all('.environment-menu.active').removeClass('active');
               self.service_click_actions.toggleControlPanel(null, self);
               self.cancelRelationBuild();
+            },
+            mousemove: function(d, self) {
+              if (this.clickAddRelation) {
+                d3.event = d3.mouse(this.get('container').one('svg').getDOMNode());
+                this.addRelationDrag.call(this, d, self);
+                //this.clickAddRelation = true;
+              }
             }
           }
         },
@@ -1032,18 +1047,21 @@ YUI.add('juju-view-environment', function(Y) {
 
         addRelationDragStart: function(d, context) {
           // Create a pending drag-line behind services.
-          var dragline = this.vis.insert('line', '.service')
+          var dragline = this.vis.append('line')
               .attr('class', 'relation pending-relation dragline dragging'),
               self = this;
 
           // Start the line in the middle of the service.
-          var point = d.getCenter();
-          dragline.attr('x1', point[0])
-              .attr('y1', point[1])
-              .attr('x2', point[0])
-              .attr('y2', point[1]);
-          self.dragline = dragline;
+          var mouse = d3.mouse(Y.one('svg').getDOMNode());
           self.cursorBox = views.BoundingBox();
+          self.cursorBox.pos = {x: d3.event.x, y: d3.event.y, w: 0, h: 0};
+          var point = self.cursorBox.getConnectorPair(d);
+          dragline.attr('x1', point[1][0])
+              .attr('y1', point[1][1])
+              .attr('x2', point[1][0])
+              .attr('y2', point[1][1]);
+          console.log(point, d3.event, d3.mouse(Y.one('svg').getDOMNode()));
+          self.dragline = dragline;
 
           // Start the add-relation process.
           self.service_click_actions
