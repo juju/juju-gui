@@ -203,19 +203,6 @@ YUI.add('juju-view-environment', function(Y) {
                 // we have the correct event in d3.event for d3.mouse().
                 d3.event = e;
 
-                // Flash an indicator around the center of the service block.
-                /*var center = d.getCenter();
-                self.vis.append('circle')
-                  .attr('cx', center[0])
-                  .attr('cy', center[1])
-                  .attr('r', 100)
-                  .attr('class', 'mouse-down-indicator')
-                  .transition()
-                  .duration(750)
-                  .ease('bounce')
-                  .attr('r', 0)
-                  .remove();*/
-
                 // Start the process of adding a relation
                 self.addRelationDragStart.call(self, d, this);
               }, [d, evt], false);
