@@ -55,15 +55,23 @@ environments:
   service. The api server needs access to the provisioning credentials
   which are lazy initialized in juju upon usage.
 
-  Since juju-gui and rapi-delta communicate via an encrypted WebSockets
-  connection, and we use a self-signed certificate, you need to visit
-  the https://localhost:8081/ws URL with your browser and accept the
-  included self-signed certificate.
+  Juju-gui and rapi-delta can communicate via an encrypted WebSockets
+  connection: to enable it, add the following line to the config above::
 
-  If you want to use a different certificate, you can add an api-keys
-  option to the config above: its value will be the path of the
-  directory containing the certificate and the private key, with
-  filenames juju.crt and juju.key .
+    api-secure: true
+
+  You will also need to edit your ``app/config.js`` replacing
+  ``ws://localhost:8081/ws`` with ``wss://localhost:8081/ws``.
+
+  By default, rapi-delta uses a self-signed certificate; because of that you
+  will need to visit the https://localhost:8081/ws WebSockets URL with your
+  browser and accept the included self-signed certificate, or the WebSockets
+  encrypted connection will not work.
+
+  In order to use a different certificate, you add an api-keys option to the
+  config above: its value will be the path of the directory containing the
+  certificate and the private key, whose filenames will have to be respectively
+  ``juju.crt`` and ``juju.key``.
 
   After which the gui should be functional (it automatically polls the
   api server for establishing a websocket).
