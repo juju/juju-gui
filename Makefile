@@ -2,6 +2,8 @@ FILES=$(shell bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js | 
 NODE_TARGETS=node_modules/chai node_modules/d3 node_modules/jshint \
 	node_modules/yui
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
+DATE=$(shell date -u)
+APPCACHE=app/assets/manifest.appcache
 
 all: prep test
 
@@ -14,7 +16,8 @@ $(NODE_TARGETS): package.json
 	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
 
-install: $(NODE_TARGETS) app/templates.js
+install: appcache 
+	$(NODE_TARGETS) app/templates.js
 
 gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --custom_jsdoc_tags=property,default,since --jslint_error=all $(FILES)
@@ -43,5 +46,8 @@ server: install
 clean:
 	@rm -rf node_modules virtualenv
 	@make -C docs clean
+
+appcache:
+	@sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
 .PHONY: test lint beautify server install clean prep jshint gjslint
