@@ -1239,6 +1239,7 @@ YUI.add('juju-view-environment', function(Y) {
          * Set the visualization size based on the viewport
          */
         setSizesFromViewport: function() {
+          Y.fire('beforePageSizeRecalculation');
           // start with some reasonable defaults
           var vis = this.vis,
               container = this.get('container'),
@@ -1291,6 +1292,7 @@ YUI.add('juju-view-environment', function(Y) {
 
           this.width = width;
           this.height = height;
+          Y.fire('afterPageSizeRecalculation');
         },
 
         /*

@@ -5,22 +5,34 @@ YUI.add('juju-charm-search', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
+      subscriptions = [],
       // Singleton
-      _instance = null;
+      _instance;
 
   var toggleSectionVisibility = function(ev) {
-    var el = ev.currentTarget.ancestor('.charm-section')
-                .one('.collapsible'),
+        var el = ev.currentTarget.ancestor('.charm-section')
+                    .one('.collapsible'),
+            icon = ev.currentTarget.one('i');
         icon = ev.currentTarget.one('i');
-    icon = ev.currentTarget.one('i');
-    if (el.getStyle('height') === '0px') {
-      el.show('sizeIn', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
-    } else {
-      el.hide('sizeOut', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
-    }
-  };
+        if (el.getStyle('height') === '0px') {
+          el.show('sizeIn', {duration: 0.25, width: null});
+          icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+        } else {
+          el.hide('sizeOut', {duration: 0.25, width: null});
+          icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+        }
+      },
+      setScroll = function(container, height) {
+        var scrollContainer = container.one('.charm-panel');
+        if (scrollContainer && height) {
+          var diff = scrollContainer.getY() - container.getY(),
+              clientDiff = (
+                scrollContainer.getClientRect().height -
+                parseInt(scrollContainer.getComputedStyle('height'), 10)),
+              scrollHeight = height - diff - clientDiff;
+          scrollContainer.setStyle('height', scrollHeight + 'px');
+        }
+      };
 
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
@@ -77,6 +89,7 @@ YUI.add('juju-charm-search', function(Y) {
       this.after('resultEntriesChange', function() {
         this.render();
       });
+      this.after('heightChange', this._setScroll);
     },
     render: function() {
       var container = this.get('container'),
@@ -94,7 +107,16 @@ YUI.add('juju-charm-search', function(Y) {
               }
           );
       container.setHTML(this.template({ charms: entries }));
+      this._setScroll();
       return this;
+    },
+    _setScroll: function() {
+      var container = this.get('container'),
+          scrollContainer = container.one('.search-result-div'),
+          height = this.get('height');
+      if (scrollContainer && height) {
+        scrollContainer.setStyle('height', height + 'px');
+      }
     },
     showDetails: function(ev) {
       ev.halt();
@@ -135,6 +157,7 @@ YUI.add('juju-charm-search', function(Y) {
         },
         initializer: function() {
           this.bindModelView(this.get('model'));
+          this.after('heightChange', this._setScroll);
         },
         render: function() {
           var container = this.get('container'),
@@ -149,7 +172,11 @@ YUI.add('juju-charm-search', function(Y) {
             container.setHTML(
                 '<div class="alert">Waiting on charm data...</div>');
           }
+          this._setScroll();
           return this;
+        },
+        _setScroll: function() {
+          setScroll(this.get('container'), this.get('height'));
         },
         goBack: function(ev) {
           ev.halt();
@@ -173,6 +200,7 @@ YUI.add('juju-charm-search', function(Y) {
         configFileContent: null,
         initializer: function() {
           this.bindModelView(this.get('model'));
+          this.after('heightChange', this._setScroll);
         },
         render: function() {
           var container = this.get('container'),
@@ -194,7 +222,11 @@ YUI.add('juju-charm-search', function(Y) {
             container.setHTML(
                 '<div class="alert">Waiting on charm data...</div>');
           }
+          this._setScroll();
           return this;
+        },
+        _setScroll: function() {
+          setScroll(this.get('container'), this.get('height'));
         },
         events: {
           '.btn.cancel': {click: 'goBack'},
@@ -404,10 +436,8 @@ YUI.add('juju-charm-search', function(Y) {
         charms = new models.CharmList(),
         app = config.app,
         testing = !!config.testing,
-        container = Y.Node.create(views.Templates['charm-search-pop']({
-          title: 'All Charms'
-        })),
-        contentNode = container.one('.popover-content'),
+        container = Y.Node.create('<div></div>').setAttribute(
+          'id', 'juju-search-charm-panel'),
         charmsSearchPanelNode = Y.Node.create(),
         charmsSearchPanel = new CharmCollectionView(
               { container: charmsSearchPanelNode,
@@ -442,8 +472,9 @@ YUI.add('juju-charm-search', function(Y) {
           throw 'Developer error: Unknown panel name ' + config.name;
         }
         activePanelName = config.name;
-        contentNode.get('children').remove();
-        contentNode.append(panels[config.name].get('container'));
+        container.get('children').remove();
+        container.append(panels[config.name].get('container'));
+        newPanel.set('height', calculatePanelPosition().height);
         if (config.charmId) {
           newPanel.set('model', null); // Clear out the old.
           var charm = charms.getById(config.charmId);
@@ -466,13 +497,12 @@ YUI.add('juju-charm-search', function(Y) {
     }
 
     Y.Object.each(panels, function(panel) {
-      panel.on('changePanel', setPanel);
+      subscriptions.push(panel.on('changePanel', setPanel));
     });
     // The panel starts with the "charmsSearchPanel" visible.
     setPanel({name: 'charms'});
 
     // Update position if we resize the window.
-    // It tries to keep the popup arrow under the charms search icon.
     Y.on('windowresize', function(e) {
       if (isPopupVisible) {
         updatePopupPosition();
@@ -481,6 +511,14 @@ YUI.add('juju-charm-search', function(Y) {
 
     function hide() {
       if (isPopupVisible) {
+        var headerBox = Y.one('#charm-search-trigger-container'),
+            headerSpan = headerBox && headerBox.one('span');
+        if(headerBox) {
+          headerBox.setStyle('borderLeftColor', 'transparent');
+          if (headerSpan) {
+            headerSpan.setStyle('borderLeftColor', 'lightgray');
+          }
+        }
         container.hide(!testing, {duration: 0.25});
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i').replaceClass(
@@ -489,21 +527,39 @@ YUI.add('juju-charm-search', function(Y) {
         isPopupVisible = false;
       }
     }
-    container.on('clickoutside', hide);
+    subscriptions.push(container.on('clickoutside', hide));
+    subscriptions.push(Y.on('beforePageSizeRecalculation', function() {
+      container.setStyle('display', 'none');
+    }));
+    subscriptions.push(Y.on('afterPageSizeRecalculation', function() {
+      if (isPopupVisible) {
+        // We need to do this both in windowresize and here because
+        // windowresize can only be fired with "on," and so we can't know
+        // which handler will be fired first.
+        updatePopupPosition();
+      }
+    }));
 
     function show() {
       if (!isPopupVisible) {
+        var headerBox = Y.one('#charm-search-trigger-container'),
+            headerSpan = headerBox && headerBox.one('span');
+        if(headerBox) {
+          headerBox.setStyle('borderLeftColor', 'lightgray');
+          if (headerSpan) {
+            headerSpan.setStyle('borderLeftColor', 'transparent');
+          }
+        }
         container.setStyles({opacity: 0, display: 'block'});
-        updatePopupPosition();
         container.show(!testing, {duration: 0.25});
+        isPopupVisible = true;
+        updatePopupPosition();
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i').replaceClass(
               'icon-chevron-down', 'icon-chevron-up');
         }
-        isPopupVisible = true;
       }
     }
-
     function toggle(ev) {
       if (Y.Lang.isValue(ev)) {
         // This is important to not have the clickoutside handler immediately
@@ -518,27 +574,31 @@ YUI.add('juju-charm-search', function(Y) {
     }
 
     function updatePopupPosition() {
+      // This should only be called when the popup is supposed to be visible.
+      // We need to hide the popup before we calculate positions so that it
+      // does not cause scrollbars to appear while we are calculating
+      // positions.  The temporary scrollbars can cause the calculations to be
+      // incorrect.
+      container.setStyle('display', 'none');
       var pos = calculatePanelPosition();
-      container.setXY([pos.x, pos.y]);
-      container.one('.arrow').setX(pos.arrowX);
+      container.setStyle('display', 'block');
+      container.setX(pos.x);
+      if (pos.height) {
+        container.setStyle('height', pos.height + 'px');
+        panels[activePanelName].set('height', pos.height);
+      }
     }
 
     function calculatePanelPosition() {
-      var icon = Y.one('#charm-search-icon'),
-          pos = icon.getXY(),
-          content = Y.one('#content'),
-          contentWidth = parseInt(content.getComputedStyle('width'), 10),
-          containerWidth = parseInt(container.getComputedStyle('width'), 10),
-          iconWidth = parseInt(icon.getComputedStyle('width'), 10);
-      return {
-        x: content.getX() + contentWidth - containerWidth,
-        y: pos[1] + 30,
-        arrowX: icon.getX() + (iconWidth / 2)
-      };
+      var headerBox = Y.one('#charm-search-trigger-container'),
+          svg = Y.one('svg');
+      return {x: headerBox && Math.round(headerBox.getX()),
+              height:
+                svg && parseInt(Y.one('svg').getAttribute('height'), 10) + 17};
     }
 
     if (Y.Lang.isValue(trigger)) {
-      trigger.on('click', toggle);
+      subscriptions.push(trigger.on('click', toggle));
     }
 
     var handleKeyDown = function(ev) {
@@ -564,9 +624,9 @@ YUI.add('juju-charm-search', function(Y) {
     };
 
     if (searchField) {
-      searchField.on('keydown', handleKeyDown);
-      searchField.on('blur', handleBlur);
-      searchField.on('focus', handleFocus);
+      subscriptions.push(searchField.on('keydown', handleKeyDown));
+      subscriptions.push(searchField.on('blur', handleBlur));
+      subscriptions.push(searchField.on('focus', handleFocus));
     }
 
     // The public methods
@@ -590,6 +650,10 @@ YUI.add('juju-charm-search', function(Y) {
       return _instance;
     },
     killInstance: function() {
+      while(subscriptions.length) {
+        var sub = subscriptions.pop();
+        // if (sub) { sub.detach(); }
+      }
       if (_instance) {
         _instance.node.remove(true);
         _instance = null;
@@ -611,6 +675,7 @@ YUI.add('juju-charm-search', function(Y) {
     'overlay',
     'svg-layouts',
     'dom-core',
-    'juju-models'
+    'juju-models',
+    'event-resize'
   ]
 });

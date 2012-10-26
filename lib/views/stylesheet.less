@@ -70,6 +70,7 @@ body {
             &#charm-search-trigger-container {
                 width: 292px;
                 white-space: nowrap;
+                border-left: 1px solid transparent;
             }
             .nav-section {
                 border-left: 1px solid lightgray;
@@ -721,10 +722,14 @@ g.unit {
 
 #juju-search-charm-panel {
     display: block;
-    padding-left: 0px;
-    padding-right: 0px;
     z-index: 999;
-    float: none;
+    padding: 0;
+    top: 70px;
+    height: 100px;
+    position: absolute;
+    width: 292px;
+    background-color: white;
+    border-left: lightgray solid 1px;
 
     .charm-panel-configure .btn {
         float: right;
@@ -779,11 +784,6 @@ g.unit {
         width: 100%;
         height: 500px;
     }
-    @popover-height: 607px;
-    .popover-content {
-        padding: 0px;
-        height: @popover-height;
-    }
     .charm-nav-back {
         background-color: black;
         text-transform: uppercase;
@@ -822,8 +822,7 @@ g.unit {
             padding: 1ex 1em;
             .charm-section {
                 .commitmessage {
-                    padding-top: 0.8ex;
-                    padding-left: 1em;
+                    padding: 0.8ex 0 1ex 1em;
                     font-style: italic;
                     white-space: pre-wrap;
                 }
@@ -866,7 +865,6 @@ g.unit {
         }
     }
     .search-result-div {
-        height: @popover-height;
         overflow-y:auto;
         overflow-x:hidden;
         .series-charms {
