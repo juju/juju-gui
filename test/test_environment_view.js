@@ -339,6 +339,9 @@
          container.all('.selectable-service')
                .size()
                .should.equal(2);
+         container.all('.dragline')
+               .size()
+               .should.equal(1);
          service.next().simulate('click');
          container.all('.selectable-service').size()
             .should.equal(0);
