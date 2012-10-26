@@ -861,80 +861,80 @@ table tr.highlighted {
 
         .filter-control {
             position: absolute;
-            right: 425px;
+            right: 430px;
             top: 13px;
-            width: 345px;
+            width: 300px;
             display: inline-block;
 
-            img {
-                padding-top: 0px;
-                height: 30px;
+            .filter-label {
+                position: absolute;
+                right: 305px;
+                top: 3px;
             }
 
-            div {
-                padding-top: 3px;
-                
-                &:first-child {
+            .control-separator {
+                 padding-top: 0px;
+                 padding-left: 5px;
+                 
+                 img {
+                    height: 30px;
+                    padding-top: 0px;
+                 }
+            }
+
+            .state-buttons {
+                img {
+                    padding-top: 0px;
+                    height: 30px;
+                }
+    
+                div {
+                    padding-top: 3px;
+                    width: 70px;
+                    height: 21px;
+                    background:url(/juju-ui/assets/images/toggles.png) -70px 0;
+    
+                    &.active {
+                        background:url(/juju-ui/assets/images/on_middle.png) 0 0;
+                        .white;
+                    }
+    
+                    &:first-child {
+                        background:url(/juju-ui/assets/images/toggles.png) 0 0px;
+    
+                        &.active {
+                            background:url(/juju-ui/assets/images/on_left.png) 0 0;
+                            .white; 
+                        }
+                    }
+    
+                    &:last-child {
+                        background:url(/juju-ui/assets/images/toggles.png) -210px 0;
+    
+                        &.active {
+                            background:url(/juju-ui/assets/images/on_right.png) 0 0;
+                            .white; 
+                        }
+                    }
+                }
+    
+                span:first-child {
                     padding-right: 5px;
                 }
-                
-                &:last-child {
-                    padding-top: 0px;
-                    padding-left: 5px;
-                }
-            }
-
-            span:first-child {
-                padding-right: 5px;
-            }
-
-            .white {
-                a {color: white !important;}
-            }
-
-            a {
-                color: #2D2D2D!important;
-                &:link, &:visited, &:active, &:hover {
-                   text-decoration: none
-                }
-            }
-
-            @width: 70px;
-            @height: 21px;
-
-            .left {
-                width: @width;
-                height: @height;
-                background:url(/juju-ui/assets/images/toggles.png) 0 0px;
-            }
-
-            .active-left {
-                background:url(/juju-ui/assets/images/on_left.png) 0 0;
-                .white; 
-            }
     
-            .center {
-                width: @width;
-                height: @height;
-                background:url(/juju-ui/assets/images/toggles.png) -70px 0;
-            }
-
-            .active-center {
-                background:url(/juju-ui/assets/images/on_middle.png) 0 0;
-                .white;
-            }
-
-            .right {
-                width: @width;
-                height: @height;
-                background:url(/juju-ui/assets/images/toggles.png) -210px 0;
-            }
-
-            .active-right {
-                background:url(/juju-ui/assets/images/on_right.png) 0 0;
-                .white;
+                .white {
+                    a {color: white !important;}
+                }
+    
+                a {
+                    color: #2D2D2D!important;
+                    &:link, &:visited, &:active, &:hover {
+                       text-decoration: none
+                    }
+                }
             }
         }
+
 
         .destroy-control {
             position: absolute;
