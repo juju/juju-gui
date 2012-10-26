@@ -204,7 +204,7 @@ YUI.add('juju-view-environment', function(Y) {
                 d3.event = e;
 
                 // Flash an indicator around the center of the service block.
-                var center = d.getCenter();
+                /*var center = d.getCenter();
                 self.vis.append('circle')
                   .attr('cx', center[0])
                   .attr('cy', center[1])
@@ -214,7 +214,7 @@ YUI.add('juju-view-environment', function(Y) {
                   .duration(750)
                   .ease('bounce')
                   .attr('r', 0)
-                  .remove();
+                  .remove();*/
 
                 // Start the process of adding a relation
                 self.addRelationDragStart.call(self, d, this);
@@ -1524,19 +1524,8 @@ YUI.add('juju-view-environment', function(Y) {
               return a[0].name + a[1].name < b[0].name + b[1].name;
             });
 
-            // Create a pending line if it doesn't exist, as in the case of
-            // clicking to add relation.
-            if (!view.dragline) {
-              var dragline = view.vis.insert('line', '.service')
-                  .attr('class', 'relation pending-relation dragline'),
-                  points = m.getConnectorPair(
-                      view.get('addRelationStart_service'));
-              dragline.attr('x1', points[0][0])
-                .attr('y1', points[0][1])
-                .attr('x2', points[1][0])
-                .attr('y2', points[1][1]);
-              view.dragline = dragline;
-            }
+            // Stop rubberbanding on mousemove.
+            self.clickAddRelation = null;
 
             // Display menu with available endpoints.
             var menu = container.one('#ambiguous-relation-menu');
