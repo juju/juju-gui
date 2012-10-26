@@ -1512,7 +1512,7 @@ YUI.add('juju-view-environment', function(Y) {
             });
 
             // Stop rubberbanding on mousemove.
-            self.clickAddRelation = null;
+            view.clickAddRelation = null;
 
             // Display menu with available endpoints.
             var menu = container.one('#ambiguous-relation-menu');
