@@ -44,11 +44,13 @@
       <!-- Service configuration form -->
       <div class="charm-section">
         <h4>Service Settings<i class="icon-chevron-down"></i></h4>
-        <div class="config-file-upload">
+        <div class="config-file-upload control-group">
           <input class="config-file-upload-widget" type="file">
-          <div class="config-file-upload-overlay">Use configuration file</div>
+          <div>
+            <span class="config-file-upload-overlay">Use configuration file</span>
+            <span class="config-file-name hidden"></span>
+          </div>
         </div>
-        <button class="remove-config-file hidden">Remove File</button>
         <div class="charm-settings">
         <form>
           <div id="service-config" class="collapsible">

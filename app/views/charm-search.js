@@ -244,11 +244,15 @@ YUI.add('juju-charm-search', function(Y) {
           Y.one('.config-file-upload-widget').getDOMNode().click();
         },
         onFileChange: function(evt) {
+          var container = this.get('container');
           console.log('onFileChange:', evt);
           this.fileInput = evt.target;
           var file = this.fileInput.get('files').shift(),
               reader = new FileReader();
-          Y.one('.config-file-upload-overlay').setContent(file.name);
+          container.one('.config-file-name').setContent(file.name);
+          container.one('.config-file-upload-overlay').hide();
+          container.one('.config-file-name').removeClass('hidden');
+          container.one('.remove-config-file').removeClass('hidden');
           reader.onerror = Y.bind(this.onFileError, this);
           reader.onload = Y.bind(this.onFileLoaded, this);
           reader.readAsText(file);
@@ -256,6 +260,7 @@ YUI.add('juju-charm-search', function(Y) {
         onFileRemove: function(evt) {
           var container = this.get('container');
           this.configFileContent = null;
+          container.one('.config-file-name').addClass('hidden');
           container.one('.remove-config-file').addClass('hidden');
           container.one('.charm-settings').show();
           // Replace the file input node.  There does not appear to be any way
