@@ -85,7 +85,7 @@ YUI.add('juju-view-environment', function(Y) {
               }
 
               // Do not fire if we're on the same service.
-              if (d == self.get('addRelationStart_service')) {
+              if (d === self.get('addRelationStart_service')) {
                 return;
               }
 
