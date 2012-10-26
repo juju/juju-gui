@@ -10,25 +10,25 @@ YUI.add('juju-charm-search', function(Y) {
       _instance;
 
   var toggleSectionVisibility = function(ev) {
-        var el = ev.currentTarget.ancestor('.charm-section')
+    var el = ev.currentTarget.ancestor('.charm-section')
                     .one('.collapsible'),
             icon = ev.currentTarget.one('i');
-        icon = ev.currentTarget.one('i');
-        if (el.getStyle('height') === '0px') {
-          el.show('sizeIn', {duration: 0.25, width: null});
-          icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
-        } else {
-          el.hide('sizeOut', {duration: 0.25, width: null});
-          icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
-        }
-      },
+    icon = ev.currentTarget.one('i');
+    if (el.getStyle('height') === '0px') {
+      el.show('sizeIn', {duration: 0.25, width: null});
+      icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+    } else {
+      el.hide('sizeOut', {duration: 0.25, width: null});
+      icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+    }
+  },
       setScroll = function(container, height) {
         var scrollContainer = container.one('.charm-panel');
         if (scrollContainer && height) {
           var diff = scrollContainer.getY() - container.getY(),
               clientDiff = (
-                scrollContainer.getClientRect().height -
-                parseInt(scrollContainer.getComputedStyle('height'), 10)),
+              scrollContainer.getClientRect().height -
+              parseInt(scrollContainer.getComputedStyle('height'), 10)),
               scrollHeight = height - diff - clientDiff;
           scrollContainer.setStyle('height', scrollHeight + 'px');
         }
@@ -437,7 +437,7 @@ YUI.add('juju-charm-search', function(Y) {
         app = config.app,
         testing = !!config.testing,
         container = Y.Node.create('<div></div>').setAttribute(
-          'id', 'juju-search-charm-panel'),
+        'id', 'juju-search-charm-panel'),
         charmsSearchPanelNode = Y.Node.create(),
         charmsSearchPanel = new CharmCollectionView(
               { container: charmsSearchPanelNode,
@@ -513,7 +513,7 @@ YUI.add('juju-charm-search', function(Y) {
       if (isPopupVisible) {
         var headerBox = Y.one('#charm-search-trigger-container'),
             headerSpan = headerBox && headerBox.one('span');
-        if(headerBox) {
+        if (headerBox) {
           headerBox.setStyle('borderLeftColor', 'transparent');
           if (headerSpan) {
             headerSpan.setStyle('borderLeftColor', 'lightgray');
@@ -544,7 +544,7 @@ YUI.add('juju-charm-search', function(Y) {
       if (!isPopupVisible) {
         var headerBox = Y.one('#charm-search-trigger-container'),
             headerSpan = headerBox && headerBox.one('span');
-        if(headerBox) {
+        if (headerBox) {
           headerBox.setStyle('borderLeftColor', 'lightgray');
           if (headerSpan) {
             headerSpan.setStyle('borderLeftColor', 'transparent');
@@ -593,8 +593,8 @@ YUI.add('juju-charm-search', function(Y) {
       var headerBox = Y.one('#charm-search-trigger-container'),
           svg = Y.one('svg');
       return {x: headerBox && Math.round(headerBox.getX()),
-              height:
-                svg && parseInt(Y.one('svg').getAttribute('height'), 10) + 17};
+        height:
+            svg && parseInt(Y.one('svg').getAttribute('height'), 10) + 17};
     }
 
     if (Y.Lang.isValue(trigger)) {
@@ -650,7 +650,7 @@ YUI.add('juju-charm-search', function(Y) {
       return _instance;
     },
     killInstance: function() {
-      while(subscriptions.length) {
+      while (subscriptions.length) {
         var sub = subscriptions.pop();
         // if (sub) { sub.detach(); }
       }
