@@ -7,16 +7,11 @@
         {{#charms}}
         <li class="charm-entry">
           <div>
-
             <button class="btn btn-primary deploy"
-             data-url="{{url}}"
-             data-name="{{name}}"
-             data-info-url="{{data_url}}">Deploy</button>
-            <a class="charm-detail" href="{{url}}">
-              {{#if owner}}{{owner}}/{{/if}}{{name}}</a>
-
+             data-url="{{id}}">Deploy</button>
+            <a class="charm-detail" href="{{id}}">
+              {{#if owner}}{{owner}}/{{/if}}{{package_name}}</a>
             <div class="charm-summary">{{summary}}</div>
-
           </div>
         </li>
         {{/charms}}

@@ -88,7 +88,7 @@ describe('Application basics', function() {
 
     // charms also require a mapping but only a name, not a function
     app.getModelURL(wp_charm).should.equal(
-        '/charms/charms/precise/wordpress/json');
+        '/charms/charms/precise/wordpress-6/json');
   });
 
   it('should display the configured environment name', function() {
@@ -176,7 +176,7 @@ describe('Application Connection State', function() {
 });
 
 describe('Application prefetching', function() {
-  var Y, models, conn, env, app, container, charm_store, data;
+  var Y, models, conn, env, app, container, charm_store, data, juju;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -190,17 +190,16 @@ describe('Application prefetching', function() {
 
   beforeEach(function() {
     conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-    env = new (Y.namespace('juju')).Environment({conn: conn});
+    env = new Y.juju.Environment({conn: conn});
     env.connect();
     conn.open();
     container = Y.Node.create('<div id="test" class="container"></div>');
     data = [];
-    charm_store = new Y.DataSource.Local({source: data});
     app = new Y.juju.App(
         { container: container,
           viewContainer: container,
           env: env,
-          charm_store: charm_store });
+          charm_store: {} });
 
     app.updateEndpoints = function() {};
     env.get_endpoints = function() {};
@@ -213,14 +212,15 @@ describe('Application prefetching', function() {
 
   it('must prefetch charm and service for service pages', function() {
     injectData(app);
-    data.push({responseText: Y.JSON.stringify({summary: 'wowza'})});
     var _ = expect(
-        app.db.charms.getById('cs:precise/wordpress')).to.not.exist;
+        app.db.charms.getById('cs:precise/wordpress-6')).to.not.exist;
     app.show_service({params: {id: 'wordpress'}, query: {}});
-    // The db loaded the charm information from the datastore.
-    app.db.charms.getById(
-        'cs:precise/wordpress').get('summary').should.equal('wowza');
     // The app made a request of juju for the service info.
-    conn.last_message().op.should.equal('get_service');
+    conn.messages[conn.messages.length - 2].op.should.equal('get_service');
+    // The app also requested juju (not the charm store--see discussion in
+    // app/models/charm.js) for the charm info.
+    conn.last_message().op.should.equal('get_charm');
+    // Tests of the actual load machinery are in the model and env tests, and
+    // so are not repeated here.
   });
 });

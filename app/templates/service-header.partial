@@ -1,71 +1,27 @@
-<div class="service-header-partial">
-<div class="hero-unit juju-service-info-container">
-  <div class="inline juju-service-info-container-big">
-    <div class="juju-service-container-header-name">
-      <div class="juju-sevice-container-name">
-        <span><strong>{{service.id}}</strong></span>
+<div class="service-view">
+  <div class="service-header-partial">
+    <div class="name crosshatch-background">
+      <div>
+        <span>{{service.id}}</span>
       </div>
       <div>
-        <span><strong>{{charm.id}}</strong></span>
-        <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-        <a class="juju-service-charm-link" 
-           href="{{charm.app_url}}">Show Charm</a>
+        <span>{{charm_id}}</span>
       </div>
     </div>
-  </div>
-  <div class="inline juju-service-info-container-separator"></div>
-  <div class="inline juju-service-info-container-separator"></div>
-  <div class="inline juju-service-info-container-small">
-    <div class="juju-service-container-header-expose">
-     <div class="inline"><span>Expose</span></div>
-     <div class="inline">
-     {{#if service.exposed}}
-         <img class="unexposeService"
-              alt="Exposed"
-              src="/juju-ui/assets/images/slider_on.png" />
-         <span class="on">On</span>
-     {{else}}
-         <img class="exposeService"
-              alt="Not exposed"
-              src="/juju-ui/assets/images/slider_off.png" />
-         <span class="off">Off</span>
-     {{/if}}
-     </div>
-    </div>
-  </div>
-  <div class="inline juju-service-info-container-separator"></div>
-  <div class="inline juju-service-info-container-separator"></div>
-  <div class="inline juju-service-info-container-small">
-    <div class="juju-service-container-header-unit-count">
-    {{#unless charm.is_subordinate}}
-      <form class="unit-count-form">
-        <label class="control-label" for="num-service-units">Unit count</label>
-        <input type="text" id="num-service-units" 
-               value="{{service.unit_count}}">
-      </form>    
-    {{/unless}}
-    </div>
-  </div>  
-  
-  
-</div>
-<div class="juju-service-info-container-menu">
-  <div class="juju-service-info-container-menu-wrapper">
-    {{#tabs}}
-    <div class="inline juju-menu-item">
-      <div>
-        <a href="{{href}}"><strong>{{title}}</strong></a> 
+    <div class="menu-items">
+      {{#tabs}}
+      <div class="inline item">
+        <div>
+          <a {{#if active}}class="link-active"{{/if}} href="{{href}}">{{title}}
+          </a> 
+        </div>
+        <div {{#if active}}class="active"{{/if}}>
+        </div>
       </div>
-      <div>
-        {{#if active}}
-        <img src="/juju-ui/assets/images/white-triangle-16X8.png" />
-        {{/if}}
-      </div>
+      {{/tabs}}
     </div>
-    {{/tabs}}
+    <div class="row">
+      <div id="message-area" class="span10"></div>
+    </div>
   </div>
-</div>
-<div class="row">
-  <div id="message-area" class="span10"></div>
-</div>
 </div>  

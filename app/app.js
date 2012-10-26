@@ -137,10 +137,11 @@ YUI.add('juju-gui', function(Y) {
       }
       // Create a charm store.
       if (this.get('charm_store')) {
+        // This path is for tests.
         this.charm_store = this.get('charm_store');
       } else {
-        this.charm_store = new Y.DataSource.IO({
-          source: this.get('charm_store_url')});
+        this.charm_store = new juju.CharmStore({
+          datasource: this.get('charm_store_url')});
       }
       // Create notifications controller
       this.notifications = new juju.NotificationController({
@@ -303,7 +304,8 @@ YUI.add('juju-gui', function(Y) {
     show_unit: function(req) {
       console.log(
           'App: Route: Unit', req.params.id, req.path, req.pendingRoutes);
-      var unit_id = req.params.id.replace('-', '/');
+      // This replacement honors service names that have a hyphen in them.
+      var unit_id = req.params.id.replace(/^(\S+)-(\d+)$/, '$1/$2');
       var unit = this.db.units.getById(unit_id);
       if (unit) {
         // Once the unit is loaded we need to get the full details of the
@@ -338,8 +340,7 @@ YUI.add('juju-gui', function(Y) {
         var charm_id = service.get('charm'),
             self = this;
         if (!Y.Lang.isValue(this.db.charms.getById(charm_id))) {
-          this.db.charms.add({id: charm_id}).load(
-              {env: this.env, charm_store: this.charm_store},
+          this.db.charms.add({id: charm_id}).load(this.env,
               // If views are bound to the charm model, firing "update" is
               // unnecessary, and potentially even mildly harmful.
               function(err, result) { self.db.fire('update'); });
@@ -707,5 +708,6 @@ YUI.add('juju-gui', function(Y) {
     'base',
     'node',
     'model',
-    'juju-charm-search']
+    'juju-charm-search',
+    'juju-charm-store']
 });

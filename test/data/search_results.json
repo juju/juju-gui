@@ -1,0 +1,71 @@
+{
+  "matches": 7, 
+  "charm_total": 469, 
+  "results_size": 7, 
+  "search_time": 0.001168966293334961, 
+  "results": [
+    {
+      "data_url": "/charms/precise/cassandra/json", 
+      "name": "cassandra", 
+      "store_url": "cs:precise/cassandra-2", 
+      "series": "precise", 
+      "summary": "distributed storage system for structured data", 
+      "relevance": 29.58930787782692, 
+      "owner": "charmers"
+    }, 
+    {
+      "data_url": "/charms/oneiric/cassandra/json", 
+      "name": "cassandra", 
+      "store_url": "cs:~charmers/oneiric/cassandra-0", 
+      "series": "oneiric", 
+      "summary": "distributed storage system for structured data", 
+      "relevance": 29.46580425464922, 
+      "owner": "charmers"
+    }, 
+    {
+      "data_url": "/~jjo/precise/cassandra/json", 
+      "name": "cassandra", 
+      "store_url": "cs:~jjo/precise/cassandra-12", 
+      "series": "precise", 
+      "summary": "distributed storage system for structured data", 
+      "relevance": 28.090375175505876, 
+      "owner": "jjo"
+    }, 
+    {
+      "data_url": "/~ev/precise/errors/json", 
+      "name": "errors", 
+      "store_url": "cs:~ev/precise/errors-0", 
+      "series": "precise", 
+      "summary": "https://errors.ubuntu.com", 
+      "relevance": 13.18957931651269, 
+      "owner": "ev"
+    }, 
+    {
+      "data_url": "/~ev/precise/daisy/json", 
+      "name": "daisy", 
+      "store_url": "cs:~ev/precise/daisy-15", 
+      "series": "precise", 
+      "summary": "Daisy error reporting server", 
+      "relevance": 12.767880577035612, 
+      "owner": "ev"
+    }, 
+    {
+      "data_url": "/~ev/precise/daisy-retracer/json", 
+      "name": "daisy-retracer", 
+      "store_url": "cs:~ev/precise/daisy-retracer-8", 
+      "series": "precise", 
+      "summary": "Daisy error reporting server retracer", 
+      "relevance": 12.539732674900428, 
+      "owner": "ev"
+    }, 
+    {
+      "data_url": "/~negronjl/oneiric/cassandra/json", 
+      "name": "cassandra", 
+      "store_url": "cs:~negronjl/oneiric/cassandra-0", 
+      "series": "oneiric", 
+      "summary": "distributed storage system for structured data", 
+      "relevance": 30.451103781408868, 
+      "owner": "negronjl"
+    }
+  ]
+}

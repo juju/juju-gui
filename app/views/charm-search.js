@@ -44,18 +44,29 @@ YUI.add('juju-charm-search', function(Y) {
       this.after('searchTextChange', function(ev) {
         this.set('resultEntries', null);
         if (ev.newVal) {
-          this.findCharms(ev.newVal, function(charms) {
-            self.set('resultEntries', charms);
-          });
+          this.get('charmStore').find(
+              ev.newVal,
+              { success: function(charms) {
+                self.set('resultEntries', charms);
+              },
+              failure: Y.bind(this._showErrors, this),
+              defaultSeries: this.get('defaultSeries'),
+              list: this.get('charms')
+              });
         }
       });
       this.after('defaultSeriesChange', function(ev) {
         this.set('defaultEntries', null);
         if (ev.newVal) {
-          var searchString = 'series%3A' + ev.newVal + '+owner%3Acharmers';
-          this.findCharms(searchString, function(charms) {
-            self.set('defaultEntries', charms);
-          });
+          this.get('charmStore').find(
+              {series: ev.newVal, owner: 'charmers'},
+              { success: function(charms) {
+                self.set('defaultEntries', charms);
+              },
+              failure: Y.bind(this._showErrors, this),
+              defaultSeries: this.get('defaultSeries'),
+              list: this.get('charms')
+              });
         }
       });
       this.after('defaultEntriesChange', function() {
@@ -72,8 +83,17 @@ YUI.add('juju-charm-search', function(Y) {
           searchText = this.get('searchText'),
           defaultEntries = this.get('defaultEntries'),
           resultEntries = this.get('resultEntries'),
-          entries = searchText ? resultEntries : defaultEntries;
-      container.setHTML(this.template({charms: entries}));
+          raw_entries = searchText ? resultEntries : defaultEntries,
+          entries = raw_entries && raw_entries.map(
+              function(data) {
+                return {
+                  series: data.series,
+                  charms: data.charms.map(
+                      function(charm) { return charm.getAttrs(); })
+                };
+              }
+          );
+      container.setHTML(this.template({ charms: entries }));
       return this;
     },
     showDetails: function(ev) {
@@ -92,77 +112,15 @@ YUI.add('juju-charm-search', function(Y) {
           { name: 'configuration',
             charmId: ev.currentTarget.getData('url')});
     },
-    // Create a data structure friendly to the view
-    normalizeCharms: function(charms) {
-      var hash = {},
-          defaultSeries = this.get('defaultSeries');
-      Y.each(charms, function(charm) {
-        charm.url = charm.series + '/' + charm.name;
-        if (charm.owner === 'charmers') {
-          charm.owner = null;
-        } else {
-          charm.url = '~' + charm.owner + '/' + charm.url;
-        }
-        charm.url = 'cs:' + charm.url;
-        if (!Y.Lang.isValue(hash[charm.series])) {
-          hash[charm.series] = [];
-        }
-        hash[charm.series].push(charm);
-      });
-      var series_names = Y.Object.keys(hash);
-      series_names.sort(function(a, b) {
-        if ((a === defaultSeries && b !== defaultSeries) || a > b) {
-          return -1;
-        } else if ((a !== defaultSeries && b === defaultSeries) || a < b) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
-      return Y.Array.map(series_names, function(name) {
-        var charms = hash[name];
-        charms.sort(function(a, b) {
-          // If !a.owner, that means it is owned by charmers.
-          if ((!a.owner && b.owner) || (a.owner < b.owner)) {
-            return -1;
-          } else if ((a.owner && !b.owner) || (a.owner > b.owner)) {
-            return 1;
-          } else if (a.name < b.name) {
-            return -1;
-          } else if (a.name > b.name) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
-        return {series: name, charms: hash[name]};
-      });
-    },
-    findCharms: function(query, callback) {
-      var charmStore = this.get('charmStore'),
-          app = this.get('app');
-      charmStore.sendRequest({
-        request: 'search/json?search_text=' + query,
-        callback: {
-          'success': Y.bind(function(io_request) {
-            // To see an example of what is being obtained, look at
-            // http://jujucharms.com/search/json?search_text=mysql .
-            var result_set = Y.JSON.parse(
-                io_request.response.results[0].responseText);
-            console.log('results update', result_set);
-            callback(this.normalizeCharms(result_set.results));
-          }, this),
-          'failure': function er(e) {
-            console.error(e.error);
-            app.db.notifications.add(
-                new models.Notification({
-                  title: 'Could not retrieve charms',
-                  message: e.error,
-                  level: 'error'
-                })
-            );
-          }
-        }});
+    _showErrors: function(e) {
+      console.error(e.error);
+      this.get('app').db.notifications.add(
+          new models.Notification({
+            title: 'Could not retrieve charms',
+            message: e.error,
+            level: 'error'
+          })
+      );
     }
   });
   views.CharmCollectionView = CharmCollectionView;
@@ -209,7 +167,7 @@ YUI.add('juju-charm-search', function(Y) {
   views.CharmDescriptionView = CharmDescriptionView;
 
   var CharmConfigurationView = Y.Base.create(
-      'CharmCollectionView', Y.View, [views.JujuBaseView], {
+      'CharmConfigurationView', Y.View, [views.JujuBaseView], {
         template: views.Templates['charm-pre-configuration'],
         tooltip: null,
         configFileContent: null,
@@ -239,8 +197,8 @@ YUI.add('juju-charm-search', function(Y) {
           return this;
         },
         events: {
-          '.charm-nav-back': {click: 'goBack'},
-          '.btn#charm-deploy': {click: 'onCharmDeployClicked'},
+          '.btn.cancel': {click: 'goBack'},
+          '.btn.deploy': {click: 'onCharmDeployClicked'},
           '.remove-config-file': {click: 'onFileRemove'},
           '.charm-section h4': {click: toggleSectionVisibility},
           '.config-file-upload': {change: 'onFileChange'},
@@ -250,7 +208,8 @@ YUI.add('juju-charm-search', function(Y) {
               {click: function(evt) {evt.target.focus();}}
         },
         _moveTooltip: function() {
-          if (Y.DOM.inRegion(
+          if (this.tooltip.field &&
+              Y.DOM.inRegion(
               this.tooltip.field.getDOMNode(),
               this.tooltip.panelRegion,
               true)) {
@@ -280,7 +239,7 @@ YUI.add('juju-charm-search', function(Y) {
           this.tooltip.setStdModContent('body', text);
           this.tooltip.field = evt.target;
           this.tooltip.panel = this.tooltip.field.ancestor(
-              '#juju-search-charm-panel');
+              '.charm-panel');
           // Stash for speed.
           this.tooltip.panelRegion = Y.DOM.region(
               this.tooltip.panel.getDOMNode());
@@ -289,6 +248,7 @@ YUI.add('juju-charm-search', function(Y) {
         hideDescription: function(evt) {
           //console.log('focus', evt, evt.target.getXY());
           this.tooltip.hide();
+          delete this.tooltip.field;
         },
         onFileChange: function(evt) {
           console.log('onFileChange:', evt);
@@ -441,6 +401,7 @@ YUI.add('juju-charm-search', function(Y) {
   function createInstance(config) {
 
     var charmStore = config.charm_store,
+        charms = new models.CharmList(),
         app = config.app,
         testing = !!config.testing,
         container = Y.Node.create(views.Templates['charm-search-pop']({
@@ -451,7 +412,8 @@ YUI.add('juju-charm-search', function(Y) {
         charmsSearchPanel = new CharmCollectionView(
               { container: charmsSearchPanelNode,
                 app: app,
-                charmStore: charmStore }),
+                charmStore: charmStore,
+                charms: charms }),
         descriptionPanelNode = Y.Node.create(),
         descriptionPanel = new CharmDescriptionView(
               { container: descriptionPanelNode,
@@ -483,12 +445,20 @@ YUI.add('juju-charm-search', function(Y) {
         contentNode.get('children').remove();
         contentNode.append(panels[config.name].get('container'));
         if (config.charmId) {
-          var newModel = app.db.charms.getById(config.charmId);
-          if (!newModel) {
-            newModel = app.db.charms.add({id: config.charmId})
-              .load({env: app.env, charm_store: app.charm_store});
+          newPanel.set('model', null); // Clear out the old.
+          var charm = charms.getById(config.charmId);
+          if (charm.loaded) {
+            newPanel.set('model', charm);
+          } else {
+            charm.load(charmStore, function(err, response) {
+              if (err) {
+                console.log('error loading charm', response);
+                newPanel.fire('changePanel', {name: 'charms'});
+              } else {
+                newPanel.set('model', charm);
+              }
+            });
           }
-          newPanel.set('model', newModel);
         } else { // This is the search panel.
           newPanel.render();
         }
@@ -640,6 +610,7 @@ YUI.add('juju-charm-search', function(Y) {
     'widget-anim',
     'overlay',
     'svg-layouts',
-    'dom-core'
+    'dom-core',
+    'juju-models'
   ]
 });

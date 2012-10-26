@@ -1,0 +1,14 @@
+<div class="menu">
+    <ul>
+        {{#relationslist endpoints}}
+        <li
+            data-startservice="{{start.service}}"
+            data-startname="{{start.name}}"
+            data-endservice="{{end.service}}"
+            data-endname="{{end.name}}">
+            {{start.service}}:{{start.name}} &rarr; {{end.service}}:{{end.name}}
+        </li>
+        {{/relationslist}}
+    </ul>
+    <button class="cancel btn-danger btn">Cancel</button>
+</div>
