@@ -164,6 +164,7 @@ YUI.add('juju-charm-models', function(Y) {
           is_subordinate: {writeOnce: true},
           last_change: {
             writeOnce: true,
+            /**/
             setter: function(val) {
               // Normalize created value from float to date object.
               if (val && val.created) {
