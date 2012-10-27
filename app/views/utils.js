@@ -797,6 +797,28 @@ YUI.add('juju-view-utils', function(Y) {
     return 'pending';
   };
 
+  utils.getEffectiveViewportSize = function(minheight, minwidth) {
+    // Attempt to get the viewport height minus the navbar at top and
+    // control bar at the bottom.
+    var docHeight = Y.one('body').get('docHeight'),
+        bottomNavbar = Y.one('.bottom-navbar'),
+        navbar = Y.one('.navbar'),
+        viewport = Y.one('#viewport'),
+        result = {height: minheight, width: minwidth};
+    if (docHeight && navbar && viewport) {
+      result.height = docHeight -
+          (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0) -
+          navbar.get('offsetHeight') - 1;
+
+      result.width = viewport.get('offsetWidth');
+
+      // Make sure we don't get sized any smaller than the minimum.
+      result.height = Math.max(result.height, minheight);
+      result.width = Math.max(result.width, minwidth);
+    }
+    return result;
+  };
+
   Y.Handlebars.registerHelper('unitState', function(relation_errors,
       agent_state) {
         if ('started' === agent_state && relation_errors &&

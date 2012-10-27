@@ -340,22 +340,21 @@ YUI.add('juju-view-service', function(Y) {
             if (!node) {
               return 0;
             }
-            return node.getDOMNode().clientHeight;
+            return node.get('clientHeight');
           }
-
-          var navbarHeight = getHeight(Y.one('.navbar')),
-              windowHeight = window.innerHeight,
-              container = this.get('container'),
-              viewContainer = container.one('.view-container'),
-              headerHeight = getHeight(container.one(
-                  '.service-header-partial')),
-              footerHeight = getHeight(container.one(
-              '.juju-service-info-container-bottom-menu')),
-              size = Math.max(windowHeight, 600) - navbarHeight -
-              headerHeight - footerHeight - 1;
-
+          var container = this.get('container'),
+              viewContainer = container.one('.view-container');
           if (viewContainer) {
+            Y.fire('beforePageSizeRecalculation');
+            var navbarHeight = getHeight(Y.one('.navbar')),
+                windowHeight = container.get('winHeight'),
+                headerHeight = getHeight(container.one(
+                    '.service-header-partial')),
+                footerHeight = getHeight(container.one('.bottom-navbar')),
+                size = (Math.max(windowHeight, 600) - navbarHeight -
+                        headerHeight - footerHeight - 1);
             viewContainer.set('offsetHeight', size);
+            Y.fire('afterPageSizeRecalculation');
           }
         }
       });

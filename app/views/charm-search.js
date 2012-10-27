@@ -10,24 +10,24 @@ YUI.add('juju-charm-search', function(Y) {
       _instance;
 
   var toggleSectionVisibility = function(ev) {
-    var el = ev.currentTarget.ancestor('.charm-section')
-                    .one('.collapsible'),
-            icon = ev.currentTarget.one('i');
-    icon = ev.currentTarget.one('i');
-    if (el.getStyle('height') === '0px') {
-      el.show('sizeIn', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
-    } else {
-      el.hide('sizeOut', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
-    }
+        var el = ev.currentTarget.ancestor('.charm-section')
+                        .one('.collapsible'),
+                icon = ev.currentTarget.one('i');
+        icon = ev.currentTarget.one('i');
+        if (el.getStyle('height') === '0px') {
+          el.show('sizeIn', {duration: 0.25, width: null});
+          icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+        } else {
+          el.hide('sizeOut', {duration: 0.25, width: null});
+          icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+        }
   },
       setScroll = function(container, height) {
         var scrollContainer = container.one('.charm-panel');
         if (scrollContainer && height) {
           var diff = scrollContainer.getY() - container.getY(),
               clientDiff = (
-              scrollContainer.getClientRect().height -
+              scrollContainer.get('clientHeight') -
               parseInt(scrollContainer.getComputedStyle('height'), 10)),
               scrollHeight = height - diff - clientDiff;
           scrollContainer.setStyle('height', scrollHeight + 'px');
@@ -245,15 +245,15 @@ YUI.add('juju-charm-search', function(Y) {
               this.tooltip.field.getDOMNode(),
               this.tooltip.panelRegion,
               true)) {
-            var targetRect = this.tooltip.field.getClientRect();
-            if (targetRect) {
+            var fieldHeight = this.tooltip.field.get('clientHeight');
+            if (fieldHeight) {
               var widget = this.tooltip.get('boundingBox'),
                   tooltipWidth = widget.get('clientWidth'),
                   tooltipHeight = widget.get('clientHeight'),
-                  y_offset = (tooltipHeight - targetRect.height) / 2;
+                  y_offset = (tooltipHeight - fieldHeight) / 2;
               this.tooltip.move(  // These are the x, y coordinates.
                   [this.tooltip.panel.getX() - tooltipWidth - 15,
-                   targetRect.top - y_offset]);
+                   this.tooltip.field.getY() - y_offset]);
               if (!this.tooltip.get('visible')) {
                 this.tooltip.show();
               }
@@ -591,10 +591,9 @@ YUI.add('juju-charm-search', function(Y) {
 
     function calculatePanelPosition() {
       var headerBox = Y.one('#charm-search-trigger-container'),
-          svg = Y.one('svg');
-      return {x: headerBox && Math.round(headerBox.getX()),
-        height:
-            svg && parseInt(Y.one('svg').getAttribute('height'), 10) + 17};
+          dimensions = utils.getEffectiveViewportSize(0, 0);
+      return { x: headerBox && Math.round(headerBox.getX()),
+               height: dimensions.height + 17 };
     }
 
     if (Y.Lang.isValue(trigger)) {
@@ -673,7 +672,6 @@ YUI.add('juju-charm-search', function(Y) {
     'event-outside',
     'widget-anim',
     'overlay',
-    'svg-layouts',
     'dom-core',
     'juju-models',
     'event-resize'
