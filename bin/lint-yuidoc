@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+
+import os
+import os.path
+import re
+import sys
+
+function_regex = re.compile('^ *([\w]+)\s*[:=]+ *function\s*\(')
+
+def find_functions(source):
+    for line_number, line in enumerate(source):
+        match = function_regex.match(line)
+        if match:
+            yield match.group(1), line_number
+
+
+def find_docs(function_name, line_number, boundry, source):
+    # Walk backwards from the function declaration to find some yuidoc.  If we
+    # hit the previous function declaration ("boundry") before finding one,
+    # then there is none.
+    for current_line_number in range(line_number, boundry, -1):
+        if '/**' in source[current_line_number]:
+            return current_line_number
+    return None
+
+
+def check_file(fn):
+    with open(fn) as f:
+        source = f.readlines()
+        boundry = 0
+        for function_name, line_number in find_functions(source):
+            found_docs = find_docs(function_name, line_number, boundry, source)
+            boundry = line_number
+
+            if not found_docs:
+                print fn, line_number, function_name
+
+
+for root, dirs, files in os.walk('app'):
+    for fn in [os.path.join(root, name) for name in files]:
+        check_file(fn)
+    # Ignore any asset directories.
+    dirs[:] = [dir for dir in dirs if dir != 'assets']
