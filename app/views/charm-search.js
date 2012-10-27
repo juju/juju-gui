@@ -7,12 +7,11 @@ YUI.add('juju-charm-search', function(Y) {
       models = Y.namespace('juju.models'),
       subscriptions = [],
       // Singleton
-      _instance;
-
-  var toggleSectionVisibility = function(ev) {
+      _instance,
+      toggleSectionVisibility = function(ev) {
         var el = ev.currentTarget.ancestor('.charm-section')
-                        .one('.collapsible'),
-                icon = ev.currentTarget.one('i');
+                .one('.collapsible'),
+            icon = ev.currentTarget.one('i');
         icon = ev.currentTarget.one('i');
         if (el.getStyle('height') === '0px') {
           el.show('sizeIn', {duration: 0.25, width: null});
@@ -21,7 +20,7 @@ YUI.add('juju-charm-search', function(Y) {
           el.hide('sizeOut', {duration: 0.25, width: null});
           icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
         }
-  },
+      },
       setScroll = function(container, height) {
         var scrollContainer = container.one('.charm-panel');
         if (scrollContainer && height) {

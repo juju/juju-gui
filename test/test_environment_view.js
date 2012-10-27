@@ -269,10 +269,10 @@
          // pertinent function, rather than truly testing it.
          parseInt(svg.getAttribute('height'), 10)
           .should.equal(
-                Math.max(600,
-                    container.get('docHeight') -
-                    Y.one('.bottom-navbar').get('offsetHeight') -
-                    Y.one('.navbar').get('offsetHeight') - 1));
+              Math.max(600,
+                  container.get('docHeight') -
+                  Y.one('.bottom-navbar').get('offsetHeight') -
+                  Y.one('.navbar').get('offsetHeight') - 1));
          // Destroy the navbar
          navbar.remove(true);
          viewport.remove(true);
