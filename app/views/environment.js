@@ -134,7 +134,22 @@ YUI.add('juju-view-environment', function(Y) {
             },
             mouseleave: function(d, self) {
               // Remove 'active' class from all subordinate relations.
-              self.removeSVGClass('.subordinate-rel-group', 'active');
+              if (!self.keepSubRelationsVisible) {
+                self.removeSVGClass('.subordinate-rel-group', 'active');
+              }
+            },
+            click: function(d, self) {
+              // Toggle the visibility of the relations (for removal)
+              if (self.keepSubRelationsVisible) {
+                self.removeSVGClass('.subordinate-rel-group', 'active');
+                self.keepSubRelationsVisible = false;
+                self.removeSVGClass(Y.one(this).one('.sub-rel-count'),
+                    'active');
+              } else {
+                self.keepSubRelationsVisible = true;
+                self.addSVGClass(Y.one(this).one('.sub-rel-count'),
+                    'active');
+              }
             }
           },
           '.service-status': {
@@ -385,8 +400,10 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         serviceClick: function(d, self) {
-          // Ignore if we clicked on a control panel image.
-          if (self.hasSVGClass(d3.event.target, 'cp-button')) {
+          // Ignore if we clicked outside the actual service node.
+          var container = self.get('container'),
+              mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+          if (!d.containsPoint(mouse_coords, self.zoom)) {
             return;
           }
           // Get the current click action
