@@ -89,7 +89,7 @@ def main():
         # Ignore any asset directories.
         dirs[:] = [dir for dir in dirs if dir != 'assets']
 
-    # Find files that are listed as undocumented but don't actually exist.
+    # Find functions that are listed as undocumented but don't actually exist.
     for code_location in missing_undocumented(all_functions, undocumented):
         print code_location, 'listed as undocumented but does not exist'
         found_errors = True
