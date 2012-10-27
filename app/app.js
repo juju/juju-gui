@@ -85,7 +85,7 @@ YUI.add('juju-gui', function(Y) {
     /*
      * Data driven behaviors
      *
-     * This is a placehold for real behaviors associated with DOM Node data-*
+     * This is a placeholder for real behaviors associated with DOM Node data-*
      * attributes.
      *
      *  @attribute behaviors
