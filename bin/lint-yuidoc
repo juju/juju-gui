@@ -18,26 +18,84 @@ def find_docs(function_name, line_number, boundry, source):
     # Walk backwards from the function declaration to find some yuidoc.  If we
     # hit the previous function declaration ("boundry") before finding one,
     # then there is none.
-    for current_line_number in range(line_number, boundry, -1):
+    for current_line_number in range(line_number-1, boundry, -1):
+        source_line = source[current_line_number] 
+        # If we enter or exit a block while scanning backwards without finding
+        # documentation, then there is none to be found.
+        if '{' in source_line or '}' in source_line:
+            return False
+        # If we find a documentation block, return its location.
         if '/**' in source[current_line_number]:
-            return current_line_number
-    return None
+            return True
+    return False
 
 
-def check_file(fn):
-    with open(fn) as f:
+def check_file(file_name, undocumented):
+    # Every function.
+    functions = []
+    # Every function that has (unexpectedly) missing documentation.
+    missing_documentation = []
+    # Every function that has documentation but wasn't expected to.
+    falsely_undocumented = []
+    with open(file_name) as f:
         source = f.readlines()
         boundry = 0
         for function_name, line_number in find_functions(source):
+            functions.append((file_name, function_name))
             found_docs = find_docs(function_name, line_number, boundry, source)
             boundry = line_number
 
-            if not found_docs:
-                print fn, line_number, function_name
+            # Report our findings.
+            code_location = '%s:%d "%s"' % (
+                file_name, line_number+1, function_name)
+            is_undocumented = (file_name, function_name) in undocumented
+            # If we found documentation for the function...
+            if found_docs:
+                # If it is listed as an undocumented function...
+                if is_undocumented:
+                    #...report the incongruence.
+                    falsely_undocumented.append(code_location)
+            # Otherwise if we found an undocumented funciton that is not
+            # supposed to be undocumented, report it.
+            elif not found_docs and not is_undocumented:
+                missing_documentation.append(code_location)
+
+    return functions, missing_documentation, falsely_undocumented
 
 
-for root, dirs, files in os.walk('app'):
-    for fn in [os.path.join(root, name) for name in files]:
-        check_file(fn)
-    # Ignore any asset directories.
-    dirs[:] = [dir for dir in dirs if dir != 'assets']
+def missing_undocumented(functions, undocumented):
+    missing = set(undocumented) - set(functions)
+    return ['%s "%s"' % x for x in missing]
+
+
+def main():
+    # Did we find any lint?
+    found_errors = False
+    # All of the functions found.
+    all_functions = []
+    for root, dirs, files in os.walk('app'):
+        with open('undocumented') as f:
+            undocumented = [tuple(line.split()) for line in f.readlines()]
+        for file_name in [os.path.join(root, name) for name in files]:
+            functions, missing_documentation, falsely_undocumented = (
+                check_file(file_name, undocumented))
+            all_functions.extend(functions)
+            for code_location in missing_documentation:
+                print code_location, 'missing yuidoc'
+                found_errors = True
+            for code_location in falsely_undocumented:
+                print code_location, 'erroneously listed as undocumented'
+                found_errors = True
+        # Ignore any asset directories.
+        dirs[:] = [dir for dir in dirs if dir != 'assets']
+
+    # Find files that are listed as undocumented but don't actually exist.
+    for code_location in missing_undocumented(all_functions, undocumented):
+        print code_location, 'listed as undocumented but does not exist'
+        found_errors = True
+
+    return int(found_errors)
+
+
+if __name__ == '__main__':
+    sys.exit(main())

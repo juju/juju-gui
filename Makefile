@@ -28,7 +28,10 @@ gjslint: virtualenv/bin/gjslint
 jshint: node_modules/jshint
 	@node_modules/jshint/bin/hint $(FILES)
 
-lint: gjslint jshint
+yuidoc-lint: $(FILES)
+	@bin/lint-yuidoc
+
+lint: gjslint jshint yuidoc-lint
 
 virtualenv/bin/gjslint virtualenv/bin/fixjsstyle:
 	@virtualenv virtualenv
