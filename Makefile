@@ -27,8 +27,7 @@ install: $(NODE_TARGETS) app/templates.js yuidoc
 
 gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
-	    --custom_jsdoc_tags \
-	        property,default,since,method,module,submodule,namespace \
+	    --custom_jsdoc_tags module,main,class,method,event,property,attribute,submodule,namespace,extends,config,constructor,static,final,readOnly,writeOnce,optional,required,param,return,for,type,private,protected,requires,default,uses,example,chainable,deprecated,since,async,beta,bubbles,extension,extensionfor,extension_for \
 	    $(FILES)
 
 jshint: node_modules/jshint
