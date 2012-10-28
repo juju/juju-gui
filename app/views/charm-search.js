@@ -650,7 +650,7 @@ YUI.add('juju-charm-search', function(Y) {
     killInstance: function() {
       while (subscriptions.length) {
         var sub = subscriptions.pop();
-        // if (sub) { sub.detach(); }
+        if (sub) { sub.detach(); }
       }
       if (_instance) {
         _instance.node.remove(true);
