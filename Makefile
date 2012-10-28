@@ -46,7 +46,15 @@ clean:
 	@rm -rf node_modules virtualenv
 	@make -C docs clean
 
-appcache:
+$(APPCACHE): manifest.appcache.in
+	@cp manifest.appcache.in $(APPCACHE)
 	@sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
-.PHONY: test lint beautify server install clean prep jshint gjslint
+appcache: $(APPCACHE)
+
+appcache-touch:
+	@touch manifest.appcache.in
+
+appcache-force: appcache-touch appcache
+
+.PHONY: test lint beautify server install clean prep jshint gjslint appcache appcache-touch appcache-force
