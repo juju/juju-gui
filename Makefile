@@ -52,9 +52,13 @@ $(APPCACHE): manifest.appcache.in
 
 appcache: $(APPCACHE)
 
+# A target used only for forcibly updating the appcache.
 appcache-touch:
 	@touch manifest.appcache.in
 
+# This is the real target.  appcache-touch needs to be executed before
+# appcache, and this provides the correct order.
 appcache-force: appcache-touch appcache
 
-.PHONY: test lint beautify server install clean prep jshint gjslint appcache appcache-touch appcache-force
+.PHONY: test lint beautify server install clean prep jshint gjslint \
+	appcache appcache-touch appcache-force
