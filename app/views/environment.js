@@ -1243,10 +1243,12 @@ YUI.add('juju-view-environment', function(Y) {
               svg = container.one('svg'),
               canvas = container.one('#canvas');
           // Get the canvas out of the way so we can calculate the size
-          // correctly (the canvas contains the svg).
-          canvas.setStyle('display', 'none');
-          var dimensions = utils.getEffectiveViewportSize(600, 800);
-          canvas.setStyle('display', 'block');
+          // correctly (the canvas contains the svg).  We want it to be the
+          // smallest size we accept--no smaller or bigger--or else the
+          // presence or absence of scrollbars may affect our calculations
+          // incorrectly.
+          canvas.setStyles({height: 600, width: 800});
+          var dimensions = utils.getEffectiveViewportSize(800, 600);
           // Set the svg sizes.
           svg.setAttribute('width', dimensions.width)
             .setAttribute('height', dimensions.height);

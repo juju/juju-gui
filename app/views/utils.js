@@ -797,7 +797,7 @@ YUI.add('juju-view-utils', function(Y) {
     return 'pending';
   };
 
-  utils.getEffectiveViewportSize = function(minheight, minwidth) {
+  utils.getEffectiveViewportSize = function(minwidth, minheight) {
     // Attempt to get the viewport height minus the navbar at top and
     // control bar at the bottom.
     var docHeight = Y.one('body').get('docHeight'),
