@@ -88,7 +88,7 @@ describe('Application basics', function() {
 
     // charms also require a mapping but only a name, not a function
     app.getModelURL(wp_charm).should.equal(
-        '/charms/charms/precise/wordpress/json');
+        '/charms/charms/precise/wordpress-6/json');
   });
 
   it('should display the configured environment name', function() {
