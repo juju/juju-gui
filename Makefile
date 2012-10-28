@@ -46,7 +46,19 @@ clean:
 	@rm -rf node_modules virtualenv
 	@make -C docs clean
 
-appcache:
+$(APPCACHE): manifest.appcache.in
+	@cp manifest.appcache.in $(APPCACHE)
 	@sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
-.PHONY: test lint beautify server install clean prep jshint gjslint
+appcache: $(APPCACHE)
+
+# A target used only for forcibly updating the appcache.
+appcache-touch:
+	@touch manifest.appcache.in
+
+# This is the real target.  appcache-touch needs to be executed before
+# appcache, and this provides the correct order.
+appcache-force: appcache-touch appcache
+
+.PHONY: test lint beautify server install clean prep jshint gjslint \
+	appcache appcache-touch appcache-force
