@@ -4,6 +4,7 @@ NODE_TARGETS=node_modules/chai node_modules/d3 node_modules/jshint \
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 DATE=$(shell date -u)
 APPCACHE=app/assets/manifest.appcache
+SPRITEGEN-VERSION=1.0
 
 all: install
 
@@ -19,7 +20,7 @@ $(NODE_TARGETS): package.json
 	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
 
-install: appcache $(NODE_TARGETS) app/templates.js yuidoc
+install: appcache $(NODE_TARGETS) app/templates.js yuidoc spritegen
 
 gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
@@ -38,6 +39,14 @@ virtualenv/bin/gjslint virtualenv/bin/fixjsstyle:
 
 beautify: virtualenv/bin/fixjsstyle
 	@virtualenv/bin/fixjsstyle --strict --nojsdoc --jslint_error=all $(FILES)
+
+spritegen:
+	rm -f spritegen-$(SPRITEGEN-VERSION).jar
+	wget http://people.apache.org/~tveronezi/spritegen/dist/spritegen-$(SPRITEGEN-VERSION).jar
+	java -jar spritegen-1.0.jar -src ./app/assets/images -assetsPath /juju-ui/assets
+	mv sprite.css ./app/assets/stylesheets/
+	mv sprite.png ./app/assets/
+	rm -f spritegen-$(SPRITEGEN-VERSION).jar
 
 prep: beautify lint
 
