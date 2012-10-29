@@ -484,6 +484,7 @@ YUI.add('juju-gui', function(Y) {
         console.log('new env view');
         this.showView('environment',
             { getModelURL: Y.bind(this.getModelURL, this),
+              /** A simple closure so changes to the value are available.*/
               getServiceEndpoints: function() {return self.serviceEndpoints;},
               loadService: this.loadService,
               db: this.db,
@@ -498,6 +499,7 @@ YUI.add('juju-gui', function(Y) {
          */
         this.showView('environment',
             { getModelURL: Y.bind(this.getModelURL, this),
+              /** A simple closure so changes to the value are available.*/
               getServiceEndpoints: function() {return self.serviceEndpoints;},
               loadService: this.loadService,
               db: this.db,
