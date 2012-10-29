@@ -18,3 +18,4 @@ tags
 Session.vim
 virtualenv
 yuidoc
+app/assets/manifest.appcache

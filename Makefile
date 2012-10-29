@@ -8,6 +8,8 @@ NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 	node_modules/should node_modules/jshint node_modules/expect.js \
 	node_modules/express node_modules/yui
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
+DATE=$(shell date -u)
+APPCACHE=app/assets/manifest.appcache
 
 all: install
 
@@ -23,7 +25,7 @@ $(NODE_TARGETS): package.json
 	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
 
-install: $(NODE_TARGETS) app/templates.js yuidoc
+install: appcache $(NODE_TARGETS) app/templates.js yuidoc
 
 gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
@@ -58,4 +60,19 @@ clean:
 	@rm -rf node_modules virtualenv
 	@make -C docs clean
 
-.PHONY: test lint beautify server install clean prep jshint gjslint
+$(APPCACHE): manifest.appcache.in
+	@cp manifest.appcache.in $(APPCACHE)
+	@sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
+
+appcache: $(APPCACHE)
+
+# A target used only for forcibly updating the appcache.
+appcache-touch:
+	@touch manifest.appcache.in
+
+# This is the real target.  appcache-touch needs to be executed before
+# appcache, and this provides the correct order.
+appcache-force: appcache-touch appcache
+
+.PHONY: test lint beautify server install clean prep jshint gjslint \
+	appcache appcache-touch appcache-force
