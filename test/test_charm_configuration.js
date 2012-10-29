@@ -200,7 +200,7 @@ describe('charm configuration', function() {
         'Number of units to deploy for this service.');
     tooltip.get('visible').should.equal(true);
     controls.item(1).blur();
-    controls.item(2).focus();
+    controls.item(3).focus();
     tooltip.get('srcNode').get('text').should.equal('Option Zero');
     tooltip.get('visible').should.equal(true);
   });
@@ -294,9 +294,8 @@ describe('charm configuration', function() {
        charm.loaded = true;
        view.render();
        var _ = expect(container.one('.config-file-upload')).to.exist;
-       // The remove button is conditional and should exist but be hidden.
-       var remove_button = container.one('.remove-config-file');
-       remove_button.hasClass('hidden').should.equal(true);
+       // The config file name should be ''.
+       container.one('.config-file-name').getContent().should.equal('');
      });
 
   it('must hide configuration panel when a file is uploaded', function() {
@@ -314,13 +313,13 @@ describe('charm configuration', function() {
     var view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
-          tooltipDelay: 0 });
+          tooltipDelay: 0 }),
+        fileContents = 'yaml yaml yaml';
     charm.loaded = true;
     view.render();
-    view.onFileLoaded({target: {result: 'yaml yaml yaml'}});
-    view.configFileContent.should.equal('yaml yaml yaml');
+    view.onFileLoaded({target: {result: fileContents}});
+    view.configFileContent.should.equal(fileContents);
     container.one('.charm-settings').getStyle('display').should.equal('none');
-    container.one('.remove-config-file').hasClass('hidden').should.equal(false);
   });
 
   it('must remove configuration data when the button is pressed', function() {
@@ -340,12 +339,14 @@ describe('charm configuration', function() {
           tooltipDelay: 0 });
     charm.loaded = true;
     view.render();
-    view.fileInput = container.one('.config-file-upload');
+    view.fileInput = container.one('.config-file-upload-widget');
     view.configFileContent = 'how now brown cow';
-    container.one('.remove-config-file').simulate('click');
+    container.one('.config-file-name').setContent('a.yaml');
+    container.one('.config-file-upload-overlay').simulate('click');
     var _ = expect(view.configFileContent).to.not.exist;
-    container.one('.remove-config-file').hasClass('hidden').should.equal(true);
-    container.one('.config-file-upload').get('files').size().should.equal(0);
+    container.one('.config-file-name').getContent().should.equal('');
+    container.one('.config-file-upload-widget').get('files').size()
+         .should.equal(0);
   });
 
   it('must be able to deploy with configuration from a file', function() {
