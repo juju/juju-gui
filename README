@@ -83,6 +83,21 @@ Running unit tests.
  xdg-open test/index.html
 
 
+Documentation
+-------------
+
+Generated JavaScript documentation is available in the yuidoc directory.  Start
+with the index.html file.  You can view the docs by running this command::
+
+    xdg-open yuidoc/index.html
+
+To regenerate the docs run this command::
+
+    make yuidoc
+
+The documentation for yuidoc markup is at http://yui.github.com/yuidoc/syntax/.
+
+
 Running lint
 ------------
 
