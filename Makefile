@@ -1,5 +1,6 @@
 FILES=$(shell bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js | grep -v server.js)
-# This list can be regenerated with this command (and then pasted in here):
+# After a successful "make" run, the NODE_TARGETS list can be regenerated with
+# this command (and then manually pasted in here):
 # find node_modules -maxdepth 1 -mindepth 1 -type d -printf 'node_modules/%f '
 NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 	node_modules/yuidocjs node_modules/chai node_modules/less \

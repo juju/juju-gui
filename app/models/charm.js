@@ -200,7 +200,7 @@ YUI.add('juju-charm-models', function(Y) {
             value: 'cs',
             writeOnce: true,
             /**
-             * No matter what value is given, "cs" is the only allowed scheme.
+             * If no value is given, "cs" is used as the default.
              */
             setter: function(val) {
               if (!Y.Lang.isValue(val)) {
