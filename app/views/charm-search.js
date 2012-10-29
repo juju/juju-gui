@@ -15,10 +15,10 @@ YUI.add('juju-charm-search', function(Y) {
     icon = ev.currentTarget.one('i');
     if (el.getStyle('height') === '0px') {
       el.show('sizeIn', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+      icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
     } else {
       el.hide('sizeOut', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+      icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
     }
   };
 
@@ -50,7 +50,8 @@ YUI.add('juju-charm-search', function(Y) {
                 self.set('resultEntries', charms);
               },
               failure: Y.bind(this._showErrors, this),
-              defaultSeries: this.get('defaultSeries')
+              defaultSeries: this.get('defaultSeries'),
+              list: this.get('charms')
               });
         }
       });
@@ -63,7 +64,8 @@ YUI.add('juju-charm-search', function(Y) {
                 self.set('defaultEntries', charms);
               },
               failure: Y.bind(this._showErrors, this),
-              defaultSeries: this.get('defaultSeries')
+              defaultSeries: this.get('defaultSeries'),
+              list: this.get('charms')
               });
         }
       });
@@ -81,8 +83,17 @@ YUI.add('juju-charm-search', function(Y) {
           searchText = this.get('searchText'),
           defaultEntries = this.get('defaultEntries'),
           resultEntries = this.get('resultEntries'),
-          entries = searchText ? resultEntries : defaultEntries;
-      container.setHTML(this.template({charms: entries}));
+          raw_entries = searchText ? resultEntries : defaultEntries,
+          entries = raw_entries && raw_entries.map(
+              function(data) {
+                return {
+                  series: data.series,
+                  charms: data.charms.map(
+                      function(charm) { return charm.getAttrs(); })
+                };
+              }
+          );
+      container.setHTML(this.template({ charms: entries }));
       return this;
     },
     showDetails: function(ev) {
@@ -227,7 +238,7 @@ YUI.add('juju-charm-search', function(Y) {
   views.CharmDescriptionView = CharmDescriptionView;
 
   var CharmConfigurationView = Y.Base.create(
-      'CharmCollectionView', Y.View, [views.JujuBaseView], {
+      'CharmConfigurationView', Y.View, [views.JujuBaseView], {
         template: views.Templates['charm-pre-configuration'],
         tooltip: null,
         configFileContent: null,
@@ -259,9 +270,9 @@ YUI.add('juju-charm-search', function(Y) {
         events: {
           '.btn.cancel': {click: 'goBack'},
           '.btn.deploy': {click: 'onCharmDeployClicked'},
-          '.remove-config-file': {click: 'onFileRemove'},
           '.charm-section h4': {click: toggleSectionVisibility},
-          '.config-file-upload': {change: 'onFileChange'},
+          '.config-file-upload-widget': {change: 'onFileChange'},
+          '.config-file-upload-overlay': {click: 'onOverlayClick'},
           '.config-field': {focus: 'showDescription',
             blur: 'hideDescription'},
           'input.config-field[type=checkbox]':
@@ -310,27 +321,40 @@ YUI.add('juju-charm-search', function(Y) {
           this.tooltip.hide();
           delete this.tooltip.field;
         },
+        onOverlayClick: function(evt) {
+          var container = this.get('container');
+          if (this.configFileContent) {
+            this.onFileRemove();
+          } else {
+            container.one('.config-file-upload-widget').getDOMNode().click();
+          }
+        },
         onFileChange: function(evt) {
+          var container = this.get('container');
           console.log('onFileChange:', evt);
           this.fileInput = evt.target;
           var file = this.fileInput.get('files').shift(),
               reader = new FileReader();
+          container.one('.config-file-name').setContent(file.name);
           reader.onerror = Y.bind(this.onFileError, this);
           reader.onload = Y.bind(this.onFileLoaded, this);
           reader.readAsText(file);
+          container.one('.config-file-upload-overlay')
+            .setContent('Remove file');
         },
-        onFileRemove: function(evt) {
+        onFileRemove: function() {
           var container = this.get('container');
           this.configFileContent = null;
-          container.one('.remove-config-file').addClass('hidden');
+          container.one('.config-file-name').setContent('');
           container.one('.charm-settings').show();
           // Replace the file input node.  There does not appear to be any way
           // to reset the element, so the only option is this rather crude
           // replacement.  It actually works well in practice.
-          var button = container.one('.remove-config-file');
           this.fileInput.replace(Y.Node.create('<input type="file"/>')
-                                 .addClass('config-file-upload'));
-          this.fileInput = container.one('.remove-config-file');
+                                 .addClass('config-file-upload-widget'));
+          this.fileInput = container.one('.config-file-upload-widget');
+          container.one('.config-file-upload-overlay')
+            .setContent('Use configuration file');
         },
         onFileLoaded: function(evt) {
           this.configFileContent = evt.target.result;
@@ -349,9 +373,6 @@ YUI.add('juju-charm-search', function(Y) {
                 }));
           }
           this.get('container').one('.charm-settings').hide();
-          this.get('container').one('.remove-config-file')
-            .removeClass('hidden');
-          console.log(this.configFileContent);
         },
         onFileError: function(evt) {
           console.log('onFileError:', evt);
@@ -474,6 +495,7 @@ YUI.add('juju-charm-search', function(Y) {
               { container: charmsSearchPanelNode,
                 env: app.env,
                 db: app.db,
+                charms: charms,
                 charmStore: charmStore }),
         descriptionPanelNode = Y.Node.create(),
         descriptionPanel = new CharmDescriptionView(
@@ -509,15 +531,19 @@ YUI.add('juju-charm-search', function(Y) {
         contentNode.append(panels[config.name].get('container'));
         if (config.charmId) {
           newPanel.set('model', null); // Clear out the old.
-          charms.loadOneByBaseId(
-              config.charmId,
-              { success: function(charm) {newPanel.set('model', charm);},
-                failure: function(data) {
-                  console.log('error loading charm', data);
-                  newPanel.fire('changePanel', {name: 'charms'});
-                },
-                charm_store: charmStore
-              });
+          var charm = charms.getById(config.charmId);
+          if (charm.loaded) {
+            newPanel.set('model', charm);
+          } else {
+            charm.load(charmStore, function(err, response) {
+              if (err) {
+                console.log('error loading charm', response);
+                newPanel.fire('changePanel', {name: 'charms'});
+              } else {
+                newPanel.set('model', charm);
+              }
+            });
+          }
         } else { // This is the search panel.
           newPanel.render();
         }

@@ -16,9 +16,11 @@ YUI.add('juju-charm-store', function(Y) {
         }
       });
     },
-    // The query can be a string that is passed directly to the search url, or a
-    // hash that is marshalled to the correct format (e.g., {series:precise,
-    // owner:charmers}).
+    // The query can be a string that is passed directly to the search url, or
+    // a hash that is marshalled to the correct format (e.g.,
+    // {series:precise owner:charmers}).  The method returns CharmId instances
+    // grouped by series and ordered within the groups according to the
+    // CharmId compare function.
     find: function(query, options) {
       if (!Y.Lang.isString(query)) {
         var tmp = [];
@@ -38,32 +40,33 @@ YUI.add('juju-charm-store', function(Y) {
             console.log('results update', result_set);
             options.success(
                 this._normalizeCharms(
-                result_set.results, options.defaultSeries));
+                result_set.results, options.list, options.defaultSeries));
           }, this),
           'failure': options.failure
         }});
     },
-    // Stash the base id on each charm, convert the official "charmers" owner to
-    // an empty owner, and group the charms within series.  The series are
-    // arranged with first the defaultSeries, if any, and then all other
-    // available series arranged from newest to oldest. Within each series,
-    // official charms come first, sorted by relevance if available and package
-    // name otherwise; and then owned charms follow, sorted again by relevance
-    // if available and package name otherwise.
-    _normalizeCharms: function(charms, defaultSeries) {
-      var hash = {};
-      Y.each(charms, function(charm) {
-        charm.baseId = charm.series + '/' + charm.name;
-        if (charm.owner === 'charmers') {
-          charm.owner = null;
-        } else {
-          charm.baseId = '~' + charm.owner + '/' + charm.baseId;
+    // Convert the charm data into Charm instances, using only id and
+    // relevance.  Group them into series.  The series are arranged with first
+    // the defaultSeries, if any, and then all other available series arranged
+    // from newest to oldest. Within each series, official charms come first,
+    // sorted by relevance if available and package name otherwise; and then
+    // owned charms follow, sorted again by relevance if available and package
+    // name otherwise.
+    _normalizeCharms: function(results, list, defaultSeries) {
+      var hash = {},
+          relevances = {};
+      Y.each(results, function(result) {
+        var charm = list.getById(result.store_url);
+        if (!charm) {
+          charm = list.add(
+              { id: result.store_url, summary: result.summary });
         }
-        charm.baseId = 'cs:' + charm.baseId;
-        if (!Y.Lang.isValue(hash[charm.series])) {
-          hash[charm.series] = [];
+        var series = charm.get('series');
+        if (!Y.Lang.isValue(hash[series])) {
+          hash[series] = [];
         }
-        hash[charm.series].push(charm);
+        hash[series].push(charm);
+        relevances[charm.get('id')] = result.relevance;
       });
       var series_names = Y.Object.keys(hash);
       series_names.sort(function(a, b) {
@@ -71,42 +74,19 @@ YUI.add('juju-charm-store', function(Y) {
           return -1;
         } else if (a !== defaultSeries && b === defaultSeries) {
           return 1;
-        } else if (a > b) {
-          return -1;
-        } else if (a < b) {
-          return 1;
         } else {
-          return 0;
+          return -a.localeCompare(b);
         }
       });
       return Y.Array.map(series_names, function(name) {
         var charms = hash[name];
         charms.sort(function(a, b) {
-          // If !a.owner, that means it is owned by charmers.
-          if (!a.owner && b.owner) {
-            return -1;
-          } else if (a.owner && !b.owner) {
-            return 1;
-          } else if (a.relevance < b.relevance) {
-            return 1; // Higher relevance comes first.
-          } else if (a.relevance > b.relevance) {
-            return -1;
-          } else if (a.name < b.name) {
-            return -1;
-          } else if (a.name > b.name) {
-            return 1;
-          } else if (a.owner < b.owner) {
-            return -1;
-          } else if (a.owner > b.owner) {
-            return 1;
-          } else {
-            return 0;
-          }
+          return a.compare(
+              b, relevances[a.get('id')], relevances[b.get('id')]);
         });
         return {series: name, charms: hash[name]};
       });
     }
-
   }, {
     ATTRS: {
       datasource: {

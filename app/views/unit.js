@@ -1,4 +1,10 @@
 'use strict';
+/**
+ * The unit view(s).
+ *
+ * @module views
+ * @submodule unit
+ */
 
 YUI.add('juju-view-unit', function(Y) {
 
@@ -7,6 +13,12 @@ YUI.add('juju-view-unit', function(Y) {
       utils = Y.namespace('juju.views.utils'),
       Templates = views.Templates;
 
+  /**
+   * Display a unit.
+   *
+   * @class UnitView
+   * @namespace views.unit
+   */
   var UnitView = Y.Base.create('UnitView', Y.View, [], {
     initializer: function() {
       console.log('view.init.unit', this.get('unit'));
@@ -14,6 +26,9 @@ YUI.add('juju-view-unit', function(Y) {
 
     template: Templates.unit,
 
+    /**
+     * @method render
+     */
     render: function() {
       var container = this.get('container');
       console.log('view.render.unit');
@@ -307,7 +322,6 @@ YUI.add('juju-view-unit', function(Y) {
     }
 
   });
-
 
   views.unit = UnitView;
 
