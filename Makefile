@@ -6,7 +6,7 @@ NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 	node_modules/.bin node_modules/node-markdown node_modules/rimraf \
 	node_modules/mocha node_modules/d3 node_modules/graceful-fs \
 	node_modules/should node_modules/jshint node_modules/expect.js \
-	node_modules/express node_modules/yui
+	node_modules/express node_modules/yui node_modules/yuidoc
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 DATE=$(shell date -u)
 APPCACHE=app/assets/manifest.appcache
