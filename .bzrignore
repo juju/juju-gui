@@ -17,3 +17,5 @@ app/assets/stylesheets/juju-gui.css
 tags
 Session.vim
 virtualenv
+yuidoc
+app/assets/manifest.appcache

@@ -30,7 +30,7 @@
       app = { env: env, db: db,
               getModelURL: function(model, intent) {
                 return model.get('name'); }};
-      charm = new models.Charm({id: 'cs:precise/mysql',
+      charm = new models.Charm({id: 'cs:precise/mysql-5',
         description: 'A DB'});
       db.charms.add([charm]);
       // Add units sorted by id as that is what we expect from the server.
@@ -40,7 +40,7 @@
           ]);
       service = new models.Service({
         id: 'mysql',
-        charm: 'cs:precise/mysql',
+        charm: 'cs:precise/mysql-5',
         unit_count: db.units.size(),
         exposed: false});
 

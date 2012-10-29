@@ -50,7 +50,8 @@ YUI.add('juju-charm-search', function(Y) {
                 self.set('resultEntries', charms);
               },
               failure: Y.bind(this._showErrors, this),
-              defaultSeries: this.get('defaultSeries')
+              defaultSeries: this.get('defaultSeries'),
+              list: this.get('charms')
               });
         }
       });
@@ -63,7 +64,8 @@ YUI.add('juju-charm-search', function(Y) {
                 self.set('defaultEntries', charms);
               },
               failure: Y.bind(this._showErrors, this),
-              defaultSeries: this.get('defaultSeries')
+              defaultSeries: this.get('defaultSeries'),
+              list: this.get('charms')
               });
         }
       });
@@ -81,8 +83,17 @@ YUI.add('juju-charm-search', function(Y) {
           searchText = this.get('searchText'),
           defaultEntries = this.get('defaultEntries'),
           resultEntries = this.get('resultEntries'),
-          entries = searchText ? resultEntries : defaultEntries;
-      container.setHTML(this.template({charms: entries}));
+          raw_entries = searchText ? resultEntries : defaultEntries,
+          entries = raw_entries && raw_entries.map(
+              function(data) {
+                return {
+                  series: data.series,
+                  charms: data.charms.map(
+                      function(charm) { return charm.getAttrs(); })
+                };
+              }
+          );
+      container.setHTML(this.template({ charms: entries }));
       return this;
     },
     showDetails: function(ev) {
@@ -156,7 +167,7 @@ YUI.add('juju-charm-search', function(Y) {
   views.CharmDescriptionView = CharmDescriptionView;
 
   var CharmConfigurationView = Y.Base.create(
-      'CharmCollectionView', Y.View, [views.JujuBaseView], {
+      'CharmConfigurationView', Y.View, [views.JujuBaseView], {
         template: views.Templates['charm-pre-configuration'],
         tooltip: null,
         configFileContent: null,
@@ -411,7 +422,8 @@ YUI.add('juju-charm-search', function(Y) {
         charmsSearchPanel = new CharmCollectionView(
               { container: charmsSearchPanelNode,
                 app: app,
-                charmStore: charmStore }),
+                charmStore: charmStore,
+                charms: charms }),
         descriptionPanelNode = Y.Node.create(),
         descriptionPanel = new CharmDescriptionView(
               { container: descriptionPanelNode,
@@ -444,15 +456,19 @@ YUI.add('juju-charm-search', function(Y) {
         contentNode.append(panels[config.name].get('container'));
         if (config.charmId) {
           newPanel.set('model', null); // Clear out the old.
-          charms.loadOneByBaseId(
-              config.charmId,
-              { success: function(charm) {newPanel.set('model', charm);},
-                failure: function(data) {
-                  console.log('error loading charm', data);
-                  newPanel.fire('changePanel', {name: 'charms'});
-                },
-                charm_store: charmStore
-              });
+          var charm = charms.getById(config.charmId);
+          if (charm.loaded) {
+            newPanel.set('model', charm);
+          } else {
+            charm.load(charmStore, function(err, response) {
+              if (err) {
+                console.log('error loading charm', response);
+                newPanel.fire('changePanel', {name: 'charms'});
+              } else {
+                newPanel.set('model', charm);
+              }
+            });
+          }
         } else { // This is the search panel.
           newPanel.render();
         }

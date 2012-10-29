@@ -91,7 +91,7 @@ describe('charm configuration', function() {
           received_charm_url = charm_url;
           received_service_name = service_name;
         }},
-        charm = new models.Charm({id: 'precise/mysql-7'}),
+        charm = new models.Charm({id: 'cs:precise/mysql-7'}),
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
@@ -119,7 +119,7 @@ describe('charm configuration', function() {
             received_config = config;
             received_num_units = num_units;
           }},
-        charm = new models.Charm({id: 'precise/mysql-7'}),
+        charm = new models.Charm({id: 'cs:precise/mysql-7'}),
         view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
