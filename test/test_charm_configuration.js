@@ -1,7 +1,7 @@
 'use strict';
 
 describe('charm configuration', function() {
-  var Y, juju, app, db, models, views, container,
+  var Y, juju, db, models, views, makeView, container,
       charmConfig =
           { config:
                 { options:
@@ -43,24 +43,29 @@ describe('charm configuration', function() {
     container = Y.Node.create('<div id="juju-search-charm-panel" />');
     Y.one('#main').append(container);
     db = new models.Database();
-    app = { db: db };
+    makeView = function(charm, env) {
+      return new views.CharmConfigurationView(
+          { container: container,
+            db: db,
+            env: env,
+            model: charm,
+            tooltipDelay: 0 }).render();
+    };
   });
+
   afterEach(function() {
     container.remove(true);
   });
 
   it('must show loading message if the charm is not loaded', function() {
-    var view = new views.CharmConfigurationView({container: container});
-    view.render();
+    var view = makeView();
     container.one('div.alert').get('text').trim().should.equal(
         'Waiting on charm data...');
   });
 
   it('must have inputs for service and number of units', function() {
     var charm = new models.Charm({id: 'precise/mysql-7'}),
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm});
+        view = makeView(charm);
     charm.loaded = true;
     // If the charm has no config options it is still handled.
     assert.isTrue(!Y.Lang.isValue(charm.config));
@@ -92,11 +97,7 @@ describe('charm configuration', function() {
           received_service_name = service_name;
         }},
         charm = new models.Charm({id: 'cs:precise/mysql-7'}),
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          app: app});
-    app.env = env;
+        view = makeView(charm, env);
     charm.loaded = true;
     view.render();
     container.one('#service-name').get('value').should.equal('mysql');
@@ -120,11 +121,7 @@ describe('charm configuration', function() {
             received_num_units = num_units;
           }},
         charm = new models.Charm({id: 'cs:precise/mysql-7'}),
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          app: app});
-    app.env = env;
+        view = makeView(charm, env);
     charm.setAttrs(
         { config:
               { options:
@@ -149,17 +146,14 @@ describe('charm configuration', function() {
   it('must not deploy a charm with same name as an existing service',
      function() {
        var deployed = false,
-       env = {deploy: function(charm_url, service_name, config, config_raw,
-                               num_units) {
+       env =
+       { deploy:
+         function(charm_url, service_name, config, config_raw, num_units) {
            deployed = true;
          }},
        charm = new models.Charm({id: 'precise/mysql-7'}),
-       view = new views.CharmConfigurationView(
-       { container: container,
-         model: charm,
-         app: app});
+       view = makeView(charm, env);
        db.services.add([{id: 'wordpress'}]);
-       app.env = env;
        charm.loaded = true;
        view.render();
        container.one('#service-name').set('value', 'wordpress');
@@ -353,17 +347,14 @@ describe('charm configuration', function() {
     var received_config,
         received_config_raw,
         charm = new models.Charm({id: 'precise/mysql-7'}),
-        app = {db: {services: {getById: function(name) {return null;}}},
-          env: {deploy: function(charm_url, service_name, config, config_raw,
-                                 num_units) {
-              received_config = config;
-              received_config_raw = config_raw;
-            }}},
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          app: app,
-          tooltipDelay: 0 });
+        db = {services: {getById: function(name) {return null;}}},
+        env =
+        { deploy:
+              function(charm_url, service_name, config, config_raw, num_units) {
+                received_config = config;
+                received_config_raw = config_raw;
+              }},
+        view = makeView(charm, env, db);
     charm.setAttrs(
         { config:
               { options:

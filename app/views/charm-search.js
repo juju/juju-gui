@@ -112,9 +112,80 @@ YUI.add('juju-charm-search', function(Y) {
           { name: 'configuration',
             charmId: ev.currentTarget.getData('url')});
     },
+    // Create a data structure friendly to the view
+    normalizeCharms: function(charms) {
+      var hash = {},
+          defaultSeries = this.get('defaultSeries');
+      Y.each(charms, function(charm) {
+        charm.url = charm.series + '/' + charm.name;
+        if (charm.owner === 'charmers') {
+          charm.owner = null;
+        } else {
+          charm.url = '~' + charm.owner + '/' + charm.url;
+        }
+        charm.url = 'cs:' + charm.url;
+        if (!Y.Lang.isValue(hash[charm.series])) {
+          hash[charm.series] = [];
+        }
+        hash[charm.series].push(charm);
+      });
+      var series_names = Y.Object.keys(hash);
+      series_names.sort(function(a, b) {
+        if ((a === defaultSeries && b !== defaultSeries) || a > b) {
+          return -1;
+        } else if ((a !== defaultSeries && b === defaultSeries) || a < b) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+      return Y.Array.map(series_names, function(name) {
+        var charms = hash[name];
+        charms.sort(function(a, b) {
+          // If !a.owner, that means it is owned by charmers.
+          if ((!a.owner && b.owner) || (a.owner < b.owner)) {
+            return -1;
+          } else if ((a.owner && !b.owner) || (a.owner > b.owner)) {
+            return 1;
+          } else if (a.name < b.name) {
+            return -1;
+          } else if (a.name > b.name) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+        return {series: name, charms: hash[name]};
+      });
+    },
+    findCharms: function(query, callback) {
+      var charmStore = this.get('charmStore'),
+          db = this.get('db');
+      charmStore.sendRequest({
+        request: 'search/json?search_text=' + query,
+        callback: {
+          'success': Y.bind(function(io_request) {
+            // To see an example of what is being obtained, look at
+            // http://jujucharms.com/search/json?search_text=mysql .
+            var result_set = Y.JSON.parse(
+                io_request.response.results[0].responseText);
+            console.log('results update', result_set);
+            callback(this.normalizeCharms(result_set.results));
+          }, this),
+          'failure': function er(e) {
+            console.error(e.error);
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Could not retrieve charms',
+                  message: e.error,
+                  level: 'error'
+                })
+            );
+          }}});
+    },
     _showErrors: function(e) {
       console.error(e.error);
-      this.get('app').db.notifications.add(
+      this.get('db').notifications.add(
           new models.Notification({
             title: 'Could not retrieve charms',
             message: e.error,
@@ -292,8 +363,8 @@ YUI.add('juju-charm-search', function(Y) {
             // Some file read errors don't go through the error handler as
             // expected but instead return an empty string.  Warn the user if
             // this happens.
-            var app = this.get('app');
-            app.db.notifications.add(
+            var db = this.get('db');
+            db.notifications.add(
                 new models.Notification({
                   title: 'Configuration file error',
                   message: 'The configuration file loaded is empty.  ' +
@@ -319,8 +390,8 @@ YUI.add('juju-charm-search', function(Y) {
               msg = 'An error occurred reading this file.';
           }
           if (msg) {
-            var app = this.get('app');
-            app.db.notifications.add(
+            var db = this.get('db');
+            db.notifications.add(
                 new models.Notification({
                   title: 'Error reading configuration file',
                   message: msg,
@@ -335,7 +406,8 @@ YUI.add('juju-charm-search', function(Y) {
         },
         onCharmDeployClicked: function(evt) {
           var container = this.get('container'),
-              app = this.get('app'),
+              db = this.get('db'),
+              env = this.get('env'),
               serviceName = container.one('#service-name').get('value'),
               numUnits = container.one('#number-units').get('value'),
               charm = this.get('model'),
@@ -344,11 +416,11 @@ YUI.add('juju-charm-search', function(Y) {
                   '#service-config .config-field');
           // The service names must be unique.  It is an error to deploy a
           // service with same name.
-          var existing_service = app.db.services.getById(serviceName);
+          var existing_service = db.services.getById(serviceName);
           if (Y.Lang.isValue(existing_service)) {
             console.log('Attempting to add service of the same name: ' +
                         serviceName);
-            app.db.notifications.add(
+            db.notifications.add(
                 new models.Notification({
                   title: 'Attempting to deploy service ' + serviceName,
                   message: 'A service with that name already exists.',
@@ -360,11 +432,11 @@ YUI.add('juju-charm-search', function(Y) {
             config = null;
           }
           numUnits = parseInt(numUnits, 10);
-          app.env.deploy(url, serviceName, config, this.configFileContent,
-                         numUnits, function(ev) {
+          env.deploy(url, serviceName, config, this.configFileContent,
+              numUnits, function(ev) {
                 if (ev.err) {
                   console.log(url + ' deployment failed');
-                  app.db.notifications.add(
+                  db.notifications.add(
                       new models.Notification({
                         title: 'Error deploying ' + serviceName,
                         message: 'Could not deploy the requested service.',
@@ -372,7 +444,7 @@ YUI.add('juju-charm-search', function(Y) {
                       }));
                 } else {
                   console.log(url + ' deployed');
-                  app.db.notifications.add(
+                  db.notifications.add(
                       new models.Notification({
                         title: 'Deployed ' + serviceName,
                         message: 'Successfully deployed the requested service.',
@@ -388,9 +460,9 @@ YUI.add('juju-charm-search', function(Y) {
                     loaded: false,
                     config: config
                   });
-                  app.db.services.add([service]);
+                  db.services.add([service]);
                   // Force refresh.
-                  app.db.fire('update');
+                  db.fire('update');
                 }
               });
           this.goBack(evt);
@@ -421,17 +493,20 @@ YUI.add('juju-charm-search', function(Y) {
         charmsSearchPanelNode = Y.Node.create(),
         charmsSearchPanel = new CharmCollectionView(
               { container: charmsSearchPanelNode,
-                app: app,
-                charmStore: charmStore,
-                charms: charms }),
+                env: app.env,
+                db: app.db,
+                charms: charms,
+                charmStore: charmStore }),
         descriptionPanelNode = Y.Node.create(),
         descriptionPanel = new CharmDescriptionView(
               { container: descriptionPanelNode,
-                app: app }),
+                env: app.env,
+                db: app.db}),
         configurationPanelNode = Y.Node.create(),
         configurationPanel = new CharmConfigurationView(
               { container: configurationPanelNode,
-                app: app}),
+                env: app.env,
+                db: app.db}),
         panels =
               { charms: charmsSearchPanel,
                 description: descriptionPanel,
