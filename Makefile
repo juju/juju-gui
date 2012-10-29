@@ -17,7 +17,7 @@ all: install
 app/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	@./bin/generateTemplates
 
-yuidoc: $(FILES)
+yuidoc: install $(FILES)
 	@node_modules/.bin/yuidoc -o yuidoc -x assets app
 
 $(NODE_TARGETS): package.json
