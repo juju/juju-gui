@@ -801,7 +801,7 @@ YUI.add('juju-view-utils', function(Y) {
     // Attempt to get the viewport height minus the navbar at top and
     // control bar at the bottom.
     var containerHeight = Y.one('body').get(
-          primary ? 'winHeight' : 'docHeight'),
+        primary ? 'winHeight' : 'docHeight'),
         bottomNavbar = Y.one('.bottom-navbar'),
         navbar = Y.one('.navbar'),
         viewport = Y.one('#viewport'),
