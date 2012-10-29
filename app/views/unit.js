@@ -27,7 +27,10 @@ YUI.add('juju-view-unit', function(Y) {
     template: Templates.unit,
 
     /**
+     * Render the view.
+     *
      * @method render
+     * @chainable
      */
     render: function() {
       var container = this.get('container');
