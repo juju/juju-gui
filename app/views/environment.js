@@ -1248,7 +1248,7 @@ YUI.add('juju-view-environment', function(Y) {
           // presence or absence of scrollbars may affect our calculations
           // incorrectly.
           canvas.setStyles({height: 600, width: 800});
-          var dimensions = utils.getEffectiveViewportSize(800, 600);
+          var dimensions = utils.getEffectiveViewportSize(true, 800, 600);
           // Set the svg sizes.
           svg.setAttribute('width', dimensions.width)
             .setAttribute('height', dimensions.height);

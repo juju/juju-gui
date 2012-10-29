@@ -590,7 +590,7 @@ YUI.add('juju-charm-search', function(Y) {
 
     function calculatePanelPosition() {
       var headerBox = Y.one('#charm-search-trigger-container'),
-          dimensions = utils.getEffectiveViewportSize(0, 0);
+          dimensions = utils.getEffectiveViewportSize();
       return { x: headerBox && Math.round(headerBox.getX()),
                height: dimensions.height + 17 };
     }

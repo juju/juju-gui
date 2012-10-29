@@ -793,28 +793,29 @@ YUI.add('juju-view-utils', function(Y) {
     if ((/-?error$/).test(state)) {
       return 'error';
     }
-    // "pending", "installed", and "stopped", plus anything unforseen
+    // "pending", "installed", and "stopped", plus anything unforeseen
     return 'pending';
   };
 
-  utils.getEffectiveViewportSize = function(minwidth, minheight) {
+  utils.getEffectiveViewportSize = function(primary, minwidth, minheight) {
     // Attempt to get the viewport height minus the navbar at top and
     // control bar at the bottom.
-    var docHeight = Y.one('body').get('docHeight'),
+    var containerHeight = Y.one('body').get(
+          primary ? 'winHeight' : 'docHeight'),
         bottomNavbar = Y.one('.bottom-navbar'),
         navbar = Y.one('.navbar'),
         viewport = Y.one('#viewport'),
-        result = {height: minheight, width: minwidth};
-    if (docHeight && navbar && viewport) {
-      result.height = docHeight -
+        result = {height: minheight || 0, width: minwidth || 0};
+    if (containerHeight && navbar && viewport) {
+      result.height = containerHeight -
           (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0) -
           navbar.get('offsetHeight') - 1;
 
       result.width = viewport.get('offsetWidth');
 
       // Make sure we don't get sized any smaller than the minimum.
-      result.height = Math.max(result.height, minheight);
-      result.width = Math.max(result.width, minwidth);
+      result.height = Math.max(result.height, minheight || 0);
+      result.width = Math.max(result.width, minwidth || 0);
     }
     return result;
   };

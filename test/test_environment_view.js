@@ -270,7 +270,7 @@
          parseInt(svg.getAttribute('height'), 10)
           .should.equal(
               Math.max(600,
-                  container.get('docHeight') -
+                  container.get('winHeight') -
                   Y.one('.bottom-navbar').get('offsetHeight') -
                   Y.one('.navbar').get('offsetHeight') - 1));
          // Destroy the navbar
