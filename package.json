@@ -28,7 +28,9 @@
     "yuidocjs": "0.3.x",
     "minimatch": "0.2.x",
     "graceful-fs": "1.1.x",
-    "rimraf": "2.0.x"
+    "rimraf": "2.0.x",
+    "grunt": ">=0.2.0",
+    "node-spritesheet": ">=0.2.3"
   },
   "optionalDependencies": {}
 }

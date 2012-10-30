@@ -1,6 +1,7 @@
 FILES=$(shell bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js | grep -v server.js)
 NODE_TARGETS=node_modules/chai node_modules/d3 node_modules/jshint \
-	node_modules/yui node_modules/yuidoc
+	node_modules/yui node_modules/yuidoc node_modules/grunt \
+	node_modules/node-spritesheet
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 DATE=$(shell date -u)
 APPCACHE=app/assets/manifest.appcache
@@ -41,12 +42,10 @@ beautify: virtualenv/bin/fixjsstyle
 	@virtualenv/bin/fixjsstyle --strict --nojsdoc --jslint_error=all $(FILES)
 
 spritegen:
-	rm -f spritegen-$(SPRITEGEN-VERSION).jar
-	wget http://people.apache.org/~tveronezi/spritegen/dist/spritegen-$(SPRITEGEN-VERSION).jar
-	java -jar spritegen-1.0.jar -src ./app/assets/images -assetsPath /juju-ui/assets
-	mv sprite.css ./app/assets/stylesheets/
-	mv sprite.png ./app/assets/
-	rm -f spritegen-$(SPRITEGEN-VERSION).jar
+	rm -Rf bin/sprite/
+	rm -Rf app/assets/sprite/
+	@node_modules/grunt/bin/grunt spritegen
+	mv bin/sprite app/assets/sprite/
 
 prep: beautify lint
 
