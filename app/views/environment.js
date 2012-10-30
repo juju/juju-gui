@@ -185,7 +185,13 @@ YUI.add('juju-view-environment', function(Y) {
               self.service_click_actions.toggleControlPanel(null, self);
               self.cancelRelationBuild();
             },
-            mousemove: 'rectMousemove'
+            mousemove: function(d, self) {
+              if (self.clickAddRelation) {
+                var container = self.get('container'),
+                    node = container.one('#canvas rect:first-child');
+                self.rectMousemove.call(node.getDOMNode(), d, self);
+              }
+            }
           }
         },
 
