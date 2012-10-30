@@ -180,14 +180,17 @@ YUI.add('juju-view-environment', function(Y) {
           // Canvas related
           '#canvas *': {
             click: function(d, self) {
-              var container = self.get('container');
-              if (!self.clickAddRelation) {
+              var container = self.get('container'),
+                  first_rect = container.one('#canvas rect:first-child');
+              console.log(this, first_rect);
+              if (this._yuid === first_rect._yuid) {
                 container.all('.environment-menu.active').removeClass('active');
                 self.service_click_actions.toggleControlPanel(null, self);
                 self.cancelRelationBuild();
-              } else {
+              } else if (self.clickAddRelation) {
+                self.cancelRelationBuild();
               }
-            }
+            },
           },
           '#canvas rect:first-child': {
             mousemove: function(d, self) {
