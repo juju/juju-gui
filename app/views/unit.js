@@ -27,7 +27,10 @@ YUI.add('juju-view-unit', function(Y) {
     template: Templates.unit,
 
     /**
+     * Render the view.
+     *
      * @method render
+     * @chainable
      */
     render: function() {
       var container = this.get('container');
@@ -138,7 +141,7 @@ YUI.add('juju-view-unit', function(Y) {
     _resolvedUnitCallback: function(button, ev) {
       var unit = this.get('unit'),
           db = this.get('db'),
-          app = this.get('app'),
+          getModelURL = this.get('getModelURL'),
           service = db.services.getById(unit.service);
       if (ev.err) {
         db.notifications.add(
@@ -146,7 +149,7 @@ YUI.add('juju-view-unit', function(Y) {
               title: 'Error resolving unit',
               message: 'Unit name: ' + ev.unit_name,
               level: 'error',
-              link: app.getModelURL(unit),
+              link: getModelURL(unit),
               modelId: unit
             })
         );
@@ -187,7 +190,7 @@ YUI.add('juju-view-unit', function(Y) {
     _removeUnitCallback: function(btn, ev) {
       var unit = this.get('unit'),
           db = this.get('db'),
-          app = this.get('app'),
+          getModelURL = this.get('getModelURL'),
           service = db.services.getById(unit.service),
           unit_name = ev.unit_names[0];
 
@@ -197,7 +200,7 @@ YUI.add('juju-view-unit', function(Y) {
               title: 'Error removing unit',
               message: 'Unit name: ' + unit_name,
               level: 'error',
-              link: app.getModelURL(unit),
+              link: getModelURL(unit),
               modelId: unit
             })
         );
@@ -216,7 +219,7 @@ YUI.add('juju-view-unit', function(Y) {
       var env = this.get('env'),
           unit = this.get('unit'),
           db = this.get('db'),
-          app = this.get('app'),
+          getModelURL = this.get('getModelURL'),
           service = db.services.getById(unit.service),
           button = ev.target;
       button.set('disabled', true);
@@ -228,7 +231,7 @@ YUI.add('juju-view-unit', function(Y) {
                     title: 'Error retrying unit',
                     message: 'Unit name: ' + ev.unit_name,
                     level: 'error',
-                    link: app.getModelURL(unit),
+                    link: getModelURL(unit),
                     modelId: unit
                   })
               );
@@ -272,7 +275,7 @@ YUI.add('juju-view-unit', function(Y) {
       views.highlightRow(button.ancestor('tr'), ev.err);
       if (ev.err) {
         var db = this.get('db'),
-            app = this.get('app'),
+            getModelURL = this.get('getModelURL'),
             unit = this.get('unit'),
             relation_id = button.ancestor('tr').get('id'),
             relation = db.relations.getById(relation_id);
@@ -281,7 +284,7 @@ YUI.add('juju-view-unit', function(Y) {
               title: 'Error resolving relation',
               message: 'Could not resolve a unit relation',
               level: 'error',
-              link: app.getModelURL(unit) + '?rel_id=' + relation_id,
+              link: getModelURL(unit) + '?rel_id=' + relation_id,
               modelId: relation
             })
         );
@@ -295,7 +298,7 @@ YUI.add('juju-view-unit', function(Y) {
       var env = this.get('env'),
           unit = this.get('unit'),
           db = this.get('db'),
-          app = this.get('app'),
+          getModelURL = this.get('getModelURL'),
           button = ev.target,
           relation_name = button.ancestor('form').get('id');
       button.set('disabled', true);
@@ -311,7 +314,7 @@ YUI.add('juju-view-unit', function(Y) {
                     title: 'Error retrying relation',
                     message: 'Could not retry a unit relation',
                     level: 'error',
-                    link: app.getModelURL(unit) + '?rel_id=' + relation_id,
+                    link: getModelURL(unit) + '?rel_id=' + relation_id,
                     modelId: relation
                   })
               );

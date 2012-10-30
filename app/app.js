@@ -317,7 +317,7 @@ YUI.add('juju-gui', function(Y) {
           'unit',
           // The querystring is used to handle highlighting relation rows in
           // links from notifications about errors.
-          { unit: unit, db: this.db, env: this.env, app: this,
+          { unit: unit, db: this.db, env: this.env,
             querystring: req.query });
     },
 
@@ -335,7 +335,7 @@ YUI.add('juju-gui', function(Y) {
       if (Y.Lang.isValue(service)) {
         if (!service.get('loaded')) {
           this.env.get_service(
-              service.get('id'), Y.bind(this.load_service, this));
+              service.get('id'), Y.bind(this.loadService, this));
         }
         var charm_id = service.get('charm'),
             self = this;
@@ -360,7 +360,9 @@ YUI.add('juju-gui', function(Y) {
       this._prefetch_service(service);
       this.showView(viewName, {
         model: service,
-        app: this,
+        db: this.db,
+        env: this.env,
+        getModelURL: Y.bind(this.getModelURL, this),
         querystring: req.query
       }, {}, function(view) {
         // If the view contains a method call fitToWindow,
@@ -428,7 +430,6 @@ YUI.add('juju-gui', function(Y) {
      */
     show_notifications_overview: function(req) {
       this.showView('notifications_overview', {
-        app: this,
         env: this.env,
         notifications: this.db.notifications});
     },
@@ -448,7 +449,6 @@ YUI.add('juju-gui', function(Y) {
       if (!instance) {
         view.instance = new views.NotificationsView(
             {container: Y.one('#notifications'),
-              app: this,
               env: this.env,
               notifications: this.db.notifications});
         view.instance.render();
@@ -478,14 +478,18 @@ YUI.add('juju-gui', function(Y) {
      */
     show_environment: function(req, res, next) {
       var view = this.getViewInfo('environment'),
-          instance = view.instance;
+          instance = view.instance,
+          self = this;
       if (!instance) {
         console.log('new env view');
-        this.showView('environment', {
-          app: this,
-          db: this.db,
-          env: this.env},
-        {render: true});
+        this.showView('environment',
+            { getModelURL: Y.bind(this.getModelURL, this),
+              /** A simple closure so changes to the value are available.*/
+              getServiceEndpoints: function() {return self.serviceEndpoints;},
+              loadService: this.loadService,
+              db: this.db,
+              env: this.env},
+            {render: true});
       } else {
         /* The current impl makes extensive use of
          * event handlers which are not being properly rebound
@@ -493,17 +497,16 @@ YUI.add('juju-gui', function(Y) {
          * to enable this but we have to land the basics of this branch
          * first.
          */
-        this.showView('environment', {app: this,
-          db: this.db,
-          env: this.env}, {
-          update: false,
-          render: true,
-          callback: function(view) {
-            //view.attachView();
-            view.postRender();
-            //view.updateCanvas();
-          }
-        });
+        this.showView('environment',
+            { getModelURL: Y.bind(this.getModelURL, this),
+              /** A simple closure so changes to the value are available.*/
+              getServiceEndpoints: function() {return self.serviceEndpoints;},
+              loadService: this.loadService,
+              db: this.db,
+              env: this.env},
+            { update: false,
+              render: true,
+              callback: function(view) {view.postRender();}});
       }
       next();
     },
@@ -513,7 +516,7 @@ YUI.add('juju-gui', function(Y) {
      *
      * @method load_service
      */
-    load_service: function(evt) {
+    loadService: function(evt) {
       console.log('load service', evt);
       if (evt.err) {
         this.db.notifications.add(

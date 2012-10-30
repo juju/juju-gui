@@ -164,8 +164,10 @@ YUI.add('juju-charm-models', function(Y) {
           is_subordinate: {writeOnce: true},
           last_change: {
             writeOnce: true,
+            /**
+             * Normalize created value from float to date object.
+             */
             setter: function(val) {
-              // Normalize created value from float to date object.
               if (val && val.created) {
                 // Mutating in place should be fine since this should only
                 // come from loading over the wire.
@@ -184,6 +186,9 @@ YUI.add('juju-charm-models', function(Y) {
           requires: {writeOnce: true},
           revision: {
             writeOnce: true,
+            /**
+             * Parse the revision number out of a string.
+             */
             setter: function(val) {
               if (Y.Lang.isValue(val)) {
                 val = parseInt(val, 10);
@@ -194,6 +199,9 @@ YUI.add('juju-charm-models', function(Y) {
           scheme: {
             value: 'cs',
             writeOnce: true,
+            /**
+             * If no value is given, "cs" is used as the default.
+             */
             setter: function(val) {
               if (!Y.Lang.isValue(val)) {
                 val = 'cs';
