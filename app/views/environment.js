@@ -129,6 +129,13 @@ YUI.add('juju-view-environment', function(Y) {
                 self.dragline.attr('class',
                     'relation pending-relation dragline dragging');
               }
+            },
+            mousemove: function(d, self) {
+              if (self.clickAddRelation) {
+                var container = self.get('container'),
+                    node = container.one('#canvas rect:first-child');
+                self.rectMousemove.call(node.getDOMNode(), d, self);
+              }
             }
           },
           '.sub-rel-block': {
@@ -160,7 +167,14 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Relation Related
           '.rel-label': {
-            click: 'relationClick'
+            click: 'relationClick',
+            mousemove: function(d, self) {
+              if (self.clickAddRelation) {
+                var container = self.get('container'),
+                    node = container.one('#canvas rect:first-child');
+                self.rectMousemove.call(node.getDOMNode(), d, self);
+              }
+            }
           },
 
           // Canvas related
@@ -171,17 +185,7 @@ YUI.add('juju-view-environment', function(Y) {
               self.service_click_actions.toggleControlPanel(null, self);
               self.cancelRelationBuild();
             },
-            mousemove: function(d, self) {
-              // If we're clicking to add a relation, make sure a dragline
-              // follows the mouse cursor.
-              if (self.clickAddRelation) {
-                var mouse = d3.mouse(this);
-                d3.event.x = mouse[0];
-                d3.event.y = mouse[1];
-                self.addRelationDrag
-                  .call(self, self.get('addRelationStart_service'), this);
-              }
-            }
+            mousemove: 'rectMousemove'
           }
         },
 
@@ -413,6 +417,18 @@ YUI.add('juju-view-environment', function(Y) {
 
         relationClick: function(d, self) {
           self.removeRelationConfirm(d, this, self);
+        },
+
+        rectMousemove: function(d, self) {
+          // If we're clicking to add a relation, make sure a dragline
+          // follows the mouse cursor.
+          if (self.clickAddRelation) {
+            var mouse = d3.mouse(this);
+            d3.event.x = mouse[0];
+            d3.event.y = mouse[1];
+            self.addRelationDrag
+              .call(self, self.get('addRelationStart_service'), this);
+          }
         },
 
         /*
