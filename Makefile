@@ -1,7 +1,14 @@
 FILES=$(shell bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js | grep -v server.js)
-NODE_TARGETS=node_modules/chai node_modules/d3 node_modules/jshint \
-	node_modules/yui node_modules/yuidoc node_modules/grunt \
-	node_modules/node-spritesheet
+# After a successful "make" run, the NODE_TARGETS list can be regenerated with
+# this command (and then manually pasted in here):
+# find node_modules -maxdepth 1 -mindepth 1 -type d -printf 'node_modules/%f '
+NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
+	node_modules/yuidocjs node_modules/chai node_modules/less \
+	node_modules/.bin node_modules/node-markdown node_modules/rimraf \
+	node_modules/mocha node_modules/d3 node_modules/graceful-fs \
+	node_modules/should node_modules/jshint node_modules/expect.js \
+	node_modules/express node_modules/yui node_modules/yuidoc \
+	node_modules/grunt node_modules/node-spritesheet
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 DATE=$(shell date -u)
 APPCACHE=app/assets/manifest.appcache
@@ -12,7 +19,7 @@ all: install
 app/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	@./bin/generateTemplates
 
-yuidoc: $(FILES)
+yuidoc: install $(FILES)
 	@node_modules/.bin/yuidoc -o yuidoc -x assets app
 
 $(NODE_TARGETS): package.json
@@ -25,14 +32,16 @@ install: appcache $(NODE_TARGETS) app/templates.js yuidoc spritegen
 
 gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
-	    --custom_jsdoc_tags \
-	    	property,default,since,method,module,submodule,namespace \
+	    --custom_jsdoc_tags module,main,class,method,event,property,attribute,submodule,namespace,extends,config,constructor,static,final,readOnly,writeOnce,optional,required,param,return,for,type,private,protected,requires,default,uses,example,chainable,deprecated,since,async,beta,bubbles,extension,extensionfor,extension_for \
 	    $(FILES)
 
 jshint: node_modules/jshint
 	@node_modules/jshint/bin/hint $(FILES)
 
-lint: gjslint jshint
+yuidoc-lint: $(FILES)
+	@bin/lint-yuidoc
+
+lint: gjslint jshint yuidoc-lint
 
 virtualenv/bin/gjslint virtualenv/bin/fixjsstyle:
 	@virtualenv virtualenv

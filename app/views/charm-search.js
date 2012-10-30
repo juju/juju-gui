@@ -112,7 +112,9 @@ YUI.add('juju-charm-search', function(Y) {
           { name: 'configuration',
             charmId: ev.currentTarget.getData('url')});
     },
-    // Create a data structure friendly to the view
+    /**
+     * Create a data structure friendly to the view
+     */
     normalizeCharms: function(charms) {
       var hash = {},
           defaultSeries = this.get('defaultSeries');
@@ -158,6 +160,9 @@ YUI.add('juju-charm-search', function(Y) {
         return {series: name, charms: hash[name]};
       });
     },
+    /**
+     * Find charms that match a query.
+     */
     findCharms: function(query, callback) {
       var charmStore = this.get('charmStore'),
           db = this.get('db');
@@ -302,11 +307,9 @@ YUI.add('juju-charm-search', function(Y) {
           }
         },
         showDescription: function(evt) {
-          //console.log('focus', evt, evt.target.getXY());
           var controlGroup = evt.target.ancestor('.control-group'),
               node = controlGroup.one('.control-description'),
               text = node.get('text').trim();
-          //console.log(text);
           this.tooltip.setStdModContent('body', text);
           this.tooltip.field = evt.target;
           this.tooltip.panel = this.tooltip.field.ancestor(
@@ -317,10 +320,10 @@ YUI.add('juju-charm-search', function(Y) {
           this._moveTooltip();
         },
         hideDescription: function(evt) {
-          //console.log('focus', evt, evt.target.getXY());
           this.tooltip.hide();
           delete this.tooltip.field;
         },
+        /** Pass clicks on the overlay on to the correct recipient. */
         onOverlayClick: function(evt) {
           var container = this.get('container');
           if (this.configFileContent) {
