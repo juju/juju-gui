@@ -1,0 +1,124 @@
+#!/usr/bin/env python
+
+import os
+import os.path
+import re
+import sys
+
+# We don't want to build or integrate with a full JS parser; fortunately we
+# comply with our coding style well enough that we can pick out the non-trivial
+# function definitions because they are on a line by themselves and are either
+# of the form "foo = function...", "foo: function..." or "function foo...".
+function_regex = re.compile(
+    '^ *(?:(\w+) *[:=] *function *|function +(\w+)) *\(')
+
+
+def find_functions(source):
+    for line_number, line in enumerate(source):
+        match = function_regex.match(line)
+        if match:
+            # Either the first or second group contains the function name.
+            name = filter(bool, match.groups())[0]
+            yield name, line_number
+
+
+def find_docs(function_name, line_number, boundry, source):
+    # Walk backwards from the function declaration to find some yuidoc.  If we
+    # hit the previous function declaration ("boundry") before finding one,
+    # then there is none.
+    in_comment = False
+    for current_line_number in range(line_number-1, boundry, -1):
+        source_line = source[current_line_number] 
+        if source_line.strip().startswith('*/'):
+            in_comment = True
+        elif source_line.strip().startswith('/*'):
+            in_comment = False
+        # If we enter or exit a block while scanning backwards without finding
+        # documentation, then there is none to be found.
+        if not in_comment and ('{' in source_line or '}' in source_line):
+            return False
+        # If we find a documentation block, tell the caller that we did.
+        if '/**' in source[current_line_number]:
+            return True
+    return False
+
+
+def check_file(file_name, undocumented):
+    # Every function.
+    functions = []
+    # Every function that has (unexpectedly) missing documentation.
+    missing_documentation = []
+    # Every function that has documentation but wasn't expected to.
+    falsely_undocumented = []
+    with open(file_name) as f:
+        source = f.readlines()
+        boundry = 0
+        for function_name, line_number in find_functions(source):
+            functions.append((file_name, function_name))
+            found_docs = find_docs(function_name, line_number, boundry, source)
+            boundry = line_number
+
+            # Report our findings.
+            code_location = '%s:%d "%s"' % (
+                file_name, line_number+1, function_name)
+            is_undocumented = (file_name, function_name) in undocumented
+            # If we found documentation for the function...
+            if found_docs:
+                # If it is listed as an undocumented function...
+                if is_undocumented:
+                    #...report the incongruence.
+                    falsely_undocumented.append(code_location)
+            # Otherwise if we found an undocumented function that is not
+            # supposed to be undocumented, report it.
+            elif not found_docs and not is_undocumented:
+                missing_documentation.append(code_location)
+
+    return functions, missing_documentation, falsely_undocumented
+
+
+def remove(unwanted, seq):
+    return [i for i in seq if i != unwanted]
+
+
+def main():
+    # Did we find any lint?
+    found_errors = False
+    # All of the functions found.
+    all_functions = []
+    for root, dirs, files in os.walk('app'):
+        # Ignore any asset directories.
+        dirs[:] = remove('assets', dirs)
+        # Ignore the template.js file.
+        files[:] = remove('templates.js', files)
+
+        with open('undocumented') as f:
+            undocumented = [tuple(line.split()) for line in f.readlines()]
+        for file_name in [os.path.join(root, name) for name in files]:
+            functions, missing_documentation, falsely_undocumented = (
+                check_file(file_name, undocumented))
+            all_functions.extend(functions)
+            for code_location in missing_documentation:
+                print code_location, 'missing yuidoc'
+                found_errors = True
+            for code_location in falsely_undocumented:
+                print code_location, 'erroneously listed as undocumented'
+                found_errors = True
+
+    # Find functions that are listed as undocumented but don't actually exist.
+    missing = set(undocumented) - set(all_functions)
+    for code_location in ['%s "%s"' % x for x in missing]:
+        print code_location, 'listed as undocumented but does not exist'
+        found_errors = True
+
+    # Urge the user to drive down the number of known undocumented functions.
+    print
+    print 'Backlog of undocumented functions:', len(undocumented)
+    print 'Please do your part to drive the above to zero by documenting '
+    print 'functions listed in the "undocumented" file and removing their '
+    print 'entries therein.  The people of the future thank you.'
+
+    return int(found_errors)
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -449,7 +449,6 @@ YUI.add('juju-view-environment', function(Y) {
         updateData: function() {
           //model data
           var vis = this.vis,
-              app = this.get('app'),
               db = this.get('db'),
               relations = db.relations.toArray(),
               services = db.services.map(views.toBoundingBox);
@@ -1433,7 +1432,7 @@ YUI.add('juju-view-environment', function(Y) {
           },
 
           _destroyCallback: function(service, view, btn, ev) {
-            var app = view.get('app'),
+            var getModelURL = view.get('getModelURL'),
                 db = view.get('db');
             if (ev.err) {
               db.notifications.add(
@@ -1441,7 +1440,7 @@ YUI.add('juju-view-environment', function(Y) {
                     title: 'Error destroying service',
                     message: 'Service name: ' + ev.service_name,
                     level: 'error',
-                    link: app.getModelURL(service),
+                    link: getModelURL(service),
                     modelId: service
                   })
               );
@@ -1466,10 +1465,10 @@ YUI.add('juju-view-environment', function(Y) {
             view.show(view.vis.selectAll('.service'));
 
             var db = view.get('db'),
-                app = view.get('app'),
+                getServiceEndpoints = view.get('getServiceEndpoints'),
                 service = view.serviceForBox(m),
                 endpoints = models.getEndpoints(
-                    service, app.serviceEndpoints, db),
+                    service, getServiceEndpoints(), db),
 
                 /* Transform endpoints into a list of
                  * relatable services (to the service in m)

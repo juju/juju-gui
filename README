@@ -1,77 +1,104 @@
 Developer Install
------------------
+=================
 
- Juju GUI uses nodejs based development tools.
+Juju GUI uses nodejs based development tools.
 
- You'll need nodejs & npm from the ppa::
+You'll need nodejs & npm from the ppa::
 
-sudo add-apt-repository ppa:chris-lea/node.js
-sudo apt-get update
-sudo apt-get install nodejs npm
+  $ sudo add-apt-repository ppa:chris-lea/node.js
+  $ sudo apt-get update
+  $ sudo apt-get install nodejs npm
 
- The linter will be installed locally per branch, but if you want editor
- integration, you may want to install jshint globally in your system.
+The linter will be installed locally per branch, but if you want editor
+integration, you may want to install jshint globally in your system::
 
-sudo npm install -g jshint
+  $ sudo npm install -g jshint
 
- For building the docs, you also need sphinx.
+For building the docs, you also need sphinx::
 
-sudo apt-get install python-sphinx
+  $ sudo apt-get install python-sphinx
 
- The gui frontend can be installed with::
+The gui frontend can be installed with::
 
-bzr branch lp:juju-ui trunk
-cd trunk
-make server
+  $ bzr branch lp:juju-ui trunk
+  $ cd trunk
+  $ make server
 
+You'll also need to deploy a juju environment with REST api access.
+Currently that work resides in a pipeline of juju branches. The
+recommended branch to use as a server is ``lp:~hazmat/juju/rapi-delta``.
 
- You'll also need to deploy a juju environment with REST api
- access. Currently that work resides in a pipeline of juju
- branches. The recommended branch to utilize as a server is
- ``lp:~hazmat/juju/rapi-delta``.
+You can use it with any environment, but for dev purposes, a local
+environment works well. One environment option specific to this branch
+is the api-port. An appropriate sample configuration::
 
+  default: dev
+  environments:
+    dev:
+      type: local
+      data-dir: /home/kapil/.juju/local
+      admin-secret: b3a5dee4fb8c4fc9a4db04751e5936f4
+      default-series: precise
+      juju-origin: ppa
+      api-port: 8081
 
- You can utilize it with any environment, but for dev purposes, a
- local environment works well. One environment option specific to this
- branch is the api-port. A sample configuration appropriate::
+Note that juju-origin is set to the ppa, the api server runs outside of
+the container, and is launched using whichever branch you're using.
 
-default: dev
-environments:
-  dev:
-    type: local
-    data-dir: /home/kapil/.juju/local
-    admin-secret: b3a5dee4fb8c4fc9a4db04751e5936f4
-    default-series: precise
-    juju-origin: ppa
-    api-port: 8081
+Also note that the api-port should be set at 8081, which the gui's
+initial environment connection currently defaults to.
 
-  Note juju-origin is set to the ppa, the api server runs outside of
-  the container, and is launched using whichever branch your using.
+You'll need to bootstrap the local environment, and deploy one service.
+The api server needs access to the provisioning credentials which are
+lazily initialized in juju upon usage.
 
-  Also note the api-port should be spec'd at 8081, which the gui's
-  initial environment connection currently defaults to.
+Juju-gui and rapi-delta can communicate via an encrypted WebSockets
+connection: to enable it, add the following line to the config above::
 
-  You'll need to bootstrap the local environment, and deploy one
-  service. The api server needs access to the provisioning credentials
-  which are lazy initialized in juju upon usage.
+  api-secure: true
 
-  After which the gui should be functional (it automatically polls the
-  api server for establishing a websocket).
+You will also need to edit your ``app/config.js`` replacing
+``ws://localhost:8081/ws`` with ``wss://localhost:8081/ws``.
 
+By default, rapi-delta uses a self-signed certificate; because of that you
+will need to visit the https://localhost:8081/ws WebSockets URL with your
+browser and accept the included self-signed certificate, or the WebSockets
+encrypted connection will not work.
 
-Running unit tests.
--------------------
+In order to use a different certificate, you add an api-keys option to the
+config above: its value will be the path of the directory containing the
+certificate and the private key, whose filenames will have to be respectively
+``juju.crt`` and ``juju.key``.
 
- xdg-open test/index.html
+After which, the gui should be functional (it automatically polls the
+api server for establishing a websocket).
 
+Running unit tests
+==================
+
+  $ xdg-open test/index.html
+
+Documentation
+=============
+
+Generated JavaScript documentation is available in the yuidoc directory.
+Start with the index.html file. You can view the docs by running::
+
+  $ xdg-open yuidoc/index.html
+
+To regenerate the docs run::
+
+  $ make yuidoc
+
+The documentation for yuidoc markup is at
+http://yui.github.com/yuidoc/syntax/ .
 
 Running lint
-------------
+============
 
- jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
-
+  $ jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
 
 Style
------
+=====
 
-See the docs/style-guide.rst file for the project style guide.
+See the ``docs/style-guide.rst`` file for the project style guide.
