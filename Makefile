@@ -12,7 +12,6 @@ NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 DATE=$(shell date -u)
 APPCACHE=app/assets/manifest.appcache
-SPRITEGEN-VERSION=1.0
 
 all: install
 
