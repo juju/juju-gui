@@ -179,10 +179,6 @@ YUI.add('juju-view-environment', function(Y) {
 
           '#canvas rect:first-child': {
             click: function(d, self) {
-//              if (self.clickAddRelation && self._yuid === event.target._yuid) {
-//                self.cancelRelationBuild();
-//                return;
-//              }
               var container = self.get('container');
               container.all('.environment-menu.active').removeClass('active');
               self.service_click_actions.toggleControlPanel(null, self);
