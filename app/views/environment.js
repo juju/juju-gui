@@ -178,13 +178,18 @@ YUI.add('juju-view-environment', function(Y) {
           },
 
           // Canvas related
-          '#canvas rect:first-child': {
+          '#canvas *': {
             click: function(d, self) {
               var container = self.get('container');
-              container.all('.environment-menu.active').removeClass('active');
-              self.service_click_actions.toggleControlPanel(null, self);
-              self.cancelRelationBuild();
-            },
+              if (!self.clickAddRelation) {
+                container.all('.environment-menu.active').removeClass('active');
+                self.service_click_actions.toggleControlPanel(null, self);
+                self.cancelRelationBuild();
+              } else {
+              }
+            }
+          },
+          '#canvas rect:first-child': {
             mousemove: function(d, self) {
               if (self.clickAddRelation) {
                 var container = self.get('container'),
