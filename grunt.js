@@ -1,13 +1,16 @@
+'use strict';
+
 module.exports = function(grunt) {
   grunt.initConfig({
-    spritesheet : {
-      compile : {
-        options : {
+    spritesheet: {
+      compile: {
+        options: {
           outputImage: 'sprite/sprite.png',
           outputCss: 'sprite/sprite.css',
-          selector : '.sprite'
+          selector: '.sprite'
+
         },
-        files : {
+        files: {
           'bin' : 'app/assets/images/*'
         }
       }
