@@ -6,13 +6,14 @@
 @text-entry-color: #6d6e70;
 @charm-panel-configure-title-color: #eee7d5;
 @charm-panel-configure-name-color: #8f8f88;
-@charm-panel-deploy-button-color: #e45718;
+@charm-panel-deploy-button-color: #dd4814;
 @charm-panel-deploy-button-bottom-gradient: #e65c19;
 @charm-panel-deploy-button-shadow: #8a2d0c;
-@charm-panel-cancel-button-color: #818080;
+@charm-panel-cancel-button-color: #b8b8b8;
 @charm-panel-cancel-button-bottom-gradient: #a3a39f;
 @charm-panel-cancel-button-shadow: #515050;
 @charm-panel-separator-color: #aeaeae;
+@charm-panel-background-color: #eeeeee;
 
 body {
     margin-top: 87px;
@@ -734,11 +735,17 @@ g.unit {
         float: right;
     }
 
+<<<<<<< TREE
     .button-colors(@top-color, @bottom-color, @shadow-color, @v-pos) {
     	//@shadow-color: blue;
         @blur: 2px;
         @gradient-start: @top-color;
 	@gradient-end: @bottom-color;
+=======
+    .button-colors(@color) {
+        @gradient-start: lighten(@color, 5%);
+        @gradient-end: darken(@color, 5%);
+>>>>>>> MERGE-SOURCE
         background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
         background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
         background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
@@ -760,10 +767,17 @@ g.unit {
         margin-left: 5px;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
+<<<<<<< TREE
 	.button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient, @charm-panel-deploy-button-shadow, 0px);
         &:active {
    	    .button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color, #8a2d0c, 1px);
 	}
+=======
+        .button-colors(@charm-panel-deploy-button-color);
+        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
+          background-color: @charm-panel-deploy-button-color;
+        }
+>>>>>>> MERGE-SOURCE
     }
 
     .charm-description btn.deploy {
@@ -778,10 +792,17 @@ g.unit {
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
+<<<<<<< TREE
 	.button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient, @charm-panel-cancel-button-shadow, 0px);
         &:active {
   	  .button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color, @charm-panel-cancel-button-shadow, 1px);
 	}
+=======
+        .button-colors(@charm-panel-cancel-button-color);
+        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
+          background-color: @charm-panel-cancel-button-color;
+        }
+>>>>>>> MERGE-SOURCE
     }
     .charm-panel-configure-buttons {
       border-bottom: 1px solid @charm-panel-separator-color;
@@ -816,11 +837,13 @@ g.unit {
             margin-bottom: 1ex;
         }
         h4 {
-            text-transform: uppercase;
-            border-bottom: 1px dotted black;
+            border-bottom: 1px solid @label-color;
             cursor: pointer;
             margin-top: 1ex;
             margin-bottom: 1ex;
+            i {
+                float: right;
+            }
         }
         h5 {
             margin-top: 1ex;
@@ -847,7 +870,8 @@ g.unit {
         }
         &.config-variant {
             padding: 1ex 1em;
-
+            background-color: @charm-panel-background-color;
+            font-size: 14px;
             .control-group {
                 width: auto;
                 margin-bottom: 0;
@@ -862,13 +886,50 @@ g.unit {
                 width: auto;
                 margin-bottom: 1ex;
                 float: left;
-            }
-            .control-label:after {
-                content: ":";
+                color: @label-color;
+                font-size: 14px;
             }
             .controls {
                 margin-left: auto;
                 margin-right: 0;
+            }
+            .config-field {
+                font-size: 16px;
+                color: text-entry-color;
+            }
+            .config-file-upload {
+                position: relative;
+                width: 252px;
+                height: 25px;
+            }
+            .config-file-upload-widget {
+                position: absolute;
+                top: 0;
+                left: 0;
+                visibility: hidden;
+                z-index: 0;
+            }
+            .config-file-upload-overlay {
+                background: url(/juju-ui/assets/images/getfile_button.png) no-repeat;
+                position: absolute;
+                top: 0;
+                left: 0;
+                padding-left: 5px;
+                padding-top: 2px;
+                height: 25px;
+                width: 149px;
+                z-index: 2;
+		cursor: pointer;
+                &:active {
+                  background: url(/juju-ui/assets/images/getfile_button-pressed.png) no-repeat;
+                }
+            }
+            .config-file-name {
+                position: absolute;
+                top: 27px;
+                left: 5px;
+                width: auto;
+                z-index: 2;
             }
             .controls.boolean {
                 input {

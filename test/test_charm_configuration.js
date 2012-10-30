@@ -1,7 +1,7 @@
 'use strict';
 
 describe('charm configuration', function() {
-  var Y, juju, app, db, models, views, container,
+  var Y, juju, db, models, views, makeView, container,
       charmConfig =
           { config:
                 { options:
@@ -43,24 +43,29 @@ describe('charm configuration', function() {
     container = Y.Node.create('<div id="juju-search-charm-panel" />');
     Y.one('#main').append(container);
     db = new models.Database();
-    app = { db: db };
+    makeView = function(charm, env) {
+      return new views.CharmConfigurationView(
+          { container: container,
+            db: db,
+            env: env,
+            model: charm,
+            tooltipDelay: 0 }).render();
+    };
   });
+
   afterEach(function() {
     container.remove(true);
   });
 
   it('must show loading message if the charm is not loaded', function() {
-    var view = new views.CharmConfigurationView({container: container});
-    view.render();
+    var view = makeView();
     container.one('div.alert').get('text').trim().should.equal(
         'Waiting on charm data...');
   });
 
   it('must have inputs for service and number of units', function() {
     var charm = new models.Charm({id: 'precise/mysql-7'}),
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm});
+        view = makeView(charm);
     charm.loaded = true;
     // If the charm has no config options it is still handled.
     assert.isTrue(!Y.Lang.isValue(charm.config));
@@ -91,12 +96,8 @@ describe('charm configuration', function() {
           received_charm_url = charm_url;
           received_service_name = service_name;
         }},
-        charm = new models.Charm({id: 'precise/mysql-7'}),
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          app: app});
-    app.env = env;
+        charm = new models.Charm({id: 'cs:precise/mysql-7'}),
+        view = makeView(charm, env);
     charm.loaded = true;
     view.render();
     container.one('#service-name').get('value').should.equal('mysql');
@@ -119,12 +120,8 @@ describe('charm configuration', function() {
             received_config = config;
             received_num_units = num_units;
           }},
-        charm = new models.Charm({id: 'precise/mysql-7'}),
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          app: app});
-    app.env = env;
+        charm = new models.Charm({id: 'cs:precise/mysql-7'}),
+        view = makeView(charm, env);
     charm.setAttrs(
         { config:
               { options:
@@ -149,17 +146,14 @@ describe('charm configuration', function() {
   it('must not deploy a charm with same name as an existing service',
      function() {
        var deployed = false,
-       env = {deploy: function(charm_url, service_name, config, config_raw,
-                               num_units) {
+       env =
+       { deploy:
+         function(charm_url, service_name, config, config_raw, num_units) {
            deployed = true;
          }},
        charm = new models.Charm({id: 'precise/mysql-7'}),
-       view = new views.CharmConfigurationView(
-       { container: container,
-         model: charm,
-         app: app});
+       view = makeView(charm, env);
        db.services.add([{id: 'wordpress'}]);
-       app.env = env;
        charm.loaded = true;
        view.render();
        container.one('#service-name').set('value', 'wordpress');
@@ -200,7 +194,7 @@ describe('charm configuration', function() {
         'Number of units to deploy for this service.');
     tooltip.get('visible').should.equal(true);
     controls.item(1).blur();
-    controls.item(2).focus();
+    controls.item(3).focus();
     tooltip.get('srcNode').get('text').should.equal('Option Zero');
     tooltip.get('visible').should.equal(true);
   });
@@ -294,9 +288,8 @@ describe('charm configuration', function() {
        charm.loaded = true;
        view.render();
        var _ = expect(container.one('.config-file-upload')).to.exist;
-       // The remove button is conditional and should exist but be hidden.
-       var remove_button = container.one('.remove-config-file');
-       remove_button.hasClass('hidden').should.equal(true);
+       // The config file name should be ''.
+       container.one('.config-file-name').getContent().should.equal('');
      });
 
   it('must hide configuration panel when a file is uploaded', function() {
@@ -314,13 +307,13 @@ describe('charm configuration', function() {
     var view = new views.CharmConfigurationView(
         { container: container,
           model: charm,
-          tooltipDelay: 0 });
+          tooltipDelay: 0 }),
+        fileContents = 'yaml yaml yaml';
     charm.loaded = true;
     view.render();
-    view.onFileLoaded({target: {result: 'yaml yaml yaml'}});
-    view.configFileContent.should.equal('yaml yaml yaml');
+    view.onFileLoaded({target: {result: fileContents}});
+    view.configFileContent.should.equal(fileContents);
     container.one('.charm-settings').getStyle('display').should.equal('none');
-    container.one('.remove-config-file').hasClass('hidden').should.equal(false);
   });
 
   it('must remove configuration data when the button is pressed', function() {
@@ -340,29 +333,28 @@ describe('charm configuration', function() {
           tooltipDelay: 0 });
     charm.loaded = true;
     view.render();
-    view.fileInput = container.one('.config-file-upload');
+    view.fileInput = container.one('.config-file-upload-widget');
     view.configFileContent = 'how now brown cow';
-    container.one('.remove-config-file').simulate('click');
+    container.one('.config-file-name').setContent('a.yaml');
+    container.one('.config-file-upload-overlay').simulate('click');
     var _ = expect(view.configFileContent).to.not.exist;
-    container.one('.remove-config-file').hasClass('hidden').should.equal(true);
-    container.one('.config-file-upload').get('files').size().should.equal(0);
+    container.one('.config-file-name').getContent().should.equal('');
+    container.one('.config-file-upload-widget').get('files').size()
+         .should.equal(0);
   });
 
   it('must be able to deploy with configuration from a file', function() {
     var received_config,
         received_config_raw,
         charm = new models.Charm({id: 'precise/mysql-7'}),
-        app = {db: {services: {getById: function(name) {return null;}}},
-          env: {deploy: function(charm_url, service_name, config, config_raw,
-                                 num_units) {
-              received_config = config;
-              received_config_raw = config_raw;
-            }}},
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          app: app,
-          tooltipDelay: 0 });
+        db = {services: {getById: function(name) {return null;}}},
+        env =
+        { deploy:
+              function(charm_url, service_name, config, config_raw, num_units) {
+                received_config = config;
+                received_config_raw = config_raw;
+              }},
+        view = makeView(charm, env, db);
     charm.setAttrs(
         { config:
               { options:
