@@ -740,17 +740,11 @@ g.unit {
         float: right;
     }
 
-<<<<<<< TREE
     .button-colors(@top-color, @bottom-color, @shadow-color, @v-pos) {
     	//@shadow-color: blue;
         @blur: 2px;
         @gradient-start: @top-color;
 	@gradient-end: @bottom-color;
-=======
-    .button-colors(@color) {
-        @gradient-start: lighten(@color, 5%);
-        @gradient-end: darken(@color, 5%);
->>>>>>> MERGE-SOURCE
         background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
         background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
         background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
@@ -772,17 +766,10 @@ g.unit {
         margin-left: 5px;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-<<<<<<< TREE
 	.button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient, @charm-panel-deploy-button-shadow, 0px);
         &:active {
    	    .button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color, #8a2d0c, 1px);
 	}
-=======
-        .button-colors(@charm-panel-deploy-button-color);
-        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
-          background-color: @charm-panel-deploy-button-color;
-        }
->>>>>>> MERGE-SOURCE
     }
 
     .charm-description btn.deploy {
@@ -797,17 +784,10 @@ g.unit {
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
-<<<<<<< TREE
 	.button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient, @charm-panel-cancel-button-shadow, 0px);
         &:active {
   	  .button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color, @charm-panel-cancel-button-shadow, 1px);
 	}
-=======
-        .button-colors(@charm-panel-cancel-button-color);
-        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
-          background-color: @charm-panel-cancel-button-color;
-        }
->>>>>>> MERGE-SOURCE
     }
     .charm-panel-configure-buttons {
       border-bottom: 1px solid @charm-panel-separator-color;
