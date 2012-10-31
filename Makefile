@@ -7,8 +7,11 @@ NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 	node_modules/.bin node_modules/node-markdown node_modules/rimraf \
 	node_modules/mocha node_modules/d3 node_modules/graceful-fs \
 	node_modules/should node_modules/jshint node_modules/expect.js \
-	node_modules/express node_modules/yui node_modules/yuidoc
+	node_modules/express node_modules/yui node_modules/yuidoc \
+	node_modules/grunt node_modules/node-spritesheet
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
+SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
+SPRITE_GENERATED_FILES=app/assets/sprite/sprite.css app/assets/sprite/sprite.png
 DATE=$(shell date -u)
 APPCACHE=app/assets/manifest.appcache
 
@@ -20,13 +23,17 @@ app/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 yuidoc: install $(FILES)
 	@node_modules/.bin/yuidoc -o yuidoc -x assets app
 
+$(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet $(SPRITE_SOURCE_FILES)
+	@node_modules/grunt/bin/grunt spritegen
+	mv bin/sprite app/assets/sprite/
+
 $(NODE_TARGETS): package.json
 	@npm install
 	@#link depends
 	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
 
-install: appcache $(NODE_TARGETS) app/templates.js yuidoc
+install: appcache $(NODE_TARGETS) app/templates.js yuidoc spritegen
 
 gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
@@ -48,6 +55,8 @@ virtualenv/bin/gjslint virtualenv/bin/fixjsstyle:
 beautify: virtualenv/bin/fixjsstyle
 	@virtualenv/bin/fixjsstyle --strict --nojsdoc --jslint_error=all $(FILES)
 
+spritegen: $(SPRITE_GENERATED_FILES)
+
 prep: beautify lint
 
 test: install
@@ -60,6 +69,8 @@ server: install
 clean:
 	@rm -rf node_modules virtualenv
 	@make -C docs clean
+	@rm -Rf bin/sprite/
+	@rm -Rf app/assets/sprite/
 
 $(APPCACHE): manifest.appcache.in
 	@cp manifest.appcache.in $(APPCACHE)
@@ -76,4 +87,4 @@ appcache-touch:
 appcache-force: appcache-touch appcache
 
 .PHONY: test lint beautify server install clean prep jshint gjslint \
-	appcache appcache-touch appcache-force
+	appcache appcache-touch appcache-force spritegen yuidoc-lint
