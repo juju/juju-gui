@@ -1,12 +1,13 @@
 {
   "matches": 5, 
-  "charm_total": 466, 
+  "charm_total": 469, 
   "results_size": 5, 
-  "search_time": 0.0008029937744140625, 
+  "search_time": 0.0007879734039306641, 
   "results": [
     {
       "data_url": "/charms/quantal/glance/json", 
       "name": "glance", 
+      "store_url": "cs:~charmers/quantal/glance-2", 
       "series": "quantal", 
       "summary": "OpenStack Image Registry and Delivery Service", 
       "relevance": 0.0, 
@@ -15,6 +16,7 @@
     {
       "data_url": "/charms/quantal/nova-cloud-controller/json", 
       "name": "nova-cloud-controller", 
+      "store_url": "cs:~charmers/quantal/nova-cloud-controller-1", 
       "series": "quantal", 
       "summary": "Openstack nova controller node.", 
       "relevance": 0.0, 
@@ -23,6 +25,7 @@
     {
       "data_url": "/charms/quantal/nova-volume/json", 
       "name": "nova-volume", 
+      "store_url": "cs:~charmers/quantal/nova-volume-0", 
       "series": "quantal", 
       "summary": "OpenStack Compute - storage", 
       "relevance": 0.0, 
@@ -31,6 +34,7 @@
     {
       "data_url": "/charms/quantal/nova-compute/json", 
       "name": "nova-compute", 
+      "store_url": "cs:~charmers/quantal/nova-compute-1", 
       "series": "quantal", 
       "summary": "OpenStack compute", 
       "relevance": 0.0, 
@@ -39,6 +43,7 @@
     {
       "data_url": "/charms/quantal/nyancat/json", 
       "name": "nyancat", 
+      "store_url": "cs:~charmers/quantal/nyancat-0", 
       "series": "quantal", 
       "summary": "Nyancat telnet server", 
       "relevance": 0.0, 
