@@ -28,7 +28,7 @@ def find_docs(function_name, line_number, boundry, source):
     # then there is none.
     in_comment = False
     for current_line_number in range(line_number-1, boundry, -1):
-        source_line = source[current_line_number] 
+        source_line = source[current_line_number]
         if source_line.strip().startswith('*/'):
             in_comment = True
         elif source_line.strip().startswith('/*'):
@@ -90,6 +90,7 @@ def main():
         dirs[:] = remove('assets', dirs)
         # Ignore the template.js file.
         files[:] = remove('templates.js', files)
+        files = filter(lambda x: x.endswith('.js'), files)
 
         with open('undocumented') as f:
             undocumented = [tuple(line.split()) for line in f.readlines()]
