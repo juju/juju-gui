@@ -1,4 +1,5 @@
-FILES=$(shell bzr ls -RV -k file | grep -v assets/ | grep -v app/templates.js | grep -v server.js)
+JSFILES=$(shell bzr ls -RV -k file | grep -E -e '.+\.js(on)?$$|generateTemplates$$' | grep -Ev -e '^manifest\.json$$' -e '^test/assets/' -e '^app/assets/javascripts/reconnecting-websocket.js$$' -e '^server.js$$')
+
 # After a successful "make" run, the NODE_TARGETS list can be regenerated with
 # this command (and then manually pasted in here):
 # find node_modules -maxdepth 1 -mindepth 1 -type d -printf 'node_modules/%f '
@@ -20,12 +21,14 @@ all: install
 app/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	@./bin/generateTemplates
 
-yuidoc: install $(FILES)
+yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 	@node_modules/.bin/yuidoc -o yuidoc -x assets app
+
+yuidoc: yuidoc/index.html
 
 $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet $(SPRITE_SOURCE_FILES)
 	@node_modules/grunt/bin/grunt spritegen
-	mv bin/sprite app/assets/sprite/
+	@mv bin/sprite app/assets/sprite/
 
 $(NODE_TARGETS): package.json
 	@npm install
@@ -38,12 +41,12 @@ install: appcache $(NODE_TARGETS) app/templates.js yuidoc spritegen
 gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
 	    --custom_jsdoc_tags module,main,class,method,event,property,attribute,submodule,namespace,extends,config,constructor,static,final,readOnly,writeOnce,optional,required,param,return,for,type,private,protected,requires,default,uses,example,chainable,deprecated,since,async,beta,bubbles,extension,extensionfor,extension_for \
-	    $(FILES)
+	    $(JSFILES)
 
 jshint: node_modules/jshint
-	@node_modules/jshint/bin/hint $(FILES)
+	@node_modules/jshint/bin/hint $(JSFILES)
 
-yuidoc-lint: $(FILES)
+yuidoc-lint: $(JSFILES)
 	@bin/lint-yuidoc
 
 lint: gjslint jshint yuidoc-lint
@@ -53,7 +56,7 @@ virtualenv/bin/gjslint virtualenv/bin/fixjsstyle:
 	@virtualenv/bin/easy_install archives/closure_linter-latest.tar.gz
 
 beautify: virtualenv/bin/fixjsstyle
-	@virtualenv/bin/fixjsstyle --strict --nojsdoc --jslint_error=all $(FILES)
+	@virtualenv/bin/fixjsstyle --strict --nojsdoc --jslint_error=all $(JSFILES)
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
@@ -87,4 +90,4 @@ appcache-touch:
 appcache-force: appcache-touch appcache
 
 .PHONY: test lint beautify server install clean prep jshint gjslint \
-	appcache appcache-touch appcache-force spritegen yuidoc-lint
+	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint
