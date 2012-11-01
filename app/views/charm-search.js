@@ -5,6 +5,8 @@ YUI.add('juju-charm-search', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
+      // This will hold objects that can be used to detach the subscriptions
+      // when the charm panel is destroyed.
       subscriptions = [],
       // Singleton
       _instance,
@@ -12,13 +14,12 @@ YUI.add('juju-charm-search', function(Y) {
         var el = ev.currentTarget.ancestor('.charm-section')
                 .one('.collapsible'),
             icon = ev.currentTarget.one('i');
-        icon = ev.currentTarget.one('i');
         if (el.getStyle('height') === '0px') {
           el.show('sizeIn', {duration: 0.25, width: null});
-          icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+          icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
         } else {
           el.hide('sizeOut', {duration: 0.25, width: null});
-          icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+          icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
         }
       },
       setScroll = function(container, height) {
@@ -163,7 +164,7 @@ YUI.add('juju-charm-search', function(Y) {
               charm = this.get('model');
           if (Y.Lang.isValue(charm)) {
             container.setHTML(this.template(charm.getAttrs()));
-            container.all('i.icon-chevron-right').each(function(el) {
+            container.all('i.icon-chevron-up').each(function(el) {
               el.ancestor('.charm-section').one('div')
                 .setStyle('height', '0px');
             });
@@ -435,8 +436,8 @@ YUI.add('juju-charm-search', function(Y) {
         charms = new models.CharmList(),
         app = config.app,
         testing = !!config.testing,
-        container = Y.Node.create('<div></div>').setAttribute(
-        'id', 'juju-search-charm-panel'),
+        container = Y.Node.create('<div />').setAttribute(
+            'id', 'juju-search-charm-panel'),
         charmsSearchPanelNode = Y.Node.create(),
         charmsSearchPanel = new CharmCollectionView(
               { container: charmsSearchPanelNode,
@@ -455,7 +456,7 @@ YUI.add('juju-charm-search', function(Y) {
               { charms: charmsSearchPanel,
                 description: descriptionPanel,
                 configuration: configurationPanel },
-        isPopupVisible = false,
+        isPanelVisible = false,
         trigger = Y.one('#charm-search-trigger'),
         searchField = Y.one('#charm-search-field'),
         ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter,
@@ -503,19 +504,19 @@ YUI.add('juju-charm-search', function(Y) {
 
     // Update position if we resize the window.
     Y.on('windowresize', function(e) {
-      if (isPopupVisible) {
-        updatePopupPosition();
+      if (isPanelVisible) {
+        updatePanelPosition();
       }
     });
 
     function hide() {
-      if (isPopupVisible) {
+      if (isPanelVisible) {
         var headerBox = Y.one('#charm-search-trigger-container'),
             headerSpan = headerBox && headerBox.one('span');
         if (headerBox) {
-          headerBox.setStyle('borderLeftColor', 'transparent');
+          headerBox.removeClass('active-border');
           if (headerSpan) {
-            headerSpan.setStyle('borderLeftColor', 'lightgray');
+            headerSpan.addClass('active-border');
           }
         }
         container.hide(!testing, {duration: 0.25});
@@ -523,7 +524,7 @@ YUI.add('juju-charm-search', function(Y) {
           trigger.one('i').replaceClass(
               'icon-chevron-up', 'icon-chevron-down');
         }
-        isPopupVisible = false;
+        isPanelVisible = false;
       }
     }
     subscriptions.push(container.on('clickoutside', hide));
@@ -531,28 +532,28 @@ YUI.add('juju-charm-search', function(Y) {
       container.setStyle('display', 'none');
     }));
     subscriptions.push(Y.on('afterPageSizeRecalculation', function() {
-      if (isPopupVisible) {
+      if (isPanelVisible) {
         // We need to do this both in windowresize and here because
         // windowresize can only be fired with "on," and so we can't know
         // which handler will be fired first.
-        updatePopupPosition();
+        updatePanelPosition();
       }
     }));
 
     function show() {
-      if (!isPopupVisible) {
+      if (!isPanelVisible) {
         var headerBox = Y.one('#charm-search-trigger-container'),
             headerSpan = headerBox && headerBox.one('span');
         if (headerBox) {
-          headerBox.setStyle('borderLeftColor', 'lightgray');
+          headerBox.addClass('active-border');
           if (headerSpan) {
-            headerSpan.setStyle('borderLeftColor', 'transparent');
+            headerSpan.removeClass('active-border');
           }
         }
         container.setStyles({opacity: 0, display: 'block'});
         container.show(!testing, {duration: 0.25});
-        isPopupVisible = true;
-        updatePopupPosition();
+        isPanelVisible = true;
+        updatePanelPosition();
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i').replaceClass(
               'icon-chevron-down', 'icon-chevron-up');
@@ -565,14 +566,14 @@ YUI.add('juju-charm-search', function(Y) {
         // undo a "show".
         ev.halt();
       }
-      if (isPopupVisible) {
+      if (isPanelVisible) {
         hide();
       } else {
         show();
       }
     }
 
-    function updatePopupPosition() {
+    function updatePanelPosition() {
       // This should only be called when the popup is supposed to be visible.
       // We need to hide the popup before we calculate positions so that it
       // does not cause scrollbars to appear while we are calculating
@@ -640,7 +641,7 @@ YUI.add('juju-charm-search', function(Y) {
   }
 
   // The public methods
-  views.CharmSearchPopup = {
+  views.CharmPanel = {
     getInstance: function(config) {
       if (!_instance) {
         _instance = createInstance(config);

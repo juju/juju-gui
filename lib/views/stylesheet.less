@@ -71,9 +71,15 @@ body {
                 width: 292px;
                 white-space: nowrap;
                 border-left: 1px solid transparent;
+                &.active-border {
+                    border-left-color: lightgray;
+                }
             }
             .nav-section {
-                border-left: 1px solid lightgray;
+                border-left: 1px solid transparent;
+                &.active-border {
+                    border-left-color: lightgray;
+                }
                 display: inline-block;
                 padding: 4px 10px;
                 #charm-search-trigger {

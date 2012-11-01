@@ -1,6 +1,6 @@
 'use strict';
 
-describe('charm search', function() {
+describe('charm panel', function() {
   var Y, models, views, juju, ENTER,
       searchResult = '{"results": [{"data_url": "this is my URL", ' +
       '"name": "membase", "series": "precise", "summary": ' +
@@ -30,7 +30,7 @@ describe('charm search', function() {
   });
 
   beforeEach(function() {
-    // The "charms search" feature needs these elements
+    // The charms panel needs these elements
     var docBody = Y.one(document.body);
     Y.Node.create('<div id="charm-search-test">' +
         '<div id="charm-search-icon"><i></i></div>' +
@@ -40,12 +40,12 @@ describe('charm search', function() {
   });
 
   afterEach(function() {
-    Y.namespace('juju.views').CharmSearchPopup.killInstance();
+    Y.namespace('juju.views').CharmPanel.killInstance();
     Y.one('#charm-search-test').remove(true);
   });
 
   it('must be able to show and hide the panel', function() {
-    var panel = Y.namespace('juju.views').CharmSearchPopup
+    var panel = Y.namespace('juju.views').CharmPanel
           .getInstance({testing: true}),
         container = panel.node;
     container.getStyle('display').should.equal('none');
@@ -61,7 +61,7 @@ describe('charm search', function() {
 
   it('must be able to search', function() {
     var searchTriggered = false,
-        panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
+        panel = Y.namespace('juju.views').CharmPanel.getInstance({
           charm_store: new juju.CharmStore({datasource: {
             sendRequest: function(params) {
               searchTriggered = true;
@@ -90,7 +90,7 @@ describe('charm search', function() {
 
   it('must be able to trigger charm details', function() {
     var db = new models.Database(),
-        panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
+        panel = Y.namespace('juju.views').CharmPanel.getInstance({
           charm_store: new juju.CharmStore({datasource: {
             sendRequest: function(params) {
               // Mocking the server callback value
@@ -121,7 +121,7 @@ describe('charm search', function() {
   it('must be able to deploy from the description panel by going to the ' +
      'configuration panel', function() {
         var db = new models.Database(),
-            panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
+            panel = Y.namespace('juju.views').CharmPanel.getInstance({
               charm_store: new juju.CharmStore({datasource: {
                 sendRequest: function(params) {
                   // Mocking the server callback value
@@ -253,12 +253,12 @@ describe('charm description', function() {
         html = container.one('.charm-description'),
         section_container = html.one('div.charm-section:nth-of-type(3)');
     section_container.one('div').getStyle('height').should.equal('0px');
-    assert(section_container.one('h4 i').hasClass('icon-chevron-right'));
+    assert(section_container.one('h4 i').hasClass('icon-chevron-up'));
     section_container.one('h4').simulate('click');
     assert(section_container.one('h4 i').hasClass('icon-chevron-down'));
     section_container.one('div').getStyle('height').should.not.equal('0px');
     section_container.one('h4').simulate('click');
-    assert(section_container.one('h4 i').hasClass('icon-chevron-right'));
+    assert(section_container.one('h4 i').hasClass('icon-chevron-up'));
     // The transition is still running, so we can't check display.
   });
 
