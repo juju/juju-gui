@@ -203,8 +203,8 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      // Create the CharmSearchPopup instance once the app.js is initialized
-      var popup = views.CharmSearchPopup.getInstance({
+      // Create the CharmPanel instance once the app.js is initialized
+      var popup = views.CharmPanel.getInstance({
         charm_store: this.charm_store,
         env: this.env,
         app: this
@@ -711,6 +711,6 @@ YUI.add('juju-gui', function(Y) {
     'base',
     'node',
     'model',
-    'juju-charm-search',
+    'juju-charm-panel',
     'juju-charm-store']
 });
