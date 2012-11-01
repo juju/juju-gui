@@ -2,21 +2,79 @@
 Process Notes
 =============
 
+Checklist for Starting a Branch
+===============================
+
+- Understand the problem.  If you don't, ask and be persistent until you do.
+- When determining a solution, consider this preferred Software
+  Architecture Cheat Sheet:
+  http://gorban.org/post/32873465932/software-architecture-cheat-sheet
+- Have a pre-implementation call with someone about your solution.  If you
+  are not sure of your solution, prototype before the pre-implementation call.
+- Use TDD.  Your prototype might be perfect, but you can still move it aside
+  and rebuild it gradually as you add tests.  It can go quickly.
+
+Checklist for Preparing for a Review
+====================================
+
+- Round-trips with reviewers are expensive. Try to eliminate them.
+  * Pre-review your diff!  Tip: you can diff your branch against a local
+    trunk named "trunk" with "bzr diff -r ancestor:../trunk/".
+    ~ All new code should have tests.  If it doesn't, be prepared to explain
+      why to skeptical reviewers.
+    ~ Have you cleaned out temporary comments and debugging changes?
+    ~ Is the code understandable?
+    ~ Do you have superfluous or duplicated code?
+  * Run tests!  Someday we'll have that in the lbox hook...
+- Make sure there is a bug for your branch.  Ideally there was one when you
+  started, but if not, see the "-new-bug" option to "lbox propose".
+- Aim for a branch diff size between 300 and 500 lines.
+- Treat branch diff sizes of more than 800 lines as a problem.
+    ~ Try to subdivide it now.  If you can't, explain to your reviewers your
+      reasoning.
+    ~ Treat this as an opportunity to learn.  Consider what you could have
+      done differently.
+- If the branch is very minor, such as a documentation change, feel free to
+  self-review.  However, *don't neglect to consider your responsibilities
+  above*, especially the diff review and running tests (even if you think
+  there's no way the tests could have been affected).
+
+It is your responsibility to get reviewers of your branch!  Reviewers will
+hopefully take it, but if they don't, rustle some up.
+
+When you get your reviews back, be appreciative, and be sure to respond to
+every request, even if it is to disagree.
+
+Once you have two approving reviews (and no disapproving reviews), you may
+land your branch.
+
 Checklist for Reviewing
 =======================
 
-- Get an idea of what the branch is doing from the diff.
-- Run ``make test`` and confirm that tests pass. (This step can be removed once
-  we have tarmac.)
-- Run ``make lint`` and confirm that the output is clean. (This step can be
-  removed once we have tarmac.)
-- Run ``python improv.py -f sample.json`` in the rapi-delta juju branch,
-  and run ``make server`` with the juju-ui branch.  QA the changes if
-  appropriate, and then do some exploratory testing to make sure
-  everything seems to work.  For extra points, try a few different
-  browsers.  TODO: Document some manual QA scripts for some of the basic
-  paths.
+- Run ``make test`` and confirm that tests pass.
+- Run ``python improv.py -f sample.json`` in the rapi-rollup juju branch, and
+  run ``make server`` with the juju-ui branch.
+  * Don't forget to clear the browser cache: index.html may be sticking around
+    because of the cache.manifest.
+  * QA the changes if possible, exploring different use cases (and edge cases).
+  * Spend between 60 and 120 seconds exploring the entire app.  Do different
+    things every time.  Try to break the app, generally.
+- [Once we support multiple browsers, try them all, at least briefly.]
 - Review the diff, including notes from the above as appropriate.
+  * Make sure that new code has tests.
+  * Make sure you can understand the new code.  Ask for clarification if
+    necessary.
+  * Consider the advice in this preferred Software Architecture Cheat Sheet.
+    http://gorban.org/post/32873465932/software-architecture-cheat-sheet
+  * Make sure changes to a file correspond to the naming conventions and other
+    stylistic considerations local to that file, and within our project.
+  * Before you ask for a change, think and make sure you can't compromise
+    reasonably with the coder.  If there is a low importance disagreement, in
+    general the coder's position should win.
+- In your summary message, thank the coder.
+- In your summary message, if you ask for changes, make it clear whether you
+  want to re-review after the changes, or if you automatically approve if the
+  changes are made.
 
 Checklist for Running a Daily Meeting
 =====================================
@@ -123,7 +181,8 @@ Slack Project Policy
   making yourself a more valuable employee to Canonical (i.e., studying a
   technology that is important to the company), improving processes or
   tools for our team, or building or improving something for another part
-  of Canonical. - Consider who you expect to maintain the project.
+  of Canonical.
+- Consider who you expect to maintain the project.
 
   - Yourself: Be skeptical of this, but if so, that's fine.
   - Our team: discuss design with team, and/or follow the "prototype, discuss,
