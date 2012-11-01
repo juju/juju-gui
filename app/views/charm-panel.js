@@ -1,6 +1,6 @@
 'use strict';
 
-YUI.add('juju-charm-search', function(Y) {
+YUI.add('juju-charm-panel', function(Y) {
 
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),

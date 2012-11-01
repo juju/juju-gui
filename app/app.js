@@ -711,6 +711,6 @@ YUI.add('juju-gui', function(Y) {
     'base',
     'node',
     'model',
-    'juju-charm-search',
+    'juju-charm-panel',
     'juju-charm-store']
 });
