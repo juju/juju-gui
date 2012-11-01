@@ -638,23 +638,8 @@ YUI.add('juju-charm-search', function(Y) {
       }
     };
 
-    var handleFocus = function(ev) {
-      if (ev.target.get('value').trim() === 'Search for a charm') {
-        ev.target.set('value', '');
-      }
-    };
-
-    var handleBlur = function(ev) {
-      if (ev.target.get('value').trim() === '') {
-        ev.target.set('value', 'Search for a charm');
-        charmsSearchPanel.set('searchText', '');
-      }
-    };
-
     if (searchField) {
       searchField.on('keydown', handleKeyDown);
-      searchField.on('blur', handleBlur);
-      searchField.on('focus', handleFocus);
     }
 
     // The public methods
