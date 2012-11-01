@@ -11,8 +11,9 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   architecture
+   readme
    style-guide
+   architecture
    process
 
 Indices and tables
