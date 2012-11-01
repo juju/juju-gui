@@ -18,22 +18,28 @@ Checklist for Preparing for a Review
 ====================================
 
 - Round-trips with reviewers are expensive. Try to eliminate them.
-  * Pre-review your diff!  Tip: you can diff your branch against a local
+
+  - Pre-review your diff!  Tip: you can diff your branch against a local
     trunk named "trunk" with "bzr diff -r ancestor:../trunk/".
-    ~ All new code should have tests.  If it doesn't, be prepared to explain
+
+    - All new code should have tests.  If it doesn't, be prepared to explain
       why to skeptical reviewers.
-    ~ Have you cleaned out temporary comments and debugging changes?
-    ~ Is the code understandable?
-    ~ Do you have superfluous or duplicated code?
-  * Run tests!  Someday we'll have that in the lbox hook...
+    - Have you cleaned out temporary comments and debugging changes?
+    - Is the code understandable?
+    - Do you have superfluous or duplicated code?
+
+  - Run tests!  Someday we'll have that in the lbox hook...
+
 - Make sure there is a bug for your branch.  Ideally there was one when you
   started, but if not, see the "-new-bug" option to "lbox propose".
 - Aim for a branch diff size between 300 and 500 lines.
 - Treat branch diff sizes of more than 800 lines as a problem.
-    ~ Try to subdivide it now.  If you can't, explain to your reviewers your
-      reasoning.
-    ~ Treat this as an opportunity to learn.  Consider what you could have
-      done differently.
+
+  - Try to subdivide it now.  If you can't, explain to your reviewers your
+    reasoning.
+  - Treat this as an opportunity to learn.  Consider what you could have
+    done differently.
+
 - If the branch is very minor, such as a documentation change, feel free to
   self-review.  However, *don't neglect to consider your responsibilities
   above*, especially the diff review and running tests (even if you think
@@ -54,13 +60,16 @@ Checklist for Reviewing
 - Run ``make test`` and confirm that tests pass.
 - Run ``python improv.py -f sample.json`` in the rapi-rollup juju branch, and
   run ``make server`` with the juju-ui branch.
+
   * Don't forget to clear the browser cache: index.html may be sticking around
     because of the cache.manifest.
   * QA the changes if possible, exploring different use cases (and edge cases).
   * Spend between 60 and 120 seconds exploring the entire app.  Do different
     things every time.  Try to break the app, generally.
+
 - [Once we support multiple browsers, try them all, at least briefly.]
 - Review the diff, including notes from the above as appropriate.
+
   * Make sure that new code has tests.
   * Make sure you can understand the new code.  Ask for clarification if
     necessary.
@@ -71,6 +80,7 @@ Checklist for Reviewing
   * Before you ask for a change, think and make sure you can't compromise
     reasonably with the coder.  If there is a low importance disagreement, in
     general the coder's position should win.
+
 - In your summary message, thank the coder.
 - In your summary message, if you ask for changes, make it clear whether you
   want to re-review after the changes, or if you automatically approve if the
