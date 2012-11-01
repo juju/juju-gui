@@ -15,10 +15,10 @@ YUI.add('juju-charm-search', function(Y) {
     icon = ev.currentTarget.one('i');
     if (el.getStyle('height') === '0px') {
       el.show('sizeIn', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-right', 'icon-chevron-down');
+      icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
     } else {
       el.hide('sizeOut', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-down', 'icon-chevron-right');
+      icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
     }
   };
 
@@ -112,9 +112,85 @@ YUI.add('juju-charm-search', function(Y) {
           { name: 'configuration',
             charmId: ev.currentTarget.getData('url')});
     },
+    /**
+     * Create a data structure friendly to the view
+     */
+    normalizeCharms: function(charms) {
+      var hash = {},
+          defaultSeries = this.get('defaultSeries');
+      Y.each(charms, function(charm) {
+        charm.url = charm.series + '/' + charm.name;
+        if (charm.owner === 'charmers') {
+          charm.owner = null;
+        } else {
+          charm.url = '~' + charm.owner + '/' + charm.url;
+        }
+        charm.url = 'cs:' + charm.url;
+        if (!Y.Lang.isValue(hash[charm.series])) {
+          hash[charm.series] = [];
+        }
+        hash[charm.series].push(charm);
+      });
+      var series_names = Y.Object.keys(hash);
+      series_names.sort(function(a, b) {
+        if ((a === defaultSeries && b !== defaultSeries) || a > b) {
+          return -1;
+        } else if ((a !== defaultSeries && b === defaultSeries) || a < b) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+      return Y.Array.map(series_names, function(name) {
+        var charms = hash[name];
+        charms.sort(function(a, b) {
+          // If !a.owner, that means it is owned by charmers.
+          if ((!a.owner && b.owner) || (a.owner < b.owner)) {
+            return -1;
+          } else if ((a.owner && !b.owner) || (a.owner > b.owner)) {
+            return 1;
+          } else if (a.name < b.name) {
+            return -1;
+          } else if (a.name > b.name) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+        return {series: name, charms: hash[name]};
+      });
+    },
+    /**
+     * Find charms that match a query.
+     */
+    findCharms: function(query, callback) {
+      var charmStore = this.get('charmStore'),
+          db = this.get('db');
+      charmStore.sendRequest({
+        request: 'search/json?search_text=' + query,
+        callback: {
+          'success': Y.bind(function(io_request) {
+            // To see an example of what is being obtained, look at
+            // http://jujucharms.com/search/json?search_text=mysql .
+            var result_set = Y.JSON.parse(
+                io_request.response.results[0].responseText);
+            console.log('results update', result_set);
+            callback(this.normalizeCharms(result_set.results));
+          }, this),
+          'failure': function er(e) {
+            console.error(e.error);
+            db.notifications.add(
+                new models.Notification({
+                  title: 'Could not retrieve charms',
+                  message: e.error,
+                  level: 'error'
+                })
+            );
+          }}});
+    },
     _showErrors: function(e) {
       console.error(e.error);
-      this.get('app').db.notifications.add(
+      this.get('db').notifications.add(
           new models.Notification({
             title: 'Could not retrieve charms',
             message: e.error,
@@ -199,9 +275,9 @@ YUI.add('juju-charm-search', function(Y) {
         events: {
           '.btn.cancel': {click: 'goBack'},
           '.btn.deploy': {click: 'onCharmDeployClicked'},
-          '.remove-config-file': {click: 'onFileRemove'},
           '.charm-section h4': {click: toggleSectionVisibility},
-          '.config-file-upload': {change: 'onFileChange'},
+          '.config-file-upload-widget': {change: 'onFileChange'},
+          '.config-file-upload-overlay': {click: 'onOverlayClick'},
           '.config-field': {focus: 'showDescription',
             blur: 'hideDescription'},
           'input.config-field[type=checkbox]':
@@ -231,11 +307,9 @@ YUI.add('juju-charm-search', function(Y) {
           }
         },
         showDescription: function(evt) {
-          //console.log('focus', evt, evt.target.getXY());
           var controlGroup = evt.target.ancestor('.control-group'),
               node = controlGroup.one('.control-description'),
               text = node.get('text').trim();
-          //console.log(text);
           this.tooltip.setStdModContent('body', text);
           this.tooltip.field = evt.target;
           this.tooltip.panel = this.tooltip.field.ancestor(
@@ -246,31 +320,44 @@ YUI.add('juju-charm-search', function(Y) {
           this._moveTooltip();
         },
         hideDescription: function(evt) {
-          //console.log('focus', evt, evt.target.getXY());
           this.tooltip.hide();
           delete this.tooltip.field;
         },
+        /** Pass clicks on the overlay on to the correct recipient. */
+        onOverlayClick: function(evt) {
+          var container = this.get('container');
+          if (this.configFileContent) {
+            this.onFileRemove();
+          } else {
+            container.one('.config-file-upload-widget').getDOMNode().click();
+          }
+        },
         onFileChange: function(evt) {
+          var container = this.get('container');
           console.log('onFileChange:', evt);
           this.fileInput = evt.target;
           var file = this.fileInput.get('files').shift(),
               reader = new FileReader();
+          container.one('.config-file-name').setContent(file.name);
           reader.onerror = Y.bind(this.onFileError, this);
           reader.onload = Y.bind(this.onFileLoaded, this);
           reader.readAsText(file);
+          container.one('.config-file-upload-overlay')
+            .setContent('Remove file');
         },
-        onFileRemove: function(evt) {
+        onFileRemove: function() {
           var container = this.get('container');
           this.configFileContent = null;
-          container.one('.remove-config-file').addClass('hidden');
+          container.one('.config-file-name').setContent('');
           container.one('.charm-settings').show();
           // Replace the file input node.  There does not appear to be any way
           // to reset the element, so the only option is this rather crude
           // replacement.  It actually works well in practice.
-          var button = container.one('.remove-config-file');
           this.fileInput.replace(Y.Node.create('<input type="file"/>')
-                                 .addClass('config-file-upload'));
-          this.fileInput = container.one('.remove-config-file');
+                                 .addClass('config-file-upload-widget'));
+          this.fileInput = container.one('.config-file-upload-widget');
+          container.one('.config-file-upload-overlay')
+            .setContent('Use configuration file');
         },
         onFileLoaded: function(evt) {
           this.configFileContent = evt.target.result;
@@ -279,8 +366,8 @@ YUI.add('juju-charm-search', function(Y) {
             // Some file read errors don't go through the error handler as
             // expected but instead return an empty string.  Warn the user if
             // this happens.
-            var app = this.get('app');
-            app.db.notifications.add(
+            var db = this.get('db');
+            db.notifications.add(
                 new models.Notification({
                   title: 'Configuration file error',
                   message: 'The configuration file loaded is empty.  ' +
@@ -289,9 +376,6 @@ YUI.add('juju-charm-search', function(Y) {
                 }));
           }
           this.get('container').one('.charm-settings').hide();
-          this.get('container').one('.remove-config-file')
-            .removeClass('hidden');
-          console.log(this.configFileContent);
         },
         onFileError: function(evt) {
           console.log('onFileError:', evt);
@@ -309,8 +393,8 @@ YUI.add('juju-charm-search', function(Y) {
               msg = 'An error occurred reading this file.';
           }
           if (msg) {
-            var app = this.get('app');
-            app.db.notifications.add(
+            var db = this.get('db');
+            db.notifications.add(
                 new models.Notification({
                   title: 'Error reading configuration file',
                   message: msg,
@@ -325,7 +409,8 @@ YUI.add('juju-charm-search', function(Y) {
         },
         onCharmDeployClicked: function(evt) {
           var container = this.get('container'),
-              app = this.get('app'),
+              db = this.get('db'),
+              env = this.get('env'),
               serviceName = container.one('#service-name').get('value'),
               numUnits = container.one('#number-units').get('value'),
               charm = this.get('model'),
@@ -334,11 +419,11 @@ YUI.add('juju-charm-search', function(Y) {
                   '#service-config .config-field');
           // The service names must be unique.  It is an error to deploy a
           // service with same name.
-          var existing_service = app.db.services.getById(serviceName);
+          var existing_service = db.services.getById(serviceName);
           if (Y.Lang.isValue(existing_service)) {
             console.log('Attempting to add service of the same name: ' +
                         serviceName);
-            app.db.notifications.add(
+            db.notifications.add(
                 new models.Notification({
                   title: 'Attempting to deploy service ' + serviceName,
                   message: 'A service with that name already exists.',
@@ -350,11 +435,11 @@ YUI.add('juju-charm-search', function(Y) {
             config = null;
           }
           numUnits = parseInt(numUnits, 10);
-          app.env.deploy(url, serviceName, config, this.configFileContent,
-                         numUnits, function(ev) {
+          env.deploy(url, serviceName, config, this.configFileContent,
+              numUnits, function(ev) {
                 if (ev.err) {
                   console.log(url + ' deployment failed');
-                  app.db.notifications.add(
+                  db.notifications.add(
                       new models.Notification({
                         title: 'Error deploying ' + serviceName,
                         message: 'Could not deploy the requested service.',
@@ -362,7 +447,7 @@ YUI.add('juju-charm-search', function(Y) {
                       }));
                 } else {
                   console.log(url + ' deployed');
-                  app.db.notifications.add(
+                  db.notifications.add(
                       new models.Notification({
                         title: 'Deployed ' + serviceName,
                         message: 'Successfully deployed the requested service.',
@@ -378,9 +463,9 @@ YUI.add('juju-charm-search', function(Y) {
                     loaded: false,
                     config: config
                   });
-                  app.db.services.add([service]);
+                  db.services.add([service]);
                   // Force refresh.
-                  app.db.fire('update');
+                  db.fire('update');
                 }
               });
           this.goBack(evt);
@@ -411,17 +496,20 @@ YUI.add('juju-charm-search', function(Y) {
         charmsSearchPanelNode = Y.Node.create(),
         charmsSearchPanel = new CharmCollectionView(
               { container: charmsSearchPanelNode,
-                app: app,
-                charmStore: charmStore,
-                charms: charms }),
+                env: app.env,
+                db: app.db,
+                charms: charms,
+                charmStore: charmStore }),
         descriptionPanelNode = Y.Node.create(),
         descriptionPanel = new CharmDescriptionView(
               { container: descriptionPanelNode,
-                app: app }),
+                env: app.env,
+                db: app.db}),
         configurationPanelNode = Y.Node.create(),
         configurationPanel = new CharmConfigurationView(
               { container: configurationPanelNode,
-                app: app}),
+                env: app.env,
+                db: app.db}),
         panels =
               { charms: charmsSearchPanel,
                 description: descriptionPanel,
