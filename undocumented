@@ -90,7 +90,7 @@ app/views/charm-panel.js showConfiguration
 app/views/charm-panel.js showDescription
 app/views/charm-panel.js showDetails
 app/views/charm-panel.js toggle
-app/views/charm-panel.js updatePopupPosition
+app/views/charm-panel.js updatePanelPosition
 app/views/charm.js _deployCallback
 app/views/charm.js initializer
 app/views/charm.js on_charm_data
@@ -144,7 +144,6 @@ app/views/environment.js setSizesFromViewport
 app/views/environment.js show
 app/views/environment.js showGraphListPicker
 app/views/environment.js show_service
-app/views/environment.js styleToNumber
 app/views/environment.js subordinateRelationsForService
 app/views/environment.js toggleControlPanel
 app/views/environment.js updateCanvas

@@ -10,6 +10,22 @@ YUI.add('juju-charm-panel', function(Y) {
       subscriptions = [],
       // Singleton
       _instance,
+      // See https://github.com/yui/yuidoc/issues/25 for issue tracking
+      // missing @function tag.
+      /**
+      A shared listener for click events on headers that open and close
+      associated divs.
+
+      It expects the event target to contain an i tag used as a bootstrap
+      icon, and to have a parent with the 'charm-section' class.  The parent
+      must contain an element with the 'collapsible' class.  The i switches
+      back and forth between up and down icons, and the collapsible element
+      opens and closes.
+
+      @class toggleSectionVisibility
+      @static
+      @private
+      */
       toggleSectionVisibility = function(ev) {
         var el = ev.currentTarget.ancestor('.charm-section')
                 .one('.collapsible'),
@@ -22,6 +38,16 @@ YUI.add('juju-charm-panel', function(Y) {
           icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
         }
       },
+      /**
+      Given a container node and a total height available, set the height of a
+      '.charm-panel' node to fill the remaining height available to it within
+      the container.  This expects '.charm-panel' node to possibly have
+      siblings before it, but not any siblings after it.
+
+      @class setScroll
+      @static
+      @private
+      */
       setScroll = function(container, height) {
         var scrollContainer = container.one('.charm-panel');
         if (scrollContainer && height) {
@@ -110,6 +136,14 @@ YUI.add('juju-charm-panel', function(Y) {
       this._setScroll();
       return this;
     },
+    /**
+    When the view's "height" attribute is set, adjust the internal scrollable
+    div to have the appropriate height.
+
+    @method _setScroll
+    @protected
+    @return undefined
+    */
     _setScroll: function() {
       var container = this.get('container'),
           scrollContainer = container.one('.search-result-div'),
@@ -251,6 +285,14 @@ YUI.add('juju-charm-panel', function(Y) {
           this._setScroll();
           return this;
         },
+        /**
+        When the view's "height" attribute is set, adjust the internal
+        scrollable div to have the appropriate height.
+
+        @method _setScroll
+        @protected
+        @return undefined
+        */
         _setScroll: function() {
           setScroll(this.get('container'), this.get('height'));
         },
@@ -301,6 +343,14 @@ YUI.add('juju-charm-panel', function(Y) {
           this._setScroll();
           return this;
         },
+        /**
+        When the view's "height" attribute is set, adjust the internal
+        scrollable div to have the appropriate height.
+
+        @method _setScroll
+        @protected
+        @return undefined
+        */
         _setScroll: function() {
           setScroll(this.get('container'), this.get('height'));
         },
