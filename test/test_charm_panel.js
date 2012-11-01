@@ -46,7 +46,7 @@ describe('charm panel', function() {
 
   it('must be able to show and hide the panel', function() {
     var panel = Y.namespace('juju.views').CharmPanel
-          .getInstance({testing: true}),
+          .getInstance({testing: true, app: {}}),
         container = panel.node;
     container.getStyle('display').should.equal('none');
     panel.show();
@@ -75,7 +75,8 @@ describe('charm panel', function() {
               });
             }
           }}),
-          testing: true
+          testing: true,
+          app: {}
         }),
         node = panel.node;
     panel.show(true);
