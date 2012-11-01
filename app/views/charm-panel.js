@@ -22,9 +22,10 @@ YUI.add('juju-charm-panel', function(Y) {
       back and forth between up and down icons, and the collapsible element
       opens and closes.
 
-      @class toggleSectionVisibility
+      @method toggleSectionVisibility
       @static
       @private
+      @return {undefined} Mutates only.
       */
       toggleSectionVisibility = function(ev) {
         var el = ev.currentTarget.ancestor('.charm-section')
@@ -44,9 +45,10 @@ YUI.add('juju-charm-panel', function(Y) {
       the container.  This expects '.charm-panel' node to possibly have
       siblings before it, but not any siblings after it.
 
-      @class setScroll
+      @method setScroll
       @static
       @private
+      @return {undefined} Mutates only.
       */
       setScroll = function(container, height) {
         var scrollContainer = container.one('.charm-panel');
@@ -142,7 +144,7 @@ YUI.add('juju-charm-panel', function(Y) {
 
     @method _setScroll
     @protected
-    @return undefined
+    @return {undefined} Mutates only.
     */
     _setScroll: function() {
       var container = this.get('container'),
@@ -291,7 +293,7 @@ YUI.add('juju-charm-panel', function(Y) {
 
         @method _setScroll
         @protected
-        @return undefined
+        @return {undefined} Mutates only.
         */
         _setScroll: function() {
           setScroll(this.get('container'), this.get('height'));
@@ -349,7 +351,7 @@ YUI.add('juju-charm-panel', function(Y) {
 
         @method _setScroll
         @protected
-        @return undefined
+        @return {undefined} Mutates only.
         */
         _setScroll: function() {
           setScroll(this.get('container'), this.get('height'));
