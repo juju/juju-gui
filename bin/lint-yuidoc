@@ -28,7 +28,7 @@ def find_docs(function_name, line_number, boundry, source):
     # then there is none.
     in_comment = False
     for current_line_number in range(line_number-1, boundry, -1):
-        source_line = source[current_line_number] 
+        source_line = source[current_line_number]
         if source_line.strip().startswith('*/'):
             in_comment = True
         elif source_line.strip().startswith('/*'):
@@ -76,10 +76,6 @@ def check_file(file_name, undocumented):
     return functions, missing_documentation, falsely_undocumented
 
 
-def remove(unwanted, seq):
-    return [i for i in seq if i != unwanted]
-
-
 def main():
     # Did we find any lint?
     found_errors = False
@@ -87,9 +83,12 @@ def main():
     all_functions = []
     for root, dirs, files in os.walk('app'):
         # Ignore any asset directories.
-        dirs[:] = remove('assets', dirs)
+        try:
+            dirs.remove('assets')
+        except:
+            pass
         # Ignore the template.js file.
-        files[:] = remove('templates.js', files)
+        files = [f for f in files if f.endswith('.js') and f != 'templates.js']
 
         with open('undocumented') as f:
             undocumented = [tuple(line.split()) for line in f.readlines()]

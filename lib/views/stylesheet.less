@@ -7,7 +7,11 @@
 @charm-panel-configure-title-color: #eee7d5;
 @charm-panel-configure-name-color: #8f8f88;
 @charm-panel-deploy-button-color: #dd4814;
+@charm-panel-deploy-button-bottom-gradient: #e65c19;
+@charm-panel-deploy-button-shadow: #8a2d0c;
 @charm-panel-cancel-button-color: #b8b8b8;
+@charm-panel-cancel-button-bottom-gradient: #a3a39f;
+@charm-panel-cancel-button-shadow: #515050;
 @charm-panel-separator-color: #aeaeae;
 @charm-panel-background-color: #eeeeee;
 
@@ -16,6 +20,33 @@ body {
     background-color: #302b28;
     font-family: @font-family;
 }
+
+input, button, select, textarea {
+    font-family: @font-family;
+}
+
+.button-colors(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
+    @blur: 2px;
+    background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
+    background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
+    background-image: -o-linear-gradient(top, @gradient-start, @gradient-end);
+    background-image: -moz-linear-gradient(top, @gradient-start, @gradient-end);
+    background-image: linear-gradient(top, @gradient-start, @gradient-end);
+    background-repeat: repeat-x;
+    -moz-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
+	                 2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+    -webkit-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
+	                    2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+    box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
+	            2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    border: none;
+}
+
+
 
 i.sprite {
     display: inline-block;
@@ -101,7 +132,6 @@ i.sprite {
                     margin: 0 10px;
                     padding: 3px 3px 3px 26px;
                     font-style: italic;
-                    font-family: @font-family;
                     font-size: 0.9em;
                     &:valid {
                         background: white;
@@ -390,6 +420,7 @@ circle.mouse-down-indicator {
     stroke-width: 2px;
     fill: none;
 }
+
 g.service {
     fill: none;
     stroke: none;
@@ -399,12 +430,10 @@ g.service {
     }
 
     .charm-label {
-        font-family: @font-family;
         font-style: italic;
         fill: #4c4c4c;
     }
     .name {
-        font-family: @font-family;
         fill: #4c4c4c;
     }
 
@@ -413,7 +442,6 @@ g.service {
         text-anchor: middle;
         dominant-baseline: central;
         fill: rgba(0,0,0,0);
-        font-family: @font-family;
 
         &.show-count {
             fill: rgba(0,0,0,1);}
@@ -425,7 +453,6 @@ g.service {
         text-anchor: middle;
         dominant_baseline: central;
         fill: #4f4f4f;
-        font-family: @font-family;
         font-size: 1.2em;
     }
 
@@ -468,8 +495,8 @@ g.service-status {
 
 g.unit {
     stroke-width: 0; font-weight: bold;
-    font-family: @font-family; font-size: 1.2em; fill: #1626cf;
-
+    font-size: 1.2em;
+    fill: #1626cf;
     .address {
     fill: #ffffff; font-size: 0.8em;}
     .unit-border {
@@ -759,41 +786,36 @@ g.unit {
         float: right;
     }
 
-    .button-colors(@color) {
-        @gradient-start: lighten(@color, 5%);
-        @gradient-end: darken(@color, 5%);
-        background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
-        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
-        background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
-        background-image: -o-linear-gradient(top, @gradient-start, @gradient-end);
-        background-image: -moz-linear-gradient(top, @gradient-start, @gradient-end);
-        background-image: linear-gradient(top, @gradient-start, @gradient-end);
-        background-repeat: repeat-x;
-        border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    }
     .btn.deploy {
         margin-top: 5px;
         margin-left: 5px;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-        .button-colors(@charm-panel-deploy-button-color);
-        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
-          background-color: @charm-panel-deploy-button-color;
+        .button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient,
+		       @charm-panel-deploy-button-shadow, 0px);
+        &:active {
+            .button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color,
+			   @charm-panel-deploy-button-shadow, 1px);
         }
     }
+
     .charm-description btn.deploy {
        float: right;
     }
     .btn.cancel {
+        color: white;
+        text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.5);
         margin-top: 5px;
         background-repeat: no-repeat;
         background-color: transparent;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
-        .button-colors(@charm-panel-cancel-button-color);
-        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
-          background-color: @charm-panel-cancel-button-color;
+        .button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
+		       @charm-panel-cancel-button-shadow, 0px);
+        &:active {
+            .button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color,
+			   @charm-panel-cancel-button-shadow, 1px);
         }
     }
     .charm-panel-configure-buttons {
@@ -905,7 +927,7 @@ g.unit {
                 height: 25px;
                 width: 149px;
                 z-index: 2;
-		cursor: pointer;
+                cursor: pointer;
                 &:active {
                   background: url(/juju-ui/assets/images/getfile_button-pressed.png) no-repeat;
                 }
