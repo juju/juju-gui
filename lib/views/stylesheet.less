@@ -107,9 +107,16 @@ i.sprite {
             &#charm-search-trigger-container {
                 width: 292px;
                 white-space: nowrap;
+                border-left: 1px solid transparent;
+                &.active-border {
+                    border-left-color: lightgray;
+                }
             }
             .nav-section {
-                border-left: 1px solid lightgray;
+                border-left: 1px solid transparent;
+                &.active-border {
+                    border-left-color: lightgray;
+                }
                 display: inline-block;
                 padding: 4px 10px;
                 #charm-search-trigger {
@@ -120,17 +127,25 @@ i.sprite {
                 }
                 input {
                     width: 128px;
-                    background: url(/juju-ui/assets/images/searchbox_icon.png) no-repeat 2px 1px whiteSmoke;
+                    background: url(/juju-ui/assets/images/searchbox_icon.png)
+                                no-repeat 2px 1px whiteSmoke;
                     margin: 0 10px;
                     padding: 3px 3px 3px 26px;
                     font-style: italic;
                     font-size: 0.9em;
-                    &:focus {
+                    &:valid {
                         background: white;
                         padding: 3px;
                         width: 151px;
                         font-style: normal;
                         font-size: 1em;
+                    }
+                    &:focus {
+                        border-color: rgba(82, 168, 236, 0.8);
+                        outline: 0;
+                        outline: thin dotted 9;
+                        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+                                    0 0 8px rgba(82, 168, 236, 0.6);
                     }
                 }
 
@@ -153,6 +168,10 @@ i.sprite {
             }
         }
     }
+}
+
+.bottom-navbar {
+    min-width: 800px;
 }
 
 #content {
@@ -754,10 +773,14 @@ g.unit {
 
 #juju-search-charm-panel {
     display: block;
-    padding-left: 0px;
-    padding-right: 0px;
     z-index: 999;
-    float: none;
+    padding: 0;
+    top: 70px;
+    height: 100px;
+    position: absolute;
+    width: 292px;
+    background-color: white;
+    border-left: lightgray solid 1px;
 
     .charm-panel-configure .btn {
         float: right;
@@ -807,11 +830,6 @@ g.unit {
         width: 100%;
         height: 500px;
     }
-    @popover-height: 607px;
-    .popover-content {
-        padding: 0px;
-        height: @popover-height;
-    }
     .charm-nav-back {
         background-color: black;
         text-transform: uppercase;
@@ -852,8 +870,7 @@ g.unit {
             padding: 1ex 1em;
             .charm-section {
                 .commitmessage {
-                    padding-top: 0.8ex;
-                    padding-left: 1em;
+                    padding: 0.8ex 0 1ex 1em;
                     font-style: italic;
                     white-space: pre-wrap;
                 }
@@ -934,7 +951,6 @@ g.unit {
         }
     }
     .search-result-div {
-        height: @popover-height;
         overflow-y:auto;
         overflow-x:hidden;
         .series-charms {

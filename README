@@ -1,3 +1,7 @@
+======
+README
+======
+
 Developer Install
 =================
 
@@ -9,7 +13,7 @@ You'll need nodejs & npm from the ppa::
   $ sudo apt-get update
   $ sudo apt-get install nodejs npm
 
-You also need ImageMagick.
+You also need ImageMagick::
 
   $ sudo apt-get install imagemagick
 
@@ -102,7 +106,18 @@ Running lint
 
   $ jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
 
-Style
-=====
+More documentation
+==================
 
-See the ``docs/style-guide.rst`` file for the project style guide.
+Install Sphinx::
+
+  $ sudo apt-get install python-sphinx
+
+Build the docs::
+
+  $ cd docs
+  $ make html
+
+View them::
+
+  $ xdg-open _build/html/index.html
