@@ -203,8 +203,8 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      // Create the CharmSearchPopup instance once the app.js is initialized
-      var popup = views.CharmSearchPopup.getInstance({
+      // Create the CharmPanel instance once the app.js is initialized
+      var popup = views.CharmPanel.getInstance({
         charm_store: this.charm_store,
         env: this.env,
         app: this
@@ -484,6 +484,7 @@ YUI.add('juju-gui', function(Y) {
         console.log('new env view');
         this.showView('environment',
             { getModelURL: Y.bind(this.getModelURL, this),
+              /** A simple closure so changes to the value are available.*/
               getServiceEndpoints: function() {return self.serviceEndpoints;},
               loadService: this.loadService,
               db: this.db,
@@ -498,6 +499,7 @@ YUI.add('juju-gui', function(Y) {
          */
         this.showView('environment',
             { getModelURL: Y.bind(this.getModelURL, this),
+              /** A simple closure so changes to the value are available.*/
               getServiceEndpoints: function() {return self.serviceEndpoints;},
               loadService: this.loadService,
               db: this.db,
@@ -709,6 +711,6 @@ YUI.add('juju-gui', function(Y) {
     'base',
     'node',
     'model',
-    'juju-charm-search',
+    'juju-charm-panel',
     'juju-charm-store']
 });
