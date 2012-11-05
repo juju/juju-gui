@@ -25,7 +25,7 @@ input, button, select, textarea {
     font-family: @font-family;
 }
 
-.button-colors(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
+.create-button(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
     @blur: 2px;
     background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
@@ -40,9 +40,9 @@ input, button, select, textarea {
 	                    2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
     box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
 	            2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
+    -moz-border-radius: ~"4px / 7px";
+    -webkit-border-radius: ~"4px / 7px";
+    border-radius: ~"4px / 7px";
     border: none;
 }
 
@@ -791,10 +791,10 @@ g.unit {
         margin-left: 5px;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-        .button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient,
+        .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient,
 		       @charm-panel-deploy-button-shadow, 0px);
         &:active {
-            .button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color,
+            .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color,
 			   @charm-panel-deploy-button-shadow, 1px);
         }
     }
@@ -811,10 +811,10 @@ g.unit {
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
-        .button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
+        .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
 		       @charm-panel-cancel-button-shadow, 0px);
         &:active {
-            .button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color,
+            .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color,
 			   @charm-panel-cancel-button-shadow, 1px);
         }
     }
