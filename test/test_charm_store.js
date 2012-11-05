@@ -100,6 +100,63 @@
           'search/json?search_text=' + escape('foo:bar sha:zam'));
     });
 
+    it('sends a proper request for a hash call of array to find', function() {
+      var args;
+      charm_store.set('datasource', {
+        sendRequest: function(params) {
+          args = params;
+        }
+      });
+      charm_store.find({foo: ['bar', 'baz', 'bing'], sha: 'zam'}, {});
+      args.request.should.equal(
+          'search/json?search_text=' +
+          escape('foo:bar foo:baz foo:bing sha:zam'));
+    });
+
+    it('sends a proper request for a hash union call to find', function() {
+      var args;
+      charm_store.set('datasource', {
+        sendRequest: function(params) {
+          args = params;
+        }
+      });
+      charm_store.find(
+        {foo: ['bar', 'baz', 'bing'], sha: 'zam', op: 'union'}, {});
+      args.request.should.equal(
+          'search/json?search_text=' +
+          escape('foo:bar OR foo:baz OR foo:bing OR sha:zam'));
+    });
+
+    it('sends a proper request for a hash intersection call to find', function() {
+      var args;
+      charm_store.set('datasource', {
+        sendRequest: function(params) {
+          args = params;
+        }
+      });
+      charm_store.find(
+        {foo: ['bar', 'baz', 'bing'], sha: 'zam', op: 'intersection'}, {});
+      args.request.should.equal(
+          'search/json?search_text=' +
+          escape('foo:bar foo:baz foo:bing sha:zam'));
+    });
+
+    it('throws an error with unknown operator', function() {
+      var args;
+      charm_store.set('datasource', {
+        sendRequest: function(params) {
+          args = params;
+        }
+      });
+      try {
+      charm_store.find(
+        {foo: ['bar', 'baz', 'bing'], sha: 'zam', op: 'fiddly'}, {});
+        assert.fail('should have thrown an error');
+      } catch (e) {
+        e.should.equal('Developer error: unknown operator fiddly');
+      }
+    });
+
     it('processes and orders search text requests properly', function(done) {
       // This is data from
       // http://jujucharms.com/search/json?search_text=cassandra .

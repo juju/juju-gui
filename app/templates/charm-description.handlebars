@@ -15,7 +15,11 @@
         <h5>Description</h5>
         <div>{{description}}</div>
         <h5>Owner</h5>
+        {{#if owner}}
         <p>{{owner}}</p>
+        {{else}}
+        <p>[Official charm]</p>
+        {{/if}}
         {{#if store_revision}}
         <h5>Store Revision</h5>
         <p>{{store_revision}}</p>
@@ -57,23 +61,13 @@
       </div>
     </div>
     {{/if}}
+    {{#any requires provides}}
     <div class="charm-section">
-      <h4><i class="icon-chevron-right"></i>Related Charms: Required</h4>
-      <div class="collapsible" id="i-require">
+      <h4><i class="icon-chevron-right"></i>Related Charms</h4>
+      <div class="collapsible" id="related-charms">
         Loading...
       </div>
     </div>
-    <div class="charm-section">
-      <h4><i class="icon-chevron-right"></i>Related Charms: Provided</h4>
-      <div class="collapsible" id="requires-me">
-        Loading...
-      </div>
-    </div>
-    <div class="charm-section">
-      <h4><i class="icon-chevron-right"></i>Related Charms: Alternatives</h4>
-      <div class="collapsible" id="alternatives">
-        Loading...
-      </div>
-    </div>
+    {{/any}}
   </div>
 </div>

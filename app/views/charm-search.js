@@ -13,7 +13,7 @@ YUI.add('juju-charm-search', function(Y) {
                 .one('.collapsible'),
         icon = ev.currentTarget.one('i');
     icon = ev.currentTarget.one('i');
-    if (el.getStyle('height') === '0px') {
+    if (el.get('clientHeight') === 0) {
       el.show('sizeIn', {duration: 0.25, width: null});
       icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
     } else {
@@ -30,7 +30,14 @@ YUI.add('juju-charm-search', function(Y) {
                   function(charm) { return charm.getAttrs(); })
             };
           });
-  };
+  },
+      getInterfaces = function(data) {
+        if (data) {
+          return Y.Array.map(
+              Y.Object.values(data),
+              function(val) { return val['interface']; });
+        }
+      };
 
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
@@ -225,88 +232,61 @@ YUI.add('juju-charm-search', function(Y) {
               el.ancestor('.charm-section').one('div')
                 .setStyle('height', '0px');
             });
-            this._findRelated(
-              'requires', charm.get('provides'), '#requires-me');
-            this._findRelated(
-              'provides', charm.get('requires'), '#i-require');
-            this._findRelated(
-              'provides', charm.get('provides'), '#alternatives');
+            var slot = container.one('#related-charms');
+            if (slot) {
+              this.getRelatedCharms(charm, slot);
+            }
           } else {
             container.setHTML(
                 '<div class="alert">Waiting on charm data...</div>');
           }
           return this;
         },
-        _findRelated: function(field, values, selector) {
-          var charm = this.get('model'),
-              store = this.get('charmStore'),
+        getRelatedCharms: function(charm, slot) {
+          var store = this.get('charmStore'),
               defaultSeries = this.get('defaultSeries'),
               list = this.get('charms'),
               self = this,
-              results = [];
-          values = Y.Object.values(values);
-          Y.each(values, function(value) {
-            var query = {};
-            query[field] = value['interface'];
+              query = {
+                op: 'union',
+                requires: getInterfaces(charm.get('provides')),
+                provides: getInterfaces(charm.get('requires'))
+              };
+          if (query.requires || query.provides) {
             store.find(
               query,
-              { success: function(charms) {
-                  results.push(charms);
-                  if (results.length === values.length) {
-                    self._aggregateAndRenderRelated(results, selector, charm);
+              { success: function(related) {
+                  if (charm === self.get('model')){
+                    self.renderRelatedCharms(related, slot);
                   }
                 },
                 failure: function(e) {
-                  results.push([]);
                   console.error(e.error);
-                  this.get('db').notifications.add(
+                  self.get('db').notifications.add(
                       new models.Notification({
                         title: 'Could not retrieve charm data',
                         message: e.error,
                         level: 'error'
                       })
                   );
-                  if (results.length === values.length) {
-                    self._aggregateAndRenderRelated(results, selector, charm);
-                  }
                 },
                 defaultSeries: defaultSeries,
                 list: list
               });
-          });
+          } else {
+            slot.setHTML('None');
+          }
         },
-        _aggregateAndRenderRelated: function(results, selector, charm) {
-          var container = this.get('container'),
-              slot = container.one(selector),
-              aggregated = {};
-          if (slot && charm === this.get('model')) {
-            // First aggregate.
-            Y.each(results, function(result) { // "result" has list of {series:, charms:}
-              Y.each(result, function(data) { // "data" is {series:, charms:}
-                var group = aggregated[data.series];
-                if (!Y.Lang.isValue(group)) {
-                  aggregated[data.series] = data;
-                } else {
-                  // We must merge.
-                  Y.each(data.charms, function(charm) {
-                    if (Y.Array.indexOf(group.charms, charm) < 0) {
-                      group.charms.push(charm);
-                    }
-                  });
-                }
-              });
-            });
-            // Next separate.
-            var charms = Y.Object.values(aggregated);
-            // Next resort series and charms.
-            // XXX
-            // Lastly render.
-            if (charms.length) {
-              slot.setHTML(this.relatedTemplate(
-                {charms: makeRenderableResults(charms)}));
-            } else {
-              slot.setHTML('None');
+        renderRelatedCharms: function(related, slot) {
+          if (related.length) {
+            slot.setHTML(this.relatedTemplate(
+              {charms: makeRenderableResults(related)}));
+            // Make container big enough if it is open.
+            if (slot.get('clientHeight') > 0) {
+              slot.show('sizeIn', {duration: 0.25, width: null});
             }
+          } else {
+            slot.setHTML('None');
           }
         },
         goBack: function(ev) {
