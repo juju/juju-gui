@@ -1,9 +1,8 @@
-//http://stackoverflow.com/questions/5348685/node-js-require-inheritance
+// http://stackoverflow.com/questions/5348685/node-js-require-inheritance
 YUI = require('yui').YUI;
 
 var fs = require('fs'), 
     syspath = require('path'), 
-    RESULTING_FILE = './app/all.js', 
     modules = {}, 
     paths = [];
 
@@ -84,7 +83,7 @@ var reqs = (function() {
   return yuiRequirements;
 })();
 
-//Using the example http://yuilibrary.com/yui/docs/yui/loader-resolve.html
+// Using the example http://yuilibrary.com/yui/docs/yui/loader-resolve.html
 (function() {
   var Y, loader, out, str = [];
   Y = YUI();
@@ -98,12 +97,19 @@ var reqs = (function() {
     console.log('file -> ' + file);
     str.push(fs.readFileSync(file, 'utf8'));
   });
+  fs.writeFileSync('./app/all-yui.js', str.join('\n'), 'utf8');
+})();
+
+// Creating the combined file for all our files
+(function() {
+  var str = [];
   loop(paths, function(file) {
     console.log('file -> ' + file);
     str.push(fs.readFileSync(file, 'utf8'));
   });
-  fs.writeFileSync(RESULTING_FILE, str.join('\n'), 'utf8');
+  fs.writeFileSync('./app/all-app.js', str.join('\n'), 'utf8');
 })();
+
 
 function loop(arr, callback) {
   if (!arr) {

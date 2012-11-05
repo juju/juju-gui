@@ -61,7 +61,8 @@ beautify: virtualenv/bin/fixjsstyle
 spritegen: $(SPRITE_GENERATED_FILES)
 
 combinejs: 
-	@rm -f app/all.js
+	@rm -f app/all-yui.js
+	@rm -f app/all-app.js
 	@node merge-files.js
 	@node_modules/grunt/bin/grunt min
 
@@ -79,7 +80,8 @@ clean:
 	@make -C docs clean
 	@rm -Rf bin/sprite/
 	@rm -Rf app/assets/sprite/
-	@rm -f app/all.js
+	@rm -f app/all-yui.js
+	@rm -f app/all-app.js
 
 $(APPCACHE): manifest.appcache.in
 	@cp manifest.appcache.in $(APPCACHE)
