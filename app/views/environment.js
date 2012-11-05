@@ -65,6 +65,20 @@ YUI.add('juju-view-environment', function(Y) {
           }
         },
 
+        /*
+         * The user clicked on the environment view background.
+         *
+         * If we are in the middle of adding a relation, cancel the relation
+         * adding.
+         *
+         * @method backgroundClicked
+         */
+        backgroundClicked: function(self) {
+            if (self.clickAddRelation) {
+              self.cancelRelationBuild();
+            }
+        },
+
         sceneEvents: {
           // Service Related
           '.service': {
@@ -177,7 +191,6 @@ YUI.add('juju-view-environment', function(Y) {
             }
           },
 
-          // Canvas related
           '#canvas rect:first-child': {
             click: function(d, self) {
               var container = self.get('container');
@@ -185,7 +198,20 @@ YUI.add('juju-view-environment', function(Y) {
               self.service_click_actions.toggleControlPanel(null, self);
               self.cancelRelationBuild();
             },
-            mousemove: 'rectMousemove'
+            mousemove: function(d, self) {
+              if (self.clickAddRelation) {
+                var container = self.get('container'),
+                    node = container.one('#canvas rect:first-child');
+                self.rectMousemove.call(node.getDOMNode(), d, self);
+              }
+            }
+          },
+          '.dragline': {
+            click: function(d, self) {
+              // It was technically the dragline that was clicked, but the
+              // intent was to click on the background, so...
+              view.backgroundClicked(self);
+            }
           }
         },
 
