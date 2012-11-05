@@ -27,8 +27,7 @@ YUI.add('juju-view-environment', function(Y) {
               this.addRelationDragStart.call(this, box, context);
               this.service_click_actions
                         .toggleControlPanel(box, this, context);
-              this.service_click_actions
-                        .addRelationStart(box, this, context);
+              this.service_click_actions.addRelationStart(box, this, context);
             }
           },
           '.view-service': {
@@ -1187,6 +1186,54 @@ YUI.add('juju-view-environment', function(Y) {
           }
         },
 
+        startRelation: function(service) {
+            // Set flags on the view that indicate we are building a relation.
+            this.buildingRelation = true;
+            this.clickAddRelation = true;
+
+            this.show(this.vis.selectAll('.service'));
+
+            var db = this.get('db'),
+                getServiceEndpoints = this.get('getServiceEndpoints'),
+                endpoints = models.getEndpoints(
+                    service, getServiceEndpoints(), db),
+
+                /* Transform endpoints into a list of
+                 * relatable services (to the service)
+                 */
+                possible_relations = Y.Array.map(
+                    Y.Array.flatten(Y.Object.values(
+                        endpoints)),
+                    function(ep) {return ep.service;}),
+                invalidRelationTargets = {};
+
+            // Iterate services and invert the possibles list.
+            db.services.each(function(s) {
+              if (Y.Array.indexOf(possible_relations,
+                  s.get('id')) === -1) {
+                invalidRelationTargets[s.get('id')] = true;
+              }
+            });
+
+            // Fade elements to which we can't relate.
+            // Rather than two loops this marks
+            // all services as selectable and then
+            // removes the invalid ones.
+            this.fade(this.vis.selectAll('.service')
+              .classed('selectable-service', true)
+              .filter(function(d) {
+                  return (d.id in invalidRelationTargets &&
+                          d.id !== service.id);
+                }))
+              .classed('selectable-service', false);
+
+            // Store possible endpoints.
+            this.set('addRelationStart_possibleEndpoints', endpoints);
+            // Set click action.
+            this.set('currentServiceClickAction', 'ambiguousAddRelationCheck');
+        },
+
+
         /*
          * Zoom in event handler.
          */
@@ -1451,55 +1498,10 @@ YUI.add('juju-view-environment', function(Y) {
            * flow.
            */
           addRelationStart: function(m, view, context) {
-            // set a flag on the view that we're building a relation
-            view.buildingRelation = true;
-            view.clickAddRelation = true;
-
-            view.show(view.vis.selectAll('.service'));
-
-            var db = view.get('db'),
-                getServiceEndpoints = view.get('getServiceEndpoints'),
-                service = view.serviceForBox(m),
-                endpoints = models.getEndpoints(
-                    service, getServiceEndpoints(), db),
-
-                /* Transform endpoints into a list of
-                 * relatable services (to the service in m)
-                 */
-                possible_relations = Y.Array.map(
-                    Y.Array.flatten(Y.Object.values(
-                        endpoints)),
-                    function(ep) {return ep.service;}),
-                invalidRelationTargets = {};
-
-            // Iterate services and invert the possibles list.
-            db.services.each(function(s) {
-              if (Y.Array.indexOf(possible_relations,
-                  s.get('id')) === -1) {
-                invalidRelationTargets[s.get('id')] = true;
-              }
-            });
-
-            // Fade elements to which we can't relate.
-            // Rather than two loops this marks
-            // all services as selecable and then
-            // removes the invalid ones
-            view.fade(view.vis.selectAll('.service')
-              .classed('selectable-service', true)
-              .filter(function(d) {
-                  return (d.id in invalidRelationTargets &&
-                          d.id !== m.id);
-                }))
-              .classed('selectable-service', false);
-
-
-
+            var service = view.serviceForBox(m);
+            view.startRelation.call(view, service);
             // Store start service in attrs.
             view.set('addRelationStart_service', m);
-            // Store possible endpoints.
-            view.set('addRelationStart_possibleEndpoints', endpoints);
-            // Set click action.
-            view.set('currentServiceClickAction', 'ambiguousAddRelationCheck');
           },
 
           /*

@@ -382,17 +382,13 @@
                 db: db,
                 env: env,
                 getServiceEndpoints: function() {return endpoint_map;}}),
-              service = new models.Service({ id: 'service-1'}),
-              box = {id: 7};
+              service = new models.Service({ id: 'service-1'});
 
           db.services.add([service]);
-          view.serviceForBox = function(m) {
-            return service;
-          };
           view.render();
 
           // If the user has clicked on the "Add Relation" menu item...
-          view.service_click_actions.addRelationStart(box, view, undefined);
+          view.startRelation(service);
           assert.isTrue(view.buildingRelation);
           // ...clicking on the background causes the relation drag to stop.
           view.backgroundClicked();
