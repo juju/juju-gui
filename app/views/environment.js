@@ -200,9 +200,6 @@ YUI.add('juju-view-environment', function(Y) {
                   return;
                 }
 
-                // set a flag on the view that we're building a relation
-                self.buildingRelation = true;
-
                 // Sometimes mouseover is fired after the mousedown, so ensure
                 // we have the correct event in d3.event for d3.mouse().
                 d3.event = e;
@@ -1450,6 +1447,9 @@ YUI.add('juju-view-environment', function(Y) {
            * flow.
            */
           addRelationStart: function(m, view, context) {
+            // set a flag on the view that we're building a relation
+            view.buildingRelation = true;
+
             view.show(view.vis.selectAll('.service'));
 
             var db = view.get('db'),

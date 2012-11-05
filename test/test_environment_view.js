@@ -372,6 +372,32 @@
          view.get('rmrelation_dialog').hide();
        });
 
+    it('should stop creating a relation if the background is clicked',
+        function() {
+          var db = new models.Database(),
+              endpoint_map = {'service-1': {requires: [], provides: []}},
+              view = new views.environment(
+              { container: container,
+                db: db,
+                env: env,
+                getServiceEndpoints: function() {return endpoint_map;}}),
+              service = new models.Service({ id: 'service-1'}),
+              box = {id: 7};
+
+          db.services.add([service]);
+          view.serviceForBox = function(m) {
+            return service;
+          };
+          view.render();
+
+          //view.startRelationClicked(service);
+          view.service_click_actions.addRelationStart(box, view, undefined);
+          assert.isTrue(view.buildingRelation);
+          // Clicking on the background causes the relation drag to stop.
+          view.backgroundClicked();
+          assert.isFalse(view.buildingRelation);
+        });
+
     // TODO: This will be fully testable once we have specification on the
     // list view itself.  Skipped until then.
     it.skip('must be able to switch between graph and list views',
@@ -392,6 +418,7 @@
         }
     );
   });
+
   describe('view model support infrastructure', function() {
     var Y, views, models;
 
