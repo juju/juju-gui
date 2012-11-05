@@ -32,6 +32,13 @@ The gui frontend can be installed with::
   $ cd trunk
   $ make server
 
+It may take a while for the server to start the first time as npm will
+need to download packages.  When ready, the server will print:
+
+Server listening on 8888
+
+You can then access the GUI at http://localhost:8888
+
 You'll also need to deploy a juju environment with REST api access.
 Currently that work resides in a pipeline of juju branches. The
 recommended branch to use as a server is ``lp:~hazmat/juju/rapi-delta``.
