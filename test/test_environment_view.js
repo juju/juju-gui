@@ -391,10 +391,10 @@
           };
           view.render();
 
-          //view.startRelationClicked(service);
+          // If the user has clicked on the "Add Relation" menu item...
           view.service_click_actions.addRelationStart(box, view, undefined);
           assert.isTrue(view.buildingRelation);
-          // Clicking on the background causes the relation drag to stop.
+          // ...clicking on the background causes the relation drag to stop.
           view.backgroundClicked();
           assert.isFalse(view.buildingRelation);
         });
