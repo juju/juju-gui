@@ -787,11 +787,12 @@ YUI.add('juju-view-environment', function(Y) {
           var status_chart_arc = d3.svg.arc()
             .innerRadius(0)
             .outerRadius(function(d) {
-                // Make sure it's exactly as wide as the mask
+                // Make sure it's exactly as wide as the mask with a bit
+                // of leeway for the border.
                 return parseInt(
                     d3.select(this.parentNode)
                       .select('image')
-                      .attr('width'), 10) / 2;
+                      .attr('width'), 10) / 2.05;
               });
 
           var status_chart_layout = d3.layout.pie()
