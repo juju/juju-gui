@@ -2,6 +2,12 @@
 
 module.exports = function(grunt) {
   grunt.initConfig({
+    min: {
+      dist: {
+        src: [ 'app/all.js' ],
+        dest: 'app/all.js'
+      }
+    },
     spritesheet: {
       compile: {
         options: {
@@ -11,7 +17,7 @@ module.exports = function(grunt) {
 
         },
         files: {
-          'bin' : 'app/assets/images/*'
+          'bin': 'app/assets/images/*'
         }
       }
     }

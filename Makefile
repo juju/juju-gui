@@ -36,7 +36,7 @@ $(NODE_TARGETS): package.json
 	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
 
-install: appcache $(NODE_TARGETS) app/templates.js yuidoc spritegen
+install: appcache $(NODE_TARGETS) app/templates.js yuidoc spritegen combinejs
 
 gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
@@ -60,6 +60,11 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
+combinejs: 
+	@rm -f app/all.js
+	@node merge-files.js
+	@node_modules/grunt/bin/grunt min
+
 prep: beautify lint
 
 test: install
@@ -74,6 +79,7 @@ clean:
 	@make -C docs clean
 	@rm -Rf bin/sprite/
 	@rm -Rf app/assets/sprite/
+	@rm -f app/all.js
 
 $(APPCACHE): manifest.appcache.in
 	@cp manifest.appcache.in $(APPCACHE)
@@ -90,4 +96,5 @@ appcache-touch:
 appcache-force: appcache-touch appcache
 
 .PHONY: test lint beautify server install clean prep jshint gjslint \
-	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint
+	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
+	combinejs

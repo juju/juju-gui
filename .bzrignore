@@ -20,3 +20,4 @@ virtualenv
 yuidoc
 app/assets/manifest.appcache
 app/assets/sprite
+app/all.js

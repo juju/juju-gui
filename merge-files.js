@@ -1,0 +1,115 @@
+//http://stackoverflow.com/questions/5348685/node-js-require-inheritance
+YUI = require('yui').YUI;
+
+var fs = require('fs'), 
+    syspath = require('path'), 
+    RESULTING_FILE = './app/all.js', 
+    modules = {}, 
+    paths = [];
+
+// Reading the 'requires' attribute of all our custom js files
+(function() {
+  // reading all JS files under './app'
+  readdir('./app');
+  console.log('FILES loaded');
+
+  var originalAdd = YUI.add;
+  // This is a trick to get the 'requires' value from the module definition
+  YUI.add = function(name, fn, version, details) {
+    modules[name] = [];
+    if (details && details.requires) {
+      loop(details.requires, function(value) {
+        modules[name].push(value);
+      });
+    }
+  };
+
+  loop(paths, function(value) {
+    try {
+      // It triggers the custom 'add' method above
+      require(value);
+    } catch (e) {
+      // If it fails it means the path points to a third-part js lib (d3
+      // for example), so we dont need to worry about it.
+    }
+  });
+  YUI.add = originalAdd;
+
+  function readdir(path) {
+    var file, dirs = [], fileName, files = fs.readdirSync(path);
+
+    loop(files, function(value) {
+      fileName = path + '/' + value;
+      file = fs.statSync(fileName);
+
+      if (file.isFile()) {
+        if (syspath.extname(fileName).toLowerCase() === '.js') {
+          paths.push(fileName);
+        }
+      } else if (file.isDirectory()) {
+        console.log('DIRECTORY -> ' + fileName);
+        if ('./app/assets/javascripts/yui' === fileName) {
+          console.log('SKIPPING DIRECTORY -> ' + fileName);
+        } else {
+          dirs.push(fileName);
+        }
+      }
+    });
+
+    loop(dirs, function(directory) {
+      readdir(directory);
+    });
+  }
+})();
+
+// Getting all the YUI dependencies that we need
+var reqs = (function() {
+  var yuiRequirements = [], requires = null;
+  for ( var key in modules) {
+    if (!modules.hasOwnProperty(key)) {
+      continue;
+    }
+    requires = modules[key];
+    loop(requires, function(value) {
+      if (!modules[value]) {
+        // This is not one of our modules but a yui one.
+        if (yuiRequirements.indexOf(value) < 0) {
+          // avoid duplicates
+          yuiRequirements.push(value);
+        }
+      }
+    });
+  }
+  console.log('REQS loaded');
+  return yuiRequirements;
+})();
+
+//Using the example http://yuilibrary.com/yui/docs/yui/loader-resolve.html
+(function() {
+  var Y, loader, out, str = [];
+  Y = YUI();
+  loader = new Y.Loader({
+    base: syspath.join(__dirname, './node_modules/yui/'),
+    ignoreRegistered: true,
+    require: reqs
+  });
+  out = loader.resolve(true);
+  out.js.forEach(function(file) {
+    console.log('file -> ' + file);
+    str.push(fs.readFileSync(file, 'utf8'));
+  });
+  loop(paths, function(file) {
+    console.log('file -> ' + file);
+    str.push(fs.readFileSync(file, 'utf8'));
+  });
+  fs.writeFileSync(RESULTING_FILE, str.join('\n'), 'utf8');
+})();
+
+function loop(arr, callback) {
+  if (!arr) {
+    return;
+  }
+  for ( var i = 0; i < arr.length; i++) {
+    callback(arr[i]);
+  }
+}
