@@ -1,3 +1,7 @@
+======
+README
+======
+
 Developer Install
 =================
 
@@ -8,6 +12,10 @@ You'll need nodejs & npm from the ppa::
   $ sudo add-apt-repository ppa:chris-lea/node.js
   $ sudo apt-get update
   $ sudo apt-get install nodejs npm
+
+You also need ImageMagick::
+
+  $ sudo apt-get install imagemagick
 
 The linter will be installed locally per branch, but if you want editor
 integration, you may want to install jshint globally in your system::
@@ -98,7 +106,18 @@ Running lint
 
   $ jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
 
-Style
-=====
+More documentation
+==================
 
-See the ``docs/style-guide.rst`` file for the project style guide.
+Install Sphinx::
+
+  $ sudo apt-get install python-sphinx
+
+Build the docs::
+
+  $ cd docs
+  $ make html
+
+View them::
+
+  $ xdg-open _build/html/index.html

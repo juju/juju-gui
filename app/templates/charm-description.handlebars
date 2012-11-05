@@ -24,7 +24,7 @@
     </div>
     {{#any requires provides}}
     <div class="charm-section">
-      <h4><i class="icon-chevron-right"></i> Interfaces</h4>
+      <h4><i class="icon-chevron-up"></i> Interfaces</h4>
       <div class="collapsible">
         {{#if provides}}
         <h5>Provides</h5>
@@ -47,7 +47,7 @@
     {{/any}}
     {{#if last_change}}
     <div class="charm-section">
-      <h4><i class="icon-chevron-right"></i> Last Change</h4>
+      <h4><i class="icon-chevron-up"></i> Last Change</h4>
       <div class="collapsible">
         {{#with last_change}}
         <div>{{dateformat created "%F"}}</div>
