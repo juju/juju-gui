@@ -1187,50 +1187,50 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         startRelation: function(service) {
-            // Set flags on the view that indicate we are building a relation.
-            this.buildingRelation = true;
-            this.clickAddRelation = true;
+          // Set flags on the view that indicate we are building a relation.
+          this.buildingRelation = true;
+          this.clickAddRelation = true;
 
-            this.show(this.vis.selectAll('.service'));
+          this.show(this.vis.selectAll('.service'));
 
-            var db = this.get('db'),
-                getServiceEndpoints = this.get('getServiceEndpoints'),
-                endpoints = models.getEndpoints(
-                    service, getServiceEndpoints(), db),
+          var db = this.get('db'),
+              getServiceEndpoints = this.get('getServiceEndpoints'),
+              endpoints = models.getEndpoints(
+              service, getServiceEndpoints(), db),
 
-                /* Transform endpoints into a list of
+              /* Transform endpoints into a list of
                  * relatable services (to the service)
                  */
-                possible_relations = Y.Array.map(
-                    Y.Array.flatten(Y.Object.values(
-                        endpoints)),
-                    function(ep) {return ep.service;}),
-                invalidRelationTargets = {};
+              possible_relations = Y.Array.map(
+              Y.Array.flatten(Y.Object.values(
+              endpoints)),
+              function(ep) {return ep.service;}),
+              invalidRelationTargets = {};
 
-            // Iterate services and invert the possibles list.
-            db.services.each(function(s) {
-              if (Y.Array.indexOf(possible_relations,
-                  s.get('id')) === -1) {
-                invalidRelationTargets[s.get('id')] = true;
-              }
-            });
+          // Iterate services and invert the possibles list.
+          db.services.each(function(s) {
+            if (Y.Array.indexOf(possible_relations,
+                s.get('id')) === -1) {
+              invalidRelationTargets[s.get('id')] = true;
+            }
+          });
 
-            // Fade elements to which we can't relate.
-            // Rather than two loops this marks
-            // all services as selectable and then
-            // removes the invalid ones.
-            this.fade(this.vis.selectAll('.service')
+          // Fade elements to which we can't relate.
+          // Rather than two loops this marks
+          // all services as selectable and then
+          // removes the invalid ones.
+          this.fade(this.vis.selectAll('.service')
               .classed('selectable-service', true)
               .filter(function(d) {
-                  return (d.id in invalidRelationTargets &&
+                return (d.id in invalidRelationTargets &&
                           d.id !== service.id);
-                }))
+              }))
               .classed('selectable-service', false);
 
-            // Store possible endpoints.
-            this.set('addRelationStart_possibleEndpoints', endpoints);
-            // Set click action.
-            this.set('currentServiceClickAction', 'ambiguousAddRelationCheck');
+          // Store possible endpoints.
+          this.set('addRelationStart_possibleEndpoints', endpoints);
+          // Set click action.
+          this.set('currentServiceClickAction', 'ambiguousAddRelationCheck');
         },
 
 
