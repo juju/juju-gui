@@ -25,7 +25,6 @@ YUI.add('juju-view-environment', function(Y) {
                   service = this.serviceForBox(box),
                   context = this.get('active_context');
               this.addRelationDragStart.call(this, box, context);
-              this.clickAddRelation = true;
               this.service_click_actions
                         .toggleControlPanel(box, this, context);
               this.service_click_actions
@@ -54,20 +53,6 @@ YUI.add('juju-view-environment', function(Y) {
                         .destroyServiceConfirm(service, this);
             }
           }
-        },
-
-        /*
-         * The user clicked on the environment view background.
-         *
-         * If we are in the middle of adding a relation, cancel the relation
-         * adding.
-         *
-         * @method backgroundClicked
-         */
-        backgroundClicked: function(self) {
-            if (self.clickAddRelation) {
-              self.cancelRelationBuild();
-            }
         },
 
         sceneEvents: {
@@ -201,7 +186,7 @@ YUI.add('juju-view-environment', function(Y) {
             click: function(d, self) {
               // It was technically the dragline that was clicked, but the
               // intent was to click on the background, so...
-              view.backgroundClicked(self);
+              self.backgroundClicked.call(self);
             }
           }
         },
@@ -1183,10 +1168,24 @@ YUI.add('juju-view-environment', function(Y) {
           }
           this.clickAddRelation = null;
           this.set('currentServiceClickAction', 'toggleControlPanel');
+          this.buildingRelation = false;
           this.show(this.vis.selectAll('.service'))
                   .classed('selectable-service', false);
         },
 
+        /*
+         * The user clicked on the environment view background.
+         *
+         * If we are in the middle of adding a relation, cancel the relation
+         * adding.
+         *
+         * @method backgroundClicked
+         */
+        backgroundClicked: function() {
+          if (this.clickAddRelation) {
+            this.cancelRelationBuild();
+          }
+        },
 
         /*
          * Zoom in event handler.
@@ -1454,6 +1453,7 @@ YUI.add('juju-view-environment', function(Y) {
           addRelationStart: function(m, view, context) {
             // set a flag on the view that we're building a relation
             view.buildingRelation = true;
+            view.clickAddRelation = true;
 
             view.show(view.vis.selectAll('.service'));
 
