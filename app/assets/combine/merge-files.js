@@ -26,7 +26,12 @@ function minify(file) {
 // Reading the 'requires' attribute of all our custom js files
 (function() {
   function readdir(path) {
-    var file, dirs = [], fileName, files = fs.readdirSync(path);
+    var file,
+        dirs = [],
+        fileName,
+        files = fs.readdirSync(path),
+        modulesDebug = syspath.join(process.cwd(), './app/modules-debug.js'),
+        assetsFolder = syspath.join(process.cwd(), './app/assets');
 
     Y.Array.each(files, function(value) {
       fileName = path + '/' + value;
@@ -34,8 +39,7 @@ function minify(file) {
 
       if (file.isFile()) {
         if (syspath.extname(fileName).toLowerCase() === '.js') {
-          if (syspath.join(process.cwd(), './app/modules-debug.js') ===
-              fileName) {
+          if (modulesDebug === fileName) {
             console.log('SKIPPING FILE -> ' + fileName);
           } else {
             paths.push(fileName);
@@ -43,7 +47,7 @@ function minify(file) {
         }
       } else if (file.isDirectory()) {
         console.log('DIRECTORY -> ' + fileName);
-        if (syspath.join(process.cwd(), './app/assets') === fileName) {
+        if (assetsFolder === fileName) {
           console.log('SKIPPING DIRECTORY -> ' + fileName);
         } else {
           dirs.push(fileName);
