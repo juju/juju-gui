@@ -3,7 +3,8 @@
 // http://stackoverflow.com/questions/5348685/node-js-require-inheritance
 global.YUI = require('yui').YUI;
 
-var fs = require('fs'),
+var Y = YUI(),
+    fs = require('fs'),
     syspath = require('path'),
     compressor = require('node-minify'),
     modules = {},
@@ -22,30 +23,12 @@ function minify(file) {
   });
 }
 
-function loop(arr, callback) {
-  if (!arr) {
-    return;
-  }
-
-  if (Array.isArray(arr)) {
-    for (var i = 0; i < arr.length; i = i + 1) {
-      callback(arr[i], i);
-    }
-  } else {
-    for (var key in arr) {
-      if (arr.hasOwnProperty(key)) {
-        callback(arr[key], key);
-      }
-    }
-  }
-}
-
 // Reading the 'requires' attribute of all our custom js files
 (function() {
   function readdir(path) {
     var file, dirs = [], fileName, files = fs.readdirSync(path);
 
-    loop(files, function(value) {
+    Y.Array.each(files, function(value) {
       fileName = path + '/' + value;
       file = fs.statSync(fileName);
 
@@ -69,7 +52,7 @@ function loop(arr, callback) {
 
     // We wrote all the files. Now it is time to read and write the files
     // inside the children directories.
-    loop(dirs, function(directory) {
+    Y.Array.each(dirs, function(directory) {
       readdir(directory);
     });
   }
@@ -83,13 +66,13 @@ function loop(arr, callback) {
   YUI.add = function(name, fn, version, details) {
     modules[name] = [];
     if (details && details.requires) {
-      loop(details.requires, function(value) {
+      Y.Array.each(details.requires, function(value) {
         modules[name].push(value);
       });
     }
   };
 
-  loop(paths, function(value) {
+  Y.Array.each(paths, function(value) {
     // It triggers the custom 'add' method above
     require(value);
   });
@@ -99,8 +82,8 @@ function loop(arr, callback) {
 // Getting all the YUI dependencies that we need
 var reqs = (function() {
   var yuiRequirements = [];
-  loop(modules, function(requires) {
-    loop(requires, function(value) {
+  Y.Object.each(modules, function(requires) {
+    Y.Array.each(requires, function(value) {
       if (!modules[value]) {
         // This is not one of our modules but a yui one.
         if (yuiRequirements.indexOf(value) < 0) {
@@ -116,8 +99,7 @@ var reqs = (function() {
 
 // Using the example http://yuilibrary.com/yui/docs/yui/loader-resolve.html
 (function() {
-  var Y, loader, out, str = [];
-  Y = YUI();
+  var loader, out, str = [];
   loader = new Y.Loader({
     base: syspath.join(__dirname, './node_modules/yui/'),
     ignoreRegistered: true,
@@ -145,7 +127,6 @@ var reqs = (function() {
 
 //Creating the combined file for the modules-debug.js and config.js files
 (function() {
-
   var str = [];
   str.push(fs.readFileSync('./app/modules-debug.js', 'utf8'));
   str.push(fs.readFileSync('./app/config.js', 'utf8'));
@@ -155,7 +136,7 @@ var reqs = (function() {
 // Creating the combined file for all our files
 (function() {
   var str = [];
-  loop(paths, function(file) {
+  Y.Array.each(paths, function(file) {
     console.log('file -> ' + file);
     str.push(fs.readFileSync(file, 'utf8'));
   });
