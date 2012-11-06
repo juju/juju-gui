@@ -113,7 +113,6 @@ app/views/environment.js ambiguousAddRelationCheck
 app/views/environment.js attachSceneEvents
 app/views/environment.js buildScene
 app/views/environment.js cancelRelationBuild
-app/views/environment.js click
 app/views/environment.js destroyService
 app/views/environment.js destroyServiceConfirm
 app/views/environment.js detachSceneEvents

@@ -20,6 +20,7 @@ YUI.add('juju-view-environment', function(Y) {
           },
           // Menu/Controls
           '.add-relation': {
+            /** The user clicked on the "Build Relation" menu item. */
             click: function() {
               var box = this.get('active_service'),
                   service = this.serviceForBox(box),
@@ -31,6 +32,7 @@ YUI.add('juju-view-environment', function(Y) {
             }
           },
           '.view-service': {
+            /** The user clicked on the "View" menu item. */
             click: function() {
               // Get the service element
               var box = this.get('active_service'),
@@ -42,6 +44,7 @@ YUI.add('juju-view-environment', function(Y) {
             }
           },
           '.destroy-service': {
+            /** The user clicked on the "Destroy" menu item. */
             click: function() {
               // Get the service element
               var box = this.get('active_service'),
@@ -119,6 +122,10 @@ YUI.add('juju-view-environment', function(Y) {
                     'relation pending-relation dragline dragging');
               }
             },
+            /**
+             * If the mouse moves over a service and we are adding a relation,
+             * then the dragline needs to be updated.
+             */
             mousemove: function(d, self) {
               if (self.clickAddRelation) {
                 var container = self.get('container'),
@@ -157,6 +164,10 @@ YUI.add('juju-view-environment', function(Y) {
           // Relation Related
           '.rel-label': {
             click: 'relationClick',
+            /**
+             * If the mouse moves over a relation label and we are adding a
+             * relation, then the dragline needs to be updated.
+             */
             mousemove: function(d, self) {
               if (self.clickAddRelation) {
                 var container = self.get('container'),
@@ -167,12 +178,20 @@ YUI.add('juju-view-environment', function(Y) {
           },
 
           '#canvas rect:first-child': {
+            /**
+             * If the user clicks on the background we cancel any active add
+             * relation.
+             */
             click: function(d, self) {
               var container = self.get('container');
               container.all('.environment-menu.active').removeClass('active');
               self.service_click_actions.toggleControlPanel(null, self);
               self.cancelRelationBuild();
             },
+            /**
+             * If the mouse moves over the background and we are adding a
+             * relation, then the dragline needs to be updated.
+             */
             mousemove: function(d, self) {
               if (self.clickAddRelation) {
                 var container = self.get('container'),
@@ -182,6 +201,7 @@ YUI.add('juju-view-environment', function(Y) {
             }
           },
           '.dragline': {
+            /** The user clicked while the dragline was active. */
             click: function(d, self) {
               // It was technically the dragline that was clicked, but the
               // intent was to click on the background, so...
@@ -417,16 +437,17 @@ YUI.add('juju-view-environment', function(Y) {
           self.removeRelationConfirm(d, this, self);
         },
 
+        /**
+         * Update the dragline to follow the mouse.
+         *
+         * @method rectMousemove
+         */
         rectMousemove: function(d, self) {
-          // If we're clicking to add a relation, make sure a dragline
-          // follows the mouse cursor.
-          if (self.clickAddRelation) {
-            var mouse = d3.mouse(this);
-            d3.event.x = mouse[0];
-            d3.event.y = mouse[1];
-            self.addRelationDrag
-              .call(self, self.get('addRelationStart_service'), this);
-          }
+          var mouse = d3.mouse(this);
+          d3.event.x = mouse[0];
+          d3.event.y = mouse[1];
+          self.addRelationDrag
+            .call(self, self.get('addRelationStart_service'), this);
         },
 
         /*
@@ -1172,7 +1193,7 @@ YUI.add('juju-view-environment', function(Y) {
                   .classed('selectable-service', false);
         },
 
-        /*
+        /**
          * The user clicked on the environment view background.
          *
          * If we are in the middle of adding a relation, cancel the relation
@@ -1186,6 +1207,11 @@ YUI.add('juju-view-environment', function(Y) {
           }
         },
 
+        /**
+         * An "add relation" action has been initiated by the user.
+         *
+         * @method startRelation
+         */
         startRelation: function(service) {
           // Set flags on the view that indicate we are building a relation.
           this.buildingRelation = true;
