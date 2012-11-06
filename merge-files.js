@@ -1,7 +1,11 @@
 // http://stackoverflow.com/questions/5348685/node-js-require-inheritance
 YUI = require('yui').YUI;
 
-var fs = require('fs'), syspath = require('path'), compressor = require('node-minify'), modules = {}, paths = [];
+var fs = require('fs'),
+    syspath = require('path'),
+    compressor = require('node-minify'),
+    modules = {},
+    paths = [];
 
 // Reading the 'requires' attribute of all our custom js files
 (function() {
@@ -21,13 +25,8 @@ var fs = require('fs'), syspath = require('path'), compressor = require('node-mi
   };
 
   loop(paths, function(value) {
-    try {
-      // It triggers the custom 'add' method above
-      require(value);
-    } catch (e) {
-      // If it fails it means the path points to a third-part js lib (d3
-      // for example), so we dont need to worry about it.
-    }
+    // It triggers the custom 'add' method above
+    require(value);
   });
   YUI.add = originalAdd;
 
@@ -56,6 +55,8 @@ var fs = require('fs'), syspath = require('path'), compressor = require('node-mi
       }
     });
 
+    // We wrote all the files. Now it is time to read and write the files
+    // inside the children directories.
     loop(dirs, function(directory) {
       readdir(directory);
     });
@@ -107,7 +108,8 @@ var reqs = (function() {
 
   var strDirectory = './app/assets/javascripts/', str = [];
   str.push(fs.readFileSync(strDirectory + 'd3.v2.min.js', 'utf8'));
-  str.push(fs.readFileSync(strDirectory + 'reconnecting-websocket.js', 'utf8'));
+  str.push(fs.readFileSync(strDirectory + 'reconnecting-websocket.js',
+      'utf8'));
   str.push(fs.readFileSync(strDirectory + 'svg-layouts.js', 'utf8'));
   fs.writeFileSync('./app/all-third.js', str.join('\n'), 'utf8');
   minify('./app/all-third.js');
