@@ -28,7 +28,8 @@ yuidoc: yuidoc/index.html
 
 $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet $(SPRITE_SOURCE_FILES)
 	@node_modules/grunt/bin/grunt spritegen
-	@mv bin/sprite app/assets/sprite/
+	@rm -Rf app/assets/sprite/
+	@mv bin/sprite app/assets
 
 $(NODE_TARGETS): package.json
 	@npm install

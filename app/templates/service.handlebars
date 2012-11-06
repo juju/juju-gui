@@ -11,13 +11,24 @@
   <div class="juju-service-info-container-bottom-menu">
     {{> service-footer-destroy-service}}
     <div class="filter-control">
-      <span>Filter</span>
-      {{#states}}
-      <a class="state-btn btn {{#if active}}btn-primary{{/if}}" 
-        data-toggle="modal" href="{{link}}">
-        <span class="state-title">{{title}}</span> ({{count}})</a>
-      {{/states}}
+        <div class="inline filter-label"><span>Filter</span></div>
+        <div class="state-buttons">
+          {{#states}}
+          <div 
+            class="inline {{#if active}}active{{/if}}">
+            <a href="{{link}}">
+              <span class="state-title {{#if active}}active{{/if}}">{{title}}
+              </span>
+            </a>
+          </div>
+          {{/states}}
+        </div>
+        <div class="inline control-separator">
+          <img class="divider" 
+                src="/juju-ui/assets/images/bottom_bar_big_div.png" />
+        </div>
     </div>
-    {{> service-footer-common-controls}}
-  </div> 
+  {{> service-footer-common-controls}}
 </div>
+</div>
+
