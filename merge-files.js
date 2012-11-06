@@ -1,10 +1,7 @@
 // http://stackoverflow.com/questions/5348685/node-js-require-inheritance
 YUI = require('yui').YUI;
 
-var fs = require('fs'), 
-    syspath = require('path'), 
-    modules = {}, 
-    paths = [];
+var fs = require('fs'), syspath = require('path'), compressor = require('node-minify'), modules = {}, paths = [];
 
 // Reading the 'requires' attribute of all our custom js files
 (function() {
@@ -47,7 +44,7 @@ var fs = require('fs'),
         }
       } else if (file.isDirectory()) {
         console.log('DIRECTORY -> ' + fileName);
-        if ('./app/assets/javascripts/yui' === fileName) {
+        if ('./app/assets' === fileName) {
           console.log('SKIPPING DIRECTORY -> ' + fileName);
         } else {
           dirs.push(fileName);
@@ -98,6 +95,18 @@ var reqs = (function() {
     str.push(fs.readFileSync(file, 'utf8'));
   });
   fs.writeFileSync('./app/all-yui.js', str.join('\n'), 'utf8');
+  minify('./app/all-yui.js');
+})();
+
+// Creating the combined file for all the third part js code
+(function() {
+
+  var strDirectory = './app/assets/javascripts/', str = [];
+  str.push(fs.readFileSync(strDirectory + 'd3.v2.min.js', 'utf8'));
+  str.push(fs.readFileSync(strDirectory + 'reconnecting-websocket.js', 'utf8'));
+  str.push(fs.readFileSync(strDirectory + 'svg-layouts.js', 'utf8'));
+  fs.writeFileSync('./app/all-third.js', str.join('\n'), 'utf8');
+  minify('./app/all-third.js');
 })();
 
 // Creating the combined file for all our files
@@ -108,8 +117,21 @@ var reqs = (function() {
     str.push(fs.readFileSync(file, 'utf8'));
   });
   fs.writeFileSync('./app/all-app.js', str.join('\n'), 'utf8');
+  minify('./app/all-app.js');
 })();
 
+function minify(file) {
+  new compressor.minify({
+    type: 'uglifyjs',
+    fileIn: file,
+    fileOut: file,
+    callback: function(err) {
+      if(err) {
+        console.log(err);
+      }
+    }
+  });
+}
 
 function loop(arr, callback) {
   if (!arr) {

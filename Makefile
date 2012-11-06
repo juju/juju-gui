@@ -9,7 +9,7 @@ NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 	node_modules/mocha node_modules/d3 node_modules/graceful-fs \
 	node_modules/should node_modules/jshint node_modules/expect.js \
 	node_modules/express node_modules/yui node_modules/yuidoc \
-	node_modules/grunt node_modules/node-spritesheet
+	node_modules/grunt node_modules/node-spritesheet node_modules/node-minify
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
 SPRITE_GENERATED_FILES=app/assets/sprite/sprite.css app/assets/sprite/sprite.png
@@ -63,8 +63,8 @@ spritegen: $(SPRITE_GENERATED_FILES)
 combinejs: 
 	@rm -f app/all-yui.js
 	@rm -f app/all-app.js
+	@rm -f app/all-third.js
 	@node merge-files.js
-	@node_modules/grunt/bin/grunt min
 
 prep: beautify lint
 
@@ -82,6 +82,7 @@ clean:
 	@rm -Rf app/assets/sprite/
 	@rm -f app/all-yui.js
 	@rm -f app/all-app.js
+	@rm -f app/all-third.js
 
 $(APPCACHE): manifest.appcache.in
 	@cp manifest.appcache.in $(APPCACHE)

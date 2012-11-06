@@ -2,12 +2,6 @@
 
 module.exports = function(grunt) {
   grunt.initConfig({
-    min: {
-      dist: {
-        src: [ 'app/all-app.js' ],
-        dest: 'app/all-app.js'
-      }
-    },
     spritesheet: {
       compile: {
         options: {
