@@ -64,7 +64,7 @@ spritegen: $(SPRITE_GENERATED_FILES)
 combinejs: $(NODE_TARGETS)
 	@rm -Rf app/assets/javascripts/generated/
 	@mkdir app/assets/javascripts/generated/
-	@node merge-files.js
+	@node app/assets/combine/merge-files.js
 
 prep: beautify lint
 
@@ -72,12 +72,12 @@ test: install
 	@./test-server.sh
 
 debug: install
-	@cp properties-dev.js app/assets/javascripts/generated/properties.js
+	@cp app/assets/combine/properties-dev.js app/assets/javascripts/generated/properties.js
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
 server: install
-	@cp properties-prod.js app/assets/javascripts/generated/properties.js
+	@cp app/assets/combine/properties-prod.js app/assets/javascripts/generated/properties.js
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 

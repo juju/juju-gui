@@ -34,7 +34,8 @@ function minify(file) {
 
       if (file.isFile()) {
         if (syspath.extname(fileName).toLowerCase() === '.js') {
-          if ('./app/modules-debug.js' === fileName) {
+          if (syspath.join(process.cwd(), './app/modules-debug.js') ===
+              fileName) {
             console.log('SKIPPING FILE -> ' + fileName);
           } else {
             paths.push(fileName);
@@ -42,7 +43,7 @@ function minify(file) {
         }
       } else if (file.isDirectory()) {
         console.log('DIRECTORY -> ' + fileName);
-        if ('./app/assets' === fileName) {
+        if (syspath.join(process.cwd(), './app/assets') === fileName) {
           console.log('SKIPPING DIRECTORY -> ' + fileName);
         } else {
           dirs.push(fileName);
@@ -58,7 +59,7 @@ function minify(file) {
   }
 
   // reading all JS files under './app'
-  readdir('./app');
+  readdir(syspath.join(process.cwd(), './app'));
   console.log('FILES loaded');
 
   var originalAdd = YUI.add;
@@ -101,9 +102,10 @@ var reqs = (function() {
 (function() {
   var loader, out,
       str = [],
-      outputFile = './app/assets/javascripts/generated/all-yui.js';
+      outputFile = syspath.join(process.cwd(),
+          './app/assets/javascripts/generated/all-yui.js');
   loader = new Y.Loader({
-    base: syspath.join(__dirname, './node_modules/yui/'),
+    base: syspath.join(process.cwd(), './node_modules/yui/'),
     ignoreRegistered: true,
     require: reqs
   });
@@ -119,8 +121,9 @@ var reqs = (function() {
 // Creating the combined file for all the third part js code
 (function() {
   var str = [],
-      strDirectory = './app/assets/javascripts/',
-      outputFile = './app/assets/javascripts/generated/all-third.js';
+      strDirectory = syspath.join(process.cwd(), './app/assets/javascripts/'),
+      outputFile = syspath.join(process.cwd(),
+          './app/assets/javascripts/generated/all-third.js');
   str.push(fs.readFileSync(strDirectory + 'd3.v2.min.js', 'utf8'));
   str.push(fs.readFileSync(strDirectory + 'reconnecting-websocket.js',
       'utf8'));
@@ -132,16 +135,20 @@ var reqs = (function() {
 //Creating the combined file for the modules-debug.js and config.js files
 (function() {
   var str = [],
-      outputFile = './app/assets/javascripts/generated/all-app-debug.js';
-  str.push(fs.readFileSync('./app/modules-debug.js', 'utf8'));
-  str.push(fs.readFileSync('./app/config.js', 'utf8'));
+      outputFile = syspath.join(process.cwd(),
+          './app/assets/javascripts/generated/all-app-debug.js');
+  str.push(fs.readFileSync(syspath.join(process.cwd(),
+      './app/modules-debug.js'), 'utf8'));
+  str.push(fs.readFileSync(syspath.join(process.cwd(), './app/config.js'),
+      'utf8'));
   fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
 })();
 
 // Creating the combined file for all our files
 (function() {
   var str = [],
-      outputFile = './app/assets/javascripts/generated/all-app.js';
+      outputFile = syspath.join(process.cwd(),
+          './app/assets/javascripts/generated/all-app.js');
   Y.Array.each(paths, function(file) {
     console.log('file -> ' + file);
     str.push(fs.readFileSync(file, 'utf8'));
