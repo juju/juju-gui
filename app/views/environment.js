@@ -163,6 +163,7 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Relation Related
           '.rel-label': {
+            /** The user clicked on the relation label. */
             click: 'relationClick',
             /**
              * If the mouse moves over a relation label and we are adding a
