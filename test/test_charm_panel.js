@@ -232,9 +232,10 @@ describe('charm description', function() {
                 committer: 'fred',
                 message: 'fixed EVERYTHING'}});
     charm_store_data.responseText = Y.JSON.stringify(
-      { matches: 1,
-        results: [
-          {store_url: 'cs:precise/superthing-7', summary: 'A super thing.'}]});
+        { matches: 1,
+          results: [
+            { store_url: 'cs:precise/superthing-7',
+              summary: 'A super thing.'}]});
     var view = new views.CharmDescriptionView(
         { container: container, app: app, model: charm, charms: charms,
           charmStore: charm_store }).render(),
@@ -250,7 +251,7 @@ describe('charm description', function() {
     last_change_div.get('text').should.contain('fixed EVERYTHING');
     last_change_div.get('text').should.contain('2012-10-09');
     related_div.one('a').getAttribute('href').should.equal(
-      'cs:precise/superthing-7');
+        'cs:precise/superthing-7');
     related_div.one('a').get('text').trim().should.equal('superthing');
   });
 
