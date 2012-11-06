@@ -61,12 +61,9 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-combinejs: 
-	@rm -f app/all-yui.js
-	@rm -f app/all-app.js
-	@rm -f app/all-third.js
-	@rm -f app/all-app-debug.js
-	@rm -f properties.js
+combinejs: $(NODE_TARGETS)
+	@rm -Rf app/assets/javascripts/generated/
+	@mkdir app/assets/javascripts/generated/
 	@node merge-files.js
 
 prep: beautify lint
@@ -75,12 +72,12 @@ test: install
 	@./test-server.sh
 
 debug: install
-	@cp properties-dev.js properties.js
+	@cp properties-dev.js app/assets/javascripts/generated/properties.js
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
 server: install
-	@cp properties-prod.js properties.js
+	@cp properties-prod.js app/assets/javascripts/generated/properties.js
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
@@ -89,11 +86,7 @@ clean:
 	@make -C docs clean
 	@rm -Rf bin/sprite/
 	@rm -Rf app/assets/sprite/
-	@rm -f app/all-yui.js
-	@rm -f app/all-app.js
-	@rm -f app/all-third.js
-	@rm -f app/all-app-debug.js
-	@rm -f properties.js
+	@rm -Rf app/assets/javascripts/generated/
 
 $(APPCACHE): manifest.appcache.in
 	@cp manifest.appcache.in $(APPCACHE)

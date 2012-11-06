@@ -99,7 +99,9 @@ var reqs = (function() {
 
 // Using the example http://yuilibrary.com/yui/docs/yui/loader-resolve.html
 (function() {
-  var loader, out, str = [];
+  var loader, out,
+      str = [],
+      outputFile = './app/assets/javascripts/generated/all-yui.js';
   loader = new Y.Loader({
     base: syspath.join(__dirname, './node_modules/yui/'),
     ignoreRegistered: true,
@@ -110,37 +112,41 @@ var reqs = (function() {
     console.log('file -> ' + file);
     str.push(fs.readFileSync(file, 'utf8'));
   });
-  fs.writeFileSync('./app/all-yui.js', str.join('\n'), 'utf8');
-  minify('./app/all-yui.js');
+  fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
+  minify(outputFile);
 })();
 
 // Creating the combined file for all the third part js code
 (function() {
-  var strDirectory = './app/assets/javascripts/', str = [];
+  var str = [],
+      strDirectory = './app/assets/javascripts/',
+      outputFile = './app/assets/javascripts/generated/all-third.js';
   str.push(fs.readFileSync(strDirectory + 'd3.v2.min.js', 'utf8'));
   str.push(fs.readFileSync(strDirectory + 'reconnecting-websocket.js',
       'utf8'));
   str.push(fs.readFileSync(strDirectory + 'svg-layouts.js', 'utf8'));
-  fs.writeFileSync('./app/all-third.js', str.join('\n'), 'utf8');
-  minify('./app/all-third.js');
+  fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
+  minify(outputFile);
 })();
 
 //Creating the combined file for the modules-debug.js and config.js files
 (function() {
-  var str = [];
+  var str = [],
+      outputFile = './app/assets/javascripts/generated/all-app-debug.js';
   str.push(fs.readFileSync('./app/modules-debug.js', 'utf8'));
   str.push(fs.readFileSync('./app/config.js', 'utf8'));
-  fs.writeFileSync('./app/all-app-debug.js', str.join('\n'), 'utf8');
+  fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
 })();
 
 // Creating the combined file for all our files
 (function() {
-  var str = [];
+  var str = [],
+      outputFile = './app/assets/javascripts/generated/all-app.js';
   Y.Array.each(paths, function(file) {
     console.log('file -> ' + file);
     str.push(fs.readFileSync(file, 'utf8'));
   });
-  fs.writeFileSync('./app/all-app.js', str.join('\n'), 'utf8');
-  minify('./app/all-app.js');
+  fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
+  minify(outputFile);
 })();
 
