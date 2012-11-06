@@ -14,6 +14,7 @@
 @charm-panel-cancel-button-shadow: #515050;
 @charm-panel-separator-color: #aeaeae;
 @charm-panel-background-color: #eeeeee;
+@navbar-color: #2D2D2D!important;
 
 body {
     margin-top: 87px;
@@ -92,7 +93,7 @@ i.sprite {
     background: url(/juju-ui/assets/images/top_bar.png) repeat-x;
     padding: 0;
     position: relative;
-    color: #2d2d2d!important;
+    color: @navbar-color;
     .brand {
         margin: 12px 26px 6px 10px;
         padding: 0;
@@ -565,7 +566,7 @@ g.unit {
     background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
     height: 50px;
     position: relative;
-    color: #2d2d2d!important;
+    color: @navbar-color;
 
     .controls {
         position: absolute;
@@ -1005,7 +1006,7 @@ table tr.highlighted {
         background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
         height: 50px;
         position: relative;
-        color: #2d2d2d!important;
+        color: @navbar-color;
         text-align: center;
 
         .filter-control {
@@ -1024,7 +1025,7 @@ table tr.highlighted {
             .control-separator {
                  padding-top: 0px;
                  padding-left: 5px;
-                 
+
                  img {
                     height: 30px;
                     padding-top: 0px;
@@ -1036,47 +1037,47 @@ table tr.highlighted {
                     padding-top: 0px;
                     height: 30px;
                 }
-    
+
                 div {
                     padding-top: 3px;
                     width: 70px;
                     height: 21px;
                     background:url(/juju-ui/assets/images/toggles.png) -70px 0;
-    
+
                     &.active {
                         background:url(/juju-ui/assets/images/on_middle.png) 0 0;
                         .white;
                     }
-    
+
                     &:first-child {
                         background:url(/juju-ui/assets/images/toggles.png) 0 0px;
-    
+
                         &.active {
                             background:url(/juju-ui/assets/images/on_left.png) 0 0;
-                            .white; 
+                            .white;
                         }
                     }
-    
+
                     &:last-child {
                         background:url(/juju-ui/assets/images/toggles.png) -210px 0;
-    
+
                         &.active {
                             background:url(/juju-ui/assets/images/on_right.png) 0 0;
-                            .white; 
+                            .white;
                         }
                     }
                 }
-    
+
                 span:first-child {
                     padding-right: 5px;
                 }
-    
+
                 .white {
                     a {color: white !important;}
                 }
-    
+
                 a {
-                    color: #2D2D2D!important;
+                    color: @navbar-color;
                     &:link, &:visited, &:active, &:hover {
                        text-decoration: none
                     }
@@ -1090,7 +1091,7 @@ table tr.highlighted {
             left: 10px;
 
             a {
-                color: #2D2D2D!important;
+                color: @navbar-color;
             }
 
             a:link, a:visited, a:active, a:hover {
