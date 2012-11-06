@@ -1,5 +1,7 @@
+'use strict';
+
 // http://stackoverflow.com/questions/5348685/node-js-require-inheritance
-YUI = require('yui').YUI;
+global.YUI = require('yui').YUI;
 
 var fs = require('fs'),
     syspath = require('path'),
@@ -7,29 +9,39 @@ var fs = require('fs'),
     modules = {},
     paths = [];
 
+function minify(file) {
+  var execution = new compressor.minify({
+    type: 'uglifyjs',
+    fileIn: file,
+    fileOut: file,
+    callback: function(err) {
+      if (err) {
+        console.log(err);
+      }
+    }
+  });
+}
+
+function loop(arr, callback) {
+  if (!arr) {
+    return;
+  }
+
+  if (Array.isArray(arr)) {
+    for (var i = 0; i < arr.length; i = i + 1) {
+      callback(arr[i], i);
+    }
+  } else {
+    for (var key in arr) {
+      if (arr.hasOwnProperty(key)) {
+        callback(arr[key], key);
+      }
+    }
+  }
+}
+
 // Reading the 'requires' attribute of all our custom js files
 (function() {
-  // reading all JS files under './app'
-  readdir('./app');
-  console.log('FILES loaded');
-
-  var originalAdd = YUI.add;
-  // This is a trick to get the 'requires' value from the module definition
-  YUI.add = function(name, fn, version, details) {
-    modules[name] = [];
-    if (details && details.requires) {
-      loop(details.requires, function(value) {
-        modules[name].push(value);
-      });
-    }
-  };
-
-  loop(paths, function(value) {
-    // It triggers the custom 'add' method above
-    require(value);
-  });
-  YUI.add = originalAdd;
-
   function readdir(path) {
     var file, dirs = [], fileName, files = fs.readdirSync(path);
 
@@ -39,7 +51,7 @@ var fs = require('fs'),
 
       if (file.isFile()) {
         if (syspath.extname(fileName).toLowerCase() === '.js') {
-          if('./app/modules-debug.js' === fileName) {
+          if ('./app/modules-debug.js' === fileName) {
             console.log('SKIPPING FILE -> ' + fileName);
           } else {
             paths.push(fileName);
@@ -61,16 +73,33 @@ var fs = require('fs'),
       readdir(directory);
     });
   }
+
+  // reading all JS files under './app'
+  readdir('./app');
+  console.log('FILES loaded');
+
+  var originalAdd = YUI.add;
+  // This is a trick to get the 'requires' value from the module definition
+  YUI.add = function(name, fn, version, details) {
+    modules[name] = [];
+    if (details && details.requires) {
+      loop(details.requires, function(value) {
+        modules[name].push(value);
+      });
+    }
+  };
+
+  loop(paths, function(value) {
+    // It triggers the custom 'add' method above
+    require(value);
+  });
+  YUI.add = originalAdd;
 })();
 
 // Getting all the YUI dependencies that we need
 var reqs = (function() {
-  var yuiRequirements = [], requires = null;
-  for ( var key in modules) {
-    if (!modules.hasOwnProperty(key)) {
-      continue;
-    }
-    requires = modules[key];
+  var yuiRequirements = [];
+  loop(modules, function(requires) {
     loop(requires, function(value) {
       if (!modules[value]) {
         // This is not one of our modules but a yui one.
@@ -80,7 +109,7 @@ var reqs = (function() {
         }
       }
     });
-  }
+  });
   console.log('REQS loaded');
   return yuiRequirements;
 })();
@@ -135,24 +164,3 @@ var reqs = (function() {
   minify('./app/all-app.js');
 })();
 
-function minify(file) {
-  new compressor.minify({
-    type: 'uglifyjs',
-    fileIn: file,
-    fileOut: file,
-    callback: function(err) {
-      if(err) {
-        console.log(err);
-      }
-    }
-  });
-}
-
-function loop(arr, callback) {
-  if (!arr) {
-    return;
-  }
-  for ( var i = 0; i < arr.length; i++) {
-    callback(arr[i]);
-  }
-}
