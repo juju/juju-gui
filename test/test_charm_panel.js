@@ -267,6 +267,7 @@ describe('charm description', function() {
         { container: container, app: app, model: charm,
           charmStore: charm_store }).render(),
         html = container.one('.charm-description'),
+        // We use the last change div.
         section_container = html.one('div.charm-section:nth-of-type(3)');
     section_container.one('div').getStyle('height').should.equal('0px');
     assert(section_container.one('h4 i').hasClass('icon-chevron-up'));
