@@ -771,7 +771,20 @@ g.unit {
     }
 }
 
+.customize-scrollbar {
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 1px 0 3px #989A9C;
+    }
+    ::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 4px 0 3px #D74613;
+    }
+}
+
 #juju-search-charm-panel {
+    .customize-scrollbar;
     display: block;
     z-index: 999;
     padding: 0;
