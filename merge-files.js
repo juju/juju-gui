@@ -40,7 +40,11 @@ var fs = require('fs'), syspath = require('path'), compressor = require('node-mi
 
       if (file.isFile()) {
         if (syspath.extname(fileName).toLowerCase() === '.js') {
-          paths.push(fileName);
+          if('./app/modules-debug.js' === fileName) {
+            console.log('SKIPPING FILE -> ' + fileName);
+          } else {
+            paths.push(fileName);
+          }
         }
       } else if (file.isDirectory()) {
         console.log('DIRECTORY -> ' + fileName);
@@ -107,6 +111,15 @@ var reqs = (function() {
   str.push(fs.readFileSync(strDirectory + 'svg-layouts.js', 'utf8'));
   fs.writeFileSync('./app/all-third.js', str.join('\n'), 'utf8');
   minify('./app/all-third.js');
+})();
+
+//Creating the combined file for the modules-debug.js and config.js files
+(function() {
+
+  var str = [];
+  str.push(fs.readFileSync('./app/modules-debug.js', 'utf8'));
+  str.push(fs.readFileSync('./app/config.js', 'utf8'));
+  fs.writeFileSync('./app/all-app-debug.js', str.join('\n'), 'utf8');
 })();
 
 // Creating the combined file for all our files

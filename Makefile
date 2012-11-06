@@ -64,6 +64,8 @@ combinejs:
 	@rm -f app/all-yui.js
 	@rm -f app/all-app.js
 	@rm -f app/all-third.js
+	@rm -f app/all-app-debug.js
+	@rm -f properties.js
 	@node merge-files.js
 
 prep: beautify lint
@@ -71,7 +73,13 @@ prep: beautify lint
 test: install
 	@./test-server.sh
 
+debug: install
+	@cp properties-dev.js properties.js
+	@echo "Customize config.js to modify server settings"
+	@node server.js
+
 server: install
+	@cp properties-prod.js properties.js
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
@@ -83,6 +91,8 @@ clean:
 	@rm -f app/all-yui.js
 	@rm -f app/all-app.js
 	@rm -f app/all-third.js
+	@rm -f app/all-app-debug.js
+	@rm -f properties.js
 
 $(APPCACHE): manifest.appcache.in
 	@cp manifest.appcache.in $(APPCACHE)
