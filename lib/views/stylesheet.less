@@ -14,6 +14,7 @@
 @charm-panel-cancel-button-shadow: #515050;
 @charm-panel-separator-color: #aeaeae;
 @charm-panel-background-color: #eeeeee;
+@navbar-color: #2D2D2D!important;
 
 body {
     margin-top: 87px;
@@ -25,7 +26,7 @@ input, button, select, textarea {
     font-family: @font-family;
 }
 
-.button-colors(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
+.create-button(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
     @blur: 2px;
     background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
@@ -40,9 +41,9 @@ input, button, select, textarea {
 	                    2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
     box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
 	            2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
+    -moz-border-radius: ~"4px / 7px";
+    -webkit-border-radius: ~"4px / 7px";
+    border-radius: ~"4px / 7px";
     border: none;
 }
 
@@ -92,7 +93,7 @@ i.sprite {
     background: url(/juju-ui/assets/images/top_bar.png) repeat-x;
     padding: 0;
     position: relative;
-    color: #2d2d2d!important;
+    color: @navbar-color;
     .brand {
         margin: 12px 26px 6px 10px;
         padding: 0;
@@ -565,7 +566,7 @@ g.unit {
     background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
     height: 50px;
     position: relative;
-    color: #2d2d2d!important;
+    color: @navbar-color;
 
     .controls {
         position: absolute;
@@ -791,10 +792,10 @@ g.unit {
         margin-left: 5px;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-        .button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient,
+        .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient,
 		       @charm-panel-deploy-button-shadow, 0px);
         &:active {
-            .button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color,
+            .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color,
 			   @charm-panel-deploy-button-shadow, 1px);
         }
     }
@@ -811,10 +812,10 @@ g.unit {
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
-        .button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
+        .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
 		       @charm-panel-cancel-button-shadow, 0px);
         &:active {
-            .button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color,
+            .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color,
 			   @charm-panel-cancel-button-shadow, 1px);
         }
     }
@@ -1005,7 +1006,84 @@ table tr.highlighted {
         background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
         height: 50px;
         position: relative;
-        color: #2d2d2d!important;
+        color: @navbar-color;
+        text-align: center;
+
+        .filter-control {
+            position: absolute;
+            right: 430px;
+            top: 13px;
+            width: 300px;
+            display: inline-block;
+
+            .filter-label {
+                position: absolute;
+                right: 305px;
+                top: 3px;
+            }
+
+            .control-separator {
+                 padding-top: 0px;
+                 padding-left: 5px;
+
+                 img {
+                    height: 30px;
+                    padding-top: 0px;
+                 }
+            }
+
+            .state-buttons {
+                img {
+                    padding-top: 0px;
+                    height: 30px;
+                }
+
+                div {
+                    padding-top: 3px;
+                    width: 70px;
+                    height: 21px;
+                    background:url(/juju-ui/assets/images/toggles.png) -70px 0;
+
+                    &.active {
+                        background:url(/juju-ui/assets/images/on_middle.png) 0 0;
+                        .white;
+                    }
+
+                    &:first-child {
+                        background:url(/juju-ui/assets/images/toggles.png) 0 0px;
+
+                        &.active {
+                            background:url(/juju-ui/assets/images/on_left.png) 0 0;
+                            .white;
+                        }
+                    }
+
+                    &:last-child {
+                        background:url(/juju-ui/assets/images/toggles.png) -210px 0;
+
+                        &.active {
+                            background:url(/juju-ui/assets/images/on_right.png) 0 0;
+                            .white;
+                        }
+                    }
+                }
+
+                span:first-child {
+                    padding-right: 5px;
+                }
+
+                .white {
+                    a {color: white !important;}
+                }
+
+                a {
+                    color: @navbar-color;
+                    &:link, &:visited, &:active, &:hover {
+                       text-decoration: none
+                    }
+                }
+            }
+        }
 
         .destroy-control {
             position: absolute;
@@ -1013,22 +1091,12 @@ table tr.highlighted {
             left: 10px;
 
             a {
-                color: #2D2D2D!important;
+                color: @navbar-color;
             }
 
             a:link, a:visited, a:active, a:hover {
                 text-decoration: none
             }
-        }
-    }
-
-    .filter-control {
-        position: absolute;
-        left: 120px;
-        top: 10px;
-
-        span:first-child {
-            padding-right: 5px;
         }
     }
 
