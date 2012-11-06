@@ -134,7 +134,6 @@ var reqs = (function() {
 
 // Creating the combined file for all the third part js code
 (function() {
-
   var strDirectory = './app/assets/javascripts/', str = [];
   str.push(fs.readFileSync(strDirectory + 'd3.v2.min.js', 'utf8'));
   str.push(fs.readFileSync(strDirectory + 'reconnecting-websocket.js',
