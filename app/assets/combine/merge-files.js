@@ -47,7 +47,8 @@ function combine(files, outputFile, shouldMinify) {
         dirs = [],
         fileName,
         files = fs.readdirSync(path),
-        modulesDebug = syspath.join(process.cwd(), './app/modules-debug.js'),
+        // I need to use "syspath.join(process.cwd()" otherwise I have...
+        // "ReferenceError: CSSStyleDeclaration is not defined" from d3
         assetsFolder = syspath.join(process.cwd(), './app/assets');
 
     Y.Array.each(files, function(value) {
@@ -56,7 +57,8 @@ function combine(files, outputFile, shouldMinify) {
 
       if (file.isFile()) {
         if (syspath.extname(fileName).toLowerCase() === '.js') {
-          if (modulesDebug === fileName) {
+          // This file is not a yui module
+          if ('./app/modules-debug.js' === fileName) {
             console.log('SKIPPING FILE -> ' + fileName);
           } else {
             paths.push(fileName);
@@ -64,6 +66,7 @@ function combine(files, outputFile, shouldMinify) {
         }
       } else if (file.isDirectory()) {
         console.log('DIRECTORY -> ' + fileName);
+        // The files under the assets folder are not combined
         if (assetsFolder === fileName) {
           console.log('SKIPPING DIRECTORY -> ' + fileName);
         } else {
@@ -80,6 +83,9 @@ function combine(files, outputFile, shouldMinify) {
   }
 
   // reading all JS files under './app'
+  // I need to use "syspath.join(process.cwd()" otherwise I have...
+  // "Error: Cannot find module './app/config.js'" from node's internal
+  // module.js file.
   readdir(syspath.join(process.cwd(), './app'));
   console.log('FILES loaded');
 
@@ -126,7 +132,7 @@ var reqs = (function() {
 (function() {
   var loader, out;
   loader = new Y.Loader({
-    base: syspath.join(process.cwd(), './node_modules/yui/'),
+    base: './node_modules/yui/',
     ignoreRegistered: true,
     require: reqs
   });
@@ -135,18 +141,13 @@ var reqs = (function() {
 })();
 
 // Creating the combined file for all the third part js code
-(function() {
-  var files, strDirectory;
-  strDirectory = syspath.join(process.cwd(), './app/assets/javascripts/');
-  files = [strDirectory + 'd3.v2.min.js',
-           strDirectory + 'reconnecting-websocket.js',
-           strDirectory + 'svg-layouts.js'];
-  combine(files, './app/assets/javascripts/generated/all-third.js', true);
-})();
+combine(['./app/assets/javascripts/d3.v2.min.js',
+         './app/assets/javascripts/reconnecting-websocket.js',
+         './app/assets/javascripts/svg-layouts.js'], 
+         './app/assets/javascripts/generated/all-third.js', true);
 
 // Creating the combined file for the modules-debug.js and config.js files
-combine([syspath.join(process.cwd(), './app/modules-debug.js'),
-         syspath.join(process.cwd(), './app/config.js')],
+combine(['./app/modules-debug.js', './app/config.js'],
     './app/assets/javascripts/generated/all-app-debug.js', false);
 
 // Creating the combined file for all our files
