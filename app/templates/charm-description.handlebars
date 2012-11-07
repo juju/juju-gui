@@ -1,12 +1,18 @@
 <div>
-  <div class="charm-nav-back"><i class="icon-arrow-left icon-white"></i> Back</div>
+  <div class="charm-nav-back"><i class="icon-chevron-left"></i> Back</div>
 
   <div class="charm-description charm-panel">
-    <button class="btn btn-primary deploy"
-            data-url="{{id}}">Deploy</button>
-    <h3>{{package_name}}</h3>
+    <div id="charm-panel-head">
+      <h3>{{package_name}}</h3>
+      {{id}}
+    </div>
+
+    <div class="charm-panel-configure-buttons">
+      <button class="btn btn-primary deploy" data-url="{{id}}">Deploy</button>
+    </div>
+
     <div class="charm-section">
-      <h4><i class="icon-chevron-down"></i> Description</h4>
+      <h4 class="first"><i class="icon-chevron-down"></i> Description</h4>
       <div class="collapsible">
         <h5>Summary</h5>
         <p>{{summary}}</p>
@@ -14,14 +20,17 @@
         <p>{{series}}</p>
         <h5>Description</h5>
         <div>{{description}}</div>
+        {{#if owner}}
         <h5>Owner</h5>
         <p>{{owner}}</p>
+        {{/if}}
         {{#if store_revision}}
         <h5>Store Revision</h5>
         <p>{{store_revision}}</p>
         {{/if}}
       </div>
     </div>
+
     {{#any requires provides}}
     <div class="charm-section">
       <h4><i class="icon-chevron-up"></i> Interfaces</h4>
@@ -45,11 +54,13 @@
       </div>
     </div>
     {{/any}}
+
     {{#if last_change}}
     <div class="charm-section">
-      <h4><i class="icon-chevron-up"></i> Last Change</h4>
+      <h4><i class="icon-chevron-up"></i> Change Log</h4>
       <div class="collapsible">
         {{#with last_change}}
+        <h5>Last Change</h5>
         <div>{{dateformat created "%F"}}</div>
         <div>{{committer}}</div>
         <div class="commitmessage">{{message}}</div>
@@ -57,5 +68,15 @@
       </div>
     </div>
     {{/if}}
+
+    {{#any requires provides}}
+    <div class="charm-section">
+      <h4><i class="icon-chevron-up"></i> Related Charms</h4>
+      <div class="collapsible" id="related-charms">
+        Loading...
+      </div>
+    </div>
+    {{/any}}
+
   </div>
 </div>

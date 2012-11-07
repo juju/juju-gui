@@ -372,10 +372,10 @@
     it('should show proper tabs initially', function() {
       var view = makeServiceView(),
           active_navtabs = [];
-      container.all('.state-btn').each(
+      container.all('.state-title').each(
           function(n) {
-            active_navtabs.push([n.one('.state-title').get('text').trim(),
-                                 n.hasClass('btn-primary')]);
+            active_navtabs.push([n.get('text').trim(),
+                                 n.hasClass('active')]);
           });
       active_navtabs.should.eql(
           [['All', true],
@@ -388,10 +388,10 @@
       // All units are pending.
       var view = makeServiceView({state: 'running'}),
           active_navtabs = [];
-      container.all('.state-btn').each(
+      container.all('.state-title').each(
           function(n) {
-            active_navtabs.push([n.one('.state-title').get('text').trim(),
-                                 n.hasClass('btn-primary')]);
+            active_navtabs.push([n.get('text').trim(),
+                                 n.hasClass('active')]);
           });
       active_navtabs.should.eql(
           [['All', false],
@@ -417,10 +417,10 @@
       db.units.getById('mysql/2').agent_state = 'started';
       var view = makeServiceView({state: 'pending'}),
           active_navtabs = [];
-      container.all('.state-btn').each(
+      container.all('.state-title').each(
           function(n) {
-            active_navtabs.push([n.one('.state-title').get('text').trim(),
-                                 n.hasClass('btn-primary')]);
+            active_navtabs.push([n.get('text').trim(),
+                                 n.hasClass('active')]);
           });
       active_navtabs.should.eql(
           [['All', false],
@@ -444,10 +444,10 @@
     it('should show zero error units when filtered', function() {
       var view = makeServiceView({state: 'error'}),
           active_navtabs = [];
-      container.all('.state-btn').each(
+      container.all('.state-title').each(
           function(n) {
-            active_navtabs.push([n.one('.state-title').get('text').trim(),
-                                 n.hasClass('btn-primary')]);
+            active_navtabs.push([n.get('text').trim(),
+                                 n.hasClass('active')]);
           });
       active_navtabs.should.eql(
           [['All', false],

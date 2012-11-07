@@ -1,5 +1,6 @@
 /* Processed with LESS from lib/views/stylesheet.less */
 @font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+@font-family-medium: 'Ubuntu Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 /* Define common colors. */
 @label-color: #292929;
@@ -9,11 +10,12 @@
 @charm-panel-deploy-button-color: #dd4814;
 @charm-panel-deploy-button-bottom-gradient: #e65c19;
 @charm-panel-deploy-button-shadow: #8a2d0c;
-@charm-panel-cancel-button-color: #b8b8b8;
-@charm-panel-cancel-button-bottom-gradient: #a3a39f;
+@charm-panel-cancel-button-color: #93a39f;
+@charm-panel-cancel-button-bottom-gradient: #818080;
 @charm-panel-cancel-button-shadow: #515050;
-@charm-panel-separator-color: #aeaeae;
 @charm-panel-background-color: #eeeeee;
+@charm-panel-border-color: #BEBEBE;
+@navbar-color: #2D2D2D!important;
 
 body {
     margin-top: 87px;
@@ -25,7 +27,7 @@ input, button, select, textarea {
     font-family: @font-family;
 }
 
-.button-colors(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
+.create-button(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
     @blur: 2px;
     background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
     background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
@@ -35,14 +37,15 @@ input, button, select, textarea {
     background-image: linear-gradient(top, @gradient-start, @gradient-end);
     background-repeat: repeat-x;
     -moz-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-	                 2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+                        2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
     -webkit-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-	                    2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+                           2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
     box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-	            2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
+                   2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+    @border-radii: ~"6px / 7px";
+    -moz-border-radius: @border-radii;
+    -webkit-border-radius: @border-radii;
+    border-radius: @border-radii;
     border: none;
 }
 
@@ -92,7 +95,7 @@ i.sprite {
     background: url(/juju-ui/assets/images/top_bar.png) repeat-x;
     padding: 0;
     position: relative;
-    color: #2d2d2d!important;
+    color: @navbar-color;
     .brand {
         margin: 12px 26px 6px 10px;
         padding: 0;
@@ -126,9 +129,10 @@ i.sprite {
                     margin: 0 5px;
                 }
                 input {
+                    height: 23px;
                     width: 128px;
                     background: url(/juju-ui/assets/images/searchbox_icon.png)
-                                no-repeat 2px 1px whiteSmoke;
+                                no-repeat 4px 4px whiteSmoke;
                     margin: 0 10px;
                     padding: 3px 3px 3px 26px;
                     font-style: italic;
@@ -565,7 +569,7 @@ g.unit {
     background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
     height: 50px;
     position: relative;
-    color: #2d2d2d!important;
+    color: @navbar-color;
 
     .controls {
         position: absolute;
@@ -771,7 +775,20 @@ g.unit {
     }
 }
 
+.customize-scrollbar {
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 1px 0 3px #989A9C;
+    }
+    ::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 4px 0 3px #D74613;
+    }
+}
+
 #juju-search-charm-panel {
+    .customize-scrollbar;
     display: block;
     z-index: 999;
     padding: 0;
@@ -789,13 +806,13 @@ g.unit {
     .btn.deploy {
         margin-top: 5px;
         margin-left: 5px;
-        vertical-align: middle;
+        text-shadow: none;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-        .button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient,
-		       @charm-panel-deploy-button-shadow, 0px);
+        .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient,
+                       @charm-panel-deploy-button-shadow, 0px);
         &:active {
-            .button-colors(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color,
-			   @charm-panel-deploy-button-shadow, 1px);
+            .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color,
+                           @charm-panel-deploy-button-shadow, 1px);
         }
     }
 
@@ -804,22 +821,23 @@ g.unit {
     }
     .btn.cancel {
         color: white;
-        text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.5);
+        text-shadow: none;
         margin-top: 5px;
         background-repeat: no-repeat;
         background-color: transparent;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
-        .button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
-		       @charm-panel-cancel-button-shadow, 0px);
+        .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
+                       @charm-panel-cancel-button-shadow, 0px);
         &:active {
-            .button-colors(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color,
-			   @charm-panel-cancel-button-shadow, 1px);
+            .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color,
+                           @charm-panel-cancel-button-shadow, 1px);
         }
     }
     .charm-panel-configure-buttons {
-      border-bottom: 1px solid @charm-panel-separator-color;
+      background-color: #FFFFFF;
+      border-bottom: 1px solid @charm-panel-border-color;
       height: 52px;
       padding-left: 8px;
       .btn {
@@ -831,43 +849,62 @@ g.unit {
         height: 500px;
     }
     .charm-nav-back {
-        background-color: black;
-        text-transform: uppercase;
-        color: white;
-        font-weight: bold;
+        border-top: 1px solid #DEDEDE;
+        border-bottom: 1px solid @charm-panel-border-color;
+        color: @charm-panel-deploy-button-color;
         cursor: pointer;
+        font-size: 14px;
+        padding: 7px 4px;
     }
     .charm-panel {
-        h3 {
-            text-transform: capitalize;
-            color: blue;
-            font-weight: bold;
-            margin-top: 1ex;
-            margin-bottom: 1ex;
-        }
-        h4 {
-            border-bottom: 1px solid @label-color;
-            cursor: pointer;
-            margin-top: 1ex;
-            margin-bottom: 1ex;
-            i {
-                float: right;
-            }
-        }
-        h5 {
-            margin-top: 1ex;
-            &:first-child {
-                margin-top: 0;
-            }
-        }
+        background-color: @charm-panel-background-color;
         height: 432px;
         overflow-y: auto;
         overflow-x: hidden;
+        h3 {
+            color: @label-color;
+            font-size: 22px;
+            font-weight: normal;
+            padding: 5px 0px 2px 0px;
+        }
+        h4 {
+            color: @label-color;
+            cursor: pointer;
+            border-top: 1px solid #FFFFFF;
+            border-bottom: 1px solid @charm-panel-border-color;
+            font-family: @font-family-medium;
+            font-weight: normal;
+            padding: 8px 12px;
+            i {
+                float: right;
+            }
+            &.first {
+                border-top: 1px solid #E0DEDE;
+            }
+        }
+        h5 {
+            color: @label-color;
+            font-family: @font-family-medium;
+            font-weight: normal;
+            margin-top: 11px;
+        }
+        #charm-panel-head {
+            border-top: 1px solid #FFFFFF;
+            border-bottom: 1px solid @charm-panel-border-color;
+            padding: 1ex 12px 10px 12px;
+        }
         .collapsible {
+            background-color: #E7E7E7;
+            line-height: 16px;
             overflow: hidden;
+            padding: 0px 12px;
+            :last-child {
+                margin-bottom: 11px;
+            }
         }
         &.charm-description {
-            padding: 1ex 1em;
+            color: #58595B;
+            font-size: 12px;
             .charm-section {
                 .commitmessage {
                     padding: 0.8ex 0 1ex 1em;
@@ -875,16 +912,20 @@ g.unit {
                     white-space: pre-wrap;
                 }
             }
+            h6 {
+                font-weight: bold;
+                text-transform: uppercase;
+                color: black
+            }
         }
         &.config-variant {
-            padding: 1ex 1em;
-            background-color: @charm-panel-background-color;
             font-size: 14px;
+
             .control-group {
                 width: auto;
                 margin-bottom: 0;
                 margin-top: 1ex;
-                padding-bottom: 0;
+                padding: 0px 12px;
                 clear: both;
             }
             .control-description {
@@ -1005,7 +1046,84 @@ table tr.highlighted {
         background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
         height: 50px;
         position: relative;
-        color: #2d2d2d!important;
+        color: @navbar-color;
+        text-align: center;
+
+        .filter-control {
+            position: absolute;
+            right: 430px;
+            top: 13px;
+            width: 300px;
+            display: inline-block;
+
+            .filter-label {
+                position: absolute;
+                right: 305px;
+                top: 3px;
+            }
+
+            .control-separator {
+                 padding-top: 0px;
+                 padding-left: 5px;
+
+                 img {
+                    height: 30px;
+                    padding-top: 0px;
+                 }
+            }
+
+            .state-buttons {
+                img {
+                    padding-top: 0px;
+                    height: 30px;
+                }
+
+                div {
+                    padding-top: 3px;
+                    width: 70px;
+                    height: 21px;
+                    background:url(/juju-ui/assets/images/toggles.png) -70px 0;
+
+                    &.active {
+                        background:url(/juju-ui/assets/images/on_middle.png) 0 0;
+                        .white;
+                    }
+
+                    &:first-child {
+                        background:url(/juju-ui/assets/images/toggles.png) 0 0px;
+
+                        &.active {
+                            background:url(/juju-ui/assets/images/on_left.png) 0 0;
+                            .white;
+                        }
+                    }
+
+                    &:last-child {
+                        background:url(/juju-ui/assets/images/toggles.png) -210px 0;
+
+                        &.active {
+                            background:url(/juju-ui/assets/images/on_right.png) 0 0;
+                            .white;
+                        }
+                    }
+                }
+
+                span:first-child {
+                    padding-right: 5px;
+                }
+
+                .white {
+                    a {color: white !important;}
+                }
+
+                a {
+                    color: @navbar-color;
+                    &:link, &:visited, &:active, &:hover {
+                       text-decoration: none
+                    }
+                }
+            }
+        }
 
         .destroy-control {
             position: absolute;
@@ -1013,22 +1131,12 @@ table tr.highlighted {
             left: 10px;
 
             a {
-                color: #2D2D2D!important;
+                color: @navbar-color;
             }
 
             a:link, a:visited, a:active, a:hover {
                 text-decoration: none
             }
-        }
-    }
-
-    .filter-control {
-        position: absolute;
-        left: 120px;
-        top: 10px;
-
-        span:first-child {
-            padding-right: 5px;
         }
     }
 
