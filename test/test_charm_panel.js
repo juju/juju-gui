@@ -265,7 +265,6 @@ describe('charm description', function() {
         html = container.one('.charm-description'),
         // We use the last change div.
         section_container = html.one('div.charm-section:last-child');
-        //section_container = html.one('div.charm-section:nth-of-type(3)');
     section_container.one('div').getStyle('height').should.equal('0px');
     assert(section_container.one('h4 i').hasClass('icon-chevron-up'));
     section_container.one('h4').simulate('click');
