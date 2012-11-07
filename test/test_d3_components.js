@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('d3-components', function() {
+describe('d3-components', function() {
   var Y, NS, TestModule, modA, state,
       container, comp;
 
@@ -98,8 +98,8 @@ describe.only('d3-components', function() {
 
   it('should allow event bindings through the use of a declartive object',
      function() {
-    var c = new NS.Component();
-    c.setAttrs({container: container});
+    comp = new NS.Component();
+    comp.setAttrs({container: container});
 
     // Change test module to use rich captures on some events.
     // This defines a phase for click (before, after, on (default))
@@ -113,15 +113,12 @@ describe.only('d3-components', function() {
                    state.dbldbl = true;
                  }}};
     modA.afterThing = function(evt) {
-      console.log('enter', evt);
       state.clicked = true;
-      console.log('after');
     };
-    c.addModule(modA);
-    c.render();
+    comp.addModule(modA);
+    comp.render();
 
     Y.one('.thing').simulate('click');
-    console.log('state', state);
     state.clicked.should.equal(true);
 
     Y.one('.thing').simulate('dblclick');
@@ -131,30 +128,42 @@ describe.only('d3-components', function() {
 
   it('should support basic rendering from all modules',
      function() {
-       var c = new NS.Component(),
-           modA = new TestModule(),
+       var modA = new TestModule(),
            modB = new TestModule();
 
+       comp = new NS.Component();
        // Give each of these a render method that adds to container
        modA.name = 'moda';
        modA.render = function() {
          this.get('container').append(Y.Node.create('<div id="fromA"></div>'));
        };
+
        modB.name = 'modb';
        modB.render = function() {
          this.get('container').append(Y.Node.create('<div id="fromB"></div>'));
        };
 
-       c.setAttrs({container: container});
-       c.addModule(modA)
+       comp.setAttrs({container: container});
+       comp.addModule(modA)
         .addModule(modB);
 
-       c.render();
+       comp.render();
        Y.Lang.isValue(Y.one('#fromA')).should.equal(true);
        Y.Lang.isValue(Y.one('#fromB')).should.equal(true);
      });
 
-  it('should support d3 event bindings post render');
+  it('should support d3 event bindings post render', function() {
+    comp = new NS.Component();
+    comp.setAttrs({container: container});
+
+    comp.addModule(TestModule);
+
+    comp.render();
+
+    // This is a d3 bound handler that occurs only after render.
+    container.one('.target').simulate('click');
+    state.targeted.should.equal(true);
+  });
 
 });
 

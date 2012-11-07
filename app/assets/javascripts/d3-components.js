@@ -114,6 +114,25 @@ YUI.add('d3-components', function(Y) {
         subscriptions.push(sub);
       }
 
+      function _normalizeHandler(handler, module) {
+        if (typeof handler === 'object') {
+          phase   = handler.phase || 'on';
+          handler = handler.callback;
+        }
+        if (typeof handler === 'string') {
+          handler = module[handler];
+        }
+        if (!handler) {
+          console.error('No Event handler for', selector, name);
+          return;
+        }
+        if (!L.isFunction(handler)) {
+          console.error('Unable to resolve a proper callback for', selector, name);
+          return;
+        }
+        return handler;
+      };
+
       this.unbind(name);
 
       // Bind 'scene' events
@@ -123,22 +142,8 @@ YUI.add('d3-components', function(Y) {
             handlers = modEvents.scene[selector];
             for (name in handlers) {
               if (owns(handlers, name)) {
-                handler = handlers[name];
-                if (typeof handler === 'object') {
-                  phase   = handler.phase || 'on';
-                  handler = handler.callback;
-                }
-                if (typeof handler === 'string') {
-                  handler = module[handler];
-                }
-                if (!handler) {
-                  console.error('No Event handler for', selector, name);
-                  continue;
-                }
-                if (!L.isFunction(handler)) {
-                  console.error('Unable to resolve a proper callback for', selector, name);
-                  continue;
-                }
+                handler = _normalizeHandler(handlers[name], module);
+                if (!handler) continue;
                 _bindEvent(name, handler, this.get('container'), selector, this);
               }
             }
@@ -154,22 +159,16 @@ YUI.add('d3-components', function(Y) {
         var resolvedHandler = {};
 
         // Resolve any 'string' handlers to methods on module.
-        Y.each(modEvents.yui, function(v, k) {
-          if (typeof v === 'string') {
-            v = module[v];
-          }
-          if (!handler || !L.isFunction(handler)) {
-            console.error('Missing or Invalid event handler for', selector, k);
-            return;
-          }
-          resolvedHandler[k] = v;
+        Y.each(modEvents.yui, function(handler, name) {
+          handler = _normalizeHandler(handler, module);
+          if (!handler) return;
+          resolvedHandler[name] = handler;
         }, this);
         // Bind resolved event handlers as a group.
         subscriptions.push(Y.on(resolvedHandler));
       }
       return subscriptions;
     },
-
 
     /**
      * @method bind
@@ -206,7 +205,9 @@ YUI.add('d3-components', function(Y) {
       // d3 selection and an 'on' binding.
       var modEvents = this.events[name];
 
-      if (!modEvents || !modEvents.d3) return;
+      if (!modEvents || !modEvents.d3) {
+        return;
+      }
 
       modEvents  = modEvents.d3;
       var module = this.modules[name],
