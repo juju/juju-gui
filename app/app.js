@@ -154,11 +154,10 @@ YUI.add('juju-gui', function(Y) {
       // When the provider type becomes available, display it.
       this.env.after('providerTypeChange', this.onProviderTypeChange);
 
-      // TODO: refactor per event views into a generic show view event.
-      this.on('*:showService', this.navigate_to_service);
-      this.on('*:showUnit', this.navigate_to_unit);
-      this.on('*:showCharm', this.navigate_to_charm);
-      this.on('*:showEnvironment', this.navigate_to_environment);
+      this.on('*:navigateTo', function(e) {
+        console.log('navigateTo', e);
+        this.navigate(e.url);
+      }, this);
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);
@@ -258,42 +257,6 @@ YUI.add('juju-gui', function(Y) {
           callback(self.serviceEndpoints);
         }
       });
-    },
-
-    // Event handlers
-
-    /**
-     * @method navigate_to_unit
-     */
-    navigate_to_unit: function(e) {
-      console.log('Evt.Nav.Router unit target', e.unit_id);
-      this.navigate('/unit/' + e.unit_id.replace('/', '-') + '/');
-    },
-
-    /**
-     * @method navigate_to_service
-     */
-    navigate_to_service: function(e) {
-      var service = e.service;
-      console.log(service.get('id'), 'Evt.Nav.Router service target');
-      this.navigate('/service/' + service.get('id') + '/');
-    },
-
-    /**
-     * @method navigate_to_charm
-     */
-    navigate_to_charm: function(e) {
-      console.log('Evt.Nav.Router charm');
-      var charm_url = e.charm_data_url;
-      this.navigate('/charms/' + charm_url);
-    },
-
-    /**
-     * @method navigate_to_environment
-     */
-    navigate_to_environment: function(e) {
-      console.log('Evt.Nav.Router environment');
-      this.navigate('/');
     },
 
     // Route handlers

@@ -216,7 +216,9 @@ YUI.add('juju-view-service', function(Y) {
             ));
         this.panel.hide();
         this.panel.destroy();
-        this.fire('showEnvironment');
+        this.fire('navigateTo', {
+          url: '/'
+        });
       }
     }
   };
@@ -859,8 +861,11 @@ YUI.add('juju-view-service', function(Y) {
 
         events: {
           'div.unit': {click: function(ev) {
-            console.log('Unit clicked', ev.currentTarget.get('id'));
-            this.fire('showUnit', {unit_id: ev.currentTarget.get('id')});
+            var id = ev.currentTarget.get('id');
+            console.log('Unit clicked', id);
+            this.fire('navigateTo', {
+              url: '/unit/' + id.replace('/', '-') + '/'
+            });
           }}
         }
       });

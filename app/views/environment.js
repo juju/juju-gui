@@ -203,7 +203,7 @@ YUI.add('juju-view-environment', function(Y) {
 
         initializer: function() {
           console.log('View: Initialized: Env');
-          this.publish('showService', {preventable: false});
+          this.publish('navigateTo', {preventable: false});
 
           // Build a service.id -> BoundingBox map for services.
           this.service_boxes = {};
@@ -1335,7 +1335,7 @@ YUI.add('juju-view-environment', function(Y) {
            * View a service
            */
           show_service: function(m, view) {
-            view.fire('showService', {service: m});
+            view.fire('navigateTo', {url: '/service/' + m.get('id') + '/'});
           },
 
           /*
