@@ -13,6 +13,10 @@ NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
 SPRITE_GENERATED_FILES=app/assets/sprite/sprite.css app/assets/sprite/sprite.png
+COMPRESSED_FILES=app/assets/javascripts/generated/all-app-debug.js \
+	app/assets/javascripts/generated/all-app.js \
+	app/assets/javascripts/generated/all-third.js \
+	app/assets/javascripts/generated/all-yui.js
 DATE=$(shell date -u)
 APPCACHE=app/assets/manifest.appcache
 
@@ -61,10 +65,12 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-combinejs: $(NODE_TARGETS)
+$(COMPRESSED_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES)
 	@rm -Rf app/assets/javascripts/generated/
 	@mkdir app/assets/javascripts/generated/
 	@node app/assets/combine/merge-files.js
+
+combinejs: $(COMPRESSED_FILES)
 
 prep: beautify lint
 
@@ -72,12 +78,14 @@ test: install
 	@./test-server.sh
 
 debug: install
-	@cp app/assets/combine/properties-dev.js app/assets/javascripts/generated/properties.js
+	@cp app/assets/combine/properties-dev.js \
+			app/assets/javascripts/generated/properties.js
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
 server: install
-	@cp app/assets/combine/properties-prod.js app/assets/javascripts/generated/properties.js
+	@cp app/assets/combine/properties-prod.js \
+			app/assets/javascripts/generated/properties.js
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
