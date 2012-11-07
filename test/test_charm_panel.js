@@ -115,7 +115,7 @@ describe('charm panel', function() {
     field.set('value', 'aaa');
     field.simulate('keydown', { keyCode: ENTER });
     node.one('a.charm-detail').simulate('click');
-    node.one('.charm-description > h3').get('text').trim()
+    node.one('.charm-description h3').get('text').trim()
       .should.equal('membase');
   });
 
@@ -212,15 +212,10 @@ describe('charm description', function() {
         { container: container, app: app, model: charm,
           charmStore: charm_store }).render(),
         html = container.one('.charm-description'),
-        description_div = html.one('.charm-section div'),
-        interface_div = html.one('div.charm-section:nth-of-type(2)'),
-        last_change_div = html.one('div.charm-section:nth-of-type(3)'),
-        related_div = html.one('div.charm-section:nth-of-type(4)');
+        description_div = html.one('.charm-section div');
     html.one('h3').get('text').trim().should.equal('mysql');
     description_div.getStyle('height').should.not.equal('0px');
-    var _ = expect(interface_div).to.not.exist;
-    _ = expect(last_change_div).to.not.exist;
-    _ = expect(related_div).to.not.exist;
+    html.all('div.charm-section').size().should.equal(1);
   });
 
   it('can render fuller charm', function() {
@@ -240,10 +235,11 @@ describe('charm description', function() {
         { container: container, app: app, model: charm, charms: charms,
           charmStore: charm_store }).render(),
         html = container.one('.charm-description'),
-        description_div = html.one('.charm-section div'),
-        interface_div = html.one('div.charm-section:nth-of-type(2) div'),
-        last_change_div = html.one('div.charm-section:nth-of-type(3) div'),
-        related_div = html.one('div.charm-section:nth-of-type(4)');
+        sections = html.all('.charm-section'),
+        description_div = sections.item(0).one('div'),
+        interface_div = sections.item(1).one('div'),
+        last_change_div = sections.item(2).one('div'),
+        related_div = sections.item(3).one('div');
     description_div.get('text').should.contain('A DB');
     interface_div.getStyle('height').should.equal('0px');
     interface_div.get('text').should.contain('munin');
@@ -268,7 +264,7 @@ describe('charm description', function() {
           charmStore: charm_store }).render(),
         html = container.one('.charm-description'),
         // We use the last change div.
-        section_container = html.one('div.charm-section:nth-of-type(3)');
+        section_container = html.one('div.charm-section:last-child');
     section_container.one('div').getStyle('height').should.equal('0px');
     assert(section_container.one('h4 i').hasClass('icon-chevron-up'));
     section_container.one('h4').simulate('click');
