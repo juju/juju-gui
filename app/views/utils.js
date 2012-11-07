@@ -29,7 +29,7 @@ YUI.add('juju-view-utils', function(Y) {
     var winConsole = window.console,
         // These are the available methods.
         // Add more to this list if necessary.
-        noop = function() {},
+        noop = function() {};,
         consoleNoop = {
           group: noop,
           groupEnd: noop,

@@ -6,35 +6,35 @@ describe('d3-components', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['d3-components',
-                              'node',
-                              'node-event-simulate'],
-      function(Y) {
-        NS = Y.namespace('d3');
+      'node',
+      'node-event-simulate'],
+    function(Y) {
+      NS = Y.namespace('d3');
 
-       TestModule = Y.Base.create('TestModule', NS.Module, [], {
-          events: {
-            scene: { '.thing': {click: 'decorateThing'}},
-            d3: {'.target': {click: 'targetTarget'}},
-            yui: {
-              cancel: 'cancelHandler'
-            }
-          },
-
-          decorateThing: function(evt) {
-            state.thing = 'decorated';
-          },
-
-          targetTarget: function(evt) {
-              state.targeted = true;
-          },
-
-          cancelHandler: function(evt) {
-            state.cancelled = true;
+      TestModule = Y.Base.create('TestModule', NS.Module, [], {
+        events: {
+          scene: { '.thing': {click: 'decorateThing'}},
+          d3: {'.target': {click: 'targetTarget'}},
+          yui: {
+            cancel: 'cancelHandler'
           }
-        });
+        },
 
-        done();
+        decorateThing: function(evt) {
+          state.thing = 'decorated';
+        },
+
+        targetTarget: function(evt) {
+          state.targeted = true;
+        },
+
+        cancelHandler: function(evt) {
+          state.cancelled = true;
+        }
       });
+
+      done();
+    });
   });
 
   beforeEach(function() {
@@ -98,33 +98,33 @@ describe('d3-components', function() {
 
   it('should allow event bindings through the use of a declartive object',
      function() {
-    comp = new NS.Component();
-    comp.setAttrs({container: container});
+       comp = new NS.Component();
+       comp.setAttrs({container: container});
 
-    // Change test module to use rich captures on some events.
-    // This defines a phase for click (before, after, on (default))
-    // and also shows an inline callback (which is discouraged but allowed)
-    modA = new TestModule();
-    modA.events.scene['.thing'] = {
-      click: {phase: 'after',
-              callback: 'afterThing'},
-      dblclick: {phase: 'on',
-                 callback: function(evt) {
-                   state.dbldbl = true;
-                 }}};
-    modA.afterThing = function(evt) {
-      state.clicked = true;
-    };
-    comp.addModule(modA);
-    comp.render();
+       // Change test module to use rich captures on some events.
+       // This defines a phase for click (before, after, on (default))
+       // and also shows an inline callback (which is discouraged but allowed)
+       modA = new TestModule();
+       modA.events.scene['.thing'] = {
+         click: {phase: 'after',
+           callback: 'afterThing'},
+         dblclick: {phase: 'on',
+           callback: function(evt) {
+             state.dbldbl = true;
+           }}};
+       modA.afterThing = function(evt) {
+         state.clicked = true;
+       };
+       comp.addModule(modA);
+       comp.render();
 
-    Y.one('.thing').simulate('click');
-    state.clicked.should.equal(true);
+       Y.one('.thing').simulate('click');
+       state.clicked.should.equal(true);
 
-    Y.one('.thing').simulate('dblclick');
-    state.dbldbl.should.equal(true);
+       Y.one('.thing').simulate('dblclick');
+       state.dbldbl.should.equal(true);
 
-  });
+     });
 
   it('should support basic rendering from all modules',
      function() {

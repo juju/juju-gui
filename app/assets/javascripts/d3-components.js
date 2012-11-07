@@ -9,7 +9,33 @@
 
 YUI.add('d3-components', function(Y) {
   var ns = Y.namespace('d3'),
-      L = Y.Lang;
+      L = Y.Lang,
+      Module = Y.Base.create('Module', Y.Base, [], {
+        /**
+         * @property events
+         * @type {object}
+         **/
+        events: {
+          scene: {},
+          d3: {},
+          yui: {}
+        },
+
+        initializer: function(options) {
+          options = options || {};
+          this.events = options.events ?
+              Y.merge(this.events, options.events) :
+              this.events;
+        }
+      }, {
+        ATTRS: {
+          component: {},
+          container: {getter: function() {
+            return this.get('component').get('container');}}
+        }
+      });
+  ns.Module = Module;
+
 
   var Component = Y.Base.create('Component', Y.Base, [], {
     /**
@@ -60,7 +86,7 @@ YUI.add('d3-components', function(Y) {
         module = new module();
       }
       module.setAttrs({component: this,
-                      options: options});
+        options: options});
 
                       this.modules[module.name] = module;
 
@@ -90,33 +116,33 @@ YUI.add('d3-components', function(Y) {
      **/
     _bindEvents: function(name) {
       var self = this,
-      modEvents = this.events[name],
-      module = this.modules[name],
-      owns = Y.Object.owns,
-      selector,
-      phase = 'on',
-      subscriptions = [],
-      handlers,
-      handler;
+          modEvents = this.events[name],
+          module = this.modules[name],
+          owns = Y.Object.owns,
+          selector,
+          phase = 'on',
+          subscriptions = [],
+          handlers,
+          handler;
 
       function _bindEvent(name, handler, container, selector, context) {
         // Adapt between d3 events and YUI delegates.
         var d3Adaptor = function(evt) {
           var selection = d3.select(evt.currentTarget.getDOMNode()),
-          d = selection.data()[0];
+              d = selection.data()[0];
           // This is a minor violation (extension)
           // of the interface, but suits us well.
           d3.event = evt;
           return handler.call(
-            evt.currentTarget.getDOMNode(), d, context);
-        },
-        sub = Y.delegate(name, d3Adaptor, container, selector, context);
+              evt.currentTarget.getDOMNode(), d, context);
+        };,
+            sub = Y.delegate(name, d3Adaptor, container, selector, context);
         subscriptions.push(sub);
       }
 
       function _normalizeHandler(handler, module) {
         if (typeof handler === 'object') {
-          phase   = handler.phase || 'on';
+          phase = handler.phase || 'on';
           handler = handler.callback;
         }
         if (typeof handler === 'string') {
@@ -131,7 +157,7 @@ YUI.add('d3-components', function(Y) {
           return;
         }
         return handler;
-      };
+      }
 
       this.unbind(name);
 
@@ -143,7 +169,9 @@ YUI.add('d3-components', function(Y) {
             for (name in handlers) {
               if (owns(handlers, name)) {
                 handler = _normalizeHandler(handlers[name], module);
-                if (!handler) continue;
+                if (!handler) {
+                  continue;
+                }
                 _bindEvent(name, handler, this.get('container'), selector, this);
               }
             }
@@ -161,7 +189,9 @@ YUI.add('d3-components', function(Y) {
         // Resolve any 'string' handlers to methods on module.
         Y.each(modEvents.yui, function(handler, name) {
           handler = _normalizeHandler(handler, module);
-          if (!handler) return;
+          if (!handler) {
+            return;
+          }
           resolvedHandler[name] = handler;
         }, this);
         // Bind resolved event handlers as a group.
@@ -200,21 +230,21 @@ YUI.add('d3-components', function(Y) {
      * @method _bindD3Events
      * @param name Module name.
      **/
-    _bindD3Events: function(name) {
+    _bindD3Events: function(modName) {
       // Walk each selector for a given module 'name', doing a
       // d3 selection and an 'on' binding.
-      var modEvents = this.events[name];
+      var modEvents = this.events[modName];
 
-      if (!modEvents || !modEvents.d3) {
+      if (!modEvents || modEvents.d3 === undefined) {
         return;
       }
 
-      modEvents  = modEvents.d3;
-      var module = this.modules[name],
-      owns   = Y.Object.owns;
+      modEvents = modEvents.d3;
+      var module = this.modules[modName],
+          owns = Y.Object.owns;
 
       var selector, kind, handler,
-      handlers, name;
+          handlers, name;
 
       for (selector in modEvents) {
         if (owns(modEvents, selector)) {
@@ -239,22 +269,26 @@ YUI.add('d3-components', function(Y) {
      * D3 events follow a 'slot' like system. Setting the
      * event to null unbinds existing handlers.
      **/
-    _unbindD3Events: function(name) {
-      var modEvents = this.events[name];
+    _unbindD3Events: function(modName) {
+      var modEvents = this.events[modName];
 
-      if (!modEvents || !modEvents.d3) return;
+      if (!modEvents || !modEvents.d3) {
+        return;
+      }
       modEvents = modEvents.d3;
-      var module = this.modules[name],
-      owns       = Y.Object.owns;
+      var module = this.modules[modName],
+          owns = Y.Object.owns;
 
       var selector, kind, handler,
-      handlers, name;
+          handlers, name;
 
       for (selector in modEvents) {
         if (owns(modEvents, selector)) {
           handlers = modEvents[selector];
           for (name in handlers) {
-            d3.selectAll(selector).on(name, null);
+            if (owns(handlers, name)) {
+              d3.selectAll(selector).on(name, null);
+            }
           }
         }
       }
@@ -268,9 +302,11 @@ YUI.add('d3-components', function(Y) {
       var eventSet = this.events;
       function _unbind(modEvents) {
         Y.each(modEvents.subscriptions, function(handler) {
-          handler && handler.detach();
-        })
-        delete modEvents.handlers;
+          if (handler) {
+            handler.detach();
+          }
+        });
+        delete modEvents.subscriptions;
       }
 
       if (moduleName) {
@@ -293,20 +329,22 @@ YUI.add('d3-components', function(Y) {
      */
     render: function() {
       function renderAndBind(module, name) {
-        module && module.render && module.render();
+        if (module && module.render) {
+          module.render();
+        }
         this._bindD3Events(name);
       }
 
       // If the container isn't bound to the DOM
       // do so now.
-      this.attach();
+      this.attachContainer();
       // Render modules.
       Y.each(this.modules, renderAndBind, this);
       return this;
     },
 
     /**
-     * @method attach
+     * @method attachContainer
      * @chainable
      *
      * Called by render, conditionally attach container to the DOM if
@@ -314,7 +352,7 @@ YUI.add('d3-components', function(Y) {
      * rendering so that d3 Events will have attached DOM elements. If
      * your application doesn't need this behavior feel free to override.
      **/
-    attach: function() {
+    attachContainer: function() {
       var container = this.get('container');
       if (container && !container.inDoc()) {
         Y.one('body').append(container);
@@ -323,15 +361,16 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
-     * @method detach
+     * @method detachContainer
      *
      * Remove container from DOM returning container. This
      * is explicitly not chainable.
      **/
-    detach: function() {
+    detachContainer: function() {
       var container = this.get('container');
-      if (container.inDoc())
+      if (container.inDoc()) {
         container.remove();
+      }
       return container;
     },
 
@@ -356,36 +395,8 @@ YUI.add('d3-components', function(Y) {
 
   });
   ns.Component = Component;
-
-  var Module = Y.Base.create('Module', Y.Base, [], {
-    /**
-     * @property events
-     * @type object
-     **/
-    events: {
-      scene: {},
-      d3: {},
-      yui: {}
-    },
-
-    initializer: function(options) {
-      options = options || {};
-      this.events = options.events ?
-        Y.merge(this.events, options.events) :
-        this.events;
-    }
-  }, {
-    ATTRS: {
-      component: {},
-      options: {default: {}},
-      container: {getter: function() {
-        return this.get('component').get('container');}}
-    }
-  });
-  ns.Module = Module;
-
-},'0.1', {
+}, '0.1', {
   'requires': ['d3',
-              'base',
-              'array-extras',
-              'event']});
+    'base',
+    'array-extras',
+    'event']});
