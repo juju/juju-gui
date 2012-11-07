@@ -67,9 +67,7 @@ app/views/charm-panel.js _moveTooltip
 app/views/charm-panel.js _showErrors
 app/views/charm-panel.js calculatePanelPosition
 app/views/charm-panel.js createInstance
-app/views/charm-panel.js deploy
 app/views/charm-panel.js getInstance
-app/views/charm-panel.js goBack
 app/views/charm-panel.js hide
 app/views/charm-panel.js hideDescription
 app/views/charm-panel.js initializer
@@ -88,7 +86,6 @@ app/views/charm-panel.js setupOverlay
 app/views/charm-panel.js show
 app/views/charm-panel.js showConfiguration
 app/views/charm-panel.js showDescription
-app/views/charm-panel.js showDetails
 app/views/charm-panel.js toggle
 app/views/charm-panel.js updatePanelPosition
 app/views/charm.js _deployCallback

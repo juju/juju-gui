@@ -3,6 +3,6 @@
 var syspath = require('path'),
     fs = require('fs'),
     debugMode = (String(process.argv[2]).toLowerCase() === 'true'),
-    outputFile = syspath.join(process.cwd(), 
-      './app/assets/javascripts/generated/properties.js');
+    outputFile = syspath.join(process.cwd(),
+    './app/assets/javascripts/generated/properties.js');
 fs.writeFileSync(outputFile, 'exports.debugMode=' + debugMode, 'utf8');
