@@ -14,6 +14,7 @@
 @charm-panel-cancel-button-shadow: #515050;
 @charm-panel-separator-color: #aeaeae;
 @charm-panel-background-color: #eeeeee;
+@charm-panel-border-color: #C2C2C2;
 @navbar-color: #2D2D2D!important;
 
 body {
@@ -847,7 +848,7 @@ g.unit {
     }
     .charm-nav-back {
         border-top: 1px solid #DEDEDE;
-        border-bottom: 1px solid #C2C2C2;
+        border-bottom: 1px solid @charm-panel-border-color;
         color: @charm-panel-deploy-button-color;
         cursor: pointer;
         font-size: 14px;
@@ -868,7 +869,7 @@ g.unit {
             padding: 12px 12px;
             cursor: pointer;
             border-top: 1px solid #FFFFFF;
-            border-bottom: 1px solid #C2C2C2;
+            border-bottom: 1px solid @charm-panel-border-color;
             i {
                 float: right;
             }
@@ -878,7 +879,7 @@ g.unit {
         }
         #charm-panel-head {
             border-top: 1px solid #FFFFFF;
-            border-bottom: 2px solid #C2C2C2;
+            border-bottom: 2px solid @charm-panel-border-color;
             padding: 1ex 12px 10px 12px;
         }
         .collapsible {
