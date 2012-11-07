@@ -4,7 +4,7 @@
    <div class="inline"><span>Unit count</span></div>
    <div class="inline">
      <input type="text" id="num-service-units" value="{{service.unit_count}}">
-     <img class="divider" 
+     <img class="divider"
            src="/juju-ui/assets/images/bottom_bar_small_div.png" />
    </div>
  </div>

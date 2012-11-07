@@ -43,9 +43,14 @@
       {{#if settings}}
       <!-- Service configuration form -->
       <div class="charm-section">
-        <h4><i class="icon-chevron-right"></i> Service Settings</h4>
-        <input class="config-file-upload" type="file">
-        <button class="remove-config-file hidden">Remove File</button>
+        <h4>Service Settings<i class="icon-chevron-down"></i></h4>
+        <div class="config-file-upload control-group">
+          <input class="config-file-upload-widget" type="file">
+          <div>
+            <span class="config-file-upload-overlay">Use configuration file</span>
+            <span class="config-file-name"></span>
+          </div>
+        </div>
         <div class="charm-settings">
         <form>
           <div id="service-config" class="collapsible">

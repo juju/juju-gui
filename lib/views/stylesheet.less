@@ -6,14 +6,52 @@
 @text-entry-color: #6d6e70;
 @charm-panel-configure-title-color: #eee7d5;
 @charm-panel-configure-name-color: #8f8f88;
-@charm-panel-deploy-button-color: #e45718;
-@charm-panel-cancel-button-color: #979694;
+@charm-panel-deploy-button-color: #dd4814;
+@charm-panel-deploy-button-bottom-gradient: #e65c19;
+@charm-panel-deploy-button-shadow: #8a2d0c;
+@charm-panel-cancel-button-color: #b8b8b8;
+@charm-panel-cancel-button-bottom-gradient: #a3a39f;
+@charm-panel-cancel-button-shadow: #515050;
 @charm-panel-separator-color: #aeaeae;
+@charm-panel-background-color: #eeeeee;
+@navbar-color: #2D2D2D!important;
 
 body {
     margin-top: 87px;
     background-color: #302b28;
     font-family: @font-family;
+}
+
+input, button, select, textarea {
+    font-family: @font-family;
+}
+
+.create-button(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
+    @blur: 2px;
+    background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
+    background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
+    background-image: -o-linear-gradient(top, @gradient-start, @gradient-end);
+    background-image: -moz-linear-gradient(top, @gradient-start, @gradient-end);
+    background-image: linear-gradient(top, @gradient-start, @gradient-end);
+    background-repeat: repeat-x;
+    -moz-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
+	                 2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+    -webkit-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
+	                    2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+    box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
+	            2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+    -moz-border-radius: ~"4px / 7px";
+    -webkit-border-radius: ~"4px / 7px";
+    border-radius: ~"4px / 7px";
+    border: none;
+}
+
+
+
+i.sprite {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 #viewport-wrapper {
@@ -55,7 +93,7 @@ body {
     background: url(/juju-ui/assets/images/top_bar.png) repeat-x;
     padding: 0;
     position: relative;
-    color: #2d2d2d!important;
+    color: @navbar-color;
     .brand {
         margin: 12px 26px 6px 10px;
         padding: 0;
@@ -70,9 +108,16 @@ body {
             &#charm-search-trigger-container {
                 width: 292px;
                 white-space: nowrap;
+                border-left: 1px solid transparent;
+                &.active-border {
+                    border-left-color: lightgray;
+                }
             }
             .nav-section {
-                border-left: 1px solid lightgray;
+                border-left: 1px solid transparent;
+                &.active-border {
+                    border-left-color: lightgray;
+                }
                 display: inline-block;
                 padding: 4px 10px;
                 #charm-search-trigger {
@@ -83,18 +128,25 @@ body {
                 }
                 input {
                     width: 128px;
-                    background: url(/juju-ui/assets/images/searchbox_icon.png) no-repeat 2px 1px whiteSmoke;
+                    background: url(/juju-ui/assets/images/searchbox_icon.png)
+                                no-repeat 2px 1px whiteSmoke;
                     margin: 0 10px;
                     padding: 3px 3px 3px 26px;
                     font-style: italic;
-                    font-family: @font-family;
                     font-size: 0.9em;
-                    &:focus {
+                    &:valid {
                         background: white;
                         padding: 3px;
                         width: 151px;
                         font-style: normal;
                         font-size: 1em;
+                    }
+                    &:focus {
+                        border-color: rgba(82, 168, 236, 0.8);
+                        outline: 0;
+                        outline: thin dotted 9;
+                        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+                                    0 0 8px rgba(82, 168, 236, 0.6);
                     }
                 }
 
@@ -117,6 +169,10 @@ body {
             }
         }
     }
+}
+
+.bottom-navbar {
+    min-width: 800px;
 }
 
 #content {
@@ -365,6 +421,7 @@ circle.mouse-down-indicator {
     stroke-width: 2px;
     fill: none;
 }
+
 g.service {
     fill: none;
     stroke: none;
@@ -374,12 +431,10 @@ g.service {
     }
 
     .charm-label {
-        font-family: @font-family;
         font-style: italic;
         fill: #4c4c4c;
     }
     .name {
-        font-family: @font-family;
         fill: #4c4c4c;
     }
 
@@ -388,7 +443,6 @@ g.service {
         text-anchor: middle;
         dominant-baseline: central;
         fill: rgba(0,0,0,0);
-        font-family: @font-family;
 
         &.show-count {
             fill: rgba(0,0,0,1);}
@@ -400,7 +454,6 @@ g.service {
         text-anchor: middle;
         dominant_baseline: central;
         fill: #4f4f4f;
-        font-family: @font-family;
         font-size: 1.2em;
 
         &.active {
@@ -449,8 +502,8 @@ g.service-status {
 
 g.unit {
     stroke-width: 0; font-weight: bold;
-    font-family: @font-family; font-size: 1.2em; fill: #1626cf;
-
+    font-size: 1.2em;
+    fill: #1626cf;
     .address {
     fill: #ffffff; font-size: 0.8em;}
     .unit-border {
@@ -519,7 +572,7 @@ g.unit {
     background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
     height: 50px;
     position: relative;
-    color: #2d2d2d!important;
+    color: @navbar-color;
 
     .controls {
         position: absolute;
@@ -727,51 +780,50 @@ g.unit {
 
 #juju-search-charm-panel {
     display: block;
-    padding-left: 0px;
-    padding-right: 0px;
     z-index: 999;
-    float: none;
+    padding: 0;
+    top: 70px;
+    height: 100px;
+    position: absolute;
+    width: 292px;
+    background-color: white;
+    border-left: lightgray solid 1px;
 
     .charm-panel-configure .btn {
         float: right;
     }
 
-    .button-colors(@color) {
-        @gradient-start: lighten(@color, 5%);
-	@gradient-end: darken(@color, 5%);
-        background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
-        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(@gradient-start), to(@gradient-end));
-        background-image: -webkit-linear-gradient(top, @gradient-start, @gradient-end);
-        background-image: -o-linear-gradient(top, @gradient-start, @gradient-end);
-        background-image: -moz-linear-gradient(top, @gradient-start, @gradient-end);
-        background-image: linear-gradient(top, @gradient-start, @gradient-end);
-        background-repeat: repeat-x;
-        border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-    }
     .btn.deploy {
         margin-top: 5px;
         margin-left: 5px;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-	.button-colors(@charm-panel-deploy-button-color);
-        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
-          background-color: @charm-panel-deploy-button-color;
-	}
+        .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient,
+		       @charm-panel-deploy-button-shadow, 0px);
+        &:active {
+            .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color,
+			   @charm-panel-deploy-button-shadow, 1px);
+        }
     }
+
     .charm-description btn.deploy {
        float: right;
     }
     .btn.cancel {
+        color: white;
+        text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.5);
         margin-top: 5px;
         background-repeat: no-repeat;
         background-color: transparent;
         vertical-align: middle;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
-	.button-colors(@charm-panel-cancel-button-color);
-        &, &:hover, &:active, &.active, &.disabled, &[disabled] {
-          background-color: @charm-panel-cancel-button-color;
-	}
+        .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
+		       @charm-panel-cancel-button-shadow, 0px);
+        &:active {
+            .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color,
+			   @charm-panel-cancel-button-shadow, 1px);
+        }
     }
     .charm-panel-configure-buttons {
       border-bottom: 1px solid @charm-panel-separator-color;
@@ -784,11 +836,6 @@ g.unit {
     .search-charm-inner {
         width: 100%;
         height: 500px;
-    }
-    @popover-height: 607px;
-    .popover-content {
-        padding: 0px;
-        height: @popover-height;
     }
     .charm-nav-back {
         background-color: black;
@@ -806,11 +853,13 @@ g.unit {
             margin-bottom: 1ex;
         }
         h4 {
-            text-transform: uppercase;
-            border-bottom: 1px dotted black;
+            border-bottom: 1px solid @label-color;
             cursor: pointer;
             margin-top: 1ex;
             margin-bottom: 1ex;
+            i {
+                float: right;
+            }
         }
         h5 {
             margin-top: 1ex;
@@ -828,8 +877,7 @@ g.unit {
             padding: 1ex 1em;
             .charm-section {
                 .commitmessage {
-                    padding-top: 0.8ex;
-                    padding-left: 1em;
+                    padding: 0.8ex 0 1ex 1em;
                     font-style: italic;
                     white-space: pre-wrap;
                 }
@@ -837,7 +885,8 @@ g.unit {
         }
         &.config-variant {
             padding: 1ex 1em;
-
+            background-color: @charm-panel-background-color;
+            font-size: 14px;
             .control-group {
                 width: auto;
                 margin-bottom: 0;
@@ -852,13 +901,50 @@ g.unit {
                 width: auto;
                 margin-bottom: 1ex;
                 float: left;
-            }
-            .control-label:after {
-                content: ":";
+                color: @label-color;
+                font-size: 14px;
             }
             .controls {
                 margin-left: auto;
                 margin-right: 0;
+            }
+            .config-field {
+                font-size: 16px;
+                color: text-entry-color;
+            }
+            .config-file-upload {
+                position: relative;
+                width: 252px;
+                height: 25px;
+            }
+            .config-file-upload-widget {
+                position: absolute;
+                top: 0;
+                left: 0;
+                visibility: hidden;
+                z-index: 0;
+            }
+            .config-file-upload-overlay {
+                background: url(/juju-ui/assets/images/getfile_button.png) no-repeat;
+                position: absolute;
+                top: 0;
+                left: 0;
+                padding-left: 5px;
+                padding-top: 2px;
+                height: 25px;
+                width: 149px;
+                z-index: 2;
+                cursor: pointer;
+                &:active {
+                  background: url(/juju-ui/assets/images/getfile_button-pressed.png) no-repeat;
+                }
+            }
+            .config-file-name {
+                position: absolute;
+                top: 27px;
+                left: 5px;
+                width: auto;
+                z-index: 2;
             }
             .controls.boolean {
                 input {
@@ -872,7 +958,6 @@ g.unit {
         }
     }
     .search-result-div {
-        height: @popover-height;
         overflow-y:auto;
         overflow-x:hidden;
         .series-charms {
@@ -927,7 +1012,84 @@ table tr.highlighted {
         background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
         height: 50px;
         position: relative;
-        color: #2d2d2d!important;
+        color: @navbar-color;
+        text-align: center;
+
+        .filter-control {
+            position: absolute;
+            right: 430px;
+            top: 13px;
+            width: 300px;
+            display: inline-block;
+
+            .filter-label {
+                position: absolute;
+                right: 305px;
+                top: 3px;
+            }
+
+            .control-separator {
+                 padding-top: 0px;
+                 padding-left: 5px;
+
+                 img {
+                    height: 30px;
+                    padding-top: 0px;
+                 }
+            }
+
+            .state-buttons {
+                img {
+                    padding-top: 0px;
+                    height: 30px;
+                }
+
+                div {
+                    padding-top: 3px;
+                    width: 70px;
+                    height: 21px;
+                    background:url(/juju-ui/assets/images/toggles.png) -70px 0;
+
+                    &.active {
+                        background:url(/juju-ui/assets/images/on_middle.png) 0 0;
+                        .white;
+                    }
+
+                    &:first-child {
+                        background:url(/juju-ui/assets/images/toggles.png) 0 0px;
+
+                        &.active {
+                            background:url(/juju-ui/assets/images/on_left.png) 0 0;
+                            .white;
+                        }
+                    }
+
+                    &:last-child {
+                        background:url(/juju-ui/assets/images/toggles.png) -210px 0;
+
+                        &.active {
+                            background:url(/juju-ui/assets/images/on_right.png) 0 0;
+                            .white;
+                        }
+                    }
+                }
+
+                span:first-child {
+                    padding-right: 5px;
+                }
+
+                .white {
+                    a {color: white !important;}
+                }
+
+                a {
+                    color: @navbar-color;
+                    &:link, &:visited, &:active, &:hover {
+                       text-decoration: none
+                    }
+                }
+            }
+        }
 
         .destroy-control {
             position: absolute;
@@ -935,22 +1097,12 @@ table tr.highlighted {
             left: 10px;
 
             a {
-                color: #2D2D2D!important;
+                color: @navbar-color;
             }
 
             a:link, a:visited, a:active, a:hover {
                 text-decoration: none
             }
-        }
-    }
-
-    .filter-control {
-        position: absolute;
-        left: 120px;
-        top: 10px;
-
-        span:first-child {
-            padding-right: 5px;
         }
     }
 

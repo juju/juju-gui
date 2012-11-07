@@ -130,11 +130,11 @@ YUI.add('juju-view-utils', function(Y) {
       this.after(['*:change', '*:load'], this.render, this);
     },
 
-    renderable_charm: function(charm_name, app) {
-      var charm = app.db.charms.getById(charm_name);
+    renderable_charm: function(charm_name, db, getModelURL) {
+      var charm = db.charms.getById(charm_name);
       if (charm) {
         var result = charm.getAttrs();
-        result.app_url = app.getModelURL(charm);
+        result.app_url = getModelURL(charm);
         return result;
       }
       return null;
@@ -793,8 +793,31 @@ YUI.add('juju-view-utils', function(Y) {
     if ((/-?error$/).test(state)) {
       return 'error';
     }
-    // "pending", "installed", and "stopped", plus anything unforseen
+    // "pending", "installed", and "stopped", plus anything unforeseen
     return 'pending';
+  };
+
+  utils.getEffectiveViewportSize = function(primary, minwidth, minheight) {
+    // Attempt to get the viewport height minus the navbar at top and
+    // control bar at the bottom.
+    var containerHeight = Y.one('body').get(
+        primary ? 'winHeight' : 'docHeight'),
+        bottomNavbar = Y.one('.bottom-navbar'),
+        navbar = Y.one('.navbar'),
+        viewport = Y.one('#viewport'),
+        result = {height: minheight || 0, width: minwidth || 0};
+    if (containerHeight && navbar && viewport) {
+      result.height = containerHeight -
+          (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0) -
+          navbar.get('offsetHeight') - 1;
+
+      result.width = viewport.get('offsetWidth');
+
+      // Make sure we don't get sized any smaller than the minimum.
+      result.height = Math.max(result.height, minheight || 0);
+      result.width = Math.max(result.width, minwidth || 0);
+    }
+    return result;
   };
 
   Y.Handlebars.registerHelper('unitState', function(relation_errors,
