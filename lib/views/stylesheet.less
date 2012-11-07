@@ -1,5 +1,6 @@
 /* Processed with LESS from lib/views/stylesheet.less */
 @font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+@font-family-medium: 'Ubuntu Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 /* Define common colors. */
 @label-color: #292929;
@@ -12,9 +13,8 @@
 @charm-panel-cancel-button-color: #b8b8b8;
 @charm-panel-cancel-button-bottom-gradient: #a3a39f;
 @charm-panel-cancel-button-shadow: #515050;
-@charm-panel-separator-color: #aeaeae;
 @charm-panel-background-color: #eeeeee;
-@charm-panel-border-color: #C2C2C2;
+@charm-panel-border-color: #BEBEBE;
 @navbar-color: #2D2D2D!important;
 
 body {
@@ -128,9 +128,10 @@ i.sprite {
                     margin: 0 5px;
                 }
                 input {
+                    height: 23px;
                     width: 128px;
                     background: url(/juju-ui/assets/images/searchbox_icon.png)
-                                no-repeat 2px 1px whiteSmoke;
+                                no-repeat 4px 4px whiteSmoke;
                     margin: 0 10px;
                     padding: 3px 3px 3px 26px;
                     font-style: italic;
@@ -835,7 +836,7 @@ g.unit {
     }
     .charm-panel-configure-buttons {
       background-color: #FFFFFF;
-      border-bottom: 1px solid @charm-panel-separator-color;
+      border-bottom: 1px solid @charm-panel-border-color;
       height: 52px;
       padding-left: 8px;
       .btn {
@@ -852,7 +853,7 @@ g.unit {
         color: @charm-panel-deploy-button-color;
         cursor: pointer;
         font-size: 14px;
-        padding: 10px 5px;
+        padding: 7px 4px;
     }
     .charm-panel {
         background-color: @charm-panel-background-color;
@@ -866,25 +867,34 @@ g.unit {
             padding: 5px 0px 2px 0px;
         }
         h4 {
-            padding: 12px 12px;
+            color: @label-color;
             cursor: pointer;
             border-top: 1px solid #FFFFFF;
             border-bottom: 1px solid @charm-panel-border-color;
+            font-family: @font-family-medium;
+            font-weight: normal;
+            padding: 8px 12px;
             i {
                 float: right;
             }
+            &.first {
+                border-top: 1px solid #E0DEDE;
+            }
         }
         h5 {
+            color: @label-color;
+            font-family: @font-family-medium;
+            font-weight: normal;
             margin-top: 11px;
         }
         #charm-panel-head {
             border-top: 1px solid #FFFFFF;
-            border-bottom: 2px solid @charm-panel-border-color;
+            border-bottom: 1px solid @charm-panel-border-color;
             padding: 1ex 12px 10px 12px;
         }
         .collapsible {
             background-color: #E7E7E7;
-            line-height: 17px;
+            line-height: 16px;
             overflow: hidden;
             padding: 0px 12px;
             :last-child {
