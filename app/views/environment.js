@@ -1,4 +1,9 @@
 'use strict';
+/**
+ * Provides the main app class.
+ *
+ * @module views
+ */
 
 YUI.add('juju-view-environment', function(Y) {
 
@@ -7,6 +12,12 @@ YUI.add('juju-view-environment', function(Y) {
       Templates = views.Templates,
       models = Y.namespace('juju.models');
 
+  /**
+   * Display an environment.
+   *
+   * @class environment
+   * @namespace views
+   */
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View,
                                       [views.JujuBaseView], {
         events: {
