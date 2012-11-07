@@ -1,4 +1,9 @@
 'use strict';
+/**
+ * The charm panel view(s).
+ *
+ * @module views
+ */
 
 YUI.add('juju-charm-panel', function(Y) {
 
@@ -104,6 +109,12 @@ YUI.add('juju-charm-panel', function(Y) {
         }
       };
 
+  /**
+   * Display a unit.
+   *
+   * @class CharmCollectionView
+   * @namespace views
+   */
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
     events: {
@@ -301,6 +312,12 @@ YUI.add('juju-charm-panel', function(Y) {
   });
   views.CharmCollectionView = CharmCollectionView;
 
+  /**
+   * Display a unit.
+   *
+   * @class CharmDescriptionView
+   * @namespace views
+   */
   var CharmDescriptionView = Y.Base.create(
       'CharmDescriptionView', Y.View, [views.JujuBaseView], {
         template: views.Templates['charm-description'],
@@ -472,9 +489,14 @@ YUI.add('juju-charm-panel', function(Y) {
                 charmId: ev.target.getAttribute('href') });
         }
       });
-
   views.CharmDescriptionView = CharmDescriptionView;
 
+  /**
+   * Display a unit.
+   *
+   * @class CharmConfigurationView
+   * @namespace views
+   */
   var CharmConfigurationView = Y.Base.create(
       'CharmConfigurationView', Y.View, [views.JujuBaseView], {
         template: views.Templates['charm-pre-configuration'],
@@ -733,7 +755,6 @@ YUI.add('juju-charm-panel', function(Y) {
           this.tooltip.render();
         }
       });
-
   views.CharmConfigurationView = CharmConfigurationView;
 
   // Creates the "_instance" object
