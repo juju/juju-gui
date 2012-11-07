@@ -492,12 +492,12 @@ YUI.add('juju-view-environment', function(Y) {
                   self.addRelationDragEnd.call(self, d, this);
                 }
               });
-          
+
           // Update relation lines for a single service.
           function updateLinkEndpoints(service) {
             Y.each(Y.Array.filter(self.rel_pairs, function(relation) {
               return relation.source() === service ||
-                relation.target() === service;
+                  relation.target() === service;
             }), function(relation) {
               var rel_group = d3.select('#' + relation.id),
                   connectors = relation.source()
@@ -511,13 +511,13 @@ YUI.add('juju-view-environment', function(Y) {
                 .attr('y2', t[1]);
               rel_group.select('.rel-label')
                 .attr('transform', function(d) {
-                  // XXX: This has to happen on update, not enter
-                  return 'translate(' +
-                      [Math.max(s[0], t[0]) -
-                       Math.abs((s[0] - t[0]) / 2),
-                       Math.max(s[1], t[1]) -
-                       Math.abs((s[1] - t[1]) / 2)] + ')';
-                });
+                    // XXX: This has to happen on update, not enter
+                    return 'translate(' +
+                        [Math.max(s[0], t[0]) -
+                         Math.abs((s[0] - t[0]) / 2),
+                         Math.max(s[1], t[1]) -
+                         Math.abs((s[1] - t[1]) / 2)] + ')';
+                  });
             });
           }
 
