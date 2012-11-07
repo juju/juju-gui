@@ -2,7 +2,7 @@
 
 describe.only('d3-components', function() {
   var Y, NS, TestModule, modA, state,
-      container;
+      container, comp;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['d3-components',
@@ -48,24 +48,26 @@ describe.only('d3-components', function() {
   afterEach(function() {
     container.remove();
     container.destroy();
+    if (comp)
+      comp.unbind();
   });
 
 
   it('should be able to create a component and add a module', function() {
-        var c = new NS.Component();
-        c.should.be.ok;
-      });
-
-  it('should be able to add and remove a module', function() {
-    var c = new NS.Component();
-    c.setAttrs({container: container});
-    c.addModule(TestModule);
+    comp = new NS.Component();
+    comp.should.be.ok;
   });
 
-  it('should be able to (un)bind module events and subscriptions', function() {
-    var c = new NS.Component();
-    c.setAttrs({container: container});
-    c.addModule(TestModule);
+  it('should be able to add and remove a module', function() {
+    comp = new NS.Component();
+    comp.setAttrs({container: container});
+    comp.addModule(TestModule);
+  });
+
+  it('should be able to (un)bind module event subscriptions', function() {
+    comp = new NS.Component();
+    comp.setAttrs({container: container});
+    comp.addModule(TestModule);
 
     // Test that default bindings work by simulating
     Y.fire('cancel');
@@ -77,19 +79,19 @@ describe.only('d3-components', function() {
 
     // Manually set state, remove the module and test again
     state.cancelled = false;
-    c.removeModule('TestModule');
+    comp.removeModule('TestModule');
 
     Y.fire('cancel');
     state.cancelled.should.equal(false);
 
     // Adding the module back again doesn't create any issues.
-    c.addModule(TestModule);
+    comp.addModule(TestModule);
     Y.fire('cancel');
     state.cancelled.should.equal(true);
 
     // Simulated events on DOM handlers better work.
     // These require a bound DOM element however
-    c.render();
+    comp.render();
     Y.one('.thing').simulate('click');
     state.thing.should.equal('decorated');
   });

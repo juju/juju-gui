@@ -56,18 +56,18 @@ YUI.add('d3-components', function(Y) {
 
     addModule: function(module, options) {
       options = options || {};
-      if (L.isFunction(module) && !(module instanceof Module)) {
+      if (!(module instanceof Module)) {
         module = new module();
       }
       module.setAttrs({component: this,
-                       options: options});
+                      options: options});
 
-      this.modules[module.name] = module;
+                      this.modules[module.name] = module;
 
-      var modEvents = module.events;
-      this.events[module.name] = Y.clone(modEvents);
-      this.bind(module.name);
-      return this;
+                      var modEvents = module.events;
+                      this.events[module.name] = Y.clone(modEvents);
+                      this.bind(module.name);
+                      return this;
     },
 
     /**
@@ -79,24 +79,6 @@ YUI.add('d3-components', function(Y) {
       this.unbind(moduleName);
       delete this.events[moduleName];
       delete this.modules[moduleName];
-      return this;
-    },
-
-    /**
-     * @method bind
-     *
-     * Internal. Called automatically by addModule.
-     **/
-    bind: function(moduleName) {
-      var eventSet = this.events;
-      if (!arguments.length) {
-        eventSet = Y.filter(this.events, function(v, k) {return k === name;});
-      }
-
-      Y.each(Y.Object.keys(eventSet), function _bind(name) {
-        this.events[name].subscriptions = this._bindEvents(name);
-      }, this);
-      console.log('Bound', this.events, 'from', moduleName);
       return this;
     },
 
@@ -188,6 +170,26 @@ YUI.add('d3-components', function(Y) {
       return subscriptions;
     },
 
+
+    /**
+     * @method bind
+     *
+     * Internal. Called automatically by addModule.
+     **/
+    bind: function(moduleName) {
+      var eventSet = this.events;
+      if (moduleName) {
+        var filtered = {};
+        filtered[moduleName] = eventSet[moduleName];
+        eventSet = filtered;
+      }
+
+      Y.each(Y.Object.keys(eventSet), function _bind(name) {
+        this.events[name].subscriptions = this._bindEvents(name);
+      }, this);
+      return this;
+    },
+
     /**
      * Specialized handling of events only found in d3.
      * This is again an internal implementation detail.
@@ -208,7 +210,7 @@ YUI.add('d3-components', function(Y) {
 
       modEvents  = modEvents.d3;
       var module = this.modules[name],
-          owns   = Y.Object.owns;
+      owns   = Y.Object.owns;
 
       var selector, kind, handler,
       handlers, name;
@@ -270,8 +272,10 @@ YUI.add('d3-components', function(Y) {
         delete modEvents.handlers;
       }
 
-      if (!arguments.length) {
-        eventSet = Y.filter(eventSet, function(v, k) {return k === name;});
+      if (moduleName) {
+        var filtered = {};
+        filtered[moduleName] = eventSet[moduleName];
+        eventSet = filtered;
       }
       Y.each(Y.Object.values(eventSet), _unbind, this);
       // Remove any d3 subscriptions as well.
@@ -338,15 +342,13 @@ YUI.add('d3-components', function(Y) {
      * Update the data for each module
      * see also the dataBinding event hookup
      */
-  update: function() {
-    Y.each(Y.Object.values(this.modules), function(mod) {
+    update: function() {
+      Y.each(Y.Object.values(this.modules), function(mod) {
         mod.update();
-        });
-    return this;
-  },
-
-
-
+      });
+      return this;
+    }
+  }, {
     ATTRS: {
       container: {}
     }
@@ -355,16 +357,27 @@ YUI.add('d3-components', function(Y) {
   ns.Component = Component;
 
   var Module = Y.Base.create('Module', Y.Base, [], {
+    /**
+     * @property events
+     * @type object
+     **/
     events: {
       scene: {},
       d3: {},
       yui: {}
     },
 
-   ATTRS: {
+    initializer: function(options) {
+      options = options || {};
+      this.events = options.events ?
+        Y.merge(this.events, options.events) :
+        this.events;
+    }
+  }, {
+    ATTRS: {
       component: {},
       options: {default: {}},
-      container: {get: function() {
+      container: {getter: function() {
         return this.get('component').get('container');}}
     }
   });
@@ -372,5 +385,6 @@ YUI.add('d3-components', function(Y) {
 
 },'0.1', {
   'requires': ['d3',
-              'base-build',
+              'base',
+              'array-extras',
               'event']});
