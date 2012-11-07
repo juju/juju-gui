@@ -493,7 +493,12 @@ YUI.add('juju-view-environment', function(Y) {
                 }
               });
 
-          // Update relation lines for a single service.
+          /**
+           * Update relation line endpoints for a given service.
+           *
+           * @method updateLinkEndpoints
+           * @param {Object} service The service module that has been moved.
+           */
           function updateLinkEndpoints(service) {
             Y.each(Y.Array.filter(self.rel_pairs, function(relation) {
               return relation.source() === service ||
