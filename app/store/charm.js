@@ -23,11 +23,22 @@ YUI.add('juju-charm-store', function(Y) {
     // CharmId compare function.
     find: function(query, options) {
       if (!Y.Lang.isString(query)) {
-        var tmp = [];
+        var operator = query.op || 'intersection',
+            join_string = {union: ' OR ', intersection: ' '}[operator],
+            tmp = [];
+        delete query.op;
+        if (!Y.Lang.isValue(join_string)) {
+          throw 'Developer error: unknown operator ' + operator;
+        }
         Y.each(query, function(val, key) {
-          tmp.push(key + ':' + val);
+          if (Y.Lang.isString(val)) {
+            val = [val];
+          }
+          Y.each(val, function(v) {
+            tmp.push(key + ':' + v);
+          });
         });
-        query = escape(tmp.join(' '));
+        query = escape(tmp.join(join_string));
       }
       this.get('datasource').sendRequest({
         request: 'search/json?search_text=' + query,

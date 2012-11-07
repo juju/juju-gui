@@ -1,27 +1,120 @@
 'use strict';
+/**
+ * The charm panel view(s).
+ *
+ * @module views
+ */
 
-YUI.add('juju-charm-search', function(Y) {
+YUI.add('juju-charm-panel', function(Y) {
 
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
+      // This will hold objects that can be used to detach the subscriptions
+      // when the charm panel is destroyed.
+      subscriptions = [],
       // Singleton
-      _instance = null;
-
-  var toggleSectionVisibility = function(ev) {
-    var el = ev.currentTarget.ancestor('.charm-section')
+      _instance,
+      // See https://github.com/yui/yuidoc/issues/25 for issue tracking
+      // missing @function tag.
+      /**
+       * A shared listener for click events on headers that open and close
+       * associated divs.
+       *
+       * It expects the event target to contain an i tag used as a bootstrap
+       * icon, and to have a parent with the 'charm-section' class.  The parent
+       * must contain an element with the 'collapsible' class.  The i switches
+       * back and forth between up and down icons, and the collapsible element
+       * opens and closes.
+       *
+       * @method toggleSectionVisibility
+       * @static
+       * @private
+       * @return {undefined} Mutates only.
+       */
+      toggleSectionVisibility = function(ev) {
+        var el = ev.currentTarget.ancestor('.charm-section')
                 .one('.collapsible'),
-        icon = ev.currentTarget.one('i');
-    icon = ev.currentTarget.one('i');
-    if (el.getStyle('height') === '0px') {
-      el.show('sizeIn', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
-    } else {
-      el.hide('sizeOut', {duration: 0.25, width: null});
-      icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
-    }
-  };
+            icon = ev.currentTarget.one('i');
+        // clientHeight and offsetHeight are not as reliable in tests.
+        if (parseInt(el.getStyle('height'), 10) === 0) {
+          el.show('sizeIn', {duration: 0.25, width: null});
+          icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
+        } else {
+          el.hide('sizeOut', {duration: 0.25, width: null});
+          icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
+        }
+      },
+      /**
+       * Given a container node and a total height available, set the height of
+       * a '.charm-panel' node to fill the remaining height available to it
+       * within the container.  This expects '.charm-panel' node to possibly
+       * have siblings before it, but not any siblings after it.
+       *
+       * @method setScroll
+       * @static
+       * @private
+       * @return {undefined} Mutates only.
+       */
+      setScroll = function(container, height) {
+        var scrollContainer = container.one('.charm-panel');
+        if (scrollContainer && height) {
+          var diff = scrollContainer.getY() - container.getY(),
+              clientDiff = (
+              scrollContainer.get('clientHeight') -
+              parseInt(scrollContainer.getComputedStyle('height'), 10)),
+              scrollHeight = height - diff - clientDiff;
+          scrollContainer.setStyle('height', scrollHeight + 'px');
+        }
+      },
+      /**
+       * Given a set of grouped entries as returned by the charm store "find"
+       * method, return the same data but with the charms converted into data
+       * objects that are more amenable to rendering with handlebars.
+       *
+       * @method makeRenderableResults
+       * @static
+       * @private
+       * @param {Array} entries An ordered collection of groups of charms, as
+       *   returned by the charm store "find" method.
+       * @return {Array} An ordered collection of groups of charm data.
+       */
+      makeRenderableResults = function(entries) {
+        return entries.map(
+            function(data) {
+              return {
+                series: data.series,
+                charms: data.charms.map(
+                    function(charm) { return charm.getAttrs(); })
+              };
+            });
+      },
+      /**
+       * Given an array of interface data as stored in a charm's "required"
+       * and "provided" attributes, return an array of interface names.
+       *
+       * @method getInterfaces
+       * @static
+       * @private
+       * @param {Array} data A collection of interfaces as stored in a charm's
+       *   "required" and "provided" attributes.
+       * @return {Array} A collection of interface names extracted from the
+       *   input.
+       */
+      getInterfaces = function(data) {
+        if (data) {
+          return Y.Array.map(
+              Y.Object.values(data),
+              function(val) { return val['interface']; });
+        }
+      };
 
+  /**
+   * Display a unit.
+   *
+   * @class CharmCollectionView
+   * @namespace views
+   */
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
     events: {
@@ -77,6 +170,7 @@ YUI.add('juju-charm-search', function(Y) {
       this.after('resultEntriesChange', function() {
         this.render();
       });
+      this.after('heightChange', this._setScroll);
     },
     render: function() {
       var container = this.get('container'),
@@ -84,18 +178,35 @@ YUI.add('juju-charm-search', function(Y) {
           defaultEntries = this.get('defaultEntries'),
           resultEntries = this.get('resultEntries'),
           raw_entries = searchText ? resultEntries : defaultEntries,
-          entries = raw_entries && raw_entries.map(
-              function(data) {
-                return {
-                  series: data.series,
-                  charms: data.charms.map(
-                      function(charm) { return charm.getAttrs(); })
-                };
-              }
-          );
+          entries = raw_entries && makeRenderableResults(raw_entries);
       container.setHTML(this.template({ charms: entries }));
+      this._setScroll();
       return this;
     },
+    /**
+     * When the view's "height" attribute is set, adjust the internal scrollable
+     * div to have the appropriate height.
+     *
+     * @method _setScroll
+     * @protected
+     * @return {undefined} Mutates only.
+     */
+    _setScroll: function() {
+      var container = this.get('container'),
+          scrollContainer = container.one('.search-result-div'),
+          height = this.get('height');
+      if (scrollContainer && height) {
+        scrollContainer.setStyle('height', height + 'px');
+      }
+    },
+    /**
+     * Fire an event indicating that the charm panel should switch to the
+     * "description" for a given charm.
+     *
+     * @method showDetails
+     * @param {Object} ev An event object (with a "halt" method).
+     * @return {undefined} Sends a signal only.
+     */
     showDetails: function(ev) {
       ev.halt();
       this.fire(
@@ -201,47 +312,191 @@ YUI.add('juju-charm-search', function(Y) {
   });
   views.CharmCollectionView = CharmCollectionView;
 
+  /**
+   * Display a unit.
+   *
+   * @class CharmDescriptionView
+   * @namespace views
+   */
   var CharmDescriptionView = Y.Base.create(
       'CharmDescriptionView', Y.View, [views.JujuBaseView], {
         template: views.Templates['charm-description'],
+        relatedTemplate: views.Templates['charm-description-related'],
         events: {
           '.charm-nav-back': {click: 'goBack'},
           '.btn': {click: 'deploy'},
-          '.charm-section h4': {click: toggleSectionVisibility}
+          '.charm-section h4': {click: toggleSectionVisibility},
+          'a.charm-detail': {click: 'showDetails'}
         },
         initializer: function() {
           this.bindModelView(this.get('model'));
+          this.after('heightChange', this._setScroll);
         },
         render: function() {
           var container = this.get('container'),
               charm = this.get('model');
           if (Y.Lang.isValue(charm)) {
             container.setHTML(this.template(charm.getAttrs()));
-            container.all('i.icon-chevron-right').each(function(el) {
+            container.all('i.icon-chevron-up').each(function(el) {
               el.ancestor('.charm-section').one('div')
                 .setStyle('height', '0px');
             });
+            var slot = container.one('#related-charms');
+            if (slot) {
+              this.getRelatedCharms(charm, slot);
+            }
           } else {
             container.setHTML(
                 '<div class="alert">Waiting on charm data...</div>');
           }
+          this._setScroll();
           return this;
         },
+        /**
+         * Get related charms and render them in the provided node.  Typically
+         * this is asynchronous, waiting on charm store results.
+         *
+         * @method getRelatedCharms
+         * @param {Object} charm A charm model.  Finds charms related to the
+         *   required and provided interfaces of this charm.
+         * @param {Object} slot An YUI node that will contain the results (using
+         *   setHTML).
+         * @return {undefined} Mutates slot only.
+         */
+        getRelatedCharms: function(charm, slot) {
+          var store = this.get('charmStore'),
+              defaultSeries = this.get('defaultSeries'),
+              list = this.get('charms'),
+              self = this,
+              query = {
+                op: 'union',
+                requires: getInterfaces(charm.get('provides')),
+                provides: getInterfaces(charm.get('requires'))
+              };
+          if (query.requires || query.provides) {
+            store.find(
+                query,
+                { /**
+                   * If the charm we searched for is still the same as the
+                   * view's charm, ask renderRelatedCharms to render the
+                   * results.  If they differ, discard the results, because they
+                   * are no longer relevant.
+                   */
+                  success: function(related) {
+                    if (charm === self.get('model')) {
+                      self.renderRelatedCharms(related, slot);
+                    }
+                  },
+                  /**
+                   * If there was a failure, render it to the console and to the
+                   * notifications section.
+                   */
+                  failure: function(e) {
+                    console.error(e.error);
+                    self.get('db').notifications.add(
+                        new models.Notification({
+                          title: 'Could not retrieve charm data',
+                          message: e.error,
+                          level: 'error'
+                        })
+                    );
+                  },
+                  defaultSeries: defaultSeries,
+                  list: list
+                }
+            );
+          } else {
+            slot.setHTML('None');
+          }
+        },
+        /**
+         * Given a grouped list of related charms such as those returned by the
+         * charm store's "find" method, and a node into which the results should
+         * be rendered, render the results into HTML and sets that into the
+         * node.
+         *
+         * @method renderRelatedCharms
+         * @param {Array} related A list of grouped charms such as those
+         *   returned by the charm store's "find" method.
+         * @param {Object} slot A node into which the results should be
+         *   rendered.
+         * @return {undefined} Mutates only.
+         */
+        renderRelatedCharms: function(related, slot) {
+          if (related.length) {
+            slot.setHTML(this.relatedTemplate(
+                {charms: makeRenderableResults(related)}));
+            // Make container big enough if it is open.
+            if (slot.get('clientHeight') > 0) {
+              slot.show('sizeIn', {duration: 0.25, width: null});
+            }
+          } else {
+            slot.setHTML('None');
+          }
+        },
+        /**
+         * When the view's "height" attribute is set, adjust the internal
+         * scrollable div to have the appropriate height.
+         *
+         * @method _setScroll
+         * @protected
+         * @return {undefined} Mutates only.
+         */
+        _setScroll: function() {
+          setScroll(this.get('container'), this.get('height'));
+        },
+        /**
+         * Fire an event indicating that the charm panel should switch to the
+         * "charms" search result view.
+         *
+         * @method goBack
+         * @param {Object} ev An event object (with a "halt" method).
+         * @return {undefined} Sends a signal only.
+         */
         goBack: function(ev) {
           ev.halt();
           this.fire('changePanel', { name: 'charms' });
         },
+        /**
+         * Fire an event indicating that the charm panel should switch to the
+         * "configuration" panel for the current charm.
+         *
+         * @method deploy
+         * @param {Object} ev An event object (with a "halt" method).
+         * @return {undefined} Sends a signal only.
+         */
         deploy: function(ev) {
           ev.halt();
           this.fire(
               'changePanel',
               { name: 'configuration',
                 charmId: ev.currentTarget.getData('url')});
+        },
+        /**
+         * Fire an event indicating that the charm panel should switch to the
+         * same "description" panel but with a new charm.  This is used by the
+         * "related charms" links.
+         *
+         * @method showDetails
+         * @param {Object} ev An event object (with a "halt" method).
+         * @return {undefined} Sends a signal only.
+         */
+        showDetails: function(ev) {
+          ev.halt();
+          this.fire(
+              'changePanel',
+              { name: 'description',
+                charmId: ev.target.getAttribute('href') });
         }
       });
-
   views.CharmDescriptionView = CharmDescriptionView;
 
+  /**
+   * Display a unit.
+   *
+   * @class CharmConfigurationView
+   * @namespace views
+   */
   var CharmConfigurationView = Y.Base.create(
       'CharmConfigurationView', Y.View, [views.JujuBaseView], {
         template: views.Templates['charm-pre-configuration'],
@@ -249,6 +504,7 @@ YUI.add('juju-charm-search', function(Y) {
         configFileContent: null,
         initializer: function() {
           this.bindModelView(this.get('model'));
+          this.after('heightChange', this._setScroll);
         },
         render: function() {
           var container = this.get('container'),
@@ -270,7 +526,19 @@ YUI.add('juju-charm-search', function(Y) {
             container.setHTML(
                 '<div class="alert">Waiting on charm data...</div>');
           }
+          this._setScroll();
           return this;
+        },
+        /**
+        When the view's "height" attribute is set, adjust the internal
+        scrollable div to have the appropriate height.
+
+        @method _setScroll
+        @protected
+        @return {undefined} Mutates only.
+        */
+        _setScroll: function() {
+          setScroll(this.get('container'), this.get('height'));
         },
         events: {
           '.btn.cancel': {click: 'goBack'},
@@ -289,15 +557,15 @@ YUI.add('juju-charm-search', function(Y) {
               this.tooltip.field.getDOMNode(),
               this.tooltip.panelRegion,
               true)) {
-            var targetRect = this.tooltip.field.getClientRect();
-            if (targetRect) {
+            var fieldHeight = this.tooltip.field.get('clientHeight');
+            if (fieldHeight) {
               var widget = this.tooltip.get('boundingBox'),
                   tooltipWidth = widget.get('clientWidth'),
                   tooltipHeight = widget.get('clientHeight'),
-                  y_offset = (tooltipHeight - targetRect.height) / 2;
+                  y_offset = (tooltipHeight - fieldHeight) / 2;
               this.tooltip.move(  // These are the x, y coordinates.
                   [this.tooltip.panel.getX() - tooltipWidth - 15,
-                   targetRect.top - y_offset]);
+                   this.tooltip.field.getY() - y_offset]);
               if (!this.tooltip.get('visible')) {
                 this.tooltip.show();
               }
@@ -403,6 +671,14 @@ YUI.add('juju-charm-search', function(Y) {
           }
           return;
         },
+        /**
+        Fires an event indicating that the charm panel should switch to the
+        "charms" search result view.
+
+        @method goBack
+        @param {Object} ev An event object (with a "halt" method).
+        @return {undefined} Sends a signal only.
+        */
         goBack: function(ev) {
           ev.halt();
           this.fire('changePanel', { name: 'charms' });
@@ -479,7 +755,6 @@ YUI.add('juju-charm-search', function(Y) {
           this.tooltip.render();
         }
       });
-
   views.CharmConfigurationView = CharmConfigurationView;
 
   // Creates the "_instance" object
@@ -489,10 +764,8 @@ YUI.add('juju-charm-search', function(Y) {
         charms = new models.CharmList(),
         app = config.app,
         testing = !!config.testing,
-        container = Y.Node.create(views.Templates['charm-search-pop']({
-          title: 'All Charms'
-        })),
-        contentNode = container.one('.popover-content'),
+        container = Y.Node.create('<div />').setAttribute(
+            'id', 'juju-search-charm-panel'),
         charmsSearchPanelNode = Y.Node.create(),
         charmsSearchPanel = new CharmCollectionView(
               { container: charmsSearchPanelNode,
@@ -504,7 +777,9 @@ YUI.add('juju-charm-search', function(Y) {
         descriptionPanel = new CharmDescriptionView(
               { container: descriptionPanelNode,
                 env: app.env,
-                db: app.db}),
+                db: app.db,
+                charms: charms,
+                charmStore: charmStore }),
         configurationPanelNode = Y.Node.create(),
         configurationPanel = new CharmConfigurationView(
               { container: configurationPanelNode,
@@ -514,7 +789,7 @@ YUI.add('juju-charm-search', function(Y) {
               { charms: charmsSearchPanel,
                 description: descriptionPanel,
                 configuration: configurationPanel },
-        isPopupVisible = false,
+        isPanelVisible = false,
         trigger = Y.one('#charm-search-trigger'),
         searchField = Y.one('#charm-search-field'),
         ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter,
@@ -524,109 +799,136 @@ YUI.add('juju-charm-search', function(Y) {
     container.hide();
 
     function setPanel(config) {
-      if (config.name !== activePanelName) {
-        var newPanel = panels[config.name];
-        if (!Y.Lang.isValue(newPanel)) {
-          throw 'Developer error: Unknown panel name ' + config.name;
+      var newPanel = panels[config.name];
+      if (!Y.Lang.isValue(newPanel)) {
+        throw 'Developer error: Unknown panel name ' + config.name;
+      }
+      activePanelName = config.name;
+      container.get('children').remove();
+      container.append(panels[config.name].get('container'));
+      newPanel.set('height', calculatePanelPosition().height);
+      if (config.charmId) {
+        newPanel.set('model', null); // Clear out the old.
+        var charm = charms.getById(config.charmId);
+        if (charm.loaded) {
+          newPanel.set('model', charm);
+        } else {
+          charm.load(charmStore, function(err, response) {
+            if (err) {
+              console.log('error loading charm', response);
+              newPanel.fire('changePanel', {name: 'charms'});
+            } else {
+              newPanel.set('model', charm);
+            }
+          });
         }
-        activePanelName = config.name;
-        contentNode.get('children').remove();
-        contentNode.append(panels[config.name].get('container'));
-        if (config.charmId) {
-          newPanel.set('model', null); // Clear out the old.
-          var charm = charms.getById(config.charmId);
-          if (charm.loaded) {
-            newPanel.set('model', charm);
-          } else {
-            charm.load(charmStore, function(err, response) {
-              if (err) {
-                console.log('error loading charm', response);
-                newPanel.fire('changePanel', {name: 'charms'});
-              } else {
-                newPanel.set('model', charm);
-              }
-            });
-          }
-        } else { // This is the search panel.
-          newPanel.render();
-        }
+      } else { // This is the search panel.
+        newPanel.render();
       }
     }
 
     Y.Object.each(panels, function(panel) {
-      panel.on('changePanel', setPanel);
+      subscriptions.push(panel.on('changePanel', setPanel));
     });
     // The panel starts with the "charmsSearchPanel" visible.
     setPanel({name: 'charms'});
 
     // Update position if we resize the window.
-    // It tries to keep the popup arrow under the charms search icon.
     Y.on('windowresize', function(e) {
-      if (isPopupVisible) {
-        updatePopupPosition();
+      if (isPanelVisible) {
+        updatePanelPosition();
       }
     });
 
     function hide() {
-      if (isPopupVisible) {
+      if (isPanelVisible) {
+        var headerBox = Y.one('#charm-search-trigger-container'),
+            headerSpan = headerBox && headerBox.one('span');
+        if (headerBox) {
+          headerBox.removeClass('active-border');
+          if (headerSpan) {
+            headerSpan.addClass('active-border');
+          }
+        }
         container.hide(!testing, {duration: 0.25});
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i').replaceClass(
               'icon-chevron-up', 'icon-chevron-down');
         }
-        isPopupVisible = false;
+        isPanelVisible = false;
       }
     }
-    container.on('clickoutside', hide);
+    subscriptions.push(container.on('clickoutside', hide));
+    subscriptions.push(Y.on('beforePageSizeRecalculation', function() {
+      container.setStyle('display', 'none');
+    }));
+    subscriptions.push(Y.on('afterPageSizeRecalculation', function() {
+      if (isPanelVisible) {
+        // We need to do this both in windowresize and here because
+        // windowresize can only be fired with "on," and so we can't know
+        // which handler will be fired first.
+        updatePanelPosition();
+      }
+    }));
 
     function show() {
-      if (!isPopupVisible) {
+      if (!isPanelVisible) {
+        var headerBox = Y.one('#charm-search-trigger-container'),
+            headerSpan = headerBox && headerBox.one('span');
+        if (headerBox) {
+          headerBox.addClass('active-border');
+          if (headerSpan) {
+            headerSpan.removeClass('active-border');
+          }
+        }
         container.setStyles({opacity: 0, display: 'block'});
-        updatePopupPosition();
         container.show(!testing, {duration: 0.25});
+        isPanelVisible = true;
+        updatePanelPosition();
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i').replaceClass(
               'icon-chevron-down', 'icon-chevron-up');
         }
-        isPopupVisible = true;
       }
     }
-
     function toggle(ev) {
       if (Y.Lang.isValue(ev)) {
         // This is important to not have the clickoutside handler immediately
         // undo a "show".
         ev.halt();
       }
-      if (isPopupVisible) {
+      if (isPanelVisible) {
         hide();
       } else {
         show();
       }
     }
 
-    function updatePopupPosition() {
+    function updatePanelPosition() {
+      // This should only be called when the popup is supposed to be visible.
+      // We need to hide the popup before we calculate positions so that it
+      // does not cause scrollbars to appear while we are calculating
+      // positions.  The temporary scrollbars can cause the calculations to be
+      // incorrect.
+      container.setStyle('display', 'none');
       var pos = calculatePanelPosition();
-      container.setXY([pos.x, pos.y]);
-      container.one('.arrow').setX(pos.arrowX);
+      container.setStyle('display', 'block');
+      container.setX(pos.x);
+      if (pos.height) {
+        container.setStyle('height', pos.height + 'px');
+        panels[activePanelName].set('height', pos.height);
+      }
     }
 
     function calculatePanelPosition() {
-      var icon = Y.one('#charm-search-icon'),
-          pos = icon.getXY(),
-          content = Y.one('#content'),
-          contentWidth = parseInt(content.getComputedStyle('width'), 10),
-          containerWidth = parseInt(container.getComputedStyle('width'), 10),
-          iconWidth = parseInt(icon.getComputedStyle('width'), 10);
-      return {
-        x: content.getX() + contentWidth - containerWidth,
-        y: pos[1] + 30,
-        arrowX: icon.getX() + (iconWidth / 2)
-      };
+      var headerBox = Y.one('#charm-search-trigger-container'),
+          dimensions = utils.getEffectiveViewportSize();
+      return { x: headerBox && Math.round(headerBox.getX()),
+               height: dimensions.height + 17 };
     }
 
     if (Y.Lang.isValue(trigger)) {
-      trigger.on('click', toggle);
+      subscriptions.push(trigger.on('click', toggle));
     }
 
     var handleKeyDown = function(ev) {
@@ -638,23 +940,8 @@ YUI.add('juju-charm-search', function(Y) {
       }
     };
 
-    var handleFocus = function(ev) {
-      if (ev.target.get('value').trim() === 'Search for a charm') {
-        ev.target.set('value', '');
-      }
-    };
-
-    var handleBlur = function(ev) {
-      if (ev.target.get('value').trim() === '') {
-        ev.target.set('value', 'Search for a charm');
-        charmsSearchPanel.set('searchText', '');
-      }
-    };
-
     if (searchField) {
-      searchField.on('keydown', handleKeyDown);
-      searchField.on('blur', handleBlur);
-      searchField.on('focus', handleFocus);
+      subscriptions.push(searchField.on('keydown', handleKeyDown));
     }
 
     // The public methods
@@ -665,12 +952,13 @@ YUI.add('juju-charm-search', function(Y) {
       node: container,
       setDefaultSeries: function(series) {
         charmsSearchPanel.set('defaultSeries', series);
+        descriptionPanel.set('defaultSeries', series);
       }
     };
   }
 
   // The public methods
-  views.CharmSearchPopup = {
+  views.CharmPanel = {
     getInstance: function(config) {
       if (!_instance) {
         _instance = createInstance(config);
@@ -678,6 +966,10 @@ YUI.add('juju-charm-search', function(Y) {
       return _instance;
     },
     killInstance: function() {
+      while (subscriptions.length) {
+        var sub = subscriptions.pop();
+        if (sub) { sub.detach(); }
+      }
       if (_instance) {
         _instance.node.remove(true);
         _instance = null;
@@ -697,8 +989,8 @@ YUI.add('juju-charm-search', function(Y) {
     'event-outside',
     'widget-anim',
     'overlay',
-    'svg-layouts',
     'dom-core',
-    'juju-models'
+    'juju-models',
+    'event-resize'
   ]
 });

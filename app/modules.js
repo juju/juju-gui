@@ -35,8 +35,8 @@ GlobalConfig = {
           fullpath: '/juju-ui/views/utils.js'
         },
 
-        'juju-charm-search': {
-          fullpath: '/juju-ui/views/charm-search.js'
+        'juju-charm-panel': {
+          fullpath: '/juju-ui/views/charm-panel.js'
         },
 
         'juju-notifications': {

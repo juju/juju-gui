@@ -1,6 +1,6 @@
 'use strict';
 
-describe('charm search', function() {
+describe('charm panel', function() {
   var Y, models, views, juju, ENTER,
       searchResult = '{"results": [{"data_url": "this is my URL", ' +
       '"name": "membase", "series": "precise", "summary": ' +
@@ -30,7 +30,7 @@ describe('charm search', function() {
   });
 
   beforeEach(function() {
-    // The "charms search" feature needs these elements
+    // The charms panel needs these elements
     var docBody = Y.one(document.body);
     Y.Node.create('<div id="charm-search-test">' +
         '<div id="charm-search-icon"><i></i></div>' +
@@ -40,12 +40,12 @@ describe('charm search', function() {
   });
 
   afterEach(function() {
-    Y.namespace('juju.views').CharmSearchPopup.killInstance();
+    Y.namespace('juju.views').CharmPanel.killInstance();
     Y.one('#charm-search-test').remove(true);
   });
 
   it('must be able to show and hide the panel', function() {
-    var panel = Y.namespace('juju.views').CharmSearchPopup
+    var panel = Y.namespace('juju.views').CharmPanel
           .getInstance({testing: true, app: {}}),
         container = panel.node;
     container.getStyle('display').should.equal('none');
@@ -61,11 +61,11 @@ describe('charm search', function() {
 
   it('must be able to search', function() {
     var searchTriggered = false,
-        panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
+        panel = Y.namespace('juju.views').CharmPanel.getInstance({
           charm_store: new juju.CharmStore({datasource: {
             sendRequest: function(params) {
               searchTriggered = true;
-              // Mocking the server callback value
+              // Stubbing the server callback value
               params.callback.success({
                 response: {
                   results: [{
@@ -91,7 +91,7 @@ describe('charm search', function() {
 
   it('must be able to trigger charm details', function() {
     var db = new models.Database(),
-        panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
+        panel = Y.namespace('juju.views').CharmPanel.getInstance({
           charm_store: new juju.CharmStore({datasource: {
             sendRequest: function(params) {
               // Mocking the server callback value
@@ -122,7 +122,7 @@ describe('charm search', function() {
   it('must be able to deploy from the description panel by going to the ' +
      'configuration panel', function() {
         var db = new models.Database(),
-            panel = Y.namespace('juju.views').CharmSearchPopup.getInstance({
+            panel = Y.namespace('juju.views').CharmPanel.getInstance({
               charm_store: new juju.CharmStore({datasource: {
                 sendRequest: function(params) {
                   // Mocking the server callback value
@@ -154,7 +154,7 @@ describe('charm search', function() {
 
 describe('charm description', function() {
   var Y, models, views, juju, conn, env, container, db, app, charm,
-      charm_store_data, charm_store;
+      charm_store_data, charm_store, charms;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -187,9 +187,10 @@ describe('charm description', function() {
     Y.one('#main').append(container);
     db = new models.Database();
     charm = db.charms.add({ id: 'cs:precise/mysql-7' });
-    charm_store_data = [];
+    charms = new models.CharmList(),
+    charm_store_data = {responseText: '{}'};
     charm_store = new juju.CharmStore(
-        {datasource: new Y.DataSource.Local({source: charm_store_data})});
+        {datasource: new Y.DataSource.Local({source: [charm_store_data]})});
     app = { db: db, env: env, charm_store: charm_store };
   });
 
@@ -208,15 +209,18 @@ describe('charm description', function() {
 
   it('can render incomplete charm', function() {
     var view = new views.CharmDescriptionView(
-        { container: container, app: app, model: charm }).render(),
+        { container: container, app: app, model: charm,
+          charmStore: charm_store }).render(),
         html = container.one('.charm-description'),
         description_div = html.one('.charm-section div'),
         interface_div = html.one('div.charm-section:nth-of-type(2)'),
-        last_change_div = html.one('div.charm-section:nth-of-type(3)');
+        last_change_div = html.one('div.charm-section:nth-of-type(3)'),
+        related_div = html.one('div.charm-section:nth-of-type(4)');
     html.one('h3').get('text').trim().should.equal('mysql');
     description_div.getStyle('height').should.not.equal('0px');
     var _ = expect(interface_div).to.not.exist;
     _ = expect(last_change_div).to.not.exist;
+    _ = expect(related_div).to.not.exist;
   });
 
   it('can render fuller charm', function() {
@@ -227,18 +231,28 @@ describe('charm description', function() {
               { created: 1349797266.032,
                 committer: 'fred',
                 message: 'fixed EVERYTHING'}});
+    charm_store_data.responseText = Y.JSON.stringify(
+        { matches: 1,
+          results: [
+            { store_url: 'cs:precise/superthing-7',
+              summary: 'A super thing.'}]});
     var view = new views.CharmDescriptionView(
-        { container: container, app: app, model: charm }).render(),
+        { container: container, app: app, model: charm, charms: charms,
+          charmStore: charm_store }).render(),
         html = container.one('.charm-description'),
         description_div = html.one('.charm-section div'),
         interface_div = html.one('div.charm-section:nth-of-type(2) div'),
-        last_change_div = html.one('div.charm-section:nth-of-type(3) div');
+        last_change_div = html.one('div.charm-section:nth-of-type(3) div'),
+        related_div = html.one('div.charm-section:nth-of-type(4)');
     description_div.get('text').should.contain('A DB');
     interface_div.getStyle('height').should.equal('0px');
     interface_div.get('text').should.contain('munin');
     last_change_div.getStyle('height').should.equal('0px');
     last_change_div.get('text').should.contain('fixed EVERYTHING');
     last_change_div.get('text').should.contain('2012-10-09');
+    related_div.one('a').getAttribute('href').should.equal(
+        'cs:precise/superthing-7');
+    related_div.one('a').get('text').trim().should.equal('superthing');
   });
 
   it('can toggle visibility of subsections', function() {
@@ -250,22 +264,25 @@ describe('charm description', function() {
                 committer: 'fred',
                 message: 'fixed EVERYTHING'}});
     var view = new views.CharmDescriptionView(
-        { container: container, app: app, model: charm }).render(),
+        { container: container, app: app, model: charm,
+          charmStore: charm_store }).render(),
         html = container.one('.charm-description'),
+        // We use the last change div.
         section_container = html.one('div.charm-section:nth-of-type(3)');
     section_container.one('div').getStyle('height').should.equal('0px');
-    assert(section_container.one('h4 i').hasClass('icon-chevron-right'));
+    assert(section_container.one('h4 i').hasClass('icon-chevron-up'));
     section_container.one('h4').simulate('click');
     assert(section_container.one('h4 i').hasClass('icon-chevron-down'));
     section_container.one('div').getStyle('height').should.not.equal('0px');
     section_container.one('h4').simulate('click');
-    assert(section_container.one('h4 i').hasClass('icon-chevron-right'));
+    assert(section_container.one('h4 i').hasClass('icon-chevron-up'));
     // The transition is still running, so we can't check display.
   });
 
   it('can respond to the "back" link', function(done) {
     var view = new views.CharmDescriptionView(
-        { container: container, app: app, model: charm }).render();
+        { container: container, app: app, model: charm,
+          charmStore: charm_store }).render();
     view.on('changePanel', function(ev) {
       ev.name.should.equal('charms');
       done();
