@@ -1,5 +1,8 @@
 'use strict';
 
+// It is used by "require(value);" (line ~82) . When nodejs executes
+// "require(value);", it loads one of our js files. These js files call
+// "YUI.add(..." and YUI is defined by "global.YUI".
 // http://stackoverflow.com/questions/5348685/node-js-require-inheritance
 global.YUI = require('yui').YUI;
 
@@ -21,6 +24,20 @@ function minify(file) {
       }
     }
   });
+}
+
+// It combines the files defined by "files" into a single (compressed or not)
+// js file.
+function combine(files, outputFile, shouldMinify) {
+  var str = [];
+  Y.Array.each(files, function(file) {
+    console.log('file -> ' + file);
+    str.push(fs.readFileSync(file, 'utf8'));
+  });
+  fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
+  if (shouldMinify) {
+    minify(outputFile);
+  }
 }
 
 // Reading the 'requires' attribute of all our custom js files
@@ -103,60 +120,34 @@ var reqs = (function() {
 })();
 
 // Using the example http://yuilibrary.com/yui/docs/yui/loader-resolve.html
+// It uses the reqs object that we created in the previous block and figures
+// out the js files that contain it, so we can mount our combines js file
+// for all the yui requirements.
 (function() {
-  var loader, out,
-      str = [],
-      outputFile = syspath.join(process.cwd(),
-          './app/assets/javascripts/generated/all-yui.js');
+  var loader, out;
   loader = new Y.Loader({
     base: syspath.join(process.cwd(), './node_modules/yui/'),
     ignoreRegistered: true,
     require: reqs
   });
   out = loader.resolve(true);
-  out.js.forEach(function(file) {
-    console.log('file -> ' + file);
-    str.push(fs.readFileSync(file, 'utf8'));
-  });
-  fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
-  minify(outputFile);
+  combine(out.js, './app/assets/javascripts/generated/all-yui.js', true);
 })();
 
 // Creating the combined file for all the third part js code
 (function() {
-  var str = [],
-      strDirectory = syspath.join(process.cwd(), './app/assets/javascripts/'),
-      outputFile = syspath.join(process.cwd(),
-          './app/assets/javascripts/generated/all-third.js');
-  str.push(fs.readFileSync(strDirectory + 'd3.v2.min.js', 'utf8'));
-  str.push(fs.readFileSync(strDirectory + 'reconnecting-websocket.js',
-      'utf8'));
-  str.push(fs.readFileSync(strDirectory + 'svg-layouts.js', 'utf8'));
-  fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
-  minify(outputFile);
+  var files, strDirectory;
+  strDirectory = syspath.join(process.cwd(), './app/assets/javascripts/');
+  files = [strDirectory + 'd3.v2.min.js',
+           strDirectory + 'reconnecting-websocket.js',
+           strDirectory + 'svg-layouts.js'];
+  combine(files, './app/assets/javascripts/generated/all-third.js', true);
 })();
 
-//Creating the combined file for the modules-debug.js and config.js files
-(function() {
-  var str = [],
-      outputFile = syspath.join(process.cwd(),
-          './app/assets/javascripts/generated/all-app-debug.js');
-  str.push(fs.readFileSync(syspath.join(process.cwd(),
-      './app/modules-debug.js'), 'utf8'));
-  str.push(fs.readFileSync(syspath.join(process.cwd(), './app/config.js'),
-      'utf8'));
-  fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
-})();
+// Creating the combined file for the modules-debug.js and config.js files
+combine([syspath.join(process.cwd(), './app/modules-debug.js'),
+         syspath.join(process.cwd(), './app/config.js')],
+    './app/assets/javascripts/generated/all-app-debug.js', false);
 
 // Creating the combined file for all our files
-(function() {
-  var str = [],
-      outputFile = syspath.join(process.cwd(),
-          './app/assets/javascripts/generated/all-app.js');
-  Y.Array.each(paths, function(file) {
-    console.log('file -> ' + file);
-    str.push(fs.readFileSync(file, 'utf8'));
-  });
-  fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
-  minify(outputFile);
-})();
+combine(paths, './app/assets/javascripts/generated/all-app.js', true);
