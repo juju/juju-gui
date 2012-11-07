@@ -160,4 +160,3 @@ var reqs = (function() {
   fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
   minify(outputFile);
 })();
-

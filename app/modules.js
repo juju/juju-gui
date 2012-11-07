@@ -1,5 +1,6 @@
 GlobalConfig = {
   debug: false,
+  // YUI will not try to download already registered modules
   ignoreRegistered: true,
 
   groups: {
@@ -18,6 +19,10 @@ GlobalConfig = {
           ]
         },
 
+        // 'juju-controllers' is just an alias for the modules defined by 'use'
+        // If we use "requires: ['juju-controllers']" that means
+        // "requires: ['juju-env', 'juju-charm-store', 
+        // 'juju-notification-controller']"
         'juju-controllers': {
           use: ['juju-env', 'juju-charm-store', 'juju-notification-controller']
         }

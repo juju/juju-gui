@@ -78,14 +78,12 @@ test: install
 	@./test-server.sh
 
 debug: install
-	@cp app/assets/combine/properties-dev.js \
-			app/assets/javascripts/generated/properties.js
+	@node app/assets/combine/write-properties.js true
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
 server: install
-	@cp app/assets/combine/properties-prod.js \
-			app/assets/javascripts/generated/properties.js
+	@node app/assets/combine/write-properties.js false
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
