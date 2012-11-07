@@ -143,8 +143,8 @@ var reqs = (function() {
 // Creating the combined file for all the third part js code
 combine(['./app/assets/javascripts/d3.v2.min.js',
          './app/assets/javascripts/reconnecting-websocket.js',
-         './app/assets/javascripts/svg-layouts.js'], 
-         './app/assets/javascripts/generated/all-third.js', true);
+         './app/assets/javascripts/svg-layouts.js'],
+'./app/assets/javascripts/generated/all-third.js', true);
 
 // Creating the combined file for the modules-debug.js and config.js files
 combine(['./app/modules-debug.js', './app/config.js'],
