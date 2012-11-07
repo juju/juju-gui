@@ -151,13 +151,13 @@ YUI.add('juju-gui', function(Y) {
 
       // Event subscriptions
 
-      // When the provider type becomes available, display it.
-      this.env.after('providerTypeChange', this.onProviderTypeChange);
-
       this.on('*:navigateTo', function(e) {
         console.log('navigateTo', e);
         this.navigate(e.url);
       }, this);
+
+      // When the provider type becomes available, display it.
+      this.env.after('providerTypeChange', this.onProviderTypeChange);
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);
