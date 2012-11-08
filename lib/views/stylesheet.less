@@ -1,19 +1,22 @@
 /* Processed with LESS from lib/views/stylesheet.less */
 @font-family: 'Ubuntu', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+@font-family-medium: 'Ubuntu Medium', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
 /* Define common colors. */
 @label-color: #292929;
 @text-entry-color: #6d6e70;
+@charm-panel-orange: #dd4814;
 @charm-panel-configure-title-color: #eee7d5;
 @charm-panel-configure-name-color: #8f8f88;
-@charm-panel-deploy-button-color: #dd4814;
+@charm-panel-deploy-button-color: @charm-panel-orange;
 @charm-panel-deploy-button-bottom-gradient: #e65c19;
 @charm-panel-deploy-button-shadow: #8a2d0c;
-@charm-panel-cancel-button-color: #b8b8b8;
-@charm-panel-cancel-button-bottom-gradient: #a3a39f;
+@charm-panel-cancel-button-color: #93a39f;
+@charm-panel-cancel-button-bottom-gradient: #818080;
 @charm-panel-cancel-button-shadow: #515050;
-@charm-panel-separator-color: #aeaeae;
 @charm-panel-background-color: #eeeeee;
+@charm-panel-border-color: #BEBEBE;
+@charm-paneel-border-top-color: #E0DEDE;
 @navbar-color: #2D2D2D!important;
 
 body {
@@ -36,14 +39,15 @@ input, button, select, textarea {
     background-image: linear-gradient(top, @gradient-start, @gradient-end);
     background-repeat: repeat-x;
     -moz-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-	                 2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+                        2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
     -webkit-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-	                    2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+                           2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
     box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-	            2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
-    -moz-border-radius: ~"4px / 7px";
-    -webkit-border-radius: ~"4px / 7px";
-    border-radius: ~"4px / 7px";
+                   2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
+    @border-radii: ~"6px / 7px";
+    -moz-border-radius: @border-radii;
+    -webkit-border-radius: @border-radii;
+    border-radius: @border-radii;
     border: none;
 }
 
@@ -127,9 +131,10 @@ i.sprite {
                     margin: 0 5px;
                 }
                 input {
+                    height: 23px;
                     width: 128px;
                     background: url(/juju-ui/assets/images/searchbox_icon.png)
-                                no-repeat 2px 1px whiteSmoke;
+                                no-repeat 4px 4px whiteSmoke;
                     margin: 0 10px;
                     padding: 3px 3px 3px 26px;
                     font-style: italic;
@@ -142,6 +147,7 @@ i.sprite {
                         font-size: 1em;
                     }
                     &:focus {
+                        color: gray;
                         border-color: rgba(82, 168, 236, 0.8);
                         outline: 0;
                         outline: thin dotted 9;
@@ -772,7 +778,20 @@ g.unit {
     }
 }
 
+.customize-scrollbar {
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 1px 0 3px #989A9C;
+    }
+    ::-webkit-scrollbar-thumb {
+        -webkit-box-shadow: inset 4px 0 3px #D74613;
+    }
+}
+
 #juju-search-charm-panel {
+    .customize-scrollbar;
     display: block;
     z-index: 999;
     padding: 0;
@@ -790,13 +809,15 @@ g.unit {
     .btn.deploy {
         margin-top: 5px;
         margin-left: 5px;
-        vertical-align: middle;
+        text-shadow: none;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-        .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient,
-		       @charm-panel-deploy-button-shadow, 0px);
+        .create-button(@charm-panel-deploy-button-color,
+                       @charm-panel-deploy-button-bottom-gradient,
+                       @charm-panel-deploy-button-shadow, 0px);
         &:active {
-            .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color,
-			   @charm-panel-deploy-button-shadow, 1px);
+            .create-button(@charm-panel-deploy-button-color,
+                           @charm-panel-deploy-button-color,
+                           @charm-panel-deploy-button-shadow, 1px);
         }
     }
 
@@ -805,7 +826,7 @@ g.unit {
     }
     .btn.cancel {
         color: white;
-        text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.5);
+        text-shadow: none;
         margin-top: 5px;
         background-repeat: no-repeat;
         background-color: transparent;
@@ -813,14 +834,15 @@ g.unit {
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
         background-image: url(/juju-ui/assets/images/cancel-button.png);
         .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-bottom-gradient,
-		       @charm-panel-cancel-button-shadow, 0px);
+                       @charm-panel-cancel-button-shadow, 0px);
         &:active {
             .create-button(@charm-panel-cancel-button-color, @charm-panel-cancel-button-color,
-			   @charm-panel-cancel-button-shadow, 1px);
+                           @charm-panel-cancel-button-shadow, 1px);
         }
     }
     .charm-panel-configure-buttons {
-      border-bottom: 1px solid @charm-panel-separator-color;
+      background-color: #FFFFFF;
+      border-bottom: 1px solid @charm-panel-border-color;
       height: 52px;
       padding-left: 8px;
       .btn {
@@ -832,43 +854,62 @@ g.unit {
         height: 500px;
     }
     .charm-nav-back {
-        background-color: black;
-        text-transform: uppercase;
-        color: white;
-        font-weight: bold;
+        border-top: 1px solid #DEDEDE;
+        border-bottom: 1px solid @charm-panel-border-color;
+        color: @charm-panel-deploy-button-color;
         cursor: pointer;
+        font-size: 14px;
+        padding: 7px 4px;
     }
     .charm-panel {
-        h3 {
-            text-transform: capitalize;
-            color: blue;
-            font-weight: bold;
-            margin-top: 1ex;
-            margin-bottom: 1ex;
-        }
-        h4 {
-            border-bottom: 1px solid @label-color;
-            cursor: pointer;
-            margin-top: 1ex;
-            margin-bottom: 1ex;
-            i {
-                float: right;
-            }
-        }
-        h5 {
-            margin-top: 1ex;
-            &:first-child {
-                margin-top: 0;
-            }
-        }
+        background-color: @charm-panel-background-color;
         height: 432px;
         overflow-y: auto;
         overflow-x: hidden;
+        h3 {
+            color: @label-color;
+            font-size: 22px;
+            font-weight: normal;
+            padding: 5px 0px 2px 0px;
+        }
+        h4 {
+            color: @label-color;
+            cursor: pointer;
+            border-top: 1px solid #FFFFFF;
+            border-bottom: 1px solid @charm-panel-border-color;
+            font-family: @font-family-medium;
+            font-weight: normal;
+            padding: 8px 12px;
+            i {
+                float: right;
+            }
+            &.first {
+                border-top: 1px solid @charm-paneel-border-top-color;
+            }
+        }
+        h5 {
+            color: @label-color;
+            font-family: @font-family-medium;
+            font-weight: normal;
+            margin-top: 11px;
+        }
+        #charm-panel-head {
+            border-top: 1px solid #FFFFFF;
+            border-bottom: 1px solid @charm-panel-border-color;
+            padding: 1ex 12px 10px 12px;
+        }
         .collapsible {
+            background-color: #E7E7E7;
+            line-height: 16px;
             overflow: hidden;
+            padding: 0px 12px;
+            :last-child {
+                margin-bottom: 11px;
+            }
         }
         &.charm-description {
-            padding: 1ex 1em;
+            color: #58595B;
+            font-size: 12px;
             .charm-section {
                 .commitmessage {
                     padding: 0.8ex 0 1ex 1em;
@@ -883,14 +924,13 @@ g.unit {
             }
         }
         &.config-variant {
-            padding: 1ex 1em;
-            background-color: @charm-panel-background-color;
             font-size: 14px;
+            border-top: 1px solid @charm-paneel-border-top-color;
             .control-group {
                 width: auto;
                 margin-bottom: 0;
                 margin-top: 1ex;
-                padding-bottom: 0;
+                padding: 0px 12px;
                 clear: both;
             }
             .control-description {
@@ -959,33 +999,49 @@ g.unit {
     .search-result-div {
         overflow-y:auto;
         overflow-x:hidden;
+        background-color: #EEEEEE;
         .series-charms {
-            border-top: 4px solid #D0D0D0;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            &:first-child {
-                border: none;
-                margin-top: 0;
-            }
             h3 {
-                font-weight: bold;
-                text-transform: uppercase;
-                font-size: 11px;
+                font-weight: normal;
+                font-size: 16px;
+                text-transform: capitalize;
+                padding-left: 11px;
+                background-color: #CBCBCB;
+                border-top: 1px solid #989898;
+            }
+            ul {
+                margin-bottom: 0;
             }
             .charm-entry {
-                border-top: 1px solid #D0D0D0;
-                padding: 0.5em 4px;
-                padding-bottom: 4px;
-                margin: 0.2em 0 0 2px;
+                padding: 11px;
+                border-top: 1px solid #FFFFFF;
+                border-bottom: 1px solid #BDBDBD;
                 &:first-child {
-                    border: none;
-                    padding-top: 0;
+                    padding-top: 11px;
+                }
+                &:last-child {
+                    border-bottom: none;
+                }
+                &:nth-child(odd) {
+                    background-color: #EDEDED;
+                }
+                &:nth-child(even) {
+                    background-color: #F3F3F3;
+                }
+                &:hover {
+                    background-color: white;
+                }
+                a.charm-detail {
+                    font-weight: normal;
+                    font-size: 16px;
+                    color: @charm-panel-orange;
+                    line-height: 18px;
                 }
                 .charm-summary {
                     margin-bottom: 4px;
-                }
-                a.charm-detail {
-                    font-weight: bold;
+                    font-size: 12px;
+                    line-height: 14px;
+                    padding-top: 6px;
                 }
                 .btn {
                     float: right;
