@@ -189,7 +189,8 @@
       container.one('#remove-modal-panel .btn-danger')
          .simulate('click');
       var called_event = null;
-      view.on('showService', function(ev) {
+      view.on('navigateTo', function(ev) {
+        assert.equal('/service/mysql/', ev.url);
         called_event = ev;
       });
       var msg = conn.last_message();
