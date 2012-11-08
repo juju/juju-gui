@@ -208,10 +208,8 @@ YUI.add('juju-view-unit', function(Y) {
         db.units.remove(db.units.getById(unit_name));
         service.set('unit_count', service.get('unit_count') - 1);
         this.remove_panel.destroy();
-        this.fire('navigateTo', {
-          service: service,
-          url: '/service/' + service.get('id') + '/'
-        });
+        this.fire('navigateTo',
+            {service: service, url: '/service/' + service.get('id') + '/'});
       }
 
       btn.set('disabled', false);
