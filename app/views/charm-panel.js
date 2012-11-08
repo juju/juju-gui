@@ -44,7 +44,7 @@ YUI.add('juju-charm-panel', function(Y) {
           el.hide('sizeOut', {duration: 0.25, width: null});
           icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
         }
-      };,
+      },
       /**
        * Given a container node and a total height available, set the height of
        * a '.charm-panel' node to fill the remaining height available to it
@@ -66,7 +66,7 @@ YUI.add('juju-charm-panel', function(Y) {
               scrollHeight = height - diff - clientDiff;
           scrollContainer.setStyle('height', scrollHeight + 'px');
         }
-      };,
+      },
       /**
        * Given a set of grouped entries as returned by the charm store "find"
        * method, return the same data but with the charms converted into data
@@ -88,7 +88,7 @@ YUI.add('juju-charm-panel', function(Y) {
                     function(charm) { return charm.getAttrs(); })
               };
             });
-      };,
+      },
       /**
        * Given an array of interface data as stored in a charm's "required"
        * and "provided" attributes, return an array of interface names.

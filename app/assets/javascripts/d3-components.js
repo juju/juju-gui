@@ -65,7 +65,8 @@ YUI.add('d3-components', function(Y) {
     /**
      * @method addModule
      * @chainable
-     * @param {Module} a Module class. Will be created and bound to Component internally.
+     * @param {Module} a Module class. Will be created and bound to Component
+     * internally.
      *
      * Add a Module to this Component. This will bind its events and set up all
      * needed event subscriptions.
@@ -98,7 +99,7 @@ YUI.add('d3-components', function(Y) {
 
     /**
      * @method removeModule
-     * @param moduleName
+     * @param {String} moduleName Module name to remove.
      * @chainable
      **/
     removeModule: function(moduleName) {
@@ -137,8 +138,8 @@ YUI.add('d3-components', function(Y) {
               evt.currentTarget.getDOMNode(), d, context);
         };
 
-        subscriptions.push(Y.delegate(
-          name, d3Adaptor, container, selector, context));
+        subscriptions.push(
+            Y.delegate(name, d3Adaptor, container, selector, context));
       }
 
       function _normalizeHandler(handler, module) {
@@ -174,7 +175,8 @@ YUI.add('d3-components', function(Y) {
                 if (!handler) {
                   continue;
                 }
-                _bindEvent(name, handler, this.get('container'), selector, this);
+                _bindEvent(name, handler,
+                           this.get('container'), selector, this);
               }
             }
           }
@@ -230,7 +232,7 @@ YUI.add('d3-components', function(Y) {
      * For this reason binding d3 events happens after render cycles.
      *
      * @method _bindD3Events
-     * @param name Module name.
+     * @param {String} modName Module name.
      **/
     _bindD3Events: function(modName) {
       // Walk each selector for a given module 'name', doing a
