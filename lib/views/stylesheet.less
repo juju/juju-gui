@@ -5,9 +5,10 @@
 /* Define common colors. */
 @label-color: #292929;
 @text-entry-color: #6d6e70;
+@charm-panel-orange: #dd4814;
 @charm-panel-configure-title-color: #eee7d5;
 @charm-panel-configure-name-color: #8f8f88;
-@charm-panel-deploy-button-color: #dd4814;
+@charm-panel-deploy-button-color: @charm-panel-orange;
 @charm-panel-deploy-button-bottom-gradient: #e65c19;
 @charm-panel-deploy-button-shadow: #8a2d0c;
 @charm-panel-cancel-button-color: #93a39f;
@@ -145,6 +146,7 @@ i.sprite {
                         font-size: 1em;
                     }
                     &:focus {
+                        color: gray;
                         border-color: rgba(82, 168, 236, 0.8);
                         outline: 0;
                         outline: thin dotted 9;
@@ -808,10 +810,12 @@ g.unit {
         margin-left: 5px;
         text-shadow: none;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-        .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient,
+        .create-button(@charm-panel-deploy-button-color,
+                       @charm-panel-deploy-button-bottom-gradient,
                        @charm-panel-deploy-button-shadow, 0px);
         &:active {
-            .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color,
+            .create-button(@charm-panel-deploy-button-color,
+                           @charm-panel-deploy-button-color,
                            @charm-panel-deploy-button-shadow, 1px);
         }
     }
@@ -994,33 +998,49 @@ g.unit {
     .search-result-div {
         overflow-y:auto;
         overflow-x:hidden;
+        background-color: #EEEEEE;
         .series-charms {
-            border-top: 4px solid #D0D0D0;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            &:first-child {
-                border: none;
-                margin-top: 0;
-            }
             h3 {
-                font-weight: bold;
-                text-transform: uppercase;
-                font-size: 11px;
+                font-weight: normal;
+                font-size: 16px;
+                text-transform: capitalize;
+                padding-left: 11px;
+                background-color: #CBCBCB;
+                border-top: 1px solid #989898;
+            }
+            ul {
+                margin-bottom: 0;
             }
             .charm-entry {
-                border-top: 1px solid #D0D0D0;
-                padding: 0.5em 4px;
-                padding-bottom: 4px;
-                margin: 0.2em 0 0 2px;
+                padding: 11px;
+                border-top: 1px solid #FFFFFF;
+                border-bottom: 1px solid #BDBDBD;
                 &:first-child {
-                    border: none;
-                    padding-top: 0;
+                    padding-top: 11px;
+                }
+                &:last-child {
+                    border-bottom: none;
+                }
+                &:nth-child(odd) {
+                    background-color: #EDEDED;
+                }
+                &:nth-child(even) {
+                    background-color: #F3F3F3;
+                }
+                &:hover {
+                    background-color: white;
+                }
+                a.charm-detail {
+                    font-weight: normal;
+                    font-size: 16px;
+                    color: @charm-panel-orange;
+                    line-height: 18px;
                 }
                 .charm-summary {
                     margin-bottom: 4px;
-                }
-                a.charm-detail {
-                    font-weight: bold;
+                    font-size: 12px;
+                    line-height: 14px;
+                    padding-top: 6px;
                 }
                 .btn {
                     float: right;
