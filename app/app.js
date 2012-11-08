@@ -1,4 +1,9 @@
 'use strict';
+/**
+ * Provides the main app class.
+ *
+ * @module app
+ */
 
 // Create a global for debug console access to YUI context.
 var yui;
@@ -12,6 +17,11 @@ YUI.add('juju-gui', function(Y) {
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views');
 
+  /**
+   * The main app class.
+   *
+   * @class App
+   */
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
     views: {
       environment: {
@@ -74,8 +84,11 @@ YUI.add('juju-gui', function(Y) {
 
     /*
      * Data driven behaviors
-     *  This is a placehold for real behaviors associated with
-     *  DOM Node  data-* attributes.
+     *
+     * This is a placeholder for real behaviors associated with DOM Node data-*
+     * attributes.
+     *
+     *  @attribute behaviors
      */
     behaviors: {
       timestamp: {
@@ -165,6 +178,9 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
+    /**
+     * @method initializer
+     */
     initializer: function() {
       // If this flag is true, start the application with the console activated
       if (this.get('consoleEnabled')) {
@@ -208,14 +224,13 @@ YUI.add('juju-gui', function(Y) {
 
       // Event subscriptions
 
+      this.on('*:navigateTo', function(e) {
+        console.log('navigateTo', e);
+        this.navigate(e.url);
+      }, this);
+
       // When the provider type becomes available, display it.
       this.env.after('providerTypeChange', this.onProviderTypeChange);
-
-      // TODO: refactor per event views into a generic show view event.
-      this.on('*:showService', this.navigate_to_service);
-      this.on('*:showUnit', this.navigate_to_unit);
-      this.on('*:showCharm', this.navigate_to_charm);
-      this.on('*:showEnvironment', this.navigate_to_environment);
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);
@@ -260,8 +275,8 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      // Create the CharmSearchPopup instance once the app.js is initialized
-      var popup = views.CharmSearchPopup.getInstance({
+      // Create the CharmPanel instance once the app.js is initialized
+      var popup = views.CharmPanel.getInstance({
         charm_store: this.charm_store,
         env: this.env,
         app: this
@@ -272,6 +287,11 @@ YUI.add('juju-gui', function(Y) {
       });
     },
 
+    /**
+     * Hook up all of the declared behaviors.
+     *
+     * @method enableBehaviors
+     */
     enableBehaviors: function() {
       Y.each(this.behaviors, function(behavior) {
         behavior.callback.call(this);
@@ -279,14 +299,19 @@ YUI.add('juju-gui', function(Y) {
 
     },
 
+    /**
+     * @method on_database_changed
+     */
     on_database_changed: function(evt) {
       Y.log(evt, 'debug', 'App: Database changed');
       // Redispatch to current view to update.
       this.dispatch();
     },
 
-    /*
+    /**
      * When services are added we update endpoints here.
+     *
+     * @method updateEndpoints
      */
     updateEndpoints: function(callback) {
       var self = this;
@@ -307,34 +332,16 @@ YUI.add('juju-gui', function(Y) {
       });
     },
 
-    // Event handlers
-    navigate_to_unit: function(e) {
-      console.log('Evt.Nav.Router unit target', e.unit_id);
-      this.navigate('/unit/' + e.unit_id.replace('/', '-') + '/');
-    },
-
-    navigate_to_service: function(e) {
-      var service = e.service;
-      console.log(service.get('id'), 'Evt.Nav.Router service target');
-      this.navigate('/service/' + service.get('id') + '/');
-    },
-
-    navigate_to_charm: function(e) {
-      console.log('Evt.Nav.Router charm');
-      var charm_url = e.charm_data_url;
-      this.navigate('/charms/' + charm_url);
-    },
-
-    navigate_to_environment: function(e) {
-      console.log('Evt.Nav.Router environment');
-      this.navigate('/');
-    },
-
     // Route handlers
+
+    /**
+     * @method show_unit
+     */
     show_unit: function(req) {
       console.log(
           'App: Route: Unit', req.params.id, req.path, req.pendingRoutes);
-      var unit_id = req.params.id.replace('-', '/');
+      // This replacement honors service names that have a hyphen in them.
+      var unit_id = req.params.id.replace(/^(\S+)-(\d+)$/, '$1/$2');
       var unit = this.db.units.getById(unit_id);
       if (unit) {
         // Once the unit is loaded we need to get the full details of the
@@ -346,10 +353,14 @@ YUI.add('juju-gui', function(Y) {
           'unit',
           // The querystring is used to handle highlighting relation rows in
           // links from notifications about errors.
-          { unit: unit, db: this.db, env: this.env, app: this,
+          { unit: unit, db: this.db, env: this.env,
             querystring: req.query });
     },
 
+    /**
+     * @method _prefetch_service
+     * @private
+     */
     _prefetch_service: function(service) {
       // only prefetch once
       // we redispatch to the service view after we have status
@@ -360,7 +371,7 @@ YUI.add('juju-gui', function(Y) {
       if (Y.Lang.isValue(service)) {
         if (!service.get('loaded')) {
           this.env.get_service(
-              service.get('id'), Y.bind(this.load_service, this));
+              service.get('id'), Y.bind(this.loadService, this));
         }
         var charm_id = service.get('charm'),
             self = this;
@@ -373,6 +384,10 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
+    /**
+     * @method _buildServiceView
+     * @private
+     */
     _buildServiceView: function(req, viewName) {
       console.log('App: Route: Service',
           viewName, req.params.id, req.path, req.pendingRoutes);
@@ -381,7 +396,9 @@ YUI.add('juju-gui', function(Y) {
       this._prefetch_service(service);
       this.showView(viewName, {
         model: service,
-        app: this,
+        db: this.db,
+        env: this.env,
+        getModelURL: Y.bind(this.getModelURL, this),
         querystring: req.query
       }, {}, function(view) {
         // If the view contains a method call fitToWindow,
@@ -392,22 +409,37 @@ YUI.add('juju-gui', function(Y) {
       });
     },
 
+    /**
+     * @method show_service
+     */
     show_service: function(req) {
       this._buildServiceView(req, 'service');
     },
 
+    /**
+     * @method show_service_config
+     */
     show_service_config: function(req) {
       this._buildServiceView(req, 'service_config');
     },
 
+    /**
+     * @method show_service_relations
+     */
     show_service_relations: function(req) {
       this._buildServiceView(req, 'service_relations');
     },
 
+    /**
+     * @method show_service_constraints
+     */
     show_service_constraints: function(req) {
       this._buildServiceView(req, 'service_constraints');
     },
 
+    /**
+     * @method show_charm_collection
+     */
     show_charm_collection: function(req) {
       console.log('App: Route: Charm Collection', req.path, req.query);
       this.showView('charm_collection', {
@@ -416,6 +448,9 @@ YUI.add('juju-gui', function(Y) {
       });
     },
 
+    /**
+     * @method show_charm
+     */
     show_charm: function(req) {
       console.log('App: Route: Charm', req.path, req.params);
       var charm_url = req.params.charm_store_path;
@@ -426,19 +461,23 @@ YUI.add('juju-gui', function(Y) {
       });
     },
 
+    /**
+     * @method show_notifications_overview
+     */
     show_notifications_overview: function(req) {
       this.showView('notifications_overview', {
-        app: this,
         env: this.env,
         notifications: this.db.notifications});
     },
 
-    /*
+    /**
      * Persistent Views
      *
      * 'notifications' is a preserved views that remains rendered on all main
      * views.  we manually create an instance of this view and insert it into
      * the App's view metadata.
+     *
+     * @method show_notifications_view
      */
     show_notifications_view: function(req, res, next) {
       var view = this.getViewInfo('notifications'),
@@ -446,7 +485,6 @@ YUI.add('juju-gui', function(Y) {
       if (!instance) {
         view.instance = new views.NotificationsView(
             {container: Y.one('#notifications'),
-              app: this,
               env: this.env,
               notifications: this.db.notifications});
         view.instance.render();
@@ -454,11 +492,14 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
-    /* Display the provider type.
+    /**
+     * Display the provider type.
      *
      * The provider type arrives asynchronously.  Instead of updating the
      * display from the environment code (a separation of concerns violation)
      * we update it here.
+     *
+     * @method onProviderTypeChange
      */
     onProviderTypeChange: function(evt) {
       var providerType = evt.newVal,
@@ -468,16 +509,23 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
+    /**
+     * @method show_environment
+     */
     show_environment: function(req, res, next) {
       var view = this.getViewInfo('environment'),
-          instance = view.instance;
+          instance = view.instance,
+          self = this;
       if (!instance) {
         console.log('new env view');
-        this.showView('environment', {
-          app: this,
-          db: this.db,
-          env: this.env},
-        {render: true});
+        this.showView('environment',
+            { getModelURL: Y.bind(this.getModelURL, this),
+              /** A simple closure so changes to the value are available.*/
+              getServiceEndpoints: function() {return self.serviceEndpoints;},
+              loadService: this.loadService,
+              db: this.db,
+              env: this.env},
+            {render: true});
       } else {
         /* The current impl makes extensive use of
          * event handlers which are not being properly rebound
@@ -485,25 +533,28 @@ YUI.add('juju-gui', function(Y) {
          * to enable this but we have to land the basics of this branch
          * first.
          */
-        this.showView('environment', {app: this,
-          db: this.db,
-          env: this.env}, {
-          update: false,
-          render: true,
-          callback: function(view) {
-            //view.attachView();
-            view.postRender();
-            //view.updateCanvas();
-          }
-        });
+        this.showView('environment',
+            { getModelURL: Y.bind(this.getModelURL, this),
+              /** A simple closure so changes to the value are available.*/
+              getServiceEndpoints: function() {return self.serviceEndpoints;},
+              loadService: this.loadService,
+              db: this.db,
+              env: this.env},
+            { update: false,
+              render: true,
+              callback: function(view) {view.postRender();}});
       }
       if (next) {
         next();
       }
     },
 
-    // Model interactions -> move to db layer
-    load_service: function(evt) {
+    /**
+     * Model interactions -> move to db layer
+     *
+     * @method load_service
+     */
+    loadService: function(evt) {
       console.log('load service', evt);
       if (evt.err) {
         this.db.notifications.add(
@@ -531,30 +582,31 @@ YUI.add('juju-gui', function(Y) {
       this.dispatch();
     },
 
-    /*
-     *  Object routing support
-     *  This is a utility that helps map from model objects to routes
-     *  defined on the App object.
+    /**
+     * Object routing support
      *
-     * getModelURL(model, [intent])
-     *    :model: the model to determine a route url for
-     *    :intent: (optional) the name of an intent associated with
-     *             a route. When more than one route can match a model
-     *             the route w/o an intent is matched when this attribute
-     *             is missing. If intent is provided as a string it
-     *             is matched to the 'intent' attribute specified on the
-     *             route. This is effectively a tag.
+     * This is a utility that helps map from model objects to routes
+     * defined on the App object.
      *
      * To support this we supplement our routing information with
      * additional attributes as follows:
      *
-     *   :model: model.name (required)
-     *   :reverse_map: (optional) route_path_key: str
-     *          reverse map can map :id  to the name of attr on model
-     *          if no value is provided its used directly as attribute name
-     *   :intent: (optional) A string named intent for which this route
-     *           should be used. This can be used to select which subview
-     *           is selected to resolve a models route.
+     * model: model.name (required)
+     * reverse_map: (optional) A reverse mapping of route_path_key to the
+     *   name of the attribute on the model.  If no value is provided its
+     *   used directly as attribute name.
+     * intent: (optional) A string named intent for which this route should
+     *   be used. This can be used to select which subview is selected to
+     *   resolve a models route.
+     *
+     * @method getModelURL
+     * @param {object} model The model to determine a route url for.
+     * @param {object} [intent] the name of an intent associated with a route.
+     *   When more than one route can match a model the route w/o an intent is
+     *   matched when this attribute is missing.  If intent is provided as a
+     *   string it is matched to the 'intent' attribute specified on the route.
+     *   This is effectively a tag.
+     *
      */
     getModelURL: function(model, intent) {
       var matches = [],
@@ -607,8 +659,13 @@ YUI.add('juju-gui', function(Y) {
       return matches[idx] && matches[idx].path;
     },
 
-    // Override Y.Router.route (and setter) to allow inclusion
-    // of additional routing params
+    /**
+     * Override Y.Router.route (and setter) to allow inclusion of additional
+     * routing params
+     *
+     * @method _setRoutes
+     * @private
+     */
     _setRoutes: function(routes) {
       this._routes = [];
       Y.Array.each(routes, function(route) {
@@ -618,6 +675,10 @@ YUI.add('juju-gui', function(Y) {
       }, this);
       return this._routes.concat();
     },
+
+    /**
+     * @method route
+     */
     route: function(path, callback, options) {
       JujuGUI.superclass.route.call(this, path, callback);
 
@@ -688,6 +749,6 @@ YUI.add('juju-gui', function(Y) {
     'base',
     'node',
     'model',
-    'juju-charm-search',
+    'juju-charm-panel',
     'juju-charm-store']
 });

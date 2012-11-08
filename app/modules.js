@@ -1,6 +1,6 @@
 GlobalConfig = {
   // Uncomment for debug versions of YUI.
-  //filter: 'debug',
+  filter: 'debug',
   // Uncomment for verbose logging of YUI
   debug: false,
 
@@ -32,8 +32,8 @@ GlobalConfig = {
           fullpath: '/juju-ui/views/utils.js'
         },
 
-        'juju-charm-search': {
-          fullpath: '/juju-ui/views/charm-search.js'
+        'juju-charm-panel': {
+          fullpath: '/juju-ui/views/charm-panel.js'
         },
 
         'juju-notifications': {
@@ -83,6 +83,7 @@ GlobalConfig = {
         },
 
         'juju-charm-models': {
+          requires: ['juju-charm-id'],
           fullpath: '/juju-ui/models/charm.js'
         },
 
@@ -103,6 +104,7 @@ GlobalConfig = {
         },
 
         'juju-charm-store': {
+          requires: ['juju-charm-id'],
           fullpath: '/juju-ui/store/charm.js'
         },
 

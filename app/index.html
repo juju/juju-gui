@@ -11,6 +11,7 @@
     <link rel="stylesheet"
           href="/juju-ui/assets/stylesheets/bootstrap-responsive-2.0.4.css">
     <link rel="stylesheet" href="/juju-ui/assets/stylesheets/juju-gui.css">
+    <link rel="stylesheet" href="/juju-ui/assets/sprite/sprite.css">
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -26,12 +27,12 @@
               <div id="nav-brand-env">
                 <span>
                   <a class="brand" href="/">
-                    <img alt="Juju GUI" src="/juju-ui/assets/images/juju_logo.png" />
+                    <i class="sprite juju_logo" title="Juju GUI"></i>
                   </a>
                 </span>
                 <span class="nav-container">
                   <span class="nav-section">
-                    <img src="/juju-ui/assets/images/environment_icon.png" />
+                    <i class="sprite environment_icon"></i>
                     <span id="environment-name"></span>
                     <span id="provider-type" class="provider-type"></span>
                   </span>
@@ -40,20 +41,20 @@
               <div id="nav-alerts-charms">
                 <span class="nav-container">
                   <span class="nav-section">
-                    <img src="/juju-ui/assets/images/alert_icon.png" />
+                    <i class="sprite alert_icon"></i>
                     Alerts
                     <span id="notifications"></span>
                   </span>
                 </span>
                 <span class="nav-container" id="charm-search-trigger-container">
-                  <span class="nav-section">
+                  <span class="nav-section active-border">
                     <span id="charm-search-trigger">
-                      <img id="charm-search-icon"
-                           src="/juju-ui/assets/images/charm_icon.png" />
+                      <i id="charm-search-icon" class="sprite charm_icon"></i>
                       Charms
                       <i class="icon-chevron-down"></i>
                     </span>
-                    <input type="text" id="charm-search-field" value="Search for a charm" />
+                    <input type="text" id="charm-search-field"
+                     required="required" placeholder="Search for a charm" />
                   </span>
                 </span>
               </div>

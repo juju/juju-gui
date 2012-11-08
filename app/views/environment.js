@@ -3,18 +3,9 @@
 YUI.add('juju-view-environment', function(Y) {
 
   var views = Y.namespace('juju.views'),
+      utils = Y.namespace('juju.views.utils'),
       Templates = views.Templates,
       models = Y.namespace('juju.models');
-
-  /*
-   * Utility function to get a number from a computed style.
-   */
-  function styleToNumber(selector, style, defaultSize) {
-    style = style || 'height';
-    defaultSize = defaultSize || 0;
-    return parseInt(Y.one(selector).getComputedStyle(style) || defaultSize,
-                    10);
-  }
 
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View,
                                       [views.JujuBaseView], {
@@ -212,7 +203,7 @@ YUI.add('juju-view-environment', function(Y) {
 
         initializer: function() {
           console.log('View: Initialized: Env');
-          this.publish('showService', {preventable: false});
+          this.publish('navigateTo', {preventable: false});
 
           // Build a service.id -> BoundingBox map for services.
           this.service_boxes = {};
@@ -415,7 +406,6 @@ YUI.add('juju-view-environment', function(Y) {
         updateData: function() {
           //model data
           var vis = this.vis,
-              app = this.get('app'),
               db = this.get('db'),
               relations = db.relations.toArray(),
               services = db.services.map(views.toBoundingBox);
@@ -468,7 +458,6 @@ YUI.add('juju-view-environment', function(Y) {
                 self.get('container').all('.environment-menu.active')
                   .removeClass('active');
                 self.service_click_actions.toggleControlPanel(null, self);
-                self.cancelRelationBuild();
               })
             .on('drag', function(d, i) {
                 if (self.buildingRelation) {
@@ -1074,8 +1063,6 @@ YUI.add('juju-view-environment', function(Y) {
           var rect = self.get('potential_drop_point_rect');
           var endpoint = self.get('potential_drop_point_service');
 
-          // Get rid of our drag line
-          self.dragline.remove();
           self.buildingRelation = false;
           self.cursorBox = null;
 
@@ -1141,6 +1128,11 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         cancelRelationBuild: function() {
+          if (this.dragline) {
+            // Get rid of our drag line
+            this.dragline.remove();
+            this.dragline = null;
+          }
           this.set('currentServiceClickAction', 'toggleControlPanel');
           this.show(this.vis.selectAll('.service'))
                   .classed('selectable-service', false);
@@ -1237,55 +1229,46 @@ YUI.add('juju-view-environment', function(Y) {
          * Set the visualization size based on the viewport
          */
         setSizesFromViewport: function() {
+          // This event allows other page components that may unintentionally
+          // affect the page size, such as the charm panel, to get out of the
+          // way before we compute sizes.  Note the
+          // "afterPageSizeRecalculation" event at the end of this function.
+          Y.fire('beforePageSizeRecalculation');
           // start with some reasonable defaults
           var vis = this.vis,
               container = this.get('container'),
               xscale = this.xscale,
               yscale = this.yscale,
-              viewport_height = '100%',
-              viewport_width = '100%',
               svg = container.one('svg'),
-              width = 800,
-              height = 600;
-
-          if (container.get('winHeight') &&
-              Y.one('#overview-tasks') &&
-              Y.one('.navbar')) {
-            // Attempt to get the viewport height minus the navbar at top and
-            // control bar at the bottom. Use Y.one() to ensure that the
-            // container is attached first (provides some sensible defaults)
-
-            viewport_height = container.get('winHeight') -
-                styleToNumber('#overview-tasks', 'height', 22) -
-                styleToNumber('.navbar', 'height', 87) - 1;
-
-            // Attempt to get the viewport width from the overview-tasks bar.
-            viewport_width = styleToNumber('#viewport', 'width', 800);
-
-            // Make sure we don't get sized any smaller than 800x600
-            viewport_height = Math.max(viewport_height, height);
-            viewport_width = Math.max(viewport_width, width);
-          }
+              canvas = container.one('#canvas');
+          // Get the canvas out of the way so we can calculate the size
+          // correctly (the canvas contains the svg).  We want it to be the
+          // smallest size we accept--no smaller or bigger--or else the
+          // presence or absence of scrollbars may affect our calculations
+          // incorrectly.
+          canvas.setStyles({height: 600, width: 800});
+          var dimensions = utils.getEffectiveViewportSize(true, 800, 600);
           // Set the svg sizes.
-          svg.setAttribute('width', viewport_width)
-            .setAttribute('height', viewport_height);
-
-          // Get the resulting computed sizes (in the case of 100%).
-          width = parseInt(svg.getComputedStyle('width'), 10);
-          height = parseInt(svg.getComputedStyle('height'), 10);
+          svg.setAttribute('width', dimensions.width)
+            .setAttribute('height', dimensions.height);
 
           // Set the internal rect's size.
           svg.one('rect')
-            .setAttribute('width', width)
-            .setAttribute('height', height);
-          container.one('#canvas').setStyle('height', height);
-          container.one('#canvas').setStyle('width', width);
+            .setAttribute('width', dimensions.width)
+            .setAttribute('height', dimensions.height);
+          canvas
+            .setStyle('height', dimensions.height)
+            .setStyle('width', dimensions.width);
 
           // Reset the scale parameters
-          this.xscale.domain([-width / 2, width / 2])
-            .range([0, width]);
-          this.yscale.domain([-height / 2, height / 2])
-            .range([height, 0]);
+          this.xscale.domain([-dimensions.width / 2, dimensions.width / 2])
+            .range([0, dimensions.width]);
+          this.yscale.domain([-dimensions.height / 2, dimensions.height / 2])
+            .range([dimensions.height, 0]);
+
+          this.width = dimensions.width;
+          this.height = dimensions.height;
+          Y.fire('afterPageSizeRecalculation');
         },
 
         /*
@@ -1297,9 +1280,30 @@ YUI.add('juju-view-environment', function(Y) {
               service = this.get('active_service'),
               tr = this.zoom.translate(),
               z = this.zoom.scale();
-          if (service) {
-            cp.setStyle('top', service.y * z + tr[1]);
-            cp.setStyle('left', service.x * z + service.w * z + tr[0]);
+          if (service && cp) {
+            var cp_width = cp.getClientRect().width,
+                menu_left = service.x * z + service.w * z / 2 <
+                this.width * z / 2,
+                service_center = service.getRelativeCenter();
+            if (menu_left) {
+              cp.removeClass('left')
+                .addClass('right');
+            } else {
+              cp.removeClass('right')
+                .addClass('left');
+            }
+            // Set the position of the div in the following way:
+            // top: aligned to the scaled/panned service minus the
+            //   location of the tip of the arrow (68px down the menu,
+            //   via css) such that the arrow always points at the service.
+            // left: aligned to the scaled/panned service; if the
+            //   service is left of the midline, display it to the
+            //   right, and vice versa.
+            cp.setStyles({
+              'top': service.y * z + tr[1] + (service_center[1] * z) - 68,
+              'left': service.x * z +
+                  (menu_left ? service.w * z : -(cp_width)) + tr[0]
+            });
           }
         },
 
@@ -1331,7 +1335,7 @@ YUI.add('juju-view-environment', function(Y) {
            * View a service
            */
           show_service: function(m, view) {
-            view.fire('showService', {service: m});
+            view.fire('navigateTo', {url: '/service/' + m.get('id') + '/'});
           },
 
           /*
@@ -1369,7 +1373,7 @@ YUI.add('juju-view-environment', function(Y) {
           },
 
           _destroyCallback: function(service, view, btn, ev) {
-            var app = view.get('app'),
+            var getModelURL = view.get('getModelURL'),
                 db = view.get('db');
             if (ev.err) {
               db.notifications.add(
@@ -1377,7 +1381,7 @@ YUI.add('juju-view-environment', function(Y) {
                     title: 'Error destroying service',
                     message: 'Service name: ' + ev.service_name,
                     level: 'error',
-                    link: app.getModelURL(service),
+                    link: getModelURL(service),
                     modelId: service
                   })
               );
@@ -1402,10 +1406,10 @@ YUI.add('juju-view-environment', function(Y) {
             view.show(view.vis.selectAll('.service'));
 
             var db = view.get('db'),
-                app = view.get('app'),
+                getServiceEndpoints = view.get('getServiceEndpoints'),
                 service = view.serviceForBox(m),
                 endpoints = models.getEndpoints(
-                    service, app.serviceEndpoints, db),
+                    service, getServiceEndpoints(), db),
 
                 /* Transform endpoints into a list of
                  * relatable services (to the service in m)
@@ -1451,12 +1455,13 @@ YUI.add('juju-view-environment', function(Y) {
            * create the relation if not.
            */
           ambiguousAddRelationCheck: function(m, view, context) {
-            var endpoints = view.get('addRelationStart_possibleEndpoints'),
+            var endpoints = view
+                  .get('addRelationStart_possibleEndpoints')[m.id],
                 container = view.get('container');
 
-            if (endpoints[m.id].length === 1) {
+            if (endpoints.length === 1) {
               // Create a relation with the only available endpoint.
-              var ep = endpoints[m.id][0],
+              var ep = endpoints[0],
                   endpoints_item = [
                     [ep[0].service, {
                       name: ep[0].name,
@@ -1469,6 +1474,25 @@ YUI.add('juju-view-environment', function(Y) {
               return;
             }
 
+            // Sort the endpoints alphabetically by relation name.
+            endpoints = endpoints.sort(function(a, b) {
+              return a[0].name + a[1].name < b[0].name + b[1].name;
+            });
+
+            // Create a pending line if it doesn't exist, as in the case of
+            // clicking to add relation.
+            if (!view.dragline) {
+              var dragline = view.vis.insert('line', '.service')
+                  .attr('class', 'relation pending-relation dragline'),
+                  points = m.getConnectorPair(
+                      view.get('addRelationStart_service'));
+              dragline.attr('x1', points[0][0])
+                .attr('y1', points[0][1])
+                .attr('x2', points[1][0])
+                .attr('y2', points[1][1]);
+              view.dragline = dragline;
+            }
+
             // Display menu with available endpoints.
             var menu = container.one('#ambiguous-relation-menu');
             if (menu.one('.menu')) {
@@ -1476,7 +1500,7 @@ YUI.add('juju-view-environment', function(Y) {
             }
 
             menu.append(Templates
-                .ambiguousRelationList({endpoints: endpoints[m.id]}));
+                .ambiguousRelationList({endpoints: endpoints}));
 
             // For each endpoint choice, bind an an event to 'click' to
             // add the specified relation.

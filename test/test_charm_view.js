@@ -87,7 +87,8 @@
         charm_store: localCharmStore,
         env: env});
       var redirected = false;
-      charmView.on('showEnvironment', function() {
+      charmView.on('navigateTo', function(e) {
+        assert.equal('/', e.url);
         redirected = true;
       });
       var deployInput = charmView.get('container').one('#charm-deploy');
