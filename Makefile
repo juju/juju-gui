@@ -69,7 +69,7 @@ spritegen: $(SPRITE_GENERATED_FILES)
 $(COMPRESSED_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES)
 	@rm -Rf app/assets/javascripts/generated/
 	@mkdir app/assets/javascripts/generated/
-	@node app/assets/combine/merge-files.js
+	@./bin/merge-files
 
 combinejs: $(COMPRESSED_FILES)
 
@@ -79,12 +79,12 @@ test: install
 	@./test-server.sh
 
 debug: install
-	@node app/assets/combine/write-properties.js true
+	@./bin/write-properties true
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
 server: install
-	@node app/assets/combine/write-properties.js false
+	@./bin/write-properties false
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 

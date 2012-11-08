@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Create the file that contains the "debugMode" flag.
 // Call "node merge-files.js true" for "debugMode=true"
 var syspath = require('path'),
