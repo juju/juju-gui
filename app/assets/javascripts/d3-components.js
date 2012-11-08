@@ -135,9 +135,10 @@ YUI.add('d3-components', function(Y) {
           d3.event = evt;
           return handler.call(
               evt.currentTarget.getDOMNode(), d, context);
-        };,
-            sub = Y.delegate(name, d3Adaptor, container, selector, context);
-        subscriptions.push(sub);
+        };
+
+        subscriptions.push(Y.delegate(
+          name, d3Adaptor, container, selector, context));
       }
 
       function _normalizeHandler(handler, module) {
@@ -153,7 +154,8 @@ YUI.add('d3-components', function(Y) {
           return;
         }
         if (!L.isFunction(handler)) {
-          console.error('Unable to resolve a proper callback for', selector, name);
+          console.error('Unable to resolve a proper callback for',
+                        selector, name);
           return;
         }
         return handler;
