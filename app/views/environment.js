@@ -132,14 +132,9 @@ YUI.add('juju-view-environment', function(Y) {
             click: function(d, self) {
               // Toggle the visibility of the relations (for removal)
               if (self.keepSubRelationsVisible) {
-                self.removeSVGClass('.subordinate-rel-group', 'active');
-                self.keepSubRelationsVisible = false;
-                self.removeSVGClass(Y.one(this).one('.sub-rel-count'),
-                    'active');
+                self.hideSubordinateRelations();
               } else {
-                self.keepSubRelationsVisible = true;
-                self.addSVGClass(Y.one(this).one('.sub-rel-count'),
-                    'active');
+                self.showSubordinateRelations(this);
               }
             }
           },
@@ -168,6 +163,7 @@ YUI.add('juju-view-environment', function(Y) {
               container.all('.environment-menu.active').removeClass('active');
               self.service_click_actions.toggleControlPanel(null, self);
               self.cancelRelationBuild();
+              self.hideSubordinateRelations();
             }
           }
         },
@@ -1240,6 +1236,28 @@ YUI.add('juju-view-environment', function(Y) {
               picker = container.one('.graph-list-picker');
           picker.removeClass('inactive');
           picker.one('.picker-expanded').removeClass('active');
+        },
+
+        /**
+         * Show subordinate relations for a service.
+         *
+         * @method showSubordinateRelations
+         * @param {Object} subordinate The sub-rel-block g element.
+         */
+        showSubordinateRelations: function(subordinate) {
+          this.keepSubRelationsVisible = true;
+          this.addSVGClass(Y.one(subordinate).one('.sub-rel-count'), 'active');
+        },
+
+        /**
+         * Hide subordinate relations.
+         *
+         * @method hideSubordinateRelations
+         */
+        hideSubordinateRelations: function() {
+          this.removeSVGClass('.subordinate-rel-group', 'active');
+          this.keepSubRelationsVisible = false;
+          this.removeSVGClass(Y.one('.sub-rel-count.active'), 'active');
         },
 
         /*
