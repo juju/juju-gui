@@ -1001,7 +1001,7 @@ g.unit {
         background-color: #EEEEEE;
         .series-charms {
             h3 {
-                font-weight: bold;
+                font-weight: normal;
                 font-size: 16px;
                 text-transform: capitalize;
                 padding-left: 11px;
@@ -1015,15 +1015,23 @@ g.unit {
                 padding: 11px;
                 border-top: 1px solid #FFFFFF;
                 border-bottom: 1px solid #BDBDBD;
-                background-color: #EDEDED;
-                &:hover {
-                    background-color: white;
-                }
                 &:first-child {
                     padding-top: 11px;
                 }
+                &:last-child {
+                    border-bottom: none;
+                }
+                &:nth-child(odd) {
+                    background-color: #EDEDED;
+                }
+                &:nth-child(even) {
+                    background-color: #F3F3F3;
+                }
+                &:hover {
+                    background-color: white;
+                }
                 a.charm-detail {
-                    font-weight: bold;
+                    font-weight: normal;
                     font-size: 16px;
                     color: @charm-panel-orange;
                     line-height: 18px;
@@ -1032,7 +1040,7 @@ g.unit {
                     margin-bottom: 4px;
                     font-size: 12px;
                     line-height: 14px;
-                    padding-top: 10px;
+                    padding-top: 6px;
                 }
                 .btn {
                     float: right;
