@@ -16,6 +16,7 @@
 @charm-panel-cancel-button-shadow: #515050;
 @charm-panel-background-color: #eeeeee;
 @charm-panel-border-color: #BEBEBE;
+@charm-paneel-border-top-color: #E0DEDE;
 @navbar-color: #2D2D2D!important;
 
 body {
@@ -883,7 +884,7 @@ g.unit {
                 float: right;
             }
             &.first {
-                border-top: 1px solid #E0DEDE;
+                border-top: 1px solid @charm-paneel-border-top-color;
             }
         }
         h5 {
@@ -924,7 +925,7 @@ g.unit {
         }
         &.config-variant {
             font-size: 14px;
-
+            border-top: 1px solid @charm-paneel-border-top-color;
             .control-group {
                 width: auto;
                 margin-bottom: 0;
