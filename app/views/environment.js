@@ -36,7 +36,7 @@ YUI.add('juju-view-environment', function(Y) {
               var box = this.get('active_service'),
                   service = this.serviceForBox(box),
                   context = this.get('active_context');
-              this.addRelationDragStart.call(this, box, context);
+              this.addRelationDragStart(box, context);
               this.service_click_actions
                         .toggleControlPanel(box, this, context);
               this.service_click_actions.addRelationStart(box, this, context);
@@ -133,17 +133,7 @@ YUI.add('juju-view-environment', function(Y) {
                     'relation pending-relation dragline dragging');
               }
             },
-            /**
-             * If the mouse moves over a service and we are adding a relation,
-             * then the dragline needs to be updated.
-             */
-            mousemove: function(d, self) {
-              if (self.clickAddRelation) {
-                var container = self.get('container'),
-                    node = container.one('#canvas rect:first-child');
-                self.rectMousemove.call(node.getDOMNode(), d, self);
-              }
-            }
+            mousemove: 'mousemove'
           },
           '.sub-rel-block': {
             mouseenter: function(d, self) {
@@ -176,17 +166,7 @@ YUI.add('juju-view-environment', function(Y) {
           '.rel-label': {
             /** The user clicked on the relation label. */
             click: 'relationClick',
-            /**
-             * If the mouse moves over a relation label and we are adding a
-             * relation, then the dragline needs to be updated.
-             */
-            mousemove: function(d, self) {
-              if (self.clickAddRelation) {
-                var container = self.get('container'),
-                    node = container.one('#canvas rect:first-child');
-                self.rectMousemove.call(node.getDOMNode(), d, self);
-              }
-            }
+            mousemove: 'mousemove'
           },
 
           '#canvas rect:first-child': {
@@ -200,24 +180,14 @@ YUI.add('juju-view-environment', function(Y) {
               self.service_click_actions.toggleControlPanel(null, self);
               self.cancelRelationBuild();
             },
-            /**
-             * If the mouse moves over the background and we are adding a
-             * relation, then the dragline needs to be updated.
-             */
-            mousemove: function(d, self) {
-              if (self.clickAddRelation) {
-                var container = self.get('container'),
-                    node = container.one('#canvas rect:first-child');
-                self.rectMousemove.call(node.getDOMNode(), d, self);
-              }
-            }
+            mousemove: 'mousemove'
           },
           '.dragline': {
             /** The user clicked while the dragline was active. */
             click: function(d, self) {
               // It was technically the dragline that was clicked, but the
               // intent was to click on the background, so...
-              self.backgroundClicked.call(self);
+              self.backgroundClicked();
             }
           }
         },
@@ -238,7 +208,7 @@ YUI.add('juju-view-environment', function(Y) {
                 d3.event = e;
 
                 // Start the process of adding a relation
-                self.addRelationDragStart.call(self, d, this);
+                self.addRelationDragStart(d, this);
               }, [d, evt], false);
             },
             'mouseup.addrel': function(d, self) {
@@ -450,16 +420,24 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /**
-         * Update the dragline to follow the mouse.
-         *
-         * @method rectMousemove
-         */
-        rectMousemove: function(d, self) {
-          var mouse = d3.mouse(this);
-          d3.event.x = mouse[0];
-          d3.event.y = mouse[1];
-          self.addRelationDrag
-            .call(self, self.get('addRelationStart_service'), this);
+          * If the mouse moves and we are adding a relation, then the dragline
+          * needs to be updated.
+          *
+          * @method mousemove
+          * @param {object} d Unused.
+          * @param {object} self The environment view itself.
+          * @return {undefined} Side effects only.
+          */
+        mousemove: function(d, self) {
+          if (self.clickAddRelation) {
+            var container = self.get('container'),
+                node = container.one('#canvas rect:first-child').getDOMNode(),
+                mouse = d3.mouse(node);
+            d3.event.x = mouse[0];
+            d3.event.y = mouse[1];
+            self.addRelationDrag
+              .call(self, self.get('addRelationStart_service'), node);
+          }
         },
 
         /*
@@ -523,7 +501,7 @@ YUI.add('juju-view-environment', function(Y) {
               })
             .on('drag', function(d, i) {
                 if (self.buildingRelation) {
-                  self.addRelationDrag.call(self, d, this);
+                  self.addRelationDrag(d, this);
                 } else {
                   if (self.longClickTimer) {
                     self.longClickTimer.cancel();
@@ -545,7 +523,7 @@ YUI.add('juju-view-environment', function(Y) {
               })
             .on('dragend', function(d, i) {
                 if (self.buildingRelation) {
-                  self.addRelationDragEnd.call(self, d, this);
+                  self.addRelationDragEnd();
                 }
               });
 
@@ -1082,7 +1060,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         addRelationDragStart: function(d, context) {
-          // Create a pending drag-line behind services.
+          // Create a pending drag-line.
           var dragline = this.vis.append('line')
               .attr('class', 'relation pending-relation dragline dragging'),
               self = this;
@@ -1122,7 +1100,7 @@ YUI.add('juju-view-environment', function(Y) {
           }
         },
 
-        addRelationDragEnd: function(d, context) {
+        addRelationDragEnd: function() {
           // Get the line, the endpoint service, and the target <rect>.
           var self = this;
           var rect = self.get('potential_drop_point_rect');
@@ -1212,6 +1190,7 @@ YUI.add('juju-view-environment', function(Y) {
          * adding.
          *
          * @method backgroundClicked
+         * @return {undefined} Side effects only.
          */
         backgroundClicked: function() {
           if (this.clickAddRelation) {
@@ -1223,6 +1202,9 @@ YUI.add('juju-view-environment', function(Y) {
          * An "add relation" action has been initiated by the user.
          *
          * @method startRelation
+         * @param {object} service The service that is the source of the
+         *  relation.
+         * @return {undefined} Side effects only.
          */
         startRelation: function(service) {
           // Set flags on the view that indicate we are building a relation.
@@ -1234,15 +1216,12 @@ YUI.add('juju-view-environment', function(Y) {
           var db = this.get('db'),
               getServiceEndpoints = this.get('getServiceEndpoints'),
               endpoints = models.getEndpoints(
-              service, getServiceEndpoints(), db),
-
-              /* Transform endpoints into a list of
-                 * relatable services (to the service)
-                 */
+                  service, getServiceEndpoints(), db),
+              // Transform endpoints into a list of relatable services (to the
+              // service).
               possible_relations = Y.Array.map(
-              Y.Array.flatten(Y.Object.values(
-              endpoints)),
-              function(ep) {return ep.service;}),
+                  Y.Array.flatten(Y.Object.values(endpoints)),
+                  function(ep) {return ep.service;}),
               invalidRelationTargets = {};
 
           // Iterate services and invert the possibles list.
@@ -1537,7 +1516,7 @@ YUI.add('juju-view-environment', function(Y) {
            */
           addRelationStart: function(m, view, context) {
             var service = view.serviceForBox(m);
-            view.startRelation.call(view, service);
+            view.startRelation(service);
             // Store start service in attrs.
             view.set('addRelationStart_service', m);
           },
