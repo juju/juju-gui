@@ -28,6 +28,18 @@ input, button, select, textarea {
     font-family: @font-family;
 }
 
+.create-border-radius(@radius) {
+    -moz-border-radius: @radius;
+    -webkit-border-radius: @radius;
+    border-radius: @radius;
+}
+
+.create-box-shadow(@arguments) {
+    -moz-box-shadow: @arguments;
+    -webkit-box-shadow: @arguments;
+    box-shadow: @arguments;
+}
+
 .create-button(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
     @blur: 2px;
     background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
@@ -37,20 +49,14 @@ input, button, select, textarea {
     background-image: -moz-linear-gradient(top, @gradient-start, @gradient-end);
     background-image: linear-gradient(top, @gradient-start, @gradient-end);
     background-repeat: repeat-x;
-    -moz-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-                        2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
-    -webkit-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-                           2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
-    box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-                   2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
-    @border-radii: ~"6px / 7px";
-    -moz-border-radius: @border-radii;
-    -webkit-border-radius: @border-radii;
-    border-radius: @border-radii;
+    // Using a variable here because LESS strips commas in mixin args.
+    @box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
+                 2px 0 3px -2px @shadow-color inset,
+                 -2px 0 3px -2px @shadow-color inset;
+    .create-box-shadow(@box-shadow);
+    .create-border-radius(~"6px / 7px");
     border: none;
 }
-
-
 
 i.sprite {
     display: inline-block;
@@ -218,15 +224,8 @@ svg {
     display: none;
     background-color: @background_color;
     color: #fdf6e3;
-
-    border-radius: @border_radius;
-    -moz-border-radius: @border_radius;
-    -webkit-border-radius: @border_radius;
-
-    box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
-    -moz-box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
-    -webkit-box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
-
+    .create-border-radius(@border_radius);
+    .create-box-shadow(-2px 4px 4px 0 rgba(0, 0, 0, 0.5));
     top: 0;
     left: 0;
     position: absolute;
@@ -270,9 +269,7 @@ svg {
             cursor: pointer;
             line-height: 32px;
             padding: 5px 5px 5px 5px;
-            border-radius: @border_radius;
-            -moz-border-radius: @border_radius;
-            -webkit-border-radius: @border_radius;
+            .create-border-radius(@border_radius);
 
             &.view-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
@@ -378,9 +375,7 @@ div.state-pending {
 
 .unit (@min_height: 20px, @border_radius:3px) {
     padding: 5px;
-    -webkit-border-radius: @border_radius;
-    -moz-border-radius: @border_radius;
-    border-radius: @border_radius;
+    .create-border-radius(@border_radius);
     margin-bottom: 0px;
     min-height: @min_height;
     cursor: pointer;
@@ -730,12 +725,8 @@ g.unit {
     background: white;
     padding: 1.6em;
     border: solid black 2px;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 6px;
-    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    .create-border-radius(6px);
+    .create-box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
     -webkit-background-clip: padding-box;
     -moz-background-clip: padding-box;
     background-clip: padding-box;
@@ -925,12 +916,19 @@ g.unit {
         &.config-variant {
             font-size: 14px;
 
+            .collapsible {
+                padding: 10px 0px;
+            }
+
             .control-group {
                 width: auto;
                 margin-bottom: 0;
                 margin-top: 1ex;
-                padding: 0px 12px;
+                padding: 5px 12px;
                 clear: both;
+                &:nth-of-type(2) {
+                    margin-bottom: 15px;
+                }
             }
             .control-description {
                 display: none;
@@ -945,6 +943,22 @@ g.unit {
             .controls {
                 margin-left: auto;
                 margin-right: 0;
+                input[type=text] {
+                    color: @text-entry-color;
+                    font-style: italic;
+                    height: 15px;
+                    width: 250px;
+                    margin: 0;
+                    .create-border-radius(6px);
+                    // Using a variable here because LESS strips commas in
+                    // mixin args.
+                    @box-shadow: 0 1px 3px #959595 inset, 0 1px 0 white;
+                    .create-box-shadow(@box-shadow);
+                }
+                input[type=checkbox] {
+                    margin-left: 1ex;
+                    margin-top: 0.7ex;
+                }
             }
             .config-field {
                 font-size: 16px;
@@ -954,6 +968,7 @@ g.unit {
                 position: relative;
                 width: 252px;
                 height: 25px;
+                margin-left: 12px;
             }
             .config-file-upload-widget {
                 position: absolute;
@@ -964,6 +979,8 @@ g.unit {
             }
             .config-file-upload-overlay {
                 background: url(/juju-ui/assets/images/getfile_button.png) no-repeat;
+                color: #4c4c4c;
+                font-family: @font-family-medium;
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -983,12 +1000,6 @@ g.unit {
                 left: 5px;
                 width: auto;
                 z-index: 2;
-            }
-            .controls.boolean {
-                input {
-                    margin-left: 1ex;
-                    margin-top: 0.7ex;
-                }
             }
             .btn {
                  margin-top: 5px;
@@ -1270,9 +1281,7 @@ div.inline {
     background-color: white;
     border: solid 1px black;
     padding: 0.2em 0.5em 0.3em;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
+    .create-border-radius(3px);
     min-width: 20px;
     max-width: 400px;
 }
