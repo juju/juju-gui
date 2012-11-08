@@ -81,10 +81,11 @@ YUI.add('d3-components', function(Y) {
      *          events the module reacts to.
      **/
 
-    addModule: function(module, options) {
+    addModule: function(ModClassOrInstance, options) {
       options = options || {};
-      if (!(module instanceof Module)) {
-        module = new module();
+      var module = ModClassOrInstance;
+      if (!(ModClassOrInstance instanceof Module)) {
+        module = new ModClassOrInstance();
       }
       module.setAttrs({component: this,
         options: options});
@@ -115,12 +116,11 @@ YUI.add('d3-components', function(Y) {
      * Module.events.scene and
      * Module.events.yui.
      **/
-    _bindEvents: function(name) {
+    _bindEvents: function(modName) {
       var self = this,
-          modEvents = this.events[name],
-          module = this.modules[name],
+          modEvents = this.events[modName],
+          module = this.modules[modName],
           owns = Y.Object.owns,
-          selector,
           phase = 'on',
           subscriptions = [],
           handlers,
@@ -142,7 +142,7 @@ YUI.add('d3-components', function(Y) {
             Y.delegate(name, d3Adaptor, container, selector, context));
       }
 
-      function _normalizeHandler(handler, module) {
+      function _normalizeHandler(handler, module, selector) {
         if (typeof handler === 'object') {
           phase = handler.phase || 'on';
           handler = handler.callback;
@@ -151,27 +151,27 @@ YUI.add('d3-components', function(Y) {
           handler = module[handler];
         }
         if (!handler) {
-          console.error('No Event handler for', selector, name);
+          console.error('No Event handler for', selector, modName);
           return;
         }
         if (!L.isFunction(handler)) {
           console.error('Unable to resolve a proper callback for',
-                        selector, name);
+                        selector, handler, modName);
           return;
         }
         return handler;
       }
 
-      this.unbind(name);
+      this.unbind(modName);
 
       // Bind 'scene' events
       if (modEvents.scene) {
-        for (selector in modEvents.scene) {
+        for (var selector in modEvents.scene) {
           if (owns(modEvents.scene, selector)) {
             handlers = modEvents.scene[selector];
-            for (name in handlers) {
+            for (var name in handlers) {
               if (owns(handlers, name)) {
-                handler = _normalizeHandler(handlers[name], module);
+                handler = _normalizeHandler(handlers[name], module, selector);
                 if (!handler) {
                   continue;
                 }
@@ -332,11 +332,12 @@ YUI.add('d3-components', function(Y) {
      * Render each module bound to the canvas
      */
     render: function() {
+      var self = this;
       function renderAndBind(module, name) {
         if (module && module.render) {
           module.render();
         }
-        this._bindD3Events(name);
+        self._bindD3Events(name);
       }
 
       // If the container isn't bound to the DOM

@@ -48,14 +48,15 @@ describe('d3-components', function() {
   afterEach(function() {
     container.remove();
     container.destroy();
-    if (comp)
+    if (comp) {
       comp.unbind();
+    }
   });
 
 
   it('should be able to create a component and add a module', function() {
     comp = new NS.Component();
-    comp.should.be.ok;
+    Y.Lang.isValue(comp).should.equal(true);
   });
 
   it('should be able to add and remove a module', function() {

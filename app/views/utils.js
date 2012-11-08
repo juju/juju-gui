@@ -29,15 +29,15 @@ YUI.add('juju-view-utils', function(Y) {
     var winConsole = window.console,
         // These are the available methods.
         // Add more to this list if necessary.
-        noop = function() {};,
-    consoleNoop = {
-      group: noop,
-      groupEnd: noop,
-      groupCollapsed: noop,
-      time: noop,
-      timeEnd: noop,
-      log: noop
-    };
+        noop = function() {},
+        consoleNoop = {
+          group: noop,
+          groupEnd: noop,
+          groupCollapsed: noop,
+          time: noop,
+          timeEnd: noop,
+          log: noop
+        };
 
     if (winConsole === undefined) {
       window.console = consoleNoop;
