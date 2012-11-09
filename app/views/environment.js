@@ -641,8 +641,6 @@ YUI.add('juju-view-environment', function(Y) {
           label.insert('rect', 'text')
               .attr('width', function(d) {
                 return d.display_name.length * 10 + 10;
-                //return (Y.one(this.parentNode)
-                //  .one('text').getClientRect() || {width: 0}).width + 10;
               })
               .attr('height', 20)
               .attr('x', function() {
