@@ -75,10 +75,6 @@ app/views/charm-panel.js killInstance
 app/views/charm-panel.js mouseenter
 app/views/charm-panel.js mouseleave
 app/views/charm-panel.js onCharmDeployClicked
-app/views/charm-panel.js onFileChange
-app/views/charm-panel.js onFileError
-app/views/charm-panel.js onFileLoaded
-app/views/charm-panel.js onFileRemove
 app/views/charm-panel.js render
 app/views/charm-panel.js setDefaultSeries
 app/views/charm-panel.js setPanel
