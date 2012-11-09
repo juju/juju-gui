@@ -9,8 +9,9 @@
 
 YUI.add('d3-components', function(Y) {
   var ns = Y.namespace('d3'),
-      L = Y.Lang,
-      Module = Y.Base.create('Module', Y.Base, [], {
+      L = Y.Lang;
+
+  var Module = Y.Base.create('Module', Y.Base, [], {
         /**
          * @property events
          * @type {object}
@@ -21,15 +22,13 @@ YUI.add('d3-components', function(Y) {
           yui: {}
         },
 
-        initializer: function(options) {
-          options = options || {};
-          this.events = options.events ?
-              Y.merge(this.events, options.events) :
-              this.events;
+        initializer: function() {
+          this.events = Y.merge(this.events);
         }
       }, {
         ATTRS: {
           component: {},
+          options: {},
           container: {getter: function() {
             return this.get('component').get('container');}}
         }
@@ -41,10 +40,10 @@ YUI.add('d3-components', function(Y) {
     /**
      * @class Component
      *
-     * Component collections modules implementing various portions
-     * of an applications functionality in a declarative way. It
-     * is designed to allow both a cleaner separation of concerns
-     * and the ability to reuse the component in different ways.
+     * Component collects modules implementing various portions of an
+     * applications functionality in a declarative way. It is designed to allow
+     * both a cleaner separation of concerns and the ability to reuse the
+     * component in different ways.
      *
      * Component accomplishes these goals by:
      *    - Control how events are bound and unbound.
@@ -57,20 +56,17 @@ YUI.add('d3-components', function(Y) {
     initializer: function() {
       this.modules = {};
       this.events = {};
-
-      // If container is changed, rebind events.
-      // this.after('containerChange', this.bind());
     },
 
     /**
      * @method addModule
      * @chainable
-     * @param {Module} a Module class. Will be created and bound to Component
-     * internally.
+     * @param {Module} ModClassOrInstance bound will be to this.
+     * @param {Object} options dict of options set as options attribute on module.
      *
      * Add a Module to this Component. This will bind its events and set up all
-     * needed event subscriptions.
-     * Modules can return three sets of events that will be bound in
+     * needed event subscriptions.  Modules can return three sets of events
+     * that will be bound in
      * different ways
      *
      *   - scene: {selector: event-type: handlerName} -> YUI styled event
@@ -82,20 +78,21 @@ YUI.add('d3-components', function(Y) {
      **/
 
     addModule: function(ModClassOrInstance, options) {
-      options = options || {};
-      var module = ModClassOrInstance;
+      var config = options || {},
+          module = ModClassOrInstance,
+          modEvents;
       if (!(ModClassOrInstance instanceof Module)) {
         module = new ModClassOrInstance();
       }
       module.setAttrs({component: this,
-        options: options});
+        options: config});
 
-                      this.modules[module.name] = module;
+        this.modules[module.name] = module;
 
-                      var modEvents = module.events;
-                      this.events[module.name] = Y.clone(modEvents);
-                      this.bind(module.name);
-                      return this;
+        modEvents = module.events;
+        this.events[module.name] = modEvents;
+        this.bind(module.name);
+        return this;
     },
 
     /**
@@ -121,7 +118,7 @@ YUI.add('d3-components', function(Y) {
           modEvents = this.events[modName],
           module = this.modules[modName],
           owns = Y.Object.owns,
-          phase = 'on',
+          container = this.get('container'),
           subscriptions = [],
           handlers,
           handler;
@@ -142,64 +139,69 @@ YUI.add('d3-components', function(Y) {
             Y.delegate(name, d3Adaptor, container, selector, context));
       }
 
+      // Return a resolved handler object in the form
+      // {phase: str, callback: function}
       function _normalizeHandler(handler, module, selector) {
-        if (typeof handler === 'object') {
-          phase = handler.phase || 'on';
-          handler = handler.callback;
+        var result = {};
+
+        if (L.isString(handler)) {
+          result.callback = module[handler];
+          result.phase = 'on';
         }
-        if (typeof handler === 'string') {
-          handler = module[handler];
+
+        if (L.isObject(handler)) {
+          result.phase = handler.phase || 'on';
+          result.callback = handler.callback;
         }
-        if (!handler) {
+
+        if (L.isString(result.callback)) {
+          result.callback = module[result.callback];
+        }
+
+        if (!result.callback) {
           console.error('No Event handler for', selector, modName);
           return;
         }
-        if (!L.isFunction(handler)) {
+        if (!L.isFunction(result.callback)) {
           console.error('Unable to resolve a proper callback for',
-                        selector, handler, modName);
+                        selector, handler, modName, result);
           return;
         }
-        return handler;
+        return result;
       }
 
       this.unbind(modName);
 
       // Bind 'scene' events
-      if (modEvents.scene) {
-        for (var selector in modEvents.scene) {
-          if (owns(modEvents.scene, selector)) {
-            handlers = modEvents.scene[selector];
-            for (var name in handlers) {
-              if (owns(handlers, name)) {
-                handler = _normalizeHandler(handlers[name], module, selector);
-                if (!handler) {
-                  continue;
-                }
-                _bindEvent(name, handler,
-                           this.get('container'), selector, this);
-              }
+      Y.each(modEvents.scene, function(handlers, selector, sceneEvents) {
+          Y.each(handlers, function(handler, trigger) {
+            handler = _normalizeHandler(handler, module, selector);
+            if (L.isValue(handler)) {
+              _bindEvent(trigger, handler.callback, container, selector, self);
             }
-          }
-        }
-      }
+          })
+      });
 
-      // Bind 'yui' custom/global subscriptions
+     // Bind 'yui' custom/global subscriptions
       // yui: {str: str_or_function}
       // TODO {str: str/func/obj}
       //       where object includes phase (before, on, after)
       if (modEvents.yui) {
-        var resolvedHandler = {};
-
         // Resolve any 'string' handlers to methods on module.
-        Y.each(modEvents.yui, function(handler, name) {
-          handler = _normalizeHandler(handler, module);
-          if (!handler) {
-            return;
+        Y.each(['after', 'before', 'on'], function(eventPhase) {
+          var resolvedHandler = {};
+          Y.each(modEvents.yui, function(handler, name) {
+            handler = _normalizeHandler(handler, module);
+            if (!handler || handler.phase != eventPhase) {
+              return;
+            }
+            resolvedHandler[name] = handler.callback;
+          }, this);
+          // Bind resolved event handlers as a group.
+          if (Y.Object.keys(resolvedHandler).length) {
+            subscriptions.push(Y[eventPhase](resolvedHandler));
           }
-          resolvedHandler[name] = handler;
-        }, this);
-        // Bind resolved event handlers as a group.
-        subscriptions.push(Y.on(resolvedHandler));
+        });
       }
       return subscriptions;
     },
@@ -210,14 +212,15 @@ YUI.add('d3-components', function(Y) {
      * Internal. Called automatically by addModule.
      **/
     bind: function(moduleName) {
-      var eventSet = this.events;
+      var eventSet = this.events,
+          filtered = {};
+
       if (moduleName) {
-        var filtered = {};
         filtered[moduleName] = eventSet[moduleName];
         eventSet = filtered;
       }
 
-      Y.each(Y.Object.keys(eventSet), function _bind(name) {
+      Y.each(Y.Object.keys(eventSet), function(name) {
         this.events[name].subscriptions = this._bindEvents(name);
       }, this);
       return this;
@@ -237,34 +240,29 @@ YUI.add('d3-components', function(Y) {
     _bindD3Events: function(modName) {
       // Walk each selector for a given module 'name', doing a
       // d3 selection and an 'on' binding.
-      var modEvents = this.events[modName];
-
-      if (!modEvents || modEvents.d3 === undefined) {
+      var modEvents = this.events[modName],
+          owns = Y.Object.owns,
+          module;
+      if (!modEvents || !modEvents.d3) {
         return;
       }
-
       modEvents = modEvents.d3;
-      var module = this.modules[modName],
-          owns = Y.Object.owns;
+      module = this.modules[modName];
 
-      var selector, kind, handler,
-          handlers, name;
-
-      for (selector in modEvents) {
-        if (owns(modEvents, selector)) {
-          handlers = modEvents[selector];
-          for (name in handlers) {
-            if (owns(handlers, name)) {
-              handler = handlers[name];
-              if (typeof handler === 'string') {
-                handler = module[handler];
-              }
-              d3.selectAll(selector).on(name, handler);
-            }
-          }
-        }
+      function _normalizeHandler(handler, module) {
+        if (handler && !L.isFunction(handler))
+          handler = module[handler];
+        return handler;
       }
-    },
+
+      Y.each(modEvents, function(handlers, selector) {
+        Y.each(handlers, function(handler, trigger) {
+          handler = _normalizeHandler(handler, module);
+          d3.selectAll(selector).on(trigger, handler);
+        });
+      });
+
+   },
 
     /**
      * @method _unbindD3Events
@@ -274,29 +272,22 @@ YUI.add('d3-components', function(Y) {
      * event to null unbinds existing handlers.
      **/
     _unbindD3Events: function(modName) {
-      var modEvents = this.events[modName];
+      var modEvents = this.events[modName],
+          owns = Y.Object.owns,
+          module;
 
       if (!modEvents || !modEvents.d3) {
         return;
       }
       modEvents = modEvents.d3;
-      var module = this.modules[modName],
-          owns = Y.Object.owns;
+      module = this.modules[modName];
 
-      var selector, kind, handler,
-          handlers, name;
-
-      for (selector in modEvents) {
-        if (owns(modEvents, selector)) {
-          handlers = modEvents[selector];
-          for (name in handlers) {
-            if (owns(handlers, name)) {
-              d3.selectAll(selector).on(name, null);
-            }
-          }
-        }
-      }
-    },
+      Y.each(modEvents, function(handlers, selector) {
+        Y.each(handlers, function(handler, trigger) {
+          d3.selectAll(selector).on(trigger, null);
+        });
+      });
+     },
 
     /**
      * @method unbind
