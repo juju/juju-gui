@@ -506,6 +506,8 @@ YUI.add('juju-view-environment', function(Y) {
                   if (self.longClickTimer) {
                     self.longClickTimer.cancel();
                   }
+
+                  // Translate the service (and, potentially, menu).
                   d.x += d3.event.dx;
                   d.y += d3.event.dy;
                   d3.select(this).attr('transform', function(d, i) {
@@ -514,11 +516,15 @@ YUI.add('juju-view-environment', function(Y) {
                   if (self.get('active_service') === d) {
                     self.updateServiceMenuLocation();
                   }
+
+                  // Clear any state while dragging.
                   self.get('container').all('.environment-menu.active')
                     .removeClass('active');
                   self.service_click_actions.toggleControlPanel(null, self);
                   self.cancelRelationBuild();
-                  updateLinks();
+
+                  // Update relation lines for just this service.
+                  updateLinkEndpoints(d);
                 }
               })
             .on('dragend', function(d, i) {
@@ -526,6 +532,39 @@ YUI.add('juju-view-environment', function(Y) {
                   self.addRelationDragEnd();
                 }
               });
+
+          /**
+           * Update relation line endpoints for a given service.
+           *
+           * @method updateLinkEndpoints
+           * @param {Object} service The service module that has been moved.
+           */
+          function updateLinkEndpoints(service) {
+            Y.each(Y.Array.filter(self.rel_pairs, function(relation) {
+              return relation.source() === service ||
+                  relation.target() === service;
+            }), function(relation) {
+              var rel_group = d3.select('#' + relation.id),
+                  connectors = relation.source()
+                    .getConnectorPair(relation.target()),
+                  s = connectors[0],
+                  t = connectors[1];
+              rel_group.select('line')
+                .attr('x1', s[0])
+                .attr('y1', s[1])
+                .attr('x2', t[0])
+                .attr('y2', t[1]);
+              rel_group.select('.rel-label')
+                .attr('transform', function(d) {
+                    // XXX: This has to happen on update, not enter
+                    return 'translate(' +
+                        [Math.max(s[0], t[0]) -
+                         Math.abs((s[0] - t[0]) / 2),
+                         Math.max(s[1], t[1]) -
+                         Math.abs((s[1] - t[1]) / 2)] + ')';
+                  });
+            });
+          }
 
           // Generate a node for each service, draw it as a rect with
           // labels for service and charm.
@@ -641,8 +680,7 @@ YUI.add('juju-view-environment', function(Y) {
               .text(function(d) {return d.display_name; });
           label.insert('rect', 'text')
               .attr('width', function(d) {
-                return (Y.one(this.parentNode)
-                  .one('text').getClientRect() || {width: 0}).width + 10;
+                return d.display_name.length * 10 + 10;
               })
               .attr('height', 20)
               .attr('x', function() {
@@ -827,11 +865,12 @@ YUI.add('juju-view-environment', function(Y) {
           var status_chart_arc = d3.svg.arc()
             .innerRadius(0)
             .outerRadius(function(d) {
-                // Make sure it's exactly as wide as the mask
+                // Make sure it's exactly as wide as the mask with a bit
+                // of leeway for the border.
                 return parseInt(
                     d3.select(this.parentNode)
                       .select('image')
-                      .attr('width'), 10) / 2;
+                      .attr('width'), 10) / 2.05;
               });
 
           var status_chart_layout = d3.layout.pie()
