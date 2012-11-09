@@ -63,6 +63,8 @@ describe('d3-components', function() {
     comp = new NS.Component();
     comp.setAttrs({container: container});
     comp.addModule(TestModule);
+    Y.Lang.isValue(comp.events).should.equal(true);
+    Y.Lang.isValue(comp.modules).should.equal(true);
   });
 
   it('should be able to (un)bind module event subscriptions', function() {
