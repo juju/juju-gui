@@ -2,9 +2,11 @@
 
 /**
  * We should aggregate and minimize the js sources in order to improve the load
- * speed of the application;
+ * speed of the application.
  *
- * We dont want to use the yui combo loader feature;
+ * We don't want to use the yui combo loader feature because we want to be able
+ * to run from only static files and we want to be able to run behaind a
+ * firewall without access to the internet.
  *
  * The final product will provide three js files: one for the YUI dependencies,
  * one for our custom js code and one for third part js like d3
@@ -12,176 +14,50 @@
 
 'use strict';
 
-// We need the yui name to be available in all modules (global variable). This
-// only happens if we remove the 'var' keyword or add it to the "global"
+// We need the yui name to be available in all modules (as a global variable).
+// This only happens if we remove the 'var' keyword or add it to the "global"
 // variable.
 global.YUI = require('yui').YUI;
 
-YUI().use(["yui"], function(Y) {
-  var fs = require('fs'),
+YUI().use(['yui'], function(Y) {
+  var merge = require('../lib/merge-files.js'),
       syspath = require('path'),
-      compressor = require('node-minify'),
       paths,
       reqs;
 
-  function minify(file) {
-    var execution = new compressor.minify(
-        { type: 'uglifyjs',
-          fileIn: file,
-          fileOut: file,
-          callback: function(err) {
-            if (err) {
-              console.log(err);
-            }
-          }});
-  }
+  // First we find all of the paths to our custom Javascript in the app
+  // directory.  We need to tell the function to ignore the "assets" directory
+  // and the debug version of the modules file. I need to use
+  // "syspath.join(process.cwd(), ...)" or else I have... "Error: Cannot find
+  // module './app/config.js'" from node's internal module.js file.
+  paths = merge.readdir(
+    syspath.join(process.cwd(), './app'),
+    [syspath.join(process.cwd(), './app/assets'),
+     './app/modules-debug.js']);
 
-  // It combines the files defined by "files" into a single (compressed or not)
-  // js file.
-  function combine(files, outputFile, shouldMinify) {
-    var str = [];
-    Y.Array.each(files, function(file) {
-      console.log('file -> ' + file);
-      str.push(fs.readFileSync(file, 'utf8'));
-    });
-    fs.writeFileSync(outputFile, str.join('\n'), 'utf8');
-    if (shouldMinify) {
-      minify(outputFile);
-    }
-  }
+  // Get the name of all the YUI modules that our custom js files use directly.
+  reqs = merge.loadRequires(paths);
 
-  // It gets the name of all the files under 'path'
-  function readdir(path) {
-    var result = [],
-        dirs = [],
-        files = fs.readdirSync(path),
-        // I need to use "syspath.join(process.cwd()" otherwise I have...
-        // "ReferenceError: CSSStyleDeclaration is not defined" from d3
-        assetsFolder = syspath.join(process.cwd(), './app/assets');
-
-    Y.Array.each(files, function(value) {
-      var fileName, file;
-      fileName = path + '/' + value;
-      file = fs.statSync(fileName);
-      if (file.isFile()) {
-        if (syspath.extname(fileName).toLowerCase() === '.js') {
-          // This file is not a yui module
-          if ('./app/modules-debug.js' === fileName) {
-            console.log('SKIPPING FILE -> ' + fileName);
-          } else {
-            result.push(fileName);
-          }
-        }
-      } else if (file.isDirectory()) {
-        console.log('DIRECTORY -> ' + fileName);
-        // The files under the assets folder are not combined
-        if (assetsFolder === fileName) {
-          console.log('SKIPPING DIRECTORY -> ' + fileName);
-        } else {
-          dirs.push(fileName);
-        }
-      }
-    });
-    // We wrote all the files. Now it is time to read and write the
-    // files
-    // inside the children directories.
-    Y.Array.each(dirs, function(directory) {
-      var children = readdir(directory);
-      Y.Array.each(children, function(child) {
-        result.push(child);
-      });
-    });
-    return result;
-  }
-
-  // It reads the 'requires' attribute of all our custom js files
-  function loadRequires(paths) {
-    var originalAdd, files, modules, yuiReqs;
-    modules = {};
-
-    // reading all JS files under './app'
-    // I need to use "syspath.join(process.cwd()" otherwise I have...
-    // "Error: Cannot find module './app/config.js'" from node's
-    // internal
-    // module.js file.
-    files = readdir(syspath.join(process.cwd(), './app'))
-    console.log('FILES loaded');
-
-    originalAdd = YUI.add;
-    // This is a trick to get the 'requires' value from the module
-    // definition
-    YUI.add = function(name, fn, version, details) {
-      modules[name] = [];
-      if (details && details.requires) {
-        Y.Array.each(details.requires, function(value) {
-          modules[name].push(value);
-        });
-      }
-    };
-
-    Y.Array.each(paths, function(customJs) {
-      // It triggers the custom 'add' method above
-      require(customJs);
-    });
-    YUI.add = originalAdd;
-
-    // Getting all the YUI dependencies that we need
-    yuiReqs = [];
-    Y.Object.each(modules, function(requires) {
-      Y.Array.each(requires, function(value) {
-        if (!modules[value]) {
-          // This is not one of our modules but a yui one.
-          if (yuiReqs.indexOf(value) < 0) {
-            // avoid duplicates
-            yuiReqs.push(value);
-          }
-        }
-      });
-    });
-    return yuiReqs;
-  }
-
-  // Using the example
-  // http://yuilibrary.com/yui/docs/yui/loader-resolve.html
-  // It uses the reqs object that we created in the previous block and
-  // figures
-  // out the js files that contain it, so we can mount our combines js
-  // file
-  //for all the yui requirements.
-  function getYUIFiles(reqs) {
-    var loader, out;
-    loader = new Y.Loader({
-      base: './node_modules/yui/',
-      ignoreRegistered: true,
-      require: reqs
-    });
-    out = loader.resolve(true);
-    return out.js;
-  }
-
-  //reading all JS files under './app'
-  //I need to use "syspath.join(process.cwd()" otherwise I have...
-  //"Error: Cannot find module './app/config.js'" from node's internal
-  //module.js file.
-  paths = readdir(syspath.join(process.cwd(), './app'));
-
-  //Get the name of all the YUI modules that our custom js files use.
-  reqs = loadRequires(paths);
-
-  //Combine yui files
-  combine(getYUIFiles(reqs),
+  // Get all of the YUI files and their dependencies, and combine them.
+  merge.combine(merge.getYUIFiles(reqs),
       './app/assets/javascripts/generated/all-yui.js', true);
 
-  //Combine third part js libraries
-  combine([ './app/assets/javascripts/d3.v2.min.js',
+  // Combine third party js libraries
+  merge.combine([ './app/assets/javascripts/d3.v2.min.js',
       './app/assets/javascripts/reconnecting-websocket.js',
       './app/assets/javascripts/svg-layouts.js' ],
       './app/assets/javascripts/generated/all-third.js', true);
 
-  //Combine modules-debug.js and config.js
-  combine([ './app/modules-debug.js', './app/config.js' ],
+  // Now we only need to generate the file that is used to tell YUI where all
+  // the dependencies are.  We either use a debug version or the production
+  // version.  The debug version is simply pointers to the individual files.
+  // The production version aggregates all of the files together.
+
+  // Creating the combined file for the modules-debug.js and config.js files
+  merge.combine([ './app/modules-debug.js', './app/config.js' ],
       './app/assets/javascripts/generated/all-app-debug.js', false);
 
-  //Combine  all our custom js files
-  combine(paths, './app/assets/javascripts/generated/all-app.js', true);
+  // Creating the combined file for all our files.  Note that this includes
+  // app/modules.js in the rollup, which is why that file still needs exist.
+  merge.combine(paths, './app/assets/javascripts/generated/all-app.js', true);
 });
