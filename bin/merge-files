@@ -14,12 +14,7 @@
 
 'use strict';
 
-// We need the yui name to be available in all modules (as a global variable).
-// This only happens if we remove the 'var' keyword or add it to the "global"
-// variable.
-global.YUI = require('yui').YUI;
-
-YUI().use(['yui'], function(Y) {
+require('yui').YUI().use(['yui'], function(Y) {
   var merge = require('../lib/merge-files.js'),
       syspath = require('path'),
       paths,
