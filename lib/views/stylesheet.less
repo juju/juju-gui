@@ -5,9 +5,10 @@
 /* Define common colors. */
 @label-color: #292929;
 @text-entry-color: #6d6e70;
+@charm-panel-orange: #dd4814;
 @charm-panel-configure-title-color: #eee7d5;
 @charm-panel-configure-name-color: #8f8f88;
-@charm-panel-deploy-button-color: #dd4814;
+@charm-panel-deploy-button-color: @charm-panel-orange;
 @charm-panel-deploy-button-bottom-gradient: #e65c19;
 @charm-panel-deploy-button-shadow: #8a2d0c;
 @charm-panel-cancel-button-color: #93a39f;
@@ -15,6 +16,8 @@
 @charm-panel-cancel-button-shadow: #515050;
 @charm-panel-background-color: #eeeeee;
 @charm-panel-border-color: #BEBEBE;
+@charm-paneel-border-top-color: #E0DEDE;
+@charm-panel-padding-left: 10px;
 @navbar-color: #2D2D2D!important;
 
 body {
@@ -27,6 +30,18 @@ input, button, select, textarea {
     font-family: @font-family;
 }
 
+.create-border-radius(@radius) {
+    -moz-border-radius: @radius;
+    -webkit-border-radius: @radius;
+    border-radius: @radius;
+}
+
+.create-box-shadow(@arguments) {
+    -moz-box-shadow: @arguments;
+    -webkit-box-shadow: @arguments;
+    box-shadow: @arguments;
+}
+
 .create-button(@gradient-start, @gradient-end, @shadow-color, @v-pos) {
     @blur: 2px;
     background-image: -ms-linear-gradient(top, @gradient-start, @gradient-end);
@@ -36,20 +51,14 @@ input, button, select, textarea {
     background-image: -moz-linear-gradient(top, @gradient-start, @gradient-end);
     background-image: linear-gradient(top, @gradient-start, @gradient-end);
     background-repeat: repeat-x;
-    -moz-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-                        2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
-    -webkit-box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-                           2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
-    box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
-                   2px 0 3px -2px @shadow-color inset, -2px 0 3px -2px @shadow-color inset;
-    @border-radii: ~"6px / 7px";
-    -moz-border-radius: @border-radii;
-    -webkit-border-radius: @border-radii;
-    border-radius: @border-radii;
+    // Using a variable here because LESS strips commas in mixin args.
+    @box-shadow: 0 (@v-pos + 3) @blur -@blur @shadow-color inset,
+                 2px 0 3px -2px @shadow-color inset,
+                 -2px 0 3px -2px @shadow-color inset;
+    .create-box-shadow(@box-shadow);
+    .create-border-radius(~"6px / 7px");
     border: none;
 }
-
-
 
 i.sprite {
     display: inline-block;
@@ -145,6 +154,7 @@ i.sprite {
                         font-size: 1em;
                     }
                     &:focus {
+                        color: gray;
                         border-color: rgba(82, 168, 236, 0.8);
                         outline: 0;
                         outline: thin dotted 9;
@@ -216,15 +226,8 @@ svg {
     display: none;
     background-color: @background_color;
     color: #fdf6e3;
-
-    border-radius: @border_radius;
-    -moz-border-radius: @border_radius;
-    -webkit-border-radius: @border_radius;
-
-    box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
-    -moz-box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
-    -webkit-box-shadow: -2px 4px 4px 0 rgba(0, 0, 0, 0.5);
-
+    .create-border-radius(@border_radius);
+    .create-box-shadow(-2px 4px 4px 0 rgba(0, 0, 0, 0.5));
     top: 0;
     left: 0;
     position: absolute;
@@ -268,9 +271,7 @@ svg {
             cursor: pointer;
             line-height: 32px;
             padding: 5px 5px 5px 5px;
-            border-radius: @border_radius;
-            -moz-border-radius: @border_radius;
-            -webkit-border-radius: @border_radius;
+            .create-border-radius(@border_radius);
 
             &.view-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
@@ -376,9 +377,7 @@ div.state-pending {
 
 .unit (@min_height: 20px, @border_radius:3px) {
     padding: 5px;
-    -webkit-border-radius: @border_radius;
-    -moz-border-radius: @border_radius;
-    border-radius: @border_radius;
+    .create-border-radius(@border_radius);
     margin-bottom: 0px;
     min-height: @min_height;
     cursor: pointer;
@@ -728,12 +727,8 @@ g.unit {
     background: white;
     padding: 1.6em;
     border: solid black 2px;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 6px;
-    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
-    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+    .create-border-radius(6px);
+    .create-box-shadow(0 3px 7px rgba(0, 0, 0, 0.3));
     -webkit-background-clip: padding-box;
     -moz-background-clip: padding-box;
     background-clip: padding-box;
@@ -808,10 +803,12 @@ g.unit {
         margin-left: 5px;
         text-shadow: none;
         background-position: 0 0;     /* Needed to defeat bootstrap btn:hover 0 -15px*/
-        .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-bottom-gradient,
+        .create-button(@charm-panel-deploy-button-color,
+                       @charm-panel-deploy-button-bottom-gradient,
                        @charm-panel-deploy-button-shadow, 0px);
         &:active {
-            .create-button(@charm-panel-deploy-button-color, @charm-panel-deploy-button-color,
+            .create-button(@charm-panel-deploy-button-color,
+                           @charm-panel-deploy-button-color,
                            @charm-panel-deploy-button-shadow, 1px);
         }
     }
@@ -839,9 +836,10 @@ g.unit {
       background-color: #FFFFFF;
       border-bottom: 1px solid @charm-panel-border-color;
       height: 52px;
-      padding-left: 8px;
+      padding-left: @charm-panel-padding-left;
       .btn {
           margin-top: 12px;
+          width: 67px;
       }
     }
     .search-charm-inner {
@@ -874,12 +872,12 @@ g.unit {
             border-bottom: 1px solid @charm-panel-border-color;
             font-family: @font-family-medium;
             font-weight: normal;
-            padding: 8px 12px;
+            padding: 8px @charm-panel-padding-left;
             i {
                 float: right;
             }
             &.first {
-                border-top: 1px solid #E0DEDE;
+                border-top: 1px solid @charm-paneel-border-top-color;
             }
         }
         h5 {
@@ -891,13 +889,13 @@ g.unit {
         #charm-panel-head {
             border-top: 1px solid #FFFFFF;
             border-bottom: 1px solid @charm-panel-border-color;
-            padding: 1ex 12px 10px 12px;
+            padding: 1ex 10px 10px @charm-panel-padding-left;
         }
         .collapsible {
             background-color: #E7E7E7;
             line-height: 16px;
             overflow: hidden;
-            padding: 0px 12px;
+            padding: 0px @charm-panel-padding-left;
             :last-child {
                 margin-bottom: 11px;
             }
@@ -905,6 +903,9 @@ g.unit {
         &.charm-description {
             color: #58595B;
             font-size: 12px;
+            .btn.deploy {
+                margin-left: 0;
+            }
             .charm-section {
                 .commitmessage {
                     padding: 0.8ex 0 1ex 1em;
@@ -920,12 +921,17 @@ g.unit {
         }
         &.config-variant {
             font-size: 14px;
-
+            border-top: 1px solid @charm-paneel-border-top-color;
+            .charm-entry {
+                padding: 5px @charm-panel-padding-left;
+                &:nth-of-type(2) {
+                    margin-bottom: 15px;
+                }
+            }
             .control-group {
                 width: auto;
                 margin-bottom: 0;
                 margin-top: 1ex;
-                padding: 0px 12px;
                 clear: both;
             }
             .control-description {
@@ -941,6 +947,23 @@ g.unit {
             .controls {
                 margin-left: auto;
                 margin-right: 0;
+                input[type=text] {
+                    color: @text-entry-color;
+                    font-style: italic;
+                    font-size: 12px;
+                    height: 15px;
+                    width: 250px;
+                    margin: 0;
+                    .create-border-radius(6px);
+                    // Using a variable here because LESS strips commas in
+                    // mixin args.
+                    @box-shadow: 0 1px 3px #959595 inset, 0 1px 0 white;
+                    .create-box-shadow(@box-shadow);
+                }
+                input[type=checkbox] {
+                    margin-left: 1ex;
+                    margin-top: 0.7ex;
+                }
             }
             .config-field {
                 font-size: 16px;
@@ -950,6 +973,8 @@ g.unit {
                 position: relative;
                 width: 252px;
                 height: 25px;
+                margin-bottom: 20px;
+                margin-top: 20px;
             }
             .config-file-upload-widget {
                 position: absolute;
@@ -960,6 +985,8 @@ g.unit {
             }
             .config-file-upload-overlay {
                 background: url(/juju-ui/assets/images/getfile_button.png) no-repeat;
+                color: #4c4c4c;
+                font-family: @font-family-medium;
                 position: absolute;
                 top: 0;
                 left: 0;
@@ -980,12 +1007,6 @@ g.unit {
                 width: auto;
                 z-index: 2;
             }
-            .controls.boolean {
-                input {
-                    margin-left: 1ex;
-                    margin-top: 0.7ex;
-                }
-            }
             .btn {
                  margin-top: 5px;
             }
@@ -994,33 +1015,49 @@ g.unit {
     .search-result-div {
         overflow-y:auto;
         overflow-x:hidden;
+        background-color: #EEEEEE;
         .series-charms {
-            border-top: 4px solid #D0D0D0;
-            margin-top: 8px;
-            margin-bottom: 4px;
-            &:first-child {
-                border: none;
-                margin-top: 0;
-            }
             h3 {
-                font-weight: bold;
-                text-transform: uppercase;
-                font-size: 11px;
+                font-weight: normal;
+                font-size: 16px;
+                text-transform: capitalize;
+                padding-left: @charm-panel-padding-left;
+                background-color: #CBCBCB;
+                border-top: 1px solid #989898;
+            }
+            ul {
+                margin-bottom: 0;
             }
             .charm-entry {
-                border-top: 1px solid #D0D0D0;
-                padding: 0.5em 4px;
-                padding-bottom: 4px;
-                margin: 0.2em 0 0 2px;
+                padding: 11px @charm-panel-padding-left;
+                border-top: 1px solid #FFFFFF;
+                border-bottom: 1px solid #BDBDBD;
                 &:first-child {
-                    border: none;
-                    padding-top: 0;
+                    padding-top: 11px;
+                }
+                &:last-child {
+                    border-bottom: none;
+                }
+                &:nth-child(odd) {
+                    background-color: #EDEDED;
+                }
+                &:nth-child(even) {
+                    background-color: #F3F3F3;
+                }
+                &:hover {
+                    background-color: white;
+                }
+                a.charm-detail {
+                    font-weight: normal;
+                    font-size: 16px;
+                    color: @charm-panel-orange;
+                    line-height: 18px;
                 }
                 .charm-summary {
                     margin-bottom: 4px;
-                }
-                a.charm-detail {
-                    font-weight: bold;
+                    font-size: 12px;
+                    line-height: 14px;
+                    padding-top: 6px;
                 }
                 .btn {
                     float: right;
@@ -1250,9 +1287,7 @@ div.inline {
     background-color: white;
     border: solid 1px black;
     padding: 0.2em 0.5em 0.3em;
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
+    .create-border-radius(3px);
     min-width: 20px;
     max-width: 400px;
 }
@@ -1260,11 +1295,11 @@ div.inline {
 .charm-panel-configure {
   background-image: url(/juju-ui/assets/images/configure-cog.png);
   background-repeat: no-repeat;
-  background-position: 230px 42px;
+  background-position: 230px 38px;
   border-top: 2px solid #dd4814;
   background-color: #2F2A27;
-  height: 93px;
-  padding-left: 8px;
+  height: 90px;
+  padding-left: @charm-panel-padding-left;
   .title {
     font-weight: lighter;
     font-size: 22px;
