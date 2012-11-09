@@ -12,27 +12,27 @@ YUI.add('d3-components', function(Y) {
       L = Y.Lang;
 
   var Module = Y.Base.create('Module', Y.Base, [], {
-        /**
-         * @property events
-         * @type {object}
-         **/
-        events: {
-          scene: {},
-          d3: {},
-          yui: {}
-        },
+    /**
+     * @property events
+     * @type {object}
+     **/
+    events: {
+      scene: {},
+      d3: {},
+      yui: {}
+    },
 
-        initializer: function() {
-          this.events = Y.merge(this.events);
-        }
-      }, {
-        ATTRS: {
-          component: {},
-          options: {},
-          container: {getter: function() {
-            return this.get('component').get('container');}}
-        }
-      });
+    initializer: function() {
+      this.events = Y.merge(this.events);
+    }
+  }, {
+    ATTRS: {
+      component: {},
+      options: {},
+      container: {getter: function() {
+        return this.get('component').get('container');}}
+    }
+  });
   ns.Module = Module;
 
 
@@ -62,12 +62,12 @@ YUI.add('d3-components', function(Y) {
      * @method addModule
      * @chainable
      * @param {Module} ModClassOrInstance bound will be to this.
-     * @param {Object} options dict of options set as options attribute on module.
+     * @param {Object} options dict of options set as options attribute on
+     * module.
      *
      * Add a Module to this Component. This will bind its events and set up all
      * needed event subscriptions.  Modules can return three sets of events
-     * that will be bound in
-     * different ways
+     * that will be bound in different ways
      *
      *   - scene: {selector: event-type: handlerName} -> YUI styled event
      *            delegation
@@ -81,18 +81,20 @@ YUI.add('d3-components', function(Y) {
       var config = options || {},
           module = ModClassOrInstance,
           modEvents;
+
       if (!(ModClassOrInstance instanceof Module)) {
         module = new ModClassOrInstance();
       }
-      module.setAttrs({component: this,
+      module.setAttrs({
+        component: this,
         options: config});
 
-        this.modules[module.name] = module;
+      this.modules[module.name] = module;
 
-        modEvents = module.events;
-        this.events[module.name] = modEvents;
-        this.bind(module.name);
-        return this;
+      modEvents = module.events;
+      this.events[module.name] = modEvents;
+      this.bind(module.name);
+      return this;
     },
 
     /**
@@ -174,15 +176,15 @@ YUI.add('d3-components', function(Y) {
 
       // Bind 'scene' events
       Y.each(modEvents.scene, function(handlers, selector, sceneEvents) {
-          Y.each(handlers, function(handler, trigger) {
-            handler = _normalizeHandler(handler, module, selector);
-            if (L.isValue(handler)) {
-              _bindEvent(trigger, handler.callback, container, selector, self);
-            }
-          })
+        Y.each(handlers, function(handler, trigger) {
+          handler = _normalizeHandler(handler, module, selector);
+          if (L.isValue(handler)) {
+            _bindEvent(trigger, handler.callback, container, selector, self);
+          }
+        });
       });
 
-     // Bind 'yui' custom/global subscriptions
+      // Bind 'yui' custom/global subscriptions
       // yui: {str: str_or_function}
       // TODO {str: str/func/obj}
       //       where object includes phase (before, on, after)
@@ -192,7 +194,7 @@ YUI.add('d3-components', function(Y) {
           var resolvedHandler = {};
           Y.each(modEvents.yui, function(handler, name) {
             handler = _normalizeHandler(handler, module);
-            if (!handler || handler.phase != eventPhase) {
+            if (!handler || handler.phase !== eventPhase) {
               return;
             }
             resolvedHandler[name] = handler.callback;
@@ -250,8 +252,9 @@ YUI.add('d3-components', function(Y) {
       module = this.modules[modName];
 
       function _normalizeHandler(handler, module) {
-        if (handler && !L.isFunction(handler))
+        if (handler && !L.isFunction(handler)) {
           handler = module[handler];
+        }
         return handler;
       }
 
@@ -261,8 +264,7 @@ YUI.add('d3-components', function(Y) {
           d3.selectAll(selector).on(trigger, handler);
         });
       });
-
-   },
+    },
 
     /**
      * @method _unbindD3Events
@@ -287,14 +289,16 @@ YUI.add('d3-components', function(Y) {
           d3.selectAll(selector).on(trigger, null);
         });
       });
-     },
+    },
 
     /**
      * @method unbind
      * Internal. Called automatically by removeModule.
      **/
     unbind: function(moduleName) {
-      var eventSet = this.events;
+      var eventSet = this.events,
+          filtered = {};
+
       function _unbind(modEvents) {
         Y.each(modEvents.subscriptions, function(handler) {
           if (handler) {
@@ -305,7 +309,6 @@ YUI.add('d3-components', function(Y) {
       }
 
       if (moduleName) {
-        var filtered = {};
         filtered[moduleName] = eventSet[moduleName];
         eventSet = filtered;
       }
