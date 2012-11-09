@@ -979,7 +979,6 @@ YUI.add('juju-charm-panel', function(Y) {
 
 }, '0.1.0', {
   requires: [
-     'juju-templates',
     'view',
     'juju-view-utils',
     'node',
