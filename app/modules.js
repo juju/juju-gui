@@ -1,7 +1,8 @@
 GlobalConfig = {
   debug: false,
-  // YUI will not try to download already registered modules
+  // YUI will not download the modules. They are supposed to be already loaded.
   ignoreRegistered: true,
+  bootstrap: true,
 
   groups: {
     juju: {

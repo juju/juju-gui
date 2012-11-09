@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 /**
- * We should aggregate and minimize the js sources in order to improve the load
- * speed of the application.
+ * We aggregate and minimize the js sources in order to improve the load speed
+ * of the application.
  *
  * We don't want to use the yui combo loader feature because we want to be able
- * to run from only static files and we want to be able to run behaind a
+ * to run from only static files and we want to be able to run behind a
  * firewall without access to the internet.
  *
  * The final product will provide three js files: one for the YUI dependencies,
@@ -32,6 +32,13 @@ require('yui').YUI().use(['yui'], function(Y) {
 
   // Get the name of all the YUI modules that our custom js files use directly.
   reqs = merge.loadRequires(paths);
+
+  // For some reason the loader does not get these requirements.
+  reqs.push('lang/datatype-date-format_en-US');
+  reqs.push('parallel');
+  reqs.push('app-transitions-native');
+  reqs.push('gallery-markdown');
+  reqs.push('loader-base');
 
   // Get all of the YUI files and their dependencies, and combine them.
   merge.combine(merge.getYUIFiles(reqs),

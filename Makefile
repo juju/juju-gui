@@ -79,12 +79,10 @@ test: install
 	@./test-server.sh
 
 debug: install
-	@./bin/write-properties true
 	@echo "Customize config.js to modify server settings"
-	@node server.js
+	@node server.js debug
 
 server: install
-	@./bin/write-properties false
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
