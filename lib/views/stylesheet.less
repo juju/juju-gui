@@ -17,6 +17,7 @@
 @charm-panel-background-color: #eeeeee;
 @charm-panel-border-color: #BEBEBE;
 @charm-paneel-border-top-color: #E0DEDE;
+@charm-panel-padding-left: 10px;
 @navbar-color: #2D2D2D!important;
 
 body {
@@ -835,9 +836,10 @@ g.unit {
       background-color: #FFFFFF;
       border-bottom: 1px solid @charm-panel-border-color;
       height: 52px;
-      padding-left: 8px;
+      padding-left: @charm-panel-padding-left;
       .btn {
           margin-top: 12px;
+          width: 67px;
       }
     }
     .search-charm-inner {
@@ -870,7 +872,7 @@ g.unit {
             border-bottom: 1px solid @charm-panel-border-color;
             font-family: @font-family-medium;
             font-weight: normal;
-            padding: 8px 12px;
+            padding: 8px @charm-panel-padding-left;
             i {
                 float: right;
             }
@@ -887,13 +889,13 @@ g.unit {
         #charm-panel-head {
             border-top: 1px solid #FFFFFF;
             border-bottom: 1px solid @charm-panel-border-color;
-            padding: 1ex 12px 10px 12px;
+            padding: 1ex 10px 10px @charm-panel-padding-left;
         }
         .collapsible {
             background-color: #E7E7E7;
             line-height: 16px;
             overflow: hidden;
-            padding: 0px 12px;
+            padding: 0px @charm-panel-padding-left;
             :last-child {
                 margin-bottom: 11px;
             }
@@ -901,6 +903,9 @@ g.unit {
         &.charm-description {
             color: #58595B;
             font-size: 12px;
+            .btn.deploy {
+                margin-left: 0;
+            }
             .charm-section {
                 .commitmessage {
                     padding: 0.8ex 0 1ex 1em;
@@ -918,7 +923,7 @@ g.unit {
             font-size: 14px;
             border-top: 1px solid @charm-paneel-border-top-color;
             .charm-entry {
-                padding: 5px 12px;
+                padding: 5px @charm-panel-padding-left;
                 &:nth-of-type(2) {
                     margin-bottom: 15px;
                 }
@@ -945,6 +950,7 @@ g.unit {
                 input[type=text] {
                     color: @text-entry-color;
                     font-style: italic;
+                    font-size: 12px;
                     height: 15px;
                     width: 250px;
                     margin: 0;
@@ -1015,7 +1021,7 @@ g.unit {
                 font-weight: normal;
                 font-size: 16px;
                 text-transform: capitalize;
-                padding-left: 11px;
+                padding-left: @charm-panel-padding-left;
                 background-color: #CBCBCB;
                 border-top: 1px solid #989898;
             }
@@ -1023,7 +1029,7 @@ g.unit {
                 margin-bottom: 0;
             }
             .charm-entry {
-                padding: 11px;
+                padding: 11px @charm-panel-padding-left;
                 border-top: 1px solid #FFFFFF;
                 border-bottom: 1px solid #BDBDBD;
                 &:first-child {
@@ -1293,7 +1299,7 @@ div.inline {
   border-top: 2px solid #dd4814;
   background-color: #2F2A27;
   height: 90px;
-  padding-left: 8px;
+  padding-left: @charm-panel-padding-left;
   .title {
     font-weight: lighter;
     font-size: 22px;
