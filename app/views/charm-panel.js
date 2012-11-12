@@ -881,6 +881,13 @@ YUI.add('juju-charm-panel', function(Y) {
       }
     });
 
+    /**
+     * Hide the charm panel.
+     * Set isPanelVisible to false.
+     *
+     * @method hide
+     * @return {undefined} Mutates only.
+     */
     function hide() {
       if (isPanelVisible) {
         var headerBox = Y.one('#charm-search-trigger-container'),
@@ -912,6 +919,13 @@ YUI.add('juju-charm-panel', function(Y) {
       }
     }));
 
+    /**
+     * Show the charm panel.
+     * Set isPanelVisible to true.
+     *
+     * @method show
+     * @return {undefined} Mutates only.
+     */
     function show() {
       if (!isPanelVisible) {
         var headerBox = Y.one('#charm-search-trigger-container'),
@@ -932,6 +946,14 @@ YUI.add('juju-charm-panel', function(Y) {
         }
       }
     }
+
+    /**
+     * Show the charm panel if it is hidden, hide it otherwise.
+     *
+     * @method toggle
+     * @param {Object} ev An event object (with a "halt" method).
+     * @return {undefined} Dispatches only.
+     */
     function toggle(ev) {
       if (Y.Lang.isValue(ev)) {
         // This is important to not have the clickoutside handler immediately
