@@ -894,7 +894,7 @@ YUI.add('juju-charm-panel', function(Y) {
         container.hide(!testing, {duration: 0.25});
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i#charm-search-chevron').replaceClass(
-            'chevron_up', 'chevron_down');
+              'chevron_up', 'chevron_down');
         }
         isPanelVisible = false;
       }
@@ -928,7 +928,7 @@ YUI.add('juju-charm-panel', function(Y) {
         updatePanelPosition();
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i#charm-search-chevron').replaceClass(
-            'chevron_down', 'chevron_up');
+              'chevron_down', 'chevron_up');
         }
       }
     }
