@@ -811,7 +811,8 @@ YUI.add('juju-view-utils', function(Y) {
           (bottomNavbar ? bottomNavbar.get('offsetHeight') : 0) -
           navbar.get('offsetHeight') - 1;
 
-      result.width = viewport.get('offsetWidth');
+      result.width = Math.floor(parseFloat(
+            viewport.getComputedStyle('width')));
 
       // Make sure we don't get sized any smaller than the minimum.
       result.height = Math.max(result.height, minheight || 0);
