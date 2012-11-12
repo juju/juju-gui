@@ -39,10 +39,10 @@ YUI.add('juju-charm-panel', function(Y) {
         // clientHeight and offsetHeight are not as reliable in tests.
         if (parseInt(el.getStyle('height'), 10) === 0) {
           el.show('sizeIn', {duration: 0.25, width: null});
-          icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
+          icon.replaceClass('chevron_down', 'chevron_up');
         } else {
           el.hide('sizeOut', {duration: 0.25, width: null});
-          icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
+          icon.replaceClass('chevron_up', 'chevron_down');
         }
       },
       /**
@@ -337,7 +337,7 @@ YUI.add('juju-charm-panel', function(Y) {
               charm = this.get('model');
           if (Y.Lang.isValue(charm)) {
             container.setHTML(this.template(charm.getAttrs()));
-            container.all('i.icon-chevron-up').each(function(el) {
+            container.all('i.chevron_down').each(function(el) {
               el.ancestor('.charm-section').one('div')
                 .setStyle('height', '0px');
             });
@@ -893,8 +893,8 @@ YUI.add('juju-charm-panel', function(Y) {
         }
         container.hide(!testing, {duration: 0.25});
         if (Y.Lang.isValue(trigger)) {
-          trigger.one('i').replaceClass(
-              'icon-chevron-up', 'icon-chevron-down');
+          trigger.one('i#charm-search-chevron').replaceClass(
+            'chevron_up', 'chevron_down');
         }
         isPanelVisible = false;
       }
@@ -927,8 +927,8 @@ YUI.add('juju-charm-panel', function(Y) {
         isPanelVisible = true;
         updatePanelPosition();
         if (Y.Lang.isValue(trigger)) {
-          trigger.one('i').replaceClass(
-              'icon-chevron-down', 'icon-chevron-up');
+          trigger.one('i#charm-search-chevron').replaceClass(
+            'chevron_down', 'chevron_up');
         }
       }
     }
