@@ -11,7 +11,7 @@ module.exports = function(grunt) {
 
         },
         files: {
-          'bin' : 'app/assets/images/*'
+          'bin': 'app/assets/images/*'
         }
       }
     }
