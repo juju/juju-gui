@@ -1242,7 +1242,9 @@ YUI.add('juju-view-environment', function(Y) {
          * Show subordinate relations for a service.
          *
          * @method showSubordinateRelations
-         * @param {Object} subordinate The sub-rel-block g element.
+         * @param {Object} subordinate The sub-rel-block g element in the form
+         * of a DOM node.
+         * @return {undefined}
          */
         showSubordinateRelations: function(subordinate) {
           this.keepSubRelationsVisible = true;
@@ -1253,11 +1255,14 @@ YUI.add('juju-view-environment', function(Y) {
          * Hide subordinate relations.
          *
          * @method hideSubordinateRelations
+         * @return {undefined}
          */
         hideSubordinateRelations: function() {
+          var container = this.get('container');
           this.removeSVGClass('.subordinate-rel-group', 'active');
           this.keepSubRelationsVisible = false;
-          this.removeSVGClass(Y.one('.sub-rel-count.active'), 'active');
+          this.removeSVGClass(container.one('.sub-rel-count.active'),
+             'active');
         },
 
         /*
