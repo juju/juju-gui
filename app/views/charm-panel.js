@@ -804,7 +804,6 @@ YUI.add('juju-charm-panel', function(Y) {
     var charmStore = config.charm_store,
         charms = new models.CharmList(),
         app = config.app,
-        testing = !!config.testing,
         container = Y.Node.create('<div />').setAttribute(
             'id', 'juju-search-charm-panel'),
         charmsSearchPanelNode = Y.Node.create(),
@@ -898,7 +897,7 @@ YUI.add('juju-charm-panel', function(Y) {
             headerSpan.addClass('active-border');
           }
         }
-        container.hide(!testing, {duration: 0.25});
+        container.hide();
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i#charm-search-chevron').replaceClass(
               'chevron_up', 'chevron_down');
@@ -937,7 +936,7 @@ YUI.add('juju-charm-panel', function(Y) {
           }
         }
         container.setStyles({opacity: 0, display: 'block'});
-        container.show(!testing, {duration: 0.25});
+        container.show();
         isPanelVisible = true;
         updatePanelPosition();
         if (Y.Lang.isValue(trigger)) {
