@@ -31,7 +31,7 @@ require('yui').YUI().use(['yui'], function(Y) {
       paths,
       reqs,
       filesToLoad,
-      thirdPartyCss;
+      thirdPartyCSS;
 
   // First we find all of the paths to our custom Javascript in the app
   // directory.  We need to tell the function to ignore the "assets" directory
@@ -55,17 +55,17 @@ require('yui').YUI().use(['yui'], function(Y) {
 
   // Get all of the YUI files and their dependencies
   filesToLoad = merge.getYUIFiles(reqs);
-  thirdPartyCss = filesToLoad.css;
-  thirdPartyCss.push('./app/assets/stylesheets/bootstrap-2.0.4.css');
-  thirdPartyCss.push('./app/assets/stylesheets/bootstrap-responsive-2.0.4.css');
-  console.log('CSS: ' + thirdPartyCss);
+  thirdPartyCSS = filesToLoad.css;
+  thirdPartyCSS.push('./app/assets/stylesheets/bootstrap-2.0.4.css');
+  thirdPartyCSS.push('./app/assets/stylesheets/bootstrap-responsive-2.0.4.css');
+  console.log('CSS: ' + thirdPartyCSS);
 
   // Combine YUI js files
   merge.combine(filesToLoad.js,
       './app/assets/javascripts/generated/all-yui.js', 'uglifyjs');
 
   // Combine third party css files
-  merge.combine(thirdPartyCss,
+  merge.combine(thirdPartyCSS,
       './app/assets/stylesheets/all-static.css', 'yui-css');
 
   // Combine third party js libraries
