@@ -123,9 +123,7 @@ i.sprite {
                 border-left: 1px solid transparent;
                 &.active-border {
                     border-left-color: darkgray;
-                    -moz-box-shadow: inset 1px 0 0 lightgray;
-                    -webkit-box-shadow: inset 1px 0 0 lightgray;
-                    box-shadow: inset 1px 0 0 lightgray;
+                    .create-box-shadow(inset 1px 0 0 lightgray);
                 }
             }
             .nav-section {
@@ -797,9 +795,7 @@ g.unit {
     width: @charm-panel-width;
     background-color: white;
     border-left: darkgray solid 1px;
-    -moz-box-shadow: inset 1px 0 0 lightgray;
-    -webkit-box-shadow: inset 1px 0 0 lightgray;
-    box-shadow: inset 1px 0 0 lightgray;
+    .create-box-shadow(inset 1px 0 0 lightgray);
 
     .charm-panel-configure .btn {
         float: right;
