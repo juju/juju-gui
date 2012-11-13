@@ -39,10 +39,10 @@ YUI.add('juju-charm-panel', function(Y) {
         // clientHeight and offsetHeight are not as reliable in tests.
         if (parseInt(el.getStyle('height'), 10) === 0) {
           el.show('sizeIn', {duration: 0.25, width: null});
-          icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
+          icon.replaceClass('chevron_down', 'chevron_up');
         } else {
           el.hide('sizeOut', {duration: 0.25, width: null});
-          icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
+          icon.replaceClass('chevron_up', 'chevron_down');
         }
       },
       /**
@@ -337,7 +337,7 @@ YUI.add('juju-charm-panel', function(Y) {
               charm = this.get('model');
           if (Y.Lang.isValue(charm)) {
             container.setHTML(this.template(charm.getAttrs()));
-            container.all('i.icon-chevron-up').each(function(el) {
+            container.all('i.chevron_down').each(function(el) {
               el.ancestor('.charm-section').one('div')
                 .setStyle('height', '0px');
             });
@@ -881,6 +881,13 @@ YUI.add('juju-charm-panel', function(Y) {
       }
     });
 
+    /**
+     * Hide the charm panel.
+     * Set isPanelVisible to false.
+     *
+     * @method hide
+     * @return {undefined} Mutates only.
+     */
     function hide() {
       if (isPanelVisible) {
         var headerBox = Y.one('#charm-search-trigger-container'),
@@ -893,8 +900,8 @@ YUI.add('juju-charm-panel', function(Y) {
         }
         container.hide(!testing, {duration: 0.25});
         if (Y.Lang.isValue(trigger)) {
-          trigger.one('i').replaceClass(
-              'icon-chevron-up', 'icon-chevron-down');
+          trigger.one('i#charm-search-chevron').replaceClass(
+              'chevron_up', 'chevron_down');
         }
         isPanelVisible = false;
       }
@@ -912,6 +919,13 @@ YUI.add('juju-charm-panel', function(Y) {
       }
     }));
 
+    /**
+     * Show the charm panel.
+     * Set isPanelVisible to true.
+     *
+     * @method show
+     * @return {undefined} Mutates only.
+     */
     function show() {
       if (!isPanelVisible) {
         var headerBox = Y.one('#charm-search-trigger-container'),
@@ -927,11 +941,19 @@ YUI.add('juju-charm-panel', function(Y) {
         isPanelVisible = true;
         updatePanelPosition();
         if (Y.Lang.isValue(trigger)) {
-          trigger.one('i').replaceClass(
-              'icon-chevron-down', 'icon-chevron-up');
+          trigger.one('i#charm-search-chevron').replaceClass(
+              'chevron_down', 'chevron_up');
         }
       }
     }
+
+    /**
+     * Show the charm panel if it is hidden, hide it otherwise.
+     *
+     * @method toggle
+     * @param {Object} ev An event object (with a "halt" method).
+     * @return {undefined} Dispatches only.
+     */
     function toggle(ev) {
       if (Y.Lang.isValue(ev)) {
         // This is important to not have the clickoutside handler immediately
