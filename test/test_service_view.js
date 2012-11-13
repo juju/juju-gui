@@ -98,7 +98,8 @@
       var view = makeServiceView(),
           unit = container.one('ul.thumbnails').one('div.unit'),
           showUnitCalled = false;
-      view.on('*:showUnit', function() {
+      view.on('navigateTo', function(e) {
+        assert.equal('/unit/mysql-0/', e.url);
         showUnitCalled = true;
       });
       unit.simulate('click');
@@ -304,7 +305,8 @@
          var destroy = container.one('#destroy-modal-panel .btn-danger');
          destroy.simulate('click');
          var called = false;
-         view.on('showEnvironment', function(ev) {
+         view.on('navigateTo', function(ev) {
+           assert.equal('/', ev.url);
            called = true;
          });
          var callbacks = Y.Object.values(env._txn_callbacks);

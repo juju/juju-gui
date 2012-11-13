@@ -87,7 +87,7 @@ YUI.add('juju-view-charm-collection', function(Y) {
       // The deploy call generates an event chain leading to a call to
       // `app.on_database_changed()`, which re-dispatches the current view.
       // For this reason we need to redirect to the root page right now.
-      this.fire('showEnvironment');
+      this.fire('navigateTo', {url: '/'});
       env.deploy(charmUrl, serviceName, config,
           Y.bind(this._deployCallback, this)
       );
@@ -130,7 +130,8 @@ YUI.add('juju-view-charm-collection', function(Y) {
       // TODO: Use view.events structure to attach this
       container.all('div.thumbnail').each(function(el) {
         el.on('click', function(evt) {
-          self.fire('showCharm', {charm_data_url: this.getData('charm-url')});
+          self.fire('navigateTo',
+              {url: '/charms/' + this.getData('charm-url')});
         });
       });
 

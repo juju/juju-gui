@@ -591,7 +591,14 @@ YUI.add('juju-charm-panel', function(Y) {
           this.tooltip.hide();
           delete this.tooltip.field;
         },
-        /** Pass clicks on the overlay on to the correct recipient. */
+        /**
+         * Pass clicks on the overlay on to the correct recipient.
+         * The recipient can be the upload widget or the file remove one.
+         *
+         * @method onOverlayClick
+         * @param {Object} evt An event object.
+         * @return {undefined} Dispatches only.
+         */
         onOverlayClick: function(evt) {
           var container = this.get('container');
           if (this.configFileContent) {
@@ -600,6 +607,14 @@ YUI.add('juju-charm-panel', function(Y) {
             container.one('.config-file-upload-widget').getDOMNode().click();
           }
         },
+        /**
+         * Handle the file upload click event.
+         * Call onFileLoaded or onFileError if an error occurs during upload.
+         *
+         * @method onFileChange
+         * @param {Object} evt An event object.
+         * @return {undefined} Mutates only.
+         */
         onFileChange: function(evt) {
           var container = this.get('container');
           console.log('onFileChange:', evt);
@@ -613,6 +628,13 @@ YUI.add('juju-charm-panel', function(Y) {
           container.one('.config-file-upload-overlay')
             .setContent('Remove file');
         },
+        /**
+         * Handle the file remove click event.
+         * Restore the file upload widget on click.
+         *
+         * @method onFileRemove
+         * @return {undefined} Mutates only.
+         */
         onFileRemove: function() {
           var container = this.get('container');
           this.configFileContent = null;
@@ -624,9 +646,20 @@ YUI.add('juju-charm-panel', function(Y) {
           this.fileInput.replace(Y.Node.create('<input type="file"/>')
                                  .addClass('config-file-upload-widget'));
           this.fileInput = container.one('.config-file-upload-widget');
-          container.one('.config-file-upload-overlay')
-            .setContent('Use configuration file');
+          var overlay = container.one('.config-file-upload-overlay');
+          overlay.setContent('Use configuration file');
+          // Ensure the charm section height is correctly restored.
+          overlay.ancestor('.collapsible')
+            .show('sizeIn', {duration: 0.25, width: null});
         },
+        /**
+         * Callback called when a file is correctly uploaded.
+         * Hide the charm configuration section.
+         *
+         * @method onFileLoaded
+         * @param {Object} evt An event object.
+         * @return {undefined} Mutates only.
+         */
         onFileLoaded: function(evt) {
           this.configFileContent = evt.target.result;
 
@@ -645,6 +678,14 @@ YUI.add('juju-charm-panel', function(Y) {
           }
           this.get('container').one('.charm-settings').hide();
         },
+        /**
+         * Callback called when an error occurs during file upload.
+         * Hide the charm configuration section.
+         *
+         * @method onFileError
+         * @param {Object} evt An event object (with a "target.error" attr).
+         * @return {undefined} Mutates only.
+         */
         onFileError: function(evt) {
           console.log('onFileError:', evt);
           var msg;
