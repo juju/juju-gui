@@ -104,7 +104,7 @@
 
     beforeEach(function(done) {
       container = Y.Node.create('<div id="test-container" />');
-      Y.one('body').append(container);
+      Y.one('body').prepend(container);
       db = new models.Database();
       db.on_delta({data: environment_delta});
       done();
@@ -307,7 +307,7 @@
            env: env
          }).render();
          var service = container.one('.service'),
-             add_rel = container.one('#service-menu .add-relation'),
+             add_rel = container.one('.add-relation'),
              after_evt;
 
          // Mock endpoints
@@ -335,7 +335,13 @@
            return endpoints;
          };
 
-         service.simulate('click');
+         // Toggle the control panel for the Add Relation button.
+         view.service_click_actions.toggleControlPanel(
+             d3.select(service.getDOMNode()).datum(),
+             view,
+             service);
+         // Mock an event object so that d3.mouse does not throw a NPE.
+         d3.event = {};
          add_rel.simulate('click');
          container.all('.selectable-service')
                .size()
@@ -343,7 +349,11 @@
          container.all('.dragline')
                .size()
                .should.equal(1);
-         service.next().simulate('click');
+         // Start the process of adding a relation.
+         view.service_click_actions.ambiguousAddRelationCheck(
+             d3.select(service.next().getDOMNode()).datum(),
+             view,
+             service.next());
          container.all('.selectable-service').size()
             .should.equal(0);
          // The database is initialized with three relations in beforeEach.
