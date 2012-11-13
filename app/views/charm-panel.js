@@ -936,7 +936,7 @@ YUI.add('juju-charm-panel', function(Y) {
           }
         }
         container.setStyles({opacity: 0, display: 'block'});
-        container.show();
+        container.show(true);
         isPanelVisible = true;
         updatePanelPosition();
         if (Y.Lang.isValue(trigger)) {
