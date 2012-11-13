@@ -4,10 +4,21 @@ GlobalConfig = {
   ignoreRegistered: true,
 
   groups: {
+    d3: {
+      modules: {
+        'd3': {
+          'fullpath': '/juju-ui/assets/javascripts/d3.v2.min.js'
+        },
+        'd3-components': {
+          fullpath: '/juju-ui/assets/javascripts/d3-components.js'
+        }
+      }
+    },
     juju: {
       modules: {
         'juju-views': {
           use: [
+            'd3-components',
             'juju-templates',
             'juju-notifications',
             'juju-view-utils',
