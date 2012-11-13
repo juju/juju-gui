@@ -14,6 +14,9 @@ GlobalConfig = {
       modules: {
         'd3': {
           'fullpath': '/juju-ui/assets/javascripts/d3.v2.min.js'
+        },
+        'd3-components': {
+          fullpath: '/juju-ui/assets/javascripts/d3-components.js'
         }
       }
     },
@@ -68,6 +71,7 @@ GlobalConfig = {
 
         'juju-views': {
           use: [
+            'd3-components',
             'juju-templates',
             'juju-notifications',
             'juju-view-utils',

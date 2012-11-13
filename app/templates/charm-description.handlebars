@@ -1,5 +1,5 @@
 <div>
-  <div class="charm-nav-back"><i class="icon-chevron-left"></i> Back</div>
+  <div class="charm-nav-back"><i class="sprite back_triangle"></i> Back</div>
 
   <div class="charm-description charm-panel">
     <div id="charm-panel-head">
@@ -12,7 +12,7 @@
     </div>
 
     <div class="charm-section">
-      <h4 class="first"><i class="icon-chevron-down"></i> Description</h4>
+      <h4 class="first"><i class="sprite chevron_up"></i> Description</h4>
       <div class="collapsible">
         <h5>Summary</h5>
         <p>{{summary}}</p>
@@ -33,7 +33,7 @@
 
     {{#any requires provides}}
     <div class="charm-section">
-      <h4><i class="icon-chevron-up"></i> Interfaces</h4>
+      <h4><i class="sprite chevron_down"></i> Interfaces</h4>
       <div class="collapsible">
         {{#if provides}}
         <h5>Provides</h5>
@@ -57,7 +57,7 @@
 
     {{#if last_change}}
     <div class="charm-section">
-      <h4><i class="icon-chevron-up"></i> Change Log</h4>
+      <h4><i class="sprite chevron_down"></i> Change Log</h4>
       <div class="collapsible">
         {{#with last_change}}
         <h5>Last Change</h5>
@@ -71,7 +71,7 @@
 
     {{#any requires provides}}
     <div class="charm-section">
-      <h4><i class="icon-chevron-up"></i> Related Charms</h4>
+      <h4><i class="sprite chevron_down"></i> Related Charms</h4>
       <div class="collapsible" id="related-charms">
         Loading...
       </div>
