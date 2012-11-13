@@ -18,6 +18,7 @@
 @charm-panel-border-color: #BEBEBE;
 @charm-paneel-border-top-color: #E0DEDE;
 @charm-panel-padding-left: 10px;
+@charm-panel-width: 292px;
 @navbar-color: #2D2D2D!important;
 
 body {
@@ -117,11 +118,12 @@ i.sprite {
             margin: 2px 0 0 0;
             padding: 20px 0 4px;
             &#charm-search-trigger-container {
-                width: 292px;
+                width: @charm-panel-width;
                 white-space: nowrap;
                 border-left: 1px solid transparent;
                 &.active-border {
-                    border-left-color: lightgray;
+                    border-left-color: darkgray;
+                    .create-box-shadow(inset 1px 0 0 lightgray);
                 }
             }
             .nav-section {
@@ -790,9 +792,10 @@ g.unit {
     top: 70px;
     height: 100px;
     position: absolute;
-    width: 292px;
+    width: @charm-panel-width;
     background-color: white;
-    border-left: lightgray solid 1px;
+    border-left: darkgray solid 1px;
+    .create-box-shadow(inset 1px 0 0 lightgray);
 
     .charm-panel-configure .btn {
         float: right;
@@ -836,6 +839,8 @@ g.unit {
       background-color: #FFFFFF;
       border-bottom: 1px solid @charm-panel-border-color;
       height: 52px;
+      width: @charm-panel-width - @charm-panel-padding-left - 1px;
+      float: right;
       padding-left: @charm-panel-padding-left;
       .btn {
           margin-top: 12px;
@@ -857,6 +862,8 @@ g.unit {
     .charm-panel {
         background-color: @charm-panel-background-color;
         height: 432px;
+        width: @charm-panel-width - 1px;
+        float: right;
         overflow-y: auto;
         overflow-x: hidden;
         h3 {
@@ -1017,6 +1024,8 @@ g.unit {
         overflow-y:auto;
         overflow-x:hidden;
         background-color: #EEEEEE;
+        width: @charm-panel-width - 1px;
+        float: right;
         .series-charms {
             h3 {
                 font-weight: normal;
@@ -1298,8 +1307,11 @@ div.inline {
   background-repeat: no-repeat;
   background-position: 230px 38px;
   border-top: 2px solid #dd4814;
+  border-left: 1px solid #2f2a27 + #333;
   background-color: #2F2A27;
   height: 90px;
+  width: @charm-panel-width - @charm-panel-padding-left - 1px;
+  float: right;
   padding-left: @charm-panel-padding-left;
   .title {
     font-weight: lighter;
