@@ -1,4 +1,4 @@
-GlobalConfig = {
+var GlobalConfig = {
   debug: false,
   // YUI will not download the modules. They are supposed to be already loaded.
   ignoreRegistered: true,
