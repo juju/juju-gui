@@ -307,7 +307,7 @@
            env: env
          }).render();
          var service = container.one('.service'),
-             add_rel = container.one('#service-menu .add-relation'),
+             add_rel = container.one('.add-relation'),
              after_evt;
 
          // Mock endpoints
@@ -340,10 +340,15 @@
              d3.select(service.getDOMNode()).datum(),
              view,
              service);
+         // Mock an event object so that d3.mouse does not throw a NPE.
+         d3.event = {};
          add_rel.simulate('click');
          container.all('.selectable-service')
                .size()
                .should.equal(2);
+         container.all('.dragline')
+               .size()
+               .should.equal(1);
          // Start the process of adding a relation.
          view.service_click_actions.ambiguousAddRelationCheck(
              d3.select(service.next().getDOMNode()).datum(),
@@ -378,6 +383,28 @@
          view.get('rmrelation_dialog').hide();
        });
 
+    it('should stop creating a relation if the background is clicked',
+        function() {
+          var db = new models.Database(),
+              endpoint_map = {'service-1': {requires: [], provides: []}},
+              view = new views.environment(
+              { container: container,
+                db: db,
+                env: env,
+                getServiceEndpoints: function() {return endpoint_map;}}),
+              service = new models.Service({ id: 'service-1'});
+
+          db.services.add([service]);
+          view.render();
+
+          // If the user has clicked on the "Add Relation" menu item...
+          view.startRelation(service);
+          assert.isTrue(view.buildingRelation);
+          // ...clicking on the background causes the relation drag to stop.
+          view.backgroundClicked();
+          assert.isFalse(view.buildingRelation);
+        });
+
     // TODO: This will be fully testable once we have specification on the
     // list view itself.  Skipped until then.
     it.skip('must be able to switch between graph and list views',
@@ -398,6 +425,7 @@
         }
     );
   });
+
   describe('view model support infrastructure', function() {
     var Y, views, models;
 
