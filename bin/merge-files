@@ -29,7 +29,9 @@ require('yui').YUI().use(['yui'], function(Y) {
   var merge = require('../lib/merge-files.js'),
       syspath = require('path'),
       paths,
-      reqs;
+      reqs,
+      filesToLoad,
+      thirdPartyCss;
 
   // First we find all of the paths to our custom Javascript in the app
   // directory.  We need to tell the function to ignore the "assets" directory
@@ -37,7 +39,8 @@ require('yui').YUI().use(['yui'], function(Y) {
   // "syspath.join(process.cwd(), ...)" or else I have... "Error: Cannot find
   // module './app/config.js'" from node's internal module.js file.
   paths = merge.readdir(syspath.join(process.cwd(), './app'),
-    [syspath.join(process.cwd(), './app/assets'), './app/modules-debug.js']);
+    [syspath.join(process.cwd(), './app/assets'),
+     syspath.join(process.cwd(), './app/modules-debug.js')]);
 
   // Get the name of all the YUI modules that our custom js files use directly.
   reqs = merge.loadRequires(paths);
@@ -50,15 +53,26 @@ require('yui').YUI().use(['yui'], function(Y) {
   reqs.push('gallery-markdown');
   reqs.push('loader-base');
 
-  // Get all of the YUI files and their dependencies, and combine them.
-  merge.combine(merge.getYUIFiles(reqs),
-      './app/assets/javascripts/generated/all-yui.js', true);
+  // Get all of the YUI files and their dependencies
+  filesToLoad = merge.getYUIFiles(reqs);
+  thirdPartyCss = filesToLoad.css;
+  thirdPartyCss.push('./app/assets/stylesheets/bootstrap-2.0.4.css');
+  thirdPartyCss.push('./app/assets/stylesheets/bootstrap-responsive-2.0.4.css');
+  console.log('CSS: ' + thirdPartyCss);
+
+  // Combine YUI js files
+  merge.combine(filesToLoad.js,
+      './app/assets/javascripts/generated/all-yui.js', 'uglifyjs');
+
+  // Combine third party css files
+  merge.combine(thirdPartyCss,
+      './app/assets/stylesheets/all-static.css', 'yui-css');
 
   // Combine third party js libraries
   merge.combine([ './app/assets/javascripts/d3.v2.min.js',
       './app/assets/javascripts/reconnecting-websocket.js',
       './app/assets/javascripts/svg-layouts.js' ],
-      './app/assets/javascripts/generated/all-third.js', true);
+      './app/assets/javascripts/generated/all-third.js', 'uglifyjs');
 
   // Now we only need to generate the file that is used to tell YUI where all
   // the dependencies are.  We either use a debug version or the production
@@ -67,9 +81,10 @@ require('yui').YUI().use(['yui'], function(Y) {
 
   // Creating the combined file for the modules-debug.js and config.js files
   merge.combine([ './app/modules-debug.js', './app/config.js' ],
-      './app/assets/javascripts/generated/all-app-debug.js', false);
+      './app/assets/javascripts/generated/all-app-debug.js');
 
   // Creating the combined file for all our files.  Note that this includes
   // app/modules.js in the rollup, which is why that file still needs exist.
-  merge.combine(paths, './app/assets/javascripts/generated/all-app.js', true);
+  merge.combine(paths, './app/assets/javascripts/generated/all-app.js', 
+      'uglifyjs');
 });
