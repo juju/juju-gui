@@ -266,12 +266,12 @@ describe('charm description', function() {
         // We use the last change div.
         section_container = html.one('div.charm-section:last-child');
     section_container.one('div').getStyle('height').should.equal('0px');
-    assert(section_container.one('h4 i').hasClass('icon-chevron-up'));
+    assert(section_container.one('h4 i').hasClass('chevron_down'));
     section_container.one('h4').simulate('click');
-    assert(section_container.one('h4 i').hasClass('icon-chevron-down'));
+    assert(section_container.one('h4 i').hasClass('chevron_up'));
     section_container.one('div').getStyle('height').should.not.equal('0px');
     section_container.one('h4').simulate('click');
-    assert(section_container.one('h4 i').hasClass('icon-chevron-up'));
+    assert(section_container.one('h4 i').hasClass('chevron_down'));
     // The transition is still running, so we can't check display.
   });
 

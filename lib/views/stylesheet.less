@@ -852,7 +852,7 @@ g.unit {
         color: @charm-panel-deploy-button-color;
         cursor: pointer;
         font-size: 14px;
-        padding: 7px 4px;
+        padding: 7px @charm-panel-padding-left;
     }
     .charm-panel {
         background-color: @charm-panel-background-color;
@@ -875,6 +875,7 @@ g.unit {
             padding: 8px @charm-panel-padding-left;
             i {
                 float: right;
+                margin-top: 8px;
             }
             &.first {
                 border-top: 1px solid @charm-paneel-border-top-color;
