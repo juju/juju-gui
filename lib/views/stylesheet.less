@@ -1024,6 +1024,8 @@ g.unit {
                 padding-left: @charm-panel-padding-left;
                 background-color: #CBCBCB;
                 border-top: 1px solid #989898;
+                height: 20px;
+                line-height: 16px;
             }
             ul {
                 margin-bottom: 0;
@@ -1032,6 +1034,7 @@ g.unit {
                 padding: 11px @charm-panel-padding-left;
                 border-top: 1px solid #FFFFFF;
                 border-bottom: 1px solid #BDBDBD;
+                height: 70px;
                 &:first-child {
                     padding-top: 11px;
                 }
@@ -1055,13 +1058,19 @@ g.unit {
                 }
                 .charm-summary {
                     margin-bottom: 4px;
+                    /*margin-right: 47px;*/
+		    width: 190px;
                     font-size: 12px;
                     line-height: 14px;
                     padding-top: 6px;
+		    height: 30px;
+                    /*text-overflow: ellipsis; */
+                    /*white-space: nowrap;*/
                 }
                 .btn {
                     float: right;
                     opacity: 0;
+                    margin-top: 20px;
                 }
             }
         }
@@ -1312,3 +1321,46 @@ div.inline {
     margin-top: 5px;
   }
 }
+
+
+.ellipsis {
+        overflow: hidden;
+        height: 28px;
+        line-height: 14px;
+}
+
+.ellipsis:before {
+        content:"";
+        float: left;
+        width: 5px; height: 28px;
+}
+
+.ellipsis > *:first-child {
+        float: right;
+        width: 100%;
+        margin-left: -5px; }
+
+.ellipsis:after {
+        content: "\02026";
+
+        box-sizing: content-box;
+        -webkit-box-sizing: content-box;
+        -moz-box-sizing: content-box;
+
+        float: right; position: relative;
+        top: -14px; left: 100%;
+        width: 3em; margin-left: -3em;
+        padding-right: 5px;
+
+        text-align: right;
+
+        background: -webkit-gradient(linear, left top, right top,
+                from(rgba(255, 255, 255, 0)), to(white), color-stop(50%, white));
+        background: -moz-linear-gradient(to right, rgba(255, 255, 255, 0), white 50%, white);
+        background: -o-linear-gradient(to right, rgba(255, 255, 255, 0), white 50%, white);
+        background: -ms-linear-gradient(to right, rgba(255, 255, 255, 0), white 50%, white);
+        background: linear-gradient(to right, rgba(255, 255, 255, 0), white 50%, white); }
+
+/* charm-summary: height 28px, overflow hidden.
+   js iterates and shortens
+*/
