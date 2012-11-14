@@ -10,7 +10,7 @@
  *
  * The final product will provide three js files: one for the YUI dependencies,
  * one for our custom js code and one for third party js like d3.
- * 
+ *
  * Known issues:
  * (1) If we set "bootstrap=false" in the GlobalConfig object, yui disables the
  *     loader object. It means it wont even try to download modules. We cannot
@@ -48,6 +48,7 @@ require('yui').YUI().use(['yui'], function(Y) {
   reqs.push('parallel');
   reqs.push('app-transitions-native');
   reqs.push('gallery-markdown');
+  reqs.push('gallery-ellipsis');
   reqs.push('loader-base');
 
   // Get all of the YUI files and their dependencies, and combine them.

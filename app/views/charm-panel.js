@@ -107,6 +107,7 @@ YUI.add('juju-charm-panel', function(Y) {
               Y.Object.values(data),
               function(val) { return val['interface']; });
         }
+        return undefined;
       };
 
   /**
@@ -180,6 +181,7 @@ YUI.add('juju-charm-panel', function(Y) {
           raw_entries = searchText ? resultEntries : defaultEntries,
           entries = raw_entries && makeRenderableResults(raw_entries);
       container.setHTML(this.template({ charms: entries }));
+      container.all('.charm-summary').ellipsis({'lines': 2});
       this._setScroll();
       return this;
     },
@@ -492,7 +494,7 @@ YUI.add('juju-charm-panel', function(Y) {
   views.CharmDescriptionView = CharmDescriptionView;
 
   /**
-   * Display a unit.
+   * Display a charms configuration panel.
    *
    * @class CharmConfigurationView
    * @namespace views
@@ -1032,6 +1034,7 @@ YUI.add('juju-charm-panel', function(Y) {
     'overlay',
     'dom-core',
     'juju-models',
-    'event-resize'
+    'event-resize',
+    'gallery-ellipsis'
   ]
 });
