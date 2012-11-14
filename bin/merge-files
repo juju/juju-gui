@@ -58,7 +58,7 @@ require('yui').YUI().use(['yui'], function(Y) {
   // Combine third party js libraries
   merge.combine([ './app/assets/javascripts/d3.v2.min.js',
       './app/assets/javascripts/reconnecting-websocket.js',
-      './app/assets/javascripts/svg-layouts.js' ],
+      './app/assets/javascripts/svg-layouts.js'],
       './app/assets/javascripts/generated/all-third.js', true);
 
   // Now we only need to generate the file that is used to tell YUI where all
@@ -67,10 +67,10 @@ require('yui').YUI().use(['yui'], function(Y) {
   // The production version aggregates all of the files together.
 
   // Creating the combined file for the modules-debug.js and config.js files
-  merge.combine([ './app/modules-debug.js', './app/config.js' ],
-      './app/assets/javascripts/generated/all-app-debug.js', false);
+  merge.combine([ './app/modules-debug.js', './app/config.js'],
+          './app/assets/javascripts/generated/all-app-debug.js', false);
 
   // Creating the combined file for all our files.  Note that this includes
-  // app/modules.js in the rollup, which is why that file still needs exist.
+  // app/modules.js in the rollup, which is why that file still needs to exist.
   merge.combine(paths, './app/assets/javascripts/generated/all-app.js', true);
 });
