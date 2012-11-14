@@ -986,7 +986,7 @@ YUI.add('juju-charm-panel', function(Y) {
       var headerBox = Y.one('#charm-search-trigger-container'),
           dimensions = utils.getEffectiveViewportSize();
       return { x: headerBox && Math.round(headerBox.getX()),
-               height: dimensions.height + 17 };
+               height: dimensions.height + 18 };
     }
 
     if (Y.Lang.isValue(trigger)) {

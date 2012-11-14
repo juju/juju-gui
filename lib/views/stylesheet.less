@@ -1030,7 +1030,7 @@ g.unit {
         overflow-y:auto;
         overflow-x:hidden;
         background-color: #EEEEEE;
-        width: @charm-panel-width - 1px;
+        width: @charm-panel-width;
         float: right;
         .series-charms {
             h3 {
@@ -1039,10 +1039,13 @@ g.unit {
                 text-transform: capitalize;
                 padding-left: @charm-panel-padding-left;
                 background-color: #CBCBCB;
+                border-left: 1px solid #CBCBCB - #333;
                 border-top: 1px solid #989898;
+                width: @charm-panel-width - 1;
             }
             ul {
                 margin-bottom: 0;
+                border-left: 1px solid lightgrey;
             }
             .charm-entry {
                 padding: 11px @charm-panel-padding-left;
@@ -1313,7 +1316,7 @@ div.inline {
   background-repeat: no-repeat;
   background-position: 230px 38px;
   border-top: 2px solid #dd4814;
-  border-left: 1px solid #2f2a27 + #333;
+  border-left: 1px solid #2f2a27 - #333;
   background-color: #2F2A27;
   height: 90px;
   width: @charm-panel-width - @charm-panel-padding-left - 1px;
