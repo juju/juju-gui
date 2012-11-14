@@ -56,9 +56,14 @@ require('yui').YUI().use(['yui'], function(Y) {
 
   // Combine third party js libraries
   merge.combine([ './app/assets/javascripts/d3.v2.min.js',
+      './app/assets/javascripts/d3-components.js',
       './app/assets/javascripts/reconnecting-websocket.js',
-      './app/assets/javascripts/svg-layouts.js'],
-      './app/assets/javascripts/generated/all-third.js', true);
+      './app/assets/javascripts/svg-layouts.js' ],
+      './app/assets/javascripts/generated/all-third-min.js', true);
+
+  // It has only one file but eventually it will have more.
+  merge.combine([ './app/assets/javascripts/d3.v2.js' ],
+      './app/assets/javascripts/generated/all-third.js', false);
 
   // Now we only need to generate the file that is used to tell YUI where all
   // the dependencies are.  We either use a debug version or the production
