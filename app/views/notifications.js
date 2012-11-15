@@ -3,10 +3,11 @@
 YUI.add('juju-notifications', function(Y) {
 
   var views = Y.namespace('juju.views'),
+      widgets = Y.namespace('juju.widgets'),
       Templates = views.Templates;
 
   /*
-   * Abstract Base class used to view a ModelList  of notifications
+   * Abstract Base class used to view a ModelList of notifications
    */
   var NotificationsBaseView = Y.Base.create('NotificationsBaseView',
       Y.View, [views.JujuBaseView], {
@@ -24,10 +25,31 @@ YUI.add('juju-notifications', function(Y) {
           notifications.after('create', this.slowRender, this);
           notifications.after('remove', this.slowRender, this);
           notifications.after('reset', this.slowRender, this);
+          // Bind new notifications to the notifier widget.
+          notifications.after('add', this.addNotifier, this);
 
           // Env connection state watcher
           env.on('connectedChange', this.slowRender, this);
+        },
 
+        /**
+         * Create and display a notifier widget when a notification is added.
+         * The notifier is created only if the notification is an error.
+         *
+         * @method addNotifier
+         * @param {Object} ev An event object (with a "model" attribute).
+         * @return {undefined} Mutates only.
+         */
+        addNotifier: function(ev) {
+          var notification = ev.model,
+              notifierBox = Y.one('#notifier-box');
+          // Show error notifications only if the DOM contain the notifier box.
+          if (notifierBox && notification.get('level') === 'error') {
+            new widgets.Notifier({
+              title: notification.get('title'),
+              message: notification.get('message')
+            }).render(notifierBox);
+          }
         },
 
         /*
@@ -251,6 +273,7 @@ YUI.add('juju-notifications', function(Y) {
     'view',
     'juju-view-utils',
     'node',
-    'handlebars'
+    'handlebars',
+    'notifier'
   ]
 });
