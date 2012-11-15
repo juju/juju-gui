@@ -21,3 +21,4 @@ yuidoc
 app/assets/manifest.appcache
 app/assets/sprite
 app/assets/javascripts/generated/
+app/assets/stylesheets/all-static.css

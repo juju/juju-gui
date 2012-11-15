@@ -17,7 +17,8 @@ SPRITE_GENERATED_FILES=app/assets/sprite/sprite.css app/assets/sprite/sprite.png
 COMPRESSED_FILES=app/assets/javascripts/generated/all-app-debug.js \
 	app/assets/javascripts/generated/all-app.js \
 	app/assets/javascripts/generated/all-third.js \
-	app/assets/javascripts/generated/all-yui.js
+	app/assets/javascripts/generated/all-yui.js \
+	app/assets/stylesheets/all-static.css
 DATE=$(shell date -u)
 APPCACHE=app/assets/manifest.appcache
 
@@ -66,7 +67,8 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(COMPRESSED_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES)
+$(COMPRESSED_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
+	@rm -f app/assets/stylesheets/all-static.css
 	@rm -Rf app/assets/javascripts/generated/
 	@mkdir app/assets/javascripts/generated/
 	@./bin/merge-files
@@ -92,6 +94,7 @@ clean:
 	@rm -Rf bin/sprite/
 	@rm -Rf app/assets/sprite/
 	@rm -Rf app/assets/javascripts/generated/
+	@rm -f app/assets/stylesheets/all-static.css
 
 $(APPCACHE): manifest.appcache.in
 	@cp manifest.appcache.in $(APPCACHE)
