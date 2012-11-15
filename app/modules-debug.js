@@ -1,7 +1,7 @@
 // This file is used for development only. In order to use it you should call
 // the "make debug" command. This command passes the "debug" argument to the
 // "lib/server.js".
-GlobalConfig = {
+var GlobalConfig = {
   filter: 'debug',
   // Set "true" for verbose logging of YUI
   debug: false,
