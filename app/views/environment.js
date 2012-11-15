@@ -434,7 +434,29 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         relationClick: function(d, self) {
-          self.removeRelationConfirm(d, this, self);
+          if (d.scope === 'container') {
+            var subRelDialog = views.createModalPanel(
+                'You may not remove a subordinate relation.',
+                '#rmsubrelation-modal-panel');
+            subRelDialog.addButton(
+                { value: 'Cancel',
+                  section: Y.WidgetStdMod.FOOTER,
+                  /**
+                   * @method action Hides the dialog on click.
+                   * @param {object} e The click event.
+                   * @return {undefined} nothing.
+                   */
+                  action: function(e) {
+                    e.preventDefault();
+                    subRelDialog.hide();
+                  },
+                  classNames: ['btn']
+                });
+            subRelDialog.get('boundingBox').all('.yui3-button')
+                .removeClass('yui5-button');
+          } else {
+            self.removeRelationConfirm(d, this, self);
+          }
         },
 
         /**

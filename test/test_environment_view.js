@@ -369,12 +369,17 @@
            db: db,
            env: env}).render();
 
-         var relation = container.one('.rel-label'),
+         var relation = container.one('#relation-0000000001 .rel-label'),
          dialog_btn,
          panel;
 
          relation.simulate('click');
-         panel = Y.one('.yui3-panel');
+         panel = Y.one('#rmrelation-modal-panel');
+
+         // There should be a 'remove relation' button and a 'cancel' button
+         // on the dialog.
+         panel.all('button').size().should.equal(2);
+
          dialog_btn = panel.one('.btn-danger');
          dialog_btn.simulate('click');
          container.all('.to-remove')
@@ -382,6 +387,28 @@
               .should.equal(1);
          view.get('rmrelation_dialog').hide();
        });
+
+    it('must not allow removing a subordinate relation between services',
+        function() {
+         var view = new views.environment({
+           container: container,
+           db: db,
+           env: env}).render();
+
+         // Get a subordinate relation.
+         var relation = container.one('#relation-0000000007 .rel-label'),
+         dialog_btn,
+         panel;
+
+         relation.simulate('click');
+         panel = Y.one('#rmsubrelation-modal-panel');
+
+         // There should only be a cancel button on the warning dialog.
+         panel.all('button').size().should.equal(1);
+
+         // Clicking cancel will hide the dialog.
+         panel.one('button').simulate('click');
+        });
 
     it('should stop creating a relation if the background is clicked',
         function() {
