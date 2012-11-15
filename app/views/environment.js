@@ -146,7 +146,22 @@ YUI.add('juju-view-environment', function(Y) {
             },
             mouseleave: function(d, self) {
               // Remove 'active' class from all subordinate relations.
-              self.removeSVGClass('.subordinate-rel-group', 'active');
+              if (!self.keepSubRelationsVisible) {
+                self.removeSVGClass('.subordinate-rel-group', 'active');
+              }
+            },
+            /**
+             * Toggle the visibility of subordinate relations for visibility
+             * or removal.
+             * @param {object} d The data-bound object (the subordinate).
+             * @param {object} self The view.
+             */
+            click: function(d, self) {
+              if (self.keepSubRelationsVisible) {
+                self.hideSubordinateRelations();
+              } else {
+                self.showSubordinateRelations(this);
+              }
             }
           },
           '.service-status': {
@@ -179,6 +194,7 @@ YUI.add('juju-view-environment', function(Y) {
               container.all('.environment-menu.active').removeClass('active');
               self.service_click_actions.toggleControlPanel(null, self);
               self.cancelRelationBuild();
+              self.hideSubordinateRelations();
             },
             mousemove: 'mousemove'
           },
@@ -395,8 +411,10 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         serviceClick: function(d, self) {
-          // Ignore if we clicked on a control panel image.
-          if (self.hasSVGClass(d3.event.target, 'cp-button')) {
+          // Ignore if we clicked outside the actual service node.
+          var container = self.get('container'),
+              mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+          if (!d.containsPoint(mouse_coords, self.zoom)) {
             return;
           }
           // Get the current click action
@@ -1374,6 +1392,33 @@ YUI.add('juju-view-environment', function(Y) {
               picker = container.one('.graph-list-picker');
           picker.removeClass('inactive');
           picker.one('.picker-expanded').removeClass('active');
+        },
+
+        /**
+         * Show subordinate relations for a service.
+         *
+         * @method showSubordinateRelations
+         * @param {Object} subordinate The sub-rel-block g element in the form
+         * of a DOM node.
+         * @return {undefined} nothing.
+         */
+        showSubordinateRelations: function(subordinate) {
+          this.keepSubRelationsVisible = true;
+          this.addSVGClass(Y.one(subordinate).one('.sub-rel-count'), 'active');
+        },
+
+        /**
+         * Hide subordinate relations.
+         *
+         * @method hideSubordinateRelations
+         * @return {undefined} nothing.
+         */
+        hideSubordinateRelations: function() {
+          var container = this.get('container');
+          this.removeSVGClass('.subordinate-rel-group', 'active');
+          this.keepSubRelationsVisible = false;
+          this.removeSVGClass(container.one('.sub-rel-count.active'),
+              'active');
         },
 
         /*

@@ -67,7 +67,7 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(COMPRESSED_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES)
+$(COMPRESSED_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
 	@rm -f app/assets/stylesheets/all-static.css
 	@rm -Rf app/assets/javascripts/generated/
 	@mkdir app/assets/javascripts/generated/
