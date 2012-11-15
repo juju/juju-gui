@@ -12,14 +12,14 @@ YUI.add('notifier', function(Y) {
    * @namespace widgets
    */
   function Notifier(config) {
-      Notifier.superclass.constructor.apply(this, arguments);
+    Notifier.superclass.constructor.apply(this, arguments);
   }
 
   Notifier.NAME = 'Notifier';
   Notifier.ATTRS = {
-    title : {value: ''},
-    message : {value: ''},
-    timeout : {value: 8000}
+    title: {value: ''},
+    message: {value: ''},
+    timeout: {value: 8000}
   };
 
   /**
@@ -71,18 +71,18 @@ YUI.add('notifier', function(Y) {
      */
     bindUI: function() {
       this.get('contentBox').on(
-        'hover',
-        function() {
-          if (this.timer) {
-            this.timer.pause();
-          }
-        },
-        function() {
-          if (this.timer) {
-            this.timer.resume();
-          }
-        },
-        this
+          'hover',
+          function() {
+            if (this.timer) {
+              this.timer.pause();
+            }
+          },
+          function() {
+            if (this.timer) {
+              this.timer.resume();
+            }
+          },
+          this
       );
     },
 
