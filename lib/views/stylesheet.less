@@ -1032,6 +1032,7 @@ g.unit {
         background-color: #EEEEEE;
         width: @charm-panel-width - 1px;
         float: right;
+        border-top: 1px solid #989898;
         .series-charms {
             h3 {
                 font-weight: normal;
@@ -1039,7 +1040,8 @@ g.unit {
                 text-transform: capitalize;
                 padding-left: @charm-panel-padding-left;
                 background-color: #CBCBCB;
-                border-top: 1px solid #989898;
+                height: 20px;
+                line-height: 16px;
             }
             ul {
                 margin-bottom: 0;
@@ -1048,6 +1050,7 @@ g.unit {
                 padding: 11px @charm-panel-padding-left;
                 border-top: 1px solid #FFFFFF;
                 border-bottom: 1px solid #BDBDBD;
+                height: 70px;
                 &:first-child {
                     padding-top: 11px;
                 }
@@ -1071,6 +1074,7 @@ g.unit {
                 }
                 .charm-summary {
                     margin-bottom: 4px;
+                    width: 190px;
                     font-size: 12px;
                     line-height: 14px;
                     padding-top: 6px;
@@ -1078,6 +1082,7 @@ g.unit {
                 .btn {
                     float: right;
                     opacity: 0;
+                    margin-top: 20px;
                 }
             }
         }
