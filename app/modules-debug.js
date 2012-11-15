@@ -24,6 +24,10 @@ GlobalConfig = {
       modules: {
         // Primitives
 
+        'notifier': {
+          fullpath: '/juju-ui/widgets/notifier.js'
+        },
+
         'svg-layouts': {
           fullpath: '/juju-ui/assets/javascripts/svg-layouts.js'
         },
