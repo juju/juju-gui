@@ -449,11 +449,12 @@ YUI.add('juju-view-environment', function(Y) {
                   action: function(e) {
                     e.preventDefault();
                     subRelDialog.hide();
+                    subRelDialog.destroy();
                   },
                   classNames: ['btn']
                 });
             subRelDialog.get('boundingBox').all('.yui3-button')
-                .removeClass('yui5-button');
+                .removeClass('yui3-button');
           } else {
             self.removeRelationConfirm(d, this, self);
           }
@@ -1231,6 +1232,7 @@ YUI.add('juju-view-environment', function(Y) {
             db.fire('update');
           }
           view.get('rmrelation_dialog').hide();
+          view.get('rmrelation_dialog').destroy();
           confirmButton.set('disabled', false);
         },
 

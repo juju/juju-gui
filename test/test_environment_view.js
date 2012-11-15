@@ -408,6 +408,7 @@
 
          // Clicking cancel will hide the dialog.
          panel.one('button').simulate('click');
+         panel.all('button').size().should.equal(0);
         });
 
     it('should stop creating a relation if the background is clicked',
