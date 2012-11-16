@@ -414,3 +414,64 @@ describe('relation notifications', function() {
         'Relation with endpoint1 (relation type "relation1") was created');
   });
 });
+
+describe('notification visual feedback', function() {
+  var env, models, notifications, notificationsView, notifierBox, views, Y;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use('juju-env', 'juju-models', 'juju-views',
+        function(Y) {
+          var juju = Y.namespace('juju');
+          env = new juju.Environment();
+          models = Y.namespace('juju.models');
+          views = Y.namespace('juju.views');
+          done();
+        });
+  });
+
+  // Instantiate the notifications model list and view.
+  // Also create the notifier box and attach it as first element of the body.
+  beforeEach(function() {
+    notifications = new models.NotificationList();
+    notificationsView = new views.NotificationsView({
+      env: env,
+      notifications: notifications
+    });
+    notifierBox = Y.Node.create('<div id="notifier-box"></div>');
+    notifierBox.setStyle('display', 'none');
+    Y.one('body').prepend(notifierBox);
+  });
+
+  // Destroy the notifier box created in beforeEach.
+  afterEach(function() {
+    notifierBox.remove();
+    notifierBox.destroy(true);
+  });
+
+  // Assert the notifier box contains the expectedNumber of notifiers.
+  var assertNumNotifiers = function(expectedNumber) {
+    assert.equal(expectedNumber, notifierBox.get('children').size());
+  };
+
+  it('should appear when a new error is notified', function() {
+    notifications.add({title: 'mytitle', level: 'error'});
+    assertNumNotifiers(1);
+  });
+
+  it('should only appear when the DOM contains the notifier box', function() {
+    notifierBox.remove();
+    notifications.add({title: 'mytitle', level: 'error'});
+    assertNumNotifiers(0);
+  });
+
+  it('should not appear when the notification is not an error', function() {
+    notifications.add({title: 'mytitle', level: 'info'});
+    assertNumNotifiers(0);
+  });
+
+  it('should not appear when the notification comes form delta', function() {
+    notifications.add({title: 'mytitle', level: 'error', isDelta: true});
+    assertNumNotifiers(0);
+  });
+
+});

@@ -565,6 +565,56 @@ g.unit {
 }
 
 /*
+ * Notifier widget.
+ */
+#notifier-box {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    z-index: 9999;
+    .yui3-notifier-content {
+        @background-color: black;
+        @margin-left: 41px;
+        @margin-top: 13px;
+        @opacity: 0.8;
+        .create-border-radius(8px);
+        // Using a variable here because LESS strips commas in mixin args.
+        @box-shadow: 0 2px 4px lighten(@background-color, 10%),
+            0 1px 2px lighten(@background-color, 20%) inset;
+        .create-box-shadow(@box-shadow);
+        background-color: @background-color;
+        margin: 6px;
+        opacity: @opacity;
+        overflow: hidden;
+        width: 277px;
+        &:hover {
+            cursor: pointer;
+            opacity: @opacity - 0.1;
+        }
+        h3 {
+            color: #FDF6E3;
+            font-size: 16px;
+            font-weight: normal;
+            margin-top: @margin-top;
+            margin-left: @margin-left;
+        }
+        div {
+            color: #DDD7C6;
+            font-size: 12px;
+            line-height: 16px;
+            margin-left: @margin-left;
+            margin-bottom: 12px;
+        }
+        .sprite {
+            float: left;
+            margin-top: @margin-top + 5px;
+            margin-left: 12px;
+            opacity: 1;
+        }
+    }
+}
+
+/*
  * Overview Module
  */
 #overview {
