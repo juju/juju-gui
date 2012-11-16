@@ -420,13 +420,13 @@ describe('notification visual feedback', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use('juju-env', 'juju-models', 'juju-views',
-    function(Y) {
-      var juju = Y.namespace('juju');
-      env = new juju.Environment();
-      models = Y.namespace('juju.models');
-      views = Y.namespace('juju.views');
-      done();
-    });
+        function(Y) {
+          var juju = Y.namespace('juju');
+          env = new juju.Environment();
+          models = Y.namespace('juju.models');
+          views = Y.namespace('juju.views');
+          done();
+        });
   });
 
   // Instantiate the notifications model list and view.
