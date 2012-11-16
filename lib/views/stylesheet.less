@@ -16,7 +16,9 @@
 @charm-panel-cancel-button-shadow: #515050;
 @charm-panel-background-color: #eeeeee;
 @charm-panel-border-color: #BEBEBE;
-@charm-paneel-border-top-color: #E0DEDE;
+@charm-panel-border-top-color: #E0DEDE;
+@charm-panel-series-color: #CBCBCB;
+@charm-panel-configure-color: #2F2A27;
 @charm-panel-padding-left: 10px;
 @charm-panel-width: 292px;
 @navbar-color: #2D2D2D!important;
@@ -891,7 +893,7 @@ g.unit {
                 margin-top: 8px;
             }
             &.first {
-                border-top: 1px solid @charm-paneel-border-top-color;
+                border-top: 1px solid @charm-panel-border-top-color;
             }
         }
         h5 {
@@ -935,7 +937,7 @@ g.unit {
         }
         &.config-variant {
             font-size: 14px;
-            border-top: 1px solid @charm-paneel-border-top-color;
+            border-top: 1px solid @charm-panel-border-top-color;
             .charm-entry {
                 padding: 5px @charm-panel-padding-left;
                 &:nth-of-type(2) {
@@ -1038,8 +1040,8 @@ g.unit {
                 font-size: 16px;
                 text-transform: capitalize;
                 padding-left: @charm-panel-padding-left;
-                background-color: #CBCBCB;
-                border-left: 1px solid #CBCBCB - #333;
+                background-color: @charm-panel-series-color;
+                border-left: 1px solid @charm-panel-series-color - #333;
                 border-top: 1px solid #989898;
                 width: @charm-panel-width - 1;
             }
@@ -1316,11 +1318,10 @@ div.inline {
   background-repeat: no-repeat;
   background-position: 230px 38px;
   border-top: 2px solid #dd4814;
-  border-left: 1px solid #2f2a27 - #333;
-  background-color: #2F2A27;
+  border-left: 1px solid @charm-panel-configure-color - #333;
+  background-color: @charm-panel-configure-color;
   height: 90px;
-  width: @charm-panel-width - @charm-panel-padding-left - 1px;
-  float: right;
+  width: @charm-panel-width - @charm-panel-padding-left;
   padding-left: @charm-panel-padding-left;
   .title {
     font-weight: lighter;
