@@ -34,7 +34,10 @@ YUI.add('juju-notifications', function(Y) {
 
         /**
          * Create and display a notifier widget when a notification is added.
-         * The notifier is created only if the notification is an error.
+         * The notifier is created only if:
+         * - the notifier box exists in the DOM;
+         * - the notification is a local one (not related to the delta stream);
+         * - the notification is an error.
          *
          * @method addNotifier
          * @param {Object} ev An event object (with a "model" attribute).
@@ -44,7 +47,9 @@ YUI.add('juju-notifications', function(Y) {
           var notification = ev.model,
               notifierBox = Y.one('#notifier-box');
           // Show error notifications only if the DOM contain the notifier box.
-          if (notifierBox && notification.get('level') === 'error') {
+          if (notifierBox &&
+              !notification.get('isDelta') &&
+              notification.get('level') === 'error') {
             new widgets.Notifier({
               title: notification.get('title'),
               message: notification.get('message')
