@@ -65,12 +65,14 @@ YUI.add('notifier', function(Y) {
     /**
      * Attach event listeners which bind the UI to the widget state.
      * The mouse enter event on a notification node pauses the timer.
+     * The mouse click event on a notification destroys the widget.
      *
      * @method bindUI
      * @return {undefined} Mutates only.
      */
     bindUI: function() {
-      this.get('contentBox').on(
+      var contentBox = this.get('contentBox');
+      contentBox.on(
           'hover',
           function() {
             if (this.timer) {
@@ -84,6 +86,10 @@ YUI.add('notifier', function(Y) {
           },
           this
       );
+      contentBox.on('click', function(ev) {
+        this.hideAndDestroy();
+        ev.halt();
+      }, this);
     },
 
     /**

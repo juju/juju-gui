@@ -78,6 +78,17 @@ describe('notifier widget', function() {
     }, 250);
   });
 
+  it('should destroy notifications on click', function(done) {
+    makeNotifier();
+    notifierBox.one('*').simulate('click');
+    // A timeout of 250 milliseconds is used so that we ensure the destroying
+    // animation can be completed.
+    setTimeout(function() {
+      assertNumNotifiers(0);
+      done();
+    }, 250);
+  });
+
   it('should prevent notification removal on mouse enter', function(done) {
     makeNotifier('mytitle', 'mymessage', 1);
     notifierBox.one('*').simulate('mouseover');
