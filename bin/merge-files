@@ -40,6 +40,7 @@ require('yui').YUI().use(['yui'], function(Y) {
   paths = merge.readdir(syspath.join(process.cwd(), './app'),
     [syspath.join(process.cwd(), './app/assets'),
      syspath.join(process.cwd(), './app/modules-debug.js')]);
+
   // templates.js is a generated file. It is not part of the app directory.
   paths.push(syspath.join(process.cwd(), './build/juju-ui/templates.js'));
 

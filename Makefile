@@ -13,7 +13,8 @@ NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 	node_modules/node-minify
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
-SPRITE_GENERATED_FILES=build/juju-ui/assets/stylesheets/sprite.css build/juju-ui/assets/stylesheets/sprite.png
+SPRITE_GENERATED_FILES=build/juju-ui/assets/stylesheets/sprite.css \
+	build/juju-ui/assets/stylesheets/sprite.png
 PRODUCTION_FILES=build/juju-ui/assets/modules.js \
 	build/juju-ui/assets/config.js \
 	build/juju-ui/assets/app.js \
