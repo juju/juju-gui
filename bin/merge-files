@@ -60,7 +60,8 @@ require('yui').YUI().use(['yui'], function(Y) {
   filesToLoad = merge.getYUIFiles(reqs);
 
   // Merge third-party files to the filesToLoad list
-  filesToLoad.js.push.apply(filesToLoad.js, [ './app/assets/javascripts/d3.v2.min.js',
+  filesToLoad.js.push.apply(filesToLoad.js, [
+      './app/assets/javascripts/d3.v2.min.js',
       './app/assets/javascripts/d3-components.js',
       './app/assets/javascripts/reconnecting-websocket.js',
       './app/assets/javascripts/svg-layouts.js' ]);
