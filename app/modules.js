@@ -1,19 +1,11 @@
-GlobalConfig = {
+var GlobalConfig = {
   debug: false,
   // YUI will not download the modules. They are supposed to be already loaded.
   ignoreRegistered: true,
 
+  // Please use this object only for defining new aliases.
+  // You can add the fullpath to the libraries in "modules-debug.js".
   groups: {
-    d3: {
-      modules: {
-        'd3': {
-          'fullpath': '/juju-ui/assets/javascripts/d3.v2.min.js'
-        },
-        'd3-components': {
-          fullpath: '/juju-ui/assets/javascripts/d3-components.js'
-        }
-      }
-    },
     juju: {
       modules: {
         'juju-views': {
