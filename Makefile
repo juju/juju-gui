@@ -14,11 +14,9 @@ NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
 SPRITE_GENERATED_FILES=build/juju-ui/assets/stylesheets/sprite.css build/juju-ui/assets/stylesheets/sprite.png
-COMPRESSED_FILES=build/juju-ui/assets/app-debug.js \
+PRODUCTION_FILES=build/juju-ui/assets/modules.js \
+	build/juju-ui/assets/config.js \
 	build/juju-ui/assets/app.js \
-	build/juju-ui/assets/third.js \
-	build/juju-ui/assets/third-debug.js \
-	build/juju-ui/assets/yui.js \
 	build/juju-ui/assets/stylesheets/all-static.css
 DATE=$(shell date -u)
 APPCACHE=build/juju-ui/assets/manifest.appcache
@@ -67,12 +65,14 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(COMPRESSED_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
-	@rm -f $(COMPRESSED_FILES)
+$(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
+	@rm -f $(PRODUCTION_FILES)
 	@test -d "build/juju-ui/assets/stylesheets" || mkdir -p "build/juju-ui/assets/stylesheets"
 	@./bin/merge-files
+	@cp app/modules.js build/juju-ui/assets/modules.js
+	@cp app/config.js build/juju-ui/assets/config.js
 
-combinejs: $(COMPRESSED_FILES)
+combinejs: $(PRODUCTION_FILES)
 
 prep: beautify lint
 

@@ -30,8 +30,7 @@ require('yui').YUI().use(['yui'], function(Y) {
       syspath = require('path'),
       paths,
       reqs,
-      filesToLoad,
-      thirdPartyCSS;
+      filesToLoad;
 
   // First we find all of the paths to our custom Javascript in the app
   // directory.  We need to tell the function to ignore the "assets" directory
@@ -58,41 +57,22 @@ require('yui').YUI().use(['yui'], function(Y) {
 
   // Get all of the YUI files and their dependencies
   filesToLoad = merge.getYUIFiles(reqs);
-  console.log('YUI CSS: ' + filesToLoad.css);
-  thirdPartyCSS = [];
-  thirdPartyCSS.push('./app/assets/stylesheets/bootstrap-2.0.4.css');
-  thirdPartyCSS.push('./app/assets/stylesheets/bootstrap-responsive-2.0.4.css');
-  console.log('CSS: ' + thirdPartyCSS);
 
-  // Combine YUI js files
-  merge.combine(filesToLoad.js,
-      './build/juju-ui/assets/yui.js', 'uglifyjs');
-
-  // Combine third party css files
-  merge.combine(thirdPartyCSS,
-      './build/juju-ui/assets/stylesheets/all-static.css', 'yui-css');
-
-  // Combine third party js libraries
-  merge.combine([ './app/assets/javascripts/d3.v2.min.js',
+  // Merge third-party files to the filesToLoad list
+  filesToLoad.js.push.apply(filesToLoad.js, [ './app/assets/javascripts/d3.v2.min.js',
       './app/assets/javascripts/d3-components.js',
       './app/assets/javascripts/reconnecting-websocket.js',
-      './app/assets/javascripts/svg-layouts.js' ],
-      './build/juju-ui/assets/third.js', 'uglifyjs');
+      './app/assets/javascripts/svg-layouts.js' ]);
+  
+  // Merge our list of custom js files to the filesToLoad list
+  filesToLoad.js.push.apply(filesToLoad.js, paths);
 
-  // It has only one file but eventually it will have more.
-  merge.combine([ './app/assets/javascripts/d3.v2.js' ],
-      './build/juju-ui/assets/third-debug.js');
+  // Combine YUI and our js files
+  merge.combine(filesToLoad.js,
+      './build/juju-ui/assets/app.js', 'uglifyjs');
 
-  // Now we only need to generate the file that is used to tell YUI where all
-  // the dependencies are.  We either use a debug version or the production
-  // version.  The debug version is simply pointers to the individual files.
-  // The production version aggregates all of the files together.
-
-  // Creating the combined file for the modules-debug.js and config.js files
-  merge.combine(['./app/modules-debug.js', './app/config.js'],
-      './build/juju-ui/assets/app-debug.js');
-
-  // Creating the combined file for all our files.  Note that this includes
-  // app/modules.js in the rollup, which is why that file still needs exist.
-  merge.combine(paths, './build/juju-ui/assets/app.js', 'uglifyjs');
+  // Combine third party css files
+  merge.combine([ './app/assets/stylesheets/bootstrap-2.0.4.css',
+      './app/assets/stylesheets/bootstrap-responsive-2.0.4.css' ],
+      './build/juju-ui/assets/stylesheets/all-static.css', 'yui-css');
 });
