@@ -23,7 +23,7 @@ PRODUCTION_FILES=$(BUILD_ASSETS_DIR)/modules.js \
 DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 
-all: install
+all: build
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	@test -d "$(BUILD_ASSETS_DIR)/stylesheets" || mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
@@ -42,8 +42,6 @@ $(NODE_TARGETS): package.json
 	@#link depends
 	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
-
-install: appcache $(NODE_TARGETS) build/juju-ui/templates.js yuidoc spritegen combinejs
 
 gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
@@ -78,10 +76,10 @@ combinejs: $(PRODUCTION_FILES)
 
 prep: beautify lint
 
-test: install
+test: build
 	@./test-server.sh
 
-debug: install
+debug: build
 	@echo "Customize config.js to modify server settings"
 	@node server.js
 
@@ -94,7 +92,7 @@ clean:
 	@make -C docs clean
 	@rm -Rf build/
 
-build: install
+build: appcache $(NODE_TARGETS) build/juju-ui/templates.js yuidoc spritegen combinejs
 	@cp -f app/index.html build/
 	@cp -rf app/assets/images $(BUILD_ASSETS_DIR)/images
 	@cp -rf app/assets/svgs $(BUILD_ASSETS_DIR)/svgs
@@ -114,6 +112,6 @@ appcache-touch:
 # appcache, and this provides the correct order.
 appcache-force: appcache-touch appcache
 
-.PHONY: test lint beautify server install clean prep jshint gjslint \
+.PHONY: test lint beautify server clean prep jshint gjslint \
 	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
 	combinejs build
