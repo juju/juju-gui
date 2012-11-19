@@ -1,4 +1,9 @@
 'use strict';
+/**
+ * Provides the main app class.
+ *
+ * @module views
+ */
 
 YUI.add('juju-view-environment', function(Y) {
 
@@ -7,6 +12,12 @@ YUI.add('juju-view-environment', function(Y) {
       Templates = views.Templates,
       models = Y.namespace('juju.models');
 
+  /**
+   * Display an environment.
+   *
+   * @class environment
+   * @namespace views
+   */
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View,
                                       [views.JujuBaseView], {
         events: {
@@ -20,17 +31,19 @@ YUI.add('juju-view-environment', function(Y) {
           },
           // Menu/Controls
           '.add-relation': {
+            /** The user clicked on the "Build Relation" menu item. */
             click: function() {
               var box = this.get('active_service'),
                   service = this.serviceForBox(box),
                   context = this.get('active_context');
+              this.addRelationDragStart(box, context);
               this.service_click_actions
                         .toggleControlPanel(box, this, context);
-              this.service_click_actions
-                        .addRelationStart(box, this, context);
+              this.service_click_actions.addRelationStart(box, this, context);
             }
           },
           '.view-service': {
+            /** The user clicked on the "View" menu item. */
             click: function() {
               // Get the service element
               var box = this.get('active_service'),
@@ -42,6 +55,7 @@ YUI.add('juju-view-environment', function(Y) {
             }
           },
           '.destroy-service': {
+            /** The user clicked on the "Destroy" menu item. */
             click: function() {
               // Get the service element
               var box = this.get('active_service'),
@@ -72,6 +86,12 @@ YUI.add('juju-view-environment', function(Y) {
               if (!d.containsPoint(mouse_coords, self.zoom)) {
                 return;
               }
+
+              // Do not fire if we're on the same service.
+              if (d === self.get('addRelationStart_service')) {
+                return;
+              }
+
               self.set('potential_drop_point_service', d);
               self.set('potential_drop_point_rect', rect);
               self.addSVGClass(rect, 'hover');
@@ -112,7 +132,8 @@ YUI.add('juju-view-environment', function(Y) {
                 self.dragline.attr('class',
                     'relation pending-relation dragline dragging');
               }
-            }
+            },
+            mousemove: 'mousemove'
           },
           '.sub-rel-block': {
             mouseenter: function(d, self) {
@@ -125,7 +146,22 @@ YUI.add('juju-view-environment', function(Y) {
             },
             mouseleave: function(d, self) {
               // Remove 'active' class from all subordinate relations.
-              self.removeSVGClass('.subordinate-rel-group', 'active');
+              if (!self.keepSubRelationsVisible) {
+                self.removeSVGClass('.subordinate-rel-group', 'active');
+              }
+            },
+            /**
+             * Toggle the visibility of subordinate relations for visibility
+             * or removal.
+             * @param {object} d The data-bound object (the subordinate).
+             * @param {object} self The view.
+             */
+            click: function(d, self) {
+              if (self.keepSubRelationsVisible) {
+                self.hideSubordinateRelations();
+              } else {
+                self.showSubordinateRelations(this);
+              }
             }
           },
           '.service-status': {
@@ -143,16 +179,31 @@ YUI.add('juju-view-environment', function(Y) {
 
           // Relation Related
           '.rel-label': {
-            click: 'relationClick'
+            /** The user clicked on the relation label. */
+            click: 'relationClick',
+            mousemove: 'mousemove'
           },
 
-          // Canvas related
           '#canvas rect:first-child': {
+            /**
+             * If the user clicks on the background we cancel any active add
+             * relation.
+             */
             click: function(d, self) {
               var container = self.get('container');
               container.all('.environment-menu.active').removeClass('active');
               self.service_click_actions.toggleControlPanel(null, self);
               self.cancelRelationBuild();
+              self.hideSubordinateRelations();
+            },
+            mousemove: 'mousemove'
+          },
+          '.dragline': {
+            /** The user clicked while the dragline was active. */
+            click: function(d, self) {
+              // It was technically the dragline that was clicked, but the
+              // intent was to click on the background, so...
+              self.backgroundClicked();
             }
           }
         },
@@ -168,28 +219,12 @@ YUI.add('juju-view-environment', function(Y) {
                   return;
                 }
 
-                // set a flag on the view that we're building a relation
-                self.buildingRelation = true;
-
                 // Sometimes mouseover is fired after the mousedown, so ensure
                 // we have the correct event in d3.event for d3.mouse().
                 d3.event = e;
 
-                // Flash an indicator around the center of the service block.
-                var center = d.getCenter();
-                self.vis.append('circle')
-                  .attr('cx', center[0])
-                  .attr('cy', center[1])
-                  .attr('r', 100)
-                  .attr('class', 'mouse-down-indicator')
-                  .transition()
-                  .duration(750)
-                  .ease('bounce')
-                  .attr('r', 0)
-                  .remove();
-
                 // Start the process of adding a relation
-                self.addRelationDragStart.call(self, d, this);
+                self.addRelationDragStart(d, this);
               }, [d, evt], false);
             },
             'mouseup.addrel': function(d, self) {
@@ -376,8 +411,10 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         serviceClick: function(d, self) {
-          // Ignore if we clicked on a control panel image.
-          if (self.hasSVGClass(d3.event.target, 'cp-button')) {
+          // Ignore if we clicked outside the actual service node.
+          var container = self.get('container'),
+              mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+          if (!d.containsPoint(mouse_coords, self.zoom)) {
             return;
           }
           // Get the current click action
@@ -398,6 +435,27 @@ YUI.add('juju-view-environment', function(Y) {
 
         relationClick: function(d, self) {
           self.removeRelationConfirm(d, this, self);
+        },
+
+        /**
+          * If the mouse moves and we are adding a relation, then the dragline
+          * needs to be updated.
+          *
+          * @method mousemove
+          * @param {object} d Unused.
+          * @param {object} self The environment view itself.
+          * @return {undefined} Side effects only.
+          */
+        mousemove: function(d, self) {
+          if (self.clickAddRelation) {
+            var container = self.get('container'),
+                node = container.one('#canvas rect:first-child').getDOMNode(),
+                mouse = d3.mouse(node);
+            d3.event.x = mouse[0];
+            d3.event.y = mouse[1];
+            self.addRelationDrag
+              .call(self, self.get('addRelationStart_service'), node);
+          }
         },
 
         /*
@@ -461,11 +519,13 @@ YUI.add('juju-view-environment', function(Y) {
               })
             .on('drag', function(d, i) {
                 if (self.buildingRelation) {
-                  self.addRelationDrag.call(self, d, this);
+                  self.addRelationDrag(d, this);
                 } else {
                   if (self.longClickTimer) {
                     self.longClickTimer.cancel();
                   }
+
+                  // Translate the service (and, potentially, menu).
                   d.x += d3.event.dx;
                   d.y += d3.event.dy;
                   d3.select(this).attr('transform', function(d, i) {
@@ -474,18 +534,55 @@ YUI.add('juju-view-environment', function(Y) {
                   if (self.get('active_service') === d) {
                     self.updateServiceMenuLocation();
                   }
+
+                  // Clear any state while dragging.
                   self.get('container').all('.environment-menu.active')
                     .removeClass('active');
                   self.service_click_actions.toggleControlPanel(null, self);
                   self.cancelRelationBuild();
-                  updateLinks();
+
+                  // Update relation lines for just this service.
+                  updateLinkEndpoints(d);
                 }
               })
             .on('dragend', function(d, i) {
                 if (self.buildingRelation) {
-                  self.addRelationDragEnd.call(self, d, this);
+                  self.addRelationDragEnd();
                 }
               });
+
+          /**
+           * Update relation line endpoints for a given service.
+           *
+           * @method updateLinkEndpoints
+           * @param {Object} service The service module that has been moved.
+           */
+          function updateLinkEndpoints(service) {
+            Y.each(Y.Array.filter(self.rel_pairs, function(relation) {
+              return relation.source() === service ||
+                  relation.target() === service;
+            }), function(relation) {
+              var rel_group = d3.select('#' + relation.id),
+                  connectors = relation.source()
+                    .getConnectorPair(relation.target()),
+                  s = connectors[0],
+                  t = connectors[1];
+              rel_group.select('line')
+                .attr('x1', s[0])
+                .attr('y1', s[1])
+                .attr('x2', t[0])
+                .attr('y2', t[1]);
+              rel_group.select('.rel-label')
+                .attr('transform', function(d) {
+                    // XXX: This has to happen on update, not enter
+                    return 'translate(' +
+                        [Math.max(s[0], t[0]) -
+                         Math.abs((s[0] - t[0]) / 2),
+                         Math.max(s[1], t[1]) -
+                         Math.abs((s[1] - t[1]) / 2)] + ')';
+                  });
+            });
+          }
 
           // Generate a node for each service, draw it as a rect with
           // labels for service and charm.
@@ -601,8 +698,7 @@ YUI.add('juju-view-environment', function(Y) {
               .text(function(d) {return d.display_name; });
           label.insert('rect', 'text')
               .attr('width', function(d) {
-                return (Y.one(this.parentNode)
-                  .one('text').getClientRect() || {width: 0}).width + 10;
+                return d.display_name.length * 10 + 10;
               })
               .attr('height', 20)
               .attr('x', function() {
@@ -787,11 +883,12 @@ YUI.add('juju-view-environment', function(Y) {
           var status_chart_arc = d3.svg.arc()
             .innerRadius(0)
             .outerRadius(function(d) {
-                // Make sure it's exactly as wide as the mask
+                // Make sure it's exactly as wide as the mask with a bit
+                // of leeway for the border.
                 return parseInt(
                     d3.select(this.parentNode)
                       .select('image')
-                      .attr('width'), 10) / 2;
+                      .attr('width'), 10) / 2.05;
               });
 
           var status_chart_layout = d3.layout.pie()
@@ -1020,23 +1117,26 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         addRelationDragStart: function(d, context) {
-          // Create a pending drag-line behind services.
-          var dragline = this.vis.insert('line', '.service')
+          // Create a pending drag-line.
+          var dragline = this.vis.append('line')
               .attr('class', 'relation pending-relation dragline dragging'),
               self = this;
 
-          // Start the line in the middle of the service.
-          var point = d.getCenter();
-          dragline.attr('x1', point[0])
-              .attr('y1', point[1])
-              .attr('x2', point[0])
-              .attr('y2', point[1]);
-          self.dragline = dragline;
+          // Start the line between the cursor and the nearest connector
+          // point on the service.
+          var mouse = d3.mouse(Y.one('svg').getDOMNode());
           self.cursorBox = views.BoundingBox();
+          self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
+          var point = self.cursorBox.getConnectorPair(d);
+          dragline.attr('x1', point[0][0])
+              .attr('y1', point[0][1])
+              .attr('x2', point[1][0])
+              .attr('y2', point[1][1]);
+          self.dragline = dragline;
 
           // Start the add-relation process.
           self.service_click_actions
-          .addRelationStart(d, self, context);
+            .addRelationStart(d, self, context);
         },
 
         addRelationDrag: function(d, context) {
@@ -1057,7 +1157,7 @@ YUI.add('juju-view-environment', function(Y) {
           }
         },
 
-        addRelationDragEnd: function(d, context) {
+        addRelationDragEnd: function() {
           // Get the line, the endpoint service, and the target <rect>.
           var self = this;
           var rect = self.get('potential_drop_point_rect');
@@ -1133,9 +1233,78 @@ YUI.add('juju-view-environment', function(Y) {
             this.dragline.remove();
             this.dragline = null;
           }
+          this.clickAddRelation = null;
           this.set('currentServiceClickAction', 'toggleControlPanel');
+          this.buildingRelation = false;
           this.show(this.vis.selectAll('.service'))
                   .classed('selectable-service', false);
+        },
+
+        /**
+         * The user clicked on the environment view background.
+         *
+         * If we are in the middle of adding a relation, cancel the relation
+         * adding.
+         *
+         * @method backgroundClicked
+         * @return {undefined} Side effects only.
+         */
+        backgroundClicked: function() {
+          if (this.clickAddRelation) {
+            this.cancelRelationBuild();
+          }
+        },
+
+        /**
+         * An "add relation" action has been initiated by the user.
+         *
+         * @method startRelation
+         * @param {object} service The service that is the source of the
+         *  relation.
+         * @return {undefined} Side effects only.
+         */
+        startRelation: function(service) {
+          // Set flags on the view that indicate we are building a relation.
+          this.buildingRelation = true;
+          this.clickAddRelation = true;
+
+          this.show(this.vis.selectAll('.service'));
+
+          var db = this.get('db'),
+              getServiceEndpoints = this.get('getServiceEndpoints'),
+              endpoints = models.getEndpoints(
+                  service, getServiceEndpoints(), db),
+              // Transform endpoints into a list of relatable services (to the
+              // service).
+              possible_relations = Y.Array.map(
+                  Y.Array.flatten(Y.Object.values(endpoints)),
+                  function(ep) {return ep.service;}),
+              invalidRelationTargets = {};
+
+          // Iterate services and invert the possibles list.
+          db.services.each(function(s) {
+            if (Y.Array.indexOf(possible_relations,
+                s.get('id')) === -1) {
+              invalidRelationTargets[s.get('id')] = true;
+            }
+          });
+
+          // Fade elements to which we can't relate.
+          // Rather than two loops this marks
+          // all services as selectable and then
+          // removes the invalid ones.
+          this.fade(this.vis.selectAll('.service')
+              .classed('selectable-service', true)
+              .filter(function(d) {
+                return (d.id in invalidRelationTargets &&
+                          d.id !== service.id);
+              }))
+              .classed('selectable-service', false);
+
+          // Store possible endpoints.
+          this.set('addRelationStart_possibleEndpoints', endpoints);
+          // Set click action.
+          this.set('currentServiceClickAction', 'ambiguousAddRelationCheck');
         },
 
 
@@ -1223,6 +1392,33 @@ YUI.add('juju-view-environment', function(Y) {
               picker = container.one('.graph-list-picker');
           picker.removeClass('inactive');
           picker.one('.picker-expanded').removeClass('active');
+        },
+
+        /**
+         * Show subordinate relations for a service.
+         *
+         * @method showSubordinateRelations
+         * @param {Object} subordinate The sub-rel-block g element in the form
+         * of a DOM node.
+         * @return {undefined} nothing.
+         */
+        showSubordinateRelations: function(subordinate) {
+          this.keepSubRelationsVisible = true;
+          this.addSVGClass(Y.one(subordinate).one('.sub-rel-count'), 'active');
+        },
+
+        /**
+         * Hide subordinate relations.
+         *
+         * @method hideSubordinateRelations
+         * @return {undefined} nothing.
+         */
+        hideSubordinateRelations: function() {
+          var container = this.get('container');
+          this.removeSVGClass('.subordinate-rel-group', 'active');
+          this.keepSubRelationsVisible = false;
+          this.removeSVGClass(container.one('.sub-rel-count.active'),
+              'active');
         },
 
         /*
@@ -1403,51 +1599,10 @@ YUI.add('juju-view-environment', function(Y) {
            * flow.
            */
           addRelationStart: function(m, view, context) {
-            view.show(view.vis.selectAll('.service'));
-
-            var db = view.get('db'),
-                getServiceEndpoints = view.get('getServiceEndpoints'),
-                service = view.serviceForBox(m),
-                endpoints = models.getEndpoints(
-                    service, getServiceEndpoints(), db),
-
-                /* Transform endpoints into a list of
-                 * relatable services (to the service in m)
-                 */
-                possible_relations = Y.Array.map(
-                    Y.Array.flatten(Y.Object.values(
-                        endpoints)),
-                    function(ep) {return ep.service;}),
-                invalidRelationTargets = {};
-
-            // Iterate services and invert the possibles list.
-            db.services.each(function(s) {
-              if (Y.Array.indexOf(possible_relations,
-                  s.get('id')) === -1) {
-                invalidRelationTargets[s.get('id')] = true;
-              }
-            });
-
-            // Fade elements to which we can't relate.
-            // Rather than two loops this marks
-            // all services as selecable and then
-            // removes the invalid ones
-            view.fade(view.vis.selectAll('.service')
-              .classed('selectable-service', true)
-              .filter(function(d) {
-                  return (d.id in invalidRelationTargets &&
-                          d.id !== m.id);
-                }))
-              .classed('selectable-service', false);
-
-
-
+            var service = view.serviceForBox(m);
+            view.startRelation(service);
             // Store start service in attrs.
             view.set('addRelationStart_service', m);
-            // Store possible endpoints.
-            view.set('addRelationStart_possibleEndpoints', endpoints);
-            // Set click action.
-            view.set('currentServiceClickAction', 'ambiguousAddRelationCheck');
           },
 
           /*
@@ -1479,19 +1634,8 @@ YUI.add('juju-view-environment', function(Y) {
               return a[0].name + a[1].name < b[0].name + b[1].name;
             });
 
-            // Create a pending line if it doesn't exist, as in the case of
-            // clicking to add relation.
-            if (!view.dragline) {
-              var dragline = view.vis.insert('line', '.service')
-                  .attr('class', 'relation pending-relation dragline'),
-                  points = m.getConnectorPair(
-                      view.get('addRelationStart_service'));
-              dragline.attr('x1', points[0][0])
-                .attr('y1', points[0][1])
-                .attr('x2', points[1][0])
-                .attr('y2', points[1][1]);
-              view.dragline = dragline;
-            }
+            // Stop rubberbanding on mousemove.
+            view.clickAddRelation = null;
 
             // Display menu with available endpoints.
             var menu = container.one('#ambiguous-relation-menu');

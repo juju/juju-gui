@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <link rel="stylesheet" href="assets/mocha.css">
   <script src="../app/assets/javascripts/yui/yui/yui-debug.js"></script>
-  <script src="../app/modules.js"></script>
+  <script src="../app/modules-debug.js"></script>
   <script src="assets/chai.js"></script>
   <script src="assets/mocha.js"></script>
   <script src="utils.js"></script>
@@ -15,6 +15,7 @@
     mocha.setup({'ui': 'bdd', 'ignoreLeaks': false})
   </script>
 
+  <script src="test_d3_components.js"></script>
   <script src="test_env.js"></script>
   <script src="test_model.js"></script>
   <script src="test_notifications.js"></script>
@@ -33,6 +34,7 @@
   <script src="test_application_notifications.js"></script>
   <script src="test_charm_store.js"></script>
   <script src="test_app_hotkeys.js"></script>
+  <script src="test_notifier_widget.js"></script>
 
   <script>
   YUI().use('node', 'event', function(Y) {

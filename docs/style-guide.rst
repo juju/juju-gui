@@ -5,6 +5,7 @@ Style Guide
 This guide is an attempt to describe a code style that both works well with the
 JavaScript beautifier and helps developers avoid pitfalls.
 
+
 Indentation
 ===========
 
@@ -13,17 +14,20 @@ doubt, completely dedent the section of code in question and run it through the
 beautifier ("make beautify").  The lowest (least leading whitespace) acceptable
 indention will be applied.
 
+
 For loops
 =========
 
 Unless you are counting something, for loops (and for-in loops) are a trap.
 Use Y.Object.each instead.
 
+
 Whitespace
 ==========
 
 No trailing whitespace on lines or at the end of the file (i.e., the file
 should end with a non-blank line).
+
 
 Object literal formatting
 =========================
@@ -60,6 +64,7 @@ An example::
               { description: 'The second option.',
                 type: 'int'}},
         errors = utils.validate(values, schema);
+
 
 Chaining method calls
 =====================
@@ -118,6 +123,7 @@ object without breaking the method chain::
             .bing()
             .zing());
 
+
 Creating HTML
 =============
 
@@ -148,3 +154,35 @@ parameter list of .append().
 
 It is important that the indentation of the calls communicates the structure of
 the resulting DOM tree.  Compare and contrast the above examples.
+
+
+Comments
+========
+
+We use YUIDoc to document the applications internals.  YUIDoc comments
+start with "/**" and end with "*/".  The Makefile includes a simple
+linter that enforces YUIDoc comments for each function in the
+application.
+
+This simple linting sometimes means that functions that we might not
+otherwise document require documentation.  If a one-line comment is
+sufficient in those situations, a comment of this form may be used:
+
+    /** Handle errors */
+    error_callback: function(err) {
+      ...
+    }
+
+Most functions (or methods) will call for normal, multi-line YUIDoc
+comments like this:
+
+    /**
+     * Frob the thingy.
+     *
+     * @method frob
+     * @param {object} type How the thingy should be frobbed.
+     * @return {undefined} Side-effects only, eturns nothing.
+     */
+
+Full documentation for the various YUIDoc directives is at
+http://yui.github.com/yuidoc/syntax/ .

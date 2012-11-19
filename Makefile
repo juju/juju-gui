@@ -9,10 +9,16 @@ NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 	node_modules/mocha node_modules/d3 node_modules/graceful-fs \
 	node_modules/should node_modules/jshint node_modules/expect.js \
 	node_modules/express node_modules/yui node_modules/yuidoc \
-	node_modules/grunt node_modules/node-spritesheet
+	node_modules/grunt node_modules/node-spritesheet \
+	node_modules/node-minify
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
 SPRITE_GENERATED_FILES=app/assets/sprite/sprite.css app/assets/sprite/sprite.png
+COMPRESSED_FILES=app/assets/javascripts/generated/all-app-debug.js \
+	app/assets/javascripts/generated/all-app.js \
+	app/assets/javascripts/generated/all-third.js \
+	app/assets/javascripts/generated/all-yui.js \
+	app/assets/stylesheets/all-static.css
 DATE=$(shell date -u)
 APPCACHE=app/assets/manifest.appcache
 
@@ -37,7 +43,7 @@ $(NODE_TARGETS): package.json
 	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
 
-install: appcache $(NODE_TARGETS) app/templates.js yuidoc spritegen
+install: appcache $(NODE_TARGETS) app/templates.js yuidoc spritegen combinejs
 
 gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
@@ -61,10 +67,22 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
+$(COMPRESSED_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
+	@rm -f app/assets/stylesheets/all-static.css
+	@rm -Rf app/assets/javascripts/generated/
+	@mkdir app/assets/javascripts/generated/
+	@./bin/merge-files
+
+combinejs: $(COMPRESSED_FILES)
+
 prep: beautify lint
 
 test: install
 	@./test-server.sh
+
+debug: install
+	@echo "Customize config.js to modify server settings"
+	@node server.js debug
 
 server: install
 	@echo "Customize config.js to modify server settings"
@@ -75,6 +93,8 @@ clean:
 	@make -C docs clean
 	@rm -Rf bin/sprite/
 	@rm -Rf app/assets/sprite/
+	@rm -Rf app/assets/javascripts/generated/
+	@rm -f app/assets/stylesheets/all-static.css
 
 $(APPCACHE): manifest.appcache.in
 	@cp manifest.appcache.in $(APPCACHE)
@@ -91,4 +111,5 @@ appcache-touch:
 appcache-force: appcache-touch appcache
 
 .PHONY: test lint beautify server install clean prep jshint gjslint \
-	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint
+	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
+	combinejs

@@ -42,7 +42,7 @@ describe('Application basics', function() {
 
   beforeEach(function(done) {
     //  XXX Apparently removing a DOM node is asynchronous (on Chrome at least)
-    //  and we occasionally loose the race if this code is in the afterEach
+    //  and we occasionally lose the race if this code is in the afterEach
     //  function, so instead we do it here, but only if one has previously been
     //  created.
     if (container) {

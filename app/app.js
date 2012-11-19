@@ -353,7 +353,8 @@ YUI.add('juju-gui', function(Y) {
           'unit',
           // The querystring is used to handle highlighting relation rows in
           // links from notifications about errors.
-          { unit: unit, db: this.db, env: this.env,
+          { getModelURL: Y.bind(this.getModelURL, this),
+            unit: unit, db: this.db, env: this.env,
             querystring: req.query });
     },
 

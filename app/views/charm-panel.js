@@ -39,10 +39,10 @@ YUI.add('juju-charm-panel', function(Y) {
         // clientHeight and offsetHeight are not as reliable in tests.
         if (parseInt(el.getStyle('height'), 10) === 0) {
           el.show('sizeIn', {duration: 0.25, width: null});
-          icon.replaceClass('icon-chevron-up', 'icon-chevron-down');
+          icon.replaceClass('chevron_down', 'chevron_up');
         } else {
           el.hide('sizeOut', {duration: 0.25, width: null});
-          icon.replaceClass('icon-chevron-down', 'icon-chevron-up');
+          icon.replaceClass('chevron_up', 'chevron_down');
         }
       },
       /**
@@ -107,6 +107,7 @@ YUI.add('juju-charm-panel', function(Y) {
               Y.Object.values(data),
               function(val) { return val['interface']; });
         }
+        return undefined;
       };
 
   /**
@@ -180,6 +181,7 @@ YUI.add('juju-charm-panel', function(Y) {
           raw_entries = searchText ? resultEntries : defaultEntries,
           entries = raw_entries && makeRenderableResults(raw_entries);
       container.setHTML(this.template({ charms: entries }));
+      container.all('.charm-summary').ellipsis({'lines': 2});
       this._setScroll();
       return this;
     },
@@ -337,7 +339,7 @@ YUI.add('juju-charm-panel', function(Y) {
               charm = this.get('model');
           if (Y.Lang.isValue(charm)) {
             container.setHTML(this.template(charm.getAttrs()));
-            container.all('i.icon-chevron-up').each(function(el) {
+            container.all('i.chevron_down').each(function(el) {
               el.ancestor('.charm-section').one('div')
                 .setStyle('height', '0px');
             });
@@ -492,7 +494,7 @@ YUI.add('juju-charm-panel', function(Y) {
   views.CharmDescriptionView = CharmDescriptionView;
 
   /**
-   * Display a unit.
+   * Display a charms configuration panel.
    *
    * @class CharmConfigurationView
    * @namespace views
@@ -591,7 +593,14 @@ YUI.add('juju-charm-panel', function(Y) {
           this.tooltip.hide();
           delete this.tooltip.field;
         },
-        /** Pass clicks on the overlay on to the correct recipient. */
+        /**
+         * Pass clicks on the overlay on to the correct recipient.
+         * The recipient can be the upload widget or the file remove one.
+         *
+         * @method onOverlayClick
+         * @param {Object} evt An event object.
+         * @return {undefined} Dispatches only.
+         */
         onOverlayClick: function(evt) {
           var container = this.get('container');
           if (this.configFileContent) {
@@ -600,6 +609,14 @@ YUI.add('juju-charm-panel', function(Y) {
             container.one('.config-file-upload-widget').getDOMNode().click();
           }
         },
+        /**
+         * Handle the file upload click event.
+         * Call onFileLoaded or onFileError if an error occurs during upload.
+         *
+         * @method onFileChange
+         * @param {Object} evt An event object.
+         * @return {undefined} Mutates only.
+         */
         onFileChange: function(evt) {
           var container = this.get('container');
           console.log('onFileChange:', evt);
@@ -613,6 +630,13 @@ YUI.add('juju-charm-panel', function(Y) {
           container.one('.config-file-upload-overlay')
             .setContent('Remove file');
         },
+        /**
+         * Handle the file remove click event.
+         * Restore the file upload widget on click.
+         *
+         * @method onFileRemove
+         * @return {undefined} Mutates only.
+         */
         onFileRemove: function() {
           var container = this.get('container');
           this.configFileContent = null;
@@ -624,9 +648,20 @@ YUI.add('juju-charm-panel', function(Y) {
           this.fileInput.replace(Y.Node.create('<input type="file"/>')
                                  .addClass('config-file-upload-widget'));
           this.fileInput = container.one('.config-file-upload-widget');
-          container.one('.config-file-upload-overlay')
-            .setContent('Use configuration file');
+          var overlay = container.one('.config-file-upload-overlay');
+          overlay.setContent('Use configuration file');
+          // Ensure the charm section height is correctly restored.
+          overlay.ancestor('.collapsible')
+            .show('sizeIn', {duration: 0.25, width: null});
         },
+        /**
+         * Callback called when a file is correctly uploaded.
+         * Hide the charm configuration section.
+         *
+         * @method onFileLoaded
+         * @param {Object} evt An event object.
+         * @return {undefined} Mutates only.
+         */
         onFileLoaded: function(evt) {
           this.configFileContent = evt.target.result;
 
@@ -645,6 +680,14 @@ YUI.add('juju-charm-panel', function(Y) {
           }
           this.get('container').one('.charm-settings').hide();
         },
+        /**
+         * Callback called when an error occurs during file upload.
+         * Hide the charm configuration section.
+         *
+         * @method onFileError
+         * @param {Object} evt An event object (with a "target.error" attr).
+         * @return {undefined} Mutates only.
+         */
         onFileError: function(evt) {
           console.log('onFileError:', evt);
           var msg;
@@ -763,7 +806,6 @@ YUI.add('juju-charm-panel', function(Y) {
     var charmStore = config.charm_store,
         charms = new models.CharmList(),
         app = config.app,
-        testing = !!config.testing,
         container = Y.Node.create('<div />').setAttribute(
             'id', 'juju-search-charm-panel'),
         charmsSearchPanelNode = Y.Node.create(),
@@ -840,6 +882,13 @@ YUI.add('juju-charm-panel', function(Y) {
       }
     });
 
+    /**
+     * Hide the charm panel.
+     * Set isPanelVisible to false.
+     *
+     * @method hide
+     * @return {undefined} Mutates only.
+     */
     function hide() {
       if (isPanelVisible) {
         var headerBox = Y.one('#charm-search-trigger-container'),
@@ -850,10 +899,10 @@ YUI.add('juju-charm-panel', function(Y) {
             headerSpan.addClass('active-border');
           }
         }
-        container.hide(!testing, {duration: 0.25});
+        container.hide();
         if (Y.Lang.isValue(trigger)) {
-          trigger.one('i').replaceClass(
-              'icon-chevron-up', 'icon-chevron-down');
+          trigger.one('i#charm-search-chevron').replaceClass(
+              'chevron_up', 'chevron_down');
         }
         isPanelVisible = false;
       }
@@ -871,6 +920,13 @@ YUI.add('juju-charm-panel', function(Y) {
       }
     }));
 
+    /**
+     * Show the charm panel.
+     * Set isPanelVisible to true.
+     *
+     * @method show
+     * @return {undefined} Mutates only.
+     */
     function show() {
       if (!isPanelVisible) {
         var headerBox = Y.one('#charm-search-trigger-container'),
@@ -882,15 +938,23 @@ YUI.add('juju-charm-panel', function(Y) {
           }
         }
         container.setStyles({opacity: 0, display: 'block'});
-        container.show(!testing, {duration: 0.25});
+        container.show(true);
         isPanelVisible = true;
         updatePanelPosition();
         if (Y.Lang.isValue(trigger)) {
-          trigger.one('i').replaceClass(
-              'icon-chevron-down', 'icon-chevron-up');
+          trigger.one('i#charm-search-chevron').replaceClass(
+              'chevron_down', 'chevron_up');
         }
       }
     }
+
+    /**
+     * Show the charm panel if it is hidden, hide it otherwise.
+     *
+     * @method toggle
+     * @param {Object} ev An event object (with a "halt" method).
+     * @return {undefined} Dispatches only.
+     */
     function toggle(ev) {
       if (Y.Lang.isValue(ev)) {
         // This is important to not have the clickoutside handler immediately
@@ -924,7 +988,7 @@ YUI.add('juju-charm-panel', function(Y) {
       var headerBox = Y.one('#charm-search-trigger-container'),
           dimensions = utils.getEffectiveViewportSize();
       return { x: headerBox && Math.round(headerBox.getX()),
-               height: dimensions.height + 17 };
+               height: dimensions.height + 18 };
     }
 
     if (Y.Lang.isValue(trigger)) {
@@ -991,6 +1055,7 @@ YUI.add('juju-charm-panel', function(Y) {
     'overlay',
     'dom-core',
     'juju-models',
-    'event-resize'
+    'event-resize',
+    'gallery-ellipsis'
   ]
 });
