@@ -105,14 +105,18 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
+    /**
+     * This method activates the keyboard listeners.
+     */
     activateHotkeys: function() {
-      var myWindow = Y.one(window);
-      myWindow.on('keydown', function(ev) {
+      // XXX: The yui event feature is not working.
+      // Once it is fixed, we will change the code below.
+      // http://yuilibrary.com/projects/yui3/ticket/2532960
+
+      Y.one(window).on('keydown', function(ev) {
         var key = [],
             keyStr = null,
-            data = {
-                  preventDefault: false
-            };
+            data = { preventDefault: false };
         if (ev.altKey) {
           key.push('alt');
         } else if (ev.ctrlKey) {
@@ -151,7 +155,12 @@ YUI.add('juju-gui', function(Y) {
         data.preventDefault = true;
       }, this);
 
-      // http://www.quirksmode.org/js/keys.html
+      /**
+       * It transforms a numeric keyCode value to its string version. Example:
+       * 16 returns 'shift'.
+       * @param {number} keyCode The numeric value of a key.
+       * @return {string} The string version of the given keyCode.
+       */
       function keyCodeToString(keyCode) {
         if (keyCode === 16) {
           return 'shift';

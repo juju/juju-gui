@@ -1,6 +1,6 @@
 'use strict';
 
-describe('application console', function() {
+describe('application hotkeys', function() {
   var Y, app, container, env, conn, testUtils, windowNode, altEtriggered;
 
   before(function() {
