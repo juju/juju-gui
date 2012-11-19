@@ -1109,7 +1109,7 @@ g.unit {
                 border-bottom: 1px solid #BDBDBD;
                 height: 70px;
                 .charm-div {
-                    padding-top: 6px;
+                    padding-top: 11px;
                 }
                 &:last-child {
                     border-bottom: none;
@@ -1123,24 +1123,27 @@ g.unit {
                 &:hover {
                     background-color: white;
                 }
+                @charm-panel-text-width: 190px;
                 a.charm-detail {
-                    padding-top: 5px;
+                    display: block;
+                    width: @charm-panel-text-width;
                     font-weight: normal;
                     font-size: 16px;
                     color: @charm-panel-orange;
                     line-height: 18px;
                 }
                 .charm-summary {
+                    padding-top: 4px;
                     margin-bottom: 4px;
-                    width: 190px;
+                    width: @charm-panel-text-width;
                     font-size: 12px;
                     line-height: 14px;
-                    padding-top: 4px;
                 }
                 .btn {
                     float: right;
                     opacity: 0;
-                    margin-top: 20px;
+                    margin-top: 11px;
+                    margin-right: 8px;
                 }
             }
         }

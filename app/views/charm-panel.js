@@ -181,6 +181,7 @@ YUI.add('juju-charm-panel', function(Y) {
           raw_entries = searchText ? resultEntries : defaultEntries,
           entries = raw_entries && makeRenderableResults(raw_entries);
       container.setHTML(this.template({ charms: entries }));
+      container.all('.charm-detail').ellipsis({'native': false});
       container.all('.charm-summary').ellipsis({'lines': 2});
       this._setScroll();
       return this;
