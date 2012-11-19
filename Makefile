@@ -13,19 +13,20 @@ NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 	node_modules/node-minify
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
-SPRITE_GENERATED_FILES=build/juju-ui/assets/stylesheets/sprite.css \
-	build/juju-ui/assets/stylesheets/sprite.png
-PRODUCTION_FILES=build/juju-ui/assets/modules.js \
-	build/juju-ui/assets/config.js \
-	build/juju-ui/assets/app.js \
-	build/juju-ui/assets/stylesheets/all-static.css
+BUILD_ASSETS_DIR=build/juju-ui/assets
+SPRITE_GENERATED_FILES=$(BUILD_ASSETS_DIR)/stylesheets/sprite.css \
+	$(BUILD_ASSETS_DIR)/stylesheets/sprite.png
+PRODUCTION_FILES=$(BUILD_ASSETS_DIR)/modules.js \
+	$(BUILD_ASSETS_DIR)/config.js \
+	$(BUILD_ASSETS_DIR)/app.js \
+	$(BUILD_ASSETS_DIR)/stylesheets/all-static.css
 DATE=$(shell date -u)
-APPCACHE=build/juju-ui/assets/manifest.appcache
+APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 
 all: install
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
-	@test -d "build/juju-ui/assets/stylesheets" || mkdir -p "build/juju-ui/assets/stylesheets"
+	@test -d "$(BUILD_ASSETS_DIR)/stylesheets" || mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
 	@./bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
@@ -68,10 +69,10 @@ spritegen: $(SPRITE_GENERATED_FILES)
 
 $(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
 	@rm -f $(PRODUCTION_FILES)
-	@test -d "build/juju-ui/assets/stylesheets" || mkdir -p "build/juju-ui/assets/stylesheets"
+	@test -d "$(BUILD_ASSETS_DIR)/stylesheets" || mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
 	@./bin/merge-files
-	@cp app/modules.js build/juju-ui/assets/modules.js
-	@cp app/config.js build/juju-ui/assets/config.js
+	@cp app/modules.js $(BUILD_ASSETS_DIR)/modules.js
+	@cp app/config.js $(BUILD_ASSETS_DIR)/config.js
 
 combinejs: $(PRODUCTION_FILES)
 
@@ -95,8 +96,8 @@ clean:
 
 build: install
 	@cp -f app/index.html build/
-	@cp -rf app/assets/images build/juju-ui/assets/images
-	@cp -rf app/assets/svgs build/juju-ui/assets/svgs
+	@cp -rf app/assets/images $(BUILD_ASSETS_DIR)/images
+	@cp -rf app/assets/svgs $(BUILD_ASSETS_DIR)/svgs
 
 $(APPCACHE): manifest.appcache.in
 	@test -d "build/juju-ui/assets" || mkdir -p "build/juju-ui/assets"
