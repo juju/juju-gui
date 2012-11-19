@@ -1237,6 +1237,11 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         removeRelationConfirm: function(d, context, view) {
+          // Destroy the dialog if it already exists to prevent cluttering
+          // up the DOM.
+          if (!Y.Lang.isUndefined(view.get('rmrelation_dialog'))) {
+            view.get('rmrelation_dialog').destroy();
+          }
           view.set('rmrelation_dialog', views.createModalPanel(
               'Are you sure you want to remove this relation? ' +
               'This cannot be undone.',
