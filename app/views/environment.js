@@ -1814,5 +1814,6 @@ YUI.add('juju-view-environment', function(Y) {
     'svg-layouts',
     'event-resize',
     'slider',
+    'slider-base',
     'view']
 });

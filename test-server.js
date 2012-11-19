@@ -17,7 +17,10 @@ server.configure(function() {
   server.use(express.methodOverride());
 });
 
-
+server.get('/juju-ui/:file', function(req, res) {
+  var fileName = req.params.file;
+  res.sendfile('build/juju-ui/' + fileName);
+});
 
 var port = 8084;
 
