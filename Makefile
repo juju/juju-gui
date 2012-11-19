@@ -112,6 +112,6 @@ appcache-touch:
 # appcache, and this provides the correct order.
 appcache-force: appcache-touch appcache
 
-.PHONY: test lint beautify server clean prep jshint gjslint \
+.PHONY: test lint beautify server build clean prep jshint gjslint \
 	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	combinejs build
+	combinejs
