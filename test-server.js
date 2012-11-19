@@ -12,12 +12,15 @@ server.configure(function() {
   // avoid annoying the linter.
   server.use(express['static'](__dirname));
   // fallback to looking in assets
-  server.use('/juju-ui', express['static'](__dirname + '/app/'));
+  server.use('/juju-ui', express['static'](__dirname + '/app'));
   server.use(express.bodyParser());
   server.use(express.methodOverride());
 });
 
-
+server.get('/juju-ui/:file', function(req, res) {
+  var fileName = req.params.file;
+  res.sendfile('build/juju-ui/' + fileName);
+});
 
 var port = 8084;
 
