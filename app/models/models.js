@@ -309,6 +309,8 @@ YUI.add('juju-models', function(Y) {
               [model.name,
                (model instanceof Y.Model) ? model.get('id') : model.id]);
         }},
+      // Whether or not the notification is related to the delta stream.
+      isDelta: {value: false},
       link: {},
       link_title: {
         value: 'View Details'
