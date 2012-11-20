@@ -1,13 +1,11 @@
 'use strict';
 
-(function() {
-
+YUI(GlobalConfig).use('juju-models', function(Y) {
   describe('charm normalization', function() {
     var models;
 
-    before(function(done) {
+    before(function() {
       models = Y.namespace('juju.models');
-      done();
     });
 
     it('must create derived attributes from official charm id', function() {
@@ -29,13 +27,14 @@
     });
 
   });
+});
 
+YUI(GlobalConfig).use('juju-models', function(Y) {
   describe('juju models', function() {
     var models;
 
-    before(function(done) {
+    before(function() {
       models = Y.namespace('juju.models');
-      done();
     });
 
     it('must be able to create charm', function() {
@@ -351,14 +350,17 @@
                 .should.eql(['relation-2', 'relation-3', 'relation-4']);
         });
   });
+});
 
+YUI(GlobalConfig).use([ 'juju-models', 'juju-gui', 'datasource-local',
+                        'juju-tests-utils', 'json-stringify',
+                        'juju-charm-store' ], function(Y) {
   describe('juju charm load', function() {
     var models, conn, env, app, container, charm_store, data, juju;
 
-    before(function(done) {
+    before(function() {
       models = Y.namespace('juju.models');
       juju = Y.namespace('juju');
-      done();
     });
 
     beforeEach(function() {
@@ -504,4 +506,4 @@
     });
 
   });
-})();
+});
