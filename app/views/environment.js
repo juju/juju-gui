@@ -318,7 +318,9 @@ YUI.add('juju-view-environment', function(Y) {
           this.vis = vis;
           this.tree = d3.layout.pack()
                 .size([width, height])
-                .value(function(d) {return d.unit_count;})
+                .value(function(d) {
+                  return d.unit_count === 0 ? 1 : d.unit_count;
+                })
                 .padding(300);
 
           this.updateCanvas();
