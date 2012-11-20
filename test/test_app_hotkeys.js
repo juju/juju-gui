@@ -1,34 +1,19 @@
 'use strict';
 
 describe('application hotkeys', function() {
-  var Y, app, container, env, conn, testUtils, windowNode, altEtriggered;
+  var Y, app, container, env, conn, testUtils, windowNode;
 
   before(function() {
     Y = YUI(GlobalConfig).use(
         ['juju-gui', 'juju-tests-utils',
           'node-event-simulate'], function(Y) {
           windowNode = Y.one(window);
-
-          function TestApp(config) {
-            // Invoke Base constructor, passing through arguments
-            TestApp.superclass.constructor.apply(this, arguments);
-          }
-
-          // Mocking the "show_environment" function.
-          Y.extend(TestApp, Y.juju.App, {
-            show_environment: function() {
-              altEtriggered = true;
-            }
-          });
-
-          app = new TestApp({
+          app = new Y.juju.App({
             env: env,
             container: container,
             viewContainer: container
           });
           app.activateHotkeys();
-
-          altEtriggered = false;
         });
   });
 
@@ -62,7 +47,12 @@ describe('application hotkeys', function() {
   });
 
   it('should listen for alt-E events', function() {
-    assert.isFalse(altEtriggered);
+    var altEtriggered = false;
+    app.on('navigateTo', function(param) {
+      if( param && param.url === '/' ) {
+        altEtriggered = true;
+      }
+    });
     app.render();
     windowNode.simulate('keydown', {
       keyCode: 69, // "E" key

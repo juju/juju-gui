@@ -109,10 +109,6 @@ YUI.add('juju-gui', function(Y) {
      * This method activates the keyboard listeners.
      */
     activateHotkeys: function() {
-      // XXX: The yui event feature is not working.
-      // Once it is fixed, we will change the code below.
-      // http://yuilibrary.com/projects/yui3/ticket/2532960
-
       Y.one(window).on('keydown', function(ev) {
         var key = [],
             keyStr = null,
@@ -125,7 +121,8 @@ YUI.add('juju-gui', function(Y) {
           key.push('shift');
         }
         if (key.length === 0 &&
-            // F1...F12 or esc
+            // If we have no modifier, check if this is a function or the esc
+            // key. It it is not one of these keys, just do nothing.
             !(ev.keyCode >= 112 && ev.keyCode <= 123 || ev.keyCode === 27)) {
           return; //nothing to do
         }
@@ -142,7 +139,7 @@ YUI.add('juju-gui', function(Y) {
 
       Y.detachAll('window-alt-E-pressed');
       Y.on('window-alt-E-pressed', function(data) {
-        this.show_environment();
+        this.fire('navigateTo', { url: '/' });
         data.preventDefault = true;
       }, this);
 
@@ -553,9 +550,6 @@ YUI.add('juju-gui', function(Y) {
             { update: false,
               render: true,
               callback: function(view) {view.postRender();}});
-      }
-      if (next) {
-        next();
       }
     },
 
