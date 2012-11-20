@@ -13,18 +13,20 @@ NODE_TARGETS=node_modules/minimatch node_modules/cryptojs \
 	node_modules/node-minify
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
-SPRITE_GENERATED_FILES=app/assets/sprite/sprite.css app/assets/sprite/sprite.png
-COMPRESSED_FILES=app/assets/javascripts/generated/all-app-debug.js \
-	app/assets/javascripts/generated/all-app.js \
-	app/assets/javascripts/generated/all-third.js \
-	app/assets/javascripts/generated/all-yui.js \
-	app/assets/stylesheets/all-static.css
+BUILD_ASSETS_DIR=build/juju-ui/assets
+SPRITE_GENERATED_FILES=$(BUILD_ASSETS_DIR)/stylesheets/sprite.css \
+	$(BUILD_ASSETS_DIR)/stylesheets/sprite.png
+PRODUCTION_FILES=$(BUILD_ASSETS_DIR)/modules.js \
+	$(BUILD_ASSETS_DIR)/config.js \
+	$(BUILD_ASSETS_DIR)/app.js \
+	$(BUILD_ASSETS_DIR)/stylesheets/all-static.css
 DATE=$(shell date -u)
-APPCACHE=app/assets/manifest.appcache
+APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 
-all: install
+all: build
 
-app/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
+build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
+	@test -d "$(BUILD_ASSETS_DIR)/stylesheets" || mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
 	@./bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
@@ -34,16 +36,12 @@ yuidoc: yuidoc/index.html
 
 $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet $(SPRITE_SOURCE_FILES)
 	@node_modules/grunt/bin/grunt spritegen
-	@rm -Rf app/assets/sprite/
-	@mv bin/sprite app/assets
 
 $(NODE_TARGETS): package.json
 	@npm install
 	@#link depends
 	@ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
 	@ln -sf `pwd`/node_modules/d3/d3.v2* ./app/assets/javascripts/
-
-install: appcache $(NODE_TARGETS) app/templates.js yuidoc spritegen combinejs
 
 gjslint: virtualenv/bin/gjslint
 	@virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
@@ -67,36 +65,40 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(COMPRESSED_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
-	@rm -f app/assets/stylesheets/all-static.css
-	@rm -Rf app/assets/javascripts/generated/
-	@mkdir app/assets/javascripts/generated/
+$(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
+	@rm -f $(PRODUCTION_FILES)
+	@test -d "$(BUILD_ASSETS_DIR)/stylesheets" || mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
 	@./bin/merge-files
+	@cp app/modules.js $(BUILD_ASSETS_DIR)/modules.js
+	@cp app/config.js $(BUILD_ASSETS_DIR)/config.js
 
-combinejs: $(COMPRESSED_FILES)
+combinejs: $(PRODUCTION_FILES)
 
 prep: beautify lint
 
-test: install
+test: build
 	@./test-server.sh
 
-debug: install
-	@echo "Customize config.js to modify server settings"
-	@node server.js debug
-
-server: install
+debug: build
 	@echo "Customize config.js to modify server settings"
 	@node server.js
+
+server: build
+	@echo "Runnning the application from a SimpleHTTPServer"
+	@cd build && python -m SimpleHTTPServer 8888
 
 clean:
 	@rm -rf node_modules virtualenv
 	@make -C docs clean
-	@rm -Rf bin/sprite/
-	@rm -Rf app/assets/sprite/
-	@rm -Rf app/assets/javascripts/generated/
-	@rm -f app/assets/stylesheets/all-static.css
+	@rm -Rf build/
+
+build: appcache $(NODE_TARGETS) build/juju-ui/templates.js yuidoc spritegen combinejs
+	@cp -f app/index.html build/
+	@cp -rf app/assets/images $(BUILD_ASSETS_DIR)/images
+	@cp -rf app/assets/svgs $(BUILD_ASSETS_DIR)/svgs
 
 $(APPCACHE): manifest.appcache.in
+	@test -d "build/juju-ui/assets" || mkdir -p "build/juju-ui/assets"
 	@cp manifest.appcache.in $(APPCACHE)
 	@sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
@@ -110,6 +112,6 @@ appcache-touch:
 # appcache, and this provides the correct order.
 appcache-force: appcache-touch appcache
 
-.PHONY: test lint beautify server install clean prep jshint gjslint \
+.PHONY: test lint beautify server build clean prep jshint gjslint \
 	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
 	combinejs

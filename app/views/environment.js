@@ -434,7 +434,30 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         relationClick: function(d, self) {
-          self.removeRelationConfirm(d, this, self);
+          if (d.scope === 'container') {
+            var subRelDialog = views.createModalPanel(
+                'You may not remove a subordinate relation.',
+                '#rmsubrelation-modal-panel');
+            subRelDialog.addButton(
+                { value: 'Cancel',
+                  section: Y.WidgetStdMod.FOOTER,
+                  /**
+                   * @method action Hides the dialog on click.
+                   * @param {object} e The click event.
+                   * @return {undefined} nothing.
+                   */
+                  action: function(e) {
+                    e.preventDefault();
+                    subRelDialog.hide();
+                    subRelDialog.destroy();
+                  },
+                  classNames: ['btn']
+                });
+            subRelDialog.get('boundingBox').all('.yui3-button')
+                .removeClass('yui3-button');
+          } else {
+            self.removeRelationConfirm(d, this, self);
+          }
         },
 
         /**
@@ -1209,10 +1232,16 @@ YUI.add('juju-view-environment', function(Y) {
             db.fire('update');
           }
           view.get('rmrelation_dialog').hide();
+          view.get('rmrelation_dialog').destroy();
           confirmButton.set('disabled', false);
         },
 
         removeRelationConfirm: function(d, context, view) {
+          // Destroy the dialog if it already exists to prevent cluttering
+          // up the DOM.
+          if (!Y.Lang.isUndefined(view.get('rmrelation_dialog'))) {
+            view.get('rmrelation_dialog').destroy();
+          }
           view.set('rmrelation_dialog', views.createModalPanel(
               'Are you sure you want to remove this relation? ' +
               'This cannot be undone.',
@@ -1785,5 +1814,6 @@ YUI.add('juju-view-environment', function(Y) {
     'svg-layouts',
     'event-resize',
     'slider',
+    'slider-base',
     'view']
 });

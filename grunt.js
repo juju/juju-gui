@@ -5,13 +5,13 @@ module.exports = function(grunt) {
     spritesheet: {
       compile: {
         options: {
-          outputImage: 'sprite/sprite.png',
-          outputCss: 'sprite/sprite.css',
+          outputImage: 'stylesheets/sprite.png',
+          outputCss: 'stylesheets/sprite.css',
           selector: '.sprite'
 
         },
         files: {
-          'bin': 'app/assets/images/*'
+          'build/juju-ui/assets': 'app/assets/images/*'
         }
       }
     }
