@@ -123,8 +123,7 @@
     "GlobalConfig",
     "consoleManager",
     "it",
-    "YUI",
-    "Y"
+    "YUI"
   ],
   // "indent"        : 2,        // Specify indentation spacing
   "quotmark": "single"

@@ -352,9 +352,9 @@ YUI(GlobalConfig).use('juju-models', function(Y) {
   });
 });
 
-YUI(GlobalConfig).use([ 'juju-models', 'juju-gui', 'datasource-local',
-                        'juju-tests-utils', 'json-stringify',
-                        'juju-charm-store' ], function(Y) {
+YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
+  'juju-tests-utils', 'json-stringify',
+  'juju-charm-store'], function(Y) {
   describe('juju charm load', function() {
     var models, conn, env, app, container, charm_store, data, juju;
 

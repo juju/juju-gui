@@ -1,6 +1,6 @@
 'use strict';
 
-YUI(GlobalConfig).use([ 'notifier', 'node-event-simulate' ], function(Y) {
+YUI(GlobalConfig).use(['notifier', 'node-event-simulate'], function(Y) {
   describe('notifier widget', function() {
     var Notifier, notifierBox;
 
