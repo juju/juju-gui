@@ -1,14 +1,10 @@
 'use strict';
 
 describe('notifier widget', function() {
-  var Notifier, notifierBox, Y;
+  var Notifier, notifierBox;
 
-  before(function(done) {
-    Y = YUI(GlobalConfig).use('notifier', 'node-event-simulate',
-        function(Y) {
-          Notifier = Y.namespace('juju.widgets').Notifier;
-          done();
-        });
+  before(function() {
+    Notifier = Y.namespace('juju.widgets').Notifier;
   });
 
   // Create the notifier box and attach it as first element of the body.

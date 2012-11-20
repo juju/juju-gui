@@ -32,13 +32,7 @@ function injectData(app, data) {
 }
 
 describe('Application basics', function() {
-  var Y, app, container;
-
-  before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-      done();
-    });
-  });
+  var app, container;
 
   beforeEach(function(done) {
     //  XXX Apparently removing a DOM node is asynchronous (on Chrome at least)
@@ -128,14 +122,11 @@ describe('Application basics', function() {
 
 
 describe('Application Connection State', function() {
-  var Y, container;
+  var container;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-      container = Y.Node.create('<div id="test" class="container"></div>');
-      done();
-        });
-
+    container = Y.Node.create('<div id="test" class="container"></div>');
+    done();
   });
 
   it('should be able to handle env connection status changes', function() {
@@ -176,16 +167,11 @@ describe('Application Connection State', function() {
 });
 
 describe('Application prefetching', function() {
-  var Y, models, conn, env, app, container, charm_store, data, juju;
+  var models, conn, env, app, container, charm_store, data, juju;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(
-        'juju-models', 'juju-gui', 'datasource-local', 'juju-tests-utils',
-        'json-stringify',
-        function(Y) {
-          models = Y.namespace('juju.models');
-          done();
-        });
+    models = Y.namespace('juju.models');
+    done();
   });
 
   beforeEach(function() {

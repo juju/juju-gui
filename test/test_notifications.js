@@ -1,7 +1,7 @@
 'use strict';
 
 describe('notifications', function() {
-  var Y, juju, models, views;
+  var juju, models, views;
 
   var default_env = {
     'result': [
@@ -59,20 +59,10 @@ describe('notifications', function() {
 
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
-      'juju-models',
-      'juju-views',
-      'juju-gui',
-      'juju-env',
-      'node-event-simulate',
-      'juju-tests-utils'],
-
-    function(Y) {
-      juju = Y.namespace('juju');
-      models = Y.namespace('juju.models');
-      views = Y.namespace('juju.views');
-      done();
-    });
+    juju = Y.namespace('juju');
+    models = Y.namespace('juju.models');
+    views = Y.namespace('juju.views');
+    done();
   });
 
   it('must be able to make notification and lists of notifications',
@@ -354,15 +344,11 @@ describe('notifications', function() {
 
 
 describe('changing notifications to words', function() {
-  var Y, juju;
+  var juju;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(
-        ['juju-notification-controller'],
-        function(Y) {
-          juju = Y.namespace('juju');
-          done();
-        });
+    juju = Y.namespace('juju');
+    done();
   });
 
   it('should correctly translate notification operations into English',
@@ -374,15 +360,11 @@ describe('changing notifications to words', function() {
 });
 
 describe('relation notifications', function() {
-  var Y, juju;
+  var juju;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(
-        ['juju-notification-controller'],
-        function(Y) {
-          juju = Y.namespace('juju');
-          done();
-        });
+    juju = Y.namespace('juju');
+    done();
   });
 
   it('should produce reasonable titles', function() {
@@ -416,17 +398,14 @@ describe('relation notifications', function() {
 });
 
 describe('notification visual feedback', function() {
-  var env, models, notifications, notificationsView, notifierBox, views, Y;
+  var env, models, notifications, notificationsView, notifierBox, views;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use('juju-env', 'juju-models', 'juju-views',
-        function(Y) {
-          var juju = Y.namespace('juju');
-          env = new juju.Environment();
-          models = Y.namespace('juju.models');
-          views = Y.namespace('juju.views');
-          done();
-        });
+    var juju = Y.namespace('juju');
+    env = new juju.Environment();
+    models = Y.namespace('juju.models');
+    views = Y.namespace('juju.views');
+    done();
   });
 
   // Instantiate the notifications model list and view.

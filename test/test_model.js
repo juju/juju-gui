@@ -3,13 +3,11 @@
 (function() {
 
   describe('charm normalization', function() {
-    var Y, models;
+    var models;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-models', function(Y) {
-            models = Y.namespace('juju.models');
-            done();
-      });
+      models = Y.namespace('juju.models');
+      done();
     });
 
     it('must create derived attributes from official charm id', function() {
@@ -33,13 +31,11 @@
   });
 
   describe('juju models', function() {
-    var Y, models;
+    var models;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use('juju-models', function(Y) {
-            models = Y.namespace('juju.models');
-            done();
-      });
+      models = Y.namespace('juju.models');
+      done();
     });
 
     it('must be able to create charm', function() {
@@ -357,17 +353,12 @@
   });
 
   describe('juju charm load', function() {
-    var Y, models, conn, env, app, container, charm_store, data, juju;
+    var models, conn, env, app, container, charm_store, data, juju;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(
-          'juju-models', 'juju-gui', 'datasource-local', 'juju-tests-utils',
-          'json-stringify', 'juju-charm-store',
-          function(Y) {
-            models = Y.namespace('juju.models');
-            juju = Y.namespace('juju');
-            done();
-          });
+      models = Y.namespace('juju.models');
+      juju = Y.namespace('juju');
+      done();
     });
 
     beforeEach(function() {

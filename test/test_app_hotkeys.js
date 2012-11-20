@@ -1,20 +1,17 @@
 'use strict';
 
 describe('application hotkeys', function() {
-  var Y, app, container, env, conn, testUtils, windowNode;
+  var app, container, env, conn, testUtils, windowNode;
 
   before(function() {
-    Y = YUI(GlobalConfig).use(
-        ['juju-gui', 'juju-tests-utils',
-          'node-event-simulate'], function(Y) {
-          windowNode = Y.one(window);
-          app = new Y.juju.App({
-            env: env,
-            container: container,
-            viewContainer: container
-          });
-          app.activateHotkeys();
-        });
+    windowNode = Y.one(window);
+    app = new Y.juju.App({
+      env: env,
+      container: container,
+      viewContainer: container
+    });
+    app.navigate = function() {};
+    app.activateHotkeys();
   });
 
   afterEach(function() {

@@ -37,8 +37,8 @@
   <script src="test_notifier_widget.js"></script>
 
   <script>
-  YUI().use('node', 'event', function(Y) {
-     Y.on('domready', function() {
+  YUI().use('node', 'event', function(runnerY) {
+    runnerY.on('domready', function() {
 
      var config = GlobalConfig;
      for (group in config.groups) {
@@ -52,8 +52,16 @@
               '/juju-ui/', '../juju-ui/', 1);
          }
      }
-     // Load before test runner
-     mocha.run();
+     
+     YUI(GlobalConfig).use(['juju-gui',
+                            'node-event-simulate',
+                            'juju-tests-utils'], 
+                            function(testsYUI) {
+         // Set the global Y variable used by the tests.
+         window.Y = testsYUI;
+         // Load before test runner
+         mocha.run();
+       });
      });
   });
   </script>
