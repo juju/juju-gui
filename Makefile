@@ -24,7 +24,7 @@ APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 all: build
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
-	test -d "$(BUILD_ASSETS_DIR)/stylesheets" || mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
+	mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
 	./bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
@@ -40,6 +40,18 @@ $(NODE_TARGETS): package.json
 	# Keep all targets up to date, not just new/changed ones.
 	for dirname in $(NODE_TARGETS); do touch $$dirname ; done
 	@# Check to see if we made what we expected to make, and warn if we did not.
+	@# Note that we calculate FOUND_TARGETS here, in this way and not in the
+	@# standard Makefile way, because we need to see what node_modules were
+	@# created by this target.  Makefile variables and substitutions, even when
+	@# using $(eval...) within a target, happen initially, before the target
+	@# is run.  Therefore, if this were a simple Makefile variable, it
+	@# would be empty after a first run, and you would always see the warning
+	@# message in that case.  We have to connect it to the "if" command with
+	@# "; \" because Makefile targets are evaluated per line, with bash
+	@# variables discarded between them.  We compare the result with
+	@# EXPECTED_NODE_TARGETS and not simply the NODE_TARGETS because this
+	@# gives us normalization, particularly of the trailing whitespace, that
+	@# we do not otherwise have.
 	@FOUND_TARGETS=$$(find node_modules -maxdepth 1 -mindepth 1 -type d \
 	-printf 'node_modules/%f ' | tr ' ' '\n' | grep -Ev '\.bin$$' \
 	| sort | tr '\n' ' '); \
@@ -98,7 +110,7 @@ spritegen: $(SPRITE_GENERATED_FILES)
 
 $(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
 	rm -f $(PRODUCTION_FILES)
-	test -d "$(BUILD_ASSETS_DIR)/stylesheets" || mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
+	mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
 	./bin/merge-files
 	cp app/modules.js $(BUILD_ASSETS_DIR)/modules.js
 	cp app/config.js $(BUILD_ASSETS_DIR)/config.js
@@ -115,7 +127,7 @@ debug: build
 	node server.js
 
 server: build
-	@echo "Runnning the application from a SimpleHTTPServer"
+	@echo "Running the application from a SimpleHTTPServer"
 	cd build && python -m SimpleHTTPServer 8888
 
 clean:
@@ -143,7 +155,7 @@ build: appcache $(NODE_TARGETS) javascript_libraries \
 	combinejs build/index.html build_images
 
 $(APPCACHE): manifest.appcache.in
-	test -d "build/juju-ui/assets" || mkdir -p "build/juju-ui/assets"
+	mkdir -p "build/juju-ui/assets"
 	cp manifest.appcache.in $(APPCACHE)
 	sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
