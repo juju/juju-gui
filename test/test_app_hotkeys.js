@@ -49,7 +49,7 @@ describe('application hotkeys', function() {
   it('should listen for alt-E events', function() {
     var altEtriggered = false;
     app.on('navigateTo', function(param) {
-      if( param && param.url === '/' ) {
+      if (param && param.url === '/') {
         altEtriggered = true;
       }
     });
