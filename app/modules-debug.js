@@ -1,8 +1,13 @@
 // This file is used for development only. In order to use it you should call
 // the "make debug" command. This command passes the "debug" argument to the
-// "lib/server.js". The sole use of this file is to define the "aliases" ("use"
-// property) and the "fullpath" of the file that implement a given module. The
-// "requires" property should not be used here.
+// "lib/server.js".
+//
+// This file declares which files implement modules, using the
+// "fullpath" property; and declares the membership of rollup modules, using
+// the "use" property to specify what the module name aliases.
+//
+// The "requires" property should not be used here because the javascript
+// minimizer will not parse it.
 var GlobalConfig = {
   filter: 'debug',
   // Set "true" for verbose logging of YUI
