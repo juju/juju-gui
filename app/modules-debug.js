@@ -1,6 +1,8 @@
 // This file is used for development only. In order to use it you should call
 // the "make debug" command. This command passes the "debug" argument to the
-// "lib/server.js".
+// "lib/server.js". The sole use of this file is to define the "aliases" ("use"
+// property) and the "fullpath" of the file that implement a given module. The
+// "requires" property should not be used here.
 var GlobalConfig = {
   filter: 'debug',
   // Set "true" for verbose logging of YUI
@@ -93,19 +95,15 @@ var GlobalConfig = {
         },
 
         'juju-charm-models': {
-          requires: ['juju-charm-id'],
           fullpath: '/juju-ui/models/charm.js'
         },
 
         'juju-models': {
-          requires: [
-            'model', 'model-list', 'juju-endpoints', 'juju-charm-models'],
           fullpath: '/juju-ui/models/models.js'
         },
 
         // Connectivity
         'juju-env': {
-          requires: ['reconnecting-websocket'],
           fullpath: '/juju-ui/store/env.js'
         },
 
@@ -114,7 +112,6 @@ var GlobalConfig = {
         },
 
         'juju-charm-store': {
-          requires: ['juju-charm-id'],
           fullpath: '/juju-ui/store/charm.js'
         },
 
@@ -125,13 +122,7 @@ var GlobalConfig = {
 
         // App
         'juju-gui': {
-          fullpath: '/juju-ui/app.js',
-          requires: [
-            'juju-controllers',
-            'juju-views',
-            'juju-models',
-            'juju-view-charm-search'
-          ]
+          fullpath: '/juju-ui/app.js'
         }
       }
     }
