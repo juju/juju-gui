@@ -642,6 +642,94 @@ g.unit {
     }
 }
 
+.create-picker(@width, @top) {
+    width: @width;
+    .picker-body {
+        width: @width - 15px;
+    }
+    .picker-expanded {
+        display: none;
+
+        &.active {
+            z-index: 100;
+            display: block;
+        }
+        .picker-edge {
+            display: block;
+            top: auto;
+            bottom: -10px;
+            margin-left: -3px;
+        }
+        .picker-edge-right {
+            left: auto;
+            right: 0;
+            margin-left: 0;
+            margin-right: -3px;
+        }
+        .picker-list {
+            position: absolute;
+            bottom: -12px;
+            left: 4px;
+            height: 100%;
+            background: url(/juju-ui/assets/images/view_1px.png) repeat-x;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            height: 54px;
+            width: @width - 8px;
+
+            ul {
+                list-style-type: none;
+                padding: 0;
+                padding-top: 5px;
+                margin: 0;
+
+                li {
+                    padding: 1px;
+
+                    .activetick {
+                        width: 12px;
+                        height: 14px;
+                        float: right;
+                        background: url(/juju-ui/assets/images/selected_tick.png)
+                            no-repeat
+                            bottom left;
+                    }
+                }
+            }
+        }
+    }
+    .picker-edge {
+        position: absolute;
+        top: @top;
+        left: 0;
+    }
+    .picker-body {
+        position: absolute;
+        top: @top;
+        left: 4px;
+        background: url(/juju-ui/assets/images/picker_1px.png) repeat-x;
+        height: 20px;
+        padding: 3px 0 0 3px;
+    }
+    .picker-button {
+        position: absolute;
+        top: @top;
+        right: 0;
+    }
+    &.inactive {
+        .picker-edge {
+            display: none;
+        }
+        .picker-body {
+            display: none;
+        }
+        .picker-button {
+            display: none;
+        }
+    }
+
+}
 .picker {
     position: relative;
     display: inline-block;
@@ -649,64 +737,14 @@ g.unit {
     padding: 0;
     height: 24px;
     &.graph-list-picker {
-        width: 116px;
-        .picker-body {
-            width: 91px;
-        }
-
-
-        .picker-expanded {
-            display: none;
-
-            &.active {
-                z-index: 100;
-                display: block;
-            }
-            .picker-edge {
-                display: block;
-                top: auto;
-                bottom: -10px;
-                margin-left: -3px;
-            }
-            .picker-edge-right {
-                left: auto;
-                right: 0;
-                margin-left: 0;
-                margin-right: -3px;
-            }
-            .picker-list {
-                position: absolute;
-                bottom: -12px;
-                left: 4px;
-                height: 100%;
-                background: url(/juju-ui/assets/images/view_1px.png) repeat-x;
-                list-style-type: none;
-                padding: 0;
-                margin: 0;
-                height: 54px;
-                width: 108px;
-
-                ul {
-                    list-style-type: none;
-                    padding: 0;
-                    padding-top: 5px;
-                    margin: 0;
-
-                    li {
-                        padding: 1px;
-
-                        .activetick {
-                            width: 12px;
-                            height: 14px;
-                            float: right;
-                            background: url(/juju-ui/assets/images/selected_tick.png)
-                                no-repeat
-                                bottom left;
-                        }
-                    }
-                }
-            }
-        }
+        .create-picker(116px, 8px);
+    }
+    &.charm-filter-picker {
+        left: 11px;
+        padding-bottom: 5px;
+        @top: 0px;
+        top: @top;
+        .create-picker(270px, 0);
     }
     &.zoom-picker {
         width: 56px;
@@ -733,35 +771,6 @@ g.unit {
         }*/
     }
 
-    .picker-edge {
-        position: absolute;
-        top: 8px;
-        left: 0;
-    }
-    .picker-body {
-        position: absolute;
-        top: 8px;
-        left: 4px;
-        background: url(/juju-ui/assets/images/picker_1px.png) repeat-x;
-        height: 20px;
-        padding: 3px 0 0 3px;
-    }
-    .picker-button {
-        position: absolute;
-        top: 8px;
-        right: 0;
-    }
-    &.inactive {
-        .picker-edge {
-            display: none;
-        }
-        .picker-body {
-            display: none;
-        }
-        .picker-button {
-            display: none;
-        }
-    }
 }
 
 #unit-status {

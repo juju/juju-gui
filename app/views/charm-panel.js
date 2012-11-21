@@ -128,6 +128,12 @@ YUI.add('juju-charm-panel', function(Y) {
         mouseleave: function(ev) {
           ev.currentTarget.all('.btn').transition({opacity: 0, duration: 0.25});
         }
+      },
+      '.charm-filter-picker .picker-button': {
+        click: 'showCharmFilterPicker'
+      },
+      '.charm-filter-picker .picker-expanded': {
+        click: 'hideCharmFilterPicker'
       }
     },
     // Set searchText to cause the results to be found and rendered.
@@ -180,7 +186,12 @@ YUI.add('juju-charm-panel', function(Y) {
           resultEntries = this.get('resultEntries'),
           raw_entries = searchText ? resultEntries : defaultEntries,
           entries = raw_entries && makeRenderableResults(raw_entries);
-      container.setHTML(this.template({ charms: entries }));
+      container.setHTML(this.template(
+        { charms: entries,
+          all_charms_count: 15,
+          subordinate_charms_count: 5,
+          deployed_charms_count: 6
+        }));
       container.all('.charm-detail').ellipsis();
       container.all('.charm-summary').ellipsis({'lines': 2});
       this._setScroll();
@@ -311,7 +322,36 @@ YUI.add('juju-charm-panel', function(Y) {
             level: 'error'
           })
       );
+    },
+
+    /*
+     * Event handler to show the charm filter picker.
+     *
+     * @method showCharmFilterPicker
+     * @param {Object} evt The event.
+     * @return {undefined} nothing.
+     */
+    showCharmFilterPicker: function(evt) {
+      var container = this.get('container'),
+          picker = container.one('.charm-filter-picker');
+      picker.addClass('inactive');
+      picker.one('.picker-expanded').addClass('active');
+    },
+
+    /*
+     * Event handler to hide the charm filter picker
+     *
+     * @method hideCharmFilterPicker
+     * @param {Object} evt The event.
+     * @return {undefined} nothing.
+     */
+    hideCharmFilterPicker: function(evt) {
+      var container = this.get('container'),
+          picker = container.one('.charm-filter-picker');
+      picker.removeClass('inactive');
+      picker.one('.picker-expanded').removeClass('active');
     }
+
   });
   views.CharmCollectionView = CharmCollectionView;
 

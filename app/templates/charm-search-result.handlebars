@@ -1,4 +1,22 @@
+<div class="picker charm-filter-picker">
+  <img class="picker-edge" src="/juju-ui/assets/images/picker_left_edge.png" />
+  <div class="picker-expanded">
+    <img class="picker-edge" src="/juju-ui/assets/images/view_left_edge.png" />
+    <div class="picker-list">
+      <ul>
+        <li class="active">All charms ({{all_charms_count}})<div class="activetick"></div></li>
+        <li>Subordinates ({{subordinate_charms_count}})</li>
+        <li>Deployed ({{deployed_charms_count}})</li>
+      </ul>
+    </div>
+    <img class="picker-edge picker-edge-right" src="/juju-ui/assets/images/view_right_edge.png" />
+  </div>
+  <div class="picker-body">All charms ({{all_charms_count}})</div>
+  <i class="picker-button" src="/juju-ui/assets/images/picker_view_right_button_down.png" />
+</div>
+
 <div class="search-result-div">
+
   <div>
     {{#charms}}
     <div class="series-charms">
