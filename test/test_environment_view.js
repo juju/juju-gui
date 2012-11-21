@@ -166,6 +166,53 @@
         }
     );
 
+    it('must be able to place new services properly', function() {
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env
+      }),
+          tmp_data = {
+            result: [
+              ['service', 'add', {
+                'subordinate': true,
+                'charm': 'cs:precise/puppet-2',
+                'id': 'puppet2'
+              }],
+              ['service', 'add', {
+                'charm': 'cs:precise/mysql-6',
+                'id': 'mysql2'
+              }],
+              ['unit', 'add', {
+                'machine': 0,
+                'agent-state': 'started',
+                'public-address': '192.168.122.222',
+                'id': 'mysql2/0'
+              }]
+            ],
+            op: 'delta'
+          },
+          properTransform = /translate\(\d+\.?\d*,\d+\.?\d*\)/;
+      view.render();
+
+      container.all('.service').each(function(serviceNode) {
+        // Ensure that all initial service nodes' transform attributes are
+        // properly formated (i.e.: no NaN values).
+        properTransform.test(serviceNode.getAttribute('transform'))
+          .should.equal(true);
+      });
+
+      db.on_delta({ data: tmp_data });
+      view.render();
+
+      container.all('.service').each(function(serviceNode) {
+        // Ensure that all new service nodes' transform attributes are properly
+        // formated as well (i.e.: no NaN values).
+        properTransform.test(serviceNode.getAttribute('transform'))
+          .should.equal(true);
+      });
+    });
+
     it('must be able to render subordinate relation indicators',
        function() {
          var view = new views.environment({
