@@ -106,6 +106,85 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+     * This method activates the keyboard listeners.
+     */
+    activateHotkeys: function() {
+      Y.one(window).on('keydown', function(ev) {
+        var key = [],
+            keyStr = null,
+            data = { preventDefault: false };
+        if (ev.altKey) {
+          key.push('alt');
+        } else if (ev.ctrlKey) {
+          key.push('ctrl');
+        } else if (ev.shiftKey) {
+          key.push('shift');
+        }
+        if (key.length === 0 &&
+            // If we have no modifier, check if this is a function or the esc
+            // key. It it is not one of these keys, just do nothing.
+            !(ev.keyCode >= 112 && ev.keyCode <= 123 || ev.keyCode === 27)) {
+          return; //nothing to do
+        }
+        keyStr = keyCodeToString(ev.keyCode);
+        if (!keyStr) {
+          keyStr = ev.keyCode;
+        }
+        key.push(keyStr);
+        Y.fire('window-' + key.join('-') + '-pressed', data);
+        if (data.preventDefault) {
+          ev.preventDefault();
+        }
+      });
+
+      Y.detachAll('window-alt-E-pressed');
+      Y.on('window-alt-E-pressed', function(data) {
+        this.fire('navigateTo', { url: '/' });
+        data.preventDefault = true;
+      }, this);
+
+      Y.detachAll('window-alt-S-pressed');
+      Y.on('window-alt-S-pressed', function(data) {
+        var field = Y.one('#charm-search-field');
+        if (field) {
+          field.focus();
+        }
+        data.preventDefault = true;
+      }, this);
+
+      /**
+       * It transforms a numeric keyCode value to its string version. Example:
+       * 16 returns 'shift'.
+       * @param {number} keyCode The numeric value of a key.
+       * @return {string} The string version of the given keyCode.
+       */
+      function keyCodeToString(keyCode) {
+        if (keyCode === 16) {
+          return 'shift';
+        }
+        if (keyCode === 17) {
+          return 'control';
+        }
+        if (keyCode === 18) {
+          return 'alt';
+        }
+        if (keyCode === 27) {
+          return 'esc';
+        }
+        // Numbers or Letters
+        if (keyCode >= 48 && keyCode <= 57 || //Numbers
+            keyCode >= 65 && keyCode <= 90) { //Letters
+          return String.fromCharCode(keyCode);
+        }
+        //F1 -> F12
+        if (keyCode >= 112 && keyCode <= 123) {
+          return 'F' + (keyCode - 111);
+        }
+        return null;
+      }
+    },
+
+    /**
      * @method initializer
      */
     initializer: function() {
@@ -472,7 +551,6 @@ YUI.add('juju-gui', function(Y) {
               render: true,
               callback: function(view) {view.postRender();}});
       }
-      next();
     },
 
     /**
