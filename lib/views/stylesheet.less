@@ -677,6 +677,7 @@ g.unit {
             margin: 0;
             height: 54px;
             width: @width - 8px;
+            cursor: pointer;
 
             ul {
                 list-style-type: none;
@@ -686,14 +687,9 @@ g.unit {
 
                 li {
                     padding: 1px;
-
-                    .activetick {
-                        width: 12px;
-                        height: 14px;
-                        float: right;
+                    &.activetick {
                         background: url(/juju-ui/assets/images/selected_tick.png)
-                            no-repeat
-                            bottom left;
+                            no-repeat bottom right;
                     }
                 }
             }
@@ -745,6 +741,12 @@ g.unit {
         @top: 0px;
         top: @top;
         .create-picker(270px, 0);
+        .picker-expanded .picker-list {
+            @border-color: #DDD;
+            border: 4px outset @border-color;
+            background: white;
+            height: auto;
+        }
     }
     &.zoom-picker {
         width: 56px;

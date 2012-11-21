@@ -132,7 +132,7 @@ YUI.add('juju-charm-panel', function(Y) {
       '.charm-filter-picker .picker-button': {
         click: 'showCharmFilterPicker'
       },
-      '.charm-filter-picker .picker-expanded': {
+      '.charm-filter-picker .picker-item': {
         click: 'hideCharmFilterPicker'
       }
     },
@@ -347,8 +347,14 @@ YUI.add('juju-charm-panel', function(Y) {
      */
     hideCharmFilterPicker: function(evt) {
       var container = this.get('container'),
-          picker = container.one('.charm-filter-picker');
+          picker = container.one('.charm-filter-picker'),
+          selected = evt.currentTarget,
+          selectedText = selected.get('text');
       picker.removeClass('inactive');
+      picker.one('.activetick').removeClass('activetick');
+      selected.addClass('activetick');
+      picker.one('.picker-body')
+        .set('text', selectedText);
       picker.one('.picker-expanded').removeClass('active');
     }
 
