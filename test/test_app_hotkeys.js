@@ -38,7 +38,7 @@ describe('application hotkeys', function() {
     searchInput.set('id', 'charm-search-field');
     container.append(searchInput);
     windowNode.simulate('keydown', {
-      keyCode: 83, //  "S" key.
+      keyCode: 83, // "S" key.
       altKey: true
     });
     // Did charm-search-field get the focus?
@@ -55,7 +55,7 @@ describe('application hotkeys', function() {
       ev.stopImmediatePropagation();
     });
     windowNode.simulate('keydown', {
-      keyCode: 69, //  "E" key.
+      keyCode: 69, // "E" key.
       altKey: true
     });
     assert.isTrue(altEtriggered);
