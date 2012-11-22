@@ -41,13 +41,6 @@ describe('Application basics', function() {
   });
 
   beforeEach(function(done) {
-    //  XXX Apparently removing a DOM node is asynchronous (on Chrome at least)
-    //  and we occasionally lose the race if this code is in the afterEach
-    //  function, so instead we do it here, but only if one has previously been
-    //  created.
-    if (container) {
-      container.remove(true);
-    }
     container = Y.one('#main')
       .appendChild(Y.Node.create('<div/>'))
         .set('id', 'test-container')
@@ -55,12 +48,17 @@ describe('Application basics', function() {
         .append(Y.Node.create('<span/>')
           .set('id', 'environment-name'))
         .append(Y.Node.create('<span/>')
-          .set('id', 'provider-type'));
+          .set('id', 'provider-type'))
+        .hide();
     app = new Y.juju.App(
         { container: container,
           viewContainer: container});
     injectData(app);
     done();
+  });
+
+  afterEach(function() {
+    container.remove(true);
   });
 
   it('should produce a valid index', function() {
@@ -114,14 +112,13 @@ describe('Application basics', function() {
   it('should show the provider type, when available', function() {
     var providerType = 'excellent provider';
     // Since no provider type has been set yet, none is displayed.
-    assert.equal(
-        container.one('#provider-type').get('text'),
-        '');
+    assert.equal('',  container.one('#provider-type').get('text'));
     app.env.set('providerType', providerType);
     // The provider type has been displayed.
     assert.equal(
-        container.one('#provider-type').get('text'),
-        'on ' + providerType);
+      'on ' + providerType,
+      container.one('#provider-type').get('text')
+    );
   });
 
 });
