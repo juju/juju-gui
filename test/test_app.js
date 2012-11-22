@@ -112,12 +112,12 @@ describe('Application basics', function() {
   it('should show the provider type, when available', function() {
     var providerType = 'excellent provider';
     // Since no provider type has been set yet, none is displayed.
-    assert.equal('',  container.one('#provider-type').get('text'));
+    assert.equal('', container.one('#provider-type').get('text'));
     app.env.set('providerType', providerType);
     // The provider type has been displayed.
     assert.equal(
-      'on ' + providerType,
-      container.one('#provider-type').get('text')
+        'on ' + providerType,
+        container.one('#provider-type').get('text')
     );
   });
 

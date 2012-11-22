@@ -7,7 +7,7 @@ describe('application hotkeys', function() {
     Y = YUI(GlobalConfig).use(
         ['juju-gui', 'juju-tests-utils',
           'node-event-simulate'], function(Y) {
-           var env = {
+          var env = {
             after: function() {},
             get: function() {},
             on: function() {}
