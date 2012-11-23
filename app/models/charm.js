@@ -226,6 +226,7 @@ YUI.add('juju-charm-models', function(Y) {
 }, '0.1.0', {
   requires: [
     'model',
-    'model-list'
+    'model-list',
+    'juju-charm-id'
   ]
 });

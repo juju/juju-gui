@@ -746,6 +746,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-models',
     'juju-views',
     'juju-controllers',
+    'juju-view-charm-search',
     'io',
     'json-parse',
     'app-base',
