@@ -379,7 +379,8 @@ YUI.add('juju-charm-panel', function(Y) {
           if (query.requires || query.provides) {
             store.find(
                 query,
-                { /**
+                {
+                  /**
                    * If the charm we searched for is still the same as the
                    * view's charm, ask renderRelatedCharms to render the
                    * results.  If they differ, discard the results, because they
