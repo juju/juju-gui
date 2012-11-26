@@ -68,18 +68,18 @@ def check_file(file_name, undocumented):
     number of documentation lines.
     """
     # Every function.
-    functions = set()
+    file_functions = set()
     # Every function that has unexpectedly missing documentation.
-    missing_documentation = set()
+    missing_doc_functions = set()
     # Every function that has documentation but wasn't expected to.
-    falsely_undocumented = set()
+    falsely_undoc_functions = set()
     # Accumulate the total number of doc lines.
     file_num_doc_lines = 0
     with open(file_name) as f:
         source = f.readlines()
         boundary = 0
         for function_name, line_number in find_functions(source):
-            functions.add((file_name, function_name))
+            file_functions.add((file_name, function_name))
             num_doc_lines = find_docs(line_number, boundary, source)
             boundary = line_number
 
@@ -93,13 +93,13 @@ def check_file(file_name, undocumented):
                 # If it is listed as an undocumented function...
                 if is_undocumented:
                     #...report the incongruence.
-                    falsely_undocumented.add(code_location)
+                    falsely_undoc_functions.add(code_location)
             # Otherwise if we found an undocumented function that is not
             # listed as undocumented, report it.
             elif not num_doc_lines and not is_undocumented:
-                missing_documentation.add(code_location)
+                missing_doc_functions.add(code_location)
 
-    return (functions, missing_documentation, falsely_undocumented,
+    return (file_functions, missing_doc_functions, falsely_undoc_functions,
         file_num_doc_lines)
 
 
@@ -127,13 +127,13 @@ def main():
         # Ignore the template.js file.
         files = [f for f in files if f.endswith('.js') and f != 'templates.js']
         for file_name in [os.path.join(root, name) for name in files]:
-            (file_functions, missing_documentation, falsely_undocumented,
+            (file_functions, missing_doc_functions, falsely_undoc_functions,
                 file_num_doc_lines) = check_file(file_name, undocumented)
             all_functions.update(file_functions)
-            for code_location in missing_documentation:
+            for code_location in missing_doc_functions:
                 print code_location, 'undocumented but not listed as such'
                 found_errors = True
-            for code_location in falsely_undocumented:
+            for code_location in falsely_undoc_functions:
                 print code_location, 'erroneously listed as undocumented'
                 found_errors = True
             total_num_doc_lines += file_num_doc_lines
