@@ -287,3 +287,142 @@ describe('charm description', function() {
   });
 
 });
+
+describe('charm panel filtering', function() {
+  var Y, models, views, juju, ENTER,
+      searchResult = '{"results": [' +
+        '{"data_url": "this is my URL", ' +
+        '"name": "membase", "series": "precise", "summary": ' +
+        '"Membase Server", "relevance": 8.728194117350437, ' +
+        '"owner": "charmers", "store_url": "cs:precise/membase-6"},' +
+        '{"data_url": "this is another URL", ' +
+        '"name": "syslogd", "series": "precise", "summary": ' +
+        '"Sys Logger", "relevance": 3.728194117350437, ' +
+        '"owner": "charmers", "store_url": "cs:precise/syslogd-2",'+
+        '"is_subordinate": true}' +
+        ']}';
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        'juju-models',
+        'juju-views',
+        'juju-gui',
+        'juju-env',
+        'juju-tests-utils',
+        'node-event-simulate',
+        'node',
+        'event-key',
+        'juju-charm-store',
+
+        function(Y) {
+          models = Y.namespace('juju.models');
+          views = Y.namespace('juju.views');
+          juju = Y.namespace('juju');
+          ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
+          done();
+        });
+
+  });
+
+  beforeEach(function() {
+    // The charms panel needs these elements
+    var docBody = Y.one(document.body);
+    Y.Node.create('<div id="charm-search-test">' +
+        '<div class="picker-body">' +
+        '  <ul>' +
+        '    <li class="picker-item" data-filter="all"></li>' +
+        '    <li class="picker-item" data-filter="subordinates"></li>' +
+        '    <li class="picker-item" data-filter="deployed"></li>' +
+        '  </ul>' +
+        '</div>' +
+        '<div id="charm-search-icon"><i></i></div>' +
+        '<div id="content"></div>' +
+        '<input type="text" id="charm-search-field" />' +
+        '</div>').appendTo(docBody);
+  });
+
+  afterEach(function() {
+    Y.namespace('juju.views').CharmPanel.killInstance();
+    Y.one('#charm-search-test').remove(true);
+  });
+
+  it('should have `filters` default to `all`', function() {
+    var view = new views.CharmCollectionView({
+    }).render();
+    view.get('filter').should.equal('all');
+  });
+
+  it('can display all charms', function() {
+    var view = new views.CharmCollectionView({
+    });
+    view.render();
+
+    var searchTriggered = false;
+    var panel;
+    var charm_store = new juju.CharmStore({datasource: {
+            sendRequest: function(params) {
+              searchTriggered = true;
+              // Stubbing the server callback value
+              params.callback.success({
+                response: {
+                  results: [{
+                    responseText: searchResult
+                  }]
+                }
+              });
+            }
+    }});
+    panel = Y.namespace('juju.views').CharmPanel.getInstance({
+          charm_store: charm_store,
+          testing: true,
+          app: {}
+    });
+    var node = panel.node;
+
+    //var view = new views.CharmCollectionView();
+    //view.set('filter', 'all');
+
+    panel.set('filter', 'subordinates');
+    panel.show(true);
+    var field = Y.one('#charm-search-field');
+    field.set('value', 'aaa');
+    field.simulate('keydown', { keyCode: ENTER });
+
+    searchTriggered.should.equal(true);
+    node.all('.charm-entry .btn.deploy').getData('url').should.eql(
+      ['cs:precise/membase-6', 'cs:precise/syslogd-2']);
+  });
+
+  it('can filter subordinate charms', function() {
+    var searchTriggered = false,
+        panel = Y.namespace('juju.views').CharmPanel.getInstance({
+          charm_store: new juju.CharmStore({datasource: {
+            sendRequest: function(params) {
+              searchTriggered = true;
+              // Stubbing the server callback value
+              params.callback.success({
+                response: {
+                  results: [{
+                    responseText: searchResult
+                  }]
+                }
+              });
+            }
+          }}),
+          testing: true,
+          filter: 'subordinates',
+          app: {}
+        }),
+        node = panel.node;
+    panel.set('filter', 'subordinates');
+    panel.show(true);
+    var field = Y.one('#charm-search-field');
+    field.set('value', 'aaa');
+    field.simulate('keydown', { keyCode: ENTER });
+
+    searchTriggered.should.equal(true);
+    node.all('.charm-entry .btn.deploy').getData('url').should.eql(
+      ['cs:precise/membase-6', 'cs:precise/syslogd-2']);
+  });
+
+});
