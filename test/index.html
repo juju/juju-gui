@@ -33,6 +33,7 @@
   <script src="test_endpoints.js"></script>
   <script src="test_application_notifications.js"></script>
   <script src="test_charm_store.js"></script>
+  <script src="test_app_hotkeys.js"></script>
   <script src="test_notifier_widget.js"></script>
 
   <script>
@@ -48,7 +49,7 @@
               continue
             }
             resource.fullpath = resource.fullpath.replace(
-              '/juju-ui/', '../app/', 1);
+              '/juju-ui/', '../juju-ui/', 1);
          }
      }
      // Load before test runner

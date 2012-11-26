@@ -63,7 +63,7 @@ YUI.add('juju-charm-panel', function(Y) {
               clientDiff = (
               scrollContainer.get('clientHeight') -
               parseInt(scrollContainer.getComputedStyle('height'), 10)),
-              scrollHeight = height - diff - clientDiff;
+              scrollHeight = height - diff - clientDiff - 1;
           scrollContainer.setStyle('height', scrollHeight + 'px');
         }
       },
@@ -181,6 +181,7 @@ YUI.add('juju-charm-panel', function(Y) {
           raw_entries = searchText ? resultEntries : defaultEntries,
           entries = raw_entries && makeRenderableResults(raw_entries);
       container.setHTML(this.template({ charms: entries }));
+      container.all('.charm-detail').ellipsis();
       container.all('.charm-summary').ellipsis({'lines': 2});
       this._setScroll();
       return this;
@@ -198,7 +199,7 @@ YUI.add('juju-charm-panel', function(Y) {
           scrollContainer = container.one('.search-result-div'),
           height = this.get('height');
       if (scrollContainer && height) {
-        scrollContainer.setStyle('height', height + 'px');
+        scrollContainer.setStyle('height', height - 1 + 'px');
       }
     },
     /**
@@ -980,7 +981,7 @@ YUI.add('juju-charm-panel', function(Y) {
       container.setX(pos.x);
       if (pos.height) {
         container.setStyle('height', pos.height + 'px');
-        panels[activePanelName].set('height', pos.height);
+        panels[activePanelName].set('height', pos.height - 1);
       }
     }
 
