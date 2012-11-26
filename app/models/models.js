@@ -487,6 +487,7 @@ YUI.add('juju-models', function(Y) {
     'datasource-jsonschema',
     'io-base',
     'json-parse',
+    'juju-endpoints',
     'juju-view-utils',
     'juju-charm-models'
   ]
