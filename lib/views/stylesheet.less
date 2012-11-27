@@ -854,6 +854,8 @@ g.unit {
     background-color: white;
     border-left: darkgray solid 1px;
     .create-box-shadow(inset 1px 0 0 lightgray);
+    border-bottom: darkgray solid 1px;
+    .create-box-shadow(inset 0 -1px 0 lightgray);
 
     .charm-panel-configure .btn {
         float: right;
@@ -1092,8 +1094,7 @@ g.unit {
                 text-transform: capitalize;
                 padding-left: @charm-panel-padding-left;
                 background-color: @charm-panel-series-color;
-                border-left: 1px solid @charm-panel-series-color - #333;
-                border-top: 1px solid #989898;
+                border-left: 1px solid #b8b7b7;
                 width: @charm-panel-width - 1;
                 height: 20px;
                 line-height: 16px;
