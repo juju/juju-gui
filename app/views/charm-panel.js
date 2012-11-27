@@ -68,6 +68,43 @@ YUI.add('juju-charm-panel', function(Y) {
         }
       },
       /**
+       * Given a set of entries as returned by the charm store "find"
+       * method (charms grouped by series), return the list filtered by 'filter'.
+       *
+       * @method filterEntries
+       * @static
+       * @private
+       * @param {Array} entries An ordered collection of groups of charms, as
+       *   returned by the charm store "find" method.
+       * @param {String} filter Either 'all', 'subordinates', or 'deployed'.
+       * @return {Array} A filtered, grouped set of filtered entries.
+       */
+      filterEntries = function(entries, filter) {
+        var is_sub_filter = function(charm) {
+              return !!charm.get('is_subordinate');
+            },
+            filter_fcn;
+
+        if (filter === 'all') {
+          return entries;
+        } else if (filter === 'subordinates') {
+          filter_fcn = is_sub_filter;
+        } else {
+          return entries;
+        }
+
+        /* Filter the charms based on the filter function. */
+        entries.forEach(function(series_group){
+          var sub_charms = series_group.charms.filter(filter_fcn);
+          series_group.charms = sub_charms;
+        });
+        /* Filter the series group based on the existence of any filtered charms. */
+        return entries.filter(function(series_group) {
+          return series_group.charms.length > 0;
+        });
+      },
+
+      /**
        * Given a set of grouped entries as returned by the charm store "find"
        * method, return the same data but with the charms converted into data
        * objects that are more amenable to rendering with handlebars.
@@ -141,6 +178,7 @@ YUI.add('juju-charm-panel', function(Y) {
     // found and rendered.
     initializer: function() {
       var self = this;
+      this.set('filter', 'all');
       this.after('searchTextChange', function(ev) {
         this.set('resultEntries', null);
         if (ev.newVal) {
@@ -178,6 +216,9 @@ YUI.add('juju-charm-panel', function(Y) {
         this.render();
       });
       this.after('heightChange', this._setScroll);
+      this.after('filterChange', function() {
+        this.render();
+      });
     },
     render: function() {
       var container = this.get('container'),
@@ -186,6 +227,11 @@ YUI.add('juju-charm-panel', function(Y) {
           resultEntries = this.get('resultEntries'),
           raw_entries = searchText ? resultEntries : defaultEntries,
           entries = raw_entries && makeRenderableResults(raw_entries);
+
+      entries = entries && filterEntries(raw_entries, this.get('filter'));
+      entries = raw_entries && makeRenderableResults(raw_entries);
+
+
       container.setHTML(this.template(
         { charms: entries,
           all_charms_count: 15,
@@ -356,6 +402,7 @@ YUI.add('juju-charm-panel', function(Y) {
       picker.one('.picker-body')
         .set('text', selectedText);
       picker.one('.picker-expanded').removeClass('active');
+      this.set('filter', selected.getData('filter'));
     }
 
   });

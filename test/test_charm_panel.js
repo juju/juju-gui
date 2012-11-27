@@ -289,18 +289,9 @@ describe('charm description', function() {
 });
 
 describe('charm panel filtering', function() {
-  var Y, models, views, juju, ENTER,
-      searchResult = '{"results": [' +
-        '{"data_url": "this is my URL", ' +
-        '"name": "membase", "series": "precise", "summary": ' +
-        '"Membase Server", "relevance": 8.728194117350437, ' +
-        '"owner": "charmers", "store_url": "cs:precise/membase-6"},' +
-        '{"data_url": "this is another URL", ' +
-        '"name": "syslogd", "series": "precise", "summary": ' +
-        '"Sys Logger", "relevance": 3.728194117350437, ' +
-        '"owner": "charmers", "store_url": "cs:precise/syslogd-2",'+
-        '"is_subordinate": true}' +
-        ']}';
+
+  var Y, models, views, juju, conn, env, container, db, app, charm,
+      charm_store_data, charm_store, charms, ENTER;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -311,7 +302,8 @@ describe('charm panel filtering', function() {
         'juju-tests-utils',
         'node-event-simulate',
         'node',
-        'event-key',
+        'datasource-local',
+        'json-stringify',
         'juju-charm-store',
 
         function(Y) {
@@ -325,104 +317,74 @@ describe('charm panel filtering', function() {
   });
 
   beforeEach(function() {
-    // The charms panel needs these elements
-    var docBody = Y.one(document.body);
-    Y.Node.create('<div id="charm-search-test">' +
-        '<div class="picker-body">' +
-        '  <ul>' +
-        '    <li class="picker-item" data-filter="all"></li>' +
-        '    <li class="picker-item" data-filter="subordinates"></li>' +
-        '    <li class="picker-item" data-filter="deployed"></li>' +
-        '  </ul>' +
-        '</div>' +
-        '<div id="charm-search-icon"><i></i></div>' +
-        '<div id="content"></div>' +
-        '<input type="text" id="charm-search-field" />' +
-        '</div>').appendTo(docBody);
+    conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
+    env = new (Y.namespace('juju')).Environment({conn: conn});
+    env.connect();
+    conn.open();
+    Y.one('#main').append(Y.Node.create(
+      '<div><input type="text" id="charm-search-field" /></div>'));
+    container = Y.Node.create('<div id="test-container"></div>');
+    Y.one('#main').append(container);
+    db = new models.Database();
+    charms = db.charms.add([
+      { id: 'cs:precise/mysql-7' },
+      { id: 'cs:precise/syslogd-1', is_subordinate: true}]);
+    charm_store_data = {responseText: '{}'};
+    charm_store = new juju.CharmStore(
+        {datasource: {
+          sendRequest: function(params) {
+              params.callback.success({
+                response: {
+                  results: [{
+                    responseText: charm_store_data.responseText
+                  }]
+                }
+              });
+            }
+          }
+        });
+    app = { db: db, env: env, charm_store: charm_store };
   });
 
   afterEach(function() {
-    Y.namespace('juju.views').CharmPanel.killInstance();
-    Y.one('#charm-search-test').remove(true);
+    container.remove(true);
+    db.destroy();
+    env.destroy();
   });
 
+
   it('should have `filters` default to `all`', function() {
-    var view = new views.CharmCollectionView({
-    }).render();
+    var view = new views.CharmCollectionView({});
     view.get('filter').should.equal('all');
   });
 
   it('can display all charms', function() {
+    charm_store_data.responseText = Y.JSON.stringify(
+      {
+        results: [
+          {
+            data_url: 'my url',
+            name: 'membase',
+            series: 'precise',
+            summary: 'Membase Server',
+            relevance: 0.8,
+            owner: 'charmers',
+            store_url: 'cs:precise/membase-2'
+          }
+        ]
+      }
+    );
     var view = new views.CharmCollectionView({
-    });
+      container: container, app: app, model: charm, charms: charms,
+      charmStore: charm_store, searchText: 'aaa'});
     view.render();
-
-    var searchTriggered = false;
-    var panel;
-    var charm_store = new juju.CharmStore({datasource: {
-            sendRequest: function(params) {
-              searchTriggered = true;
-              // Stubbing the server callback value
-              params.callback.success({
-                response: {
-                  results: [{
-                    responseText: searchResult
-                  }]
-                }
-              });
-            }
-    }});
-    panel = Y.namespace('juju.views').CharmPanel.getInstance({
-          charm_store: charm_store,
-          testing: true,
-          app: {}
-    });
-    var node = panel.node;
-
-    //var view = new views.CharmCollectionView();
-    //view.set('filter', 'all');
-
-    panel.set('filter', 'subordinates');
-    panel.show(true);
     var field = Y.one('#charm-search-field');
     field.set('value', 'aaa');
-    field.simulate('keydown', { keyCode: ENTER });
-
-    searchTriggered.should.equal(true);
-    node.all('.charm-entry .btn.deploy').getData('url').should.eql(
+    field.simulate('keydown', {keyCode: ENTER });
+    var html = container.one('.search-result-div');
+    html.all('.charm-entry .btn.deploy').getData('url').should.eql(
       ['cs:precise/membase-6', 'cs:precise/syslogd-2']);
   });
 
-  it('can filter subordinate charms', function() {
-    var searchTriggered = false,
-        panel = Y.namespace('juju.views').CharmPanel.getInstance({
-          charm_store: new juju.CharmStore({datasource: {
-            sendRequest: function(params) {
-              searchTriggered = true;
-              // Stubbing the server callback value
-              params.callback.success({
-                response: {
-                  results: [{
-                    responseText: searchResult
-                  }]
-                }
-              });
-            }
-          }}),
-          testing: true,
-          filter: 'subordinates',
-          app: {}
-        }),
-        node = panel.node;
-    panel.set('filter', 'subordinates');
-    panel.show(true);
-    var field = Y.one('#charm-search-field');
-    field.set('value', 'aaa');
-    field.simulate('keydown', { keyCode: ENTER });
-
-    searchTriggered.should.equal(true);
-    node.all('.charm-entry .btn.deploy').getData('url').should.eql(
-      ['cs:precise/membase-6', 'cs:precise/syslogd-2']);
-  });
 
 });
