@@ -3,9 +3,14 @@
 YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils', 'node-event-simulate'],
     function(Y) {
       describe('application hotkeys', function() {
-        var app, container, env, conn, testUtils, windowNode;
+        var app, container, windowNode;
 
-        before(function() {
+        before(function(done) {
+          var env = {
+            after: function() {},
+            get: function() {},
+            on: function() {}
+          };
           windowNode = Y.one(window);
           app = new Y.juju.App({
             env: env,
@@ -13,51 +18,46 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils', 'node-event-simulate'],
             viewContainer: container
           });
           app.activateHotkeys();
+          done();
+        });
+
+        beforeEach(function() {
+          container = Y.Node.create('<div/>');
+          Y.one('#main').append(container);
+          app.render();
         });
 
         afterEach(function() {
           container.remove(true);
         });
 
-        beforeEach(function() {
-          container = Y.one('#main').appendChild(Y.Node.create(
-              '<div/>')).set('id', 'test-container').append(
-              Y.Node.create('<input />').set('id', 'charm-search-field'));
-          testUtils = Y.namespace('juju-tests.utils');
-          env = {
-            get: function() {
-            },
-            on: function() {
-            },
-            after: function() {
-            }
-          };
-        });
-
         it('should listen for alt-S events', function() {
-          app.render();
+          var searchInput = Y.Node.create('<input/>');
+          searchInput.set('id', 'charm-search-field');
+          container.append(searchInput);
           windowNode.simulate('keydown', {
-            keyCode: 83, // "S" key
+            keyCode: 83, // "S" key.
             altKey: true
           });
           // Did charm-search-field get the focus?
-          assert.equal(Y.one('#charm-search-field'),
-              Y.one(document.activeElement));
+          assert.equal(searchInput, Y.one(document.activeElement));
         });
 
         it('should listen for alt-E events', function() {
           var altEtriggered = false;
-          app.on('navigateTo', function(param) {
-            if (param && param.url === '/') {
+          app.on('navigateTo', function(ev) {
+            if (ev && ev.url === '/') {
               altEtriggered = true;
             }
+            // Avoid URL change performed by additional listeners.
+            ev.stopImmediatePropagation();
           });
-          app.render();
           windowNode.simulate('keydown', {
-            keyCode: 69, // "E" key
+            keyCode: 69, // "E" key.
             altKey: true
           });
           assert.isTrue(altEtriggered);
         });
+
       });
     });
