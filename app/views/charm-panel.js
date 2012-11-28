@@ -77,11 +77,16 @@ YUI.add('juju-charm-panel', function(Y) {
        * @param {Array} entries An ordered collection of groups of charms, as
        *   returned by the charm store "find" method.
        * @param {String} filter Either 'all', 'subordinates', or 'deployed'.
+       * @param {Object} services The db.services model list.
        * @return {Array} A filtered, grouped set of filtered entries.
        */
-      filterEntries = function(entries, filter) {
-        var is_sub_filter = function(charm) {
+      filterEntries = function(entries, filter, services) {
+        var deployed_charms,
+            is_sub_filter = function(charm) {
               return !!charm.get('is_subordinate');
+            },
+            is_deployed_filter = function(charm) {
+              return deployed_charms.indexOf(charm.get('id')) != -1;
             },
             filter_fcn;
 
@@ -89,17 +94,22 @@ YUI.add('juju-charm-panel', function(Y) {
           return entries;
         } else if (filter === 'subordinates') {
           filter_fcn = is_sub_filter;
+        } else if (filter === 'deployed') {
+          deployed_charms = services.get('charm');
+          filter_fcn = is_deployed_filter;
         } else {
+          // This case should not happen.
           return entries;
         }
 
+        var filtered = Y.clone(entries);
         /* Filter the charms based on the filter function. */
-        entries.forEach(function(series_group){
+        filtered.forEach(function(series_group){
           var sub_charms = series_group.charms.filter(filter_fcn);
           series_group.charms = sub_charms;
         });
         /* Filter the series group based on the existence of any filtered charms. */
-        return entries.filter(function(series_group) {
+        return filtered.filter(function(series_group) {
           return series_group.charms.length > 0;
         });
       },
@@ -217,7 +227,8 @@ YUI.add('juju-charm-panel', function(Y) {
       });
       this.after('heightChange', this._setScroll);
       this.after('filterChange', function() {
-        this.render();
+        console.log('filterChange', this.get('filter'));
+        //this.render();
       });
     },
     render: function() {
@@ -226,18 +237,23 @@ YUI.add('juju-charm-panel', function(Y) {
           defaultEntries = this.get('defaultEntries'),
           resultEntries = this.get('resultEntries'),
           raw_entries = searchText ? resultEntries : defaultEntries,
-          entries = raw_entries && makeRenderableResults(raw_entries);
+          entries = raw_entries && makeRenderableResults(raw_entries),
+          db = this.get('db') || undefined,
+          services = db && db.services || undefined;
 
-      entries = entries && filterEntries(raw_entries, this.get('filter'));
-      entries = raw_entries && makeRenderableResults(raw_entries);
-
-
+      entries = raw_entries && filterEntries(raw_entries, this.get('filter'), services);
+      console.log('render - raw_entries:', raw_entries && raw_entries[0].charms.length);
+      console.log('render - entries: ', entries && entries[0].charms.length);
+      entries = entries && makeRenderableResults(entries);
       container.setHTML(this.template(
         { charms: entries,
-          all_charms_count: 15,
+          all_charms_count: 15, // use real value at some point.
           subordinate_charms_count: 5,
           deployed_charms_count: 6
         }));
+      var selected = container.one('.' + this.get('filter'));
+      selected.addClass('.activetick');
+      picker.one('.picker-body').set('text', selected.get('text'));
       container.all('.charm-detail').ellipsis();
       container.all('.charm-summary').ellipsis({'lines': 2});
       this._setScroll();
@@ -392,17 +408,26 @@ YUI.add('juju-charm-panel', function(Y) {
      * @return {undefined} nothing.
      */
     hideCharmFilterPicker: function(evt) {
+      // Set the filter and re-render the control.
+      var selected = evt.currentTarget;
+      this.set('filter', selected.getData('filter'));
+      this.render();
+
+      // After rendering, now change the widget.
       var container = this.get('container'),
           picker = container.one('.charm-filter-picker'),
-          selected = evt.currentTarget,
           selectedText = selected.get('text');
+      console.log(selectedText);
       picker.removeClass('inactive');
       picker.one('.activetick').removeClass('activetick');
       selected.addClass('activetick');
+      console.log('new active', picker.one('.activetick').get('text'));
+      console.log(picker.one('.picker-body'));
       picker.one('.picker-body')
         .set('text', selectedText);
+      console.log(picker.one('.picker-body'));
       picker.one('.picker-expanded').removeClass('active');
-      this.set('filter', selected.getData('filter'));
+      evt.halt();
     }
 
   });
@@ -1134,6 +1159,9 @@ YUI.add('juju-charm-panel', function(Y) {
       }
     }
   };
+
+  // Exposed for testing.
+  views.filterEntries = filterEntries;
 
 }, '0.1.0', {
   requires: [
