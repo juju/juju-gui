@@ -14,12 +14,20 @@ It accomplishes this through a number of declarative tools and suggested
 patterns around application development. The document below attempts to
 explain this usage as it exists today.
 
+The framework only models two high level objects, Component and Module. A
+Component is a top level container around Module objects. The Component 
+provides the implementation of the declarative behavior provided by the
+framework. The Module(s) implement the logical sections of the application. In
+the YUI world it might be common to expect each Module to be the application's
+rendering and interactive behavior around a single YUI App.Model or
+App.ModelList.
+
 Module Writers Guide
 ====================
 
 Using the component framework means taking advantage of the tools offered
 through its module system. Components manage one or more modules, each of which
-models one concern of the resultant Scene.
+models one concern of the resultant scene.
 
 Modules declare events using structures dictated by the framework. Event
 bindings allow the module to respond to both changes in its underlying data and
@@ -34,39 +42,50 @@ Component API
 
 Components support few actions (as most of the non-declarative work happens in
 Modules).  Components are containers for modules and have support functions for
-adding and removing modules from their management. In addition, when modules are
-added options can be passed that will be made available in the modules runtime.
-Modules added by via the ``addModule`` method automatically have a reference to
-the component via an YUI Attribute named ``component``, and any options passed to
-the addModule call in an Attribute called ``options``, which will default to an empty
-object.
+adding and removing modules from their management. In addition, when modules
+are added options can be passed that will be made available in the Module's
+run time.  Modules added via the ``addModule`` method automatically have a
+reference to the component via an YUI Attribute named ``component``, and any
+options passed to the addModule call result in an Attribute called ``options``,
+which will default to an empty object.
 
 ::
 
     comp = new Component();
     comp.addModule(MyModule, {foo: bar})
 
-This example would create a new component and, using the MyModule constructor,
-create an instance of this module (or use an instance if directly passed) and
-set the ``component`` and ``options`` Attributes. In this example the Module would
-have its ``foo`` option set to ``bar`` such that::
+This example would create a new component and, then using the MyModule
+constructor, create an instance of this module (or use an instance if directly
+passed) and set the ``component`` and ``options`` Attributes. In this example
+the Module would have its ``foo`` option set to ``bar`` such that::
 
     modInstance.get('options.foo') === 'bar'
 
 where modInstance is the instance created by the above example's addModule call.
 
-Components then support rendering, drawing the scene described by any data the
-modules reference. This is done in a number of phases. The first time ``render``
-is called, a special ``renderOnce`` is called. This allows the component to do any
-necessary setup work. Typically this will be to create some svg element and
-retain a reference to it. In the context of renderOnce, ``render`` will call
-``update`` on each of its modules in the order they were added. The ``update``
-method is used to recalculate any intermediate state associated with rendering
-the various data objects. This typically includes things like position
-information. Once ``update`` has been called on the modules, each module's
-``render`` method is invoked. This performs the actual drawing work. It is at
+Components then support rendering, which draws the scene described by any data
+the modules reference. This is done in a number of phases. The first (and often
+only) time ``render`` is called, a special ``renderOnce`` is called. This
+allows the component to do any necessary setup work. Typically this will be to
+create some svg element and retain a reference to it. In the context of
+renderOnce, ``render`` will call ``update`` on each of its modules in the order
+they were added. The ``update`` method is used to recalculate any intermediate
+state associated with rendering the various data objects. This includes things
+like position information. Once ``update`` has been called each module's
+``render`` method is invoked. This performs the actual drawing work.  It is at
 this point that any d3js synthetic events are bound to the canvas (see the
-section on events below).
+section on events below). This separation of phases exists to make the life of
+the Module writer simpler. They can rely on whatever elements they'll be drawing
+ (adding children to an svg object for example) will already have its container 
+ properly available due to the renderOnce setup. They can also be sure that 
+ any ``update`` driven intermediate data will be computed and available for
+ use in ``render``. This reduces the need for checks in each module to assert
+ the most basic DOM state.
+
+After the initial render its expected that updates to the scene occur via the 
+event handlers in the various modules. Render will not usually need to be called 
+more than once unless the entire Component rendering is removed from the DOM and
+then later re-attached.
 
 The most important aspect of addModule (and its inverse removeModule) is that
 they properly support adding and removing event listeners. When a component's
@@ -212,8 +231,9 @@ the default.
 Complete Example
 ================
 
-While the frameworks tests show off these features, here is a complete example of
-a module with some description.
+Here is a complete example of a module, with some description. The tests for
+this framework also can be used to learn about the capabilities and expected
+usage of the system.
 
 ::
 
