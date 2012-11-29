@@ -86,7 +86,7 @@ YUI.add('juju-charm-panel', function(Y) {
               return !!charm.get('is_subordinate');
             },
             is_deployed_filter = function(charm) {
-              return deployed_charms.indexOf(charm.get('id')) != -1;
+              return deployed_charms.indexOf(charm.get('package_name')) != -1;
             },
             filter_fcn;
 
@@ -95,8 +95,17 @@ YUI.add('juju-charm-panel', function(Y) {
         } else if (filter === 'subordinates') {
           filter_fcn = is_sub_filter;
         } else if (filter === 'deployed') {
-          deployed_charms = services.get('charm');
           filter_fcn = is_deployed_filter;
+          if (!Y.Lang.isValue(services)) {
+            deployed_charms =  [];
+          } else {
+            var charm_ids = services.get('charm'),
+                package_names = Y.Array.map(charm_ids, function(id) {
+                  var parts = models.charmIdRe.exec(id);
+                  return parts[4];
+                });
+            deployed_charms = Y.Array.dedupe(package_names);
+          }
         } else {
           // This case should not happen.
           return entries;
@@ -237,23 +246,47 @@ YUI.add('juju-charm-panel', function(Y) {
           defaultEntries = this.get('defaultEntries'),
           resultEntries = this.get('resultEntries'),
           raw_entries = searchText ? resultEntries : defaultEntries,
-          entries = raw_entries && makeRenderableResults(raw_entries),
+          entries,
           db = this.get('db') || undefined,
-          services = db && db.services || undefined;
+          services = db && db.services || undefined,
+          filtered = {},
+          filters = ['all', 'subordinates', 'deployed'];
 
-      entries = raw_entries && filterEntries(raw_entries, this.get('filter'), services);
-      console.log('render - raw_entries:', raw_entries && raw_entries[0].charms.length);
-      console.log('render - entries: ', entries && entries[0].charms.length);
-      entries = entries && makeRenderableResults(entries);
+      if (!raw_entries) {
+        return this;
+      }
+      for (var sel in filters) {
+        filtered[filters[sel]] = filterEntries(raw_entries, filters[sel], services);
+      };
+
+      var sub = filterEntries(raw_entries, 'subordinates', services);
+
+      entries = makeRenderableResults(filtered[this.get('filter')]);
+      var countEntries = function(entries) {
+        if (!entries) {return 0;}
+        var lengths = entries.map(function(e) {return e.charms.length});
+        // Initial value of 0 required since the array may be empty.
+        return lengths.reduce(function(pv, cv) {return pv + cv;}, 0);
+      };
+
+      var subs = countEntries(filtered['subordinates']);
+
       container.setHTML(this.template(
         { charms: entries,
-          all_charms_count: 15, // use real value at some point.
-          subordinate_charms_count: 5,
-          deployed_charms_count: 6
+          all_charms_count: countEntries(filtered['all']),
+          subordinate_charms_count: countEntries(filtered['subordinates']),
+          deployed_charms_count: countEntries(filtered['deployed'])
         }));
-      var selected = container.one('.' + this.get('filter'));
-      selected.addClass('.activetick');
+
+      // The picker has now been rendered generically.  Based on the
+      // filter add the decorations.
+      var selected = container.one('.' + this.get('filter')),
+          picker = container.one('.charm-filter-picker');
+      selected.addClass('activetick');
       picker.one('.picker-body').set('text', selected.get('text'));
+      // The charm details and summary are user-supplied and may be
+      // way too big for the fixed height cells.  Sadly the best we
+      // can do is truncate them with elllipses.
       container.all('.charm-detail').ellipsis();
       container.all('.charm-summary').ellipsis({'lines': 2});
       this._setScroll();
@@ -412,21 +445,6 @@ YUI.add('juju-charm-panel', function(Y) {
       var selected = evt.currentTarget;
       this.set('filter', selected.getData('filter'));
       this.render();
-
-      // After rendering, now change the widget.
-      var container = this.get('container'),
-          picker = container.one('.charm-filter-picker'),
-          selectedText = selected.get('text');
-      console.log(selectedText);
-      picker.removeClass('inactive');
-      picker.one('.activetick').removeClass('activetick');
-      selected.addClass('activetick');
-      console.log('new active', picker.one('.activetick').get('text'));
-      console.log(picker.one('.picker-body'));
-      picker.one('.picker-body')
-        .set('text', selectedText);
-      console.log(picker.one('.picker-body'));
-      picker.one('.picker-expanded').removeClass('active');
       evt.halt();
     }
 

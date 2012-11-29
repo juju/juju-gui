@@ -322,7 +322,7 @@ describe('charm panel filtering', function() {
     env.connect();
     conn.open();
     Y.one('#main').append(Y.Node.create(
-      '<div><input type="text" id="charm-search-field" /></div>'));
+      '<div id="charm-search-test"><input type="text" id="charm-search-field" /></div>'));
     container = Y.Node.create('<div id="test-container"></div>');
     Y.one('#main').append(container);
     db = new models.Database();
@@ -347,6 +347,8 @@ describe('charm panel filtering', function() {
   });
 
   afterEach(function() {
+    Y.namespace('juju.views').CharmPanel.killInstance();
+    Y.one('#charm-search-test').remove(true);
     container.remove(true);
     db.destroy();
     env.destroy();
@@ -459,44 +461,18 @@ describe('charm panel filtering', function() {
       ];
 
     db.services.add([
-      {id: 'wordpress', charm: 'cs:precise/wordpress-1'},
-      {id: 'foo', charm: 'cs:precise/foo-1'},
+      {id: 'wordpress', charm: 'cs:edgy/wordpress-9'},
+      {id: 'foo', charm: 'cs:oneiric/foo-2'},
       {id: 'sub', charm: 'cs:precise/sub-1'}]);
 
     var filtered = views.filterEntries(entries, 'deployed', db.services);
 
-    filtered.length.should.equal(1);
+    filtered.length.should.equal(2);
     filtered[0].charms.length.should.equal(2);
     filtered[0].charms[0].get('id').should.equal('cs:precise/foo-1');
     filtered[0].charms[1].get('id').should.equal('cs:precise/sub-1');
-  });
-
-  it('can display all charms', function() {
-    charm_store_data.responseText = Y.JSON.stringify(
-      {
-        results: [
-          {
-            data_url: 'my url',
-            name: 'membase',
-            series: 'precise',
-            summary: 'Membase Server',
-            relevance: 0.8,
-            owner: 'charmers',
-            store_url: 'cs:precise/membase-2'
-          }
-        ]
-      }
-    );
-    var view = new views.CharmCollectionView({
-      container: container, app: app, model: charm, charms: charms,
-      charmStore: charm_store, searchText: 'aaa'});
-    view.render();
-    var field = Y.one('#charm-search-field');
-    field.set('value', 'aaa');
-    field.simulate('keydown', {keyCode: ENTER });
-    var html = container.one('.search-result-div');
-    html.all('.charm-entry .btn.deploy').getData('url').should.eql(
-      ['cs:precise/membase-6', 'cs:precise/syslogd-2']);
+    filtered[1].charms.length.should.equal(1);
+    filtered[1].charms[0].get('id').should.equal('cs:oneiric/foo-1');
   });
 
 
