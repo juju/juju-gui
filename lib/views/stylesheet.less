@@ -642,14 +642,14 @@ g.unit {
     }
 }
 
-.create-picker(@width, @top) {
+.create-picker(@width, @top, @listtop, @listbottom) {
     width: @width;
     .picker-body {
         width: @width - 15px;
     }
     .picker-expanded {
         display: none;
-
+        top: @top;
         &.active {
             z-index: 100;
             display: block;
@@ -668,7 +668,8 @@ g.unit {
         }
         .picker-list {
             position: absolute;
-            bottom: -12px;
+            bottom: @listbottom;
+            top: @listtop;
             left: 4px;
             height: 100%;
             background: url(/juju-ui/assets/images/view_1px.png) repeat-x;
@@ -688,7 +689,7 @@ g.unit {
                 li {
                     padding: 1px;
                     &.activetick {
-                        /* XXX bac: The positioning is not right but I have been unable
+                        /* XXX bac: The positioning is off but I have been unable
                          * to get it right.  Using background-position does not work.
                          */
                         background: url(/juju-ui/assets/images/selected_tick.png)
@@ -736,14 +737,14 @@ g.unit {
     padding: 0;
     height: 24px;
     &.graph-list-picker {
-        .create-picker(116px, 8px);
+        .create-picker(116px, 8px, initial, -12px);
     }
     &.charm-filter-picker {
         left: 11px;
         padding-bottom: 5px;
         @top: 0px;
         top: @top;
-        .create-picker(270px, 0);
+        .create-picker(270px, @top, @top, initial);
         .picker-expanded .picker-list {
             @border-color: #DDD;
             border: 4px outset @border-color;
