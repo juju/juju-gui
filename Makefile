@@ -9,6 +9,7 @@ NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 	node_modules/yuidocjs
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort | tr '\n' ' ')
 
+# See the README for an overview of many of these release-oriented variables.
 FINAL_VERSION_NAME=$(shell cat version.txt)
 ifdef FINAL
 VERSION_NAME=$(FINAL_VERSION_NAME)
@@ -38,7 +39,6 @@ IS_SAFE_RELEASE=1
 endif
 endif
 endif
-
 
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
@@ -166,6 +166,7 @@ clean:
 	make -C docs clean
 	rm -Rf build/
 	rm -Rf releases
+	rm -f upload_release.py
 
 build/index.html: app/index.html
 	cp -f app/index.html build/
