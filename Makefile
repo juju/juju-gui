@@ -9,6 +9,37 @@ NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 	node_modules/yuidocjs
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort | tr '\n' ' ')
 
+FINAL_VERSION_NAME=$(shell cat version.txt)
+ifdef FINAL
+VERSION_NAME=$(FINAL_VERSION_NAME)
+SERIES=stable
+else
+VERSION_NAME=$(FINAL_VERSION_NAME)-dev-r$(shell bzr revno)
+SERIES=trunk
+endif
+ifdef STAGING
+LAUNCHPAD_API_ROOT=staging
+endif
+ifndef RELEASE_NAME
+RELEASE_NAME=juju-gui-$(VERSION_NAME).tgz
+endif
+ifndef IS_TRUNK_CHECKOUT
+IS_TRUNK_CHECKOUT=$(shell bzr info | grep \
+	'checkout of branch: bzr+ssh://bazaar.launchpad.net/+branch/juju-gui/' \
+	> /dev/null && echo 1)
+endif
+ifndef HAS_NO_CHANGES
+HAS_NO_CHANGES=$(shell [ -z "`bzr status`" ] && echo 1)
+endif
+ifndef IS_SAFE_RELEASE
+ifneq ($(strip $(IS_TRUNK_CHECKOUT)),)
+ifneq ($(strip $(HAS_NO_CHANGES)),)
+IS_SAFE_RELEASE=1
+endif
+endif
+endif
+
+
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
 BUILD_ASSETS_DIR=build/juju-ui/assets
@@ -134,6 +165,7 @@ clean:
 	rm -rf node_modules virtualenv
 	make -C docs clean
 	rm -Rf build/
+	rm -Rf releases
 
 build/index.html: app/index.html
 	cp -f app/index.html build/
@@ -150,14 +182,55 @@ $(BUILD_ASSETS_DIR)/svgs: $(shell bzr ls -R -k file app/assets/svgs)
 build_images: build/favicon.ico $(BUILD_ASSETS_DIR)/images \
 	$(BUILD_ASSETS_DIR)/svgs
 
+# This really depends on version.txt, the bzr revno changing, and the build
+# /juju-ui directory existing.  I'm vaguely trying to approximate the second
+# one by connecting it to our pertinent versioned files.  The appcache target
+# creates the third, and directories are a bit tricky with Makefiles so I'm OK
+# with that.
+build/juju-ui/version.js: appcache version.txt $(JSFILES) $(TEMPLATE_TARGETS)\
+	$(SPRITE_SOURCE_FILES)
+	echo "var jujuGuiVersionName='$(VERSION_NAME)';" > build/juju-ui/version.js
+
 build: appcache $(NODE_TARGETS) javascript_libraries \
 	build/juju-ui/templates.js yuidoc spritegen \
-	combinejs build/index.html build_images
+	combinejs build/index.html build_images build/juju-ui/version.js
 
 $(APPCACHE): manifest.appcache.in
 	mkdir -p "build/juju-ui/assets"
 	cp manifest.appcache.in $(APPCACHE)
 	sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
+
+upload_release.py:
+	bzr cat lp:launchpadlib/contrib/upload_release_tarball.py > upload_release.py
+
+releases/$(RELEASE_NAME): build
+ifdef IS_SAFE_RELEASE
+	mkdir -p releases
+	cd build && tar cvzf ../releases/$(RELEASE_NAME) *
+	@echo "Release was created in releases/$(RELEASE_NAME)."
+else
+	@echo "******************************************************************"
+	@echo "************************* RELEASE FAILED *************************"
+	@echo "******************************************************************"
+	@echo
+	@echo "To make a release, you must either be in a checkout of lp:juju-gui "
+	@echo "without uncommitted changes, or you must override one of the "
+	@echo "pertinent variable names to force a release."
+	@echo
+	@echo "See the README for more information."
+	@echo
+	@false
+endif
+
+tarball: releases/$(RELEASE_NAME)
+
+releases/$(RELEASE_NAME).asc: releases/$(RELEASE_NAME)
+	gpg --armor --sign --detach-sig releases/$(RELEASE_NAME)
+
+signature: releases/$(RELEASE_NAME).asc
+
+release: signature upload_release.py
+	python2 upload_release.py juju-gui $(SERIES) $(VERSION_NAME) ./releases/$(RELEASE_NAME) $(LAUNCHPAD_API_ROOT)
 
 appcache: $(APPCACHE)
 
@@ -171,4 +244,4 @@ appcache-force: appcache-touch appcache
 
 .PHONY: test lint beautify server clean build_images prep jshint gjslint \
 	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	combinejs javascript_libraries
+	combinejs javascript_libraries tarball release signature
