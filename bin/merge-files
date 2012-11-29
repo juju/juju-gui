@@ -1,23 +1,24 @@
 #!/usr/bin/env node
 
-/**
- * We aggregate and minimize the js sources in order to improve the load speed
- * of the application.
+/*
+ * We aggregate and minimize the JavaScript sources in order to improve the
+ * load speed of the application.
  *
- * We don't want to use the yui combo loader feature because we want to be able
+ * We don't want to use the YUI combo loader feature because we want to be able
  * to run from only static files and we want to be able to run behind a
  * firewall without access to the internet.
  *
- * The final product will provide three js files: one for the YUI dependencies,
- * one for our custom js code and one for third party js like d3.
+ * The final product will provide three JavaScript files: one for the YUI
+ * dependencies, one for our custom JavaScript code and one for third party
+ * JavaScript like D3.
  *
  * Known issues:
- * (1) If we set "bootstrap=false" in the GlobalConfig object, yui disables the
+ * (1) If we set "bootstrap=false" in the GlobalConfig object, YUI disables the
  *     loader object. It means it wont even try to download modules. We cannot
  *     do it because the loader also manages the "use" property which defines
  *     aliases for some of your modules ('juju-views' and 'juju-controllers').
- * (2) During development, we've noticed that some of the yui modules weren't
- *     included in the list of yui files (lang/datatype-date-format_en-US,
+ * (2) During development, we've noticed that some of the YUI modules weren't
+ *     included in the list of YUI files (lang/datatype-date-format_en-US,
  *     parallel, app-transitions-native, gallery-markdown, loader-base). For
  *     some reason, the loader does not resolve the names of the files for
  *     these modules. We need to add them manually in this file.
@@ -70,11 +71,11 @@ require('yui').YUI().use(['yui'], function(Y) {
   filesToLoad.js.push.apply(filesToLoad.js, paths);
 
   // Combine YUI and our js files
-  merge.combine(filesToLoad.js,
-      './build/juju-ui/assets/app.js', 'uglifyjs');
+  merge.combineJs(filesToLoad.js, './build/juju-ui/assets/app.js');
 
   // Combine third party css files
-  merge.combine([ './app/assets/stylesheets/bootstrap-2.0.4.css',
-      './app/assets/stylesheets/bootstrap-responsive-2.0.4.css' ],
-      './build/juju-ui/assets/stylesheets/all-static.css', 'yui-css');
+  merge.combineCSS(['./app/assets/stylesheets/bootstrap-2.0.4.css',
+    './app/assets/stylesheets/bootstrap-responsive-2.0.4.css' ],
+    './build/',
+    './build/juju-ui/assets/stylesheets/all-static.css');
 });
