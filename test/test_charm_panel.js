@@ -322,7 +322,9 @@ describe('charm panel filtering', function() {
     env.connect();
     conn.open();
     Y.one('#main').append(Y.Node.create(
-      '<div id="charm-search-test"><input type="text" id="charm-search-field" /></div>'));
+        '<div id="charm-search-test">' +
+        '  <input type="text" id="charm-search-field" />' +
+        '</div>'));
     container = Y.Node.create('<div id="test-container"></div>');
     Y.one('#main').append(container);
     db = new models.Database();
@@ -333,15 +335,15 @@ describe('charm panel filtering', function() {
     charm_store = new juju.CharmStore(
         {datasource: {
           sendRequest: function(params) {
-              params.callback.success({
-                response: {
-                  results: [{
-                    responseText: charm_store_data.responseText
-                  }]
-                }
-              });
-            }
+            params.callback.success({
+              response: {
+                results: [{
+                  responseText: charm_store_data.responseText
+                }]
+              }
+            });
           }
+        }
         });
     app = { db: db, env: env, charm_store: charm_store };
   });
@@ -367,8 +369,8 @@ describe('charm panel filtering', function() {
         charms: [
           new models.Charm({id: 'cs:precise/foo-1'}),
           new models.Charm({id: 'cs:precise/logger-1',
-                           is_subordinate: true})
-          ]
+            is_subordinate: true})
+        ]
       }
     ];
 
@@ -384,19 +386,19 @@ describe('charm panel filtering', function() {
         charms: [
           new models.Charm({id: 'cs:precise/foo-1'}),
           new models.Charm({id: 'cs:precise/logger-1',
-                            is_subordinate: true}),
+            is_subordinate: true}),
           new models.Charm({id: 'cs:precise/sub-1',
-                            is_subordinate: true}),
+            is_subordinate: true}),
           new models.Charm({id: 'cs:precise/nosub-3',
-                            is_subordinate: false})
-          ]
+            is_subordinate: false})
+        ]
       },
       {
         series: 'oneiric',
         charms: [
           new models.Charm({id: 'cs:precise/foo-1',
-                            is_subordinate: true})
-          ]
+            is_subordinate: true})
+        ]
       }
     ];
 
@@ -416,19 +418,19 @@ describe('charm panel filtering', function() {
         charms: [
           new models.Charm({id: 'cs:precise/foo-1'}),
           new models.Charm({id: 'cs:precise/logger-1',
-                            is_subordinate: true}),
+            is_subordinate: true}),
           new models.Charm({id: 'cs:precise/sub-1',
-                            is_subordinate: true}),
+            is_subordinate: true}),
           new models.Charm({id: 'cs:precise/nosub-3',
-                            is_subordinate: false})
-          ]
+            is_subordinate: false})
+        ]
       },
       {
         series: 'oneiric',
         charms: [
           new models.Charm({id: 'cs:oneiric/foo-1',
-                            is_subordinate: false})
-          ]
+            is_subordinate: false})
+        ]
       }
     ];
 
@@ -439,26 +441,26 @@ describe('charm panel filtering', function() {
 
   it('should filter for `deployed` charms', function() {
     var entries = [
-        {
-          series: 'precise',
-          charms: [
-            new models.Charm({id: 'cs:precise/foo-1'}),
-            new models.Charm({id: 'cs:precise/logger-1',
-                              is_subordinate: true}),
-            new models.Charm({id: 'cs:precise/sub-1',
-                              is_subordinate: true}),
-            new models.Charm({id: 'cs:precise/nosub-3',
-                              is_subordinate: false})
-            ]
-        },
-        {
-          series: 'oneiric',
-          charms: [
-            new models.Charm({id: 'cs:oneiric/foo-1',
-                              is_subordinate: true})
-            ]
-        }
-      ];
+      {
+        series: 'precise',
+        charms: [
+          new models.Charm({id: 'cs:precise/foo-1'}),
+          new models.Charm({id: 'cs:precise/logger-1',
+            is_subordinate: true}),
+          new models.Charm({id: 'cs:precise/sub-1',
+            is_subordinate: true}),
+          new models.Charm({id: 'cs:precise/nosub-3',
+            is_subordinate: false})
+        ]
+      },
+      {
+        series: 'oneiric',
+        charms: [
+          new models.Charm({id: 'cs:oneiric/foo-1',
+            is_subordinate: true})
+        ]
+      }
+    ];
 
     db.services.add([
       {id: 'wordpress', charm: 'cs:edgy/wordpress-9'},

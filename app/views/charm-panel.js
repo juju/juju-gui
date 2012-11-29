@@ -69,7 +69,8 @@ YUI.add('juju-charm-panel', function(Y) {
       },
       /**
        * Given a set of entries as returned by the charm store "find"
-       * method (charms grouped by series), return the list filtered by 'filter'.
+       * method (charms grouped by series), return the list filtered
+       * by 'filter'.
        *
        * @method filterEntries
        * @static
@@ -82,11 +83,26 @@ YUI.add('juju-charm-panel', function(Y) {
        */
       filterEntries = function(entries, filter, services) {
         var deployed_charms,
+            /**
+             * Filter to determine if a charm is a subordinate.
+             *
+             * @method is_sub_filter
+             * @param {Object} charm The charm to test.
+             * @return {Boolean} True if the charm is a subordinate.
+             */
             is_sub_filter = function(charm) {
               return !!charm.get('is_subordinate');
             },
+            /**
+             * Filter to determine if a charm is the same as any
+             * deployed services.
+             *
+             * @method is_deployed_filter
+             * @param {Object} charm The charm to test.
+             * @return {Boolean} True if the charm matches a deployed service.
+             */
             is_deployed_filter = function(charm) {
-              return deployed_charms.indexOf(charm.get('package_name')) != -1;
+              return deployed_charms.indexOf(charm.get('package_name')) !== -1;
             },
             filter_fcn;
 
@@ -97,7 +113,7 @@ YUI.add('juju-charm-panel', function(Y) {
         } else if (filter === 'deployed') {
           filter_fcn = is_deployed_filter;
           if (!Y.Lang.isValue(services)) {
-            deployed_charms =  [];
+            deployed_charms = [];
           } else {
             var charm_ids = services.get('charm'),
                 package_names = Y.Array.map(charm_ids, function(id) {
@@ -113,11 +129,12 @@ YUI.add('juju-charm-panel', function(Y) {
 
         var filtered = Y.clone(entries);
         /* Filter the charms based on the filter function. */
-        filtered.forEach(function(series_group){
+        filtered.forEach(function(series_group) {
           var sub_charms = series_group.charms.filter(filter_fcn);
           series_group.charms = sub_charms;
         });
-        /* Filter the series group based on the existence of any filtered charms. */
+        /* Filter the series group based on the existence of any
+           filtered charms. */
         return filtered.filter(function(series_group) {
           return series_group.charms.length > 0;
         });
@@ -256,27 +273,26 @@ YUI.add('juju-charm-panel', function(Y) {
         return this;
       }
       for (var sel in filters) {
-        filtered[filters[sel]] = filterEntries(raw_entries, filters[sel], services);
-      };
-
-      var sub = filterEntries(raw_entries, 'subordinates', services);
+        if (true) {             // Avoid lint warning.
+          filtered[filters[sel]] = filterEntries(
+              raw_entries, filters[sel], services);
+        }
+      }
 
       entries = makeRenderableResults(filtered[this.get('filter')]);
       var countEntries = function(entries) {
         if (!entries) {return 0;}
-        var lengths = entries.map(function(e) {return e.charms.length});
+        var lengths = entries.map(function(e) {return e.charms.length;});
         // Initial value of 0 required since the array may be empty.
         return lengths.reduce(function(pv, cv) {return pv + cv;}, 0);
       };
 
-      var subs = countEntries(filtered['subordinates']);
-
       container.setHTML(this.template(
-        { charms: entries,
-          all_charms_count: countEntries(filtered['all']),
-          subordinate_charms_count: countEntries(filtered['subordinates']),
-          deployed_charms_count: countEntries(filtered['deployed'])
-        }));
+          { charms: entries,
+            all_charms_count: countEntries(filtered.all),
+            subordinate_charms_count: countEntries(filtered.subordinates),
+            deployed_charms_count: countEntries(filtered.deployed)
+          }));
 
       // The picker has now been rendered generically.  Based on the
       // filter add the decorations.
@@ -419,7 +435,7 @@ YUI.add('juju-charm-panel', function(Y) {
       );
     },
 
-    /*
+    /**
      * Event handler to show the charm filter picker.
      *
      * @method showCharmFilterPicker
@@ -433,7 +449,7 @@ YUI.add('juju-charm-panel', function(Y) {
       picker.one('.picker-expanded').addClass('active');
     },
 
-    /*
+    /**
      * Event handler to hide the charm filter picker
      *
      * @method hideCharmFilterPicker

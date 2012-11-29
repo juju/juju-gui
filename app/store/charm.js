@@ -70,8 +70,8 @@ YUI.add('juju-charm-store', function(Y) {
         var charm = list.getById(result.store_url);
         if (!charm) {
           charm = list.add(
-            { id: result.store_url, summary: result.summary,
-              is_subordinate: result.subordinate});
+              { id: result.store_url, summary: result.summary,
+                is_subordinate: result.subordinate});
         }
         var series = charm.get('series');
         if (!Y.Lang.isValue(hash[series])) {
