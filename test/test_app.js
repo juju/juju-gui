@@ -36,9 +36,6 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
     var app, container;
 
     beforeEach(function() {
-      if (container) {
-        container.remove(true);
-      }
       container = Y.one('#main')
         .appendChild(Y.Node.create('<div/>'))
           .set('id', 'test-container')
@@ -46,11 +43,16 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
           .append(Y.Node.create('<span/>')
             .set('id', 'environment-name'))
           .append(Y.Node.create('<span/>')
-            .set('id', 'provider-type'));
+            .set('id', 'provider-type'))
+          .hide();
       app = new Y.juju.App(
           { container: container,
             viewContainer: container});
       injectData(app);
+    });
+
+    afterEach(function() {
+      container.remove(true);
     });
 
     it('should produce a valid index', function() {
@@ -104,14 +106,13 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
     it('should show the provider type, when available', function() {
       var providerType = 'excellent provider';
       // Since no provider type has been set yet, none is displayed.
-      assert.equal(
-          container.one('#provider-type').get('text'),
-          '');
+      assert.equal('', container.one('#provider-type').get('text'));
       app.env.set('providerType', providerType);
       // The provider type has been displayed.
       assert.equal(
-          container.one('#provider-type').get('text'),
-          'on ' + providerType);
+          'on ' + providerType,
+          container.one('#provider-type').get('text')
+      );
     });
 
   });
