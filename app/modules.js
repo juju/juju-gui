@@ -2,6 +2,7 @@ var GlobalConfig = {
   debug: false,
   // YUI will not download the modules. They are supposed to be already loaded.
   ignoreRegistered: true,
+  base: '/juju-ui/assets/',
 
   // Please use this object only for defining new aliases.
   // You can add the fullpath to the libraries in "modules-debug.js".

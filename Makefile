@@ -17,15 +17,23 @@ SPRITE_GENERATED_FILES=$(BUILD_ASSETS_DIR)/stylesheets/sprite.css \
 PRODUCTION_FILES=$(BUILD_ASSETS_DIR)/modules.js \
 	$(BUILD_ASSETS_DIR)/config.js \
 	$(BUILD_ASSETS_DIR)/app.js \
+	$(BUILD_ASSETS_DIR)/all-yui.js \
 	$(BUILD_ASSETS_DIR)/stylesheets/all-static.css
 DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
+
+image-assets:
+	mkdir -p $(BUILD_ASSETS_DIR)/slider-base/assets/skins/sam/
+	cp node_modules/yui/slider-base/assets/skins/sam/*.png \
+	    $(BUILD_ASSETS_DIR)/slider-base/assets/skins/sam/
+	cp node_modules/yui/assets/skins/sam/rail-x.png \
+	    $(BUILD_ASSETS_DIR)/stylesheets
 
 all: build
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
-	./bin/generateTemplates
+	bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 	node_modules/.bin/yuidoc -o yuidoc -x assets app
@@ -73,17 +81,17 @@ $(NODE_TARGETS): package.json
 	fi
 
 app/assets/javascripts/yui: node_modules/yui
-	ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
+	ln -sf `pwd`/node_modules/yui app/assets/javascripts/
 
 node_modules/d3/d3.v2.js node_modules/d3/d3.v2.min.js: node_modules/d3
 
 app/assets/javascripts/d3.v2.js: node_modules/d3/d3.v2.js
-	ln -sf `pwd`/node_modules/d3/d3.v2.js ./app/assets/javascripts/d3.v2.js
+	ln -sf `pwd`/node_modules/d3/d3.v2.js app/assets/javascripts/d3.v2.js
 
 app/assets/javascripts/d3.v2.min.js: node_modules/d3/d3.v2.min.js
-	ln -sf `pwd`/node_modules/d3/d3.v2.min.js ./app/assets/javascripts/d3.v2.min.js
+	ln -sf `pwd`/node_modules/d3/d3.v2.min.js app/assets/javascripts/d3.v2.min.js
 
-javascript_libraries: app/assets/javascripts/yui \
+javascript-libraries: app/assets/javascripts/yui \
 	app/assets/javascripts/d3.v2.js app/assets/javascripts/d3.v2.min.js
 
 gjslint: virtualenv/bin/gjslint
@@ -108,10 +116,10 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
+$(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) bin/merge-files
 	rm -f $(PRODUCTION_FILES)
 	mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
-	./bin/merge-files
+	bin/merge-files
 	cp app/modules.js $(BUILD_ASSETS_DIR)/modules.js
 	cp app/config.js $(BUILD_ASSETS_DIR)/config.js
 
@@ -120,7 +128,7 @@ combinejs: $(PRODUCTION_FILES)
 prep: beautify lint
 
 test: build
-	./test-server.sh
+	test-server.sh
 
 debug: build
 	@echo "Customize config.js to modify server settings"
@@ -150,7 +158,7 @@ $(BUILD_ASSETS_DIR)/svgs: $(shell bzr ls -R -k file app/assets/svgs)
 build_images: build/favicon.ico $(BUILD_ASSETS_DIR)/images \
 	$(BUILD_ASSETS_DIR)/svgs
 
-build: appcache $(NODE_TARGETS) javascript_libraries \
+build: appcache $(NODE_TARGETS) javascript-libraries image-assets \
 	build/juju-ui/templates.js yuidoc spritegen \
 	combinejs build/index.html build_images
 
@@ -171,4 +179,4 @@ appcache-force: appcache-touch appcache
 
 .PHONY: test lint beautify server clean build_images prep jshint gjslint \
 	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	combinejs javascript_libraries
+	combinejs javascript-libraries image-assets

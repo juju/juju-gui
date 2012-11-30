@@ -27,26 +27,25 @@
 'use strict';
 
 require('yui').YUI().use(['yui'], function(Y) {
-  var merge = require('../lib/merge-files.js'),
-      syspath = require('path'),
-      paths,
-      reqs,
-      filesToLoad;
+  var merge = require('../lib/merge-files.js');
+  var syspath = require('path');
 
   // First we find all of the paths to our custom Javascript in the app
   // directory.  We need to tell the function to ignore the "assets" directory
   // and the debug version of the modules file. I need to use
   // "syspath.join(process.cwd(), ...)" or else I have... "Error: Cannot find
-  // module './app/config.js'" from node's internal module.js file.
-  paths = merge.readdir(syspath.join(process.cwd(), './app'),
-    [syspath.join(process.cwd(), './app/assets'),
-     syspath.join(process.cwd(), './app/modules-debug.js')]);
+  // module 'app/config.js'" from node's internal module.js file.
+  var paths = merge.readdir(syspath.join(process.cwd(), 'app'),
+    [syspath.join(process.cwd(), 'app/assets'),
+     syspath.join(process.cwd(), 'app/modules-debug.js')]);
 
   // templates.js is a generated file. It is not part of the app directory.
-  paths.push(syspath.join(process.cwd(), './build/juju-ui/templates.js'));
+  paths.push(syspath.join(process.cwd(), 'build/juju-ui/templates.js'));
 
-  // Get the name of all the YUI modules that our custom js files use directly.
-  reqs = merge.loadRequires(paths);
+  merge.combineJs(paths, 'build/juju-ui/assets/app.js');
+
+  // Get the paths to the YUI modules that we use.
+  var reqs = merge.loadRequires(paths);
 
   // For some reason the loader does not get these requirements.
   // (Known issue #2)
@@ -58,24 +57,22 @@ require('yui').YUI().use(['yui'], function(Y) {
   reqs.push('loader-base');
 
   // Get all of the YUI files and their dependencies
-  filesToLoad = merge.getYUIFiles(reqs);
+  var filesToLoad = merge.getYUIFiles(reqs);
 
   // Merge third-party files to the filesToLoad list
   filesToLoad.js.push.apply(filesToLoad.js, [
-      './app/assets/javascripts/d3.v2.min.js',
-      './app/assets/javascripts/d3-components.js',
-      './app/assets/javascripts/reconnecting-websocket.js',
-      './app/assets/javascripts/svg-layouts.js' ]);
+    'app/assets/javascripts/d3.v2.min.js',
+    'app/assets/javascripts/d3-components.js',
+    'app/assets/javascripts/reconnecting-websocket.js',
+    'app/assets/javascripts/svg-layouts.js' ]);
   
-  // Merge our list of custom js files to the filesToLoad list
-  filesToLoad.js.push.apply(filesToLoad.js, paths);
+  merge.combineJs(filesToLoad.js,
+    'build/juju-ui/assets/all-yui.js', 'uglifyjs');
 
-  // Combine YUI and our js files
-  merge.combineJs(filesToLoad.js, './build/juju-ui/assets/app.js');
-
-  // Combine third party css files
-  merge.combineCSS(['./app/assets/stylesheets/bootstrap-2.0.4.css',
-    './app/assets/stylesheets/bootstrap-responsive-2.0.4.css' ],
-    './build/',
-    './build/juju-ui/assets/stylesheets/all-static.css');
+  var cssFiles = filesToLoad.css;
+  cssFiles.push('app/assets/stylesheets/bootstrap-2.0.4.css');
+  cssFiles.push('app/assets/stylesheets/bootstrap-responsive-2.0.4.css');
+  merge.combineCSS(cssFiles,
+    'build/',
+    'build/juju-ui/assets/stylesheets/all-static.css', 'yui-css');
 });
