@@ -642,105 +642,73 @@ g.unit {
     }
 }
 
-.picker {
-    position: relative;
-    display: inline-block;
-    margin: 0;
-    padding: 0;
-    height: 24px;
-    &.graph-list-picker {
-        width: 116px;
-        .picker-body {
-            width: 91px;
+.create-picker(@width, @top, @listtop, @listbottom) {
+    width: @width;
+    .picker-body {
+        width: @width - 15px;
+    }
+    .picker-expanded {
+        display: none;
+        top: @top;
+        &.active {
+            z-index: 100;
+            display: block;
         }
+        .picker-edge {
+            display: block;
+            top: auto;
+            bottom: -10px;
+            margin-left: -3px;
+        }
+        .picker-edge-right {
+            left: auto;
+            right: 0;
+            margin-left: 0;
+            margin-right: -3px;
+        }
+        .picker-list {
+            position: absolute;
+            bottom: @listbottom;
+            top: @listtop;
+            left: 4px;
+            height: 100%;
+            background: url(/juju-ui/assets/images/view_1px.png) repeat-x;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            height: 54px;
+            width: @width - 8px;
+            cursor: pointer;
 
-
-        .picker-expanded {
-            display: none;
-
-            &.active {
-                z-index: 100;
-                display: block;
-            }
-            .picker-edge {
-                display: block;
-                top: auto;
-                bottom: -10px;
-                margin-left: -3px;
-            }
-            .picker-edge-right {
-                left: auto;
-                right: 0;
-                margin-left: 0;
-                margin-right: -3px;
-            }
-            .picker-list {
-                position: absolute;
-                bottom: -12px;
-                left: 4px;
-                height: 100%;
-                background: url(/juju-ui/assets/images/view_1px.png) repeat-x;
+            ul {
                 list-style-type: none;
                 padding: 0;
+                padding-top: 5px;
                 margin: 0;
-                height: 54px;
-                width: 108px;
 
-                ul {
-                    list-style-type: none;
-                    padding: 0;
-                    padding-top: 5px;
-                    margin: 0;
-
-                    li {
-                        padding: 1px;
-
-                        .activetick {
-                            width: 12px;
-                            height: 14px;
-                            float: right;
-                            background: url(/juju-ui/assets/images/selected_tick.png)
-                                no-repeat
-                                bottom left;
-                        }
+                li {
+                    padding: 1px;
+                    &.activetick {
+                        /* XXX bac: The positioning is off but I have
+                         * been unable to get it right.  Using
+                         * background-position does not work.
+                         */
+                        background:
+                            url(/juju-ui/assets/images/selected_tick.png)
+                            no-repeat bottom right;
                     }
                 }
             }
         }
     }
-    &.zoom-picker {
-        width: 56px;
-        .picker-body {
-            width: 36px;
-        }
-        /*#zoom-btn-up {
-            position: absolute;
-            top: 8px;
-            right: 0px;
-            opacity: 0;
-            &.active {
-                opacity: 1;
-            }
-        }
-        #zoom-btn-down {
-            position: absolute;
-            bottom: -8px;
-            right: 0px;
-            opacity: 0;
-            &.active {
-                opacity: 1;
-            }
-        }*/
-    }
-
     .picker-edge {
         position: absolute;
-        top: 8px;
+        top: @top;
         left: 0;
     }
     .picker-body {
         position: absolute;
-        top: 8px;
+        top: @top;
         left: 4px;
         background: url(/juju-ui/assets/images/picker_1px.png) repeat-x;
         height: 20px;
@@ -748,7 +716,7 @@ g.unit {
     }
     .picker-button {
         position: absolute;
-        top: 8px;
+        top: @top;
         right: 0;
     }
     &.inactive {
@@ -762,6 +730,42 @@ g.unit {
             display: none;
         }
     }
+
+}
+.picker {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    height: 24px;
+    &.graph-list-picker {
+        .create-picker(116px, 8px, initial, -12px);
+    }
+    &.charm-filter-picker {
+        left: 11px;
+        padding-bottom: 5px;
+        @top: 0px;
+        top: @top;
+        .create-picker(270px, @top, @top, initial);
+        .picker-expanded .picker-list {
+            border: 1px solid #a3a1a1;
+            .create-border-radius(4px);
+            -moz-background-clip: padding;
+            -webkit-background-clip: padding-box;
+            background-clip: padding-box;
+            .create-box-shadow(0 0 4px rgba(0,0,0,.51));
+            background-color: #fff;
+            background: white;
+            height: auto;
+        }
+    }
+    &.zoom-picker {
+        width: 56px;
+        .picker-body {
+            width: 36px;
+        }
+    }
+
 }
 
 #unit-status {
