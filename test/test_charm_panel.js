@@ -321,14 +321,15 @@ describe('charm panel filtering', function() {
     env = new (Y.namespace('juju')).Environment({conn: conn});
     env.connect();
     conn.open();
-    Y.one('#main').append(
-        Y.Node.create('<div />')
-          .setAttribute('id', 'charm-search-test').append(
-            Y.Node.create('<input />')
-              .setAttribute('type', 'text')
-              .setAttribute('id', 'charm-search-field')
-        )
-    );
+    Y.one('#main')
+        .append(
+            Y.Node.create('<div />')
+              .setAttribute('id', 'charm-search-test').append(
+                Y.Node.create('<input />')
+                  .setAttribute('type', 'text')
+                  .setAttribute('id', 'charm-search-field')
+            )
+        );
     container = Y.Node.create('<div />');
     Y.one('#main').append(container);
     db = new models.Database();

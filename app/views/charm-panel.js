@@ -79,7 +79,7 @@ YUI.add('juju-charm-panel', function(Y) {
        *   returned by the charm store "find" method.
        * @param {String} filter Either 'all', 'subordinates', or 'deployed'.
        * @param {Object} services The db.services model list.
-       * @return {Array} A filtered, grouped set of filtered entries.
+       * @return {Array} A filtered, grouped set of entries.
        */
       filterEntries = function(entries, filter, services) {
         var deployedCharms;
@@ -90,9 +90,9 @@ YUI.add('juju-charm-panel', function(Y) {
          * @param {Object} charm The charm to test.
          * @return {Boolean} True if the charm is a subordinate.
          */
-        var isSubFilter = function(charm) {
+        function isSubFilter(charm) {
           return !!charm.get('is_subordinate');
-        };
+        }
         /**
          * Filter to determine if a charm is the same as any
          * deployed services.
@@ -101,9 +101,9 @@ YUI.add('juju-charm-panel', function(Y) {
          * @param {Object} charm The charm to test.
          * @return {Boolean} True if the charm matches a deployed service.
          */
-        var isDeployedFilter = function(charm) {
+        function isDeployedFilter(charm) {
               return deployedCharms.indexOf(charm.get('id')) !== -1;
-        };
+        }
         var filter_fcn;
 
         if (filter === 'all') {
@@ -123,12 +123,12 @@ YUI.add('juju-charm-panel', function(Y) {
         }
 
         var filtered = Y.clone(entries);
-        /* Filter the charms based on the filter function. */
+        // Filter the charms based on the filter function.
         filtered.forEach(function(series_group) {
           series_group.charms = series_group.charms.filter(filter_fcn);
         });
-        /* Filter the series group based on the existence of any
-           filtered charms. */
+        // Filter the series group based on the existence of any
+        // filtered charms.
         return filtered.filter(function(series_group) {
           return series_group.charms.length > 0;
         });
@@ -676,13 +676,13 @@ YUI.add('juju-charm-panel', function(Y) {
           return this;
         },
         /**
-        When the view's "height" attribute is set, adjust the internal
-        scrollable div to have the appropriate height.
-
-        @method _setScroll
-        @protected
-        @return {undefined} Mutates only.
-        */
+         * When the view's "height" attribute is set, adjust the internal
+         * scrollable div to have the appropriate height.
+         *
+         * @method _setScroll
+         * @protected
+         * @return {undefined} Mutates only.
+         */
         _setScroll: function() {
           setScroll(this.get('container'), this.get('height'));
         },
@@ -859,13 +859,13 @@ YUI.add('juju-charm-panel', function(Y) {
           return;
         },
         /**
-        Fires an event indicating that the charm panel should switch to the
-        "charms" search result view.
-
-        @method goBack
-        @param {Object} ev An event object (with a "halt" method).
-        @return {undefined} Sends a signal only.
-        */
+         * Fires an event indicating that the charm panel should switch to the
+         * "charms" search result view.
+         *
+         * @method goBack
+         * @param {Object} ev An event object (with a "halt" method).
+         * @return {undefined} Sends a signal only.
+         */
         goBack: function(ev) {
           ev.halt();
           this.fire('changePanel', { name: 'charms' });
