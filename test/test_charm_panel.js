@@ -321,30 +321,28 @@ describe('charm panel filtering', function() {
     env = new (Y.namespace('juju')).Environment({conn: conn});
     env.connect();
     conn.open();
-    Y.one('#main').append(Y.Node.create(
-        '<div id="charm-search-test">' +
-        '  <input type="text" id="charm-search-field" />' +
-        '</div>'));
-    container = Y.Node.create('<div id="test-container"></div>');
+    Y.one('#main').append(
+        Y.Node.create('<div />')
+          .setAttribute('id', 'charm-search-test').append(
+            Y.Node.create('<input />')
+              .setAttribute('type', 'text')
+              .setAttribute('id', 'charm-search-field')
+          )
+    );
+    container = Y.Node.create('<div />');
     Y.one('#main').append(container);
     db = new models.Database();
     charms = db.charms.add([
       { id: 'cs:precise/mysql-7' },
       { id: 'cs:precise/syslogd-1', is_subordinate: true}]);
     charm_store_data = {responseText: '{}'};
-    charm_store = new juju.CharmStore(
-        {datasource: {
-          sendRequest: function(params) {
-            params.callback.success({
-              response: {
-                results: [{
-                  responseText: charm_store_data.responseText
-                }]
-              }
-            });
-          }
-        }
-        });
+    charm_store = new juju.CharmStore({
+      datasource: {
+        sendRequest: function(params) {
+          params.callback.success({
+            response: {
+              results: [{responseText: charm_store_data.responseText}]}});
+        }}});
     app = { db: db, env: env, charm_store: charm_store };
   });
 

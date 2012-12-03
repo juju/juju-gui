@@ -82,45 +82,45 @@ YUI.add('juju-charm-panel', function(Y) {
        * @return {Array} A filtered, grouped set of filtered entries.
        */
       filterEntries = function(entries, filter, services) {
-        var deployed_charms,
-            /**
-             * Filter to determine if a charm is a subordinate.
-             *
-             * @method is_sub_filter
-             * @param {Object} charm The charm to test.
-             * @return {Boolean} True if the charm is a subordinate.
-             */
-            is_sub_filter = function(charm) {
-              return !!charm.get('is_subordinate');
-            },
-            /**
-             * Filter to determine if a charm is the same as any
-             * deployed services.
-             *
-             * @method is_deployed_filter
-             * @param {Object} charm The charm to test.
-             * @return {Boolean} True if the charm matches a deployed service.
-             */
-            is_deployed_filter = function(charm) {
-              return deployed_charms.indexOf(charm.get('package_name')) !== -1;
-            },
-            filter_fcn;
+        var deployedCharms;
+        /**
+         * Filter to determine if a charm is a subordinate.
+         *
+         * @method isSubFilter
+         * @param {Object} charm The charm to test.
+         * @return {Boolean} True if the charm is a subordinate.
+         */
+        var isSubFilter = function(charm) {
+          return !!charm.get('is_subordinate');
+        };
+        /**
+         * Filter to determine if a charm is the same as any
+         * deployed services.
+         *
+         * @method isDeployedFilter
+         * @param {Object} charm The charm to test.
+         * @return {Boolean} True if the charm matches a deployed service.
+         */
+        var isDeployedFilter = function(charm) {
+              return deployedCharms.indexOf(charm.get('package_name')) !== -1;
+        };
+        var filter_fcn;
 
         if (filter === 'all') {
           return entries;
         } else if (filter === 'subordinates') {
-          filter_fcn = is_sub_filter;
+          filter_fcn = isSubFilter;
         } else if (filter === 'deployed') {
-          filter_fcn = is_deployed_filter;
+          filter_fcn = isDeployedFilter;
           if (!Y.Lang.isValue(services)) {
-            deployed_charms = [];
+            deployedCharms = [];
           } else {
             var charm_ids = services.get('charm'),
                 package_names = Y.Array.map(charm_ids, function(id) {
                   var parts = models.charmIdRe.exec(id);
                   return parts[4];
                 });
-            deployed_charms = Y.Array.dedupe(package_names);
+            deployedCharms = Y.Array.dedupe(package_names);
           }
         } else {
           // This case should not happen.
@@ -130,8 +130,7 @@ YUI.add('juju-charm-panel', function(Y) {
         var filtered = Y.clone(entries);
         /* Filter the charms based on the filter function. */
         filtered.forEach(function(series_group) {
-          var sub_charms = series_group.charms.filter(filter_fcn);
-          series_group.charms = sub_charms;
+          series_group.charms = series_group.charms.filter(filter_fcn);
         });
         /* Filter the series group based on the existence of any
            filtered charms. */
@@ -252,30 +251,26 @@ YUI.add('juju-charm-panel', function(Y) {
         this.render();
       });
       this.after('heightChange', this._setScroll);
-      this.after('filterChange', function() {
-        console.log('filterChange', this.get('filter'));
-        //this.render();
-      });
     },
     render: function() {
       var container = this.get('container'),
           searchText = this.get('searchText'),
           defaultEntries = this.get('defaultEntries'),
           resultEntries = this.get('resultEntries'),
-          raw_entries = searchText ? resultEntries : defaultEntries,
+          rawEntries = searchText ? resultEntries : defaultEntries,
           entries,
           db = this.get('db') || undefined,
           services = db && db.services || undefined,
           filtered = {},
           filters = ['all', 'subordinates', 'deployed'];
 
-      if (!raw_entries) {
+      if (!rawEntries) {
         return this;
       }
       for (var sel in filters) {
-        if (true) {             // Avoid lint warning.
+        if (true) { // Avoid lint warning.
           filtered[filters[sel]] = filterEntries(
-              raw_entries, filters[sel], services);
+              rawEntries, filters[sel], services);
         }
       }
 
@@ -289,9 +284,9 @@ YUI.add('juju-charm-panel', function(Y) {
 
       container.setHTML(this.template(
           { charms: entries,
-            all_charms_count: countEntries(filtered.all),
-            subordinate_charms_count: countEntries(filtered.subordinates),
-            deployed_charms_count: countEntries(filtered.deployed)
+            allCharmsCount: countEntries(filtered.all),
+            subordinateCharmsCount: countEntries(filtered.subordinates),
+            deployedCharmsCount: countEntries(filtered.deployed)
           }));
 
       // The picker has now been rendered generically.  Based on the
