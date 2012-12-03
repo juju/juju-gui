@@ -16,23 +16,32 @@ YUI.add('d3-components', function(Y) {
      * @property events
      * @type {object}
      **/
-    events: {
+    _defaultEvents: {
       scene: {},
       d3: {},
       yui: {}
     },
+    events: {},
 
     initializer: function() {
-      this.events = Y.merge(this.events);
-    }
+      this.events = Y.mix(this.events, this._defaultEvents,
+                          false, undefined, 0, true);
+    },
+
+    componentBound: function() {},
+    render: function() {},
+    update: function() {}
   }, {
     ATTRS: {
       component: {},
       options: {},
-      container: {getter: function() {
-        return this.get('component').get('container');}}
+      container: {
+        getter: function() {
+          var component = this.get('component');
+          return component && component.get('container') || undefined;
     }
-  });
+      }
+    }});
   ns.Module = Module;
 
 
@@ -56,6 +65,8 @@ YUI.add('d3-components', function(Y) {
     initializer: function() {
       this.modules = {};
       this.events = {};
+      // Used to track the renderOnce invocation.
+      this._rendered = false;
     },
 
     /**
@@ -82,6 +93,9 @@ YUI.add('d3-components', function(Y) {
           module = ModClassOrInstance,
           modEvents;
 
+      if (ModClassOrInstance === undefined) {
+        throw 'undefined Module in addModule call';
+      }
       if (!(ModClassOrInstance instanceof Module)) {
         module = new ModClassOrInstance();
       }
@@ -94,6 +108,7 @@ YUI.add('d3-components', function(Y) {
       modEvents = module.events;
       this.events[module.name] = modEvents;
       this.bind(module.name);
+      module.componentBound();
       return this;
     },
 
@@ -169,6 +184,13 @@ YUI.add('d3-components', function(Y) {
                         selector, handler, modName, result);
           return;
         }
+        // Set up binding context for callback.
+        result.context = module;
+        if (handler.context) {
+          if (handler.context === 'component') {
+            result.context = self;
+          }
+        }
         return result;
       }
 
@@ -193,15 +215,19 @@ YUI.add('d3-components', function(Y) {
         Y.each(['after', 'before', 'on'], function(eventPhase) {
           var resolvedHandler = {};
           Y.each(modEvents.yui, function(handler, name) {
-            handler = _normalizeHandler(handler, module);
+            handler = _normalizeHandler(handler, module, name);
             if (!handler || handler.phase !== eventPhase) {
               return;
             }
-            resolvedHandler[name] = handler.callback;
+            resolvedHandler[name] = handler;
           }, this);
           // Bind resolved event handlers as a group.
           if (Y.Object.keys(resolvedHandler).length) {
-            subscriptions.push(Y[eventPhase](resolvedHandler));
+            Y.each(resolvedHandler, function(handler, name) {
+              subscriptions.push(Y[eventPhase](name,
+                                               handler.callback,
+                                               handler.context));
+            });
           }
         });
       }
@@ -318,12 +344,21 @@ YUI.add('d3-components', function(Y) {
 
       return this;
     },
+    /**
+     * @method renderOnce
+     *
+     * Called the first time render is invoked. See {render}.
+     **/
+    renderOnce: function() {},
 
     /**
      * @method render
      * @chainable
      *
-     * Render each module bound to the canvas
+     * Render each module bound to the canvas. The first call to
+     * render() will automatically call renderOnce (a noop by default)
+     * and update(). If update requires some render state to operate on
+     * renderOnce is the place to include that setup code.
      */
     render: function() {
       var self = this;
@@ -337,6 +372,11 @@ YUI.add('d3-components', function(Y) {
       // If the container isn't bound to the DOM
       // do so now.
       this.attachContainer();
+      if (!this._rendered) {
+        self.renderOnce();
+        self.update();
+        self._rendered = true;
+      }
       // Render modules.
       Y.each(this.modules, renderAndBind, this);
       return this;
