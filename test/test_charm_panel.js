@@ -454,7 +454,7 @@ describe('charm panel filtering', function() {
       {
         series: 'oneiric',
         charms: [
-          new models.Charm({id: 'cs:oneiric/foo-1',
+          new models.Charm({id: 'cs:oneiric/foo-2',
             is_subordinate: true})
         ]
       }
@@ -468,11 +468,10 @@ describe('charm panel filtering', function() {
     var filtered = views.filterEntries(entries, 'deployed', db.services);
 
     filtered.length.should.equal(2);
-    filtered[0].charms.length.should.equal(2);
-    filtered[0].charms[0].get('id').should.equal('cs:precise/foo-1');
-    filtered[0].charms[1].get('id').should.equal('cs:precise/sub-1');
+    filtered[0].charms.length.should.equal(1);
+    filtered[0].charms[0].get('id').should.equal('cs:precise/sub-1');
     filtered[1].charms.length.should.equal(1);
-    filtered[1].charms[0].get('id').should.equal('cs:oneiric/foo-1');
+    filtered[1].charms[0].get('id').should.equal('cs:oneiric/foo-2');
   });
 
 

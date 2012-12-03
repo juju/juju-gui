@@ -102,7 +102,7 @@ YUI.add('juju-charm-panel', function(Y) {
          * @return {Boolean} True if the charm matches a deployed service.
          */
         var isDeployedFilter = function(charm) {
-              return deployedCharms.indexOf(charm.get('package_name')) !== -1;
+              return deployedCharms.indexOf(charm.get('id')) !== -1;
         };
         var filter_fcn;
 
@@ -115,12 +115,7 @@ YUI.add('juju-charm-panel', function(Y) {
           if (!Y.Lang.isValue(services)) {
             deployedCharms = [];
           } else {
-            var charm_ids = services.get('charm'),
-                package_names = Y.Array.map(charm_ids, function(id) {
-                  var parts = models.charmIdRe.exec(id);
-                  return parts[4];
-                });
-            deployedCharms = Y.Array.dedupe(package_names);
+            deployedCharms = services.get('charm');
           }
         } else {
           // This case should not happen.
@@ -980,6 +975,13 @@ YUI.add('juju-charm-panel', function(Y) {
               { charms: charmsSearchPanel,
                 description: descriptionPanel,
                 configuration: configurationPanel },
+        // panelHeightOffset takes into account the height of the
+        // charm filter picker widget, which only appears on the
+        // "charms" panel.
+        panelHeightOffset = {
+          charms: 33,
+          description: 0,
+          configuration: 0},
         isPanelVisible = false,
         trigger = Y.one('#charm-search-trigger'),
         searchField = Y.one('#charm-search-field'),
@@ -997,7 +999,8 @@ YUI.add('juju-charm-panel', function(Y) {
       activePanelName = config.name;
       container.get('children').remove();
       container.append(panels[config.name].get('container'));
-      newPanel.set('height', calculatePanelPosition().height);
+      newPanel.set('height', calculatePanelPosition().height -
+                   panelHeightOffset[activePanelName] - 1);
       if (config.charmId) {
         newPanel.set('model', null); // Clear out the old.
         var charm = charms.getById(config.charmId);
@@ -1128,8 +1131,9 @@ YUI.add('juju-charm-panel', function(Y) {
       container.setStyle('display', 'block');
       container.setX(pos.x);
       if (pos.height) {
+        var height = pos.height - panelHeightOffset[activePanelName];
         container.setStyle('height', pos.height + 'px');
-        panels[activePanelName].set('height', pos.height - 1);
+        panels[activePanelName].set('height', height - 1);
       }
     }
 
