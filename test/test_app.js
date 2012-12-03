@@ -10,7 +10,7 @@ function injectData(app, data) {
       ['relation', 'add',
        {'interface': 'reversenginx', 'scope': 'global',
          'endpoints': [['wordpress', {'role': 'peer', 'name': 'loadbalancer'}]],
-         'id': 'relation-0000000000'}],
+         'id': 'relation-0000000002'}],
       ['relation', 'add',
        {'interface': 'mysql',
          'scope': 'global', 'endpoints':
@@ -186,7 +186,7 @@ YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
             env: env,
             charm_store: {} });
 
-      app.updateEndpoints = function() {};
+      //app.updateEndpoints = function() {};
       env.get_endpoints = function() {};
     });
 
@@ -207,6 +207,34 @@ YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
       conn.last_message().op.should.equal('get_charm');
       // Tests of the actual load machinery are in the model and env tests, and
       // so are not repeated here.
+    });
+
+    it('must request endpoints only when necessary', function() {
+      var get_endpoints_count = 0,
+          tmp_data = {
+            result: [
+              ['service', 'add', {
+                'charm': 'cs:precise/mysql-6',
+                'id': 'mysql2'
+              }],
+              ['unit', 'add', {
+                'machine': 0,
+                'agent-state': 'started',
+                'public-address': '192.168.122.222',
+                'id': 'mysql2/0'
+              }]
+            ],
+            op: 'delta'
+          };
+      env.get_endpoints = function(services, callback) {
+        get_endpoints_count++;
+      };
+      // Inject default data, should only get_endpoints once.
+      injectData(app)
+      get_endpoints_count.should.equal(1);
+      // Additional deltas should only call get_endpoints once.
+      app.db.on_delta({ data: tmp_data });
+      get_endpoints_count.should.equal(2);
     });
   });
 });
