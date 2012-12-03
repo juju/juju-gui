@@ -227,10 +227,10 @@ YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
             op: 'delta'
           };
       env.get_endpoints = function(services, callback) {
-        get_endpoints_count++;
+        get_endpoints_count += 1;
       };
       // Inject default data, should only get_endpoints once.
-      injectData(app)
+      injectData(app);
       get_endpoints_count.should.equal(1);
       // Additional deltas should only call get_endpoints once.
       app.db.on_delta({ data: tmp_data });
