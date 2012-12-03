@@ -12,27 +12,29 @@ EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort | tr '
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
 BUILD_ASSETS_DIR=build/juju-ui/assets
-SPRITE_GENERATED_FILES=$(BUILD_ASSETS_DIR)/stylesheets/sprite.css \
-	$(BUILD_ASSETS_DIR)/stylesheets/sprite.png
+SPRITE_GENERATED_FILES=$(BUILD_ASSETS_DIR)/sprite.css \
+	$(BUILD_ASSETS_DIR)/sprite.png
 PRODUCTION_FILES=$(BUILD_ASSETS_DIR)/modules.js \
 	$(BUILD_ASSETS_DIR)/config.js \
 	$(BUILD_ASSETS_DIR)/app.js \
 	$(BUILD_ASSETS_DIR)/all-yui.js \
-	$(BUILD_ASSETS_DIR)/stylesheets/all-static.css
+	$(BUILD_ASSETS_DIR)/combined-css/all-static.css
 DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 
-image-assets:
-	mkdir -p $(BUILD_ASSETS_DIR)/slider-base/assets/skins/sam/
-	cp node_modules/yui/slider-base/assets/skins/sam/*.png \
-	    $(BUILD_ASSETS_DIR)/slider-base/assets/skins/sam/
+copied-assets: $(NODE_TARGETS)
+	# Copy each YUI module's assets into the build directory where they
+	# will be served.
+	mkdir -p "$(BUILD_ASSETS_DIR)/combined-css"
+	(cd node_modules/yui/ && \
+	 cp -r --parents */assets "$(PWD)/$(BUILD_ASSETS_DIR)")
 	cp node_modules/yui/assets/skins/sam/rail-x.png \
-	    $(BUILD_ASSETS_DIR)/stylesheets
+	    "$(BUILD_ASSETS_DIR)/combined-css"
 
 all: build
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
-	mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
+	mkdir -p "$(BUILD_ASSETS_DIR)"
 	bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
@@ -118,7 +120,7 @@ spritegen: $(SPRITE_GENERATED_FILES)
 
 $(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) bin/merge-files
 	rm -f $(PRODUCTION_FILES)
-	mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
+	mkdir -p "$(BUILD_ASSETS_DIR)/combined-css"
 	bin/merge-files
 	cp app/modules.js $(BUILD_ASSETS_DIR)/modules.js
 	cp app/config.js $(BUILD_ASSETS_DIR)/config.js
@@ -128,7 +130,7 @@ combinejs: $(PRODUCTION_FILES)
 prep: beautify lint
 
 test: build
-	test-server.sh
+	./test-server.sh
 
 debug: build
 	@echo "Customize config.js to modify server settings"
@@ -139,9 +141,8 @@ server: build
 	cd build && python -m SimpleHTTPServer 8888
 
 clean:
-	rm -rf node_modules virtualenv
+	rm -rf node_modules virtualenv build
 	make -C docs clean
-	rm -Rf build/
 
 build/index.html: app/index.html
 	cp -f app/index.html build/
@@ -155,12 +156,12 @@ $(BUILD_ASSETS_DIR)/images: $(SPRITE_SOURCE_FILES)
 $(BUILD_ASSETS_DIR)/svgs: $(shell bzr ls -R -k file app/assets/svgs)
 	cp -rf app/assets/svgs $(BUILD_ASSETS_DIR)/svgs
 
-build_images: build/favicon.ico $(BUILD_ASSETS_DIR)/images \
+build-images: build/favicon.ico $(BUILD_ASSETS_DIR)/images \
 	$(BUILD_ASSETS_DIR)/svgs
 
-build: appcache $(NODE_TARGETS) javascript-libraries image-assets \
+build: appcache $(NODE_TARGETS) javascript-libraries copied-assets \
 	build/juju-ui/templates.js yuidoc spritegen \
-	combinejs build/index.html build_images
+	combinejs build/index.html build-images
 
 $(APPCACHE): manifest.appcache.in
 	mkdir -p "build/juju-ui/assets"
@@ -177,6 +178,6 @@ appcache-touch:
 # appcache, and this provides the correct order.
 appcache-force: appcache-touch appcache
 
-.PHONY: test lint beautify server clean build_images prep jshint gjslint \
+.PHONY: test lint beautify server clean build-images prep jshint gjslint \
 	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	combinejs javascript-libraries image-assets
+	combinejs javascript-libraries copied-assets

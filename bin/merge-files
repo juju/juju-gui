@@ -74,5 +74,5 @@ require('yui').YUI().use(['yui'], function(Y) {
   cssFiles.push('app/assets/stylesheets/bootstrap-responsive-2.0.4.css');
   merge.combineCSS(cssFiles,
     'build/',
-    'build/juju-ui/assets/stylesheets/all-static.css', 'yui-css');
+    'build/juju-ui/assets/combined-css/all-static.css', 'yui-css');
 });
