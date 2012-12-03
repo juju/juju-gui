@@ -327,7 +327,7 @@ describe('charm panel filtering', function() {
             Y.Node.create('<input />')
               .setAttribute('type', 'text')
               .setAttribute('id', 'charm-search-field')
-          )
+        )
     );
     container = Y.Node.create('<div />');
     Y.one('#main').append(container);
