@@ -2,28 +2,27 @@ JSFILES=$(shell bzr ls -RV -k file | grep -E -e '.+\.js(on)?$$|generateTemplates
 
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 	node_modules/expect.js node_modules/express node_modules/graceful-fs \
-	node_modules/grunt node_modules/jshint node_modules/less \
-	node_modules/minimatch node_modules/mocha node_modules/node-markdown \
-	node_modules/node-minify node_modules/node-spritesheet \
-	node_modules/rimraf node_modules/should node_modules/yui \
-	node_modules/yuidocjs
+	node_modules/grunt node_modules/jshint node_modules/js-yaml \
+	node_modules/less node_modules/minimatch node_modules/mocha \
+	node_modules/node-markdown node_modules/node-minify \
+	node_modules/node-spritesheet node_modules/rimraf node_modules/should \
+	node_modules/yui node_modules/yuidocjs
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort | tr '\n' ' ')
 
 # See the README for an overview of many of these release-oriented variables.
 FINAL_VERSION_NAME=$(shell cat version.txt)
+BZR_REVNO=$(shell bzr revno)
 ifdef FINAL
 VERSION_NAME=$(FINAL_VERSION_NAME)
 SERIES=stable
 else
-VERSION_NAME=$(FINAL_VERSION_NAME)-dev-r$(shell bzr revno)
+VERSION_NAME=$(FINAL_VERSION_NAME)-dev-r$(BZR_REVNO)
 SERIES=trunk
 endif
 ifdef STAGING
 LAUNCHPAD_API_ROOT=staging
 endif
-ifndef RELEASE_NAME
 RELEASE_NAME=juju-gui-$(VERSION_NAME).tgz
-endif
 ifndef IS_TRUNK_CHECKOUT
 IS_TRUNK_CHECKOUT=$(shell bzr info | grep \
 	'checkout of branch: bzr+ssh://bazaar.launchpad.net/+branch/juju-gui/' \
@@ -161,12 +160,17 @@ server: build
 	@echo "Running the application from a SimpleHTTPServer"
 	cd build && python -m SimpleHTTPServer 8888
 
-clean:
+cleanbuild:
+	rm -Rf build/
+
+clean: cleanbuild
 	rm -rf node_modules virtualenv
 	make -C docs clean
-	rm -Rf build/
 	rm -Rf releases
 	rm -f upload_release.py
+
+releaseprep: cleanbuild
+	bzr up
 
 build/index.html: app/index.html
 	cp -f app/index.html build/
@@ -245,4 +249,5 @@ appcache-force: appcache-touch appcache
 
 .PHONY: test lint beautify server clean build_images prep jshint gjslint \
 	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	combinejs javascript_libraries tarball release signature
+	combinejs javascript_libraries tarball release signature cleanbuild \
+	releaseprep

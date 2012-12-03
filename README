@@ -145,23 +145,22 @@ FINAL
 
     $ FINAL=1 make release
 
-STAGING
-  Set STAGING to any non-empty value to send uploads to staging.launchpad.net,
-  the temporary, testing version of Launchpad.This can be convenient for
-  trying out the release process in the Makefile without affecting our actual
-  releases. Note that you may need to ask the webops to turn off the two-
-  factor authentication on your Launchpad staging account in order for this to
+PROD
+  By default, releases will be uploaded to staging.launchpad.net, which is a
+  separate version of Launchpad that uses a temporary database.  This can be
+  convenient for trying out the release process in the Makefile without
+  affecting our actual production releases.  Set PROD to any non-empty value
+  to send uploads to launchpad.net, the production version of Launchpad, when
+  you are ready to make a real release.
+
+  Note that you may need to ask the webops to turn off the two-factor
+  authentication on your Launchpad staging account in order for the staging to
   work. Go to the #launchpad-ops channel on the canonical IRC server and ask
   something like "webops, could you disable 2FA on my staging account?"
+
   Example usage::
 
-    $ STAGING=1 make release
-
-RELEASE_NAME
-  This name will be automatically set using the contents of version.txt and,
-  if FINAL is not set, the bzr revno. You may override it. Example usage::
-
-    $ RELEASE_NAME=foo.tgz make tarball
+    $ PROD=1 make release
 
 IS_TRUNK_CHECKOUT
   Set this to any non-empty value to force the Makefile to believe it is

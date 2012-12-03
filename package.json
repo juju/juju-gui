@@ -31,7 +31,8 @@
     "rimraf": "2.0.x",
     "grunt": ">=0.2.0",
     "node-spritesheet": ">=0.2.3",
-    "node-minify": "0.5.0"
+    "node-minify": "0.5.0",
+    "js-yaml": "1.0.x"
   },
   "optionalDependencies": {}
 }
