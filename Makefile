@@ -13,7 +13,7 @@ JSFILES=$(shell bzr ls -RV -k file | \
 		-e '^test/assets/' \
 		-e '^app/assets/javascripts/reconnecting-websocket.js$$' \
 		-e '^server.js$$')
-
+THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 	node_modules/expect.js node_modules/express node_modules/graceful-fs \
 	node_modules/grunt node_modules/jshint node_modules/less \
@@ -128,7 +128,8 @@ beautify: virtualenv/bin/fixjsstyle
 spritegen: $(SPRITE_GENERATED_FILES)
 
 $(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) \
-		bin/merge-files lib/merge-files.js
+		bin/merge-files lib/merge-files.js \
+		$(THIRD_PARTY_JS)
 	rm -f $(PRODUCTION_FILES)
 	mkdir -p "$(BUILD_ASSETS_DIR)/combined-css"
 	bin/merge-files
