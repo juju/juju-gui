@@ -1,3 +1,6 @@
+OLD_SHELL := $(SHELL)
+SHELL = $(warning [$@ [32m($^)[m[34m($?)[m ])$(OLD_SHELL)
+
 JSFILES=$(shell bzr ls -RV -k file | grep -E -e '.+\.js(on)?$$|generateTemplates$$' | grep -Ev -e '^manifest\.json$$' -e '^test/assets/' -e '^app/assets/javascripts/reconnecting-websocket.js$$' -e '^server.js$$')
 
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
@@ -22,15 +25,6 @@ PRODUCTION_FILES=$(BUILD_ASSETS_DIR)/modules.js \
 DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 
-copied-assets: $(NODE_TARGETS)
-	# Copy each YUI module's assets into the build directory where they
-	# will be served.
-	mkdir -p "$(BUILD_ASSETS_DIR)/combined-css"
-	(cd node_modules/yui/ && \
-	 cp -r --parents */assets "$(PWD)/$(BUILD_ASSETS_DIR)")
-	cp node_modules/yui/assets/skins/sam/rail-x.png \
-	    "$(BUILD_ASSETS_DIR)/combined-css"
-
 all: build
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
@@ -42,7 +36,8 @@ yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 
 yuidoc: yuidoc/index.html
 
-$(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet $(SPRITE_SOURCE_FILES)
+$(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
+		$(SPRITE_SOURCE_FILES)
 	node_modules/grunt/bin/grunt spritegen
 
 $(NODE_TARGETS): package.json
@@ -118,14 +113,22 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) bin/merge-files
+$(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) \
+		bin/merge-files lib/merge-files.js
 	rm -f $(PRODUCTION_FILES)
 	mkdir -p "$(BUILD_ASSETS_DIR)/combined-css"
 	bin/merge-files
 	cp app/modules.js $(BUILD_ASSETS_DIR)/modules.js
 	cp app/config.js $(BUILD_ASSETS_DIR)/config.js
+	cp node_modules/yui/assets/skins/sam/rail-x.png \
+	    "$(BUILD_ASSETS_DIR)/combined-css/rail-x.png"
+	# Copy each YUI module's assets into the build directory where they
+	# will be served.
+	mkdir -p "$(BUILD_ASSETS_DIR)/combined-css"
+	(cd node_modules/yui/ && \
+	 cp -r --parents */assets "$(PWD)/$(BUILD_ASSETS_DIR)")
 
-combinejs: $(PRODUCTION_FILES)
+production-files: $(PRODUCTION_FILES)
 
 prep: beautify lint
 
@@ -140,8 +143,11 @@ server: build
 	@echo "Running the application from a SimpleHTTPServer"
 	cd build && python -m SimpleHTTPServer 8888
 
-clean:
-	rm -rf node_modules virtualenv build
+build-clean:
+	rm -rf build
+
+clean: build-clean
+	rm -rf node_modules virtualenv
 	make -C docs clean
 
 build/index.html: app/index.html
@@ -159,9 +165,9 @@ $(BUILD_ASSETS_DIR)/svgs: $(shell bzr ls -R -k file app/assets/svgs)
 build-images: build/favicon.ico $(BUILD_ASSETS_DIR)/images \
 	$(BUILD_ASSETS_DIR)/svgs
 
-build: appcache $(NODE_TARGETS) javascript-libraries copied-assets \
+build: appcache $(NODE_TARGETS) javascript-libraries  \
 	build/juju-ui/templates.js yuidoc spritegen \
-	combinejs build/index.html build-images
+	production-files build/index.html build-images
 
 $(APPCACHE): manifest.appcache.in
 	mkdir -p "build/juju-ui/assets"
@@ -180,4 +186,6 @@ appcache-force: appcache-touch appcache
 
 .PHONY: test lint beautify server clean build-images prep jshint gjslint \
 	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	combinejs javascript-libraries copied-assets
+	production-files javascript-libraries
+
+.DEFAULT_GOAL := all

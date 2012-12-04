@@ -66,13 +66,11 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/reconnecting-websocket.js',
     'app/assets/javascripts/svg-layouts.js' ]);
   
-  merge.combineJs(filesToLoad.js,
-    'build/juju-ui/assets/all-yui.js', 'uglifyjs');
+  merge.combineJs(filesToLoad.js, 'build/juju-ui/assets/all-yui.js');
 
   var cssFiles = filesToLoad.css;
   cssFiles.push('app/assets/stylesheets/bootstrap-2.0.4.css');
   cssFiles.push('app/assets/stylesheets/bootstrap-responsive-2.0.4.css');
   merge.combineCSS(cssFiles,
-    'build/',
-    'build/juju-ui/assets/combined-css/all-static.css', 'yui-css');
+    'build/juju-ui/assets/combined-css/all-static.css');
 });

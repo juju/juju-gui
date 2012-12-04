@@ -29,6 +29,10 @@ var GlobalConfig = {
         // 'juju-notification-controller']"
         'juju-controllers': {
           use: ['juju-env', 'juju-charm-store', 'juju-notification-controller']
+        },
+
+        'juju-gui': {
+          fullpath: '/juju-ui/assets/app.js'
         }
       }
     }
