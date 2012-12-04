@@ -1,5 +1,11 @@
-OLD_SHELL := $(SHELL)
-SHELL = $(warning [$@ [32m($^)[m[34m($?)[m ])$(OLD_SHELL)
+# Makefile debugging hack: uncomment the two lines below and make will tell you
+# more about what is happening.  The output generated is of the form 
+# "FILE:LINE [TARGET (DEPENDENCIES) (NEWER)]" where DEPENDENCIES are all the
+# things TARGET depends on and NEWER are all the files that are newer than
+# TARGET.  DEPENDENCIES will be colored green and NEWER will be blue.
+#
+#OLD_SHELL := $(SHELL)
+#SHELL = $(warning [$@ [32m($^) [34m($?)[m ])$(OLD_SHELL)
 
 JSFILES=$(shell bzr ls -RV -k file | grep -E -e '.+\.js(on)?$$|generateTemplates$$' | grep -Ev -e '^manifest\.json$$' -e '^test/assets/' -e '^app/assets/javascripts/reconnecting-websocket.js$$' -e '^server.js$$')
 
@@ -44,19 +50,19 @@ $(NODE_TARGETS): package.json
 	npm install
 	# Keep all targets up to date, not just new/changed ones.
 	for dirname in $(NODE_TARGETS); do touch $$dirname ; done
-	@# Check to see if we made what we expected to make, and warn if we did not.
-	@# Note that we calculate FOUND_TARGETS here, in this way and not in the
-	@# standard Makefile way, because we need to see what node_modules were
-	@# created by this target.  Makefile variables and substitutions, even when
-	@# using $(eval...) within a target, happen initially, before the target
-	@# is run.  Therefore, if this were a simple Makefile variable, it
-	@# would be empty after a first run, and you would always see the warning
-	@# message in that case.  We have to connect it to the "if" command with
-	@# "; \" because Makefile targets are evaluated per line, with bash
-	@# variables discarded between them.  We compare the result with
-	@# EXPECTED_NODE_TARGETS and not simply the NODE_TARGETS because this
-	@# gives us normalization, particularly of the trailing whitespace, that
-	@# we do not otherwise have.
+	@# Check to see if we made what we expected to make, and warn if we did
+	@# not. Note that we calculate FOUND_TARGETS here, in this way and not
+	@# in the standard Makefile way, because we need to see what
+	@# node_modules were created by this target.  Makefile variables and
+	@# substitutions, even when using $(eval...) within a target, happen
+	@# initially, before the target is run.  Therefore, if this were a
+	@# simple Makefile variable, it  would be empty after a first run, and
+	@# you would always see the warning message in that case.  We have to
+	@# connect it to the "if" command with "; \" because Makefile targets
+	@# are evaluated per line, with bash variables discarded between them.
+	@# We compare the result with EXPECTED_NODE_TARGETS and not simply the
+	@# NODE_TARGETS because this gives us normalization, particularly of the
+	@# trailing whitespace, that we do not otherwise have.
 	@FOUND_TARGETS=$$(find node_modules -maxdepth 1 -mindepth 1 -type d \
 	-printf 'node_modules/%f ' | tr ' ' '\n' | grep -Ev '\.bin$$' \
 	| sort | tr '\n' ' '); \
@@ -78,15 +84,16 @@ $(NODE_TARGETS): package.json
 	fi
 
 app/assets/javascripts/yui: node_modules/yui
-	ln -sf `pwd`/node_modules/yui app/assets/javascripts/
+	ln -sf "$(PWD)/node_modules/yui" app/assets/javascripts/
 
 node_modules/d3/d3.v2.js node_modules/d3/d3.v2.min.js: node_modules/d3
 
 app/assets/javascripts/d3.v2.js: node_modules/d3/d3.v2.js
-	ln -sf `pwd`/node_modules/d3/d3.v2.js app/assets/javascripts/d3.v2.js
+	ln -sf "$(PWD)/node_modules/d3/d3.v2.js" app/assets/javascripts/d3.v2.js
 
 app/assets/javascripts/d3.v2.min.js: node_modules/d3/d3.v2.min.js
-	ln -sf `pwd`/node_modules/d3/d3.v2.min.js app/assets/javascripts/d3.v2.min.js
+	ln -sf "$(PWD)/node_modules/d3/d3.v2.min.js" \
+	    app/assets/javascripts/d3.v2.min.js
 
 javascript-libraries: app/assets/javascripts/yui \
 	app/assets/javascripts/d3.v2.js app/assets/javascripts/d3.v2.min.js

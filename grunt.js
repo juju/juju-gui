@@ -1,5 +1,9 @@
 'use strict';
 
+/*
+ * Configure the CSS sprite generation utility.
+ */
+
 module.exports = function(grunt) {
   grunt.initConfig({
     spritesheet: {

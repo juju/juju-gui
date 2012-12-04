@@ -14,9 +14,10 @@
  *
  * Known issues:
  * (1) If we set "bootstrap=false" in the GlobalConfig object, YUI disables the
- *     loader object. It means it wont even try to download modules. We cannot
- *     do it because the loader also manages the "use" property which defines
- *     aliases for some of your modules ('juju-views' and 'juju-controllers').
+ *     loader object. It means it will not even try to download modules. We
+ *     cannot  do it because the loader also manages the "use" property which
+ *     defines aliases for some of your modules ('juju-views' and
+ *     'juju-controllers').
  * (2) During development, we've noticed that some of the YUI modules weren't
  *     included in the list of YUI files (lang/datatype-date-format_en-US,
  *     parallel, app-transitions-native, gallery-markdown, loader-base). For
