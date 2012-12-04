@@ -1,13 +1,18 @@
 # Makefile debugging hack: uncomment the two lines below and make will tell you
-# more about what is happening.  The output generated is of the form 
+# more about what is happening.  The output generated is of the form
 # "FILE:LINE [TARGET (DEPENDENCIES) (NEWER)]" where DEPENDENCIES are all the
 # things TARGET depends on and NEWER are all the files that are newer than
 # TARGET.  DEPENDENCIES will be colored green and NEWER will be blue.
 #
 #OLD_SHELL := $(SHELL)
-#SHELL = $(warning [$@ [32m($^) [34m($?)[m ])$(OLD_SHELL)
+#SHELL = $(warning [$@ [32m($^) [34m($?)[m ])$(OLD_SHELL)
 
-JSFILES=$(shell bzr ls -RV -k file | grep -E -e '.+\.js(on)?$$|generateTemplates$$' | grep -Ev -e '^manifest\.json$$' -e '^test/assets/' -e '^app/assets/javascripts/reconnecting-websocket.js$$' -e '^server.js$$')
+JSFILES=$(shell bzr ls -RV -k file | \
+	grep -E -e '.+\.js(on)?$$' | \
+	grep -Ev -e '^manifest\.json$$' \
+		-e '^test/assets/' \
+		-e '^app/assets/javascripts/reconnecting-websocket.js$$' \
+		-e '^server.js$$')
 
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 	node_modules/expect.js node_modules/express node_modules/graceful-fs \
@@ -31,11 +36,13 @@ PRODUCTION_FILES=$(BUILD_ASSETS_DIR)/modules.js \
 DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 
+show:
+	echo $(JSFILES)
 all: build
 
-build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
+build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates.js
 	mkdir -p "$(BUILD_ASSETS_DIR)"
-	bin/generateTemplates
+	bin/generateTemplates.js
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 	node_modules/.bin/yuidoc -o yuidoc -x assets app
@@ -165,6 +172,7 @@ build/favicon.ico: app/favicon.ico
 
 $(BUILD_ASSETS_DIR)/images: $(SPRITE_SOURCE_FILES)
 	cp -rf app/assets/images $(BUILD_ASSETS_DIR)/images
+	touch $@
 
 $(BUILD_ASSETS_DIR)/svgs: $(shell bzr ls -R -k file app/assets/svgs)
 	cp -rf app/assets/svgs $(BUILD_ASSETS_DIR)/svgs
