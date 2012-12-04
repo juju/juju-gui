@@ -310,9 +310,6 @@ YUI.add('juju-gui', function(Y) {
       Y.log(evt, 'debug', 'App: Database changed');
 
       var self = this;
-      if (!Y.Lang.isValue(this.serviceEndpoints)) {
-        this.serviceEndpoints = {};
-      }
 
       // Compare endpoints map against db to see if it needs to be changed.
       var updateNeeded = this.db.services.some(function(service) {
