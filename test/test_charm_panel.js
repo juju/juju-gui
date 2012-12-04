@@ -287,3 +287,193 @@ describe('charm description', function() {
   });
 
 });
+
+describe('charm panel filtering', function() {
+
+  var Y, models, views, juju, conn, env, container, db, app, charm,
+      charm_store_data, charm_store, charms, ENTER;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(
+        'juju-models',
+        'juju-views',
+        'juju-gui',
+        'juju-env',
+        'juju-tests-utils',
+        'node-event-simulate',
+        'node',
+        'datasource-local',
+        'json-stringify',
+        'juju-charm-store',
+
+        function(Y) {
+          models = Y.namespace('juju.models');
+          views = Y.namespace('juju.views');
+          juju = Y.namespace('juju');
+          ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
+          done();
+        });
+
+  });
+
+  beforeEach(function() {
+    conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
+    env = new (Y.namespace('juju')).Environment({conn: conn});
+    env.connect();
+    conn.open();
+    Y.one('#main')
+        .append(
+            Y.Node.create('<div />')
+              .setAttribute('id', 'charm-search-test').append(
+                Y.Node.create('<input />')
+                  .setAttribute('type', 'text')
+                  .setAttribute('id', 'charm-search-field')
+            )
+        );
+    container = Y.Node.create('<div />');
+    Y.one('#main').append(container);
+    db = new models.Database();
+    charms = db.charms.add([
+      { id: 'cs:precise/mysql-7' },
+      { id: 'cs:precise/syslogd-1', is_subordinate: true}]);
+    charm_store_data = {responseText: '{}'};
+    charm_store = new juju.CharmStore({
+      datasource: {
+        sendRequest: function(params) {
+          params.callback.success({
+            response: {
+              results: [{responseText: charm_store_data.responseText}]}});
+        }}});
+    app = { db: db, env: env, charm_store: charm_store };
+  });
+
+  afterEach(function() {
+    Y.namespace('juju.views').CharmPanel.killInstance();
+    Y.one('#charm-search-test').remove(true);
+    container.remove(true);
+    db.destroy();
+    env.destroy();
+  });
+
+
+  it('should have `filters` default to `all`', function() {
+    var view = new views.CharmCollectionView({});
+    view.get('filter').should.equal('all');
+  });
+
+  it('should not filter entries when `all` is the filter', function() {
+    var entries = [
+      {
+        series: 'precise',
+        charms: [
+          new models.Charm({id: 'cs:precise/foo-1'}),
+          new models.Charm({id: 'cs:precise/logger-1',
+            is_subordinate: true})
+        ]
+      }
+    ];
+
+    var filtered = views.filterEntries(entries, 'all');
+    filtered.length.should.equal(1);
+    filtered[0].charms.length.should.equal(2);
+  });
+
+  it('should filter for `subordinate`', function() {
+    var entries = [
+      {
+        series: 'precise',
+        charms: [
+          new models.Charm({id: 'cs:precise/foo-1'}),
+          new models.Charm({id: 'cs:precise/logger-1',
+            is_subordinate: true}),
+          new models.Charm({id: 'cs:precise/sub-1',
+            is_subordinate: true}),
+          new models.Charm({id: 'cs:precise/nosub-3',
+            is_subordinate: false})
+        ]
+      },
+      {
+        series: 'oneiric',
+        charms: [
+          new models.Charm({id: 'cs:precise/foo-1',
+            is_subordinate: true})
+        ]
+      }
+    ];
+
+    var filtered = views.filterEntries(entries, 'subordinates');
+    filtered.length.should.equal(2);
+    filtered[0].charms.length.should.equal(2);
+    filtered[0].charms[0].get('id').should.equal('cs:precise/logger-1');
+    filtered[0].charms[0].get('is_subordinate').should.equal(true);
+    filtered[0].charms[1].get('id').should.equal('cs:precise/sub-1');
+    filtered[0].charms[1].get('is_subordinate').should.equal(true);
+  });
+
+  it('should filter out series with no remaining charms', function() {
+    var entries = [
+      {
+        series: 'precise',
+        charms: [
+          new models.Charm({id: 'cs:precise/foo-1'}),
+          new models.Charm({id: 'cs:precise/logger-1',
+            is_subordinate: true}),
+          new models.Charm({id: 'cs:precise/sub-1',
+            is_subordinate: true}),
+          new models.Charm({id: 'cs:precise/nosub-3',
+            is_subordinate: false})
+        ]
+      },
+      {
+        series: 'oneiric',
+        charms: [
+          new models.Charm({id: 'cs:oneiric/foo-1',
+            is_subordinate: false})
+        ]
+      }
+    ];
+
+    var filtered = views.filterEntries(entries, 'subordinates');
+    filtered.length.should.equal(1);
+  });
+
+
+  it('should filter for `deployed` charms', function() {
+    var entries = [
+      {
+        series: 'precise',
+        charms: [
+          new models.Charm({id: 'cs:precise/foo-1'}),
+          new models.Charm({id: 'cs:precise/logger-1',
+            is_subordinate: true}),
+          new models.Charm({id: 'cs:precise/sub-1',
+            is_subordinate: true}),
+          new models.Charm({id: 'cs:precise/nosub-3',
+            is_subordinate: false})
+        ]
+      },
+      {
+        series: 'oneiric',
+        charms: [
+          new models.Charm({id: 'cs:oneiric/foo-2',
+            is_subordinate: true})
+        ]
+      }
+    ];
+
+    db.services.add([
+      {id: 'wordpress', charm: 'cs:edgy/wordpress-9'},
+      {id: 'foo', charm: 'cs:oneiric/foo-2'},
+      {id: 'sub', charm: 'cs:precise/sub-1'}]);
+
+    var filtered = views.filterEntries(entries, 'deployed', db.services);
+
+    filtered.length.should.equal(2);
+    filtered[0].charms.length.should.equal(1);
+    filtered[0].charms[0].get('id').should.equal('cs:precise/sub-1');
+    filtered[1].charms.length.should.equal(1);
+    filtered[1].charms[0].get('id').should.equal('cs:oneiric/foo-2');
+  });
+
+
+});
