@@ -1,16 +1,12 @@
 'use strict';
 
-/*
- * Configure the CSS sprite generation utility.
- */
-
 module.exports = function(grunt) {
   grunt.initConfig({
     spritesheet: {
       compile: {
         options: {
-          outputImage: 'sprite.png',
-          outputCss: 'sprite.css',
+          outputImage: 'stylesheets/sprite.png',
+          outputCss: 'stylesheets/sprite.css',
           selector: '.sprite'
 
         },

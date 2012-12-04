@@ -2,7 +2,6 @@ var GlobalConfig = {
   debug: false,
   // YUI will not download the modules. They are supposed to be already loaded.
   ignoreRegistered: true,
-  base: '/juju-ui/assets/',
 
   // Please use this object only for defining new aliases.
   // You can add the fullpath to the libraries in "modules-debug.js".
@@ -29,10 +28,6 @@ var GlobalConfig = {
         // 'juju-notification-controller']"
         'juju-controllers': {
           use: ['juju-env', 'juju-charm-store', 'juju-notification-controller']
-        },
-
-        'juju-gui': {
-          fullpath: '/juju-ui/assets/app.js'
         }
       }
     }
