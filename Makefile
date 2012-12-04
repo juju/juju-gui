@@ -8,29 +8,48 @@ NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 	node_modules/rimraf node_modules/should node_modules/yui \
 	node_modules/yuidocjs
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort | tr '\n' ' ')
-
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
+
+BUILD=build
+DEVEL=$(BUILD)-devel
+DEBUG=$(BUILD)-debug
+PROD=$(BUILD)-prod
+JUJU_UI=juju-ui
+BUILD_ASSETS_DIR=$(BUILD)/$(JUJU_UI)/assets
+DEVEL_ASSETS_DIR=$(DEVEL)/$(JUJU_UI)/assets
+DEBUG_ASSETS_DIR=$(DEBUG)/$(JUJU_UI)/assets
+PROD_ASSETS_DIR=$(PROD)/$(JUJU_UI)/assets
+
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
-BUILD_ASSETS_DIR=build/juju-ui/assets
 SPRITE_GENERATED_FILES=$(BUILD_ASSETS_DIR)/stylesheets/sprite.css \
 	$(BUILD_ASSETS_DIR)/stylesheets/sprite.png
-PRODUCTION_FILES=$(BUILD_ASSETS_DIR)/modules.js \
-	$(BUILD_ASSETS_DIR)/config.js \
-	$(BUILD_ASSETS_DIR)/app.js \
-	$(BUILD_ASSETS_DIR)/stylesheets/all-static.css
+DEBUG_FILES=$(DEBUG_ASSETS_DIR)/modules-debug.js \
+	$(DEBUG_ASSETS_DIR)/config-debug.js \
+	$(DEBUG_ASSETS_DIR)/stylesheets/xxx.css
+PRODUCTION_FILES=$(PROD_ASSETS_DIR)/modules.js \
+	$(PROD_ASSETS_DIR)/config.js \
+	$(PROD_ASSETS_DIR)/app.js \
+	$(PROD_ASSETS_DIR)/stylesheets/all-static.css
 DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 
-all: build
+all:
+	@echo "Available targets:"
+	@echo "appcache: create the manifest.appcache file inside build"
+	@echo "doc: generate both Sphinx and YuiDoc documentation"
+	@echo "yuidoc: generate YuiDoc documentation"
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
-	mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
+	mkdir -p $(BUILD_ASSETS_DIR)/stylesheets
 	./bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 	node_modules/.bin/yuidoc -o yuidoc -x assets app
 
 yuidoc: yuidoc/index.html
+
+doc: yuidoc
+	make -C docs html
 
 $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet $(SPRITE_SOURCE_FILES)
 	node_modules/grunt/bin/grunt spritegen
@@ -108,32 +127,76 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
+$(DEBUG_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES)
+	rm -f $(DEBUG_FILES)
+	mkdir -p $(DEBUG_ASSETS_DIR)/stylesheets
+	cp app/modules-debug.js $(DEBUG_ASSETS_DIR)/modules.js
+	cp app/config-debug.js $(DEBUG_ASSETS_DIR)/config.js
+
+copy_debug_files: $(DEBUG_FILES)
+
 $(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
 	rm -f $(PRODUCTION_FILES)
-	mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
+	mkdir -p $(PROD_ASSETS_DIR)/stylesheets
 	./bin/merge-files
-	cp app/modules.js $(BUILD_ASSETS_DIR)/modules.js
-	cp app/config.js $(BUILD_ASSETS_DIR)/config.js
+	cp app/modules.js $(PROD_ASSETS_DIR)/modules.js
+	cp app/config.js $(PROD_ASSETS_DIR)/config.js
 
-combinejs: $(PRODUCTION_FILES)
+combine_js_css: $(PRODUCTION_FILES)
+
+link_devel_files:
+	ln -sf `pwd`/$(BUILD)/index.html `pwd`/$(DEVEL)/index.html
+
+link_debug_files:
+	ln -sf `pwd`/$(BUILD)/index.html `pwd`/$(DEBUG)/index.html
+	ln -sf `pwd`/$(BUILD)/favicon.ico `pwd`/$(DEBUG)/favicon.ico
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/images `pwd`/$(DEBUG_ASSETS_DIR)/images
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/svgs `pwd`/$(DEBUG_ASSETS_DIR)/svgs
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/manifest.appcache `pwd`/$(DEBUG_ASSETS_DIR)/manifest.appcache
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/juju-gui.css `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/juju-gui.css
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.css `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/sprite.css
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.png `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/sprite.png
+
+link_prod_files:
+	ln -sf `pwd`/$(BUILD)/index.html `pwd`/$(PROD)/
+	ln -sf `pwd`/$(BUILD)/favicon.ico `pwd`/$(PROD)/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/images `pwd`/$(PROD_ASSETS_DIR)/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/svgs `pwd`/$(PROD_ASSETS_DIR)/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/manifest.appcache `pwd`/$(PROD_ASSETS_DIR)/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/juju-gui.css `pwd`/$(PROD_ASSETS_DIR)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.css `pwd`/$(PROD_ASSETS_DIR)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.png `pwd`/$(PROD_ASSETS_DIR)/stylesheets/
 
 prep: beautify lint
 
 test: build
 	./test-server.sh
 
-debug: build
+devel: build-devel
 	@echo "Customize config.js to modify server settings"
 	node server.js
 
-server: build
-	@echo "Running the application from a SimpleHTTPServer"
-	cd build && python -m SimpleHTTPServer 8888
+debug: build-debug
+	@echo "Running the debug environment from a SimpleHTTPServer"
+	cd $(DEBUG) && python -m SimpleHTTPServer 8888
+
+prod: build-prod
+	@echo "Running the production environment from a SimpleHTTPServer"
+	cd $(PROD) && python -m SimpleHTTPServer 8888
 
 clean:
-	rm -rf node_modules virtualenv
+	rm -rf node_modules virtualenv yuidoc
 	make -C docs clean
 	rm -Rf build/
+
+clean-devel:
+	rm -Rf $(DEVEL)
+
+clean-debug:
+	rm -Rf $(DEBUG)
+
+clean-prod:
+	rm -Rf $(PROD)
 
 build/index.html: app/index.html
 	cp -f app/index.html build/
@@ -151,11 +214,17 @@ build_images: build/favicon.ico $(BUILD_ASSETS_DIR)/images \
 	$(BUILD_ASSETS_DIR)/svgs
 
 build: appcache $(NODE_TARGETS) javascript_libraries \
-	build/juju-ui/templates.js yuidoc spritegen \
-	combinejs build/index.html build_images
+	build/juju-ui/templates.js spritegen \
+	build/index.html build_images
+
+build-devel: build yuidoc link_devel_files
+
+build-debug: build copy_debug_files link_debug_files
+
+build-prod: build combine_js_css link_prod_files
 
 $(APPCACHE): manifest.appcache.in
-	mkdir -p "build/juju-ui/assets"
+	mkdir -p $(BUILD_ASSETS_DIR)
 	cp manifest.appcache.in $(APPCACHE)
 	sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
