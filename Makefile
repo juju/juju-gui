@@ -8,7 +8,7 @@
 #SHELL = $(warning [$@ [32m($^) [34m($?)[m ])$(OLD_SHELL)
 
 JSFILES=$(shell bzr ls -RV -k file | \
-	grep -E -e '.+\.js(on)?$$' | \
+	grep -E -e '.+\.js(on)?$$|generateTemplates$$' | \
 	grep -Ev -e '^manifest\.json$$' \
 		-e '^test/assets/' \
 		-e '^app/assets/javascripts/reconnecting-websocket.js$$' \
@@ -40,9 +40,9 @@ show:
 	echo $(JSFILES)
 all: build
 
-build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates.js
+build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	mkdir -p "$(BUILD_ASSETS_DIR)"
-	bin/generateTemplates.js
+	bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 	node_modules/.bin/yuidoc -o yuidoc -x assets app
