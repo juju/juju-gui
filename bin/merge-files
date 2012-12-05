@@ -65,7 +65,7 @@ require('yui').YUI().use(['yui'], function(Y) {
       './app/assets/javascripts/d3-components.js',
       './app/assets/javascripts/reconnecting-websocket.js',
       './app/assets/javascripts/svg-layouts.js' ]);
-  
+
   // Merge our list of custom js files to the filesToLoad list
   filesToLoad.js.push.apply(filesToLoad.js, paths);
 
