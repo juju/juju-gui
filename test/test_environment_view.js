@@ -230,7 +230,7 @@
     );
 
     // Ensure that the zoom controls work
-    it('must be able to zoom using controls', function(done) {
+    it('must be able to zoom using controls', function() {
       var view = new views.environment({
         container: container,
         db: db,
@@ -244,31 +244,29 @@
           module = view.topo.modules.MegaModule,
           slider = module.slider,
           svg = container.one('svg g g');
-      zoom_in.after('click', function() {
-        module.zoom_in();
-        var attr = svg.getAttribute('transform');
-        // Ensure that, after clicking the zoom in button, that the
-        // scale portion of the transform attribute of the svg
-        // element has been upped by 0.2.  The transform attribute
-        // also contains translate, so test via a regex.
-        /scale\(1\.25\)/.test(attr).should.equal(true);
 
-        // Ensure that the slider agrees.
-        slider.get('value').should.equal(125);
-
-        // Ensure that zooming via slider sets scale.
-        slider.set('value', 150);
-        attr = svg.getAttribute('transform');
-        /scale\(1\.5\)/.test(attr).should.equal(true);
-        done();
-      });
       zoom_in.simulate('click');
+
+      var attr = svg.getAttribute('transform');
+      // Ensure that, after clicking the zoom in button, that the
+      // scale portion of the transform attribute of the svg
+      // element has been upped by 0.2.  The transform attribute
+      // also contains translate, so test via a regex.
+      /scale\(1\.25\)/.test(attr).should.equal(true);
+
+      // Ensure that the slider agrees.
+      slider.get('value').should.equal(125);
+
+      // Ensure that zooming via slider sets scale.
+      slider.set('value', 150);
+      attr = svg.getAttribute('transform');
+      /scale\(1\.5\)/.test(attr).should.equal(true);
     });
 
     // Ensure that sizes are computed properly
     it('must be able to compute rect sizes based on the svg and' +
        ' viewport size',
-       function(done) {
+       function() {
          var view = new views.environment({
            container: container,
            db: db,
@@ -285,7 +283,6 @@
          parseInt(svg.one('rect').getAttribute('width'), 10)
           .should.equal(
          parseInt(svg.getComputedStyle('width'), 10));
-         done();
        }
     );
 
@@ -312,15 +309,8 @@
              canvas = container.one('.topology');
          // We have to hide the canvas so it does not affect our calculations.
          canvas.setStyle('display', 'none');
-         // Ensure that calculations are being done correctly on the viewport.
-         // Unfortunately, this essentially duplicates the logic in the
-         // pertinent function, rather than truly testing it.
          parseInt(svg.getAttribute('height'), 10)
-          .should.equal(
-              Math.max(600,
-                  container.get('winHeight') -
-                  Y.one('.bottom-navbar').get('offsetHeight') -
-                  Y.one('.navbar').get('offsetHeight') - 1));
+          .should.be.above(599);
          // Destroy the navbar
          navbar.remove(true);
          viewport.remove(true);
@@ -434,7 +424,7 @@
          container.all('.to-remove')
               .size()
               .should.equal(1);
-         view.get('rmrelation_dialog').hide();
+         view.topo.modules.MegaModule.get('rmrelation_dialog').hide();
        });
 
     it('must not allow removing a subordinate relation between services',

@@ -1328,8 +1328,8 @@ YUI.add('juju-topology-mega', function(Y) {
     /*
          * Zoom in event handler.
          */
-    zoom_out: function(evt) {
-      var slider = this.slider,
+    zoom_out: function(data, context) {
+      var slider = context.slider,
               val = slider.get('value');
       slider.set('value', val - 25);
     },
@@ -1337,8 +1337,8 @@ YUI.add('juju-topology-mega', function(Y) {
     /*
          * Zoom out event handler.
          */
-    zoom_in: function(evt) {
-      var slider = this.slider,
+    zoom_in: function(data, context) {
+      var slider = context.slider,
               val = slider.get('value');
       slider.set('value', val + 25);
     },
