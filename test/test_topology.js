@@ -1,7 +1,7 @@
 
 'use strict';
 
-describe.only('topology', function() {
+describe('topology', function() {
   var Y, NS, views,
       TestModule, modA, state,
       container, topo,

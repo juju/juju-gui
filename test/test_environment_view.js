@@ -241,10 +241,11 @@
       view.postRender();
       var zoom_in = container.one('#zoom-in-btn'),
           zoom_out = container.one('#zoom-out-btn'),
-          slider = view.slider,
+          module = view.topo.modules.MegaModule,
+          slider = module.slider,
           svg = container.one('svg g g');
       zoom_in.after('click', function() {
-        view.zoom_in();
+        module.zoom_in();
         var attr = svg.getAttribute('transform');
         // Ensure that, after clicking the zoom in button, that the
         // scale portion of the transform attribute of the svg
@@ -308,7 +309,7 @@
          // from the viewport (only available from DOM).
          view.postRender();
          var svg = container.one('svg'),
-             canvas = container.one('#canvas');
+             canvas = container.one('.topology');
          // We have to hide the canvas so it does not affect our calculations.
          canvas.setStyle('display', 'none');
          // Ensure that calculations are being done correctly on the viewport.
@@ -383,9 +384,10 @@
          };
 
          // Toggle the control panel for the Add Relation button.
-         view.service_click_actions.toggleControlPanel(
+         var module = view.topo.modules.MegaModule;
+         module.service_click_actions.toggleControlPanel(
              d3.select(service.getDOMNode()).datum(),
-             view,
+             module,
              service);
          // Mock an event object so that d3.mouse does not throw a NPE.
          d3.event = {};
@@ -397,9 +399,9 @@
                .size()
                .should.equal(1);
          // Start the process of adding a relation.
-         view.service_click_actions.ambiguousAddRelationCheck(
+         module.service_click_actions.ambiguousAddRelationCheck(
              d3.select(service.next().getDOMNode()).datum(),
-             view,
+             module,
              service.next());
          container.all('.selectable-service').size()
             .should.equal(0);
@@ -473,11 +475,12 @@
           view.render();
 
           // If the user has clicked on the "Add Relation" menu item...
-          view.startRelation(service);
-          assert.isTrue(view.buildingRelation);
+          var module = view.topo.modules.MegaModule;
+          module.startRelation(service);
+          assert.isTrue(module.buildingRelation);
           // ...clicking on the background causes the relation drag to stop.
-          view.backgroundClicked();
-          assert.isFalse(view.buildingRelation);
+          module.backgroundClicked();
+          assert.isFalse(module.buildingRelation);
         });
 
     // TODO: This will be fully testable once we have specification on the
