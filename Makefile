@@ -42,7 +42,11 @@ BUILD_FILES=$(BUILD_ASSETS)/app.js \
 DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS)/manifest.appcache
 
-all:
+all: build-prod build-debug
+	@echo "\nProduction and debug environments built."
+	@echo "Run 'make help' to list the main available targets."
+
+help:
 	@echo "Main targets:"
 	@echo "devel: run the development environment"
 	@echo "debug: run the debugging environment"
@@ -191,12 +195,20 @@ prep: beautify lint
 test: build-debug
 	./test-server.sh
 
+server:
+	@echo "Run 'make prod' or 'make debug' to start the production"
+	@echo "or debug environments respectively."
+	@echo "Run 'make help' to list the main available targets."
+
 devel: build
-	@echo "Customize config.js to modify server settings"
+	@echo "Running the development environment from node.js ."
+	@echo "Customize config.js to modify server settings."
 	node server.js
 
 debug: build-debug
 	@echo "Running the debug environment from a SimpleHTTPServer"
+	@echo "To run the development environment, including automatically"
+	@echo "rebuilding the generated files on changes, run 'make devel'."
 	cd $(DEBUG) && python -m SimpleHTTPServer 8888
 
 prod: build-prod
@@ -237,8 +249,8 @@ appcache-touch:
 # appcache, and this provides the correct order.
 appcache-force: appcache-touch appcache
 
-.PHONY: test lint beautify clean prep jshint gjslint appcache \
+.PHONY: test lint beautify server clean prep jshint gjslint appcache \
 	appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	combine_js_css javascript_libraries build build-debug \
+	combine_js_css javascript_libraries build build-debug help \
 	build-prod clean-builds clean-deps clean-docs devel debug \
 	prod link_debug_files link_prod_files doc all
