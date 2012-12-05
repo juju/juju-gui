@@ -36,8 +36,6 @@ PRODUCTION_FILES=$(BUILD_ASSETS_DIR)/modules.js \
 DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 
-show:
-	echo $(JSFILES)
 all: build
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
