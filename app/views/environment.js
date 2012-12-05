@@ -28,7 +28,7 @@ YUI.add('juju-view-environment', function(Y) {
 
         render: function() {
           var container = this.get('container'),
-              topo;
+              topo = this.topo;
 
           //If we need the initial HTML template
           // take care of that.
@@ -38,20 +38,26 @@ YUI.add('juju-view-environment', function(Y) {
             this.svg = container.one('.topology');
           }
 
-          if (!this.get('topo')) {
+          if (!topo) {
             topo = new views.Topology();
             topo.setAttrs({
               size: [640, 480],
               env: this.get('env'),
               db: this.get('db'),
+              getServiceEndpoints: this.get('getServiceEndpoints'),
               container: container});
             // Bind all the behaviors we need as modules.
-            topo.addModule(views.ServiceModule);
+            topo.addModule(views.MegaModule);
 
-            this.set('topo', topo);
+            topo.addTarget(this);
+            this.topo = topo;
           }
           topo.render();
           return this;
+        },
+        // XXX: vomit
+        postRender: function() {
+          this.topo.modules['MegaModule'].postRender();
         }
       }, {
         ATTRS: {

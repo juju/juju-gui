@@ -201,7 +201,8 @@ YUI.add('d3-components', function(Y) {
         Y.each(handlers, function(handler, trigger) {
           handler = _normalizeHandler(handler, module, selector);
           if (L.isValue(handler)) {
-            _bindEvent(trigger, handler.callback, container, selector, self);
+            console.log("bind handler", handler);
+            _bindEvent(trigger, handler.callback, container, selector, handler.context);
           }
         });
       });

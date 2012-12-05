@@ -54,9 +54,6 @@ YUI.add('juju-topology', function(Y) {
 
       this.vis = vis;
 
-      this.zoom = d3.behaviors.zoom();
-
-
       return this;
     }
 

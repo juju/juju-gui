@@ -25,6 +25,87 @@ YUI.add('juju-view-utils', function(Y) {
     numbers: []
   };
 
+  var humanizeNumber = function(n) {
+    var units = [[1000, 'K'],
+      [1000000, 'M'],
+      [1000000000, 'B']],
+      result = n;
+
+    Y.each(units, function(sizer) {
+      var threshold = sizer[0],
+      unit = sizer[1];
+      if (n > threshold) {
+        result = (n / threshold);
+        if (n % threshold !== 0) {
+          result = result.toFixed(1);
+        }
+        result = result + unit;
+      }
+    });
+    return result;
+  };
+  utils.humanizeNumber = humanizeNumber;
+
+  /*
+   * Utility methods for SVG regarding classes
+   */
+  var hasSVGClass = function(selector, class_name) {
+    var classes = selector.getAttribute('class');
+    if (!classes) {
+      return false;
+    }
+    return classes.indexOf(class_name) !== -1;
+  };
+  utils.hasSVGClass = hasSVGClass;
+
+  var addSVGClass = function(selector, class_name) {
+    var self = this;
+    if (!selector) {
+      return;
+    };
+
+    if (typeof(selector) === 'string') {
+      Y.all(selector).each(function(n) {
+        var classes = this.getAttribute('class');
+        if (!self.hasSVGClass(this, class_name)) {
+          this.setAttribute('class', classes + ' ' + class_name);
+        }
+      });
+    } else {
+      var classes = selector.getAttribute('class');
+      if (!self.hasSVGClass(selector, class_name)) {
+        selector.setAttribute('class', classes + ' ' + class_name);
+      }
+    }
+  };
+  utils.addSVGClass = addSVGClass;
+
+  var removeSVGClass = function(selector, class_name) {
+    if (!selector) {
+      return;
+    }
+
+    if (typeof(selector) === 'string') {
+      Y.all(selector).each(function() {
+        var classes = this.getAttribute('class');
+        this.setAttribute('class', classes.replace(class_name, ''));
+      });
+    } else {
+      var classes = selector.getAttribute('class');
+      selector.setAttribute('class', classes.replace(class_name, ''));
+    }
+  };
+  utils.removeSVGClass = removeSVGClass;
+
+  var toggleSVGClass = function(selector, class_name) {
+    if (this.hasSVGClass(selector, class_name)) {
+      this.removeSVGClass(selector, class_name);
+    } else {
+      this.addSVGClass(selector, class_name);
+    }
+  };
+  utils.toggleSVGClass = toggleSVGClass;
+
   var consoleManager = function() {
     var winConsole = window.console,
         // These are the available methods.
