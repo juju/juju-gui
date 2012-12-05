@@ -195,7 +195,7 @@ describe('juju application notifications', function() {
         assertNotificationNumber('2');
       });
 
-  it('should show notification for "add_relation" and "remove_relation"' +
+  it.skip('should show notification for "add_relation" and "remove_relation"' +
       ' exceptions (environment view)', function() {
         var view = new views.environment({
           db: db,
@@ -219,7 +219,7 @@ describe('juju application notifications', function() {
         assertNotificationNumber('2');
       });
 
-  it('should show notification for "add_relation" and "destroy_service"' +
+  it.skip('should show notification for "add_relation" and "destroy_service"' +
       ' exceptions (environment view)', function() {
         var fakeLink = (function() {
           var link = [{}, {}];
