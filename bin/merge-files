@@ -71,10 +71,10 @@ require('yui').YUI().use(['yui'], function(Y) {
 
   // Combine YUI and our js files
   merge.combine(filesToLoad.js,
-      './build-prod/juju-ui/assets/app.js', 'uglifyjs');
+      './build/juju-ui/assets/app.js', 'uglifyjs');
 
   // Combine third party css files
   merge.combine([ './app/assets/stylesheets/bootstrap-2.0.4.css',
       './app/assets/stylesheets/bootstrap-responsive-2.0.4.css' ],
-      './build-prod/juju-ui/assets/stylesheets/all-static.css', 'yui-css');
+      './build/juju-ui/assets/stylesheets/all-static.css', 'yui-css');
 });

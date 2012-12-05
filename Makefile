@@ -10,6 +10,8 @@ NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort | tr '\n' ' ')
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 
+SRC=app
+ASSETS_DIR=$(SRC)/assets
 BUILD=build
 DEVEL=$(BUILD)-devel
 DEBUG=$(BUILD)-debug
@@ -23,13 +25,8 @@ PROD_ASSETS_DIR=$(PROD)/$(JUJU_UI)/assets
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
 SPRITE_GENERATED_FILES=$(BUILD_ASSETS_DIR)/stylesheets/sprite.css \
 	$(BUILD_ASSETS_DIR)/stylesheets/sprite.png
-DEBUG_FILES=$(DEBUG_ASSETS_DIR)/modules-debug.js \
-	$(DEBUG_ASSETS_DIR)/config-debug.js \
-	$(DEBUG_ASSETS_DIR)/stylesheets/xxx.css
-PRODUCTION_FILES=$(PROD_ASSETS_DIR)/modules.js \
-	$(PROD_ASSETS_DIR)/config.js \
-	$(PROD_ASSETS_DIR)/app.js \
-	$(PROD_ASSETS_DIR)/stylesheets/all-static.css
+BUILD_FILES=$(BUILD_ASSETS_DIR)/app.js \
+	$(BUILD_ASSETS_DIR)/stylesheets/all-static.css
 DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 
@@ -127,42 +124,46 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(DEBUG_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES)
-	rm -f $(DEBUG_FILES)
-	mkdir -p $(DEBUG_ASSETS_DIR)/stylesheets
-	cp app/modules-debug.js $(DEBUG_ASSETS_DIR)/modules.js
-	cp app/config-debug.js $(DEBUG_ASSETS_DIR)/config.js
-
-copy_debug_files: $(DEBUG_FILES)
-
-$(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
-	rm -f $(PRODUCTION_FILES)
-	mkdir -p $(PROD_ASSETS_DIR)/stylesheets
+$(BUILD_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
+	rm -f $(BUILD_FILES)
+	mkdir -p $(BUILD_ASSETS_DIR)/stylesheets
 	./bin/merge-files
-	cp app/modules.js $(PROD_ASSETS_DIR)/modules.js
-	cp app/config.js $(PROD_ASSETS_DIR)/config.js
 
-combine_js_css: $(PRODUCTION_FILES)
-
-link_devel_files:
-	ln -sf `pwd`/$(BUILD)/index.html `pwd`/$(DEVEL)/index.html
+combine_js_css: $(BUILD_FILES)
 
 link_debug_files:
-	ln -sf `pwd`/$(BUILD)/index.html `pwd`/$(DEBUG)/index.html
-	ln -sf `pwd`/$(BUILD)/favicon.ico `pwd`/$(DEBUG)/favicon.ico
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/images `pwd`/$(DEBUG_ASSETS_DIR)/images
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/svgs `pwd`/$(DEBUG_ASSETS_DIR)/svgs
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/manifest.appcache `pwd`/$(DEBUG_ASSETS_DIR)/manifest.appcache
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/juju-gui.css `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/juju-gui.css
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.css `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/sprite.css
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.png `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/sprite.png
+	mkdir -p $(DEBUG_ASSETS_DIR)/stylesheets
+	ln -sf `pwd`/$(SRC)/favicon.ico `pwd`/$(DEBUG)/
+	ln -sf `pwd`/$(SRC)/index.html `pwd`/$(DEBUG)/
+	ln -sf `pwd`/$(SRC)/config-debug.js $(DEBUG_ASSETS_DIR)/config.js
+	ln -sf `pwd`/$(SRC)/modules-debug.js $(DEBUG_ASSETS_DIR)/modules.js
+	ln -sf `pwd`/$(SRC)/app.js `pwd`/$(DEBUG)/$(JUJU_UI)/
+	ln -sf `pwd`/$(SRC)/models `pwd`/$(DEBUG)/$(JUJU_UI)/
+	ln -sf `pwd`/$(SRC)/store `pwd`/$(DEBUG)/$(JUJU_UI)/
+	ln -sf `pwd`/$(SRC)/views `pwd`/$(DEBUG)/$(JUJU_UI)/
+	ln -sf `pwd`/$(SRC)/widgets `pwd`/$(DEBUG)/$(JUJU_UI)/
+	ln -sf `pwd`/$(ASSETS_DIR)/javascripts/yui/yui/yui-debug.js $(DEBUG_ASSETS_DIR)/app.js
+	ln -sf `pwd`/$(ASSETS_DIR)/images `pwd`/$(DEBUG_ASSETS_DIR)/
+	ln -sf `pwd`/$(ASSETS_DIR)/javascripts `pwd`/$(DEBUG_ASSETS_DIR)/
+	ln -sf `pwd`/$(ASSETS_DIR)/svgs `pwd`/$(DEBUG_ASSETS_DIR)/
+	ln -sf `pwd`/$(BUILD)/$(JUJU_UI)/templates.js `pwd`/$(DEBUG)/$(JUJU_UI)/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/manifest.appcache `pwd`/$(DEBUG_ASSETS_DIR)/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/all-static.css `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/juju-gui.css `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.css `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.png `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/
 
 link_prod_files:
-	ln -sf `pwd`/$(BUILD)/index.html `pwd`/$(PROD)/
-	ln -sf `pwd`/$(BUILD)/favicon.ico `pwd`/$(PROD)/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/images `pwd`/$(PROD_ASSETS_DIR)/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/svgs `pwd`/$(PROD_ASSETS_DIR)/
+	mkdir -p $(PROD_ASSETS_DIR)/stylesheets
+	ln -sf `pwd`/$(SRC)/favicon.ico `pwd`/$(PROD)/
+	ln -sf `pwd`/$(SRC)/index.html `pwd`/$(PROD)/
+	ln -sf `pwd`/$(SRC)/config.js $(PROD_ASSETS_DIR)/config.js
+	ln -sf `pwd`/$(SRC)/modules.js $(PROD_ASSETS_DIR)/modules.js
+	ln -sf `pwd`/$(ASSETS_DIR)/images `pwd`/$(PROD_ASSETS_DIR)/
+	ln -sf `pwd`/$(ASSETS_DIR)/svgs `pwd`/$(PROD_ASSETS_DIR)/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/app.js `pwd`/$(PROD_ASSETS_DIR)/
 	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/manifest.appcache `pwd`/$(PROD_ASSETS_DIR)/
+	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/all-static.css `pwd`/$(PROD_ASSETS_DIR)/stylesheets/
 	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/juju-gui.css `pwd`/$(PROD_ASSETS_DIR)/stylesheets/
 	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.css `pwd`/$(PROD_ASSETS_DIR)/stylesheets/
 	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.png `pwd`/$(PROD_ASSETS_DIR)/stylesheets/
@@ -198,28 +199,12 @@ clean-debug:
 clean-prod:
 	rm -Rf $(PROD)
 
-build/index.html: app/index.html
-	cp -f app/index.html build/
-
-build/favicon.ico: app/favicon.ico
-	cp -f app/favicon.ico build/
-
-$(BUILD_ASSETS_DIR)/images: $(SPRITE_SOURCE_FILES)
-	cp -rf app/assets/images $(BUILD_ASSETS_DIR)/images
-
-$(BUILD_ASSETS_DIR)/svgs: $(shell bzr ls -R -k file app/assets/svgs)
-	cp -rf app/assets/svgs $(BUILD_ASSETS_DIR)/svgs
-
-build_images: build/favicon.ico $(BUILD_ASSETS_DIR)/images \
-	$(BUILD_ASSETS_DIR)/svgs
-
 build: appcache $(NODE_TARGETS) javascript_libraries \
-	build/juju-ui/templates.js spritegen \
-	build/index.html build_images
+	build/juju-ui/templates.js spritegen
 
-build-devel: build yuidoc link_devel_files
+build-devel: build yuidoc
 
-build-debug: build copy_debug_files link_debug_files
+build-debug: build combine_js_css link_debug_files
 
 build-prod: build combine_js_css link_prod_files
 
@@ -238,6 +223,8 @@ appcache-touch:
 # appcache, and this provides the correct order.
 appcache-force: appcache-touch appcache
 
-.PHONY: test lint beautify server clean build_images prep jshint gjslint \
+.PHONY: test lint beautify clean build_images prep jshint gjslint \
 	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	combinejs javascript_libraries
+	combine_js_css javascript_libraries build-devel build-debug build-prod \
+	clean-devel clean-debug clean-prod devel debug prod link_devel_files \
+	link_debug_files link_prod_files doc all
