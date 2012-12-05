@@ -256,8 +256,6 @@ YUI.add('juju-gui', function(Y) {
       // TODO - Bound views will automatically update this on individual models
       this.db.on('update', this.on_database_changed, this);
 
-      this.db.services.on('add', this.updateEndpoints, this);
-
       this.on('navigate', function(e) {
         console.log('app navigate', e);
       });
@@ -310,6 +308,28 @@ YUI.add('juju-gui', function(Y) {
      */
     on_database_changed: function(evt) {
       Y.log(evt, 'debug', 'App: Database changed');
+
+      var self = this;
+
+      // Compare endpoints map against db to see if it needs to be changed.
+      var updateNeeded = this.db.services.some(function(service) {
+        return (self.serviceEndpoints[service.get('id')] === undefined);
+      });
+
+      // If there are new services in the DB, pull an updated endpoints map.
+      if (updateNeeded) {
+        this.updateEndpoints();
+      } else {
+        // Check to see if any services have been removed (if there are, and
+        // new ones also, updateEndpoints will replace the whole map, so only
+        // do this if needed).
+        Y.Object.each(this.serviceEndpoints, function(key, value, obj) {
+          if (self.db.services.getById(key) === null) {
+            delete(self.serviceEndpoints[key]);
+          }
+        });
+      }
+
       // Redispatch to current view to update.
       this.dispatch();
     },
@@ -322,9 +342,6 @@ YUI.add('juju-gui', function(Y) {
     updateEndpoints: function(callback) {
       var self = this;
 
-      if (!Y.Lang.isValue(this.serviceEndpoints)) {
-        this.serviceEndpoints = {};
-      }
       // Defensive code to aid tests. Other systems
       // don't have to mock enough to get_endpoints below.
       if (!this.env.get('connected')) {
