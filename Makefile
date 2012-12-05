@@ -25,33 +25,35 @@ EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort | tr '
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 
 SRC=app
-ASSETS_DIR=$(SRC)/assets
+ASSETS=$(SRC)/assets
 BUILD=build
-DEVEL=$(BUILD)-devel
 DEBUG=$(BUILD)-debug
 PROD=$(BUILD)-prod
 JUJU_UI=juju-ui
-BUILD_ASSETS_DIR=$(BUILD)/$(JUJU_UI)/assets
-DEVEL_ASSETS_DIR=$(DEVEL)/$(JUJU_UI)/assets
-DEBUG_ASSETS_DIR=$(DEBUG)/$(JUJU_UI)/assets
-PROD_ASSETS_DIR=$(PROD)/$(JUJU_UI)/assets
+BUILD_ASSETS=$(BUILD)/$(JUJU_UI)/assets
+DEBUG_ASSETS=$(DEBUG)/$(JUJU_UI)/assets
+PROD_ASSETS=$(PROD)/$(JUJU_UI)/assets
 
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
-SPRITE_GENERATED_FILES=$(BUILD_ASSETS_DIR)/stylesheets/sprite.css \
-	$(BUILD_ASSETS_DIR)/stylesheets/sprite.png
-BUILD_FILES=$(BUILD_ASSETS_DIR)/app.js \
-	$(BUILD_ASSETS_DIR)/stylesheets/all-static.css
+SPRITE_GENERATED_FILES=$(BUILD_ASSETS)/stylesheets/sprite.css \
+	$(BUILD_ASSETS)/stylesheets/sprite.png
+BUILD_FILES=$(BUILD_ASSETS)/app.js \
+	$(BUILD_ASSETS)/stylesheets/all-static.css
 DATE=$(shell date -u)
-APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
+APPCACHE=$(BUILD_ASSETS)/manifest.appcache
 
 all:
-	@echo "Available targets:"
-	@echo "appcache: create the manifest.appcache file inside build"
-	@echo "doc: generate both Sphinx and YuiDoc documentation"
-	@echo "yuidoc: generate YuiDoc documentation"
+	@echo "Main targets:"
+	@echo "devel: run the development environment"
+	@echo "debug: run the debugging environment"
+	@echo "prod: run the production environment"
+	@echo "clean: remove all generated directories"
+	@echo "test: run tests in the browser"
+	@echo "prep: beautify and lint the source"
+	@echo "doc: generate Sphinx and YuiDoc documentation"
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
-	mkdir -p $(BUILD_ASSETS_DIR)/stylesheets
+	mkdir -p $(BUILD_ASSETS)/stylesheets
 	./bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
@@ -142,54 +144,54 @@ $(BUILD_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) \
 		bin/merge-files lib/merge-files.js \
 		$(THIRD_PARTY_JS)
 	rm -f $(BUILD_FILES)
-	mkdir -p $(BUILD_ASSETS_DIR)/stylesheets
+	mkdir -p $(BUILD_ASSETS)/stylesheets
 	./bin/merge-files
 
 combine_js_css: $(BUILD_FILES)
 
 link_debug_files:
-	mkdir -p $(DEBUG_ASSETS_DIR)/stylesheets
+	mkdir -p $(DEBUG_ASSETS)/stylesheets
 	ln -sf `pwd`/$(SRC)/favicon.ico `pwd`/$(DEBUG)/
 	ln -sf `pwd`/$(SRC)/index.html `pwd`/$(DEBUG)/
-	ln -sf `pwd`/$(SRC)/config-debug.js $(DEBUG_ASSETS_DIR)/config.js
-	ln -sf `pwd`/$(SRC)/modules-debug.js $(DEBUG_ASSETS_DIR)/modules.js
+	ln -sf `pwd`/$(SRC)/config-debug.js $(DEBUG_ASSETS)/config.js
+	ln -sf `pwd`/$(SRC)/modules-debug.js $(DEBUG_ASSETS)/modules.js
 	ln -sf `pwd`/$(SRC)/app.js `pwd`/$(DEBUG)/$(JUJU_UI)/
 	ln -sf `pwd`/$(SRC)/models `pwd`/$(DEBUG)/$(JUJU_UI)/
 	ln -sf `pwd`/$(SRC)/store `pwd`/$(DEBUG)/$(JUJU_UI)/
 	ln -sf `pwd`/$(SRC)/views `pwd`/$(DEBUG)/$(JUJU_UI)/
 	ln -sf `pwd`/$(SRC)/widgets `pwd`/$(DEBUG)/$(JUJU_UI)/
-	ln -sf `pwd`/$(ASSETS_DIR)/javascripts/yui/yui/yui-debug.js $(DEBUG_ASSETS_DIR)/app.js
-	ln -sf `pwd`/$(ASSETS_DIR)/images `pwd`/$(DEBUG_ASSETS_DIR)/
-	ln -sf `pwd`/$(ASSETS_DIR)/javascripts `pwd`/$(DEBUG_ASSETS_DIR)/
-	ln -sf `pwd`/$(ASSETS_DIR)/svgs `pwd`/$(DEBUG_ASSETS_DIR)/
+	ln -sf `pwd`/$(ASSETS)/javascripts/yui/yui/yui-debug.js $(DEBUG_ASSETS)/app.js
+	ln -sf `pwd`/$(ASSETS)/images `pwd`/$(DEBUG_ASSETS)/
+	ln -sf `pwd`/$(ASSETS)/javascripts `pwd`/$(DEBUG_ASSETS)/
+	ln -sf `pwd`/$(ASSETS)/svgs `pwd`/$(DEBUG_ASSETS)/
 	ln -sf `pwd`/$(BUILD)/$(JUJU_UI)/templates.js `pwd`/$(DEBUG)/$(JUJU_UI)/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/manifest.appcache `pwd`/$(DEBUG_ASSETS_DIR)/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/all-static.css `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/juju-gui.css `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.css `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.png `pwd`/$(DEBUG_ASSETS_DIR)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS)/manifest.appcache `pwd`/$(DEBUG_ASSETS)/
+	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/all-static.css `pwd`/$(DEBUG_ASSETS)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/juju-gui.css `pwd`/$(DEBUG_ASSETS)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/sprite.css `pwd`/$(DEBUG_ASSETS)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/sprite.png `pwd`/$(DEBUG_ASSETS)/stylesheets/
 
 link_prod_files:
-	mkdir -p $(PROD_ASSETS_DIR)/stylesheets
+	mkdir -p $(PROD_ASSETS)/stylesheets
 	ln -sf `pwd`/$(SRC)/favicon.ico `pwd`/$(PROD)/
 	ln -sf `pwd`/$(SRC)/index.html `pwd`/$(PROD)/
-	ln -sf `pwd`/$(SRC)/config.js $(PROD_ASSETS_DIR)/config.js
-	ln -sf `pwd`/$(SRC)/modules.js $(PROD_ASSETS_DIR)/modules.js
-	ln -sf `pwd`/$(ASSETS_DIR)/images `pwd`/$(PROD_ASSETS_DIR)/
-	ln -sf `pwd`/$(ASSETS_DIR)/svgs `pwd`/$(PROD_ASSETS_DIR)/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/app.js `pwd`/$(PROD_ASSETS_DIR)/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/manifest.appcache `pwd`/$(PROD_ASSETS_DIR)/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/all-static.css `pwd`/$(PROD_ASSETS_DIR)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/juju-gui.css `pwd`/$(PROD_ASSETS_DIR)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.css `pwd`/$(PROD_ASSETS_DIR)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS_DIR)/stylesheets/sprite.png `pwd`/$(PROD_ASSETS_DIR)/stylesheets/
+	ln -sf `pwd`/$(SRC)/config.js $(PROD_ASSETS)/config.js
+	ln -sf `pwd`/$(SRC)/modules.js $(PROD_ASSETS)/modules.js
+	ln -sf `pwd`/$(ASSETS)/images `pwd`/$(PROD_ASSETS)/
+	ln -sf `pwd`/$(ASSETS)/svgs `pwd`/$(PROD_ASSETS)/
+	ln -sf `pwd`/$(BUILD_ASSETS)/app.js `pwd`/$(PROD_ASSETS)/
+	ln -sf `pwd`/$(BUILD_ASSETS)/manifest.appcache `pwd`/$(PROD_ASSETS)/
+	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/all-static.css `pwd`/$(PROD_ASSETS)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/juju-gui.css `pwd`/$(PROD_ASSETS)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/sprite.css `pwd`/$(PROD_ASSETS)/stylesheets/
+	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/sprite.png `pwd`/$(PROD_ASSETS)/stylesheets/
 
 prep: beautify lint
 
-test: build
+test: build-debug
 	./test-server.sh
 
-devel: build-devel
+devel: build
 	@echo "Customize config.js to modify server settings"
 	node server.js
 
@@ -201,31 +203,27 @@ prod: build-prod
 	@echo "Running the production environment from a SimpleHTTPServer"
 	cd $(PROD) && python -m SimpleHTTPServer 8888
 
-clean:
-	rm -rf node_modules virtualenv yuidoc
+clean-builds:
+	rm -rf $(BUILD) $(DEBUG) $(PROD)
+
+clean-deps:
+	rm -rf node_modules virtualenv
+
+clean-docs:
 	make -C docs clean
-	rm -Rf build/
+	rm -rf yuidoc
 
-clean-devel:
-	rm -Rf $(DEVEL)
-
-clean-debug:
-	rm -Rf $(DEBUG)
-
-clean-prod:
-	rm -Rf $(PROD)
+clean: clean-builds clean-deps clean-docs
 
 build: appcache $(NODE_TARGETS) javascript_libraries \
 	build/juju-ui/templates.js spritegen
-
-build-devel: build yuidoc
 
 build-debug: build combine_js_css link_debug_files
 
 build-prod: build combine_js_css link_prod_files
 
 $(APPCACHE): manifest.appcache.in
-	mkdir -p $(BUILD_ASSETS_DIR)
+	mkdir -p $(BUILD_ASSETS)
 	cp manifest.appcache.in $(APPCACHE)
 	sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
@@ -239,8 +237,8 @@ appcache-touch:
 # appcache, and this provides the correct order.
 appcache-force: appcache-touch appcache
 
-.PHONY: test lint beautify clean build_images prep jshint gjslint \
-	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	combine_js_css javascript_libraries build-devel build-debug build-prod \
-	clean-devel clean-debug clean-prod devel debug prod link_devel_files \
-	link_debug_files link_prod_files doc all
+.PHONY: test lint beautify clean prep jshint gjslint appcache \
+	appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
+	combine_js_css javascript_libraries build build-debug \
+	build-prod clean-builds clean-deps clean-docs devel debug \
+	prod link_debug_files link_prod_files doc all
