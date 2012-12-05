@@ -670,7 +670,7 @@ g.unit {
             position: absolute;
             bottom: @listbottom;
             top: @listtop;
-            left: 4px;
+            left: 0px;
             height: 100%;
             background: url(/juju-ui/assets/images/view_1px.png) repeat-x;
             list-style-type: none;
@@ -682,20 +682,17 @@ g.unit {
 
             ul {
                 list-style-type: none;
-                padding: 0;
                 padding-top: 5px;
+		padding-bottom: 5px;
                 margin: 0;
 
                 li {
-                    padding: 1px;
+                    padding-left: 7px;
                     &.activetick {
-                        /* XXX bac: The positioning is off but I have
-                         * been unable to get it right.  Using
-                         * background-position does not work.
-                         */
                         background:
                             url(/juju-ui/assets/images/selected_tick.png)
-                            no-repeat bottom right;
+                            no-repeat;
+			background-position: 240px 3px;
                     }
                 }
             }
@@ -748,7 +745,6 @@ g.unit {
         top: @top;
         .create-picker(270px, @top, @top, initial);
         .picker-expanded .picker-list {
-            border: 1px solid #a3a1a1;
             .create-border-radius(4px);
             -moz-background-clip: padding;
             -webkit-background-clip: padding-box;
