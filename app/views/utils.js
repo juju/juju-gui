@@ -27,13 +27,13 @@ YUI.add('juju-view-utils', function(Y) {
 
   var humanizeNumber = function(n) {
     var units = [[1000, 'K'],
-      [1000000, 'M'],
-      [1000000000, 'B']],
-      result = n;
+          [1000000, 'M'],
+          [1000000000, 'B']],
+        result = n;
 
     Y.each(units, function(sizer) {
       var threshold = sizer[0],
-      unit = sizer[1];
+          unit = sizer[1];
       if (n > threshold) {
         result = (n / threshold);
         if (n % threshold !== 0) {
@@ -62,7 +62,7 @@ YUI.add('juju-view-utils', function(Y) {
     var self = this;
     if (!selector) {
       return;
-    };
+    }
 
     if (typeof(selector) === 'string') {
       Y.all(selector).each(function(n) {

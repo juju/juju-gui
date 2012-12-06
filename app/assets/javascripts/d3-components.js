@@ -39,7 +39,7 @@ YUI.add('d3-components', function(Y) {
         getter: function() {
           var component = this.get('component');
           return component && component.get('container') || undefined;
-    }
+        }
       }
     }});
   ns.Module = Module;
@@ -201,8 +201,8 @@ YUI.add('d3-components', function(Y) {
         Y.each(handlers, function(handler, trigger) {
           handler = _normalizeHandler(handler, module, selector);
           if (L.isValue(handler)) {
-            console.log("bind handler", handler);
-            _bindEvent(trigger, handler.callback, container, selector, handler.context);
+            _bindEvent(trigger, handler.callback,
+                       container, selector, handler.context);
           }
         });
       });

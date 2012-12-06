@@ -50,70 +50,71 @@ YUI.add('juju-topology-mega', function(Y) {
            * If the user clicks on the background we cancel any active add
            * relation.
            */
-click: {callback: function(d, self) {
-         var container = self.get('container');
-         container.all('.environment-menu.active').removeClass('active');
-         self.service_click_actions.toggleControlPanel(null, self);
-         self.cancelRelationBuild();
-         self.hideSubordinateRelations();
-       }},
-mousemove: 'mousemove'
+          click: {callback: function(d, self) {
+            var container = self.get('container');
+            container.all('.environment-menu.active').removeClass('active');
+            self.service_click_actions.toggleControlPanel(null, self);
+            self.cancelRelationBuild();
+            self.hideSubordinateRelations();
+          }},
+          mousemove: 'mousemove'
         },
         '.dragline': {
           /** The user clicked while the dragline was active. */
-click: {callback: function(d, self) {
-         // It was technically the dragline that was clicked, but the
-         // intent was to click on the background, so...
-         self.backgroundClicked();
-       }}
+          click: {callback: function(d, self) {
+            // It was technically the dragline that was clicked, but the
+            // intent was to click on the background, so...
+            self.backgroundClicked();
+          }}
         },
 
-          '#zoom-out-btn': {click: 'zoom_out'},
-          '#zoom-in-btn': {click: 'zoom_in'},
-          '.graph-list-picker .picker-button': {
-            click: 'showGraphListPicker'
-          },
-          '.graph-list-picker .picker-expanded': {
-            click: 'hideGraphListPicker'
-          },
-          // Menu/Controls
-          '.add-relation': {
-            /** The user clicked on the "Build Relation" menu item. */
-            click: {
-              callback: function(data, context) {
-                var box = context.get('active_service'),
-                service = context.serviceForBox(box),
-                origin = context.get('active_context');
-                context.addRelationDragStart(box, context);
-                context.service_click_actions
+        '#zoom-out-btn': {click: 'zoom_out'},
+        '#zoom-in-btn': {click: 'zoom_in'},
+        '.graph-list-picker .picker-button': {
+          click: 'showGraphListPicker'
+        },
+        '.graph-list-picker .picker-expanded': {
+          click: 'hideGraphListPicker'
+        },
+        // Menu/Controls
+        '.add-relation': {
+          /** The user clicked on the "Build Relation" menu item. */
+          click: {
+            callback: function(data, context) {
+              var box = context.get('active_service'),
+                  service = context.serviceForBox(box),
+                  origin = context.get('active_context');
+              context.addRelationDragStart(box, context);
+              context.service_click_actions
                 .toggleControlPanel(box, context, origin);
-                context.service_click_actions.addRelationStart(box, context, origin);
-              }}
-          },
-          '.view-service': {
-            /** The user clicked on the "View" menu item. */
-            click: {callback: function(data, context) {
-              // Get the service element
-              var box = context.get('active_service'),
-              service = context.serviceForBox(box);
-              context.service_click_actions
+              context.service_click_actions.addRelationStart(
+                  box, context, origin);
+            }}
+        },
+        '.view-service': {
+          /** The user clicked on the "View" menu item. */
+          click: {callback: function(data, context) {
+            // Get the service element
+            var box = context.get('active_service'),
+                service = context.serviceForBox(box);
+            context.service_click_actions
               .toggleControlPanel(box, context);
-              context.service_click_actions
+            context.service_click_actions
               .show_service(service, context);
-            }}
-          },
-          '.destroy-service': {
-            /** The user clicked on the "Destroy" menu item. */
-            click: {callback: function(data, context) {
-              // Get the service element
-              var box = context.get('active_service'),
-              service = context.serviceForBox(box);
-              context.service_click_actions
+          }}
+        },
+        '.destroy-service': {
+          /** The user clicked on the "Destroy" menu item. */
+          click: {callback: function(data, context) {
+            // Get the service element
+            var box = context.get('active_service'),
+                service = context.serviceForBox(box);
+            context.service_click_actions
               .toggleControlPanel(box, context);
-              context.service_click_actions
+            context.service_click_actions
               .destroyServiceConfirm(service, context);
-            }}
-          }
+          }}
+        }
       },
       d3: {
         '.service': {
@@ -141,6 +142,9 @@ click: {callback: function(d, self) {
             }
           }}
         }
+      },
+      yui: {
+        windowresize: 'setSizesFromViewport'
       }
     },
 
@@ -166,15 +170,15 @@ click: {callback: function(d, self) {
 
       return this;
     },
-   /*
+    /*
    * Construct a persistent scene that is managed in update.
    */
     renderOnce: function() {
       var self = this,
-      container = this.get('container'),
-      height = 600,
-      width = 640,
-      fill = d3.scale.category20();
+          container = this.get('container'),
+          height = 600,
+          width = 640,
+          fill = d3.scale.category20();
 
       this.service_scale = d3.scale.log().range([150, 200]);
       this.service_scale_width = d3.scale.log().range([164, 200]),
@@ -192,12 +196,12 @@ click: {callback: function(d, self) {
       .y(this.yscale)
       .scaleExtent([0.25, 2.0])
       .on('zoom', function() {
-        // Keep the slider up to date with the scale on other sorts
-        // of zoom interactions
-        var s = self.slider;
-        s.set('value', Math.floor(d3.event.scale * 100));
-        self.rescale(vis, d3.event);
-      });
+            // Keep the slider up to date with the scale on other sorts
+            // of zoom interactions
+            var s = self.slider;
+            s.set('value', Math.floor(d3.event.scale * 100));
+            self.rescale(vis, d3.event);
+          });
       self.zoom = zoom;
 
       // Set up the visualization with a pack layout.
@@ -209,7 +213,7 @@ click: {callback: function(d, self) {
       .attr('height', height)
       .append('svg:g')
       .call(zoom)
-      // Disable zoom on double click.
+          // Disable zoom on double click.
       .on('dblclick.zoom', null)
       .append('g');
 
@@ -217,17 +221,12 @@ click: {callback: function(d, self) {
       .attr('class', 'graph')
       .attr('fill', 'rgba(255,255,255,0)');
 
-      // Bind visualization resizing on window resize.
-      Y.on('windowresize', function() {
-        self.setSizesFromViewport();
-      });
-
       this.vis = vis;
       this.tree = d3.layout.pack()
       .size([width, height])
       .value(function(d) {
-        return Math.max(d.unit_count, 1);
-      })
+            return Math.max(d.unit_count, 1);
+          })
       .padding(300);
 
       this.updateCanvas();
@@ -235,7 +234,7 @@ click: {callback: function(d, self) {
 
     serviceClick: function(d, context) {
       // Ignore if we clicked outside the actual service node.
-      console.log("serviceClick", arguments, this);
+      console.log('serviceClick', arguments, this);
       var container = context.get('container'),
               mouse_coords = d3.mouse(container.one('svg').getDOMNode());
       if (!d.containsPoint(mouse_coords, context.zoom)) {
@@ -1124,15 +1123,15 @@ click: {callback: function(d, self) {
 
       this.show(this.vis.selectAll('.service'));
 
-      console.log("startRelation", this, arguments);
+      console.log('startRelation', this, arguments);
       var db = this.get('component').get('db'),
           getServiceEndpoints = this.get('component')
                                     .get('getServiceEndpoints'),
           endpoints = models.getEndpoints(
-            service, getServiceEndpoints(), db),
-            // Transform endpoints into a list of relatable services (to the
-            // service).
-            possible_relations = Y.Array.map(
+          service, getServiceEndpoints(), db),
+          // Transform endpoints into a list of relatable services (to the
+          // service).
+          possible_relations = Y.Array.map(
               Y.Array.flatten(Y.Object.values(endpoints)),
               function(ep) {return ep.service;}),
               invalidRelationTargets = {};
@@ -1285,6 +1284,7 @@ click: {callback: function(d, self) {
       // affect the page size, such as the charm panel, to get out of the
       // way before we compute sizes.  Note the
       // "afterPageSizeRecalculation" event at the end of this function.
+      console.log('resize');
       Y.fire('beforePageSizeRecalculation');
       // start with some reasonable defaults
       var vis = this.vis,
@@ -1359,97 +1359,97 @@ click: {callback: function(d, self) {
       }
     },
 
-  serviceMouseEnter: function (d, context) {
-    var rect = Y.one(this);
-    // Do not fire if this service isn't selectable.
-    if (!utils.hasSVGClass(rect, 'selectable-service')) {
-      return;
-    }
+    serviceMouseEnter: function(d, context) {
+      var rect = Y.one(this);
+      // Do not fire if this service isn't selectable.
+      if (!utils.hasSVGClass(rect, 'selectable-service')) {
+        return;
+      }
 
-    // Do not fire unless we're within the service box.
-    var container = self.get('container'),
-    mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-    if (!d.containsPoint(mouse_coords, self.zoom)) {
-      return;
-    }
+      // Do not fire unless we're within the service box.
+      var container = self.get('container'),
+          mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+      if (!d.containsPoint(mouse_coords, self.zoom)) {
+        return;
+      }
 
-    // Do not fire if we're on the same service.
-    if (d === self.get('addRelationStart_service')) {
-      return;
-    }
+      // Do not fire if we're on the same service.
+      if (d === self.get('addRelationStart_service')) {
+        return;
+      }
 
-    self.set('potential_drop_point_service', d);
-    self.set('potential_drop_point_rect', rect);
-    utils.addSVGClass(rect, 'hover');
+      self.set('potential_drop_point_service', d);
+      self.set('potential_drop_point_rect', rect);
+      utils.addSVGClass(rect, 'hover');
 
-    // If we have an active dragline, stop redrawing it on mousemove
-    // and draw the line between the two nearest connector points of
-    // the two services.
-    if (self.dragline) {
-      var connectors = d.getConnectorPair(
-        self.get('addRelationStart_service')),
-        s = connectors[0],
-        t = connectors[1];
+      // If we have an active dragline, stop redrawing it on mousemove
+      // and draw the line between the two nearest connector points of
+      // the two services.
+      if (self.dragline) {
+        var connectors = d.getConnectorPair(
+            self.get('addRelationStart_service')),
+            s = connectors[0],
+            t = connectors[1];
         self.dragline.attr('x1', t[0])
         .attr('y1', t[1])
         .attr('x2', s[0])
         .attr('y2', s[1])
         .attr('class', 'relation pending-relation dragline');
-    }
-  },
+      }
+    },
 
-  serviceMouseLeave: function(d, self) {
-    // Do not fire if we aren't looking for a relation endpoint.
-    if (!self.get('potential_drop_point_rect')) {
-      return;
-    }
+    serviceMouseLeave: function(d, self) {
+      // Do not fire if we aren't looking for a relation endpoint.
+      if (!self.get('potential_drop_point_rect')) {
+        return;
+      }
 
-    // Do not fire if we're within the service box.
-    var container = self.get('container'),
-    mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-    if (d.containsPoint(mouse_coords, self.zoom)) {
-      return;
-    }
-    var rect = Y.one(this).one('.service-border');
-    self.set('potential_drop_point_service', null);
-    self.set('potential_drop_point_rect', null);
-    utils.removeSVGClass(rect, 'hover');
+      // Do not fire if we're within the service box.
+      var container = self.get('container'),
+          mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+      if (d.containsPoint(mouse_coords, self.zoom)) {
+        return;
+      }
+      var rect = Y.one(this).one('.service-border');
+      self.set('potential_drop_point_service', null);
+      self.set('potential_drop_point_rect', null);
+      utils.removeSVGClass(rect, 'hover');
 
-    if (self.dragline) {
-      self.dragline.attr('class',
+      if (self.dragline) {
+        self.dragline.attr('class',
                          'relation pending-relation dragline dragging');
-    }
-  },
+      }
+    },
 
-  subRelBlockMouseEnter:  function(d, self) {
-    // Add an 'active' class to all of the subordinate relations
-    // belonging to this service.
-    self.subordinateRelationsForService(d)
+    subRelBlockMouseEnter: function(d, self) {
+      // Add an 'active' class to all of the subordinate relations
+      // belonging to this service.
+      self.subordinateRelationsForService(d)
     .forEach(function(p) {
-      utils.addSVGClass('#' + p.id, 'active');
-    });
-  },
+            utils.addSVGClass('#' + p.id, 'active');
+          });
+    },
 
-  subRelBlockMouseLeave: function(d, self) {
-    // Remove 'active' class from all subordinate relations.
-    if (!self.keepSubRelationsVisible) {
-      utils.removeSVGClass('.subordinate-rel-group', 'active');
-    }
-  },
+    subRelBlockMouseLeave: function(d, self) {
+      // Remove 'active' class from all subordinate relations.
+      if (!self.keepSubRelationsVisible) {
+        utils.removeSVGClass('.subordinate-rel-group', 'active');
+      }
+    },
 
-  /**
+    /**
    * Toggle the visibility of subordinate relations for visibility
    * or removal.
    * @param {object} d The data-bound object (the subordinate).
    * @param {object} self The view.
    **/
-  subRelBlockClick: function(d, self) {
-    if (self.keepSubRelationsVisible) {
-      self.hideSubordinateRelations();
-    } else {
-      self.showSubordinateRelations(this);
-    }
-  },
+    subRelBlockClick: function(d, self) {
+      if (self.keepSubRelationsVisible) {
+        self.hideSubordinateRelations();
+      } else {
+        self.showSubordinateRelations(this);
+      }
+    },
 
     /*
          * Actions to be called on clicking a service.
@@ -1478,7 +1478,7 @@ click: {callback: function(d, self) {
            * View a service
            */
       show_service: function(m, context) {
-       context.get('component')
+        context.get('component')
         .fire('navigateTo', {url: '/service/' + m.get('id') + '/'});
       },
 
@@ -1518,7 +1518,7 @@ click: {callback: function(d, self) {
       },
 
       _destroyCallback: function(service, view, btn, ev) {
-        console.log("dest callback", arguments, this);
+        console.log('dest callback', arguments, this);
         var getModelURL = view.get('getModelURL'),
                 db = view.get('component').get('db');
         if (ev.err) {
@@ -1715,16 +1715,7 @@ click: {callback: function(d, self) {
         // Redraw the graph and reattach events.
         db.fire('update');
       }
-    },
-
-
-
-    update: function() {
-      MegaModule.superclass.update.apply(this, arguments);
-      return this;
     }
-
-
   }, {
     ATTRS: {}
 

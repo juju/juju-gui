@@ -47,7 +47,7 @@ var GlobalConfig = {
         'juju-topology-relation': {
           fullpath: '/juju-ui/views/topology/relation.js'
         },
-      
+
         'juju-topology-panzoom': {
           fullpath: '/juju-ui/views/topology/panzoom.js'
         },
@@ -68,7 +68,7 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/topology/topology.js',
           require: [
             'juju-topology-mega',
-          'juju-topology-service',
+            'juju-topology-service',
             'juju-topology-relation',
             'juju-topology-panzoom',
             'juju-topology-viewport'
