@@ -3,6 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+======================
 Juju GUI documentation
 ======================
 
@@ -14,6 +15,7 @@ Contents:
    readme
    style-guide
    architecture
+   d3-component-framework
    process
 
 Indices and tables
