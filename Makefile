@@ -92,7 +92,7 @@ gjslint: virtualenv/bin/gjslint
 	    $(JSFILES)
 
 jshint: node_modules/jshint
-	node_modules/jshint/bin/hint --config jshint.json $(JSFILES)
+	node_modules/jshint/bin/hint $(JSFILES)
 
 yuidoc-lint: $(JSFILES)
 	bin/lint-yuidoc
