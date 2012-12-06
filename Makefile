@@ -38,7 +38,7 @@ SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
 SPRITE_GENERATED_FILES=$(BUILD_ASSETS)/sprite.css \
 	$(BUILD_ASSETS)/sprite.png
 BUILD_FILES=$(BUILD_ASSETS)/app.js \
-	$(BUILD_ASSETS_DIR)/all-yui.js \
+	$(BUILD_ASSETS)/all-yui.js \
 	$(BUILD_ASSETS)/combined-css/all-static.css
 DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS)/manifest.appcache
@@ -157,7 +157,7 @@ $(BUILD_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) \
 combine_js_css: $(BUILD_FILES)
 
 link_debug_files:
-	mkdir -p $(DEBUG_ASSETS)/combined-css $(DEBUG_ASSETS)/stylesheets
+	mkdir -p $(DEBUG_ASSETS)/combined-css
 	ln -sf $(PWD)/$(SRC)/favicon.ico $(DEBUG)/
 	ln -sf $(PWD)/$(SRC)/index.html $(DEBUG)/
 	ln -sf $(PWD)/$(SRC)/config-debug.js $(DEBUG_ASSETS)/config.js
@@ -174,14 +174,22 @@ link_debug_files:
 	ln -sf $(PWD)/$(BUILD)/$(JUJU_UI)/templates.js $(DEBUG)/$(JUJU_UI)/
 	ln -sf $(PWD)/$(BUILD_ASSETS)/manifest.appcache $(DEBUG_ASSETS)/
 	ln -sf $(PWD)/$(BUILD_ASSETS)/combined-css/all-static.css $(DEBUG_ASSETS)/combined-css/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/stylesheets/juju-gui.css $(DEBUG_ASSETS)/stylesheets/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/juju-gui.css $(DEBUG_ASSETS)/
 	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.css $(DEBUG_ASSETS)/
 	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.png $(DEBUG_ASSETS)/
 	ln -sf $(PWD)/node_modules/yui/assets/skins/sam/rail-x.png \
 		$(DEBUG_ASSETS)/combined-css/rail-x.png
+	# Link each YUI module's assets.
+	mkdir -p $(DEBUG_ASSETS)/skins/night/ $(DEBUG_ASSETS)/skins/sam/
+	find . -path "*/skins/night/*" -type f \
+		-exec ln -sf "$(PWD)/{}" $(DEBUG_ASSETS)/skins/night/ \;
+	find . -path "*/skins/sam/*" -type f \
+		-exec ln -sf "$(PWD)/{}" $(DEBUG_ASSETS)/skins/sam/ \;
+	find ./node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
+		-exec ln -sf "$(PWD)/{}" $(DEBUG_ASSETS)/ \;
 
 link_prod_files:
-	mkdir -p $(PROD_ASSETS)/combined-css $(PROD_ASSETS)/stylesheets
+	mkdir -p $(PROD_ASSETS)/combined-css
 	ln -sf $(PWD)/$(SRC)/favicon.ico $(PROD)/
 	ln -sf $(PWD)/$(SRC)/index.html $(PROD)/
 	ln -sf $(PWD)/$(SRC)/config.js $(PROD_ASSETS)/config.js
@@ -191,23 +199,19 @@ link_prod_files:
 	ln -sf $(PWD)/$(BUILD_ASSETS)/app.js $(PROD_ASSETS)/
 	ln -sf $(PWD)/$(BUILD_ASSETS)/manifest.appcache $(PROD_ASSETS)/
 	ln -sf $(PWD)/$(BUILD_ASSETS)/combined-css/all-static.css $(PROD_ASSETS)/combined-css/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/stylesheets/juju-gui.css $(PROD_ASSETS)/stylesheets/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/juju-gui.css $(PROD_ASSETS)/
 	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.css $(PROD_ASSETS)/
 	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.png $(PROD_ASSETS)/
 	ln -sf $(PWD)/node_modules/yui/assets/skins/sam/rail-x.png \
 		$(PROD_ASSETS)/combined-css/rail-x.png
 	# Link each YUI module's assets.
-	MODULES=(autocomplete-list calendar calendar-base calendarnavigator)
 	mkdir -p $(PROD_ASSETS)/skins/night/ $(PROD_ASSETS)/skins/sam/
-	for PATH in `find node_modules/yui/*/assets -type f`; do
-		if [[ $PATH == *skins/night* ]] then
-			ln -sf $(PWD)/$(PATH) $(PROD_ASSETS)/skins/night/
-		elif [[ $PATH == *skins/sam* ]] then
-			ln -sf $(PWD)/$(PATH) $(PROD_ASSETS)/skins/sam/
-		else
-			ln -sf $(PWD)/$(PATH) $(PROD_ASSETS)/
-		fi
-	done
+	find . -path "*/skins/night/*" -type f \
+		-exec ln -sf "$(PWD)/{}" $(PROD_ASSETS)/skins/night/ \;
+	find . -path "*/skins/sam/*" -type f \
+		-exec ln -sf "$(PWD)/{}" $(PROD_ASSETS)/skins/sam/ \;
+	find ./node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
+		-exec ln -sf "$(PWD)/{}" $(PROD_ASSETS)/ \;
 
 prep: beautify lint
 
