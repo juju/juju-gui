@@ -8,7 +8,6 @@ YUI.add('juju-topology-viewport', function(Y) {
   /**
    * Utility function to get a number from a computed style.
    * @method styleToNumber
-   * @return {Int}
    */
   function styleToNumber(selector, style, defaultSize) {
     style = style || 'height';
