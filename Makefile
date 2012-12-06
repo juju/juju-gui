@@ -35,10 +35,11 @@ DEBUG_ASSETS=$(DEBUG)/$(JUJU_UI)/assets
 PROD_ASSETS=$(PROD)/$(JUJU_UI)/assets
 
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
-SPRITE_GENERATED_FILES=$(BUILD_ASSETS)/stylesheets/sprite.css \
-	$(BUILD_ASSETS)/stylesheets/sprite.png
+SPRITE_GENERATED_FILES=$(BUILD_ASSETS)/sprite.css \
+	$(BUILD_ASSETS)/sprite.png
 BUILD_FILES=$(BUILD_ASSETS)/app.js \
-	$(BUILD_ASSETS)/stylesheets/all-static.css
+	$(BUILD_ASSETS_DIR)/all-yui.js \
+	$(BUILD_ASSETS)/combined-css/all-static.css
 DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS)/manifest.appcache
 
@@ -51,13 +52,14 @@ help:
 	@echo "devel: run the development environment"
 	@echo "debug: run the debugging environment"
 	@echo "prod: run the production environment"
-	@echo "clean: remove all generated directories"
+	@echo "clean: remove the generated build directories"
+	@echo "clean-all: remove build, deps and doc directories"
 	@echo "test: run tests in the browser"
 	@echo "prep: beautify and lint the source"
 	@echo "doc: generate Sphinx and YuiDoc documentation"
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
-	mkdir -p $(BUILD_ASSETS)/stylesheets
+	mkdir -p $(BUILD_ASSETS)
 	./bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
@@ -68,26 +70,27 @@ yuidoc: yuidoc/index.html
 doc: yuidoc
 	make -C docs html
 
-$(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet $(SPRITE_SOURCE_FILES)
+$(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
+		$(SPRITE_SOURCE_FILES)
 	node_modules/grunt/bin/grunt spritegen
 
 $(NODE_TARGETS): package.json
 	npm install
 	# Keep all targets up to date, not just new/changed ones.
 	for dirname in $(NODE_TARGETS); do touch $$dirname ; done
-	@# Check to see if we made what we expected to make, and warn if we did not.
-	@# Note that we calculate FOUND_TARGETS here, in this way and not in the
-	@# standard Makefile way, because we need to see what node_modules were
-	@# created by this target.  Makefile variables and substitutions, even when
-	@# using $(eval...) within a target, happen initially, before the target
-	@# is run.  Therefore, if this were a simple Makefile variable, it
-	@# would be empty after a first run, and you would always see the warning
-	@# message in that case.  We have to connect it to the "if" command with
-	@# "; \" because Makefile targets are evaluated per line, with bash
-	@# variables discarded between them.  We compare the result with
-	@# EXPECTED_NODE_TARGETS and not simply the NODE_TARGETS because this
-	@# gives us normalization, particularly of the trailing whitespace, that
-	@# we do not otherwise have.
+	@# Check to see if we made what we expected to make, and warn if we did
+	@# not. Note that we calculate FOUND_TARGETS here, in this way and not
+	@# in the standard Makefile way, because we need to see what
+	@# node_modules were created by this target.  Makefile variables and
+	@# substitutions, even when using $(eval...) within a target, happen
+	@# initially, before the target is run.  Therefore, if this were a
+	@# simple Makefile variable, it  would be empty after a first run, and
+	@# you would always see the warning message in that case.  We have to
+	@# connect it to the "if" command with "; \" because Makefile targets
+	@# are evaluated per line, with bash variables discarded between them.
+	@# We compare the result with EXPECTED_NODE_TARGETS and not simply the
+	@# NODE_TARGETS because this gives us normalization, particularly of the
+	@# trailing whitespace, that we do not otherwise have.
 	@FOUND_TARGETS=$$(find node_modules -maxdepth 1 -mindepth 1 -type d \
 	-printf 'node_modules/%f ' | tr ' ' '\n' | grep -Ev '\.bin$$' \
 	| sort | tr '\n' ' '); \
@@ -109,17 +112,17 @@ $(NODE_TARGETS): package.json
 	fi
 
 app/assets/javascripts/yui: node_modules/yui
-	ln -sf `pwd`/node_modules/yui ./app/assets/javascripts/
+	ln -sf node_modules/yui app/assets/javascripts/
 
 node_modules/d3/d3.v2.js node_modules/d3/d3.v2.min.js: node_modules/d3
 
 app/assets/javascripts/d3.v2.js: node_modules/d3/d3.v2.js
-	ln -sf `pwd`/node_modules/d3/d3.v2.js ./app/assets/javascripts/d3.v2.js
+	ln -sf node_modules/d3/d3.v2.js app/assets/javascripts/d3.v2.js
 
 app/assets/javascripts/d3.v2.min.js: node_modules/d3/d3.v2.min.js
-	ln -sf `pwd`/node_modules/d3/d3.v2.min.js ./app/assets/javascripts/d3.v2.min.js
+	ln -sf node_modules/d3/d3.v2.min.js app/assets/javascripts/d3.v2.min.js
 
-javascript_libraries: app/assets/javascripts/yui \
+javascript-libraries: app/assets/javascripts/yui \
 	app/assets/javascripts/d3.v2.js app/assets/javascripts/d3.v2.min.js
 
 gjslint: virtualenv/bin/gjslint
@@ -148,47 +151,63 @@ $(BUILD_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) \
 		bin/merge-files lib/merge-files.js \
 		$(THIRD_PARTY_JS)
 	rm -f $(BUILD_FILES)
-	mkdir -p $(BUILD_ASSETS)/stylesheets
+	mkdir -p $(BUILD_ASSETS)/combined-css
 	./bin/merge-files
 
 combine_js_css: $(BUILD_FILES)
 
 link_debug_files:
-	mkdir -p $(DEBUG_ASSETS)/stylesheets
-	ln -sf `pwd`/$(SRC)/favicon.ico `pwd`/$(DEBUG)/
-	ln -sf `pwd`/$(SRC)/index.html `pwd`/$(DEBUG)/
-	ln -sf `pwd`/$(SRC)/config-debug.js $(DEBUG_ASSETS)/config.js
-	ln -sf `pwd`/$(SRC)/modules-debug.js $(DEBUG_ASSETS)/modules.js
-	ln -sf `pwd`/$(SRC)/app.js `pwd`/$(DEBUG)/$(JUJU_UI)/
-	ln -sf `pwd`/$(SRC)/models `pwd`/$(DEBUG)/$(JUJU_UI)/
-	ln -sf `pwd`/$(SRC)/store `pwd`/$(DEBUG)/$(JUJU_UI)/
-	ln -sf `pwd`/$(SRC)/views `pwd`/$(DEBUG)/$(JUJU_UI)/
-	ln -sf `pwd`/$(SRC)/widgets `pwd`/$(DEBUG)/$(JUJU_UI)/
-	ln -sf `pwd`/$(ASSETS)/javascripts/yui/yui/yui-debug.js $(DEBUG_ASSETS)/app.js
-	ln -sf `pwd`/$(ASSETS)/images `pwd`/$(DEBUG_ASSETS)/
-	ln -sf `pwd`/$(ASSETS)/javascripts `pwd`/$(DEBUG_ASSETS)/
-	ln -sf `pwd`/$(ASSETS)/svgs `pwd`/$(DEBUG_ASSETS)/
-	ln -sf `pwd`/$(BUILD)/$(JUJU_UI)/templates.js `pwd`/$(DEBUG)/$(JUJU_UI)/
-	ln -sf `pwd`/$(BUILD_ASSETS)/manifest.appcache `pwd`/$(DEBUG_ASSETS)/
-	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/all-static.css `pwd`/$(DEBUG_ASSETS)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/juju-gui.css `pwd`/$(DEBUG_ASSETS)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/sprite.css `pwd`/$(DEBUG_ASSETS)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/sprite.png `pwd`/$(DEBUG_ASSETS)/stylesheets/
+	mkdir -p $(DEBUG_ASSETS)/combined-css $(DEBUG_ASSETS)/stylesheets
+	ln -sf $(PWD)/$(SRC)/favicon.ico $(DEBUG)/
+	ln -sf $(PWD)/$(SRC)/index.html $(DEBUG)/
+	ln -sf $(PWD)/$(SRC)/config-debug.js $(DEBUG_ASSETS)/config.js
+	ln -sf $(PWD)/$(SRC)/modules-debug.js $(DEBUG_ASSETS)/modules.js
+	ln -sf $(PWD)/$(SRC)/app.js $(DEBUG)/$(JUJU_UI)/
+	ln -sf $(PWD)/$(SRC)/models $(DEBUG)/$(JUJU_UI)/
+	ln -sf $(PWD)/$(SRC)/store $(DEBUG)/$(JUJU_UI)/
+	ln -sf $(PWD)/$(SRC)/views $(DEBUG)/$(JUJU_UI)/
+	ln -sf $(PWD)/$(SRC)/widgets $(DEBUG)/$(JUJU_UI)/
+	ln -sf $(PWD)/$(ASSETS)/javascripts/yui/yui/yui-debug.js $(DEBUG_ASSETS)/app.js
+	ln -sf $(PWD)/$(ASSETS)/images $(DEBUG_ASSETS)/
+	ln -sf $(PWD)/$(ASSETS)/javascripts $(DEBUG_ASSETS)/
+	ln -sf $(PWD)/$(ASSETS)/svgs $(DEBUG_ASSETS)/
+	ln -sf $(PWD)/$(BUILD)/$(JUJU_UI)/templates.js $(DEBUG)/$(JUJU_UI)/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/manifest.appcache $(DEBUG_ASSETS)/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/combined-css/all-static.css $(DEBUG_ASSETS)/combined-css/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/stylesheets/juju-gui.css $(DEBUG_ASSETS)/stylesheets/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.css $(DEBUG_ASSETS)/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.png $(DEBUG_ASSETS)/
+	ln -sf $(PWD)/node_modules/yui/assets/skins/sam/rail-x.png \
+		$(DEBUG_ASSETS)/combined-css/rail-x.png
 
 link_prod_files:
-	mkdir -p $(PROD_ASSETS)/stylesheets
-	ln -sf `pwd`/$(SRC)/favicon.ico `pwd`/$(PROD)/
-	ln -sf `pwd`/$(SRC)/index.html `pwd`/$(PROD)/
-	ln -sf `pwd`/$(SRC)/config.js $(PROD_ASSETS)/config.js
-	ln -sf `pwd`/$(SRC)/modules.js $(PROD_ASSETS)/modules.js
-	ln -sf `pwd`/$(ASSETS)/images `pwd`/$(PROD_ASSETS)/
-	ln -sf `pwd`/$(ASSETS)/svgs `pwd`/$(PROD_ASSETS)/
-	ln -sf `pwd`/$(BUILD_ASSETS)/app.js `pwd`/$(PROD_ASSETS)/
-	ln -sf `pwd`/$(BUILD_ASSETS)/manifest.appcache `pwd`/$(PROD_ASSETS)/
-	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/all-static.css `pwd`/$(PROD_ASSETS)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/juju-gui.css `pwd`/$(PROD_ASSETS)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/sprite.css `pwd`/$(PROD_ASSETS)/stylesheets/
-	ln -sf `pwd`/$(BUILD_ASSETS)/stylesheets/sprite.png `pwd`/$(PROD_ASSETS)/stylesheets/
+	mkdir -p $(PROD_ASSETS)/combined-css $(PROD_ASSETS)/stylesheets
+	ln -sf $(PWD)/$(SRC)/favicon.ico $(PROD)/
+	ln -sf $(PWD)/$(SRC)/index.html $(PROD)/
+	ln -sf $(PWD)/$(SRC)/config.js $(PROD_ASSETS)/config.js
+	ln -sf $(PWD)/$(SRC)/modules.js $(PROD_ASSETS)/modules.js
+	ln -sf $(PWD)/$(ASSETS)/images $(PROD_ASSETS)/
+	ln -sf $(PWD)/$(ASSETS)/svgs $(PROD_ASSETS)/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/app.js $(PROD_ASSETS)/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/manifest.appcache $(PROD_ASSETS)/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/combined-css/all-static.css $(PROD_ASSETS)/combined-css/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/stylesheets/juju-gui.css $(PROD_ASSETS)/stylesheets/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.css $(PROD_ASSETS)/
+	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.png $(PROD_ASSETS)/
+	ln -sf $(PWD)/node_modules/yui/assets/skins/sam/rail-x.png \
+		$(PROD_ASSETS)/combined-css/rail-x.png
+	# Link each YUI module's assets.
+	MODULES=(autocomplete-list calendar calendar-base calendarnavigator)
+	mkdir -p $(PROD_ASSETS)/skins/night/ $(PROD_ASSETS)/skins/sam/
+	for PATH in `find node_modules/yui/*/assets -type f`; do
+		if [[ $PATH == *skins/night* ]] then
+			ln -sf $(PWD)/$(PATH) $(PROD_ASSETS)/skins/night/
+		elif [[ $PATH == *skins/sam* ]] then
+			ln -sf $(PWD)/$(PATH) $(PROD_ASSETS)/skins/sam/
+		else
+			ln -sf $(PWD)/$(PATH) $(PROD_ASSETS)/
+		fi
+	done
 
 prep: beautify lint
 
@@ -215,7 +234,7 @@ prod: build-prod
 	@echo "Running the production environment from a SimpleHTTPServer"
 	cd $(PROD) && python -m SimpleHTTPServer 8888
 
-clean-builds:
+clean:
 	rm -rf $(BUILD) $(DEBUG) $(PROD)
 
 clean-deps:
@@ -223,9 +242,8 @@ clean-deps:
 
 clean-docs:
 	make -C docs clean
-	rm -rf yuidoc
 
-clean: clean-builds clean-deps clean-docs
+clean-all: clean clean-deps clean-docs
 
 build: appcache $(NODE_TARGETS) javascript_libraries \
 	build/juju-ui/templates.js spritegen
@@ -252,5 +270,7 @@ appcache-force: appcache-touch appcache
 .PHONY: test lint beautify server clean prep jshint gjslint appcache \
 	appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
 	combine_js_css javascript_libraries build build-debug help \
-	build-prod clean-builds clean-deps clean-docs devel debug \
-	prod link_debug_files link_prod_files doc all
+	build-prod clean clean-deps clean-docs clean-all devel debug \
+	prod link_debug_files link_prod_files doc
+
+.DEFAULT_GOAL := all
