@@ -13,4 +13,6 @@ tags
 Session.vim
 virtualenv
 yuidoc
-build*
+build
+build-prod
+build-debug

@@ -24,42 +24,35 @@ NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort | tr '\n' ' ')
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 
-SRC=app
-ASSETS=$(SRC)/assets
-BUILD=build
-DEBUG=$(BUILD)-debug
-PROD=$(BUILD)-prod
-JUJU_UI=juju-ui
-BUILD_ASSETS=$(BUILD)/$(JUJU_UI)/assets
-DEBUG_ASSETS=$(DEBUG)/$(JUJU_UI)/assets
-PROD_ASSETS=$(PROD)/$(JUJU_UI)/assets
-
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
-SPRITE_GENERATED_FILES=$(BUILD_ASSETS)/sprite.css \
-	$(BUILD_ASSETS)/sprite.png
-BUILD_FILES=$(BUILD_ASSETS)/app.js \
-	$(BUILD_ASSETS)/all-yui.js \
-	$(BUILD_ASSETS)/combined-css/all-static.css
+SPRITE_GENERATED_FILES=build/juju-ui/assets/sprite.css \
+	build/juju-ui/assets/sprite.png
+BUILD_FILES=build/juju-ui/assets/app.js \
+	build/juju-ui/assets/all-yui.js \
+	build/juju-ui/assets/combined-css/all-static.css
 DATE=$(shell date -u)
-APPCACHE=$(BUILD_ASSETS)/manifest.appcache
+APPCACHE=build/juju-ui/assets/manifest.appcache
 
-all: build-prod build-debug
-	@echo "\nProduction and debug environments built."
+all: build-debug build-prod
+	@echo "\nDebug and production environments built."
 	@echo "Run 'make help' to list the main available targets."
 
 help:
 	@echo "Main targets:"
-	@echo "devel: run the development environment"
-	@echo "debug: run the debugging environment"
-	@echo "prod: run the production environment"
+	@echo "[no target]: build the debug and production environments"
+	@echo "devel: run the development environment (dynamic templates/CSS)"
+	@echo "debug: run the debugging environment (static templates/CSS)"
+	@echo "prod: run the production environment (aggregated, compressed files)"
 	@echo "clean: remove the generated build directories"
 	@echo "clean-all: remove build, deps and doc directories"
 	@echo "test: run tests in the browser"
 	@echo "prep: beautify and lint the source"
 	@echo "doc: generate Sphinx and YuiDoc documentation"
+	@echo "help: this description"
+	@echo "Other, less common targets are available, see Makefile."
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
-	mkdir -p $(BUILD_ASSETS)
+	mkdir -p build/juju-ui/assets
 	./bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
@@ -151,67 +144,75 @@ $(BUILD_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) \
 		bin/merge-files lib/merge-files.js \
 		$(THIRD_PARTY_JS)
 	rm -f $(BUILD_FILES)
-	mkdir -p $(BUILD_ASSETS)/combined-css
+	mkdir -p build/juju-ui/assets/combined-css
 	./bin/merge-files
 
 combine_js_css: $(BUILD_FILES)
 
 link_debug_files:
-	mkdir -p $(DEBUG_ASSETS)/combined-css
-	ln -sf $(PWD)/$(SRC)/favicon.ico $(DEBUG)/
-	ln -sf $(PWD)/$(SRC)/index.html $(DEBUG)/
-	ln -sf $(PWD)/$(SRC)/config-debug.js $(DEBUG_ASSETS)/config.js
-	ln -sf $(PWD)/$(SRC)/modules-debug.js $(DEBUG_ASSETS)/modules.js
-	ln -sf $(PWD)/$(SRC)/app.js $(DEBUG)/$(JUJU_UI)/
-	ln -sf $(PWD)/$(SRC)/models $(DEBUG)/$(JUJU_UI)/
-	ln -sf $(PWD)/$(SRC)/store $(DEBUG)/$(JUJU_UI)/
-	ln -sf $(PWD)/$(SRC)/views $(DEBUG)/$(JUJU_UI)/
-	ln -sf $(PWD)/$(SRC)/widgets $(DEBUG)/$(JUJU_UI)/
-	ln -sf $(PWD)/$(ASSETS)/javascripts/yui/yui/yui-debug.js $(DEBUG_ASSETS)/app.js
-	ln -sf $(PWD)/$(ASSETS)/images $(DEBUG_ASSETS)/
-	ln -sf $(PWD)/$(ASSETS)/javascripts $(DEBUG_ASSETS)/
-	ln -sf $(PWD)/$(ASSETS)/svgs $(DEBUG_ASSETS)/
-	ln -sf $(PWD)/$(BUILD)/$(JUJU_UI)/templates.js $(DEBUG)/$(JUJU_UI)/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/manifest.appcache $(DEBUG_ASSETS)/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/combined-css/all-static.css $(DEBUG_ASSETS)/combined-css/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/juju-gui.css $(DEBUG_ASSETS)/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.css $(DEBUG_ASSETS)/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.png $(DEBUG_ASSETS)/
+	mkdir -p build-debug/juju-ui/assets/combined-css
+	ln -sf $(PWD)/app/favicon.ico build-debug/
+	ln -sf $(PWD)/app/index.html build-debug/
+	ln -sf $(PWD)/app/config-debug.js build-debug/juju-ui/assets/config.js
+	ln -sf $(PWD)/app/modules-debug.js build-debug/juju-ui/assets/modules.js
+	ln -sf $(PWD)/app/app.js build-debug/juju-ui/
+	ln -sf $(PWD)/app/models build-debug/juju-ui/
+	ln -sf $(PWD)/app/store build-debug/juju-ui/
+	ln -sf $(PWD)/app/views build-debug/juju-ui/
+	ln -sf $(PWD)/app/widgets build-debug/juju-ui/
+	ln -sf $(PWD)/app/assets/javascripts/yui/yui/yui-debug.js \
+		build-debug/juju-ui/assets/all-yui.js
+	ln -sf $(PWD)/app/assets/images build-debug/juju-ui/assets/
+	ln -sf $(PWD)/app/assets/javascripts build-debug/juju-ui/assets/
+	ln -sf $(PWD)/app/assets/svgs build-debug/juju-ui/assets/
+	ln -sf $(PWD)/build/juju-ui/templates.js build-debug/juju-ui/
+	ln -sf $(PWD)/build/juju-ui/assets/manifest.appcache \
+		build-debug/juju-ui/assets/
+	ln -sf $(PWD)/build/juju-ui/assets/combined-css/all-static.css \
+		build-debug/juju-ui/assets/combined-css/
+	ln -sf $(PWD)/build/juju-ui/assets/juju-gui.css build-debug/juju-ui/assets/
+	ln -sf $(PWD)/build/juju-ui/assets/sprite.css build-debug/juju-ui/assets/
+	ln -sf $(PWD)/build/juju-ui/assets/sprite.png build-debug/juju-ui/assets/
 	ln -sf $(PWD)/node_modules/yui/assets/skins/sam/rail-x.png \
-		$(DEBUG_ASSETS)/combined-css/rail-x.png
+		build-debug/juju-ui/assets/combined-css/rail-x.png
 	# Link each YUI module's assets.
-	mkdir -p $(DEBUG_ASSETS)/skins/night/ $(DEBUG_ASSETS)/skins/sam/
-	find . -path "*/skins/night/*" -type f \
-		-exec ln -sf "$(PWD)/{}" $(DEBUG_ASSETS)/skins/night/ \;
-	find . -path "*/skins/sam/*" -type f \
-		-exec ln -sf "$(PWD)/{}" $(DEBUG_ASSETS)/skins/sam/ \;
+	mkdir -p build-debug/juju-ui/assets/skins/night/ \
+		build-debug/juju-ui/assets/skins/sam/
+	find ./node_modules/yui/ -path "*/skins/night/*" -type f \
+		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/skins/night/ \;
+	find ./node_modules/yui/ -path "*/skins/sam/*" -type f \
+		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/skins/sam/ \;
 	find ./node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
-		-exec ln -sf "$(PWD)/{}" $(DEBUG_ASSETS)/ \;
+		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/ \;
 
 link_prod_files:
-	mkdir -p $(PROD_ASSETS)/combined-css
-	ln -sf $(PWD)/$(SRC)/favicon.ico $(PROD)/
-	ln -sf $(PWD)/$(SRC)/index.html $(PROD)/
-	ln -sf $(PWD)/$(SRC)/config.js $(PROD_ASSETS)/config.js
-	ln -sf $(PWD)/$(SRC)/modules.js $(PROD_ASSETS)/modules.js
-	ln -sf $(PWD)/$(ASSETS)/images $(PROD_ASSETS)/
-	ln -sf $(PWD)/$(ASSETS)/svgs $(PROD_ASSETS)/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/app.js $(PROD_ASSETS)/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/manifest.appcache $(PROD_ASSETS)/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/combined-css/all-static.css $(PROD_ASSETS)/combined-css/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/juju-gui.css $(PROD_ASSETS)/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.css $(PROD_ASSETS)/
-	ln -sf $(PWD)/$(BUILD_ASSETS)/sprite.png $(PROD_ASSETS)/
+	mkdir -p build-prod/juju-ui/assets/combined-css
+	ln -sf $(PWD)/app/favicon.ico build-prod/
+	ln -sf $(PWD)/app/index.html build-prod/
+	ln -sf $(PWD)/app/config.js build-prod/juju-ui/assets/config.js
+	ln -sf $(PWD)/app/modules.js build-prod/juju-ui/assets/modules.js
+	ln -sf $(PWD)/app/assets/images build-prod/juju-ui/assets/
+	ln -sf $(PWD)/app/assets/svgs build-prod/juju-ui/assets/
+	ln -sf $(PWD)/build/juju-ui/assets/all-yui.js build-prod/juju-ui/assets/
+	ln -sf $(PWD)/build/juju-ui/assets/app.js build-prod/juju-ui/assets/
+	ln -sf $(PWD)/build/juju-ui/assets/manifest.appcache \
+		build-prod/juju-ui/assets/
+	ln -sf $(PWD)/build/juju-ui/assets/combined-css/all-static.css \
+		build-prod/juju-ui/assets/combined-css/
+	ln -sf $(PWD)/build/juju-ui/assets/juju-gui.css build-prod/juju-ui/assets/
+	ln -sf $(PWD)/build/juju-ui/assets/sprite.css build-prod/juju-ui/assets/
+	ln -sf $(PWD)/build/juju-ui/assets/sprite.png build-prod/juju-ui/assets/
 	ln -sf $(PWD)/node_modules/yui/assets/skins/sam/rail-x.png \
-		$(PROD_ASSETS)/combined-css/rail-x.png
+		build-prod/juju-ui/assets/combined-css/rail-x.png
 	# Link each YUI module's assets.
-	mkdir -p $(PROD_ASSETS)/skins/night/ $(PROD_ASSETS)/skins/sam/
-	find . -path "*/skins/night/*" -type f \
-		-exec ln -sf "$(PWD)/{}" $(PROD_ASSETS)/skins/night/ \;
-	find . -path "*/skins/sam/*" -type f \
-		-exec ln -sf "$(PWD)/{}" $(PROD_ASSETS)/skins/sam/ \;
+	mkdir -p build-prod/juju-ui/assets/skins/night/ \
+		build-prod/juju-ui/assets/skins/sam/
+	find ./node_modules/yui/ -path "*/skins/night/*" -type f \
+		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/skins/night/ \;
+	find ./node_modules/yui/ -path "*/skins/sam/*" -type f \
+		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/skins/sam/ \;
 	find ./node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
-		-exec ln -sf "$(PWD)/{}" $(PROD_ASSETS)/ \;
+		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/ \;
 
 prep: beautify lint
 
@@ -232,14 +233,14 @@ debug: build-debug
 	@echo "Running the debug environment from a SimpleHTTPServer"
 	@echo "To run the development environment, including automatically"
 	@echo "rebuilding the generated files on changes, run 'make devel'."
-	cd $(DEBUG) && python -m SimpleHTTPServer 8888
+	cd build-debug && python -m SimpleHTTPServer 8888
 
 prod: build-prod
 	@echo "Running the production environment from a SimpleHTTPServer"
-	cd $(PROD) && python -m SimpleHTTPServer 8888
+	cd build-prod && python -m SimpleHTTPServer 8888
 
 clean:
-	rm -rf $(BUILD) $(DEBUG) $(PROD)
+	rm -rf build build-debug build-prod
 
 clean-deps:
 	rm -rf node_modules virtualenv
@@ -257,7 +258,7 @@ build-debug: build combine_js_css link_debug_files
 build-prod: build combine_js_css link_prod_files
 
 $(APPCACHE): manifest.appcache.in
-	mkdir -p $(BUILD_ASSETS)
+	mkdir -p build/juju-ui/assets
 	cp manifest.appcache.in $(APPCACHE)
 	sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
