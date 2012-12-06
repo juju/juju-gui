@@ -1,5 +1,17 @@
 'use strict';
 
+/**
+ * IMPORTANT
+ *
+ * This module represents a single step in the refactor of the environment
+ * view. This module is THROW AWAY CODE.  Each forthcoming branch should
+ * begin by moving relevant code to the proper module, binding that
+ * module to Topo and removing code from here.
+ *
+ * Any patch adding code here (minus some initial cross module callback changes)
+ * is highly suspect.
+ **/
+
 YUI.add('juju-topology-mega', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
