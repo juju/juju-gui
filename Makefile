@@ -1,49 +1,76 @@
-OLD_SHELL := $(SHELL)
-SHELL = $(warning [$@ [32m($^) [34m($?)[m ])$(OLD_SHELL)
-
-JSFILES=$(shell bzr ls -RV -k file | grep -E -e '.+\.js(on)?$$|generateTemplates$$' | grep -Ev -e '^manifest\.json$$' -e '^test/assets/' -e '^app/assets/javascripts/reconnecting-websocket.js$$' -e '^server.js$$')
-
+JSFILES=$(shell bzr ls -RV -k file \
+    | grep -E -e '.+\.js(on)?$$|generateTemplates$$' \
+    | grep -Ev -e '^manifest\.json$$' -e '^test/assets/' \
+	-e '^app/assets/javascripts/reconnecting-websocket.js$$' \
+	-e '^server.js$$')
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
-	node_modules/expect.js node_modules/express node_modules/graceful-fs \
-	node_modules/grunt node_modules/jshint node_modules/js-yaml \
-	node_modules/less node_modules/minimatch node_modules/mocha \
-	node_modules/node-markdown node_modules/node-minify \
-	node_modules/node-spritesheet node_modules/rimraf node_modules/should \
-	node_modules/yui node_modules/yuidocjs
-EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort | tr '\n' ' ')
+    node_modules/expect.js node_modules/express node_modules/graceful-fs \
+    node_modules/grunt node_modules/jshint node_modules/js-yaml \
+    node_modules/less node_modules/minimatch node_modules/mocha \
+    node_modules/node-markdown node_modules/node-minify \
+    node_modules/node-spritesheet node_modules/rimraf node_modules/should \
+    node_modules/yui node_modules/yuidocjs
+EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
+    | tr '\n' ' ')
 
-# See the README for an overview of many of these release-oriented variables.
-FINAL_VERSION_NAME=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
-ifeq ($(FINAL_VERSION_NAME), unreleased)
-FINAL_VERSION_NAME=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 | sed 's/[ :-]//g')
-endif
+### Relase-specific variables - see docs/process.rst for an overview. ###
 BZR_REVNO=$(shell bzr revno)
+# Figure out the two most recent version numbers.
+ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
+PENULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 \
+    | sed 's/[ :-]//g')
+# If the user specified (via setting an environment variable on the command
+# line) that this is a final (non-development) release, set the version number
+# and series appropriately.
 ifdef FINAL
-VERSION_NAME=$(FINAL_VERSION_NAME)
+# If this is a FINAL (non-development) release, then the most recent version
+# number should not be "unreleased".
+ifeq ($(ULTIMATE_VERSION), unreleased)
+    $(error FINAL releases must have a most-recent version number other than \
+	"unreleased" in CHANGES.yaml)
+endif
+VERSION=$(ULTIMATE_VERSION)
 SERIES=stable
 else
-VERSION_NAME=$(FINAL_VERSION_NAME)-dev-r$(BZR_REVNO)
+# If this is development (non-FINAL) release, then the most recent version
+# number must be "unreleased".
+ifneq ($(ULTIMATE_VERSION), unreleased)
+    $(error non-FINAL releases must have a most-recent version number of \
+	"unreleased" in CHANGES.yaml)
+endif
+RELEASE_VERSION=$(PENULTIMATE_VERSION)+build.$(BZR_REVNO)
 SERIES=trunk
 endif
+# If we are doing a production release (as opposed to a trial-run release) we
+# use the "real" Launchpad site, if not we use the Launchpad staging site.
 ifndef PROD
 LAUNCHPAD_API_ROOT=staging
 endif
-RELEASE_NAME=juju-gui-$(VERSION_NAME).tgz
-ifndef IS_TRUNK_CHECKOUT
-IS_TRUNK_CHECKOUT=$(shell bzr info | grep \
-	'checkout of branch: bzr+ssh://bazaar.launchpad.net/+branch/juju-gui/' \
+RELEASE_NAME=juju-gui-$(RELEASE_VERSION)
+RELEASE_FILE=releases/$(RELEASE_NAME).tgz
+RELEASE_SIGNATURE=releases/$(RELEASE_NAME).asc
+# Is the branch being released a trunk checkout?
+ifndef IS_TRUNK_BRANCH
+IS_TRUNK_BRANCH=$(shell bzr info | grep \
+	'parent branch: bzr+ssh://bazaar.launchpad.net/+branch/juju-gui/' \
 	> /dev/null && echo 1)
 endif
-ifndef HAS_NO_CHANGES
-HAS_NO_CHANGES=$(shell [ -z "`bzr status`" ] && echo 1)
+# Is the branch on disk a branch of the trunk and does it not have
+# uncomitted/unpushed changes?
+ifndef BRANCH_IS_CLEAN
+BRANCH_IS_CLEAN=$(shell [ -z "`bzr status`" ] && bzr missing --this && echo 1)
 endif
-ifndef IS_SAFE_RELEASE
-ifneq ($(strip $(IS_TRUNK_CHECKOUT)),)
-ifneq ($(strip $(HAS_NO_CHANGES)),)
-IS_SAFE_RELEASE=1
+# Is it safe to do a release of the checkout?  For trial-run releases you can
+# override this check on the command line by setting the BRANCH_IS_GOOD
+# environment variable.
+ifndef BRANCH_IS_GOOD
+ifneq ($(strip $(IS_TRUNK_BRANCH)),)
+ifneq ($(strip $(BRANCH_IS_CLEAN)),)
+BRANCH_IS_GOOD=1
 endif
 endif
 endif
+### End of relase-specific variables ###
 
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
@@ -58,7 +85,6 @@ DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 
 all: build
-	echo $(FINAL_VERSION_NAME)
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
@@ -145,7 +171,8 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) ./bin/merge-files
+$(PRODUCTION_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) \
+		./bin/merge-files
 	rm -f $(PRODUCTION_FILES)
 	mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
 	./bin/merge-files
@@ -176,9 +203,6 @@ clean: cleanbuild
 	rm -Rf releases
 	rm -f upload_release.py
 
-releaseprep: cleanbuild
-	bzr up
-
 build/index.html: app/index.html
 	cp -f app/index.html build/
 
@@ -201,7 +225,8 @@ build_images: build/favicon.ico $(BUILD_ASSETS_DIR)/images \
 # OK with that.
 build/juju-ui/version.js: appcache CHANGES.yaml $(JSFILES) $(TEMPLATE_TARGETS) \
 		$(SPRITE_SOURCE_FILES)
-	echo "var jujuGuiVersionName='$(VERSION_NAME)';" > build/juju-ui/version.js
+	echo "var jujuGuiVersionName='$(RELEASE_VERSION)';" \
+	    > build/juju-ui/version.js
 
 build: appcache $(NODE_TARGETS) javascript_libraries yuidoc spritegen \
 		build/juju-ui/templates.js combinejs build/index.html \
@@ -213,36 +238,36 @@ $(APPCACHE): manifest.appcache.in
 	sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
 upload_release.py:
-	bzr cat lp:launchpadlib/contrib/upload_release_tarball.py > upload_release.py
+	bzr cat lp:launchpadlib/contrib/upload_release_tarball.py \
+	    > upload_release.py
 
-releases/$(RELEASE_NAME): build
-ifdef IS_SAFE_RELEASE
+$(RELEASE_FILE): build
+ifdef BRANCH_IS_GOOD
 	mkdir -p releases
-	tar cz --exclude-vcs -f --exclude "releases/*" releases/$(RELEASE_NAME) *
-	@echo "Release was created in releases/$(RELEASE_NAME)."
+	tar c --auto-compress --exclude-vcs --exclude releases \
+	    --transform "s|^|$(RELEASE_NAME)/|" -f $(RELEASE_FILE) *
+	@echo "Release was created in $(RELEASE_FILE)."
 else
 	@echo "**************************************************************"
 	@echo "*********************** RELEASE FAILED ***********************"
 	@echo "**************************************************************"
 	@echo
 	@echo "To make a release, you must either be in a checkout of"
-	@echo "lp:juju-gui without uncommitted changes, or you must override"
-	@echo "one of the pertinent variable names to force a release."
+	@echo "lp:juju-gui without uncommitted/unpushed changes, or you must"
+	@echo "override one of the pertinent variable names to force a "
+	@echo "release."
 	@echo
 	@echo "See the README for more information."
 	@echo
 	@false
 endif
 
-tarball: releases/$(RELEASE_NAME)
+$(RELEASE_SIGNATURE): $(RELEASE_FILE)
+	gpg --armor --sign --detach-sig $(RELEASE_FILE)
 
-releases/$(RELEASE_NAME).asc: releases/$(RELEASE_NAME)
-	gpg --armor --sign --detach-sig releases/$(RELEASE_NAME)
-
-signature: releases/$(RELEASE_NAME).asc
-
-release: releases/$(RELEASE_NAME) signature upload_release.py
-	python2 upload_release.py juju-gui $(SERIES) $(VERSION_NAME) releases/$(RELEASE_NAME) $(LAUNCHPAD_API_ROOT)
+release: $(RELEASE_FILE) $(RELEASE_SIGNATURE) upload_release.py
+	python2 upload_release.py juju-gui $(SERIES) $(RELEASE_VERSION) \
+	    $(RELEASE_FILE) $(LAUNCHPAD_API_ROOT)
 
 appcache: $(APPCACHE)
 
@@ -256,5 +281,4 @@ appcache-force: appcache-touch appcache
 
 .PHONY: test lint beautify server clean build_images prep jshint gjslint \
 	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	combinejs javascript_libraries tarball release signature cleanbuild \
-	releaseprep
+	combinejs javascript_libraries release cleanbuild
