@@ -1,3 +1,6 @@
+OLD_SHELL := $(SHELL)
+SHELL = $(warning [$@ [32m($^) [34m($?)[m ])$(OLD_SHELL)
+
 JSFILES=$(shell bzr ls -RV -k file | grep -E -e '.+\.js(on)?$$|generateTemplates$$' | grep -Ev -e '^manifest\.json$$' -e '^test/assets/' -e '^app/assets/javascripts/reconnecting-websocket.js$$' -e '^server.js$$')
 
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
@@ -10,7 +13,10 @@ NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort | tr '\n' ' ')
 
 # See the README for an overview of many of these release-oriented variables.
-FINAL_VERSION_NAME=$(shell cat version.txt)
+FINAL_VERSION_NAME=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
+ifeq ($(FINAL_VERSION_NAME), unreleased)
+FINAL_VERSION_NAME=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 | sed 's/[ :-]//g')
+endif
 BZR_REVNO=$(shell bzr revno)
 ifdef FINAL
 VERSION_NAME=$(FINAL_VERSION_NAME)
@@ -19,7 +25,7 @@ else
 VERSION_NAME=$(FINAL_VERSION_NAME)-dev-r$(BZR_REVNO)
 SERIES=trunk
 endif
-ifdef STAGING
+ifndef PROD
 LAUNCHPAD_API_ROOT=staging
 endif
 RELEASE_NAME=juju-gui-$(VERSION_NAME).tgz
@@ -52,6 +58,7 @@ DATE=$(shell date -u)
 APPCACHE=$(BUILD_ASSETS_DIR)/manifest.appcache
 
 all: build
+	echo $(FINAL_VERSION_NAME)
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	mkdir -p "$(BUILD_ASSETS_DIR)/stylesheets"
@@ -187,18 +194,18 @@ $(BUILD_ASSETS_DIR)/svgs: $(shell bzr ls -R -k file app/assets/svgs)
 build_images: build/favicon.ico $(BUILD_ASSETS_DIR)/images \
 	$(BUILD_ASSETS_DIR)/svgs
 
-# This really depends on version.txt, the bzr revno changing, and the build
-# /juju-ui directory existing.  I'm vaguely trying to approximate the second
+# This really depends on CHANGES.yaml, the bzr revno changing, and the build
+# /juju-ui directory existing.  We are vaguely trying to approximate the second
 # one by connecting it to our pertinent versioned files.  The appcache target
-# creates the third, and directories are a bit tricky with Makefiles so I'm OK
-# with that.
-build/juju-ui/version.js: appcache version.txt $(JSFILES) $(TEMPLATE_TARGETS)\
-	$(SPRITE_SOURCE_FILES)
+# creates the third, and directories are a bit tricky with Makefiles so we are
+# OK with that.
+build/juju-ui/version.js: appcache CHANGES.yaml $(JSFILES) $(TEMPLATE_TARGETS) \
+		$(SPRITE_SOURCE_FILES)
 	echo "var jujuGuiVersionName='$(VERSION_NAME)';" > build/juju-ui/version.js
 
-build: appcache $(NODE_TARGETS) javascript_libraries \
-	build/juju-ui/templates.js yuidoc spritegen \
-	combinejs build/index.html build_images build/juju-ui/version.js
+build: appcache $(NODE_TARGETS) javascript_libraries yuidoc spritegen \
+		build/juju-ui/templates.js combinejs build/index.html \
+		build_images build/juju-ui/version.js
 
 $(APPCACHE): manifest.appcache.in
 	mkdir -p "build/juju-ui/assets"
@@ -211,16 +218,16 @@ upload_release.py:
 releases/$(RELEASE_NAME): build
 ifdef IS_SAFE_RELEASE
 	mkdir -p releases
-	cd build && tar cvzf ../releases/$(RELEASE_NAME) *
+	tar cz --exclude-vcs -f --exclude "releases/*" releases/$(RELEASE_NAME) *
 	@echo "Release was created in releases/$(RELEASE_NAME)."
 else
-	@echo "******************************************************************"
-	@echo "************************* RELEASE FAILED *************************"
-	@echo "******************************************************************"
+	@echo "**************************************************************"
+	@echo "*********************** RELEASE FAILED ***********************"
+	@echo "**************************************************************"
 	@echo
-	@echo "To make a release, you must either be in a checkout of lp:juju-gui "
-	@echo "without uncommitted changes, or you must override one of the "
-	@echo "pertinent variable names to force a release."
+	@echo "To make a release, you must either be in a checkout of"
+	@echo "lp:juju-gui without uncommitted changes, or you must override"
+	@echo "one of the pertinent variable names to force a release."
 	@echo
 	@echo "See the README for more information."
 	@echo
@@ -234,8 +241,8 @@ releases/$(RELEASE_NAME).asc: releases/$(RELEASE_NAME)
 
 signature: releases/$(RELEASE_NAME).asc
 
-release: signature upload_release.py
-	python2 upload_release.py juju-gui $(SERIES) $(VERSION_NAME) ./releases/$(RELEASE_NAME) $(LAUNCHPAD_API_ROOT)
+release: releases/$(RELEASE_NAME) signature upload_release.py
+	python2 upload_release.py juju-gui $(SERIES) $(VERSION_NAME) releases/$(RELEASE_NAME) $(LAUNCHPAD_API_ROOT)
 
 appcache: $(APPCACHE)
 
