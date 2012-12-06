@@ -57,7 +57,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
         // XXX: vomit
         postRender: function() {
-          this.topo.modules['MegaModule'].postRender();
+          this.topo.modules.MegaModule.postRender();
         }
       }, {
         ATTRS: {

@@ -175,7 +175,7 @@ YUI.add('juju-topology-mega', function(Y) {
     render: function() {
       MegaModule.superclass.render.apply(this, arguments);
       var container = this.get('container');
-      container.setHTML(Templates['overview']());
+      container.setHTML(Templates.overview());
       this.svg = container.one('.topology');
 
       this.renderOnce();
@@ -1379,30 +1379,30 @@ YUI.add('juju-topology-mega', function(Y) {
       }
 
       // Do not fire unless we're within the service box.
-      var container = self.get('container'),
+      var container = context.get('container'),
           mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (!d.containsPoint(mouse_coords, self.zoom)) {
+      if (!d.containsPoint(mouse_coords, context.zoom)) {
         return;
       }
 
       // Do not fire if we're on the same service.
-      if (d === self.get('addRelationStart_service')) {
+      if (d === context.get('addRelationStart_service')) {
         return;
       }
 
-      self.set('potential_drop_point_service', d);
-      self.set('potential_drop_point_rect', rect);
+      context.set('potential_drop_point_service', d);
+      context.set('potential_drop_point_rect', rect);
       utils.addSVGClass(rect, 'hover');
 
       // If we have an active dragline, stop redrawing it on mousemove
       // and draw the line between the two nearest connector points of
       // the two services.
-      if (self.dragline) {
+      if (context.dragline) {
         var connectors = d.getConnectorPair(
-            self.get('addRelationStart_service')),
+            context.get('addRelationStart_service')),
             s = connectors[0],
             t = connectors[1];
-        self.dragline.attr('x1', t[0])
+        context.dragline.attr('x1', t[0])
         .attr('y1', t[1])
         .attr('x2', s[0])
         .attr('y2', s[1])
