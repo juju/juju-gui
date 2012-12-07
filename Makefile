@@ -104,20 +104,12 @@ $(NODE_TARGETS): package.json
 	echo $$FOUND_TARGETS; \
 	fi
 
-app/assets/javascripts/yui: node_modules/yui
+javascript-libraries: node_modules/yui node_modules/d3
 	ln -sf "$(PWD)/node_modules/yui" app/assets/javascripts/
-
-node_modules/d3/d3.v2.js node_modules/d3/d3.v2.min.js: node_modules/d3
-
-app/assets/javascripts/d3.v2.js: node_modules/d3/d3.v2.js
 	ln -sf "$(PWD)/node_modules/d3/d3.v2.js" app/assets/javascripts/d3.v2.js
-
-app/assets/javascripts/d3.v2.min.js: node_modules/d3/d3.v2.min.js
 	ln -sf "$(PWD)/node_modules/d3/d3.v2.min.js" \
 		app/assets/javascripts/d3.v2.min.js
-
-javascript-libraries: app/assets/javascripts/yui \
-	app/assets/javascripts/d3.v2.js app/assets/javascripts/d3.v2.min.js
+	ln -sf "$(PWD)/node_modules/yui" app/assets/javascripts/
 
 gjslint: virtualenv/bin/gjslint
 	virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
@@ -141,7 +133,7 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(BUILD_FILES): node_modules/yui node_modules/d3/d3.v2.min.js $(JSFILES) \
+$(BUILD_FILES): javascript-libraries $(JSFILES) \
 		bin/merge-files lib/merge-files.js \
 		$(THIRD_PARTY_JS)
 	rm -f $(BUILD_FILES)
