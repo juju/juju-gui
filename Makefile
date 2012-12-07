@@ -109,7 +109,6 @@ javascript-libraries: node_modules/yui node_modules/d3
 	ln -sf "$(PWD)/node_modules/d3/d3.v2.js" app/assets/javascripts/d3.v2.js
 	ln -sf "$(PWD)/node_modules/d3/d3.v2.min.js" \
 		app/assets/javascripts/d3.v2.min.js
-	ln -sf "$(PWD)/node_modules/yui" app/assets/javascripts/
 
 gjslint: virtualenv/bin/gjslint
 	virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
@@ -141,7 +140,7 @@ $(BUILD_FILES): javascript-libraries $(JSFILES) $(THIRD_PARTY_JS) \
 
 build-files: $(BUILD_FILES)
 
-link_debug_files:
+link-debug-files:
 	mkdir -p build-debug/juju-ui/assets/combined-css
 	ln -sf "$(PWD)/app/favicon.ico" build-debug/
 	ln -sf "$(PWD)/app/index.html" build-debug/
@@ -178,7 +177,7 @@ link_debug_files:
 	find node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
 		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/ \;
 
-link_prod_files:
+link-prod-files:
 	mkdir -p build-prod/juju-ui/assets/combined-css
 	ln -sf "$(PWD)/app/favicon.ico" build-prod/
 	ln -sf "$(PWD)/app/index.html" build-prod/
@@ -243,12 +242,12 @@ clean-docs:
 
 clean-all: clean clean-deps clean-docs
 
-build: appcache $(NODE_TARGETS) javascript_libraries \
+build: appcache $(NODE_TARGETS) javascript-libraries \
 	build/juju-ui/templates.js spritegen
 
-build-debug: build build-files link_debug_files
+build-debug: build build-files link-debug-files
 
-build-prod: build build-files link_prod_files
+build-prod: build build-files link-prod-files
 
 $(APPCACHE): manifest.appcache.in
 	mkdir -p build/juju-ui/assets
@@ -267,8 +266,8 @@ appcache-force: appcache-touch appcache
 
 .PHONY: test lint beautify server clean prep jshint gjslint appcache \
 	appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	build-files javascript_libraries build build-debug help \
+	build-files javascript-libraries build build-debug help \
 	build-prod clean clean-deps clean-docs clean-all devel debug \
-	prod link_debug_files link_prod_files doc
+	prod link-debug-files link-prod-files doc
 
 .DEFAULT_GOAL := all
