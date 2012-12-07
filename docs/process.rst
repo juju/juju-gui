@@ -98,9 +98,9 @@ Checklist for Making a Stable Release
 - Get a checkout of the trunk:: ``bzr co lp:juju-gui``.
 - If you are using a pre-existing checkout, make sure it is up-to-date:: ``bzr
   up``.
-- Verify that version.txt specifies the expected version string.  It should be
-  bigger than the most recent version found on
-  https://launchpad.net/juju-gui/stable .
+- Verify that the top-most version in CHANGES.yaml specifies the
+  expected version string.  It should be bigger than the most recent
+  version found on https://launchpad.net/juju-gui/stable .
 - Run the tests and verify they pass: ``make test``.
 - Create the tarball: ``FINAL=1 make tarball``.  The process will end by
   reporting the name of the tarball it made.
@@ -142,10 +142,6 @@ Checklist for Making a Stable Release
 
 - Go to https://launchpad.net/juju-gui/stable and verify that you see
   a new release and a new download file.
-- Increase the version string in version.txt on the third number (e.g.,
-  increase 0.6.0 to 0.6.1 and increase 0.8.9 to 0.8.10) and commit the change
-  to trunk with a commit message of "version bump after stable release" (or
-  similar).
 
 You are done!
 
@@ -153,19 +149,21 @@ Checklist for Making a Developer Release
 ========================================
 
 - Get a checkout of the trunk:: ``bzr co lp:juju-gui``.
-- If you are using a pre-existing checkout, make sure it is up-to-date:: ``bzr up``.
-- Verify that version.txt specifies the expected version string.  Run ``bzr
-  revno``.  These two values, combined, should be bigger than the most recent
-  version found on https://launchpad.net/juju-gui/trunk .  To be clear, the
-  version.txt value should be the same or greater as the most recent developer
-  release, and the revno should be greater.
+- If you are using a pre-existing checkout, make sure it is up-to-date::
+  ``bzr up``.
+- Verify that the top-most version in CHANGES.yaml specifies the expected
+  version string.  Run ``bzr revno``.  These two values, combined, should be
+  bigger than the most recent version found on
+  https://launchpad.net/juju-gui/trunk .  To be clear, the version should be
+  the same or greater as the most recent developer release, and the revno
+  should be greater.
 - Run the tests and verify they pass: ``make test``.
 - Create the tarball: ``make tarball``.  It will end by reporting the name of
   the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``
 - Looking at juju-ui/version.js should show you a version string that combines
-  the value in the checkout's version.txt with the checkout's revno.
+  the value in the checkout's CHANGES.yaml with the checkout's revno.
 - In that directory, start a server: ``python -m SimpleHTTPServer 8888``
 - In Chrome and Firefox, QA the application.  XXX EXPLICIT QA STEPS GO HERE!
 - For now, we will assume you would like to verify the release on the
