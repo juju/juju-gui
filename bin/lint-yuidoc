@@ -111,7 +111,7 @@ def read_undocumented_listing(lines):
             'read the old-style "undocumented" file.  Try regenerating it '
             'with --generate-undocumented.')
 
-    new_style_regex = re.compile('([^:]+):[^ ]+ "([^"]+)"')
+    new_style_regex = re.compile('([^:]+):\d+ "([^"]+)"')
     def parser(line):
         return new_style_regex.match(line).groups()
     return set(map(parser, lines))
