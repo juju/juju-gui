@@ -10,9 +10,9 @@
 JSFILES=$(shell bzr ls -RV -k file | \
 	grep -E -e '.+\.js(on)?$$|generateTemplates$$' | \
 	grep -Ev -e '^manifest\.json$$' \
-	    -e '^test/assets/' \
-	    -e '^app/assets/javascripts/reconnecting-websocket.js$$' \
-	    -e '^server.js$$')
+		-e '^test/assets/' \
+		-e '^app/assets/javascripts/reconnecting-websocket.js$$' \
+		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 	node_modules/expect.js node_modules/express node_modules/graceful-fs \
