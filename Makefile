@@ -118,6 +118,9 @@ gjslint: virtualenv/bin/gjslint
 jshint: node_modules/jshint
 	node_modules/jshint/bin/hint $(JSFILES)
 
+undocumented:
+	bin/lint-yuidoc --generate-undocumented > undocumented
+
 yuidoc-lint: $(JSFILES)
 	bin/lint-yuidoc
 
@@ -268,6 +271,6 @@ appcache-force: appcache-touch appcache
 	appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
 	build-files javascript-libraries build build-debug help \
 	build-prod clean clean-deps clean-docs clean-all devel debug \
-	prod link-debug-files link-prod-files doc
+	prod link-debug-files link-prod-files doc undocumented
 
 .DEFAULT_GOAL := all

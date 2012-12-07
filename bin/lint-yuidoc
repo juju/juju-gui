@@ -103,7 +103,21 @@ def check_file(file_name, undocumented):
         file_num_doc_lines)
 
 
-def main():
+def read_undocumented_listing(lines):
+    """Read the listing of legacy undocumented functions."""
+    old_style = len(lines) and ':' not in lines[0]
+    if old_style:
+        raise RuntimeError('This version of the lint-yuidoc program can not '
+            'read the old-style "undocumented" file.  Try regenerating it '
+            'with --generate-undocumented.')
+
+    new_style_regex = re.compile('([^:]+):[^ ]+ "([^"]+)"')
+    def parser(line):
+        return new_style_regex.match(line).groups()
+    return set(map(parser, lines))
+
+
+def main(argv):
     """Check inline documentation of Javascript functions.
 
     Traverse the "app" subtree excluding all "assets" directories and
@@ -111,13 +125,17 @@ def main():
     number of documentation lines, the total number of undocumented functions,
     and any discrepancies between the current status and the undocumented list.
     """
+    in_generate_undocumented_file_mode = '--generate-undocumented' in argv
     # Did we find any lint?
     found_errors = False
     # All of the functions found.
     all_functions = set()
     total_num_doc_lines = 0
-    with open('undocumented') as f:
-        undocumented = [tuple(line.split()) for line in f.readlines()]
+    if in_generate_undocumented_file_mode:
+        undocumented = ()
+    else:
+        with open('undocumented') as f:
+            undocumented = read_undocumented_listing(f.readlines())
     for root, dirs, files in os.walk('app'):
         # Ignore any asset directories.
         try:
@@ -131,12 +149,20 @@ def main():
                 file_num_doc_lines) = check_file(file_name, undocumented)
             all_functions.update(file_functions)
             for code_location in missing_doc_functions:
-                print code_location, 'undocumented but not listed as such'
-                found_errors = True
-            for code_location in falsely_undoc_functions:
-                print code_location, 'erroneously listed as undocumented'
-                found_errors = True
+                if in_generate_undocumented_file_mode:
+                    print code_location
+                else:
+                    print code_location, 'undocumented but not listed as such'
+                    found_errors = True
+            if in_generate_undocumented_file_mode:
+                for code_location in falsely_undoc_functions:
+                    print code_location, 'erroneously listed as undocumented'
+                    found_errors = True
             total_num_doc_lines += file_num_doc_lines
+
+    if in_generate_undocumented_file_mode:
+        # Nothing more to do.
+        return 0
 
     print
     print 'Total documentation lines: %d' % total_num_doc_lines
@@ -157,4 +183,4 @@ def main():
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(sys.argv))
