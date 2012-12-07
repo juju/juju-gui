@@ -53,7 +53,7 @@ help:
 
 build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	mkdir -p build/juju-ui/assets
-	./bin/generateTemplates
+	bin/generateTemplates
 
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 	node_modules/.bin/yuidoc -o yuidoc -x assets app
@@ -133,12 +133,11 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(BUILD_FILES): javascript-libraries $(JSFILES) \
-		bin/merge-files lib/merge-files.js \
-		$(THIRD_PARTY_JS)
+$(BUILD_FILES): javascript-libraries $(JSFILES) $(THIRD_PARTY_JS) \
+		bin/merge-files lib/merge-files.js
 	rm -f $(BUILD_FILES)
-	mkdir -p build/juju-ui/assets/combined-css
-	./bin/merge-files
+	mkdir -p build/juju-ui/assets/combined-css/
+	bin/merge-files
 
 build-files: $(BUILD_FILES)
 
@@ -159,6 +158,7 @@ link_debug_files:
 	ln -sf "$(PWD)/app/assets/javascripts" build-debug/juju-ui/assets/
 	ln -sf "$(PWD)/app/assets/svgs" build-debug/juju-ui/assets/
 	ln -sf "$(PWD)/build/juju-ui/templates.js" build-debug/juju-ui/
+	ln -sf "$(PWD)/build/juju-ui/assets/app.js" build-debug/juju-ui/assets/
 	ln -sf "$(PWD)/build/juju-ui/assets/manifest.appcache" \
 		build-debug/juju-ui/assets/
 	ln -sf "$(PWD)/build/juju-ui/assets/combined-css/all-static.css" \
@@ -171,11 +171,11 @@ link_debug_files:
 	# Link each YUI module's assets.
 	mkdir -p build-debug/juju-ui/assets/skins/night/ \
 		build-debug/juju-ui/assets/skins/sam/
-	find ./node_modules/yui/ -path "*/skins/night/*" -type f \
+	find node_modules/yui/ -path "*/skins/night/*" -type f \
 		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/skins/night/ \;
-	find ./node_modules/yui/ -path "*/skins/sam/*" -type f \
+	find node_modules/yui/ -path "*/skins/sam/*" -type f \
 		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/skins/sam/ \;
-	find ./node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
+	find node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
 		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/ \;
 
 link_prod_files:
@@ -200,17 +200,17 @@ link_prod_files:
 	# Link each YUI module's assets.
 	mkdir -p build-prod/juju-ui/assets/skins/night/ \
 		build-prod/juju-ui/assets/skins/sam/
-	find ./node_modules/yui/ -path "*/skins/night/*" -type f \
+	find node_modules/yui/ -path "*/skins/night/*" -type f \
 		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/skins/night/ \;
-	find ./node_modules/yui/ -path "*/skins/sam/*" -type f \
+	find node_modules/yui/ -path "*/skins/sam/*" -type f \
 		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/skins/sam/ \;
-	find ./node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
+	find node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
 		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/ \;
 
 prep: beautify lint
 
 test: build-debug
-	./test-server.sh
+	test-server.sh
 
 server:
 	@echo "Deprecated. Please run either 'make prod' or 'make debug',"
@@ -226,11 +226,11 @@ debug: build-debug
 	@echo "Running the debug environment from a SimpleHTTPServer"
 	@echo "To run the development environment, including automatically"
 	@echo "rebuilding the generated files on changes, run 'make devel'."
-	cd ./build-debug && python -m SimpleHTTPServer 8888
+	cd build-debug && python -m SimpleHTTPServer 8888
 
 prod: build-prod
 	@echo "Running the production environment from a SimpleHTTPServer"
-	cd ./build-prod && python -m SimpleHTTPServer 8888
+	cd build-prod && python -m SimpleHTTPServer 8888
 
 clean:
 	rm -rf build build-debug build-prod
