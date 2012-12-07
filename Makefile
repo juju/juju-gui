@@ -33,6 +33,13 @@ BUILD_FILES=build/juju-ui/assets/app.js \
 DATE=$(shell date -u)
 APPCACHE=build/juju-ui/assets/manifest.appcache
 
+# Some environments, notably sudo, do not populate the PWD environment
+# variable, which is used to set $(PWD); however, getting the current
+# directory from `pwd` can get expensive, so we set it once here.
+ifeq ($(PWD),)
+	PWD=$(shell pwd)
+endif
+
 all: build-debug build-prod
 	@echo "\nDebug and production environments built."
 	@echo "Run 'make help' to list the main available targets."
