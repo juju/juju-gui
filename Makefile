@@ -70,8 +70,9 @@ endif
 ifndef BRANCH_IS_CLEAN
 BRANCH_IS_CLEAN=$(shell [ -z "`bzr status`" ] && bzr missing --this && echo 1)
 endif
-# Is it safe to do a release?  For trial-run releases you can override this
-# check on the command line by setting the BRANCH_IS_GOOD environment variable.
+# Is it safe to do a release of the branch?  For trial-run releases you can
+# override this check on the command line by setting the BRANCH_IS_GOOD
+# environment variable.
 ifndef BRANCH_IS_GOOD
 ifneq ($(strip $(IS_TRUNK_BRANCH)),)
 ifneq ($(strip $(BRANCH_IS_CLEAN)),)
@@ -262,6 +263,7 @@ upload_release.py:
 	    > upload_release.py
 
 $(RELEASE_FILE): build
+	@echo "$(BRANCH_IS_CLEAN)"
 ifdef BRANCH_IS_GOOD
 	mkdir -p releases
 	tar c --auto-compress --exclude-vcs --exclude releases \
@@ -272,7 +274,7 @@ else
 	@echo "*********************** RELEASE FAILED ***********************"
 	@echo "**************************************************************"
 	@echo
-	@echo "To make a release, you must either be in a checkout of"
+	@echo "To make a release, you must either be in a branch of"
 	@echo "lp:juju-gui without uncommitted/unpushed changes, or you must"
 	@echo "override one of the pertinent variable names to force a "
 	@echo "release."
@@ -285,7 +287,7 @@ endif
 $(RELEASE_SIGNATURE): $(RELEASE_FILE)
 	gpg --armor --sign --detach-sig $(RELEASE_FILE)
 
-release: $(RELEASE_FILE) $(RELEASE_SIGNATURE) upload_release.py
+dist: $(RELEASE_FILE) $(RELEASE_SIGNATURE) upload_release.py
 	python2 upload_release.py juju-gui $(SERIES) $(RELEASE_VERSION) \
 	    $(RELEASE_FILE) $(LAUNCHPAD_API_ROOT)
 
@@ -301,6 +303,6 @@ appcache-force: appcache-touch appcache
 
 .PHONY: test lint beautify server clean build-images prep jshint gjslint \
 	appcache appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	production-files javascript-libraries build-clean release
+	production-files javascript-libraries build-clean dist
 
 .DEFAULT_GOAL := all
