@@ -8,21 +8,21 @@
 #SHELL = $(warning [$@ [32m($^) [34m($?)[m ])$(OLD_SHELL)
 
 JSFILES=$(shell bzr ls -RV -k file | \
-    grep -E -e '.+\.js(on)?$$|generateTemplates$$' | \
-    grep -Ev -e '^manifest\.json$$' \
-	-e '^test/assets/' \
-	-e '^app/assets/javascripts/reconnecting-websocket.js$$' \
-	-e '^server.js$$')
+	grep -E -e '.+\.js(on)?$$|generateTemplates$$' | \
+	grep -Ev -e '^manifest\.json$$' \
+	    -e '^test/assets/' \
+	    -e '^app/assets/javascripts/reconnecting-websocket.js$$' \
+	    -e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
-    node_modules/expect.js node_modules/express node_modules/graceful-fs \
-    node_modules/grunt node_modules/jshint node_modules/less \
-    node_modules/minimatch node_modules/mocha node_modules/node-markdown \
-    node_modules/node-minify node_modules/node-spritesheet \
-    node_modules/rimraf node_modules/should node_modules/yui \
-    node_modules/yuidocjs
+	node_modules/expect.js node_modules/express node_modules/graceful-fs \
+	node_modules/grunt node_modules/jshint node_modules/less \
+	node_modules/minimatch node_modules/mocha node_modules/node-markdown \
+	node_modules/node-minify node_modules/node-spritesheet \
+	node_modules/rimraf node_modules/should node_modules/yui \
+	node_modules/yuidocjs
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
-    | tr '\n' ' ')
+	| tr '\n' ' ')
 
 ### Relase-specific variables - see docs/process.rst for an overview. ###
 BZR_REVNO=$(shell bzr revno)
