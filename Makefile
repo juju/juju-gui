@@ -45,7 +45,8 @@ help:
 	@echo "prod: run the production environment (aggregated, compressed files)"
 	@echo "clean: remove the generated build directories"
 	@echo "clean-all: remove build, deps and doc directories"
-	@echo "test: run tests in the browser"
+	@echo "test-debug: run tests in the browser from the debug environment"
+	@echo "test-prod: run tests in the browser from the production environment"
 	@echo "prep: beautify and lint the source"
 	@echo "doc: generate Sphinx and YuiDoc documentation"
 	@echo "help: this description"
@@ -208,8 +209,13 @@ link-prod-files:
 
 prep: beautify lint
 
-test: build-debug
-	test-server.sh
+test-debug: build-debug
+	test-server.sh debug
+
+test-prod: build-prod
+	test-server.sh prod
+
+test: test-debug
 
 server:
 	@echo "Deprecated. Please run either 'make prod' or 'make debug',"
@@ -268,6 +274,6 @@ appcache-force: appcache-touch appcache
 	appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
 	build-files javascript-libraries build build-debug help \
 	build-prod clean clean-deps clean-docs clean-all devel debug \
-	prod link-debug-files link-prod-files doc
+	prod link-debug-files link-prod-files doc test-debug test-prod
 
 .DEFAULT_GOAL := all
