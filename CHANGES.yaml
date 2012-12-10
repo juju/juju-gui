@@ -1,0 +1,26 @@
+# This file keeps track of the changes to the project.  We use it both to
+# document the changes, and to find the most recent version numbers.  See the
+# release process documented in docs/process.rst for details.
+
+# This file uses the YAML format because it is easy to write and it is easy to
+# convert to JSON, which seemed like a reasonable goal in case we want to use
+# this data in the GUI itself at some point.  Here's an example of how to
+# write the changes data.
+
+# - 0.5.0:
+#   - Did something
+#   - Did something else
+#   - >
+#     Another thing that spans multiple lines
+#     like this
+# - 0.4.0:
+#   - Something!
+#   - Ooh!
+
+# Release identifiers in this file should always be "unreleased" or
+# [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
+
+- unreleased:
+    - First tarball release
+- 0.1.0:
+    - OpenStack Summit 2012 demo

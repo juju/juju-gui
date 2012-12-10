@@ -21,7 +21,67 @@ NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 	node_modules/node-minify node_modules/node-spritesheet \
 	node_modules/rimraf node_modules/should node_modules/yui \
 	node_modules/yuidocjs
-EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort | tr '\n' ' ')
+EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
+	| tr '\n' ' ')
+
+### Release-specific variables - see docs/process.rst for an overview. ###
+BZR_REVNO=$(shell bzr revno)
+# Figure out the two most recent version numbers.
+ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
+PENULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 \
+    | sed 's/[ :-]//g')
+# If the user specified (via setting an environment variable on the command
+# line) that this is a final (non-development) release, set the version number
+# and series appropriately.
+ifdef FINAL
+# If this is a FINAL (non-development) release, then the most recent version
+# number should not be "unreleased".
+ifeq ($(ULTIMATE_VERSION), unreleased)
+    $(error FINAL releases must have a most-recent version number other than \
+	"unreleased" in CHANGES.yaml)
+endif
+VERSION=$(ULTIMATE_VERSION)
+SERIES=stable
+else
+# If this is development (non-FINAL) release, then the most recent version
+# number must be "unreleased".
+ifneq ($(ULTIMATE_VERSION), unreleased)
+    $(error non-FINAL releases must have a most-recent version number of \
+	"unreleased" in CHANGES.yaml)
+endif
+RELEASE_VERSION=$(PENULTIMATE_VERSION)+build.$(BZR_REVNO)
+SERIES=trunk
+endif
+# If we are doing a production release (as opposed to a trial-run release) we
+# use the "real" Launchpad site, if not we use the Launchpad staging site.
+ifndef PROD
+LAUNCHPAD_API_ROOT=staging
+endif
+RELEASE_NAME=juju-gui-$(RELEASE_VERSION)
+RELEASE_FILE=releases/$(RELEASE_NAME).tgz
+RELEASE_SIGNATURE=releases/$(RELEASE_NAME).asc
+# Is the branch being released a branch of trunk?
+ifndef IS_TRUNK_BRANCH
+IS_TRUNK_BRANCH=$(shell bzr info | grep \
+	'parent branch: bzr+ssh://bazaar.launchpad.net/+branch/juju-gui/' \
+	> /dev/null && echo 1)
+endif
+# Does the branch on disk have uncomitted/unpushed changes?
+ifndef BRANCH_IS_CLEAN
+BRANCH_IS_CLEAN=$(shell [ -z "`bzr status`" ] && bzr missing --this && echo 1)
+endif
+# Is it safe to do a release of the branch?  For trial-run releases you can
+# override this check on the command line by setting the BRANCH_IS_GOOD
+# environment variable.
+ifndef BRANCH_IS_GOOD
+ifneq ($(strip $(IS_TRUNK_BRANCH)),)
+ifneq ($(strip $(BRANCH_IS_CLEAN)),)
+BRANCH_IS_GOOD=1
+endif
+endif
+endif
+### End of release-specific variables ###
+
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 
 SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
@@ -264,6 +324,49 @@ $(APPCACHE): manifest.appcache.in
 	cp manifest.appcache.in $(APPCACHE)
 	sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
+# This really depends on CHANGES.yaml, the bzr revno changing, and the build
+# /juju-ui directory existing.  We are vaguely trying to approximate the second
+# one by connecting it to our pertinent versioned files.  The appcache target
+# creates the third, and directories are a bit tricky with Makefiles so we are
+# OK with that.
+build/juju-ui/version.js: appcache CHANGES.yaml $(JSFILES) $(TEMPLATE_TARGETS) \
+		$(SPRITE_SOURCE_FILES)
+	echo "var jujuGuiVersionName='$(RELEASE_VERSION)';" \
+	    > build/juju-ui/version.js
+
+upload_release.py:
+	bzr cat lp:launchpadlib/contrib/upload_release_tarball.py \
+	    > upload_release.py
+
+$(RELEASE_FILE): build
+	@echo "$(BRANCH_IS_CLEAN)"
+ifdef BRANCH_IS_GOOD
+	mkdir -p releases
+	tar c --auto-compress --exclude-vcs --exclude releases \
+	    --transform "s|^|$(RELEASE_NAME)/|" -f $(RELEASE_FILE) *
+	@echo "Release was created in $(RELEASE_FILE)."
+else
+	@echo "**************************************************************"
+	@echo "*********************** RELEASE FAILED ***********************"
+	@echo "**************************************************************"
+	@echo
+	@echo "To make a release, you must either be in a branch of"
+	@echo "lp:juju-gui without uncommitted/unpushed changes, or you must"
+	@echo "override one of the pertinent variable names to force a "
+	@echo "release."
+	@echo
+	@echo "See the README for more information."
+	@echo
+	@false
+endif
+
+$(RELEASE_SIGNATURE): $(RELEASE_FILE)
+	gpg --armor --sign --detach-sig $(RELEASE_FILE)
+
+dist: $(RELEASE_FILE) $(RELEASE_SIGNATURE) upload_release.py
+	python2 upload_release.py juju-gui $(SERIES) $(RELEASE_VERSION) \
+	    $(RELEASE_FILE) $(LAUNCHPAD_API_ROOT)
+
 appcache: $(APPCACHE)
 
 # A target used only for forcibly updating the appcache.
@@ -278,6 +381,6 @@ appcache-force: appcache-touch appcache
 	appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
 	build-files javascript-libraries build build-debug help \
 	build-prod clean clean-deps clean-docs clean-all devel debug \
-	prod link-debug-files link-prod-files doc undocumented
+	prod link-debug-files link-prod-files doc dist undocumented
 
 .DEFAULT_GOAL := all
