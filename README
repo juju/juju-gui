@@ -26,6 +26,10 @@ For building the docs, you also need sphinx::
 
   $ sudo apt-get install python-sphinx
 
+To make releases, you'll need pytz::
+
+  $ sudo apt-get install python-tz
+
 The gui frontend can be installed with::
 
   $ bzr branch lp:juju-ui trunk
@@ -112,6 +116,69 @@ Running lint
 ============
 
   $ jshint --config=jshint.config `bzr ls -RV -k file | grep -v assets/`
+
+Making releases
+===============
+
+To make a release, you must either be in a checkout of lp:juju-gui
+without uncommitted changes, or you must override one of the
+`pertinent variable names`_ to force a release.
+
+.. _`pertinent variable names`: `Potentially Useful Release-Oriented Makefile Variables`_
+
+You also need to have a gpg key, and the python-pytz package installed (as
+well as launchpadlib, but that is installed by default in Ubuntu).
+
+See the Process document (docs/process.rst) for step-by-step checklists to
+make developer and stable releases.
+
+Potentially Useful Release-Oriented Makefile Variables
+------------------------------------------------------
+
+The following is a list of pertinent Makefile variables.
+
+FINAL
+  Set FINAL to any non-empty value to make a final release. This will cause
+  the bzr revno to be omitted from the tarball name, and (if you use the
+  release target) will cause the release to be uploaded to the stable series
+  rather than the trunk series. Example usage::
+
+    $ FINAL=1 make release
+
+PROD
+  By default, releases will be uploaded to staging.launchpad.net, which is a
+  separate version of Launchpad that uses a temporary database.  This can be
+  convenient for trying out the release process in the Makefile without
+  affecting our actual production releases.  Set PROD to any non-empty value
+  to send uploads to launchpad.net, the production version of Launchpad, when
+  you are ready to make a real release.
+
+  Note that you may need to ask the webops to turn off the two-factor
+  authentication on your Launchpad staging account in order for the staging to
+  work. Go to the #launchpad-ops channel on the Canonical IRC server and ask
+  something like "webops, could you disable 2FA on my staging account?"
+
+  Example usage::
+
+    $ PROD=1 make release
+
+IS_TRUNK_CHECKOUT
+  Set this to any non-empty value to force the Makefile to believe it is
+  working with a trunk checkout. Example usage::
+
+    $ IS_TRUNK_CHECKOUT=1 make release
+
+HAS_NO_CHANGES
+  Set this to any non-empty value to force the Makefile to believe that the
+  current code tree has no changes. Example usage::
+
+    $ HAS_NO_CHANGES=1 make release
+
+IS_SAFE_RELEASE
+  Set this to any non-empty value to force the Makefile to bypass checks of
+  IS_TRUNK_CHECKOUT and HAS_NO_CHANGES. Example usage::
+
+    $ IS_SAFE_RELEASE=1 make release
 
 More documentation
 ==================

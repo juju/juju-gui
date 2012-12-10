@@ -14,5 +14,7 @@ Session.vim
 virtualenv
 yuidoc
 build
+upload_release.py
+releases
 build-prod
 build-debug
