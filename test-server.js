@@ -14,7 +14,7 @@ server.configure(function() {
   server.use(express['static'](__dirname));
   // fallback to looking in assets
   server.use('/juju-ui', express['static'](
-    __dirname + '/build-' + process.argv[2] + '/juju-ui'));
+      __dirname + '/build-' + process.argv[2] + '/juju-ui'));
   server.use(express.bodyParser());
   server.use(express.methodOverride());
 });
