@@ -93,6 +93,13 @@ BUILD_FILES=build/juju-ui/assets/app.js \
 DATE=$(shell date -u)
 APPCACHE=build/juju-ui/assets/manifest.appcache
 
+# Some environments, notably sudo, do not populate the PWD environment
+# variable, which is used to set $(PWD); however, getting the current
+# directory from `pwd` can get expensive, so we set it once here.
+ifeq ($(PWD),)
+	PWD=$(shell pwd)
+endif
+
 all: build-debug build-prod
 	@echo "\nDebug and production environments built."
 	@echo "Run 'make help' to list the main available targets."
@@ -177,6 +184,9 @@ gjslint: virtualenv/bin/gjslint
 
 jshint: node_modules/jshint
 	node_modules/jshint/bin/hint $(JSFILES)
+
+undocumented:
+	bin/lint-yuidoc --generate-undocumented > undocumented
 
 yuidoc-lint: $(JSFILES)
 	bin/lint-yuidoc
@@ -371,6 +381,6 @@ appcache-force: appcache-touch appcache
 	appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
 	build-files javascript-libraries build build-debug help \
 	build-prod clean clean-deps clean-docs clean-all devel debug \
-	prod link-debug-files link-prod-files doc dist
+	prod link-debug-files link-prod-files doc dist undocumented
 
 .DEFAULT_GOAL := all
