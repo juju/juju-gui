@@ -114,6 +114,7 @@ help:
 	@echo "clean-all: remove build, deps and doc directories"
 	@echo "test-debug: run tests in the browser from the debug environment"
 	@echo "test-prod: run tests in the browser from the production environment"
+	@echo "           FIXME: currently yielding 78 failures"
 	@echo "test: same as the test-debug target"
 	@echo "prep: beautify and lint the source"
 	@echo "doc: generate Sphinx and YuiDoc documentation"
@@ -384,6 +385,7 @@ appcache-touch:
 # appcache, and this provides the correct order.
 appcache-force: appcache-touch appcache
 
+# targets are alphabetically sorted, they like it that way :-)
 .PHONY: appcache appcache-force appcache-touch beautify build \
 	build-debug build-files build-prod clean clean clean-all \
 	clean-deps clean-docs debug devel doc dist gjslint help \
