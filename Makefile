@@ -114,6 +114,7 @@ help:
 	@echo "clean-all: remove build, deps and doc directories"
 	@echo "test-debug: run tests in the browser from the debug environment"
 	@echo "test-prod: run tests in the browser from the production environment"
+	@echo "test: same as the test-debug target"
 	@echo "prep: beautify and lint the source"
 	@echo "doc: generate Sphinx and YuiDoc documentation"
 	@echo "help: this description"
