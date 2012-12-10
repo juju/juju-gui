@@ -116,7 +116,7 @@ Checklist for Making a Stable Release
 
   * Note that you may need to ask the webops to turn off the two-factor
     authentication on your Launchpad staging account in order for this to
-    work. Go to the #launchpad-ops channel on the canonical IRC server and ask
+    work. Go to the #launchpad-ops channel on the Canonical IRC server and ask
     something like "webops, could you disable 2FA on my staging account?"
   * When Launchpad asks you what level of permissions to grant, assuming you
     are running on your own computer that you manage securely, the easiest
@@ -174,7 +174,7 @@ Checklist for Making a Developer Release
 
   * Note that you may need to ask the webops to turn off the two-factor
     authentication on your Launchpad staging account in order for this to
-    work. Go to the #launchpad-ops channel on the canonical IRC server and ask
+    work. Go to the #launchpad-ops channel on the Canonical IRC server and ask
     something like "webops, could you disable 2FA on my staging account?"
   * When Launchpad asks you what level of permissions to grant, assuming you
     are running on your own computer that you manage securely, the easiest

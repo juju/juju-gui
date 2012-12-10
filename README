@@ -155,7 +155,7 @@ PROD
 
   Note that you may need to ask the webops to turn off the two-factor
   authentication on your Launchpad staging account in order for the staging to
-  work. Go to the #launchpad-ops channel on the canonical IRC server and ask
+  work. Go to the #launchpad-ops channel on the Canonical IRC server and ask
   something like "webops, could you disable 2FA on my staging account?"
 
   Example usage::

@@ -24,7 +24,7 @@ NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
 	| tr '\n' ' ')
 
-### Relase-specific variables - see docs/process.rst for an overview. ###
+### Release-specific variables - see docs/process.rst for an overview. ###
 BZR_REVNO=$(shell bzr revno)
 # Figure out the two most recent version numbers.
 ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
@@ -80,7 +80,7 @@ BRANCH_IS_GOOD=1
 endif
 endif
 endif
-### End of relase-specific variables ###
+### End of release-specific variables ###
 
 TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
 
