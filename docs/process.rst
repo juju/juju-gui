@@ -13,6 +13,10 @@ Checklist for Starting a Branch
   are not sure of your solution, prototype before the pre-implementation call.
 - Use TDD.  Your prototype might be perfect, but you can still move it aside
   and rebuild it gradually as you add tests.  It can go quickly.
+- Update the CHANGES.yaml file with your changes.  The newest (topmost)
+  section should have the version "unreleased".  If not and you are
+  making changes, add an "unreleased" section at the top.  All other
+  version numbers follow Semantic Versioning (http://semver.org/).
 
 Checklist for Preparing for a Review
 ====================================
@@ -40,6 +44,8 @@ Checklist for Preparing for a Review
   - Treat this as an opportunity to learn.  Consider what you could have
     done differently.
 
+- Update the CHANGES.yaml file with a description of the changes you
+  made.  Reference Launchpad bugs if appropriate.
 - If the branch is very minor, such as a documentation change, feel free to
   self-review.  However, *don't neglect to consider your responsibilities
   above*, especially the diff review and running tests (even if you think
@@ -85,6 +91,116 @@ Checklist for Reviewing
 - In your summary message, if you ask for changes, make it clear whether you
   want to re-review after the changes, or if you automatically approve if the
   changes are made.
+
+Checklist for Making a Stable Release
+=====================================
+
+- Get a checkout of the trunk:: ``bzr co lp:juju-gui``.
+- If you are using a pre-existing checkout, make sure it is up-to-date:: ``bzr
+  up``.
+- Verify that the top-most version in CHANGES.yaml specifies the
+  expected version string.  It should be bigger than the most recent
+  version found on https://launchpad.net/juju-gui/stable .
+- Run the tests and verify they pass: ``make test``.
+- Create the tarball: ``FINAL=1 make tarball``.  The process will end by
+  reporting the name of the tarball it made.
+- In an empty temporary directory somewhere else on your system, expand the
+  tarball: ``tar xvzf PATH_TO_TARBALL``
+- In that directory, start a server: ``python -m SimpleHTTPServer 8888``
+- In Chrome and Firefox, QA the application.  XXX EXPLICIT QA STEPS GO HERE!
+- For now, we will assume you would like to verify the release on the
+  Launchpad staging server.  As we become more confident with this process,
+  this step may become unnecessary.  In the checkout, run ``FINAL=1 make
+  release``.  This will step you through signing the tarball, connecting
+  to Launchpad, and uploading the release.
+
+  * Note that you may need to ask the webops to turn off the two-factor
+    authentication on your Launchpad staging account in order for this to
+    work. Go to the #launchpad-ops channel on the Canonical IRC server and ask
+    something like "webops, could you disable 2FA on my staging account?"
+  * When Launchpad asks you what level of permissions to grant, assuming you
+    are running on your own computer that you manage securely, the easiest
+    thing to do is hopefully also reasonably safe: accept that the computer
+    may perform all actions, indefinitely.
+
+- Go to https://staging.launchpad.net/juju-gui/stable and verify that you see
+  a new release and a new download file.
+- Download the file, expand it in a temporary directory, run ``python -m
+  SimpleHTTPServer 8888``, and do a quick double-check in the browser that it
+  is what you expect.  Looking at juju-ui/version.js should also show you the
+  version you expect.
+- This is a final release.  Consider asking others to verify the package on staging.
+- Now it is time for the actual, real release.  Head back to your checkout and
+  run ``FINAL=1 PROD=1 make release``.  The computer will again walk you
+  through the process.
+
+  * Note that, one time per computer, you will again have to accept the
+    Launchpadlib security token: In Launchpad, the staging site and the
+    production have fully separate databases, including authentication.  What
+    is done in production will in many cases eventually be copied over to
+    staging, but never vice versa.  Staging data is destroyed periodically.
+
+- Go to https://launchpad.net/juju-gui/stable and verify that you see
+  a new release and a new download file.
+
+You are done!
+
+Checklist for Making a Developer Release
+========================================
+
+- Get a checkout of the trunk:: ``bzr co lp:juju-gui``.
+- If you are using a pre-existing checkout, make sure it is up-to-date::
+  ``bzr up``.
+- Verify that the top-most version in CHANGES.yaml specifies the expected
+  version string.  Run ``bzr revno``.  These two values, combined, should be
+  bigger than the most recent version found on
+  https://launchpad.net/juju-gui/trunk .  To be clear, the version should be
+  the same or greater as the most recent developer release, and the revno
+  should be greater.
+- Run the tests and verify they pass: ``make test``.
+- Create the tarball: ``make tarball``.  It will end by reporting the name of
+  the tarball it made.
+- In an empty temporary directory somewhere else on your system, expand the
+  tarball: ``tar xvzf PATH_TO_TARBALL``
+- Looking at juju-ui/version.js should show you a version string that combines
+  the value in the checkout's CHANGES.yaml with the checkout's revno.
+- In that directory, start a server: ``python -m SimpleHTTPServer 8888``
+- In Chrome and Firefox, QA the application.  XXX EXPLICIT QA STEPS GO HERE!
+- For now, we will assume you would like to verify the release on the
+  Launchpad staging server.  As we become more confident with this process,
+  this step may become unnecessary.  In the checkout, run ``make release``.
+  This will step you through signing the tarball, connecting to
+  Launchpad, and uploading the release.
+
+  * Note that you may need to ask the webops to turn off the two-factor
+    authentication on your Launchpad staging account in order for this to
+    work. Go to the #launchpad-ops channel on the Canonical IRC server and ask
+    something like "webops, could you disable 2FA on my staging account?"
+  * When Launchpad asks you what level of permissions to grant, assuming you
+    are running on your own computer that you manage securely, the easiest
+    thing to do is hopefully also reasonably safe: accept that the computer
+    may perform all actions, indefinitely.
+
+- Go to https://staging.launchpad.net/juju-gui/trunk and verify that you see
+  a new release and a new download file.
+- Download the file, expand it in a temporary directory, run ``python -m
+  SimpleHTTPServer 8888``, and do a quick double-check in the browser that it
+  is what you expect.  Looking at juju-ui/version.js should also show you the
+  version you expect, as seen in the similar earlier step above.
+- Now it is time for the actual, real release.  Head back to your checkout and
+  run ``PROD=1 make release``.  The computer will again walk you through the
+  process.
+
+  * Note that, one time per computer, you will again have to accept the
+    Launchpadlib security token: In Launchpad, the staging site and the
+    production have fully separate databases, including authentication.  What
+    is done in production will in many cases eventually be copied over to
+    staging, but never vice versa.  Staging data is destroyed periodically.
+
+- Go to https://launchpad.net/juju-gui/trunk and verify that you see
+  a new release and a new download file.
+
+You are done!
 
 Checklist for Running a Daily Meeting
 =====================================
