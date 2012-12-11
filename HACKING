@@ -1,8 +1,8 @@
-=======
-HACKING
-=======
+===========
+Development
+===========
 
-Here is how to hack (that is, code, develop, program :-) ) on this codebase.
+Here is how to develop on this codebase.
 
 Developer Install
 =================
@@ -43,7 +43,7 @@ need to download packages.  When ready, the server will print:
 
 Server listening on 8888
 
-You can then access the GUI at http://localhost:8888/ .
+You can then access the GUI at <http://localhost:8888/>.
 
 You'll also need to deploy a juju environment with REST api access.
 Currently that work resides in a pipeline of juju branches. The
@@ -82,7 +82,7 @@ You will also need to edit your ``app/config.js`` replacing
 ``ws://localhost:8081/ws`` with ``wss://localhost:8081/ws``.
 
 By default, rapi-rollup uses a self-signed certificate; because of that you
-will need to visit the https://localhost:8081/ws WebSockets URL with your
+will need to visit the <https://localhost:8081/ws> WebSockets URL with your
 browser and accept the included self-signed certificate, or the WebSockets
 encrypted connection will not work.
 
@@ -112,8 +112,8 @@ running the command ``make yuidoc``. You can view the docs by running::
 
   $ xdg-open yuidoc/index.html
 
-The documentation for YUIDoc markup is at
-http://yui.github.com/yuidoc/syntax/ .
+The `documentation <http://yui.github.com/yuidoc/syntax/>`_ for YUIDoc markup
+is available.
 
 Project documentation
 =====================

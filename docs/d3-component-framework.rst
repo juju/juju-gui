@@ -1,5 +1,5 @@
 ======================
-D3 Component Framework
+D3 component framework
 ======================
 
 The D3 Component codebase is a small framework with the following goals:
@@ -22,7 +22,7 @@ the YUI world it might be common to expect each Module to be the application's
 rendering and interactive behavior around a single YUI App.Model or
 App.ModelList.
 
-Module Writers Guide
+Module writers guide
 ====================
 
 Using the component framework means taking advantage of the tools offered
@@ -228,7 +228,7 @@ Context can either be ``component`` or ``module``, with module being the default
 ``this`` for handlers. Phase can be ``before``, ``on``, or ``after``, with ``on`` being
 the default.
 
-Complete Example
+Complete example
 ================
 
 Here is a complete example of a module, with some description. The tests for

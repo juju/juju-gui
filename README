@@ -1,3 +1,37 @@
-====================
-Deploy and configure
-====================
+========
+Juju-GUI
+========
+
+Welcome. Juju-GUI is a web-based GUI for `Juju <https://juju.ubuntu.com/>`_.
+Juju lets you deploy connected services to the cloud in a convenient,
+vendor-neutral, and powerful way. The GUI lets you visualize and manage
+your work more intuitively from a web browser.
+
+See also:
+
+- `The new Juju GUI: because a picture paints a thousand words
+  <http://blog.canonical.com/2012/10/29/the-new-juju-gui-because-a-picture-paints-a-thousand-words/>`_
+- a `demo of trunk <http://uistage.jujucharms.com:8080/>`_, which is reset
+  every 15 minutes.
+
+Deploy
+======
+
+There are no official releases of Juju-GUI yet, so you have to get the source
+code from Launchpad::
+
+  $ bzr branch lp:juju-gui
+
+The most useful available commands are shown by the command::
+
+  $ make help
+
+You'll typically want to run one of ``make prod``,  ``make debug`` or ``make
+devel`` to deploy an environment. You might also run ``make test`` to check
+that everything is ok. You may also run ``make doc`` to generate the available
+documentation.
+
+Configure
+=========
+
+TBD
