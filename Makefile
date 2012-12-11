@@ -112,7 +112,10 @@ help:
 	@echo "prod: run the production environment (aggregated, compressed files)"
 	@echo "clean: remove the generated build directories"
 	@echo "clean-all: remove build, deps and doc directories"
-	@echo "test: run tests in the browser"
+	@echo "test-debug: run tests in the browser from the debug environment"
+	@echo "test-prod: run tests in the browser from the production environment"
+	@echo "           FIXME: currently yielding 78 failures"
+	@echo "test: same as the test-debug target"
 	@echo "prep: beautify and lint the source"
 	@echo "doc: generate Sphinx and YuiDoc documentation"
 	@echo "help: this description"
@@ -278,8 +281,13 @@ link-prod-files:
 
 prep: beautify lint
 
-test: build-debug
-	test-server.sh
+test-debug: build-debug
+	./test-server.sh debug
+
+test-prod: build-prod
+	./test-server.sh prod
+
+test: test-debug
 
 server:
 	@echo "Deprecated. Please run either 'make prod' or 'make debug',"
@@ -377,10 +385,12 @@ appcache-touch:
 # appcache, and this provides the correct order.
 appcache-force: appcache-touch appcache
 
-.PHONY: test lint beautify server clean prep jshint gjslint appcache \
-	appcache-touch appcache-force yuidoc spritegen yuidoc-lint \
-	build-files javascript-libraries build build-debug help \
-	build-prod clean clean-deps clean-docs clean-all devel debug \
-	prod link-debug-files link-prod-files doc dist undocumented
+# targets are alphabetically sorted, they like it that way :-)
+.PHONY: appcache appcache-force appcache-touch beautify build \
+	build-debug build-files build-prod clean clean clean-all \
+	clean-deps clean-docs debug devel doc dist gjslint help \
+	javascript-libraries jshint link-debug-files link-prod-files \
+	lint prep prod server spritegen test test-debug test-prod \
+	undocumented yuidoc yuidoc-lint
 
 .DEFAULT_GOAL := all
