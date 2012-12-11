@@ -215,7 +215,7 @@ YUI.add('juju-charm-models', function(Y) {
         }
       });
   models.Charm = Charm;
-
+  models.charmIdRe = charmIdRe;
   var CharmList = Y.Base.create('charmList', Y.ModelList, [], {
     model: Charm
   }, {

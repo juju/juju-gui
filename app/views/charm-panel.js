@@ -68,6 +68,73 @@ YUI.add('juju-charm-panel', function(Y) {
         }
       },
       /**
+       * Given a set of entries as returned by the charm store "find"
+       * method (charms grouped by series), return the list filtered
+       * by 'filter'.
+       *
+       * @method filterEntries
+       * @static
+       * @private
+       * @param {Array} entries An ordered collection of groups of charms, as
+       *   returned by the charm store "find" method.
+       * @param {String} filter Either 'all', 'subordinates', or 'deployed'.
+       * @param {Object} services The db.services model list.
+       * @return {Array} A filtered, grouped set of entries.
+       */
+      filterEntries = function(entries, filter, services) {
+        var deployedCharms;
+        /**
+         * Filter to determine if a charm is a subordinate.
+         *
+         * @method isSubFilter
+         * @param {Object} charm The charm to test.
+         * @return {Boolean} True if the charm is a subordinate.
+         */
+        function isSubFilter(charm) {
+          return !!charm.get('is_subordinate');
+        }
+        /**
+         * Filter to determine if a charm is the same as any
+         * deployed services.
+         *
+         * @method isDeployedFilter
+         * @param {Object} charm The charm to test.
+         * @return {Boolean} True if the charm matches a deployed service.
+         */
+        function isDeployedFilter(charm) {
+              return deployedCharms.indexOf(charm.get('id')) !== -1;
+        }
+        var filter_fcn;
+
+        if (filter === 'all') {
+          return entries;
+        } else if (filter === 'subordinates') {
+          filter_fcn = isSubFilter;
+        } else if (filter === 'deployed') {
+          filter_fcn = isDeployedFilter;
+          if (!Y.Lang.isValue(services)) {
+            deployedCharms = [];
+          } else {
+            deployedCharms = services.get('charm');
+          }
+        } else {
+          // This case should not happen.
+          return entries;
+        }
+
+        var filtered = Y.clone(entries);
+        // Filter the charms based on the filter function.
+        filtered.forEach(function(series_group) {
+          series_group.charms = series_group.charms.filter(filter_fcn);
+        });
+        // Filter the series group based on the existence of any
+        // filtered charms.
+        return filtered.filter(function(series_group) {
+          return series_group.charms.length > 0;
+        });
+      },
+
+      /**
        * Given a set of grouped entries as returned by the charm store "find"
        * method, return the same data but with the charms converted into data
        * objects that are more amenable to rendering with handlebars.
@@ -128,6 +195,12 @@ YUI.add('juju-charm-panel', function(Y) {
         mouseleave: function(ev) {
           ev.currentTarget.all('.btn').transition({opacity: 0, duration: 0.25});
         }
+      },
+      '.charm-filter-picker .picker-button': {
+        click: 'showCharmFilterPicker'
+      },
+      '.charm-filter-picker .picker-item': {
+        click: 'hideCharmFilterPicker'
       }
     },
     // Set searchText to cause the results to be found and rendered.
@@ -135,6 +208,7 @@ YUI.add('juju-charm-panel', function(Y) {
     // found and rendered.
     initializer: function() {
       var self = this;
+      this.set('filter', 'all');
       this.after('searchTextChange', function(ev) {
         this.set('resultEntries', null);
         if (ev.newVal) {
@@ -178,9 +252,47 @@ YUI.add('juju-charm-panel', function(Y) {
           searchText = this.get('searchText'),
           defaultEntries = this.get('defaultEntries'),
           resultEntries = this.get('resultEntries'),
-          raw_entries = searchText ? resultEntries : defaultEntries,
-          entries = raw_entries && makeRenderableResults(raw_entries);
-      container.setHTML(this.template({ charms: entries }));
+          rawEntries = searchText ? resultEntries : defaultEntries,
+          entries,
+          db = this.get('db') || undefined,
+          services = db && db.services || undefined,
+          filtered = {},
+          filters = ['all', 'subordinates', 'deployed'];
+
+      if (!rawEntries) {
+        return this;
+      }
+      for (var sel in filters) {
+        if (true) { // Avoid lint warning.
+          filtered[filters[sel]] = filterEntries(
+              rawEntries, filters[sel], services);
+        }
+      }
+
+      entries = makeRenderableResults(filtered[this.get('filter')]);
+      var countEntries = function(entries) {
+        if (!entries) {return 0;}
+        var lengths = entries.map(function(e) {return e.charms.length;});
+        // Initial value of 0 required since the array may be empty.
+        return lengths.reduce(function(pv, cv) {return pv + cv;}, 0);
+      };
+
+      container.setHTML(this.template(
+          { charms: entries,
+            allCharmsCount: countEntries(filtered.all),
+            subordinateCharmsCount: countEntries(filtered.subordinates),
+            deployedCharmsCount: countEntries(filtered.deployed)
+          }));
+
+      // The picker has now been rendered generically.  Based on the
+      // filter add the decorations.
+      var selected = container.one('.' + this.get('filter')),
+          picker = container.one('.charm-filter-picker');
+      selected.addClass('activetick');
+      picker.one('.picker-body').set('text', selected.get('text'));
+      // The charm details and summary are user-supplied and may be
+      // way too big for the fixed height cells.  Sadly the best we
+      // can do is truncate them with elllipses.
       container.all('.charm-detail').ellipsis();
       container.all('.charm-summary').ellipsis({'lines': 2});
       this._setScroll();
@@ -311,7 +423,37 @@ YUI.add('juju-charm-panel', function(Y) {
             level: 'error'
           })
       );
+    },
+
+    /**
+     * Event handler to show the charm filter picker.
+     *
+     * @method showCharmFilterPicker
+     * @param {Object} evt The event.
+     * @return {undefined} nothing.
+     */
+    showCharmFilterPicker: function(evt) {
+      var container = this.get('container'),
+          picker = container.one('.charm-filter-picker');
+      picker.addClass('inactive');
+      picker.one('.picker-expanded').addClass('active');
+    },
+
+    /**
+     * Event handler to hide the charm filter picker
+     *
+     * @method hideCharmFilterPicker
+     * @param {Object} evt The event.
+     * @return {undefined} nothing.
+     */
+    hideCharmFilterPicker: function(evt) {
+      // Set the filter and re-render the control.
+      var selected = evt.currentTarget;
+      this.set('filter', selected.getData('filter'));
+      this.render();
+      evt.halt();
     }
+
   });
   views.CharmCollectionView = CharmCollectionView;
 
@@ -534,13 +676,13 @@ YUI.add('juju-charm-panel', function(Y) {
           return this;
         },
         /**
-        When the view's "height" attribute is set, adjust the internal
-        scrollable div to have the appropriate height.
-
-        @method _setScroll
-        @protected
-        @return {undefined} Mutates only.
-        */
+         * When the view's "height" attribute is set, adjust the internal
+         * scrollable div to have the appropriate height.
+         *
+         * @method _setScroll
+         * @protected
+         * @return {undefined} Mutates only.
+         */
         _setScroll: function() {
           setScroll(this.get('container'), this.get('height'));
         },
@@ -717,13 +859,13 @@ YUI.add('juju-charm-panel', function(Y) {
           return;
         },
         /**
-        Fires an event indicating that the charm panel should switch to the
-        "charms" search result view.
-
-        @method goBack
-        @param {Object} ev An event object (with a "halt" method).
-        @return {undefined} Sends a signal only.
-        */
+         * Fires an event indicating that the charm panel should switch to the
+         * "charms" search result view.
+         *
+         * @method goBack
+         * @param {Object} ev An event object (with a "halt" method).
+         * @return {undefined} Sends a signal only.
+         */
         goBack: function(ev) {
           ev.halt();
           this.fire('changePanel', { name: 'charms' });
@@ -833,6 +975,13 @@ YUI.add('juju-charm-panel', function(Y) {
               { charms: charmsSearchPanel,
                 description: descriptionPanel,
                 configuration: configurationPanel },
+        // panelHeightOffset takes into account the height of the
+        // charm filter picker widget, which only appears on the
+        // "charms" panel.
+        panelHeightOffset = {
+          charms: 33,
+          description: 0,
+          configuration: 0},
         isPanelVisible = false,
         trigger = Y.one('#charm-search-trigger'),
         searchField = Y.one('#charm-search-field'),
@@ -850,7 +999,8 @@ YUI.add('juju-charm-panel', function(Y) {
       activePanelName = config.name;
       container.get('children').remove();
       container.append(panels[config.name].get('container'));
-      newPanel.set('height', calculatePanelPosition().height);
+      newPanel.set('height', calculatePanelPosition().height -
+                   panelHeightOffset[activePanelName] - 1);
       if (config.charmId) {
         newPanel.set('model', null); // Clear out the old.
         var charm = charms.getById(config.charmId);
@@ -981,8 +1131,9 @@ YUI.add('juju-charm-panel', function(Y) {
       container.setStyle('display', 'block');
       container.setX(pos.x);
       if (pos.height) {
+        var height = pos.height - panelHeightOffset[activePanelName];
         container.setStyle('height', pos.height + 'px');
-        panels[activePanelName].set('height', pos.height - 1);
+        panels[activePanelName].set('height', height - 1);
       }
     }
 
@@ -1042,6 +1193,9 @@ YUI.add('juju-charm-panel', function(Y) {
       }
     }
   };
+
+  // Exposed for testing.
+  views.filterEntries = filterEntries;
 
 }, '0.1.0', {
   requires: [
