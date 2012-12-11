@@ -6,7 +6,7 @@ Overview
 ========
 
 MVC YUI
-~~~~~~~
+-------
 
 Juju-gui is based on yui's backbone style app framework. The official docs
 for this are highly recommended for developers:
@@ -25,36 +25,36 @@ An overview of the individual pieces.
   http://yuilibrary.com/yui/docs/model-list/
 
 Environment Integration
-~~~~~~~~~~~~~~~~~~~~~~~
+-----------------------
 
 The gui connects and communicates to the environment over a web socket
 connection.
 
 RPC Calls
-~~~~~~~~~
+---------
 
 Completion callbacks can be used with any of the methods on the environment.
 Multiple calls are done in parallel.
 
 RPC Events
-~~~~~~~~~~
+----------
 
 Messages from the backend for known rpc operation results are messaged out as
 Environment events.
 
 Delta Stream
-~~~~~~~~~~~~
+------------
 
 A stream of object changes, used to update models.
 
 Scenarios
----------
+~~~~~~~~~
 
 - new client
 - existing client disconnects and reconnects
 
 Requirements
-------------
+~~~~~~~~~~~~
 
 ::
 
@@ -67,7 +67,7 @@ Requirements
   -- delta
 
 Questions
-~~~~~~~~~
+---------
 
 Model Composition and relations.
 
