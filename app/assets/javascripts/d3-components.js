@@ -195,8 +195,7 @@ YUI.add('d3-components', function(Y) {
         result.context = module;
         if (handler.context &&
             handler.context === 'component') {
-            result.context = self;
-          }
+          result.context = self;
         }
         return result;
       }
