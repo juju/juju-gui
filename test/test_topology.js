@@ -45,10 +45,12 @@ describe('topology', function() {
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div id="test" style="visibility: hidden">' +
-                              '<button class="thing"></button>' +
-                              '<button class="target"></button>' +
-                              '</div>');
+    container = Y.Node.create('<div/>')
+                 .setStyle('visibility', 'hidden')
+                 .append(Y.Node.create('<button/>')
+                 .addClass('thing'))
+                 .append(Y.Node.create('<button/>')
+                 .addClass('target'));
     state = {};
   });
 

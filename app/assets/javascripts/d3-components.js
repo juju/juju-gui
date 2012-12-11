@@ -395,9 +395,9 @@ YUI.add('d3-components', function(Y) {
      * it isn't already. The framework calls this before module
      * rendering so that d3 Events will have attached DOM elements. If
      * your application doesn't need this behavior feel free to override.
+     *
      * @method attachContainer
      * @chainable
-     *
      **/
     attachContainer: function() {
       var container = this.get('container');
