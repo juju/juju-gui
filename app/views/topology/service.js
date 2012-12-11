@@ -48,7 +48,7 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     update: function() {
-   }
+    }
   }, {
     ATTRS: {}
 

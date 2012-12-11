@@ -12,7 +12,7 @@ YUI.add('d3-components', function(Y) {
       L = Y.Lang;
 
   var Module = Y.Base.create('Module', Y.Base, [], {
-   _defaultEvents: {
+    _defaultEvents: {
       scene: {},
       d3: {},
       yui: {}
