@@ -12,15 +12,23 @@ YUI.add('d3-components', function(Y) {
       L = Y.Lang;
 
   var Module = Y.Base.create('Module', Y.Base, [], {
-    /**
-     * @property events
-     * @type {object}
-     **/
-    _defaultEvents: {
+   _defaultEvents: {
       scene: {},
       d3: {},
       yui: {}
     },
+
+    /**
+     * Declarative events include
+     *    scene
+     *    d3
+     *    yui
+     *
+     * See Component below for a description of these elements.
+     *
+     * @property events
+     * @type {object}
+     **/
     events: {},
 
     initializer: function() {
@@ -47,8 +55,6 @@ YUI.add('d3-components', function(Y) {
 
   var Component = Y.Base.create('Component', Y.Base, [], {
     /**
-     * @class Component
-     *
      * Component collects modules implementing various portions of an
      * applications functionality in a declarative way. It is designed to allow
      * both a cleaner separation of concerns and the ability to reuse the
@@ -60,6 +66,7 @@ YUI.add('d3-components', function(Y) {
      *    - Providing suggestions around updating the interactive portions
      *      of the application.
      *
+     * @class Component
      * @constructor
      **/
     initializer: function() {
@@ -70,12 +77,6 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
-     * @method addModule
-     * @chainable
-     * @param {Module} ModClassOrInstance bound will be to this.
-     * @param {Object} options dict of options set as options attribute on
-     * module.
-     *
      * Add a Module to this Component. This will bind its events and set up all
      * needed event subscriptions.  Modules can return three sets of events
      * that will be bound in different ways
@@ -86,6 +87,12 @@ YUI.add('d3-components', function(Y) {
      *          specialized d3 event handling
      *   - yui {event-type: handlerName} -> collection of global and custom
      *          events the module reacts to.
+     *
+     * @method addModule
+     * @chainable
+     * @param {Module} ModClassOrInstance bound will be to this.
+     * @param {Object} options dict of options set as options attribute on
+     * module.
      **/
 
     addModule: function(ModClassOrInstance, options) {
@@ -113,6 +120,8 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
+     * Remove a module and unbind its handlers.
+     *
      * @method removeModule
      * @param {String} moduleName Module name to remove.
      * @chainable
@@ -125,9 +134,7 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
-     * Internal implementation of
-     * binding both
-     * Module.events.scene and
+     * Internal implementation of binding both Module.events.scene and
      * Module.events.yui.
      **/
     _bindEvents: function(modName) {
@@ -186,8 +193,8 @@ YUI.add('d3-components', function(Y) {
         }
         // Set up binding context for callback.
         result.context = module;
-        if (handler.context) {
-          if (handler.context === 'component') {
+        if (handler.context &&
+            handler.context === 'component') {
             result.context = self;
           }
         }
@@ -236,9 +243,9 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
-     * @method bind
-     *
      * Internal. Called automatically by addModule.
+     *
+     * @method bind
      **/
     bind: function(moduleName) {
       var eventSet = this.events,
@@ -294,11 +301,12 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
-     * @method _unbindD3Events
-     *
-     * Internal Detail. Called by unbind automatically.
+      Internal Detail. Called by unbind automatically.
      * D3 events follow a 'slot' like system. Setting the
      * event to null unbinds existing handlers.
+     *
+     * @method _unbindD3Events
+     *
      **/
     _unbindD3Events: function(modName) {
       var modEvents = this.events[modName],
@@ -319,8 +327,8 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
+    * Internal. Called automatically by removeModule.
      * @method unbind
-     * Internal. Called automatically by removeModule.
      **/
     unbind: function(moduleName) {
       var eventSet = this.events,
@@ -353,12 +361,12 @@ YUI.add('d3-components', function(Y) {
     renderOnce: function() {},
 
     /**
-     * @method render
-     * @chainable
-     *
      * Render each module bound to the canvas. The first call to
      * render() will automatically call renderOnce (a noop by default)
      * and update(). If update requires some render state to operate on
+     *
+     * @method render
+     * @chainable
      * renderOnce is the place to include that setup code.
      */
     render: function() {
@@ -384,13 +392,13 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
-     * @method attachContainer
-     * @chainable
-     *
      * Called by render, conditionally attach container to the DOM if
      * it isn't already. The framework calls this before module
      * rendering so that d3 Events will have attached DOM elements. If
      * your application doesn't need this behavior feel free to override.
+     * @method attachContainer
+     * @chainable
+     *
      **/
     attachContainer: function() {
       var container = this.get('container');
@@ -401,10 +409,10 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
-     * @method detachContainer
-     *
      * Remove container from DOM returning container. This
      * is explicitly not chainable.
+     *
+     * @method detachContainer
      **/
     detachContainer: function() {
       var container = this.get('container');
@@ -415,12 +423,11 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
+     * Update the data for each module
+     * see also the dataBinding event hookup
      *
      * @method update
      * @chainable
-     *
-     * Update the data for each module
-     * see also the dataBinding event hookup
      */
     update: function() {
       Y.each(Y.Object.values(this.modules), function(mod) {

@@ -10,6 +10,8 @@
  *
  * Any patch adding code here (minus some initial cross module callback changes)
  * is highly suspect.
+ *
+ * @module mega
  **/
 
 YUI.add('juju-topology-mega', function(Y) {
@@ -162,7 +164,6 @@ YUI.add('juju-topology-mega', function(Y) {
 
     initializer: function(options) {
       MegaModule.superclass.constructor.apply(this, arguments);
-      console.log('View: Initialized: Env');
       this.publish('navigateTo', {preventable: false});
 
       // Build a service.id -> BoundingBox map for services.
@@ -183,8 +184,8 @@ YUI.add('juju-topology-mega', function(Y) {
       return this;
     },
     /*
-   * Construct a persistent scene that is managed in update.
-   */
+     * Construct a persistent scene that is managed in update.
+     */
     renderOnce: function() {
       var self = this,
           container = this.get('container'),
@@ -246,7 +247,6 @@ YUI.add('juju-topology-mega', function(Y) {
 
     serviceClick: function(d, context) {
       // Ignore if we clicked outside the actual service node.
-      console.log('serviceClick', arguments, this);
       var container = context.get('container'),
               mouse_coords = d3.mouse(container.one('svg').getDOMNode());
       if (!d.containsPoint(mouse_coords, context.zoom)) {
@@ -277,10 +277,10 @@ YUI.add('juju-topology-mega', function(Y) {
             { value: 'Cancel',
               section: Y.WidgetStdMod.FOOTER,
               /**
-                   * @method action Hides the dialog on click.
-                   * @param {object} e The click event.
-                   * @return {undefined} nothing.
-                   */
+               * @method action Hides the dialog on click.
+               * @param {object} e The click event.
+               * @return {undefined} nothing.
+               */
               action: function(e) {
                 e.preventDefault();
                 subRelDialog.hide();
@@ -296,16 +296,15 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     /**
-          * If the mouse moves and we are adding a relation, then the dragline
-          * needs to be updated.
-          *
-          * @method mousemove
-          * @param {object} d Unused.
-          * @param {object} self The environment view itself.
-          * @return {undefined} Side effects only.
-          */
+     * If the mouse moves and we are adding a relation, then the dragline
+     * needs to be updated.
+     *
+     * @method mousemove
+     * @param {object} d Unused.
+     * @param {object} self The environment view itself.
+     * @return {undefined} Side effects only.
+     */
     mousemove: function(d, self) {
-      //console.log("mousemove", this, arguments);
       if (self.clickAddRelation) {
         var container = self.get('component').get('container'),
                 node = container.one('.topology rect:first-child').getDOMNode(),
@@ -318,8 +317,8 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     /*
-         * Sync view models with current db.models.
-         */
+     * Sync view models with current db.models.
+     */
     updateData: function() {
       //model data
       var vis = this.vis,
@@ -357,9 +356,9 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     /*
-         * Attempt to reuse as much of the existing graph and view models
-         * as possible to re-render the graph.
-         */
+     * Attempt to reuse as much of the existing graph and view models
+     * as possible to re-render the graph.
+     */
     updateCanvas: function() {
       var self = this,
               tree = this.tree,
@@ -411,11 +410,11 @@ YUI.add('juju-topology-mega', function(Y) {
               });
 
       /**
-           * Update relation line endpoints for a given service.
-           *
-           * @method updateLinkEndpoints
-           * @param {Object} service The service module that has been moved.
-           */
+       * Update relation line endpoints for a given service.
+       *
+       * @method updateLinkEndpoints
+       * @param {Object} service The service module that has been moved.
+       */
       function updateLinkEndpoints(service) {
         Y.each(Y.Array.filter(self.rel_pairs, function(relation) {
           return relation.source() === service ||
@@ -505,8 +504,8 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     /*
-         * Draw a new relation link with label and controls.
-         */
+     * Draw a new relation link with label and controls.
+     */
     drawRelationGroup: function() {
       // Add a labelgroup.
       var self = this,
@@ -535,7 +534,6 @@ YUI.add('juju-topology-mega', function(Y) {
                     'relation';
               });
 
-      // TODO:: figure out a clean way to update position
       g.selectAll('rel-label').remove();
       g.selectAll('text').remove();
       g.selectAll('rect').remove();
@@ -1106,14 +1104,14 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     /**
-         * The user clicked on the environment view background.
-         *
-         * If we are in the middle of adding a relation, cancel the relation
-         * adding.
-         *
-         * @method backgroundClicked
-         * @return {undefined} Side effects only.
-         */
+     * The user clicked on the environment view background.
+     *
+     * If we are in the middle of adding a relation, cancel the relation
+     * adding.
+     *
+     * @method backgroundClicked
+     * @return {undefined} Side effects only.
+     */
     backgroundClicked: function() {
       if (this.clickAddRelation) {
         this.cancelRelationBuild();
@@ -1121,13 +1119,13 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     /**
-         * An "add relation" action has been initiated by the user.
-         *
-         * @method startRelation
-         * @param {object} service The service that is the source of the
-         *  relation.
-         * @return {undefined} Side effects only.
-         */
+     * An "add relation" action has been initiated by the user.
+     *
+     * @method startRelation
+     * @param {object} service The service that is the source of the
+     *  relation.
+     * @return {undefined} Side effects only.
+     */
     startRelation: function(service) {
       // Set flags on the view that indicate we are building a relation.
       this.buildingRelation = true;
@@ -1135,7 +1133,6 @@ YUI.add('juju-topology-mega', function(Y) {
 
       this.show(this.vis.selectAll('.service'));
 
-      console.log('startRelation', this, arguments);
       var db = this.get('component').get('db'),
           getServiceEndpoints = this.get('component')
                                     .get('getServiceEndpoints'),
@@ -1262,24 +1259,24 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     /**
-         * Show subordinate relations for a service.
-         *
-         * @method showSubordinateRelations
-         * @param {Object} subordinate The sub-rel-block g element in the form
-         * of a DOM node.
-         * @return {undefined} nothing.
-         */
+     * Show subordinate relations for a service.
+     *
+     * @method showSubordinateRelations
+     * @param {Object} subordinate The sub-rel-block g element in the form
+     * of a DOM node.
+     * @return {undefined} nothing.
+     */
     showSubordinateRelations: function(subordinate) {
       this.keepSubRelationsVisible = true;
       utils.addSVGClass(Y.one(subordinate).one('.sub-rel-count'), 'active');
     },
 
     /**
-         * Hide subordinate relations.
-         *
-         * @method hideSubordinateRelations
-         * @return {undefined} nothing.
-         */
+     * Hide subordinate relations.
+     *
+     * @method hideSubordinateRelations
+     * @return {undefined} nothing.
+     */
     hideSubordinateRelations: function() {
       var container = this.get('container');
       utils.removeSVGClass('.subordinate-rel-group', 'active');
@@ -1296,7 +1293,6 @@ YUI.add('juju-topology-mega', function(Y) {
       // affect the page size, such as the charm panel, to get out of the
       // way before we compute sizes.  Note the
       // "afterPageSizeRecalculation" event at the end of this function.
-      console.log('resize');
       Y.fire('beforePageSizeRecalculation');
       // start with some reasonable defaults
       var vis = this.vis,
@@ -1450,11 +1446,11 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     /**
-   * Toggle the visibility of subordinate relations for visibility
-   * or removal.
-   * @param {object} d The data-bound object (the subordinate).
-   * @param {object} self The view.
-   **/
+     * Toggle the visibility of subordinate relations for visibility
+     * or removal.
+     * @param {object} d The data-bound object (the subordinate).
+     * @param {object} self The view.
+     **/
     subRelBlockClick: function(d, self) {
       if (self.keepSubRelationsVisible) {
         self.hideSubordinateRelations();
@@ -1530,7 +1526,6 @@ YUI.add('juju-topology-mega', function(Y) {
       },
 
       _destroyCallback: function(service, view, btn, ev) {
-        console.log('dest callback', arguments, this);
         var getModelURL = view.get('getModelURL'),
                 db = view.get('component').get('db');
         if (ev.err) {

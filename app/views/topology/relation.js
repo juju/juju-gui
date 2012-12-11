@@ -6,9 +6,9 @@ YUI.add('juju-topology-relation', function(Y) {
       d3ns = Y.namespace('d3');
 
   /**
-   * @module topology-service
-   * @class Service
-   * @namespace juju.views
+   * @module topology-relations
+   * @class RelationModule
+   * @namespace views
    **/
   var RelationModule = Y.Base.create('RelationModule', d3ns.Module, [], {
     initializer: function(options) {

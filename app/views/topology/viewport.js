@@ -18,9 +18,9 @@ YUI.add('juju-topology-viewport', function(Y) {
 
 
   /**
-   * @module topology-service
-   * @class Service
-   * @namespace juju.views
+   * @module topology-viewport
+   * @class ViewportModule
+   * @namespace views
    **/
   var ViewportModule = Y.Base.create('ViewportModule', d3ns.Module, [], {
 

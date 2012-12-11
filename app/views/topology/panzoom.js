@@ -6,9 +6,9 @@ YUI.add('juju-topology-panzoom', function(Y) {
       d3ns = Y.namespace('d3');
 
   /**
-   * @module topology-service
-   * @class Service
-   * @namespace juju.views
+   * @module topology-panzoom
+   * @class PanZoomModule
+   * @namespace views
    **/
   var PanZoomModule = Y.Base.create('PanZoomModule', d3ns.Module, [], {
     initializer: function(options) {

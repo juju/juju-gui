@@ -16,7 +16,7 @@ YUI.add('juju-view-environment', function(Y) {
    * Display an environment.
    *
    * @class environment
-   * @namespace juju.views
+   * @namespace views
    */
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View,
                                       [views.JujuBaseView],
@@ -55,13 +55,14 @@ YUI.add('juju-view-environment', function(Y) {
           topo.render();
           return this;
         },
-        // XXX: vomit
+        // XXX: This method is a pass through,
+        // it will be removed when we move to
+        // incremental rendering.
         postRender: function() {
           this.topo.modules.MegaModule.postRender();
         }
       }, {
-        ATTRS: {
-        }
+        ATTRS: {}
       });
 
   views.environment = EnvironmentView;
