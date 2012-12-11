@@ -282,10 +282,10 @@ link-prod-files:
 prep: beautify lint
 
 test-debug: build-debug
-	test-server.sh debug
+	./test-server.sh debug
 
 test-prod: build-prod
-	test-server.sh prod
+	./test-server.sh prod
 
 test: test-debug
 

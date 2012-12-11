@@ -44,6 +44,36 @@ var GlobalConfig = {
         },
 
         // Views
+        'juju-topology-relation': {
+          fullpath: '/juju-ui/views/topology/relation.js'
+        },
+
+        'juju-topology-panzoom': {
+          fullpath: '/juju-ui/views/topology/panzoom.js'
+        },
+
+        'juju-topology-viewport': {
+          fullpath: '/juju-ui/views/topology/viewport.js'
+        },
+
+        'juju-topology-service': {
+          fullpath: '/juju-ui/views/topology/service.js'
+        },
+
+        'juju-topology-mega': {
+          fullpath: '/juju-ui/views/topology/mega.js'
+        },
+
+        'juju-topology': {
+          fullpath: '/juju-ui/views/topology/topology.js',
+          require: [
+            'juju-topology-mega',
+            'juju-topology-service',
+            'juju-topology-relation',
+            'juju-topology-panzoom',
+            'juju-topology-viewport'
+          ]
+        },
         'juju-view-utils': {
           fullpath: '/juju-ui/views/utils.js'
         },
@@ -86,6 +116,7 @@ var GlobalConfig = {
             'juju-templates',
             'juju-notifications',
             'juju-view-utils',
+            'juju-topology',
             'juju-view-environment',
             'juju-view-service',
             'juju-view-unit',
