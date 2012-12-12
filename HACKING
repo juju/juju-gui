@@ -94,17 +94,17 @@ certificate and the private key, whose filenames will have to be respectively
 After which, the gui should be functional (it automatically polls the
 api server for establishing a websocket).
 
-Running unit tests
+Running Unit Tests
 ==================
 
   $ make test
 
-Running lint
+Running Lint
 ============
 
   $ make lint
 
-API documentation
+API Documentation
 =================
 
 Generated JavaScript documentation is available in the yuidoc directory after
@@ -115,7 +115,7 @@ running the command ``make yuidoc``. You can view the docs by running::
 The `documentation <http://yui.github.com/yuidoc/syntax/>`_ for YUIDoc markup
 is available.
 
-Project documentation
+Project Documentation
 =====================
 
 The project documentation is available in the ``docs/`` directory. It needs
@@ -133,7 +133,7 @@ View it::
 
   $ xdg-open docs/_build/html/index.html
 
-Making releases
+Making Releases
 ===============
 
 To make a release, you must either be in a checkout of lp:juju-gui

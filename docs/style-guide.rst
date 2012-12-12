@@ -1,5 +1,5 @@
 ===========
-Style guide
+Style Guide
 ===========
 
 This guide is an attempt to describe a code style that both works well with the
@@ -15,7 +15,7 @@ beautifier ("make beautify").  The lowest (least leading whitespace) acceptable
 indention will be applied.
 
 
-For loops
+For Loops
 =========
 
 Unless you are counting something, for loops (and for-in loops) are a trap.
@@ -29,7 +29,7 @@ No trailing whitespace on lines or at the end of the file (i.e., the file
 should end with a non-blank line).
 
 
-Object literal formatting
+Object Literal Formatting
 =========================
 
 Things you should do:
@@ -66,7 +66,7 @@ An example::
         errors = utils.validate(values, schema);
 
 
-Chaining method calls
+Chaining Method Calls
 =====================
 
 Some APIs are designed such that mutating method calls return the object being

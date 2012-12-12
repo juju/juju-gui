@@ -1,8 +1,8 @@
 =============
-Process notes
+Process Notes
 =============
 
-Checklist for starting a branch
+Checklist for Starting a Branch
 ===============================
 
 - Understand the problem.  If you don't, ask and be persistent until you do.
@@ -18,7 +18,7 @@ Checklist for starting a branch
   making changes, add an "unreleased" section at the top.  All other
   version numbers follow `Semantic Versioning <http://semver.org/>`_.
 
-Checklist for preparing for a review
+Checklist for Preparing for a Review
 ====================================
 
 - Round-trips with reviewers are expensive. Try to eliminate them.
@@ -60,7 +60,7 @@ every request, even if it is to disagree.
 Once you have two approving reviews (and no disapproving reviews), you may
 land your branch.
 
-Checklist for reviewing
+Checklist for Reviewing
 =======================
 
 - Run ``make test`` and confirm that tests pass.
@@ -92,7 +92,7 @@ Checklist for reviewing
   want to re-review after the changes, or if you automatically approve if the
   changes are made.
 
-Checklist for making a stable release
+Checklist for Making a Stable Release
 =====================================
 
 - Get a checkout of the trunk:: ``bzr co lp:juju-gui``.
@@ -145,7 +145,7 @@ Checklist for making a stable release
 
 You are done!
 
-Checklist for making a developer release
+Checklist for Making a Developer Release
 ========================================
 
 - Get a checkout of the trunk:: ``bzr co lp:juju-gui``.
@@ -202,7 +202,7 @@ Checklist for making a developer release
 
 You are done!
 
-Checklist for running a daily meeting
+Checklist for Running a Daily Meeting
 =====================================
 
 Move quickly if possible. :-)
@@ -243,7 +243,7 @@ Second part: what are we going to do?
     of reduced availability, request help such as code reviews or pair requests,
     etc.
 
-Checklist for running a weekly retrospective
+Checklist for Running a Weekly Retrospective
 ============================================
 
 Do not go over allotted time.  Try to move quickly to discuss all
@@ -300,7 +300,7 @@ Suggested sources for topic cards:
   - Experiment?
   - Another process change?
 
-Slack project policy
+Slack Project Policy
 ====================
 
 - The project should further Canonical in some aspect.  Examples include

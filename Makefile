@@ -128,10 +128,12 @@ build/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 	node_modules/.bin/yuidoc -o yuidoc -x assets app
 
+sphinx:
+	make -C docs html
+
 yuidoc: yuidoc/index.html
 
-doc: yuidoc
-	make -C docs html
+doc: sphinx yuidoc
 
 $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 		$(SPRITE_SOURCE_FILES)
