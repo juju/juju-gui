@@ -202,6 +202,24 @@ Checklist for Making a Developer Release
 
 You are done!
 
+Making Targets Quickly Without ``bzr``
+======================================
+
+Within a checkout, a lightweight checkout, or a branch, you may run make as
+``NO_BZR=1 make [target]`` in order to prevent the Makefile from running 
+any bzr commands, all of which access the parent branch over the network.
+Where bzr may have provided information such as the revno, sensible defaults
+are used instead.  As many of these bzr commands are used to populate
+variables regardless of the target, defining NO_BZR will have an effect on
+all targets.
+
+- Note that this allows one to run any make target from the working copy, 
+  even if it is a lightweight checkout, by skipping steps that involve
+  network access through bzr.  Because of this, make will assume that
+  the revno is 0 and that the branch is clean and up to date without
+  checking that it is a checkout of trunk.  The resulting tarball or build
+  may be used to test releases by hand or in the charm.
+
 Checklist for Running a Daily Meeting
 =====================================
 
