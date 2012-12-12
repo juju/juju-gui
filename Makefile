@@ -20,6 +20,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
   	\) -print \
   	| sort | sed -e 's/^\.\///' \
 	| grep -Ev -e '^manifest\.json$$' \
+		-e '^app/assets/javascripts/d3.v2.*.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket.js$$' \
 		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
