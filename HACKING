@@ -34,7 +34,7 @@ To make releases, you'll need pytz::
 
 The gui frontend can be installed with::
 
-  $ bzr branch lp:juju-ui trunk
+  $ bzr branch lp:juju-gui trunk
   $ cd trunk
   $ make server
 
@@ -64,7 +64,7 @@ is the api-port. An appropriate sample configuration::
       api-port: 8081
 
 Note that juju-origin is set to the ppa, the api server runs outside of
-the container, and is launched using whichever branch you're using.
+the container, and it is launched using whichever branch you're using.
 
 Also note that the api-port should be set at 8081, which the gui's
 initial environment connection currently defaults to.
@@ -91,7 +91,7 @@ config above: its value will be the path of the directory containing the
 certificate and the private key, whose filenames will have to be respectively
 ``juju.crt`` and ``juju.key``.
 
-After which, the gui should be functional (it automatically polls the
+After this, the gui should be functional (it automatically polls the
 api server for establishing a websocket).
 
 Running Unit Tests
