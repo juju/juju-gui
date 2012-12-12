@@ -14,6 +14,7 @@ var GlobalConfig = {
             'd3-components',
             'juju-templates',
             'juju-notifications',
+            'juju-topology',
             'juju-view-utils',
             'juju-view-environment',
             'juju-view-service',
