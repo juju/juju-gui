@@ -6,9 +6,9 @@ Checklist for Starting a Branch
 ===============================
 
 - Understand the problem.  If you don't, ask and be persistent until you do.
-- When determining a solution, consider this preferred Software
-  Architecture Cheat Sheet:
-  http://gorban.org/post/32873465932/software-architecture-cheat-sheet
+- When determining a solution, consider this preferred `Software
+  Architecture Cheat Sheet
+  <http://gorban.org/post/32873465932/software-architecture-cheat-sheet>`_
 - Have a pre-implementation call with someone about your solution.  If you
   are not sure of your solution, prototype before the pre-implementation call.
 - Use TDD.  Your prototype might be perfect, but you can still move it aside
@@ -16,7 +16,7 @@ Checklist for Starting a Branch
 - Update the CHANGES.yaml file with your changes.  The newest (topmost)
   section should have the version "unreleased".  If not and you are
   making changes, add an "unreleased" section at the top.  All other
-  version numbers follow Semantic Versioning (http://semver.org/).
+  version numbers follow `Semantic Versioning <http://semver.org/>`_.
 
 Checklist for Preparing for a Review
 ====================================
@@ -79,8 +79,8 @@ Checklist for Reviewing
   * Make sure that new code has tests.
   * Make sure you can understand the new code.  Ask for clarification if
     necessary.
-  * Consider the advice in this preferred Software Architecture Cheat Sheet.
-    http://gorban.org/post/32873465932/software-architecture-cheat-sheet
+  * Consider the advice in this preferred `Software Architecture Cheat Sheet
+    <http://gorban.org/post/32873465932/software-architecture-cheat-sheet>`_
   * Make sure changes to a file correspond to the naming conventions and other
     stylistic considerations local to that file, and within our project.
   * Before you ask for a change, think and make sure you can't compromise
