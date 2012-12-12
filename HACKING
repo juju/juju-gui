@@ -1,0 +1,197 @@
+===========
+Development
+===========
+
+Here is how to develop on this codebase.
+
+Developer Install
+=================
+
+Juju GUI uses nodejs based development tools.
+
+You'll need nodejs & npm from the ppa::
+
+  $ sudo add-apt-repository ppa:chris-lea/node.js
+  $ sudo apt-get update
+  $ sudo apt-get install nodejs npm
+
+You also need ImageMagick::
+
+  $ sudo apt-get install imagemagick
+
+The linter will be installed locally per branch, but if you want editor
+integration, you may want to install jshint globally in your system::
+
+  $ sudo npm install -g jshint
+
+For building the docs, you also need sphinx::
+
+  $ sudo apt-get install python-sphinx
+
+To make releases, you'll need pytz::
+
+  $ sudo apt-get install python-tz
+
+The gui frontend can be installed with::
+
+  $ bzr branch lp:juju-ui trunk
+  $ cd trunk
+  $ make server
+
+It may take a while for the server to start the first time as npm will
+need to download packages.  When ready, the server will print:
+
+Server listening on 8888
+
+You can then access the GUI at <http://localhost:8888/>.
+
+You'll also need to deploy a juju environment with REST api access.
+Currently that work resides in a pipeline of juju branches. The
+recommended branch to use as a server is ``lp:~hazmat/juju/rapi-rollup``.
+
+You can use it with any environment, but for dev purposes, a local
+environment works well. One environment option specific to this branch
+is the api-port. An appropriate sample configuration::
+
+  default: dev
+  environments:
+    dev:
+      type: local
+      data-dir: /home/kapil/.juju/local
+      admin-secret: b3a5dee4fb8c4fc9a4db04751e5936f4
+      default-series: precise
+      juju-origin: ppa
+      api-port: 8081
+
+Note that juju-origin is set to the ppa, the api server runs outside of
+the container, and is launched using whichever branch you're using.
+
+Also note that the api-port should be set at 8081, which the gui's
+initial environment connection currently defaults to.
+
+You'll need to bootstrap the local environment, and deploy one service.
+The api server needs access to the provisioning credentials which are
+lazily initialized in juju upon usage.
+
+Juju-gui and rapi-rollup can communicate via an encrypted WebSockets
+connection: to enable it, add the following line to the config above::
+
+  api-secure: true
+
+You will also need to edit your ``app/config.js`` replacing
+``ws://localhost:8081/ws`` with ``wss://localhost:8081/ws``.
+
+By default, rapi-rollup uses a self-signed certificate; because of that you
+will need to visit the <https://localhost:8081/ws> WebSockets URL with your
+browser and accept the included self-signed certificate, or the WebSockets
+encrypted connection will not work.
+
+In order to use a different certificate, you add an api-keys option to the
+config above: its value will be the path of the directory containing the
+certificate and the private key, whose filenames will have to be respectively
+``juju.crt`` and ``juju.key``.
+
+After which, the gui should be functional (it automatically polls the
+api server for establishing a websocket).
+
+Running Unit Tests
+==================
+
+  $ make test
+
+Running Lint
+============
+
+  $ make lint
+
+API Documentation
+=================
+
+Generated JavaScript documentation is available in the yuidoc directory after
+running the command ``make yuidoc``. You can view the docs by running::
+
+  $ xdg-open yuidoc/index.html
+
+The `documentation <http://yui.github.com/yuidoc/syntax/>`_ for YUIDoc markup
+is available.
+
+Project Documentation
+=====================
+
+The project documentation is available in the ``docs/`` directory. It needs
+Sphinx::
+
+  $ sudo apt-get install python-sphinx
+
+Build the documentation::
+
+  $ make doc
+
+(This will also generate the above mentioned yuidoc documentation.)
+
+View it::
+
+  $ xdg-open docs/_build/html/index.html
+
+Making Releases
+===============
+
+To make a release, you must either be in a checkout of lp:juju-gui
+without uncommitted changes, or you must override one of the
+`pertinent variable names`_ to force a release.
+
+.. _`pertinent variable names`: `Potentially Useful Release-Oriented Makefile Variables`_
+
+You also need to have a gpg key, and the python-pytz package installed (as
+well as launchpadlib, but that is installed by default in Ubuntu).
+
+See the Process document (docs/process.rst) for step-by-step checklists to
+make developer and stable releases.
+
+Potentially Useful Release-Oriented Makefile Variables
+------------------------------------------------------
+
+The following is a list of pertinent Makefile variables.
+
+FINAL
+  Set FINAL to any non-empty value to make a final release. This will cause
+  the bzr revno to be omitted from the tarball name, and (if you use the
+  release target) will cause the release to be uploaded to the stable series
+  rather than the trunk series. Example usage::
+
+    $ FINAL=1 make release
+
+PROD
+  By default, releases will be uploaded to staging.launchpad.net, which is a
+  separate version of Launchpad that uses a temporary database.  This can be
+  convenient for trying out the release process in the Makefile without
+  affecting our actual production releases.  Set PROD to any non-empty value
+  to send uploads to launchpad.net, the production version of Launchpad, when
+  you are ready to make a real release.
+
+  Note that you may need to ask the webops to turn off the two-factor
+  authentication on your Launchpad staging account in order for the staging to
+  work. Go to the #launchpad-ops channel on the Canonical IRC server and ask
+  something like "webops, could you disable 2FA on my staging account?"
+
+  Example usage::
+
+    $ PROD=1 make release
+
+IS_TRUNK_CHECKOUT
+  Set this to any non-empty value to force the Makefile to believe it is
+  working with a trunk checkout. Example usage::
+
+    $ IS_TRUNK_CHECKOUT=1 make release
+
+HAS_NO_CHANGES
+  Set this to any non-empty value to force the Makefile to believe that the
+  current code tree has no changes. Example usage::
+
+    $ HAS_NO_CHANGES=1 make release
+
+IS_SAFE_RELEASE
+  Set this to any non-empty value to force the Makefile to bypass checks of
+  IS_TRUNK_CHECKOUT and HAS_NO_CHANGES. Example usage::
+
+    $ IS_SAFE_RELEASE=1 make release
