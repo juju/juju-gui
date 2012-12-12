@@ -13,6 +13,7 @@ Contents:
    :maxdepth: 2
 
    readme
+   hacking
    style-guide
    architecture
    d3-component-framework
