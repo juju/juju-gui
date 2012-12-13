@@ -60,6 +60,32 @@ describe('juju application notifications', function() {
     views.highlightRow = _viewsHighlightRow;
   });
 
+  it('should notify errors in the notifications view', function() {
+    viewContainer.set('id', 'notifications');
+    var notificationsView = new views.NotificationsView({
+      container: viewContainer,
+      db: db,
+      env: {
+        on: NO_OP,
+        get: function(key) {
+          if (key === 'connected') {
+            return true;
+          }
+          return null;
+        }
+      },
+      notifications: db.notifications
+    });
+    notificationsView.render();
+    var notification = new models.Notification({
+      title: 'Error',
+      message: 'Message',
+      level: 'error'
+    });
+    db.notifications.add(notification);
+    assert.equal('1', viewContainer.one('#notify-indicator').getHTML().trim());
+  });
+
   it('should show notification for "add_unit" and "remove_units" exceptions' +
      ' (service view)', function() {
        var view = new views.service(
