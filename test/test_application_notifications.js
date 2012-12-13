@@ -195,18 +195,19 @@ describe('juju application notifications', function() {
         assertNotificationNumber('2');
       });
 
-  it('should show notification for "addRelation" exceptions (env view)',
+  it('should show a notification for "addRelation" exceptions (env view)',
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
         var module = view.topo.modules.MegaModule;
+        // The callback wants to remove the pending relation from the db.
         db.relations.remove = NO_OP;
         var args = [module, 'relation_id', ERR_EV];
         module.service_click_actions._addRelationCallback.apply(module, args);
         assertNotificationNumber('1');
       });
 
-  it('should show notification for "removeRelation" exceptions (env view)',
+  it('should show a notification for "removeRelation" exceptions (env view)',
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
@@ -220,11 +221,13 @@ describe('juju application notifications', function() {
         assertNotificationNumber('1');
       });
 
-  it('should show notification for "destroyService" exceptions (env view)',
+  it('should show a notification for "destroyService" exceptions (env view)',
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
         var module = view.topo.modules.MegaModule;
+        // The callback uses the 'getModelURL' attribute to retrieve the
+        // service URL.
         module.set('getModelURL', NO_OP);
         var args = [{}, module, {set: NO_OP}, ERR_EV];
         module.service_click_actions._destroyCallback.apply(module, args);
