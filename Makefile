@@ -7,10 +7,25 @@
 #OLD_SHELL := $(SHELL)
 #SHELL = $(warning [$@ [32m($^) [34m($?)[m ])$(OLD_SHELL)
 
-JSFILES=$(shell bzr ls -RV -k file | \
-	grep -E -e '.+\.js(on)?$$|generateTemplates$$' | \
-	grep -Ev -e '^manifest\.json$$' \
-		-e '^test/assets/' \
+# Build a target for JavaScript files.  The find command exclused directories
+# as needed through the -prune directive, and the grep command removes
+# individual unwanted JavaScript and JSON files from the list.
+# find(1) is used here to build a list of JavaScript targets rather than bzr
+# due to the speed of network access being unpredictable (bzr accesses the 
+# parent branch, which may be lp:juju-gui, for any command relating to the
+# branch or checkout).  Additionally, working with the release or an export,
+# a developer may not be working in a bzr repository.
+JSFILES=$(shell find . -wholename './node_modules*' -prune \
+	-o -wholename './build*' -prune \
+	-o -wholename './test/assets*' -prune \
+	-o \( \
+    		-name '*.js' \
+    		-o -name '*.json' \
+    		-o -name 'generateTemplates' \
+  	\) -print \
+  	| sort | sed -e 's/^\.\///' \
+	| grep -Ev -e '^manifest\.json$$' \
+		-e '^app/assets/javascripts/d3.v2.*.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket.js$$' \
 		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
@@ -25,7 +40,14 @@ EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
 	| tr '\n' ' ')
 
 ### Release-specific variables - see docs/process.rst for an overview. ###
+# Provide the ability to build a release package without using bzr, for
+# lightweight checkouts.
+ifdef NO_BZR
+BZR_REVNO=0
+BRANCH_IS_GOOD=1
+else
 BZR_REVNO=$(shell bzr revno)
+endif
 # Figure out the two most recent version numbers.
 ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
 PENULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 \
@@ -61,6 +83,7 @@ RELEASE_NAME=juju-gui-$(RELEASE_VERSION)
 RELEASE_FILE=releases/$(RELEASE_NAME).tgz
 RELEASE_SIGNATURE=releases/$(RELEASE_NAME).asc
 # Is the branch being released a branch of trunk?
+ifndef BRANCH_IS_GOOD
 ifndef IS_TRUNK_BRANCH
 IS_TRUNK_BRANCH=$(shell bzr info | grep \
 	'parent branch: bzr+ssh://bazaar.launchpad.net/+branch/juju-gui/' \
@@ -73,7 +96,6 @@ endif
 # Is it safe to do a release of the branch?  For trial-run releases you can
 # override this check on the command line by setting the BRANCH_IS_GOOD
 # environment variable.
-ifndef BRANCH_IS_GOOD
 ifneq ($(strip $(IS_TRUNK_BRANCH)),)
 ifneq ($(strip $(BRANCH_IS_CLEAN)),)
 BRANCH_IS_GOOD=1
@@ -81,10 +103,9 @@ endif
 endif
 endif
 ### End of release-specific variables ###
+TEMPLATE_TARGETS=$(shell find app/templates -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
 
-TEMPLATE_TARGETS=$(shell bzr ls -k file app/templates)
-
-SPRITE_SOURCE_FILES=$(shell bzr ls -R -k file app/assets/images)
+SPRITE_SOURCE_FILES=$(shell find app/assets/images -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
 SPRITE_GENERATED_FILES=build/juju-ui/assets/sprite.css \
 	build/juju-ui/assets/sprite.png
 BUILD_FILES=build/juju-ui/assets/app.js \
@@ -377,12 +398,28 @@ else
 	@false
 endif
 
+distfile: $(RELEASE_FILE)
+
 $(RELEASE_SIGNATURE): $(RELEASE_FILE)
 	gpg --armor --sign --detach-sig $(RELEASE_FILE)
 
 dist: $(RELEASE_FILE) $(RELEASE_SIGNATURE) upload_release.py
+ifndef NO_BZR
 	python2 upload_release.py juju-gui $(SERIES) $(RELEASE_VERSION) \
 	    $(RELEASE_FILE) $(LAUNCHPAD_API_ROOT)
+else
+	@echo "**************************************************************"
+	@echo "*********************** DIST FAILED **************************"
+	@echo "**************************************************************"
+	@echo
+	@echo "You may not make dist while the NO_BZR flag is defined."
+	@echo "Please run this target without the NO_BZR flag defined if you"
+	@echo "wish to upload a release."
+	@echo
+	@echo "See the README for more information"
+	@echo
+	@false
+endif
 
 appcache: $(APPCACHE)
 
