@@ -195,125 +195,41 @@ describe('juju application notifications', function() {
         assertNotificationNumber('2');
       });
 
-  it.skip('should show notification for "add_relation" and "remove_relation"' +
-      ' exceptions (environment view)', function() {
-        var view = new views.environment({
-          db: db,
-          container: viewContainer});
+  it('should show notification for "addRelation" exceptions (env view)',
+      function() {
+        var view = new views.environment({db: db, container: viewContainer});
         view.render();
+        var module = view.topo.modules.MegaModule;
         db.relations.remove = NO_OP;
-
-        view.service_click_actions._addRelationCallback.apply(view,
-            [view, 'relation_id', ERR_EV]);
-
+        module.service_click_actions._addRelationCallback.apply(
+          module, [module, 'relation_id', ERR_EV]);
         assertNotificationNumber('1');
-
-        //view, relationElement, relationId, confirmButton, ev
-        view._removeRelationCallback.apply(view, [{
-          get: function() {return {hide: NO_OP, destroy: NO_OP};},
-          removeSVGClass: NO_OP
-        }, {}, '', {
-          set: NO_OP
-        }, ERR_EV]);
-
-        assertNotificationNumber('2');
       });
 
-  it.skip('should show notification for "add_relation" and "destroy_service"' +
-      ' exceptions (environment view)', function() {
-        var fakeLink = (function() {
-          var link = [{}, {}];
-          link.enter = function() {
-            return {
-              insert: function() {
-                return {
-                  attr: NO_OP
-                };
-              }
-            };
-          };
-          return link;
-        })(),
-            env = {
-              destroy_service: function(service, callback) {
-                callback(ERR_EV);
-              },
-              add_relation: function(endpoint_a, endpoint_b, callback) {
-                callback(ERR_EV);
-              }
-            },
-            view = {
-              set: NO_OP,
-              drawRelation: NO_OP,
-              cancelRelationBuild: NO_OP,
-
-              vis: {
-                selectAll: function() {
-                  return {
-                    data: function() {return fakeLink;}
-                  };
-                }
-              },
-              removeSVGClass: NO_OP,
-              db: db,
-              destroy_service: {
-                get: NO_OP
-              },
-              env: env,
-              get: function(key) {
-                if ('getModelURL' === key) {
-                  return NO_OP;
-                }
-                if ('updateEndpoints' === key) {
-                  return NO_OP;
-                }
-                if ('env' === key) {
-                  return env;
-                }
-                if ('addRelationStart_service' === key) {
-                  return {};
-                }
-                if ('db' === key) {
-                  return db;
-                }
-                if ('destroy_service' === key) {
-                  return {
-                    get: NO_OP
-                  };
-                }
-                return null;
-              },
-              container: viewContainer,
-              _addRelationCallback: function() {
-                // Executing the "views.environment.prototype
-                // .service_click_actions._addRelationCallback" function
-                //instead.
-                views.environment.prototype.service_click_actions
-                   ._addRelationCallback.apply(this, arguments);
-              },
-              _destroyCallback: function() {
-                // Executing the "views.environment.prototype
-                // .service_click_actions._destroyCallback" function
-                //instead.
-                views.environment.prototype.service_click_actions
-                   ._destroyCallback.apply(this, arguments);
-              }
-            };
-
-        views.environment.prototype.service_click_actions.addRelationEnd
-           .apply(view, [
-              [
-               ['s1', {name: 'n', role: 'client'}],
-               ['s2', {name: 'n', role: 'server'}]],
-              view]);
-
+  it('should show notification for "removeRelation" exceptions (env view)',
+      function() {
+        var view = new views.environment({db: db, container: viewContainer});
+        view.render();
+        var module = view.topo.modules.MegaModule;
+        module._removeRelationCallback.apply(
+          module, [
+            {
+              get: function() {return {hide: NO_OP, destroy: NO_OP};},
+              removeSVGClass: NO_OP
+            }, {}, '', {set: NO_OP}, ERR_EV
+          ]);
         assertNotificationNumber('1');
+      });
 
-        views.environment.prototype.service_click_actions.destroyService.apply(
-            //destroyService function signature > (m, view, btn)
-            view, [{}, view, {set: NO_OP}]);
-
-        assertNotificationNumber('2');
+  it('should show notification for "destroyService" exceptions (env view)',
+      function() {
+        var view = new views.environment({db: db, container: viewContainer});
+        view.render();
+        var module = view.topo.modules.MegaModule;
+        module.set('getModelURL', NO_OP);
+        module.service_click_actions._destroyCallback.apply(
+          module, [{}, module, {set: NO_OP}, ERR_EV]);
+        assertNotificationNumber('1');
       });
 
   it('should show notification for "get_service" exceptions' +
