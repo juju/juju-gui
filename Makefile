@@ -11,13 +11,15 @@
 # as needed through the -prune directive, and the grep command removes
 # individual unwanted JavaScript and JSON files from the list.
 # find(1) is used here to build a list of JavaScript targets rather than bzr
-# due to the speed of network access being unpredictable (bzr accesses the 
+# due to the speed of network access being unpredictable (bzr accesses the
 # parent branch, which may be lp:juju-gui, for any command relating to the
 # branch or checkout).  Additionally, working with the release or an export,
 # a developer may not be working in a bzr repository.
 JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	-o -wholename './build*' -prune \
+	-o -wholename './docs*' -prune \
 	-o -wholename './test/assets*' -prune \
+	-o -wholename './yuidoc*' -prune \
 	-o \( \
     		-name '*.js' \
     		-o -name '*.json' \
@@ -140,7 +142,7 @@ help:
 	@echo "           FIXME: currently yielding 78 failures"
 	@echo "test: same as the test-debug target"
 	@echo "prep: beautify and lint the source"
-	@echo "doc: generate Sphinx and YuiDoc documentation"
+	@echo "docs: generate Sphinx and YUIdoc documentation"
 	@echo "help: this description"
 	@echo "Other, less common targets are available, see Makefile."
 
@@ -156,7 +158,7 @@ sphinx:
 
 yuidoc: yuidoc/index.html
 
-doc: sphinx yuidoc
+docs: sphinx yuidoc
 
 $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 		$(SPRITE_SOURCE_FILES)
@@ -347,6 +349,7 @@ clean-deps:
 
 clean-docs:
 	make -C docs clean
+	rm -rf yuidoc
 
 clean-all: clean clean-deps clean-docs
 
@@ -434,7 +437,7 @@ appcache-force: appcache-touch $(APPCACHE)
 # targets are alphabetically sorted, they like it that way :-)
 .PHONY: appcache-force appcache-touch beautify build \
 	build-debug build-files build-prod clean clean clean-all \
-	clean-deps clean-docs debug devel doc dist gjslint help \
+	clean-deps clean-docs debug devel docs dist gjslint help \
 	jshint lint prep prod server spritegen test test-debug test-prod \
 	undocumented yuidoc yuidoc-lint
 
