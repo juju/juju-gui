@@ -64,7 +64,6 @@ describe('juju application notifications', function() {
     viewContainer.set('id', 'notifications');
     var notificationsView = new views.NotificationsView({
       container: viewContainer,
-      db: db,
       env: {
         on: NO_OP,
         get: function(key) {
