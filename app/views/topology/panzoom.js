@@ -26,25 +26,92 @@ YUI.add('juju-topology-panzoom', function(Y) {
     },
 
     componentBound: function() {
-      // Create a pan/zoom behavior manager.
-      var zoom = d3.behavior.zoom()
-      .x(this.xscale)
-      .y(this.yscale)
-      .scaleExtent([0.25, 2.0])
-      .on('zoom', function() {
-            // Keep the slider up to date with the scale on other sorts
-            // of zoom interactions
-            var s = self.slider;
-            s.set('value', Math.floor(d3.event.scale * 100));
-            self.rescale(vis, d3.event);
-          });
-      self.zoom = zoom;
+      var topo = this.get('component'),
+          vis = topo.vis;
+
+      // Directly invoke the handler on bind
+      this.sizeChangeHandler();
+      // And register it as a subscribed event handler.
+      // XXX: we have to manually do this until either
+      // I add a slots/signals model to the framework
+      // or we let the declaration specify a target object.
+      // At first glance saying context:
+      // component|module|component-attr|module-attr
+      // for the yui event block make sense, but some
+      // attrs would not exist until late in runtime
+      // so I lean towards slots.
+      topo.recordSubscription(
+        topo.on('sizeChanged', this.sizeChangeHandler);
+      );
+
+      // Bind zoom behavior and disable
+      // dblclick to zoom.
+      vis.call(this.zoom)
+         .on('dblclick.zoom', null);
     },
+
+    sizeChangeHandler: function() {
+      var component = this.get('component'),
+          width = component.get('width'),
+          height = component.get('height'),
+          vis = component.vis;
+
+      // Create a pan/zoom behavior manager.
+      this.xscale = d3.scale.linear()
+      .domain([-width / 2, width / 2])
+      .range([0, width]),
+      this.yscale = d3.scale.linear()
+      .domain([-height / 2, height / 2])
+      .range([height, 0]);
+
+      var zoom = d3.behavior.zoom()
+                   .x(this.xscale)
+                   .y(this.yscale)
+                   .scaleExtent([0.25, 2.0])
+                   .on('zoom', function() {
+                     // Keep the slider up to date with the scale on other sorts
+                     // of zoom interactions
+                     var s = self.slider;
+                     s.set('value', Math.floor(d3.event.scale * 100));
+                     self.rescale(vis, d3.event);
+                   });
+      self.zoom = zoom;
+
+    }
 
     render: function() {
       PanZoomModule.superclass.render.apply(this, arguments);
+      this.renderSlider();
       return this;
     },
+
+    renderSlider: function() {
+      var self = this,
+          topo = this.get('component'),
+          contianer = topo.get('container'),
+          value = 100,
+          currentScale = topo.get('scale');
+      // Build a slider to control zoom level
+      if (currentScale) {
+        value = currentScale * 100;
+      }
+      var slider = new Y.Slider({
+        min: 25,
+        max: 200,
+        value: value
+      });
+      slider.render('#slider-parent');
+      slider.after('valueChange', function(evt) {
+        // Don't fire a zoom if there's a zoom event already in progress;
+        // that will run rescale for us.
+        if (d3.event && d3.event.scale && d3.event.translate) {
+          return;
+        }
+        self._fire_zoom((evt.newVal - evt.prevVal) / 100);
+      });
+      self.slider = slider;
+    },
+
 
     update: function() {
       PanZoomModule.superclass.update.apply(this, arguments);

@@ -201,20 +201,6 @@ YUI.add('juju-topology-mega', function(Y) {
       .domain([-height / 2, height / 2])
       .range([height, 0]);
 
-      // Create a pan/zoom behavior manager.
-      var zoom = d3.behavior.zoom()
-      .x(this.xscale)
-      .y(this.yscale)
-      .scaleExtent([0.25, 2.0])
-      .on('zoom', function() {
-            // Keep the slider up to date with the scale on other sorts
-            // of zoom interactions
-            var s = self.slider;
-            s.set('value', Math.floor(d3.event.scale * 100));
-            self.rescale(vis, d3.event);
-          });
-      self.zoom = zoom;
-
       // Set up the visualization with a pack layout.
       var vis = d3.select(container.getDOMNode())
       .select('.crosshatch-background')
@@ -223,9 +209,6 @@ YUI.add('juju-topology-mega', function(Y) {
       .attr('width', width)
       .attr('height', height)
       .append('svg:g')
-      .call(zoom)
-          // Disable zoom on double click.
-      .on('dblclick.zoom', null)
       .append('g');
 
       vis.append('svg:rect')
@@ -849,31 +832,6 @@ YUI.add('juju-topology-mega', function(Y) {
             p.scope === 'container';
       });
     },
-    renderSlider: function() {
-      var self = this,
-              value = 100,
-              currentScale = this.get('scale');
-      // Build a slider to control zoom level
-      if (currentScale) {
-        value = currentScale * 100;
-      }
-      var slider = new Y.Slider({
-        min: 25,
-        max: 200,
-        value: value
-      });
-      slider.render('#slider-parent');
-      slider.after('valueChange', function(evt) {
-        // Don't fire a zoom if there's a zoom event already in progress;
-        // that will run rescale for us.
-        if (d3.event && d3.event.scale && d3.event.translate) {
-          return;
-        }
-        self._fire_zoom((evt.newVal - evt.prevVal) / 100);
-      });
-      self.slider = slider;
-    },
-
     /*
          * Utility method to get a service object from the DB
          * given a BoundingBox.

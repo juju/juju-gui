@@ -301,6 +301,25 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
+     * Register a manual event subscription on
+     * behalf of a module.
+     *
+     * @method recordSubscription
+     * @param {Module} module
+     * @param {Object} YUI event subscription
+     * @chainable
+     **/
+  recordSubscription: function(module, subscription) {
+    if (!(module.name in this.events)) {
+      throw "Unable able to recordSubscription, module not added.";
+    }
+    if (!subscription) {
+      throw "Invalid/undefined subscription object cannot be recorded.";
+    }
+    this.events[module.name].push(subscription);
+  },
+
+    /**
       Internal Detail. Called by unbind automatically.
      * D3 events follow a 'slot' like system. Setting the
      * event to null unbinds existing handlers.
