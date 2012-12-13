@@ -76,11 +76,7 @@ describe('juju application notifications', function() {
       notifications: db.notifications
     });
     notificationsView.render();
-    var notification = new models.Notification({
-      title: 'Error',
-      message: 'Message',
-      level: 'error'
-    });
+    var notification = new models.Notification({level: 'error'});
     db.notifications.add(notification);
     assert.equal('1', viewContainer.one('#notify-indicator').getHTML().trim());
   });
@@ -199,6 +195,7 @@ describe('juju application notifications', function() {
         var module = view.topo.modules.MegaModule;
         // The callback wants to remove the pending relation from the db.
         db.relations.remove = NO_OP;
+        // The _addRelationCallback args are: view, relation id, event.
         var args = [module, 'relation_id', ERR_EV];
         module.service_click_actions._addRelationCallback.apply(module, args);
         assert.equal(1, db.notifications.size());
@@ -209,10 +206,12 @@ describe('juju application notifications', function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
         var module = view.topo.modules.MegaModule;
+        // The _removeRelationCallback args are: view, relation element,
+        // relation id, confirm button, event.
         var args = [
           {get: function() {return {hide: NO_OP, destroy: NO_OP};},
            removeSVGClass: NO_OP
-          }, {}, '', {set: NO_OP}, ERR_EV
+          }, {}, 'relation_id', {set: NO_OP}, ERR_EV
         ];
         module._removeRelationCallback.apply(module, args);
         assert.equal(1, db.notifications.size());
@@ -226,6 +225,7 @@ describe('juju application notifications', function() {
         // The callback uses the 'getModelURL' attribute to retrieve the
         // service URL.
         module.set('getModelURL', NO_OP);
+        // The _destroyCallback args are: service, view, confirm button, event.
         var args = [{}, module, {set: NO_OP}, ERR_EV];
         module.service_click_actions._destroyCallback.apply(module, args);
         assert.equal(1, db.notifications.size());
