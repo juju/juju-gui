@@ -1,14 +1,8 @@
 'use strict';
 
 describe('juju application notifications', function() {
-  var Y, juju, models, views, applicationContainer, notificationsContainer,
-      viewContainer, db, _setTimeout, _viewsHighlightRow, ERR_EV, NO_OP;
-
-  function assertNotificationNumber(value) {
-    assert.equal(
-        applicationContainer.one('#notify-indicator').getHTML().trim(),
-        value, 'The system didn\'t show the alert');
-  }
+  var _setTimeout, _viewsHighlightRow, db, ERR_EV, juju, models, NO_OP,
+      viewContainer, views, Y;
 
   before(function() {
     Y = YUI(GlobalConfig).use(['node',
@@ -39,33 +33,11 @@ describe('juju application notifications', function() {
       'juju-tests-utils',
       'node-event-simulate'],
     function(Y) {
-      applicationContainer = Y.Node.create('<div id="test-container" />');
-      applicationContainer.appendTo(Y.one('body'));
-
-      notificationsContainer = Y.Node.create('<div id="notifications" />');
-      notificationsContainer.appendTo(applicationContainer);
-
       viewContainer = Y.Node.create('<div />');
-      viewContainer.appendTo(applicationContainer);
+      viewContainer.appendTo(Y.one('body'));
+      viewContainer.hide();
 
       db = new models.Database();
-
-      var notificationsView = new views.NotificationsView(
-          { container: notificationsContainer,
-            db: db,
-            env: {
-              on: NO_OP,
-              get: function(key) {
-                if (key === 'connected') {
-                  return true;
-                }
-                return null;
-              }
-            },
-            notifications: db.notifications
-          });
-
-      notificationsView.render();
 
       // The notifications.js delays the notification update.
       // We are going to avoid this timeout to make it possible to test
@@ -83,7 +55,7 @@ describe('juju application notifications', function() {
   });
 
   afterEach(function() {
-    applicationContainer.remove(true);
+    viewContainer.remove(true);
     window.setTimeout = _setTimeout;
     views.highlightRow = _viewsHighlightRow;
   });
@@ -124,11 +96,11 @@ describe('juju application notifications', function() {
 
        // It triggers the "add unit" logic
        view._modifyUnits(3);
-       assertNotificationNumber('1');
+       assert.equal(1, db.notifications.size());
 
        // It triggers the "remove unit" logic
        view._modifyUnits(1);
-       assertNotificationNumber('2');
+       assert.equal(2, db.notifications.size());
      });
 
   it('should show notification for "remove_units" and "resolved" exceptions' +
@@ -173,7 +145,7 @@ describe('juju application notifications', function() {
         view.remove_panel.footerNode.one('.btn-danger').simulate('click');
         view.remove_panel.destroy();
 
-        assertNotificationNumber('1');
+        assert.equal(1, db.notifications.size());
 
         // Fake relation
         db.relations.getById = function() {
@@ -192,10 +164,10 @@ describe('juju application notifications', function() {
           }
         });
 
-        assertNotificationNumber('2');
+        assert.equal(2, db.notifications.size());
       });
 
-  it('should show a notification for "addRelation" exceptions (env view)',
+  it('should add a notification for "addRelation" exceptions (env view)',
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
@@ -204,10 +176,10 @@ describe('juju application notifications', function() {
         db.relations.remove = NO_OP;
         var args = [module, 'relation_id', ERR_EV];
         module.service_click_actions._addRelationCallback.apply(module, args);
-        assertNotificationNumber('1');
+        assert.equal(1, db.notifications.size());
       });
 
-  it('should show a notification for "removeRelation" exceptions (env view)',
+  it('should add a notification for "removeRelation" exceptions (env view)',
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
@@ -218,10 +190,10 @@ describe('juju application notifications', function() {
           }, {}, '', {set: NO_OP}, ERR_EV
         ];
         module._removeRelationCallback.apply(module, args);
-        assertNotificationNumber('1');
+        assert.equal(1, db.notifications.size());
       });
 
-  it('should show a notification for "destroyService" exceptions (env view)',
+  it('should add a notification for "destroyService" exceptions (env view)',
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
@@ -231,7 +203,7 @@ describe('juju application notifications', function() {
         module.set('getModelURL', NO_OP);
         var args = [{}, module, {set: NO_OP}, ERR_EV];
         module.service_click_actions._destroyCallback.apply(module, args);
-        assertNotificationNumber('1');
+        assert.equal(1, db.notifications.size());
       });
 
   it('should show notification for "get_service" exceptions' +
@@ -256,7 +228,7 @@ describe('juju application notifications', function() {
 
         view.updateConstraints();
 
-        assertNotificationNumber('1');
+        assert.equal(1, db.notifications.size());
       });
 
   it('should show notification for "get_service", "expose" and "unexpose"' +
@@ -306,13 +278,13 @@ describe('juju application notifications', function() {
         view.render();
 
         view.saveConfig();
-        assertNotificationNumber('1');
+        assert.equal(1, db.notifications.size());
 
         view.exposeService();
-        assertNotificationNumber('2');
+        assert.equal(2, db.notifications.size());
 
         view.unexposeService();
-        assertNotificationNumber('3');
+        assert.equal(3, db.notifications.size());
       });
 
   it('should show notification for "remove_relation"' +
@@ -355,7 +327,7 @@ describe('juju application notifications', function() {
         view.remove_panel.footerNode.one('.btn-danger').simulate('click');
         view.remove_panel.destroy();
 
-        assertNotificationNumber('1');
+        assert.equal(1, db.notifications.size());
       });
 
   it('should show notification for "deploy" exceptions (charm view)',
