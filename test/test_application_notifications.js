@@ -1,14 +1,8 @@
 'use strict';
 
 describe('juju application notifications', function() {
-  var Y, juju, models, views, applicationContainer, notificationsContainer,
-      viewContainer, db, _setTimeout, _viewsHighlightRow, ERR_EV, NO_OP;
-
-  function assertNotificationNumber(value) {
-    assert.equal(
-        applicationContainer.one('#notify-indicator').getHTML().trim(),
-        value, 'The system didn\'t show the alert');
-  }
+  var _setTimeout, _viewsHighlightRow, db, ERR_EV, juju, models, NO_OP,
+      viewContainer, views, Y;
 
   before(function() {
     Y = YUI(GlobalConfig).use(['node',
@@ -39,33 +33,11 @@ describe('juju application notifications', function() {
       'juju-tests-utils',
       'node-event-simulate'],
     function(Y) {
-      applicationContainer = Y.Node.create('<div id="test-container" />');
-      applicationContainer.appendTo(Y.one('body'));
-
-      notificationsContainer = Y.Node.create('<div id="notifications" />');
-      notificationsContainer.appendTo(applicationContainer);
-
       viewContainer = Y.Node.create('<div />');
-      viewContainer.appendTo(applicationContainer);
+      viewContainer.appendTo(Y.one('body'));
+      viewContainer.hide();
 
       db = new models.Database();
-
-      var notificationsView = new views.NotificationsView(
-          { container: notificationsContainer,
-            db: db,
-            env: {
-              on: NO_OP,
-              get: function(key) {
-                if (key === 'connected') {
-                  return true;
-                }
-                return null;
-              }
-            },
-            notifications: db.notifications
-          });
-
-      notificationsView.render();
 
       // The notifications.js delays the notification update.
       // We are going to avoid this timeout to make it possible to test
@@ -83,9 +55,30 @@ describe('juju application notifications', function() {
   });
 
   afterEach(function() {
-    applicationContainer.remove(true);
+    viewContainer.remove(true);
     window.setTimeout = _setTimeout;
     views.highlightRow = _viewsHighlightRow;
+  });
+
+  it('should notify errors in the notifications view', function() {
+    viewContainer.set('id', 'notifications');
+    var notificationsView = new views.NotificationsView({
+      container: viewContainer,
+      env: {
+        on: NO_OP,
+        get: function(key) {
+          if (key === 'connected') {
+            return true;
+          }
+          return null;
+        }
+      },
+      notifications: db.notifications
+    });
+    notificationsView.render();
+    var notification = new models.Notification({level: 'error'});
+    db.notifications.add(notification);
+    assert.equal('1', viewContainer.one('#notify-indicator').getHTML().trim());
   });
 
   it('should show notification for "add_unit" and "remove_units" exceptions' +
@@ -124,11 +117,11 @@ describe('juju application notifications', function() {
 
        // It triggers the "add unit" logic
        view._modifyUnits(3);
-       assertNotificationNumber('1');
+       assert.equal(1, db.notifications.size());
 
        // It triggers the "remove unit" logic
        view._modifyUnits(1);
-       assertNotificationNumber('2');
+       assert.equal(2, db.notifications.size());
      });
 
   it('should show notification for "remove_units" and "resolved" exceptions' +
@@ -173,7 +166,7 @@ describe('juju application notifications', function() {
         view.remove_panel.footerNode.one('.btn-danger').simulate('click');
         view.remove_panel.destroy();
 
-        assertNotificationNumber('1');
+        assert.equal(1, db.notifications.size());
 
         // Fake relation
         db.relations.getById = function() {
@@ -192,128 +185,50 @@ describe('juju application notifications', function() {
           }
         });
 
-        assertNotificationNumber('2');
+        assert.equal(2, db.notifications.size());
       });
 
-  it.skip('should show notification for "add_relation" and "remove_relation"' +
-      ' exceptions (environment view)', function() {
-        var view = new views.environment({
-          db: db,
-          container: viewContainer});
+  it('should add a notification for "addRelation" exceptions (env view)',
+      function() {
+        var view = new views.environment({db: db, container: viewContainer});
         view.render();
+        var module = view.topo.modules.MegaModule;
+        // The callback wants to remove the pending relation from the db.
         db.relations.remove = NO_OP;
-
-        view.service_click_actions._addRelationCallback.apply(view,
-            [view, 'relation_id', ERR_EV]);
-
-        assertNotificationNumber('1');
-
-        //view, relationElement, relationId, confirmButton, ev
-        view._removeRelationCallback.apply(view, [{
-          get: function() {return {hide: NO_OP, destroy: NO_OP};},
-          removeSVGClass: NO_OP
-        }, {}, '', {
-          set: NO_OP
-        }, ERR_EV]);
-
-        assertNotificationNumber('2');
+        // The _addRelationCallback args are: view, relation id, event.
+        var args = [module, 'relation_id', ERR_EV];
+        module.service_click_actions._addRelationCallback.apply(module, args);
+        assert.equal(1, db.notifications.size());
       });
 
-  it.skip('should show notification for "add_relation" and "destroy_service"' +
-      ' exceptions (environment view)', function() {
-        var fakeLink = (function() {
-          var link = [{}, {}];
-          link.enter = function() {
-            return {
-              insert: function() {
-                return {
-                  attr: NO_OP
-                };
-              }
-            };
-          };
-          return link;
-        })(),
-            env = {
-              destroy_service: function(service, callback) {
-                callback(ERR_EV);
-              },
-              add_relation: function(endpoint_a, endpoint_b, callback) {
-                callback(ERR_EV);
-              }
-            },
-            view = {
-              set: NO_OP,
-              drawRelation: NO_OP,
-              cancelRelationBuild: NO_OP,
+  it('should add a notification for "removeRelation" exceptions (env view)',
+      function() {
+        var view = new views.environment({db: db, container: viewContainer});
+        view.render();
+        var module = view.topo.modules.MegaModule;
+        // The _removeRelationCallback args are: view, relation element,
+        // relation id, confirm button, event.
+        var args = [
+          {get: function() {return {hide: NO_OP, destroy: NO_OP};},
+           removeSVGClass: NO_OP
+          }, {}, 'relation_id', {set: NO_OP}, ERR_EV
+        ];
+        module._removeRelationCallback.apply(module, args);
+        assert.equal(1, db.notifications.size());
+      });
 
-              vis: {
-                selectAll: function() {
-                  return {
-                    data: function() {return fakeLink;}
-                  };
-                }
-              },
-              removeSVGClass: NO_OP,
-              db: db,
-              destroy_service: {
-                get: NO_OP
-              },
-              env: env,
-              get: function(key) {
-                if ('getModelURL' === key) {
-                  return NO_OP;
-                }
-                if ('updateEndpoints' === key) {
-                  return NO_OP;
-                }
-                if ('env' === key) {
-                  return env;
-                }
-                if ('addRelationStart_service' === key) {
-                  return {};
-                }
-                if ('db' === key) {
-                  return db;
-                }
-                if ('destroy_service' === key) {
-                  return {
-                    get: NO_OP
-                  };
-                }
-                return null;
-              },
-              container: viewContainer,
-              _addRelationCallback: function() {
-                // Executing the "views.environment.prototype
-                // .service_click_actions._addRelationCallback" function
-                //instead.
-                views.environment.prototype.service_click_actions
-                   ._addRelationCallback.apply(this, arguments);
-              },
-              _destroyCallback: function() {
-                // Executing the "views.environment.prototype
-                // .service_click_actions._destroyCallback" function
-                //instead.
-                views.environment.prototype.service_click_actions
-                   ._destroyCallback.apply(this, arguments);
-              }
-            };
-
-        views.environment.prototype.service_click_actions.addRelationEnd
-           .apply(view, [
-              [
-               ['s1', {name: 'n', role: 'client'}],
-               ['s2', {name: 'n', role: 'server'}]],
-              view]);
-
-        assertNotificationNumber('1');
-
-        views.environment.prototype.service_click_actions.destroyService.apply(
-            //destroyService function signature > (m, view, btn)
-            view, [{}, view, {set: NO_OP}]);
-
-        assertNotificationNumber('2');
+  it('should add a notification for "destroyService" exceptions (env view)',
+      function() {
+        var view = new views.environment({db: db, container: viewContainer});
+        view.render();
+        var module = view.topo.modules.MegaModule;
+        // The callback uses the 'getModelURL' attribute to retrieve the
+        // service URL.
+        module.set('getModelURL', NO_OP);
+        // The _destroyCallback args are: service, view, confirm button, event.
+        var args = [{}, module, {set: NO_OP}, ERR_EV];
+        module.service_click_actions._destroyCallback.apply(module, args);
+        assert.equal(1, db.notifications.size());
       });
 
   it('should show notification for "get_service" exceptions' +
@@ -338,7 +253,7 @@ describe('juju application notifications', function() {
 
         view.updateConstraints();
 
-        assertNotificationNumber('1');
+        assert.equal(1, db.notifications.size());
       });
 
   it('should show notification for "get_service", "expose" and "unexpose"' +
@@ -388,13 +303,13 @@ describe('juju application notifications', function() {
         view.render();
 
         view.saveConfig();
-        assertNotificationNumber('1');
+        assert.equal(1, db.notifications.size());
 
         view.exposeService();
-        assertNotificationNumber('2');
+        assert.equal(2, db.notifications.size());
 
         view.unexposeService();
-        assertNotificationNumber('3');
+        assert.equal(3, db.notifications.size());
       });
 
   it('should show notification for "remove_relation"' +
@@ -437,7 +352,7 @@ describe('juju application notifications', function() {
         view.remove_panel.footerNode.one('.btn-danger').simulate('click');
         view.remove_panel.destroy();
 
-        assertNotificationNumber('1');
+        assert.equal(1, db.notifications.size());
       });
 
   it('should show notification for "deploy" exceptions (charm view)',
