@@ -10,13 +10,18 @@
 # Build a target for JavaScript files.  The find command exclused directories
 # as needed through the -prune directive, and the grep command removes
 # individual unwanted JavaScript and JSON files from the list.
+# find(1) is used here to build a list of JavaScript targets rather than bzr
+# due to the speed of network access being unpredictable (bzr accesses the 
+# parent branch, which may be lp:juju-gui, for any command relating to the
+# branch or checkout).  Additionally, working with the release or an export,
+# a developer may not be working in a bzr repository.
 JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	-o -wholename './build*' -prune \
 	-o -wholename './test/assets*' -prune \
 	-o \( \
     		-name '*.js' \
     		-o -name '*.json' \
-    		-o -name '*generateTemplates' \
+    		-o -name 'generateTemplates' \
   	\) -print \
   	| sort | sed -e 's/^\.\///' \
 	| grep -Ev -e '^manifest\.json$$' \
@@ -98,10 +103,9 @@ endif
 endif
 endif
 ### End of release-specific variables ###
+TEMPLATE_TARGETS=$(shell find app/templates -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
 
-TEMPLATE_TARGETS=$(shell find app/templates -type f -print)
-
-SPRITE_SOURCE_FILES=$(shell find app/assets/images -type f -print)
+SPRITE_SOURCE_FILES=$(shell find app/assets/images -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
 SPRITE_GENERATED_FILES=build/juju-ui/assets/sprite.css \
 	build/juju-ui/assets/sprite.png
 BUILD_FILES=build/juju-ui/assets/app.js \
@@ -387,12 +391,28 @@ else
 	@false
 endif
 
+distfile: $(RELEASE_FILE)
+
 $(RELEASE_SIGNATURE): $(RELEASE_FILE)
 	gpg --armor --sign --detach-sig $(RELEASE_FILE)
 
 dist: $(RELEASE_FILE) $(RELEASE_SIGNATURE) upload_release.py
+ifndef NO_BZR
 	python2 upload_release.py juju-gui $(SERIES) $(RELEASE_VERSION) \
 	    $(RELEASE_FILE) $(LAUNCHPAD_API_ROOT)
+else
+	@echo "**************************************************************"
+	@echo "*********************** DIST FAILED **************************"
+	@echo "**************************************************************"
+	@echo
+	@echo "You may not make dist while the NO_BZR flag is defined."
+	@echo "Please run this target without the NO_BZR flag defined if you"
+	@echo "wish to upload a release."
+	@echo
+	@echo "See the README for more information"
+	@echo
+	@false
+endif
 
 appcache: $(APPCACHE)
 

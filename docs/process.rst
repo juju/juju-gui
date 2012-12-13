@@ -102,7 +102,7 @@ Checklist for Making a Stable Release
   expected version string.  It should be bigger than the most recent
   version found on https://launchpad.net/juju-gui/stable .
 - Run the tests and verify they pass: ``make test``.
-- Create the tarball: ``FINAL=1 make tarball``.  The process will end by
+- Create the tarball: ``FINAL=1 make distfile``.  The process will end by
   reporting the name of the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``
@@ -131,7 +131,7 @@ Checklist for Making a Stable Release
   version you expect.
 - This is a final release.  Consider asking others to verify the package on staging.
 - Now it is time for the actual, real release.  Head back to your checkout and
-  run ``FINAL=1 PROD=1 make release``.  The computer will again walk you
+  run ``FINAL=1 PROD=1 make dist``.  The computer will again walk you
   through the process.
 
   * Note that, one time per computer, you will again have to accept the
@@ -158,7 +158,7 @@ Checklist for Making a Developer Release
   the same or greater as the most recent developer release, and the revno
   should be greater.
 - Run the tests and verify they pass: ``make test``.
-- Create the tarball: ``make tarball``.  It will end by reporting the name of
+- Create the tarball: ``make distfile``.  It will end by reporting the name of
   the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``
@@ -168,7 +168,7 @@ Checklist for Making a Developer Release
 - In Chrome and Firefox, QA the application.  XXX EXPLICIT QA STEPS GO HERE!
 - For now, we will assume you would like to verify the release on the
   Launchpad staging server.  As we become more confident with this process,
-  this step may become unnecessary.  In the checkout, run ``make release``.
+  this step may become unnecessary.  In the checkout, run ``make dist``.
   This will step you through signing the tarball, connecting to
   Launchpad, and uploading the release.
 
@@ -188,7 +188,7 @@ Checklist for Making a Developer Release
   is what you expect.  Looking at juju-ui/version.js should also show you the
   version you expect, as seen in the similar earlier step above.
 - Now it is time for the actual, real release.  Head back to your checkout and
-  run ``PROD=1 make release``.  The computer will again walk you through the
+  run ``PROD=1 make dist``.  The computer will again walk you through the
   process.
 
   * Note that, one time per computer, you will again have to accept the
@@ -211,7 +211,7 @@ any bzr commands, all of which access the parent branch over the network.
 Where bzr may have provided information such as the revno, sensible defaults
 are used instead.  As many of these bzr commands are used to populate
 variables regardless of the target, defining NO_BZR will have an effect on
-all targets.
+all targets, except dist, which will refuse to complete.
 
 - Note that this allows one to run any make target from the working copy, 
   even if it is a lightweight checkout, by skipping steps that involve
