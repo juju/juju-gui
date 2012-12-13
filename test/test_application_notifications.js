@@ -201,8 +201,8 @@ describe('juju application notifications', function() {
         view.render();
         var module = view.topo.modules.MegaModule;
         db.relations.remove = NO_OP;
-        module.service_click_actions._addRelationCallback.apply(
-          module, [module, 'relation_id', ERR_EV]);
+        var args = [module, 'relation_id', ERR_EV];
+        module.service_click_actions._addRelationCallback.apply(module, args);
         assertNotificationNumber('1');
       });
 
@@ -211,13 +211,12 @@ describe('juju application notifications', function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
         var module = view.topo.modules.MegaModule;
-        module._removeRelationCallback.apply(
-          module, [
-            {
-              get: function() {return {hide: NO_OP, destroy: NO_OP};},
-              removeSVGClass: NO_OP
-            }, {}, '', {set: NO_OP}, ERR_EV
-          ]);
+        var args = [
+          {get: function() {return {hide: NO_OP, destroy: NO_OP};},
+           removeSVGClass: NO_OP
+          }, {}, '', {set: NO_OP}, ERR_EV
+        ];
+        module._removeRelationCallback.apply(module, args);
         assertNotificationNumber('1');
       });
 
@@ -227,8 +226,8 @@ describe('juju application notifications', function() {
         view.render();
         var module = view.topo.modules.MegaModule;
         module.set('getModelURL', NO_OP);
-        module.service_click_actions._destroyCallback.apply(
-          module, [{}, module, {set: NO_OP}, ERR_EV]);
+        var args = [{}, module, {set: NO_OP}, ERR_EV];
+        module.service_click_actions._destroyCallback.apply(module, args);
         assertNotificationNumber('1');
       });
 
