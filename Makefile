@@ -284,7 +284,11 @@ define link-files
 	ln -sf "$(PWD)/build/juju-ui/assets/sprite.png" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
 		build-$(1)/juju-ui/assets/combined-css/rail-x.png
-	# Link each YUI module's assets.
+	# Copy each YUI module's assets to a parallel directory in the build
+	# location.  This is run in a subshell (indicated by the parenthesis)
+	# so we can change directory and have it not effect this process.  To
+	# understand how it does what it does look at the man page for cp,
+	# particularly "--parents".
 	(cd node_modules/yui/ && \
 	 cp -r --parents */assets "$(PWD)/build-$(1)/juju-ui/assets/")
 endef
