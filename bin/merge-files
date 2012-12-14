@@ -36,13 +36,14 @@ require('yui').YUI().use(['yui'], function(Y) {
   // and the debug version of the modules file. I need to use
   // "syspath.join(process.cwd(), ...)" or else I have... "Error: Cannot find
   // module 'app/config.js'" from node's internal module.js file.
-  // config(-debug).js should also be passed in the ignore list: these files
-  // are included in index.html separately as part of charm configuration,
-  // and should not also be included in the minification.
+  // config-[prod|debug].js should also be passed in the ignore list: these
+  // files are included in index.html separately as part of charm
+  // configuration, and should not also be included in the minification.
   var paths = merge.readdir(syspath.join(process.cwd(), 'app'),
     [syspath.join(process.cwd(), 'app/assets'),
+     syspath.join(process.cwd(), 'app/modules-prod.js'),
      syspath.join(process.cwd(), 'app/modules-debug.js'),
-     syspath.join(process.cwd(), 'app/config.js'),
+     syspath.join(process.cwd(), 'app/config-prod.js'),
      syspath.join(process.cwd(), 'app/config-debug.js')]);
 
   // templates.js is a generated file. It is not part of the app directory.
