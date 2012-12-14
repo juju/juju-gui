@@ -317,7 +317,11 @@ test-debug: build-debug
 test-prod: build-prod
 	./test-server.sh prod
 
-test: test-debug
+test:
+	@echo "Deprecated. Please run either 'make test-prod' or 'make"
+	@echo "test-debug', to test the production or debug environments"
+	@echo "respectively.  Run 'make help' to list the main available "
+	@echo "targets."
 
 server:
 	@echo "Deprecated. Please run either 'make prod' or 'make debug',"
