@@ -129,6 +129,24 @@ describe('d3-components', function() {
 
      });
 
+  it('should correctly handle synthetic event bindings', function(done) {
+    comp = new NS.Component();
+    comp.setAttrs({container: container});
+    modA = new TestModule();
+    var resized = false;
+    modA.windowResizeHandler = function(evt) {
+      resized = true;
+    };
+    modA.events.yui.windowresize = 'windowResizeHandler';
+    comp.addModule(modA);
+    var subscription = Y.after('windowresize', function(evt) {
+      subscription.detach();
+      assert.isTrue(resized);
+      done();
+    });
+    Y.one('window').simulate('resize');
+  });
+
   it('should support basic rendering from all modules',
      function() {
        var modA = new TestModule(),

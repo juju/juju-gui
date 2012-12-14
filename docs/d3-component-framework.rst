@@ -15,7 +15,7 @@ patterns around application development. The document below attempts to
 explain this usage as it exists today.
 
 The framework only models two high level objects, Component and Module. A
-Component is a top level container around Module objects. The Component 
+Component is a top level container around Module objects. The Component
 provides the implementation of the declarative behavior provided by the
 framework. The Module(s) implement the logical sections of the application. In
 the YUI world it might be common to expect each Module to be the application's
@@ -76,14 +76,14 @@ like position information. Once ``update`` has been called each module's
 this point that any d3js synthetic events are bound to the canvas (see the
 section on events below). This separation of phases exists to make the life of
 the Module writer simpler. They can rely on whatever elements they'll be drawing
- (adding children to an svg object for example) will already have its container 
- properly available due to the renderOnce setup. They can also be sure that 
- any ``update`` driven intermediate data will be computed and available for
- use in ``render``. This reduces the need for checks in each module to assert
- the most basic DOM state.
+(adding children to an svg object for example) will already have its container
+properly available due to the renderOnce setup. They can also be sure that
+any ``update`` driven intermediate data will be computed and available for
+use in ``render``. This reduces the need for checks in each module to assert
+the most basic DOM state.
 
-After the initial render its expected that updates to the scene occur via the 
-event handlers in the various modules. Render will not usually need to be called 
+After the initial render its expected that updates to the scene occur via the
+event handlers in the various modules. Render will not usually need to be called
 more than once unless the entire Component rendering is removed from the DOM and
 then later re-attached.
 

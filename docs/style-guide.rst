@@ -15,7 +15,7 @@ beautifier ("make beautify").  The lowest (least leading whitespace) acceptable
 indention will be applied.
 
 
-For loops
+For Loops
 =========
 
 Unless you are counting something, for loops (and for-in loops) are a trap.
@@ -29,7 +29,7 @@ No trailing whitespace on lines or at the end of the file (i.e., the file
 should end with a non-blank line).
 
 
-Object literal formatting
+Object Literal Formatting
 =========================
 
 Things you should do:
@@ -66,7 +66,7 @@ An example::
         errors = utils.validate(values, schema);
 
 
-Chaining method calls
+Chaining Method Calls
 =====================
 
 Some APIs are designed such that mutating method calls return the object being
@@ -160,13 +160,13 @@ Comments
 ========
 
 We use YUIDoc to document the applications internals.  YUIDoc comments
-start with "/**" and end with "*/".  The Makefile includes a simple
+start with ``/**`` and end with ``*/``.  The Makefile includes a simple
 linter that enforces YUIDoc comments for each function in the
 application.
 
 This simple linting sometimes means that functions that we might not
 otherwise document require documentation.  If a one-line comment is
-sufficient in those situations, a comment of this form may be used:
+sufficient in those situations, a comment of this form may be used::
 
     /** Handle errors */
     error_callback: function(err) {
@@ -174,7 +174,7 @@ sufficient in those situations, a comment of this form may be used:
     }
 
 Most functions (or methods) will call for normal, multi-line YUIDoc
-comments like this:
+comments like this::
 
     /**
      * Frob the thingy.
@@ -184,5 +184,5 @@ comments like this:
      * @return {undefined} Side-effects only, eturns nothing.
      */
 
-Full documentation for the various YUIDoc directives is at
-http://yui.github.com/yuidoc/syntax/ .
+`Full documentation <http://yui.github.com/yuidoc/syntax/>`_
+for the various YUIDoc directives is available.
