@@ -114,7 +114,7 @@ BUILD_FILES=build/juju-ui/assets/app.js \
 	build/juju-ui/assets/all-yui.js \
 	build/juju-ui/assets/combined-css/all-static.css
 JAVASCRIPT_LIBRARIES=app/assets/javascripts/d3.v2.js \
-	app/assets/javascripts/d3.v2.min.js app/assets/javascripts/
+	app/assets/javascripts/d3.v2.min.js app/assets/javascripts/yui
 DATE=$(shell date -u)
 APPCACHE=build/juju-ui/assets/manifest.appcache
 
@@ -202,7 +202,7 @@ $(NODE_TARGETS): package.json
 	fi
 
 $(JAVASCRIPT_LIBRARIES): | node_modules/yui node_modules/d3
-	ln -sf "$(PWD)/node_modules/yui" app/assets/javascripts/
+	ln -sf "$(PWD)/node_modules/yui" app/assets/javascripts/yui
 	ln -sf "$(PWD)/node_modules/d3/d3.v2.js" app/assets/javascripts/d3.v2.js
 	ln -sf "$(PWD)/node_modules/d3/d3.v2.min.js" \
 		app/assets/javascripts/d3.v2.min.js

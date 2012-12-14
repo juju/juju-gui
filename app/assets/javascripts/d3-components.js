@@ -231,9 +231,12 @@ YUI.add('d3-components', function(Y) {
           // Bind resolved event handlers as a group.
           if (Y.Object.keys(resolvedHandler).length) {
             Y.each(resolvedHandler, function(handler, name) {
-              subscriptions.push(Y[eventPhase](name,
-                                               handler.callback,
-                                               handler.context));
+              // DOM and synthetic events are subscribed using Y.on with
+              // this signature: Y.on(event, callback, target, context).
+              // For this reason, it is not possible here to just pass the
+              // context as third argument.
+              var callback = Y.bind(handler.callback, handler.context);
+              subscriptions.push(Y[eventPhase](name, callback));
             });
           }
         });
