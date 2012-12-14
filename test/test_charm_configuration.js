@@ -24,6 +24,7 @@ describe('charm configuration', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         'juju-models',
+        'juju-charm-models',
         'juju-views',
         'juju-gui',
         'juju-env',
@@ -199,35 +200,25 @@ describe('charm configuration', function() {
     tooltip.get('visible').should.equal(true);
   });
 
-  it('must keep the tooltip aligned with its field', function() {
-    var charm = new models.Charm({id: 'precise/mysql-7'}),
-        view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          tooltipDelay: 0 });
-    charm.setAttrs(charmConfig);
-    charm.loaded = true;
-    view.render();
-    var tooltip = view.tooltip,
-        controls = container.all('.control-group input'),
-        panel = container.one('.charm-panel');
-    // The panel needs to be scrollable and smaller than what it contains.  We
-    // do this by setting a height to the panel and then setting the height to
-    // one of the controls to something much bigger.
-    panel.setStyles({height: '400px', overflowY: 'auto'});
-    controls.item(2).set('height', '4000px');
-    // We need to have the field visible or else the call to "focus" will
-    // change the positioning after our calculation has occurred, thus
-    // changing our Y field.
-    controls.item(1).scrollIntoView();
-    controls.item(1).focus();
-    var originalY = tooltip.get('boundingBox').getY();
-    panel.set('scrollTop', panel.get('scrollTop') + 10);
-    // The simulate module does not support firing scroll events so we call
-    // the associated method directly.
-    view._moveTooltip();
-    Math.floor(tooltip.get('boundingBox').getY())
-      .should.equal(Math.floor(originalY - 10));
+  it('must keep the tooltip aligned with its field vertically', function() {
+    // The tooltip's Y coordinate should be such that it is centered vertically
+    // on its associated field.
+    var fieldHeight = 7;
+    var tooltipHeight = 17;
+    var fieldY = 1000;
+    var view = new views.CharmConfigurationView();
+    var y = view._calculateTooltipY(fieldY, fieldHeight, tooltipHeight);
+    assert.equal(y, 995);
+  });
+
+  it('must keep the tooltip to the left of its field', function() {
+    // The tooltip's X coordinate should be such that it is to the left of its
+    // associated field.
+    var tooltipWidth = 100;
+    var fieldX = 1000;
+    var view = new views.CharmConfigurationView();
+    var x = view._calculateTooltipX(fieldX, tooltipWidth);
+    assert.equal(x, 885);
   });
 
   it('must hide the tooltip when its field scrolls away', function() {

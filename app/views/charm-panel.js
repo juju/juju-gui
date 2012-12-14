@@ -697,6 +697,31 @@ YUI.add('juju-charm-panel', function(Y) {
           'input.config-field[type=checkbox]':
               {click: function(evt) {evt.target.focus();}}
         },
+        /**
+         * Determines the Y coordinate that would center a tooltip on a field.
+         *
+         * @static
+         * @param {Number} fieldY The current Y position of the tooltip.
+         * @param {Number} fieldHeight The hight of the field.
+         * @param {Number} tooltipHeight The height of the tooltip.
+         * @return {Number} New Y coordinate for the tooltip.
+         */
+        _calculateTooltipY: function(fieldY, fieldHeight, tooltipHeight) {
+          var y_offset = (tooltipHeight - fieldHeight) / 2;
+          return fieldY - y_offset;
+        },
+        /**
+         * Determines the X coordinate that would place a tooltip next to a
+         * field.
+         *
+         * @static
+         * @param {Number} fieldX The current X position of the tooltip.
+         * @param {Number} tooltipWidth The width of the tooltip.
+         * @return {Number} New X coordinate for the tooltip.
+         */
+        _calculateTooltipX: function(fieldX, tooltipWidth) {
+          return fieldX - tooltipWidth - 15;
+        },
         _moveTooltip: function() {
           if (this.tooltip.field &&
               Y.DOM.inRegion(
@@ -708,10 +733,13 @@ YUI.add('juju-charm-panel', function(Y) {
               var widget = this.tooltip.get('boundingBox'),
                   tooltipWidth = widget.get('clientWidth'),
                   tooltipHeight = widget.get('clientHeight'),
-                  y_offset = (tooltipHeight - fieldHeight) / 2;
-              this.tooltip.move(  // These are the x, y coordinates.
-                  [this.tooltip.panel.getX() - tooltipWidth - 15,
-                   this.tooltip.field.getY() - y_offset]);
+                  fieldX = this.tooltip.panel.getX(),
+                  fieldY = this.tooltip.field.getY(),
+                  tooltipX = this._calculateTooltipX(
+                      fieldX, tooltipWidth),
+                  tooltipY = this._calculateTooltipY(
+                      fieldY, fieldHeight, tooltipHeight);
+              this.tooltip.move([tooltipX, tooltipY]);
               if (!this.tooltip.get('visible')) {
                 this.tooltip.show();
               }

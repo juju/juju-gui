@@ -241,14 +241,8 @@ link-debug-files:
 	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
 		build-debug/juju-ui/assets/combined-css/rail-x.png
 	# Link each YUI module's assets.
-	mkdir -p build-debug/juju-ui/assets/skins/night/ \
-		build-debug/juju-ui/assets/skins/sam/
-	find node_modules/yui/ -path "*/skins/night/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/skins/night/ \;
-	find node_modules/yui/ -path "*/skins/sam/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/skins/sam/ \;
-	find node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/ \;
+	(cd node_modules/yui/ && \
+	 cp -r --parents */assets "$(PWD)/build-debug/juju-ui/assets/")
 
 link-prod-files:
 	mkdir -p build-prod/juju-ui/assets/combined-css
@@ -269,23 +263,24 @@ link-prod-files:
 	ln -sf "$(PWD)/build/juju-ui/assets/sprite.png" build-prod/juju-ui/assets/
 	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
 		build-prod/juju-ui/assets/combined-css/rail-x.png
-	# Link each YUI module's assets.
-	mkdir -p build-prod/juju-ui/assets/skins/night/ \
-		build-prod/juju-ui/assets/skins/sam/
-	find node_modules/yui/ -path "*/skins/night/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/skins/night/ \;
-	find node_modules/yui/ -path "*/skins/sam/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/skins/sam/ \;
-	find node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/ \;
+	# Requirements for tests to run.
+	ln -sf \
+	    "$(PWD)/node_modules/yui/event-simulate/event-simulate.js" \
+	    build-prod/juju-ui/assets/
+	ln -sf \
+	    "$(PWD)/node_modules/yui/node-event-simulate/node-event-simulate.js" \
+	    build-prod/juju-ui/assets/
+	# Copy each YUI module's assets.
+	(cd node_modules/yui/ && \
+	 cp -r --parents */assets "$(PWD)/build-prod/juju-ui/assets/")
 
 prep: beautify lint
 
 test-debug: build-debug
-	test-server.sh debug
+	./test-server.sh debug
 
 test-prod: build-prod
-	test-server.sh prod
+	./test-server.sh prod
 
 test: test-debug
 
