@@ -11,13 +11,15 @@
 # as needed through the -prune directive, and the grep command removes
 # individual unwanted JavaScript and JSON files from the list.
 # find(1) is used here to build a list of JavaScript targets rather than bzr
-# due to the speed of network access being unpredictable (bzr accesses the 
+# due to the speed of network access being unpredictable (bzr accesses the
 # parent branch, which may be lp:juju-gui, for any command relating to the
 # branch or checkout).  Additionally, working with the release or an export,
 # a developer may not be working in a bzr repository.
 JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	-o -wholename './build*' -prune \
+	-o -wholename './docs*' -prune \
 	-o -wholename './test/assets*' -prune \
+	-o -wholename './yuidoc*' -prune \
 	-o \( \
     		-name '*.js' \
     		-o -name '*.json' \
@@ -111,6 +113,8 @@ SPRITE_GENERATED_FILES=build/juju-ui/assets/sprite.css \
 BUILD_FILES=build/juju-ui/assets/app.js \
 	build/juju-ui/assets/all-yui.js \
 	build/juju-ui/assets/combined-css/all-static.css
+JAVASCRIPT_LIBRARIES=app/assets/javascripts/d3.v2.js \
+	app/assets/javascripts/d3.v2.min.js app/assets/javascripts/
 DATE=$(shell date -u)
 APPCACHE=build/juju-ui/assets/manifest.appcache
 
@@ -138,7 +142,7 @@ help:
 	@echo "           FIXME: currently yielding 78 failures"
 	@echo "test: same as the test-debug target"
 	@echo "prep: beautify and lint the source"
-	@echo "doc: generate Sphinx and YuiDoc documentation"
+	@echo "docs: generate Sphinx and YUIdoc documentation"
 	@echo "help: this description"
 	@echo "Other, less common targets are available, see Makefile."
 
@@ -154,7 +158,7 @@ sphinx:
 
 yuidoc: yuidoc/index.html
 
-doc: sphinx yuidoc
+docs: sphinx yuidoc
 
 $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 		$(SPRITE_SOURCE_FILES)
@@ -197,7 +201,7 @@ $(NODE_TARGETS): package.json
 	echo $$FOUND_TARGETS; \
 	fi
 
-javascript-libraries: node_modules/yui node_modules/d3
+$(JAVASCRIPT_LIBRARIES): | node_modules/yui node_modules/d3
 	ln -sf "$(PWD)/node_modules/yui" app/assets/javascripts/
 	ln -sf "$(PWD)/node_modules/d3/d3.v2.js" app/assets/javascripts/d3.v2.js
 	ln -sf "$(PWD)/node_modules/d3/d3.v2.min.js" \
@@ -228,20 +232,71 @@ beautify: virtualenv/bin/fixjsstyle
 
 spritegen: $(SPRITE_GENERATED_FILES)
 
-$(BUILD_FILES): javascript-libraries $(JSFILES) $(THIRD_PARTY_JS) \
-		bin/merge-files lib/merge-files.js
+$(BUILD_FILES): $(JSFILES) $(THIRD_PARTY_JS) build/juju-ui/templates.js \
+		bin/merge-files lib/merge-files.js | $(JAVASCRIPT_LIBRARIES)
 	rm -f $(BUILD_FILES)
 	mkdir -p build/juju-ui/assets/combined-css/
 	bin/merge-files
 
 build-files: $(BUILD_FILES)
 
-link-debug-files:
-	mkdir -p build-debug/juju-ui/assets/combined-css
-	ln -sf "$(PWD)/app/favicon.ico" build-debug/
-	ln -sf "$(PWD)/app/index.html" build-debug/
-	ln -sf "$(PWD)/app/config-debug.js" build-debug/juju-ui/assets/config.js
-	ln -sf "$(PWD)/app/modules-debug.js" build-debug/juju-ui/assets/modules.js
+# This leaves out all of the individual YUI assets, because we can't have them
+# the first time the Makefile is run in a clean tree.
+shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
+	build-$(1)/favicon.ico build-$(1)/index.html \
+	build-$(1)/juju-ui/assets/config.js build-$(1)/juju-ui/assets/modules.js \
+	build-$(1)/juju-ui/assets/images build-$(1)/juju-ui/assets/svgs \
+	build-$(1)/juju-ui/assets/app.js build-$(1)/juju-ui/version.js \
+	build-$(1)/juju-ui/assets/manifest.appcache \
+	build-$(1)/juju-ui/assets/combined-css/all-static.css \
+	build-$(1)/juju-ui/assets/juju-gui.css \
+	build-$(1)/juju-ui/assets/sprite.css \
+	build-$(1)/juju-ui/assets/sprite.png \
+	build-$(1)/juju-ui/assets/combined-css/rail-x.png \
+	build-$(1)/juju-ui/assets/skins/night/ \
+	build-$(1)/juju-ui/assets/skins/sam/ build-$(1)/juju-ui/assets/all-yui.js
+
+LINK_DEBUG_FILES=$(call shared-link-files-list,debug) \
+	build-debug/juju-ui/app.js build-debug/juju-ui/models \
+	build-debug/juju-ui/store build-debug/juju-ui/views \
+	build-debug/juju-ui/widgets build-debug/juju-ui/assets/javascripts \
+	build-debug/juju-ui/templates.js
+
+LINK_PROD_FILES=$(call shared-link-files-list,prod)
+
+# These are shared instructions between link-debug-files and link-prod-files.
+define link-files
+	mkdir -p build-$(1)/juju-ui/assets/combined-css
+	ln -sf "$(PWD)/app/favicon.ico" build-$(1)/
+	ln -sf "$(PWD)/app/index.html" build-$(1)/
+	ln -sf "$(PWD)/app/config-$(1).js" build-$(1)/juju-ui/assets/config.js
+	ln -sf "$(PWD)/app/modules-$(1).js" build-$(1)/juju-ui/assets/modules.js
+	ln -sf "$(PWD)/app/assets/images" build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/app/assets/svgs" build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/build/juju-ui/version.js" build-$(1)/juju-ui/
+	ln -sf "$(PWD)/build/juju-ui/assets/app.js" build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/build/juju-ui/assets/manifest.appcache" \
+		build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/build/juju-ui/assets/combined-css/all-static.css" \
+		build-$(1)/juju-ui/assets/combined-css/
+	ln -sf "$(PWD)/build/juju-ui/assets/juju-gui.css" build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/build/juju-ui/assets/sprite.css" build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/build/juju-ui/assets/sprite.png" build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
+		build-$(1)/juju-ui/assets/combined-css/rail-x.png
+	# Link each YUI module's assets.
+	mkdir -p build-$(1)/juju-ui/assets/skins/night/ \
+		build-$(1)/juju-ui/assets/skins/sam/
+	find node_modules/yui/ -path "*/skins/night/*" -type f \
+		-exec ln -sf "$(PWD)/{}" build-$(1)/juju-ui/assets/skins/night/ \;
+	find node_modules/yui/ -path "*/skins/sam/*" -type f \
+		-exec ln -sf "$(PWD)/{}" build-$(1)/juju-ui/assets/skins/sam/ \;
+	find node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
+		-exec ln -sf "$(PWD)/{}" build-$(1)/juju-ui/assets/ \;
+endef
+
+$(LINK_DEBUG_FILES):
+	$(call link-files,debug)
 	ln -sf "$(PWD)/app/app.js" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/models" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/store" build-debug/juju-ui/
@@ -249,58 +304,12 @@ link-debug-files:
 	ln -sf "$(PWD)/app/widgets" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/assets/javascripts/yui/yui/yui-debug.js" \
 		build-debug/juju-ui/assets/all-yui.js
-	ln -sf "$(PWD)/app/assets/images" build-debug/juju-ui/assets/
 	ln -sf "$(PWD)/app/assets/javascripts" build-debug/juju-ui/assets/
-	ln -sf "$(PWD)/app/assets/svgs" build-debug/juju-ui/assets/
 	ln -sf "$(PWD)/build/juju-ui/templates.js" build-debug/juju-ui/
-	ln -sf "$(PWD)/build/juju-ui/assets/app.js" build-debug/juju-ui/assets/
-	ln -sf "$(PWD)/build/juju-ui/assets/manifest.appcache" \
-		build-debug/juju-ui/assets/
-	ln -sf "$(PWD)/build/juju-ui/assets/combined-css/all-static.css" \
-		build-debug/juju-ui/assets/combined-css/
-	ln -sf "$(PWD)/build/juju-ui/assets/juju-gui.css" build-debug/juju-ui/assets/
-	ln -sf "$(PWD)/build/juju-ui/assets/sprite.css" build-debug/juju-ui/assets/
-	ln -sf "$(PWD)/build/juju-ui/assets/sprite.png" build-debug/juju-ui/assets/
-	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
-		build-debug/juju-ui/assets/combined-css/rail-x.png
-	# Link each YUI module's assets.
-	mkdir -p build-debug/juju-ui/assets/skins/night/ \
-		build-debug/juju-ui/assets/skins/sam/
-	find node_modules/yui/ -path "*/skins/night/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/skins/night/ \;
-	find node_modules/yui/ -path "*/skins/sam/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/skins/sam/ \;
-	find node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-debug/juju-ui/assets/ \;
 
-link-prod-files:
-	mkdir -p build-prod/juju-ui/assets/combined-css
-	ln -sf "$(PWD)/app/favicon.ico" build-prod/
-	ln -sf "$(PWD)/app/index.html" build-prod/
-	ln -sf "$(PWD)/app/config.js" build-prod/juju-ui/assets/config.js
-	ln -sf "$(PWD)/app/modules.js" build-prod/juju-ui/assets/modules.js
-	ln -sf "$(PWD)/app/assets/images" build-prod/juju-ui/assets/
-	ln -sf "$(PWD)/app/assets/svgs" build-prod/juju-ui/assets/
+$(LINK_PROD_FILES):
+	$(call link-files,prod)
 	ln -sf "$(PWD)/build/juju-ui/assets/all-yui.js" build-prod/juju-ui/assets/
-	ln -sf "$(PWD)/build/juju-ui/assets/app.js" build-prod/juju-ui/assets/
-	ln -sf "$(PWD)/build/juju-ui/assets/manifest.appcache" \
-		build-prod/juju-ui/assets/
-	ln -sf "$(PWD)/build/juju-ui/assets/combined-css/all-static.css" \
-		build-prod/juju-ui/assets/combined-css/
-	ln -sf "$(PWD)/build/juju-ui/assets/juju-gui.css" build-prod/juju-ui/assets/
-	ln -sf "$(PWD)/build/juju-ui/assets/sprite.css" build-prod/juju-ui/assets/
-	ln -sf "$(PWD)/build/juju-ui/assets/sprite.png" build-prod/juju-ui/assets/
-	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
-		build-prod/juju-ui/assets/combined-css/rail-x.png
-	# Link each YUI module's assets.
-	mkdir -p build-prod/juju-ui/assets/skins/night/ \
-		build-prod/juju-ui/assets/skins/sam/
-	find node_modules/yui/ -path "*/skins/night/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/skins/night/ \;
-	find node_modules/yui/ -path "*/skins/sam/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/skins/sam/ \;
-	find node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-prod/juju-ui/assets/ \;
 
 prep: beautify lint
 
@@ -340,15 +349,16 @@ clean-deps:
 
 clean-docs:
 	make -C docs clean
+	rm -rf yuidoc
 
 clean-all: clean clean-deps clean-docs
 
-build: appcache $(NODE_TARGETS) javascript-libraries \
-	build/juju-ui/templates.js spritegen
+build: $(APPCACHE) $(NODE_TARGETS) spritegen \
+	  $(BUILD_FILES) build/juju-ui/version.js
 
-build-debug: build build-files link-debug-files
+build-debug: build | $(LINK_DEBUG_FILES)
 
-build-prod: build build-files link-prod-files
+build-prod: build | $(LINK_PROD_FILES)
 
 $(APPCACHE): manifest.appcache.in
 	mkdir -p build/juju-ui/assets
@@ -360,9 +370,9 @@ $(APPCACHE): manifest.appcache.in
 # one by connecting it to our pertinent versioned files.  The appcache target
 # creates the third, and directories are a bit tricky with Makefiles so we are
 # OK with that.
-build/juju-ui/version.js: appcache CHANGES.yaml $(JSFILES) $(TEMPLATE_TARGETS) \
+build/juju-ui/version.js: $(APPCACHE) CHANGES.yaml $(JSFILES) $(TEMPLATE_TARGETS) \
 		$(SPRITE_SOURCE_FILES)
-	echo "var jujuGuiVersionName='$(RELEASE_VERSION)';" \
+	echo "var jujuGuiVersionInfo=['$(RELEASE_VERSION)', '$(BZR_REVNO)'];" \
 	    > build/juju-ui/version.js
 
 upload_release.py:
@@ -422,14 +432,13 @@ appcache-touch:
 
 # This is the real target.  appcache-touch needs to be executed before
 # appcache, and this provides the correct order.
-appcache-force: appcache-touch appcache
+appcache-force: appcache-touch $(APPCACHE)
 
 # targets are alphabetically sorted, they like it that way :-)
-.PHONY: appcache appcache-force appcache-touch beautify build \
+.PHONY: appcache-force appcache-touch beautify build \
 	build-debug build-files build-prod clean clean clean-all \
-	clean-deps clean-docs debug devel doc dist gjslint help \
-	javascript-libraries jshint link-debug-files link-prod-files \
-	lint prep prod server spritegen test test-debug test-prod \
+	clean-deps clean-docs debug devel docs dist gjslint help \
+	jshint lint prep prod server spritegen test test-debug test-prod \
 	undocumented yuidoc yuidoc-lint
 
 .DEFAULT_GOAL := all
