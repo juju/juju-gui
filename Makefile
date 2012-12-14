@@ -288,7 +288,10 @@ define link-files
 	# location.  This is run in a subshell (indicated by the parenthesis)
 	# so we can change directory and have it not effect this process.  To
 	# understand how it does what it does look at the man page for cp,
-	# particularly "--parents".
+	# particularly "--parents".  Notice that this makes copies instead of
+	# links.  This goes against the way the dependencies are structured and
+	# so may be a problem in the future.  If so, a way to do this as links
+	# would be called for.
 	(cd node_modules/yui/ && \
 	 cp -r --parents */assets "$(PWD)/build-$(1)/juju-ui/assets/")
 endef
