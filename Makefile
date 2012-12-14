@@ -343,6 +343,7 @@ prod: build-prod
 
 clean:
 	rm -rf build build-debug build-prod
+	find app/assets/javascripts/ -type l | xargs rm -rf
 
 clean-deps:
 	rm -rf node_modules virtualenv
