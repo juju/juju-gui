@@ -206,7 +206,7 @@ YUI.add('juju-topology-mega', function(Y) {
     serviceClick: function(d, context) {
       // Ignore if we clicked outside the actual service node.
       var container = context.get('container'),
-              mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+          mouse_coords = d3.mouse(container.one('svg').getDOMNode());
       if (!d.containsPoint(mouse_coords, context.zoom)) {
         return;
       }
