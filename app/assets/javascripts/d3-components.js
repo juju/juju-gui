@@ -243,7 +243,7 @@ YUI.add('d3-components', function(Y) {
               var callback = Y.bind(handler.callback, handler.context);
               // (re)Register the event to bubble.
               self.publish(name, {emitFacade: true});
-              subscriptions.push(Y[eventPhase](name, callback, handler.context));
+              subscriptions.push(self[eventPhase](name, callback, handler.context));
             });
           }
         });
