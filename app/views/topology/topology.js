@@ -121,9 +121,9 @@ YUI.add('juju-topology', function(Y) {
       /**
        * @property {Array} transform
        **/
-      transform: {
-        getter: function() {return this.zoom.transform();},
-        setter: function(v) {this.zoom.transform(v);}
+      translate: {
+        getter: function() {return this.zoom.translate();},
+        setter: function(v) {this.zoom.translate(v);}
       },
 
       width: {

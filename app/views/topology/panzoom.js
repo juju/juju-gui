@@ -32,6 +32,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
     initializer: function(options) {
       PanZoomModule.superclass.constructor.apply(this, arguments);
+      this._translate = [0,0];
+      this._scale = 1.0;
     },
 
     // Handler for 'zoom' event.
@@ -158,10 +160,10 @@ YUI.add('juju-topology-panzoom', function(Y) {
       // Preserve zoom when the scene is updated.
       var topo = this.get('component'),
           changed = false,
-          currentScale = topo.get('scale'),
-          currentTranslate = topo.get('translate');
+          currentScale = this._scale,
+          currentTranslate = this._translate;
 
-      if (currentTranslate && currentTranslate !== topo.zoom.translate()) {
+      if (currentTranslate && currentTranslate !== topo.get('translate')) {
         topo.zoom.translate(currentTranslate);
         changed = true;
       }
@@ -178,7 +180,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
       // seem to play well with the app framework: the slider will render
       // the first time, but on navigation away and back, will not
       // re-render within the view.
-      this.renderSlider();
+      //this.renderSlider();
     }
   }, {
     ATTRS: {}

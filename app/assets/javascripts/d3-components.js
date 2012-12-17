@@ -241,7 +241,9 @@ YUI.add('d3-components', function(Y) {
               // For this reason, it is not possible here to just pass the
               // context as third argument.
               var callback = Y.bind(handler.callback, handler.context);
-              subscriptions.push(Y[eventPhase](name, callback));
+              // (re)Register the event to bubble.
+              self.publish(name, {emitFacade: true});
+              subscriptions.push(Y[eventPhase](name, callback, handler.context));
             });
           }
         });

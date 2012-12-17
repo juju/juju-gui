@@ -62,6 +62,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         postRender: function() {
+          console.log("postRender");
           this.topo.fire('rendered');
         }
       }, {
