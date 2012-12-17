@@ -48,6 +48,8 @@ require('yui').YUI().use(['yui'], function(Y) {
 
   // templates.js is a generated file. It is not part of the app directory.
   paths.push(syspath.join(process.cwd(), 'build/juju-ui/templates.js'));
+  // XXX Why do we have to do this?  (bug 1090563).
+  paths.push(syspath.join(process.cwd(), 'app/models/charm.js'));
 
   merge.combineJs(paths, 'build/juju-ui/assets/app.js');
 

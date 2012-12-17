@@ -284,15 +284,20 @@ define link-files
 	ln -sf "$(PWD)/build/juju-ui/assets/sprite.png" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
 		build-$(1)/juju-ui/assets/combined-css/rail-x.png
-	# Link each YUI module's assets.
-	mkdir -p build-$(1)/juju-ui/assets/skins/night/ \
-		build-$(1)/juju-ui/assets/skins/sam/
-	find node_modules/yui/ -path "*/skins/night/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-$(1)/juju-ui/assets/skins/night/ \;
-	find node_modules/yui/ -path "*/skins/sam/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-$(1)/juju-ui/assets/skins/sam/ \;
-	find node_modules/yui/ -path "*/assets/*" \! -path "*/skins/*" -type f \
-		-exec ln -sf "$(PWD)/{}" build-$(1)/juju-ui/assets/ \;
+	ln -sf "$(PWD)/node_modules/yui/event-simulate/event-simulate.js" \
+		build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/node_modules/yui/node-event-simulate/node-event-simulate.js" \
+		build-$(1)/juju-ui/assets
+	# Copy each YUI module's assets to a parallel directory in the build
+	# location.  This is run in a subshell (indicated by the parenthesis)
+	# so we can change directory and have it not effect this process.  To
+	# understand how it does what it does look at the man page for cp,
+	# particularly "--parents".  Notice that this makes copies instead of
+	# links.  This goes against the way the dependencies are structured and
+	# so may be a problem in the future.  If so, a way to do this as links
+	# would be called for.
+	(cd node_modules/yui/ && \
+	 cp -r --parents */assets "$(PWD)/build-$(1)/juju-ui/assets/")
 endef
 
 $(LINK_DEBUG_FILES):
@@ -319,7 +324,11 @@ test-debug: build-debug
 test-prod: build-prod
 	./test-server.sh prod
 
-test: test-debug
+test:
+	@echo "Deprecated. Please run either 'make test-prod' or 'make"
+	@echo "test-debug', to test the production or debug environments"
+	@echo "respectively.  Run 'make help' to list the main available "
+	@echo "targets."
 
 server:
 	@echo "Deprecated. Please run either 'make prod' or 'make debug',"
