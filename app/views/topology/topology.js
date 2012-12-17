@@ -28,6 +28,44 @@ YUI.add('juju-topology', function(Y) {
       this.options = Y.mix(options || {});
     },
 
+    /**
+     * Called by render, conditionally attach container to the DOM if
+     * it isn't already. The framework calls this before module
+     * rendering so that d3 Events will have attached DOM elements. If
+     * your application doesn't need this behavior feel free to override.
+     *
+     * @method attachContainer
+     * @chainable
+     **/
+    attachContainer: function() {
+      var container = this.get('container');
+      if (container && !container.inDoc()) {
+        Y.one('body').append(container);
+     }
+     if (this.topoNode && !this.topoNode.inDoc()) {
+       container.detachAll(true);
+       container.setHTML('');
+       container.append(this.topoNode);
+     }
+     return this;
+    },
+
+    /**
+     * Remove container from DOM returning container. This
+     * is explicitly not chainable.
+     *
+     * @method detachContainer
+     **/
+    detachContainer: function() {
+      var container = this.get('container');
+      if (container.inDoc()) {
+        this.topoNode = container.one('.topology');
+        this.topoNode.remove();
+      }
+      return container;
+    },
+
+
     renderOnce: function() {
       var self = this,
           vis,
@@ -36,9 +74,7 @@ YUI.add('juju-topology', function(Y) {
           container = this.get('container'),
           templateName = this.options.template || 'overview';
 
-      console.log('topo renderOnce');
       if (this._templateRendered) {
-        console.log('render once bail');
         return;
       }
       //container.setHTML(views.Templates[templateName]());

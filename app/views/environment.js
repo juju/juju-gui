@@ -53,7 +53,6 @@ YUI.add('juju-view-environment', function(Y) {
 
             topo.addTarget(this);
             this.topo = topo;
-            console.log('added topo', topo)
           }
 
           topo.render();
@@ -61,7 +60,7 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         postRender: function() {
-          console.log("postRender");
+          this.topo.attachContainer();
           this.topo.fire('rendered');
         }
       }, {

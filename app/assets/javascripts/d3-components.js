@@ -436,7 +436,6 @@ YUI.add('d3-components', function(Y) {
       var container = this.get('container');
       if (container && !container.inDoc()) {
         Y.one('body').append(container);
-        console.log('attached container');
       }
       return this;
     },
@@ -450,7 +449,7 @@ YUI.add('d3-components', function(Y) {
     detachContainer: function() {
       var container = this.get('container');
       if (container.inDoc()) {
-        container.remove();
+        container.one('.topology').remove();
       }
       return container;
     },

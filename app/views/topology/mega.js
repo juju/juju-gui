@@ -1136,15 +1136,16 @@ YUI.add('juju-topology-mega', function(Y) {
       // affect the page size, such as the charm panel, to get out of the
       // way before we compute sizes.  Note the
       // "afterPageSizeRecalculation" event at the end of this function.
-      Y.fire('beforePageSizeRecalculation');
       // start with some reasonable defaults
-      var container = this.get('container'),
-          vis = container.vis,
-          xscale = this.xscale,
-          yscale = this.yscale,
+      var topo = this.get('component'),
+          container = this.get('container'),
+          vis = topo.vis,
+          xscale = topo.xScale,
+          yscale = topo.yScale,
           svg = container.one('svg'),
           canvas = container.one('.topology-canvas');
 
+      topo.fire('beforePageSizeRecalculation');
       // Get the canvas out of the way so we can calculate the size
       // correctly (the canvas contains the svg).  We want it to be the
       // smallest size we accept--no smaller or bigger--or else the
@@ -1165,14 +1166,13 @@ YUI.add('juju-topology-mega', function(Y) {
             .setStyle('width', dimensions.width);
 
       // Reset the scale parameters
-      this.xscale.domain([-dimensions.width / 2, dimensions.width / 2])
+      topo.xScale.domain([-dimensions.width / 2, dimensions.width / 2])
             .range([0, dimensions.width]);
-      this.yscale.domain([-dimensions.height / 2, dimensions.height / 2])
+      topo.yScale.domain([-dimensions.height / 2, dimensions.height / 2])
             .range([dimensions.height, 0]);
 
-      this.width = dimensions.width;
-      this.height = dimensions.height;
-      Y.fire('afterPageSizeRecalculation');
+      topo.set('size', [dimensions.width, dimensions.height]);
+      topo.fire('afterPageSizeRecalculation');
     },
 
     /*
@@ -1332,8 +1332,9 @@ YUI.add('juju-topology-mega', function(Y) {
            * View a service
            */
       show_service: function(m, context) {
-        context.get('component')
-        .fire('navigateTo', {url: '/service/' + m.get('id') + '/'});
+        var topo = context.get('component');
+        topo.detachContainer();
+        topo.fire('navigateTo', {url: '/service/' + m.get('id') + '/'});
       },
 
       /*
