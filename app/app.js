@@ -543,7 +543,8 @@ YUI.add('juju-gui', function(Y) {
           options = {
             getModelURL: Y.bind(this.getModelURL, this),
             /** A simple closure so changes to the value are available.*/
-            getServiceEndpoints: function() {return self.serviceEndpoints;},
+            getServiceEndpoints: function() {
+              return self.serviceEndpoints;},
             loadService: this.loadService,
             container: this.get('container'),
             db: this.db,
@@ -552,6 +553,7 @@ YUI.add('juju-gui', function(Y) {
       if (!view.instance) {
         console.log('new env view');
         view.instance = new views.environment(options);
+        view.instance.addTarget(this);
         view.instance.render();
       }
       view.instance.postRender();

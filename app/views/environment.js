@@ -23,7 +23,8 @@ YUI.add('juju-view-environment', function(Y) {
       {
         initializer: function() {
           console.log('View: Initialized: Env');
-          this.publish('navigateTo', {preventable: false});
+          this.publish('navigateTo', {broadcast: true,
+                                      preventable: false});
         },
 
         render: function() {
@@ -33,11 +34,9 @@ YUI.add('juju-view-environment', function(Y) {
           //If we need the initial HTML template
           // take care of that.
           if (!this.svg) {
-            console.log('Env View', container);
             EnvironmentView.superclass.render.apply(this, arguments);
             container.setHTML(Templates.overview());
             this.svg = container.one('.topology');
-            console.log("container, svg", container, this.svg);
           }
 
           if (!topo) {

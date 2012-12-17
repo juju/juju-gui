@@ -163,7 +163,6 @@ YUI.add('juju-topology-mega', function(Y) {
 
     initializer: function(options) {
       MegaModule.superclass.constructor.apply(this, arguments);
-      this.publish('navigateTo', {preventable: false});
 
       // Build a service.id -> BoundingBox map for services.
       this.service_boxes = {};
