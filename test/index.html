@@ -5,6 +5,8 @@
   <link rel="stylesheet" href="assets/mocha.css">
   <script src="/juju-ui/assets/modules.js"></script>
   <script src="/juju-ui/assets/all-yui.js"></script>
+  <!-- Since only the tests depend on these files and the prod tests disable
+    the YUI loader, we have to include them manually here. -->
   <script src="/juju-ui/assets/event-simulate.js"></script>
   <script src="/juju-ui/assets/node-event-simulate.js"></script>
   <script src="assets/chai.js"></script>
