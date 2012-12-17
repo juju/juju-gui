@@ -545,6 +545,7 @@ YUI.add('juju-gui', function(Y) {
             /** A simple closure so changes to the value are available.*/
             getServiceEndpoints: function() {return self.serviceEndpoints;},
             loadService: this.loadService,
+            container: this.get('container'),
             db: this.db,
             env: this.env};
 

@@ -177,7 +177,7 @@ YUI.add('juju-topology-mega', function(Y) {
      */
     renderOnce: function() {
       var self = this,
-          container = this.get('container'),
+          container = this.get('component'),
           height = 600,
           width = 640,
           fill = d3.scale.category20();
@@ -323,7 +323,7 @@ YUI.add('juju-topology-mega', function(Y) {
     updateCanvas: function() {
       var self = this,
           tree = this.tree,
-          vis = this.vis;
+          vis = this.get('component').vis;
 
       //Process any changed data.
       this.updateData();
@@ -1014,7 +1014,7 @@ YUI.add('juju-topology-mega', function(Y) {
       this.clickAddRelation = null;
       this.set('currentServiceClickAction', 'toggleControlPanel');
       this.buildingRelation = false;
-      this.show(this.vis.selectAll('.service'))
+      this.show(this.get('component').vis.selectAll('.service'))
                   .classed('selectable-service', false);
     },
 
@@ -1143,7 +1143,7 @@ YUI.add('juju-topology-mega', function(Y) {
       // "afterPageSizeRecalculation" event at the end of this function.
       Y.fire('beforePageSizeRecalculation');
       // start with some reasonable defaults
-      var vis = this.vis,
+      var vis = this.get('component').vis,
               container = this.get('container'),
               xscale = this.xscale,
               yscale = this.yscale,
