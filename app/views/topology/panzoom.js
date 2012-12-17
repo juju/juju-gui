@@ -147,10 +147,10 @@ YUI.add('juju-topology-panzoom', function(Y) {
         evt.scale = this.get('scale');
       }
       // Store the current value of scale so that it can be restored later.
-      topo.set('scale', evt.scale);
+      this._scale = evt.scale;
       // Store the current value of translate as well, by copying the event
       // array in order to avoid reference sharing.
-      topo.set('translate', evt.translate.slice(0));
+      this._translate = evt.translate.slice(0);
       vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
       topo.fire('rescaled');
@@ -174,13 +174,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
       if (changed) {
         this._fire_zoom(0);
       }
-
-      // Render the slider after the view is attached.
-      // Although there is a .syncUI() method on sliders, it does not
-      // seem to play well with the app framework: the slider will render
-      // the first time, but on navigation away and back, will not
-      // re-render within the view.
-      //this.renderSlider();
     }
   }, {
     ATTRS: {}

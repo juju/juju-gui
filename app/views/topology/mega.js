@@ -175,7 +175,7 @@ YUI.add('juju-topology-mega', function(Y) {
     /*
      * Construct a persistent scene that is managed in update.
      */
-    renderOnce: function() {
+    render: function() {
       var self = this,
           container = this.get('container'),
           height = 600,
@@ -192,9 +192,6 @@ YUI.add('juju-topology-mega', function(Y) {
       this.yscale = d3.scale.linear()
       .domain([-height / 2, height / 2])
       .range([height, 0]);
-
-      //XXX: patchthrough
-      this.vis = container.vis;
 
       this.tree = d3.layout.pack()
       .size([width, height])
@@ -323,7 +320,7 @@ YUI.add('juju-topology-mega', function(Y) {
     updateCanvas: function() {
       var self = this,
           tree = this.tree,
-          vis = this.vis;
+          vis = this.get('component').vis;
 
       //Process any changed data.
       this.updateData();
@@ -890,8 +887,9 @@ YUI.add('juju-topology-mega', function(Y) {
 
     addRelationDragStart: function(d, context) {
       // Create a pending drag-line.
-      var dragline = this.vis.append('line')
-              .attr('class', 'relation pending-relation dragline dragging'),
+      var vis = this.get('component').vis,
+          dragline = vis.append('line').attr('class',
+                     'relation pending-relation dragline dragging'),
               self = this;
 
       // Start the line between the cursor and the nearest connector
@@ -1006,6 +1004,7 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     cancelRelationBuild: function() {
+      var vis = this.get('component').vis;
       if (this.dragline) {
         // Get rid of our drag line
         this.dragline.remove();
@@ -1014,7 +1013,7 @@ YUI.add('juju-topology-mega', function(Y) {
       this.clickAddRelation = null;
       this.set('currentServiceClickAction', 'toggleControlPanel');
       this.buildingRelation = false;
-      this.show(this.vis.selectAll('.service'))
+      this.show(vis.selectAll('.service'))
                   .classed('selectable-service', false);
     },
 
@@ -1043,10 +1042,12 @@ YUI.add('juju-topology-mega', function(Y) {
      */
     startRelation: function(service) {
       // Set flags on the view that indicate we are building a relation.
+      var vis = this.get('component').vis;
+
       this.buildingRelation = true;
       this.clickAddRelation = true;
 
-      this.show(this.vis.selectAll('.service'));
+      this.show(vis.selectAll('.service'));
 
       var db = this.get('component').get('db'),
           getServiceEndpoints = this.get('component')
@@ -1072,7 +1073,7 @@ YUI.add('juju-topology-mega', function(Y) {
       // Rather than two loops this marks
       // all services as selectable and then
       // removes the invalid ones.
-      this.fade(this.vis.selectAll('.service')
+      this.fade(vis.selectAll('.service')
               .classed('selectable-service', true)
               .filter(function(d) {
                 return (d.id in invalidRelationTargets &&
@@ -1143,12 +1144,13 @@ YUI.add('juju-topology-mega', function(Y) {
       // "afterPageSizeRecalculation" event at the end of this function.
       Y.fire('beforePageSizeRecalculation');
       // start with some reasonable defaults
-      var vis = this.vis,
-              container = this.get('container'),
-              xscale = this.xscale,
-              yscale = this.yscale,
-              svg = container.one('svg'),
-              canvas = container.one('.crosshatch-background');
+      var container = this.get('container'),
+          vis = container.vis,
+          xscale = this.xscale,
+          yscale = this.yscale,
+          svg = container.one('svg'),
+          canvas = container.one('.topology-canvas');
+
       // Get the canvas out of the way so we can calculate the size
       // correctly (the canvas contains the svg).  We want it to be the
       // smallest size we accept--no smaller or bigger--or else the
@@ -1502,7 +1504,7 @@ YUI.add('juju-topology-mega', function(Y) {
         view.cancelRelationBuild();
 
         // Get the vis, and links, build the new relation.
-        var vis = view.vis,
+        var vis = view.get('component').vis,
                 env = view.get('component').get('env'),
                 db = view.get('component').get('db'),
                 source = view.get('addRelationStart_service'),
