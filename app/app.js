@@ -747,6 +747,7 @@ YUI.add('juju-gui', function(Y) {
 }, '0.5.2', {
   requires: [
     'juju-models',
+    'juju-charm-models',
     'juju-views',
     'juju-controllers',
     'juju-view-charm-search',

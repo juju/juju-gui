@@ -103,7 +103,7 @@
     });
 
     beforeEach(function(done) {
-      container = Y.Node.create('<div id="test-container" />');
+      container = Y.Node.create('<div />').setStyle('visibility', 'hidden');
       Y.one('body').prepend(container);
       db = new models.Database();
       db.on_delta({data: environment_delta});
@@ -116,6 +116,22 @@
       env._txn_callbacks = {};
       conn.messages = [];
       done();
+    });
+
+    it('must handle the window resize event', function(done) {
+      var view = new views.environment({container: container, db: db});
+      view.render();
+      var beforeResizeEventFired = false;
+      Y.once('beforePageSizeRecalculation', function() {
+        // This event must be fired by views.MegaModule.setSizesFromViewport.
+        beforeResizeEventFired = true;
+      });
+      Y.once('afterPageSizeRecalculation', function() {
+        // This event must be fired by views.MegaModule.setSizesFromViewport.
+        assert.isTrue(beforeResizeEventFired);
+        done();
+      });
+      Y.one('window').simulate('resize');
     });
 
     // Ensure the environment view loads properly
