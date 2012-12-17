@@ -177,7 +177,7 @@ YUI.add('juju-topology-mega', function(Y) {
      */
     render: function() {
       var self = this,
-          container = this.get('container'),
+          container = this.get('component'),
           height = 600,
           width = 640,
           fill = d3.scale.category20();
@@ -279,8 +279,9 @@ YUI.add('juju-topology-mega', function(Y) {
      */
     updateData: function() {
       //model data
-      var vis = this.get('component').vis,
-          db = this.get('component').get('db'),
+      var topo = this.get('component'),
+          vis = topo.vis,
+          db = topo.get('db'),
           relations = db.relations.toArray(),
           services = db.services.map(views.toBoundingBox);
 
@@ -422,14 +423,6 @@ YUI.add('juju-topology-mega', function(Y) {
           return (d.subordinate ? 'subordinate ' : '') + 'service';
         })
         .call(drag)
-        .on('mousedown.addrel', function(d) {
-          self.d3Events['.service']['mousedown.addrel']
-          .call(this, d, self, d3.event);
-        })
-        .on('mouseup.addrel', function(d) {
-          self.d3Events['.service']['mouseup.addrel']
-          .call(this, d, self, d3.event);
-        })
         .attr('transform', function(d) {
           return d.translateStr();
         });
@@ -857,6 +850,8 @@ YUI.add('juju-topology-mega', function(Y) {
     renderedHandler: function() {
       var container = this.get('container');
 
+      this.updateCanvas();
+
       // Set the sizes from the viewport.
       this.setSizesFromViewport();
 
@@ -1185,11 +1180,13 @@ YUI.add('juju-topology-mega', function(Y) {
          * Update the location of the active service panel
          */
     updateServiceMenuLocation: function() {
-      var container = this.get('container'),
-              cp = container.one('.environment-menu.active'),
-              service = this.get('active_service'),
-              tr = this.zoom.translate(),
-              z = this.zoom.scale();
+      var topo = this.get('component'),
+          container = this.get('container'),
+          cp = container.one('.environment-menu.active'),
+          service = this.get('active_service'),
+          tr = topo.get('translate'),
+          z = topo.get('scale');
+
       if (service && cp) {
         var cp_width = cp.getClientRect().width,
                 menu_left = service.x * z + service.w * z / 2 <
