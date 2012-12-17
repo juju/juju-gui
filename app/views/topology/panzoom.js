@@ -32,7 +32,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
     initializer: function(options) {
       PanZoomModule.superclass.constructor.apply(this, arguments);
-      this._translate = [0,0];
+      this._translate = [0, 0];
       this._scale = 1.0;
     },
 
