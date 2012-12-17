@@ -41,23 +41,23 @@ YUI.add('juju-topology', function(Y) {
         console.log('render once bail');
         return;
       }
-      container.setHTML(views.Templates[templateName]());
+      //container.setHTML(views.Templates[templateName]());
       // Take the first element.
       this._templateRendered = true;
 
       // Set up the visualization with a pack layout.
       vis = d3.select(container.getDOMNode())
-      .selectAll('.topology-canvas')
-      .append('svg:svg')
-      .attr('pointer-events', 'all')
-      .attr('width', width)
-      .attr('height', height)
-      .append('svg:g')
-      .append('g');
+              .selectAll('.topology-canvas')
+              .append('svg:svg')
+              .attr('pointer-events', 'all')
+              .attr('width', width)
+              .attr('height', height)
+              .append('svg:g')
+              .append('g');
 
       vis.append('svg:rect')
-      .attr('class', 'graph')
-      .attr('fill', 'rgba(255,255,255,0)');
+         .attr('class', 'graph')
+         .attr('fill', 'rgba(255,255,255,0)');
 
       this.vis = vis;
 

@@ -322,8 +322,8 @@ YUI.add('juju-topology-mega', function(Y) {
      */
     updateCanvas: function() {
       var self = this,
-              tree = this.tree,
-              vis = this.vis;
+          tree = this.tree,
+          vis = this.vis;
 
       //Process any changed data.
       this.updateData();
@@ -420,21 +420,22 @@ YUI.add('juju-topology-mega', function(Y) {
 
       // enter
       node
-            .enter().append('g')
-            .attr('class', function(d) {
-            return (d.subordinate ? 'subordinate ' : '') + 'service';
-          })
-            .call(drag)
-            .on('mousedown.addrel', function(d) {
-                self.d3Events['.service']['mousedown.addrel']
-                .call(this, d, self, d3.event);
-              })
-            .on('mouseup.addrel', function(d) {
-                self.d3Events['.service']['mouseup.addrel']
-                .call(this, d, self, d3.event);
-              })
-            .attr('transform', function(d) {
-                return d.translateStr();});
+        .enter().append('g')
+        .attr('class', function(d) {
+          return (d.subordinate ? 'subordinate ' : '') + 'service';
+        })
+        .call(drag)
+        .on('mousedown.addrel', function(d) {
+          self.d3Events['.service']['mousedown.addrel']
+          .call(this, d, self, d3.event);
+        })
+        .on('mouseup.addrel', function(d) {
+          self.d3Events['.service']['mouseup.addrel']
+          .call(this, d, self, d3.event);
+        })
+        .attr('transform', function(d) {
+          return d.translateStr();
+        });
 
       // Update
       this.drawService(node);

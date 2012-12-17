@@ -30,6 +30,16 @@ YUI.add('juju-view-environment', function(Y) {
           var container = this.get('container'),
               topo = this.topo;
 
+          //If we need the initial HTML template
+          // take care of that.
+          if (!this.svg) {
+            console.log('Env View', container);
+            EnvironmentView.superclass.render.apply(this, arguments);
+            container.setHTML(Templates.overview());
+            this.svg = container.one('.topology');
+            console.log("container, svg", container, this.svg);
+          }
+
           if (!topo) {
             topo = new views.Topology();
             topo.setAttrs({
@@ -44,7 +54,7 @@ YUI.add('juju-view-environment', function(Y) {
 
             topo.addTarget(this);
             this.topo = topo;
-            console.log('added topo', topo);
+            console.log('added topo', topo)
           }
 
           topo.render();

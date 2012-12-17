@@ -43,9 +43,12 @@ YUI.add('juju-topology-panzoom', function(Y) {
       self.rescale(vis, evt);
     },
 
+    renderOnce: function() {
+      this.renderSlider();
+    },
+
     render: function() {
       PanZoomModule.superclass.render.apply(this, arguments);
-      this.renderSlider();
       return this;
     },
 
