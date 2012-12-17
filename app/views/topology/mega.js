@@ -156,7 +156,8 @@ YUI.add('juju-topology-mega', function(Y) {
         }
       },
       yui: {
-        windowresize: 'setSizesFromViewport'
+        windowresize: 'setSizesFromViewport',
+        rendered: 'renderedHandler'
       }
     },
 
@@ -171,16 +172,6 @@ YUI.add('juju-topology-mega', function(Y) {
       this.set('currentServiceClickAction', 'toggleControlPanel');
     },
 
-    render: function() {
-      MegaModule.superclass.render.apply(this, arguments);
-      var container = this.get('container');
-      container.setHTML(Templates.overview());
-      this.svg = container.one('.topology');
-
-      this.renderOnce();
-
-      return this;
-    },
     /*
      * Construct a persistent scene that is managed in update.
      */
@@ -191,6 +182,7 @@ YUI.add('juju-topology-mega', function(Y) {
           width = 640,
           fill = d3.scale.category20();
 
+      console.log("MEGA RENDER ONCE");
       this.service_scale = d3.scale.log().range([150, 200]);
       this.service_scale_width = d3.scale.log().range([164, 200]),
       this.service_scale_height = d3.scale.log().range([64, 100]);
@@ -201,21 +193,9 @@ YUI.add('juju-topology-mega', function(Y) {
       .domain([-height / 2, height / 2])
       .range([height, 0]);
 
-      // Set up the visualization with a pack layout.
-      var vis = d3.select(container.getDOMNode())
-      .select('.crosshatch-background')
-      .append('svg:svg')
-      .attr('pointer-events', 'all')
-      .attr('width', width)
-      .attr('height', height)
-      .append('svg:g')
-      .append('g');
+      //XXX: patchthrough
+      this.vis = container.vis;
 
-      vis.append('svg:rect')
-      .attr('class', 'graph')
-      .attr('fill', 'rgba(255,255,255,0)');
-
-      this.vis = vis;
       this.tree = d3.layout.pack()
       .size([width, height])
       .value(function(d) {
@@ -302,7 +282,7 @@ YUI.add('juju-topology-mega', function(Y) {
      */
     updateData: function() {
       //model data
-      var vis = this.vis,
+      var vis = this.get('component').vis,
           db = this.get('component').get('db'),
           relations = db.relations.toArray(),
           services = db.services.map(views.toBoundingBox);
@@ -333,7 +313,7 @@ YUI.add('juju-topology-mega', function(Y) {
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
                        .data(services, function(d) {
-                return d.modelId();});
+                         return d.modelId();});
     },
 
     /*
@@ -490,10 +470,11 @@ YUI.add('juju-topology-mega', function(Y) {
     drawRelationGroup: function() {
       // Add a labelgroup.
       var self = this,
-              g = self.vis.selectAll('g.rel-group')
-                  .data(self.rel_pairs, function(r) {
-                    return r.modelIds();
-                  });
+          vis = this.get('component').vis,
+          g = vis.selectAll('g.rel-group')
+                 .data(self.rel_pairs, function(r) {
+                   return r.modelIds();
+                 });
 
       var enter = g.enter();
 
@@ -875,7 +856,7 @@ YUI.add('juju-topology-mega', function(Y) {
          * in app.showView(), and in testing, it needs to be called manually,
          * if the test relies on any of this data.
          */
-    postRender: function() {
+    renderedHandler: function() {
       var container = this.get('container');
 
       // Set the sizes from the viewport.
@@ -887,29 +868,6 @@ YUI.add('juju-topology-mega', function(Y) {
         label.one('rect').setAttribute('width', width)
               .setAttribute('x', -width / 2);
       });
-
-      // Preserve zoom when the scene is updated.
-      var changed = false,
-              currentScale = this.get('scale'),
-              currentTranslate = this.get('translate');
-      if (currentTranslate && currentTranslate !== this.zoom.translate()) {
-        this.zoom.translate(currentTranslate);
-        changed = true;
-      }
-      if (currentScale && currentScale !== this.zoom.scale()) {
-        this.zoom.scale(currentScale);
-        changed = true;
-      }
-      if (changed) {
-        this._fire_zoom(0);
-      }
-
-      // Render the slider after the view is attached.
-      // Although there is a .syncUI() method on sliders, it does not
-      // seem to play well with the app framework: the slider will render
-      // the first time, but on navigation away and back, will not
-      // re-render within the view.
-      this.renderSlider();
 
       // Chainable method.
       return this;

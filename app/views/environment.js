@@ -30,14 +30,6 @@ YUI.add('juju-view-environment', function(Y) {
           var container = this.get('container'),
               topo = this.topo;
 
-          //If we need the initial HTML template
-          // take care of that.
-          if (!this.svg) {
-            EnvironmentView.superclass.render.apply(this, arguments);
-            container.setHTML(Templates.overview());
-            this.svg = container.one('.topology');
-          }
-
           if (!topo) {
             topo = new views.Topology();
             topo.setAttrs({
@@ -48,18 +40,19 @@ YUI.add('juju-view-environment', function(Y) {
               container: container});
             // Bind all the behaviors we need as modules.
             topo.addModule(views.MegaModule);
+            topo.addModule(views.PanZoomModule);
 
             topo.addTarget(this);
             this.topo = topo;
+            console.log('added topo', topo);
           }
+
           topo.render();
           return this;
         },
-        // XXX: This method is a pass through,
-        // it will be removed when we move to
-        // incremental rendering.
+
         postRender: function() {
-          this.topo.modules.MegaModule.postRender();
+          this.topo.fire('rendered');
         }
       }, {
         ATTRS: {}

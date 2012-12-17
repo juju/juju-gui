@@ -14,6 +14,11 @@ YUI.add('juju-topology', function(Y) {
    * configuration belong here. If the only shared requirement on shared state
    * is watch/event like behavior fire an event and place the logic in a module.
    *
+   * Emmitted Events:
+   *
+   *  zoom: When the zoom level of the canvas changes a 'zoom'
+   *        event is fired. Analogous to d3's zoom event.
+   *
    * @class Topology
    * @namespace juju.views
    **/
@@ -31,12 +36,14 @@ YUI.add('juju-topology', function(Y) {
           container = this.get('container'),
           templateName = this.options.template || 'overview';
 
-      if (this.svg) {
+      console.log('topo renderOnce');
+      if (this._templateRendered) {
+        console.log('render once bail');
         return;
       }
       container.setHTML(views.Templates[templateName]());
       // Take the first element.
-      this.svg = container.one(':first-child');
+      this._templateRendered = true;
 
       // Set up the visualization with a pack layout.
       vis = d3.select(container.getDOMNode())
@@ -54,7 +61,39 @@ YUI.add('juju-topology', function(Y) {
 
       this.vis = vis;
 
+      // Build out scale and zoom.
+      // These are defaults, a Module
+      // can implement policy around them.
+      this.sizeChangeHandler();
+      this.on('sizeChanged', this.sizeChangeHandler);
+
+      Topology.superclass.renderOnce.apply(this, arguments);
       return this;
+    },
+
+    sizeChangeHandler: function() {
+      var self = this,
+          width = this.get('width'),
+          height = this.get('height'),
+          vis = this.vis;
+
+      // Create a pan/zoom behavior manager.
+      this.xScale = d3.scale.linear()
+                      .domain([-width / 2, width / 2])
+                      .range([0, width]),
+      this.yScale = d3.scale.linear()
+                      .domain([-height / 2, height / 2])
+                      .range([height, 0]);
+
+      // Include very basic behavior, fire
+      // yui event for anything more complex.
+      this.zoom = d3.behavior.zoom()
+                    .x(this.xScale)
+                    .y(this.yScale)
+                    .scaleExtent([0.25, 2.0])
+                    .on('zoom', function(evt) {
+                      self.fire('zoom');
+                    });
     }
 
   }, {
@@ -83,8 +122,8 @@ YUI.add('juju-topology', function(Y) {
        * @property {Array} transform
        **/
       transform: {
-        getter: function() {return this.get('zoom').transform();},
-        setter: function(v) {this.get('zoom').transform(v);}
+        getter: function() {return this.zoom.transform();},
+        setter: function(v) {this.zoom.transform(v);}
       },
 
       width: {

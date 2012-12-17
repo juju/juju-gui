@@ -117,6 +117,9 @@ YUI.add('d3-components', function(Y) {
       this.events[module.name] = modEvents;
       this.bind(module.name);
       module.componentBound();
+
+      // Add Module as an event target of Component
+      this.addTarget(module);
       return this;
     },
 
@@ -130,6 +133,7 @@ YUI.add('d3-components', function(Y) {
     removeModule: function(moduleName) {
       this.unbind(moduleName);
       delete this.events[moduleName];
+      this.removeTarget(this.modules[moduleName]);
       delete this.modules[moduleName];
       return this;
     },
@@ -316,7 +320,7 @@ YUI.add('d3-components', function(Y) {
     if (!subscription) {
       throw "Invalid/undefined subscription object cannot be recorded.";
     }
-    this.events[module.name].push(subscription);
+    this.events[module.name].subscriptions.push(subscription);
   },
 
     /**
@@ -377,7 +381,11 @@ YUI.add('d3-components', function(Y) {
      *
      * Called the first time render is invoked. See {render}.
      **/
-    renderOnce: function() {},
+    renderOnce: function() {
+       Y.each(this.modules, function(mod) {
+         mod.renderOnce && mod.renderOnce();
+       }, this);
+    },
 
     /**
      * Render each module bound to the canvas. The first call to
@@ -423,6 +431,7 @@ YUI.add('d3-components', function(Y) {
       var container = this.get('container');
       if (container && !container.inDoc()) {
         Y.one('body').append(container);
+        console.log('attached container');
       }
       return this;
     },

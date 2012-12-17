@@ -8,6 +8,11 @@ YUI.add('juju-topology-panzoom', function(Y) {
   /**
    * Handle PanZoom within the a Topology.
    *
+   * Emitted events:
+   *
+   *  rescaled: post-zoom event, after the scene has been rescaled,
+   *            queried object positions should be accurate.
+   *
    * @module topology-panzoom
    * @class PanZoomModule
    * @namespace views
@@ -18,6 +23,10 @@ YUI.add('juju-topology-panzoom', function(Y) {
       scene: {
         '#zoom-out-btn': {click: 'zoom_out'},
         '#zoom-in-btn': {click: 'zoom_in'},
+      },
+      yui: {
+        zoom: {callback: 'zoomHandler'},
+        rendered: {callback: 'renderedHandler'}
       }
     },
 
@@ -25,59 +34,14 @@ YUI.add('juju-topology-panzoom', function(Y) {
       PanZoomModule.superclass.constructor.apply(this, arguments);
     },
 
-    componentBound: function() {
-      var topo = this.get('component'),
-          vis = topo.vis;
+    // Handler for 'zoom' event.
+    zoomHandler: function(evt) {
+      var s = self.slider,
+          vis = this.get('component').vis;
 
-      // Directly invoke the handler on bind
-      this.sizeChangeHandler();
-      // And register it as a subscribed event handler.
-      // XXX: we have to manually do this until either
-      // I add a slots/signals model to the framework
-      // or we let the declaration specify a target object.
-      // At first glance saying context:
-      // component|module|component-attr|module-attr
-      // for the yui event block make sense, but some
-      // attrs would not exist until late in runtime
-      // so I lean towards slots.
-      topo.recordSubscription(
-        topo.on('sizeChanged', this.sizeChangeHandler);
-      );
-
-      // Bind zoom behavior and disable
-      // dblclick to zoom.
-      vis.call(this.zoom)
-         .on('dblclick.zoom', null);
+      s.set('value', Mat.floor(evt.scale * 100));
+      self.rescale(vis, evt);
     },
-
-    sizeChangeHandler: function() {
-      var component = this.get('component'),
-          width = component.get('width'),
-          height = component.get('height'),
-          vis = component.vis;
-
-      // Create a pan/zoom behavior manager.
-      this.xscale = d3.scale.linear()
-      .domain([-width / 2, width / 2])
-      .range([0, width]),
-      this.yscale = d3.scale.linear()
-      .domain([-height / 2, height / 2])
-      .range([height, 0]);
-
-      var zoom = d3.behavior.zoom()
-                   .x(this.xscale)
-                   .y(this.yscale)
-                   .scaleExtent([0.25, 2.0])
-                   .on('zoom', function() {
-                     // Keep the slider up to date with the scale on other sorts
-                     // of zoom interactions
-                     var s = self.slider;
-                     s.set('value', Math.floor(d3.event.scale * 100));
-                     self.rescale(vis, d3.event);
-                   });
-      self.zoom = zoom;
-
-    }
 
     render: function() {
       PanZoomModule.superclass.render.apply(this, arguments);
@@ -101,22 +65,22 @@ YUI.add('juju-topology-panzoom', function(Y) {
         value: value
       });
       slider.render('#slider-parent');
-      slider.after('valueChange', function(evt) {
-        // Don't fire a zoom if there's a zoom event already in progress;
-        // that will run rescale for us.
-        if (d3.event && d3.event.scale && d3.event.translate) {
-          return;
-        }
-        self._fire_zoom((evt.newVal - evt.prevVal) / 100);
-      });
+      topo.recordSubscription(this,
+        slider.after('valueChange', function(evt) {
+          // Don't fire a zoom if there's a zoom event already in progress;
+          // that will run rescale for us.
+          if (d3.event && d3.event.scale && d3.event.translate) {
+            return;
+          }
+          self._fire_zoom((evt.newVal - evt.prevVal) / 100);
+      }));
       self.slider = slider;
     },
-
 
     update: function() {
       PanZoomModule.superclass.update.apply(this, arguments);
       return this;
-    }
+    },
 
     /*
      * Zoom out event handler.
@@ -140,8 +104,9 @@ YUI.add('juju-topology-panzoom', function(Y) {
      * Wraper around the actual rescale method for zoom buttons.
      */
     _fire_zoom: function(delta) {
-      var vis = this.vis,
-          zoom = this.zoom,
+      var topo = this.get('component'),
+          vis = topo.vis,
+          zoom = topo.zoom,
           evt = {};
 
       // Build a temporary event that rescale can use of a similar
@@ -163,28 +128,55 @@ YUI.add('juju-topology-panzoom', function(Y) {
     },
 
     /*
-         * Rescale the visualization on a zoom/pan event.
-         */
+     * Rescale the visualization on a zoom/pan event.
+     */
     rescale: function(vis, evt) {
       // Make sure we don't scale outside of our bounds.
       // This check is needed because we're messing with d3's zoom
       // behavior outside of mouse events (e.g.: with the slider),
       // and can't trust that zoomExtent will play well.
-      var new_scale = Math.floor(evt.scale * 100);
+      var new_scale = Math.floor(evt.scale * 100),
+          topo = this.get('component');
+
       if (new_scale < 25 || new_scale > 200) {
         evt.scale = this.get('scale');
       }
       // Store the current value of scale so that it can be restored later.
-      this.set('scale', evt.scale);
+      topo.set('scale', evt.scale);
       // Store the current value of translate as well, by copying the event
       // array in order to avoid reference sharing.
-      this.set('translate', evt.translate.slice(0));
+      topo.set('translate', evt.translate.slice(0));
       vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
-      this.updateServiceMenuLocation();
+      topo.fire('rescaled');
     },
 
+    renderedHandler: function(evt) {
+      // Preserve zoom when the scene is updated.
+      var topo = this.get('component'),
+          changed = false,
+          currentScale = topo.get('scale'),
+          currentTranslate = topo.get('translate');
 
+      if (currentTranslate && currentTranslate !== topo.zoom.translate()) {
+        topo.zoom.translate(currentTranslate);
+        changed = true;
+      }
+      if (currentScale && currentScale !== topo.zoom.scale()) {
+        topo.zoom.scale(currentScale);
+        changed = true;
+      }
+      if (changed) {
+        this._fire_zoom(0);
+      }
+
+      // Render the slider after the view is attached.
+      // Although there is a .syncUI() method on sliders, it does not
+      // seem to play well with the app framework: the slider will render
+      // the first time, but on navigation away and back, will not
+      // re-render within the view.
+      this.renderSlider();
+    }
   }, {
     ATTRS: {}
 
