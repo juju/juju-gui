@@ -43,10 +43,11 @@ YUI.add('juju-topology', function(Y) {
         Y.one('body').append(container);
      }
      if (this.topoNode && !this.topoNode.inDoc()) {
-       container.detachAll(true);
-       container.setHTML('');
+       container.remove();
        container.append(this.topoNode);
      }
+
+      this.bind();
      return this;
     },
 
@@ -61,6 +62,7 @@ YUI.add('juju-topology', function(Y) {
       if (container.inDoc()) {
         this.topoNode = container.one('.topology');
         this.topoNode.remove();
+        this.unbind();
       }
       return container;
     },

@@ -182,24 +182,7 @@ YUI.add('juju-topology-mega', function(Y) {
           fill = d3.scale.category20();
 
       console.log("MEGA RENDER ONCE");
-      this.service_scale = d3.scale.log().range([150, 200]);
-      this.service_scale_width = d3.scale.log().range([164, 200]),
-      this.service_scale_height = d3.scale.log().range([64, 100]);
-      this.xscale = d3.scale.linear()
-      .domain([-width / 2, width / 2])
-      .range([0, width]),
-      this.yscale = d3.scale.linear()
-      .domain([-height / 2, height / 2])
-      .range([height, 0]);
-
-      this.tree = d3.layout.pack()
-      .size([width, height])
-      .value(function(d) {
-            return Math.max(d.unit_count, 1);
-          })
-      .padding(300);
-
-      this.updateCanvas();
+      //this.updateCanvas();
     },
 
     serviceClick: function(d, context) {
@@ -319,8 +302,24 @@ YUI.add('juju-topology-mega', function(Y) {
      */
     updateCanvas: function() {
       var self = this,
-          tree = this.tree,
-          vis = this.get('component').vis;
+          topo = this.get('component'),
+          width = topo.get('width'),
+          height = topo.get('height');
+
+      if (!this.service_scale) {
+        this.service_scale = d3.scale.log().range([150, 200]);
+        this.service_scale_width = d3.scale.log().range([164, 200]),
+        this.service_scale_height = d3.scale.log().range([64, 100]);
+      }
+
+      if (!this.tree) {
+        this.tree = d3.layout.pack()
+                      .size([width, height])
+                      .value(function(d) {
+                        return Math.max(d.unit_count, 1);
+                      })
+                      .padding(300);
+      }
 
       //Process any changed data.
       this.updateData();
@@ -354,7 +353,7 @@ YUI.add('juju-topology-mega', function(Y) {
                   // Clear any state while dragging.
                   self.get('container').all('.environment-menu.active')
                     .removeClass('active');
-                  self.service_click_actions.toggleControlPanel(null, self);
+                  //self.service_click_actions.toggleControlPanel(null, self);
                   self.cancelRelationBuild();
 
                   // Update relation lines for just this service.
@@ -390,7 +389,6 @@ YUI.add('juju-topology-mega', function(Y) {
                 .attr('y2', t[1]);
           rel_group.select('.rel-label')
                 .attr('transform', function(d) {
-                // XXX: This has to happen on update, not enter
                 return 'translate(' +
                     [Math.max(s[0], t[0]) -
                          Math.abs((s[0] - t[0]) / 2),
