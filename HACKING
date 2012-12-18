@@ -159,7 +159,7 @@ FINAL
   release target) will cause the release to be uploaded to the stable series
   rather than the trunk series. Example usage::
 
-    $ FINAL=1 make release
+    $ FINAL=1 make distfile
 
 PROD
   By default, releases will be uploaded to staging.launchpad.net, which is a
@@ -176,22 +176,22 @@ PROD
 
   Example usage::
 
-    $ PROD=1 make release
+    $ PROD=1 make distfile
 
-IS_TRUNK_CHECKOUT
+IS_TRUNK_BRANCH
   Set this to any non-empty value to force the Makefile to believe it is
   working with a trunk checkout. Example usage::
 
-    $ IS_TRUNK_CHECKOUT=1 make release
+    $ IS_TRUNK_BRANCH=1 make distfile
 
-HAS_NO_CHANGES
+BRANCH_IS_CLEAN
   Set this to any non-empty value to force the Makefile to believe that the
   current code tree has no changes. Example usage::
 
-    $ HAS_NO_CHANGES=1 make release
+    $ BRANCH_IS_CLEAN=1 make distfile
 
 IS_SAFE_RELEASE
   Set this to any non-empty value to force the Makefile to bypass checks of
-  IS_TRUNK_CHECKOUT and HAS_NO_CHANGES. Example usage::
+  IS_TRUNK_BRANCH and BRANCH_IS_CLEAN. Example usage::
 
-    $ IS_SAFE_RELEASE=1 make release
+    $ BRANCH_IS_GOOD=1 make distfile
