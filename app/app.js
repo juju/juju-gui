@@ -552,9 +552,10 @@ YUI.add('juju-gui', function(Y) {
 
       if (!view.instance) {
         console.log('new env view');
-        view.instance = new views.environment(options);
-        view.instance.addTarget(this);
-        view.instance.render();
+        //view.instance = new views.environment(options);
+        this.showView('environment', options, {render: true});
+        //view.instance.addTarget(this);
+        //view.instance.render();
       }
       view.instance.postRender();
     },

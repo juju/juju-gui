@@ -38,6 +38,7 @@ YUI.add('juju-topology', function(Y) {
      * @chainable
      **/
     attachContainer: function() {
+      return;
       var container = this.get('container');
       if (container && !container.inDoc()) {
         Y.one('body').append(container);
@@ -58,6 +59,7 @@ YUI.add('juju-topology', function(Y) {
      * @method detachContainer
      **/
     detachContainer: function() {
+      return;
       var container = this.get('container');
       if (container.inDoc()) {
         this.topoNode = container.one('.topology');
