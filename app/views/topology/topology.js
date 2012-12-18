@@ -70,6 +70,26 @@ YUI.add('juju-topology', function(Y) {
       // Take the first element.
       this._templateRendered = true;
 
+      // Create a pan/zoom behavior manager.
+      this.xScale = d3.scale.linear()
+                      .domain([-width / 2, width / 2])
+                      .range([0, width]);
+      this.yScale = d3.scale.linear()
+                      .domain([-height / 2, height / 2])
+                      .range([height, 0]);
+
+      // Include very basic behavior, fire
+      // yui event for anything more complex.
+      this.zoom = d3.behavior.zoom()
+                    .x(this.xScale)
+                    .y(this.yScale)
+                    .scaleExtent([0.25, 2.0])
+                    .on('zoom', function(evt) {
+                      // This will add the d3 properties to the
+                      // eventFacade
+                      self.fire('zoom', d3.event);
+                    });
+
       // Set up the visualization with a pack layout.
       vis = d3.select(container.getDOMNode())
               .selectAll('.topology-canvas')
@@ -78,6 +98,7 @@ YUI.add('juju-topology', function(Y) {
               .attr('width', width)
               .attr('height', height)
               .append('svg:g')
+              .call(this.zoom)
               .append('g');
 
       vis.append('svg:rect')
@@ -99,34 +120,15 @@ YUI.add('juju-topology', function(Y) {
     sizeChangeHandler: function() {
       var self = this,
           width = this.get('width'),
-          height = this.get('height'),
-          vis = this.vis;
+          height = this.get('height');
 
-      // Create a pan/zoom behavior manager.
-      this.xScale = d3.scale.linear()
-                      .domain([-width / 2, width / 2])
-                      .range([0, width]),
-      this.yScale = d3.scale.linear()
-                      .domain([-height / 2, height / 2])
-                      .range([height, 0]);
-
-      // Include very basic behavior, fire
-      // yui event for anything more complex.
-      this.zoom = d3.behavior.zoom()
-                    .x(this.xScale)
-                    .y(this.yScale)
-                    .scaleExtent([0.25, 2.0])
-                    .on('zoom', function(evt) {
-                      // This will add the d3 properties to the
-                      // eventFacade
-                      self.fire('zoom', d3.event);
-                    });
-      if(!this._zoomRegistered) {
-        console.log("calling ZOOM");
-        this.vis.call(this.zoom);
-        this._zoomRegistered = true;
-      }
-
+      // Update the pan/zoom behavior manager.
+      this.xScale.domain([-width / 2, width / 2])
+        .range([0, width]);
+      this.yScale.domain([-height / 2, height / 2])
+        .range([height, 0]);
+      this.zoom.x(this.xScale)
+        .y(this.yScale);
     }
 
   }, {
