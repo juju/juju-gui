@@ -34,22 +34,14 @@ YUI.add('juju-topology', function(Y) {
      * rendering so that d3 Events will have attached DOM elements. If
      * your application doesn't need this behavior feel free to override.
      *
+     * In this case we currently rely on app.showView to do all the
+     * container management, this only works on a preserved view.
+     *
      * @method attachContainer
      * @chainable
      **/
     attachContainer: function() {
-      return;
-      var container = this.get('container');
-      if (container && !container.inDoc()) {
-        Y.one('body').append(container);
-     }
-     if (this.topoNode && !this.topoNode.inDoc()) {
-       container.remove();
-       container.append(this.topoNode);
-     }
-
-      this.bind();
-     return this;
+      return this;
     },
 
     /**
@@ -60,13 +52,6 @@ YUI.add('juju-topology', function(Y) {
      **/
     detachContainer: function() {
       return;
-      var container = this.get('container');
-      if (container.inDoc()) {
-        this.topoNode = container.one('.topology');
-        this.topoNode.remove();
-        this.unbind();
-      }
-      return container;
     },
 
 

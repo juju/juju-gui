@@ -171,20 +171,6 @@ YUI.add('juju-topology-mega', function(Y) {
       this.set('currentServiceClickAction', 'toggleControlPanel');
     },
 
-    /*
-     * Construct a persistent scene that is managed in update.
-     */
-    render: function() {
-      var self = this,
-          container = this.get('component'),
-          height = 600,
-          width = 640,
-          fill = d3.scale.category20();
-
-      console.log("MEGA RENDER ONCE");
-      //this.updateCanvas();
-    },
-
     serviceClick: function(d, context) {
       // Ignore if we clicked outside the actual service node.
       var container = context.get('container'),
@@ -300,7 +286,7 @@ YUI.add('juju-topology-mega', function(Y) {
      * Attempt to reuse as much of the existing graph and view models
      * as possible to re-render the graph.
      */
-    updateCanvas: function() {
+    update: function() {
       var self = this,
           topo = this.get('component'),
           width = topo.get('width'),
@@ -429,11 +415,7 @@ YUI.add('juju-topology-mega', function(Y) {
 
       // Exit
       node.exit()
-            .call(function(d) {
-            // TODO: update the service_boxes
-            // removing the bound data
-          })
-            .remove();
+          .remove();
 
       function updateLinks() {
         // Enter.
@@ -484,7 +466,7 @@ YUI.add('juju-topology-mega', function(Y) {
                     'relation';
               });
 
-      g.selectAll('rel-label').remove();
+      g.selectAll('.rel-label').remove();
       g.selectAll('text').remove();
       g.selectAll('rect').remove();
       var label = g.append('g')
@@ -847,7 +829,7 @@ YUI.add('juju-topology-mega', function(Y) {
     renderedHandler: function() {
       var container = this.get('container');
 
-      this.updateCanvas();
+      this.update();
 
       // Set the sizes from the viewport.
       this.setSizesFromViewport();

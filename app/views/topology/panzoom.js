@@ -45,21 +45,15 @@ YUI.add('juju-topology-panzoom', function(Y) {
       self.rescale(vis, evt);
     },
 
-    renderOnce: function() {
-      this.renderSlider();
-    },
-
-    render: function() {
-      PanZoomModule.superclass.render.apply(this, arguments);
-      return this;
-    },
-
     renderSlider: function() {
       var self = this,
           topo = this.get('component'),
           contianer = topo.get('container'),
           value = 100,
           currentScale = topo.get('scale');
+
+      if (self.slider) return;
+
       // Build a slider to control zoom level
       if (currentScale) {
         value = currentScale * 100;
@@ -163,6 +157,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
           currentScale = this._scale,
           currentTranslate = this._translate;
 
+      this.renderSlider();
       if (currentTranslate && currentTranslate !== topo.get('translate')) {
         topo.zoom.translate(currentTranslate);
         changed = true;
