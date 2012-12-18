@@ -190,7 +190,7 @@ BRANCH_IS_CLEAN
 
     $ BRANCH_IS_CLEAN=1 make distfile
 
-IS_SAFE_RELEASE
+BRANCH_IS_GOOD
   Set this to any non-empty value to force the Makefile to bypass checks of
   IS_TRUNK_BRANCH and BRANCH_IS_CLEAN. Example usage::
 
