@@ -173,9 +173,10 @@ YUI.add('juju-topology-mega', function(Y) {
 
     serviceClick: function(d, context) {
       // Ignore if we clicked outside the actual service node.
-      var container = context.get('container'),
+      var topo = context.get('component'),
+          container = context.get('container'),
           mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (!d.containsPoint(mouse_coords, context.zoom)) {
+      if (!d.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
       // Get the current click action
@@ -1201,9 +1202,10 @@ YUI.add('juju-topology-mega', function(Y) {
       }
 
       // Do not fire unless we're within the service box.
-      var container = context.get('container'),
+      var topo = context.get('component'),
+          container = context.get('container'),
           mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (!d.containsPoint(mouse_coords, context.zoom)) {
+      if (!d.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
 
@@ -1239,9 +1241,10 @@ YUI.add('juju-topology-mega', function(Y) {
       }
 
       // Do not fire if we're within the service box.
-      var container = self.get('container'),
+      var topo = this.get('component'),
+          container = self.get('container'),
           mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (d.containsPoint(mouse_coords, self.zoom)) {
+      if (d.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
       var rect = Y.one(this).one('.service-border');
@@ -1394,9 +1397,10 @@ YUI.add('juju-topology-mega', function(Y) {
            * create the relation if not.
            */
       ambiguousAddRelationCheck: function(m, view, context) {
-        var endpoints = view
-                  .get('addRelationStart_possibleEndpoints')[m.id],
-                container = view.get('container');
+        var endpoints = view.get(
+                            'addRelationStart_possibleEndpoints')[m.id],
+            container = view.get('container'),
+            topo = view.get('component');
 
         if (endpoints.length === 1) {
           // Create a relation with the only available endpoint.
@@ -1456,8 +1460,8 @@ YUI.add('juju-topology-mega', function(Y) {
         });
 
         // Display the menu at the service endpoint.
-        var tr = view.zoom.translate(),
-                z = view.zoom.scale();
+        var tr = topo.zoom.translate(),
+                z = topo.zoom.scale();
         menu.setStyle('top', m.y * z + tr[1]);
         menu.setStyle('left', m.x * z + m.w * z + tr[0]);
         menu.addClass('active');

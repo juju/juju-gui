@@ -265,9 +265,7 @@ YUI.add('d3-components', function(Y) {
         eventSet = filtered;
       }
 
-      console.trace();
       Y.each(Y.Object.keys(eventSet), function(name) {
-        console.log('bind', name);
         this.events[name].subscriptions = this._bindEvents(name);
       }, this);
       return this;
@@ -389,14 +387,8 @@ YUI.add('d3-components', function(Y) {
      * Called the first time render is invoked. See {render}.
      **/
     renderOnce: function() {
-       Y.each(this.modules, function(mod, name) {
-         if (mod.renderOnce) {
-           console.log('renderOnce', name)
-           mod.renderOnce();
-         }
-       }, this);
+      this.all('renderOnce');
     },
-
     /**
      * Render each module bound to the canvas. The first call to
      * render() will automatically call renderOnce (a noop by default)
@@ -410,7 +402,6 @@ YUI.add('d3-components', function(Y) {
       var self = this;
       function renderAndBind(module, name) {
         if (module && module.render) {
-          console.log('render', name);
           module.render();
         }
         self._bindD3Events(name);
@@ -468,13 +459,17 @@ YUI.add('d3-components', function(Y) {
      * @chainable
      */
     update: function() {
-      Y.each(Y.Object.values(this.modules), function(mod, name) {
-        if (mod.update) {
-        console.log('update', name);
-        mod.update();
+      this.all('update');
+      return this;
+    },
+
+    all: function(methodName) {
+      Y.each(this.modules, function(mod, name) {
+        if (methodName in mod) {
+          console.log('Component', methodName, 'on', name);
+          mod[methodName]();
         }
       });
-      return this;
     }
   }, {
     ATTRS: {
