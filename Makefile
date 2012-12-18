@@ -335,17 +335,20 @@ server:
 	@echo "to start the production or debug environments respectively."
 	@echo "Run 'make help' to list the main available targets."
 
+# devel is used during the development process.
 devel: build-devel
 	@echo "Running the development environment from node.js ."
 	@echo "Customize config.js to modify server settings."
 	node server.js
 
+# debug is for deployments of unaggregated and uncompressed code.
 debug: build-debug
 	@echo "Running the debug environment from a SimpleHTTPServer"
 	@echo "To run the development environment, including automatically"
 	@echo "rebuilding the generated files on changes, run 'make devel'."
 	cd build-debug && python -m SimpleHTTPServer 8888
 
+# prod is for deployment of aggregated and minimized code.
 prod: build-prod
 	@echo "Running the production environment from a SimpleHTTPServer"
 	cd build-prod && python -m SimpleHTTPServer 8888
