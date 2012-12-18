@@ -21,11 +21,11 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	-o -wholename './test/assets*' -prune \
 	-o -wholename './yuidoc*' -prune \
 	-o \( \
-    		-name '*.js' \
-    		-o -name '*.json' \
-    		-o -name 'generateTemplates' \
-  	\) -print \
-  	| sort | sed -e 's/^\.\///' \
+		-name '*.js' \
+		-o -name '*.json' \
+		-o -name 'generateTemplates' \
+	\) -print \
+	| sort | sed -e 's/^\.\///' \
 	| grep -Ev -e '^manifest\.json$$' \
 		-e '^app/assets/javascripts/d3.v2.*.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket.js$$' \
@@ -125,7 +125,7 @@ ifeq ($(PWD),)
 	PWD=$(shell pwd)
 endif
 
-all: build-debug build-prod
+all: build
 	@echo "\nDebug and production environments built."
 	@echo "Run 'make help' to list the main available targets."
 
@@ -335,17 +335,20 @@ server:
 	@echo "to start the production or debug environments respectively."
 	@echo "Run 'make help' to list the main available targets."
 
-devel: build
+# devel is used during the development process.
+devel: build-devel
 	@echo "Running the development environment from node.js ."
 	@echo "Customize config.js to modify server settings."
 	node server.js
 
+# debug is for deployments of unaggregated and uncompressed code.
 debug: build-debug
 	@echo "Running the debug environment from a SimpleHTTPServer"
 	@echo "To run the development environment, including automatically"
 	@echo "rebuilding the generated files on changes, run 'make devel'."
 	cd build-debug && python -m SimpleHTTPServer 8888
 
+# prod is for deployment of aggregated and minimized code.
 prod: build-prod
 	@echo "Running the production environment from a SimpleHTTPServer"
 	cd build-prod && python -m SimpleHTTPServer 8888
@@ -363,12 +366,14 @@ clean-docs:
 
 clean-all: clean clean-deps clean-docs
 
-build: $(APPCACHE) $(NODE_TARGETS) spritegen \
+build: build-prod build-debug
+
+build-devel: $(APPCACHE) $(NODE_TARGETS) spritegen \
 	  $(BUILD_FILES) build/juju-ui/version.js
 
-build-debug: build | $(LINK_DEBUG_FILES)
+build-debug: build-devel | $(LINK_DEBUG_FILES)
 
-build-prod: build | $(LINK_PROD_FILES)
+build-prod: build-devel | $(LINK_PROD_FILES)
 
 $(APPCACHE): manifest.appcache.in
 	mkdir -p build/juju-ui/assets
