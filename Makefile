@@ -118,12 +118,13 @@ JAVASCRIPT_LIBRARIES=app/assets/javascripts/d3.v2.js \
 DATE=$(shell date -u)
 APPCACHE=build/juju-ui/assets/manifest.appcache
 
-# Some environments, notably sudo, do not populate the PWD environment
-# variable, which is used to set $(PWD); however, getting the current
-# directory from `pwd` can get expensive, so we set it once here.
-ifeq ($(PWD),)
-	PWD=$(shell pwd)
-endif
+# Some environments, notably sudo, do not populate the default PWD environment
+# variable, which is used to set $(PWD).  Worse, in some situations, such as
+# using make -C [directory], $(PWD) is set to a value we don't want: the
+# directory in which make was invoked, rather than the directory of this file.
+# Therefore, we want to run the shell's pwd to get this Makefile's directory.
+# As an optimization, we stash this value in the local PWD variable.
+PWD=$(shell pwd)
 
 all: build
 	@echo "\nDebug and production environments built."
