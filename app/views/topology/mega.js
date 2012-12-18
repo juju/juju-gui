@@ -131,10 +131,8 @@ YUI.add('juju-topology-mega', function(Y) {
       d3: {
         '.service': {
           'mousedown.addrel': {callback: function(d, context) {
-            console.log('mousedown', this, arguments);
             var evt = d3.event;
             context.longClickTimer = Y.later(750, this, function(d, e) {
-              console.log("lc handler");
               // Provide some leeway for accidental dragging.
               if ((Math.abs(d.x - d.oldX) + Math.abs(d.y - d.oldY)) /
                   2 > 5) {
@@ -1472,25 +1470,25 @@ YUI.add('juju-topology-mega', function(Y) {
       },
 
       /*
-           * Fired when clicking the second service is clicked in the
-           * add relation flow.
-           *
-           * :param endpoints: array of two endpoints, each in the form
-           *   ['service name', {
-           *     name: 'endpoint type',
-           *     role: 'client or server'
-           *   }]
-           */
+       * Fired when clicking the second service is clicked in the
+       * add relation flow.
+       *
+       * :param endpoints: array of two endpoints, each in the form
+       *   ['service name', {
+       *     name: 'endpoint type',
+       *     role: 'client or server'
+       *   }]
+       */
       addRelationEnd: function(endpoints, view, context) {
         // Redisplay all services
         view.cancelRelationBuild();
 
         // Get the vis, and links, build the new relation.
         var vis = view.get('component').vis,
-                env = view.get('component').get('env'),
-                db = view.get('component').get('db'),
-                source = view.get('addRelationStart_service'),
-                relation_id = 'pending:' + endpoints[0][0] + endpoints[1][0];
+            env = view.get('component').get('env'),
+            db = view.get('component').get('db'),
+            source = view.get('addRelationStart_service'),
+            relation_id = 'pending:' + endpoints[0][0] + endpoints[1][0];
 
         if (endpoints[0][0] === endpoints[1][0]) {
           view.set('currentServiceClickAction', 'toggleControlPanel');
@@ -1508,7 +1506,9 @@ YUI.add('juju-topology-mega', function(Y) {
 
         // Firing the update event on the db will properly redraw the
         // graph and reattach events.
-        db.fire('update');
+        //db.fire('update');
+        view.get('component').bindAllD3Events();
+        view.update();
 
         // Fire event to add relation in juju.
         // This needs to specify interface in the future.
