@@ -38,11 +38,11 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
     // Handler for 'zoom' event.
     zoomHandler: function(evt) {
-      var s = self.slider,
+      var s = this.slider,
           vis = this.get('component').vis;
 
-      s.set('value', Mat.floor(evt.scale * 100));
-      self.rescale(vis, evt);
+      s.set('value', Math.floor(evt.scale * 100));
+      this.rescale(vis, evt);
     },
 
     renderSlider: function() {
@@ -144,7 +144,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
       this._scale = evt.scale;
       // Store the current value of translate as well, by copying the event
       // array in order to avoid reference sharing.
-      this._translate = evt.translate.slice(0);
+      this._translate = Y.mix(evt.translate);
       vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
       topo.fire('rescaled');

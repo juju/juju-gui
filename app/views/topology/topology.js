@@ -97,6 +97,7 @@ YUI.add('juju-topology', function(Y) {
     },
 
     sizeChangeHandler: function() {
+      console.log("SIZECHANGEHANDLER");
       var self = this,
           width = this.get('width'),
           height = this.get('height'),
@@ -117,8 +118,10 @@ YUI.add('juju-topology', function(Y) {
                     .y(this.yScale)
                     .scaleExtent([0.25, 2.0])
                     .on('zoom', function(evt) {
-                      self.fire('zoom');
+                      self.fire('zoom', d3.event);
                     });
+      this.vis.call(this.zoom);
+
     }
 
   }, {
