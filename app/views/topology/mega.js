@@ -130,9 +130,11 @@ YUI.add('juju-topology-mega', function(Y) {
       },
       d3: {
         '.service': {
-          'mousedown.addrel': {callback: function(d, self) {
+          'mousedown.addrel': {callback: function(d, context) {
+            console.log('mousedown', this, arguments);
             var evt = d3.event;
-            self.longClickTimer = Y.later(750, this, function(d, e) {
+            context.longClickTimer = Y.later(750, this, function(d, e) {
+              console.log("lc handler");
               // Provide some leeway for accidental dragging.
               if ((Math.abs(d.x - d.oldX) + Math.abs(d.y - d.oldY)) /
                   2 > 5) {
@@ -144,13 +146,13 @@ YUI.add('juju-topology-mega', function(Y) {
               d3.event = e;
 
               // Start the process of adding a relation
-              self.addRelationDragStart(d, self);
+              context.addRelationDragStart(d, context);
             }, [d, evt], false);
           }},
-          'mouseup.addrel': {callback: function(d, self) {
+          'mouseup.addrel': {callback: function(d, context) {
             // Cancel the long-click timer if it exists.
-            if (self.longClickTimer) {
-              self.longClickTimer.cancel();
+            if (context.longClickTimer) {
+              context.longClickTimer.cancel();
             }
           }}
         }
@@ -340,7 +342,6 @@ YUI.add('juju-topology-mega', function(Y) {
                   // Clear any state while dragging.
                   self.get('container').all('.environment-menu.active')
                     .removeClass('active');
-                  //self.service_click_actions.toggleControlPanel(null, self);
                   self.cancelRelationBuild();
 
                   // Update relation lines for just this service.
@@ -869,8 +870,8 @@ YUI.add('juju-topology-mega', function(Y) {
 
       // Start the line between the cursor and the nearest connector
       // point on the service.
-      var mouse = d3.mouse(Y.one('svg').getDOMNode());
-      self.cursorBox = views.BoundingBox();
+      var mouse = d3.mouse(Y.one('.topology svg').getDOMNode());
+      self.cursorBox = new views.BoundingBox();
       self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
       var point = self.cursorBox.getConnectorPair(d);
       dragline.attr('x1', point[0][0])
@@ -1402,7 +1403,7 @@ YUI.add('juju-topology-mega', function(Y) {
             container = view.get('container'),
             topo = view.get('component');
 
-        if (endpoints.length === 1) {
+        if (endpoints && endpoints.length === 1) {
           // Create a relation with the only available endpoint.
           var ep = endpoints[0],
                   endpoints_item = [
