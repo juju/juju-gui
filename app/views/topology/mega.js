@@ -53,12 +53,10 @@ YUI.add('juju-topology-mega', function(Y) {
             .attr('class', 'unit-count hide-count');
           }}
         },
-
         '.rel-label': {
           click: 'relationClick',
           mousemove: 'mousemove'
         },
-
         '.topology .crosshatch-background rect:first-child': {
           /**
            * If the user clicks on the background we cancel any active add
@@ -81,8 +79,7 @@ YUI.add('juju-topology-mega', function(Y) {
             self.backgroundClicked();
           }}
         },
-
-       '.graph-list-picker .picker-button': {
+        '.graph-list-picker .picker-button': {
           click: 'showGraphListPicker'
         },
         '.graph-list-picker .picker-expanded': {
@@ -156,7 +153,9 @@ YUI.add('juju-topology-mega', function(Y) {
         }
       },
       yui: {
-        windowresize: 'setSizesFromViewport',
+        windowresize: {
+          callback: 'setSizesFromViewport',
+          context: 'module'},
         rendered: 'renderedHandler'
       }
     },
@@ -303,8 +302,8 @@ YUI.add('juju-topology-mega', function(Y) {
         this.tree = d3.layout.pack()
                       .size([width, height])
                       .value(function(d) {
-                        return Math.max(d.unit_count, 1);
-                      })
+                          return Math.max(d.unit_count, 1);
+                        })
                       .padding(300);
       }
 
@@ -403,12 +402,12 @@ YUI.add('juju-topology-mega', function(Y) {
       node
         .enter().append('g')
         .attr('class', function(d) {
-          return (d.subordinate ? 'subordinate ' : '') + 'service';
-        })
+            return (d.subordinate ? 'subordinate ' : '') + 'service';
+          })
         .call(drag)
         .attr('transform', function(d) {
-          return d.translateStr();
-        });
+            return d.translateStr();
+          });
 
       // Update
       this.drawService(node);
@@ -862,9 +861,10 @@ YUI.add('juju-topology-mega', function(Y) {
     addRelationDragStart: function(d, context) {
       // Create a pending drag-line.
       var vis = this.get('component').vis,
-          dragline = vis.append('line').attr('class',
-                     'relation pending-relation dragline dragging'),
-              self = this;
+          dragline = vis.append('line')
+                        .attr('class',
+                              'relation pending-relation dragline dragging'),
+          self = this;
 
       // Start the line between the cursor and the nearest connector
       // point on the service.
@@ -1397,7 +1397,7 @@ YUI.add('juju-topology-mega', function(Y) {
            */
       ambiguousAddRelationCheck: function(m, view, context) {
         var endpoints = view.get(
-                            'addRelationStart_possibleEndpoints')[m.id],
+            'addRelationStart_possibleEndpoints')[m.id],
             container = view.get('container'),
             topo = view.get('component');
 

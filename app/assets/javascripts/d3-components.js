@@ -158,19 +158,22 @@ YUI.add('d3-components', function(Y) {
       }
 
       if (!result.callback) {
-        console.error('No Event handler for', selector, modName);
+        console.error('No Event handler for', selector, module.name);
         return;
       }
       if (!L.isFunction(result.callback)) {
         console.error('Unable to resolve a proper callback for',
-                      selector, handler, modName, result);
-                      return;
+                      selector, handler, module.name, result);
+        return;
       }
       // Set up binding context for callback.
       result.context = module;
-      if (handler.context &&
-          handler.context === 'component') {
-        result.context = self;
+      if (handler.context) {
+        if (handler.context === 'component') {
+          result.context = this;
+        } else if (handler.context === 'window') {
+          result.context = Y.one('window');
+        }
       }
       return result;
     },
@@ -205,7 +208,7 @@ YUI.add('d3-components', function(Y) {
             Y.delegate(name, d3Adaptor, container, selector, context));
       }
 
-       this.unbind(modName);
+      this.unbind(modName);
 
       // Bind 'scene' events
       Y.each(modEvents.scene, function(handlers, selector, sceneEvents) {
@@ -240,10 +243,17 @@ YUI.add('d3-components', function(Y) {
               // this signature: Y.on(event, callback, target, context).
               // For this reason, it is not possible here to just pass the
               // context as third argument.
-              var callback = Y.bind(handler.callback, handler.context);
-              // (re)Register the event to bubble.
-              self.publish(name, {emitFacade: true});
-              subscriptions.push(self[eventPhase](name, callback, handler.context));
+              var target = self,
+                  callback = Y.bind(handler.callback, handler.context);
+              if (Y.Array.indexOf(['windowresize'], name) !== -1) {
+                target = Y;
+              } else {
+                // (re)Register the event to bubble.
+                self.publish(name, {emitFacade: true});
+              }
+              subscriptions.push(
+                  target[eventPhase](
+                  name, callback, handler.context));
             });
           }
         });
@@ -304,11 +314,11 @@ YUI.add('d3-components', function(Y) {
           adapter = function() {
             var selection = d3.select(this),
                 d = selection.data()[0];
-                // This is a minor violation (extension)
-                // of the interface, but suits us well.
-                return handler.callback.call(this, d, handler.context);
+            // This is a minor violation (extension)
+            // of the interface, but suits us well.
+            return handler.callback.call(this, d, handler.context);
           };
-           d3.selectAll(selector).on(trigger, adapter);
+          d3.selectAll(selector).on(trigger, adapter);
         });
       });
     },
@@ -325,19 +335,19 @@ YUI.add('d3-components', function(Y) {
      * behalf of a module.
      *
      * @method recordSubscription
-     * @param {Module} module
-     * @param {Object} YUI event subscription
+     * @param {Module} module to record relative to.
+     * @param {Object} YUI event subscription.
      * @chainable
      **/
-  recordSubscription: function(module, subscription) {
-    if (!(module.name in this.events)) {
-      throw "Unable able to recordSubscription, module not added.";
-    }
-    if (!subscription) {
-      throw "Invalid/undefined subscription object cannot be recorded.";
-    }
-    this.events[module.name].subscriptions.push(subscription);
-  },
+    recordSubscription: function(module, subscription) {
+      if (!(module.name in this.events)) {
+        throw 'Unable able to recordSubscription, module not added.';
+      }
+      if (!subscription) {
+        throw 'Invalid/undefined subscription object cannot be recorded.';
+      }
+      this.events[module.name].subscriptions.push(subscription);
+    },
 
     /**
       Internal Detail. Called by unbind automatically.

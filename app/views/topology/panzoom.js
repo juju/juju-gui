@@ -22,7 +22,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
     events: {
       scene: {
         '#zoom-out-btn': {click: 'zoom_out'},
-        '#zoom-in-btn': {click: 'zoom_in'},
+        '#zoom-in-btn': {click: 'zoom_in'}
       },
       yui: {
         zoom: {callback: 'zoomHandler'},
@@ -52,8 +52,9 @@ YUI.add('juju-topology-panzoom', function(Y) {
           value = 100,
           currentScale = topo.get('scale');
 
-      if (self.slider) return;
-
+      if (self.slider) {
+        return;
+      }
       // Build a slider to control zoom level
       if (currentScale) {
         value = currentScale * 100;
@@ -65,14 +66,17 @@ YUI.add('juju-topology-panzoom', function(Y) {
       });
       slider.render('#slider-parent');
       topo.recordSubscription(this,
-        slider.after('valueChange', function(evt) {
-          // Don't fire a zoom if there's a zoom event already in progress;
-          // that will run rescale for us.
-          if (d3.event && d3.event.scale && d3.event.translate) {
-            return;
-          }
-          self._fire_zoom((evt.newVal - evt.prevVal) / 100);
-      }));
+                              slider.after('valueChange', function(evt) {
+                                // Don't fire a zoom if there's a zoom event
+                                // already in progress; that will run rescale
+                                // for us.
+                                if (d3.event && d3.event.scale &&
+                                    d3.event.translate) {
+                                  return;
+                                }
+                                self._fire_zoom((
+                                    evt.newVal - evt.prevVal) / 100);
+                              }));
       self.slider = slider;
     },
 
