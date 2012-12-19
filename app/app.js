@@ -761,6 +761,7 @@ YUI.add('juju-gui', function(Y) {
 }, '0.5.2', {
   requires: [
     'juju-models',
+    'juju-notification-controller',
     'juju-charm-models',
     'juju-views',
     'juju-controllers',

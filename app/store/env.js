@@ -68,16 +68,13 @@ YUI.add('juju-env', function(Y) {
 
     on_message: function(evt) {
       console.log('Env: Receive', evt.data);
-
       var msg = Y.JSON.parse(evt.data);
+      // The "ready" attribute indicates that this is a server's initial
+      // greeting.  It provides a few initial values that we care about.
       if (msg.ready) {
-        // The "ready" attribute indicates that this is a server's initial
-        // greeting.  It provides a few initial values that we care about.
+        console.log('Env: Handshake Complete');
         this.set('providerType', msg.provider_type);
         this.set('defaultSeries', msg.default_series);
-      }
-      if (msg.version === 0) {
-        console.log('Env: Handshake Complete');
         return;
       }
       this.fire('msg', msg);

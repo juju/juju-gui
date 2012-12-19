@@ -90,6 +90,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/environment.js'
         },
 
+        'juju-view-login': {
+          fullpath: '/juju-ui/views/login.js'
+        },
+
         'juju-view-service': {
           fullpath: '/juju-ui/views/service.js'
         },
@@ -118,6 +122,7 @@ var GlobalConfig = {
             'juju-view-utils',
             'juju-topology',
             'juju-view-environment',
+            'juju-view-login',
             'juju-view-service',
             'juju-view-unit',
             'juju-view-charm',
