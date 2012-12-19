@@ -64,7 +64,7 @@ ifeq ($(ULTIMATE_VERSION), unreleased)
     $(error FINAL releases must have a most-recent version number other than \
 	"unreleased" in CHANGES.yaml)
 endif
-VERSION=$(ULTIMATE_VERSION)
+RELEASE_VERSION=$(ULTIMATE_VERSION)
 SERIES=stable
 else
 # If this is development (non-FINAL) release, then the most recent version
