@@ -20,7 +20,7 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
-- unreleased:
+- 0.1.1:
     - First tarball release
 - 0.1.0:
     - OpenStack Summit 2012 demo
