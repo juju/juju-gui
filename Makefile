@@ -399,8 +399,9 @@ $(RELEASE_FILE): build
 	@echo "$(BRANCH_IS_CLEAN)"
 ifdef BRANCH_IS_GOOD
 	mkdir -p releases
-	tar c --auto-compress --exclude-vcs --exclude releases \
-	    --transform "s|^|$(RELEASE_NAME)/|" -f $(RELEASE_FILE) *
+	# When creating the tarball, ensure all symbolic links are followed.
+	tar -c --auto-compress --exclude-vcs --exclude releases \
+	    --dereference --transform "s|^|$(RELEASE_NAME)/|" -f $(RELEASE_FILE) *
 	@echo "Release was created in $(RELEASE_FILE)."
 else
 	@echo "**************************************************************"
