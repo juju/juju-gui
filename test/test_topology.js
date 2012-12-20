@@ -72,7 +72,7 @@ describe('topology', function() {
     topo.render();
 
     // Verify that we have built the default scene.
-    Y.Lang.isValue(topo.svg).should.equal(true);
+    Y.Lang.isValue(topo.vis).should.equal(true);
   });
 
   function createStandardTopo() {
@@ -80,6 +80,7 @@ describe('topology', function() {
     topo = new views.Topology();
     topo.setAttrs({container: container, db: db});
     topo.addModule(views.MegaModule);
+    topo.addModule(views.PanZoomModule);
     return topo;
   }
 
@@ -88,7 +89,7 @@ describe('topology', function() {
        topo = createStandardTopo();
        topo.render();
        // Verify that we have built the default scene.
-       Y.Lang.isValue(topo.svg).should.equal(true);
+       Y.Lang.isValue(topo.vis).should.equal(true);
      });
 
 });

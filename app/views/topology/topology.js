@@ -14,6 +14,11 @@ YUI.add('juju-topology', function(Y) {
    * configuration belong here. If the only shared requirement on shared state
    * is watch/event like behavior fire an event and place the logic in a module.
    *
+   * Emmitted Events:
+   *
+   *  zoom: When the zoom level of the canvas changes a 'zoom'
+   *        event is fired. Analogous to d3's zoom event.
+   *
    * @class Topology
    * @namespace juju.views
    **/
@@ -23,6 +28,33 @@ YUI.add('juju-topology', function(Y) {
       this.options = Y.mix(options || {});
     },
 
+    /**
+     * Called by render, conditionally attach container to the DOM if
+     * it isn't already. The framework calls this before module
+     * rendering so that d3 Events will have attached DOM elements. If
+     * your application doesn't need this behavior feel free to override.
+     *
+     * In this case we currently rely on app.showView to do all the
+     * container management, this only works on a preserved view.
+     *
+     * @method attachContainer
+     * @chainable
+     **/
+    attachContainer: function() {
+      return this;
+    },
+
+    /**
+     * Remove container from DOM returning container. This
+     * is explicitly not chainable.
+     *
+     * @method detachContainer
+     **/
+    detachContainer: function() {
+      return;
+    },
+
+
     renderOnce: function() {
       var self = this,
           vis,
@@ -31,30 +63,72 @@ YUI.add('juju-topology', function(Y) {
           container = this.get('container'),
           templateName = this.options.template || 'overview';
 
-      if (this.svg) {
+      if (this._templateRendered) {
         return;
       }
-      container.setHTML(views.Templates[templateName]());
+      //container.setHTML(views.Templates[templateName]());
       // Take the first element.
-      this.svg = container.one(':first-child');
+      this._templateRendered = true;
+
+      // Create a pan/zoom behavior manager.
+      this.xScale = d3.scale.linear()
+                      .domain([-width / 2, width / 2])
+                      .range([0, width]);
+      this.yScale = d3.scale.linear()
+                      .domain([-height / 2, height / 2])
+                      .range([height, 0]);
+
+      // Include very basic behavior, fire
+      // yui event for anything more complex.
+      this.zoom = d3.behavior.zoom()
+                    .x(this.xScale)
+                    .y(this.yScale)
+                    .scaleExtent([0.25, 2.0])
+                    .on('zoom', function(evt) {
+                        // This will add the d3 properties to the
+                        // eventFacade
+                        self.fire('zoom', d3.event);
+                     });
 
       // Set up the visualization with a pack layout.
       vis = d3.select(container.getDOMNode())
-      .selectAll('.topology-canvas')
-      .append('svg:svg')
-      .attr('pointer-events', 'all')
-      .attr('width', width)
-      .attr('height', height)
-      .append('svg:g')
-      .append('g');
+              .selectAll('.topology-canvas')
+              .append('svg:svg')
+              .attr('pointer-events', 'all')
+              .attr('width', width)
+              .attr('height', height)
+              .append('svg:g')
+              .call(this.zoom)
+              .append('g');
 
       vis.append('svg:rect')
-      .attr('class', 'graph')
-      .attr('fill', 'rgba(255,255,255,0)');
+         .attr('class', 'graph')
+         .attr('fill', 'rgba(255,255,255,0)');
 
       this.vis = vis;
 
+      // Build out scale and zoom.
+      // These are defaults, a Module
+      // can implement policy around them.
+      this.sizeChangeHandler();
+      this.on('sizeChanged', this.sizeChangeHandler);
+
+      Topology.superclass.renderOnce.apply(this, arguments);
       return this;
+    },
+
+    sizeChangeHandler: function() {
+      var self = this,
+          width = this.get('width'),
+          height = this.get('height');
+
+      // Update the pan/zoom behavior manager.
+      this.xScale.domain([-width / 2, width / 2])
+        .range([0, width]);
+      this.yScale.domain([-height / 2, height / 2])
+        .range([height, 0]);
+      this.zoom.x(this.xScale)
+        .y(this.yScale);
     }
 
   }, {
@@ -82,9 +156,9 @@ YUI.add('juju-topology', function(Y) {
       /**
        * @property {Array} transform
        **/
-      transform: {
-        getter: function() {return this.get('zoom').transform();},
-        setter: function(v) {this.get('zoom').transform(v);}
+      translate: {
+        getter: function() {return this.zoom.translate();},
+        setter: function(v) {this.zoom.translate(v);}
       },
 
       width: {
