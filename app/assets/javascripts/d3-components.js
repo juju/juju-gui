@@ -252,8 +252,8 @@ YUI.add('d3-components', function(Y) {
                 // (re)Register the event to bubble.
                 self.publish(name, {emitFacade: true});
               }
-
-              console.log('Bind', target, eventPhase, name);
+              console.debug('d3 component yui event binding', target.toString(),
+                            eventPhase, name);
               subscriptions.push(
                   target[eventPhase](
                   name, callback, handler.context));
@@ -317,8 +317,6 @@ YUI.add('d3-components', function(Y) {
           adapter = function() {
             var selection = d3.select(this),
                 d = selection.data()[0];
-            // This is a minor violation (extension)
-            // of the interface, but suits us well.
             return handler.callback.call(this, d, handler.context);
           };
           d3.selectAll(selector).on(trigger, adapter);
@@ -326,6 +324,10 @@ YUI.add('d3-components', function(Y) {
       });
     },
 
+    /**
+     * Allow d3 event rebinding after rendering.
+     *
+     **/
     bindAllD3Events: function() {
       var self = this;
       Y.each(this.modules, function(mod, name) {
@@ -470,7 +472,7 @@ YUI.add('d3-components', function(Y) {
     detachContainer: function() {
       var container = this.get('container');
       if (container.inDoc()) {
-        container.one('.topology').remove();
+        container.remove();
       }
       return container;
     },

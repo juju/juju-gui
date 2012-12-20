@@ -32,7 +32,6 @@ YUI.add('juju-topology-mega', function(Y) {
         '.service': {
           click: 'serviceClick',
           dblclick: 'serviceDblClick',
-          mouseenter: 'serviceMouseEnter',
           mouseleave: 'mousemove'
         },
 
@@ -83,7 +82,8 @@ YUI.add('juju-topology-mega', function(Y) {
           click: {callback: function(data, context) {
             // Get the service element
             var box = context.get('active_service'),
-                service = context.serviceForBox(box);
+                topo = context.get('component'),
+                service = topo.serviceForBox(box);
             context.service_click_actions
               .toggleControlPanel(box, context);
             context.service_click_actions
@@ -95,7 +95,8 @@ YUI.add('juju-topology-mega', function(Y) {
           click: {callback: function(data, context) {
             // Get the service element
             var box = context.get('active_service'),
-                service = context.serviceForBox(box);
+                topo = context.get('component'),
+                service = topo.serviceForBox(box);
             context.service_click_actions
               .toggleControlPanel(box, context);
             context.service_click_actions
@@ -107,7 +108,9 @@ YUI.add('juju-topology-mega', function(Y) {
         windowresize: {
           callback: 'setSizesFromViewport',
           context: 'module'},
-        rendered: 'renderedHandler'
+        rendered: 'renderedHandler',
+        show: 'show',
+        hide: 'hide'
       }
     },
 
@@ -141,7 +144,8 @@ YUI.add('juju-topology-mega', function(Y) {
 
     serviceDblClick: function(d, self) {
       // Just show the service on double-click.
-      var service = self.serviceForBox(d);
+      var topo = self.get('component'),
+          service = topo.serviceForBox(d);
       (self.service_click_actions.show_service)(service, self);
     },
 
@@ -242,8 +246,8 @@ YUI.add('juju-topology-mega', function(Y) {
                 self.service_click_actions.toggleControlPanel(null, self);
               })
             .on('drag', function(d, i) {
-                if (self.buildingRelation) {
-                  topo.fire('addRelationDrag', d, this);
+                if (topo.buildingRelation) {
+                  topo.fire('addRelationDrag', { box: d });
                 } else {
                   if (self.longClickTimer) {
                     self.longClickTimer.cancel();
@@ -269,7 +273,7 @@ YUI.add('juju-topology-mega', function(Y) {
                 }
               })
             .on('dragend', function(d, i) {
-                if (self.buildingRelation) {
+                if (topo.buildingRelation) {
                   topo.fire('addRelationDragEnd');
                 }
               });
@@ -530,32 +534,28 @@ YUI.add('juju-topology-mega', function(Y) {
 
 
     },
-    /*
-         * Utility method to get a service object from the DB
-         * given a BoundingBox.
-         */
-    serviceForBox: function(boundingBox) {
-      var db = this.get('component').get('db');
-      return db.services.getById(boundingBox.id);
-    },
 
 
     /*
          * Show/hide/fade selection.
          */
-    show: function(selection) {
+    show: function(evt) {
+      var selection = evt.selection;
       selection.attr('opacity', '1.0')
                 .style('display', 'block');
       return selection;
     },
 
-    hide: function(selection) {
+    hide: function(evt) {
+      var selection = evt.selection;
       selection.attr('opacity', '0')
             .style('display', 'none');
       return selection;
     },
 
-    fade: function(selection, alpha) {
+    fade: function(evt) {
+      var selection = evt.selection,
+          alpha = evt.alpha;
       selection.transition()
             .duration(400)
             .attr('opacity', alpha !== undefined && alpha || '0.2');
@@ -710,70 +710,6 @@ YUI.add('juju-topology-mega', function(Y) {
           'left': service.x * z +
               (menu_left ? service.w * z : -(cp_width)) + tr[0]
         });
-      }
-    },
-
-    serviceMouseEnter: function(d, context) {
-      var rect = Y.one(this);
-      // Do not fire if this service isn't selectable.
-      if (!utils.hasSVGClass(rect, 'selectable-service')) {
-        return;
-      }
-
-      // Do not fire unless we're within the service box.
-      var topo = context.get('component'),
-          container = context.get('container'),
-          mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (!d.containsPoint(mouse_coords, topo.zoom)) {
-        return;
-      }
-
-      // Do not fire if we're on the same service.
-      if (d === context.get('addRelationStart_service')) {
-        return;
-      }
-
-      context.set('potential_drop_point_service', d);
-      context.set('potential_drop_point_rect', rect);
-      utils.addSVGClass(rect, 'hover');
-
-      // If we have an active dragline, stop redrawing it on mousemove
-      // and draw the line between the two nearest connector points of
-      // the two services.
-      if (context.dragline) {
-        var connectors = d.getConnectorPair(
-            context.get('addRelationStart_service')),
-            s = connectors[0],
-            t = connectors[1];
-        context.dragline.attr('x1', t[0])
-        .attr('y1', t[1])
-        .attr('x2', s[0])
-        .attr('y2', s[1])
-        .attr('class', 'relation pending-relation dragline');
-      }
-    },
-
-    serviceMouseLeave: function(d, self) {
-      // Do not fire if we aren't looking for a relation endpoint.
-      if (!self.get('potential_drop_point_rect')) {
-        return;
-      }
-
-      // Do not fire if we're within the service box.
-      var topo = this.get('component'),
-          container = self.get('container'),
-          mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (d.containsPoint(mouse_coords, topo.zoom)) {
-        return;
-      }
-      var rect = Y.one(this).one('.service-border');
-      self.set('potential_drop_point_service', null);
-      self.set('potential_drop_point_rect', null);
-      utils.removeSVGClass(rect, 'hover');
-
-      if (self.dragline) {
-        self.dragline.attr('class',
-                         'relation pending-relation dragline dragging');
       }
     },
 

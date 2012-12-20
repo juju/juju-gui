@@ -108,7 +108,7 @@ YUI.add('juju-topology', function(Y) {
       this.vis = vis;
 
       // Build out scale and zoom.
-      // These are defaults, a Module
+      // These are defaults, a (Viewport) Module
       // can implement policy around them.
       this.sizeChangeHandler();
       this.on('sizeChanged', this.sizeChangeHandler);
@@ -129,7 +129,16 @@ YUI.add('juju-topology', function(Y) {
         .range([height, 0]);
       this.zoom.x(this.xScale)
         .y(this.yScale);
-    }
+    },
+
+    /*
+         * Utility method to get a service object from the DB
+         * given a BoundingBox.
+         */
+    serviceForBox: function(boundingBox) {
+      var db = this.get('db');
+      return db.services.getById(boundingBox.id);
+    },
 
   }, {
     ATTRS: {

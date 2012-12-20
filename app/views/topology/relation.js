@@ -3,6 +3,7 @@
 YUI.add('juju-topology-relation', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
+      utils = Y.namespace('juju.views.utils'),
       d3ns = Y.namespace('d3');
 
   /**
@@ -14,6 +15,10 @@ YUI.add('juju-topology-relation', function(Y) {
 
     events: {
       scene: {
+        '.service': {
+          mouseenter: 'serviceMouseEnter',
+          mouseleave: 'serviceMouseLeave'
+        },
         '.rel-label': {
           click: 'relationClick'
         },
@@ -29,14 +34,13 @@ YUI.add('juju-topology-relation', function(Y) {
           /** The user clicked on the "Build Relation" menu item. */
           click: {
             callback: function(data, context) {
-              var box = context.get('active_service'),
-                  service = context.serviceForBox(box),
-                  origin = context.get('active_context');
+              var box = context.get('active_service');
+              var topo = context.get('component');
+              var service = topo.serviceForBox(box);
+              var origin = context.get('active_context');
               context.addRelationDragStart(box, context);
-              context.service_click_actions
-                .toggleControlPanel(box, context, origin);
-              context.service_click_actions.addRelationStart(
-                  box, context, origin);
+              context.toggleControlPanel(box, context, origin);
+              context.addRelationStart(box, context, origin);
             }}
         },
       },
@@ -92,8 +96,8 @@ YUI.add('juju-topology-relation', function(Y) {
     update: function() {
       RelationModule.superclass.update.apply(this, arguments);
       
-      var db = this.get('component').get('db'),
-          relations = db.relations.toArray();
+      var db = this.get('component').get('db');
+      var relations = db.relations.toArray();
       this.relPairs = this.processRelations(relations);
       this.updateLinks();
 
@@ -105,10 +109,10 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     processRelation: function(r) {
-      var self = this,
-              topo = self.get('component'),
-              endpoints = r.get('endpoints'),
-              rel_services = [];
+      var self = this;
+      var topo = self.get('component');
+      var endpoints = r.get('endpoints');
+      var rel_services = [];
 
       Y.each(endpoints, function(ep) {
         rel_services.push([ep[1].name, topo.service_boxes[ep[0]]]);
@@ -117,8 +121,8 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     processRelations: function(rels) {
-      var self = this,
-              pairs = [];
+      var self = this;
+      var pairs = [];
       Y.each(rels, function(rel) {
         var pair = self.processRelation(rel);
 
@@ -150,8 +154,8 @@ YUI.add('juju-topology-relation', function(Y) {
 
     updateLinks: function() {
       // Enter.
-      var g = this.drawRelationGroup(),
-              link = g.selectAll('line.relation');
+      var g = this.drawRelationGroup();
+      var link = g.selectAll('line.relation');
 
       // Update (+ enter selection).
       link.each(this.drawRelation);
@@ -167,17 +171,17 @@ YUI.add('juju-topology-relation', function(Y) {
      * @param {Object} service The service module that has been moved.
      */
     updateLinkEndpoints: function(evt) {
-      var self = this,
-          service = evt.service;
+      var self = this;
+      var service = evt.service;
       Y.each(Y.Array.filter(self.relPairs, function(relation) {
         return relation.source() === service ||
             relation.target() === service;
       }), function(relation) {
-        var rel_group = d3.select('#' + relation.id),
-                connectors = relation.source()
-                  .getConnectorPair(relation.target()),
-                s = connectors[0],
-                t = connectors[1];
+        var rel_group = d3.select('#' + relation.id);
+        var connectors = relation.source()
+                  .getConnectorPair(relation.target());
+        var s = connectors[0];
+        var t = connectors[1];
         rel_group.select('line')
               .attr('x1', s[0])
               .attr('y1', s[1])
@@ -196,9 +200,9 @@ YUI.add('juju-topology-relation', function(Y) {
 
     drawRelationGroup: function() {
       // Add a labelgroup.
-      var self = this,
-          vis = this.get('component').vis,
-          g = vis.selectAll('g.rel-group')
+      var self = this;
+      var vis = this.get('component').vis;
+      var g = vis.selectAll('g.rel-group')
                  .data(self.relPairs, function(r) {
                    return r.modelIds();
                  });
@@ -230,9 +234,9 @@ YUI.add('juju-topology-relation', function(Y) {
               .attr('class', 'rel-label')
               .attr('transform', function(d) {
                 // XXX: This has to happen on update, not enter
-                var connectors = d.source().getConnectorPair(d.target()),
-                    s = connectors[0],
-                    t = connectors[1];
+                var connectors = d.source().getConnectorPair(d.target());
+                var s = connectors[0];
+                var t = connectors[1];
                 return 'translate(' +
                     [Math.max(s[0], t[0]) -
                      Math.abs((s[0] - t[0]) / 2),
@@ -259,10 +263,10 @@ YUI.add('juju-topology-relation', function(Y) {
 
     drawRelation: function(relation) {
       var connectors = relation.source()
-                .getConnectorPair(relation.target()),
-              s = connectors[0],
-              t = connectors[1],
-              link = d3.select(this);
+                .getConnectorPair(relation.target());
+      var s = connectors[0];
+      var t = connectors[1];
+      var link = d3.select(this);
 
       link
                 .attr('x1', s[0])
@@ -276,8 +280,7 @@ YUI.add('juju-topology-relation', function(Y) {
          * Event handler for the add relation button.
          */
     addRelation: function(evt) {
-      var curr_action = this.get('currentServiceClickAction'),
-              container = this.get('container');
+      var curr_action = this.get('currentServiceClickAction');
       if (curr_action === 'show_service') {
         this.set('currentServiceClickAction', 'addRelationStart');
       } else if (curr_action === 'addRelationStart' ||
@@ -286,13 +289,79 @@ YUI.add('juju-topology-relation', function(Y) {
       } // Otherwise do nothing.
     },
 
+    serviceMouseEnter: function(d, context) {
+      var rect = Y.one(this);
+      // Do not fire if this service isn't selectable.
+      if (!utils.hasSVGClass(rect, 'selectable-service')) {
+        return;
+      }
+
+      // Do not fire unless we're within the service box.
+      var topo = context.get('component');
+      var container = context.get('container');
+      var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+      if (!d.containsPoint(mouse_coords, topo.zoom)) {
+        return;
+      }
+
+      // Do not fire if we're on the same service.
+      if (d === context.get('addRelationStart_service')) {
+        return;
+      }
+
+      context.set('potential_drop_point_service', d);
+      context.set('potential_drop_point_rect', rect);
+      utils.addSVGClass(rect, 'hover');
+
+      // If we have an active dragline, stop redrawing it on mousemove
+      // and draw the line between the two nearest connector points of
+      // the two services.
+      if (context.dragline) {
+        var connectors = d.getConnectorPair(
+            context.get('addRelationStart_service'));
+        var s = connectors[0];
+        var t = connectors[1];
+        context.dragline.attr('x1', t[0])
+        .attr('y1', t[1])
+        .attr('x2', s[0])
+        .attr('y2', s[1])
+        .attr('class', 'relation pending-relation dragline');
+        context.draglineOverService = true;
+      }
+    },
+
+    serviceMouseLeave: function(d, self) {
+      // Do not fire if we aren't looking for a relation endpoint.
+      if (!self.get('potential_drop_point_rect')) {
+        return;
+      }
+
+      // Do not fire if we're within the service box.
+      var topo = self.get('component');
+      var container = self.get('container');
+      var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+      if (d.containsPoint(mouse_coords, topo.zoom)) {
+        return;
+      }
+      var rect = Y.one(this).one('.service-border');
+      self.set('potential_drop_point_service', null);
+      self.set('potential_drop_point_rect', null);
+      utils.removeSVGClass(rect, 'hover');
+
+      if (self.dragline) {
+        self.dragline.attr('class',
+                         'relation pending-relation dragline dragging');
+        self.draglineOverService = false;
+      }
+    },
+
     addRelationDragStart: function(d, context) {
       // Create a pending drag-line.
-      var vis = this.get('component').vis,
-          dragline = vis.append('line')
+      var vis = this.get('component').vis;
+      var dragline = vis.append('line')
                         .attr('class',
-                              'relation pending-relation dragline dragging'),
-          self = this;
+                              'relation pending-relation dragline dragging');
+      var self = this;
 
       // Start the line between the cursor and the nearest connector
       // point on the service.
@@ -310,10 +379,13 @@ YUI.add('juju-topology-relation', function(Y) {
       self.addRelationStart(d, self, context);
     },
 
-    addRelationDrag: function(d, context) {
+    addRelationDrag: function(evt) {
+      var d = evt.box;
+
       // Rubberband our potential relation line if we're not currently
       // hovering over a potential drop-point.
-      if (!this.get('potential_drop_point_service')) {
+      if (!this.get('potential_drop_point_service') &&
+          !this.draglineOverService) {
         // Create a BoundingBox for our cursor.
         this.cursorBox.pos = {x: d3.event.x, y: d3.event.y, w: 0, h: 0};
 
@@ -328,19 +400,20 @@ YUI.add('juju-topology-relation', function(Y) {
       }
     },
 
+
     addRelationDragEnd: function() {
       // Get the line, the endpoint service, and the target <rect>.
       var self = this;
+      var topo = self.get('component');
       var rect = self.get('potential_drop_point_rect');
       var endpoint = self.get('potential_drop_point_service');
 
-      self.buildingRelation = false;
+      topo.buildingRelation = false;
       self.cursorBox = null;
 
       // If we landed on a rect, add relation, otherwise, cancel.
       if (rect) {
-        self.service_click_actions
-            .ambiguousAddRelationCheck(endpoint, self, rect);
+        self.ambiguousAddRelationCheck(endpoint, self, rect);
       } else {
         // TODO clean up, abstract
         self.cancelRelationBuild();
@@ -348,9 +421,9 @@ YUI.add('juju-topology-relation', function(Y) {
       }
     },
     removeRelation: function(d, context, view, confirmButton) {
-      var env = this.get('component').get('env'),
-              endpoints = d.endpoints,
-              relationElement = Y.one(context.parentNode).one('.relation');
+      var env = this.get('component').get('env');
+      var endpoints = d.endpoints;
+      var relationElement = Y.one(context.parentNode).one('.relation');
       utils.addSVGClass(relationElement, 'to-remove pending-relation');
       env.remove_relation(
           endpoints[0][0] + ':' + endpoints[0][1].name,
@@ -361,8 +434,8 @@ YUI.add('juju-topology-relation', function(Y) {
 
     _removeRelationCallback: function(view,
             relationElement, relationId, confirmButton, ev) {
-      var db = this.get('component').get('db'),
-          service = this.get('model');
+      var db = this.get('component').get('db');
+      var service = this.get('model');
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
@@ -405,7 +478,8 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     cancelRelationBuild: function() {
-      var vis = this.get('component').vis;
+      var topo = this.get('component');
+      var vis = topo.vis;
       if (this.dragline) {
         // Get rid of our drag line
         this.dragline.remove();
@@ -413,9 +487,9 @@ YUI.add('juju-topology-relation', function(Y) {
       }
       this.clickAddRelation = null;
       this.set('currentServiceClickAction', 'toggleControlPanel');
-      this.buildingRelation = false;
-      //this.show(vis.selectAll('.service'))
-      //            .classed('selectable-service', false);
+      topo.buildingRelation = false;
+      topo.fire('show', { selection: vis.selectAll('.service') })
+      vis.selectAll('.service').classed('selectable-service', false);
     },
 
     /**
@@ -428,24 +502,25 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     startRelation: function(service) {
       // Set flags on the view that indicate we are building a relation.
-      var vis = this.get('component').vis;
+      var topo = this.get('component');
+      var vis = topo.vis;
 
-      this.buildingRelation = true;
+      topo.buildingRelation = true;
       this.clickAddRelation = true;
 
-      this.show(vis.selectAll('.service'));
+      topo.fire('show', { selection: vis.selectAll('.service') });
 
-      var db = this.get('component').get('db'),
-          getServiceEndpoints = this.get('component')
-                                    .get('getServiceEndpoints'),
-          endpoints = models.getEndpoints(
-          service, getServiceEndpoints(), db),
+      var db = this.get('component').get('db');
+      var getServiceEndpoints = this.get('component')
+                                    .get('getServiceEndpoints');
+      var endpoints = models.getEndpoints(
+          service, getServiceEndpoints(), db);
           // Transform endpoints into a list of relatable services (to the
           // service).
-          possible_relations = Y.Array.map(
+      var possible_relations = Y.Array.map(
               Y.Array.flatten(Y.Object.values(endpoints)),
-              function(ep) {return ep.service;}),
-              invalidRelationTargets = {};
+              function(ep) {return ep.service;});
+      var invalidRelationTargets = {};
 
       // Iterate services and invert the possibles list.
       db.services.each(function(s) {
@@ -459,13 +534,14 @@ YUI.add('juju-topology-relation', function(Y) {
       // Rather than two loops this marks
       // all services as selectable and then
       // removes the invalid ones.
-      this.fade(vis.selectAll('.service')
+      var sel = vis.selectAll('.service')
               .classed('selectable-service', true)
               .filter(function(d) {
                 return (d.id in invalidRelationTargets &&
                           d.id !== service.id);
-              }))
-              .classed('selectable-service', false);
+              });
+      topo.fire('fade', { selection: sel })
+      sel.classed('selectable-service', false);
 
       // Store possible endpoints.
       this.set('addRelationStart_possibleEndpoints', endpoints);
@@ -473,180 +549,181 @@ YUI.add('juju-topology-relation', function(Y) {
       this.set('currentServiceClickAction', 'ambiguousAddRelationCheck');
     },
 
-      /*
-           * Fired when clicking the first service in the add relation
-           * flow.
-           */
-      addRelationStart: function(m, view, context) {
-        var service = view.serviceForBox(m);
-        view.startRelation(service);
-        // Store start service in attrs.
-        view.set('addRelationStart_service', m);
-      },
+    /*
+         * Fired when clicking the first service in the add relation
+         * flow.
+         */
+    addRelationStart: function(m, view, context) {
+      var topo = context.get('component');
+      var service = topo.serviceForBox(m);
+      view.startRelation(service);
+      // Store start service in attrs.
+      view.set('addRelationStart_service', m);
+    },
 
-      /*
-           * Test if the pending relation is ambiguous.  Display a menu if so,
-           * create the relation if not.
-           */
-      ambiguousAddRelationCheck: function(m, view, context) {
-        var endpoints = view.get(
-            'addRelationStart_possibleEndpoints')[m.id],
-            container = view.get('container'),
-            topo = view.get('component');
+    /*
+         * Test if the pending relation is ambiguous.  Display a menu if so,
+         * create the relation if not.
+         */
+    ambiguousAddRelationCheck: function(m, view, context) {
+      var endpoints = view.get(
+          'addRelationStart_possibleEndpoints')[m.id];
+      var container = view.get('container');
+      var topo = view.get('component');
 
-        if (endpoints && endpoints.length === 1) {
-          // Create a relation with the only available endpoint.
-          var ep = endpoints[0],
-                  endpoints_item = [
-                    [ep[0].service, {
-                      name: ep[0].name,
-                      role: 'server' }],
-                    [ep[1].service, {
-                      name: ep[1].name,
-                      role: 'client' }]];
-          view.service_click_actions
-                .addRelationEnd(endpoints_item, view, context);
+      if (endpoints && endpoints.length === 1) {
+        // Create a relation with the only available endpoint.
+        var ep = endpoints[0],
+                endpoints_item = [
+                  [ep[0].service, {
+                    name: ep[0].name,
+                    role: 'server' }],
+                  [ep[1].service, {
+                    name: ep[1].name,
+                    role: 'client' }]];
+        view.addRelationEnd(endpoints_item, view, context);
+        return;
+      }
+
+      // Sort the endpoints alphabetically by relation name.
+      endpoints = endpoints.sort(function(a, b) {
+        return a[0].name + a[1].name < b[0].name + b[1].name;
+      });
+
+      // Stop rubberbanding on mousemove.
+      view.clickAddRelation = null;
+
+      // Display menu with available endpoints.
+      var menu = container.one('#ambiguous-relation-menu');
+      if (menu.one('.menu')) {
+        menu.one('.menu').remove(true);
+      }
+
+      menu.append(Templates
+              .ambiguousRelationList({endpoints: endpoints}));
+
+      // For each endpoint choice, bind an an event to 'click' to
+      // add the specified relation.
+      menu.all('li').on('click', function(evt) {
+        if (evt.currentTarget.hasClass('cancel')) {
           return;
         }
+        var el = evt.currentTarget,
+                endpoints_item = [
+                  [el.getData('startservice'), {
+                    name: el.getData('startname'),
+                    role: 'server' }],
+                  [el.getData('endservice'), {
+                    name: el.getData('endname'),
+                    role: 'client' }]];
+        menu.removeClass('active');
+        view.addRelationEnd(endpoints_item, view, context);
+      });
 
-        // Sort the endpoints alphabetically by relation name.
-        endpoints = endpoints.sort(function(a, b) {
-          return a[0].name + a[1].name < b[0].name + b[1].name;
-        });
-
-        // Stop rubberbanding on mousemove.
-        view.clickAddRelation = null;
-
-        // Display menu with available endpoints.
-        var menu = container.one('#ambiguous-relation-menu');
-        if (menu.one('.menu')) {
-          menu.one('.menu').remove(true);
-        }
-
-        menu.append(Templates
-                .ambiguousRelationList({endpoints: endpoints}));
-
-        // For each endpoint choice, bind an an event to 'click' to
-        // add the specified relation.
-        menu.all('li').on('click', function(evt) {
-          if (evt.currentTarget.hasClass('cancel')) {
-            return;
-          }
-          var el = evt.currentTarget,
-                  endpoints_item = [
-                    [el.getData('startservice'), {
-                      name: el.getData('startname'),
-                      role: 'server' }],
-                    [el.getData('endservice'), {
-                      name: el.getData('endname'),
-                      role: 'client' }]];
-          menu.removeClass('active');
-          view.service_click_actions
-                .addRelationEnd(endpoints_item, view, context);
-        });
-
-        // Add a cancel item.
-        menu.one('.cancel').on('click', function(evt) {
-          menu.removeClass('active');
-          view.cancelRelationBuild();
-        });
-
-        // Display the menu at the service endpoint.
-        var tr = topo.zoom.translate(),
-                z = topo.zoom.scale();
-        menu.setStyle('top', m.y * z + tr[1]);
-        menu.setStyle('left', m.x * z + m.w * z + tr[0]);
-        menu.addClass('active');
-        view.set('active_service', m);
-        view.set('active_context', context);
-        view.updateServiceMenuLocation();
-      },
-
-      /*
-       * Fired when clicking the second service is clicked in the
-       * add relation flow.
-       *
-       * :param endpoints: array of two endpoints, each in the form
-       *   ['service name', {
-       *     name: 'endpoint type',
-       *     role: 'client or server'
-       *   }]
-       */
-      addRelationEnd: function(endpoints, view, context) {
-        // Redisplay all services
+      // Add a cancel item.
+      menu.one('.cancel').on('click', function(evt) {
+        menu.removeClass('active');
         view.cancelRelationBuild();
+      });
 
-        // Get the vis, and links, build the new relation.
-        var vis = view.get('component').vis,
-            env = view.get('component').get('env'),
-            db = view.get('component').get('db'),
-            source = view.get('addRelationStart_service'),
-            relation_id = 'pending:' + endpoints[0][0] + endpoints[1][0];
+      // Display the menu at the service endpoint.
+      var tr = topo.zoom.translate();
+      var z = topo.zoom.scale();
+      menu.setStyle('top', m.y * z + tr[1]);
+      menu.setStyle('left', m.x * z + m.w * z + tr[0]);
+      menu.addClass('active');
+      view.set('active_service', m);
+      view.set('active_context', context);
+      view.updateServiceMenuLocation();
+    },
 
-        if (endpoints[0][0] === endpoints[1][0]) {
-          view.set('currentServiceClickAction', 'toggleControlPanel');
-          return;
-        }
+    /*
+     * Fired when clicking the second service is clicked in the
+     * add relation flow.
+     *
+     * :param endpoints: array of two endpoints, each in the form
+     *   ['service name', {
+     *     name: 'endpoint type',
+     *     role: 'client or server'
+     *   }]
+     */
+    addRelationEnd: function(endpoints, view, context) {
+      // Redisplay all services
+      view.cancelRelationBuild();
 
-        // Create a pending relation in the database between the
-        // two services.
-        db.relations.create({
-          relation_id: relation_id,
-          display_name: 'pending',
-          endpoints: endpoints,
-          pending: true
-        });
+      // Get the vis, and links, build the new relation.
+      var vis = view.get('component').vis;
+      var env = view.get('component').get('env');
+      var db = view.get('component').get('db');
+      var source = view.get('addRelationStart_service');
+      var relation_id = 'pending:' + endpoints[0][0] + endpoints[1][0];
 
-        // Firing the update event on the db will properly redraw the
-        // graph and reattach events.
-        //db.fire('update');
-        view.get('component').bindAllD3Events();
-        view.update();
-
-        // Fire event to add relation in juju.
-        // This needs to specify interface in the future.
-        env.add_relation(
-            endpoints[0][0] + ':' + endpoints[0][1].name,
-            endpoints[1][0] + ':' + endpoints[1][1].name,
-            Y.bind(this._addRelationCallback, this, view, relation_id)
-        );
+      if (endpoints[0][0] === endpoints[1][0]) {
         view.set('currentServiceClickAction', 'toggleControlPanel');
-      },
+        return;
+      }
 
-      _addRelationCallback: function(view, relation_id, ev) {
-        var db = view.get('component').get('db');
-        // Remove our pending relation from the DB, error or no.
-        db.relations.remove(
-            db.relations.getById(relation_id));
-        if (ev.err) {
-          db.notifications.add(
-              new models.Notification({
-                title: 'Error adding relation',
-                message: 'Relation ' + ev.endpoint_a +
-                    ' to ' + ev.endpoint_b,
-                level: 'error'
-              })
-          );
-        } else {
-          // Create a relation in the database between the two services.
-          var result = ev.result,
-                  endpoints = Y.Array.map(result.endpoints, function(item) {
-                    var id = Y.Object.keys(item)[0];
-                    return [id, item[id]];
-                  });
-          db.relations.create({
-            relation_id: ev.result.id,
-            type: result['interface'],
-            endpoints: endpoints,
-            pending: false,
-            scope: result.scope,
-            // endpoints[1][1].name should be the same
-            display_name: endpoints[0][1].name
-          });
-        }
-        // Redraw the graph and reattach events.
-        db.fire('update');
-      },
+      // Create a pending relation in the database between the
+      // two services.
+      db.relations.create({
+        relation_id: relation_id,
+        display_name: 'pending',
+        endpoints: endpoints,
+        pending: true
+      });
+
+      // Firing the update event on the db will properly redraw the
+      // graph and reattach events.
+      //db.fire('update');
+      view.get('component').bindAllD3Events();
+      view.update();
+
+      // Fire event to add relation in juju.
+      // This needs to specify interface in the future.
+      env.add_relation(
+          endpoints[0][0] + ':' + endpoints[0][1].name,
+          endpoints[1][0] + ':' + endpoints[1][1].name,
+          Y.bind(this._addRelationCallback, this, view, relation_id)
+      );
+      view.set('currentServiceClickAction', 'toggleControlPanel');
+    },
+
+    _addRelationCallback: function(view, relation_id, ev) {
+      var db = view.get('component').get('db');
+      // Remove our pending relation from the DB, error or no.
+      db.relations.remove(
+          db.relations.getById(relation_id));
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error adding relation',
+              message: 'Relation ' + ev.endpoint_a +
+                  ' to ' + ev.endpoint_b,
+              level: 'error'
+            })
+        );
+      } else {
+        // Create a relation in the database between the two services.
+        var result = ev.result;
+        var endpoints = Y.Array.map(result.endpoints, function(item) {
+                  var id = Y.Object.keys(item)[0];
+                  return [id, item[id]];
+                });
+        db.relations.create({
+          relation_id: ev.result.id,
+          type: result['interface'],
+          endpoints: endpoints,
+          pending: false,
+          scope: result.scope,
+          // endpoints[1][1].name should be the same
+          display_name: endpoints[0][1].name
+        });
+      }
+      // Redraw the graph and reattach events.
+      //db.fire('update');
+      view.get('component').bindAllD3Events();
+      view.update();
+    },
 
     /**
      * Show subordinate relations for a service.
