@@ -1,5 +1,7 @@
 'use strict';
 
+(function () {
+
 var Y = YUI(GlobalConfig).use(
     ['node', 'juju-gui', 'juju-views', 'juju-tests-utils']);
 
@@ -13,8 +15,6 @@ describe('login view', function() {
     juju = Y.namespace('juju');
     makeLoginView = function() {
       var view = new views.LoginView({env: env});
-      // Disable actually prompting.
-      view._prompt = function() {};
       return view;
     };
   });
@@ -70,6 +70,28 @@ describe('login view', function() {
     assert.equal(view.get('password'), password);
   });
 
+  test('prompts when there are no known credentials', function() {
+    var view = makeLoginView();
+    view.login();
+    assert.isTrue(view._prompted);
+  });
+
+  test('no prompt when there are known credentials', function() {
+    var view = makeLoginView();
+    view.set('user', 'user');
+    view.set('password', 'password');
+    view.login();
+    assert.isFalse(view._prompted);
+  });
+
+  test('login() sends login message', function() {
+    var view = makeLoginView();
+    view.set('user', 'user');
+    view.set('password', 'password');
+    view.login();
+    assert.equal(conn.last_message().op, 'login');
+  });
+
 });
 
 
@@ -107,20 +129,9 @@ describe('login user interaction', function() {
   });
 
   test('unauthorized requests prompt for credentials', function() {
-    var view = makeLoginView();
-    var userWasPrompted = false;
-    var fauxLoginView = {
-      promptUser: function() {
-        userWasPrompted = true;
-        view.promptUser();
-      },
-      get: function(name) {
-        view.get(name);
-      }
-    };
-    app.getViewInfo('login').instance = fauxLoginView;
     app.check_user_credentials(undefined, undefined, function() {});
-    assert.isTrue(userWasPrompted);
+    var view = app.getViewInfo('login').instance;
+    assert.isTrue(view._prompted);
   });
 
   test('unauthorized requests do not call next()', function() {
@@ -153,38 +164,6 @@ describe('login user interaction', function() {
     assert.isTrue(view.waiting);
     view._prompted = false;
     app.check_user_credentials(undefined, undefined, function() {});
-    assert.isFalse(view._prompted);
-  });
-
-});
-
-describe('login() method of login view', function() {
-  var conn, env, utils, juju, makeLoginView, views, app;
-  var test = it; // We aren't really doing BDD so let's be more direct.
-
-  before(function() {
-    views = Y.namespace('juju.views');
-    makeLoginView = function() {
-      var fauxEnvironment = {
-        after: function() {
-        }
-      };
-      var view = new views.LoginView({env: fauxEnvironment});
-      return view;
-    };
-  });
-
-  test('prompts when there are no known credentials', function() {
-    var view = makeLoginView();
-    view.login();
-    assert.isTrue(view._prompted);
-  });
-
-  test('no prompt when there are known credentials', function() {
-    var view = makeLoginView();
-    view.set('user', 'user');
-    view.set('password', 'password');
-    view.login();
     assert.isFalse(view._prompted);
   });
 
@@ -252,7 +231,5 @@ describe('login server interaction', function() {
     assert.isFalse(view.userIsAuthenticated);
   });
 
-  test.skip('login-required operation failures resend creds', function() {
-  });
-
 });
+})();

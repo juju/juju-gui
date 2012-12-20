@@ -23,8 +23,8 @@ YUI.add('juju-view-login', function(Y) {
 
     promptUser: function() {
       this._prompted = true;
-//      this.set('user', prompt('User name'));
-//      this.set('password', prompt('Password'));
+      this.set('user', prompt('User name'));
+      this.set('password', prompt('Password'));
       this.waiting = true;
     },
 
@@ -33,10 +33,16 @@ YUI.add('juju-view-login', function(Y) {
     },
 
     login: function() {
+      // If the credentials are known good or we are waiting to find out, exit
+      // early.
+      if (this.userIsAuthenticated || this.waiting) {
+        return;
+      }
       // If there are no stored credentials, prompt the user for some.
       if (!Y.Lang.isValue(this.get('user'))) {
         this.promptUser();
       }
+      this.validateCredentials(this.get('user'), this.get('password'));
     }
 
   });

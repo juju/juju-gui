@@ -529,8 +529,8 @@ YUI.add('juju-gui', function(Y) {
       var view = viewInfo.instance;
       // If there has not been a successful login attempt, prompt for
       // credentials.
-      if (!view.waiting && !view.loginSuccessful) {
-        view.promptUser();
+      if (!view.waiting && !view.userIsAuthenticated) {
+        view.login();
       }
       // If we are waiting for a response from the server as to whether the
       // login credentials were correct or not, we need to try again later.
