@@ -108,7 +108,7 @@ YUI.add('juju-topology', function(Y) {
       this.vis = vis;
 
       // Build out scale and zoom.
-      // These are defaults, a Module
+      // These are defaults, a (Viewport) Module
       // can implement policy around them.
       this.sizeChangeHandler();
       this.on('sizeChanged', this.sizeChangeHandler);

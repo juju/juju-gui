@@ -104,7 +104,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
     },
 
     /*
-     * Wraper around the actual rescale method for zoom buttons.
+     * Wrapper around the actual rescale method for zoom buttons.
      */
     _fire_zoom: function(delta) {
       var topo = this.get('component'),
@@ -142,7 +142,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
           topo = this.get('component');
 
       if (new_scale < 25 || new_scale > 200) {
-        evt.scale = this.get('scale');
+        evt.scale = topo.get('scale');
       }
       // Store the current value of scale so that it can be restored later.
       this._scale = evt.scale;
