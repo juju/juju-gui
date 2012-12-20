@@ -29,6 +29,11 @@ YUI.add('juju-gui', function(Y) {
         preserve: true
       },
 
+      login: {
+        type: 'juju.views.login',
+        preserve: true
+      },
+
       service: {
         type: 'juju.views.service',
         preserve: false,
@@ -516,6 +521,29 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
+    check_user_credentials: function(req, res, next) {
+      var viewInfo = this.getViewInfo('login');
+      if (!viewInfo.instance) {
+         viewInfo.instance = new views.LoginView({env: this.env});
+      }
+      var view = viewInfo.instance;
+      // If there has not been a successful login attempt, prompt for
+      // credentials.
+      if (!view.get('waiting') && !view.loginSuccessful) {
+        view.promptUser();
+      }
+      // If we are waiting for a response from the server as to whether the
+      // login credentials were correct or not, we need to try again later.
+      if (view.get('waiting')) {
+//        var self = this;
+//        window.setTimeout(function() {
+//          self.show_login_view(req, res, next)
+//        }, 1000);
+        return;
+      }
+      next();
+    },
+
     /**
      * Display the provider type.
      *
@@ -724,6 +752,7 @@ YUI.add('juju-gui', function(Y) {
       charm_store: {},
       routes: {
         value: [
+          { path: '*', callback: 'check_user_credentials'},
           { path: '*', callback: 'show_notifications_view'},
           { path: '/charms/', callback: 'show_charm_collection'},
           { path: '/charms/*charm_store_path',

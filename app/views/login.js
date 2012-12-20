@@ -16,7 +16,13 @@ YUI.add('juju-view-login', function(Y) {
     handleLoginEvent: function(evt) {
       this.userIsAuthenticated = (evt.data.result === 'success');
       //this.waiting = false;
-    }
+    },
+
+    promptUser: function() {
+//      this.user_name = prompt('User name');
+//      this.password = prompt('Password');
+      this.set('waiting', true);
+    },
 
   });
 
