@@ -68,9 +68,11 @@ YUI.add('juju-topology-relation', function(Y) {
         }
       },
       yui: {
+        rendered: {callback: 'renderedHandler'},
         serviceMoved: {callback: 'updateLinkEndpoints'},
         servicesRendered: {callback: 'updateLinks'},
         cancelRelationBuild: {callback: 'cancelRelationBuild'},
+        hideSubordinateRelations: {callback: 'hideSubordinateRelations'},
         addRelationDragStart: {callback: 'addRelationDragStart'},
         addRelationDrag: {callback: 'addRelationDrag'},
         addRelationDragEnd: {callback: 'addRelationDragEnd'}
@@ -92,18 +94,24 @@ YUI.add('juju-topology-relation', function(Y) {
       
       var db = this.get('component').get('db'),
           relations = db.relations.toArray();
-      this.relPairs = this.processRelations(relations)
+      this.relPairs = this.processRelations(relations);
+      this.updateLinks();
 
       return this;
     },
 
+    renderedHandler: function() {
+      this.update();
+    },
+
     processRelation: function(r) {
       var self = this,
+              topo = self.get('component'),
               endpoints = r.get('endpoints'),
               rel_services = [];
 
       Y.each(endpoints, function(ep) {
-        rel_services.push([ep[1].name, self.service_boxes[ep[0]]]);
+        rel_services.push([ep[1].name, topo.service_boxes[ep[0]]]);
       });
       return rel_services;
     },
@@ -134,13 +142,13 @@ YUI.add('juju-topology-relation', function(Y) {
          * Utility function to get subordinate relations for a service.
          */
     subordinateRelationsForService: function(service) {
-      return this.rel_pairs.filter(function(p) {
+      return this.relPairs.filter(function(p) {
         return p.modelIds().indexOf(service.modelId()) !== -1 &&
             p.scope === 'container';
       });
     },
 
-    function updateLinks() {
+    updateLinks: function() {
       // Enter.
       var g = this.drawRelationGroup(),
               link = g.selectAll('line.relation');
@@ -150,7 +158,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Exit
       g.exit().remove();
-    };
+    },
 
     /**
      * Update relation line endpoints for a given service.
@@ -158,8 +166,10 @@ YUI.add('juju-topology-relation', function(Y) {
      * @method updateLinkEndpoints
      * @param {Object} service The service module that has been moved.
      */
-    updateLinkEndpoints: function(service) {
-      Y.each(Y.Array.filter(self.rel_pairs, function(relation) {
+    updateLinkEndpoints: function(evt) {
+      var self = this,
+          service = evt.service;
+      Y.each(Y.Array.filter(self.relPairs, function(relation) {
         return relation.source() === service ||
             relation.target() === service;
       }), function(relation) {
@@ -189,7 +199,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var self = this,
           vis = this.get('component').vis,
           g = vis.selectAll('g.rel-group')
-                 .data(self.rel_pairs, function(r) {
+                 .data(self.relPairs, function(r) {
                    return r.modelIds();
                  });
 
@@ -297,8 +307,7 @@ YUI.add('juju-topology-relation', function(Y) {
       self.dragline = dragline;
 
       // Start the add-relation process.
-      context.service_click_actions
-            .addRelationStart(d, self, context);
+      self.addRelationStart(d, self, context);
     },
 
     addRelationDrag: function(d, context) {
@@ -405,8 +414,8 @@ YUI.add('juju-topology-relation', function(Y) {
       this.clickAddRelation = null;
       this.set('currentServiceClickAction', 'toggleControlPanel');
       this.buildingRelation = false;
-      this.show(vis.selectAll('.service'))
-                  .classed('selectable-service', false);
+      //this.show(vis.selectAll('.service'))
+      //            .classed('selectable-service', false);
     },
 
     /**

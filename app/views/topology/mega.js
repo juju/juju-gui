@@ -62,11 +62,12 @@ YUI.add('juju-topology-mega', function(Y) {
            * relation.
            */
           click: {callback: function(d, self) {
-            var container = self.get('container');
+            var container = self.get('container'),
+                topo = self.get('component');
             container.all('.environment-menu.active').removeClass('active');
             self.service_click_actions.toggleControlPanel(null, self);
-            self.cancelRelationBuild();
-            self.hideSubordinateRelations();
+            topo.fire('cancelRelationBuild');
+            topo.fire('hideSubordinateRelations');
           }},
           mousemove: 'mousemove'
         },
@@ -196,6 +197,7 @@ YUI.add('juju-topology-mega', function(Y) {
                   right: 0.086758});
         this.service_boxes[service.id] = service;
       }, this);
+      topo.service_boxes = this.service_boxes;
 
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
@@ -263,7 +265,7 @@ YUI.add('juju-topology-mega', function(Y) {
                   topo.fire('cancelRelationBuild');
 
                   // Update relation lines for just this service.
-                  topo.fire('serviceMoved', d);//updateLinkEndpoints(d);
+                  topo.fire('serviceMoved', { service: d });
                 }
               })
             .on('dragend', function(d, i) {
@@ -304,10 +306,6 @@ YUI.add('juju-topology-mega', function(Y) {
       // Exit
       node.exit()
           .remove();
-
-      // Draw or schedule redraw of links.
-      topo.fire('servicesRendered');//updateLinks();
-
     },
 
     // Called to draw a service in the 'update' phase

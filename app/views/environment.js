@@ -51,6 +51,7 @@ YUI.add('juju-view-environment', function(Y) {
             // Bind all the behaviors we need as modules.
             topo.addModule(views.MegaModule);
             topo.addModule(views.PanZoomModule);
+            topo.addModule(views.RelationModule);
 
             topo.addTarget(this);
             this.topo = topo;
