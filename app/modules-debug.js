@@ -12,11 +12,24 @@ var GlobalConfig = {
   filter: 'debug',
   // Set "true" for verbose logging of YUI
   debug: false,
-
+  base: '/juju-ui/assets/javascripts/yui/',
   // Use Rollups
   combine: false,
 
   groups: {
+    gallery: {
+      modules: {
+        'gallery-ellipsis': {
+          fullpath: 'juju-ui/assets/javascripts/gallery-ellipsis-debug.js'
+        },
+        'gallery-markdown': {
+          fullpath: 'juju-ui/assets/javascripts/gallery-markdown-debug.js'
+        },
+        'gallery-timer': {
+          fullpath: 'juju-ui/assets/javascripts/gallery-timer-debug.js'
+        }
+      }
+    },
     d3: {
       modules: {
         'd3': {
@@ -66,13 +79,6 @@ var GlobalConfig = {
 
         'juju-topology': {
           fullpath: '/juju-ui/views/topology/topology.js',
-          require: [
-            'juju-topology-mega',
-            'juju-topology-service',
-            'juju-topology-relation',
-            'juju-topology-panzoom',
-            'juju-topology-viewport'
-          ]
         },
         'juju-view-utils': {
           fullpath: '/juju-ui/views/utils.js'

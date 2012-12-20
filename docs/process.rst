@@ -77,6 +77,7 @@ Checklist for Reviewing
 - Review the diff, including notes from the above as appropriate.
 
   * Make sure that new code has tests.
+  * Make sure user-facing changes are described in CHANGES.yaml.
   * Make sure you can understand the new code.  Ask for clarification if
     necessary.
   * Consider the advice in this preferred `Software Architecture Cheat Sheet
@@ -95,12 +96,20 @@ Checklist for Reviewing
 Checklist for Making a Stable Release
 =====================================
 
-- Get a checkout of the trunk:: ``bzr co lp:juju-gui``.
-- If you are using a pre-existing checkout, make sure it is up-to-date:: ``bzr
-  up``.
-- Verify that the top-most version in CHANGES.yaml specifies the
-  expected version string.  It should be bigger than the most recent
-  version found on https://launchpad.net/juju-gui/stable .
+- Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
+- If you are using a pre-existing branch, make sure it is up-to-date:: ``bzr
+  pull``.
+- Verify that the top-most version in CHANGES.yaml specifies the expected
+  version string.  It should be bigger than the most recent version found on
+  https://launchpad.net/juju-gui/stable .  If the most recent version string
+  is "unreleased," do the following.
+
+  * Decide what the next version number should be (see http://semver.org/) and
+    change "unreleased" to that value.
+  * Commit to the branch with this checkin message: ``bzr commit -m 'Set
+    version for release.'``
+  * Push the branch directly to the parent (``bzr push`` should work).
+
 - Run the tests and verify they pass: ``make test``.
 - Create the tarball: ``FINAL=1 make distfile``.  The process will end by
   reporting the name of the tarball it made.
@@ -111,7 +120,7 @@ Checklist for Making a Stable Release
 - For now, we will assume you would like to verify the release on the
   Launchpad staging server.  As we become more confident with this process,
   this step may become unnecessary.  In the checkout, run ``FINAL=1 make
-  release``.  This will step you through signing the tarball, connecting
+  dist``.  This will step you through signing the tarball, connecting
   to Launchpad, and uploading the release.
 
   * Note that you may need to ask the webops to turn off the two-factor
