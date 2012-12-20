@@ -138,6 +138,46 @@ YUI.add('d3-components', function(Y) {
       return this;
     },
 
+    // Return a resolved handler object in the form
+    // {phase: str, callback: function}
+    _normalizeHandler: function(handler, module, selector) {
+      var result = {};
+
+      if (L.isString(handler)) {
+        result.callback = module[handler];
+        result.phase = 'on';
+      }
+
+      if (L.isObject(handler)) {
+        result.phase = handler.phase || 'on';
+        result.callback = handler.callback;
+      }
+
+      if (L.isString(result.callback)) {
+        result.callback = module[result.callback];
+      }
+
+      if (!result.callback) {
+        console.error('No Event handler for', selector, module.name);
+        return;
+      }
+      if (!L.isFunction(result.callback)) {
+        console.error('Unable to resolve a proper callback for',
+                      selector, handler, module.name, result);
+        return;
+      }
+      // Set up binding context for callback.
+      result.context = module;
+      if (handler.context) {
+        if (handler.context === 'component') {
+          result.context = this;
+        } else if (handler.context === 'window') {
+          result.context = Y.one('window');
+        }
+      }
+      return result;
+    },
+
     /**
      * Internal implementation of binding both Module.events.scene and
      * Module.events.yui.
@@ -168,49 +208,12 @@ YUI.add('d3-components', function(Y) {
             Y.delegate(name, d3Adaptor, container, selector, context));
       }
 
-      // Return a resolved handler object in the form
-      // {phase: str, callback: function}
-      function _normalizeHandler(handler, module, selector) {
-        var result = {};
-
-        if (L.isString(handler)) {
-          result.callback = module[handler];
-          result.phase = 'on';
-        }
-
-        if (L.isObject(handler)) {
-          result.phase = handler.phase || 'on';
-          result.callback = handler.callback;
-        }
-
-        if (L.isString(result.callback)) {
-          result.callback = module[result.callback];
-        }
-
-        if (!result.callback) {
-          console.error('No Event handler for', selector, modName);
-          return;
-        }
-        if (!L.isFunction(result.callback)) {
-          console.error('Unable to resolve a proper callback for',
-                        selector, handler, modName, result);
-          return;
-        }
-        // Set up binding context for callback.
-        result.context = module;
-        if (handler.context &&
-            handler.context === 'component') {
-          result.context = self;
-        }
-        return result;
-      }
-
       this.unbind(modName);
 
       // Bind 'scene' events
       Y.each(modEvents.scene, function(handlers, selector, sceneEvents) {
         Y.each(handlers, function(handler, trigger) {
-          handler = _normalizeHandler(handler, module, selector);
+          handler = self._normalizeHandler(handler, module, selector);
           if (L.isValue(handler)) {
             _bindEvent(trigger, handler.callback,
                        container, selector, handler.context);
@@ -227,7 +230,7 @@ YUI.add('d3-components', function(Y) {
         Y.each(['after', 'before', 'on'], function(eventPhase) {
           var resolvedHandler = {};
           Y.each(modEvents.yui, function(handler, name) {
-            handler = _normalizeHandler(handler, module, name);
+            handler = self._normalizeHandler(handler, module, name);
             if (!handler || handler.phase !== eventPhase) {
               return;
             }
@@ -240,10 +243,17 @@ YUI.add('d3-components', function(Y) {
               // this signature: Y.on(event, callback, target, context).
               // For this reason, it is not possible here to just pass the
               // context as third argument.
-              var callback = Y.bind(handler.callback, handler.context);
-              // (re)Register the event to bubble.
-              self.publish(name, {emitFacade: true});
-              subscriptions.push(self[eventPhase](name, callback, handler.context));
+              var target = self,
+                  callback = Y.bind(handler.callback, handler.context);
+              if (Y.Array.indexOf(['windowresize'], name) !== -1) {
+                target = Y;
+              } else {
+                // (re)Register the event to bubble.
+                self.publish(name, {emitFacade: true});
+              }
+              subscriptions.push(
+                  target[eventPhase](
+                  name, callback, handler.context));
             });
           }
         });
@@ -285,27 +295,38 @@ YUI.add('d3-components', function(Y) {
     _bindD3Events: function(modName) {
       // Walk each selector for a given module 'name', doing a
       // d3 selection and an 'on' binding.
-      var modEvents = this.events[modName],
+      var self = this,
+          modEvents = this.events[modName],
           owns = Y.Object.owns,
           module;
+
       if (!modEvents || !modEvents.d3) {
         return;
       }
       modEvents = modEvents.d3;
       module = this.modules[modName];
 
-      function _normalizeHandler(handler, module) {
-        if (handler && !L.isFunction(handler)) {
-          handler = module[handler];
-        }
-        return handler;
-      }
-
       Y.each(modEvents, function(handlers, selector) {
         Y.each(handlers, function(handler, trigger) {
-          handler = _normalizeHandler(handler, module);
-          d3.selectAll(selector).on(trigger, handler);
+          var adapter;
+          handler = self._normalizeHandler(handler, module);
+          // Create an adaptor
+          adapter = function() {
+            var selection = d3.select(this),
+                d = selection.data()[0];
+            // This is a minor violation (extension)
+            // of the interface, but suits us well.
+            return handler.callback.call(this, d, handler.context);
+          };
+          d3.selectAll(selector).on(trigger, adapter);
         });
+      });
+    },
+
+    bindAllD3Events: function() {
+      var self = this;
+      Y.each(this.modules, function(mod, name) {
+        self._bindD3Events(name);
       });
     },
 
@@ -314,19 +335,19 @@ YUI.add('d3-components', function(Y) {
      * behalf of a module.
      *
      * @method recordSubscription
-     * @param {Module} module
-     * @param {Object} YUI event subscription
+     * @param {Module} module to record relative to.
+     * @param {Object} YUI event subscription.
      * @chainable
      **/
-  recordSubscription: function(module, subscription) {
-    if (!(module.name in this.events)) {
-      throw "Unable able to recordSubscription, module not added.";
-    }
-    if (!subscription) {
-      throw "Invalid/undefined subscription object cannot be recorded.";
-    }
-    this.events[module.name].subscriptions.push(subscription);
-  },
+    recordSubscription: function(module, subscription) {
+      if (!(module.name in this.events)) {
+        throw 'Unable able to recordSubscription, module not added.';
+      }
+      if (!subscription) {
+        throw 'Invalid/undefined subscription object cannot be recorded.';
+      }
+      this.events[module.name].subscriptions.push(subscription);
+    },
 
     /**
       Internal Detail. Called by unbind automatically.

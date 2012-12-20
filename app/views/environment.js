@@ -23,8 +23,9 @@ YUI.add('juju-view-environment', function(Y) {
       {
         initializer: function() {
           console.log('View: Initialized: Env');
-          this.publish('navigateTo', {broadcast: true,
-                                      preventable: false});
+          this.publish('navigateTo', {
+            broadcast: true,
+            preventable: false});
         },
 
         render: function() {
@@ -62,6 +63,11 @@ YUI.add('juju-view-environment', function(Y) {
         postRender: function() {
           this.topo.attachContainer();
           this.topo.fire('rendered');
+          // Bind d3 events (manually)
+          // this needs to be postRender and
+          // the jiggle in phases has broken
+          // the existing (from change to showView)
+          this.topo.bindAllD3Events();
         }
       }, {
         ATTRS: {}

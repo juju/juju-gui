@@ -539,7 +539,6 @@ YUI.add('juju-gui', function(Y) {
     show_environment: function(req, res, next) {
       var self = this,
           view = this.getViewInfo('environment'),
-          self = this,
           options = {
             getModelURL: Y.bind(this.getModelURL, this),
             /** A simple closure so changes to the value are available.*/
@@ -552,7 +551,8 @@ YUI.add('juju-gui', function(Y) {
       this.showView('environment', options, {
         callback: function() {
           this.views.environment.instance.postRender();
-      }, render: true});
+        },
+        render: true});
     },
 
     /**

@@ -85,10 +85,10 @@ YUI.add('juju-topology', function(Y) {
                     .y(this.yScale)
                     .scaleExtent([0.25, 2.0])
                     .on('zoom', function(evt) {
-                      // This will add the d3 properties to the
-                      // eventFacade
-                      self.fire('zoom', d3.event);
-                    });
+                        // This will add the d3 properties to the
+                        // eventFacade
+                        self.fire('zoom', d3.event);
+                     });
 
       // Set up the visualization with a pack layout.
       vis = d3.select(container.getDOMNode())
