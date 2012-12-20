@@ -118,7 +118,7 @@
       done();
     });
 
-    it.only('must handle the window resize event', function(done) {
+    it('must handle the window resize event', function(done) {
       var view = new views.environment({container: container, db: db}),
           topo,
           beforeResizeEventFired = false;
