@@ -119,15 +119,18 @@
     });
 
     it('must handle the window resize event', function(done) {
-      var view = new views.environment({container: container, db: db});
+      var view = new views.environment({container: container, db: db}),
+          topo,
+          beforeResizeEventFired = false;
       view.render();
-      var beforeResizeEventFired = false;
-      Y.once('beforePageSizeRecalculation', function() {
-        // This event must be fired by views.MegaModule.setSizesFromViewport.
+      topo = view.topo;
+
+      topo.once('beforePageSizeRecalculation', function() {
+        // This event must be fired.
         beforeResizeEventFired = true;
       });
-      Y.once('afterPageSizeRecalculation', function() {
-        // This event must be fired by views.MegaModule.setSizesFromViewport.
+      topo.once('afterPageSizeRecalculation', function() {
+        // This event must be fired.
         assert.isTrue(beforeResizeEventFired);
         done();
       });
@@ -257,7 +260,7 @@
       view.postRender();
       var zoom_in = container.one('#zoom-in-btn'),
           zoom_out = container.one('#zoom-out-btn'),
-          module = view.topo.modules.MegaModule,
+          module = view.topo.modules.PanZoomModule,
           slider = module.slider,
           svg = container.one('svg g g');
 

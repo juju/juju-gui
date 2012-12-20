@@ -53,12 +53,10 @@ YUI.add('juju-topology-mega', function(Y) {
             .attr('class', 'unit-count hide-count');
           }}
         },
-
         '.rel-label': {
           click: 'relationClick',
           mousemove: 'mousemove'
         },
-
         '.topology .crosshatch-background rect:first-child': {
           /**
            * If the user clicks on the background we cancel any active add
@@ -81,9 +79,6 @@ YUI.add('juju-topology-mega', function(Y) {
             self.backgroundClicked();
           }}
         },
-
-        '#zoom-out-btn': {click: 'zoom_out'},
-        '#zoom-in-btn': {click: 'zoom_in'},
         '.graph-list-picker .picker-button': {
           click: 'showGraphListPicker'
         },
@@ -132,9 +127,9 @@ YUI.add('juju-topology-mega', function(Y) {
       },
       d3: {
         '.service': {
-          'mousedown.addrel': {callback: function(d, self) {
+          'mousedown.addrel': {callback: function(d, context) {
             var evt = d3.event;
-            self.longClickTimer = Y.later(750, this, function(d, e) {
+            context.longClickTimer = Y.later(750, this, function(d, e) {
               // Provide some leeway for accidental dragging.
               if ((Math.abs(d.x - d.oldX) + Math.abs(d.y - d.oldY)) /
                   2 > 5) {
@@ -146,25 +141,27 @@ YUI.add('juju-topology-mega', function(Y) {
               d3.event = e;
 
               // Start the process of adding a relation
-              self.addRelationDragStart(d, self);
+              context.addRelationDragStart(d, context);
             }, [d, evt], false);
           }},
-          'mouseup.addrel': {callback: function(d, self) {
+          'mouseup.addrel': {callback: function(d, context) {
             // Cancel the long-click timer if it exists.
-            if (self.longClickTimer) {
-              self.longClickTimer.cancel();
+            if (context.longClickTimer) {
+              context.longClickTimer.cancel();
             }
           }}
         }
       },
       yui: {
-        windowresize: 'setSizesFromViewport'
+        windowresize: {
+          callback: 'setSizesFromViewport',
+          context: 'module'},
+        rendered: 'renderedHandler'
       }
     },
 
     initializer: function(options) {
       MegaModule.superclass.constructor.apply(this, arguments);
-      this.publish('navigateTo', {preventable: false});
 
       // Build a service.id -> BoundingBox map for services.
       this.service_boxes = {};
@@ -173,83 +170,12 @@ YUI.add('juju-topology-mega', function(Y) {
       this.set('currentServiceClickAction', 'toggleControlPanel');
     },
 
-    render: function() {
-      MegaModule.superclass.render.apply(this, arguments);
-      var container = this.get('container');
-      container.setHTML(Templates.overview());
-      this.svg = container.one('.topology');
-
-      this.renderOnce();
-
-      return this;
-    },
-    /*
-     * Construct a persistent scene that is managed in update.
-     */
-    renderOnce: function() {
-      var self = this,
-          container = this.get('container'),
-          height = 600,
-          width = 640,
-          fill = d3.scale.category20();
-
-      this.service_scale = d3.scale.log().range([150, 200]);
-      this.service_scale_width = d3.scale.log().range([164, 200]),
-      this.service_scale_height = d3.scale.log().range([64, 100]);
-      this.xscale = d3.scale.linear()
-      .domain([-width / 2, width / 2])
-      .range([0, width]),
-      this.yscale = d3.scale.linear()
-      .domain([-height / 2, height / 2])
-      .range([height, 0]);
-
-      // Create a pan/zoom behavior manager.
-      var zoom = d3.behavior.zoom()
-      .x(this.xscale)
-      .y(this.yscale)
-      .scaleExtent([0.25, 2.0])
-      .on('zoom', function() {
-            // Keep the slider up to date with the scale on other sorts
-            // of zoom interactions
-            var s = self.slider;
-            s.set('value', Math.floor(d3.event.scale * 100));
-            self.rescale(vis, d3.event);
-          });
-      self.zoom = zoom;
-
-      // Set up the visualization with a pack layout.
-      var vis = d3.select(container.getDOMNode())
-      .select('.crosshatch-background')
-      .append('svg:svg')
-      .attr('pointer-events', 'all')
-      .attr('width', width)
-      .attr('height', height)
-      .append('svg:g')
-      .call(zoom)
-          // Disable zoom on double click.
-      .on('dblclick.zoom', null)
-      .append('g');
-
-      vis.append('svg:rect')
-      .attr('class', 'graph')
-      .attr('fill', 'rgba(255,255,255,0)');
-
-      this.vis = vis;
-      this.tree = d3.layout.pack()
-      .size([width, height])
-      .value(function(d) {
-            return Math.max(d.unit_count, 1);
-          })
-      .padding(300);
-
-      this.updateCanvas();
-    },
-
     serviceClick: function(d, context) {
       // Ignore if we clicked outside the actual service node.
-      var container = context.get('container'),
-              mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (!d.containsPoint(mouse_coords, context.zoom)) {
+      var topo = context.get('component'),
+          container = context.get('container'),
+          mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+      if (!d.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
       // Get the current click action
@@ -321,8 +247,9 @@ YUI.add('juju-topology-mega', function(Y) {
      */
     updateData: function() {
       //model data
-      var vis = this.vis,
-          db = this.get('component').get('db'),
+      var topo = this.get('component'),
+          vis = topo.vis,
+          db = topo.get('db'),
           relations = db.relations.toArray(),
           services = db.services.map(views.toBoundingBox);
 
@@ -352,17 +279,33 @@ YUI.add('juju-topology-mega', function(Y) {
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
                        .data(services, function(d) {
-                return d.modelId();});
+                         return d.modelId();});
     },
 
     /*
      * Attempt to reuse as much of the existing graph and view models
      * as possible to re-render the graph.
      */
-    updateCanvas: function() {
+    update: function() {
       var self = this,
-              tree = this.tree,
-              vis = this.vis;
+          topo = this.get('component'),
+          width = topo.get('width'),
+          height = topo.get('height');
+
+      if (!this.service_scale) {
+        this.service_scale = d3.scale.log().range([150, 200]);
+        this.service_scale_width = d3.scale.log().range([164, 200]),
+        this.service_scale_height = d3.scale.log().range([64, 100]);
+      }
+
+      if (!this.tree) {
+        this.tree = d3.layout.pack()
+                      .size([width, height])
+                      .value(function(d) {
+                          return Math.max(d.unit_count, 1);
+                        })
+                      .padding(300);
+      }
 
       //Process any changed data.
       this.updateData();
@@ -396,7 +339,6 @@ YUI.add('juju-topology-mega', function(Y) {
                   // Clear any state while dragging.
                   self.get('container').all('.environment-menu.active')
                     .removeClass('active');
-                  self.service_click_actions.toggleControlPanel(null, self);
                   self.cancelRelationBuild();
 
                   // Update relation lines for just this service.
@@ -432,7 +374,6 @@ YUI.add('juju-topology-mega', function(Y) {
                 .attr('y2', t[1]);
           rel_group.select('.rel-label')
                 .attr('transform', function(d) {
-                // XXX: This has to happen on update, not enter
                 return 'translate(' +
                     [Math.max(s[0], t[0]) -
                          Math.abs((s[0] - t[0]) / 2),
@@ -459,32 +400,21 @@ YUI.add('juju-topology-mega', function(Y) {
 
       // enter
       node
-            .enter().append('g')
-            .attr('class', function(d) {
+        .enter().append('g')
+        .attr('class', function(d) {
             return (d.subordinate ? 'subordinate ' : '') + 'service';
           })
-            .call(drag)
-            .on('mousedown.addrel', function(d) {
-                self.d3Events['.service']['mousedown.addrel']
-                .call(this, d, self, d3.event);
-              })
-            .on('mouseup.addrel', function(d) {
-                self.d3Events['.service']['mouseup.addrel']
-                .call(this, d, self, d3.event);
-              })
-            .attr('transform', function(d) {
-                return d.translateStr();});
+        .call(drag)
+        .attr('transform', function(d) {
+            return d.translateStr();
+          });
 
       // Update
       this.drawService(node);
 
       // Exit
       node.exit()
-            .call(function(d) {
-            // TODO: update the service_boxes
-            // removing the bound data
-          })
-            .remove();
+          .remove();
 
       function updateLinks() {
         // Enter.
@@ -509,10 +439,11 @@ YUI.add('juju-topology-mega', function(Y) {
     drawRelationGroup: function() {
       // Add a labelgroup.
       var self = this,
-              g = self.vis.selectAll('g.rel-group')
-                  .data(self.rel_pairs, function(r) {
-                    return r.modelIds();
-                  });
+          vis = this.get('component').vis,
+          g = vis.selectAll('g.rel-group')
+                 .data(self.rel_pairs, function(r) {
+                   return r.modelIds();
+                 });
 
       var enter = g.enter();
 
@@ -534,7 +465,7 @@ YUI.add('juju-topology-mega', function(Y) {
                     'relation';
               });
 
-      g.selectAll('rel-label').remove();
+      g.selectAll('.rel-label').remove();
       g.selectAll('text').remove();
       g.selectAll('rect').remove();
       var label = g.append('g')
@@ -851,31 +782,6 @@ YUI.add('juju-topology-mega', function(Y) {
             p.scope === 'container';
       });
     },
-    renderSlider: function() {
-      var self = this,
-              value = 100,
-              currentScale = this.get('scale');
-      // Build a slider to control zoom level
-      if (currentScale) {
-        value = currentScale * 100;
-      }
-      var slider = new Y.Slider({
-        min: 25,
-        max: 200,
-        value: value
-      });
-      slider.render('#slider-parent');
-      slider.after('valueChange', function(evt) {
-        // Don't fire a zoom if there's a zoom event already in progress;
-        // that will run rescale for us.
-        if (d3.event && d3.event.scale && d3.event.translate) {
-          return;
-        }
-        self._fire_zoom((evt.newVal - evt.prevVal) / 100);
-      });
-      self.slider = slider;
-    },
-
     /*
          * Utility method to get a service object from the DB
          * given a BoundingBox.
@@ -919,8 +825,10 @@ YUI.add('juju-topology-mega', function(Y) {
          * in app.showView(), and in testing, it needs to be called manually,
          * if the test relies on any of this data.
          */
-    postRender: function() {
+    renderedHandler: function() {
       var container = this.get('container');
+
+      this.update();
 
       // Set the sizes from the viewport.
       this.setSizesFromViewport();
@@ -931,29 +839,6 @@ YUI.add('juju-topology-mega', function(Y) {
         label.one('rect').setAttribute('width', width)
               .setAttribute('x', -width / 2);
       });
-
-      // Preserve zoom when the scene is updated.
-      var changed = false,
-              currentScale = this.get('scale'),
-              currentTranslate = this.get('translate');
-      if (currentTranslate && currentTranslate !== this.zoom.translate()) {
-        this.zoom.translate(currentTranslate);
-        changed = true;
-      }
-      if (currentScale && currentScale !== this.zoom.scale()) {
-        this.zoom.scale(currentScale);
-        changed = true;
-      }
-      if (changed) {
-        this._fire_zoom(0);
-      }
-
-      // Render the slider after the view is attached.
-      // Although there is a .syncUI() method on sliders, it does not
-      // seem to play well with the app framework: the slider will render
-      // the first time, but on navigation away and back, will not
-      // re-render within the view.
-      this.renderSlider();
 
       // Chainable method.
       return this;
@@ -975,14 +860,16 @@ YUI.add('juju-topology-mega', function(Y) {
 
     addRelationDragStart: function(d, context) {
       // Create a pending drag-line.
-      var dragline = this.vis.append('line')
-              .attr('class', 'relation pending-relation dragline dragging'),
-              self = this;
+      var vis = this.get('component').vis,
+          dragline = vis.append('line')
+                        .attr('class',
+                              'relation pending-relation dragline dragging'),
+          self = this;
 
       // Start the line between the cursor and the nearest connector
       // point on the service.
-      var mouse = d3.mouse(Y.one('svg').getDOMNode());
-      self.cursorBox = views.BoundingBox();
+      var mouse = d3.mouse(Y.one('.topology svg').getDOMNode());
+      self.cursorBox = new views.BoundingBox();
       self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
       var point = self.cursorBox.getConnectorPair(d);
       dragline.attr('x1', point[0][0])
@@ -1091,6 +978,7 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     cancelRelationBuild: function() {
+      var vis = this.get('component').vis;
       if (this.dragline) {
         // Get rid of our drag line
         this.dragline.remove();
@@ -1099,7 +987,7 @@ YUI.add('juju-topology-mega', function(Y) {
       this.clickAddRelation = null;
       this.set('currentServiceClickAction', 'toggleControlPanel');
       this.buildingRelation = false;
-      this.show(this.vis.selectAll('.service'))
+      this.show(vis.selectAll('.service'))
                   .classed('selectable-service', false);
     },
 
@@ -1128,10 +1016,12 @@ YUI.add('juju-topology-mega', function(Y) {
      */
     startRelation: function(service) {
       // Set flags on the view that indicate we are building a relation.
+      var vis = this.get('component').vis;
+
       this.buildingRelation = true;
       this.clickAddRelation = true;
 
-      this.show(this.vis.selectAll('.service'));
+      this.show(vis.selectAll('.service'));
 
       var db = this.get('component').get('db'),
           getServiceEndpoints = this.get('component')
@@ -1157,7 +1047,7 @@ YUI.add('juju-topology-mega', function(Y) {
       // Rather than two loops this marks
       // all services as selectable and then
       // removes the invalid ones.
-      this.fade(this.vis.selectAll('.service')
+      this.fade(vis.selectAll('.service')
               .classed('selectable-service', true)
               .filter(function(d) {
                 return (d.id in invalidRelationTargets &&
@@ -1169,73 +1059,6 @@ YUI.add('juju-topology-mega', function(Y) {
       this.set('addRelationStart_possibleEndpoints', endpoints);
       // Set click action.
       this.set('currentServiceClickAction', 'ambiguousAddRelationCheck');
-    },
-
-
-    /*
-         * Zoom in event handler.
-         */
-    zoom_out: function(data, context) {
-      var slider = context.slider,
-              val = slider.get('value');
-      slider.set('value', val - 25);
-    },
-
-    /*
-         * Zoom out event handler.
-         */
-    zoom_in: function(data, context) {
-      var slider = context.slider,
-              val = slider.get('value');
-      slider.set('value', val + 25);
-    },
-
-    /*
-         * Wraper around the actual rescale method for zoom buttons.
-         */
-    _fire_zoom: function(delta) {
-      var vis = this.vis,
-              zoom = this.zoom,
-              evt = {};
-
-      // Build a temporary event that rescale can use of a similar
-      // construction to d3.event.
-      evt.translate = zoom.translate();
-      evt.scale = zoom.scale() + delta;
-
-      // Update the scale in our zoom behavior manager to maintain state.
-      zoom.scale(evt.scale);
-
-      // Update the translate so that we scale from the center
-      // instead of the origin.
-      var rect = vis.select('rect');
-      evt.translate[0] -= parseInt(rect.attr('width'), 10) / 2 * delta;
-      evt.translate[1] -= parseInt(rect.attr('height'), 10) / 2 * delta;
-      zoom.translate(evt.translate);
-
-      this.rescale(vis, evt);
-    },
-
-    /*
-         * Rescale the visualization on a zoom/pan event.
-         */
-    rescale: function(vis, evt) {
-      // Make sure we don't scale outside of our bounds.
-      // This check is needed because we're messing with d3's zoom
-      // behavior outside of mouse events (e.g.: with the slider),
-      // and can't trust that zoomExtent will play well.
-      var new_scale = Math.floor(evt.scale * 100);
-      if (new_scale < 25 || new_scale > 200) {
-        evt.scale = this.get('scale');
-      }
-      // Store the current value of scale so that it can be restored later.
-      this.set('scale', evt.scale);
-      // Store the current value of translate as well, by copying the event
-      // array in order to avoid reference sharing.
-      this.set('translate', evt.translate.slice(0));
-      vis.attr('transform', 'translate(' + evt.translate + ')' +
-              ' scale(' + evt.scale + ')');
-      this.updateServiceMenuLocation();
     },
 
     /*
@@ -1293,14 +1116,17 @@ YUI.add('juju-topology-mega', function(Y) {
       // affect the page size, such as the charm panel, to get out of the
       // way before we compute sizes.  Note the
       // "afterPageSizeRecalculation" event at the end of this function.
-      Y.fire('beforePageSizeRecalculation');
       // start with some reasonable defaults
-      var vis = this.vis,
-              container = this.get('container'),
-              xscale = this.xscale,
-              yscale = this.yscale,
-              svg = container.one('svg'),
-              canvas = container.one('.crosshatch-background');
+      console.log('setSizesFromViewPort', this, arguments);
+      var topo = this.get('component'),
+          container = this.get('container'),
+          vis = topo.vis,
+          xscale = topo.xScale,
+          yscale = topo.yScale,
+          svg = container.one('svg'),
+          canvas = container.one('.topology-canvas');
+
+      topo.fire('beforePageSizeRecalculation');
       // Get the canvas out of the way so we can calculate the size
       // correctly (the canvas contains the svg).  We want it to be the
       // smallest size we accept--no smaller or bigger--or else the
@@ -1321,25 +1147,26 @@ YUI.add('juju-topology-mega', function(Y) {
             .setStyle('width', dimensions.width);
 
       // Reset the scale parameters
-      this.xscale.domain([-dimensions.width / 2, dimensions.width / 2])
+      topo.xScale.domain([-dimensions.width / 2, dimensions.width / 2])
             .range([0, dimensions.width]);
-      this.yscale.domain([-dimensions.height / 2, dimensions.height / 2])
+      topo.yScale.domain([-dimensions.height / 2, dimensions.height / 2])
             .range([dimensions.height, 0]);
 
-      this.width = dimensions.width;
-      this.height = dimensions.height;
-      Y.fire('afterPageSizeRecalculation');
+      topo.set('size', [dimensions.width, dimensions.height]);
+      topo.fire('afterPageSizeRecalculation');
     },
 
     /*
          * Update the location of the active service panel
          */
     updateServiceMenuLocation: function() {
-      var container = this.get('container'),
-              cp = container.one('.environment-menu.active'),
-              service = this.get('active_service'),
-              tr = this.zoom.translate(),
-              z = this.zoom.scale();
+      var topo = this.get('component'),
+          container = this.get('container'),
+          cp = container.one('.environment-menu.active'),
+          service = this.get('active_service'),
+          tr = topo.get('translate'),
+          z = topo.get('scale');
+
       if (service && cp) {
         var cp_width = cp.getClientRect().width,
                 menu_left = service.x * z + service.w * z / 2 <
@@ -1375,9 +1202,10 @@ YUI.add('juju-topology-mega', function(Y) {
       }
 
       // Do not fire unless we're within the service box.
-      var container = context.get('container'),
+      var topo = context.get('component'),
+          container = context.get('container'),
           mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (!d.containsPoint(mouse_coords, context.zoom)) {
+      if (!d.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
 
@@ -1413,9 +1241,10 @@ YUI.add('juju-topology-mega', function(Y) {
       }
 
       // Do not fire if we're within the service box.
-      var container = self.get('container'),
+      var topo = this.get('component'),
+          container = self.get('container'),
           mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (d.containsPoint(mouse_coords, self.zoom)) {
+      if (d.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
       var rect = Y.one(this).one('.service-border');
@@ -1486,8 +1315,9 @@ YUI.add('juju-topology-mega', function(Y) {
            * View a service
            */
       show_service: function(m, context) {
-        context.get('component')
-        .fire('navigateTo', {url: '/service/' + m.get('id') + '/'});
+        var topo = context.get('component');
+        topo.detachContainer();
+        topo.fire('navigateTo', {url: '/service/' + m.get('id') + '/'});
       },
 
       /*
@@ -1567,11 +1397,12 @@ YUI.add('juju-topology-mega', function(Y) {
            * create the relation if not.
            */
       ambiguousAddRelationCheck: function(m, view, context) {
-        var endpoints = view
-                  .get('addRelationStart_possibleEndpoints')[m.id],
-                container = view.get('container');
+        var endpoints = view.get(
+            'addRelationStart_possibleEndpoints')[m.id],
+            container = view.get('container'),
+            topo = view.get('component');
 
-        if (endpoints.length === 1) {
+        if (endpoints && endpoints.length === 1) {
           // Create a relation with the only available endpoint.
           var ep = endpoints[0],
                   endpoints_item = [
@@ -1629,8 +1460,8 @@ YUI.add('juju-topology-mega', function(Y) {
         });
 
         // Display the menu at the service endpoint.
-        var tr = view.zoom.translate(),
-                z = view.zoom.scale();
+        var tr = topo.zoom.translate(),
+                z = topo.zoom.scale();
         menu.setStyle('top', m.y * z + tr[1]);
         menu.setStyle('left', m.x * z + m.w * z + tr[0]);
         menu.addClass('active');
@@ -1640,25 +1471,25 @@ YUI.add('juju-topology-mega', function(Y) {
       },
 
       /*
-           * Fired when clicking the second service is clicked in the
-           * add relation flow.
-           *
-           * :param endpoints: array of two endpoints, each in the form
-           *   ['service name', {
-           *     name: 'endpoint type',
-           *     role: 'client or server'
-           *   }]
-           */
+       * Fired when clicking the second service is clicked in the
+       * add relation flow.
+       *
+       * :param endpoints: array of two endpoints, each in the form
+       *   ['service name', {
+       *     name: 'endpoint type',
+       *     role: 'client or server'
+       *   }]
+       */
       addRelationEnd: function(endpoints, view, context) {
         // Redisplay all services
         view.cancelRelationBuild();
 
         // Get the vis, and links, build the new relation.
-        var vis = view.vis,
-                env = view.get('component').get('env'),
-                db = view.get('component').get('db'),
-                source = view.get('addRelationStart_service'),
-                relation_id = 'pending:' + endpoints[0][0] + endpoints[1][0];
+        var vis = view.get('component').vis,
+            env = view.get('component').get('env'),
+            db = view.get('component').get('db'),
+            source = view.get('addRelationStart_service'),
+            relation_id = 'pending:' + endpoints[0][0] + endpoints[1][0];
 
         if (endpoints[0][0] === endpoints[1][0]) {
           view.set('currentServiceClickAction', 'toggleControlPanel');
@@ -1676,7 +1507,9 @@ YUI.add('juju-topology-mega', function(Y) {
 
         // Firing the update event on the db will properly redraw the
         // graph and reattach events.
-        db.fire('update');
+        //db.fire('update');
+        view.get('component').bindAllD3Events();
+        view.update();
 
         // Fire event to add relation in juju.
         // This needs to specify interface in the future.

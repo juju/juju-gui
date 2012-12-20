@@ -73,7 +73,7 @@ describe('d3-components', function() {
     comp.addModule(TestModule);
 
     // Test that default bindings work by simulating
-    Y.fire('cancel');
+    comp.fire('cancel');
     state.cancelled.should.equal(true);
 
     // XXX: While on the plane I determined that things like
@@ -84,12 +84,12 @@ describe('d3-components', function() {
     state.cancelled = false;
     comp.removeModule('TestModule');
 
-    Y.fire('cancel');
+    comp.fire('cancel');
     state.cancelled.should.equal(false);
 
     // Adding the module back again doesn't create any issues.
     comp.addModule(TestModule);
-    Y.fire('cancel');
+    comp.fire('cancel');
     state.cancelled.should.equal(true);
 
     // Simulated events on DOM handlers better work.
@@ -137,7 +137,9 @@ describe('d3-components', function() {
     modA.windowResizeHandler = function(evt) {
       resized = true;
     };
-    modA.events.yui.windowresize = 'windowResizeHandler';
+    modA.events.yui.windowresize = {
+      callback: 'windowResizeHandler',
+      context: 'window'};
     comp.addModule(modA);
     var subscription = Y.after('windowresize', function(evt) {
       subscription.detach();
