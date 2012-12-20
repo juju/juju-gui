@@ -22,7 +22,7 @@ YUI.add('juju-view-login', function(Y) {
 //      this.user_name = prompt('User name');
 //      this.password = prompt('Password');
       this.set('waiting', true);
-    },
+    }
 
   });
 

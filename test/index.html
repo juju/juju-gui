@@ -19,6 +19,29 @@
     mocha.setup({ui: 'bdd', ignoreLeaks: false})
   </script>
 
+  <script>
+  YUI().use('event', function(Y) {
+     var config = GlobalConfig;
+     for (group in config.groups) {
+       var group = config.groups[group];
+       for (m in group.modules) {
+         var resource = group.modules[m];
+         if (!m || !resource.fullpath) {
+           continue
+         }
+         resource.fullpath = resource.fullpath.replace(
+           '/juju-ui/', '../juju-ui/', 1);
+         // If we load modules asyncronously then the module loading may take
+         // so long that the test definitions (and before/after calls) happen
+         // *after* the test runner is invoked.  In which case the test runner
+         // will not know about the tests and therefore not run them.
+         resource.async = false;
+       }
+     }
+     Y.on('domready', mocha.run);
+  });
+  </script>
+
   <script src="test_d3_components.js"></script>
   <script src="test_topology.js"></script>
   <script src="test_env.js"></script>
@@ -42,32 +65,6 @@
   <script src="test_app_hotkeys.js"></script>
   <script src="test_notifier_widget.js"></script>
 
-  <script>
-  YUI().use('node', 'event', function(Y) {
-     Y.on('domready', function() {
-
-     var config = GlobalConfig;
-     for (group in config.groups) {
-       var group = config.groups[group];
-       for (m in group.modules) {
-         var resource = group.modules[m];
-         if (!m || !resource.fullpath) {
-           continue
-         }
-         resource.fullpath = resource.fullpath.replace(
-           '/juju-ui/', '../juju-ui/', 1);
-         // If we load modules asyncronously then the module loading may take
-         // so long that the test definitions (and before/after calls) happen
-         // *after* the test runner is invoked.  In which case the test runner
-         // will not know about the tests and therefore not run them.
-         resource.async = false;
-       }
-     }
-     // Load before test runner
-     mocha.run();
-     });
-  });
-  </script>
 
 </head>
 
