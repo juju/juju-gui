@@ -247,10 +247,13 @@ YUI.add('d3-components', function(Y) {
                   callback = Y.bind(handler.callback, handler.context);
               if (Y.Array.indexOf(['windowresize'], name) !== -1) {
                 target = Y;
+                handler.context = null;
               } else {
                 // (re)Register the event to bubble.
                 self.publish(name, {emitFacade: true});
               }
+
+              console.log('Bind', target, eventPhase, name);
               subscriptions.push(
                   target[eventPhase](
                   name, callback, handler.context));
@@ -503,4 +506,5 @@ YUI.add('d3-components', function(Y) {
   'requires': ['d3',
     'base',
     'array-extras',
-    'event']});
+    'event',
+    'event-resize']});

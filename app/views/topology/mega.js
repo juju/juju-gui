@@ -638,6 +638,7 @@ YUI.add('juju-topology-mega', function(Y) {
       // way before we compute sizes.  Note the
       // "afterPageSizeRecalculation" event at the end of this function.
       // start with some reasonable defaults
+      console.log('setSizesFromViewPort', this, arguments);
       var topo = this.get('component'),
           container = this.get('container'),
           vis = topo.vis,

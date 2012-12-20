@@ -125,12 +125,12 @@
       view.render();
       topo = view.topo;
 
-      topo.once('beforePageSizeRecalculation', function() {
-        // This event must be fired by views.MegaModule.setSizesFromViewport.
+      Y.once('beforePageSizeRecalculation', function() {
+        // This event must be fired.
         beforeResizeEventFired = true;
       });
-      topo.once('afterPageSizeRecalculation', function() {
-        // This event must be fired by views.MegaModule.setSizesFromViewport.
+      Y.once('afterPageSizeRecalculation', function() {
+        // This event must be fired.
         assert.isTrue(beforeResizeEventFired);
         done();
       });

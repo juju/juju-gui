@@ -21,11 +21,11 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	-o -wholename './test/assets*' -prune \
 	-o -wholename './yuidoc*' -prune \
 	-o \( \
-    		-name '*.js' \
-    		-o -name '*.json' \
-    		-o -name 'generateTemplates' \
-  	\) -print \
-  	| sort | sed -e 's/^\.\///' \
+		-name '*.js' \
+		-o -name '*.json' \
+		-o -name 'generateTemplates' \
+	\) -print \
+	| sort | sed -e 's/^\.\///' \
 	| grep -Ev -e '^manifest\.json$$' \
 		-e '^app/assets/javascripts/d3.v2.*.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket.js$$' \
@@ -64,7 +64,7 @@ ifeq ($(ULTIMATE_VERSION), unreleased)
     $(error FINAL releases must have a most-recent version number other than \
 	"unreleased" in CHANGES.yaml)
 endif
-VERSION=$(ULTIMATE_VERSION)
+RELEASE_VERSION=$(ULTIMATE_VERSION)
 SERIES=stable
 else
 # If this is development (non-FINAL) release, then the most recent version
@@ -118,14 +118,15 @@ JAVASCRIPT_LIBRARIES=app/assets/javascripts/d3.v2.js \
 DATE=$(shell date -u)
 APPCACHE=build/juju-ui/assets/manifest.appcache
 
-# Some environments, notably sudo, do not populate the PWD environment
-# variable, which is used to set $(PWD); however, getting the current
-# directory from `pwd` can get expensive, so we set it once here.
-ifeq ($(PWD),)
-	PWD=$(shell pwd)
-endif
+# Some environments, notably sudo, do not populate the default PWD environment
+# variable, which is used to set $(PWD).  Worse, in some situations, such as
+# using make -C [directory], $(PWD) is set to a value we don't want: the
+# directory in which make was invoked, rather than the directory of this file.
+# Therefore, we want to run the shell's pwd to get this Makefile's directory.
+# As an optimization, we stash this value in the local PWD variable.
+PWD=$(shell pwd)
 
-all: build-debug build-prod
+all: build
 	@echo "\nDebug and production environments built."
 	@echo "Run 'make help' to list the main available targets."
 
@@ -335,17 +336,20 @@ server:
 	@echo "to start the production or debug environments respectively."
 	@echo "Run 'make help' to list the main available targets."
 
-devel: build
+# devel is used during the development process.
+devel: build-devel
 	@echo "Running the development environment from node.js ."
 	@echo "Customize config.js to modify server settings."
 	node server.js
 
+# debug is for deployments of unaggregated and uncompressed code.
 debug: build-debug
 	@echo "Running the debug environment from a SimpleHTTPServer"
 	@echo "To run the development environment, including automatically"
 	@echo "rebuilding the generated files on changes, run 'make devel'."
 	cd build-debug && python -m SimpleHTTPServer 8888
 
+# prod is for deployment of aggregated and minimized code.
 prod: build-prod
 	@echo "Running the production environment from a SimpleHTTPServer"
 	cd build-prod && python -m SimpleHTTPServer 8888
@@ -363,12 +367,14 @@ clean-docs:
 
 clean-all: clean clean-deps clean-docs
 
-build: $(APPCACHE) $(NODE_TARGETS) spritegen \
+build: build-prod build-debug
+
+build-devel: $(APPCACHE) $(NODE_TARGETS) spritegen \
 	  $(BUILD_FILES) build/juju-ui/version.js
 
-build-debug: build | $(LINK_DEBUG_FILES)
+build-debug: build-devel | $(LINK_DEBUG_FILES)
 
-build-prod: build | $(LINK_PROD_FILES)
+build-prod: build-devel | $(LINK_PROD_FILES)
 
 $(APPCACHE): manifest.appcache.in
 	mkdir -p build/juju-ui/assets
@@ -393,8 +399,9 @@ $(RELEASE_FILE): build
 	@echo "$(BRANCH_IS_CLEAN)"
 ifdef BRANCH_IS_GOOD
 	mkdir -p releases
-	tar c --auto-compress --exclude-vcs --exclude releases \
-	    --transform "s|^|$(RELEASE_NAME)/|" -f $(RELEASE_FILE) *
+	# When creating the tarball, ensure all symbolic links are followed.
+	tar -c --auto-compress --exclude-vcs --exclude releases \
+	    --dereference --transform "s|^|$(RELEASE_NAME)/|" -f $(RELEASE_FILE) *
 	@echo "Release was created in $(RELEASE_FILE)."
 else
 	@echo "**************************************************************"
