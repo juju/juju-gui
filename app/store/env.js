@@ -171,6 +171,10 @@ YUI.add('juju-env', function(Y) {
       this._send_rpc({'op': 'expose', 'service_name': service}, callback);
     },
 
+    login: function(user, password, callback) {
+      this._send_rpc({op: 'login', user: user, password: password}, callback);
+    },
+
     unexpose: function(service, callback) {
       this._send_rpc({'op': 'unexpose', 'service_name': service}, callback);
     },

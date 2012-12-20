@@ -6,6 +6,9 @@ YUI.add('juju-view-login', function(Y) {
   var Templates = views.Templates;
 
   var LoginView = Y.Base.create('LoginView', Y.View, [views.JujuBaseView], {
+    // This is so tests can easily determine if the user was prompted.
+    _prompted: false,
+
     initializer: function() {
       this.userIsAuthenticated = false;
       // When the server tells us the outcome of a login attempt we record
@@ -19,9 +22,21 @@ YUI.add('juju-view-login', function(Y) {
     },
 
     promptUser: function() {
-//      this.user_name = prompt('User name');
-//      this.password = prompt('Password');
-      this.set('waiting', true);
+      this._prompted = true;
+//      this.set('user', prompt('User name'));
+//      this.set('password', prompt('Password'));
+      this.waiting = true;
+    },
+
+    validateCredentials: function(user, password) {
+      this.get('env').login(user, password);
+    },
+
+    login: function() {
+      // If there are no stored credentials, prompt the user for some.
+      if (!Y.Lang.isValue(this.get('user'))) {
+        this.promptUser();
+      }
     }
 
   });

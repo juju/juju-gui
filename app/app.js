@@ -524,17 +524,17 @@ YUI.add('juju-gui', function(Y) {
     check_user_credentials: function(req, res, next) {
       var viewInfo = this.getViewInfo('login');
       if (!viewInfo.instance) {
-         viewInfo.instance = new views.LoginView({env: this.env});
+        viewInfo.instance = new views.LoginView({env: this.env});
       }
       var view = viewInfo.instance;
       // If there has not been a successful login attempt, prompt for
       // credentials.
-      if (!view.get('waiting') && !view.loginSuccessful) {
+      if (!view.waiting && !view.loginSuccessful) {
         view.promptUser();
       }
       // If we are waiting for a response from the server as to whether the
       // login credentials were correct or not, we need to try again later.
-      if (view.get('waiting')) {
+      if (view.waiting) {
 //        var self = this;
 //        window.setTimeout(function() {
 //          self.show_login_view(req, res, next)
