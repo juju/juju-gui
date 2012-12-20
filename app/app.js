@@ -535,10 +535,10 @@ YUI.add('juju-gui', function(Y) {
       // If we are waiting for a response from the server as to whether the
       // login credentials were correct or not, we need to try again later.
       if (view.waiting) {
-//        var self = this;
-//        window.setTimeout(function() {
-//          self.show_login_view(req, res, next)
-//        }, 1000);
+        //        var self = this;
+        //        window.setTimeout(function() {
+        //          self.show_login_view(req, res, next)
+        //        }, 1000);
         return;
       }
       next();
