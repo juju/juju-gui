@@ -118,19 +118,19 @@
       done();
     });
 
-    it('must handle the window resize event', function(done) {
+    it.only('must handle the window resize event', function(done) {
       var view = new views.environment({container: container, db: db}),
           topo,
           beforeResizeEventFired = false;
       view.render();
       topo = view.topo;
 
-      topo.once('beforePageSizeRecalculation', function() {
-        // This event must be fired by views.MegaModule.setSizesFromViewport.
+      Y.once('beforePageSizeRecalculation', function() {
+        // This event must be fired.
         beforeResizeEventFired = true;
       });
-      topo.once('afterPageSizeRecalculation', function() {
-        // This event must be fired by views.MegaModule.setSizesFromViewport.
+      Y.once('afterPageSizeRecalculation', function() {
+        // This event must be fired.
         assert.isTrue(beforeResizeEventFired);
         done();
       });
