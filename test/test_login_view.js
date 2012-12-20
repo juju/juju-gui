@@ -101,7 +101,7 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-views', 'juju-tests-utils'], function(Y
           view.promptUser();
         },
         get: function(name) {
-          view.get(name);
+          return view.get(name);
         }
       };
       app.getViewInfo('login').instance = fauxLoginView;
