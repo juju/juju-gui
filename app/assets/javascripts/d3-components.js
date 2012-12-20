@@ -253,7 +253,7 @@ YUI.add('d3-components', function(Y) {
                 self.publish(name, {emitFacade: true});
               }
               console.debug('d3 component yui event binding', target.toString(),
-                          eventPhase, name);
+                            eventPhase, name);
               subscriptions.push(
                   target[eventPhase](
                   name, callback, handler.context));
