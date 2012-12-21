@@ -13,7 +13,7 @@ tags
 Session.vim
 virtualenv
 yuidoc
-build
+build-shared
 upload_release.py
 releases
 build-prod
