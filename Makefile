@@ -455,7 +455,7 @@ appcache-touch:
 appcache-force: appcache-touch $(APPCACHE)
 
 # targets are alphabetically sorted, they like it that way :-)
-.PHONY: appcache-force appcache-touch beautify \
+.PHONY: appcache-force appcache-touch beautify build \
 	build-files build-devel clean clean-all \
 	clean-deps clean-docs debug devel docs dist gjslint help \
 	jshint lint prep prod server spritegen test test-debug test-prod \

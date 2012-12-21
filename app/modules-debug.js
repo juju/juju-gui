@@ -20,13 +20,13 @@ var GlobalConfig = {
     gallery: {
       modules: {
         'gallery-ellipsis': {
-          fullpath: 'juju-ui/assets/javascripts/gallery-ellipsis-debug.js'
+          fullpath: '/juju-ui/assets/javascripts/gallery-ellipsis-debug.js'
         },
         'gallery-markdown': {
-          fullpath: 'juju-ui/assets/javascripts/gallery-markdown-debug.js'
+          fullpath: '/juju-ui/assets/javascripts/gallery-markdown-debug.js'
         },
         'gallery-timer': {
-          fullpath: 'juju-ui/assets/javascripts/gallery-timer-debug.js'
+          fullpath: '/juju-ui/assets/javascripts/gallery-timer-debug.js'
         }
       }
     },
