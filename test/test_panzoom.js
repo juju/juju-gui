@@ -33,7 +33,10 @@ describe('pan zoom module', function() {
       viewContainer.hide();
 
       db = new models.Database();
-      pz = new views.PanZoomModule({});
+      var view = new views.environment({container: viewContainer, db: db});
+      view.render();
+      view.postRender();
+      pz = view.topo.modules.PanZoomModule;
       done();
     });
   });
@@ -51,8 +54,9 @@ describe('pan zoom module', function() {
   // Test the zoom calculations.
   it('scale handles fractional values',
      function() {
-       pz.zoomHandler({scale: 0.6});
-       pz.slider.get('value').should.equal(61);
+       // Floor is used so the scale will round down.
+       pz.zoomHandler({scale: 0.609});
+       pz.slider.get('value').should.equal(60);
      });
 
 });
