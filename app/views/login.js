@@ -32,7 +32,7 @@ YUI.add('juju-view-login', function(Y) {
       if (no_login_prompts) {
         return null;
       }
-      return prompt(message);
+      return window.prompt(message);
     },
 
     promptUser: function() {
