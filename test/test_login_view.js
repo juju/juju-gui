@@ -2,8 +2,8 @@
 
 (function() {
 
-  var Y = YUI(GlobalConfig).use(
-      ['node', 'juju-gui', 'juju-views', 'juju-tests-utils']);
+  var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
+  var Y = YUI(GlobalConfig).use(requires);
 
   describe('login view', function() {
     var conn, env, utils, juju, makeLoginView, views, app;
@@ -25,6 +25,7 @@
       env = new juju.Environment({conn: conn});
       env.connect();
       conn.open();
+      env.set('serverReady', true);
     });
 
     afterEach(function() {
@@ -42,14 +43,14 @@
 
     test('successful login event marks user as authenticated', function() {
       var view = makeLoginView();
-      var evt = {data: {result: 'success'}};
+      var evt = {data: {op: 'login', result: true}};
       view.handleLoginEvent(evt);
       assert.equal(view.userIsAuthenticated, true);
     });
 
     test('unsuccessful login event marks user as unauthenticated', function() {
       var view = makeLoginView();
-      var evt = {data: {}};
+      var evt = {data: {op: 'login'}};
       view.handleLoginEvent(evt);
       assert.equal(view.userIsAuthenticated, false);
     });
@@ -117,6 +118,7 @@
       env = new juju.Environment({conn: conn});
       env.connect();
       conn.open();
+      env.set('serverReady', true);
       app = new Y.juju.App({env: env, container: container});
     });
 
@@ -192,6 +194,7 @@
       env = new juju.Environment({conn: conn});
       env.connect();
       conn.open();
+      env.set('serverReady', true);
       app = new Y.juju.App({env: env, container: container});
     });
 
@@ -220,15 +223,21 @@
     test('successful credential verification messages are handled', function() {
       var view = makeLoginView();
       assert.isFalse(view.userIsAuthenticated);
-      env.fire('login', {data: {result: 'success'}});
+      env.fire('log', {data: {op: 'login', result: true}});
       assert.isTrue(view.userIsAuthenticated);
     });
 
     test('failed credential verification messages are handled', function() {
       var view = makeLoginView();
       assert.isFalse(view.userIsAuthenticated);
-      env.fire('login', {data: {}});
+      env.fire('log', {op: 'login', data: {}});
       assert.isFalse(view.userIsAuthenticated);
+    });
+
+    test.skip('no longer waiting after successful login', function () {
+    });
+
+    test.skip('no longer waiting after unsuccessful login', function () {
     });
 
   });

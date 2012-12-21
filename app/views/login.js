@@ -13,18 +13,24 @@ YUI.add('juju-view-login', function(Y) {
       this.userIsAuthenticated = false;
       // When the server tells us the outcome of a login attempt we record
       // the result.
-      this.get('env').after('login', this.handleLoginEvent, this);
+      this.get('env').after('log', this.handleLoginEvent, this);
     },
 
     handleLoginEvent: function(evt) {
-      this.userIsAuthenticated = (evt.data.result === 'success');
-      //this.waiting = false;
+      // We are only interested in the responses to login events.
+      if (evt.data.op !== 'login') {
+        return;
+      }
+      this.userIsAuthenticated = !!evt.data.result;
+      this.waiting = false;
     },
 
     promptUser: function() {
       this._prompted = true;
       this.set('user', prompt('User name'));
       this.set('password', prompt('Password'));
+//      this.set('user', 'admin');
+//      this.set('password', 'admin');
       this.waiting = true;
     },
 
@@ -33,6 +39,13 @@ YUI.add('juju-view-login', function(Y) {
     },
 
     login: function() {
+      // If the server connection is not yet ready, then there is no use in
+      // trying to authenticate.
+      var env = this.get('env');
+      if (!env.get('serverReady')) {
+        return;
+      }
+      console.log('---------- login')
       // If the credentials are known good or we are waiting to find out, exit
       // early.
       if (this.userIsAuthenticated || this.waiting) {
