@@ -1,8 +1,7 @@
 'use strict';
 
 describe('pan zoom module', function() {
-  var _setTimeout, _viewsHighlightRow, db, ERR_EV, juju, models, NO_OP,
-      viewContainer, views, Y, pz;
+  var db, juju, models, viewContainer, views, Y, pz;
 
   before(function() {
     Y = YUI(GlobalConfig).use(['node',
