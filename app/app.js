@@ -521,6 +521,16 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
+    /**
+     * Ensure that the current user has authenticated.
+     *
+     * @method check_user_credentials
+     * @param {Object} req The request.
+     * @param {Object} res Something. ???
+     * @param {Object} res ???
+     * @param {Object} next The next route handler.
+     *
+     */
     check_user_credentials: function(req, res, next) {
       var viewInfo = this.getViewInfo('login');
       if (!viewInfo.instance) {

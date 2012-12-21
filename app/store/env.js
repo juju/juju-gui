@@ -173,6 +173,14 @@ YUI.add('juju-env', function(Y) {
       this._send_rpc({'op': 'expose', 'service_name': service}, callback);
     },
 
+    /**
+     * Attempt to log the user in.
+     * @param {Object} user The user name.
+     * @param {Object} password The user's password.
+     * @param {Object} [callback] A function to call when a response to the
+     *   message arrives.
+     * @return {undefined} Nothing.
+     */
     login: function(user, password, callback) {
       this._send_rpc({op: 'login', user: user, password: password}, callback);
     },
