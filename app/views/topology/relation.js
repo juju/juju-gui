@@ -16,10 +16,6 @@ YUI.add('juju-topology-relation', function(Y) {
 
     events: {
       scene: {
-        '.service': {
-          mouseenter: 'serviceMouseEnter',
-          mouseleave: 'serviceMouseLeave'
-        },
         '.sub-rel-block': {
           mouseenter: 'subRelBlockMouseEnter',
           mouseleave: 'subRelBlockMouseLeave',
@@ -30,51 +26,11 @@ YUI.add('juju-topology-relation', function(Y) {
         },
         '.dragline': {
           /** The user clicked while the dragline was active. */
-          click: {callback: function(d, self) {
-            // It was technically the dragline that was clicked, but the
-            // intent was to click on the background, so...
-            self.backgroundClicked();
-          }}
+          click: {callback: 'draglineClicked'}
         },
         '.add-relation': {
           /** The user clicked on the "Build Relation" menu item. */
-          click: {
-            callback: function(data, context) {
-              var topo = context.get('component');
-              var box = topo.get('active_service');
-              var service = topo.serviceForBox(box);
-              var origin = topo.get('active_context');
-              context.addRelationDragStart(box, context);
-              topo.fire('toggleControlPanel');
-              context.addRelationStart(box, context, origin);
-            }}
-        }
-      },
-      d3: {
-        '.service': {
-          'mousedown.addrel': {callback: function(d, context) {
-            var evt = d3.event;
-            context.longClickTimer = Y.later(750, this, function(d, e) {
-              // Provide some leeway for accidental dragging.
-              if ((Math.abs(d.x - d.oldX) + Math.abs(d.y - d.oldY)) /
-                  2 > 5) {
-                return;
-              }
-
-              // Sometimes mouseover is fired after the mousedown, so ensure
-              // we have the correct event in d3.event for d3.mouse().
-              d3.event = e;
-
-              // Start the process of adding a relation
-              context.addRelationDragStart(d, context);
-            }, [d, evt], false);
-          }},
-          'mouseup.addrel': {callback: function(d, context) {
-            // Cancel the long-click timer if it exists.
-            if (context.longClickTimer) {
-              context.longClickTimer.cancel();
-            }
-          }}
+          click: {callback: 'addRelButtonClicked'}
         }
       },
       yui: {
@@ -82,6 +38,8 @@ YUI.add('juju-topology-relation', function(Y) {
         clearState: {callback: 'cancelRelationBuild'},
         serviceMoved: {callback: 'updateLinkEndpoints'},
         servicesRendered: {callback: 'updateLinks'},
+        snapToService: {callback: 'snapToService'},
+        snapOutOfService: {callback: 'snapOutOfService'},
         cancelRelationBuild: {callback: 'cancelRelationBuild'},
         addRelationDragStart: {callback: 'addRelationDragStart'},
         addRelationDrag: {callback: 'addRelationDrag'},
@@ -290,6 +248,22 @@ YUI.add('juju-topology-relation', function(Y) {
           });
     },
 
+    draglineClicked: function(d, self) {
+      // It was technically the dragline that was clicked, but the
+      // intent was to click on the background, so...
+      self.backgroundClicked();
+    },
+
+    addRelButtonClicked: function(data, context) {
+      var topo = context.get('component');
+      var box = topo.get('active_service');
+      var service = topo.serviceForBox(box);
+      var origin = topo.get('active_context');
+      context.addRelationDragStart({service: box});
+      topo.fire('toggleControlPanel');
+      context.addRelationStart(box, context, origin);
+    },
+
     /*
          * Event handler for the add relation button.
          */
@@ -303,73 +277,53 @@ YUI.add('juju-topology-relation', function(Y) {
       } // Otherwise do nothing.
     },
 
-    serviceMouseEnter: function(d, context) {
-      var rect = Y.one(this);
-      // Do not fire if this service isn't selectable.
-      if (!utils.hasSVGClass(rect, 'selectable-service')) {
-        return;
-      }
-
-      // Do not fire unless we're within the service box.
-      var topo = context.get('component');
-      var container = context.get('container');
-      var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (!d.containsPoint(mouse_coords, topo.zoom)) {
-        return;
-      }
+    snapToService: function(evt) {
+      var d = evt.service;
+      var rect = evt.rect;
 
       // Do not fire if we're on the same service.
-      if (d === context.get('addRelationStart_service')) {
+      if (d === this.get('addRelationStart_service')) {
         return;
       }
-
-      context.set('potential_drop_point_service', d);
-      context.set('potential_drop_point_rect', rect);
+      this.set('potential_drop_point_service', d);
+      this.set('potential_drop_point_rect', rect);
       utils.addSVGClass(rect, 'hover');
 
       // If we have an active dragline, stop redrawing it on mousemove
       // and draw the line between the two nearest connector points of
       // the two services.
-      if (context.dragline) {
+      if (this.dragline) {
         var connectors = d.getConnectorPair(
-            context.get('addRelationStart_service'));
+            this.get('addRelationStart_service'));
         var s = connectors[0];
         var t = connectors[1];
-        context.dragline.attr('x1', t[0])
+        this.dragline.attr('x1', t[0])
         .attr('y1', t[1])
         .attr('x2', s[0])
         .attr('y2', s[1])
         .attr('class', 'relation pending-relation dragline');
-        context.draglineOverService = true;
+        this.draglineOverService = true;
       }
     },
 
-    serviceMouseLeave: function(d, self) {
+    snapOutOfService: function() {
       // Do not fire if we aren't looking for a relation endpoint.
-      if (!self.get('potential_drop_point_rect')) {
+      if (!this.get('potential_drop_point_rect')) {
         return;
       }
 
-      // Do not fire if we're within the service box.
-      var topo = self.get('component');
-      var container = self.get('container');
-      var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (d.containsPoint(mouse_coords, topo.zoom)) {
-        return;
-      }
-      var rect = Y.one(this).one('.service-border');
-      self.set('potential_drop_point_service', null);
-      self.set('potential_drop_point_rect', null);
-      utils.removeSVGClass(rect, 'hover');
+      this.set('potential_drop_point_service', null);
+      this.set('potential_drop_point_rect', null);
 
-      if (self.dragline) {
-        self.dragline.attr('class',
+      if (this.dragline) {
+        this.dragline.attr('class',
             'relation pending-relation dragline dragging');
-        self.draglineOverService = false;
+        this.draglineOverService = false;
       }
     },
 
-    addRelationDragStart: function(d, context) {
+    addRelationDragStart: function(evt) {
+      var d = evt.service;
       // Create a pending drag-line.
       var vis = this.get('component').vis;
       var dragline = vis.append('line')
@@ -390,7 +344,7 @@ YUI.add('juju-topology-relation', function(Y) {
       self.dragline = dragline;
 
       // Start the add-relation process.
-      self.addRelationStart(d, self, context);
+      self.addRelationStart(d, self);
     },
 
     addRelationDrag: function(evt) {

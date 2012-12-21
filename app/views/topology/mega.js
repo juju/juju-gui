@@ -32,7 +32,9 @@ YUI.add('juju-topology-mega', function(Y) {
         '.service': {
           click: 'serviceClick',
           dblclick: 'serviceDblClick',
-          mouseleave: 'mousemove'
+          mouseenter: 'serviceMouseEnter',
+          mouseleave: 'serviceMouseLeave'
+          //mouseleave: 'mousemove'
         },
 
         '.service-status': {
@@ -99,6 +101,34 @@ YUI.add('juju-topology-mega', function(Y) {
           }}
         }
       },
+      d3: {
+        '.service': {
+          'mousedown.addrel': {callback: function(d, context) {
+            var evt = d3.event;
+            var topo = context.get('component');
+            context.longClickTimer = Y.later(750, this, function(d, e) {
+              // Provide some leeway for accidental dragging.
+              if ((Math.abs(d.x - d.oldX) + Math.abs(d.y - d.oldY)) /
+                  2 > 5) {
+                return;
+              }
+
+              // Sometimes mouseover is fired after the mousedown, so ensure
+              // we have the correct event in d3.event for d3.mouse().
+              d3.event = e;
+
+              // Start the process of adding a relation
+              topo.fire('addRelationDragStart', {service: d});
+            }, [d, evt], false);
+          }},
+          'mouseup.addrel': {callback: function(d, context) {
+            // Cancel the long-click timer if it exists.
+            if (context.longClickTimer) {
+              context.longClickTimer.cancel();
+            }
+          }}
+        }
+      },
       yui: {
         windowresize: {
           callback: 'setSizesFromViewport',
@@ -147,6 +177,38 @@ YUI.add('juju-topology-mega', function(Y) {
       var topo = self.get('component'),
           service = topo.serviceForBox(d);
       (self.service_click_actions.show_service)(service, self);
+    },
+
+    serviceMouseEnter: function(d, context) {
+      var rect = Y.one(this);
+      // Do not fire if this service isn't selectable.
+      if (!utils.hasSVGClass(rect, 'selectable-service')) {
+        return;
+      }
+
+      // Do not fire unless we're within the service box.
+      var topo = context.get('component');
+      var container = context.get('container');
+      var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+      if (!d.containsPoint(mouse_coords, topo.zoom)) {
+        return;
+      }
+
+      topo.fire('snapToService', { service: d, rect: rect });
+    },
+
+    serviceMouseLeave: function(d, context) {
+      // Do not fire if we're within the service box.
+      var topo = context.get('component');
+      var container = context.get('container');
+      var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+      if (d.containsPoint(mouse_coords, topo.zoom)) {
+        return;
+      }
+      var rect = Y.one(this).one('.service-border');
+      utils.removeSVGClass(rect, 'hover');
+
+      topo.fire('snapOutOfService');
     },
 
     /**
