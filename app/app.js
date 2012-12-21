@@ -558,37 +558,22 @@ YUI.add('juju-gui', function(Y) {
      * @method show_environment
      */
     show_environment: function(req, res, next) {
-      var view = this.getViewInfo('environment'),
-          instance = view.instance,
-          self = this;
-      if (!instance) {
-        console.log('new env view');
-        this.showView('environment',
-            { getModelURL: Y.bind(this.getModelURL, this),
-              /** A simple closure so changes to the value are available.*/
-              getServiceEndpoints: function() {return self.serviceEndpoints;},
-              loadService: this.loadService,
-              db: this.db,
-              env: this.env},
-            {render: true});
-      } else {
-        /* The current impl makes extensive use of
-         * event handlers which are not being properly rebound
-         * when the view is attached.  There is a workable pattern
-         * to enable this but we have to land the basics of this branch
-         * first.
-         */
-        this.showView('environment',
-            { getModelURL: Y.bind(this.getModelURL, this),
-              /** A simple closure so changes to the value are available.*/
-              getServiceEndpoints: function() {return self.serviceEndpoints;},
-              loadService: this.loadService,
-              db: this.db,
-              env: this.env},
-            { update: false,
-              render: true,
-              callback: function(view) {view.postRender();}});
-      }
+      var self = this,
+          view = this.getViewInfo('environment'),
+          options = {
+            getModelURL: Y.bind(this.getModelURL, this),
+            /** A simple closure so changes to the value are available.*/
+            getServiceEndpoints: function() {
+              return self.serviceEndpoints;},
+            loadService: this.loadService,
+            db: this.db,
+            env: this.env};
+
+      this.showView('environment', options, {
+        callback: function() {
+          this.views.environment.instance.postRender();
+        },
+        render: true});
     },
 
     /**

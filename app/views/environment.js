@@ -23,7 +23,9 @@ YUI.add('juju-view-environment', function(Y) {
       {
         initializer: function() {
           console.log('View: Initialized: Env');
-          this.publish('navigateTo', {preventable: false});
+          this.publish('navigateTo', {
+            broadcast: true,
+            preventable: false});
         },
 
         render: function() {
@@ -48,18 +50,24 @@ YUI.add('juju-view-environment', function(Y) {
               container: container});
             // Bind all the behaviors we need as modules.
             topo.addModule(views.MegaModule);
+            topo.addModule(views.PanZoomModule);
 
             topo.addTarget(this);
             this.topo = topo;
           }
+
           topo.render();
           return this;
         },
-        // XXX: This method is a pass through,
-        // it will be removed when we move to
-        // incremental rendering.
+
         postRender: function() {
-          this.topo.modules.MegaModule.postRender();
+          this.topo.attachContainer();
+          this.topo.fire('rendered');
+          // Bind d3 events (manually)
+          // this needs to be postRender and
+          // the jiggle in phases has broken
+          // the existing (from change to showView)
+          this.topo.bindAllD3Events();
         }
       }, {
         ATTRS: {}
@@ -68,15 +76,15 @@ YUI.add('juju-view-environment', function(Y) {
   views.environment = EnvironmentView;
 }, '0.1.0', {
   requires: ['juju-templates',
-    'juju-view-utils',
-    'juju-models',
-    'd3',
-    'd3-components',
-    'base-build',
-    'handlebars-base',
-    'node',
-    'svg-layouts',
-    'event-resize',
-    'slider',
-    'view']
+             'juju-view-utils',
+             'juju-models',
+             'd3',
+             'd3-components',
+             'base-build',
+             'handlebars-base',
+             'node',
+             'svg-layouts',
+             'event-resize',
+             'slider',
+             'view']
 });
