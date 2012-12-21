@@ -1,5 +1,7 @@
 'use strict';
 
+var no_login_prompts = false;
+
 YUI.add('juju-view-login', function(Y) {
 
   var views = Y.namespace('juju.views');
@@ -25,12 +27,18 @@ YUI.add('juju-view-login', function(Y) {
       this.waiting = false;
     },
 
+    _prompt: function(message) {
+      // no_login_prompts is a global.
+      if (no_login_prompts) {
+        return null;
+      }
+      return prompt(message);
+    },
+
     promptUser: function() {
       this._prompted = true;
-      this.set('user', prompt('User name'));
-      this.set('password', prompt('Password'));
-//      this.set('user', 'admin');
-//      this.set('password', 'admin');
+      this.set('user', this._prompt('User name'));
+      this.set('password', this._prompt('Password'));
       this.waiting = true;
     },
 
@@ -45,7 +53,6 @@ YUI.add('juju-view-login', function(Y) {
       if (!env.get('serverReady')) {
         return;
       }
-      console.log('---------- login')
       // If the credentials are known good or we are waiting to find out, exit
       // early.
       if (this.userIsAuthenticated || this.waiting) {

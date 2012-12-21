@@ -106,8 +106,6 @@
       juju = Y.namespace('juju');
       makeLoginView = function() {
         var view = new views.LoginView({env: env});
-        // Disable actually prompting.
-        view._prompt = function() {};
         return view;
       };
     });
@@ -131,23 +129,14 @@
     });
 
     test('unauthorized requests prompt for credentials', function() {
+      var view = app.getViewInfo('login').instance = makeLoginView();
       app.check_user_credentials(undefined, undefined, function() {});
-      var view = app.getViewInfo('login').instance;
       assert.isTrue(view._prompted);
     });
 
-    test('unauthorized requests do not call next()', function() {
-      var nextWasCalled = false;
-      var next = function() {
-        nextWasCalled = true;
-      }
-      app.check_user_credentials(undefined, undefined, next);
-      assert.isFalse(nextWasCalled);
-    });
-
     test('user is not prompted while waiting for login results', function() {
+      var view = app.getViewInfo('login').instance = makeLoginView();
       app.check_user_credentials(undefined, undefined, function() {});
-      var view = app.getViewInfo('login').instance;
       assert.isTrue(view._prompted);
       assert.isTrue(view.waiting);
       view._prompted = false;
@@ -160,8 +149,8 @@
     // prompting is done, instead the existing credentials are reused, or if we
     // are waiting on credential validation, no action is taken.
     test('no prompting if non-invalid credentials are available', function() {
+      var view = app.getViewInfo('login').instance = makeLoginView();
       app.check_user_credentials(undefined, undefined, function() {});
-      var view = app.getViewInfo('login').instance;
       assert.isTrue(view._prompted);
       assert.isTrue(view.waiting);
       view._prompted = false;
@@ -182,8 +171,6 @@
       juju = Y.namespace('juju');
       makeLoginView = function() {
         var view = new views.LoginView({env: env});
-        // Disable actually prompting.
-        view._prompt = function() {};
         return view;
       };
     });
@@ -207,12 +194,12 @@
       assert.equal(conn.last_message().op, 'login');
     });
 
-    test('the login view contacts the server to verify credentials', function() {
+    test('the view contacts the server to verify credentials', function() {
       var view = makeLoginView();
       var user = 'Will Smith';
       var password = 'I am legend!';
-      // If we ask the view to validate credentials, a login message will be sent
-      // to the server.
+      // If we ask the view to validate credentials, a login message will be
+      // sent to the server.
       view.validateCredentials(user, password);
       var msg = conn.last_message();
       assert.equal(msg.op, 'login');
@@ -232,12 +219,6 @@
       assert.isFalse(view.userIsAuthenticated);
       env.fire('log', {op: 'login', data: {}});
       assert.isFalse(view.userIsAuthenticated);
-    });
-
-    test.skip('no longer waiting after successful login', function () {
-    });
-
-    test.skip('no longer waiting after unsuccessful login', function () {
     });
 
   });

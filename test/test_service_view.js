@@ -23,7 +23,8 @@
       env = new (Y.namespace('juju')).Environment({conn: conn});
       env.connect();
       conn.open();
-      container = Y.Node.create('<div id="test-container" />');
+      container = Y.Node.create('<div/>')
+        .hide();
       Y.one('#main').append(container);
       db = new models.Database();
       charm = new models.Charm({id: 'cs:precise/mysql-7', description: 'A DB'});

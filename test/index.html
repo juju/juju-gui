@@ -21,6 +21,7 @@
 
   <script>
   YUI().use('node', 'event', function(Y) {
+     no_login_prompts = true;
      var config = GlobalConfig;
      for (group in config.groups) {
        var group = config.groups[group];

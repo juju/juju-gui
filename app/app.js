@@ -524,7 +524,9 @@ YUI.add('juju-gui', function(Y) {
     check_user_credentials: function(req, res, next) {
       var viewInfo = this.getViewInfo('login');
       if (!viewInfo.instance) {
-        viewInfo.instance = new views.LoginView({env: this.env});
+        viewInfo.instance = new views.LoginView({
+          env: this.env
+        });
       }
       var view = viewInfo.instance;
       // If there has not been a successful login attempt, prompt for
