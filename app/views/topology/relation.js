@@ -20,6 +20,11 @@ YUI.add('juju-topology-relation', function(Y) {
           mouseenter: 'serviceMouseEnter',
           mouseleave: 'serviceMouseLeave'
         },
+        '.sub-rel-block': {
+          mouseenter: 'subRelBlockMouseEnter',
+          mouseleave: 'subRelBlockMouseLeave',
+          click: 'subRelBlockClick'
+        },
         '.rel-label': {
           click: 'relationClick'
         },
@@ -40,7 +45,7 @@ YUI.add('juju-topology-relation', function(Y) {
               var service = topo.serviceForBox(box);
               var origin = topo.get('active_context');
               context.addRelationDragStart(box, context);
-              context.toggleControlPanel(box, context, origin);
+              topo.fire('toggleControlPanel');
               context.addRelationStart(box, context, origin);
             }}
         },
@@ -74,10 +79,10 @@ YUI.add('juju-topology-relation', function(Y) {
       },
       yui: {
         rendered: {callback: 'renderedHandler'},
+        clearState: {callback: 'cancelRelationBuild'},
         serviceMoved: {callback: 'updateLinkEndpoints'},
         servicesRendered: {callback: 'updateLinks'},
         cancelRelationBuild: {callback: 'cancelRelationBuild'},
-        hideSubordinateRelations: {callback: 'hideSubordinateRelations'},
         addRelationDragStart: {callback: 'addRelationDragStart'},
         addRelationDrag: {callback: 'addRelationDrag'},
         addRelationDragEnd: {callback: 'addRelationDragEnd'}
@@ -97,10 +102,13 @@ YUI.add('juju-topology-relation', function(Y) {
     update: function() {
       RelationModule.superclass.update.apply(this, arguments);
       
-      var db = this.get('component').get('db');
+      var topo = this.get('component');
+      var db = topo.get('db');
       var relations = db.relations.toArray();
       this.relPairs = this.processRelations(relations);
+      topo.relPairs = this.relPairs;
       this.updateLinks();
+      this.updateSubordinateRelationsCount();
 
       return this;
     },
@@ -141,16 +149,6 @@ YUI.add('juju-topology-relation', function(Y) {
         }
       });
       return pairs;
-    },
-
-    /*
-         * Utility function to get subordinate relations for a service.
-         */
-    subordinateRelationsForService: function(service) {
-      return this.relPairs.filter(function(p) {
-        return p.modelIds().indexOf(service.modelId()) !== -1 &&
-            p.scope === 'container';
-      });
     },
 
     updateLinks: function() {
@@ -275,6 +273,21 @@ YUI.add('juju-topology-relation', function(Y) {
                 .attr('x2', t[0])
                 .attr('y2', t[1]);
       return link;
+    },
+
+    updateSubordinateRelationsCount: function() {
+      var topo = this.get('component');
+      var vis = topo.vis;
+      var self = this;
+
+      vis.selectAll('.service')
+        .filter(function(d) {
+          return d.subordinate;
+        })
+        .select('.sub-rel-block tspan')
+        .text(function(d) {
+          return self.subordinateRelationsForService(d).length;
+        });
     },
 
     /*
@@ -555,9 +568,9 @@ YUI.add('juju-topology-relation', function(Y) {
          * flow.
          */
     addRelationStart: function(m, view, context) {
-      var topo = context.get('component');
+      var topo = view.get('component');
       var service = topo.serviceForBox(m);
-      context.startRelation(service);
+      view.startRelation(service);
       // Store start service in attrs.
       view.set('addRelationStart_service', m);
     },
@@ -635,6 +648,8 @@ YUI.add('juju-topology-relation', function(Y) {
       menu.addClass('active');
       topo.set('active_service', m);
       topo.set('active_context', context);
+
+      // Firing resized will ensure the menu's positioned properly.
       topo.fire('resized');
     },
 
@@ -657,7 +672,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var env = view.get('component').get('env');
       var db = view.get('component').get('db');
       var source = view.get('addRelationStart_service');
-      var relation_id = 'pending:' + endpoints[0][0] + endpoints[1][0];
+      var relation_id = 'pending-' + endpoints[0][0] + endpoints[1][0];
 
       if (endpoints[0][0] === endpoints[1][0]) {
         view.set('currentServiceClickAction', 'toggleControlPanel');
@@ -690,10 +705,14 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     _addRelationCallback: function(view, relation_id, ev) {
-      var db = view.get('component').get('db');
+      console.log('addRelationCallback reached');
+      var topo = view.get('component');
+      var db = topo.get('db');
+      var vis = topo.vis;
       // Remove our pending relation from the DB, error or no.
       db.relations.remove(
           db.relations.getById(relation_id));
+      vis.select('#' + relation_id).remove();
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
@@ -724,6 +743,46 @@ YUI.add('juju-topology-relation', function(Y) {
       //db.fire('update');
       view.get('component').bindAllD3Events();
       view.update();
+    },
+
+    /*
+         * Utility function to get subordinate relations for a service.
+         */
+    subordinateRelationsForService: function(service) {
+      return this.relPairs.filter(function(p) {
+        return p.modelIds().indexOf(service.modelId()) !== -1 &&
+            p.scope === 'container';
+      });
+    },
+
+    subRelBlockMouseEnter: function(d, self) {
+      // Add an 'active' class to all of the subordinate relations
+      // belonging to this service.
+      self.subordinateRelationsForService(d)
+    .forEach(function(p) {
+            utils.addSVGClass('#' + p.id, 'active');
+          });
+    },
+
+    subRelBlockMouseLeave: function(d, self) {
+      // Remove 'active' class from all subordinate relations.
+      if (!self.keepSubRelationsVisible) {
+        utils.removeSVGClass('.subordinate-rel-group', 'active');
+      }
+    },
+
+    /**
+     * Toggle the visibility of subordinate relations for visibility
+     * or removal.
+     * @param {object} d The data-bound object (the subordinate).
+     * @param {object} self The view.
+     **/
+    subRelBlockClick: function(d, self) {
+      if (self.keepSubRelationsVisible) {
+        self.hideSubordinateRelations();
+      } else {
+        self.showSubordinateRelations(this);
+      }
     },
 
     /**

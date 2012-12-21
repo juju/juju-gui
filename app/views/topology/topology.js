@@ -138,7 +138,7 @@ YUI.add('juju-topology', function(Y) {
     serviceForBox: function(boundingBox) {
       var db = this.get('db');
       return db.services.getById(boundingBox.id);
-    },
+    }
 
   }, {
     ATTRS: {

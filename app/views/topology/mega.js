@@ -35,11 +35,6 @@ YUI.add('juju-topology-mega', function(Y) {
           mouseleave: 'mousemove'
         },
 
-        '.sub-rel-block': {
-          mouseenter: 'subRelBlockMouseEnter',
-          mouseleave: 'subRelBlockMouseLeave',
-          click: 'subRelBlockClick'
-        },
         '.service-status': {
           mouseover: {callback: function(d, self) {
             d3.select(this)
@@ -112,6 +107,9 @@ YUI.add('juju-topology-mega', function(Y) {
         show: 'show',
         hide: 'hide',
         fade: 'fade',
+        toggleControlPanel: {callback: function() {
+          this.service_click_actions.toggleControlPanel(null, this);
+        }},
         rescaled: 'updateServiceMenuLocation'
       }
     },
@@ -317,6 +315,7 @@ YUI.add('juju-topology-mega', function(Y) {
     // Called to draw a service in the 'update' phase
     drawService: function(node) {
       var self = this,
+              topo = this.get('component'),
               service_scale = this.service_scale,
               service_scale_width = this.service_scale_width,
               service_scale_height = this.service_scale_height;
@@ -370,10 +369,7 @@ YUI.add('juju-topology-mega', function(Y) {
       sub_relation.append('text').append('tspan')
             .attr('class', 'sub-rel-count')
             .attr('x', 64)
-            .attr('y', 47 * 0.8)
-            .text(function(d) {
-                return self.subordinateRelationsForService(d).length;
-              });
+            .attr('y', 47 * 0.8);
       // Draw non-subordinate services services
       node.filter(function(d) {
         return !d.subordinate;
@@ -601,9 +597,8 @@ YUI.add('juju-topology-mega', function(Y) {
      * @return {undefined} Side effects only.
      */
     backgroundClicked: function() {
-      if (this.clickAddRelation) {
-        this.cancelRelationBuild();
-      }
+      var topo = this.get('component');
+      topo.fire('clearState');
     },
 
     /*
@@ -709,36 +704,6 @@ YUI.add('juju-topology-mega', function(Y) {
           'left': service.x * z +
               (menu_left ? service.w * z : -(cp_width)) + tr[0]
         });
-      }
-    },
-
-    subRelBlockMouseEnter: function(d, self) {
-      // Add an 'active' class to all of the subordinate relations
-      // belonging to this service.
-      self.subordinateRelationsForService(d)
-    .forEach(function(p) {
-            utils.addSVGClass('#' + p.id, 'active');
-          });
-    },
-
-    subRelBlockMouseLeave: function(d, self) {
-      // Remove 'active' class from all subordinate relations.
-      if (!self.keepSubRelationsVisible) {
-        utils.removeSVGClass('.subordinate-rel-group', 'active');
-      }
-    },
-
-    /**
-     * Toggle the visibility of subordinate relations for visibility
-     * or removal.
-     * @param {object} d The data-bound object (the subordinate).
-     * @param {object} self The view.
-     **/
-    subRelBlockClick: function(d, self) {
-      if (self.keepSubRelationsVisible) {
-        self.hideSubordinateRelations();
-      } else {
-        self.showSubordinateRelations(this);
       }
     },
 
