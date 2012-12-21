@@ -48,7 +48,7 @@ YUI.add('juju-topology-relation', function(Y) {
               topo.fire('toggleControlPanel');
               context.addRelationStart(box, context, origin);
             }}
-        },
+        }
       },
       d3: {
         '.service': {
@@ -88,7 +88,7 @@ YUI.add('juju-topology-relation', function(Y) {
         addRelationDragEnd: {callback: 'addRelationDragEnd'}
       }
     },
-      
+
     initializer: function(options) {
       RelationModule.superclass.constructor.apply(this, arguments);
       this.relPairs = [];
@@ -101,7 +101,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
     update: function() {
       RelationModule.superclass.update.apply(this, arguments);
-      
+
       var topo = this.get('component');
       var db = topo.get('db');
       var relations = db.relations.toArray();
@@ -203,8 +203,8 @@ YUI.add('juju-topology-relation', function(Y) {
       var vis = this.get('component').vis;
       var g = vis.selectAll('g.rel-group')
                  .data(self.relPairs, function(r) {
-                   return r.modelIds();
-                 });
+            return r.modelIds();
+          });
 
       var enter = g.enter();
 
@@ -282,12 +282,12 @@ YUI.add('juju-topology-relation', function(Y) {
 
       vis.selectAll('.service')
         .filter(function(d) {
-          return d.subordinate;
-        })
+            return d.subordinate;
+          })
         .select('.sub-rel-block tspan')
         .text(function(d) {
-          return self.subordinateRelationsForService(d).length;
-        });
+            return self.subordinateRelationsForService(d).length;
+          });
     },
 
     /*
@@ -364,7 +364,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       if (self.dragline) {
         self.dragline.attr('class',
-                         'relation pending-relation dragline dragging');
+            'relation pending-relation dragline dragging');
         self.draglineOverService = false;
       }
     },
@@ -502,7 +502,7 @@ YUI.add('juju-topology-relation', function(Y) {
       this.clickAddRelation = null;
       this.set('currentServiceClickAction', 'toggleControlPanel');
       topo.buildingRelation = false;
-      topo.fire('show', { selection: vis.selectAll('.service') })
+      topo.fire('show', { selection: vis.selectAll('.service') });
       vis.selectAll('.service').classed('selectable-service', false);
     },
 
@@ -529,11 +529,11 @@ YUI.add('juju-topology-relation', function(Y) {
                                     .get('getServiceEndpoints');
       var endpoints = models.getEndpoints(
           service, getServiceEndpoints(), db);
-          // Transform endpoints into a list of relatable services (to the
-          // service).
+      // Transform endpoints into a list of relatable services (to the
+      // service).
       var possible_relations = Y.Array.map(
-              Y.Array.flatten(Y.Object.values(endpoints)),
-              function(ep) {return ep.service;});
+          Y.Array.flatten(Y.Object.values(endpoints)),
+          function(ep) {return ep.service;});
       var invalidRelationTargets = {};
 
       // Iterate services and invert the possibles list.
@@ -554,7 +554,7 @@ YUI.add('juju-topology-relation', function(Y) {
                 return (d.id in invalidRelationTargets &&
                           d.id !== service.id);
               });
-      topo.fire('fade', { selection: sel })
+      topo.fire('fade', { selection: sel });
       sel.classed('selectable-service', false);
 
       // Store possible endpoints.
@@ -726,9 +726,9 @@ YUI.add('juju-topology-relation', function(Y) {
         // Create a relation in the database between the two services.
         var result = ev.result;
         var endpoints = Y.Array.map(result.endpoints, function(item) {
-                  var id = Y.Object.keys(item)[0];
-                  return [id, item[id]];
-                });
+          var id = Y.Object.keys(item)[0];
+          return [id, item[id]];
+        });
         db.relations.create({
           relation_id: ev.result.id,
           type: result['interface'],

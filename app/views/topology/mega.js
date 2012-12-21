@@ -716,7 +716,7 @@ YUI.add('juju-topology-mega', function(Y) {
            */
       toggleControlPanel: function(m, view, context) {
         var container = view.get('container'),
-        topo = view.get('component'),
+            topo = view.get('component'),
                 cp = container.one('#service-menu');
 
         if (cp.hasClass('active') || !m) {
