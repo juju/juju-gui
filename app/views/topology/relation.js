@@ -4,7 +4,8 @@ YUI.add('juju-topology-relation', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils'),
-      d3ns = Y.namespace('d3');
+      d3ns = Y.namespace('d3'),
+      Templates = views.Templates;
 
   /**
    * @module topology-relations
@@ -34,10 +35,10 @@ YUI.add('juju-topology-relation', function(Y) {
           /** The user clicked on the "Build Relation" menu item. */
           click: {
             callback: function(data, context) {
-              var box = context.get('active_service');
               var topo = context.get('component');
+              var box = topo.get('active_service');
               var service = topo.serviceForBox(box);
-              var origin = context.get('active_context');
+              var origin = topo.get('active_context');
               context.addRelationDragStart(box, context);
               context.toggleControlPanel(box, context, origin);
               context.addRelationStart(box, context, origin);
@@ -556,7 +557,7 @@ YUI.add('juju-topology-relation', function(Y) {
     addRelationStart: function(m, view, context) {
       var topo = context.get('component');
       var service = topo.serviceForBox(m);
-      view.startRelation(service);
+      context.startRelation(service);
       // Store start service in attrs.
       view.set('addRelationStart_service', m);
     },
@@ -632,9 +633,9 @@ YUI.add('juju-topology-relation', function(Y) {
       menu.setStyle('top', m.y * z + tr[1]);
       menu.setStyle('left', m.x * z + m.w * z + tr[0]);
       menu.addClass('active');
-      view.set('active_service', m);
-      view.set('active_context', context);
-      view.updateServiceMenuLocation();
+      topo.set('active_service', m);
+      topo.set('active_context', context);
+      topo.fire('resized');
     },
 
     /*

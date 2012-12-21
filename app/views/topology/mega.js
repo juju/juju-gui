@@ -81,9 +81,9 @@ YUI.add('juju-topology-mega', function(Y) {
           /** The user clicked on the "View" menu item. */
           click: {callback: function(data, context) {
             // Get the service element
-            var box = context.get('active_service'),
-                topo = context.get('component'),
-                service = topo.serviceForBox(box);
+            var topo = context.get('component');
+            var box = topo.get('active_service');
+            var service = topo.serviceForBox(box);
             context.service_click_actions
               .toggleControlPanel(box, context);
             context.service_click_actions
@@ -94,9 +94,9 @@ YUI.add('juju-topology-mega', function(Y) {
           /** The user clicked on the "Destroy" menu item. */
           click: {callback: function(data, context) {
             // Get the service element
-            var box = context.get('active_service'),
-                topo = context.get('component'),
-                service = topo.serviceForBox(box);
+            var topo = context.get('component');
+            var box = topo.get('active_service');
+            var service = topo.serviceForBox(box);
             context.service_click_actions
               .toggleControlPanel(box, context);
             context.service_click_actions
@@ -110,7 +110,9 @@ YUI.add('juju-topology-mega', function(Y) {
           context: 'module'},
         rendered: 'renderedHandler',
         show: 'show',
-        hide: 'hide'
+        hide: 'hide',
+        fade: 'fade',
+        rescaled: 'updateServiceMenuLocation'
       }
     },
 
@@ -259,7 +261,7 @@ YUI.add('juju-topology-mega', function(Y) {
                   d3.select(this).attr('transform', function(d, i) {
                     return d.translateStr();
                   });
-                  if (self.get('active_service') === d) {
+                  if (topo.get('active_service') === d) {
                     self.updateServiceMenuLocation();
                   }
 
@@ -543,14 +545,12 @@ YUI.add('juju-topology-mega', function(Y) {
       var selection = evt.selection;
       selection.attr('opacity', '1.0')
                 .style('display', 'block');
-      return selection;
     },
 
     hide: function(evt) {
       var selection = evt.selection;
       selection.attr('opacity', '0')
             .style('display', 'none');
-      return selection;
     },
 
     fade: function(evt) {
@@ -559,7 +559,6 @@ YUI.add('juju-topology-mega', function(Y) {
       selection.transition()
             .duration(400)
             .attr('opacity', alpha !== undefined && alpha || '0.2');
-      return selection;
     },
 
     /*
@@ -682,7 +681,7 @@ YUI.add('juju-topology-mega', function(Y) {
       var topo = this.get('component'),
           container = this.get('container'),
           cp = container.one('.environment-menu.active'),
-          service = this.get('active_service'),
+          service = topo.get('active_service'),
           tr = topo.get('translate'),
           z = topo.get('scale');
 
@@ -752,15 +751,16 @@ YUI.add('juju-topology-mega', function(Y) {
            */
       toggleControlPanel: function(m, view, context) {
         var container = view.get('container'),
+        topo = view.get('component'),
                 cp = container.one('#service-menu');
 
         if (cp.hasClass('active') || !m) {
           cp.removeClass('active');
-          view.set('active_service', null);
-          view.set('active_context', null);
+          topo.set('active_service', null);
+          topo.set('active_context', null);
         } else {
-          view.set('active_service', m);
-          view.set('active_context', context);
+          topo.set('active_service', m);
+          topo.set('active_context', context);
           cp.addClass('active');
           view.updateServiceMenuLocation();
         }
