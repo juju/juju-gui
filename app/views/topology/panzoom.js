@@ -48,7 +48,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
     renderSlider: function() {
       var self = this,
           topo = this.get('component'),
-          contianer = topo.get('container'),
           value = 100,
           currentScale = topo.get('scale');
 
