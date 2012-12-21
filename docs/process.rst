@@ -63,12 +63,20 @@ land your branch.
 Checklist for Reviewing
 =======================
 
-- Run ``make test`` and confirm that tests pass.
+Your goal is to help the coder land their code, so that we incrementally
+improve the user experience and the codebase quality without user-facing
+regressions.  Occasionally we might even have to consciously take a step
+backwards in order to step forwards, `as Kent Beck explains
+<http://goo.gl/DBDtJ>`_.
+
+- Run ``make test-prod`` and ``make test-debug`` and confirm that tests pass.
 - Run ``python improv.py -f sample.json`` in the rapi-rollup juju branch, and
   run ``make server`` with the juju-ui branch.
 
   * Don't forget to clear the browser cache: index.html may be sticking around
     because of the cache.manifest.
+  * Verify that the browser reports no 404s and no Javascript errors in the
+    console.
   * QA the changes if possible, exploring different use cases (and edge cases).
   * Spend between 60 and 120 seconds exploring the entire app.  Do different
     things every time.  Try to break the app, generally.
@@ -91,7 +99,8 @@ Checklist for Reviewing
 - In your summary message, thank the coder.
 - In your summary message, if you ask for changes, make it clear whether you
   want to re-review after the changes, or if you automatically approve if the
-  changes are made.
+  changes are made.  We've agreed to use these arbitrary code phrases, for
+  clarity: "Land as is," "Land with changes," and "Request review".
 
 Checklist for Making a Stable Release
 =====================================
@@ -110,13 +119,17 @@ Checklist for Making a Stable Release
     version for release.'``
   * Push the branch directly to the parent (``bzr push`` should work).
 
-- Run the tests and verify they pass: ``make test``.
+- Run the tests and verify they pass: ``make test-prod`` and then
+  ``make test-debug``.
 - Create the tarball: ``FINAL=1 make distfile``.  The process will end by
   reporting the name of the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``
 - In that directory, start a server: ``python -m SimpleHTTPServer 8888``
-- In Chrome and Firefox, QA the application.  XXX EXPLICIT QA STEPS GO HERE!
+- In Chrome and Firefox, QA the application.  At the very least, load the app,
+  open the charm panel, go to an inner page, and make sure there are no 404s
+  or Javascript errors in the console.  We want a real QA script for the
+  future.
 - For now, we will assume you would like to verify the release on the
   Launchpad staging server.  As we become more confident with this process,
   this step may become unnecessary.  In the checkout, run ``FINAL=1 make
@@ -157,24 +170,24 @@ You are done!
 Checklist for Making a Developer Release
 ========================================
 
-- Get a checkout of the trunk:: ``bzr co lp:juju-gui``.
-- If you are using a pre-existing checkout, make sure it is up-to-date::
-  ``bzr up``.
-- Verify that the top-most version in CHANGES.yaml specifies the expected
-  version string.  Run ``bzr revno``.  These two values, combined, should be
-  bigger than the most recent version found on
-  https://launchpad.net/juju-gui/trunk .  To be clear, the version should be
-  the same or greater as the most recent developer release, and the revno
-  should be greater.
+- Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
+- If you are using a pre-existing branch, make sure it is up-to-date::
+  ``bzr pull``.
+- Verify that the top-most version in CHANGES.yaml is "unreleased."
+- Run ``bzr revno``.  The revno should be bigger than the most recent release found on
+  `Launchpad <https://launchpad.net/juju-gui/trunk>`_.
 - Run the tests and verify they pass: ``make test``.
 - Create the tarball: ``make distfile``.  It will end by reporting the name of
   the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
-  tarball: ``tar xvzf PATH_TO_TARBALL``
+  tarball: ``tar xvzf PATH_TO_TARBALL``.
 - Looking at juju-ui/version.js should show you a version string that combines
   the value in the checkout's CHANGES.yaml with the checkout's revno.
 - In that directory, start a server: ``python -m SimpleHTTPServer 8888``
-- In Chrome and Firefox, QA the application.  XXX EXPLICIT QA STEPS GO HERE!
+- In Chrome and Firefox, QA the application.  At the very least, load the app,
+  open the charm panel, go to an inner page, and make sure there are no 404s
+  or Javascript errors in the console.  We want a real QA script for the
+  future.
 - For now, we will assume you would like to verify the release on the
   Launchpad staging server.  As we become more confident with this process,
   this step may become unnecessary.  In the checkout, run ``make dist``.

@@ -459,6 +459,6 @@ appcache-force: appcache-touch $(APPCACHE)
 	build-files build-devel clean clean-all \
 	clean-deps clean-docs debug devel docs dist gjslint help \
 	jshint lint prep prod server spritegen test test-debug test-prod \
-	undocumented yuidoc yuidoc-lint all
+	undocumented yuidoc yuidoc-lint
 
 .DEFAULT_GOAL := all
