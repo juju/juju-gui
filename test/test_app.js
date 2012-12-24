@@ -38,7 +38,7 @@ function injectData(app, data) {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-	  ['juju-gui', 'juju-tests-utils'], 
+	  ['juju-gui', 'juju-tests-utils'],
 	  function(Y) {
 	      done();
 	  });
@@ -185,10 +185,10 @@ function injectData(app, data) {
     var Y, models, conn, env, app, container, charm_store, data, juju;
 
     before(function(done) {
-      console.log("Loading App prefetch test code");
+      console.log('Loading App prefetch test code');
 
       Y = YUI(GlobalConfig).use(
-	  ['juju-gui', 'datasource-local', 
+	  ['juju-gui', 'datasource-local',
 	   'juju-views', 'juju-templates',
 	   'juju-tests-utils', 'json-stringify'], function(Y) {
 	       models = Y.namespace('juju.models');

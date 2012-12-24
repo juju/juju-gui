@@ -745,23 +745,23 @@ YUI.add('juju-gui', function(Y) {
 
 }, '0.5.2', {
   requires: [
-      'juju-charm-models',
-      'juju-charm-panel',
-      'juju-charm-store',
-      'juju-models',
-      'juju-notifications',
+    'juju-charm-models',
+    'juju-charm-panel',
+    'juju-charm-store',
+    'juju-models',
+    'juju-notifications',
 
-      // This alias doesn't seem to work, including refs by hand.
-      'juju-controllers',      
-      'juju-notification-controller',
-      'juju-env',
+    // This alias doesn't seem to work, including refs by hand.
+    'juju-controllers',
+    'juju-notification-controller',
+    'juju-env',
 
-      'juju-views',
-      'io',
-      'json-parse',
-      'app-base',
-      'app-transitions',
-      'base',
-      'node',
-      'model']
+    'juju-views',
+    'io',
+    'json-parse',
+    'app-base',
+    'app-transitions',
+    'base',
+    'node',
+    'model']
 });
