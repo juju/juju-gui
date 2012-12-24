@@ -38,9 +38,9 @@ function injectData(app, data) {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-	  ['juju-gui', 'juju-tests-utils'],
-	  function(Y) {
-	      done();
+          ['juju-gui', 'juju-tests-utils'],
+          function(Y) {
+            done();
 	  });
     });
 
@@ -135,9 +135,10 @@ function injectData(app, data) {
     var container, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-	  container = Y.Node.create('<div id="test" class="container"></div>');
-	  done();
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], 
+          function(Y) {
+            container = Y.Node.create('<div id="test" class="container"></div>');
+            done();
       });
     });
 
@@ -186,14 +187,13 @@ function injectData(app, data) {
 
     before(function(done) {
       console.log('Loading App prefetch test code');
-
       Y = YUI(GlobalConfig).use(
-	  ['juju-gui', 'datasource-local',
-	   'juju-views', 'juju-templates',
-	   'juju-tests-utils', 'json-stringify'], function(Y) {
-	       models = Y.namespace('juju.models');
-	       done();
-	   });
+          ['juju-gui', 'datasource-local',
+           'juju-views', 'juju-templates',
+           'juju-tests-utils', 'json-stringify'], function(Y) {
+              models = Y.namespace('juju.models');
+              done();
+            });
     });
 
     beforeEach(function() {

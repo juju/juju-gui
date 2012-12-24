@@ -78,7 +78,7 @@ YUI.add('juju-view-environment', function(Y) {
   requires: ['juju-templates',
              'juju-view-utils',
              'juju-models',
-	     'juju-topology',
+             'juju-topology',
              'svg-layouts',
              'base-build',
              'handlebars-base',

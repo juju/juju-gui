@@ -118,7 +118,7 @@ YUI.add('juju-view-utils', function(Y) {
           time: noop,
           timeEnd: noop,
           log: noop,
-	  info: noop,
+          info: noop,
           error: noop,
           debug: noop
         };

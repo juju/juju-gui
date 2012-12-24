@@ -160,8 +160,10 @@ var GlobalConfig = {
         },
 
         'juju-controllers': {
-          use: ['juju-env', 'juju-charm-store',
-		'juju-notification-controller']
+          use: [
+            'juju-env', 
+            'juju-charm-store',
+            'juju-notification-controller']
         },
 
         // App

@@ -1129,7 +1129,7 @@ YUI.add('juju-topology-mega', function(Y) {
 
       // Test band-aid due to lack of cleanup.
       if (!canvas) {
-	    return;
+        return;
       }
 
       topo.fire('beforePageSizeRecalculation');
