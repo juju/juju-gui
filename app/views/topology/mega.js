@@ -1126,6 +1126,12 @@ YUI.add('juju-topology-mega', function(Y) {
           svg = container.one('svg'),
           canvas = container.one('.topology-canvas');
 
+
+      // Test band-aid due to lack of cleanup.
+      if (!canvas) {
+	    return
+      }
+
       topo.fire('beforePageSizeRecalculation');
       // Get the canvas out of the way so we can calculate the size
       // correctly (the canvas contains the svg).  We want it to be the
@@ -1566,8 +1572,6 @@ YUI.add('juju-topology-mega', function(Y) {
     'd3',
     'd3-components',
     'juju-templates',
-    'node',
-    'event',
     'juju-models',
     'juju-env'
   ]

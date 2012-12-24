@@ -81,8 +81,8 @@
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
-        'juju-views', 'juju-tests-utils', 'juju-env',
-        'node-event-simulate', 'juju-gui'
+          'juju-views', 'juju-tests-utils', 'juju-env',
+          'node-event-simulate', 'juju-gui'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');

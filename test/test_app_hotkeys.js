@@ -1,11 +1,11 @@
 'use strict';
 
-YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils', 'node-event-simulate'],
-    function(Y) {
       describe('application hotkeys', function() {
-        var app, container, windowNode;
+        var app, container, windowNode, Y;
 
         before(function(done) {
+          Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils', 'node-event-simulate'], function(Y) {
+
           var env = {
             after: function() {},
             get: function() {},
@@ -19,6 +19,8 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils', 'node-event-simulate'],
           });
           app.activateHotkeys();
           done();
+          });
+
         });
 
         beforeEach(function() {
@@ -60,4 +62,4 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils', 'node-event-simulate'],
         });
 
       });
-    });
+
