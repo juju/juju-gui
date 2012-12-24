@@ -137,9 +137,9 @@ function injectData(app, data) {
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
           function(Y) {
-              container = Y.Node.create(
+            container = Y.Node.create(
                 '<div id="test" class="container"></div>');
-              done();
+            done();
           });
     });
 
@@ -192,8 +192,8 @@ function injectData(app, data) {
           ['juju-gui', 'datasource-local',
            'juju-views', 'juju-templates',
            'juju-tests-utils', 'json-stringify'], function(Y) {
-                models = Y.namespace('juju.models');
-                done();
+            models = Y.namespace('juju.models');
+            done();
           });
     });
 
