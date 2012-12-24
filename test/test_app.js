@@ -41,7 +41,7 @@ function injectData(app, data) {
           ['juju-gui', 'juju-tests-utils'],
           function(Y) {
             done();
-	  });
+          });
     });
 
     beforeEach(function() {
@@ -135,11 +135,12 @@ function injectData(app, data) {
     var container, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], 
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
           function(Y) {
-            container = Y.Node.create('<div id="test" class="container"></div>');
-            done();
-      });
+              container = Y.Node.create(
+                '<div id="test" class="container"></div>');
+              done();
+          });
     });
 
     it('should be able to handle env connection status changes', function() {
@@ -191,9 +192,9 @@ function injectData(app, data) {
           ['juju-gui', 'datasource-local',
            'juju-views', 'juju-templates',
            'juju-tests-utils', 'json-stringify'], function(Y) {
-              models = Y.namespace('juju.models');
-              done();
-            });
+                models = Y.namespace('juju.models');
+                done();
+          });
     });
 
     beforeEach(function() {
