@@ -53,29 +53,29 @@
 
 
   <script>
-  YUI({'async': false}).use('node', 'event', function(Y) {
-     Y.on('domready', function() {
+  YUI_config = {
+      async: false,
+      consoleEnabled: true,
+      delayUntil: 'domready'
+  };
 
-     var config = GlobalConfig;
+  YUI().use(['node', 'event'], function(Y) {
+      var config = GlobalConfig;
 
-     config.async = false;
-     config.consoleEnabled = true;
-
-     for (group in config.groups) {
+      for (group in config.groups) {
           var group = config.groups[group];
-         for (m in group.modules) {
-            var resource = group.modules[m];
-            if (!m || !resource.fullpath) {
-              continue
-            }
-            resource.fullpath = resource.fullpath.replace(
-              '/juju-ui/', '../juju-ui/');
-         }
-     }
-     // Run the tests.
-     if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
-     else { mocha.run(); }
-     });
+          for (m in group.modules) {
+              var resource = group.modules[m];
+              if (!m || !resource.fullpath) {
+                  continue
+              }
+              resource.fullpath = resource.fullpath.replace(
+                  '/juju-ui/', '../juju-ui/');
+          }
+      }
+      // Run the tests.
+      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      else { mocha.run(); }
   });
   </script>
 
