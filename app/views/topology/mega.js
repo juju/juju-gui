@@ -40,7 +40,7 @@ YUI.add('juju-topology-mega', function(Y) {
           mouseenter: 'subRelBlockMouseEnter',
           mouseleave: 'subRelBlockMouseLeave',
           click: 'subRelBlockClick'
-        },
+          },
         '.service-status': {
           mouseover: {callback: function(d, self) {
             d3.select(this)
@@ -1108,9 +1108,7 @@ YUI.add('juju-topology-mega', function(Y) {
           'active');
     },
 
-    /*
-         * Update the location of the active service panel
-         */
+    /* Update the location of the active service panel */
     updateServiceMenuLocation: function() {
       var topo = this.get('component'),
           container = this.get('container'),
@@ -1518,8 +1516,6 @@ YUI.add('juju-topology-mega', function(Y) {
     'd3',
     'd3-components',
     'juju-templates',
-    'node',
-    'event',
     'juju-models',
     'juju-env'
   ]

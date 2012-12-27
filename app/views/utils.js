@@ -117,7 +117,10 @@ YUI.add('juju-view-utils', function(Y) {
           groupCollapsed: noop,
           time: noop,
           timeEnd: noop,
-          log: noop
+          log: noop,
+          info: noop,
+          error: noop,
+          debug: noop
         };
 
     if (winConsole === undefined) {

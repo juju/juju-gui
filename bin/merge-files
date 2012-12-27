@@ -47,11 +47,11 @@ require('yui').YUI().use(['yui'], function(Y) {
      syspath.join(process.cwd(), 'app/config-debug.js')]);
 
   // templates.js is a generated file. It is not part of the app directory.
-  paths.push(syspath.join(process.cwd(), 'build/juju-ui/templates.js'));
+  paths.push(syspath.join(process.cwd(), 'build-shared/juju-ui/templates.js'));
   // XXX Why do we have to do this?  (bug 1090563).
   paths.push(syspath.join(process.cwd(), 'app/models/charm.js'));
 
-  merge.combineJs(paths, 'build/juju-ui/assets/app.js');
+  merge.combineJs(paths, 'build-shared/juju-ui/assets/app.js');
 
   // Get the paths to the YUI modules that we use.
   var reqs = merge.loadRequires(paths);
@@ -63,6 +63,7 @@ require('yui').YUI().use(['yui'], function(Y) {
   reqs.push('app-transitions-native');
   reqs.push('gallery-markdown');
   reqs.push('gallery-ellipsis');
+  reqs.push('gallery-timer');
   reqs.push('loader-base');
 
   // Get all of the YUI files and their dependencies
@@ -73,13 +74,16 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/d3.v2.min.js',
     'app/assets/javascripts/d3-components.js',
     'app/assets/javascripts/reconnecting-websocket.js',
-    'app/assets/javascripts/svg-layouts.js']);
+    'app/assets/javascripts/svg-layouts.js',
+    'app/assets/javascripts/gallery-ellipsis.js',
+    'app/assets/javascripts/gallery-markdown.js',
+    'app/assets/javascripts/gallery-timer.js']);
 
-  merge.combineJs(filesToLoad.js, 'build/juju-ui/assets/all-yui.js');
+  merge.combineJs(filesToLoad.js, 'build-shared/juju-ui/assets/all-yui.js');
 
   var cssFiles = filesToLoad.css;
   cssFiles.push('app/assets/stylesheets/bootstrap-2.0.4.css');
   cssFiles.push('app/assets/stylesheets/bootstrap-responsive-2.0.4.css');
   merge.combineCSS(cssFiles,
-    'build/juju-ui/assets/combined-css/all-static.css');
+    'build-shared/juju-ui/assets/combined-css/all-static.css');
 });

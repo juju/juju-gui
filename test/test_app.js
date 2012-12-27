@@ -31,9 +31,18 @@ function injectData(app, data) {
   return app;
 }
 
-YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+(function() {
+
   describe('Application basics', function() {
-    var app, container;
+    var Y, app, container;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          ['juju-gui', 'juju-tests-utils'],
+          function(Y) {
+            done();
+          });
+    });
 
     beforeEach(function() {
       container = Y.one('#main')
@@ -116,14 +125,22 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
     });
 
   });
-});
+})();
 
-YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+
+
+(function() {
+
   describe('Application Connection State', function() {
-    var container;
+    var container, Y;
 
-    before(function() {
-      container = Y.Node.create('<div id="test" class="container"></div>');
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
+          function(Y) {
+            container = Y.Node.create(
+                '<div id="test" class="container"></div>');
+            done();
+          });
     });
 
     it('should be able to handle env connection status changes', function() {
@@ -133,7 +150,6 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
           app = new Y.juju.App({env: env, container: container}),
           reset_called = false,
           noop = function() {return this;};
-
 
       // mock the db
       app.db = {
@@ -162,15 +178,23 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
     });
 
   });
-});
+})();
 
-YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
-  'juju-tests-utils', 'json-stringify'], function(Y) {
+
+(function() {
+
   describe('Application prefetching', function() {
-    var models, conn, env, app, container, charm_store, data, juju;
+    var Y, models, conn, env, app, container, charm_store, data, juju;
 
-    before(function() {
-      models = Y.namespace('juju.models');
+    before(function(done) {
+      console.log('Loading App prefetch test code');
+      Y = YUI(GlobalConfig).use(
+          ['juju-gui', 'datasource-local',
+           'juju-views', 'juju-templates',
+           'juju-tests-utils', 'json-stringify'], function(Y) {
+            models = Y.namespace('juju.models');
+            done();
+          });
     });
 
     beforeEach(function() {
@@ -237,4 +261,4 @@ YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
       get_endpoints_count.should.equal(2);
     });
   });
-});
+})();

@@ -71,6 +71,9 @@ YUI.add('juju-topology-viewport', function(Y) {
           svg = container.one('svg'),
           canvas = container.one('.topology-canvas');
 
+      if (!canvas) {
+        return;
+      }
       topo.fire('beforePageSizeRecalculation');
       // Get the canvas out of the way so we can calculate the size
       // correctly (the canvas contains the svg).  We want it to be the

@@ -34,10 +34,10 @@ YUI.add('juju-view-environment', function(Y) {
 
           //If we need the initial HTML template
           // take care of that.
-          if (!this.svg) {
+          if (!this.rendered) {
             EnvironmentView.superclass.render.apply(this, arguments);
             container.setHTML(Templates.overview());
-            this.svg = container.one('.topology');
+            this.rendered = true;
           }
 
           if (!topo) {
@@ -76,13 +76,10 @@ YUI.add('juju-view-environment', function(Y) {
   requires: ['juju-templates',
              'juju-view-utils',
              'juju-models',
-             'd3',
-             'd3-components',
+             'juju-topology',
+             'svg-layouts',
              'base-build',
              'handlebars-base',
              'node',
-             'svg-layouts',
-             'event-resize',
-             'slider',
              'view']
 });

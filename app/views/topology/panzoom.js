@@ -181,10 +181,11 @@ YUI.add('juju-topology-panzoom', function(Y) {
   views.PanZoomModule = PanZoomModule;
 }, '0.1.0', {
   requires: [
-    'd3',
-    'd3-components',
     'node',
     'event',
+    'slider',
+    'd3',
+    'd3-components',
     'juju-models',
     'juju-env'
   ]
