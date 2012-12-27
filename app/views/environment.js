@@ -51,6 +51,7 @@ YUI.add('juju-view-environment', function(Y) {
             // Bind all the behaviors we need as modules.
             topo.addModule(views.MegaModule);
             topo.addModule(views.PanZoomModule);
+            topo.addModule(views.ViewportModule);
 
             topo.addTarget(this);
             this.topo = topo;
@@ -63,10 +64,7 @@ YUI.add('juju-view-environment', function(Y) {
         postRender: function() {
           this.topo.attachContainer();
           this.topo.fire('rendered');
-          // Bind d3 events (manually)
-          // this needs to be postRender and
-          // the jiggle in phases has broken
-          // the existing (from change to showView)
+          // Bind d3 events (manually).
           this.topo.bindAllD3Events();
         }
       }, {

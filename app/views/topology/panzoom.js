@@ -6,7 +6,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
       d3ns = Y.namespace('d3');
 
   /**
-   * Handle PanZoom within the a Topology.
+   * Handle PanZoom within a Topology.
    *
    * Emitted events:
    *

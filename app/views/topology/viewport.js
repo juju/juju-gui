@@ -26,7 +26,13 @@ YUI.add('juju-topology-viewport', function(Y) {
 
     events: {
       yui: {
-        windowresize: 'resized'
+         windowresize: {
+          callback: 'resized',
+          context: 'module'},
+        rescaled: {
+          callback: 'resized',
+        },
+        rendered: 'renderedHandler'
       }
     },
 
@@ -40,33 +46,61 @@ YUI.add('juju-topology-viewport', function(Y) {
           currentScale = topology.get('scale');
 
       ViewportModule.superclass.render.apply(this, arguments);
-      // Build a slider to control zoom level
-      if (currentScale) {
-        value = currentScale * 100;
-      }
-      var slider = new Y.Slider({
-        min: 25,
-        max: 200,
-        value: value
-      });
-      slider.render('#slider-parent');
-      slider.after('valueChange', function(evt) {
-        // Don't fire a zoom if there's a zoom event already in progress;
-        // that will run rescale for us.
-        if (d3.event && d3.event.scale && d3.event.translate) {
-          return;
-        }
-        topology._fire_zoom((evt.newVal - evt.prevVal) / 100);
-      });
-      this.slider = slider;
-
-      return this;
+     return this;
     },
 
     update: function() {
       ViewportModule.superclass.update.apply(this, arguments);
       return this;
     },
+
+    /*
+     * Set the visualization size based on the viewport
+     */
+    resized: function() {
+      // This event allows other page components that may unintentionally
+      // affect the page size, such as the charm panel, to get out of the
+      // way before we compute sizes.  Note the
+      // "afterPageSizeRecalculation" event at the end of this function.
+      // start with some reasonable defaults
+      var topo = this.get('component'),
+          container = this.get('container'),
+          vis = topo.vis,
+          xscale = topo.xScale,
+          yscale = topo.yScale,
+          svg = container.one('svg'),
+          canvas = container.one('.topology-canvas');
+
+      topo.fire('beforePageSizeRecalculation');
+      // Get the canvas out of the way so we can calculate the size
+      // correctly (the canvas contains the svg).  We want it to be the
+      // smallest size we accept--no smaller or bigger--or else the
+      // presence or absence of scrollbars may affect our calculations
+      // incorrectly.
+      canvas.setStyles({height: height, width: width});
+      var dimensions = utils.getEffectiveViewportSize(true, 800, 600);
+      // Set the svg sizes.
+      svg.setAttribute('width', dimensions.width)
+            .setAttribute('height', dimensions.height);
+
+      // Set the internal rect's size.
+      svg.one('rect')
+            .setAttribute('width', dimensions.width)
+            .setAttribute('height', dimensions.height);
+      canvas
+            .setStyle('height', dimensions.height)
+            .setStyle('width', dimensions.width);
+
+      // Reset the scale parameters
+      topo.xScale.domain([-dimensions.width / 2, dimensions.width / 2])
+            .range([0, dimensions.width]);
+      topo.yScale.domain([-dimensions.height / 2, dimensions.height / 2])
+            .range([dimensions.height, 0]);
+
+      topo.set('size', [dimensions.width, dimensions.height]);
+      topo.fire('afterPageSizeRecalculation');
+    },
+
 
     /**
      * Event handler for windowresize events.
@@ -84,8 +118,8 @@ YUI.add('juju-topology-viewport', function(Y) {
           viewport_height = '100%',
           viewport_width = '100%',
           svg = container.one('svg'),
-          width = 800,
-          height = 600;
+          width = topo.get('width'),
+          height = topo.get('height');
 
       if (container.get('winHeight') &&
           Y.one('#overview-tasks') &&
@@ -126,12 +160,8 @@ YUI.add('juju-topology-viewport', function(Y) {
       topology.yscale.domain([-height / 2, height / 2])
         .range([height, 0]);
 
-      topology.width = width;
-      topology.height = height;
+      topology.set('size', [width, height]);
     }
-
-
-
   }, {
     ATTRS: {}
   });
