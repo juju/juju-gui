@@ -118,23 +118,13 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
   });
 });
 
-(function() {
-
-//  var requires = ['juju-gui', 'juju-tests-utils'];
-  var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
-  var Y = YUI(GlobalConfig).use(requires);
+YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
 
   describe('Application Connection State', function() {
-    var container, views, utils, juju;
+    var container;
 
     before(function() {
-      views = Y.namespace('juju.views');
-      utils = Y.namespace('juju-tests.utils');
-      juju = Y.namespace('juju');
-    });
-
-    beforeEach(function() {
-//      container = Y.Node.create('<div id="test" class="container"></div>');
+      container = Y.Node.create('<div id="test" class="container"></div>');
     });
 
     it('should be able to handle env connection status changes', function() {
