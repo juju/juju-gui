@@ -94,7 +94,7 @@ YUI.add('juju-view-login', function(Y) {
       // If the server connection is not yet ready, then there is no use in
       // trying to authenticate.
       var env = this.get('env');
-      if (!env.get('serverReady')) {
+      if (!env.get('connected')) {
         return;
       }
       // If the credentials are known good or we are waiting to find out, exit

@@ -58,13 +58,11 @@ YUI.add('juju-env', function(Y) {
 
     on_open: function(data) {
       console.log('Env: Connected');
-      this.set('connected', true);
     },
 
     on_close: function(data) {
       console.log('Env: Disconnect');
       this.set('connected', false);
-      this.set('serverReady', false);
     },
 
     on_message: function(evt) {
@@ -74,7 +72,7 @@ YUI.add('juju-env', function(Y) {
       // greeting.  It provides a few initial values that we care about.
       if (msg.ready) {
         console.log('Env: Handshake Complete');
-        this.set('serverReady', true);
+        this.set('connected', true);
         this.set('providerType', msg.provider_type);
         this.set('defaultSeries', msg.default_series);
         return;

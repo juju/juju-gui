@@ -25,7 +25,7 @@
       env = new juju.Environment({conn: conn});
       env.connect();
       conn.open();
-      env.set('serverReady', true);
+      env.set('connected', true);
     });
 
     afterEach(function() {
@@ -116,7 +116,7 @@
       env = new juju.Environment({conn: conn});
       env.connect();
       conn.open();
-      env.set('serverReady', true);
+      env.set('connected', true);
       app = new Y.juju.App({env: env, container: container});
     });
 
@@ -181,7 +181,7 @@
       env = new juju.Environment({conn: conn});
       env.connect();
       conn.open();
-      env.set('serverReady', true);
+      env.set('connected', true);
       app = new Y.juju.App({env: env, container: container});
     });
 
