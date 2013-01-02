@@ -4,7 +4,7 @@ describe('juju application notifications', function() {
   var _setTimeout, _viewsHighlightRow, db, ERR_EV, juju, models, NO_OP,
       viewContainer, views, Y;
 
-  before(function() {
+  before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
       'juju-models',
       'juju-views',
@@ -16,6 +16,7 @@ describe('juju application notifications', function() {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
+      done();
     });
 
     ERR_EV = {
