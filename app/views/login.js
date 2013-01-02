@@ -1,6 +1,7 @@
 'use strict';
 
-var no_login_prompts = false;
+// Should login prompts be presented?  Turned on for testing.
+var noLoginPrompts = noLoginPrompts || false;
 
 YUI.add('juju-view-login', function(Y) {
 
@@ -24,7 +25,7 @@ YUI.add('juju-view-login', function(Y) {
     },
 
     /**
-     * React to the results of sennding a login message to the server.
+     * React to the results of sending a login message to the server.
      *
      * @method handleLoginEvent
      * @param {Object} evt The event to which we are responding.
@@ -50,8 +51,8 @@ YUI.add('juju-view-login', function(Y) {
      * @return {String} The string the user typed.
      */
     _prompt: function(message) {
-      // no_login_prompts is a global.
-      if (no_login_prompts) {
+      // noLoginPrompts is a global.
+      if (noLoginPrompts) {
         return null;
       }
       return window.prompt(message);

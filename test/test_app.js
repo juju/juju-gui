@@ -166,7 +166,7 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
     });
 
   });
-})();
+});
 
 YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
   'juju-tests-utils', 'json-stringify'], function(Y) {

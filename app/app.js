@@ -526,7 +526,6 @@ YUI.add('juju-gui', function(Y) {
      *
      * @method check_user_credentials
      * @param {Object} req The request.
-     * @param {Object} res Something. ???
      * @param {Object} res ???
      * @param {Object} next The next route handler.
      *

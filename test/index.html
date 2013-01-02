@@ -13,6 +13,7 @@
   <script src="assets/mocha.js"></script>
   <script src="utils.js"></script>
   <script>
+    noLoginPrompts = true;
     var assert = chai.assert,
         expect = chai.expect
         should = chai.should();
@@ -21,7 +22,6 @@
 
   <script>
   YUI().use('node', 'event', function(Y) {
-     no_login_prompts = true;
      var config = GlobalConfig;
      for (group in config.groups) {
        var group = config.groups[group];
