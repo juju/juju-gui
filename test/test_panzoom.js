@@ -19,42 +19,31 @@ describe('pan zoom module', function() {
     });
   });
 
-  beforeEach(function(done) {
-    Y = YUI(GlobalConfig).use(['node',
-      'juju-models',
-      'juju-views',
-      'juju-gui',
-      'juju-env',
-      'juju-tests-utils',
-      'node-event-simulate'],
-    function(Y) {
-      viewContainer = Y.Node.create('<div />');
-      viewContainer.appendTo(Y.one('body'));
-      viewContainer.hide();
-
-      db = new models.Database();
-      var view = new views.environment({container: viewContainer, db: db});
-      view.render();
-      view.postRender();
-      pz = view.topo.modules.PanZoomModule;
-      topo = pz.get('component');
-      vis = topo.vis;
-      done();
-    });
+  beforeEach(function() {
+    viewContainer = Y.Node.create('<div />');
+    viewContainer.appendTo(Y.one('body'));
+    viewContainer.hide();
+    db = new models.Database();
+    var view = new views.environment({container: viewContainer, db: db});
+    view.render();
+    view.postRender();
+    pz = view.topo.modules.PanZoomModule;
+    topo = pz.get('component');
+    vis = topo.vis;
   });
 
   afterEach(function() {
     viewContainer.remove(true);
   });
 
-  it('initial values are set',
+  it('should set initial values',
       function() {
         pz._translate.should.eql([0, 0]);
         pz._scale.should.equal(1.0);
       });
 
   // Test the zoom handler calculations.
-  it('zoom scale handles fractional values',
+  it('should handle fractional values properly in zoom scale',
      function() {
        // Floor is used so the scale will round down.
        var evt = { scale: 0.609 };
@@ -67,7 +56,7 @@ describe('pan zoom module', function() {
        assert.isTrue(rescaleCalled);
      });
 
-  it('slider has an upper limit',
+  it('should have an upper limit on the slider',
      function() {
        var evt = { scale: 3.5 };
        var rescaleCalled = false;
@@ -79,7 +68,7 @@ describe('pan zoom module', function() {
        assert.isTrue(rescaleCalled);
      });
 
-  it('slider has a lower limit',
+  it('should have a lower limint on the slider',
      function() {
        var evt = { scale: 0.18 };
        var rescaleCalled = false;
@@ -92,7 +81,7 @@ describe('pan zoom module', function() {
      });
 
   // Test the zoom calculations.
-  it('rescale handles fractional values within the limit',
+  it('should handle fractional values within the limit for rescale',
      function(done) {
        // Floor is used so the scale will round down.
        var evt =
@@ -110,7 +99,7 @@ describe('pan zoom module', function() {
        assert.isTrue(rescaled);
      });
 
-  it('rescale sets upper limit',
+  it('should set an upper limit for rescale',
      function(done) {
        var evt =
            { scale: 2.1,
@@ -128,7 +117,7 @@ describe('pan zoom module', function() {
        assert.isTrue(rescaled);
      });
 
-  it('rescale sets lower limit',
+  it('should set a lower limit for rescale',
      function(done) {
        var evt =
            { scale: 0.2,
