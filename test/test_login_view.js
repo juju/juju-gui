@@ -144,7 +144,7 @@
       assert.isFalse(view._prompted);
     });
 
-    // If there are know credentials that are not known to be bad (they are
+    // If there are no credentials that are not known to be bad (they are
     // either good or not yet validated) and a login request is made, no
     // prompting is done, instead the existing credentials are reused, or if we
     // are waiting on credential validation, no action is taken.
