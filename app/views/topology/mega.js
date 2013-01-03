@@ -768,12 +768,12 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     /*
-         * Actions to be called on clicking a service.
-         */
+     * Actions to be called on clicking a service.
+     */
     service_click_actions: {
       /*
-           * Default action: show or hide control panel.
-           */
+       * Default action: show or hide control panel.
+       */
       toggleControlPanel: function(m, view, context) {
         var container = view.get('container'),
             topo = view.get('component'),

@@ -445,6 +445,13 @@ YUI.add('juju-topology-relation', function(Y) {
           this)));
     },
 
+    /**
+     * Clear any states such as building a relation or showing
+     * subordinate relations.
+     *
+     * @method clearState
+     * @return {undefined} side effects only.
+     */
     clearState: function() {
       this.cancelRelationBuild();
       this.hideSubordinateRelations();
