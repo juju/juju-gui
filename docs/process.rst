@@ -125,8 +125,8 @@ Checklist for Making a Stable Release
   reporting the name of the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``
-- In the ``build-prod`` directory, under the uncompressed one, start a server:
-  ``python -m SimpleHTTPServer 8888``
+- While still in the directory where you extracted the tar file, change to the
+  build-prod directory and start a server: ``python -m SimpleHTTPServer 8888``.
 - In Chrome and Firefox, QA the application.  At the very least, load the app,
   open the charm panel, go to an inner page, and make sure there are no 404s
   or Javascript errors in the console.  We want a real QA script for the
@@ -193,8 +193,8 @@ Checklist for Making a Developer Release
   tarball: ``tar xvzf PATH_TO_TARBALL``.
 - Looking at ``build-prod/juju-ui/version.js`` should show you a version string
   that combines the value in the branch's CHANGES.yaml with the branch's revno.
-- In the ``build-prod`` directory, start a server:
-  ``python -m SimpleHTTPServer 8888``
+- While still in the directory where you extracted the tar file, change to the
+  build-prod directory and start a server: ``python -m SimpleHTTPServer 8888``.
 - In Chrome and Firefox, QA the application.  At the very least, load the app,
   open the charm panel, go to an inner page, and make sure there are no 404s
   or Javascript errors in the console.  We want a real QA script for the
