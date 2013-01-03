@@ -106,8 +106,8 @@ Checklist for Making a Stable Release
 =====================================
 
 - Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
-- If you are using a pre-existing branch, make sure it is up-to-date:: ``bzr
-  pull``.
+- If you are using a pre-existing branch, make sure it is up-to-date::
+  ``bzr pull``.
 - Verify that the top-most version in CHANGES.yaml specifies the expected
   version string.  It should be bigger than the most recent version found on
   https://launchpad.net/juju-gui/stable .  If the most recent version string
@@ -115,24 +115,25 @@ Checklist for Making a Stable Release
 
   * Decide what the next version number should be (see http://semver.org/) and
     change "unreleased" to that value.
-  * Commit to the branch with this checkin message: ``bzr commit -m 'Set
-    version for release.'``
-  * Push the branch directly to the parent (``bzr push`` should work).
+  * Commit to the branch with this checkin message:
+    ``bzr commit -m 'Set version for release.'``
+  * Push the branch directly to the parent (``bzr push :parent`` should work).
 
-- Run the tests and verify they pass: ``make test-prod`` and then
-  ``make test-debug``.
+- Run the tests and verify they pass: ``FINAL=1 make test-prod`` and then
+  ``FINAL=1 make test-debug``.
 - Create the tarball: ``FINAL=1 make distfile``.  The process will end by
   reporting the name of the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``
-- In that directory, start a server: ``python -m SimpleHTTPServer 8888``
+- In the ``build-prod`` directory, inside the uncompressed one, start a server:
+  ``python -m SimpleHTTPServer 8888``
 - In Chrome and Firefox, QA the application.  At the very least, load the app,
   open the charm panel, go to an inner page, and make sure there are no 404s
   or Javascript errors in the console.  We want a real QA script for the
   future.
 - For now, we will assume you would like to verify the release on the
   Launchpad staging server.  As we become more confident with this process,
-  this step may become unnecessary.  In the checkout, run ``FINAL=1 make
+  this step may become unnecessary.  In the branch, run ``FINAL=1 make
   dist``.  This will step you through signing the tarball, connecting
   to Launchpad, and uploading the release.
 
@@ -151,8 +152,9 @@ Checklist for Making a Stable Release
   SimpleHTTPServer 8888``, and do a quick double-check in the browser that it
   is what you expect.  Looking at juju-ui/version.js should also show you the
   version you expect.
-- This is a final release.  Consider asking others to verify the package on staging.
-- Now it is time for the actual, real release.  Head back to your checkout and
+- This is a final release.  Consider asking others to verify the package on
+  staging.
+- Now it is time for the actual, real release.  Head back to your branch and
   run ``FINAL=1 PROD=1 make dist``.  The computer will again walk you
   through the process.
 
@@ -165,6 +167,13 @@ Checklist for Making a Stable Release
 - Go to https://launchpad.net/juju-gui/stable and verify that you see
   a new release and a new download file.
 
+- Set the version back to ``unreleased`` by doing the following.
+
+  * Restore ``- unreleased:`` as most recent version string in CHANGES.yaml.
+  * Commit to the branch with this checkin message:
+    ``bzr commit -m 'Set version back to unreleased.'``
+  * Push the branch directly to the parent (``bzr push :parent`` should work).
+
 You are done!
 
 Checklist for Making a Developer Release
@@ -174,23 +183,25 @@ Checklist for Making a Developer Release
 - If you are using a pre-existing branch, make sure it is up-to-date::
   ``bzr pull``.
 - Verify that the top-most version in CHANGES.yaml is "unreleased."
-- Run ``bzr revno``.  The revno should be bigger than the most recent release found on
-  `Launchpad <https://launchpad.net/juju-gui/trunk>`_.
-- Run the tests and verify they pass: ``make test``.
+- Run ``bzr revno``.  The revno should be bigger than the most recent release
+  found on `Launchpad <https://launchpad.net/juju-gui/trunk>`_.
+- Run the tests and verify they pass: ``make test-prod`` and then
+  ``make test-debug``.
 - Create the tarball: ``make distfile``.  It will end by reporting the name of
   the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``.
-- Looking at juju-ui/version.js should show you a version string that combines
-  the value in the checkout's CHANGES.yaml with the checkout's revno.
-- In that directory, start a server: ``python -m SimpleHTTPServer 8888``
+- Looking at ``build-prod/juju-ui/version.js`` should show you a version string
+  that combines the value in the branch's CHANGES.yaml with the branch's revno.
+- In the ``build-prod`` directory, start a server:
+  ``python -m SimpleHTTPServer 8888``
 - In Chrome and Firefox, QA the application.  At the very least, load the app,
   open the charm panel, go to an inner page, and make sure there are no 404s
   or Javascript errors in the console.  We want a real QA script for the
   future.
 - For now, we will assume you would like to verify the release on the
   Launchpad staging server.  As we become more confident with this process,
-  this step may become unnecessary.  In the checkout, run ``make dist``.
+  this step may become unnecessary.  In the branch, run ``make dist``.
   This will step you through signing the tarball, connecting to
   Launchpad, and uploading the release.
 
@@ -209,7 +220,7 @@ Checklist for Making a Developer Release
   SimpleHTTPServer 8888``, and do a quick double-check in the browser that it
   is what you expect.  Looking at juju-ui/version.js should also show you the
   version you expect, as seen in the similar earlier step above.
-- Now it is time for the actual, real release.  Head back to your checkout and
+- Now it is time for the actual, real release.  Head back to your branch and
   run ``PROD=1 make dist``.  The computer will again walk you through the
   process.
 
@@ -228,14 +239,14 @@ Making Targets Quickly Without ``bzr``
 ======================================
 
 Within a checkout, a lightweight checkout, or a branch, you may run make as
-``NO_BZR=1 make [target]`` in order to prevent the Makefile from running 
+``NO_BZR=1 make [target]`` in order to prevent the Makefile from running
 any bzr commands, all of which access the parent branch over the network.
 Where bzr may have provided information such as the revno, sensible defaults
 are used instead.  As many of these bzr commands are used to populate
 variables regardless of the target, defining NO_BZR will have an effect on
 all targets, except dist, which will refuse to complete.
 
-- Note that this allows one to run any make target from the working copy, 
+- Note that this allows one to run any make target from the working copy,
   even if it is a lightweight checkout, by skipping steps that involve
   network access through bzr.  Because of this, make will assume that
   the revno is 0 and that the branch is clean and up to date without
@@ -279,9 +290,9 @@ Second part: what are we going to do?
 
   - Encourage but do not require each person to mention what card they plan to
     work on for the next 24 hours, if that has not already been discussed.
-  - Ask the person to mention any items that everyone should know: remind people
-    of reduced availability, request help such as code reviews or pair requests,
-    etc.
+  - Ask the person to mention any items that everyone should know: remind
+    people of reduced availability, request help such as code reviews or pair
+    requests, etc.
 
 Checklist for Running a Weekly Retrospective
 ============================================
