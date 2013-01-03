@@ -34,7 +34,6 @@ YUI.add('juju-topology-mega', function(Y) {
           dblclick: 'serviceDblClick',
           mouseenter: 'serviceMouseEnter',
           mouseleave: 'serviceMouseLeave'
-          //mouseleave: 'mousemove'
         },
 
         '.service-status': {
@@ -62,8 +61,7 @@ YUI.add('juju-topology-mega', function(Y) {
                 topo = self.get('component');
             container.all('.environment-menu.active').removeClass('active');
             self.service_click_actions.toggleControlPanel(null, self);
-            topo.fire('cancelRelationBuild');
-            topo.fire('hideSubordinateRelations');
+            topo.fire('clearState');
           }},
           mousemove: 'mousemove'
         },

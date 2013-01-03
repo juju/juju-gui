@@ -35,7 +35,7 @@ YUI.add('juju-topology-relation', function(Y) {
       },
       yui: {
         rendered: {callback: 'renderedHandler'},
-        clearState: {callback: 'cancelRelationBuild'},
+        clearState: {callback: 'clearState'},
         serviceMoved: {callback: 'updateLinkEndpoints'},
         servicesRendered: {callback: 'updateLinks'},
         snapToService: {callback: 'snapToService'},
@@ -242,7 +242,7 @@ YUI.add('juju-topology-relation', function(Y) {
         .filter(function(d) {
             return d.subordinate;
           })
-        .select('.sub-rel-block tspan')
+        .selectAll('.sub-rel-block tspan')
         .text(function(d) {
             return self.subordinateRelationsForService(d).length;
           });
@@ -337,7 +337,7 @@ YUI.add('juju-topology-relation', function(Y) {
       self.cursorBox = new views.BoundingBox();
       self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
       var point = self.cursorBox.getConnectorPair(d);
-      dragline.attr('x1', point[0][0])
+      dragline.attr('x3', point[0][0])
               .attr('y1', point[0][1])
               .attr('x2', point[1][0])
               .attr('y2', point[1][1]);
@@ -443,6 +443,11 @@ YUI.add('juju-topology-relation', function(Y) {
             view.removeRelation(d, context, view, confirmButton);
           },
           this)));
+    },
+
+    clearState: function() {
+      this.cancelRelationBuild();
+      this.hideSubordinateRelations();
     },
 
     cancelRelationBuild: function() {
