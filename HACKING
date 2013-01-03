@@ -71,7 +71,6 @@ is the api-port. An appropriate sample configuration::
       juju-origin: ppa
       api-port: 8081
 
-
 Note that juju-origin is set to the ppa, the api server runs outside of
 the container, and it is launched using whichever branch you're using.
 
