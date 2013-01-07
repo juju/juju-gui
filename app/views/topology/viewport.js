@@ -13,9 +13,8 @@ YUI.add('juju-topology-viewport', function(Y) {
   function styleToNumber(selector, style, defaultSize) {
     style = style || 'height';
     defaultSize = defaultSize || 0;
-    return parseInt(
-      Y.one(selector).getComputedStyle(style) || defaultSize,
-      10);
+    return parseInt(Y.one(selector).getComputedStyle(style) || defaultSize,
+                    10);
   }
 
 

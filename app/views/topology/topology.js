@@ -97,7 +97,7 @@ YUI.add('juju-topology', function(Y) {
 
       this.vis = vis;
 
-     Topology.superclass.renderOnce.apply(this, arguments);
+      Topology.superclass.renderOnce.apply(this, arguments);
       return this;
     },
 
@@ -124,11 +124,7 @@ YUI.add('juju-topology', function(Y) {
       this.zoom.x(this.xScale)
                .y(this.yScale)
                .scaleExtent([this.options.minZoom, this.options.maxZoom])
-               .on('zoom', function(evt) {
-                 // This will add the d3 properties to the
-                 // eventFacade
-                 self.fire('zoom', d3.event);
-               });
+               .on('zoom', function(evt) {self.fire('zoom', d3.event);});
       // After updating scale allow modules to perform any needed updates.
       this.fire('rescaled');
     },

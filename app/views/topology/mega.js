@@ -675,7 +675,7 @@ YUI.add('juju-topology-mega', function(Y) {
       picker.one('.picker-expanded').removeClass('active');
     },
 
-   updateServiceMenuLocation: function() {
+    updateServiceMenuLocation: function() {
       var topo = this.get('component'),
           container = this.get('container'),
           cp = container.one('.environment-menu.active'),

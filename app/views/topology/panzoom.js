@@ -59,11 +59,11 @@ YUI.add('juju-topology-panzoom', function(Y) {
       });
       // XXX: selection to module option
       slider.render('#slider-parent');
-      topo.recordSubscription(
-        this,
-        slider.after('valueChange', function(evt) {
-          self._fire_zoom((evt.newVal - evt.prevVal) / 100);
-        }));
+      topo.recordSubscription(this,
+                              slider.after('valueChange', function(evt) {
+                                self._fire_zoom(
+                                (evt.newVal - evt.prevVal) / 100);
+                              }));
       self.slider = slider;
     },
 
