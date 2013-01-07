@@ -547,10 +547,9 @@ YUI.add('juju-gui', function(Y) {
       var password = this.env.get('password');
       if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
         view.promptUser();
-        return;
       }
       // If there are credentials available and there has not been a successful
-      // login attempt and we are not waiting on a login attemt, try to log in.
+      // login attempt and we are not waiting on a login attempt, try to log in.
       if (Y.Lang.isValue(user) && Y.Lang.isValue(password) &&
           !this.env.waiting && !this.env.userIsAuthenticated) {
         this.env.login();

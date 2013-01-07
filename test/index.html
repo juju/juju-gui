@@ -34,7 +34,7 @@
            '/juju-ui/', '../juju-ui/', 1);
          // If we load modules asyncronously then the module loading may take
          // so long that the test definitions (and before/after calls) happen
-         // *after* the test runner is invoked.  In which case the test runner
+         // *after* the test runner is invoked.  In this case the test runner
          // will not know about the tests and therefore not run them.
          resource.async = false;
        }

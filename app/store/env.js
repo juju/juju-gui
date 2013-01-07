@@ -85,11 +85,6 @@ YUI.add('juju-env', function(Y) {
         this.set('connected', true);
         this.set('providerType', msg.provider_type);
         this.set('defaultSeries', msg.default_series);
-        // Once a connection is established with the back end, authenticate the
-        // user.
-        if (!noLogin) {
-          this.login();
-        }
         return;
       }
       this.fire('msg', msg);
@@ -218,10 +213,6 @@ YUI.add('juju-env', function(Y) {
       }
       var user = this.get('user');
       var password = this.get('password');
-      // If there are no credentials available yet try again in a little while.
-      if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
-        window.setTimeout(Y.bind(this.login, this), 500);
-      }
       this._send_rpc({op: 'login', user: user, password: password});
     },
 
