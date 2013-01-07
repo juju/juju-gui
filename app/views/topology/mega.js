@@ -362,18 +362,60 @@ YUI.add('juju-topology-mega', function(Y) {
         .call(drag)
         .attr('transform', function(d) {
             return d.translateStr();
+          })
+        .call(function() {
+            // Create new nodes.
+            self.createServiceNode(this);
           });
 
-      // Update
-      this.drawService(node);
+      // Update all nodes.
+      self.updateServiceNodes(node);
 
-      // Exit
+      // Remove old nodes.
       node.exit()
           .remove();
     },
 
-    // Called to draw a service in the 'update' phase
-    drawService: function(node) {
+    /**
+     * @method createServiceNode fills a service node with empty structures
+     *                           that will be filled out in the update stage.
+     * @param {object} node the node to construct.
+     * @return {null} side effects only.
+     */
+    createServiceNode: function(node) {
+      node.append('image')
+        .attr('class', 'service-block-image');
+
+      node.append('text').append('tspan')
+            .attr('class', 'name')
+            .text(function(d) {return d.id; });
+
+      node.append('text').append('tspan')
+            .attr('class', 'charm-label')
+            .attr('dy', '3em')
+            .text(function(d) { return d.charm; });
+
+      // Append status charts to service nodes.
+      var status_chart = node.append('g')
+            .attr('class', 'service-status');
+
+      // Add a mask svg
+      status_chart.append('image')
+            .attr('xlink:href', '/juju-ui/assets/svgs/service_health_mask.svg')
+            .attr('class', 'service-health-mask');
+
+      // Add the unit counts, visible only on hover.
+      status_chart.append('text')
+            .attr('class', 'unit-count hide-count');
+    },
+
+    /**
+     * @method updateServiceNodes fills the empty structures within a service
+     *                            node such that they match the db.
+     * @param {object} node the collection of nodes to update.
+     * @return {null} side effects only.
+     */
+    updateServiceNodes: function(node) {
       var self = this,
               topo = this.get('component'),
               service_scale = this.service_scale,
@@ -396,23 +438,24 @@ YUI.add('juju-topology-mega', function(Y) {
                 d.h = h;
                 return h;
               });
-
-      // Draw subordinate services
-      node.filter(function(d) {
-        return d.subordinate;
-      })
-            .append('image')
-            .attr('xlink:href', '/juju-ui/assets/svgs/sub_module.svg')
+      node.select('.service-block-image')
+            .attr('xlink:href', function(d) {
+            return d.subordinate ?
+                '/juju-ui/assets/svgs/sub_module.svg' :
+                '/juju-ui/assets/svgs/service_module.svg';
+          })
             .attr('width', function(d) {
-                    return d.w;
-                  })
+            return d.w;
+          })
             .attr('height', function(d) {
                     return d.h;
                   });
 
       // Draw a subordinate relation indicator.
-      var sub_relation = node.filter(function(d) {
-        return d.subordinate;
+      var subRelationIndicator = node.filter(function(d) {
+        return d.subordinate &&
+            d3.select(this)
+            .select('.sub-rel-block').empty();
       })
             .append('g')
             .attr('class', 'sub-rel-block')
@@ -422,26 +465,14 @@ YUI.add('juju-topology-mega', function(Y) {
                 return 'translate(' + [d.w, d.h / 2 - 26] + ')';
               });
 
-      sub_relation.append('image')
+      subRelationIndicator.append('image')
             .attr('xlink:href', '/juju-ui/assets/svgs/sub_relation.svg')
             .attr('width', 87)
             .attr('height', 47);
-      sub_relation.append('text').append('tspan')
+      subRelationIndicator.append('text').append('tspan')
             .attr('class', 'sub-rel-count')
             .attr('x', 64)
             .attr('y', 47 * 0.8);
-      // Draw non-subordinate services services
-      node.filter(function(d) {
-        return !d.subordinate;
-      })
-            .append('image')
-            .attr('xlink:href', '/juju-ui/assets/svgs/service_module.svg')
-            .attr('width', function(d) {
-                    return d.w;
-                  })
-            .attr('height', function(d) {
-                    return d.h;
-                  });
 
       // The following are sizes in pixels of the SVG assets used to
       // render a service, and are used to in calculating the vertical
@@ -452,54 +483,47 @@ YUI.add('juju-topology-mega', function(Y) {
               name_padding = 26,
               charm_label_padding = 118;
 
-      var service_labels = node.append('text').append('tspan')
-            .attr('class', 'name')
+      node.select('.name')
             .attr('style', function(d) {
-                // Programmatically size the font.
-                // Number derived from service assets:
-                // font-size 22px when asset is 224px.
-                return 'font-size:' + d.h *
-                    (name_size / service_height) + 'px';
-              })
+            // Programmatically size the font.
+            // Number derived from service assets:
+            // font-size 22px when asset is 224px.
+            return 'font-size:' + d.h *
+                (name_size / service_height) + 'px';
+          })
             .attr('x', function(d) {
-                    return d.w / 2;
-                  })
+            return d.w / 2;
+          })
             .attr('y', function(d) {
                 // Number derived from service assets:
                 // padding-top 26px when asset is 224px.
                 return d.h * (name_padding / service_height) + d.h *
                     (name_size / service_height) / 2;
-                  })
-            .text(function(d) {return d.id; });
-
-      var charm_labels = node.append('text').append('tspan')
-            .attr('class', 'charm-label')
+                  });
+      node.select('.charm-label')
             .attr('style', function(d) {
-                // Programmatically size the font.
-                // Number derived from service assets:
-                // font-size 16px when asset is 224px.
-                return 'font-size:' + d.h *
-                    (charm_label_size / service_height) + 'px';
-              })
+            // Programmatically size the font.
+            // Number derived from service assets:
+            // font-size 16px when asset is 224px.
+            return 'font-size:' + d.h *
+                (charm_label_size / service_height) + 'px';
+          })
             .attr('x', function(d) {
-                    return d.w / 2;
-                  })
+            return d.w / 2;
+          })
             .attr('y', function(d) {
                 // Number derived from service assets:
                 // padding-top: 118px when asset is 224px.
                 return d.h * (charm_label_padding / service_height) - d.h *
                     (charm_label_size / service_height) / 2;
-                  })
-            .attr('dy', '3em')
-            .text(function(d) { return d.charm; });
+                  });
 
-      // Show whether or not the service is exposed using an
-      // indicator (currently a simple circle).
-      // TODO this will likely change to an image with UI uodates.
-      var exposed_indicator = node.filter(function(d) {
+      // Show whether or not the service is exposed using an indicator.
+      node.filter(function(d) {
         return d.exposed;
       })
             .append('image')
+            .attr('class', 'exposed-indicator on')
             .attr('xlink:href', '/juju-ui/assets/svgs/exposed.svg')
             .attr('width', function(d) {
                 return d.w / 6;
@@ -513,11 +537,17 @@ YUI.add('juju-topology-mega', function(Y) {
             .attr('y', function(d) {
                 return d.getRelativeCenter()[1] - (d.w / 6) / 2;
               })
-            .attr('class', 'exposed-indicator on');
-      exposed_indicator.append('title')
+            .append('title')
             .text(function(d) {
             return d.exposed ? 'Exposed' : '';
           });
+
+      // Remove exposed indicator from nodes that are no longer exposed.
+      node.filter(function(d) {
+        return !d.exposed &&
+            !d3.select(this)
+            .select('.exposed-indicator').empty();
+      }).select('.exposed-indicator').remove();
 
       // Add the relative health of a service in the form of a pie chart
       // comprised of units styled appropriately.
@@ -541,19 +571,14 @@ YUI.add('juju-topology-mega', function(Y) {
                 return states[a.name] - states[b.name];
               });
 
-      // Append to status charts to non-subordinate services
-      var status_chart = node.append('g')
-            .attr('class', 'service-status')
+      node.select('.service-status')
             .attr('transform', function(d) {
-                return 'translate(' + d.getRelativeCenter() + ')';
-              });
-
-      // Add a mask svg
-      status_chart.append('image')
-            .attr('xlink:href', '/juju-ui/assets/svgs/service_health_mask.svg')
+            return 'translate(' + d.getRelativeCenter() + ')';
+          });
+      node.select('.service-health-mask')
             .attr('width', function(d) {
-                return d.w / 3;
-              })
+            return d.w / 3;
+          })
             .attr('height', function(d) {
                 return d.h / 3;
               })
@@ -566,7 +591,8 @@ YUI.add('juju-topology-mega', function(Y) {
 
       // Add the path after the mask image (since it requires the mask's
       // width to set its own).
-      var status_arcs = status_chart.selectAll('path')
+      node.select('.service-status')
+            .selectAll('path')
             .data(function(d) {
                 var aggregate_map = d.aggregated_status,
                     aggregate_list = [];
@@ -583,14 +609,10 @@ YUI.add('juju-topology-mega', function(Y) {
                 return d.data.name;
               });
 
-      // Add the unit counts, visible only on hover.
-      var unit_count = status_chart.append('text')
-            .attr('class', 'unit-count hide-count')
+      node.select('.unit-count')
             .text(function(d) {
-                return utils.humanizeNumber(d.unit_count);
-              });
-
-
+            return utils.humanizeNumber(d.unit_count);
+          });
     },
 
 
