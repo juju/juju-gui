@@ -1,6 +1,6 @@
 'use strict';
 
-describe('juju application notifications - login', function() {
+describe('juju application notifications', function() {
   var _setTimeout, _viewsHighlightRow, db, ERR_EV, juju, models, NO_OP,
       viewContainer, views, Y;
 
