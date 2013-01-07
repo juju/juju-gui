@@ -545,9 +545,7 @@ YUI.add('juju-gui', function(Y) {
       // If there are no stored credentials the user is prompted for some.
       var user = this.env.get('user');
       var password = this.env.get('password');
-      console.log('---------------', user, password);
       if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
-        console.log('view.promptUser()');
         view.promptUser();
         return;
       }
