@@ -42,11 +42,6 @@ YUI.add('juju-view-login', function(Y) {
       // The user's name is always "admin".
       env.set('user', 'admin');
       env.set('password', this._prompt('Password'));
-      // If we are not supposed to be prompting, then we shouldn't force
-      // navigation either.
-//      if (!noLoginPrompts) {
-//        this.get('app').fire('navigateTo', { url: '/' });
-//      }
     }
 
   });
