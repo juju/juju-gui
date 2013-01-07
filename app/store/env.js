@@ -1,5 +1,8 @@
 'use strict';
 
+// A global.
+var noLogin;
+
 YUI.add('juju-env', function(Y) {
 
   function Environment(config) {
