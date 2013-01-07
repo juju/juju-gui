@@ -973,11 +973,11 @@ YUI.add('juju-view-utils', function(Y) {
 
 }, '0.1.0', {
   requires: ['base-build',
-    'handlebars',
-    'node',
-    'view',
-    'panel',
-    'json-stringify',
-    'gallery-markdown',
-    'datatype-date-format']
+             'handlebars',
+             'node',
+             'view',
+             'panel',
+             'json-stringify',
+             'gallery-markdown',
+             'datatype-date-format']
 });

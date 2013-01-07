@@ -34,10 +34,10 @@ YUI.add('juju-view-environment', function(Y) {
 
           //If we need the initial HTML template
           // take care of that.
-          if (!this.rendered) {
+          if (!this._rendered) {
             EnvironmentView.superclass.render.apply(this, arguments);
             container.setHTML(Templates.overview());
-            this.rendered = true;
+            this._rendered = true;
           }
 
           if (!topo) {
@@ -61,8 +61,13 @@ YUI.add('juju-view-environment', function(Y) {
           return this;
         },
 
-        postRender: function() {
-          this.topo.attachContainer();
+        /**
+         * Render callback handler,
+         * triggered from app when the view renders.
+         *
+         * @method rendered
+         **/
+        rendered: function() {
           this.topo.fire('rendered');
           // Bind d3 events (manually).
           this.topo.bindAllD3Events();

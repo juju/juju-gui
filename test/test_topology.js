@@ -81,6 +81,7 @@ describe('topology', function() {
     topo.setAttrs({container: container, db: db});
     topo.addModule(views.MegaModule);
     topo.addModule(views.PanZoomModule);
+    topo.addModule(views.ViewportModule);
     return topo;
   }
 

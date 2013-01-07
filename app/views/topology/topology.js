@@ -25,7 +25,12 @@ YUI.add('juju-topology', function(Y) {
   var Topology = Y.Base.create('Topology', d3ns.Component, [], {
     initializer: function(options) {
       Topology.superclass.constructor.apply(this, arguments);
-      this.options = Y.mix(options || {});
+      this.options = Y.mix(options || {
+        minZoom: 25,
+        maxZoom: 200
+      });
+
+      this._subscriptions = [];
     },
 
     /**
@@ -70,25 +75,9 @@ YUI.add('juju-topology', function(Y) {
       // Take the first element.
       this._templateRendered = true;
 
-      // Create a pan/zoom behavior manager.
-      this.xScale = d3.scale.linear()
-                      .domain([-width / 2, width / 2])
-                      .range([0, width]);
-      this.yScale = d3.scale.linear()
-                      .domain([-height / 2, height / 2])
-                      .range([height, 0]);
-
-      // Include very basic behavior, fire
-      // yui event for anything more complex.
-      this.zoom = d3.behavior.zoom()
-                    .x(this.xScale)
-                    .y(this.yScale)
-                    .scaleExtent([0.25, 2.0])
-                    .on('zoom', function(evt) {
-                        // This will add the d3 properties to the
-                        // eventFacade
-                        self.fire('zoom', d3.event);
-                     });
+      // These are defaults, a (Viewport) Module
+      // can implement policy around them.
+      this.computeScales();
 
       // Set up the visualization with a pack layout.
       vis = d3.select(container.getDOMNode())
@@ -98,7 +87,8 @@ YUI.add('juju-topology', function(Y) {
               .attr('width', width)
               .attr('height', height)
               .append('svg:g')
-              .call(this.zoom)
+              .attr('class', 'zoom-plane')
+              .call(this.zoom) // Set by computeScales.
               .append('g');
 
       vis.append('svg:rect')
@@ -107,28 +97,41 @@ YUI.add('juju-topology', function(Y) {
 
       this.vis = vis;
 
-      // Build out scale and zoom.
-      // These are defaults, a (Viewport) Module
-      // can implement policy around them.
-      this.sizeChangeHandler();
-      this.on('sizeChanged', this.sizeChangeHandler);
-
-      Topology.superclass.renderOnce.apply(this, arguments);
+     Topology.superclass.renderOnce.apply(this, arguments);
       return this;
     },
 
-    sizeChangeHandler: function() {
+    computeScales: function() {
       var self = this,
           width = this.get('width'),
           height = this.get('height');
 
+      if (!this.xScale) {
+        this.xScale = d3.scale.linear();
+        this.yScale = d3.scale.linear();
+        this.zoom = d3.behavior.zoom();
+      }
       // Update the pan/zoom behavior manager.
       this.xScale.domain([-width / 2, width / 2])
-        .range([0, width]);
+        .range([0, width])
+        .clamp(true)
+        .nice();
       this.yScale.domain([-height / 2, height / 2])
-        .range([height, 0]);
+        .range([height, 0])
+        .clamp(true)
+        .nice();
+
       this.zoom.x(this.xScale)
-        .y(this.yScale);
+               .y(this.yScale)
+               .scaleExtent([this.options.minZoom, this.options.maxZoom])
+               .on('zoom', function(evt) {
+                 // This will add the d3 properties to the
+                 // eventFacade
+                 self.fire('zoom', d3.event);
+               });
+
+      // After updating scale allow modules to perform any needed updates.
+      this.fire('rescaled');
     }
 
   }, {

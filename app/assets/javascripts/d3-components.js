@@ -200,6 +200,7 @@ YUI.add('d3-components', function(Y) {
           // This is a minor violation (extension)
           // of the interface, but suits us well.
           d3.event = evt;
+          console.debug('Handler for', name, selector);
           return handler.call(
               evt.currentTarget.getDOMNode(), d, context);
         };
@@ -252,8 +253,7 @@ YUI.add('d3-components', function(Y) {
                 // (re)Register the event to bubble.
                 self.publish(name, {emitFacade: true});
               }
-              console.debug('d3 component yui event binding', target.toString(),
-                            eventPhase, name);
+              console.debug('yui event binding', module.name, eventPhase, name);
               subscriptions.push(
                   target[eventPhase](
                   name, callback, handler.context));
@@ -317,6 +317,7 @@ YUI.add('d3-components', function(Y) {
           adapter = function() {
             var selection = d3.select(this),
                 d = selection.data()[0];
+            console.debug('D3 Handler for', selector, trigger);
             return handler.callback.call(this, d, handler.context);
           };
           d3.selectAll(selector).on(trigger, adapter);
@@ -510,4 +511,5 @@ YUI.add('d3-components', function(Y) {
   'requires': ['d3',
     'base',
     'array-extras',
-    'event']});
+    'event',
+    'event-resize']});

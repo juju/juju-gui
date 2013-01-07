@@ -153,9 +153,6 @@ YUI.add('juju-topology-mega', function(Y) {
         }
       },
       yui: {
-        windowresize: {
-          callback: 'setSizesFromViewport',
-          context: 'module'},
         rendered: 'renderedHandler'
       }
     },
@@ -829,9 +826,6 @@ YUI.add('juju-topology-mega', function(Y) {
       var container = this.get('container');
 
       this.update();
-
-      // Set the sizes from the viewport.
-      this.setSizesFromViewport();
 
       // Ensure relation labels are sized properly.
       container.all('.rel-label').each(function(label) {

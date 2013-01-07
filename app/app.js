@@ -550,7 +550,7 @@ YUI.add('juju-gui', function(Y) {
 
       this.showView('environment', options, {
         callback: function() {
-          this.views.environment.instance.postRender();
+          this.views.environment.instance.rendered();
         },
         render: true});
     },
