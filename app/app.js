@@ -243,8 +243,8 @@ YUI.add('juju-gui', function(Y) {
       // When the provider type becomes available, display it.
       this.env.after('providerTypeChange', this.onProviderTypeChange);
 
-//      // Once the user logs in we need to redraw.
-//      this.env.after('login', this.dispatch, this);
+      // Once the user logs in we need to redraw.
+      this.env.after('login', this.dispatch, this);
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);

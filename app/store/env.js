@@ -84,7 +84,9 @@ YUI.add('juju-env', function(Y) {
         this.set('defaultSeries', msg.default_series);
         // Once a connection is established with the back end, authenticate the
         // user.
-        this.login();
+        if (!noLogin) {
+          this.login();
+        }
         return;
       }
       this.fire('msg', msg);
