@@ -61,7 +61,6 @@ YUI.add('juju-topology-viewport', function(Y) {
       // incorrectly.
       canvas.setStyles({height: 600, width: 800});
       var dimensions = utils.getEffectiveViewportSize(true, 800, 600);
-      console.log('resize viewport', dimensions);
       svg.setAttribute('width', dimensions.width);
       svg.setAttribute('height', dimensions.height);
 

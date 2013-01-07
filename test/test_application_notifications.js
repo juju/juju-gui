@@ -4,7 +4,7 @@ describe('juju application notifications', function() {
   var _setTimeout, _viewsHighlightRow, db, ERR_EV, juju, models, NO_OP,
       viewContainer, views, Y;
 
-  before(function() {
+  before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
       'juju-models',
       'juju-views',
@@ -16,6 +16,7 @@ describe('juju application notifications', function() {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
+      done();
     });
 
     ERR_EV = {
@@ -192,12 +193,12 @@ describe('juju application notifications', function() {
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
-        var module = view.topo.modules.MegaModule;
+        var module = view.topo.modules.RelationModule;
         // The callback wants to remove the pending relation from the db.
         db.relations.remove = NO_OP;
         // The _addRelationCallback args are: view, relation id, event.
         var args = [module, 'relation_id', ERR_EV];
-        module.service_click_actions._addRelationCallback.apply(module, args);
+        module._addRelationCallback.apply(module, args);
         assert.equal(1, db.notifications.size());
       });
 
@@ -205,7 +206,7 @@ describe('juju application notifications', function() {
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
-        var module = view.topo.modules.MegaModule;
+        var module = view.topo.modules.RelationModule;
         // The _removeRelationCallback args are: view, relation element,
         // relation id, confirm button, event.
         var args = [

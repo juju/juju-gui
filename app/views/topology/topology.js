@@ -129,11 +129,18 @@ YUI.add('juju-topology', function(Y) {
                  // eventFacade
                  self.fire('zoom', d3.event);
                });
-
       // After updating scale allow modules to perform any needed updates.
       this.fire('rescaled');
-    }
+    },
 
+    /*
+     * Utility method to get a service object from the DB
+     * given a BoundingBox.
+     */
+    serviceForBox: function(boundingBox) {
+      var db = this.get('db');
+      return db.services.getById(boundingBox.id);
+    }
   }, {
     ATTRS: {
       /**

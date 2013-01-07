@@ -32,11 +32,11 @@ To make releases, you'll need pytz::
 
   $ sudo apt-get install python-tz
 
-The gui frontend can be installed with::
+The gui frontend can be installed and run with::
 
   $ bzr branch lp:juju-gui trunk
   $ cd trunk
-  $ make server
+  $ make prod
 
 It may take a while for the server to start the first time as npm will
 need to download packages.  When ready, the server will print:
@@ -45,9 +45,17 @@ Server listening on 8888
 
 You can then access the GUI at <http://localhost:8888/>.
 
-You'll also need to deploy a juju environment with REST api access.
+The front-end needs to talk to a Juju backend.  So first you'll need
+to install Juju::
+
+   $ sudo apt-get install juju zookeeper
+
+Next you'll also need to deploy a juju environment with REST api access.
 Currently that work resides in a pipeline of juju branches. The
-recommended branch to use as a server is ``lp:~hazmat/juju/rapi-rollup``.
+recommended branch to use as a server is
+``lp:~hazmat/juju/rapi-rollup``::
+
+   $ bzr branch lp:~hazmat/juju/rapi-rollup
 
 You can use it with any environment, but for dev purposes, a local
 environment works well. One environment option specific to this branch
@@ -97,19 +105,21 @@ api server for establishing a websocket).
 Running Unit Tests
 ==================
 
-  $ make test
+  $ make test-prod
 
 Running Lint
 ============
 
+  $ sudo apt-get install python-virtualenv
   $ make lint
 
 API Documentation
 =================
 
-Generated JavaScript documentation is available in the yuidoc directory after
-running the command ``make yuidoc``. You can view the docs by running::
+Generated JavaScript documentation is available in the yuidoc
+directory.  You can view the docs by running::
 
+  $ make yuidoc
   $ xdg-open yuidoc/index.html
 
 The `documentation <http://yui.github.com/yuidoc/syntax/>`_ for YUIDoc markup
@@ -125,7 +135,7 @@ Sphinx::
 
 Build the documentation::
 
-  $ make doc
+  $ make docs
 
 (This will also generate the above mentioned yuidoc documentation.)
 
