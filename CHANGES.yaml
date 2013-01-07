@@ -21,6 +21,10 @@
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
 - unreleased:
+- 0.1.3:
+    - Avoid loading external not secure resources
+- 0.1.2:
+    - Enable frontend TLS
 - 0.1.1:
     - First tarball release
 - 0.1.0:

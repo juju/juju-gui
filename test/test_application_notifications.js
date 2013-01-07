@@ -193,12 +193,12 @@ describe('juju application notifications - login', function() {
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
-        var module = view.topo.modules.MegaModule;
+        var module = view.topo.modules.RelationModule;
         // The callback wants to remove the pending relation from the db.
         db.relations.remove = NO_OP;
         // The _addRelationCallback args are: view, relation id, event.
         var args = [module, 'relation_id', ERR_EV];
-        module.service_click_actions._addRelationCallback.apply(module, args);
+        module._addRelationCallback.apply(module, args);
         assert.equal(1, db.notifications.size());
       });
 
@@ -206,7 +206,7 @@ describe('juju application notifications - login', function() {
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
-        var module = view.topo.modules.MegaModule;
+        var module = view.topo.modules.RelationModule;
         // The _removeRelationCallback args are: view, relation element,
         // relation id, confirm button, event.
         var args = [

@@ -393,10 +393,11 @@
          };
 
          // Toggle the control panel for the Add Relation button.
-         var module = view.topo.modules.MegaModule;
-         module.service_click_actions.toggleControlPanel(
+         var module = view.topo.modules.RelationModule;
+         var mega = view.topo.modules.MegaModule;
+         mega.service_click_actions.toggleControlPanel(
              d3.select(service.getDOMNode()).datum(),
-             module,
+             mega,
              service);
          // Mock an event object so that d3.mouse does not throw a NPE.
          d3.event = {};
@@ -408,7 +409,7 @@
                .size()
                .should.equal(1);
          // Start the process of adding a relation.
-         module.service_click_actions.ambiguousAddRelationCheck(
+         module.ambiguousAddRelationCheck(
              d3.select(service.next().getDOMNode()).datum(),
              module,
              service.next());
@@ -443,7 +444,7 @@
          container.all('.to-remove')
               .size()
               .should.equal(1);
-         view.topo.modules.MegaModule.get('rmrelation_dialog').hide();
+         view.topo.modules.RelationModule.get('rmrelation_dialog').hide();
        });
 
     it('must not allow removing a subordinate relation between services',
@@ -484,12 +485,14 @@
           view.render();
 
           // If the user has clicked on the "Add Relation" menu item...
-          var module = view.topo.modules.MegaModule;
+          var module = view.topo.modules.RelationModule;
+          var mega = view.topo.modules.MegaModule;
+          var topo = module.get('component');
           module.startRelation(service);
-          assert.isTrue(module.buildingRelation);
+          assert.isTrue(topo.buildingRelation);
           // ...clicking on the background causes the relation drag to stop.
-          module.backgroundClicked();
-          assert.isFalse(module.buildingRelation);
+          mega.backgroundClicked();
+          assert.isFalse(topo.buildingRelation);
         });
 
     // TODO: This will be fully testable once we have specification on the

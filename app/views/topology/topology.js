@@ -129,6 +129,15 @@ YUI.add('juju-topology', function(Y) {
         .range([height, 0]);
       this.zoom.x(this.xScale)
         .y(this.yScale);
+    },
+
+    /*
+         * Utility method to get a service object from the DB
+         * given a BoundingBox.
+         */
+    serviceForBox: function(boundingBox) {
+      var db = this.get('db');
+      return db.services.getById(boundingBox.id);
     }
 
   }, {
