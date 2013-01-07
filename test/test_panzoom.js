@@ -26,7 +26,7 @@ describe('pan zoom module', function() {
     db = new models.Database();
     var view = new views.environment({container: viewContainer, db: db});
     view.render();
-    view.postRender();
+    view.rendered();
     pz = view.topo.modules.PanZoomModule;
     topo = pz.get('component');
     vis = topo.vis;

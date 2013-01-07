@@ -68,7 +68,8 @@ YUI.add('juju-topology-viewport', function(Y) {
       newSize.height = dimensions.height;
       svg.one('.zoom-plane').setStyles(newSize);
       canvas.setStyles(newSize);
-      rect.setStyles(newSize);
+      rect.setAttribute('width', dimensions.width);
+      rect.setAttribute('height', dimensions.height);
       // Reset the scale parameters
       topo.set('size', [dimensions.width, dimensions.height]);
       topo.fire('afterPageSizeRecalculation');
