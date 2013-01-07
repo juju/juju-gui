@@ -91,10 +91,6 @@ YUI.add('juju-topology', function(Y) {
               .call(this.zoom) // Set by computeScales.
               .append('g');
 
-      vis.append('svg:rect')
-         .attr('class', 'graph')
-         .attr('fill', 'rgba(255,255,255,0)');
-
       this.vis = vis;
 
       Topology.superclass.renderOnce.apply(this, arguments);

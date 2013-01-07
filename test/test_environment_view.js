@@ -296,10 +296,10 @@
          view.rendered();
          var svg = Y.one('svg');
 
-         parseInt(svg.one('rect').getAttribute('height'), 10)
+         parseInt(svg.one('g g').getAttribute('height'), 10)
           .should.equal(
          parseInt(svg.getComputedStyle('height'), 10));
-         parseInt(svg.one('rect').getAttribute('width'), 10)
+         parseInt(svg.one('g g').getAttribute('width'), 10)
           .should.equal(
          parseInt(svg.getComputedStyle('width'), 10));
        }
