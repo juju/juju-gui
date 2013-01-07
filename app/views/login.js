@@ -13,34 +13,6 @@ YUI.add('juju-view-login', function(Y) {
     _prompted: false,
 
     /**
-     * Initialize the login view.
-     *
-     * @return {undefined} Nothing.
-     */
-    initializer: function() {
-      this.userIsAuthenticated = false;
-      // When the server tells us the outcome of a login attempt we record
-      // the result.
-      this.get('env').after('log', this.handleLoginEvent, this);
-    },
-
-    /**
-     * React to the results of sending a login message to the server.
-     *
-     * @method handleLoginEvent
-     * @param {Object} evt The event to which we are responding.
-     * @return {undefined} Nothing.
-     */
-    handleLoginEvent: function(evt) {
-      // We are only interested in the responses to login events.
-      if (evt.data.op !== 'login') {
-        return;
-      }
-      this.userIsAuthenticated = !!evt.data.result;
-      this.waiting = false;
-    },
-
-    /**
      * Prompt the user for input.
      *
      * Does nothing if a special global flag has been set.  This is used so
@@ -66,48 +38,15 @@ YUI.add('juju-view-login', function(Y) {
      */
     promptUser: function() {
       this._prompted = true;
-      this.set('user', this._prompt('User name'));
-      this.set('password', this._prompt('Password'));
-      this.waiting = true;
-    },
-
-    /**
-     * Send a login RPC message to the server.
-     *
-     * @method validateCredentials
-     * @param {String} user The user name.
-     * @param {String} password The password.
-     * @return {undefined} Nothing.
-     */
-    validateCredentials: function(user, password) {
-      this.get('env').login(user, password);
-    },
-
-    /**
-     * Attempt to log the user in.
-     *
-     * If a login attempt is outstanding, this function is a no-op.
-     *
-     * @method login
-     * @return {undefined} Nothing.
-     */
-    login: function() {
-      // If the server connection is not yet ready, then there is no use in
-      // trying to authenticate.
       var env = this.get('env');
-      if (!env.get('connected')) {
-        return;
-      }
-      // If the credentials are known good or we are waiting to find out, exit
-      // early.
-      if (this.userIsAuthenticated || this.waiting) {
-        return;
-      }
-      // If there are no stored credentials, prompt the user for some.
-      if (!Y.Lang.isValue(this.get('user'))) {
-        this.promptUser();
-      }
-      this.validateCredentials(this.get('user'), this.get('password'));
+      // The user's name is always "admin".
+      env.set('user', 'admin');
+      env.set('password', this._prompt('Password'));
+      // If we are not supposed to be prompting, then we shouldn't force
+      // navigation either.
+//      if (!noLoginPrompts) {
+//        this.get('app').fire('navigateTo', { url: '/' });
+//      }
     }
 
   });

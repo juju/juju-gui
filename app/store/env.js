@@ -12,6 +12,8 @@ YUI.add('juju-env', function(Y) {
   Environment.ATTRS = {
     'socket_url': {},
     'conn': {},
+    'user': {},
+    'password': {},
     'connected': {value: false},
     'debug': {value: false}
   };
@@ -30,6 +32,11 @@ YUI.add('juju-env', function(Y) {
       this._counter = 0;
       // mapping txn-id callback if any.
       this._txn_callbacks = {};
+      // Consider the user unauthenticated until proven otherwise.
+      this.userIsAuthenticated = false;
+      // When the server tells us the outcome of a login attempt we record
+      // the result.
+      this.on('login', this.handleLoginEvent, this);
     },
 
     destructor: function() {
@@ -75,9 +82,30 @@ YUI.add('juju-env', function(Y) {
         this.set('connected', true);
         this.set('providerType', msg.provider_type);
         this.set('defaultSeries', msg.default_series);
+        // Once a connection is established with the back end, authenticate the
+        // user.
+        this.login();
         return;
       }
       this.fire('msg', msg);
+    },
+
+    /**
+     * React to the results of sending a login message to the server.
+     *
+     * @method handleLoginEvent
+     * @param {Object} evt The event to which we are responding.
+     * @return {undefined} Nothing.
+     */
+    handleLoginEvent: function(evt) {
+      // We are only interested in the responses to login events.
+      this.userIsAuthenticated = !!evt.data.result;
+      this.waiting = false;
+      // If the credentials were rejected remove them.
+      if (!this.userIsAuthenticated) {
+        this.set('user', undefined);
+        this.set('password', undefined);
+      }
     },
 
     dispatch_result: function(data) {
@@ -172,15 +200,24 @@ YUI.add('juju-env', function(Y) {
     },
 
     /**
-     * Attempt to log the user in.
-     * @param {Object} user The user name.
-     * @param {Object} password The user's password.
-     * @param {Object} [callback] A function to call when a response to the
-     *   message arrives.
+     * Attempt to log the user in.  Credentials must have been previously
+     * stored on the environment.  If not, this method will schedule a call to
+     * itself in the future in order to try again.
+     *
      * @return {undefined} Nothing.
      */
-    login: function(user, password, callback) {
-      this._send_rpc({op: 'login', user: user, password: password}, callback);
+    login: function() {
+      // If the user is already authenticated there is nothing to do.
+      if (this.userIsAuthenticated) {
+        return;
+      }
+      var user = this.get('user');
+      var password = this.get('password');
+      // If there are no credentials available yet try again in a little while.
+      if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
+        window.setTimeout(Y.bind(this.login, this), 500);
+      }
+      this._send_rpc({op: 'login', user: user, password: password});
     },
 
     unexpose: function(service, callback) {

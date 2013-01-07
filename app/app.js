@@ -31,7 +31,7 @@ YUI.add('juju-gui', function(Y) {
 
       login: {
         type: 'juju.views.login',
-        preserve: true
+        preserve: false
       },
 
       service: {
@@ -242,6 +242,9 @@ YUI.add('juju-gui', function(Y) {
 
       // When the provider type becomes available, display it.
       this.env.after('providerTypeChange', this.onProviderTypeChange);
+
+      // Once the user logs in we need to redraw.
+      this.env.after('login', this.dispatch, this);
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);
@@ -534,14 +537,31 @@ YUI.add('juju-gui', function(Y) {
       var viewInfo = this.getViewInfo('login');
       if (!viewInfo.instance) {
         viewInfo.instance = new views.LoginView({
+          app: this,
           env: this.env
         });
       }
       var view = viewInfo.instance;
-      // If there has not been a successful login attempt, prompt for
-      // credentials.
-      if (!view.waiting && !view.userIsAuthenticated) {
-        view.login();
+      // If there are no stored credentials the user is prompted for some.
+      var user = this.env.get('user');
+      var password = this.env.get('password');
+      console.log('---------------', user, password);
+      if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
+        console.log('view.promptUser()');
+        view.promptUser();
+        return;
+      }
+      // If there are credentials available and there has not been a successful
+      // login attempt and we are not waiting on a login attemt, try to log in.
+      if (Y.Lang.isValue(user) && Y.Lang.isValue(password) &&
+          !this.env.waiting && !this.env.userIsAuthenticated) {
+        this.env.login();
+        return;
+      }
+      // If there has not been a successful login attempt, do not let the route
+      // dispatch proceed.
+      if (this.env.waiting || !this.env.userIsAuthenticated) {
+        return;
       }
       next();
     },
