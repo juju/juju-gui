@@ -534,19 +534,14 @@ YUI.add('juju-gui', function(Y) {
      *
      */
     check_user_credentials: function(req, res, next) {
-      var viewInfo = this.getViewInfo('login');
-      if (!viewInfo.instance) {
-        viewInfo.instance = new views.LoginView({
-          app: this,
-          env: this.env
-        });
-      }
-      var view = viewInfo.instance;
       // If there are no stored credentials the user is prompted for some.
       var user = this.env.get('user');
       var password = this.env.get('password');
       if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
-        view.promptUser();
+        this.showView('login', {
+          app: this,
+          env: this.env
+        });
       }
       // If there are credentials available and there has not been a successful
       // login attempt and we are not waiting on a login attempt, try to log in.
