@@ -81,12 +81,12 @@ YUI.add('juju-topology', function(Y) {
       this.computeScales();
 
       // Set up the visualization with a pack layout.
-      svg =  d3.select(container.getDOMNode())
-               .selectAll('.topology-canvas')
-               .append('svg:svg')
-               .attr('pointer-events', 'all')
-               .attr('width', width)
-               .attr('height', height);
+      svg = d3.select(container.getDOMNode())
+              .selectAll('.topology-canvas')
+              .append('svg:svg')
+              .attr('pointer-events', 'all')
+              .attr('width', width)
+              .attr('height', height);
       this.svg = svg;
 
       this.zoomPlane = svg.append('rect')
@@ -128,7 +128,7 @@ YUI.add('juju-topology', function(Y) {
                .y(this.yScale)
                .scaleExtent([this.options.minZoom, this.options.maxZoom])
                .on('zoom', function(evt) {self.fire('zoom', d3.event);});
-   },
+    },
 
     /*
      * Utility method to get a service object from the DB
@@ -153,7 +153,7 @@ YUI.add('juju-topology', function(Y) {
        * A [width, height] tuple representing canvas size.
        **/
       size: {value: [640, 480]},
-            width: {
+      width: {
         getter: function() {return this.get('size')[0];}
       },
 

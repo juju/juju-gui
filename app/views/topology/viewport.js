@@ -41,7 +41,7 @@ YUI.add('juju-topology-viewport', function(Y) {
      * of this function.
      */
     resized: function() {
-     var topo = this.get('component'),
+      var topo = this.get('component'),
           container = this.get('container'),
           vis = topo.vis,
           svg = container.one('svg'),

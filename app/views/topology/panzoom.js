@@ -70,7 +70,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
                               slider.after('valueChange', function(evt) {
                                 if (d3.event && d3.event.scale &&
                                     d3.event.translate) {
-                                  console.debug("slider set in scale");
                                   return;
                                 }
                                 self._fire_zoom(self.toScale(evt.newVal));
@@ -86,7 +85,9 @@ YUI.add('juju-topology-panzoom', function(Y) {
           width = topo.get('width'),
           options = topo.options;
 
-      if (!this.slider) return;
+      if (!this.slider) {
+        return;
+      }
       slider.set('value', this.toSlider(evt.scale));
       this.rescale(d3.event);
     },
@@ -160,7 +161,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
       // Store the current value of translate as well, by copying the event
       // array in order to avoid reference sharing.
       this._translate = Y.mix(evt.translate);
-      console.log("doing transform", evt.scale, evt.translate);
       vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
     },
