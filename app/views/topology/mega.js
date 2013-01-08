@@ -387,26 +387,26 @@ YUI.add('juju-topology-mega', function(Y) {
         .attr('class', 'service-block-image');
 
       node.append('text').append('tspan')
-            .attr('class', 'name')
-            .text(function(d) {return d.id; });
+        .attr('class', 'name')
+        .text(function(d) {return d.id; });
 
       node.append('text').append('tspan')
-            .attr('class', 'charm-label')
-            .attr('dy', '3em')
-            .text(function(d) { return d.charm; });
+        .attr('class', 'charm-label')
+        .attr('dy', '3em')
+        .text(function(d) { return d.charm; });
 
       // Append status charts to service nodes.
       var status_chart = node.append('g')
-            .attr('class', 'service-status');
+        .attr('class', 'service-status');
 
       // Add a mask svg
       status_chart.append('image')
-            .attr('xlink:href', '/juju-ui/assets/svgs/service_health_mask.svg')
-            .attr('class', 'service-health-mask');
+        .attr('xlink:href', '/juju-ui/assets/svgs/service_health_mask.svg')
+        .attr('class', 'service-health-mask');
 
       // Add the unit counts, visible only on hover.
       status_chart.append('text')
-            .attr('class', 'unit-count hide-count');
+        .attr('class', 'unit-count hide-count');
     },
 
     /**
@@ -417,128 +417,127 @@ YUI.add('juju-topology-mega', function(Y) {
      */
     updateServiceNodes: function(node) {
       var self = this,
-              topo = this.get('component'),
-              service_scale = this.service_scale,
-              service_scale_width = this.service_scale_width,
-              service_scale_height = this.service_scale_height;
+          topo = this.get('component'),
+          service_scale = this.service_scale,
+          service_scale_width = this.service_scale_width,
+          service_scale_height = this.service_scale_height;
 
       // Size the node for drawing.
-      node
-            .attr('width', function(d) {
-            // NB: if a service has zero units, as is possible with
-            // subordinates, then default to 1 for proper scaling, as
-            // a value of 0 will return a scale of 0 (this does not
-            // affect the unit count, just the scale of the service).
-            var w = service_scale(d.unit_count || 1);
-            d.w = w;
-            return w;
-          })
-            .attr('height', function(d) {
-                var h = service_scale(d.unit_count || 1);
-                d.h = h;
-                return h;
-              });
+      node.attr('width', function(d) {
+        // NB: if a service has zero units, as is possible with
+        // subordinates, then default to 1 for proper scaling, as
+        // a value of 0 will return a scale of 0 (this does not
+        // affect the unit count, just the scale of the service).
+        var w = service_scale(d.unit_count || 1);
+        d.w = w;
+        return w;
+      })
+        .attr('height', function(d) {
+            var h = service_scale(d.unit_count || 1);
+            d.h = h;
+            return h;
+          });
       node.select('.service-block-image')
-            .attr('xlink:href', function(d) {
+        .attr('xlink:href', function(d) {
             return d.subordinate ?
                 '/juju-ui/assets/svgs/sub_module.svg' :
                 '/juju-ui/assets/svgs/service_module.svg';
           })
-            .attr('width', function(d) {
+        .attr('width', function(d) {
             return d.w;
           })
-            .attr('height', function(d) {
-                    return d.h;
-                  });
+        .attr('height', function(d) {
+            return d.h;
+          });
 
       // Draw a subordinate relation indicator.
       var subRelationIndicator = node.filter(function(d) {
         return d.subordinate &&
             d3.select(this)
-            .select('.sub-rel-block').empty();
+                  .select('.sub-rel-block').empty();
       })
-            .append('g')
-            .attr('class', 'sub-rel-block')
-            .attr('transform', function(d) {
-                // Position the block so that the relation indicator will
-                // appear at the right connector.
-                return 'translate(' + [d.w, d.h / 2 - 26] + ')';
-              });
+        .append('g')
+        .attr('class', 'sub-rel-block')
+        .attr('transform', function(d) {
+            // Position the block so that the relation indicator will
+            // appear at the right connector.
+            return 'translate(' + [d.w, d.h / 2 - 26] + ')';
+          });
 
       subRelationIndicator.append('image')
-            .attr('xlink:href', '/juju-ui/assets/svgs/sub_relation.svg')
-            .attr('width', 87)
-            .attr('height', 47);
+        .attr('xlink:href', '/juju-ui/assets/svgs/sub_relation.svg')
+        .attr('width', 87)
+        .attr('height', 47);
       subRelationIndicator.append('text').append('tspan')
-            .attr('class', 'sub-rel-count')
-            .attr('x', 64)
-            .attr('y', 47 * 0.8);
+        .attr('class', 'sub-rel-count')
+        .attr('x', 64)
+        .attr('y', 47 * 0.8);
 
       // The following are sizes in pixels of the SVG assets used to
       // render a service, and are used to in calculating the vertical
       // positioning of text down along the service block.
       var service_height = 224,
-              name_size = 22,
-              charm_label_size = 16,
-              name_padding = 26,
-              charm_label_padding = 118;
+          name_size = 22,
+          charm_label_size = 16,
+          name_padding = 26,
+          charm_label_padding = 118;
 
       node.select('.name')
-            .attr('style', function(d) {
+        .attr('style', function(d) {
             // Programmatically size the font.
             // Number derived from service assets:
             // font-size 22px when asset is 224px.
             return 'font-size:' + d.h *
                 (name_size / service_height) + 'px';
           })
-            .attr('x', function(d) {
+        .attr('x', function(d) {
             return d.w / 2;
           })
-            .attr('y', function(d) {
-                // Number derived from service assets:
-                // padding-top 26px when asset is 224px.
-                return d.h * (name_padding / service_height) + d.h *
-                    (name_size / service_height) / 2;
-                  });
+        .attr('y', function(d) {
+            // Number derived from service assets:
+            // padding-top 26px when asset is 224px.
+            return d.h * (name_padding / service_height) + d.h *
+                (name_size / service_height) / 2;
+          });
       node.select('.charm-label')
-            .attr('style', function(d) {
+        .attr('style', function(d) {
             // Programmatically size the font.
             // Number derived from service assets:
             // font-size 16px when asset is 224px.
             return 'font-size:' + d.h *
                 (charm_label_size / service_height) + 'px';
           })
-            .attr('x', function(d) {
+        .attr('x', function(d) {
             return d.w / 2;
           })
-            .attr('y', function(d) {
-                // Number derived from service assets:
-                // padding-top: 118px when asset is 224px.
-                return d.h * (charm_label_padding / service_height) - d.h *
-                    (charm_label_size / service_height) / 2;
-                  });
+        .attr('y', function(d) {
+            // Number derived from service assets:
+            // padding-top: 118px when asset is 224px.
+            return d.h * (charm_label_padding / service_height) - d.h *
+                (charm_label_size / service_height) / 2;
+          });
 
       // Show whether or not the service is exposed using an indicator.
       node.filter(function(d) {
         return d.exposed;
       })
-            .append('image')
-            .attr('class', 'exposed-indicator on')
-            .attr('xlink:href', '/juju-ui/assets/svgs/exposed.svg')
-            .attr('width', function(d) {
-                return d.w / 6;
-              })
-            .attr('height', function(d) {
-                return d.w / 6;
-              })
-            .attr('x', function(d) {
-                return d.w / 10 * 7;
-              })
-            .attr('y', function(d) {
-                return d.getRelativeCenter()[1] - (d.w / 6) / 2;
-              })
-            .append('title')
-            .text(function(d) {
+        .append('image')
+        .attr('class', 'exposed-indicator on')
+        .attr('xlink:href', '/juju-ui/assets/svgs/exposed.svg')
+        .attr('width', function(d) {
+            return d.w / 6;
+          })
+        .attr('height', function(d) {
+            return d.w / 6;
+          })
+        .attr('x', function(d) {
+            return d.w / 10 * 7;
+          })
+        .attr('y', function(d) {
+            return d.getRelativeCenter()[1] - (d.w / 6) / 2;
+          })
+        .append('title')
+        .text(function(d) {
             return d.exposed ? 'Exposed' : '';
           });
 
@@ -546,71 +545,72 @@ YUI.add('juju-topology-mega', function(Y) {
       node.filter(function(d) {
         return !d.exposed &&
             !d3.select(this)
-            .select('.exposed-indicator').empty();
+                .select('.exposed-indicator').empty();
       }).select('.exposed-indicator').remove();
 
       // Add the relative health of a service in the form of a pie chart
       // comprised of units styled appropriately.
       var status_chart_arc = d3.svg.arc()
-            .innerRadius(0)
-            .outerRadius(function(d) {
-                // Make sure it's exactly as wide as the mask with a bit
-                // of leeway for the border.
-                return parseInt(
-                    d3.select(this.parentNode)
-                      .select('image')
-                      .attr('width'), 10) / 2.05;
-              });
+        .innerRadius(0)
+        .outerRadius(function(d) {
+            // Make sure it's exactly as wide as the mask with a bit
+            // of leeway for the border.
+            return parseInt(
+                d3.select(this.parentNode)
+                  .select('image')
+                  .attr('width'), 10) / 2.05;
+          });
 
       var status_chart_layout = d3.layout.pie()
-            .value(function(d) { return (d.value ? d.value : 1); })
-            .sort(function(a, b) {
-                // Ensure that the service health graphs will be renders in
-                // the correct order: error - pending - running.
-                var states = {error: 0, pending: 1, running: 2};
-                return states[a.name] - states[b.name];
-              });
+        .value(function(d) { return (d.value ? d.value : 1); })
+        .sort(function(a, b) {
+            // Ensure that the service health graphs will be renders in
+            // the correct order: error - pending - running.
+            var states = {error: 0, pending: 1, running: 2};
+            return states[a.name] - states[b.name];
+          });
 
       node.select('.service-status')
-            .attr('transform', function(d) {
+        .attr('transform', function(d) {
             return 'translate(' + d.getRelativeCenter() + ')';
           });
       node.select('.service-health-mask')
-            .attr('width', function(d) {
+        .attr('width', function(d) {
             return d.w / 3;
           })
-            .attr('height', function(d) {
-                return d.h / 3;
-              })
-            .attr('x', function() {
-                return -d3.select(this).attr('width') / 2;
-              })
-            .attr('y', function() {
-                return -d3.select(this).attr('height') / 2;
-              });
+        .attr('height', function(d) {
+            return d.h / 3;
+          })
+        .attr('x', function() {
+            return -d3.select(this).attr('width') / 2;
+          })
+        .attr('y', function() {
+            return -d3.select(this).attr('height') / 2;
+          });
 
       // Add the path after the mask image (since it requires the mask's
       // width to set its own).
       node.select('.service-status')
-            .selectAll('path')
-            .data(function(d) {
-                var aggregate_map = d.aggregated_status,
-                    aggregate_list = [];
-                Y.Object.each(aggregate_map, function(count, state) {
-                  aggregate_list.push({name: state, value: count});
-                });
+        .selectAll('path')
+        .data(function(d) {
+            var aggregate_map = d.aggregated_status,
+                aggregate_list = [];
+            Y.Object.each(aggregate_map, function(count, state) {
+              aggregate_list.push({name: state, value: count});
+            });
 
-                return status_chart_layout(aggregate_list);
-              }).enter().insert('path', 'image')
-            .attr('d', status_chart_arc)
-            .attr('class', function(d) { return 'status-' + d.data.name; })
-            .attr('fill-rule', 'evenodd')
-            .append('title').text(function(d) {
-                return d.data.name;
-              });
+            return status_chart_layout(aggregate_list);
+          })
+        .enter().insert('path', 'image')
+        .attr('d', status_chart_arc)
+        .attr('class', function(d) { return 'status-' + d.data.name; })
+        .attr('fill-rule', 'evenodd')
+        .append('title').text(function(d) {
+            return d.data.name;
+          });
 
       node.select('.unit-count')
-            .text(function(d) {
+        .text(function(d) {
             return utils.humanizeNumber(d.unit_count);
           });
     },
