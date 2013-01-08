@@ -288,7 +288,7 @@ YUI.add('d3-components', function(Y) {
      * Specialized handling of events only found in d3.
      * This is again an internal implementation detail.
      *
-     * Its worth noting that d3 events don't use a delegate pattern
+     * It is worth noting that d3 events don't use a delegate pattern
      * and thus must be bound to nodes present in a selection.
      * For this reason binding d3 events happens after render cycles.
      *
@@ -327,7 +327,7 @@ YUI.add('d3-components', function(Y) {
 
     /**
      * Allow d3 event rebinding after rendering. The component
-     * can trigger this after its sure relevant elements
+     * can trigger this after it is sure relevant elements
      * are in the bound DOM.
      *
      **/

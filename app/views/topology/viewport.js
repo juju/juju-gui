@@ -33,15 +33,15 @@ YUI.add('juju-topology-viewport', function(Y) {
     },
 
     /*
-     * Set the visualization size based on the viewport
+     * Set the visualization size based on the viewport.
+     *
+     * This event allows other page components that may unintentionally affect
+     * the page size, such as the charm panel, to get out of the way before we
+     * compute sizes.  Note the "afterPageSizeRecalculation" event at the end
+     * of this function.
      */
     resized: function() {
-      // This event allows other page components that may unintentionally
-      // affect the page size, such as the charm panel, to get out of the
-      // way before we compute sizes.  Note the
-      // "afterPageSizeRecalculation" event at the end of this function.
-      // start with some reasonable defaults
-      var topo = this.get('component'),
+     var topo = this.get('component'),
           container = this.get('container'),
           vis = topo.vis,
           svg = container.one('svg'),
