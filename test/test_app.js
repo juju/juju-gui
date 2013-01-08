@@ -119,6 +119,7 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
 });
 
 YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+
   describe('Application Connection State', function() {
     var container;
 
@@ -128,7 +129,7 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
 
     it('should be able to handle env connection status changes', function() {
       var juju = Y.namespace('juju'),
-          conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
+          conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
           env = new juju.Environment({conn: conn}),
           app = new Y.juju.App({env: env, container: container}),
           reset_called = false,
@@ -153,11 +154,14 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
       };
       env.connect();
       conn.open();
+      // We need to fake the connection event.
+      env.set('connected', true);
       reset_called.should.equal(true);
 
       // trigger a second time and verify
       reset_called = false;
       conn.open();
+      env.set('connected', true);
       reset_called.should.equal(true);
     });
 
@@ -229,6 +233,8 @@ YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
       env.get_endpoints = function(services, callback) {
         get_endpoints_count += 1;
       };
+      // We need to fake the connection event.
+      env.set('connected', true);
       // Inject default data, should only get_endpoints once.
       injectData(app);
       get_endpoints_count.should.equal(1);

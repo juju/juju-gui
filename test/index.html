@@ -13,10 +13,34 @@
   <script src="assets/mocha.js"></script>
   <script src="utils.js"></script>
   <script>
+    noLogin = true;
     var assert = chai.assert,
         expect = chai.expect
         should = chai.should();
-    mocha.setup({'ui': 'bdd', 'ignoreLeaks': false})
+    mocha.setup({ui: 'bdd', ignoreLeaks: false})
+  </script>
+
+  <script>
+  YUI().use('node', 'event', function(Y) {
+     var config = GlobalConfig;
+     for (group in config.groups) {
+       var group = config.groups[group];
+       for (m in group.modules) {
+         var resource = group.modules[m];
+         if (!m || !resource.fullpath) {
+           continue
+         }
+         resource.fullpath = resource.fullpath.replace(
+           '/juju-ui/', '../juju-ui/', 1);
+         // If we load modules asyncronously then the module loading may take
+         // so long that the test definitions (and before/after calls) happen
+         // *after* the test runner is invoked.  In this case the test runner
+         // will not know about the tests and therefore not run them.
+         resource.async = false;
+       }
+     }
+     Y.on('domready', mocha.run);
+  });
   </script>
 
   <script src="test_d3_components.js"></script>
@@ -33,6 +57,7 @@
   <script src="test_service_config_view.js"></script>
   <script src="test_service_view.js"></script>
   <script src="test_utils.js"></script>
+  <script src="test_login.js"></script>
   <script src="test_charm_panel.js"></script>
   <script src="test_charm_configuration.js"></script>
   <script src="test_console.js"></script>
@@ -42,27 +67,6 @@
   <script src="test_app_hotkeys.js"></script>
   <script src="test_notifier_widget.js"></script>
 
-  <script>
-  YUI().use('node', 'event', function(Y) {
-     Y.on('domready', function() {
-
-     var config = GlobalConfig;
-     for (group in config.groups) {
-          var group = config.groups[group];
-         for (m in group.modules) {
-            var resource = group.modules[m];
-            if (!m || !resource.fullpath) {
-              continue
-            }
-            resource.fullpath = resource.fullpath.replace(
-              '/juju-ui/', '../juju-ui/', 1);
-         }
-     }
-     // Load before test runner
-     mocha.run();
-     });
-  });
-  </script>
 
 </head>
 
