@@ -93,7 +93,10 @@ YUI.add('juju-topology', function(Y) {
                           .attr('class', 'zoom-plane')
                           .attr('width', width)
                           .attr('height', height)
-                          .call(this.zoom);
+                          .call(this.zoom)
+                          .on('mousewheel.zoom', null)
+                          .on('DOMMouseScroll.zoom', null)
+                          .on('dblclick.zoom', null);
 
       vis = svg.append('svg:g');
       this.vis = vis;
@@ -125,7 +128,7 @@ YUI.add('juju-topology', function(Y) {
                .y(this.yScale)
                .scaleExtent([this.options.minZoom, this.options.maxZoom])
                .on('zoom', function(evt) {self.fire('zoom', d3.event);});
-    },
+   },
 
     /*
      * Utility method to get a service object from the DB

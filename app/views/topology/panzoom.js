@@ -82,15 +82,13 @@ YUI.add('juju-topology-panzoom', function(Y) {
     zoomHandler: function(evt) {
       var slider = this.slider,
           topo = this.get('component'),
+          height = topo.get('height'),
+          width = topo.get('width'),
           options = topo.options;
 
       if (!this.slider) return;
-      console.group('ZOOMHANDLER')
-      console.log('zoomHandler', this._scale, evt.scale, evt.translate);
-      console.log('setting val', this.toSlider(evt.scale));
       slider.set('value', this.toSlider(evt.scale));
       this.rescale(d3.event);
-      console.groupEnd();
     },
 
     /*
