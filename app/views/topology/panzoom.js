@@ -30,12 +30,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
       }
     },
 
-    initializer: function(options) {
-      PanZoomModule.superclass.constructor.apply(this, arguments);
-      this._translate = [0, 0];
-      this._scale = 1.0;
-    },
-
     componentBound: function() {
       var topo = this.get('component'),
           options = topo.options;
@@ -48,6 +42,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
                             .domain([0.25, 2])
                             .range([options.minZoom, options.maxZoom])
                             .clamp(true);
+      this._translate = [0, 0];
+      this._scale = 1.0;
 
 
     },
@@ -89,11 +85,12 @@ YUI.add('juju-topology-panzoom', function(Y) {
           options = topo.options;
 
       if (!this.slider) return;
+      console.group('ZOOMHANDLER')
       console.log('zoomHandler', this._scale, evt.scale, evt.translate);
-      slider.set('value', evt.scale);
-
-      evt.scale = Math.min(Math.max(options.zoomMin, evt.scale), options.zoomMax);
-      this.rescale(evt);
+      console.log('setting val', this.toSlider(evt.scale));
+      slider.set('value', this.toSlider(evt.scale));
+      this.rescale(d3.event);
+      console.groupEnd();
     },
 
     /*
