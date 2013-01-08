@@ -37,6 +37,7 @@ YUI.add('juju-env', function(Y) {
       this._txn_callbacks = {};
       // Consider the user unauthenticated until proven otherwise.
       this.userIsAuthenticated = false;
+      this.failedAuthentication = false;
       // When the server tells us the outcome of a login attempt we record
       // the result.
       this.on('login', this.handleLoginEvent, this);
@@ -100,11 +101,11 @@ YUI.add('juju-env', function(Y) {
     handleLoginEvent: function(evt) {
       // We are only interested in the responses to login events.
       this.userIsAuthenticated = !!evt.data.result;
-      this.waiting = false;
       // If the credentials were rejected remove them.
       if (!this.userIsAuthenticated) {
         this.set('user', undefined);
         this.set('password', undefined);
+        this.failedAuthentication = true;
       }
     },
 

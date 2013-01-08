@@ -1,12 +1,16 @@
-<div id="login-mask">
+<div id="login-column">
   <i class="sprite juju_logo" title="Juju GUI"></i>
   <div id="login-form">
-    <div id="login-header">{{environment_name}} on {{provider}}</div>
+    <div id="login-header">
+      {{environment_name}} <span class="provider-type">{{provider_type}}</span>
+    </div>
     <form>
       <input type="text" disabled="disabled" value="admin"></input>
       <input type="password" value="" placeholder="Enter password"></input>
       <input type="submit" value="Login"></input>
     </form>
   </div>
+  <div class="error">{{error_text}}</div>
   <div>{{help_text}}</div>
+  <div><a href="https://juju.ubuntu.com/" target="_blank">juju.ubuntu.com</a></div>
 </div>
