@@ -64,10 +64,11 @@ YUI.add('juju-topology-viewport', function(Y) {
       vis.attr('width', dimensions.width);
       vis.attr('height', dimensions.height);
 
+
       zoomPlane.setAttribute('width', dimensions.width);
       zoomPlane.setAttribute('height', dimensions.height);
-      canvas.setAttribute('width', dimensions.width);
-      canvas.setAttribute('height', dimensions.height);
+      canvas.setStyles({width: dimensions.width + 'px',
+                        height: dimensions.height + 'px'});
       // Reset the scale parameters
       topo.set('size', [dimensions.width, dimensions.height]);
       topo.fire('afterPageSizeRecalculation');
