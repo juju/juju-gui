@@ -62,6 +62,7 @@ YUI.add('juju-topology', function(Y) {
 
     renderOnce: function() {
       var self = this,
+          svg,
           vis,
           width = this.get('width'),
           height = this.get('height'),
@@ -80,19 +81,22 @@ YUI.add('juju-topology', function(Y) {
       this.computeScales();
 
       // Set up the visualization with a pack layout.
-      vis = d3.select(container.getDOMNode())
-              .selectAll('.topology-canvas')
-              .append('svg:svg')
-              .attr('pointer-events', 'all')
-              .attr('width', width)
-              .attr('height', height)
-              .append('svg:g')
-              .attr('class', 'zoom-plane')
-              .call(this.zoom) // Set by computeScales.
-              .append('g');
+      svg =  d3.select(container.getDOMNode())
+               .selectAll('.topology-canvas')
+               .append('svg:svg')
+               .attr('pointer-events', 'all')
+               .attr('width', width)
+               .attr('height', height);
+      this.svg = svg;
 
+      this.zoomPlane = svg.append('rect')
+                          .attr('class', 'zoom-plane')
+                          .attr('width', width)
+                          .attr('height', height)
+                          .call(this.zoom);
+
+      vis = svg.append('svg:g');
       this.vis = vis;
-
       Topology.superclass.renderOnce.apply(this, arguments);
       return this;
     },
@@ -121,8 +125,6 @@ YUI.add('juju-topology', function(Y) {
                .y(this.yScale)
                .scaleExtent([this.options.minZoom, this.options.maxZoom])
                .on('zoom', function(evt) {self.fire('zoom', d3.event);});
-      // After updating scale allow modules to perform any needed updates.
-      this.fire('rescaled');
     },
 
     /*
@@ -148,22 +150,7 @@ YUI.add('juju-topology', function(Y) {
        * A [width, height] tuple representing canvas size.
        **/
       size: {value: [640, 480]},
-      /**
-       * @property {Number} scale
-       **/
-      scale: {
-        getter: function() {return this.zoom.scale();},
-        setter: function(v) {this.zoom.scale(v);}
-      },
-      /**
-       * @property {Array} transform
-       **/
-      translate: {
-        getter: function() {return this.zoom.translate();},
-        setter: function(v) {this.zoom.translate(v);}
-      },
-
-      width: {
+            width: {
         getter: function() {return this.get('size')[0];}
       },
 

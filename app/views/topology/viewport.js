@@ -46,7 +46,7 @@ YUI.add('juju-topology-viewport', function(Y) {
           vis = topo.vis,
           svg = container.one('svg'),
           canvas = container.one('.topology-canvas'),
-          newSize = {};
+          zoomPlane = container.one('.zoom-plane');
 
       if (!canvas || !svg) {
         return;
@@ -64,10 +64,10 @@ YUI.add('juju-topology-viewport', function(Y) {
       vis.attr('width', dimensions.width);
       vis.attr('height', dimensions.height);
 
-      newSize.width = dimensions.width;
-      newSize.height = dimensions.height;
-      svg.one('.zoom-plane').setStyles(newSize);
-      canvas.setStyles(newSize);
+      zoomPlane.setAttribute('width', dimensions.width);
+      zoomPlane.setAttribute('height', dimensions.height);
+      canvas.setAttribute('width', dimensions.width);
+      canvas.setAttribute('height', dimensions.height);
       // Reset the scale parameters
       topo.set('size', [dimensions.width, dimensions.height]);
       topo.fire('afterPageSizeRecalculation');

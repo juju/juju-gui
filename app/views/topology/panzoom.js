@@ -25,8 +25,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
         '#zoom-in-btn': {click: 'zoom_in'}
       },
       yui: {
-        zoom: {callback: 'zoomHandler'},
-        rendered: {callback: 'renderedHandler'}
+        zoom: 'zoomHandler',
+        rendered: 'renderedHandler'
       }
     },
 
@@ -36,44 +36,64 @@ YUI.add('juju-topology-panzoom', function(Y) {
       this._scale = 1.0;
     },
 
+    componentBound: function() {
+      var topo = this.get('component'),
+          options = topo.options;
+
+      this.toScale = d3.scale.linear()
+                            .domain([options.minZoom, options.maxZoom])
+                            .range([0.25, 2])
+                            .clamp(true);
+      this.toSlider = d3.scale.linear()
+                            .domain([0.25, 2])
+                            .range([options.minZoom, options.maxZoom])
+                            .clamp(true);
+
+
+    },
+
     renderSlider: function() {
       var self = this,
           topo = this.get('component'),
           options = topo.options,
-          currentScale = topo.get('scale'),
-          value = 100,
+          currentScale = this._scale,
           slider;
 
       if (self.slider) {
         return;
       }
-      // Build a slider to control zoom level
-      if (currentScale) {
-        value = currentScale * 100;
-      }
 
       slider = new Y.Slider({
         min: options.minZoom,
         max: options.maxZoom,
-        value: value
+        value: this.toSlider(currentScale)
       });
       // XXX: selection to module option
       slider.render('#slider-parent');
       topo.recordSubscription(this,
                               slider.after('valueChange', function(evt) {
-                                self._fire_zoom(
-                                (evt.newVal - evt.prevVal) / 100);
+                                if (d3.event && d3.event.scale &&
+                                    d3.event.translate) {
+                                  console.debug("slider set in scale");
+                                  return;
+                                }
+                                self._fire_zoom(self.toScale(evt.newVal));
                               }));
-      self.slider = slider;
+      this.slider = slider;
     },
 
     // Handler for 'zoom' event.
     zoomHandler: function(evt) {
       var slider = this.slider,
-          vis = this.get('component').vis;
+          topo = this.get('component'),
+          options = topo.options;
 
-      slider.set('value', Math.floor(evt.scale * 100));
-      this.rescale(vis, evt);
+      if (!this.slider) return;
+      console.log('zoomHandler', this._scale, evt.scale, evt.translate);
+      slider.set('value', evt.scale);
+
+      evt.scale = Math.min(Math.max(options.zoomMin, evt.scale), options.zoomMax);
+      this.rescale(evt);
     },
 
     /*
@@ -97,57 +117,57 @@ YUI.add('juju-topology-panzoom', function(Y) {
     /*
      * Wrapper around the actual rescale method for zoom buttons.
      */
-    _fire_zoom: function(delta) {
+    _fire_zoom: function(scale) {
       var topo = this.get('component'),
-          container = topo.get('container'),
-          dim = container.getClientRect(),
           vis = topo.vis,
           zoom = topo.zoom,
+          rect = topo.zoomPlane,
+          delta,
           evt = {};
 
-      if (!dim) {
-        return;
-      }
+      delta = scale - this._scale;
 
       // Build a temporary event that rescale can use of a similar
       // construction to d3.event.
-      evt.translate = zoom.translate();
-      evt.scale = zoom.scale() + delta;
+      evt.scale = scale;
       // Update the scale in our zoom behavior manager to maintain state.
-      zoom.scale(evt.scale);
+      zoom.scale(scale);
       // Update the translate so that we scale from the center
       // instead of the origin.
-      var rect = vis.select('rect');
-      if (rect && rect.attr('width')) {
-        evt.translate[0] -= parseInt(rect.attr('width'), 10) / 2 * delta;
-        evt.translate[1] -= parseInt(rect.attr('height'), 10) / 2 * delta;
-        zoom.translate(evt.translate);
-      }
-      this.rescale(vis, evt);
+      evt.translate = zoom.translate();
+      evt.translate[0] -= (parseInt(rect.attr('width'), 10) / 2) * delta;
+      evt.translate[1] -= (parseInt(rect.attr('height'), 10) / 2) * delta;
+      zoom.translate(evt.translate);
+
+      console.log('firezoom -> resize', delta);
+      this.rescale(evt);
     },
 
     /*
      * Rescale the visualization on a zoom/pan event.
      */
-    rescale: function(vis, evt) {
+    rescale: function(evt) {
       // Make sure we don't scale outside of our bounds.
       // This check is needed because we're messing with d3's zoom
       // behavior outside of mouse events (e.g.: with the slider),
       // and can't trust that zoomExtent will play well.
-      var new_scale = Math.floor(evt.scale * 100),
-          topo = this.get('component');
+      var topo = this.get('component'),
+          options = topo.options,
+          vis = topo.vis;
 
-      if (new_scale < 25 || new_scale > 200) {
-        evt.scale = topo.get('scale');
+      if (!vis) {
+        return;
       }
+
+      console.log('rescale', evt.scale, evt.translate);
       // Store the current value of scale so that it can be restored later.
       this._scale = evt.scale;
       // Store the current value of translate as well, by copying the event
       // array in order to avoid reference sharing.
       this._translate = Y.mix(evt.translate);
+      console.log("doing transform", evt.scale, evt.translate);
       vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
-      topo.fire('rescaled');
     },
 
     renderedHandler: function(evt) {
@@ -167,7 +187,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
         changed = true;
       }
       if (changed) {
-        this._fire_zoom(0);
+        this.rescale({scale: this._scale, translate: this._translate});
       }
     }
   }, {

@@ -200,7 +200,7 @@ YUI.add('d3-components', function(Y) {
           // This is a minor violation (extension)
           // of the interface, but suits us well.
           d3.event = evt;
-          console.debug('Handler for', name, selector);
+          //console.debug('Handler for', name, selector, d3.event);
           return handler.call(
               evt.currentTarget.getDOMNode(), d, context);
         };
