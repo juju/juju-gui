@@ -9,7 +9,8 @@ describe('application hotkeys', function() {
           var env = {
             after: function() {},
             get: function() {},
-            on: function() {}
+            on: function() {},
+            set: function() {}
           };
           windowNode = Y.one(window);
           app = new Y.juju.App({

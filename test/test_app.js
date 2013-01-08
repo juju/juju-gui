@@ -253,6 +253,8 @@ function injectData(app, data) {
       env.get_endpoints = function(services, callback) {
         get_endpoints_count += 1;
       };
+      // We need to fake the connection event.
+      env.set('connected', true);
       // Inject default data, should only get_endpoints once.
       injectData(app);
       get_endpoints_count.should.equal(1);

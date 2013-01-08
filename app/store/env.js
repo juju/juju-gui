@@ -1,5 +1,8 @@
 'use strict';
 
+// A global.
+var noLogin;
+
 YUI.add('juju-env', function(Y) {
 
   function Environment(config) {
@@ -12,6 +15,8 @@ YUI.add('juju-env', function(Y) {
   Environment.ATTRS = {
     'socket_url': {},
     'conn': {},
+    'user': {},
+    'password': {},
     'connected': {value: false},
     'debug': {value: false}
   };
@@ -30,6 +35,11 @@ YUI.add('juju-env', function(Y) {
       this._counter = 0;
       // mapping txn-id callback if any.
       this._txn_callbacks = {};
+      // Consider the user unauthenticated until proven otherwise.
+      this.userIsAuthenticated = false;
+      // When the server tells us the outcome of a login attempt we record
+      // the result.
+      this.on('login', this.handleLoginEvent, this);
     },
 
     destructor: function() {
@@ -58,7 +68,6 @@ YUI.add('juju-env', function(Y) {
 
     on_open: function(data) {
       console.log('Env: Connected');
-      this.set('connected', true);
     },
 
     on_close: function(data) {
@@ -68,19 +77,35 @@ YUI.add('juju-env', function(Y) {
 
     on_message: function(evt) {
       console.log('Env: Receive', evt.data);
-
       var msg = Y.JSON.parse(evt.data);
+      // The "ready" attribute indicates that this is a server's initial
+      // greeting.  It provides a few initial values that we care about.
       if (msg.ready) {
-        // The "ready" attribute indicates that this is a server's initial
-        // greeting.  It provides a few initial values that we care about.
+        console.log('Env: Handshake Complete');
+        this.set('connected', true);
         this.set('providerType', msg.provider_type);
         this.set('defaultSeries', msg.default_series);
-      }
-      if (msg.version === 0) {
-        console.log('Env: Handshake Complete');
         return;
       }
       this.fire('msg', msg);
+    },
+
+    /**
+     * React to the results of sending a login message to the server.
+     *
+     * @method handleLoginEvent
+     * @param {Object} evt The event to which we are responding.
+     * @return {undefined} Nothing.
+     */
+    handleLoginEvent: function(evt) {
+      // We are only interested in the responses to login events.
+      this.userIsAuthenticated = !!evt.data.result;
+      this.waiting = false;
+      // If the credentials were rejected remove them.
+      if (!this.userIsAuthenticated) {
+        this.set('user', undefined);
+        this.set('password', undefined);
+      }
     },
 
     dispatch_result: function(data) {
@@ -172,6 +197,23 @@ YUI.add('juju-env', function(Y) {
 
     expose: function(service, callback) {
       this._send_rpc({'op': 'expose', 'service_name': service}, callback);
+    },
+
+    /**
+     * Attempt to log the user in.  Credentials must have been previously
+     * stored on the environment.  If not, this method will schedule a call to
+     * itself in the future in order to try again.
+     *
+     * @return {undefined} Nothing.
+     */
+    login: function() {
+      // If the user is already authenticated there is nothing to do.
+      if (this.userIsAuthenticated) {
+        return;
+      }
+      var user = this.get('user');
+      var password = this.get('password');
+      this._send_rpc({op: 'login', user: user, password: password});
     },
 
     unexpose: function(service, callback) {

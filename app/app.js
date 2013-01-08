@@ -29,6 +29,11 @@ YUI.add('juju-gui', function(Y) {
         preserve: true
       },
 
+      login: {
+        type: 'juju.views.login',
+        preserve: false
+      },
+
       service: {
         type: 'juju.views.service',
         preserve: false,
@@ -237,6 +242,9 @@ YUI.add('juju-gui', function(Y) {
 
       // When the provider type becomes available, display it.
       this.env.after('providerTypeChange', this.onProviderTypeChange);
+
+      // Once the user logs in we need to redraw.
+      this.env.after('login', this.dispatch, this);
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);
@@ -517,6 +525,45 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+     * Ensure that the current user has authenticated.
+     *
+     * @method check_user_credentials
+     * @param {Object} req The request.
+     * @param {Object} res ???
+     * @param {Object} next The next route handler.
+     *
+     */
+    check_user_credentials: function(req, res, next) {
+      var viewInfo = this.getViewInfo('login');
+      if (!viewInfo.instance) {
+        viewInfo.instance = new views.LoginView({
+          app: this,
+          env: this.env
+        });
+      }
+      var view = viewInfo.instance;
+      // If there are no stored credentials the user is prompted for some.
+      var user = this.env.get('user');
+      var password = this.env.get('password');
+      if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
+        view.promptUser();
+      }
+      // If there are credentials available and there has not been a successful
+      // login attempt and we are not waiting on a login attempt, try to log in.
+      if (Y.Lang.isValue(user) && Y.Lang.isValue(password) &&
+          !this.env.waiting && !this.env.userIsAuthenticated) {
+        this.env.login();
+        return;
+      }
+      // If there has not been a successful login attempt, do not let the route
+      // dispatch proceed.
+      if (this.env.waiting || !this.env.userIsAuthenticated) {
+        return;
+      }
+      next();
+    },
+
+    /**
      * Display the provider type.
      *
      * The provider type arrives asynchronously.  Instead of updating the
@@ -709,6 +756,7 @@ YUI.add('juju-gui', function(Y) {
       charm_store: {},
       routes: {
         value: [
+          { path: '*', callback: 'check_user_credentials'},
           { path: '*', callback: 'show_notifications_view'},
           { path: '/charms/', callback: 'show_charm_collection'},
           { path: '/charms/*charm_store_path',
@@ -750,12 +798,10 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-notifications',
-
     // This alias doesn't seem to work, including refs by hand.
     'juju-controllers',
     'juju-notification-controller',
     'juju-env',
-
     'juju-views',
     'io',
     'json-parse',

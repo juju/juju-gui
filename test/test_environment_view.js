@@ -185,6 +185,46 @@
         }
     );
 
+    it('must not duplicate nodes when services are added', function() {
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env
+      }),
+          tmp_data = {
+            result: [
+              ['service', 'add', {
+                'subordinate': true,
+                'charm': 'cs:precise/puppet-2',
+                'id': 'puppet2'
+              }],
+              ['service', 'add', {
+                'charm': 'cs:precise/mysql-6',
+                'id': 'mysql2'
+              }],
+              ['unit', 'add', {
+                'machine': 0,
+                'agent-state': 'started',
+                'public-address': '192.168.122.222',
+                'id': 'mysql2/0'
+              }]
+            ],
+            op: 'delta'
+          };
+      view.render();
+
+      db.on_delta({ data: tmp_data });
+      view.render();
+
+      container.all('.service').each(function(serviceNode) {
+        // There should not be any duplicate nodes within the service.
+        serviceNode.all('.service-status').size().should.equal(1);
+        serviceNode.all('.name').size().should.equal(1);
+        serviceNode.all('.charm-label').size().should.equal(1);
+        serviceNode.all('.service-block-image').size().should.equal(1);
+      });
+    });
+
     it('must be able to place new services properly', function() {
       var view = new views.environment({
         container: container,
@@ -226,9 +266,15 @@
 
       container.all('.service').each(function(serviceNode) {
         // Ensure that all new service nodes' transform attributes are properly
-        // formated as well (i.e.: no NaN values).
+        // formatted as well (i.e.: no NaN values).
         properTransform.test(serviceNode.getAttribute('transform'))
           .should.equal(true);
+
+        // There should not be any duplicate nodes within the service.
+        serviceNode.all('.service-status').size().should.equal(1);
+        serviceNode.all('.name').size().should.equal(1);
+        serviceNode.all('.charm-label').size().should.equal(1);
+        serviceNode.all('.service-block-image').size().should.equal(1);
       });
     });
 
