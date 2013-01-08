@@ -17,6 +17,7 @@ var GlobalConfig = {
             'juju-topology',
             'juju-view-utils',
             'juju-view-environment',
+            'juju-view-login',
             'juju-view-service',
             'juju-view-unit',
             'juju-view-charm',
