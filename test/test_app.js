@@ -43,7 +43,8 @@ YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
           .append(Y.Node.create('<span/>')
             .set('id', 'environment-name'))
           .append(Y.Node.create('<span/>')
-            .set('id', 'provider-type'))
+            .set('id', 'provider-type')
+            .addClass('provider-type'))
           .hide();
       app = new Y.juju.App(
           { container: container,
