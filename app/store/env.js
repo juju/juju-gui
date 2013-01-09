@@ -268,8 +268,59 @@ YUI.add('juju-env', function(Y) {
     get_endpoints: function(services, callback) {
       this._send_rpc({'op': 'get_endpoints', 'service_names': services},
                      callback);
-    }
+    },
 
+    /**
+     * Update the annotations for an entity by name.
+     *
+     * @param {Object} entity The name of a machine, unit, service, or
+     *   environment, e.g. '0', 'mysql/0', or 'mysql'.  To specify the
+     *   environment as the entity the magic string 'env' is used.
+     * @param {Object} data A dictionary of key, value pairs.
+     * @return {undefined} Nothing.
+     */
+    update_annotations: function(entity, data, callback) {
+      this._send_rpc({
+        op: 'update_annotations',
+        entity: entity,
+        data: data}, callback);
+    },
+
+    /**
+     * Get the annotations for an entity by name.
+     *
+     * Note that the annotations are returned as part of the delta stream, so
+     * the explicit use of this command should rarely be needed.
+     *
+     * @param {Object} entity The name of a machine, unit, service, or
+     *   environment, e.g. '0', 'mysql/0', or 'mysql'.  To specify the
+     *   environment as the entity the magic string 'env' is used.
+     * @return {Object} A dictionary of key,value pairs is returned in the
+     *   callback.  The invocation of this command returns nothing.
+     */
+    get_annotations: function(entity, callback) {
+      this._send_rpc({
+        op: 'get_annotations',
+        entity: entity}, callback);
+    },
+
+    /**
+     * Remove the annotations for an entity by name.
+     *
+     * @param {Object} entity The name of a machine, unit, service, or
+     *   environment, e.g. '0', 'mysql/0', or 'mysql'.  To specify the
+     *   environment as the entity the magic string 'env' is used.
+     * @param {Object} keys An optional list of annotation key names for the
+     *   annotations to be deleted.  If no keys are passed, all annotations
+     *   for the entity will be removed.
+     * @return {undefined} Nothing.
+     */
+    remove_annotations: function(entity, keys, callback) {
+      this._send_rpc({
+        op: 'remove_annotations',
+        entity: entity,
+        keys: keys || []}, callback);
+    }
 
   });
 

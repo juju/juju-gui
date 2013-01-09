@@ -33,7 +33,9 @@ describe('pan zoom module', function() {
   });
 
   afterEach(function() {
-    viewContainer && viewContainer.remove(true);
+    if (viewContainer) {
+      viewContainer.remove(true);
+    }
   });
 
   // Test the zoom handler calculations.

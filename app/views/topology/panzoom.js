@@ -150,7 +150,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
         return;
       }
 
-     evt.scale = this.toSlider(evt.scale) /100.0;
+      evt.scale = this.toSlider(evt.scale) / 100.0;
 
       // Store the current value of scale so that it can be restored later.
       topo.set('scale', evt.scale);

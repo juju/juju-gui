@@ -6,7 +6,7 @@ describe('charm normalization', function() {
   before(function(done) {
     YUI(GlobalConfig).use('juju-models', 'juju-charm-models', function(Y) {
       models = Y.namespace('juju.models');
-      done()
+      done();
     });
   });
 

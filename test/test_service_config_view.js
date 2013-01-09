@@ -29,7 +29,9 @@
     });
 
     after(function(done) {
-      env && env.destroy();
+      if (env) {
+        env.destroy();
+      }
       done();
     });
 
