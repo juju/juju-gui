@@ -6,10 +6,9 @@ var noLogin = noLogin || false;
 YUI.add('juju-view-login', function(Y) {
 
   var views = Y.namespace('juju.views');
-  var Templates = views.Templates;
 
   var LoginView = Y.Base.create('LoginView', Y.View, [views.JujuBaseView], {
-    template: Templates.login,
+    template: views.Templates.login,
     events: {
       '#login-form input[type=submit]': {click: 'login'}
     },
@@ -68,7 +67,6 @@ YUI.add('juju-view-login', function(Y) {
   requires: [
     'view',
     'juju-view-utils',
-    'node',
-    'handlebars'
+    'node'
   ]
 });

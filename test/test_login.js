@@ -2,20 +2,19 @@
 
 (function() {
 
-  var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
-  var Y = YUI(GlobalConfig).use(requires);
-
   describe('environment login support', function() {
-    var conn, env, utils, juju, makeLoginView, views, app;
+    var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
+    var Y, conn, env, utils, juju;
     var test = it; // We aren't really doing BDD so let's be more direct.
 
-    before(function() {
-      utils = Y.namespace('juju-tests.utils');
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires);
       juju = Y.namespace('juju');
+      utils = Y.namespace('juju-tests.utils');
+      done();
     });
 
     beforeEach(function() {
-      var container = Y.Node.create('<div/>');
       conn = new utils.SocketStub();
       env = new juju.Environment({conn: conn});
       env.connect();
@@ -79,6 +78,57 @@
       assert.equal(conn.last_message().op, 'login');
       assert.equal(conn.last_message().user, 'user');
       assert.equal(conn.last_message().password, 'password');
+    });
+
+  });
+
+
+  describe('login view', function() {
+    var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
+    var Y, conn, env, utils, juju, views, loginView, container, loginMask;
+    var test = it; // We aren't really doing BDD so let's be more direct.
+
+    before(function() {
+      Y = YUI(GlobalConfig).use(requires);
+      utils = Y.namespace('juju-tests.utils');
+      juju = Y.namespace('juju');
+      views = Y.namespace('juju-views');
+    });
+
+    beforeEach(function() {
+      conn = new utils.SocketStub();
+      env = new juju.Environment({conn: conn});
+      env.connect();
+      conn.open();
+      container = Y.Node.create('<div/>');
+      // Needed by the render method.
+      loginMask = Y.one('body').appendChild('<div/>').set('id', 'login-mask');
+      loginView = new views.login(
+        {container: container, env: env, help_text: 'Help text'});
+    });
+
+    afterEach(function() {
+      env.destroy();
+      container.remove(true);
+      loginMask.remove(true);
+    });
+
+    test('the view login method calls the environment login one', function() {
+      var noop = function() {};
+      var ev = {preventDefault: noop, currentTarget: {get: noop}};
+      container.appendChild('<input/>').set('type', 'text').set(
+        'value', 'user');
+      container.appendChild('<input/>').set('type', 'password').set(
+        'value', 'password');
+      loginView.login(ev);
+      assert.equal(conn.last_message().op, 'login');
+      assert.equal(conn.last_message().user, 'user');
+      assert.equal(conn.last_message().password, 'password');
+    });
+
+    test('the view render method adds the login form', function() {
+      loginView.render();
+      assert.isTrue(Y.one('#login-form'));
     });
 
   });
