@@ -349,7 +349,7 @@ YUI.add('juju-topology-mega', function(Y) {
       // Pack doesn't honor existing positions and will
       // re-layout the entire graph. As a short term work
       // around we layout only new nodes. This has the side
-      // effect that node nodes can overlap and will
+      // effect that service blocks can overlap and will
       // be fixed later.
       var new_services = this.services.filter(function(boundingBox) {
         return !Y.Lang.isNumber(boundingBox.x);
