@@ -107,7 +107,7 @@
       // Needed by the render method.
       loginMask = Y.one('body').appendChild('<div/>').set('id', 'login-mask');
       loginView = new views.login(
-        {container: container, env: env, help_text: 'Help text'});
+          {container: container, env: env, help_text: 'Help text'});
     });
 
     afterEach(function() {
@@ -120,9 +120,9 @@
       var noop = function() {};
       var ev = {preventDefault: noop, currentTarget: {get: noop}};
       container.appendChild('<input/>').set('type', 'text').set(
-        'value', 'user');
+          'value', 'user');
       container.appendChild('<input/>').set('type', 'password').set(
-        'value', 'password');
+          'value', 'password');
       loginView.login(ev);
       assert.equal(conn.last_message().op, 'login');
       assert.equal(conn.last_message().user, 'user');
@@ -132,7 +132,8 @@
     test('the view render method adds the login form', function() {
       loginView.render();
       assert.equal(
-        container.one('#login-form input[type=submit]').get('value'), 'Login');
+          container.one('#login-form input[type=submit]').get('value'),
+          'Login');
     });
 
   });

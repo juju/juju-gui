@@ -49,7 +49,7 @@ YUI.add('juju-view-login', function(Y) {
       var environment_name_node = Y.one('#environment-name');
       var provider_type_node = Y.one('#provider-type');
       var environment_name = (
-        environment_name_node ? environment_name_node.get('text')
+          environment_name_node ? environment_name_node.get('text')
                               : 'Environment');
       var provider_type = provider_type_node ? provider_type_node.get('text') : '';
       // In order to have events work and the view cleanly be replaced by
@@ -59,7 +59,7 @@ YUI.add('juju-view-login', function(Y) {
         environment_name: environment_name,
         provider_type: provider_type,
         error_text: (
-          env.failedAuthentication ? 'Unknown user or password.' : ''),
+            env.failedAuthentication ? 'Unknown user or password.' : ''),
         help_text: this.get('help_text')
       }));
       return this;
