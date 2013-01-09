@@ -289,6 +289,9 @@ YUI.add('juju-env', function(Y) {
     /**
      * Get the annotations for an entity by name.
      *
+     * Note that the annotations are returned as part of the delta stream, so
+     * the explicit use of this command should rarely be needed.
+     *
      * @param {Object} entity The name of a machine, unit, service, or
      *   environment, e.g. '0', 'mysql/0', or 'mysql'.  To specify the
      *   environment as the entity the magic string 'env' is used.
