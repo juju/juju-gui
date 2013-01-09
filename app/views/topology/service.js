@@ -248,8 +248,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
-                       .data(services, function(d) {
-                         return d.modelId();});
+                       .data(services, function(d) { return d.modelId();});
     },
 
     /*

@@ -1,3 +1,4 @@
+'use strict';
 
 YUI.add('juju-topology', function(Y) {
   var views = Y.namespace('juju.views'),
