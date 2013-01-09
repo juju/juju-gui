@@ -6,7 +6,6 @@ var noLogin = noLogin || false;
 YUI.add('juju-view-login', function(Y) {
 
   var views = Y.namespace('juju.views');
-  var Templates = views.Templates;
 
   var LoginView = Y.Base.create('LoginView', Y.View, [views.JujuBaseView], {
     // This is so tests can easily determine if the user was prompted.
@@ -52,8 +51,7 @@ YUI.add('juju-view-login', function(Y) {
   requires: [
     'view',
     'juju-view-utils',
-    'node',
-    'handlebars'
+    'node'
   ]
 });
 

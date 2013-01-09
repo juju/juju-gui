@@ -12,6 +12,7 @@ var GlobalConfig = {
   filter: 'debug',
   // Set "true" for verbose logging of YUI
   debug: false,
+
   base: '/juju-ui/assets/javascripts/yui/',
   // Use Rollups
   combine: false,
@@ -80,6 +81,7 @@ var GlobalConfig = {
         'juju-topology': {
           fullpath: '/juju-ui/views/topology/topology.js'
         },
+
         'juju-view-utils': {
           fullpath: '/juju-ui/views/utils.js'
         },
@@ -122,6 +124,7 @@ var GlobalConfig = {
 
         'juju-views': {
           use: [
+            'handlebars',
             'd3-components',
             'juju-templates',
             'juju-notifications',
@@ -163,7 +166,9 @@ var GlobalConfig = {
         },
 
         'juju-controllers': {
-          use: ['juju-env', 'juju-charm-store',
+          use: [
+            'juju-env',
+            'juju-charm-store',
             'juju-notification-controller']
         },
 

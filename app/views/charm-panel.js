@@ -1056,11 +1056,11 @@ YUI.add('juju-charm-panel', function(Y) {
     setPanel({name: 'charms'});
 
     // Update position if we resize the window.
-    Y.on('windowresize', function(e) {
+    subscriptions.push(Y.on('windowresize', function(e) {
       if (isPanelVisible) {
         updatePanelPosition();
       }
-    });
+    }));
 
     /**
      * Hide the charm panel.
@@ -1229,6 +1229,7 @@ YUI.add('juju-charm-panel', function(Y) {
   requires: [
     'view',
     'juju-view-utils',
+    'juju-templates',
     'node',
     'handlebars',
     'event-hover',
