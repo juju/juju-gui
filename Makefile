@@ -224,7 +224,7 @@ yuidoc-lint: $(JSFILES)
 	bin/lint-yuidoc
 
 recess: node_modules/recess
-	recess lib/views/stylesheet.less --noIDs false --noOverqualifying false --strictPropertyOrder false --zeroUnits false | grep -q Perfect
+	recess lib/views/stylesheet.less --config recess.json | grep -q Perfect
 
 lint: gjslint jshint recess yuidoc-lint
 
