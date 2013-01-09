@@ -29,7 +29,7 @@
     });
 
     after(function(done) {
-      env.destroy();
+      env && env.destroy();
       done();
     });
 

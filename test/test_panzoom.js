@@ -33,7 +33,7 @@ describe('pan zoom module', function() {
   });
 
   afterEach(function() {
-    viewContainer.remove(true);
+    viewContainer && viewContainer.remove(true);
   });
 
   // Test the zoom handler calculations.
@@ -76,7 +76,7 @@ describe('pan zoom module', function() {
 
   // Test the zoom calculations.
   it('should handle fractional values within the limit for rescale',
-     function(done) {
+     function() {
        // Floor is used so the scale will round down.
        var evt =
            { scale: 0.609,
@@ -84,26 +84,23 @@ describe('pan zoom module', function() {
        var rescaled = false;
        topo.once('rescaled', function() {
          rescaled = true;
-         done();
        });
        pz.rescale(evt);
-       topo.get('scale').should.equal(0.6);
-       var expected = 'translate(' + evt.translate + ') scale(0.6)';
+       topo.get('scale').should.equal(0.609);
+       var expected = 'translate(' + evt.translate + ') scale(0.609)';
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);
      });
 
   it('should set an upper limit for rescale',
-     function(done) {
+     function() {
        var evt =
            { scale: 2.1,
              translate: [0, 0]};
        var rescaled = false;
        topo.once('rescaled', function() {
          rescaled = true;
-         done();
        });
-       topo.set('scale', 2.0);
        pz.rescale(evt);
        topo.get('scale').should.equal(2.0);
        var expected = 'translate(' + evt.translate + ') scale(2)';
@@ -112,16 +109,14 @@ describe('pan zoom module', function() {
      });
 
   it('should set a lower limit for rescale',
-     function(done) {
+     function() {
        var evt =
            { scale: 0.2,
              translate: [0, 0]};
        var rescaled = false;
        topo.once('rescaled', function() {
          rescaled = true;
-         done();
        });
-       topo.set('scale', 0.25);
        pz.rescale(evt);
        topo.get('scale').should.equal(0.25);
        var expected = 'translate(' + evt.translate + ') scale(0.25)';
