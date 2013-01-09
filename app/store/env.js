@@ -311,8 +311,8 @@ YUI.add('juju-env', function(Y) {
      *   environment, e.g. '0', 'mysql/0', or 'mysql'.  To specify the
      *   environment as the entity the magic string 'env' is used.
      * @param {Object} keys An optional list of annotation key names for the
-     *   annotations to be deleted.  If no keys are passed, all annoations for
-     *   the entity will be removed.
+     *   annotations to be deleted.  If no keys are passed, all annotations
+     *   for the entity will be removed.
      * @return {undefined} Nothing.
      */
     remove_annotations: function(entity, keys, callback) {
