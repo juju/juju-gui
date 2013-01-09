@@ -128,9 +128,6 @@ YUI.add('juju-topology-mega', function(Y) {
         }
       },
       yui: {
-        windowresize: {
-          callback: 'setSizesFromViewport',
-          context: 'module'},
         rendered: 'renderedHandler',
         show: 'show',
         hide: 'hide',
@@ -655,9 +652,6 @@ YUI.add('juju-topology-mega', function(Y) {
 
       this.update();
 
-      // Set the sizes from the viewport.
-      this.setSizesFromViewport();
-
       // Ensure relation labels are sized properly.
       container.all('.rel-label').each(function(label) {
         var width = label.one('text').getClientRect().width + 10;
@@ -703,57 +697,6 @@ YUI.add('juju-topology-mega', function(Y) {
       picker.one('.picker-expanded').removeClass('active');
     },
 
-    /*
-         * Set the visualization size based on the viewport
-         */
-    setSizesFromViewport: function() {
-      // This event allows other page components that may unintentionally
-      // affect the page size, such as the charm panel, to get out of the
-      // way before we compute sizes.  Note the
-      // "afterPageSizeRecalculation" event at the end of this function.
-      // start with some reasonable defaults
-      console.log('setSizesFromViewPort', this, arguments);
-      var topo = this.get('component'),
-          container = this.get('container'),
-          vis = topo.vis,
-          xscale = topo.xScale,
-          yscale = topo.yScale,
-          svg = container.one('svg'),
-          canvas = container.one('.topology-canvas');
-
-      topo.fire('beforePageSizeRecalculation');
-      // Get the canvas out of the way so we can calculate the size
-      // correctly (the canvas contains the svg).  We want it to be the
-      // smallest size we accept--no smaller or bigger--or else the
-      // presence or absence of scrollbars may affect our calculations
-      // incorrectly.
-      canvas.setStyles({height: 600, width: 800});
-      var dimensions = utils.getEffectiveViewportSize(true, 800, 600);
-      // Set the svg sizes.
-      svg.setAttribute('width', dimensions.width)
-            .setAttribute('height', dimensions.height);
-
-      // Set the internal rect's size.
-      svg.one('rect')
-            .setAttribute('width', dimensions.width)
-            .setAttribute('height', dimensions.height);
-      canvas
-            .setStyle('height', dimensions.height)
-            .setStyle('width', dimensions.width);
-
-      // Reset the scale parameters
-      topo.xScale.domain([-dimensions.width / 2, dimensions.width / 2])
-            .range([0, dimensions.width]);
-      topo.yScale.domain([-dimensions.height / 2, dimensions.height / 2])
-            .range([dimensions.height, 0]);
-
-      topo.set('size', [dimensions.width, dimensions.height]);
-      topo.fire('afterPageSizeRecalculation');
-    },
-
-    /*
-         * Update the location of the active service panel
-         */
     updateServiceMenuLocation: function() {
       var topo = this.get('component'),
           container = this.get('container'),
@@ -894,8 +837,6 @@ YUI.add('juju-topology-mega', function(Y) {
     'd3',
     'd3-components',
     'juju-templates',
-    'node',
-    'event',
     'juju-models',
     'juju-env'
   ]

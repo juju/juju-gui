@@ -303,12 +303,12 @@
       }).render();
       // Attach the view to the DOM so that sizes get set properly
       // from the viewport (only available from DOM).
-      view.postRender();
+      view.rendered();
       var zoom_in = container.one('#zoom-in-btn'),
           zoom_out = container.one('#zoom-out-btn'),
           module = view.topo.modules.PanZoomModule,
           slider = module.slider,
-          svg = container.one('svg g g');
+          svg = container.one('svg g');
 
       zoom_in.simulate('click');
 
@@ -339,13 +339,13 @@
          }).render();
          // Attach the view to the DOM so that sizes get set properly
          // from the viewport (only available from DOM).
-         view.postRender();
+         view.rendered();
          var svg = Y.one('svg');
 
-         parseInt(svg.one('rect').getAttribute('height'), 10)
+         parseInt(svg.one('g').getAttribute('height'), 10)
           .should.equal(
          parseInt(svg.getComputedStyle('height'), 10));
-         parseInt(svg.one('rect').getAttribute('width'), 10)
+         parseInt(svg.one('g').getAttribute('width'), 10)
           .should.equal(
          parseInt(svg.getComputedStyle('width'), 10));
        }
@@ -369,7 +369,7 @@
          }).render();
          // Attach the view to the DOM so that sizes get set properly
          // from the viewport (only available from DOM).
-         view.postRender();
+         view.rendered();
          var svg = container.one('svg'),
              canvas = container.one('.topology');
          // We have to hide the canvas so it does not affect our calculations.
@@ -550,7 +550,7 @@
             db: db,
             env: env
           }).render();
-          view.postRender();
+          view.rendered();
           var picker = container.one('.graph-list-picker'),
               button = picker.one('.picker-button');
           button.after('click', function() {

@@ -194,18 +194,19 @@ YUI.add('d3-components', function(Y) {
 
       function _bindEvent(name, handler, container, selector, context) {
         // Adapt between d3 events and YUI delegates.
-        var d3Adaptor = function(evt) {
+        var d3Adapter = function(evt) {
           var selection = d3.select(evt.currentTarget.getDOMNode()),
               d = selection.data()[0];
           // This is a minor violation (extension)
           // of the interface, but suits us well.
           d3.event = evt;
+          //console.debug('Handler for', name, selector, d3.event);
           return handler.call(
               evt.currentTarget.getDOMNode(), d, context);
         };
 
         subscriptions.push(
-            Y.delegate(name, d3Adaptor, container, selector, context));
+            Y.delegate(name, d3Adapter, container, selector, context));
       }
 
       this.unbind(modName);
@@ -252,8 +253,7 @@ YUI.add('d3-components', function(Y) {
                 // (re)Register the event to bubble.
                 self.publish(name, {emitFacade: true});
               }
-              console.debug('d3 component yui event binding', target.toString(),
-                            eventPhase, name);
+              console.debug('yui event binding', module.name, eventPhase, name);
               subscriptions.push(
                   target[eventPhase](
                   name, callback, handler.context));
@@ -288,7 +288,7 @@ YUI.add('d3-components', function(Y) {
      * Specialized handling of events only found in d3.
      * This is again an internal implementation detail.
      *
-     * Its worth noting that d3 events don't use a delegate pattern
+     * It is worth noting that d3 events don't use a delegate pattern
      * and thus must be bound to nodes present in a selection.
      * For this reason binding d3 events happens after render cycles.
      *
@@ -313,10 +313,11 @@ YUI.add('d3-components', function(Y) {
         Y.each(handlers, function(handler, trigger) {
           var adapter;
           handler = self._normalizeHandler(handler, module);
-          // Create an adaptor
+          // Create an adapter
           adapter = function() {
             var selection = d3.select(this),
                 d = selection.data()[0];
+            console.debug('D3 Handler for', selector, trigger);
             return handler.callback.call(this, d, handler.context);
           };
           d3.selectAll(selector).on(trigger, adapter);
@@ -325,7 +326,9 @@ YUI.add('d3-components', function(Y) {
     },
 
     /**
-     * Allow d3 event rebinding after rendering.
+     * Allow d3 event rebinding after rendering. The component
+     * can trigger this after it is sure relevant elements
+     * are in the bound DOM.
      *
      **/
     bindAllD3Events: function() {

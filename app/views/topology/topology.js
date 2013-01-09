@@ -25,7 +25,12 @@ YUI.add('juju-topology', function(Y) {
   var Topology = Y.Base.create('Topology', d3ns.Component, [], {
     initializer: function(options) {
       Topology.superclass.constructor.apply(this, arguments);
-      this.options = Y.mix(options || {});
+      this.options = Y.mix(options || {
+        minZoom: 25,
+        maxZoom: 200
+      });
+
+      this._subscriptions = [];
     },
 
     /**
@@ -57,6 +62,7 @@ YUI.add('juju-topology', function(Y) {
 
     renderOnce: function() {
       var self = this,
+          svg,
           vis,
           width = this.get('width'),
           height = this.get('height'),
@@ -70,76 +76,68 @@ YUI.add('juju-topology', function(Y) {
       // Take the first element.
       this._templateRendered = true;
 
-      // Create a pan/zoom behavior manager.
-      this.xScale = d3.scale.linear()
-                      .domain([-width / 2, width / 2])
-                      .range([0, width]);
-      this.yScale = d3.scale.linear()
-                      .domain([-height / 2, height / 2])
-                      .range([height, 0]);
-
-      // Include very basic behavior, fire
-      // yui event for anything more complex.
-      this.zoom = d3.behavior.zoom()
-                    .x(this.xScale)
-                    .y(this.yScale)
-                    .scaleExtent([0.25, 2.0])
-                    .on('zoom', function(evt) {
-                        // This will add the d3 properties to the
-                        // eventFacade
-                        self.fire('zoom', d3.event);
-                     });
+      // These are defaults, a (Viewport) Module
+      // can implement policy around them.
+      this.computeScales();
 
       // Set up the visualization with a pack layout.
-      vis = d3.select(container.getDOMNode())
+      svg = d3.select(container.getDOMNode())
               .selectAll('.topology-canvas')
               .append('svg:svg')
               .attr('pointer-events', 'all')
               .attr('width', width)
-              .attr('height', height)
-              .append('svg:g')
-              .call(this.zoom)
-              .append('g');
+              .attr('height', height);
+      this.svg = svg;
 
-      vis.append('svg:rect')
-         .attr('class', 'graph')
-         .attr('fill', 'rgba(255,255,255,0)');
+      this.zoomPlane = svg.append('rect')
+                          .attr('class', 'zoom-plane')
+                          .attr('width', width)
+                          .attr('height', height)
+                          .call(this.zoom)
+                          .on('mousewheel.zoom', null)
+                          .on('DOMMouseScroll.zoom', null)
+                          .on('dblclick.zoom', null);
 
+      vis = svg.append('svg:g');
       this.vis = vis;
-
-      // Build out scale and zoom.
-      // These are defaults, a (Viewport) Module
-      // can implement policy around them.
-      this.sizeChangeHandler();
-      this.on('sizeChanged', this.sizeChangeHandler);
-
       Topology.superclass.renderOnce.apply(this, arguments);
       return this;
     },
 
-    sizeChangeHandler: function() {
+    computeScales: function() {
       var self = this,
           width = this.get('width'),
           height = this.get('height');
 
+      if (!this.xScale) {
+        this.xScale = d3.scale.linear();
+        this.yScale = d3.scale.linear();
+        this.zoom = d3.behavior.zoom();
+      }
       // Update the pan/zoom behavior manager.
       this.xScale.domain([-width / 2, width / 2])
-        .range([0, width]);
+        .range([0, width])
+        .clamp(true)
+        .nice();
       this.yScale.domain([-height / 2, height / 2])
-        .range([height, 0]);
+        .range([height, 0])
+        .clamp(true)
+        .nice();
+
       this.zoom.x(this.xScale)
-        .y(this.yScale);
+               .y(this.yScale)
+               .scaleExtent([this.options.minZoom, this.options.maxZoom])
+               .on('zoom', function(evt) {self.fire('zoom', d3.event);});
     },
 
     /*
-         * Utility method to get a service object from the DB
-         * given a BoundingBox.
-         */
+     * Utility method to get a service object from the DB
+     * given a BoundingBox.
+     */
     serviceForBox: function(boundingBox) {
       var db = this.get('db');
       return db.services.getById(boundingBox.id);
     }
-
   }, {
     ATTRS: {
       /**
@@ -155,28 +153,26 @@ YUI.add('juju-topology', function(Y) {
        * A [width, height] tuple representing canvas size.
        **/
       size: {value: [640, 480]},
-      /**
-       * @property {Number} scale
-       **/
-      scale: {
-        getter: function() {return this.zoom.scale();},
-        setter: function(v) {this.zoom.scale(v);}
-      },
-      /**
-       * @property {Array} transform
-       **/
-      translate: {
-        getter: function() {return this.zoom.translate();},
-        setter: function(v) {this.zoom.translate(v);}
-      },
-
       width: {
         getter: function() {return this.get('size')[0];}
       },
 
       height: {
         getter: function() {return this.get('size')[1];}
-      }
+      },
+      /*
+       * Scale and translate are managed by an external module
+       * (PanZoom in this case). If that module isn't
+       * loaded nothing will modify these values.
+       */
+      scale: {
+        getter: function() {return this.zoom.scale();},
+        setter: function(v) {this.zoom.scale(v);}
+      },
+
+      translate: {
+        getter: function() {return this.zoom.translate();},
+        setter: function(v) {this.zoom.translate(v);}}
     }
 
   });

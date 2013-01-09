@@ -26,21 +26,17 @@ describe('pan zoom module', function() {
     db = new models.Database();
     var view = new views.environment({container: viewContainer, db: db});
     view.render();
-    view.postRender();
+    view.rendered();
     pz = view.topo.modules.PanZoomModule;
     topo = pz.get('component');
     vis = topo.vis;
   });
 
   afterEach(function() {
-    viewContainer.remove(true);
+    if (viewContainer) {
+      viewContainer.remove(true);
+    }
   });
-
-  it('should set initial values',
-      function() {
-        pz._translate.should.eql([0, 0]);
-        pz._scale.should.equal(1.0);
-      });
 
   // Test the zoom handler calculations.
   it('should handle fractional values properly in zoom scale',
@@ -52,7 +48,7 @@ describe('pan zoom module', function() {
          rescaleCalled = true;
        };
        pz.zoomHandler(evt);
-       pz.slider.get('value').should.equal(60);
+       pz.slider.get('value').should.equal(61);
        assert.isTrue(rescaleCalled);
      });
 
@@ -82,54 +78,49 @@ describe('pan zoom module', function() {
 
   // Test the zoom calculations.
   it('should handle fractional values within the limit for rescale',
-     function(done) {
+     function() {
        // Floor is used so the scale will round down.
        var evt =
            { scale: 0.609,
-             translate: 't'};
+             translate: [0, 0]};
        var rescaled = false;
        topo.once('rescaled', function() {
          rescaled = true;
-         done();
        });
-       pz.rescale(vis, evt);
-       pz._scale.should.equal(0.609);
+       pz.rescale(evt);
+       topo.get('scale').should.equal(0.609);
        var expected = 'translate(' + evt.translate + ') scale(0.609)';
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);
      });
 
   it('should set an upper limit for rescale',
-     function(done) {
+     function() {
        var evt =
            { scale: 2.1,
-             translate: 'u'};
+             translate: [0, 0]};
        var rescaled = false;
        topo.once('rescaled', function() {
          rescaled = true;
-         done();
        });
-       topo.set('scale', 2.0);
-       pz.rescale(vis, evt);
-       pz._scale.should.equal(2.0);
+       pz.rescale(evt);
+       topo.get('scale').should.equal(2.0);
        var expected = 'translate(' + evt.translate + ') scale(2)';
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);
      });
 
   it('should set a lower limit for rescale',
-     function(done) {
+     function() {
        var evt =
            { scale: 0.2,
-             translate: 'v'};
+             translate: [0, 0]};
        var rescaled = false;
        topo.once('rescaled', function() {
          rescaled = true;
-         done();
        });
-       topo.set('scale', 0.25);
-       pz.rescale(vis, evt);
-       pz._scale.should.equal(0.25);
+       pz.rescale(evt);
+       topo.get('scale').should.equal(0.25);
        var expected = 'translate(' + evt.translate + ') scale(0.25)';
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);

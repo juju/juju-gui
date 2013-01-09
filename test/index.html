@@ -3,70 +3,71 @@
 <head>
   <meta charset="utf-8">
   <link rel="stylesheet" href="assets/mocha.css">
-  <script src="/juju-ui/assets/modules.js"></script>
-  <script src="/juju-ui/assets/all-yui.js"></script>
-  <!-- Since only the tests depend on these files and the prod tests disable
-    the YUI loader, we have to include them manually here. -->
-  <script src="/juju-ui/assets/event-simulate.js"></script>
-  <script src="/juju-ui/assets/node-event-simulate.js"></script>
+
+
+  <!-- Load test runner/environment -->
   <script src="assets/chai.js"></script>
   <script src="assets/mocha.js"></script>
-  <script src="utils.js"></script>
   <script>
     noLogin = true;
     var assert = chai.assert,
-        expect = chai.expect
-        should = chai.should();
-    mocha.setup({ui: 'bdd', ignoreLeaks: false})
+        expect = chai.expect;
+
+    var should = chai.should();
+    console.log('mocha setup');
+    mocha.setup({'ui': 'bdd', 'ignoreLeaks': false, 'timeout': 20000})
+    console.log('mocha setup done');
   </script>
 
-  <script>
-  YUI().use('node', 'event', function(Y) {
-     var config = GlobalConfig;
-     for (group in config.groups) {
-       var group = config.groups[group];
-       for (m in group.modules) {
-         var resource = group.modules[m];
-         if (!m || !resource.fullpath) {
-           continue
-         }
-         resource.fullpath = resource.fullpath.replace(
-           '/juju-ui/', '../juju-ui/', 1);
-         // If we load modules asyncronously then the module loading may take
-         // so long that the test definitions (and before/after calls) happen
-         // *after* the test runner is invoked.  In this case the test runner
-         // will not know about the tests and therefore not run them.
-         resource.async = false;
-       }
-     }
-     Y.on('domready', mocha.run);
-  });
-  </script>
+  <!-- Load up YUI base, app modules, and test utils -->
+  <!-- Since only the tests depend on these files and the prod tests disable
+       the YUI loader, we have to include them manually here. -->
+  <script src="/juju-ui/assets/modules.js"></script>
+  <script src="/juju-ui/assets/all-yui.js"></script>
+  <script src="/juju-ui/assets/event-simulate.js"></script>
+  <script src="/juju-ui/assets/node-event-simulate.js"></script>
+  <script src="utils.js"></script>
 
+
+  <!-- Tests (Alphabetical)-->
+  <script src="test_app.js"></script>
+  <script src="test_app_hotkeys.js"></script>
+  <script src="test_application_notifications.js"></script>
+  <script src="test_charm_collection_view.js"></script>
+  <script src="test_charm_configuration.js"></script>
+  <script src="test_charm_panel.js"></script>
+  <script src="test_charm_store.js"></script>
+  <script src="test_charm_view.js"></script>
+  <script src="test_console.js"></script> 
   <script src="test_d3_components.js"></script>
-  <script src="test_topology.js"></script>
-  <script src="test_panzoom.js"></script>
+  <script src="test_environment_view.js"></script>
   <script src="test_env.js"></script>
+  <script src="test_endpoints.js"></script>
+  <script src="test_login.js"></script>
   <script src="test_model.js"></script>
   <script src="test_notifications.js"></script>
-  <script src="test_app.js"></script>
-  <script src="test_unit_view.js"></script>
-  <script src="test_charm_collection_view.js"></script>
-  <script src="test_charm_view.js"></script>
-  <script src="test_environment_view.js"></script>
+  <script src="test_notifier_widget.js"></script>
+  <script src="test_panzoom.js"></script>
+  <script src="test_topology.js"></script>
   <script src="test_service_config_view.js"></script>
   <script src="test_service_view.js"></script>
+  <script src="test_unit_view.js"></script>
   <script src="test_utils.js"></script>
-  <script src="test_login.js"></script>
-  <script src="test_charm_panel.js"></script>
-  <script src="test_charm_configuration.js"></script>
-  <script src="test_console.js"></script>
-  <script src="test_endpoints.js"></script>
-  <script src="test_application_notifications.js"></script>
-  <script src="test_charm_store.js"></script>
-  <script src="test_app_hotkeys.js"></script>
-  <script src="test_notifier_widget.js"></script>
 
+
+  <script>
+  YUI_config = {
+      async: false,
+      consoleEnabled: true,
+      delayUntil: 'domready'
+  };
+
+  YUI().use(['node', 'event'], function(Y) {
+     // Run the tests.
+      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      else { mocha.run(); }
+  });
+  </script>
 
 </head>
 

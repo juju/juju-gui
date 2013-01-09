@@ -34,10 +34,10 @@ YUI.add('juju-view-environment', function(Y) {
 
           //If we need the initial HTML template
           // take care of that.
-          if (!this.svg) {
+          if (!this._rendered) {
             EnvironmentView.superclass.render.apply(this, arguments);
             container.setHTML(Templates.overview());
-            this.svg = container.one('.topology');
+            this._rendered = true;
           }
 
           if (!topo) {
@@ -51,6 +51,7 @@ YUI.add('juju-view-environment', function(Y) {
             // Bind all the behaviors we need as modules.
             topo.addModule(views.MegaModule);
             topo.addModule(views.PanZoomModule);
+            topo.addModule(views.ViewportModule);
             topo.addModule(views.RelationModule);
 
             topo.addTarget(this);
@@ -61,13 +62,15 @@ YUI.add('juju-view-environment', function(Y) {
           return this;
         },
 
-        postRender: function() {
-          this.topo.attachContainer();
+        /**
+         * Render callback handler,
+         * triggered from app when the view renders.
+         *
+         * @method rendered
+         **/
+        rendered: function() {
           this.topo.fire('rendered');
-          // Bind d3 events (manually)
-          // this needs to be postRender and
-          // the jiggle in phases has broken
-          // the existing (from change to showView)
+          // Bind d3 events (manually).
           this.topo.bindAllD3Events();
         }
       }, {
@@ -79,13 +82,10 @@ YUI.add('juju-view-environment', function(Y) {
   requires: ['juju-templates',
              'juju-view-utils',
              'juju-models',
-             'd3',
-             'd3-components',
+             'juju-topology',
+             'svg-layouts',
              'base-build',
              'handlebars-base',
              'node',
-             'svg-layouts',
-             'event-resize',
-             'slider',
              'view']
 });
