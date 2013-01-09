@@ -308,7 +308,7 @@
           zoom_out = container.one('#zoom-out-btn'),
           module = view.topo.modules.PanZoomModule,
           slider = module.slider,
-          svg = container.one('svg g g');
+          svg = container.one('svg g');
 
       zoom_in.simulate('click');
 
@@ -342,10 +342,10 @@
          view.rendered();
          var svg = Y.one('svg');
 
-         parseInt(svg.one('g g').getAttribute('height'), 10)
+         parseInt(svg.one('g').getAttribute('height'), 10)
           .should.equal(
          parseInt(svg.getComputedStyle('height'), 10));
-         parseInt(svg.one('g g').getAttribute('width'), 10)
+         parseInt(svg.one('g').getAttribute('width'), 10)
           .should.equal(
          parseInt(svg.getComputedStyle('width'), 10));
        }

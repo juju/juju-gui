@@ -63,20 +63,7 @@
   };
 
   YUI().use(['node', 'event'], function(Y) {
-      var config = GlobalConfig;
-
-      for (group in config.groups) {
-          var group = config.groups[group];
-          for (m in group.modules) {
-              var resource = group.modules[m];
-              if (!m || !resource.fullpath) {
-                  continue
-              }
-              resource.fullpath = resource.fullpath.replace(
-                  '/juju-ui/', '../juju-ui/');
-          }
-      }
-      // Run the tests.
+     // Run the tests.
       if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
       else { mocha.run(); }
   });

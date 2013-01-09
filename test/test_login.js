@@ -2,7 +2,7 @@
 
 (function() {
 
-   describe('environment login support', function() {
+  describe('environment login support', function() {
     var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
     var Y, conn, env, utils, juju, makeLoginView, views, app;
     var test = it; // We aren't really doing BDD so let's be more direct.

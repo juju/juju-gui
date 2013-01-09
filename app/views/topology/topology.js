@@ -167,7 +167,7 @@ YUI.add('juju-topology', function(Y) {
        */
       scale: {
         getter: function() {return this.zoom.scale();},
-        setter: function(v) {this.zoom.scale(v);}
+        setter: function(v) {this.zoom.scale(Math.floor(v * 100.0) /100.0);}
       },
 
       translate: {

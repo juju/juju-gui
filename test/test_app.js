@@ -38,7 +38,7 @@ function injectData(app, data) {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-          ['juju-gui', 'juju-tests-utils'],
+          ['juju-gui', 'juju-tests-utils', 'juju-view-utils'],
           function(Y) {
             done();
           });
@@ -61,9 +61,7 @@ function injectData(app, data) {
     });
 
     afterEach(function() {
-      if (container) {
-        container.remove(true);
-      }
+      container.remove(true);
     });
 
     it('should produce a valid index', function() {

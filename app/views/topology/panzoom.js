@@ -123,7 +123,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
       // construction to d3.event.
       evt.scale = scale;
       // Update the scale in our zoom behavior manager to maintain state.
-      zoom.scale(scale);
+      zoom.scale(Math.floor(scale));
       // Update the translate so that we scale from the center
       // instead of the origin.
       evt.translate = zoom.translate();
@@ -131,7 +131,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
       evt.translate[1] -= (parseInt(rect.attr('height'), 10) / 2) * delta;
       zoom.translate(evt.translate);
 
-      console.log('firezoom -> resize', delta);
       this.rescale(evt);
     },
 
@@ -151,14 +150,14 @@ YUI.add('juju-topology-panzoom', function(Y) {
         return;
       }
 
-      console.log('rescale', evt.scale, evt.translate);
       // Store the current value of scale so that it can be restored later.
       topo.set('scale', evt.scale);
       // Store the current value of translate as well, by copying the event
       // array in order to avoid reference sharing.
       topo.set('translate', Y.mix(evt.translate));
-      vis.attr('transform', 'translate(' + evt.translate + ')' +
-              ' scale(' + evt.scale + ')');
+      vis.attr('transform', 'translate(' + topo.get('translate') + ')' +
+              ' scale(' + topo.get('scale') + ')');
+      topo.fire('rescaled');
     },
 
     renderedHandler: function(evt) {
