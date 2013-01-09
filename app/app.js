@@ -244,7 +244,7 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('providerTypeChange', this.onProviderTypeChange);
 
       // Once the user logs in we need to redraw.
-      this.env.after('login', this.dispatch, this);
+      this.env.after('login', this.onLogin, this);
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);
@@ -558,6 +558,11 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
+    onLogin: function() {
+      Y.one('body > #login-mask').setStyle('display', 'none');
+      this.dispatch();
+    },
+
     /**
      * Display the provider type.
      *
@@ -568,11 +573,8 @@ YUI.add('juju-gui', function(Y) {
      * @method onProviderTypeChange
      */
     onProviderTypeChange: function(evt) {
-      var providerType = evt.newVal,
-          providerNode = Y.one('#provider-type');
-      if (Y.Lang.isValue(providerType)) {
-        providerNode.set('text', 'on ' + providerType);
-      }
+      var providerType = evt.newVal;
+      Y.all('.provider-type').set('text', 'on ' + providerType);
     },
 
     /**
