@@ -268,8 +268,51 @@ YUI.add('juju-env', function(Y) {
     get_endpoints: function(services, callback) {
       this._send_rpc({'op': 'get_endpoints', 'service_names': services},
                      callback);
-    }
+    },
 
+    /**
+     * Update the annotations for an entity by name.
+     *
+     * @param {Object} entity The name of a machine, unit, service, or
+     *   environment.
+     * @param {Object} data A dictionary of key, value pairs.
+     * @return {undefined} Nothing.
+     */
+    update_annotations: function(entity, data, callback) {
+      this._send_rpc({
+        op: 'update_annotations',
+        entity: entity,
+        data: data}, callback);
+    },
+
+    /**
+     * Get the annotations for an entity by name.
+     *
+     * @param {Object} entity The name of a machine, unit, service, or
+     *   environment.
+     * @return {undefined} Nothing.
+     * @return {Object} A dictionary of key,value pairs is returned in the
+     *   callback.  The invocation of this command returns nothing.
+     */
+    get_annotations: function(entity, callback) {
+      this._send_rpc({
+        op: 'get_annotations',
+        entity: entity}, callback);
+    },
+
+    /**
+     * Remove the annotations for an entity by name.
+     *
+     * @param {Object} entity The name of a machine, unit, service, or
+     *   environment.
+     * @return {undefined} Nothing.
+     */
+    remove_annotations: function(entity, keys, callback) {
+      this._send_rpc({
+        op: 'remove_annotations',
+        entity: entity,
+        keys: keys || []}, callback);
+    }
 
   });
 
