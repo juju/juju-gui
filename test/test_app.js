@@ -61,7 +61,9 @@ function injectData(app, data) {
     });
 
     afterEach(function() {
-      container.remove(true);
+      if (container) {
+        container.remove(true);
+      }
     });
 
     it('should produce a valid index', function() {
@@ -169,11 +171,14 @@ function injectData(app, data) {
       };
       env.connect();
       conn.open();
+      // We need to fake the connection event.
+      env.set('connected', true);
       reset_called.should.equal(true);
 
       // trigger a second time and verify
       reset_called = false;
       conn.open();
+      env.set('connected', true);
       reset_called.should.equal(true);
     });
 

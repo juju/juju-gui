@@ -15,7 +15,7 @@ var GlobalConfig = {
 
   base: '/juju-ui/assets/javascripts/yui/',
   // Use Rollups
-  combine: true,
+  combine: false,
 
   groups: {
     gallery: {

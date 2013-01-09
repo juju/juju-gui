@@ -2,14 +2,13 @@
 
 (function() {
 
-  var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
-  var Y = YUI(GlobalConfig).use(requires);
-
-  describe('environment login support', function() {
-    var conn, env, utils, juju, makeLoginView, views, app;
+   describe('environment login support', function() {
+    var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
+    var Y, conn, env, utils, juju, makeLoginView, views, app;
     var test = it; // We aren't really doing BDD so let's be more direct.
 
     before(function() {
+      Y = YUI(GlobalConfig).use(requires);
       utils = Y.namespace('juju-tests.utils');
       juju = Y.namespace('juju');
     });
