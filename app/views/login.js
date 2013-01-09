@@ -14,6 +14,15 @@ YUI.add('juju-view-login', function(Y) {
       '#login-form input[type=submit]': {click: 'login'}
     },
 
+    /**
+     * Login event handler. When clicking the login form submit button,
+     * disable the form, take username and password from the input fields
+     * and put them in the environment, and call the environment login method.
+     *
+     * @method login
+     * @param {Object} ev An event object (with a "currentTarget" attribute).
+     * @return {undefined} Mutates only.
+    **/
     login: function(ev) {
       ev.preventDefault();
       if (ev.currentTarget.get('disabled')) {
@@ -29,11 +38,10 @@ YUI.add('juju-view-login', function(Y) {
 
     render: function() {
       var env = this.get('env');
-      var app = this.get('app');
       // In order to have the mask cover everything, it needs to be an
       // immediate child of the body.  In order for it to render immediately
       // when the app loads, it needs to be in index.html.
-      Y.one('body > #login-mask').setStyle('display', 'block');
+      Y.one('body > #login-mask').show();
       // In order to have events work and the view cleanly be replaced by
       // other views, we need to put the contents in the usual "container"
       // node, even though it is not a child of the mask node.
@@ -41,8 +49,8 @@ YUI.add('juju-view-login', function(Y) {
         environment_name: Y.one('#environment-name').get('text'),
         provider_type: Y.one('#provider-type').get('text'),
         error_text: (
-          env.failedAuthentication ? 'Unknown user and password.' : ''),
-        help_text: app.get('login_help')
+          env.failedAuthentication ? 'Unknown user or password.' : ''),
+        help_text: this.get('help_text')
       }));
       return this;
     }

@@ -539,8 +539,8 @@ YUI.add('juju-gui', function(Y) {
       var password = this.env.get('password');
       if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
         this.showView('login', {
-          app: this,
-          env: this.env
+          env: this.env,
+          help_text: this.get('login_help')
         });
       }
       // If there are credentials available and there has not been a successful
@@ -559,7 +559,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     onLogin: function() {
-      Y.one('body > #login-mask').setStyle('display', 'none');
+      Y.one('body > #login-mask').hide();
       this.dispatch();
     },
 
