@@ -31,93 +31,101 @@ function injectData(app, data) {
   return app;
 }
 
-YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
-  describe('Application basics', function() {
-    var app, container;
+(function() {
 
-    beforeEach(function() {
-      container = Y.one('#main')
-        .appendChild(Y.Node.create('<div/>'))
-          .set('id', 'test-container')
-          .addClass('container')
-          .append(Y.Node.create('<span/>')
-            .set('id', 'environment-name'))
-          .append(Y.Node.create('<span/>')
-            .set('id', 'provider-type')
-            .addClass('provider-type'))
-          .hide();
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container});
-      injectData(app);
+describe('Application basics', function() {
+  var app, container, Y;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils', 'juju-views'], function(Y) {
+      done();
     });
-
-    afterEach(function() {
-      container.remove(true);
-    });
-
-    it('should produce a valid index', function() {
-      var container = app.get('container');
-      app.render();
-      container.getAttribute('id').should.equal('test-container');
-      container.getAttribute('class').should.include('container');
-    });
-
-    it('should be able to route objects to internal URLs', function() {
-      // take handles to database objects and ensure we can route to the view
-      // needed to show them
-      var wordpress = app.db.services.getById('wordpress'),
-          wp0 = app.db.units.get_units_for_service(wordpress)[0],
-          wp_charm = app.db.charms.add({id: wordpress.get('charm')});
-
-      // 'service/wordpress/' is the primary and so other URL are not returned
-      app.getModelURL(wordpress).should.equal('/service/wordpress/');
-      // however passing 'intent' can force selection of another
-      app.getModelURL(wordpress, 'config').should.equal(
-          '/service/wordpress/config');
-
-      // service units use argument rewriting (thus not /u/wp/0)
-      app.getModelURL(wp0).should.equal('/unit/wordpress-0/');
-
-      // charms also require a mapping but only a name, not a function
-      app.getModelURL(wp_charm).should.equal(
-          '/charms/charms/precise/wordpress-6/json');
-    });
-
-    it('should display the configured environment name', function() {
-      var environment_name = 'This is the environment name.  Deal with it.';
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            environment_name: environment_name});
-      assert.equal(
-          container.one('#environment-name').get('text'),
-          environment_name);
-    });
-
-    it('should show a generic environment name if none configured', function() {
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container});
-      assert.equal(
-          container.one('#environment-name').get('text'),
-          'Environment');
-    });
-
-    it('should show the provider type, when available', function() {
-      var providerType = 'excellent provider';
-      // Since no provider type has been set yet, none is displayed.
-      assert.equal('', container.one('#provider-type').get('text'));
-      app.env.set('providerType', providerType);
-      // The provider type has been displayed.
-      assert.equal(
-          'on ' + providerType,
-          container.one('#provider-type').get('text')
-      );
-    });
-
   });
+
+  beforeEach(function() {
+    container = Y.one('#main')
+      .appendChild(Y.Node.create('<div/>'))
+        .set('id', 'test-container')
+        .addClass('container')
+        .append(Y.Node.create('<span/>')
+          .set('id', 'environment-name'))
+        .append(Y.Node.create('<span/>')
+          .set('id', 'provider-type')
+          .addClass('provider-type'))
+        .hide();
+    app = new Y.juju.App(
+        { container: container,
+          viewContainer: container});
+    injectData(app);
+  });
+
+  afterEach(function() {
+    container.remove(true);
+  });
+
+  it('should produce a valid index', function() {
+    var container = app.get('container');
+    app.render();
+    container.getAttribute('id').should.equal('test-container');
+    container.getAttribute('class').should.include('container');
+  });
+
+  it('should be able to route objects to internal URLs', function() {
+    // take handles to database objects and ensure we can route to the view
+    // needed to show them
+    var wordpress = app.db.services.getById('wordpress'),
+        wp0 = app.db.units.get_units_for_service(wordpress)[0],
+        wp_charm = app.db.charms.add({id: wordpress.get('charm')});
+
+    // 'service/wordpress/' is the primary and so other URL are not returned
+    app.getModelURL(wordpress).should.equal('/service/wordpress/');
+    // however passing 'intent' can force selection of another
+    app.getModelURL(wordpress, 'config').should.equal(
+        '/service/wordpress/config');
+
+    // service units use argument rewriting (thus not /u/wp/0)
+    app.getModelURL(wp0).should.equal('/unit/wordpress-0/');
+
+    // charms also require a mapping but only a name, not a function
+    app.getModelURL(wp_charm).should.equal(
+        '/charms/charms/precise/wordpress-6/json');
+  });
+
+  it('should display the configured environment name', function() {
+    var environment_name = 'This is the environment name.  Deal with it.';
+    app = new Y.juju.App(
+        { container: container,
+          viewContainer: container,
+          environment_name: environment_name});
+    assert.equal(
+        container.one('#environment-name').get('text'),
+        environment_name);
+  });
+
+  it('should show a generic environment name if none configured', function() {
+    app = new Y.juju.App(
+        { container: container,
+          viewContainer: container});
+    assert.equal(
+        container.one('#environment-name').get('text'),
+        'Environment');
+  });
+
+  it('should show the provider type, when available', function() {
+    var providerType = 'excellent provider';
+    // Since no provider type has been set yet, none is displayed.
+    assert.equal('', container.one('#provider-type').get('text'));
+    app.env.set('providerType', providerType);
+    // The provider type has been displayed.
+    assert.equal(
+        'on ' + providerType,
+        container.one('#provider-type').get('text')
+    );
+  });
+
 });
+
+})();
 
 YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
 
