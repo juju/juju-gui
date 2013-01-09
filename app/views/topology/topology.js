@@ -165,11 +165,14 @@ YUI.add('juju-topology', function(Y) {
        * (PanZoom in this case). If that module isn't
        * loaded nothing will modify these values.
        */
-       scale: {getter: function() {return this.zoom.scale();},
-               setter: function(v) {this.zoom.scale(v);}},
+      scale: {
+        getter: function() {return this.zoom.scale();},
+        setter: function(v) {this.zoom.scale(v);}
+      },
 
-       translate: {getter: function() {return this.zoom.translate();},
-                   setter: function(v) {this.zoom.translate(v);}}
+      translate: {
+        getter: function() {return this.zoom.translate();},
+        setter: function(v) {this.zoom.translate(v);}}
     }
 
   });
