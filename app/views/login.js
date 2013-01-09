@@ -35,6 +35,14 @@ YUI.add('juju-view-login', function(Y) {
       env.login();
     },
 
+    /**
+     * Render the page.
+     *
+     * Reveal the mask element, and show the login form.
+     *
+     * @method render
+     * @return {undefined} Mutates only.
+    **/
     render: function() {
       // In order to have the mask cover everything, it needs to be an
       // immediate child of the body.  In order for it to render immediately
@@ -49,9 +57,10 @@ YUI.add('juju-view-login', function(Y) {
       var environment_name_node = Y.one('#environment-name');
       var provider_type_node = Y.one('#provider-type');
       var environment_name = (
-          environment_name_node ? environment_name_node.get('text')
-                              : 'Environment');
-      var provider_type = provider_type_node ? provider_type_node.get('text') : '';
+          environment_name_node ?
+          environment_name_node.get('text') : 'Environment');
+      var provider_type = (
+          provider_type_node ? provider_type_node.get('text') : '');
       // In order to have events work and the view cleanly be replaced by
       // other views, we need to put the contents in the usual "container"
       // node, even though it is not a child of the mask node.

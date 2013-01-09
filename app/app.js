@@ -564,6 +564,15 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
+    /**
+     * Hide the login mask and redispatch the router.
+     *
+     * When the environment gets a response from a login attempt,
+     * it fires a login event, to which this responds.
+     *
+     * @method onLogin
+     * @private
+     */
     onLogin: function() {
       Y.one('body > #login-mask').hide();
       this.dispatch();
