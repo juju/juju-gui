@@ -31,15 +31,14 @@
       done();
     });
 
-    it('can deploy a service', function(done) {
+    it('can deploy a service', function() {
       env.deploy('precise/mysql');
       msg = conn.last_message();
       msg.op.should.equal('deploy');
       msg.charm_url.should.equal('precise/mysql');
-      done();
     });
 
-    it('can deploy a service with a config file', function(done) {
+    it('can deploy a service with a config file', function() {
       /*jshint multistr:true */
       var config_raw = 'tuning-level: \nexpert-mojo';
       /*jshint multistr:false */
@@ -48,16 +47,14 @@
       msg.op.should.equal('deploy');
       msg.charm_url.should.equal('precise/mysql');
       msg.config_raw.should.equal(config_raw);
-      done();
     });
 
-    it('can add a unit', function(done) {
+    it('can add a unit', function() {
       env.add_unit('mysql', 3);
       msg = conn.last_message();
       msg.op.should.equal('add_unit');
       msg.service_name.should.equal('mysql');
       msg.num_units.should.equal(3);
-      done();
     });
 
     it('can accept a callback on its methods', function(done) {
@@ -76,7 +73,7 @@
         'result': {'id': 'cs:precise/mysql'}});
     });
 
-    it('can resolve a problem with a unit', function(done) {
+    it('can resolve a problem with a unit', function() {
       var unit_name = 'mysql/0';
       env.resolved(unit_name);
       msg = conn.last_message();
@@ -84,10 +81,9 @@
       msg.unit_name.should.equal(unit_name);
       var _ = expect(msg.relation_name).to.not.exist;
       msg.retry.should.equal(false);
-      done();
     });
 
-    it('can resolve a problem with a unit relation', function(done) {
+    it('can resolve a problem with a unit relation', function() {
       var unit_name = 'mysql/0';
       var rel_name = 'relation-0000000000';
       env.resolved(unit_name, rel_name);
@@ -96,10 +92,9 @@
       msg.unit_name.should.equal(unit_name);
       msg.relation_name.should.equal(rel_name);
       msg.retry.should.equal(false);
-      done();
     });
 
-    it('can retry a problem with a unit', function(done) {
+    it('can retry a problem with a unit', function() {
       var unit_name = 'mysql/0';
       env.resolved(unit_name, null, true);
       msg = conn.last_message();
@@ -107,7 +102,6 @@
       msg.unit_name.should.equal(unit_name);
       var _ = expect(msg.relation_name).to.not.exist;
       msg.retry.should.equal(true);
-      done();
     });
 
     it('can retry a problem with a unit using a callback', function(done) {
@@ -124,7 +118,7 @@
         request_id: msg.request_id});
     });
 
-    it('will populate the provider type and default series', function(done) {
+    it('will populate the provider type and default series', function() {
       var providerType = 'super provider',
           defaultSeries = 'oneiric',
           evt =
@@ -141,7 +135,6 @@
       // After the message arrives the provider type is set.
       assert.equal(env.get('providerType'), providerType);
       assert.equal(env.get('defaultSeries'), defaultSeries);
-      done();
     });
 
     it('can get endpoints for a service', function() {
@@ -151,6 +144,41 @@
       msg.service_names.should.eql(['mysql']);
     });
 
+    it('can update annotations', function() {
+      var unit_name = 'mysql/0';
+      env.update_annotations(unit_name, {name: 'A'});
+      msg = conn.last_message();
+      msg.op.should.equal('update_annotations');
+      msg.entity.should.equal(unit_name);
+      msg.data.name.should.equal('A');
+    });
+
+    it('can get annotations', function() {
+      var unit_name = 'mysql/0';
+      env.get_annotations(unit_name);
+      msg = conn.last_message();
+      msg.op.should.equal('get_annotations');
+      msg.entity.should.equal(unit_name);
+    });
+
+    it('can remove annotations with specified keys', function() {
+      var unit_name = 'mysql/0';
+      var keys = ['key1', 'key2'];
+      env.remove_annotations(unit_name, keys);
+      msg = conn.last_message();
+      msg.op.should.equal('remove_annotations');
+      msg.entity.should.equal(unit_name);
+      msg.keys.should.eql(keys);
+    });
+
+    it('can remove annotations with no specified keys', function() {
+      var unit_name = 'mysql/0';
+      env.remove_annotations(unit_name);
+      msg = conn.last_message();
+      msg.op.should.equal('remove_annotations');
+      msg.entity.should.equal(unit_name);
+      msg.keys.should.eql([]);
+    });
 
   });
 })();
