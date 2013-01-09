@@ -534,6 +534,12 @@ YUI.add('juju-gui', function(Y) {
      *
      */
     check_user_credentials: function(req, res, next) {
+      if (!this.get('container').getDOMNode()) {
+        // We are probably after a test tear down, in a handler for a
+        // setTimeout in the YUI router.  Ugh, setTimeout is the source of
+        // so many fun race conditions and fragilities. :-/  Let's just bail.
+        return;
+      }
       // If there are no stored credentials, the user is prompted for some.
       var user = this.env.get('user');
       var password = this.env.get('password');

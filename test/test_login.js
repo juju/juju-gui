@@ -8,10 +8,11 @@
     var test = it; // We aren't really doing BDD so let's be more direct.
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(requires);
-      juju = Y.namespace('juju');
-      utils = Y.namespace('juju-tests.utils');
-      done();
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests').utils;
+        juju = Y.namespace('juju');
+        done();
+      });
     });
 
     beforeEach(function() {
@@ -88,11 +89,13 @@
     var Y, conn, env, utils, juju, views, loginView, container, loginMask;
     var test = it; // We aren't really doing BDD so let's be more direct.
 
-    before(function() {
-      Y = YUI(GlobalConfig).use(requires);
-      utils = Y.namespace('juju-tests.utils');
-      juju = Y.namespace('juju');
-      views = Y.namespace('juju-views');
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests').utils;
+        juju = Y.namespace('juju');
+        views = Y.namespace('juju.views');
+        done();
+      });
     });
 
     beforeEach(function() {
@@ -100,7 +103,7 @@
       env = new juju.Environment({conn: conn});
       env.connect();
       conn.open();
-      container = Y.Node.create('<div/>');
+      container = Y.one('body').appendChild('<div/>');
       // Needed by the render method.
       loginMask = Y.one('body').appendChild('<div/>').set('id', 'login-mask');
       loginView = new views.login(
@@ -128,7 +131,8 @@
 
     test('the view render method adds the login form', function() {
       loginView.render();
-      assert.isTrue(Y.one('#login-form'));
+      assert.equal(
+        container.one('#login-form input[type=submit]').get('value'), 'Login');
     });
 
   });
