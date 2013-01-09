@@ -124,6 +124,7 @@ var GlobalConfig = {
 
         'juju-views': {
           use: [
+            'handlebars',
             'd3-components',
             'juju-templates',
             'juju-notifications',
