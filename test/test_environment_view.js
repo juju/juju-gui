@@ -440,10 +440,10 @@
 
          // Toggle the control panel for the Add Relation button.
          var module = view.topo.modules.RelationModule;
-         var mega = view.topo.modules.MegaModule;
-         mega.service_click_actions.toggleControlPanel(
+         var sm = view.topo.modules.ServiceModule;
+         sm.service_click_actions.toggleControlPanel(
              d3.select(service.getDOMNode()).datum(),
-             mega,
+             sm,
              service);
          // Mock an event object so that d3.mouse does not throw a NPE.
          d3.event = {};
@@ -532,12 +532,12 @@
 
           // If the user has clicked on the "Add Relation" menu item...
           var module = view.topo.modules.RelationModule;
-          var mega = view.topo.modules.MegaModule;
+          var sm = view.topo.modules.ServiceModule;
           var topo = module.get('component');
           module.startRelation(service);
           assert.isTrue(topo.buildingRelation);
           // ...clicking on the background causes the relation drag to stop.
-          mega.backgroundClicked();
+          sm.backgroundClicked();
           assert.isFalse(topo.buildingRelation);
         });
 

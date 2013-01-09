@@ -74,10 +74,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/topology/service.js'
         },
 
-        'juju-topology-mega': {
-          fullpath: '/juju-ui/views/topology/mega.js'
-        },
-
         'juju-topology': {
           fullpath: '/juju-ui/views/topology/topology.js'
         },

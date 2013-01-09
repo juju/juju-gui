@@ -222,7 +222,7 @@ describe('juju application notifications', function() {
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
-        var module = view.topo.modules.MegaModule;
+        var module = view.topo.modules.ServiceModule;
         // The callback uses the 'getModelURL' attribute to retrieve the
         // service URL.
         module.set('getModelURL', NO_OP);
