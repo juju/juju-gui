@@ -274,7 +274,8 @@ YUI.add('juju-env', function(Y) {
      * Update the annotations for an entity by name.
      *
      * @param {Object} entity The name of a machine, unit, service, or
-     *   environment.
+     *   environment, e.g. '0', 'mysql/0', or 'mysql'.  To specify the
+     *   environment as the entity the magic string 'env' is used.
      * @param {Object} data A dictionary of key, value pairs.
      * @return {undefined} Nothing.
      */
@@ -289,7 +290,8 @@ YUI.add('juju-env', function(Y) {
      * Get the annotations for an entity by name.
      *
      * @param {Object} entity The name of a machine, unit, service, or
-     *   environment, e.g. '0', 'mysql/0', 'mysql', 'ec2-dev'.
+     *   environment, e.g. '0', 'mysql/0', or 'mysql'.  To specify the
+     *   environment as the entity the magic string 'env' is used.
      * @return {Object} A dictionary of key,value pairs is returned in the
      *   callback.  The invocation of this command returns nothing.
      */
@@ -303,7 +305,8 @@ YUI.add('juju-env', function(Y) {
      * Remove the annotations for an entity by name.
      *
      * @param {Object} entity The name of a machine, unit, service, or
-     *   environment.
+     *   environment, e.g. '0', 'mysql/0', or 'mysql'.  To specify the
+     *   environment as the entity the magic string 'env' is used.
      * @param {Object} keys An optional list of annotation key names for the
      *   annotations to be deleted.  If no keys are passed, all annoations for
      *   the entity will be removed.
