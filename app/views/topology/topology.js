@@ -186,7 +186,6 @@ YUI.add('juju-topology', function(Y) {
     'juju-templates',
     'juju-models',
     'juju-env',
-    'juju-topology-mega',
     'juju-topology-service',
     'juju-topology-relation',
     'juju-topology-panzoom',

@@ -49,7 +49,7 @@ YUI.add('juju-view-environment', function(Y) {
               getServiceEndpoints: this.get('getServiceEndpoints'),
               container: container});
             // Bind all the behaviors we need as modules.
-            topo.addModule(views.MegaModule);
+            topo.addModule(views.ServiceModule);
             topo.addModule(views.PanZoomModule);
             topo.addModule(views.ViewportModule);
             topo.addModule(views.RelationModule);
