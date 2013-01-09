@@ -37,11 +37,16 @@ YUI.add('juju-view-login', function(Y) {
     },
 
     render: function() {
-      var env = this.get('env');
       // In order to have the mask cover everything, it needs to be an
       // immediate child of the body.  In order for it to render immediately
       // when the app loads, it needs to be in index.html.
-      Y.one('body > #login-mask').show();
+      var loginMask = Y.one('body > #login-mask');
+      if (!loginMask) {
+        // No login mask in the DOM, as is the case in tests.
+        return this;
+      }
+      loginMask.show();
+      var env = this.get('env');
       // In order to have events work and the view cleanly be replaced by
       // other views, we need to put the contents in the usual "container"
       // node, even though it is not a child of the mask node.

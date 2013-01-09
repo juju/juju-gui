@@ -534,7 +534,7 @@ YUI.add('juju-gui', function(Y) {
      *
      */
     check_user_credentials: function(req, res, next) {
-      // If there are no stored credentials the user is prompted for some.
+      // If there are no stored credentials, the user is prompted for some.
       var user = this.env.get('user');
       var password = this.env.get('password');
       if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
@@ -543,16 +543,16 @@ YUI.add('juju-gui', function(Y) {
           help_text: this.get('login_help')
         });
       }
-      // If there are credentials available and there has not been a successful
-      // login attempt and we are not waiting on a login attempt, try to log in.
+      // If there are credentials available and there has not been
+      // a successful login attempt, try to log in.
       if (Y.Lang.isValue(user) && Y.Lang.isValue(password) &&
-          !this.env.waiting && !this.env.userIsAuthenticated) {
+          !this.env.userIsAuthenticated) {
         this.env.login();
         return;
       }
-      // If there has not been a successful login attempt, do not let the route
-      // dispatch proceed.
-      if (this.env.waiting || !this.env.userIsAuthenticated) {
+      // If there has not been a successful login attempt,
+      // do not let the route dispatch proceed.
+      if (!this.env.userIsAuthenticated) {
         return;
       }
       next();
