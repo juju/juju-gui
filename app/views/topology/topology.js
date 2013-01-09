@@ -159,7 +159,17 @@ YUI.add('juju-topology', function(Y) {
 
       height: {
         getter: function() {return this.get('size')[1];}
-      }
+      },
+      /*
+       * Scale and translate are managed by an external module
+       * (PanZoom in this case). If that module isn't
+       * loaded nothing will modify these values.
+       */
+       scale: {getter: function() {return this.zoom.scale();},
+               setter: function(v) {this.zoom.scale(v);}},
+
+       translate: {getter: function() {return this.zoom.translate();},
+                   setter: function(v) {this.zoom.translate(v);}}
     }
 
   });

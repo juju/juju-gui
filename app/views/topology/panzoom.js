@@ -42,17 +42,13 @@ YUI.add('juju-topology-panzoom', function(Y) {
                             .domain([0.25, 2])
                             .range([options.minZoom, options.maxZoom])
                             .clamp(true);
-      this._translate = [0, 0];
-      this._scale = 1.0;
-
-
     },
 
     renderSlider: function() {
       var self = this,
           topo = this.get('component'),
           options = topo.options,
-          currentScale = this._scale,
+          currentScale = topo.get('scale'),
           slider;
 
       if (self.slider) {
@@ -121,7 +117,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
           delta,
           evt = {};
 
-      delta = scale - this._scale;
+      delta = scale - topo.get('scale');
 
       // Build a temporary event that rescale can use of a similar
       // construction to d3.event.
@@ -157,10 +153,10 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
       console.log('rescale', evt.scale, evt.translate);
       // Store the current value of scale so that it can be restored later.
-      this._scale = evt.scale;
+      topo.set('scale', evt.scale);
       // Store the current value of translate as well, by copying the event
       // array in order to avoid reference sharing.
-      this._translate = Y.mix(evt.translate);
+      topo.set('translate', Y.mix(evt.translate));
       vis.attr('transform', 'translate(' + evt.translate + ')' +
               ' scale(' + evt.scale + ')');
     },
@@ -169,8 +165,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
       // Preserve zoom when the scene is updated.
       var topo = this.get('component'),
           changed = false,
-          currentScale = this._scale,
-          currentTranslate = this._translate;
+          currentScale = topo.get('scale'),
+          currentTranslate = topo.get('translate');
 
       this.renderSlider();
       if (currentTranslate && currentTranslate !== topo.get('translate')) {
@@ -182,7 +178,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
         changed = true;
       }
       if (changed) {
-        this.rescale({scale: this._scale, translate: this._translate});
+        this.rescale({scale: currentScale, translate: currentTranslate});
       }
     }
   }, {
