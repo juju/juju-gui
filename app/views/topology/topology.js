@@ -1,4 +1,3 @@
-'use strict';
 
 YUI.add('juju-topology', function(Y) {
   var views = Y.namespace('juju.views'),
@@ -186,7 +185,6 @@ YUI.add('juju-topology', function(Y) {
     'juju-templates',
     'juju-models',
     'juju-env',
-    'juju-topology-mega',
     'juju-topology-service',
     'juju-topology-relation',
     'juju-topology-panzoom',

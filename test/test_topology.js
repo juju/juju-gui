@@ -79,7 +79,8 @@ describe('topology', function() {
     db = new models.Database();
     topo = new views.Topology();
     topo.setAttrs({container: container, db: db});
-    topo.addModule(views.MegaModule);
+    topo.addModule(views.ServiceModule);
+    topo.addModule(views.RelationModule);
     topo.addModule(views.PanZoomModule);
     topo.addModule(views.ViewportModule);
     return topo;
