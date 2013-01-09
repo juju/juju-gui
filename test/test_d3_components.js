@@ -99,7 +99,7 @@ describe('d3-components', function() {
     state.thing.should.equal('decorated');
   });
 
-  it('should allow event bindings through the use of a declartive object',
+  it('should allow event bindings through the use of a declarative object',
      function() {
        comp = new NS.Component();
        comp.setAttrs({container: container});
@@ -189,5 +189,3 @@ describe('d3-components', function() {
   });
 
 });
-
-

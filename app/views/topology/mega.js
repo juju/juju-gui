@@ -336,6 +336,9 @@ YUI.add('juju-topology-mega', function(Y) {
                 if (topo.buildingRelation) {
                   topo.fire('addRelationDragEnd');
                 }
+                else {
+                  topo.get('env').update_annotations(d.id, {x: d.x, y: d.y});
+                }
               });
 
       // Generate a node for each service, draw it as a rect with
@@ -694,18 +697,18 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     /*
-         * Event handler to hide the graph-list picker
-         */
+     * Event handler to hide the graph-list picker
+     */
     hideGraphListPicker: function(evt) {
       var container = this.get('container'),
-              picker = container.one('.graph-list-picker');
+          picker = container.one('.graph-list-picker');
       picker.removeClass('inactive');
       picker.one('.picker-expanded').removeClass('active');
     },
 
     /*
-         * Set the visualization size based on the viewport
-         */
+     * Set the visualization size based on the viewport
+     */
     setSizesFromViewport: function() {
       // This event allows other page components that may unintentionally
       // affect the page size, such as the charm panel, to get out of the
@@ -752,8 +755,8 @@ YUI.add('juju-topology-mega', function(Y) {
     },
 
     /*
-         * Update the location of the active service panel
-         */
+     * Update the location of the active service panel
+     */
     updateServiceMenuLocation: function() {
       var topo = this.get('component'),
           container = this.get('container'),
@@ -799,7 +802,7 @@ YUI.add('juju-topology-mega', function(Y) {
       toggleControlPanel: function(m, view, context) {
         var container = view.get('container'),
             topo = view.get('component'),
-                cp = container.one('#service-menu');
+            cp = container.one('#service-menu');
 
         if (cp.hasClass('active') || !m) {
           cp.removeClass('active');
@@ -814,8 +817,8 @@ YUI.add('juju-topology-mega', function(Y) {
       },
 
       /*
-           * View a service
-           */
+       * View a service
+       */
       show_service: function(m, context) {
         var topo = context.get('component');
         topo.detachContainer();
@@ -823,8 +826,8 @@ YUI.add('juju-topology-mega', function(Y) {
       },
 
       /*
-           * Show a dialog before destroying a service
-           */
+       * Show a dialog before destroying a service
+       */
       destroyServiceConfirm: function(m, view) {
         // Set service in view.
         view.set('destroy_service', m);
@@ -846,8 +849,8 @@ YUI.add('juju-topology-mega', function(Y) {
       },
 
       /*
-           * Destroy a service.
-           */
+       * Destroy a service.
+       */
       destroyService: function(m, view, btn) {
         var env = view.get('component').get('env'),
             service = view.get('destroy_service');
