@@ -26,13 +26,13 @@ describe('service module', function() {
     db = new models.Database();
     called = false;
     location =
-        { x: 0,
-          y: 0};
+        { 'gui.x': 0,
+          'gui.y': 0};
     var env =
         { update_annotations: function(name, data) {
                 called = true;
-                location.x = data.x;
-                location.y = data.y;}};
+                location['gui.x'] = data['gui.x'];
+                location['gui.y'] = data['gui.y'];}};
     var view = new views.environment(
         { container: viewContainer,
           db: db,
@@ -57,8 +57,8 @@ describe('service module', function() {
              y: 200.2};
        serviceModule._dragend(d, 0);
        assert.isTrue(called);
-       location.x.should.equal(100.1);
-       location.y.should.equal(200.2);
+       location['gui.x'].should.equal(100.1);
+       location['gui.y'].should.equal(200.2);
      });
 
   it('should not set annotations on drag end if building a relation',
@@ -71,8 +71,8 @@ describe('service module', function() {
        topo.buildingRelation = true;
        serviceModule._dragend(d, 0);
        assert.isFalse(called);
-       location.x.should.equal(0);
-       location.y.should.equal(0);
+       location['gui.x'].should.equal(0);
+       location['gui.y'].should.equal(0);
      });
 
 });

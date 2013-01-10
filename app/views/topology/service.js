@@ -264,7 +264,7 @@ YUI.add('juju-topology-service', function(Y) {
         topo.fire('addRelationDragEnd');
       }
       else {
-        topo.get('env').update_annotations(d.id, {x: d.x, y: d.y});
+        topo.get('env').update_annotations(d.id, {'gui.x': d.x, 'gui.y': d.y});
       }
     },
 
