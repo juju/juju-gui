@@ -251,6 +251,23 @@ YUI.add('juju-topology-service', function(Y) {
                        .data(services, function(d) { return d.modelId();});
     },
 
+    /**
+     * Handle dragend events for a service.
+     *
+     * @param {object} svc A service object.
+     * @param {object} i Unused.
+     * @return {undefined} Side effects only.
+     */
+    _dragend: function(d, i) {
+      var topo = this.get('component');
+      if (topo.buildingRelation) {
+        topo.fire('addRelationDragEnd');
+      }
+      else {
+        topo.get('env').update_annotations(d.id, {'gui.x': d.x, 'gui.y': d.y});
+      }
+    },
+
     /*
      * Attempt to reuse as much of the existing graph and view models
      * as possible to re-render the graph.
@@ -314,11 +331,7 @@ YUI.add('juju-topology-service', function(Y) {
                   topo.fire('serviceMoved', { service: d });
                 }
               })
-            .on('dragend', function(d, i) {
-                if (topo.buildingRelation) {
-                  topo.fire('addRelationDragEnd');
-                }
-              });
+            .on('dragend', Y.bind(this._dragend, this));
 
       // Generate a node for each service, draw it as a rect with
       // labels for service and charm.
@@ -328,7 +341,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Pack doesn't honor existing positions and will
       // re-layout the entire graph. As a short term work
       // around we layout only new nodes. This has the side
-      // effect that node nodes can overlap and will
+      // effect that service blocks can overlap and will
       // be fixed later.
       var new_services = this.services.filter(function(boundingBox) {
         return !Y.Lang.isNumber(boundingBox.x);
@@ -599,8 +612,8 @@ YUI.add('juju-topology-service', function(Y) {
 
 
     /*
-         * Show/hide/fade selection.
-         */
+     * Show/hide/fade selection.
+     */
     show: function(evt) {
       var selection = evt.selection;
       selection.attr('opacity', '1.0')
@@ -622,16 +635,16 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /*
-         * Finish DOM-dependent rendering
-         *
-         * Some portions of the visualization require information pulled
-         * from the DOM, such as the clientRects used for sizing relation
-         * labels and the viewport size used for sizing the whole graph. This
-         * is called after the view is attached to the DOM in order to
-         * perform all of that work.  In the app, it's called as a callback
-         * in app.showView(), and in testing, it needs to be called manually,
-         * if the test relies on any of this data.
-         */
+     * Finish DOM-dependent rendering
+     *
+     * Some portions of the visualization require information pulled
+     * from the DOM, such as the clientRects used for sizing relation
+     * labels and the viewport size used for sizing the whole graph. This
+     * is called after the view is attached to the DOM in order to
+     * perform all of that work.  In the app, it's called as a callback
+     * in app.showView(), and in testing, it needs to be called manually,
+     * if the test relies on any of this data.
+     */
     renderedHandler: function() {
       var container = this.get('container');
 
@@ -673,11 +686,11 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /*
-         * Event handler to hide the graph-list picker
-         */
+     * Event handler to hide the graph-list picker
+     */
     hideGraphListPicker: function(evt) {
       var container = this.get('container'),
-              picker = container.one('.graph-list-picker');
+          picker = container.one('.graph-list-picker');
       picker.removeClass('inactive');
       picker.one('.picker-expanded').removeClass('active');
     },
@@ -727,7 +740,7 @@ YUI.add('juju-topology-service', function(Y) {
       toggleControlPanel: function(m, view, context) {
         var container = view.get('container'),
             topo = view.get('component'),
-                cp = container.one('#service-menu');
+            cp = container.one('#service-menu');
 
         if (cp.hasClass('active') || !m) {
           cp.removeClass('active');
@@ -742,8 +755,8 @@ YUI.add('juju-topology-service', function(Y) {
       },
 
       /*
-           * View a service
-           */
+       * View a service
+       */
       show_service: function(m, context) {
         var topo = context.get('component');
         topo.detachContainer();
@@ -751,8 +764,8 @@ YUI.add('juju-topology-service', function(Y) {
       },
 
       /*
-           * Show a dialog before destroying a service
-           */
+       * Show a dialog before destroying a service
+       */
       destroyServiceConfirm: function(m, view) {
         // Set service in view.
         view.set('destroy_service', m);
@@ -774,8 +787,8 @@ YUI.add('juju-topology-service', function(Y) {
       },
 
       /*
-           * Destroy a service.
-           */
+       * Destroy a service.
+       */
       destroyService: function(m, view, btn) {
         var env = view.get('component').get('env'),
             service = view.get('destroy_service');
