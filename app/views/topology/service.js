@@ -605,8 +605,8 @@ YUI.add('juju-topology-service', function(Y) {
 
 
     /*
-         * Show/hide/fade selection.
-         */
+     * Show/hide/fade selection.
+     */
     show: function(evt) {
       var selection = evt.selection;
       selection.attr('opacity', '1.0')
@@ -628,16 +628,16 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /*
-         * Finish DOM-dependent rendering
-         *
-         * Some portions of the visualization require information pulled
-         * from the DOM, such as the clientRects used for sizing relation
-         * labels and the viewport size used for sizing the whole graph. This
-         * is called after the view is attached to the DOM in order to
-         * perform all of that work.  In the app, it's called as a callback
-         * in app.showView(), and in testing, it needs to be called manually,
-         * if the test relies on any of this data.
-         */
+     * Finish DOM-dependent rendering
+     *
+     * Some portions of the visualization require information pulled
+     * from the DOM, such as the clientRects used for sizing relation
+     * labels and the viewport size used for sizing the whole graph. This
+     * is called after the view is attached to the DOM in order to
+     * perform all of that work.  In the app, it's called as a callback
+     * in app.showView(), and in testing, it needs to be called manually,
+     * if the test relies on any of this data.
+     */
     renderedHandler: function() {
       var container = this.get('container');
 
