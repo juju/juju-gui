@@ -244,7 +244,7 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('providerTypeChange', this.onProviderTypeChange);
 
       // Once the user logs in we need to redraw.
-      this.env.after('login', this.dispatch, this);
+      this.env.after('login', this.onLogin, this);
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);
@@ -534,33 +534,48 @@ YUI.add('juju-gui', function(Y) {
      *
      */
     check_user_credentials: function(req, res, next) {
-      var viewInfo = this.getViewInfo('login');
-      if (!viewInfo.instance) {
-        viewInfo.instance = new views.LoginView({
-          app: this,
-          env: this.env
-        });
+      if (!this.get('container').getDOMNode()) {
+        // We are probably after a test tear down, in a handler for a
+        // setTimeout in the YUI router.  Ugh, setTimeout is the source of
+        // so many fun race conditions and fragilities. :-/  Let's just bail.
+        return;
       }
-      var view = viewInfo.instance;
-      // If there are no stored credentials the user is prompted for some.
+      // If there are no stored credentials, the user is prompted for some.
       var user = this.env.get('user');
       var password = this.env.get('password');
       if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
-        view.promptUser();
+        this.showView('login', {
+          env: this.env,
+          help_text: this.get('login_help')
+        });
       }
-      // If there are credentials available and there has not been a successful
-      // login attempt and we are not waiting on a login attempt, try to log in.
+      // If there are credentials available and there has not been
+      // a successful login attempt, try to log in.
       if (Y.Lang.isValue(user) && Y.Lang.isValue(password) &&
-          !this.env.waiting && !this.env.userIsAuthenticated) {
+          !this.env.userIsAuthenticated) {
         this.env.login();
         return;
       }
-      // If there has not been a successful login attempt, do not let the route
-      // dispatch proceed.
-      if (this.env.waiting || !this.env.userIsAuthenticated) {
+      // If there has not been a successful login attempt,
+      // do not let the route dispatch proceed.
+      if (!this.env.userIsAuthenticated) {
         return;
       }
       next();
+    },
+
+    /**
+     * Hide the login mask and redispatch the router.
+     *
+     * When the environment gets a response from a login attempt,
+     * it fires a login event, to which this responds.
+     *
+     * @method onLogin
+     * @private
+     */
+    onLogin: function() {
+      Y.one('body > #login-mask').hide();
+      this.dispatch();
     },
 
     /**
@@ -573,11 +588,8 @@ YUI.add('juju-gui', function(Y) {
      * @method onProviderTypeChange
      */
     onProviderTypeChange: function(evt) {
-      var providerType = evt.newVal,
-          providerNode = Y.one('#provider-type');
-      if (Y.Lang.isValue(providerType)) {
-        providerNode.set('text', 'on ' + providerType);
-      }
+      var providerType = evt.newVal;
+      Y.all('.provider-type').set('text', 'on ' + providerType);
     },
 
     /**
