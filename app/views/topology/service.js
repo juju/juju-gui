@@ -251,6 +251,13 @@ YUI.add('juju-topology-service', function(Y) {
                        .data(services, function(d) { return d.modelId();});
     },
 
+    /**
+     * Handle dragend events for a service.
+     *
+     * @param {object} svc A service object.
+     * @param {object} i Unused.
+     * @return {undefined} Side effects only.
+     */
     _dragend: function(d, i) {
       var topo = this.get('component');
       if (topo.buildingRelation) {
