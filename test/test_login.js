@@ -116,7 +116,7 @@
       loginMask.remove(true);
     });
 
-    test('the view login method calls the environment login one', function() {
+    test('the view login method logs in through the environment', function() {
       var noop = function() {};
       var ev = {preventDefault: noop, currentTarget: {get: noop}};
       container.appendChild('<input/>').set('type', 'text').set(
