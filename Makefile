@@ -38,7 +38,7 @@ NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 	node_modules/minimatch node_modules/mocha node_modules/node-markdown \
 	node_modules/node-minify node_modules/node-spritesheet \
 	node_modules/rimraf node_modules/should node_modules/yui \
-	node_modules/yuidocjs
+	node_modules/yuidocjs node_modules/recess
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
 	| tr '\n' ' ')
 
@@ -223,7 +223,13 @@ undocumented:
 yuidoc-lint: $(JSFILES)
 	bin/lint-yuidoc
 
-lint: gjslint jshint yuidoc-lint
+recess: node_modules/recess
+	# We need to grep for "Perfect" because recess does not set a non-zero
+	# exit code if it rejects a file.  If this fails, run the recess command
+	# below without the grep to get recess' report.
+	node_modules/recess/bin/recess lib/views/stylesheet.less --config recess.json | grep -q Perfect
+
+lint: gjslint jshint recess yuidoc-lint
 
 virtualenv/bin/gjslint virtualenv/bin/fixjsstyle:
 	virtualenv virtualenv
@@ -459,6 +465,6 @@ appcache-force: appcache-touch $(APPCACHE)
 	build-files build-devel clean clean-all \
 	clean-deps clean-docs debug devel docs dist gjslint help \
 	jshint lint prep prod server spritegen test test-debug test-prod \
-	undocumented yuidoc yuidoc-lint
+	undocumented yuidoc yuidoc-lint recess
 
 .DEFAULT_GOAL := all
