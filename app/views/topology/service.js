@@ -19,7 +19,8 @@ YUI.add('juju-topology-service', function(Y) {
           click: 'serviceClick',
           dblclick: 'serviceDblClick',
           mouseenter: 'serviceMouseEnter',
-          mouseleave: 'serviceMouseLeave'
+          mouseleave: 'serviceMouseLeave',
+          mousemove: 'serviceMouseMove'
         },
 
         '.service-status': {
@@ -34,9 +35,6 @@ YUI.add('juju-topology-service', function(Y) {
             .attr('class', 'unit-count hide-count');
           }}
         },
-        '.rel-label': {
-          mousemove: 'mousemove'
-        },
         '.topology .crosshatch-background rect:first-child': {
           /**
            * If the user clicks on the background we cancel any active add
@@ -48,8 +46,7 @@ YUI.add('juju-topology-service', function(Y) {
             container.all('.environment-menu.active').removeClass('active');
             self.service_click_actions.toggleControlPanel(null, self);
             topo.fire('clearState');
-          }},
-          mousemove: 'mousemove'
+          }}
         },
         '.graph-list-picker .picker-button': {
           click: 'showGraphListPicker'
@@ -193,24 +190,16 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-     * If the mouse moves and we are adding a relation, then the dragline
-     * needs to be updated.
+     * Handle a mouse moving over a service.
      *
-     * @method mousemove
+     * @method serviceMouseMove
      * @param {object} d Unused.
-     * @param {object} self The environment view itself.
+     * @param {object} context Unused.
      * @return {undefined} Side effects only.
      */
-    mousemove: function(d, self) {
-      if (self.clickAddRelation) {
-        var container = self.get('component').get('container'),
-                node = container.one('.topology rect:first-child').getDOMNode(),
-                mouse = d3.mouse(node);
-        d3.event.x = mouse[0];
-        d3.event.y = mouse[1];
-        self.addRelationDrag
-              .call(self, self.get('addRelationStart_service'), node);
-      }
+    serviceMouseMove: function(d, context) {
+      var topo = context.get('component');
+      topo.fire('mouseMove');
     },
 
     /*
@@ -219,9 +208,9 @@ YUI.add('juju-topology-service', function(Y) {
     updateData: function() {
       //model data
       var topo = this.get('component'),
-          vis = topo.vis,
-          db = topo.get('db'),
-          services = db.services.map(views.toBoundingBox);
+              vis = topo.vis,
+              db = topo.get('db'),
+              services = db.services.map(views.toBoundingBox);
 
       this.services = services;
 
