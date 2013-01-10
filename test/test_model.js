@@ -3,9 +3,10 @@
 describe('charm normalization', function() {
   var models;
 
-  before(function() {
+  before(function(done) {
     YUI(GlobalConfig).use('juju-models', 'juju-charm-models', function(Y) {
       models = Y.namespace('juju.models');
+      done();
     });
   });
 

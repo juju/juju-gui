@@ -32,7 +32,6 @@ describe('d3-components', function() {
           state.cancelled = true;
         }
       });
-
       done();
     });
   });
