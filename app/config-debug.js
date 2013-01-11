@@ -8,5 +8,7 @@ var juju_config = {
   transitions: false,
   charm_store_url: 'http://jujucharms.com/',
   socket_url: 'ws://localhost:8081/ws',
-  login_help: 'For this demonstration, use the "admin" password to connect.'
+  user: 'admin',
+  password: 'admin',
+  login_help: 'For this demonstration, use the password "admin" to connect.'
 };
