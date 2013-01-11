@@ -94,9 +94,11 @@ YUI.add('juju-topology', function(Y) {
                           .attr('width', width)
                           .attr('height', height)
                           .call(this.zoom)
-                          .on('mousewheel.zoom', null)
-                          .on('DOMMouseScroll.zoom', null)
-                          .on('dblclick.zoom', null);
+                          .on('dblclick.zoom', null)
+                          .on('DOMMouseScroll', function(evt) {
+                            self.fire('zoom', d3.event);})
+                          .on('mousewheel.zoom', function(evt) {
+                            self.fire('zoom', d3.event);});
 
       vis = svg.append('svg:g');
       this.vis = vis;

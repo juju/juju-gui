@@ -84,8 +84,23 @@ YUI.add('juju-topology-panzoom', function(Y) {
       if (!this.slider) {
         return;
       }
-      slider.set('value', this.toSlider(evt.scale));
-      this.rescale(d3.event);
+
+      // If this is a scroll wheel event translate
+      // delta and apply to scale.
+      if (evt.sourceEvent) {
+        // If we have a wrapped event facade extract the raw data,
+        // this is needed to properly handle wheel delta events below.
+        evt.stopPropogation();
+        evt.preventDefault();
+        evt = evt.sourceEvent;
+      }
+      if (evt.type === 'mousewheel') {
+        var delta = (evt.wheelDelta > 0) ? 0.1 : -0.1;
+        evt.scale = (topo.get('scale') + delta);
+        evt.translate = topo.get('translate');
+      }
+      slider._set('value', this.toSlider(evt.scale));
+      this.rescale(evt);
     },
 
     /*
