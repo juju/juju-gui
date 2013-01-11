@@ -207,10 +207,10 @@ YUI.add('juju-topology-service', function(Y) {
      */
     updateData: function() {
       //model data
-      var topo = this.get('component'),
-              vis = topo.vis,
-              db = topo.get('db'),
-              services = db.services.map(views.toBoundingBox);
+      var topo = this.get('component');
+      var vis = topo.vis;
+      var db = topo.get('db');
+      var services = db.services.map(views.toBoundingBox);
 
       this.services = services;
 

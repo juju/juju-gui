@@ -265,8 +265,16 @@ YUI.add('juju-topology-relation', function(Y) {
       var box = topo.get('active_service');
       var service = topo.serviceForBox(box);
       var origin = topo.get('active_context');
-      context.addRelationDragStart({service: box});
+      var container = context.get('container');
+
+      // Remove the service menu.
       topo.fire('toggleControlPanel');
+
+      // Create the dragline and position its endpoints properly.
+      context.addRelationDragStart({service: box});
+      context.mousemove.call(
+          container.one('.topology rect:first-child').getDOMNode(),
+          null, context);
       context.addRelationStart(box, context, origin);
     },
 
