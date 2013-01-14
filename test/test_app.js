@@ -79,8 +79,6 @@ function injectData(app, data) {
               user: 'nehi',
               password: 'moonpie',
               viewContainer: container});
-        injectData(app);
-        app.render();
         app.env.get('user').should.equal('nehi');
         app.env.get('password').should.equal('moonpie');
       });
