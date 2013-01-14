@@ -10,7 +10,7 @@
   var Y;
 
   describe('Juju environment', function() {
-    var juju, conn, env, msg, testUtils;
+    var juju, conn, env, msg, noop, testUtils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -22,6 +22,7 @@
             env = new juju.Environment({conn: conn});
             env.connect();
             conn.open();
+            noop = function() {};
             done();
           });
     });
@@ -178,6 +179,58 @@
       msg.op.should.equal('remove_annotations');
       msg.entity.should.equal(unit_name);
       msg.keys.should.eql([]);
+    });
+
+    it('denies write operations if the GUI is in read only mode', function() {
+      var writeOperations = {
+        add_relation: ['haproxy', 'django', noop],
+        add_unit: ['haproxy', 3, noop],
+        destroy_service: ['haproxy', noop],
+        deploy: ['cs:precise/haproxy', 'haproxy', {}, null, 3, noop],
+        expose: ['haproxy', noop],
+        remove_relation: ['haproxy', 'django', noop],
+        remove_units: [['unit1', 'unit2'], noop],
+        resolved: ['unit1', null, true, noop],
+        set_config: ['haproxy', {}, null, noop],
+        set_constraints: ['haproxy', {}, noop],
+        unexpose: ['haproxy', noop]
+      };
+      env.set('readOnly', true);
+      // Mock *console.warn* so that it is possible to collect warnings.
+      var original = console.warn;
+      var warning = null;
+      console.warn = function() {
+        warning = arguments;
+      };
+      // Reset websocket messages.
+      conn.messages = [];
+      Y.each(writeOperations, function(args, operation) {
+        env[operation].apply(env, args);
+        assert.equal(0, conn.messages.length, 'Operation ' + operation);
+        assert.include(warning[0], 'Permission denied');
+        assert.equal(operation, warning[1].op);
+      });
+      // Restore the original *console.warn*.
+      console.warn = original;
+    });
+
+    it('allows read operations if the GUI is in read only mode', function() {
+      var readOperations = {
+        get_annotations: ['example', noop],
+        get_charm: ['cs:precise/haproxy', noop],
+        get_endpoints: [['haproxy'], noop],
+        get_service: ['haproxy', noop],
+        login: [],
+        remove_annotations: ['example', {}, noop],
+        status: [],
+        update_annotations: ['example', {}, noop]
+      };
+      env.set('readOnly', true);
+      Y.each(readOperations, function(args, operation) {
+        env[operation].apply(env, args);
+        var lastOperation = conn.last_message().op;
+        assert.equal(operation, lastOperation, 'Operation ' + operation);
+      });
     });
 
   });
