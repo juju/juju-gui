@@ -40,14 +40,14 @@ describe('viewport module', function() {
   it('should fire before and after events', function() {
     var topo = viewportModule.get('component');
     var events = [];
-    topo.fire = function(e){
+    topo.fire = function(e) {
       events.push(e);
     };
     viewportModule.resized();
     events.should.eql(
-      ['beforePageSizeRecalculation',
-       'sizeChange',
-       'afterPageSizeRecalculation']);
+        ['beforePageSizeRecalculation',
+         'sizeChange',
+         'afterPageSizeRecalculation']);
   });
 
   it('should set canvas dimensions', function() {
