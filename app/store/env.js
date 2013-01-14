@@ -139,7 +139,7 @@ YUI.add('juju-env', function(Y) {
       // and the GUI is in read only mode.
       if (writePermissionRequired && this.get('readOnly')) {
         console.warn('Permission denied: write permission required. ' +
-          'Attempted operation: ', op);
+            'Attempted operation: ', op);
         return;
       }
       var tid = this._counter += 1;
@@ -204,7 +204,7 @@ YUI.add('juju-env', function(Y) {
 
     expose: function(service, callback) {
       this._send_rpc(
-        {'op': 'expose', 'service_name': service}, callback, true);
+          {'op': 'expose', 'service_name': service}, callback, true);
     },
 
     /**
@@ -226,7 +226,7 @@ YUI.add('juju-env', function(Y) {
 
     unexpose: function(service, callback) {
       this._send_rpc(
-        {'op': 'unexpose', 'service_name': service}, callback, true);
+          {'op': 'unexpose', 'service_name': service}, callback, true);
     },
 
     status: function(callback) {
