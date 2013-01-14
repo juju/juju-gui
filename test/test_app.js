@@ -71,7 +71,7 @@ function injectData(app, data) {
         assert.equal(app.env.get('password'), undefined);
       });
 
-    it('should propogate login credentials from the configuration',
+    it('should propagate login credentials from the configuration',
       function() {
         // Replace the existing app.
         app = new Y.juju.App(
