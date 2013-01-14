@@ -65,23 +65,23 @@ function injectData(app, data) {
     });
 
     it('should not have login credentials if missing from the configuration',
-      function() {
-        app.render();
-        assert.equal(app.env.get('user'), undefined);
-        assert.equal(app.env.get('password'), undefined);
-      });
+        function() {
+          app.render();
+          assert.equal(app.env.get('user'), undefined);
+          assert.equal(app.env.get('password'), undefined);
+        });
 
     it('should propagate login credentials from the configuration',
-      function() {
-        // Replace the existing app.
-        app = new Y.juju.App(
-            { container: container,
-              user: 'nehi',
-              password: 'moonpie',
-              viewContainer: container});
-        app.env.get('user').should.equal('nehi');
-        app.env.get('password').should.equal('moonpie');
-      });
+        function() {
+          // Replace the existing app.
+          app = new Y.juju.App(
+              { container: container,
+                user: 'nehi',
+                password: 'moonpie',
+                viewContainer: container});
+          app.env.get('user').should.equal('nehi');
+          app.env.get('password').should.equal('moonpie');
+        });
 
     it('should produce a valid index', function() {
       var container = app.get('container');
