@@ -9,7 +9,7 @@ Developer Install
 
 Juju GUI uses nodejs-based development tools.
 
-You'll need ``nodejs`` & ``npm`` from the PPA::
+You will need ``nodejs`` & ``npm`` from the PPA::
 
   sudo add-apt-repository ppa:chris-lea/node.js
   sudo apt-get update
@@ -28,7 +28,7 @@ For building the docs, you also need Sphinx::
 
   sudo apt-get install python-sphinx
 
-To make releases, you'll need PyTZ::
+To make releases, you will need PyTZ::
 
   sudo apt-get install python-tz
 
@@ -45,12 +45,12 @@ need to download packages.  When ready, the server will print::
 
 You can then access the GUI at <http://localhost:8888/>.
 
-The front-end needs to talk to a Juju backend.  So first you'll need
+The front-end needs to talk to a Juju backend.  So first you will need
 to install Juju::
 
    sudo apt-get install juju zookeeper
 
-Next you'll also need to deploy a Juju environment with REST API access.
+Next you will also need to deploy a Juju environment with REST API access.
 Currently that work resides in a pipeline of Juju branches. The
 recommended branch to use as a server is ``rapi-rollup`` by hazmat::
 
