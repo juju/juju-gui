@@ -460,7 +460,7 @@
          var x2 = view.topo.vis.select('.dragline').attr('x2');
          var y2 = view.topo.vis.select('.dragline').attr('y2');
          container.one('.topology rect:first-child')
-           .simulate('mousemove');
+           .simulate('mousemove', { clientX: -1, clientY: -1 });
          view.topo.vis.select('.dragline').attr('x2').should.not.equal(x2);
          view.topo.vis.select('.dragline').attr('y2').should.not.equal(y2);
 
