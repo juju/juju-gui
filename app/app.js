@@ -217,7 +217,8 @@ YUI.add('juju-gui', function(Y) {
         this.env = this.get('env');
       } else {
         this.env = new juju.Environment({
-          'socket_url': this.get('socket_url')});
+          'socket_url': this.get('socket_url'),
+          'readOnly': this.get('readOnly') || false});
       }
       // Create a charm store.
       if (this.get('charm_store')) {
