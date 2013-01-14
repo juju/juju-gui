@@ -1,8 +1,5 @@
 'use strict';
 
-// A global.
-var noLogin;
-
 YUI.add('juju-env', function(Y) {
 
   function Environment(config) {
@@ -18,8 +15,10 @@ YUI.add('juju-env', function(Y) {
     'user': {},
     'password': {},
     'connected': {value: false},
-    'debug': {value: false}
+    'debug': {value: false},
+    'readOnly': {value: false}
   };
+
 
   Y.extend(Environment, Y.Base, {
     // Prototype methods for your new class
@@ -135,7 +134,14 @@ YUI.add('juju-env', function(Y) {
       }
     },
 
-    _send_rpc: function(op, callback) {
+    _send_rpc: function(op, callback, writePermissionRequired) {
+      // Avoid sending remote messages if the operation requires writing
+      // and the GUI is in read only mode.
+      if (writePermissionRequired && this.get('readOnly')) {
+        console.warn('Permission denied: write permission required. ' +
+          'Attempted operation: ', op);
+        return;
+      }
       var tid = this._counter += 1;
       if (callback) {
         this._txn_callbacks[tid] = callback;
@@ -152,13 +158,13 @@ YUI.add('juju-env', function(Y) {
       this._send_rpc({
         'op': 'add_unit',
         'service_name': service,
-        'num_units': num_units}, callback);
+        'num_units': num_units}, callback, true);
     },
 
     remove_units: function(unit_names, callback) {
       this._send_rpc({
         'op': 'remove_units',
-        'unit_names': unit_names}, callback);
+        'unit_names': unit_names}, callback, true);
 
     },
 
@@ -166,7 +172,7 @@ YUI.add('juju-env', function(Y) {
       this._send_rpc({
         'op': 'add_relation',
         'endpoint_a': endpoint_a,
-        'endpoint_b': endpoint_b}, callback);
+        'endpoint_b': endpoint_b}, callback, true);
     },
 
     get_charm: function(charm_url, callback) {
@@ -193,11 +199,12 @@ YUI.add('juju-env', function(Y) {
             config_raw: config_raw,
             charm_url: charm_url,
             num_units: num_units},
-          callback);
+          callback, true);
     },
 
     expose: function(service, callback) {
-      this._send_rpc({'op': 'expose', 'service_name': service}, callback);
+      this._send_rpc(
+        {'op': 'expose', 'service_name': service}, callback, true);
     },
 
     /**
@@ -218,7 +225,8 @@ YUI.add('juju-env', function(Y) {
     },
 
     unexpose: function(service, callback) {
-      this._send_rpc({'op': 'unexpose', 'service_name': service}, callback);
+      this._send_rpc(
+        {'op': 'unexpose', 'service_name': service}, callback, true);
     },
 
     status: function(callback) {
@@ -229,13 +237,13 @@ YUI.add('juju-env', function(Y) {
       this._send_rpc({
         'op': 'remove_relation',
         'endpoint_a': endpoint_a,
-        'endpoint_b': endpoint_b}, callback);
+        'endpoint_b': endpoint_b}, callback, true);
     },
 
     destroy_service: function(service, callback) {
       this._send_rpc({
         'op': 'destroy_service',
-        'service_name': service}, callback);
+        'service_name': service}, callback, true);
     },
 
     set_config: function(service, config, data, callback) {
@@ -248,14 +256,14 @@ YUI.add('juju-env', function(Y) {
         op: 'set_config',
         service_name: service,
         config: config,
-        data: data}, callback);
+        data: data}, callback, true);
     },
 
     set_constraints: function(service, constraints, callback) {
       this._send_rpc({
         op: 'set_constraints',
         service_name: service,
-        constraints: constraints}, callback);
+        constraints: constraints}, callback, true);
     },
 
     resolved: function(unit_name, relation_name, retry, callback) {
@@ -263,7 +271,7 @@ YUI.add('juju-env', function(Y) {
         op: 'resolved',
         unit_name: unit_name,
         relation_name: relation_name || null,
-        retry: retry || false}, callback);
+        retry: retry || false}, callback, true);
     },
 
     get_endpoints: function(services, callback) {
