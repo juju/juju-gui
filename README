@@ -7,6 +7,9 @@ Juju lets you deploy connected services to the cloud in a convenient,
 vendor-neutral, and powerful way. The GUI lets you visualize and manage
 your work more intuitively from a web browser.
 
+Juju-GUI releases and the current code are `on Launchpad
+<https://launchpad.net/juju-gui>`_.
+
 See also:
 
 - `The new Juju GUI: because a picture paints a thousand words
@@ -17,21 +20,20 @@ See also:
 Deploy
 ======
 
-There are no official releases of Juju-GUI yet, so you have to get the source
-code from Launchpad::
-
-  $ bzr branch lp:juju-gui
-
-The most useful available commands are shown by the command::
-
-  $ make help
-
+The most useful available commands are shown by the ``make help`` command.
 You'll typically want to run one of ``make prod``,  ``make debug`` or ``make
-devel`` to deploy an environment. You might also run ``make test`` to check
-that everything is ok. You may also run ``make doc`` to generate the available
-documentation.
+devel`` to deploy an environment. You might also run ``make test-debug`` and
+``make test-prod``, to check that everything is ok, and ``make docs`` to
+generate the available documentation.for both project and code.
+
+Automatic deploy
+----------------
+
+You may also deploy the GUI in an automated fashion by means of the `Juju GUI
+charm <http://jujucharms.com/~juju-gui/precise/juju-gui>`_.
 
 Configure
 =========
 
-TBD
+Some configurable parameters may be found in three files: ``config.js``,
+``app/config-debug.js`` and ``app/config-prod.js``.
