@@ -22,7 +22,8 @@ YUI.add('juju-topology-relation', function(Y) {
           click: 'subRelBlockClick'
         },
         '.rel-label': {
-          click: 'relationClick'
+          click: 'relationClick',
+          mousemove: 'mousemove'
         },
         '.dragline': {
           /** The user clicked while the dragline was active. */
@@ -31,10 +32,14 @@ YUI.add('juju-topology-relation', function(Y) {
         '.add-relation': {
           /** The user clicked on the "Build Relation" menu item. */
           click: {callback: 'addRelButtonClicked'}
+        },
+        '.topology .crosshatch-background rect:first-child': {
+          mousemove: {callback: 'mousemove'}
         }
       },
       yui: {
         rendered: {callback: 'renderedHandler'},
+        mouseMove: {callback: 'mouseMoveHandler'},
         clearState: {callback: 'clearState'},
         serviceMoved: {callback: 'updateLinkEndpoints'},
         servicesRendered: {callback: 'updateLinks'},
@@ -251,7 +256,8 @@ YUI.add('juju-topology-relation', function(Y) {
     draglineClicked: function(d, self) {
       // It was technically the dragline that was clicked, but the
       // intent was to click on the background, so...
-      self.backgroundClicked();
+      var topo = self.get('component');
+      topo.fire('clearState');
     },
 
     addRelButtonClicked: function(data, context) {
@@ -259,14 +265,22 @@ YUI.add('juju-topology-relation', function(Y) {
       var box = topo.get('active_service');
       var service = topo.serviceForBox(box);
       var origin = topo.get('active_context');
-      context.addRelationDragStart({service: box});
+      var container = context.get('container');
+
+      // Remove the service menu.
       topo.fire('toggleControlPanel');
+
+      // Create the dragline and position its endpoints properly.
+      context.addRelationDragStart({service: box});
+      context.mousemove.call(
+          container.one('.topology rect:first-child').getDOMNode(),
+          null, context);
       context.addRelationStart(box, context, origin);
     },
 
     /*
-         * Event handler for the add relation button.
-         */
+     * Event handler for the add relation button.
+     */
     addRelation: function(evt) {
       var curr_action = this.get('currentServiceClickAction');
       if (curr_action === 'show_service') {
@@ -275,6 +289,39 @@ YUI.add('juju-topology-relation', function(Y) {
               curr_action === 'ambiguousAddRelationCheck') {
         this.set('currentServiceClickAction', 'toggleControlPanel');
       } // Otherwise do nothing.
+    },
+
+    /**
+     * If the mouse moves and we are adding a relation, then the dragline
+     * needs to be updated.
+     *
+     * @method mousemove
+     * @param {object} d Unused.
+     * @param {object} self The environment view itself.
+     * @return {undefined} Side effects only.
+     */
+    mousemove: function(d, self) {
+      if (self.clickAddRelation) {
+        var mouse = d3.mouse(this);
+        var service = self.get('addRelationStart_service');
+        d3.event.x = mouse[0];
+        d3.event.y = mouse[1];
+        self.addRelationDrag.call(self, {box: service});
+      }
+    },
+
+    /**
+     * Handler for when the mouse is moved over a service.
+     *
+     * @method mouseMoveHandler
+     * @param {object} evt Event facade.
+     * @return {undefined} Side effects only.
+     */
+    mouseMoveHandler: function(evt) {
+      var container = this.get('container');
+      this.mousemove.call(
+          container.one('.topology rect:first-child').getDOMNode(),
+          null, this);
     },
 
     snapToService: function(evt) {
