@@ -159,7 +159,7 @@ the resulting DOM tree.  Compare and contrast the above examples.
 Comments
 ========
 
-We use YUIDoc to document the application's internals.  YUIDoc comments
+We use YUIDoc to document the applications internals.  YUIDoc comments
 start with ``/**`` and end with ``*/``.  The Makefile includes a simple
 linter that enforces YUIDoc comments for each function in the
 application.
