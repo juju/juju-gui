@@ -183,13 +183,13 @@
 
     it('denies write operations if the GUI is in read only mode', function() {
       var writeOperations = {
-        add_relation: ['haproxy', 'django', noop],
+        add_relation: ['haproxy:http', 'django:http', noop],
         add_unit: ['haproxy', 3, noop],
         destroy_service: ['haproxy', noop],
         deploy: ['cs:precise/haproxy', 'haproxy', {}, null, 3, noop],
         expose: ['haproxy', noop],
-        remove_relation: ['haproxy', 'django', noop],
-        remove_units: [['unit1', 'unit2'], noop],
+        remove_relation: ['haproxy:http', 'django:http', noop],
+        remove_units: [['haproxy/1', 'haproxy/2'], noop],
         resolved: ['unit1', null, true, noop],
         set_config: ['haproxy', {}, null, noop],
         set_constraints: ['haproxy', {}, noop],
