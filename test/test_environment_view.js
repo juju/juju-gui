@@ -252,11 +252,11 @@
               };
 
           function chartSizedProperly(serviceNode) {
-           var node = d3.select(serviceNode);
-           var outerRadius = node.attr('data-outerradius');
-           var maskWidth = node.select('.service-health-mask')
-               .attr('width');
-           return parseFloat(outerRadius) === parseFloat(maskWidth) / 2.05;
+            var node = d3.select(serviceNode);
+            var outerRadius = node.attr('data-outerradius');
+            var maskWidth = node.select('.service-health-mask')
+                .attr('width');
+            return parseFloat(outerRadius) === parseFloat(maskWidth) / 2.05;
           }
 
           container.all('.service').each(function(service) {
