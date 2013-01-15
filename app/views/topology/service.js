@@ -252,7 +252,8 @@ YUI.add('juju-topology-service', function(Y) {
       if (topo.buildingRelation) {
         topo.fire('addRelationDragEnd');
       }
-      else {
+      // Do not update annotations if the GUI is in read-only mode.
+      else if (!topo.get('env').get('readOnly')) {
         topo.get('env').update_annotations(d.id, {'gui.x': d.x, 'gui.y': d.y});
       }
     },
@@ -788,7 +789,7 @@ YUI.add('juju-topology-service', function(Y) {
       },
 
       _destroyCallback: function(service, view, btn, ev) {
-        var getModelURL = view.get('getModelURL'),
+        var getModelURL = view.get('component').get('getModelURL'),
                 db = view.get('component').get('db');
         if (ev.err) {
           db.notifications.add(
@@ -806,9 +807,9 @@ YUI.add('juju-topology-service', function(Y) {
             relation.destroy();
           });
           service.destroy();
-          view.get('destroy_dialog').hide();
           db.fire('update');
         }
+        view.get('destroy_dialog').hide();
         btn.set('disabled', false);
       }
 

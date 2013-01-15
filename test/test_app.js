@@ -83,6 +83,15 @@ function injectData(app, data) {
           app.env.get('password').should.equal('moonpie');
         });
 
+    it('propagates the readOnly option from the configuration', function() {
+      // Replace the existing app.
+      app = new Y.juju.App({
+        container: container,
+        readOnly: true,
+        viewContainer: container});
+      assert.isTrue(app.env.get('readOnly'));
+    });
+
     it('should produce a valid index', function() {
       var container = app.get('container');
       app.render();

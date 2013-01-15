@@ -10,5 +10,6 @@ var juju_config = {
   socket_url: 'ws://localhost:8081/ws',
   user: 'admin',
   password: 'admin',
+  readOnly: false,
   login_help: 'For this demonstration, use the password "admin" to connect.'
 };
