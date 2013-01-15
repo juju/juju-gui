@@ -427,7 +427,7 @@ YUI.add('juju-env', function(Y) {
       this._send_rpc({
         op: 'update_annotations',
         entity: entity,
-        data: data}, callback);
+        data: data}, callback, true);
     },
 
     /**
@@ -463,7 +463,7 @@ YUI.add('juju-env', function(Y) {
       this._send_rpc({
         op: 'remove_annotations',
         entity: entity,
-        keys: keys || []}, callback);
+        keys: keys || []}, callback, true);
     }
 
   });

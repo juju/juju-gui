@@ -180,34 +180,17 @@
       msg.keys.should.eql([]);
     });
 
-    it('denies write operations if the GUI is in read-only mode', function() {
-      // Define a callback tracking errors.
-      var errors = 0;
+    var assertOperationDenied = function(operationName, argsWithoutCallback) {
+      // Define a callback tracking error state.
+      var errorRaised = false;
       var callback = function(evt) {
-        if (evt.err) {
-          errors += 1;
-        }
+        errorRaised = evt.err;
       };
       // Subscribe an event handler called when *permissionDenied* is fired.
-      var firedEvents = 0;
+      var permissionDeniedFired = false;
       env.on('permissionDenied', function() {
-        firedEvents += 1;
+        permissionDeniedFired = true;
       });
-      // Write operations and corresponding arguments.
-      var writeOperations = {
-        add_relation: ['haproxy:http', 'django:http', callback],
-        add_unit: ['haproxy', 3, callback],
-        destroy_service: ['haproxy', callback],
-        deploy: ['cs:precise/haproxy', 'haproxy', {}, null, 3, callback],
-        expose: ['haproxy', callback],
-        remove_relation: ['haproxy:http', 'django:http', callback],
-        remove_units: [['haproxy/1', 'haproxy/2'], callback],
-        resolved: ['unit1', null, true, callback],
-        set_config: ['haproxy', {}, null, callback],
-        set_constraints: ['haproxy', {}, callback],
-        unexpose: ['haproxy', callback]
-      };
-      env.set('readOnly', true);
       // Mock *console.warn* so that it is possible to collect warnings.
       var original = console.warn;
       var warning = null;
@@ -216,43 +199,106 @@
       };
       // Reset websocket messages.
       conn.messages = [];
-      Y.each(writeOperations, function(args, operation) {
-        env[operation].apply(env, args);
-        // Ensure no messages are sent to the server.
-        assert.equal(0, conn.messages.length, 'Operation ' + operation);
-        // A warning is always created.
-        assert.include(warning[0], 'Permission denied');
-        assert.equal(operation, warning[1].op);
-      });
-      var writeOperationsNumber = Y.Object.size(writeOperations);
-      // All the callbacks received errors.
-      assert.equal(writeOperationsNumber, errors);
-      // A *permissionDenied* was fired for each write operation.
-      assert.equal(writeOperationsNumber, firedEvents);
+      var args = argsWithoutCallback.slice(0);
+      args.push(callback);
+      env.set('readOnly', true);
+      env[operationName].apply(env, args);
+      // Ensure no messages are sent to the server.
+      assert.equal(0, conn.messages.length);
+      // A warning is always created.
+      assert.include(warning[0], 'Permission denied');
+      assert.equal(operationName, warning[1].op);
+      // The callback received an error.
+      assert.isTrue(errorRaised);
+      // A *permissionDenied* was fired by the environment.
+      assert.isTrue(permissionDeniedFired);
       // Restore the original *console.warn*.
       console.warn = original;
+    };
+
+    it('denies adding a relation if the GUI is read-only', function() {
+      assertOperationDenied('add_relation', ['haproxy:http', 'django:http']);
     });
 
-    it('allows read operations if the GUI is in read-only mode', function() {
-      var noop = function() {};
-      // Read-only operations and corresponding arguments.
-      var readOperations = {
-        get_annotations: ['example', noop],
-        get_charm: ['cs:precise/haproxy', noop],
-        get_endpoints: [['haproxy'], noop],
-        get_service: ['haproxy', noop],
-        login: [],
-        remove_annotations: ['example', {}, noop],
-        status: [],
-        update_annotations: ['example', {}, noop]
-      };
+    it('denies adding a unit if the GUI is read-only', function() {
+      assertOperationDenied('add_unit', ['haproxy', 3]);
+    });
+
+    it('denies destroying a service if the GUI is read-only', function() {
+      assertOperationDenied('destroy_service', ['haproxy']);
+    });
+
+    it('denies deploying a charm if the GUI is read-only', function() {
+      assertOperationDenied(
+        'deploy', ['cs:precise/haproxy', 'haproxy', {}, null, 3]);
+    });
+
+    it('denies exposing a service if the GUI is read-only', function() {
+      assertOperationDenied('expose', ['haproxy']);
+    });
+
+    it('denies removing annotations if the GUI is read-only', function() {
+      assertOperationDenied('remove_annotations', ['example', {}]);
+    });
+
+    it('denies removing a relation if the GUI is read-only', function() {
+      assertOperationDenied(
+        'remove_relation', ['haproxy:http', 'django:http']);
+    });
+
+    it('denies removing units if the GUI is read-only', function() {
+      assertOperationDenied('remove_units', [['haproxy/1', 'haproxy/2']]);
+    });
+
+    it('denies marking units as resolved if the GUI is read-only', function() {
+      assertOperationDenied('resolved', ['unit1', null, true]);
+    });
+
+    it('denies changes to config options if the GUI is read-only', function() {
+      assertOperationDenied('set_config', ['haproxy', {}, null]);
+    });
+
+    it('denies changing constraints if the GUI is read-only', function() {
+      assertOperationDenied('set_constraints', ['haproxy', {}]);
+    });
+
+    it('denies un-exposing a service if the GUI is read-only', function() {
+      assertOperationDenied('unexpose', ['haproxy']);
+    });
+
+    it('denies updating annotations if the GUI is read-only', function() {
+      assertOperationDenied('update_annotations', ['example', {}]);
+    });
+
+    var assertOperationAllowed = function(operationName, args) {
       env.set('readOnly', true);
-      Y.each(readOperations, function(args, operation) {
-        env[operation].apply(env, args);
-        var lastOperation = conn.last_message().op;
-        // Ensure the message is correctly sent to the server.
-        assert.equal(operation, lastOperation, 'Operation ' + operation);
-      });
+      env[operationName].apply(env, args);
+      // Ensure the message is correctly sent to the server.
+      assert.equal(operationName, conn.last_message().op);
+    };
+
+    it('allows retrieving annotations if the GUI is read-only', function() {
+      assertOperationAllowed('get_annotations', ['example']);
+    });
+
+    it('allows getting charms if the GUI is read-only', function() {
+      assertOperationAllowed('get_charm', ['cs:precise/haproxy']);
+    });
+
+    it('allows retrieving endpoints if the GUI is read-only', function() {
+      assertOperationAllowed('get_endpoints', [['haproxy']]);
+    });
+
+    it('allows getting services if the GUI is read-only', function() {
+      assertOperationAllowed('get_service', ['haproxy']);
+    });
+
+    it('allows logging in if the GUI is read-only', function() {
+      assertOperationAllowed('login', []);
+    });
+
+    it('allows retrieving the status if the GUI is read-only', function() {
+      assertOperationAllowed('status', []);
     });
 
   });
