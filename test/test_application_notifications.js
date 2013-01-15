@@ -234,6 +234,13 @@ describe('juju application notifications', function() {
         assert.equal(1, db.notifications.size());
       });
 
+  it('should add a notification for "permissionDenied" exceptions (app)',
+      function() {
+        var app = new juju.App();
+        app.env.fire('permissionDenied', {title: 'title', message: 'message'});
+        assert.equal(1, app.db.notifications.size());
+      });
+
   it('should show notification for "get_service" exceptions' +
       ' (service constraints view)', function() {
 
