@@ -788,7 +788,7 @@ YUI.add('juju-topology-service', function(Y) {
       },
 
       _destroyCallback: function(service, view, btn, ev) {
-        var getModelURL = view.get('getModelURL'),
+        var getModelURL = view.get('component').get('getModelURL'),
                 db = view.get('component').get('db');
         if (ev.err) {
           db.notifications.add(
@@ -806,9 +806,9 @@ YUI.add('juju-topology-service', function(Y) {
             relation.destroy();
           });
           service.destroy();
-          view.get('destroy_dialog').hide();
           db.fire('update');
         }
+        view.get('destroy_dialog').hide();
         btn.set('disabled', false);
       }
 
