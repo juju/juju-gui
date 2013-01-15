@@ -5,18 +5,18 @@ Process Notes
 Checklist for Starting a Branch
 ===============================
 
-- Understand the problem.  If you don't, ask and be persistent until you do.
+- Understand the problem.  If you do not, ask and be persistent until you do.
 - When determining a solution, consider this preferred `Software
   Architecture Cheat Sheet
-  <http://gorban.org/post/32873465932/software-architecture-cheat-sheet>`_
+  <http://gorban.org/post/32873465932/software-architecture-cheat-sheet>`_.
 - Have a pre-implementation call with someone about your solution.  If you
   are not sure of your solution, prototype before the pre-implementation call.
 - Use TDD (Test-Driven Development).  Your prototype might be perfect, but you
   can still move it aside and rebuild it gradually as you add tests.  It can
   go quickly.
-- Update the CHANGES.yaml file with your changes.  The newest (topmost)
-  section should have the version "unreleased".  If not and you are
-  making changes, add an "unreleased" section at the top.  All other
+- Update the ``CHANGES.yaml`` file with your changes.  The newest (topmost)
+  section should have the version ``unreleased``.  If not and you are
+  making changes, add an ``unreleased`` section at the top.  All other
   version numbers follow `Semantic Versioning <http://semver.org/>`_.
 
 Checklist for Preparing for a Review
@@ -27,7 +27,7 @@ Checklist for Preparing for a Review
   - Pre-review your diff!  Tip: you can diff your branch against a local
     trunk named "trunk" with "bzr diff -r ancestor:../trunk/".
 
-    - All new code should have tests.  If it doesn't, be prepared to explain
+    - All new code should have tests.  If it does not, be prepared to explain
       why to skeptical reviewers.
     - Have you cleaned out temporary comments and debugging changes?
     - Is the code understandable?
@@ -36,24 +36,24 @@ Checklist for Preparing for a Review
   - Run tests!  Someday we'll have that in the lbox hook...
 
 - Make sure there is a bug for your branch.  Ideally there was one when you
-  started, but if not, see the "-new-bug" option to "lbox propose".
+  started, but if not, see the ``-new-bug`` option to ``lbox propose``.
 - Aim for a branch diff size between 300 and 500 lines.
 - Treat branch diff sizes of more than 800 lines as a problem.
 
-  - Try to subdivide it now.  If you can't, explain to your reviewers your
+  - Try to subdivide it now.  If you cannot, explain to your reviewers your
     reasoning.
   - Treat this as an opportunity to learn.  Consider what you could have
     done differently.
 
-- Update the CHANGES.yaml file with a description of the changes you
+- Update the ``CHANGES.yaml`` file with a description of the changes you
   made.  Reference Launchpad bugs if appropriate.
 - If the branch is very minor, such as a documentation change, feel free to
   self-review.  However, *don't neglect to consider your responsibilities
   above*, especially the diff review and running tests (even if you think
-  there's no way the tests could have been affected).
+  there is no way the tests could have been affected).
 
 It is your responsibility to get reviewers of your branch!  Reviewers will
-hopefully take it, but if they don't, rustle some up.
+hopefully take it, but if they do not, rustle some up.
 
 When you get your reviews back, be appreciative, and be sure to respond to
 every request, even if it is to disagree.
@@ -71,11 +71,11 @@ backwards in order to step forwards, as Kent Beck explains: `When Worse
 Is Better: Incrementally Escaping Local Maxima <http://goo.gl/DBDtJ>`_.
 
 - Run ``make test-prod`` and ``make test-debug`` and confirm that tests pass.
-- Run ``python improv.py -f sample.json`` in the rapi-rollup juju branch, and
-  run ``make server`` with the juju-ui branch.
+- Run ``python improv.py -f sample.json`` in the ``rapi-rollup`` Juju branch,
+  and run ``make server`` with the ``juju-ui`` branch.
 
-  * Don't forget to clear the browser cache: index.html may be sticking around
-    because of the cache.manifest.
+  * Do not forget to clear the browser cache: ``index.html`` may be sticking
+    around because of the cache.manifest.
   * Verify that the browser reports no 404s and no Javascript errors in the
     console.
   * QA the changes if possible, exploring different use cases (and edge cases).
@@ -86,21 +86,21 @@ Is Better: Incrementally Escaping Local Maxima <http://goo.gl/DBDtJ>`_.
 - Review the diff, including notes from the above as appropriate.
 
   * Make sure that new code has tests.
-  * Make sure user-facing changes are described in CHANGES.yaml.
+  * Make sure user-facing changes are described in ``CHANGES.yaml``.
   * Make sure you can understand the new code.  Ask for clarification if
     necessary.
   * Consider the advice in this preferred `Software Architecture Cheat Sheet
     <http://gorban.org/post/32873465932/software-architecture-cheat-sheet>`_
   * Make sure changes to a file correspond to the naming conventions and other
     stylistic considerations local to that file, and within our project.
-  * Before you ask for a change, think and make sure you can't compromise
+  * Before you ask for a change, think and make sure you cannot compromise
     reasonably with the coder.  If there is a low importance disagreement, in
     general the coder's position should win.
 
 - In your summary message, thank the coder.
 - In your summary message, if you ask for changes, make it clear whether you
   want to re-review after the changes, or if you automatically approve if the
-  changes are made.  We've agreed to use these arbitrary code phrases, for
+  changes are made.  We have agreed to use these arbitrary code phrases, for
   clarity: "Land as is," "Land with changes," and "Request review".
 
 Checklist for Making a Stable Release
@@ -109,13 +109,13 @@ Checklist for Making a Stable Release
 - Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
 - If you are using a pre-existing branch, make sure it is up-to-date:
   ``bzr pull``.
-- Verify that the top-most version in CHANGES.yaml specifies the expected
+- Verify that the top-most version in ``CHANGES.yaml`` specifies the expected
   version string.  It should be bigger than the most recent version found on
-  https://launchpad.net/juju-gui/stable .  If the most recent version string
-  is "unreleased," do the following.
+  <https://launchpad.net/juju-gui/stable>.  If the most recent version string
+  is ``unreleased``, do the following.
 
-  * Decide what the next version number should be (see http://semver.org/) and
-    change "unreleased" to that value.
+  * Decide what the next version number should be (see <http://semver.org/>)
+    and change ``unreleased`` to that value.
   * Commit to the branch with this checkin message:
     ``bzr commit -m 'Set version for release.'``
   * Push the branch directly to the parent (``bzr push :parent`` should work).
@@ -127,7 +127,8 @@ Checklist for Making a Stable Release
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``
 - While still in the directory where you extracted the tar file, change to the
-  build-prod directory and start a server: ``python -m SimpleHTTPServer 8888``.
+  ``build-prod`` directory and start a server: ``python -m SimpleHTTPServer
+  8888``.
 - In Chrome and Firefox, QA the application.  At the very least, load the app,
   open the charm panel, go to an inner page, and make sure there are no 404s
   or Javascript errors in the console.  We want a real QA script for the
@@ -140,19 +141,19 @@ Checklist for Making a Stable Release
 
   * Note that you may need to ask the webops to turn off the two-factor
     authentication on your Launchpad staging account in order for this to
-    work. Go to the #launchpad-ops channel on the Canonical IRC server and ask
-    something like "webops, could you disable 2FA on my staging account?"
+    work. Go to the ``#launchpad-ops`` channel on the Canonical IRC server and
+    ask something like "webops, could you disable 2FA on my staging account?"
   * When Launchpad asks you what level of permissions to grant, assuming you
     are running on your own computer that you manage securely, the easiest
     thing to do is hopefully also reasonably safe: accept that the computer
     may perform all actions, indefinitely.
 
-- Go to https://staging.launchpad.net/juju-gui/stable and verify that you see
+- Go to <https://staging.launchpad.net/juju-gui/stable> and verify that you see
   a new release and a new download file.
 - Download the file, expand it in a temporary directory, run ``python -m
   SimpleHTTPServer 8888``, and do a quick double-check in the browser that it
-  is what you expect.  Looking at juju-ui/version.js should also show you the
-  version you expect.
+  is what you expect.  Looking at ``juju-ui/version.js`` should also show you
+  the version you expect.
 - This is a final release.  Consider asking others to verify the package on
   staging.
 - Now it is time for the actual, real release.  Head back to your branch and
@@ -165,12 +166,13 @@ Checklist for Making a Stable Release
     is done in production will in many cases eventually be copied over to
     staging, but never vice versa.  Staging data is destroyed periodically.
 
-- Go to https://launchpad.net/juju-gui/stable and verify that you see
+- Go to <https://launchpad.net/juju-gui/stable> and verify that you see
   a new release and a new download file.
 
 - Set the version back to ``unreleased`` by doing the following.
 
-  * Restore ``- unreleased:`` as most recent version string in CHANGES.yaml.
+  * Restore ``- unreleased:`` as most recent version string in
+    ``CHANGES.yaml``.
   * Commit to the branch with this checkin message:
     ``bzr commit -m 'Set version back to unreleased.'``
   * Push the branch directly to the parent (``bzr push :parent`` should work).
@@ -183,7 +185,7 @@ Checklist for Making a Developer Release
 - Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
 - If you are using a pre-existing branch, make sure it is up-to-date:
   ``bzr pull``.
-- Verify that the top-most version in CHANGES.yaml is "unreleased."
+- Verify that the top-most version in ``CHANGES.yaml`` is ``unreleased``.
 - Run ``bzr revno``.  The revno should be bigger than the most recent release
   found on `Launchpad <https://launchpad.net/juju-gui/trunk>`_.
 - Run the tests and verify they pass: ``make test-prod`` and then
@@ -193,9 +195,11 @@ Checklist for Making a Developer Release
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``.
 - Looking at ``build-prod/juju-ui/version.js`` should show you a version string
-  that combines the value in the branch's CHANGES.yaml with the branch's revno.
+  that combines the value in the branch's ``CHANGES.yaml`` with the branch's
+  revno.
 - While still in the directory where you extracted the tar file, change to the
-  build-prod directory and start a server: ``python -m SimpleHTTPServer 8888``.
+  ``build-prod`` directory and start a server: ``python -m SimpleHTTPServer
+  8888``.
 - In Chrome and Firefox, QA the application.  At the very least, load the app,
   open the charm panel, go to an inner page, and make sure there are no 404s
   or Javascript errors in the console.  We want a real QA script for the
@@ -208,19 +212,19 @@ Checklist for Making a Developer Release
 
   * Note that you may need to ask the webops to turn off the two-factor
     authentication on your Launchpad staging account in order for this to
-    work. Go to the #launchpad-ops channel on the Canonical IRC server and ask
-    something like "webops, could you disable 2FA on my staging account?"
+    work. Go to the ``#launchpad-ops`` channel on the Canonical IRC server and
+    ask something like "webops, could you disable 2FA on my staging account?"
   * When Launchpad asks you what level of permissions to grant, assuming you
     are running on your own computer that you manage securely, the easiest
     thing to do is hopefully also reasonably safe: accept that the computer
     may perform all actions, indefinitely.
 
-- Go to https://staging.launchpad.net/juju-gui/trunk and verify that you see
+- Go to <https://staging.launchpad.net/juju-gui/trunk> and verify that you see
   a new release and a new download file.
 - Download the file, expand it in a temporary directory, run ``python -m
   SimpleHTTPServer 8888``, and do a quick double-check in the browser that it
-  is what you expect.  Looking at juju-ui/version.js should also show you the
-  version you expect, as seen in the similar earlier step above.
+  is what you expect.  Looking at ``juju-ui/version.js`` should also show you
+  the version you expect, as seen in the similar earlier step above.
 - Now it is time for the actual, real release.  Head back to your branch and
   run ``PROD=1 make dist``.  The computer will again walk you through the
   process.
@@ -231,7 +235,7 @@ Checklist for Making a Developer Release
     is done in production will in many cases eventually be copied over to
     staging, but never vice versa.  Staging data is destroyed periodically.
 
-- Go to https://launchpad.net/juju-gui/trunk and verify that you see
+- Go to <https://launchpad.net/juju-gui/trunk> and verify that you see
   a new release and a new download file.
 
 You are done!
@@ -245,7 +249,7 @@ any Bazaar commands, all of which access the parent branch over the network.
 Where Bazaar may have provided information such as the revno, sensible defaults
 are used instead.  As many of these Bazaar commands are used to populate
 variables regardless of the target, defining NO_BZR will have an effect on
-all targets, except dist, which will refuse to complete.
+all targets, except ``dist``, which will refuse to complete.
 
 - Note that this allows one to run any make target from the working copy,
   even if it is a lightweight checkout, by skipping steps that involve
