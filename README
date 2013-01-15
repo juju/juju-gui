@@ -20,11 +20,11 @@ Deploy
 There are no official releases of Juju-GUI yet, so you have to get the source
 code from Launchpad::
 
-  $ bzr branch lp:juju-gui
+  bzr branch lp:juju-gui
 
 The most useful available commands are shown by the command::
 
-  $ make help
+  make help
 
 You'll typically want to run one of ``make prod``,  ``make debug`` or ``make
 devel`` to deploy an environment. You might also run ``make test`` to check

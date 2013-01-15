@@ -20,7 +20,7 @@ You also need ImageMagick::
   sudo apt-get install imagemagick
 
 The linter will be installed locally per branch, but if you want editor
-integration, you may want to install JSHint globally in your system::
+integration, you may want to install ``jshint`` globally in your system::
 
   sudo npm install -g jshint
 
@@ -48,13 +48,13 @@ You can then access the GUI at <http://localhost:8888/>.
 The front-end needs to talk to a Juju backend.  So first you will need
 to install Juju::
 
-   sudo apt-get install juju zookeeper
+  sudo apt-get install juju zookeeper
 
 Next you will also need to deploy a Juju environment with REST API access.
 Currently that work resides in a pipeline of Juju branches. The
 recommended branch to use as a server is ``rapi-rollup`` by hazmat::
 
-   bzr branch lp:~hazmat/juju/rapi-rollup
+  bzr branch lp:~hazmat/juju/rapi-rollup
 
 You can use it with any environment, but for development purposes, a local
 environment works well. One environment option specific to this branch
@@ -104,7 +104,7 @@ API server for establishing a websocket).
 Running Unit Tests
 ==================
 
-  $ make test-prod
+  make test-prod
 
 Running Lint
 ============
@@ -134,13 +134,13 @@ Sphinx::
 
 Build the documentation::
 
-  $ make docs
+  make docs
 
 (This will also generate the above mentioned yuidoc documentation.)
 
 View it::
 
-  $ xdg-open docs/_build/html/index.html
+  xdg-open docs/_build/html/index.html
 
 Making Releases
 ===============
@@ -149,7 +149,8 @@ To make a release, you must either be in a checkout of ``lp:juju-gui``
 without uncommitted changes, or you must override one of the
 `pertinent variable names`_ to force a release.
 
-.. _`pertinent variable names`: `Potentially Useful Release-Oriented Makefile Variables`_
+.. _`pertinent variable names`:
+    `Potentially Useful Release-Oriented Makefile Variables`_
 
 To make the release tarball use ``make distfile``.
 

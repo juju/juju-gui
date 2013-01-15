@@ -33,7 +33,7 @@ Modules declare events using structures dictated by the framework. Event
 bindings allow the module to respond to both changes in its underlying data and
 to changes in application state (through things like user interaction). It is
 through these bound events that most rendering and interaction with the scene
-are performed. Render becomes a rarely invoked complete redraw of the scene
+are performed. Rendering becomes a rarely invoked complete redraw of the scene
 while the modules themselves handle incremental updates via their event
 handlers.
 
@@ -51,15 +51,15 @@ options passed to the ``addModule`` call result in an Attribute called
 
 ::
 
-    comp = new Component();
-    comp.addModule(MyModule, {foo: bar})
+  comp = new Component();
+  comp.addModule(MyModule, {foo: bar})
 
 This example would create a new component and, then using the ``MyModule``
 constructor, create an instance of this module (or use an instance if directly
 passed) and set the ``component`` and ``options`` Attributes. In this example
 the Module would have its ``foo`` option set to ``bar`` such that::
 
-    modInstance.get('options.foo') === 'bar'
+  modInstance.get('options.foo') === 'bar'
 
 where ``modInstance`` is the instance created by the above example's
 ``addModule`` call.
@@ -88,9 +88,9 @@ intermediate data will be computed and available for use in ``render``. This
 reduces the need for checks in each module to assert the most basic DOM state.
 
 After the initial render, it is expected that updates to the scene occur via
-the event handlers in the various modules. Render will not usually need to be
-called more than once unless the entire Component rendering is removed from the
-DOM and then later re-attached.
+the event handlers in the various modules. ``render`` will not usually need to
+be called more than once unless the entire Component rendering is removed from
+the DOM and then later re-attached.
 
 The most important aspect of ``addModule`` (and its inverse ``removeModule``)
 is that they properly support adding and removing event listeners. When a
