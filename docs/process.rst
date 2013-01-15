@@ -68,7 +68,8 @@ Your goal is to help the coder land their code, so that we incrementally
 improve the user experience and the codebase quality without user-facing
 regressions.  Occasionally we might even have to consciously take a step
 backwards in order to step forwards, as Kent Beck explains: `When Worse
-Is Better: Incrementally Escaping Local Maxima <http://goo.gl/DBDtJ>`_.
+Is Better: Incrementally Escaping Local Maxima
+<http://www.facebook.com/notes/kent-beck/when-worse-is-better-incrementally-escaping-local-maxima/498576730175196>`_.
 
 - Run ``make test-prod`` and ``make test-debug`` and confirm that tests pass.
 - Run ``python improv.py -f sample.json`` in the ``rapi-rollup`` Juju branch,
@@ -370,5 +371,5 @@ Slack Project Policy
   - Our team: discuss design with team, and/or follow the "prototype, discuss,
     code" pattern we have for new projects (that is, prototype yourself and
     then discuss the prototype with the team).
-  - Cloud Engineering team: make a LEP, consult with team lead (robbiew), and
+  - Cloud Engineering team: make a LEP, consult with team lead (deryck), and
     get acceptance from TA (lifeless) and/or any other stakeholders identified

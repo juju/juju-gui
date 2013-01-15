@@ -20,20 +20,28 @@ See also:
 Deploy
 ======
 
-The most useful available commands are shown by the ``make help`` command.
-You'll typically want to run one of ``make prod``,  ``make debug`` or ``make
+Deploying the GUI is easiest with `its charm
+<https://jujucharms.com/~juju-gui/precise/juju-gui>`_.  If you want to simply
+use the GUI, please try it.
+
+If you want to develop the GUI, or you have a deployment goal that the charm
+does not and cannot support, you can try the Makefile commands.  The most
+useful available commands are shown by the ``make help`` command.
+
+You will typically want to run one of ``make prod``,  ``make debug`` or ``make
 devel`` to deploy an environment. You might also run ``make test-debug`` and
 ``make test-prod`` to check that everything is ok, and ``make docs`` to
 generate the available documentation for both project and code.
 
-Automatic deploy
-----------------
-
-You may also deploy the GUI in an automated fashion by means of the `Juju GUI
-charm <http://jujucharms.com/~juju-gui/precise/juju-gui>`_.
-
 Configure
 =========
 
-Some configurable parameters may be found in three files: ``config.js``,
-``app/config-debug.js`` and ``app/config-prod.js``.
+Some configurable parameters may be found in three files:
+
+- ``config.js``
+- ``app/config-debug.js``
+- ``app/config-prod.js``
+
+If you are using `the charm
+<https://jujucharms.com/~juju-gui/precise/juju-gui>`_, the end-user
+configuration is available from the charm configuration.

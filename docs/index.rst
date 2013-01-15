@@ -17,10 +17,3 @@ Contents:
    architecture
    d3-component-framework
    process
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
