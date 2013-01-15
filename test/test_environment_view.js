@@ -441,6 +441,7 @@
          // Toggle the control panel for the Add Relation button.
          var module = view.topo.modules.RelationModule;
          var sm = view.topo.modules.ServiceModule;
+
          sm.service_click_actions.toggleControlPanel(
              d3.select(service.getDOMNode()).datum(),
              sm,
@@ -454,6 +455,15 @@
          container.all('.dragline')
                .size()
                .should.equal(1);
+
+         // Ensure that mousemove was fired and the dragline moved.
+         var x2 = view.topo.vis.select('.dragline').attr('x2');
+         var y2 = view.topo.vis.select('.dragline').attr('y2');
+         container.one('.topology rect:first-child')
+           .simulate('mousemove');
+         view.topo.vis.select('.dragline').attr('x2').should.not.equal(x2);
+         view.topo.vis.select('.dragline').attr('y2').should.not.equal(y2);
+
          // Start the process of adding a relation.
          module.ambiguousAddRelationCheck(
              d3.select(service.next().getDOMNode()).datum(),
