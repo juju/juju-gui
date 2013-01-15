@@ -120,7 +120,8 @@ YUI.add('juju-view-utils', function(Y) {
           log: noop,
           info: noop,
           error: noop,
-          debug: noop
+          debug: noop,
+          warn: noop
         };
 
     if (winConsole === undefined) {

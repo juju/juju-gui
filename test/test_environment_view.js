@@ -82,7 +82,7 @@
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'juju-env',
-        'node-event-simulate', 'juju-gui'
+        'node-event-simulate', 'juju-gui', 'slider'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
@@ -506,7 +506,7 @@
          var x2 = view.topo.vis.select('.dragline').attr('x2');
          var y2 = view.topo.vis.select('.dragline').attr('y2');
          container.one('.topology rect:first-child')
-           .simulate('mousemove');
+           .simulate('mousemove', { clientX: -1, clientY: -1 });
          view.topo.vis.select('.dragline').attr('x2').should.not.equal(x2);
          view.topo.vis.select('.dragline').attr('y2').should.not.equal(y2);
 
@@ -596,6 +596,19 @@
           sm.backgroundClicked();
           assert.isFalse(topo.buildingRelation);
         });
+
+    it('propagates the getModelURL function to the topology', function() {
+      var getModelURL = function() {
+        return 'placeholder value';
+      };
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        getModelURL: getModelURL}).render();
+      var topoGetModelURL = view.topo.get('getModelURL');
+      assert.equal('placeholder value', topoGetModelURL());
+    });
 
     // TODO: This will be fully testable once we have specification on the
     // list view itself.  Skipped until then.
