@@ -8,6 +8,9 @@ var juju_config = {
   transitions: false,
   charm_store_url: 'http://jujucharms.com/',
   socket_url: 'ws://localhost:8081/ws',
+  user: undefined,
+  password: undefined,
+  readOnly: false,
   login_help: (
       'The password is the admin-secret from the Juju environment.  This can ' +
       'often be found by looking in ~/.juju/environments.yaml.')

@@ -7,18 +7,6 @@ YUI.add('juju-topology-viewport', function(Y) {
       d3ns = Y.namespace('d3');
 
   /**
-   * Utility function to get a number from a computed style.
-   * @method styleToNumber
-   */
-  function styleToNumber(selector, style, defaultSize) {
-    style = style || 'height';
-    defaultSize = defaultSize || 0;
-    return parseInt(Y.one(selector).getComputedStyle(style) || defaultSize,
-                    10);
-  }
-
-
-  /**
    * @module topology-viewport
    * @class ViewportModule
    * @namespace views
@@ -57,13 +45,12 @@ YUI.add('juju-topology-viewport', function(Y) {
       // smallest size we accept--no smaller or bigger--or else the
       // presence or absence of scrollbars may affect our calculations
       // incorrectly.
-      canvas.setStyles({height: 600, width: 800});
+      canvas.setStyles({height: '600px', width: '800px'});
       var dimensions = utils.getEffectiveViewportSize(true, 800, 600);
       svg.setAttribute('width', dimensions.width);
       svg.setAttribute('height', dimensions.height);
       vis.attr('width', dimensions.width);
       vis.attr('height', dimensions.height);
-
 
       zoomPlane.setAttribute('width', dimensions.width);
       zoomPlane.setAttribute('height', dimensions.height);

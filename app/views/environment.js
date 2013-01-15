@@ -46,6 +46,7 @@ YUI.add('juju-view-environment', function(Y) {
               size: [640, 480],
               env: this.get('env'),
               db: this.get('db'),
+              getModelURL: this.get('getModelURL'),
               getServiceEndpoints: this.get('getServiceEndpoints'),
               container: container});
             // Bind all the behaviors we need as modules.
