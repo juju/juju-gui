@@ -11,8 +11,9 @@ Checklist for Starting a Branch
   <http://gorban.org/post/32873465932/software-architecture-cheat-sheet>`_
 - Have a pre-implementation call with someone about your solution.  If you
   are not sure of your solution, prototype before the pre-implementation call.
-- Use TDD.  Your prototype might be perfect, but you can still move it aside
-  and rebuild it gradually as you add tests.  It can go quickly.
+- Use TDD (Test-Driven Development).  Your prototype might be perfect, but you
+  can still move it aside and rebuild it gradually as you add tests.  It can
+  go quickly.
 - Update the CHANGES.yaml file with your changes.  The newest (topmost)
   section should have the version "unreleased".  If not and you are
   making changes, add an "unreleased" section at the top.  All other
@@ -66,8 +67,8 @@ Checklist for Reviewing
 Your goal is to help the coder land their code, so that we incrementally
 improve the user experience and the codebase quality without user-facing
 regressions.  Occasionally we might even have to consciously take a step
-backwards in order to step forwards, `as Kent Beck explains
-<http://goo.gl/DBDtJ>`_.
+backwards in order to step forwards, as Kent Beck explains: `When Worse
+Is Better: Incrementally Escaping Local Maxima <http://goo.gl/DBDtJ>`_.
 
 - Run ``make test-prod`` and ``make test-debug`` and confirm that tests pass.
 - Run ``python improv.py -f sample.json`` in the rapi-rollup juju branch, and
@@ -235,20 +236,20 @@ Checklist for Making a Developer Release
 
 You are done!
 
-Making Targets Quickly Without ``bzr``
-======================================
+Making Targets Quickly Without Bazaar
+=====================================
 
 Within a checkout, a lightweight checkout, or a branch, you may run make as
 ``NO_BZR=1 make [target]`` in order to prevent the Makefile from running
-any bzr commands, all of which access the parent branch over the network.
-Where bzr may have provided information such as the revno, sensible defaults
-are used instead.  As many of these bzr commands are used to populate
+any Bazaar commands, all of which access the parent branch over the network.
+Where Bazaar may have provided information such as the revno, sensible defaults
+are used instead.  As many of these Bazaar commands are used to populate
 variables regardless of the target, defining NO_BZR will have an effect on
 all targets, except dist, which will refuse to complete.
 
 - Note that this allows one to run any make target from the working copy,
   even if it is a lightweight checkout, by skipping steps that involve
-  network access through bzr.  Because of this, make will assume that
+  network access through Bazaar.  Because of this, make will assume that
   the revno is 0 and that the branch is clean and up to date without
   checking that it is a checkout of trunk.  The resulting tarball or build
   may be used to test releases by hand or in the charm.
@@ -311,7 +312,7 @@ letting interested parties discuss later.
 
 - Review cards in "Weekly review" lane.
 
-  - If a card with a problem (e.g. active more than 24 hours), why did it
+  - If a card had a problem (e.g. active more than 24 hours), why did it
     happen?  Consider applying five whys or similar analysis.
   - If a topic card, let the person with the topic lead discussion.
 
@@ -365,5 +366,5 @@ Slack Project Policy
   - Our team: discuss design with team, and/or follow the "prototype, discuss,
     code" pattern we have for new projects (that is, prototype yourself and
     then discuss the prototype with the team).
-  - Cloud Engineering team: make a LEP, consult with team lead (flacoste), and
+  - Cloud Engineering team: make a LEP, consult with team lead (robbiew), and
     get acceptance from TA (lifeless) and/or any other stakeholders identified

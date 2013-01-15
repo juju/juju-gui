@@ -86,8 +86,8 @@ connection: to enable it, add the following line to the config above::
 
   api-secure: true
 
-You will also need to edit your ``app/config.js`` replacing
-``ws://localhost:8081/ws`` with ``wss://localhost:8081/ws``.
+You will also need to edit ``app/config-debug.js`` and ``app/config-prod.js``
+replacing ``ws://localhost:8081/ws`` with ``wss://localhost:8081/ws``.
 
 By default, rapi-rollup uses a self-signed certificate; because of that you
 will need to visit the <https://localhost:8081/ws> WebSockets URL with your
@@ -105,10 +105,13 @@ api server for establishing a websocket).
 Running Unit Tests
 ==================
 
-  $ make test-prod
+Run the unit tests with the ``make test-debug`` and ``make test-prod``
+commands.
 
 Running Lint
 ============
+
+Run the linter with the commands::
 
   $ sudo apt-get install python-virtualenv
   $ make lint
@@ -122,8 +125,8 @@ directory.  You can view the docs by running::
   $ make yuidoc
   $ xdg-open yuidoc/index.html
 
-The `documentation <http://yui.github.com/yuidoc/syntax/>`_ for YUIDoc markup
-is available.
+See the YUIDoc markup `documentation <http://yui.github.com/yuidoc/syntax/>`_
+for details on its syntax.
 
 Project Documentation
 =====================
@@ -133,15 +136,9 @@ Sphinx::
 
   $ sudo apt-get install python-sphinx
 
-Build the documentation::
+Build the documentation with the ``make sphinx`` command and view it::
 
-  $ make docs
-
-(This will also generate the above mentioned yuidoc documentation.)
-
-View it::
-
-  $ xdg-open docs/_build/html/index.html
+  xdg-open docs/_build/html/index.html
 
 Making Releases
 ===============
