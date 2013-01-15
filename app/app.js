@@ -219,6 +219,11 @@ YUI.add('juju-gui', function(Y) {
         this.env = new juju.Environment({
           'socket_url': this.get('socket_url'),
           'readOnly': this.get('readOnly') || false});
+        this.env = new juju.Environment(
+            { socket_url: this.get('socket_url'),
+              user: this.get('user'),
+              password: this.get('password'),
+              readOnly: this.get('readOnly')});
       }
       // Create a charm store.
       if (this.get('charm_store')) {
