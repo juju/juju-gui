@@ -67,11 +67,17 @@ YUI.add('juju-topology-relation', function(Y) {
 
       var topo = this.get('component');
       var db = topo.get('db');
+      var self = this;
       var relations = db.relations.toArray();
       this.relPairs = this.processRelations(relations);
       topo.relPairs = this.relPairs;
       this.updateLinks();
       this.updateSubordinateRelationsCount();
+
+      // Ensure that link endpoints are up-to-date.
+      Y.each(topo.service_boxes, function(svc, key) {
+        self.updateLinkEndpoints({ service: svc });
+      });
 
       return this;
     },
@@ -136,8 +142,8 @@ YUI.add('juju-topology-relation', function(Y) {
       var self = this;
       var service = evt.service;
       Y.each(Y.Array.filter(self.relPairs, function(relation) {
-        return relation.source() === service ||
-            relation.target() === service;
+        return relation.source().id === service.id ||
+            relation.target().id === service.id;
       }), function(relation) {
         var rel_group = d3.select('#' + relation.id);
         var connectors = relation.source()
