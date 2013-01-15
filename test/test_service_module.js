@@ -32,7 +32,8 @@ describe('service module', function() {
         { update_annotations: function(name, data) {
                 called = true;
                 location['gui.x'] = data['gui.x'];
-                location['gui.y'] = data['gui.y'];}};
+                location['gui.y'] = data['gui.y'];},
+          get: function() {}};
     var view = new views.environment(
         { container: viewContainer,
           db: db,
