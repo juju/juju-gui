@@ -546,7 +546,7 @@ YUI.add('juju-topology-service', function(Y) {
                   .attr('width'), 10) / 2.05;
             d3.select(this.parentNode)
               .attr('data-outerradius', outerRadius);
-            return outerRadius
+            return outerRadius;
           });
 
       var status_chart_layout = d3.layout.pie()

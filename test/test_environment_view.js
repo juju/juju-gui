@@ -250,13 +250,13 @@
                 ],
                 op: 'delta'
               };
-          
+
           function chartSizedProperly(serviceNode) {
-             var node = d3.select(serviceNode);
-             var outerRadius = node.attr('data-outerradius');
-             var maskWidth = node.select('.service-health-mask')
+           var node = d3.select(serviceNode);
+           var outerRadius = node.attr('data-outerradius');
+           var maskWidth = node.select('.service-health-mask')
                .attr('width');
-             return parseFloat(outerRadius) === parseFloat(maskWidth) / 2.05;
+           return parseFloat(outerRadius) === parseFloat(maskWidth) / 2.05;
           }
 
           container.all('.service').each(function(service) {
@@ -269,7 +269,7 @@
             chartSizedProperly(service.getDOMNode()).should.equal(true);
           });
         }
-      );
+    );
 
     it('must be able to place new services properly', function() {
       var view = new views.environment({
