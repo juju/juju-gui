@@ -156,7 +156,7 @@ YUI.add('juju-env', function(Y) {
       // and the GUI is in read-only mode.
       if (writePermissionRequired && this.get('readOnly')) {
         var title = 'Permission denied';
-        var message = ('GUI is in read only mode and this operation ' +
+        var message = ('GUI is in read-only mode and this operation ' +
             'requires an environment modification');
         console.warn(title + ': ' + message + '. Attempted operation: ', op);
         this.fire(
