@@ -202,14 +202,23 @@
       console.warn = function() {
         warning = arguments;
       };
+      // Subscribe an event handler called when *permissionDenied* is fired.
+      var firedEvents = 0;
+      env.on('permissionDenied', function() {
+        firedEvents += 1;
+      });
       // Reset websocket messages.
       conn.messages = [];
       Y.each(writeOperations, function(args, operation) {
         env[operation].apply(env, args);
+        // Ensure no messages are sent to the server.
         assert.equal(0, conn.messages.length, 'Operation ' + operation);
+        // A warning is always created.
         assert.include(warning[0], 'Permission denied');
         assert.equal(operation, warning[1].op);
       });
+      // A *permissionDenied* was fired for each write operation.
+      assert.equal(Y.Object.size(writeOperations), firedEvents);
       // Restore the original *console.warn*.
       console.warn = original;
     });
@@ -229,6 +238,7 @@
       Y.each(readOperations, function(args, operation) {
         env[operation].apply(env, args);
         var lastOperation = conn.last_message().op;
+        // Ensure the message is correctly sent to the server.
         assert.equal(operation, lastOperation, 'Operation ' + operation);
       });
     });
