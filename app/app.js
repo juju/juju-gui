@@ -216,9 +216,6 @@ YUI.add('juju-gui', function(Y) {
       if (this.get('env')) {
         this.env = this.get('env');
       } else {
-        this.env = new juju.Environment({
-          'socket_url': this.get('socket_url'),
-          'readOnly': this.get('readOnly') || false});
         this.env = new juju.Environment(
             { socket_url: this.get('socket_url'),
               user: this.get('user'),
