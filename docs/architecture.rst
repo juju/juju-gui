@@ -8,13 +8,13 @@ Overview
 MVC YUI
 -------
 
-Juju-gui is based on yui's backbone style app framework. The `official docs
+The Juju GUI is based on YUI's Backbone-style app framework. The `official docs
 <http://yuilibrary.com/yui/docs/app/>`_ are highly recommended for developers.
 
 An overview of the individual pieces.
 
-- `Router <http://yuilibrary.com/yui/docs/router/>`_ - Route dispatch by url,
-  saves and restores url state.
+- `Router <http://yuilibrary.com/yui/docs/router/>`_ - Route dispatch by URL,
+  saves and restores URL state.
 
 - `Views <http://yuilibrary.com/yui/docs/view/index.html>`_ - Rendering of a
   view.
@@ -26,7 +26,7 @@ An overview of the individual pieces.
 Environment Integration
 -----------------------
 
-The gui connects and communicates to the environment over a web socket
+The GUI connects and communicates to the environment over a WebSocket
 connection.
 
 RPC Calls
@@ -38,7 +38,7 @@ Multiple calls are done in parallel.
 RPC Events
 ----------
 
-Messages from the backend for known rpc operation results are messaged out as
+Messages from the backend for known RPC operation results are messaged out as
 Environment events.
 
 Delta Stream
@@ -66,11 +66,11 @@ Requirements
   -- delta
 
 Questions
----------
+=========
 
 - Model Composition and relations.
 
-- relations by id
+- Relations by id.
 
 - We have multiple object states for a given.
 
