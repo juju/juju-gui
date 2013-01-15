@@ -539,10 +539,13 @@ YUI.add('juju-topology-service', function(Y) {
         .outerRadius(function(d) {
             // Make sure it's exactly as wide as the mask with a bit
             // of leeway for the border.
-            return parseInt(
+            var outerRadius = parseInt(
                 d3.select(this.parentNode)
                   .select('.service-health-mask')
                   .attr('width'), 10) / 2.05;
+            d3.select(this.parentNode)
+              .attr('data-outerradius', outerRadius);
+            return outerRadius
           });
 
       var status_chart_layout = d3.layout.pie()

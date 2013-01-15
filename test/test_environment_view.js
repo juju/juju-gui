@@ -225,6 +225,52 @@
       });
     });
 
+    it('must resize the service health graph properly when units are added',
+        function() {
+          var view = new views.environment({
+            container: container,
+            db: db,
+            env: env
+          }),
+              tmp_data = {
+                result: [
+                  ['machine', 'add', {
+                    'agent-state': 'running',
+                    'instance-state': 'running',
+                    'id': 1,
+                    'instance-id': 'local',
+                    'dns-name': 'localhost'
+                  }],
+                  ['unit', 'add', {
+                    'machine': 1,
+                    'agent-state': 'started',
+                    'public-address': '192.168.122.114',
+                    'id': 'wordpress/1'
+                  }]
+                ],
+                op: 'delta'
+              };
+          
+          function chartSizedProperly(serviceNode) {
+             var node = d3.select(serviceNode);
+             var outerRadius = node.attr('data-outerradius');
+             var maskWidth = node.select('.service-health-mask')
+               .attr('width');
+             return parseFloat(outerRadius) === parseFloat(maskWidth) / 2.05;
+          }
+
+          container.all('.service').each(function(service) {
+            chartSizedProperly(service.getDOMNode()).should.equal(true);
+          });
+
+          db.on_delta({ data: tmp_data });
+
+          container.all('.service').each(function(service) {
+            chartSizedProperly(service.getDOMNode()).should.equal(true);
+          });
+        }
+      );
+
     it('must be able to place new services properly', function() {
       var view = new views.environment({
         container: container,
