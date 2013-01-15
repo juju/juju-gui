@@ -252,7 +252,8 @@ YUI.add('juju-topology-service', function(Y) {
       if (topo.buildingRelation) {
         topo.fire('addRelationDragEnd');
       }
-      else {
+      // Do not update annotations if the GUI is in read-only mode.
+      else if (!topo.get('env').get('readOnly')) {
         topo.get('env').update_annotations(d.id, {'gui.x': d.x, 'gui.y': d.y});
       }
     },
