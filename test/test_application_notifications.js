@@ -222,10 +222,12 @@ describe('juju application notifications', function() {
       function() {
         var view = new views.environment({db: db, container: viewContainer});
         view.render();
-        var module = view.topo.modules.ServiceModule;
         // The callback uses the 'getModelURL' attribute to retrieve the
         // service URL.
-        module.set('getModelURL', NO_OP);
+        view.topo.set('getModelURL', NO_OP);
+        var module = view.topo.modules.ServiceModule;
+        // The callback hides the destroy dialog at the end of the process.
+        module.set('destroy_dialog', {hide: NO_OP});
         // The _destroyCallback args are: service, view, confirm button, event.
         var args = [{}, module, {set: NO_OP}, ERR_EV];
         module.service_click_actions._destroyCallback.apply(module, args);
