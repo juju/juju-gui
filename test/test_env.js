@@ -230,7 +230,7 @@
 
     it('denies deploying a charm if the GUI is read-only', function() {
       assertOperationDenied(
-        'deploy', ['cs:precise/haproxy', 'haproxy', {}, null, 3]);
+          'deploy', ['cs:precise/haproxy', 'haproxy', {}, null, 3]);
     });
 
     it('denies exposing a service if the GUI is read-only', function() {
@@ -243,7 +243,7 @@
 
     it('denies removing a relation if the GUI is read-only', function() {
       assertOperationDenied(
-        'remove_relation', ['haproxy:http', 'django:http']);
+          'remove_relation', ['haproxy:http', 'django:http']);
     });
 
     it('denies removing units if the GUI is read-only', function() {

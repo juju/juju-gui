@@ -28,12 +28,12 @@ describe('service module', function() {
     location =
         { 'gui.x': 0,
           'gui.y': 0};
-    var env =
-        { update_annotations: function(name, data) {
-                called = true;
-                location['gui.x'] = data['gui.x'];
-                location['gui.y'] = data['gui.y'];},
-          get: function() {}};
+    var env = {
+      update_annotations: function(name, data) {
+        called = true;
+        location['gui.x'] = data['gui.x'];
+        location['gui.y'] = data['gui.y'];},
+      get: function() {}};
     var view = new views.environment(
         { container: viewContainer,
           db: db,
