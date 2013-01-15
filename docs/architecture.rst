@@ -46,6 +46,12 @@ Delta Stream
 
 A stream of object changes, used to update models.
 
+Vector Graphics
+---------------
+
+The vector graphics are rendered by means of the `D3 <http://d3js.org/>`_
+JavaScript library.
+
 Scenarios
 ~~~~~~~~~
 
