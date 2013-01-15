@@ -540,10 +540,17 @@ YUI.add('juju-topology-service', function(Y) {
         .outerRadius(function(d) {
             // Make sure it's exactly as wide as the mask with a bit
             // of leeway for the border.
-            return parseInt(
+            var outerRadius = parseInt(
                 d3.select(this.parentNode)
-                  .select('image')
+                  .select('.service-health-mask')
                   .attr('width'), 10) / 2.05;
+
+            // NB: although this causes a calculation function to have
+            // side effects, it does allow us to test that the health
+            // graph was sized properly by accessing this attribute.
+            d3.select(this.parentNode)
+              .attr('data-outerradius', outerRadius);
+            return outerRadius;
           });
 
       var status_chart_layout = d3.layout.pie()
@@ -572,6 +579,12 @@ YUI.add('juju-topology-service', function(Y) {
         .attr('y', function() {
             return -d3.select(this).attr('height') / 2;
           });
+
+      // Remove the path object as the data bound to it will cause some
+      // updates to fail because the test in enter() will not pass.
+      node.select('.service-status')
+        .selectAll('path')
+        .remove();
 
       // Add the path after the mask image (since it requires the mask's
       // width to set its own).
