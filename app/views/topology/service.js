@@ -544,6 +544,10 @@ YUI.add('juju-topology-service', function(Y) {
                 d3.select(this.parentNode)
                   .select('.service-health-mask')
                   .attr('width'), 10) / 2.05;
+
+            // NB: although this causes a calculation function to have
+            // side effects, it does allow us to test that the health
+            // graph was sized properly by accessing this attribute.
             d3.select(this.parentNode)
               .attr('data-outerradius', outerRadius);
             return outerRadius;
