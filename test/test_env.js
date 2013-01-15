@@ -10,7 +10,7 @@
   var Y;
 
   describe('Juju environment', function() {
-    var juju, conn, env, msg, noop, testUtils;
+    var juju, conn, env, msg, testUtils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -22,7 +22,6 @@
             env = new juju.Environment({conn: conn});
             env.connect();
             conn.open();
-            noop = function() {};
             done();
           });
     });
@@ -182,18 +181,31 @@
     });
 
     it('denies write operations if the GUI is in read only mode', function() {
+      // Define a callback tracking errors.
+      var errors = 0;
+      var callback = function(evt) {
+        if (evt.err) {
+          errors += 1;
+        }
+      };
+      // Subscribe an event handler called when *permissionDenied* is fired.
+      var firedEvents = 0;
+      env.on('permissionDenied', function() {
+        firedEvents += 1;
+      });
+      // Write operations and corresponding arguments.
       var writeOperations = {
-        add_relation: ['haproxy:http', 'django:http', noop],
-        add_unit: ['haproxy', 3, noop],
-        destroy_service: ['haproxy', noop],
-        deploy: ['cs:precise/haproxy', 'haproxy', {}, null, 3, noop],
-        expose: ['haproxy', noop],
-        remove_relation: ['haproxy:http', 'django:http', noop],
-        remove_units: [['haproxy/1', 'haproxy/2'], noop],
-        resolved: ['unit1', null, true, noop],
-        set_config: ['haproxy', {}, null, noop],
-        set_constraints: ['haproxy', {}, noop],
-        unexpose: ['haproxy', noop]
+        add_relation: ['haproxy:http', 'django:http', callback],
+        add_unit: ['haproxy', 3, callback],
+        destroy_service: ['haproxy', callback],
+        deploy: ['cs:precise/haproxy', 'haproxy', {}, null, 3, callback],
+        expose: ['haproxy', callback],
+        remove_relation: ['haproxy:http', 'django:http', callback],
+        remove_units: [['haproxy/1', 'haproxy/2'], callback],
+        resolved: ['unit1', null, true, callback],
+        set_config: ['haproxy', {}, null, callback],
+        set_constraints: ['haproxy', {}, callback],
+        unexpose: ['haproxy', callback]
       };
       env.set('readOnly', true);
       // Mock *console.warn* so that it is possible to collect warnings.
@@ -202,11 +214,6 @@
       console.warn = function() {
         warning = arguments;
       };
-      // Subscribe an event handler called when *permissionDenied* is fired.
-      var firedEvents = 0;
-      env.on('permissionDenied', function() {
-        firedEvents += 1;
-      });
       // Reset websocket messages.
       conn.messages = [];
       Y.each(writeOperations, function(args, operation) {
@@ -217,13 +224,18 @@
         assert.include(warning[0], 'Permission denied');
         assert.equal(operation, warning[1].op);
       });
+      var writeOperationsNumber = Y.Object.size(writeOperations);
+      // All the callbacks received errors.
+      assert.equal(writeOperationsNumber, errors);
       // A *permissionDenied* was fired for each write operation.
-      assert.equal(Y.Object.size(writeOperations), firedEvents);
+      assert.equal(writeOperationsNumber, firedEvents);
       // Restore the original *console.warn*.
       console.warn = original;
     });
 
     it('allows read operations if the GUI is in read only mode', function() {
+      var noop = function() {};
+      // Read only operations and corresponding arguments.
       var readOperations = {
         get_annotations: ['example', noop],
         get_charm: ['cs:precise/haproxy', noop],
