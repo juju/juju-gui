@@ -180,7 +180,7 @@
       msg.keys.should.eql([]);
     });
 
-    it('denies write operations if the GUI is in read only mode', function() {
+    it('denies write operations if the GUI is in read-only mode', function() {
       // Define a callback tracking errors.
       var errors = 0;
       var callback = function(evt) {
@@ -233,9 +233,9 @@
       console.warn = original;
     });
 
-    it('allows read operations if the GUI is in read only mode', function() {
+    it('allows read operations if the GUI is in read-only mode', function() {
       var noop = function() {};
-      // Read only operations and corresponding arguments.
+      // Read-only operations and corresponding arguments.
       var readOperations = {
         get_annotations: ['example', noop],
         get_charm: ['cs:precise/haproxy', noop],

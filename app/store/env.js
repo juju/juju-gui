@@ -153,7 +153,7 @@ YUI.add('juju-env', function(Y) {
      */
     _send_rpc: function(op, callback, writePermissionRequired) {
       // Avoid sending remote messages if the operation requires writing
-      // and the GUI is in read only mode.
+      // and the GUI is in read-only mode.
       if (writePermissionRequired && this.get('readOnly')) {
         var title = 'Permission denied';
         var message = ('GUI is in read only mode and this operation ' +
@@ -161,7 +161,8 @@ YUI.add('juju-env', function(Y) {
         console.warn(title + ': ' + message + '. Attempted operation: ', op);
         this.fire(
             'permissionDenied', {title: title, message: message, op: op});
-        // Fire the callback passing an event-like object containing an error.
+        // Execute the callback passing an event-like object containing an
+        // error.
         if (callback) {
           callback(Y.merge(op, {err: true}));
         }
