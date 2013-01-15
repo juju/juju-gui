@@ -95,7 +95,7 @@ YUI.add('juju-topology', function(Y) {
                           .attr('height', height)
                           .call(this.zoom)
                           .on('dblclick.zoom', null)
-                          .on('DOMMouseScroll', function(evt) {
+                          .on('DOMMouseScroll.zoom', function(evt) {
                             self.fire('zoom', d3.event);})
                           .on('mousewheel.zoom', function(evt) {
                             self.fire('zoom', d3.event);});

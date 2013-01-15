@@ -548,6 +548,8 @@ YUI.add('juju-gui', function(Y) {
           env: this.env,
           help_text: this.get('login_help')
         });
+        this.get('container').one('input[type=password]').focus();
+
       }
       // If there are credentials available and there has not been
       // a successful login attempt, try to log in.

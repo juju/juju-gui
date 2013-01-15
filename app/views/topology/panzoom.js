@@ -87,11 +87,7 @@ YUI.add('juju-topology-panzoom', function(Y) {
 
       // If this is a scroll wheel event translate
       // delta and apply to scale.
-      if (evt.sourceEvent) {
-        // If we have a wrapped event facade extract the raw data,
-        // this is needed to properly handle wheel delta events below.
-        evt.stopPropogation();
-        evt.preventDefault();
+      if (evt.sourceEvent && evt.sourceEvent.type === 'mousewheel') {
         evt = evt.sourceEvent;
       }
       if (evt.type === 'mousewheel') {

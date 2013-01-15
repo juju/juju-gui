@@ -71,7 +71,6 @@ YUI.add('juju-view-login', function(Y) {
             env.failedAuthentication ? 'Unknown user or password.' : ''),
         help_text: this.get('help_text')
       }));
-      this.get('container').one('input[type=password]').focus();
       return this;
     }
 
