@@ -65,7 +65,7 @@ def get_version_from_changes(changes_path):
     - "version" will be "release" truncated to the first dash;
     - "release" will be the first version number (last change made). If the
       first version number is "unreleased", the second version number will
-      be used, extended by "-build{revno}", where "revno" is the output of
+      be used, extended by "+build.{revno}", where "revno" is the output of
       "bzr revno".
 
     If any errors, ('unknown', 'unknown-version') will be returned.
@@ -98,8 +98,8 @@ def get_version_from_changes(changes_path):
         revno = subprocess.check_output(['bzr', 'revno']).strip()
     except Exception as err:
         print 'ERROR: cannot get the branch revno - {0}'.format(err)
-        revno = '-unknown'
-    release += '-build{0}'.format(revno)
+        revno = 'unknown'
+    release += '+build.{0}'.format(revno)
     return version, release
 
 
