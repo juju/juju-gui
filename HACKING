@@ -1,6 +1,6 @@
-===========
-Development
-===========
+=======
+HACKING
+=======
 
 Here is how to develop on this codebase.
 
@@ -115,10 +115,18 @@ Run the linter with the commands::
   sudo apt-get install python-virtualenv
   make lint
 
-API Documentation
-=================
+.. _all-docs:
 
-Generated JavaScript documentation is available in the ``yuidoc``
+Documentation
+=============
+
+The ``make docs`` command generates the code and the project documentation
+together.
+
+Code Documentation
+------------------
+
+Generated documentation for the JavaScript code is available in the ``yuidoc``
 directory.  You can view the docs by running::
 
   make yuidoc
@@ -128,12 +136,12 @@ See the YUIDoc markup `documentation <http://yui.github.com/yuidoc/syntax/>`_
 for details on its syntax.
 
 Project Documentation
-=====================
+---------------------
 
 The project documentation is available in the ``docs/`` directory. It needs
-Sphinx::
+Sphinx and Python-yaml::
 
-  sudo apt-get install python-sphinx
+  sudo apt-get install python-sphinx python-yaml
 
 Build the documentation with the ``make sphinx`` command and view it::
 
@@ -155,8 +163,8 @@ In order to make and upload the release (``make dist``), you also need to have
 a GPG key, and the ``python-pytz`` package installed (as well as
 ``launchpadlib``, but that is installed by default in Ubuntu).
 
-See the Process document (``docs/process.rst``) for step-by-step checklists to
-make developer and stable releases.
+See the Process document :ref:`(docs/process.rst) <make-releases>` for
+step-by-step checklists to make developer and stable releases.
 
 Potentially Useful Release-Oriented Makefile Variables
 ------------------------------------------------------

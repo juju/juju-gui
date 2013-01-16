@@ -1,6 +1,6 @@
-========
-Juju-GUI
-========
+======
+README
+======
 
 Welcome. Juju-GUI is a web-based GUI for `Juju <https://juju.ubuntu.com/>`_.
 Juju lets you deploy connected services to the cloud in a convenient,
@@ -31,7 +31,8 @@ useful available commands are shown by the ``make help`` command.
 You will typically want to run one of ``make prod``,  ``make debug`` or ``make
 devel`` to deploy an environment. You might also run ``make test-debug`` and
 ``make test-prod`` to check that everything is ok, and ``make docs`` to
-generate the available documentation for both project and code.
+generate the available documentation for both project and code. See the
+:ref:`HACKING <all-docs>` file for details.
 
 Configure
 =========

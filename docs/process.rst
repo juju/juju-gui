@@ -104,8 +104,13 @@ Is Better: Incrementally Escaping Local Maxima
   changes are made.  We have agreed to use these arbitrary code phrases, for
   clarity: "Land as is," "Land with changes," and "Request review".
 
+.. _make-releases:
+
+Making Releases
+===============
+
 Checklist for Making a Stable Release
-=====================================
+-------------------------------------
 
 - Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
 - If you are using a pre-existing branch, make sure it is up-to-date:
@@ -115,7 +120,8 @@ Checklist for Making a Stable Release
   <https://launchpad.net/juju-gui/stable>.  If the most recent version string
   is ``unreleased``, do the following.
 
-  * Decide what the next version number should be (see <http://semver.org/>)
+  * Decide what the next version number should be (see `Semantic Versioning
+    <http://semver.org/>`_).
     and change ``unreleased`` to that value.
   * Commit to the branch with this checkin message:
     ``bzr commit -m 'Set version for release.'``
@@ -181,7 +187,7 @@ Checklist for Making a Stable Release
 You are done!
 
 Checklist for Making a Developer Release
-========================================
+----------------------------------------
 
 - Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
 - If you are using a pre-existing branch, make sure it is up-to-date:
