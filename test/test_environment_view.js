@@ -277,38 +277,38 @@
             container: container,
             db: db,
             env: env
-          }).render(),
-              tmp_data = {
-                result: [
-                  ['machine', 'add', {
-                    'agent-state': 'running',
-                    'instance-state': 'running',
-                    'id': 1,
-                    'instance-id': 'local',
-                    'dns-name': 'localhost'
-                  }],
-                  ['machine', 'add', {
-                    'agent-state': 'running',
-                    'instance-state': 'running',
-                    'id': 2,
-                    'instance-id': 'local',
-                    'dns-name': 'localhost'
-                  }],
-                  ['unit', 'add', {
-                    'machine': 1,
-                    'agent-state': 'started',
-                    'public-address': '192.168.122.114',
-                    'id': 'wordpress/1'
-                  }],
-                  ['unit', 'add', {
-                    'machine': 2,
-                    'agent-state': 'started',
-                    'public-address': '192.168.122.114',
-                    'id': 'wordpress/2'
-                  }]
-                ],
-                op: 'delta'
-              };
+          }).render();
+          var tmp_data = {
+           result: [
+             ['machine', 'add', {
+               'agent-state': 'running',
+               'instance-state': 'running',
+               'id': 1,
+               'instance-id': 'local',
+               'dns-name': 'localhost'
+             }],
+             ['machine', 'add', {
+               'agent-state': 'running',
+               'instance-state': 'running',
+               'id': 2,
+               'instance-id': 'local',
+               'dns-name': 'localhost'
+             }],
+             ['unit', 'add', {
+               'machine': 1,
+               'agent-state': 'started',
+               'public-address': '192.168.122.114',
+               'id': 'wordpress/1'
+             }],
+             ['unit', 'add', {
+               'machine': 2,
+               'agent-state': 'started',
+               'public-address': '192.168.122.114',
+               'id': 'wordpress/2'
+             }]
+           ],
+           op: 'delta'
+         };
 
           // Ensure that line endpoints match with calculated endpoints.
           function endpointsCalculatedProperly(relation) {
@@ -324,16 +324,18 @@
            parseFloat(line.attr('y2')) === connectors[1][1];
           }
 
-          // Ensure that endpoints match for all services.
+          // Ensure that endpoints match for all services before any
+          // service is resized.
           container.all('.rel-group').each(function(relationGroup) {
             endpointsCalculatedProperly(relationGroup.getDOMNode())
               .should.equal(true);
           });
 
+          // Resize the wordpress service.
           db.on_delta({ data: tmp_data });
 
-          // Ensure that endpoints still match for all services, even though
-          // one service has now been resized.
+          // Ensure that endpoints still match for all services, now that
+          // one service has been resized.  This is the real test here.
           container.all('.rel-group').each(function(relationGroup) {
             endpointsCalculatedProperly(relationGroup.getDOMNode())
               .should.equal(true);
