@@ -163,7 +163,7 @@ In order to make and upload the release (``make dist``), you also need to have
 a GPG key, and the ``python-pytz`` package installed (as well as
 ``launchpadlib``, but that is installed by default in Ubuntu).
 
-See the Process document :ref:`(docs/process.rst) <make-release>` for
+See the Process document :ref:`(docs/process.rst) <make-releases>` for
 step-by-step checklists to make developer and stable releases.
 
 Potentially Useful Release-Oriented Makefile Variables

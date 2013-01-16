@@ -13,6 +13,7 @@
 # serve to show the default.
 
 import os
+
 try:
     import yaml
 except ImportError:
@@ -68,7 +69,7 @@ def get_version_from_changes(changes_path):
     """
     version = 'unknown'
     release = 'unknown-version'
-    if not yaml:
+    if yaml is None:
         print 'ERROR: cannot import the python-yaml library'
         return version, release
     try:

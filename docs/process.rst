@@ -104,7 +104,7 @@ Is Better: Incrementally Escaping Local Maxima
   changes are made.  We have agreed to use these arbitrary code phrases, for
   clarity: "Land as is," "Land with changes," and "Request review".
 
-.. _make-release:
+.. _make-releases:
 
 Making Releases
 ===============
