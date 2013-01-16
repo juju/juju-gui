@@ -285,14 +285,16 @@ YUI.add('juju-env', function(Y) {
 
     /**
      * Attempt to log the user in.  Credentials must have been previously
-     * stored on the environment.  If not, this method will schedule a call to
-     * itself in the future in order to try again.
+     * stored on the environment.
      *
      * @return {undefined} Nothing.
      */
     login: function() {
       // If the user is already authenticated there is nothing to do.
       if (this.userIsAuthenticated) {
+        return;
+      }
+      if (!this.get('connected')) {
         return;
       }
       var user = this.get('user');
