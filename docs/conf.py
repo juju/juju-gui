@@ -13,6 +13,7 @@
 # serve to show the default.
 
 import os
+import subprocess
 
 try:
     import yaml
@@ -59,31 +60,46 @@ copyright = u'2012-2013, Juju GUI Developers'
 
 
 def get_version_from_changes(changes_path):
-    """
-    Get (version, release) from a yaml-formatted changes file.
+    """Get (version, release) from a yaml-formatted changes file.
 
-    "version" will be "release" truncated to the first dash.
-    "release" will be the first version number (last change made);
+    - "version" will be "release" truncated to the first dash;
+    - "release" will be the first version number (last change made). If the
+      first version number is "unreleased", the second version number will
+      be used, extended by "-build{revno}", where "revno" is the output of
+      "bzr revno".
 
     If any errors, ('unknown', 'unknown-version') will be returned.
     """
-    version = 'unknown'
-    release = 'unknown-version'
+    unknown_version = 'unknown'
+    unknown_release = 'unknown-version'
     if yaml is None:
         print 'ERROR: cannot import the python-yaml library'
-        return version, release
+        return unknown_version, unknown_release
     try:
         with open(changes_path) as cfd:
             changes = yaml.load(cfd.read())
     except IOError:
         print 'ERROR: cannot read {0}'.format(changes_path)
-        return version, release
+        return unknown_version, unknown_release
     try:
-        release = changes[0].keys()[0]
+        version = release = changes[0].keys()[0]
     except IndexError:
         print 'ERROR: cannot parse changes in {0}'.format(changes_path)
+        return unknown_version, unknown_release
+    if version != 'unreleased':
         return version, release
-    version = release.split('-')[0]
+    # take the most recent real version number
+    try:
+        version = release = changes[1].keys()[0]
+    except IndexError:
+        print 'ERROR: cannot parse changes in {0}'.format(changes_path)
+        return unknown_version, unknown_release
+    try:
+        revno = subprocess.check_output(['bzr', 'revno']).strip()
+    except Exception as err:
+        print 'ERROR: cannot get the branch revno - {0}'.format(err)
+        revno = '-unknown'
+    release += '-build{0}'.format(revno)
     return version, release
 
 
