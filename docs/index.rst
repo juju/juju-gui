@@ -9,11 +9,11 @@ Juju GUI documentation
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
    readme
    hacking
-   style-guide
    architecture
    d3-component-framework
+   style-guide
    process
