@@ -554,8 +554,11 @@ YUI.add('juju-gui', function(Y) {
           env: this.env,
           help_text: this.get('login_help')
         });
-        this.get('container').one('input[type=password]').focus();
-
+        var passwordField = this.get('container').one('input[type=password]');
+        // The password field may not be present in testing context.
+        if (passwordField) {
+          passwordField.focus();
+        }
       }
       // If there are credentials available and there has not been
       // a successful login attempt, try to log in.
