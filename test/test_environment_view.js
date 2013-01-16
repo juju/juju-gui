@@ -277,7 +277,7 @@
             container: container,
             db: db,
             env: env
-          }),
+          }).render(),
               tmp_data = {
                 result: [
                   ['machine', 'add', {
@@ -299,7 +299,7 @@
                     'agent-state': 'started',
                     'public-address': '192.168.122.114',
                     'id': 'wordpress/1'
-                  }]
+                  }],
                   ['unit', 'add', {
                     'machine': 2,
                     'agent-state': 'started',
@@ -310,50 +310,36 @@
                 op: 'delta'
               };
 
+          // Ensure that line endpoints match with calculated endpoints.
           function endpointsCalculatedProperly(relation) {
-            return true;
+            var node = d3.select(relation);
+            var line = node.select('line');
+            var boxpair = node.datum();
+            var connectors = boxpair.source()
+              .getConnectorPair(boxpair.target());
+
+            return parseFloat(line.attr('x1')) === connectors[0][0] &&
+           parseFloat(line.attr('y1')) === connectors[0][1] &&
+           parseFloat(line.attr('x2')) === connectors[1][0] &&
+           parseFloat(line.attr('y2')) === connectors[1][1];
           }
 
+          // Ensure that endpoints match for all services.
           container.all('.rel-group').each(function(relationGroup) {
-            endpointsCalculatedProperly(relation.getDOMNode())
+            endpointsCalculatedProperly(relationGroup.getDOMNode())
               .should.equal(true);
           });
 
           db.on_delta({ data: tmp_data });
 
+          // Ensure that endpoints still match for all services, even though
+          // one service has now been resized.
           container.all('.rel-group').each(function(relationGroup) {
-            endpointsCalculatedProperly(relation.getDOMNode())
+            endpointsCalculatedProperly(relationGroup.getDOMNode())
               .should.equal(true);
           });
         }
     );
-
-    it('must resize the service health graph properly when units are added',
-        function() {
-          var view = new views.environment({
-            container: container,
-            db: db,
-            env: env
-          }),
-              tmp_data = {
-                result: [
-                  ['machine', 'add', {
-                    'agent-state': 'running',
-                    'instance-state': 'running',
-                    'id': 1,
-                    'instance-id': 'local',
-                    'dns-name': 'localhost'
-                  }],
-                  ['unit', 'add', {
-                    'machine': 1,
-                    'agent-state': 'started',
-                    'public-address': '192.168.122.114',
-                    'id': 'wordpress/1'
-                  }]
-                ],
-                op: 'delta'
-              };
-
 
     it('must be able to place new services properly', function() {
       var view = new views.environment({
