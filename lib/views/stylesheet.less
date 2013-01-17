@@ -291,11 +291,6 @@ svg {
             }
             &.add-remove-units {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
-                color: gray;
-                cursor: default;
-                &:hover {
-                    background-color: inherit;
-                }
             }
             &.destroy-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
@@ -306,6 +301,13 @@ svg {
             }
             &:hover {
                 background-color: lighten(@background_color, 10%);
+            }
+            &.disabled {
+                color: gray;
+                cursor: default;
+                &:hover {
+                    background-color: inherit;
+                }
             }
         }
 
@@ -1500,4 +1502,9 @@ div.inline {
         color: red;
         font-weight: bold;
     }
+}
+
+.warning-message {
+    color: red;
+    padding: 1em;
 }
