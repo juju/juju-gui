@@ -55,24 +55,29 @@ endif
 ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
 PENULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 \
     | sed 's/[ :-]//g')
+RELEASE_TARGETS=dist distfile
 # If the user specified (via setting an environment variable on the command
 # line) that this is a final (non-development) release, set the version number
 # and series appropriately.
 ifdef FINAL
 # If this is a FINAL (non-development) release, then the most recent version
 # number should not be "unreleased".
+ifneq (, $(filter $(RELEASE_TARGETS), $(MAKECMDGOALS)))
 ifeq ($(ULTIMATE_VERSION), unreleased)
     $(error FINAL releases must have a most-recent version number other than \
 	"unreleased" in CHANGES.yaml)
+endif
 endif
 RELEASE_VERSION=$(ULTIMATE_VERSION)
 SERIES=stable
 else
 # If this is development (non-FINAL) release, then the most recent version
 # number must be "unreleased".
+ifneq (, $(filter $(RELEASE_TARGETS), $(MAKECMDGOALS)))
 ifneq ($(ULTIMATE_VERSION), unreleased)
     $(error non-FINAL releases must have a most-recent version number of \
 	"unreleased" in CHANGES.yaml)
+endif
 endif
 RELEASE_VERSION=$(PENULTIMATE_VERSION)+build.$(BZR_REVNO)
 SERIES=trunk
@@ -142,7 +147,6 @@ help:
 	@echo "test-debug: run tests in the browser from the debug environment"
 	@echo "test-prod: run tests in the browser from the production environment"
 	@echo "           FIXME: currently yielding 78 failures"
-	@echo "test: same as the test-debug target"
 	@echo "prep: beautify and lint the source"
 	@echo "docs: generate Sphinx and YUIdoc documentation"
 	@echo "help: this description"

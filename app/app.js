@@ -219,7 +219,8 @@ YUI.add('juju-gui', function(Y) {
         this.env = new juju.Environment(
             { socket_url: this.get('socket_url'),
               user: this.get('user'),
-              password: this.get('password')});
+              password: this.get('password'),
+              readOnly: this.get('readOnly')});
       }
       // Create a charm store.
       if (this.get('charm_store')) {
@@ -241,6 +242,9 @@ YUI.add('juju-gui', function(Y) {
         console.log('navigateTo', e);
         this.navigate(e.url);
       }, this);
+
+      // Notify user attempts to modify the environment without permission.
+      this.env.on('permissionDenied', this.onEnvPermissionDenied, this);
 
       // When the provider type becomes available, display it.
       this.env.after('providerTypeChange', this.onProviderTypeChange);
@@ -550,6 +554,11 @@ YUI.add('juju-gui', function(Y) {
           env: this.env,
           help_text: this.get('login_help')
         });
+        var passwordField = this.get('container').one('input[type=password]');
+        // The password field may not be present in testing context.
+        if (passwordField) {
+          passwordField.focus();
+        }
       }
       // If there are credentials available and there has not been
       // a successful login attempt, try to log in.
@@ -564,6 +573,26 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       next();
+    },
+
+    /**
+     * Notify with an error when the user tries to change the environment
+     * without permission.
+     *
+     * @method onEnvPermissionDenied
+     * @private
+     * @param {Object} evt An event object (with "title" and "message"
+         attributes).
+     * @return {undefined} Mutates only.
+     */
+    onEnvPermissionDenied: function(evt) {
+      this.db.notifications.add(
+          new models.Notification({
+            title: evt.title,
+            message: evt.message,
+            level: 'error'
+          })
+      );
     },
 
     /**

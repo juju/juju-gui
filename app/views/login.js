@@ -1,8 +1,5 @@
 'use strict';
 
-// Should login prompts be presented?  Turned on for testing.
-var noLogin = noLogin || false;
-
 YUI.add('juju-view-login', function(Y) {
 
   var views = Y.namespace('juju.views');

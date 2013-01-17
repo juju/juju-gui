@@ -1,10 +1,13 @@
 'use strict';
 
-// A global.
-var noLogin;
-
 YUI.add('juju-env', function(Y) {
 
+  /**
+   * The Juju environment.
+   * This class handles the websocket connection to the Juju API backend.
+   *
+   * @class Environment
+   */
   function Environment(config) {
     // Invoke Base constructor, passing through arguments
     Environment.superclass.constructor.apply(this, arguments);
@@ -18,7 +21,8 @@ YUI.add('juju-env', function(Y) {
     'user': {},
     'password': {},
     'connected': {value: false},
-    'debug': {value: false}
+    'debug': {value: false},
+    'readOnly': {value: false}
   };
 
   Y.extend(Environment, Y.Base, {
@@ -135,7 +139,35 @@ YUI.add('juju-env', function(Y) {
       }
     },
 
-    _send_rpc: function(op, callback) {
+    /**
+     * Send a message to the server using the websocket connection.
+     *
+     * @method _send_rpc
+     * @private
+     * @param {Object} op The operation to perform (with an "op" attr).
+     * @param {Function} callback A callable that must be called once the
+         backend returns results.
+     * @param {Boolean} writePermissionRequired Whether the requested
+         operation requires write permission, i.e. it modifies the env.
+     * @return {undefined} Sends a message to the server only.
+     */
+    _send_rpc: function(op, callback, writePermissionRequired) {
+      // Avoid sending remote messages if the operation requires writing
+      // and the GUI is in read-only mode.
+      if (writePermissionRequired && this.get('readOnly')) {
+        var title = 'Permission denied';
+        var message = ('GUI is in read-only mode and this operation ' +
+            'requires an environment modification');
+        console.warn(title + ': ' + message + '. Attempted operation: ', op);
+        this.fire(
+            'permissionDenied', {title: title, message: message, op: op});
+        // Execute the callback passing an event-like object containing an
+        // error.
+        if (callback) {
+          callback(Y.merge(op, {err: true}));
+        }
+        return;
+      }
       var tid = this._counter += 1;
       if (callback) {
         this._txn_callbacks[tid] = callback;
@@ -148,25 +180,56 @@ YUI.add('juju-env', function(Y) {
 
     // Environment API
 
+    /**
+     * Add units to the provided service.
+     *
+     * @method add_unit
+     * @param {String} service The service to be scaled up.
+     * @param {Integer} num_units The number of units to be added.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
     add_unit: function(service, num_units, callback) {
       this._send_rpc({
         'op': 'add_unit',
         'service_name': service,
-        'num_units': num_units}, callback);
+        'num_units': num_units}, callback, true);
     },
 
+    /**
+     * Remove units from a service.
+     *
+     * @method remove_units
+     * @param {Array} unit_names The units to be removed.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
     remove_units: function(unit_names, callback) {
       this._send_rpc({
         'op': 'remove_units',
-        'unit_names': unit_names}, callback);
+        'unit_names': unit_names}, callback, true);
 
     },
 
+    /**
+     * Add a relation between two services.
+     *
+     * @method add_relation
+     * @param {String} endpoint_a A string `service:interface` representing
+         the first endpoint to connect.
+     * @param {String} endpoint_b A string `service:interface` representing
+         the second endpoint to connect.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
     add_relation: function(endpoint_a, endpoint_b, callback) {
       this._send_rpc({
         'op': 'add_relation',
         'endpoint_a': endpoint_a,
-        'endpoint_b': endpoint_b}, callback);
+        'endpoint_b': endpoint_b}, callback, true);
     },
 
     get_charm: function(charm_url, callback) {
@@ -178,13 +241,23 @@ YUI.add('juju-env', function(Y) {
           {'op': 'get_service', 'service_name': service_name}, callback);
     },
 
+    /**
+     * Deploy a charm.
+     *
+     * @method deploy
+     * @param {String} charm_url The URL of the charm.
+     * @param {String} service_name The name of the service to be deployed.
+     * @param {Object} config The charm configuration options.
+     * @param {String} config_raw The YAML representation of the charm
+         configuration options. Only one of `config` and `config_raw` should be
+         provided, though `config_raw` takes precedence if it is given.
+     * @param {Integer} num_units The number of units to be deployed.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
     deploy: function(charm_url, service_name, config, config_raw, num_units,
                      callback) {
-      // Only one of config and config_raw should be provided, though
-      // config_raw takes precedence if it is given.
-      // config is an object holding the charm configuration options.
-      // config_raw is a string containing a YAML representation of the charm
-      // configuration options.
       console.log(charm_url, service_name, config, config_raw, num_units);
       this._send_rpc(
           { op: 'deploy',
@@ -193,11 +266,21 @@ YUI.add('juju-env', function(Y) {
             config_raw: config_raw,
             charm_url: charm_url,
             num_units: num_units},
-          callback);
+          callback, true);
     },
 
+    /**
+     * Expose the given service.
+     *
+     * @method expose
+     * @param {String} service The service name.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
     expose: function(service, callback) {
-      this._send_rpc({'op': 'expose', 'service_name': service}, callback);
+      this._send_rpc(
+          {'op': 'expose', 'service_name': service}, callback, true);
     },
 
     /**
@@ -217,53 +300,113 @@ YUI.add('juju-env', function(Y) {
       this._send_rpc({op: 'login', user: user, password: password});
     },
 
+    /**
+     * Un-expose the given service.
+     *
+     * @method unexpose
+     * @param {String} service The service name.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
     unexpose: function(service, callback) {
-      this._send_rpc({'op': 'unexpose', 'service_name': service}, callback);
+      this._send_rpc(
+          {'op': 'unexpose', 'service_name': service}, callback, true);
     },
 
     status: function(callback) {
       this._send_rpc({'op': 'status'}, callback);
     },
 
+    /**
+     * Remove a relation between two services.
+     *
+     * @method remove_relation
+     * @param {String} endpoint_a A string `service:interface` representing
+         the first endpoint to disconnect.
+     * @param {String} endpoint_b A string `service:interface` representing
+         the second endpoint to disconnect.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
     remove_relation: function(endpoint_a, endpoint_b, callback) {
       this._send_rpc({
         'op': 'remove_relation',
         'endpoint_a': endpoint_a,
-        'endpoint_b': endpoint_b}, callback);
+        'endpoint_b': endpoint_b}, callback, true);
     },
 
+    /**
+     * Destroy the given service.
+     *
+     * @method destroy_service
+     * @param {String} service The service name.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
     destroy_service: function(service, callback) {
       this._send_rpc({
         'op': 'destroy_service',
-        'service_name': service}, callback);
+        'service_name': service}, callback, true);
     },
 
+    /**
+     * Change the configuration of the given service.
+     *
+     * @method set_config
+     * @param {String} service The service name.
+     * @param {Object} config The charm configuration options.
+     * @param {String} data The YAML representation of the charm
+         configuration options. Only one of `config` and `data` should be
+         provided, though `data` takes precedence if it is given.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
     set_config: function(service, config, data, callback) {
-      // Only one of config and data should be provided, though
-      // data takes precedence if it is given.
-      // config is an object holding the charm configuration options.
-      // data is a string containing a YAML representation of the charm
-      // configuration options.
       this._send_rpc({
         op: 'set_config',
         service_name: service,
         config: config,
-        data: data}, callback);
+        data: data}, callback, true);
     },
 
+    /**
+     * Change the constraints of the given service.
+     *
+     * @method set_constraints
+     * @param {String} service The service name.
+     * @param {Object} constraints The charm constraints.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
     set_constraints: function(service, constraints, callback) {
       this._send_rpc({
         op: 'set_constraints',
         service_name: service,
-        constraints: constraints}, callback);
+        constraints: constraints}, callback, true);
     },
 
+    /**
+     * Mark the given unit or relation problem as resolved.
+     *
+     * @method resolved
+     * @param {String} unit_name The unit name.
+     * @param {String} relation_name The relation name.
+     * @param {Boolean} retry Whether or not to retry the unit/relation.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
     resolved: function(unit_name, relation_name, retry, callback) {
       this._send_rpc({
         op: 'resolved',
         unit_name: unit_name,
         relation_name: relation_name || null,
-        retry: retry || false}, callback);
+        retry: retry || false}, callback, true);
     },
 
     get_endpoints: function(services, callback) {
@@ -284,7 +427,7 @@ YUI.add('juju-env', function(Y) {
       this._send_rpc({
         op: 'update_annotations',
         entity: entity,
-        data: data}, callback);
+        data: data}, callback, true);
     },
 
     /**
@@ -320,7 +463,7 @@ YUI.add('juju-env', function(Y) {
       this._send_rpc({
         op: 'remove_annotations',
         entity: entity,
-        keys: keys || []}, callback);
+        keys: keys || []}, callback, true);
     }
 
   });

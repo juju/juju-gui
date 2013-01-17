@@ -1,65 +1,64 @@
-===========
-Development
-===========
+=======
+HACKING
+=======
 
 Here is how to develop on this codebase.
 
 Developer Install
 =================
 
-Juju GUI uses nodejs based development tools.
+Juju GUI uses nodejs-based development tools.
 
-You'll need nodejs & npm from the ppa::
+You will need ``nodejs`` & ``npm`` from the PPA::
 
-  $ sudo add-apt-repository ppa:chris-lea/node.js
-  $ sudo apt-get update
-  $ sudo apt-get install nodejs npm
+  sudo add-apt-repository ppa:chris-lea/node.js
+  sudo apt-get update
+  sudo apt-get install nodejs npm
 
 You also need ImageMagick::
 
-  $ sudo apt-get install imagemagick
+  sudo apt-get install imagemagick
 
 The linter will be installed locally per branch, but if you want editor
-integration, you may want to install jshint globally in your system::
+integration, you may want to install ``jshint`` globally in your system::
 
-  $ sudo npm install -g jshint
+  sudo npm install -g jshint
 
-For building the docs, you also need sphinx::
+For building the docs, you also need Sphinx::
 
-  $ sudo apt-get install python-sphinx
+  sudo apt-get install python-sphinx
 
-To make releases, you'll need pytz::
+To make releases, you will need PyTZ::
 
-  $ sudo apt-get install python-tz
+  sudo apt-get install python-tz
 
-The gui frontend can be installed and run with::
+The Juju GUI can be installed and run with::
 
-  $ bzr branch lp:juju-gui trunk
-  $ cd trunk
-  $ make prod
+  bzr branch lp:juju-gui trunk
+  cd trunk
+  make prod
 
 It may take a while for the server to start the first time as npm will
-need to download packages.  When ready, the server will print:
+need to download packages.  When ready, the server will print::
 
-Server listening on 8888
+  Server listening on 8888
 
 You can then access the GUI at <http://localhost:8888/>.
 
-The front-end needs to talk to a Juju backend.  So first you'll need
+The front-end needs to talk to a Juju backend.  So first you will need
 to install Juju::
 
-   $ sudo apt-get install juju zookeeper
+  sudo apt-get install juju zookeeper
 
-Next you'll also need to deploy a juju environment with REST api access.
-Currently that work resides in a pipeline of juju branches. The
-recommended branch to use as a server is
-``lp:~hazmat/juju/rapi-rollup``::
+Next you will also need to deploy a Juju environment with REST API access.
+Currently that work resides in a pipeline of Juju branches. The
+recommended branch to use as a server is ``rapi-rollup`` by hazmat::
 
-   $ bzr branch lp:~hazmat/juju/rapi-rollup
+  bzr branch lp:~hazmat/juju/rapi-rollup
 
-You can use it with any environment, but for dev purposes, a local
+You can use it with any environment, but for development purposes, a local
 environment works well. One environment option specific to this branch
-is the api-port. An appropriate sample configuration::
+is the ``api-port``. An appropriate sample configuration::
 
   default: dev
   environments:
@@ -71,142 +70,146 @@ is the api-port. An appropriate sample configuration::
       juju-origin: ppa
       api-port: 8081
 
-Note that juju-origin is set to the ppa, the api server runs outside of
-the container, and it is launched using whichever branch you're using.
+Note that ``juju-origin`` is set to the PPA, the API server runs outside of
+the container, and it is launched using whichever branch you are using.
 
-Also note that the api-port should be set at 8081, which the gui's
+Also note that the ``api-port`` should be set at 8081, which the GUI's
 initial environment connection currently defaults to.
 
-You'll need to bootstrap the local environment, and deploy one service.
-The api server needs access to the provisioning credentials which are
-lazily initialized in juju upon usage.
+You will need to bootstrap the local environment, and deploy one service.
+The API server needs access to the provisioning credentials which are
+lazily initialized in Juju upon usage.
 
-Juju-gui and rapi-rollup can communicate via an encrypted WebSockets
+``Juju-gui`` and ``rapi-rollup`` can communicate via an encrypted WebSocket
 connection: to enable it, add the following line to the config above::
 
   api-secure: true
 
-You will also need to edit your ``app/config.js`` replacing
-``ws://localhost:8081/ws`` with ``wss://localhost:8081/ws``.
+You will also need to edit ``app/config-debug.js`` and ``app/config-prod.js``
+replacing ``ws://localhost:8081/ws`` with ``wss://localhost:8081/ws``.
 
-By default, rapi-rollup uses a self-signed certificate; because of that you
-will need to visit the <https://localhost:8081/ws> WebSockets URL with your
-browser and accept the included self-signed certificate, or the WebSockets
+By default, ``rapi-rollup`` uses a self-signed certificate; because of that you
+will need to visit the <https://localhost:8081/ws> WebSocket URL with your
+browser and accept the included self-signed certificate, or the WebSocket
 encrypted connection will not work.
 
-In order to use a different certificate, you add an api-keys option to the
+In order to use a different certificate you add an ``api-keys`` option to the
 config above: its value will be the path of the directory containing the
 certificate and the private key, whose filenames will have to be respectively
 ``juju.crt`` and ``juju.key``.
 
-After this, the gui should be functional (it automatically polls the
-api server for establishing a websocket).
+After this, the GUI should be functional (it automatically polls the
+API server for establishing a websocket).
 
 Running Unit Tests
 ==================
 
-  $ make test-prod
+Run the unit tests with the ``make test-debug`` and ``make test-prod``
+commands.
 
 Running Lint
 ============
 
-  $ sudo apt-get install python-virtualenv
-  $ make lint
+Run the linter with the commands::
 
-API Documentation
-=================
+  sudo apt-get install python-virtualenv
+  make lint
 
-Generated JavaScript documentation is available in the yuidoc
+.. _all-docs:
+
+Documentation
+=============
+
+The ``make docs`` command generates the code and the project documentation
+together.
+
+Code Documentation
+------------------
+
+Generated documentation for the JavaScript code is available in the ``yuidoc``
 directory.  You can view the docs by running::
 
-  $ make yuidoc
-  $ xdg-open yuidoc/index.html
+  make yuidoc
+  xdg-open yuidoc/index.html
 
-The `documentation <http://yui.github.com/yuidoc/syntax/>`_ for YUIDoc markup
-is available.
+See the YUIDoc markup `documentation <http://yui.github.com/yuidoc/syntax/>`_
+for details on its syntax.
 
 Project Documentation
-=====================
+---------------------
 
 The project documentation is available in the ``docs/`` directory. It needs
-Sphinx::
+Sphinx and Python-yaml::
 
-  $ sudo apt-get install python-sphinx
+  sudo apt-get install python-sphinx python-yaml
 
-Build the documentation::
+Build the documentation with the ``make sphinx`` command and view it::
 
-  $ make docs
-
-(This will also generate the above mentioned yuidoc documentation.)
-
-View it::
-
-  $ xdg-open docs/_build/html/index.html
+  xdg-open docs/_build/html/index.html
 
 Making Releases
 ===============
 
-To make a release, you must either be in a checkout of lp:juju-gui
+To make a release, you must either be in a checkout of ``lp:juju-gui``
 without uncommitted changes, or you must override one of the
 `pertinent variable names`_ to force a release.
 
-.. _`pertinent variable names`: `Potentially Useful Release-Oriented Makefile Variables`_
+.. _`pertinent variable names`:
+    `Potentially Useful Release-Oriented Makefile Variables`_
 
+To make the release tarball use ``make distfile``.
 
-To make the release tarball use:
-    $ make distfile
+In order to make and upload the release (``make dist``), you also need to have
+a GPG key, and the ``python-pytz`` package installed (as well as
+``launchpadlib``, but that is installed by default in Ubuntu).
 
-In order to make and upload the release ('make dist'), you also need to have a
-gpg key, and the python-pytz package installed (as well as launchpadlib, but
-that is installed by default in Ubuntu).
-
-See the Process document (docs/process.rst) for step-by-step checklists to
-make developer and stable releases.
+See the Process document :ref:`(docs/process.rst) <make-releases>` for
+step-by-step checklists to make developer and stable releases.
 
 Potentially Useful Release-Oriented Makefile Variables
 ------------------------------------------------------
 
 The following is a list of pertinent Makefile variables.
 
-FINAL
-  Set FINAL to any non-empty value to make a final release. This will cause
-  the bzr revno to be omitted from the tarball name, and (if you use the
+``FINAL``
+  Set ``FINAL`` to any non-empty value to make a final release. This will cause
+  the ``bzr revno`` to be omitted from the tarball name, and (if you use the
   release target) will cause the release to be uploaded to the stable series
   rather than the trunk series. Example usage::
 
-    $ FINAL=1 make dist
+    FINAL=1 make dist
 
-PROD
-  By default, releases will be uploaded to staging.launchpad.net, which is a
-  separate version of Launchpad that uses a temporary database.  This can be
+``PROD``
+  By default, releases will be uploaded to ``staging.launchpad.net``, which is
+  a separate version of Launchpad that uses a temporary database.  This can be
   convenient for trying out the release process in the Makefile without
-  affecting our actual production releases.  Set PROD to any non-empty value
-  to send uploads to launchpad.net, the production version of Launchpad, when
-  you are ready to make a real release.
+  affecting our actual production releases.  Set ``PROD`` to any non-empty
+  value to send uploads to ``launchpad.net``, the production version of
+  Launchpad, when you are ready to make a real release.
 
   Note that you may need to ask the webops to turn off the two-factor
   authentication on your Launchpad staging account in order for the staging to
-  work. Go to the #launchpad-ops channel on the Canonical IRC server and ask
-  something like "webops, could you disable 2FA on my staging account?"
+  work. Go to the ``#launchpad-ops`` channel on the Canonical IRC server and
+  ask something like "webops, could you disable 2FA on my staging account?".
 
   Example usage::
 
-    $ PROD=1 make dist
+    PROD=1 make dist
 
-IS_TRUNK_BRANCH
+``IS_TRUNK_BRANCH``
   Set this to any non-empty value to force the Makefile to believe it is
   working with a trunk checkout. Example usage::
 
-    $ IS_TRUNK_BRANCH=1 make dist
+    IS_TRUNK_BRANCH=1 make dist
 
-BRANCH_IS_CLEAN
+``BRANCH_IS_CLEAN``
   Set this to any non-empty value to force the Makefile to believe that the
   current code tree has no changes. Example usage::
 
-    $ BRANCH_IS_CLEAN=1 make dist
+    BRANCH_IS_CLEAN=1 make dist
 
-BRANCH_IS_GOOD
+``BRANCH_IS_GOOD``
   Set this to any non-empty value to force the Makefile to bypass checks of
-  IS_TRUNK_BRANCH and BRANCH_IS_CLEAN. Example usage::
+  ``IS_TRUNK_BRANCH`` and ``BRANCH_IS_CLEAN``. Example usage::
 
-    $ BRANCH_IS_GOOD=1 make dist
+    BRANCH_IS_GOOD=1 make dist

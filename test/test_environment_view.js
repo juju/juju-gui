@@ -82,7 +82,7 @@
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'juju-env',
-        'node-event-simulate', 'juju-gui'
+        'node-event-simulate', 'juju-gui', 'slider'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
@@ -224,6 +224,124 @@
         serviceNode.all('.service-block-image').size().should.equal(1);
       });
     });
+
+    it('must resize the service health graph properly when units are added',
+        function() {
+          var view = new views.environment({
+            container: container,
+            db: db,
+            env: env
+          }),
+              tmp_data = {
+                result: [
+                  ['machine', 'add', {
+                    'agent-state': 'running',
+                    'instance-state': 'running',
+                    'id': 1,
+                    'instance-id': 'local',
+                    'dns-name': 'localhost'
+                  }],
+                  ['unit', 'add', {
+                    'machine': 1,
+                    'agent-state': 'started',
+                    'public-address': '192.168.122.114',
+                    'id': 'wordpress/1'
+                  }]
+                ],
+                op: 'delta'
+              };
+
+          function chartSizedProperly(serviceNode) {
+            var node = d3.select(serviceNode);
+            var outerRadius = node.attr('data-outerradius');
+            var maskWidth = node.select('.service-health-mask')
+                .attr('width');
+            return parseFloat(outerRadius) === parseFloat(maskWidth) / 2.05;
+          }
+
+          container.all('.service').each(function(service) {
+            chartSizedProperly(service.getDOMNode()).should.equal(true);
+          });
+
+          db.on_delta({ data: tmp_data });
+
+          container.all('.service').each(function(service) {
+            chartSizedProperly(service.getDOMNode()).should.equal(true);
+          });
+        }
+    );
+
+    it('must recalculate relation endpoints when services are resized',
+        function() {
+          var view = new views.environment({
+            container: container,
+            db: db,
+            env: env
+          }).render();
+          var tmp_data = {
+           result: [
+             ['machine', 'add', {
+               'agent-state': 'running',
+               'instance-state': 'running',
+               'id': 1,
+               'instance-id': 'local',
+               'dns-name': 'localhost'
+             }],
+             ['machine', 'add', {
+               'agent-state': 'running',
+               'instance-state': 'running',
+               'id': 2,
+               'instance-id': 'local',
+               'dns-name': 'localhost'
+             }],
+             ['unit', 'add', {
+               'machine': 1,
+               'agent-state': 'started',
+               'public-address': '192.168.122.114',
+               'id': 'wordpress/1'
+             }],
+             ['unit', 'add', {
+               'machine': 2,
+               'agent-state': 'started',
+               'public-address': '192.168.122.114',
+               'id': 'wordpress/2'
+             }]
+           ],
+           op: 'delta'
+         };
+
+          // Ensure that line endpoints match with calculated endpoints.
+          function endpointsCalculatedProperly(relation) {
+            var node = d3.select(relation);
+            var line = node.select('line');
+            var boxpair = node.datum();
+            var connectors = boxpair.source()
+              .getConnectorPair(boxpair.target());
+
+            return parseFloat(line.attr('x1')) === connectors[0][0] &&
+           parseFloat(line.attr('y1')) === connectors[0][1] &&
+           parseFloat(line.attr('x2')) === connectors[1][0] &&
+           parseFloat(line.attr('y2')) === connectors[1][1];
+          }
+
+          // Ensure that endpoints match for all services before any
+          // service is resized.
+          container.all('.rel-group').each(function(relationGroup) {
+            endpointsCalculatedProperly(relationGroup.getDOMNode())
+              .should.equal(true);
+          });
+
+          // Resize the wordpress service.
+          db.on_delta({ data: tmp_data });
+
+          // Ensure that endpoints still match for all services, now that
+          // one service has been resized.  This is the real test here.
+          container.all('.rel-group').each(function(relationGroup) {
+            endpointsCalculatedProperly(relationGroup.getDOMNode())
+              .should.equal(true);
+          });
+        }
+    );
 
     it('must be able to place new services properly', function() {
       var view = new views.environment({
@@ -550,6 +668,19 @@
           sm.backgroundClicked();
           assert.isFalse(topo.buildingRelation);
         });
+
+    it('propagates the getModelURL function to the topology', function() {
+      var getModelURL = function() {
+        return 'placeholder value';
+      };
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        getModelURL: getModelURL}).render();
+      var topoGetModelURL = view.topo.get('getModelURL');
+      assert.equal('placeholder value', topoGetModelURL());
+    });
 
     // TODO: This will be fully testable once we have specification on the
     // list view itself.  Skipped until then.
