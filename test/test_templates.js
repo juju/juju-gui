@@ -69,7 +69,7 @@
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         var templates = Y.namespace('juju.views').Templates;
-        template = templates['service-config']
+        template = templates['service-config'];
         done();
       });
     });
@@ -100,7 +100,7 @@
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         var templates = Y.namespace('juju.views').Templates;
-        template = templates['service']
+        template = templates.service;
         done();
       });
     });

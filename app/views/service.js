@@ -375,6 +375,15 @@ YUI.add('juju-view-service', function(Y) {
           '#service-relations .btn': {click: 'confirmRemoved'}
         },
 
+        /**
+         * Gather up all of the data required for the template.
+         *
+         * Aside from a nice seperation of concerns, this method also
+         * facilitates testing.
+         *
+         * @method gatherRenderData
+         * @return {Object} The data the template will render.
+         */
         gatherRenderData: function() {
           var container = this.get('container'),
               service = this.get('model'),
@@ -555,6 +564,15 @@ YUI.add('juju-view-service', function(Y) {
           }
         },
 
+        /**
+         * Gather up all of the data required for the template.
+         *
+         * Aside from a nice seperation of concerns, this method also
+         * facilitates testing.
+         *
+         * @method gatherRenderData
+         * @return {Object} The data the template will render.
+         */
         gatherRenderData: function() {
           var service = this.get('model'),
               constraints = service.get('constraints'),
@@ -617,6 +635,15 @@ YUI.add('juju-view-service', function(Y) {
           '#save-service-config': {click: 'saveConfig'}
         },
 
+        /**
+         * Gather up all of the data required for the template.
+         *
+         * Aside from a nice seperation of concerns, this method also
+         * facilitates testing.
+         *
+         * @method gatherRenderData
+         * @return {Object} The data the template will render.
+         */
         gatherRenderData: function() {
           var container = this.get('container');
           var db = this.get('db');
@@ -731,8 +758,8 @@ YUI.add('juju-view-service', function(Y) {
           container.one('#save-service-config').set('disabled', 'disabled');
 
           var new_values = utils.getElementsValuesMapping(
-                                            container, '.config-field'),
-              errors = utils.validate(new_values, schema);
+              container, '.config-field');
+          var errors = utils.validate(new_values, schema);
 
           if (Y.Object.isEmpty(errors)) {
             env.set_config(
@@ -807,6 +834,15 @@ YUI.add('juju-view-service', function(Y) {
 
         template: Templates.service,
 
+        /**
+         * Gather up all of the data required for the template.
+         *
+         * Aside from a nice seperation of concerns, this method also
+         * facilitates testing.
+         *
+         * @method gatherRenderData
+         * @return {Object} The data the template will render.
+         */
         gatherRenderData: function() {
           var db = this.get('db');
           var service = this.get('model');
@@ -816,11 +852,11 @@ YUI.add('juju-view-service', function(Y) {
           var charm = db.charms.getById(charm_id);
           var charm_attrs = charm ? charm.getAttrs() : undefined;
           var state_data = [{
-                title: 'All',
-                link: '.',
-                active: !filter_state,
-                count: this.filterUnits(null, units).length
-              }];
+            title: 'All',
+            link: '.',
+            active: !filter_state,
+            count: this.filterUnits(null, units).length
+          }];
           Y.each(['Running', 'Pending', 'Error'], function(title) {
             var lower = title.toLowerCase();
             state_data.push({
@@ -839,7 +875,7 @@ YUI.add('juju-view-service', function(Y) {
             state: filter_state,
             units: this.filterUnits(filter_state, units),
             states: state_data
-          }
+          };
         },
 
         render: function() {

@@ -94,30 +94,30 @@ describe('topology', function() {
      });
 
   it('should prevent the Juju GUI service from being destroyed', function() {
-     var service = {
-        charm: 'cs:precise/juju-gui-7'
-      };
-      var fauxTopo = {
-        get: function() {
-          return null;
-        },
-        serviceForBox: function() {
-          return service;
-        }
-      };
-      // The context is used to do the destroying, so if it does not have the
-      // destroy method, an exception will be raised if the service would be
-      // destroyed.
-      var context = {
-        get: function(name) {
-          if (name == 'component') {
-            return fauxTopo;
-          }
+    var service = {
+      charm: 'cs:precise/juju-gui-7'
+    };
+    var fauxTopo = {
+      get: function() {
+        return null;
+      },
+      serviceForBox: function() {
+        return service;
+      }
+    };
+    // The context is used to do the destroying, so if it does not have the
+    // destroy method, an exception will be raised if the service would be
+    // destroyed.
+    var context = {
+      get: function(name) {
+        if (name === 'component') {
+          return fauxTopo;
         }
       }
-      topo.events.ServiceModule.scene['.destroy-service'].click.callback(
+    };
+    topo.events.ServiceModule.scene['.destroy-service'].click.callback(
         undefined, context);
-    });
+  });
 });
 
 describe('service menu xxx', function() {
@@ -125,9 +125,9 @@ describe('service menu xxx', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-topology'], function(Y) {
-        views = Y.namespace('juju.views');
-        done();
-      });
+      views = Y.namespace('juju.views');
+      done();
+    });
   });
 
   it('should disable the "Destroy" menu for the Juju GUI service', function() {
@@ -150,17 +150,17 @@ describe('service menu xxx', function() {
     };
     var fauxView = {
       get: function(name) {
-        if (name == 'container') {
+        if (name === 'container') {
           return {one: function() { return menu; }};
-        } else if (name == 'component') {
+        } else if (name === 'component') {
           return {set: function() {}};
         }
       },
-      updateServiceMenuLocation: function () {}
+      updateServiceMenuLocation: function() {}
     };
     var view = new views.ServiceModule();
     view.service_click_actions.toggleControlPanel(
-      service, fauxView, undefined);
+        service, fauxView, undefined);
     assert.equal(addedClassName, 'disabled');
   });
 
