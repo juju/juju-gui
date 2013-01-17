@@ -271,6 +271,78 @@
         }
     );
 
+    it('must recalculate relation endpoints when services are resized',
+        function() {
+          var view = new views.environment({
+            container: container,
+            db: db,
+            env: env
+          }).render();
+          var tmp_data = {
+           result: [
+             ['machine', 'add', {
+               'agent-state': 'running',
+               'instance-state': 'running',
+               'id': 1,
+               'instance-id': 'local',
+               'dns-name': 'localhost'
+             }],
+             ['machine', 'add', {
+               'agent-state': 'running',
+               'instance-state': 'running',
+               'id': 2,
+               'instance-id': 'local',
+               'dns-name': 'localhost'
+             }],
+             ['unit', 'add', {
+               'machine': 1,
+               'agent-state': 'started',
+               'public-address': '192.168.122.114',
+               'id': 'wordpress/1'
+             }],
+             ['unit', 'add', {
+               'machine': 2,
+               'agent-state': 'started',
+               'public-address': '192.168.122.114',
+               'id': 'wordpress/2'
+             }]
+           ],
+           op: 'delta'
+         };
+
+          // Ensure that line endpoints match with calculated endpoints.
+          function endpointsCalculatedProperly(relation) {
+            var node = d3.select(relation);
+            var line = node.select('line');
+            var boxpair = node.datum();
+            var connectors = boxpair.source()
+              .getConnectorPair(boxpair.target());
+
+            return parseFloat(line.attr('x1')) === connectors[0][0] &&
+           parseFloat(line.attr('y1')) === connectors[0][1] &&
+           parseFloat(line.attr('x2')) === connectors[1][0] &&
+           parseFloat(line.attr('y2')) === connectors[1][1];
+          }
+
+          // Ensure that endpoints match for all services before any
+          // service is resized.
+          container.all('.rel-group').each(function(relationGroup) {
+            endpointsCalculatedProperly(relationGroup.getDOMNode())
+              .should.equal(true);
+          });
+
+          // Resize the wordpress service.
+          db.on_delta({ data: tmp_data });
+
+          // Ensure that endpoints still match for all services, now that
+          // one service has been resized.  This is the real test here.
+          container.all('.rel-group').each(function(relationGroup) {
+            endpointsCalculatedProperly(relationGroup.getDOMNode())
+              .should.equal(true);
+          });
+        }
+    );
+
     it('must be able to place new services properly', function() {
       var view = new views.environment({
         container: container,
