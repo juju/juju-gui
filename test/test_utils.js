@@ -387,6 +387,14 @@ describe('utilities', function() {
       assert.isTrue(utils.isGuiCharmUrl('cs:precise/juju-gui-7'));
     });
 
+    it('should recognize unofficial charm store URLs', function() {
+      assert.isTrue(utils.isGuiCharmUrl('cs:~foobar/precise/juju-gui-7'));
+    });
+
+    it('should ignore owners of unofficial charm store URLs', function() {
+      assert.isFalse(utils.isGuiCharmUrl('cs:~juju-gui/precise/foobar-7'));
+    });
+
     it('should recognize local charm URLs', function() {
       assert.isTrue(utils.isGuiCharmUrl('local:juju-gui-3'));
     });

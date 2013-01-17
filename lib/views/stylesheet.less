@@ -96,8 +96,15 @@ i.sprite {
 }
 
 .view-container {
-  overflow: auto;
-  padding: 10px;
+    overflow: auto;
+    padding: 10px;
+
+    .control-group {
+        .warning-message {
+            color: red;
+            padding: 1em;
+        }
+    }
 }
 
 .navbar {
@@ -1502,9 +1509,4 @@ div.inline {
         color: red;
         font-weight: bold;
     }
-}
-
-.warning-message {
-    color: red;
-    padding: 1em;
 }

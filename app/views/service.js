@@ -165,12 +165,6 @@ YUI.add('juju-view-service', function(Y) {
 
     confirmDestroy: function(ev) {
       ev.preventDefault();
-      var service = this.get('model');
-      // The user is not allowed to destroy the Juju GUI service because
-      // it would break the application they are currently using.
-      if (utils.isGuiService(service)) {
-        return;
-      }
       // We wait to make the panel until now, because in the render method
       // the container is not yet part of the document.
       if (Y.Lang.isUndefined(this.panel)) {
@@ -378,7 +372,7 @@ YUI.add('juju-view-service', function(Y) {
         /**
          * Gather up all of the data required for the template.
          *
-         * Aside from a nice seperation of concerns, this method also
+         * Aside from a nice separation of concerns, this method also
          * facilitates testing.
          *
          * @method gatherRenderData
@@ -567,7 +561,7 @@ YUI.add('juju-view-service', function(Y) {
         /**
          * Gather up all of the data required for the template.
          *
-         * Aside from a nice seperation of concerns, this method also
+         * Aside from a nice separation of concerns, this method also
          * facilitates testing.
          *
          * @method gatherRenderData
@@ -638,7 +632,7 @@ YUI.add('juju-view-service', function(Y) {
         /**
          * Gather up all of the data required for the template.
          *
-         * Aside from a nice seperation of concerns, this method also
+         * Aside from a nice separation of concerns, this method also
          * facilitates testing.
          *
          * @method gatherRenderData
@@ -837,7 +831,7 @@ YUI.add('juju-view-service', function(Y) {
         /**
          * Gather up all of the data required for the template.
          *
-         * Aside from a nice seperation of concerns, this method also
+         * Aside from a nice separation of concerns, this method also
          * facilitates testing.
          *
          * @method gatherRenderData

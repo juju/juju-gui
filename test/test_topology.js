@@ -120,7 +120,7 @@ describe('topology', function() {
   });
 });
 
-describe('service menu xxx', function() {
+describe('service menu', function() {
   var Y, views;
 
   before(function(done) {

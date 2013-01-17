@@ -674,65 +674,36 @@
       assert.equal('error2', filtered[1].testKey);
     });
 
-    it('prevents the Juju GUI service from being destroyed', function() {
-      var evt = {preventDefault: function() {}};
-      var view = makeServiceView();
-      // Sanity check to ensure there is no pre-existing panel.
-      assert.equal(view.panel, undefined);
-      view.set('model', new models.Service({
-        id: 'juju-gui',
-        charm: 'cs:precise/juju-gui-7',
-        unit_count: 1,
-        loaded: true,
-        exposed: true
-      }));
-      view.confirmDestroy(evt);
-      // No confirmation panel was built, thus the user wasn't allowed to
-      // destroy the service.
-      assert.equal(view.panel, undefined);
-    });
-
-    it('allows non-Juju-GUI services to be destroyed', function() {
-      var evt = {preventDefault: function() {}};
-      var view = makeServiceView();
-      // Sanity check to ensure there is no pre-existing panel.
-      assert.equal(view.panel, undefined);
-      view.confirmDestroy(evt);
-      // No confirmation panel was built, thus the user wasn't allowed to
-      // destroy the service.
-      assert.notEqual(view.panel, undefined);
-    });
-
     it('tells the template if the service is the GUI (service)', function() {
-      // See the XXX at the top of these tests.
       var view = makeServiceView();
       var renderData = view.gatherRenderData();
       assert.equal(renderData.serviceIsJujuGUI, false);
     });
 
     it('tells the template if the service is the GUI (relations)', function() {
-      // See the XXX at the top of these tests.
+      // This would ideally be in its own suite; see the XXX at top of this
+      // file.
       var view = makeServiceRelationsView();
       var renderData = view.gatherRenderData();
       assert.equal(renderData.serviceIsJujuGUI, false);
     });
 
     it('loading message if the service is not loaded (service)', function() {
-      // See the XXX at the top of these tests.
       var view = makeServiceView();
       view.get('model').set('loaded', false);
       view.render();
       var html = container.getHTML();
-      assert.notEqual(html.indexOf('Loading...'), -1);
+      assert.match(html, /Loading\.\.\./);
     });
 
     it('loading message if the service is not loaded (relations)', function() {
-      // See the XXX at the top of these tests.
+      // This would ideally be in its own suite; see the XXX at top of this
+      // file.
       var view = makeServiceRelationsView();
       view.get('model').set('loaded', false);
       view.render();
       var html = container.getHTML();
-      assert.notEqual(html.indexOf('Loading...'), -1);
+      assert.match(html, /Loading\.\.\./);
     });
 
   });
@@ -795,14 +766,14 @@
       view.get('model').set('loaded', false);
       view.render();
       var html = container.getHTML();
-      assert.notEqual(html.indexOf('Loading...'), -1);
+      assert.match(html, /Loading\.\.\./);
     });
 
     it('displays no loading message if the service is loaded', function() {
       view.get('model').set('loaded', true);
       view.render();
       var html = container.getHTML();
-      assert.equal(html.indexOf('Loading...'), -1);
+      assert.notMatch(html, /Loading\.\.\./);
     });
 
     it('informs the template if the service is the GUI', function() {
