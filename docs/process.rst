@@ -121,14 +121,13 @@ Checklist for Making a Stable Release
   is ``unreleased``, do the following.
 
   * Decide what the next version number should be (see `Semantic Versioning
-    <http://semver.org/>`_).
-    and change ``unreleased`` to that value.
+    <http://semver.org/>`_) and change ``unreleased`` to that value.
   * Commit to the branch with this checkin message:
     ``bzr commit -m 'Set version for release.'``
   * Push the branch directly to the parent (``bzr push :parent`` should work).
 
-- Run the tests and verify they pass: ``FINAL=1 make test-prod`` and then
-  ``FINAL=1 make test-debug``.
+- Run the tests and verify they pass: ``make test-prod`` and then
+  ``make test-debug``.
 - Create the tarball: ``FINAL=1 make distfile``.  The process will end by
   reporting the name of the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
