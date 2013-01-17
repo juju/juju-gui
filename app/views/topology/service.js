@@ -154,6 +154,9 @@ YUI.add('juju-topology-service', function(Y) {
       // Just show the service on double-click.
       var topo = self.get('component'),
           service = topo.serviceForBox(d);
+      // The browser sends a click event right before the dblclick one,
+      // opening the service menu, so we need to close it before going on.
+      self.service_click_actions.toggleControlPanel(null, self);
       (self.service_click_actions.show_service)(service, self);
     },
 
