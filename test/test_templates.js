@@ -85,7 +85,7 @@
       // Reconfiguring the Juju GUI service could break it, causing the user to
       // lose access to the app they are in the process of using.
       var html = template({serviceIsJujuGUI: true});
-      assert.match(html, warningMessage)
+      assert.match(html, warningMessage);
     });
 
     it('does not warn about about reconfiguring other services', function() {
