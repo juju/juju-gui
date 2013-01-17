@@ -42,19 +42,26 @@
       });
     });
 
-    it('generates nothing for the Juju GUI service', function() {
-      // This partial generates the unit count and expose/unexpose UI, neither
-      // of which we want for the Juju GUI service.
+    it('includes unit count UI for the Juju GUI service', function() {
       var html = partial({serviceIsJujuGUI: true});
-      assert.equal(Y.Lang.trim(html), '');
+      assert.notEqual(html.indexOf('Unit count'), -1);
     });
 
-    it('generates something for non-Juju-GUI services', function() {
-      // We want /something/ for non-Juju-GUI services.  Additional tests
-      // specifying what, exactly would be an improvment.
-      var html = partial({serviceIsJujuGUI: false});
-      assert.notEqual(Y.Lang.trim(html), '');
+    it('does not include (un)expose for the Juju GUI service', function() {
+      var html = partial({serviceIsJujuGUI: true});
+      assert.equal(html.indexOf('Expose'), -1);
     });
+
+    it('includes unit count UI for non-Juju-GUI services', function() {
+      var html = partial({serviceIsJujuGUI: false});
+      assert.notEqual(html.indexOf('Unit count'), -1);
+    });
+
+    it('includes (un)expose for non-Juju-GUI services', function() {
+      var html = partial({serviceIsJujuGUI: false});
+      assert.notEqual(html.indexOf('Expose'), -1);
+    });
+
 
   });
 })();
@@ -115,18 +122,6 @@
       var html = template({serviceIsJujuGUI: false, units: []});
       assert.notEqual(html.indexOf('Destroy'), -1);
       assert.notEqual(html.indexOf('Expose'), -1);
-    });
-
-    it('does not render a seperator in the footer for Juju GUI', function() {
-      // Since the only thing displayed is the unit filter, there is no need
-      // for a seperator.
-      var html = template({serviceIsJujuGUI: true, units: []});
-      assert.equal(html.indexOf(divider), -1);
-    });
-
-    it('renders a seperator in the footer for other services', function() {
-      var html = template({serviceIsJujuGUI: false, units: []});
-      assert.notEqual(html.indexOf(divider), -1);
     });
 
   });

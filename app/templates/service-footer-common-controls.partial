@@ -1,16 +1,16 @@
-{{#unless serviceIsJujuGUI}}
-  <div class="inline service-common-controls">
-  {{#unless charm.is_subordinate}}
-    <div class="control-unit-count">
-      <div class="inline"><span>Unit count</span></div>
-      <div class="inline">
-        <input type="text" id="num-service-units"
-            value="{{service.unit_count}}">
-        <img class="divider"
-            src="/juju-ui/assets/images/bottom_bar_small_div.png" />
-      </div>
+<div class="inline service-common-controls">
+{{#unless charm.is_subordinate}}
+  <div class="control-unit-count">
+    <div class="inline"><span>Unit count</span></div>
+    <div class="inline">
+      <input type="text" id="num-service-units"
+          value="{{service.unit_count}}">
+      <img class="divider"
+          src="/juju-ui/assets/images/bottom_bar_small_div.png" />
     </div>
-  {{/unless}}
+  </div>
+{{/unless}}
+{{#unless serviceIsJujuGUI}}
   <div class="control-expose">
     <div class="inline"><span>Expose</span></div>
     <div class="inline">
