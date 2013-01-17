@@ -156,6 +156,52 @@ function injectData(app, data) {
 })();
 
 
+(function() {
+
+  describe('Application authentication', function() {
+    var conn, env, juju, utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
+        function(Y) {
+          utils = Y.namespace('juju-tests.utils');
+          juju = Y.namespace('juju');
+          done();
+        });
+    });
+
+    beforeEach(function(done) {
+      conn = new utils.SocketStub();
+      env = new juju.Environment({conn: conn});
+      env.connect();
+      env.setAttrs({user: 'user', password: 'password'});
+      conn.open();
+      done();
+    });
+
+    after(function(done)  {
+      env.destroy();
+      done();
+    });
+
+    it('should avoid trying to login if the env is not connected', function() {
+      var app = new Y.juju.App({env: env});
+      app.after('ready', function() {
+        assert.equal(0, conn.messages.length);
+      });
+    });
+
+    it('should try to login if the env connection is established', function() {
+      env.set('connected', true);
+      var app = new Y.juju.App({env: env});
+      app.after('ready', function() {
+        assert.equal('login', conn.last_message().op);
+      });
+    });
+
+  });
+})();
+
 
 (function() {
 

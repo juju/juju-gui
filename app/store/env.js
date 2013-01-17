@@ -294,7 +294,6 @@ YUI.add('juju-env', function(Y) {
       if (this.userIsAuthenticated) {
         return;
       }
-
       var user = this.get('user');
       var password = this.get('password');
       this._send_rpc({op: 'login', user: user, password: password});
