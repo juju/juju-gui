@@ -20,7 +20,6 @@
       env = new juju.Environment({conn: conn});
       env.connect();
       conn.open();
-      // env.set('connected', true);
     });
 
     afterEach(function() {
