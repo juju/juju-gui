@@ -75,6 +75,11 @@ YUI.add('juju-topology-service', function(Y) {
             var topo = context.get('component');
             var box = topo.get('active_service');
             var service = topo.serviceForBox(box);
+            // The user is not allowed to destroy the Juju GUI service because
+            // it would break the application they are currently using.
+            if (utils.isGuiService(service)) {
+              return;
+            }
             context.service_click_actions
               .hideServiceMenu(box, context);
             context.service_click_actions
@@ -744,9 +749,9 @@ YUI.add('juju-topology-service', function(Y) {
        * Show (if hidden) or hide (if shown) the service menu.
        *
        * @method toggleServiceMenu
-       * @param {object} box Presentation state for the service.
-       * @param {object} view Environment view.
-       * @param {object} context Service context.
+       * @param {object} box The presentation state for the service.
+       * @param {object} view The environment view.
+       * @param {object} context The service context.
        * @return {undefined} Side effects only.
        */
       toggleServiceMenu: function(box, view, context) {
@@ -763,9 +768,9 @@ YUI.add('juju-topology-service', function(Y) {
        * Show the service menu.
        *
        * @method showServiceMenu
-       * @param {object} box Presentation state for the service.
-       * @param {object} view Environment view.
-       * @param {object} context Service context.
+       * @param {object} box The presentation state for the service.
+       * @param {object} view The environment view.
+       * @param {object} context The service context.
        * @return {undefined} Side effects only.
        */
       showServiceMenu: function(box, view, context) {
@@ -776,6 +781,10 @@ YUI.add('juju-topology-service', function(Y) {
           topo.set('active_service', box);
           topo.set('active_context', context);
           svc_menu.addClass('active');
+          // We do not want the user destroying the Juju GUI service.
+          if (utils.isGuiService(box)) {
+            svc_menu.one('.destroy-service').addClass('disabled');
+          }
           view.updateServiceMenuLocation();
         }
       },
@@ -784,9 +793,9 @@ YUI.add('juju-topology-service', function(Y) {
        * Hide the service menu.
        *
        * @method hideServiceMenu
-       * @param {object} box Presentation state for the service (unused).
-       * @param {object} view Environment view.
-       * @param {object} context Service context (unused).
+       * @param {object} box The presentation state for the service (unused).
+       * @param {object} view The environment view.
+       * @param {object} context The service context (unused).
        * @return {undefined} Side effects only.
        */
       hideServiceMenu: function(box, view, context) {
@@ -797,6 +806,8 @@ YUI.add('juju-topology-service', function(Y) {
           svc_menu.removeClass('active');
           topo.set('active_service', null);
           topo.set('active_context', null);
+          // Most services can be destroyed via the GUI.
+          svc_menu.one('.destroy-service').removeClass('disabled');
         }
       },
 

@@ -259,10 +259,11 @@ YUI.add('juju-gui', function(Y) {
       this.env.on('delta', this.notifications.generate_notices,
           this.notifications);
 
-      // When the connection resets, reset the db.
+      // When the connection resets, reset the db and re-dispatch.
       this.env.on('connectedChange', function(ev) {
         if (ev.newVal === true) {
           this.db.reset();
+          this.dispatch();
         }
       }, this);
 
@@ -540,10 +541,10 @@ YUI.add('juju-gui', function(Y) {
      *
      */
     check_user_credentials: function(req, res, next) {
-      if (!this.get('container').getDOMNode()) {
-        // We are probably after a test tear down, in a handler for a
-        // setTimeout in the YUI router.  Ugh, setTimeout is the source of
-        // so many fun race conditions and fragilities. :-/  Let's just bail.
+      // If the Juju environment is not connected, exit without letting the
+      // route dispatch proceed. On env connection change, the app will
+      // re-dispatch and this route callback will be executed again.
+      if (!this.env.get('connected')) {
         return;
       }
       // If there are no stored credentials, the user is prompted for some.

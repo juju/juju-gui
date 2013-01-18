@@ -14,17 +14,16 @@
         <div class="inline filter-label"><span>Filter</span></div>
         <div class="state-buttons">
           {{#states}}
-          <div 
-            class="inline {{#if active}}active{{/if}}">
-            <a href="{{link}}">
-              <span class="state-title {{#if active}}active{{/if}}">{{title}}
-              </span>
-            </a>
-          </div>
+            <div class="inline {{#if active}}active{{/if}}">
+              <a href="{{link}}">
+                <span class="state-title {{#if active}}active{{/if}}">{{title}}
+                </span>
+              </a>
+            </div>
           {{/states}}
         </div>
         <div class="inline control-separator">
-          <img class="divider" 
+          <img class="divider"
                 src="/juju-ui/assets/images/bottom_bar_big_div.png" />
         </div>
     </div>

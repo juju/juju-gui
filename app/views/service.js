@@ -164,9 +164,9 @@ YUI.add('juju-view-service', function(Y) {
     },
 
     confirmDestroy: function(ev) {
+      ev.preventDefault();
       // We wait to make the panel until now, because in the render method
       // the container is not yet part of the document.
-      ev.preventDefault();
       if (Y.Lang.isUndefined(this.panel)) {
         this.panel = views.createModalPanel(
             'Are you sure you want to destroy the service?  ' +
@@ -360,7 +360,7 @@ YUI.add('juju-view-service', function(Y) {
       });
   views.serviceBase = ServiceViewBase;
 
-  var ServiceRelations = Y.Base.create(
+  views.service_relations = Y.Base.create(
       'ServiceRelationsView', ServiceViewBase, [views.JujuBaseView], {
 
         template: Templates['service-relations'],
@@ -369,17 +369,20 @@ YUI.add('juju-view-service', function(Y) {
           '#service-relations .btn': {click: 'confirmRemoved'}
         },
 
-        render: function() {
+        /**
+         * Gather up all of the data required for the template.
+         *
+         * Aside from a nice separation of concerns, this method also
+         * facilitates testing.
+         *
+         * @method gatherRenderData
+         * @return {Object} The data the template will render.
+         */
+        gatherRenderData: function() {
           var container = this.get('container'),
-              getModelURL = this.get('getModelURL'),
               service = this.get('model'),
               db = this.get('db'),
               querystring = this.get('querystring');
-          if (!service || !service.get('loaded')) {
-            container.setHTML('<div class="alert">Loading...</div>');
-            console.log('waiting on service data');
-            return this;
-          }
           var relation_data = utils.getRelationDataForService(db, service);
           Y.each(relation_data, function(rel) {
             if (rel.relation_id === querystring.rel_id) {
@@ -389,14 +392,27 @@ YUI.add('juju-view-service', function(Y) {
           var charm_id = service.get('charm'),
               charm = db.charms.getById(charm_id),
               charm_attrs = charm ? charm.getAttrs() : undefined;
-          container.setHTML(this.template(
-              { viewName: 'relations',
-                tabs: this.getServiceTabs('relations'),
-                service: service.getAttrs(),
-                relations: relation_data,
-                charm: charm_attrs,
-                charm_id: charm_id}));
+          return {
+            viewName: 'relations',
+            tabs: this.getServiceTabs('relations'),
+            service: service.getAttrs(),
+            relations: relation_data,
+            charm: charm_attrs,
+            charm_id: charm_id,
+            serviceIsJujuGUI: utils.isGuiCharmUrl(charm_id)
+          };
+        },
 
+        render: function() {
+          var container = this.get('container');
+          var service = this.get('model');
+          if (!service || !service.get('loaded')) {
+            container.setHTML('<div class="alert">Loading...</div>');
+            console.log('waiting on service data');
+          } else {
+            container.setHTML(this.template(this.gatherRenderData()));
+          }
+          return this;
         },
 
         confirmRemoved: function(ev) {
@@ -474,9 +490,7 @@ YUI.add('juju-view-service', function(Y) {
         }
       });
 
-  views.service_relations = ServiceRelations;
-
-  var ServiceConstraints = Y.Base.create(
+  views.service_constraints = Y.Base.create(
       'ServiceConstraintsView', ServiceViewBase, [views.JujuBaseView], {
 
         template: Templates['service-constraints'],
@@ -544,11 +558,17 @@ YUI.add('juju-view-service', function(Y) {
           }
         },
 
-        render: function() {
-          var container = this.get('container'),
-              service = this.get('model'),
-              getModelURL = this.get('getModelURL'),
-              db = this.get('db'),
+        /**
+         * Gather up all of the data required for the template.
+         *
+         * Aside from a nice separation of concerns, this method also
+         * facilitates testing.
+         *
+         * @method gatherRenderData
+         * @return {Object} The data the template will render.
+         */
+        gatherRenderData: function() {
+          var service = this.get('model'),
               constraints = service.get('constraints'),
               display_constraints = [];
 
@@ -574,7 +594,8 @@ YUI.add('juju-view-service', function(Y) {
           });
 
           console.log('service constraints', display_constraints);
-          container.setHTML(this.template({
+          var charm_id = service.get('charm');
+          return {
             viewName: 'constraints',
             tabs: this.getServiceTabs('constraints'),
             service: service.getAttrs(),
@@ -586,17 +607,20 @@ YUI.add('juju-view-service', function(Y) {
               });
               return arr;
             })(),
-            charm_id: service.get('charm')}
-          ));
+            charm_id: charm_id,
+            serviceIsJujuGUI: utils.isGuiCharmUrl(charm_id)
+          };
+        },
 
+        render: function() {
+          var container = this.get('container');
+          container.setHTML(this.template(this.gatherRenderData()));
           return this;
         }
 
       });
 
-  views.service_constraints = ServiceConstraints;
-
-  var ServiceConfigView = Y.Base.create(
+  views.service_config = Y.Base.create(
       'ServiceConfigView', ServiceViewBase, [views.JujuBaseView], {
 
         template: Templates['service-config'],
@@ -605,27 +629,27 @@ YUI.add('juju-view-service', function(Y) {
           '#save-service-config': {click: 'saveConfig'}
         },
 
-        render: function() {
-          var container = this.get('container'),
-              db = this.get('db'),
-              service = this.get('model');
-
-          if (!service || !service.get('loaded')) {
-            container.setHTML('<div class="alert">Loading...</div>');
-            console.log('waiting on service data');
-            return this;
-          }
-
-          console.log('config', service.get('config'));
-
-          // combine the charm schema and the service values for display.
-          var charm = db.charms.getById(service.get('charm')),
-              config = service.get('config'),
-              getModelURL = this.get('getModelURL'),
-              charm_config = charm.get('config'),
-              schema = charm_config && charm_config.options,
-              settings = [],
-              field_def;
+        /**
+         * Gather up all of the data required for the template.
+         *
+         * Aside from a nice separation of concerns, this method also
+         * facilitates testing.
+         *
+         * @method gatherRenderData
+         * @return {Object} The data the template will render.
+         */
+        gatherRenderData: function() {
+          var container = this.get('container');
+          var db = this.get('db');
+          var service = this.get('model');
+          var charm = db.charms.getById(service.get('charm'));
+          var config = service.get('config');
+          var getModelURL = this.get('getModelURL');
+          var charm_config = charm.get('config');
+          var schema = charm_config && charm_config.options;
+          var settings = [];
+          var charm_id = service.get('charm');
+          var field_def;
 
           Y.Object.each(schema, function(field_def, field_name) {
             var entry = {
@@ -651,16 +675,25 @@ YUI.add('juju-view-service', function(Y) {
             settings.push(Y.mix(entry, field_def));
           });
 
-          console.log('render view svc config', service.getAttrs(), settings);
+          return {
+            viewName: 'config',
+            tabs: this.getServiceTabs('config'),
+            service: service.getAttrs(),
+            settings: settings,
+            charm_id: charm_id,
+            serviceIsJujuGUI: utils.isGuiCharmUrl(charm_id)
+          };
+        },
 
-          container.setHTML(this.template(
-              { viewName: 'config',
-                tabs: this.getServiceTabs('config'),
-                service: service.getAttrs(),
-                settings: settings,
-                charm_id: service.get('charm')}
-              ));
-
+        render: function() {
+          var container = this.get('container');
+          var service = this.get('model');
+          if (!service || !service.get('loaded')) {
+            container.setHTML('<div class="alert">Loading...</div>');
+            console.log('waiting on service data');
+          } else {
+            container.setHTML(this.template(this.gatherRenderData()));
+          }
           return this;
         },
 
@@ -719,8 +752,8 @@ YUI.add('juju-view-service', function(Y) {
           container.one('#save-service-config').set('disabled', 'disabled');
 
           var new_values = utils.getElementsValuesMapping(
-                                            container, '.config-field'),
-              errors = utils.validate(new_values, schema);
+              container, '.config-field');
+          var errors = utils.validate(new_values, schema);
 
           if (Y.Object.isEmpty(errors)) {
             env.set_config(
@@ -767,8 +800,6 @@ YUI.add('juju-view-service', function(Y) {
         }
       });
 
-  views.service_config = ServiceConfigView;
-
   // Display a unit grid based on the total number of units.
   Y.Handlebars.registerHelper('show_units', function(units) {
     var template;
@@ -797,29 +828,29 @@ YUI.add('juju-view-service', function(Y) {
 
         template: Templates.service,
 
-        render: function() {
-          console.log('service view render');
-
-          var container = this.get('container'),
-              getModelURL = this.get('getModelURL'),
-              db = this.get('db'),
-              service = this.get('model'),
-              filter_state = this.get('querystring').state;
-
-          if (!service) {
-            container.setHTML('<div class="alert">Loading...</div>');
-            console.log('waiting on service data');
-            return this;
-          }
-
-          var units = db.units.get_units_for_service(service),
-              state_data = [{
-                title: 'All',
-                link: '.',
-                active: !filter_state,
-                count: this.filterUnits(null, units).length
-              }];
-
+        /**
+         * Gather up all of the data required for the template.
+         *
+         * Aside from a nice separation of concerns, this method also
+         * facilitates testing.
+         *
+         * @method gatherRenderData
+         * @return {Object} The data the template will render.
+         */
+        gatherRenderData: function() {
+          var db = this.get('db');
+          var service = this.get('model');
+          var filter_state = this.get('querystring').state;
+          var units = db.units.get_units_for_service(service);
+          var charm_id = service.get('charm');
+          var charm = db.charms.getById(charm_id);
+          var charm_attrs = charm ? charm.getAttrs() : undefined;
+          var state_data = [{
+            title: 'All',
+            link: '.',
+            active: !filter_state,
+            count: this.filterUnits(null, units).length
+          }];
           Y.each(['Running', 'Pending', 'Error'], function(title) {
             var lower = title.toLowerCase();
             state_data.push({
@@ -828,18 +859,29 @@ YUI.add('juju-view-service', function(Y) {
               count: this.filterUnits(lower, units).length,
               link: '?state=' + lower});
           }, this);
-          var charm_id = service.get('charm'),
-              charm = db.charms.getById(charm_id),
-              charm_attrs = charm ? charm.getAttrs() : undefined;
-          container.setHTML(this.template(
-              { viewName: 'units',
-                tabs: this.getServiceTabs('.'),
-                service: service.getAttrs(),
-                charm_id: charm_id,
-                charm: charm_attrs,
-                state: filter_state,
-                units: this.filterUnits(filter_state, units),
-                states: state_data}));
+          return {
+            viewName: 'units',
+            tabs: this.getServiceTabs('.'),
+            service: service.getAttrs(),
+            charm_id: charm_id,
+            charm: charm_attrs,
+            serviceIsJujuGUI: utils.isGuiCharmUrl(charm_id),
+            state: filter_state,
+            units: this.filterUnits(filter_state, units),
+            states: state_data
+          };
+        },
+
+        render: function() {
+          console.log('service view render');
+          var container = this.get('container');
+          var service = this.get('model');
+          if (!service || !service.get('loaded')) {
+            container.setHTML('<div class="alert">Loading...</div>');
+            console.log('waiting on service data');
+          } else {
+            container.setHTML(this.template(this.gatherRenderData()));
+          }
           return this;
         },
 

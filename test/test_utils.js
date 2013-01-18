@@ -339,3 +339,70 @@ describe('utilities', function() {
 
   });
 })();
+
+(function() {
+  describe('utils.isGuiService', function() {
+
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('should extract values from "charm" attribute', function() {
+      var candidate = {charm: 'cs:precise/juju-gui-7'};
+      assert.isTrue(utils.isGuiService(candidate));
+    });
+
+    it('should extract values from .get("charm")', function() {
+      var candidate = {
+        get: function(name) {
+          if (name === 'charm') {
+            return 'cs:precise/juju-gui-7';
+          }
+        }
+      };
+      assert.isTrue(utils.isGuiService(candidate));
+    });
+
+  });
+})();
+
+(function() {
+  describe('utils.isGuiCharmUrl', function() {
+
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('should recognize charm store URLs', function() {
+      assert.isTrue(utils.isGuiCharmUrl('cs:precise/juju-gui-7'));
+    });
+
+    it('should recognize unofficial charm store URLs', function() {
+      assert.isTrue(utils.isGuiCharmUrl('cs:~foobar/precise/juju-gui-7'));
+    });
+
+    it('should ignore owners of unofficial charm store URLs', function() {
+      assert.isFalse(utils.isGuiCharmUrl('cs:~juju-gui/precise/foobar-7'));
+    });
+
+    it('should recognize local charm URLs', function() {
+      assert.isTrue(utils.isGuiCharmUrl('local:juju-gui-3'));
+    });
+
+    it('should not allow junk on the end of the URL', function() {
+      assert.isFalse(utils.isGuiCharmUrl('local:juju-gui-3 ROFLCOPTR!'));
+    });
+
+  });
+})();
+
