@@ -75,6 +75,11 @@ YUI.add('juju-topology-service', function(Y) {
             var topo = context.get('component');
             var box = topo.get('active_service');
             var service = topo.serviceForBox(box);
+            // The user is not allowed to destroy the Juju GUI service because
+            // it would break the application they are currently using.
+            if (utils.isGuiService(service)) {
+              return;
+            }
             context.service_click_actions
               .toggleControlPanel(box, context);
             context.service_click_actions
@@ -738,21 +743,31 @@ YUI.add('juju-topology-service', function(Y) {
      */
     service_click_actions: {
       /*
-       * Default action: show or hide control panel.
+       * Default action: show or hide control panel (service menu).
+       *
+       * @method toggleControlPanel
+       * @param {Object} service The service in question (if any).
+       * @param {Object} view The current view.
+       * @param {object} context The active context.
        */
-      toggleControlPanel: function(m, view, context) {
-        var container = view.get('container'),
-            topo = view.get('component'),
-            cp = container.one('#service-menu');
+      toggleControlPanel: function(service, view, context) {
+        var menu = view.get('container').one('#service-menu'),
+            topo = view.get('component');
 
-        if (cp.hasClass('active') || !m) {
-          cp.removeClass('active');
+        if (menu.hasClass('active') || !service) {
+          menu.removeClass('active');
           topo.set('active_service', null);
           topo.set('active_context', null);
+          // Most services can be destroyed via the GUI.
+          menu.one('.destroy-service').removeClass('disabled');
         } else {
-          topo.set('active_service', m);
+          topo.set('active_service', service);
           topo.set('active_context', context);
-          cp.addClass('active');
+          menu.addClass('active');
+          // We do not want the user destroying the Juju GUI service.
+          if (utils.isGuiService(service)) {
+            menu.one('.destroy-service').addClass('disabled');
+          }
           view.updateServiceMenuLocation();
         }
       },

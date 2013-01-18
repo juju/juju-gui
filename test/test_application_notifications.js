@@ -104,6 +104,8 @@ describe('juju application notifications', function() {
              if ('unit_count' === key) {
                // We simulate a model with 2 units
                return 2;
+             } else if ('loaded' === key) {
+               return true;
              }
              return null;
            }
