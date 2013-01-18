@@ -183,20 +183,24 @@ function injectData(app, data) {
       done();
     });
 
-    it('should avoid trying to login if the env is not connected', function() {
-      var app = new Y.juju.App({env: env});
-      app.after('ready', function() {
-        assert.equal(0, conn.messages.length);
-      });
-    });
+    it('should avoid trying to login if the env is not connected',
+       function(done) {
+         var app = new Y.juju.App({env: env});
+         app.after('ready', function() {
+           assert.equal(0, conn.messages.length);
+           done();
+         });
+       });
 
-    it('should try to login if the env connection is established', function() {
-      env.set('connected', true);
-      var app = new Y.juju.App({env: env});
-      app.after('ready', function() {
-        assert.equal('login', conn.last_message().op);
-      });
-    });
+    it('should try to login if the env connection is established',
+       function(done) {
+         env.set('connected', true);
+         var app = new Y.juju.App({env: env});
+         app.after('ready', function() {
+           assert.equal('login', conn.last_message().op);
+           done();
+         });
+       });
 
   });
 })();
