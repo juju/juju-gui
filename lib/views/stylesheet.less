@@ -96,8 +96,15 @@ i.sprite {
 }
 
 .view-container {
-  overflow: auto;
-  padding: 10px;
+    overflow: auto;
+    padding: 10px;
+
+    .control-group {
+        .warning-message {
+            color: red;
+            padding: 1em;
+        }
+    }
 }
 
 .navbar {
@@ -291,11 +298,6 @@ svg {
             }
             &.add-remove-units {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
-                color: gray;
-                cursor: default;
-                &:hover {
-                    background-color: inherit;
-                }
             }
             &.destroy-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
@@ -306,6 +308,13 @@ svg {
             }
             &:hover {
                 background-color: lighten(@background_color, 10%);
+            }
+            &.disabled {
+                color: gray;
+                cursor: default;
+                &:hover {
+                    background-color: inherit;
+                }
             }
         }
 

@@ -1,6 +1,10 @@
 'use strict';
 
 (function() {
+  // XXX This "describe" is a lie.  There are tests here for both the service
+  // view (views.service) and the relations view (views.service_relations).
+  // This test suite needs to be broken out into two that just contain tests
+  // for one or the other.
   describe('juju service view', function() {
     var models, Y, container, service, db, conn, env, charm, ENTER, ESC,
         makeServiceView, makeServiceRelationsView, views, unit;
@@ -670,5 +674,112 @@
       assert.equal('error2', filtered[1].testKey);
     });
 
+    it('tells the template if the service is the GUI (service)', function() {
+      var view = makeServiceView();
+      var renderData = view.gatherRenderData();
+      assert.equal(renderData.serviceIsJujuGUI, false);
+    });
+
+    it('tells the template if the service is the GUI (relations)', function() {
+      // This would ideally be in its own suite; see the XXX at top of this
+      // file.
+      var view = makeServiceRelationsView();
+      var renderData = view.gatherRenderData();
+      assert.equal(renderData.serviceIsJujuGUI, false);
+    });
+
+    it('loading message if the service is not loaded (service)', function() {
+      var view = makeServiceView();
+      view.get('model').set('loaded', false);
+      view.render();
+      var html = container.getHTML();
+      assert.match(html, /Loading\.\.\./);
+    });
+
+    it('loading message if the service is not loaded (relations)', function() {
+      // This would ideally be in its own suite; see the XXX at top of this
+      // file.
+      var view = makeServiceRelationsView();
+      view.get('model').set('loaded', false);
+      view.render();
+      var html = container.getHTML();
+      assert.match(html, /Loading\.\.\./);
+    });
+
   });
-}) ();
+})();
+
+(function() {
+  describe('Service config view (views.service_config)', function() {
+    var models, Y, container, service, db, conn, env, charm, views, view;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          'juju-views', 'juju-models', 'base', 'node', 'json-parse',
+          'juju-env', 'node-event-simulate', 'juju-tests-utils', 'event-key',
+          function(Y) {
+            models = Y.namespace('juju.models');
+            views = Y.namespace('juju.views');
+            done();
+          });
+    });
+
+    beforeEach(function(done) {
+      conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
+      env = new (Y.namespace('juju')).Environment({conn: conn});
+      env.connect();
+      conn.open();
+      container = Y.Node.create('<div/>').hide();
+      Y.one('#main').append(container);
+      db = new models.Database();
+      charm = new models.Charm({id: 'cs:precise/mysql-7', description: 'A DB'});
+      db.charms.add([charm]);
+      service = new models.Service(
+          { id: 'mysql',
+            charm: 'cs:precise/mysql-7',
+            unit_count: db.units.size(),
+            loaded: true,
+            exposed: false});
+
+      db.services.add([service]);
+      view = new views.service_config({
+        db: db,
+        env: env,
+        getModelURL: function(model, intent) {
+          return model.get('name');
+        },
+        model: service,
+        container: container
+      });
+      done();
+    });
+
+    afterEach(function(done) {
+      container.remove(true);
+      service.destroy();
+      db.destroy();
+      env.destroy();
+      done();
+    });
+
+    it('displays a loading message if the service is not loaded', function() {
+      view.get('model').set('loaded', false);
+      view.render();
+      var html = container.getHTML();
+      assert.match(html, /Loading\.\.\./);
+    });
+
+    it('displays no loading message if the service is loaded', function() {
+      view.get('model').set('loaded', true);
+      view.render();
+      var html = container.getHTML();
+      assert.notMatch(html, /Loading\.\.\./);
+    });
+
+    it('informs the template if the service is the GUI', function() {
+      var renderData = view.gatherRenderData();
+      assert.equal(renderData.serviceIsJujuGUI, false);
+    });
+
+  });
+})();
