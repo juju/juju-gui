@@ -44,7 +44,7 @@ YUI.add('juju-topology-service', function(Y) {
             var container = self.get('container'),
                 topo = self.get('component');
             container.all('.environment-menu.active').removeClass('active');
-            self.service_click_actions.toggleServiceMenu(null, self);
+            self.service_click_actions.hideServiceMenu(null, self);
             topo.fire('clearState');
           }}
         },
@@ -63,7 +63,7 @@ YUI.add('juju-topology-service', function(Y) {
             var box = topo.get('active_service');
             var service = topo.serviceForBox(box);
             context.service_click_actions
-              .toggleServiceMenu(box, context);
+              .hideServiceMenu(box, context);
             context.service_click_actions
               .show_service(service, context);
           }}
@@ -76,7 +76,7 @@ YUI.add('juju-topology-service', function(Y) {
             var box = topo.get('active_service');
             var service = topo.serviceForBox(box);
             context.service_click_actions
-              .toggleServiceMenu(box, context);
+              .hideServiceMenu(box, context);
             context.service_click_actions
               .destroyServiceConfirm(service, context);
           }}
@@ -115,8 +115,8 @@ YUI.add('juju-topology-service', function(Y) {
         show: 'show',
         hide: 'hide',
         fade: 'fade',
-        toggleServiceMenu: {callback: function() {
-          this.service_click_actions.toggleServiceMenu(null, this);
+        hideServiceMenu: {callback: function() {
+          this.service_click_actions.hideServiceMenu(null, this);
         }},
         rescaled: 'updateServiceMenuLocation'
       }
@@ -295,7 +295,7 @@ YUI.add('juju-topology-service', function(Y) {
                 d.oldY = d.y;
                 self.get('container').all('.environment-menu.active')
                   .removeClass('active');
-                self.service_click_actions.toggleServiceMenu(null, self);
+                self.service_click_actions.hideServiceMenu(null, self);
               })
             .on('drag', function(d, i) {
                 if (topo.buildingRelation) {
@@ -682,8 +682,8 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /*
-         * Event handler to show the graph-list picker
-         */
+     * Event handler to show the graph-list picker
+     */
     showGraphListPicker: function(evt) {
       var container = this.get('container'),
               picker = container.one('.graph-list-picker');
@@ -741,20 +741,20 @@ YUI.add('juju-topology-service', function(Y) {
      */
     service_click_actions: {
       /*
-       * Default action: show or hide the service menu.
+       * Show (if hidden) or hide (if shown) the service menu.
        */
       toggleServiceMenu: function(m, view, context) {
         var svc_menu = view.get('container').one('#service-menu');
 
         if (svc_menu.hasClass('active') || !m) {
-            view.service_click_actions.hideServiceMenu(m, view, context);
+          view.service_click_actions.hideServiceMenu(m, view, context);
         } else {
-            view.service_click_actions.showServiceMenu(m, view, context);
+          view.service_click_actions.showServiceMenu(m, view, context);
         }
       },
 
       /*
-       * Default action: show the service menu.
+       * Show the service menu.
        */
       showServiceMenu: function(m, view, context) {
         var svc_menu = view.get('container').one('#service-menu'),
@@ -769,7 +769,7 @@ YUI.add('juju-topology-service', function(Y) {
       },
 
       /*
-       * Default action: hide the service menu.
+       * Hide the service menu.
        */
       hideServiceMenu: function(m, view, context) {
         var svc_menu = view.get('container').one('#service-menu'),
