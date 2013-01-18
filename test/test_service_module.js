@@ -117,14 +117,15 @@ describe('service module events', function() {
     }
   });
 
-  it('should not show the menu when after the service is double-clicked',
+  it('should not show the menu after the service is double-clicked',
     function() {
-      // Monkeypatch to avoid the event handler bailing out early.
+      // Monkeypatch to avoid the click event handler bailing out early.
       view.topo.modules.ServiceModule.service_boxes
         .haproxy.containsPoint = function() {return true;};
       var service = viewContainer.one('.service');
       var menu = viewContainer.one('#service-menu');
       service.simulate('click');
+      // Ideally the browser would not send the click event right away...
       assert(menu.hasClass('active'));
       service.simulate('dblclick');
       assert.isFalse(menu.hasClass('active'));

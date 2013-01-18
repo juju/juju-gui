@@ -274,7 +274,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var container = context.get('container');
 
       // Remove the service menu.
-      topo.fire('toggleControlPanel');
+      topo.fire('toggleServiceMenu');
 
       // Create the dragline and position its endpoints properly.
       context.addRelationDragStart({service: box});
@@ -293,7 +293,7 @@ YUI.add('juju-topology-relation', function(Y) {
         this.set('currentServiceClickAction', 'addRelationStart');
       } else if (curr_action === 'addRelationStart' ||
               curr_action === 'ambiguousAddRelationCheck') {
-        this.set('currentServiceClickAction', 'toggleControlPanel');
+        this.set('currentServiceClickAction', 'toggleServiceMenu');
       } // Otherwise do nothing.
     },
 
@@ -519,7 +519,7 @@ YUI.add('juju-topology-relation', function(Y) {
         this.dragline = null;
       }
       this.clickAddRelation = null;
-      this.set('currentServiceClickAction', 'toggleControlPanel');
+      this.set('currentServiceClickAction', 'toggleServiceMenu');
       topo.buildingRelation = false;
       topo.fire('show', { selection: vis.selectAll('.service') });
       vis.selectAll('.service').classed('selectable-service', false);
@@ -694,7 +694,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var relation_id = 'pending-' + endpoints[0][0] + endpoints[1][0];
 
       if (endpoints[0][0] === endpoints[1][0]) {
-        view.set('currentServiceClickAction', 'toggleControlPanel');
+        view.set('currentServiceClickAction', 'toggleServiceMenu');
         return;
       }
 
@@ -720,7 +720,7 @@ YUI.add('juju-topology-relation', function(Y) {
           endpoints[1][0] + ':' + endpoints[1][1].name,
           Y.bind(this._addRelationCallback, this, view, relation_id)
       );
-      view.set('currentServiceClickAction', 'toggleControlPanel');
+      view.set('currentServiceClickAction', 'toggleServiceMenu');
     },
 
     _addRelationCallback: function(view, relation_id, ev) {

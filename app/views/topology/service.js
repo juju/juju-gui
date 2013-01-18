@@ -44,7 +44,7 @@ YUI.add('juju-topology-service', function(Y) {
             var container = self.get('container'),
                 topo = self.get('component');
             container.all('.environment-menu.active').removeClass('active');
-            self.service_click_actions.toggleControlPanel(null, self);
+            self.service_click_actions.toggleServiceMenu(null, self);
             topo.fire('clearState');
           }}
         },
@@ -63,7 +63,7 @@ YUI.add('juju-topology-service', function(Y) {
             var box = topo.get('active_service');
             var service = topo.serviceForBox(box);
             context.service_click_actions
-              .toggleControlPanel(box, context);
+              .toggleServiceMenu(box, context);
             context.service_click_actions
               .show_service(service, context);
           }}
@@ -76,7 +76,7 @@ YUI.add('juju-topology-service', function(Y) {
             var box = topo.get('active_service');
             var service = topo.serviceForBox(box);
             context.service_click_actions
-              .toggleControlPanel(box, context);
+              .toggleServiceMenu(box, context);
             context.service_click_actions
               .destroyServiceConfirm(service, context);
           }}
@@ -115,8 +115,8 @@ YUI.add('juju-topology-service', function(Y) {
         show: 'show',
         hide: 'hide',
         fade: 'fade',
-        toggleControlPanel: {callback: function() {
-          this.service_click_actions.toggleControlPanel(null, this);
+        toggleServiceMenu: {callback: function() {
+          this.service_click_actions.toggleServiceMenu(null, this);
         }},
         rescaled: 'updateServiceMenuLocation'
       }
@@ -129,7 +129,7 @@ YUI.add('juju-topology-service', function(Y) {
       this.service_boxes = {};
 
       // Set a default
-      this.set('currentServiceClickAction', 'toggleControlPanel');
+      this.set('currentServiceClickAction', 'toggleServiceMenu');
     },
 
     serviceClick: function(d, context) {
@@ -154,9 +154,9 @@ YUI.add('juju-topology-service', function(Y) {
       // Just show the service on double-click.
       var topo = self.get('component'),
           service = topo.serviceForBox(d);
-      // The browser sends a click event right before the dblclick one,
-      // opening the service menu, so we need to close it before going on.
-      self.service_click_actions.toggleControlPanel(null, self);
+      // The browser sends a click event right before the dblclick one, and it
+      // opens the service menu: close it before moving to the service details.
+      self.service_click_actions.hideServiceMenu(null, self);
       (self.service_click_actions.show_service)(service, self);
     },
 
@@ -295,7 +295,7 @@ YUI.add('juju-topology-service', function(Y) {
                 d.oldY = d.y;
                 self.get('container').all('.environment-menu.active')
                   .removeClass('active');
-                self.service_click_actions.toggleControlPanel(null, self);
+                self.service_click_actions.toggleServiceMenu(null, self);
               })
             .on('drag', function(d, i) {
                 if (topo.buildingRelation) {
@@ -741,22 +741,44 @@ YUI.add('juju-topology-service', function(Y) {
      */
     service_click_actions: {
       /*
-       * Default action: show or hide control panel.
+       * Default action: show or hide the service menu.
        */
-      toggleControlPanel: function(m, view, context) {
-        var container = view.get('container'),
-            topo = view.get('component'),
-            cp = container.one('#service-menu');
+      toggleServiceMenu: function(m, view, context) {
+        var svc_menu = view.get('container').one('#service-menu');
 
-        if (cp.hasClass('active') || !m) {
-          cp.removeClass('active');
-          topo.set('active_service', null);
-          topo.set('active_context', null);
+        if (svc_menu.hasClass('active') || !m) {
+            view.service_click_actions.hideServiceMenu(m, view, context);
         } else {
+            view.service_click_actions.showServiceMenu(m, view, context);
+        }
+      },
+
+      /*
+       * Default action: show the service menu.
+       */
+      showServiceMenu: function(m, view, context) {
+        var svc_menu = view.get('container').one('#service-menu'),
+            topo = view.get('component');
+
+        if (m && !svc_menu.hasClass('active')) {
           topo.set('active_service', m);
           topo.set('active_context', context);
-          cp.addClass('active');
+          svc_menu.addClass('active');
           view.updateServiceMenuLocation();
+        }
+      },
+
+      /*
+       * Default action: hide the service menu.
+       */
+      hideServiceMenu: function(m, view, context) {
+        var svc_menu = view.get('container').one('#service-menu'),
+            topo = view.get('component');
+
+        if (svc_menu.hasClass('active') || !m) {
+          svc_menu.removeClass('active');
+          topo.set('active_service', null);
+          topo.set('active_context', null);
         }
       },
 
