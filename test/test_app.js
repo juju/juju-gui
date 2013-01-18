@@ -226,6 +226,7 @@ function injectData(app, data) {
           env = new juju.Environment({conn: conn}),
           app = new Y.juju.App({env: env, container: container}),
           reset_called = false,
+          dispatch_called = false,
           noop = function() {return this;};
 
       // mock the db
@@ -242,19 +243,30 @@ function injectData(app, data) {
         },
         reset: function() {
           reset_called = true;
-                 }
+        }
+      };
+      app.dispatch = function() {
+        // We want to verify that we are called after the value is set, so
+        // check_user_credentials can look at this value reliably.
+        if (env.get('connected')) {
+          dispatch_called = true;
+        }
       };
       env.connect();
       conn.open();
       // We need to fake the connection event.
       env.set('connected', true);
       reset_called.should.equal(true);
+      dispatch_called.should.equal(true);
 
       // trigger a second time and verify
+      env.set('connected', false);
       reset_called = false;
+      dispatch_called = false;
       conn.open();
       env.set('connected', true);
       reset_called.should.equal(true);
+      dispatch_called.should.equal(true);
     });
 
   });
