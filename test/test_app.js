@@ -162,12 +162,11 @@ function injectData(app, data) {
     var conn, env, juju, utils, Y;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'],
-        function(Y) {
-          utils = Y.namespace('juju-tests.utils');
-          juju = Y.namespace('juju');
-          done();
-        });
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        juju = Y.namespace('juju');
+        done();
+      });
     });
 
     beforeEach(function(done) {
