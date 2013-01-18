@@ -285,8 +285,7 @@ YUI.add('juju-env', function(Y) {
 
     /**
      * Attempt to log the user in.  Credentials must have been previously
-     * stored on the environment.  If not, this method will schedule a call to
-     * itself in the future in order to try again.
+     * stored on the environment.
      *
      * @return {undefined} Nothing.
      */
@@ -297,7 +296,11 @@ YUI.add('juju-env', function(Y) {
       }
       var user = this.get('user');
       var password = this.get('password');
-      this._send_rpc({op: 'login', user: user, password: password});
+      if (Y.Lang.isValue(user) && Y.Lang.isValue(password)) {
+        this._send_rpc({op: 'login', user: user, password: password});
+      } else {
+        console.warn('Attempted login without providing credentials.');
+      }
     },
 
     /**

@@ -294,11 +294,31 @@
     });
 
     it('allows logging in if the GUI is read-only', function() {
+      env.setAttrs({user: 'user', password: 'password'});
       assertOperationAllowed('login', []);
     });
 
     it('allows retrieving the status if the GUI is read-only', function() {
       assertOperationAllowed('status', []);
+    });
+
+    it('denies logging in without providing credentials', function() {
+      env.setAttrs({user: undefined, password: undefined});
+      // Mock *console.warn* so that it is possible to collect warnings.
+      var original = console.warn;
+      var warning = false;
+      console.warn = function() {
+        warning = true;
+      };
+      // Reset websocket messages.
+      conn.messages = [];
+      env.login();
+      // Ensure no messages are sent to the server.
+      assert.equal(0, conn.messages.length);
+      // A warning is emitted.
+      assert.isTrue(warning);
+      // Restore the original *console.warn*.
+      console.warn = original;
     });
 
   });
