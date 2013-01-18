@@ -740,42 +740,60 @@ YUI.add('juju-topology-service', function(Y) {
      * Actions to be called on clicking a service.
      */
     service_click_actions: {
-      /*
+      /**
        * Show (if hidden) or hide (if shown) the service menu.
+       *
+       * @method toggleServiceMenu
+       * @param {object} box Presentation state for the service.
+       * @param {object} view Environment view.
+       * @param {object} context Service context.
+       * @return {undefined} Side effects only.
        */
-      toggleServiceMenu: function(m, view, context) {
+      toggleServiceMenu: function(box, view, context) {
         var svc_menu = view.get('container').one('#service-menu');
 
-        if (svc_menu.hasClass('active') || !m) {
-          view.service_click_actions.hideServiceMenu(m, view, context);
+        if (svc_menu.hasClass('active') || !box) {
+          this.hideServiceMenu(null, view);
         } else {
-          view.service_click_actions.showServiceMenu(m, view, context);
+          this.showServiceMenu(box, view, context);
         }
       },
 
-      /*
+      /**
        * Show the service menu.
+       *
+       * @method showServiceMenu
+       * @param {object} box Presentation state for the service.
+       * @param {object} view Environment view.
+       * @param {object} context Service context.
+       * @return {undefined} Side effects only.
        */
-      showServiceMenu: function(m, view, context) {
-        var svc_menu = view.get('container').one('#service-menu'),
-            topo = view.get('component');
+      showServiceMenu: function(box, view, context) {
+        var svc_menu = view.get('container').one('#service-menu');
+        var topo = view.get('component');
 
-        if (m && !svc_menu.hasClass('active')) {
-          topo.set('active_service', m);
+        if (box && !svc_menu.hasClass('active')) {
+          topo.set('active_service', box);
           topo.set('active_context', context);
           svc_menu.addClass('active');
           view.updateServiceMenuLocation();
         }
       },
 
-      /*
+      /**
        * Hide the service menu.
+       *
+       * @method hideServiceMenu
+       * @param {object} box Presentation state for the service (unused).
+       * @param {object} view Environment view.
+       * @param {object} context Service context (unused).
+       * @return {undefined} Side effects only.
        */
-      hideServiceMenu: function(m, view, context) {
-        var svc_menu = view.get('container').one('#service-menu'),
-            topo = view.get('component');
+      hideServiceMenu: function(box, view, context) {
+        var svc_menu = view.get('container').one('#service-menu');
+        var topo = view.get('component');
 
-        if (svc_menu.hasClass('active') || !m) {
+        if (svc_menu.hasClass('active')) {
           svc_menu.removeClass('active');
           topo.set('active_service', null);
           topo.set('active_context', null);

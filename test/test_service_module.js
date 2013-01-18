@@ -80,7 +80,7 @@ describe('service module annotations', function() {
 
 
 describe('service module events', function() {
-  var db, juju, models, view, viewContainer, views, Y;
+  var db, juju, models, serviceModule, view, viewContainer, views, Y;
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
       'juju-models',
@@ -109,6 +109,7 @@ describe('service module events', function() {
     });
     view.render();
     view.rendered();
+    serviceModule = view.topo.modules.ServiceModule;
   });
 
   afterEach(function() {
@@ -117,11 +118,54 @@ describe('service module events', function() {
     }
   });
 
-  it('should not show the menu after the service is double-clicked',
+  it('should toggle the service menu',
+     function() {
+       var box = serviceModule.service_boxes.haproxy;
+       var menu = viewContainer.one('#service-menu');
+       assert.isFalse(menu.hasClass('active'));
+       serviceModule.service_click_actions.toggleServiceMenu(
+           box, serviceModule, serviceModule);
+       assert(menu.hasClass('active'));
+       serviceModule.service_click_actions.toggleServiceMenu(
+           box, serviceModule, serviceModule);
+       assert.isFalse(menu.hasClass('active'));
+     });
+
+  it('should show the service menu',
+     function() {
+       var box = serviceModule.service_boxes.haproxy;
+       var menu = viewContainer.one('#service-menu');
+       assert.isFalse(menu.hasClass('active'));
+       serviceModule.service_click_actions.showServiceMenu(
+           box, serviceModule, serviceModule);
+       assert(menu.hasClass('active'));
+       // Check no-op.
+       serviceModule.service_click_actions.showServiceMenu(
+           box, serviceModule, serviceModule);
+       assert(menu.hasClass('active'));
+     });
+
+  it('should hide the service menu',
+     function() {
+       var box = serviceModule.service_boxes.haproxy;
+       var menu = viewContainer.one('#service-menu');
+       serviceModule.service_click_actions.showServiceMenu(
+           box, serviceModule, serviceModule);
+       assert(menu.hasClass('active'));
+       serviceModule.service_click_actions.hideServiceMenu(
+           null, serviceModule);
+       assert.isFalse(menu.hasClass('active'));
+       // Check no-op.
+       serviceModule.service_click_actions.hideServiceMenu(
+           null, serviceModule);
+       assert.isFalse(menu.hasClass('active'));
+     });
+
+  it('should not show the service menu after the service is double-clicked',
      function() {
        // Monkeypatch to avoid the click event handler bailing out early.
-       view.topo.modules.ServiceModule.service_boxes
-        .haproxy.containsPoint = function() {return true;};
+       serviceModule.service_boxes.haproxy.containsPoint = function() {
+         return true;};
        var service = viewContainer.one('.service');
        var menu = viewContainer.one('#service-menu');
        service.simulate('click');

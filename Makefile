@@ -141,8 +141,6 @@ help:
 	@echo "clean-all: remove build, deps and doc directories"
 	@echo "test-debug: run tests in the browser from the debug environment"
 	@echo "test-prod: run tests in the browser from the production environment"
-	@echo "           FIXME: currently yielding 78 failures"
-	@echo "test: same as the test-debug target"
 	@echo "prep: beautify and lint the source"
 	@echo "docs: generate Sphinx and YUIdoc documentation"
 	@echo "help: this description"
