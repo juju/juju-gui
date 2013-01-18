@@ -776,13 +776,14 @@ YUI.add('juju-topology-service', function(Y) {
       showServiceMenu: function(box, view, context) {
         var svc_menu = view.get('container').one('#service-menu');
         var topo = view.get('component');
+        var service = topo.serviceForBox(box);
 
         if (box && !svc_menu.hasClass('active')) {
           topo.set('active_service', box);
           topo.set('active_context', context);
           svc_menu.addClass('active');
           // We do not want the user destroying the Juju GUI service.
-          if (utils.isGuiService(box)) {
+          if (utils.isGuiService(service)) {
             svc_menu.one('.destroy-service').addClass('disabled');
           }
           view.updateServiceMenuLocation();
