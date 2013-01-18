@@ -500,8 +500,8 @@
        }
     );
 
-    // Tests for control panel.
-    it('must be able to toggle a control panel', function(done) {
+    // Tests for the service menu.
+    it('must be able to toggle the service menu', function(done) {
       var view = new views.environment({
         container: container,
         db: db,
@@ -519,7 +519,7 @@
       done();
     });
 
-    it('must be able to add a relation from the control panel',
+    it('must be able to add a relation from the service menu',
        function() {
          var view = new views.environment({
            container: container,
@@ -556,11 +556,11 @@
            return endpoints;
          };
 
-         // Toggle the control panel for the Add Relation button.
+         // Toggle the service menu for the Add Relation button.
          var module = view.topo.modules.RelationModule;
          var sm = view.topo.modules.ServiceModule;
 
-         sm.service_click_actions.toggleControlPanel(
+         sm.service_click_actions.toggleServiceMenu(
              d3.select(service.getDOMNode()).datum(),
              sm,
              service);
