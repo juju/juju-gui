@@ -43,7 +43,7 @@ YUI.add('juju-topology-service', function(Y) {
         // Menu/Controls
         '.view-service': {
           click: 'viewServiceClick'
-       },
+        },
         '.destroy-service': {
           click: 'destroyServiceClick'
         }
