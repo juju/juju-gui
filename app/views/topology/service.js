@@ -25,7 +25,7 @@ YUI.add('juju-topology-service', function(Y) {
 
         '.service-status': {
           mouseover: 'serviceStatusMouseOver',
-          mouseout:  'serviceStatusMouseOut'
+          mouseout: 'serviceStatusMouseOut'
         },
         '.zoomPlane': {
           /**
@@ -283,14 +283,14 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     dragend: function(d,  self) {
-       var topo = self.get('component');
+      var topo = self.get('component');
       if (topo.buildingRelation) {
         topo.fire('addRelationDragEnd');
       }
-       else {
-         topo.get('env').update_annotations(
-           d.id, {'gui.x': d.x, 'gui.y': d.y});
-       }
+      else {
+        topo.get('env').update_annotations(
+            d.id, {'gui.x': d.x, 'gui.y': d.y});
+      }
     },
 
     /**
@@ -302,9 +302,13 @@ YUI.add('juju-topology-service', function(Y) {
      * though of as 'drag to position'.
      *
      * @method drag
-     * @param d {Box}
-     * @param self {ServiceModule}
-     * @param pos {Object} (optional) containing x/y numbers.
+     * @param {Box} d viewModel BoundingBox.
+     * @param {ServiceModule} self ServiceModule.
+     * @param {Object} pos (optional) containing x/y numbers.
+     * @param {Boolean} includeTransition (optional) Use transition to drag.
+     *
+     * [At the time of this writing useTransition works in practice but
+     * introduces a timing issue in the tests.]
      **/
     drag: function(d, self, pos, includeTransition) {
       var topo = self.get('component');
@@ -425,8 +429,8 @@ YUI.add('juju-topology-service', function(Y) {
     /**
      * Get a d3 selected node for a given service by id.
      *
-     * @getServiceNode
-     * @returns d3.select(DOMNode)
+     * @method getServiceNode
+     * @return  {d3.selection} selection || null.
      **/
     getServiceNode: function(id) {
       if (this.node === undefined) {
@@ -507,8 +511,7 @@ YUI.add('juju-topology-service', function(Y) {
           topo.fire('serviceMoved', {service: d});
         }});
 
-
-            // Size the node for drawing.
+      // Size the node for drawing.
       node.attr('width', function(d) {
         // NB: if a service has zero units, as is possible with
         // subordinates, then default to 1 for proper scaling, as
