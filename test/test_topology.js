@@ -113,10 +113,13 @@ describe('topology', function() {
         if (name === 'component') {
           return fauxTopo;
         }
+      },
+      service_click_actions: {
+        toggleControlPanel: function() {},
+        destroyServiceConfirm: function() {}
       }
     };
-    topo.events.ServiceModule.scene['.destroy-service'].click.callback(
-        undefined, context);
+    topo.modules.ServiceModule.destroyServiceClick(undefined, context);
   });
 });
 

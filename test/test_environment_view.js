@@ -396,6 +396,10 @@
       });
     });
 
+    it('must be able to use position annotations on load');
+
+    it('must be able to update position on annotation change');
+
     it('must be able to render subordinate relation indicators',
        function() {
          var view = new views.environment({

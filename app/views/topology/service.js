@@ -62,7 +62,6 @@ YUI.add('juju-topology-service', function(Y) {
         dragstart: 'dragstart',
         drag: 'drag',
         dragend: 'dragend',
-        positionUpdated: 'updatePosition',
         toggleControlPanel: {callback: function() {
           this.service_click_actions.toggleControlPanel(null, this);
         }},
@@ -437,19 +436,6 @@ YUI.add('juju-topology-service', function(Y) {
       return node && node[0][0] || null;
     },
 
-    updatePosition: function(evt) {
-      var topo = this.get('component');
-      var box = this.service_boxes[evt.id];
-      var model = topo.serviceForBox(box);
-      if (!box || !model) {return;}
-
-      var node = this.getServiceNode(box.id);
-      if (!node) {return;}
-
-      this.drag.call(node, box, this, evt);
-      topo.fire('serviceMoved', {service: box});
-    },
-
     /**
      * @method createServiceNode fills a service node with empty structures
      *                           that will be filled out in the update stage.
@@ -515,7 +501,7 @@ YUI.add('juju-topology-service', function(Y) {
           // as we use the values.
           delete annotations['gui.x'];
           delete annotations['gui.y'];
-          self.drag.call(this, d, self, {x:x, y:y});
+          self.drag.call(this, d, self, {x: x, y: y});
           topo.fire('serviceMoved', {service: d});
         }});
 
