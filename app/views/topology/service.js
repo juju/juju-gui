@@ -306,7 +306,7 @@ YUI.add('juju-topology-service', function(Y) {
      * @param self {ServiceModule}
      * @param pos {Object} (optional) containing x/y numbers.
      **/
-    drag: function(d, self, pos) {
+    drag: function(d, self, pos, includeTransition) {
       var topo = self.get('component');
       var selection = d3.select(this);
 
@@ -322,16 +322,18 @@ YUI.add('juju-topology-service', function(Y) {
           d.x = pos.x;
           d.y = pos.y;
           // Explicitly reassign data.
-          selection = selection.data([d])
-                      // Define a transition on
-                      // programatic drag action.
-                      .transition()
-                      .duration(500)
-                      .ease('elastic');
+          selection = selection.data([d]);
         } else {
           d.x += d3.event.dx;
           d.y += d3.event.dy;
         }
+
+        if (includeTransition) {
+          selection = selection.transition()
+                               .duration(500)
+                               .ease('elastic');
+        }
+
         selection.attr('transform', function(d, i) {
           return d.translateStr();
         });

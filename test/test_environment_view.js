@@ -11,7 +11,8 @@
         ['service', 'add', {
           'charm': 'cs:precise/wordpress-6',
           'id': 'wordpress',
-          'exposed': false
+          'exposed': false,
+          'annotations': {'gui.x': 100, 'gui.y': 200}
         }],
         ['service', 'add', {
           'charm': 'cs:precise/mediawiki-3',
@@ -92,7 +93,6 @@
         env = new juju.Environment({conn: conn});
         env.connect();
         conn.open();
-        env.dispatch_result(environment_delta);
         done();
       });
     });
@@ -102,12 +102,14 @@
       done();
     });
 
-    beforeEach(function(done) {
+    beforeEach(function() {
       container = Y.Node.create('<div />').setStyle('visibility', 'hidden');
       Y.one('body').prepend(container);
       db = new models.Database();
-      db.on_delta({data: environment_delta});
-      done();
+      // Use a clone to avoid any mutation
+      // to the input set (as happens with processed
+      // annotations, its a direct reference).
+      db.on_delta({data: Y.clone(environment_delta)});
     });
 
     afterEach(function(done) {
@@ -396,9 +398,42 @@
       });
     });
 
-    it('must be able to use position annotations on load');
+    it('must be able to use position annotations',
+      function() {
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env
+      });
+      var tmp_data = {
+        op: 'delta',
+        result: [
+          ['service', 'add', {
+          'subordinate': true,
+          'charm': 'cs:precise/wordpress-6',
+          'id': 'wordpress',
+          'annotations': {'gui.x': 374.1, 'gui.y': 211.2}
+        }]]};
+      var properTransform = /translate\((\d+\.?\d*),(\d+\.?\d*)\)/;
+      var node, match;
 
-    it('must be able to update position on annotation change');
+      view.render();
+
+      // Test values from initial load.
+      node = view.topo.modules.ServiceModule.getServiceNode('wordpress');
+      match = node.getAttribute('transform').match(properTransform);
+      match[1].should.eql('100');
+      match[2].should.eql('200');
+
+      db.on_delta({ data: tmp_data });
+      view.update();
+
+      //On annotation change  position should be updated.
+      match = node.getAttribute('transform').match(properTransform);
+      match[1].should.eql('374.1');
+      match[2].should.eql('211.2');
+      });
+
 
     it('must be able to render subordinate relation indicators',
        function() {

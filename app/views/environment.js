@@ -28,6 +28,11 @@ YUI.add('juju-view-environment', function(Y) {
             preventable: false});
         },
 
+        update: function() {
+          this.topo.update();
+          return this;
+        },
+
         render: function() {
           var container = this.get('container'),
               topo = this.topo;

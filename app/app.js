@@ -348,7 +348,7 @@ YUI.add('juju-gui', function(Y) {
 
       // Redispatch to current view to update.
       if (active && active.name === 'EnvironmentView') {
-        active.topo.update();
+        active.update();
       } else {
         this.dispatch();
       }
