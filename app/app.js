@@ -325,6 +325,7 @@ YUI.add('juju-gui', function(Y) {
       Y.log(evt, 'debug', 'App: Database changed');
 
       var self = this;
+      var active = this.get('activeView');
 
       // Compare endpoints map against db to see if it needs to be changed.
       var updateNeeded = this.db.services.some(function(service) {
@@ -346,7 +347,11 @@ YUI.add('juju-gui', function(Y) {
       }
 
       // Redispatch to current view to update.
-      this.dispatch();
+      if (active && active.name === 'EnvironmentView') {
+        active.topo.update();
+      } else {
+        this.dispatch();
+      }
     },
 
     /**

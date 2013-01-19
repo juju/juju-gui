@@ -24,29 +24,15 @@ YUI.add('juju-topology-service', function(Y) {
         },
 
         '.service-status': {
-          mouseover: {callback: function(d, self) {
-            d3.select(this)
-            .select('.unit-count')
-            .attr('class', 'unit-count show-count');
-          }},
-          mouseout: {callback: function(d, self) {
-            d3.select(this)
-            .select('.unit-count')
-            .attr('class', 'unit-count hide-count');
-          }}
+          mouseover: 'serviceStatusMouseOver',
+          mouseout:  'serviceStatusMouseOut'
         },
-        '.topology .crosshatch-background rect:first-child': {
+        '.zoomPlane': {
           /**
            * If the user clicks on the background we cancel any active add
            * relation.
            */
-          click: {callback: function(d, self) {
-            var container = self.get('container'),
-                topo = self.get('component');
-            container.all('.environment-menu.active').removeClass('active');
-            self.service_click_actions.toggleControlPanel(null, self);
-            topo.fire('clearState');
-          }}
+          click: 'zoomPlaneClick'
         },
         '.graph-list-picker .picker-button': {
           click: 'showGraphListPicker'
@@ -56,63 +42,16 @@ YUI.add('juju-topology-service', function(Y) {
         },
         // Menu/Controls
         '.view-service': {
-          /** The user clicked on the "View" menu item. */
-          click: {callback: function(data, context) {
-            // Get the service element
-            var topo = context.get('component');
-            var box = topo.get('active_service');
-            var service = topo.serviceForBox(box);
-            context.service_click_actions
-              .toggleControlPanel(box, context);
-            context.service_click_actions
-              .show_service(service, context);
-          }}
+          click: 'viewServiceClick'
         },
         '.destroy-service': {
-          /** The user clicked on the "Destroy" menu item. */
-          click: {callback: function(data, context) {
-            // Get the service element
-            var topo = context.get('component');
-            var box = topo.get('active_service');
-            var service = topo.serviceForBox(box);
-            // The user is not allowed to destroy the Juju GUI service because
-            // it would break the application they are currently using.
-            if (utils.isGuiService(service)) {
-              return;
-            }
-            context.service_click_actions
-              .toggleControlPanel(box, context);
-            context.service_click_actions
-              .destroyServiceConfirm(service, context);
-          }}
+          click: 'destroyServiceClick'
         }
       },
       d3: {
         '.service': {
-          'mousedown.addrel': {callback: function(d, context) {
-            var evt = d3.event;
-            var topo = context.get('component');
-            context.longClickTimer = Y.later(750, this, function(d, e) {
-              // Provide some leeway for accidental dragging.
-              if ((Math.abs(d.x - d.oldX) + Math.abs(d.y - d.oldY)) /
-                  2 > 5) {
-                return;
-              }
-
-              // Sometimes mouseover is fired after the mousedown, so ensure
-              // we have the correct event in d3.event for d3.mouse().
-              d3.event = e;
-
-              // Start the process of adding a relation
-              topo.fire('addRelationDragStart', {service: d});
-            }, [d, evt], false);
-          }},
-          'mouseup.addrel': {callback: function(d, context) {
-            // Cancel the long-click timer if it exists.
-            if (context.longClickTimer) {
-              context.longClickTimer.cancel();
-            }
-          }}
+          'mousedown.addrel': 'serviceAddRelMouseDown',
+          'mouseup.addrel': 'serviceAddRelMouseUp'
         }
       },
       yui: {
@@ -120,6 +59,10 @@ YUI.add('juju-topology-service', function(Y) {
         show: 'show',
         hide: 'hide',
         fade: 'fade',
+        dragstart: 'dragstart',
+        drag: 'drag',
+        dragend: 'dragend',
+        positionUpdated: 'updatePosition',
         toggleControlPanel: {callback: function() {
           this.service_click_actions.toggleControlPanel(null, this);
         }},
@@ -207,6 +150,82 @@ YUI.add('juju-topology-service', function(Y) {
       topo.fire('mouseMove');
     },
 
+    /**
+     * Handle mouseover service status
+     **/
+    serviceStatusMouseOver: function(d, context) {
+      d3.select(this)
+        .select('.unit-count')
+        .attr('class', 'unit-count show-count');
+    },
+
+    serviceStatusMouseOut: function(d, context) {
+      d3.select(this)
+        .select('.unit-count')
+        .attr('class', 'unit-count hide-count');
+    },
+
+    /**
+     * If the user clicks on the background we cancel any active add
+     * relation.
+     */
+    zoomPlaneClick: function(d, self) {
+      var container = self.get('container'),
+          topo = self.get('component');
+      container.all('.environment-menu.active').removeClass('active');
+      self.service_click_actions.toggleControlPanel(null, self);
+      topo.fire('clearState');
+    },
+
+    /** The user clicked on the "View" menu item. */
+    viewServiceClick: function(d, context) {
+      // Get the service element
+      var topo = context.get('component');
+      var box = topo.get('active_service');
+      var service = topo.serviceForBox(box);
+      context.service_click_actions
+             .toggleControlPanel(box, context);
+      context.service_click_actions
+             .show_service(service, context);
+    },
+
+    /** The user clicked on the "Destroy" menu item. */
+    destroyServiceClick: function(data, context) {
+      // Get the service element
+      var topo = context.get('component');
+      var box = topo.get('active_service');
+      var service = topo.serviceForBox(box);
+      context.service_click_actions
+             .toggleControlPanel(box, context);
+      context.service_click_actions
+             .destroyServiceConfirm(service, context);
+    },
+
+    serviceAddRelMouseDown: function(d, context) {
+      var evt = d3.event;
+      var topo = context.get('component');
+      context.longClickTimer = Y.later(750, this, function(d, e) {
+        // Provide some leeway for accidental dragging.
+        if ((Math.abs(d.x - d.oldX) + Math.abs(d.y - d.oldY)) /
+            2 > 5) {
+          return;
+        }
+
+        // Sometimes mouseover is fired after the mousedown, so ensure
+        // we have the correct event in d3.event for d3.mouse().
+        d3.event = e;
+
+        // Start the process of adding a relation
+        topo.fire('addRelationDragStart', {service: d});
+      }, [d, evt], false);
+    },
+
+    serviceAddRelMouseUp: function(d, context) {
+      // Cancel the long-click timer if it exists.
+      if (context.longClickTimer) {
+        context.longClickTimer.cancel();
+      }
+    },
     /*
      * Sync view models with current db.models.
      */
@@ -238,28 +257,95 @@ YUI.add('juju-topology-service', function(Y) {
                   right: 0.086758});
         this.service_boxes[service.id] = service;
       }, this);
+
+      // XXX: containment breaking alias, do we need this?
       topo.service_boxes = this.service_boxes;
 
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
-                       .data(services, function(d) { return d.modelId();});
+                     .data(services,
+                           function(d) { return d.modelId();});
     },
 
     /**
-     * Handle dragend events for a service.
+     * Handle drag events for a service.
      *
      * @param {object} svc A service object.
      * @param {object} i Unused.
      * @return {undefined} Side effects only.
      */
-    _dragend: function(d, i) {
-      var topo = this.get('component');
+    dragstart: function(d, self) {
+      var topo = self.get('component');
+      d.oldX = d.x;
+      d.oldY = d.y;
+      self.get('container').all('.environment-menu.active')
+          .removeClass('active');
+      self.service_click_actions.toggleControlPanel(null, self);
+    },
+
+    dragend: function(d,  self) {
+       var topo = self.get('component');
       if (topo.buildingRelation) {
         topo.fire('addRelationDragEnd');
       }
-      // Do not update annotations if the GUI is in read-only mode.
-      else if (!topo.get('env').get('readOnly')) {
-        topo.get('env').update_annotations(d.id, {'gui.x': d.x, 'gui.y': d.y});
+       else {
+         topo.get('env').update_annotations(
+           d.id, {'gui.x': d.x, 'gui.y': d.y});
+       }
+    },
+
+    /**
+     * Specialized drag event handler
+     * when called as an event handler it
+     * Allows optional extra param, pos
+     * which when used overrides the mouse
+     * handling. This method can then be
+     * though of as 'drag to position'.
+     *
+     * @method drag
+     * @param d {Box}
+     * @param self {ServiceModule}
+     * @param pos {Object} (optional) containing x/y numbers.
+     **/
+    drag: function(d, self, pos) {
+      var topo = self.get('component');
+      var selection = d3.select(this);
+
+      if (topo.buildingRelation) {
+        topo.fire('addRelationDrag', { box: d });
+      } else {
+        if (self.longClickTimer) {
+          self.longClickTimer.cancel();
+        }
+
+        // Translate the service (and, potentially, menu).
+        if (pos) {
+          d.x = pos.x;
+          d.y = pos.y;
+          // Explicitly reassign data.
+          selection = selection.data([d])
+                      // Define a transition on
+                      // programatic drag action.
+                      .transition()
+                      .duration(500)
+                      .ease('elastic');
+        } else {
+          d.x += d3.event.dx;
+          d.y += d3.event.dy;
+        }
+        selection.attr('transform', function(d, i) {
+          return d.translateStr();
+        });
+        if (topo.get('active_service') === d) {
+          self.updateServiceMenuLocation();
+        }
+
+        // Clear any state while dragging.
+        self.get('container').all('.environment-menu.active')
+            .removeClass('active');
+        topo.fire('cancelRelationBuild');
+        // Update relation lines for just this service.
+        topo.fire('serviceMoved', { service: d });
       }
     },
 
@@ -288,45 +374,14 @@ YUI.add('juju-topology-service', function(Y) {
                       .padding(300);
       }
 
+      var drag = d3.behavior.drag()
+            .on('dragstart', function(d) { self.dragstart.call(this, d, self);})
+            .on('drag', function(d) { self.drag.call(this, d, self);})
+            .on('dragend', function(d) { self.dragend.call(this, d, self);});
+
+
       //Process any changed data.
       this.updateData();
-
-      var drag = d3.behavior.drag()
-            .on('dragstart', function(d) {
-                d.oldX = d.x;
-                d.oldY = d.y;
-                self.get('container').all('.environment-menu.active')
-                  .removeClass('active');
-                self.service_click_actions.toggleControlPanel(null, self);
-              })
-            .on('drag', function(d, i) {
-                if (topo.buildingRelation) {
-                  topo.fire('addRelationDrag', { box: d });
-                } else {
-                  if (self.longClickTimer) {
-                    self.longClickTimer.cancel();
-                  }
-
-                  // Translate the service (and, potentially, menu).
-                  d.x += d3.event.dx;
-                  d.y += d3.event.dy;
-                  d3.select(this).attr('transform', function(d, i) {
-                    return d.translateStr();
-                  });
-                  if (topo.get('active_service') === d) {
-                    self.updateServiceMenuLocation();
-                  }
-
-                  // Clear any state while dragging.
-                  self.get('container').all('.environment-menu.active')
-                    .removeClass('active');
-                  topo.fire('cancelRelationBuild');
-
-                  // Update relation lines for just this service.
-                  topo.fire('serviceMoved', { service: d });
-                }
-              })
-            .on('dragend', Y.bind(this._dragend, this));
 
       // Generate a node for each service, draw it as a rect with
       // labels for service and charm.
@@ -364,6 +419,35 @@ YUI.add('juju-topology-service', function(Y) {
       // Remove old nodes.
       node.exit()
           .remove();
+    },
+
+    /**
+     * Get a d3 selected node for a given service by id.
+     *
+     * @getServiceNode
+     * @returns d3.select(DOMNode)
+     **/
+    getServiceNode: function(id) {
+      if (this.node === undefined) {
+        return null;
+      }
+      var node = this.node.filter(function(d, i) {
+        return d.id === id;
+      });
+      return node && node[0][0] || null;
+    },
+
+    updatePosition: function(evt) {
+      var topo = this.get('component');
+      var box = this.service_boxes[evt.id];
+      var model = topo.serviceForBox(box);
+      if (!box || !model) {return;}
+
+      var node = this.getServiceNode(box.id);
+      if (!node) {return;}
+
+      this.drag.call(node, box, this, evt);
+      topo.fire('serviceMoved', {service: box});
     },
 
     /**
@@ -412,7 +496,31 @@ YUI.add('juju-topology-service', function(Y) {
           service_scale_width = this.service_scale_width,
           service_scale_height = this.service_scale_height;
 
-      // Size the node for drawing.
+      // Apply Position Annotations
+      // This is done after the services_boxes
+      // binding as the event handler will
+      // use that index.
+      node.each(function(d) {
+        var service = topo.serviceForBox(d),
+            annotations = service.get('annotations'),
+            x, y;
+
+        if (!annotations) {return;}
+        x = annotations['gui.x'],
+        y = annotations['gui.y'];
+        if (!d ||
+            (x !== undefined && x !== d.x) &&
+            (y !== undefined && y !== d.y)) {
+          // Delete gui.x and gui.y from annotations
+          // as we use the values.
+          delete annotations['gui.x'];
+          delete annotations['gui.y'];
+          self.drag.call(this, d, self, {x:x, y:y});
+          topo.fire('serviceMoved', {service: d});
+        }});
+
+
+            // Size the node for drawing.
       node.attr('width', function(d) {
         // NB: if a service has zero units, as is possible with
         // subordinates, then default to 1 for proper scaling, as
@@ -655,8 +763,6 @@ YUI.add('juju-topology-service', function(Y) {
      */
     renderedHandler: function() {
       var container = this.get('container');
-
-      this.update();
 
       // Ensure relation labels are sized properly.
       container.all('.rel-label').each(function(label) {
