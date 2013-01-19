@@ -156,13 +156,18 @@ describe('service menu', function() {
         if (name === 'container') {
           return {one: function() { return menu; }};
         } else if (name === 'component') {
-          return {set: function() {}};
+          return {
+            set: function() {},
+            serviceForBox: function() {
+              return service;
+            }
+          };
         }
       },
       updateServiceMenuLocation: function() {}
     };
     var view = new views.ServiceModule();
-    view.service_click_actions.toggleControlPanel(
+    view.service_click_actions.toggleServiceMenu(
         service, fauxView, undefined);
     assert.equal(addedClassName, 'disabled');
   });

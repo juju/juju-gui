@@ -43,7 +43,7 @@ YUI.add('juju-topology-service', function(Y) {
         // Menu/Controls
         '.view-service': {
           click: 'viewServiceClick'
-        },
+       },
         '.destroy-service': {
           click: 'destroyServiceClick'
         }
@@ -76,7 +76,7 @@ YUI.add('juju-topology-service', function(Y) {
       this.service_boxes = {};
 
       // Set a default
-      this.set('currentServiceClickAction', 'toggleControlPanel');
+      this.set('currentServiceClickAction', 'toggleServiceMenu');
     },
 
     serviceClick: function(d, context) {
@@ -101,6 +101,9 @@ YUI.add('juju-topology-service', function(Y) {
       // Just show the service on double-click.
       var topo = self.get('component'),
           service = topo.serviceForBox(d);
+      // The browser sends a click event right before the dblclick one, and it
+      // opens the service menu: close it before moving to the service details.
+      self.service_click_actions.hideServiceMenu(null, self);
       (self.service_click_actions.show_service)(service, self);
     },
 
@@ -781,8 +784,8 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /*
-         * Event handler to show the graph-list picker
-         */
+     * Event handler to show the graph-list picker
+     */
     showGraphListPicker: function(evt) {
       var container = this.get('container'),
               picker = container.one('.graph-list-picker');
@@ -839,33 +842,70 @@ YUI.add('juju-topology-service', function(Y) {
      * Actions to be called on clicking a service.
      */
     service_click_actions: {
-      /*
-       * Default action: show or hide control panel (service menu).
+      /**
+       * Show (if hidden) or hide (if shown) the service menu.
        *
-       * @method toggleControlPanel
-       * @param {Object} service The service in question (if any).
-       * @param {Object} view The current view.
-       * @param {object} context The active context.
+       * @method toggleServiceMenu
+       * @param {object} box The presentation state for the service.
+       * @param {object} view The environment view.
+       * @param {object} context The service context.
+       * @return {undefined} Side effects only.
        */
-      toggleControlPanel: function(service, view, context) {
-        var menu = view.get('container').one('#service-menu'),
-            topo = view.get('component');
+      toggleServiceMenu: function(box, view, context) {
+        var svc_menu = view.get('container').one('#service-menu');
 
-        if (menu.hasClass('active') || !service) {
-          menu.removeClass('active');
+        if (svc_menu.hasClass('active') || !box) {
+          this.hideServiceMenu(null, view);
+        } else {
+          this.showServiceMenu(box, view, context);
+        }
+      },
+
+      /**
+       * Show the service menu.
+       *
+       * @method showServiceMenu
+       * @param {object} box The presentation state for the service.
+       * @param {object} module The service module..
+       * @param {object} context The service context.
+       * @return {undefined} Side effects only.
+       */
+      showServiceMenu: function(box, module, context) {
+        var svc_menu = module.get('container').one('#service-menu');
+        var topo = module.get('component');
+        var service = topo.serviceForBox(box);
+
+        if (box && !svc_menu.hasClass('active')) {
+          topo.set('active_service', box);
+          topo.set('active_context', context);
+          svc_menu.addClass('active');
+          // We do not want the user destroying the Juju GUI service.
+          if (utils.isGuiService(service)) {
+            svc_menu.one('.destroy-service').addClass('disabled');
+          }
+          module.updateServiceMenuLocation();
+        }
+      },
+
+      /**
+       * Hide the service menu.
+       *
+       * @method hideServiceMenu
+       * @param {object} box The presentation state for the service (unused).
+       * @param {object} module The service module.
+       * @param {object} context The service context (unused).
+       * @return {undefined} Side effects only.
+       */
+      hideServiceMenu: function(box, module, context) {
+        var svc_menu = module.get('container').one('#service-menu');
+        var topo = module.get('component');
+
+        if (svc_menu.hasClass('active')) {
+          svc_menu.removeClass('active');
           topo.set('active_service', null);
           topo.set('active_context', null);
           // Most services can be destroyed via the GUI.
-          menu.one('.destroy-service').removeClass('disabled');
-        } else {
-          topo.set('active_service', service);
-          topo.set('active_context', context);
-          menu.addClass('active');
-          // We do not want the user destroying the Juju GUI service.
-          if (utils.isGuiService(service)) {
-            menu.one('.destroy-service').addClass('disabled');
-          }
-          view.updateServiceMenuLocation();
+          svc_menu.one('.destroy-service').removeClass('disabled');
         }
       },
 
