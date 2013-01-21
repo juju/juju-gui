@@ -113,10 +113,13 @@ describe('topology', function() {
         if (name === 'component') {
           return fauxTopo;
         }
+      },
+      service_click_actions: {
+        toggleControlPanel: function() {},
+        destroyServiceConfirm: function() {}
       }
     };
-    topo.events.ServiceModule.scene['.destroy-service'].click.callback(
-        undefined, context);
+    topo.modules.ServiceModule.destroyServiceClick(undefined, context);
   });
 });
 
@@ -153,9 +156,12 @@ describe('service menu', function() {
         if (name === 'container') {
           return {one: function() { return menu; }};
         } else if (name === 'component') {
-          return { set: function() {},
-                   serviceForBox: function(box) { return service;}
-                 };
+          return {
+            set: function() {},
+            serviceForBox: function() {
+              return service;
+            }
+          };
         }
       },
       updateServiceMenuLocation: function() {}

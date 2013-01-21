@@ -56,7 +56,7 @@ describe('service module annotations', function() {
            { id: 'wordpress',
              x: 100.1,
              y: 200.2};
-       serviceModule._dragend(d, 0);
+       serviceModule.dragend(d, serviceModule);
        assert.isTrue(called);
        location['gui.x'].should.equal(100.1);
        location['gui.y'].should.equal(200.2);
@@ -70,7 +70,7 @@ describe('service module annotations', function() {
              y: 200.2};
        var topo = serviceModule.get('component');
        topo.buildingRelation = true;
-       serviceModule._dragend(d, 0);
+       serviceModule.dragend(d, serviceModule);
        assert.isFalse(called);
        location['gui.x'].should.equal(0);
        location['gui.y'].should.equal(0);

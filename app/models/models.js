@@ -32,7 +32,6 @@ YUI.add('juju-models', function(Y) {
           Y.each(data, function(value, key) {
             o[key] = value;
           });
-          // XXX Fire model changed event manually if we need it later?
         }
       }
     }
