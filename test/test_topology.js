@@ -159,7 +159,7 @@ describe('service menu', function() {
       updateServiceMenuLocation: function() {}
     };
     var view = new views.ServiceModule();
-    view.service_click_actions.toggleControlPanel(
+    view.service_click_actions.toggleServiceMenu(
         service, fauxView, undefined);
     assert.equal(addedClassName, 'disabled');
   });

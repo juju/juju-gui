@@ -260,7 +260,7 @@ YUI.add('juju-gui', function(Y) {
           this.notifications);
 
       // When the connection resets, reset the db and re-dispatch.
-      this.env.on('connectedChange', function(ev) {
+      this.env.after('connectedChange', function(ev) {
         if (ev.newVal === true) {
           this.db.reset();
           this.dispatch();
