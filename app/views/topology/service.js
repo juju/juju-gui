@@ -28,11 +28,7 @@ YUI.add('juju-topology-service', function(Y) {
           mouseout: 'serviceStatusMouseOut'
         },
         '.zoomPlane': {
-          /**
-           * If the user clicks on the background we cancel any active add
-           * relation.
-           */
-          click: 'zoomPlaneClick'
+         click: 'zoomPlaneClick'
         },
         '.graph-list-picker .picker-button': {
           click: 'showGraphListPicker'
@@ -62,12 +58,16 @@ YUI.add('juju-topology-service', function(Y) {
         dragstart: 'dragstart',
         drag: 'drag',
         dragend: 'dragend',
-        toggleControlPanel: {callback: function() {
-          this.service_click_actions.toggleControlPanel(null, this);
+        hideServiceMenu: {callback: function() {
+          this.service_click_actions.hideServiceMenu(null, this);
         }},
         rescaled: 'updateServiceMenuLocation'
       }
     },
+
+    // Margins applied on update to Box instances.
+    subordinate_margins: {top: 0.05, bottom: 0.1, left: 0.084848, right: 0.084848},
+    service_margins: {top: 0, bottom: 0.1667, left: 0.086758, right: 0.086758},
 
     initializer: function(options) {
       ServiceModule.superclass.constructor.apply(this, arguments);
@@ -242,21 +242,16 @@ YUI.add('juju-topology-service', function(Y) {
 
       Y.each(services, function(service) {
         // Update services  with existing positions.
+        // In the future it would be better to sync
+        // the model to the existing box.
         var existing = this.service_boxes[service.id];
         if (existing) {
           service.pos = existing.pos;
+          service.inDrag = existing.inDrag;
         }
         service.margins(service.subordinate ?
-                {
-                  top: 0.05,
-                  bottom: 0.1,
-                  left: 0.084848,
-                  right: 0.084848} :
-                {
-                  top: 0,
-                  bottom: 0.1667,
-                  left: 0.086758,
-                  right: 0.086758});
+                        this.subordinate_margins :
+                        this.service_margins);
         this.service_boxes[service.id] = service;
       }, this);
 
@@ -265,8 +260,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
-                     .data(services,
-                           function(d) { return d.modelId();});
+                     .data(services, function(d) {
+                       return d.modelId();});
     },
 
     /**
@@ -282,7 +277,8 @@ YUI.add('juju-topology-service', function(Y) {
       d.oldY = d.y;
       self.get('container').all('.environment-menu.active')
           .removeClass('active');
-      self.service_click_actions.toggleControlPanel(null, self);
+      self.service_click_actions.hideServiceMenu(null, self);
+      console.log('dragstart');
     },
 
     dragend: function(d,  self) {
@@ -292,8 +288,15 @@ YUI.add('juju-topology-service', function(Y) {
       }
       else {
         topo.get('env').update_annotations(
-            d.id, {'gui.x': d.x, 'gui.y': d.y});
+            d.id, {'gui.x': d.x, 'gui.y': d.y},
+        function() {
+          // Force a reposition at the end.
+          d.inDrag = false;
+          //self.drag.call(self.getServiceNode(d.id),
+          //               d, self, {x:d.x, y: d.y}, false);
+        });
       }
+      console.log('dragend');
     },
 
     /**
@@ -319,42 +322,42 @@ YUI.add('juju-topology-service', function(Y) {
 
       if (topo.buildingRelation) {
         topo.fire('addRelationDrag', { box: d });
-      } else {
-        if (self.longClickTimer) {
-          self.longClickTimer.cancel();
-        }
-
-        // Translate the service (and, potentially, menu).
-        if (pos) {
-          d.x = pos.x;
-          d.y = pos.y;
-          // Explicitly reassign data.
-          selection = selection.data([d]);
-        } else {
-          d.x += d3.event.dx;
-          d.y += d3.event.dy;
-        }
-
-        if (includeTransition) {
-          selection = selection.transition()
-                               .duration(500)
-                               .ease('elastic');
-        }
-
-        selection.attr('transform', function(d, i) {
-          return d.translateStr();
-        });
-        if (topo.get('active_service') === d) {
-          self.updateServiceMenuLocation();
-        }
-
-        // Clear any state while dragging.
-        self.get('container').all('.environment-menu.active')
-            .removeClass('active');
-        topo.fire('cancelRelationBuild');
-        // Update relation lines for just this service.
-        topo.fire('serviceMoved', { service: d });
+        return;
       }
+      if (self.longClickTimer) {
+        self.longClickTimer.cancel();
+      }
+      // Translate the service (and, potentially, menu).
+      if (pos) {
+        d.x = pos.x;
+        d.y = pos.y;
+        // Explicitly reassign data.
+        selection = selection.data([d]);
+      } else {
+        d.x += d3.event.dx;
+        d.y += d3.event.dy;
+      }
+
+      if (includeTransition) {
+        selection = selection.transition()
+                             .duration(500)
+                             .ease('elastic');
+      }
+
+      selection.attr('transform', function(d, i) {
+        return d.translateStr();
+      });
+      if (topo.get('active_service') === d) {
+        self.updateServiceMenuLocation();
+      }
+
+      // Clear any state while dragging.
+      self.get('container').all('.environment-menu.active')
+          .removeClass('active');
+      topo.fire('cancelRelationBuild');
+      // Update relation lines for just this service.
+      topo.fire('serviceMoved', { service: d });
+      console.log('drag');
     },
 
     /*
@@ -382,11 +385,12 @@ YUI.add('juju-topology-service', function(Y) {
                       .padding(300);
       }
 
-      var drag = d3.behavior.drag()
+      if (!this.dragBehavior) {
+        this.dragBehavior = d3.behavior.drag()
             .on('dragstart', function(d) { self.dragstart.call(this, d, self);})
             .on('drag', function(d) { self.drag.call(this, d, self);})
             .on('dragend', function(d) { self.dragend.call(this, d, self);});
-
+      }
 
       //Process any changed data.
       this.updateData();
@@ -404,28 +408,29 @@ YUI.add('juju-topology-service', function(Y) {
       var new_services = this.services.filter(function(boundingBox) {
         return !Y.Lang.isNumber(boundingBox.x);
       });
-      this.tree.nodes({children: new_services});
-
+      if (new_services) {
+        this.tree.nodes({children: new_services});
+      }
       // enter
       node
         .enter().append('g')
         .attr('class', function(d) {
             return (d.subordinate ? 'subordinate ' : '') + 'service';
           })
-        .call(drag)
+        .call(this.dragBehavior)
         .attr('transform', function(d) {
             return d.translateStr();
           })
-        .call(function() {
-            // Create new nodes.
-            self.createServiceNode(this);
-          });
+        .call(self.createServiceNode);
 
       // Update all nodes.
       self.updateServiceNodes(node);
 
       // Remove old nodes.
       node.exit()
+          .each(function(d) {
+            delete self.service_boxes[d.id];
+          })
           .remove();
     },
 
@@ -510,8 +515,9 @@ YUI.add('juju-topology-service', function(Y) {
           // as we use the values.
           delete annotations['gui.x'];
           delete annotations['gui.y'];
-          self.drag.call(this, d, self, {x: x, y: y});
-          topo.fire('serviceMoved', {service: d});
+          if (!d.inDrag) {
+            self.drag.call(this, d, self, {x: x, y: y});
+          }
         }});
 
       // Size the node for drawing.
