@@ -122,6 +122,7 @@ Checklist for Making a Stable Release
 
   * Decide what the next version number should be (see `Semantic Versioning
     <http://semver.org/>`_) and change ``unreleased`` to that value.
+  * Set a bzr tag for the release, e.g.: ``bzr tag 0.1.5``.
   * Commit to the branch with this checkin message:
     ``bzr commit -m 'Set version for release.'``
   * Push the branch directly to the parent (``bzr push :parent`` should work).

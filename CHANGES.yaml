@@ -20,7 +20,12 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
-- unreleased:
+- 0.1.5:
+    - Add support for recess as a CSS linter.  Currently not enabled.
+    - Allow login credentials to be placed in config.
+    - Support read-only mode in the GUI.
+    - Restore mouse wheel support for pan/zoom.
+    - Prevent destruction of the Juju GUI service.
 - 0.1.4:
     - Add login infrastructure
 - 0.1.3:
