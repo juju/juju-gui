@@ -186,8 +186,69 @@ describe('service module events', function() {
          return false;};
        var service = viewContainer.one('.service');
        var menu = viewContainer.one('#service-menu');
-       //assert.isFalse(menu.hasClass('active'));
+       assert.isFalse(menu.hasClass('active'));
        service.simulate('click');
        assert.isFalse(menu.hasClass('active'));
      });
+});
+
+describe('service menu', function() {
+  var Y, views;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(['juju-topology'], function(Y) {
+      views = Y.namespace('juju.views');
+      done();
+    });
+  });
+
+  it('should disable the "Destroy" menu for the Juju GUI service', function() {
+    var service = {
+      charm: 'cs:precise/juju-gui-7'
+    };
+    var addedClassName;
+    var menu = {
+      hasClass: function() {
+        return false;
+      },
+      addClass: function() {},
+      one: function() {
+        return {
+          addClass: function(className) {
+            addedClassName = className;
+          }
+        };
+      }
+    };
+    var fauxView = {
+      get: function(name) {
+        if (name === 'container') {
+          return {one: function() { return menu; }};
+        } else if (name === 'component') {
+          return { set: function() {},
+                   serviceForBox: function(box) { return service;}
+                 };
+        }
+      },
+      updateServiceMenuLocation: function() {}
+    };
+    var view = new views.ServiceModule();
+    view.service_click_actions.toggleServiceMenu(
+        service, fauxView, undefined);
+    assert.equal(addedClassName, 'disabled');
+  });
+
+  it('should toggle the service menu',
+     function() {
+       var box = serviceModule.service_boxes.haproxy;
+       var menu = viewContainer.one('#service-menu');
+       assert.isFalse(menu.hasClass('active'));
+       serviceModule.service_click_actions.toggleServiceMenu(
+           box, serviceModule, serviceModule);
+       assert(menu.hasClass('active'));
+       serviceModule.service_click_actions.toggleServiceMenu(
+           box, serviceModule, serviceModule);
+       assert.isFalse(menu.hasClass('active'));
+     });
+
 });
