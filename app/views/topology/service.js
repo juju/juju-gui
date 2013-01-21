@@ -28,7 +28,7 @@ YUI.add('juju-topology-service', function(Y) {
           mouseout: 'serviceStatusMouseOut'
         },
         '.zoomPlane': {
-         click: 'zoomPlaneClick'
+          click: 'zoomPlaneClick'
         },
         '.graph-list-picker .picker-button': {
           click: 'showGraphListPicker'
@@ -66,8 +66,10 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     // Margins applied on update to Box instances.
-    subordinate_margins: {top: 0.05, bottom: 0.1, left: 0.084848, right: 0.084848},
-    service_margins: {top: 0, bottom: 0.1667, left: 0.086758, right: 0.086758},
+    subordinate_margins: {
+      top: 0.05, bottom: 0.1, left: 0.084848, right: 0.084848},
+    service_margins: {
+      top: 0, bottom: 0.1667, left: 0.086758, right: 0.086758},
 
     initializer: function(options) {
       ServiceModule.superclass.constructor.apply(this, arguments);
@@ -260,8 +262,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
-                     .data(services, function(d) {
-                       return d.modelId();});
+                     .data(services, function(d) {return d.modelId();});
     },
 
     /**
@@ -278,7 +279,6 @@ YUI.add('juju-topology-service', function(Y) {
       self.get('container').all('.environment-menu.active')
           .removeClass('active');
       self.service_click_actions.hideServiceMenu(null, self);
-      console.log('dragstart');
     },
 
     dragend: function(d,  self) {
@@ -289,14 +289,13 @@ YUI.add('juju-topology-service', function(Y) {
       else {
         topo.get('env').update_annotations(
             d.id, {'gui.x': d.x, 'gui.y': d.y},
-        function() {
-          // Force a reposition at the end.
-          d.inDrag = false;
-          //self.drag.call(self.getServiceNode(d.id),
-          //               d, self, {x:d.x, y: d.y}, false);
-        });
+            function() {
+              // Force a reposition at the end.
+              d.inDrag = false;
+              //self.drag.call(self.getServiceNode(d.id),
+              //               d, self, {x:d.x, y: d.y}, false);
+            });
       }
-      console.log('dragend');
     },
 
     /**
@@ -357,7 +356,6 @@ YUI.add('juju-topology-service', function(Y) {
       topo.fire('cancelRelationBuild');
       // Update relation lines for just this service.
       topo.fire('serviceMoved', { service: d });
-      console.log('drag');
     },
 
     /*
