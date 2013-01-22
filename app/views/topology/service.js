@@ -876,7 +876,6 @@ YUI.add('juju-topology-service', function(Y) {
      */
     getClickAction: function() {
       var current_action = this.get('currentServiceClickAction');
-      //this.setClickAction(undefined);
       return current_action;
     },
 
