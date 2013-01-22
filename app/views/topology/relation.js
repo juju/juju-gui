@@ -635,23 +635,23 @@ YUI.add('juju-topology-relation', function(Y) {
       menu.append(Templates
               .ambiguousRelationList({endpoints: endpoints}));
 
-      // For each endpoint choice, bind an an event to 'click' to
-      // add the specified relation.
-      menu.all('li').on('click', function(evt) {
-        if (evt.currentTarget.hasClass('cancel')) {
-          return;
-        }
-        var el = evt.currentTarget,
-                endpoints_item = [
-                  [el.getData('startservice'), {
-                    name: el.getData('startname'),
-                    role: 'server' }],
-                  [el.getData('endservice'), {
-                    name: el.getData('endname'),
-                    role: 'client' }]];
+      // For each endpoint choice, delegate a click event to add the specified
+      // relation. Use event delegation in order to avoid weird behaviors
+      // encountered when using "on" on a YUI NodeList: in some situations,
+      // e.g. our production server, NodeList.on does not work.
+      menu.one('.menu').delegate('click', function(evt) {
+        var el = evt.target;
+        var endpoints_item = [
+          [el.getData('startservice'), {
+            name: el.getData('startname'),
+            role: 'server' }],
+          [el.getData('endservice'), {
+            name: el.getData('endname'),
+            role: 'client' }]
+        ];
         menu.removeClass('active');
         view.addRelationEnd(endpoints_item, view, context);
-      });
+      }, 'li');
 
       // Add a cancel item.
       menu.one('.cancel').on('click', function(evt) {
