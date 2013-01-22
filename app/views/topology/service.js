@@ -89,6 +89,12 @@ YUI.add('juju-topology-service', function(Y) {
       if (!d.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
+      // serviceClick is being called after dragend is processed.  In those
+      // cases the current click action should not be invoked.
+      if (topo.ignoreServiceClick) {
+        topo.ignoreServiceClick = false;
+        return;
+      }
       // Get the current click action
       var curr_click_action = context.get('currentServiceClickAction');
       // Fire the action named in the following scheme:
@@ -282,7 +288,9 @@ YUI.add('juju-topology-service', function(Y) {
     dragend: function(d,  self) {
       var topo = self.get('component');
       if (topo.buildingRelation) {
+        //topo.ignoreServiceClick = true;
         topo.fire('addRelationDragEnd');
+        //d3.event.sourceEvent.preventDefault();
       }
       else {
         if (!d.inDrag ||
