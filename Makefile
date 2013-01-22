@@ -55,7 +55,7 @@ endif
 ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
 PENULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 \
     | sed 's/[ :-]//g')
-RELEASE_TARGETS=dist distfile
+RELEASE_TARGETS=dist
 # If the user specified (via setting an environment variable on the command
 # line) that this is a final (non-development) release, set the version number
 # and series appropriately.
