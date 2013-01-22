@@ -286,17 +286,17 @@ YUI.add('juju-topology-service', function(Y) {
       }
       else {
         if (!d.inDrag ||
-           (d.oldX === d.x &&
-            d.oldY === d.y)) {
+            (d.oldX === d.x &&
+             d.oldY === d.y)) {
           return;
         }
         topo.get('env').update_annotations(
-          d.id, {'gui.x': d.x, 'gui.y': d.y},
-          function() {
-            d.inDrag = false;
-            self.drag.call(self.getServiceNode(d.id),
-                           d, self, {x:d.x, y: d.y}, false);
-          });
+            d.id, {'gui.x': d.x, 'gui.y': d.y},
+            function() {
+              d.inDrag = false;
+              //self.drag.call(self.getServiceNode(d.id),
+              //               d, self, {x: d.x, y: d.y}, false);
+            });
       }
     },
 
