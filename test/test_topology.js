@@ -115,7 +115,7 @@ describe('topology', function() {
         }
       },
       service_click_actions: {
-        toggleControlPanel: function() {},
+        toggleServiceMenu: function() {},
         destroyServiceConfirm: function() {}
       }
     };
