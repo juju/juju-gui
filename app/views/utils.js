@@ -823,29 +823,10 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
 
-  function BoxPair() {
-    var source, target;
-
-    function pair() {}
-    /*
-     * Bind an actual model object
-     */
-    pair.model = function(_) {
-      Y.mix(pair, _.getAttrs());
-      return pair;
-    };
-
-    pair.source = function(_) {
-      if (!arguments.length) { return source;}
-      source = _;
-      return pair;
-    };
-
-    pair.target = function(_) {
-      if (!arguments.length) { return target;}
-      target = _;
-      return pair;
-    };
+  views.DecoratedRelation = function(relation, source, target) {
+    var pair = function() {};
+    Y.mix(pair, relation.getAttrs());
+    Y.mix(pair, {source: source, target: target});
 
     pair.modelIds = function() {
       if (this.endpoints !== undefined) {
@@ -856,9 +837,7 @@ YUI.add('juju-view-utils', function(Y) {
     };
 
     return pair;
-  }
-
-  views.BoxPair = BoxPair;
+  };
 
   /* Given one of the many "real" states return a "UI" state.
    *

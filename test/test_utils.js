@@ -406,3 +406,61 @@ describe('utilities', function() {
   });
 })();
 
+
+(function() {
+  describe('DecoratedRelation', function() {
+
+    var utils, views, Y, blankRelation;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        views = Y.namespace('juju.views');
+        done();
+      });
+      blankRelation = {
+        getAttrs: function() {
+          return {};
+        }
+      };
+    });
+
+    beforeEach(function() {
+    });
+
+    it('mirrors the relation\'s properties', function() {
+      var relation = {
+        getAttrs: function() {
+          return {foo: 'bar'};
+        }
+      };
+      relation = views.DecoratedRelation(relation);
+      assert.deepProperty(relation, 'foo');
+      assert.equal(relation.foo, 'bar');
+    });
+
+    it('exposes the source and target as attributes', function() {
+      var source = 1;
+      var target = 2;
+      var relation = views.DecoratedRelation(blankRelation, source, target);
+      assert.equal(relation.source, source);
+      assert.equal(relation.target, target);
+    });
+
+    it('generates an ID that includes source and target IDs', function() {
+      var source = {
+        modelId: function() {
+          return 'source-id';
+        }
+      };
+      var target = {
+        modelId: function() {
+          return 'target-id';
+        }
+      };
+      var relation = views.DecoratedRelation(blankRelation, source, target);
+      assert.match(relation.modelIds(), RegExp(source.modelId()));
+      assert.match(relation.modelIds(), RegExp(target.modelId()));
+    });
+  });
+})();

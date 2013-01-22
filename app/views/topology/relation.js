@@ -54,7 +54,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
     initializer: function(options) {
       RelationModule.superclass.constructor.apply(this, arguments);
-      this.relPairs = [];
+      this.relations = [];
     },
 
     render: function() {
@@ -69,8 +69,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var db = topo.get('db');
       var self = this;
       var relations = db.relations.toArray();
-      this.relPairs = this.processRelations(relations);
-      topo.relPairs = this.relPairs;
+      this.relations = this.decorateRelations(relations);
       this.updateLinks();
       this.updateSubordinateRelationsCount();
 
@@ -86,38 +85,43 @@ YUI.add('juju-topology-relation', function(Y) {
       this.update();
     },
 
-    processRelation: function(r) {
+    processRelation: function(relation) {
       var self = this;
       var topo = self.get('component');
-      var endpoints = r.get('endpoints');
+      var endpoints = relation.get('endpoints');
       var rel_services = [];
 
-      Y.each(endpoints, function(ep) {
-        rel_services.push([ep[1].name, topo.service_boxes[ep[0]]]);
+      Y.each(endpoints, function(endpoint) {
+        rel_services.push([endpoint[1].name, topo.service_boxes[endpoint[0]]]);
       });
       return rel_services;
     },
 
-    processRelations: function(rels) {
+    /**
+     *
+     * @method decorateRelations
+     * @param {Array} relations The relations currently in effect.
+     * @return {Array} Relation pairs.
+     */
+    decorateRelations: function(relations) {
       var self = this;
-      var pairs = [];
-      Y.each(rels, function(rel) {
-        var pair = self.processRelation(rel);
+      var decorated = [];
+      Y.each(relations, function(relation) {
+        var pair = self.processRelation(relation);
 
         // skip peer for now
         if (pair.length === 2) {
-          var bpair = views.BoxPair()
-                                 .model(rel)
-                                 .source(pair[0][1])
-                                 .target(pair[1][1]);
+          var source = pair[0][1];
+          var target = pair[1][1];
+          var bpair = views.DecoratedRelation(relation, source, target);
           // Copy the relation type to the box.
           if (bpair.display_name === undefined) {
             bpair.display_name = pair[0][0];
           }
-          pairs.push(bpair);
+          decorated.push(bpair);
         }
       });
-      return pairs;
+      return decorated;
     },
 
     updateLinks: function() {
@@ -141,13 +145,13 @@ YUI.add('juju-topology-relation', function(Y) {
     updateLinkEndpoints: function(evt) {
       var self = this;
       var service = evt.service;
-      Y.each(Y.Array.filter(self.relPairs, function(relation) {
-        return relation.source().id === service.id ||
-            relation.target().id === service.id;
+      Y.each(Y.Array.filter(self.relations, function(relation) {
+        return relation.source.id === service.id ||
+            relation.target.id === service.id;
       }), function(relation) {
         var rel_group = d3.select('#' + relation.id);
-        var connectors = relation.source()
-                  .getConnectorPair(relation.target());
+        var connectors = relation.source
+                  .getConnectorPair(relation.target);
         var s = connectors[0];
         var t = connectors[1];
         rel_group.select('line')
@@ -171,9 +175,9 @@ YUI.add('juju-topology-relation', function(Y) {
       var self = this;
       var vis = this.get('component').vis;
       var g = vis.selectAll('g.rel-group')
-                 .data(self.relPairs, function(r) {
-            return r.modelIds();
-          });
+                 .data(self.relations, function(r) {
+                    return r.modelIds();
+                  });
 
       var enter = g.enter();
 
@@ -202,7 +206,7 @@ YUI.add('juju-topology-relation', function(Y) {
               .attr('class', 'rel-label')
               .attr('transform', function(d) {
                 // XXX: This has to happen on update, not enter
-                var connectors = d.source().getConnectorPair(d.target());
+                var connectors = d.source.getConnectorPair(d.target);
                 var s = connectors[0];
                 var t = connectors[1];
                 return 'translate(' +
@@ -230,8 +234,8 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     drawRelation: function(relation) {
-      var connectors = relation.source()
-                .getConnectorPair(relation.target());
+      var connectors = relation.source
+                .getConnectorPair(relation.target);
       var s = connectors[0];
       var t = connectors[1];
       var link = d3.select(this);
@@ -635,23 +639,23 @@ YUI.add('juju-topology-relation', function(Y) {
       menu.append(Templates
               .ambiguousRelationList({endpoints: endpoints}));
 
-      // For each endpoint choice, bind an an event to 'click' to
-      // add the specified relation.
-      menu.all('li').on('click', function(evt) {
-        if (evt.currentTarget.hasClass('cancel')) {
-          return;
-        }
-        var el = evt.currentTarget,
-                endpoints_item = [
-                  [el.getData('startservice'), {
-                    name: el.getData('startname'),
-                    role: 'server' }],
-                  [el.getData('endservice'), {
-                    name: el.getData('endname'),
-                    role: 'client' }]];
+      // For each endpoint choice, delegate a click event to add the specified
+      // relation. Use event delegation in order to avoid weird behaviors
+      // encountered when using "on" on a YUI NodeList: in some situations,
+      // e.g. our production server, NodeList.on does not work.
+      menu.one('.menu').delegate('click', function(evt) {
+        var el = evt.target;
+        var endpoints_item = [
+          [el.getData('startservice'), {
+            name: el.getData('startname'),
+            role: 'server' }],
+          [el.getData('endservice'), {
+            name: el.getData('endname'),
+            role: 'client' }]
+        ];
         menu.removeClass('active');
         view.addRelationEnd(endpoints_item, view, context);
-      });
+      }, 'li');
 
       // Add a cancel item.
       menu.one('.cancel').on('click', function(evt) {
@@ -765,10 +769,10 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /*
-         * Utility function to get subordinate relations for a service.
-         */
+     * Utility function to get subordinate relations for a service.
+     */
     subordinateRelationsForService: function(service) {
-      return this.relPairs.filter(function(p) {
+      return this.relations.filter(function(p) {
         return p.modelIds().indexOf(service.modelId()) !== -1 &&
             p.scope === 'container';
       });
