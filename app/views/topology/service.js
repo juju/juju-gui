@@ -78,7 +78,7 @@ YUI.add('juju-topology-service', function(Y) {
       this.service_boxes = {};
 
       // Set a default
-      this.set('currentServiceClickAction', 'toggleServiceMenu');
+      this.setClickAction('toggleServiceMenu');
     },
 
     serviceClick: function(d, context) {
@@ -96,13 +96,13 @@ YUI.add('juju-topology-service', function(Y) {
         return;
       }
       // Get the current click action
-      var curr_click_action = context.get('currentServiceClickAction');
+      var curr_click_action = context.getClickAction();
       // Fire the action named in the following scheme:
       //   service_click_action.<action>
       // with the service, the SVG node, and the view
       // as arguments.
       context.service_click_actions[curr_click_action](
-          d, context, this);
+        d, context, this);
     },
 
     serviceDblClick: function(d, self) {
@@ -855,6 +855,29 @@ YUI.add('juju-topology-service', function(Y) {
               (menu_left ? service.w * z : -(cp_width)) + tr[0]
         });
       }
+    },
+
+    /**
+     * Set the next service click action.
+     *
+     * @method setClickAction.
+     * @param {String} action The name of the next action.
+     * @return {undefined} Setter.
+     */
+    setClickAction: function(action) {
+      this.set('currentServiceClickAction', action);
+    },
+
+    /**
+     * Get the next service click action.
+     *
+     * @method getClickAction.
+     * @return {String} The next action name.
+     */
+    getClickAction: function() {
+      var current_action = this.get('currentServiceClickAction');
+      //this.setClickAction(undefined);
+      return current_action;
     },
 
     /*
