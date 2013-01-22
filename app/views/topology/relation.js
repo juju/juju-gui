@@ -606,12 +606,12 @@ YUI.add('juju-topology-relation', function(Y) {
         // Create a relation with the only available endpoint.
         var ep = endpoints[0];
         var endpoints_item = [
-                  [ep[0].service, {
-                    name: ep[0].name,
-                    role: 'server' }],
-                  [ep[1].service, {
-                    name: ep[1].name,
-                    role: 'client' }]];
+          [ep[0].service,
+           { name: ep[0].name,
+             role: 'server' }],
+          [ep[1].service,
+           { name: ep[1].name,
+             role: 'client' }]];
         view.addRelationEnd(endpoints_item, view, context);
         return;
       }
