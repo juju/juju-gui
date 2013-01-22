@@ -824,17 +824,16 @@ YUI.add('juju-view-utils', function(Y) {
 
 
   views.DecoratedRelation = function(relation, source, target) {
-    var decorated = {source: source, target: target};
-    Y.mix(decorated, relation.getAttrs());
-
-    decorated.modelIds = function() {
-      var hasRelations = Y.Lang.isValue(relation.endpoints);
-      return (source.modelId()
+    var hasRelations = Y.Lang.isValue(relation.endpoints);
+    var decorated = {
+      source: source,
+      target: target,
+      compositeId: (source.modelId()
         + (hasRelations ? ':' + relation.endpoints[0][1].name : '')
         + '-' + target.modelId()
-        + (hasRelations ? ':' + relation.endpoints[1][1].name : ''));
+        + (hasRelations ? ':' + relation.endpoints[1][1].name : ''))
     };
-
+    Y.mix(decorated, relation.getAttrs());
     return decorated;
   };
 

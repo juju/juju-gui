@@ -175,9 +175,9 @@ YUI.add('juju-topology-relation', function(Y) {
       var self = this;
       var vis = this.get('component').vis;
       var g = vis.selectAll('g.rel-group')
-                 .data(self.relations, function(r) {
-                    return r.modelIds();
-                  });
+        .data(self.relations, function(r) {
+          return r.compositeId;
+        });
 
       var enter = g.enter();
 
@@ -772,9 +772,9 @@ YUI.add('juju-topology-relation', function(Y) {
      * Utility function to get subordinate relations for a service.
      */
     subordinateRelationsForService: function(service) {
-      return this.relations.filter(function(p) {
-        return p.modelIds().indexOf(service.modelId()) !== -1 &&
-            p.scope === 'container';
+      return this.relations.filter(function(relation) {
+        return relation.compositeId.indexOf(service.modelId()) !== -1 &&
+            relation.scope === 'container';
       });
     },
 
