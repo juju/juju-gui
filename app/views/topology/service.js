@@ -188,7 +188,7 @@ YUI.add('juju-topology-service', function(Y) {
       var box = topo.get('active_service');
       var service = topo.serviceForBox(box);
       context.service_click_actions
-             .toggleServiceMenu(d, context);
+             .hideServiceMenu(d, context);
       context.service_click_actions
              .show_service(service, context);
     },
@@ -200,7 +200,7 @@ YUI.add('juju-topology-service', function(Y) {
       var box = topo.get('active_service');
       var service = topo.serviceForBox(box);
       context.service_click_actions
-             .toggleServiceMenu(box, context);
+             .hideServiceMenu(box, context);
       context.service_click_actions
              .destroyServiceConfirm(service, context);
     },
