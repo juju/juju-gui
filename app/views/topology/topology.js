@@ -84,7 +84,6 @@ YUI.add('juju-topology', function(Y) {
       svg = d3.select(container.getDOMNode())
               .selectAll('.topology-canvas')
               .append('svg:svg')
-              .attr('pointer-events', 'all')
               .attr('width', width)
               .attr('height', height);
       this.svg = svg;
@@ -93,6 +92,7 @@ YUI.add('juju-topology', function(Y) {
                           .attr('class', 'zoom-plane')
                           .attr('width', width)
                           .attr('height', height)
+                          .attr('pointer-events', 'all')
                           .call(this.zoom)
                           .on('dblclick.zoom', null)
                           .on('DOMMouseScroll.zoom', function(evt) {
