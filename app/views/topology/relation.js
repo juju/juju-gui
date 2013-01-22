@@ -420,8 +420,6 @@ YUI.add('juju-topology-relation', function(Y) {
               .attr('y2', d3.event.y);
       }
     },
-
-
     addRelationDragEnd: function() {
       // Get the line, the endpoint service, and the target <rect>.
       var self = this;
@@ -606,14 +604,14 @@ YUI.add('juju-topology-relation', function(Y) {
 
       if (endpoints && endpoints.length === 1) {
         // Create a relation with the only available endpoint.
-        var ep = endpoints[0],
-                endpoints_item = [
-                  [ep[0].service, {
-                    name: ep[0].name,
-                    role: 'server' }],
-                  [ep[1].service, {
-                    name: ep[1].name,
-                    role: 'client' }]];
+        var ep = endpoints[0];
+        var endpoints_item = [
+          [ep[0].service,
+           { name: ep[0].name,
+             role: 'server' }],
+          [ep[1].service,
+           { name: ep[1].name,
+             role: 'client' }]];
         view.addRelationEnd(endpoints_item, view, context);
         return;
       }
