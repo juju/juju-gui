@@ -636,7 +636,9 @@ YUI.add('juju-topology-relation', function(Y) {
               .ambiguousRelationList({endpoints: endpoints}));
 
       // For each endpoint choice, delegate a click event to add the specified
-      // relation.
+      // relation. Use event delegation in order to avoid weird behaviors
+      // encountered when using "on" on a YUI NodeList: in some situations,
+      // e.g. our production server, NodeList.on does not work.
       menu.one('.menu').delegate('click', function(evt) {
         var el = evt.target;
         var endpoints_item = [
