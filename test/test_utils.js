@@ -425,9 +425,6 @@ describe('utilities', function() {
       };
     });
 
-    beforeEach(function() {
-    });
-
     it('mirrors the relation\'s properties', function() {
       var relation = {
         getAttrs: function() {
@@ -461,6 +458,34 @@ describe('utilities', function() {
       var relation = views.DecoratedRelation(blankRelation, source, target);
       assert.match(relation.modelIds(), RegExp(source.modelId()));
       assert.match(relation.modelIds(), RegExp(target.modelId()));
+    });
+
+    it('includes endpoint names in its ID, if they exist', function() {
+      var source = {
+        modelId: function() {
+          return 'source-id';
+        }
+      };
+      var target = {
+        modelId: function() {
+          return 'target-id';
+        }
+      };
+      var firstEndpointName = 'endpoint-1';
+      var secondEndpointName = 'endpoint-2';
+      var inputRelation = {
+        getAttrs: function() {
+          return {foo: 'bar'};
+        },
+        endpoints: [
+          [null, {name: firstEndpointName}],
+          [null, {name: secondEndpointName}]
+        ]
+      };
+
+      var relation = views.DecoratedRelation(inputRelation, source, target);
+      assert.match(relation.modelIds(), RegExp(firstEndpointName));
+      assert.match(relation.modelIds(), RegExp(secondEndpointName));
     });
   });
 })();

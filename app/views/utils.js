@@ -824,19 +824,18 @@ YUI.add('juju-view-utils', function(Y) {
 
 
   views.DecoratedRelation = function(relation, source, target) {
-    var pair = function() {};
-    Y.mix(pair, relation.getAttrs());
-    Y.mix(pair, {source: source, target: target});
+    var decorated = {source: source, target: target};
+    Y.mix(decorated, relation.getAttrs());
 
-    pair.modelIds = function() {
-      if (this.endpoints !== undefined) {
-        return source.modelId() + ':' + this.endpoints[0][1].name +
-               '-' + target.modelId() + ':' + this.endpoints[1][1].name;
-      }
-      return source.modelId() + '-' + target.modelId();
+    decorated.modelIds = function() {
+      var hasRelations = Y.Lang.isValue(relation.endpoints);
+      return (source.modelId()
+        + (hasRelations ? ':' + relation.endpoints[0][1].name : '')
+        + '-' + target.modelId()
+        + (hasRelations ? ':' + relation.endpoints[1][1].name : ''));
     };
 
-    return pair;
+    return decorated;
   };
 
   /* Given one of the many "real" states return a "UI" state.
