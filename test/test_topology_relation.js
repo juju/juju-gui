@@ -5,10 +5,10 @@ describe('topology relation module', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-topology', 'node', 'node-event-simulate'],
-    function(Y) {
-      views = Y.namespace('juju.views');
-      done();
-    });
+        function(Y) {
+          views = Y.namespace('juju.views');
+          done();
+        });
   });
 
   beforeEach(function() {
@@ -44,10 +44,10 @@ describe('topology relation module', function() {
         firedEventName = eventName;
       }
     };
-    view.set('component', fauxTopo)
+    view.set('component', fauxTopo);
     view.draglineClicked(undefined, view);
     assert.equal(firedEventName, 'clearState');
-  })
+  });
 
   it('has a list of relations', function() {
     assert.deepEqual(view.relations, []);

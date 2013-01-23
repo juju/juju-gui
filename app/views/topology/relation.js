@@ -175,9 +175,10 @@ YUI.add('juju-topology-relation', function(Y) {
       var self = this;
       var vis = this.get('component').vis;
       var g = vis.selectAll('g.rel-group')
-        .data(self.relations, function(r) {
-          return r.compositeId;
-        });
+        .data(self.relations,
+          function(r) {
+            return r.compositeId;
+          });
 
       var enter = g.enter();
 
@@ -187,15 +188,14 @@ YUI.add('juju-topology-relation', function(Y) {
           })
               .attr('class', function(d) {
                 // Mark the rel-group as a subordinate relation if need be.
-                return (d.scope === 'container' ?
-                    'subordinate-rel-group ' : '') +
+                return (d.isSubordinate ? 'subordinate-rel-group ' : '') +
                     'rel-group';
               })
               .append('svg:line', 'g.service')
               .attr('class', function(d) {
                 // Style relation lines differently depending on status.
                 return (d.pending ? 'pending-relation ' : '') +
-                    (d.scope === 'container' ? 'subordinate-relation ' : '') +
+                    (d.isSubordinate ? 'subordinate-relation ' : '') +
                     'relation';
               });
 
@@ -774,7 +774,7 @@ YUI.add('juju-topology-relation', function(Y) {
     subordinateRelationsForService: function(service) {
       return this.relations.filter(function(relation) {
         return relation.compositeId.indexOf(service.modelId()) !== -1 &&
-            relation.scope === 'container';
+            relation.isSubordinate;
       });
     },
 
@@ -836,7 +836,7 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     relationClick: function(d, self) {
-      if (d.scope === 'container') {
+      if (d.isSubordinate) {
         var subRelDialog = views.createModalPanel(
             'You may not remove a subordinate relation.',
             '#rmsubrelation-modal-panel');

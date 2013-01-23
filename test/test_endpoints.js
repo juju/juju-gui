@@ -151,9 +151,9 @@ describe('Relation endpoints logic', function() {
   });
 
   it('should find valid targets for subordinates', function() {
-    var service = db.services.getById('puppet'),
-        available = models.getEndpoints(service, sample_endpoints, db),
-        available_svcs = Y.Object.keys(available);
+    var service = db.services.getById('puppet');
+    var available = models.getEndpoints(service, sample_endpoints, db);
+    var available_svcs = Y.Object.keys(available);
 
     available_svcs.sort();
     available_svcs.should.eql(

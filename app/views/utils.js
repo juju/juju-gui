@@ -823,17 +823,22 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
 
+  /**
+   * Decorate a relation with some related/derrived data.
+   */
   views.DecoratedRelation = function(relation, source, target) {
     var hasRelations = Y.Lang.isValue(relation.endpoints);
     var decorated = {
       source: source,
       target: target,
-      compositeId: (source.modelId()
-        + (hasRelations ? ':' + relation.endpoints[0][1].name : '')
-        + '-' + target.modelId()
-        + (hasRelations ? ':' + relation.endpoints[1][1].name : ''))
+      compositeId: (
+          source.modelId() +
+          (hasRelations ? ':' + relation.endpoints[0][1].name : '') +
+          '-' + target.modelId() +
+          (hasRelations ? ':' + relation.endpoints[1][1].name : '')),
     };
     Y.mix(decorated, relation.getAttrs());
+    decorated.isSubordinate = decorated.scope === 'container';
     return decorated;
   };
 

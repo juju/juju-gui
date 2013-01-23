@@ -58,11 +58,8 @@ YUI.add('juju-endpoints', function(Y) {
           var ep = convert(sid, rdata);
           /* Subordinate relations are slightly different, a
              subordinate typically acts as a client to many services,
-             against the implicitly provided juju-info interface. we
-             explicitly check for a subordinate via the scope
-             parameter of a relation. */
-          if (svc.get('subordinate') &&
-             rdata.scope === 'container') {
+             against the implicitly provided juju-info interface. */
+          if (svc.get('subordinate') && rdata.isSubordinate) {
             return requires.push(ep);
           }
           if (db.relations.has_relation_for_endpoint(ep)) {
@@ -115,7 +112,7 @@ YUI.add('juju-endpoints', function(Y) {
             // to many services. We check if a subordinate relation
             // exists between this subordinate endpoint and the origin
             // service.
-            if (tgt.get('subordinate') && rdata.scope === 'container') {
+            if (tgt.get('subordinate') && rdata.isSubordinate) {
               if (db.relations.has_relation_for_endpoint(ep, sid)) {
                 return;
               }
