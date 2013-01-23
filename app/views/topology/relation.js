@@ -770,7 +770,7 @@ YUI.add('juju-topology-relation', function(Y) {
          */
     subordinateRelationsForService: function(service) {
       return this.relPairs.filter(function(p) {
-        return p.modelIds().indexOf(service.modelId()) !== -1 &&
+        return (p.source() === service || p.target() === service) &&
             p.scope === 'container';
       });
     },
