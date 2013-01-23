@@ -349,6 +349,7 @@ YUI.add('juju-gui', function(Y) {
       // Redispatch to current view to update.
       if (active && active.name === 'EnvironmentView') {
         active.update();
+        active.rendered();
       } else {
         this.dispatch();
       }
