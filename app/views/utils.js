@@ -825,6 +825,13 @@ YUI.add('juju-view-utils', function(Y) {
 
   /**
    * Decorate a relation with some related/derrived data.
+   *
+   * @method DecoratedRelation
+   * @param {Object} relation The model object we will be based on.
+   * @param {Object} source The service from which the relation originates.
+   * @param {Object} target The service at which the relation terminates.
+   * @return {Object} An object with attributes matching the result of
+   * relation.getAttrs() plus "source", "target", and other convenience data.
    */
   views.DecoratedRelation = function(relation, source, target) {
     var hasRelations = Y.Lang.isValue(relation.endpoints);
