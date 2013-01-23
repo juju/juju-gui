@@ -439,16 +439,19 @@ YUI.add('juju-topology-relation', function(Y) {
         self.addRelation(); // Will clear the state.
       }
     },
-    removeRelation: function(d, context, view, confirmButton) {
+    removeRelation: function(d, view, confirmButton) {
       var env = this.get('component').get('env');
       var endpoints = d.endpoints;
-      var relationElement = Y.one(context.parentNode).one('.relation');
+      var relationId = d.relation_id;
+      // At this time, relations may have been redrawn, so here we have to
+      // retrieve the relation DOM element again.
+      var relationElement = view.get('container').one('#' + relationId);
       utils.addSVGClass(relationElement, 'to-remove pending-relation');
       env.remove_relation(
           endpoints[0][0] + ':' + endpoints[0][1].name,
           endpoints[1][0] + ':' + endpoints[1][1].name,
           Y.bind(this._removeRelationCallback, this, view,
-          relationElement, d.relation_id, confirmButton));
+          relationElement, relationId, confirmButton));
     },
 
     _removeRelationCallback: function(view,
@@ -491,7 +494,7 @@ YUI.add('juju-topology-relation', function(Y) {
             ev.preventDefault();
             var confirmButton = ev.target;
             confirmButton.set('disabled', true);
-            view.removeRelation(d, context, view, confirmButton);
+            view.removeRelation(d, view, confirmButton);
           },
           this)));
     },
