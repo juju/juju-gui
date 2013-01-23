@@ -835,7 +835,7 @@ YUI.add('juju-view-utils', function(Y) {
           source.modelId() +
           (hasRelations ? ':' + relation.endpoints[0][1].name : '') +
           '-' + target.modelId() +
-          (hasRelations ? ':' + relation.endpoints[1][1].name : '')),
+          (hasRelations ? ':' + relation.endpoints[1][1].name : ''))
     };
     Y.mix(decorated, relation.getAttrs());
     decorated.isSubordinate = decorated.scope === 'container';

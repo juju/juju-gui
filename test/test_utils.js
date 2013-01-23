@@ -476,9 +476,9 @@ describe('utilities', function() {
       var firstEndpointName = 'endpoint-1';
       var secondEndpointName = 'endpoint-2';
       inputRelation.endpoints = [
-          [null, {name: firstEndpointName}],
-          [null, {name: secondEndpointName}]
-        ];
+        [null, {name: firstEndpointName}],
+        [null, {name: secondEndpointName}]
+      ];
       var relation = views.DecoratedRelation(inputRelation, source, target);
       assert.match(relation.compositeId, new RegExp(firstEndpointName));
       assert.match(relation.compositeId, new RegExp(secondEndpointName));
@@ -488,7 +488,7 @@ describe('utilities', function() {
       var inputRelation = {
         getAttrs: function() {
           return {scope: 'container'};
-        },
+        }
       };
       var relation = views.DecoratedRelation(inputRelation, source, target);
       assert.isTrue(relation.isSubordinate);
@@ -498,7 +498,7 @@ describe('utilities', function() {
       var inputRelation = {
         getAttrs: function() {
           return {scope: 'not-container'};
-        },
+        }
       };
       var relation = views.DecoratedRelation(inputRelation, source, target);
       assert.isFalse(relation.isSubordinate);
