@@ -2,7 +2,7 @@
 
 describe('juju application notifications', function() {
   var _setTimeout, _viewsHighlightRow, db, ERR_EV, juju, models, NO_OP,
-      viewContainer, views, Y;
+      viewContainer, views, Y, willError;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
@@ -22,6 +22,18 @@ describe('juju application notifications', function() {
     ERR_EV = {
       err: true
     };
+
+    /**
+     * A function that accepts a callback as its last (rightmost) argument and
+     * calls that callback with a synthetic error event.
+     */
+    willError = function() {
+      // The last argument is the callback.  We do not care what the
+      // other arguments are or if they change in the future.
+      var callback = arguments[arguments.length-1];
+      callback(ERR_EV);
+    };
+
     NO_OP = function() {};
   });
 
@@ -91,12 +103,8 @@ describe('juju application notifications', function() {
          },
          db: db,
          env: {
-           add_unit: function(serviceId, delta, callback) {
-             callback(ERR_EV);
-           },
-           remove_units: function(param, callback) {
-             callback(ERR_EV);
-           }
+           add_unit: willError,
+           remove_units: willError
          },
          model: {
            getAttrs: NO_OP,
@@ -140,9 +148,8 @@ describe('juju application notifications', function() {
              { err: true,
                unit_names: ['aaa']});
            },
-           resolved: function(unit_name, relation_name, retry, callback) {
-             callback(ERR_EV);
-           }},
+           resolved: willError,
+           },
          unit: {},
          querystring: {}
        });
@@ -257,10 +264,7 @@ describe('juju application notifications', function() {
                }},
               getModelURL: NO_OP,
               db: db,
-              env:
-                  { set_constraints: function(id, values, callback) {
-                    callback(ERR_EV);
-                  }},
+              env: {set_constraints: willError},
               container: viewContainer}).render();
 
         view.updateConstraints();
@@ -274,15 +278,9 @@ describe('juju application notifications', function() {
         var view = new views.service_config(
        { db: db,
          env: {
-           set_config: function(id, newValues, callback) {
-             callback(ERR_EV);
-           },
-           expose: function(id, callback) {
-             callback(ERR_EV);
-           },
-           unexpose: function(id, callback) {
-             callback({err: true, service_name: '1234'});
-           }
+           set_config: willError,
+           expose: willError,
+           unexpose: willError,
          },
          getModelURL: NO_OP,
          model: {
@@ -329,11 +327,7 @@ describe('juju application notifications', function() {
 
         var view = new views.service_relations(
        { db: db,
-         env: {
-           remove_relation: function(id, newValues, callback) {
-             callback(ERR_EV);
-           }
-         },
+         env: {remove_relation: willError},
          getModelURL: NO_OP,
          container: viewContainer});
 
@@ -388,11 +382,7 @@ describe('juju application notifications', function() {
            return {get: NO_OP};
          }
        },
-       env = {
-         deploy: function(charmUrl, serviceName, config, callback) {
-           callback(ERR_EV);
-         }
-       },
+       env = {deploy: willError},
        mockView = {
          fire: NO_OP,
          _deployCallback: function() {
@@ -418,7 +408,7 @@ describe('juju application notifications', function() {
          }
        };
 
-        views.charm.prototype.on_charm_deploy.apply(mockView, [ERR_EV]);
+        views.charm.prototype.on_charm_deploy.call(mockView, ERR_EV);
         assert.isTrue(notified);
       });
 
