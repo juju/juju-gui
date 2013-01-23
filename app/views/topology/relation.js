@@ -445,15 +445,13 @@ YUI.add('juju-topology-relation', function(Y) {
     },
     removeRelation: function(d, view, confirmButton) {
       var env = this.get('component').get('env');
-      var endpoints = d.endpoints;
-      var relationId = d.relation_id;
       // At this time, relations may have been redrawn, so here we have to
       // retrieve the relation DOM element again.
-      var relationElement = view.get('container').one('#' + relationId);
+      var relationElement = view.get('container').one('#' + d.relation_id);
       utils.addSVGClass(relationElement, 'to-remove pending-relation');
-      env.remove_relation(endpoints[0], endpoints[1],
+      env.remove_relation(d.endpoints[0], d.endpoints[1],
           Y.bind(this._removeRelationCallback, this, view,
-          relationElement, relationId, confirmButton));
+          relationElement, d.relation_id, confirmButton));
     },
 
     _removeRelationCallback: function(view,

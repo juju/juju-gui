@@ -84,10 +84,7 @@ describe('topology relation module', function() {
     var relationId = 'the ID of this relation';
     var relation = {
       relation_id: relationId,
-      endpoints: [
-        [null, {name: 'endpoint-1'}],
-        [null, {name: 'endpoint-2'}]
-      ]
+      endpoints: [null, null]
     };
     view.removeRelation.call(fauxView, relation, fauxView, undefined);
     assert.equal(requestedSelector, '#' + relationId);
