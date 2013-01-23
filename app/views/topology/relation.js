@@ -451,9 +451,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // retrieve the relation DOM element again.
       var relationElement = view.get('container').one('#' + relationId);
       utils.addSVGClass(relationElement, 'to-remove pending-relation');
-      env.remove_relation(
-          endpoints[0][0] + ':' + endpoints[0][1].name,
-          endpoints[1][0] + ':' + endpoints[1][1].name,
+      env.remove_relation(endpoints[0], endpoints[1],
           Y.bind(this._removeRelationCallback, this, view,
           relationElement, relationId, confirmButton));
     },
@@ -720,9 +718,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Fire event to add relation in juju.
       // This needs to specify interface in the future.
-      env.add_relation(
-          endpoints[0][0] + ':' + endpoints[0][1].name,
-          endpoints[1][0] + ':' + endpoints[1][1].name,
+      env.add_relation(endpoints[0], endpoints[1],
           Y.bind(this._addRelationCallback, this, view, relation_id)
       );
       view.set('currentServiceClickAction', 'hideServiceMenu');

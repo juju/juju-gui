@@ -10,7 +10,7 @@
   var Y;
 
   describe('Juju environment', function() {
-    var juju, conn, env, msg, testUtils;
+    var juju, conn, env, msg, testUtils, endpoint1, endpoint2;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -26,9 +26,13 @@
           });
     });
 
-    after(function(done)  {
+    beforeEach(function() {
+      endpoint1 = ['service1', {name: 'relation-name-1'}];
+      endpoint2 = ['service2', {name: 'relation-name-2'}];
+    });
+
+    after(function() {
       env.destroy();
-      done();
     });
 
     it('can deploy a service', function() {
@@ -217,7 +221,7 @@
     };
 
     it('denies adding a relation if the GUI is read-only', function() {
-      assertOperationDenied('add_relation', ['haproxy:http', 'django:http']);
+      assertOperationDenied('add_relation', [endpoint1, endpoint2]);
     });
 
     it('denies adding a unit if the GUI is read-only', function() {
@@ -242,8 +246,7 @@
     });
 
     it('denies removing a relation if the GUI is read-only', function() {
-      assertOperationDenied(
-          'remove_relation', ['haproxy:http', 'django:http']);
+      assertOperationDenied('remove_relation', [endpoint1, endpoint2]);
     });
 
     it('denies removing units if the GUI is read-only', function() {

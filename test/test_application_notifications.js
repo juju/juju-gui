@@ -30,7 +30,7 @@ describe('juju application notifications', function() {
     willError = function() {
       // The last argument is the callback.  We do not care what the
       // other arguments are or if they change in the future.
-      var callback = arguments[arguments.length-1];
+      var callback = arguments[arguments.length - 1];
       callback(ERR_EV);
     };
 
@@ -148,8 +148,8 @@ describe('juju application notifications', function() {
              { err: true,
                unit_names: ['aaa']});
            },
-           resolved: willError,
-           },
+           resolved: willError
+         },
          unit: {},
          querystring: {}
        });
@@ -280,7 +280,7 @@ describe('juju application notifications', function() {
          env: {
            set_config: willError,
            expose: willError,
-           unexpose: willError,
+           unexpose: willError
          },
          getModelURL: NO_OP,
          model: {

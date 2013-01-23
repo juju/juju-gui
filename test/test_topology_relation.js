@@ -63,9 +63,9 @@ describe('topology relation module', function() {
       one: function(selector) {
         requestedSelector = selector;
       }
-    }
+    };
     var env = {
-      remove_relation: function() {},
+      remove_relation: function() {}
     };
     var topo = {
       get: function() {
@@ -89,8 +89,8 @@ describe('topology relation module', function() {
         [null, {name: 'endpoint-2'}]
       ]
     };
-    view.removeRelation.call(fauxView, relation, fauxView, undefined)
-    assert.equal(requestedSelector, '#'+relationId);
+    view.removeRelation.call(fauxView, relation, fauxView, undefined);
+    assert.equal(requestedSelector, '#' + relationId);
   });
 
 });
