@@ -33,7 +33,7 @@ YUI.add('juju-topology-relation', function(Y) {
           /** The user clicked on the "Build Relation" menu item. */
           click: {callback: 'addRelButtonClicked'}
         },
-        '.topology .crosshatch-background rect:first-child': {
+        '.zoom-plane': {
           mousemove: {callback: 'mousemove'}
         }
       },
@@ -309,10 +309,10 @@ YUI.add('juju-topology-relation', function(Y) {
     mousemove: function(d, self) {
       if (self.clickAddRelation) {
         var mouse = d3.mouse(this);
-        var service = self.get('addRelationStart_service');
+        var box = self.get('addRelationStart_service');
         d3.event.x = mouse[0];
         d3.event.y = mouse[1];
-        self.addRelationDrag.call(self, {box: service});
+        self.addRelationDrag.call(self, {box: box});
       }
     },
 
@@ -326,7 +326,7 @@ YUI.add('juju-topology-relation', function(Y) {
     mouseMoveHandler: function(evt) {
       var container = this.get('container');
       this.mousemove.call(
-          container.one('.topology rect:first-child').getDOMNode(),
+          container.one('.zoom-plane').getDOMNode(),
           null, this);
     },
 
@@ -391,7 +391,7 @@ YUI.add('juju-topology-relation', function(Y) {
       self.cursorBox = new views.BoundingBox();
       self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
       var point = self.cursorBox.getConnectorPair(d);
-      dragline.attr('x3', point[0][0])
+      dragline.attr('x1', point[0][0])
               .attr('y1', point[0][1])
               .attr('x2', point[1][0])
               .attr('y2', point[1][1]);
@@ -440,16 +440,19 @@ YUI.add('juju-topology-relation', function(Y) {
         self.addRelation(); // Will clear the state.
       }
     },
-    removeRelation: function(d, context, view, confirmButton) {
+    removeRelation: function(d, view, confirmButton) {
       var env = this.get('component').get('env');
       var endpoints = d.endpoints;
-      var relationElement = Y.one(context.parentNode).one('.relation');
+      var relationId = d.relation_id;
+      // At this time, relations may have been redrawn, so here we have to
+      // retrieve the relation DOM element again.
+      var relationElement = view.get('container').one('#' + relationId);
       utils.addSVGClass(relationElement, 'to-remove pending-relation');
       env.remove_relation(
           endpoints[0][0] + ':' + endpoints[0][1].name,
           endpoints[1][0] + ':' + endpoints[1][1].name,
           Y.bind(this._removeRelationCallback, this, view,
-          relationElement, d.relation_id, confirmButton));
+          relationElement, relationId, confirmButton));
     },
 
     _removeRelationCallback: function(view,
@@ -492,7 +495,7 @@ YUI.add('juju-topology-relation', function(Y) {
             ev.preventDefault();
             var confirmButton = ev.target;
             confirmButton.set('disabled', true);
-            view.removeRelation(d, context, view, confirmButton);
+            view.removeRelation(d, view, confirmButton);
           },
           this)));
     },
