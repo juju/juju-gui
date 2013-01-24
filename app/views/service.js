@@ -873,7 +873,6 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         render: function() {
-          console.log('service view render');
           var container = this.get('container');
           var service = this.get('model');
           if (!service || !service.get('loaded')) {

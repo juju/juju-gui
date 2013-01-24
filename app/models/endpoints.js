@@ -25,9 +25,6 @@ YUI.add('juju-endpoints', function(Y) {
         provides = [],
         sid = svc.get('id');
 
-    console.groupCollapsed('Relation endpoints for', sid);
-    console.time('Endpoint Match');
-
     /* Convert a service name and its relation endpoint info into a
        valid relation target endpoint, ie. including service name. */
     function convert(svcName, relInfo) {
@@ -84,8 +81,6 @@ YUI.add('juju-endpoints', function(Y) {
           sid, {'interface': 'juju-info', 'name': 'juju-info'}));
     }
 
-    console.log('Available origin requires', requires, 'provides', provides);
-
     // Now check every other service to see if it can be a valid target.
     db.services.each(function(tgt) {
       var tid = tgt.get('id'),
@@ -97,11 +92,6 @@ YUI.add('juju-endpoints', function(Y) {
       if (tid === sid) {
         return;
       }
-
-      console.log(
-          'Matching against service', tid,
-          'requires', ep_map[tid].requires,
-          'provides', ep_map[tid].provides);
 
       // Process each of the service's required endpoints, its only
       // considered a valid target if its unsatisified by an existing
@@ -149,8 +139,6 @@ YUI.add('juju-endpoints', function(Y) {
                });
           });
     });
-    console.timeEnd('Endpoint Match');
-    console.groupEnd();
     return targets;
   };
 });

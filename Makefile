@@ -144,8 +144,9 @@ help:
 	@echo "prod: run the production environment (aggregated, compressed files)"
 	@echo "clean: remove the generated build directories"
 	@echo "clean-all: remove build, deps and doc directories"
-	@echo "test-debug: run tests in the browser from the debug environment"
-	@echo "test-prod: run tests in the browser from the production environment"
+	@echo "test-debug: run tests on the cli from the debug environment"
+	@echo "test-prod: run tests on the cli from the production environment"
+	@echo "test-server: run tests in the browser from the debug environment"
 	@echo "prep: beautify and lint the source"
 	@echo "docs: generate Sphinx and YUIdoc documentation"
 	@echo "help: this description"
@@ -334,6 +335,9 @@ test-debug: build-debug
 test-prod: build-prod
 	./test-server.sh prod
 
+test-server: build-debug
+	./test-server.sh debug true
+	
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
 	@echo "test-debug', to test the production or debug environments"

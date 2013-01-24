@@ -22,7 +22,6 @@ YUI.add('juju-view-environment', function(Y) {
                                       [views.JujuBaseView],
       {
         initializer: function() {
-          console.log('View: Initialized: Env');
           this.publish('navigateTo', {
             broadcast: true,
             preventable: false});
