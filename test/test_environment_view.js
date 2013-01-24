@@ -363,8 +363,8 @@
             var node = d3.select(relation);
             var line = node.select('line');
             var boxpair = node.datum();
-            var connectors = boxpair.source()
-              .getConnectorPair(boxpair.target());
+            var connectors = boxpair.source
+              .getConnectorPair(boxpair.target);
 
             return parseFloat(line.attr('x1')) === connectors[0][0] &&
            parseFloat(line.attr('y1')) === connectors[0][1] &&
@@ -916,44 +916,6 @@
          boxes[0].id.should.equal('mysql');
          boxes[3].id.should.equal('wordpress');
        });
-
-    it('must be able to support pairs of boundingBoxes', function() {
-      var b1 = new views.BoundingBox(),
-          b2 = new views.BoundingBox();
-
-      b1.x = 0; b1.y = 0;
-      b1.w = 100; b1.h = 200;
-
-      b2.x = 200; b2.y = 300;
-      b2.w = 100; b2.h = 200;
-
-      var pair = views.BoxPair()
-                           .source(b1)
-                           .target(b2);
-
-      pair.source().getXY().should.eql([0, 0]);
-      pair.target().getXY().should.eql([200, 300]);
-    });
-
-    it('must support composite modelIds on BoxPairs', function() {
-      var b1 = new views.BoundingBox(),
-          b2 = new views.BoundingBox(),
-          relation = new models.Relation({endpoints: [
-            ['haproxy', {name: 'app'}],
-            ['mediawiki', {name: 'proxy'}]]}),
-          service1 = new models.Service({id: 'mediawiki'}),
-          service2 = new models.Service({id: 'haproxy'});
-
-      b1.model(service1);
-      b2.model(service2);
-      var pair = views.BoxPair()
-                           .source(b1)
-                           .target(b2)
-                           .model(relation);
-      pair.modelIds().should.not.contain(',');
-      pair.modelIds().should.equal(
-          'service-mediawiki:app-service-haproxy:proxy');
-    });
 
   });
 

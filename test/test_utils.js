@@ -406,3 +406,128 @@ describe('utilities', function() {
   });
 })();
 
+
+(function() {
+  describe('DecoratedRelation', function() {
+
+    var utils, views, Y, inputRelation, source, target;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        views = Y.namespace('juju.views');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      source = {
+        modelId: function() {
+          return 'source-id';
+        }
+      };
+      target = {
+        modelId: function() {
+          return 'target-id';
+        }
+      };
+      inputRelation = {
+        getAttrs: function() {
+          return {};
+        }
+      };
+
+    });
+
+    it('mirrors the relation\'s properties', function() {
+      var relation = {
+        getAttrs: function() {
+          return {foo: 'bar'};
+        }
+      };
+      relation = views.DecoratedRelation(relation, source, target);
+      assert.deepProperty(relation, 'foo');
+      assert.equal(relation.foo, 'bar');
+    });
+
+    it('exposes the source and target as attributes', function() {
+      var relation = views.DecoratedRelation(inputRelation, source, target);
+      assert.equal(relation.source, source);
+      assert.equal(relation.target, target);
+    });
+
+    it('generates an ID that includes source and target IDs', function() {
+      var relation = views.DecoratedRelation(inputRelation, source, target);
+      assert.match(relation.compositeId, new RegExp(source.modelId()));
+      assert.match(relation.compositeId, new RegExp(target.modelId()));
+    });
+
+    it('includes endpoint names in its ID, if they exist', function() {
+      var source = {
+        modelId: function() {
+          return 'source-id';
+        }
+      };
+      var target = {
+        modelId: function() {
+          return 'target-id';
+        }
+      };
+      var firstEndpointName = 'endpoint-1';
+      var secondEndpointName = 'endpoint-2';
+      inputRelation.endpoints = [
+        [null, {name: firstEndpointName}],
+        [null, {name: secondEndpointName}]
+      ];
+      var relation = views.DecoratedRelation(inputRelation, source, target);
+      assert.match(relation.compositeId, new RegExp(firstEndpointName));
+      assert.match(relation.compositeId, new RegExp(secondEndpointName));
+    });
+
+    it('exposes the fact that a relation is a subordinate', function() {
+      var inputRelation = {
+        getAttrs: function() {
+          return {scope: 'container'};
+        }
+      };
+      var relation = views.DecoratedRelation(inputRelation, source, target);
+      assert.isTrue(relation.isSubordinate);
+    });
+
+    it('exposes the fact that a relation is not a subordinate', function() {
+      var inputRelation = {
+        getAttrs: function() {
+          return {scope: 'not-container'};
+        }
+      };
+      var relation = views.DecoratedRelation(inputRelation, source, target);
+      assert.isFalse(relation.isSubordinate);
+    });
+
+  });
+})();
+
+(function() {
+  describe('utils.isSubordinateRelation', function() {
+
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can tell if a relation is a subordinate', function() {
+      var relation = {scope: 'container'};
+      assert.isTrue(utils.isSubordinateRelation(relation));
+    });
+
+    it('can tell if a relation is not a subordinate', function() {
+      var relation = {scope: 'not-a-container'};
+      assert.isFalse(utils.isSubordinateRelation(relation));
+    });
+
+  });
+})();
