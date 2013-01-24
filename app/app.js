@@ -194,10 +194,16 @@ YUI.add('juju-gui', function(Y) {
      */
     initializer: function() {
       // If this flag is true, start the application with the console activated
-      if (this.get('consoleEnabled')) {
-        consoleManager.native();
-      } else {
-        consoleManager.noop();
+      var consoleEnabled = this.get('consoleEnabled');
+
+      // Concession to testing, they need muck
+      // with console, we can't as well.
+      if (window.mochaPhantomJS === undefined) {
+        if (consoleEnabled) {
+          consoleManager.native();
+        } else {
+          consoleManager.noop();
+        }
       }
       // Create a client side database to store state.
       this.db = new models.Database();
@@ -236,13 +242,6 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         notifications: this.db.notifications});
 
-      // Event subscriptions
-
-      this.on('*:navigateTo', function(e) {
-        console.log('navigateTo', e);
-        this.navigate(e.url);
-      }, this);
-
       // Notify user attempts to modify the environment without permission.
       this.env.on('permissionDenied', this.onEnvPermissionDenied, this);
 
@@ -271,22 +270,13 @@ YUI.add('juju-gui', function(Y) {
       // TODO - Bound views will automatically update this on individual models
       this.db.on('update', this.on_database_changed, this);
 
-      this.on('navigate', function(e) {
-        console.log('app navigate', e);
-      });
-
       this.enableBehaviors();
 
       this.once('ready', function(e) {
         if (this.get('socket_url')) {
           // Connect to the environment.
-          console.log('App: Connecting to environment');
           this.env.connect();
         }
-
-        console.log(
-            'App: Re-rendering current view', this.getPath(), 'info');
-
         if (this.get('activeView')) {
           this.get('activeView').render();
         } else {
@@ -349,6 +339,7 @@ YUI.add('juju-gui', function(Y) {
       // Redispatch to current view to update.
       if (active && active.name === 'EnvironmentView') {
         active.update();
+        active.rendered();
       } else {
         this.dispatch();
       }
@@ -381,8 +372,6 @@ YUI.add('juju-gui', function(Y) {
      * @method show_unit
      */
     show_unit: function(req) {
-      console.log(
-          'App: Route: Unit', req.params.id, req.path, req.pendingRoutes);
       // This replacement honors service names that have a hyphen in them.
       var unit_id = req.params.id.replace(/^(\S+)-(\d+)$/, '$1/$2');
       var unit = this.db.units.getById(unit_id);
@@ -657,7 +646,6 @@ YUI.add('juju-gui', function(Y) {
      * @method load_service
      */
     loadService: function(evt) {
-      console.log('load service', evt);
       if (evt.err) {
         this.db.notifications.add(
             new models.Notification({

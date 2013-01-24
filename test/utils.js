@@ -24,7 +24,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       };
 
       this.msg = function(m) {
-        console.log('serializing env msg', m);
+        //console.log('serializing env msg', m);
         this.onmessage({'data': Y.JSON.stringify(m)});
       };
 
@@ -33,7 +33,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       };
 
       this.send = function(m) {
-        console.log('socket send', m);
+        //console.log('socket send', m);
         this.messages.push(Y.JSON.parse(m));
       };
 

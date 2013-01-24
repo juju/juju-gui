@@ -158,7 +158,7 @@ YUI.add('d3-components', function(Y) {
       }
 
       if (!result.callback) {
-        console.error('No Event handler for', selector, module.name);
+        //console.error('No Event handler for', selector, module.name);
         return;
       }
       if (!L.isFunction(result.callback)) {
@@ -253,7 +253,6 @@ YUI.add('d3-components', function(Y) {
                 // (re)Register the event to bubble.
                 self.publish(name, {emitFacade: true});
               }
-              console.debug('yui event binding', module.name, eventPhase, name);
               subscriptions.push(
                   target[eventPhase](
                   name, callback, handler.context));
@@ -317,7 +316,7 @@ YUI.add('d3-components', function(Y) {
           adapter = function() {
             var selection = d3.select(this),
                 d = selection.data()[0];
-            console.debug('D3 Handler for', selector, trigger);
+            //console.debug('D3 Handler for', selector, trigger);
             return handler.callback.call(this, d, handler.context);
           };
           d3.selectAll(selector).on(trigger, adapter);
@@ -495,7 +494,7 @@ YUI.add('d3-components', function(Y) {
     all: function(methodName) {
       Y.each(this.modules, function(mod, name) {
         if (methodName in mod) {
-          console.log('Component', methodName, 'on', name);
+          //console.log('Component', methodName, 'on', name);
           mod[methodName]();
         }
       });

@@ -211,22 +211,25 @@
         ],
         op: 'delta'
       };
+
       view.render();
 
-      function validateRelationCount(serviceNode) {
-        var textNode = serviceNode.one('.sub-rel-block tspan').getDOMNode();
-        return textNode.firstChild.nodeValue === '1';
+      var relationModule = view.topo.modules.RelationModule;
+
+      function validateRelationCount(serviceNode, module) {
+        var service = d3.select(serviceNode.getDOMNode()).datum();
+        return module.subordinateRelationsForService(service).length === 1;
       }
 
       container.all('.subordinate.service').each(function(service) {
-        validateRelationCount(service).should.equal(true);
+        validateRelationCount(service, relationModule).should.equal(true);
       });
 
       db.on_delta({ data: tmp_data });
       view.render();
 
       container.all('.subordinate.service').each(function(service) {
-        validateRelationCount(service).should.equal(true);
+        validateRelationCount(service, relationModule).should.equal(true);
       });
     });
 
