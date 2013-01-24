@@ -645,7 +645,6 @@ YUI.add('juju-gui', function(Y) {
      * @method load_service
      */
     loadService: function(evt) {
-      //console.log('load service', evt);
       if (evt.err) {
         this.db.notifications.add(
             new models.Notification({

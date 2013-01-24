@@ -32,7 +32,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
     render: function() {
       var charm = this.get('charm'),
           container = this.get('container');
-      console.log('render', charm);
       CharmCollectionView.superclass.render.apply(this, arguments);
       if (!charm) {
         container.setHTML('<div class="alert">Loading...</div>');
@@ -61,7 +60,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
     on_charm_data: function(io_request) {
       var charm = Y.JSON.parse(
           io_request.response.results[0].responseText);
-      //console.log('results update', charm, this);
       this.set('charm', charm);
       this.render();
     },
@@ -71,7 +69,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
           container = this.get('container'),
           charmUrl = charm.series + '/' + charm.name,
           env = this.get('env');
-      //console.log('charm deploy', charm);
       // Generating charm url: see http://jujucharms.com/tools/store-missing
       // for examples of charm addresses.
       if (charm.owner !== 'charmers') {
@@ -112,7 +109,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
 
     initializer: function() {
-      console.log('View: Initialized: Charm Collection', this.get('query'));
       this.set('charms', []);
       this.set('current_request', null);
     },
@@ -139,7 +135,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
     },
 
     on_search_change: function(evt) {
-      console.log('search update');
       if (evt) {
         evt.preventDefault();
         evt.stopImmediatePropagation();
@@ -166,7 +161,6 @@ YUI.add('juju-view-charm-collection', function(Y) {
     on_results_change: function(io_request) {
       var result_set = Y.JSON.parse(
           io_request.response.results[0].responseText);
-      //console.log('results update', result_set, this);
       this.set('charms', result_set.results);
       this.render();
     }

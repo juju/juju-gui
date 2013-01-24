@@ -48,7 +48,6 @@ YUI.add('juju-charm-store', function(Y) {
             // http://jujucharms.com/search/json?search_text=mysql .
             var result_set = Y.JSON.parse(
                 io_request.response.results[0].responseText);
-            console.log('results update', result_set);
             options.success(
                 this._normalizeCharms(
                 result_set.results, options.list, options.defaultSeries));

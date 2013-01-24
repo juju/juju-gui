@@ -449,7 +449,6 @@ YUI.add('juju-models', function(Y) {
       this.relations.reset();
       this.units.reset();
       this.notifications.reset();
-      //console.log('Reset Application Database');
     },
 
     on_delta: function(delta_evt) {
@@ -457,7 +456,6 @@ YUI.add('juju-models', function(Y) {
       var change_type, model_class = null,
           self = this;
 
-      //console.log('Delta');
       changes.forEach(
           Y.bind(function(change) {
             change_type = change[0];

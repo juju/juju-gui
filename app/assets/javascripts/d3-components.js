@@ -158,7 +158,7 @@ YUI.add('d3-components', function(Y) {
       }
 
       if (!result.callback) {
-        console.error('No Event handler for', selector, module.name);
+        //console.error('No Event handler for', selector, module.name);
         return;
       }
       if (!L.isFunction(result.callback)) {
