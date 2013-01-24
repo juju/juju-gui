@@ -111,6 +111,10 @@ globally.
   sudo npm install -g phantomjs
   sudo npm install -g mocha-phantomjs
 
+If you recieve an error installing phantomjs, you can manually download and
+unpack the archive and then arrange for the "phantomjs" executable to be
+located on your path (e.g., by linking it into ~/bin).
+
 After this make test-prod or make test-debug will run the CLI based test
 runner. If you need to debug a test in the browser use ``make test-server``.
 
