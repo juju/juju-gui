@@ -833,7 +833,7 @@ YUI.add('juju-topology-relation', function(Y) {
           'active');
     },
 
-    relationClick: function(relation self) {
+    relationClick: function(relation, self) {
       if (relation.isSubordinate) {
         var subRelDialog = views.createModalPanel(
             'You may not remove a subordinate relation.',
