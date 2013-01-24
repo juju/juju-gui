@@ -33,22 +33,22 @@ YUI.add('juju-topology-relation', function(Y) {
           /** The user clicked on the "Build Relation" menu item. */
           click: {callback: 'addRelButtonClicked'}
         },
-        '.topology .crosshatch-background rect:first-child': {
+        '.zoom-plane': {
           mousemove: {callback: 'mousemove'}
         }
       },
       yui: {
-        rendered: {callback: 'renderedHandler'},
-        mouseMove: {callback: 'mouseMoveHandler'},
-        clearState: {callback: 'clearState'},
-        serviceMoved: {callback: 'updateLinkEndpoints'},
-        servicesRendered: {callback: 'updateLinks'},
-        snapToService: {callback: 'snapToService'},
-        snapOutOfService: {callback: 'snapOutOfService'},
-        cancelRelationBuild: {callback: 'cancelRelationBuild'},
-        addRelationDragStart: {callback: 'addRelationDragStart'},
-        addRelationDrag: {callback: 'addRelationDrag'},
-        addRelationDragEnd: {callback: 'addRelationDragEnd'}
+        addRelationDrag: 'addRelationDrag',
+        addRelationDragEnd: 'addRelationDragEnd',
+        addRelationDragStart: 'addRelationDragStart',
+        cancelRelationBuild: 'cancelRelationBuild',
+        clearState: 'clearState',
+        mouseMove: 'mouseMoveHandler',
+        rendered: 'renderedHandler',
+        serviceMoved: 'updateLinkEndpoints',
+        servicesRendered: 'updateLinks',
+        snapOutOfService: 'snapOutOfService',
+        snapToService: 'snapToService'
       }
     },
 
@@ -113,12 +113,13 @@ YUI.add('juju-topology-relation', function(Y) {
         if (pair.length === 2) {
           var source = pair[0][1];
           var target = pair[1][1];
-          var bpair = views.DecoratedRelation(relation, source, target);
+          var decoratedRelation = views.DecoratedRelation(
+              relation, source, target);
           // Copy the relation type to the box.
-          if (bpair.display_name === undefined) {
-            bpair.display_name = pair[0][0];
+          if (decoratedRelation.display_name === undefined) {
+            decoratedRelation.display_name = pair[0][0];
           }
-          decorated.push(bpair);
+          decorated.push(decoratedRelation);
         }
       });
       return decorated;
@@ -283,7 +284,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // Create the dragline and position its endpoints properly.
       context.addRelationDragStart({service: box});
       context.mousemove.call(
-          container.one('.topology rect:first-child').getDOMNode(),
+          container.one('.topology g').getDOMNode(),
           null, context);
       context.addRelationStart(box, context, origin);
     },
@@ -313,10 +314,10 @@ YUI.add('juju-topology-relation', function(Y) {
     mousemove: function(d, self) {
       if (self.clickAddRelation) {
         var mouse = d3.mouse(this);
-        var service = self.get('addRelationStart_service');
+        var box = self.get('addRelationStart_service');
         d3.event.x = mouse[0];
         d3.event.y = mouse[1];
-        self.addRelationDrag.call(self, {box: service});
+        self.addRelationDrag.call(self, {box: box});
       }
     },
 
@@ -330,7 +331,7 @@ YUI.add('juju-topology-relation', function(Y) {
     mouseMoveHandler: function(evt) {
       var container = this.get('container');
       this.mousemove.call(
-          container.one('.topology rect:first-child').getDOMNode(),
+          container.one('.zoom-plane').getDOMNode(),
           null, this);
     },
 
@@ -387,14 +388,15 @@ YUI.add('juju-topology-relation', function(Y) {
                         .attr('class',
                               'relation pending-relation dragline dragging');
       var self = this;
+      var container = this.get('container');
 
       // Start the line between the cursor and the nearest connector
       // point on the service.
-      var mouse = d3.mouse(Y.one('.topology svg').getDOMNode());
+      var mouse = d3.mouse(container.one('svg g').getDOMNode());
       self.cursorBox = new views.BoundingBox();
       self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
       var point = self.cursorBox.getConnectorPair(d);
-      dragline.attr('x3', point[0][0])
+      dragline.attr('x1', point[0][0])
               .attr('y1', point[0][1])
               .attr('x2', point[1][0])
               .attr('y2', point[1][1]);
@@ -769,7 +771,7 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     subordinateRelationsForService: function(service) {
       return this.relations.filter(function(relation) {
-        return relation.compositeId.indexOf(service.modelId()) !== -1 &&
+        return (relation.source === service || relation.target === service) &&
             relation.isSubordinate;
       });
     },

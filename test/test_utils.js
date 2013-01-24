@@ -506,3 +506,28 @@ describe('utilities', function() {
 
   });
 })();
+
+(function() {
+  describe('utils.isSubordinateRelation', function() {
+
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('can tell if a relation is a subordinate', function() {
+      var relation = {scope: 'container'};
+      assert.isTrue(utils.isSubordinateRelation(relation));
+    });
+
+    it('can tell if a relation is not a subordinate', function() {
+      var relation = {scope: 'not-a-container'};
+      assert.isFalse(utils.isSubordinateRelation(relation));
+    });
+
+  });
+})();

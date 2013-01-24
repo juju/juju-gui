@@ -63,14 +63,14 @@
 
     it('can accept a callback on its methods', function(done) {
       env.get_charm('cs:precise/mysql', function(result) {
-        console.log('invoked', result);
+        //console.log('invoked', result);
         result.op.should.equal('get_charm');
         result.result.id.should.equal('cs:precise/mysql');
         done();
       });
 
       msg = conn.last_message();
-      console.log('msg', msg);
+      //console.log('msg', msg);
       conn.msg({
         'op': 'get_charm',
         'request_id': msg.request_id,

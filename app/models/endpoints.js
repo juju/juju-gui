@@ -6,6 +6,7 @@
 YUI.add('juju-endpoints', function(Y) {
 
   var models = Y.namespace('juju.models');
+  var utils = Y.namespace('juju.views.utils');
 
   /* Find available relation targets for a service.
 
@@ -24,16 +25,14 @@ YUI.add('juju-endpoints', function(Y) {
         provides = [],
         sid = svc.get('id');
 
-    console.groupCollapsed('Relation endpoints for', sid);
-    console.time('Endpoint Match');
-
     /* Convert a service name and its relation endpoint info into a
        valid relation target endpoint, ie. including service name. */
     function convert(svcName, relInfo) {
       return {
         service: svcName,
         name: relInfo.name,
-        type: relInfo['interface']};
+        type: relInfo['interface']
+      };
     }
 
     /* Store endpoints for a relation to target the given service.
@@ -59,7 +58,7 @@ YUI.add('juju-endpoints', function(Y) {
           /* Subordinate relations are slightly different, a
              subordinate typically acts as a client to many services,
              against the implicitly provided juju-info interface. */
-          if (svc.get('subordinate') && rdata.isSubordinate) {
+          if (svc.get('subordinate') && utils.isSubordinateRelation(rdata)) {
             return requires.push(ep);
           }
           if (db.relations.has_relation_for_endpoint(ep)) {
@@ -82,8 +81,6 @@ YUI.add('juju-endpoints', function(Y) {
           sid, {'interface': 'juju-info', 'name': 'juju-info'}));
     }
 
-    console.log('Available origin requires', requires, 'provides', provides);
-
     // Now check every other service to see if it can be a valid target.
     db.services.each(function(tgt) {
       var tid = tgt.get('id'),
@@ -96,11 +93,6 @@ YUI.add('juju-endpoints', function(Y) {
         return;
       }
 
-      console.log(
-          'Matching against service', tid,
-          'requires', ep_map[tid].requires,
-          'provides', ep_map[tid].provides);
-
       // Process each of the service's required endpoints, its only
       // considered a valid target if its unsatisified by an existing
       // relation.
@@ -112,14 +104,14 @@ YUI.add('juju-endpoints', function(Y) {
             // to many services. We check if a subordinate relation
             // exists between this subordinate endpoint and the origin
             // service.
-            if (tgt.get('subordinate') && rdata.isSubordinate) {
+            if (tgt.get('subordinate') && utils.isSubordinateRelation(rdata)) {
               if (db.relations.has_relation_for_endpoint(ep, sid)) {
                 return;
               }
             } else if (db.relations.has_relation_for_endpoint(ep)) {
               return;
             }
-            // If the origin provides it then its a valid target.
+            // If the origin provides it then it is a valid target.
             Y.Array.filter(provides, function(oep) {
               if (oep.type === ep.type) {
                 add(tid, oep, ep);
@@ -147,8 +139,6 @@ YUI.add('juju-endpoints', function(Y) {
                });
           });
     });
-    console.timeEnd('Endpoint Match');
-    console.groupEnd();
     return targets;
   };
 });
