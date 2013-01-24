@@ -553,8 +553,6 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   utils.validate = function(values, schema) {
-    console.group('view.utils.validate');
-    console.log('validating', values, 'against', schema);
     var errors = {};
 
     function toString(value) {
@@ -574,7 +572,6 @@ YUI.add('juju-view-utils', function(Y) {
 
     Y.Object.each(schema, function(field_definition, name) {
       var value = toString(values[name]);
-      console.log('validating field', name, 'with value', value);
 
       if (field_definition.type === 'int') {
         if (!value) {
@@ -597,10 +594,7 @@ YUI.add('juju-view-utils', function(Y) {
         }
       }
 
-      console.log('generated this error (possibly undefined)', errors[name]);
     });
-    console.log('returning', errors);
-    console.groupEnd();
     return errors;
   };
 
@@ -996,7 +990,7 @@ YUI.add('juju-view-utils', function(Y) {
   });
 
   Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
-    // console.log('helper', iface_decl, options, this);
+    //console.log('helper', iface_decl, options, this);
     var result = [];
     var ret = '';
     Y.Object.each(iface_decl, function(value, name) {
