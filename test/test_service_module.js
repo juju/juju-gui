@@ -176,4 +176,22 @@ describe('service module events', function() {
        assert.isFalse(menu.hasClass('active'));
      });
 
+  it('must be able to view a service from the menu', function() {
+      var topo = view.topo,
+          requestTransition = false;
+
+      topo.once('*:navigateTo', function() {
+        console.log("got event");
+        requestTransition = true;
+      });
+
+      // Select a service and click it.
+      // Opening the menu.
+      topo.service_boxes.haproxy.containsPoint = function() {
+         return true;};
+      viewContainer.one('.service').simulate('click');
+      // Click View Button
+      viewContainer.one('.view-service').simulate('click');
+      requestTransition.should.equal(true);
+    });
 });
