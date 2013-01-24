@@ -445,19 +445,16 @@ YUI.add('juju-topology-relation', function(Y) {
         self.addRelation(); // Will clear the state.
       }
     },
-    removeRelation: function(d, view, confirmButton) {
+    removeRelation: function(relation, view, confirmButton) {
       var env = this.get('component').get('env');
-      var endpoints = d.endpoints;
-      var relationId = d.relation_id;
       // At this time, relations may have been redrawn, so here we have to
       // retrieve the relation DOM element again.
-      var relationElement = view.get('container').one('#' + relationId);
+      var relationElement = view.get('container')
+        .one('#' + relation.relation_id);
       utils.addSVGClass(relationElement, 'to-remove pending-relation');
-      env.remove_relation(
-          endpoints[0][0] + ':' + endpoints[0][1].name,
-          endpoints[1][0] + ':' + endpoints[1][1].name,
+      env.remove_relation(relation.endpoints[0], relation.endpoints[1],
           Y.bind(this._removeRelationCallback, this, view,
-          relationElement, relationId, confirmButton));
+          relationElement, relation.relation_id, confirmButton));
     },
 
     _removeRelationCallback: function(view,
@@ -722,9 +719,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Fire event to add relation in juju.
       // This needs to specify interface in the future.
-      env.add_relation(
-          endpoints[0][0] + ':' + endpoints[0][1].name,
-          endpoints[1][0] + ':' + endpoints[1][1].name,
+      env.add_relation(endpoints[0], endpoints[1],
           Y.bind(this._addRelationCallback, this, view, relation_id)
       );
       view.set('currentServiceClickAction', 'hideServiceMenu');
@@ -838,8 +833,8 @@ YUI.add('juju-topology-relation', function(Y) {
           'active');
     },
 
-    relationClick: function(d, self) {
-      if (d.isSubordinate) {
+    relationClick: function(relation, self) {
+      if (relation.isSubordinate) {
         var subRelDialog = views.createModalPanel(
             'You may not remove a subordinate relation.',
             '#rmsubrelation-modal-panel');
@@ -861,7 +856,7 @@ YUI.add('juju-topology-relation', function(Y) {
         subRelDialog.get('boundingBox').all('.yui3-button')
                 .removeClass('yui3-button');
       } else {
-        self.removeRelationConfirm(d, this, self);
+        self.removeRelationConfirm(relation, this, self);
       }
     }
 
