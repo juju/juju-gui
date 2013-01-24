@@ -114,7 +114,7 @@ YUI.add('juju-topology-relation', function(Y) {
           var source = pair[0][1];
           var target = pair[1][1];
           var decoratedRelation = views.DecoratedRelation(
-            relation, source, target);
+              relation, source, target);
           // Copy the relation type to the box.
           if (decoratedRelation.display_name === undefined) {
             decoratedRelation.display_name = pair[0][0];
