@@ -187,6 +187,52 @@
         }
     );
 
+    it('must properly count subordinate relations', function() {
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env
+      });
+      var tmp_data = {
+        result: [
+          ['service', 'add', {
+            'subordinate': true,
+            'charm': 'cs:precise/puppet-2',
+            'id': 'puppet2'
+          }],
+          ['relation', 'add', {
+            'interface': 'juju-info',
+            'scope': 'container',
+            'endpoints':
+             [['wordpress', {'role': 'server', 'name': 'juju-info'}],
+              ['puppet2', {'role': 'client', 'name': 'juju-info'}]],
+            'id': 'relation-0000000007'
+          }]
+        ],
+        op: 'delta'
+      };
+
+      view.render();
+
+      var relationModule = view.topo.modules.RelationModule;
+
+      function validateRelationCount(serviceNode, module) {
+        var service = d3.select(serviceNode.getDOMNode()).datum();
+        return module.subordinateRelationsForService(service).length === 1;
+      }
+
+      container.all('.subordinate.service').each(function(service) {
+        validateRelationCount(service, relationModule).should.equal(true);
+      });
+
+      db.on_delta({ data: tmp_data });
+      view.render();
+
+      container.all('.subordinate.service').each(function(service) {
+        validateRelationCount(service, relationModule).should.equal(true);
+      });
+    });
+
     it('must not duplicate nodes when services are added', function() {
       var view = new views.environment({
         container: container,
