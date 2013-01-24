@@ -775,7 +775,7 @@ YUI.add('juju-topology-relation', function(Y) {
      * Utility function to get subordinate relations for a service.
      */
     subordinateRelationsForService: function(service) {
-      return this.relPairs.filter(function(relation) {
+      return this.relations.filter(function(relation) {
         return (relation.source === service || relation.target === service) &&
             relation.isSubordinate;
       });
