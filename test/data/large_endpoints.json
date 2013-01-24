@@ -13,8 +13,7 @@
         "optional": false, 
         "limit": 1, 
         "name": "juju-info", 
-        "scope": "container",
-        "isSubordinate": true
+        "scope": "container"
       }
     ], 
     "provides": []
@@ -170,8 +169,7 @@
         "optional": false, 
         "limit": null, 
         "name": "local-monitors", 
-        "scope": "container",
-        "isSubordinate": true
+        "scope": "container"
       }, 
       {
         "interface": "mysql-root", 
@@ -230,8 +228,7 @@
         "optional": false, 
         "limit": 1, 
         "name": "juju-info", 
-        "scope": "container",
-        "isSubordinate": true
+        "scope": "container"
       }
     ], 
     "provides": []

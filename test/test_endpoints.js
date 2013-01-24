@@ -1,66 +1,10 @@
 'use strict';
 
-
-var default_env = {
-  'result': [
-    ['service', 'add',
-     {'charm': 'cs:precise/wordpress-6',
-       'id': 'blog', 'exposed': false}],
-    ['service', 'add', {'charm': 'cs:precise/mysql-6',
-       'id': 'my_db'}]],
-  'op': 'delta'};
-
-var default_endpoints = {
-  'blog': {
-    'requires': [
-      {
-        'interface': 'varnish',
-        'optional': true,
-        'limit': 2,
-        'name': 'cache',
-        'scope': 'global'
-      },
-      {
-        'interface': 'mysql',
-        'optional': false,
-        'limit': 1,
-        'name': 'db',
-        'scope': 'global'
-      }
-    ],
-    'provides': [
-      {
-        'interface': 'http',
-        'optional': false,
-        'limit': null,
-        'name': 'url',
-        'scope': 'global'
-      }
-    ]
-  },
-  'my_db': {
-    'requires': [],
-    'provides': [
-      {
-        'interface': 'mysql',
-        'optional': false,
-        'limit': null,
-        'name': 'server',
-        'scope': 'global'
-      }
-    ]
-  }
-};
-
-
 // These are nominally based on improv sample.json delta stream with
 // the addition of puppet subordinate relations.
-var sample_endpoints,
-    sample_env;
-
 
 describe('Relation endpoints logic', function() {
-  var Y, juju, db, models;
+  var Y, juju, db, models, sample_endpoints, sample_env;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([

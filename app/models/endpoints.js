@@ -6,6 +6,7 @@
 YUI.add('juju-endpoints', function(Y) {
 
   var models = Y.namespace('juju.models');
+  var utils = Y.namespace('juju.views.utils');
 
   /* Find available relation targets for a service.
 
@@ -33,7 +34,8 @@ YUI.add('juju-endpoints', function(Y) {
       return {
         service: svcName,
         name: relInfo.name,
-        type: relInfo['interface']};
+        type: relInfo['interface']
+      };
     }
 
     /* Store endpoints for a relation to target the given service.
@@ -59,7 +61,7 @@ YUI.add('juju-endpoints', function(Y) {
           /* Subordinate relations are slightly different, a
              subordinate typically acts as a client to many services,
              against the implicitly provided juju-info interface. */
-          if (svc.get('subordinate') && rdata.isSubordinate) {
+          if (svc.get('subordinate') && utils.isSubordinateRelation(rdata)) {
             return requires.push(ep);
           }
           if (db.relations.has_relation_for_endpoint(ep)) {
@@ -112,14 +114,14 @@ YUI.add('juju-endpoints', function(Y) {
             // to many services. We check if a subordinate relation
             // exists between this subordinate endpoint and the origin
             // service.
-            if (tgt.get('subordinate') && rdata.isSubordinate) {
+            if (tgt.get('subordinate') && utils.isSubordinateRelation(rdata)) {
               if (db.relations.has_relation_for_endpoint(ep, sid)) {
                 return;
               }
             } else if (db.relations.has_relation_for_endpoint(ep)) {
               return;
             }
-            // If the origin provides it then its a valid target.
+            // If the origin provides it then it is a valid target.
             Y.Array.filter(provides, function(oep) {
               if (oep.type === ep.type) {
                 add(tid, oep, ep);

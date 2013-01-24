@@ -824,7 +824,7 @@ YUI.add('juju-view-utils', function(Y) {
 
 
   /**
-   * Decorate a relation with some related/derrived data.
+   * Decorate a relation with some related/derived data.
    *
    * @method DecoratedRelation
    * @param {Object} relation The model object we will be based on.
@@ -845,8 +845,12 @@ YUI.add('juju-view-utils', function(Y) {
           (hasRelations ? ':' + relation.endpoints[1][1].name : ''))
     };
     Y.mix(decorated, relation.getAttrs());
-    decorated.isSubordinate = decorated.scope === 'container';
+    decorated.isSubordinate = utils.isSubordinateRelation(decorated);
     return decorated;
+  };
+
+  utils.isSubordinateRelation = function(relation) {
+    return relation.scope === 'container';
   };
 
   /* Given one of the many "real" states return a "UI" state.

@@ -113,12 +113,13 @@ YUI.add('juju-topology-relation', function(Y) {
         if (pair.length === 2) {
           var source = pair[0][1];
           var target = pair[1][1];
-          var bpair = views.DecoratedRelation(relation, source, target);
+          var decoratedRelation = views.DecoratedRelation(
+            relation, source, target);
           // Copy the relation type to the box.
-          if (bpair.display_name === undefined) {
-            bpair.display_name = pair[0][0];
+          if (decoratedRelation.display_name === undefined) {
+            decoratedRelation.display_name = pair[0][0];
           }
-          decorated.push(bpair);
+          decorated.push(decoratedRelation);
         }
       });
       return decorated;
