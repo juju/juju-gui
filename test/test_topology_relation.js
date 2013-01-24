@@ -39,12 +39,12 @@ describe('topology relation module', function() {
 
   it('fires a "clearState" event if a drag line is clicked', function() {
     var firedEventName;
-    var fauxTopo = {
+    var topo = {
       fire: function(eventName) {
         firedEventName = eventName;
       }
     };
-    view.set('component', fauxTopo);
+    view.set('component', topo);
     view.draglineClicked(undefined, view);
     assert.equal(firedEventName, 'clearState');
   });
@@ -55,6 +55,39 @@ describe('topology relation module', function() {
 
   it('has a chainable render function', function() {
     assert.equal(view.render(), view);
+  });
+
+  it('retrieves the current relation DOM element when removing', function() {
+    var requestedSelector;
+    var container = {
+      one: function(selector) {
+        requestedSelector = selector;
+      }
+    };
+    var env = {
+      remove_relation: function() {}
+    };
+    var topo = {
+      get: function() {
+        return env;
+      }
+    };
+    var fauxView = {
+      get: function(name) {
+        if (name === 'component') {
+          return topo;
+        } else if (name === 'container') {
+          return container;
+        }
+      }
+    };
+    var relationId = 'the ID of this relation';
+    var relation = {
+      relation_id: relationId,
+      endpoints: [null, null]
+    };
+    view.removeRelation.call(fauxView, relation, fauxView, undefined);
+    assert.equal(requestedSelector, '#' + relationId);
   });
 
 });
