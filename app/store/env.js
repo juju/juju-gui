@@ -29,7 +29,7 @@ YUI.add('juju-env', function(Y) {
     // Prototype methods for your new class
 
     initializer: function() {
-      console.log('Env Init');
+      //console.log('Env Init');
       // Define custom events
       this.publish('msg', {
         emitFacade: true,
@@ -53,10 +53,10 @@ YUI.add('juju-env', function(Y) {
     },
 
     connect: function() {
-      console.log('Env Connect');
+      //console.log('Env Connect');
       // Allow an external websocket to be passed in.
       var conn = this.get('conn');
-      console.log('ext ws', conn);
+      //console.log('ext ws', conn);
       if (conn) {
         this.ws = conn;
       } else {
@@ -72,21 +72,21 @@ YUI.add('juju-env', function(Y) {
     },
 
     on_open: function(data) {
-      console.log('Env: Connected');
+      //console.log('Env: Connected');
     },
 
     on_close: function(data) {
-      console.log('Env: Disconnect');
+      //console.log('Env: Disconnect');
       this.set('connected', false);
     },
 
     on_message: function(evt) {
-      console.log('Env: Receive', evt.data);
+      //console.log('Env: Receive', evt.data);
       var msg = Y.JSON.parse(evt.data);
       // The "ready" attribute indicates that this is a server's initial
       // greeting.  It provides a few initial values that we care about.
       if (msg.ready) {
-        console.log('Env: Handshake Complete');
+        //console.log('Env: Handshake Complete');
         this.set('connected', true);
         this.set('providerType', msg.provider_type);
         this.set('defaultSeries', msg.default_series);
@@ -114,7 +114,7 @@ YUI.add('juju-env', function(Y) {
     },
 
     dispatch_result: function(data) {
-      console.log('Env: Dispatch Result', data);
+      //console.log('Env: Dispatch Result', data);
       this._dispatch_rpc_result(data);
       this._dispatch_event(data);
     },
@@ -124,7 +124,7 @@ YUI.add('juju-env', function(Y) {
         console.warn('Env: Unknown evt kind', evt);
         return;
       }
-      console.log('Env: Dispatch Evt', evt.op);
+      //console.log('Env: Dispatch Evt', evt.op);
       this.fire(evt.op, {data: evt});
     },
 
@@ -132,7 +132,7 @@ YUI.add('juju-env', function(Y) {
       if ('request_id' in msg) {
         var tid = msg.request_id;
         if (tid in this._txn_callbacks) {
-          console.log('Env: Dispatch Rpc');
+          //console.log('Env: Dispatch Rpc');
           this._txn_callbacks[tid].apply(this, [msg]);
           delete this._txn_callbacks[tid];
         }
@@ -174,7 +174,7 @@ YUI.add('juju-env', function(Y) {
       }
       op.request_id = tid;
       var msg = Y.JSON.stringify(op);
-      console.log('Env: send msg', tid, msg, op);
+      //console.log('Env: send msg', tid, msg, op);
       this.ws.send(msg);
     },
 
@@ -258,7 +258,7 @@ YUI.add('juju-env', function(Y) {
      */
     deploy: function(charm_url, service_name, config, config_raw, num_units,
                      callback) {
-      console.log(charm_url, service_name, config, config_raw, num_units);
+      //console.log(charm_url, service_name, config, config_raw, num_units);
       this._send_rpc(
           { op: 'deploy',
             service_name: service_name,

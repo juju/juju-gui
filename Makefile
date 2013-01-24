@@ -333,7 +333,7 @@ test-debug: build-debug
 
 test-prod: build-prod
 	./test-server.sh prod
-
+	
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
 	@echo "test-debug', to test the production or debug environments"
