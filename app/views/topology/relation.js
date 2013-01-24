@@ -838,8 +838,8 @@ YUI.add('juju-topology-relation', function(Y) {
           'active');
     },
 
-    relationClick: function(d, self) {
-      if (d.isSubordinate) {
+    relationClick: function(relation self) {
+      if (relation.isSubordinate) {
         var subRelDialog = views.createModalPanel(
             'You may not remove a subordinate relation.',
             '#rmsubrelation-modal-panel');
@@ -861,7 +861,7 @@ YUI.add('juju-topology-relation', function(Y) {
         subRelDialog.get('boundingBox').all('.yui3-button')
                 .removeClass('yui3-button');
       } else {
-        self.removeRelationConfirm(d, this, self);
+        self.removeRelationConfirm(relation, this, self);
       }
     }
 
