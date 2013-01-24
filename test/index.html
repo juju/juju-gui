@@ -10,12 +10,11 @@
   <script src="assets/mocha.js"></script>
   <script>
     var assert = chai.assert,
-        expect = chai.expect;
-
-    var should = chai.should();
-    console.log('mocha setup');
-    mocha.setup({'ui': 'bdd', 'ignoreLeaks': false, 'timeout': 20000})
-    console.log('mocha setup done');
+        expect = chai.expect,
+        should = chai.should();
+    mocha.reporter('html');
+    mocha.ui('bdd');
+    mocha.setup({ignoreLeaks: false, timeout: 20000})
   </script>
 
   <!-- Load up YUI base, app modules, and test utils -->
@@ -60,13 +59,15 @@
   <script>
   YUI_config = {
       async: false,
-      consoleEnabled: true,
-      delayUntil: 'domready'
+      delayUntil: 'domready',
+      debug: false,
+      combine: false
   };
 
   YUI().use(['node', 'event'], function(Y) {
-     // Run the tests.
-      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      // Run the tests.
+      if (window.mochaPhantomJS) {
+          mochaPhantomJS.run(); }
       else { mocha.run(); }
   });
   </script>

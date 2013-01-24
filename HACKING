@@ -104,8 +104,17 @@ API server for establishing a websocket).
 Running Unit Tests
 ==================
 
-Run the unit tests with the ``make test-debug`` and ``make test-prod``
-commands.
+Running tests is supported both within the browser and from the command line.
+To support testing from the command line two npm packages should be installed
+globally.
+
+  sudo npm install -g phantomjs
+  sudo npm install -g mocha-phantomjs
+
+After this make test-prod or make test-debug will run the CLI based test
+runner. If you need to debug a test in the browser use ``make test-server``.
+
+
 
 Running Lint
 ============
