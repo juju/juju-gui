@@ -13,6 +13,9 @@ YUI.add('juju-env', function(Y) {
     Environment.superclass.constructor.apply(this, arguments);
   }
 
+  var endpointToName = function(endpoint) {
+    return endpoint[0] + ':' + endpoint[1].name;
+  };
 
   Environment.NAME = 'env';
   Environment.ATTRS = {
@@ -204,19 +207,19 @@ YUI.add('juju-env', function(Y) {
      * Add a relation between two services.
      *
      * @method add_relation
-     * @param {String} endpoint_a A string `service:interface` representing
+     * @param {Object} endpointA An array of [service, interface] representing
          the first endpoint to connect.
-     * @param {String} endpoint_b A string `service:interface` representing
+     * @param {Object} endpointB An array of [service, interface] representing
          the second endpoint to connect.
      * @param {Function} callback A callable that must be called once the
          operation is performed.
      * @return {undefined} Sends a message to the server only.
      */
-    add_relation: function(endpoint_a, endpoint_b, callback) {
+    add_relation: function(endpointA, endpointB, callback) {
       this._send_rpc({
         'op': 'add_relation',
-        'endpoint_a': endpoint_a,
-        'endpoint_b': endpoint_b}, callback, true);
+        'endpoint_a': endpointToName(endpointA),
+        'endpoint_b': endpointToName(endpointB)}, callback, true);
     },
 
     get_charm: function(charm_url, callback) {
@@ -311,19 +314,19 @@ YUI.add('juju-env', function(Y) {
      * Remove a relation between two services.
      *
      * @method remove_relation
-     * @param {String} endpoint_a A string `service:interface` representing
+     * @param {Object} endpointA An array of [service, interface] representing
          the first endpoint to disconnect.
-     * @param {String} endpoint_b A string `service:interface` representing
+     * @param {Object} endpointB An array of [service, interface] representing
          the second endpoint to disconnect.
      * @param {Function} callback A callable that must be called once the
          operation is performed.
      * @return {undefined} Sends a message to the server only.
      */
-    remove_relation: function(endpoint_a, endpoint_b, callback) {
+    remove_relation: function(endpointA, endpointB, callback) {
       this._send_rpc({
         'op': 'remove_relation',
-        'endpoint_a': endpoint_a,
-        'endpoint_b': endpoint_b}, callback, true);
+        'endpoint_a': endpointToName(endpointA),
+        'endpoint_b': endpointToName(endpointB)}, callback, true);
     },
 
     /**
