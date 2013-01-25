@@ -7,9 +7,10 @@ Here is how to develop on this codebase.
 Developer Install
 =================
 
-Before you get the GUI, first you need to get Juju.  For PyJuju, we use a
-custom branch of Juju that supplies the websocket API we need.  (Go Juju will
-have a websocket API provided for us directly as part of the software.)
+Before you get the GUI, first you need to get Juju.  For PyJuju, the original
+Python-based implementation, we use a custom branch of Juju that supplies the
+websocket API we need.  (GoJuju, the newer Go-based implementation, will have
+a websocket API provided for us directly as part of the software.)
 
 ::
 
@@ -28,8 +29,8 @@ capabilities.  Note that your Python needs Twisted and Zookeeper installed,
 but the ``sudo apt-get install juju zookeeper`` command above should have
 already taken care of that for you.
 
-Go ahead and use the branch's sample.json file to pre-populate the
-environment.  In the future, you might want to investigate the "large.json"
+Go ahead and use the branch's ``sample.json`` file to pre-populate the
+environment.  In the future, you might want to investigate the ``large.json``
 also available there.
 
 ::
@@ -37,14 +38,15 @@ also available there.
   python improv.py -f sample.json
 
 Now it's time to actually get the GUI itself set up.  Juju GUI uses nodejs-
-based development tools, so you will need ``nodejs`` & ``npm`` from Chris
+based development tools, so you will need ``nodejs`` and ``npm`` from Chris
 Lea's node PPA. You also need ImageMagick for sprite generation, lbox to
-propose branches, python-sphinx to build docs, PyTZ to make releases, and
-python-virtualenv to build the Google Closure linter tools locally::
+propose branches, python-sphinx and python-yaml to build docs, PyTZ to make
+releases, and python-virtualenv to build the Google Closure linter tools
+locally::
 
   sudo add-apt-repository ppa:chris-lea/node.js
   sudo apt-get update
-  sudo apt-get install nodejs npm imagemagick lbox python-sphinx python-tz python-virtualenv
+  sudo apt-get install nodejs npm imagemagick lbox python-sphinx python-yaml python-tz python-virtualenv
 
 The jshint linter will be installed locally per branch, but if you want editor
 integration, you may want to install ``jshint`` globally in your system.  More
@@ -53,11 +55,11 @@ phantomjs should be installed globally.
 
 ::
 
-  sudo npm install -g jshint mocha-phantomjs phantomjs 
+  sudo npm install -g jshint mocha-phantomjs phantomjs
 
-If you recieve an error installing phantomjs, you can manually download and
+If you receive an error installing phantomjs, you can manually download and
 unpack the archive and then arrange for the "phantomjs" executable to be
-located on your path (e.g., by linking it into ~/bin).
+located on your path (e.g., by linking it into ``~/bin``).
 
 The Juju GUI can now be installed and run with::
 
@@ -72,9 +74,10 @@ need to download packages.  When ready, the server will print::
 
 You can then access the GUI at <http://localhost:8888/>.
 
-Note that the Makefile supports "make help" to try to introduce some of the
-more important targets.  Also note that if you use the "make prod" target, the
-password you should use with improv is "admin," despite the help text you see.
+Note that the Makefile supports ``make help`` to try to introduce some of the
+more important targets.  Also note that if you use the "make prod" target
+while using the PyJuju rapi-rollup improv script, the password you should use
+is "admin," despite the help text you see.
 
 Working with a Real Juju
 ========================
@@ -85,7 +88,7 @@ http://jujucharms.com/~juju-gui/precise/juju-gui or
 http://jujucharms.com/charms/precise/juju-gui for details.
 
 Alternatively, you can try the instructions below, but be warned that they
-have bit-rotted and we haven't felt the need to update them.  If you get them
+have bit-rotted and we have not felt the need to update them.  If you get them
 to work, please update the docs and submit a branch for review (see below).
 
 Bit-Rotted Instructions
@@ -140,14 +143,22 @@ Running Unit Tests
 ==================
 
 ``make test-prod`` or ``make test-debug`` will run the CLI based test
-runner. If you need to debug a test in the browser use ``make test-server``.
+runner. If you need to debug a test in the browser, use ``make test-server``.
 
 Running Lint
 ============
 
 Run the linters with ``make lint``.  ``make beautify`` will use the Google
 Closure tools to try and force the code to conform to some of the guidelines,
-with variable success.
+with variable success.  It can help, but we suggest you first commit your code
+to your branch and only then run make beautify, so you can easily see and
+evaluate the changes it made.
+
+If you have done a large refactoring and the yuidoc linter complains about a
+lot of code that no longer exists or has been moved or renamed, note that
+``make undocumented`` can reproduce the undocumented file so as to quiet the
+linter. If you need to do this, please make sure that the length (``wc -l``)
+of the new "undocumented" file is the same or smaller than it was before.
 
 .. _all-docs:
 
@@ -161,7 +172,7 @@ Code Documentation
 ------------------
 
 Generated documentation for the JavaScript code is available in the ``yuidoc``
-directory.  You can view the docs by running::
+directory.  You can build and view the docs by running::
 
   make yuidoc
   xdg-open yuidoc/index.html
@@ -172,13 +183,11 @@ for details on its syntax.
 Project Documentation
 ---------------------
 
-The project documentation is available in the ``docs/`` directory. It needs
-Sphinx and Python-yaml::
+The project documentation is available in the ``docs/`` directory. As already
+mentioned in the developer installation instructions above, it needs Sphinx
+and Python-yaml.  To build and view the documentation, use these commands::
 
-  sudo apt-get install python-sphinx python-yaml
-
-Build the documentation with the ``make sphinx`` command and view it::
-
+  make sphinx
   xdg-open docs/_build/html/index.html
 
 Filing Bugs
@@ -192,10 +201,12 @@ Proposing Branches
 ==================
 
 We use ``lbox`` to propose branches for review and submit them to the trunk.
-Gustavo Niemeyer has `a helpful blogpost <http://goo.gl/oHP1l>`_ about this
-tool.  See the process document
-:ref:`(docs/process.rst) <preparing-reviews>` for a step-by-step checklist on
-how to prepare branches for review.
+Gustavo Niemeyer has `a helpful blogpost`_ about this tool.  See the process
+document :ref:`(docs/process.rst) <preparing-reviews>` for a step-by-step
+checklist on how to prepare branches for review.
+
+.. _`a helpful blogpost`:
+    http://blog.labix.org/2011/11/17/launchpad-rietveld-happycodereviews
 
 Making Targets Quickly Without Bazaar
 =====================================

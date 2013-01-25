@@ -48,16 +48,19 @@ Checklist for Preparing for a Review
 
 - Update the ``CHANGES.yaml`` file with a description of the changes you
   made.  Reference Launchpad bugs if appropriate.
-- Propose your branch with lbox (see `this blog post <http://goo.gl/oHP1l>`_)
-  and Rietveld.  The command to use is ``lbox propose -cr``.  This will ask
-  you to write a commit message/cover letter for the review (use the usual
-  EDITOR environment variable to specify what to use for writing it).  It will
-  then ask you to sign into a Google account so that it can create a Rietveld
-  review request for you.
+- Propose your branch with lbox (see `this blog post`_) and Rietveld.  The
+  command to use is ``lbox propose -cr``.  This will ask you to write a commit
+  message/cover letter for the review (use the usual EDITOR environment
+  variable to specify what to use for writing it).  It will then ask you to
+  sign into a Google account so that it can create a Rietveld review request
+  for you.
 - If the branch is very minor, such as a documentation change, feel free to
   self-review.  However, *don't neglect to consider your responsibilities
   above*, especially the diff review and running tests (even if you think
   there is no way the tests could have been affected).
+
+.. _`this blog post`:
+    http://blog.labix.org/2011/11/17/launchpad-rietveld-happycodereviews
 
 It is your responsibility to get reviewers of your branch!  Reviewers will
 hopefully take it, but if they do not, rustle some up.
@@ -65,10 +68,10 @@ hopefully take it, but if they do not, rustle some up.
 When you get your reviews back, be appreciative, and be sure to respond to
 every request, even if it is to disagree.  If you do disagree, try to come to
 a resolution with the reviewer.  If the reviewer is out for a day, you can try
-to work it out with someone else instead, but it's much better to work
+to work it out with someone else instead, but it is much better to work
 directly with the person who raised the concern.
 
-Once you have two approving reviews (and no disapproving reviews, or an
+Once you have two approving reviews (and no disapproving reviews, or a
 resolution from someone else in lieu of an absent reviewer), you may land your
 branch.  Use ``lbox submit``.
 
@@ -108,6 +111,15 @@ Is Better: Incrementally Escaping Local Maxima
   * Before you ask for a change, think and make sure you cannot compromise
     reasonably with the coder.  If there is a low importance disagreement, in
     general the coder's position should win.
+  * Only make a rework request if absolutely necessary.  They are very
+    expensive in time, money, and morale.  One way to think about it is to
+    imagine filing a bug for the problem you see.  Are you confident it is a
+    bug?  If not, reconsider.  If it would be a bug, how would you triage it?
+    A critical bug almost certainly indicates something that should be
+    reworked now.  A high bug might or might not.  If it is anything else,
+    maybe it can wait, with a respectful email or bug that starts a
+    discussion, or establishes a goal or standard, or reminds everyone about a
+    previously agreed decision.
 
 - In your summary message, thank the coder.
 - In your summary message, if you ask for changes, make it clear whether you
