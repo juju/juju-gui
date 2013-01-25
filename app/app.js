@@ -242,6 +242,10 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         notifications: this.db.notifications});
 
+      this.on('*:navigateTo', function(e) {
+        this.navigate(e.url);
+      }, this);
+
       // Notify user attempts to modify the environment without permission.
       this.env.on('permissionDenied', this.onEnvPermissionDenied, this);
 
