@@ -54,20 +54,20 @@ describe('views.ViewportModule', function() {
     // would like to know when this method is called relative to the
     // beforePageSizeRecalculation and afterPageSizeRecalculation events, so we
     // will inject a marker into the event stream.
-    view.setAllTheDimentions = function() {
-      events.push('setAllTheDimentions called');
+    view.setAllTheDimensions = function() {
+      events.push('setAllTheDimensions called');
     };
     // Inject a topology component that records events.
     view.set('component', topo);
     view.resized();
     events.should.eql(
         ['beforePageSizeRecalculation',
-         'setAllTheDimentions called',
+         'setAllTheDimensions called',
          'afterPageSizeRecalculation']);
   });
 });
 
-describe('views.ViewportModule.setAllTheDimentions', function() {
+describe('views.ViewportModule.setAllTheDimensions', function() {
   var views, Y, testUtils, view, width, height, canvas, svg, topo, zoomPlane;
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node', 'juju-views', 'juju-tests-utils'],
@@ -98,9 +98,9 @@ describe('views.ViewportModule.setAllTheDimentions', function() {
       height: height,
       width: width
     };
-    // Since all of the tests inspect the output of setAllTheDimentions, we can
+    // Since all of the tests inspect the output of setAllTheDimensions, we can
     // just call it here and the tests will just contain assertions.
-    view.setAllTheDimentions(dimentions, canvas, svg, topo, zoomPlane);
+    view.setAllTheDimensions(dimentions, canvas, svg, topo, zoomPlane);
   });
 
   it('should set canvas dimensions', function() {
