@@ -20,12 +20,29 @@ YUI.add('juju-topology-viewport', function(Y) {
       }
     },
 
-    // for testing
+    /**
+     * Retrieve the DOM element that contains the UI.  This exists primarily to
+     * make it easy for tests to substitute their own container.
+     *
+     * @return {Object} A DOM node.
+     */
     getContainer: function() {
       return this.get('container');
     },
 
-    setAllTheDimentions: function(dimensions, canvas, svg, topo, zoomPlane) {
+    /**
+     * Propagate new dimensions to all the places that need them.
+     *
+     * @method setAllTheDimensions.
+     * @static
+     * @param {Object} dimensions The new height and width.
+     * @param {Object} canvas The canvas to which impute new dimensions.
+     * @param {Object} svg The SVG container to which impute new dimensions.
+     * @param {Object} topo The topology view to which impute new dimensions.
+     * @param {Object} zoomPlane The zoomPlane to which impute new dimensions.
+     * @return {undefined} Nothing, this function generates only side effects.
+     */
+    setAllTheDimensions: function(dimensions, canvas, svg, topo, zoomPlane) {
       // Get the canvas out of the way so we can calculate the size
       // correctly (the canvas contains the svg).  We want it to be the
       // smallest size we accept--no smaller or bigger--or else the
@@ -36,7 +53,6 @@ YUI.add('juju-topology-viewport', function(Y) {
       svg.setAttribute('height', dimensions.height);
       topo.vis.attr('width', dimensions.width);
       topo.vis.attr('height', dimensions.height);
-
       zoomPlane.setAttribute('width', dimensions.width);
       zoomPlane.setAttribute('height', dimensions.height);
       canvas.setStyles({
@@ -46,13 +62,15 @@ YUI.add('juju-topology-viewport', function(Y) {
       topo.set('size', [dimensions.width, dimensions.height]);
     },
 
-    /*
+    /**
      * Set the visualization size based on the viewport.
      *
-     * This event allows other page components that may unintentionally affect
-     * the page size, such as the charm panel, to get out of the way before we
-     * compute sizes.  Note the "afterPageSizeRecalculation" event at the end
-     * of this function.
+     * The beforePageSizeRecalculation and afterPageSizeRecalculation events
+     * allow other page components that may unintentionally affect the page
+     * size, such as the charm panel, to get out of the way before we compute
+     * sizes.
+     *
+     * @return {undefined} Nothing, this function generates only side effects.
      */
     resized: function() {
       var container = this.getContainer();
@@ -67,7 +85,7 @@ YUI.add('juju-topology-viewport', function(Y) {
       var zoomPlane = container.one('.zoom-plane');
       topo.fire('beforePageSizeRecalculation');
       var dimensions = utils.getEffectiveViewportSize(true, 800, 600);
-      this.setAllTheDimentions(dimensions, canvas, svg, topo, zoomPlane);
+      this.setAllTheDimensions(dimensions, canvas, svg, topo, zoomPlane);
       topo.fire('afterPageSizeRecalculation');
     }
 

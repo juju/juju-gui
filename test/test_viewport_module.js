@@ -1,41 +1,14 @@
 'use strict';
 
-describe('viewport module', function() {
-  var db, juju, models, viewContainer, views, Y, viewportModule, testUtils;
+describe('views.ViewportModule', function() {
+  var views, Y, testUtils;
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['node',
-      'juju-models',
-      'juju-views',
-      'juju-gui',
-      'juju-env',
-      'juju-tests-utils',
-      'node-event-simulate'],
-    function(Y) {
-      juju = Y.namespace('juju');
-      models = Y.namespace('juju.models');
-      views = Y.namespace('juju.views');
-      testUtils = Y.namespace('juju-tests').utils;
-      done();
-    });
-  });
-
-  beforeEach(function() {
-    viewContainer = Y.Node.create('<div />');
-    viewContainer.appendTo(Y.one('body'));
-    viewContainer.hide();
-    db = new models.Database();
-    var view = new views.environment(
-        { container: viewContainer,
-          db: db});
-    view.render();
-    view.rendered();
-    viewportModule = view.topo.modules.ViewportModule;
-  });
-
-  afterEach(function() {
-    if (viewContainer) {
-      viewContainer.remove(true);
-    }
+    Y = YUI(GlobalConfig).use(['node', 'juju-views', 'juju-tests-utils'],
+        function(Y) {
+          views = Y.namespace('juju.views');
+          testUtils = Y.namespace('juju-tests').utils;
+          done();
+        });
   });
 
   it('aborts a resize if the canvas is not available', function() {
@@ -80,8 +53,8 @@ describe('viewport module', function() {
     // Ignore setting dimensions, we're not testing that bit.  However, we
     // would like to know when this method is called relative to the
     // beforePageSizeRecalculation and afterPageSizeRecalculation events, so we
-    // will inject a marker in the event stream.
-    view.setAllTheDimentions = function () {
+    // will inject a marker into the event stream.
+    view.setAllTheDimentions = function() {
       events.push('setAllTheDimentions called');
     };
     // Inject a topology component that records events.
@@ -92,37 +65,66 @@ describe('viewport module', function() {
          'setAllTheDimentions called',
          'afterPageSizeRecalculation']);
   });
+});
+
+describe('views.ViewportModule.setAllTheDimentions', function() {
+  var views, Y, testUtils, view, width, height, canvas, svg, topo, zoomPlane;
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(['node', 'juju-views', 'juju-tests-utils'],
+        function(Y) {
+          views = Y.namespace('juju.views');
+          testUtils = Y.namespace('juju-tests').utils;
+          done();
+        });
+  });
+
+  beforeEach(function() {
+    height = Math.floor(Math.random() * 1000);
+    width = Math.floor(Math.random() * 1000);
+    // Build test doubles that record height and width settings.
+    topo = {vis: {}};
+    topo.set = testUtils.setter(topo);
+    topo.vis.attr = testUtils.setter(topo.vis);
+    view = new views.ViewportModule();
+    canvas = {style: {}};
+    canvas.setStyles = function(styles) {
+      Y.mix(canvas.style, styles, true);
+    };
+    zoomPlane = {};
+    zoomPlane.setAttribute = testUtils.setter(zoomPlane);
+    svg = {};
+    svg.setAttribute = testUtils.setter(svg);
+    var dimentions = {
+      height: height,
+      width: width
+    };
+    // Since all of the tests inspect the output of setAllTheDimentions, we can
+    // just call it here and the tests will just contain assertions.
+    view.setAllTheDimentions(dimentions, canvas, svg, topo, zoomPlane);
+  });
 
   it('should set canvas dimensions', function() {
-    var container = viewportModule.get('container');
-    var canvas = container.one('.topology-canvas');
-    // Initialize to absurd dimensions.
-    canvas.setStyles({height: '60px', width: '80px'});
-    viewportModule.resized();
-    canvas.getStyle('width').should.equal('800px');
-    canvas.getStyle('height').should.equal('600px');
+    assert.equal(canvas.style.width, width + 'px');
+    assert.equal(canvas.style.height, height + 'px');
   });
 
   it('should set zoom plane dimensions', function() {
-    var container = viewportModule.get('container');
-    var zoomPlane = container.one('.zoom-plane');
-    // Initialize to absurd dimensions.
-    zoomPlane.setAttribute('width', 10);
-    zoomPlane.setAttribute('height', 10);
-    viewportModule.resized();
-    zoomPlane.getAttribute('width').should.equal('800');
-    zoomPlane.getAttribute('height').should.equal('600');
+    assert.equal(zoomPlane.width, width);
+    assert.equal(zoomPlane.height, height);
   });
 
   it('should set svg dimensions', function() {
-    var container = viewportModule.get('container');
-    var svg = container.one('svg');
-    // Initialize to absurd dimensions.
-    svg.setAttribute('width', 10);
-    svg.setAttribute('height', 10);
-    viewportModule.resized();
-    svg.getAttribute('width').should.equal('800');
-    svg.getAttribute('height').should.equal('600');
+    assert.equal(svg.width, width);
+    assert.equal(svg.height, height);
+  });
+
+  it('should set topo dimensions', function() {
+    assert.deepEqual(topo.size, [width, height]);
+  });
+
+  it('should set topo.vis dimensions', function() {
+    assert.equal(topo.vis.width, width);
+    assert.equal(topo.vis.height, height);
   });
 
 });

@@ -51,6 +51,12 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
           return default_;
         }
       };
+    },
+
+    setter: function(attributes) {
+      return function(name, value) {
+        attributes[name] = value;
+      };
     }
   };
 
