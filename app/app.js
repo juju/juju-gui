@@ -262,10 +262,13 @@ YUI.add('juju-gui', function(Y) {
       this.env.on('delta', this.notifications.generate_notices,
           this.notifications);
 
-      // When the connection resets, reset the db and re-dispatch.
+      // When the connection resets, reset the db, re-login (a delta will
+      // arrive with the login), and redispatch.
       this.env.after('connectedChange', function(ev) {
         if (ev.newVal === true) {
           this.db.reset();
+          this.env.userIsAuthenticated = false;
+          this.env.login();
           this.dispatch();
         }
       }, this);
