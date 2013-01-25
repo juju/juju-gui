@@ -766,26 +766,6 @@
       var topoGetModelURL = view.topo.get('getModelURL');
       assert.equal('placeholder value', topoGetModelURL());
     });
-
-    // TODO: This will be fully testable once we have specification on the
-    // list view itself.  Skipped until then.
-    it.skip('must be able to switch between graph and list views',
-        function(done) {
-          var view = new views.environment({
-            container: container,
-            db: db,
-            env: env
-          }).render();
-          view.rendered();
-          var picker = container.one('.graph-list-picker'),
-              button = picker.one('.picker-button');
-          button.after('click', function() {
-            // Simulate click on list view, ensure that the view is displayed.
-            done();
-          });
-          button.simulate('click');
-        }
-    );
   });
 
   describe('view model support infrastructure', function() {
