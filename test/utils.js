@@ -41,6 +41,16 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       this.onmessage = function() {};
       this.onopen = function() {};
 
+    },
+
+    getter: function(attributes, default_) {
+      return function(name) {
+        if (attributes.hasOwnProperty(name)) {
+          return attributes[name];
+        } else {
+          return default_;
+        }
+      };
     }
   };
 

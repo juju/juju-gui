@@ -11,13 +11,39 @@ YUI.add('juju-topology-viewport', function(Y) {
    * @class ViewportModule
    * @namespace views
    **/
-  var ViewportModule = Y.Base.create('ViewportModule', d3ns.Module, [], {
+  views.ViewportModule = Y.Base.create('ViewportModule', d3ns.Module, [], {
 
     events: {
       yui: {
         windowresize: 'resized',
         rendered: 'resized'
       }
+    },
+
+    // for testing
+    getContainer: function() {
+      return this.get('container');
+    },
+
+    setAllTheDimentions: function(dimensions, canvas, svg, topo, zoomPlane) {
+      // Get the canvas out of the way so we can calculate the size
+      // correctly (the canvas contains the svg).  We want it to be the
+      // smallest size we accept--no smaller or bigger--or else the
+      // presence or absence of scrollbars may affect our calculations
+      // incorrectly.  The real canvas size will be set in a moment.
+      canvas.setStyles({height: '600px', width: '800px'});
+      svg.setAttribute('width', dimensions.width);
+      svg.setAttribute('height', dimensions.height);
+      topo.vis.attr('width', dimensions.width);
+      topo.vis.attr('height', dimensions.height);
+
+      zoomPlane.setAttribute('width', dimensions.width);
+      zoomPlane.setAttribute('height', dimensions.height);
+      canvas.setStyles({
+        width: dimensions.width + 'px',
+        height: dimensions.height + 'px'});
+      // Reset the scale parameters
+      topo.set('size', [dimensions.width, dimensions.height]);
     },
 
     /*
@@ -29,43 +55,25 @@ YUI.add('juju-topology-viewport', function(Y) {
      * of this function.
      */
     resized: function() {
-      var topo = this.get('component'),
-          container = this.get('container'),
-          vis = topo.vis,
-          svg = container.one('svg'),
-          canvas = container.one('.topology-canvas'),
-          zoomPlane = container.one('.zoom-plane');
-
-      if (!canvas || !svg) {
+      var container = this.getContainer();
+      var svg = container.one('svg');
+      var canvas = container.one('.topology-canvas');
+      // XXX Why?  Is this for testing?  Is there some race with the canvas
+      // and/or "svg" becoming available?
+      if (!Y.Lang.isValue(canvas) || !Y.Lang.isValue(svg)) {
         return;
       }
+      var topo = this.get('component');
+      var zoomPlane = container.one('.zoom-plane');
       topo.fire('beforePageSizeRecalculation');
-      // Get the canvas out of the way so we can calculate the size
-      // correctly (the canvas contains the svg).  We want it to be the
-      // smallest size we accept--no smaller or bigger--or else the
-      // presence or absence of scrollbars may affect our calculations
-      // incorrectly.
-      canvas.setStyles({height: '600px', width: '800px'});
       var dimensions = utils.getEffectiveViewportSize(true, 800, 600);
-      svg.setAttribute('width', dimensions.width);
-      svg.setAttribute('height', dimensions.height);
-      vis.attr('width', dimensions.width);
-      vis.attr('height', dimensions.height);
-
-      zoomPlane.setAttribute('width', dimensions.width);
-      zoomPlane.setAttribute('height', dimensions.height);
-      canvas.setStyles({
-        width: dimensions.width + 'px',
-        height: dimensions.height + 'px'});
-      // Reset the scale parameters
-      topo.set('size', [dimensions.width, dimensions.height]);
+      this.setAllTheDimentions(dimensions, canvas, svg, topo, zoomPlane);
       topo.fire('afterPageSizeRecalculation');
     }
 
   }, {
     ATTRS: {}
   });
-  views.ViewportModule = ViewportModule;
 }, '0.1.0', {
   requires: [
     'd3',

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('viewport module', function() {
-  var db, juju, models, viewContainer, views, Y, viewportModule;
+  var db, juju, models, viewContainer, views, Y, viewportModule, testUtils;
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
       'juju-models',
@@ -14,6 +14,7 @@ describe('viewport module', function() {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
+      testUtils = Y.namespace('juju-tests').utils;
       done();
     });
   });
@@ -37,16 +38,58 @@ describe('viewport module', function() {
     }
   });
 
-  it('should fire before and after events', function() {
-    var topo = viewportModule.get('component');
-    var events = [];
-    topo.fire = function(e) {
-      events.push(e);
+  it('aborts a resize if the canvas is not available', function() {
+    var container = {
+      one: testUtils.getter({'.topology-canvas': undefined}, {})
     };
-    viewportModule.resized();
+    var view = new views.ViewportModule();
+    view.getContainer = function() {return container;};
+    // Since we do not provide most of the environment needed by "resized" we
+    // know that it takes an early out if calling it does not raise an
+    // exception.
+    view.resized();
+  });
+
+  it('aborts a resize if the "svg" element is not available', function() {
+    var container = {
+      one: testUtils.getter({'svg': undefined}, {})
+    };
+    var view = new views.ViewportModule();
+    view.getContainer = function() {return container;};
+    // Since we do not provide most of the environment needed by "resized" we
+    // know that it takes an early out if calling it does not raise an
+    // exception.
+    view.resized();
+  });
+
+  it('should fire before and after events', function() {
+    var events = [];
+    var topo = {
+      fire: function(e) {
+        events.push(e);
+      },
+      get: function() {}
+    };
+    var container = {
+      one: testUtils.getter({}, {})
+    };
+
+    var view = new views.ViewportModule();
+    // Provide a test container that likes to return empty objects.
+    view.getContainer = function() {return container;};
+    // Ignore setting dimensions, we're not testing that bit.  However, we
+    // would like to know when this method is called relative to the
+    // beforePageSizeRecalculation and afterPageSizeRecalculation events, so we
+    // will inject a marker in the event stream.
+    view.setAllTheDimentions = function () {
+      events.push('setAllTheDimentions called');
+    };
+    // Inject a topology component that records events.
+    view.set('component', topo);
+    view.resized();
     events.should.eql(
         ['beforePageSizeRecalculation',
-         'sizeChange',
+         'setAllTheDimentions called',
          'afterPageSizeRecalculation']);
   });
 
