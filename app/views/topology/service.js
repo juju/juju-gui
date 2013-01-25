@@ -30,12 +30,6 @@ YUI.add('juju-topology-service', function(Y) {
         '.zoom-plane': {
           click: 'canvasClick'
         },
-        '.graph-list-picker .picker-button': {
-          click: 'showGraphListPicker'
-        },
-        '.graph-list-picker .picker-expanded': {
-          click: 'hideGraphListPicker'
-        },
         // Menu/Controls
         '.view-service': {
           click: 'viewServiceClick'
@@ -800,26 +794,6 @@ YUI.add('juju-topology-service', function(Y) {
     backgroundClicked: function() {
       var topo = this.get('component');
       topo.fire('clearState');
-    },
-
-    /*
-     * Event handler to show the graph-list picker
-     */
-    showGraphListPicker: function(evt) {
-      var container = this.get('container'),
-              picker = container.one('.graph-list-picker');
-      picker.addClass('inactive');
-      picker.one('.picker-expanded').addClass('active');
-    },
-
-    /*
-     * Event handler to hide the graph-list picker
-     */
-    hideGraphListPicker: function(evt) {
-      var container = this.get('container'),
-          picker = container.one('.graph-list-picker');
-      picker.removeClass('inactive');
-      picker.one('.picker-expanded').removeClass('active');
     },
 
     updateServiceMenuLocation: function() {

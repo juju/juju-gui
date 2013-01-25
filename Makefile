@@ -248,6 +248,8 @@ $(BUILD_FILES): $(JSFILES) $(THIRD_PARTY_JS) build-shared/juju-ui/templates.js \
 		bin/merge-files lib/merge-files.js | $(JAVASCRIPT_LIBRARIES)
 	rm -f $(BUILD_FILES)
 	mkdir -p build-shared/juju-ui/assets/combined-css/
+	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
+		build-shared/juju-ui/assets/combined-css/rail-x.png
 	bin/merge-files
 
 build-files: $(BUILD_FILES)
@@ -290,11 +292,11 @@ define link-files
 		build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/all-static.css" \
 		build-$(1)/juju-ui/assets/combined-css/
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-x.png" \
+		build-$(1)/juju-ui/assets/combined-css/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/juju-gui.css" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprite.css" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprite.png" build-$(1)/juju-ui/assets/
-	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
-		build-$(1)/juju-ui/assets/combined-css/rail-x.png
 	ln -sf "$(PWD)/node_modules/yui/event-simulate/event-simulate.js" \
 		build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/node_modules/yui/node-event-simulate/node-event-simulate.js" \
@@ -337,7 +339,7 @@ test-prod: build-prod
 
 test-server: build-debug
 	./test-server.sh debug true
-	
+
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
 	@echo "test-debug', to test the production or debug environments"
