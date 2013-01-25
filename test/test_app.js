@@ -73,14 +73,16 @@ function injectData(app, data) {
 
     it('should propagate login credentials from the configuration',
         function() {
+          var the_username = 'nehi';
+          var the_password = 'moonpie';
           // Replace the existing app.
           app = new Y.juju.App(
               { container: container,
-                user: 'nehi',
-                password: 'moonpie',
+                user: the_username,
+                password: the_password,
                 viewContainer: container});
-          app.env.get('user').should.equal('nehi');
-          app.env.get('password').should.equal('moonpie');
+          app.env.get('user').should.equal(the_username);
+          app.env.get('password').should.equal(the_password);
         });
 
     it('propagates the readOnly option from the configuration', function() {
@@ -100,22 +102,22 @@ function injectData(app, data) {
     });
 
     it('should be able to route objects to internal URLs', function() {
-      // take handles to database objects and ensure we can route to the view
-      // needed to show them
+      // Take handles to database objects and ensure we can route to the view
+      // needed to show them.
       var wordpress = app.db.services.getById('wordpress'),
           wp0 = app.db.units.get_units_for_service(wordpress)[0],
           wp_charm = app.db.charms.add({id: wordpress.get('charm')});
 
-      // 'service/wordpress/' is the primary and so other URL are not returned
+      // 'service/wordpress/' is the primary, so other URLs are not returned.
       app.getModelURL(wordpress).should.equal('/service/wordpress/');
-      // however passing 'intent' can force selection of another
+      // However, passing 'intent' can force selection of another one.
       app.getModelURL(wordpress, 'config').should.equal(
           '/service/wordpress/config');
 
-      // service units use argument rewriting (thus not /u/wp/0)
+      // Service units use argument rewriting (thus not /u/wp/0).
       app.getModelURL(wp0).should.equal('/unit/wordpress-0/');
 
-      // charms also require a mapping but only a name, not a function
+      // Charms also require a mapping, but only a name, not a function.
       app.getModelURL(wp_charm).should.equal(
           '/charms/charms/precise/wordpress-6/json');
     });
@@ -131,14 +133,15 @@ function injectData(app, data) {
           environment_name);
     });
 
-    it('should show a generic environment name if none configured', function() {
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container});
-      assert.equal(
-          container.one('#environment-name').get('text'),
-          'Environment');
-    });
+    it('should show a generic environment name if none configured',
+       function() {
+         app = new Y.juju.App(
+         { container: container,
+           viewContainer: container});
+         assert.equal(
+         container.one('#environment-name').get('text'),
+         'Environment');
+       });
 
     it('should show the provider type, when available', function() {
       var providerType = 'excellent provider';
@@ -229,10 +232,9 @@ function injectData(app, data) {
           dispatch_called = false,
           noop = function() {return this;};
 
-      // mock the db
+      // Mock the database.
       app.db = {
-        // mock out notifications
-        // so app can start normally
+        // Mock out notifications, so the app can start normally.
         notifications: {
           addTarget: noop,
           after: noop,
@@ -259,7 +261,7 @@ function injectData(app, data) {
       reset_called.should.equal(true);
       dispatch_called.should.equal(true);
 
-      // trigger a second time and verify
+      // Trigger a second time and verify.
       env.set('connected', false);
       reset_called = false;
       dispatch_called = false;
@@ -301,8 +303,6 @@ function injectData(app, data) {
             viewContainer: container,
             env: env,
             charm_store: {} });
-
-      //app.updateEndpoints = function() {};
       env.get_endpoints = function() {};
     });
 

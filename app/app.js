@@ -1,6 +1,7 @@
 'use strict';
+
 /**
- * Provides the main app class.
+ * Provides the main app class, based on the YUI App framework.
  *
  * @module app
  */
@@ -23,15 +24,25 @@ YUI.add('juju-gui', function(Y) {
    * @class App
    */
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
+
+    /*
+     * Views
+     *
+     * The views encapsulate the functionality blocks that output
+     * the GUI pages. The "parent" attribute defines the hierarchy.
+     *
+     *  @attribute views
+     */
     views: {
-      environment: {
-        type: 'juju.views.environment',
-        preserve: true
-      },
 
       login: {
         type: 'juju.views.login',
         preserve: false
+      },
+
+      environment: {
+        type: 'juju.views.environment',
+        preserve: true
       },
 
       service: {
@@ -87,16 +98,19 @@ YUI.add('juju-gui', function(Y) {
 
     },
 
-    /*
+    /**
      * Data driven behaviors
      *
-     * This is a placeholder for real behaviors associated with DOM Node data-*
+     * Placeholder for real behaviors associated with DOM Node data-*
      * attributes.
      *
      *  @attribute behaviors
      */
     behaviors: {
       timestamp: {
+        /**
+         * Wait for the DOM to be built before rendering timestamps.
+         */
         callback: function() {
           var self = this;
           Y.later(6000, this, function(o) {
@@ -111,7 +125,8 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * This method activates the keyboard listeners.
+     * Activate the keyboard listeners. Only called by the main index.html,
+     * not by the tests' one.
      */
     activateHotkeys: function() {
       Y.one(window).on('keydown', function(ev) {
@@ -126,8 +141,8 @@ YUI.add('juju-gui', function(Y) {
           key.push('shift');
         }
         if (key.length === 0 &&
-            // If we have no modifier, check if this is a function or the esc
-            // key. It it is not one of these keys, just do nothing.
+            // If we have no modifier, check if this is a function or the ESC
+            // key. If it is not one of these keys, do nothing.
             !(ev.keyCode >= 112 && ev.keyCode <= 123 || ev.keyCode === 27)) {
           return; //nothing to do
         }
@@ -158,7 +173,7 @@ YUI.add('juju-gui', function(Y) {
       }, this);
 
       /**
-       * It transforms a numeric keyCode value to its string version. Example:
+       * Transform a numeric keyCode value to its string version. Example:
        * 16 returns 'shift'.
        * @param {number} keyCode The numeric value of a key.
        * @return {string} The string version of the given keyCode.
@@ -193,11 +208,10 @@ YUI.add('juju-gui', function(Y) {
      * @method initializer
      */
     initializer: function() {
-      // If this flag is true, start the application with the console activated
+      // If this flag is true, start the app with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
 
-      // Concession to testing, they need muck
-      // with console, we can't as well.
+      // Concession to testing, they need muck with console, we can't as well.
       if (window.mochaPhantomJS === undefined) {
         if (consoleEnabled) {
           consoleManager.native();
@@ -218,7 +232,7 @@ YUI.add('juju-gui', function(Y) {
         environment_node.set('text', environment_name);
       }
       // Create an environment facade to interact with.
-      // allow env as an attr/option to ease testing
+      // Allow "env" as an attribute/option to ease testing.
       if (this.get('env')) {
         this.env = this.get('env');
       } else {
@@ -252,13 +266,13 @@ YUI.add('juju-gui', function(Y) {
       // When the provider type becomes available, display it.
       this.env.after('providerTypeChange', this.onProviderTypeChange);
 
-      // Once the user logs in we need to redraw.
+      // Once the user logs in, we need to redraw.
       this.env.after('login', this.onLogin, this);
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);
 
-      // Feed delta changes to the notifications system
+      // Feed delta changes to the notifications system.
       this.env.on('delta', this.notifications.generate_notices,
           this.notifications);
 
@@ -270,8 +284,8 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      // If the database updates redraw the view (distinct from model updates)
-      // TODO - Bound views will automatically update this on individual models
+      // If the database updates, redraw the view (distinct from model updates)
+      // TODO: bound views will automatically update this on individual models.
       this.db.on('update', this.on_database_changed, this);
 
       this.enableBehaviors();
@@ -288,7 +302,7 @@ YUI.add('juju-gui', function(Y) {
         }
       }, this);
 
-      // Create the CharmPanel instance once the app.js is initialized
+      // Create the CharmPanel instance once the app is initialized.
       var popup = views.CharmPanel.getInstance({
         charm_store: this.charm_store,
         env: this.env,
@@ -330,9 +344,9 @@ YUI.add('juju-gui', function(Y) {
       if (updateNeeded) {
         this.updateEndpoints();
       } else {
-        // Check to see if any services have been removed (if there are, and
-        // new ones also, updateEndpoints will replace the whole map, so only
-        // do this if needed).
+        // Check to see if any services have been removed. If there are any,
+        // and new ones also, updateEndpoints will replace the whole map,
+        // so only do this if needed.
         Y.Object.each(this.serviceEndpoints, function(key, value, obj) {
           if (self.db.services.getById(key) === null) {
             delete(self.serviceEndpoints[key]);
@@ -350,7 +364,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * When services are added we update endpoints here.
+     * When services are added, we update endpoints here.
      *
      * @method updateEndpoints
      */
@@ -399,8 +413,8 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     _prefetch_service: function(service) {
-      // only prefetch once
-      // we redispatch to the service view after we have status
+      // Only prefetch once; we redispatch to the service view after we have
+      // status.
       if (!service || service.get('prefetch')) { return; }
       service.set('prefetch', true);
 
@@ -439,7 +453,7 @@ YUI.add('juju-gui', function(Y) {
         querystring: req.query
       }, {}, function(view) {
         // If the view contains a method call fitToWindow,
-        // we will execute it after getting the view rendered
+        // we will execute it after getting the view rendered.
         if (view.fitToWindow) {
           view.fitToWindow();
         }
@@ -510,8 +524,8 @@ YUI.add('juju-gui', function(Y) {
     /**
      * Persistent Views
      *
-     * 'notifications' is a preserved views that remains rendered on all main
-     * views.  we manually create an instance of this view and insert it into
+     * 'notifications' is a preserved view that remains rendered on all main
+     * views.  We manually create an instance of this view and insert it into
      * the App's view metadata.
      *
      * @method show_notifications_view
@@ -612,7 +626,7 @@ YUI.add('juju-gui', function(Y) {
      * Display the provider type.
      *
      * The provider type arrives asynchronously.  Instead of updating the
-     * display from the environment code (a separation of concerns violation)
+     * display from the environment code (a separation of concerns violation),
      * we update it here.
      *
      * @method onProviderTypeChange
@@ -630,7 +644,7 @@ YUI.add('juju-gui', function(Y) {
           view = this.getViewInfo('environment'),
           options = {
             getModelURL: Y.bind(this.getModelURL, this),
-            /** A simple closure so changes to the value are available.*/
+            /** A simple closure so changes to the value are available. */
             getServiceEndpoints: function() {
               return self.serviceEndpoints;},
             loadService: this.loadService,
@@ -638,6 +652,9 @@ YUI.add('juju-gui', function(Y) {
             env: this.env};
 
       this.showView('environment', options, {
+        /**
+         * Let the component framework know that the view has been rendered.
+         */
         callback: function() {
           this.views.environment.instance.rendered();
         },
@@ -679,7 +696,7 @@ YUI.add('juju-gui', function(Y) {
     /**
      * Object routing support
      *
-     * This is a utility that helps map from model objects to routes
+     * This utility helps map from model objects to routes
      * defined on the App object.
      *
      * To support this we supplement our routing information with
@@ -687,20 +704,21 @@ YUI.add('juju-gui', function(Y) {
      *
      * model: model.name (required)
      * reverse_map: (optional) A reverse mapping of route_path_key to the
-     *   name of the attribute on the model.  If no value is provided its
+     *   name of the attribute on the model.  If no value is provided, it is
      *   used directly as attribute name.
      * intent: (optional) A string named intent for which this route should
      *   be used. This can be used to select which subview is selected to
-     *   resolve a models route.
+     *   resolve a model's route.
      *
      * @method getModelURL
      * @param {object} model The model to determine a route url for.
      * @param {object} [intent] the name of an intent associated with a route.
-     *   When more than one route can match a model the route w/o an intent is
+     *   When more than one route can match a model, the route w/o an intent is
      *   matched when this attribute is missing.  If intent is provided as a
-     *   string it is matched to the 'intent' attribute specified on the route.
-     *   This is effectively a tag.
+     *   string, it is matched to the 'intent' attribute specified on the
+     *   route. This is effectively a tag.
      *
+     * @method getModelURL
      */
     getModelURL: function(model, intent) {
       var matches = [],
@@ -714,16 +732,15 @@ YUI.add('juju-gui', function(Y) {
             required_model = route.model,
             reverse_map = route.reverse_map;
 
-        // Fail fast on wildcard paths, routes w/o models
-        // and when the model doesn't match the route type
+        // Fail fast on wildcard paths, routes w/o models,
+        // and when the model does not match the route type.
         if (path === '*' ||
             required_model === undefined ||
             model.name !== required_model) {
           return;
         }
 
-        // Replace the path params with items from the
-        // models attrs
+        // Replace the path params with items from the model's attributes.
         path = path.replace(regexPathParam,
             function(match, operator, key) {
               if (reverse_map !== undefined && reverse_map[key]) {
@@ -737,17 +754,15 @@ YUI.add('juju-gui', function(Y) {
           intent: route.intent}));
       });
 
-      // See if intent is in the match. Because the default is
-      // to match routes without intent (undefined) this test
-      // can always be applied.
+      // See if intent is in the match. Because the default is to match routes
+      // without intent (undefined), this test can always be applied.
       matches = Y.Array.filter(matches, function(match) {
         return match.intent === intent;
       });
 
       if (matches.length > 1) {
         console.warn('Ambiguous routeModel', attrs.id, matches);
-        // Default to the last route in this configuration
-        // error case.
+        // Default to the last route in this configuration error case.
         idx = matches.length - 1;
       }
       return matches[idx] && matches[idx].path;
@@ -763,8 +778,8 @@ YUI.add('juju-gui', function(Y) {
     _setRoutes: function(routes) {
       this._routes = [];
       Y.Array.each(routes, function(route) {
-        // additionally pass route as options
-        // needed to pass through the attribute setter
+        // Additionally pass route as options needed to pass through the
+        // attribute setter.
         this.route(route.path, route.callback, route);
       }, this);
       return this._routes.concat();
@@ -776,13 +791,12 @@ YUI.add('juju-gui', function(Y) {
     route: function(path, callback, options) {
       JujuGUI.superclass.route.call(this, path, callback);
 
-      // This is a whitelist to spare the extra juggling
+      // A whitelist to spare the extra juggling.
       if (options.model) {
         var r = this._routes,
                 idx = r.length - 1;
         if (r[idx].path === path) {
-          // Combine our options with the default
-          // computed route information
+          // Combine our options with the default computed route information.
           r[idx] = Y.mix(r[idx], options);
         } else {
           console.error(
@@ -795,16 +809,28 @@ YUI.add('juju-gui', function(Y) {
   }, {
     ATTRS: {
       charm_store: {},
+      /*
+       * Routes
+       *
+       * Evaluate the request path against all defined routes, and invoke the
+       * callbacks for all the ones that match (do not stop at the first one).
+       *
+       *  @attribute routes
+       */
       routes: {
         value: [
+          // Called on each request.
           { path: '*', callback: 'check_user_credentials'},
           { path: '*', callback: 'show_notifications_view'},
+          // Charms.
           { path: '/charms/', callback: 'show_charm_collection'},
           { path: '/charms/*charm_store_path',
             callback: 'show_charm',
             model: 'charm'},
+          // Notifications.
           { path: '/notifications/',
             callback: 'show_notifications_overview'},
+          // Services.
           { path: '/service/:id/config',
             callback: 'show_service_config',
             intent: 'config',
@@ -820,10 +846,12 @@ YUI.add('juju-gui', function(Y) {
           { path: '/service/:id/',
             callback: 'show_service',
             model: 'service'},
+          // Units.
           { path: '/unit/:id/',
             callback: 'show_unit',
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit'},
+          // Root.
           { path: '/', callback: 'show_environment'}
         ]
       }
@@ -839,7 +867,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-notifications',
-    // This alias doesn't seem to work, including refs by hand.
+    // This alias does not seem to work, including refs by hand.
     'juju-controllers',
     'juju-notification-controller',
     'juju-env',
