@@ -11,7 +11,8 @@
         ['service', 'add', {
           'charm': 'cs:precise/wordpress-6',
           'id': 'wordpress',
-          'exposed': false
+          'exposed': false,
+          'annotations': {'gui.x': 100, 'gui.y': 200}
         }],
         ['service', 'add', {
           'charm': 'cs:precise/mediawiki-3',
@@ -92,7 +93,6 @@
         env = new juju.Environment({conn: conn});
         env.connect();
         conn.open();
-        env.dispatch_result(environment_delta);
         done();
       });
     });
@@ -102,12 +102,14 @@
       done();
     });
 
-    beforeEach(function(done) {
+    beforeEach(function() {
       container = Y.Node.create('<div />').setStyle('visibility', 'hidden');
       Y.one('body').prepend(container);
       db = new models.Database();
-      db.on_delta({data: environment_delta});
-      done();
+      // Use a clone to avoid any mutation
+      // to the input set (as happens with processed
+      // annotations, its a direct reference).
+      db.on_delta({data: Y.clone(environment_delta)});
     });
 
     afterEach(function(done) {
@@ -184,6 +186,52 @@
           done();
         }
     );
+
+    it('must properly count subordinate relations', function() {
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env
+      });
+      var tmp_data = {
+        result: [
+          ['service', 'add', {
+            'subordinate': true,
+            'charm': 'cs:precise/puppet-2',
+            'id': 'puppet2'
+          }],
+          ['relation', 'add', {
+            'interface': 'juju-info',
+            'scope': 'container',
+            'endpoints':
+             [['wordpress', {'role': 'server', 'name': 'juju-info'}],
+              ['puppet2', {'role': 'client', 'name': 'juju-info'}]],
+            'id': 'relation-0000000007'
+          }]
+        ],
+        op: 'delta'
+      };
+
+      view.render();
+
+      var relationModule = view.topo.modules.RelationModule;
+
+      function validateRelationCount(serviceNode, module) {
+        var service = d3.select(serviceNode.getDOMNode()).datum();
+        return module.subordinateRelationsForService(service).length === 1;
+      }
+
+      container.all('.subordinate.service').each(function(service) {
+        validateRelationCount(service, relationModule).should.equal(true);
+      });
+
+      db.on_delta({ data: tmp_data });
+      view.render();
+
+      container.all('.subordinate.service').each(function(service) {
+        validateRelationCount(service, relationModule).should.equal(true);
+      });
+    });
 
     it('must not duplicate nodes when services are added', function() {
       var view = new views.environment({
@@ -315,8 +363,8 @@
             var node = d3.select(relation);
             var line = node.select('line');
             var boxpair = node.datum();
-            var connectors = boxpair.source()
-              .getConnectorPair(boxpair.target());
+            var connectors = boxpair.source
+              .getConnectorPair(boxpair.target);
 
             return parseFloat(line.attr('x1')) === connectors[0][0] &&
            parseFloat(line.attr('y1')) === connectors[0][1] &&
@@ -395,6 +443,43 @@
         serviceNode.all('.service-block-image').size().should.equal(1);
       });
     });
+
+    it('must be able to use position annotations',
+       function() {
+         var view = new views.environment({
+           container: container,
+           db: db,
+           env: env
+         });
+         var tmp_data = {
+           op: 'delta',
+           result: [
+             ['service', 'add',
+               {
+                 'subordinate': true,
+                 'charm': 'cs:precise/wordpress-6',
+                 'id': 'wordpress',
+                 'annotations': {'gui.x': 374.1, 'gui.y': 211.2}
+               }]]};
+         var properTransform = /translate\((\d+\.?\d*),(\d+\.?\d*)\)/;
+         var node, match;
+
+         view.render();
+
+         // Test values from initial load.
+         node = view.topo.modules.ServiceModule.getServiceNode('wordpress');
+         match = node.getAttribute('transform').match(properTransform);
+         match[1].should.eql('100');
+         match[2].should.eql('200');
+
+         db.on_delta({ data: tmp_data });
+         view.update();
+
+         //On annotation change  position should be updated.
+         match = node.getAttribute('transform').match(properTransform);
+         match[1].should.eql('374.1');
+         match[2].should.eql('211.2');
+       });
 
     it('must be able to render subordinate relation indicators',
        function() {
@@ -663,26 +748,6 @@
       var topoGetModelURL = view.topo.get('getModelURL');
       assert.equal('placeholder value', topoGetModelURL());
     });
-
-    // TODO: This will be fully testable once we have specification on the
-    // list view itself.  Skipped until then.
-    it.skip('must be able to switch between graph and list views',
-        function(done) {
-          var view = new views.environment({
-            container: container,
-            db: db,
-            env: env
-          }).render();
-          view.rendered();
-          var picker = container.one('.graph-list-picker'),
-              button = picker.one('.picker-button');
-          button.after('click', function() {
-            // Simulate click on list view, ensure that the view is displayed.
-            done();
-          });
-          button.simulate('click');
-        }
-    );
   });
 
   describe('view model support infrastructure', function() {
@@ -813,44 +878,6 @@
          boxes[0].id.should.equal('mysql');
          boxes[3].id.should.equal('wordpress');
        });
-
-    it('must be able to support pairs of boundingBoxes', function() {
-      var b1 = new views.BoundingBox(),
-          b2 = new views.BoundingBox();
-
-      b1.x = 0; b1.y = 0;
-      b1.w = 100; b1.h = 200;
-
-      b2.x = 200; b2.y = 300;
-      b2.w = 100; b2.h = 200;
-
-      var pair = views.BoxPair()
-                           .source(b1)
-                           .target(b2);
-
-      pair.source().getXY().should.eql([0, 0]);
-      pair.target().getXY().should.eql([200, 300]);
-    });
-
-    it('must support composite modelIds on BoxPairs', function() {
-      var b1 = new views.BoundingBox(),
-          b2 = new views.BoundingBox(),
-          relation = new models.Relation({endpoints: [
-            ['haproxy', {name: 'app'}],
-            ['mediawiki', {name: 'proxy'}]]}),
-          service1 = new models.Service({id: 'mediawiki'}),
-          service2 = new models.Service({id: 'haproxy'});
-
-      b1.model(service1);
-      b2.model(service2);
-      var pair = views.BoxPair()
-                           .source(b1)
-                           .target(b2)
-                           .model(relation);
-      pair.modelIds().should.not.contain(',');
-      pair.modelIds().should.equal(
-          'service-mediawiki:app-service-haproxy:proxy');
-    });
 
   });
 

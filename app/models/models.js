@@ -32,7 +32,6 @@ YUI.add('juju-models', function(Y) {
           Y.each(data, function(value, key) {
             o[key] = value;
           });
-          // XXX Fire model changed event manually if we need it later?
         }
       }
     }
@@ -450,20 +449,16 @@ YUI.add('juju-models', function(Y) {
       this.relations.reset();
       this.units.reset();
       this.notifications.reset();
-      console.log('Reset Application Database');
     },
 
     on_delta: function(delta_evt) {
       var changes = delta_evt.data.result;
-      console.groupCollapsed('Delta');
-      console.log('Delta', this, changes);
       var change_type, model_class = null,
           self = this;
 
       changes.forEach(
           Y.bind(function(change) {
             change_type = change[0];
-            console.log('change', this, change);
             this.getModelListByModelName(change_type).process_delta(
                 change[1], change[2]);
           }, this));
@@ -471,7 +466,6 @@ YUI.add('juju-models', function(Y) {
         self.units.update_service_unit_aggregates(service);
       });
       this.fire('update');
-      console.groupEnd();
     }
 
   });

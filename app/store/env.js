@@ -13,6 +13,9 @@ YUI.add('juju-env', function(Y) {
     Environment.superclass.constructor.apply(this, arguments);
   }
 
+  var endpointToName = function(endpoint) {
+    return endpoint[0] + ':' + endpoint[1].name;
+  };
 
   Environment.NAME = 'env';
   Environment.ATTRS = {
@@ -29,7 +32,6 @@ YUI.add('juju-env', function(Y) {
     // Prototype methods for your new class
 
     initializer: function() {
-      console.log('Env Init');
       // Define custom events
       this.publish('msg', {
         emitFacade: true,
@@ -53,14 +55,11 @@ YUI.add('juju-env', function(Y) {
     },
 
     connect: function() {
-      console.log('Env Connect');
       // Allow an external websocket to be passed in.
       var conn = this.get('conn');
-      console.log('ext ws', conn);
       if (conn) {
         this.ws = conn;
       } else {
-        console.log('Creating new websocket', this.get('socket_url'));
         this.ws = new Y.ReconnectingWebSocket(this.get('socket_url'));
       }
       this.ws.debug = this.get('debug');
@@ -71,22 +70,17 @@ YUI.add('juju-env', function(Y) {
       return this;
     },
 
-    on_open: function(data) {
-      console.log('Env: Connected');
-    },
+    on_open: function(data) {},
 
     on_close: function(data) {
-      console.log('Env: Disconnect');
       this.set('connected', false);
     },
 
     on_message: function(evt) {
-      console.log('Env: Receive', evt.data);
       var msg = Y.JSON.parse(evt.data);
       // The "ready" attribute indicates that this is a server's initial
       // greeting.  It provides a few initial values that we care about.
       if (msg.ready) {
-        console.log('Env: Handshake Complete');
         this.set('connected', true);
         this.set('providerType', msg.provider_type);
         this.set('defaultSeries', msg.default_series);
@@ -114,7 +108,6 @@ YUI.add('juju-env', function(Y) {
     },
 
     dispatch_result: function(data) {
-      console.log('Env: Dispatch Result', data);
       this._dispatch_rpc_result(data);
       this._dispatch_event(data);
     },
@@ -124,7 +117,6 @@ YUI.add('juju-env', function(Y) {
         console.warn('Env: Unknown evt kind', evt);
         return;
       }
-      console.log('Env: Dispatch Evt', evt.op);
       this.fire(evt.op, {data: evt});
     },
 
@@ -132,7 +124,6 @@ YUI.add('juju-env', function(Y) {
       if ('request_id' in msg) {
         var tid = msg.request_id;
         if (tid in this._txn_callbacks) {
-          console.log('Env: Dispatch Rpc');
           this._txn_callbacks[tid].apply(this, [msg]);
           delete this._txn_callbacks[tid];
         }
@@ -174,7 +165,6 @@ YUI.add('juju-env', function(Y) {
       }
       op.request_id = tid;
       var msg = Y.JSON.stringify(op);
-      console.log('Env: send msg', tid, msg, op);
       this.ws.send(msg);
     },
 
@@ -217,19 +207,19 @@ YUI.add('juju-env', function(Y) {
      * Add a relation between two services.
      *
      * @method add_relation
-     * @param {String} endpoint_a A string `service:interface` representing
+     * @param {Object} endpointA An array of [service, interface] representing
          the first endpoint to connect.
-     * @param {String} endpoint_b A string `service:interface` representing
+     * @param {Object} endpointB An array of [service, interface] representing
          the second endpoint to connect.
      * @param {Function} callback A callable that must be called once the
          operation is performed.
      * @return {undefined} Sends a message to the server only.
      */
-    add_relation: function(endpoint_a, endpoint_b, callback) {
+    add_relation: function(endpointA, endpointB, callback) {
       this._send_rpc({
         'op': 'add_relation',
-        'endpoint_a': endpoint_a,
-        'endpoint_b': endpoint_b}, callback, true);
+        'endpoint_a': endpointToName(endpointA),
+        'endpoint_b': endpointToName(endpointB)}, callback, true);
     },
 
     get_charm: function(charm_url, callback) {
@@ -258,7 +248,6 @@ YUI.add('juju-env', function(Y) {
      */
     deploy: function(charm_url, service_name, config, config_raw, num_units,
                      callback) {
-      console.log(charm_url, service_name, config, config_raw, num_units);
       this._send_rpc(
           { op: 'deploy',
             service_name: service_name,
@@ -325,19 +314,19 @@ YUI.add('juju-env', function(Y) {
      * Remove a relation between two services.
      *
      * @method remove_relation
-     * @param {String} endpoint_a A string `service:interface` representing
+     * @param {Object} endpointA An array of [service, interface] representing
          the first endpoint to disconnect.
-     * @param {String} endpoint_b A string `service:interface` representing
+     * @param {Object} endpointB An array of [service, interface] representing
          the second endpoint to disconnect.
      * @param {Function} callback A callable that must be called once the
          operation is performed.
      * @return {undefined} Sends a message to the server only.
      */
-    remove_relation: function(endpoint_a, endpoint_b, callback) {
+    remove_relation: function(endpointA, endpointB, callback) {
       this._send_rpc({
         'op': 'remove_relation',
-        'endpoint_a': endpoint_a,
-        'endpoint_b': endpoint_b}, callback, true);
+        'endpoint_a': endpointToName(endpointA),
+        'endpoint_b': endpointToName(endpointB)}, callback, true);
     },
 
     /**

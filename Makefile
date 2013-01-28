@@ -55,7 +55,7 @@ endif
 ULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 1 | sed 's/[ :-]//g')
 PENULTIMATE_VERSION=$(shell grep '^-' CHANGES.yaml | head -n 2 | tail -n 1 \
     | sed 's/[ :-]//g')
-RELEASE_TARGETS=dist distfile
+RELEASE_TARGETS=dist
 # If the user specified (via setting an environment variable on the command
 # line) that this is a final (non-development) release, set the version number
 # and series appropriately.
@@ -144,8 +144,9 @@ help:
 	@echo "prod: run the production environment (aggregated, compressed files)"
 	@echo "clean: remove the generated build directories"
 	@echo "clean-all: remove build, deps and doc directories"
-	@echo "test-debug: run tests in the browser from the debug environment"
-	@echo "test-prod: run tests in the browser from the production environment"
+	@echo "test-debug: run tests on the cli from the debug environment"
+	@echo "test-prod: run tests on the cli from the production environment"
+	@echo "test-server: run tests in the browser from the debug environment"
 	@echo "prep: beautify and lint the source"
 	@echo "docs: generate Sphinx and YUIdoc documentation"
 	@echo "help: this description"
@@ -247,6 +248,8 @@ $(BUILD_FILES): $(JSFILES) $(THIRD_PARTY_JS) build-shared/juju-ui/templates.js \
 		bin/merge-files lib/merge-files.js | $(JAVASCRIPT_LIBRARIES)
 	rm -f $(BUILD_FILES)
 	mkdir -p build-shared/juju-ui/assets/combined-css/
+	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
+		build-shared/juju-ui/assets/combined-css/rail-x.png
 	bin/merge-files
 
 build-files: $(BUILD_FILES)
@@ -289,11 +292,11 @@ define link-files
 		build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/all-static.css" \
 		build-$(1)/juju-ui/assets/combined-css/
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-x.png" \
+		build-$(1)/juju-ui/assets/combined-css/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/juju-gui.css" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprite.css" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/sprite.png" build-$(1)/juju-ui/assets/
-	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
-		build-$(1)/juju-ui/assets/combined-css/rail-x.png
 	ln -sf "$(PWD)/node_modules/yui/event-simulate/event-simulate.js" \
 		build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/node_modules/yui/node-event-simulate/node-event-simulate.js" \
@@ -333,6 +336,9 @@ test-debug: build-debug
 
 test-prod: build-prod
 	./test-server.sh prod
+
+test-server: build-debug
+	./test-server.sh debug true
 
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"

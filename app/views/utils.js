@@ -553,10 +553,16 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
   utils.validate = function(values, schema) {
-    console.group('view.utils.validate');
-    console.log('validating', values, 'against', schema);
     var errors = {};
 
+    /**
+     * Translate a value into a string, translating non-values into an empty
+     * string.
+     *
+     * @method toString
+     * @param {Object} value The value to stringify.
+     * @return {String} The input value translated into a string.
+     */
     function toString(value) {
       if (value === null || value === undefined) {
         return '';
@@ -574,7 +580,6 @@ YUI.add('juju-view-utils', function(Y) {
 
     Y.Object.each(schema, function(field_definition, name) {
       var value = toString(values[name]);
-      console.log('validating field', name, 'with value', value);
 
       if (field_definition.type === 'int') {
         if (!value) {
@@ -597,10 +602,7 @@ YUI.add('juju-view-utils', function(Y) {
         }
       }
 
-      console.log('generated this error (possibly undefined)', errors[name]);
     });
-    console.log('returning', errors);
-    console.groupEnd();
     return errors;
   };
 
@@ -823,42 +825,35 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
 
-  function BoxPair() {
-    var source, target;
-
-    function pair() {}
-    /*
-     * Bind an actual model object
-     */
-    pair.model = function(_) {
-      Y.mix(pair, _.getAttrs());
-      return pair;
+  /**
+   * Decorate a relation with some related/derived data.
+   *
+   * @method DecoratedRelation
+   * @param {Object} relation The model object we will be based on.
+   * @param {Object} source The service from which the relation originates.
+   * @param {Object} target The service at which the relation terminates.
+   * @return {Object} An object with attributes matching the result of
+   * relation.getAttrs() plus "source", "target", and other convenience data.
+   */
+  views.DecoratedRelation = function(relation, source, target) {
+    var hasRelations = Y.Lang.isValue(relation.endpoints);
+    var decorated = {
+      source: source,
+      target: target,
+      compositeId: (
+          source.modelId() +
+          (hasRelations ? ':' + relation.endpoints[0][1].name : '') +
+          '-' + target.modelId() +
+          (hasRelations ? ':' + relation.endpoints[1][1].name : ''))
     };
+    Y.mix(decorated, relation.getAttrs());
+    decorated.isSubordinate = utils.isSubordinateRelation(decorated);
+    return decorated;
+  };
 
-    pair.source = function(_) {
-      if (!arguments.length) { return source;}
-      source = _;
-      return pair;
-    };
-
-    pair.target = function(_) {
-      if (!arguments.length) { return target;}
-      target = _;
-      return pair;
-    };
-
-    pair.modelIds = function() {
-      if (this.endpoints !== undefined) {
-        return source.modelId() + ':' + this.endpoints[0][1].name +
-               '-' + target.modelId() + ':' + this.endpoints[1][1].name;
-      }
-      return source.modelId() + '-' + target.modelId();
-    };
-
-    return pair;
-  }
-
-  views.BoxPair = BoxPair;
+  utils.isSubordinateRelation = function(relation) {
+    return relation.scope === 'container';
+  };
 
   /* Given one of the many "real" states return a "UI" state.
    *
@@ -996,7 +991,7 @@ YUI.add('juju-view-utils', function(Y) {
   });
 
   Y.Handlebars.registerHelper('iflat', function(iface_decl, options) {
-    // console.log('helper', iface_decl, options, this);
+    //console.log('helper', iface_decl, options, this);
     var result = [];
     var ret = '';
     Y.Object.each(iface_decl, function(value, name) {

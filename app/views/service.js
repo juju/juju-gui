@@ -445,14 +445,14 @@ YUI.add('juju-view-service', function(Y) {
               service = this.get('model'),
               relation = db.relations.getById(rel_id),
               endpoints = relation.get('endpoints'),
-              endpoint_a = endpoints[0][0] + ':' + endpoints[0][1].name,
+              endpoint_a = endpoints[0],
               endpoint_b;
 
           if (endpoints.length === 1) {
             // For a peer relationship, both endpoints are the same.
             endpoint_b = endpoint_a;
           } else {
-            endpoint_b = endpoints[1][0] + ':' + endpoints[1][1].name;
+            endpoint_b = endpoints[1];
           }
 
           ev.target.set('disabled', true);
@@ -873,7 +873,6 @@ YUI.add('juju-view-service', function(Y) {
         },
 
         render: function() {
-          console.log('service view render');
           var container = this.get('container');
           var service = this.get('model');
           if (!service || !service.get('loaded')) {

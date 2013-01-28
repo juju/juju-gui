@@ -33,28 +33,28 @@ YUI.add('juju-topology-relation', function(Y) {
           /** The user clicked on the "Build Relation" menu item. */
           click: {callback: 'addRelButtonClicked'}
         },
-        '.topology .crosshatch-background rect:first-child': {
+        '.zoom-plane': {
           mousemove: {callback: 'mousemove'}
         }
       },
       yui: {
-        rendered: {callback: 'renderedHandler'},
-        mouseMove: {callback: 'mouseMoveHandler'},
-        clearState: {callback: 'clearState'},
-        serviceMoved: {callback: 'updateLinkEndpoints'},
-        servicesRendered: {callback: 'updateLinks'},
-        snapToService: {callback: 'snapToService'},
-        snapOutOfService: {callback: 'snapOutOfService'},
-        cancelRelationBuild: {callback: 'cancelRelationBuild'},
-        addRelationDragStart: {callback: 'addRelationDragStart'},
-        addRelationDrag: {callback: 'addRelationDrag'},
-        addRelationDragEnd: {callback: 'addRelationDragEnd'}
+        addRelationDrag: 'addRelationDrag',
+        addRelationDragEnd: 'addRelationDragEnd',
+        addRelationDragStart: 'addRelationDragStart',
+        cancelRelationBuild: 'cancelRelationBuild',
+        clearState: 'clearState',
+        mouseMove: 'mouseMoveHandler',
+        rendered: 'renderedHandler',
+        serviceMoved: 'updateLinkEndpoints',
+        servicesRendered: 'updateLinks',
+        snapOutOfService: 'snapOutOfService',
+        snapToService: 'snapToService'
       }
     },
 
     initializer: function(options) {
       RelationModule.superclass.constructor.apply(this, arguments);
-      this.relPairs = [];
+      this.relations = [];
     },
 
     render: function() {
@@ -69,8 +69,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var db = topo.get('db');
       var self = this;
       var relations = db.relations.toArray();
-      this.relPairs = this.processRelations(relations);
-      topo.relPairs = this.relPairs;
+      this.relations = this.decorateRelations(relations);
       this.updateLinks();
       this.updateSubordinateRelationsCount();
 
@@ -86,38 +85,44 @@ YUI.add('juju-topology-relation', function(Y) {
       this.update();
     },
 
-    processRelation: function(r) {
+    processRelation: function(relation) {
       var self = this;
       var topo = self.get('component');
-      var endpoints = r.get('endpoints');
+      var endpoints = relation.get('endpoints');
       var rel_services = [];
 
-      Y.each(endpoints, function(ep) {
-        rel_services.push([ep[1].name, topo.service_boxes[ep[0]]]);
+      Y.each(endpoints, function(endpoint) {
+        rel_services.push([endpoint[1].name, topo.service_boxes[endpoint[0]]]);
       });
       return rel_services;
     },
 
-    processRelations: function(rels) {
+    /**
+     *
+     * @method decorateRelations
+     * @param {Array} relations The relations currently in effect.
+     * @return {Array} Relation pairs.
+     */
+    decorateRelations: function(relations) {
       var self = this;
-      var pairs = [];
-      Y.each(rels, function(rel) {
-        var pair = self.processRelation(rel);
+      var decorated = [];
+      Y.each(relations, function(relation) {
+        var pair = self.processRelation(relation);
 
         // skip peer for now
         if (pair.length === 2) {
-          var bpair = views.BoxPair()
-                                 .model(rel)
-                                 .source(pair[0][1])
-                                 .target(pair[1][1]);
+          var source = pair[0][1];
+          var target = pair[1][1];
+          var decoratedRelation = views.DecoratedRelation(
+              relation, source, target);
           // Copy the relation type to the box.
-          if (bpair.display_name === undefined) {
-            bpair.display_name = pair[0][0];
+          if (decoratedRelation.display_name === undefined) {
+            decoratedRelation.display_name = pair[0][0];
           }
-          pairs.push(bpair);
+          decorated.push(decoratedRelation);
         }
       });
-      return pairs;
+      return decorated;
     },
 
     updateLinks: function() {
@@ -141,13 +146,13 @@ YUI.add('juju-topology-relation', function(Y) {
     updateLinkEndpoints: function(evt) {
       var self = this;
       var service = evt.service;
-      Y.each(Y.Array.filter(self.relPairs, function(relation) {
-        return relation.source().id === service.id ||
-            relation.target().id === service.id;
+      Y.each(Y.Array.filter(self.relations, function(relation) {
+        return relation.source.id === service.id ||
+            relation.target.id === service.id;
       }), function(relation) {
         var rel_group = d3.select('#' + relation.id);
-        var connectors = relation.source()
-                  .getConnectorPair(relation.target());
+        var connectors = relation.source
+                  .getConnectorPair(relation.target);
         var s = connectors[0];
         var t = connectors[1];
         rel_group.select('line')
@@ -171,8 +176,9 @@ YUI.add('juju-topology-relation', function(Y) {
       var self = this;
       var vis = this.get('component').vis;
       var g = vis.selectAll('g.rel-group')
-                 .data(self.relPairs, function(r) {
-            return r.modelIds();
+        .data(self.relations,
+          function(r) {
+            return r.compositeId;
           });
 
       var enter = g.enter();
@@ -183,15 +189,14 @@ YUI.add('juju-topology-relation', function(Y) {
           })
               .attr('class', function(d) {
                 // Mark the rel-group as a subordinate relation if need be.
-                return (d.scope === 'container' ?
-                    'subordinate-rel-group ' : '') +
+                return (d.isSubordinate ? 'subordinate-rel-group ' : '') +
                     'rel-group';
               })
               .append('svg:line', 'g.service')
               .attr('class', function(d) {
                 // Style relation lines differently depending on status.
                 return (d.pending ? 'pending-relation ' : '') +
-                    (d.scope === 'container' ? 'subordinate-relation ' : '') +
+                    (d.isSubordinate ? 'subordinate-relation ' : '') +
                     'relation';
               });
 
@@ -202,7 +207,7 @@ YUI.add('juju-topology-relation', function(Y) {
               .attr('class', 'rel-label')
               .attr('transform', function(d) {
                 // XXX: This has to happen on update, not enter
-                var connectors = d.source().getConnectorPair(d.target());
+                var connectors = d.source.getConnectorPair(d.target);
                 var s = connectors[0];
                 var t = connectors[1];
                 return 'translate(' +
@@ -230,8 +235,8 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     drawRelation: function(relation) {
-      var connectors = relation.source()
-                .getConnectorPair(relation.target());
+      var connectors = relation.source
+                .getConnectorPair(relation.target);
       var s = connectors[0];
       var t = connectors[1];
       var link = d3.select(this);
@@ -279,7 +284,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // Create the dragline and position its endpoints properly.
       context.addRelationDragStart({service: box});
       context.mousemove.call(
-          container.one('.topology rect:first-child').getDOMNode(),
+          container.one('.topology g').getDOMNode(),
           null, context);
       context.addRelationStart(box, context, origin);
     },
@@ -309,10 +314,10 @@ YUI.add('juju-topology-relation', function(Y) {
     mousemove: function(d, self) {
       if (self.clickAddRelation) {
         var mouse = d3.mouse(this);
-        var service = self.get('addRelationStart_service');
+        var box = self.get('addRelationStart_service');
         d3.event.x = mouse[0];
         d3.event.y = mouse[1];
-        self.addRelationDrag.call(self, {box: service});
+        self.addRelationDrag.call(self, {box: box});
       }
     },
 
@@ -326,7 +331,7 @@ YUI.add('juju-topology-relation', function(Y) {
     mouseMoveHandler: function(evt) {
       var container = this.get('container');
       this.mousemove.call(
-          container.one('.topology rect:first-child').getDOMNode(),
+          container.one('.zoom-plane').getDOMNode(),
           null, this);
     },
 
@@ -383,14 +388,15 @@ YUI.add('juju-topology-relation', function(Y) {
                         .attr('class',
                               'relation pending-relation dragline dragging');
       var self = this;
+      var container = this.get('container');
 
       // Start the line between the cursor and the nearest connector
       // point on the service.
-      var mouse = d3.mouse(Y.one('.topology svg').getDOMNode());
+      var mouse = d3.mouse(container.one('svg g').getDOMNode());
       self.cursorBox = new views.BoundingBox();
       self.cursorBox.pos = {x: mouse[0], y: mouse[1], w: 0, h: 0};
       var point = self.cursorBox.getConnectorPair(d);
-      dragline.attr('x3', point[0][0])
+      dragline.attr('x1', point[0][0])
               .attr('y1', point[0][1])
               .attr('x2', point[1][0])
               .attr('y2', point[1][1]);
@@ -420,8 +426,6 @@ YUI.add('juju-topology-relation', function(Y) {
               .attr('y2', d3.event.y);
       }
     },
-
-
     addRelationDragEnd: function() {
       // Get the line, the endpoint service, and the target <rect>.
       var self = this;
@@ -441,16 +445,16 @@ YUI.add('juju-topology-relation', function(Y) {
         self.addRelation(); // Will clear the state.
       }
     },
-    removeRelation: function(d, context, view, confirmButton) {
+    removeRelation: function(relation, view, confirmButton) {
       var env = this.get('component').get('env');
-      var endpoints = d.endpoints;
-      var relationElement = Y.one(context.parentNode).one('.relation');
+      // At this time, relations may have been redrawn, so here we have to
+      // retrieve the relation DOM element again.
+      var relationElement = view.get('container')
+        .one('#' + relation.relation_id);
       utils.addSVGClass(relationElement, 'to-remove pending-relation');
-      env.remove_relation(
-          endpoints[0][0] + ':' + endpoints[0][1].name,
-          endpoints[1][0] + ':' + endpoints[1][1].name,
+      env.remove_relation(relation.endpoints[0], relation.endpoints[1],
           Y.bind(this._removeRelationCallback, this, view,
-          relationElement, d.relation_id, confirmButton));
+          relationElement, relation.relation_id, confirmButton));
     },
 
     _removeRelationCallback: function(view,
@@ -493,7 +497,7 @@ YUI.add('juju-topology-relation', function(Y) {
             ev.preventDefault();
             var confirmButton = ev.target;
             confirmButton.set('disabled', true);
-            view.removeRelation(d, context, view, confirmButton);
+            view.removeRelation(d, view, confirmButton);
           },
           this)));
     },
@@ -606,14 +610,14 @@ YUI.add('juju-topology-relation', function(Y) {
 
       if (endpoints && endpoints.length === 1) {
         // Create a relation with the only available endpoint.
-        var ep = endpoints[0],
-                endpoints_item = [
-                  [ep[0].service, {
-                    name: ep[0].name,
-                    role: 'server' }],
-                  [ep[1].service, {
-                    name: ep[1].name,
-                    role: 'client' }]];
+        var ep = endpoints[0];
+        var endpoints_item = [
+          [ep[0].service,
+           { name: ep[0].name,
+             role: 'server' }],
+          [ep[1].service,
+           { name: ep[1].name,
+             role: 'client' }]];
         view.addRelationEnd(endpoints_item, view, context);
         return;
       }
@@ -635,23 +639,23 @@ YUI.add('juju-topology-relation', function(Y) {
       menu.append(Templates
               .ambiguousRelationList({endpoints: endpoints}));
 
-      // For each endpoint choice, bind an an event to 'click' to
-      // add the specified relation.
-      menu.all('li').on('click', function(evt) {
-        if (evt.currentTarget.hasClass('cancel')) {
-          return;
-        }
-        var el = evt.currentTarget,
-                endpoints_item = [
-                  [el.getData('startservice'), {
-                    name: el.getData('startname'),
-                    role: 'server' }],
-                  [el.getData('endservice'), {
-                    name: el.getData('endname'),
-                    role: 'client' }]];
+      // For each endpoint choice, delegate a click event to add the specified
+      // relation. Use event delegation in order to avoid weird behaviors
+      // encountered when using "on" on a YUI NodeList: in some situations,
+      // e.g. our production server, NodeList.on does not work.
+      menu.one('.menu').delegate('click', function(evt) {
+        var el = evt.target;
+        var endpoints_item = [
+          [el.getData('startservice'), {
+            name: el.getData('startname'),
+            role: 'server' }],
+          [el.getData('endservice'), {
+            name: el.getData('endname'),
+            role: 'client' }]
+        ];
         menu.removeClass('active');
         view.addRelationEnd(endpoints_item, view, context);
-      });
+      }, 'li');
 
       // Add a cancel item.
       menu.one('.cancel').on('click', function(evt) {
@@ -715,9 +719,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Fire event to add relation in juju.
       // This needs to specify interface in the future.
-      env.add_relation(
-          endpoints[0][0] + ':' + endpoints[0][1].name,
-          endpoints[1][0] + ':' + endpoints[1][1].name,
+      env.add_relation(endpoints[0], endpoints[1],
           Y.bind(this._addRelationCallback, this, view, relation_id)
       );
       view.set('currentServiceClickAction', 'hideServiceMenu');
@@ -765,12 +767,12 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /*
-         * Utility function to get subordinate relations for a service.
-         */
+     * Utility function to get subordinate relations for a service.
+     */
     subordinateRelationsForService: function(service) {
-      return this.relPairs.filter(function(p) {
-        return p.modelIds().indexOf(service.modelId()) !== -1 &&
-            p.scope === 'container';
+      return this.relations.filter(function(relation) {
+        return (relation.source === service || relation.target === service) &&
+            relation.isSubordinate;
       });
     },
 
@@ -831,8 +833,8 @@ YUI.add('juju-topology-relation', function(Y) {
           'active');
     },
 
-    relationClick: function(d, self) {
-      if (d.scope === 'container') {
+    relationClick: function(relation, self) {
+      if (relation.isSubordinate) {
         var subRelDialog = views.createModalPanel(
             'You may not remove a subordinate relation.',
             '#rmsubrelation-modal-panel');
@@ -854,7 +856,7 @@ YUI.add('juju-topology-relation', function(Y) {
         subRelDialog.get('boundingBox').all('.yui3-button')
                 .removeClass('yui3-button');
       } else {
-        self.removeRelationConfirm(d, this, self);
+        self.removeRelationConfirm(relation, this, self);
       }
     }
 

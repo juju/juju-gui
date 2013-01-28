@@ -22,12 +22,32 @@ YUI.add('juju-view-environment', function(Y) {
                                       [views.JujuBaseView],
       {
         initializer: function() {
-          console.log('View: Initialized: Env');
           this.publish('navigateTo', {
             broadcast: true,
             preventable: false});
         },
 
+        /**
+         * Wrapper around topo.update. Rather than
+         * re-rendering a whole topology the view
+         * can require data updates when needed.
+         * Ideally even this shouldn't be needed
+         * as we can observe ModelList change events
+         * and debounce update calculations
+         * internally.
+         *
+         * @method update
+         * @chainable
+         **/
+        update: function() {
+          this.topo.update();
+          return this;
+        },
+
+        /**
+         * @method render
+         * @chainable
+         **/
         render: function() {
           var container = this.get('container'),
               topo = this.topo;

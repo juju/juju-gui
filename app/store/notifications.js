@@ -146,7 +146,6 @@ YUI.add('juju-notification-controller', function(Y) {
          * Process new delta stream events and see if we need new notifications
          */
         generate_notices: function(delta_evt) {
-          console.log('Generating Notices', this, this.getAttrs());
           var self = this,
               rules = this.ingest_rules,
               app = this.get('app'),
@@ -161,18 +160,18 @@ YUI.add('juju-notification-controller', function(Y) {
                     model;
 
             /*
-                 * Data ingestion rules
-                 *  Create notifications for incoming deltas
-                 *  Promote some notifications to the 'show me' list
-                 *  Also:
-                 *  - for each change event see if there is an notice
-                 *   relating to that object in the model list
-                 *    -- see if the current change event invalidates the need
-                 *       to show the existing notices
-                 *    -- make the new notice as 'must see' or not (
-                 *       errors, etc)
-                 *  - add a notification for the event
-                 */
+             * Data ingestion rules
+             *  Create notifications for incoming deltas
+             *  Promote some notifications to the 'show me' list
+             *  Also:
+             *  - for each change event see if there is an notice
+             *   relating to that object in the model list
+             *    -- see if the current change event invalidates the need
+             *       to show the existing notices
+             *    -- make the new notice as 'must see' or not (
+             *       errors, etc)
+             *  - add a notification for the event
+             */
 
             // Dispatch ingestion rules (which may mutate either the
             // current 'notifications' or models within it (notice status)

@@ -20,10 +20,6 @@ YUI.add('juju-view-unit', function(Y) {
    * @namespace views.unit
    */
   var UnitView = Y.Base.create('UnitView', Y.View, [], {
-    initializer: function() {
-      console.log('view.init.unit', this.get('unit'));
-    },
-
     template: Templates.unit,
 
     /**
@@ -34,7 +30,6 @@ YUI.add('juju-view-unit', function(Y) {
      */
     render: function() {
       var container = this.get('container');
-      console.log('view.render.unit');
       var unit = this.get('unit');
       if (!unit) {
         container.setHTML('<div class="alert">Loading...</div>');

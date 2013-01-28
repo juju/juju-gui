@@ -19,6 +19,8 @@ Checklist for Starting a Branch
   making changes, add an ``unreleased`` section at the top.  All other
   version numbers follow `Semantic Versioning <http://semver.org/>`_.
 
+.. _preparing-reviews:
+
 Checklist for Preparing for a Review
 ====================================
 
@@ -33,33 +35,45 @@ Checklist for Preparing for a Review
     - Is the code understandable?
     - Do you have superfluous or duplicated code?
 
-  - Run tests!  Someday we'll have that in the lbox hook...
-
 - Make sure there is a bug for your branch.  Ideally there was one when you
-  started, but if not, see the ``-new-bug`` option to ``lbox propose``.
+  started, but if not, see the ``-new-bug`` option to the ``lbox propose -cr``
+  command, which is introduced below.
 - Aim for a branch diff size between 300 and 500 lines.
 - Treat branch diff sizes of more than 800 lines as a problem.
 
   - Try to subdivide it now.  If you cannot, explain to your reviewers your
     reasoning.
   - Treat this as an opportunity to learn.  Consider what you could have
-    done differently.
+    done differently to make a smaller branch.
 
 - Update the ``CHANGES.yaml`` file with a description of the changes you
   made.  Reference Launchpad bugs if appropriate.
+- Propose your branch with lbox (see `this blog post`_) and Rietveld.  The
+  command to use is ``lbox propose -cr``.  This will ask you to write a commit
+  message/cover letter for the review (use the usual EDITOR environment
+  variable to specify what to use for writing it).  It will then ask you to
+  sign into a Google account so that it can create a Rietveld review request
+  for you.
 - If the branch is very minor, such as a documentation change, feel free to
   self-review.  However, *don't neglect to consider your responsibilities
   above*, especially the diff review and running tests (even if you think
   there is no way the tests could have been affected).
 
+.. _`this blog post`:
+    http://blog.labix.org/2011/11/17/launchpad-rietveld-happycodereviews
+
 It is your responsibility to get reviewers of your branch!  Reviewers will
 hopefully take it, but if they do not, rustle some up.
 
 When you get your reviews back, be appreciative, and be sure to respond to
-every request, even if it is to disagree.
+every request, even if it is to disagree.  If you do disagree, try to come to
+a resolution with the reviewer.  If the reviewer is out for a day, you can try
+to work it out with someone else instead, but it is much better to work
+directly with the person who raised the concern.
 
-Once you have two approving reviews (and no disapproving reviews), you may
-land your branch.
+Once you have two approving reviews (and no disapproving reviews, or a
+resolution from someone else in lieu of an absent reviewer), you may land your
+branch.  Use ``lbox submit``.
 
 Checklist for Reviewing
 =======================
@@ -97,6 +111,15 @@ Is Better: Incrementally Escaping Local Maxima
   * Before you ask for a change, think and make sure you cannot compromise
     reasonably with the coder.  If there is a low importance disagreement, in
     general the coder's position should win.
+  * Only make a rework request if absolutely necessary.  They are very
+    expensive in time, money, and morale.  One way to think about it is to
+    imagine filing a bug for the problem you see.  Are you confident it is a
+    bug?  If not, reconsider.  If it would be a bug, how would you triage it?
+    A critical bug almost certainly indicates something that should be
+    reworked now.  A high bug might or might not.  If it is anything else,
+    maybe it can wait, with a respectful email or bug that starts a
+    discussion, or establishes a goal or standard, or reminds everyone about a
+    previously agreed decision.
 
 - In your summary message, thank the coder.
 - In your summary message, if you ask for changes, make it clear whether you
@@ -122,6 +145,7 @@ Checklist for Making a Stable Release
 
   * Decide what the next version number should be (see `Semantic Versioning
     <http://semver.org/>`_) and change ``unreleased`` to that value.
+  * Set a bzr tag for the release, e.g.: ``bzr tag 0.1.5``.
   * Commit to the branch with this checkin message:
     ``bzr commit -m 'Set version for release.'``
   * Push the branch directly to the parent (``bzr push :parent`` should work).
@@ -153,15 +177,15 @@ Checklist for Making a Stable Release
     are running on your own computer that you manage securely, the easiest
     thing to do is hopefully also reasonably safe: accept that the computer
     may perform all actions, indefinitely.
+  * Go to <https://staging.launchpad.net/juju-gui/stable> and verify that you
+    see a new release and a new download file.
+  * Download the file, expand it in a temporary directory, run ``python -m
+    SimpleHTTPServer 8888``, and do a quick double-check in the browser that
+    it is what you expect.  Looking at ``juju-ui/version.js`` should also show
+    you the version you expect.
+  * This is a final release.  Consider asking others to verify the package on
+    staging.
 
-- Go to <https://staging.launchpad.net/juju-gui/stable> and verify that you see
-  a new release and a new download file.
-- Download the file, expand it in a temporary directory, run ``python -m
-  SimpleHTTPServer 8888``, and do a quick double-check in the browser that it
-  is what you expect.  Looking at ``juju-ui/version.js`` should also show you
-  the version you expect.
-- This is a final release.  Consider asking others to verify the package on
-  staging.
 - Now it is time for the actual, real release.  Head back to your branch and
   run ``FINAL=1 PROD=1 make dist``.  The computer will again walk you
   through the process.
@@ -224,13 +248,13 @@ Checklist for Making a Developer Release
     are running on your own computer that you manage securely, the easiest
     thing to do is hopefully also reasonably safe: accept that the computer
     may perform all actions, indefinitely.
+  * Go to <https://staging.launchpad.net/juju-gui/trunk> and verify that you
+    see a new release and a new download file.
+  * Download the file, expand it in a temporary directory, run ``python -m
+    SimpleHTTPServer 8888``, and do a quick double-check in the browser that
+    it is what you expect.  Looking at ``juju-ui/version.js`` should also show
+    you the version you expect, as seen in the similar earlier step above.
 
-- Go to <https://staging.launchpad.net/juju-gui/trunk> and verify that you see
-  a new release and a new download file.
-- Download the file, expand it in a temporary directory, run ``python -m
-  SimpleHTTPServer 8888``, and do a quick double-check in the browser that it
-  is what you expect.  Looking at ``juju-ui/version.js`` should also show you
-  the version you expect, as seen in the similar earlier step above.
 - Now it is time for the actual, real release.  Head back to your branch and
   run ``PROD=1 make dist``.  The computer will again walk you through the
   process.
@@ -245,24 +269,6 @@ Checklist for Making a Developer Release
   a new release and a new download file.
 
 You are done!
-
-Making Targets Quickly Without Bazaar
-=====================================
-
-Within a checkout, a lightweight checkout, or a branch, you may run make as
-``NO_BZR=1 make [target]`` in order to prevent the Makefile from running
-any Bazaar commands, all of which access the parent branch over the network.
-Where Bazaar may have provided information such as the revno, sensible defaults
-are used instead.  As many of these Bazaar commands are used to populate
-variables regardless of the target, defining NO_BZR will have an effect on
-all targets, except ``dist``, which will refuse to complete.
-
-- Note that this allows one to run any make target from the working copy,
-  even if it is a lightweight checkout, by skipping steps that involve
-  network access through Bazaar.  Because of this, make will assume that
-  the revno is 0 and that the branch is clean and up to date without
-  checking that it is a checkout of trunk.  The resulting tarball or build
-  may be used to test releases by hand or in the charm.
 
 Checklist for Running a Daily Meeting
 =====================================
