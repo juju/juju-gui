@@ -8,8 +8,6 @@ describe('service module annotations', function() {
       'juju-models',
       'juju-views',
       'juju-gui',
-      'juju-env',
-      'juju-tests-utils',
       'node-event-simulate'],
     function(Y) {
       juju = Y.namespace('juju');
@@ -87,8 +85,6 @@ describe('service module events', function() {
       'juju-models',
       'juju-views',
       'juju-gui',
-      'juju-env',
-      'juju-tests-utils',
       'node-event-simulate',
       'slider'],
     function(Y) {
