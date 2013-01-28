@@ -208,10 +208,11 @@ YUI.add('juju-gui', function(Y) {
      * @method initializer
      */
     initializer: function() {
-      // If this flag is true, start the app with the console activated.
+      // If this flag is true, start the application
+      // with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
 
-      // Concession to testing, they need muck with console, we can't as well.
+      // Concession to testing, they need muck with console, we cannot as well.
       if (window.mochaPhantomJS === undefined) {
         if (consoleEnabled) {
           consoleManager.native();
