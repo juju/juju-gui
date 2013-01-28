@@ -231,6 +231,7 @@ function injectData(app, data) {
           app = new Y.juju.App({env: env, container: container}),
           reset_called = false,
           dispatch_called = false,
+          login_called = false,
           noop = function() {return this;};
 
       // Mock the database.
@@ -255,21 +256,27 @@ function injectData(app, data) {
           dispatch_called = true;
         }
       };
+      env.login = function() {
+        login_called = true;
+      };
       env.connect();
       conn.open();
       // We need to fake the connection event.
       env.set('connected', true);
       reset_called.should.equal(true);
       dispatch_called.should.equal(true);
+      login_called.should.equal(true);
 
       // Trigger a second time and verify.
       env.set('connected', false);
       reset_called = false;
       dispatch_called = false;
+      login_called = false;
       conn.open();
       env.set('connected', true);
       reset_called.should.equal(true);
       dispatch_called.should.equal(true);
+      login_called.should.equal(true);
     });
 
   });
