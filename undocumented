@@ -1,5 +1,3 @@
-app/app.js:100 "callback"
-app/app.js:636 "callback"
 app/store/env.js:306 "status"
 app/store/env.js:31 "initializer"
 app/store/env.js:120 "_dispatch_rpc_result"
