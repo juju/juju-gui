@@ -586,6 +586,24 @@
     );
 
     // Tests for the service menu.
+    it('must be able to toggle the service menu', function(done) {
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env
+      }).render();
+      container.all('.service').each(function(node, i) {
+        node.after('click', function() {
+          view.hasSVGClass(
+              node.one('.service-control-panel'),
+              'active').should.equal(true);
+          container.all('.service-control-panel.active').size()
+              .should.equal(1);
+        });
+      });
+      done();
+    });
+
     it('must be able to add a relation from the service menu',
        function() {
          var view = new views.environment({
