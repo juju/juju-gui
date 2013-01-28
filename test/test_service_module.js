@@ -89,7 +89,8 @@ describe('service module events', function() {
       'juju-gui',
       'juju-env',
       'juju-tests-utils',
-      'node-event-simulate'],
+      'node-event-simulate',
+      'slider'],
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
@@ -162,19 +163,43 @@ describe('service module events', function() {
        assert.isFalse(menu.hasClass('active'));
      });
 
+  // Click the provided service so that the service menu is shown.
+  // Return the service menu.
+  var clickService = function(service) {
+    // Monkeypatch to avoid the click event handler bailing out early.
+    serviceModule.service_boxes.haproxy.containsPoint = function() {
+      return true;
+    };
+    // Click the service.
+    service.simulate('click');
+    return viewContainer.one('#service-menu');
+  };
+
   it('should not show the service menu after the service is double-clicked',
      function() {
-       // Monkeypatch to avoid the click event handler bailing out early.
-       serviceModule.service_boxes.haproxy.containsPoint = function() {
-         return true;};
        var service = viewContainer.one('.service');
-       var menu = viewContainer.one('#service-menu');
-       service.simulate('click');
+       var menu = clickService(service);
        // Ideally the browser would not send the click event right away...
        assert(menu.hasClass('active'));
        service.simulate('dblclick');
        assert.isFalse(menu.hasClass('active'));
      });
+
+  it('hides the service menu when the View voice is clicked', function() {
+    var menu = clickService(viewContainer.one('.service'));
+    // Click the "View" menu voice.
+    menu.one('.view-service').simulate('click');
+    assert.isFalse(menu.hasClass('active'));
+  });
+
+  it('hides the service menu when the Destroy voice is clicked', function() {
+    var menu = clickService(viewContainer.one('.service'));
+    // Click the "Destroy" menu voice.
+    menu.one('.destroy-service').simulate('click');
+    assert.isFalse(menu.hasClass('active'));
+    // Click the "Cancel" button to close the "Destroy Service" dialog.
+    Y.all('.yui3-widget-modal .btn').item(1).simulate('click');
+  });
 
   it('must be able to view a service from the menu', function() {
     var topo = view.topo,
@@ -185,12 +210,31 @@ describe('service module events', function() {
     });
 
     // Select a service and click it.
-    // Opening the menu.
-    topo.service_boxes.haproxy.containsPoint = function() {
-      return true;};
-    viewContainer.one('.service').simulate('click');
-    // Click View Button
-    viewContainer.one('.view-service').simulate('click');
+    var menu = clickService(viewContainer.one('.service'));
+    // Click the "View" menu voice.
+    menu.one('.view-service').simulate('click');
     requestTransition.should.equal(true);
+  });
+
+  it('must be able to destroy a service from the menu', function() {
+    // Select a service and click it.
+    var menu = clickService(viewContainer.one('.service'));
+    // Click the "Destroy" menu voice.
+    menu.one('.destroy-service').simulate('click');
+    // Retrieve the "Destroy Service" modal dialog buttons.
+    var destroyDialogButtons = Y.all('.yui3-widget-modal .btn');
+    var destroyButton = destroyDialogButtons.item(0);
+    var cancelButton = destroyDialogButtons.item(1);
+
+    var serviceDestroyed = false;
+    view.get('env').destroy_service = function() {
+      serviceDestroyed = true;
+    };
+
+    // Clicking the destroy button removes the service from the environment.
+    destroyButton.simulate('click');
+    assert.isTrue(serviceDestroyed);
+    // Click the "Cancel" button to close the "Destroy Service" dialog.
+    cancelButton.simulate('click');
   });
 });
