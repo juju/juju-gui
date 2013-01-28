@@ -11,7 +11,7 @@ YUI.add('juju-topology-viewport', function(Y) {
    * @class ViewportModule
    * @namespace views
    **/
-  var ViewportModule = Y.Base.create('ViewportModule', d3ns.Module, [], {
+  views.ViewportModule = Y.Base.create('ViewportModule', d3ns.Module, [], {
 
     events: {
       yui: {
@@ -20,38 +20,39 @@ YUI.add('juju-topology-viewport', function(Y) {
       }
     },
 
-    /*
-     * Set the visualization size based on the viewport.
+    /**
+     * Retrieve the DOM element that contains the UI.  This exists primarily to
+     * make it easy for tests to substitute their own container.
      *
-     * This event allows other page components that may unintentionally affect
-     * the page size, such as the charm panel, to get out of the way before we
-     * compute sizes.  Note the "afterPageSizeRecalculation" event at the end
-     * of this function.
+     * @return {Object} A DOM node.
      */
-    resized: function() {
-      var topo = this.get('component'),
-          container = this.get('container'),
-          vis = topo.vis,
-          svg = container.one('svg'),
-          canvas = container.one('.topology-canvas'),
-          zoomPlane = container.one('.zoom-plane');
+    getContainer: function() {
+      return this.get('container');
+    },
 
-      if (!canvas || !svg) {
-        return;
-      }
-      topo.fire('beforePageSizeRecalculation');
+    /**
+     * Propagate new dimensions to all the places that need them.
+     *
+     * @method setAllTheDimensions.
+     * @static
+     * @param {Object} dimensions The new height and width.
+     * @param {Object} canvas The canvas to which impute new dimensions.
+     * @param {Object} svg The SVG container to which impute new dimensions.
+     * @param {Object} topo The topology view to which impute new dimensions.
+     * @param {Object} zoomPlane The zoomPlane to which impute new dimensions.
+     * @return {undefined} Nothing.  This function generates only side effects.
+     */
+    setAllTheDimensions: function(dimensions, canvas, svg, topo, zoomPlane) {
       // Get the canvas out of the way so we can calculate the size
       // correctly (the canvas contains the svg).  We want it to be the
       // smallest size we accept--no smaller or bigger--or else the
       // presence or absence of scrollbars may affect our calculations
-      // incorrectly.
+      // incorrectly.  The real canvas size will be set in a moment.
       canvas.setStyles({height: '600px', width: '800px'});
-      var dimensions = utils.getEffectiveViewportSize(true, 800, 600);
       svg.setAttribute('width', dimensions.width);
       svg.setAttribute('height', dimensions.height);
-      vis.attr('width', dimensions.width);
-      vis.attr('height', dimensions.height);
-
+      topo.vis.attr('width', dimensions.width);
+      topo.vis.attr('height', dimensions.height);
       zoomPlane.setAttribute('width', dimensions.width);
       zoomPlane.setAttribute('height', dimensions.height);
       canvas.setStyles({
@@ -59,13 +60,37 @@ YUI.add('juju-topology-viewport', function(Y) {
         height: dimensions.height + 'px'});
       // Reset the scale parameters
       topo.set('size', [dimensions.width, dimensions.height]);
+    },
+
+    /**
+     * Set the visualization size based on the viewport.
+     *
+     * The beforePageSizeRecalculation and afterPageSizeRecalculation events
+     * allow other page components that may unintentionally affect the page
+     * size, such as the charm panel, to get out of the way before we compute
+     * sizes.
+     *
+     * @return {undefined} Nothing, this function generates only side effects.
+     */
+    resized: function() {
+      var container = this.getContainer();
+      var svg = container.one('svg');
+      var canvas = container.one('.topology-canvas');
+      // Early out for tests that do not provide a full rendering environment.
+      if (!Y.Lang.isValue(canvas) || !Y.Lang.isValue(svg)) {
+        return;
+      }
+      var topo = this.get('component');
+      var zoomPlane = container.one('.zoom-plane');
+      topo.fire('beforePageSizeRecalculation');
+      var dimensions = utils.getEffectiveViewportSize(true, 800, 600);
+      this.setAllTheDimensions(dimensions, canvas, svg, topo, zoomPlane);
       topo.fire('afterPageSizeRecalculation');
     }
 
   }, {
     ATTRS: {}
   });
-  views.ViewportModule = ViewportModule;
 }, '0.1.0', {
   requires: [
     'd3',

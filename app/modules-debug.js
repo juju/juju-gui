@@ -1,6 +1,5 @@
 // This file is used for development only. In order to use it you should call
-// the "make debug" command. This command passes the "debug" argument to the
-// "lib/server.js".
+// one of the "make debug" and "make devel" commands.
 //
 // This file declares which files implement modules, using the
 // "fullpath" property; and declares the membership of rollup modules, using
