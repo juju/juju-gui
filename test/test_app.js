@@ -108,7 +108,8 @@ function injectData(app, data) {
           wp0 = app.db.units.get_units_for_service(wordpress)[0],
           wp_charm = app.db.charms.add({id: wordpress.get('charm')});
 
-      // 'service/wordpress/' is the primary, so other URLs are not returned.
+      // 'service/wordpress/' is the primary route,
+      // so other URLs are not returned.
       app.getModelURL(wordpress).should.equal('/service/wordpress/');
       // However, passing 'intent' can force selection of another one.
       app.getModelURL(wordpress, 'config').should.equal(
@@ -234,7 +235,7 @@ function injectData(app, data) {
 
       // Mock the database.
       app.db = {
-        // Mock out notifications, so the app can start normally.
+        // Mock out notifications, so the application can start normally.
         notifications: {
           addTarget: noop,
           after: noop,

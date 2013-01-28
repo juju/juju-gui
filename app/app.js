@@ -335,18 +335,17 @@ YUI.add('juju-gui', function(Y) {
       var self = this;
       var active = this.get('activeView');
 
-      // Compare endpoints map against db to see if it needs to be changed.
-      var updateNeeded = this.db.services.some(function(service) {
+      // Compare endpoints map against db to see if services have been added.
+      var servicesAdded = this.db.services.some(function(service) {
         return (self.serviceEndpoints[service.get('id')] === undefined);
       });
 
       // If there are new services in the DB, pull an updated endpoints map.
-      if (updateNeeded) {
+      if (servicesAdded) {
         this.updateEndpoints();
       } else {
-        // Check to see if any services have been removed. If there are any,
-        // and new ones also, updateEndpoints will replace the whole map,
-        // so only do this if needed.
+        // If any services have been removed, delete them from the map
+        // rather than updating it as a whole.
         Y.Object.each(this.serviceEndpoints, function(key, value, obj) {
           if (self.db.services.getById(key) === null) {
             delete(self.serviceEndpoints[key]);
@@ -413,8 +412,8 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     _prefetch_service: function(service) {
-      // Only prefetch once; we redispatch to the service view after we have
-      // status.
+      // Only prefetch once. We redispatch to the service view
+      // after we have status.
       if (!service || service.get('prefetch')) { return; }
       service.set('prefetch', true);
 
@@ -713,10 +712,10 @@ YUI.add('juju-gui', function(Y) {
      * @method getModelURL
      * @param {object} model The model to determine a route url for.
      * @param {object} [intent] the name of an intent associated with a route.
-     *   When more than one route can match a model, the route w/o an intent is
-     *   matched when this attribute is missing.  If intent is provided as a
-     *   string, it is matched to the 'intent' attribute specified on the
-     *   route. This is effectively a tag.
+     *   When more than one route can match a model, the route without an
+     *   intent is matched when this attribute is missing.  If intent is
+     *   provided as a string, it is matched to the 'intent' attribute
+     *   specified on the route. This is effectively a tag.
      *
      * @method getModelURL
      */
@@ -732,7 +731,7 @@ YUI.add('juju-gui', function(Y) {
             required_model = route.model,
             reverse_map = route.reverse_map;
 
-        // Fail fast on wildcard paths, routes w/o models,
+        // Fail fast on wildcard paths, on routes without models,
         // and when the model does not match the route type.
         if (path === '*' ||
             required_model === undefined ||
@@ -778,8 +777,8 @@ YUI.add('juju-gui', function(Y) {
     _setRoutes: function(routes) {
       this._routes = [];
       Y.Array.each(routes, function(route) {
-        // Additionally pass route as options needed to pass through the
-        // attribute setter.
+        // Additionally pass route as options. This is needed to pass through
+        // the attribute setter.
         this.route(route.path, route.callback, route);
       }, this);
       return this._routes.concat();
@@ -791,7 +790,7 @@ YUI.add('juju-gui', function(Y) {
     route: function(path, callback, options) {
       JujuGUI.superclass.route.call(this, path, callback);
 
-      // A whitelist to spare the extra juggling.
+      // Use a whitelist to spare the extra juggling.
       if (options.model) {
         var r = this._routes,
                 idx = r.length - 1;
@@ -812,8 +811,9 @@ YUI.add('juju-gui', function(Y) {
       /*
        * Routes
        *
-       * Evaluate the request path against all defined routes, and invoke the
-       * callbacks for all the ones that match (do not stop at the first one).
+       * Each request path is evaluated against all hereby defined routes,
+       * and the callbacks for all the ones that match are invoked,
+       * without stopping at the first one.
        *
        *  @attribute routes
        */
@@ -867,7 +867,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-notifications',
-    // This alias does not seem to work, including refs by hand.
+    // This alias does not seem to work, including references by hand.
     'juju-controllers',
     'juju-notification-controller',
     'juju-env',
