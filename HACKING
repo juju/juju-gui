@@ -37,7 +37,7 @@ also available there.
 
   python improv.py -f sample.json
 
-Now it's time to actually get the GUI itself set up.  Juju GUI uses nodejs-
+Now it is time to actually get the GUI itself set up.  Juju GUI uses nodejs-
 based development tools, so you will need ``nodejs`` and ``npm`` from Chris
 Lea's node PPA. You also need ImageMagick for sprite generation, lbox to
 propose branches, python-sphinx and python-yaml to build docs, PyTZ to make

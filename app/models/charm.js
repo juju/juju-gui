@@ -1,47 +1,49 @@
 'use strict';
 
+/**
+ * Charms, once instantiated and loaded with data from their respective
+ * sources, are immutable and read-only. This reflects the reality of how
+ * we interact with them.
+ *
+ * Charm instances can represent both environment charms and charm store
+ * charms.  A charm id is reliably and uniquely associated with a given
+ * charm only within a given context--the environment or the charm store.
+ *
+ * Therefore, the database keeps these charms separate in two different
+ * CharmList instances.  One is db.charms, representing the environment
+ * charms.  The other, from the charm store, is maintained by and within the
+ * persistent charm panel instance. As you'd expect, environment charms are
+ * what to use when viewing or manipulating the environment.  Charm store
+ * charms are what we can browse to select and deploy new charms to the
+ * environment.
+ *
+ * Charms begin their lives with full charm ids, as provided by
+ * services in the environment and the charm store:
+ *
+ * [SCHEME]:(~[OWNER]/)?[SERIES]/[PACKAGE NAME]-[REVISION].
+ *
+ * With an id, we can instantiate a charm: typically we use
+ * "db.charms.add({id: [ID]})".  Finally, we load the charm's data over the
+ * network using the standard YUI Model method "load," providing an object
+ * with a get_charm callable, and an optional callback (see YUI docs).  Both
+ * the env and the charm store have a get_charm method, so, by design, it
+ * works easily: "charm.load(env, optionalCallback)" or
+ * "charm.load(charm_store, optionalCallback)".  The get_charm method must
+ * either callback using the default YUI approach for this code, a boolean
+ * indicating failure, and a result; or it must return what the env version
+ * does: an object with a "result" object containing the charm data, or an
+ * object with an "err" attribute.
+ *
+ * In both cases, environment charms and charm store charms, a charm's
+ * "loaded" attribute is set to true once it has all the data from its
+ * environment.
+ *
+ * @module charm
+ */
+
 YUI.add('juju-charm-models', function(Y) {
 
-
   var models = Y.namespace('juju.models');
-
-  // Charms, once instantiated and loaded with data from their respective
-  // sources, are immutable and read-only. This reflects the reality of how we
-  // interact with them.
-
-  // Charm instances can represent both environment charms and charm store
-  // charms.  A charm id is reliably and uniquely associated with a given
-  // charm only within a given context--the environment or the charm store.
-
-  // Therefore, the database keeps these charms separate in two different
-  // CharmList instances.  One is db.charms, representing the environment
-  // charms.  The other, from the charm store, is maintained by and within the
-  // persistent charm panel instance. As you'd expect, environment charms are
-  // what to use when viewing or manipulating the environment.  Charm store
-  // charms are what we can browse to select and deploy new charms to the
-  // environment.
-
-  // Charms begin their lives with full charm ids, as provided by
-  // services in the environment and the charm store:
-
-  // [SCHEME]:(~[OWNER]/)?[SERIES]/[PACKAGE NAME]-[REVISION].
-
-  // With an id, we can instantiate a charm: typically we use
-  // "db.charms.add({id: [ID]})".  Finally, we load the charm's data over the
-  // network using the standard YUI Model method "load," providing an object
-  // with a get_charm callable, and an optional callback (see YUI docs).  Both
-  // the env and the charm store have a get_charm method, so, by design, it
-  // works easily: "charm.load(env, optionalCallback)" or
-  // "charm.load(charm_store, optionalCallback)".  The get_charm method must
-  // either callback using the default YUI approach for this code, a boolean
-  // indicating failure, and a result; or it must return what the env version
-  // does: an object with a "result" object containing the charm data, or an
-  // object with an "err" attribute.
-
-  // In both cases, environment charms and charm store charms, a charm's
-  // "loaded" attribute is set to true once it has all the data from its
-  // environment.
-
   var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)-(\d+)$/,
       idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'],
       Charm = Y.Base.create('charm', Y.Model, [], {
@@ -221,6 +223,7 @@ YUI.add('juju-charm-models', function(Y) {
   }, {
     ATTRS: {}
   });
+
   models.CharmList = CharmList;
 
 }, '0.1.0', {
