@@ -181,16 +181,16 @@ describe('service module events', function() {
        assert.isFalse(menu.hasClass('active'));
      });
 
-  it('hides the service menu when the View voice is clicked', function() {
+  it('hides the service menu when the View entry is clicked', function() {
     var menu = clickService(viewContainer.one('.service'));
-    // Click the "View" menu voice.
+    // Click the "View" menu entry.
     menu.one('.view-service').simulate('click');
     assert.isFalse(menu.hasClass('active'));
   });
 
-  it('hides the service menu when the Destroy voice is clicked', function() {
+  it('hides the service menu when the Destroy entry is clicked', function() {
     var menu = clickService(viewContainer.one('.service'));
-    // Click the "Destroy" menu voice.
+    // Click the "Destroy" menu entry.
     menu.one('.destroy-service').simulate('click');
     assert.isFalse(menu.hasClass('active'));
     // Click the "Cancel" button to close the "Destroy Service" dialog.
@@ -207,7 +207,7 @@ describe('service module events', function() {
 
     // Select a service and click it.
     var menu = clickService(viewContainer.one('.service'));
-    // Click the "View" menu voice.
+    // Click the "View" menu entry.
     menu.one('.view-service').simulate('click');
     requestTransition.should.equal(true);
   });
@@ -215,7 +215,7 @@ describe('service module events', function() {
   it('must be able to destroy a service from the menu', function() {
     // Select a service and click it.
     var menu = clickService(viewContainer.one('.service'));
-    // Click the "Destroy" menu voice.
+    // Click the "Destroy" menu entry.
     menu.one('.destroy-service').simulate('click');
     // Retrieve the "Destroy Service" modal dialog buttons.
     var destroyDialogButtons = Y.all('.yui3-widget-modal .btn');
