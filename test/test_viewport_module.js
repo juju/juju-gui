@@ -1,6 +1,6 @@
 'use strict';
 
-describe('views.ViewportModule', function() {
+describe('views.ViewportModule (Topology module)', function() {
   var views, Y, testUtils;
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node', 'juju-views', 'juju-tests-utils'],

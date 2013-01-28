@@ -40,7 +40,7 @@ YUI.add('juju-topology-viewport', function(Y) {
      * @param {Object} svg The SVG container to which impute new dimensions.
      * @param {Object} topo The topology view to which impute new dimensions.
      * @param {Object} zoomPlane The zoomPlane to which impute new dimensions.
-     * @return {undefined} Nothing, this function generates only side effects.
+     * @return {undefined} Nothing.  This function generates only side effects.
      */
     setAllTheDimensions: function(dimensions, canvas, svg, topo, zoomPlane) {
       // Get the canvas out of the way so we can calculate the size
@@ -76,8 +76,7 @@ YUI.add('juju-topology-viewport', function(Y) {
       var container = this.getContainer();
       var svg = container.one('svg');
       var canvas = container.one('.topology-canvas');
-      // XXX Why?  Is this for testing?  Is there some race with the canvas
-      // and/or "svg" becoming available?
+      // Early out for tests that do not provide a full rendering environment.
       if (!Y.Lang.isValue(canvas) || !Y.Lang.isValue(svg)) {
         return;
       }
