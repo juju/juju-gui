@@ -114,10 +114,8 @@ describe('topology', function() {
           return fauxTopo;
         }
       },
-      service_click_actions: {
-        hideServiceMenu: function() {},
-        destroyServiceConfirm: function() {}
-      }
+      hideServiceMenu: function() {},
+      destroyServiceConfirm: function() {}
     };
     topo.modules.ServiceModule.destroyServiceClick(undefined, context);
   });
@@ -167,7 +165,7 @@ describe('service menu', function() {
       updateServiceMenuLocation: function() {}
     };
     var view = new views.ServiceModule();
-    view.service_click_actions.toggleServiceMenu(
+    view.toggleServiceMenu(
         service, fauxView, undefined);
     assert.equal(addedClassName, 'disabled');
   });
