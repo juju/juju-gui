@@ -845,9 +845,9 @@ YUI.add('juju-topology-service', function(Y) {
        * @return {undefined} Side effects only.
        */
       toggleServiceMenu: function(box, view, context) {
-        var svc_menu = view.get('container').one('#service-menu');
+        var serviceMenu = view.get('container').one('#service-menu');
 
-        if (svc_menu.hasClass('active') || !box) {
+        if (serviceMenu.hasClass('active') || !box) {
           this.hideServiceMenu(null, view);
         } else {
           this.showServiceMenu(box, view, context);
@@ -864,17 +864,17 @@ YUI.add('juju-topology-service', function(Y) {
        * @return {undefined} Side effects only.
        */
       showServiceMenu: function(box, module, context) {
-        var svc_menu = module.get('container').one('#service-menu');
+        var serviceMenu = module.get('container').one('#service-menu');
         var topo = module.get('component');
         var service = topo.serviceForBox(box);
 
-        if (box && !svc_menu.hasClass('active')) {
+        if (box && !serviceMenu.hasClass('active')) {
           topo.set('active_service', box);
           topo.set('active_context', context);
-          svc_menu.addClass('active');
+          serviceMenu.addClass('active');
           // We do not want the user destroying the Juju GUI service.
           if (utils.isGuiService(service)) {
-            svc_menu.one('.destroy-service').addClass('disabled');
+            serviceMenu.one('.destroy-service').addClass('disabled');
           }
           module.updateServiceMenuLocation();
         }
@@ -890,15 +890,15 @@ YUI.add('juju-topology-service', function(Y) {
        * @return {undefined} Side effects only.
        */
       hideServiceMenu: function(box, module, context) {
-        var svc_menu = module.get('container').one('#service-menu');
+        var serviceMenu = module.get('container').one('#service-menu');
         var topo = module.get('component');
 
-        if (svc_menu.hasClass('active')) {
-          svc_menu.removeClass('active');
+        if (serviceMenu.hasClass('active')) {
+          serviceMenu.removeClass('active');
           topo.set('active_service', null);
           topo.set('active_context', null);
           // Most services can be destroyed via the GUI.
-          svc_menu.one('.destroy-service').removeClass('disabled');
+          serviceMenu.one('.destroy-service').removeClass('disabled');
         }
       },
 
