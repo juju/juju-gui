@@ -77,9 +77,9 @@ YUI.add('juju-topology-service', function(Y) {
 
     serviceClick: function(d, context) {
       // Ignore if we clicked outside the actual service node.
-      var topo = context.get('component'),
-          container = context.get('container'),
-          mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+      var topo = context.get('component');
+      var container = context.get('container');
+      var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
       if (!d.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
