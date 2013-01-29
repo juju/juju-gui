@@ -246,10 +246,10 @@ describe('service module events', function() {
     var topo = view.topo;
     var called = false;
     var d =
-          { id: 'wordpress',
-            containsPoint: function() { return true; }
-          };
-    serviceModule.service_click_actions['fake'] = function() {
+        { id: 'wordpress',
+          containsPoint: function() { return true; }
+        };
+    serviceModule.service_click_actions.fake = function() {
       called = true;
     };
     serviceModule.set('currentServiceClickAction', 'fake');
