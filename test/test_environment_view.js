@@ -193,7 +193,7 @@
         db: db,
         env: env
       });
-      var tmp_data = {
+      var addSubordinate = {
         result: [
           ['service', 'add', {
             'subordinate': true,
@@ -206,7 +206,20 @@
             'endpoints':
              [['wordpress', {'role': 'server', 'name': 'juju-info'}],
               ['puppet2', {'role': 'client', 'name': 'juju-info'}]],
-            'id': 'relation-0000000007'
+            'id': 'new-relation-0000000008'
+          }]
+        ],
+        op: 'delta'
+      };
+      var addRelation = {
+        result: [
+          ['relation', 'add', {
+            'interface': 'juju-info',
+            'scope': 'container',
+            'endpoints':
+             [['mediawiki', {'role': 'server', 'name': 'juju-info'}],
+              ['puppet', {'role': 'client', 'name': 'juju-info'}]],
+            'id': 'new-relation-0000000009'
           }]
         ],
         op: 'delta'
@@ -216,21 +229,28 @@
 
       var relationModule = view.topo.modules.RelationModule;
 
-      function validateRelationCount(serviceNode, module) {
+      function validateRelationCount(serviceNode, module, count) {
         var service = d3.select(serviceNode.getDOMNode()).datum();
-        return module.subordinateRelationsForService(service).length === 1;
+        return module.subordinateRelationsForService(service)
+          .length === count;
       }
 
       container.all('.subordinate.service').each(function(service) {
-        validateRelationCount(service, relationModule).should.equal(true);
+        validateRelationCount(service, relationModule, 1).should.equal(true);
       });
 
-      db.on_delta({ data: tmp_data });
-      view.render();
+      db.on_delta({ data: addSubordinate });
+      view.update();
 
       container.all('.subordinate.service').each(function(service) {
-        validateRelationCount(service, relationModule).should.equal(true);
+        validateRelationCount(service, relationModule, 1).should.equal(true);
       });
+
+      db.on_delta({ data: addRelation });
+      view.update();
+
+      validateRelationCount(container.one('.subordinate.service'),
+          relationModule, 2).should.equal(true);
     });
 
     it('must not duplicate nodes when services are added', function() {
@@ -238,27 +258,27 @@
         container: container,
         db: db,
         env: env
-      }),
-          tmp_data = {
-            result: [
-              ['service', 'add', {
-                'subordinate': true,
-                'charm': 'cs:precise/puppet-2',
-                'id': 'puppet2'
-              }],
-              ['service', 'add', {
-                'charm': 'cs:precise/mysql-6',
-                'id': 'mysql2'
-              }],
-              ['unit', 'add', {
-                'machine': 0,
-                'agent-state': 'started',
-                'public-address': '192.168.122.222',
-                'id': 'mysql2/0'
-              }]
-            ],
-            op: 'delta'
-          };
+      });
+      var tmp_data = {
+        result: [
+          ['service', 'add', {
+            'subordinate': true,
+            'charm': 'cs:precise/puppet-2',
+            'id': 'puppet2'
+          }],
+          ['service', 'add', {
+            'charm': 'cs:precise/mysql-6',
+            'id': 'mysql2'
+          }],
+          ['unit', 'add', {
+            'machine': 0,
+            'agent-state': 'started',
+            'public-address': '192.168.122.222',
+            'id': 'mysql2/0'
+          }]
+        ],
+        op: 'delta'
+      };
       view.render();
 
       db.on_delta({ data: tmp_data });

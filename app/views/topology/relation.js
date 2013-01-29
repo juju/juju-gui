@@ -254,10 +254,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var vis = topo.vis;
       var self = this;
 
-      vis.selectAll('.service')
-        .filter(function(d) {
-            return d.subordinate;
-          })
+      vis.selectAll('.service.subordinate')
         .selectAll('.sub-rel-block tspan')
         .text(function(d) {
             return self.subordinateRelationsForService(d).length;
@@ -771,7 +768,8 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     subordinateRelationsForService: function(service) {
       return this.relations.filter(function(relation) {
-        return (relation.source === service || relation.target === service) &&
+        return (relation.source.modelId() === service.modelId() ||
+            relation.target.modelId() === service.modelId()) &&
             relation.isSubordinate;
       });
     },
