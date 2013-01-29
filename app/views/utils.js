@@ -607,222 +607,272 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
 
-
   /*
-   * Utility class that encapsulates Y.Models and keeps their positional
+   * Utility class that encapsulates Y.Models and keeps their position
    * state within an svg canvas.
    *
    * As a convenience attributes of the encapsulated model are exposed
    * directly as attributes.
    */
-  function BoundingBox() {
-    var x, y, w, h, value, modelId, boxMargins;
-    function Box() {}
-
-    Box.model = function(_) {
-      if (!arguments.length) {
-        return modelId;
+  var _box = {};
+  function positionProp(name) {
+    return {
+      writeable: true,
+      get: function() {return this['_' + name];},
+      set: function(value) {
+        this['p' + name] = this['_' + name];
+        this['_' + name] = value;
       }
-      modelId = [_.name, _.get('id')];
+    }
+  }
 
-      // Copy all the attrs from model to Box
-      Y.mix(Box, _.getAttrs());
-      return Box;
-    };
+  Object.defineProperties(_box, {
+    x: positionProp('x'),
+    y: positionProp('y'),
+    w: positionProp('w'),
+    h: positionProp('h'),
 
-    Box.margins = function(_) {
-      if (!arguments.length) {
-        return boxMargins;
+    pos: {
+      writeable: true,
+      get: function(){return {x: this.x, y: this.y, w: this.w, h: this.h};},
+      set: function(value) {
+        Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
       }
-      boxMargins = _;
-      return Box;
-    };
+    },
 
-    Object.defineProperties(Box, {
-      pos: {
-        writeable: true,
-        get: function() {
-          return {x: this.x, y: this.y, w: this.w, h: this.h};
-        },
-        set: function(value) {
-          Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
-        }
+    translateStr: {
+      get: function() {return 'translate(' + this.x +','+ this.y+')';}
+    },
+
+    model: {
+      writeable: true,
+      get: function() {
+        return this.topology.serviceForBox(this.id);
       },
-      x: {
-        writeable: true,
-        get: function() { return x;},
-        set: function(value) {
-          this.px = this.x;
-          x = value;
-          return this;}
-      },
-      y: {
-        writeable: true,
-        get: function() { return y;},
-        set: function(value) {
-          this.py = this.y;
-          y = value;
-          return this;
+      set: function(value) {
+        if (value) {
+          Y.mix(this, value.getAttrs());
+          this._modelName = value.name;
         }
       }
-    });
+    },
+    modelId: {
+      get: function() {return this._modelName + '-' + this.id;}
+    },
+    node: {
+      get: function() {return this.module.getServiceNode(this.id);}
+    },
+    topology: {
+      get: function() {return this.module.get('component');}
+    },
+    xy: {
+      get: function() {return [this.x, this.y];}
+    },
+    wh: {
+      get: function() {return [this.w, this.h];}
+    },
 
-    Box.getXY = function() {return [this.x, this.y];};
-    Box.getWH = function() {return [this.w, this.h];};
+    /*
+     * Extract margins from the supplied module.
+     */
+    margins: {
+      writeable: false,
+      get: function() {
+        if (!this.module) {
+          // Used in testing.
+          return {top: 0, bottom: 0, left: 0, right: 0};
+        }
+        if (this.subordinate) {
+          return this.module.subordinate_margins;
+        }
+        return this.module.service_margins;
+      }
+    },
 
     /*
      * Returns the center of the box with the origin being the upper-left
      * corner of the box.
      */
-    Box.getRelativeCenter = function() {
-      var margins = this.margins();
+    relativeCenter: {
+      get: function () {
+      var margins = this.margins;
       return [
         (this.w / 2) + (margins &&
               (margins.left * this.w / 2 -
-                margins.right * this.w / 2) || 0),
-        (this.h / 2) - (margins &&
-              (margins.bottom * this.h / 2 -
-                margins.top * this.h / 2) || 0)
-      ];
-    };
+               margins.right * this.w / 2) || 0),
+               (this.h / 2) - (margins &&
+                               (margins.bottom * this.h / 2 -
+                                margins.top * this.h / 2) || 0)
+      ];}
+    },
 
     /*
      * Returns the absolute center of the box on the canvas.
      */
-    Box.getCenter = function() {
-      var center = this.getRelativeCenter();
-      center[0] += this.x;
-      center[1] += this.y;
-      return center;
-    };
-
+    center: {
+      get: function() {
+        var c = this.relativeCenter;
+        c[0] += this.x;
+        c[1] += this.y;
+        return c;
+      }
+    },
 
     /*
      * Returns true if a given point in the form [x, y] is within the box.
+     * Transform could be extracted from the topology but the current
+     * arguments ease testing.
      */
-    Box.containsPoint = function(point, transform) {
-      transform = transform || {
-        scale: function() { return 1; },
-        translate: function() { return [0, 0]; }
-      };
-      var s = transform.scale(), tr = transform.translate();
-      if (point[0] >= this.x * s + tr[0] &&
-          point[0] <= this.x * s + this.w * s + tr[0] &&
-          point[1] >= this.y * s + tr[1] &&
-          point[1] <= this.y * s + this.h * s + tr[1]) {
-        return true;
+    containsPoint: {
+      value: function(point, transform) {
+        transform = transform || {
+          scale: function() { return 1; },
+          translate: function() { return [0, 0]; }
+        };
+        var tr = transform.translate(),
+            s = transform.scale();
+
+        return (point[0] >= this.x * s + tr[0] &&
+                point[0] <= this.x * s + this.w * s + tr[0] &&
+                point[1] >= this.y * s + tr[1] &&
+                point[1] <= this.y * s + this.h * s + tr[1]);
       }
-      return false;
-    };
+    },
 
     /*
-     * Return the 50% points along each side as xy pairs
+     * Return the 50% points along each side as [x, y] pairs.
      */
-    Box.getConnectors = function() {
-      // Since the service nodes have a shadow that takes up a bit of
-      // space on the sides and bottom of the actual node itself, add a bit
-      // of a margin to the actual connecting points. The margin is specified
-      // as a percentage of the width or height, as those are affected by the
-      // scale. This is calculated by taking the distance of the shadow from
-      // the edge of the actual shape and calculating it as a percentage of
-      // the total height of the shape.
-      var margins = this.margins();
-      return {
-        top: [
-          this.x + (this.w / 2),
-          this.y + (margins && (margins.top * this.h) || 0)
-        ],
-        right: [
-          this.x + this.w - (margins && (margins.right * this.w) || 0),
-          this.y + (this.h / 2) - (
+    connectors: {
+      get: function() {
+        // Since the service nodes have a shadow that takes up a bit of
+        // space on the sides and bottom of the actual node itself, add a bit
+        // of a margin to the actual connecting points. The margin is specified
+        // as a percentage of the width or height, as those are affected by the
+        // scale. This is calculated by taking the distance of the shadow from
+        // the edge of the actual shape and calculating it as a percentage of
+        // the total height of the shape.
+        var margins = this.margins;
+        return {
+          top: [
+            this.x + (this.w / 2),
+            this.y + (margins && (margins.top * this.h) || 0)
+          ],
+          right: [
+            this.x + this.w - (margins && (margins.right * this.w) || 0),
+            this.y + (this.h / 2) - (
               margins && (margins.bottom * this.h / 2 -
                           margins.top * this.h / 2) || 0)
-        ],
-        bottom: [
-          this.x + (this.w / 2),
-          this.y + this.h - (margins && (margins.bottom * this.h) || 0)
-        ],
-        left: [
-          this.x + (margins && (margins.left * this.w) || 0),
-          this.y + (this.h / 2) - (
+          ],
+          bottom: [
+            this.x + (this.w / 2),
+            this.y + this.h - (margins && (margins.bottom * this.h) || 0)
+          ],
+          left: [
+            this.x + (margins && (margins.left * this.w) || 0),
+            this.y + (this.h / 2) - (
               margins && (margins.bottom * this.h / 2 -
                           margins.top * this.h / 2) || 0)
-        ]
-      };
-    };
+          ]
+        };
+      }
+    },
 
-    Box._distance = function(xy1, xy2) {
-      return Math.sqrt(Math.pow(xy1[0] - xy2[0], 2) +
-                       Math.pow(xy1[1] - xy2[1], 2));
-    };
+    _distance: {
+      value: function(xy1, xy2) {
+        return Math.sqrt(Math.pow(xy1[0] - xy2[0], 2) +
+                         Math.pow(xy1[1] - xy2[1], 2));
+      }
+    },
 
     /*
      * Connectors are defined on four borders, find the one closes to
      * another BoundingBox
      */
-    Box.getNearestConnector = function(other_box) {
-      var connectors = this.getConnectors(),
-          result = null,
-          shortest_d = Infinity,
-          source = other_box;
-      // duck typing
-      if ('getXY' in other_box) {
-        source = other_box.getXY();
-      }
+    getNearestConnector: {
+      value: function(box_or_xy) {
+        var connectors = this.connectors,
+            result = null,
+            shortest_d = Infinity,
+            source = box_or_xy;
+            if (box_or_xy.xy !== undefined) {
+              source = box_or_xy.xy;
+            }
 
-      Y.each(connectors, function(ep) {
-        // Take the distance of each XY pair
-        var d = this._distance(source, ep);
-        if (!Y.Lang.isValue(result) || d < shortest_d) {
-          shortest_d = d;
-          result = ep;
-        }
-      }, this);
-      return result;
-    };
+        Y.each(connectors, function(ep) {
+          // Take the distance of each XY pair
+          var d = this._distance(source, ep);
+          if (!Y.Lang.isValue(result) || d < shortest_d) {
+            shortest_d = d;
+            result = ep;
+          }
+        }, this);
+        return result;
+      }
+    },
 
     /*
      * Return [this.connector.XY, other.connector.XY] (in that order)
      * that as nearest to each other. This can be used to define start-end
      * points for routing.
      */
-    Box.getConnectorPair = function(other_box) {
-      var sc = Box.getConnectors(),
-          oc = other_box.getConnectors(),
-          result = null,
-          shortest_d = Infinity;
+    getConnectorPair: {
+      value: function(other_box) {
+        var sc = this.connectors,
+            oc = other_box.connectors,
+            result = null,
+            shortest_d = Infinity;
 
-      Y.each(sc, function(ep1) {
-        Y.each(oc, function(ep2) {
-          // Take the distance of each XY pair
-          var d = this._distance(ep1, ep2);
-          if (!Y.Lang.isValue(result) || d < shortest_d) {
-            shortest_d = d;
-            result = [ep1, ep2];
-          }
-        }, other_box);
-      }, this);
-      return result;
-    };
+            Y.each(sc, function(ep1) {
+              Y.each(oc, function(ep2) {
+                // Take the distance of each XY pair
+                var d = this._distance(ep1, ep2);
+                if (!Y.Lang.isValue(result) || d < shortest_d) {
+                  shortest_d = d;
+                  result = [ep1, ep2];
+                }
+              }, other_box);
+            }, this);
+            return result;
+      }
+    }
+  });
 
-    Box.translateStr = function() {
-      return 'translate(' + this.getXY() + ')';
-    };
+  // Glorious Ctor
+  function BoundingBox(module, model) {
+    var b = Object.create(_box, {
+          });
+    b.module = module;
+    b.model = model;
 
-    Box.modelId = function() {
-      return modelId[0] + '-' + modelId[1];
-    };
-
-    return Box;
+    return b;
   }
 
   views.BoundingBox = BoundingBox;
 
-  views.toBoundingBox = function(model) {
-    var box = new BoundingBox();
-    box.model(model);
-    return box;
+  /**
+   * Covert an Array of services into BoundingBoxes. If
+   * existing is supplied it should be a map of {id: box}
+   * and will be updated in place by merging changed attribute
+   * into the index.
+   *
+   * @param module {ServiceModule} Module holding box canvas and context.
+   * @param services {ModelList} of Service models.
+   * @param existing {Object} id:box mapping.
+   * @returns {Object} id:box mapping.
+   **/
+  views.toBoundingBoxes = function(module, services, existing) {
+    var result = existing || {};
+    Y.each(services, function(service) {
+      var id = service.get('id');
+      if (id in result) {
+        result[id].model = service;
+      } else {
+        result[id] = BoundingBox(module, service);
+      }
+    });
+    return result;
   };
+
 
 
   /**
