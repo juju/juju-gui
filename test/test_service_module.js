@@ -74,13 +74,7 @@ describe('service module annotations', function() {
        location['gui.x'].should.equal(0);
        location['gui.y'].should.equal(0);
      });
-
-  it('should ', function() {});
-
-  it('should ', function() {});
-  it('should ', function() {});
 });
-
 
 describe('service module events', function() {
   var db, juju, models, serviceModule, view, viewContainer, views, Y;
@@ -255,7 +249,8 @@ describe('service module events', function() {
     serviceModule.set('currentServiceClickAction', 'fake');
     topo.ignoreServiceClick = true;
     serviceModule.serviceClick(d, serviceModule);
-    assert.isFalse(topo.ignoreServiceClick);
     assert.isFalse(called);
+    // The flag is reset when encountered and ignored.
+    assert.isFalse(topo.ignoreServiceClick);
   });
 });
