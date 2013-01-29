@@ -237,4 +237,25 @@ describe('service module events', function() {
     // Click the "Cancel" button to close the "Destroy Service" dialog.
     cancelButton.simulate('click');
   });
+
+  it('must not process service clicks after a dragend', function() {
+    // Test the work-around that prevents serviceClick from doing its work if
+    // called after dragend.  A better test that causes dragend and
+    // serviceClick to be called via the eventhandlers is preferred but
+    // unobvious.
+    var topo = view.topo;
+    var called = false;
+    var d =
+          { id: 'wordpress',
+            containsPoint: function() { return true; }
+          };
+    serviceModule.service_click_actions['fake'] = function() {
+      called = true;
+    };
+    serviceModule.set('currentServiceClickAction', 'fake');
+    topo.ignoreServiceClick = true;
+    serviceModule.serviceClick(d, serviceModule);
+    assert.isFalse(topo.ignoreServiceClick);
+    assert.isFalse(called);
+  });
 });
