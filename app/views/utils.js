@@ -891,9 +891,9 @@ YUI.add('juju-view-utils', function(Y) {
       source: source,
       target: target,
       compositeId: (
-          source.modelId() +
+          source.modelId +
           (hasRelations ? ':' + relation.endpoints[0][1].name : '') +
-          '-' + target.modelId() +
+          '-' + target.modelId +
           (hasRelations ? ':' + relation.endpoints[1][1].name : ''))
     };
     Y.mix(decorated, relation.getAttrs());

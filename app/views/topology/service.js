@@ -238,31 +238,19 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = this.get('component');
       var vis = topo.vis;
       var db = topo.get('db');
-      var services = db.services.map(views.toBoundingBox);
 
-      this.services = services;
-
-      Y.each(services, function(service) {
-        // Update services  with existing positions.
-        // In the future it would be better to sync
-        // the model to the existing box.
-        var existing = this.service_boxes[service.id];
-        if (existing) {
-          service.pos = existing.pos;
-          service.inDrag = existing.inDrag;
-        }
-        service.margins(service.subordinate ?
-                        this.subordinate_margins :
-                        this.service_margins);
-        this.service_boxes[service.id] = service;
-      }, this);
+      if (!this.service_boxes) {
+        this.service_boxes = {};
+      }
+      views.toBoundingBoxes(this, db.services, this.service_boxes);
+      this.services = Y.Object.values(this.service_boxes);
 
       // XXX: containment breaking alias, do we need this?
       topo.service_boxes = this.service_boxes;
 
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
-                     .data(services, function(d) {return d.modelId();});
+                     .data(this.services, function(d) {return d.modelId;});
     },
 
     /**
@@ -348,7 +336,7 @@ YUI.add('juju-topology-service', function(Y) {
       }
 
       selection.attr('transform', function(d, i) {
-        return d.translateStr();
+        return d.translateStr;
       });
       if (topo.get('active_service') === d) {
         self.updateServiceMenuLocation();
@@ -426,7 +414,7 @@ YUI.add('juju-topology-service', function(Y) {
           })
         .call(this.dragBehavior)
         .attr('transform', function(d) {
-            return d.translateStr();
+            return d.translateStr;
           })
         .call(self.createServiceNode);
 
@@ -639,7 +627,7 @@ YUI.add('juju-topology-service', function(Y) {
             return d.w / 10 * 7;
           })
         .attr('y', function(d) {
-            return d.getRelativeCenter()[1] - (d.w / 6) / 2;
+            return d.relativeCenter[1] - (d.w / 6) / 2;
           })
         .append('title')
         .text(function(d) {
@@ -684,7 +672,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       node.select('.service-status')
         .attr('transform', function(d) {
-            return 'translate(' + d.getRelativeCenter() + ')';
+            return 'translate(' + d.relativeCenter + ')';
           });
       node.select('.service-health-mask')
         .attr('width', function(d) {
@@ -808,7 +796,7 @@ YUI.add('juju-topology-service', function(Y) {
         var cp_width = cp.getClientRect().width,
                 menu_left = service.x * z + service.w * z / 2 <
                 this.width * z / 2,
-                service_center = service.getRelativeCenter();
+                service_center = service.relativeCenter;
         if (menu_left) {
           cp.removeClass('left')
                 .addClass('right');
@@ -920,18 +908,18 @@ YUI.add('juju-topology-service', function(Y) {
 
         // Show dialog.
         view.set('destroy_dialog', views.createModalPanel(
-            'Are you sure you want to destroy the service? ' +
-                'This cannot be undone.',
-            '#destroy-modal-panel',
-            'Destroy Service',
-            Y.bind(function(ev) {
-              ev.preventDefault();
-              var btn = ev.target;
-              btn.set('disabled', true);
-              view.service_click_actions
-                      .destroyService(m, view, btn);
-            },
-            this)));
+          'Are you sure you want to destroy the service? ' +
+          'This cannot be undone.',
+          '#destroy-modal-panel',
+          'Destroy Service',
+          Y.bind(function(ev) {
+            ev.preventDefault();
+            var btn = ev.target;
+            btn.set('disabled', true);
+            view.service_click_actions
+            .destroyService(m, view, btn);
+          },
+          this)));
       },
 
       /*
@@ -939,25 +927,25 @@ YUI.add('juju-topology-service', function(Y) {
        */
       destroyService: function(m, view, btn) {
         var env = view.get('component').get('env'),
-            service = view.get('destroy_service');
+        service = view.get('destroy_service');
         env.destroy_service(
-            service.get('id'),
-            Y.bind(this._destroyCallback, view,
-                   service, view, btn));
+          service.get('id'),
+          Y.bind(this._destroyCallback, view,
+                 service, view, btn));
       },
 
       _destroyCallback: function(service, view, btn, ev) {
         var getModelURL = view.get('component').get('getModelURL'),
-                db = view.get('component').get('db');
+        db = view.get('component').get('db');
         if (ev.err) {
           db.notifications.add(
-              new models.Notification({
-                title: 'Error destroying service',
-                message: 'Service name: ' + ev.service_name,
-                level: 'error',
-                link: getModelURL(service),
-                modelId: service
-              })
+            new models.Notification({
+            title: 'Error destroying service',
+            message: 'Service name: ' + ev.service_name,
+            level: 'error',
+            link: getModelURL(service),
+            modelId: service
+          })
           );
         } else {
           var relations = db.relations.get_relations_for_service(service);
@@ -970,7 +958,6 @@ YUI.add('juju-topology-service', function(Y) {
         view.get('destroy_dialog').hide();
         btn.set('disabled', false);
       }
-
 
     }
   }, {

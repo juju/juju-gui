@@ -2,7 +2,7 @@
 
 (function() {
 
-  describe('juju environment view', function() {
+  describe.only('juju environment view', function() {
     var views, models, Y, container, service, db, conn,
         juju, env, testUtils;
 
@@ -768,7 +768,7 @@
     });
   });
 
-  describe.only('view model support infrastructure', function() {
+  describe('view model support infrastructure', function() {
     var Y, views, models, module, service;
 
     before(function(done) {
