@@ -234,9 +234,8 @@ describe('service module events', function() {
 
   it('must not process service clicks after a dragend', function() {
     // Test the work-around that prevents serviceClick from doing its work if
-    // called after dragend.  A better test that causes dragend and
-    // serviceClick to be called via the eventhandlers is preferred but
-    // unobvious.
+    // called after dragend.  Behaviour-driven testing via a tool such as
+    // Selenium will add more coverage.
     var topo = view.topo;
     var called = false;
     var d =
