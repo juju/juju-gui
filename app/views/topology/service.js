@@ -527,6 +527,13 @@ YUI.add('juju-topology-service', function(Y) {
           }
         }});
 
+      // Mark subordinates as such.  This is needed for when a new service
+      // is created.
+      node.filter(function(d) {
+        return d.subordinate;
+      })
+        .classed('subordinate', true);
+
       // Size the node for drawing.
       node.attr('width', function(d) {
         // NB: if a service has zero units, as is possible with
