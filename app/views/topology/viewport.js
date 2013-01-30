@@ -25,6 +25,7 @@ YUI.add('juju-topology-viewport', function(Y) {
      * make it easy for tests to substitute their own container.
      *
      * @return {Object} A DOM node.
+     * @method getContainer
      */
     getContainer: function() {
       return this.get('container');
@@ -71,6 +72,7 @@ YUI.add('juju-topology-viewport', function(Y) {
      * sizes.
      *
      * @return {undefined} Nothing, this function generates only side effects.
+     * @method resized.
      */
     resized: function() {
       var container = this.getContainer();

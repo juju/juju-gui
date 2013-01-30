@@ -156,6 +156,8 @@ YUI.add('juju-topology-service', function(Y) {
 
     /**
      * Handle mouseover service status
+     *
+     * @method serviceStatusMouseOver
      **/
     serviceStatusMouseOver: function(d, context) {
       d3.select(this)
@@ -172,6 +174,8 @@ YUI.add('juju-topology-service', function(Y) {
     /**
      * If the user clicks on the background we cancel any active add
      * relation.
+     *
+     * @method canvasClick
      */
     canvasClick: function(d, self) {
       var container = self.get('container'),
@@ -181,7 +185,11 @@ YUI.add('juju-topology-service', function(Y) {
       topo.fire('clearState');
     },
 
-    /** The user clicked on the "View" menu item. */
+    /**
+     * The user clicked on the "View" menu item.
+     *
+     * @method viewServiceClick
+     */
     viewServiceClick: function(d, context) {
       // Get the service element
       var topo = context.get('component');
@@ -193,7 +201,11 @@ YUI.add('juju-topology-service', function(Y) {
              .show_service(service, context);
     },
 
-    /** The user clicked on the "Destroy" menu item. */
+    /**
+     * The user clicked on the "Destroy" menu item.
+     *
+     * @method destroyServiceClick
+     */
     destroyServiceClick: function(data, context) {
       // Get the service element
       var topo = context.get('component');
@@ -232,6 +244,8 @@ YUI.add('juju-topology-service', function(Y) {
     },
     /*
      * Sync view models with current db.models.
+     *
+     * @method updateData
      */
     updateData: function() {
       //model data
@@ -271,6 +285,7 @@ YUI.add('juju-topology-service', function(Y) {
      * @param {object} svc A service object.
      * @param {object} i Unused.
      * @return {undefined} Side effects only.
+     * @method dragstart
      */
     dragstart: function(d, self) {
       var topo = self.get('component');
@@ -370,6 +385,8 @@ YUI.add('juju-topology-service', function(Y) {
     /*
      * Attempt to reuse as much of the existing graph and view models
      * as possible to re-render the graph.
+     *
+     * @method update
      */
     update: function() {
       var self = this,
@@ -458,10 +475,12 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-     * @method createServiceNode fills a service node with empty structures
-     *                           that will be filled out in the update stage.
+     * Fill a service node with empty structures that will be filled out
+     * in the update stage.
+     *
      * @param {object} node the node to construct.
      * @return {null} side effects only.
+     * @method createServiceNode
      */
     createServiceNode: function(node) {
       node.append('image')
@@ -491,10 +510,12 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-     * @method updateServiceNodes fills the empty structures within a service
-     *                            node such that they match the db.
+     * Fill the empty structures within a service node such that they
+     * match the db.
+     *
      * @param {object} node the collection of nodes to update.
      * @return {null} side effects only.
+     * @method updateServiceNodes
      */
     updateServiceNodes: function(node) {
       var self = this,
@@ -771,9 +792,11 @@ YUI.add('juju-topology-service', function(Y) {
      * from the DOM, such as the clientRects used for sizing relation
      * labels and the viewport size used for sizing the whole graph. This
      * is called after the view is attached to the DOM in order to
-     * perform all of that work.  In the app, it's called as a callback
-     * in app.showView(), and in testing, it needs to be called manually,
+     * perform all of that work.  In the app, it is called as a callback
+     * in `app.showView()`, and in testing, it needs to be called manually,
      * if the test relies on any of this data.
+     *
+     * @method renderedHandler
      */
     renderedHandler: function() {
       var container = this.get('container');
@@ -911,6 +934,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       /*
        * View a service
+       *
+       * @method show_service
        */
       show_service: function(m, context) {
         var topo = context.get('component');
@@ -920,6 +945,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       /*
        * Show a dialog before destroying a service
+       *
+       * @method destroyServiceConfirm
        */
       destroyServiceConfirm: function(m, view) {
         // Set service in view.
@@ -943,6 +970,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       /*
        * Destroy a service.
+       *
+       * @method destroyService
        */
       destroyService: function(m, view, btn) {
         var env = view.get('component').get('env'),
@@ -984,7 +1013,9 @@ YUI.add('juju-topology-service', function(Y) {
     ATTRS: {}
 
   });
+
   views.ServiceModule = ServiceModule;
+
 }, '0.1.0', {
   requires: [
     'd3',

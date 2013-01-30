@@ -4,6 +4,7 @@ YUI.add('juju-env', function(Y) {
 
   /**
    * The Juju environment.
+   *
    * This class handles the websocket connection to the Juju API backend.
    *
    * @class Environment
@@ -277,6 +278,7 @@ YUI.add('juju-env', function(Y) {
      * stored on the environment.
      *
      * @return {undefined} Nothing.
+     * @method login
      */
     login: function() {
       // If the user is already authenticated there is nothing to do.
@@ -414,6 +416,7 @@ YUI.add('juju-env', function(Y) {
      *   environment as the entity the magic string 'env' is used.
      * @param {Object} data A dictionary of key, value pairs.
      * @return {undefined} Nothing.
+     * @method update_annotations
      */
     update_annotations: function(entity, data, callback) {
       this._send_rpc({
@@ -433,6 +436,7 @@ YUI.add('juju-env', function(Y) {
      *   environment as the entity the magic string 'env' is used.
      * @return {Object} A dictionary of key,value pairs is returned in the
      *   callback.  The invocation of this command returns nothing.
+     * @method get_annotations
      */
     get_annotations: function(entity, callback) {
       this._send_rpc({
@@ -450,6 +454,7 @@ YUI.add('juju-env', function(Y) {
      *   annotations to be deleted.  If no keys are passed, all annotations
      *   for the entity will be removed.
      * @return {undefined} Nothing.
+     * @method remove_annotations
      */
     remove_annotations: function(entity, keys, callback) {
       this._send_rpc({
