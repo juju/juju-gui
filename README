@@ -1,5 +1,7 @@
-.. Run "make viewdocs" to render this file and read it in the browser
-   alongside the whole project documentation.
+.. Run "make view-main-doc" to render this file and read it in the browser
+   alongside the whole project documentation. To do this, you need the
+   dependencies described in the "Documentation" section of the HACKING
+   file.
 
 ======
 README

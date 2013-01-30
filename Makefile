@@ -149,7 +149,7 @@ help:
 	@echo "test-server: run tests in the browser from the debug environment"
 	@echo "prep: beautify and lint the source"
 	@echo "docs: generate project and code documentation"
-	@echo "viewdocs: generate all documentation and view it in the browser"
+	@echo "view-docs: generate both doc sets and view them in the browser"
 	@echo "help: this description"
 	@echo "Other, less common targets are available, see Makefile."
 
@@ -160,15 +160,22 @@ build-shared/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 yuidoc/index.html: node_modules/yuidocjs $(JSFILES)
 	node_modules/.bin/yuidoc -o yuidoc -x assets app
 
-sphinx:
+main-doc:
 	make -C docs html
 
-yuidoc: yuidoc/index.html
-
-docs: sphinx yuidoc
-
-viewdocs: docs
+view-main-doc: main-doc
 	xdg-open docs/_build/html/index.html
+
+code-doc: yuidoc/index.html
+
+view-code-doc: code-doc
+	xdg-open yuidoc/index.html
+
+docs: code-doc main-doc
+
+view-docs: docs
+	xdg-open docs/_build/html/index.html
+	xdg-open yuidoc/index.html
 
 $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 		$(SPRITE_SOURCE_FILES)
@@ -474,10 +481,10 @@ appcache-touch:
 appcache-force: appcache-touch $(APPCACHE)
 
 # targets are alphabetically sorted, they like it that way :-)
-.PHONY: appcache-force appcache-touch beautify build \
-	build-files build-devel clean clean-all \
-	clean-deps clean-docs debug devel docs dist gjslint help \
-	jshint lint prep prod server spritegen test test-debug test-prod \
-	undocumented yuidoc yuidoc-lint recess
+.PHONY: appcache-force appcache-touch beautify build build-files \
+	build-devel clean clean-all clean-deps clean-docs code-doc \
+	debug devel docs dist gjslint help jshint lint main-doc prep prod \
+	recess server spritegen test test-debug test-prod undocumented \
+	view-code-doc view-docs view-main-doc yuidoc-lint
 
 .DEFAULT_GOAL := all
