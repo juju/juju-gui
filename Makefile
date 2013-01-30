@@ -148,7 +148,8 @@ help:
 	@echo "test-prod: run tests on the cli from the production environment"
 	@echo "test-server: run tests in the browser from the debug environment"
 	@echo "prep: beautify and lint the source"
-	@echo "docs: generate Sphinx and YUIdoc documentation"
+	@echo "docs: generate project and code documentation"
+	@echo "viewdocs: generate all documentation and view it in the browser"
 	@echo "help: this description"
 	@echo "Other, less common targets are available, see Makefile."
 
@@ -165,6 +166,9 @@ sphinx:
 yuidoc: yuidoc/index.html
 
 docs: sphinx yuidoc
+
+viewdocs: docs
+	xdg-open docs/_build/html/index.html
 
 $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 		$(SPRITE_SOURCE_FILES)

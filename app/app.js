@@ -532,6 +532,8 @@ YUI.add('juju-gui', function(Y) {
         notifications: this.db.notifications});
     },
 
+    // Persistent Views
+
     /**
      * `notifications` is a preserved view that remains rendered on all main
      * views.  We manually create an instance of this view and insert it into
@@ -801,7 +803,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Wrap the default routing using a whitelist to spare the extra juggling.
+     * Wrap the default routing using a whitelist to avoid extra juggling.
      *
      * @method route
      */
