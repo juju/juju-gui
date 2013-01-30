@@ -1,4 +1,5 @@
 'use strict';
+
 /**
  * The charm panel view(s).
  *
@@ -319,7 +320,7 @@ YUI.add('juju-charm-panel', function(Y) {
      * "description" for a given charm.
      *
      * @method showDetails
-     * @param {Object} ev An event object (with a "halt" method).
+     * @param {Object} ev An event object (with a `halt` method).
      * @return {undefined} Sends a signal only.
      */
     showDetails: function(ev) {
@@ -340,6 +341,8 @@ YUI.add('juju-charm-panel', function(Y) {
     },
     /**
      * Create a data structure friendly to the view
+     *
+     * @method normalizeCharms.
      */
     normalizeCharms: function(charms) {
       var hash = {},
@@ -388,6 +391,8 @@ YUI.add('juju-charm-panel', function(Y) {
     },
     /**
      * Find charms that match a query.
+     *
+     * @method findCharms
      */
     findCharms: function(query, callback) {
       var charmStore = this.get('charmStore'),
@@ -527,6 +532,8 @@ YUI.add('juju-charm-panel', function(Y) {
                    * view's charm, ask renderRelatedCharms to render the
                    * results.  If they differ, discard the results, because they
                    * are no longer relevant.
+                   *
+                   * @method getRelatedCharms.store.find.success
                    */
                   success: function(related) {
                     if (charm === self.get('model')) {
@@ -536,6 +543,8 @@ YUI.add('juju-charm-panel', function(Y) {
                   /**
                    * If there was a failure, render it to the console and to the
                    * notifications section.
+                   *
+                   * @method getRelatedCharms.store.find.failure
                    */
                   failure: function(e) {
                     console.error(e.error);
@@ -705,6 +714,7 @@ YUI.add('juju-charm-panel', function(Y) {
          * @param {Number} fieldHeight The hight of the field.
          * @param {Number} tooltipHeight The height of the tooltip.
          * @return {Number} New Y coordinate for the tooltip.
+         * @method _calculateTooltipY
          */
         _calculateTooltipY: function(fieldY, fieldHeight, tooltipHeight) {
           var y_offset = (tooltipHeight - fieldHeight) / 2;
@@ -718,6 +728,7 @@ YUI.add('juju-charm-panel', function(Y) {
          * @param {Number} fieldX The current X position of the tooltip.
          * @param {Number} tooltipWidth The width of the tooltip.
          * @return {Number} New X coordinate for the tooltip.
+         * @method _calculateTooltipX
          */
         _calculateTooltipX: function(fieldX, tooltipWidth) {
           return fieldX - tooltipWidth - 15;

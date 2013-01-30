@@ -1,3 +1,7 @@
+.. Run "make view-main-doc" to render this file and read it in the browser
+   alongside the whole project documentation. To do this, you need the
+   dependencies described in the "Documentation" section below.
+
 =======
 HACKING
 =======
@@ -84,8 +88,8 @@ Working with a Real Juju
 
 The easiest way to work with a real Juju installation, as opposed to the
 "improv" script described above, is to use the Juju charm.  See
-http://jujucharms.com/~juju-gui/precise/juju-gui or
-http://jujucharms.com/charms/precise/juju-gui for details.
+<http://jujucharms.com/~juju-gui/precise/juju-gui> or
+<http://jujucharms.com/charms/precise/juju-gui> for details.
 
 Alternatively, you can try the instructions below, but be warned that they
 have bit-rotted and we have not felt the need to update them.  If you get them
@@ -177,8 +181,8 @@ directory.  You can build and view the docs by running::
   make yuidoc
   xdg-open yuidoc/index.html
 
-See the YUIDoc markup `documentation <http://yui.github.com/yuidoc/syntax/>`_
-for details on its syntax.
+See the :ref:`style guide <embedded-docs>` document for details on how to
+write the embedded documentation.
 
 Project Documentation
 ---------------------

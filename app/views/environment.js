@@ -1,6 +1,6 @@
 'use strict';
 /**
- * Provides the main app class.
+ * Provide the EnvironmentView class.
  *
  * @module environment
  */
@@ -15,7 +15,7 @@ YUI.add('juju-view-environment', function(Y) {
   /**
    * Display an environment.
    *
-   * @class environment
+   * @class EnvironmentView
    * @namespace views
    */
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View,
@@ -28,12 +28,10 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /**
-         * Wrapper around topo.update. Rather than
-         * re-rendering a whole topology the view
-         * can require data updates when needed.
-         * Ideally even this shouldn't be needed
-         * as we can observe ModelList change events
-         * and debounce update calculations
+         * Wrapper around topo.update. Rather than re-rendering a whole
+         * topology, the view can require data updates when needed.
+         * Ideally even this should not be needed, as we can observe
+         * ModelList change events and debounce update calculations
          * internally.
          *
          * @method update
@@ -52,8 +50,7 @@ YUI.add('juju-view-environment', function(Y) {
           var container = this.get('container'),
               topo = this.topo;
 
-          //If we need the initial HTML template
-          // take care of that.
+          // If we need the initial HTML template, take care of that.
           if (!this._rendered) {
             EnvironmentView.superclass.render.apply(this, arguments);
             container.setHTML(Templates.overview());
@@ -84,10 +81,9 @@ YUI.add('juju-view-environment', function(Y) {
         },
 
         /**
-         * Render callback handler,
-         * triggered from app when the view renders.
+         * Render callback handler, triggered from app when the view renders.
          *
-         * @method rendered
+         * @method render.rendered
          **/
         rendered: function() {
           this.topo.fire('rendered');
@@ -99,6 +95,7 @@ YUI.add('juju-view-environment', function(Y) {
       });
 
   views.environment = EnvironmentView;
+
 }, '0.1.0', {
   requires: ['juju-templates',
              'juju-view-utils',

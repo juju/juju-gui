@@ -9,18 +9,20 @@ YUI.add('juju-topology', function(Y) {
    * Topology models and renders the SVG of the envionment topology
    * with its associated behaviors.
    *
-   * The line of where to put code (in the Topology vs a Module) isn't 100%
+   * The line of where to put code (in the Topology vs a Module) is not 100%
    * clear. The rule of thumb to follow is that shared state, policy and
    * configuration belong here. If the only shared requirement on shared state
-   * is watch/event like behavior fire an event and place the logic in a module.
+   * is watch/event like behavior, fire an event and place the logic in a
+   * module.
    *
-   * Emmitted Events:
+   * Emitted events:
    *
    *  zoom: When the zoom level of the canvas changes a 'zoom'
    *        event is fired. Analogous to d3's zoom event.
    *
+   * @module topology
    * @class Topology
-   * @namespace juju.views
+   * @namespace views
    **/
   var Topology = Y.Base.create('Topology', d3ns.Component, [], {
     initializer: function(options) {

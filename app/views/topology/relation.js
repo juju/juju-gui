@@ -26,11 +26,19 @@ YUI.add('juju-topology-relation', function(Y) {
           mousemove: 'mousemove'
         },
         '.dragline': {
-          /** The user clicked while the dragline was active. */
+          /**
+           * The user clicked while the dragline was active.
+           *
+           * @method events.scene.dragline.click
+           */
           click: {callback: 'draglineClicked'}
         },
         '.add-relation': {
-          /** The user clicked on the "Build Relation" menu item. */
+          /**
+           * The user clicked on the "Build Relation" menu item.
+           *
+           * @method events.scene.add-relation.click
+           */
           click: {callback: 'addRelButtonClicked'}
         },
         '.zoom-plane': {
@@ -795,6 +803,7 @@ YUI.add('juju-topology-relation', function(Y) {
      * or removal.
      * @param {object} d The data-bound object (the subordinate).
      * @param {object} self The view.
+     * @method subRelBlockClick
      **/
     subRelBlockClick: function(d, self) {
       if (self.keepSubRelationsVisible) {
