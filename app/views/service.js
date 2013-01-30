@@ -118,7 +118,6 @@ YUI.add('juju-view-service', function(Y) {
           getModelURL = this.get('getModelURL'),
           db = this.get('db'),
           unit_names = ev.unit_names;
-      console.log('_removeUnitCallback with: ', arguments);
 
       if (ev.err) {
         db.notifications.add(

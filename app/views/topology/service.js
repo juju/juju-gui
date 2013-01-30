@@ -102,7 +102,7 @@ YUI.add('juju-topology-service', function(Y) {
     serviceDblClick: function(d, self) {
       // Just show the service on double-click.
       var topo = self.get('component'),
-          service = topo.serviceForBox(d);
+          service = d.model;
       // The browser sends a click event right before the dblclick one, and it
       // opens the service menu: close it before moving to the service details.
       self.service_click_actions.hideServiceMenu(null, self);
@@ -186,7 +186,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Get the service element
       var topo = context.get('component');
       var box = topo.get('active_service');
-      var service = topo.serviceForBox(box);
+      var service = box.model;
       context.service_click_actions
              .hideServiceMenu(d, context);
       context.service_click_actions
@@ -198,7 +198,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Get the service element
       var topo = context.get('component');
       var box = topo.get('active_service');
-      var service = topo.serviceForBox(box);
+      var service = box.model;
       context.service_click_actions
              .hideServiceMenu(box, context);
       context.service_click_actions
@@ -239,9 +239,6 @@ YUI.add('juju-topology-service', function(Y) {
       var vis = topo.vis;
       var db = topo.get('db');
 
-      if (!this.service_boxes) {
-        this.service_boxes = {};
-      }
       views.toBoundingBoxes(this, db.services, this.service_boxes);
       this.services = Y.Object.values(this.service_boxes);
 
@@ -496,7 +493,7 @@ YUI.add('juju-topology-service', function(Y) {
       // binding as the event handler will
       // use that index.
       node.each(function(d) {
-        var service = topo.serviceForBox(d),
+        var service = d.model,
             annotations = service.get('annotations'),
             x, y;
 
@@ -854,7 +851,7 @@ YUI.add('juju-topology-service', function(Y) {
       showServiceMenu: function(box, module, context) {
         var serviceMenu = module.get('container').one('#service-menu');
         var topo = module.get('component');
-        var service = topo.serviceForBox(box);
+        var service = box.model;
 
         if (box && !serviceMenu.hasClass('active')) {
           topo.set('active_service', box);

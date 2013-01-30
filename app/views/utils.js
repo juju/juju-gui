@@ -623,7 +623,7 @@ YUI.add('juju-view-utils', function(Y) {
         this['p' + name] = this['_' + name];
         this['_' + name] = value;
       }
-    }
+    };
   }
 
   Object.defineProperties(_box, {
@@ -634,42 +634,43 @@ YUI.add('juju-view-utils', function(Y) {
 
     pos: {
       writeable: true,
-      get: function(){return {x: this.x, y: this.y, w: this.w, h: this.h};},
+      get: function() { return {x: this.x, y: this.y, w: this.w, h: this.h};},
       set: function(value) {
         Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
       }
     },
 
     translateStr: {
-      get: function() {return 'translate(' + this.x +','+ this.y+')';}
+      get: function() { return 'translate(' + this.x + ',' + this.y+')';}
     },
 
     model: {
       writeable: true,
       get: function() {
-        return this.topology.serviceForBox(this.id);
+        if (!this._modelName) { return null;}
+        return this.topology.serviceForBox(this);
       },
       set: function(value) {
-        if (value) {
-          Y.mix(this, value.getAttrs());
+        if (Y.Lang.isValue(value)) {
+          Y.mix(this, value.getAttrs(), true);
           this._modelName = value.name;
         }
       }
     },
     modelId: {
-      get: function() {return this._modelName + '-' + this.id;}
+      get: function() { return this._modelName + '-' + this.id;}
     },
     node: {
-      get: function() {return this.module.getServiceNode(this.id);}
+      get: function() { return this.module.getServiceNode(this.id);}
     },
     topology: {
-      get: function() {return this.module.get('component');}
+      get: function() { return this.module.get('component');}
     },
     xy: {
-      get: function() {return [this.x, this.y];}
+      get: function() { return [this.x, this.y];}
     },
     wh: {
-      get: function() {return [this.w, this.h];}
+      get: function() { return [this.w, this.h];}
     },
 
     /*
@@ -724,6 +725,8 @@ YUI.add('juju-view-utils', function(Y) {
      * arguments ease testing.
      */
     containsPoint: {
+      writable: true, // For test overrides.
+      configurable: true,
       value: function(point, transform) {
         transform = transform || {
           scale: function() { return 1; },
@@ -855,19 +858,19 @@ YUI.add('juju-view-utils', function(Y) {
    * and will be updated in place by merging changed attribute
    * into the index.
    *
-   * @param module {ServiceModule} Module holding box canvas and context.
-   * @param services {ModelList} of Service models.
-   * @param existing {Object} id:box mapping.
-   * @returns {Object} id:box mapping.
+   * @param {ServiceModule} Module holding box canvas and context.
+   * @param {ModelList} services Service modellist.
+   * @param {Object} existing id:box mapping.
+   * @return {Object} id:box mapping.
    **/
   views.toBoundingBoxes = function(module, services, existing) {
     var result = existing || {};
-    Y.each(services, function(service) {
-      var id = service.get('id');
-      if (id in result) {
-        result[id].model = service;
+    Y.each(services, function() {
+      var id = this.get('id');
+      if (result[id] !== undefined) {
+        result[id].model = this;
       } else {
-        result[id] = BoundingBox(module, service);
+        result[id] = BoundingBox(module, this);
       }
     });
     return result;

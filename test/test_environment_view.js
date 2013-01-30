@@ -2,7 +2,7 @@
 
 (function() {
 
-  describe.only('juju environment view', function() {
+  describe('juju environment view', function() {
     var views, models, Y, container, service, db, conn,
         juju, env, testUtils;
 
@@ -772,24 +772,28 @@
     var Y, views, models, module, service;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-views', 'juju-models'],
+      Y = YUI(GlobalConfig).use(['juju-view-utils', 'juju-views', 'juju-models'],
           function(Y) {
             views = Y.namespace('juju.views');
             models = Y.namespace('juju.models');
-            service = new models.Service({
-              id: 'mediawiki',
-              exposed: true});
-            module = {topology: {
-              serviceForBox: function() {return service;}
-            }};
-            done();
+           done();
           });
+    });
+
+    beforeEach(function() {
+      service = new models.Service({
+        id: 'mediawiki',
+        exposed: true});
+      module = {
+        topology: {
+          serviceForBox: function() {return service;}
+        }};
     });
 
     it('must be able to get us nearest connectors',
        function() {
-         var b1 = views.BoundingBox(),
-         b2 = views.BoundingBox();
+         var b1 = views.BoundingBox(module, service),
+         b2 = views.BoundingBox(module, service);
 
          // raw property access
          b1.x = 0; b1.y = 0;
@@ -815,7 +819,7 @@
        });
 
     it('must be able to tell if a point is inside a box', function() {
-      var b = views.BoundingBox();
+      var b = views.BoundingBox(module, service);
       b.pos = {x: 100, y: 100, w: 50, h: 50};
 
       b.containsPoint([125, 125]).should.equal(true);
@@ -867,8 +871,7 @@
          b1.pos = {x: 100, y: 100, id: 'blubber'};
          b1.x.should.equal(100);
          b1.id.should.equal('mediawiki');
-
-       });
+    });
 
     it('must be able to map from sequence of models to boundingboxes',
        function() {
@@ -883,24 +886,25 @@
          boxes.mysql.id.should.equal('mysql');
          boxes.wordpress.id.should.equal('wordpress');
        });
+
+       it('must be able to update boxes with new model data',
+          function() {
+            var services = new models.ServiceList();
+            services.add([{id: 'mysql', exposed: false},
+                         {id: 'haproxy'},
+                         {id: 'memcache'},
+                         {id: 'wordpress'}]);
+
+          services.size().should.equal(4);
+          var boxes = views.toBoundingBoxes(module, services);
+          var mysql = services.getById('mysql');
+
+          boxes.mysql.exposed.should.equal(false);
+          mysql.set('exposed', true);
+
+          // The third argument here implies an update.
+          views.toBoundingBoxes(module, services, boxes);
+          boxes.mysql.exposed.should.equal(true);
+          });
   });
-
-  it('must be able to update boxes with new model data', function() {
-    var services = new models.ServiceList();
-    services.add([{id: 'mysql'},
-                  {id: 'haproxy'},
-                  {id: 'memcache'},
-                  {id: 'wordpress'}]);
-
-    services.size().should.equal(4);
-    var boxes = views.toBoundingBoxes(module, services);
-
-    boxes[0].exposed.should.equal(false);
-
-    // The third argument here implies an update.
-    services[0].set('exposed', true);
-    views.toBoundingBoxes(module. services.toArray(), boxes);
-    boxes.mysql.exposed.should.equal(true);
-  });
-
 })();
