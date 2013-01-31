@@ -617,7 +617,7 @@ YUI.add('juju-view-utils', function(Y) {
   var _box = {};
   function positionProp(name) {
     return {
-      writeable: true,
+      writable: true,
       get: function() {return this['_' + name];},
       set: function(value) {
         this['p' + name] = this['_' + name];
@@ -633,7 +633,7 @@ YUI.add('juju-view-utils', function(Y) {
     h: positionProp('h'),
 
     pos: {
-      writeable: true,
+      writable: true,
       get: function() { return {x: this.x, y: this.y, w: this.w, h: this.h};},
       set: function(value) {
         Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
@@ -641,11 +641,11 @@ YUI.add('juju-view-utils', function(Y) {
     },
 
     translateStr: {
-      get: function() { return 'translate(' + this.x + ',' + this.y+')';}
+      get: function() { return 'translate(' + this.x + ',' + this.y + ')';}
     },
 
     model: {
-      writeable: true,
+      writable: true,
       get: function() {
         if (!this._modelName) { return null;}
         return this.topology.serviceForBox(this);
@@ -677,7 +677,7 @@ YUI.add('juju-view-utils', function(Y) {
      * Extract margins from the supplied module.
      */
     margins: {
-      writeable: false,
+      writable: false,
       get: function() {
         if (!this.module) {
           // Used in testing.
@@ -695,16 +695,16 @@ YUI.add('juju-view-utils', function(Y) {
      * corner of the box.
      */
     relativeCenter: {
-      get: function () {
-      var margins = this.margins;
-      return [
-        (this.w / 2) + (margins &&
-              (margins.left * this.w / 2 -
-               margins.right * this.w / 2) || 0),
-               (this.h / 2) - (margins &&
-                               (margins.bottom * this.h / 2 -
-                                margins.top * this.h / 2) || 0)
-      ];}
+      get: function() {
+        var margins = this.margins;
+        return [
+          (this.w / 2) + (margins &&
+                          (margins.left * this.w / 2 -
+                           margins.right * this.w / 2) || 0),
+          (this.h / 2) - (margins &&
+                          (margins.bottom * this.h / 2 -
+                           margins.top * this.h / 2) || 0)
+        ];}
     },
 
     /*
@@ -763,8 +763,8 @@ YUI.add('juju-view-utils', function(Y) {
           right: [
             this.x + this.w - (margins && (margins.right * this.w) || 0),
             this.y + (this.h / 2) - (
-              margins && (margins.bottom * this.h / 2 -
-                          margins.top * this.h / 2) || 0)
+                margins && (margins.bottom * this.h / 2 -
+                            margins.top * this.h / 2) || 0)
           ],
           bottom: [
             this.x + (this.w / 2),
@@ -773,8 +773,8 @@ YUI.add('juju-view-utils', function(Y) {
           left: [
             this.x + (margins && (margins.left * this.w) || 0),
             this.y + (this.h / 2) - (
-              margins && (margins.bottom * this.h / 2 -
-                          margins.top * this.h / 2) || 0)
+                margins && (margins.bottom * this.h / 2 -
+                            margins.top * this.h / 2) || 0)
           ]
         };
       }
@@ -797,10 +797,10 @@ YUI.add('juju-view-utils', function(Y) {
             result = null,
             shortest_d = Infinity,
             source = box_or_xy;
-            if (box_or_xy.xy !== undefined) {
-              source = box_or_xy.xy;
-            }
 
+        if (box_or_xy.xy !== undefined) {
+          source = box_or_xy.xy;
+        }
         Y.each(connectors, function(ep) {
           // Take the distance of each XY pair
           var d = this._distance(source, ep);
@@ -825,25 +825,29 @@ YUI.add('juju-view-utils', function(Y) {
             result = null,
             shortest_d = Infinity;
 
-            Y.each(sc, function(ep1) {
-              Y.each(oc, function(ep2) {
-                // Take the distance of each XY pair
-                var d = this._distance(ep1, ep2);
-                if (!Y.Lang.isValue(result) || d < shortest_d) {
-                  shortest_d = d;
-                  result = [ep1, ep2];
-                }
-              }, other_box);
-            }, this);
-            return result;
+        Y.each(sc, function(ep1) {
+          Y.each(oc, function(ep2) {
+            // Take the distance of each XY pair
+            var d = this._distance(ep1, ep2);
+            if (!Y.Lang.isValue(result) || d < shortest_d) {
+              shortest_d = d;
+              result = [ep1, ep2];
+            }
+          }, other_box);
+        }, this);
+        return result;
       }
     }
   });
 
-  // Glorious Ctor
+  /**
+   * @method BoundingBox
+   * @param {Module} module Typically service module.
+   * @param {Model} model Model object.
+   * @return {BoundingBox} A Box model.
+   */
   function BoundingBox(module, model) {
-    var b = Object.create(_box, {
-          });
+    var b = Object.create(_box);
     b.module = module;
     b.model = model;
 
@@ -870,7 +874,7 @@ YUI.add('juju-view-utils', function(Y) {
       if (result[id] !== undefined) {
         result[id].model = this;
       } else {
-        result[id] = BoundingBox(module, this);
+        result[id] = new BoundingBox(module, this);
       }
     });
     return result;

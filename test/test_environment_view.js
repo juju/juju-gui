@@ -772,11 +772,11 @@
     var Y, views, models, module, service;
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-view-utils', 'juju-views', 'juju-models'],
+      Y = YUI(GlobalConfig).use(['juju-views', 'juju-models'],
           function(Y) {
             views = Y.namespace('juju.views');
             models = Y.namespace('juju.models');
-           done();
+            done();
           });
     });
 
@@ -851,7 +851,7 @@
        });
 
     it('must be able to access model attributes', function() {
-     var b1 = new views.BoundingBox(module, service);
+      var b1 = new views.BoundingBox(module, service);
 
       b1.modelId.should.equal('service-mediawiki');
 
@@ -871,15 +871,15 @@
          b1.pos = {x: 100, y: 100, id: 'blubber'};
          b1.x.should.equal(100);
          b1.id.should.equal('mediawiki');
-    });
+       });
 
     it('must be able to map from sequence of models to boundingboxes',
        function() {
          var services = new models.ServiceList();
          services.add([{id: 'mysql'},
-                      {id: 'haproxy'},
-                      {id: 'memcache'},
-                      {id: 'wordpress'}]);
+                       {id: 'haproxy'},
+                       {id: 'memcache'},
+                       {id: 'wordpress'}]);
 
          services.size().should.equal(4);
          var boxes = views.toBoundingBoxes(module, services);
@@ -887,24 +887,24 @@
          boxes.wordpress.id.should.equal('wordpress');
        });
 
-       it('must be able to update boxes with new model data',
-          function() {
-            var services = new models.ServiceList();
-            services.add([{id: 'mysql', exposed: false},
-                         {id: 'haproxy'},
-                         {id: 'memcache'},
-                         {id: 'wordpress'}]);
+    it('must be able to update boxes with new model data',
+       function() {
+         var services = new models.ServiceList();
+         services.add([{id: 'mysql', exposed: false},
+                       {id: 'haproxy'},
+                       {id: 'memcache'},
+                       {id: 'wordpress'}]);
 
-          services.size().should.equal(4);
-          var boxes = views.toBoundingBoxes(module, services);
-          var mysql = services.getById('mysql');
+         services.size().should.equal(4);
+         var boxes = views.toBoundingBoxes(module, services);
+         var mysql = services.getById('mysql');
 
-          boxes.mysql.exposed.should.equal(false);
-          mysql.set('exposed', true);
+         boxes.mysql.exposed.should.equal(false);
+         mysql.set('exposed', true);
 
-          // The third argument here implies an update.
-          views.toBoundingBoxes(module, services, boxes);
-          boxes.mysql.exposed.should.equal(true);
-          });
+         // The third argument here implies an update.
+         views.toBoundingBoxes(module, services, boxes);
+         boxes.mysql.exposed.should.equal(true);
+       });
   });
 })();

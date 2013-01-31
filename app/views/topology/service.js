@@ -198,7 +198,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Get the service element
       var topo = context.get('component');
       var box = topo.get('active_service');
-      var service = box.model;
+      var service = box;
       context.service_click_actions
              .hideServiceMenu(box, context);
       context.service_click_actions
@@ -905,18 +905,17 @@ YUI.add('juju-topology-service', function(Y) {
 
         // Show dialog.
         view.set('destroy_dialog', views.createModalPanel(
-          'Are you sure you want to destroy the service? ' +
-          'This cannot be undone.',
-          '#destroy-modal-panel',
-          'Destroy Service',
-          Y.bind(function(ev) {
-            ev.preventDefault();
-            var btn = ev.target;
-            btn.set('disabled', true);
-            view.service_click_actions
-            .destroyService(m, view, btn);
-          },
-          this)));
+            'Are you sure you want to destroy the service? ' +
+            'This cannot be undone.',
+            '#destroy-modal-panel',
+            'Destroy Service',
+            Y.bind(function(ev) {
+              ev.preventDefault();
+              var btn = ev.target;
+              btn.set('disabled', true);
+              view.service_click_actions
+              .destroyService(m, view, btn);
+            }, this)));
       },
 
       /*
@@ -924,26 +923,24 @@ YUI.add('juju-topology-service', function(Y) {
        */
       destroyService: function(m, view, btn) {
         var env = view.get('component').get('env'),
-        service = view.get('destroy_service');
-        env.destroy_service(
-          service.get('id'),
-          Y.bind(this._destroyCallback, view,
-                 service, view, btn));
+            service = view.get('destroy_service');
+        env.destroy_service(service.get('id'),
+                            Y.bind(this._destroyCallback, view,
+                                   service, view, btn));
       },
 
       _destroyCallback: function(service, view, btn, ev) {
         var getModelURL = view.get('component').get('getModelURL'),
-        db = view.get('component').get('db');
+            db = view.get('component').get('db');
         if (ev.err) {
           db.notifications.add(
-            new models.Notification({
-            title: 'Error destroying service',
-            message: 'Service name: ' + ev.service_name,
-            level: 'error',
-            link: getModelURL(service),
-            modelId: service
-          })
-          );
+              new models.Notification({
+                title: 'Error destroying service',
+                message: 'Service name: ' + ev.service_name,
+                level: 'error',
+                link: getModelURL(service),
+                modelId: service
+              }));
         } else {
           var relations = db.relations.get_relations_for_service(service);
           Y.each(relations, function(relation) {

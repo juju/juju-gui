@@ -235,8 +235,9 @@ describe('service module events', function() {
   });
 
   it('should prevent the Juju GUI service from being destroyed', function() {
-    var service = db.services.add({id: 'gui',
-                                   charm: 'cs:precise/juju-gui-7'
+    var service = db.services.add({
+      id: 'gui',
+      charm: 'cs:precise/juju-gui-7'
     });
     var box = views.BoundingBox(serviceModule, service);
     view.topo.set('active_service', service);
