@@ -241,7 +241,8 @@ describe('service module events', function() {
     var menu = view.get('container').one('#service-menu');
     view.topo.set('active_service', service);
 
-    serviceModule.service_click_actions.toggleServiceMenu(box, serviceModule, serviceModule);
+    serviceModule.service_click_actions
+                 .toggleServiceMenu(box, serviceModule, serviceModule);
     menu.one('.destroy-service').hasClass('disabled').should.equal(true);
   });
 
