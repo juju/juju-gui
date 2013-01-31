@@ -17,3 +17,6 @@ Contents:
    d3-component-framework
    style-guide
    process
+
+See also the `code documentation <../../../yuidoc/index.html>`_
+(:ref:`generated separately <embedded-docs>`).

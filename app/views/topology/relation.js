@@ -26,11 +26,19 @@ YUI.add('juju-topology-relation', function(Y) {
           mousemove: 'mousemove'
         },
         '.dragline': {
-          /** The user clicked while the dragline was active. */
+          /**
+           * The user clicked while the dragline was active.
+           *
+           * @method events.scene.dragline.click
+           */
           click: {callback: 'draglineClicked'}
         },
         '.add-relation': {
-          /** The user clicked on the "Build Relation" menu item. */
+          /**
+           * The user clicked on the "Build Relation" menu item.
+           *
+           * @method events.scene.add-relation.click
+           */
           click: {callback: 'addRelButtonClicked'}
         },
         '.zoom-plane': {
@@ -254,10 +262,7 @@ YUI.add('juju-topology-relation', function(Y) {
       var vis = topo.vis;
       var self = this;
 
-      vis.selectAll('.service')
-        .filter(function(d) {
-            return d.subordinate;
-          })
+      vis.selectAll('.service.subordinate')
         .selectAll('.sub-rel-block tspan')
         .text(function(d) {
             return self.subordinateRelationsForService(d).length;
@@ -771,7 +776,8 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     subordinateRelationsForService: function(service) {
       return this.relations.filter(function(relation) {
-        return (relation.source === service || relation.target === service) &&
+        return (relation.source.modelId === service.modelId ||
+            relation.target.modelId === service.modelId) &&
             relation.isSubordinate;
       });
     },
@@ -797,6 +803,7 @@ YUI.add('juju-topology-relation', function(Y) {
      * or removal.
      * @param {object} d The data-bound object (the subordinate).
      * @param {object} self The view.
+     * @method subRelBlockClick
      **/
     subRelBlockClick: function(d, self) {
       if (self.keepSubRelationsVisible) {

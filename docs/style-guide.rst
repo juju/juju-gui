@@ -156,33 +156,66 @@ It is important that the indentation of the calls communicates the structure of
 the resulting DOM tree.  Compare and contrast the above examples.
 
 
-Comments
-========
+.. _embedded-docs:
 
-We use YUIDoc to document the application's internals.  YUIDoc comments
-start with ``/**`` and end with ``*/``.  The Makefile includes a simple
-linter that enforces YUIDoc comments for each function in the
-application.
+Embedded documentation
+======================
 
-This simple linting sometimes means that functions that we might not
-otherwise document require documentation.  If a one-line comment is
-sufficient in those situations, a comment of this form may be used::
+We use YUIDoc to document the application's internals.  YUIDoc comment
+blocks start with ``/**`` and end with ``*/``. Once you add or change
+comment blocks, generate the HTML pages and check them (as described in
+the :ref:`HACKING <all-docs>` document).
 
-    /** Handle errors */
-    error_callback: function(err) {
-      ...
-    }
+Full documentation for the various `YUIDoc directives`_ is available.
+Note that YUIDoc also supports the `Markdown syntax`_.
 
-Most functions (or methods) will call for normal, multi-line YUIDoc
-comments like this::
+.. _`YUIDoc directives`:
+    http://yui.github.com/yuidoc/syntax/
+.. _`Markdown syntax`:
+    http://daringfireball.net/projects/markdown/syntax
+
+
+Format
+------
+
+The Makefile includes a simple linter that enforces YUIDoc comment blocks
+for each function in the application. This simple linting sometimes means
+that functions that we might not otherwise document require documentation.
+
+Unfortunately one-line comment blocks cannot be used, because the YUIDoc
+compiler needs a type directive for each block, or else it emits "Missing
+item type" warnings.
+
+Multi-line YUIDoc comment blocks like this will be needed::
 
     /**
      * Frob the thingy.
      *
-     * @method frob
      * @param {object} type How the thingy should be frobbed.
      * @return {undefined} Side-effects only, eturns nothing.
+     * @method frob
      */
 
-`Full documentation <http://yui.github.com/yuidoc/syntax/>`_
-for the various YUIDoc directives is available.
+In this case, the type directive is the ``@method`` one. It is placed at
+the end of the comment block, because it is little more than noise
+required by the YUIDoc compiler, and is best placed close to the name it
+repeats.
+
+
+Notes
+-----
+
+Check that the comment blocks actually appear in the generated HTML pages.
+If they do not, check that the ``@class`` directives in the comment
+blocks use the actual names in the code. If the class name used in the
+``@class`` is not the actual one, the comment blocks in the class will
+not be included in the generated HTML pages.
+
+On the other hand, while the ``@method`` directives for actual methods
+should also be the same as the method names, we also misuse that
+directive in place of the not available ``@function`` one. The comment
+block will appear in the HTML pages, albeit with a few not-working links.
+
+For instance, for a closure named ``callback``, you may want to use the
+``@method behaviors.timestamp.callback`` directive for greater
+expressiveness.

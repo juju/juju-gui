@@ -110,6 +110,8 @@ YUI.add('juju-gui', function(Y) {
       timestamp: {
         /**
          * Wait for the DOM to be built before rendering timestamps.
+         *
+         * @method behaviors.timestamp.callback
          */
         callback: function() {
           var self = this;
@@ -127,6 +129,8 @@ YUI.add('juju-gui', function(Y) {
     /**
      * Activate the keyboard listeners. Only called by the main index.html,
      * not by the tests' one.
+     *
+     * @method activateHotkeys
      */
     activateHotkeys: function() {
       Y.one(window).on('keydown', function(ev) {
@@ -175,8 +179,10 @@ YUI.add('juju-gui', function(Y) {
       /**
        * Transform a numeric keyCode value to its string version. Example:
        * 16 returns 'shift'.
+       *
        * @param {number} keyCode The numeric value of a key.
        * @return {string} The string version of the given keyCode.
+       * @method keyCodeToString
        */
       function keyCodeToString(keyCode) {
         if (keyCode === 16) {
@@ -331,6 +337,8 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+     * On database changes, update the endpoints map and update the view.
+     *
      * @method on_database_changed
      */
     on_database_changed: function(evt) {
@@ -367,7 +375,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * When services are added, we update endpoints here.
+     * When services are added, update the endpoints map.
      *
      * @method updateEndpoints
      */
@@ -375,7 +383,7 @@ YUI.add('juju-gui', function(Y) {
       var self = this;
 
       // Defensive code to aid tests. Other systems
-      // don't have to mock enough to get_endpoints below.
+      // do not have to mock enough to get_endpoints below.
       if (!this.env.get('connected')) {
         return;
       }
@@ -524,10 +532,10 @@ YUI.add('juju-gui', function(Y) {
         notifications: this.db.notifications});
     },
 
+    // Persistent Views
+
     /**
-     * Persistent Views
-     *
-     * 'notifications' is a preserved view that remains rendered on all main
+     * `notifications` is a preserved view that remains rendered on all main
      * views.  We manually create an instance of this view and insert it into
      * the App's view metadata.
      *
@@ -647,7 +655,11 @@ YUI.add('juju-gui', function(Y) {
           view = this.getViewInfo('environment'),
           options = {
             getModelURL: Y.bind(this.getModelURL, this),
-            /** A simple closure so changes to the value are available. */
+            /**
+             * A simple closure so changes to the value are available.
+             *
+             * @method show_environment.options.getServiceEndpoints
+             */
             getServiceEndpoints: function() {
               return self.serviceEndpoints;},
             loadService: this.loadService,
@@ -657,6 +669,8 @@ YUI.add('juju-gui', function(Y) {
       this.showView('environment', options, {
         /**
          * Let the component framework know that the view has been rendered.
+         *
+         * @method show_environment.callback
          */
         callback: function() {
           this.views.environment.instance.rendered();
@@ -705,22 +719,22 @@ YUI.add('juju-gui', function(Y) {
      * To support this we supplement our routing information with
      * additional attributes as follows:
      *
-     * model: model.name (required)
-     * reverse_map: (optional) A reverse mapping of route_path_key to the
+     * `model`: `model.name` (required)
+     *
+     * `reverse_map`: (optional) A reverse mapping of `route_path_key` to the
      *   name of the attribute on the model.  If no value is provided, it is
      *   used directly as attribute name.
-     * intent: (optional) A string named intent for which this route should
+     *
+     * `intent`: (optional) A string named `intent` for which this route should
      *   be used. This can be used to select which subview is selected to
      *   resolve a model's route.
      *
-     * @method getModelURL
-     * @param {object} model The model to determine a route url for.
+     * @param {object} model The model to determine a route URL for.
      * @param {object} [intent] the name of an intent associated with a route.
      *   When more than one route can match a model, the route without an
      *   intent is matched when this attribute is missing.  If intent is
-     *   provided as a string, it is matched to the 'intent' attribute
+     *   provided as a string, it is matched to the `intent` attribute
      *   specified on the route. This is effectively a tag.
-     *
      * @method getModelURL
      */
     getModelURL: function(model, intent) {
@@ -789,18 +803,19 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+     * Wrap the default routing using a whitelist to avoid extra juggling.
+     *
      * @method route
      */
     route: function(path, callback, options) {
       JujuGUI.superclass.route.call(this, path, callback);
 
-      // Use a whitelist to spare the extra juggling.
       if (options.model) {
-        var r = this._routes,
-                idx = r.length - 1;
-        if (r[idx].path === path) {
+        var routes = this._routes;
+        var idx = routes.length - 1;
+        if (routes[idx].path === path) {
           // Combine our options with the default computed route information.
-          r[idx] = Y.mix(r[idx], options);
+          routes[idx] = Y.mix(routes[idx], options);
         } else {
           console.error(
               'Underlying Y.Router not behaving as expected. ' +

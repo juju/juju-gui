@@ -74,9 +74,7 @@ describe('service module annotations', function() {
        location['gui.x'].should.equal(0);
        location['gui.y'].should.equal(0);
      });
-
 });
-
 
 describe('service module events', function() {
   var db, juju, models, serviceModule, view, viewContainer, views, Y;
@@ -245,4 +243,24 @@ describe('service module events', function() {
     serviceModule.destroyServiceClick({model: service}, serviceModule);
   });
 
+  it('must not process service clicks after a dragend', function() {
+    // Test the work-around that prevents serviceClick from doing its work if
+    // called after dragend.  Behaviour-driven testing via a tool such as
+    // Selenium will add more coverage.
+    var topo = view.topo;
+    var called = false;
+    var d =
+        { id: 'wordpress',
+          containsPoint: function() { return true; }
+        };
+    serviceModule.service_click_actions.fake = function() {
+      called = true;
+    };
+    serviceModule.set('currentServiceClickAction', 'fake');
+    topo.ignoreServiceClick = true;
+    serviceModule.serviceClick(d, serviceModule);
+    assert.isFalse(called);
+    // The flag is reset when encountered and ignored.
+    assert.isFalse(topo.ignoreServiceClick);
+  });
 });
