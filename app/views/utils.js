@@ -617,7 +617,6 @@ YUI.add('juju-view-utils', function(Y) {
   var _box = {};
   function positionProp(name) {
     return {
-      writable: true,
       get: function() {return this['_' + name];},
       set: function(value) {
         this['p' + name] = this['_' + name];
@@ -633,7 +632,6 @@ YUI.add('juju-view-utils', function(Y) {
     h: positionProp('h'),
 
     pos: {
-      writable: true,
       get: function() { return {x: this.x, y: this.y, w: this.w, h: this.h};},
       set: function(value) {
         Y.mix(this, value, true, ['x', 'y', 'w', 'h']);
@@ -645,7 +643,6 @@ YUI.add('juju-view-utils', function(Y) {
     },
 
     model: {
-      writable: true,
       get: function() {
         if (!this._modelName) { return null;}
         return this.topology.serviceForBox(this);
@@ -677,7 +674,6 @@ YUI.add('juju-view-utils', function(Y) {
      * Extract margins from the supplied module.
      */
     margins: {
-      writable: false,
       get: function() {
         if (!this.module) {
           // Used in testing.

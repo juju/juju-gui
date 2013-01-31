@@ -901,7 +901,7 @@ YUI.add('juju-topology-service', function(Y) {
        */
       destroyServiceConfirm: function(m, view) {
         // Set service in view.
-        view.set('destroy_service', m);
+        view.set('destroy_service', m.model);
 
         // Show dialog.
         view.set('destroy_dialog', views.createModalPanel(
