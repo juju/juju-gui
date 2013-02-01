@@ -179,10 +179,11 @@ Checklist for Making a Stable Release
     may perform all actions, indefinitely.
   * Go to <https://staging.launchpad.net/juju-gui/stable> and verify that you
     see a new release and a new download file.
-  * Download the file, expand it in a temporary directory, run ``python -m
-    SimpleHTTPServer 8888``, and do a quick double-check in the browser that
-    it is what you expect.  Looking at ``juju-ui/version.js`` should also show
-    you the version you expect.
+  * Download the file, expand it in a temporary directory, cd into
+    build-prod, run ``python -m SimpleHTTPServer 8888``, start the
+    improv.py script, and do a quick double-check in the browser that it
+    is what you expect.  Looking at ``juju-ui/version.js`` should also
+    show you the version you expect.
   * This is a final release.  Consider asking others to verify the package on
     staging.
 
