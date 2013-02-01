@@ -89,29 +89,29 @@ Is Better: Incrementally Escaping Local Maxima
 - Run ``python improv.py -f sample.json`` in the ``rapi-rollup`` Juju branch,
   and run ``make server`` with the ``juju-ui`` branch.
 
-  * Do not forget to clear the browser cache: ``index.html`` may be sticking
+  - Do not forget to clear the browser cache: ``index.html`` may be sticking
     around because of the cache.manifest.
-  * Verify that the browser reports no 404s and no Javascript errors in the
+  - Verify that the browser reports no 404s and no Javascript errors in the
     console.
-  * QA the changes if possible, exploring different use cases (and edge cases).
-  * Spend between 60 and 120 seconds exploring the entire app.  Do different
+  - QA the changes if possible, exploring different use cases (and edge cases).
+  - Spend between 60 and 120 seconds exploring the entire app.  Do different
     things every time.  Try to break the app, generally.
 
 - [Once we support multiple browsers, try them all, at least briefly.]
 - Review the diff, including notes from the above as appropriate.
 
-  * Make sure that new code has tests.
-  * Make sure user-facing changes are described in ``CHANGES.yaml``.
-  * Make sure you can understand the new code.  Ask for clarification if
+  - Make sure that new code has tests.
+  - Make sure user-facing changes are described in ``CHANGES.yaml``.
+  - Make sure you can understand the new code.  Ask for clarification if
     necessary.
-  * Consider the advice in this preferred `Software Architecture Cheat Sheet
+  - Consider the advice in this preferred `Software Architecture Cheat Sheet
     <http://gorban.org/post/32873465932/software-architecture-cheat-sheet>`_
-  * Make sure changes to a file correspond to the naming conventions and other
+  - Make sure changes to a file correspond to the naming conventions and other
     stylistic considerations local to that file, and within our project.
-  * Before you ask for a change, think and make sure you cannot compromise
+  - Before you ask for a change, think and make sure you cannot compromise
     reasonably with the coder.  If there is a low importance disagreement, in
     general the coder's position should win.
-  * Only make a rework request if absolutely necessary.  They are very
+  - Only make a rework request if absolutely necessary.  They are very
     expensive in time, money, and morale.  One way to think about it is to
     imagine filing a bug for the problem you see.  Are you confident it is a
     bug?  If not, reconsider.  If it would be a bug, how would you triage it?
@@ -143,12 +143,12 @@ Checklist for Making a Stable Release
   <https://launchpad.net/juju-gui/stable>.  If the most recent version string
   is ``unreleased``, do the following.
 
-  * Decide what the next version number should be (see `Semantic Versioning
+  - Decide what the next version number should be (see `Semantic Versioning
     <http://semver.org/>`_) and change ``unreleased`` to that value.
-  * Set a bzr tag for the release, e.g.: ``bzr tag 0.1.5``.
-  * Commit to the branch with this checkin message:
+  - Set a bzr tag for the release, e.g.: ``bzr tag 0.1.5``.
+  - Commit to the branch with this checkin message:
     ``bzr commit -m 'Set version for release.'``
-  * Push the branch directly to the parent (``bzr push :parent`` should work).
+  - Push the branch directly to the parent (``bzr push :parent`` should work).
 
 - Run the tests and verify they pass: ``make test-prod`` and then
   ``make test-debug``.
@@ -158,16 +158,16 @@ Checklist for Making a Stable Release
   tarball: ``tar xvzf PATH_TO_TARBALL``.
 - Check that read and execute permissions for all are present on all files
   and directories, especially in the ``node_modules/`` directory.
-- Looking at the ``build-prod/juju-ui/version.js`` file should show you a
-  version string that combines the value in the branch's ``CHANGES.yaml``
-  with the branch's revno.
+- Ensure that the ``build-prod/juju-ui/version.js`` file contains a version
+  string that combines the value in the branch's ``CHANGES.yaml`` with the
+  branch's revno.
 - While still in the directory where you extracted the tar file, run the
   command: ``NO_BZR=1 make prod``.  Go to the URL shown in the terminal.
 - In Chrome and Firefox, QA the application.  At the very least, load the app,
   open the charm panel, go to an inner page, and make sure there are no 404s
-  or Javascript errors in the console.  Looking at the ``/juju-ui/version.js``
-  URL should also show you the same version as before.  We want a real QA
-  script for the future.
+  or Javascript errors in the console.  Ensure that the ``/juju-ui/version.js``
+  URL shows the same version string as before.  We want a real QA script for
+  the future.
 - Also do the same checks after running the command ``NO_BZR=1 make debug``.
 - For now, we will assume you would like to verify the release on the
   Launchpad staging server.  As we become more confident with this process,
@@ -175,31 +175,34 @@ Checklist for Making a Stable Release
   dist``.  This will step you through signing the tarball, connecting to
   Launchpad, and uploading the release.
 
-  * If you have two-factor authentication enabled on Launchpad, the staging
+  - If you have two-factor authentication enabled on Launchpad, the staging
     server will ask for a one-time password: be sure to have your device
     available. (If you are a Canonical collaborator, you may try and ask the
-    webops to turn off the two-factor authentication on your Launchpad
-    staging account, but it may not be possible anyway. Go to the ``#u1-as``
-    channel on the Canonical IRC server and ask something like "webops,
-    could you disable 2FA on my staging account?")
-  * When Launchpad asks you what level of permissions to grant, assuming you
+    webops to turn off the two-factor authentication on your Launchpad staging
+    account, but it may not be possible anyway. Go to the ``#u1-as`` channel
+    on the Canonical IRC server and ask something like "webops, could you
+    disable 2FA on my staging account?")
+  - When Launchpad asks you what level of permissions to grant, assuming you
     are running on your own computer that you manage securely, the easiest
     thing to do is hopefully also reasonably safe: accept that the computer
     may perform all actions, indefinitely.
-  * Go to <https://staging.launchpad.net/juju-gui/stable> and verify that you
+  - Go to <https://staging.launchpad.net/juju-gui/stable> and verify that you
     see a new release and a new download file.
-  * Download the file and compare it to the original tarball in the
+  - Download the file and compare it to the original tarball in the
     ``release/`` directory, verifying that they are identical (hint: use the
     ``cmp`` command).
-  * This is a final release.  Consider asking others to verify the package on
+  - This is a final release.  Consider asking others to verify the package on
     staging. If there are problems, you will have to delete the release from
-    staging, fix the problems and restart the process.
+    staging, fix the problems and restart the process. However, *do not*
+    reuse the version number that you deleted.  A deleted release is dead,
+    not invisible, and the next, fixed release should increase the revision
+    number.
 
 - Now it is time for the actual, real release.  Head back to your branch and
   run ``FINAL=1 PROD=1 make dist``.  The computer will again walk you
   through the process and upload the release, this time to production.
 
-  * Note that, one time per computer, you will again have to accept the
+  - Note that, one time per computer, you will again have to accept the
     Launchpadlib security token: In Launchpad, the staging site and the
     production have fully separate databases, including authentication.  What
     is done in production will in many cases eventually be copied over to
@@ -207,14 +210,13 @@ Checklist for Making a Stable Release
 
 - Go to <https://launchpad.net/juju-gui/stable> and verify that you see
   a new release and a new download file.
-
 - Set the version back to ``unreleased`` by doing the following.
 
-  * Restore ``- unreleased:`` as most recent version string in
+  - Restore ``- unreleased:`` as most recent version string in
     ``CHANGES.yaml``.
-  * Commit to the branch with this checkin message:
+  - Commit to the branch with this checkin message:
     ``bzr commit -m 'Set version back to unreleased.'``
-  * Push the branch directly to the parent (``bzr push :parent`` should work).
+  - Push the branch directly to the parent (``bzr push :parent`` should work).
 
 You are done!
 
@@ -235,16 +237,16 @@ Checklist for Making a Developer Release
   tarball: ``tar xvzf PATH_TO_TARBALL``.
 - Check that read and execute permissions for all are present on all files
   and directories, especially in the ``node_modules/`` directory.
-- Looking at the ``build-prod/juju-ui/version.js`` file should show you a
-  version string that combines the value in the branch's ``CHANGES.yaml``
-  with the branch's revno.
+- Ensure that the ``build-prod/juju-ui/version.js`` file contains a version
+  string that combines the value in the branch's ``CHANGES.yaml`` with the
+  branch's revno.
 - While still in the directory where you extracted the tar file, run the
   command: ``NO_BZR=1 make prod``.  Go to the URL shown in the terminal.
 - In Chrome and Firefox, QA the application.  At the very least, load the app,
   open the charm panel, go to an inner page, and make sure there are no 404s
-  or Javascript errors in the console.  Looking at the ``/juju-ui/version.js``
-  URL should also show you the same version as before.  We want a real QA
-  script for the future.
+  or Javascript errors in the console.  Ensure that the ``/juju-ui/version.js``
+  URL shows the same version string as before.  We want a real QA script for
+  the future.
 - Also do the same checks after running the command ``NO_BZR=1 make debug``.
 - For now, we will assume you would like to verify the release on the
   Launchpad staging server.  As we become more confident with this process,
@@ -252,20 +254,20 @@ Checklist for Making a Developer Release
   This will step you through signing the tarball, connecting to
   Launchpad, and uploading the release.
 
-  * If you have two-factor authentication enabled on Launchpad, the staging
+  - If you have two-factor authentication enabled on Launchpad, the staging
     server will ask for a one-time password: be sure to have your device
     available. (If you are a Canonical collaborator, you may try and ask the
-    webops to turn off the two-factor authentication on your Launchpad
-    staging account, but it may not be possible anyway. Go to the ``#u1-as``
-    channel on the Canonical IRC server and ask something like "webops,
-    could you disable 2FA on my staging account?")
-  * When Launchpad asks you what level of permissions to grant, assuming you
+    webops to turn off the two-factor authentication on your Launchpad staging
+    account, but it may not be possible anyway. Go to the ``#u1-as`` channel
+    on the Canonical IRC server and ask something like "webops, could you
+    disable 2FA on my staging account?")
+  - When Launchpad asks you what level of permissions to grant, assuming you
     are running on your own computer that you manage securely, the easiest
     thing to do is hopefully also reasonably safe: accept that the computer
     may perform all actions, indefinitely.
-  * Go to <https://staging.launchpad.net/juju-gui/trunk> and verify that you
+  - Go to <https://staging.launchpad.net/juju-gui/trunk> and verify that you
     see a new release and a new download file.
-  * Download the file and compare it to the original tarball in the
+  - Download the file and compare it to the original tarball in the
     ``release/`` directory, verifying that they are identical (hint: use the
     ``cmp`` command).
 
@@ -273,7 +275,7 @@ Checklist for Making a Developer Release
   run ``PROD=1 make dist``.  The computer will again walk you through the
   process and upload the release.
 
-  * Note that, one time per computer, you will again have to accept the
+  - Note that, one time per computer, you will again have to accept the
     Launchpadlib security token: In Launchpad, the staging site and the
     production have fully separate databases, including authentication.  What
     is done in production will in many cases eventually be copied over to
