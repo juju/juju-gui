@@ -162,12 +162,11 @@ Checklist for Making a Stable Release
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
 - While still in the directory where you extracted the tar file, run the
-  command: ``NO_BZR=1 make prod``.  Go to the URL shown in the terminal.
+  command: ``NO_BZR=1 make prod``.
+- Start the improv.py script as described in the HACKING file.
+- Go to the URL shown in the terminal.
 - In Chrome and Firefox, QA the application.
 
-  - Expand the release archive in a temporary directory, cd into
-    build-prod, run ``python -m SimpleHTTPServer 8888``, start the
-    improv.py script.
   - Load the app, open the charm panel, go to an inner page, and make
     sure there are no 404s or Javascript errors in the console.
   - Ensure that the ``/juju-ui/version.js`` URL shows the same version
@@ -217,8 +216,8 @@ Checklist for Making a Stable Release
 - Go to <https://launchpad.net/juju-gui/stable> and verify that you see
   a new release and a new download file.
 - Download the file and compare it to the original tarball in the
-``release/`` directory, verifying that they are identical (hint: use the
-``cmp`` command).
+  ``release/`` directory, verifying that they are identical (hint: use
+  the ``cmp`` command).
 - Set the version back to ``unreleased`` by doing the following.
 
   - Restore ``- unreleased:`` as most recent version string in
@@ -250,12 +249,17 @@ Checklist for Making a Developer Release
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
 - While still in the directory where you extracted the tar file, run the
-  command: ``NO_BZR=1 make prod``.  Go to the URL shown in the terminal.
-- In Chrome and Firefox, QA the application.  At the very least, load the app,
-  open the charm panel, go to an inner page, and make sure there are no 404s
-  or Javascript errors in the console.  Ensure that the ``/juju-ui/version.js``
-  URL shows the same version string as before.  We want a real QA script for
-  the future.
+  command: ``NO_BZR=1 make prod``.
+- Start the improv.py script as described in the HACKING file.
+- Go to the URL shown in the terminal.
+- In Chrome and Firefox, QA the application.
+
+  - Load the app, open the charm panel, go to an inner page, and make
+    sure there are no 404s or Javascript errors in the console.
+  - Ensure that the ``/juju-ui/version.js`` URL shows the same version
+    string as before.
+  - We want a real QA script for the future.
+
 - Also do the same checks after running the command ``NO_BZR=1 make debug``.
 - For now, we will assume you would like to verify the release on the
   Launchpad staging server.  As we become more confident with this process,
@@ -292,6 +296,9 @@ Checklist for Making a Developer Release
 
 - Go to <https://launchpad.net/juju-gui/trunk> and verify that you see
   a new release and a new download file.
+- Download the file and compare it to the original tarball in the
+  ``release/`` directory, verifying that they are identical (hint: use
+  the ``cmp`` command).
 
 You are done!
 
