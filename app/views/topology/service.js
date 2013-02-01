@@ -68,10 +68,7 @@ YUI.add('juju-topology-service', function(Y) {
     initializer: function(options) {
       ServiceModule.superclass.constructor.apply(this, arguments);
 
-      // Build a service.id -> BoundingBox map for services.
-      this.service_boxes = {};
-
-      // Set a default
+     // Set a default
       this.set('currentServiceClickAction', 'toggleServiceMenu');
     },
 
@@ -252,14 +249,11 @@ YUI.add('juju-topology-service', function(Y) {
       var vis = topo.vis;
       var db = topo.get('db');
 
-      views.toBoundingBoxes(this, db.services, this.service_boxes);
-
-      // XXX: containment breaking alias, do we need this?
-      topo.service_boxes = this.service_boxes;
+      views.toBoundingBoxes(this, db.services, topo.service_boxes);
 
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
-                     .data(Y.Object.values(this.service_boxes),
+                     .data(Y.Object.values(topo.service_boxes),
                            function(d) {return d.modelId;});
     },
 
@@ -410,7 +404,7 @@ YUI.add('juju-topology-service', function(Y) {
       // around we layout only new nodes. This has the side
       // effect that service blocks can overlap and will
       // be fixed later.
-      var new_services = Y.Object.values(this.service_boxes)
+      var new_services = Y.Object.values(topo.service_boxes)
                           .filter(function(boundingBox) {
         return !Y.Lang.isNumber(boundingBox.x);
       });
@@ -435,7 +429,7 @@ YUI.add('juju-topology-service', function(Y) {
       // Remove old nodes.
       node.exit()
           .each(function(d) {
-            delete self.service_boxes[d.id];
+            delete topo.service_boxes[d.id];
           })
           .remove();
     },
