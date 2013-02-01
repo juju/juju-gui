@@ -7,6 +7,7 @@
 # this data in the GUI itself at some point.  Here's an example of how to
 # write the changes data.
 
+# - unreleased:
 # - 0.5.0:
 #   - Did something
 #   - Did something else
@@ -20,7 +21,12 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
-- unrelased:
+- 0.2.0:
+    - Fix a number of bugs and UI misbehaviors.
+    - Switch to a CSS minifier that does not require Java.
+    - Remove login credentials from config.
+    - Improve tests and testing infrastructure.
+    - Improve project and code documentation.
 - 0.1.5:
     - Add support for recess as a CSS linter.  Currently not enabled.
     - Allow login credentials to be placed in config.
