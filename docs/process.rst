@@ -163,11 +163,17 @@ Checklist for Making a Stable Release
   branch's revno.
 - While still in the directory where you extracted the tar file, run the
   command: ``NO_BZR=1 make prod``.  Go to the URL shown in the terminal.
-- In Chrome and Firefox, QA the application.  At the very least, load the app,
-  open the charm panel, go to an inner page, and make sure there are no 404s
-  or Javascript errors in the console.  Ensure that the ``/juju-ui/version.js``
-  URL shows the same version string as before.  We want a real QA script for
-  the future.
+- In Chrome and Firefox, QA the application.
+
+  - Expand the release archive in a temporary directory, cd into
+    build-prod, run ``python -m SimpleHTTPServer 8888``, start the
+    improv.py script.
+  - Load the app, open the charm panel, go to an inner page, and make
+    sure there are no 404s or Javascript errors in the console.
+  - Ensure that the ``/juju-ui/version.js`` URL shows the same version
+    string as before.
+  - We want a real QA script for the future.
+
 - Also do the same checks after running the command ``NO_BZR=1 make debug``.
 - For now, we will assume you would like to verify the release on the
   Launchpad staging server.  As we become more confident with this process,
@@ -191,11 +197,6 @@ Checklist for Making a Stable Release
   - Download the file and compare it to the original tarball in the
     ``release/`` directory, verifying that they are identical (hint: use the
     ``cmp`` command).
-  - Expand the release archive in a temporary directory, cd into
-    build-prod, run ``python -m SimpleHTTPServer 8888``, start the
-    improv.py script, and do a quick double-check in the browser that it
-    is what you expect.  Looking at ``juju-ui/version.js`` should also
-    show you the version you expect.
   - This is a final release.  Consider asking others to verify the package on
     staging. If there are problems, you will have to delete the release from
     staging, fix the problems and restart the process. However, *do not*
@@ -215,6 +216,9 @@ Checklist for Making a Stable Release
 
 - Go to <https://launchpad.net/juju-gui/stable> and verify that you see
   a new release and a new download file.
+- Download the file and compare it to the original tarball in the
+``release/`` directory, verifying that they are identical (hint: use the
+``cmp`` command).
 - Set the version back to ``unreleased`` by doing the following.
 
   - Restore ``- unreleased:`` as most recent version string in
