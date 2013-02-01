@@ -163,7 +163,7 @@ Checklist for Making a Stable Release
   branch's revno.
 - While still in the directory where you extracted the tar file, run the
   command: ``NO_BZR=1 make prod``.
-- Start the improv.py script as described in the HACKING file.
+- Start the ``improv.py`` script as described in the HACKING file.
 - Go to the URL shown in the terminal.
 - In Chrome and Firefox, QA the application.
 
@@ -250,7 +250,7 @@ Checklist for Making a Developer Release
   branch's revno.
 - While still in the directory where you extracted the tar file, run the
   command: ``NO_BZR=1 make prod``.
-- Start the improv.py script as described in the HACKING file.
+- Start the ``improv.py`` script as described in the HACKING file.
 - Go to the URL shown in the terminal.
 - In Chrome and Firefox, QA the application.
 
