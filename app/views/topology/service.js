@@ -821,15 +821,16 @@ YUI.add('juju-topology-service', function(Y) {
 
       if (service && cp) {
         var cp_width = cp.getClientRect().width,
-                menu_left = service.x * z + service.w * z / 2 <
-                this.width * z / 2,
-                service_center = service.relativeCenter;
+            menu_left = (service.x * z + service.w * z / 2 <
+                         topo.get('width') * z / 2),
+            service_center = service.relativeCenter;
+
         if (menu_left) {
           cp.removeClass('left')
-                .addClass('right');
+            .addClass('right');
         } else {
           cp.removeClass('right')
-                .addClass('left');
+            .addClass('left');
         }
         // Set the position of the div in the following way:
         // top: aligned to the scaled/panned service minus the
