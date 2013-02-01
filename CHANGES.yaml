@@ -21,7 +21,7 @@
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
 - unreleased:
-- 0.2:
+- 0.2.0:
     - Fix a number of bugs and UI misbehaviors.
     - Switch to a CSS minifier that does not require Java.
     - Remove login credentials from config.
