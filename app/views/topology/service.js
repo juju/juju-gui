@@ -253,7 +253,6 @@ YUI.add('juju-topology-service', function(Y) {
       var db = topo.get('db');
 
       views.toBoundingBoxes(this, db.services, this.service_boxes);
-      this.services = Y.Object.values(this.service_boxes);
 
       // XXX: containment breaking alias, do we need this?
       topo.service_boxes = this.service_boxes;
@@ -411,7 +410,8 @@ YUI.add('juju-topology-service', function(Y) {
       // around we layout only new nodes. This has the side
       // effect that service blocks can overlap and will
       // be fixed later.
-      var new_services = this.services.filter(function(boundingBox) {
+      var new_services = Y.Object.values(this.service_boxes)
+                          .filter(function(boundingBox) {
         return !Y.Lang.isNumber(boundingBox.x);
       });
       if (new_services) {
