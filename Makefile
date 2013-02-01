@@ -265,6 +265,9 @@ shelltoolbox: virtualenv/bin/python
 	[ -d python-shelltoolbox ] || bzr branch lp:python-shelltoolbox
 	virtualenv/bin/easy_install ./python-shelltoolbox
 
+selenium: virtualenv/bin/python
+	virtualenv/bin/easy_install selenium==2.29.0
+
 beautify: virtualenv/bin/fixjsstyle
 	virtualenv/bin/fixjsstyle --strict --nojsdoc --jslint_error=all $(JSFILES)
 
@@ -504,6 +507,6 @@ appcache-force: appcache-touch $(APPCACHE)
 	build-devel clean clean-all clean-deps clean-docs code-doc \
 	debug devel docs dist gjslint help jshint lint main-doc prep prod \
 	recess server spritegen test test-debug test-prod undocumented \
-	view-code-doc view-docs view-main-doc yuidoc-lint shelltoolbox
+	view-code-doc view-docs view-main-doc yuidoc-lint shelltoolbox selenium
 
 .DEFAULT_GOAL := all
