@@ -365,9 +365,11 @@ YUI.add('juju-gui', function(Y) {
         });
       }
 
+      // Regardless of which view we are rendering
+      // update the env view on db change.
+      this.views.environment.instance.topo.update();
       // Redispatch to current view to update.
       if (active && active.name === 'EnvironmentView') {
-        active.update();
         active.rendered();
       } else {
         this.dispatch();
