@@ -858,12 +858,12 @@
          // Use pos to set b2
          b2.pos = {x: 200, y: 300, w: 100, h: 200};
 
-         // update using property
+         // Update using property.
          b1.x = 100;
          b1.x.should.equal(100);
          b1.px.should.equal(0);
 
-         // update using pos
+         // Update using position.
          b2.pos = {x: 300};
          b2.x.should.equal(300);
          b2.px.should.equal(200);
@@ -875,7 +875,7 @@
 
       b1.modelId.should.equal('service-mediawiki');
 
-      // properties of the model have mapped to the box
+      // Properties of the model have mapped to the box.
       b1.id.should.equal('mediawiki');
       b1.exposed.should.equal(true);
     });

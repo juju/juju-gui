@@ -607,14 +607,22 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
 
-  /*
-   * Utility class that encapsulates Y.Models and keeps their position
-   * state within an svg canvas.
+  /**
+   * Utility object that encapsulates Y.Models and keeps their position
+   * state within an SVG canvas.
    *
    * As a convenience attributes of the encapsulated model are exposed
    * directly as attributes.
-   */
+   *
+   * @class BoundingBox
+   * @param {Module} module Service module.
+   * @param {Model} model Service model.
+   **/
+
+  // Internal base object
   var _box = {};
+
+  // Internal descriptor generator.
   function positionProp(name) {
     return {
       get: function() {return this['_' + name];},
@@ -625,6 +633,7 @@ YUI.add('juju-view-utils', function(Y) {
     };
   }
 
+  // Box Properties (and methods).
   Object.defineProperties(_box, {
     x: positionProp('x'),
     y: positionProp('y'),
@@ -841,7 +850,7 @@ YUI.add('juju-view-utils', function(Y) {
    * @param {Module} module Typically service module.
    * @param {Model} model Model object.
    * @return {BoundingBox} A Box model.
-   */
+   **/
   function BoundingBox(module, model) {
     var b = Object.create(_box);
     b.module = module;
@@ -858,6 +867,7 @@ YUI.add('juju-view-utils', function(Y) {
    * and will be updated in place by merging changed attribute
    * into the index.
    *
+   * @method toBoundingBoxes
    * @param {ServiceModule} Module holding box canvas and context.
    * @param {ModelList} services Service modellist.
    * @param {Object} existing id:box mapping.
@@ -877,7 +887,6 @@ YUI.add('juju-view-utils', function(Y) {
   };
 
 
-
   /**
    * Decorate a relation with some related/derived data.
    *
@@ -886,7 +895,8 @@ YUI.add('juju-view-utils', function(Y) {
    * @param {Object} source The service from which the relation originates.
    * @param {Object} target The service at which the relation terminates.
    * @return {Object} An object with attributes matching the result of
-   * relation.getAttrs() plus "source", "target", and other convenience data.
+   *                  relation.getAttrs() plus "source", "target",
+   *                  and other convenience data.
    */
   views.DecoratedRelation = function(relation, source, target) {
     var hasRelations = Y.Lang.isValue(relation.endpoints);
