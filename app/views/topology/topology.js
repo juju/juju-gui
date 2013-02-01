@@ -32,6 +32,9 @@ YUI.add('juju-topology', function(Y) {
         maxZoom: 200
       });
 
+      // Build a service.id -> BoundingBox map for services.
+      this.service_boxes = {};
+
       this._subscriptions = [];
     },
 

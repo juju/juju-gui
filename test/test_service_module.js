@@ -77,7 +77,8 @@ describe('service module annotations', function() {
 });
 
 describe('service module events', function() {
-  var db, juju, models, serviceModule, view, viewContainer, views, Y;
+  var db, juju, models, serviceModule, topo,
+      view, viewContainer, views, Y;
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
       'juju-models',
@@ -105,7 +106,8 @@ describe('service module events', function() {
     });
     view.render();
     view.rendered();
-    serviceModule = view.topo.modules.ServiceModule;
+    topo = view.topo;
+    serviceModule = topo.modules.ServiceModule;
   });
 
   afterEach(function() {
@@ -116,7 +118,7 @@ describe('service module events', function() {
 
   it('should toggle the service menu',
      function() {
-       var box = serviceModule.service_boxes.haproxy;
+       var box = topo.service_boxes.haproxy;
        var menu = viewContainer.one('#service-menu');
        assert.isFalse(menu.hasClass('active'));
        serviceModule.service_click_actions.toggleServiceMenu(
@@ -129,7 +131,7 @@ describe('service module events', function() {
 
   it('should show the service menu',
      function() {
-       var box = serviceModule.service_boxes.haproxy;
+       var box = topo.service_boxes.haproxy;
        var menu = viewContainer.one('#service-menu');
        assert.isFalse(menu.hasClass('active'));
        serviceModule.service_click_actions.showServiceMenu(
@@ -143,7 +145,7 @@ describe('service module events', function() {
 
   it('should hide the service menu',
      function() {
-       var box = serviceModule.service_boxes.haproxy;
+       var box = topo.service_boxes.haproxy;
        var menu = viewContainer.one('#service-menu');
        serviceModule.service_click_actions.showServiceMenu(
            box, serviceModule, serviceModule);
@@ -161,7 +163,7 @@ describe('service module events', function() {
   // Return the service menu.
   var clickService = function(service) {
     // Monkeypatch to avoid the click event handler bailing out early.
-    serviceModule.service_boxes.haproxy.containsPoint = function() {
+    topo.service_boxes.haproxy.containsPoint = function() {
       return true;
     };
     // Click the service.
@@ -230,6 +232,20 @@ describe('service module events', function() {
     assert.isTrue(serviceDestroyed);
     // Click the "Cancel" button to close the "Destroy Service" dialog.
     cancelButton.simulate('click');
+  });
+
+  it('should prevent the Juju GUI service from being destroyed', function() {
+    var service = db.services.add({
+      id: 'gui',
+      charm: 'cs:precise/juju-gui-7'
+    });
+    var box = views.BoundingBox(serviceModule, service);
+    var menu = view.get('container').one('#service-menu');
+    view.topo.set('active_service', service);
+
+    serviceModule.service_click_actions
+                 .toggleServiceMenu(box, serviceModule, serviceModule);
+    menu.one('.destroy-service').hasClass('disabled').should.equal(true);
   });
 
   it('must not process service clicks after a dragend', function() {
