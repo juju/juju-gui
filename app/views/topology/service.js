@@ -68,7 +68,7 @@ YUI.add('juju-topology-service', function(Y) {
     initializer: function(options) {
       ServiceModule.superclass.constructor.apply(this, arguments);
 
-     // Set a default
+      // Set a default
       this.set('currentServiceClickAction', 'toggleServiceMenu');
     },
 
@@ -406,8 +406,8 @@ YUI.add('juju-topology-service', function(Y) {
       // be fixed later.
       var new_services = Y.Object.values(topo.service_boxes)
                           .filter(function(boundingBox) {
-        return !Y.Lang.isNumber(boundingBox.x);
-      });
+                            return !Y.Lang.isNumber(boundingBox.x);
+                          });
       if (new_services) {
         this.tree.nodes({children: new_services});
       }
