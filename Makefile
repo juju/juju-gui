@@ -370,7 +370,7 @@ test-server: build-debug
 	./test-server.sh debug true
 
 test-misc: bin/py shelltoolbox
-	bin/py lib/test_deploy_charm_for_testing.py
+	PYTHONPATH=lib bin/py test/test_deploy_charm_for_testing.py
 
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
