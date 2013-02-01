@@ -151,7 +151,7 @@ help:
 	@echo "docs: generate project and code documentation"
 	@echo "view-docs: generate both doc sets and view them in the browser"
 	@echo "help: this description"
-	@echo "Other, less common targets are available, see Makefile."
+	@echo "Other targets are available, see the Makefile."
 
 build-shared/juju-ui/templates.js: $(TEMPLATE_TARGETS) bin/generateTemplates
 	mkdir -p build-shared/juju-ui/assets
@@ -166,10 +166,16 @@ main-doc:
 view-main-doc: main-doc
 	xdg-open docs/_build/html/index.html
 
+sphinx:
+	@echo "Deprecated. Please run 'make main-doc' or 'make view-main-doc'."
+
 code-doc: yuidoc/index.html
 
 view-code-doc: code-doc
 	xdg-open yuidoc/index.html
+
+yuidoc:
+	@echo "Deprecated. Please run 'make code-doc' or 'make view-code-doc'."
 
 docs: code-doc main-doc
 

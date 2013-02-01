@@ -776,8 +776,8 @@ YUI.add('juju-topology-relation', function(Y) {
      */
     subordinateRelationsForService: function(service) {
       return this.relations.filter(function(relation) {
-        return (relation.source.modelId() === service.modelId() ||
-            relation.target.modelId() === service.modelId()) &&
+        return (relation.source.modelId === service.modelId ||
+            relation.target.modelId === service.modelId) &&
             relation.isSubordinate;
       });
     },

@@ -789,7 +789,7 @@
   });
 
   describe('view model support infrastructure', function() {
-    var Y, views, models;
+    var Y, views, models, module, service;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-views', 'juju-models'],
@@ -800,48 +800,46 @@
           });
     });
 
+    beforeEach(function() {
+      service = new models.Service({
+        id: 'mediawiki',
+        exposed: true});
+      module = {
+        topology: {
+          serviceForBox: function() {return service;}
+        }};
+    });
+
     it('must be able to get us nearest connectors',
        function() {
-         var b1 = views.BoundingBox(),
-         b2 = views.BoundingBox();
+         var b1 = views.BoundingBox(module, service),
+         b2 = views.BoundingBox(module, service);
 
-         // raw poperty access
+         // raw property access
          b1.x = 0; b1.y = 0;
          b1.w = 100; b1.h = 200;
 
          // Use pos to set b2
          b2.pos = {x: 200, y: 300, w: 100, h: 200};
 
-         b1.getXY().should.eql([0, 0]);
-         b2.getWH().should.eql([100, 200]);
+         b1.xy.should.eql([0, 0]);
+         b2.wh.should.eql([100, 200]);
 
-         b1.margins({
-           top: 0,
-           bottom: 0,
-           right: 0,
-           left: 0
-         });
          b1.getNearestConnector([0, 0]);
 
          b1.getNearestConnector(b2).should
-          .eql(b1.getConnectors().bottom);
+          .eql(b1.connectors.bottom);
 
-         b2.margins({
-           top: 0,
-           bottom: 0,
-           right: 0,
-           left: 0
-         });
          b2.getNearestConnector(b1).should
-          .eql(b2.getConnectors().top);
+          .eql(b2.connectors.top);
 
          b1.getConnectorPair(b2).should.eql([
-           b1.getConnectors().bottom,
-           b2.getConnectors().top]);
+           b1.connectors.bottom,
+           b2.connectors.top]);
        });
 
     it('must be able to tell if a point is inside a box', function() {
-      var b = views.BoundingBox();
+      var b = views.BoundingBox(module, service);
       b.pos = {x: 100, y: 100, w: 50, h: 50};
 
       b.containsPoint([125, 125]).should.equal(true);
@@ -850,73 +848,83 @@
 
     it('must be able to save and restore old position information',
        function() {
-         var b1 = views.BoundingBox(),
-         b2 = views.BoundingBox();
+         var b1 = views.BoundingBox(module, service),
+             b2 = views.BoundingBox(module, service);
 
-         // raw poperty access
+         // raw property access
          b1.x = 0; b1.y = 0;
          b1.w = 100; b1.h = 200;
 
          // Use pos to set b2
          b2.pos = {x: 200, y: 300, w: 100, h: 200};
 
-         // update using property
+         // Update using property.
          b1.x = 100;
          b1.x.should.equal(100);
          b1.px.should.equal(0);
 
-         // update using pos
+         // Update using position.
          b2.pos = {x: 300};
          b2.x.should.equal(300);
          b2.px.should.equal(200);
 
        });
 
-    it('must be able to access model attributes easily', function() {
-      var service = new models.Service({id: 'mediawiki',
-        exposed: true}),
-          b1 = new views.BoundingBox();
-      b1.model(service);
+    it('must be able to access model attributes', function() {
+      var b1 = new views.BoundingBox(module, service);
 
-      b1.modelId().should.equal('service-mediawiki');
+      b1.modelId.should.equal('service-mediawiki');
 
-      // properties of the model have mapped to the box
+      // Properties of the model have mapped to the box.
       b1.id.should.equal('mediawiki');
       b1.exposed.should.equal(true);
     });
 
     it('must be able to update position data and not touch model data',
        function() {
-         var service = new models.Service({id: 'mediawiki',
-           exposed: true}),
-         b1 = new views.BoundingBox();
-         b1.model(service);
+         var b1 = views.BoundingBox(module, service);
          b1.x = 0; b1.y = 0;
          b1.w = 100; b1.h = 200;
          b1.id.should.equal('mediawiki');
 
          // X/Y updated, other keys ignored
-         b1.pos = {x: 100, y: 100, id: 'mediawiki'};
+         b1.pos = {x: 100, y: 100, id: 'blubber'};
          b1.x.should.equal(100);
          b1.id.should.equal('mediawiki');
-
        });
 
     it('must be able to map from sequence of models to boundingboxes',
        function() {
          var services = new models.ServiceList();
          services.add([{id: 'mysql'},
-           {id: 'haproxy'},
-           {id: 'memcache'},
-           {id: 'wordpress'}]);
+                       {id: 'haproxy'},
+                       {id: 'memcache'},
+                       {id: 'wordpress'}]);
 
          services.size().should.equal(4);
-         var boxes = services.map(views.toBoundingBox);
-         boxes.length.should.equal(4);
-         boxes[0].id.should.equal('mysql');
-         boxes[3].id.should.equal('wordpress');
+         var boxes = views.toBoundingBoxes(module, services);
+         boxes.mysql.id.should.equal('mysql');
+         boxes.wordpress.id.should.equal('wordpress');
        });
 
-  });
+    it('must be able to update boxes with new model data',
+       function() {
+         var services = new models.ServiceList();
+         services.add([{id: 'mysql', exposed: false},
+                       {id: 'haproxy'},
+                       {id: 'memcache'},
+                       {id: 'wordpress'}]);
 
+         services.size().should.equal(4);
+         var boxes = views.toBoundingBoxes(module, services);
+         var mysql = services.getById('mysql');
+
+         boxes.mysql.exposed.should.equal(false);
+         mysql.set('exposed', true);
+
+         // The third argument here implies an update.
+         views.toBoundingBoxes(module, services, boxes);
+         boxes.mysql.exposed.should.equal(true);
+       });
+  });
 })();
