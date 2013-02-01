@@ -246,9 +246,18 @@ recess: node_modules/recess
 
 lint: gjslint jshint recess yuidoc-lint
 
-virtualenv/bin/gjslint virtualenv/bin/fixjsstyle:
+virtualenv/bin/python:
 	virtualenv virtualenv
+
+bin/py: virtualenv/bin/python
+	ln -s $(PWD)/virtualenv/bin/python bin/py
+
+virtualenv/bin/gjslint virtualenv/bin/fixjsstyle: virtualenv/bin/python
 	virtualenv/bin/easy_install archives/closure_linter-latest.tar.gz
+
+shelltoolbox: virtualenv/bin/python
+	[ -d python-shelltoolbox ] || bzr branch lp:python-shelltoolbox
+	virtualenv/bin/easy_install ./python-shelltoolbox
 
 beautify: virtualenv/bin/fixjsstyle
 	virtualenv/bin/fixjsstyle --strict --nojsdoc --jslint_error=all $(JSFILES)
@@ -351,6 +360,9 @@ test-prod: build-prod
 test-server: build-debug
 	./test-server.sh debug true
 
+test-misc: bin/py shelltoolbox
+	bin/py lib/test_deploy_charm_for_testing.py
+
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
 	@echo "test-debug', to test the production or debug environments"
@@ -386,6 +398,7 @@ clean:
 
 clean-deps:
 	rm -rf node_modules virtualenv
+	rm -rf python-shelltoolbox
 
 clean-docs:
 	make -C docs clean
@@ -485,6 +498,6 @@ appcache-force: appcache-touch $(APPCACHE)
 	build-devel clean clean-all clean-deps clean-docs code-doc \
 	debug devel docs dist gjslint help jshint lint main-doc prep prod \
 	recess server spritegen test test-debug test-prod undocumented \
-	view-code-doc view-docs view-main-doc yuidoc-lint
+	view-code-doc view-docs view-main-doc yuidoc-lint shelltoolbox
 
 .DEFAULT_GOAL := all
