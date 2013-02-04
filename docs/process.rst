@@ -322,8 +322,11 @@ Checklist for Making a Developer Release
       Go to <https://staging.launchpad.net/> to verify.  Try again when
       Launchpad is back online.
 
-  - Go to <https://staging.launchpad.net/juju-gui/stable> and verify that you
+  - Go to <https://staging.launchpad.net/juju-gui/trunk> and verify that you
     see a new release and a new download file.
+  - Download the file and compare it to the original tarball in the
+    ``release/`` directory, verifying that they are identical (hint: use the
+    ``cmp`` command).
 
 - Now it is time for the actual, real release.  Head back to your branch and
   run ``PROD=1 make dist``.  The computer will again walk you through the
