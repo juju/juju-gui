@@ -512,7 +512,7 @@ appcache-force: appcache-touch $(APPCACHE)
 .PHONY: appcache-force appcache-touch beautify build build-files \
 	build-devel clean clean-all clean-deps clean-docs code-doc \
 	debug devel docs dist gjslint help jshint lint main-doc prep prod \
-	recess server spritegen test test-debug test-prod undocumented \
-	view-code-doc view-docs view-main-doc yuidoc-lint selenium
+	recess selenium server spritegen test test-debug test-prod undocumented \
+	view-code-doc view-docs view-main-doc yuidoc-lint
 
 .DEFAULT_GOAL := all
