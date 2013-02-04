@@ -43,3 +43,23 @@ GUI.  To specify another branch to test against, pass it in like so::
 
 Note that only "lp:" and "http:" URLs are accepted by the charm at the
 time of this writing.
+
+
+Specifying the browser
+======================
+
+You can choose which browser will be used to run the tests by setting
+the JUJU_GUI_TEST_BROWSER environment variable.  See test/browser.py for
+the available options.
+
+
+Running an individual test
+==========================
+
+If there is a particular browser test you want to run in isolation or
+against an already-running copy of the application.  You can also
+specify the browser to use as above.  For example, this command will run
+the given test against the UI stage using IE::
+
+    $ APP_URL=http://uistage.jujucharms.com:8080/ \
+    JUJU_GUI_TEST_BROWSER=ie bin/py test/test_charm_running.py

@@ -22,6 +22,10 @@ firefox['version'] = '18'
 
 browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
 
+# Given the limited capabilities that the credentials impart (primarily the
+# ability to run a web browser via Sauce Labs) and that anyone can sign up for
+# their own credentials at no cost, it seems like an appropriate handling of
+# the credentials to just include them here.
 config = {
     'username': 'juju-gui',
     'access-key': '0a3b7821-93ed-4a2d-abdb-f34854eeaba3',
@@ -31,6 +35,7 @@ credentials = ':'.join([config['username'], config['access-key']])
 encoded_credentials = base64.encodestring(credentials)[:-1]
 # This is saucelabs.com credentials and API endpoint rolled into a URL.
 command_executor = 'http://%s@ondemand.saucelabs.com:80/wd/hub' % credentials
+
 
 def set_test_result(jobid, passed):
     headers = {'Authorization': 'Basic ' + encoded_credentials}
