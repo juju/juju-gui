@@ -18,3 +18,5 @@ upload_release.py
 releases
 build-prod
 build-debug
+bin/py
+python-shelltoolbox
