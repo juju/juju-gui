@@ -132,7 +132,7 @@ APPCACHE=build-shared/juju-ui/assets/manifest.appcache
 # As an optimization, we stash this value in the local PWD variable.
 PWD=$(shell pwd)
 
-all: build
+all: build bin/test-charm
 	@echo "\nDebug and production environments built."
 	@echo "Run 'make help' to list the main available targets."
 
@@ -146,6 +146,7 @@ help:
 	@echo "clean-all: remove build, deps and doc directories"
 	@echo "test-debug: run tests on the cli from the debug environment"
 	@echo "test-prod: run tests on the cli from the production environment"
+	@echo "test-misc: run tests of project infrastructure bits"
 	@echo "test-server: run tests in the browser from the debug environment"
 	@echo "prep: beautify and lint the source"
 	@echo "docs: generate project and code documentation"
@@ -258,15 +259,19 @@ virtualenv/bin/python:
 bin/py: virtualenv/bin/python
 	ln -s $(PWD)/virtualenv/bin/python bin/py
 
+bin/test-charm: bin/py python-shelltoolbox selenium
+
 virtualenv/bin/gjslint virtualenv/bin/fixjsstyle: virtualenv/bin/python
 	virtualenv/bin/easy_install archives/closure_linter-latest.tar.gz
 
-shelltoolbox: virtualenv/bin/python
-	[ -d python-shelltoolbox ] || bzr branch lp:python-shelltoolbox
+python-shelltoolbox: virtualenv/bin/python
+	[ -d python-shelltoolbox ] || bzr branch --standalone lp:python-shelltoolbox
 	virtualenv/bin/easy_install ./python-shelltoolbox
 
-selenium: virtualenv/bin/python
-	virtualenv/bin/easy_install selenium==2.29.0
+virtualenv/lib/python2.7/site-packages/selenium-2.29.0-py2.7.egg:
+	virtualenv/bin/easy_install archives/selenium-2.29.0.tar.gz
+
+selenium: virtualenv/bin/python virtualenv/lib/python2.7/site-packages/selenium-2.29.0-py2.7.egg
 
 beautify: virtualenv/bin/fixjsstyle
 	virtualenv/bin/fixjsstyle --strict --nojsdoc --jslint_error=all $(JSFILES)
@@ -369,7 +374,7 @@ test-prod: build-prod
 test-server: build-debug
 	./test-server.sh debug true
 
-test-misc: bin/py shelltoolbox
+test-misc: bin/py python-shelltoolbox
 	PYTHONPATH=lib bin/py test/test_deploy_charm_for_testing.py
 
 test:
@@ -404,6 +409,7 @@ prod: build-prod
 clean:
 	rm -rf build-shared build-debug build-prod
 	find app/assets/javascripts/ -type l | xargs rm -rf
+	rm -f bin/py
 
 clean-deps:
 	rm -rf node_modules virtualenv
@@ -507,6 +513,6 @@ appcache-force: appcache-touch $(APPCACHE)
 	build-devel clean clean-all clean-deps clean-docs code-doc \
 	debug devel docs dist gjslint help jshint lint main-doc prep prod \
 	recess server spritegen test test-debug test-prod undocumented \
-	view-code-doc view-docs view-main-doc yuidoc-lint shelltoolbox selenium
+	view-code-doc view-docs view-main-doc yuidoc-lint selenium
 
 .DEFAULT_GOAL := all

@@ -18,6 +18,13 @@ In order to run the tests you must have a Juju environment named
 an environment.
 
 
+Building
+--------
+
+The test script has dependencies that are provided for by the Makefile.
+Run an unadorned "make" command to set up those dependencies.
+
+
 Running the tests
 =================
 
