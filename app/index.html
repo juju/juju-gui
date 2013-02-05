@@ -1,8 +1,16 @@
 <!DOCTYPE html>
-<html manifest="/juju-ui/assets/manifest.appcache">
+<!--[if IE]>
+  <html class="ie" manifest="/juju-ui/assets/manifest.appcache">
+<![endif]-->
+<!--[if !(IE)]><!-->
+  <html class="" manifest="/juju-ui/assets/manifest.appcache">
+<!--<![endif]-->
+
   <head>
     <meta charset="utf-8">
     <title>Juju Admin</title>
+    <!-- Disable backwards compatible mode for IE on a LAN. -->
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Juju team">
@@ -14,7 +22,6 @@
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
   </head>
 
   <body>

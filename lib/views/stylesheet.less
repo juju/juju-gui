@@ -695,7 +695,7 @@ g.unit {
             ul {
                 list-style-type: none;
                 padding-top: 5px;
-		padding-bottom: 5px;
+                padding-bottom: 5px;
                 margin: 0;
 
                 li {
@@ -704,7 +704,7 @@ g.unit {
                         background:
                             url(/juju-ui/assets/images/selected_tick.png)
                             no-repeat;
-			background-position: 240px 3px;
+                        background-position: 240px 3px;
                     }
                 }
             }
@@ -1108,6 +1108,7 @@ g.unit {
                 height: 20px;
                 line-height: 16px;
             }
+
             ul {
                 margin-bottom: 0;
                 border-left: 1px solid lightgrey;
@@ -1118,6 +1119,9 @@ g.unit {
                 border-top: 1px solid #FFFFFF;
                 border-bottom: 1px solid #BDBDBD;
                 height: 70px;
+                .ie {
+                    padding-left: 5px
+                }
                 .charm-div {
                     padding-top: 11px;
                 }
@@ -1141,6 +1145,8 @@ g.unit {
                     font-size: 16px;
                     color: @charm-panel-orange;
                     line-height: 18px;
+                    /* Silly margin-top needed for moz. */
+                    margin-top: -0.1px;
                 }
                 .charm-summary {
                     padding-top: 4px;
