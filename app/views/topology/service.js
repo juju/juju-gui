@@ -269,7 +269,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = self.get('component');
       box.oldX = box.x;
       box.oldY = box.y;
-      box.inDrag = 1;
+      box.inDrag = views.DRAG_START;
     },
 
     dragend: function(box,  self) {
@@ -348,9 +348,9 @@ YUI.add('juju-topology-service', function(Y) {
       self.get('container').all('.environment-menu.active')
           .removeClass('active');
 
-      if (box.inDrag === 1) {
+      if (box.inDrag === views.DRAG_START) {
         self.service_click_actions.hideServiceMenu(null, self);
-        box.inDrag = 2;
+        box.inDrag = views.DRAG_ACTIVE;
       }
       topo.fire('cancelRelationBuild');
       // Update relation lines for just this service.
