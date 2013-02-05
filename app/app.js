@@ -234,6 +234,13 @@ YUI.add('juju-gui', function(Y) {
       // a default if none is configured.
       var environment_name = this.get('environment_name') || 'Environment',
           environment_node = Y.one('#environment-name');
+
+      // Set a class identifying that the browser is IE so that we can use
+      // targeted CSS rules if needed.
+      if (Y.UA.ie > 0) {
+        Y.one('html').addClass('msie');
+      }
+
       // Some tests do not fully populate the DOM, so we check to be sure.
       if (Y.Lang.isValue(environment_node)) {
         environment_node.set('text', environment_name);

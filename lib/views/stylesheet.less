@@ -1119,8 +1119,9 @@ g.unit {
                 border-top: 1px solid #FFFFFF;
                 border-bottom: 1px solid #BDBDBD;
                 height: 70px;
-                .ie {
-                    padding-left: 5px
+                /* Hack to prevent the block from spilling downward in IE. */
+                .msie & {
+                    padding-left: 4px;
                 }
                 .charm-div {
                     padding-top: 11px;
