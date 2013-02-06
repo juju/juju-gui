@@ -10,7 +10,7 @@ juju_command = shelltoolbox.command('juju')
 
 
 def juju(s):
-    juju_command(*s.split())
+    return juju_command(*s.split())
 
 
 def get_branch_url(argv):
@@ -18,7 +18,7 @@ def get_branch_url(argv):
     if len(argv) > 1:
         branch = argv[1]
     else:
-        branch = None # trunk
+        branch = None  # trunk
 
     return branch
 
