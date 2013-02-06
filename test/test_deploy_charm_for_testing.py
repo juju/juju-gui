@@ -1,7 +1,7 @@
 from __future__ import print_function
 
 import unittest
-import sys
+
 from deploy_charm_for_testing import (
     get_branch_url,
     get_state,
@@ -37,6 +37,7 @@ class TestWaitingForService(unittest.TestCase):
             return 'started'
         # The fact that no exception is raised shows that no unexpected
         # sleeping was done.
+
         def sleep(seconds):
             raise RuntimeError('narcolepsy')
         wait_for_service(get_service_state, sleep)
@@ -45,8 +46,10 @@ class TestWaitingForService(unittest.TestCase):
         # If the service has not started, the sleep function is called.
         def get_service_state():
             return 'not started'
+
         class ZZZZ(Exception):
             pass
+
         def sleep(seconds):
             raise ZZZZ
         with self.assertRaises(ZZZZ):
@@ -63,8 +66,10 @@ class TestWaitingForService(unittest.TestCase):
         # get_service_state and sleep are called repeatedly until the service
         # is started.
         statuses = ['installing', 'pending', 'pending', 'started']
+
         def get_service_state():
             return statuses[0]
+
         def sleep(seconds):
             statuses.pop(0)
         wait_for_service(get_service_state, sleep)
@@ -101,6 +106,7 @@ class TestScript(unittest.TestCase):
         # passed to the charm.
         printed = []
         juju_commands = []
+
         def juju(s):
             juju_commands.append(s)
         main(argv=['', 'lp:foo'], print=printed.append, juju=juju,
@@ -113,7 +119,8 @@ class TestScript(unittest.TestCase):
              'Waiting for service to start...',
              'Exposing the service...'])
         self.assertIn(
-            ('set juju-gui juju-gui-source=lp:foo --environment juju-gui-testing'),
+            ('set juju-gui juju-gui-source=lp:foo --environment '
+             'juju-gui-testing'),
             juju_commands)
 
 

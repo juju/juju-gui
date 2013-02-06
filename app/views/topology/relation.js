@@ -149,7 +149,8 @@ YUI.add('juju-topology-relation', function(Y) {
      * Update relation line endpoints for a given service.
      *
      * @method updateLinkEndpoints
-     * @param {Object} service The service module that has been moved.
+     * @param {Object} evt The event facade that was fired.  This should have
+     *                     a 'service' property mixed in when fired.
      */
     updateLinkEndpoints: function(evt) {
       var self = this;
