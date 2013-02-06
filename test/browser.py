@@ -6,6 +6,7 @@ import selenium
 import selenium.webdriver
 import unittest
 
+
 ie = dict(selenium.webdriver.DesiredCapabilities.INTERNETEXPLORER)
 ie['platform'] = 'Windows 2012'
 ie['version'] = '10'
@@ -67,4 +68,3 @@ class TestCase(unittest.TestCase):
         set_test_result(self.driver.session_id,
             self.last_result.wasSuccessful())
         self.driver.quit()
-
