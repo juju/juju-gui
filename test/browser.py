@@ -54,7 +54,7 @@ def set_test_result(jobid, passed):
 
 
 class TestCase(unittest.TestCase):
-    """Helper base class that supports runing browser tests."""
+    """Helper base class that supports running browser tests."""
 
     @classmethod
     def setUpClass(cls):
