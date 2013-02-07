@@ -18,7 +18,31 @@
   </head>
 
   <body>
-      <div id="login-mask" class="crosshatch-background"></div>
+      <div id="login-mask" class="crosshatch-background">
+        <div id="login-column">
+          <i class="sprite juju_logo" title="Juju GUI"></i>
+          <div id="login-form">
+            <div id="login-header">
+              <div class="error">
+                <i class="sprite alert_icon2"></i>
+                Your browser not fully supported.
+              </div>
+            </div>
+            <p>
+              If you continue to use Juju with your current browser your
+              experience may not be as good as we would like it to be.
+            </p>
+            <p>
+              Please use the latest version of
+              <a href="http://www.google.com/chrome">Chrome</a> to be fully
+              supported.
+            </p>
+            <form onsubmit="return continueWithCurrentBrowser();">
+              <input type="submit" value="Continue"/>
+            </form>
+          </div>
+        </div>
+      </div>
       <div id="notifier-box"></div>
       <div id="viewport-wrapper">
         <div id="vp-left-border"></div>
@@ -73,12 +97,24 @@
     <script src="/juju-ui/assets/modules.js"></script>
     <script src="/juju-ui/assets/config.js"></script>
     <script>
-      YUI(GlobalConfig).use(["juju-gui"], function(Y) {
-        app = new Y.juju.App(juju_config);
-        // We need to activate the hotkeys when running the application
-        // in production. Unit tests should call it manually.
-        app.activateHotkeys();
-      });
+      function startTheApp() {
+        YUI(GlobalConfig).use(["juju-gui"], function(Y) {
+          app = new Y.juju.App(juju_config);
+          // We need to activate the hotkeys when running the application
+          // in production. Unit tests should call it manually.
+          app.activateHotkeys();
+        });
+      }
+
+      // At the moment, only Chrome is supported.
+      if (/Chromex/.test(navigator.userAgent)) {
+        startTheApp();
+      }
+
+      function continueWithCurrentBrowser() {
+        startTheApp();
+        return false;
+      }
     </script>
   </body>
 </html>
