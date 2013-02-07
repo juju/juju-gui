@@ -4,6 +4,8 @@ import json
 import shelltoolbox
 import sys
 import time
+import tempfile
+import yaml
 
 
 juju_command = shelltoolbox.command('juju')
@@ -34,6 +36,18 @@ def get_state(get_status=get_status):
     return unit['agent-state']
 
 
+def make_config_file(options):
+    """Create a Juju GUI charm config file. Return the config file object."""
+    config = {'juju-gui': options}
+    config_file = tempfile.NamedTemporaryFile()
+    config_file.write(yaml.dump(config))
+    config_file.flush()
+    # The NamedTemporaryFile instance is returned instead of just the name
+    # because we want to take advantage of garbage collection-triggered
+    # deletion of the temp file when it goes out of scope in the caller.
+    return config_file
+
+
 def wait_for_service(get_state=get_state, sleep=time.sleep):
     """Wait for the service to start or for it to enter an error state."""
     while True:
@@ -51,11 +65,13 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service):
     print('Bootstrapping...')
     juju('bootstrap --environment juju-gui-testing')
     print('Deploying service...')
-    juju('deploy juju-gui --environment juju-gui-testing')
+    options = {'serve-tests': True, 'staging': True}
     if branch is not None:
         print('Setting branch for charm to deploy...')
-        juju('set juju-gui juju-gui-source={} --environment juju-gui-testing'
-            .format(branch))
+        options['juju-gui-source'] = branch
+    with make_config_file(options) as config_file:
+        juju('deploy --environment juju-gui-testing --config {} '
+             'cs:~juju-gui/precise/juju-gui'.format(config_file.name))
     print('Waiting for service to start...')
     wait_for_service()
     print('Exposing the service...')
