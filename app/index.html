@@ -19,13 +19,17 @@
 
   <body>
       <div id="login-mask" class="crosshatch-background">
-        <div id="login-column">
+        <img id="loading-spinner" src="/juju-ui/assets/loading-spinner.gif"
+            alt="Loading..." style="display:none;"/>
+        <div id="login-column" style="display:none;">
           <i class="sprite juju_logo" title="Juju GUI"></i>
           <div id="login-form">
             <div id="login-header">
               <div class="error">
-                <i class="sprite alert_icon2"></i>
-                Your browser not fully supported.
+                <nobr>
+                  <i class="sprite alert_icon2"></i>
+                  Your browser not fully supported.
+                </nobr>
               </div>
             </div>
             <p>
@@ -111,7 +115,11 @@
         startTheApp();
       }
 
+      document.getElementById('login-column').style.display = 'block';
+
       function continueWithCurrentBrowser() {
+        document.getElementById('login-column').style.display = 'none';
+        document.getElementById('loading-spinner').style.display = 'block';
         startTheApp();
         return false;
       }
