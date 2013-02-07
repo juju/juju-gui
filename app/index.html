@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html manifest="/juju-ui/assets/manifest.appcache">
+<!-- !IE will be true for all non-IE browsers and IE10 since it does not
+ recognize conditional flags. -->
 <!--[if !IE]><!--><script>
 if (/*@cc_on!@*/false) {
+  // Only IE10 has cc_on as false.
   document.documentElement.className+=' ie10';
 }
 </script><!--<![endif]-->
