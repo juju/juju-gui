@@ -234,6 +234,7 @@ YUI.add('juju-gui', function(Y) {
       // a default if none is configured.
       var environment_name = this.get('environment_name') || 'Environment',
           environment_node = Y.one('#environment-name');
+
       // Some tests do not fully populate the DOM, so we check to be sure.
       if (Y.Lang.isValue(environment_node)) {
         environment_node.set('text', environment_name);
