@@ -1,10 +1,15 @@
+from __future__ import print_function
+
+import atexit
 import base64
+import getpass
 import httplib
 import json
 import os
 import selenium
 import selenium.webdriver
 import unittest
+
 
 ie = dict(selenium.webdriver.DesiredCapabilities.INTERNETEXPLORER)
 ie['platform'] = 'Windows 2012'
@@ -35,6 +40,7 @@ credentials = ':'.join([config['username'], config['access-key']])
 encoded_credentials = base64.encodestring(credentials)[:-1]
 # This is saucelabs.com credentials and API endpoint rolled into a URL.
 command_executor = 'http://%s@ondemand.saucelabs.com:80/wd/hub' % credentials
+driver = None
 
 
 def set_test_result(jobid, passed):
@@ -48,23 +54,34 @@ def set_test_result(jobid, passed):
 
 
 class TestCase(unittest.TestCase):
+    """Helper base class that supports running browser tests."""
+
+    @classmethod
+    def setUpClass(cls):
+        global driver # We only want one because they are expensive to set up.
+        if driver is None:
+            # We sometimes run the tests under different browsers, if none is
+            # specified, use Chrome.
+            browser_name = os.environ.get('JUJU_GUI_TEST_BROWSER', 'chrome')
+            capabilities = browser_capabilities[browser_name].copy()
+            capabilities['name'] = 'Juju GUI'
+            user = getpass.getuser()
+            capabilities['tags'] = [user]
+            driver = selenium.webdriver.Remote(
+                desired_capabilities=capabilities,
+                command_executor=command_executor)
+            print('Test run details at https://saucelabs.com/jobs/' +
+                driver.session_id)
+            # We want to tell saucelabs when all the tests are done.
+            atexit.register(driver.quit)
 
     def setUp(self):
-        # We sometimes run the tests under different browsers, if none is
-        # specified, use Chrome.
-        browser_name = os.environ.get('JUJU_GUI_TEST_BROWSER', 'chrome')
-        self.capabilities = browser_capabilities[browser_name].copy()
-        self.capabilities['name'] = 'Juju GUI'
-        self.driver = selenium.webdriver.Remote(
-            desired_capabilities=self.capabilities,
-            command_executor=command_executor)
+        self.driver = driver
 
     def run(self, result=None):
         self.last_result = result
         super(TestCase, self).run(result)
 
     def tearDown(self):
-        set_test_result(self.driver.session_id,
-            self.last_result.wasSuccessful())
-        self.driver.quit()
-
+        successful = self.last_result.wasSuccessful()
+        set_test_result(driver.session_id, successful)
