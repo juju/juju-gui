@@ -1,10 +1,12 @@
 'use strict';
 
+// Both of these views should probably either be deleted or converted to only
+// show environment charms.  My (GP) favorite option is to convert CharmView
+// into a service tab (viewing the environment's charm) and delete
+// CharmCollectionView.
+
 /**
- * Both of these views should probably either be deleted or converted to only
- * show environment charms.  My (GP) favorite option is to convert CharmView
- * into a service tab (viewing the environment's charm) and delete
- * CharmCollectionView.
+ * Provide the CharmView and CharmCollectionView classes.
  *
  * @module views
  * @submodule views.charm

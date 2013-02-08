@@ -72,7 +72,7 @@ YUI.add('juju-notification-controller', function(Y) {
       Y.Base, [], {
 
         /**
-         * Tell `Y.Base` that it should create ad-hoc attributes for
+         * Tell `Y.Base` that it should create ad hoc attributes for
          * config properties.
          *
          * @property _allowAdHocAttrs
@@ -151,7 +151,8 @@ YUI.add('juju-notification-controller', function(Y) {
         },
 
         /**
-         * Process new delta stream events and see if we need new notifications
+         * Process new delta stream events and see if we need new
+         * notifications.
          *
          * @method generate_notices
          */

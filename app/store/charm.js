@@ -78,8 +78,8 @@ YUI.add('juju-charm-store', function(Y) {
      * the defaultSeries, if any, and then all other available series arranged
      * from newest to oldest. Within each series, official charms come first,
      * sorted by relevance if available and package name otherwise; and then
-     * owned charms follow, sorted again by relevance if available and package
-     * name otherwise.
+     * owned charms follow, sorted again by relevance, if available, and
+     * package name otherwise.
      *
      * @method _normalizeCharms
      */
