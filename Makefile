@@ -32,7 +32,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 		-e '^app/assets/javascripts/gallery-.*\.js$$' \
 		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
-NODE_TARGETS= node_modules/chai node_modules/cryptojs node_modules/d3 \
+NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
     node_modules/expect.js node_modules/express node_modules/graceful-fs \
     node_modules/grunt node_modules/jshint node_modules/less \
     node_modules/minimatch node_modules/mocha node_modules/node-markdown \
@@ -40,6 +40,7 @@ NODE_TARGETS= node_modules/chai node_modules/cryptojs node_modules/d3 \
     node_modules/recess node_modules/rimraf node_modules/should \
     node_modules/uglify-js node_modules/yui node_modules/yuidocjs \
     node_modules/grunt/bin/grunt spritegen
+
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
 	| tr '\n' ' ')
 
