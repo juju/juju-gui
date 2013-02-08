@@ -1,9 +1,21 @@
 'use strict';
 
+/**
+ * Provide the LoginView class.
+ *
+ * @module views
+ * @submodule views.login
+ */
+
 YUI.add('juju-view-login', function(Y) {
 
   var views = Y.namespace('juju.views');
 
+  /**
+   * The LoginView class.
+   *
+   * @class LoginView
+   */
   var LoginView = Y.Base.create('LoginView', Y.View, [views.JujuBaseView], {
     template: views.Templates.login,
     events: {
@@ -18,7 +30,7 @@ YUI.add('juju-view-login', function(Y) {
      * @method login
      * @param {Object} ev An event object (with a "currentTarget" attribute).
      * @return {undefined} Mutates only.
-    **/
+     */
     login: function(ev) {
       ev.preventDefault();
       if (ev.currentTarget.get('disabled')) {
@@ -39,7 +51,7 @@ YUI.add('juju-view-login', function(Y) {
      *
      * @method render
      * @return {undefined} Mutates only.
-    **/
+     */
     render: function() {
       // In order to have the mask cover everything, it needs to be an
       // immediate child of the body.  In order for it to render immediately

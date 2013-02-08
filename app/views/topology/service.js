@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Provide the ServiceModule class.
+ *
+ * @module topology
+ * @submodule topology.service
+ */
+
 YUI.add('juju-topology-service', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
@@ -8,9 +15,7 @@ YUI.add('juju-topology-service', function(Y) {
       Templates = views.Templates;
 
   /**
-   * @module topology-service
    * @class ServiceModule
-   * @namespace views
    **/
   var ServiceModule = Y.Base.create('ServiceModule', d3ns.Module, [], {
     events: {

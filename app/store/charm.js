@@ -1,7 +1,19 @@
 'use strict';
 
+/**
+ * Provide the CharmStore class.
+ *
+ * @module store
+ * @submodule store.charm
+ */
+
 YUI.add('juju-charm-store', function(Y) {
 
+  /**
+   * The CharmStore class.
+   *
+   * @class CharmStore
+   */
   var CharmStore = Y.Base.create('charm', Y.Base, [], {
 
     loadByPath: function(path, options) {
@@ -16,11 +28,15 @@ YUI.add('juju-charm-store', function(Y) {
         }
       });
     },
-    // The query can be a string that is passed directly to the search url, or
-    // a hash that is marshalled to the correct format (e.g.,
-    // {series:precise owner:charmers}).  The method returns CharmId instances
-    // grouped by series and ordered within the groups according to the
-    // CharmId compare function.
+
+    /**
+     * @method find
+     * @param {string} query Either a string that is passed directly to the
+     *   search url, or a hash that is marshalled to the correct format (e.g.,
+     *   {series:precise owner:charmers}).
+     * @return {Object} CharmId instances grouped by series and ordered
+     *   within the groups according to the CharmId compare function.
+     */
     find: function(query, options) {
       if (!Y.Lang.isString(query)) {
         var operator = query.op || 'intersection',
@@ -55,13 +71,18 @@ YUI.add('juju-charm-store', function(Y) {
           'failure': options.failure
         }});
     },
-    // Convert the charm data into Charm instances, using only id and
-    // relevance.  Group them into series.  The series are arranged with first
-    // the defaultSeries, if any, and then all other available series arranged
-    // from newest to oldest. Within each series, official charms come first,
-    // sorted by relevance if available and package name otherwise; and then
-    // owned charms follow, sorted again by relevance if available and package
-    // name otherwise.
+
+    /**
+     * Convert the charm data into Charm instances, using only id and
+     * relevance.  Group them into series.  The series are arranged with first
+     * the defaultSeries, if any, and then all other available series arranged
+     * from newest to oldest. Within each series, official charms come first,
+     * sorted by relevance if available and package name otherwise; and then
+     * owned charms follow, sorted again by relevance, if available, and
+     * package name otherwise.
+     *
+     * @method _normalizeCharms
+     */
     _normalizeCharms: function(results, list, defaultSeries) {
       var hash = {},
           relevances = {};
