@@ -4,7 +4,8 @@
  * The charm panel views implement the various things shown in the right panel
  * when clicking on the "Charms" label in the title bar, or running a search.
  *
- * @module charm-panel
+ * @module views
+ * @submodule views.charm-panel
  */
 
 YUI.add('juju-charm-panel', function(Y) {

@@ -38,7 +38,8 @@
  * `loaded` attribute is set to true once it has all the data from its
  * environment.
  *
- * @module charm
+ * @module models
+ * @submodule models.charm
  */
 
 YUI.add('juju-charm-models', function(Y) {

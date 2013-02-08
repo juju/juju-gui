@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Provide the PanZoomModule class.
+ *
+ * @module topology
+ * @submodule topology.panzoom
+ */
+
 YUI.add('juju-topology-panzoom', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
@@ -13,7 +20,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
    *  rescaled: post-zoom event, after the scene has been rescaled,
    *            queried object positions should be accurate.
    *
-   * @module topology-panzoom
    * @class PanZoomModule
    * @namespace views
    **/

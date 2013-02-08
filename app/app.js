@@ -1,7 +1,9 @@
 'use strict';
 
 /**
- * Provides the main app class, based on the YUI App framework.
+ * Provide the main App class, based on the YUI App framework. Also provide
+ * the routing definitions, which map the request paths to the top-level
+ * views defined by the App class.
  *
  * @module app
  */
@@ -31,7 +33,7 @@ YUI.add('juju-gui', function(Y) {
      * The views encapsulate the functionality blocks that output
      * the GUI pages. The "parent" attribute defines the hierarchy.
      *
-     *  @attribute views
+     *  @attribute App.views
      */
     views: {
 
@@ -111,7 +113,7 @@ YUI.add('juju-gui', function(Y) {
         /**
          * Wait for the DOM to be built before rendering timestamps.
          *
-         * @method behaviors.timestamp.callback
+         * @method App.behaviors.timestamp.callback
          */
         callback: function() {
           var self = this;
@@ -832,6 +834,7 @@ YUI.add('juju-gui', function(Y) {
   }, {
     ATTRS: {
       charm_store: {},
+
       /*
        * Routes
        *
@@ -839,7 +842,7 @@ YUI.add('juju-gui', function(Y) {
        * and the callbacks for all the ones that match are invoked,
        * without stopping at the first one.
        *
-       *  @attribute routes
+       * @attribute routes
        */
       routes: {
         value: [

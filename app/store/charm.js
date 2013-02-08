@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * The store charm.
+ *
+ * @module store
+ * @submodule store.charm
+ */
+
 YUI.add('juju-charm-store', function(Y) {
 
   var CharmStore = Y.Base.create('charm', Y.Base, [], {

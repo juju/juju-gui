@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Provide the ViewportModule class.
+ *
+ * @module topology
+ * @submodule topology.viewport
+ */
+
 YUI.add('juju-topology-viewport', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
@@ -7,7 +14,6 @@ YUI.add('juju-topology-viewport', function(Y) {
       d3ns = Y.namespace('d3');
 
   /**
-   * @module topology-viewport
    * @class ViewportModule
    * @namespace views
    **/

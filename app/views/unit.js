@@ -1,9 +1,10 @@
 'use strict';
+
 /**
  * The unit view(s).
  *
  * @module views
- * @submodule unit
+ * @submodule views.unit
  */
 
 YUI.add('juju-view-unit', function(Y) {

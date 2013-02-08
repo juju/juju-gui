@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * The store notifications.
+ *
+ * @module store
+ * @submodule store.notifications
+ */
+
 YUI.add('juju-notification-controller', function(Y) {
 
   var juju = Y.namespace('juju');

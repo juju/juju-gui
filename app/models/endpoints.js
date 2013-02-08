@@ -1,7 +1,11 @@
 'use strict';
-/*
 
-*/
+/**
+ * The database endpoints.
+ *
+ * @module models
+ * @submodule models.endpoints
+ */
 
 YUI.add('juju-endpoints', function(Y) {
 
@@ -142,4 +146,3 @@ YUI.add('juju-endpoints', function(Y) {
     return targets;
   };
 });
-
