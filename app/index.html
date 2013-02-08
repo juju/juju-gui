@@ -99,28 +99,44 @@
     <script src="/juju-ui/assets/all-yui.js"></script>
     <script src="/juju-ui/assets/modules.js"></script>
     <script src="/juju-ui/assets/config.js"></script>
-    <script>
-      function startTheApp() {
-        YUI(GlobalConfig).use(["juju-gui"], function(Y) {
+    <script id="app-startup">
+      startTheApp = function() {
+        YUI(GlobalConfig).use(['juju-gui'], function(Y) {
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application
           // in production. Unit tests should call it manually.
           app.activateHotkeys();
         });
-      }
+      };
 
-      // At the moment, only Chrome is supported.
-      if (/Chromex/.test(navigator.userAgent)) {
-        startTheApp();
-      }
+      isBrowserSupported = function() {
+        // At the moment, only Chrome is supported.
+        return (/Chrome/.test(navigator.userAgent));
+      };
 
-      document.getElementById('browser-warning').style.display = 'block';
+      displayBrowserWarning = function() {
+        document.getElementById('browser-warning').style.display = 'block';
+      };
 
-      function continueWithCurrentBrowser() {
+      continueWithCurrentBrowser = function() {
         document.getElementById('browser-warning').style.display = 'none';
         startTheApp();
         return false;
-      }
+      };
+
+      go = function() {
+        if (isBrowserSupported()) {
+          startTheApp();
+        } else {
+          displayBrowserWarning();
+        }
+      };
+    </script>
+    <script>
+      // This is here instead of in the script tag above because we extract the
+      // above JS in order to test it.  This bit here is just to bootstrap the
+      // app when actually loaded into a browser.
+      go();
     </script>
   </body>
 </html>

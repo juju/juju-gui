@@ -1,0 +1,7 @@
+'use strict';
+
+(function() {
+  describe('Application start-up', function() {
+    var startTheApp, isBrowserSupported, displayBrowserWarning,
+        continueWithCurrentBrowser, go, app, juju_config;
+    before(function(done) {

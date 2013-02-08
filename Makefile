@@ -252,7 +252,7 @@ recess: node_modules/recess
 	# below without the grep to get recess' report.
 	node_modules/recess/bin/recess lib/views/stylesheet.less --config recess.json | grep -q Perfect
 
-lint: gjslint jshint recess yuidoc-lint
+lint: test-prep gjslint jshint recess yuidoc-lint
 
 virtualenv/bin/python:
 	virtualenv virtualenv
@@ -372,13 +372,29 @@ $(LINK_PROD_FILES):
 
 prep: beautify lint
 
-test-debug: build-debug
+test/extracted_startup_code: app/index.html
+	# Pull the JS out of the index so we can run tests against it.
+	cat app/index.html | \
+	    sed -n '/<script id="app-startup">/,/<\/script>/p'| \
+	    head -n-1 | tail -n+2 > test/extracted_startup_code
+
+test/test_startup.js: test/test_startup.js.top test/test_startup.js.bottom \
+    test/extracted_startup_code
+	echo "// THIS IS A GENERATED FILE.  DO NOT EDIT." > $@
+	echo "// See the Makefile for details." >> $@
+	cat test/test_startup.js.top >> $@
+	cat test/extracted_startup_code >> $@
+	cat test/test_startup.js.bottom >> $@
+
+test-prep: test/test_startup.js
+
+test-debug: build-debug test-prep
 	./test-server.sh debug
 
-test-prod: build-prod
+test-prod: build-prod prep-tests
 	./test-server.sh prod
 
-test-server: build-debug
+test-server: build-debug prep-tests
 	./test-server.sh debug true
 
 test-misc: bin/py python-shelltoolbox
@@ -517,9 +533,9 @@ appcache-force: appcache-touch $(APPCACHE)
 
 # targets are alphabetically sorted, they like it that way :-)
 .PHONY: appcache-force appcache-touch beautify build build-files \
-	build-devel clean clean-all clean-deps clean-docs code-doc \
-	debug devel docs dist gjslint help jshint lint main-doc prep prod \
-	recess selenium server spritegen test test-debug test-prod undocumented \
+	build-devel clean clean-all clean-deps clean-docs code-doc debug \
+	devel docs dist gjslint help jshint lint main-doc prep prod recess \
+	selenium server spritegen test test-debug test-prod undocumented \
 	view-code-doc view-docs view-main-doc yuidoc-lint
 
 .DEFAULT_GOAL := all
