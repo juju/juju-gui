@@ -37,8 +37,8 @@ NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
 	node_modules/grunt node_modules/jshint node_modules/less \
 	node_modules/minimatch node_modules/mocha node_modules/node-markdown \
 	node_modules/node-minify node_modules/node-spritesheet \
-	node_modules/recess node_modules/rimraf node_modules/should \
-	node_modules/uglify-js node_modules/yui node_modules/yuidocjs
+	node_modules/rimraf node_modules/should node_modules/yui \
+	node_modules/yuidocjs node_modules/recess
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
 	| tr '\n' ' ')
 
