@@ -3,8 +3,8 @@
 (function() {
   describe('Application start-up', function() {
     var startTheApp, isBrowserSupported, displayBrowserWarning,
-        continueWithCurrentBrowser, go, app, juju_config, getDocument, appStarted,
-        warningStyle;
+        continueWithCurrentBrowser, go, app, juju_config, getDocument,
+        appStarted, warningStyle;
     before(function() {
       warningStyle = {display: null};
       appStarted = false;

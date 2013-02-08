@@ -1,5 +1,5 @@
       startTheApp = function() {
-          appStarted = true;
+        appStarted = true;
       };
       getDocument = function() {
         return {
