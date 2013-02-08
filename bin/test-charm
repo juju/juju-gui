@@ -7,6 +7,6 @@ python lib/deploy_charm_for_testing.py "$@"
 # Figure out the URL of the APP.
 export APP_URL=https://`juju status -e juju-gui-testing | grep public-address: | cut -d: -f2 | cut -c2-`
 # Run the browser tests against the app.
-python test/test_charm_running.py
+python test/test_charm_running.py -v2
 # Destroy the environment, releasing the resources.
 yes | juju destroy-environment -e juju-gui-testing
