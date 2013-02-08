@@ -380,6 +380,7 @@ test/extracted_startup_code: app/index.html
 
 test/test_startup.js: test/test_startup.js.top test/test_startup.js.bottom \
     test/extracted_startup_code
+	# Stitch together the test file for app start-up.
 	echo "// THIS IS A GENERATED FILE.  DO NOT EDIT." > $@
 	echo "// See the Makefile for details." >> $@
 	cat test/test_startup.js.top >> $@

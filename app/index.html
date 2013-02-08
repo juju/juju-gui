@@ -25,10 +25,8 @@
           <div class="panel">
             <div class="header">
               <div class="error">
-                <nobr>
-                  <span><i class="sprite alert_icon2"></i>
-                  Your browser not fully supported.</span>
-                </nobr>
+                <span><i class="sprite alert_icon2"></i>
+                Your browser not fully supported.</span>
               </div>
             </div>
             <p>
@@ -131,7 +129,7 @@
       };
 
       go = function() {
-        if (isBrowserSupported(navigator.agent)) {
+        if (isBrowserSupported(navigator.userAgent)) {
           startTheApp();
         } else {
           displayBrowserWarning();
