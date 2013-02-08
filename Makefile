@@ -391,10 +391,10 @@ test-prep: test/test_startup.js
 test-debug: build-debug test-prep
 	./test-server.sh debug
 
-test-prod: build-prod prep-tests
+test-prod: build-prod test-prep
 	./test-server.sh prod
 
-test-server: build-debug prep-tests
+test-server: build-debug test-prep
 	./test-server.sh debug true
 
 test-misc: bin/py python-shelltoolbox

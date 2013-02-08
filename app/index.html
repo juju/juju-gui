@@ -109,23 +109,29 @@
         });
       };
 
-      isBrowserSupported = function() {
+      isBrowserSupported = function(agent) {
         // At the moment, only Chrome is supported.
-        return (/Chrome/.test(navigator.userAgent));
+        return (/Chrome/.test(agent));
+      };
+
+      getDocument = function() {
+        return document;
       };
 
       displayBrowserWarning = function() {
-        document.getElementById('browser-warning').style.display = 'block';
+        getDocument()
+          .getElementById('browser-warning').style.display = 'block';
       };
 
       continueWithCurrentBrowser = function() {
-        document.getElementById('browser-warning').style.display = 'none';
+        getDocument()
+          .getElementById('browser-warning').style.display = 'none';
         startTheApp();
         return false;
       };
 
       go = function() {
-        if (isBrowserSupported()) {
+        if (isBrowserSupported(navigator.agent)) {
           startTheApp();
         } else {
           displayBrowserWarning();
