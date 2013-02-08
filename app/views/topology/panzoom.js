@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Provide the PanZoomModule class.
+ *
+ * @module topology
+ * @submodule topology.panzoom
+ */
+
 YUI.add('juju-topology-panzoom', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
@@ -13,10 +20,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
    *  rescaled: post-zoom event, after the scene has been rescaled,
    *            queried object positions should be accurate.
    *
-   * @module topology-panzoom
    * @class PanZoomModule
-   * @namespace views
-   **/
+   */
   var PanZoomModule = Y.Base.create('PanZoomModule', d3ns.Module, [], {
 
     events: {
@@ -73,7 +78,11 @@ YUI.add('juju-topology-panzoom', function(Y) {
       this.slider = slider;
     },
 
-    // Handler for 'zoom' event.
+    /**
+     * Handler for 'zoom' event.
+     *
+     * @method zoomHandler
+     */
     zoomHandler: function(evt) {
       var slider = this.slider,
           topo = this.get('component'),
@@ -99,8 +108,10 @@ YUI.add('juju-topology-panzoom', function(Y) {
       this.rescale(evt);
     },
 
-    /*
+    /**
      * Zoom out event handler.
+     *
+     * @method zoom_out
      */
     zoom_out: function(data, context) {
       var slider = context.slider,
@@ -108,8 +119,10 @@ YUI.add('juju-topology-panzoom', function(Y) {
       slider.set('value', val - 25);
     },
 
-    /*
+    /**
      * Zoom in event handler.
+     *
+     * @method zoom_in
      */
     zoom_in: function(data, context) {
       var slider = context.slider,
@@ -117,8 +130,10 @@ YUI.add('juju-topology-panzoom', function(Y) {
       slider.set('value', val + 25);
     },
 
-    /*
+    /**
      * Wrapper around the actual rescale method for zoom buttons.
+     *
+     * @method _fire_zoom
      */
     _fire_zoom: function(scale) {
       var topo = this.get('component'),
@@ -145,8 +160,10 @@ YUI.add('juju-topology-panzoom', function(Y) {
       this.rescale(evt);
     },
 
-    /*
+    /**
      * Rescale the visualization on a zoom/pan event.
+     *
+     * @method rescale
      */
     rescale: function(evt) {
       // Make sure we don't scale outside of our bounds.

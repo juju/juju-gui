@@ -1,9 +1,12 @@
 #!/bin/sh
+# This script expects that the system has python-shelltoolbox, python-
+# selenium, python-yaml, and juju installed:
+# sudo apt-get install python-shelltoolbox python-selenium python-yaml juju
 # Deploy the charm, using a branch if given.
-bin/py lib/deploy_charm_for_testing.py "$@"
+python lib/deploy_charm_for_testing.py "$@"
 # Figure out the URL of the APP.
-export APP_URL=http://`juju status -e juju-gui-testing | grep public-address: | cut -d: -f2 | cut -c2-`
+export APP_URL=https://`juju status -e juju-gui-testing | grep public-address: | cut -d: -f2 | cut -c2-`
 # Run the browser tests against the app.
-bin/py test/test_charm_running.py
+python test/test_charm_running.py -v
 # Destroy the environment, releasing the resources.
 yes | juju destroy-environment -e juju-gui-testing

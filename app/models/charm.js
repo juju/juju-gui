@@ -1,44 +1,10 @@
 'use strict';
 
 /**
- * Charms, once instantiated and loaded with data from their respective
- * sources, are immutable and read-only. This reflects the reality of how
- * we interact with them.
+ * Provide the Charm and CharmList classes.
  *
- * Charm instances can represent both environment charms and charm store
- * charms.  A charm id is reliably and uniquely associated with a given
- * charm only within a given context: the environment or the charm store.
- *
- * Therefore, the database keeps these charms separate in two different
- * CharmList instances.  One is `db.charms`, representing the environment
- * charms.  The other, from the charm store, is maintained by and within the
- * persistent charm panel instance. As you would expect, environment charms
- * are what to use when viewing or manipulating the environment.  Charm store
- * charms are what we can browse to select and deploy new charms to the
- * environment.
- *
- * Charms begin their lives with full charm ids, as provided by
- * services in the environment and the charm store:
-
- *   `[SCHEME]:(~[OWNER]/)?[SERIES]/[PACKAGE NAME]-[REVISION]`
- *
- * With an id, we can instantiate a charm: typically we use
- * `db.charms.add({id: [ID]})`.  Finally, we load the charm's data over the
- * network using the standard YUI Model method `load`, providing an object
- * with a get_charm callable, and an optional callback (see YUI docs).  Both
- * the env and the charm store have a `get_charm` method, so, by design, it
- * works easily: `charm.load(env, optionalCallback)` or
- * `charm.load(charm_store, optionalCallback)`.  The `get_charm` method must
- * either callback using the default YUI approach for this code, a boolean
- * indicating failure, and a result; or it must return what the env version
- * does: an object with a `result` object containing the charm data, or an
- * object with an `err` attribute.
- *
- * In both cases, environment charms and charm store charms, a charm's
- * `loaded` attribute is set to true once it has all the data from its
- * environment.
- *
- * @module charm
+ * @module models
+ * @submodule models.charm
  */
 
 YUI.add('juju-charm-models', function(Y) {
@@ -48,9 +14,39 @@ YUI.add('juju-charm-models', function(Y) {
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
 
   /**
+   * Charms, once instantiated and loaded with data from their respective
+   * sources, are immutable and read-only. This reflects the reality of how
+   * we interact with them.
+   *
+   * Charm instances can represent both environment charms and charm store
+   * charms.  A charm id is reliably and uniquely associated with a given
+   * charm only within a given context: the environment or the charm store.
+   *
+   * Charms begin their lives with full charm ids, as provided by
+   * services in the environment and the charm store:
+   *
+   *   `[SCHEME]:(~[OWNER]/)?[SERIES]/[PACKAGE NAME]-[REVISION]`
+   *
+   * With an id, we can instantiate a charm: typically we use
+   * `db.charms.add({id: [ID]})`.  Finally, we load the charm's data over the
+   * network using the standard YUI Model method `load`, providing an object
+   * with a get_charm callable, and an optional callback (see YUI docs).  Both
+   * the env and the charm store have a `get_charm` method, so, by design, it
+   * works easily: `charm.load(env, optionalCallback)` or
+   * `charm.load(charm_store, optionalCallback)`.  The `get_charm` method must
+   * either callback using the default YUI approach for this code, a boolean
+   * indicating failure, and a result; or it must return what the env version
+   * does: an object with a `result` object containing the charm data, or an
+   * object with an `err` attribute.
+   *
+   * In both cases, environment charms and charm store charms, a charm's
+   * `loaded` attribute is set to true once it has all the data from its
+   * environment.
+   *
    * @class Charm
    */
   var Charm = Y.Base.create('charm', Y.Model, [], {
+
     initializer: function() {
       var id = this.get('id'),
               parts = id && charmIdRe.exec(id),
@@ -80,6 +76,7 @@ YUI.add('juju-charm-models', function(Y) {
            'json'
           ].join('/'));
     },
+
     sync: function(action, options, callback) {
       if (action !== 'read') {
         throw (
@@ -116,6 +113,7 @@ YUI.add('juju-charm-models', function(Y) {
         throw 'You must supply a get_charm or loadByPath function.';
       }
     },
+
     parse: function() {
       var data = Charm.superclass.parse.apply(this, arguments),
               self = this;
@@ -132,6 +130,7 @@ YUI.add('juju-charm-models', function(Y) {
       }
       return data;
     },
+
     compare: function(other, relevance, otherRelevance) {
       // Official charms sort before owned charms.
       // If !X.owner, that means it is owned by charmers.
@@ -170,11 +169,12 @@ YUI.add('juju-charm-models', function(Y) {
       is_subordinate: {writeOnce: true},
       last_change: {
         writeOnce: true,
+
         /**
-             * Normalize created value from float to date object.
-             *
-             * @method last_change.writeOnce.setter
-             */
+         * Normalize created value from float to date object.
+         *
+         * @method last_change.writeOnce.setter
+         */
         setter: function(val) {
           if (val && val.created) {
             // Mutating in place should be fine since this should only
@@ -194,11 +194,12 @@ YUI.add('juju-charm-models', function(Y) {
       requires: {writeOnce: true},
       revision: {
         writeOnce: true,
+
         /**
-             * Parse the revision number out of a string.
-             *
-             * @method revision.writeOnce.setter
-             */
+         * Parse the revision number out of a string.
+         *
+         * @method revision.writeOnce.setter
+         */
         setter: function(val) {
           if (Y.Lang.isValue(val)) {
             val = parseInt(val, 10);
@@ -209,11 +210,12 @@ YUI.add('juju-charm-models', function(Y) {
       scheme: {
         value: 'cs',
         writeOnce: true,
+
         /**
-             * If no value is given, "cs" is used as the default.
-             *
-             * @method scheme.writeOnce.setter
-             */
+         * If no value is given, "cs" is used as the default.
+         *
+         * @method scheme.writeOnce.setter
+         */
         setter: function(val) {
           if (!Y.Lang.isValue(val)) {
             val = 'cs';
@@ -231,6 +233,14 @@ YUI.add('juju-charm-models', function(Y) {
   models.charmIdRe = charmIdRe;
 
   /**
+   * The database keeps the charms separate in two different CharmList
+   * instances.  One is `db.charms`, representing the environment charms.
+   * The other, from the charm store, is maintained by and within the
+   * persistent charm panel instance. As you would expect, environment
+   * charms are what to use when viewing or manipulating the environment.
+   * Charm store charms are what we can browse to select and deploy new
+   * charms to the environment.
+   *
    * @class CharmList
    */
   var CharmList = Y.Base.create('charmList', Y.ModelList, [], {

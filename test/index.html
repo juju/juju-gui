@@ -69,8 +69,11 @@
   YUI().use(['node', 'event'], function(Y) {
       // Run the tests.
       if (window.mochaPhantomJS) {
-          mochaPhantomJS.run(); }
-      else { mocha.run(); }
+          mochaPhantomJS.run();
+      } else {
+          // The global variable testRunner is required by browser tests.
+          testRunner = mocha.run();
+      }
   });
   </script>
 

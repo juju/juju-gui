@@ -1,8 +1,21 @@
 <!DOCTYPE html>
 <html manifest="/juju-ui/assets/manifest.appcache">
-  <head>
-    <meta charset="utf-8">
+<!-- !IE will be true for all non-IE browsers and IE10 since it does not
+ recognize conditional flags. -->
+<!--[if !IE]><!--><script>
+if (/*@cc_on!@*/false) {
+  // Only IE10 has cc_on as false.
+  document.documentElement.className+=' ie10';
+}
+</script><!--<![endif]-->
+
+<head>
     <title>Juju Admin</title>
+    <!-- Disable backwards compatible mode for IE on an intranet.
+         For an explanation see http://bit.ly/14VytlD
+         Also note it this must be the first <meta> to appear. -->
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Juju team">
@@ -14,7 +27,6 @@
     <!--[if lt IE 9]>
     <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-
   </head>
 
   <body>

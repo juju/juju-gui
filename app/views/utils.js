@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * The view utils.
+ *
+ * @module views
+ * @submodule views.utils
+ */
+
 YUI.add('juju-view-utils', function(Y) {
 
   var views = Y.namespace('juju.views'),

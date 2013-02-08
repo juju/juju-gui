@@ -133,7 +133,7 @@ APPCACHE=build-shared/juju-ui/assets/manifest.appcache
 # As an optimization, we stash this value in the local PWD variable.
 PWD=$(shell pwd)
 
-all: build bin/test-charm
+all: build
 	@echo "\nDebug and production environments built."
 	@echo "Run 'make help' to list the main available targets."
 
@@ -257,22 +257,8 @@ lint: test-prep gjslint jshint recess yuidoc-lint
 virtualenv/bin/python:
 	virtualenv virtualenv
 
-bin/py: virtualenv/bin/python
-	ln -s $(PWD)/virtualenv/bin/python bin/py
-
-bin/test-charm: bin/py python-shelltoolbox selenium
-
 virtualenv/bin/gjslint virtualenv/bin/fixjsstyle: virtualenv/bin/python
 	virtualenv/bin/easy_install archives/closure_linter-latest.tar.gz
-
-python-shelltoolbox: virtualenv/bin/python
-	[ -d python-shelltoolbox ] || bzr branch --standalone lp:python-shelltoolbox
-	virtualenv/bin/easy_install ./python-shelltoolbox
-
-virtualenv/lib/python2.7/site-packages/selenium-2.29.0-py2.7.egg:
-	virtualenv/bin/easy_install archives/selenium-2.29.0.tar.gz
-
-selenium: virtualenv/bin/python virtualenv/lib/python2.7/site-packages/selenium-2.29.0-py2.7.egg
 
 beautify: virtualenv/bin/fixjsstyle
 	virtualenv/bin/fixjsstyle --strict --nojsdoc --jslint_error=all $(JSFILES)
@@ -398,8 +384,8 @@ test-prod: build-prod test-prep
 test-server: build-debug test-prep
 	./test-server.sh debug true
 
-test-misc: bin/py python-shelltoolbox
-	PYTHONPATH=lib bin/py test/test_deploy_charm_for_testing.py
+test-misc:
+	PYTHONPATH=lib python test/test_deploy_charm_for_testing.py
 
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
@@ -433,11 +419,9 @@ prod: build-prod
 clean:
 	rm -rf build-shared build-debug build-prod
 	find app/assets/javascripts/ -type l | xargs rm -rf
-	rm -f bin/py
 
 clean-deps:
 	rm -rf node_modules virtualenv
-	rm -rf python-shelltoolbox
 
 clean-docs:
 	make -C docs clean
@@ -536,7 +520,7 @@ appcache-force: appcache-touch $(APPCACHE)
 .PHONY: appcache-force appcache-touch beautify build build-files \
 	build-devel clean clean-all clean-deps clean-docs code-doc debug \
 	devel docs dist gjslint help jshint lint main-doc prep prod recess \
-	selenium server spritegen test test-debug test-prod undocumented \
+	server spritegen test test-debug test-prod undocumented \
 	view-code-doc view-docs view-main-doc yuidoc-lint
 
 .DEFAULT_GOAL := all

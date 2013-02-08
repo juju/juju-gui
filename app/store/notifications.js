@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Provide the NotificationController class and two functions.
+ *
+ * @module store
+ * @submodule store.notifications
+ */
+
 YUI.add('juju-notification-controller', function(Y) {
 
   var juju = Y.namespace('juju');
@@ -52,28 +59,28 @@ YUI.add('juju-notification-controller', function(Y) {
     // reported on units, there are no relation errors to evict.
   };
 
-  /*
-     * NotificationController
-     *
-     * This controller manages the relationship between incoming delta stream
-     * events and the notification models the views use for display and
-     * interaction.  NotificationController({env: Environment,
-     * notifications: ModelList})
-     */
-
+  /**
+   * This controller manages the relationship between incoming delta stream
+   * events and the notification models the views use for display and
+   * interaction.
+   *
+   * NotificationController({env: Environment, notifications: ModelList})
+   *
+   * @class NotificationController
+   */
   var NotificationController = Y.Base.create('NotificationController',
       Y.Base, [], {
 
         /**
-         This tells `Y.Base` that it should create ad-hoc attributes for config
-         properties.
-
-         @property _allowAdHocAttrs
-         @type {Boolean}
-         @default true
-         @protected
-         @since 3.5.0
-         **/
+         * Tell `Y.Base` that it should create ad hoc attributes for
+         * config properties.
+         *
+         * @property _allowAdHocAttrs
+         * @type {Boolean}
+         * @default true
+         * @protected
+         * @since 3.5.0
+         */
         _allowAdHocAttrs: true,
 
         /*
@@ -83,7 +90,7 @@ YUI.add('juju-notification-controller', function(Y) {
          *  change_type maps to a set of controls
          *     model_list: (string)
          *         where do objects of this type live in the app.db
-
+         *
          * Each attribute of notify is checked in the appropriate rule
          * for a function that can return its value, if no rule is defined
          * the function in a rule called 'default' will be used. The signature
@@ -142,8 +149,12 @@ YUI.add('juju-notification-controller', function(Y) {
             }
           }
         },
-        /*
-         * Process new delta stream events and see if we need new notifications
+
+        /**
+         * Process new delta stream events and see if we need new
+         * notifications.
+         *
+         * @method generate_notices
          */
         generate_notices: function(delta_evt) {
           var self = this,
