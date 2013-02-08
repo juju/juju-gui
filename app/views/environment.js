@@ -18,7 +18,6 @@ YUI.add('juju-view-environment', function(Y) {
    * Display an environment.
    *
    * @class EnvironmentView
-   * @namespace views
    */
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View,
                                       [views.JujuBaseView],

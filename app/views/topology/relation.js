@@ -16,7 +16,6 @@ YUI.add('juju-topology-relation', function(Y) {
 
   /**
    * @class RelationModule
-   * @namespace views
    **/
   var RelationModule = Y.Base.create('RelationModule', d3ns.Module, [], {
 

@@ -27,7 +27,6 @@ YUI.add('juju-topology', function(Y) {
    *        event is fired. Analogous to d3's zoom event.
    *
    * @class Topology
-   * @namespace views
    **/
   var Topology = Y.Base.create('Topology', d3ns.Component, [], {
     initializer: function(options) {

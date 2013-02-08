@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Provide the service views and mixins.
+ *
+ * @module views
+ * @submodule views.services
+ */
+
 YUI.add('juju-view-service', function(Y) {
 
   var ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
@@ -11,6 +18,9 @@ YUI.add('juju-view-service', function(Y) {
       models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
+  /**
+   * @class manageUnitsMixin
+   */
   var manageUnitsMixin = {
     // Mixin attributes
     events: {
@@ -220,6 +230,9 @@ YUI.add('juju-view-service', function(Y) {
     }
   };
 
+  /**
+   * @class exposeButtonMixin
+   */
   var exposeButtonMixin = {
     events: {
       '.unexposeService': {mousedown: 'unexposeService'},
@@ -281,6 +294,9 @@ YUI.add('juju-view-service', function(Y) {
     }
   };
 
+  /**
+   * @class ServiceViewBase
+   */
   var ServiceViewBase = Y.Base.create('ServiceViewBase', Y.View,
       [views.JujuBaseView], {
 
@@ -359,6 +375,9 @@ YUI.add('juju-view-service', function(Y) {
       });
   views.serviceBase = ServiceViewBase;
 
+  /**
+   * @class ServiceRelationsView
+   */
   views.service_relations = Y.Base.create(
       'ServiceRelationsView', ServiceViewBase, [views.JujuBaseView], {
 
@@ -489,6 +508,9 @@ YUI.add('juju-view-service', function(Y) {
         }
       });
 
+  /**
+   * @class ServiceConstraintsView
+   */
   views.service_constraints = Y.Base.create(
       'ServiceConstraintsView', ServiceViewBase, [views.JujuBaseView], {
 
@@ -619,6 +641,9 @@ YUI.add('juju-view-service', function(Y) {
 
       });
 
+  /**
+   * @class ServiceConfigView
+   */
   views.service_config = Y.Base.create(
       'ServiceConfigView', ServiceViewBase, [views.JujuBaseView], {
 
@@ -822,6 +847,9 @@ YUI.add('juju-view-service', function(Y) {
     return utils.stateToStyle(state);
   });
 
+  /**
+   * @class ServiceView
+   */
   var ServiceView = Y.Base.create('ServiceView', ServiceViewBase,
       [views.JujuBaseView], {
 

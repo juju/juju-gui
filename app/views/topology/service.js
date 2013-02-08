@@ -16,7 +16,6 @@ YUI.add('juju-topology-service', function(Y) {
 
   /**
    * @class ServiceModule
-   * @namespace views
    **/
   var ServiceModule = Y.Base.create('ServiceModule', d3ns.Module, [], {
     events: {

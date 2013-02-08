@@ -33,7 +33,9 @@ YUI.add('juju-gui', function(Y) {
      * The views encapsulate the functionality blocks that output
      * the GUI pages. The "parent" attribute defines the hierarchy.
      *
-     *  @attribute App.views
+     * FIXME: not included in the generated doc output.
+     *
+     * @attribute views
      */
     views: {
 
@@ -106,14 +108,14 @@ YUI.add('juju-gui', function(Y) {
      * Placeholder for real behaviors associated with DOM Node data-*
      * attributes.
      *
-     *  @attribute behaviors
+     * @attribute behaviors
      */
     behaviors: {
       timestamp: {
         /**
          * Wait for the DOM to be built before rendering timestamps.
          *
-         * @method App.behaviors.timestamp.callback
+         * @method behaviors.timestamp.callback
          */
         callback: function() {
           var self = this;
@@ -841,6 +843,8 @@ YUI.add('juju-gui', function(Y) {
        * Each request path is evaluated against all hereby defined routes,
        * and the callbacks for all the ones that match are invoked,
        * without stopping at the first one.
+       *
+       * FIXME: not included in the generated doc output.
        *
        * @attribute routes
        */
