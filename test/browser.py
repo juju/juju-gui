@@ -8,7 +8,9 @@ import json
 import os
 import selenium
 import selenium.webdriver
+from selenium.webdriver.support import ui
 import unittest
+import urlparse
 
 
 ie = dict(selenium.webdriver.DesiredCapabilities.INTERNETEXPLORER)
@@ -58,7 +60,7 @@ class TestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        global driver # We only want one because they are expensive to set up.
+        global driver  # We only want one because they are expensive to set up.
         if driver is None:
             # We sometimes run the tests under different browsers, if none is
             # specified, use Chrome.
@@ -76,6 +78,7 @@ class TestCase(unittest.TestCase):
             atexit.register(driver.quit)
 
     def setUp(self):
+        self.app_url = os.environ['APP_URL']
         self.driver = driver
 
     def run(self, result=None):
@@ -85,3 +88,18 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         successful = self.last_result.wasSuccessful()
         set_test_result(driver.session_id, successful)
+
+    def load(self, path='/'):
+        """Load a page using the current Selenium driver."""
+        url = urlparse.urljoin(self.app_url, path)
+        self.driver.get(url)
+
+    def wait_for(self, condition, error=None, timeout=10):
+        """Wait for condition to be True.
+
+        The argument condition is a callable accepting a driver object.
+        Fail printing the provided error if timeout is exceeded.
+        Otherwise, return the value returned by the condition call.
+        """
+        wait = ui.WebDriverWait(self.driver, timeout)
+        return wait.until(condition, error)

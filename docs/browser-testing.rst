@@ -23,7 +23,7 @@ Building
 
 The test script has a few system dependencies::
 
-    sudo apt-get install python-shelltoolbox python-selenium juju
+    sudo apt-get install python-shelltoolbox python-selenium python-yaml juju
 
 It does not require that the Makefile be run.
 
