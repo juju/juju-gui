@@ -72,7 +72,6 @@ class TestCase(unittest.TestCase):
             driver = selenium.webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor=command_executor)
-            #driver = selenium.webdriver.Firefox()
             print('Test run details at https://saucelabs.com/jobs/' +
                 driver.session_id)
             # We want to tell saucelabs when all the tests are done.

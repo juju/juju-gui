@@ -37,7 +37,10 @@ def get_state(get_status=get_status):
 
 
 def make_config_file(options):
-    """Create a Juju GUI charm config file. Return the config file object."""
+    """Create a Juju GUI charm config file. Return the config file object.
+
+    This function can also be used as a context manager.
+    """
     config = {'juju-gui': options}
     config_file = tempfile.NamedTemporaryFile()
     config_file.write(yaml.dump(config))
