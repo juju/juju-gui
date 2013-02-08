@@ -633,7 +633,7 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     onLogin: function() {
-      Y.one('body > #login-mask').hide();
+      Y.one('body > #full-screen-mask').hide();
       this.dispatch();
     },
 

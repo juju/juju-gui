@@ -44,12 +44,12 @@ YUI.add('juju-view-login', function(Y) {
       // In order to have the mask cover everything, it needs to be an
       // immediate child of the body.  In order for it to render immediately
       // when the app loads, it needs to be in index.html.
-      var loginMask = Y.one('body > #login-mask');
-      if (!loginMask) {
-        // No login mask in the DOM, as is the case in tests.
+      var mask = Y.one('body > #full-screen-mask');
+      if (!mask) {
+        // No mask in the DOM, as is the case in tests.
         return this;
       }
-      loginMask.show();
+      mask.show();
       var env = this.get('env');
       var environment_name_node = Y.one('#environment-name');
       var provider_type_node = Y.one('#provider-type');

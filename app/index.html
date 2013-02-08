@@ -18,13 +18,15 @@
   </head>
 
   <body>
-      <div id="login-mask" class="crosshatch-background">
-        <img id="loading-spinner" src="/juju-ui/assets/loading-spinner.gif"
-            alt="Loading..." style="display:none;"/>
-        <div id="login-column" style="display:none;">
+      <div id="full-screen-mask" class="crosshatch-background">
+        <img id="loading-spinner"
+            src="/juju-ui/assets/images/loading-spinner.gif" alt="Loading..."
+            style="display:none;"/>
+        <div id="browser-warning" class="centered-column"
+            style="display:none;">
           <i class="sprite juju_logo" title="Juju GUI"></i>
-          <div id="login-form">
-            <div id="login-header">
+          <div class="panel">
+            <div class="header">
               <div class="error">
                 <nobr>
                   <i class="sprite alert_icon2"></i>
@@ -115,10 +117,10 @@
         startTheApp();
       }
 
-      document.getElementById('login-column').style.display = 'block';
+      document.getElementById('browser-warning').style.display = 'block';
 
       function continueWithCurrentBrowser() {
-        document.getElementById('login-column').style.display = 'none';
+        document.getElementById('browser-warning').style.display = 'none';
         document.getElementById('loading-spinner').style.display = 'block';
         startTheApp();
         return false;
