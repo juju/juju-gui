@@ -87,6 +87,19 @@ class TestParsingStatus(unittest.TestCase):
         self.assertEqual(get_state(get_status), 'started')
 
 
+class MakeConfigFile(object):
+    """Simulate creating a charm configuration file."""
+
+    name = 'my-config-file.yaml'
+    options = None
+    # This class is used as a context manager.
+    __enter__ = lambda self: self
+    __exit__ = noop
+
+    def __init__(self, options):
+        self.__class__.options = options
+
+
 class TestScript(unittest.TestCase):
     """The main() function is the entry point when run as a script."""
 
@@ -101,16 +114,27 @@ class TestScript(unittest.TestCase):
              'Waiting for service to start...',
              'Exposing the service...'])
 
-    def test_providing_a_branch(self):
-        # If the user provides a branch name on the command line, it will be
-        # passed to the charm.
-        printed = []
+    def test_config_file(self):
+        # A charm config file is correctly created.
         juju_commands = []
 
         def juju(s):
             juju_commands.append(s)
-        main(argv=['', 'lp:foo'], print=printed.append, juju=juju,
-            wait_for_service=noop)
+        main(argv=[], print=noop, juju=juju, wait_for_service=noop,
+             make_config_file=MakeConfigFile)
+        options = MakeConfigFile.options
+        deploy_command = juju_commands[1]
+        self.assertIn('--config my-config-file.yaml', deploy_command)
+        self.assertDictEqual({'serve-tests': True, 'staging': True}, options)
+
+    def test_providing_a_branch(self):
+        # If the user provides a branch name on the command line, it will be
+        # passed to the charm.
+        printed = []
+
+        main(argv=['', 'lp:foo'], print=printed.append, juju=noop,
+             wait_for_service=noop, make_config_file=MakeConfigFile)
+        options = MakeConfigFile.options
         self.assertSequenceEqual(
             printed,
             ['Bootstrapping...',
@@ -118,10 +142,8 @@ class TestScript(unittest.TestCase):
              'Setting branch for charm to deploy...',
              'Waiting for service to start...',
              'Exposing the service...'])
-        self.assertIn(
-            ('set juju-gui juju-gui-source=lp:foo --environment '
-             'juju-gui-testing'),
-            juju_commands)
+        self.assertIn('juju-gui-source', options)
+        self.assertEqual('lp:foo', options['juju-gui-source'])
 
 
 if __name__ == '__main__':

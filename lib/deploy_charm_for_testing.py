@@ -62,7 +62,8 @@ def wait_for_service(get_state=get_state, sleep=time.sleep):
         sleep(10)
 
 
-def main(argv, print=print, juju=juju, wait_for_service=wait_for_service):
+def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
+         make_config_file=make_config_file):
     """Deploy the Juju GUI service and wait for it to become available."""
     branch = get_branch_url(argv)
     print('Bootstrapping...')
