@@ -1086,6 +1086,15 @@ YUI.add('juju-charm-panel', function(Y) {
                         level: 'info'
                       })
                   );
+                  // Update the annotations with the box's x/y coordinates if
+                  // they have been set by dragging the ghost.
+                  if (ghostService.get('dragged')) {
+                    env.update_annotations(
+                      serviceName, 
+                      { 'gui.x': ghostService.get('x'), 
+                        'gui.y': ghostService.get('y') },
+                      function() { return; });
+                  }
                   // Update the ghost service to match the configuration.
                   ghostService.setAttrs({
                     id: serviceName,

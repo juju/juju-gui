@@ -82,7 +82,16 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = self.get('component');
       var container = self.get('container');
       var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (box.pending || !box.containsPoint(mouse_coords, topo.zoom)) {
+      if (!box.containsPoint(mouse_coords, topo.zoom)) {
+        return;
+      }
+      // If the service box is pending, ensure that the charm panel is
+      // visible, but don't do anythign else.
+      if (box.pending) {
+        // Prevent the clickoutside event from firing and immediately closing
+        // the panel.
+        d3.event.halt();
+        views.CharmPanel.getInstance().show();
         return;
       }
       // serviceClick is being called after dragend is processed.  In those
@@ -296,6 +305,14 @@ YUI.add('juju-topology-service', function(Y) {
         if (!box.inDrag ||
             (box.oldX === box.x &&
              box.oldY === box.y)) {
+          return;
+        }
+        // If the service is still pending, persist x/y coordinates in order
+        // to set them as annotations when the service is created.
+        if (box.pending) {
+          box.model.set('dragged', true);
+          box.model.set('x', box.x);
+          box.model.set('y', box.y);
           return;
         }
         topo.get('env').update_annotations(
