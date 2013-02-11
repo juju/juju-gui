@@ -272,7 +272,7 @@ $(BUILD_FILES): $(JSFILES) $(THIRD_PARTY_JS) build-shared/juju-ui/templates.js \
 	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
 		build-shared/juju-ui/assets/combined-css/rail-x.png
 	bin/merge-files
-	mv *-source-map build-shared/juju-ui/assets/
+	mv *.js.map build-shared/juju-ui/assets/
 
 build-files: $(BUILD_FILES)
 
@@ -350,7 +350,7 @@ $(LINK_DEBUG_FILES):
 $(LINK_PROD_FILES):
 	$(call link-files,prod)
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/all-yui.js" build-prod/juju-ui/assets/
-	ln -sf "$(PWD)"/build-shared/juju-ui/assets/*-source-map build-prod/juju-ui/assets/
+	ln -sf "$(PWD)"/build-shared/juju-ui/assets/*.js.map build-prod/juju-ui/assets/
 	# Link in the application source code so source maps work.
 	mkdir -p $(PWD)/build-prod/juju-ui/assets/source
 	ln -s $(PWD)/app $(PWD)/build-prod/juju-ui/assets/source
@@ -520,7 +520,7 @@ appcache-force: appcache-touch $(APPCACHE)
 .PHONY: appcache-force appcache-touch beautify build build-files \
 	build-devel clean clean-all clean-deps clean-docs code-doc debug \
 	devel docs dist gjslint help jshint lint main-doc prep prod recess \
-	server spritegen test test-debug test-prod undocumented \
+	server spritegen test test-debug test-prep test-prod undocumented \
 	view-code-doc view-docs view-main-doc yuidoc-lint
 
 .DEFAULT_GOAL := all
