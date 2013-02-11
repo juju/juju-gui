@@ -255,17 +255,17 @@ describe('charm configuration', function() {
 
   it('must not show a configuration file upload button if the charm ' +
       'has no settings', function() {
-    var charm = new models.Charm({id: 'precise/mysql-7'});
-    var db = new models.Database();
-    var view = new views.CharmConfigurationView(
-        { container: container,
-          model: charm,
-          db: db,
-          tooltipDelay: 0 });
-    view.render();
-    var _ = expect(container.one('.config-file-upload')).to.not.exist;
-    _ = expect(container.one('.remove-config-file')).to.not.exist;
-  });
+       var charm = new models.Charm({id: 'precise/mysql-7'});
+       var db = new models.Database();
+       var view = new views.CharmConfigurationView(
+       { container: container,
+         model: charm,
+         db: db,
+         tooltipDelay: 0 });
+       view.render();
+       var _ = expect(container.one('.config-file-upload')).to.not.exist;
+       _ = expect(container.one('.remove-config-file')).to.not.exist;
+     });
 
   it('must show a configuration file upload button if the charm ' +
       'has settings', function() {

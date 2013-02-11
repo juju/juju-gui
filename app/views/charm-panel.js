@@ -1020,6 +1020,13 @@ YUI.add('juju-charm-panel', function(Y) {
           this.fire('changePanel', { name: 'charms' });
         },
 
+        /**
+         * Clears the ghost service from the database and updates the canvas.
+         *
+         * @method _clearGhostService
+         * @param {Object} ev An event object.
+         * @return {undefined} Side effects only.
+         */
         _clearGhostService: function(ev) {
           // Remove the ghost service from the environment.
           var db = this.get('db');
@@ -1047,7 +1054,7 @@ YUI.add('juju-charm-panel', function(Y) {
           var charm = this.get('model');
           var url = charm.get('id');
           var config = utils.getElementsValuesMapping(container,
-                  '#service-config .config-field');
+              '#service-config .config-field');
           var self = this;
           // The service names must be unique.  It is an error to deploy a
           // service with same name.
@@ -1090,10 +1097,10 @@ YUI.add('juju-charm-panel', function(Y) {
                   // they have been set by dragging the ghost.
                   if (ghostService.get('dragged')) {
                     env.update_annotations(
-                      serviceName, 
-                      { 'gui.x': ghostService.get('x'), 
-                        'gui.y': ghostService.get('y') },
-                      function() { return; });
+                        serviceName,
+                        { 'gui.x': ghostService.get('x'),
+                          'gui.y': ghostService.get('y') },
+                        function() { return; });
                   }
                   // Update the ghost service to match the configuration.
                   ghostService.setAttrs({

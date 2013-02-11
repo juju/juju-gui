@@ -151,8 +151,8 @@ describe('charm panel', function() {
          .should.equal('Service name');
       });
 
-  it('must show a ghosted service only when configuring a new charm', 
-    function() {
+  it('must show a ghosted service only when configuring a new charm',
+     function() {
         var db = new models.Database(),
             panel = Y.namespace('juju.views').CharmPanel.getInstance({
               charm_store: new juju.CharmStore({datasource: {
@@ -202,7 +202,7 @@ describe('charm panel', function() {
         node.one('.btn-primary').simulate('click');
         node.one('.btn-primary').simulate('click');
         db.services.item(0).get('pending').should.equal(false);
-    });
+     });
 });
 
 describe('charm description', function() {

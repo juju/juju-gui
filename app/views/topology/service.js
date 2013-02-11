@@ -447,7 +447,7 @@ YUI.add('juju-topology-service', function(Y) {
         .enter().append('g')
         .attr('class', function(d) {
             return (d.subordinate ? 'subordinate ' : '') +
-              (d.pending ? 'pending ' : '') + 'service';
+                (d.pending ? 'pending ' : '') + 'service';
           })
         .call(this.dragBehavior)
         .attr('transform', function(d) {
