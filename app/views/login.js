@@ -61,6 +61,7 @@ YUI.add('juju-view-login', function(Y) {
         // No mask in the DOM, as is the case in tests.
         return this;
       }
+      Y.one('#loading-message').hide();
       mask.show();
       var env = this.get('env');
       var environment_name_node = Y.one('#environment-name');

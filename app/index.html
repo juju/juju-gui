@@ -55,8 +55,7 @@ if (/*@cc_on!@*/false) {
             </form>
           </div>
         </div>
-        <div id="loading-message" class="centered-column"
-            style="display:none;">
+        <div id="loading-message" class="centered-column">
           <i class="sprite juju_logo" title="Juju GUI"></i>
           <div class="panel">
             <div class="header">
@@ -168,8 +167,6 @@ if (/*@cc_on!@*/false) {
       // function which will be picked up by the setTimeout and the app will
       // start.
       startTheApp = function() {
-        getDocument()
-          .getElementById('loading-message').style.display = 'block';
         YUI(GlobalConfig).use(['juju-gui'], function(Y) {
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application
