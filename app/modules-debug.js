@@ -56,6 +56,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },
 
+        'juju-routing': {
+          fullpath: '/juju-ui/assets/javascripts/routing.js'
+        },
+
         // Views
         'juju-topology-relation': {
           fullpath: '/juju-ui/views/topology/relation.js'
