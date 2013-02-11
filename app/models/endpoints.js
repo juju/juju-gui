@@ -1,32 +1,41 @@
 'use strict';
-/*
 
-*/
+/**
+ * Provide the database endpoints handling.
+ *
+ * @module models
+ * @submodule models.endpoints
+ */
 
 YUI.add('juju-endpoints', function(Y) {
 
   var models = Y.namespace('juju.models');
   var utils = Y.namespace('juju.views.utils');
 
-  /* Find available relation targets for a service.
-
-     :param svc: A service object.
-     :param ep_map: An mapping of service name to available endpoints
-       for the service in the form [{'interface':x, 'name':y, 'role': z}, ...].
-     :param db: The application database
-
-     Returns a mapping with keys of valid relation service targets and
-     values consisting of a list of valid endpoints for each.
-
-  */
+  /**
+   * Find available relation targets for a service.
+   *
+   * @class getEndpoints
+   * @param {Object} svc A service object.
+   * @param {Object} ep_map A mapping of service name to available endpoints
+   *   for the service in the form [{'interface':x, 'name':y, 'role': z}, ...].
+   * @param {Object} db The application database.
+   *
+   * @return {Object} A mapping with keys of valid relation service targets
+   *   and values consisting of a list of valid endpoints for each.
+   */
   models.getEndpoints = function(svc, ep_map, db) {
     var targets = {},
         requires = [],
         provides = [],
         sid = svc.get('id');
 
-    /* Convert a service name and its relation endpoint info into a
-       valid relation target endpoint, ie. including service name. */
+    /**
+     * Convert a service name and its relation endpoint info into a
+     * valid relation target endpoint, ie. including service name.
+     *
+     * @method getEndpoints.convert
+     */
     function convert(svcName, relInfo) {
       return {
         service: svcName,
@@ -35,10 +44,13 @@ YUI.add('juju-endpoints', function(Y) {
       };
     }
 
-    /* Store endpoints for a relation to target the given service.
-       :param tep: target endpoint
-       :param oep: origin endpoint
-    */
+    /**
+     * Store endpoints for a relation to target the given service.
+     *
+     * @method getEndpoints.add
+     * @param {Object} tep Target endpoint.
+     * @param {Object} oep Origin endpoint.
+     */
     function add(svcName, oep, tep) {
       if (!Y.Object.owns(targets, svcName)) {
         targets[svcName] = [];
@@ -47,17 +59,16 @@ YUI.add('juju-endpoints', function(Y) {
     }
 
     // First we process all the endpoints of the origin service.
-
-    // For required interfaces, we only consider them valid for
-    // new relations, if their not already satisified by an existing
-    // relation.
+    //
+    // For required interfaces, we consider them valid for new relations
+    // only if they are not already satisfied by an existing relation.
     Y.each(
         ep_map[sid].requires,
         function(rdata) {
           var ep = convert(sid, rdata);
-          /* Subordinate relations are slightly different, a
-             subordinate typically acts as a client to many services,
-             against the implicitly provided juju-info interface. */
+          // Subordinate relations are slightly different:
+          // a subordinate typically acts as a client to many services,
+          // against the implicitly provided juju-info interface.
           if (svc.get('subordinate') && utils.isSubordinateRelation(rdata)) {
             return requires.push(ep);
           }
@@ -67,7 +78,7 @@ YUI.add('juju-endpoints', function(Y) {
           requires.push(ep);
         });
 
-    // Process origin provides endpoints, a bit simpler, as their
+    // Process origin provides endpoints, a bit simpler, as they are
     // always one to many.
     Y.each(
         ep_map[sid].provides,
@@ -93,8 +104,8 @@ YUI.add('juju-endpoints', function(Y) {
         return;
       }
 
-      // Process each of the service's required endpoints, its only
-      // considered a valid target if its unsatisified by an existing
+      // Process each of the service's required endpoints. It is only
+      // considered a valid target if it is not satisfied by an existing
       // relation.
       Y.each(
           ep_map[tid].requires,
@@ -142,4 +153,3 @@ YUI.add('juju-endpoints', function(Y) {
     return targets;
   };
 });
-

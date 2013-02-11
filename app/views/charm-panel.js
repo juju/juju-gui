@@ -4,7 +4,8 @@
  * The charm panel views implement the various things shown in the right panel
  * when clicking on the "Charms" label in the title bar, or running a search.
  *
- * @module charm-panel
+ * @module views
+ * @submodule views.charm-panel
  */
 
 YUI.add('juju-charm-panel', function(Y) {
@@ -191,7 +192,6 @@ YUI.add('juju-charm-panel', function(Y) {
    * for a description, or deployed directly with a "Deploy" button.
    *
    * @class CharmCollectionView
-   * @namespace views
    */
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
@@ -519,7 +519,6 @@ YUI.add('juju-charm-panel', function(Y) {
    * together with a "Deploy" button.
    *
    * @class CharmDescriptionView
-   * @namespace views
    */
   var CharmDescriptionView = Y.Base.create(
       'CharmDescriptionView', Y.View, [views.JujuBaseView], {
@@ -711,7 +710,6 @@ YUI.add('juju-charm-panel', function(Y) {
    * a "Confirm" button for deployment.
    *
    * @class CharmConfigurationView
-   * @namespace views
    */
   var CharmConfigurationView = Y.Base.create(
       'CharmConfigurationView', Y.View, [views.JujuBaseView], {

@@ -21,9 +21,11 @@ an environment.
 Building
 --------
 
-The test script has dependencies that are provided for by the Makefile.
-Run an unadorned "make" command to set up those dependencies.
+The test script has a few system dependencies::
 
+    sudo apt-get install python-shelltoolbox python-selenium python-yaml juju
+
+It does not require that the Makefile be run.
 
 Running the tests
 =================

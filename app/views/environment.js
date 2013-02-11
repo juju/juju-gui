@@ -1,8 +1,10 @@
 'use strict';
+
 /**
  * Provide the EnvironmentView class.
  *
- * @module environment
+ * @module views
+ * @submodule views.environment
  */
 
 YUI.add('juju-view-environment', function(Y) {
@@ -16,11 +18,13 @@ YUI.add('juju-view-environment', function(Y) {
    * Display an environment.
    *
    * @class EnvironmentView
-   * @namespace views
    */
   var EnvironmentView = Y.Base.create('EnvironmentView', Y.View,
                                       [views.JujuBaseView],
       {
+        /**
+         * @method EnvironmentView.initializer
+         */
         initializer: function() {
           this.publish('navigateTo', {
             broadcast: true,

@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Provide the Notifier class.
+ *
+ * @module widgets
+ * @submodule widgets.notifier
+ */
+
 YUI.add('notifier', function(Y) {
 
   var widgets = Y.namespace('juju.widgets');
@@ -9,7 +16,6 @@ YUI.add('notifier', function(Y) {
    * This is the constructor for the notifier widget.
    *
    * @class Notifier
-   * @namespace widgets
    */
   function Notifier(config) {
     Notifier.superclass.constructor.apply(this, arguments);
@@ -22,12 +28,6 @@ YUI.add('notifier', function(Y) {
     timeout: {value: 8000}
   };
 
-  /**
-   * Define the widget class extending Y.Widget.
-   *
-   * @class Notifier
-   * @namespace widgets
-   */
   Y.extend(Notifier, Y.Widget, {
 
     CONTENT_TEMPLATE: null,

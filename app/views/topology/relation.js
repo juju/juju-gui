@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Provide the RelationModule class.
+ *
+ * @module topology
+ * @submodule topology.relation
+ */
+
 YUI.add('juju-topology-relation', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
@@ -8,9 +15,7 @@ YUI.add('juju-topology-relation', function(Y) {
       Templates = views.Templates;
 
   /**
-   * @module topology-relations
    * @class RelationModule
-   * @namespace views
    **/
   var RelationModule = Y.Base.create('RelationModule', d3ns.Module, [], {
 
