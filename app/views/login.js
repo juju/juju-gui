@@ -63,7 +63,7 @@ YUI.add('juju-view-login', function(Y) {
       }
       // No loading message in tests.
       var loading_message = Y.one('#loading-message');
-      if (Y.Lang.isValue(loading-message)) {
+      if (Y.Lang.isValue(loading_message)) {
         loading_message.hide();
       }
       mask.show();
