@@ -150,6 +150,59 @@ describe('charm panel', function() {
         node.one('.control-label').get('text').trim()
          .should.equal('Service name');
       });
+
+  it('must show a ghosted service only when configuring a new charm', 
+    function() {
+        var db = new models.Database(),
+            panel = Y.namespace('juju.views').CharmPanel.getInstance({
+              charm_store: new juju.CharmStore({datasource: {
+                sendRequest: function(params) {
+                  // Mocking the server callback value
+                  params.callback.success({
+                    response: {
+                      results: [{
+                        responseText: searchResult
+                      }]
+                    }
+                  });
+                }
+              }}),
+              app: {
+                db: db,
+                env: {
+                  deploy: function() {
+                    arguments[5]({ err: false });
+                  },
+                  update_annotations: function() {
+                    return true;
+                  }
+                }
+              },
+              testing: true
+            }),
+            node = panel.node,
+            charm = db.charms.add({id: 'cs:precise/membase-6'});
+        charm.loaded = true;
+        panel.show();
+        var field = Y.one('#charm-search-field');
+        field.set('value', 'aaa');
+        field.simulate('keydown', { keyCode: ENTER });
+        node.one('a.charm-detail').simulate('click');
+        node.one('.btn-primary').simulate('click');
+        // Test that a ghosted service was created in the db.
+        db.services.size().should.equal(1);
+        db.services.item(0).get('pending').should.equal(true);
+        // Test that the ghosted service is removed on cancel.
+        node.one('.btn.cancel').simulate('click');
+        db.services.size().should.equal(0);
+        // Test that the ghosted service is no longer ghosted on deploy.
+        field.set('value', 'aaa');
+        field.simulate('keydown', { keyCode: ENTER });
+        node.one('a.charm-detail').simulate('click');
+        node.one('.btn-primary').simulate('click');
+        node.one('.btn-primary').simulate('click');
+        db.services.item(0).get('pending').should.equal(false);
+    });
 });
 
 describe('charm description', function() {
