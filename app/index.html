@@ -130,8 +130,11 @@ if (/*@cc_on!@*/false) {
       startTheApp = function() {
         // This function will be redefined when all the app's JavaScript is
         // loaded.  We want to keep trying until that happens.
+
+        // Tell jslint that we really do want to evaluate a string:
+        /*jslint evil: true */
         window.setTimeout('startTheApp', 100);
-      }
+      };
 
       go = function() {
         if (isBrowserSupported(navigator.userAgent)) {
