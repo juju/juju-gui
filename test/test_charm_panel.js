@@ -46,7 +46,10 @@ describe('charm panel', function() {
 
   it('must be able to show and hide the panel', function() {
     var panel = Y.namespace('juju.views').CharmPanel
-          .getInstance({testing: true, app: {}}),
+          .getInstance({
+          testing: true,
+          app: { views: { environment: {}}}
+        }),
         container = panel.node;
     container.getStyle('display').should.equal('none');
     panel.show();
@@ -76,7 +79,7 @@ describe('charm panel', function() {
             }
           }}),
           testing: true,
-          app: {}
+          app: { views: { environment: {} } }
         }),
         node = panel.node;
     panel.show(true);
@@ -104,7 +107,7 @@ describe('charm panel', function() {
               });
             }
           }}),
-          app: {db: db},
+          app: {db: db, views: { environment: {} } },
           testing: true
         }),
         node = panel.node;
@@ -135,7 +138,7 @@ describe('charm panel', function() {
                   });
                 }
               }}),
-              app: {db: db},
+              app: {db: db, views: { environment: {} } },
               testing: true
             }),
             node = panel.node,
@@ -169,6 +172,9 @@ describe('charm panel', function() {
               }}),
               app: {
                 db: db,
+                views: {
+                  environment: {}
+                },
                 env: {
                   deploy: function() {
                     arguments[5]({ err: false });
