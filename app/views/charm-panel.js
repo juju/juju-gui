@@ -725,6 +725,7 @@ YUI.add('juju-charm-panel', function(Y) {
         initializer: function() {
           this.bindModelView(this.get('model'));
           this.after('heightChange', this._setScroll);
+          this.after('changePanel', this._clearGhostService);
         },
 
         /**
@@ -746,6 +747,19 @@ YUI.add('juju-charm-panel', function(Y) {
             // This does not work via delegation.
             container.one('.charm-panel').after(
                 'scroll', Y.bind(this._moveTooltip, this));
+
+            // Create a 'ghost' service to represent what will be deployed.
+            var db = this.get('db');
+            var ghostService = db.services.create({
+              id: '(' + charm.get('package_name') + ')',
+              pending: true,
+              charm: charm.get('id'),
+              unit_count: 0,  // No units yet.
+              loaded: false,
+              config: config
+            });
+            this.set('ghostService', ghostService);
+            db.fire('update');
           } else {
             container.setHTML(
                 '<div class="alert">Waiting on charm data...</div>');
@@ -1008,6 +1022,16 @@ YUI.add('juju-charm-panel', function(Y) {
           this.fire('changePanel', { name: 'charms' });
         },
 
+        _clearGhostService: function(ev) {
+          // Remove the ghost service from the environment.
+          var db = this.get('db');
+          var ghostService = this.get('ghostService');
+          if (Y.Lang.isValue(ghostService)) {
+            db.services.remove(ghostService);
+            db.fire('update');
+          }
+        },
+
         /**
          * Called upon clicking the "Confirm" button.
          *
@@ -1016,15 +1040,17 @@ YUI.add('juju-charm-panel', function(Y) {
          * @return {undefined} Sends a signal only.
          */
         onCharmDeployClicked: function(evt) {
-          var container = this.get('container'),
-              db = this.get('db'),
-              env = this.get('env'),
-              serviceName = container.one('#service-name').get('value'),
-              numUnits = container.one('#number-units').get('value'),
-              charm = this.get('model'),
-              url = charm.get('id'),
-              config = utils.getElementsValuesMapping(container,
+          var container = this.get('container');
+          var db = this.get('db');
+          var ghostService = this.get('ghostService');
+          var env = this.get('env');
+          var serviceName = container.one('#service-name').get('value');
+          var numUnits = container.one('#number-units').get('value');
+          var charm = this.get('model');
+          var url = charm.get('id');
+          var config = utils.getElementsValuesMapping(container,
                   '#service-config .config-field');
+          var self = this;
           // The service names must be unique.  It is an error to deploy a
           // service with same name.
           var existing_service = db.services.getById(serviceName);
@@ -1062,21 +1088,21 @@ YUI.add('juju-charm-panel', function(Y) {
                         level: 'info'
                       })
                   );
-                  // Add service to the db and re-render for immediate display
-                  // on the front page.
-                  var service = new models.Service({
+                  // Update the ghost service to match the configuration.
+                  ghostService.setAttrs({
                     id: serviceName,
                     charm: charm.get('id'),
                     unit_count: 0,  // No units yet.
                     loaded: false,
+                    pending: false,
                     config: config
                   });
-                  db.services.add([service]);
                   // Force refresh.
                   db.fire('update');
+                  self.set('ghostService', null);
                 }
+                self.goBack(evt);
               });
-          this.goBack(evt);
         },
 
         /**

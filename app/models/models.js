@@ -56,6 +56,9 @@ YUI.add('juju-models', function(Y) {
       subordinate: {
         value: false
       },
+      pending: {
+        value: false
+      },
       unit_count: {},
       aggregated_status: {}
     }

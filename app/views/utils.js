@@ -875,6 +875,11 @@ YUI.add('juju-view-utils', function(Y) {
    **/
   views.toBoundingBoxes = function(module, services, existing) {
     var result = existing || {};
+    Y.each(result, function(val, key, obj) {
+      if (!Y.Lang.isValue(services.getById(key))) {
+        delete result[key];
+      }
+    });
     Y.each(services, function() {
       var id = this.get('id');
       if (result[id] !== undefined) {

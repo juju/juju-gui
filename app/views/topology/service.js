@@ -77,7 +77,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = self.get('component');
       var container = self.get('container');
       var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (!box.containsPoint(mouse_coords, topo.zoom)) {
+      if (box.pending || !box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
       // serviceClick is being called after dragend is processed.  In those
@@ -97,6 +97,9 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     serviceDblClick: function(box, self) {
+      if (box.pending) {
+        return;
+      }
       // Just show the service on double-click.
       var topo = self.get('component'),
           service = box.model;
@@ -109,7 +112,7 @@ YUI.add('juju-topology-service', function(Y) {
     serviceMouseEnter: function(box, context) {
       var rect = Y.one(this);
       // Do not fire if this service isn't selectable.
-      if (!utils.hasSVGClass(rect, 'selectable-service')) {
+      if (box.pending || !utils.hasSVGClass(rect, 'selectable-service')) {
         return;
       }
 
@@ -129,7 +132,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = context.get('component');
       var container = context.get('container');
       var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (box.containsPoint(mouse_coords, topo.zoom)) {
+      if (box.pending || box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
       var rect = Y.one(this).one('.service-border');
@@ -147,6 +150,9 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Side effects only.
      */
     serviceMouseMove: function(box, context) {
+      if (box.pending) {
+        return;
+      }
       var topo = context.get('component');
       topo.fire('mouseMove');
     },
@@ -214,6 +220,9 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     serviceAddRelMouseDown: function(box, context) {
+      if (box.pending) {
+        return;
+      }
       var evt = d3.event;
       var topo = context.get('component');
       context.longClickTimer = Y.later(750, this, function(d, e) {
@@ -415,7 +424,8 @@ YUI.add('juju-topology-service', function(Y) {
       node
         .enter().append('g')
         .attr('class', function(d) {
-            return (d.subordinate ? 'subordinate ' : '') + 'service';
+            return (d.subordinate ? 'subordinate ' : '') +
+              (d.pending ? 'pending ' : '') + 'service';
           })
         .call(this.dragBehavior)
         .attr('transform', function(d) {
