@@ -748,8 +748,11 @@ YUI.add('juju-charm-panel', function(Y) {
 
             // Create a 'ghost' service to represent what will be deployed.
             var db = this.get('db');
+            var serviceCount = db.services.filter(function(service) {
+              return service.get('charm') === charm.get('id');
+            }).length + 1;
             var ghostService = db.services.create({
-              id: '(' + charm.get('package_name') + ')',
+              id: '(' + charm.get('package_name') + ' ' + serviceCount + ')',
               pending: true,
               charm: charm.get('id'),
               unit_count: 0,  // No units yet.
@@ -1057,9 +1060,10 @@ YUI.add('juju-charm-panel', function(Y) {
               '#service-config .config-field');
           var self = this;
           // The service names must be unique.  It is an error to deploy a
-          // service with same name.
+          // service with same name (but ignore the ghost service).
           var existing_service = db.services.getById(serviceName);
-          if (Y.Lang.isValue(existing_service)) {
+          if (Y.Lang.isValue(existing_service) &&
+              existing_service !== ghostService) {
             console.log('Attempting to add service of the same name: ' +
                         serviceName);
             db.notifications.add(
@@ -1294,6 +1298,9 @@ YUI.add('juju-charm-panel', function(Y) {
         container.setStyles({opacity: 0, display: 'block'});
         container.show(true);
         isPanelVisible = true;
+        if (app.views.environment.instance) {
+          app.views.environment.instance.topo.fire('clearState');
+        }
         updatePanelPosition();
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i#charm-search-chevron').replaceClass(

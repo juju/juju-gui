@@ -60,6 +60,7 @@ YUI.add('juju-topology-service', function(Y) {
         hideServiceMenu: {callback: function() {
           this.service_click_actions.hideServiceMenu(null, this);
         }},
+        clearState: 'clearStateHandler',
         rescaled: 'updateServiceMenuLocation'
       }
     },
@@ -86,11 +87,13 @@ YUI.add('juju-topology-service', function(Y) {
         return;
       }
       // If the service box is pending, ensure that the charm panel is
-      // visible, but don't do anythign else.
+      // visible, but don't do anything else.
       if (box.pending) {
         // Prevent the clickoutside event from firing and immediately closing
         // the panel.
         d3.event.halt();
+        // Ensure service menus are closed.
+        topo.fire('clearState');
         views.CharmPanel.getInstance().show();
         return;
       }
@@ -195,11 +198,22 @@ YUI.add('juju-topology-service', function(Y) {
      * @method canvasClick
      */
     canvasClick: function(box, self) {
-      var container = self.get('container'),
-          topo = self.get('component');
-      container.all('.environment-menu.active').removeClass('active');
-      self.service_click_actions.hideServiceMenu(null, self);
+      var topo = self.get('component');
       topo.fire('clearState');
+    },
+
+    /**
+     * Clear any stateful actions (menus, etc.) when a clearState event is
+     * received.
+     *
+     * @method clearStateHandler
+     * @return {undefined} Side effects only.
+     */
+    clearStateHandler: function() {
+      var container = this.get('container'),
+          topo = this.get('component');
+      container.all('.environment-menu.active').removeClass('active');
+      this.service_click_actions.hideServiceMenu(null, this);
     },
 
     /**
