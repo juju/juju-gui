@@ -723,6 +723,7 @@ YUI.add('juju-charm-panel', function(Y) {
         initializer: function() {
           this.bindModelView(this.get('model'));
           this.after('heightChange', this._setScroll);
+          this.after('changePanel', this._clearGhostService);
         },
 
         /**
@@ -744,6 +745,22 @@ YUI.add('juju-charm-panel', function(Y) {
             // This does not work via delegation.
             container.one('.charm-panel').after(
                 'scroll', Y.bind(this._moveTooltip, this));
+
+            // Create a 'ghost' service to represent what will be deployed.
+            var db = this.get('db');
+            var serviceCount = db.services.filter(function(service) {
+              return service.get('charm') === charm.get('id');
+            }).length + 1;
+            var ghostService = db.services.create({
+              id: '(' + charm.get('package_name') + ' ' + serviceCount + ')',
+              pending: true,
+              charm: charm.get('id'),
+              unit_count: 0,  // No units yet.
+              loaded: false,
+              config: config
+            });
+            this.set('ghostService', ghostService);
+            db.fire('update');
           } else {
             container.setHTML(
                 '<div class="alert">Waiting on charm data...</div>');
@@ -1007,6 +1024,23 @@ YUI.add('juju-charm-panel', function(Y) {
         },
 
         /**
+         * Clears the ghost service from the database and updates the canvas.
+         *
+         * @method _clearGhostService
+         * @param {Object} ev An event object.
+         * @return {undefined} Side effects only.
+         */
+        _clearGhostService: function(ev) {
+          // Remove the ghost service from the environment.
+          var db = this.get('db');
+          var ghostService = this.get('ghostService');
+          if (Y.Lang.isValue(ghostService)) {
+            db.services.remove(ghostService);
+            db.fire('update');
+          }
+        },
+
+        /**
          * Called upon clicking the "Confirm" button.
          *
          * @method onCharmDeployClicked
@@ -1014,19 +1048,22 @@ YUI.add('juju-charm-panel', function(Y) {
          * @return {undefined} Sends a signal only.
          */
         onCharmDeployClicked: function(evt) {
-          var container = this.get('container'),
-              db = this.get('db'),
-              env = this.get('env'),
-              serviceName = container.one('#service-name').get('value'),
-              numUnits = container.one('#number-units').get('value'),
-              charm = this.get('model'),
-              url = charm.get('id'),
-              config = utils.getElementsValuesMapping(container,
-                  '#service-config .config-field');
+          var container = this.get('container');
+          var db = this.get('db');
+          var ghostService = this.get('ghostService');
+          var env = this.get('env');
+          var serviceName = container.one('#service-name').get('value');
+          var numUnits = container.one('#number-units').get('value');
+          var charm = this.get('model');
+          var url = charm.get('id');
+          var config = utils.getElementsValuesMapping(container,
+              '#service-config .config-field');
+          var self = this;
           // The service names must be unique.  It is an error to deploy a
-          // service with same name.
+          // service with same name (but ignore the ghost service).
           var existing_service = db.services.getById(serviceName);
-          if (Y.Lang.isValue(existing_service)) {
+          if (Y.Lang.isValue(existing_service) &&
+              existing_service !== ghostService) {
             console.log('Attempting to add service of the same name: ' +
                         serviceName);
             db.notifications.add(
@@ -1060,21 +1097,30 @@ YUI.add('juju-charm-panel', function(Y) {
                         level: 'info'
                       })
                   );
-                  // Add service to the db and re-render for immediate display
-                  // on the front page.
-                  var service = new models.Service({
+                  // Update the annotations with the box's x/y coordinates if
+                  // they have been set by dragging the ghost.
+                  if (ghostService.get('dragged')) {
+                    env.update_annotations(
+                        serviceName,
+                        { 'gui.x': ghostService.get('x'),
+                          'gui.y': ghostService.get('y') },
+                        function() { return; });
+                  }
+                  // Update the ghost service to match the configuration.
+                  ghostService.setAttrs({
                     id: serviceName,
                     charm: charm.get('id'),
                     unit_count: 0,  // No units yet.
                     loaded: false,
+                    pending: false,
                     config: config
                   });
-                  db.services.add([service]);
                   // Force refresh.
                   db.fire('update');
+                  self.set('ghostService', null);
                 }
+                self.goBack(evt);
               });
-          this.goBack(evt);
         },
 
         /**
@@ -1252,6 +1298,9 @@ YUI.add('juju-charm-panel', function(Y) {
         container.setStyles({opacity: 0, display: 'block'});
         container.show(true);
         isPanelVisible = true;
+        if (app.views.environment.instance) {
+          app.views.environment.instance.topo.fire('clearState');
+        }
         updatePanelPosition();
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i#charm-search-chevron').replaceClass(
