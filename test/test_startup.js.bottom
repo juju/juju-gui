@@ -10,14 +10,14 @@
         return {
           getElementById: function(id) {
             if (id === 'browser-warning') {
-                return {style: warningStyle};
+              return {style: warningStyle};
             } else if (id === 'loading-message') {
-                return {style: loadingStyle};
+              return {style: loadingStyle};
             } else if (id === 'loading-spinner') {
-                return {};
+              return {};
             } else {
-                // This should not happen.
-                throw 'Unknown ID requested: ' + id;
+              // This should not happen.
+              throw 'Unknown ID requested: ' + id;
             }
           }
         };
@@ -62,13 +62,13 @@
     });
 
     it('will show a loading message while the app loads', function() {
-        // The loading message has not had it's default style touched yet.
-        assert.isNull(loadingStyle.display);
-        // The "go" function displays the loading message if there is no
-        // browser compatability warning.
-        go('Chrome');
-        assert.equal(loadingStyle.display, 'block');
-        assert.isNull(warningStyle.display);
+      // The loading message has not had it's default style touched yet.
+      assert.isNull(loadingStyle.display);
+      // The "go" function displays the loading message if there is no
+      // browser compatability warning.
+      go('Chrome');
+      assert.equal(loadingStyle.display, 'block');
+      assert.isNull(warningStyle.display);
     });
 
     it('will show a loading message after any browser wanting', function() {

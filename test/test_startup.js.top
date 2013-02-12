@@ -4,7 +4,7 @@
   describe('Application start-up', function() {
     var startTheApp, isBrowserSupported, displayBrowserWarning,
         hideBrowserWarning, continueWithCurrentBrowser, go, app, juju_config,
-        getDocument, appStarted, warningStyle, loadingStyle,
+        getDocument, appStarted, warningStyle, loadingStyle, Spinner,
         displayLoadingMessage, originalStartTheApp, startupTimeout;
 
     beforeEach(function() {

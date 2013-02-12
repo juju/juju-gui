@@ -132,9 +132,9 @@ if (/*@cc_on!@*/false) {
       hideBrowserWarning = function() {
         getDocument()
           .getElementById('browser-warning').style.display = 'none';
-      }
+      };
 
-      displayLoadingMessage = function () {
+      displayLoadingMessage = function() {
         var opts = {
           lines: 17, // The number of lines to draw
           length: 0, // The length of each line
@@ -175,7 +175,7 @@ if (/*@cc_on!@*/false) {
 
         // Tell jslint that we really do want to evaluate a string:
         /*jslint evil: true */
-        startupTimeout = window.setTimeout('startTheApp', 100);
+        window.setTimeout('startTheApp', 100);
       };
 
       go = function(agent) {

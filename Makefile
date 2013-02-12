@@ -28,6 +28,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	| sort | sed -e 's/^\.\///' \
 	| grep -Ev -e '^manifest\.json$$' \
 		-e '^app/assets/javascripts/d3\.v2(\.min)?\.js$$' \
+		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket\.js$$' \
 		-e '^app/assets/javascripts/gallery-.*\.js$$' \
 		-e '^server.js$$')
