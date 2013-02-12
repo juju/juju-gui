@@ -928,7 +928,7 @@
        });
 
     it('must cull removed services from the existing list',
-       function(){
+       function() {
          var services = new models.ServiceList();
          services.add([{id: 'mysql', exposed: false},
                        {id: 'memcache'},
@@ -939,9 +939,9 @@
            'memcache': 3,
            'wordpress': 4};
 
-         assert.equal(existing['haproxy'], 2);
+         assert.equal(existing.haproxy, 2);
          var boxes = views.toBoundingBoxes(module, services, existing);
-         assert.equal(boxes['haproxy'], undefined);
+         assert.equal(boxes.haproxy, undefined);
        });
   });
 })();
