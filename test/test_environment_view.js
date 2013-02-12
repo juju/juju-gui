@@ -935,12 +935,13 @@
                        {id: 'wordpress'}]);
          var existing = {
            'mysql': 1,
-           'haproxy': 2,
+           'haproxy': 2, // This entry is stale and will be removed.
            'memcache': 3,
            'wordpress': 4};
 
-         assert.equal(existing.haproxy, 2);
          var boxes = views.toBoundingBoxes(module, services, existing);
+         // The haproxy is removed from the results since it is no longer in
+         // the services list.
          assert.equal(boxes.haproxy, undefined);
        });
   });
