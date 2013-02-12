@@ -1,11 +1,9 @@
-      originalStartTheApp = startTheApp;
+      // Replace the real app starting function with one that is more suitable
+      // for testing.
       startTheApp = function() {
         appStarted = true;
-        // The behavior of the startTheApp function of displaying the loding
-        // message is emulated here, but the real startTheApp funciton is
-        // tested below to ensure that it actually behaves this way.
-        displayLoadingMessage();
       };
+
       getDocument = function() {
         return {
           getElementById: function(id) {
