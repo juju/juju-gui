@@ -200,8 +200,6 @@ if (/*@cc_on!@*/false) {
       // function which will be picked up by the setTimeout and the app will
       // start.
       startTheApp = function() {
-        // Even though we are about to start the app, there is still
-        // non-trivial work to do, so we want to display the loading message.
         YUI(GlobalConfig).use(['juju-gui'], function(Y) {
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application
