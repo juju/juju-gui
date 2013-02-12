@@ -1,11 +1,23 @@
+      originalStartTheApp = startTheApp;
       startTheApp = function() {
         appStarted = true;
+        // The behavior of the startTheApp function of displaying the loding
+        // message is emulated here, but the real startTheApp funciton is
+        // tested below to ensure that it actually behaves this way.
+        displayLoadingMessage();
       };
       getDocument = function() {
         return {
           getElementById: function(id) {
-            assert.equal(id, 'browser-warning');
-            return {style: warningStyle};
+            if (id === 'browser-warning') {
+                return {style: warningStyle};
+            } else if (id === 'loading-message') {
+                return {style: loadingStyle};
+
+            } else {
+                // This should not happen.
+                throw 'Unknown ID requested: ' + id;
+            }
           }
         };
       };
@@ -24,6 +36,8 @@
     });
 
     it('can display the browser warning', function() {
+      // The browser warning's style has not been touched yet.
+      assert.isNull(loadingStyle.display);
       displayBrowserWarning();
       assert.equal(warningStyle.display, 'block');
     });
@@ -44,6 +58,29 @@
     it('will start the app when the user continues', function() {
       continueWithCurrentBrowser();
       assert.isTrue(appStarted);
+    });
+
+    it('will show a loading message while the app loads', function() {
+        // The loading message has not had it's default style touched yet.
+        assert.isNull(loadingStyle.display);
+        // The original (non-overridden for testing purposes) startTheApp
+        // function displays the loading message.
+        originalStartTheApp();
+        assert.equal(loadingStyle.display, 'block');
+        // The original startTheApp function initiates a window.setTimeout that
+        // we now want to cancel.
+        window.clearTimeout(startupTimeout);
+    });
+
+    it('will show a loading message after any browser wanting', function() {
+      // If the browser is not supported, then the loading message will be
+      // displayed after the browser warning.
+      go('Browser that does not exist, and therefore is not supported');
+      assert.equal(warningStyle.display, 'block');
+      assert.equal(loadingStyle.display, null);
+      continueWithCurrentBrowser();
+      assert.equal(warningStyle.display, 'none');
+      assert.equal(loadingStyle.display, 'block');
     });
 
   });
