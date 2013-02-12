@@ -17,7 +17,6 @@ In order to run the tests you must have a Juju environment named
 "juju-gui-testing".  Consult the Juju documentation for how to set up
 an environment.
 
-
 Building
 --------
 
@@ -26,6 +25,7 @@ The test script has a few system dependencies::
     sudo apt-get install python-shelltoolbox python-selenium python-yaml juju
 
 It does not require that the Makefile be run.
+
 
 Running the tests
 =================
@@ -50,9 +50,15 @@ time of this writing.
 Specifying the browser
 ======================
 
-You can choose which browser will be used to run the tests by setting
-the JUJU_GUI_TEST_BROWSER environment variable.  See test/browser.py for
-the available options.
+You can choose which browser(s) will be used to run the tests by setting
+the JUJU_GUI_TEST_BROWSERS environment variable.  It is possible to run the
+tests on multiple browsers by specifying a space separated list of browser
+names, e.g.::
+
+    JUJU_GUI_TEST_BROWSERS="chrome firefox" bin/test-charm
+
+If JUJU_GUI_TEST_BROWSERS is empty or unset, the "chrome" browser is used by
+default.  See ``test/browser.py`` for the available options.
 
 
 Running an individual test
