@@ -47,9 +47,13 @@ class TestDeploy(browser.TestCase):
     def get_service_names(self):
         """Return the set of services' names displayed in the current page."""
         def services_found(driver):
-            return driver.find_elements_by_css_selector('.service .name')
-        services = self.wait_for(services_found, 'Services not displayed.')
-        return set([element.text for element in services])
+            services = driver.find_elements_by_css_selector('.service .name')
+            try:
+                return set([element.text for element in services])
+            except exceptions.StaleElementReferenceException:
+                # One or more elements are no longer attached to the DOM.
+                return False
+        return self.wait_for(services_found, 'Services not displayed.')
 
     def test_charm_deploy(self):
         # A charm can be deployed using the GUI.
@@ -71,7 +75,8 @@ class TestDeploy(browser.TestCase):
         charm_panel = self.wait_for(charm_panel_loaded)
         # Deploy appflower.
         deploy_button = charm_panel.find_element_by_css_selector(
-            'button.deploy[data-url="cs:precise/appflower-0"]')
+            # See http://www.w3.org/TR/css3-selectors/#attribute-substrings
+            'button.deploy[data-url*="appflower"]')
         deploy_button.click()
         # Click to confirm deployment.
         charm_panel.find_element_by_id('charm-deploy').click()

@@ -70,4 +70,28 @@ specify the browser to use as above.  For example, this command will run
 the given test against the UI stage using IE::
 
     $ APP_URL=http://uistage.jujucharms.com:8080/ \
-    JUJU_GUI_TEST_BROWSER=ie bin/py test/test_charm_running.py
+    JUJU_GUI_TEST_BROWSERS=ie bin/py test/test_charm_running.py
+
+
+Writing tests
+=============
+
+The base test case ``test.browser.TestCase`` takes care of the necessary
+driver set up.  Tests defined in subclasses can take advantage of several
+already defined attributes and methods, including:
+
+- self.driver: the active Selenium web driver;
+- self.app_url: the Juju GUI URL;
+- self.load(path='/'): ask the web driver to load the given page;
+- self.wait_for(condition, error, timeout): wait for some condition to become
+  true;
+- self.restart_api(): restart the staging API backend, so that the default
+  environment is restored.
+
+The last of the methods above is particularly important: tests modifying the
+environment are responsible of restoring it by restarting the API backend, e.g.
+including this line at the beginning of their body::
+
+    self.addCleanup(self.restart_api)
+
+See ``test/browser.py`` for more details.
