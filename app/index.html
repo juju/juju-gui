@@ -55,12 +55,11 @@ if (/*@cc_on!@*/false) {
             </form>
           </div>
         </div>
-        <div id="loading-message" class="centered-column">
+        <div id="loading-message" class="centered-column"
+            style="display: none;">
           <i class="sprite juju_logo" title="Juju GUI"></i>
           <div class="panel">
-            <div class="header">
-              Trying to connect to the Juju environment.</span>
-            </div>
+            <div class="header">Loading the Juju GUI</div>
             <div class="loading-spinner">
             </div>
           </div>
@@ -138,6 +137,11 @@ if (/*@cc_on!@*/false) {
       };
 
       startTheApp = function() {
+        // Show the loading message.  The "real" startTheApp does this too, but
+        // it does so after the JS has been loaded, so we want to do it here too
+        // in case that takes a long time.
+        getDocument()
+          .getElementById('loading-message').style.display = 'block';
         // This function will be redefined when all the app's JavaScript is
         // loaded.  We want to keep trying until that happens.
 
@@ -167,6 +171,10 @@ if (/*@cc_on!@*/false) {
       // function which will be picked up by the setTimeout and the app will
       // start.
       startTheApp = function() {
+        // Even though we are about to start the app, there is still
+        // non-trivial work to do, so we want to display the loading message.
+        getDocument()
+          .getElementById('loading-message').style.display = 'block';
         YUI(GlobalConfig).use(['juju-gui'], function(Y) {
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application
