@@ -1418,7 +1418,7 @@ div.inline {
   }
 }
 
-#login-mask {
+#full-screen-mask {
     display: block;
     position: absolute;
     top: 0;
@@ -1427,18 +1427,18 @@ div.inline {
     height: 100%;
     z-index: 10000;
 }
-#login-column {
+.centered-column {
     display: block;
     z-index: 10001;
     position: absolute;
     top: 80px;
     left: 50%;
     text-align: center;
-    width: 300px;
-    margin-left: -150px;
+    width: 420px;
+    margin-left: -210px;
 
     div {
-        width: 220px;
+        width: 280px;
         text-align: left;
         margin: 0 auto;
         margin-bottom: 1ex;
@@ -1449,17 +1449,20 @@ div.inline {
             text-decoration: none
         }
     }
-    @login-panel-color: #f5f5f5;
-    @login-panel-gradient: (@login-panel-color - #111);
-    @login-panel-shadow: (@login-panel-color - #444);
+
+    @panel-color: #f5f5f5;
+    @panel-gradient: (@panel-color - #111);
+    @panel-shadow: (@panel-color - #444);
     @curve-radius: ~"24px 28px";
-    div#login-form {
+
+    .panel {
         input {
+            width: 270px;
             margin-top: 8px;
             margin-bottom: 8px;
         }
         input[type=submit] {
-            width: 220px;
+            width: 280px;
             height: 26px;
             text-transform: uppercase;
             text-shadow: none;
@@ -1478,12 +1481,10 @@ div.inline {
         padding: 5px 25px 5px;
         margin-top: 3ex;
         margin-bottom: 4ex;
-        .create-button(@login-panel-color,
-                       @login-panel-gradient,
-                       @login-panel-shadow,
-                       -6px);
-        .create-border-radius(~"24px / 28px");
-        div#login-header {
+        .create-button(@panel-color, @panel-gradient, @panel-shadow, -6px);
+        .create-border-radius(@curve-radius);
+
+        .header {
             padding: 15px 25px 10px 25px;
             margin-left: -25px;
             margin-top: -5px;
@@ -1493,8 +1494,8 @@ div.inline {
             -moz-border-radius-topright: @curve-radius;
             border-top-left-radius: @curve-radius;
             border-top-right-radius: @curve-radius;
-            @gradient-start: @login-panel-gradient;
-            @gradient-end: @login-panel-shadow;
+            @gradient-start: @panel-gradient;
+            @gradient-end: @panel-shadow;
             background-image: -ms-linear-gradient(
                 top, @gradient-start, @gradient-end);
             background-image: -webkit-gradient(

@@ -1,0 +1,50 @@
+      startTheApp = function() {
+        appStarted = true;
+      };
+      getDocument = function() {
+        return {
+          getElementById: function(id) {
+            assert.equal(id, 'browser-warning');
+            return {style: warningStyle};
+          }
+        };
+      };
+    });
+
+    it('knows that Chrome is supported', function() {
+      assert.isTrue(isBrowserSupported('Chrome'));
+    });
+
+    it('knows that Firefox is not supported', function() {
+      assert.isFalse(isBrowserSupported('Firefox'));
+    });
+
+    it('knows that IE is not supported', function() {
+      assert.isFalse(isBrowserSupported('MSIE'));
+    });
+
+    it('can display the browser warning', function() {
+      displayBrowserWarning();
+      assert.equal(warningStyle.display, 'block');
+    });
+
+    it('will hide the browser warning when the user continues', function() {
+      continueWithCurrentBrowser();
+      assert.equal(warningStyle.display, 'none');
+    });
+
+    it('will stop event propigation when the user continues', function() {
+      var result = continueWithCurrentBrowser();
+      // Since the function is an event handler of a submit button and we do
+      // not want the form submittion to actually happen, the handler must
+      // return false.
+      assert.isFalse(result);
+    });
+
+    it('will start the app when the user continues', function() {
+      continueWithCurrentBrowser();
+      assert.isTrue(appStarted);
+    });
+
+  });
+}) ();

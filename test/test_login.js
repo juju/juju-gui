@@ -85,7 +85,7 @@
 
   describe('login view', function() {
     var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
-    var Y, conn, env, utils, juju, views, loginView, container, loginMask;
+    var Y, conn, env, utils, juju, views, loginView, container, mask;
     var test = it; // We aren't really doing BDD so let's be more direct.
 
     before(function(done) {
@@ -104,7 +104,7 @@
       conn.open();
       container = Y.one('body').appendChild('<div/>');
       // Needed by the render method.
-      loginMask = Y.one('body').appendChild('<div/>').set('id', 'login-mask');
+      mask = Y.one('body').appendChild('<div/>').set('id', 'full-screen-mask');
       loginView = new views.login(
           {container: container, env: env, help_text: 'Help text'});
     });
@@ -112,7 +112,7 @@
     afterEach(function() {
       env.destroy();
       container.remove(true);
-      loginMask.remove(true);
+      mask.remove(true);
     });
 
     test('the view login method logs in through the environment', function() {
