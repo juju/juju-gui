@@ -926,5 +926,23 @@
          views.toBoundingBoxes(module, services, boxes);
          boxes.mysql.exposed.should.equal(true);
        });
+
+    it('must cull removed services from the existing list',
+       function() {
+         var services = new models.ServiceList();
+         services.add([{id: 'mysql', exposed: false},
+                       {id: 'memcache'},
+                       {id: 'wordpress'}]);
+         var existing = {
+           'mysql': 1,
+           'haproxy': 2, // This entry is stale and will be removed.
+           'memcache': 3,
+           'wordpress': 4};
+
+         var boxes = views.toBoundingBoxes(module, services, existing);
+         // The haproxy is removed from the results since it is no longer in
+         // the services list.
+         assert.equal(boxes.haproxy, undefined);
+       });
   });
 })();

@@ -444,6 +444,10 @@ g.service {
     fill: none;
     stroke: none;
 
+    &.pending {
+        opacity: 0.8;
+    }
+
     text {
         text-anchor: middle;
     }
@@ -531,11 +535,24 @@ g.unit {
 /*
  * Notification system
  */
+ #notify-list {
+    white-space: nowrap;
+    max-height: 500px;
+    overflow-y: scroll;
+
+    .header {
+        padding: 1em 0;
+    }
+ }
+
 .notice {
     border-top: 1px solid #D0D0D0;
-    padding: 1em 4px;
-    margin: 1em 0 0 2px;
+    padding: 1em;
     cursor: pointer;
+
+    &:hover {
+        background-color: #eee;
+    }
 
     .seen {
         background-color: rgba(222, 222, 222, 0.33);
@@ -1430,11 +1447,11 @@ div.inline {
     top: 80px;
     left: 50%;
     text-align: center;
-    width: 400px;
-    margin-left: -200px;
+    width: 420px;
+    margin-left: -210px;
 
     div {
-        width: 260px;
+        width: 280px;
         text-align: left;
         margin: 0 auto;
         margin-bottom: 1ex;
@@ -1453,12 +1470,12 @@ div.inline {
 
     .panel {
         input {
-            width: 250px;
+            width: 270px;
             margin-top: 8px;
             margin-bottom: 8px;
         }
         input[type=submit] {
-            width: 260px;
+            width: 280px;
             height: 26px;
             text-transform: uppercase;
             text-shadow: none;
