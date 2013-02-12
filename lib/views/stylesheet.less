@@ -535,11 +535,24 @@ g.unit {
 /*
  * Notification system
  */
+ #notify-list {
+    white-space: nowrap;
+    max-height: 500px;
+    overflow-y: scroll;
+
+    .header {
+        padding: 1em 0;
+    }
+ }
+
 .notice {
     border-top: 1px solid #D0D0D0;
-    padding: 1em 4px;
-    margin: 1em 0 0 2px;
+    padding: 1em;
     cursor: pointer;
+
+    &:hover {
+        background-color: #eee;
+    }
 
     .seen {
         background-color: rgba(222, 222, 222, 0.33);
