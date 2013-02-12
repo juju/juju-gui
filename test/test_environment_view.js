@@ -926,5 +926,22 @@
          views.toBoundingBoxes(module, services, boxes);
          boxes.mysql.exposed.should.equal(true);
        });
+
+    it('must cull removed services from the existing list',
+       function(){
+         var services = new models.ServiceList();
+         services.add([{id: 'mysql', exposed: false},
+                       {id: 'memcache'},
+                       {id: 'wordpress'}]);
+         var existing = {
+           'mysql': 1,
+           'haproxy': 2,
+           'memcache': 3,
+           'wordpress': 4};
+
+         assert.equal(existing['haproxy'], 2);
+         var boxes = views.toBoundingBoxes(module, services, existing);
+         assert.equal(boxes['haproxy'], undefined);
+       });
   });
 })();
