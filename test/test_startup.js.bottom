@@ -13,7 +13,8 @@
                 return {style: warningStyle};
             } else if (id === 'loading-message') {
                 return {style: loadingStyle};
-
+            } else if (id === 'loading-spinner') {
+                return {};
             } else {
                 // This should not happen.
                 throw 'Unknown ID requested: ' + id;
@@ -63,13 +64,11 @@
     it('will show a loading message while the app loads', function() {
         // The loading message has not had it's default style touched yet.
         assert.isNull(loadingStyle.display);
-        // The original (non-overridden for testing purposes) startTheApp
-        // function displays the loading message.
-        originalStartTheApp();
+        // The "go" function displays the loading message if there is no
+        // browser compatability warning.
+        go('Chrome');
         assert.equal(loadingStyle.display, 'block');
-        // The original startTheApp function initiates a window.setTimeout that
-        // we now want to cancel.
-        window.clearTimeout(startupTimeout);
+        assert.isNull(warningStyle.display);
     });
 
     it('will show a loading message after any browser wanting', function() {
@@ -77,7 +76,7 @@
       // displayed after the browser warning.
       go('Browser that does not exist, and therefore is not supported');
       assert.equal(warningStyle.display, 'block');
-      assert.equal(loadingStyle.display, null);
+      assert.isNull(loadingStyle.display);
       continueWithCurrentBrowser();
       assert.equal(warningStyle.display, 'none');
       assert.equal(loadingStyle.display, 'block');
