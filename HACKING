@@ -11,13 +11,15 @@ Here is how to develop on this codebase.
 Developer Install
 =================
 
-Before you get the GUI, first you need to get Juju.  For PyJuju, the original
-Python-based implementation, we use a custom branch of Juju that supplies the
-websocket API we need.  (GoJuju, the newer Go-based implementation, will have
-a websocket API provided for us directly as part of the software.)
+Before you get the GUI you need to get Juju. We use the fresh one from the Juju PPA.
+For PyJuju, the original Python-based implementation, we also use a custom branch of Juju
+that supplies the websocket API we need.  (GoJuju, the newer Go-based implementation,
+will have a websocket API provided for us directly as part of the software.)
 
 ::
 
+  sudo add-apt-repository ppa:juju/pkgs
+  sudo apt-get update
   sudo apt-get install juju zookeeper
 
 Next you will also need to get the Juju branch that has API access.
@@ -45,14 +47,16 @@ Now it is time to actually get the GUI itself set up.  Juju GUI uses nodejs-
 based development tools, so you will need ``nodejs`` and ``npm`` from Chris
 Lea's node PPA. You also need ImageMagick for sprite generation, lbox to
 propose branches, python-sphinx and python-yaml to build docs, PyTZ to make
-releases, and python-virtualenv to build the Google Closure linter tools
-locally::
+releases, python-shelltoolbox and python-selenium for browser tests, and
+python-virtualenv to build the Google Closure linter tools locally::
 
   sudo add-apt-repository ppa:chris-lea/node.js
   sudo add-apt-repository ppa:gophers/go
-  sudo add-apt-repository ppa:juju/pkgs
   sudo apt-get update
-  sudo apt-get install nodejs npm imagemagick lbox python-sphinx python-yaml python-tz python-virtualenv python-shelltoolbox
+  sudo apt-get install nodejs npm imagemagick lbox python-sphinx python-yaml python-tz python-virtualenv python-shelltoolbox python-selenium
+
+See docs/browser-testing.rst if you are curious about the source for
+python-shelltoolbox and python-selenium
 
 The jshint linter will be installed locally per branch, but if you want editor
 integration, you may want to install ``jshint`` globally in your system.  More
@@ -84,6 +88,36 @@ Note that the Makefile supports ``make help`` to try to introduce some of the
 more important targets.  Also note that if you use the "make prod" target
 while using the PyJuju rapi-rollup improv script, the password you should use
 is "admin," despite the help text you see.
+
+Typical Bzr workflow
+=====================
+
+Bazaar allows you to work in a lot of different workflows - a workflow that
+works well for our development
+
+To set up the environment::
+
+bzr init-repo juju-gui
+cd juju-gui
+bzr branch lp:juju-gui trunk
+mkdir yourUseName
+bzr branch trunk/{featureBranchName}
+
+To link branch to ticket::
+
+bzr commit --fixes=lp:{ticketNumber}
+
+To push code::
+
+bzr push lp:~{yourUserName}/juju-gui/{featureBranchName}
+
+To submit for review::
+
+lbox propose -cr
+
+After review, to merge into trunk::
+
+lbox submit
 
 Working with a Real Juju
 ========================
