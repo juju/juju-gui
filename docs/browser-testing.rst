@@ -17,7 +17,6 @@ In order to run the tests you must have a Juju environment named
 "juju-gui-testing".  Consult the Juju documentation for how to set up
 an environment.
 
-
 Building
 --------
 
@@ -26,6 +25,7 @@ The test script has a few system dependencies::
     sudo apt-get install python-shelltoolbox python-selenium python-yaml juju
 
 It does not require that the Makefile be run.
+
 
 Running the tests
 =================
@@ -50,9 +50,15 @@ time of this writing.
 Specifying the browser
 ======================
 
-You can choose which browser will be used to run the tests by setting
-the JUJU_GUI_TEST_BROWSER environment variable.  See test/browser.py for
-the available options.
+You can choose which browser(s) will be used to run the tests by setting
+the JUJU_GUI_TEST_BROWSERS environment variable.  It is possible to run the
+tests on multiple browsers by specifying a space separated list of browser
+names, e.g.::
+
+    JUJU_GUI_TEST_BROWSERS="chrome firefox" bin/test-charm
+
+If JUJU_GUI_TEST_BROWSERS is empty or unset, the "chrome" browser is used by
+default.  See ``test/browser.py`` for the available options.
 
 
 Running an individual test
@@ -64,4 +70,28 @@ specify the browser to use as above.  For example, this command will run
 the given test against the UI stage using IE::
 
     $ APP_URL=http://uistage.jujucharms.com:8080/ \
-    JUJU_GUI_TEST_BROWSER=ie bin/py test/test_charm_running.py
+    JUJU_GUI_TEST_BROWSERS=ie bin/py test/test_charm_running.py
+
+
+Writing tests
+=============
+
+The base test case ``test.browser.TestCase`` takes care of the necessary
+driver set up.  Tests defined in subclasses can take advantage of several
+already defined attributes and methods, including:
+
+- self.driver: the active Selenium web driver;
+- self.app_url: the Juju GUI URL;
+- self.load(path='/'): ask the web driver to load the given page;
+- self.wait_for(condition, error, timeout): wait for some condition to become
+  true;
+- self.restart_api(): restart the staging API backend, so that the default
+  environment is restored.
+
+The last of the methods above is particularly important: tests modifying the
+environment are responsible of restoring it by restarting the API backend, e.g.
+including this line at the beginning of their body::
+
+    self.addCleanup(self.restart_api)
+
+See ``test/browser.py`` for more details.
