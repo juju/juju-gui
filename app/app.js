@@ -336,17 +336,17 @@ YUI.add('juju-gui', function(Y) {
      * Namespace aware dispatch
      **/
     dispatch: function() {
-      console.group('dispatch');
+      //console.group('dispatch');
       this._routeGeneration += 1;
       // Parse the URL in a namespace aware fashion.
       var paths = this._nsRouter.parse(this._getPath());
       Y.each(paths, function(p, ns) {
         this._nsPath = p;
-        console.log('dispatch ns', ns, p, this._routeGeneration);
+        //console.log('dispatch ns', ns, p, this._routeGeneration);
         JujuGUI.superclass.dispatch.apply(this, arguments);
         this._nsPath = null;
       }, this);
-      console.groupEnd();
+      //console.groupEnd();
       return this;
     },
 
@@ -359,9 +359,14 @@ YUI.add('juju-gui', function(Y) {
     },
 
     _navigate: function(url, options) {
-      console.log("NAV", url, this._routeGeneration);
+      //console.log("NAV", url, this._routeGeneration);
       this._routeGeneration += 1;
       return JujuGUI.superclass._navigate.call(this, url, options);
+    },
+
+    _queue: function() {
+      // Sync Invocation
+      this._save.apply(this, arguments);
     },
 
     // NS aware wrapper around _save to update URL
@@ -369,7 +374,7 @@ YUI.add('juju-gui', function(Y) {
       // Increment Route Generation late in the chain.
       // `save` is past the async queue and the proper time to
       // increment gen.
-      console.log("_save", url);
+      //console.log("_save", url);
       //this._routeGeneration += 1;
       // Take the current Location and preserve other
       // namespaces
@@ -426,8 +431,8 @@ YUI.add('juju-gui', function(Y) {
           }
 
         } else if ((callback = callbacks.shift())) {
-          console.group('callback');
-          console.log('callback', callback);
+          //console.group('callback');
+          //console.log('callback', callback);
           if (typeof callback === 'string') {
             callback = self[callback];
           }
@@ -437,11 +442,11 @@ YUI.add('juju-gui', function(Y) {
           // Attach the callback id to the request.
           req.callbackId = Y.stamp(callback, true);
           callback.call(self, req, res, req.next);
-          console.groupEnd();
+          //console.groupEnd();
 
         } else if ((route = routes.shift())) {
           // Make a copy of this route's `callbacks` and find its matches.
-          console.group("route", route.path)
+          //console.group("route", route.path)
           callbacks = route.callbacks.concat();
           matches = route.regex.exec(path);
 
@@ -458,7 +463,7 @@ YUI.add('juju-gui', function(Y) {
 
           // Execute this route's `callbacks`.
           req.next();
-          console.groupEnd();
+          //console.groupEnd();
         }
       };
 
@@ -986,10 +991,10 @@ YUI.add('juju-gui', function(Y) {
         // further callbacks in _this_ array (remember
         // route.callbacks is an array per route).
         // But can allow continued processing;
-        console.log('skip');
+        //console.log('skip');
         next('route');
       }
-      console.log('continue dispatch');
+      //console.log('continue dispatch');
       next();
       seen[cdId] = gen;
     },
