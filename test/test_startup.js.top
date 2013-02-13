@@ -1,10 +1,14 @@
 'use strict';
 
 (function() {
-  describe('Application start-up', function() {
+  describe('Application start up', function() {
     var startTheApp, isBrowserSupported, displayBrowserWarning,
-        continueWithCurrentBrowser, go, app, juju_config, getDocument,
-        appStarted, warningStyle;
-    before(function() {
+        hideBrowserWarning, continueWithCurrentBrowser, go, app, juju_config,
+        getDocument, appStarted, warningStyle, loadingStyle, Spinner, spinner,
+        startSpinner, displayLoadingMessage, hideLoadingMessage,
+        setLoadingMessageText;
+
+    beforeEach(function() {
       warningStyle = {display: null};
+      loadingStyle = {display: null};
       appStarted = false;

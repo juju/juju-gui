@@ -28,6 +28,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	| sort | sed -e 's/^\.\///' \
 	| grep -Ev -e '^manifest\.json$$' \
 		-e '^app/assets/javascripts/d3\.v2(\.min)?\.js$$' \
+		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket\.js$$' \
 		-e '^app/assets/javascripts/gallery-.*\.js$$' \
 		-e '^server.js$$')
@@ -308,6 +309,7 @@ define link-files
 	ln -sf "$(PWD)/app/modules-$(1).js" build-$(1)/juju-ui/assets/modules.js
 	ln -sf "$(PWD)/app/assets/images" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/app/assets/svgs" build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/app/assets/javascripts" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/version.js" build-$(1)/juju-ui/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/app.js" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/manifest.appcache" \
@@ -344,7 +346,6 @@ $(LINK_DEBUG_FILES):
 	ln -sf "$(PWD)/app/widgets" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/assets/javascripts/yui/yui/yui-debug.js" \
 		build-debug/juju-ui/assets/all-yui.js
-	ln -sf "$(PWD)/app/assets/javascripts" build-debug/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/templates.js" build-debug/juju-ui/
 
 $(LINK_PROD_FILES):

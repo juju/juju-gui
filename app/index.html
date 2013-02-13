@@ -30,6 +30,11 @@ if (/*@cc_on!@*/false) {
   </head>
 
   <body>
+      <!-- This <img> tag is here just to force early loading of the background
+        image so it displays more quickly.  This makes a large improvment to the
+        way the app looks while loading on a slow connection. -->
+      <img src="/juju-ui/assets/images/pattern_tile.png" style="display: none;">
+
       <div id="full-screen-mask" class="crosshatch-background">
         <div id="browser-warning" class="centered-column"
             style="display:none;">
@@ -38,7 +43,7 @@ if (/*@cc_on!@*/false) {
             <div class="header">
               <div class="error">
                 <span><i class="sprite alert_icon2"></i>
-                Your browser is not fully supported.</span>
+                Your browser is not fully supported</span>
               </div>
             </div>
             <p>
@@ -53,6 +58,15 @@ if (/*@cc_on!@*/false) {
             <form onsubmit="return continueWithCurrentBrowser();">
               <input type="submit" value="Continue"/>
             </form>
+          </div>
+        </div>
+        <div id="loading-message" class="centered-column">
+          <i class="sprite juju_logo" title="Juju GUI"></i>
+          <div class="panel">
+            <div id="loading-message-text" class="header">
+              Loading the Juju GUI
+            </div>
+            <div id="loading-spinner"></div>
           </div>
         </div>
       </div>
@@ -105,9 +119,42 @@ if (/*@cc_on!@*/false) {
         </div>
         <div id="vp-right-border"></div>
     </div>
+    <script src="/juju-ui/assets/javascripts/spin.min.js"></script>
     <script id="app-startup">
+      startSpinner = function() {
+        var opts = {
+          lines: 17, // The number of lines to draw
+          length: 0, // The length of each line
+          width: 3, // The line thickness
+          radius: 30, // The radius of the inner circle
+          corners: 1, // Corner roundness (0..1)
+          rotate: 14, // The rotation offset
+          color: '#000', // #rgb or #rrggbb
+          speed: 1.3, // Rounds per second
+          trail: 60, // Afterglow percentage
+          shadow: false, // Whether to render a shadow
+          hwaccel: true, // Whether to use hardware acceleration
+          className: 'spinner', // The CSS class to assign to the spinner
+          zIndex: 2e9, // The z-index (defaults to 2000000000)
+          top: '15', // Top position relative to parent in px
+          left: 'auto' // Left position relative to parent in px
+        };
+        var document = getDocument();
+        var target = document.getElementById('loading-spinner');
+        // If we are in a testing environment, then actually starting the
+        // spinner is unneccesary and counter productive.
+        if (target.style !== undefined) {
+          spinner = new Spinner(opts).spin(target);
+        }
+      };
+
+      setLoadingMessageText = function(newText) {
+        getDocument()
+          .getElementById('loading-message-text').innerHTML = newText;
+      };
+
       isBrowserSupported = function(agent) {
-        // At the moment, only Chrome is supported.
+        // At the moment only Chrome is supported.
         return (/Chrome/.test(agent));
       };
 
@@ -120,10 +167,26 @@ if (/*@cc_on!@*/false) {
           .getElementById('browser-warning').style.display = 'block';
       };
 
-      continueWithCurrentBrowser = function() {
+      hideBrowserWarning = function() {
         getDocument()
           .getElementById('browser-warning').style.display = 'none';
+      };
+
+      displayLoadingMessage = function() {
+        getDocument()
+          .getElementById('loading-message').style.display = 'block';
+      };
+
+      hideLoadingMessage = function() {
+        getDocument()
+          .getElementById('loading-message').style.display = 'none';
+      };
+
+      continueWithCurrentBrowser = function() {
+        hideBrowserWarning();
+        displayLoadingMessage();
         startTheApp();
+        // Signal that we want to stop even propagation.
         return false;
       };
 
@@ -133,16 +196,24 @@ if (/*@cc_on!@*/false) {
 
         // Tell jslint that we really do want to evaluate a string:
         /*jslint evil: true */
-        window.setTimeout('startTheApp', 100);
+        window.setTimeout('startTheApp()', 100);
       };
 
-      go = function() {
-        if (isBrowserSupported(navigator.userAgent)) {
+      go = function(agent) {
+        if (isBrowserSupported(agent)) {
           startTheApp();
         } else {
+          hideLoadingMessage();
           displayBrowserWarning();
         }
       };
+    </script>
+    <script>
+      // This code is here instead of in the "app-startup" script tag above
+      // because we extract that JS in order to test it.  This bit here is just
+      // to bootstrap the app when actually loaded into a browser.
+      startSpinner();
+      go(navigator.userAgent);
     </script>
     <!--
       Load the (potentially slow to download) core of the app.  We do this here
@@ -157,6 +228,7 @@ if (/*@cc_on!@*/false) {
       // function which will be picked up by the setTimeout and the app will
       // start.
       startTheApp = function() {
+        setLoadingMessageText('Trying to connect to the Juju environment');
         YUI(GlobalConfig).use(['juju-gui'], function(Y) {
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application
@@ -164,10 +236,6 @@ if (/*@cc_on!@*/false) {
           app.activateHotkeys();
         });
       };
-      // This call is here instead of in the "app-startup" script tag above
-      // because we extract that JS in order to test it.  This bit here is just
-      // to bootstrap the app when actually loaded into a browser.
-      go();
     </script>
   </body>
 </html>
