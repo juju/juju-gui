@@ -1,0 +1,5 @@
+<div class="landscape-controls">
+    <div class="restart-control right-border"></div>
+    <div class="updates-control right-border"></div>
+    <div class="machine-control"></div>
+</div>
