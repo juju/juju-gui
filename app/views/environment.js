@@ -105,7 +105,6 @@ YUI.add('juju-view-environment', function(Y) {
              'juju-view-utils',
              'juju-models',
              'juju-topology',
-             'svg-layouts',
              'base-build',
              'handlebars-base',
              'node',
