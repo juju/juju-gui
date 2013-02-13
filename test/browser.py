@@ -6,12 +6,16 @@ import getpass
 import httplib
 import json
 import os
-import selenium
-import selenium.webdriver
-from selenium.webdriver.support import ui
 import unittest
 import urlparse
 
+import selenium
+import selenium.webdriver
+from selenium.webdriver.support import ui
+import shelltoolbox
+
+
+juju = shelltoolbox.command('juju')
 
 ie = dict(selenium.webdriver.DesiredCapabilities.INTERNETEXPLORER)
 ie['platform'] = 'Windows 2012'
@@ -64,7 +68,7 @@ class TestCase(unittest.TestCase):
         if driver is None:
             # We sometimes run the tests under different browsers, if none is
             # specified, use Chrome.
-            browser_name = os.environ.get('JUJU_GUI_TEST_BROWSER', 'chrome')
+            browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'chrome')
             capabilities = browser_capabilities[browser_name].copy()
             capabilities['name'] = 'Juju GUI'
             user = getpass.getuser()
@@ -72,6 +76,7 @@ class TestCase(unittest.TestCase):
             driver = selenium.webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor=command_executor)
+            print('Browser:', browser_name)
             print('Test run details at https://saucelabs.com/jobs/' +
                 driver.session_id)
             # We want to tell saucelabs when all the tests are done.
@@ -103,3 +108,29 @@ class TestCase(unittest.TestCase):
         """
         wait = ui.WebDriverWait(self.driver, timeout)
         return wait.until(condition, error)
+
+    def wait_for_script(self, script, error=None, timeout=10):
+        """Wait for the given JavaScript snippet to return a True value.
+
+        Fail printing the provided error if timeout is exceeded.
+        Otherwise, return the value returned by the script.
+        """
+        condition = lambda driver: driver.execute_script(script)
+        return self.wait_for(condition, error=error, timeout=timeout)
+
+    def restart_api(self):
+        """Restart the staging API backend.
+
+        Wait for the pristine environment to be available.
+
+        Restarting the API backend allows for full test isolation even if tests
+        change the internal Juju environment. Such tests should add this
+        function as part of their own clean up process.
+        """
+        juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
+             'sudo', 'service', 'juju-api-improv', 'restart')
+        self.load()
+        self.wait_for_script(
+            'return app.env.get("connected");',
+            error='Impossible to connect to the API backend after restart.',
+            timeout=30)

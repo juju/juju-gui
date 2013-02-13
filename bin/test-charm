@@ -6,7 +6,14 @@
 python lib/deploy_charm_for_testing.py "$@"
 # Figure out the URL of the APP.
 export APP_URL=https://`juju status -e juju-gui-testing | grep public-address: | cut -d: -f2 | cut -c2-`
+# EXIT_CODE is used to keep track of test failures. If a test fails, this
+# script will exit with an error code.
+EXIT_CODE=0
 # Run the browser tests against the app.
-python test/test_charm_running.py -v
+for JUJU_GUI_TEST_BROWSER in ${JUJU_GUI_TEST_BROWSERS:-chrome}; do
+    export JUJU_GUI_TEST_BROWSER
+    python test/test_charm_running.py -v || EXIT_CODE=1
+done
 # Destroy the environment, releasing the resources.
 yes | juju destroy-environment -e juju-gui-testing
+exit $EXIT_CODE
