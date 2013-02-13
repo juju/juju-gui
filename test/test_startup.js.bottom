@@ -46,6 +46,11 @@
       assert.equal(warningStyle.display, 'none');
     });
 
+    it('will display the loading message when the user continues', function() {
+      continueWithCurrentBrowser();
+      assert.equal(loadingStyle.display, 'block');
+    });
+
     it('will stop event propigation when the user continues', function() {
       var result = continueWithCurrentBrowser();
       // Since the function is an event handler of a submit button and we do
@@ -59,22 +64,12 @@
       assert.isTrue(appStarted);
     });
 
-    it('will show a loading message while the app loads', function() {
-      // The loading message has not had it's default style touched yet.
-      assert.isNull(loadingStyle.display);
-      // The "go" function displays the loading message if there is no
-      // browser compatability warning.
-      go('Chrome');
-      assert.equal(loadingStyle.display, 'block');
-      assert.isNull(warningStyle.display);
-    });
-
     it('will show a loading message after any browser wanting', function() {
       // If the browser is not supported, then the loading message will be
       // displayed after the browser warning.
       go('Browser that does not exist, and therefore is not supported');
       assert.equal(warningStyle.display, 'block');
-      assert.isNull(loadingStyle.display);
+      assert.equal(loadingStyle.display, 'none');
       continueWithCurrentBrowser();
       assert.equal(warningStyle.display, 'none');
       assert.equal(loadingStyle.display, 'block');

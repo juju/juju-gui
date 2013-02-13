@@ -1,5 +1,7 @@
 'use strict';
 
+var spinner;
+
 /**
  * Provide the main App class, based on the YUI App framework. Also provide
  * the routing definitions, which map the request paths to the top-level
@@ -639,6 +641,8 @@ YUI.add('juju-gui', function(Y) {
      */
     onLogin: function() {
       Y.one('body > #full-screen-mask').hide();
+      // Stop the animated loading spinner.
+      spinner.stop();
       this.dispatch();
     },
 
