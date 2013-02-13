@@ -335,7 +335,8 @@ YUI.add('juju-gui', function(Y) {
     /**
      * Namespace aware dispatch
      **/
-    dispatch: function() {
+    xdispatch: function() {
+      console.log('dispatch');
       this._routeGeneration += 1;
       // Parse the URL in a namespace aware fashion.
       var paths = this._nsRouter.parse(this._getPath());
@@ -344,6 +345,7 @@ YUI.add('juju-gui', function(Y) {
         JujuGUI.superclass.dispatch.apply(this, arguments);
         this._nsPath = null;
       }, this);
+      return this;
     },
 
     // NS aware getpath
@@ -354,11 +356,18 @@ YUI.add('juju-gui', function(Y) {
       return JujuGUI.superclass._getPath.apply(this, arguments);
     },
 
+    _xnavigate: function(url, options) {
+      console.log("NAV", url, this._routeGeneration);
+      this._routeGeneration += 1;
+      return JujuGUI.superclass._navigate.call(this, url, options);
+    },
+
     // NS aware wrapper around _save to update URL
-    _save: function(url, replace) {
+    _xsave: function(url, replace) {
       // Increment Route Generation late in the chain.
       // `save` is past the async queue and the proper time to
       // increment gen.
+      console.log("_save", url);
       this._routeGeneration += 1;
       // Take the current Location and preserve other
       // namespaces
@@ -368,7 +377,7 @@ YUI.add('juju-gui', function(Y) {
       var loc = Y.getLocation();
       var result = loc.origin + this._nsRouter.url(
           Y.mix(components, incoming, true));
-      JujuGUI.superclass._save.call(this, result, replace);
+      return JujuGUI.superclass._save.call(this, result, replace);
     },
 
     /**
