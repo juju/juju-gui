@@ -335,16 +335,18 @@ YUI.add('juju-gui', function(Y) {
     /**
      * Namespace aware dispatch
      **/
-    xdispatch: function() {
-      console.log('dispatch');
+    dispatch: function() {
+      console.group('dispatch');
       this._routeGeneration += 1;
       // Parse the URL in a namespace aware fashion.
       var paths = this._nsRouter.parse(this._getPath());
       Y.each(paths, function(p, ns) {
         this._nsPath = p;
+        console.log('dispatch ns', ns, p, this._routeGeneration);
         JujuGUI.superclass.dispatch.apply(this, arguments);
         this._nsPath = null;
       }, this);
+      console.groupEnd();
       return this;
     },
 
@@ -356,19 +358,19 @@ YUI.add('juju-gui', function(Y) {
       return JujuGUI.superclass._getPath.apply(this, arguments);
     },
 
-    _xnavigate: function(url, options) {
+    _navigate: function(url, options) {
       console.log("NAV", url, this._routeGeneration);
       this._routeGeneration += 1;
       return JujuGUI.superclass._navigate.call(this, url, options);
     },
 
     // NS aware wrapper around _save to update URL
-    _xsave: function(url, replace) {
+    _save: function(url, replace) {
       // Increment Route Generation late in the chain.
       // `save` is past the async queue and the proper time to
       // increment gen.
       console.log("_save", url);
-      this._routeGeneration += 1;
+      //this._routeGeneration += 1;
       // Take the current Location and preserve other
       // namespaces
       var components = this._nsRouter.parse(Y.getLocation().pathname);
@@ -424,6 +426,8 @@ YUI.add('juju-gui', function(Y) {
           }
 
         } else if ((callback = callbacks.shift())) {
+          console.group('callback');
+          console.log('callback', callback);
           if (typeof callback === 'string') {
             callback = self[callback];
           }
@@ -433,9 +437,11 @@ YUI.add('juju-gui', function(Y) {
           // Attach the callback id to the request.
           req.callbackId = Y.stamp(callback, true);
           callback.call(self, req, res, req.next);
+          console.groupEnd();
 
         } else if ((route = routes.shift())) {
           // Make a copy of this route's `callbacks` and find its matches.
+          console.group("route", route.path)
           callbacks = route.callbacks.concat();
           matches = route.regex.exec(path);
 
@@ -452,6 +458,7 @@ YUI.add('juju-gui', function(Y) {
 
           // Execute this route's `callbacks`.
           req.next();
+          console.groupEnd();
         }
       };
 
@@ -770,8 +777,11 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     onLogin: function() {
-      Y.one('body > #login-mask').hide();
-      this.dispatch();
+      var mask = Y.one('#login-mask');
+      if (mask) {
+        mask.hide();
+        this.dispatch();
+      }
     },
 
     /**
@@ -949,7 +959,9 @@ YUI.add('juju-gui', function(Y) {
         // the state tracker.
         Y.Array.each(callbacks, function(cb) {Y.stamp(cb);});
         // Inject our state tracker
-        callbacks.unshift(this._routeStateTracker);
+        if (callbacks[0] !== 'routeStateTracker') {
+          callbacks.unshift('_routeStateTracker');
+        }
         route.callbacks = callbacks.concat();
         // Additionally pass the route with its exteneded
         // attribute set.
@@ -974,8 +986,10 @@ YUI.add('juju-gui', function(Y) {
         // further callbacks in _this_ array (remember
         // route.callbacks is an array per route).
         // But can allow continued processing;
+        console.log('skip');
         next('route');
       }
+      console.log('continue dispatch');
       next();
       seen[cdId] = gen;
     },
