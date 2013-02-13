@@ -50,7 +50,6 @@ YUI.add('juju-topology-service', function(Y) {
         }
       },
       yui: {
-        rendered: 'renderedHandler',
         show: 'show',
         hide: 'hide',
         fade: 'fade',
@@ -807,33 +806,6 @@ YUI.add('juju-topology-service', function(Y) {
             .attr('opacity', alpha !== undefined && alpha || '0.2');
     },
 
-    /*
-     * Finish DOM-dependent rendering
-     *
-     * Some portions of the visualization require information pulled
-     * from the DOM, such as the clientRects used for sizing relation
-     * labels and the viewport size used for sizing the whole graph. This
-     * is called after the view is attached to the DOM in order to
-     * perform all of that work.  In the app, it is called as a callback
-     * in `app.showView()`, and in testing, it needs to be called manually,
-     * if the test relies on any of this data.
-     *
-     * @method renderedHandler
-     */
-    renderedHandler: function() {
-      var container = this.get('container');
-
-      // Ensure relation labels are sized properly.
-      container.all('.rel-label').each(function(label) {
-        var width = label.one('text').getClientRect().width + 10;
-        label.one('rect').setAttribute('width', width)
-              .setAttribute('x', -width / 2);
-      });
-
-      // Chainable method.
-      return this;
-    },
-
     /**
      * The user clicked on the environment view background.
      *
@@ -857,7 +829,7 @@ YUI.add('juju-topology-service', function(Y) {
           z = topo.get('scale');
 
       if (service && cp) {
-        var cp_width = cp.getClientRect().width,
+        var cp_width = cp.getDOMNode().getClientRects()[0].width,
             menu_left = (service.x * z + service.w * z / 2 <
                          topo.get('width') * z / 2),
             service_center = service.relativeCenter;
