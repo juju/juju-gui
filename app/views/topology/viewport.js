@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Provide the ViewportModule class.
+ *
+ * @module topology
+ * @submodule topology.viewport
+ */
+
 YUI.add('juju-topology-viewport', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
@@ -7,9 +14,7 @@ YUI.add('juju-topology-viewport', function(Y) {
       d3ns = Y.namespace('d3');
 
   /**
-   * @module topology-viewport
    * @class ViewportModule
-   * @namespace views
    **/
   views.ViewportModule = Y.Base.create('ViewportModule', d3ns.Module, [], {
 
@@ -34,7 +39,7 @@ YUI.add('juju-topology-viewport', function(Y) {
     /**
      * Propagate new dimensions to all the places that need them.
      *
-     * @method setAllTheDimensions.
+     * @method setAllTheDimensions
      * @static
      * @param {Object} dimensions The new height and width.
      * @param {Object} canvas The canvas to which impute new dimensions.
@@ -72,7 +77,7 @@ YUI.add('juju-topology-viewport', function(Y) {
      * sizes.
      *
      * @return {undefined} Nothing, this function generates only side effects.
-     * @method resized.
+     * @method resized
      */
     resized: function() {
       var container = this.getContainer();

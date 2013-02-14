@@ -1,9 +1,11 @@
 'use strict';
 
 /**
- * The charm panel view(s).
+ * The charm panel views implement the various things shown in the right panel
+ * when clicking on the "Charms" label in the title bar, or running a search.
  *
  * @module views
+ * @submodule views.charm-panel
  */
 
 YUI.add('juju-charm-panel', function(Y) {
@@ -16,6 +18,7 @@ YUI.add('juju-charm-panel', function(Y) {
       subscriptions = [],
       // Singleton
       _instance,
+
       // See https://github.com/yui/yuidoc/issues/25 for issue tracking
       // missing @function tag.
       /**
@@ -46,6 +49,7 @@ YUI.add('juju-charm-panel', function(Y) {
           icon.replaceClass('chevron_up', 'chevron_down');
         }
       },
+
       /**
        * Given a container node and a total height available, set the height of
        * a '.charm-panel' node to fill the remaining height available to it
@@ -68,6 +72,7 @@ YUI.add('juju-charm-panel', function(Y) {
           scrollContainer.setStyle('height', scrollHeight + 'px');
         }
       },
+
       /**
        * Given a set of entries as returned by the charm store "find"
        * method (charms grouped by series), return the list filtered
@@ -84,6 +89,7 @@ YUI.add('juju-charm-panel', function(Y) {
        */
       filterEntries = function(entries, filter, services) {
         var deployedCharms;
+
         /**
          * Filter to determine if a charm is a subordinate.
          *
@@ -94,6 +100,7 @@ YUI.add('juju-charm-panel', function(Y) {
         function isSubFilter(charm) {
           return !!charm.get('is_subordinate');
         }
+
         /**
          * Filter to determine if a charm is the same as any
          * deployed services.
@@ -105,6 +112,7 @@ YUI.add('juju-charm-panel', function(Y) {
         function isDeployedFilter(charm) {
               return deployedCharms.indexOf(charm.get('id')) !== -1;
         }
+
         var filter_fcn;
 
         if (filter === 'all') {
@@ -157,6 +165,7 @@ YUI.add('juju-charm-panel', function(Y) {
               };
             });
       },
+
       /**
        * Given an array of interface data as stored in a charm's "required"
        * and "provided" attributes, return an array of interface names.
@@ -179,10 +188,10 @@ YUI.add('juju-charm-panel', function(Y) {
       };
 
   /**
-   * Display a unit.
+   * Charm collection view. Show a list of charms, each clickable through
+   * for a description, or deployed directly with a "Deploy" button.
    *
    * @class CharmCollectionView
-   * @namespace views
    */
   var CharmCollectionView = Y.Base.create('CharmCollectionView', Y.View, [], {
     template: views.Templates['charm-search-result'],
@@ -190,12 +199,25 @@ YUI.add('juju-charm-panel', function(Y) {
       'a.charm-detail': {click: 'showDetails'},
       '.charm-entry .btn.deploy': {click: 'showConfiguration'},
       '.charm-entry': {
+
+        /**
+         * Show the charm deploy button on mouse pointer enter.
+         *
+         * @method CharmCollectionView.events.mouseenter
+         */
         mouseenter: function(ev) {
           ev.currentTarget.all('.btn').transition({opacity: 1, duration: 0.25});
         },
+
+        /**
+         * Hide the charm deploy button on mouse pointer leave.
+         *
+         * @method CharmCollectionView.events.mouseleave
+         */
         mouseleave: function(ev) {
           ev.currentTarget.all('.btn').transition({opacity: 0, duration: 0.25});
         }
+
       },
       '.charm-filter-picker .picker-button': {
         click: 'showCharmFilterPicker'
@@ -204,9 +226,15 @@ YUI.add('juju-charm-panel', function(Y) {
         click: 'hideCharmFilterPicker'
       }
     },
-    // Set searchText to cause the results to be found and rendered.
-    // Set defaultSeries to cause all the results for the default series to be
-    // found and rendered.
+
+    /**
+     * Set searchText to cause the results to be found and rendered.
+     *
+     * Set defaultSeries to cause all the results for the default series
+     * to be found and rendered.
+     *
+     * @method CharmCollectionView.initializer
+     */
     initializer: function() {
       var self = this;
       this.set('filter', 'all');
@@ -224,6 +252,7 @@ YUI.add('juju-charm-panel', function(Y) {
               });
         }
       });
+
       this.after('defaultSeriesChange', function(ev) {
         this.set('defaultEntries', null);
         if (ev.newVal) {
@@ -248,6 +277,10 @@ YUI.add('juju-charm-panel', function(Y) {
       });
       this.after('heightChange', this._setScroll);
     },
+
+    /**
+     * @method CharmCollectionView.render
+     */
     render: function() {
       var container = this.get('container'),
           searchText = this.get('searchText'),
@@ -299,9 +332,10 @@ YUI.add('juju-charm-panel', function(Y) {
       this._setScroll();
       return this;
     },
+
     /**
-     * When the view's "height" attribute is set, adjust the internal scrollable
-     * div to have the appropriate height.
+     * When the view's "height" attribute is set, adjust the internal
+     * scrollable div to have the appropriate height.
      *
      * @method _setScroll
      * @protected
@@ -315,6 +349,7 @@ YUI.add('juju-charm-panel', function(Y) {
         scrollContainer.setStyle('height', height - 1 + 'px');
       }
     },
+
     /**
      * Fire an event indicating that the charm panel should switch to the
      * "description" for a given charm.
@@ -330,6 +365,15 @@ YUI.add('juju-charm-panel', function(Y) {
           { name: 'description',
             charmId: ev.target.getAttribute('href') });
     },
+
+    /**
+     * Fire an event indicating that the charm panel should switch to the
+     * "configuration" for a given charm.
+     *
+     * @method showConfiguration
+     * @param {Object} ev An event object (with a `halt` method).
+     * @return {undefined} Sends a signal only.
+     */
     showConfiguration: function(ev) {
       // Without the ev.halt the 'outside' click handler is getting
       // called which immediately closes the panel.
@@ -339,8 +383,9 @@ YUI.add('juju-charm-panel', function(Y) {
           { name: 'configuration',
             charmId: ev.currentTarget.getData('url')});
     },
+
     /**
-     * Create a data structure friendly to the view
+     * Create a data structure friendly to the view.
      *
      * @method normalizeCharms.
      */
@@ -389,6 +434,7 @@ YUI.add('juju-charm-panel', function(Y) {
         return {series: name, charms: hash[name]};
       });
     },
+
     /**
      * Find charms that match a query.
      *
@@ -419,6 +465,12 @@ YUI.add('juju-charm-panel', function(Y) {
             );
           }}});
     },
+
+    /**
+     * Show errors on both console and notifications.
+     *
+     * @method _showErrors
+     */
     _showErrors: function(e) {
       console.error(e.error);
       this.get('db').notifications.add(
@@ -463,10 +515,10 @@ YUI.add('juju-charm-panel', function(Y) {
   views.CharmCollectionView = CharmCollectionView;
 
   /**
-   * Display a unit.
+   * Charm description view. It describes a charm's features in detail,
+   * together with a "Deploy" button.
    *
    * @class CharmDescriptionView
-   * @namespace views
    */
   var CharmDescriptionView = Y.Base.create(
       'CharmDescriptionView', Y.View, [views.JujuBaseView], {
@@ -478,10 +530,16 @@ YUI.add('juju-charm-panel', function(Y) {
           '.charm-section h4': {click: toggleSectionVisibility},
           'a.charm-detail': {click: 'showDetails'}
         },
+        /**
+         * @method CharmDescriptionView.initializer
+         */
         initializer: function() {
           this.bindModelView(this.get('model'));
           this.after('heightChange', this._setScroll);
         },
+        /**
+         * @method CharmDescriptionView.render
+         */
         render: function() {
           var container = this.get('container'),
               charm = this.get('model');
@@ -647,20 +705,30 @@ YUI.add('juju-charm-panel', function(Y) {
   views.CharmDescriptionView = CharmDescriptionView;
 
   /**
-   * Display a charms configuration panel.
+   * Display a charm's configuration panel. It shows editable fields for
+   * the charm's configuration parameters, together with a "Cancel" and
+   * a "Confirm" button for deployment.
    *
    * @class CharmConfigurationView
-   * @namespace views
    */
   var CharmConfigurationView = Y.Base.create(
       'CharmConfigurationView', Y.View, [views.JujuBaseView], {
         template: views.Templates['charm-pre-configuration'],
         tooltip: null,
         configFileContent: null,
+
+        /**
+         * @method CharmConfigurationView.initializer
+         */
         initializer: function() {
           this.bindModelView(this.get('model'));
           this.after('heightChange', this._setScroll);
+          this.after('changePanel', this._clearGhostService);
         },
+
+        /**
+         * @method CharmConfigurationView.render
+         */
         render: function() {
           var container = this.get('container'),
               charm = this.get('model'),
@@ -677,6 +745,22 @@ YUI.add('juju-charm-panel', function(Y) {
             // This does not work via delegation.
             container.one('.charm-panel').after(
                 'scroll', Y.bind(this._moveTooltip, this));
+
+            // Create a 'ghost' service to represent what will be deployed.
+            var db = this.get('db');
+            var serviceCount = db.services.filter(function(service) {
+              return service.get('charm') === charm.get('id');
+            }).length + 1;
+            var ghostService = db.services.create({
+              id: '(' + charm.get('package_name') + ' ' + serviceCount + ')',
+              pending: true,
+              charm: charm.get('id'),
+              unit_count: 0,  // No units yet.
+              loaded: false,
+              config: config
+            });
+            this.set('ghostService', ghostService);
+            db.fire('update');
           } else {
             container.setHTML(
                 '<div class="alert">Waiting on charm data...</div>');
@@ -684,6 +768,7 @@ YUI.add('juju-charm-panel', function(Y) {
           this._setScroll();
           return this;
         },
+
         /**
          * When the view's "height" attribute is set, adjust the internal
          * scrollable div to have the appropriate height.
@@ -695,6 +780,7 @@ YUI.add('juju-charm-panel', function(Y) {
         _setScroll: function() {
           setScroll(this.get('container'), this.get('height'));
         },
+
         events: {
           '.btn.cancel': {click: 'goBack'},
           '.btn.deploy': {click: 'onCharmDeployClicked'},
@@ -706,8 +792,9 @@ YUI.add('juju-charm-panel', function(Y) {
           'input.config-field[type=checkbox]':
               {click: function(evt) {evt.target.focus();}}
         },
+
         /**
-         * Determines the Y coordinate that would center a tooltip on a field.
+         * Determine the Y coordinate that would center a tooltip on a field.
          *
          * @static
          * @param {Number} fieldY The current Y position of the tooltip.
@@ -720,8 +807,9 @@ YUI.add('juju-charm-panel', function(Y) {
           var y_offset = (tooltipHeight - fieldHeight) / 2;
           return fieldY - y_offset;
         },
+
         /**
-         * Determines the X coordinate that would place a tooltip next to a
+         * Determine the X coordinate that would place a tooltip next to a
          * field.
          *
          * @static
@@ -733,6 +821,12 @@ YUI.add('juju-charm-panel', function(Y) {
         _calculateTooltipX: function(fieldX, tooltipWidth) {
           return fieldX - tooltipWidth - 15;
         },
+
+        /**
+         * Move a tooltip to its predefined position.
+         *
+         * @method _moveTooltip
+         */
         _moveTooltip: function() {
           if (this.tooltip.field &&
               Y.DOM.inRegion(
@@ -759,6 +853,12 @@ YUI.add('juju-charm-panel', function(Y) {
             this.tooltip.hide();
           }
         },
+
+        /**
+         * Show the charm's description.
+         *
+         * @method showDescription
+         */
         showDescription: function(evt) {
           var controlGroup = evt.target.ancestor('.control-group'),
               node = controlGroup.one('.control-description'),
@@ -772,10 +872,17 @@ YUI.add('juju-charm-panel', function(Y) {
               this.tooltip.panel.getDOMNode());
           this._moveTooltip();
         },
+
+        /**
+         * Hide the charm's description.
+         *
+         * @method hideDescription
+         */
         hideDescription: function(evt) {
           this.tooltip.hide();
           delete this.tooltip.field;
         },
+
         /**
          * Pass clicks on the overlay on to the correct recipient.
          * The recipient can be the upload widget or the file remove one.
@@ -792,6 +899,7 @@ YUI.add('juju-charm-panel', function(Y) {
             container.one('.config-file-upload-widget').getDOMNode().click();
           }
         },
+
         /**
          * Handle the file upload click event.
          * Call onFileLoaded or onFileError if an error occurs during upload.
@@ -813,6 +921,7 @@ YUI.add('juju-charm-panel', function(Y) {
           container.one('.config-file-upload-overlay')
             .setContent('Remove file');
         },
+
         /**
          * Handle the file remove click event.
          * Restore the file upload widget on click.
@@ -837,6 +946,7 @@ YUI.add('juju-charm-panel', function(Y) {
           overlay.ancestor('.collapsible')
             .show('sizeIn', {duration: 0.25, width: null});
         },
+
         /**
          * Callback called when a file is correctly uploaded.
          * Hide the charm configuration section.
@@ -849,7 +959,7 @@ YUI.add('juju-charm-panel', function(Y) {
           this.configFileContent = evt.target.result;
 
           if (!this.configFileContent) {
-            // Some file read errors don't go through the error handler as
+            // Some file read errors do not go through the error handler as
             // expected but instead return an empty string.  Warn the user if
             // this happens.
             var db = this.get('db');
@@ -863,6 +973,7 @@ YUI.add('juju-charm-panel', function(Y) {
           }
           this.get('container').one('.charm-settings').hide();
         },
+
         /**
          * Callback called when an error occurs during file upload.
          * Hide the charm configuration section.
@@ -897,9 +1008,11 @@ YUI.add('juju-charm-panel', function(Y) {
           }
           return;
         },
+
         /**
          * Fires an event indicating that the charm panel should switch to the
-         * "charms" search result view.
+         * "charms" search result view. Called upon clicking the "Cancel"
+         * button.
          *
          * @method goBack
          * @param {Object} ev An event object (with a "halt" method).
@@ -909,20 +1022,48 @@ YUI.add('juju-charm-panel', function(Y) {
           ev.halt();
           this.fire('changePanel', { name: 'charms' });
         },
+
+        /**
+         * Clears the ghost service from the database and updates the canvas.
+         *
+         * @method _clearGhostService
+         * @param {Object} ev An event object.
+         * @return {undefined} Side effects only.
+         */
+        _clearGhostService: function(ev) {
+          // Remove the ghost service from the environment.
+          var db = this.get('db');
+          var ghostService = this.get('ghostService');
+          if (Y.Lang.isValue(ghostService)) {
+            db.services.remove(ghostService);
+            db.fire('update');
+          }
+        },
+
+        /**
+         * Called upon clicking the "Confirm" button.
+         *
+         * @method onCharmDeployClicked
+         * @param {Object} ev An event object (with a "halt" method).
+         * @return {undefined} Sends a signal only.
+         */
         onCharmDeployClicked: function(evt) {
-          var container = this.get('container'),
-              db = this.get('db'),
-              env = this.get('env'),
-              serviceName = container.one('#service-name').get('value'),
-              numUnits = container.one('#number-units').get('value'),
-              charm = this.get('model'),
-              url = charm.get('id'),
-              config = utils.getElementsValuesMapping(container,
-                  '#service-config .config-field');
+          var container = this.get('container');
+          var db = this.get('db');
+          var ghostService = this.get('ghostService');
+          var env = this.get('env');
+          var serviceName = container.one('#service-name').get('value');
+          var numUnits = container.one('#number-units').get('value');
+          var charm = this.get('model');
+          var url = charm.get('id');
+          var config = utils.getElementsValuesMapping(container,
+              '#service-config .config-field');
+          var self = this;
           // The service names must be unique.  It is an error to deploy a
-          // service with same name.
+          // service with same name (but ignore the ghost service).
           var existing_service = db.services.getById(serviceName);
-          if (Y.Lang.isValue(existing_service)) {
+          if (Y.Lang.isValue(existing_service) &&
+              existing_service !== ghostService) {
             console.log('Attempting to add service of the same name: ' +
                         serviceName);
             db.notifications.add(
@@ -956,22 +1097,39 @@ YUI.add('juju-charm-panel', function(Y) {
                         level: 'info'
                       })
                   );
-                  // Add service to the db and re-render for immediate display
-                  // on the front page.
-                  var service = new models.Service({
+                  // Update the annotations with the box's x/y coordinates if
+                  // they have been set by dragging the ghost.
+                  if (ghostService.get('dragged')) {
+                    env.update_annotations(
+                        serviceName,
+                        { 'gui.x': ghostService.get('x'),
+                          'gui.y': ghostService.get('y') },
+                        function() { return; });
+                  }
+                  // Update the ghost service to match the configuration.
+                  ghostService.setAttrs({
                     id: serviceName,
                     charm: charm.get('id'),
                     unit_count: 0,  // No units yet.
                     loaded: false,
+                    pending: false,
                     config: config
                   });
-                  db.services.add([service]);
                   // Force refresh.
                   db.fire('update');
+                  self.set('ghostService', null);
                 }
+                self.goBack(evt);
               });
-          this.goBack(evt);
         },
+
+        /**
+         * Setup the panel overlay.
+         *
+         * @method setupOverlay
+         * @param {Object} container The container element.
+         * @return {undefined} Side effects only.
+         */
         setupOverlay: function(container) {
           var self = this;
           container.appendChild(Y.Node.create('<div/>'))
@@ -983,7 +1141,11 @@ YUI.add('juju-charm-panel', function(Y) {
       });
   views.CharmConfigurationView = CharmConfigurationView;
 
-  // Creates the "_instance" object
+  /**
+   * Create the "_instance" object.
+   *
+   * @method createInstance
+   */
   function createInstance(config) {
 
     var charmStore = config.charm_store,
@@ -1030,6 +1192,11 @@ YUI.add('juju-charm-panel', function(Y) {
     Y.one(document.body).append(container);
     container.hide();
 
+    /**
+     * Setup the panel data.
+     *
+     * @method setPanel
+     */
     function setPanel(config) {
       var newPanel = panels[config.name];
       if (!Y.Lang.isValue(newPanel)) {
@@ -1105,7 +1272,7 @@ YUI.add('juju-charm-panel', function(Y) {
     subscriptions.push(Y.on('afterPageSizeRecalculation', function() {
       if (isPanelVisible) {
         // We need to do this both in windowresize and here because
-        // windowresize can only be fired with "on," and so we can't know
+        // windowresize can only be fired with "on," and so we cannot know
         // which handler will be fired first.
         updatePanelPosition();
       }
@@ -1131,6 +1298,9 @@ YUI.add('juju-charm-panel', function(Y) {
         container.setStyles({opacity: 0, display: 'block'});
         container.show(true);
         isPanelVisible = true;
+        if (app.views.environment.instance) {
+          app.views.environment.instance.topo.fire('clearState');
+        }
         updatePanelPosition();
         if (Y.Lang.isValue(trigger)) {
           trigger.one('i#charm-search-chevron').replaceClass(
@@ -1159,12 +1329,18 @@ YUI.add('juju-charm-panel', function(Y) {
       }
     }
 
+    /**
+     * Update the panel position.
+     *
+     * This should only be called when the popup is supposed to be visible.
+     * We need to hide the popup before we calculate positions, so that it
+     * does not cause scrollbars to appear while we are calculating
+     * positions.  The temporary scrollbars can cause the calculations to
+     * be incorrect.
+     *
+     * @method updatePanelPosition
+     */
     function updatePanelPosition() {
-      // This should only be called when the popup is supposed to be visible.
-      // We need to hide the popup before we calculate positions so that it
-      // does not cause scrollbars to appear while we are calculating
-      // positions.  The temporary scrollbars can cause the calculations to be
-      // incorrect.
       container.setStyle('display', 'none');
       var pos = calculatePanelPosition();
       container.setStyle('display', 'block');
@@ -1176,6 +1352,11 @@ YUI.add('juju-charm-panel', function(Y) {
       }
     }
 
+    /**
+     * Calculate the panel position.
+     *
+     * @method calculatePanelPosition
+     */
     function calculatePanelPosition() {
       var headerBox = Y.one('#charm-search-trigger-container'),
           dimensions = utils.getEffectiveViewportSize();
@@ -1200,12 +1381,18 @@ YUI.add('juju-charm-panel', function(Y) {
       subscriptions.push(searchField.on('keydown', handleKeyDown));
     }
 
-    // The public methods
+    // The public methods.
     return {
       hide: hide,
       toggle: toggle,
       show: show,
       node: container,
+
+      /**
+       * Set the default charm series in the search and description panels.
+       *
+       * @method setDefaultSeries
+       */
       setDefaultSeries: function(series) {
         charmsSearchPanel.set('defaultSeries', series);
         descriptionPanel.set('defaultSeries', series);
@@ -1213,14 +1400,26 @@ YUI.add('juju-charm-panel', function(Y) {
     };
   }
 
-  // The public methods
+  // The public methods.
   views.CharmPanel = {
+
+    /**
+     * Get the instance, creating it if it does not yet exist.
+     *
+     * @method getInstance
+     */
     getInstance: function(config) {
       if (!_instance) {
         _instance = createInstance(config);
       }
       return _instance;
     },
+
+    /**
+     * Destroy the instance and its node, detaching all subscriptions.
+     *
+     * @method getInstance
+     */
     killInstance: function() {
       while (subscriptions.length) {
         var sub = subscriptions.pop();

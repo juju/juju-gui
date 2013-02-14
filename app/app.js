@@ -1,7 +1,11 @@
 'use strict';
 
+var spinner;
+
 /**
- * Provides the main app class, based on the YUI App framework.
+ * Provide the main App class, based on the YUI App framework. Also provide
+ * the routing definitions, which map the request paths to the top-level
+ * views defined by the App class.
  *
  * @module app
  */
@@ -31,7 +35,9 @@ YUI.add('juju-gui', function(Y) {
      * The views encapsulate the functionality blocks that output
      * the GUI pages. The "parent" attribute defines the hierarchy.
      *
-     *  @attribute views
+     * FIXME: not included in the generated doc output.
+     *
+     * @attribute views
      */
     views: {
 
@@ -104,7 +110,7 @@ YUI.add('juju-gui', function(Y) {
      * Placeholder for real behaviors associated with DOM Node data-*
      * attributes.
      *
-     *  @attribute behaviors
+     * @attribute behaviors
      */
     behaviors: {
       timestamp: {
@@ -242,6 +248,7 @@ YUI.add('juju-gui', function(Y) {
       // a default if none is configured.
       var environment_name = this.get('environment_name') || 'Environment',
           environment_node = Y.one('#environment-name');
+
       // Some tests do not fully populate the DOM, so we check to be sure.
       if (Y.Lang.isValue(environment_node)) {
         environment_node.set('text', environment_name);
@@ -792,6 +799,8 @@ YUI.add('juju-gui', function(Y) {
       var mask = Y.one('#login-mask');
       if (mask) {
         mask.hide();
+        // Stop the animated loading spinner.
+        spinner.stop();
         this.dispatch();
       }
     },
@@ -1032,6 +1041,7 @@ YUI.add('juju-gui', function(Y) {
     ATTRS: {
       html5: true,
       charm_store: {},
+
       /*
        * Routes
        *
@@ -1039,7 +1049,9 @@ YUI.add('juju-gui', function(Y) {
        * and the callbacks for all the ones that match are invoked,
        * without stopping at the first one.
        *
-       *  @attribute routes
+       * FIXME: not included in the generated doc output.
+       *
+       * @attribute routes
        */
       routes: {
         value: [

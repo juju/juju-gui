@@ -5,6 +5,13 @@
 // into a service tab (viewing the environment's charm) and delete
 // CharmCollectionView.
 
+/**
+ * Provide the CharmView and CharmCollectionView classes.
+ *
+ * @module views
+ * @submodule views.charm
+ */
+
 YUI.add('juju-view-charm-collection', function(Y) {
 
   var views = Y.namespace('juju.views'),

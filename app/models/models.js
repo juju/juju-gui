@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * The database models.
+ *
+ * @module models
+ */
+
 YUI.add('juju-models', function(Y) {
 
   var models = Y.namespace('juju.models'),
@@ -54,6 +60,9 @@ YUI.add('juju-models', function(Y) {
         value: false
       },
       subordinate: {
+        value: false
+      },
+      pending: {
         value: false
       },
       unit_count: {},

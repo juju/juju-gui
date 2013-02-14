@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * The store environment.
+ *
+ * @module store
+ * @submodule store.env
+ */
+
 YUI.add('juju-env', function(Y) {
 
   /**

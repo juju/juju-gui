@@ -444,6 +444,10 @@ g.service {
     fill: none;
     stroke: none;
 
+    &.pending {
+        opacity: 0.8;
+    }
+
     text {
         text-anchor: middle;
     }
@@ -531,11 +535,24 @@ g.unit {
 /*
  * Notification system
  */
+ #notify-list {
+    white-space: nowrap;
+    max-height: 500px;
+    overflow-y: scroll;
+
+    .header {
+        padding: 1em 0;
+    }
+ }
+
 .notice {
     border-top: 1px solid #D0D0D0;
-    padding: 1em 4px;
-    margin: 1em 0 0 2px;
+    padding: 1em;
     cursor: pointer;
+
+    &:hover {
+        background-color: #eee;
+    }
 
     .seen {
         background-color: rgba(222, 222, 222, 0.33);
@@ -695,7 +712,7 @@ g.unit {
             ul {
                 list-style-type: none;
                 padding-top: 5px;
-		padding-bottom: 5px;
+                padding-bottom: 5px;
                 margin: 0;
 
                 li {
@@ -704,7 +721,7 @@ g.unit {
                         background:
                             url(/juju-ui/assets/images/selected_tick.png)
                             no-repeat;
-			background-position: 240px 3px;
+                        background-position: 240px 3px;
                     }
                 }
             }
@@ -1108,6 +1125,7 @@ g.unit {
                 height: 20px;
                 line-height: 16px;
             }
+
             ul {
                 margin-bottom: 0;
                 border-left: 1px solid lightgrey;
@@ -1118,6 +1136,10 @@ g.unit {
                 border-top: 1px solid #FFFFFF;
                 border-bottom: 1px solid #BDBDBD;
                 height: 70px;
+                /* Hack to prevent the block from spilling downward in IE10. */
+                .ie10 & {
+                    padding-left: 4px;
+                }
                 .charm-div {
                     padding-top: 11px;
                 }
@@ -1141,6 +1163,8 @@ g.unit {
                     font-size: 16px;
                     color: @charm-panel-orange;
                     line-height: 18px;
+                    /* Silly margin-top needed for moz. */
+                    margin-top: -0.1px;
                 }
                 .charm-summary {
                     padding-top: 4px;
@@ -1407,7 +1431,7 @@ div.inline {
   }
 }
 
-#login-mask {
+#full-screen-mask {
     display: block;
     position: absolute;
     top: 0;
@@ -1416,18 +1440,18 @@ div.inline {
     height: 100%;
     z-index: 10000;
 }
-#login-column {
+.centered-column {
     display: block;
     z-index: 10001;
     position: absolute;
     top: 80px;
     left: 50%;
     text-align: center;
-    width: 300px;
-    margin-left: -150px;
+    width: 420px;
+    margin-left: -210px;
 
     div {
-        width: 220px;
+        width: 280px;
         text-align: left;
         margin: 0 auto;
         margin-bottom: 1ex;
@@ -1438,17 +1462,20 @@ div.inline {
             text-decoration: none
         }
     }
-    @login-panel-color: #f5f5f5;
-    @login-panel-gradient: (@login-panel-color - #111);
-    @login-panel-shadow: (@login-panel-color - #444);
+
+    @panel-color: #f5f5f5;
+    @panel-gradient: (@panel-color - #111);
+    @panel-shadow: (@panel-color - #444);
     @curve-radius: ~"24px 28px";
-    div#login-form {
+
+    .panel {
         input {
+            width: 270px;
             margin-top: 8px;
             margin-bottom: 8px;
         }
         input[type=submit] {
-            width: 220px;
+            width: 280px;
             height: 26px;
             text-transform: uppercase;
             text-shadow: none;
@@ -1467,12 +1494,10 @@ div.inline {
         padding: 5px 25px 5px;
         margin-top: 3ex;
         margin-bottom: 4ex;
-        .create-button(@login-panel-color,
-                       @login-panel-gradient,
-                       @login-panel-shadow,
-                       -6px);
-        .create-border-radius(~"24px / 28px");
-        div#login-header {
+        .create-button(@panel-color, @panel-gradient, @panel-shadow, -6px);
+        .create-border-radius(@curve-radius);
+
+        .header {
             padding: 15px 25px 10px 25px;
             margin-left: -25px;
             margin-top: -5px;
@@ -1482,8 +1507,8 @@ div.inline {
             -moz-border-radius-topright: @curve-radius;
             border-top-left-radius: @curve-radius;
             border-top-right-radius: @curve-radius;
-            @gradient-start: @login-panel-gradient;
-            @gradient-end: @login-panel-shadow;
+            @gradient-start: @panel-gradient;
+            @gradient-end: @panel-shadow;
             background-image: -ms-linear-gradient(
                 top, @gradient-start, @gradient-end);
             background-image: -webkit-gradient(
@@ -1502,5 +1527,9 @@ div.inline {
     .error {
         color: red;
         font-weight: bold;
+    }
+
+    #loading-spinner {
+        height: 100px;
     }
 }

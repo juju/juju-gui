@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Provide the RelationModule class.
+ *
+ * @module topology
+ * @submodule topology.relation
+ */
+
 YUI.add('juju-topology-relation', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
@@ -8,9 +15,7 @@ YUI.add('juju-topology-relation', function(Y) {
       Templates = views.Templates;
 
   /**
-   * @module topology-relations
    * @class RelationModule
-   * @namespace views
    **/
   var RelationModule = Y.Base.create('RelationModule', d3ns.Module, [], {
 
@@ -149,7 +154,8 @@ YUI.add('juju-topology-relation', function(Y) {
      * Update relation line endpoints for a given service.
      *
      * @method updateLinkEndpoints
-     * @param {Object} service The service module that has been moved.
+     * @param {Object} evt The event facade that was fired.  This should have
+     *                     a 'service' property mixed in when fired.
      */
     updateLinkEndpoints: function(evt) {
       var self = this;

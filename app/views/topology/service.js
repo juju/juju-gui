@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Provide the ServiceModule class.
+ *
+ * @module topology
+ * @submodule topology.service
+ */
+
 YUI.add('juju-topology-service', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
@@ -8,9 +15,7 @@ YUI.add('juju-topology-service', function(Y) {
       Templates = views.Templates;
 
   /**
-   * @module topology-service
    * @class ServiceModule
-   * @namespace views
    **/
   var ServiceModule = Y.Base.create('ServiceModule', d3ns.Module, [], {
     events: {
@@ -45,7 +50,6 @@ YUI.add('juju-topology-service', function(Y) {
         }
       },
       yui: {
-        rendered: 'renderedHandler',
         show: 'show',
         hide: 'hide',
         fade: 'fade',
@@ -55,6 +59,7 @@ YUI.add('juju-topology-service', function(Y) {
         hideServiceMenu: {callback: function() {
           this.service_click_actions.hideServiceMenu(null, this);
         }},
+        clearState: 'clearStateHandler',
         rescaled: 'updateServiceMenuLocation'
       }
     },
@@ -80,6 +85,17 @@ YUI.add('juju-topology-service', function(Y) {
       if (!box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
+      // If the service box is pending, ensure that the charm panel is
+      // visible, but don't do anything else.
+      if (box.pending) {
+        // Prevent the clickoutside event from firing and immediately closing
+        // the panel.
+        d3.event.halt();
+        // Ensure service menus are closed.
+        topo.fire('clearState');
+        views.CharmPanel.getInstance().show();
+        return;
+      }
       // serviceClick is being called after dragend is processed.  In those
       // cases the current click action should not be invoked.
       if (topo.ignoreServiceClick) {
@@ -97,6 +113,9 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     serviceDblClick: function(box, self) {
+      if (box.pending) {
+        return;
+      }
       // Just show the service on double-click.
       var topo = self.get('component'),
           service = box.model;
@@ -109,7 +128,7 @@ YUI.add('juju-topology-service', function(Y) {
     serviceMouseEnter: function(box, context) {
       var rect = Y.one(this);
       // Do not fire if this service isn't selectable.
-      if (!utils.hasSVGClass(rect, 'selectable-service')) {
+      if (box.pending || !utils.hasSVGClass(rect, 'selectable-service')) {
         return;
       }
 
@@ -129,7 +148,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = context.get('component');
       var container = context.get('container');
       var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (box.containsPoint(mouse_coords, topo.zoom)) {
+      if (box.pending || box.containsPoint(mouse_coords, topo.zoom)) {
         return;
       }
       var rect = Y.one(this).one('.service-border');
@@ -147,6 +166,9 @@ YUI.add('juju-topology-service', function(Y) {
      * @return {undefined} Side effects only.
      */
     serviceMouseMove: function(box, context) {
+      if (box.pending) {
+        return;
+      }
       var topo = context.get('component');
       topo.fire('mouseMove');
     },
@@ -175,11 +197,22 @@ YUI.add('juju-topology-service', function(Y) {
      * @method canvasClick
      */
     canvasClick: function(box, self) {
-      var container = self.get('container'),
-          topo = self.get('component');
-      container.all('.environment-menu.active').removeClass('active');
-      self.service_click_actions.hideServiceMenu(null, self);
+      var topo = self.get('component');
       topo.fire('clearState');
+    },
+
+    /**
+     * Clear any stateful actions (menus, etc.) when a clearState event is
+     * received.
+     *
+     * @method clearStateHandler
+     * @return {undefined} Side effects only.
+     */
+    clearStateHandler: function() {
+      var container = this.get('container'),
+          topo = this.get('component');
+      container.all('.environment-menu.active').removeClass('active');
+      this.service_click_actions.hideServiceMenu(null, this);
     },
 
     /**
@@ -214,6 +247,9 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     serviceAddRelMouseDown: function(box, context) {
+      if (box.pending) {
+        return;
+      }
       var evt = d3.event;
       var topo = context.get('component');
       context.longClickTimer = Y.later(750, this, function(d, e) {
@@ -269,7 +305,7 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = self.get('component');
       box.oldX = box.x;
       box.oldY = box.y;
-      box.inDrag = 1;
+      box.inDrag = views.DRAG_START;
     },
 
     dragend: function(box,  self) {
@@ -282,6 +318,14 @@ YUI.add('juju-topology-service', function(Y) {
         if (!box.inDrag ||
             (box.oldX === box.x &&
              box.oldY === box.y)) {
+          return;
+        }
+        // If the service is still pending, persist x/y coordinates in order
+        // to set them as annotations when the service is created.
+        if (box.pending) {
+          box.model.set('dragged', true);
+          box.model.set('x', box.x);
+          box.model.set('y', box.y);
           return;
         }
         topo.get('env').update_annotations(
@@ -348,9 +392,9 @@ YUI.add('juju-topology-service', function(Y) {
       self.get('container').all('.environment-menu.active')
           .removeClass('active');
 
-      if (box.inDrag === 1) {
+      if (box.inDrag === views.DRAG_START) {
         self.service_click_actions.hideServiceMenu(null, self);
-        box.inDrag = 2;
+        box.inDrag = views.DRAG_ACTIVE;
       }
       topo.fire('cancelRelationBuild');
       // Update relation lines for just this service.
@@ -415,7 +459,8 @@ YUI.add('juju-topology-service', function(Y) {
       node
         .enter().append('g')
         .attr('class', function(d) {
-            return (d.subordinate ? 'subordinate ' : '') + 'service';
+            return (d.subordinate ? 'subordinate ' : '') +
+                (d.pending ? 'pending ' : '') + 'service';
           })
         .call(this.dragBehavior)
         .attr('transform', function(d) {
@@ -761,33 +806,6 @@ YUI.add('juju-topology-service', function(Y) {
             .attr('opacity', alpha !== undefined && alpha || '0.2');
     },
 
-    /*
-     * Finish DOM-dependent rendering
-     *
-     * Some portions of the visualization require information pulled
-     * from the DOM, such as the clientRects used for sizing relation
-     * labels and the viewport size used for sizing the whole graph. This
-     * is called after the view is attached to the DOM in order to
-     * perform all of that work.  In the app, it is called as a callback
-     * in `app.showView()`, and in testing, it needs to be called manually,
-     * if the test relies on any of this data.
-     *
-     * @method renderedHandler
-     */
-    renderedHandler: function() {
-      var container = this.get('container');
-
-      // Ensure relation labels are sized properly.
-      container.all('.rel-label').each(function(label) {
-        var width = label.one('text').getClientRect().width + 10;
-        label.one('rect').setAttribute('width', width)
-              .setAttribute('x', -width / 2);
-      });
-
-      // Chainable method.
-      return this;
-    },
-
     /**
      * The user clicked on the environment view background.
      *
@@ -811,7 +829,7 @@ YUI.add('juju-topology-service', function(Y) {
           z = topo.get('scale');
 
       if (service && cp) {
-        var cp_width = cp.getClientRect().width,
+        var cp_width = cp.getDOMNode().getClientRects()[0].width,
             menu_left = (service.x * z + service.w * z / 2 <
                          topo.get('width') * z / 2),
             service_center = service.relativeCenter;

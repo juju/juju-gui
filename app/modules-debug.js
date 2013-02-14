@@ -48,10 +48,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/notifier.js'
         },
 
-        'svg-layouts': {
-          fullpath: '/juju-ui/assets/javascripts/svg-layouts.js'
-        },
-
         'reconnecting-websocket': {
           fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },

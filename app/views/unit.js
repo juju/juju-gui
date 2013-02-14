@@ -1,9 +1,10 @@
 'use strict';
+
 /**
  * The unit view(s).
  *
  * @module views
- * @submodule unit
+ * @submodule views.unit
  */
 
 YUI.add('juju-view-unit', function(Y) {
@@ -17,7 +18,6 @@ YUI.add('juju-view-unit', function(Y) {
    * Display a unit.
    *
    * @class UnitView
-   * @namespace views.unit
    */
   var UnitView = Y.Base.create('UnitView', Y.View, [], {
     template: Templates.unit,

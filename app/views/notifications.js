@@ -1,13 +1,22 @@
 'use strict';
 
+/**
+ * Provide the notification classes.
+ *
+ * @module views
+ * @submodule views.notifications
+ */
+
 YUI.add('juju-notifications', function(Y) {
 
   var views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       Templates = views.Templates;
 
-  /*
-   * Abstract Base class used to view a ModelList of notifications
+  /**
+   * Abstract base class used to view a ModelList of notifications.
+   *
+   * @class NotificationsBaseView
    */
   var NotificationsBaseView = Y.Base.create('NotificationsBaseView',
       Y.View, [views.JujuBaseView], {
@@ -57,8 +66,10 @@ YUI.add('juju-notifications', function(Y) {
           }
         },
 
-        /*
+        /**
          * Event handler for clicking the notification icon.
+         *
+         * @method notifyToggle
          */
         notifyToggle: function(evt) {
           var container = this.get('container'),
@@ -86,9 +97,11 @@ YUI.add('juju-notifications', function(Y) {
 
         },
 
-        /*
+        /**
          * Select/click on a notice. Currently this just removes it from the
-         * model_list
+         * model_list.
+         *
+         * @method notificationSelect
          */
         notificationSelect: function(evt) {
           var notifications = this.get('notifications'),
@@ -114,9 +127,11 @@ YUI.add('juju-notifications', function(Y) {
           this.slowRender();
         },
 
-        /*
+        /**
          * A flow of events can trigger many renders, from the event system
-         * we debounce render requests with this method
+         * we debounce render requests with this method.
+         *
+         * @method slowRender
          */
         slowRender: function() {
           var self = this,
@@ -175,16 +190,18 @@ YUI.add('juju-notifications', function(Y) {
         }
       });
 
-  /*
-   * This is the view associated with the notifications indicator
+  /**
+   * The view associated with the notifications indicator.
+   *
+   * @class NotificationsView
    */
   var NotificationsView = Y.Base.create('NotificationsView',
       NotificationsBaseView, [], {
         template: Templates.notifications,
+
         /*
-         * Actions associated with events
-         * in this case selection events represent
-         * policy flags inside the 'notificationSelect' callback.
+         * Actions associated with events. In this case selection events
+         * represent policy flags inside the 'notificationSelect' callback.
          *
          * :hide: should the selected element be hidden on selection
          */
@@ -206,6 +223,9 @@ YUI.add('juju-notifications', function(Y) {
           }
         },
 
+        /**
+         * @method getShowable
+         */
         getShowable: function() {
           var notifications = this.get('notifications');
           return notifications.filter(function(n) {
@@ -245,8 +265,10 @@ YUI.add('juju-notifications', function(Y) {
       });
   views.NotificationsView = NotificationsView;
 
-  /*
-   * This is the 'View All Notifications' view
+  /**
+   * The 'View All Notifications' view.
+   *
+   * @class NotificationsOverview
    */
   var NotificationsOverview = Y.Base.create('NotificationsOverview',
       NotificationsBaseView, [], {
@@ -259,9 +281,11 @@ YUI.add('juju-notifications', function(Y) {
         // Actions for selecting a notice
         selection: {hide: false},
 
-        /*
-         *  The overview shows all events by default
-         *  when real filtering is present this will have to take options
+        /**
+         * The overview shows all events by default when real filtering
+         * is present this will have to take options.
+         *
+         * @method getShowable
          */
         getShowable: function() {
           var notifications = this.get('notifications');

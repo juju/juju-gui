@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * Provide the Topology class.
+ *
+ * @module topology
+ */
+
 YUI.add('juju-topology', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
@@ -20,9 +26,7 @@ YUI.add('juju-topology', function(Y) {
    *  zoom: When the zoom level of the canvas changes a 'zoom'
    *        event is fired. Analogous to d3's zoom event.
    *
-   * @module topology
    * @class Topology
-   * @namespace views
    **/
   var Topology = Y.Base.create('Topology', d3ns.Component, [], {
     initializer: function(options) {
@@ -184,6 +188,12 @@ YUI.add('juju-topology', function(Y) {
 
   });
   views.Topology = Topology;
+
+  /*
+   * Some additional flags used in dragging.
+   */
+  views.DRAG_START = 1;
+  views.DRAG_ACTIVE = 2;
 }, '0.1.0', {
   requires: [
     'd3',

@@ -28,17 +28,19 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	| sort | sed -e 's/^\.\///' \
 	| grep -Ev -e '^manifest\.json$$' \
 		-e '^app/assets/javascripts/d3\.v2(\.min)?\.js$$' \
+		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket\.js$$' \
 		-e '^app/assets/javascripts/gallery-.*\.js$$' \
 		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
-	node_modules/expect.js node_modules/express node_modules/graceful-fs \
-	node_modules/grunt node_modules/jshint node_modules/less \
-	node_modules/minimatch node_modules/mocha node_modules/node-markdown \
-	node_modules/node-minify node_modules/node-spritesheet \
-	node_modules/rimraf node_modules/should node_modules/yui \
-	node_modules/yuidocjs node_modules/recess
+    node_modules/expect.js node_modules/express \
+    node_modules/graceful-fs node_modules/grunt node_modules/jshint \
+    node_modules/less node_modules/minimatch node_modules/mocha \
+    node_modules/node-markdown node_modules/node-minify \
+    node_modules/node-spritesheet node_modules/recess \
+    node_modules/rimraf node_modules/should node_modules/uglify-js \
+    node_modules/yui node_modules/yuidocjs
 EXPECTED_NODE_TARGETS=$(shell echo "$(NODE_TARGETS)" | tr ' ' '\n' | sort \
 	| tr '\n' ' ')
 
@@ -146,6 +148,7 @@ help:
 	@echo "clean-all: remove build, deps and doc directories"
 	@echo "test-debug: run tests on the cli from the debug environment"
 	@echo "test-prod: run tests on the cli from the production environment"
+	@echo "test-misc: run tests of project infrastructure bits"
 	@echo "test-server: run tests in the browser from the debug environment"
 	@echo "prep: beautify and lint the source"
 	@echo "docs: generate project and code documentation"
@@ -250,10 +253,12 @@ recess: node_modules/recess
 	# below without the grep to get recess' report.
 	node_modules/recess/bin/recess lib/views/stylesheet.less --config recess.json | grep -q Perfect
 
-lint: gjslint jshint recess yuidoc-lint
+lint: test-prep gjslint jshint recess yuidoc-lint
 
-virtualenv/bin/gjslint virtualenv/bin/fixjsstyle:
+virtualenv/bin/python:
 	virtualenv virtualenv
+
+virtualenv/bin/gjslint virtualenv/bin/fixjsstyle: virtualenv/bin/python
 	virtualenv/bin/easy_install archives/closure_linter-latest.tar.gz
 
 beautify: virtualenv/bin/fixjsstyle
@@ -268,6 +273,7 @@ $(BUILD_FILES): $(JSFILES) $(THIRD_PARTY_JS) build-shared/juju-ui/templates.js \
 	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
 		build-shared/juju-ui/assets/combined-css/rail-x.png
 	bin/merge-files
+	mv *.js.map build-shared/juju-ui/assets/
 
 build-files: $(BUILD_FILES)
 
@@ -303,6 +309,7 @@ define link-files
 	ln -sf "$(PWD)/app/modules-$(1).js" build-$(1)/juju-ui/assets/modules.js
 	ln -sf "$(PWD)/app/assets/images" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/app/assets/svgs" build-$(1)/juju-ui/assets/
+	ln -sf "$(PWD)/app/assets/javascripts" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/version.js" build-$(1)/juju-ui/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/app.js" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/manifest.appcache" \
@@ -339,23 +346,47 @@ $(LINK_DEBUG_FILES):
 	ln -sf "$(PWD)/app/widgets" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/assets/javascripts/yui/yui/yui-debug.js" \
 		build-debug/juju-ui/assets/all-yui.js
-	ln -sf "$(PWD)/app/assets/javascripts" build-debug/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/templates.js" build-debug/juju-ui/
 
 $(LINK_PROD_FILES):
 	$(call link-files,prod)
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/all-yui.js" build-prod/juju-ui/assets/
+	ln -sf "$(PWD)"/build-shared/juju-ui/assets/*.js.map build-prod/juju-ui/assets/
+	# Link in the application source code so source maps work.
+	mkdir -p $(PWD)/build-prod/juju-ui/assets/source
+	ln -s $(PWD)/app $(PWD)/build-prod/juju-ui/assets/source
+	ln -s $(PWD)/node_modules $(PWD)/build-prod/juju-ui/assets/source
 
 prep: beautify lint
 
-test-debug: build-debug
+test/extracted_startup_code: app/index.html
+	# Pull the JS out of the index so we can run tests against it.
+	cat app/index.html | \
+	    sed -n '/<script id="app-startup">/,/<\/script>/p'| \
+	    head -n-1 | tail -n+2 > test/extracted_startup_code
+
+test/test_startup.js: test/test_startup.js.top test/test_startup.js.bottom \
+    test/extracted_startup_code
+	# Stitch together the test file for app start-up.
+	echo "// THIS IS A GENERATED FILE.  DO NOT EDIT." > $@
+	echo "// See the Makefile for details." >> $@
+	cat test/test_startup.js.top >> $@
+	cat test/extracted_startup_code >> $@
+	cat test/test_startup.js.bottom >> $@
+
+test-prep: test/test_startup.js
+
+test-debug: build-debug test-prep
 	./test-server.sh debug
 
-test-prod: build-prod
+test-prod: build-prod test-prep
 	./test-server.sh prod
 
-test-server: build-debug
+test-server: build-debug test-prep
 	./test-server.sh debug true
+
+test-misc:
+	PYTHONPATH=lib python test/test_deploy_charm_for_testing.py
 
 test:
 	@echo "Deprecated. Please run either 'make test-prod' or 'make"
@@ -488,9 +519,9 @@ appcache-force: appcache-touch $(APPCACHE)
 
 # targets are alphabetically sorted, they like it that way :-)
 .PHONY: appcache-force appcache-touch beautify build build-files \
-	build-devel clean clean-all clean-deps clean-docs code-doc \
-	debug devel docs dist gjslint help jshint lint main-doc prep prod \
-	recess server spritegen test test-debug test-prod undocumented \
+	build-devel clean clean-all clean-deps clean-docs code-doc debug \
+	devel docs dist gjslint help jshint lint main-doc prep prod recess \
+	server spritegen test test-debug test-prep test-prod undocumented \
 	view-code-doc view-docs view-main-doc yuidoc-lint
 
 .DEFAULT_GOAL := all
