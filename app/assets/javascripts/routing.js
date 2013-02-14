@@ -1,15 +1,13 @@
 'use strict';
 
 YUI.add('juju-routing', function(Y) {
-  // package to help compute svg layouts,
-  // particuallary around text
-  // Utility methods.
+
   function _trim(s, char, leading, trailing) {
     // remove leading, trailing char.
-    if (leading && s.indexOf(char) === 0) {
+    while (leading && s && s.indexOf(char) === 0) {
       s = s.slice(1, s.length);
     }
-    if (trailing && s.lastIndexOf(char) === s.length - 1) {
+    while (trailing && s && s.lastIndexOf(char) === (s.length - 1)) {
       s = s.slice(0, s.length - 1);
     }
     return s;
@@ -20,6 +18,12 @@ YUI.add('juju-routing', function(Y) {
   function ltrim(s, char) { return _trim(s, char, true, false); }
 
 
+  /**
+   * Return a sorted array of namespace, url pairs.
+   *
+   * @method pairs
+   * @return {Object} [[namespace, url]].
+   **/
   function pairs(o) {
     var result = [],
         keys = Y.Object.keys(o).sort();
@@ -31,7 +35,8 @@ YUI.add('juju-routing', function(Y) {
   }
 
   var Routes = {
-    pairs: function() {return pairs(this);}
+    pairs: function() {return pairs(this);},
+    defaultNamespace: 'default'
   };
 
   // Multi dimensional router (TARDIS).
@@ -45,8 +50,7 @@ YUI.add('juju-routing', function(Y) {
      * @return {Object} {url: string, qs: querystring}.
      **/
     _normalize: function(url) {
-      var parts = url.split('?');
-      return parts[0];
+      return url.split('?')[0];
     },
 
     getQS: function(url) {
@@ -65,9 +69,13 @@ YUI.add('juju-routing', function(Y) {
       var parts = url.split(this.fragment);
       if (parts[0]) {
         // This is a URL fragment w/o a namespace
-        result.charmstore = parts[0];
+        //  > '/foo/bar'.split(/\/?(:\w+\:)/)
+        //    ["/foo/bar"]
+        //  > :baz:/foo/bar'.split(/\/?(:\w+\:)/)
+        //    ["", ":baz:", "/foo/bar"]
+        result[this.defaultNamespace] = parts[0];
       } else {
-        result.charmstore = '/'; // A sane default.
+        result[this.defaultNamespace] = '/'; // A sane default.
       }
       // Now scan each pair after [0] for ns/route elements
       for (var i = 1; i < parts.length; i += 2) {
@@ -81,7 +89,7 @@ YUI.add('juju-routing', function(Y) {
         }
 
         if (result[ns] !== undefined) {
-          console.log('URL more than one refernce to same namespace');
+          console.log('URL has more than one refernce to same namespace');
         }
         result[ns] = val;
       }
@@ -107,9 +115,9 @@ YUI.add('juju-routing', function(Y) {
         return u;
       }
 
-      if (base.charmstore) {
-        u += trim(base.charmstore, '/');
-        delete base.charmstore;
+      if (base[this.defaultNamespace]) {
+        u += trim(base[this.defaultNamespace], '/');
+        delete base[this.defaultNamespace];
       }
 
       // Sort base properties such
@@ -125,8 +133,10 @@ YUI.add('juju-routing', function(Y) {
     }
   };
 
-  Y.namespace('juju').Router = function() {
-    return Object.create(_Router);
+  Y.namespace('juju').Router = function(defaultNamespace) {
+    var r = Object.create(_Router);
+    r.defaultNamespace = defaultNamespace;
+    return r;
   };
 
 

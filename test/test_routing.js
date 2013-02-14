@@ -18,7 +18,7 @@ describe('Namespaced Routing', function() {
   });
 
   it('should support basic namespaced urls', function() {
-    var router = juju.Router();
+    var router = juju.Router('charmstore');
 
     var match = router.parse('/');
     assert(match.charmstore === '/');
@@ -49,7 +49,7 @@ describe('Namespaced Routing', function() {
     u = router.url({charmstore: '/', gamma: 'g', a: 'alpha', b: 'beta'});
     assert(u === '/:a:alpha/:b:beta/:gamma:g/');
 
-    // Sorted keys with actual charmstore component.
+    // Sorted keys with actual charmstore [defaultNamespace] component.
     u = router.url({
       charmstore: '/charms/precise/mysql',
       gamma: 'g', a: 'alpha', b: 'beta'});
