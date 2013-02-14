@@ -370,7 +370,11 @@ YUI.add('juju-gui', function(Y) {
       return JujuGUI.superclass._getPath.apply(this, arguments);
     },
 
-    // NS aware navigate wrapper
+    /**
+     * NS aware navigate wrapper.
+     *
+     * @method _navigate
+     **/
     _navigate: function(url, options) {
       //console.log("NAV", url, this._routeGeneration);
       this._routeGeneration += 1;
@@ -378,23 +382,33 @@ YUI.add('juju-gui', function(Y) {
     },
 
 
-    // Null-queue for NS routing. The 1ms delay in the queue presents
-    // problems, apply url saves as they happen.
+    /**
+     * Null-queue for NS routing. The 1ms delay in the queue presents problems,
+     * apply url saves as they happen.
+     *
+     * Overrides superclass, formalizes dependency on HTML5 paths.
+     * @method _queue
+     **/
     _queue: function() {
       // Sync Invocation
       this._save.apply(this, arguments);
     },
 
-    // NS aware wrapper around _save to update URL
+    /**
+     * NS aware wrapper around _save to update URL.
+     * Overrides superclass.
+     * .
+     * @method _save
+     **/
     _save: function(url, replace) {
       // Increment Route Generation late in the chain.
       var components = this._nsRouter.parse(Y.getLocation().pathname);
       var incoming = this._nsRouter.parse(this.removeRoot(url));
       var qs = this._nsRouter.getQS(url);
-
       var loc = Y.getLocation();
       var result = loc.origin + this._nsRouter.url(
           Y.mix(components, incoming, true));
+
       if (qs) {
         result += '?' + qs;
       }
@@ -993,8 +1007,9 @@ YUI.add('juju-gui', function(Y) {
 
     /**
      * Internal state tracker, makes sure a given route
-     * dispatches once per any dispatch call wrt namespace
-     * components.
+     * dispatches once per any dispatch call with regard to
+     * namespace components.
+     *
      * @method _routeStateTracker
      **/
     _routeStateTracker: function(req, res, next) {

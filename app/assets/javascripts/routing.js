@@ -45,14 +45,18 @@ YUI.add('juju-routing', function(Y) {
     fragment: /\/?(:\w+\:)/,
 
     /**
-     * normalize a url w/o its qs.
+     * Normalize a URL omitting any query string.
      * @method _normalize
-     * @return {Object} {url: string, qs: querystring}.
+     * @return {String} URL.
      **/
     _normalize: function(url) {
       return url.split('?')[0];
     },
 
+    /**
+     * Return the query string portion of a URL.
+     * @method getQS
+     **/
     getQS: function(url) {
       return url.split('?')[1];
     },
