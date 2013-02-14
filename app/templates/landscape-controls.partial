@@ -2,16 +2,16 @@
     <div class="logo-tab">
     	<i class="sprite landscape_logo_empty"></i>
     </div>
-    <div class="machine-control">
-    	<i class="sprite dotted_divider divider"></i>
+    <div class="machine-control control">
+    	<i class="sprite dotted_divider icon-divider"></i>
     	<i class="sprite landscape-icon landscape_machine"></i>
     </div>
-    <div class="updates-control">
-    	<i class="sprite dotted_divider divider"></i>
+    <div class="updates-control control">
+    	<i class="sprite dotted_divider icon-divider"></i>
     	<i class="sprite landscape-icon landscape_updates"></i>
     </div>
-    <div class="restart-control">
-    	<i class="sprite dotted_divider divider"></i>
+    <div class="restart-control control">
+    	<i class="sprite dotted_divider icon-divider"></i>
     	<i class="sprite landscape-icon landscape_restart"></i>
     </div>
 </div>
