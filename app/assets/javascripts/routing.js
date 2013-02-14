@@ -42,7 +42,7 @@ YUI.add('juju-routing', function(Y) {
     /**
      * normalize a url w/o its qs.
      * @method _normalize
-     * @return {Object} {url: string, qs: querystring}
+     * @return {Object} {url: string, qs: querystring}.
      **/
     _normalize: function(url) {
       var parts = url.split('?');
