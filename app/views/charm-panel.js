@@ -1046,13 +1046,13 @@ YUI.add('juju-charm-panel', function(Y) {
          *
          * @method updateGhostServiceName
          * @param {Object} evt The event that's fired.
-         * @returns {undefined} Side effects only.
+         * @return {undefined} Side effects only.
          */
         updateGhostServiceName: function(evt) {
           var ghostService = this.get('ghostService');
           var container = this.get('container');
           var db = this.get('db');
-          ghostService.set('id', '(' + 
+          ghostService.set('id', '(' +
               container.one('#service-name').get('value') + ')');
           db.fire('update');
         },
