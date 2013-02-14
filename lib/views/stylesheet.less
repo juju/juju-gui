@@ -198,6 +198,41 @@ i.sprite {
 
 .bottom-navbar {
     min-width: 800px;
+    height: 50px;
+    position: relative;
+    background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
+
+    .landscape-controls {
+        display: none;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 295px;
+        margin-right: 10px;
+
+        div {
+            float: right;
+            width: 60px;
+            
+            .landscape-icon {
+                display: none;
+                margin: 10px 0 0 16px;;
+            }
+
+            .dotted_divider {
+                margin-top: 8px;
+            }
+        }
+
+        .logo-tab {
+            width: 115px!important;
+
+            i {
+                margin-top: 1px;
+                margin-left: 5px;
+            }
+        }
+    }
 }
 
 #content {
@@ -654,7 +689,6 @@ g.unit {
     width: 100%;
 }
 #overview-tasks {
-    background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
     height: 50px;
     position: relative;
     color: @navbar-color;
@@ -1196,7 +1230,6 @@ table tr.highlighted {
 
 .service-view {
     .juju-service-info-container-bottom-menu {
-        background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
         height: 50px;
         position: relative;
         color: @navbar-color;
@@ -1204,14 +1237,14 @@ table tr.highlighted {
 
         .filter-control {
             position: absolute;
-            right: 430px;
+            left: 110px;
             top: 13px;
-            width: 300px;
+            width: 350px;
             display: inline-block;
 
             .filter-label {
                 position: absolute;
-                right: 305px;
+                left: 10px;
                 top: 3px;
             }
 
@@ -1226,6 +1259,7 @@ table tr.highlighted {
             }
 
             .state-buttons {
+                margin-left: 50px;
                 img {
                     padding-top: 0px;
                     height: 30px;
@@ -1345,12 +1379,12 @@ table tr.highlighted {
 
     .service-common-controls {
         position: absolute;
-        right: 10px;
+        left: 455px;
         top: 10px;
 
         .control-unit-count {
             position: absolute;
-            right: 120px;
+            left: 0px;
             top: 0px;
             width: 305px;
 
@@ -1369,7 +1403,7 @@ table tr.highlighted {
 
         .control-expose {
             position: absolute;
-            right: 0px;
+            left: 300px;
             top: 4px;
             width: 120px;
 

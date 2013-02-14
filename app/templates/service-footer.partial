@@ -3,5 +3,4 @@
     {{> service-footer-destroy-service}}
     {{> service-footer-common-controls}}
   </div>
-  {{> landscape-controls }}
 </div>
