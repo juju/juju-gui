@@ -340,9 +340,14 @@ YUI.add('juju-gui', function(Y) {
       this._routeGeneration += 1;
       // Parse the URL in a namespace aware fashion.
       var paths = this._nsRouter.parse(this._getPath());
+      var qs = this._nsRouter.getQS(this._getPath());
       Y.each(paths, function(p, ns) {
         this._nsPath = p;
-        //console.log('dispatch ns', ns, p, this._routeGeneration);
+        // Each fragment gets the qs passed as we don't know
+        // to whom it applies.
+        if (qs) {
+          this._nsPath += qs;
+        }
         JujuGUI.superclass.dispatch.apply(this, arguments);
         this._nsPath = null;
       }, this);
@@ -358,12 +363,16 @@ YUI.add('juju-gui', function(Y) {
       return JujuGUI.superclass._getPath.apply(this, arguments);
     },
 
+    // NS aware navigate wrapper
     _navigate: function(url, options) {
       //console.log("NAV", url, this._routeGeneration);
       this._routeGeneration += 1;
       return JujuGUI.superclass._navigate.call(this, url, options);
     },
 
+
+    // Null-queue for NS routing. The 1ms delay in the queue presents
+    // problems, apply url saves as they happen.
     _queue: function() {
       // Sync Invocation
       this._save.apply(this, arguments);
@@ -372,18 +381,16 @@ YUI.add('juju-gui', function(Y) {
     // NS aware wrapper around _save to update URL
     _save: function(url, replace) {
       // Increment Route Generation late in the chain.
-      // `save` is past the async queue and the proper time to
-      // increment gen.
-      //console.log("_save", url);
-      //this._routeGeneration += 1;
-      // Take the current Location and preserve other
-      // namespaces
       var components = this._nsRouter.parse(Y.getLocation().pathname);
-      var incoming = this._nsRouter.parse(this.removeRoot(arguments[0]));
+      var incoming = this._nsRouter.parse(this.removeRoot(url));
+      var qs = this._nsRouter.getQS(url);
 
       var loc = Y.getLocation();
       var result = loc.origin + this._nsRouter.url(
           Y.mix(components, incoming, true));
+      if (qs) {
+        result += '?' + qs;
+      }
       return JujuGUI.superclass._save.call(this, result, replace);
     },
 

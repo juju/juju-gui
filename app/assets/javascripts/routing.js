@@ -38,6 +38,21 @@ YUI.add('juju-routing', function(Y) {
   var _Router = {
     // Regex to parse namespace, url fragment pairs.
     fragment: /\/?(:\w+\:)/,
+
+    /**
+     * normalize a url w/o its qs.
+     * @method _normalize
+     * @return {Object} {url: string, qs: querystring}
+     **/
+    _normalize: function(url) {
+      var parts = url.split('?');
+      return parts[0];
+    },
+
+    getQS: function(url) {
+      return url.split('?')[1];
+    },
+
     /**
      * @method parse
      * @param {String} url to parse.
@@ -45,6 +60,8 @@ YUI.add('juju-routing', function(Y) {
      **/
     parse: function(url) {
       var result = Object.create(Routes);
+      url = this._normalize(url);
+
       var parts = url.split(this.fragment);
       if (parts[0]) {
         // This is a URL fragment w/o a namespace
