@@ -250,7 +250,16 @@ YUI.add('juju-gui', function(Y) {
       if (this.get('env')) {
         this.env = this.get('env');
       } else {
-        this.env = new juju.Environment(
+        // Instantiate the environment specified in the configuration, choosing
+        // between the Python and the Go implementations and defaulting to the
+        // Python one.
+        var apiBackend = this.get('apiBackend') || 'python';
+        var apiBackends = {
+          'go': juju.GoEnvironment,
+          'python': juju.PyEnvironment
+        };
+        var Environment = apiBackends[apiBackend] || juju.PyEnvironment;
+        this.env = new Environment(
             { socket_url: this.get('socket_url'),
               user: this.get('user'),
               password: this.get('password'),
