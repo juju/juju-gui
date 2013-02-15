@@ -35,6 +35,7 @@ YUI.add('juju-env', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'base',
     'juju-env-go',
     'juju-env-python'
   ]

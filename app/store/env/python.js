@@ -16,17 +16,20 @@ YUI.add('juju-env-python', function(Y) {
    *
    * @class PythonEnvironment
    */
-  function Environment(config) {
-    // Invoke Base constructor, passing through arguments
-    Environment.superclass.constructor.apply(this, arguments);
+  var environments = Y.namespace('juju.environments');
+
+  function PythonEnvironment(config) {
+    // Invoke Base constructor, passing through arguments.
+    PythonEnvironment.superclass.constructor.apply(this, arguments);
   }
 
   var endpointToName = function(endpoint) {
     return endpoint[0] + ':' + endpoint[1].name;
   };
 
-  Environment.NAME = 'python-env';
-  Environment.ATTRS = {
+  PythonEnvironment.NAME = 'python-env';
+  // FIXME: remove ATTRS?
+  PythonEnvironment.ATTRS = {
     'socket_url': {},
     'conn': {},
     'user': {},
@@ -36,52 +39,12 @@ YUI.add('juju-env-python', function(Y) {
     'readOnly': {value: false}
   };
 
-  Y.extend(Environment, Y.Base, {
-    // Prototype methods for your new class
+  Y.extend(PythonEnvironment, environments.BaseEnvironment, {
 
     initializer: function() {
-      // Define custom events
-      this.publish('msg', {
-        emitFacade: true,
-        defaultFn: this.dispatch_result
-      });
-      // txn-id sequence
-      this._counter = 0;
-      // mapping txn-id callback if any.
-      this._txn_callbacks = {};
-      // Consider the user unauthenticated until proven otherwise.
-      this.userIsAuthenticated = false;
-      this.failedAuthentication = false;
       // When the server tells us the outcome of a login attempt we record
       // the result.
       this.on('login', this.handleLoginEvent, this);
-    },
-
-    destructor: function() {
-      this.ws.close();
-      this._txn_callbacks = {};
-    },
-
-    connect: function() {
-      // Allow an external websocket to be passed in.
-      var conn = this.get('conn');
-      if (conn) {
-        this.ws = conn;
-      } else {
-        this.ws = new Y.ReconnectingWebSocket(this.get('socket_url'));
-      }
-      this.ws.debug = this.get('debug');
-      this.ws.onmessage = Y.bind(this.on_message, this);
-      this.ws.onopen = Y.bind(this.on_open, this);
-      this.ws.onclose = Y.bind(this.on_close, this);
-      this.on('msg', this.dispatch_event);
-      return this;
-    },
-
-    on_open: function(data) {},
-
-    on_close: function(data) {
-      this.set('connected', false);
     },
 
     on_message: function(evt) {
@@ -113,11 +76,6 @@ YUI.add('juju-env-python', function(Y) {
         this.set('password', undefined);
         this.failedAuthentication = true;
       }
-    },
-
-    dispatch_result: function(data) {
-      this._dispatch_rpc_result(data);
-      this._dispatch_event(data);
     },
 
     _dispatch_event: function(evt) {
@@ -154,12 +112,7 @@ YUI.add('juju-env-python', function(Y) {
       // Avoid sending remote messages if the operation requires writing
       // and the GUI is in read-only mode.
       if (writePermissionRequired && this.get('readOnly')) {
-        var title = 'Permission denied';
-        var message = ('GUI is in read-only mode and this operation ' +
-            'requires an environment modification');
-        console.warn(title + ': ' + message + '. Attempted operation: ', op);
-        this.fire(
-            'permissionDenied', {title: title, message: message, op: op});
+        this._firePermissionDenied(op);
         // Execute the callback passing an event-like object containing an
         // error.
         if (callback) {
@@ -176,7 +129,7 @@ YUI.add('juju-env-python', function(Y) {
       this.ws.send(msg);
     },
 
-    // Environment API
+    // PythonEnvironment API
 
     /**
      * Add units to the provided service.
@@ -472,15 +425,13 @@ YUI.add('juju-env-python', function(Y) {
 
   });
 
-
-  Y.namespace('juju.environments').PythonEnvironment = Environment;
+  environments.PythonEnvironment = PythonEnvironment;
 
 }, '0.1.0', {
   requires: [
-    'io',
+    'base',
     'json-parse',
     'json-stringify',
-    'base',
-    'reconnecting-websocket'
+    'juju-env-base'
   ]
 });
