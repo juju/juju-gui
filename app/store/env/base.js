@@ -36,12 +36,12 @@ YUI.add('juju-env-base', function(Y) {
   Y.extend(BaseEnvironment, Y.Base, {
 
     initializer: function() {
-      // Define custom events
+      // Define custom events.
       this.publish('msg', {
         emitFacade: true,
         defaultFn: this.dispatch_result
       });
-      // txn-id sequence
+      // txn-id sequence.
       this._counter = 0;
       // mapping txn-id callback if any.
       this._txn_callbacks = {};
@@ -67,7 +67,6 @@ YUI.add('juju-env-base', function(Y) {
       this.ws.onmessage = Y.bind(this.on_message, this);
       this.ws.onopen = Y.bind(this.on_open, this);
       this.ws.onclose = Y.bind(this.on_close, this);
-      this.on('msg', this.dispatch_event);
       return this;
     },
 
@@ -75,6 +74,10 @@ YUI.add('juju-env-base', function(Y) {
 
     on_close: function(data) {
       this.set('connected', false);
+    },
+
+    on_message: function(evt) {
+      this.fire('msg', Y.JSON.parse(evt.data));
     },
 
     /**
@@ -110,12 +113,12 @@ YUI.add('juju-env-base', function(Y) {
 
   });
 
-
   Y.namespace('juju.environments').BaseEnvironment = BaseEnvironment;
 
 }, '0.1.0', {
   requires: [
     'base',
+    'json-parse',
     'reconnecting-websocket'
   ]
 });

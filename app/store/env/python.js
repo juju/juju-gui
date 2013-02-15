@@ -18,26 +18,16 @@ YUI.add('juju-env-python', function(Y) {
    */
   var environments = Y.namespace('juju.environments');
 
+  var endpointToName = function(endpoint) {
+    return endpoint[0] + ':' + endpoint[1].name;
+  };
+
   function PythonEnvironment(config) {
     // Invoke Base constructor, passing through arguments.
     PythonEnvironment.superclass.constructor.apply(this, arguments);
   }
 
-  var endpointToName = function(endpoint) {
-    return endpoint[0] + ':' + endpoint[1].name;
-  };
-
   PythonEnvironment.NAME = 'python-env';
-  // FIXME: remove ATTRS?
-  PythonEnvironment.ATTRS = {
-    'socket_url': {},
-    'conn': {},
-    'user': {},
-    'password': {},
-    'connected': {value: false},
-    'debug': {value: false},
-    'readOnly': {value: false}
-  };
 
   Y.extend(PythonEnvironment, environments.BaseEnvironment, {
 
