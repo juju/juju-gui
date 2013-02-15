@@ -810,13 +810,15 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     onLogin: function() {
-      var mask = Y.one('#login-mask');
+      var mask = Y.one('#full-screen-mask');
       if (mask) {
         mask.hide();
         // Stop the animated loading spinner.
-        spinner.stop();
-        this.dispatch();
+        if (spinner) {
+          spinner.stop();
+        }
       }
+      this.dispatch();
     },
 
     /**
