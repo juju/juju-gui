@@ -1,20 +1,20 @@
 'use strict';
 
 /**
- * The store environment.
+ * The Python store environment.
  *
- * @module store
- * @submodule store.env
+ * @module env
+ * @submodule env.python
  */
 
-YUI.add('juju-env', function(Y) {
+YUI.add('juju-env-python', function(Y) {
 
   /**
-   * The Juju environment.
+   * The Python Juju environment.
    *
-   * This class handles the websocket connection to the Juju API backend.
+   * This class handles the websocket connection to the PyJuju API backend.
    *
-   * @class Environment
+   * @class PythonEnvironment
    */
   function Environment(config) {
     // Invoke Base constructor, passing through arguments
@@ -473,7 +473,7 @@ YUI.add('juju-env', function(Y) {
   });
 
 
-  Y.namespace('juju').Environment = Environment;
+  Y.namespace('juju.environments').PythonEnvironment = Environment;
 
 }, '0.1.0', {
   requires: [

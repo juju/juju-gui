@@ -90,7 +90,7 @@
         models = Y.namespace('juju.models');
         conn = new testUtils.SocketStub();
         juju = Y.namespace('juju');
-        env = new juju.Environment({conn: conn});
+        env = juju.newEnvironment({conn: conn});
         env.connect();
         conn.open();
         done();

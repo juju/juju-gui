@@ -251,19 +251,14 @@ YUI.add('juju-gui', function(Y) {
         this.env = this.get('env');
       } else {
         // Instantiate the environment specified in the configuration, choosing
-        // between the Python and the Go implementations and defaulting to the
-        // Python one.
-        var apiBackend = this.get('apiBackend') || 'python';
-        var apiBackends = {
-          'go': juju.GoEnvironment,
-          'python': juju.PyEnvironment
+        // between the available implementations, currently Go and Python.
+        var envOptions = {
+          socket_url: this.get('socket_url'),
+          user: this.get('user'),
+          password: this.get('password'),
+          readOnly: this.get('readOnly')
         };
-        var Environment = apiBackends[apiBackend] || juju.PyEnvironment;
-        this.env = new Environment(
-            { socket_url: this.get('socket_url'),
-              user: this.get('user'),
-              password: this.get('password'),
-              readOnly: this.get('readOnly')});
+        this.env = juju.newEnvironment(envOptions, this.get('apiBackend'));
       }
       // Create a charm store.
       if (this.get('charm_store')) {

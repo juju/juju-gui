@@ -25,12 +25,18 @@ var GlobalConfig = {
           ]
         },
 
-        // 'juju-controllers' is just an alias for the modules defined by 'use'
-        // If we use "requires: ['juju-controllers']" that means
-        // "requires: ['juju-env', 'juju-charm-store',
-        // 'juju-notification-controller']"
+        // 'juju-controllers' is just an alias for the modules defined by
+        // 'use'. If we use "requires: ['juju-controllers']" that means
+        // requiring all the modules below.
         'juju-controllers': {
-          use: ['juju-env', 'juju-charm-store', 'juju-notification-controller']
+          use: [
+            'juju-env',
+            'juju-env-base',
+            'juju-env-go',
+            'juju-env-python',
+            'juju-charm-store',
+            'juju-notification-controller'
+          ]
         },
 
         'juju-gui': {

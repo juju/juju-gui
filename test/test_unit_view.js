@@ -15,7 +15,7 @@
             testUtils = Y.namespace('juju-tests.utils');
             conn = new testUtils.SocketStub();
             juju = Y.namespace('juju');
-            env = new juju.Environment({conn: conn});
+            env = juju.newEnvironment({conn: conn});
             env.connect();
             conn.open();
             makeView = function(querystring) {
