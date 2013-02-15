@@ -25,7 +25,7 @@ YUI.add('juju-env-python', function(Y) {
     return endpoint[0] + ':' + endpoint[1].name;
   };
 
-  Environment.NAME = 'env';
+  Environment.NAME = 'python-env';
   Environment.ATTRS = {
     'socket_url': {},
     'conn': {},
