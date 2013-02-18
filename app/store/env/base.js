@@ -91,7 +91,7 @@ YUI.add('juju-env-base', function(Y) {
      * Dispatch the results returned by the API backend.
      * Take care of calling attached callbacks and firing events.
      * Subclasses must implement the "_dispatch_rpc_result" and
-     * "_dispatch_event" methods.
+     * "_dispatch_event" methods or override this method directly.
      *
      * @method dispatch_result
      * @param {Object} data The JSON contents returned by the API backend.

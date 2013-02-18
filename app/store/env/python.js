@@ -66,7 +66,6 @@ YUI.add('juju-env-python', function(Y) {
      * @return {undefined} Nothing.
      */
     handleLoginEvent: function(evt) {
-      // We are only interested in the responses to login events.
       this.userIsAuthenticated = !!evt.data.result;
       // If the credentials were rejected remove them.
       if (!this.userIsAuthenticated) {
