@@ -244,7 +244,7 @@ describe('charm description', function() {
 
   beforeEach(function() {
     conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-    env = new (Y.namespace('juju')).Environment({conn: conn});
+    env = Y.namespace('juju').newEnvironment({conn: conn});
     env.connect();
     conn.open();
     container = Y.Node.create('<div id="test-container" />');
@@ -382,7 +382,7 @@ describe('charm panel filtering', function() {
 
   beforeEach(function() {
     conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-    env = new (Y.namespace('juju')).Environment({conn: conn});
+    env = Y.namespace('juju').newEnvironment({conn: conn});
     env.connect();
     conn.open();
     Y.one('#main')

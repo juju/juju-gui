@@ -10,6 +10,7 @@ var juju_config = {
   socket_url: 'ws://localhost:8081/ws',
   user: undefined,
   password: undefined,
+  apiBackend: 'python', // Value can be 'python' or 'go'.
   readOnly: false,
   login_help: (
       'The password is the admin-secret from the Juju environment.  This can ' +

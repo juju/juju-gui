@@ -10,6 +10,7 @@ var juju_config = {
   socket_url: 'ws://localhost:8081/ws',
   user: 'admin',
   password: 'admin',
+  apiBackend: 'python', // Value can be 'python' or 'go'.
   readOnly: false,
   login_help: 'For this demonstration, use the password "admin" to connect.'
 };

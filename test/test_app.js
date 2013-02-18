@@ -175,7 +175,7 @@ function injectData(app, data) {
 
     beforeEach(function(done) {
       conn = new utils.SocketStub();
-      env = new juju.Environment({conn: conn});
+      env = juju.newEnvironment({conn: conn});
       env.connect();
       env.setAttrs({user: 'user', password: 'password'});
       conn.open();
@@ -227,7 +227,7 @@ function injectData(app, data) {
     it('should be able to handle env connection status changes', function() {
       var juju = Y.namespace('juju'),
           conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
-          env = new juju.Environment({conn: conn}),
+          env = juju.newEnvironment({conn: conn}),
           app = new Y.juju.App({env: env, container: container}),
           reset_called = false,
           dispatch_called = false,
@@ -286,7 +286,7 @@ function injectData(app, data) {
 (function() {
 
   describe('Application prefetching', function() {
-    var Y, models, conn, env, app, container, charm_store, data, juju;
+    var Y, models, conn, env, app, container, charm_store, data;
 
     before(function(done) {
       console.log('Loading App prefetch test code');
@@ -301,7 +301,7 @@ function injectData(app, data) {
 
     beforeEach(function() {
       conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-      env = new Y.juju.Environment({conn: conn});
+      env = Y.juju.newEnvironment({conn: conn});
       env.connect();
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');
