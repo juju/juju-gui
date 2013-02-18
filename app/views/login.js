@@ -83,7 +83,7 @@ YUI.add('juju-view-login', function(Y) {
         provider_type: provider_type,
         error_text: (
             env.failedAuthentication ? 'Unknown user or password.' : ''),
-        user: env.get('user') || 'admin',
+        user: env.get('user') || env.defaultUser,
         help_text: this.get('help_text')
       }));
       return this;

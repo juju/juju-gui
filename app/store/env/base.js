@@ -70,7 +70,9 @@ YUI.add('juju-env-base', function(Y) {
       return this;
     },
 
-    on_open: function(data) {},
+    on_open: function(data) {
+      this.set('connected', true);
+    },
 
     on_close: function(data) {
       this.set('connected', false);

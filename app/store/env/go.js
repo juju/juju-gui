@@ -27,6 +27,12 @@ YUI.add('juju-env-go', function(Y) {
 
   Y.extend(GoEnvironment, environments.BaseEnvironment, {
 
+    initializer: function() {
+      // Define the default user name for this environment. It will appear as
+      // predefined value in the login mask.
+      this.defaultUser = 'user-admin';
+    },
+
     /**
      * See "app.store.env.base.BaseEnvironment.dispatch_result".
      *
@@ -35,7 +41,6 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Dispatches only.
      */
     dispatch_result: function(data) {
-      this.set('connected', true);
       if ('RequestId' in data) {
         var tid = data.RequestId;
         if (tid in this._txn_callbacks) {
@@ -71,8 +76,7 @@ YUI.add('juju-env-go', function(Y) {
       this.userIsAuthenticated = !data.Error;
       // If the credentials were rejected remove them.
       if (!this.userIsAuthenticated) {
-        // Do not reset the user name so that it's still displayed in the login
-        // mask.
+        this.set('user', undefined);
         this.set('password', undefined);
         this.failedAuthentication = true;
       }
