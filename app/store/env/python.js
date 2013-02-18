@@ -9,6 +9,12 @@
 
 YUI.add('juju-env-python', function(Y) {
 
+  var environments = Y.namespace('juju.environments');
+
+  var endpointToName = function(endpoint) {
+    return endpoint[0] + ':' + endpoint[1].name;
+  };
+
   /**
    * The Python Juju environment.
    *
@@ -16,12 +22,6 @@ YUI.add('juju-env-python', function(Y) {
    *
    * @class PythonEnvironment
    */
-  var environments = Y.namespace('juju.environments');
-
-  var endpointToName = function(endpoint) {
-    return endpoint[0] + ':' + endpoint[1].name;
-  };
-
   function PythonEnvironment(config) {
     // Invoke Base constructor, passing through arguments.
     PythonEnvironment.superclass.constructor.apply(this, arguments);
@@ -37,10 +37,18 @@ YUI.add('juju-env-python', function(Y) {
       this.on('login', this.handleLoginEvent, this);
     },
 
+    /**
+     * Fire a "msg" event when a message is received from the WebSocket.
+     * Handle the initial handshake with the server.
+     * The "evt.data.ready" attribute indicates the server's initial greeting.
+     * It provides a few initial values that we care about.
+     *
+     * @method on_message
+     * @param {Object} evt The event triggered by the WebSocket.
+     * @return {undefined} Side effects only.
+     */
     on_message: function(evt) {
       var msg = Y.JSON.parse(evt.data);
-      // The "ready" attribute indicates that this is a server's initial
-      // greeting.  It provides a few initial values that we care about.
       if (msg.ready) {
         this.set('connected', true);
         this.set('providerType', msg.provider_type);

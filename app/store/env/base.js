@@ -76,6 +76,13 @@ YUI.add('juju-env-base', function(Y) {
       this.set('connected', false);
     },
 
+    /**
+     * Fire a "msg" event when a message is received from the WebSocket.
+     *
+     * @method on_message
+     * @param {Object} evt The event triggered by the WebSocket.
+     * @return {undefined} Fire an event only.
+     */
     on_message: function(evt) {
       this.fire('msg', Y.JSON.parse(evt.data));
     },
