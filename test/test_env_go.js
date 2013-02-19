@@ -45,6 +45,7 @@
       conn.msg({RequestId: 1, Error: 'Invalid user or password'});
       assert.isUndefined(env.get('user'));
       assert.isUndefined(env.get('password'));
+      assert.isTrue(env.failedAuthentication);
     });
 
     it('fires a login event on successful login', function(done) {
