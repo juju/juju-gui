@@ -31,6 +31,12 @@ YUI.add('juju-env-python', function(Y) {
 
   Y.extend(PythonEnvironment, environments.BaseEnvironment, {
 
+    /**
+     * Python environment constructor.
+     *
+     * @method initializer
+     * @return {undefined} Nothing.
+     */
     initializer: function() {
       // When the server tells us the outcome of a login attempt we record
       // the result.

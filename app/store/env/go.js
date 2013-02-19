@@ -27,6 +27,12 @@ YUI.add('juju-env-go', function(Y) {
 
   Y.extend(GoEnvironment, environments.BaseEnvironment, {
 
+    /**
+     * Go environment constructor.
+     *
+     * @method initializer
+     * @return {undefined} Nothing.
+     */
     initializer: function() {
       // Define the default user name for this environment. It will appear as
       // predefined value in the login mask.
@@ -72,6 +78,13 @@ YUI.add('juju-env-go', function(Y) {
       this.ws.send(msg);
     },
 
+    /**
+     * React to the results of sending a login message to the server.
+     *
+     * @method handleLoginEvent
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
     handleLogin: function(data) {
       this.userIsAuthenticated = !data.Error;
       // If the credentials were rejected remove them.
