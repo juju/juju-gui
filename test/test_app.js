@@ -177,8 +177,6 @@ function injectData(app, data) {
       conn = new utils.SocketStub();
       env = juju.newEnvironment({conn: conn});
       env.connect();
-      env.setAttrs({user: 'user', password: 'password'});
-      conn.open();
       done();
     });
 
@@ -198,10 +196,21 @@ function injectData(app, data) {
 
     it('should try to login if the env connection is established',
        function(done) {
-         env.set('connected', true);
+         env.setAttrs({user: 'user', password: 'password'});
+         conn.open();
          var app = new Y.juju.App({env: env});
          app.after('ready', function() {
            assert.equal('login', conn.last_message().op);
+           done();
+         });
+       });
+
+    it('should not try to login if user and password are not provided',
+       function(done) {
+         conn.open();
+         var app = new Y.juju.App({env: env});
+         app.after('ready', function() {
+           assert.equal(0, conn.messages.length);
            done();
          });
        });
@@ -227,7 +236,11 @@ function injectData(app, data) {
     it('should be able to handle env connection status changes', function() {
       var juju = Y.namespace('juju'),
           conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
-          env = juju.newEnvironment({conn: conn}),
+          env = juju.newEnvironment({
+            conn: conn,
+            user: 'user',
+            password: 'password'
+          }),
           app = new Y.juju.App({env: env, container: container}),
           reset_called = false,
           dispatch_called = false,
@@ -262,18 +275,16 @@ function injectData(app, data) {
       env.connect();
       conn.open();
       // We need to fake the connection event.
-      env.set('connected', true);
       reset_called.should.equal(true);
       dispatch_called.should.equal(true);
       login_called.should.equal(true);
 
       // Trigger a second time and verify.
-      env.set('connected', false);
+      conn.transient_close();
       reset_called = false;
       dispatch_called = false;
       login_called = false;
       conn.open();
-      env.set('connected', true);
       reset_called.should.equal(true);
       dispatch_called.should.equal(true);
       login_called.should.equal(true);
@@ -353,8 +364,6 @@ function injectData(app, data) {
       env.get_endpoints = function(services, callback) {
         get_endpoints_count += 1;
       };
-      // We need to fake the connection event.
-      env.set('connected', true);
       // Inject default data, should only get_endpoints once.
       injectData(app);
       get_endpoints_count.should.equal(1);
