@@ -85,6 +85,24 @@ need to download packages.  When ready, the server will print::
 
 You can then access the GUI at <http://localhost:8888/>.
 
+If you receive an error like:
+
+  fs.js:837
+     throw errnoException(errno, 'watch');
+           ^
+  Error: watch ENOSPC
+
+You can increase your watch limit:
+
+Create or edit:
+  /etc/sysctl.d/10-inotify.conf
+
+Add in the following:
+  # expand inotify limit
+  fs.inotify.max_user_watches=16384
+
+Then restart
+
 Note that the Makefile supports ``make help`` to try to introduce some of the
 more important targets.  Also note that if you use the "make prod" target
 while using the PyJuju rapi-rollup improv script, the password you should use
