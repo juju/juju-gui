@@ -180,7 +180,7 @@ function injectData(app, data) {
       done();
     });
 
-    after(function(done)  {
+    afterEach(function(done)  {
       env.destroy();
       done();
     });
