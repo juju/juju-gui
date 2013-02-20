@@ -250,11 +250,11 @@ YUI.add('juju-env-python', function(Y) {
         return;
       }
       var credentials = this.getCredentials();
-      if (Y.Lang.isObject(credentials) && 
+      if (Y.Lang.isObject(credentials) &&
           credentials.user && credentials.password) {
         this._send_rpc({
-          op: 'login', 
-          user: credentials.user, 
+          op: 'login',
+          user: credentials.user,
           password: credentials.password
         });
       } else {

@@ -61,8 +61,8 @@
       var credentials = env.getCredentials();
       assert.equal(credentials.user, user);
       assert.equal(credentials.password, password);
-      assert.equal(JSON.stringify(credentials), 
-        sessionStorage.getItem('credentials'));
+      assert.equal(JSON.stringify(credentials),
+          sessionStorage.getItem('credentials'));
     });
 
     test('login requests are sent in response to a connection', function() {

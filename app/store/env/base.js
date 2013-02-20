@@ -49,16 +49,16 @@ YUI.add('juju-env-base', function(Y) {
       this.userIsAuthenticated = false;
       this.failedAuthentication = false;
       // Populate our credentials if they don't already exist.
+      var credentials = this.getCredentials() || {};
       if (Y.Lang.isValue(this.get('user'))) {
-        var credentials = this.getCredentials() || {};
-        credentials.user = credentials.user || 
+        credentials.user = credentials.user ||
             this.get('user');
         if (Y.Lang.isValue(this.get('password'))) {
           credentials.password = credentials.password ||
               this.get('password');
         }
-        this.setCredentials(credentials);
       }
+      this.setCredentials(credentials);
     },
 
     destructor: function() {
@@ -147,7 +147,7 @@ YUI.add('juju-env-base', function(Y) {
      * Retrieve the stored user credentials.
      *
      * @method getCredentials
-     * @returns {Object} The stored user credentials with a 'user' and a
+     * @return {Object} The stored user credentials with a 'user' and a
      *                   'password' attribute.
      */
     getCredentials: function() {

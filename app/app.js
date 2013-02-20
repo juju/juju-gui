@@ -684,6 +684,12 @@ YUI.add('juju-gui', function(Y) {
         notifications: this.db.notifications});
     },
 
+    /**
+     * Show the login screen.
+     *
+     * @method show_login
+     * @return {undefined} Nothing.
+     */
     show_login: function() {
       this.showView('login', {
         env: this.env,
@@ -696,6 +702,13 @@ YUI.add('juju-gui', function(Y) {
       }
     },
 
+    /**
+     * Log the current user out and show the login screen again.
+     *
+     * @method logout
+     * @param {Object} req The request.
+     * @return {undefined} Nothing.
+     */
     logout: function(req) {
       this.env.logout();
       this.fire('navigateTo', { url: '/' });
@@ -742,15 +755,15 @@ YUI.add('juju-gui', function(Y) {
       }
       // If there are no stored credentials, the user is prompted for some.
       var credentials = this.env.getCredentials();
-      if (Y.Lang.isObject(credentials) && 
-          (!Y.Lang.isValue(credentials.user) || 
+      if (Y.Lang.isObject(credentials) &&
+          (!Y.Lang.isValue(credentials.user) ||
            !Y.Lang.isValue(credentials.password))) {
         this.show_login();
       }
       // If there are credentials available and there has not been
       // a successful login attempt, try to log in.
       if (Y.Lang.isObject(credentials) &&
-          Y.Lang.isValue(credentials.user) && 
+          Y.Lang.isValue(credentials.user) &&
           Y.Lang.isValue(credentials.password) &&
           !this.env.userIsAuthenticated) {
         this.env.login();
