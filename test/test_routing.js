@@ -1,7 +1,7 @@
 
 'use strict';
 
-describe('Namespaced Routing', function() {
+describe.only('Namespaced Routing', function() {
   var Y, juju, app;
 
   before(function(done) {
@@ -25,22 +25,22 @@ describe('Namespaced Routing', function() {
     assert(match.inspector === undefined);
 
     match = router.parse('cs:mysql');
-    assert(match.charmstore === 'cs:mysql');
+    assert(match.charmstore === 'cs:mysql/');
     assert(match.inspector === undefined);
 
     match = router.parse(
         '/:inspector:/services/mysql/:charmstore:/charms/precise/mediawiki');
-    assert(match.charmstore === '/charms/precise/mediawiki');
-    assert(match.inspector === '/services/mysql');
+    assert(match.charmstore === '/charms/precise/mediawiki/');
+    assert(match.inspector === '/services/mysql/');
 
     match.pairs().should.eql(
-        [['charmstore', '/charms/precise/mediawiki'],
-          ['inspector', '/services/mysql']]);
+        [['charmstore', '/charms/precise/mediawiki/'],
+          ['inspector', '/services/mysql/']]);
 
     match = router.parse(
         '/charms/precise/mediawiki/:inspector:/services/mysql/');
-    assert(match.charmstore === '/charms/precise/mediawiki');
-    assert(match.inspector === '/services/mysql');
+    assert(match.charmstore === '/charms/precise/mediawiki/');
+    assert(match.inspector === '/services/mysql/');
 
     var u = router.url(match);
     assert(u === '/charms/precise/mediawiki/:inspector:/services/mysql/');
@@ -60,9 +60,50 @@ describe('Namespaced Routing', function() {
   });
 
 
-  it('should parse and route namedspaced urls');
+  it('should support a default namespace', function() {
+    var router = juju.Router('charmstore');
+    var url, parts;
+    router.defaultNamespace.should.equal('charmstore');
+
+    // Use a different namespace.
+    router = juju.Router('foo');
+    parts = router.parse('/bar');
+    url = router.url(parts);
+    url.should.equal('/bar/');
+
+    // .. and with an additional ns.
+    parts.extra = 'happens';
+    url = router.url(parts);
+    url.should.equal('/bar/:extra:happens/');
+  });
 
 
-  it('should trigger middleware only once per dispatch');
+  it('should be able to cleanly combine urls preserving untouched namespaces',
+    function() {
+      var router = juju.Router('charmstore');
+      var url, parts;
+      url = router.combine('/foo/bar', '/:inspector:/foo/');
+     console.log("combine", url);
+      url.should.equal('/foo/bar/:inspector:/foo/');
+    });
+
+
+    it('should be able to split qualified urls', function() {
+      var router = juju.Router('playground');
+      var url, parts;
+
+      parts = router.split('http://foo.bar:8888/foo/bar');
+      parts.pathname.should.equal('/foo/bar');
+      parts.origin.should.equal('http://foo.bar:8888');
+
+      parts = router.split('http://foo.bar:8888/foo/bar/?a=b');
+      parts.pathname.should.equal('/foo/bar/');
+      parts.origin.should.equal('http://foo.bar:8888');
+      parts.search.should.equal('a=b');
+
+      parts = router.split('/foo/bar/?a=b');
+      parts.pathname.should.equal('/foo/bar/');
+      parts.search.should.equal('a=b');
+    });
 
 });

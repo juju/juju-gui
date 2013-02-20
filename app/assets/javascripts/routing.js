@@ -35,23 +35,15 @@ YUI.add('juju-routing', function(Y) {
   }
 
   var Routes = {
-    pairs: function() {return pairs(this);},
-    defaultNamespace: 'default'
+    pairs: function() {return pairs(this);}
   };
 
   // Multi dimensional router (TARDIS).
   var _Router = {
     // Regex to parse namespace, url fragment pairs.
-    fragment: /\/?(:\w+\:)/,
-
-    /**
-     * Normalize a URL omitting any query string.
-     * @method _normalize
-     * @return {String} URL.
-     **/
-    _normalize: function(url) {
-      return url.split('?')[0];
-    },
+    _fragment: /\/?(:\w+\:)/,
+    _regexUrlOrigin: /^(?:[^\/#?:]+:\/\/|\/\/)[^\/]*/,
+    defaultNamespace: 'default',
 
     /**
      * Return the query string portion of a URL.
@@ -62,22 +54,66 @@ YUI.add('juju-routing', function(Y) {
     },
 
     /**
+     * Split a URL into components, a subset of the
+     * Location Object.
+     *
+     * @method split
+     * @param {String} url to split.
+     * @return {Object} hash of URL parts.
+     **/
+    split: function(url) {
+      var result = {
+        href: url
+      };
+      var origin = this._regexUrlOrigin.exec(url);
+      result.search = this.getQS(url);
+
+      if (origin) {
+        // Take the match.
+        result.origin = origin = origin[0];
+        // And remove it from the url.
+        result.pathname = url.substr(origin.length);
+     } else {
+       result.pathname = url;
+     }
+
+     if (result.search) {
+       result.pathname = result.pathname.substr(0,
+                           (result.pathname.length - result.search.length) - 1);
+     }
+
+      return result;
+    },
+
+    /**
+     * Parse a url into an Object with namespaced url fragments for values.
+     * Each value will be normalized to include a trailing slash
+     * ('/').
+     *
      * @method parse
      * @param {String} url to parse.
      * @return {Object} result is {ns: url fragment {String}}.
      **/
     parse: function(url) {
-      var result = Object.create(Routes);
-      url = this._normalize(url);
+      var result = Object.create(Routes, {
+        defaultNamespacePresent: {
+          enumerable: false,
+          writable: true
+        }
+      });
+      var parts = this.split(url);
+      url = parts.pathname;
 
-      var parts = url.split(this.fragment);
+      var parts = url.split(this._fragment);
+      //  > '/foo/bar'.split(this._fragment)
+      //    ["/foo/bar"]
+      //  > :baz:/foo/bar'.split(this._fragment)
+      //    ["", ":baz:", "/foo/bar"]
       if (parts[0]) {
-        // This is a URL fragment w/o a namespace
-        //  > '/foo/bar'.split(/\/?(:\w+\:)/)
-        //    ["/foo/bar"]
-        //  > :baz:/foo/bar'.split(/\/?(:\w+\:)/)
-        //    ["", ":baz:", "/foo/bar"]
-        result[this.defaultNamespace] = parts[0];
+       // This is a URL fragment without a namespace.
+       parts[0] = rtrim(parts[0], '/') + '/';
+       result[this.defaultNamespace] = parts[0];
+       result.defaultNamespacePresent = true;
       } else {
         result[this.defaultNamespace] = '/'; // A sane default.
       }
@@ -89,13 +125,16 @@ YUI.add('juju-routing', function(Y) {
         if ((i + 1) > parts.length) {
           console.log('URL namespace without path');
         } else {
-          val = rtrim(parts[i + 1], '/');
+          val = parts[i + 1];
         }
 
         if (result[ns] !== undefined) {
           console.log('URL has more than one refernce to same namespace');
         }
-        result[ns] = val;
+        if (ns === this.defaultNamespace) {
+          result.defaultNamespacePresent = true;
+        }
+        result[ns] = rtrim(val, '/') + '/';
       }
       return result;
     },
@@ -109,7 +148,7 @@ YUI.add('juju-routing', function(Y) {
      * @return {String} url.
      **/
     url: function(components) {
-      var base = Y.mix(components);
+      var base = Y.mix({}, components);
       var u = '/';
 
       function slash(u) {
@@ -134,6 +173,36 @@ YUI.add('juju-routing', function(Y) {
 
       u = slash(u);
       return u;
+    },
+
+    /**
+     * Smartly combine new namespaced url components with old.
+     *
+     * @method combine
+     * @param {Object} orig url.
+     * @param {Object} incoming new url.
+     * @return {String} a new namespaced url.
+     **/
+    combine: function(orig, incoming) {
+      var url;
+
+      if (Y.Lang.isString(orig)) {
+        orig = this.parse(orig);
+      }
+      if (Y.Lang.isString(incoming)) {
+        incoming = this.parse(incoming);
+      }
+
+      if (!incoming.defaultNamespacePresent) {
+        // The default namespace was supplied (rather
+        // than defaulting to /) in the incoming url,
+        // this means we can safely override it.
+        delete incoming[this.defaultNamespace];
+      }
+      url = this.url(
+        Y.mix(orig, incoming, true, Y.Object.keys(incoming)));
+      return url;
+
     }
   };
 
