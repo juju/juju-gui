@@ -307,7 +307,12 @@ YUI.add('juju-gui', function(Y) {
         if (ev.newVal === true) {
           this.db.reset();
           this.env.userIsAuthenticated = false;
-          this.env.login();
+          // Do not attempt environment login without credentials.
+          var user = this.env.get('user');
+          var password = this.env.get('password');
+          if (Y.Lang.isValue(user) && Y.Lang.isValue(password)) {
+            this.env.login();
+          }
           this.dispatch();
         }
       }, this);
