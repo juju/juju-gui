@@ -39,8 +39,10 @@ YUI.add('juju-view-login', function(Y) {
       var env = this.get('env');
       var container = this.get('container');
       container.all('input').set('disabled', true);
-      env.set('user', container.one('input[type=text]').get('value'));
-      env.set('password', container.one('input[type=password]').get('value'));
+      env.setCredentials({
+        user: container.one('input[type=text]').get('value'),
+        password: container.one('input[type=password]').get('value')
+      });
       env.login();
     },
 

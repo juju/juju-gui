@@ -48,6 +48,17 @@ YUI.add('juju-env-base', function(Y) {
       // Consider the user unauthenticated until proven otherwise.
       this.userIsAuthenticated = false;
       this.failedAuthentication = false;
+      // Populate our credentials if they don't already exist.
+      if (Y.Lang.isValue(this.get('user'))) {
+        var credentials = this.getCredentials() || {};
+        credentials.user = credentials.user || 
+            this.get('user');
+        if (Y.Lang.isValue(this.get('password'))) {
+          credentials.password = credentials.password ||
+              this.get('password');
+        }
+        this.setCredentials(credentials);
+      }
     },
 
     destructor: function() {
@@ -116,6 +127,40 @@ YUI.add('juju-env-base', function(Y) {
           'requires an environment modification');
       console.warn(title + ': ' + message + '. Attempted operation: ', op);
       this.fire('permissionDenied', {title: title, message: message, op: op});
+    },
+
+    /**
+     * Store the user's credentials in session storage.
+     *
+     * @method setCredentials
+     * @param {Object} The credentials to store, with a 'user' and a 'password'
+     *                 attribute included.
+     * @return {undefined} Stores data only.
+     */
+    setCredentials: function(credentials) {
+      sessionStorage.setItem('credentials', Y.JSON.stringify(credentials));
+    },
+
+    /**
+     * Retrieve the stored user credentials.
+     *
+     * @method getCredentials
+     * @returns {Object} The stored user credentials with a 'user' and a
+     *                   'password' attribute.
+     */
+    getCredentials: function() {
+      return Y.JSON.parse(sessionStorage.getItem('credentials'));
+    },
+
+    /**
+     * Clear login information.
+     *
+     * @method logout
+     * @return {undefined} Nothing.
+     */
+    logout: function() {
+      this.userIsAuthenticated = false;
+      this.setCredentials(null);
     }
 
   });

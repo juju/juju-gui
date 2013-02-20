@@ -295,7 +295,7 @@ YUI.add('juju-gui', function(Y) {
           this.notifications);
 
       // When the connection resets, reset the db, re-login (a delta will
-      // arrive with the login), and redispatch.
+      // arrive with the log), and redispatch.
       this.env.after('connectedChange', function(ev) {
         if (ev.newVal === true) {
           this.db.reset();
@@ -547,6 +547,24 @@ YUI.add('juju-gui', function(Y) {
         notifications: this.db.notifications});
     },
 
+    show_login: function() {
+      this.showView('login', {
+        env: this.env,
+        help_text: this.get('login_help')
+      });
+      var passwordField = this.get('container').one('input[type=password]');
+      // The password field may not be present in testing context.
+      if (passwordField) {
+        passwordField.focus();
+      }
+    },
+
+    logout: function(req) {
+      this.env.logout();
+      this.fire('navigateTo', { url: '/' });
+      this.show_login();
+    },
+
     // Persistent Views
 
     /**
@@ -586,22 +604,17 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       // If there are no stored credentials, the user is prompted for some.
-      var user = this.env.get('user');
-      var password = this.env.get('password');
-      if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
-        this.showView('login', {
-          env: this.env,
-          help_text: this.get('login_help')
-        });
-        var passwordField = this.get('container').one('input[type=password]');
-        // The password field may not be present in testing context.
-        if (passwordField) {
-          passwordField.focus();
-        }
+      var credentials = this.env.getCredentials();
+      if (Y.Lang.isObject(credentials) && 
+          (!Y.Lang.isValue(credentials.user) || 
+           !Y.Lang.isValue(credentials.password))) {
+        this.show_login();
       }
       // If there are credentials available and there has not been
       // a successful login attempt, try to log in.
-      if (Y.Lang.isValue(user) && Y.Lang.isValue(password) &&
+      if (Y.Lang.isObject(credentials) &&
+          Y.Lang.isValue(credentials.user) && 
+          Y.Lang.isValue(credentials.password) &&
           !this.env.userIsAuthenticated) {
         this.env.login();
         return;
@@ -890,6 +903,8 @@ YUI.add('juju-gui', function(Y) {
             callback: 'show_unit',
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit'},
+          // Logout.
+          { path: '/logout', callback: 'logout'},
           // Root.
           { path: '/', callback: 'show_environment'}
         ]
