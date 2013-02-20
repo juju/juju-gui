@@ -1,7 +1,7 @@
 
 'use strict';
 
-describe.only('Namespaced Routing', function() {
+describew:('Namespaced Routing', function() {
   var Y, juju, app;
 
   before(function(done) {
