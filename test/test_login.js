@@ -17,7 +17,7 @@
 
     beforeEach(function() {
       conn = new utils.SocketStub();
-      env = new juju.Environment({conn: conn});
+      env = juju.newEnvironment({conn: conn});
       env.connect();
       conn.open();
     });
@@ -52,7 +52,7 @@
     test('credentials passed to the constructor are stored', function() {
       var user = 'Will Smith';
       var password = 'I am legend!';
-      var env = new juju.Environment({
+      var env = juju.newEnvironment({
         user: user,
         password: password,
         conn: conn
@@ -99,7 +99,7 @@
 
     beforeEach(function() {
       conn = new utils.SocketStub();
-      env = new juju.Environment({conn: conn});
+      env = juju.newEnvironment({conn: conn});
       env.connect();
       conn.open();
       container = Y.one('body').appendChild('<div/>');

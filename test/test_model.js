@@ -369,7 +369,7 @@ YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
 
     beforeEach(function() {
       conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-      env = new juju.Environment({conn: conn});
+      env = juju.newEnvironment({conn: conn});
       env.connect();
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');

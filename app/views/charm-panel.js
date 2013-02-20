@@ -790,7 +790,8 @@ YUI.add('juju-charm-panel', function(Y) {
           '.config-field': {focus: 'showDescription',
             blur: 'hideDescription'},
           'input.config-field[type=checkbox]':
-              {click: function(evt) {evt.target.focus();}}
+              {click: function(evt) {evt.target.focus();}},
+          '#service-name': {blur: 'updateGhostServiceName'}
         },
 
         /**
@@ -1041,6 +1042,22 @@ YUI.add('juju-charm-panel', function(Y) {
         },
 
         /**
+         * Updates the ghost service's ID to reflect the service-name field.
+         *
+         * @method updateGhostServiceName
+         * @param {Object} evt The event that's fired.
+         * @return {undefined} Side effects only.
+         */
+        updateGhostServiceName: function(evt) {
+          var ghostService = this.get('ghostService');
+          var container = this.get('container');
+          var db = this.get('db');
+          ghostService.set('id', '(' +
+              container.one('#service-name').get('value') + ')');
+          db.fire('update');
+        },
+
+        /**
          * Called upon clicking the "Confirm" button.
          *
          * @method onCharmDeployClicked
@@ -1059,6 +1076,7 @@ YUI.add('juju-charm-panel', function(Y) {
           var config = utils.getElementsValuesMapping(container,
               '#service-config .config-field');
           var self = this;
+          var buttons = container.one('.charm-panel-configure-buttons');
           // The service names must be unique.  It is an error to deploy a
           // service with same name (but ignore the ghost service).
           var existing_service = db.services.getById(serviceName);
@@ -1074,6 +1092,8 @@ YUI.add('juju-charm-panel', function(Y) {
                 }));
             return;
           }
+          // Disable the buttons to prevent clicking again.
+          buttons.all('.btn').set('disabled', true);
           if (this.configFileContent) {
             config = null;
           }

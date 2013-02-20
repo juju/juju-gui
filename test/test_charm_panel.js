@@ -201,11 +201,16 @@ describe('charm panel', function() {
         // Test that the ghosted service is removed on cancel.
         node.one('.btn.cancel').simulate('click');
         db.services.size().should.equal(0);
-        // Test that the ghosted service is no longer ghosted on deploy.
         field.set('value', 'aaa');
         field.simulate('keydown', { keyCode: ENTER });
         node.one('a.charm-detail').simulate('click');
         node.one('.btn-primary').simulate('click');
+        // Test that the ghost name is updated on blur.
+        var serviceName = Y.one('#service-name');
+        serviceName.set('value', 'foo');
+        serviceName.simulate('blur');
+        db.services.item(0).get('id').should.equal('(foo)');
+        // Test that the ghosted service is no longer ghosted on deploy.
         node.one('.btn-primary').simulate('click');
         db.services.item(0).get('pending').should.equal(false);
      });
@@ -239,7 +244,7 @@ describe('charm description', function() {
 
   beforeEach(function() {
     conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-    env = new (Y.namespace('juju')).Environment({conn: conn});
+    env = Y.namespace('juju').newEnvironment({conn: conn});
     env.connect();
     conn.open();
     container = Y.Node.create('<div id="test-container" />');
@@ -377,7 +382,7 @@ describe('charm panel filtering', function() {
 
   beforeEach(function() {
     conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-    env = new (Y.namespace('juju')).Environment({conn: conn});
+    env = Y.namespace('juju').newEnvironment({conn: conn});
     env.connect();
     conn.open();
     Y.one('#main')
