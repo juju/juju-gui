@@ -1,7 +1,7 @@
 
 'use strict';
 
-describew:('Namespaced Routing', function() {
+describe('Namespaced Routing', function() {
   var Y, juju, app;
 
   before(function(done) {
@@ -79,31 +79,30 @@ describew:('Namespaced Routing', function() {
 
 
   it('should be able to cleanly combine urls preserving untouched namespaces',
-    function() {
-      var router = juju.Router('charmstore');
-      var url, parts;
-      url = router.combine('/foo/bar', '/:inspector:/foo/');
-     console.log("combine", url);
-      url.should.equal('/foo/bar/:inspector:/foo/');
-    });
+     function() {
+       var router = juju.Router('charmstore');
+       var url, parts;
+       url = router.combine('/foo/bar', '/:inspector:/foo/');
+       url.should.equal('/foo/bar/:inspector:/foo/');
+     });
 
 
-    it('should be able to split qualified urls', function() {
-      var router = juju.Router('playground');
-      var url, parts;
+  it('should be able to split qualified urls', function() {
+    var router = juju.Router('playground');
+    var url, parts;
 
-      parts = router.split('http://foo.bar:8888/foo/bar');
-      parts.pathname.should.equal('/foo/bar');
-      parts.origin.should.equal('http://foo.bar:8888');
+    parts = router.split('http://foo.bar:8888/foo/bar');
+    parts.pathname.should.equal('/foo/bar');
+    parts.origin.should.equal('http://foo.bar:8888');
 
-      parts = router.split('http://foo.bar:8888/foo/bar/?a=b');
-      parts.pathname.should.equal('/foo/bar/');
-      parts.origin.should.equal('http://foo.bar:8888');
-      parts.search.should.equal('a=b');
+    parts = router.split('http://foo.bar:8888/foo/bar/?a=b');
+    parts.pathname.should.equal('/foo/bar/');
+    parts.origin.should.equal('http://foo.bar:8888');
+    parts.search.should.equal('a=b');
 
-      parts = router.split('/foo/bar/?a=b');
-      parts.pathname.should.equal('/foo/bar/');
-      parts.search.should.equal('a=b');
-    });
+    parts = router.split('/foo/bar/?a=b');
+    parts.pathname.should.equal('/foo/bar/');
+    parts.search.should.equal('a=b');
+  });
 
 });

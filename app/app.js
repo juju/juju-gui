@@ -355,12 +355,12 @@ YUI.add('juju-gui', function(Y) {
       if (qs) {
         result += '?' + qs;
       }
-     if (JujuGUI.superclass._navigate.call(this, url, options)) {
-       // Queue/Save the entire URL, not just the new fragment.
-       this._queue(result, true);
-       return true;
-     }
-     return false;
+      if (JujuGUI.superclass._navigate.call(this, url, options)) {
+        // Queue/Save the entire URL, not just the new fragment.
+        this._queue(result, true);
+        return true;
+      }
+      return false;
     },
 
 

@@ -73,14 +73,14 @@ YUI.add('juju-routing', function(Y) {
         result.origin = origin = origin[0];
         // And remove it from the url.
         result.pathname = url.substr(origin.length);
-     } else {
-       result.pathname = url;
-     }
+      } else {
+        result.pathname = url;
+      }
 
-     if (result.search) {
-       result.pathname = result.pathname.substr(0,
-                           (result.pathname.length - result.search.length) - 1);
-     }
+      if (result.search) {
+        result.pathname = result.pathname.substr(0,
+                          (result.pathname.length - result.search.length) - 1);
+      }
 
       return result;
     },
@@ -104,16 +104,16 @@ YUI.add('juju-routing', function(Y) {
       var parts = this.split(url);
       url = parts.pathname;
 
-      var parts = url.split(this._fragment);
+      parts = url.split(this._fragment);
       //  > '/foo/bar'.split(this._fragment)
       //    ["/foo/bar"]
       //  > :baz:/foo/bar'.split(this._fragment)
       //    ["", ":baz:", "/foo/bar"]
       if (parts[0]) {
-       // This is a URL fragment without a namespace.
-       parts[0] = rtrim(parts[0], '/') + '/';
-       result[this.defaultNamespace] = parts[0];
-       result.defaultNamespacePresent = true;
+        // This is a URL fragment without a namespace.
+        parts[0] = rtrim(parts[0], '/') + '/';
+        result[this.defaultNamespace] = parts[0];
+        result.defaultNamespacePresent = true;
       } else {
         result[this.defaultNamespace] = '/'; // A sane default.
       }
@@ -199,8 +199,7 @@ YUI.add('juju-routing', function(Y) {
         // this means we can safely override it.
         delete incoming[this.defaultNamespace];
       }
-      url = this.url(
-        Y.mix(orig, incoming, true, Y.Object.keys(incoming)));
+      url = this.url(Y.mix(orig, incoming, true, Y.Object.keys(incoming)));
       return url;
 
     }
