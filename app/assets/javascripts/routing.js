@@ -129,7 +129,7 @@ YUI.add('juju-routing', function(Y) {
         }
 
         if (result[ns] !== undefined) {
-          console.log('URL has more than one refernce to same namespace');
+          console.log('URL has more than one reference to same namespace');
         }
         if (ns === this.defaultNamespace) {
           result.defaultNamespacePresent = true;
@@ -149,7 +149,7 @@ YUI.add('juju-routing', function(Y) {
      **/
     url: function(components) {
       var base = Y.mix({}, components);
-      var u = '/';
+      var url = '/';
 
       function slash(u) {
         if (u.lastIndexOf('/') !== u.length - 1) {
@@ -159,7 +159,7 @@ YUI.add('juju-routing', function(Y) {
       }
 
       if (base[this.defaultNamespace]) {
-        u += trim(base[this.defaultNamespace], '/');
+        url += trim(base[this.defaultNamespace], '/');
         delete base[this.defaultNamespace];
       }
 
@@ -167,12 +167,12 @@ YUI.add('juju-routing', function(Y) {
       // that output ordering is uniform.
       var keys = Y.Object.keys(base).sort();
       Y.each(keys, function(ns) {
-        u = slash(u);
-        u += ':' + ns + ':' + base[ns];
+        url = slash(url);
+        url += ':' + ns + ':' + base[ns];
       });
 
-      u = slash(u);
-      return u;
+      url = slash(url);
+      return url;
     },
 
     /**
@@ -213,6 +213,6 @@ YUI.add('juju-routing', function(Y) {
   };
 
 
-}, '0.0.1', {
+}, '0.1.0', {
   requires: ['oop']
 });
