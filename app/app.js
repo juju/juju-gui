@@ -711,8 +711,8 @@ YUI.add('juju-gui', function(Y) {
      */
     logout: function(req) {
       this.env.logout();
-      this.fire('navigateTo', { url: '/' });
       this.show_login();
+      this.loggingOut = true;
     },
 
     // Persistent Views
@@ -772,6 +772,10 @@ YUI.add('juju-gui', function(Y) {
       // If there has not been a successful login attempt,
       // do not let the route dispatch proceed.
       if (!this.env.userIsAuthenticated) {
+        if (this.loggingOut) {
+          this.loggingOut = false;
+          this.navigate('/');
+        }
         return;
       }
       next();
@@ -1100,7 +1104,7 @@ YUI.add('juju-gui', function(Y) {
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit'},
           // Logout.
-          { path: '/logout', callback: 'logout'},
+          { path: '/logout/', callbacks: 'logout'},
           // Root.
           { path: '/', callbacks: 'show_environment'}
         ]
