@@ -47,12 +47,10 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Dispatches only.
      */
     dispatch_result: function(data) {
-      if ('RequestId' in data) {
-        var tid = data.RequestId;
-        if (tid in this._txn_callbacks) {
-          this._txn_callbacks[tid].call(this, data);
-          delete this._txn_callbacks[tid];
-        }
+      var tid = data.RequestId;
+      if (tid in this._txn_callbacks) {
+        this._txn_callbacks[tid].call(this, data);
+        delete this._txn_callbacks[tid];
       }
     },
 
