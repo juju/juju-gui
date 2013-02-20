@@ -72,6 +72,7 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/d3.v2.min.js',
     'app/assets/javascripts/d3-components.js',
     'app/assets/javascripts/reconnecting-websocket.js',
+    'app/assets/javascripts/routing.js',
     'app/assets/javascripts/gallery-ellipsis.js',
     'app/assets/javascripts/gallery-markdown.js',
     'app/assets/javascripts/gallery-timer.js']);

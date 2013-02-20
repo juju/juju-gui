@@ -31,10 +31,19 @@ YUI.add('juju-env-python', function(Y) {
 
   Y.extend(PythonEnvironment, environments.BaseEnvironment, {
 
+    /**
+     * Python environment constructor.
+     *
+     * @method initializer
+     * @return {undefined} Nothing.
+     */
     initializer: function() {
       // When the server tells us the outcome of a login attempt we record
       // the result.
       this.on('login', this.handleLoginEvent, this);
+      // Define the default user name for this environment. It will appear as
+      // predefined value in the login mask.
+      this.defaultUser = 'admin';
     },
 
     /**
@@ -50,7 +59,6 @@ YUI.add('juju-env-python', function(Y) {
     on_message: function(evt) {
       var msg = Y.JSON.parse(evt.data);
       if (msg.ready) {
-        this.set('connected', true);
         this.set('providerType', msg.provider_type);
         this.set('defaultSeries', msg.default_series);
         return;
@@ -66,7 +74,6 @@ YUI.add('juju-env-python', function(Y) {
      * @return {undefined} Nothing.
      */
     handleLoginEvent: function(evt) {
-      // We are only interested in the responses to login events.
       this.userIsAuthenticated = !!evt.data.result;
       // If the credentials were rejected remove them.
       if (!this.userIsAuthenticated) {
