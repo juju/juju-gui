@@ -113,14 +113,14 @@ function injectData(app, data) {
       app.getModelURL(wordpress).should.equal('/service/wordpress/');
       // However, passing 'intent' can force selection of another one.
       app.getModelURL(wordpress, 'config').should.equal(
-          '/service/wordpress/config');
+          '/service/wordpress/config/');
 
       // Service units use argument rewriting (thus not /u/wp/0).
       app.getModelURL(wp0).should.equal('/unit/wordpress-0/');
 
       // Charms also require a mapping, but only a name, not a function.
       app.getModelURL(wp_charm).should.equal(
-          '/charms/charms/precise/wordpress-6/json');
+          '/charms/charms/precise/wordpress-6/json/');
     });
 
     it('should display the configured environment name', function() {

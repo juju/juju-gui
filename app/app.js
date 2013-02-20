@@ -232,6 +232,13 @@ YUI.add('juju-gui', function(Y) {
           consoleManager.noop();
         }
       }
+
+      // Namespaced URL tracker.
+      this._routeGeneration = 0;
+      this._routeStates = {};
+      this._nsRouter = juju.Router('charmstore');
+
+
       // Create a client side database to store state.
       this.db = new models.Database();
       this.serviceEndpoints = {};
@@ -338,6 +345,136 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('defaultSeriesChange', function(ev) {
         popup.setDefaultSeries(ev.newVal);
       });
+    },
+
+    /**
+     * NS aware navigate wrapper. This has the feature
+     * of preserving existing namespaces in the url.
+     *
+     * @method _navigate
+     **/
+    _navigate: function(url, options) {
+      var loc = Y.getLocation();
+      var qs = this._nsRouter.getQS(url);
+      var result = this._nsRouter.combine(loc.pathname, url);
+      if (qs) {
+        result += '?' + qs;
+      }
+      if (JujuGUI.superclass._navigate.call(this, url, options)) {
+        // Queue/Save the entire URL, not just the new fragment.
+        this._queue(result, true);
+        return true;
+      }
+      return false;
+    },
+
+
+    /**
+     * Null-queue for NS routing. The 1ms delay in the queue presents problems,
+     * apply url saves as they happen.
+     *
+     * Overrides superclass, formalizes dependency on HTML5 paths.
+     * @method _queue
+     **/
+    _queue: function() {
+      // Sync Invocation
+      this._save.apply(this, arguments);
+    },
+
+    /**
+    Dispatches to the first route handler that matches the specified _path_.
+
+    If called before the `ready` event has fired, the dispatch will be aborted.
+    This ensures normalized behavior between Chrome (which fires a `popstate`
+    event on every pageview) and other browsers (which do not).
+
+    @method _dispatch
+    @param {String} path URL path.
+    @param {String} url Full URL.
+    @param {String} src What initiated the dispatch.
+    @chainable
+    @protected
+    **/
+    _dispatch: function(path, url, src) {
+      var self = this,
+          routes,
+          callbacks = [],
+          namespaces = [],
+          matches, req, res, parts;
+
+      self._dispatching = self._dispatched = true;
+
+      parts = this._nsRouter.split(path);
+      namespaces = this._nsRouter.parse(parts.pathname);
+      this._routeGeneration += 1;
+
+      Y.each(namespaces, function(fragment, namespace) {
+        routes = self.match(fragment);
+        if (!routes || !routes.length) {
+          self._dispatching = false;
+          return self;
+        }
+
+        //console.log("_dispatch", fragment, url, src);
+        req = self._getRequest(fragment, url, src);
+        res = self._getResponse(req);
+
+        req.next = function(err) {
+          var callback, route;
+
+          if (err) {
+            // Special case "route" to skip to the next route handler
+            // avoiding any additional callbacks for the current route.
+            if (err === 'route') {
+              callbacks = [];
+              req.next();
+            } else {
+              Y.error(err);
+            }
+
+          } else if ((callback = callbacks.shift())) {
+            //console.group('callback');
+            //console.log('callback', callback);
+            if (typeof callback === 'string') {
+              callback = self[callback];
+            }
+
+            // Allow access to the num or remaining callbacks for the route.
+            req.pendingCallbacks = callbacks.length;
+            // Attach the callback id to the request.
+            req.callbackId = Y.stamp(callback, true);
+            callback.call(self, req, res, req.next);
+            //console.groupEnd();
+
+          } else if ((route = routes.shift())) {
+            // Make a copy of this route's `callbacks` and find its matches.
+            //console.group("route", fragment, route.path)
+            callbacks = route.callbacks.concat();
+            matches = route.regex.exec(fragment);
+
+            // Use named keys for parameter names if the route path contains
+            // named keys. Otherwise, use numerical match indices.
+            if (matches.length === route.keys.length + 1) {
+              req.params = Y.Array.hash(route.keys, matches.slice(1));
+            } else {
+              req.params = matches.concat();
+            }
+
+            // Allow access tot he num of remaining routes for this request.
+            req.pendingRoutes = routes.length;
+
+            // Execute this route's `callbacks`.
+            req.next();
+            //console.groupEnd();
+          }
+        };
+
+        req.next();
+      });
+
+
+      self._dispatching = false;
+      return self._dequeue();
     },
 
     /**
@@ -471,9 +608,6 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     _buildServiceView: function(req, viewName) {
-      console.log('App: Route: Service',
-          viewName, req.params.id, req.path, req.pendingRoutes);
-
       var service = this.db.services.getById(req.params.id);
       this._prefetch_service(service);
       this.showView(viewName, {
@@ -523,7 +657,6 @@ YUI.add('juju-gui', function(Y) {
      * @method show_charm_collection
      */
     show_charm_collection: function(req) {
-      console.log('App: Route: Charm Collection', req.path, req.query);
       this.showView('charm_collection', {
         query: req.query.q,
         charm_store: this.charm_store
@@ -534,7 +667,6 @@ YUI.add('juju-gui', function(Y) {
      * @method show_charm
      */
     show_charm: function(req) {
-      console.log('App: Route: Charm', req.path, req.params);
       var charm_url = req.params.charm_store_path;
       this.showView('charm', {
         charm_data_url: charm_url,
@@ -649,9 +781,14 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     onLogin: function() {
-      Y.one('body > #full-screen-mask').hide();
-      // Stop the animated loading spinner.
-      spinner.stop();
+      var mask = Y.one('#full-screen-mask');
+      if (mask) {
+        mask.hide();
+        // Stop the animated loading spinner.
+        if (spinner) {
+          spinner.stop();
+        }
+      }
       this.dispatch();
     },
 
@@ -781,12 +918,13 @@ YUI.add('juju-gui', function(Y) {
 
         // Replace the path params with items from the model's attributes.
         path = path.replace(regexPathParam,
-            function(match, operator, key) {
-              if (reverse_map !== undefined && reverse_map[key]) {
-                key = reverse_map[key];
-              }
-              return attrs[key];
-            });
+                            function(match, operator, key) {
+                              if (reverse_map !== undefined &&
+                                  reverse_map[key]) {
+                                key = reverse_map[key];
+                              }
+                              return attrs[key];
+                            });
         matches.push(Y.mix({path: path,
           route: route,
           attrs: attrs,
@@ -819,9 +957,48 @@ YUI.add('juju-gui', function(Y) {
       Y.Array.each(routes, function(route) {
         // Additionally pass route as options. This is needed to pass through
         // the attribute setter.
-        this.route(route.path, route.callback, route);
+        // Callback can be an array, we push a state tracker to the head of
+        // each callback chain.
+        var callbacks = route.callbacks || route.callback;
+        if (!Y.Lang.isArray(callbacks)) {
+          callbacks = [callbacks];
+        }
+        // Tag each callback such that we can resolve it in
+        // the state tracker.
+        Y.Array.each(callbacks, function(cb) {Y.stamp(cb);});
+        // Inject our state tracker
+        if (callbacks[0] !== '_routeStateTracker') {
+          callbacks.unshift('_routeStateTracker');
+        }
+        route.callbacks = callbacks.concat();
+        // Additionally pass the route with its exteneded
+        // attribute set.
+        this.route(route.path, route.callbacks, route);
       }, this);
       return this._routes.concat();
+    },
+
+    /**
+     * Internal state tracker, makes sure a given route
+     * dispatches once per any dispatch call with regard to
+     * namespace components.
+     *
+     * @method _routeStateTracker
+     **/
+    _routeStateTracker: function(req, res, next) {
+      var gen = this._routeGeneration,
+          seen = this._routeStates,
+          callbackId = req.callbackId;
+
+      if (callbackId && seen[callbackId] && (seen[callbackId] >= gen)) {
+        // Calling next with a route error aborts
+        // further callbacks in _this_ array (remember
+        // route.callbacks is an array per route).
+        // But can allow continued processing;
+        next('route');
+      }
+      next();
+      seen[callbackId] = gen;
     },
 
     /**
@@ -848,6 +1025,7 @@ YUI.add('juju-gui', function(Y) {
 
   }, {
     ATTRS: {
+      html5: true,
       charm_store: {},
 
       /*
@@ -864,39 +1042,39 @@ YUI.add('juju-gui', function(Y) {
       routes: {
         value: [
           // Called on each request.
-          { path: '*', callback: 'check_user_credentials'},
-          { path: '*', callback: 'show_notifications_view'},
+          { path: '*', callbacks: 'check_user_credentials'},
+          { path: '*', callbacks: 'show_notifications_view'},
           // Charms.
-          { path: '/charms/', callback: 'show_charm_collection'},
-          { path: '/charms/*charm_store_path',
-            callback: 'show_charm',
+          { path: '/charms/', callbacks: 'show_charm_collection'},
+          { path: '/charms/*charm_store_path/',
+            callbacks: 'show_charm',
             model: 'charm'},
           // Notifications.
           { path: '/notifications/',
-            callback: 'show_notifications_overview'},
+            callbacks: 'show_notifications_overview'},
           // Services.
-          { path: '/service/:id/config',
-            callback: 'show_service_config',
+          { path: '/service/:id/config/',
+            callbacks: 'show_service_config',
             intent: 'config',
             model: 'service'},
-          { path: '/service/:id/constraints',
-            callback: 'show_service_constraints',
+          { path: '/service/:id/constraints/',
+            callbacks: 'show_service_constraints',
             intent: 'constraints',
             model: 'service'},
-          { path: '/service/:id/relations',
-            callback: 'show_service_relations',
+          { path: '/service/:id/relations/',
+            callbacks: 'show_service_relations',
             intent: 'relations',
             model: 'service'},
           { path: '/service/:id/',
-            callback: 'show_service',
+            callbacks: 'show_service',
             model: 'service'},
           // Units.
           { path: '/unit/:id/',
-            callback: 'show_unit',
+            callbacks: 'show_unit',
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit'},
           // Root.
-          { path: '/', callback: 'show_environment'}
+          { path: '/', callbacks: 'show_environment'}
         ]
       }
     }
@@ -911,6 +1089,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-notifications',
+    'juju-routing',
     // This alias does not seem to work, including references by hand.
     'juju-controllers',
     'juju-notification-controller',
