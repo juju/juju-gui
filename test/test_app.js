@@ -62,6 +62,7 @@ function injectData(app, data) {
 
     afterEach(function() {
       container.remove(true);
+      sessionStorage.setItem('credentials', null);
     });
 
     it('should not have login credentials if missing from the configuration',
@@ -81,8 +82,9 @@ function injectData(app, data) {
                 user: the_username,
                 password: the_password,
                 viewContainer: container});
-          app.env.get('user').should.equal(the_username);
-          app.env.get('password').should.equal(the_password);
+          var credentials = app.env.getCredentials();
+          credentials.user.should.equal(the_username);
+          credentials.password.should.equal(the_password);
         });
 
     it('propagates the readOnly option from the configuration', function() {
@@ -177,10 +179,12 @@ function injectData(app, data) {
       conn = new utils.SocketStub();
       env = juju.newEnvironment({conn: conn});
       env.connect();
+      env.setCredentials({user: 'user', password: 'password'});
       done();
     });
 
     afterEach(function(done)  {
+      sessionStorage.setItem('credentials', null);
       env.destroy();
       done();
     });
@@ -207,6 +211,7 @@ function injectData(app, data) {
 
     it('should not try to login if user and password are not provided',
        function(done) {
+         env.setCredentials(null);
          conn.open();
          var app = new Y.juju.App({env: env});
          app.after('ready', function() {
@@ -214,6 +219,12 @@ function injectData(app, data) {
            done();
          });
        });
+
+    it('should allow logging out', function() {
+      env.logout();
+      assert.equal(false, env.userIsAuthenticated);
+      assert.equal(null, env.getCredentials());
+    });
 
   });
 })();

@@ -77,8 +77,7 @@ YUI.add('juju-env-python', function(Y) {
       this.userIsAuthenticated = !!evt.data.result;
       // If the credentials were rejected remove them.
       if (!this.userIsAuthenticated) {
-        this.set('user', undefined);
-        this.set('password', undefined);
+        this.setCredentials(null);
         this.failedAuthentication = true;
       }
     },
@@ -250,12 +249,16 @@ YUI.add('juju-env-python', function(Y) {
       if (this.userIsAuthenticated) {
         return;
       }
-      var user = this.get('user');
-      var password = this.get('password');
-      if (Y.Lang.isValue(user) && Y.Lang.isValue(password)) {
-        this._send_rpc({op: 'login', user: user, password: password});
+      var credentials = this.getCredentials();
+      if (credentials && credentials.areAvailable) {
+        this._send_rpc({
+          op: 'login',
+          user: credentials.user,
+          password: credentials.password
+        });
       } else {
         console.warn('Attempted login without providing credentials.');
+        this.fire('login', { data: { result: false } });
       }
     },
 
