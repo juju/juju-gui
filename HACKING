@@ -93,13 +93,16 @@ If you receive an error like::
   Error: watch ENOSPC
 
 You can increase your watch limit create or edit::
+
   /etc/sysctl.d/10-inotify.conf
 
 Add in the following::
+
   # expand inotify limit
   fs.inotify.max_user_watches=16384
 
 Then::
+
   sudo sysctl -p
   cat /proc/sys/fs/inotify/max_user_watches
 
@@ -110,6 +113,45 @@ more important targets.  Also note that if you use the "make prod" target
 while using the PyJuju rapi-rollup improv script, the password you should use
 is "admin," despite the help text you see.
 
+HTML5 Application Cache Notes
+=============================
+
+The GUI utilizes the HTML5 Application Cache in order to speed loading of
+certain assets in the environment view.  The application cache manifest file
+is included in index.html, and per the cache specification, this file is also
+cached.  This means that any change to any of the cached assets, including
+index.html, requires additional work to verify in a development setting.
+
+If you need to make changes to index.html and are not seeing those changes
+show up in the UI while you're working, we've provided a make target that will
+refresh the application cache and ``touch index.html``::
+
+  make appcache-force
+
+This will update a timestamp comment within the application cache, and the next
+time you refresh the page, your browser should see that both the mtime and
+contents of the cache manifest have changed, and redownload assets.  This also
+applies to an updated GUI within the charm, and new data should be pulled down
+when a new browser session accesses the charm.
+
+While this describes the ideal workflow, not all browsers work with application
+caching in the same way on refreshing within one tab.  There are a few solutions
+that can help if you are not seeing your changes to index.html or other cached
+files show up when developing:
+
+* In Google Chrome, open the developer tools with F12, click on the Network
+  tab, right click on the resources list (which may be empty if you have just
+  opened the developer tools window), and click "Clear Browser Cache".
+* Use Ctrl+Shift+R or Shift+F5 to refresh; in most browsers this will pull
+  down assets again.
+* If none of the above work, in Google Chrome, the settings page has a "Clear 
+  Browsing Data" option (<chrome://settings/clearBrowserData>); in that pane
+  make sure that "Delete cookies and other site and application data" is
+  checked, and then click "Clear Browsing Data"
+
+For more information on the HTML5 Application Cache, see the MDN article here:
+<https://developer.mozilla.org/en-US/docs/HTML/Using_the_application_cache>.
+
 Typical Bzr workflow
 =====================
 
@@ -118,27 +160,27 @@ works well for our environemnt, if you are not already familiar with bzr.
 
 To set up the environment::
 
-bzr init-repo juju-gui
-cd juju-gui
-bzr branch lp:juju-gui trunk
-mkdir yourUseName
-bzr branch trunk/{featureBranchName}
+  bzr init-repo juju-gui
+  cd juju-gui
+  bzr branch lp:juju-gui trunk
+  mkdir yourUseName
+  bzr branch trunk/{featureBranchName}
 
 To link branch to ticket::
 
-bzr commit --fixes=lp:{ticketNumber}
+  bzr commit --fixes=lp:{ticketNumber}
 
 To push code::
 
-bzr push lp:~{yourUserName}/juju-gui/{featureBranchName}
+  bzr push lp:~{yourUserName}/juju-gui/{featureBranchName}
 
 To submit for review::
 
-lbox propose -cr
+  lbox propose -cr
 
 After review, to merge into trunk::
 
-lbox submit
+  lbox submit
 
 Working with a Real Juju
 ========================
