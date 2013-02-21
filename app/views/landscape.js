@@ -158,27 +158,35 @@ YUI.add('juju-landscape', function(Y) {
     getLandscapeURL: function(model, intent) {
       var env = this.get('db').environment;
       var annotations = env.get('annotations');
-      var url = slash(annotations['landscape-url']);
+      var url = annotations['landscape-url'];
+
+      function addIntent(url, intent, envAnno) {
+        if (!intent) {
+          return slash(url);
+        }
+        if (intent === 'reboot') {
+          return url + envAnno['landscape-reboot-alert-url'];
+        } else if (intent === 'security') {
+          return url + envAnno['landscape-security-alert-url'];
+        }
+      }
 
       if (model.name === 'environment') {
-        if (intent === 'reboot') {
-          return url + '+alert:computer-reboot/info#power';
-        } else if (intent === 'security') {
-          return url + '+alert:security-upgrades/packages/list?filter=security';
+        if (intent) {
+          url = slash(url);
         }
-        return url;
+        return addIntent(url, intent, annotations);
       }
       // Indicate we want a computer in this environment.
-      url += 'computers/criteria/environment:' + env.get('uuid');
+      url += annotations['landscape-computers'];
 
       if (model.name === 'service') {
-        url += slash('+service:' + model.get('id'));
+        url += slash(model.get('annotations')['landscape-computers']);
       } else if (model.name === 'serviceUnit') {
-        url += slash('+unit:' + model.urlName);
-      } else {
-        url = slash(url);
+        url += slash(model.annotations['landscape-computers']);
       }
-      return url;
+
+      return addIntent(url, intent, annotations);
     }
   });
 

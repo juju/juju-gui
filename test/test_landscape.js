@@ -18,13 +18,24 @@ describe('Landscape integration', function() {
       landscape.set('db', db);
 
       // Set defaults for testing.
-      db.environment.set('uuid', 'test');
       envAnno = db.environment.get('annotations');
       envAnno['landscape-url'] = 'http://landscape.com';
+      envAnno['landscape-computers'] = '/computers/criteria/environment:test';
+      envAnno['landscape-reboot-alert-url'] =
+          '+alert:computer-reboot/info#power';
+      envAnno['landscape-security-alert-url'] =
+          '+alert:security-upgrades/packages/list?filter=security';
 
       // Create a default Service and some units.
-      db.services.add({id: 'mysql'});
-      db.units.add([{id: 'mysql/0'}, {id: 'mysql/1'}]);
+      db.services.add({id: 'mysql',
+        annotations: {'landscape-computers': '+service:mysql'}
+      });
+      db.units.add([{id: 'mysql/0',
+        annotations: {'landscape-computers': '+unit:mysql-0'}
+      }, {
+        id: 'mysql/1',
+        annotations: {'landscape-computers': '+unit:mysql-1'}
+      }]);
 
       done();
     });
