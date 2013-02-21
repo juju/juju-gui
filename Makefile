@@ -239,7 +239,7 @@ gjslint: virtualenv/bin/gjslint
 	    $(JSFILES)
 
 jshint: node_modules/jshint
-	node_modules/jshint/bin/jshint $(JSFILES)
+	node_modules/jshint/bin/hint $(JSFILES)
 
 undocumented:
 	bin/lint-yuidoc --generate-undocumented > undocumented
