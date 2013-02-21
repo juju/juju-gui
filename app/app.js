@@ -355,7 +355,7 @@ YUI.add('juju-gui', function(Y) {
 
     /**
      * NS aware navigate wrapper. This has the feature
-     * of preserving existing namespaces in the url.  In other words, you can
+     * of preserving existing namespaces in the URL.  In other words, you can
      * provide only a single namespace value, and all other namespaces are
      * maintained.
      *
@@ -379,7 +379,7 @@ YUI.add('juju-gui', function(Y) {
 
     /**
      * Null-queue for NS routing. The 1ms delay in the queue presents problems
-     * and is unnecessary for our supported browsers, so we save urls as they
+     * and is unnecessary for our supported browsers, so we save URLs as they
      * come.
      *
      * Overrides superclass, formalizes dependency on HTML5 paths.
