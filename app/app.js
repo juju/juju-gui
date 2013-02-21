@@ -422,7 +422,7 @@ YUI.add('juju-gui', function(Y) {
       this._routeSeen = {};
 
       Y.each(namespaces, function(fragment, namespace) {
-        routes = self.match(fragment);
+        routes = self.match(fragment, namespace);
         if (!routes || !routes.length) {
           self._dispatching = false;
           return self;
@@ -485,6 +485,39 @@ YUI.add('juju-gui', function(Y) {
 
       self._dispatching = false;
       return self._dequeue();
+    },
+
+    /** Overridden Y.Route.match to support namespaced routes.
+     *
+     * @method match
+     * @param {String} path to match.
+     * @param {String} namespace (optional) return route to have a matching
+     *                 namespace attribute. If no namespace was specified
+     *                 routes will match in any namespace, not just the default
+     *                 one.
+     **/
+    match: function(path, namespace) {
+      return Y.Array.filter(this._routes, function(route) {
+        if (path.search(route.regex) > -1) {
+          if (namespace === undefined) {
+            // If no namespace was passed match any route.
+            return true;
+          } else {
+            // If the route specified a namespace it must match,
+            // if the route didn't specify a namespace but
+            // we required a match but the match is in the default
+            // namespace we can assume the route belongs the default
+            // namespace.
+            if (route.namespace && route.namespace === namespace) {
+              return true;
+            } else if (!route.namespace &&
+                       namespace === this._nsRouter.defaultNamespace) {
+              return true;
+            }
+          }
+        }
+        return false;
+      }, this);
     },
 
     /**
