@@ -194,9 +194,11 @@ YUI.add('juju-routing', function(Y) {
       }
 
       if (!incoming.defaultNamespacePresent) {
-        // The default namespace was supplied (rather
-        // than defaulting to /) in the incoming url,
-        // this means we can safely override it.
+        // A value for the default namespace was not supplied in the incoming
+        // url, which means we should use the default namespace's "orig"
+        // value. (The "parse" method will set the default namespace's value
+        // to "/" if no value is provided, but this should not override the
+        // original value).
         delete incoming[this.defaultNamespace];
       }
       url = this.url(Y.mix(orig, incoming, true, Y.Object.keys(incoming)));
