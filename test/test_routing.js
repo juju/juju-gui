@@ -105,4 +105,20 @@ describe('Namespaced Routing', function() {
     parts.search.should.equal('a=b');
   });
 
+  it('should allow overriding namespaces', function() {
+    var result;
+    var oldGetLocation = Y.getLocation;
+    app._queue = function(url) {
+      result = url;
+    };
+    Y.getLocation = function() {
+      return { pathname: '/:foo:/bar/' };
+    };
+    app._navigate('/:bar:/baz/', {});
+    result.should.equal('/:bar:/baz/:foo:/bar/');
+    app._navigate('/', { overrideAllNamespaces: true });
+    result.should.equal('/');
+    Y.getLocation = oldGetLocation;
+  });
+
 });

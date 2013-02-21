@@ -308,7 +308,7 @@ YUI.add('juju-gui', function(Y) {
           this.notifications);
 
       // When the connection resets, reset the db, re-login (a delta will
-      // arrive with the login), and redispatch.
+      // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', function(ev) {
         if (ev.newVal === true) {
           this.db.reset();
@@ -357,16 +357,23 @@ YUI.add('juju-gui', function(Y) {
      * NS aware navigate wrapper. This has the feature
      * of preserving existing namespaces in the URL.  In other words, you can
      * provide only a single namespace value, and all other namespaces are
-     * maintained.
+     * maintained, unless you pass the overrideAllNamespaces option in the
+     * options object, in which case the other namespaces are removed.
      *
      * @method _navigate
      **/
     _navigate: function(url, options) {
-      var loc = Y.getLocation();
-      var qs = this._nsRouter.getQS(url);
-      var result = this._nsRouter.combine(loc.pathname, url);
-      if (qs) {
-        result += '?' + qs;
+      var result;
+      if (options.overrideAllNamespaces) {
+        result = url;
+        delete options.overrideAllNamespaces;
+      } else {
+        var loc = Y.getLocation();
+        var qs = this._nsRouter.getQS(url);
+        result = this._nsRouter.combine(loc.pathname, url);
+        if (qs) {
+          result += '?' + qs;
+        }
       }
       if (JujuGUI.superclass._navigate.call(this, url, options)) {
         // Queue/Save the entire URL, not just the new fragment.
@@ -727,6 +734,39 @@ YUI.add('juju-gui', function(Y) {
         notifications: this.db.notifications});
     },
 
+    /**
+     * Show the login screen.
+     *
+     * @method show_login
+     * @return {undefined} Nothing.
+     */
+    show_login: function() {
+      this.showView('login', {
+        env: this.env,
+        help_text: this.get('login_help')
+      });
+      var passwordField = this.get('container').one('input[type=password]');
+      // The password field may not be present in testing context.
+      if (passwordField) {
+        passwordField.focus();
+      }
+    },
+
+    /**
+     * Log the current user out and show the login screen again.
+     *
+     * @method logout
+     * @param {Object} req The request.
+     * @return {undefined} Nothing.
+     */
+    logout: function(req) {
+      this.env.logout();
+      this.show_login();
+      // This flag will trigger a URL reset in check_user_credentials as the
+      // routing finishes.
+      this.loggingOut = true;
+    },
+
     // Persistent Views
 
     /**
@@ -765,30 +805,25 @@ YUI.add('juju-gui', function(Y) {
       if (!this.env.get('connected')) {
         return;
       }
-      // If there are no stored credentials, the user is prompted for some.
-      var user = this.env.get('user');
-      var password = this.env.get('password');
-      if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
-        this.showView('login', {
-          env: this.env,
-          help_text: this.get('login_help')
-        });
-        var passwordField = this.get('container').one('input[type=password]');
-        // The password field may not be present in testing context.
-        if (passwordField) {
-          passwordField.focus();
+      var credentials = this.env.getCredentials();
+      if (credentials) {
+        if (!credentials.areAvailable) {
+          // If there are no stored credentials, the user is prompted for some.
+          this.show_login();
+        } else if (!this.env.userIsAuthenticated) {
+          // If there are credentials available and there has not been
+          // a successful login attempt, try to log in.
+          this.env.login();
+          return;
         }
       }
-      // If there are credentials available and there has not been
-      // a successful login attempt, try to log in.
-      if (Y.Lang.isValue(user) && Y.Lang.isValue(password) &&
-          !this.env.userIsAuthenticated) {
-        this.env.login();
-        return;
-      }
-      // If there has not been a successful login attempt,
-      // do not let the route dispatch proceed.
+      // If there has not been a successful login attempt and there are no
+      // credentials, do not let the route dispatch proceed.
       if (!this.env.userIsAuthenticated) {
+        if (this.loggingOut) {
+          this.loggingOut = false;
+          this._navigate('/', { overrideAllNamespaces: true });
+        }
         return;
       }
       next();
@@ -823,16 +858,20 @@ YUI.add('juju-gui', function(Y) {
      * @method onLogin
      * @private
      */
-    onLogin: function() {
-      var mask = Y.one('#full-screen-mask');
-      if (mask) {
-        mask.hide();
-        // Stop the animated loading spinner.
-        if (spinner) {
-          spinner.stop();
+    onLogin: function(evt) {
+      if (evt.data.result) {
+        var mask = Y.one('#full-screen-mask');
+        if (mask) {
+          mask.hide();
+          // Stop the animated loading spinner.
+          if (spinner) {
+            spinner.stop();
+          }
         }
+        this.dispatch();
+      } else {
+        this.show_login();
       }
-      this.dispatch();
     },
 
     /**
@@ -1122,6 +1161,8 @@ YUI.add('juju-gui', function(Y) {
             callbacks: 'show_unit',
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit'},
+          // Logout.
+          { path: '/logout/', callbacks: 'logout'},
           // Root.
           { path: '/', callbacks: 'show_environment'}
         ]
