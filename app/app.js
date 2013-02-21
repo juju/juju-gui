@@ -916,20 +916,8 @@ YUI.add('juju-gui', function(Y) {
      * Object routing support
      *
      * This utility helps map from model objects to routes
-     * defined on the App object.
-     *
-     * To support this we supplement our routing information with
-     * additional attributes as follows:
-     *
-     * `model`: `model.name` (required)
-     *
-     * `reverse_map`: (optional) A reverse mapping of `route_path_key` to the
-     *   name of the attribute on the model.  If no value is provided, it is
-     *   used directly as attribute name.
-     *
-     * `intent`: (optional) A string named `intent` for which this route should
-     *   be used. This can be used to select which subview is selected to
-     *   resolve a model's route.
+     * defined on the App object. See the routes Attribute
+     * for additional information.
      *
      * @param {object} model The model to determine a route URL for.
      * @param {object} [intent] the name of an intent associated with a route.
@@ -1077,6 +1065,24 @@ YUI.add('juju-gui', function(Y) {
        * Each request path is evaluated against all hereby defined routes,
        * and the callbacks for all the ones that match are invoked,
        * without stopping at the first one.
+       *
+       * To support this we supplement our routing information with
+       * additional attributes as follows:
+       *
+       * `namespace`: (optional) when namespace is specified this route should
+       *   only match when the URL fragment occurs in that namespace. The
+       *   default namespace (as passed to this._nsRouter) is assumed if no
+       *   namespace  attribute is specified.
+       *
+       * `model`: `model.name` (required)
+       *
+       * `reverse_map`: (optional) A reverse mapping of `route_path_key` to the
+       *   name of the attribute on the model.  If no value is provided, it is
+       *   used directly as attribute name.
+       *
+       * `intent`: (optional) A string named `intent` for which this route
+       *   should be used. This can be used to select which subview is selected
+       *   to resolve a model's route.
        *
        * FIXME: not included in the generated doc output.
        *
