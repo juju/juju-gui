@@ -95,7 +95,7 @@ If you receive an error like::
            ^
   Error: watch ENOSPC
 
-You can increase your watch limit create or edit::
+You can increase your watch limit by creating or editing::
 
   /etc/sysctl.d/10-inotify.conf
 
