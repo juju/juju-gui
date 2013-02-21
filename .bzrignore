@@ -18,7 +18,7 @@ upload_release.py
 releases
 build-prod
 build-debug
-bin/py
+bin/*
 python-shelltoolbox
 test/test_startup.js
 test/extracted_startup_code
