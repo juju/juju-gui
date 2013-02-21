@@ -56,10 +56,14 @@ YUI.add('juju-models', function(Y) {
    *
    * @class Environment
    **/
-  var Environment = Y.Base.create('environment', Y.Model, [], {
+  var Environment = Y.Base.create('environment', Y.Model, [], {}, {
     ATTRS: {
       name: {},
-      provider: {}
+      provider: {},
+      uuid: {},
+      annotations: {
+        valueFn: function() {return {};}
+      }
     }
   });
   models.Environment = Environment;

@@ -114,7 +114,7 @@ describe('notifications', function() {
          title: 'test2', message: 'I said goodnight!'}),
            notifications = new models.NotificationList(),
            container = Y.Node.create('<div id="test">'),
-           env = new juju.Environment(),
+           env = juju.newEnvironment(),
            view = new views.NotificationsView({
                    container: container,
                    notifications: notifications,
@@ -177,7 +177,7 @@ describe('notifications', function() {
   it('must be able to include and show object links', function() {
     var container = Y.Node.create('<div id="test">'),
         conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
-        env = new juju.Environment({conn: conn}),
+        env = juju.newEnvironment({conn: conn}),
         app = new Y.juju.App({env: env, container: container}),
         db = app.db,
         mw = db.services.create({id: 'mediawiki',
@@ -220,7 +220,7 @@ describe('notifications', function() {
     var container = Y.Node.create(
         '<div id="test" class="container"></div>'),
         conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
-        env = new juju.Environment({conn: conn}),
+        env = juju.newEnvironment({conn: conn}),
         app = new Y.juju.App({
           env: env,
           container: container,
@@ -329,7 +329,7 @@ describe('notifications', function() {
     var container = Y.Node.create(
         '<div id="test-container" style="display: none" class="container"/>'),
         notifications = new models.NotificationList(),
-        env = new juju.Environment(),
+        env = juju.newEnvironment(),
         view = new views.NotificationsView({
           container: container,
           notifications: notifications,
@@ -422,7 +422,7 @@ describe('notification visual feedback', function() {
     Y = YUI(GlobalConfig).use('juju-env', 'juju-models', 'juju-views',
         function(Y) {
           var juju = Y.namespace('juju');
-          env = new juju.Environment();
+          env = juju.newEnvironment();
           models = Y.namespace('juju.models');
           views = Y.namespace('juju.views');
           done();

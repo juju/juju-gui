@@ -113,7 +113,6 @@ describe('juju models', function() {
     names[1].should.equal('logger');
   });
 
-
   it('service unit list should be able to get units of a given service',
       function() {
         var sl = new models.ServiceList();
@@ -353,6 +352,12 @@ describe('juju models', function() {
        function(r) { return r.get('id'); })
             .should.eql(['relation-2', 'relation-3', 'relation-4']);
       });
+
+  it('must be able to reference the Environment model', function() {
+    var db = new models.Database();
+    var env = db.environment;
+    env.get('annotations').should.eql({});
+  });
 });
 
 
@@ -369,7 +374,7 @@ YUI(GlobalConfig).use(['juju-models', 'juju-gui', 'datasource-local',
 
     beforeEach(function() {
       conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-      env = new juju.Environment({conn: conn});
+      env = juju.newEnvironment({conn: conn});
       env.connect();
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');

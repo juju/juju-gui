@@ -315,20 +315,21 @@ YUI.add('juju-view-service', function(Y) {
         getServiceTabs: function(href) {
           var db = this.get('db'),
               service = this.get('model'),
+              getModelURL = this.get('getModelURL'),
               charmId = service.get('charm'),
               charm = db.charms.getById(charmId),
-              charmUrl = (charm ? this.get('getModelURL')(charm) : '#');
+              charmUrl = (charm ? getModelURL(charm) : '#');
 
           var tabs = [{
-            href: '.',
+            href: getModelURL(service),
             title: 'Units',
             active: false
           }, {
-            href: 'relations',
+            href: getModelURL(service, 'relations'),
             title: 'Relations',
             active: false
           }, {
-            href: 'config',
+            href: getModelURL(service, 'config'),
             title: 'Settings',
             active: false
           }, {
@@ -336,7 +337,7 @@ YUI.add('juju-view-service', function(Y) {
             title: 'Charm',
             active: false
           }, {
-            href: 'constraints',
+            href: getModelURL(service, 'constraints'),
             title: 'Constraints',
             active: false
           }];
