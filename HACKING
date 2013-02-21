@@ -68,6 +68,9 @@ phantomjs should be installed globally.
 
   sudo npm install -g jshint mocha-phantomjs phantomjs
 
+Note: Make sure to get the latest phantomjs from npm and not rely on an older
+.deb packaged version. mocha-phantomjs will fail silently when running.
+
 If you receive an error installing phantomjs, you can manually download and
 unpack the archive and then arrange for the "phantomjs" executable to be
 located on your path (e.g., by linking it into ``~/bin``).
