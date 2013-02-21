@@ -24,7 +24,7 @@
 
     beforeEach(function(done) {
       conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-      env = new (Y.namespace('juju')).Environment({conn: conn});
+      env = Y.namespace('juju').newEnvironment({conn: conn});
       env.connect();
       conn.open();
       container = Y.Node.create('<div/>')
@@ -726,7 +726,7 @@
 
     beforeEach(function(done) {
       conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-      env = new (Y.namespace('juju')).Environment({conn: conn});
+      env = Y.namespace('juju').newEnvironment({conn: conn});
       env.connect();
       conn.open();
       container = Y.Node.create('<div/>').hide();

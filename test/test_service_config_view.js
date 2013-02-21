@@ -37,7 +37,7 @@
 
     beforeEach(function(done) {
       conn = new testUtils.SocketStub(),
-      env = new (Y.namespace('juju')).Environment({conn: conn});
+      env = Y.namespace('juju').newEnvironment({conn: conn});
       env.connect();
       conn.open();
       container = Y.Node.create('<div id="test-container" />');
