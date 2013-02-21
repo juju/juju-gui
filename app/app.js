@@ -302,7 +302,7 @@ YUI.add('juju-gui', function(Y) {
           this.notifications);
 
       // When the connection resets, reset the db, re-login (a delta will
-      // arrive with the log), and redispatch.
+      // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', function(ev) {
         if (ev.newVal === true) {
           this.db.reset();
@@ -354,11 +354,17 @@ YUI.add('juju-gui', function(Y) {
      * @method _navigate
      **/
     _navigate: function(url, options) {
-      var loc = Y.getLocation();
-      var qs = this._nsRouter.getQS(url);
-      var result = this._nsRouter.combine(loc.pathname, url);
-      if (qs) {
-        result += '?' + qs;
+      var result;
+      if (options.overrideAllNamespaces) {
+        result = url;
+        delete options.overrideAllNamespaces;
+      } else {
+        var loc = Y.getLocation();
+        var qs = this._nsRouter.getQS(url);
+        var result = this._nsRouter.combine(loc.pathname, url);
+        if (qs) {
+          result += '?' + qs;
+        }
       }
       if (JujuGUI.superclass._navigate.call(this, url, options)) {
         // Queue/Save the entire URL, not just the new fragment.
@@ -712,6 +718,8 @@ YUI.add('juju-gui', function(Y) {
     logout: function(req) {
       this.env.logout();
       this.show_login();
+      // This flag will trigger a URL reset in check_user_credentials as the
+      // routing finishes.  
       this.loggingOut = true;
     },
 
@@ -753,28 +761,24 @@ YUI.add('juju-gui', function(Y) {
       if (!this.env.get('connected')) {
         return;
       }
-      // If there are no stored credentials, the user is prompted for some.
       var credentials = this.env.getCredentials();
-      if (Y.Lang.isObject(credentials) &&
-          (!Y.Lang.isValue(credentials.user) ||
-           !Y.Lang.isValue(credentials.password))) {
-        this.show_login();
+      if (credentials) {
+        if (!credentials.areAvailable) {
+          // If there are no stored credentials, the user is prompted for some.
+          this.show_login();
+        } else if (!this.env.userIsAuthenticated) {
+          // If there are credentials available and there has not been
+          // a successful login attempt, try to log in.
+          this.env.login();
+          return;
+        }
       }
-      // If there are credentials available and there has not been
-      // a successful login attempt, try to log in.
-      if (Y.Lang.isObject(credentials) &&
-          Y.Lang.isValue(credentials.user) &&
-          Y.Lang.isValue(credentials.password) &&
-          !this.env.userIsAuthenticated) {
-        this.env.login();
-        return;
-      }
-      // If there has not been a successful login attempt,
-      // do not let the route dispatch proceed.
+      // If there has not been a successful login attempt and there are no
+      // credentials, do not let the route dispatch proceed.
       if (!this.env.userIsAuthenticated) {
         if (this.loggingOut) {
           this.loggingOut = false;
-          this.navigate('/');
+          this._navigate('/', { overrideAllNamespaces: true });
         }
         return;
       }
@@ -810,16 +814,20 @@ YUI.add('juju-gui', function(Y) {
      * @method onLogin
      * @private
      */
-    onLogin: function() {
-      var mask = Y.one('#full-screen-mask');
-      if (mask) {
-        mask.hide();
-        // Stop the animated loading spinner.
-        if (spinner) {
-          spinner.stop();
+    onLogin: function(evt) {
+      if (evt.data.result) {
+        var mask = Y.one('#full-screen-mask');
+        if (mask) {
+          mask.hide();
+          // Stop the animated loading spinner.
+          if (spinner) {
+            spinner.stop();
+          }
         }
+        this.dispatch();
+      } else {
+        this.show_login();
       }
-      this.dispatch();
     },
 
     /**

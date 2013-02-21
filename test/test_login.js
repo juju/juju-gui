@@ -46,8 +46,7 @@
       var evt = {data: {op: 'login'}};
       env.handleLoginEvent(evt);
       var credentials = env.getCredentials();
-      assert.equal(credentials.user, undefined);
-      assert.equal(credentials.password, undefined);
+      assert.equal(credentials, null);
     });
 
     test('credentials passed to the constructor are stored', function() {

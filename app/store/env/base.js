@@ -151,7 +151,18 @@ YUI.add('juju-env-base', function(Y) {
      *                   'password' attribute.
      */
     getCredentials: function() {
-      return Y.JSON.parse(sessionStorage.getItem('credentials'));
+      var credentials = Y.JSON.parse(sessionStorage.getItem('credentials'));
+      if (credentials) {
+        Object.defineProperties(credentials, {
+          areAvailable: {
+            get: function() {
+              return Y.Lang.isValue(this.user) && 
+                Y.Lang.isValue(this.password);
+            }
+          }
+        });
+      }
+      return credentials;
     },
 
     /**
@@ -163,6 +174,8 @@ YUI.add('juju-env-base', function(Y) {
     logout: function() {
       this.userIsAuthenticated = false;
       this.setCredentials(null);
+      this.ws.close();
+      this.connect();
     }
 
   });
