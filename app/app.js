@@ -233,20 +233,15 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
-      // These three attributes are used by the namespaced URL tracker.
-      //
-      // _routeGeneration and _routeStates are part of a mechanism to prevent
-      // non-namespaced routes from being processed multiple times when
-      // multiple namespaces are present in the URL.  _routeGeneration holds
-      // an integer that increases every time a URL is processed (see
-      // _dispatch). _routeStates holds a mapping between route callback uids
-      // and generations in which the callback has been used. A callback is
-      // not called if it has been used in the current generation.
-      //
+      // These two attributes are used by the namespaced URL tracker.
+      // _routeSeen is part of a mechanism to prevent non-namespaced routes
+      // from being processed multiple times when multiple namespaces are
+      // present in the URL.  The data structure is reset for each URL (in
+      // _dispatch).  It holds a mapping between route callback uids and a
+      // flag to indicate that the callback has been used.
+      this._routeSeen = {};
       // _nsRouter is a juju.Router.  It provides a lot of utility methods for
       // working with namespaced URLs.  See the module for details.
-      this._routeGeneration = 0;
-      this._routeStates = {};
       this._nsRouter = juju.Router('charmstore');
 
 
@@ -421,7 +416,10 @@ YUI.add('juju-gui', function(Y) {
 
       parts = this._nsRouter.split(path);
       namespaces = this._nsRouter.parse(parts.pathname);
-      this._routeGeneration += 1;
+      // Clear out the "seen" stash because we are starting a new URL
+      // dispatch.  This data structure helps us from processing the same non-
+      // namespaced route multiple times for each URL.
+      this._routeSeen = {};
 
       Y.each(namespaces, function(fragment, namespace) {
         routes = self.match(fragment);
@@ -999,19 +997,18 @@ YUI.add('juju-gui', function(Y) {
      * @method _routeStateTracker
      **/
     _routeStateTracker: function(req, res, next) {
-      var gen = this._routeGeneration,
-          seen = this._routeStates,
+      var seen = this._routeSeen,
           callbackId = req.callbackId;
 
-      if (callbackId && seen[callbackId] && (seen[callbackId] >= gen)) {
+      if (callbackId && seen[callbackId]) {
         // Calling next with a route error aborts
         // further callbacks in _this_ array (remember
         // route.callbacks is an array per route).
-        // But can allow continued processing;
+        // But it can allow continued processing.
         next('route');
       }
       next();
-      seen[callbackId] = gen;
+      seen[callbackId] = true;
     },
 
     /**
