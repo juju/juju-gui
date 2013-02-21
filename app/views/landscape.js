@@ -160,6 +160,10 @@ YUI.add('juju-landscape', function(Y) {
       var annotations = env.get('annotations');
       var url = annotations['landscape-url'];
 
+      /**
+       * @method addIntent
+       * @return {String} url.
+       **/
       function addIntent(url, intent, envAnno) {
         if (!intent) {
           return slash(url);
