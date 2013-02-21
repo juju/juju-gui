@@ -233,7 +233,18 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
-      // Namespaced URL tracker.
+      // These three attributes are used by the namespaced URL tracker.
+      //
+      // _routeGeneration and _routeStates are part of a mechanism to prevent
+      // non-namespaced routes from being processed multiple times when
+      // multiple namespaces are present in the URL.  _routeGeneration holds
+      // an integer that increases every time a URL is processed (see
+      // _dispatch). _routeStates holds a mapping between route callback uids
+      // and generations in which the callback has been used. A callback is
+      // not called if it has been used in the current generation.
+      //
+      // _nsRouter is a juju.Router.  It provides a lot of utility methods for
+      // working with namespaced URLs.  See the module for details.
       this._routeGeneration = 0;
       this._routeStates = {};
       this._nsRouter = juju.Router('charmstore');
@@ -349,7 +360,9 @@ YUI.add('juju-gui', function(Y) {
 
     /**
      * NS aware navigate wrapper. This has the feature
-     * of preserving existing namespaces in the url.
+     * of preserving existing namespaces in the url.  In other words, you can
+     * provide only a single namespace value, and all other namespaces are
+     * maintained.
      *
      * @method _navigate
      **/
@@ -370,8 +383,9 @@ YUI.add('juju-gui', function(Y) {
 
 
     /**
-     * Null-queue for NS routing. The 1ms delay in the queue presents problems,
-     * apply url saves as they happen.
+     * Null-queue for NS routing. The 1ms delay in the queue presents problems
+     * and is unnecessary for our supported browsers, so we save urls as they
+     * come.
      *
      * Overrides superclass, formalizes dependency on HTML5 paths.
      * @method _queue
@@ -402,6 +416,7 @@ YUI.add('juju-gui', function(Y) {
           namespaces = [],
           matches, req, res, parts;
 
+      // These are used by underlying YUI machinery.
       self._dispatching = self._dispatched = true;
 
       parts = this._nsRouter.split(path);
@@ -415,10 +430,12 @@ YUI.add('juju-gui', function(Y) {
           return self;
         }
 
-        //console.log("_dispatch", fragment, url, src);
         req = self._getRequest(fragment, url, src);
         res = self._getResponse(req);
 
+        // This method is a recursive closure, which mutates a number of
+        // variables in the enclosing scope, most notably the callbacks and
+        // routes.  Read carefully!
         req.next = function(err) {
           var callback, route;
 
@@ -433,8 +450,6 @@ YUI.add('juju-gui', function(Y) {
             }
 
           } else if ((callback = callbacks.shift())) {
-            //console.group('callback');
-            //console.log('callback', callback);
             if (typeof callback === 'string') {
               callback = self[callback];
             }
@@ -444,11 +459,9 @@ YUI.add('juju-gui', function(Y) {
             // Attach the callback id to the request.
             req.callbackId = Y.stamp(callback, true);
             callback.call(self, req, res, req.next);
-            //console.groupEnd();
 
           } else if ((route = routes.shift())) {
             // Make a copy of this route's `callbacks` and find its matches.
-            //console.group("route", fragment, route.path)
             callbacks = route.callbacks.concat();
             matches = route.regex.exec(fragment);
 
@@ -465,7 +478,6 @@ YUI.add('juju-gui', function(Y) {
 
             // Execute this route's `callbacks`.
             req.next();
-            //console.groupEnd();
           }
         };
 
@@ -947,7 +959,7 @@ YUI.add('juju-gui', function(Y) {
 
     /**
      * Override Y.Router.route (and setter) to allow inclusion of additional
-     * routing params
+     * routing params.
      *
      * @method _setRoutes
      * @private
@@ -957,7 +969,7 @@ YUI.add('juju-gui', function(Y) {
       Y.Array.each(routes, function(route) {
         // Additionally pass route as options. This is needed to pass through
         // the attribute setter.
-        // Callback can be an array, we push a state tracker to the head of
+        // Callback can be an array. We push a state tracker to the head of
         // each callback chain.
         var callbacks = route.callbacks || route.callback;
         if (!Y.Lang.isArray(callbacks)) {
@@ -966,12 +978,12 @@ YUI.add('juju-gui', function(Y) {
         // Tag each callback such that we can resolve it in
         // the state tracker.
         Y.Array.each(callbacks, function(cb) {Y.stamp(cb);});
-        // Inject our state tracker
+        // Inject our state tracker.
         if (callbacks[0] !== '_routeStateTracker') {
           callbacks.unshift('_routeStateTracker');
         }
         route.callbacks = callbacks.concat();
-        // Additionally pass the route with its exteneded
+        // Additionally pass the route with its extended
         // attribute set.
         this.route(route.path, route.callbacks, route);
       }, this);
@@ -979,9 +991,10 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Internal state tracker, makes sure a given route
+     * Internal state tracker. This makes sure a given route
      * dispatches once per any dispatch call with regard to
-     * namespace components.
+     * namespace components.  This is important for routes registered
+     * without namespaces.
      *
      * @method _routeStateTracker
      **/
