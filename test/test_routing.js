@@ -113,7 +113,7 @@ describe('Namespaced Routing', function() {
     };
     Y.getLocation = function() {
       return { pathname: '/:foo:/bar/' };
-    }
+    };
     app._navigate('/:bar:/baz/', {});
     result.should.equal('/:bar:/baz/:foo:/bar/');
     app._navigate('/', { overrideAllNamespaces: true });

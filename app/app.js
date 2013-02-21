@@ -361,7 +361,7 @@ YUI.add('juju-gui', function(Y) {
       } else {
         var loc = Y.getLocation();
         var qs = this._nsRouter.getQS(url);
-        var result = this._nsRouter.combine(loc.pathname, url);
+        result = this._nsRouter.combine(loc.pathname, url);
         if (qs) {
           result += '?' + qs;
         }
@@ -719,7 +719,7 @@ YUI.add('juju-gui', function(Y) {
       this.env.logout();
       this.show_login();
       // This flag will trigger a URL reset in check_user_credentials as the
-      // routing finishes.  
+      // routing finishes.
       this.loggingOut = true;
     },
 

@@ -155,9 +155,15 @@ YUI.add('juju-env-base', function(Y) {
       if (credentials) {
         Object.defineProperties(credentials, {
           areAvailable: {
+            /**
+             * Returns whether or not credentials are populated.
+             *
+             * @method get
+             * @return {Boolean} Whether or not user and password are set.
+             */
             get: function() {
-              return Y.Lang.isValue(this.user) && 
-                Y.Lang.isValue(this.password);
+              return Y.Lang.isValue(this.user) &&
+                  Y.Lang.isValue(this.password);
             }
           }
         });
