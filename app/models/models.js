@@ -60,7 +60,6 @@ YUI.add('juju-models', function(Y) {
     ATTRS: {
       name: {},
       provider: {},
-      uuid: {},
       annotations: {
         valueFn: function() {return {};}
       }
