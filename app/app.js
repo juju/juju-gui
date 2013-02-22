@@ -364,7 +364,7 @@ YUI.add('juju-gui', function(Y) {
      **/
     _navigate: function(url, options) {
       var result;
-      if (options.overrideAllNamespaces) {
+      if (options && options.overrideAllNamespaces) {
         result = url;
         delete options.overrideAllNamespaces;
       } else {
@@ -500,27 +500,19 @@ YUI.add('juju-gui', function(Y) {
      * @param {String} path to match.
      * @param {String} namespace (optional) return route to have a matching
      *                 namespace attribute. If no namespace was specified
-     *                 routes will match in any namespace, not just the default
-     *                 one.
+     *                 routes will match in the default namespace only.
      **/
     match: function(path, namespace) {
+      var defaultNS = this._nsRouter.defaultNamespace;
+      if (!namespace) {
+        namespace = defaultNS;
+      }
+
       return Y.Array.filter(this._routes, function(route) {
+        var routeNS = route.namespace || defaultNS;
         if (path.search(route.regex) > -1) {
-          if (namespace === undefined) {
-            // If no namespace was passed match any route.
+          if (routeNS === namespace) {
             return true;
-          } else {
-            // If the route specified a namespace it must match,
-            // if the route didn't specify a namespace but
-            // we required a match but the match is in the default
-            // namespace we can assume the route belongs the default
-            // namespace.
-            if (route.namespace && route.namespace === namespace) {
-              return true;
-            } else if (!route.namespace &&
-                       namespace === this._nsRouter.defaultNamespace) {
-              return true;
-            }
           }
         }
         return false;
