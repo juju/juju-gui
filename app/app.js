@@ -233,9 +233,15 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
-      // Namespaced URL tracker.
-      this._routeGeneration = 0;
-      this._routeStates = {};
+      // These two attributes are used by the namespaced URL tracker.
+      // _routeSeen is part of a mechanism to prevent non-namespaced routes
+      // from being processed multiple times when multiple namespaces are
+      // present in the URL.  The data structure is reset for each URL (in
+      // _dispatch).  It holds a mapping between route callback uids and a
+      // flag to indicate that the callback has been used.
+      this._routeSeen = {};
+      // _nsRouter is a juju.Router.  It provides a lot of utility methods for
+      // working with namespaced URLs.  See the module for details.
       this._nsRouter = juju.Router('charmstore');
 
 
@@ -302,7 +308,7 @@ YUI.add('juju-gui', function(Y) {
           this.notifications);
 
       // When the connection resets, reset the db, re-login (a delta will
-      // arrive with the login), and redispatch.
+      // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', function(ev) {
         if (ev.newVal === true) {
           this.db.reset();
@@ -349,16 +355,25 @@ YUI.add('juju-gui', function(Y) {
 
     /**
      * NS aware navigate wrapper. This has the feature
-     * of preserving existing namespaces in the url.
+     * of preserving existing namespaces in the URL.  In other words, you can
+     * provide only a single namespace value, and all other namespaces are
+     * maintained, unless you pass the overrideAllNamespaces option in the
+     * options object, in which case the other namespaces are removed.
      *
      * @method _navigate
      **/
     _navigate: function(url, options) {
-      var loc = Y.getLocation();
-      var qs = this._nsRouter.getQS(url);
-      var result = this._nsRouter.combine(loc.pathname, url);
-      if (qs) {
-        result += '?' + qs;
+      var result;
+      if (options && options.overrideAllNamespaces) {
+        result = url;
+        delete options.overrideAllNamespaces;
+      } else {
+        var loc = Y.getLocation();
+        var qs = this._nsRouter.getQS(url);
+        result = this._nsRouter.combine(loc.pathname, url);
+        if (qs) {
+          result += '?' + qs;
+        }
       }
       if (JujuGUI.superclass._navigate.call(this, url, options)) {
         // Queue/Save the entire URL, not just the new fragment.
@@ -370,8 +385,9 @@ YUI.add('juju-gui', function(Y) {
 
 
     /**
-     * Null-queue for NS routing. The 1ms delay in the queue presents problems,
-     * apply url saves as they happen.
+     * Null-queue for NS routing. The 1ms delay in the queue presents problems
+     * and is unnecessary for our supported browsers, so we save URLs as they
+     * come.
      *
      * Overrides superclass, formalizes dependency on HTML5 paths.
      * @method _queue
@@ -402,23 +418,29 @@ YUI.add('juju-gui', function(Y) {
           namespaces = [],
           matches, req, res, parts;
 
+      // These are used by underlying YUI machinery.
       self._dispatching = self._dispatched = true;
 
       parts = this._nsRouter.split(path);
       namespaces = this._nsRouter.parse(parts.pathname);
-      this._routeGeneration += 1;
+      // Clear out the "seen" stash because we are starting a new URL
+      // dispatch.  This data structure helps us from processing the same non-
+      // namespaced route multiple times for each URL.
+      this._routeSeen = {};
 
       Y.each(namespaces, function(fragment, namespace) {
-        routes = self.match(fragment);
+        routes = self.match(fragment, namespace);
         if (!routes || !routes.length) {
           self._dispatching = false;
           return self;
         }
 
-        //console.log("_dispatch", fragment, url, src);
         req = self._getRequest(fragment, url, src);
         res = self._getResponse(req);
 
+        // This method is a recursive closure, which mutates a number of
+        // variables in the enclosing scope, most notably the callbacks and
+        // routes.  Read carefully!
         req.next = function(err) {
           var callback, route;
 
@@ -433,8 +455,6 @@ YUI.add('juju-gui', function(Y) {
             }
 
           } else if ((callback = callbacks.shift())) {
-            //console.group('callback');
-            //console.log('callback', callback);
             if (typeof callback === 'string') {
               callback = self[callback];
             }
@@ -444,11 +464,9 @@ YUI.add('juju-gui', function(Y) {
             // Attach the callback id to the request.
             req.callbackId = Y.stamp(callback, true);
             callback.call(self, req, res, req.next);
-            //console.groupEnd();
 
           } else if ((route = routes.shift())) {
             // Make a copy of this route's `callbacks` and find its matches.
-            //console.group("route", fragment, route.path)
             callbacks = route.callbacks.concat();
             matches = route.regex.exec(fragment);
 
@@ -465,7 +483,6 @@ YUI.add('juju-gui', function(Y) {
 
             // Execute this route's `callbacks`.
             req.next();
-            //console.groupEnd();
           }
         };
 
@@ -475,6 +492,31 @@ YUI.add('juju-gui', function(Y) {
 
       self._dispatching = false;
       return self._dequeue();
+    },
+
+    /** Overridden Y.Route.match to support namespaced routes.
+     *
+     * @method match
+     * @param {String} path to match.
+     * @param {String} namespace (optional) return route to have a matching
+     *                 namespace attribute. If no namespace was specified
+     *                 routes will match in the default namespace only.
+     **/
+    match: function(path, namespace) {
+      var defaultNS = this._nsRouter.defaultNamespace;
+      if (!namespace) {
+        namespace = defaultNS;
+      }
+
+      return Y.Array.filter(this._routes, function(route) {
+        var routeNS = route.namespace || defaultNS;
+        if (path.search(route.regex) > -1) {
+          if (routeNS === namespace) {
+            return true;
+          }
+        }
+        return false;
+      }, this);
     },
 
     /**
@@ -684,6 +726,39 @@ YUI.add('juju-gui', function(Y) {
         notifications: this.db.notifications});
     },
 
+    /**
+     * Show the login screen.
+     *
+     * @method show_login
+     * @return {undefined} Nothing.
+     */
+    show_login: function() {
+      this.showView('login', {
+        env: this.env,
+        help_text: this.get('login_help')
+      });
+      var passwordField = this.get('container').one('input[type=password]');
+      // The password field may not be present in testing context.
+      if (passwordField) {
+        passwordField.focus();
+      }
+    },
+
+    /**
+     * Log the current user out and show the login screen again.
+     *
+     * @method logout
+     * @param {Object} req The request.
+     * @return {undefined} Nothing.
+     */
+    logout: function(req) {
+      this.env.logout();
+      this.show_login();
+      // This flag will trigger a URL reset in check_user_credentials as the
+      // routing finishes.
+      this.loggingOut = true;
+    },
+
     // Persistent Views
 
     /**
@@ -722,30 +797,25 @@ YUI.add('juju-gui', function(Y) {
       if (!this.env.get('connected')) {
         return;
       }
-      // If there are no stored credentials, the user is prompted for some.
-      var user = this.env.get('user');
-      var password = this.env.get('password');
-      if (!Y.Lang.isValue(user) || !Y.Lang.isValue(password)) {
-        this.showView('login', {
-          env: this.env,
-          help_text: this.get('login_help')
-        });
-        var passwordField = this.get('container').one('input[type=password]');
-        // The password field may not be present in testing context.
-        if (passwordField) {
-          passwordField.focus();
+      var credentials = this.env.getCredentials();
+      if (credentials) {
+        if (!credentials.areAvailable) {
+          // If there are no stored credentials, the user is prompted for some.
+          this.show_login();
+        } else if (!this.env.userIsAuthenticated) {
+          // If there are credentials available and there has not been
+          // a successful login attempt, try to log in.
+          this.env.login();
+          return;
         }
       }
-      // If there are credentials available and there has not been
-      // a successful login attempt, try to log in.
-      if (Y.Lang.isValue(user) && Y.Lang.isValue(password) &&
-          !this.env.userIsAuthenticated) {
-        this.env.login();
-        return;
-      }
-      // If there has not been a successful login attempt,
-      // do not let the route dispatch proceed.
+      // If there has not been a successful login attempt and there are no
+      // credentials, do not let the route dispatch proceed.
       if (!this.env.userIsAuthenticated) {
+        if (this.loggingOut) {
+          this.loggingOut = false;
+          this._navigate('/', { overrideAllNamespaces: true });
+        }
         return;
       }
       next();
@@ -780,16 +850,20 @@ YUI.add('juju-gui', function(Y) {
      * @method onLogin
      * @private
      */
-    onLogin: function() {
-      var mask = Y.one('#full-screen-mask');
-      if (mask) {
-        mask.hide();
-        // Stop the animated loading spinner.
-        if (spinner) {
-          spinner.stop();
+    onLogin: function(evt) {
+      if (evt.data.result) {
+        var mask = Y.one('#full-screen-mask');
+        if (mask) {
+          mask.hide();
+          // Stop the animated loading spinner.
+          if (spinner) {
+            spinner.stop();
+          }
         }
+        this.dispatch();
+      } else {
+        this.show_login();
       }
-      this.dispatch();
     },
 
     /**
@@ -873,20 +947,8 @@ YUI.add('juju-gui', function(Y) {
      * Object routing support
      *
      * This utility helps map from model objects to routes
-     * defined on the App object.
-     *
-     * To support this we supplement our routing information with
-     * additional attributes as follows:
-     *
-     * `model`: `model.name` (required)
-     *
-     * `reverse_map`: (optional) A reverse mapping of `route_path_key` to the
-     *   name of the attribute on the model.  If no value is provided, it is
-     *   used directly as attribute name.
-     *
-     * `intent`: (optional) A string named `intent` for which this route should
-     *   be used. This can be used to select which subview is selected to
-     *   resolve a model's route.
+     * defined on the App object. See the routes Attribute
+     * for additional information.
      *
      * @param {object} model The model to determine a route URL for.
      * @param {object} [intent] the name of an intent associated with a route.
@@ -947,7 +1009,7 @@ YUI.add('juju-gui', function(Y) {
 
     /**
      * Override Y.Router.route (and setter) to allow inclusion of additional
-     * routing params
+     * routing params.
      *
      * @method _setRoutes
      * @private
@@ -957,7 +1019,7 @@ YUI.add('juju-gui', function(Y) {
       Y.Array.each(routes, function(route) {
         // Additionally pass route as options. This is needed to pass through
         // the attribute setter.
-        // Callback can be an array, we push a state tracker to the head of
+        // Callback can be an array. We push a state tracker to the head of
         // each callback chain.
         var callbacks = route.callbacks || route.callback;
         if (!Y.Lang.isArray(callbacks)) {
@@ -966,12 +1028,12 @@ YUI.add('juju-gui', function(Y) {
         // Tag each callback such that we can resolve it in
         // the state tracker.
         Y.Array.each(callbacks, function(cb) {Y.stamp(cb);});
-        // Inject our state tracker
+        // Inject our state tracker.
         if (callbacks[0] !== '_routeStateTracker') {
           callbacks.unshift('_routeStateTracker');
         }
         route.callbacks = callbacks.concat();
-        // Additionally pass the route with its exteneded
+        // Additionally pass the route with its extended
         // attribute set.
         this.route(route.path, route.callbacks, route);
       }, this);
@@ -979,26 +1041,26 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Internal state tracker, makes sure a given route
+     * Internal state tracker. This makes sure a given route
      * dispatches once per any dispatch call with regard to
-     * namespace components.
+     * namespace components.  This is important for routes registered
+     * without namespaces.
      *
      * @method _routeStateTracker
      **/
     _routeStateTracker: function(req, res, next) {
-      var gen = this._routeGeneration,
-          seen = this._routeStates,
+      var seen = this._routeSeen,
           callbackId = req.callbackId;
 
-      if (callbackId && seen[callbackId] && (seen[callbackId] >= gen)) {
+      if (callbackId && seen[callbackId]) {
         // Calling next with a route error aborts
         // further callbacks in _this_ array (remember
         // route.callbacks is an array per route).
-        // But can allow continued processing;
+        // But it can allow continued processing.
         next('route');
       }
       next();
-      seen[callbackId] = gen;
+      seen[callbackId] = true;
     },
 
     /**
@@ -1034,6 +1096,24 @@ YUI.add('juju-gui', function(Y) {
        * Each request path is evaluated against all hereby defined routes,
        * and the callbacks for all the ones that match are invoked,
        * without stopping at the first one.
+       *
+       * To support this we supplement our routing information with
+       * additional attributes as follows:
+       *
+       * `namespace`: (optional) when namespace is specified this route should
+       *   only match when the URL fragment occurs in that namespace. The
+       *   default namespace (as passed to this._nsRouter) is assumed if no
+       *   namespace  attribute is specified.
+       *
+       * `model`: `model.name` (required)
+       *
+       * `reverse_map`: (optional) A reverse mapping of `route_path_key` to the
+       *   name of the attribute on the model.  If no value is provided, it is
+       *   used directly as attribute name.
+       *
+       * `intent`: (optional) A string named `intent` for which this route
+       *   should be used. This can be used to select which subview is selected
+       *   to resolve a model's route.
        *
        * FIXME: not included in the generated doc output.
        *
@@ -1073,6 +1153,8 @@ YUI.add('juju-gui', function(Y) {
             callbacks: 'show_unit',
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit'},
+          // Logout.
+          { path: '/logout/', callbacks: 'logout'},
           // Root.
           { path: '/', callbacks: 'show_environment'}
         ]

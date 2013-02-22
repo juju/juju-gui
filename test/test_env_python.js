@@ -35,6 +35,10 @@
       env.destroy();
     });
 
+    afterEach(function() {
+      sessionStorage.setItem('credentials', null);
+    });
+
     it('can deploy a service', function() {
       env.deploy('precise/mysql');
       msg = conn.last_message();
@@ -297,7 +301,7 @@
     });
 
     it('allows logging in if the GUI is read-only', function() {
-      env.setAttrs({user: 'user', password: 'password'});
+      env.setCredentials({user: 'user', password: 'password'});
       assertOperationAllowed('login', []);
     });
 

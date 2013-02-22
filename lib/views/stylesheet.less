@@ -146,6 +146,10 @@ i.sprite {
                 #charm-search-trigger {
                     cursor: pointer;
                 }
+                #logout-trigger {
+                    display: inline-block;
+                    padding: 5px 0 8px 5px;
+                }
                 .btn {
                     margin: 0 5px;
                 }
@@ -174,7 +178,10 @@ i.sprite {
                                     0 0 8px rgba(82, 168, 236, 0.6);
                     }
                 }
-
+                a, a:hover, a:visited, a:active {
+                    color: @navbar-color;
+                    text-decoration: none;
+                }
             }
         }
         span:first-child .nav-section {
@@ -1401,6 +1408,11 @@ table tr.highlighted {
 
             div:first-child {
                 padding-top: 4px;
+            }
+
+            input {
+                text-align: right;
+                width: 5em;
             }
         }
 

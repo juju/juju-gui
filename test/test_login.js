@@ -45,8 +45,8 @@
     test('bad credentials are removed', function() {
       var evt = {data: {op: 'login'}};
       env.handleLoginEvent(evt);
-      assert.equal(env.get('user'), undefined);
-      assert.equal(env.get('password'), undefined);
+      var credentials = env.getCredentials();
+      assert.equal(credentials, null);
     });
 
     test('credentials passed to the constructor are stored', function() {
@@ -57,8 +57,11 @@
         password: password,
         conn: conn
       });
-      assert.equal(env.get('user'), user);
-      assert.equal(env.get('password'), password);
+      var credentials = env.getCredentials();
+      assert.equal(credentials.user, user);
+      assert.equal(credentials.password, password);
+      assert.equal(JSON.stringify(credentials),
+          sessionStorage.getItem('credentials'));
     });
 
     test('login requests are sent in response to a connection', function() {
@@ -72,8 +75,7 @@
     });
 
     test('with credentials set, login() sends an RPC message', function() {
-      env.set('user', 'user');
-      env.set('password', 'password');
+      env.setCredentials({ user: 'user', password: 'password' });
       env.login();
       assert.equal(conn.last_message().op, 'login');
       assert.equal(conn.last_message().user, 'user');
@@ -113,6 +115,7 @@
       env.destroy();
       container.remove(true);
       mask.remove(true);
+      sessionStorage.setItem('credentials', null);
     });
 
     test('the view login method logs in through the environment', function() {
