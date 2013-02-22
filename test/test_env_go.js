@@ -83,6 +83,60 @@
       assert.equal(0, conn.messages.length);
     });
 
+    it('calls environmentInfo on successful login', function(done) {
+      env.login();
+      // Assume login to be the first request.
+      conn.msg({RequestId: 1, Response: {}});
+      var last_message = conn.last_message();
+      // EnvironmentInfo is the second request.
+      var expected = {
+        Type: 'Client',
+        Request: 'EnvironmentInfo',
+        RequestId: 2,
+        Params: {}
+      };
+      assert.deepEqual(expected, last_message);
+      done();
+    });
+
+    it('sends the correct request for environment info', function() {
+      env.environmentInfo();
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'EnvironmentInfo',
+        RequestId: 1,
+        Params: {}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('warns on environment info errors', function() {
+      env.environmentInfo();
+      // Mock "console.warn" so that it is possible to collect warnings.
+      var original = console.warn;
+      var warning = null;
+      console.warn = function(msg) {
+        warning = msg;
+      };
+      // Assume environmentInfo to be the first request.
+      conn.msg({RequestId: 1, Error: 'Error retrieving env info.'});
+      assert.include(warning, 'Error');
+      // Restore the original "console.warn".
+      console.warn = original;
+    });
+
+    it('stores environment info into env attributes', function() {
+      env.environmentInfo();
+      // Assume environmentInfo to be the first request.
+      conn.msg({
+        RequestId: 1,
+        Response: {DefaultSeries: 'precise', 'ProviderType': 'ec2'}
+      });
+      assert.equal('precise', env.get('defaultSeries'));
+      assert.equal('ec2', env.get('providerType'));
+    });
+
   });
 
 })();

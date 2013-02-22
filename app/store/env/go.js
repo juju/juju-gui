@@ -132,9 +132,14 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Nothing.
      */
     handleEnvironmentInfo: function(data) {
-      var response = data.Response;
-      this.set('defaultSeries', response.DefaultSeries);
-      this.set('providerType', response.ProviderType);
+      if (data.Error) {
+        console.warn('Error retrieving environment information.');
+      } else {
+        // Store default series and provider type in the env.
+        var response = data.Response;
+        this.set('defaultSeries', response.DefaultSeries);
+        this.set('providerType', response.ProviderType);
+      }
     },
 
     /**
