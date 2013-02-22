@@ -85,8 +85,11 @@ YUI.add('juju-env-go', function(Y) {
      */
     handleLogin: function(data) {
       this.userIsAuthenticated = !data.Error;
-      // If the credentials were rejected remove them.
-      if (!this.userIsAuthenticated) {
+      if (this.userIsAuthenticated) {
+        // If login succeeded retrieve the environment info.
+        this.environmentInfo();
+      } else {
+        // If the credentials were rejected remove them.
         this.setCredentials(null);
         this.failedAuthentication = true;
       }
@@ -97,8 +100,8 @@ YUI.add('juju-env-go', function(Y) {
      * Attempt to log the user in.  Credentials must have been previously
      * stored on the environment.
      *
-     * @return {undefined} Nothing.
      * @method login
+     * @return {undefined} Nothing.
      */
     login: function() {
       // If the user is already authenticated there is nothing to do.
@@ -119,6 +122,34 @@ YUI.add('juju-env-go', function(Y) {
         console.warn('Attempted login without providing credentials.');
         this.fire('login', {data: {result: false}});
       }
+    },
+
+    /**
+     * Store the environment info coming from the server.
+     *
+     * @method handleEnvironmentInfo
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleEnvironmentInfo: function(data) {
+      var response = data.Response;
+      this.set('defaultSeries', response.DefaultSeries);
+      this.set('providerType', response.ProviderType);
+    },
+
+    /**
+     * Send a request for details about the current Juju environment: default
+     * series and provider type.
+     *
+     * @method environmentInfo
+     * @return {undefined} Nothing.
+     */
+    environmentInfo: function() {
+      this._send_rpc({
+          Type: 'Client',
+          Request: 'EnvironmentInfo',
+          Params: {}
+        }, this.handleEnvironmentInfo);
     }
 
   });

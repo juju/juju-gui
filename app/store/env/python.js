@@ -241,8 +241,8 @@ YUI.add('juju-env-python', function(Y) {
      * Attempt to log the user in.  Credentials must have been previously
      * stored on the environment.
      *
-     * @return {undefined} Nothing.
      * @method login
+     * @return {undefined} Nothing.
      */
     login: function() {
       // If the user is already authenticated there is nothing to do.
