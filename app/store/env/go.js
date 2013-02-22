@@ -87,11 +87,10 @@ YUI.add('juju-env-go', function(Y) {
       this.userIsAuthenticated = !data.Error;
       // If the credentials were rejected remove them.
       if (!this.userIsAuthenticated) {
-        this.set('user', undefined);
-        this.set('password', undefined);
+        this.setCredentials(null);
         this.failedAuthentication = true;
       }
-      this.fire('login');
+      this.fire('login', {data: {result: this.userIsAuthenticated}});
     },
 
     /**
@@ -106,16 +105,19 @@ YUI.add('juju-env-go', function(Y) {
       if (this.userIsAuthenticated) {
         return;
       }
-      var user = this.get('user');
-      var password = this.get('password');
-      if (Y.Lang.isValue(user) && Y.Lang.isValue(password)) {
+      var credentials = this.getCredentials();
+      if (credentials && credentials.areAvailable) {
         this._send_rpc({
           Type: 'Admin',
           Request: 'Login',
-          Params: {EntityName: user, Password: password}
+          Params: {
+            EntityName: credentials.user,
+            Password: credentials.password
+          }
         }, this.handleLogin);
       } else {
         console.warn('Attempted login without providing credentials.');
+        this.fire('login', {data: {result: false}});
       }
     }
 

@@ -43,25 +43,42 @@
       env.login();
       // Assume login to be the first request.
       conn.msg({RequestId: 1, Error: 'Invalid user or password'});
-      assert.isUndefined(env.get('user'));
-      assert.isUndefined(env.get('password'));
+      assert.isNull(env.getCredentials());
       assert.isTrue(env.failedAuthentication);
     });
 
     it('fires a login event on successful login', function(done) {
       var loginFired = false;
-      env.on('login', function() {
+      var result;
+      env.on('login', function(evt) {
         loginFired = true;
+        result = evt.data.result;
       });
       env.login();
       // Assume login to be the first request.
       conn.msg({RequestId: 1, Response: {}});
       assert.isTrue(loginFired);
+      assert.isTrue(result);
+      done();
+    });
+
+    it('fires a login event on failed login', function(done) {
+      var loginFired = false;
+      var result;
+      env.on('login', function(evt) {
+        loginFired = true;
+        result = evt.data.result;
+      });
+      env.login();
+      // Assume login to be the first request.
+      conn.msg({RequestId: 1, Error: 'Invalid user or password'});
+      assert.isTrue(loginFired);
+      assert.isFalse(result);
       done();
     });
 
     it('avoids sending login requests without credentials', function() {
-      env.setAttrs({user: undefined, password: undefined});
+      env.setCredentials(null);
       env.login();
       assert.equal(0, conn.messages.length);
     });
