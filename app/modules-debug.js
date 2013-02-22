@@ -57,6 +57,10 @@ var GlobalConfig = {
         },
 
         // Views
+        'juju-landscape': {
+          fullpath: '/juju-ui/views/landscape.js'
+        },
+
         'juju-topology-relation': {
           fullpath: '/juju-ui/views/topology/relation.js'
         },
@@ -130,7 +134,8 @@ var GlobalConfig = {
             'juju-view-service',
             'juju-view-unit',
             'juju-view-charm',
-            'juju-view-charm-collection'
+            'juju-view-charm-collection',
+            'juju-landscape'
           ]
         },
 
