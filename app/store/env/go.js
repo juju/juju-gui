@@ -151,10 +151,10 @@ YUI.add('juju-env-go', function(Y) {
      */
     environmentInfo: function() {
       this._send_rpc({
-          Type: 'Client',
-          Request: 'EnvironmentInfo',
-          Params: {}
-        }, this.handleEnvironmentInfo);
+        Type: 'Client',
+        Request: 'EnvironmentInfo',
+        Params: {}
+      }, this.handleEnvironmentInfo);
     }
 
   });
