@@ -65,41 +65,6 @@ YUI.add('juju-landscape', function(Y) {
       var db = this.get('db');
       var env = db.environment;
 
-      /**
-       * Internal utility method to manage annotation rollup.
-       * Complexity comes from preserving the property that
-       * we want to be able to track if any value was positive
-       * for a given set and its interaction with Y.some
-       *
-       * @method rollupAnnotation
-       * @param {Model} service (optional).
-       * @param {Model} env (optional).
-       * @param {String} name of annotation.
-       * @param {Boolean} value of annotation.
-       * @param {Boolean} force used to force the recording of false values.
-       * @return {Boolean} value.
-       **/
-      function rollupAnnotation(service, env, name, value, force) {
-        var serviceAnno, envAnno;
-        if (value === true || force) {
-          if (service) {
-            serviceAnno = service.get('annotations');
-            if (!serviceAnno) {
-              service.set('annotations', {});
-            }
-            service.get('annotations')[name] = value;
-          }
-
-          if (env) {
-            // If we mark a service as needing a security upgrade also
-            // mark the environment
-            env.get('annotations')[name] = value;
-          }
-          return true;
-        }
-        return false;
-      }
-
       // Rollup each unit annotation name applying it
       // service and environment.
       //
@@ -115,33 +80,21 @@ YUI.add('juju-landscape', function(Y) {
         // are cleared.
         // The inner loop uses Y.some allowing it to stop on the
         // first true value.
-        var serviceFlagged = Y.some(db.services, function(service) {
-          // Iterate the unit.ts services.
-          var result = Y.some(
+        var serviceFlagged = false;
+        Y.each(db.services, function(service) {
+          /*jslint bitwise: true*/
+          // The above lint is needed to allow a |= expression
+          // to pass the linter.
+          serviceFlagged |= service[annotationName] = Y.some(
               db.units.get_units_for_service(service),
               function(unit) {
                 var annotations = unit.annotations;
-                if (!annotations) {
-                  return false;
-                }
-                return rollupAnnotation(service, env, annotationName,
-                                        annotations[annotationName]);
-              }, this);
-
-          // If 'some' returned false we need to force
-          // recording a false value at the service level.
-          if (result === false) {
-            rollupAnnotation(service, false, annotationName,
-                             false, true);
-          }
-          return result;
-        }, this);
-        if (!serviceFlagged) {
-          // No service has this flag marked as true so we
-          // can remove the environment annotation.
-          rollupAnnotation(null, env, annotationName, false, true);
-        }
-      }, this);
+                return Boolean(
+                    annotations && annotations[annotationName]);
+              });
+        });
+        env[annotationName] = Boolean(serviceFlagged);
+      });
       return this;
     },
 
@@ -156,41 +109,23 @@ YUI.add('juju-landscape', function(Y) {
      * @return {String} URL to access model entity in landscape.
      **/
     getLandscapeURL: function(model, intent) {
-      var env = this.get('db').environment;
-      var annotations = env.get('annotations');
-      var url = annotations['landscape-url'];
+      var env = this.get('db').environment.get('annotations');
+      var url = env['landscape-url'];
 
-      /**
-       * @method addIntent
-       * @return {String} url.
-       **/
-      function addIntent(url, intent, envAnno) {
-        if (!intent) {
-          return slash(url);
-        }
-        if (intent === 'reboot') {
-          return url + envAnno['landscape-reboot-alert-url'];
-        } else if (intent === 'security') {
-          return url + envAnno['landscape-security-alert-url'];
-        }
-      }
-
-      if (model.name === 'environment') {
-        if (intent) {
-          url = slash(url);
-        }
-        return addIntent(url, intent, annotations);
-      }
-      // Indicate we want a computer in this environment.
-      url += annotations['landscape-computers'];
-
+      url += env['landscape-computers'];
       if (model.name === 'service') {
         url += slash(model.get('annotations')['landscape-computers']);
       } else if (model.name === 'serviceUnit') {
         url += slash(model.annotations['landscape-computers']);
       }
 
-      return addIntent(url, intent, annotations);
+      if (!intent) {
+        return slash(url);
+      } else if (intent === 'reboot') {
+        return url + env['landscape-reboot-alert-url'];
+      } else if (intent === 'security') {
+        return url + env['landscape-security-alert-url'];
+      }
     }
   });
 

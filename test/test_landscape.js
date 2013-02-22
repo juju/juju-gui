@@ -44,14 +44,18 @@ describe('Landscape integration', function() {
   it('should provide valid Landscape URLs for given object', function() {
     var url;
     url = landscape.getLandscapeURL(db.environment);
-    url.should.equal('http://landscape.com/');
+    url.should.equal(
+        'http://landscape.com/computers/criteria/environment:test/');
 
     url = landscape.getLandscapeURL(db.environment, 'security');
     url.should.equal(
-        'http://landscape.com/+alert:security-upgrades/packages/list?filter=security');
+        'http://landscape.com/computers/criteria/environment:test' +
+        '+alert:security-upgrades/packages/list?filter=security');
 
     url = landscape.getLandscapeURL(db.environment, 'reboot');
-    url.should.equal('http://landscape.com/+alert:computer-reboot/info#power');
+    url.should.equal(
+        'http://landscape.com/computers/criteria/environment:test' +
+        '+alert:computer-reboot/info#power');
 
     url = landscape.getLandscapeURL(db.services.getById('mysql'));
     url.should.equal(
@@ -65,6 +69,8 @@ describe('Landscape integration', function() {
 
   it('should summarize landscape annotations at object parents', function() {
     var anno, unit1, unit2;
+    var env = db.environment;
+    var mysql = db.services.getById('mysql');
 
     landscape.update();
     anno = db.environment.get('annotations');
@@ -83,49 +89,41 @@ describe('Landscape integration', function() {
 
     // Check rollup to environment.
     landscape.update();
-    anno = db.environment.get('annotations');
-    anno['landscape-needs-reboot'].should.equal(true);
-    anno['landscape-security-upgrades'].should.equal(true);
+    env['landscape-needs-reboot'].should.equal(true);
+    env['landscape-security-upgrades'].should.equal(true);
 
     // Check rollup to service.
-    anno = db.services.getById('mysql').get('annotations');
-    anno['landscape-needs-reboot'].should.equal(true);
-    anno['landscape-security-upgrades'].should.equal(true);
+    mysql['landscape-needs-reboot'].should.equal(true);
+    mysql['landscape-security-upgrades'].should.equal(true);
 
     // Remove one of the flags.
     unit2.annotations['landscape-security-upgrades'] = false;
 
     // Check rollup to environment.
     landscape.update();
-    anno = db.environment.get('annotations');
-    anno['landscape-needs-reboot'].should.equal(true);
-    anno['landscape-security-upgrades'].should.equal(false);
+    env['landscape-needs-reboot'].should.equal(true);
+    env['landscape-security-upgrades'].should.equal(false);
 
     // Check rollup to service.
-    anno = db.services.getById('mysql').get('annotations');
-    anno['landscape-needs-reboot'].should.equal(true);
-    anno['landscape-security-upgrades'].should.equal(false);
-
+    mysql['landscape-needs-reboot'].should.equal(true);
+    mysql['landscape-security-upgrades'].should.equal(false);
 
     // Add a second service with a unit in a flagged state
     // and make sure the environment reflects this.
-    var service2 = db.services.add({id: 'wordpress'});
+    var wordpress = db.services.add({id: 'wordpress'});
     var unit3 = db.units.add({
       id: 'wordpress/0',
       annotations: {'landscape-security-upgrades': true}
     });
     // We expect the environment to be flagged now.
     landscape.update();
-    anno = db.environment.get('annotations');
-    anno['landscape-security-upgrades'].should.equal(true);
+    env['landscape-security-upgrades'].should.equal(true);
 
-    // ... and service2.
-    anno = service2.get('annotations');
-    anno['landscape-security-upgrades'].should.equal(true);
+    // ... and wordpress.
+    wordpress['landscape-security-upgrades'].should.equal(true);
 
     // But mysql is still not flagged.
-    anno = db.services.getById('mysql').get('annotations');
-    anno['landscape-security-upgrades'].should.equal(false);
+    mysql['landscape-security-upgrades'].should.equal(false);
   });
 
 });
