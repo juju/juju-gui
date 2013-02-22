@@ -511,6 +511,7 @@ appcache: $(APPCACHE)
 
 # A target used only for forcibly updating the appcache.
 appcache-touch:
+	touch app/index.html
 	touch manifest.appcache.in
 
 # This is the real target.  appcache-touch needs to be executed before
