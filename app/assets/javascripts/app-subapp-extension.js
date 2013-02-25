@@ -4,7 +4,7 @@ YUI.add('app-subapp-extension', function(Y) {
 
   SubAppRegistration.ATTRS = {
     subApps: {
-        value: {}
+      value: {}
     }
   };
 
@@ -20,28 +20,25 @@ YUI.add('app-subapp-extension', function(Y) {
       }]
 
       @property subApplications
-      @public
       @type {array}
     */
     subApplications: [],
 
     /**
-      Adds all of the sub applications listed in the subApplications property
+      Adds all of the sub applications listed in the subApplications property.
 
       @method addSubApplications
-      @public
     */
     addSubApplications: function() {
       this.addSubApps(this.subApplications);
     },
 
     /**
-      Adds the sub application and it's routes to the parent application
+      Adds the sub application and it's routes to the parent application.
 
       @method addSubApp
-      @public
-      @param subApp {string} string referance to an instantiable Y.App object
-      @param config {object} configuration properties for the subapp
+      @param {string} subApp string referance to an instantiable Y.App object.
+      @param {object} config configuration properties for the subapp.
     */
     addSubApp: function(subApp, config) {
       var subAppObject = Y.Object.getValue(Y, subApp.split('.')),
@@ -57,7 +54,7 @@ YUI.add('app-subapp-extension', function(Y) {
     },
 
     /**
-      Wrapper for addSubApp to add multiple sub apps at once
+      Wrapper for addSubApp to add multiple sub apps at once.
 
       [{
         app: Y.SubAppOne,
@@ -65,8 +62,7 @@ YUI.add('app-subapp-extension', function(Y) {
       }]
 
       @method addSubApps
-      @public
-      @param subApps {array} an array of sub abb objects and configs
+      @param {array} subApps an array of sub abb objects and configs.
     */
     addSubApps: function(subApps) {
       for (var i = 0; i < subApps.length; i++) {
@@ -75,26 +71,25 @@ YUI.add('app-subapp-extension', function(Y) {
     },
 
     /**
-      Public method to refresh routes from the sub apps
+      Public method to refresh routes from the sub apps.
 
       @method refreshRoutes
-      @public
-      @param index {integer} index of the subapp to refresh if undefined
-        it will refresh all
-      @return {array} array of sub app route data
+      @param {integer} index index of the subapp to refresh if undefined
+        it will refresh all.
+      @return {array} array of sub app route data.
     */
     refreshRoutes: function(index) {
       return this._augmentParentRoutes(this._extractRoutes(index));
     },
 
     /**
-      Extract the routes out of the sub apps
+      Extract the routes out of the sub apps.
 
       @method _extractRoutes
       @protected
-      @param subApp {object | integer | undefined} will extract the routes
-        out of the supplied subApp, index, or all subApps if undefined
-      @return {array} array of sub app route data
+      @param {object | integer | undefined} subApp will extract the routes
+        out of the supplied subApp, index, or all subApps if undefined.
+      @return {array} array of sub app route data.
     */
     _extractRoutes: function(subApp) {
       var subApps = this.get('subApps'),
@@ -106,7 +101,7 @@ YUI.add('app-subapp-extension', function(Y) {
         // fallthrough intentional
         case 'object':
           routes = subApp.getSubAppRoutes();
-        break;
+          break;
 
         case 'undefined':
           routes = [];
@@ -116,7 +111,7 @@ YUI.add('app-subapp-extension', function(Y) {
               routes.push(subRoutes[j]);
             }
           }
-        break;
+          break;
       }
       return routes;
     },
@@ -126,11 +121,11 @@ YUI.add('app-subapp-extension', function(Y) {
 
       @method _augmentParentRoutes
       @protected
-      @param {array} array of route objects
+      @param {array} array of route objects.
     */
     _augmentParentRoutes: function(routes) {
       var parentRoutes = this.get('routes'),
-        middlewareIndex, groupedRoutes;
+          middlewareIndex, groupedRoutes;
 
       Y.Array.some(parentRoutes, function(value, index, array) {
         if (value.path !== '*') {
