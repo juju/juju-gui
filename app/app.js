@@ -1188,6 +1188,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-models',
     'juju-views',
     'juju-view-login',
+    'juju-landscape',
     'io',
     'json-parse',
     'app-base',
