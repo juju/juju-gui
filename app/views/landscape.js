@@ -122,7 +122,7 @@ YUI.add('juju-landscape', function(Y) {
       if (model.name === 'service') {
         url += slash(model.get('annotations')['landscape-computers']);
       } else if (model.name === 'serviceUnit') {
-        url += slash(model.annotations['landscape-computers']);
+        url += slash(model.annotations['landscape-computer']);
       }
 
       if (!intent) {
