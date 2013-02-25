@@ -133,14 +133,14 @@ YUI.add('app-subapp-extension', function(Y) {
         middlewareIndex, groupedRoutes;
 
       Y.Array.some(parentRoutes, function(value, index, array) {
-        if (value.path !== "*") {
+        if (value.path !== '*') {
           middlewareIndex = index;
           return true;
         }
       });
 
       routes.unshift(middlewareIndex, 0);
-      Array.prototype.splice.apply(parentRoutes, routes)
+      Array.prototype.splice.apply(parentRoutes, routes);
 
       this.set('routes', parentRoutes);
     }
