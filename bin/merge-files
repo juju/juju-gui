@@ -75,7 +75,8 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/routing.js',
     'app/assets/javascripts/gallery-ellipsis.js',
     'app/assets/javascripts/gallery-markdown.js',
-    'app/assets/javascripts/gallery-timer.js']);
+    'app/assets/javascripts/gallery-timer.js',
+    'app/assets/javascripts/app-subapp-extension.js']);
 
   merge.combineJs(filesToLoad.js, 'build-shared/juju-ui/assets/all-yui.js');
 
