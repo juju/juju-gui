@@ -1,3 +1,5 @@
+'use strict';
+
 YUI.add('app-subapp-extension', function(Y) {
 
   function SubAppRegistration() {}
@@ -41,10 +43,11 @@ YUI.add('app-subapp-extension', function(Y) {
       @param {object} config configuration properties for the subapp.
     */
     addSubApp: function(subApp, config) {
-      var subAppObject = Y.Object.getValue(Y, subApp.split('.')),
-          subApp = new subAppObject(config),
+      var SubAppObject = Y.Object.getValue(Y, subApp.split('.')),
           subApps = this.get('subApps'),
           routes;
+
+      subApp = new SubAppObject(config);
 
       subApps[subApp.get('urlNamespace')] = subApp;
 
@@ -65,7 +68,7 @@ YUI.add('app-subapp-extension', function(Y) {
       @param {array} subApps an array of sub abb objects and configs.
     */
     addSubApps: function(subApps) {
-      for (var i = 0; i < subApps.length; i++) {
+      for (var i = 0; i < subApps.length; i += 1) {
         this.addSubApp(subApps[i].type, subApps[i].config);
       }
     },
@@ -98,16 +101,16 @@ YUI.add('app-subapp-extension', function(Y) {
       switch (typeof subApp) {
         case 'number':
           subApp = subApps[subApp];
-        // fallthrough intentional
+        /* falls through */
         case 'object':
           routes = subApp.getSubAppRoutes();
           break;
 
         case 'undefined':
           routes = [];
-          for (i = 0; i < subApps.length; i++) {
+          for (i = 0; i < subApps.length; i += 1) {
             subRoutes = subApps[i].getSubAppRoutes();
-            for (j = 0; j < subRoutes.length; j++) {
+            for (j = 0; j < subRoutes.length; j += 1) {
               routes.push(subRoutes[j]);
             }
           }
