@@ -21,7 +21,15 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
-- unreleased:
+- 0.2.1:
+    - Initial support for source maps.
+    - Browser tests infrastructure.
+    - Browser compatibility CSS fixes.
+    - Store credentials in sessionStorage.
+    - Namespace aware routing.
+    - Landscape integration helpers.
+    - Go env: authentication and environment info.
+    - Documentation improvements.
 - 0.2.0:
     - Fix a number of bugs and UI misbehaviors.
     - Switch to a CSS minifier that does not require Java.
