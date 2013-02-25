@@ -112,6 +112,12 @@ YUI.add('juju-landscape', function(Y) {
       var env = this.get('db').environment.get('annotations');
       var url = env['landscape-url'];
 
+      if (!url) {
+        // If this environment annotation doesn't exist
+        // we cannot generate URLs.
+        return undefined;
+      }
+
       url += env['landscape-computers'];
       if (model.name === 'service') {
         url += slash(model.get('annotations')['landscape-computers']);

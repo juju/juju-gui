@@ -244,10 +244,20 @@ YUI.add('juju-gui', function(Y) {
       // working with namespaced URLs.  See the module for details.
       this._nsRouter = juju.Router('charmstore');
 
-
       // Create a client side database to store state.
       this.db = new models.Database();
       this.serviceEndpoints = {};
+
+      // Optional Landscape integration helper.
+      this.landscape = new views.Landscape();
+      this.landscape.set('db', this.db);
+      this.db.units.on('')
+      // Connect the annotation update to delta events.
+      // This can be made more efficient in the future if
+      // units properly fire annotationChanged events, but
+      // as they are lazy models we can forgo connecting it
+      // that way.
+      this.after('update', this.landscape.update, this.landscape);
 
       // Update the on-screen environment name provided in the configuration or
       // a default if none is configured.
