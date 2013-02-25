@@ -17,7 +17,7 @@ YUI.add('app-subapp-extension', function(Y) {
       of the parent app.
 
       [{
-        type: Y.SubappInstance
+        type: 'path.to.subapplication'
         config: {}
       }]
 
@@ -53,7 +53,7 @@ YUI.add('app-subapp-extension', function(Y) {
 
       routes = this._extractRoutes(subApp);
 
-      this._augmentParentRoutes(routes);
+      this._augmentRoutes(routes);
     },
 
     /**
@@ -65,12 +65,12 @@ YUI.add('app-subapp-extension', function(Y) {
       }]
 
       @method addSubApps
-      @param {array} subApps an array of sub abb objects and configs.
+      @param {array} subApps an array of sub app objects and configs.
     */
     addSubApps: function(subApps) {
-      for (var i = 0; i < subApps.length; i += 1) {
-        this.addSubApp(subApps[i].type, subApps[i].config);
-      }
+      Y.Array.each(subApps, function(subApp) {
+        this.addSubApp(subApp.type, subApp.config);
+      });
     },
 
     /**
@@ -122,11 +122,11 @@ YUI.add('app-subapp-extension', function(Y) {
     /**
       Adds the sub app routes to the parent routes after the middleware
 
-      @method _augmentParentRoutes
+      @method _augmentRoutes
       @protected
       @param {array} array of route objects.
     */
-    _augmentParentRoutes: function(routes) {
+    _augmentRoutes: function(routes) {
       var parentRoutes = this.get('routes'),
           middlewareIndex, groupedRoutes;
 
