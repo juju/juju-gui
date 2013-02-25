@@ -65,8 +65,7 @@ YUI.add('juju-models', function(Y) {
      **/
     process_delta: function(action, data) {
       this.set('annotations', data);
-
-    },
+    }
   }, {
     ATTRS: {
       name: {},

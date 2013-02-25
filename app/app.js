@@ -251,7 +251,6 @@ YUI.add('juju-gui', function(Y) {
       // Optional Landscape integration helper.
       this.landscape = new views.Landscape();
       this.landscape.set('db', this.db);
-      this.db.units.on('')
       // Connect the annotation update to delta events.
       // This can be made more efficient in the future if
       // units properly fire annotationChanged events, but
