@@ -50,6 +50,23 @@ YUI.add('juju-models', function(Y) {
     }
   };
 
+  /**
+   * Model a single Environment. Serves as a place to collect
+   * Environment level annotations.
+   *
+   * @class Environment
+   **/
+  var Environment = Y.Base.create('environment', Y.Model, [], {}, {
+    ATTRS: {
+      name: {},
+      provider: {},
+      annotations: {
+        valueFn: function() {return {};}
+      }
+    }
+  });
+  models.Environment = Environment;
+
   var Service = Y.Base.create('service', Y.Model, [], {
     ATTRS: {
       name: {},
@@ -391,6 +408,8 @@ YUI.add('juju-models', function(Y) {
 
   var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
+      // Single model for environment database is bound to.
+      this.environment = new Environment();
       this.services = new ServiceList();
       this.charms = new models.CharmList();
       this.relations = new RelationList();
