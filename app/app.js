@@ -27,7 +27,7 @@ YUI.add('juju-gui', function(Y) {
    *
    * @class App
    */
-  var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
+  var JujuGUI = Y.Base.create('juju-gui', Y.App, [Y.juju.SubAppRegistration], {
 
     /*
      * Views
@@ -1186,5 +1186,6 @@ YUI.add('juju-gui', function(Y) {
     'app-transitions',
     'base',
     'node',
-    'model']
+    'model',
+    'app-subapp-extension']
 });
