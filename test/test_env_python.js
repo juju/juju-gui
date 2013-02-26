@@ -305,10 +305,6 @@
       assertOperationAllowed('login', []);
     });
 
-    it('allows retrieving the status if the GUI is read-only', function() {
-      assertOperationAllowed('status', []);
-    });
-
     it('denies logging in without providing credentials', function() {
       env.setAttrs({user: undefined, password: undefined});
       // Mock *console.warn* so that it is possible to collect warnings.
