@@ -2,6 +2,14 @@
 
 YUI.add('app-subapp-extension', function(Y) {
 
+  /**
+  Adds the ability to register sub applications with a parent Y.App instance by
+  recording all instances in a subApps attribute and augmenting the parent
+  routes with the sub applications.
+
+  @class SubAppRegistration
+  @extension App
+  */
   function SubAppRegistration() {}
 
   SubAppRegistration.ATTRS = {
