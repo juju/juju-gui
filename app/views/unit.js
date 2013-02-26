@@ -38,7 +38,8 @@ YUI.add('juju-view-unit', function(Y) {
       }
 
       var db = this.get('db'),
-          service = db.services.getById(unit.service);
+          service = db.services.getById(unit.service),
+          env = db.environment.get('annotations');
 
       if (!service.get('loaded')) {
         container.setHTML('<div class="alert">Loading...</div>');
@@ -99,6 +100,8 @@ YUI.add('juju-view-unit', function(Y) {
         unit_running: unit_running,
         unit_pending: unit_pending,
         relations: relations}));
+
+      views.utils.updateLandscapeBottomBar(unit, env, container);
       return this;
     },
 

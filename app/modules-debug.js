@@ -77,6 +77,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/topology/service.js'
         },
 
+        'juju-topology-landscape': {
+          fullpath: '/juju-ui/views/topology/landscape.js'
+        },
+
         'juju-topology': {
           fullpath: '/juju-ui/views/topology/topology.js'
         },

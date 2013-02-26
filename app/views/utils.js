@@ -410,6 +410,41 @@ YUI.add('juju-view-utils', function(Y) {
     window.scrollTo(0, 0);
   }
 
+  utils.updateLandscapeBottomBar = function(env, model, container) {
+    // `Unit's don't have annotations as a YUI attribute.
+    var annotations = model.get ? model.get('annotations') : model.annotations;
+    var controls = container.one('.landscape-controls');
+    var logo = controls.one('.logo-tab');
+    var machine = controls.one('.machine-control');
+    var updates = controls.one('.updates-control');
+    var restart = controls.one('.restart-control');
+
+    if (env['landscape-url']) {
+      controls.show();
+      machine.show();
+      machine.one('a').setAttr('href', app.landscape.getLandscapeURL(model));
+
+      if (annotations['landscape-security-upgrades']) {
+        updates.show();
+        updates.one('a').setAttr('href',
+            app.landscape.getLandscapeURL(model, 'security'));
+      } else {
+        updates.hide();
+      }
+
+      if (annotations['landscape-needs-reboot']) {
+        restart.show();
+        updates.one('a').setAttr('href',
+            app.landscape.getLandscapeURL(model, 'reboot'));
+      } else {
+        restart.hide();
+      }
+    } else {
+      machine.hide();
+      controls.hide();
+    }
+  };
+
   utils.showSuccessMessage = function(container, message) {
     _addAlertMessage(container, 'alert-success', message);
   };
