@@ -411,8 +411,9 @@ YUI.add('juju-view-utils', function(Y) {
   }
 
   utils.updateLandscapeBottomBar = function(env, model, container, intent) {
-    // `Unit's don't have annotations as a YUI attribute.
-    var annotations = model.get ? model.get('annotations') : model.annotations;
+    // Landscape annotations are stored in a unit's annotations, but just on
+    // the object in the case of services/environment.
+    var annotations = model.annotations ? model.annotations : model;
     var envAnnotations = env.get ? env.get('annotations') : env;
     var controls = container.one('.landscape-controls');
     var logo = controls.one('.logo-tab');
