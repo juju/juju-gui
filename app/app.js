@@ -903,6 +903,7 @@ YUI.add('juju-gui', function(Y) {
             getServiceEndpoints: function() {
               return self.serviceEndpoints;},
             loadService: this.loadService,
+            landscape: this.landscape,
             db: this.db,
             env: this.env};
 
