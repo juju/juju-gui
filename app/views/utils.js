@@ -410,23 +410,27 @@ YUI.add('juju-view-utils', function(Y) {
     window.scrollTo(0, 0);
   }
 
-  utils.updateLandscapeBottomBar = function(env, model, container) {
+  utils.updateLandscapeBottomBar = function(env, model, container, intent) {
     // `Unit's don't have annotations as a YUI attribute.
     var annotations = model.get ? model.get('annotations') : model.annotations;
+    var envAnnotations = env.get ? env.get('annotations') : env;
     var controls = container.one('.landscape-controls');
     var logo = controls.one('.logo-tab');
     var machine = controls.one('.machine-control');
     var updates = controls.one('.updates-control');
     var restart = controls.one('.restart-control');
 
-    if (env['landscape-url']) {
+    if (envAnnotations['landscape-url']) {
       controls.show();
       machine.show();
-      machine.one('a').setAttr('href', app.landscape.getLandscapeURL(model));
+      machine.one('a').setAttribute('href', 
+          app.landscape.getLandscapeURL(model));
+      controls.one('.logo-tab i').setAttribute('class', 'sprite landscape_' +
+          intent);
 
       if (annotations['landscape-security-upgrades']) {
         updates.show();
-        updates.one('a').setAttr('href',
+        updates.one('a').setAttribute('href',
             app.landscape.getLandscapeURL(model, 'security'));
       } else {
         updates.hide();
@@ -434,7 +438,7 @@ YUI.add('juju-view-utils', function(Y) {
 
       if (annotations['landscape-needs-reboot']) {
         restart.show();
-        updates.one('a').setAttr('href',
+        updates.one('a').setAttribute('href',
             app.landscape.getLandscapeURL(model, 'reboot'));
       } else {
         restart.hide();

@@ -101,7 +101,7 @@ YUI.add('juju-view-unit', function(Y) {
         unit_pending: unit_pending,
         relations: relations}));
 
-      views.utils.updateLandscapeBottomBar(unit, env, container);
+      views.utils.updateLandscapeBottomBar(unit, env, container, 'unit');
       return this;
     },
 
