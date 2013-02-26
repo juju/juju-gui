@@ -439,7 +439,7 @@ YUI.add('juju-view-utils', function(Y) {
 
       if (annotations['landscape-needs-reboot']) {
         restart.show();
-        updates.one('a').setAttribute('href',
+        restart.one('a').setAttribute('href',
             app.landscape.getLandscapeURL(model, 'reboot'));
       } else {
         restart.hide();
