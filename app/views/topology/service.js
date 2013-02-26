@@ -906,7 +906,7 @@ YUI.add('juju-topology-service', function(Y) {
           landscapeReboot.hide();
         }
 
-         // Update landscape links and show/hide as needed.
+        // Update landscape links and show/hide as needed.
         if (securityURL) {
           landscapeSecurity.set('href', securityURL)
                            .show();
