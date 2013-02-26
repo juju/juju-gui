@@ -60,8 +60,8 @@ YUI.add('app-subapp-extension', function(Y) {
       Wrapper for addSubApp to add multiple sub apps at once.
 
       [{
-        app: Y.SubAppOne,
-        cfg: {}
+        type: 'path.to.subapplication'
+        config: {}
       }]
 
       @method addSubApps
@@ -70,19 +70,7 @@ YUI.add('app-subapp-extension', function(Y) {
     addSubApps: function(subApps) {
       Y.Array.each(subApps, function(subApp) {
         this.addSubApp(subApp.type, subApp.config);
-      });
-    },
-
-    /**
-      Public method to refresh routes from the sub apps.
-
-      @method refreshRoutes
-      @param {integer} index index of the subapp to refresh if undefined
-        it will refresh all.
-      @return {array} array of sub app route data.
-    */
-    refreshRoutes: function(index) {
-      return this._augmentParentRoutes(this._extractRoutes(index));
+      }, this);
     },
 
     /**
@@ -99,13 +87,12 @@ YUI.add('app-subapp-extension', function(Y) {
           routes, subRoutes, i, j;
 
       switch (typeof subApp) {
-        case 'number':
+        case 'number': // If an index is passed in grab that subapp
           subApp = subApps[subApp];
         /* falls through */
-        case 'object':
+        case 'object': // If subapp is passed in fetch it's routes
           routes = subApp.getSubAppRoutes();
           break;
-
         case 'undefined':
           routes = [];
           for (i = 0; i < subApps.length; i += 1) {
@@ -141,6 +128,7 @@ YUI.add('app-subapp-extension', function(Y) {
       Array.prototype.splice.apply(parentRoutes, routes);
 
       this.set('routes', parentRoutes);
+      return parentRoutes;
     }
   };
 
