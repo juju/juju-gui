@@ -381,7 +381,7 @@ YUI.add('juju-view-utils', function(Y) {
     var annotations = model.annotations ? model.annotations : model;
     var envAnnotations = env.get ? env.get('annotations') : env;
     var controls = container.one('.landscape-controls');
-    var logo = controls.one('.logo-tab');
+    var logo = controls.one('.logo-tab i');
     var machine = controls.one('.machine-control');
     var updates = controls.one('.updates-control');
     var restart = controls.one('.restart-control');
