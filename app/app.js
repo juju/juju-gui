@@ -854,6 +854,7 @@ YUI.add('juju-gui', function(Y) {
      * it fires a login event, to which this responds.
      *
      * @method onLogin
+     * @param {Object} evt An event object (with a "data.result" attribute).
      * @private
      */
     onLogin: function(evt) {
