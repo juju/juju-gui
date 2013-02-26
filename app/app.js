@@ -244,10 +244,13 @@ YUI.add('juju-gui', function(Y) {
       // working with namespaced URLs.  See the module for details.
       this._nsRouter = juju.Router('charmstore');
 
-
       // Create a client side database to store state.
       this.db = new models.Database();
       this.serviceEndpoints = {};
+
+      // Optional Landscape integration helper.
+      this.landscape = new views.Landscape();
+      this.landscape.set('db', this.db);
 
       // Update the on-screen environment name provided in the configuration or
       // a default if none is configured.
@@ -559,6 +562,9 @@ YUI.add('juju-gui', function(Y) {
           }
         });
       }
+
+      // Update Landscape annotations.
+      this.landscape.update();
 
       // Regardless of which view we are rendering
       // update the env view on db change.
@@ -1180,6 +1186,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-models',
     'juju-views',
     'juju-view-login',
+    'juju-landscape',
     'io',
     'json-parse',
     'app-base',

@@ -375,6 +375,45 @@ YUI.add('juju-view-utils', function(Y) {
         });
   };
 
+  utils.updateLandscapeBottomBar = function(env, model, container, intent) {
+    // Landscape annotations are stored in a unit's annotations, but just on
+    // the object in the case of services/environment.
+    var annotations = model.annotations ? model.annotations : model;
+    var envAnnotations = env.get ? env.get('annotations') : env;
+    var controls = container.one('.landscape-controls');
+    var logo = controls.one('.logo-tab');
+    var machine = controls.one('.machine-control');
+    var updates = controls.one('.updates-control');
+    var restart = controls.one('.restart-control');
+
+    if (envAnnotations['landscape-url']) {
+      controls.show();
+      machine.show();
+      machine.one('a').setAttribute('href', 
+          app.landscape.getLandscapeURL(model));
+      logo.setAttribute('class', 'sprite landscape_' + intent);
+
+      if (annotations['landscape-security-upgrades']) {
+        updates.show();
+        updates.one('a').setAttribute('href',
+            app.landscape.getLandscapeURL(model, 'security'));
+      } else {
+        updates.hide();
+      }
+
+      if (annotations['landscape-needs-reboot']) {
+        restart.show();
+        restart.one('a').setAttribute('href',
+            app.landscape.getLandscapeURL(model, 'reboot'));
+      } else {
+        restart.hide();
+      }
+    } else {
+      machine.hide();
+      controls.hide();
+    }
+  };
+
   function _addAlertMessage(container, alertClass, message) {
     var div = container.one('#message-area');
 
@@ -409,46 +448,6 @@ YUI.add('juju-view-utils', function(Y) {
     errorDiv.one('#alert-area-text').setHTML(message);
     window.scrollTo(0, 0);
   }
-
-  utils.updateLandscapeBottomBar = function(env, model, container, intent) {
-    // Landscape annotations are stored in a unit's annotations, but just on
-    // the object in the case of services/environment.
-    var annotations = model.annotations ? model.annotations : model;
-    var envAnnotations = env.get ? env.get('annotations') : env;
-    var controls = container.one('.landscape-controls');
-    var logo = controls.one('.logo-tab');
-    var machine = controls.one('.machine-control');
-    var updates = controls.one('.updates-control');
-    var restart = controls.one('.restart-control');
-
-    if (envAnnotations['landscape-url']) {
-      controls.show();
-      machine.show();
-      machine.one('a').setAttribute('href', 
-          app.landscape.getLandscapeURL(model));
-      controls.one('.logo-tab i').setAttribute('class', 'sprite landscape_' +
-          intent);
-
-      if (annotations['landscape-security-upgrades']) {
-        updates.show();
-        updates.one('a').setAttribute('href',
-            app.landscape.getLandscapeURL(model, 'security'));
-      } else {
-        updates.hide();
-      }
-
-      if (annotations['landscape-needs-reboot']) {
-        restart.show();
-        restart.one('a').setAttribute('href',
-            app.landscape.getLandscapeURL(model, 'reboot'));
-      } else {
-        restart.hide();
-      }
-    } else {
-      machine.hide();
-      controls.hide();
-    }
-  };
 
   utils.showSuccessMessage = function(container, message) {
     _addAlertMessage(container, 'alert-success', message);
