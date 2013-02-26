@@ -909,7 +909,7 @@ YUI.add('juju-view-service', function(Y) {
             console.log('waiting on service data');
           } else {
             container.setHTML(this.template(this.gatherRenderData()));
-            views.utils.updateLandscapeBottomBar(env, service, 
+            views.utils.updateLandscapeBottomBar(env, service,
                 container, 'service');
           }
           return this;

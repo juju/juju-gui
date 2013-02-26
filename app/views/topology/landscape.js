@@ -22,7 +22,7 @@ YUI.add('juju-topology-landscape', function(Y) {
      * Update Landscape links as needed.
      *
      * @method update
-     * @returns {undefined} Nothing.
+     * @return {undefined} Nothing.
      */
     update: function() {
       var topo = this.get('component');

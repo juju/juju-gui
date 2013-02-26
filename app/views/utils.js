@@ -385,18 +385,19 @@ YUI.add('juju-view-utils', function(Y) {
     var machine = controls.one('.machine-control');
     var updates = controls.one('.updates-control');
     var restart = controls.one('.restart-control');
+    var landscape = window.app.landscape;
 
     if (envAnnotations['landscape-url']) {
       controls.show();
       machine.show();
-      machine.one('a').setAttribute('href', 
-          app.landscape.getLandscapeURL(model));
+      machine.one('a').setAttribute('href',
+          landscape.getLandscapeURL(model));
       logo.setAttribute('class', 'sprite landscape_' + intent);
 
       if (annotations['landscape-security-upgrades']) {
         updates.show();
         updates.one('a').setAttribute('href',
-            app.landscape.getLandscapeURL(model, 'security'));
+            landscape.getLandscapeURL(model, 'security'));
       } else {
         updates.hide();
       }
@@ -404,7 +405,7 @@ YUI.add('juju-view-utils', function(Y) {
       if (annotations['landscape-needs-reboot']) {
         restart.show();
         restart.one('a').setAttribute('href',
-            app.landscape.getLandscapeURL(model, 'reboot'));
+            landscape.getLandscapeURL(model, 'reboot'));
       } else {
         restart.hide();
       }
