@@ -251,12 +251,6 @@ YUI.add('juju-gui', function(Y) {
       // Optional Landscape integration helper.
       this.landscape = new views.Landscape();
       this.landscape.set('db', this.db);
-      // Connect the annotation update to delta events.
-      // This can be made more efficient in the future if
-      // units properly fire annotationChanged events, but
-      // as they are lazy models we can forgo connecting it
-      // that way.
-      this.after('update', this.landscape.update, this.landscape);
 
       // Update the on-screen environment name provided in the configuration or
       // a default if none is configured.
@@ -568,6 +562,9 @@ YUI.add('juju-gui', function(Y) {
           }
         });
       }
+
+      // Update Landscape annotations.
+      this.landscape.update();
 
       // Regardless of which view we are rendering
       // update the env view on db change.
