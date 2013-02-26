@@ -2,10 +2,12 @@
 
 `grep -lscor describe.only test`
 if [ $? -ne 1 ]; then
-  exit 1
+    echo "describe.only left in test"
+    exit 1
 fi
 
 `grep -lscor it.only test`
 if [ $? -ne 1 ]; then
-  exit 1
+    echo "it.only left in test"
+    exit 1
 fi
