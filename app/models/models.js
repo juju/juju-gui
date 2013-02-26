@@ -56,7 +56,17 @@ YUI.add('juju-models', function(Y) {
    *
    * @class Environment
    **/
-  var Environment = Y.Base.create('environment', Y.Model, [], {}, {
+  var Environment = Y.Base.create('environment', Y.Model, [], {
+    /**
+     * Update the annotations on delta events.
+     * We don't support removal of the Environment model.
+     *
+     * @method process_delta
+     **/
+    process_delta: function(action, data) {
+      this.set('annotations', data);
+    }
+  }, {
     ATTRS: {
       name: {},
       provider: {},
@@ -451,12 +461,17 @@ YUI.add('juju-models', function(Y) {
         modelList = modelList[0];
       }
       modelList = this.getModelListByModelName(modelList);
+      if (!modelList) {
+        return undefined;
+      }
       return modelList.getById(id);
     },
 
     getModelListByModelName: function(modelName) {
       if (modelName === 'serviceUnit') {
         modelName = 'unit';
+      } else if (modelName === 'annotations') {
+        return this.environment;
       }
       return this[modelName + 's'];
     },
