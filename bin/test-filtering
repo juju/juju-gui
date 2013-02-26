@@ -1,0 +1,11 @@
+#!/bin/bash
+
+`grep -lscor describe.only test`
+if [ $? -ne 1 ]; then
+  exit 1
+fi
+
+`grep -lscor it.only test`
+if [ $? -ne 1 ]; then
+  exit 1
+fi
