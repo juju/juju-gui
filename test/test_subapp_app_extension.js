@@ -23,13 +23,13 @@ describe('SubApplication App Extension', function() {
       subAppRoutes: [
         { path: '/', callbacks: 'showRootView', namespace: 'charmStore' },
         { path: '/charm/:id', callbacks: 'showCharmDetailView',
-            namespace: 'charmStore' },
+          namespace: 'charmStore' }
       ],
       parentAppRoutes: [
         { path: '*', callbacks: 'check_user_credentials' },
         { path: '*', callbacks: 'show_notifications_view' },
         { path: '/charms/', callbacks: 'show_charm_collection' },
-        { path: '/charms/*charm_store_path/', callbacks: 'show_charm' },
+        { path: '/charms/*charm_store_path/', callbacks: 'show_charm' }
       ]
     };
 
@@ -53,19 +53,18 @@ describe('SubApplication App Extension', function() {
   it('should extract the routes from the subapp', function() {
     app.set('subApps', [new Y.mock.subapp()]);
     assert.deepEqual(app._extractRoutes(), mocks.subAppRoutes,
-      'Routes do not match');
+        'Routes do not match');
   });
 
-  it('should augment the parent routes with the subapp routes',
-    function() {
-      var augmentedRoutes, numberOfRoutes;
+  it('should augment the parent routes with the subapp routes', function() {
+    var augmentedRoutes, numberOfRoutes;
 
-      numberOfRoutes = mocks.subAppRoutes.length + mocks.parentAppRoutes.length;
-      app.set('routes', mocks.parentAppRoutes);
+    numberOfRoutes = mocks.subAppRoutes.length + mocks.parentAppRoutes.length;
+    app.set('routes', mocks.parentAppRoutes);
 
-      augmentedRoutes = app._augmentRoutes(mocks.subAppRoutes),
+    augmentedRoutes = app._augmentRoutes(mocks.subAppRoutes),
 
-      assert.equal(augmentedRoutes.length, numberOfRoutes,
+    assert.equal(augmentedRoutes.length, numberOfRoutes,
         'Number of routes does not match');
   });
 
