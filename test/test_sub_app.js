@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('Sub Applications', function() {
+describe('Sub Applications', function() {
   var Y, juju, subapp;
 
   before(function(done) {
