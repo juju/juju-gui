@@ -175,7 +175,7 @@ describe('service module events', function() {
        // Verify that we have a reboot URL.
        var rebootItem = menu.one('.landscape-reboot');
        rebootItem.one('a').get('href').should.equal(
-         'http://host/foo/bar/+reboot');
+           'http://host/foo/bar/+reboot');
      });
 
 
