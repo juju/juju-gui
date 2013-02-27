@@ -31,7 +31,7 @@ YUI.add('juju-topology-landscape', function(Y) {
       var container = this.get('container');
 
       views.utils.updateLandscapeBottomBar(topo.get('landscape'), env, env,
-        container, 'environment');
+          container, 'environment');
     }
   }, {
     ATTRS: {}

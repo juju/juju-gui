@@ -13,6 +13,7 @@
       Y = YUI(GlobalConfig).use(
           'juju-views', 'juju-models', 'base', 'node', 'json-parse',
           'juju-env', 'node-event-simulate', 'juju-tests-utils', 'event-key',
+          'landscape',
           function(Y) {
             ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
             ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
@@ -51,11 +52,14 @@
           if (!Y.Lang.isValue(querystring)) {
             querystring = {};
           }
+          var landscape = new views.Landscape();
+          landscape.set('db', db);
           return new ViewPrototype(
               { container: container,
                 model: service,
                 db: db,
                 env: env,
+                landscape: landscape,
                 getModelURL: function(model, intent) {
                   return model.get('name');
                 },
@@ -85,6 +89,36 @@
       var view = makeServiceView();
       // "var _ =" makes the linter happy.
       var _ = expect(container.one('#num-service-units')).to.not.exist;
+    });
+
+    it('should show Landscape controls if needed', function() {
+      db.environment.set('annotations', {
+        'landscape-url': 'http://host',
+        'landscape-computers': '/foo',
+        'landscape-reboot-alert-url': '+reboot'
+      });
+      service['landscape-needs-reboot'] = true;
+      service.set('annotations', {
+        'landscape-computers': '/bar'
+      });
+      var landscape = new views.Landscape();
+      landscape.set('db', db);
+
+      var view = new views.service({
+        container: container,
+        model: service,
+        db: db,
+        env: env,
+        landscape: landscape,
+        getModelURL: function(model, intent) {
+          return model.get('name');
+        },
+        querystring: {}
+      }).render();
+
+      var rebootItem = container.one('.landscape-controls .restart-control');
+      rebootItem.one('a').get('href').should
+        .equal('http://host/foo/bar/+reboot');
     });
 
     it('should show the service units ordered by number', function() {
