@@ -101,7 +101,10 @@ class TestCase(unittest.TestCase):
 
     def handle_browser_warning(self):
         """Overstep the browser warning dialog if required."""
-        script = 'return isBrowserSupported(navigator.userAgent)'
+        self.wait_for_script(
+            'return window.isBrowserSupported',
+            error='Function isBrowserSupported not found.')
+        script = 'return window.isBrowserSupported(navigator.userAgent)'
         supported = self.driver.execute_script(script)
         if not supported:
             continue_button = self.wait_for_css_selector(
