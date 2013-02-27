@@ -1,25 +1,26 @@
 'use strict';
 
 describe('SubApplication App Extension', function() {
-  var Y, juju, app, mocks;
+  var Y, juju, app, mocks, MockApp;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-routing',
-                               'juju-gui'],
+                               'juju-gui', 'app-subapp-extension'],
     function(Y) {
       juju = Y.namespace('juju');
+      MockApp = Y.Base.create('mock-app', Y.App,
+          [Y.juju.SubAppRegistration], {});
       done();
     });
+
   });
 
   beforeEach(function() {
-    app = new juju.App();
+    app = new MockApp();
+
+    Y.namespace('mock');
 
     mocks = {
-      subAppProperty: {
-        type: 'mock.subapp',
-        config: {}
-      },
       subAppRoutes: [
         { path: '/', callbacks: 'showRootView', namespace: 'charmStore' },
         { path: '/charm/:id', callbacks: 'showCharmDetailView',
@@ -40,7 +41,12 @@ describe('SubApplication App Extension', function() {
     subAppMock.prototype.get = function(attribute) {
       if (attribute === 'urlNamespace') { return 'charmStore'; }
     };
-    Y.namespace('mock').subapp = subAppMock;
+    Y.mock.subapp = subAppMock;
+
+    mocks.subAppProperty = {
+      type: Y.mock.subapp,
+      config: {}
+    };
   });
 
   it('should add subapps to the parent app', function() {
