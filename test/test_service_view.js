@@ -13,7 +13,7 @@
       Y = YUI(GlobalConfig).use(
           'juju-views', 'juju-models', 'base', 'node', 'json-parse',
           'juju-env', 'node-event-simulate', 'juju-tests-utils', 'event-key',
-          'landscape',
+          'juju-landscape',
           function(Y) {
             ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
             ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
@@ -52,14 +52,11 @@
           if (!Y.Lang.isValue(querystring)) {
             querystring = {};
           }
-          var landscape = new views.Landscape();
-          landscape.set('db', db);
           return new ViewPrototype(
               { container: container,
                 model: service,
                 db: db,
                 env: env,
-                landscape: landscape,
                 getModelURL: function(model, intent) {
                   return model.get('name');
                 },
