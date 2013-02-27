@@ -99,6 +99,16 @@ class TestCase(unittest.TestCase):
         url = urlparse.urljoin(self.app_url, path)
         self.driver.get(url)
 
+    def handle_browser_warning(self):
+        """Overstep the browser warning dialog if required."""
+        script = 'return isBrowserSupported(navigator.userAgent)'
+        supported = self.driver.execute_script(script)
+        if not supported:
+            continue_button = self.wait_for_css_selector(
+                '#browser-warning input',
+                error='Browser warning dialog not found.')
+            continue_button.click()
+
     def wait_for(self, condition, error=None, timeout=10):
         """Wait for condition to be True.
 
@@ -108,6 +118,17 @@ class TestCase(unittest.TestCase):
         """
         wait = ui.WebDriverWait(self.driver, timeout)
         return wait.until(condition, error)
+
+    def wait_for_css_selector(self, selector, error=None, timeout=10):
+        """Wait until the provided CSS selector is found.
+
+        Fail printing the provided error if timeout is exceeded.
+        Otherwise, return the value returned by the script.
+        """
+        condition = lambda driver: driver.find_elements_by_css_selector(
+            selector)
+        elements = self.wait_for(condition, error=error, timeout=timeout)
+        return elements[0]
 
     def wait_for_script(self, script, error=None, timeout=10):
         """Wait for the given JavaScript snippet to return a True value.
@@ -130,6 +151,7 @@ class TestCase(unittest.TestCase):
         juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
              'sudo', 'service', 'juju-api-improv', 'restart')
         self.load()
+        self.handle_browser_warning()
         self.wait_for_script(
             'return app.env.get("connected");',
             error='Impossible to connect to the API backend after restart.',
