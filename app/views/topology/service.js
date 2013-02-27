@@ -893,8 +893,8 @@ YUI.add('juju-topology-service', function(Y) {
         var topo = module.get('component');
         var service = box.model;
         var landscape = topo.get('landscape');
-        var landscapeReboot = serviceMenu.one('.landscape-reboot a').hide();
-        var landscapeSecurity = serviceMenu.one('.landscape-security a').hide();
+        var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
+        var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
         var securityURL, rebootURL;
 
         // Update landscape links and show/hide as needed.
@@ -902,13 +902,11 @@ YUI.add('juju-topology-service', function(Y) {
           rebootURL = landscape.getLandscapeURL(service, 'reboot');
           securityURL = landscape.getLandscapeURL(service, 'security');
 
-          if (rebootURL) {
-            landscapeReboot.set('href', rebootURL)
-            .show();
+          if (rebootURL && service['landscape-needs-reboot']) {
+            landscapeReboot.show().one('a').set('href', rebootURL);
           }
-          if (securityURL) {
-            landscapeSecurity.set('href', securityURL)
-            .show();
+          if (securityURL && service['landscape-security-upgrades']) {
+            landscapeSecurity.show().one('a').set('href', securityURL);
           }
         }
 
