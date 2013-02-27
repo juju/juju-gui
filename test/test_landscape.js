@@ -31,10 +31,10 @@ describe('Landscape integration', function() {
         annotations: {'landscape-computers': '+service:mysql'}
       });
       db.units.add([{id: 'mysql/0',
-        annotations: {'landscape-computers': '+unit:mysql-0'}
+        annotations: {'landscape-computer': '+unit:mysql-0'}
       }, {
         id: 'mysql/1',
-        annotations: {'landscape-computers': '+unit:mysql-1'}
+        annotations: {'landscape-computer': '+unit:mysql-1'}
       }]);
 
       done();

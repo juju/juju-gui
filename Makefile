@@ -253,7 +253,7 @@ recess: node_modules/recess
 	# below without the grep to get recess' report.
 	node_modules/recess/bin/recess lib/views/stylesheet.less --config recess.json | grep -q Perfect
 
-lint: test-prep gjslint jshint recess yuidoc-lint
+lint: test-prep gjslint jshint recess yuidoc-lint test-filtering
 
 virtualenv/bin/python:
 	virtualenv virtualenv
@@ -375,6 +375,9 @@ test/test_startup.js: test/test_startup.js.top test/test_startup.js.bottom \
 	cat test/test_startup.js.bottom >> $@
 
 test-prep: test/test_startup.js
+
+test-filtering:
+	./bin/test-filtering
 
 test-debug: build-debug test-prep
 	./test-server.sh debug

@@ -85,6 +85,8 @@ already defined attributes and methods, including:
 - self.load(path='/'): ask the web driver to load the given page;
 - self.wait_for(condition, error, timeout): wait for some condition to become
   true;
+- self.handle_browser_warning(): overstep the browser warning dialog if the
+  current browser is not supported;
 - self.restart_api(): restart the staging API backend, so that the default
   environment is restored.
 

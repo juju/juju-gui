@@ -276,10 +276,6 @@ YUI.add('juju-env-python', function(Y) {
           {'op': 'unexpose', 'service_name': service}, callback, true);
     },
 
-    status: function(callback) {
-      this._send_rpc({'op': 'status'}, callback);
-    },
-
     /**
      * Remove a relation between two services.
      *
