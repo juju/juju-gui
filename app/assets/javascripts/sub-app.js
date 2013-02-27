@@ -46,9 +46,9 @@ YUI.add('sub-app', function(Y) {
           namespace = this.get('urlNamespace'),
           i;
 
-      for (i = 0; i < routes.length; i += 1) {
-        routes[i].namespace = namespace;
-      }
+      Y.Array.each(routes, function(route){
+        route.namespace = namespace;
+      });
 
       return routes;
     },
@@ -64,16 +64,7 @@ YUI.add('sub-app', function(Y) {
         @default undefined
         @type {string}
       */
-      urlNamespace: {},
-
-      /**
-        The SubApp's index location in the registration array.
-
-        @attribute index
-        @default undefined
-        @type {integer}
-      */
-      index: {}
+      urlNamespace: {}
     }
   });
 
