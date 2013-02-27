@@ -47,7 +47,7 @@ YUI.add('app-subapp-extension', function(Y) {
       Adds the sub application and its routes to the parent application.
 
       @method addSubApp
-      @param {string} SubApp string referance to an instantiable Y.App object.
+      @param {object} SubApp instantiable Y.SubApp object.
       @param {object} config configuration properties for the subapp.
     */
     addSubApp: function(SubApp, config) {
