@@ -1193,5 +1193,6 @@ YUI.add('juju-gui', function(Y) {
     'app-transitions',
     'base',
     'node',
-    'model']
+    'model',
+    'sub-app']
 });

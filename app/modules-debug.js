@@ -56,6 +56,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/routing.js'
         },
 
+        'sub-app': {
+          fullpath: '/juju-ui/assets/javascripts/sub-app.js'
+        },
+
         // Views
         'juju-landscape': {
           fullpath: '/juju-ui/views/landscape.js'
