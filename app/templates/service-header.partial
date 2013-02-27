@@ -19,6 +19,35 @@
         </div>
       </div>
       {{/tabs}}
+      <div class="controls">
+        {{#unless serviceIsJujuGUI}}
+          <div class="destroy-control control">
+            <a id="destroy-service" data-toggle="modal" href="#destroy-service-modal">
+	    <img src="/juju-ui/assets/images/destroy_icon.png" />Destroy</a>
+          </div>
+        {{/unless}}
+        {{#unless serviceIsJujuGUI}}
+          <div class="control-expose control">
+            <div class="inline">
+	      <img src="/juju-ui/assets/images/bottom_bar_big_div.png" class="divider" />
+	      <span>Expose</span>
+	    </div>
+            <div class="inline">
+            {{#if service.exposed}}
+              <img class="unexposeService"
+                    alt="Exposed"
+                    src="/juju-ui/assets/images/slider_on.png" />
+              <span class="on">On</span>
+            {{else}}
+              <img class="exposeService"
+                    alt="Not exposed"
+                    src="/juju-ui/assets/images/slider_off.png" />
+              <span class="off">Off</span>
+            {{/if}}
+            </div>
+          </div>
+        {{/unless}}
+      </div>
     </div>
     <div class="row">
       <div id="message-area" class="span10"></div>

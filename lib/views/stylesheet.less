@@ -330,6 +330,12 @@ svg {
             padding: 5px 5px 5px 5px;
             .create-border-radius(@border_radius);
 
+            a {
+              text-decoration: none;
+              font-size: 75%;
+              color: #fdf6e3;
+            }
+
             &.view-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
             }
@@ -339,6 +345,15 @@ svg {
             &.destroy-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
             }
+
+            &.landscape-reboot {
+                background-image: url(/juju-ui/assets/images/landscape_restart_menu.png);
+            }
+
+            &.landscape-security {
+                background-image: url(/juju-ui/assets/images/landscape_security_menu.png);
+            }
+
 
             &:last-child {
                 border-bottom: none;
@@ -702,11 +717,6 @@ g.unit {
         position: absolute;
         top: 1px;
         left: 11px;
-    }
-    .destroy-control {
-        position: absolute;
-        top: 1px;
-        right: 11px;
     }
 }
 
@@ -1242,7 +1252,7 @@ table tr.highlighted {
 
         .filter-control {
             position: absolute;
-            left: 110px;
+            left: 10px;
             top: 13px;
             width: 350px;
             display: inline-block;
@@ -1317,19 +1327,6 @@ table tr.highlighted {
             }
         }
 
-        .destroy-control {
-            position: absolute;
-            top: 1px;
-            left: 10px;
-
-            a {
-                color: @navbar-color;
-            }
-
-            a:link, a:visited, a:active, a:hover {
-                text-decoration: none
-            }
-        }
     }
 
     .service-header-partial {
@@ -1380,11 +1377,58 @@ table tr.highlighted {
                 }
             }
         }
+
+        .controls {
+            float: right;
+
+            .control {
+                float: left;
+                
+                .divider {
+                    margin-right: 3px;
+                    height: 13px;
+                    width: 2px;
+                }
+            }
+            .destroy-control {
+                a, a:hover, a:active, a:visited {
+                    text-decoration: none;
+                    color: @navbar-color;
+                }
+
+                img {
+                    margin: -2px 5px 0 0;
+                }
+            }
+
+            .control-expose {
+                position: relative;
+                margin-right: 5px;
+
+                div {
+                    padding-right: 5px;
+                }
+
+                .on {
+                    font-size: 11px; fill: #ffffff;
+                    position: absolute;
+                    right: 18px;
+                    top: 0;
+                }
+
+                .off {
+                    font-size: 12px; fill: #292929;
+                    position: absolute;
+                    right: 32px;
+                    top: 1px;
+                }
+            }
+        }
     }
 
     .service-common-controls {
         position: absolute;
-        left: 455px;
+        left: 355px;
         top: 10px;
 
         .control-unit-count {
@@ -1411,30 +1455,6 @@ table tr.highlighted {
             }
         }
 
-        .control-expose {
-            position: absolute;
-            left: 300px;
-            top: 4px;
-            width: 120px;
-
-            div {
-                padding-left: 5px;
-            }
-
-            .on {
-                font-size: 12px; fill: #ffffff;
-                position: absolute;
-                right: 20px;
-                top: 3px;
-            }
-
-            .off {
-                font-size: 12px; fill: #292929;
-                position: absolute;
-                right: 40px;
-                top: 3px;
-            }
-          }
     }
 }
 
