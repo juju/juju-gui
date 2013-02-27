@@ -46,7 +46,7 @@ YUI.add('sub-app', function(Y) {
           namespace = this.get('urlNamespace'),
           i;
 
-      Y.Array.each(routes, function(route){
+      Y.Array.each(routes, function(route) {
         route.namespace = namespace;
       });
 
