@@ -67,6 +67,7 @@ YUI.add('juju-view-environment', function(Y) {
               size: [640, 480],
               env: this.get('env'),
               db: this.get('db'),
+              landscape: this.get('landscape'),
               getModelURL: this.get('getModelURL'),
               getServiceEndpoints: this.get('getServiceEndpoints'),
               container: container});

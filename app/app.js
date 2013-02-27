@@ -621,7 +621,7 @@ YUI.add('juju-gui', function(Y) {
           // links from notifications about errors.
           { getModelURL: Y.bind(this.getModelURL, this),
             unit: unit, db: this.db, env: this.env,
-            querystring: req.query });
+            querystring: req.query, landscape: this.landscape });
     },
 
     /**
@@ -662,6 +662,7 @@ YUI.add('juju-gui', function(Y) {
         model: service,
         db: this.db,
         env: this.env,
+        landscape: this.landscape,
         getModelURL: Y.bind(this.getModelURL, this),
         querystring: req.query
       }, {}, function(view) {
@@ -903,6 +904,7 @@ YUI.add('juju-gui', function(Y) {
             getServiceEndpoints: function() {
               return self.serviceEndpoints;},
             loadService: this.loadService,
+            landscape: this.landscape,
             db: this.db,
             env: this.env};
 

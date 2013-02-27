@@ -30,7 +30,8 @@ YUI.add('juju-topology-landscape', function(Y) {
       var env = db.environment;
       var container = this.get('container');
 
-      views.utils.updateLandscapeBottomBar(env, env, container, 'environment');
+      views.utils.updateLandscapeBottomBar(topo.get('landscape'), env, env,
+        container, 'environment');
     }
   }, {
     ATTRS: {}

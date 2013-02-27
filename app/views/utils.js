@@ -375,7 +375,8 @@ YUI.add('juju-view-utils', function(Y) {
         });
   };
 
-  utils.updateLandscapeBottomBar = function(env, model, container, intent) {
+  utils.updateLandscapeBottomBar = function(landscape, env, model, container,
+      intent) {
     // Landscape annotations are stored in a unit's annotations, but just on
     // the object in the case of services/environment.
     var annotations = model.annotations ? model.annotations : model;
@@ -385,7 +386,6 @@ YUI.add('juju-view-utils', function(Y) {
     var machine = controls.one('.machine-control');
     var updates = controls.one('.updates-control');
     var restart = controls.one('.restart-control');
-    var landscape = window.app.landscape;
 
     if (envAnnotations['landscape-url']) {
       controls.show();
