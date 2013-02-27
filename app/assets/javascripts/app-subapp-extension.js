@@ -25,7 +25,7 @@ YUI.add('app-subapp-extension', function(Y) {
       of the parent app.
 
       [{
-        type: 'path.to.subapplication'
+        type: path.to.subapp
         config: {}
       }]
 
@@ -44,23 +44,20 @@ YUI.add('app-subapp-extension', function(Y) {
     },
 
     /**
-      Adds the sub application and it's routes to the parent application.
+      Adds the sub application and its routes to the parent application.
 
       @method addSubApp
-      @param {string} subApp string referance to an instantiable Y.App object.
+      @param {string} SubApp string referance to an instantiable Y.App object.
       @param {object} config configuration properties for the subapp.
     */
-    addSubApp: function(subApp, config) {
-      var SubAppObject = Y.Object.getValue(Y, subApp.split('.')),
-          subApps = this.get('subApps'),
+    addSubApp: function(SubApp, config) {
+      var subApps = this.get('subApps'),
           routes;
 
-      subApp = new SubAppObject(config);
+      SubApp = new SubApp(config);
+      subApps[SubApp.get('urlNamespace')] = SubApp;
 
-      subApps[subApp.get('urlNamespace')] = subApp;
-
-      routes = this._extractRoutes(subApp);
-
+      routes = this._extractRoutes(SubApp);
       this._augmentRoutes(routes);
     },
 
@@ -110,6 +107,8 @@ YUI.add('app-subapp-extension', function(Y) {
             }
           }
           break;
+        default:
+          throw 'subApp valid types are integer, object, or undefined';
       }
       return routes;
     },
@@ -123,7 +122,7 @@ YUI.add('app-subapp-extension', function(Y) {
     */
     _augmentRoutes: function(routes) {
       var parentRoutes = this.get('routes'),
-          middlewareIndex, groupedRoutes;
+          middlewareIndex;
 
       Y.Array.some(parentRoutes, function(value, index, array) {
         if (value.path !== '*') {
