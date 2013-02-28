@@ -445,7 +445,7 @@ YUI.add('juju-gui', function(Y) {
         // variables in the enclosing scope, most notably the callbacks and
         // routes.  Read carefully!
         req.next = function(err) {
-          var callback, route;
+          var subApp, callback, route, callingContext;
 
           if (err) {
             // Special case "route" to skip to the next route handler
@@ -458,15 +458,28 @@ YUI.add('juju-gui', function(Y) {
             }
 
           } else if ((callback = callbacks.shift())) {
+
             if (typeof callback === 'string') {
-              callback = self[callback];
+              subApp = self.get('subApps')[namespace];
+
+              if (subApp && typeof subApp[callback] === 'function') {
+                callback = subApp[callback];
+                callingContext = subApp;
+              } else if (typeof self[callback] === 'function') {
+                callback = self[callback];
+                callingContext = self;
+              } else {
+                console.error('Callback function `', callback,
+                    '` does not exist under the namespace `', namespace,
+                    '` at the path `', path, '`.');
+              }
             }
 
             // Allow access to the num or remaining callbacks for the route.
             req.pendingCallbacks = callbacks.length;
             // Attach the callback id to the request.
             req.callbackId = Y.stamp(callback, true);
-            callback.call(self, req, res, req.next);
+            callback.call(callingContext, req, res, req.next);
 
           } else if ((route = routes.shift())) {
             // Make a copy of this route's `callbacks` and find its matches.
