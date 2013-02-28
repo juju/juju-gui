@@ -469,7 +469,9 @@ YUI.add('juju-gui', function(Y) {
                 callback = self[callback];
                 callingContext = self;
               } else {
-                console.error('Callback function `%s` does not exist under the namespace `%s` at the path `%s`.', callback, namespace, path);
+                console.error('Callback function `', callback,
+                  '` does not exist under the namespace `', namespace,
+                  '` at the path `', path, '`.');
               }
             }
 
