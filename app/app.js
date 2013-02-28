@@ -1072,25 +1072,27 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Wrap the default routing using a whitelist to avoid extra juggling.
+     * Overridden route builder. This allows for options
+     * to be mixed in to each route. It differs from the
+     * default interface which allows for *callbacks to
+     * fill out arguments.
      *
      * @method route
      */
-    route: function(path, callback, options) {
-      JujuGUI.superclass.route.call(this, path, callback);
+    route: function(path, callbacks, options) {
+      callbacks = Y.Array.flatten(callbacks);
+      var keys = [];
+      var routeData = Y.mix({
+        callbacks: callbacks,
+        keys: keys,
+        path: path,
+        regex: this._getRegex(path, keys),
 
-      if (options.model) {
-        var routes = this._routes;
-        var idx = routes.length - 1;
-        if (routes[idx].path === path) {
-          // Combine our options with the default computed route information.
-          routes[idx] = Y.mix(routes[idx], options);
-        } else {
-          console.error(
-              'Underlying Y.Router not behaving as expected. ' +
-              'Press the red button.');
-        }
-      }
+        // For back-compat.
+        callback: callbacks[0]
+      }, options);
+      this._routes.push(routeData);
+      return this;
     }
 
   }, {
