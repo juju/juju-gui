@@ -1,16 +1,20 @@
 'use strict';
 
-describe('notifier widget', function() {
+describe('charm small widget', function() {
   var Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['notifier', 'node-event-simulate'], function(Y) {
-          CharmSmall = Y.namespace('juju.widgets').CharmSmall;
-          done();
+    Y = YUI(GlobalConfig).use(['charm-small', 'node-event-simulate'], function(Y) {
+      done();
     });
   });
 
-  it('should exist', function() {
-    assert.notNull(CharmSmall);
+  it('should initialize', function() {
+    var charm = new Y.juju.widgets.CharmSmall();
+    assert.isObject(charm);
+    assert.equal(charm.get('charm_name'), '');
+    assert.equal(charm.get('description'), '');
+    assert.equal(charm.get('rating'), 0);
+    assert.equal(charm.get('icon'), '');
   });
-};
+});
