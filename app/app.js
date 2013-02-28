@@ -465,9 +465,11 @@ YUI.add('juju-gui', function(Y) {
               if (subApp && typeof subApp[callback] === 'function') {
                 callback = subApp[callback];
                 callingContext = subApp;
-              } else {
+              } else if (typeof self[callback] === 'function') {
                 callback = self[callback];
                 callingContext = self;
+              } else {
+                console.error('Callback function `%s` does not exist under the namespace `%s` at the path `%s`.', callback, namespace, path);
               }
             }
 
