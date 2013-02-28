@@ -470,8 +470,8 @@ YUI.add('juju-gui', function(Y) {
                 callingContext = self;
               } else {
                 console.error('Callback function `', callback,
-                  '` does not exist under the namespace `', namespace,
-                  '` at the path `', path, '`.');
+                    '` does not exist under the namespace `', namespace,
+                    '` at the path `', path, '`.');
               }
             }
 
