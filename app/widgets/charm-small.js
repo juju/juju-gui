@@ -11,6 +11,7 @@ YUI.add('charm-small', function(Y) {
       description: {value: ''},
       rating: {value: 0},
       icon: {value: ''},
+      container: {value: null}
     }  
   });
 
