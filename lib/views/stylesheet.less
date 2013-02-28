@@ -224,7 +224,7 @@ i.sprite {
             &.control {
                 display: none;
             }
-            
+
             .landscape-icon {
                 margin: 10px 0 0 16px;
             }
@@ -1514,6 +1514,12 @@ div.inline {
     width: 420px;
     margin-left: -210px;
 
+    /* This enables us to use the .centered-column
+    class inside of the main application */
+    &.in-main {
+        top: 0;
+    }
+
     div {
         width: 280px;
         text-align: left;
@@ -1595,5 +1601,34 @@ div.inline {
 
     #loading-spinner {
         height: 100px;
+    }
+
+    #loading-message-text {
+        font-family: Ubuntu Medium, Helvetica, Arial;
+        font-size: 10pt;
+    }
+
+    #login-form {
+        .header {
+            font-size: 10pt;
+            font-family: Ubuntu Medium, Helvetica, Arial;
+        }
+    }
+
+    .header .error span {
+        color: #DD4814;
+        i {
+            margin-right: 5px;
+            float: left;
+        }
+        h4 {
+            font-family: Ubuntu Medium, Helvetica, Arial;
+            font-size: 10pt;
+            line-height: 10pt;
+        }
+    }
+
+   p {
+            font-size: 8pt;
     }
 }
