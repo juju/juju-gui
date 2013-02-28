@@ -1085,25 +1085,28 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Wrap the default routing using a whitelist to avoid extra juggling.
+     * Override the App route builder. This method adds the ability to
+     * send multiple callbacks, and the ability to specify arbitrary
+     * additional attributes in the options argument.
      *
      * @method route
      */
-    route: function(path, callback, options) {
-      JujuGUI.superclass.route.call(this, path, callback);
+    route: function(path, callbacks, options) {
+      callbacks = Y.Array(callbacks);
+      var keys = [];
+      var routeData = Y.mix({
+        callbacks: callbacks,
+        keys: keys,
+        path: path,
+        regex: this._getRegex(path, keys),
 
-      if (options.model) {
-        var routes = this._routes;
-        var idx = routes.length - 1;
-        if (routes[idx].path === path) {
-          // Combine our options with the default computed route information.
-          routes[idx] = Y.mix(routes[idx], options);
-        } else {
-          console.error(
-              'Underlying Y.Router not behaving as expected. ' +
-              'Press the red button.');
-        }
-      }
+        // For back-compat.
+        // This may no longer be required but is being left here until
+        // proper tests are written to guarantee there are no side effects
+        callback: callbacks[0]
+      }, options);
+      this._routes.push(routeData);
+      return this;
     }
 
   }, {
