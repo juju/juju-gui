@@ -103,4 +103,6 @@ YUI.add('sub-app', function(Y) {
     }
   });
 
+  Y.namespace('juju').SubApp = SubApp;
+
 }, '0.1.0', {requires: ['app-base', 'base-build']});
