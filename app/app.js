@@ -465,6 +465,7 @@ YUI.add('juju-gui', function(Y) {
               if (subApp && typeof subApp[callback] === 'function') {
                 callback = subApp[callback];
                 callingContext = subApp;
+                subApp._checkRendered();
               } else if (typeof self[callback] === 'function') {
                 callback = self[callback];
                 callingContext = self;
