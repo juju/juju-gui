@@ -25,10 +25,9 @@ YUI.add('sub-app', function(Y) {
       Middleware that is called on every namespaced path to ensure that the
       sub app is rendered before calling any other callbacks
 
-      @method _checkRendered
-      @protected
+      @method verifyRendered
     */
-    _checkRendered: function() {
+    verifyRendered: function() {
       if (this.get('rendered') === false) {
         this.render();
       }
