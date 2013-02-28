@@ -335,6 +335,12 @@ svg {
             padding: 5px 5px 5px 5px;
             .create-border-radius(@border_radius);
 
+            a {
+              text-decoration: none;
+              font-size: 75%;
+              color: #fdf6e3;
+            }
+
             &.view-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_view.png);
             }
@@ -344,6 +350,15 @@ svg {
             &.destroy-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
             }
+
+            &.landscape-reboot {
+                background-image: url(/juju-ui/assets/images/landscape_restart_menu.png);
+            }
+
+            &.landscape-security {
+                background-image: url(/juju-ui/assets/images/landscape_security_menu.png);
+            }
+
 
             &:last-child {
                 border-bottom: none;

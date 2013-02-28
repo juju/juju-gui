@@ -50,6 +50,33 @@ YUI.add('juju-models', function(Y) {
     }
   };
 
+  /**
+   * Model a single Environment. Serves as a place to collect
+   * Environment level annotations.
+   *
+   * @class Environment
+   **/
+  var Environment = Y.Base.create('environment', Y.Model, [], {
+    /**
+     * Update the annotations on delta events.
+     * We don't support removal of the Environment model.
+     *
+     * @method process_delta
+     **/
+    process_delta: function(action, data) {
+      this.set('annotations', data);
+    }
+  }, {
+    ATTRS: {
+      name: {},
+      provider: {},
+      annotations: {
+        valueFn: function() {return {};}
+      }
+    }
+  });
+  models.Environment = Environment;
+
   var Service = Y.Base.create('service', Y.Model, [], {
     ATTRS: {
       name: {},
@@ -391,6 +418,8 @@ YUI.add('juju-models', function(Y) {
 
   var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
+      // Single model for environment database is bound to.
+      this.environment = new Environment();
       this.services = new ServiceList();
       this.charms = new models.CharmList();
       this.relations = new RelationList();
@@ -432,12 +461,17 @@ YUI.add('juju-models', function(Y) {
         modelList = modelList[0];
       }
       modelList = this.getModelListByModelName(modelList);
+      if (!modelList) {
+        return undefined;
+      }
       return modelList.getById(id);
     },
 
     getModelListByModelName: function(modelName) {
       if (modelName === 'serviceUnit') {
         modelName = 'unit';
+      } else if (modelName === 'annotations') {
+        return this.environment;
       }
       return this[modelName + 's'];
     },

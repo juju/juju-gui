@@ -12,12 +12,14 @@ class TestBasics(browser.TestCase):
 
     def test_environment_name(self):
         self.load()
+        self.handle_browser_warning()
         body = self.driver.find_element_by_xpath('//body')
         self.assertTrue('Environment on ' in body.text)
 
     def test_environment_connection(self):
         # The GUI connects to the API backend.
         self.load()
+        self.handle_browser_warning()
         script = 'return app.env.get("connected");'
         self.wait_for_script(script, 'Environment not connected.')
 
@@ -36,7 +38,7 @@ class TestBasics(browser.TestCase):
                 return total, failures
 
         total, failures = self.wait_for(
-            tests_completed, 'Unable to complete test run.', timeout=30)
+            tests_completed, 'Unable to complete test run.', timeout=60)
         if failures:
             msg = '{} failure(s) running {} tests.'.format(failures, total)
             self.fail(msg)
@@ -59,6 +61,7 @@ class TestDeploy(browser.TestCase):
         # A charm can be deployed using the GUI.
         self.addCleanup(self.restart_api)
         self.load()
+        self.handle_browser_warning()
 
         def charm_panel_loaded(driver):
             """Wait for the charm panel to be ready and displayed."""
@@ -88,6 +91,7 @@ class TestDeploy(browser.TestCase):
     def test_staging_services(self):
         # The staging API backend contains already deployed services.
         self.load()
+        self.handle_browser_warning()
         expected = ('haproxy', 'mediawiki', 'memcached', 'mysql', 'wordpress')
         self.assertSetEqual(set(expected), self.get_service_names())
 

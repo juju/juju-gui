@@ -241,8 +241,8 @@ YUI.add('juju-env-python', function(Y) {
      * Attempt to log the user in.  Credentials must have been previously
      * stored on the environment.
      *
-     * @return {undefined} Nothing.
      * @method login
+     * @return {undefined} Nothing.
      */
     login: function() {
       // If the user is already authenticated there is nothing to do.
@@ -274,10 +274,6 @@ YUI.add('juju-env-python', function(Y) {
     unexpose: function(service, callback) {
       this._send_rpc(
           {'op': 'unexpose', 'service_name': service}, callback, true);
-    },
-
-    status: function(callback) {
-      this._send_rpc({'op': 'status'}, callback);
     },
 
     /**

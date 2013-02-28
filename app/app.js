@@ -27,7 +27,7 @@ YUI.add('juju-gui', function(Y) {
    *
    * @class App
    */
-  var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
+  var JujuGUI = Y.Base.create('juju-gui', Y.App, [Y.juju.SubAppRegistration], {
 
     /*
      * Views
@@ -244,10 +244,13 @@ YUI.add('juju-gui', function(Y) {
       // working with namespaced URLs.  See the module for details.
       this._nsRouter = juju.Router('charmstore');
 
-
       // Create a client side database to store state.
       this.db = new models.Database();
       this.serviceEndpoints = {};
+
+      // Optional Landscape integration helper.
+      this.landscape = new views.Landscape();
+      this.landscape.set('db', this.db);
 
       // Update the on-screen environment name provided in the configuration or
       // a default if none is configured.
@@ -560,6 +563,9 @@ YUI.add('juju-gui', function(Y) {
         });
       }
 
+      // Update Landscape annotations.
+      this.landscape.update();
+
       // Regardless of which view we are rendering
       // update the env view on db change.
       if (this.views.environment.instance) {
@@ -848,6 +854,7 @@ YUI.add('juju-gui', function(Y) {
      * it fires a login event, to which this responds.
      *
      * @method onLogin
+     * @param {Object} evt An event object (with a "data.result" attribute).
      * @private
      */
     onLogin: function(evt) {
@@ -896,6 +903,7 @@ YUI.add('juju-gui', function(Y) {
             getServiceEndpoints: function() {
               return self.serviceEndpoints;},
             loadService: this.loadService,
+            landscape: this.landscape,
             db: this.db,
             env: this.env};
 
@@ -1179,11 +1187,14 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-models',
     'juju-views',
     'juju-view-login',
+    'juju-landscape',
     'io',
     'json-parse',
     'app-base',
     'app-transitions',
     'base',
     'node',
-    'model']
+    'model',
+    'app-subapp-extension',
+    'sub-app']
 });

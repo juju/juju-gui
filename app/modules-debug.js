@@ -60,7 +60,19 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/routing.js'
         },
 
+        'app-subapp-extension': {
+          fullpath: '/juju-ui/assets/javascripts/app-subapp-extension.js'
+        },
+
+        'sub-app': {
+          fullpath: '/juju-ui/assets/javascripts/sub-app.js'
+        },
+
         // Views
+        'juju-landscape': {
+          fullpath: '/juju-ui/views/landscape.js'
+        },
+
         'juju-topology-relation': {
           fullpath: '/juju-ui/views/topology/relation.js'
         },
@@ -134,7 +146,8 @@ var GlobalConfig = {
             'juju-view-service',
             'juju-view-unit',
             'juju-view-charm',
-            'juju-view-charm-collection'
+            'juju-view-charm-collection',
+            'juju-landscape'
           ]
         },
 
