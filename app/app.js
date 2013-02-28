@@ -1080,7 +1080,7 @@ YUI.add('juju-gui', function(Y) {
      * @method route
      */
     route: function(path, callbacks, options) {
-      callbacks = Y.Array.flatten(callbacks);
+      callbacks = Y.Array(callbacks);
       var keys = [];
       var routeData = Y.mix({
         callbacks: callbacks,
