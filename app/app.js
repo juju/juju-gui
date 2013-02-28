@@ -1072,10 +1072,9 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Overridden route builder. This allows for options
-     * to be mixed in to each route. It differs from the
-     * default interface which allows for *callbacks to
-     * fill out arguments.
+     * Override the App route builder. This method adds the ability to
+     * send multiple callbacks, and the ability to specify arbitrary
+     * additional attributes in the options argument.
      *
      * @method route
      */
@@ -1089,6 +1088,8 @@ YUI.add('juju-gui', function(Y) {
         regex: this._getRegex(path, keys),
 
         // For back-compat.
+        // This may no longer be required but is being left here until
+        // proper tests are written to guarantee there are no side effects
         callback: callbacks[0]
       }, options);
       this._routes.push(routeData);
