@@ -621,7 +621,7 @@ YUI.add('juju-gui', function(Y) {
           // links from notifications about errors.
           { getModelURL: Y.bind(this.getModelURL, this),
             unit: unit, db: this.db, env: this.env,
-            querystring: req.query, 
+            querystring: req.query,
             landscape: this.landscape });
     },
 

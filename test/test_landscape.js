@@ -6,9 +6,9 @@ describe('Landscape integration', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
-                           'juju-landscape',
-                           'juju-models',
-                           'juju-views'], function(Y) {
+      'juju-landscape',
+      'juju-models',
+      'juju-views'], function(Y) {
       var envAnno;
 
       views = Y.namespace('juju.views');
@@ -136,8 +136,8 @@ describe('Landscape integration', function() {
     var node = Y.one('#test-node');
     node.append(partial());
 
-    views.utils.updateLandscapeBottomBar(landscape, env, env, node, 
-      'environment');
+    views.utils.updateLandscapeBottomBar(landscape, env, env, node,
+        'environment');
 
     // We should have the correct logo.
     node.one('.logo-tab i').hasClass('landscape_environment')
@@ -150,14 +150,14 @@ describe('Landscape integration', function() {
     node.one('.restart-control').getStyle('display').should.equal('block');
 
     views.utils.updateLandscapeBottomBar(landscape, env, mysql, node,
-      'service');
+        'service');
 
     // We should have the correct logo.
     node.one('.logo-tab i').hasClass('landscape_service')
       .should.equal(true);
     // We should have the correct URL for the machines.
     node.one('.machine-control a').get('href').should.equal('http://' +
-      'landscape.com/computers/criteria/environment:test+service:mysql/');
+        'landscape.com/computers/criteria/environment:test+service:mysql/');
     // We should have visible restart but not update controls.
     node.one('.updates-control').getStyle('display').should.equal('none');
     node.one('.restart-control').getStyle('display').should.equal('block');
@@ -166,14 +166,14 @@ describe('Landscape integration', function() {
     landscape.update();
 
     views.utils.updateLandscapeBottomBar(landscape, env, unit, node,
-      'unit');
+        'unit');
 
     // We should have the correct logo.
     node.one('.logo-tab i').hasClass('landscape_unit')
       .should.equal(true);
     // We should have the correct URL for the machines.
     node.one('.machine-control a').get('href').should.equal('http://' +
-      'landscape.com/computers/criteria/environment:test+unit:mysql-0/');
+        'landscape.com/computers/criteria/environment:test+unit:mysql-0/');
     // We should have no visible controls.
     node.one('.updates-control').getStyle('display').should.equal('none');
     node.one('.restart-control').getStyle('display').should.equal('none');
