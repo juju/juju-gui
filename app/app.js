@@ -27,7 +27,7 @@ YUI.add('juju-gui', function(Y) {
    *
    * @class App
    */
-  var JujuGUI = Y.Base.create('juju-gui', Y.App, [], {
+  var JujuGUI = Y.Base.create('juju-gui', Y.App, [Y.juju.SubAppRegistration], {
 
     /*
      * Views
@@ -445,7 +445,7 @@ YUI.add('juju-gui', function(Y) {
         // variables in the enclosing scope, most notably the callbacks and
         // routes.  Read carefully!
         req.next = function(err) {
-          var callback, route;
+          var subApp, callback, route, callingContext;
 
           if (err) {
             // Special case "route" to skip to the next route handler
@@ -458,15 +458,29 @@ YUI.add('juju-gui', function(Y) {
             }
 
           } else if ((callback = callbacks.shift())) {
+
             if (typeof callback === 'string') {
-              callback = self[callback];
+              subApp = self.get('subApps')[namespace];
+
+              if (subApp && typeof subApp[callback] === 'function') {
+                callback = subApp[callback];
+                callingContext = subApp;
+                subApp.verifyRendered();
+              } else if (typeof self[callback] === 'function') {
+                callback = self[callback];
+                callingContext = self;
+              } else {
+                console.error('Callback function `', callback,
+                    '` does not exist under the namespace `', namespace,
+                    '` at the path `', path, '`.');
+              }
             }
 
             // Allow access to the num or remaining callbacks for the route.
             req.pendingCallbacks = callbacks.length;
             // Attach the callback id to the request.
             req.callbackId = Y.stamp(callback, true);
-            callback.call(self, req, res, req.next);
+            callback.call(callingContext, req, res, req.next);
 
           } else if ((route = routes.shift())) {
             // Make a copy of this route's `callbacks` and find its matches.
@@ -1074,25 +1088,28 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * Wrap the default routing using a whitelist to avoid extra juggling.
+     * Override the App route builder. This method adds the ability to
+     * send multiple callbacks, and the ability to specify arbitrary
+     * additional attributes in the options argument.
      *
      * @method route
      */
-    route: function(path, callback, options) {
-      JujuGUI.superclass.route.call(this, path, callback);
+    route: function(path, callbacks, options) {
+      callbacks = Y.Array(callbacks);
+      var keys = [];
+      var routeData = Y.mix({
+        callbacks: callbacks,
+        keys: keys,
+        path: path,
+        regex: this._getRegex(path, keys),
 
-      if (options.model) {
-        var routes = this._routes;
-        var idx = routes.length - 1;
-        if (routes[idx].path === path) {
-          // Combine our options with the default computed route information.
-          routes[idx] = Y.mix(routes[idx], options);
-        } else {
-          console.error(
-              'Underlying Y.Router not behaving as expected. ' +
-              'Press the red button.');
-        }
-      }
+        // For back-compat.
+        // This may no longer be required but is being left here until
+        // proper tests are written to guarantee there are no side effects
+        callback: callbacks[0]
+      }, options);
+      this._routes.push(routeData);
+      return this;
     }
 
   }, {
@@ -1197,5 +1214,6 @@ YUI.add('juju-gui', function(Y) {
     'base',
     'node',
     'model',
+    'app-subapp-extension',
     'sub-app']
 });
