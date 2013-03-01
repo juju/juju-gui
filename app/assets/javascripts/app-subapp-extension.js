@@ -41,6 +41,9 @@ YUI.add('app-subapp-extension', function(Y) {
     */
     addSubApplications: function() {
       this.addSubApps(this.subApplications);
+      Y.on('*:subNavigate', function(e) {
+        this.navigate(':' + e.namespace + ':' + e.url);
+      }, this);
     },
 
     /**
