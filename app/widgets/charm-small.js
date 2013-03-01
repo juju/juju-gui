@@ -11,8 +11,8 @@ YUI.add('charm-small', function(Y) {
 
     renderUI: function() {
       var content = this.TEMPLATE({
-        iconfile: this.get('icon'),
-        charm_name: this.get('charm_name'),
+        iconfile: this.get('iconfile'),
+        title: this.get('title'),
         description: this.get('description'),
         rating: this.get('rating'),
       });
@@ -21,10 +21,10 @@ YUI.add('charm-small', function(Y) {
     },
   }, {
     ATTRS: {
-      charm_name: {value: ''},  
+      title: {value: ''},  
       description: {value: ''},
       rating: {value: 0},
-      icon: {value: ''},
+      iconfile: {value: ''},
       container: {value: null}
     }  
   });
