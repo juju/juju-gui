@@ -13,12 +13,24 @@ YUI.add('sub-app', function(Y) {
     @class SubApp
     @namespace juju
   */
-  Y.namespace('juju').SubApp = Y.Base.create('sub-app', Y.App.Base, [], {
+  var SubApp = Y.Base.create('sub-app', Y.App.Base, [], {
 
     initializer: function() {
       this.publish('subNavigate', {
         emitFacade: true
       });
+    },
+
+    /*
+      Middleware that is called on every namespaced path to ensure that the
+      sub app is rendered before calling any other callbacks
+
+      @method verifyRendered
+    */
+    verifyRendered: function() {
+      if (this.get('rendered') === false) {
+        this.render();
+      }
     },
 
     /**
@@ -33,6 +45,17 @@ YUI.add('sub-app', function(Y) {
         url: url,
         options: options
       });
+    },
+
+    /**
+      Overwrites the core Y.App.Base render method to toggle an attribute
+      once the application has been rendered
+
+      @method render
+    */
+    render: function() {
+      SubApp.superclass.render.call(this);
+      this.set('rendered', true);
     },
 
     /**
@@ -64,8 +87,21 @@ YUI.add('sub-app', function(Y) {
         @default undefined
         @type {string}
       */
-      urlNamespace: {}
+      urlNamespace: {},
+
+      /**
+        Whether the sub app is rendered or not
+
+        @attribute rendered
+        @default false
+        @type {boolean}
+      */
+      rendered: {
+        value: false
+      }
     }
   });
+
+  Y.namespace('juju').SubApp = SubApp;
 
 }, '0.1.0', {requires: ['app-base', 'base-build']});
