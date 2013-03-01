@@ -1,5 +1,6 @@
 'use strict';
 
+
 /**
  * Provide the Charm Small widget.
  *
@@ -20,7 +21,7 @@ YUI.add('charm-small', function(Y) {
      * @method initialize
      * @return {undefined} Mutates only.
      */
-    initialize: function(cfg) {}, 
+    initialize: function(cfg) {},
 
     /**
      * Create the nodes required by this widget and attach them to the DOM.
@@ -33,7 +34,7 @@ YUI.add('charm-small', function(Y) {
         iconfile: this.get('iconfile'),
         title: this.get('title'),
         description: this.get('description'),
-        rating: this.get('rating'),
+        rating: this.get('rating')
       });
       this.get('contentBox').append(content);
       this.get('container').append(this.get('boundingBox'));
@@ -50,23 +51,23 @@ YUI.add('charm-small', function(Y) {
     bindUI: function() {
       var add_button = this.get('contentBox').one('button');
       this.on('mouseover', function() {
-        add_button.removeClass('hidden'); 
+        add_button.removeClass('hidden');
       });
       this.on('mouseout', function() {
-        add_button.addClass('hidden'); 
+        add_button.addClass('hidden');
       });
       add_button.on('click', function() {
-        this.fire(ns.CHARM_ADD); 
-      })
-    },
+        this.fire(ns.CHARM_ADD);
+      });
+    }
   }, {
     ATTRS: {
-      title: {value: ''},  
+      title: {value: ''},
       description: {value: ''},
       rating: {value: 0},
       iconfile: {value: ''},
       container: {value: null}
-    }  
+    }
   });
 
 }, '0.1.0', {
@@ -74,6 +75,6 @@ YUI.add('charm-small', function(Y) {
     'base',
     'handlebars',
     'juju-templates',
-    'widget',
+    'widget'
   ]
 });

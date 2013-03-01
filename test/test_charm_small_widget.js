@@ -1,13 +1,14 @@
 'use strict';
 
+
 describe('charm small widget', function() {
   var charm_container, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['charm-small', 'node-event-simulate'], function(Y) {
-      done();
-    });
+          done();
+        });
   });
 
   beforeEach(function() {
@@ -16,7 +17,7 @@ describe('charm small widget', function() {
   });
 
   afterEach(function() {
-    Y.one("#charm-container").remove(true);
+    Y.one('#charm-container').remove(true);
   });
 
   it('should initialize', function() {
@@ -35,16 +36,16 @@ describe('charm small widget', function() {
       container: charm_container,
       title: 'some-charm',
       description: 'some description',
-      rating: 1,
+      rating: 1
     };
     var charm = new Y.juju.widgets.CharmSmall(cfg);
     charm.render();
     var rendered_charm = Y.one('.charm-small');
-    assert.equal('some-charm', rendered_charm.one(".charm-title").get('text'));
+    assert.equal('some-charm', rendered_charm.one('.charm-title').get('text'));
     assert.equal(
-      'some description',
-      rendered_charm.one(".charm-description").get('text'));
-    assert.equal('1', rendered_charm.one(".charm-rating").get('text'));
+        'some description',
+        rendered_charm.one('.charm-description').get('text'));
+    assert.equal('1', rendered_charm.one('.charm-rating').get('text'));
   });
 
   it('should show an add button on hover', function() {
@@ -52,18 +53,17 @@ describe('charm small widget', function() {
     var charm = new Y.juju.widgets.CharmSmall(cfg);
     charm.render();
     var rendered_charm = Y.one('.charm-small');
-    var add_button = rendered_charm.one('button'); 
+    var add_button = rendered_charm.one('button');
     assert.isTrue(
-      add_button.hasClass('hidden'),
-      "Button didn't start out hidden");
+        add_button.hasClass('hidden'),
+        'Button did not start out hidden');
     rendered_charm.simulate('mouseover');
-    var add_button = rendered_charm.one('button'); 
     assert.isFalse(
-      add_button.hasClass('hidden'),
-      'Button did not become revealed on mouseover');
+        add_button.hasClass('hidden'),
+        'Button did not become revealed on mouseover');
     rendered_charm.simulate('mouseout');
     assert.isTrue(
-      add_button.hasClass('hidden'),
-      "Button did not become hidden on mouseout");
+        add_button.hasClass('hidden'),
+        'Button did not become hidden on mouseout');
   });
 });
