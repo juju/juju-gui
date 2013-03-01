@@ -46,4 +46,24 @@ describe('charm small widget', function() {
       rendered_charm.one(".charm-description").get('text'));
     assert.equal('1', rendered_charm.one(".charm-rating").get('text'));
   });
+
+  it('should show an add button on hover', function() {
+    var cfg = { container: charm_container };
+    var charm = new Y.juju.widgets.CharmSmall(cfg);
+    charm.render();
+    var rendered_charm = Y.one('.charm-small');
+    var add_button = rendered_charm.one('button'); 
+    assert.isTrue(
+      add_button.hasClass('hidden'),
+      "Button didn't start out hidden");
+    rendered_charm.simulate('mouseover');
+    var add_button = rendered_charm.one('button'); 
+    assert.isFalse(
+      add_button.hasClass('hidden'),
+      'Button did not become revealed on mouseover');
+    rendered_charm.simulate('mouseout');
+    assert.isTrue(
+      add_button.hasClass('hidden'),
+      "Button did not become hidden on mouseout");
+  });
 });

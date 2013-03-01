@@ -3,6 +3,7 @@
 YUI.add('charm-small', function(Y) {
 
   var ns = Y.namespace('juju.widgets');
+  ns.CHARM_ADD = 'charm-small-add';
   ns.CharmSmall = Y.Base.create('CharmSmall', Y.Widget, [], {
 
     TEMPLATE: Y.namespace('juju.views').Templates['charm-small-widget'],
@@ -18,6 +19,19 @@ YUI.add('charm-small', function(Y) {
       });
       this.get('contentBox').append(content);
       this.get('container').append(this.get('boundingBox'));
+    },
+
+    bindUI: function() {
+      var add_button = this.get('contentBox').one('button');
+      this.on('mouseover', function() {
+        add_button.removeClass('hidden'); 
+      });
+      this.on('mouseout', function() {
+        add_button.addClass('hidden'); 
+      });
+      add_button.on('click', function() {
+        this.fire(ns.CHARM_ADD); 
+      })
     },
   }, {
     ATTRS: {
