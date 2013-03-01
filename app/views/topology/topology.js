@@ -206,6 +206,7 @@ YUI.add('juju-topology', function(Y) {
     'juju-topology-service',
     'juju-topology-relation',
     'juju-topology-panzoom',
-    'juju-topology-viewport'
+    'juju-topology-viewport',
+    'juju-topology-landscape'
   ]
 });

@@ -9,7 +9,7 @@
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         var partials = Y.Handlebars.partials;
-        partial = partials['service-footer-destroy-service'];
+        partial = partials['service-header-destroy-service'];
         done();
       });
     });
@@ -47,14 +47,32 @@
       assert.match(html, /Unit count/);
     });
 
-    it('does not include (un)expose for the Juju GUI service', function() {
-      var html = partial({serviceIsJujuGUI: true});
-      assert.notMatch(html, /Expose/);
-    });
-
     it('includes unit count UI for non-Juju-GUI services', function() {
       var html = partial({serviceIsJujuGUI: false});
       assert.match(html, /Unit count/);
+    });
+
+
+  });
+})();
+
+(function() {
+
+  describe('Template: service-header.partial', function() {
+    var requires = ['node', 'juju-gui', 'juju-views', 'juju-tests-utils'];
+    var Y, conn, env, partial;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        var partials = Y.Handlebars.partials;
+        partial = partials['service-header'];
+        done();
+      });
+    });
+
+    it('does not include (un)expose for the Juju GUI service', function() {
+      var html = partial({serviceIsJujuGUI: true});
+      assert.notMatch(html, /Expose/);
     });
 
     it('includes (un)expose for non-Juju-GUI services', function() {

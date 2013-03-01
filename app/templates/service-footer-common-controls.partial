@@ -5,27 +5,7 @@
     <div class="inline">
       <input type="text" id="num-service-units"
           value="{{service.unit_count}}">
-      <img class="divider"
-          src="/juju-ui/assets/images/bottom_bar_small_div.png" />
     </div>
   </div>
 {{/unless}}
-{{#unless serviceIsJujuGUI}}
-  <div class="control-expose">
-    <div class="inline"><span>Expose</span></div>
-    <div class="inline">
-    {{#if service.exposed}}
-      <img class="unexposeService"
-            alt="Exposed"
-            src="/juju-ui/assets/images/slider_on.png" />
-      <span class="on">On</span>
-    {{else}}
-      <img class="exposeService"
-            alt="Not exposed"
-            src="/juju-ui/assets/images/slider_off.png" />
-      <span class="off">Off</span>
-    {{/if}}
-    </div>
-    </div>
-  </div>
-{{/unless}}
+</div>

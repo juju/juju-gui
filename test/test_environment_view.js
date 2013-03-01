@@ -83,7 +83,8 @@
     before(function(done) {
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'juju-env',
-        'node-event-simulate', 'juju-gui', 'slider'
+        'node-event-simulate', 'juju-gui', 'slider',
+        'landscape'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
@@ -500,6 +501,28 @@
          match[1].should.eql('374.1');
          match[2].should.eql('211.2');
        });
+
+    it('must be able to use Landscape annotations', function() {
+      var landscape = new views.Landscape();
+      landscape.set('db', db);
+      db.environment.set('annotations', {
+        'landscape-url': 'http://host',
+        'landscape-computers': '/foo',
+        'landscape-reboot-alert-url': '+reboot'
+      });
+      db.environment['landscape-needs-reboot'] = true;
+
+      var view = new views.environment({
+        container: container,
+        db: db,
+        env: env,
+        landscape: landscape
+      }).render();
+
+      var rebootItem = container.one('.landscape-controls .restart-control');
+      rebootItem.one('a').get('href').should.equal('http://host/foo+reboot');
+    });
+
 
     it('must be able to render subordinate relation indicators',
        function() {
