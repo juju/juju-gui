@@ -5,7 +5,8 @@ describe('charm small widget', function() {
   var charm_container, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['browser-charm-small', 'node-event-simulate'], function(Y) {
+    Y = YUI(GlobalConfig).use(
+        ['browser-charm-small', 'node-event-simulate'], function(Y) {
           done();
         });
   });
