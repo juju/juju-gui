@@ -132,6 +132,45 @@ YUI.add('juju-landscape', function(Y) {
       } else if (intent === 'security') {
         return url + env['landscape-security-alert-url'];
       }
+    },
+
+    /**
+     * Given a model and an intent return an object
+     * with the properties of a badge. If the object
+     * shouldn't have a badge undefined is returned.
+     **/
+    getLandscapeBadge: function(model, intent, hint) {
+      var badge = {};
+      var props = model;
+      var sprite = 'landscape_';
+
+      if (model.name === 'serviceUnit') {
+        props = model.annotations;
+      }
+      if (!props) {
+        return undefined;
+      }
+
+      badge.link = this.getLandscapeURL(model, intent);
+      if (intent === 'reboot') {
+        if (!props['landscape-needs-reboot']) {
+          return undefined;
+        }
+        sprite += 'restart';
+
+      } else if (intent === 'security') {
+         if (!props['landscape-security-upgrades']) {
+          return undefined;
+        }
+        sprite += intent;
+      }
+
+      if (hint) {
+        sprite += '_' + hint;
+      }
+
+      badge.sprite = sprite;
+      return badge;
     }
   });
 

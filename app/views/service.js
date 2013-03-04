@@ -826,7 +826,7 @@ YUI.add('juju-view-service', function(Y) {
       });
 
   // Display a unit grid based on the total number of units.
-  Y.Handlebars.registerHelper('show_units', function(units) {
+  Y.Handlebars.registerHelper('show_units', function(units, landscape) {
     var template;
     var numUnits = units.length;
     // TODO: different visualization based on the viewport size.
@@ -839,7 +839,7 @@ YUI.add('juju-view-service', function(Y) {
     } else {
       template = Templates.show_units_tiny;
     }
-    return template({units: units});
+    return template({units: units, landscape: landscape});
   });
 
   // Translate the given state to the matching style.
@@ -889,6 +889,7 @@ YUI.add('juju-view-service', function(Y) {
           }, this);
           return {
             viewName: 'units',
+            landscape: this.get('landscape'),
             tabs: this.getServiceTabs('.'),
             service: service.getAttrs(),
             charm_id: charm_id,

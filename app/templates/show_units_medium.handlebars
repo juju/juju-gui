@@ -1,6 +1,10 @@
 <ul id="unit-medium" class="thumbnails">
   {{#units}}
   <li class="span2">
+     <div class="pull-right">
+      {{landscapeBadge ../landscape . 'reboot' 'medium'}}<br>
+      {{landscapeBadge ../landscape . 'security' 'medium'}}
+    </div>
     <div class="well unit {{state_to_style agent_state}}"
       id="{{id}}"{{#if public_address}} title="{{public_address}}"{{/if}}>
       <span class="agent-state">{{unitState relation_errors agent_state}}</span>

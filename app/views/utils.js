@@ -1126,6 +1126,19 @@ YUI.add('juju-view-utils', function(Y) {
         Y.Markdown.toHTML(text));
   });
 
+  /**
+   * Generate a landscape badge using a partial internally.
+   **/
+  Y.Handlebars.registerHelper('landscapeBadge', function(landscape, model, intent, hint) {
+    var output = '';
+    var badge = landscape.getLandscapeBadge(model, intent, hint);
+
+    if (badge) {
+      output += Y.Handlebars.render('{{>landscape-badges}}', {badge: badge});
+    }
+    return new Y.Handlebars.SafeString(output);
+  });
+
   /*
    * Build a list of relation types given a list of endpoints.
    */

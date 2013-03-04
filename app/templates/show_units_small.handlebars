@@ -1,6 +1,10 @@
 <ul id="unit-small" class="thumbnails">
   {{#units}}
   <li>
+      <div class="pull-right">
+      {{landscapeBadge ../landscape . 'reboot' 'small'}}<br>
+      {{landscapeBadge ../landscape . 'security' 'small'}}
+    </div>
     <div class="well unit {{state_to_style agent_state}}" id="{{id}}"
       title="{{agent_state}}{{#if public_address}} - {{public_address}}{{/if}}">
       <span class="agent-state">{{unitState relation_errors agent_state}}</span>
