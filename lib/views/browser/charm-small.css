@@ -1,0 +1,7 @@
+yui3-charmsmall button.hidden {
+    display: None;
+}
+
+yui3-charmsmall div#main:hover button.hidden {
+  display: block;
+}
