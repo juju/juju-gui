@@ -70,7 +70,7 @@ YUI.add('sub-app', function(Y) {
 
       @method _afterHistoryChange
       @protected
-      @return {undefined} Clobbers old fn so returns undefined
+      @return {undefined} Clobbers old function so returns undefined.
     */
     _afterHistoryChange: function() {},
 
