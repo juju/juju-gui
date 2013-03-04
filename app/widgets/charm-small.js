@@ -13,17 +13,47 @@ YUI.add('browser-charm-small', function(Y) {
   ns.EVENT_CHARM_ADD = 'charm-small-add';
   ns.CharmSmall = Y.Base.create('CharmSmall', Y.Widget, [], {
 
+    _events: [],
     TEMPLATE: Y.namespace('juju.views').Templates['charm-small-widget'],
 
     /**
-     * Initializer.
+     * Set up and bind DOM events.
      *
-     * @method initializer
+     * @method _bind_events
+     * @private
      * @return {undefined} Mutates only.
      */
-    initializer: function(cfg) {
-      this.addButton = null; 
-      this.addClick = null;
+    _bind_ui: function() {
+      var addButton = this.get('contentBox').one('button');
+      var addClick = addButton.on('click', function() {
+        this.fire(ns.EVENT_CHARM_ADD);
+      });
+      this._events.push(addClick);
+    },
+
+    /**
+     * Detach listeners for DOM events.
+     *
+     * @method _unbind_events
+     * @private
+     * @return {undefined} Mutates only.
+     */
+    _unbind_ui: function() {
+      Y.Array.each(this._events, function(item) {
+        item.detach();
+      });
+    },
+
+    /**
+     * Attach event listeners which bind the UI to the widget state.
+     * Clicking add fires the add signal.
+     *
+     * @method bindUI
+     * @return {undefined} Mutates only.
+     */
+    bindUI: function() {
+      this._unbind_ui();
+      this._bind_ui();
     },
 
     /**
@@ -33,12 +63,7 @@ YUI.add('browser-charm-small', function(Y) {
      * @return {undefined} Mutates only.
      */
     destructor: function(cfg) {
-      if (this.addButton) {
-        this.addButton.detach();
-      }
-      if (this.addClick) {
-        this.addClick.detach();
-      }
+      this._unbind_ui();
     },
 
     /**
@@ -50,21 +75,8 @@ YUI.add('browser-charm-small', function(Y) {
     renderUI: function() {
       var content = this.TEMPLATE(this.getAttrs());
       this.get('contentBox').setHTML(content);
-    },
-
-    /**
-     * Attach event listeners which bind the UI to the widget state.
-     * Clicking add fires the add signal.
-     *
-     * @method bindUI
-     * @return {undefined} Mutates only.
-     */
-    bindUI: function() {
-      var addButton = this.get('contentBox').one('button');
-      addButton.on('click', function() {
-        this.fire(ns.EVENT_CHARM_ADD);
-      });
     }
+
   }, {
     ATTRS: {
       title: {value: ''},
