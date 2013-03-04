@@ -24,10 +24,10 @@ YUI.add('browser-charm-small', function(Y) {
      * @return {undefined} Mutates only.
      */
     _bind_ui: function() {
-      var addButton = this.get('contentBox').one('button');
-      var addClick = addButton.on('click', function() {
-        this.fire(ns.EVENT_CHARM_ADD);
-      });
+      var addButton = this.get('contentBox').one('button'),
+          addClick = addButton.on('click', function() {
+            this.fire(ns.EVENT_CHARM_ADD);
+          });
       this._events.push(addClick);
     },
 
