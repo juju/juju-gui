@@ -18,10 +18,28 @@ YUI.add('browser-charm-small', function(Y) {
     /**
      * Initializer.
      *
-     * @method initialize
+     * @method initializer
      * @return {undefined} Mutates only.
      */
-    initializer: function(cfg) {},
+    initializer: function(cfg) {
+      this.addButton = null; 
+      this.addClick = null;
+    },
+
+    /**
+     * Desctructor
+     *
+     * @method destructor
+     * @return {undefined} Mutates only.
+     */
+    destructor: function(cfg) {
+      if (this.addButton) {
+        this.addButton.detach();
+      }
+      if (this.addClick) {
+        this.addClick.detach();
+      }
+    },
 
     /**
      * Create the nodes required by this widget and attach them to the DOM.
@@ -31,7 +49,7 @@ YUI.add('browser-charm-small', function(Y) {
      */
     renderUI: function() {
       var content = this.TEMPLATE(this.getAttrs());
-      this.get('contentBox').append(content);
+      this.get('contentBox').setHTML(content);
     },
 
     /**
@@ -43,14 +61,13 @@ YUI.add('browser-charm-small', function(Y) {
      * @return {undefined} Mutates only.
      */
     bindUI: function() {
-      var add_button = this.get('contentBox').one('button');
-      this.on('mouseover', function() {
-        add_button.removeClass('hidden');
+      var addButton = this.get('contentBox').one('button');
+      this.addHover = this.on('hover', function() {
+        addButton.removeClass('hidden');
+      }, function() {
+        addButton.addClass('hidden');
       });
-      this.on('mouseout', function() {
-        add_button.addClass('hidden');
-      });
-      add_button.on('click', function() {
+      addButton.on('click', function() {
         this.fire(ns.CHARM_ADD);
       });
     }
@@ -66,6 +83,7 @@ YUI.add('browser-charm-small', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
+    'event-hover',
     'handlebars',
     'juju-templates',
     'widget'
