@@ -163,7 +163,7 @@
         Error: 'service \"mysql\" not found'
       });
       assert.equal(service_name, 'mysql');
-      assert.equal(err, 'service \"mysql\" not found');
+      assert.equal(err, 'service "mysql" not found');
 
     });
 
