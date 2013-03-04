@@ -48,6 +48,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/notifier.js'
         },
 
+        'browser-charm-small': {
+          fullpath: '/juju-ui/widgets/charm-small.js'
+        },
+
         'reconnecting-websocket': {
           fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },
