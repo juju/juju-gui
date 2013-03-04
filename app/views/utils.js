@@ -1131,6 +1131,9 @@ YUI.add('juju-view-utils', function(Y) {
    **/
   Y.Handlebars.registerHelper('landscapeBadge', function(
       landscape, model, intent, hint) {
+        if (!landscape) {
+          return '';
+        }
         var output = '';
         var badge = landscape.getLandscapeBadge(model, intent, hint);
 

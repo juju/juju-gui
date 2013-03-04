@@ -504,13 +504,23 @@
 
     it('must be able to use Landscape annotations', function() {
       var landscape = new views.Landscape();
+      var wordpress = db.services.getById('wordpress');
       landscape.set('db', db);
+      // Mock out enough of the annotations to
+      // allow a full render with landscape data.
       db.environment.set('annotations', {
         'landscape-url': 'http://host',
         'landscape-computers': '/foo',
         'landscape-reboot-alert-url': '+reboot'
       });
       db.environment['landscape-needs-reboot'] = true;
+      db.services.each(function(s) {
+        s.set('annotations', {
+          'landscape-computers': '/service'
+        });
+      });
+      wordpress['landscape-needs-reboot'] = true;
+      wordpress['landscape-security-upgrades'] = false;
 
       var view = new views.environment({
         container: container,

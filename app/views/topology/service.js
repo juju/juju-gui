@@ -630,38 +630,40 @@ YUI.add('juju-topology-service', function(Y) {
 
       // Landscape badge
       // Remove any existing badge.
-      node.select('.landscape-badge').remove();
-      node.each(function(d) {
-        var landscapeAsset;
-        var securityBadge = landscape.getLandscapeBadge(
-            d.model, 'security', 'round');
-        var rebootBadge = landscape.getLandscapeBadge(
-            d.model, 'reboot', 'round');
+      if (landscape) {
+        node.select('.landscape-badge').remove();
+        node.each(function(d) {
+          var landscapeAsset;
+          console.log('landscape for', d.id);
+          var securityBadge = landscape.getLandscapeBadge(
+              d.model, 'security', 'round');
+          var rebootBadge = landscape.getLandscapeBadge(
+              d.model, 'reboot', 'round');
 
-        if (securityBadge && rebootBadge) {
-          landscapeAsset =
-              '/juju-ui/assets/images/non-sprites/landscape_rotate.gif';
-        } else if (securityBadge) {
-          landscapeAsset =
-              '/juju-ui/assets/images/landscape_security_round.png';
-        } else if (rebootBadge) {
-          landscapeAsset =
-              '/juju-ui/assets/images/landscape_restart_round.png';
-        }
-        if (landscapeAsset) {
-          d3.select(this).append('image')
-          .attr('xlink:href', landscapeAsset)
-          .attr('width', 25)
-          .attr('height', 25)
-          .attr('x', function(box) {
-                return box.w * 0.13;
-              })
-          .attr('y', function(box) {
-                return box.h / 2 - 25;
-              });
-        }
-      });
-
+          if (securityBadge && rebootBadge) {
+            landscapeAsset =
+                '/juju-ui/assets/images/non-sprites/landscape_rotate.gif';
+          } else if (securityBadge) {
+            landscapeAsset =
+                '/juju-ui/assets/images/landscape_security_round.png';
+          } else if (rebootBadge) {
+            landscapeAsset =
+                '/juju-ui/assets/images/landscape_restart_round.png';
+          }
+          if (landscapeAsset) {
+            d3.select(this).append('image')
+            .attr('xlink:href', landscapeAsset)
+            .attr('width', 25)
+            .attr('height', 25)
+            .attr('x', function(box) {
+                  return box.w * 0.13;
+                })
+            .attr('y', function(box) {
+                  return box.h / 2 - 25;
+                });
+          }
+        });
+      }
       // The following are sizes in pixels of the SVG assets used to
       // render a service, and are used to in calculating the vertical
       // positioning of text down along the service block.
