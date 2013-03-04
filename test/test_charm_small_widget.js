@@ -44,22 +44,4 @@ describe('charm small widget', function() {
         rendered_charm.one('.description').get('text'));
     assert.equal('1', rendered_charm.one('.rating').get('text'));
   });
-
-  it('should show an add button on hover', function() {
-    var charm = new Y.juju.widgets.browser.CharmSmall();
-    charm.render(charm_container);
-    var rendered_charm = Y.one('.yui3-charmsmall');
-    var add_button = rendered_charm.one('button');
-    assert.isTrue(
-        add_button.hasClass('hidden'),
-        'Button did not start out hidden');
-    rendered_charm.simulate('mouseover');
-    assert.isFalse(
-        add_button.hasClass('hidden'),
-        'Button did not become revealed on mouseover');
-    rendered_charm.simulate('mouseout');
-    assert.isTrue(
-        add_button.hasClass('hidden'),
-        'Button did not become hidden on mouseout');
-  });
 });

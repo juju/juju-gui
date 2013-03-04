@@ -54,7 +54,6 @@ YUI.add('browser-charm-small', function(Y) {
 
     /**
      * Attach event listeners which bind the UI to the widget state.
-     * Hover causes the "Add" button to display.
      * Clicking add fires the add signal.
      *
      * @method bindUI
@@ -62,13 +61,8 @@ YUI.add('browser-charm-small', function(Y) {
      */
     bindUI: function() {
       var addButton = this.get('contentBox').one('button');
-      this.addHover = this.on('hover', function() {
-        addButton.removeClass('hidden');
-      }, function() {
-        addButton.addClass('hidden');
-      });
       addButton.on('click', function() {
-        this.fire(ns.CHARM_ADD);
+        this.fire(ns.EVENT_CHARM_ADD);
       });
     }
   }, {
@@ -83,7 +77,6 @@ YUI.add('browser-charm-small', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
-    'event-hover',
     'handlebars',
     'juju-templates',
     'widget'
