@@ -903,11 +903,14 @@ YUI.add('juju-view-service', function(Y) {
         render: function() {
           var container = this.get('container');
           var service = this.get('model');
+          var env = this.get('db').environment.get('annotations');
           if (!service || !service.get('loaded')) {
             container.setHTML('<div class="alert">Loading...</div>');
             console.log('waiting on service data');
           } else {
             container.setHTML(this.template(this.gatherRenderData()));
+            views.utils.updateLandscapeBottomBar(this.get('landscape'),
+                env, service, container, 'service');
           }
           return this;
         },

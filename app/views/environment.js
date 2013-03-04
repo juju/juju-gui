@@ -76,6 +76,7 @@ YUI.add('juju-view-environment', function(Y) {
             topo.addModule(views.PanZoomModule);
             topo.addModule(views.ViewportModule);
             topo.addModule(views.RelationModule);
+            topo.addModule(views.LandscapeModule);
 
             topo.addTarget(this);
             this.topo = topo;
