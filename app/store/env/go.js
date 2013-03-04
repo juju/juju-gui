@@ -170,7 +170,7 @@ YUI.add('juju-env-go', function(Y) {
       this._send_rpc({
         Type: 'Client',
         Request: 'ServiceExpose',
-        Params:{service: service}
+        Params: {service: service}
       }, Y.bind(this.handleExpose, this, callback, service));
     },
 
@@ -193,7 +193,7 @@ YUI.add('juju-env-go', function(Y) {
       if (userCallback) {
         userCallback(transformedData);
       }
-    },
+    }
 
   });
 
