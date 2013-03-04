@@ -210,7 +210,6 @@ i.sprite {
     background: url(/juju-ui/assets/images/bottom_bar.png) repeat-x;
 
     .landscape-controls {
-        display: none;
         position: absolute;
         top: 0;
         right: 0;
@@ -220,10 +219,6 @@ i.sprite {
         div {
             float: right;
             width: 60px;
-
-            &.control {
-                display: none;
-            }
 
             .landscape-icon {
                 margin: 10px 0 0 16px;
@@ -722,11 +717,6 @@ g.unit {
         position: absolute;
         top: 1px;
         left: 11px;
-    }
-    .destroy-control {
-        position: absolute;
-        top: 1px;
-        right: 11px;
     }
 }
 
@@ -1262,7 +1252,7 @@ table tr.highlighted {
 
         .filter-control {
             position: absolute;
-            left: 110px;
+            left: 10px;
             top: 13px;
             width: 350px;
             display: inline-block;
@@ -1337,19 +1327,6 @@ table tr.highlighted {
             }
         }
 
-        .destroy-control {
-            position: absolute;
-            top: 1px;
-            left: 10px;
-
-            a {
-                color: @navbar-color;
-            }
-
-            a:link, a:visited, a:active, a:hover {
-                text-decoration: none
-            }
-        }
     }
 
     .service-header-partial {
@@ -1374,7 +1351,7 @@ table tr.highlighted {
 
         .menu-items {
             height: 26px;
-            padding-top: 2px;
+            padding-top: 6px;
             padding-left: 38px;
             background: url(/juju-ui/assets/images/tab_div.png) repeat;
 
@@ -1400,11 +1377,59 @@ table tr.highlighted {
                 }
             }
         }
+
+        .controls {
+            float: right;
+
+            .control {
+                float: left;
+                
+                .divider {
+                    margin-right: 3px;
+                    height: 13px;
+                    width: 2px;
+                }
+            }
+            .destroy-control {
+                margin-top: -1px;
+                a, a:hover, a:active, a:visited {
+                    text-decoration: none;
+                    color: @navbar-color;
+                }
+
+                img {
+                    margin: -4px 5px 0 0;
+                }
+            }
+
+            .control-expose {
+                position: relative;
+                margin: -2px 5px 0 0;
+
+                div {
+                    padding-right: 5px;
+                }
+
+                .on {
+                    font-size: 11px; fill: #ffffff;
+                    position: absolute;
+                    right: 18px;
+                    top: 0;
+                }
+
+                .off {
+                    font-size: 12px; fill: #292929;
+                    position: absolute;
+                    right: 32px;
+                    top: 1px;
+                }
+            }
+        }
     }
 
     .service-common-controls {
         position: absolute;
-        left: 455px;
+        left: 355px;
         top: 10px;
 
         .control-unit-count {
@@ -1431,30 +1456,6 @@ table tr.highlighted {
             }
         }
 
-        .control-expose {
-            position: absolute;
-            left: 300px;
-            top: 4px;
-            width: 120px;
-
-            div {
-                padding-left: 5px;
-            }
-
-            .on {
-                font-size: 12px; fill: #ffffff;
-                position: absolute;
-                right: 20px;
-                top: 3px;
-            }
-
-            .off {
-                font-size: 12px; fill: #292929;
-                position: absolute;
-                right: 40px;
-                top: 3px;
-            }
-          }
     }
 }
 

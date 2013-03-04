@@ -17,7 +17,8 @@ YUI.add('sub-app', function(Y) {
 
     initializer: function() {
       this.publish('subNavigate', {
-        emitFacade: true
+        emitFacade: true,
+        broadcast: 1
       });
     },
 
@@ -43,7 +44,8 @@ YUI.add('sub-app', function(Y) {
     navigate: function(url, options) {
       this.fire('subNavigate', {
         url: url,
-        options: options
+        options: options,
+        namespace: this.get('urlNamespace')
       });
     },
 
@@ -57,6 +59,20 @@ YUI.add('sub-app', function(Y) {
       SubApp.superclass.render.call(this);
       this.set('rendered', true);
     },
+
+    /**
+      Because the native Y.App.Base includes Router which automatically adds
+      this callback handler in its initalizer we need to blank it out to
+      avoid throwing errors on history change events
+
+      When YUI splits Router and Pjax from the Y.App.Base then we should be
+      able to simply delete this method and have it function appropriately
+
+      @method _afterHistoryChange
+      @protected
+      @return {undefined} Clobbers old function so returns undefined.
+    */
+    _afterHistoryChange: function() {},
 
     /**
       Fetches the sub apps routes and adds the namespace to each record.
