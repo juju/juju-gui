@@ -629,22 +629,22 @@ YUI.add('juju-topology-service', function(Y) {
         .attr('y', 47 * 0.8);
 
       // Landscape badge
-     // Remove any existing badge.
+      // Remove any existing badge.
       node.select('.landscape-badge').remove();
       node.each(function(d) {
         var landscapeAsset;
         var securityBadge = landscape.getLandscapeBadge(
-          d.model, 'security', 'round');
+            d.model, 'security', 'round');
         var rebootBadge = landscape.getLandscapeBadge(
-          d.model, 'reboot', 'round');
+            d.model, 'reboot', 'round');
 
         if (securityBadge && rebootBadge) {
           landscapeAsset = '/juju-ui/assets/images/landscape_rotate.gif';
         } else if (securityBadge) {
           landscapeAsset =
-            '/juju-ui/assets/images/landscape_security_round.png';
+              '/juju-ui/assets/images/landscape_security_round.png';
         } else if (rebootBadge) {
-            landscapeAsset =
+          landscapeAsset =
               '/juju-ui/assets/images/landscape_restart_round.png';
         }
         if (landscapeAsset) {
@@ -653,11 +653,11 @@ YUI.add('juju-topology-service', function(Y) {
           .attr('width', 25)
           .attr('height', 25)
           .attr('x', function(box) {
-            return box.w * 0.13;
-          })
+                return box.w * 0.13;
+              })
           .attr('y', function(box) {
-            return box.h / 2 - 25;
-          });
+                return box.h / 2 - 25;
+              });
         }
       });
 

@@ -159,7 +159,7 @@ YUI.add('juju-landscape', function(Y) {
         sprite += 'restart';
 
       } else if (intent === 'security') {
-         if (!props['landscape-security-upgrades']) {
+        if (!props['landscape-security-upgrades']) {
           return undefined;
         }
         sprite += intent;
