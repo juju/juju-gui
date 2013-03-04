@@ -639,7 +639,8 @@ YUI.add('juju-topology-service', function(Y) {
             d.model, 'reboot', 'round');
 
         if (securityBadge && rebootBadge) {
-          landscapeAsset = '/juju-ui/assets/images/non-sprites/landscape_rotate.gif';
+          landscapeAsset =
+              '/juju-ui/assets/images/non-sprites/landscape_rotate.gif';
         } else if (securityBadge) {
           landscapeAsset =
               '/juju-ui/assets/images/landscape_security_round.png';
