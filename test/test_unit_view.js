@@ -9,6 +9,7 @@
       Y = YUI(GlobalConfig).use(
           'juju-views', 'juju-models', 'base', 'node', 'json-parse',
           'juju-env', 'node-event-simulate', 'juju-tests-utils',
+          'juju-landscape',
           function(Y) {
             views = Y.namespace('juju.views');
             models = Y.namespace('juju.models');
@@ -125,6 +126,36 @@
       container.one('.relation-scope').get('text').trim().should.equal(
           'global');
       container.one('.relation-status').get('text').trim().should.equal('');
+    });
+
+    it('should show Landscape controls if needed', function() {
+      db.environment.set('annotations', {
+        'landscape-url': 'http://host',
+        'landscape-computers': '/foo',
+        'landscape-reboot-alert-url': '+reboot'
+      });
+      unit.annotations = {
+        'landscape-needs-reboot': true,
+        'landscape-computer': '/bar'
+      };
+      var landscape = new views.Landscape();
+      landscape.set('db', db);
+
+      var view = new views.unit({
+        container: container,
+        unit: unit,
+        db: db,
+        env: env,
+        landscape: landscape,
+        getModelURL: function(model, intent) {
+          return model.get('name');
+        },
+        querystring: {}
+      }).render();
+
+      var rebootItem = container.one('.landscape-controls .restart-control');
+      rebootItem.one('a').get('href').should
+        .equal('http://host/foo/bar/+reboot');
     });
 
     it('should not display Retry and Resolved buttons when ' +

@@ -2,12 +2,13 @@
 
 describe('Landscape integration', function() {
 
-  var views, models, db, landscape;
+  var views, models, db, landscape, Y;
 
   before(function(done) {
-    YUI(GlobalConfig).use(['juju-landscape',
-                           'juju-models',
-                           'juju-views'], function(Y) {
+    Y = YUI(GlobalConfig).use(['node',
+      'juju-landscape',
+      'juju-models',
+      'juju-views'], function(Y) {
       var envAnno;
 
       views = Y.namespace('juju.views');
@@ -124,6 +125,60 @@ describe('Landscape integration', function() {
 
     // But mysql is still not flagged.
     mysql['landscape-security-upgrades'].should.equal(false);
+  });
+
+  it('should build the bottom-bar properly', function() {
+    var env = db.environment;
+    var mysql = db.services.getById('mysql');
+    var unit = db.units.item(0);
+    var partial = Y.Handlebars.partials['landscape-controls'];
+    Y.one('body').append('<div id="test-node"></div>');
+    var node = Y.one('#test-node');
+    node.append(partial());
+
+    views.utils.updateLandscapeBottomBar(landscape, env, env, node,
+        'environment');
+
+    // We should have the correct logo.
+    node.one('.logo-tab i').hasClass('landscape_environment')
+      .should.equal(true);
+    // We should have the correct URL for the machines.
+    node.one('.machine-control a').get('href').should
+      .equal('http://landscape.com/computers/criteria/environment:test/');
+    // We should have visible controls.
+    node.one('.updates-control').getStyle('display').should.equal('block');
+    node.one('.restart-control').getStyle('display').should.equal('block');
+
+    views.utils.updateLandscapeBottomBar(landscape, env, mysql, node,
+        'service');
+
+    // We should have the correct logo.
+    node.one('.logo-tab i').hasClass('landscape_service')
+      .should.equal(true);
+    // We should have the correct URL for the machines.
+    node.one('.machine-control a').get('href').should.equal('http://' +
+        'landscape.com/computers/criteria/environment:test+service:mysql/');
+    // We should have visible restart but not update controls.
+    node.one('.updates-control').getStyle('display').should.equal('none');
+    node.one('.restart-control').getStyle('display').should.equal('block');
+
+    unit.annotations = {'landscape-computer': '+unit:mysql-0'};
+    landscape.update();
+
+    views.utils.updateLandscapeBottomBar(landscape, env, unit, node,
+        'unit');
+
+    // We should have the correct logo.
+    node.one('.logo-tab i').hasClass('landscape_unit')
+      .should.equal(true);
+    // We should have the correct URL for the machines.
+    node.one('.machine-control a').get('href').should.equal('http://' +
+        'landscape.com/computers/criteria/environment:test+unit:mysql-0/');
+    // We should have no visible controls.
+    node.one('.updates-control').getStyle('display').should.equal('none');
+    node.one('.restart-control').getStyle('display').should.equal('none');
+
+    node.remove();
   });
 
 });
