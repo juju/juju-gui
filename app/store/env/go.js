@@ -155,7 +155,45 @@ YUI.add('juju-env-go', function(Y) {
         Request: 'EnvironmentInfo',
         Params: {}
       }, this.handleEnvironmentInfo);
-    }
+    },
+
+    /**
+     * Expose the given service.
+     *
+     * @method expose
+     * @param {String} service The service name.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
+    expose: function(service, callback) {
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'ServiceExpose',
+        Params:{service: service}
+      }, Y.bind(this.handleExpose, callback, service));
+    },
+
+    /**
+     * Transform the data returned from juju-core 'expose' into that suitable
+     * for the user callback.
+     *
+     * @method handleExpose
+     * @param {Object} data The response returned by the server.
+     * @param {String} service The namee of the service.  Passed in since it
+     * is not part of the data.
+     * @return {undefined} Nothing.
+     */
+    handleExpose: function(data, userCallback, service) {
+      var transformedData = {
+        err: data.Error,
+        service_name: service
+      };
+      // Call the original user callback.
+      if (userCallback) {
+        userCallback(tranformedData);
+      }
+    },
 
   });
 
