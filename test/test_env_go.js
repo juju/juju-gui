@@ -137,8 +137,8 @@
       assert.equal('ec2', env.get('providerType'));
     });
 
-    it('successfully expose a service', function() {
-      var service;
+    it('successfully exposes a service', function() {
+      var service_name;
       env.expose('mysql', function(data) {
         service_name = data.service_name;
       });
@@ -151,7 +151,7 @@
     });
 
     it('handles failed service expose', function() {
-      var service;
+      var service_name;
       var err;
       env.expose('mysql', function(data) {
         service_name = data.service_name;
@@ -160,7 +160,7 @@
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Response: {'Error': 'service \"mysql\" not found'}
+        Error: 'service \"mysql\" not found'
       });
       assert.equal(service_name, 'mysql');
       assert.equal(err, 'service \"mysql\" not found');

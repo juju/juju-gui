@@ -171,7 +171,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'ServiceExpose',
         Params:{service: service}
-      }, Y.bind(this.handleExpose, callback, service));
+      }, Y.bind(this.handleExpose, this, callback, service));
     },
 
     /**
@@ -184,14 +184,14 @@ YUI.add('juju-env-go', function(Y) {
      * is not part of the data.
      * @return {undefined} Nothing.
      */
-    handleExpose: function(data, userCallback, service) {
+    handleExpose: function(userCallback, service, data) {
       var transformedData = {
         err: data.Error,
         service_name: service
       };
       // Call the original user callback.
       if (userCallback) {
-        userCallback(tranformedData);
+        userCallback(transformedData);
       }
     },
 
