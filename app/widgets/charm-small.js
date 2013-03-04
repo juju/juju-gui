@@ -5,7 +5,7 @@
  * Provide the Charm Small widget.
  *
  * @module widgets
- * @submodule widgets.charm-small
+ * @submodule juju.widgets.browser.charm-small
  */
 YUI.add('browser-charm-small', function(Y) {
 
