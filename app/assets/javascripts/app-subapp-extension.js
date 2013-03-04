@@ -42,6 +42,9 @@ YUI.add('app-subapp-extension', function(Y) {
     addSubApplications: function() {
       this.addSubApps(this.subApplications);
       Y.on('*:subNavigate', function(e) {
+        /* In order for the new namespace enabled router to
+          parse this route correctly we need to navigate to the
+          appropriate namespace and url */
         this.navigate(':' + e.namespace + ':' + e.url);
       }, this);
     },

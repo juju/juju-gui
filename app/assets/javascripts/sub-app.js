@@ -65,8 +65,12 @@ YUI.add('sub-app', function(Y) {
       this callback handler in its initalizer we need to blank it out to
       avoid throwing errors on history change events
 
+      When YUI splits Router and Pjax from the Y.App.Base then we should be
+      able to simply delete this method and have it function appropriately
+
       @method _afterHistoryChange
       @protected
+      @return {undefined} Clobbers old fn so returns undefined
     */
     _afterHistoryChange: function() {},
 
