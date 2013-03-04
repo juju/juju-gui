@@ -32,7 +32,7 @@
     "rimraf": "2.0.x",
     "uglify-js": "2.2.x",
     "grunt": "0.3.17",
-    "node-spritesheet": ">=0.2.3",
+    "node-spritesheet": "0.4.0",
     "node-minify": "0.7.x"
   },
   "optionalDependencies": {}
