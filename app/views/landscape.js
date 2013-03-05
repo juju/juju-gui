@@ -144,7 +144,7 @@ YUI.add('juju-landscape', function(Y) {
       var props = model;
       var sprite = 'landscape_';
 
-      if (model.name === 'serviceUnit') {
+      if (model.name === 'serviceUnit' || !model.name) {
         props = model.annotations;
       }
       if (!props) {

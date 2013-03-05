@@ -415,6 +415,8 @@ YUI.add('juju-view-service', function(Y) {
             viewName: 'relations',
             tabs: this.getServiceTabs('relations'),
             service: service.getAttrs(),
+            landscape: this.get('landscape'),
+            serviceModel: service,
             relations: relation_data,
             charm: charm_attrs,
             charm_id: charm_id,
@@ -621,6 +623,8 @@ YUI.add('juju-view-service', function(Y) {
             viewName: 'constraints',
             tabs: this.getServiceTabs('constraints'),
             service: service.getAttrs(),
+            landscape: this.get('landscape'),
+            serviceModel: service,
             constraints: display_constraints,
             readOnlyConstraints: (function() {
               var arr = [];
@@ -706,6 +710,8 @@ YUI.add('juju-view-service', function(Y) {
             service: service.getAttrs(),
             settings: settings,
             charm_id: charm_id,
+            landscape: this.get('landscape'),
+            serviceModel: service,
             serviceIsJujuGUI: utils.isGuiCharmUrl(charm_id)
           };
         },
@@ -826,7 +832,7 @@ YUI.add('juju-view-service', function(Y) {
       });
 
   // Display a unit grid based on the total number of units.
-  Y.Handlebars.registerHelper('show_units', function(units, landscape) {
+  Y.Handlebars.registerHelper('show_units', function(units) {
     var template;
     var numUnits = units.length;
     // TODO: different visualization based on the viewport size.
@@ -839,7 +845,7 @@ YUI.add('juju-view-service', function(Y) {
     } else {
       template = Templates.show_units_tiny;
     }
-    return template({units: units, landscape: landscape});
+    return template({units: units});
   });
 
   // Translate the given state to the matching style.
@@ -890,6 +896,7 @@ YUI.add('juju-view-service', function(Y) {
           return {
             viewName: 'units',
             landscape: this.get('landscape'),
+            serviceModel: service,
             tabs: this.getServiceTabs('.'),
             service: service.getAttrs(),
             charm_id: charm_id,

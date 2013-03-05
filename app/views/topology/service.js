@@ -642,7 +642,7 @@ YUI.add('juju-topology-service', function(Y) {
 
           if (securityBadge && rebootBadge) {
             landscapeAsset =
-                '/juju-ui/assets/images/non-sprites/landscape_rotate.gif';
+                '/juju-ui/assets/images/landscape_restart_round.png';
           } else if (securityBadge) {
             landscapeAsset =
                 '/juju-ui/assets/images/landscape_security_round.png';
@@ -653,13 +653,14 @@ YUI.add('juju-topology-service', function(Y) {
           if (landscapeAsset) {
             d3.select(this).append('image')
             .attr('xlink:href', landscapeAsset)
-            .attr('width', 25)
-            .attr('height', 25)
+            .attr('class', 'landscape-badge')
+            .attr('width', 30)
+            .attr('height', 30)
             .attr('x', function(box) {
                   return box.w * 0.13;
                 })
             .attr('y', function(box) {
-                  return box.h / 2 - 25;
+                  return box.h / 2 - 30;
                 });
           }
         });

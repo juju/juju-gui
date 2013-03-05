@@ -3,6 +3,8 @@
     <div class="name crosshatch-background">
       <div>
         <span>{{service.id}}</span>
+      {{landscapeBadge landscape serviceModel 'reboot' 'round'}}
+      {{landscapeBadge landscape serviceModel 'security' 'round'}}
       </div>
       <div>
         <span>{{charm_id}}</span>
