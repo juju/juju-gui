@@ -57,7 +57,7 @@ YUI.add('browser-charm-small', function(Y) {
     },
 
     /**
-     * Desctructor
+     * Destructor
      *
      * @method destructor
      * @return {undefined} Mutates only.
