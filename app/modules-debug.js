@@ -217,7 +217,7 @@ var GlobalConfig = {
 
         'subapp-browser-fullscreen': {
           fullpath: '/juju-ui/subapps/browser/views/fullscreen.js'
-        },
+        }
       }
     }
   }
