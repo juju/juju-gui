@@ -21,6 +21,11 @@ YUI.add('subapp-browser', function(Y) {
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
 
+    /**
+     * The available Views run from this sub app.
+     * @attribute views
+     *
+     */
     views: {
       fullscreen: {
         type: 'juju.browser.views.FullScreen',
@@ -32,21 +37,52 @@ YUI.add('subapp-browser', function(Y) {
       }
     },
 
-    initializer: function() {
+    /**
+     * General app initializer
+     *
+     * @method initializer
+     * @param {Object} cfg
+     *
+     */
+    initializer: function(cfg) {
     },
 
+    /**
+     * Render the fullscreen view to the client.
+     *
+     * @method fullscreen
+     * @param {Request} req
+     * @param {Response} res
+     * @param {function} next
+     *
+     */
     fullscreen: function(req, res, next) {
       console.log('showing fullscreen', this.name);
       this.showView('fullscreen');
       next();
     },
 
+    /**
+     * Render the fullscreen view of a specific charm to the client.
+     *
+     * @method fullscreen
+     * @param {Request} req
+     * @param {Response} res
+     * @param {function} next
+     *
+     */
     fullscreen_charm: function(req, res, next) {
       console.log('showing fullscreen charm', this.name);
       this.showView('fullscreen_charm');
       next();
     },
 
+    /**
+     * Destroy the subapp instance.
+     *
+     * @method destructor
+     *
+     */
     destructor: function() {}
 
   }, {
