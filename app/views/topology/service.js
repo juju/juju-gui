@@ -634,7 +634,6 @@ YUI.add('juju-topology-service', function(Y) {
         node.select('.landscape-badge').remove();
         node.each(function(d) {
           var landscapeAsset;
-          console.log('landscape for', d.id);
           var securityBadge = landscape.getLandscapeBadge(
               d.model, 'security', 'round');
           var rebootBadge = landscape.getLandscapeBadge(
