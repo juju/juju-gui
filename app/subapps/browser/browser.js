@@ -41,7 +41,7 @@ YUI.add('subapp-browser', function(Y) {
      * General app initializer
      *
      * @method initializer
-     * @param {Object} cfg general init config object
+     * @param {Object} cfg general init config object.
      *
      */
     initializer: function(cfg) {
@@ -51,9 +51,9 @@ YUI.add('subapp-browser', function(Y) {
      * Render the fullscreen view to the client.
      *
      * @method fullscreen
-     * @param {Request} req current request object
-     * @param {Response} res current response object
-     * @param {function} next callable for the next route in the chain
+     * @param {Request} req current request object.
+     * @param {Response} res current response object.
+     * @param {function} next callable for the next route in the chain.
      *
      */
     fullscreen: function(req, res, next) {
@@ -66,9 +66,9 @@ YUI.add('subapp-browser', function(Y) {
      * Render the fullscreen view of a specific charm to the client.
      *
      * @method fullscreen
-     * @param {Request} req current request object
-     * @param {Response} res current response object
-     * @param {function} next callable for the next route in the chain
+     * @param {Request} req current request object.
+     * @param {Response} res current response object.
+     * @param {function} next callable for the next route in the chain.
      *
      */
     fullscreen_charm: function(req, res, next) {
