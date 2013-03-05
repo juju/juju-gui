@@ -5,14 +5,14 @@ describe('charm slider', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['browser-charm-slider'], function(Y) {
+        ['browser-charm-slider', 'node'], function(Y) {
           done();
         });
   });
 
   beforeEach(function() {
     container = Y.Node.create('<div id="container"></div>');
-    Y.one(document.body).prepend(charm_container);
+    Y.one(document.body).prepend(container);
   });
 
   afterEach(function() {
