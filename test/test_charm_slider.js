@@ -23,3 +23,4 @@ describe('charm slider', function() {
     var slider = new Y.juju.widgets.browser.CharmSlider();
     assert.isObject(slider);
   });
+});
