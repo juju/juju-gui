@@ -137,6 +137,17 @@
       assert.equal('ec2', env.get('providerType'));
     });
 
+    it('sends the correct expose message', function() {
+      env.expose('apache');
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'ServiceExpose',
+        RequestId: 1,
+        Params: {ServiceName: 'apache'}
+      };
+      assert.deepEqual(expected, last_message);
+    });
     it('successfully exposes a service', function() {
       var service_name;
       env.expose('mysql', function(data) {

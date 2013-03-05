@@ -174,7 +174,7 @@ YUI.add('juju-env-go', function(Y) {
       this._send_rpc({
         Type: 'Client',
         Request: 'ServiceExpose',
-        Params: {service: service}
+        Params: {ServiceName: service}
       }, intermediateCallback);
     },
 
