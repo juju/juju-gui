@@ -206,7 +206,18 @@ var GlobalConfig = {
         // App
         'juju-gui': {
           fullpath: '/juju-ui/app.js'
-        }
+        },
+
+        // Sub Apps
+
+        'subapp-browser': {
+          fullpath: '/juju-ui/subapps/browser/browser.js',
+          requires: ['subapp-browser-fullscreen']
+        },
+
+        'subapp-browser-fullscreen': {
+          fullpath: '/juju-ui/subapps/browser/views/fullscreen.js'
+        },
       }
     }
   }
