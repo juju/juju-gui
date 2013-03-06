@@ -3,7 +3,8 @@
 
 
 YUI.add('subapp-browser-fullscreen', function(Y) {
-  var ns = Y.namespace('juju.browser.views');
+  var ns = Y.namespace('juju.browser.views'),
+      views = Y.namespace('juju.views');
 
   /**
    * Browser Sub App for the Juju Gui.
@@ -13,7 +14,7 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
    *
    */
   ns.FullScreen = Y.Base.create('browser-view-fullscreen', Y.View, [], {
-    // template: views.Templates.browser,
+    template: views.Templates.fullscreen,
 
     /**
      * @attribute events
@@ -36,9 +37,12 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
      * @method render
      *
      */
-    render: function() {
-      console.log('rendered in view one');
-      this.get('container').setHTML('Hey! I\'m view one');
+    render: function(container) {
+      if (!Y.Lang.isValue(container)) {
+        var container = this.get('container');
+      }
+      debugger;
+      container.setHTML(this.template({}));
       return this;
     },
 
