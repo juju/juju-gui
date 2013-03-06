@@ -182,7 +182,7 @@
       env.deploy('precise/mysql');
       msg = conn.last_message();
       msg.op.should.equal('deploy');
-      msg.charm_url.should.equal('precise/mysql');
+      msg.charmUrl.should.equal('precise/mysql');
     });
 
     it('can deploy a service with a config file', function() {
