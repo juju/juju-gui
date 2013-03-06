@@ -1,7 +1,3 @@
-/*global YUI: false, window: false, describe: false, before:false,
-  should: false, GlobalConfig: false, beforeEach: false, document: false,
-  afterEach: false, it: false*/
-
 'use strict';
 
 (function() {
@@ -42,7 +38,7 @@
 
       filter.set('category', []);
       filter.gen_querystring().should.equal([
-        'category=&provider=aws&provider=openstack&scope=public&',
+        'provider=aws&provider=openstack&scope=public&',
         'series=precise&type=approved'
       ].join(''));
     });

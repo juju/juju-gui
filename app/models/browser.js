@@ -1,5 +1,3 @@
-/*global YUI: false, window: false*/
-
 'use strict';
 
 
@@ -56,6 +54,8 @@ YUI.add('juju-browser-models', function(Y) {
 
 
   /**
+   * Filter is used for the Browser subapp to maintain the user's charm search
+   * filter status across the various views and routes encountered during use.
    *
    * @class Filter
    * @extends {Y.Model}
@@ -65,11 +65,11 @@ YUI.add('juju-browser-models', function(Y) {
     /**
      * Set up the default filters used to load charms.
      *
-     * @method _set_defaults
+     * @method _setDefaults
      * @private
      *
      */
-    _set_defaults: function() {
+    _setDefaults: function() {
       this.set('category', Y.Object.keys(ns.FILTER_CATEGORIES));
       this.set('provider', [
         'aws',
@@ -88,42 +88,15 @@ YUI.add('juju-browser-models', function(Y) {
      *
      */
     gen_querystring: function() {
-      var category = this.get('category'),
-          provider = this.get('provider'),
-          scope = this.get('scope'),
-          series = this.get('series'),
-          charm_type = this.get('type'),
-          query_string = '';
+      var filter_data = {
+        category: this.get('category'),
+        provider: this.get('provider'),
+        scope: this.get('scope'),
+        series: this.get('series'),
+        type: this.get('type')
+      };
 
-      query_string = [
-        [
-          'category=',
-          category.join('&category=')
-        ].join(''),
-
-        [
-          'provider=',
-          provider.join('&provider=')
-        ].join(''),
-
-        [
-          'scope=',
-          scope.join('&scope=')
-        ].join(''),
-
-        [
-          'series=',
-          series.join('&series=')
-        ].join(''),
-
-        [
-          'type=',
-          charm_type.join('&type=')
-        ].join('')
-
-      ].join('&');
-
-      return query_string;
+      return Y.QueryString.stringify(filter_data);
     },
 
     /**
@@ -134,7 +107,7 @@ YUI.add('juju-browser-models', function(Y) {
      *
      */
     initializer: function(cfg) {
-      this._set_defaults();
+      this._setDefaults();
     }
 
   }, {
@@ -159,7 +132,8 @@ YUI.add('juju-browser-models', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'model'
+    'model',
+    'querystring-stringify'
   ]
 });
 

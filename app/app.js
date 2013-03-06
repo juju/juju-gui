@@ -1,4 +1,3 @@
-/*global YUI: false, window: false*/
 'use strict';
 
 var spinner;

@@ -1,7 +1,3 @@
-/*global YUI: false, window: false, describe: false, before:false,
-  should: false, GlobalConfig: false, beforeEach: false, document: false,
-  afterEach: false, it: false*/
-
 'use strict';
 
 (function() {
@@ -23,22 +19,22 @@
     beforeEach(function() {
       // The charms panel needs these elements
       var docBody = Y.one(document.body);
-      Y.Node.create('<div id="browser">' +
+      Y.Node.create('<div id="subapp-browser">' +
           '</div>').appendTo(docBody);
     });
 
     afterEach(function() {
-      Y.one('#browser').remove(true);
+      Y.one('#subapp-browser').remove(true);
     });
 
     // Ensure the search results are rendered inside the container.
     it('must correctly render the initial browser ui', function() {
-      var container = Y.one('#browser'),
+      var container = Y.one('#subapp-browser'),
           view = new FullScreen();
       view.render(container);
 
       // And the hide button is rendered to the container node.
-      should.exist(container.one('#fullscreen'));
+      assert.isTrue(Y.Lang.isObject(container.one('#fullscreen')));
     });
 
   });

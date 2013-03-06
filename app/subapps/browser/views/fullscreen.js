@@ -1,4 +1,3 @@
-/*global YUI:false*/
 'use strict';
 
 
@@ -42,7 +41,6 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
         container = this.get('container');
       }
       container.setHTML(this.template({}));
-      return this;
     },
 
     /**

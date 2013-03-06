@@ -1,4 +1,3 @@
-/*global YUI: false*/
 'use strict';
 
 
