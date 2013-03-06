@@ -28,6 +28,10 @@ YUI.add('juju-gui', function(Y) {
    * @class App
    */
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [Y.juju.SubAppRegistration], {
+    subApplications: [{
+      type: Y.juju.subapps.Browser,
+      config: {}
+    }],
 
     /*
      * Views
@@ -354,6 +358,9 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('defaultSeriesChange', function(ev) {
         popup.setDefaultSeries(ev.newVal);
       });
+
+      // Attach SubApplications
+      this.addSubApplications();
     },
 
     /**
@@ -1215,5 +1222,6 @@ YUI.add('juju-gui', function(Y) {
     'node',
     'model',
     'app-subapp-extension',
-    'sub-app']
+    'sub-app',
+    'subapp-browser']
 });
