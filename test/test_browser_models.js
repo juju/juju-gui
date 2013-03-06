@@ -29,7 +29,7 @@
 
     it('constructs a valid query string based on settings.', function() {
       var filter = new Filter();
-      filter.genQuerystring().should.equal([
+      filter.genQueryString().should.equal([
         'category=databases&category=file_servers&category=app_servers&',
         'category=cache_proxy&category=applications&category=miscellaneous',
         '&provider=aws&provider=openstack&scope=public&series=precise&',
@@ -37,7 +37,7 @@
       ].join(''));
 
       filter.set('category', []);
-      filter.genQuerystring().should.equal([
+      filter.genQueryString().should.equal([
         'provider=aws&provider=openstack&scope=public&',
         'series=precise&type=approved'
       ].join(''));
