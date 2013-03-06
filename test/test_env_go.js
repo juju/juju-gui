@@ -3,7 +3,7 @@
 (function() {
 
   describe('Go Juju environment', function() {
-    var conn, env, juju, utils, Y;
+    var conn, env, juju, msg, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
@@ -176,6 +176,24 @@
       assert.equal(service_name, 'mysql');
       assert.equal(err, 'service "mysql" not found');
 
+    });
+
+    it('can deploy a service', function() {
+      env.deploy('precise/mysql');
+      msg = conn.last_message();
+      msg.op.should.equal('deploy');
+      msg.charm_url.should.equal('precise/mysql');
+    });
+
+    it('can deploy a service with a config file', function() {
+      /*jshint multistr:true */
+      var config_raw = 'tuning-level: \nexpert-mojo';
+      /*jshint multistr:false */
+      env.deploy('precise/mysql', null, null, config_raw);
+      msg = conn.last_message();
+      msg.op.should.equal('deploy');
+      msg.charmUrl.should.equal('precise/mysql');
+      msg.configYAML.should.equal(config_raw);
     });
 
   });

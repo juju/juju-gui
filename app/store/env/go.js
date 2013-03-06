@@ -158,6 +158,33 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+     * Deploy a charm.
+     *
+     * @method deploy
+     * @param {String} charm_url The URL of the charm.
+     * @param {String} service_name The name of the service to be deployed.
+     * @param {Object} config The charm configuration options.
+     * @param {String} config_raw The YAML representation of the charm
+         configuration options. Only one of `config` and `config_raw` should be
+         provided, though `config_raw` takes precedence if it is given.
+     * @param {Integer} num_units The number of units to be deployed.
+     * @param {Function} callback A callable that must be called once the
+         operation is performed.
+     * @return {undefined} Sends a message to the server only.
+     */
+    deploy: function(charm_url, service_name, config, config_raw, num_units,
+                     callback) {
+      this._send_rpc(
+          { op: 'deploy',
+            serviceName: service_name,
+            config: config,
+            configYAML: config_raw,
+            charmUrl: charm_url,
+            numUnits: num_units},
+          callback, true);
+    },
+
+    /**
      * Expose the given service.
      *
      * @method expose
