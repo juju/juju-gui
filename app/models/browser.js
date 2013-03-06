@@ -136,5 +136,3 @@ YUI.add('juju-browser-models', function(Y) {
     'querystring-stringify'
   ]
 });
-
-// vim: set tabstop=2:shiftwidth=2
