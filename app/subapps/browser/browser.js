@@ -30,7 +30,7 @@ YUI.add('subapp-browser', function(Y) {
         type: 'juju.browser.views.FullScreen',
         preserve: true
       },
-      fullscreen_charm: {
+      fullscreenCharm: {
         type: 'juju.browser.views.FullScreen',
         preserve: true
       }
@@ -64,15 +64,15 @@ YUI.add('subapp-browser', function(Y) {
     /**
      * Render the fullscreen view of a specific charm to the client.
      *
-     * @method fullscreen
+     * @method fullscreenCharm
      * @param {Request} req current request object.
      * @param {Response} res current response object.
      * @param {function} next callable for the next route in the chain.
      *
      */
-    fullscreen_charm: function(req, res, next) {
+    fullscreenCharm: function(req, res, next) {
       console.log('showing fullscreen charm', this.name);
-      this.showView('fullscreen_charm');
+      this.showView('fullscreenCharm');
       next();
     },
 
@@ -87,7 +87,7 @@ YUI.add('subapp-browser', function(Y) {
   }, {
     ATTRS: {
       container: {
-        value: '#browser'
+        value: '#subapp-browser'
       },
       urlNamespace: {
         value: 'charmstore'
@@ -95,7 +95,7 @@ YUI.add('subapp-browser', function(Y) {
       routes: {
         value: [
           { path: '/bws/fullscreen/', callbacks: 'fullscreen' },
-          { path: '/bws/fullscreen/:id/', callbacks: 'fullscreen_charm' }
+          { path: '/bws/fullscreen/:id/', callbacks: 'fullscreenCharm' }
           // { path: '/bws/sidebar/:id/', callbacks: 'sidebar_charm' },
         ]
       }

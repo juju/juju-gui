@@ -84,11 +84,11 @@ YUI.add('juju-browser-models', function(Y) {
      * Given the current filters, generate a query string to use for api
      * calls.
      *
-     * @method gen_querystring
+     * @method genQueryString
      *
      */
-    gen_querystring: function() {
-      var filter_data = {
+    genQueryString: function() {
+      var filterData = {
         category: this.get('category'),
         provider: this.get('provider'),
         scope: this.get('scope'),
@@ -96,7 +96,7 @@ YUI.add('juju-browser-models', function(Y) {
         type: this.get('type')
       };
 
-      return Y.QueryString.stringify(filter_data);
+      return Y.QueryString.stringify(filterData);
     },
 
     /**
@@ -109,7 +109,6 @@ YUI.add('juju-browser-models', function(Y) {
     initializer: function(cfg) {
       this._setDefaults();
     }
-
   }, {
     ATTRS: {
       category: {
