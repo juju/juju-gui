@@ -39,9 +39,8 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
      */
     render: function(container) {
       if (!Y.Lang.isValue(container)) {
-        var container = this.get('container');
+        container = this.get('container');
       }
-      debugger;
       container.setHTML(this.template({}));
       return this;
     },

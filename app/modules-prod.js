@@ -56,9 +56,7 @@ var GlobalConfig = {
         //Browser Models
         'juju-browser-models': {
           fullpath: '/juju-ui/models/browser.js'
-        },
-
-
+        }
       }
     }
   }
