@@ -531,6 +531,12 @@
 
       var rebootItem = container.one('.landscape-controls .restart-control');
       rebootItem.one('a').get('href').should.equal('http://host/foo+reboot');
+
+      // Test that we can match a single badge rendered on the wordpress
+      // service.
+      var wpNode = view.topo.modules.ServiceModule.getServiceNode('wordpress');
+      var hasBadge = d3.select(wpNode).select('.landscape-badge');
+      hasBadge[0][0].should.not.equal(null);
     });
 
 
