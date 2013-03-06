@@ -8,6 +8,7 @@ var juju_config = {
   transitions: false,
   charm_store_url: 'http://jujucharms.com/',
   socket_port: 8081,
+  socket_protocol: 'ws',
   user: 'admin',
   password: 'admin',
   apiBackend: 'python', // Value can be 'python' or 'go'.

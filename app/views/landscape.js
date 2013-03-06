@@ -138,6 +138,12 @@ YUI.add('juju-landscape', function(Y) {
      * Given a model and an intent return an object
      * with the properties of a badge. If the object
      * shouldn't have a badge undefined is returned.
+     *
+     * @method getLandscapeBadge
+     * @param {Model} model to render badge for.
+     * @param {String} intent 'security' || 'reboot'.
+     * @param {String} hint image postfix to use ex _round.
+     * @return {Object} {link: {String}, sprite:{String}}.
      **/
     getLandscapeBadge: function(model, intent, hint) {
       var badge = {};

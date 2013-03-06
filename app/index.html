@@ -240,7 +240,8 @@ if (/*@cc_on!@*/false) {
             // provided.
             var loc = Y.getLocation();
             var port = juju_config.socket_port || loc.port;
-            juju_config.socket_url = "ws://" + loc.hostname + ':' + port + '/ws';
+             var protocol = juju_config.socket_protocol || 'ws';
+            juju_config.socket_url = protocol + '://' + loc.hostname + ':' + port + '/ws';
             console.log('websocket url', juju_config.socket_url);
           }
           app = new Y.juju.App(juju_config);
