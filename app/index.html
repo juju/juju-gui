@@ -243,9 +243,9 @@ if (/*@cc_on!@*/false) {
              var protocol = juju_config.socket_protocol || 'ws';
             juju_config.socket_url = protocol + '://' + loc.hostname;
             if (port) {
-              juju_config += ':' + port
+              juju_config.socket_url += ':' + port
             }
-            juju_config += '/ws';
+            juju_config.socket_url += '/ws';
             console.log('websocket url', juju_config.socket_url);
           }
           app = new Y.juju.App(juju_config);
