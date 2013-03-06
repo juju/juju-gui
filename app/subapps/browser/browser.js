@@ -87,7 +87,7 @@ YUI.add('subapp-browser', function(Y) {
   }, {
     ATTRS: {
       container: {
-        value: Y.one('#browser')
+        value: '#browser'
       },
       urlNamespace: {
         value: 'charmstore'
