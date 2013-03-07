@@ -14,12 +14,29 @@ YUI.add('subapp-browser-sidebar', function(Y) {
    */
   ns.Sidebar = Y.Base.create('browser-view-sidebar', Y.View, [], {
     template: views.Templates.sidebar,
+    visible: true,
 
     /**
      * @attribute events
      *
      */
-    events: {},
+    events: {
+      '.sidebar-toggle': {
+        click: '_toggle_sidebar'
+      }
+    },
+
+    _toggle_sidebar: function (ev) {
+      var sidebar = Y.one('#bws-sidebar');
+
+      if (this.visible) {
+        sidebar.hide();
+        this.visible = false;
+      } else {
+        sidebar.show();
+        this.visible = true;
+      }
+    },
 
     /**
      * Gereral YUI initializer.
@@ -28,10 +45,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      * @param {Object} cfg configuration object.
      *
      */
-    initializer: function(cfg) {
-      // Create the CharmPanel instance.
-      debugger;
-    },
+    initializer: function(cfg) {},
 
     /**
      * Render out the view to the DOM.
@@ -60,6 +74,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'view',
+    'view'
   ]
 });

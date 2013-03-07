@@ -6,7 +6,10 @@ var config = {
       __dirname + '/app/templates/',
       __dirname + '/app/subapps/browser/templates/'
     ],
-    'view_dir': __dirname + '/lib/views/',
+    'view_dirs': [
+      __dirname + '/lib/views/',
+      __dirname + '/lib/views/browser'
+    ],
     'public_dir': __dirname + '/app'
   }
 };
