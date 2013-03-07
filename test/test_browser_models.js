@@ -37,6 +37,9 @@
       ].join(''));
 
       filter.set('category', []);
+      // Google and Firefox think that the string should start with the first
+      // param. PhantomJS thinks it starts with a &. Removing the & if it's at
+      // the start of the string and checking the rest of it for validity.
       var qstring = filter.genQueryString();
       if (qstring.charAt(0) === '&') {
         qstring = qstring.slice(1);
