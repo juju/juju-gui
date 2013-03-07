@@ -37,7 +37,12 @@
       ].join(''));
 
       filter.set('category', []);
-      filter.genQueryString().should.equal([
+      var qstring = filter.genQueryString();
+      if (qstring.charAt(0) === '&') {
+        qstring = qstring.slice(1);
+      }
+
+      qstring.should.equal([
         'provider=aws&provider=openstack&scope=public&',
         'series=precise&type=approved'
       ].join(''));
