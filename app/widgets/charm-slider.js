@@ -1,60 +1,72 @@
 'use strict';
 
-
 /**
- * Provide the Charm Slider widget.
+ * Provides the Charm Slider widget.
  *
+ * @namespace juju.widgets.browser
  * @module widgets
- * @submodule juju.widgets.browser.charm-slider
+ *
  */
 YUI.add('browser-charm-slider', function(Y) {
   var sub = Y.Lang.sub;
   var ns = Y.namespace('juju.widgets.browser');
   
   /**
-    @class CharmSlider
-    @extends ScrollView
-    @constructor
-  */
+   * The CharmSlider provides a rotating display of one member of a generic set
+   * of items, with controls to go directly to a given item.
+   *
+   * @class CharmSlider
+   * @extends Y.ScrollView
+   *
+   */
   ns.CharmSlider = new Y.Base.create('browser-charm-slider', Y.ScrollView, [], {
   
     /**
-      Image slider container template
-  
-      @property imageSliderTemplate
-      @public
-      @type string
+     * Template for the CharmSlider
+     *
+     * @property charmSliderTemplate
+     * @public
+     * @type string
+     *
      */
     charmSliderTemplate: '<ul width="{width}px" />',
   
     /**
-      Image item template
-  
-      @property imageTemplate
-      @public
-      @type string
+     * Template for a given item in the slider
+     *
+     * @property itemTemplate
+     * @public
+     * @type string
+     *
      */
-    itemTemplate: '<li width="{width}px" data-index="{index}" />',
+   itemTemplate: '<li width="{width}px" data-index="{index}" />',
   
     /**
-      Template used for the navigation controls.
-  
-      @property prevNavTemplate
-      @public
-      @type string
-    */
+     * Template used for the navigation controls.
+     *  
+     * @property prevNavTemplate
+     * @public
+     * @type string
+     */
     navTemplate: '<ul class="navigation"></div>',
 
-    /** DOCTSTRINGS HERE **/
+    /**
+     * Template used for items in the navigation.
+     *
+     * @property navItemTemplate
+     * @publc
+     * @type string
+     */
     navItemTemplate: '<li data-index="{index}">O</li>',
   
     /**
-      Pagination plugin
-  
-      @method initializer
-      @param cfg {object} Module configuration object
-      @private
-    */
+     * Initializer
+     *
+     * @method initializer
+     * @param {Object}  The config object
+     *
+     */
+    
     initializer: function(cfg) {
       this.plug(Y.Plugin.ScrollViewPaginator, {
         selector: 'li'
@@ -62,7 +74,15 @@ YUI.add('browser-charm-slider', function(Y) {
      
     },
   
-    /* SOME DOCS GO HERE */
+    /**
+     * Creates the structure and DOM nodes for the slider.
+     *
+     * @method _generateDOM
+     * @private
+     * @returns {Node} The slider's DOM nodes.
+     *
+     */
+      
     _generateDOM: function() {
       var that = this,
           slider = Y.Node.create(
@@ -78,11 +98,11 @@ YUI.add('browser-charm-slider', function(Y) {
     },
 
     /**
-      Generates and appends the navigation controls for the slider
-  
-      @method _generateSliderControls
-      @protected
-    */
+     * Generates and appends the navigation controls for the slider
+     * 
+     * @method _generateSliderControls
+     * @private
+     */
     _generateSliderControls: function() {
       Y.log('_generateSliderControls', 'info', this.name);
       var that = this,
@@ -95,11 +115,13 @@ YUI.add('browser-charm-slider', function(Y) {
     },
   
     /**
-      Advances the photo and description to the next appropriate value
-  
-      @method _advanceSlide
-      @protected
-    */
+      * Advances the slider to the next item, or a designated index
+      * 
+      * @method _advanceSlide
+      * @param {string} Index to move to; if not supplied, advances to next
+      * slide  
+      * @private
+      */
     _advanceSlide: function(index) {
       Y.log('_advanceSlide', 'info', this.name);
       Y.log(index, 'info', this.name);
@@ -117,11 +139,11 @@ YUI.add('browser-charm-slider', function(Y) {
     },
   
     /**
-      Checks to see if autoadvance is set then sets up the timeouts
-  
-      @method _startTimer
-      @private
-    */
+      * Checks to see if autoadvance is set then sets up the timeouts
+      * 
+      * @method _startTimer
+      * @private
+      */
     _startTimer: function() {
       Y.log('_startTimer', 'info', this.name);
   
@@ -135,7 +157,12 @@ YUI.add('browser-charm-slider', function(Y) {
       }
     },
 
-    /** DOCSTRING **/
+    /**
+      * Stops the timer for autoadvance
+      * 
+      * @method _stopTimer
+      * @private
+      */
     _stopTimer: function() {
       Y.log('_stopTimer', 'info', this.name);
       var timer = this.get('timer');
@@ -145,23 +172,23 @@ YUI.add('browser-charm-slider', function(Y) {
     },
   
     /**
-      Mouseenter/mouseleave event handler
-  
-      @method _pauseAutoAdvance
-      @private
-      @param e {object} mouseout or mouseover event object
-    */
+      * Mouseenter/mouseleave event handler
+      * 
+      * @method _pauseAutoAdvance
+      * @private
+      * @param e {object} mouseout or mouseover event object
+      */
     _pauseAutoAdvance: function(e) {
       Y.log('pauseAutoAdvance', 'info', this.name);
       (e.type === "mouseenter") ? this.set('pauseOnHover', true) : this.set('pauseOnHover', false);
     },
   
     /**
-      Binds the navigate event listeners
-  
-      @method bindUI
-      @private
-    */
+      * Binds the navigate event listeners
+      * 
+      * @method bindUI
+      * @private
+      */
     bindUI: function() {
       Y.log('bindUI', 'info', this.name);
   
@@ -181,17 +208,23 @@ YUI.add('browser-charm-slider', function(Y) {
       }, 'li'));
     },
 
+    /**
+      * Render the nodes and HTML for the slider.
+      *
+      * @method renderUI
+      * @private
+      */
     renderUI: function() {
       this.get('contentBox').setHTML(this._generateDOM());
       this._generateSliderControls();
     },
   
     /**
-      Detaches events attached during instantiation
-  
-      @method destructor
-      @private
-    */
+      * Detaches events attached during instantiation
+      *  
+      * @method destructor
+      * @private
+      */
     destructor: function() {
       Y.log('destructor', 'info', this.name);
       this.get('_events').each(function(event) {
@@ -202,54 +235,52 @@ YUI.add('browser-charm-slider', function(Y) {
   }, {
     ATTRS: {
   
-      /** THIS NEEDS DOCS **/
+      /**
+       * @attribute width
+       * @default 500
+       * @type int
+       *
+       */
       width: {
         value: 500 
       },
+
       /**
-        Weather the slider should automatically advance
-  
-        @attribute autoAdvance
-        @public
-        @type boolean
-        @default true
-      */
+       * @attribute autoAdvance
+       * @default true
+       * @type boolean
+       *
+       */
       autoAdvance: {
         value: true
       },
   
       /**
-        Amount of time to wait between autoadvances
-  
-        @attribute advanceDelay
-        @public
-        @type integer
-        @default 3000
-      */
+       * @attribute advanceDelay
+       * @default 3000
+       * @type int
+       *
+       */
       advanceDelay: {
         value: 3000
       },
   
       /**
-        If the slider should pause then the user hovers on it
-  
-        @attribute pauseOnHover
-        @public
-        @type boolean
-        @default false
-      */
+       * @attribute pauseOnHover
+       * @default false
+       * @type boolean
+       *
+       */
       pauseOnHover: {
         value: false
       },
   
       /**
-        Items data array
-  
-        @attribute items
-        @public
-        @type array
-        @default []
-      */
+       * @attribute items
+       * @default []
+       * @type array
+       *
+       */
       items: {
         value: [],
         validator: function(val) {
@@ -258,21 +289,31 @@ YUI.add('browser-charm-slider', function(Y) {
       },
 
       /**
-        Collection of event handlers to detach on destroy
-  
-        @attribute _events
-        @private
-        @default []
-        @type array
-      */
+       * @attribute _events
+       * @default []
+       * @type array
+       *
+       */
       _events: {
         value: []
       },
 
+      /**
+       * @attribute max
+       * @default 5
+       * @type int
+       *
+       */
       max: {
         value: 5 
       },
 
+      /**
+       * @attribute timer
+       * @default null
+       * @type Object
+       *
+       */
       timer: {
         value: null 
       }
