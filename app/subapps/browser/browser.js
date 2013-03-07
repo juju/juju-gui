@@ -33,7 +33,12 @@ YUI.add('subapp-browser', function(Y) {
       fullscreenCharm: {
         type: 'juju.browser.views.FullScreen',
         preserve: true
+      },
+      sidebar: {
+        type: 'juju.browser.views.Sidebar',
+        preserve: true
       }
+
     },
 
     /**
@@ -82,7 +87,13 @@ YUI.add('subapp-browser', function(Y) {
      * @method destructor
      *
      */
-    destructor: function() {}
+    destructor: function() {},
+
+    sidebar: function(req, res, next) {
+      console.log('showing sidebar', this.name);
+      this.showView('sidebar');
+      next();
+    }
 
   }, {
     ATTRS: {
@@ -95,11 +106,17 @@ YUI.add('subapp-browser', function(Y) {
       routes: {
         value: [
           { path: '/bws/fullscreen/', callbacks: 'fullscreen' },
-          { path: '/bws/fullscreen/:id/', callbacks: 'fullscreenCharm' }
-          // { path: '/bws/sidebar/:id/', callbacks: 'sidebar_charm' },
+          { path: '/bws/fullscreen/:id/', callbacks: 'fullscreenCharm' },
+          { path: '/bws/sidebar/', callbacks: 'sidebar' }
         ]
       }
     }
   });
 
-}, '0.1.0', {requires: ['sub-app', 'subapp-browser-fullscreen']});
+}, '0.1.0', {
+  requires: [
+    'sub-app',
+    'subapp-browser-fullscreen',
+    'subapp-browser-sidebar'
+  ]
+});

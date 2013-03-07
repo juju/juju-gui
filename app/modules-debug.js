@@ -221,6 +221,11 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/fullscreen.js'
         },
 
+        'subapp-browser-sidebar': {
+          fullpath: '/juju-ui/subapps/browser/views/sidebar.js',
+          requires: ['subapp-browser-sidebar']
+        },
+
         //Browser Models
         'juju-browser-models': {
           fullpath: '/juju-ui/models/browser.js'
