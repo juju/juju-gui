@@ -124,6 +124,7 @@ if (/*@cc_on!@*/false) {
         </div>
         <div id="vp-right-border"></div>
     </div>
+    <div id="subapp-browser"></div>
     <script src="/juju-ui/assets/javascripts/spin.min.js"></script>
     <script id="app-startup">
       startSpinner = function() {
@@ -240,9 +241,12 @@ if (/*@cc_on!@*/false) {
             // provided.
             var loc = Y.getLocation();
             var port = juju_config.socket_port || loc.port;
-            var protocol = juju_config.socket_protocol || 'ws';
-            juju_config.socket_url = protocol + '://' + loc.hostname + ':' + port + '/ws';
-            console.log('websocket url', juju_config.socket_url);
+             var protocol = juju_config.socket_protocol || 'ws';
+            juju_config.socket_url = protocol + '://' + loc.hostname;
+            if (port) {
+              juju_config.socket_url += ':' + port;
+            }
+            juju_config.socket_url += '/ws';
           }
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application

@@ -92,6 +92,7 @@ YUI.add('juju-view-unit', function(Y) {
       container.setHTML(this.template({
         unit: unit,
         unit_ip_description: unit_ip_description,
+        landscape: this.get('landscape'),
         service: service.getAttrs(),
         disabled_remove: service.get('unit_count') <= 1,
         charm: charm.getAttrs(),
