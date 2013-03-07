@@ -294,7 +294,8 @@ shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
 
 LINK_DEBUG_FILES=$(call shared-link-files-list,debug) \
 	build-debug/juju-ui/app.js build-debug/juju-ui/models \
-	build-debug/juju-ui/store build-debug/juju-ui/views \
+	build-debug/juju-ui/store build-debug/juju-ui/subapps \
+	build-debug/juju-ui/views \
 	build-debug/juju-ui/widgets build-debug/juju-ui/assets/javascripts \
 	build-debug/juju-ui/templates.js
 
@@ -342,6 +343,7 @@ $(LINK_DEBUG_FILES):
 	ln -sf "$(PWD)/app/app.js" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/models" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/store" build-debug/juju-ui/
+	ln -sf "$(PWD)/app/subapps" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/views" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/widgets" build-debug/juju-ui/
 	ln -sf "$(PWD)/app/assets/javascripts/yui/yui/yui-debug.js" \
