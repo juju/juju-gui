@@ -293,6 +293,10 @@
 
     it('should reset values on the control when you change focus',
        function() {
+         if (Y.UA.ie) {
+           // TODO: blur simulate broken in IE
+           return;
+         }
          var view = makeServiceView();
          var control = container.one('#num-service-units');
          control.set('value', 2);

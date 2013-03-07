@@ -84,7 +84,7 @@
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'juju-env',
         'node-event-simulate', 'juju-gui', 'slider',
-        'landscape'
+        'landscape', 'dump'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
@@ -379,6 +379,12 @@
            op: 'delta'
          };
 
+          function floor(o) {
+            return Math.floor(parseFloat(o.toString()));
+          }
+          function cmp(a, b) {
+            return floor(a) === floor(b);
+          }
           // Ensure that line endpoints match with calculated endpoints.
           function endpointsCalculatedProperly(relation) {
             var node = d3.select(relation);
@@ -387,10 +393,10 @@
             var connectors = boxpair.source
               .getConnectorPair(boxpair.target);
 
-            return parseFloat(line.attr('x1')) === connectors[0][0] &&
-           parseFloat(line.attr('y1')) === connectors[0][1] &&
-           parseFloat(line.attr('x2')) === connectors[1][0] &&
-           parseFloat(line.attr('y2')) === connectors[1][1];
+            return cmp(line.attr('x1'), connectors[0][0]) &&
+                   cmp(line.attr('y1'), connectors[0][1]) &&
+                   cmp(line.attr('x2'), connectors[1][0]) &&
+                   cmp(line.attr('y2'), connectors[1][1]);
           }
 
           // Ensure that endpoints match for all services before any
@@ -438,7 +444,7 @@
             ],
             op: 'delta'
           },
-          properTransform = /translate\(\d+\.?\d*,\d+\.?\d*\)/;
+          properTransform = /translate\(\d+\.?\d*[, ]\d+\.?\d*\)/;
       view.render();
 
       container.all('.service').each(function(serviceNode) {
@@ -482,7 +488,8 @@
                  'id': 'wordpress',
                  'annotations': {'gui.x': 374.1, 'gui.y': 211.2}
                }]]};
-         var properTransform = /translate\((\d+\.?\d*),(\d+\.?\d*)\)/;
+         // IE uses a space delimiter, not a comma.
+         var properTransform = /translate\((\d+\.?\d*)[, ](\d+\.?\d*)\)/;
          var node, match;
 
          view.render();
@@ -490,6 +497,7 @@
          // Test values from initial load.
          node = view.topo.modules.ServiceModule.getServiceNode('wordpress');
          match = node.getAttribute('transform').match(properTransform);
+         console.log("Match ", match, node.getAttribute('transform'));
          match[1].should.eql('100');
          match[2].should.eql('200');
 

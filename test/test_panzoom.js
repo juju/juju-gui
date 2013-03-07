@@ -38,6 +38,16 @@ describe('pan zoom module', function() {
     }
   });
 
+  function fixTranslate(translate) {
+    console.log('fixtranslate', translate);
+    if (Y.Lang.isArray(translate) &&
+        translate[0] === 0 &&
+        translate[1] === 0 &&
+        Y.UA.ie) {
+      return 0;
+    }
+    return translate;
+  }
   // Test the zoom handler calculations.
   it('should handle fractional values properly in zoom scale',
      function() {
@@ -89,7 +99,8 @@ describe('pan zoom module', function() {
        });
        pz.rescale(evt);
        topo.get('scale').should.equal(0.609);
-       var expected = 'translate(' + evt.translate + ') scale(0.609)';
+       var translate = fixTranslate(evt.translate);
+       var expected = 'translate(' + translate + ') scale(0.609)';
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);
      });
@@ -105,7 +116,8 @@ describe('pan zoom module', function() {
        });
        pz.rescale(evt);
        topo.get('scale').should.equal(2.0);
-       var expected = 'translate(' + evt.translate + ') scale(2)';
+       var translate = fixTranslate(evt.translate);
+       var expected = 'translate(' + translate + ') scale(2)';
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);
      });
@@ -121,7 +133,8 @@ describe('pan zoom module', function() {
        });
        pz.rescale(evt);
        topo.get('scale').should.equal(0.25);
-       var expected = 'translate(' + evt.translate + ') scale(0.25)';
+       var translate = fixTranslate(evt.translate);
+       var expected = 'translate(' + translate + ') scale(0.25)';
        vis.attr('transform').should.equal(expected);
        assert.isTrue(rescaled);
      });
