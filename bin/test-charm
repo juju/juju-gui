@@ -5,12 +5,13 @@
 # Deploy the charm, using a branch if given.
 python lib/deploy_charm_for_testing.py "$@"
 # Figure out the URL of the APP.
-export APP_URL=https://`juju status -e juju-gui-testing | grep public-address: | cut -d: -f2 | cut -c2-`
+export APP_URL=http://`juju status -e juju-gui-testing | grep public-address: | cut -d: -f2 | cut -c2-`
 # EXIT_CODE is used to keep track of test failures. If a test fails, this
 # script will exit with an error code.
 EXIT_CODE=0
 # Run the browser tests against the app.
-for JUJU_GUI_TEST_BROWSER in ${JUJU_GUI_TEST_BROWSERS:-chrome}; do
+for JUJU_GUI_TEST_BROWSER in 'ie' 'firefox' 'chrome'
+do
     export JUJU_GUI_TEST_BROWSER
     python test/test_charm_running.py -v || EXIT_CODE=1
 done

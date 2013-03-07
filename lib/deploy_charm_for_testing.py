@@ -6,7 +6,8 @@ import sys
 import time
 import tempfile
 import yaml
-
+import subprocess
+import os
 
 juju_command = shelltoolbox.command('juju')
 
@@ -69,15 +70,23 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
     print('Bootstrapping...')
     juju('bootstrap --environment juju-gui-testing')
     print('Deploying service...')
-    options = {'serve-tests': True, 'staging': True}
+    options = {'serve-tests': True, 'staging': True, 'secure': False, 'juju-gui-source': 'lp:bcsaller/juju-gui/ie-cuts'}
     if branch is not None:
         print('Setting branch for charm to deploy...')
         options['juju-gui-source'] = branch
     with make_config_file(options) as config_file:
         juju('deploy --environment juju-gui-testing --config {} '
-             'cs:~juju-gui/precise/juju-gui'.format(config_file.name))
+             'cs:~hatch/precise/juju-gui'.format(config_file.name))
     print('Waiting for service to start...')
     wait_for_service()
+    # Fetches the instance ID from the testing instances to apply an IP to
+    instance_ip = os.environ.get("JUJU_INSTANCE_IP")
+    if instance_ip:
+        print('Assigning JUJU_INSTANCE_IP to testing instance')
+        instance_id = subprocess.check_output("euca-describe-instances --filter "
+            "tag-value=juju-juju-gui-testing-1 | tail -n1 | awk '{print $2;}'", shell=True).strip()
+        subprocess.check_call("euca-associate-address -i %s %s" % (instance_id, instance_ip), shell=True)
+
     print('Exposing the service...')
     juju('expose juju-gui --environment juju-gui-testing')
 
