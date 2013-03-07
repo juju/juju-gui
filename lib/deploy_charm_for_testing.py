@@ -36,6 +36,10 @@ def get_state(get_status=get_status):
     unit = status['services']['juju-gui']['units']['juju-gui/0']
     return unit['agent-state']
 
+def get_machine_state(get_status=get_status):
+    status = json.loads(get_status())
+    machine = status['machines']['1']['agent-state']
+    return machine
 
 def make_config_file(options):
     """Create a Juju GUI charm config file. Return the config file object.
@@ -62,6 +66,12 @@ def wait_for_service(get_state=get_state, sleep=time.sleep):
             break
         sleep(10)
 
+def wait_for_machine(get_state=get_state, sleep=time.sleep):
+    while True:
+        state = get_machine_state()
+        if state == 'running':
+            break
+        sleep(5)
 
 def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
          make_config_file=make_config_file):
@@ -70,7 +80,7 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
     print('Bootstrapping...')
     juju('bootstrap --environment juju-gui-testing')
     print('Deploying service...')
-    options = {'serve-tests': True, 'staging': True, 'secure': False, 'juju-gui-source': 'lp:~bcsaller/juju-gui/ie-cuts'}
+    options = {'serve-tests': True, 'staging': True, 'secure': False, 'juju-gui-source': 'lp:~hatch/juju-gui/remote-testing'}
     if branch is not None:
         print('Setting branch for charm to deploy...')
         options['juju-gui-source'] = branch
@@ -78,7 +88,7 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
         juju('deploy --environment juju-gui-testing --config {} '
              'cs:~hatch/precise/juju-gui'.format(config_file.name))
     print('Waiting for service to start...')
-    wait_for_service()
+    wait_for_machine()
     # Fetches the instance ID from the testing instances to apply an IP to
     instance_ip = os.environ.get("JUJU_INSTANCE_IP")
     if instance_ip:
@@ -87,6 +97,7 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
             "tag-value=juju-juju-gui-testing-1 | tail -n1 | awk '{print $2;}'", shell=True).strip()
         subprocess.check_call("euca-associate-address -i %s %s" % (instance_id, instance_ip), shell=True)
 
+    wait_for_service()
     print('Exposing the service...')
     juju('expose juju-gui --environment juju-gui-testing')
 
