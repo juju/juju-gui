@@ -39,7 +39,6 @@ describe('pan zoom module', function() {
   });
 
   function fixTranslate(translate) {
-    console.log('fixtranslate', translate);
     if (Y.Lang.isArray(translate) &&
         translate[0] === 0 &&
         translate[1] === 0 &&

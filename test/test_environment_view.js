@@ -497,7 +497,6 @@
          // Test values from initial load.
          node = view.topo.modules.ServiceModule.getServiceNode('wordpress');
          match = node.getAttribute('transform').match(properTransform);
-         console.log("Match ", match, node.getAttribute('transform'));
          match[1].should.eql('100');
          match[2].should.eql('200');
 

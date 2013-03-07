@@ -156,10 +156,10 @@ describe('charm panel', function() {
 
   it('must show a ghosted service only when configuring a new charm',
      function() {
-         if (yui.UA.ie === 10) {
-           // IE10 Can't simulate blur at time of writing.
-           return;
-         }
+        if (Y.UA.ie === 10) {
+          // IE10 Can't simulate blur at time of writing.
+          return;
+        }
         var db = new models.Database(),
             panel = Y.namespace('juju.views').CharmPanel.getInstance({
               charm_store: new juju.CharmStore({datasource: {

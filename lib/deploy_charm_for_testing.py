@@ -69,7 +69,7 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
     print('Bootstrapping...')
     juju('bootstrap --environment juju-gui-testing')
     print('Deploying service...')
-    options = {'serve-tests': True, 'staging': True, 'secure': False}
+    options = {'serve-tests': True, 'staging': True}
     if branch is not None:
         print('Setting branch for charm to deploy...')
         options['juju-gui-source'] = branch
