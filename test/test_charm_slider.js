@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('charm slider', function() {
+describe('charm slider', function() {
   var container, Y;
 
   before(function(done) {
@@ -32,20 +32,20 @@ describe.only('charm slider', function() {
     assert.equal(3, sliderDOM.all('li').size());
     var html = sliderDOM.get('outerHTML');
     Y.Array.each(items, function(item) {
-      assert.notEqual(-1, html.indexOf(item)); 
+      assert.notEqual(-1, html.indexOf(item));
     });
   });
 
   it('renders', function() {
     var cs = new Y.juju.widgets.browser.CharmSlider({
-      items: ['<div id="foo"/>'] 
+      items: ['<div id="foo"/>']
     });
     cs.render(container);
     assert.isObject(Y.one('#foo'));
   });
 
   it('it generates buttons for each', function() {
-    var cs = new Y.juju.widgets.browser.CharmSlider(), 
+    var cs = new Y.juju.widgets.browser.CharmSlider(),
         items = ['<div />', '<div />'];
     cs.set('items', items);
     cs.render(container);
