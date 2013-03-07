@@ -458,6 +458,7 @@ YUI.add('juju-topology-service', function(Y) {
       // enter
       node
         .enter().append('g')
+        .attr('pointer-events', 'all') // IE doesn't drag properly without this.
         .attr('class', function(d) {
             return (d.subordinate ? 'subordinate ' : '') +
                 (d.pending ? 'pending ' : '') + 'service';
