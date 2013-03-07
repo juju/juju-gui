@@ -43,7 +43,7 @@ YUI.add('browser-charm-slider', function(Y) {
       @public
       @type string
     */
-    navTemplate: '<ul class="navigate"></div>',
+    navTemplate: '<ul class="navigation"></div>',
 
     /** DOCTSTRINGS HERE **/
     navItemTemplate: '<li data-index="{index}">O</li>',
@@ -86,7 +86,6 @@ YUI.add('browser-charm-slider', function(Y) {
     _generateSliderControls: function() {
       Y.log('_generateSliderControls', 'info', this.name);
       var that = this,
-          navClass = this.getClassName() + '-navigation',
           nav = Y.Node.create(this.navTemplate);
       Y.Array.each(this.get('items'), function(item, index) {
         nav.append(Y.Node.create(sub(
@@ -172,7 +171,7 @@ YUI.add('browser-charm-slider', function(Y) {
       var that = this,
         events = this.get('_events'),
         boundingBox = this.get('boundingBox'),
-        nav = boundingBox.one('.navigate');
+        nav = boundingBox.one('.navigation');
       events.push(this.after('render', this._startTimer, this));
       events.push(boundingBox.on('mouseenter', this._pauseAutoAdvance, this));
       events.push(boundingBox.on('mouseleave', this._pauseAutoAdvance, this));

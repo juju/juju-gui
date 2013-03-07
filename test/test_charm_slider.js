@@ -16,7 +16,7 @@ describe.only('charm slider', function() {
   });
 
   afterEach(function() {
-    Y.one('#container').remove(true);
+    container.remove(true);
   });
 
   it('initializes', function() {
@@ -40,7 +40,16 @@ describe.only('charm slider', function() {
     var cs = new Y.juju.widgets.browser.CharmSlider({
       items: ['<div id="foo"/>'] 
     });
-    cs.render(this.container);
+    cs.render(container);
     assert.isObject(Y.one('#foo'));
+  });
+
+  it('it generates buttons for each', function() {
+    var cs = new Y.juju.widgets.browser.CharmSlider(), 
+        items = ['<div />', '<div />'];
+    cs.set('items', items);
+    cs.render(container);
+    var nav = Y.one('.navigation');
+    assert.equal(items.length, nav.all('li').size());
   });
 });
