@@ -20,24 +20,27 @@ describe.only('charm slider', function() {
   });
 
   it('initializes', function() {
-    var slider = new Y.juju.widgets.browser.CharmSlider();
-    assert.isObject(slider);
+    var cs = new Y.juju.widgets.browser.CharmSlider();
+    assert.isObject(cs);
   });
 
-  it('renders the charm small widgets its given', function() {
-    var charm = new Y.juju.widgets.browser.CharmSmall(); 
-    var cfg = {charms: [charm]};
-    var slider = new Y.juju.widgets.browser.CharmSlider(cfg);
-    slider.render(container);
-    assert.isObject(Y.one('.yui3-charmslider'));
-    assert.isObject(Y.one('.yui3-charmsmall'));
+  it('creates the right DOM', function() {
+    var cs = new Y.juju.widgets.browser.CharmSlider(),
+        items = ['foo', 'bar', 'baz'];
+    cs.set('items', items);
+    var sliderDOM = cs._generateDOM();
+    assert.equal(3, sliderDOM.all('li').size());
+    var html = sliderDOM.get('outerHTML');
+    Y.Array.each(items, function(item) {
+      assert.notEqual(-1, html.indexOf(item)); 
+    });
   });
 
-  it('only shows one charm small widget at a time');
-
-  it('automatically scrolls through its charms');
-
-  it('has one button for each charm');
-
-  it('scrolls to charms when buttons are clicked');
+  it('renders', function() {
+    var cs = new Y.juju.widgets.browser.CharmSlider({
+      items: ['<div id="foo"/>'] 
+    });
+    cs.render(this.container);
+    assert.isObject(Y.one('#foo'));
+  });
 });
