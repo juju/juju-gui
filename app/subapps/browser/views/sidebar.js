@@ -1,6 +1,13 @@
 'use strict';
 
 
+/**
+ * Browser SubApp Sidebar View handler.
+ *
+ * @module juju.browser
+ * @submodule views
+ *
+ */
 YUI.add('subapp-browser-sidebar', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       views = Y.namespace('juju.views');
@@ -48,7 +55,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     },
 
     /**
-     * Gereral YUI initializer.
+     * General YUI initializer.
      *
      * @method initializer
      * @param {Object} cfg configuration object.
