@@ -66,10 +66,8 @@ YUI.add('browser-charm-slider', function(Y) {
       * @private
       */
     _advanceSlide: function(index) {
-      Y.log('_advanceSlide', 'info', this.name);
-      Y.log(index, 'info', this.name);
       var pages = this.pages;
-      if (Y.Lang.isValue(index)) {
+      if (index) {
         this._stopTimer();
         pages.scrollToIndex(index);
         this._startTimer();
@@ -92,17 +90,16 @@ YUI.add('browser-charm-slider', function(Y) {
      *
      */
     _generateDOM: function() {
-      var that = this,
-          width = this.get('width'),
+      var width = this.get('width'),
           slider = Y.Node.create(
               sub(this.charmSliderTemplate, {width: width}));
 
       Y.Array.map(this.get('items'), function(item, index) {
         var tmpNode = Y.Node.create(
-            sub(that.itemTemplate, {width: width, index: index}));
-        tmpNode.setContent(item);
+            sub(this.itemTemplate, {width: width, index: index}));
+        tmpNode.setHTML(item);
         slider.append(tmpNode);
-      });
+      }, this);
       return slider;
     },
 
@@ -113,13 +110,11 @@ YUI.add('browser-charm-slider', function(Y) {
      * @private
      */
     _generateSliderControls: function() {
-      Y.log('_generateSliderControls', 'info', this.name);
-      var that = this,
-          nav = Y.Node.create(this.navTemplate);
+      var nav = Y.Node.create(this.navTemplate);
       Y.Array.each(this.get('items'), function(item, index) {
         nav.append(Y.Node.create(sub(
-            that.navItemTemplate, {index: index})));
-      });
+            this.navItemTemplate, {index: index})));
+      }, this);
       this.get('boundingBox').append(nav);
     },
 
@@ -131,7 +126,6 @@ YUI.add('browser-charm-slider', function(Y) {
       * @param {object} mouseout or mouseover event object.
       */
     _pauseAutoAdvance: function(e) {
-      Y.log('pauseAutoAdvance', 'info', this.name);
       if (e.type === 'mouseenter') {
         this.set('paused', true);
       } else {
@@ -146,7 +140,6 @@ YUI.add('browser-charm-slider', function(Y) {
       * @private
       */
     _startTimer: function() {
-      Y.log('_startTimer', 'info', this.name);
 
       if (this.get('autoAdvance') === true) {
         var timer = Y.later(this.get('advanceDelay'), this, function() {
@@ -165,7 +158,6 @@ YUI.add('browser-charm-slider', function(Y) {
       * @private
       */
     _stopTimer: function() {
-      Y.log('_stopTimer', 'info', this.name);
       var timer = this.get('timer');
       if (timer) {
         timer.cancel();
@@ -179,23 +171,21 @@ YUI.add('browser-charm-slider', function(Y) {
       * @private
       */
     bindUI: function() {
-      Y.log('bindUI', 'info', this.name);
 
       //Call the parent bindUI method
       ns.CharmSlider.superclass.bindUI.apply(this);
 
-      var that = this,
-          events = this.get('_events'),
+      var events = this.get('_events'),
           boundingBox = this.get('boundingBox'),
           nav = boundingBox.one('.navigation');
       events.push(this.after('render', this._startTimer, this));
       events.push(boundingBox.on('mouseenter', this._pauseAutoAdvance, this));
       events.push(boundingBox.on('mouseleave', this._pauseAutoAdvance, this));
-      events.push(nav.delegate('click', function() {
-        var index = this.getAttribute('data-index');
+      events.push(nav.delegate('click', function(e) {
+        var index = e.currentTarget.getAttribute('data-index');
         index = parseInt(index, 10);
-        that._advanceSlide(index);
-      }, 'li'));
+        this._advanceSlide(index);
+      }, 'li', this));
     },
 
     /**
@@ -205,7 +195,6 @@ YUI.add('browser-charm-slider', function(Y) {
       * @private
       */
     destructor: function() {
-      Y.log('destructor', 'info', this.name);
       this.get('_events').each(function(event) {
         event.detach();
       });
