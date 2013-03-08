@@ -181,19 +181,31 @@
     it('can deploy a service', function() {
       env.deploy('precise/mysql');
       msg = conn.last_message();
-      msg.op.should.equal('deploy');
-      msg.charmUrl.should.equal('precise/mysql');
+      var expected = {
+        Type: 'Client',
+        Request: 'ServiceDeploy',
+        Params: {CharmUrl: 'precise/mysql'
+                },
+        RequestId: 1
+      };
+      assert.deepEqual(expected, msg);
     });
 
     it('can deploy a service with a config file', function() {
       /*jshint multistr:true */
       var config_raw = 'tuning-level: \nexpert-mojo';
       /*jshint multistr:false */
-      env.deploy('precise/mysql', null, null, config_raw);
+      var expected = {
+        Type: 'Client',
+        Request: 'ServiceDeploy',
+        Params: {CharmUrl: 'precise/mysql',
+                 ConfigYAML: config_raw
+                },
+        RequestId: 1
+      };
+      env.deploy('precise/mysql', undefined, undefined, config_raw);
       msg = conn.last_message();
-      msg.op.should.equal('deploy');
-      msg.charmUrl.should.equal('precise/mysql');
-      msg.configYAML.should.equal(config_raw);
+      assert.deepEqual(expected, msg);
     });
 
   });
