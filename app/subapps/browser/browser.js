@@ -90,15 +90,16 @@ YUI.add('subapp-browser', function(Y) {
     destructor: function() {},
 
     sidebar: function(req, res, next) {
-      console.log('showing sidebar', this.name);
-      this.showView('sidebar');
+      // console.log('showing sidebar', this.name);
+      // this.showView('sidebar');
+      // debugger;
       next();
     }
 
   }, {
     ATTRS: {
       container: {
-        value: '#subapp-browser'
+        value: Y.one('#subapp-browser')
       },
       urlNamespace: {
         value: 'charmstore'
