@@ -61,7 +61,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
-      console.log('showing fullscreen', this.name);
       this.showView('fullscreen');
       next();
     },
@@ -76,7 +75,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreenCharm: function(req, res, next) {
-      console.log('showing fullscreen charm', this.name);
       this.showView('fullscreenCharm');
       next();
     },
@@ -99,16 +97,14 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
-      // console.log('showing sidebar', this.name);
-      // this.showView('sidebar');
-      // debugger;
+      this.showView('sidebar');
       next();
     }
 
   }, {
     ATTRS: {
       container: {
-        value: Y.one('#subapp-browser')
+        value: '#subapp-browser'
       },
       urlNamespace: {
         value: 'charmstore'

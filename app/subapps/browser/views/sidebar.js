@@ -22,7 +22,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      */
     events: {
       '.sidebar-toggle': {
-        click: '_toggle_sidebar'
+        click: '_toggleSidebar'
       }
     },
 
@@ -35,7 +35,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      * @param {Event} ev event to trigger the toggle.
      *
      */
-    _toggle_sidebar: function(ev) {
+    _toggleSidebar: function(ev) {
       var sidebar = Y.one('#bws-sidebar');
 
       if (this.visible) {
