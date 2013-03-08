@@ -200,12 +200,14 @@
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
-          CharmUrl: 'precise/mysql',
-          ConfigYAML: config_raw
+          ServiceName: null,
+          Config: null,
+          ConfigYAML: config_raw,
+          CharmUrl: 'precise/mysql'
         },
         RequestId: 1
       };
-      env.deploy('precise/mysql', undefined, undefined, config_raw);
+      env.deploy('precise/mysql', null, null, config_raw);
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
