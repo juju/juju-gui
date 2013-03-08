@@ -175,15 +175,15 @@ YUI.add('juju-env-go', function(Y) {
     deploy: function(charm_url, service_name, config, config_raw, num_units,
                      callback) {
       this._send_rpc(
-        { Type: 'Client',
-          Request: 'ServiceDeploy',
-          Params: {
-            ServiceName: service_name,
-            Config: config,
-            ConfigYAML: config_raw,
-            CharmUrl: charm_url,
-            NumUnits: num_units
-          }},
+          { Type: 'Client',
+            Request: 'ServiceDeploy',
+            Params: {
+              ServiceName: service_name,
+              Config: config,
+              ConfigYAML: config_raw,
+              CharmUrl: charm_url,
+              NumUnits: num_units
+            }},
           callback, true);
     },
 

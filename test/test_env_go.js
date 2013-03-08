@@ -184,8 +184,9 @@
       var expected = {
         Type: 'Client',
         Request: 'ServiceDeploy',
-        Params: {CharmUrl: 'precise/mysql'
-                },
+        Params: {
+          CharmUrl: 'precise/mysql'
+        },
         RequestId: 1
       };
       assert.deepEqual(expected, msg);
@@ -198,9 +199,10 @@
       var expected = {
         Type: 'Client',
         Request: 'ServiceDeploy',
-        Params: {CharmUrl: 'precise/mysql',
-                 ConfigYAML: config_raw
-                },
+        Params: {
+          CharmUrl: 'precise/mysql',
+          ConfigYAML: config_raw
+        },
         RequestId: 1
       };
       env.deploy('precise/mysql', undefined, undefined, config_raw);
