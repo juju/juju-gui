@@ -191,39 +191,38 @@
       assert.deepEqual(expected, last_message);
     });
 
-    it('sends the correct update_annotation message', function() {
-      env.update_annotation('service-apache', {'mykey': 'myvalue'});
+    it('sends the correct update_annotations message', function() {
+      env.update_annotations('service-apache', {'mykey': 'myvalue'});
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
-        Request: 'SetAnnotation',
+        Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
           Id: 'service-apache', 
-          Annotations: {
-            Key: 'mykey', 
-            Value: 'myvalue'
+          Pairs: {
+            mykey: 'myvalue'
           }
         }
       };
       assert.deepEqual(expected, last_message);
     });
 
-    it('sends correct multiple update_annotation messages', function() {
-      env.update_annotation('service-apache', {
+    it('sends correct multiple update_annotations messages', function() {
+      env.update_annotations('service-apache', {
         'key1': 'value1',
         'key2': 'value2'
       });
       var expected = [
         {
           Type: 'Client',
-          Request: 'SetAnnotation',
+          Request: 'SetAnnotations',
           RequestId: 1,
           Params: {
             Id: 'service-apache', 
-            Annotatoins: {
-              Key: 'key1', 
-              Value: 'value1'
+            Pairs: {
+              key1: 'value1',
+              key2: 'value2'
             }
           }
         },
@@ -240,9 +239,8 @@
         RequestId: 1,
         Params: {
           Id: 'service-apache', 
-          Annotations: {
-            Key: 'key1', 
-            Value: ''
+          Pairs: {
+            key1: ''
           }
         }
       };
@@ -251,19 +249,20 @@
 
     it('sends the correct remove_annotations message', function() {
       env.remove_annotations('service-apache', ['key1', 'key2']);
+      var last_message = conn.last_message();
       var expected = {
           Type: 'Client',
           Request: 'SetAnnotations',
           RequestId: 1,
           Params: {
             Id: 'service-apache',
-            Annotations: {
-              Key: 'key2', 
-              Value: ''
+            Pairs: {
+              key1: '',
+              key2: ''
             }
           }
         };
-      assert.deepEqual(expected, conn.messages);
+      assert.deepEqual(expected, last_message);
     });
 
     it('successfully retrieves annotations', function() {
@@ -273,7 +272,7 @@
         'key2': 'value2'
       }
       env.get_annotations('service-mysql', function(data) {
-        annotations = data.result;
+        annotations = data.results;
       });
       // Mimic response.
       conn.msg({
@@ -295,7 +294,7 @@
         RequestId: 1,
         Response: {}
       });
-      assert.equal(err, false);
+      assert.isUndefined(err);
     });
 
     it('successfully sets annotations', function() {
@@ -311,7 +310,7 @@
         RequestId: 1,
         Response: {}
       });
-      assert.equal(err, false);
+      assert.isUndefined(err);
     });
 
     it('successfully removes annotations', function() {
@@ -324,7 +323,7 @@
         RequestId: 1,
         Response: {}
       });
-      assert.equal(err, false);
+      assert.isUndefined(err);
     });
 
     it('correctly handles errors from getting annotations', function() {

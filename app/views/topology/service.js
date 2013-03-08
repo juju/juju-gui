@@ -509,7 +509,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       node.append('text').append('tspan')
         .attr('class', 'name')
-        .text(function(d) {return d.id; });
+        .text(function(d) {return d.displayName; });
 
       node.append('text').append('tspan')
         .attr('class', 'charm-label')

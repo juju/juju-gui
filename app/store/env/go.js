@@ -198,7 +198,129 @@ YUI.add('juju-env-go', function(Y) {
       };
       // Call the original user callback.
       userCallback(transformedData);
-    }
+    },
+
+    /**
+     * Update the annotations for an entity by name.
+     *
+     * @param {Object} entity The name of a machine, unit, service, or
+     *   environment, e.g. 'machine-0', 'unit-mysql-0', or 'service-mysql'.
+     *   To specify the environment as the entity the magic string 
+     *   'environment' is used.
+     * @param {Object} data A dictionary of key, value pairs.
+     * @return {undefined} Nothing.
+     * @method update_annotations
+     */
+    update_annotations: function(entity, data, callback) {
+      var intermediateCallback = null;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleSetAnnotations, this,
+            callback, entity);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'SetAnnotations',
+        Params: {
+          Id: entity,
+          Pairs: data
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+     * Remove the annotations for an entity by name.
+     *
+     * @param {Object} entity The name of a machine, unit, service, or
+     *   environment, e.g. 'machine-0', 'unit-mysql-0', or 'service-mysql'.
+     *   To specify the environment as the entity the magic string 
+     *   'environment' is used.
+     * @param {Object} keys A list of annotation key names for the
+     *   annotations to be deleted.  
+     * @return {undefined} Nothing.
+     * @method remove_annotations
+     */
+    remove_annotations: function(entity, keys, callback) {
+      var intermediateCallback = null;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleSetAnnotations, this,
+            callback, entity);
+      }
+      var data = {};
+      Y.each(keys, function(key) {
+        data[key] = '';
+      });
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'SetAnnotations',
+        Params: {
+          Id: entity,
+          Pairs: data
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+     * Transform the data returned from juju-core 'SetAnnotations' into that 
+     * suitable for the user callback.
+     *
+     * @method handleSetAnnotations
+     * @param {Function} userCallback The callback originally submitted by the
+     * call site.
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleSetAnnotations: function(userCallback, entity, data) {
+      // Call the original user callback.
+      userCallback({err: data.Error, entity: entity});
+    },
+
+    /**
+     * Get the annotations for an entity by name.
+     *
+     * Note that the annotations are returned as part of the delta stream, so
+     * the explicit use of this command should rarely be needed.
+     *
+     * @param {Object} entity The name of a machine, unit, service, or
+     *   environment, e.g. 'machine-0', 'unit-mysql-0', or 'service-mysql'.
+     *   To specify the environment as the entity the magic string 
+     *   'environment' is used.
+     * @return {Object} A dictionary of key,value pairs is returned in the
+     *   callback.  The invocation of this command returns nothing.
+     * @method get_annotations
+     */
+    get_annotations: function(entity, callback) {
+      var intermediateCallback = null;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleGetAnnotations, this,
+            callback, entity);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'GetAnnotations',
+        Params: {
+          Id: entity
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+     * Transform the data returned from juju-core 'GetAnnotations' into that 
+     * suitable for the user callback.
+     *
+     * @method handleGetAnnotations
+     * @param {Function} userCallback The callback originally submitted by the
+     * call site.
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleGetAnnotations: function(userCallback, entity, data) {
+      // Call the original user callback.
+      userCallback({
+        err: data.Error,
+        entity: entity,
+        results: data.Response && data.Response.Annotations
+      });
+    },
 
   });
 
