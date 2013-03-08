@@ -53,9 +53,10 @@
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-        'juju-views',
         'juju-browser',
-        'subapp-browser-sidebar', function(Y) {
+        'juju-views',
+        'subapp-browser-sidebar',
+        function(Y) {
         browser = Y.namespace('juju.browser');
         views = Y.namespace('juju.browser.views');
         Sidebar = views.Sidebar;
@@ -84,38 +85,28 @@
 
 
   describe('browser app', function() {
-    var Y, browser, views ;
+    var Y, browser;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
+        'app-subapp-extension',
         'juju-views',
         'juju-browser',
         'subapp-browser', function(Y) {
-        browser = Y.namespace('subapp-browser');
+        browser = Y.namespace('juju.subapps');
         done();
       });
     });
 
-    beforeEach(function() {
-      addBrowserContainer(Y);
-    });
+    it('verify that route callables exist', function() {
+      var app = new browser.Browser();
+      Y.each(app.get('routes'), function(route) {
+        Y.Lang.isValue(app[route.callback]);
 
-    afterEach(function() {
-      Y.one('#subapp-browser').remove(true);
-    });
+      });
 
-    it('must correctly route the /sidebar/ route.', function() {
-
-      // create a dummy Y.App with the subapp installed correctly. Then test
-      // against the test app instance routing.
-      var app = getDummyApp(Y),
-          res = app.navigate('/bws/sidebar/');
-      debugger;
-
-      assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));
     });
 
   });
-
 
 })();
