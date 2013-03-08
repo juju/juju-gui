@@ -38,7 +38,7 @@ def get_state(get_status=get_status):
 
 def get_machine_state(get_status=get_status):
     status = json.loads(get_status())
-    machine = status['machines']['1']['agent-state']
+    machine = status['machines']['1']['instance-state']
     return machine
 
 def make_config_file(options):
