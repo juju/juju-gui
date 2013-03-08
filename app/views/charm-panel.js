@@ -1122,8 +1122,8 @@ YUI.add('juju-charm-panel', function(Y) {
                   if (ghostService.get('dragged')) {
                     env.update_annotations(
                         serviceName,
-                        { 'gui.x': ghostService.get('x'),
-                          'gui.y': ghostService.get('y') },
+                        { 'gui-x': ghostService.get('x'),
+                          'gui-y': ghostService.get('y') },
                         function() { return; });
                   }
                   // Update the ghost service to match the configuration.

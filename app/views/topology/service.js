@@ -329,7 +329,7 @@ YUI.add('juju-topology-service', function(Y) {
           return;
         }
         topo.get('env').update_annotations(
-            box.id, {'gui.x': box.x, 'gui.y': box.y},
+            box.id, {'gui-x': box.x, 'gui-y': box.y},
             function() {
               box.inDrag = false;
             });
@@ -556,15 +556,15 @@ YUI.add('juju-topology-service', function(Y) {
             x, y;
 
         if (!annotations) {return;}
-        x = annotations['gui.x'],
-        y = annotations['gui.y'];
+        x = annotations['gui-x'],
+        y = annotations['gui-y'];
         if (!d ||
             (x !== undefined && x !== d.x) &&
             (y !== undefined && y !== d.y)) {
-          // Delete gui.x and gui.y from annotations
+          // Delete gui-x and gui-y from annotations
           // as we use the values.
-          delete annotations['gui.x'];
-          delete annotations['gui.y'];
+          delete annotations['gui-x'];
+          delete annotations['gui-y'];
           if (!d.inDrag) {
             self.drag.call(this, d, self, {x: x, y: y});
           }
