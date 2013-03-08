@@ -186,7 +186,7 @@
         Type: 'Client',
         Request: 'GetAnnotations',
         RequestId: 1,
-        Params: {Id: 'service-apache'}
+        Params: {EntityId: 'service-apache'}
       };
       assert.deepEqual(expected, last_message);
     });
@@ -199,7 +199,7 @@
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
-          Id: 'service-apache',
+          EntityId: 'service-apache',
           Pairs: {
             mykey: 'myvalue'
           }
@@ -219,7 +219,7 @@
           Request: 'SetAnnotations',
           RequestId: 1,
           Params: {
-            Id: 'service-apache',
+            EntityId: 'service-apache',
             Pairs: {
               key1: 'value1',
               key2: 'value2'
@@ -238,7 +238,7 @@
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
-          Id: 'service-apache',
+          EntityId: 'service-apache',
           Pairs: {
             key1: ''
           }
@@ -255,7 +255,7 @@
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
-          Id: 'service-apache',
+          EntityId: 'service-apache',
           Pairs: {
             key1: '',
             key2: ''

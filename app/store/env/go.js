@@ -221,7 +221,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'SetAnnotations',
         Params: {
-          Id: entity,
+          EntityId: entity,
           Pairs: data
         }
       }, intermediateCallback);
@@ -253,7 +253,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'SetAnnotations',
         Params: {
-          Id: entity,
+          EntityId: entity,
           Pairs: data
         }
       }, intermediateCallback);
@@ -298,7 +298,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'GetAnnotations',
         Params: {
-          Id: entity
+          EntityId: entity
         }
       }, intermediateCallback);
     },
