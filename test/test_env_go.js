@@ -199,7 +199,7 @@
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
-          Id: 'service-apache', 
+          Id: 'service-apache',
           Pairs: {
             mykey: 'myvalue'
           }
@@ -219,13 +219,13 @@
           Request: 'SetAnnotations',
           RequestId: 1,
           Params: {
-            Id: 'service-apache', 
+            Id: 'service-apache',
             Pairs: {
               key1: 'value1',
               key2: 'value2'
             }
           }
-        },
+        }
       ];
       assert.deepEqual(expected, conn.messages);
     });
@@ -238,7 +238,7 @@
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
-          Id: 'service-apache', 
+          Id: 'service-apache',
           Pairs: {
             key1: ''
           }
@@ -251,17 +251,17 @@
       env.remove_annotations('service-apache', ['key1', 'key2']);
       var last_message = conn.last_message();
       var expected = {
-          Type: 'Client',
-          Request: 'SetAnnotations',
-          RequestId: 1,
-          Params: {
-            Id: 'service-apache',
-            Pairs: {
-              key1: '',
-              key2: ''
-            }
+        Type: 'Client',
+        Request: 'SetAnnotations',
+        RequestId: 1,
+        Params: {
+          Id: 'service-apache',
+          Pairs: {
+            key1: '',
+            key2: ''
           }
-        };
+        }
+      };
       assert.deepEqual(expected, last_message);
     });
 
@@ -270,7 +270,7 @@
       var expected = {
         'key1': 'value1',
         'key2': 'value2'
-      }
+      };
       env.get_annotations('service-mysql', function(data) {
         annotations = data.results;
       });
@@ -334,9 +334,9 @@
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Error: "This is an error."
+        Error: 'This is an error.'
       });
-      assert.equal("This is an error.", err)
+      assert.equal('This is an error.', err);
     });
 
     it('correctly handles errors from setting annotations', function() {
@@ -349,23 +349,23 @@
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Error: "This is an error."
+        Error: 'This is an error.'
       });
-      assert.equal("This is an error.", err)
+      assert.equal('This is an error.', err);
     });
 
     it('correctly handles errors from removing annotations', function() {
       var err;
-      env.remove_annotations('service-haproxy', ['key1', 'key2'], 
-        function(data) {
-          err = data.err;
-        });
+      env.remove_annotations('service-haproxy', ['key1', 'key2'],
+          function(data) {
+            err = data.err;
+          });
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Error: "This is an error."
+        Error: 'This is an error.'
       });
-      assert.equal("This is an error.", err)
+      assert.equal('This is an error.', err);
     });
   });
 

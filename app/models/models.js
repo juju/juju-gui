@@ -29,7 +29,7 @@ YUI.add('juju-models', function(Y) {
         data[name.replace('-', '_')] = value;
       });
       if (list.createDisplayName) {
-        data['displayName'] = list.createDisplayName(data['id']);
+        data.displayName = list.createDisplayName(data.id);
       }
       if (!Y.Lang.isValue(o)) {
         o = list.add(data);
@@ -104,6 +104,14 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
     model: Service,
+    /**
+     * Create a display name that can be used in the views as an entity label
+     * agnostic from juju type.
+     *
+     * @method createDisplayName
+     * @param {String} name The name to modify.
+     * @return {String} A display name.
+     */
     createDisplayName: function(name) {
       return name.replace('service-', '');
     },
@@ -147,7 +155,18 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
     model: ServiceUnit,
+    /**
+     * Create a display name that can be used in the views as an entity label
+     * agnostic from juju type.
+     *
+     * @method createDisplayName
+     * @param {String} name The name to modify.
+     * @return {String} A display name.
+     */
     createDisplayName: function(name) {
+      // The following is needed to allow '.' to be allowed in RegExps by
+      // JSLint.
+      /*jslint regexp: true*/
       return name.replace('unit-', '').replace(/^(.+)-(\d+)$/, '$1/$2');
     },
 
@@ -247,6 +266,14 @@ YUI.add('juju-models', function(Y) {
 
   var MachineList = Y.Base.create('machineList', Y.LazyModelList, [], {
     model: Machine,
+    /**
+     * Create a display name that can be used in the views as an entity label
+     * agnostic from juju type.
+     *
+     * @method createDisplayName
+     * @param {String} name The name to modify.
+     * @return {String} A display name.
+     */
     createDisplayName: function(name) {
       return (name + '').replace('machine-', '');
     },

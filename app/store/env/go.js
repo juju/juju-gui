@@ -205,7 +205,7 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @param {Object} entity The name of a machine, unit, service, or
      *   environment, e.g. 'machine-0', 'unit-mysql-0', or 'service-mysql'.
-     *   To specify the environment as the entity the magic string 
+     *   To specify the environment as the entity the magic string
      *   'environment' is used.
      * @param {Object} data A dictionary of key, value pairs.
      * @return {undefined} Nothing.
@@ -232,10 +232,10 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @param {Object} entity The name of a machine, unit, service, or
      *   environment, e.g. 'machine-0', 'unit-mysql-0', or 'service-mysql'.
-     *   To specify the environment as the entity the magic string 
+     *   To specify the environment as the entity the magic string
      *   'environment' is used.
      * @param {Object} keys A list of annotation key names for the
-     *   annotations to be deleted.  
+     *   annotations to be deleted.
      * @return {undefined} Nothing.
      * @method remove_annotations
      */
@@ -260,7 +260,7 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     * Transform the data returned from juju-core 'SetAnnotations' into that 
+     * Transform the data returned from juju-core 'SetAnnotations' into that
      * suitable for the user callback.
      *
      * @method handleSetAnnotations
@@ -282,7 +282,7 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @param {Object} entity The name of a machine, unit, service, or
      *   environment, e.g. 'machine-0', 'unit-mysql-0', or 'service-mysql'.
-     *   To specify the environment as the entity the magic string 
+     *   To specify the environment as the entity the magic string
      *   'environment' is used.
      * @return {Object} A dictionary of key,value pairs is returned in the
      *   callback.  The invocation of this command returns nothing.
@@ -304,7 +304,7 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     * Transform the data returned from juju-core 'GetAnnotations' into that 
+     * Transform the data returned from juju-core 'GetAnnotations' into that
      * suitable for the user callback.
      *
      * @method handleGetAnnotations
@@ -320,7 +320,7 @@ YUI.add('juju-env-go', function(Y) {
         entity: entity,
         results: data.Response && data.Response.Annotations
       });
-    },
+    }
 
   });
 
