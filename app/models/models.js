@@ -28,6 +28,9 @@ YUI.add('juju-models', function(Y) {
       Y.each(change_data, function(value, name) {
         data[name.replace('-', '_')] = value;
       });
+      if (list.createDisplayName) {
+        data['displayName'] = list.createDisplayName(data['id']);
+      }
       if (!Y.Lang.isValue(o)) {
         o = list.add(data);
       } else {
@@ -79,6 +82,7 @@ YUI.add('juju-models', function(Y) {
 
   var Service = Y.Base.create('service', Y.Model, [], {
     ATTRS: {
+      displayName: {},
       name: {},
       charm: {},
       config: {},
@@ -100,6 +104,9 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
     model: Service,
+    createDisplayName: function(name) {
+      return name.replace('service-', '');
+    },
 
     process_delta: function(action, data) {
       _process_delta(this, action, data, {exposed: false});
@@ -120,6 +127,7 @@ YUI.add('juju-models', function(Y) {
       //    idAttribute: 'name',
       {
         ATTRS: {
+          displayName: {},
           machine: {},
           agent_state: {},
           // This is empty if there are no relation errors, and otherwise
@@ -139,6 +147,9 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
     model: ServiceUnit,
+    createDisplayName: function(name) {
+      return name.replace('unit-', '').replace(/^(.+)-(\d+)$/, '$1/$2');
+    },
 
     process_delta: function(action, data) {
       _process_delta(this, action, data, {relation_errors: {}});
@@ -224,6 +235,7 @@ YUI.add('juju-models', function(Y) {
     idAttribute: 'machine_id'
   }, {
     ATTRS: {
+      displayName: {},
       machine_id: {},
       public_address: {},
       instance_id: {},
@@ -235,6 +247,9 @@ YUI.add('juju-models', function(Y) {
 
   var MachineList = Y.Base.create('machineList', Y.LazyModelList, [], {
     model: Machine,
+    createDisplayName: function(name) {
+      return (name + '').replace('machine-', '');
+    },
 
     process_delta: function(action, data) {
       _process_delta(this, action, data, {});
