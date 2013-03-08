@@ -4,20 +4,21 @@
 /**
  * Provides the Charm Slider widget.
  *
- * @namespace juju.widgets.browser
+ * @namespace juju
  * @module widgets
+ * @submodule browser.CharmSlider
  *
  */
 YUI.add('browser-charm-slider', function(Y) {
-  var sub = Y.Lang.sub;
-  var ns = Y.namespace('juju.widgets.browser');
+  var sub = Y.Lang.sub,
+      ns = Y.namespace('juju.widgets.browser');
 
   /**
    * The CharmSlider provides a rotating display of one member of a generic set
    * of items, with controls to go directly to a given item.
    *
    * @class CharmSlider
-   * @extends { Y.ScrollView }
+   * @extends {Y.ScrollView}
    *
    */
   ns.CharmSlider = new Y.Base.create('browser-charm-slider', Y.ScrollView, [], {
@@ -26,7 +27,7 @@ YUI.add('browser-charm-slider', function(Y) {
      * Template for the CharmSlider
      *
      * @property charmSliderTemplate
-     * @type { string }
+     * @type {String}
      *
      */
     charmSliderTemplate: '<ul width="{width}px" />',
@@ -35,7 +36,7 @@ YUI.add('browser-charm-slider', function(Y) {
      * Template for a given item in the slider
      *
      * @property itemTemplate
-     * @type { string }
+     * @type {String}
      *
      */
     itemTemplate: '<li width="{width}px" data-index="{index}" />',
@@ -44,7 +45,7 @@ YUI.add('browser-charm-slider', function(Y) {
      * Template used for the navigation controls.
      *
      * @property prevNavTemplate
-     * @type { string }
+     * @type {String}
      */
     navTemplate: '<ul class="navigation"></div>',
 
@@ -52,23 +53,34 @@ YUI.add('browser-charm-slider', function(Y) {
      * Template used for items in the navigation.
      *
      * @property navItemTemplate
-     * @type { string }
+     * @type {String}
      */
     navItemTemplate: '<li data-index="{index}">O</li>',
 
     /**
-     * Initializer
-     *
-     * @method initializer
-     * @param {Object} The config object.
-     *
-     */
-
-    initializer: function(cfg) {
-      this.plug(Y.Plugin.ScrollViewPaginator, {
-        selector: 'li'
-      });
-
+      * Advances the slider to the next item, or a designated index.
+      *
+      * @method _advanceSlide
+      * @param {string} Index to move to; if not supplied, advances to next
+      * slide.
+      * @private
+      */
+    _advanceSlide: function(index) {
+      Y.log('_advanceSlide', 'info', this.name);
+      Y.log(index, 'info', this.name);
+      var pages = this.pages;
+      if (Y.Lang.isValue(index)) {
+        this._stopTimer();
+        pages.scrollToIndex(index);
+        this._startTimer();
+      } else {
+        index = pages.get('index');
+        if (index < pages.get('total') - 1) {
+          pages.next();
+        } else {
+          pages.scrollToIndex(0);
+        }
+      }
     },
 
     /**
@@ -79,15 +91,15 @@ YUI.add('browser-charm-slider', function(Y) {
      * @return {Node} The slider's DOM nodes.
      *
      */
-
     _generateDOM: function() {
       var that = this,
+          width = this.get('width'),
           slider = Y.Node.create(
-              sub(this.charmSliderTemplate, {width: this.get('width')}));
+              sub(this.charmSliderTemplate, {width: width}));
 
       Y.Array.map(this.get('items'), function(item, index) {
         var tmpNode = Y.Node.create(
-            sub(that.itemTemplate, {width: that.get('width'), index: index}));
+            sub(that.itemTemplate, {width: width, index: index}));
         tmpNode.setContent(item);
         slider.append(tmpNode);
       });
@@ -112,29 +124,18 @@ YUI.add('browser-charm-slider', function(Y) {
     },
 
     /**
-      * Advances the slider to the next item, or a designated index
+      * Mouseenter/mouseleave event handler
       *
-      * @method _advanceSlide
-      * @param {string} Index to move to; if not supplied, advances to next
-      * slide.
+      * @method _pauseAutoAdvance
       * @private
+      * @param {object} mouseout or mouseover event object.
       */
-    _advanceSlide: function(index) {
-      Y.log('_advanceSlide', 'info', this.name);
-      Y.log(index, 'info', this.name);
-      var pages = this.pages;
-      if (Y.Lang.isValue(index)) {
-        this._stopTimer();
-        index = parseInt(index, 10);
-        pages.scrollToIndex(index);
-        this._startTimer();
+    _pauseAutoAdvance: function(e) {
+      Y.log('pauseAutoAdvance', 'info', this.name);
+      if (e.type === 'mouseenter') {
+        this.set('paused', true);
       } else {
-        index = pages.get('index');
-        if (index < pages.get('total') - 1) {
-          pages.next();
-        } else {
-          pages.scrollToIndex(0);
-        }
+        this.set('paused', false);
       }
     },
 
@@ -149,7 +150,7 @@ YUI.add('browser-charm-slider', function(Y) {
 
       if (this.get('autoAdvance') === true) {
         var timer = Y.later(this.get('advanceDelay'), this, function() {
-          if (this.get('pauseOnHover') !== true) {
+          if (this.get('paused') !== true) {
             this._advanceSlide();
           }
         }, null, true);
@@ -172,22 +173,6 @@ YUI.add('browser-charm-slider', function(Y) {
     },
 
     /**
-      * Mouseenter/mouseleave event handler
-      *
-      * @method _pauseAutoAdvance
-      * @private
-      * @param {object} mouseout or mouseover event object.
-      */
-    _pauseAutoAdvance: function(e) {
-      Y.log('pauseAutoAdvance', 'info', this.name);
-      if (e.type === 'mouseenter') {
-        this.set('pauseOnHover', true);
-      } else {
-        this.set('pauseOnHover', false);
-      }
-    },
-
-    /**
       * Binds the navigate event listeners
       *
       * @method bindUI
@@ -197,7 +182,7 @@ YUI.add('browser-charm-slider', function(Y) {
       Y.log('bindUI', 'info', this.name);
 
       //Call the parent bindUI method
-      Y.juju.widgets.browser.CharmSlider.superclass.bindUI.apply(this);
+      ns.CharmSlider.superclass.bindUI.apply(this);
 
       var that = this,
           events = this.get('_events'),
@@ -208,19 +193,9 @@ YUI.add('browser-charm-slider', function(Y) {
       events.push(boundingBox.on('mouseleave', this._pauseAutoAdvance, this));
       events.push(nav.delegate('click', function() {
         var index = this.getAttribute('data-index');
+        index = parseInt(index, 10);
         that._advanceSlide(index);
       }, 'li'));
-    },
-
-    /**
-      * Render the nodes and HTML for the slider.
-      *
-      * @method renderUI
-      * @private
-      */
-    renderUI: function() {
-      this.get('contentBox').setHTML(this._generateDOM());
-      this._generateSliderControls();
     },
 
     /**
@@ -234,15 +209,39 @@ YUI.add('browser-charm-slider', function(Y) {
       this.get('_events').each(function(event) {
         event.detach();
       });
-    }
+    },
 
+    /**
+     * Initializer
+     *
+     * @method initializer
+     * @param {Object} The config object.
+     *
+     */
+    initializer: function(cfg) {
+      this.plug(Y.Plugin.ScrollViewPaginator, {
+        selector: 'li'
+      });
+
+    },
+
+    /**
+      * Render the nodes and HTML for the slider.
+      *
+      * @method renderUI
+      * @private
+      */
+    renderUI: function() {
+      this.get('contentBox').setHTML(this._generateDOM());
+      this._generateSliderControls();
+    }
   }, {
     ATTRS: {
 
       /**
        * @attribute width
-       * @default 500
-       * @type { int }
+       * @default 200
+       * @type {Int}
        *
        */
       width: {
@@ -252,7 +251,7 @@ YUI.add('browser-charm-slider', function(Y) {
       /**
        * @attribute autoAdvance
        * @default true
-       * @type { boolean }
+       * @type {Boolean}
        *
        */
       autoAdvance: {
@@ -262,7 +261,7 @@ YUI.add('browser-charm-slider', function(Y) {
       /**
        * @attribute advanceDelay
        * @default 3000
-       * @type { int }
+       * @type {Int}
        *
        */
       advanceDelay: {
@@ -270,19 +269,19 @@ YUI.add('browser-charm-slider', function(Y) {
       },
 
       /**
-       * @attribute pauseOnHover
+       * @attribute paused
        * @default false
-       * @type { boolean }
+       * @type {Boolean}
        *
        */
-      pauseOnHover: {
+      paused: {
         value: false
       },
 
       /**
        * @attribute items
        * @default []
-       * @type { array }
+       * @type {Array}
        *
        */
       items: {
@@ -291,7 +290,7 @@ YUI.add('browser-charm-slider', function(Y) {
          * Verify items aren't larger than max value.
          *
          * @method validator
-         * @param { array } The items being validated.
+         * @param {Array} The items being validated.
          */
         validator: function(val) {
           return (val.length <= this.get('max'));
@@ -301,7 +300,7 @@ YUI.add('browser-charm-slider', function(Y) {
       /**
        * @attribute _events
        * @default []
-       * @type { array }
+       * @type {Array}
        *
        */
       _events: {
@@ -311,7 +310,7 @@ YUI.add('browser-charm-slider', function(Y) {
       /**
        * @attribute max
        * @default 5
-       * @type { int }
+       * @type {Int}
        *
        */
       max: {
@@ -321,7 +320,7 @@ YUI.add('browser-charm-slider', function(Y) {
       /**
        * @attribute timer
        * @default null
-       * @type { Object }
+       * @type {Object}
        *
        */
       timer: {
@@ -333,9 +332,9 @@ YUI.add('browser-charm-slider', function(Y) {
 }, '0.1.0', {
   requires: [
     'array-extras',
+    'base',
+    'event-mouseenter',
     'scrollview',
-    'scrollview-paginator',
-    'base-build',
-    'event-mouseenter'
+    'scrollview-paginator'
   ]
 });

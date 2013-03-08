@@ -5,14 +5,15 @@ describe('charm slider', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['browser-charm-slider', 'browser-charm-small', 'node'], function(Y) {
+        ['browser-charm-slider', 'browser-charm-small', 'event-simulate',
+         'node-event-simulate', 'node'], function(Y) {
           done();
         });
   });
 
   beforeEach(function() {
     container = Y.Node.create('<div id="container"></div>');
-    Y.one(document.body).prepend(container);
+    Y.one('body').prepend(container);
   });
 
   afterEach(function() {
@@ -51,5 +52,30 @@ describe('charm slider', function() {
     cs.render(container);
     var nav = Y.one('.navigation');
     assert.equal(items.length, nav.all('li').size());
+  });
+
+  it('pauses on hover', function() {
+    var cs = new Y.juju.widgets.browser.CharmSlider({items: ['<div/>']});
+    cs.render(container);
+    Y.one('.yui3-browser-charm-slider').simulate('mouseover');
+    assert.isTrue(cs.get('paused'), 'Slider is not paused.');
+    Y.one('.yui3-browser-charm-slider').simulate('mouseout');
+    assert.isFalse(cs.get('paused'), 'Slider is not paused.');
+  });
+
+  it('goes to the right slide on nav click', function() {
+    var cs = new Y.juju.widgets.browser.CharmSlider({
+      items: ['<div/>', '<div/>'],
+      autoAdvance: false
+    });
+    cs.render(container);
+    assert.equal(
+        0, cs.pages.get('index'),
+        'Slider did not start on first slide.');
+    var li = Y.one('.navigation').all('li').pop();
+    li.simulate('click');
+    assert.equal(
+        1, cs.pages.get('index'),
+        'Slider did not advance to second slide.');
   });
 });
