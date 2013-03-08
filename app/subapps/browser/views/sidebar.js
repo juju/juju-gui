@@ -26,7 +26,16 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       }
     },
 
-    _toggle_sidebar: function (ev) {
+    /**
+     * Toggle the visibility of the sidebar. Bound to nav controls in the
+     * view, however this will be expanded to be controlled from the new
+     * constant nav menu outside of the view once it's completed.
+     *
+     * @method _toggle_sidebar
+     * @param {Event} ev event to trigger the toggle.
+     *
+     */
+    _toggle_sidebar: function(ev) {
       var sidebar = Y.one('#bws-sidebar');
 
       if (this.visible) {

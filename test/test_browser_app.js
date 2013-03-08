@@ -8,23 +8,19 @@
         '</div>').appendTo(docBody);
   };
 
-  var getDummyApp = function(Y) {
-
-  };
-
   describe('browser fullscreen view', function() {
     var browser, FullScreen, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-        'juju-views',
-        'juju-browser',
-        'subapp-browser-fullscreen', function(Y) {
-        browser = Y.namespace('juju.browser');
-        views = Y.namespace('juju.browser.views');
-        FullScreen = views.FullScreen;
-        done();
-      });
+          'juju-views',
+          'juju-browser',
+          'subapp-browser-fullscreen', function(Y) {
+            browser = Y.namespace('juju.browser');
+            views = Y.namespace('juju.browser.views');
+            FullScreen = views.FullScreen;
+            done();
+          });
     });
 
     beforeEach(function() {
@@ -53,15 +49,15 @@
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-        'juju-browser',
-        'juju-views',
-        'subapp-browser-sidebar',
-        function(Y) {
-        browser = Y.namespace('juju.browser');
-        views = Y.namespace('juju.browser.views');
-        Sidebar = views.Sidebar;
-        done();
-      });
+          'juju-browser',
+          'juju-views',
+          'subapp-browser-sidebar',
+          function(Y) {
+            browser = Y.namespace('juju.browser');
+            views = Y.namespace('juju.browser.views');
+            Sidebar = views.Sidebar;
+            done();
+          });
     });
 
     beforeEach(function() {
@@ -89,20 +85,19 @@
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-        'app-subapp-extension',
-        'juju-views',
-        'juju-browser',
-        'subapp-browser', function(Y) {
-        browser = Y.namespace('juju.subapps');
-        done();
-      });
+          'app-subapp-extension',
+          'juju-views',
+          'juju-browser',
+          'subapp-browser', function(Y) {
+            browser = Y.namespace('juju.subapps');
+            done();
+          });
     });
 
     it('verify that route callables exist', function() {
       var app = new browser.Browser();
       Y.each(app.get('routes'), function(route) {
         Y.Lang.isValue(app[route.callback]);
-
       });
 
     });

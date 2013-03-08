@@ -89,6 +89,15 @@ YUI.add('subapp-browser', function(Y) {
      */
     destructor: function() {},
 
+    /**
+     * Handle the route for the sidebar view.
+     *
+     * @method sidebar
+     * @param {Request} req current request object.
+     * @param {Response} res current response object.
+     * @param {function} next callable for the next route in the chain.
+     *
+     */
     sidebar: function(req, res, next) {
       // console.log('showing sidebar', this.name);
       // this.showView('sidebar');
