@@ -1190,7 +1190,7 @@ YUI.add('juju-gui', function(Y) {
           // Logout.
           { path: '/logout/', callbacks: 'logout'},
           // Root.
-          { path: '/', callbacks: 'show_environment', namespace: 'gui'}
+          { path: '/', callbacks: 'show_environment'}
         ]
       }
     }

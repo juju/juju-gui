@@ -70,7 +70,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     render: function(container) {
-      if (!Y.Lang.isValue(container)) {
+      if (typeof container !== 'object') {
         container = this.get('container');
       }
       container.setHTML(this.template({}));

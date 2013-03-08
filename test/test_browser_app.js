@@ -97,7 +97,7 @@
     it('verify that route callables exist', function() {
       var app = new browser.Browser();
       Y.each(app.get('routes'), function(route) {
-        Y.Lang.isValue(app[route.callback]);
+        assert.isTrue(typeof app[route.callback] === 'function');
       });
 
     });
