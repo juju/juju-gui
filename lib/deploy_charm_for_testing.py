@@ -85,12 +85,8 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
         print('Setting branch for charm to deploy...')
         options['juju-gui-source'] = branch
     with make_config_file(options) as config_file:
-        try:
-            juju('deploy --environment juju-gui-testing --config {} '
-                'cs:~hatch/precise/juju-gui'.format(config_file.name))
-        except Exception, e:
-            print(e)
-            print(e.output)
+        juju('deploy --environment juju-gui-testing --config {} '
+            'cs:~hatch/precise/juju-gui'.format(config_file.name))
     print('Waiting for service to start...')
     wait_for_machine()
     # Fetches the instance ID from the testing instances to apply an IP to
