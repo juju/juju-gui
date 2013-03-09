@@ -16,7 +16,7 @@ YUI.add('juju-charm-store', function(Y) {
    */
   var CharmStore = Y.Base.create('charm', Y.Base, [], {
 
-    loadByPath: function(path, options) {
+    loadByPath: function(path, options, cfg) {
       this.get('datasource').sendRequest({
         request: path,
         callback: {
@@ -25,7 +25,8 @@ YUI.add('juju-charm-store', function(Y) {
                 Y.JSON.parse(io_request.response.results[0].responseText));
           },
           failure: options.failure
-        }
+        },
+        cfg: cfg || {}
       });
     },
 

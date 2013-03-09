@@ -12,6 +12,37 @@ YUI.add('juju-charm-models', function(Y) {
   var models = Y.namespace('juju.models');
   var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)-(\d+)$/;
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
+  var simpleCharmIdRe = /^(?:(\w+):)?(?!:~)(\w+)$/;
+  var simpleIdElements = ['scheme', 'package_name'];
+  var parseCharmId = models.parseCharmId = function(charmId, defaultSeries) {
+    if (Y.Lang.isString(charmId)) {
+      var parts = charmIdRe.exec(charmId);
+      var pairs;
+      if (parts) {
+        parts.shift(); // Get rid of the first, full string.
+        pairs = Y.Array.zip(idElements, parts);
+      } else if (defaultSeries) {
+        parts = simpleCharmIdRe.exec(charmId);
+        if (parts) {
+          parts.shift(); // Get rid of the first, full string.
+          pairs = Y.Array.zip(simpleIdElements, parts);
+          pairs.push(['series', defaultSeries]);
+        }
+      }
+      if (parts) {
+        var result = {};
+        Y.Array.map(pairs, function(pair) { result[pair[0]] = pair[1]; });
+        result.charm_store_path = [
+          (result.owner ? '~' + result.owner : 'charms'),
+           result.series,
+           result.package_name + (
+            result.revision ? '-' + result.revision : ''),
+           'json'
+          ].join('/');
+        return result;
+      }
+    }
+  };
 
   /**
    * Charms, once instantiated and loaded with data from their respective
@@ -49,32 +80,23 @@ YUI.add('juju-charm-models', function(Y) {
 
     initializer: function() {
       var id = this.get('id'),
-              parts = id && charmIdRe.exec(id),
+              parts = parseCharmId(id),
               self = this;
-      if (!Y.Lang.isValue(id) || !parts) {
+      if (!parts) {
         throw 'Developers must initialize charms with a well-formed id.';
       }
       this.loaded = false;
       this.on('load', function() { this.loaded = true; });
-      parts.shift();
-      Y.each(
-          Y.Array.zip(idElements, parts),
-          function(pair) { self.set(pair[0], pair[1]); });
+      Y.Object.each(
+          parts,
+          function(value, key) { self.set(key, value); });
       // full_name
       var tmp = [this.get('series'), this.get('package_name')],
-              owner = this.get('owner');
+          owner = this.get('owner');
       if (owner) {
         tmp.unshift('~' + owner);
       }
       this.set('full_name', tmp.join('/'));
-      // charm_store_path
-      this.set(
-          'charm_store_path',
-          [(owner ? '~' + owner : 'charms'),
-           this.get('series'),
-           (this.get('package_name') + '-' + this.get('revision')),
-           'json'
-          ].join('/'));
     },
 
     sync: function(action, options, callback) {
@@ -117,9 +139,9 @@ YUI.add('juju-charm-models', function(Y) {
     parse: function() {
       var data = Charm.superclass.parse.apply(this, arguments),
               self = this;
-      data.is_subordinate = data.subordinate;
+      data.is_subordinate = data.subordinate || false;
       Y.each(data, function(value, key) {
-        if (!value ||
+        if (    !value ||
                 !self.attrAdded(key) ||
                 Y.Lang.isValue(self.get(key))) {
           delete data[key];
@@ -166,7 +188,7 @@ YUI.add('juju-charm-models', function(Y) {
       config: {writeOnce: true},
       description: {writeOnce: true},
       full_name: {writeOnce: true},
-      is_subordinate: {writeOnce: true},
+      is_subordinate: {writeOnce: true, value: false},
       last_change: {
         writeOnce: true,
 
