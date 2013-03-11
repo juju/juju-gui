@@ -40,6 +40,8 @@ browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
 config = {
     'username': 'juju-gui',
     'access-key': '0a3b7821-93ed-4a2d-abdb-f34854eeaba3',
+    'command-timeout' : 400,
+    'idle-timeout': 300,
     }
 
 credentials = ':'.join([config['username'], config['access-key']])

@@ -11,6 +11,8 @@ import os
 
 juju_command = shelltoolbox.command('juju')
 
+DEFAULT_BRANCH = 'lp:~hatch/juju-gui/remote-testing'
+DEFAULT_CHARM = 'cs:~hatch/precise/juju-gui'
 
 def juju(s):
     return juju_command(*s.split())
@@ -21,7 +23,7 @@ def get_branch_url(argv):
     if len(argv) > 1:
         branch = argv[1]
     else:
-        branch = None  # trunk
+        branch = DEFAULT_BRANCH
 
     return branch
 
@@ -80,13 +82,15 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
     print('Bootstrapping...')
     juju('bootstrap --environment juju-gui-testing')
     print('Deploying service...')
-    options = {'serve-tests': True, 'staging': True, 'secure': False, 'juju-gui-source': 'lp:~hatch/juju-gui/remote-testing'}
+    options = {'serve-tests': True, 'staging': True, 'secure': False,
+               'juju-gui-source': DEFAULT_BRANCH}
     if branch is not None:
         print('Setting branch for charm to deploy...')
         options['juju-gui-source'] = branch
     with make_config_file(options) as config_file:
-        juju('deploy --environment juju-gui-testing --config {} '
-            'cs:~hatch/precise/juju-gui'.format(config_file.name))
+        juju('deploy --environment juju-gui-testing --config {} {}'.format(
+            config_file.name, DEFAULT_CHARM))
+
     print('Waiting for service to start...')
     wait_for_machine()
     # Fetches the instance ID from the testing instances to apply an IP to
