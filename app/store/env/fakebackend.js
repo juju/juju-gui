@@ -79,6 +79,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
         name: The name of the service to be deployed, defaulting to the charm
           name.
         config: The charm configuration options, defaulting to none.
+        configYAML: The charm configuration options, expressed as a YAML
+          string.  You may provide only one of config or configYAML.
         unitCount: The number of units to be deployed.
       @return {undefined} Get the result from the callback.
      */
@@ -195,6 +197,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
         name: The name of the service to be deployed, defaulting to the charm
           name.
         config: The charm configuration options, defaulting to none.
+        configYAML: The charm configuration options, expressed as a YAML
+          string.  You may provide only one of config or configYAML.
         unitCount: The number of units to be deployed.
       @return {undefined} Get the result from the callback.
      */
@@ -204,6 +208,24 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       if (this.db.services.getById(options.name)) {
         return callback({error: 'A service with this name already exists.'});
+      }
+      if (options.configYAML) {
+        if (options.config) {
+          return callback(
+            {error: 'Do not provide both a config and configYAML.'});
+        }
+        if (!Y.Lang.isString(options.configYAML)) {
+          return callback(
+            {error: 'Developer error: configYAML is not a string.'});
+        }
+        try {
+          options.config = jsyaml.safeLoad(options.configYAML);
+        } catch (e) {
+          if (e instanceof jsyaml.YAMLException) {
+            return callback({error: 'Error parsing YAML.\n' + e});
+          }
+          throw e;
+        }
       }
       var service = this.db.services.add({
         id: options.name,
@@ -327,7 +349,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         }
       }
       return machines;
-    },
+    } // ,
 
     // removeUnit: function() {
 
@@ -384,6 +406,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
+    'js-yaml',
     'juju-models'
   ]
 });

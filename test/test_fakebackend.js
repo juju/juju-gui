@@ -189,11 +189,46 @@
       assert.equal(result.service.get('id'), 'kumquat');
     });
 
-    // it('accepts a config file.');
+    it('does not accept both a config and config string.', function() {
+      fakebackend.deploy(
+          'cs:wordpress',
+          callback,
+          {config: {funny: 'business'}, configYAML: 'foo'});
+      assert.equal(
+        result.error, 'Do not provide both a config and configYAML.');
+    });
 
-    // it('does not accept both a config and config file.');
+    it('rejects a non-string configYAML', function() {
+      fakebackend.deploy('cs:wordpress', callback, {configYAML: {}});
+      assert.equal(
+        result.error, 'Developer error: configYAML is not a string.');
+    });
 
-    // it('records when services and units are added.');
+    it('accepts a YAML config string.', function() {
+      fakebackend.deploy(
+        'cs:wordpress',
+        callback,
+        {configYAML:
+          Y.io('assets/mysql-config.yaml', {sync: true}).responseText});
+      assert.isObject(result.service.get('config'));
+      assert.equal(result.service.get('config')['tuning-level'], 'super bad');
+    });
+
+    it('rejects unparseable YAML config string.', function() {
+      fakebackend.deploy(
+        'cs:wordpress',
+        callback,
+        {configYAML: 'auto_id: %n'});
+      assert.equal(
+        result.error,
+        'Error parsing YAML.\n' +
+        'JS-YAML: end of the stream or a document separator is expected ' +
+        'at line 1, column 10:\n' +
+        '    auto_id: %n\n' +
+        '             ^');
+    });
+
+    // it('records when services, units, and machines are added.');
 
   });
 
@@ -273,7 +308,7 @@
       assert.isString(result.machines[0].machine_id);
       assert.isString(result.machines[0].public_address);
       assert.match(
-        result.machines[0].public_address, /^.+?\.example\.com$/);
+        result.machines[0].public_address, /^[^.]+\.example\.com$/);
       assert.equal(result.machines[0].agent_state, 'running');
       assert.equal(result.machines[0].instance_state, 'running');
     });
@@ -295,7 +330,7 @@
       assert.lengthOf(result.machines, 5);
     });
 
-    // it('records when services and units are added.');
+    // it('records when units and machines are added.');
 
   });
 })();
