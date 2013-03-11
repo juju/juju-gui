@@ -265,7 +265,17 @@
       assert.equal(result.units[0].agent_state, 'started');
       assert.deepEqual(
           result.units[0], fakebackend.db.units.getById('wordpress/2'));
-      // TODO Verify that machines exist.
+      // Creating units also created/assigned associated machines.  Like units,
+      // these are simple objects, not models.
+      assert.lengthOf(result.machines, 1);
+      assert.equal(
+        result.machines[0].machine_id, result.units[0].machine);
+      assert.isString(result.machines[0].machine_id);
+      assert.isString(result.machines[0].public_address);
+      assert.match(
+        result.machines[0].public_address, /^.+?\.example\.com$/);
+      assert.equal(result.machines[0].agent_state, 'running');
+      assert.equal(result.machines[0].instance_state, 'running');
     });
 
     it('adds multiple units', function() {
@@ -282,6 +292,7 @@
       assert.equal(result.units[2].id, 'wordpress/4');
       assert.equal(result.units[3].id, 'wordpress/5');
       assert.equal(result.units[4].id, 'wordpress/6');
+      assert.lengthOf(result.machines, 5);
     });
 
     // it('records when services and units are added.');

@@ -255,26 +255,79 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!service) {
         return {error: 'Service "' + serviceName + '" does not exist.'};
       }
-      if (!service.unitSequence) {
+      if (!Y.Lang.isValue(service.unitSequence)) {
         service.unitSequence = 0;
       }
       var result = [];
-      // var unitMachines = this._getUnitMachines(numUnits);
+      var machines = this._getUnitMachines(numUnits);
 
       for (var i = 0; i < numUnits; i += 1) {
         var unitId = service.unitSequence += 1;
         result.push(
             this.db.units.add({
               'id': serviceName + '/' + unitId,
-              //'machine': unit_machines.shift(),
+              'machine': machines[i].machine_id,
               // The models use underlines, not hyphens (see
               // app/models/models.js in _process_delta.)
               'agent_state': 'started'
             })
         );
       }
-      return {units: result};
-    } // ,
+      return {units: result, machines: machines};
+    },
+
+    /**
+      Find machines without any units currently assigned.
+
+      @method _getAvailableMachines
+      @return {Array} An array of zero or more machines that have been
+        previously allocated but that are not currently in use by a unit.
+     */
+    _getAvailableMachines: function () {
+      var machines = [];
+      var usedMachineIds = {};
+      this.db.units.each(function (unit){
+        if (unit.machine_id) {
+          usedMachineIds[unit.machine_id] = true;
+        }
+      });
+      this.db.machines.each(function (machine) {
+         if (!usedMachineIds[machine.machine_id]) {
+            machines.push(machine);
+         }
+      });
+      return machines;
+    },
+
+    /**
+      Find or allocate machines for the requested number of units.
+
+      @method _getUnitMachines
+      @param {Integer} count The number of units that need machines.
+      @return {Array} An array of [count] machines.
+     */
+    _getUnitMachines: function(count) {
+      var machines = [];
+      var availableMachines = this._getAvailableMachines();
+      var machineId;
+      if (!Y.Lang.isValue(this.db.machineSequence)) {
+        this.db.machineSequence = 0;
+      }
+      for (var i = 0; i < count; i += 1) {
+        if (i < availableMachines.length) {
+          machines.push(availableMachines[i]);
+        } else {
+          machineId = this.db.machines.machineSequence += 1;
+          machines.push(
+            this.db.machines.add({
+              'machine_id': machineId.toString(),
+              'public_address': 'addr-' + machineId.toString() + '.example.com',
+              'agent_state': 'running',
+              'instance_state': 'running'}));
+        }
+      }
+      return machines;
+    },
 
     // removeUnit: function() {
 
