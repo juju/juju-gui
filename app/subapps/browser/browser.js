@@ -33,7 +33,12 @@ YUI.add('subapp-browser', function(Y) {
       fullscreenCharm: {
         type: 'juju.browser.views.FullScreen',
         preserve: true
+      },
+      sidebar: {
+        type: 'juju.browser.views.Sidebar',
+        preserve: true
       }
+
     },
 
     /**
@@ -56,7 +61,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
-      console.log('showing fullscreen', this.name);
       this.showView('fullscreen');
       next();
     },
@@ -71,7 +75,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreenCharm: function(req, res, next) {
-      console.log('showing fullscreen charm', this.name);
       this.showView('fullscreenCharm');
       next();
     },
@@ -82,7 +85,21 @@ YUI.add('subapp-browser', function(Y) {
      * @method destructor
      *
      */
-    destructor: function() {}
+    destructor: function() {},
+
+    /**
+     * Handle the route for the sidebar view.
+     *
+     * @method sidebar
+     * @param {Request} req current request object.
+     * @param {Response} res current response object.
+     * @param {function} next callable for the next route in the chain.
+     *
+     */
+    sidebar: function(req, res, next) {
+      this.showView('sidebar');
+      next();
+    }
 
   }, {
     ATTRS: {
@@ -95,11 +112,17 @@ YUI.add('subapp-browser', function(Y) {
       routes: {
         value: [
           { path: '/bws/fullscreen/', callbacks: 'fullscreen' },
-          { path: '/bws/fullscreen/:id/', callbacks: 'fullscreenCharm' }
-          // { path: '/bws/sidebar/:id/', callbacks: 'sidebar_charm' },
+          { path: '/bws/fullscreen/:id/', callbacks: 'fullscreenCharm' },
+          { path: '/bws/sidebar/', callbacks: 'sidebar' }
         ]
       }
     }
   });
 
-}, '0.1.0', {requires: ['sub-app', 'subapp-browser-fullscreen']});
+}, '0.1.0', {
+  requires: [
+    'sub-app',
+    'subapp-browser-fullscreen',
+    'subapp-browser-sidebar'
+  ]
+});
