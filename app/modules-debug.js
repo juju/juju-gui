@@ -56,6 +56,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/charm-slider.js'
         },
 
+        'browser-search-widget': {
+          fullpath: '/juju-ui/widgets/charm-search.js'
+        },
+
         'reconnecting-websocket': {
           fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },
