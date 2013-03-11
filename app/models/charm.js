@@ -34,11 +34,11 @@ YUI.add('juju-charm-models', function(Y) {
         Y.Array.map(pairs, function(pair) { result[pair[0]] = pair[1]; });
         result.charm_store_path = [
           (result.owner ? '~' + result.owner : 'charms'),
-           result.series,
-           result.package_name + (
-            result.revision ? '-' + result.revision : ''),
-           'json'
-          ].join('/');
+          result.series,
+          result.package_name + (
+              result.revision ? '-' + result.revision : ''),
+          'json'
+        ].join('/');
         return result;
       }
     }
@@ -139,11 +139,11 @@ YUI.add('juju-charm-models', function(Y) {
     parse: function() {
       var data = Charm.superclass.parse.apply(this, arguments),
               self = this;
-      data.is_subordinate = data.subordinate || false;
+      data.is_subordinate = data.subordinate;
       Y.each(data, function(value, key) {
-        if (    !value ||
-                !self.attrAdded(key) ||
-                Y.Lang.isValue(self.get(key))) {
+        if (!value ||
+            !self.attrAdded(key) ||
+            Y.Lang.isValue(self.get(key))) {
           delete data[key];
         }
       });
@@ -188,7 +188,7 @@ YUI.add('juju-charm-models', function(Y) {
       config: {writeOnce: true},
       description: {writeOnce: true},
       full_name: {writeOnce: true},
-      is_subordinate: {writeOnce: true, value: false},
+      is_subordinate: {writeOnce: true},
       last_change: {
         writeOnce: true,
 

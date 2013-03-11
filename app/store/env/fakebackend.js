@@ -34,7 +34,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     /**
       Initializes.
-     
+
       @method initializer
       @return {undefined} Nothing.
      */
@@ -44,7 +44,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     /**
       Attempt to log a user in.
-     
+
       @method login
       @param {String} username The id of the user.
       @param {String} submittedPassword The user-submitted password.
@@ -66,7 +66,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     /**
       Deploy a charm.  Uses a callback for response!
-     
+
       @method deploy
       @param {String} charmUrl The URL of the charm.
       @param {Function} callback A call that will receive an object either
@@ -91,18 +91,22 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       var self = this;
       this._loadCharm(
-        charmId,
-        { success: function(charm) {
-            self._deployFromCharm(charm, callback, options);
-          },
-          failure: callback
-        }
+          charmId,
+          {
+            /**
+              Deploy the successfully-obtained charm.
+             */
+            success: function(charm) {
+              self._deployFromCharm(charm, callback, options);
+            },
+            failure: callback
+          }
       );
     },
 
     /**
       Get a charm from a URL, via charmStore and/or db.  Uses callbacks.
-     
+
       @method _loadCharm
       @param {String} charmUrl The URL of the charm.
       @param {Function} callbacks An optional object with optional success and
@@ -114,14 +118,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
      */
     _loadCharm: function(charmId, callbacks) {
       var charmIdParts = models.parseCharmId(
-        charmId, this.get('defaultSeries'));
+          charmId, this.get('defaultSeries'));
       if (!callbacks) {
         callbacks = {};
       }
       if (!charmIdParts) {
         return (
-          callbacks.failure &&
-          callbacks.failure({error: 'Invalid charm id.'}));
+            callbacks.failure &&
+            callbacks.failure({error: 'Invalid charm id.'}));
       }
       var charm = this.db.charms.getById(charmId);
       if (charm) {
@@ -130,19 +134,26 @@ YUI.add('juju-env-fakebackend', function(Y) {
         // Get the charm data.
         var self = this;
         this.get('charmStore').loadByPath(
-          charmIdParts.charm_store_path,
-          { success: function(data) {
-              var charm = self._getCharmFromData(data);
-              if (callbacks.success) {
-                callbacks.success(charm);
-              }
-            },
-            failure: function(e) {
-              if (callbacks.failure) {
-                callbacks.failure({error: 'Could not contact charm store.'});
+            charmIdParts.charm_store_path,
+            {
+              /**
+                Convert the charm data to a charm and use the success callback.
+               */
+              success: function(data) {
+                var charm = self._getCharmFromData(data);
+                if (callbacks.success) {
+                  callbacks.success(charm);
+                }
+              },
+              /**
+                Inform the caller of an error using the charm store.
+               */
+              failure: function(e) {
+                if (callbacks.failure) {
+                  callbacks.failure({error: 'Could not contact charm store.'});
+                }
               }
             }
-          }
         );
       }
 
@@ -152,7 +163,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       Convert charm data as returned by the charmStore into a charm.
       The charm might be pre-existing or might need to be created, but
       after this method it will be within the db.
-     
+
       @method _getCharmFromData
       @param {Object} data The raw charm information as delivered by the
         charmStore's loadByPath method.
@@ -172,7 +183,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     /**
       Deploy a charm, given the charm, a callback, and options.
-     
+
       @param {Object} charm The charm to be deployed, from the db.
       @param {Function} callback A call that will receive an object either
         with an "error" attribute containing a string describing the problem,
@@ -221,7 +232,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     /**
       Add units to the given service.
-     
+
       @method addUnit
       @param {String} serviceName The name of the service to be scaled up.
       @param {Integer} numUnits The number of units to be added, defaulting
@@ -253,13 +264,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
       for (var i = 0; i < numUnits; i += 1) {
         var unitId = service.unitSequence += 1;
         result.push(
-          this.db.units.add({
-            'id': serviceName + '/' + unitId,
-            //'machine': unit_machines.shift(),
-            // The models use underlines, not hyphens (see app/models/models.js
-            // in _process_delta.)
-            'agent_state': 'started'
-          })
+            this.db.units.add({
+              'id': serviceName + '/' + unitId,
+              //'machine': unit_machines.shift(),
+              // The models use underlines, not hyphens (see
+              // app/models/models.js in _process_delta.)
+              'agent_state': 'started'
+            })
         );
       }
       return {units: result};

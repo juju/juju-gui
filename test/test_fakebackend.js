@@ -38,12 +38,12 @@
         {datasource: new Y.DataSource.Local({source: data})});
     var setCharm = function(name) {
       data[0] = (
-        { responseText: Y.io(
-            'data/' + name + '-charmdata.json', {sync: true}).responseText });
+          { responseText: Y.io(
+              'data/' + name + '-charmdata.json', {sync: true}).responseText });
     };
     setCharm('wordpress');
     var fakebackend = new module.FakeBackend(
-      {charmStore: charmStore});
+        {charmStore: charmStore});
     fakebackend.login('admin', 'password');
     return {fakebackend: fakebackend, setCharm: setCharm};
   };
@@ -64,7 +64,7 @@
 
     beforeEach(function() {
       var setupData = makeFakeBackendWithCharmStore(
-        Y, juju, environmentsModule);
+          Y, juju, environmentsModule);
       fakebackend = setupData.fakebackend;
       setCharm = setupData.setCharm;
       result = undefined;
@@ -89,11 +89,11 @@
     it('deploys a charm', function() {
       // Defaults service name to charm name; defaults unit count to 1.
       assert.isNull(
-        fakebackend.db.charms.getById('cs:precise/wordpress-10'));
+          fakebackend.db.charms.getById('cs:precise/wordpress-10'));
       assert.isUndefined(fakebackend.deploy('cs:wordpress', callback));
       assert.isUndefined(result.error);
       assert.isObject(
-        fakebackend.db.charms.getById('cs:precise/wordpress-10'));
+          fakebackend.db.charms.getById('cs:precise/wordpress-10'));
       var service = fakebackend.db.services.getById('wordpress');
       assert.isObject(service);
       assert.strictEqual(service, result.service);
@@ -109,7 +109,7 @@
         id: 'wordpress',
         initialized: true,
         name: 'wordpress',
-        subordinate: false
+        subordinate: undefined
       });
       var units = fakebackend.db.units.get_units_for_service(service);
       assert.lengthOf(units, 1);
@@ -133,7 +133,7 @@
     it('reuses already-loaded charms with the same explicit id.', function() {
       fakebackend._loadCharm('cs:wordpress');
       assert.isObject(
-        fakebackend.db.charms.getById('cs:precise/wordpress-10'));
+          fakebackend.db.charms.getById('cs:precise/wordpress-10'));
       // Eliminate the charmStore to show we reuse the pre-loaded charm.
       fakebackend.set('charmStore', undefined);
       fakebackend.deploy('cs:precise/wordpress-10', callback);
@@ -146,17 +146,26 @@
       fakebackend._loadCharm('cs:wordpress');
       var charm = fakebackend.db.charms.getById('cs:precise/wordpress-10');
       assert.equal(fakebackend.db.charms.size(), 1);
+      // The charm data shows that this is not a subordinate charm.  We will
+      // change this in the db, to show that the db data is used within the
+      // deploy code.
+      assert.isUndefined(charm.get('is_subordinate'));
+      // The _set forces a change to a writeOnly attribute.
+      charm._set('is_subordinate', true);
       fakebackend.deploy('cs:wordpress', callback);
       assert.isUndefined(result.error);
       assert.strictEqual(
-        fakebackend.db.charms.getById('cs:precise/wordpress-10'), charm);
+          fakebackend.db.charms.getById('cs:precise/wordpress-10'), charm);
       assert.equal(fakebackend.db.charms.size(), 1);
       assert.equal(result.service.get('charm'), 'cs:precise/wordpress-10');
+      // This is the clearest indication that we used the db version, as
+      // opposed to the charmStore version, per the comments above.
+      assert.isTrue(result.service.get('subordinate'));
     });
 
     it('accepts a config.', function() {
       fakebackend.deploy(
-        'cs:wordpress', callback, {config: {funny: 'business'}});
+          'cs:wordpress', callback, {config: {funny: 'business'}});
       assert.deepEqual(result.service.get('config'), {funny: 'business'});
     });
 
@@ -178,14 +187,14 @@
 
     it('honors the optional service name', function() {
       assert.isUndefined(
-        fakebackend.deploy('cs:wordpress', callback, {name: 'kumquat'}));
+          fakebackend.deploy('cs:wordpress', callback, {name: 'kumquat'}));
       assert.equal(result.service.get('id'), 'kumquat');
     });
 
     // it('accepts a config file.');
 
     // it('does not accept both a config and config file.');
-    
+
     // it('records when services and units are added.');
 
   });
@@ -207,7 +216,7 @@
 
     beforeEach(function() {
       var setupData = makeFakeBackendWithCharmStore(
-        Y, juju, environmentsModule);
+          Y, juju, environmentsModule);
       fakebackend = setupData.fakebackend;
       setCharm = setupData.setCharm;
       deployResult = undefined;
@@ -228,36 +237,36 @@
       fakebackend.deploy('cs:wordpress', callback);
       assert.isUndefined(deployResult.error);
       assert.equal(
-        fakebackend.addUnit('wordpress', 'goyesca').error,
-        'Invalid number of units.');
+          fakebackend.addUnit('wordpress', 'goyesca').error,
+          'Invalid number of units.');
       assert.equal(
-        fakebackend.addUnit('wordpress', 0).error,
-        'Invalid number of units.');
+          fakebackend.addUnit('wordpress', 0).error,
+          'Invalid number of units.');
       assert.equal(
-        fakebackend.addUnit('wordpress', -1).error,
-        'Invalid number of units.');
+          fakebackend.addUnit('wordpress', -1).error,
+          'Invalid number of units.');
     });
 
     it('returns an error if the service does not exist.', function() {
       assert.equal(
-        fakebackend.addUnit('foo').error,
-        'Service "foo" does not exist.');
+          fakebackend.addUnit('foo').error,
+          'Service "foo" does not exist.');
     });
 
     it('defaults to adding just one unit', function() {
       fakebackend.deploy('cs:wordpress', callback);
       assert.isUndefined(deployResult.error);
       assert.lengthOf(
-        fakebackend.db.units.get_units_for_service(deployResult.service), 1);
+          fakebackend.db.units.get_units_for_service(deployResult.service), 1);
       var result = fakebackend.addUnit('wordpress');
       assert.lengthOf(result.units, 1);
       assert.lengthOf(
-        fakebackend.db.units.get_units_for_service(deployResult.service), 2);
+          fakebackend.db.units.get_units_for_service(deployResult.service), 2);
       // Units are simple objects, not models.
       assert.equal(result.units[0].id, 'wordpress/2');
       assert.equal(result.units[0].agent_state, 'started');
       assert.deepEqual(
-        result.units[0], fakebackend.db.units.getById('wordpress/2'));
+          result.units[0], fakebackend.db.units.getById('wordpress/2'));
       // TODO Verify that machines exist.
     });
 
@@ -265,11 +274,11 @@
       fakebackend.deploy('cs:wordpress', callback);
       assert.isUndefined(deployResult.error);
       assert.lengthOf(
-        fakebackend.db.units.get_units_for_service(deployResult.service), 1);
+          fakebackend.db.units.get_units_for_service(deployResult.service), 1);
       var result = fakebackend.addUnit('wordpress', 5);
       assert.lengthOf(result.units, 5);
       assert.lengthOf(
-        fakebackend.db.units.get_units_for_service(deployResult.service), 6);
+          fakebackend.db.units.get_units_for_service(deployResult.service), 6);
       assert.equal(result.units[0].id, 'wordpress/2');
       assert.equal(result.units[1].id, 'wordpress/3');
       assert.equal(result.units[2].id, 'wordpress/4');
