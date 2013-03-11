@@ -37,9 +37,7 @@
     var charmStore = new juju.CharmStore(
         {datasource: new Y.DataSource.Local({source: data})});
     var setCharm = function(name) {
-      data[0] = (
-          { responseText: Y.io(
-              'data/' + name + '-charmdata.json', {sync: true}).responseText });
+      data[0] = Y.io('data/' + name + '-charmdata.json', {sync: true});
     };
     setCharm('wordpress');
     var fakebackend = new module.FakeBackend(
