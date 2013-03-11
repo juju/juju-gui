@@ -189,6 +189,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/env/python.js'
         },
 
+        'juju-env-fakebackend': {
+          fullpath: '/juju-ui/store/env/fakebackend.js'
+        },
+
         'juju-notification-controller': {
           fullpath: '/juju-ui/store/notifications.js'
         },
