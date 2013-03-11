@@ -28,9 +28,6 @@ YUI.add('juju-models', function(Y) {
       Y.each(change_data, function(value, name) {
         data[name.replace('-', '_')] = value;
       });
-      if (list.createDisplayName) {
-        data.displayName = list.createDisplayName(data.id);
-      }
       if (!Y.Lang.isValue(o)) {
         o = list.add(data);
       } else {
@@ -116,6 +113,20 @@ YUI.add('juju-models', function(Y) {
       return name.replace('service-', '');
     },
 
+    _setDefaultsAndCalculatedValues: function(obj) {
+      obj.set('displayName', this.createDisplayName(obj.get('id')));
+    },
+
+    add: function() {
+      var result = ServiceUnitList.superclass.add.apply(this, arguments);
+      if (Y.Lang.isArray(result)) {
+        Y.Array.each(result, this._setDefaultsAndCalculatedValues, this);
+      } else {
+        this._setDefaultsAndCalculatedValues(result);
+      }
+      return result;
+    },
+
     process_delta: function(action, data) {
       _process_delta(this, action, data, {exposed: false});
     }
@@ -180,12 +191,13 @@ YUI.add('juju-models', function(Y) {
       obj.number = parseInt(raw[1], 10);
       obj.urlName = obj.id.replace('/', '-');
       obj.name = 'serviceUnit'; // This lets us more easily mimic models.
+      obj.displayName = this.createDisplayName(obj.id);
     },
 
     add: function() {
       var result = ServiceUnitList.superclass.add.apply(this, arguments);
       if (Y.Lang.isArray(result)) {
-        Y.Array.each(result, this._setDefaultsAndCalculatedValues);
+        Y.Array.each(result, this._setDefaultsAndCalculatedValues, this);
       } else {
         this._setDefaultsAndCalculatedValues(result);
       }
@@ -276,6 +288,20 @@ YUI.add('juju-models', function(Y) {
      */
     createDisplayName: function(name) {
       return (name + '').replace('machine-', '');
+    },
+
+    _setDefaultsAndCalculatedValues: function(obj) {
+      obj.displayName = this.createDisplayName(obj.id);
+    },
+
+    add: function() {
+      var result = ServiceUnitList.superclass.add.apply(this, arguments);
+      if (Y.Lang.isArray(result)) {
+        Y.Array.each(result, this._setDefaultsAndCalculatedValues, this);
+      } else {
+        this._setDefaultsAndCalculatedValues(result);
+      }
+      return result;
     },
 
     process_delta: function(action, data) {
