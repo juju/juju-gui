@@ -77,12 +77,12 @@
 
     it('rejects unauthenticated calls', function() {
       fakebackend.logout();
-      fakebackend.deploy('cs:wordpress', {}, callback);
+      fakebackend.deploy('cs:wordpress', callback);
       assert.equal(result.error, 'Please log in.');
     });
 
     it('rejects poorly formed charm ids', function() {
-      fakebackend.deploy('shazam!!!!!!', {}, callback);
+      fakebackend.deploy('shazam!!!!!!', callback);
       assert.equal(result.error, 'Invalid charm id.');
     });
 
@@ -90,7 +90,7 @@
       // Defaults service name to charm name; defaults unit count to 1.
       assert.isNull(
         fakebackend.db.charms.getById('cs:precise/wordpress-10'));
-      assert.isUndefined(fakebackend.deploy('cs:wordpress', {}, callback));
+      assert.isUndefined(fakebackend.deploy('cs:wordpress', callback));
       assert.isUndefined(result.error);
       assert.isObject(
         fakebackend.db.charms.getById('cs:precise/wordpress-10'));
@@ -119,14 +119,14 @@
     });
 
     it('rejects names that duplicate an existing service', function() {
-      fakebackend.deploy('cs:wordpress', {}, callback);
+      fakebackend.deploy('cs:wordpress', callback);
       assert.isUndefined(result.error);
       // The service name is provided explicitly.
-      fakebackend.deploy('cs:haproxy', {name: 'wordpress'}, callback);
+      fakebackend.deploy('cs:haproxy', callback, {name: 'wordpress'});
       assert.equal(result.error, 'A service with this name already exists.');
       // The service name is derived from charm.
       result = undefined;
-      fakebackend.deploy('cs:wordpress', {}, callback);
+      fakebackend.deploy('cs:wordpress', callback);
       assert.equal(result.error, 'A service with this name already exists.');
     });
 
@@ -134,21 +134,60 @@
       fakebackend._loadCharm('cs:wordpress');
       assert.isObject(
         fakebackend.db.charms.getById('cs:precise/wordpress-10'));
-      // Eliminate the charmStore to show we reuse the charm,
+      // Eliminate the charmStore to show we reuse the pre-loaded charm.
       fakebackend.set('charmStore', undefined);
-      fakebackend.deploy('cs:precise/wordpress-10', {}, callback);
+      fakebackend.deploy('cs:precise/wordpress-10', callback);
       assert.isUndefined(result.error);
       assert.isObject(result.service);
       assert.equal(result.service.get('charm'), 'cs:precise/wordpress-10');
     });
 
-    it('reuses already-loaded charms with the same id.');
-    it('accepts a config.');
-    it('accepts a config file.');
-    it('does not accept both a config and config file.');
-    it('reports when the charm store is inaccessible.');
-    it('deploys multiple units.');
-    it('records when services and units are added.');
+    it('reuses already-loaded charms with the same id.', function() {
+      fakebackend._loadCharm('cs:wordpress');
+      var charm = fakebackend.db.charms.getById('cs:precise/wordpress-10');
+      assert.equal(fakebackend.db.charms.size(), 1);
+      fakebackend.deploy('cs:wordpress', callback);
+      assert.isUndefined(result.error);
+      assert.strictEqual(
+        fakebackend.db.charms.getById('cs:precise/wordpress-10'), charm);
+      assert.equal(fakebackend.db.charms.size(), 1);
+      assert.equal(result.service.get('charm'), 'cs:precise/wordpress-10');
+    });
+
+    it('accepts a config.', function() {
+      fakebackend.deploy(
+        'cs:wordpress', callback, {config: {funny: 'business'}});
+      assert.deepEqual(result.service.get('config'), {funny: 'business'});
+    });
+
+    it('deploys multiple units.', function() {
+      fakebackend.deploy('cs:wordpress', callback, {unitCount: 3});
+      var units = fakebackend.db.units.get_units_for_service(result.service);
+      assert.lengthOf(units, 3);
+      assert.lengthOf(result.units, 3);
+      assert.deepEqual(units, result.units);
+    });
+
+    it('reports when the charm store is inaccessible.', function() {
+      fakebackend.get('charmStore').loadByPath = function(path, options) {
+        options.failure({boo: 'hiss'});
+      };
+      fakebackend.deploy('cs:wordpress', callback);
+      assert.equal(result.error, 'Could not contact charm store.');
+    });
+
+    it('honors the optional service name', function() {
+      assert.isUndefined(
+        fakebackend.deploy('cs:wordpress', callback, {name: 'kumquat'}));
+      assert.equal(result.service.get('id'), 'kumquat');
+    });
+
+    // it('accepts a config file.');
+
+    // it('does not accept both a config and config file.');
+    
+    // it('records when services and units are added.');
+
   });
 
   describe('FakeBackend.addUnit', function() {
@@ -186,7 +225,7 @@
     });
 
     it('returns an error for an invalid number of units', function() {
-      fakebackend.deploy('cs:wordpress', {}, callback);
+      fakebackend.deploy('cs:wordpress', callback);
       assert.isUndefined(deployResult.error);
       assert.equal(
         fakebackend.addUnit('wordpress', 'goyesca').error,
@@ -206,7 +245,7 @@
     });
 
     it('defaults to adding just one unit', function() {
-      fakebackend.deploy('cs:wordpress', {}, callback);
+      fakebackend.deploy('cs:wordpress', callback);
       assert.isUndefined(deployResult.error);
       assert.lengthOf(
         fakebackend.db.units.get_units_for_service(deployResult.service), 1);
@@ -219,11 +258,11 @@
       assert.equal(result.units[0].agent_state, 'started');
       assert.deepEqual(
         result.units[0], fakebackend.db.units.getById('wordpress/2'));
-      // XXX verify machines
+      // TODO Verify that machines exist.
     });
 
     it('adds multiple units', function() {
-      fakebackend.deploy('cs:wordpress', {}, callback);
+      fakebackend.deploy('cs:wordpress', callback);
       assert.isUndefined(deployResult.error);
       assert.lengthOf(
         fakebackend.db.units.get_units_for_service(deployResult.service), 1);
@@ -237,6 +276,8 @@
       assert.equal(result.units[3].id, 'wordpress/5');
       assert.equal(result.units[4].id, 'wordpress/6');
     });
-    it('records when services and units are added.');
+
+    // it('records when services and units are added.');
+
   });
 })();
