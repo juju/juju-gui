@@ -358,6 +358,24 @@ describe('juju models', function() {
     var env = db.environment;
     env.get('annotations').should.eql({});
   });
+
+  it('returns a display name for a service', function() {
+    var services = new models.ServiceList();
+    assert.equal('mysql', services.createDisplayName('service-mysql'));
+    assert.equal('mysql', services.createDisplayName('mysql'));
+  });
+
+  it('returns a display name for a unit', function() {
+    var units = new models.ServiceUnitList();
+    assert.equal('mysql/0', units.createDisplayName('unit-mysql-0'));
+    assert.equal('mysql/0', units.createDisplayName('mysql/0'));
+  });
+
+  it('returns a display name for a machine', function() {
+    var machines = new models.MachineList();
+    assert.equal('0', machines.createDisplayName('machine-0'));
+    assert.equal('0', machines.createDisplayName('0'));
+  });
 });
 
 

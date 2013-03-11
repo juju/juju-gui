@@ -148,6 +148,7 @@
       };
       assert.deepEqual(expected, last_message);
     });
+
     it('successfully exposes a service', function() {
       var service_name;
       env.expose('mysql', function(data) {
@@ -178,6 +179,194 @@
 
     });
 
+    it('sends the correct get_annotations message', function() {
+      env.get_annotations('service-apache');
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'GetAnnotations',
+        RequestId: 1,
+        Params: {EntityId: 'service-apache'}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends the correct update_annotations message', function() {
+      env.update_annotations('service-apache', {'mykey': 'myvalue'});
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'SetAnnotations',
+        RequestId: 1,
+        Params: {
+          EntityId: 'service-apache',
+          Pairs: {
+            mykey: 'myvalue'
+          }
+        }
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends correct multiple update_annotations messages', function() {
+      env.update_annotations('service-apache', {
+        'key1': 'value1',
+        'key2': 'value2'
+      });
+      var expected = [
+        {
+          Type: 'Client',
+          Request: 'SetAnnotations',
+          RequestId: 1,
+          Params: {
+            EntityId: 'service-apache',
+            Pairs: {
+              key1: 'value1',
+              key2: 'value2'
+            }
+          }
+        }
+      ];
+      assert.deepEqual(expected, conn.messages);
+    });
+
+    it('sends the correct remove_annotations message', function() {
+      env.remove_annotations('service-apache', ['key1']);
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'SetAnnotations',
+        RequestId: 1,
+        Params: {
+          EntityId: 'service-apache',
+          Pairs: {
+            key1: ''
+          }
+        }
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('sends the correct remove_annotations message', function() {
+      env.remove_annotations('service-apache', ['key1', 'key2']);
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'SetAnnotations',
+        RequestId: 1,
+        Params: {
+          EntityId: 'service-apache',
+          Pairs: {
+            key1: '',
+            key2: ''
+          }
+        }
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully retrieves annotations', function() {
+      var annotations;
+      var expected = {
+        'key1': 'value1',
+        'key2': 'value2'
+      };
+      env.get_annotations('service-mysql', function(data) {
+        annotations = data.results;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {
+          Annotations: expected
+        }
+      });
+      assert.deepEqual(expected, annotations);
+    });
+
+    it('successfully sets annotation', function() {
+      var err;
+      env.update_annotations('mysql', {'mykey': 'myvalue'}, function(data) {
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {}
+      });
+      assert.isUndefined(err);
+    });
+
+    it('successfully sets annotations', function() {
+      var err;
+      env.update_annotations('mysql', {
+        'key1': 'value1',
+        'key2': 'value2'
+      }, function(data) {
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {}
+      });
+      assert.isUndefined(err);
+    });
+
+    it('successfully removes annotations', function() {
+      var err;
+      env.remove_annotations('mysql', ['key1', 'key2'], function(data) {
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {}
+      });
+      assert.isUndefined(err);
+    });
+
+    it('correctly handles errors from getting annotations', function() {
+      var err;
+      env.get_annotations('service-haproxy', function(data) {
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'This is an error.'
+      });
+      assert.equal('This is an error.', err);
+    });
+
+    it('correctly handles errors from setting annotations', function() {
+      var err;
+      env.update_annotations('service-haproxy', {
+        'key': 'value'
+      }, function(data) {
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'This is an error.'
+      });
+      assert.equal('This is an error.', err);
+    });
+
+    it('correctly handles errors from removing annotations', function() {
+      var err;
+      env.remove_annotations('service-haproxy', ['key1', 'key2'],
+          function(data) {
+            err = data.err;
+          });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'This is an error.'
+      });
+      assert.equal('This is an error.', err);
+    });
   });
 
 })();

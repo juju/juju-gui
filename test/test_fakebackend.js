@@ -107,6 +107,7 @@
         id: 'wordpress',
         initialized: true,
         name: 'wordpress',
+        displayName: 'wordpress',
         subordinate: undefined
       });
       var units = fakebackend.db.units.get_units_for_service(service);

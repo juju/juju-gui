@@ -51,6 +51,7 @@
       db.charms.add([charm]);
       service = new models.Service({
         id: 'mysql',
+        displayName: 'mysql',
         charm: 'cs:precise/mysql-5',
         unit_count: 1,
         loaded: true});
@@ -65,11 +66,13 @@
       db.services.add([service]);
       unit = {
         id: 'mysql/0',
+        displayName: 'mysql/0',
         agent_state: 'pending',
         machine: 'machine-0'};
       db.units.add([unit]);
       machine = {
         id: 'machine-0',
+        displayName: '0',
         agent_state: 'pending',
         instance_id: 'instance-0',
         instance_state: 'running',
