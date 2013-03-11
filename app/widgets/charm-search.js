@@ -1,14 +1,26 @@
 'use strict';
 
+
 /**
  * The widget used across Browser view to manage the search box and the
  * controls for selecting which view you're in.
+ *
+ * @module widgets
+ * @submodule browser
  *
  */
 YUI.add('browser-search-widget', function(Y) {
   var ns = Y.namespace('juju.widgets.browser'),
       templates = Y.namespace('juju.views').Templates;
 
+  /**
+   * Search widget present in the Charm browser across both fullscreen and
+   * sidebar views.
+   *
+   * @class Search
+   * @extends {Y.Widget}
+   *
+   */
   ns.Search = Y.Base.create('search-widget', Y.Widget, [], {
     _events: [],
 
@@ -20,11 +32,28 @@ YUI.add('browser-search-widget', function(Y) {
 
     TEMPLATE: templates['browser-search'],
 
-    _toggle_fullscreen: function (ev) {
+    /**
+     * Expose to the outside world that we've got a request to go fullscreen.
+     *
+     * @method _toggle_fullscreen
+     * @param {Event} ev the click event from the control.
+     * @private
+     *
+     */
+    _toggle_fullscreen: function(ev) {
       this.fire(this.EVT_TOGGLE_FULLSCREEN);
     },
 
-    _toggle_viewable: function (ev) {
+    /**
+     * Expose to the outside world that we've got a request to hide from
+     * sight.
+     *
+     * @method _toggle_viewable
+     * @param {Event} ev the click event from the control.
+     * @private
+     *
+     */
+    _toggle_viewable: function(ev) {
       this.fire(this.EVT_TOGGLE_VIEWABLE);
     },
 
@@ -41,16 +70,22 @@ YUI.add('browser-search-widget', function(Y) {
       });
     },
 
+    /**
+     * bind the UI events to the DOM making up the widget control.
+     *
+     * @method bindUI
+     *
+     */
     bindUI: function() {
       var container = this.get('boundingBox');
 
       this._events.push(
-        container.one('.bws-icon').on(
-          'click', this._toggle_viewable, this)
+          container.one('.bws-icon').on(
+              'click', this._toggle_viewable, this)
       );
       this._events.push(
-        container.one('.toggle-fullscreen').on(
-          'click', this._toggle_fullscreen, this)
+          container.one('.toggle-fullscreen').on(
+              'click', this._toggle_fullscreen, this)
       );
 
       // Note that the search could be updated either from our internal input
@@ -58,20 +93,41 @@ YUI.add('browser-search-widget', function(Y) {
       // it to update to a specific value. This is how things like clicking
       // categories can work.
       this._events.push(
-        container.one('input').on('valuechange', function(ev) {
-          this.fire(this.EVT_SEARCH_CHANGED);
-        }, this)
+          container.one('input').on('valuechange', function(ev) {
+            this.fire(this.EVT_SEARCH_CHANGED);
+          }, this)
       );
     },
 
-    clear_search: function(ev) {
+    /**
+     * Clear the search input control in order to reset it.
+     *
+     * @method clear_search
+     *
+     */
+    clear_search: function() {
       this.get('contentBox').one('input').set('value', '');
     },
 
+
+    /**
+     * destory the widget and unbind all DOM events.
+     *
+     * @method destructor
+     *
+     */
     destructor: function() {
       this._unbind_ui();
     },
 
+    /**
+     * Generic initializer for the widget. Publish events we expose for
+     * outside use.
+     *
+     * @method initializer
+     * @param {Object} cfg configuration override object.
+     *
+     */
     initializer: function(cfg) {
       /**
        * Fires when the "Charm Browser" link is checked. Needs to communicate
@@ -84,18 +140,39 @@ YUI.add('browser-search-widget', function(Y) {
       this.publish(this.EVT_SEARCH_CHANGED);
     },
 
+    /**
+     * Render all the things!
+     *
+     * @method renderUI
+     *
+     */
     renderUI: function() {
       this.get('contentBox').setHTML(
-        this.TEMPLATE(this.getAttrs())
+          this.TEMPLATE(this.getAttrs())
       );
     },
 
-    syncUI: function() {
-    },
+    /**
+     * Sync the widget to the currente DOM code. Since we render/create
+     * nothing implemented here at the moment.
+     *
+     * @method syncUI
+     *
+     */
+    syncUI: function() {},
 
-    update_search: function (newval) {
+    /**
+     * Update the search input to contain the string passed. This is meant to
+     * be used by outside links that want to perform a pre-canned search and
+     * display results.
+     *
+     * @method update_search
+     * @param {String} newval the sting to update the input to.
+     *
+     */
+    update_search: function(newval) {
       this.get('boundingBox').one('input').set('value', newval);
-    },
+    }
 
   }, {
     ATTRS: {

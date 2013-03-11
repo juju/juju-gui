@@ -1,7 +1,7 @@
 'use strict';
 
 
-describe.only('browser search widget', function() {
+describe('browser search widget', function() {
   var Y, container, Search;
 
   before(function(done) {
@@ -9,9 +9,9 @@ describe.only('browser search widget', function() {
                                'event-simulate',
                                'node-event-simulate',
                                'node'], function(Y) {
-          Search = Y.juju.widgets.browser.Search;
-          done();
-        });
+      Search = Y.juju.widgets.browser.Search;
+      done();
+    });
   });
 
   beforeEach(function() {
@@ -44,8 +44,8 @@ describe.only('browser search widget', function() {
   //   var input = container.one('input');
   //   input.set('value', 'test');
   //   input.simulate('valuechange');
-  //   // now trigger the event and make sure that it fired to our custom watcher
-  //   // outside the widget.
+  //   // now trigger the event and make sure that it fired to our custom
+  //   // watcher outside the widget.
   //   triggered.should.eql(true);
   // });
 
