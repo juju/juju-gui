@@ -247,7 +247,6 @@ if (/*@cc_on!@*/false) {
               juju_config.socket_url += ':' + port;
             }
             juju_config.socket_url += '/ws';
-            console.log('websocket url', juju_config.socket_url);
           }
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application
