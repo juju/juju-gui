@@ -179,7 +179,7 @@
 
     });
 
-    it('can deploy a service', function() {
+    it('successfully deploys a service', function() {
       env.deploy('precise/mysql');
       msg = conn.last_message();
       var expected = {
@@ -193,7 +193,7 @@
       assert.deepEqual(expected, msg);
     });
 
-    it('can deploy a service with a config file', function() {
+    it('successfully deploys a service with a config file', function() {
       /*jshint multistr:true */
       var config_raw = 'tuning-level: \nexpert-mojo';
       /*jshint multistr:false */
@@ -211,6 +211,23 @@
       env.deploy('precise/mysql', null, null, config_raw);
       msg = conn.last_message();
       assert.deepEqual(expected, msg);
+    });
+
+    it('handles failed service deploy', function() {
+      var service_name;
+      var err;
+      env.deploy('precise/mysql', 'mysql', null, null, null, function(data) {
+        service_name = data.service_name;
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'service "mysql" not found'
+      });
+      assert.equal(service_name, 'mysql');
+      assert.equal(err, 'service "mysql" not found');
+
     });
 
     it('sends the correct get_annotations message', function() {
