@@ -78,32 +78,35 @@ def wait_for_machine(get_state=get_state, sleep=time.sleep):
 def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
          make_config_file=make_config_file):
     """Deploy the Juju GUI service and wait for it to become available."""
-    branch = get_branch_url(argv)
-    print('Bootstrapping...')
-    juju('bootstrap --environment juju-gui-testing')
-    print('Deploying service...')
-    options = {'serve-tests': True, 'staging': True, 'secure': False,
-               'juju-gui-source': branch}
-    print('Setting branch for charm to deploy %s' % branch)
-    with make_config_file(options) as config_file:
-        juju('deploy --environment juju-gui-testing --config {} {}'.format(
-            config_file.name, DEFAULT_CHARM))
+    try:
+        branch = get_branch_url(argv)
+        print('Bootstrapping...')
+        juju('bootstrap --environment juju-gui-testing')
+        print('Deploying service...')
+        options = {'serve-tests': True, 'staging': True, 'secure': False,
+                   'juju-gui-source': branch}
+        print('Setting branch for charm to deploy %s' % branch)
+        with make_config_file(options) as config_file:
+            juju('deploy --environment juju-gui-testing --config {} {}'.format(
+                config_file.name, DEFAULT_CHARM))
 
-    print('Waiting for service to start...')
-    wait_for_machine()
-    # Fetches the instance ID from the testing instances to apply an IP to
-    instance_ip = os.environ.get("JUJU_INSTANCE_IP")
-    if instance_ip:
-        print('Assigning JUJU_INSTANCE_IP %s' % instance_ip)
-        instance_id = subprocess.check_output(
-            "euca-describe-instances | grep INSTANCE | grep juju-juju-gui-testing-instance-1 | awk '{print $2;}'", shell=True).strip()
-        subprocess.check_call("euca-associate-address -i %s %s" % (instance_id, instance_ip), shell=True)
-        print('Assigned IP to %s' % instance_id)
+        print('Waiting for service to start...')
+        wait_for_machine()
+        # Fetches the instance ID from the testing instances to apply an IP to
+        instance_ip = os.environ.get("JUJU_INSTANCE_IP")
+        if instance_ip:
+            print('Assigning JUJU_INSTANCE_IP %s' % instance_ip)
+            instance_id = subprocess.check_output(
+                "euca-describe-instances | grep INSTANCE | grep juju-juju-gui-testing-instance-1 | awk '{print $2;}'", shell=True).strip()
+            subprocess.check_call("euca-associate-address -i %s %s" % (instance_id, instance_ip), shell=True)
+            print('Assigned IP to %s' % instance_id)
 
-    wait_for_service()
-    print('Exposing the service...')
-    juju('expose juju-gui --environment juju-gui-testing')
-
+        wait_for_service()
+        print('Exposing the service...')
+        juju('expose juju-gui --environment juju-gui-testing')
+    except RuntimeError, e:
+        print("Execution failure, unable to continue")
+        print(e)
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
