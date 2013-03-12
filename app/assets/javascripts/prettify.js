@@ -33,9 +33,6 @@ h={};g()}};typeof define==="function"&&define.amd&&define("google-code-prettify"
 /** END minified prettify block **/
 
 ns = Y.namespace('prettify');
-ns.prettyPrint = function(e) {
-  prettyPrint(); 
-}
-
+ns.prettyPrint = prettyPrint; 
 }, '4-march-13', {requires: []
 });
