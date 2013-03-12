@@ -1,5 +1,6 @@
 from __future__ import print_function
 
+import argparse
 import json
 import shelltoolbox
 import sys
@@ -16,17 +17,6 @@ DEFAULT_CHARM = 'cs:~juju-gui/precise/juju-gui'
 
 def juju(s):
     return juju_command(*s.split())
-
-
-def get_branch_url(argv):
-    """Extract the requested branch URL (if any)."""
-    if len(argv) > 1:
-        branch = argv[1]
-    else:
-        branch = DEFAULT_BRANCH
-
-    return branch
-
 
 def get_status():
     """Get the current status info as a JSON document."""
@@ -79,17 +69,22 @@ def wait_for_machine(get_state=get_state, sleep=time.sleep):
 def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
          make_config_file=make_config_file):
     """Deploy the Juju GUI service and wait for it to become available."""
+    parser = argparse.ArgumentParser(
+        description='Deploy juju-gui for testing')
+    parser.add_argument('branch', default=DEFAULT_BRANCH)
+    parser.add_argument('charm', default=DEFAULT_CHARM)
+    options = parser.parse_args()
+
     try:
-        branch = get_branch_url(argv)
         print('Bootstrapping...')
         juju('bootstrap --environment juju-gui-testing')
         print('Deploying service...')
         options = {'serve-tests': True, 'staging': True, 'secure': False,
-                   'juju-gui-source': branch}
-        print('Setting branch for charm to deploy %s' % branch)
+                   'juju-gui-source': options.branch}
+        print('Setting branch for charm to deploy %s' % options.branch)
         with make_config_file(options) as config_file:
             juju('deploy --environment juju-gui-testing --config {} {}'.format(
-                config_file.name, DEFAULT_CHARM))
+                config_file.name, options.charm))
 
         print('Waiting for service to start...')
         wait_for_machine()
@@ -112,4 +107,4 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
     return 1
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv))
+    sys.exit(main())
