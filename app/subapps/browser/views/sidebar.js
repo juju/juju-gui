@@ -39,10 +39,11 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      * @private
      *
      */
-    _bindEvents: function () {
+    _bindEvents: function() {
       // Watch the Search widget for changes to the search params.
       this.search.on(this.search.EVT_UPDATE_SEARCH, this._searchChanged, this);
-      this.search.on(this.search.EVT_TOGGLE_VIEWABLE, this._toggleSidebar, this);
+      this.search.on(
+          this.search.EVT_TOGGLE_VIEWABLE, this._toggleSidebar, this);
     },
 
     /**
