@@ -40,6 +40,62 @@ YUI.add('juju-env-fakebackend', function(Y) {
      */
     initializer: function() {
       this.db = new models.Database();
+      this.environmentAnnotations = {};
+      this._resetChanges();
+      this._resetAnnotations();
+    },
+
+    /**
+      Reset the database for reporting object changes.
+
+      @method _resetChanges
+      @return {undefined} Nothing.
+     */
+    _resetChanges: function() {
+      this.changes = {
+        // These are hashes of identifier: [object, boolean], where a true
+        // boolean means added or changed and a false value means removed.
+        services: {},
+        machines: {},
+        units: {},
+        relations: {}
+      };
+    },
+
+    /**
+      Return all of the recently changed objects.
+
+      @method nextChanges
+      @return {Object} A hash of the keys 'services', 'machines', 'units' and
+        'relations'.  Each of those are hashes from entity identifier to
+        [entity, boolean] where the boolean means either active (true) or
+        removed (false).
+     */
+    nextChanges: function() {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var result = this.changes;
+      this._resetChanges();
+      return result;
+    },
+
+    /**
+      Reset the database for reporting object annotation changes.
+
+      @method _resetAnnotations
+      @return {undefined} Nothing.
+     */
+    _resetAnnotations: function() {
+      this.annotations = {
+        // These are hashes of identifier: object.
+        services: {},
+        machines: {},
+        units: {},
+        relations: {},
+        // This is undefined or the environment annotations, if they changed.
+        environment: undefined
+      };
     },
 
     /**
@@ -212,11 +268,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (options.configYAML) {
         if (options.config) {
           return callback(
-            {error: 'Do not provide both a config and configYAML.'});
+              {error: 'Do not provide both a config and configYAML.'});
         }
         if (!Y.Lang.isString(options.configYAML)) {
           return callback(
-            {error: 'Developer error: configYAML is not a string.'});
+              {error: 'Developer error: configYAML is not a string.'});
         }
         try {
           options.config = jsyaml.safeLoad(options.configYAML);
@@ -235,6 +291,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         subordinate: charm.get('is_subordinate'),
         config: options.config
       });
+      this.changes.services[service.get('id')] = [service, true];
       var response = this.addUnit(options.name, options.unitCount);
       response.service = service;
       callback(response);
@@ -280,22 +337,25 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!Y.Lang.isValue(service.unitSequence)) {
         service.unitSequence = 0;
       }
-      var result = [];
+      var unit, machine;
+      var units = [];
       var machines = this._getUnitMachines(numUnits);
 
       for (var i = 0; i < numUnits; i += 1) {
         var unitId = service.unitSequence += 1;
-        result.push(
-            this.db.units.add({
-              'id': serviceName + '/' + unitId,
-              'machine': machines[i].machine_id,
-              // The models use underlines, not hyphens (see
-              // app/models/models.js in _process_delta.)
-              'agent_state': 'started'
-            })
-        );
+        machine = machines[i];
+        unit = this.db.units.add({
+          'id': serviceName + '/' + unitId,
+          'machine': machine.machine_id,
+          // The models use underlines, not hyphens (see
+          // app/models/models.js in _process_delta.)
+          'agent_state': 'started'
+        });
+        units.push(unit);
+        this.changes.units[unit.id] = [unit, true];
+        this.changes.machines[machine.machine_id] = [machine, true];
       }
-      return {units: result, machines: machines};
+      return {units: units, machines: machines};
     },
 
     /**
@@ -305,18 +365,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
       @return {Array} An array of zero or more machines that have been
         previously allocated but that are not currently in use by a unit.
      */
-    _getAvailableMachines: function () {
+    _getAvailableMachines: function() {
       var machines = [];
       var usedMachineIds = {};
-      this.db.units.each(function (unit){
+      this.db.units.each(function(unit) {
         if (unit.machine_id) {
           usedMachineIds[unit.machine_id] = true;
         }
       });
-      this.db.machines.each(function (machine) {
-         if (!usedMachineIds[machine.machine_id]) {
-            machines.push(machine);
-         }
+      this.db.machines.each(function(machine) {
+        if (!usedMachineIds[machine.machine_id]) {
+          machines.push(machine);
+        }
       });
       return machines;
     },
@@ -333,19 +393,20 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var availableMachines = this._getAvailableMachines();
       var machineId;
       if (!Y.Lang.isValue(this.db.machineSequence)) {
-        this.db.machineSequence = 0;
+        this.db.machines.sequence = 0;
       }
       for (var i = 0; i < count; i += 1) {
         if (i < availableMachines.length) {
           machines.push(availableMachines[i]);
         } else {
-          machineId = this.db.machines.machineSequence += 1;
+          machineId = this.db.machines.sequence += 1;
           machines.push(
-            this.db.machines.add({
-              'machine_id': machineId.toString(),
-              'public_address': 'addr-' + machineId.toString() + '.example.com',
-              'agent_state': 'running',
-              'instance_state': 'running'}));
+              this.db.machines.add({
+                'machine_id': machineId.toString(),
+                'public_address':
+                    'addr-' + machineId.toString() + '.example.com',
+                'agent_state': 'running',
+                'instance_state': 'running'}));
         }
       }
       return machines;

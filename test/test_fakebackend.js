@@ -195,40 +195,38 @@
           callback,
           {config: {funny: 'business'}, configYAML: 'foo'});
       assert.equal(
-        result.error, 'Do not provide both a config and configYAML.');
+          result.error, 'Do not provide both a config and configYAML.');
     });
 
     it('rejects a non-string configYAML', function() {
       fakebackend.deploy('cs:wordpress', callback, {configYAML: {}});
       assert.equal(
-        result.error, 'Developer error: configYAML is not a string.');
+          result.error, 'Developer error: configYAML is not a string.');
     });
 
     it('accepts a YAML config string.', function() {
       fakebackend.deploy(
-        'cs:wordpress',
-        callback,
-        {configYAML:
-          Y.io('assets/mysql-config.yaml', {sync: true}).responseText});
+          'cs:wordpress',
+          callback,
+          {configYAML:
+                Y.io('assets/mysql-config.yaml', {sync: true}).responseText});
       assert.isObject(result.service.get('config'));
       assert.equal(result.service.get('config')['tuning-level'], 'super bad');
     });
 
     it('rejects unparseable YAML config string.', function() {
       fakebackend.deploy(
-        'cs:wordpress',
-        callback,
-        {configYAML: 'auto_id: %n'});
+          'cs:wordpress',
+          callback,
+          {configYAML: 'auto_id: %n'});
       assert.equal(
-        result.error,
-        'Error parsing YAML.\n' +
-        'JS-YAML: end of the stream or a document separator is expected ' +
-        'at line 1, column 10:\n' +
-        '    auto_id: %n\n' +
-        '             ^');
+          result.error,
+          'Error parsing YAML.\n' +
+          'JS-YAML: end of the stream or a document separator is expected ' +
+          'at line 1, column 10:\n' +
+          '    auto_id: %n\n' +
+          '             ^');
     });
-
-    // it('records when services, units, and machines are added.');
 
   });
 
@@ -304,11 +302,11 @@
       // these are simple objects, not models.
       assert.lengthOf(result.machines, 1);
       assert.equal(
-        result.machines[0].machine_id, result.units[0].machine);
+          result.machines[0].machine_id, result.units[0].machine);
       assert.isString(result.machines[0].machine_id);
       assert.isString(result.machines[0].public_address);
       assert.match(
-        result.machines[0].public_address, /^[^.]+\.example\.com$/);
+          result.machines[0].public_address, /^[^.]+\.example\.com$/);
       assert.equal(result.machines[0].agent_state, 'running');
       assert.equal(result.machines[0].instance_state, 'running');
     });
@@ -330,7 +328,115 @@
       assert.lengthOf(result.machines, 5);
     });
 
-    // it('records when units and machines are added.');
+  });
+
+  describe('FakeBackend.nextChanges', function() {
+    var requires = [
+      'node', 'juju-env-fakebackend', 'datasource-local', 'io',
+      'juju-charm-store', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, environmentsModule, setCharm, juju, deployResult,
+        callback;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        environmentsModule = Y.namespace('juju.environments');
+        juju = Y.namespace('juju');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      var setupData = makeFakeBackendWithCharmStore(
+          Y, juju, environmentsModule);
+      fakebackend = setupData.fakebackend;
+      setCharm = setupData.setCharm;
+      deployResult = undefined;
+      callback = function(response) { deployResult = response; };
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('rejects unauthenticated calls.', function() {
+      fakebackend.logout();
+      var result = fakebackend.nextChanges();
+      assert.equal(result.error, 'Please log in.');
+    });
+
+    it('reports no changes initially.', function() {
+      assert.deepEqual(
+          fakebackend.nextChanges(),
+          {
+            services: {},
+            machines: {},
+            units: {},
+            relations: {}
+          }
+      );
+    });
+
+    it('reports a call to addUnit correctly.', function() {
+      fakebackend.deploy('cs:wordpress', callback);
+      assert.isUndefined(deployResult.error);
+      assert.isObject(fakebackend.nextChanges());
+      var result = fakebackend.addUnit('wordpress');
+      assert.lengthOf(result.units, 1);
+      var changes = fakebackend.nextChanges();
+      assert.lengthOf(Y.Object.keys(changes.services), 0);
+      assert.lengthOf(Y.Object.keys(changes.units), 1);
+      assert.lengthOf(Y.Object.keys(changes.machines), 1);
+      assert.lengthOf(Y.Object.keys(changes.relations), 0);
+      assert.deepEqual(
+          changes.units['wordpress/2'], [result.units[0], true]);
+      assert.deepEqual(
+          changes.machines[result.machines[0].machine_id],
+          [result.machines[0], true]);
+    });
+
+    it('reports a deploy correctly.', function() {
+      fakebackend.deploy('cs:wordpress', callback);
+      assert.isUndefined(deployResult.error);
+      var changes = fakebackend.nextChanges();
+      assert.lengthOf(Y.Object.keys(changes.services), 1);
+      assert.deepEqual(
+          changes.services.wordpress, [deployResult.service, true]);
+      assert.lengthOf(Y.Object.keys(changes.units), 1);
+      assert.deepEqual(
+          changes.units['wordpress/1'], [deployResult.units[0], true]);
+      assert.lengthOf(Y.Object.keys(changes.machines), 1);
+      assert.deepEqual(
+          changes.machines[deployResult.machines[0].machine_id],
+          [deployResult.machines[0], true]);
+      assert.lengthOf(Y.Object.keys(changes.relations), 0);
+    });
+
+    it('reports a deploy of multiple units correctly.', function() {
+      fakebackend.deploy('cs:wordpress', callback, {unitCount: 5});
+      assert.isUndefined(deployResult.error);
+      var changes = fakebackend.nextChanges();
+      assert.lengthOf(Y.Object.keys(changes.services), 1);
+      assert.lengthOf(Y.Object.keys(changes.units), 5);
+      assert.lengthOf(Y.Object.keys(changes.machines), 5);
+      assert.lengthOf(Y.Object.keys(changes.relations), 0);
+    });
+
+    it('reports no changes when no changes have occurred since the last call.',
+        function() {
+          fakebackend.deploy('cs:wordpress', callback);
+          assert.isUndefined(deployResult.error);
+          assert.isObject(fakebackend.nextChanges());
+          assert.deepEqual(
+              fakebackend.nextChanges(),
+              {
+                services: {},
+                machines: {},
+                units: {},
+                relations: {}
+              }
+          );
+        }
+    );
 
   });
 })();
