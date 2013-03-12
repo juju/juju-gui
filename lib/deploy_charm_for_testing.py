@@ -11,8 +11,8 @@ import os
 
 juju_command = shelltoolbox.command('juju')
 
-DEFAULT_BRANCH = 'lp:~hatch/juju-gui/remote-testing'
-DEFAULT_CHARM = 'cs:~hatch/precise/juju-gui'
+DEFAULT_BRANCH = 'lp:juju-gui'
+DEFAULT_CHARM = 'cs:~juju-gui/precise/juju-gui'
 
 def juju(s):
     return juju_command(*s.split())
