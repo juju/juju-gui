@@ -66,15 +66,20 @@ def wait_for_machine(get_state=get_state, sleep=time.sleep):
             break
         sleep(5)
 
-def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
-         make_config_file=make_config_file):
-    """Deploy the Juju GUI service and wait for it to become available."""
+def make_parser():
     parser = argparse.ArgumentParser(
         description='Deploy juju-gui for testing')
     parser.add_argument('branch', default=DEFAULT_BRANCH)
     parser.add_argument('charm', default=DEFAULT_CHARM)
-    options = parser.parse_args()
 
+def parse():
+    p = make_parser()
+    return p.parse_args()
+
+def main(options=parse, print=print, juju=juju, wait_for_service=wait_for_service,
+         make_config_file=make_config_file):
+    """Deploy the Juju GUI service and wait for it to become available."""
+    options = options()
     try:
         print('Bootstrapping...')
         juju('bootstrap --environment juju-gui-testing')
