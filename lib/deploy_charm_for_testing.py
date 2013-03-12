@@ -105,9 +105,11 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
         wait_for_service()
         print('Exposing the service...')
         juju('expose juju-gui --environment juju-gui-testing')
+        return 0
     except RuntimeError, e:
         print("Execution failure, unable to continue")
         print(e)
+    return 1
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv))
