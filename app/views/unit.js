@@ -209,7 +209,8 @@ YUI.add('juju-view-unit', function(Y) {
         service.set('unit_count', service.get('unit_count') - 1);
         this.remove_panel.destroy();
         this.fire('navigateTo',
-            {service: service, url: '/service/' + service.get('id') + '/'});
+            { service: service, url: '/service/' +
+                  service.get('displayName') + '/'});
       }
 
       btn.set('disabled', false);

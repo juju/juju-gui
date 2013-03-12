@@ -79,6 +79,7 @@ YUI.add('juju-models', function(Y) {
 
   var Service = Y.Base.create('service', Y.Model, [], {
     ATTRS: {
+      displayName: {},
       name: {},
       charm: {},
       config: {},
@@ -100,6 +101,31 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
     model: Service,
+    /**
+     * Create a display name that can be used in the views as an entity label
+     * agnostic from juju type.
+     *
+     * @method createDisplayName
+     * @param {String} name The name to modify.
+     * @return {String} A display name.
+     */
+    createDisplayName: function(name) {
+      return name.replace('service-', '');
+    },
+
+    _setDefaultsAndCalculatedValues: function(obj) {
+      obj.set('displayName', this.createDisplayName(obj.get('id')));
+    },
+
+    add: function() {
+      var result = ServiceUnitList.superclass.add.apply(this, arguments);
+      if (Y.Lang.isArray(result)) {
+        Y.Array.each(result, this._setDefaultsAndCalculatedValues, this);
+      } else {
+        this._setDefaultsAndCalculatedValues(result);
+      }
+      return result;
+    },
 
     process_delta: function(action, data) {
       _process_delta(this, action, data, {exposed: false});
@@ -120,6 +146,7 @@ YUI.add('juju-models', function(Y) {
       //    idAttribute: 'name',
       {
         ATTRS: {
+          displayName: {},
           machine: {},
           agent_state: {},
           // This is empty if there are no relation errors, and otherwise
@@ -139,6 +166,20 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceUnitList = Y.Base.create('serviceUnitList', Y.LazyModelList, [], {
     model: ServiceUnit,
+    /**
+     * Create a display name that can be used in the views as an entity label
+     * agnostic from juju type.
+     *
+     * @method createDisplayName
+     * @param {String} name The name to modify.
+     * @return {String} A display name.
+     */
+    createDisplayName: function(name) {
+      // The following is needed to allow '.' to be allowed in RegExps by
+      // JSLint.
+      /*jslint regexp: true*/
+      return name.replace('unit-', '').replace(/^(.+)-(\d+)$/, '$1/$2');
+    },
 
     process_delta: function(action, data) {
       _process_delta(this, action, data, {relation_errors: {}});
@@ -150,12 +191,13 @@ YUI.add('juju-models', function(Y) {
       obj.number = parseInt(raw[1], 10);
       obj.urlName = obj.id.replace('/', '-');
       obj.name = 'serviceUnit'; // This lets us more easily mimic models.
+      obj.displayName = this.createDisplayName(obj.id);
     },
 
     add: function() {
       var result = ServiceUnitList.superclass.add.apply(this, arguments);
       if (Y.Lang.isArray(result)) {
-        Y.Array.each(result, this._setDefaultsAndCalculatedValues);
+        Y.Array.each(result, this._setDefaultsAndCalculatedValues, this);
       } else {
         this._setDefaultsAndCalculatedValues(result);
       }
@@ -224,6 +266,7 @@ YUI.add('juju-models', function(Y) {
     idAttribute: 'machine_id'
   }, {
     ATTRS: {
+      displayName: {},
       machine_id: {},
       public_address: {},
       instance_id: {},
@@ -235,6 +278,31 @@ YUI.add('juju-models', function(Y) {
 
   var MachineList = Y.Base.create('machineList', Y.LazyModelList, [], {
     model: Machine,
+    /**
+     * Create a display name that can be used in the views as an entity label
+     * agnostic from juju type.
+     *
+     * @method createDisplayName
+     * @param {String} name The name to modify.
+     * @return {String} A display name.
+     */
+    createDisplayName: function(name) {
+      return (name + '').replace('machine-', '');
+    },
+
+    _setDefaultsAndCalculatedValues: function(obj) {
+      obj.displayName = this.createDisplayName(obj.id);
+    },
+
+    add: function() {
+      var result = ServiceUnitList.superclass.add.apply(this, arguments);
+      if (Y.Lang.isArray(result)) {
+        Y.Array.each(result, this._setDefaultsAndCalculatedValues, this);
+      } else {
+        this._setDefaultsAndCalculatedValues(result);
+      }
+      return result;
+    },
 
     process_delta: function(action, data) {
       _process_delta(this, action, data, {});
