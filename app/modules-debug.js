@@ -43,9 +43,9 @@ var GlobalConfig = {
     prettify: {
       modules: {
         'prettify': {
-          fullpath: '/juju-ui/assets/javascripts/prettify.js' 
+          fullpath: '/juju-ui/assets/javascripts/prettify.js'
         }
-      } 
+      }
     },
     juju: {
       modules: {

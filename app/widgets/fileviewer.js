@@ -1,5 +1,6 @@
 'use strict';
 
+
 /**
  * Fileviewer widget; a syntax colored view of code with linenumbers.
  *
@@ -22,7 +23,7 @@ YUI.add('browser-fileviewer-widget', function(Y) {
      * The pre block template for the pretty printer
      *
      * @property TEMPLATE
-     * @type {String} 
+     * @type {String}
      */
     TEMPLATE: '<pre class="prettyprint linenums hidden">{code}</pre>',
 
@@ -30,7 +31,7 @@ YUI.add('browser-fileviewer-widget', function(Y) {
      * Sets up the dom and processes the pretty printing.
      *
      * @method renderUI
-     * @param {undefined}; Mutates only. 
+     * @param {undefined}; Mutates only.
      */
     renderUI: function() {
       var content = sub(this.TEMPLATE, {code: this.get('code')});
@@ -52,10 +53,9 @@ YUI.add('browser-fileviewer-widget', function(Y) {
     }
   });
 
-}, '0.1.0', {
-  requires: [
-    'base',
-    'node',
-    'prettify',
-    'widget'
+}, '0.1.0', { requires: [
+  'base',
+  'node',
+  'prettify',
+  'widget'
 ]});

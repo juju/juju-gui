@@ -5,11 +5,11 @@ describe('fileviewer', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-        'browser-fileviewer-widget',
-        'node',
-        'prettify'
-      ], function(Y) {
-        done();
+      'browser-fileviewer-widget',
+      'node',
+      'prettify'
+    ], function(Y) {
+      done();
     });
   });
 
@@ -39,16 +39,16 @@ describe('fileviewer', function() {
     fv.render(container);
     var codeblock = Y.one('.prettyprint');
     assert.isObject(
-      codeblock,
-      'No pretty print block found.');
+        codeblock,
+        'No pretty print block found.');
     assert.isTrue(
-      codeblock.hasClass('prettyprinted'),
-      'Pretty print block found, but not pretty printed.');
+        codeblock.hasClass('prettyprinted'),
+        'Pretty print block found, but not pretty printed.');
     assert.isTrue(
-      codeblock.hasClass('linenums'),
-      'Pretty print block is pretty printed, but does not have linenums.');
+        codeblock.hasClass('linenums'),
+        'Pretty print block is pretty printed, but does not have linenums.');
     assert.notEqual(
-      -1, codeblock.get('text').indexOf('from foo import bar'),
-      'Code not in pretty print block.');
+        -1, codeblock.get('text').indexOf('from foo import bar'),
+        'Code not in pretty print block.');
   });
 });
