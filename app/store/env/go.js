@@ -352,6 +352,10 @@ YUI.add('juju-env-go', function(Y) {
 
   });
 
+  get_service: function(service_name, callback) {
+    return false;
+  }
+
   environments.GoEnvironment = GoEnvironment;
 
 }, '0.1.0', {

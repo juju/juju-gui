@@ -412,4 +412,18 @@
     });
   });
 
+  it('sends the correct get_service message', function(){
+      env.get_service('hadoop');
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'ServiceGet',
+        RequestId: 1,
+        Params: {ServiceName: 'hadoop'}
+      };
+      assert.deepEqual(expected, last_message);
+  });
+
+  //it('', function(){});
+
 })();
