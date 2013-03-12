@@ -17,12 +17,19 @@ import shelltoolbox
 
 juju = shelltoolbox.command('juju')
 
+common = {
+    'command-timeout' : 400,
+    'idle-timeout': 200,
+}
+
 ie = dict(selenium.webdriver.DesiredCapabilities.INTERNETEXPLORER)
 ie['platform'] = 'Windows 2012'
 ie['version'] = '10'
+ie.update(common)
 
 chrome = dict(selenium.webdriver.DesiredCapabilities.CHROME)
 chrome['platform'] = 'Linux'
+chrome.update(common)
 # The saucelabs.com folks recommend using the latest version of Chrome because
 # new versions come out so quickly, therefore there is no version specified
 # here.
@@ -30,6 +37,7 @@ chrome['platform'] = 'Linux'
 firefox = dict(selenium.webdriver.DesiredCapabilities.FIREFOX)
 firefox['platform'] = 'Linux'
 firefox['version'] = '18'
+firefox.update(common)
 
 browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
 
@@ -40,9 +48,7 @@ browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
 config = {
     'username': 'juju-gui',
     'access-key': '0a3b7821-93ed-4a2d-abdb-f34854eeaba3',
-    'command-timeout' : 400,
-    'idle-timeout': 200,
-    }
+   }
 
 credentials = ':'.join([config['username'], config['access-key']])
 encoded_credentials = base64.encodestring(credentials)[:-1]
