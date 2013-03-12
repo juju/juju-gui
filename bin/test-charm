@@ -11,6 +11,7 @@ fi
 
 # Figure out the URL of the APP.
 export APP_URL=http://`juju status -e juju-gui-testing | grep public-address: | cut -d: -f2 | cut -c2-`
+echo "APP_URL=" ${APP_URL}
 # EXIT_CODE is used to keep track of test failures. If a test fails, this
 # script will exit with an error code.
 EXIT_CODE=0
@@ -18,6 +19,7 @@ EXIT_CODE=0
 for JUJU_GUI_TEST_BROWSER in 'ie' 'firefox' 'chrome'
 do
     export JUJU_GUI_TEST_BROWSER
+    echo Launching ${JUJU_GUI_TEST_BROWSER} tests.
     python test/test_charm_running.py -v || EXIT_CODE=1
 done
 # Destroy the environment, releasing the resources.
