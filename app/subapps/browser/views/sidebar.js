@@ -10,7 +10,8 @@
  */
 YUI.add('subapp-browser-sidebar', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
-      views = Y.namespace('juju.views');
+      views = Y.namespace('juju.views'),
+      widgets = Y.namespace('juju.widgets');
 
   /**
    * Sidebar master view for the gui browser.
@@ -70,10 +71,17 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     render: function(container) {
+      // build widgets used in the template.
+      var search = new widgets.browser.Search(),
+          tpl = this.template(),
+          tpl_node = Y.Node.create(tpl);
+
+      search.render(tpl_node.one('.bws-search'));
+
       if (typeof container !== 'object') {
         container = this.get('container');
       }
-      container.setHTML(this.template({}));
+      container.setHTML(tpl_node);
     },
 
     /**
@@ -90,6 +98,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'browser-search-widget',
     'view'
   ]
 });

@@ -94,7 +94,7 @@ YUI.add('browser-search-widget', function(Y) {
       // categories can work.
       this._events.push(
           container.one('input').on('valueChange', function(ev) {
-          debugger;
+            debugger;
             this.fire(this.EVT_SEARCH_CHANGED);
           }, this)
       );

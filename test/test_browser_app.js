@@ -75,6 +75,8 @@
 
       // And the hide button is rendered to the container node.
       assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));
+      // Also verify that the search widget has rendered into the view code.
+      assert.isTrue(Y.Lang.isObject(container.one('input')));
     });
 
   });
