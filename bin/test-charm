@@ -21,7 +21,7 @@ do
     export JUJU_GUI_TEST_BROWSER
     echo Launching ${JUJU_GUI_TEST_BROWSER} tests.
     python test/test_charm_running.py -v || EXIT_CODE=1
-    if [ ${FAIL_FAST:-0} -eq 1 -a ${EXIT_CODE} -eq 1 ];
+    if [ ${FAIL_FAST:-0} -eq 1 -a ${EXIT_CODE} -eq 1 ]; then
         exit 1;
     fi
 done
