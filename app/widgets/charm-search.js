@@ -108,6 +108,7 @@ YUI.add('browser-search-widget', function(Y) {
      */
     clearSearch: function() {
       var input = this.get('contentBox').one('input');
+      input.focus();
       input.set('value', '');
     },
 
@@ -174,6 +175,7 @@ YUI.add('browser-search-widget', function(Y) {
      */
     updateSearch: function(newval) {
       var input = this.get('contentBox').one('input');
+      input.focus();
       input.set('value', newval);
     }
 
