@@ -21,6 +21,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
    *
    */
   ns.Sidebar = Y.Base.create('browser-view-sidebar', Y.View, [], {
+    _events: [],
     template: views.Templates.sidebar,
     visible: true,
 
@@ -41,9 +42,15 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      */
     _bindEvents: function() {
       // Watch the Search widget for changes to the search params.
-      this.search.on(this.search.EVT_UPDATE_SEARCH, this._searchChanged, this);
-      this.search.on(
-          this.search.EVT_TOGGLE_VIEWABLE, this._toggleSidebar, this);
+      this._events.push(
+          this.search.on(
+              this.search.EVT_UPDATE_SEARCH, this._searchChanged, this)
+      );
+
+      this._events.push(
+          this.search.on(
+              this.search.EVT_TOGGLE_VIEWABLE, this._toggleSidebar, this)
+      );
     },
 
     /**
@@ -80,6 +87,18 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     },
 
     /**
+     * Destroy this view and clear from the dom world.
+     *
+     * @method destructor
+     *
+     */
+    destructor: function() {
+      Y.Array.each(this._events, function(ev) {
+        ev.detach();
+      });
+    },
+
+    /**
      * General YUI initializer.
      *
      * @method initializer
@@ -106,15 +125,10 @@ YUI.add('subapp-browser-sidebar', function(Y) {
         container = this.get('container');
       }
       container.setHTML(tpl_node);
-    },
 
-    /**
-     * Destroy this view and clear from the dom world.
-     *
-     * @method destructor
-     *
-     */
-    destructor: function() {}
+      // Bind extra events that aren't covered by the Y.View events object.
+      this._bindEvents();
+    }
 
   }, {
     ATTRS: {}

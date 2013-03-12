@@ -107,7 +107,8 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     clearSearch: function() {
-      this.get('contentBox').one('input').set('value', '');
+      var input = this.get('contentBox').one('input');
+      input.set('value', '');
     },
 
 
@@ -172,7 +173,8 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     updateSearch: function(newval) {
-      this.get('boundingBox').one('input').set('value', newval);
+      var input = this.get('contentBox').one('input');
+      input.set('value', newval);
     }
 
   }, {
