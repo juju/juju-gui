@@ -63,6 +63,7 @@ def wait_for_service(get_state=get_state, sleep=time.sleep):
     while True:
         state = get_state()
         if 'error' in state:
+            print(get_status())
             raise RuntimeError('error deploying service')
         if state == 'started':
             break
