@@ -266,15 +266,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return callback({error: 'A service with this name already exists.'});
       }
       if (options.configYAML) {
-        if (options.config) {
-          return callback(
-              {error: 'Do not provide both a config and configYAML.'});
-        }
         if (!Y.Lang.isString(options.configYAML)) {
           return callback(
               {error: 'Developer error: configYAML is not a string.'});
         }
         try {
+          // options.configYAML overrides options.config in Go and Python
+          // implementations, so we do that here too.
           options.config = jsyaml.safeLoad(options.configYAML);
         } catch (e) {
           if (e instanceof jsyaml.YAMLException) {

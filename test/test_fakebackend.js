@@ -189,13 +189,12 @@
       assert.equal(result.service.get('id'), 'kumquat');
     });
 
-    it('does not accept both a config and config string.', function() {
+    it('prefers config YAML to config.', function() {
       fakebackend.deploy(
           'cs:wordpress',
           callback,
-          {config: {funny: 'business'}, configYAML: 'foo'});
-      assert.equal(
-          result.error, 'Do not provide both a config and configYAML.');
+          {config: {funny: 'business'}, configYAML: 'funny: girl'});
+      assert.deepEqual(result.service.get('config'), {funny: 'girl'});
     });
 
     it('rejects a non-string configYAML', function() {
