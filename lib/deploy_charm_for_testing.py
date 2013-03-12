@@ -80,17 +80,17 @@ def parse():
 def main(options=parse, print=print, juju=juju, wait_for_service=wait_for_service,
          make_config_file=make_config_file):
     """Deploy the Juju GUI service and wait for it to become available."""
-    options = options()
+    args = options()
     try:
         print('Bootstrapping...')
         juju('bootstrap --environment juju-gui-testing')
         print('Deploying service...')
         options = {'serve-tests': True, 'staging': True, 'secure': False,
-                   'juju-gui-source': options.branch}
-        print('Setting branch for charm to deploy %s' % options.branch)
+                   'juju-gui-source': args.branch}
+        print('Setting branch for charm to deploy %s' % args.branch)
         with make_config_file(options) as config_file:
             juju('deploy --environment juju-gui-testing --config {} {}'.format(
-                config_file.name, options.charm))
+                config_file.name, args.charm))
 
         print('Waiting for service to start...')
         wait_for_machine()
