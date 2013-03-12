@@ -198,7 +198,7 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback = null;
       if (callback) {
         intermediateCallback = Y.bind(
-          this.handleExposure, this, callback, service);
+            this.handleExposure, this, callback, service);
       }
       this._send_rpc({
         Type: 'Client',
