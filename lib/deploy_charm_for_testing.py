@@ -83,10 +83,8 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
     juju('bootstrap --environment juju-gui-testing')
     print('Deploying service...')
     options = {'serve-tests': True, 'staging': True, 'secure': False,
-               'juju-gui-source': DEFAULT_BRANCH}
-    if branch is not None:
-        print('Setting branch for charm to deploy...')
-        options['juju-gui-source'] = branch
+               'juju-gui-source': branch}
+    print('Setting branch for charm to deploy %s' % branch)
     with make_config_file(options) as config_file:
         juju('deploy --environment juju-gui-testing --config {} {}'.format(
             config_file.name, DEFAULT_CHARM))
