@@ -3,7 +3,8 @@
 
 YUI.add('subapp-browser-fullscreen', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
-      views = Y.namespace('juju.views');
+      views = Y.namespace('juju.views'),
+      widgets = Y.namespace('juju.widgets');
 
   /**
    * Browser Sub App for the Juju Gui.
@@ -37,10 +38,16 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
      *
      */
     render: function(container) {
+      var search = new widgets.browser.Search(),
+          tpl = this.template(),
+          tpl_node = Y.Node.create(tpl);
+
+      search.render(tpl_node.one('.bws-search'));
+
       if (!Y.Lang.isValue(container)) {
         container = this.get('container');
       }
-      container.setHTML(this.template({}));
+      container.setHTML(tpl_node);
     },
 
     /**
@@ -56,5 +63,8 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
   });
 
 }, '0.1.0', {
-  requires: ['view']
+  requires: [
+    'browser-search-widget',
+    'view'
+  ]
 });
