@@ -141,7 +141,7 @@ class TestCase(unittest.TestCase):
         elements = self.wait_for(condition, error=error, timeout=timeout)
         return elements[0]
 
-    def wait_for_script(self, script, error=None, timeout=10):
+    def wait_for_script(self, script, error=None, timeout=20):
         """Wait for the given JavaScript snippet to return a True value.
 
         Fail printing the provided error if timeout is exceeded.
