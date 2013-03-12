@@ -92,8 +92,9 @@ YUI.add('browser-search-widget', function(Y) {
       // control, or it could come from someone outside of the widget asking
       // it to update to a specific value. This is how things like clicking
       // categories can work.
+      var input = container.one('input');
       this._events.push(
-          container.one('input').on('valueChange', function(ev) {
+          input.on('valueChange', function(ev) {
             debugger;
             this.fire(this.EVT_SEARCH_CHANGED);
           }, this)
