@@ -163,13 +163,16 @@ YUI.add('juju-env-go', function(Y) {
      * @method expose
      * @param {String} service The service name.
      * @param {Function} callback A callable that must be called once the
-         operation is performed.
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), and with a "service_name" attribute containing the name of
+        the service.
      * @return {undefined} Sends a message to the server only.
      */
     expose: function(service, callback) {
       var intermediateCallback = null;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleExpose, this,
+        intermediateCallback = Y.bind(this.handleExposure, this,
             callback, service);
       }
       this._send_rpc({
@@ -180,10 +183,35 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     * Transform the data returned from juju-core 'expose' into that suitable
-     * for the user callback.
+     * Unexpose the given service.
      *
-     * @method handleExpose
+     * @method unexpose
+     * @param {String} service The service name.
+     * @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), and with a "service_name" attribute containing the name of
+        the service.
+     * @return {undefined} Sends a message to the server only.
+     */
+    unexpose: function(service, callback) {
+      var intermediateCallback = null;
+      if (callback) {
+        intermediateCallback = Y.bind(
+          this.handleExposure, this, callback, service);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'ServiceUnexpose',
+        Params: {ServiceName: service}
+      }, intermediateCallback);
+    },
+
+    /**
+     * Transform the data returned from juju-core 'ServiceExpose' and
+     * 'ServiceUnexpose' calls into that suitable for the user callback.
+     *
+     * @method handleExposure
      * @param {Function} userCallback The callback originally submitted by the
      * call site.
      * @param {String} service The name of the service.  Passed in since it
@@ -191,7 +219,7 @@ YUI.add('juju-env-go', function(Y) {
      * @param {Object} data The response returned by the server.
      * @return {undefined} Nothing.
      */
-    handleExpose: function(userCallback, service, data) {
+    handleExposure: function(userCallback, service, data) {
       var transformedData = {
         err: data.Error,
         service_name: service
