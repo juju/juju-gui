@@ -69,8 +69,9 @@ def wait_for_machine(get_state=get_state, sleep=time.sleep):
 def make_parser():
     parser = argparse.ArgumentParser(
         description='Deploy juju-gui for testing')
-    parser.add_argument('branch', default=DEFAULT_BRANCH)
-    parser.add_argument('charm', default=DEFAULT_CHARM)
+    parser.add_argument('--branch', default=DEFAULT_BRANCH)
+    parser.add_argument('--charm', default=DEFAULT_CHARM)
+    return parser
 
 def parse():
     p = make_parser()
