@@ -40,7 +40,6 @@ describe('browser search widget', function() {
     var triggered = false;
 
     search.on(search.EVT_SEARCH_CHANGED, function(ev) {
-      debugger;
       triggered = true;
       // now trigger the event and make sure that it fired to our custom
       // watcher outside the widget.
@@ -49,65 +48,66 @@ describe('browser search widget', function() {
     });
 
     var input = container.one('input');
+    input.focus();
     input.set('value', 'test');
   });
 
-  // it('should supports setting search string', function() {
-  //   var search = new Search();
-  //   search.render(container);
+  it('should supports setting search string', function() {
+    var search = new Search();
+    search.render(container);
 
-  //   search.update_search('test');
-  //   container.one('input').get('value').should.eql('test');
-  // });
+    search.updateSearch('test');
+    container.one('input').get('value').should.eql('test');
+  });
 
-  // it('should supports clearing search string', function() {
-  //   var search = new Search({
-  //     term: 'test'
-  //   });
-  //   search.render(container);
-  //   container.one('input').get('value').should.eql('test');
+  it('should supports clearing search string', function() {
+    var search = new Search({
+      term: 'test'
+    });
+    search.render(container);
+    container.one('input').get('value').should.eql('test');
 
-  //   search.clear_search();
-  //   container.one('input').get('value').should.eql('');
-  // });
+    search.clearSearch();
+    container.one('input').get('value').should.eql('');
+  });
 
-  // it('should supports clearing search string', function() {
-  //   var search = new Search({
-  //     term: 'test'
-  //   });
-  //   search.render(container);
-  //   container.one('input').get('value').should.eql('test');
+  it('should supports clearing search string', function() {
+    var search = new Search({
+      term: 'test'
+    });
+    search.render(container);
+    container.one('input').get('value').should.eql('test');
 
-  //   search.clear_search();
-  //   container.one('input').get('value').should.eql('');
-  // });
+    search.clearSearch();
+    container.one('input').get('value').should.eql('');
+  });
 
-  // it('should fire a toggle fullscreen event when expand clicked', function() {
-  //   var search = new Search(),
-  //       triggered = false;
-  //   search.render(container);
+  it('should fire a toggle fullscreen event when expand clicked', function() {
+    var search = new Search(),
+        triggered = false;
+    search.render(container);
 
-  //   search.on(search.EVT_TOGGLE_FULLSCREEN, function(ev) {
-  //     triggered = true;
-  //   });
+    search.on(search.EVT_TOGGLE_FULLSCREEN, function(ev) {
+      triggered = true;
+    });
 
-  //   var toggle = container.one('.toggle-fullscreen');
-  //   toggle.simulate('click');
-  //   triggered.should.eql(true);
-  // });
+    var toggle = container.one('.toggle-fullscreen');
+    toggle.simulate('click');
+    triggered.should.eql(true);
+  });
 
-  // it('should fire a toggle viewable event when icon clicked', function() {
-  //   var search = new Search(),
-  //       triggered = false;
-  //   search.render(container);
+  it('should fire a toggle viewable event when icon clicked', function() {
+    var search = new Search(),
+        triggered = false;
+    search.render(container);
 
-  //   search.on(search.EVT_TOGGLE_VIEWABLE, function(ev) {
-  //     triggered = true;
-  //   });
+    search.on(search.EVT_TOGGLE_VIEWABLE, function(ev) {
+      triggered = true;
+    });
 
-  //   var toggle = container.one('.bws-icon');
-  //   toggle.simulate('click');
-  //   triggered.should.eql(true);
-  // });
+    var toggle = container.one('.bws-icon');
+    toggle.simulate('click');
+    triggered.should.eql(true);
+  });
 
 });

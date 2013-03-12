@@ -29,9 +29,32 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     events: {
-      '.sidebar-toggle': {
-        click: '_toggleSidebar'
-      }
+    },
+
+    /**
+     * Bind the non native DOM events from within the View. This includes
+     * watching widgets used for their exposed events.
+     *
+     * @method _bindEvents
+     * @private
+     *
+     */
+    _bindEvents: function () {
+      // Watch the Search widget for changes to the search params.
+      this.search.on(this.search.EVT_UPDATE_SEARCH, this._searchChanged, this);
+      this.search.on(this.search.EVT_TOGGLE_VIEWABLE, this._toggleSidebar, this);
+    },
+
+    /**
+     * When the search term or filter is changed, fetch new data and redraw.
+     *
+     * @method _searchChanged
+     * @param {Event} ev event object from catching changes.
+     * @private
+     *
+     */
+    _searchChanged: function(ev) {
+      console.log('Sidebar search changed.');
     },
 
     /**
@@ -71,12 +94,12 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     render: function(container) {
-      // build widgets used in the template.
-      var search = new widgets.browser.Search(),
-          tpl = this.template(),
+      var tpl = this.template(),
           tpl_node = Y.Node.create(tpl);
 
-      search.render(tpl_node.one('.bws-search'));
+      // build widgets used in the template.
+      this.search = new widgets.browser.Search(),
+      this.search.render(tpl_node.one('.bws-search'));
 
       if (typeof container !== 'object') {
         container = this.get('container');

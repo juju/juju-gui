@@ -35,12 +35,12 @@ YUI.add('browser-search-widget', function(Y) {
     /**
      * Expose to the outside world that we've got a request to go fullscreen.
      *
-     * @method _toggle_fullscreen
+     * @method _toggleFullScreen
      * @param {Event} ev the click event from the control.
      * @private
      *
      */
-    _toggle_fullscreen: function(ev) {
+    _toggleFullScreen: function(ev) {
       this.fire(this.EVT_TOGGLE_FULLSCREEN);
     },
 
@@ -48,12 +48,12 @@ YUI.add('browser-search-widget', function(Y) {
      * Expose to the outside world that we've got a request to hide from
      * sight.
      *
-     * @method _toggle_viewable
+     * @method _toggleViewable
      * @param {Event} ev the click event from the control.
      * @private
      *
      */
-    _toggle_viewable: function(ev) {
+    _toggleViewable: function(ev) {
       this.fire(this.EVT_TOGGLE_VIEWABLE);
     },
 
@@ -64,7 +64,7 @@ YUI.add('browser-search-widget', function(Y) {
      * @private
      * @return {undefined} mutates only.
      */
-    _unbind_ui: function() {
+    _unbindUI: function() {
       Y.array.each(this._events, function(item) {
         item.detach();
       });
@@ -81,11 +81,11 @@ YUI.add('browser-search-widget', function(Y) {
 
       this._events.push(
           container.one('.bws-icon').on(
-              'click', this._toggle_viewable, this)
+              'click', this._toggleViewable, this)
       );
       this._events.push(
           container.one('.toggle-fullscreen').on(
-              'click', this._toggle_fullscreen, this)
+              'click', this._toggleFullScreen, this)
       );
 
       // Note that the search could be updated either from our internal input
@@ -95,7 +95,6 @@ YUI.add('browser-search-widget', function(Y) {
       var input = container.one('input');
       this._events.push(
           input.on('valueChange', function(ev) {
-            debugger;
             this.fire(this.EVT_SEARCH_CHANGED);
           }, this)
       );
@@ -104,10 +103,10 @@ YUI.add('browser-search-widget', function(Y) {
     /**
      * Clear the search input control in order to reset it.
      *
-     * @method clear_search
+     * @method clearSearch
      *
      */
-    clear_search: function() {
+    clearSearch: function() {
       this.get('contentBox').one('input').set('value', '');
     },
 
@@ -119,7 +118,7 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     destructor: function() {
-      this._unbind_ui();
+      this._unbindUI();
     },
 
     /**
@@ -172,7 +171,7 @@ YUI.add('browser-search-widget', function(Y) {
      * @param {String} newval the sting to update the input to.
      *
      */
-    update_search: function(newval) {
+    updateSearch: function(newval) {
       this.get('boundingBox').one('input').set('value', newval);
     }
 
@@ -193,6 +192,7 @@ YUI.add('browser-search-widget', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
+    'event',
     'event-valuechange',
     'juju-templates',
     'widget'
