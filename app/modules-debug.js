@@ -40,6 +40,13 @@ var GlobalConfig = {
         }
       }
     },
+    prettify: {
+      modules: {
+        'prettify': {
+          fullpath: '/juju-ui/assets/javascripts/prettify.js' 
+        }
+      } 
+    },
     juju: {
       modules: {
         // Primitives
@@ -54,6 +61,10 @@ var GlobalConfig = {
 
         'browser-charm-slider': {
           fullpath: '/juju-ui/widgets/charm-slider.js'
+        },
+
+        'browser-fileviewer-widget': {
+          fullpath: '/juju-ui/widgets/fileviewer.js'
         },
 
         'reconnecting-websocket': {
