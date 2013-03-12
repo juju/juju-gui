@@ -21,7 +21,11 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
-- unreleased:
+- 0.2.2:
+    - Initial support for in browser environment.
+    - Subapp infrastructure.
+    - Landscape integration support.
+    - juju-core environment improvements.
 - 0.2.1:
     - Initial support for source maps.
     - Browser tests infrastructure.
