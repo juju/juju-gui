@@ -96,9 +96,11 @@ def main(argv, print=print, juju=juju, wait_for_service=wait_for_service,
     # Fetches the instance ID from the testing instances to apply an IP to
     instance_ip = os.environ.get("JUJU_INSTANCE_IP")
     if instance_ip:
-        print('Assigning JUJU_INSTANCE_IP to testing instance')
-        instance_id = subprocess.check_output("euca-describe-instances | grep INSTANCE | grep juju-juju-gui-testing-instance-1 | awk '{print $2;}'", shell=True).strip()
+        print('Assigning JUJU_INSTANCE_IP %s' % instance_ip)
+        instance_id = subprocess.check_output(
+            "euca-describe-instances | grep INSTANCE | grep juju-juju-gui-testing-instance-1 | awk '{print $2;}'", shell=True).strip()
         subprocess.check_call("euca-associate-address -i %s %s" % (instance_id, instance_ip), shell=True)
+        print('Assigned IP to %s' % instance_id)
 
     wait_for_service()
     print('Exposing the service...')
