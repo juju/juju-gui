@@ -93,7 +93,8 @@ YUI.add('browser-search-widget', function(Y) {
       // it to update to a specific value. This is how things like clicking
       // categories can work.
       this._events.push(
-          container.one('input').on('valuechange', function(ev) {
+          container.one('input').on('valueChange', function(ev) {
+          debugger;
             this.fire(this.EVT_SEARCH_CHANGED);
           }, this)
       );
