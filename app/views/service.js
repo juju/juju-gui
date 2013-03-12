@@ -261,7 +261,7 @@ YUI.add('juju-view-service', function(Y) {
      *
      * @method _unexposeServiceCallback
      * @param {Object} ev An event object (with "err" and "service_name"
-         attributes).
+     *  attributes).
      * @return {undefined} Nothing.
      */
     _unexposeServiceCallback: function(ev) {
@@ -306,7 +306,7 @@ YUI.add('juju-view-service', function(Y) {
      *
      * @method _exposeServiceCallback
      * @param {Object} ev An event object (with "err" and "service_name"
-         attributes).
+     *  attributes).
      * @return {undefined} Nothing.
      */
     _exposeServiceCallback: function(ev) {

@@ -163,10 +163,10 @@ YUI.add('juju-env-go', function(Y) {
      * @method expose
      * @param {String} service The service name.
      * @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err"
-        attribute containing a string describing the problem (if an error
-        occurred), and with a "service_name" attribute containing the name of
-        the service.
+     *  operation is performed. It will receive an object with an "err"
+     *  attribute containing a string describing the problem (if an error
+     *  occurred), and with a "service_name" attribute containing the name of
+     *  the service.
      * @return {undefined} Sends a message to the server only.
      */
     expose: function(service, callback) {
@@ -188,10 +188,10 @@ YUI.add('juju-env-go', function(Y) {
      * @method unexpose
      * @param {String} service The service name.
      * @param {Function} callback A callable that must be called once the
-        operation is performed. It will receive an object with an "err"
-        attribute containing a string describing the problem (if an error
-        occurred), and with a "service_name" attribute containing the name of
-        the service.
+     *  operation is performed. It will receive an object with an "err"
+     *  attribute containing a string describing the problem (if an error
+     *  occurred), and with a "service_name" attribute containing the name of
+     *  the service.
      * @return {undefined} Sends a message to the server only.
      */
     unexpose: function(service, callback) {
