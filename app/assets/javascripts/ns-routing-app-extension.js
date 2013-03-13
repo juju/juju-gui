@@ -2,8 +2,6 @@
 
 YUI.add('ns-routing-app-extension', function(Y) {
 
-  // Below copied directly from routing.js without modification
-
   function _trim(s, char, leading, trailing) {
     // remove leading, trailing char.
     while (leading && s && s.indexOf(char) === 0) {
@@ -208,8 +206,6 @@ YUI.add('ns-routing-app-extension', function(Y) {
     }
   };
 
-  // End routing.js copy
-
   /**
     Adds namespaced routing functionality to a Y.App instance
 
@@ -218,8 +214,8 @@ YUI.add('ns-routing-app-extension', function(Y) {
   */
   function NSRouter() {
     // _nsRouter is a juju.Router.  It provides a lot of utility methods for
-    // working with namespaced URLs.  See the module for details.
-    this._nsRouter = Y.juju.Router(this.defaultNamespace);
+    // working with namespaced URLs.
+    this._nsRouter = Y.namespace('juju').Router(this.defaultNamespace);
   }
 
   NSRouter.ATTRS = {};

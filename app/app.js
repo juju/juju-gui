@@ -248,7 +248,7 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
-      // These two attributes are used by the namespaced URL tracker.
+      // This attribute is used by the namespaced URL tracker.
       // _routeSeen is part of a mechanism to prevent non-namespaced routes
       // from being processed multiple times when multiple namespaces are
       // present in the URL.  The data structure is reset for each URL (in
