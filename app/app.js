@@ -27,11 +27,22 @@ YUI.add('juju-gui', function(Y) {
    *
    * @class App
    */
-  var JujuGUI = Y.Base.create('juju-gui', Y.App, [Y.juju.SubAppRegistration], {
+  var JujuGUI = Y.Base.create('juju-gui', Y.App, [
+                                                  Y.juju.SubAppRegistration,
+                                                  Y.juju.NSRouter], {
+
+    /*
+      Extension properties
+    */
     subApplications: [{
       type: Y.juju.subapps.Browser,
       config: {}
     }],
+
+    defaultNamespace: 'charmstore',
+    /*
+      End extension properties
+    */
 
     /*
      * Views
@@ -237,16 +248,13 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
-      // These two attributes are used by the namespaced URL tracker.
+      // This attribute is used by the namespaced URL tracker.
       // _routeSeen is part of a mechanism to prevent non-namespaced routes
       // from being processed multiple times when multiple namespaces are
       // present in the URL.  The data structure is reset for each URL (in
       // _dispatch).  It holds a mapping between route callback uids and a
       // flag to indicate that the callback has been used.
       this._routeSeen = {};
-      // _nsRouter is a juju.Router.  It provides a lot of utility methods for
-      // working with namespaced URLs.  See the module for details.
-      this._nsRouter = juju.Router('charmstore');
 
       // Create a client side database to store state.
       this.db = new models.Database();
@@ -377,186 +385,6 @@ YUI.add('juju-gui', function(Y) {
 
       // Attach SubApplications
       this.addSubApplications();
-    },
-
-    /**
-     * NS aware navigate wrapper. This has the feature
-     * of preserving existing namespaces in the URL.  In other words, you can
-     * provide only a single namespace value, and all other namespaces are
-     * maintained, unless you pass the overrideAllNamespaces option in the
-     * options object, in which case the other namespaces are removed.
-     *
-     * @method _navigate
-     **/
-    _navigate: function(url, options) {
-      var result;
-      if (options && options.overrideAllNamespaces) {
-        result = url;
-        delete options.overrideAllNamespaces;
-      } else {
-        var loc = Y.getLocation();
-        var qs = this._nsRouter.getQS(url);
-        result = this._nsRouter.combine(loc.pathname, url);
-        if (qs) {
-          result += '?' + qs;
-        }
-      }
-      if (JujuGUI.superclass._navigate.call(this, url, options)) {
-        // Queue/Save the entire URL, not just the new fragment.
-        this._queue(result, true);
-        return true;
-      }
-      return false;
-    },
-
-
-    /**
-     * Null-queue for NS routing. The 1ms delay in the queue presents problems
-     * and is unnecessary for our supported browsers, so we save URLs as they
-     * come.
-     *
-     * Overrides superclass, formalizes dependency on HTML5 paths.
-     * @method _queue
-     **/
-    _queue: function() {
-      // Sync Invocation
-      this._save.apply(this, arguments);
-    },
-
-    /**
-    Dispatches to the first route handler that matches the specified _path_.
-
-    If called before the `ready` event has fired, the dispatch will be aborted.
-    This ensures normalized behavior between Chrome (which fires a `popstate`
-    event on every pageview) and other browsers (which do not).
-
-    @method _dispatch
-    @param {String} path URL path.
-    @param {String} url Full URL.
-    @param {String} src What initiated the dispatch.
-    @chainable
-    @protected
-    **/
-    _dispatch: function(path, url, src) {
-      var self = this,
-          routes,
-          callbacks = [],
-          namespaces = [],
-          matches, req, res, parts;
-
-      // These are used by underlying YUI machinery.
-      self._dispatching = self._dispatched = true;
-
-      parts = this._nsRouter.split(path);
-      namespaces = this._nsRouter.parse(parts.pathname);
-      // Clear out the "seen" stash because we are starting a new URL
-      // dispatch.  This data structure helps us from processing the same non-
-      // namespaced route multiple times for each URL.
-      this._routeSeen = {};
-
-      Y.each(namespaces, function(fragment, namespace) {
-        routes = self.match(fragment, namespace);
-        if (!routes || !routes.length) {
-          self._dispatching = false;
-          return self;
-        }
-
-        req = self._getRequest(fragment, url, src);
-        res = self._getResponse(req);
-
-        // This method is a recursive closure, which mutates a number of
-        // variables in the enclosing scope, most notably the callbacks and
-        // routes.  Read carefully!
-        req.next = function(err) {
-          var subApp, callback, route, callingContext;
-
-          if (err) {
-            // Special case "route" to skip to the next route handler
-            // avoiding any additional callbacks for the current route.
-            if (err === 'route') {
-              callbacks = [];
-              req.next();
-            } else {
-              Y.error(err);
-            }
-
-          } else if ((callback = callbacks.shift())) {
-
-            if (typeof callback === 'string') {
-              subApp = self.get('subApps')[namespace];
-
-              if (subApp && typeof subApp[callback] === 'function') {
-                callback = subApp[callback];
-                callingContext = subApp;
-                subApp.verifyRendered();
-              } else if (typeof self[callback] === 'function') {
-                callback = self[callback];
-                callingContext = self;
-              } else {
-                console.error('Callback function `', callback,
-                    '` does not exist under the namespace `', namespace,
-                    '` at the path `', path, '`.');
-              }
-            }
-
-            // Allow access to the num or remaining callbacks for the route.
-            req.pendingCallbacks = callbacks.length;
-            // Attach the callback id to the request.
-            req.callbackId = Y.stamp(callback, true);
-            callback.call(callingContext, req, res, req.next);
-
-          } else if ((route = routes.shift())) {
-            // Make a copy of this route's `callbacks` and find its matches.
-            callbacks = route.callbacks.concat();
-            matches = route.regex.exec(fragment);
-
-            // Use named keys for parameter names if the route path contains
-            // named keys. Otherwise, use numerical match indices.
-            if (matches.length === route.keys.length + 1) {
-              req.params = Y.Array.hash(route.keys, matches.slice(1));
-            } else {
-              req.params = matches.concat();
-            }
-
-            // Allow access tot he num of remaining routes for this request.
-            req.pendingRoutes = routes.length;
-
-            // Execute this route's `callbacks`.
-            req.next();
-          }
-        };
-
-        req.next();
-      });
-
-
-      self._dispatching = false;
-      return self._dequeue();
-    },
-
-    /** Overridden Y.Route.match to support namespaced routes.
-     *
-     * @method match
-     * @param {String} path to match.
-     * @param {String} namespace (optional) return route to have a matching
-     *                 namespace attribute. If no namespace was specified
-     *                 routes will match in the default namespace only.
-     **/
-    match: function(path, namespace) {
-      var defaultNS = this._nsRouter.defaultNamespace;
-      if (!namespace) {
-        namespace = defaultNS;
-      }
-
-      return Y.Array.filter(this._routes, function(route) {
-        var routeNS = route.namespace || defaultNS;
-        if (path.search(route.regex) > -1) {
-          if (routeNS === namespace) {
-            return true;
-          }
-        }
-        return false;
-      }, this);
     },
 
     /**
@@ -1052,87 +880,6 @@ YUI.add('juju-gui', function(Y) {
         idx = matches.length - 1;
       }
       return matches[idx] && matches[idx].path;
-    },
-
-    /**
-     * Override Y.Router.route (and setter) to allow inclusion of additional
-     * routing params.
-     *
-     * @method _setRoutes
-     * @private
-     */
-    _setRoutes: function(routes) {
-      this._routes = [];
-      Y.Array.each(routes, function(route) {
-        // Additionally pass route as options. This is needed to pass through
-        // the attribute setter.
-        // Callback can be an array. We push a state tracker to the head of
-        // each callback chain.
-        var callbacks = route.callbacks || route.callback;
-        if (!Y.Lang.isArray(callbacks)) {
-          callbacks = [callbacks];
-        }
-        // Tag each callback such that we can resolve it in
-        // the state tracker.
-        Y.Array.each(callbacks, function(cb) {Y.stamp(cb);});
-        // Inject our state tracker.
-        if (callbacks[0] !== '_routeStateTracker') {
-          callbacks.unshift('_routeStateTracker');
-        }
-        route.callbacks = callbacks.concat();
-        // Additionally pass the route with its extended
-        // attribute set.
-        this.route(route.path, route.callbacks, route);
-      }, this);
-      return this._routes.concat();
-    },
-
-    /**
-     * Internal state tracker. This makes sure a given route
-     * dispatches once per any dispatch call with regard to
-     * namespace components.  This is important for routes registered
-     * without namespaces.
-     *
-     * @method _routeStateTracker
-     **/
-    _routeStateTracker: function(req, res, next) {
-      var seen = this._routeSeen,
-          callbackId = req.callbackId;
-
-      if (callbackId && seen[callbackId]) {
-        // Calling next with a route error aborts
-        // further callbacks in _this_ array (remember
-        // route.callbacks is an array per route).
-        // But it can allow continued processing.
-        next('route');
-      }
-      next();
-      seen[callbackId] = true;
-    },
-
-    /**
-     * Override the App route builder. This method adds the ability to
-     * send multiple callbacks, and the ability to specify arbitrary
-     * additional attributes in the options argument.
-     *
-     * @method route
-     */
-    route: function(path, callbacks, options) {
-      callbacks = Y.Array(callbacks);
-      var keys = [];
-      var routeData = Y.mix({
-        callbacks: callbacks,
-        keys: keys,
-        path: path,
-        regex: this._getRegex(path, keys),
-
-        // For back-compat.
-        // This may no longer be required but is being left here until
-        // proper tests are written to guarantee there are no side effects
-        callback: callbacks[0]
-      }, options);
-      this._routes.push(routeData);
-      return this;
     }
 
   }, {
@@ -1221,7 +968,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-notifications',
-    'juju-routing',
+    'ns-routing-app-extension',
     // This alias does not seem to work, including references by hand.
     'juju-controllers',
     'juju-notification-controller',
