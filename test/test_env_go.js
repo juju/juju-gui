@@ -260,7 +260,7 @@
       var charm_url;
       var err;
       var service_name;
-      env.deploy('precise/mysql', 'mysql', null, null, function(data) {
+      env.deploy('precise/mysql', 'mysql', null, null, null, function(data) {
         charm_url = data.charm_url;
         err = data.err;
         service_name = data.service_name;
