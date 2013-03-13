@@ -60,7 +60,11 @@ encoded_credentials = base64.encodestring(credentials)[:-1]
 # This is saucelabs.com credentials and API endpoint rolled into a URL.
 command_executor = 'http://%s@ondemand.saucelabs.com:80/wd/hub' % credentials
 driver = None
-
+internal_ip = None
+if os.path.exists('juju-internal-ip'):
+    with open('juju-internal-ip') as fp:
+        internal_ip = fp.read().strip()
+        os.unlink('juju-internal-ip')
 
 def formatWebDriverError(error):
     msg = []
@@ -92,7 +96,6 @@ class TestCase(unittest.TestCase):
             capabilities['name'] = 'Juju GUI'
             user = getpass.getuser()
             capabilities['tags'] = [user]
-            print('Capabilities %s' % capabilities)
             driver = selenium.webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor=command_executor)
@@ -177,7 +180,6 @@ class TestCase(unittest.TestCase):
         change the internal Juju environment. Such tests should add this
         function as part of their own clean up process.
         """
-        internal_ip = os.environ.get('JUJU_INTERNAL_IP', None)
         print('retry_api with ip:%s' % internal_ip)
         if internal_ip:
             # When an internal ip address is set directly contract
