@@ -283,7 +283,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
           result += '?' + qs;
         }
       }
-      if (JujuGUI.superclass._navigate.call(this, url, options)) {
+      if (Y.App.prototype._navigate.call(this, url, options)) {
         // Queue/Save the entire URL, not just the new fragment.
         this._queue(result, true);
         return true;

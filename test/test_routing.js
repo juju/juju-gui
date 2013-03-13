@@ -15,6 +15,7 @@ describe('Namespaced Routing', function() {
 
   beforeEach(function() {
     app = new juju.App();
+
   });
 
   it('should support basic namespaced urls', function() {

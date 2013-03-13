@@ -28,8 +28,8 @@ YUI.add('juju-gui', function(Y) {
    * @class App
    */
   var JujuGUI = Y.Base.create('juju-gui', Y.App, [
-            Y.juju.SubAppRegistration,
-            Y.juju.NSRouter ], {
+                                                  Y.juju.SubAppRegistration,
+                                                  Y.juju.NSRouter], {
 
     /*
       Extension properties
