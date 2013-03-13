@@ -256,11 +256,26 @@
       assert.deepEqual(expected, msg);
     });
 
-    it('handles failed service deploy', function() {
+    it('successfully deploys a service storing charm data', function() {
+      var charm_url;
+      var err;
       var service_name;
+      env.deploy('precise/mysql', 'mysql', null, null, function(data) {
+        charm_url = data.charm_url;
+        err = data.err;
+        service_name = data.service_name;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1
+      });
+      assert.equal(charm_url, 'precise/mysql');
+      assert.isUndefined(err);
+      assert.equal(service_name, 'mysql');
+
+    it('handles failed service deploy', function() {
       var err;
       env.deploy('precise/mysql', 'mysql', null, null, null, function(data) {
-        service_name = data.service_name;
         err = data.err;
       });
       // Mimic response.
@@ -268,9 +283,7 @@
         RequestId: 1,
         Error: 'service "mysql" not found'
       });
-      assert.equal(service_name, 'mysql');
       assert.equal(err, 'service "mysql" not found');
-
     });
 
     it('sends the correct get_annotations message', function() {

@@ -189,7 +189,7 @@ YUI.add('juju-env-go', function(Y) {
               CharmUrl: charm_url,
               NumUnits: num_units
             }},
-          intermediateCallback, true);
+          intermediateCallback);
     },
 
     /**
@@ -200,6 +200,8 @@ YUI.add('juju-env-go', function(Y) {
        @param {Function} userCallback The callback originally submitted by the
        call site.
        @param {String} service_name The name of the service.  Passed in since
+         it is not part of the response.
+       @param {String} charm_url The URL of the charm.  Passed in since
          it is not part of the response.
        @param {Object} data The response returned by the server.
        @return {undefined} Nothing.
