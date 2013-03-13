@@ -273,6 +273,7 @@
       assert.equal(charm_url, 'precise/mysql');
       assert.isUndefined(err);
       assert.equal(service_name, 'mysql');
+    });
 
     it('handles failed service deploy', function() {
       var err;
