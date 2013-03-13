@@ -75,10 +75,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/charm-slider.js'
         },
 
-        'browser-fileviewer-widget': {
-          fullpath: '/juju-ui/widgets/fileviewer.js'
-        },
-
         'browser-search-widget': {
           fullpath: '/juju-ui/widgets/charm-search.js'
         },

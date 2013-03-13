@@ -1,14 +1,10 @@
 'use strict';
 
-describe('fileviewer', function() {
+describe('prettify', function() {
   var container, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use([
-      'browser-fileviewer-widget',
-      'node',
-      'prettify'
-    ], function(Y) {
+    Y = YUI(GlobalConfig).use(['node', 'prettify'], function(Y) {
       done();
     });
   });
@@ -22,9 +18,8 @@ describe('fileviewer', function() {
     container.remove(true);
   });
 
-  it('initializes', function() {
-    var fv = new Y.juju.widgets.browser.FileViewer();
-    assert.isObject(fv);
+  it('exists', function() {
+    assert.isObject(Y.prettify);
   });
 
   it('renders code', function() {
@@ -35,8 +30,7 @@ describe('fileviewer', function() {
       'x = bar(fnord)',
       'print x'
     ].join('\n');
-    var fv = new Y.juju.widgets.browser.FileViewer();
-    fv.render(container, code);
+    Y.prettify.renderPrettyPrintedFile(container, code);
     var codeblock = Y.one('.prettyprint');
     assert.isObject(
         codeblock,

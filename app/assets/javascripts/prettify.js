@@ -1,3 +1,9 @@
+/**
+ * Prettifies code and renders prettily printed code to nodes.
+ *
+ * @namespace prettify 
+ */
+
 YUI.add('prettify', function(Y){
 /** BEGIN minified prettify block **/
 !function(){var q=null;window.PR_SHOULD_USE_CONTINUATION=!0;
@@ -32,7 +38,24 @@ o.className&&e.test(o.className)){m=!0;break}if(!m){d.className+=" prettyprinted
 h={};g()}};typeof define==="function"&&define.amd&&define("google-code-prettify",[],function(){return Y})})();}()
 /** END minified prettify block **/
 
-ns = Y.namespace('prettify');
+var ns = Y.namespace('prettify'),
+    sub = Y.Lang.sub;
+
 ns.prettyPrint = prettyPrint; 
-}, '4-march-13', {requires: []
-});
+
+/**
+ * Sets up the dom and processes the pretty printing.
+ *
+ * @method renderPrettyPrintedFile
+ * @param {Y.Node} container The node to contain the code.
+ * @param {String} code The code being rendered.
+ */
+ns.renderPrettyPrintedFile = function(container, code) {
+  var template = '<pre class="prettyprint linenums hidden">{code}</pre>',
+      content = sub(template, {code: code});
+  container.setHTML(content);
+  ns.prettyPrint();
+  Y.one('.prettyprint').removeClass('hidden');
+};
+
+}, '4-march-13', {requires: ['base']});
