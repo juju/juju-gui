@@ -72,7 +72,3 @@ __ https://juju.ubuntu.com/docs/getting-started.html
 Rename your newly configured EC2 juju config to be `juju-gui-testing` and run::
 
   bin/test-charm
-
-Running the tests locally
--------------------------
-Coming soon...
