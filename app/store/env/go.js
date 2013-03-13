@@ -172,7 +172,7 @@ YUI.add('juju-env-go', function(Y) {
     expose: function(service, callback) {
       var intermediateCallback = null;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleExposure, this,
+        intermediateCallback = Y.bind(this.handleServiceCalls, this,
             callback, service);
       }
       this._send_rpc({
@@ -198,7 +198,7 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback = null;
       if (callback) {
         intermediateCallback = Y.bind(
-            this.handleExposure, this, callback, service);
+            this.handleServiceCalls, this, callback, service);
       }
       this._send_rpc({
         Type: 'Client',
@@ -208,10 +208,11 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-     * Transform the data returned from juju-core 'ServiceExpose' and
-     * 'ServiceUnexpose' calls into that suitable for the user callback.
+     * Transform the data returned from juju-core calls related to a service
+     * (e.g. 'ServiceExpose', 'ServiceUnexpose') into that suitable for the
+     * user callback.
      *
-     * @method handleExposure
+     * @method handleServiceCalls
      * @param {Function} userCallback The callback originally submitted by the
      * call site.
      * @param {String} service The name of the service.  Passed in since it
@@ -219,7 +220,7 @@ YUI.add('juju-env-go', function(Y) {
      * @param {Object} data The response returned by the server.
      * @return {undefined} Nothing.
      */
-    handleExposure: function(userCallback, service, data) {
+    handleServiceCalls: function(userCallback, service, data) {
       var transformedData = {
         err: data.Error,
         service_name: service
@@ -347,6 +348,54 @@ YUI.add('juju-env-go', function(Y) {
         err: data.Error,
         entity: entity,
         results: data.Response && data.Response.Annotations
+      });
+    },
+
+    /**
+     * Get the configuration for the given service.
+     *
+     * @method expose
+     * @param {String} serviceName The service name.
+     * @param {Function} callback A callable that must be called once the
+     *  operation is performed. It will receive an object containing:
+     *    err - a string describing the problem (if an error occurred),
+     *    service_name - the name of the service,
+     *    results: an object containing all of the configuration data for
+     *      the service.
+     * @return {undefined} Sends a message to the server only.
+     */
+    get_service: function(serviceName, callback) {
+      var intermediateCallback = null;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleGetService, this,
+            callback, serviceName);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'ServiceGet',
+        Params: {
+          ServiceName: serviceName
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+     * Transform the data returned from juju-core call to get_service into
+     * that suitable for the user callback.
+     *
+     * @method handleGetService
+     * @param {Function} userCallback The callback originally submitted by the
+     * call site.
+     * @param {String} serviceName The name of the service.  Passed in since it
+     * is not part of the response.
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleGetService: function(userCallback, serviceName, data) {
+      userCallback({
+        err: data.Error,
+        service_name: serviceName,
+        result: data.Response
       });
     }
 
