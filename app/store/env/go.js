@@ -170,9 +170,10 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Sends a message to the server only.
      */
     expose: function(service, callback) {
-      var intermediateCallback = null;
+      var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleServiceCalls, this,
+        // Curry the callback and service.  No context is passed.
+        intermediateCallback = Y.bind(this.handleServiceCalls, null,
             callback, service);
       }
       this._send_rpc({
@@ -195,10 +196,11 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Sends a message to the server only.
      */
     unexpose: function(service, callback) {
-      var intermediateCallback = null;
+      var intermediateCallback;
       if (callback) {
+        // Curry the callback and service.  No context is passed.
         intermediateCallback = Y.bind(
-            this.handleServiceCalls, this, callback, service);
+            this.handleServiceCalls, null, callback, service);
       }
       this._send_rpc({
         Type: 'Client',
@@ -241,9 +243,10 @@ YUI.add('juju-env-go', function(Y) {
      * @method update_annotations
      */
     update_annotations: function(entity, data, callback) {
-      var intermediateCallback = null;
+      var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleSetAnnotations, this,
+        // Curry the callback and entity.  No context is passed.
+        intermediateCallback = Y.bind(this.handleSetAnnotations, null,
             callback, entity);
       }
       this._send_rpc({
@@ -269,9 +272,10 @@ YUI.add('juju-env-go', function(Y) {
      * @method remove_annotations
      */
     remove_annotations: function(entity, keys, callback) {
-      var intermediateCallback = null;
+      var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleSetAnnotations, this,
+        // Curry the callback and entity.  No context is passed.
+        intermediateCallback = Y.bind(this.handleSetAnnotations, null,
             callback, entity);
       }
       var data = {};
@@ -318,9 +322,10 @@ YUI.add('juju-env-go', function(Y) {
      * @method get_annotations
      */
     get_annotations: function(entity, callback) {
-      var intermediateCallback = null;
+      var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleGetAnnotations, this,
+        // Curry the callback and entity.  No context is passed.
+        intermediateCallback = Y.bind(this.handleGetAnnotations, null,
             callback, entity);
       }
       this._send_rpc({
@@ -354,7 +359,7 @@ YUI.add('juju-env-go', function(Y) {
     /**
      * Get the configuration for the given service.
      *
-     * @method expose
+     * @method get_service
      * @param {String} serviceName The service name.
      * @param {Function} callback A callable that must be called once the
      *  operation is performed. It will receive an object containing:
@@ -365,9 +370,10 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Sends a message to the server only.
      */
     get_service: function(serviceName, callback) {
-      var intermediateCallback = null;
+      var intermediateCallback;
       if (callback) {
-        intermediateCallback = Y.bind(this.handleGetService, this,
+        // Curry the callback and serviceName.  No context is passed.
+        intermediateCallback = Y.bind(this.handleGetService, null,
             callback, serviceName);
       }
       this._send_rpc({
