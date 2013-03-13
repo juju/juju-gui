@@ -308,15 +308,12 @@ function injectData(app, data) {
 (function() {
 
   describe('Application prefetching', function() {
-    var Y, models, conn, env, app, container, charm_store, data;
+    var Y, conn, env, app, container;
 
     before(function(done) {
       console.log('Loading App prefetch test code');
       Y = YUI(GlobalConfig).use(
-          ['juju-gui', 'datasource-local',
-           'juju-views', 'juju-templates',
-           'juju-tests-utils', 'json-stringify'], function(Y) {
-            models = Y.namespace('juju.models');
+          ['juju-gui', 'juju-views', 'juju-tests-utils'], function(Y) {
             done();
           });
     });
@@ -327,7 +324,6 @@ function injectData(app, data) {
       env.connect();
       conn.open();
       container = Y.Node.create('<div id="test" class="container"></div>');
-      data = [];
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
@@ -382,5 +378,98 @@ function injectData(app, data) {
       app.db.on_delta({ data: tmp_data });
       get_endpoints_count.should.equal(2);
     });
+  });
+})();
+
+(function() {
+  describe('configuration parsing', function() {
+
+    var Y, app, container, getLocation;
+
+    before(function(done) {
+      console.log('Loading App prefetch test code');
+      Y = YUI(GlobalConfig).use(
+          ['juju-gui'], function(Y) {
+            done();
+          });
+    });
+
+    beforeEach(function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
+      // Monkey patch.
+      getLocation = Y.getLocation;
+      Y.getLocation = function() {
+        return {port: 71070, hostname: 'example.net'};
+      };
+    });
+
+    afterEach(function() {
+      Y.getLocation = getLocation;
+      container.destroy();
+      app.destroy();
+    });
+
+    it('should honor socket_url', function() {
+      // The app passes it through to the environment.
+      app = new Y.juju.App(
+          { container: container,
+            viewContainer: container,
+            socket_url: 'wss://example.com/' });
+      assert.equal(app.env.get('socket_url'), 'wss://example.com/');
+    });
+
+    it('should honor socket_port', function() {
+      app = new Y.juju.App(
+          { container: container,
+            viewContainer: container,
+            socket_port: '8080' });
+      assert.equal(
+          app.env.get('socket_url'),
+          'ws://example.net:8080/ws');
+    });
+
+    it('should honor socket_protocol', function() {
+      app = new Y.juju.App(
+          { container: container,
+            viewContainer: container,
+            socket_protocol: 'wss' });
+      assert.equal(
+          app.env.get('socket_url'),
+          'wss://example.net:71070/ws');
+    });
+
+    it('should support combining socket_port and socket_protocol', function() {
+      app = new Y.juju.App(
+          { container: container,
+            viewContainer: container,
+            socket_protocol: 'wss',
+            socket_port: '8080' });
+      assert.equal(
+          app.env.get('socket_url'),
+          'wss://example.net:8080/ws');
+    });
+
+    it('should allow socket_port to override socket_url', function() {
+      app = new Y.juju.App(
+          { container: container,
+            viewContainer: container,
+            socket_port: '8080',
+            socket_url: 'fnord' });
+      assert.equal(
+          app.env.get('socket_url'),
+          'ws://example.net:8080/ws');
+    });
+
+    it('should allow socket_protocol to override socket_url', function() {
+      app = new Y.juju.App(
+          { container: container,
+            viewContainer: container,
+            socket_protocol: 'wss',
+            socket_url: 'fnord' });
+      assert.equal(
+          app.env.get('socket_url'),
+          'wss://example.net:71070/ws');
+    });
+
   });
 })();

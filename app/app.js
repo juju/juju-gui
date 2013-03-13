@@ -270,10 +270,26 @@ YUI.add('juju-gui', function(Y) {
       if (this.get('env')) {
         this.env = this.get('env');
       } else {
+        // Calculate the socket_url.
+        var socket_url = this.get('socket_url'),
+            socket_port = this.get('socket_port'),
+            socket_protocol = this.get('socket_protocol');
+        if (socket_port || socket_protocol) {
+          // Assemble a socket URL from the Location.
+          var loc = Y.getLocation();
+          socket_port = socket_port || loc.port;
+          socket_protocol = socket_protocol || 'ws';
+          socket_url = socket_protocol + '://' + loc.hostname;
+          if (socket_port) {
+            socket_url += ':' + socket_port;
+          }
+          socket_url += '/ws';
+          this.set('socket_url', socket_url);
+        }
         // Instantiate the environment specified in the configuration, choosing
         // between the available implementations, currently Go and Python.
         var envOptions = {
-          socket_url: this.get('socket_url'),
+          socket_url: socket_url,
           user: this.get('user'),
           password: this.get('password'),
           readOnly: this.get('readOnly')
