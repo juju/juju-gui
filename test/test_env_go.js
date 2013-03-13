@@ -477,6 +477,62 @@
       assert.equal('This is an error.', err);
     });
 
+    it('sends the correct get_service message', function() {
+      env.get_service('mysql');
+      var last_message = conn.last_message();
+      var expected = {
+        Request: 'ServiceGet',
+        Type: 'Client',
+        RequestId: 1,
+        Params: {ServiceName: 'mysql'}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully gets service configuration', function() {
+      var service_name;
+      var result;
+      var expected = {
+        Service: 'mysql',
+        Charm: 'mysql',
+        Settings: {
+          'binlog-format': {
+            description: 'If binlogging is enabled, etc, etc","type":"string',
+            value: null
+          }
+        }
+      };
+
+      env.get_service('mysql', function(data) {
+        service_name = data.service_name;
+        result = data.result;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: expected
+      });
+      assert.equal(service_name, 'mysql');
+      assert.deepEqual(expected, result);
+    });
+
+    it('handles failed get service', function() {
+      var service_name;
+      var err;
+      env.get_service('yoursql', function(data) {
+        service_name = data.service_name;
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'service \"yoursql\" not found'
+      });
+      assert.equal(service_name, 'yoursql');
+      assert.equal(err, 'service "yoursql" not found');
+    });
+
   });
+
 
 })();
