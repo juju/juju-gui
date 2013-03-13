@@ -31,8 +31,8 @@ YUI.add('browser-fileviewer-widget', function(Y) {
      * Sets up the dom and processes the pretty printing.
      *
      * @method render
-     * @param {Y.Node}
-     * @param {String}
+     * @param {Y.Node} container The node to contain the code.
+     * @param {String} code The code being rendered.
      */
     render: function(container, code) {
       var content = sub(this.TEMPLATE, {code: code});
