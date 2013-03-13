@@ -97,6 +97,8 @@ class TestCase(unittest.TestCase):
                 command_executor=command_executor)
             # Enable implicit waits for all browsers (DOM polling behavior)
             driver.implicitly_wait(10)
+            driver.set_script_timeout(60)
+
             print('Browser:', browser_name)
             print('Test run details at https://saucelabs.com/jobs/' +
                 driver.session_id)
