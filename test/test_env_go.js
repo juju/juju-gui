@@ -176,7 +176,50 @@
       });
       assert.equal(service_name, 'mysql');
       assert.equal(err, 'service "mysql" not found');
+    });
 
+    it('sends the correct unexpose message', function() {
+      env.unexpose('apache');
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'ServiceUnexpose',
+        RequestId: 1,
+        Params: {ServiceName: 'apache'}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully unexposes a service', function() {
+      var err;
+      var service_name;
+      env.unexpose('mysql', function(data) {
+        err = data.err;
+        service_name = data.service_name;
+      });
+      // Mimic response, assuming ServiceUnexpose to be the first request.
+      conn.msg({
+        RequestId: 1,
+        Response: {}
+      });
+      assert.isUndefined(err);
+      assert.equal(service_name, 'mysql');
+    });
+
+    it('handles failed service unexpose', function() {
+      var err;
+      var service_name;
+      env.unexpose('mysql', function(data) {
+        err = data.err;
+        service_name = data.service_name;
+      });
+      // Mimic response, assuming ServiceUnexpose to be the first request.
+      conn.msg({
+        RequestId: 1,
+        Error: 'service \"mysql\" not found'
+      });
+      assert.equal(err, 'service "mysql" not found');
+      assert.equal(service_name, 'mysql');
     });
 
     it('successfully deploys a service', function() {

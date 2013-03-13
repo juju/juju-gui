@@ -40,6 +40,62 @@ YUI.add('juju-env-fakebackend', function(Y) {
      */
     initializer: function() {
       this.db = new models.Database();
+      this.environmentAnnotations = {};
+      this._resetChanges();
+      this._resetAnnotations();
+    },
+
+    /**
+      Reset the database for reporting object changes.
+
+      @method _resetChanges
+      @return {undefined} Nothing.
+     */
+    _resetChanges: function() {
+      this.changes = {
+        // These are hashes of identifier: [object, boolean], where a true
+        // boolean means added or changed and a false value means removed.
+        services: {},
+        machines: {},
+        units: {},
+        relations: {}
+      };
+    },
+
+    /**
+      Return all of the recently changed objects.
+
+      @method nextChanges
+      @return {Object} A hash of the keys 'services', 'machines', 'units' and
+        'relations'.  Each of those are hashes from entity identifier to
+        [entity, boolean] where the boolean means either active (true) or
+        removed (false).
+     */
+    nextChanges: function() {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var result = this.changes;
+      this._resetChanges();
+      return result;
+    },
+
+    /**
+      Reset the database for reporting object annotation changes.
+
+      @method _resetAnnotations
+      @return {undefined} Nothing.
+     */
+    _resetAnnotations: function() {
+      this.annotations = {
+        // These are hashes of identifier: object.
+        services: {},
+        machines: {},
+        units: {},
+        relations: {},
+        // This is undefined or the environment annotations, if they changed.
+        environment: undefined
+      };
     },
 
     /**
@@ -79,6 +135,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
         name: The name of the service to be deployed, defaulting to the charm
           name.
         config: The charm configuration options, defaulting to none.
+        configYAML: The charm configuration options, expressed as a YAML
+          string.  You may provide only one of config or configYAML.
         unitCount: The number of units to be deployed.
       @return {undefined} Get the result from the callback.
      */
@@ -195,6 +253,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
         name: The name of the service to be deployed, defaulting to the charm
           name.
         config: The charm configuration options, defaulting to none.
+        configYAML: The charm configuration options, expressed as a YAML
+          string.  You may provide only one of config or configYAML.
         unitCount: The number of units to be deployed.
       @return {undefined} Get the result from the callback.
      */
@@ -205,6 +265,22 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (this.db.services.getById(options.name)) {
         return callback({error: 'A service with this name already exists.'});
       }
+      if (options.configYAML) {
+        if (!Y.Lang.isString(options.configYAML)) {
+          return callback(
+              {error: 'Developer error: configYAML is not a string.'});
+        }
+        try {
+          // options.configYAML overrides options.config in Go and Python
+          // implementations, so we do that here too.
+          options.config = jsyaml.safeLoad(options.configYAML);
+        } catch (e) {
+          if (e instanceof jsyaml.YAMLException) {
+            return callback({error: 'Error parsing YAML.\n' + e});
+          }
+          throw e;
+        }
+      }
       var service = this.db.services.add({
         id: options.name,
         name: options.name,
@@ -213,6 +289,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         subordinate: charm.get('is_subordinate'),
         config: options.config
       });
+      this.changes.services[service.get('id')] = [service, true];
       var response = this.addUnit(options.name, options.unitCount);
       response.service = service;
       callback(response);
@@ -255,25 +332,82 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!service) {
         return {error: 'Service "' + serviceName + '" does not exist.'};
       }
-      if (!service.unitSequence) {
+      if (!Y.Lang.isValue(service.unitSequence)) {
         service.unitSequence = 0;
       }
-      var result = [];
-      // var unitMachines = this._getUnitMachines(numUnits);
+      var unit, machine;
+      var units = [];
+      var machines = this._getUnitMachines(numUnits);
 
       for (var i = 0; i < numUnits; i += 1) {
         var unitId = service.unitSequence += 1;
-        result.push(
-            this.db.units.add({
-              'id': serviceName + '/' + unitId,
-              //'machine': unit_machines.shift(),
-              // The models use underlines, not hyphens (see
-              // app/models/models.js in _process_delta.)
-              'agent_state': 'started'
-            })
-        );
+        machine = machines[i];
+        unit = this.db.units.add({
+          'id': serviceName + '/' + unitId,
+          'machine': machine.machine_id,
+          // The models use underlines, not hyphens (see
+          // app/models/models.js in _process_delta.)
+          'agent_state': 'started'
+        });
+        units.push(unit);
+        this.changes.units[unit.id] = [unit, true];
+        this.changes.machines[machine.machine_id] = [machine, true];
       }
-      return {units: result};
+      return {units: units, machines: machines};
+    },
+
+    /**
+      Find machines without any units currently assigned.
+
+      @method _getAvailableMachines
+      @return {Array} An array of zero or more machines that have been
+        previously allocated but that are not currently in use by a unit.
+     */
+    _getAvailableMachines: function() {
+      var machines = [];
+      var usedMachineIds = {};
+      this.db.units.each(function(unit) {
+        if (unit.machine_id) {
+          usedMachineIds[unit.machine_id] = true;
+        }
+      });
+      this.db.machines.each(function(machine) {
+        if (!usedMachineIds[machine.machine_id]) {
+          machines.push(machine);
+        }
+      });
+      return machines;
+    },
+
+    /**
+      Find or allocate machines for the requested number of units.
+
+      @method _getUnitMachines
+      @param {Integer} count The number of units that need machines.
+      @return {Array} An array of [count] machines.
+     */
+    _getUnitMachines: function(count) {
+      var machines = [];
+      var availableMachines = this._getAvailableMachines();
+      var machineId;
+      if (!Y.Lang.isValue(this.db.machineSequence)) {
+        this.db.machines.sequence = 0;
+      }
+      for (var i = 0; i < count; i += 1) {
+        if (i < availableMachines.length) {
+          machines.push(availableMachines[i]);
+        } else {
+          machineId = this.db.machines.sequence += 1;
+          machines.push(
+              this.db.machines.add({
+                'machine_id': machineId.toString(),
+                'public_address':
+                    'addr-' + machineId.toString() + '.example.com',
+                'agent_state': 'running',
+                'instance_state': 'running'}));
+        }
+      }
+      return machines;
     } // ,
 
     // removeUnit: function() {
@@ -331,6 +465,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
+    'js-yaml',
     'juju-models'
   ]
 });
