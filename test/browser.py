@@ -41,6 +41,11 @@ firefox.update(common)
 
 browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
 
+# Enable implicit waits for all browsers (DOM polling behavior)
+for browser in browser_capabilities.values():
+    browser.implicitly_wait(10)
+
+
 # Given the limited capabilities that the credentials impart (primarily the
 # ability to run a web browser via Sauce Labs) and that anyone can sign up for
 # their own credentials at no cost, it seems like an appropriate handling of
