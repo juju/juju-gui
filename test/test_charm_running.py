@@ -79,7 +79,7 @@ class TestDeploy(browser.TestCase):
         # Deploy appflower.
         deploy_button = charm_panel.find_element_by_css_selector(
             # See http://www.w3.org/TR/css3-selectors/#attribute-substrings
-            'button.deploy[data-url*="appflower"]')
+            'button.deploy[data-url*=appflower]')
         deploy_button.click()
         # Click to confirm deployment.
         charm_panel.find_element_by_id('charm-deploy').click()

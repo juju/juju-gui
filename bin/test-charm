@@ -27,4 +27,11 @@ do
 done
 # Destroy the environment, releasing the resources.
 yes | juju destroy-environment -e juju-gui-testing
+
+# Cleanup old internal IP address file if
+# one was created (in deploy for testing).
+if [ -e juju-internal-ip ]; then
+    rm -f juju-internal-ip
+fi
+
 exit $EXIT_CODE

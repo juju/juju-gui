@@ -64,7 +64,6 @@ internal_ip = None
 if os.path.exists('juju-internal-ip'):
     with open('juju-internal-ip') as fp:
         internal_ip = fp.read().strip()
-        os.unlink('juju-internal-ip')
 
 def formatWebDriverError(error):
     msg = []
