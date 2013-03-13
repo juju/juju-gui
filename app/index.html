@@ -236,18 +236,6 @@ if (/*@cc_on!@*/false) {
       startTheApp = function() {
         setLoadingMessageText('Trying to connect to the Juju environment');
         YUI(GlobalConfig).use(['juju-gui'], function(Y) {
-          if (!juju_config.socket_url) {
-            // Assemble a socket URL from the Location if one isn't
-            // provided.
-            var loc = Y.getLocation();
-            var port = juju_config.socket_port || loc.port;
-             var protocol = juju_config.socket_protocol || 'ws';
-            juju_config.socket_url = protocol + '://' + loc.hostname;
-            if (port) {
-              juju_config.socket_url += ':' + port;
-            }
-            juju_config.socket_url += '/ws';
-          }
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application
           // in production. Unit tests should call it manually.

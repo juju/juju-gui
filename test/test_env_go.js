@@ -3,7 +3,7 @@
 (function() {
 
   describe('Go Juju environment', function() {
-    var conn, env, juju, utils, Y;
+    var conn, env, juju, msg, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
@@ -220,6 +220,72 @@
       });
       assert.equal(err, 'service "mysql" not found');
       assert.equal(service_name, 'mysql');
+    });
+
+    it('successfully deploys a service', function() {
+      env.deploy('precise/mysql');
+      msg = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'ServiceDeploy',
+        Params: {
+          CharmUrl: 'precise/mysql'
+        },
+        RequestId: 1
+      };
+      assert.deepEqual(expected, msg);
+    });
+
+    it('successfully deploys a service with a config file', function() {
+      /*jshint multistr:true */
+      var config_raw = 'tuning-level: \nexpert-mojo';
+      /*jshint multistr:false */
+      var expected = {
+        Type: 'Client',
+        Request: 'ServiceDeploy',
+        Params: {
+          ServiceName: null,
+          Config: null,
+          ConfigYAML: config_raw,
+          CharmUrl: 'precise/mysql'
+        },
+        RequestId: 1
+      };
+      env.deploy('precise/mysql', null, null, config_raw);
+      msg = conn.last_message();
+      assert.deepEqual(expected, msg);
+    });
+
+    it('successfully deploys a service storing charm data', function() {
+      var charm_url;
+      var err;
+      var service_name;
+      env.deploy('precise/mysql', 'mysql', null, null, null, function(data) {
+        charm_url = data.charm_url;
+        err = data.err;
+        service_name = data.service_name;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {}
+      });
+      assert.equal(charm_url, 'precise/mysql');
+      assert.isUndefined(err);
+      assert.equal(service_name, 'mysql');
+    });
+
+    it('handles failed service deploy', function() {
+      var err;
+      env.deploy('precise/mysql', 'mysql', null, null, null, function(data) {
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'service "mysql" not found'
+      });
+      assert.equal(err, 'service "mysql" not found');
     });
 
     it('sends the correct get_annotations message', function() {

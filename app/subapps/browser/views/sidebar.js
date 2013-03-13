@@ -10,7 +10,8 @@
  */
 YUI.add('subapp-browser-sidebar', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
-      views = Y.namespace('juju.views');
+      views = Y.namespace('juju.views'),
+      widgets = Y.namespace('juju.widgets');
 
   /**
    * Sidebar master view for the gui browser.
@@ -20,6 +21,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
    *
    */
   ns.Sidebar = Y.Base.create('browser-view-sidebar', Y.View, [], {
+    _events: [],
     template: views.Templates.sidebar,
     visible: true,
 
@@ -28,9 +30,39 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     events: {
-      '.sidebar-toggle': {
-        click: '_toggleSidebar'
-      }
+    },
+
+    /**
+     * Bind the non native DOM events from within the View. This includes
+     * watching widgets used for their exposed events.
+     *
+     * @method _bindEvents
+     * @private
+     *
+     */
+    _bindEvents: function() {
+      // Watch the Search widget for changes to the search params.
+      this._events.push(
+          this.search.on(
+              this.search.EVT_UPDATE_SEARCH, this._searchChanged, this)
+      );
+
+      this._events.push(
+          this.search.on(
+              this.search.EVT_TOGGLE_VIEWABLE, this._toggleSidebar, this)
+      );
+    },
+
+    /**
+     * When the search term or filter is changed, fetch new data and redraw.
+     *
+     * @method _searchChanged
+     * @param {Event} ev event object from catching changes.
+     * @private
+     *
+     */
+    _searchChanged: function(ev) {
+      console.log('Sidebar search changed.');
     },
 
     /**
@@ -55,6 +87,18 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     },
 
     /**
+     * Destroy this view and clear from the dom world.
+     *
+     * @method destructor
+     *
+     */
+    destructor: function() {
+      Y.Array.each(this._events, function(ev) {
+        ev.detach();
+      });
+    },
+
+    /**
      * General YUI initializer.
      *
      * @method initializer
@@ -70,19 +114,21 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     render: function(container) {
+      var tpl = this.template(),
+          tpl_node = Y.Node.create(tpl);
+
+      // build widgets used in the template.
+      this.search = new widgets.browser.Search(),
+      this.search.render(tpl_node.one('.bws-search'));
+
       if (typeof container !== 'object') {
         container = this.get('container');
       }
-      container.setHTML(this.template({}));
-    },
+      container.setHTML(tpl_node);
 
-    /**
-     * Destroy this view and clear from the dom world.
-     *
-     * @method destructor
-     *
-     */
-    destructor: function() {}
+      // Bind extra events that aren't covered by the Y.View events object.
+      this._bindEvents();
+    }
 
   }, {
     ATTRS: {}
@@ -90,6 +136,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'browser-search-widget',
     'view'
   ]
 });
