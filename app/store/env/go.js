@@ -158,6 +158,67 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+       Deploy a charm.
+
+       @method deploy
+       @param {String} charm_url The URL of the charm.
+       @param {String} service_name The name of the service to be deployed.
+       @param {Object} config The charm configuration options.
+       @param {String} config_raw The YAML representation of the charm
+         configuration options. Only one of `config` and `config_raw` should be
+         provided, though `config_raw` takes precedence if it is given.
+       @param {Integer} num_units The number of units to be deployed.
+       @param {Function} callback A callable that must be called once the
+         operation is performed.
+       @return {undefined} Sends a message to the server only.
+     */
+    deploy: function(charm_url, service_name, config, config_raw, num_units,
+                     callback) {
+      var intermediateCallback = null;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleDeploy, this,
+            callback, service_name, charm_url);
+      }
+      this._send_rpc(
+          { Type: 'Client',
+            Request: 'ServiceDeploy',
+            Params: {
+              ServiceName: service_name,
+              Config: config,
+              ConfigYAML: config_raw,
+              CharmUrl: charm_url,
+              NumUnits: num_units
+            }
+          },
+          intermediateCallback
+      );
+    },
+
+    /**
+       Transform the data returned from juju-core 'deploy' into that suitable
+       for the user callback.
+
+       @method handleDeploy
+       @param {Function} userCallback The callback originally submitted by the
+       call site.
+       @param {String} service_name The name of the service.  Passed in since
+         it is not part of the response.
+       @param {String} charm_url The URL of the charm.  Passed in since
+         it is not part of the response.
+       @param {Object} data The response returned by the server.
+       @return {undefined} Nothing.
+     */
+    handleDeploy: function(userCallback, service_name, charm_url, data) {
+      var transformedData = {
+        err: data.Error,
+        service_name: service_name,
+        charm_url: charm_url
+      };
+      // Call the original user callback.
+      userCallback(transformedData);
+    },
+
+    /**
      * Expose the given service.
      *
      * @method expose
