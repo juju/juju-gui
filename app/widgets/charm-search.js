@@ -156,15 +156,6 @@ YUI.add('browser-search-widget', function(Y) {
     },
 
     /**
-     * Sync the widget to the currente DOM code. Since we render/create
-     * nothing implemented here at the moment.
-     *
-     * @method syncUI
-     *
-     */
-    syncUI: function() {},
-
-    /**
      * Update the search input to contain the string passed. This is meant to
      * be used by outside links that want to perform a pre-canned search and
      * display results.
