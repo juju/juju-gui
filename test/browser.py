@@ -185,7 +185,7 @@ class TestCase(unittest.TestCase):
             # When an internal ip address is set directly contract
             # the machine in question. This can help route around
             # firewalls and provider issues in some cases.
-            ssh('ubuntu@' % internal_ip,
+            ssh('ubuntu@%s' % internal_ip,
                 'sudo', 'service', 'juju-api-improv', 'restart')
         else:
             juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
