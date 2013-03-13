@@ -188,8 +188,10 @@ YUI.add('juju-env-go', function(Y) {
               ConfigYAML: config_raw,
               CharmUrl: charm_url,
               NumUnits: num_units
-            }},
-          intermediateCallback);
+            }
+          },
+          intermediateCallback
+      );
     },
 
     /**
