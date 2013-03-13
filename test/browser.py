@@ -6,6 +6,7 @@ import getpass
 import httplib
 import json
 import os
+import subprocess
 import unittest
 import urlparse
 
@@ -13,6 +14,8 @@ import selenium
 import selenium.webdriver
 from selenium.webdriver.support import ui
 import shelltoolbox
+
+from retry import retry
 
 
 juju = shelltoolbox.command('juju')
@@ -152,6 +155,7 @@ class TestCase(unittest.TestCase):
         condition = lambda driver: driver.execute_script(script)
         return self.wait_for(condition, error=error, timeout=timeout)
 
+    @retry(subprocess.CalledProcessError)
     def restart_api(self):
         """Restart the staging API backend.
 
