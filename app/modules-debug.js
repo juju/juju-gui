@@ -45,6 +45,13 @@ var GlobalConfig = {
         }
       }
     },
+    prettify: {
+      modules: {
+        'prettify': {
+          fullpath: '/juju-ui/assets/javascripts/prettify.js'
+        }
+      }
+    },
     jsyaml: {
       modules: {
         'js-yaml': {
