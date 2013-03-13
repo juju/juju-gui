@@ -23,6 +23,7 @@
 @charm-panel-width: 292px;
 @navbar-color: #2D2D2D!important;
 
+
 body {
     margin-top: 87px;
     background-color: #302b28;
@@ -62,6 +63,10 @@ input, button, select, textarea {
     .create-box-shadow(@box-shadow);
     .create-border-radius(~"6px / 7px");
     border: none;
+}
+
+.align-right {
+    text-align: right;
 }
 
 i.sprite {
@@ -260,6 +265,7 @@ i.sprite {
 
 svg {
     stroke-width: 0;
+    overflow: hidden;
 }
 
 .crosshatch-background {

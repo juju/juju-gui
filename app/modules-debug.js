@@ -1,6 +1,11 @@
 // This file is used for development only. In order to use it you should call
 // one of the "make debug" and "make devel" commands.
 //
+// If you add a new module here that is in the assets/javascripts path, there's
+// a good chance that you will need to add the file in bin/merge-files in order
+// for the fully compressed version (used by our release and "make prod," among
+// others) to work.
+//
 // This file declares which files implement modules, using the
 // "fullpath" property; and declares the membership of rollup modules, using
 // the "use" property to specify what the module name aliases.
@@ -47,6 +52,11 @@ var GlobalConfig = {
         }
       }
     },
+    jsyaml: {
+      'js-yaml': {
+        fullpath: '/juju-ui/assets/javascripts/js-yaml.min.js'
+      }
+    },
     juju: {
       modules: {
         // Primitives
@@ -65,6 +75,10 @@ var GlobalConfig = {
 
         'browser-fileviewer-widget': {
           fullpath: '/juju-ui/widgets/fileviewer.js'
+        },
+
+        'browser-search-widget': {
+          fullpath: '/juju-ui/widgets/charm-search.js'
         },
 
         'reconnecting-websocket': {
