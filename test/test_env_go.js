@@ -267,7 +267,8 @@
       });
       // Mimic response.
       conn.msg({
-        RequestId: 1
+        RequestId: 1,
+        Response: {}
       });
       assert.equal(charm_url, 'precise/mysql');
       assert.isUndefined(err);
