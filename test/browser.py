@@ -12,6 +12,7 @@ import urlparse
 
 import selenium
 import selenium.webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support import ui
 import shelltoolbox
 
@@ -60,6 +61,12 @@ command_executor = 'http://%s@ondemand.saucelabs.com:80/wd/hub' % credentials
 driver = None
 
 
+def formatWebDriverError(error):
+    msg = []
+    msg.append(str(error))
+    msg.append(str(error.stacktrace))
+    return '\n'.join(msg)
+
 def set_test_result(jobid, passed):
     headers = {'Authorization': 'Basic ' + encoded_credentials}
     url = '/rest/v1/%s/jobs/%s' % (config['username'], jobid)
@@ -84,6 +91,7 @@ class TestCase(unittest.TestCase):
             capabilities['name'] = 'Juju GUI'
             user = getpass.getuser()
             capabilities['tags'] = [user]
+            print('Capabilities %s' % capabilities)
             driver = selenium.webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor=command_executor)
@@ -125,6 +133,7 @@ class TestCase(unittest.TestCase):
                 error='Browser warning dialog not found.')
             continue_button.click()
 
+    @retry(WebDriverException, format_error=formatWebDriverError)
     def wait_for(self, condition, error=None, timeout=10):
         """Wait for condition to be True.
 
