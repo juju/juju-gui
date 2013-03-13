@@ -425,28 +425,28 @@ function injectData(app, data) {
             socket_port: '8080' });
       assert.equal(
           app.env.get('socket_url'),
-          'ws://example.net:8080/ws');
+          'wss://example.net:8080/ws');
     });
 
     it('should honor socket_protocol', function() {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
-            socket_protocol: 'wss' });
+            socket_protocol: 'ws' });
       assert.equal(
           app.env.get('socket_url'),
-          'wss://example.net:71070/ws');
+          'ws://example.net:71070/ws');
     });
 
     it('should support combining socket_port and socket_protocol', function() {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
-            socket_protocol: 'wss',
+            socket_protocol: 'ws',
             socket_port: '8080' });
       assert.equal(
           app.env.get('socket_url'),
-          'wss://example.net:8080/ws');
+          'ws://example.net:8080/ws');
     });
 
     it('should allow socket_port to override socket_url', function() {
@@ -457,18 +457,18 @@ function injectData(app, data) {
             socket_url: 'fnord' });
       assert.equal(
           app.env.get('socket_url'),
-          'ws://example.net:8080/ws');
+          'wss://example.net:8080/ws');
     });
 
     it('should allow socket_protocol to override socket_url', function() {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
-            socket_protocol: 'wss',
+            socket_protocol: 'ws',
             socket_url: 'fnord' });
       assert.equal(
           app.env.get('socket_url'),
-          'wss://example.net:71070/ws');
+          'ws://example.net:71070/ws');
     });
 
   });
