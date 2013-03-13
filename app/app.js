@@ -27,11 +27,16 @@ YUI.add('juju-gui', function(Y) {
    *
    * @class App
    */
-  var JujuGUI = Y.Base.create('juju-gui', Y.App, [Y.juju.SubAppRegistration], {
+  var JujuGUI = Y.Base.create('juju-gui', Y.App, [
+            Y.juju.SubAppRegistration,
+            Y.juju.Router ], {
+
     subApplications: [{
       type: Y.juju.subapps.Browser,
       config: {}
     }],
+
+    defaultNamespace: 'charmstore',
 
     /*
      * Views
@@ -1205,7 +1210,8 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-notifications',
-    'juju-routing',
+    //'juju-routing',
+    'ns-routing-app-extension',
     // This alias does not seem to work, including references by hand.
     'juju-controllers',
     'juju-notification-controller',
