@@ -35,8 +35,8 @@ describe('fileviewer', function() {
       'x = bar(fnord)',
       'print x'
     ].join('\n');
-    var fv = new Y.juju.widgets.browser.FileViewer({code: code});
-    fv.render(container);
+    var fv = new Y.juju.widgets.browser.FileViewer();
+    fv.render(container, code);
     var codeblock = Y.one('.prettyprint');
     assert.isObject(
         codeblock,

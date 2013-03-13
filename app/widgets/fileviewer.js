@@ -18,7 +18,7 @@ YUI.add('browser-fileviewer-widget', function(Y) {
    * @class FileViewer
    * @extends {Y.Widget}
    */
-  ns.FileViewer = Y.Base.create('file-viewer', Y.Widget, [], {
+  ns.FileViewer = Y.Base.create('file-viewer', Y.Base, [], {
     /**
      * The pre block template for the pretty printer
      *
@@ -30,32 +30,22 @@ YUI.add('browser-fileviewer-widget', function(Y) {
     /**
      * Sets up the dom and processes the pretty printing.
      *
-     * @method renderUI
-     * @param {undefined}; Mutates only.
+     * @method render
+     * @param {Y.Node}
+     * @param {String}
      */
-    renderUI: function() {
-      var content = sub(this.TEMPLATE, {code: this.get('code')});
-      this.get('contentBox').setHTML(content);
+    render: function(container, code) {
+      var content = sub(this.TEMPLATE, {code: code});
+      container.setHTML(content);
       Y.prettify.prettyPrint();
       Y.one('.prettyprint').removeClass('hidden');
     }
 
   }, {
-    ATTRS: {
-      /**
-       * @attribute code
-       * @default ''
-       * @type {String}
-       */
-      code: {
-        value: ''
-      }
-    }
   });
 
 }, '0.1.0', { requires: [
   'base',
   'node',
-  'prettify',
-  'widget'
+  'prettify'
 ]});
