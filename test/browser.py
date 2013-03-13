@@ -20,6 +20,7 @@ from retry import retry
 
 
 juju = shelltoolbox.command('juju')
+ssh = shelltoolbox.command('ssh')
 
 common = {
     'command-timeout' : 400,
@@ -176,8 +177,16 @@ class TestCase(unittest.TestCase):
         change the internal Juju environment. Such tests should add this
         function as part of their own clean up process.
         """
-        juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
-             'sudo', 'service', 'juju-api-improv', 'restart')
+        internal_ip = os.environ.get('JUJU_INTERNAL_IP', None)
+        if internal_ip:
+            # When an internal ip address is set directly contract
+            # the machine in question. This can help route around
+            # firewalls and provider issues in some cases.
+            ssh('ubuntu@' % internal_ip,
+                'sudo', 'service', 'juju-api-improv', 'restart')
+        else:
+            juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
+                 'sudo', 'service', 'juju-api-improv', 'restart')
         self.load()
         self.handle_browser_warning()
         self.wait_for_script(
