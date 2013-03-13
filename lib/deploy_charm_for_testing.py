@@ -101,7 +101,7 @@ def main(options=parse, print=print, juju=juju, wait_for_service=wait_for_servic
             instance_id = subprocess.check_output(
                 "euca-describe-instances | grep INSTANCE | grep juju-juju-gui-testing-instance-1 | awk '{print $2;}'", shell=True).strip()
             internal_ip = subprocess.check_output(
-                "euca-describe-instances | grep INSTANCE | grep juju-juju-gui-testing-instance-1 | awk '{print $11;}'", shell=True).strip()
+                "euca-describe-instances | grep INSTANCE | grep juju-juju-gui-testing-instance-1 | awk '{print $12;}'", shell=True).strip()
             os.environ['JUJU_INTERNAL_IP'] = internal_ip
             print ('Storing Internal IP as %s' % internal_ip)
             subprocess.check_call("euca-associate-address -i %s %s" % (instance_id, instance_ip), shell=True)
