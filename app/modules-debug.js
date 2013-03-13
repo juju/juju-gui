@@ -53,8 +53,10 @@ var GlobalConfig = {
       }
     },
     jsyaml: {
-      'js-yaml': {
-        fullpath: '/juju-ui/assets/javascripts/js-yaml.min.js'
+      modules: {
+        'js-yaml': {
+          fullpath: '/juju-ui/assets/javascripts/js-yaml.min.js'
+        }
       }
     },
     juju: {
