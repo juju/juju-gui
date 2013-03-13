@@ -952,7 +952,6 @@ YUI.add('juju-gui', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-notifications',
-    //'juju-routing',
     'ns-routing-app-extension',
     // This alias does not seem to work, including references by hand.
     'juju-controllers',
