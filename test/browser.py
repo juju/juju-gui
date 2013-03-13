@@ -178,6 +178,7 @@ class TestCase(unittest.TestCase):
         function as part of their own clean up process.
         """
         internal_ip = os.environ.get('JUJU_INTERNAL_IP', None)
+        print('retry_api with ip:%s' % internal_ip)
         if internal_ip:
             # When an internal ip address is set directly contract
             # the machine in question. This can help route around
