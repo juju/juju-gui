@@ -23,8 +23,8 @@ juju = shelltoolbox.command('juju')
 ssh = shelltoolbox.command('ssh')
 
 common = {
-    'command-timeout' : 400,
-    'idle-timeout': 300,
+    'command-timeout' : 300,
+    'idle-timeout': 100,
 }
 
 ie = dict(selenium.webdriver.DesiredCapabilities.INTERNETEXPLORER)
@@ -99,8 +99,8 @@ class TestCase(unittest.TestCase):
                 desired_capabilities=capabilities,
                 command_executor=command_executor)
             # Enable implicit waits for all browsers (DOM polling behavior)
-            driver.implicitly_wait(20)
-            driver.set_script_timeout(80)
+            driver.implicitly_wait(10)
+            driver.set_script_timeout(10)
 
             print('Browser:', browser_name)
             print('Test run details at https://saucelabs.com/jobs/' +

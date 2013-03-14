@@ -38,7 +38,7 @@ class TestBasics(browser.TestCase):
                 return total, failures
 
         total, failures = self.wait_for(
-            tests_completed, 'Unable to complete test run.', timeout=80)
+            tests_completed, 'Unable to complete test run.', timeout=60)
         if failures:
             msg = '{} failure(s) running {} tests.'.format(failures, total)
             self.fail(msg)
