@@ -78,7 +78,7 @@ def parse():
     return p.parse_args()
 
 def main(options=parse, print=print, juju=juju, wait_for_service=wait_for_service,
-         make_config_file=make_config_file):
+         make_config_file=make_config_file, wait_for_machine=wait_for_machine):
     """Deploy the Juju GUI service and wait for it to become available."""
     args = options()
     try:
