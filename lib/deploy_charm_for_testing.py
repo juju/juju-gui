@@ -12,7 +12,7 @@ import os
 
 juju_command = shelltoolbox.command('juju')
 
-DEFAULT_BRANCH = 'lp:juju-gui'
+DEFAULT_ORIGIN = 'lp:juju-gui'
 DEFAULT_CHARM = 'cs:~juju-gui/precise/juju-gui'
 
 def juju(s):
@@ -69,7 +69,7 @@ def wait_for_machine(get_state=get_state, sleep=time.sleep):
 def make_parser():
     parser = argparse.ArgumentParser(
         description='Deploy juju-gui for testing')
-    parser.add_argument('--branch', default=DEFAULT_BRANCH)
+    parser.add_argument('--origin', default=DEFAULT_ORIGIN)
     parser.add_argument('--charm', default=DEFAULT_CHARM)
     return parser
 
@@ -86,8 +86,8 @@ def main(options=parse, print=print, juju=juju, wait_for_service=wait_for_servic
         juju('bootstrap --environment juju-gui-testing')
         print('Deploying service...')
         options = {'serve-tests': True, 'staging': True, 'secure': False,
-                   'juju-gui-source': args.branch}
-        print('Setting branch for charm to deploy %s' % args.branch)
+                   'juju-gui-source': args.origin}
+        print('Setting origin for charm to deploy %s' % args.origin)
         with make_config_file(options) as config_file:
             juju('deploy --environment juju-gui-testing --config {} {}'.format(
                 config_file.name, args.charm))
@@ -99,13 +99,18 @@ def main(options=parse, print=print, juju=juju, wait_for_service=wait_for_servic
         if instance_ip:
             print('Assigning JUJU_INSTANCE_IP %s' % instance_ip)
             instance_id = subprocess.check_output(
-                "euca-describe-instances | grep INSTANCE | grep juju-juju-gui-testing-instance-1 | awk '{print $2;}'", shell=True).strip()
+                "euca-describe-instances | grep INSTANCE | "
+                "grep juju-juju-gui-testing-instance-1 | awk '{print $2;}'",
+                shell=True).strip()
             internal_ip = subprocess.check_output(
-                "euca-describe-instances | grep INSTANCE | grep juju-juju-gui-testing-instance-1 | awk '{print $12;}'", shell=True).strip()
+                "euca-describe-instances | grep INSTANCE | "
+                "grep juju-juju-gui-testing-instance-1 | awk '{print $12;}'",
+                shell=True).strip()
             with open('juju-internal-ip', 'w') as fp:
                 fp.write(internal_ip)
             print ('Storing Internal IP as %s' % internal_ip)
-            subprocess.check_call("euca-associate-address -i %s %s" % (instance_id, instance_ip), shell=True)
+            subprocess.check_call("euca-associate-address -i %s %s" % (
+                instance_id, instance_ip), shell=True)
             print('Assigned IP to %s' % instance_id)
 
         wait_for_service()

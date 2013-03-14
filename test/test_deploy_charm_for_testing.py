@@ -91,7 +91,7 @@ def _options(**kwargs):
         class _o(dict):
             def __getattr__(self, k):
                 return self[k]
-        result = _o(branch=None, charm=None)
+        result = _o(origin=None, charm=None)
         result.update(kwargs)
         return result
     return _wrapper
@@ -108,7 +108,7 @@ class TestScript(unittest.TestCase):
             printed,
             ['Bootstrapping...',
              'Deploying service...',
-             'Setting branch for charm to deploy None',
+             'Setting origin for charm to deploy None',
              'Waiting for service to start...',
              'Exposing the service...'])
 
@@ -119,7 +119,7 @@ class TestScript(unittest.TestCase):
         def juju(s):
             juju_commands.append(s)
 
-        main(options=_options(branch='lp:foo'), print=noop, juju=juju, wait_for_service=noop,
+        main(options=_options(origin='lp:foo'), print=noop, juju=juju, wait_for_service=noop,
              make_config_file=MakeConfigFile, wait_for_machine=noop)
         options = MakeConfigFile.options
         deploy_command = juju_commands[1]
@@ -132,7 +132,7 @@ class TestScript(unittest.TestCase):
         # passed to the charm.
         printed = []
 
-        main(options=_options(branch='lp:foo'), print=printed.append, juju=noop,
+        main(options=_options(origin='lp:foo'), print=printed.append, juju=noop,
              wait_for_service=noop, make_config_file=MakeConfigFile,
              wait_for_machine=noop)
         options = MakeConfigFile.options
@@ -140,7 +140,7 @@ class TestScript(unittest.TestCase):
             printed,
             ['Bootstrapping...',
              'Deploying service...',
-             'Setting branch for charm to deploy lp:foo',
+             'Setting origin for charm to deploy lp:foo',
              'Waiting for service to start...',
              'Exposing the service...'])
         self.assertIn('juju-gui-source', options)

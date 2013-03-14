@@ -2,7 +2,13 @@
 # This script expects that the system has python-shelltoolbox, python-
 # selenium, python-yaml, and juju installed:
 # sudo apt-get install python-shelltoolbox python-selenium python-yaml juju
-# Deploy the charm, using a branch if given.
+# Deploy the charm, using an alternate origin if given.
+# Takes all arguments that are valid for lib/deploy_charm_for_testing.py
+#  --origin
+#  --charm
+# If FAIL_FAST is set to 1 in the environment the testing loop
+# will exit when the first tested browser returns a failure
+# rather than trying them all.
 python lib/deploy_charm_for_testing.py "$@"
 if [ $? -ne 0 ]; then
     echo "Unable to deploy Charm"
