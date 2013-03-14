@@ -1,13 +1,12 @@
 #!/bin/bash
-set -x
 
-`grep -lscoP describe\\.only test/test_*.js`
+`grep -lscoP "describe\\.only" test/test_*.js`
 if [ $? -ne 1 ]; then
     echo "describe.only left in test"
     exit 1
 fi
 
-`grep -lscoP it\\.only test/test_*.js`
+`grep -lscoP "it\\.only" test/test_*.js`
 if [ $? -ne 1 ]; then
     echo "it.only left in test"
     exit 1
