@@ -66,13 +66,9 @@ class TestDeploy(browser.TestCase):
         def charm_panel_loaded(driver):
             """Wait for the charm panel to be ready and displayed."""
             charm_search = driver.find_element_by_id('charm-search-trigger')
-            try:
-                # Click to open the charm panel.
-                charm_search.click()
-            except exceptions.WebDriverException:
-                # A WebDriverException here means the element is still not
-                # clickable. Ask to retry later.
-                return False
+            # Click to open the charm panel.
+            # Implicit wait should let this resolve.
+            charm_search.click()
             return driver.find_element_by_id('juju-search-charm-panel')
 
         charm_panel = self.wait_for(charm_panel_loaded)
