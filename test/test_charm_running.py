@@ -72,12 +72,12 @@ class TestDeploy(browser.TestCase):
             return driver.find_element_by_id('juju-search-charm-panel')
 
         charm_panel = self.wait_for(charm_panel_loaded)
-        print "Charm panel", charm_panel
+        print "Charm panel", charm_panel.is_displayed()
         # Deploy appflower.
         deploy_button = charm_panel.find_element_by_css_selector(
             # See http://www.w3.org/TR/css3-selectors/#attribute-substrings
             'button.deploy[data-url*=appflower]')
-        print "Deploy Button", deploy_button
+        print "Deploy Button", deploy_button.is_displayed()
         deploy_button.click()
         # Click to confirm deployment.
         charm_panel.find_element_by_id('charm-deploy').click()
