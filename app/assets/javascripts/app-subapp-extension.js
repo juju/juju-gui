@@ -19,6 +19,13 @@ YUI.add('app-subapp-extension', function(Y) {
   };
 
   SubAppRegistration.prototype = {
+    _blacklisted_config: [
+      'container',
+      'html5',
+      'serverRouting',
+      'transitions',
+      'viewContainer'
+    ],
 
     /**
       A list of sub applications to be instantiated after initialization
@@ -38,9 +45,10 @@ YUI.add('app-subapp-extension', function(Y) {
       Adds all of the sub applications listed in the subApplications property.
 
       @method addSubApplications
+      @param {Object} cfg Shared application configuration data.
     */
-    addSubApplications: function() {
-      this.addSubApps(this.subApplications);
+    addSubApplications: function(cfg) {
+      this.addSubApps(this.subApplications, cfg);
       Y.on('*:subNavigate', function(e) {
         /* In order for the new namespace enabled router to
           parse this route correctly we need to navigate to the
@@ -77,10 +85,25 @@ YUI.add('app-subapp-extension', function(Y) {
 
       @method addSubApps
       @param {array} subApps an array of sub app objects and configs.
+      @param {Object} cfg Shared application configuration data.
     */
-    addSubApps: function(subApps) {
+    addSubApps: function(subApps, cfg) {
+      if (cfg === undefined) {
+        cfg = {};
+      }
+
       Y.Array.each(subApps, function(subApp) {
-        this.addSubApp(subApp.type, subApp.config);
+        // Merge the shared application config data with the hard coded config
+        // so that the hard coded values maintain precedence.
+        // Note that black listed attributes are not passed into SubApps.
+        Y.each(this._blacklisted_config, function(blacklist) {
+          if (cfg[blacklist]) {
+            delete cfg[blacklist];
+          }
+        });
+
+        var merged_cfg = Y.merge(cfg, subApp.config);
+        this.addSubApp(subApp.type, merged_cfg);
       }, this);
     },
 

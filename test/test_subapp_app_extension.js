@@ -1,6 +1,6 @@
 'use strict';
 
-describe('SubApplication App Extension', function() {
+describe.only('SubApplication App Extension', function() {
   var Y, juju, app, mocks, MockApp;
 
   before(function(done) {
@@ -47,6 +47,48 @@ describe('SubApplication App Extension', function() {
       type: Y.mock.subapp,
       config: {}
     };
+  });
+
+  it('should supply application config to sub apps', function() {
+    var app_config = {
+      api_url: 'http://google.com',
+      html5: 'updated'
+    },
+        subapp_config,
+        ConfigSubApp = Y.Base.create('config-subapp', Y.juju.SubApp, [], {
+          initializer: function(cfg) {
+            subapp_config = this.getAttrs();
+          }
+        }, {
+          ATTRS: {
+            'keepme': {
+              value: 'original'
+            },
+            'api_url': {},
+            'html5': {
+              value: 'original'
+            }
+          }
+        }),
+        ConfigApp = Y.Base.create('config-app', Y.App, [
+          Y.juju.SubAppRegistration], {
+          subApplications: [{
+            type: ConfigSubApp,
+            config: {'keepme': 'clobber'}
+          }],
+          initializer: function(cfg) {
+            this.addSubApplications(cfg);
+          }
+        }),
+        app = new ConfigApp(app_config);
+
+    // App config is passed to the subapp.
+    assert.equal(subapp_config.api_url, 'http://google.com');
+    // The hard coded config is kept over any application config.
+    assert.equal(subapp_config.keepme, 'clobber');
+    // Some config is blacklisted because the subapp should define their own
+    // values.
+    assert.equal(subapp_config.html5, 'original');
   });
 
   it('should add subapps to the parent app', function() {
