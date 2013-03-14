@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('SubApplication App Extension', function() {
+describe('SubApplication App Extension', function() {
   var Y, juju, app, mocks, MockApp;
 
   before(function(done) {
