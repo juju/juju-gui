@@ -1,6 +1,11 @@
 // This file is used for development only. In order to use it you should call
 // one of the "make debug" and "make devel" commands.
 //
+// If you add a new module here that is in the assets/javascripts path, there's
+// a good chance that you will need to add the file in bin/merge-files in order
+// for the fully compressed version (used by our release and "make prod," among
+// others) to work.
+//
 // This file declares which files implement modules, using the
 // "fullpath" property; and declares the membership of rollup modules, using
 // the "use" property to specify what the module name aliases.
@@ -40,6 +45,20 @@ var GlobalConfig = {
         }
       }
     },
+    prettify: {
+      modules: {
+        'prettify': {
+          fullpath: '/juju-ui/assets/javascripts/prettify.js'
+        }
+      }
+    },
+    jsyaml: {
+      modules: {
+        'js-yaml': {
+          fullpath: '/juju-ui/assets/javascripts/js-yaml.min.js'
+        }
+      }
+    },
     juju: {
       modules: {
         // Primitives
@@ -52,12 +71,20 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/charm-small.js'
         },
 
+        'browser-charm-slider': {
+          fullpath: '/juju-ui/widgets/charm-slider.js'
+        },
+
+        'browser-search-widget': {
+          fullpath: '/juju-ui/widgets/charm-search.js'
+        },
+
         'reconnecting-websocket': {
           fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },
 
-        'juju-routing': {
-          fullpath: '/juju-ui/assets/javascripts/routing.js'
+        'ns-routing-app-extension': {
+          fullpath: '/juju-ui/assets/javascripts/ns-routing-app-extension.js'
         },
 
         'app-subapp-extension': {
@@ -185,6 +212,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/env/python.js'
         },
 
+        'juju-env-fakebackend': {
+          fullpath: '/juju-ui/store/env/fakebackend.js'
+        },
+
         'juju-notification-controller': {
           fullpath: '/juju-ui/store/notifications.js'
         },
@@ -219,6 +250,11 @@ var GlobalConfig = {
         // Browser Views
         'subapp-browser-fullscreen': {
           fullpath: '/juju-ui/subapps/browser/views/fullscreen.js'
+        },
+
+        'subapp-browser-sidebar': {
+          fullpath: '/juju-ui/subapps/browser/views/sidebar.js',
+          requires: ['subapp-browser-sidebar']
         },
 
         //Browser Models

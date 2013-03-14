@@ -23,6 +23,7 @@
 @charm-panel-width: 292px;
 @navbar-color: #2D2D2D!important;
 
+
 body {
     margin-top: 87px;
     background-color: #302b28;
@@ -62,6 +63,10 @@ input, button, select, textarea {
     .create-box-shadow(@box-shadow);
     .create-border-radius(~"6px / 7px");
     border: none;
+}
+
+.align-right {
+    text-align: right;
 }
 
 i.sprite {
@@ -1635,4 +1640,9 @@ div.inline {
     }
 }
 
+/** SubApps **/
+@import "browser/main.less";
+
+/** Widgets **/
 @import "browser/charm-small.less";
+@import "browser/charm-slider.less";

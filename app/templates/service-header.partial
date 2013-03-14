@@ -2,7 +2,7 @@
   <div class="service-header-partial">
     <div class="name crosshatch-background">
       <div>
-        <span>{{service.id}}</span>
+        <span>{{service.displayName}}</span>
         {{landscapeBadge landscape serviceModel 'reboot' 'round'}}
         {{landscapeBadge landscape serviceModel 'security' 'round'}}
       </div>

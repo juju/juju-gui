@@ -82,7 +82,8 @@
     });
 
     it('should not show controls if the charm is subordinate', function() {
-      charm.set('is_subordinate', true);
+      // The _set forces a change to a writeOnly attribute.
+      charm._set('is_subordinate', true);
       var view = makeServiceView();
       // "var _ =" makes the linter happy.
       var _ = expect(container.one('#num-service-units')).to.not.exist;

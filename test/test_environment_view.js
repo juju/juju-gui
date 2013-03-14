@@ -12,7 +12,7 @@
           'charm': 'cs:precise/wordpress-6',
           'id': 'wordpress',
           'exposed': false,
-          'annotations': {'gui.x': 100, 'gui.y': 200}
+          'annotations': {'gui-x': 100, 'gui-y': 200}
         }],
         ['service', 'add', {
           'charm': 'cs:precise/mediawiki-3',
@@ -486,7 +486,7 @@
                  'subordinate': true,
                  'charm': 'cs:precise/wordpress-6',
                  'id': 'wordpress',
-                 'annotations': {'gui.x': 374.1, 'gui.y': 211.2}
+                 'annotations': {'gui-x': 374.1, 'gui-y': 211.2}
                }]]};
          // IE uses a space delimiter, not a comma.
          var properTransform = /translate\((\d+\.?\d*)[, ](\d+\.?\d*)\)/;

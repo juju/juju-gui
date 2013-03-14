@@ -121,6 +121,7 @@
     "escape",
     "expect",
     "GlobalConfig",
+    "jsyaml",
     "consoleManager",
     "it",
     "YUI"

@@ -239,6 +239,14 @@ YUI.add('juju-view-service', function(Y) {
       '.exposeService': {mousedown: 'exposeService'}
     },
 
+    /**
+     * Unexpose the service stored in this view.
+     * Pass this._unexposeServiceCallback as callback to be called when
+     * the response is returned by the backend.
+     *
+     * @method unexposeService
+     * @return {undefined} Nothing.
+     */
     unexposeService: function() {
       var service = this.get('model'),
           env = this.get('env');
@@ -246,6 +254,16 @@ YUI.add('juju-view-service', function(Y) {
           Y.bind(this._unexposeServiceCallback, this));
     },
 
+    /**
+     * Callback called when the backend returns a response to a service
+     * unexpose call. Update the service model instance or, if an error
+     * occurred, add a failure notification.
+     *
+     * @method _unexposeServiceCallback
+     * @param {Object} ev An event object (with "err" and "service_name"
+     *  attributes).
+     * @return {undefined} Nothing.
+     */
     _unexposeServiceCallback: function(ev) {
       var service = this.get('model'),
           db = this.get('db'),
@@ -266,6 +284,14 @@ YUI.add('juju-view-service', function(Y) {
       }
     },
 
+    /**
+     * Expose the service stored in this view.
+     * Pass this._exposeServiceCallback as callback to be called when
+     * the response is returned by the backend.
+     *
+     * @method exposeService
+     * @return {undefined} Nothing.
+     */
     exposeService: function() {
       var service = this.get('model'),
           env = this.get('env');
@@ -273,6 +299,16 @@ YUI.add('juju-view-service', function(Y) {
           Y.bind(this._exposeServiceCallback, this));
     },
 
+    /**
+     * Callback called when the backend returns a response to a service
+     * expose call. Update the service model instance or, if an error
+     * occurred, add a failure notification.
+     *
+     * @method _exposeServiceCallback
+     * @param {Object} ev An event object (with "err" and "service_name"
+     *  attributes).
+     * @return {undefined} Nothing.
+     */
     _exposeServiceCallback: function(ev) {
       var service = this.get('model'),
           db = this.get('db'),
