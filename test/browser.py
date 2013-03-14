@@ -6,23 +6,35 @@ import getpass
 import httplib
 import json
 import os
+import subprocess
 import unittest
 import urlparse
 
 import selenium
 import selenium.webdriver
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support import ui
 import shelltoolbox
 
+from retry import retry
+
 
 juju = shelltoolbox.command('juju')
+ssh = shelltoolbox.command('ssh')
+
+common = {
+    'command-timeout' : 300,
+    'idle-timeout': 100,
+}
 
 ie = dict(selenium.webdriver.DesiredCapabilities.INTERNETEXPLORER)
 ie['platform'] = 'Windows 2012'
 ie['version'] = '10'
+ie.update(common)
 
 chrome = dict(selenium.webdriver.DesiredCapabilities.CHROME)
 chrome['platform'] = 'Linux'
+chrome.update(common)
 # The saucelabs.com folks recommend using the latest version of Chrome because
 # new versions come out so quickly, therefore there is no version specified
 # here.
@@ -30,6 +42,7 @@ chrome['platform'] = 'Linux'
 firefox = dict(selenium.webdriver.DesiredCapabilities.FIREFOX)
 firefox['platform'] = 'Linux'
 firefox['version'] = '18'
+firefox.update(common)
 
 browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
 
@@ -40,14 +53,23 @@ browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
 config = {
     'username': 'juju-gui',
     'access-key': '0a3b7821-93ed-4a2d-abdb-f34854eeaba3',
-    }
+   }
 
 credentials = ':'.join([config['username'], config['access-key']])
 encoded_credentials = base64.encodestring(credentials)[:-1]
 # This is saucelabs.com credentials and API endpoint rolled into a URL.
 command_executor = 'http://%s@ondemand.saucelabs.com:80/wd/hub' % credentials
 driver = None
+internal_ip = None
+if os.path.exists('juju-internal-ip'):
+    with open('juju-internal-ip') as fp:
+        internal_ip = fp.read().strip()
 
+def formatWebDriverError(error):
+    msg = []
+    msg.append(str(error))
+    msg.append(str(error.stacktrace))
+    return '\n'.join(msg)
 
 def set_test_result(jobid, passed):
     headers = {'Authorization': 'Basic ' + encoded_credentials}
@@ -76,6 +98,10 @@ class TestCase(unittest.TestCase):
             driver = selenium.webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor=command_executor)
+            # Enable implicit waits for all browsers (DOM polling behavior)
+            driver.implicitly_wait(20)
+            driver.set_script_timeout(30)
+
             print('Browser:', browser_name)
             print('Test run details at https://saucelabs.com/jobs/' +
                 driver.session_id)
@@ -112,6 +138,7 @@ class TestCase(unittest.TestCase):
                 error='Browser warning dialog not found.')
             continue_button.click()
 
+    @retry(WebDriverException, format_error=formatWebDriverError)
     def wait_for(self, condition, error=None, timeout=10):
         """Wait for condition to be True.
 
@@ -133,7 +160,7 @@ class TestCase(unittest.TestCase):
         elements = self.wait_for(condition, error=error, timeout=timeout)
         return elements[0]
 
-    def wait_for_script(self, script, error=None, timeout=10):
+    def wait_for_script(self, script, error=None, timeout=20):
         """Wait for the given JavaScript snippet to return a True value.
 
         Fail printing the provided error if timeout is exceeded.
@@ -142,6 +169,7 @@ class TestCase(unittest.TestCase):
         condition = lambda driver: driver.execute_script(script)
         return self.wait_for(condition, error=error, timeout=timeout)
 
+    @retry(subprocess.CalledProcessError)
     def restart_api(self):
         """Restart the staging API backend.
 
@@ -151,8 +179,16 @@ class TestCase(unittest.TestCase):
         change the internal Juju environment. Such tests should add this
         function as part of their own clean up process.
         """
-        juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
-             'sudo', 'service', 'juju-api-improv', 'restart')
+        print('retry_api with ip:%s' % internal_ip)
+        if internal_ip:
+            # When an internal ip address is set directly contract
+            # the machine in question. This can help route around
+            # firewalls and provider issues in some cases.
+            ssh('ubuntu@%s' % internal_ip,
+                'sudo', 'service', 'juju-api-improv', 'restart')
+        else:
+            juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
+                 'sudo', 'service', 'juju-api-improv', 'restart')
         self.load()
         self.handle_browser_warning()
         self.wait_for_script(

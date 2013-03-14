@@ -1,12 +1,12 @@
 #!/bin/bash
 
-`grep -lscor describe.only test/test_*`
+`grep -lscoP "describe\\.only" test/test_*.js`
 if [ $? -ne 1 ]; then
     echo "describe.only left in test"
     exit 1
 fi
 
-`grep -lscor it.only test/test_*`
+`grep -lscoP "it\\.only" test/test_*.js`
 if [ $? -ne 1 ]; then
     echo "it.only left in test"
     exit 1

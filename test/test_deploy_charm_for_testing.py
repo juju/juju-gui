@@ -3,7 +3,6 @@ from __future__ import print_function
 import unittest
 
 from deploy_charm_for_testing import (
-    get_branch_url,
     get_state,
     main,
     wait_for_service,
@@ -12,20 +11,6 @@ from deploy_charm_for_testing import (
 
 def noop(*args, **kws):
     pass
-
-
-class TestArgumentParsing(unittest.TestCase):
-    """The get_branch_url function does simple argument parsing."""
-
-    def test_no_branch_given(self):
-        # If there is no branch given, None is returned.
-        branch = get_branch_url(['script-name'])
-        self.assertIs(branch, None)
-
-    def test_branch_given(self):
-        # If a branch is given, the branch's URL is returned.
-        branch = get_branch_url(['script-name', 'lp:foo'])
-        self.assertEqual(branch, 'lp:foo')
 
 
 class TestWaitingForService(unittest.TestCase):
@@ -100,17 +85,30 @@ class MakeConfigFile(object):
         self.__class__.options = options
 
 
+# Mock argparse
+def _options(**kwargs):
+    def _wrapper():
+        class _o(dict):
+            def __getattr__(self, k):
+                return self[k]
+        result = _o(origin=None, charm=None)
+        result.update(kwargs)
+        return result
+    return _wrapper
+
 class TestScript(unittest.TestCase):
     """The main() function is the entry point when run as a script."""
 
     def test_status_messages_are_displayed(self):
         # While running, the script tells the user what is happening.
         printed = []
-        main(argv=[], print=printed.append, juju=noop, wait_for_service=noop)
+        main(options=_options(), print=printed.append, juju=noop, wait_for_service=noop,
+             wait_for_machine=noop)
         self.assertSequenceEqual(
             printed,
             ['Bootstrapping...',
              'Deploying service...',
+             'Setting origin for charm to deploy None',
              'Waiting for service to start...',
              'Exposing the service...'])
 
@@ -120,26 +118,29 @@ class TestScript(unittest.TestCase):
 
         def juju(s):
             juju_commands.append(s)
-        main(argv=[], print=noop, juju=juju, wait_for_service=noop,
-             make_config_file=MakeConfigFile)
+
+        main(options=_options(origin='lp:foo'), print=noop, juju=juju, wait_for_service=noop,
+             make_config_file=MakeConfigFile, wait_for_machine=noop)
         options = MakeConfigFile.options
         deploy_command = juju_commands[1]
         self.assertIn('--config my-config-file.yaml', deploy_command)
-        self.assertDictEqual({'serve-tests': True, 'staging': True}, options)
+        self.assertDictEqual({'serve-tests': True, 'staging': True,
+                              'juju-gui-source': 'lp:foo', 'secure': False}, options)
 
     def test_providing_a_branch(self):
         # If the user provides a branch name on the command line, it will be
         # passed to the charm.
         printed = []
 
-        main(argv=['', 'lp:foo'], print=printed.append, juju=noop,
-             wait_for_service=noop, make_config_file=MakeConfigFile)
+        main(options=_options(origin='lp:foo'), print=printed.append, juju=noop,
+             wait_for_service=noop, make_config_file=MakeConfigFile,
+             wait_for_machine=noop)
         options = MakeConfigFile.options
         self.assertSequenceEqual(
             printed,
             ['Bootstrapping...',
              'Deploying service...',
-             'Setting branch for charm to deploy...',
+             'Setting origin for charm to deploy lp:foo',
              'Waiting for service to start...',
              'Exposing the service...'])
         self.assertIn('juju-gui-source', options)

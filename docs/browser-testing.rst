@@ -57,8 +57,12 @@ names, e.g.::
 
     JUJU_GUI_TEST_BROWSERS="chrome firefox" bin/test-charm
 
-If JUJU_GUI_TEST_BROWSERS is empty or unset, the "chrome" browser is used by
-default.  See ``test/browser.py`` for the available options.
+If JUJU_GUI_TEST_BROWSERS is empty or unset, the "chrome", "firefox" and "ie"
+browsers are used by default.  See ``test/browser.py`` for the available
+options.
+
+If the FAIL_FAST Environment variable is set to 1 tests are aborted on the first
+browser failure rather than attempting them all.
 
 
 Running an individual test
