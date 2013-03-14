@@ -7,6 +7,7 @@ var juju_config = {
   // FIXME: turn off transitions until they are fixed.
   transitions: false,
   charm_store_url: 'http://jujucharms.com/',
+  charmworld_url: 'http://staging.jujucharms.com',
   // The config has three socket settings.  socket_port and socket_protocol
   // modify the current application url to determine the websocket url (always
   // adding "/ws" as the final path).  socket_url sets the entire websocket

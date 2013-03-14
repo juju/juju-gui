@@ -1139,6 +1139,8 @@ YUI.add('juju-gui', function(Y) {
     ATTRS: {
       html5: true,
       charm_store: {},
+      charm_store_url: {},
+      charmworld_url: {},
 
       /*
        * Routes

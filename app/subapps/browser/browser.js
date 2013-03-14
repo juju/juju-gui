@@ -49,6 +49,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     initializer: function(cfg) {
+      debugger;
     },
 
     /**
