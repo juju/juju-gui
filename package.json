@@ -9,7 +9,7 @@
     "url": "lp:juju-ui"
   },
   "engines": {
-    "node": "0.8 || 0.9"
+    "node": "0.8.x"
   },
   "dependencies": {
     "cryptojs": ">= 2.5.3"
