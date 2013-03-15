@@ -464,6 +464,51 @@ YUI.add('juju-env-go', function(Y) {
         service_name: serviceName,
         result: data.Response
       });
+    },
+
+    /**
+     * Remove the relationship between two services.
+     *
+     * @param {string} endpoint0 The name of one of the services in the relation.
+     * @param {string} endpoint1 The name of the other service in the relation.
+     * @return {undefined} Nothing.
+     * @method remove_relation
+     */
+    remove_relation: function(endpoint0, endpoint1, callback) {
+      var intermediateCallback;
+      if (callback) {
+        // Curry the endpoints.  No context is passed.
+        intermediateCallback = Y.bind(this.handleRemoveRelation, null,
+                                      callback, endpoint0, endpoint1);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'DestroyRelation',
+        Params: {
+          Endpoint0: endpoint0,
+          Endpoint1: endpoint1
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+     * Transform the data returned from juju-core call to DestroyRelation
+     * to that suitable for the user callback.
+     *
+     * @method handleRemoveRelation
+     * @param {Function} userCallback The callback originally submitted by the
+     * call site.
+     * @param {string} endpoint0 The name of one of the services in the relation.
+     * @param {string} endpoint1 The name of the other service in the relation.
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleRemoveRelation: function(userCallback, endpoint0, endpoint1, data) {
+      userCallback({
+        err: data.Error,
+        endpoint_a: endpoint0,
+        endpoint_b: endpoint1
+      });
     }
 
   });
