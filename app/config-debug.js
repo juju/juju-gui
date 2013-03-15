@@ -1,11 +1,16 @@
 var juju_config = {
-  consoleEnabled: true,
+  // These are blacklisted config items not passed into subapps mounted into
+  // the main App.
   serverRouting: false,
   html5: true,
   container: '#main',
   viewContainer: '#main',
   // FIXME: turn off transitions until they are fixed.
   transitions: false,
+
+  // These are the main application config items used and passed down into all
+  // SubApps.
+  consoleEnabled: true,
   charm_store_url: 'http://jujucharms.com/',
   charmworld_url: 'http://staging.jujucharms.com',
   // The config has three socket settings.  socket_port and socket_protocol
