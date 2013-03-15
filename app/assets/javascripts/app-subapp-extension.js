@@ -19,7 +19,7 @@ YUI.add('app-subapp-extension', function(Y) {
   };
 
   SubAppRegistration.prototype = {
-    _blacklisted_config: [
+    _blacklistedConfig: [
       'container',
       'html5',
       'serverRouting',
@@ -96,14 +96,14 @@ YUI.add('app-subapp-extension', function(Y) {
         // Merge the shared application config data with the hard coded config
         // so that the hard coded values maintain precedence.
         // Note that black listed attributes are not passed into SubApps.
-        Y.each(this._blacklisted_config, function(blacklist) {
+        Y.each(this._blacklistedConfig, function(blacklist) {
           if (cfg[blacklist]) {
             delete cfg[blacklist];
           }
         });
 
-        var merged_cfg = Y.merge(cfg, subApp.config);
-        this.addSubApp(subApp.type, merged_cfg);
+        var mergedCfg = Y.merge(cfg, subApp.config);
+        this.addSubApp(subApp.type, mergedCfg);
       }, this);
     },
 

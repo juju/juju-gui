@@ -50,14 +50,14 @@ describe('SubApplication App Extension', function() {
   });
 
   it('should supply application config to sub apps', function() {
-    var app_config = {
+    var appConfig = {
       api_url: 'http://google.com',
       html5: 'updated'
     },
-        subapp_config,
+        subappConfig,
         ConfigSubApp = Y.Base.create('config-subapp', Y.juju.SubApp, [], {
           initializer: function(cfg) {
-            subapp_config = this.getAttrs();
+            subappConfig = this.getAttrs();
           }
         }, {
           ATTRS: {
@@ -80,15 +80,15 @@ describe('SubApplication App Extension', function() {
             this.addSubApplications(cfg);
           }
         }),
-        app = new ConfigApp(app_config);
+        app = new ConfigApp(appConfig);
 
     // App config is passed to the subapp.
-    assert.equal(subapp_config.api_url, 'http://google.com');
+    assert.equal(subappConfig.api_url, 'http://google.com');
     // The hard coded config is kept over any application config.
-    assert.equal(subapp_config.keepme, 'clobber');
+    assert.equal(subappConfig.keepme, 'clobber');
     // Some config is blacklisted because the subapp should define their own
     // values.
-    assert.equal(subapp_config.html5, 'original');
+    assert.equal(subappConfig.html5, 'original');
   });
 
   it('should add subapps to the parent app', function() {
