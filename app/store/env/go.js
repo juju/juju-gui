@@ -469,8 +469,8 @@ YUI.add('juju-env-go', function(Y) {
     /**
      * Remove the relationship between two services.
      *
-     * @param {string} endpoint_a The name of one of the services in the relation.
-     * @param {string} endpoint_b The name of the other service in the relation.
+     * @param {string} endpoint_a Name of one of the services in the relation.
+     * @param {string} endpoint_b Name of the other service in the relation.
      * @return {undefined} Nothing.
      * @method remove_relation
      */
@@ -497,8 +497,8 @@ YUI.add('juju-env-go', function(Y) {
      * @method handleRemoveRelation
      * @param {Function} userCallback The callback originally submitted by the
      * call site.
-     * @param {string} endpoint_a The name of one of the services in the relation.
-     * @param {string} endpoint_b The name of the other service in the relation.
+     * @param {string} endpoint_a Name of one of the services in the relation.
+     * @param {string} endpoint_b Name of the other service in the relation.
      * @param {Object} data The response returned by the server.
      * @return {undefined} Nothing.
      */
