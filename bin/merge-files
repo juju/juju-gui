@@ -88,6 +88,7 @@ require('yui').YUI().use(['yui'], function(Y) {
   cssFiles.push('app/assets/stylesheets/bootstrap-2.0.4.css');
   cssFiles.push('app/assets/stylesheets/bootstrap-responsive-2.0.4.css');
   cssFiles.push('app/assets/stylesheets/prettify.css');
+  cssFiles.push('app/assets/stylesheets/cssgrids-responsive-min.css');
   merge.combineCSS(cssFiles,
     'build-shared/juju-ui/assets/combined-css/all-static.css');
 });
