@@ -233,8 +233,9 @@ YUI.add('juju-gui', function(Y) {
 
     /**
      * @method initializer
+     * @param {Object} cfg Application configuration data.
      */
-    initializer: function() {
+    initializer: function(cfg) {
       // If this flag is true, start the application
       // with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
@@ -384,7 +385,7 @@ YUI.add('juju-gui', function(Y) {
       });
 
       // Attach SubApplications
-      this.addSubApplications();
+      this.addSubApplications(cfg);
     },
 
     /**
