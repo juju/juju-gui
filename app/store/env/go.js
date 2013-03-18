@@ -471,6 +471,11 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @param {string} endpoint_a Name of one of the services in the relation.
      * @param {string} endpoint_b Name of the other service in the relation.
+     * @param {Function} callback A callable that must be called once the
+     *  operation is performed. It will receive an object with an "err"
+     *  attribute containing a string describing the problem (if an error
+     *  occurred), and with a "endpoint_a" and "endpoint_b" attributes containing the
+     *  names of the endpoints.
      * @return {undefined} Nothing.
      * @method remove_relation
      */
