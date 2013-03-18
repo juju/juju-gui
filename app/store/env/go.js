@@ -485,7 +485,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'DestroyRelation',
         Params: {
-          Endpoints: [endpoint_a,  endpoint_b]
+          Endpoints: [endpoint_a, endpoint_b]
         }
       }, intermediateCallback);
     },
