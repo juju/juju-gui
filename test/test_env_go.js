@@ -532,63 +532,50 @@
       assert.equal(err, 'service "yoursql" not found');
     });
 
-
-
-
-    it('sends the correct destroy_relation message', function() {
+    it('sends the correct DestroyRelation message', function() {
       env.remove_relation('mysql', 'wordpress');
       var last_message = conn.last_message();
       var expected = {
         Request: 'DestroyRelation',
         Type: 'Client',
         RequestId: 1,
-        Params: {Endpoint0: 'mysql', Endpoint1: 'wordpress'}
+        Params: {Endpoints: ['mysql', 'wordpress']}
       };
       assert.deepEqual(expected, last_message);
     });
 
-    //it('successfully gets service configuration', function() {
-    //  var service_name;
-    //  var result;
-    //  var expected = {
-    //    Service: 'mysql',
-    //    Charm: 'mysql',
-    //    Settings: {
-    //      'binlog-format': {
-    //        description: 'If binlogging is enabled, etc, etc","type":"string',
-    //        value: null
-    //      }
-    //    }
-    //  };
-    //
-    //  env.get_service('mysql', function(data) {
-    //    service_name = data.service_name;
-    //    result = data.result;
-    //  });
-    //  // Mimic response.
-    //  conn.msg({
-    //    RequestId: 1,
-    //    Response: expected
-    //  });
-    //  assert.equal(service_name, 'mysql');
-    //  assert.deepEqual(expected, result);
-    //});
-    //
-    //it('handles failed get service', function() {
-    //  var service_name;
-    //  var err;
-    //  env.get_service('yoursql', function(data) {
-    //    service_name = data.service_name;
-    //    err = data.err;
-    //  });
-    //  // Mimic response.
-    //  conn.msg({
-    //    RequestId: 1,
-    //    Error: 'service \"yoursql\" not found'
-    //  });
-    //  assert.equal(service_name, 'yoursql');
-    //  assert.equal(err, 'service "yoursql" not found');
-    //});
+    it('successfully destroys a relation', function() {
+      var endpoint_a, endpoint_b;
+      env.remove_relation('mysql', 'wordpress', function(data) {
+        endpoint_a = data.endpoint_a;
+        endpoint_b = data.endpoint_b;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {}
+      });
+      assert.equal(endpoint_a, 'mysql');
+      assert.equal(endpoint_b, 'wordpress');
+    });
+
+    it('handles failed attempt to destroy a relation', function() {
+      var endpoint_a, endpoint_b;
+      var err;
+      env.remove_relation('yoursql', 'wordpress', function(data) {
+        endpoint_a = data.endpoint_a;
+        endpoint_b = data.endpoint_b;
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'service \"yoursql\" not found'
+      });
+      assert.equal(endpoint_a, 'yoursql');
+      assert.equal(endpoint_b, 'wordpress');
+      assert.equal(err, 'service "yoursql" not found');
+    });
 
   });
 

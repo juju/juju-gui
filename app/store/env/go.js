@@ -469,24 +469,23 @@ YUI.add('juju-env-go', function(Y) {
     /**
      * Remove the relationship between two services.
      *
-     * @param {string} endpoint0 The name of one of the services in the relation.
-     * @param {string} endpoint1 The name of the other service in the relation.
+     * @param {string} endpoint_a The name of one of the services in the relation.
+     * @param {string} endpoint_b The name of the other service in the relation.
      * @return {undefined} Nothing.
      * @method remove_relation
      */
-    remove_relation: function(endpoint0, endpoint1, callback) {
+    remove_relation: function(endpoint_a, endpoint_b, callback) {
       var intermediateCallback;
       if (callback) {
         // Curry the endpoints.  No context is passed.
         intermediateCallback = Y.bind(this.handleRemoveRelation, null,
-                                      callback, endpoint0, endpoint1);
+                                      callback, endpoint_a, endpoint_b);
       }
       this._send_rpc({
         Type: 'Client',
         Request: 'DestroyRelation',
         Params: {
-          Endpoint0: endpoint0,
-          Endpoint1: endpoint1
+          Endpoints: [endpoint_a,  endpoint_b]
         }
       }, intermediateCallback);
     },
@@ -498,16 +497,16 @@ YUI.add('juju-env-go', function(Y) {
      * @method handleRemoveRelation
      * @param {Function} userCallback The callback originally submitted by the
      * call site.
-     * @param {string} endpoint0 The name of one of the services in the relation.
-     * @param {string} endpoint1 The name of the other service in the relation.
+     * @param {string} endpoint_a The name of one of the services in the relation.
+     * @param {string} endpoint_b The name of the other service in the relation.
      * @param {Object} data The response returned by the server.
      * @return {undefined} Nothing.
      */
-    handleRemoveRelation: function(userCallback, endpoint0, endpoint1, data) {
+    handleRemoveRelation: function(userCallback, endpoint_a, endpoint_b, data) {
       userCallback({
         err: data.Error,
-        endpoint_a: endpoint0,
-        endpoint_b: endpoint1
+        endpoint_a: endpoint_a,
+        endpoint_b: endpoint_b
       });
     }
 
