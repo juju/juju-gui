@@ -17,7 +17,7 @@ __ http://10.189.74.2:8080/job/jujugui-test-charm/
 __ https://wiki.canonical.com/UbuntuEngineering/QA/VPN
 
 The credentials for the various systems that we rely on can be found at
-`JujuGUICI on the wiki`__/
+`JujuGUICI on the wiki`__.
 
 __ https://wiki.canonical.com/JujuGUICI
 
@@ -94,7 +94,7 @@ Rename your newly configured EC2 juju config to be `juju-gui-testing` and run::
 
   bin/test-charm
 
-How do I view and edit the Jenkins results and configuration
+How do I view and edit the Jenkins results and configuration?
 ------------------------------------------------------------
 You will need to log into the `QA labs Jenkins server`__ which requires
 `VPN access`__ and a Jenkins account.
@@ -106,8 +106,8 @@ How do I debug test failures?
 -----------------------------
 While the tests are running and after they are complete the Jenkins control
 panel will show you the console output of the results. If there are failures in
-this list you will need to use the debug information outputted to track down
-the failure.
+this list you will need to use the debug information that was output to track
+down the failure. Look in particular for the links to the videos.
 
 If the failure is with a unit test it will be much faster to run those locally
 in the failing browser to determine the issue. Make sure that locally you start
