@@ -6,7 +6,7 @@ describe('charm slider', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['browser-charm-slider', 'browser-charm-small', 'event-simulate',
-         'node-event-simulate', 'node'], function(Y) {
+         'node-event-simulate', 'node', 'scrollview-base-ie'], function(Y) {
           done();
         });
   });
