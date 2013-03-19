@@ -369,7 +369,7 @@ describe('juju models', function() {
   it('updates the display name when the id changes', function() {
     var service = new models.Service({id: 'service-mysql', exposed: false});
     assert.equal('mysql', service.get('displayName'));
-    service.set('id', 'service-flibbertigibbet')
+    service.set('id', 'service-flibbertigibbet');
     assert.equal('flibbertigibbet', service.get('displayName'));
   });
 

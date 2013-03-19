@@ -80,6 +80,10 @@ YUI.add('juju-models', function(Y) {
   var Service = Y.Base.create('service', Y.Model, [], {}, {
     ATTRS: {
       displayName: {
+        /**
+          Dynamically calculate a display name that accounts for Juju Core name
+          prefixes.
+         */
         getter: function() {
           return this.get('id').replace('service-', '');
         }
