@@ -119,11 +119,11 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      */
     render: function(container) {
       var tpl = this.template(),
-          tpl_node = Y.Node.create(tpl);
+          tplNode = Y.Node.create(tpl);
 
       // build widgets used in the template.
       this.search = new widgets.browser.Search(),
-      this.search.render(tpl_node.one('.bws-search'));
+      this.search.render(tplNode.one('.bws-search'));
 
       if (typeof container !== 'object') {
         container = this.get('container');
@@ -163,7 +163,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
         }
       });
 
-      container.setHTML(tpl_node);
+      container.setHTML(tplNode);
 
       // Bind extra events that aren't covered by the Y.View events object.
       this._bindEvents();
