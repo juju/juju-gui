@@ -216,6 +216,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
     // _nsRouter is a juju.Router.  It provides a lot of utility methods for
     // working with namespaced URLs.
     this._nsRouter = Y.namespace('juju').Router(this.defaultNamespace);
+    Y.namespace('juju')._nsRouter = this._nsRouter;
   }
 
   NSRouter.ATTRS = {};

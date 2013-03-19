@@ -695,7 +695,7 @@ YUI.add('juju-gui', function(Y) {
       if (!this.env.userIsAuthenticated) {
         if (this.loggingOut) {
           this.loggingOut = false;
-          this._navigate('/', { overrideAllNamespaces: true });
+          this.showRootView();
         }
         return;
       }
