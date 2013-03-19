@@ -94,7 +94,7 @@ YUI.add('juju-view-unit', function(Y) {
       container.setHTML(this.template({
         charmUri: Y.juju._nsRouter.url({
           gui: '/charms/charms/' + charmAttrs.series +
-          '/' + charmAttrs.package_name + '/json'
+              '/' + charmAttrs.package_name + '/json'
         }),
         serviceRootUri: Y.juju._nsRouter.url({
           gui: 'service'
