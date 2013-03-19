@@ -135,7 +135,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
         success: function(data) {
           var slider_charms = [];
           Y.Array.each(data.result.slider, function(charm) {
-              slider_charms.push(new Y.juju.widgets.browser.CharmSmall(charm));
+            slider_charms.push(new Y.juju.widgets.browser.CharmSmall(charm));
           });
 
           var slider = new Y.juju.widgets.browser.CharmSlider({
@@ -149,9 +149,8 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           slider.render(slider_container);
 
           // Add in the charm-smalls for the new as well.
-          var new_charms = [];
           var new_container = container.one('.bws-left .new');
-          var new_charms =Y.Array.map(data.result.new, function(charm) {
+          var new_charms = Y.Array.map(data.result['new'], function(charm) {
             var node = Y.Node.create('<div>'),
                 widget = new Y.juju.widgets.browser.CharmSmall(charm);
             widget.render(node);

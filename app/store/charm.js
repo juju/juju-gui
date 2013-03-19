@@ -165,14 +165,13 @@ YUI.add('juju-charm-store', function(Y) {
           success: function(io_request) {
             var res = Y.JSON.parse(
                 io_request.response.results[0].responseText
-            );
+                );
             callbacks.success(res);
           },
 
           failure: function(io_request) {
             var res = Y.JSON.parse(
-                io_request.response.results[0].responseText
-            );
+                io_request.response.results[0].responseText);
             callbacks.failure(res, io_request);
           }
         }
@@ -184,7 +183,7 @@ YUI.add('juju-charm-store', function(Y) {
      * application to use.
      *
      * @method _results_to_charmlist
-     * @param {Object} JSON decoded data from response
+     * @param {Object} JSON decoded data from response.
      * @private
      *
      */
@@ -197,7 +196,7 @@ YUI.add('juju-charm-store', function(Y) {
      * calls.
      *
      * @method initializer
-     * @param {Object} cfg
+     * @param {Object} cfg configuration object.
      *
      */
     initializer: function(cfg) {
@@ -210,7 +209,7 @@ YUI.add('juju-charm-store', function(Y) {
      * Fetch the sidebar editoral content from the charmworld api.
      *
      * @method sidebar_editorial
-     * @returns {Object} data loaded from the api call
+     * @return {Object} data loaded from the api call.
      *
      */
     sidebar_editorial: function(callbacks, bind_scope) {
