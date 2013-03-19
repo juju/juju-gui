@@ -76,7 +76,23 @@
             charmworld_url: 'http://localhost'
 
           });
+
+      // mock out the data source on the view so that it won't actually make a
+      // request.
+      var sample_data = {
+        responseText: Y.JSON.stringify({
+          result: {
+            'new': [],
+            slider: []
+          }
+        })
+      };
+
+      view.get('store').set(
+        'datasource',
+        new Y.DataSource.Local({source: sample_data}));
       view.render(container);
+
 
       // And the hide button is rendered to the container node.
       assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));
