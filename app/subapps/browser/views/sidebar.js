@@ -105,7 +105,11 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      * @param {Object} cfg configuration object.
      *
      */
-    initializer: function(cfg) {},
+    initializer: function(cfg) {
+      this.set('store', new Y.juju.Charmworld0({
+        'api_host': cfg.charmworld_url
+      }));
+    },
 
     /**
      * Render out the view to the DOM.
@@ -124,6 +128,32 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       if (typeof container !== 'object') {
         container = this.get('container');
       }
+
+      // By default we grab the editorial content from the api to use for
+      // display.
+      this.get('store').sidebar_editorial({
+        success: function(data) {
+          debugger;
+          var slider_charms = [];
+          Y.Array.each(data.result.slider, function(charm) {
+              slider_charms.push(new Y.juju.widgets.browser.CharmSmall(charm));
+          });
+
+          var slider = new Y.juju.widgets.browser.CharmSlider({
+            items: Y.Array.map(slider_charms, function(widget) {
+              var node = Y.Node.create('<div>');
+              widget.render(node);
+              return node.getHTML();
+            })
+          });
+          var slider_container = container.one('.bws-left .slider');
+          slider.render(slider_container);
+        },
+        failure: function(data, request) {
+
+        }
+      });
+
       container.setHTML(tpl_node);
 
       // Bind extra events that aren't covered by the Y.View events object.
@@ -131,12 +161,30 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     }
 
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+       * Required attribute to tell the view where to tell the Charmworld api
+       * to get it's data from.
+       *
+       * @attribute charmworld_url
+       * @default undefined
+       * @type {String}
+       *
+       */
+      charmworld_url: {
+        required: true
+      },
+
+      store: {}
+    }
   });
 
 }, '0.1.0', {
   requires: [
+    'browser-charm-slider',
+    'browser-charm-small',
     'browser-search-widget',
+    'juju-charm-store',
     'view'
   ]
 });

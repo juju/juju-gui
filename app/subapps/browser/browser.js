@@ -48,9 +48,7 @@ YUI.add('subapp-browser', function(Y) {
      * @param {Object} cfg general init config object.
      *
      */
-    initializer: function(cfg) {
-      debugger;
-    },
+    initializer: function(cfg) {},
 
     /**
      * Render the fullscreen view to the client.
@@ -98,7 +96,10 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
-      this.showView('sidebar');
+      debugger;
+      this.showView('sidebar', {
+        charmworld_url: this.get('charmworld_url')
+      });
       next();
     }
 
@@ -107,6 +108,7 @@ YUI.add('subapp-browser', function(Y) {
       container: {
         value: '#subapp-browser'
       },
+      charmworld_url: {},
       urlNamespace: {
         value: 'charmstore'
       },

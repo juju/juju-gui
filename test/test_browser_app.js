@@ -46,7 +46,7 @@
   });
 
 
-  describe('browser sidebar view', function() {
+  describe.only('browser sidebar view', function() {
     var Y, browser, views, Sidebar;
 
     before(function(done) {
@@ -72,7 +72,10 @@
 
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser'),
-          view = new Sidebar();
+          view = new Sidebar({
+            charmworld_url: 'http://localhost'
+
+          });
       view.render(container);
 
       // And the hide button is rendered to the container node.
