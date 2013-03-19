@@ -14,7 +14,7 @@ describe('charm small widget', function() {
   beforeEach(function() {
     charm_container = Y.Node.create('<div id="charm-container"></div>');
     Y.one(document.body).prepend(charm_container);
-  });;
+  });
 
   afterEach(function() {
     Y.one('#charm-container').remove(true);

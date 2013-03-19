@@ -77,9 +77,17 @@ YUI.add('juju-models', function(Y) {
   });
   models.Environment = Environment;
 
-  var Service = Y.Base.create('service', Y.Model, [], {
+  var Service = Y.Base.create('service', Y.Model, [], {}, {
     ATTRS: {
-      displayName: {},
+      displayName: {
+        /**
+          Dynamically calculate a display name that accounts for Juju Core name
+          prefixes.
+         */
+        getter: function() {
+          return this.get('id').replace('service-', '');
+        }
+      },
       name: {},
       charm: {},
       config: {},
@@ -101,31 +109,6 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
     model: Service,
-    /**
-     * Create a display name that can be used in the views as an entity label
-     * agnostic from juju type.
-     *
-     * @method createDisplayName
-     * @param {String} name The name to modify.
-     * @return {String} A display name.
-     */
-    createDisplayName: function(name) {
-      return name.replace('service-', '');
-    },
-
-    _setDefaultsAndCalculatedValues: function(obj) {
-      obj.set('displayName', this.createDisplayName(obj.get('id')));
-    },
-
-    add: function() {
-      var result = ServiceUnitList.superclass.add.apply(this, arguments);
-      if (Y.Lang.isArray(result)) {
-        Y.Array.each(result, this._setDefaultsAndCalculatedValues, this);
-      } else {
-        this._setDefaultsAndCalculatedValues(result);
-      }
-      return result;
-    },
 
     process_delta: function(action, data) {
       _process_delta(this, action, data, {exposed: false});

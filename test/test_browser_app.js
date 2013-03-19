@@ -89,8 +89,8 @@
       };
 
       view.get('store').set(
-        'datasource',
-        new Y.DataSource.Local({source: sample_data}));
+          'datasource',
+          new Y.DataSource.Local({source: sample_data}));
       view.render(container);
 
 
