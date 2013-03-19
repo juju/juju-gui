@@ -120,9 +120,19 @@ YUI.add('juju-landscape', function(Y) {
 
       url += env['landscape-computers'];
       if (model.name === 'service') {
-        url += slash(model.get('annotations')['landscape-computers']);
+        var computers = model.get('annotations')['landscape-computers'];
+        if (!computers) {
+          console.warn('Service missing the landscape-computers annotation!');
+          return undefined;
+        }
+        url += slash(computers);
       } else if (model.name === 'serviceUnit') {
-        url += slash(model.annotations['landscape-computer']);
+        var computer = model.annotations['landscape-computer'];
+        if (!computer) {
+          console.warn('Unit missing the landscape-computer annotation!');
+          return undefined;
+        }
+        url += slash(computer);
       }
 
       if (!intent) {
