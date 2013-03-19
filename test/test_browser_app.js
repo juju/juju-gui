@@ -46,7 +46,7 @@
   });
 
 
-  describe.only('browser sidebar view', function() {
+  describe('browser sidebar view', function() {
     var Y, browser, views, Sidebar;
 
     before(function(done) {
