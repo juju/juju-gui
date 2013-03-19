@@ -857,7 +857,8 @@ YUI.add('juju-gui', function(Y) {
           attrs = (model instanceof Y.Model) ? model.getAttrs() : model,
           routes = this.get('routes'),
           regexPathParam = /([:*])([\w\-]+)?/g,
-          idx = 0;
+          idx = 0,
+          finalPath = '';
 
       routes.forEach(function(route) {
         var path = route.path,
@@ -884,7 +885,8 @@ YUI.add('juju-gui', function(Y) {
         matches.push(Y.mix({path: path,
           route: route,
           attrs: attrs,
-          intent: route.intent}));
+          intent: route.intent,
+          namespace: route.namespace}));
       });
 
       // See if intent is in the match. Because the default is to match routes
@@ -898,7 +900,11 @@ YUI.add('juju-gui', function(Y) {
         // Default to the last route in this configuration error case.
         idx = matches.length - 1;
       }
-      return matches[idx] && matches[idx].path;
+
+      if (matches[idx] && matches[idx].path) {
+        finalPath = Y.juju._nsRouter.url({ gui: matches[idx].path });
+      }
+      return finalPath;
     }
 
   }, {
