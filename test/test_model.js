@@ -360,9 +360,17 @@ describe('juju models', function() {
   });
 
   it('returns a display name for a service', function() {
-    var services = new models.ServiceList();
-    assert.equal('mysql', services.createDisplayName('service-mysql'));
-    assert.equal('mysql', services.createDisplayName('mysql'));
+    var service = new models.Service({id: 'mysql', exposed: false});
+    assert.equal('mysql', service.get('displayName'));
+    service = new models.Service({id: 'service-mysql', exposed: false});
+    assert.equal('mysql', service.get('displayName'));
+  });
+
+  it('updates the display name when the id changes', function() {
+    var service = new models.Service({id: 'service-mysql', exposed: false});
+    assert.equal('mysql', service.get('displayName'));
+    service.set('id', 'service-flibbertigibbet')
+    assert.equal('flibbertigibbet', service.get('displayName'));
   });
 
   it('returns a display name for a unit', function() {
