@@ -89,13 +89,22 @@ YUI.add('juju-view-unit', function(Y) {
             querystring.rel_id && querystring.rel_id === rel.relation_id);
       });
 
+      var charmAttrs = charm.getAttrs();
+
       container.setHTML(this.template({
+        charmUri: Y.juju._nsRouter.url({
+          gui: '/charms/charms/' + charmAttrs.series +
+          '/' + charmAttrs.package_name + '/json'
+        }),
+        serviceRootUri: Y.juju._nsRouter.url({
+          gui: 'service'
+        }),
         unit: unit,
         unit_ip_description: unit_ip_description,
         landscape: this.get('landscape'),
         service: service.getAttrs(),
         disabled_remove: service.get('unit_count') <= 1,
-        charm: charm.getAttrs(),
+        charm: charmAttrs,
         machine: db.machines.getById(unit.machine),
         unit_error: unit_error,
         unit_running: unit_running,
