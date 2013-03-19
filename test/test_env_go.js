@@ -532,6 +532,7 @@
       assert.equal(err, 'service "yoursql" not found');
     });
 
+
     it('successfully sends the AddRelation message', function() {
       env.add_relation('mysql', 'haproxy');
       var last_message = conn.last_message();
@@ -575,6 +576,51 @@
       assert.equal(endpointA, 'no_such');
       assert.equal(endpointB, 'and_such');
       assert.equal(err, 'service "no_such" not found');
+    });
+
+    it('sends the correct DestroyRelation message', function() {
+      env.remove_relation('mysql', 'wordpress');
+      var last_message = conn.last_message();
+      var expected = {
+        Request: 'DestroyRelation',
+        Type: 'Client',
+        RequestId: 1,
+        Params: {Endpoints: ['mysql', 'wordpress']}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully destroys a relation', function() {
+      var endpoint_a, endpoint_b;
+      env.remove_relation('mysql', 'wordpress', function(data) {
+        endpoint_a = data.endpoint_a;
+        endpoint_b = data.endpoint_b;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {}
+      });
+      assert.equal(endpoint_a, 'mysql');
+      assert.equal(endpoint_b, 'wordpress');
+    });
+
+    it('handles failed attempt to destroy a relation', function() {
+      var endpoint_a, endpoint_b;
+      var err;
+      env.remove_relation('yoursql', 'wordpress', function(data) {
+        endpoint_a = data.endpoint_a;
+        endpoint_b = data.endpoint_b;
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'service \"yoursql\" not found'
+      });
+      assert.equal(endpoint_a, 'yoursql');
+      assert.equal(endpoint_b, 'wordpress');
+      assert.equal(err, 'service "yoursql" not found');
     });
 
   });

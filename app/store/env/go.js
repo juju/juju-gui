@@ -466,6 +466,7 @@ YUI.add('juju-env-go', function(Y) {
       });
     },
 
+
     /**
        Add a relation between two services.
 
@@ -512,6 +513,55 @@ YUI.add('juju-env-go', function(Y) {
         endpointA: endpointA,
         endpointB: endpointB,
         err: data.Error
+      });
+    },
+
+    /**
+     * Remove the relationship between two services.
+     *
+     * @param {string} endpoint_a Name of one of the services in the relation.
+     * @param {string} endpoint_b Name of the other service in the relation.
+     * @param {Function} callback A callable that must be called once the
+     *  operation is performed. It will receive an object with an "err"
+     *  attribute containing a string describing the problem (if an error
+     *  occurred), and with a "endpoint_a" and "endpoint_b" attributes
+     *  containing the names of the endpoints.
+     * @return {undefined} Nothing.
+     * @method remove_relation
+     */
+    remove_relation: function(endpoint_a, endpoint_b, callback) {
+      var intermediateCallback;
+      if (callback) {
+        // Curry the endpoints.  No context is passed.
+        intermediateCallback = Y.bind(this.handleRemoveRelation, null,
+                                      callback, endpoint_a, endpoint_b);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'DestroyRelation',
+        Params: {
+          Endpoints: [endpoint_a, endpoint_b]
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+     * Transform the data returned from juju-core call to DestroyRelation
+     * to that suitable for the user callback.
+     *
+     * @method handleRemoveRelation
+     * @param {Function} userCallback The callback originally submitted by the
+     * call site.
+     * @param {string} endpoint_a Name of one of the services in the relation.
+     * @param {string} endpoint_b Name of the other service in the relation.
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleRemoveRelation: function(userCallback, endpoint_a, endpoint_b, data) {
+      userCallback({
+        err: data.Error,
+        endpoint_a: endpoint_a,
+        endpoint_b: endpoint_b
       });
     }
 
