@@ -216,6 +216,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/env/fakebackend.js'
         },
 
+        'juju-env-sandbox': {
+          fullpath: '/juju-ui/store/env/sandbox.js'
+        },
+
         'juju-notification-controller': {
           fullpath: '/juju-ui/store/notifications.js'
         },
