@@ -990,7 +990,7 @@ YUI.add('juju-topology-service', function(Y) {
       show_service: function(service, context) {
         var topo = context.get('component');
         topo.detachContainer();
-        topo.fire('navigateTo', {url: '/service/' + service.get('id') + '/'});
+        topo.fire('navigateTo', {url: ':gui:/service/' + service.get('id') + '/'});
       },
 
       /*

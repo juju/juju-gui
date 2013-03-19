@@ -384,6 +384,13 @@ YUI.add('juju-gui', function(Y) {
         popup.setDefaultSeries(ev.newVal);
       });
 
+      // Halts the default naviation on the juju logo to allow us to show
+      // the real root view without namespaces
+      Y.one('#nav-brand-env').on('click', function(e) {
+        e.halt();
+        this.showRootView();
+      }, this);
+
       // Attach SubApplications
       this.addSubApplications(cfg);
     },
@@ -756,6 +763,15 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Shows the root view of the application erasing all namespaces
+
+      @method showRootViewinit
+    */
+    showRootView: function() {
+      this._navigate('/', { overrideAllNamespaces: true });
+    },
+
+    /**
      * @method show_environment
      */
     show_environment: function(req, res, next) {
@@ -784,7 +800,9 @@ YUI.add('juju-gui', function(Y) {
         callback: function() {
           this.views.environment.instance.rendered();
         },
-        render: true});
+        render: true
+      });
+      next();
     },
 
     /**
@@ -922,11 +940,16 @@ YUI.add('juju-gui', function(Y) {
           // Called on each request.
           { path: '*', callbacks: 'check_user_credentials'},
           { path: '*', callbacks: 'show_notifications_view'},
+          // Root.
+          { path: '*', callbacks: 'show_environment'},
           // Charms.
-          { path: '/charms/', callbacks: 'show_charm_collection'},
+          { path: '/charms/',
+            callbacks: 'show_charm_collection',
+            namespace: 'gui'},
           { path: '/charms/*charm_store_path/',
             callbacks: 'show_charm',
-            model: 'charm'},
+            model: 'charm',
+            namespace: 'gui'},
           // Notifications.
           { path: '/notifications/',
             callbacks: 'show_notifications_overview'},
@@ -934,27 +957,30 @@ YUI.add('juju-gui', function(Y) {
           { path: '/service/:id/config/',
             callbacks: 'show_service_config',
             intent: 'config',
-            model: 'service'},
+            model: 'service',
+            namespace: 'gui'},
           { path: '/service/:id/constraints/',
             callbacks: 'show_service_constraints',
             intent: 'constraints',
-            model: 'service'},
+            model: 'service',
+            namespace: 'gui'},
           { path: '/service/:id/relations/',
             callbacks: 'show_service_relations',
             intent: 'relations',
-            model: 'service'},
+            model: 'service',
+            namespace: 'gui'},
           { path: '/service/:id/',
             callbacks: 'show_service',
-            model: 'service'},
+            model: 'service',
+            namespace: 'gui'},
           // Units.
           { path: '/unit/:id/',
             callbacks: 'show_unit',
             reverse_map: {id: 'urlName'},
-            model: 'serviceUnit'},
+            model: 'serviceUnit',
+            namespace: 'gui'},
           // Logout.
-          { path: '/logout/', callbacks: 'logout'},
-          // Root.
-          { path: '/', callbacks: 'show_environment'}
+          { path: '/logout/', callbacks: 'logout'}
         ]
       }
     }
