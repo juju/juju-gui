@@ -169,7 +169,7 @@ YUI.add('juju-charm-store', function(Y) {
             callbacks.success(res);
           },
 
-          failure: function(io_request) {
+          'failure': function(io_request) {
             var res = Y.JSON.parse(
                 io_request.response.results[0].responseText);
             callbacks.failure(res, io_request);

@@ -132,7 +132,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       // By default we grab the editorial content from the api to use for
       // display.
       this.get('store').sidebar_editorial({
-        success: function(data) {
+        'success': function(data) {
           var slider_charms = [];
           Y.Array.each(data.result.slider, function(charm) {
             slider_charms.push(new Y.juju.widgets.browser.CharmSmall(charm));
@@ -157,7 +157,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
             new_container.append(node);
           });
         },
-        failure: function(data, request) {
+        'failure': function(data, request) {
 
         }
       });
