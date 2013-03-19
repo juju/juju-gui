@@ -9,7 +9,7 @@
   };
 
   describe('browser fullscreen view', function() {
-    var browser, FullScreen, views, Y;
+    var browser, FullScreen, view, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -28,13 +28,15 @@
     });
 
     afterEach(function() {
+      view.destroy();
       Y.one('#subapp-browser').remove(true);
     });
 
     // Ensure the search results are rendered inside the container.
     it('must correctly render the initial browser ui', function() {
-      var container = Y.one('#subapp-browser'),
-          view = new FullScreen();
+      var container = Y.one('#subapp-browser');
+
+      view = new FullScreen();
       view.render(container);
 
       // And the hide button is rendered to the container node.
@@ -47,7 +49,7 @@
 
 
   describe('browser sidebar view', function() {
-    var Y, browser, views, Sidebar;
+    var Y, browser, view, views, Sidebar;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -67,15 +69,15 @@
     });
 
     afterEach(function() {
+      view.destroy();
       Y.one('#subapp-browser').remove(true);
     });
 
     it('must correctly render the initial browser ui', function() {
-      var container = Y.one('#subapp-browser'),
-          view = new Sidebar({
-            charmworld_url: 'http://localhost'
-
-          });
+      var container = Y.one('#subapp-browser');
+      view = new Sidebar({
+        charmworld_url: 'http://localhost'
+      });
 
       // mock out the data source on the view so that it won't actually make a
       // request.
@@ -92,7 +94,6 @@
           'datasource',
           new Y.DataSource.Local({source: sample_data}));
       view.render(container);
-
 
       // And the hide button is rendered to the container node.
       assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));

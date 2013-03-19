@@ -93,9 +93,14 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     destructor: function() {
+      console.log('sidebar view destructor');
       Y.Array.each(this._events, function(ev) {
         ev.detach();
       });
+
+      if (this.slider) {
+        this.slider.destroy();
+      }
     },
 
     /**
@@ -135,18 +140,22 @@ YUI.add('subapp-browser-sidebar', function(Y) {
         'success': function(data) {
           var slider_charms = [];
           Y.Array.each(data.result.slider, function(charm) {
-            slider_charms.push(new Y.juju.widgets.browser.CharmSmall(charm));
+            slider_charms.push(
+                new Y.juju.widgets.browser.CharmSmall(charm));
           });
 
-          var slider = new Y.juju.widgets.browser.CharmSlider({
-            items: Y.Array.map(slider_charms, function(widget) {
-              var node = Y.Node.create('<div>');
-              widget.render(node);
-              return node.getHTML();
-            })
-          });
-          var slider_container = container.one('.bws-left .slider');
-          slider.render(slider_container);
+          if (slider_charms.length) {
+            this.slider = new Y.juju.widgets.browser.CharmSlider({
+              items: Y.Array.map(slider_charms, function(widget) {
+                var node = Y.Node.create('<div>');
+                widget.render(node);
+                return node.getHTML();
+              })
+            });
+            var slider_container = container.one('.bws-left .slider');
+
+            this.slider.render(slider_container);
+          }
 
           // Add in the charm-smalls for the new as well.
           var new_container = container.one('.bws-left .new');
