@@ -484,7 +484,7 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback;
       if (callback) {
         intermediateCallback = Y.bind(this.handleAddRelation, null,
-          callback, endpointA, endpointB);
+            callback, endpointA, endpointB);
       }
       this._send_rpc({
         Type: 'Client',
