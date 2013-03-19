@@ -96,7 +96,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
-      debugger;
       this.showView('sidebar', {
         charmworld_url: this.get('charmworld_url')
       });
