@@ -464,6 +464,55 @@ YUI.add('juju-env-go', function(Y) {
         service_name: serviceName,
         result: data.Response
       });
+    },
+
+    /**
+       Add a relation between two services.
+
+       @method add_relation
+       @param {string} endpointA Name of one of the services in the relation.
+       @param {string} endpointB Name of the other service in the relation.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), and with a "endpointA" and "endpointB" attributes
+        containing the names of the endpoints.
+       @return {undefined} Nothing.
+       @method add_relation
+     */
+    add_relation: function(endpointA, endpointB, callback) {
+      var intermediateCallback;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleAddRelation, null,
+          callback, endpointA, endpointB);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'AddRelation',
+        Params: {
+          Endpoints: [endpointA, endpointB]
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+       Transform the data returned from juju-core call to AddRelation
+       to that suitable for the user callback.
+
+       @method handleAddRelation
+       @param {Function} userCallback The callback originally submitted by
+         the call site.
+       @param {string} endpointA Name of one of the services in the relation.
+       @param {string} endpointB Name of the other service in the relation.
+       @param {Object} data The response returned by the server.
+       @return {undefined} Nothing.
+     */
+    handleAddRelation: function(userCallback, endpointA, endpointB, data) {
+      userCallback({
+        endpointA: endpointA,
+        endpointB: endpointB,
+        err: data.Error
+      });
     }
 
   });

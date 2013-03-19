@@ -532,7 +532,51 @@
       assert.equal(err, 'service "yoursql" not found');
     });
 
-  });
+    it('successfully sends the AddRelation message', function() {
+      env.add_relation('mysql', 'haproxy');
+      var last_message = conn.last_message();
+      var expected = {
+        RequestId: 1,
+        Type: 'Client',
+        Request: 'AddRelation',
+        Params: {Endpoints: ['mysql', 'haproxy']}
+      };
+      assert.deepEqual(expected, last_message);
+    });
 
+    it('successfully adds a relation', function() {
+      var endpointA, endpointB;
+      env.add_relation('mysql', 'haproxy', function(data) {
+        endpointA = data.endpointA;
+        endpointB = data.endpointB;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {}
+      });
+      assert.equal(endpointA, 'mysql');
+      assert.equal(endpointB, 'haproxy');
+    });
+
+    it('handles failed attempt to add a relation', function() {
+      var endpointA, endpointB;
+      var err;
+      env.add_relation('no_such', 'and_such', function(data) {
+        endpointA = data.endpointA;
+        endpointB = data.endpointB;
+        err = data.err;
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'service "no_such" not found'
+      });
+      assert.equal(endpointA, 'no_such');
+      assert.equal(endpointB, 'and_such');
+      assert.equal(err, 'service "no_such" not found');
+    });
+
+  });
 
 })();
