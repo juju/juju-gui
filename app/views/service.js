@@ -977,8 +977,9 @@ YUI.add('juju-view-service', function(Y) {
           'div.unit': {click: function(ev) {
             var id = ev.currentTarget.get('id');
             console.log('Unit clicked', id);
-            this.fire('navigateTo',
-                {url: '/unit/' + id.replace('/', '-') + '/'});
+            this.fire('navigateTo', {
+              url: Y.juju._nsRouter.url( {gui: '/unit/' + id.replace('/', '-') + '/'})
+            });
           }}
         }
       });
