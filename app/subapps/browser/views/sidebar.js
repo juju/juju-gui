@@ -133,7 +133,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       // display.
       this.get('store').sidebar_editorial({
         success: function(data) {
-          debugger;
           var slider_charms = [];
           Y.Array.each(data.result.slider, function(charm) {
               slider_charms.push(new Y.juju.widgets.browser.CharmSmall(charm));
@@ -148,6 +147,16 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           });
           var slider_container = container.one('.bws-left .slider');
           slider.render(slider_container);
+
+          // Add in the charm-smalls for the new as well.
+          var new_charms = [];
+          var new_container = container.one('.bws-left .new');
+          var new_charms =Y.Array.map(data.result.new, function(charm) {
+            var node = Y.Node.create('<div>'),
+                widget = new Y.juju.widgets.browser.CharmSmall(charm);
+            widget.render(node);
+            new_container.append(node);
+          });
         },
         failure: function(data, request) {
 
