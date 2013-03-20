@@ -695,6 +695,8 @@ YUI.add('juju-gui', function(Y) {
           this.env.login();
           return;
         }
+      } else {
+        this.show_login();
       }
       // If there has not been a successful login attempt and there are no
       // credentials, do not let the route dispatch proceed.
