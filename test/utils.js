@@ -57,7 +57,29 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       return function(name, value) {
         attributes[name] = value;
       };
+    },
+
+    makeFakeBackendWithCharmStore: function() {
+      var data = [];
+      var charmStore = new Y.juju.CharmStore(
+          {datasource: new Y.DataSource.Local({source: data})});
+      var setCharm = function(name) {
+        data[0] = Y.io('data/' + name + '-charmdata.json', {sync: true});
+      };
+      setCharm('wordpress');
+      var fakebackend = new Y.juju.environments.FakeBackend(
+          {charmStore: charmStore});
+      fakebackend.login('admin', 'password');
+      return {fakebackend: fakebackend, setCharm: setCharm};
     }
+
   };
 
+}, '0.1.0', {
+  requires: [
+    'io',
+    'datasource-local',
+    'juju-charm-store',
+    'juju-env-fakebackend'
+  ]
 });
