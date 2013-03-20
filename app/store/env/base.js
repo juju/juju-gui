@@ -62,9 +62,10 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     destructor: function() {
+      // Close the socket, if we have connected. 
       if (this.ws) {
         this.ws.close();
-      } // else we never connected.
+      }
       this._txn_callbacks = {};
     },
 
@@ -80,8 +81,10 @@ YUI.add('juju-env-base', function(Y) {
       this.ws.onmessage = Y.bind(this.on_message, this);
       this.ws.onopen = Y.bind(this.on_open, this);
       this.ws.onclose = Y.bind(this.on_close, this);
+      // Our fake backends have "open" methods.  Call them, now that we have
+      // set our listeners up.
       if (this.ws.open) {
-        this.ws.open(); // For the fake backends.
+        this.ws.open();
       }
       return this;
     },
