@@ -39,24 +39,4 @@ describe('tabview', function() {
     tabview.render(container);
     assert.isObject(container.one('.vertical'));
   });
-
-  it('accepts tab data', function() {
-    var tabview = new Y.juju.browser.widgets.TabView({
-      children: [
-        {
-          label: 'foo',
-          content: 'this is foo'
-        }, {
-          label: 'bar',
-          content: 'this is bar'
-        }]
-    });
-
-    tabview.render(container);
-    var text = container.get('text');
-    assert.notEqual(-1, text.indexOf('foo'));
-    assert.notEqual(-1, text.indexOf('bar'));
-    assert.notEqual(-1, text.indexOf('this is foo'));
-    assert.notEqual(-1, text.indexOf('this is bar'));
-  });
 });
