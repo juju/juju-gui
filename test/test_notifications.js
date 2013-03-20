@@ -199,7 +199,7 @@ describe('notifications', function() {
     view.render();
     var link = container.one('.notice').one('a');
     link.getAttribute('href').should.equal(
-        '/service/mediawiki/');
+        '/:gui:/service/mediawiki/');
     link.getHTML().should.contain('View Details');
 
 
@@ -212,7 +212,7 @@ describe('notifications', function() {
     view.render();
     link = container.one('.notice').one('a');
     link.getAttribute('href').should.equal(
-        '/service/mediawiki/');
+        '/:gui:/service/mediawiki/');
     link.getHTML().should.contain('Resolve this');
   });
 
