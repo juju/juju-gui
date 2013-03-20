@@ -60,6 +60,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/notifier.js'
         },
 
+        'browser-tabview': {
+          fullpath: '/juju-ui/widgets/tabview.js'
+        },
+
         'browser-charm-small': {
           fullpath: '/juju-ui/widgets/charm-small.js'
         },
