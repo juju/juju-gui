@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('tabview', function() {
+describe('tabview', function() {
   var container, Y;
 
   before(function(done) {
@@ -74,11 +74,11 @@ describe.only('tabview', function() {
               content: 'this is bar',
               callback: function() {
                 callback_called = true;
-            }
+              }
             }]
         });
     tabview.render(container);
-    var bar = container.all('li').slice(1,2).item(0);
+    var bar = container.all('li').slice(1, 2).item(0);
     bar.simulate('click');
     assert.isTrue(callback_called);
   });
@@ -95,13 +95,13 @@ describe.only('tabview', function() {
               content: 'this is bar',
               callback: function() {
                 num_calls = num_calls + 1;
-            }
+              }
             }]
         });
     tabview.render(container);
     var foo = container.one('li');
     assert.equal(foo.get('text'), 'foo');
-    var bar = container.all('li').slice(1,2).item(0);
+    var bar = container.all('li').slice(1, 2).item(0);
     bar.simulate('click');
     assert.equal(1, num_calls);
     foo.simulate('click');
