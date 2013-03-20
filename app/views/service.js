@@ -456,7 +456,8 @@ YUI.add('juju-view-service', function(Y) {
             relations: relation_data,
             charm: charm_attrs,
             charm_id: charm_id,
-            serviceIsJujuGUI: utils.isGuiCharmUrl(charm_id)
+            serviceIsJujuGUI: utils.isGuiCharmUrl(charm_id),
+            serviceRemoteUri: this.get('_nsRouter').url({ gui: '/service/'})
           };
         },
 
