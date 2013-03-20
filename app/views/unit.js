@@ -90,15 +90,15 @@ YUI.add('juju-view-unit', function(Y) {
       });
 
       var charmAttrs = charm.getAttrs();
-      var _nsRouter = this.get('_nsRouter');
+      var nsRouter = this.get('_nsRouter');
 
       container.setHTML(this.template({
-        charmUri: _nsRouter.url({
+        charmUri: nsRouter.url({
           gui: '/charms/charms/' + charmAttrs.series +
               '/' + charmAttrs.package_name + '/json'
         }),
-        serviceRootUri: _nsRouter.url({
-          gui: 'service'
+        serviceRootUri: nsRouter.url({
+          gui: '/service/'
         }),
         unit: unit,
         unit_ip_description: unit_ip_description,
@@ -111,7 +111,7 @@ YUI.add('juju-view-unit', function(Y) {
         unit_running: unit_running,
         unit_pending: unit_pending,
         relations: relations}));
-
+console.log(relations);
       views.utils.updateLandscapeBottomBar(this.get('landscape'), env, unit,
           container, 'unit');
       return this;
