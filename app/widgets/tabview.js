@@ -9,7 +9,7 @@
  * @module browser
  * @submodule widgets
  */
-YUI().add('browser-juju-tabview', function(Y) {
+YUI().add('browser-tabview', function(Y) {
   var ns = Y.namespace('juju.browser.widgets');
 
   /**
@@ -122,7 +122,7 @@ YUI().add('browser-juju-tabview', function(Y) {
   });
 
 }, '0.1.0', { requires: [
-  'array',
+  'array-extras',
   'base',
   'tab',
   'tabview'
