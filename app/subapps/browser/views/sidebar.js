@@ -13,6 +13,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets');
 
+
   /**
    * Sidebar master view for the gui browser.
    *
@@ -51,6 +52,29 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           this.search.on(
               this.search.EVT_TOGGLE_VIEWABLE, this._toggleSidebar, this)
       );
+    },
+
+    _generate_slider_widget: function(results) {
+      var slider_charms = this.get('store').results_to_charmlist(results),
+          slider_widgets = [];
+
+      slider_charms.each(function(charm) {
+        slider_widgets.push(
+            new Y.juju.widgets.browser.CharmSmall(charm.getAttrs()));
+      });
+
+      if (slider_widgets.length) {
+        var slider = new Y.juju.widgets.browser.CharmSlider({
+          items: Y.Array.map(slider_widgets, function(widget) {
+            var node = Y.Node.create('<div>');
+            widget.render(node);
+            return node.getHTML();
+          })
+        });
+        return slider;
+      } else {
+          return false;
+      }
     },
 
     /**
@@ -112,7 +136,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      */
     initializer: function(cfg) {
       this.set('store', new Y.juju.Charmworld0({
-        'api_host': cfg.charmworld_url
+        'api_host': window.juju_config.charmworld_url
       }));
     },
 
@@ -124,7 +148,8 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      */
     render: function(container) {
       var tpl = this.template(),
-          tplNode = Y.Node.create(tpl);
+          tplNode = Y.Node.create(tpl),
+          store = this.get('store');
 
       // build widgets used in the template.
       this.search = new widgets.browser.Search(),
@@ -138,22 +163,9 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       // display.
       this.get('store').sidebar_editorial({
         'success': function(data) {
-          var slider_charms = [];
-          Y.Array.each(data.result.slider, function(charm) {
-            slider_charms.push(
-                new Y.juju.widgets.browser.CharmSmall(charm));
-          });
-
-          if (slider_charms.length) {
-            this.slider = new Y.juju.widgets.browser.CharmSlider({
-              items: Y.Array.map(slider_charms, function(widget) {
-                var node = Y.Node.create('<div>');
-                widget.render(node);
-                return node.getHTML();
-              })
-            });
-            var slider_container = container.one('.bws-left .slider');
-
+          var slider_container = container.one('.bws-left .slider');
+          this.slider = this._generate_slider_widget(data.result.slider);
+          if (this.slider) {
             this.slider.render(slider_container);
           }
 
@@ -166,10 +178,10 @@ YUI.add('subapp-browser-sidebar', function(Y) {
             new_container.append(node);
           });
         },
-        'failure': function(data, request) {
 
+        'failure': function(data, request) {
         }
-      });
+      }, this);
 
       container.setHTML(tplNode);
 
@@ -179,19 +191,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
   }, {
     ATTRS: {
-      /**
-       * Required attribute to tell the view where to tell the Charmworld api
-       * to get it's data from.
-       *
-       * @attribute charmworld_url
-       * @default undefined
-       * @type {String}
-       *
-       */
-      charmworld_url: {
-        required: true
-      },
-
       store: {}
     }
   });

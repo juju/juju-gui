@@ -66,18 +66,20 @@
 
     beforeEach(function() {
       addBrowserContainer(Y);
+      window.juju_config = {
+        charmworld_url = 'http://localhost'
+      };
     });
 
     afterEach(function() {
       view.destroy();
       Y.one('#subapp-browser').remove(true);
+      delete window.juju_config;
     });
 
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser');
-      view = new Sidebar({
-        charmworld_url: 'http://localhost'
-      });
+      view = new Sidebar();
 
       // mock out the data source on the view so that it won't actually make a
       // request.

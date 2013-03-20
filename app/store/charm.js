@@ -8,7 +8,8 @@
  */
 
 YUI.add('juju-charm-store', function(Y) {
-  var ns = Y.namespace('juju');
+  var ns = Y.namespace('juju'),
+      models = Y.namespace('juju.models');
 
   /**
    * The CharmStore class.
@@ -187,8 +188,10 @@ YUI.add('juju-charm-store', function(Y) {
      * @private
      *
      */
-    _results_to_charmlist: function(res) {
-
+    results_to_charmlist: function(data) {
+      return new Y.juju.models.CharmList({
+        items: data
+      });
     },
 
     /**
@@ -214,8 +217,8 @@ YUI.add('juju-charm-store', function(Y) {
      */
     sidebar_editorial: function(callbacks, bind_scope) {
       if (bind_scope) {
-        callbacks.success = Y.bind(callbacks.success, this);
-        callbacks.failure = Y.bind(callbacks.failure, this);
+        callbacks.success = Y.bind(callbacks.success, bind_scope);
+        callbacks.failure = Y.bind(callbacks.failure, bind_scope);
       }
 
       var res = this._make_request('sidebar_editorial', callbacks);
@@ -255,6 +258,7 @@ YUI.add('juju-charm-store', function(Y) {
     'datasource-io',
     'json-parse',
     'juju-charm-id',
+    'juju-charm-models',
     'querystring-stringify'
   ]
 });

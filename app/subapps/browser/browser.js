@@ -96,9 +96,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
-      this.showView('sidebar', {
-        charmworld_url: this.get('charmworld_url')
-      });
+      this.showView('sidebar', {});
       next();
     }
 
@@ -107,7 +105,6 @@ YUI.add('subapp-browser', function(Y) {
       container: {
         value: '#subapp-browser'
       },
-      charmworld_url: {},
       urlNamespace: {
         value: 'charmstore'
       },
