@@ -62,7 +62,7 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     destructor: function() {
-      // Close the socket, if we have connected. 
+      // Close the socket, if we have connected.
       if (this.ws) {
         this.ws.close();
       }
