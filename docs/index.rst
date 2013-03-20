@@ -18,6 +18,7 @@ Contents:
    style-guide
    process
    browser-testing
+   continuous-integration
 
 See also the `code documentation <../../../yuidoc/index.html>`_
 (:ref:`generated separately <embedded-docs>`).

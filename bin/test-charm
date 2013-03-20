@@ -2,18 +2,42 @@
 # This script expects that the system has python-shelltoolbox, python-
 # selenium, python-yaml, and juju installed:
 # sudo apt-get install python-shelltoolbox python-selenium python-yaml juju
-# Deploy the charm, using a branch if given.
+# Deploy the charm, using an alternate origin if given.
+# Takes all arguments that are valid for lib/deploy_charm_for_testing.py
+#  --origin
+#  --charm
+# If FAIL_FAST is set to 1 in the environment the testing loop
+# will exit when the first tested browser returns a failure
+# rather than trying them all.
 python lib/deploy_charm_for_testing.py "$@"
+if [ $? -ne 0 ]; then
+    echo "Unable to deploy Charm"
+    exit 1
+fi
+
 # Figure out the URL of the APP.
-export APP_URL=https://`juju status -e juju-gui-testing | grep public-address: | cut -d: -f2 | cut -c2-`
+export APP_URL=http://`juju status -e juju-gui-testing | grep public-address: | cut -d: -f2 | cut -c2-`
+echo "APP_URL=" ${APP_URL}
 # EXIT_CODE is used to keep track of test failures. If a test fails, this
 # script will exit with an error code.
 EXIT_CODE=0
 # Run the browser tests against the app.
-for JUJU_GUI_TEST_BROWSER in ${JUJU_GUI_TEST_BROWSERS:-chrome}; do
+for JUJU_GUI_TEST_BROWSER in ${JUJU_GUI_TEST_BROWSERS:-ie firefox chrome}
+do
     export JUJU_GUI_TEST_BROWSER
+    echo Launching ${JUJU_GUI_TEST_BROWSER} tests.
     python test/test_charm_running.py -v || EXIT_CODE=1
+    if [ ${FAIL_FAST:-0} -eq 1 -a ${EXIT_CODE} -eq 1 ]; then
+        exit 1;
+    fi
 done
 # Destroy the environment, releasing the resources.
 yes | juju destroy-environment -e juju-gui-testing
+
+# Cleanup old internal IP address file if
+# one was created (in deploy for testing).
+if [ -e juju-internal-ip ]; then
+    rm -f juju-internal-ip
+fi
+
 exit $EXIT_CODE

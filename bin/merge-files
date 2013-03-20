@@ -63,29 +63,34 @@ require('yui').YUI().use(['yui'], function(Y) {
   reqs.push('gallery-ellipsis');
   reqs.push('gallery-timer');
   reqs.push('loader-base');
+  // IE conditionals are not resolved automatically by the merge files script
+  // causing our CI tests to fail
+  reqs.push('scrollview-base-ie');
 
   // Get all of the YUI files and their dependencies
   var filesToLoad = merge.getYUIFiles(reqs);
 
   // Merge third-party files to the filesToLoad list
   filesToLoad.js.push.apply(filesToLoad.js, [
-    'app/assets/javascripts/d3.v2.min.js',
+    'app/assets/javascripts/app-subapp-extension.js',
     'app/assets/javascripts/d3-components.js',
-    'app/assets/javascripts/reconnecting-websocket.js',
-    'app/assets/javascripts/routing.js',
+    'app/assets/javascripts/d3.v2.min.js',
+    'app/assets/javascripts/ns-routing-app-extension.js',
     'app/assets/javascripts/gallery-ellipsis.js',
     'app/assets/javascripts/gallery-markdown.js',
     'app/assets/javascripts/gallery-timer.js',
-    'app/assets/javascripts/app-subapp-extension.js',
-    'app/assets/javascripts/sub-app.js',
-    'app/assets/javascripts/js-yaml.min.js']);
-
+    'app/assets/javascripts/js-yaml.min.js',
+    'app/assets/javascripts/prettify.js',
+    'app/assets/javascripts/reconnecting-websocket.js',
+    'app/assets/javascripts/sub-app.js'
+  ]);
 
   merge.combineJs(filesToLoad.js, 'build-shared/juju-ui/assets/all-yui.js');
 
   var cssFiles = filesToLoad.css;
   cssFiles.push('app/assets/stylesheets/bootstrap-2.0.4.css');
   cssFiles.push('app/assets/stylesheets/bootstrap-responsive-2.0.4.css');
+  cssFiles.push('app/assets/stylesheets/prettify.css');
   merge.combineCSS(cssFiles,
     'build-shared/juju-ui/assets/combined-css/all-static.css');
 });

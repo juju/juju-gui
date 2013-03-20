@@ -7,7 +7,7 @@
 #OLD_SHELL := $(SHELL)
 #SHELL = $(warning [$@ [32m($^) [34m($?)[m ])$(OLD_SHELL)
 
-# Build a target for JavaScript files.  The find command exclused directories
+# Build a target for JavaScript files.  The find command excludes directories
 # as needed through the -prune directive, and the grep command removes
 # individual unwanted JavaScript and JSON files from the list.
 # find(1) is used here to build a list of JavaScript targets rather than bzr
@@ -31,9 +31,11 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/js-yaml\.min\.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket\.js$$' \
+		-e '^app/assets/javascripts/prettify.js$$' \
 		-e '^app/assets/javascripts/gallery-.*\.js$$' \
 		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
+LINT_IGNORE='app/assets/javascripts/prettify.js'
 NODE_TARGETS=node_modules/chai node_modules/cryptojs node_modules/d3 \
     node_modules/expect.js node_modules/express \
     node_modules/graceful-fs node_modules/grunt node_modules/jshint \
@@ -237,7 +239,7 @@ $(JAVASCRIPT_LIBRARIES): | node_modules/yui node_modules/d3
 gjslint: virtualenv/bin/gjslint
 	virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
 	    --custom_jsdoc_tags module,main,class,method,event,property,attribute,submodule,namespace,extends,config,constructor,static,final,readOnly,writeOnce,optional,required,param,return,for,type,private,protected,requires,default,uses,example,chainable,deprecated,since,async,beta,bubbles,extension,extensionfor,extension_for \
-	    $(JSFILES)
+		-x $(LINT_IGNORE) $(JSFILES)
 
 jshint: node_modules/jshint
 	node_modules/jshint/bin/hint $(JSFILES)

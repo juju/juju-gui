@@ -45,6 +45,13 @@ var GlobalConfig = {
         }
       }
     },
+    prettify: {
+      modules: {
+        'prettify': {
+          fullpath: '/juju-ui/assets/javascripts/prettify.js'
+        }
+      }
+    },
     jsyaml: {
       modules: {
         'js-yaml': {
@@ -80,8 +87,8 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/reconnecting-websocket.js'
         },
 
-        'juju-routing': {
-          fullpath: '/juju-ui/assets/javascripts/routing.js'
+        'ns-routing-app-extension': {
+          fullpath: '/juju-ui/assets/javascripts/ns-routing-app-extension.js'
         },
 
         'app-subapp-extension': {
