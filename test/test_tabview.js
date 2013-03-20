@@ -20,9 +20,7 @@ describe('tabview', function() {
   });
 
   it('exists', function() {
-    var tab = new Y.juju.browser.widgets.Tab(),
-        tabview = new Y.juju.browser.widgets.TabView();
-    assert.isObject(tab);
+    var tabview = new Y.juju.browser.widgets.TabView();
     assert.isObject(tabview);
   });
 
@@ -60,52 +58,5 @@ describe('tabview', function() {
     assert.notEqual(-1, text.indexOf('bar'));
     assert.notEqual(-1, text.indexOf('this is foo'));
     assert.notEqual(-1, text.indexOf('this is bar'));
-  });
-
-  it('calls callbacks if provided when a tab is focused', function() {
-    var callback_called = false,
-        tabview = new Y.juju.browser.widgets.TabView({
-          children: [
-            {
-              label: 'foo',
-              content: 'this is foo'
-            }, {
-              label: 'bar',
-              content: 'this is bar',
-              callback: function() {
-                callback_called = true;
-              }
-            }]
-        });
-    tabview.render(container);
-    var bar = container.all('li').slice(1, 2).item(0);
-    bar.simulate('click');
-    assert.isTrue(callback_called);
-  });
-
-  it('only calls the callback the first time', function() {
-    var num_calls = 0,
-        tabview = new Y.juju.browser.widgets.TabView({
-          children: [
-            {
-              label: 'foo',
-              content: 'this is foo'
-            }, {
-              label: 'bar',
-              content: 'this is bar',
-              callback: function() {
-                num_calls = num_calls + 1;
-              }
-            }]
-        });
-    tabview.render(container);
-    var foo = container.one('li');
-    assert.equal(foo.get('text'), 'foo');
-    var bar = container.all('li').slice(1, 2).item(0);
-    bar.simulate('click');
-    assert.equal(1, num_calls);
-    foo.simulate('click');
-    bar.simulate('click');
-    assert.equal(1, num_calls);
   });
 });
