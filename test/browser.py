@@ -2,6 +2,7 @@ from __future__ import print_function
 
 import atexit
 import base64
+from functools import wraps
 import getpass
 import httplib
 import json
@@ -41,7 +42,7 @@ chrome.update(common)
 
 firefox = dict(selenium.webdriver.DesiredCapabilities.FIREFOX)
 firefox['platform'] = 'Linux'
-firefox['version'] = '18'
+firefox['version'] = '20'
 firefox.update(common)
 
 browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
@@ -68,8 +69,22 @@ if os.path.exists('juju-internal-ip'):
 def formatWebDriverError(error):
     msg = []
     msg.append(str(error))
-    msg.append(str(error.stacktrace))
+    if error.stacktrace:
+        msg.append(str(error.stacktrace))
     return '\n'.join(msg)
+
+def webdriverError():
+    """Decorator for formatting web driver exceptions"""
+    def decorator(f):
+        @wraps(f)
+        def format_error(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except WebDriverException as e:
+                print(formatWebDriverError(e))
+                raise e
+        return format_error
+    return decorator
 
 def set_test_result(jobid, passed):
     headers = {'Authorization': 'Basic ' + encoded_credentials}
@@ -138,7 +153,7 @@ class TestCase(unittest.TestCase):
                 error='Browser warning dialog not found.')
             continue_button.click()
 
-    @retry(WebDriverException, format_error=formatWebDriverError)
+    @webdriverError()
     def wait_for(self, condition, error=None, timeout=10):
         """Wait for condition to be True.
 
@@ -169,7 +184,7 @@ class TestCase(unittest.TestCase):
         condition = lambda driver: driver.execute_script(script)
         return self.wait_for(condition, error=error, timeout=timeout)
 
-    @retry(subprocess.CalledProcessError)
+    @retry(subprocess.CalledProcessError, tries=2)
     def restart_api(self):
         """Restart the staging API backend.
 
@@ -179,7 +194,7 @@ class TestCase(unittest.TestCase):
         change the internal Juju environment. Such tests should add this
         function as part of their own clean up process.
         """
-        print('retry_api with ip:%s' % internal_ip)
+        print('restart_api with ip:%s' % internal_ip)
         if internal_ip:
             # When an internal ip address is set directly contract
             # the machine in question. This can help route around
