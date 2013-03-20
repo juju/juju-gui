@@ -978,11 +978,20 @@ YUI.add('juju-view-service', function(Y) {
             var id = ev.currentTarget.get('id');
             console.log('Unit clicked', id);
             this.fire('navigateTo', {
-              url: Y.juju._nsRouter.url({
+              url: this.get('_nsRouter').url({
                 gui: '/unit/' + id.replace('/', '-') + '/'
               })
             });
           }}
+        }
+      }, {
+        ATTRS: {
+          /**
+            Applications router utility methods
+
+            @attribute _nsRouter
+          */
+          _nsRouter: {}
         }
       });
 

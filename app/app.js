@@ -495,7 +495,8 @@ YUI.add('juju-gui', function(Y) {
           { getModelURL: Y.bind(this.getModelURL, this),
             unit: unit, db: this.db, env: this.env,
             querystring: req.query,
-            landscape: this.landscape });
+            landscape: this.landscape,
+            _nsRouter: this._nsRouter });
     },
 
     /**
@@ -538,6 +539,7 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         landscape: this.landscape,
         getModelURL: Y.bind(this.getModelURL, this),
+        _nsRouter: this._nsRouter,
         querystring: req.query
       }, {}, function(view) {
         // If the view contains a method call fitToWindow,
@@ -779,6 +781,7 @@ YUI.add('juju-gui', function(Y) {
           view = this.getViewInfo('environment'),
           options = {
             getModelURL: Y.bind(this.getModelURL, this),
+            _nsRouter: this._nsRouter,
             /**
              * A simple closure so changes to the value are available.
              *
@@ -902,7 +905,7 @@ YUI.add('juju-gui', function(Y) {
       }
 
       if (matches[idx] && matches[idx].path) {
-        finalPath = Y.juju._nsRouter.url({ gui: matches[idx].path });
+        finalPath = this._nsRouter.url({ gui: matches[idx].path });
       }
       return finalPath;
     }

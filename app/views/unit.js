@@ -90,13 +90,14 @@ YUI.add('juju-view-unit', function(Y) {
       });
 
       var charmAttrs = charm.getAttrs();
+      var _nsRouter = this.get('_nsRouter');
 
       container.setHTML(this.template({
-        charmUri: Y.juju._nsRouter.url({
+        charmUri: _nsRouter.url({
           gui: '/charms/charms/' + charmAttrs.series +
               '/' + charmAttrs.package_name + '/json'
         }),
-        serviceRootUri: Y.juju._nsRouter.url({
+        serviceRootUri: _nsRouter.url({
           gui: 'service'
         }),
         unit: unit,
@@ -335,6 +336,15 @@ YUI.add('juju-view-unit', function(Y) {
       );
     }
 
+  }, {
+    ATTRS: {
+      /**
+        Applications router utility methods
+
+        @attribute _nsRouter
+      */
+      _nsRouter: {}
+    }
   });
 
   views.unit = UnitView;
