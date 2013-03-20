@@ -62,7 +62,9 @@ YUI.add('juju-env-base', function(Y) {
     },
 
     destructor: function() {
-      this.ws.close();
+      if (this.ws) {
+        this.ws.close();
+      } // else we never connected.
       this._txn_callbacks = {};
     },
 
