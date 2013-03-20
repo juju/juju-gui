@@ -191,6 +191,7 @@ function injectData(app, data) {
 
     it('should avoid trying to login if the env is not connected',
        function(done) {
+         conn.transient_close();
          var app = new Y.juju.App({env: env});
          app.after('ready', function() {
            assert.equal(0, conn.messages.length);

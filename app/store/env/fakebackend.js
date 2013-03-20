@@ -75,8 +75,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATEDERROR;
       }
-      var result = this.changes;
-      this._resetChanges();
+      var result;
+      if (Y.Object.isEmpty(this.changes.services) &&
+          Y.Object.isEmpty(this.changes.machines) &&
+          Y.Object.isEmpty(this.changes.units) &&
+          Y.Object.isEmpty(this.changes.relations)) {
+        result = null;
+      } else {
+        result = this.changes;
+        this._resetChanges();
+      }
       return result;
     },
 
