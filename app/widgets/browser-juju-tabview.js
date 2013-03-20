@@ -24,9 +24,9 @@ YUI().add('browser-juju-tabview', function(Y) {
     /**
      * Calls the Tab's callback, if it exists and the tab is selected.
      *
-     * @method _callbackMaybe 
+     * @method _callbackMaybe
      */
-    _callbackMaybe: function () {
+    _callbackMaybe: function() {
       var callback = this.get('callback');
       if (callback && this.get('selected') === 1) {
         callback();
@@ -36,12 +36,12 @@ YUI().add('browser-juju-tabview', function(Y) {
     /**
      * Binds the UI events.
      *
-     * @method binUI 
+     * @method binUI
      */
     bindUI: function() {
       ns.Tab.superclass.bindUI.apply(this);
       this.get('_events').push(
-        this.onceAfter('selectedChange', this._callbackMaybe));
+          this.onceAfter('selectedChange', this._callbackMaybe));
     },
 
     /**
@@ -49,7 +49,7 @@ YUI().add('browser-juju-tabview', function(Y) {
      *
      * @method destructor
      */
-    destructor: function () {
+    destructor: function() {
       Y.Array.each(this.get('_events'), function(e) {
         e.detach();
       });
@@ -83,14 +83,14 @@ YUI().add('browser-juju-tabview', function(Y) {
    * tabs horizontally rendered like Y.TabView, or vertically.
    *
    * @class Y.juju.browser.widgets.TabView
-   * @extends {Y.TabView} 
+   * @extends {Y.TabView}
    */
   ns.TabView = Y.Base.create('juju-browser-tabview', Y.TabView, [], {
 
     /**
      * Renders the DOM nodes for the widget.
      *
-     * @method renderUI 
+     * @method renderUI
      */
     renderUI: function() {
       ns.TabView.superclass.renderUI.apply(this);
@@ -100,7 +100,7 @@ YUI().add('browser-juju-tabview', function(Y) {
     }
   }, {
     ATTRS: {
-      
+
       /**
        * @attribute defaultChildType
        * @default Y.juju.browser.widgets.Tab
