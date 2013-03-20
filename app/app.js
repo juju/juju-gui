@@ -606,7 +606,9 @@ YUI.add('juju-gui', function(Y) {
     show_notifications_overview: function(req) {
       this.showView('notifications_overview', {
         env: this.env,
-        notifications: this.db.notifications});
+        notifications: this.db.notifications,
+        nsRouter: this._nsRouter
+      });
     },
 
     /**
@@ -658,7 +660,9 @@ YUI.add('juju-gui', function(Y) {
         view.instance = new views.NotificationsView(
             {container: Y.one('#notifications'),
               env: this.env,
-              notifications: this.db.notifications});
+              notifications: this.db.notifications,
+              nsRouter: this._nsRouter
+            });
         view.instance.render();
       }
       next();
@@ -961,7 +965,8 @@ YUI.add('juju-gui', function(Y) {
             namespace: 'gui'},
           // Notifications.
           { path: '/notifications/',
-            callbacks: 'show_notifications_overview'},
+            callbacks: 'show_notifications_overview',
+            namespace: 'gui'},
           // Services.
           { path: '/service/:id/config/',
             callbacks: 'show_service_config',
