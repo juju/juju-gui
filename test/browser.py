@@ -154,7 +154,7 @@ class TestCase(unittest.TestCase):
             continue_button.click()
 
     @webdriverError()
-    def wait_for(self, condition, error=None, timeout=10):
+    def wait_for(self, condition, error=None, timeout=30):
         """Wait for condition to be True.
 
         The argument condition is a callable accepting a driver object.
