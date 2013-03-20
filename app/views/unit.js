@@ -111,7 +111,6 @@ YUI.add('juju-view-unit', function(Y) {
         unit_running: unit_running,
         unit_pending: unit_pending,
         relations: relations}));
-console.log(relations);
       views.utils.updateLandscapeBottomBar(this.get('landscape'), env, unit,
           container, 'unit');
       return this;
