@@ -171,9 +171,12 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
           // Add in the charm-smalls for the new as well.
           var new_container = container.one('.bws-left .new');
-          var new_charms = Y.Array.map(data.result['new'], function(charm) {
+          var new_charms = this.get('store').results_to_charmlist(
+            data.result['new']);
+          new_charms.map(function(charm) {
             var node = Y.Node.create('<div>'),
-                widget = new Y.juju.widgets.browser.CharmSmall(charm);
+                widget = new Y.juju.widgets.browser.CharmSmall(
+                  charm.getAttrs());
             widget.render(node);
             new_container.append(node);
           });
