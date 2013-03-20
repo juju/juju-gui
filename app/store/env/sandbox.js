@@ -241,11 +241,38 @@ YUI.add('juju-env-sandbox', function(Y) {
 
       @method performOp_login
       @param {Object} data A hash minimally of user and password.
-      @return {undfefined} Nothing.
+      @return {undefined} Nothing.
      */
     performOp_login: function(data) {
       data.result = this.get('state').login(data.user, data.password);
       this.get('client').receive(data);
+    },
+
+    /**
+      Handles deploy operations from client.  Called by receive.
+      client.receive will receive all sent values back, transparently.
+      If there is an error, the reply will also have an "err" with a string
+      describing the error.
+
+      @method performOp_deploy
+      @param {Object} data A hash minimally of charm_url, and optionally also
+        service_name, config, config_raw, and num_units.
+      @return {undefined} Nothing.
+     */
+    performOp_deploy: function(data) {
+      var client = this.get('client');
+      var callback = function(result) {
+        if (result.error) {
+          data.err = result.error;
+        }
+        client.receiveNow(data);
+      };
+      this.get('state').deploy(data.charm_url, callback, {
+        name: data.service_name,
+        config: data.config,
+        configYAML: data.config_raw,
+        unitCount: data.num_units
+      });
     }
   });
 
