@@ -54,7 +54,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       );
     },
 
-    _generate_slider_widget: function(results) {
+    _generateSliderWidget: function(results) {
       var slider_charms = this.get('store').results_to_charmlist(results),
           slider_widgets = [];
 
@@ -75,6 +75,49 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       } else {
           return false;
       }
+    },
+
+    _renderEditorialView: function () {
+      var tpl = this.template(),
+          tplNode = Y.Node.create(tpl),
+          store = this.get('store');
+
+      // build widgets used in the template.
+      this.search = new widgets.browser.Search(),
+      this.search.render(tplNode.one('.bws-search'));
+
+      if (typeof container !== 'object') {
+        container = this.get('container');
+      }
+
+      // By default we grab the editorial content from the api to use for
+      // display.
+      this.get('store').sidebar_editorial({
+        'success': function(data) {
+          var sliderContainer = container.one('.bws-left .slider');
+          this.slider = this._generateSliderWidget(data.result.slider);
+          if (this.slider) {
+            this.slider.render(sliderContainer);
+          }
+
+          // Add in the charm-smalls for the new as well.
+          var newContainer = container.one('.bws-left .new');
+          var newCharms = this.get('store').results_to_charmlist(
+            data.result['new']);
+          newCharms.map(function(charm) {
+            var node = Y.Node.create('<div>'),
+                widget = new Y.juju.widgets.browser.CharmSmall(
+                  charm.getAttrs());
+            widget.render(node);
+            newContainer.append(node);
+          });
+        },
+
+        'failure': function(data, request) {
+        }
+      }, this);
+
+      container.setHTML(tplNode);
     },
 
     /**
@@ -147,46 +190,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     render: function(container) {
-      var tpl = this.template(),
-          tplNode = Y.Node.create(tpl),
-          store = this.get('store');
-
-      // build widgets used in the template.
-      this.search = new widgets.browser.Search(),
-      this.search.render(tplNode.one('.bws-search'));
-
-      if (typeof container !== 'object') {
-        container = this.get('container');
-      }
-
-      // By default we grab the editorial content from the api to use for
-      // display.
-      this.get('store').sidebar_editorial({
-        'success': function(data) {
-          var slider_container = container.one('.bws-left .slider');
-          this.slider = this._generate_slider_widget(data.result.slider);
-          if (this.slider) {
-            this.slider.render(slider_container);
-          }
-
-          // Add in the charm-smalls for the new as well.
-          var new_container = container.one('.bws-left .new');
-          var new_charms = this.get('store').results_to_charmlist(
-            data.result['new']);
-          new_charms.map(function(charm) {
-            var node = Y.Node.create('<div>'),
-                widget = new Y.juju.widgets.browser.CharmSmall(
-                  charm.getAttrs());
-            widget.render(node);
-            new_container.append(node);
-          });
-        },
-
-        'failure': function(data, request) {
-        }
-      }, this);
-
-      container.setHTML(tplNode);
+      this._renderEditorialView();
 
       // Bind extra events that aren't covered by the Y.View events object.
       this._bindEvents();
@@ -194,6 +198,15 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+       * An instance of the Charmworld API object to hit for any data that
+       * needs fetching.
+       *
+       * @attribute store
+       * @default undefined
+       * @type {Charmworld0}
+       *
+       */
       store: {}
     }
   });

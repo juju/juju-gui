@@ -149,19 +149,19 @@ YUI.add('juju-charm-store', function(Y) {
     /**
      * Send the actual request and handle response from the api.
      *
-     * @method _make_request
+     * @method _makeRequest
      * @param {Object} args any query params and arguments required.
      * @private
      *
      */
-    _make_request: function(api_endpoint, callbacks, args) {
+    _makeRequest: function(apiEndpoint, callbacks, args) {
       // Any query string args need to be put onto the endpoint for calling.
       if (args) {
-        api_endpoint = api_endpoint + '?' + Y.QueryString.stringify(args);
+        apiEndpoint = apiEndpoint + '?' + Y.QueryString.stringify(args);
       }
 
       this.get('datasource').sendRequest({
-        request: api_endpoint,
+        request: apiEndpoint,
         callback: {
           success: function(io_request) {
             var res = Y.JSON.parse(
@@ -215,13 +215,13 @@ YUI.add('juju-charm-store', function(Y) {
      * @return {Object} data loaded from the api call.
      *
      */
-    sidebar_editorial: function(callbacks, bind_scope) {
-      if (bind_scope) {
-        callbacks.success = Y.bind(callbacks.success, bind_scope);
-        callbacks.failure = Y.bind(callbacks.failure, bind_scope);
+    sidebar_editorial: function(callbacks, bindScope) {
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
 
-      var res = this._make_request('sidebar_editorial', callbacks);
+      var res = this._makeRequest('sidebar_editorial', callbacks);
     }
   }, {
     ATTRS: {
