@@ -496,7 +496,7 @@ YUI.add('juju-gui', function(Y) {
             unit: unit, db: this.db, env: this.env,
             querystring: req.query,
             landscape: this.landscape,
-            _nsRouter: this._nsRouter });
+            nsRouter: this.nsRouter });
     },
 
     /**
@@ -539,7 +539,7 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         landscape: this.landscape,
         getModelURL: Y.bind(this.getModelURL, this),
-        _nsRouter: this._nsRouter,
+        nsRouter: this.nsRouter,
         querystring: req.query
       }, {}, function(view) {
         // If the view contains a method call fitToWindow,
@@ -607,7 +607,7 @@ YUI.add('juju-gui', function(Y) {
       this.showView('notifications_overview', {
         env: this.env,
         notifications: this.db.notifications,
-        nsRouter: this._nsRouter
+        nsRouter: this.nsRouter
       });
     },
 
@@ -661,7 +661,7 @@ YUI.add('juju-gui', function(Y) {
             {container: Y.one('#notifications'),
               env: this.env,
               notifications: this.db.notifications,
-              nsRouter: this._nsRouter
+              nsRouter: this.nsRouter
             });
         view.instance.render();
       }
@@ -791,7 +791,7 @@ YUI.add('juju-gui', function(Y) {
           view = this.getViewInfo('environment'),
           options = {
             getModelURL: Y.bind(this.getModelURL, this),
-            _nsRouter: this._nsRouter,
+            nsRouter: this.nsRouter,
             /**
              * A simple closure so changes to the value are available.
              *
@@ -915,7 +915,7 @@ YUI.add('juju-gui', function(Y) {
       }
 
       if (matches[idx] && matches[idx].path) {
-        finalPath = this._nsRouter.url({ gui: matches[idx].path });
+        finalPath = this.nsRouter.url({ gui: matches[idx].path });
       }
       return finalPath;
     }
@@ -937,7 +937,7 @@ YUI.add('juju-gui', function(Y) {
        *
        * `namespace`: (optional) when namespace is specified this route should
        *   only match when the URL fragment occurs in that namespace. The
-       *   default namespace (as passed to this._nsRouter) is assumed if no
+       *   default namespace (as passed to this.nsRouter) is assumed if no
        *   namespace  attribute is specified.
        *
        * `model`: `model.name` (required)

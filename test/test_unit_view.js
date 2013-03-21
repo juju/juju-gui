@@ -3,7 +3,7 @@
 (function() {
   describe('juju unit view', function() {
     var views, machine, models, Y, container, service, unit, db,
-        conn, juju, env, charm, testUtils, makeView, _nsRouter;
+        conn, juju, env, charm, testUtils, makeView, nsRouter;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -19,7 +19,7 @@
             env = juju.newEnvironment({conn: conn});
             env.connect();
             conn.open();
-            _nsRouter = Y.namespace('juju').Router('charmstore');
+            nsRouter = Y.namespace('juju').Router('charmstore');
             makeView = function(querystring) {
               if (!Y.Lang.isValue(querystring)) {
                 querystring = {};
@@ -30,7 +30,7 @@
                     db: db,
                     env: env,
                     getModelURL: function(u) { return u.id; },
-                    _nsRouter: _nsRouter,
+                    nsRouter: nsRouter,
                     querystring: querystring}).render();
             };
             done();
@@ -155,7 +155,7 @@
         getModelURL: function(model, intent) {
           return model.get('name');
         },
-        _nsRouter: _nsRouter,
+        nsRouter: nsRouter,
         querystring: {}
       }).render();
 

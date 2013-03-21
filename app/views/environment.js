@@ -71,7 +71,7 @@ YUI.add('juju-view-environment', function(Y) {
               getModelURL: this.get('getModelURL'),
               getServiceEndpoints: this.get('getServiceEndpoints'),
               container: container,
-              _nsRouter: this.get('_nsRouter')});
+              nsRouter: this.get('nsRouter')});
             // Bind all the behaviors we need as modules.
             topo.addModule(views.ServiceModule);
             topo.addModule(views.PanZoomModule);
@@ -102,9 +102,9 @@ YUI.add('juju-view-environment', function(Y) {
           /**
             Applications router utility methods
 
-            @attribute _nsRouter
+            @attribute nsRouter
           */
-          _nsRouter: {}
+          nsRouter: {}
         }
       });
 

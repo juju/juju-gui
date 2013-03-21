@@ -213,9 +213,9 @@ YUI.add('ns-routing-app-extension', function(Y) {
     @extension App
   */
   function NSRouter() {
-    // _nsRouter is a juju.Router.  It provides a lot of utility methods for
+    // nsRouter is a juju.Router.  It provides a lot of utility methods for
     // working with namespaced URLs.
-    this._nsRouter = Y.namespace('juju').Router(this.defaultNamespace);
+    this.nsRouter = Y.namespace('juju').Router(this.defaultNamespace);
   }
 
   NSRouter.ATTRS = {};
@@ -273,8 +273,8 @@ YUI.add('ns-routing-app-extension', function(Y) {
         delete options.overrideAllNamespaces;
       } else {
         var loc = Y.getLocation();
-        var qs = this._nsRouter.getQS(url);
-        result = this._nsRouter.combine(loc.pathname, url);
+        var qs = this.nsRouter.getQS(url);
+        result = this.nsRouter.combine(loc.pathname, url);
         if (qs) {
           result += '?' + qs;
         }
@@ -324,8 +324,8 @@ YUI.add('ns-routing-app-extension', function(Y) {
       // These are used by underlying YUI machinery.
       self._dispatching = self._dispatched = true;
 
-      parts = this._nsRouter.split(path);
-      namespaces = this._nsRouter.parse(parts.pathname);
+      parts = this.nsRouter.split(path);
+      namespaces = this.nsRouter.parse(parts.pathname);
       // Clear out the "seen" stash because we are starting a new URL
       // dispatch.  This data structure helps us from processing the same non-
       // namespaced route multiple times for each URL.

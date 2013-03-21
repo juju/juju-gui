@@ -457,7 +457,7 @@ YUI.add('juju-view-service', function(Y) {
             charm: charm_attrs,
             charm_id: charm_id,
             serviceIsJujuGUI: utils.isGuiCharmUrl(charm_id),
-            serviceRemoteUri: this.get('_nsRouter').url({ gui: '/service/'})
+            serviceRemoteUri: this.get('nsRouter').url({ gui: '/service/'})
           };
         },
 
@@ -979,7 +979,7 @@ YUI.add('juju-view-service', function(Y) {
             var id = ev.currentTarget.get('id');
             console.log('Unit clicked', id);
             this.fire('navigateTo', {
-              url: this.get('_nsRouter').url({
+              url: this.get('nsRouter').url({
                 gui: '/unit/' + id.replace('/', '-') + '/'
               })
             });
@@ -990,9 +990,9 @@ YUI.add('juju-view-service', function(Y) {
           /**
             Applications router utility methods
 
-            @attribute _nsRouter
+            @attribute nsRouter
           */
-          _nsRouter: {}
+          nsRouter: {}
         }
       });
 
