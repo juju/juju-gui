@@ -375,8 +375,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var machines = [];
       var usedMachineIds = {};
       this.db.units.each(function(unit) {
-        if (unit.machine_id) {
-          usedMachineIds[unit.machine_id] = true;
+        if (unit.machine) {
+          usedMachineIds[unit.machine] = true;
         }
       });
       this.db.machines.each(function(machine) {

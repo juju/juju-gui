@@ -295,7 +295,7 @@ YUI.add('juju-models', function(Y) {
     },
 
     add: function() {
-      var result = ServiceUnitList.superclass.add.apply(this, arguments);
+      var result = MachineList.superclass.add.apply(this, arguments);
       if (Y.Lang.isArray(result)) {
         Y.Array.each(result, this._setDefaultsAndCalculatedValues, this);
       } else {
