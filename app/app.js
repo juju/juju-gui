@@ -384,7 +384,7 @@ YUI.add('juju-gui', function(Y) {
         popup.setDefaultSeries(ev.newVal);
       });
 
-      // Halts the default naviation on the juju logo to allow us to show
+      // Halts the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
       Y.one('#nav-brand-env').on('click', function(e) {
         e.halt();
@@ -695,6 +695,10 @@ YUI.add('juju-gui', function(Y) {
           this.env.login();
           return;
         }
+      // After re-aranging the execution order of our routes to suppor the new
+      // :gui: namespace we were unable to log out on prod build in Ubuntu
+      // chrome. It appeared to be because credentials was null so the log in
+      // form was never shown - this handles that edge case.
       } else {
         this.show_login();
       }
@@ -773,7 +777,7 @@ YUI.add('juju-gui', function(Y) {
     /**
       Shows the root view of the application erasing all namespaces
 
-      @method showRootViewinit
+      @method showRootView
     */
     showRootView: function() {
       this._navigate('/', { overrideAllNamespaces: true });
