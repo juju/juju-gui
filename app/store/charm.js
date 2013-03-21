@@ -171,8 +171,11 @@ YUI.add('juju-charm-store', function(Y) {
           },
 
           'failure': function(io_request) {
-            var res = Y.JSON.parse(
-                io_request.response.results[0].responseText);
+            var respText = io_request.response.results[0].responseText,
+                res;
+            if (respText) {
+              res = Y.JSON.parse(respText);
+            }
             callbacks.failure(res, io_request);
           }
         }

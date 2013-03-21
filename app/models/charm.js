@@ -178,7 +178,13 @@ YUI.add('juju-charm-models', function(Y) {
       },
       bzr_branch: {writeOnce: true},
       charm_store_path: {
-        getter: function () {
+        /**
+         * Generate the charm store path from the attributes of the charm.
+         *
+         * @method getter
+         *
+         */
+        getter: function() {
           // charm_store_path
           var owner = this.get('owner');
           return [
@@ -193,7 +199,13 @@ YUI.add('juju-charm-models', function(Y) {
       config: {writeOnce: true},
       description: {writeOnce: true},
       full_name: {
-        getter: function () {
+        /**
+         * Generate the full name of the charm from its attributes.
+         *
+         * @method geetter
+         *
+         */
+        getter: function() {
           // full_name
           var tmp = [this.get('series'), this.get('package_name')],
               owner = this.get('owner');
@@ -293,7 +305,7 @@ YUI.add('juju-charm-models', function(Y) {
    * Model to represent the Charms from the Charmworld0 Api.
    *
    * @class BrowserCharm
-   * @extends Charm
+   * @extends {Charm}
    *
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
@@ -320,11 +332,17 @@ YUI.add('juju-charm-models', function(Y) {
       date_created: {writeOnce: true},
       description: {writeOnce: true},
       files: {
-          value: {},
-          writeOnce: true
+        value: {},
+        writeOnce: true
       },
       full_name: {
-        getter: function () {
+        /**
+         * Generate the full name of the charm from its attributes.
+         *
+         * @method geetter
+         *
+         */
+        getter: function() {
           // full_name
           var tmp = [this.get('series'), this.get('package_name')],
               owner = this.get('owner');
@@ -337,7 +355,7 @@ YUI.add('juju-charm-models', function(Y) {
       },
       is_approved: {writeOnce: true},
       is_new: {writeOnce: true},
-      is_popular:{writeOnce: true},
+      is_popular: {writeOnce: true},
       is_subordinate: {writeOnce: true},
       last_change: {
         writeOnce: true,

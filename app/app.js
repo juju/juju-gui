@@ -385,6 +385,8 @@ YUI.add('juju-gui', function(Y) {
       });
 
       // Attach SubApplications
+      // The subapps should share the same db.
+      cfg.db = this.db;
       this.addSubApplications(cfg);
     },
 

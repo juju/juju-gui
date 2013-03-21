@@ -10,6 +10,7 @@
  */
 YUI.add('subapp-browser-sidebar', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
+      models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets');
 
@@ -54,7 +55,14 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       );
     },
 
-    _generateSliderWidget: function(results) {
+    /**
+     * Given a set of Charms generate a CharmSlider widget with that data.
+     *
+     * @method _generateSliderWidget
+     * @param {Object} results Object of Charm Data from the API.
+     *
+     */
+    _generatSliderWidget: function(results) {
       var slider_charms = this.get('store').results_to_charmlist(results),
           slider_widgets = [];
 
@@ -73,11 +81,19 @@ YUI.add('subapp-browser-sidebar', function(Y) {
         });
         return slider;
       } else {
-          return false;
+        return false;
       }
     },
 
-    _renderEditorialView: function () {
+    /**
+     * Initially we load editorial content to populate the sidebar. Build this
+     * content.
+     *
+     * @method _renderEditorialView
+     * @param {Node} container A node to stick the rendered output into.
+     *
+     */
+    _renderEditorialView: function(container) {
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl),
           store = this.get('store');
@@ -103,17 +119,30 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           // Add in the charm-smalls for the new as well.
           var newContainer = container.one('.bws-left .new');
           var newCharms = this.get('store').results_to_charmlist(
-            data.result['new']);
+              data.result['new']);
           newCharms.map(function(charm) {
             var node = Y.Node.create('<div>'),
                 widget = new Y.juju.widgets.browser.CharmSmall(
-                  charm.getAttrs());
+                charm.getAttrs());
             widget.render(node);
             newContainer.append(node);
           });
         },
 
         'failure': function(data, request) {
+          var message;
+          if (data && data.type) {
+            message = 'Charm API error of type: ' + data.type;
+          } else {
+            message = 'Charm API server did not respond';
+          }
+          this.get('db').notifications.add(
+              new models.Notification({
+                title: 'Failed to load sidebar content.',
+                message: message,
+                level: 'error'
+              })
+          );
         }
       }, this);
 
@@ -190,7 +219,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     render: function(container) {
-      this._renderEditorialView();
+      this._renderEditorialView(container);
 
       // Bind extra events that aren't covered by the Y.View events object.
       this._bindEvents();
@@ -217,6 +246,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     'browser-charm-small',
     'browser-search-widget',
     'juju-charm-store',
+    'juju-models',
     'view'
   ]
 });

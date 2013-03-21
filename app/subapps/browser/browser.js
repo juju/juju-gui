@@ -21,6 +21,18 @@ YUI.add('subapp-browser', function(Y) {
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
 
     /**
+     * Generate a standard shared set of cfg all Views can expect to see.
+     *
+     * @method _getViewCfg
+     *
+     */
+    _getViewCfg: function() {
+      return {
+        db: this.get('db')
+      };
+    },
+
+    /**
      * The available Views run from this sub app.
      * @attribute views
      *
@@ -60,7 +72,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
-      this.showView('fullscreen');
+      this.showView('fullscreen', this._getViewCfg());
       next();
     },
 
@@ -74,7 +86,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreenCharm: function(req, res, next) {
-      this.showView('fullscreenCharm');
+      this.showView('fullscreenCharm', this._getViewCfg());
       next();
     },
 
@@ -96,7 +108,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
-      this.showView('sidebar', {});
+      this.showView('sidebar', this._getViewCfg());
       next();
     }
 
