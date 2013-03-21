@@ -9,8 +9,12 @@
 
   var Y;
 
+  var endpointToName = function(endpoint) {
+    return endpoint[0] + ':' + endpoint[1].name;
+  };
+
   describe('Python Juju environment', function() {
-    var juju, conn, env, msg, testUtils, endpoint1, endpoint2;
+    var conn, endpointA, endpointB, env, juju, msg, testUtils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -24,11 +28,6 @@
             conn.open();
             done();
           });
-    });
-
-    beforeEach(function() {
-      endpoint1 = ['service1', {name: 'relation-name-1'}];
-      endpoint2 = ['service2', {name: 'relation-name-2'}];
     });
 
     after(function() {
@@ -124,6 +123,51 @@
         op: 'resolved',
         result: true,
         request_id: msg.request_id});
+    });
+
+    it('successfully adds a relation', function(done) {
+      var endpoints, result;
+      endpointA = ['service-a', {name: 'relation-name-a'}];
+      endpointB = ['service-b', {name: 'relation-name-b'}];
+      env.add_relation(endpointA, endpointB, function(ev) {
+        result = ev.result;
+        assert.equal(result.id, 'relation-0');
+        assert.equal(result['interface'], 'http');
+        assert.equal(result.scope, 'global');
+        endpoints = result.endpoints;
+        assert.equal(Y.Object.keys(endpoints[0])[0], 'service-a');
+        assert.equal(Y.Object.keys(endpoints[1])[0], 'service-b');
+        assert.equal(Y.Object.values(endpoints[0])[0].name, 'relation-name-a');
+        assert.equal(Y.Object.values(endpoints[1])[0].name, 'relation-name-b');
+        done();
+      });
+      msg = conn.last_message();
+      conn.msg({
+        'result': {
+          'id': 'relation-0',
+          'interface': 'http',
+          'scope': 'global',
+          'endpoints': [
+            {'service-a': {'name': 'relation-name-a', 'role': 'client'}},
+            {'service-b': {'name': 'relation-name-b', 'role': 'server'}}
+          ]
+        }
+      });
+    });
+
+    it('handles failed relation adding', function() {
+      endpointA = ['service-a', {name: 'relation-name-a'}];
+      endpointB = ['service-b', {name: 'relation-name-b'}];
+      env.add_relation(endpointA, endpointB, function(ev) {
+        assert.equal(ev.err, 'cannot add relation');
+        assert.equal(ev.endpoint_a, endpointToName(endpointA));
+        assert.equal(ev.endpoint_b, endpointToName(endpointB));
+      });
+      conn.msg({
+        err: 'cannot add relation',
+        endpoint_a: endpointToName(endpointA),
+        endpoint_b: endpointToName(endpointB)
+      });
     });
 
     it('will populate the provider type and default series', function() {
@@ -225,7 +269,9 @@
     };
 
     it('denies adding a relation if the GUI is read-only', function() {
-      assertOperationDenied('add_relation', [endpoint1, endpoint2]);
+      endpointA = ['service-a', {name: 'relation-name-a'}];
+      endpointB = ['service-b', {name: 'relation-name-b'}];
+      assertOperationDenied('add_relation', [endpointA, endpointB);
     });
 
     it('denies adding a unit if the GUI is read-only', function() {
@@ -250,7 +296,9 @@
     });
 
     it('denies removing a relation if the GUI is read-only', function() {
-      assertOperationDenied('remove_relation', [endpoint1, endpoint2]);
+      endpointA = ['service-a', {name: 'relation-name-a'}];
+      endpointB = ['service-b', {name: 'relation-name-b'}];
+      assertOperationDenied('remove_relation', [endpointA, endpointB]);
     });
 
     it('denies removing units if the GUI is read-only', function() {

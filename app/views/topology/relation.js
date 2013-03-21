@@ -762,12 +762,12 @@ YUI.add('juju-topology-relation', function(Y) {
           return [id, item[id]];
         });
         db.relations.create({
-          relation_id: ev.result.id,
+          relation_id: result.id,
           type: result['interface'],
           endpoints: endpoints,
           pending: false,
           scope: result.scope,
-          // endpoints[1][1].name should be the same
+          // choosing this or endpoints[1][1].name is arbitrary
           display_name: endpoints[0][1].name
         });
       }
