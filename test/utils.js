@@ -59,7 +59,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       };
     },
 
-    makeFakeBackendWithCharmStore: function() {
+    makeCharmStore: function() {
       var data = [];
       var charmStore = new Y.juju.CharmStore(
           {datasource: new Y.DataSource.Local({source: data})});
@@ -67,10 +67,15 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         data[0] = Y.io('data/' + name + '-charmdata.json', {sync: true});
       };
       setCharm('wordpress');
+      return {charmStore: charmStore, setCharm: setCharm};
+    },
+
+    makeFakeBackendWithCharmStore: function() {
+      var charmStoreData = jujuTests.utils.makeCharmStore();
       var fakebackend = new Y.juju.environments.FakeBackend(
-          {charmStore: charmStore});
+          {charmStore: charmStoreData.charmStore});
       fakebackend.login('admin', 'password');
-      return {fakebackend: fakebackend, setCharm: setCharm};
+      return {fakebackend: fakebackend, setCharm: charmStoreData.setCharm};
     }
 
   };

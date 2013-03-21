@@ -274,6 +274,14 @@ YUI.add('juju-gui', function(Y) {
       if (Y.Lang.isValue(environment_node)) {
         environment_node.set('text', environment_name);
       }
+      // Create a charm store.
+      if (this.get('charm_store')) {
+        // This path is for tests.
+        this.charm_store = this.get('charm_store');
+      } else {
+        this.charm_store = new juju.CharmStore({
+          datasource: this.get('charm_store_url')});
+      }
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       if (this.get('env')) {
@@ -303,15 +311,21 @@ YUI.add('juju-gui', function(Y) {
           password: this.get('password'),
           readOnly: this.get('readOnly')
         };
-        this.env = juju.newEnvironment(envOptions, this.get('apiBackend'));
-      }
-      // Create a charm store.
-      if (this.get('charm_store')) {
-        // This path is for tests.
-        this.charm_store = this.get('charm_store');
-      } else {
-        this.charm_store = new juju.CharmStore({
-          datasource: this.get('charm_store_url')});
+        var apiBackend = this.get('apiBackend');
+        // The sandbox mode does not support the Go API (yet?).
+        if (this.get('sandbox') && apiBackend === 'python') {
+          var sandboxModule = Y.namespace('juju.environments.sandbox');
+          var State = Y.namespace('juju.environments').FakeBackend;
+          var state = new State({charmStore: this.charm_store});
+          if (envOptions.user && envOptions.password) {
+            var credentials = {};
+            credentials[envOptions.user] = envOptions.password;
+            state.set('authorizedUsers', credentials);
+          }
+          envOptions.conn = new sandboxModule.ClientConnection(
+              {juju: new sandboxModule.PyJujuAPI({state: state})});
+        }
+        this.env = juju.newEnvironment(envOptions, apiBackend);
       }
       // Create notifications controller
       this.notifications = new juju.NotificationController({
@@ -362,7 +376,7 @@ YUI.add('juju-gui', function(Y) {
       this.enableBehaviors();
 
       this.once('ready', function(e) {
-        if (this.get('socket_url')) {
+        if (this.get('socket_url') || this.get('sandbox')) {
           // Connect to the environment.
           this.env.connect();
         }
@@ -991,6 +1005,8 @@ YUI.add('juju-gui', function(Y) {
     'juju-controllers',
     'juju-notification-controller',
     'juju-env',
+    'juju-env-fakebackend',
+    'juju-env-sandbox',
     'juju-charm-models',
     'juju-views',
     'juju-view-login',
