@@ -166,7 +166,8 @@ YUI.add('juju-env-sandbox', function(Y) {
   PyJujuAPI.NAME = 'sandbox-py-juju-api';
   PyJujuAPI.ATTRS = {
     state: {}, // Required.
-    client: {} // Set in the "open" method.
+    client: {}, // Set in the "open" method.
+    deltaInterval: {value: 1000} // In milliseconds.
   };
 
   Y.extend(PyJujuAPI, Y.Base, {
@@ -199,6 +200,8 @@ YUI.add('juju-env-sandbox', function(Y) {
           provider_type: state.get('providerType'),
           default_series: state.get('defaultSeries')
         });
+        this.deltaIntervalId = setInterval(
+            this.sendDelta.bind(this), this.get('deltaInterval'));
       } else if (this.get('client') !== client) {
         throw 'INVALID_STATE_ERR : Connection is open to another client.';
       }
@@ -221,6 +224,7 @@ YUI.add('juju-env-sandbox', function(Y) {
      */
     sendDelta: function() {
       var changes = this.get('state').nextChanges();
+      // TODO: Add annotations when we have them.
       if (changes && !changes.error) {
         var deltas = [];
         var response = {op: 'delta', result: deltas};
@@ -256,8 +260,23 @@ YUI.add('juju-env-sandbox', function(Y) {
       @return {undefined} Nothing.
      */
     close: function() {
-      this.connected = false;
-      this.set('client', undefined);
+      if (this.connected) {
+        this.connected = false;
+        clearInterval(this.deltaIntervalId);
+        delete this.deltaIntervalId;
+        this.set('client', undefined);
+      }
+    },
+
+    /**
+      Destroy the object.
+
+      @method destroy
+      @return {undefined} Nothing.
+     */
+    destroy: function() {
+      this.close(); // Make sure the setInterval is cleared!
+      return PyJujuAPI.superclass.destroy.apply(this, arguments);
     },
 
     /**

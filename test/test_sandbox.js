@@ -165,7 +165,7 @@
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models'];
     var Y, sandboxModule, ClientConnection, PyJujuAPI, environmentsModule,
-        state, juju, client, env, utils;
+        state, juju, client, env, utils, cleanups;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
@@ -181,9 +181,11 @@
       juju = new sandboxModule.PyJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
       env = new environmentsModule.PythonEnvironment({conn: client});
+      cleanups = [];
     });
 
     afterEach(function() {
+      Y.each(cleanups, function(f) {f();});
       env.destroy();
       client.destroy();
       juju.destroy();
@@ -464,8 +466,55 @@
       env.connect();
     });
 
-    it('sends delta streams periodically after opening.');
-    it('stops sending delta streams after closing.');
+    it('sends delta streams periodically after opening.', function(done) {
+      client.onmessage = function(received) {
+        // First message is the provider type and default series.  We ignore
+        // it, and prepare for the next one, which will handle the delta
+        // stream.
+        var isAsync = false;
+        client.onmessage = function(received) {
+          assert.isTrue(isAsync);
+          var parsed = Y.JSON.parse(received.data);
+          assert.equal(parsed.op, 'delta');
+          var deltas = parsed.result;
+          assert.lengthOf(deltas, 3);
+          assert.equal(deltas[0][2].charm, 'cs:precise/wordpress-10');
+          done();
+        };
+        // Create a service with the name "wordpress".
+        // The charm store is synchronous in tests, so we don't need a real
+        // callback.
+        state.deploy('cs:wordpress', function() {});
+        isAsync = true;
+      };
+      juju.set('deltaInterval', 4);
+      client.open();
+    });
+
+    it('stops sending delta streams after closing.', function(done) {
+      var sysSetInterval = window.setInterval;
+      var sysClearInterval = window.clearInterval;
+      cleanups.push(function() {
+        window.setInterval = sysSetInterval;
+        window.clearInterval = sysClearInterval;
+      });
+      window.setInterval = function(f, interval) {
+        assert.isFunction(f);
+        assert.equal(interval, 4);
+        return 42;
+      };
+      window.clearInterval = function(token) {
+        assert.equal(token, 42);
+        done();
+      };
+      client.onmessage = function(received) {
+        // First message is the provider type and default series.  We can
+        // close now.
+        client.close();
+      };
+      juju.set('deltaInterval', 4);
+      client.open();
+    });
 
   });
 
