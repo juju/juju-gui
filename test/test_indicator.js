@@ -1,6 +1,6 @@
 'use strict';
 
-describe('indicator', function() {
+describe.only('indicator', function() {
   var container, Y;
 
   before(function(done) {

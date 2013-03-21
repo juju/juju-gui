@@ -67,10 +67,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/notifier.js'
         },
 
-        'browser-tabview': {
-          fullpath: '/juju-ui/widgets/tabview.js'
-        },
-
         'browser-charm-small': {
           fullpath: '/juju-ui/widgets/charm-small.js'
         },
@@ -79,8 +75,16 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/charm-slider.js'
         },
 
+        'browser-indicator': {
+          fullpath: '/juju-ui/widgets/indicator.js' 
+        },
+
         'browser-search-widget': {
           fullpath: '/juju-ui/widgets/charm-search.js'
+        },
+
+        'browser-tabview': {
+          fullpath: '/juju-ui/widgets/tabview.js'
         },
 
         'reconnecting-websocket': {
