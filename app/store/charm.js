@@ -180,7 +180,7 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Given a result list, turn that into a CharmList object for the
+     * Given a result list, turn that into a BrowserCharmList object for the
      * application to use.
      *
      * @method _results_to_charmlist
@@ -189,7 +189,7 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     results_to_charmlist: function(data) {
-      return new Y.juju.models.CharmList({
+      return new Y.juju.models.BrowserCharmList({
         items: data
       });
     },

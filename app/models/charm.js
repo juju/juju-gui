@@ -80,8 +80,8 @@ YUI.add('juju-charm-models', function(Y) {
 
     initializer: function() {
       var id = this.get('id'),
-              parts = parseCharmId(id),
-              self = this;
+          parts = parseCharmId(id),
+          self = this;
       if (!parts) {
         throw 'Developers must initialize charms with a well-formed id.';
       }
@@ -90,13 +90,6 @@ YUI.add('juju-charm-models', function(Y) {
       Y.Object.each(
           parts,
           function(value, key) { self.set(key, value); });
-      // full_name
-      var tmp = [this.get('series'), this.get('package_name')],
-          owner = this.get('owner');
-      if (owner) {
-        tmp.unshift('~' + owner);
-      }
-      this.set('full_name', tmp.join('/'));
     },
 
     sync: function(action, options, callback) {
@@ -138,7 +131,7 @@ YUI.add('juju-charm-models', function(Y) {
 
     parse: function() {
       var data = Charm.superclass.parse.apply(this, arguments),
-              self = this;
+          self = this;
       data.is_subordinate = data.subordinate;
       Y.each(data, function(value, key) {
         if (!value ||
@@ -157,7 +150,7 @@ YUI.add('juju-charm-models', function(Y) {
       // Official charms sort before owned charms.
       // If !X.owner, that means it is owned by charmers.
       var owner = this.get('owner'),
-              otherOwner = other.get('owner');
+          otherOwner = other.get('owner');
       if (!owner && otherOwner) {
         return -1;
       } else if (owner && !otherOwner) {
@@ -184,10 +177,33 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       bzr_branch: {writeOnce: true},
-      charm_store_path: {writeOnce: true},
+      charm_store_path: {
+        getter: function () {
+          // charm_store_path
+          var owner = this.get('owner');
+          return [
+            (owner ? '~' + owner : 'charms'),
+            this.get('series'),
+            (this.get('package_name') + '-' + this.get('revision')),
+            'json'
+          ].join('/');
+        },
+        writeOnce: true
+      },
       config: {writeOnce: true},
       description: {writeOnce: true},
-      full_name: {writeOnce: true},
+      full_name: {
+        getter: function () {
+          // full_name
+          var tmp = [this.get('series'), this.get('package_name')],
+              owner = this.get('owner');
+          if (owner) {
+            tmp.unshift('~' + owner);
+          }
+          return tmp.join('/');
+        },
+        writeOnce: true
+      },
       is_subordinate: {writeOnce: true},
       last_change: {
         writeOnce: true,
@@ -271,6 +287,137 @@ YUI.add('juju-charm-models', function(Y) {
     ATTRS: {}
   });
   models.CharmList = CharmList;
+
+
+  /**
+   * Model to represent the Charms from the Charmworld0 Api.
+   *
+   * @class BrowserCharm
+   * @extends Charm
+   *
+   */
+  models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
+
+  }, {
+    ATTRS: {
+      id: {
+        writeOnce: true,
+        validator: function(val) {
+          return Y.Lang.isString(val) && !!charmIdRe.exec(val);
+        }
+      },
+      bzr_branch: {writeOnce: true},
+      categories: {
+        value: [],
+        writeOnce: true
+      },
+      changelog: {
+        value: {},
+        writeOnce: true
+      },
+      charm_store_path: {writeOnce: true},
+      code_source: {writeOnce: true},
+      date_created: {writeOnce: true},
+      description: {writeOnce: true},
+      files: {
+          value: {},
+          writeOnce: true
+      },
+      full_name: {
+        getter: function () {
+          // full_name
+          var tmp = [this.get('series'), this.get('package_name')],
+              owner = this.get('owner');
+          if (owner) {
+            tmp.unshift('~' + owner);
+          }
+          return tmp.join('/');
+        },
+        writeOnce: true
+      },
+      is_approved: {writeOnce: true},
+      is_new: {writeOnce: true},
+      is_popular:{writeOnce: true},
+      is_subordinate: {writeOnce: true},
+      last_change: {
+        writeOnce: true,
+
+        /**
+         * Normalize created value from float to date object.
+         *
+         * @method last_change.writeOnce.setter
+         */
+        setter: function(val) {
+          if (val && val.created) {
+            // Mutating in place should be fine since this should only
+            // come from loading over the wire.
+            val.created = new Date(val.created * 1000);
+          }
+          return val;
+        }
+      },
+      maintainer: {writeOnce: true},
+      //metadata: {writeOnce: true},
+      name: {writeOnce: true},
+      config: {writeOnce: true},
+      owner: {writeOnce: true},
+      peers: {writeOnce: true},
+      proof: {writeOnce: true},
+      provides: {writeOnce: true},
+      rating_numerator: {writeOnce: true},
+      rating_denominator: {writeOnce: true},
+      recent_downloads: {writeOnce: true},
+      relations: {writeOnce: true},
+      requires: {writeOnce: true},
+      revision: {
+        writeOnce: true,
+
+        /**
+         * Parse the revision number out of a string.
+         *
+         * @method revision.writeOnce.setter
+         */
+        setter: function(val) {
+          if (Y.Lang.isValue(val)) {
+            val = parseInt(val, 10);
+          }
+          return val;
+        }
+      },
+      scheme: {
+        value: 'cs',
+        writeOnce: true,
+
+        /**
+         * If no value is given, "cs" is used as the default.
+         *
+         * @method scheme.writeOnce.setter
+         */
+        setter: function(val) {
+          if (!Y.Lang.isValue(val)) {
+            val = 'cs';
+          }
+          return val;
+        }
+      },
+      series: {writeOnce: true},
+      summary: {writeOnce: true},
+      tested_providers: {writeOnce: true},
+      url: {writeOnce: true}
+    }
+  });
+
+
+  /**
+   * BrowserCharmList is set of BrowserCharms.
+   *
+   * @class BrowserCharmList
+   */
+  models.BrowserCharmList = Y.Base.create('browserCharmList', Y.ModelList, [], {
+    model: models.BrowserCharm
+  }, {
+    ATTRS: {}
+  });
 
 }, '0.1.0', {
   requires: [
