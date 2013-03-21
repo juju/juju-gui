@@ -215,14 +215,14 @@
 
     it('ignores "open" when already open to same client.', function() {
       client.receive = function() {
-        assert.fail('The receive method should not be called.');
+        assert.ok(false, 'The receive method should not be called.');
       };
       // Whitebox test: duplicate "open" state.
       juju.connected = true;
       juju.set('client', client);
       // This is effectively a re-open.
       client.open();
-      // The assert.fail above is the verification.
+      // The assert.ok above is the verification.
     });
 
     it('refuses to open if already open to another client.', function() {
@@ -231,7 +231,9 @@
       // simultaneous clients, that's fine, though that will require
       // reworking the delta code generally.
       juju.connected = true;
-      juju.set('client', {receive: assert.fail});
+      juju.set('client', {receive: function() {
+        assert.ok(false, 'The receive method should not have been called.');
+      }});
       assert.throws(
           client.open.bind(client),
           'INVALID_STATE_ERR : Connection is open to another client.');
@@ -410,7 +412,7 @@
         // it, and prepare for the next one, which will handle the delta
         // stream.
         client.receiveNow = function(response) {
-          assert.fail('Oops.');
+          assert.ok(false, 'This method should not have been called.');
         };
         juju.sendDelta();
         done();

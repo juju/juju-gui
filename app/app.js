@@ -389,6 +389,23 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+    Release resources and inform subcomponents to do the same.
+
+    @method destructor
+    */
+    destructor: function() {
+      Y.each(
+          [this.env, this.db, this.charm_store, this.notifications,
+           this.landscape],
+          function(o) {
+            if (o && o.destroy) {
+              o.destroy();
+            }
+          }
+      );
+    },
+
+    /**
      * Hook up all of the declared behaviors.
      *
      * @method enableBehaviors

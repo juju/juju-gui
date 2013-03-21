@@ -269,14 +269,13 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-      Destroy the object.
+      Do any extra work to destroy the object.
 
-      @method destroy
+      @method destructor
       @return {undefined} Nothing.
      */
-    destroy: function() {
+    destructor: function() {
       this.close(); // Make sure the setInterval is cleared!
-      return PyJujuAPI.superclass.destroy.apply(this, arguments);
     },
 
     /**
