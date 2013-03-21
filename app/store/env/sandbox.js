@@ -204,6 +204,50 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
     },
 
+    _deltaWhitelist: {
+      service: ['charm', 'config', 'constraints', 'exposed', 'id', 'name',
+                'subordinate'],
+      machine: ['agent_state', 'instance_state', 'public_address',
+                'machine_id'],
+      unit: ['agent_state', 'machine', 'number', 'service', 'id'],
+      relation: ['relation_id', 'type', 'endpoints', 'scope']
+    },
+
+    /**
+      Send a delta of events to the client from since the last time they asked.
+
+      @method sendDelta
+      @return {undefined} Nothing.
+     */
+    sendDelta: function() {
+      var changes = this.get('state').nextChanges();
+      if (changes && !changes.error) {
+        var deltas = [];
+        var response = {op: 'delta', result: deltas};
+        Y.each(this._deltaWhitelist, function(whitelist, changeType) {
+          Y.each(changes[changeType + 's'], function(change) {
+            var attrs = change[0];
+            if (attrs.getAttrs) {
+              attrs = attrs.getAttrs();
+            }
+            var filtered = {};
+            Y.each(whitelist, function(name) {
+              filtered[name] = attrs[name];
+            });
+            // For fuller verisimilitude, we could convert some of the
+            // underlines in the attribute names to dashes.  That is currently
+            // unnecessary.
+            var action = change[1] ? 'change' : 'remove';
+            // The unit change_type is actually "serviceUnit" in the Python
+            // stream.  Our model code handles either, so we're not modifying
+            // it for now.
+            deltas.push([changeType, action, filtered]);
+          });
+        });
+        this.get('client').receiveNow(response);
+      }
+    },
+
     /**
       Closes the connection to the sandbox Juju environment.
       Called by ClientConnection.

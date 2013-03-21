@@ -162,7 +162,8 @@
 
   describe('sandbox.PyJujuAPI', function() {
     var requires = [
-      'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python'];
+      'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
+      'juju-models'];
     var Y, sandboxModule, ClientConnection, PyJujuAPI, environmentsModule,
         state, juju, client, env, utils;
 
@@ -373,9 +374,98 @@
       env.connect();
     });
 
-    it('can send a delta stream of changes.');
-    it('sends delta streams periodically.');
-    it('does not send a delta stream message if there are no changes.');
+    it('can send a delta stream of changes.', function(done) {
+      // Create a service with the name "wordpress".
+      // The charm store is synchronous in tests, so we don't need a real
+      // callback.
+      state.deploy('cs:wordpress', function() {});
+      client.onmessage = function(received) {
+        // First message is the provider type and default series.  We ignore
+        // it, and prepare for the next one, which will handle the delta
+        // stream.
+        client.onmessage = function(received) {
+          var parsed = Y.JSON.parse(received.data);
+          assert.equal(parsed.op, 'delta');
+          var deltas = parsed.result;
+          assert.lengthOf(deltas, 3);
+          assert.equal(deltas[0][0], 'service');
+          assert.equal(deltas[0][1], 'change');
+          assert.equal(deltas[0][2].charm, 'cs:precise/wordpress-10');
+          assert.equal(deltas[1][0], 'machine');
+          assert.equal(deltas[1][1], 'change');
+          assert.equal(deltas[2][0], 'unit');
+          assert.equal(deltas[2][1], 'change');
+          done();
+        };
+        juju.sendDelta();
+      };
+      client.open();
+    });
+
+    it('does not send a delta if there are no changes.', function(done) {
+      client.onmessage = function(received) {
+        // First message is the provider type and default series.  We ignore
+        // it, and prepare for the next one, which will handle the delta
+        // stream.
+        client.receiveNow = function(response) {
+          assert.fail('Oops.');
+        };
+        juju.sendDelta();
+        done();
+      };
+      client.open();
+    });
+
+    it('can send a delta stream (integration).', function(done) {
+      // Create a service with the name "wordpress".
+      // The charm store is synchronous in tests, so we don't need a real
+      // callback.
+      state.deploy('cs:wordpress', function() {}, {unitCount: 2});
+      var db = new Y.juju.models.Database();
+      db.on('update', function() {
+        // We want to verify that the GUI database is equivalent to the state
+        // database.
+        assert.equal(db.services.size(), 1);
+        assert.equal(db.units.size(), 2);
+        assert.equal(db.machines.size(), 2);
+        var stateService = state.db.services.item(0);
+        var guiService = db.services.item(0);
+        Y.each(
+            ['charm', 'config', 'constraints', 'exposed',
+             'id', 'name', 'subordinate'],
+            function(attrName) {
+              assert.deepEqual(
+                  guiService.get(attrName), stateService.get(attrName));
+            }
+        );
+        state.db.units.each(function(stateUnit) {
+          var guiUnit = db.units.getById(stateUnit.id);
+          Y.each(
+              ['agent_state', 'machine', 'number', 'service'],
+              function(attrName) {
+                assert.deepEqual(guiUnit[attrName], stateUnit[attrName]);
+              }
+          );
+        });
+        state.db.machines.each(function(stateMachine) {
+          var guiMachine = db.machines.getById(stateMachine.id);
+          Y.each(
+              ['agent_state', 'instance_state', 'public_address',
+               'machine_id'],
+              function(attrName) {
+                assert.deepEqual(guiMachine[attrName], stateMachine[attrName]);
+              }
+          );
+        });
+        done();
+      });
+      env.on('delta', db.on_delta, db);
+      env.after('defaultSeriesChange', function() {juju.sendDelta();});
+      env.connect();
+    });
+
+    it('sends delta streams periodically after opening.');
+    it('stops sending delta streams after closing.');
 
   });
 

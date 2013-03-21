@@ -398,7 +398,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var machines = [];
       var availableMachines = this._getAvailableMachines();
       var machineId;
-      if (!Y.Lang.isValue(this.db.machineSequence)) {
+      if (!Y.Lang.isValue(this.db.machines.sequence)) {
         this.db.machines.sequence = 0;
       }
       for (var i = 0; i < count; i += 1) {
