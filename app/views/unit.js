@@ -89,19 +89,28 @@ YUI.add('juju-view-unit', function(Y) {
             querystring.rel_id && querystring.rel_id === rel.relation_id);
       });
 
+      var charmAttrs = charm.getAttrs();
+      var nsRouter = this.get('_nsRouter');
+
       container.setHTML(this.template({
+        charmUri: nsRouter.url({
+          gui: '/charms/charms/' + charmAttrs.series +
+              '/' + charmAttrs.package_name + '/json'
+        }),
+        serviceRootUri: nsRouter.url({
+          gui: '/service/'
+        }),
         unit: unit,
         unit_ip_description: unit_ip_description,
         landscape: this.get('landscape'),
         service: service.getAttrs(),
         disabled_remove: service.get('unit_count') <= 1,
-        charm: charm.getAttrs(),
+        charm: charmAttrs,
         machine: db.machines.getById(unit.machine),
         unit_error: unit_error,
         unit_running: unit_running,
         unit_pending: unit_pending,
         relations: relations}));
-
       views.utils.updateLandscapeBottomBar(this.get('landscape'), env, unit,
           container, 'unit');
       return this;
@@ -326,6 +335,15 @@ YUI.add('juju-view-unit', function(Y) {
       );
     }
 
+  }, {
+    ATTRS: {
+      /**
+        Applications router utility methods
+
+        @attribute _nsRouter
+      */
+      _nsRouter: {}
+    }
   });
 
   views.unit = UnitView;

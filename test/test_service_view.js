@@ -13,7 +13,7 @@
       Y = YUI(GlobalConfig).use(
           'juju-views', 'juju-models', 'base', 'node', 'json-parse',
           'juju-env', 'node-event-simulate', 'juju-tests-utils', 'event-key',
-          'juju-landscape',
+          'juju-landscape', 'ns-routing-app-extension',
           function(Y) {
             ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
             ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
@@ -47,6 +47,7 @@
             exposed: false});
 
       db.services.add([service]);
+      var _nsRouter = Y.namespace('juju').Router('charmstore');
       var viewMakerMaker = function(ViewPrototype) {
         return function(querystring) {
           if (!Y.Lang.isValue(querystring)) {
@@ -60,6 +61,7 @@
                 getModelURL: function(model, intent) {
                   return model.get('name');
                 },
+                _nsRouter: _nsRouter,
                 querystring: querystring}).render();
         };
       };
@@ -136,7 +138,7 @@
           unit = container.one('ul.thumbnails').one('div.unit'),
           showUnitCalled = false;
       view.on('navigateTo', function(e) {
-        assert.equal('/unit/mysql-0/', e.url);
+        assert.equal('/:gui:/unit/mysql-0/', e.url);
         showUnitCalled = true;
       });
       unit.simulate('click');

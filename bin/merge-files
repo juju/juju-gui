@@ -63,6 +63,7 @@ require('yui').YUI().use(['yui'], function(Y) {
   reqs.push('gallery-ellipsis');
   reqs.push('gallery-timer');
   reqs.push('loader-base');
+  reqs.push('tabview');
   // IE conditionals are not resolved automatically by the merge files script
   // causing our CI tests to fail
   reqs.push('scrollview-base-ie');
