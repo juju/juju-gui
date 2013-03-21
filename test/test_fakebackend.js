@@ -100,15 +100,19 @@
       assert.isTrue(Y.Lang.isString(attrs.clientId));
       delete attrs.clientId;
       assert.deepEqual(attrs, {
+        aggregated_status: undefined,
         charm: 'cs:precise/wordpress-10',
         config: undefined,
+        constraints: undefined,
         destroyed: false,
+        displayName: 'wordpress',
         exposed: false,
         id: 'wordpress',
         initialized: true,
         name: 'wordpress',
-        displayName: 'wordpress',
-        subordinate: undefined
+        pending: false,
+        subordinate: false,
+        unit_count: undefined
       });
       var units = fakebackend.db.units.get_units_for_service(service);
       assert.lengthOf(units, 1);
@@ -365,15 +369,7 @@
     });
 
     it('reports no changes initially.', function() {
-      assert.deepEqual(
-          fakebackend.nextChanges(),
-          {
-            services: {},
-            machines: {},
-            units: {},
-            relations: {}
-          }
-      );
+      assert.isNull(fakebackend.nextChanges());
     });
 
     it('reports a call to addUnit correctly.', function() {
@@ -426,15 +422,7 @@
           fakebackend.deploy('cs:wordpress', callback);
           assert.isUndefined(deployResult.error);
           assert.isObject(fakebackend.nextChanges());
-          assert.deepEqual(
-              fakebackend.nextChanges(),
-              {
-                services: {},
-                machines: {},
-                units: {},
-                relations: {}
-              }
-          );
+          assert.isNull(fakebackend.nextChanges());
         }
     );
 

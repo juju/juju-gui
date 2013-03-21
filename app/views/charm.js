@@ -39,6 +39,12 @@ YUI.add('juju-view-charm-collection', function(Y) {
     render: function() {
       var charm = this.get('charm'),
           container = this.get('container');
+
+      if (Y.Lang.isNull(container._node)) {
+        // If the container node isn't in the dom yet then just return
+        // This avoids a console error caused by out of order rendering
+        return;
+      }
       CharmCollectionView.superclass.render.apply(this, arguments);
       if (!charm) {
         container.setHTML('<div class="alert">Loading...</div>');

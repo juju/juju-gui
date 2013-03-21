@@ -183,10 +183,20 @@ YUI.add('juju-notifications', function(Y) {
             notifications: showable,
             count: show_count,
             state: state,
-            open: open
+            open: open,
+            viewAllUri: this.get('nsRouter').url({ gui: '/notifications' })
           }));
 
           return this;
+        }
+      }, {
+        ATTRS: {
+          /**
+            Applications router utility methods
+
+            @attribute nsRouter
+          */
+          nsRouter: {}
         }
       });
 
