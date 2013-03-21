@@ -62,7 +62,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      * @param {Object} results Object of Charm Data from the API.
      *
      */
-    _generatSliderWidget: function(results) {
+    _generateSliderWidget: function(results) {
       var slider_charms = this.get('store').results_to_charmlist(results),
           slider_widgets = [];
 

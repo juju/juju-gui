@@ -236,6 +236,9 @@ YUI.add('juju-gui', function(Y) {
      * @param {Object} cfg Application configuration data.
      */
     initializer: function(cfg) {
+      // If no cfg is passed in use a default empty object so we don't blow up
+      // getting at things.
+      cfg = cfg || {};
       // If this flag is true, start the application
       // with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
