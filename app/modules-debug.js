@@ -67,6 +67,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/notifier.js'
         },
 
+        'browser-tabview': {
+          fullpath: '/juju-ui/widgets/tabview.js'
+        },
+
         'browser-charm-small': {
           fullpath: '/juju-ui/widgets/charm-small.js'
         },
@@ -214,6 +218,10 @@ var GlobalConfig = {
 
         'juju-env-fakebackend': {
           fullpath: '/juju-ui/store/env/fakebackend.js'
+        },
+
+        'juju-env-sandbox': {
+          fullpath: '/juju-ui/store/env/sandbox.js'
         },
 
         'juju-notification-controller': {
