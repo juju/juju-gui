@@ -23,7 +23,7 @@ describe('charm small widget', function() {
   it('should initialize', function() {
     var charm = new Y.juju.widgets.browser.CharmSmall();
     assert.isObject(charm);
-    assert.equal(charm.get('title'), '');
+    assert.equal(charm.get('name'), '');
     assert.equal(charm.get('description'), '');
     assert.equal(charm.get('rating'), 0);
     assert.equal(charm.get('iconfile'), '');
@@ -31,7 +31,7 @@ describe('charm small widget', function() {
 
   it('should render with name, rating, and description', function() {
     var cfg = {
-      title: 'some-charm',
+      name: 'some-charm',
       description: 'some description',
       rating: 1
     };
