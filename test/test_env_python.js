@@ -10,7 +10,7 @@
   var Y;
 
   describe('Python Juju environment', function() {
-    var juju, conn, env, msg, testUtils, endpoint1, endpoint2;
+    var conn, endpointA, endpointB, env, juju, msg, testUtils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -24,11 +24,6 @@
             conn.open();
             done();
           });
-    });
-
-    beforeEach(function() {
-      endpoint1 = ['service1', {name: 'relation-name-1'}];
-      endpoint2 = ['service2', {name: 'relation-name-2'}];
     });
 
     after(function() {
@@ -124,6 +119,90 @@
         op: 'resolved',
         result: true,
         request_id: msg.request_id});
+    });
+
+    it('successfully adds a relation', function(done) {
+      var endpoints, result;
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.add_relation(endpointA, endpointB, function(ev) {
+        result = ev.result;
+        assert.equal(result.id, 'relation-0');
+        assert.equal(result['interface'], 'http');
+        assert.equal(result.scope, 'global');
+        endpoints = result.endpoints;
+        assert.deepEqual(endpoints[0], {'mysql': {'name': 'database'}});
+        assert.deepEqual(endpoints[1], {'wordpress': {'name': 'website'}});
+        done();
+      });
+      msg = conn.last_message();
+      conn.msg({
+        request_id: msg.request_id,
+        op: 'add_relation',
+        result: {
+          id: 'relation-0',
+          'interface': 'http',
+          scope: 'global',
+          endpoints: [
+            {'mysql': {'name': 'database'}},
+            {'wordpress': {'name': 'website'}}
+          ]
+        }
+      });
+    });
+
+    it('handles failed relation adding', function(done) {
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.add_relation(endpointA, endpointB, function(ev) {
+        assert.equal(ev.err, 'cannot add relation');
+        assert.equal(ev.endpoint_a, 'mysql:database');
+        assert.equal(ev.endpoint_b, 'wordpress:website');
+        done();
+      });
+      msg = conn.last_message();
+      conn.msg({
+        request_id: msg.request_id,
+        op: 'add_relation',
+        err: 'cannot add relation',
+        endpoint_a: 'mysql:database',
+        endpoint_b: 'wordpress:website'
+      });
+    });
+
+    it('successfully removes a relation', function(done) {
+      var endpoints;
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.remove_relation(endpointA, endpointB, function(ev) {
+        assert.equal(ev.result, true);
+        done();
+      });
+      msg = conn.last_message();
+      conn.msg({
+        request_id: msg.request_id,
+        op: 'remove_relation',
+        result: true
+      });
+    });
+
+    it('handles failed relation removal', function(done) {
+      endpointA = ['yoursql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.remove_relation(endpointA, endpointB, function(ev) {
+        assert.equal(ev.err, 'service "yoursql" not found');
+        assert.equal(ev.endpoint_a, 'yoursql:database');
+        assert.equal(ev.endpoint_b, 'wordpress:website');
+        done();
+      });
+      msg = conn.last_message();
+      conn.msg({
+        request_id: msg.request_id,
+        op: 'remove_relation',
+        err: 'service "yoursql" not found',
+        endpoint_a: 'yoursql:database',
+        endpoint_b: 'wordpress:website'
+      });
     });
 
     it('will populate the provider type and default series', function() {
@@ -225,7 +304,9 @@
     };
 
     it('denies adding a relation if the GUI is read-only', function() {
-      assertOperationDenied('add_relation', [endpoint1, endpoint2]);
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      assertOperationDenied('add_relation', [endpointA, endpointB]);
     });
 
     it('denies adding a unit if the GUI is read-only', function() {
@@ -250,7 +331,9 @@
     });
 
     it('denies removing a relation if the GUI is read-only', function() {
-      assertOperationDenied('remove_relation', [endpoint1, endpoint2]);
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      assertOperationDenied('remove_relation', [endpointA, endpointB]);
     });
 
     it('denies removing units if the GUI is read-only', function() {
