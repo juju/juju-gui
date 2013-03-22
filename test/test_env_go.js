@@ -532,7 +532,7 @@
       assert.equal(err, 'service "yoursql" not found');
     });
 
-    it('sends the correct DestroyRelation message', function() {
+    it('sends the correct AddRelation message', function() {
       endpointA = ['mysql', {name: 'database'}];
       endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB);

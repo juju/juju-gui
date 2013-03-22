@@ -475,9 +475,9 @@ YUI.add('juju-env-go', function(Y) {
        Add a relation between two services.
 
        @method add_relation
-     * @param {Object} endpointA An array of [service, interface]
+       @param {Object} endpointA An array of [service, interface]
          representing one of the endpoints to connect.
-     * @param {Object} endpointB An array of [service, interface]
+       @param {Object} endpointB An array of [service, interface]
          representing the other endpoint to connect.
        @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object with an "err"
