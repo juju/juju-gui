@@ -1,10 +1,10 @@
 'use strict';
 
-describe.only('indicator', function() {
+describe('overlay indicator', function() {
   var container, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['browser-indicator', 'node'], function(Y) {
+    Y = YUI(GlobalConfig).use(['browser-overlay-indicator', 'node'], function(Y) {
       done();
     });
   });
@@ -19,12 +19,12 @@ describe.only('indicator', function() {
   });
 
   it('exists', function() {
-    var indicator = new Y.juju.browser.widgets.Indicator();
+    var indicator = new Y.juju.browser.widgets.OverlayIndicator();
     assert.isObject(indicator);
   });
 
   it('gets target from config', function() {
-    var indicator = new Y.juju.browser.widgets.Indicator({target: container});
+    var indicator = new Y.juju.browser.widgets.OverlayIndicator({target: container});
     indicator.render();
     assert.equal(container, indicator.get('target'));
   });
@@ -32,31 +32,34 @@ describe.only('indicator', function() {
   it('appends itself to target parent', function() {
     var child = Y.Node.create('<div/>');
     container.appendChild(child);
-    var indicator = new Y.juju.browser.widgets.Indicator({target: child});
+    var indicator = new Y.juju.browser.widgets.OverlayIndicator({target: child});
     indicator.render();
     assert.equal(container, indicator.get('boundingBox').get('parentNode'));
   });
 
   it('has a loading icon', function() {
-    var indicator = new Y.juju.browser.widgets.Indicator({target: container});
+    var indicator = new Y.juju.browser.widgets.OverlayIndicator({target: container});
     indicator.render();
     var content = indicator.get('boundingBox'),
         test = content.getContent(),
         img = content.one('img');
-    assert.equal('file:///@@/spinner-big', img.get('src'));
+    var img_url = img.get('src').split('/').slice(3,7).join('/');
+    assert.equal(
+      'juju-ui/assets/images/loading-spinner.gif',
+      img_url);
   });
 
   it('starts invisible',  function() {
-    // Indicator widgets should start hidden.
-    var indicator = new Y.juju.browser.widgets.Indicator({target: container});
+    // OverlayIndicator widgets should start hidden.
+    var indicator = new Y.juju.browser.widgets.OverlayIndicator({target: container});
     indicator.render();
     assert.isFalse(indicator.get('visible'));
     assert.isTrue(indicator.get('boundingBox').hasClass(
-        'yui3-browser-indicator-hidden'));
+        'yui3-overlay-indicator-hidden'));
   });
 
-  it('shows shows on setBusy', function() {
-    var indicator = new Y.juju.browser.widgets.Indicator({target: container});
+  it('shows on setBusy', function() {
+    var indicator = new Y.juju.browser.widgets.OverlayIndicator({target: container});
     indicator.render();
     indicator.setBusy();
     assert.isTrue(indicator.get('visible'));
@@ -65,7 +68,7 @@ describe.only('indicator', function() {
   });
 
   it('size matches on setBusy', function() {
-    var indicator = new Y.juju.browser.widgets.Indicator({target: container});
+    var indicator = new Y.juju.browser.widgets.OverlayIndicator({target: container});
     indicator.render();
     // Mess with the size of target div.
     var expected_width = 800,
@@ -88,8 +91,8 @@ describe.only('indicator', function() {
   });
 
   it('position matches on setBusy', function() {
-    // Indicator should always reposition itself before setBusy.
-    var indicator = new Y.juju.browser.widgets.Indicator({target: container});
+    // OverlayIndicator should always reposition itself before setBusy.
+    var indicator = new Y.juju.browser.widgets.OverlayIndicator({target: container});
     indicator.render();
     // Change the position of target div.
     var expected_xy = [100, 300],
@@ -104,7 +107,7 @@ describe.only('indicator', function() {
   });
 
   it('hides on success', function() {
-    var indicator = new Y.juju.browser.widgets.Indicator({target: container});
+    var indicator = new Y.juju.browser.widgets.OverlayIndicator({target: container});
     indicator.render();
     indicator.setBusy();
     indicator.success();
@@ -115,7 +118,7 @@ describe.only('indicator', function() {
 
   it('can have a success callback', function() {
     var called = false,
-        indicator = new Y.juju.browser.widgets.Indicator({
+        indicator = new Y.juju.browser.widgets.OverlayIndicator({
       target: container,
       success_action: function () {
         called = true;
@@ -127,7 +130,7 @@ describe.only('indicator', function() {
   });
 
   it('hides on error', function() {
-    var indicator = new Y.juju.browser.widgets.Indicator({target: container});
+    var indicator = new Y.juju.browser.widgets.OverlayIndicator({target: container});
     indicator.render();
     indicator.setBusy();
     indicator.error();
@@ -138,7 +141,7 @@ describe.only('indicator', function() {
 
   it('can have an error callback', function() {
     var called = false,
-        indicator = new Y.juju.browser.widgets.Indicator({
+        indicator = new Y.juju.browser.widgets.OverlayIndicator({
       target: container,
       error_action: function() {
         called = true; 

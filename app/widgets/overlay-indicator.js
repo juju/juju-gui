@@ -1,10 +1,10 @@
 'use strict';
 
 
-YUI.add('browser-indicator', function (Y) {
+YUI.add('browser-overlay-indicator', function (Y) {
   var ns = Y.namespace('juju.browser.widgets');
-  ns.indicator = Y.Base.create('browser-indicator', Y.Widget, [], {
-  
+  ns.OverlayIndicator = Y.Base.create('overlay-indicator', Y.Widget, [], {
+
     initializer: function(cfg) {
       this.hide();
     },
@@ -48,7 +48,7 @@ YUI.add('browser-indicator', function (Y) {
     renderUI: function () {
       var node_html = '<img/>';
       var img = Y.Node.create(node_html);
-      img.set('src', '/@@/spinner-big');
+      img.set('src', '/juju-ui/assets/images/loading-spinner.gif');
       this.get('contentBox').append(img);
     },
 

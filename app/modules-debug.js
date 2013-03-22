@@ -75,8 +75,8 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/charm-slider.js'
         },
 
-        'browser-indicator': {
-          fullpath: '/juju-ui/widgets/indicator.js' 
+        'browser-overlay-indicator': {
+          fullpath: '/juju-ui/widgets/overlay-indicator.js'
         },
 
         'browser-search-widget': {
