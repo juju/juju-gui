@@ -1,7 +1,7 @@
 'use strict';
 
 
-YUI.add('browser-overlay-indicator', function (Y) {
+YUI.add('browser-overlay-indicator', function(Y) {
   var ns = Y.namespace('juju.browser.widgets');
   ns.OverlayIndicator = Y.Base.create('overlay-indicator', Y.Widget, [], {
 
@@ -34,18 +34,18 @@ YUI.add('browser-overlay-indicator', function (Y) {
      *
      * @method _renderUI
      */
-     _renderUI: function() {
-       var local_parent = this.get('target').get('parentNode');
-       this._renderBoxClassNames();
-       this._renderBox(local_parent);
-     },
+    _renderUI: function() {
+      var local_parent = this.get('target').get('parentNode');
+      this._renderBoxClassNames();
+      this._renderBox(local_parent);
+    },
 
     /**
      * Build the indicator overlay itself.
      *
      * @method renderUI
      */
-    renderUI: function () {
+    renderUI: function() {
       var node_html = '<img/>';
       var img = Y.Node.create(node_html);
       img.set('src', '/juju-ui/assets/images/loading-spinner.gif');
@@ -62,7 +62,7 @@ YUI.add('browser-overlay-indicator', function (Y) {
      *
      * @method resizeAndReposition
      */
-    resizeAndReposition: function () {
+    resizeAndReposition: function() {
       var boundingBox = this.get('boundingBox');
       var target = this.get('target');
       var width = target.get('offsetWidth');
@@ -114,7 +114,7 @@ YUI.add('browser-overlay-indicator', function (Y) {
        * A reference to the node that we're going to overlay.
        *
        * @attribute target
-       * @type Y.Node
+       * @type {Y.Node}
        * @default null
        */
       target: {
@@ -125,7 +125,7 @@ YUI.add('browser-overlay-indicator', function (Y) {
        * Callback to fire upon calling success.
        *
        * @attribute success_action
-       * @type Function
+       * @type {function}
        * @default null
        */
       success_action: {
@@ -136,7 +136,7 @@ YUI.add('browser-overlay-indicator', function (Y) {
        * Callback to fire upon calling error.
        *
        * @attribute error_action
-       * @type Function
+       * @type {function}
        * @default null
        */
       error_action: {
@@ -145,10 +145,8 @@ YUI.add('browser-overlay-indicator', function (Y) {
     }
   });
 
-}, '0.1.0', { requires:
-  [
-    'base',
-    'node-screen',
-    'widget'
-  ]
-});
+}, '0.1.0', { requires: [
+  'base',
+  'node-screen',
+  'widget'
+]});
