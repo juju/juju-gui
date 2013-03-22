@@ -524,7 +524,7 @@ YUI.add('juju-env-go', function(Y) {
         err: data.Error,
         result: {
           id: response.Id,
-          interface: response.Interface,
+          'interface': response.Interface,
           scope: response.Scope,
           endpoints: response.Endpoints
         }

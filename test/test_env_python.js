@@ -141,7 +141,7 @@
         op: 'add_relation',
         result: {
           id: 'relation-0',
-          interface: 'http',
+          'interface': 'http',
           scope: 'global',
           endpoints: [
             {'mysql': {'name': 'database'}},
