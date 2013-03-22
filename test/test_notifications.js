@@ -1,7 +1,7 @@
 'use strict';
 
 describe('notifications', function() {
-  var Y, juju, models, views;
+  var Y, juju, models, views, nsRouter, logoNode;
 
   var default_env = {
     'result': [
@@ -65,14 +65,25 @@ describe('notifications', function() {
       'juju-gui',
       'juju-env',
       'node-event-simulate',
-      'juju-tests-utils'],
+      'juju-tests-utils',
+      'ns-routing-app-extension'],
 
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
+      logoNode = Y.Node.create('<div id="nav-brand-env"></div>');
+      Y.one('body').append(logoNode);
       done();
     });
+  });
+
+  beforeEach(function() {
+    nsRouter = Y.namespace('juju').Router('charmstore');
+  });
+
+  after(function() {
+    logoNode.destroy(true);
   });
 
   it('must be able to make notification and lists of notifications',
@@ -118,7 +129,8 @@ describe('notifications', function() {
            view = new views.NotificationsView({
                    container: container,
                    notifications: notifications,
-                   env: env});
+                   env: env,
+                   nsRouter: nsRouter});
        view.render();
        // Verify the expected elements appear in the view
        container.one('#notify-list').should.not.equal(undefined);
@@ -176,6 +188,7 @@ describe('notifications', function() {
 
   it('must be able to include and show object links', function() {
     var container = Y.Node.create('<div id="test">'),
+        logoNode = Y.Node.create('<div id="nav-brand-env"></div>'),
         conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
         env = juju.newEnvironment({conn: conn}),
         app = new Y.juju.App({env: env, container: container}),
@@ -187,7 +200,8 @@ describe('notifications', function() {
                       container: container,
                       notifications: notifications,
                       app: app,
-                      env: env}).render();
+                      env: env,
+                      nsRouter: nsRouter}).render();
     // we use overview here for testing as it defaults
     // to showing all notices
 
@@ -199,7 +213,7 @@ describe('notifications', function() {
     view.render();
     var link = container.one('.notice').one('a');
     link.getAttribute('href').should.equal(
-        '/service/mediawiki/');
+        '/:gui:/service/mediawiki/');
     link.getHTML().should.contain('View Details');
 
 
@@ -212,8 +226,9 @@ describe('notifications', function() {
     view.render();
     link = container.one('.notice').one('a');
     link.getAttribute('href').should.equal(
-        '/service/mediawiki/');
+        '/:gui:/service/mediawiki/');
     link.getHTML().should.contain('Resolve this');
+    logoNode.destroy();
   });
 
   it('must be able to evict irrelevant notices', function() {
@@ -232,7 +247,8 @@ describe('notifications', function() {
         view = new views.NotificationsView({
           container: container,
           notifications: notifications,
-          env: app.env}).render();
+          env: app.env,
+          nsRouter: nsRouter}).render();
 
 
     app.env.dispatch_result(environment_delta);
@@ -300,7 +316,8 @@ describe('notifications', function() {
          container: container,
          notifications: notifications,
          app: app,
-         env: app.env}).render();
+         env: app.env,
+         nsRouter: nsRouter}).render();
 
        app.env.dispatch_result(environment_delta);
 
@@ -333,7 +350,8 @@ describe('notifications', function() {
         view = new views.NotificationsView({
           container: container,
           notifications: notifications,
-          env: env}).render(),
+          env: env,
+          nsRouter: nsRouter}).render(),
         indicator;
 
     Y.one('body').append(container);
@@ -435,7 +453,10 @@ describe('notification visual feedback', function() {
     notifications = new models.NotificationList();
     notificationsView = new views.NotificationsView({
       env: env,
-      notifications: notifications
+      notifications: notifications,
+      nsRouter: {
+        url: function() { return; }
+      }
     });
     notifierBox = Y.Node.create('<div id="notifier-box"></div>');
     notifierBox.setStyle('display', 'none');
@@ -446,6 +467,11 @@ describe('notification visual feedback', function() {
   afterEach(function() {
     notifierBox.remove();
     notifierBox.destroy(true);
+  });
+
+  after(function() {
+    notifications.destroy(true);
+    notificationsView.destroy(true);
   });
 
   // Assert the notifier box contains the expectedNumber of notifiers.
