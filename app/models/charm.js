@@ -244,7 +244,7 @@ YUI.add('juju-charm-models', function(Y) {
          * @method revision.setter
          */
         setter: function(val) {
-          if (Y.Lang.isNumber(val)) {
+          if (Y.Lang.isValue(val)) {
             val = parseInt(val, 10);
           }
           return val;
