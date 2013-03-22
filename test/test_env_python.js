@@ -137,13 +137,13 @@
       });
       msg = conn.last_message();
       conn.msg({
-        'request_id': msg.request_id,
-        'op': 'add_relation',
-        'result': {
-          'id': 'relation-0',
-          'interface': 'http',
-          'scope': 'global',
-          'endpoints': [
+        request_id: msg.request_id,
+        op: 'add_relation',
+        result: {
+          id: 'relation-0',
+          interface: 'http',
+          scope: 'global',
+          endpoints: [
             {'mysql': {'name': 'database'}},
             {'wordpress': {'name': 'website'}}
           ]
@@ -162,11 +162,11 @@
       });
       msg = conn.last_message();
       conn.msg({
-        'request_id': msg.request_id,
-        'op': 'add_relation',
-        'err': 'cannot add relation',
-        'endpoint_a': 'mysql:database',
-        'endpoint_b': 'wordpress:website'
+        request_id: msg.request_id,
+        op: 'add_relation',
+        err: 'cannot add relation',
+        endpoint_a: 'mysql:database',
+        endpoint_b: 'wordpress:website'
       });
     });
 
@@ -180,9 +180,9 @@
       });
       msg = conn.last_message();
       conn.msg({
-        'request_id': msg.request_id,
-        'op': 'remove_relation',
-        'result': true
+        request_id: msg.request_id,
+        op: 'remove_relation',
+        result: true
       });
     });
 
@@ -197,11 +197,11 @@
       });
       msg = conn.last_message();
       conn.msg({
-        'request_id': msg.request_id,
-        'op': 'remove_relation',
-        'err': 'service "yoursql" not found',
-        'endpoint_a': 'yoursql:database',
-        'endpoint_b': 'wordpress:website'
+        request_id: msg.request_id,
+        op: 'remove_relation',
+        err: 'service "yoursql" not found',
+        endpoint_a: 'yoursql:database',
+        endpoint_b: 'wordpress:website'
       });
     });
 

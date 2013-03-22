@@ -475,9 +475,9 @@ YUI.add('juju-env-go', function(Y) {
        Add a relation between two services.
 
        @method add_relation
-     * @param {Object} endpoint_a_obj An array of [service, interface]
+     * @param {Object} endpointA An array of [service, interface]
          representing one of the endpoints to connect.
-     * @param {Object} endpoint_b_obj An array of [service, interface]
+     * @param {Object} endpointB An array of [service, interface]
          representing the other endpoint to connect.
        @param {Function} callback A callable that must be called once the
         operation is performed. It will receive an object with an "err"
@@ -486,9 +486,9 @@ YUI.add('juju-env-go', function(Y) {
         containing the names of the endpoints.
        @return {undefined} Nothing.
      */
-    add_relation: function(endpoint_a_obj, endpoint_b_obj, callback) {
-      var endpoint_a = endpointToName(endpoint_a_obj);
-      var endpoint_b = endpointToName(endpoint_b_obj);
+    add_relation: function(endpointA, endpointB, callback) {
+      var endpoint_a = endpointToName(endpointA);
+      var endpoint_b = endpointToName(endpointB);
       var intermediateCallback;
       if (callback) {
         intermediateCallback = Y.bind(this.handleAddRelation, null,
@@ -516,10 +516,18 @@ YUI.add('juju-env-go', function(Y) {
        @return {undefined} Nothing.
      */
     handleAddRelation: function(userCallback, endpoint_a, endpoint_b, data) {
+      var response = data.Response || {};
       userCallback({
+        request_id: data.RequestId,
         endpoint_a: endpoint_a,
         endpoint_b: endpoint_b,
-        err: data.Error
+        err: data.Error,
+        result: {
+          id: response.Id,
+          interface: response.Interface,
+          scope: response.Scope,
+          endpoints: response.Endpoints
+        }
       });
     },
 
