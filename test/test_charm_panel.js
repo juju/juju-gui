@@ -222,7 +222,8 @@ describe('charm panel', function() {
 
 describe('charm description', function() {
   var Y, models, views, juju, conn, env, container, db, app, charm,
-      charm_store_data, charm_store, charms;
+      charm_store_data, charm_store, charms,
+      createdDate = 1349797266.032
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
@@ -236,6 +237,8 @@ describe('charm description', function() {
         'datasource-local',
         'json-stringify',
         'juju-charm-store',
+        'datatype-date',
+        'datatype-date-format',
 
         function(Y) {
           models = Y.namespace('juju.models');
@@ -291,7 +294,7 @@ describe('charm description', function() {
         { summary: 'A DB',
           provides: {munin: {'interface': 'munin-node'}},
           last_change:
-              { created: 1349797266.032,
+              { created: createdDate,
                 committer: 'fred',
                 message: 'fixed EVERYTHING'}});
     charm_store_data.responseText = Y.JSON.stringify(
@@ -314,18 +317,9 @@ describe('charm description', function() {
     last_change_div.getStyle('height').should.equal('0px');
     last_change_div.get('text').should.contain('fixed EVERYTHING');
 
-    var cd = new Date(1349797266.032 * 1000),
-        date = cd.getDate(),
-        month = cd.getMonth() + 1,
-        checkedDate;
-
-    date = (date < 10) ? '0' + date : date;
-    month = (month < 10) ? '0' + month : month;
-    checkedDate = cd.getFullYear() + '-' + month + '-' + date;
-
+    var cd = new Date(createdDate * 1000);
     // '2012-10-09' on this side of the date line
-    last_change_div.get('text').should.contain(checkedDate);
-
+    last_change_div.get('text').should.contain(Y.Date.format(cd, '%F'));
 
     related_div.one('a').getAttribute('href').should.equal(
         'cs:precise/superthing-7');
@@ -337,7 +331,7 @@ describe('charm description', function() {
         { summary: 'A DB',
           provides: {munin: {'interface': 'munin-node'}},
           last_change:
-              { created: 1349797266.032,
+              { created: createdDate,
                 committer: 'fred',
                 message: 'fixed EVERYTHING'}});
     var view = new views.CharmDescriptionView(
