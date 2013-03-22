@@ -8,6 +8,8 @@
  */
 
 YUI.add('juju-charm-store', function(Y) {
+  var ns = Y.namespace('juju'),
+      models = Y.namespace('juju.models');
 
   /**
    * The CharmStore class.
@@ -133,10 +135,133 @@ YUI.add('juju-charm-store', function(Y) {
   });
   Y.namespace('juju').CharmStore = CharmStore;
 
+
+  /**
+   * Api helper for the updated charmworld api v0.
+   *
+   * @class Charmworld0
+   * @extends {Base}
+   *
+   */
+  ns.Charmworld0 = Y.Base.create('charmworld0', Y.Base, [], {
+    _apiRoot: '/api/0/',
+
+    /**
+     * Send the actual request and handle response from the api.
+     *
+     * @method _makeRequest
+     * @param {Object} args any query params and arguments required.
+     * @private
+     *
+     */
+    _makeRequest: function(apiEndpoint, callbacks, args) {
+      // Any query string args need to be put onto the endpoint for calling.
+      if (args) {
+        apiEndpoint = apiEndpoint + '?' + Y.QueryString.stringify(args);
+      }
+
+      this.get('datasource').sendRequest({
+        request: apiEndpoint,
+        callback: {
+          success: function(io_request) {
+            var res = Y.JSON.parse(
+                io_request.response.results[0].responseText
+                );
+            callbacks.success(res);
+          },
+
+          'failure': function(io_request) {
+            var respText = io_request.response.results[0].responseText,
+                res;
+            if (respText) {
+              res = Y.JSON.parse(respText);
+            }
+            callbacks.failure(res, io_request);
+          }
+        }
+      });
+    },
+
+    /**
+     * Given a result list, turn that into a BrowserCharmList object for the
+     * application to use.
+     *
+     * @method _resultsToCharmlist
+     * @param {Object} JSON decoded data from response.
+     * @private
+     *
+     */
+    resultsToCharmlist: function(data) {
+      return new Y.juju.models.BrowserCharmList({
+        items: data
+      });
+    },
+
+    /**
+     * Initialize the API helper. Constructs a reusable datasource for all
+     * calls.
+     *
+     * @method initializer
+     * @param {Object} cfg configuration object.
+     *
+     */
+    initializer: function(cfg) {
+      // @todo this isn't set on initial load so we have to manually hit the
+      // setter to get datasource filled in. Must be a better way.
+      this.set('apiHost', cfg.apiHost);
+    },
+
+    /**
+     * Fetch the sidebar editoral content from the charmworld api.
+     *
+     * @method sidebarEditorial
+     * @return {Object} data loaded from the api call.
+     *
+     */
+    sidebarEditorial: function(callbacks, bindScope) {
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+
+      var res = this._makeRequest('sidebarEditorial', callbacks);
+    }
+  }, {
+    ATTRS: {
+      /**
+       * Required attribute for the host to talk to for api calls.
+       *
+       * @attribute apiHost
+       * @default undefined
+       * @type {String}
+       *
+       */
+      apiHost: {
+        required: true,
+        setter: function(val) {
+          // Make sure we update the datasource if our apiHost changes.
+          var source = val + this._apiRoot;
+          this.set('datasource', new Y.DataSource.IO({ source: source }));
+          return val;
+        }
+      },
+
+      /**
+       * Auto constructed datasource object based on the apiHost attribute.
+       * @attribute datasource
+       * @type {Datasource}
+       *
+       */
+      datasource: {}
+    }
+  });
+
 }, '0.1.0', {
   requires: [
-    'juju-charm-id',
     'datasource-io',
-    'json-parse'
+    'json-parse',
+    'juju-charm-id',
+    'juju-charm-models',
+    'querystring-stringify'
   ]
 });

@@ -195,6 +195,7 @@ YUI.add('browser-charm-slider', function(Y) {
       * @private
       */
     destructor: function() {
+      console.log('Clearing slider events');
       this.get('_events').each(function(event) {
         event.detach();
       });
