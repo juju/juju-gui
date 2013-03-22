@@ -313,7 +313,20 @@ describe('charm description', function() {
     interface_div.get('text').should.contain('munin');
     last_change_div.getStyle('height').should.equal('0px');
     last_change_div.get('text').should.contain('fixed EVERYTHING');
-    last_change_div.get('text').should.contain('2012-10-09');
+
+    var cd = new Date(1349797266.032 * 1000),
+        date = cd.getDate(),
+        month = cd.getMonth() + 1,
+        checkedDate;
+
+    date = (date < 10) ? '0' + date : date;
+    month = (month < 10) ? '0' + month : month;
+    checkedDate = cd.getFullYear() + '-' + month + '-' + date;
+
+    // '2012-10-09' on this side of the date line
+    last_change_div.get('text').should.contain(checkedDate);
+
+
     related_div.one('a').getAttribute('href').should.equal(
         'cs:precise/superthing-7');
     related_div.one('a').get('text').trim().should.equal('superthing');
