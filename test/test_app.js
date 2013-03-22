@@ -54,7 +54,6 @@ function injectData(app, data) {
           .append(Y.Node.create('<span/>')
             .addClass('provider-type'))
           .hide();
-      Y.one('body').append(Y.Node.create('<div id="nav-brand-env"></div>'));
       app = new Y.juju.App(
           { container: container,
             viewContainer: container});
@@ -379,6 +378,45 @@ function injectData(app, data) {
       // Additional deltas should only call get_endpoints once.
       app.db.on_delta({ data: tmp_data });
       get_endpoints_count.should.equal(2);
+    });
+  });
+})();
+
+(function() {
+  describe('Application sandbox', function() {
+    var Y, app, container, utils;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
+    });
+
+    afterEach(function() {
+      if (app) {
+        app.destroy({remove: true});
+      }
+    });
+
+    it('app instantiates correctly in sandbox mode.', function() {
+      var charmStoreData = utils.makeCharmStore();
+      app = new Y.juju.App(
+          { container: container,
+            viewContainer: container,
+            sandbox: true,
+            apiBackend: 'python',
+            user: 'admin',
+            password: 'admin',
+            charm_store: charmStoreData.charmStore
+          });
+      // This simply walks through the hierarchy to show that all the
+      // necessary parts are there.
+      assert.isObject(app.env.get('conn').get('juju').get('state'));
     });
   });
 })();
