@@ -767,7 +767,8 @@ YUI.add('juju-topology-relation', function(Y) {
           endpoints: endpoints,
           pending: false,
           scope: result.scope,
-          // choosing this or endpoints[1][1].name is arbitrary
+          // Using either the relation name for endpoint A (this one) or
+          // the one for endpoint B (endpoints[1][1].name) is arbitrary.
           display_name: endpoints[0][1].name
         });
       }

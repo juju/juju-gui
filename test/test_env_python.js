@@ -9,10 +9,6 @@
 
   var Y;
 
-  var endpointToName = function(endpoint) {
-    return endpoint[0] + ':' + endpoint[1].name;
-  };
-
   describe('Python Juju environment', function() {
     var conn, endpointA, endpointB, env, juju, msg, testUtils;
 
@@ -127,46 +123,85 @@
 
     it('successfully adds a relation', function(done) {
       var endpoints, result;
-      endpointA = ['service-a', {name: 'relation-name-a'}];
-      endpointB = ['service-b', {name: 'relation-name-b'}];
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB, function(ev) {
         result = ev.result;
         assert.equal(result.id, 'relation-0');
         assert.equal(result['interface'], 'http');
         assert.equal(result.scope, 'global');
         endpoints = result.endpoints;
-        assert.equal(Y.Object.keys(endpoints[0])[0], 'service-a');
-        assert.equal(Y.Object.keys(endpoints[1])[0], 'service-b');
-        assert.equal(Y.Object.values(endpoints[0])[0].name, 'relation-name-a');
-        assert.equal(Y.Object.values(endpoints[1])[0].name, 'relation-name-b');
+        assert.deepEqual(endpoints[0], {'mysql': {'name': 'database'}});
+        assert.deepEqual(endpoints[1], {'wordpress': {'name': 'website'}});
         done();
       });
       msg = conn.last_message();
       conn.msg({
+        'request_id': msg.request_id,
+        'op': 'add_relation',
         'result': {
           'id': 'relation-0',
           'interface': 'http',
           'scope': 'global',
           'endpoints': [
-            {'service-a': {'name': 'relation-name-a', 'role': 'client'}},
-            {'service-b': {'name': 'relation-name-b', 'role': 'server'}}
+            {'mysql': {'name': 'database'}},
+            {'wordpress': {'name': 'website'}}
           ]
         }
       });
     });
 
-    it('handles failed relation adding', function() {
-      endpointA = ['service-a', {name: 'relation-name-a'}];
-      endpointB = ['service-b', {name: 'relation-name-b'}];
+    it('handles failed relation adding', function(done) {
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB, function(ev) {
         assert.equal(ev.err, 'cannot add relation');
-        assert.equal(ev.endpoint_a, endpointToName(endpointA));
-        assert.equal(ev.endpoint_b, endpointToName(endpointB));
+        assert.equal(ev.endpoint_a, 'mysql:database');
+        assert.equal(ev.endpoint_b, 'wordpress:website');
+        done();
       });
+      msg = conn.last_message();
       conn.msg({
-        err: 'cannot add relation',
-        endpoint_a: endpointToName(endpointA),
-        endpoint_b: endpointToName(endpointB)
+        'request_id': msg.request_id,
+        'op': 'add_relation',
+        'err': 'cannot add relation',
+        'endpoint_a': 'mysql:database',
+        'endpoint_b': 'wordpress:website'
+      });
+    });
+
+    it('successfully removes a relation', function(done) {
+      var endpoints;
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.remove_relation(endpointA, endpointB, function(ev) {
+        assert.equal(ev.result, true);
+        done();
+      });
+      msg = conn.last_message();
+      conn.msg({
+        'request_id': msg.request_id,
+        'op': 'remove_relation',
+        'result': true
+      });
+    });
+
+    it('handles failed relation removal', function(done) {
+      endpointA = ['yoursql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.remove_relation(endpointA, endpointB, function(ev) {
+        assert.equal(ev.err, 'service "yoursql" not found');
+        assert.equal(ev.endpoint_a, 'yoursql:database');
+        assert.equal(ev.endpoint_b, 'wordpress:website');
+        done();
+      });
+      msg = conn.last_message();
+      conn.msg({
+        'request_id': msg.request_id,
+        'op': 'remove_relation',
+        'err': 'service "yoursql" not found',
+        'endpoint_a': 'yoursql:database',
+        'endpoint_b': 'wordpress:website'
       });
     });
 
@@ -269,9 +304,9 @@
     };
 
     it('denies adding a relation if the GUI is read-only', function() {
-      endpointA = ['service-a', {name: 'relation-name-a'}];
-      endpointB = ['service-b', {name: 'relation-name-b'}];
-      assertOperationDenied('add_relation', [endpointA, endpointB);
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      assertOperationDenied('add_relation', [endpointA, endpointB]);
     });
 
     it('denies adding a unit if the GUI is read-only', function() {
@@ -296,8 +331,8 @@
     });
 
     it('denies removing a relation if the GUI is read-only', function() {
-      endpointA = ['service-a', {name: 'relation-name-a'}];
-      endpointB = ['service-b', {name: 'relation-name-b'}];
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
       assertOperationDenied('remove_relation', [endpointA, endpointB]);
     });
 
