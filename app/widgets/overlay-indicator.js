@@ -5,6 +5,11 @@ YUI.add('browser-overlay-indicator', function(Y) {
   var ns = Y.namespace('juju.browser.widgets');
   ns.OverlayIndicator = Y.Base.create('overlay-indicator', Y.Widget, [], {
 
+    /**
+     * Initializer; hides the indicator on creation.
+     *
+     * @method initializer
+     */
     initializer: function(cfg) {
       this.hide();
     },
@@ -52,6 +57,11 @@ YUI.add('browser-overlay-indicator', function(Y) {
       this.get('contentBox').append(img);
     },
 
+    /**
+     * Sets up event listeners.
+     *
+     * @method bindUI
+     */
     bindUI: function() {
       this._addListeners();
     },
