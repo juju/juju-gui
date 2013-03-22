@@ -15,7 +15,7 @@ YUI.add('juju-charm-models', function(Y) {
   var simpleCharmIdRe = /^(?:(\w+):)?(?!:~)(\w+)$/;
   var simpleIdElements = ['scheme', 'package_name'];
   var parseCharmId = models.parseCharmId = function(charmId, defaultSeries) {
-    if (Y.Lang.isString(charmId)) {
+    if (typeof charmId === 'string') {
       var parts = charmIdRe.exec(charmId);
       var pairs;
       if (parts) {
@@ -171,12 +171,11 @@ YUI.add('juju-charm-models', function(Y) {
   }, {
     ATTRS: {
       id: {
-        writeOnce: true,
         validator: function(val) {
           return Y.Lang.isString(val) && !!charmIdRe.exec(val);
         }
       },
-      bzr_branch: {writeOnce: true},
+      bzr_branch: {},
       charm_store_path: {
         /**
          * Generate the charm store path from the attributes of the charm.
@@ -193,11 +192,10 @@ YUI.add('juju-charm-models', function(Y) {
             (this.get('package_name') + '-' + this.get('revision')),
             'json'
           ].join('/');
-        },
-        writeOnce: true
+        }
       },
-      config: {writeOnce: true},
-      description: {writeOnce: true},
+      config: {},
+      description: {},
       full_name: {
         /**
          * Generate the full name of the charm from its attributes.
@@ -213,13 +211,10 @@ YUI.add('juju-charm-models', function(Y) {
             tmp.unshift('~' + owner);
           }
           return tmp.join('/');
-        },
-        writeOnce: true
+        }
       },
-      is_subordinate: {writeOnce: true},
+      is_subordinate: {},
       last_change: {
-        writeOnce: true,
-
         /**
          * Normalize created value from float to date object.
          *
@@ -234,24 +229,22 @@ YUI.add('juju-charm-models', function(Y) {
           return val;
         }
       },
-      maintainer: {writeOnce: true},
-      metadata: {writeOnce: true},
-      owner: {writeOnce: true},
-      package_name: {writeOnce: true},
-      peers: {writeOnce: true},
-      proof: {writeOnce: true},
-      provides: {writeOnce: true},
-      requires: {writeOnce: true},
+      maintainer: {},
+      metadata: {},
+      owner: {},
+      package_name: {},
+      peers: {},
+      proof: {},
+      provides: {},
+      requires: {},
       revision: {
-        writeOnce: true,
-
         /**
          * Parse the revision number out of a string.
          *
-         * @method revision.writeOnce.setter
+         * @method revision.setter
          */
         setter: function(val) {
-          if (Y.Lang.isValue(val)) {
+          if (Y.Lang.isNumber(val)) {
             val = parseInt(val, 10);
           }
           return val;
@@ -259,12 +252,10 @@ YUI.add('juju-charm-models', function(Y) {
       },
       scheme: {
         value: 'cs',
-        writeOnce: true,
-
         /**
          * If no value is given, "cs" is used as the default.
          *
-         * @method scheme.writeOnce.setter
+         * @method scheme.setter
          */
         setter: function(val) {
           if (!Y.Lang.isValue(val)) {
@@ -273,9 +264,9 @@ YUI.add('juju-charm-models', function(Y) {
           return val;
         }
       },
-      series: {writeOnce: true},
-      summary: {writeOnce: true},
-      url: {writeOnce: true}
+      series: {},
+      summary: {},
+      url: {}
     }
   });
 
@@ -313,27 +304,23 @@ YUI.add('juju-charm-models', function(Y) {
   }, {
     ATTRS: {
       id: {
-        writeOnce: true,
         validator: function(val) {
           return Y.Lang.isString(val) && !!charmIdRe.exec(val);
         }
       },
-      bzr_branch: {writeOnce: true},
+      bzr_branch: {},
       categories: {
-        value: [],
-        writeOnce: true
+        value: []
       },
       changelog: {
-        value: {},
-        writeOnce: true
+        value: {}
       },
-      charm_store_path: {writeOnce: true},
-      code_source: {writeOnce: true},
-      date_created: {writeOnce: true},
-      description: {writeOnce: true},
+      charm_store_path: {},
+      code_source: {},
+      date_created: {},
+      description: {},
       files: {
-        value: {},
-        writeOnce: true
+        value: {}
       },
       full_name: {
         /**
@@ -350,20 +337,17 @@ YUI.add('juju-charm-models', function(Y) {
             tmp.unshift('~' + owner);
           }
           return tmp.join('/');
-        },
-        writeOnce: true
+        }
       },
-      is_approved: {writeOnce: true},
-      is_new: {writeOnce: true},
-      is_popular: {writeOnce: true},
-      is_subordinate: {writeOnce: true},
+      is_approved: {},
+      is_new: {},
+      is_popular: {},
+      is_subordinate: {},
       last_change: {
-        writeOnce: true,
-
         /**
          * Normalize created value from float to date object.
          *
-         * @method last_change.writeOnce.setter
+         * @method last_change.setter
          */
         setter: function(val) {
           if (val && val.created) {
@@ -374,26 +358,24 @@ YUI.add('juju-charm-models', function(Y) {
           return val;
         }
       },
-      maintainer: {writeOnce: true},
-      //metadata: {writeOnce: true},
-      name: {writeOnce: true},
-      config: {writeOnce: true},
-      owner: {writeOnce: true},
-      peers: {writeOnce: true},
-      proof: {writeOnce: true},
-      provides: {writeOnce: true},
-      rating_numerator: {writeOnce: true},
-      rating_denominator: {writeOnce: true},
-      recent_downloads: {writeOnce: true},
-      relations: {writeOnce: true},
-      requires: {writeOnce: true},
+      maintainer: {},
+      metadata: {},
+      name: {},
+      config: {},
+      owner: {},
+      peers: {},
+      proof: {},
+      provides: {},
+      rating_numerator: {},
+      rating_denominator: {},
+      recent_downloads: {},
+      relations: {},
+      requires: {},
       revision: {
-        writeOnce: true,
-
         /**
          * Parse the revision number out of a string.
          *
-         * @method revision.writeOnce.setter
+         * @method revision.setter
          */
         setter: function(val) {
           if (Y.Lang.isValue(val)) {
@@ -404,12 +386,10 @@ YUI.add('juju-charm-models', function(Y) {
       },
       scheme: {
         value: 'cs',
-        writeOnce: true,
-
         /**
          * If no value is given, "cs" is used as the default.
          *
-         * @method scheme.writeOnce.setter
+         * @method scheme.setter
          */
         setter: function(val) {
           if (!Y.Lang.isValue(val)) {
@@ -418,10 +398,10 @@ YUI.add('juju-charm-models', function(Y) {
           return val;
         }
       },
-      series: {writeOnce: true},
-      summary: {writeOnce: true},
-      tested_providers: {writeOnce: true},
-      url: {writeOnce: true}
+      series: {},
+      summary: {},
+      tested_providers: {},
+      url: {}
     }
   });
 

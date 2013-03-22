@@ -3,7 +3,7 @@
 (function() {
 
   describe('juju charm store', function() {
-    var Y, models, conn, env, app, container, charm_store, data, juju;
+    var Y, models, conn, env, app, container, charmStore, data, juju;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -18,13 +18,17 @@
 
     beforeEach(function() {
       data = [];
-      charm_store = new juju.CharmStore(
+      charmStore = new juju.CharmStore(
           {datasource: new Y.DataSource.Local({source: data})});
     });
 
+    afterEach(function() {
+
+    });
+
     it('creates a remote datasource if you simply supply a uri', function() {
-      charm_store.set('datasource', 'http://example.com/');
-      var datasource = charm_store.get('datasource');
+      charmStore.set('datasource', 'http://example.com/');
+      var datasource = charmStore.get('datasource');
       assert(datasource instanceof Y.DataSource.IO);
       datasource.get('source').should.equal('http://example.com/');
     });
@@ -33,7 +37,7 @@
       data.push(
           { responseText: Y.JSON.stringify(
           { summary: 'wowza' })});
-      charm_store.loadByPath(
+      charmStore.loadByPath(
           'whatever',
           { success: function(data) {
             data.summary.should.equal('wowza');
@@ -48,14 +52,14 @@
       // datasource._defRequestFn is designed to be overridden to achieve more
       // complex behavior when a request is received.  We simply declare that
       // an error occurred.
-      var datasource = charm_store.get('datasource'),
+      var datasource = charmStore.get('datasource'),
           original = datasource._defResponseFn;
       datasource._defResponseFn = function(e) {
         e.error = true;
         original.apply(datasource, [e]);
       };
       data.push({responseText: Y.JSON.stringify({darn_it: 'uh oh!'})});
-      charm_store.loadByPath(
+      charmStore.loadByPath(
           'whatever',
           { success: assert.fail,
             failure: function(e) {
@@ -68,46 +72,46 @@
 
     it('sends a proper request for loadByPath', function() {
       var args;
-      charm_store.set('datasource', {
+      charmStore.set('datasource', {
         sendRequest: function(params) {
           args = params;
         }
       });
-      charm_store.loadByPath('/foo/bar', {});
+      charmStore.loadByPath('/foo/bar', {});
       args.request.should.equal('/foo/bar');
     });
 
     it('sends a proper request for a string call to find', function() {
       var args;
-      charm_store.set('datasource', {
+      charmStore.set('datasource', {
         sendRequest: function(params) {
           args = params;
         }
       });
-      charm_store.find('foobar', {});
+      charmStore.find('foobar', {});
       args.request.should.equal('search/json?search_text=foobar');
     });
 
     it('sends a proper request for a hash call to find', function() {
       var args;
-      charm_store.set('datasource', {
+      charmStore.set('datasource', {
         sendRequest: function(params) {
           args = params;
         }
       });
-      charm_store.find({foo: 'bar', sha: 'zam'}, {});
+      charmStore.find({foo: 'bar', sha: 'zam'}, {});
       args.request.should.equal(
           'search/json?search_text=' + escape('foo:bar sha:zam'));
     });
 
     it('sends a proper request for a hash call of array to find', function() {
       var args;
-      charm_store.set('datasource', {
+      charmStore.set('datasource', {
         sendRequest: function(params) {
           args = params;
         }
       });
-      charm_store.find({foo: ['bar', 'baz', 'bing'], sha: 'zam'}, {});
+      charmStore.find({foo: ['bar', 'baz', 'bing'], sha: 'zam'}, {});
       args.request.should.equal(
           'search/json?search_text=' +
           escape('foo:bar foo:baz foo:bing sha:zam'));
@@ -115,12 +119,12 @@
 
     it('sends a proper request for a hash union call to find', function() {
       var args;
-      charm_store.set('datasource', {
+      charmStore.set('datasource', {
         sendRequest: function(params) {
           args = params;
         }
       });
-      charm_store.find(
+      charmStore.find(
           {foo: ['bar', 'baz', 'bing'], sha: 'zam', op: 'union'}, {});
       args.request.should.equal(
           'search/json?search_text=' +
@@ -130,12 +134,12 @@
     it('sends a proper request for a hash intersection call to find',
        function() {
          var args;
-         charm_store.set('datasource', {
+         charmStore.set('datasource', {
            sendRequest: function(params) {
              args = params;
            }
          });
-         charm_store.find(
+         charmStore.find(
          {foo: ['bar', 'baz', 'bing'], sha: 'zam', op: 'intersection'}, {});
          args.request.should.equal(
          'search/json?search_text=' +
@@ -144,13 +148,13 @@
 
     it('throws an error with unknown operator', function() {
       var args;
-      charm_store.set('datasource', {
+      charmStore.set('datasource', {
         sendRequest: function(params) {
           args = params;
         }
       });
       try {
-        charm_store.find(
+        charmStore.find(
             {foo: ['bar', 'baz', 'bing'], sha: 'zam', op: 'fiddly'}, {});
         assert.fail('should have thrown an error');
       } catch (e) {
@@ -162,7 +166,7 @@
       // This is data from
       // http://jujucharms.com/search/json?search_text=cassandra .
       data.push(Y.io('data/search_results.json', {sync: true}));
-      charm_store.find('cassandra',
+      charmStore.find('cassandra',
           { success: function(results) {
             results.length.should.equal(2);
             results[0].series.should.equal('precise');
@@ -188,7 +192,7 @@
       // This is data from
       // http://jujucharms.com/search/json?search_text=cassandra .
       data.push(Y.io('data/search_results.json', {sync: true}));
-      charm_store.find('cassandra',
+      charmStore.find('cassandra',
           { defaultSeries: 'oneiric',
             success: function(results) {
               results.length.should.equal(2);
@@ -205,7 +209,7 @@
       // http://jujucharms.com/search/json [CONTINUED ON NEXT LINE]
       // ?search_text=series:quantal+owner:charmers .
       data.push(Y.io('data/series_search_results.json', {sync: true}));
-      charm_store.find('cassandra',
+      charmStore.find('cassandra',
           { success: function(results) {
             results.length.should.equal(1);
             results[0].series.should.equal('quantal');
@@ -226,7 +230,7 @@
   });
 
   describe('juju charmworld0 api', function() {
-    var Y, models, conn, env, app, container, charm_store, data, juju;
+    var Y, models, conn, env, app, container, charmStore, data, juju;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -242,20 +246,20 @@
     beforeEach(function() {
     });
 
-    it('constructs the api url correctly based on api_host', function() {
+    it('constructs the api url correctly based on apiHost', function() {
       var hostname = 'http://localhost',
           api = new Y.juju.Charmworld0({
-            api_host: hostname
+            apiHost: hostname
           }),
           ds = api.get('datasource');
 
       ds.get('source').should.eql('http://localhost/api/0/');
     });
 
-    it('handles loading sidebar_editorial correctly', function(done) {
+    it('handles loading sidebarEditorial correctly', function(done) {
       var hostname = 'http://localhost',
           api = new Y.juju.Charmworld0({
-            api_host: hostname
+            apiHost: hostname
           }),
           data = [];
 
@@ -266,7 +270,7 @@
       });
       api.set('datasource', new Y.DataSource.Local({source: data}));
 
-      var sidebar = api.sidebar_editorial({
+      var sidebar = api.sidebarEditorial({
         success: function(data) {
           data.summary.should.equal('wowza');
           done();

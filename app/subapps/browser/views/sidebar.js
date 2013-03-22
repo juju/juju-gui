@@ -63,17 +63,17 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     _generateSliderWidget: function(results) {
-      var slider_charms = this.get('store').results_to_charmlist(results),
-          slider_widgets = [];
+      var sliderCharms = this.get('store').resultsToCharmlist(results),
+          sliderWidgets = [];
 
-      slider_charms.each(function(charm) {
-        slider_widgets.push(
+      sliderCharms.each(function(charm) {
+        sliderWidgets.push(
             new Y.juju.widgets.browser.CharmSmall(charm.getAttrs()));
       });
 
-      if (slider_widgets.length) {
+      if (sliderWidgets.length) {
         var slider = new Y.juju.widgets.browser.CharmSlider({
-          items: Y.Array.map(slider_widgets, function(widget) {
+          items: Y.Array.map(sliderWidgets, function(widget) {
             var node = Y.Node.create('<div>');
             widget.render(node);
             return node.getHTML();
@@ -108,7 +108,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
       // By default we grab the editorial content from the api to use for
       // display.
-      this.get('store').sidebar_editorial({
+      this.get('store').sidebarEditorial({
         'success': function(data) {
           var sliderContainer = container.one('.bws-left .slider');
           this.slider = this._generateSliderWidget(data.result.slider);
@@ -118,7 +118,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
           // Add in the charm-smalls for the new as well.
           var newContainer = container.one('.bws-left .new');
-          var newCharms = this.get('store').results_to_charmlist(
+          var newCharms = this.get('store').resultsToCharmlist(
               data.result['new']);
           newCharms.map(function(charm) {
             var node = Y.Node.create('<div>'),
@@ -208,7 +208,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      */
     initializer: function(cfg) {
       this.set('store', new Y.juju.Charmworld0({
-        'api_host': window.juju_config.charmworld_url
+        'apiHost': window.juju_config.charmworldUrl
       }));
     },
 

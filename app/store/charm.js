@@ -144,7 +144,7 @@ YUI.add('juju-charm-store', function(Y) {
    *
    */
   ns.Charmworld0 = Y.Base.create('charmworld0', Y.Base, [], {
-    _api_root: '/api/0/',
+    _apiRoot: '/api/0/',
 
     /**
      * Send the actual request and handle response from the api.
@@ -186,12 +186,12 @@ YUI.add('juju-charm-store', function(Y) {
      * Given a result list, turn that into a BrowserCharmList object for the
      * application to use.
      *
-     * @method _results_to_charmlist
+     * @method _resultsToCharmlist
      * @param {Object} JSON decoded data from response.
      * @private
      *
      */
-    results_to_charmlist: function(data) {
+    resultsToCharmlist: function(data) {
       return new Y.juju.models.BrowserCharmList({
         items: data
       });
@@ -208,46 +208,46 @@ YUI.add('juju-charm-store', function(Y) {
     initializer: function(cfg) {
       // @todo this isn't set on initial load so we have to manually hit the
       // setter to get datasource filled in. Must be a better way.
-      this.set('api_host', cfg.api_host);
+      this.set('apiHost', cfg.apiHost);
     },
 
     /**
      * Fetch the sidebar editoral content from the charmworld api.
      *
-     * @method sidebar_editorial
+     * @method sidebarEditorial
      * @return {Object} data loaded from the api call.
      *
      */
-    sidebar_editorial: function(callbacks, bindScope) {
+    sidebarEditorial: function(callbacks, bindScope) {
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
 
-      var res = this._makeRequest('sidebar_editorial', callbacks);
+      var res = this._makeRequest('sidebarEditorial', callbacks);
     }
   }, {
     ATTRS: {
       /**
        * Required attribute for the host to talk to for api calls.
        *
-       * @attribute api_host
+       * @attribute apiHost
        * @default undefined
        * @type {String}
        *
        */
-      api_host: {
+      apiHost: {
         required: true,
         setter: function(val) {
-          // Make sure we update the datasource if our api_host changes.
-          var source = val + this._api_root;
+          // Make sure we update the datasource if our apiHost changes.
+          var source = val + this._apiRoot;
           this.set('datasource', new Y.DataSource.IO({ source: source }));
           return val;
         }
       },
 
       /**
-       * Auto constructed datasource object based on the api_host attribute.
+       * Auto constructed datasource object based on the apiHost attribute.
        * @attribute datasource
        * @type {Datasource}
        *

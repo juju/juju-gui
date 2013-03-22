@@ -893,7 +893,7 @@ YUI.add('juju-gui', function(Y) {
       html5: true,
       charm_store: {},
       charm_store_url: {},
-      charmworld_url: {},
+      charmworldUrl: {},
 
       /*
        * Routes
