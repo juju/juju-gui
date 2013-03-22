@@ -162,26 +162,30 @@
 
   describe('sandbox.PyJujuAPI', function() {
     var requires = [
-      'juju-env-sandbox', 'juju-env-fakebackend', 'juju-env-python'];
+      'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
+      'juju-models'];
     var Y, sandboxModule, ClientConnection, PyJujuAPI, environmentsModule,
-        state, juju, client, env;
+        state, juju, client, env, utils, cleanups;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         sandboxModule = Y.namespace('juju.environments.sandbox');
         environmentsModule = Y.namespace('juju.environments');
+        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(function() {
-      state = new environmentsModule.FakeBackend();
+      state = utils.makeFakeBackendWithCharmStore().fakebackend;
       juju = new sandboxModule.PyJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
       env = new environmentsModule.PythonEnvironment({conn: client});
+      cleanups = [];
     });
 
     afterEach(function() {
+      Y.each(cleanups, function(f) {f();});
       env.destroy();
       client.destroy();
       juju.destroy();
@@ -211,14 +215,14 @@
 
     it('ignores "open" when already open to same client.', function() {
       client.receive = function() {
-        assert.fail('The receive method should not be called.');
+        assert.ok(false, 'The receive method should not be called.');
       };
       // Whitebox test: duplicate "open" state.
       juju.connected = true;
       juju.set('client', client);
       // This is effectively a re-open.
       client.open();
-      // The assert.fail above is the verification.
+      // The assert.ok above is the verification.
     });
 
     it('refuses to open if already open to another client.', function() {
@@ -227,7 +231,9 @@
       // simultaneous clients, that's fine, though that will require
       // reworking the delta code generally.
       juju.connected = true;
-      juju.set('client', {receive: assert.fail});
+      juju.set('client', {receive: function() {
+        assert.ok(false, 'The receive method should not have been called.');
+      }});
       assert.throws(
           client.open.bind(client),
           'INVALID_STATE_ERR : Connection is open to another client.');
@@ -267,6 +273,7 @@
     });
 
     it('can log in.', function(done) {
+      state.logout();
       // See FakeBackend's authorizedUsers for these default authentication
       // values.
       var data = {
@@ -291,6 +298,7 @@
     });
 
     it('can log in (environment integration).', function(done) {
+      state.logout();
       env.after('defaultSeriesChange', function() {
         // See FakeBackend's authorizedUsers for these default values.
         env.setCredentials({user: 'admin', password: 'password'});
@@ -301,6 +309,213 @@
         env.login();
       });
       env.connect();
+    });
+
+    it('can deploy.', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      var data = {
+        op: 'deploy',
+        charm_url: 'cs:wordpress',
+        service_name: 'kumquat',
+        config_raw: 'funny: business',
+        num_units: 2,
+        request_id: 42
+      };
+      client.onmessage = function(received) {
+        // First message is the provider type and default series.  We ignore
+        // it, and prepare for the next one, which will be the reply to our
+        // deployment.
+        client.onmessage = function(received) {
+          var parsed = Y.JSON.parse(received.data);
+          assert.isUndefined(parsed.err);
+          assert.deepEqual(parsed, data);
+          assert.isObject(
+              state.db.charms.getById('cs:precise/wordpress-10'));
+          var service = state.db.services.getById('kumquat');
+          assert.isObject(service);
+          assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+          assert.deepEqual(service.get('config'), {funny: 'business'});
+          var units = state.db.units.get_units_for_service(service);
+          assert.lengthOf(units, 2);
+          done();
+        };
+        client.send(Y.JSON.stringify(data));
+      };
+      client.open();
+    });
+
+    it('can deploy (environment integration).', function(done) {
+      // We begin logged in.  See utils.makeFakeBackendWithCharmStore.
+      env.after('defaultSeriesChange', function() {
+        var callback = function(result) {
+          assert.isUndefined(result.err);
+          assert.equal(result.charm_url, 'cs:wordpress');
+          var service = state.db.services.getById('kumquat');
+          assert.equal(service.get('charm'), 'cs:precise/wordpress-10');
+          assert.deepEqual(service.get('config'), {llama: 'pajama'});
+          done();
+        };
+        env.deploy(
+            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, callback);
+      });
+      env.connect();
+    });
+
+    it('can communicate errors after attempting to deploy', function(done) {
+      // Create a service with the name "wordpress".
+      // The charm store is synchronous in tests, so we don't need a real
+      // callback.
+      state.deploy('cs:wordpress', function() {});
+      env.after('defaultSeriesChange', function() {
+        var callback = function(result) {
+          assert.equal(
+              result.err, 'A service with this name already exists.');
+          done();
+        };
+        env.deploy(
+            'cs:wordpress', undefined, undefined, undefined, 1, callback);
+      });
+      env.connect();
+    });
+
+    it('can send a delta stream of changes.', function(done) {
+      // Create a service with the name "wordpress".
+      // The charm store is synchronous in tests, so we don't need a real
+      // callback.
+      state.deploy('cs:wordpress', function() {});
+      client.onmessage = function(received) {
+        // First message is the provider type and default series.  We ignore
+        // it, and prepare for the next one, which will handle the delta
+        // stream.
+        client.onmessage = function(received) {
+          var parsed = Y.JSON.parse(received.data);
+          assert.equal(parsed.op, 'delta');
+          var deltas = parsed.result;
+          assert.lengthOf(deltas, 3);
+          assert.equal(deltas[0][0], 'service');
+          assert.equal(deltas[0][1], 'change');
+          assert.equal(deltas[0][2].charm, 'cs:precise/wordpress-10');
+          assert.equal(deltas[1][0], 'machine');
+          assert.equal(deltas[1][1], 'change');
+          assert.equal(deltas[2][0], 'unit');
+          assert.equal(deltas[2][1], 'change');
+          done();
+        };
+        juju.sendDelta();
+      };
+      client.open();
+    });
+
+    it('does not send a delta if there are no changes.', function(done) {
+      client.onmessage = function(received) {
+        // First message is the provider type and default series.  We ignore
+        // it, and prepare for the next one, which will handle the delta
+        // stream.
+        client.receiveNow = function(response) {
+          assert.ok(false, 'This method should not have been called.');
+        };
+        juju.sendDelta();
+        done();
+      };
+      client.open();
+    });
+
+    it('can send a delta stream (integration).', function(done) {
+      // Create a service with the name "wordpress".
+      // The charm store is synchronous in tests, so we don't need a real
+      // callback.
+      state.deploy('cs:wordpress', function() {}, {unitCount: 2});
+      var db = new Y.juju.models.Database();
+      db.on('update', function() {
+        // We want to verify that the GUI database is equivalent to the state
+        // database.
+        assert.equal(db.services.size(), 1);
+        assert.equal(db.units.size(), 2);
+        assert.equal(db.machines.size(), 2);
+        var stateService = state.db.services.item(0);
+        var guiService = db.services.item(0);
+        Y.each(
+            ['charm', 'config', 'constraints', 'exposed',
+             'id', 'name', 'subordinate'],
+            function(attrName) {
+              assert.deepEqual(
+                  guiService.get(attrName), stateService.get(attrName));
+            }
+        );
+        state.db.units.each(function(stateUnit) {
+          var guiUnit = db.units.getById(stateUnit.id);
+          Y.each(
+              ['agent_state', 'machine', 'number', 'service'],
+              function(attrName) {
+                assert.deepEqual(guiUnit[attrName], stateUnit[attrName]);
+              }
+          );
+        });
+        state.db.machines.each(function(stateMachine) {
+          var guiMachine = db.machines.getById(stateMachine.id);
+          Y.each(
+              ['agent_state', 'instance_state', 'public_address',
+               'machine_id'],
+              function(attrName) {
+                assert.deepEqual(guiMachine[attrName], stateMachine[attrName]);
+              }
+          );
+        });
+        done();
+      });
+      env.on('delta', db.on_delta, db);
+      env.after('defaultSeriesChange', function() {juju.sendDelta();});
+      env.connect();
+    });
+
+    it('sends delta streams periodically after opening.', function(done) {
+      client.onmessage = function(received) {
+        // First message is the provider type and default series.  We ignore
+        // it, and prepare for the next one, which will handle the delta
+        // stream.
+        var isAsync = false;
+        client.onmessage = function(received) {
+          assert.isTrue(isAsync);
+          var parsed = Y.JSON.parse(received.data);
+          assert.equal(parsed.op, 'delta');
+          var deltas = parsed.result;
+          assert.lengthOf(deltas, 3);
+          assert.equal(deltas[0][2].charm, 'cs:precise/wordpress-10');
+          done();
+        };
+        // Create a service with the name "wordpress".
+        // The charm store is synchronous in tests, so we don't need a real
+        // callback.
+        state.deploy('cs:wordpress', function() {});
+        isAsync = true;
+      };
+      juju.set('deltaInterval', 4);
+      client.open();
+    });
+
+    it('stops sending delta streams after closing.', function(done) {
+      var sysSetInterval = window.setInterval;
+      var sysClearInterval = window.clearInterval;
+      cleanups.push(function() {
+        window.setInterval = sysSetInterval;
+        window.clearInterval = sysClearInterval;
+      });
+      window.setInterval = function(f, interval) {
+        assert.isFunction(f);
+        assert.equal(interval, 4);
+        return 42;
+      };
+      window.clearInterval = function(token) {
+        assert.equal(token, 42);
+        done();
+      };
+      client.onmessage = function(received) {
+        // First message is the provider type and default series.  We can
+        // close now.
+        client.close();
+      };
+      juju.set('deltaInterval', 4);
+      client.open();
     });
 
   });

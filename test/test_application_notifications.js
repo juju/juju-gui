@@ -2,7 +2,7 @@
 
 describe('juju application notifications', function() {
   var _setTimeout, _viewsHighlightRow, db, ERR_EV, juju, models, NO_OP,
-      viewContainer, views, Y, willError;
+      viewContainer, views, Y, willError, nsRouter;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
@@ -44,13 +44,15 @@ describe('juju application notifications', function() {
       'juju-gui',
       'juju-env',
       'juju-tests-utils',
-      'node-event-simulate'],
+      'node-event-simulate',
+      'ns-routing-app-extension'],
     function(Y) {
       viewContainer = Y.Node.create('<div />');
       viewContainer.appendTo(Y.one('body'));
       viewContainer.hide();
 
       db = new models.Database();
+      nsRouter = Y.namespace('juju').Router('charmstore');
 
       // The notifications.js delays the notification update.
       // We are going to avoid this timeout to make it possible to test
@@ -86,6 +88,7 @@ describe('juju application notifications', function() {
           return null;
         }
       },
+      nsRouter: nsRouter,
       notifications: db.notifications
     });
     notificationsView.render();
@@ -245,9 +248,12 @@ describe('juju application notifications', function() {
 
   it('should add a notification for "permissionDenied" exceptions (app)',
       function() {
+        var logoNode = Y.Node.create('<div id="nav-brand-env"></div>');
+        Y.one('body').append(logoNode);
         var app = new juju.App();
         app.env.fire('permissionDenied', {title: 'title', message: 'message'});
         assert.equal(1, app.db.notifications.size());
+        logoNode.destroy();
       });
 
   it('should show notification for "get_service" exceptions' +

@@ -103,7 +103,10 @@ describe('service module events', function() {
     view = new views.environment({
       container: viewContainer,
       db: db,
-      env: {}
+      env: {},
+      nsRouter: {
+        url: function() { return; }
+      }
     });
     view.render();
     view.rendered();
