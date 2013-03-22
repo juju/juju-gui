@@ -223,7 +223,7 @@ describe('charm panel', function() {
 describe('charm description', function() {
   var Y, models, views, juju, conn, env, container, db, app, charm,
       charm_store_data, charm_store, charms,
-      createdDate = 1349797266.032
+      createdDate = 1349797266.032;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
