@@ -208,7 +208,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      */
     initializer: function(cfg) {
       this.set('store', new Y.juju.Charmworld0({
-        'apiHost': window.juju_config.charmworldUrl
+        'apiHost': window.juju_config.charmworldURL
       }));
     },
 

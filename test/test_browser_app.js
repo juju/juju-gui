@@ -67,7 +67,7 @@
     beforeEach(function() {
       addBrowserContainer(Y);
       window.juju_config = {
-        charmworldUrl: 'http://localhost'
+        charmworldURL: 'http://localhost'
       };
     });
 
