@@ -245,7 +245,7 @@ YUI.add('juju-env-sandbox', function(Y) {
             // underlines in the attribute names to dashes.  That is currently
             // unnecessary.
             var action = change[1] ? 'change' : 'remove';
-            // The unit change_type is actually "serviceUnit" in the Python
+            // The unit changeType is actually "serviceUnit" in the Python
             // stream.  Our model code handles either, so we're not modifying
             // it for now.
             deltas.push([changeType, action, filtered]);
