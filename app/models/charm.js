@@ -244,7 +244,7 @@ YUI.add('juju-charm-models', function(Y) {
          * @method revision.setter
          */
         setter: function(val) {
-          return = parseInt(val, 10);
+          return parseInt(val, 10);
         }
       },
       scheme: {
