@@ -136,7 +136,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
        *
        * @attribute success_action
        * @type {function}
-       * @default null
+       * @default undefined
        */
       success_action: {},
 
@@ -145,7 +145,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
        *
        * @attribute error_action
        * @type {function}
-       * @default null
+       * @default undefined
        */
       error_action: {},
 
