@@ -1033,5 +1033,6 @@ YUI.add('juju-gui', function(Y) {
     'model',
     'app-subapp-extension',
     'sub-app',
-    'subapp-browser']
+    'subapp-browser',
+    'event-touch']
 });

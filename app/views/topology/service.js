@@ -37,7 +37,8 @@ YUI.add('juju-topology-service', function(Y) {
         },
         // Menu/Controls
         '.view-service': {
-          click: 'viewServiceClick'
+          click: 'viewServiceClick',
+          touchstart: 'viewServiceClick'
         },
         '.destroy-service': {
           click: 'destroyServiceClick'
@@ -77,14 +78,79 @@ YUI.add('juju-topology-service', function(Y) {
       this.set('currentServiceClickAction', 'toggleServiceMenu');
     },
 
-    serviceClick: function(box, self) {
+    /**
+      Whether the touchstart event was attached to all of the service nodes
+
+      Required because this view is rendered multiple times and it doesn't
+      appear that touchstart events bubble from svg elements in chrome on
+      android 4.2.2
+
+      @property _touchEventAttached
+      @type {Boolean}
+      @default false
+    */
+    _touchEventAtached: false,
+
+    /**
+      Called on showView or render
+
+      Handles the attaching of the touch events on the service elements. This
+      is required because touchstart does not appear to bubble in Chrome for
+      Android 4.2.2.
+
+      Known issue: If new service elements are attached they will not have this
+      event attached until it is reloaded
+
+      @method render
+    */
+    render: function() {
+      var elements = Y.all('.service-status');
+      var topo = this.get('component');
+      if (elements.size() > 1) {
+        if (!this._touchEventAtached) {
+          Y.all('.service').on('touchstart', function(e) {
+            // To execute the serviceClick method under the same context as
+            // click we call it under the touch target context
+            this.serviceClick.call(
+                e.currentTarget.getDOMNode(),
+                // This gets the service model instance from the DOM node
+                topo.service_boxes[
+                    e.currentTarget.one('text tspan.name').get('text')],
+                this,
+                // Specifying the eventt ype to avoid d3.mouse() error
+                'touch'
+            );
+          }, this);
+          this._touchEventAtached = true;
+        }
+      }
+    },
+
+
+    /**
+      Handles the click or tap on the service svg elements.
+
+      It is executed under the context of the clicked/tapped DOM element
+
+      @method serviceClick
+      @param {Object} box service object model instance.
+      @param {Object} self this service module instance.
+      @param {String} eType string representing if it's 'touch' or not.
+    */
+    serviceClick: function(box, self, eType) {
       // Ignore if we clicked outside the actual service node.
       var topo = self.get('component');
       var container = self.get('container');
-      var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
-      if (!box.containsPoint(mouse_coords, topo.zoom)) {
-        return;
+
+      // This check is required because d3.mouse() throws an internal error
+      // on touch events
+      if (eType !== 'touch') {
+        var mouse_coords = d3.mouse(container.one('svg').getDOMNode());
+        if (!box.containsPoint(mouse_coords, topo.zoom)) {
+          return;
+        }
       }
+
       // If the service box is pending, ensure that the charm panel is
       // visible, but don't do anything else.
       if (box.pending) {
@@ -104,6 +170,7 @@ YUI.add('juju-topology-service', function(Y) {
       }
       // Get the current click action
       var curr_click_action = self.get('currentServiceClickAction');
+
       // Fire the action named in the following scheme:
       //   service_click_action.<action>
       // with the service, the SVG node, and the view
