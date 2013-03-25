@@ -90,15 +90,22 @@ YUI.add('juju-topology-service', function(Y) {
     attachTouchstartEvents: function(elements) {
       var topo = this.get('component'),
           i, element;
+
+      // The topology test doesn't create any nodes which causes this to fail.
+      // It's probably not a bad idea to have this check in regardless.
+      if (elements[0] === undefined) {
+        return;
+      }
       // Intentionally using a for loop because the iterators also iterate over
       // the named elements of the array causing it to attach this event listner
       // to the parentNode making it unresponsive.
-      for (i = 0; i < elements[0].length; i++) {
+      for (i = 0; i < elements[0].length; i += 1) {
         element = elements[0][i];
         // this simulates a logical XOR operator to deal with the two states
         // of possible null values
-        if ( (element !== 'null') ? (element !== null) : (element === null) ) {
-          Y.Node(element).on('touchstart', this._touchstartServiceTap, this, topo);
+        if ((element !== 'null') ? (element !== null) : (element === null)) {
+          Y.Node(element)
+            .on('touchstart', this._touchstartServiceTap, this, topo);
         }
       }
     },
@@ -565,7 +572,7 @@ YUI.add('juju-topology-service', function(Y) {
      * in the update stage.
      *
      * @param {object} node the node to construct.
-     * @param {object} self reference to the view instance
+     * @param {object} self reference to the view instance.
      * @return {null} side effects only.
      * @method createServiceNode
      */
