@@ -458,15 +458,17 @@ YUI.add('juju-topology-service', function(Y) {
       // enter
       node
         .enter().append('g')
-        .attr('pointer-events', 'all') // IE doesn't drag properly without this.
-        .attr('class', function(d) {
-            return (d.subordinate ? 'subordinate ' : '') +
-                (d.pending ? 'pending ' : '') + 'service';
-          })
+        .attr({
+            'pointer-events': 'all', // IE doesn't drag properly without this.
+            'class': function(d) {
+              return (d.subordinate ? 'subordinate ' : '') +
+                  (d.pending ? 'pending ' : '') + 'service';
+            },
+            'transform': function(d) {
+              return d.translateStr;
+            }})
+          // REVIEW NOTE: transform was called after drag was bound.
         .call(this.dragBehavior)
-        .attr('transform', function(d) {
-            return d.translateStr;
-          })
         .call(self.createServiceNode);
 
       // Update all nodes.
@@ -513,8 +515,8 @@ YUI.add('juju-topology-service', function(Y) {
         .text(function(d) {return d.displayName; });
 
       node.append('text').append('tspan')
-        .attr('class', 'charm-label')
-        .attr('dy', '3em')
+        .attr({'class': 'charm-label',
+            'dy': '3em'})
         .text(function(d) { return d.charm; });
 
       // Append status charts to service nodes.
@@ -523,8 +525,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       // Add a mask svg
       status_chart.append('image')
-        .attr('xlink:href', '/juju-ui/assets/svgs/service_health_mask.svg')
-        .attr('class', 'service-health-mask');
+        .attr({'xlink:href': '/juju-ui/assets/svgs/service_health_mask.svg',
+            'class': 'service-health-mask'});
 
       // Add the unit counts, visible only on hover.
       status_chart.append('text')
@@ -579,31 +581,28 @@ YUI.add('juju-topology-service', function(Y) {
         .classed('subordinate', true);
 
       // Size the node for drawing.
-      node.attr('width', function(d) {
+      node.attr({'width': function(d) {
         // NB: if a service has zero units, as is possible with
         // subordinates, then default to 1 for proper scaling, as
         // a value of 0 will return a scale of 0 (this does not
         // affect the unit count, just the scale of the service).
         var w = service_scale(d.unit_count || 1);
         d.w = w;
-        return w;
-      })
-        .attr('height', function(d) {
-            var h = service_scale(d.unit_count || 1);
-            d.h = h;
-            return h;
-          });
+        return w;},
+      'height': function(d) {
+        var h = service_scale(d.unit_count || 1);
+        d.h = h;
+        return h;
+      }
+      });
       node.select('.service-block-image')
-        .attr('xlink:href', function(d) {
+        .attr({'xlink:href': function(d) {
             return d.subordinate ?
                 '/juju-ui/assets/svgs/sub_module.svg' :
                 '/juju-ui/assets/svgs/service_module.svg';
-          })
-        .attr('width', function(d) {
-            return d.w;
-          })
-        .attr('height', function(d) {
-            return d.h;
+          },
+          'width': function(d) { return d.w; },
+          'height': function(d) { return d.h; }
           });
 
       // Draw a subordinate relation indicator.
@@ -621,13 +620,13 @@ YUI.add('juju-topology-service', function(Y) {
           });
 
       subRelationIndicator.append('image')
-        .attr('xlink:href', '/juju-ui/assets/svgs/sub_relation.svg')
-        .attr('width', 87)
-        .attr('height', 47);
+        .attr({'xlink:href': '/juju-ui/assets/svgs/sub_relation.svg',
+            'width': 87,
+            'height': 47});
       subRelationIndicator.append('text').append('tspan')
-        .attr('class', 'sub-rel-count')
-        .attr('x', 64)
-        .attr('y', 47 * 0.8);
+        .attr({'class': 'sub-rel-count',
+            'x': 64,
+            'y': 47 * 0.8});
 
       // Landscape badge
       // Remove any existing badge.
@@ -652,15 +651,12 @@ YUI.add('juju-topology-service', function(Y) {
           }
           if (landscapeAsset) {
             d3.select(this).append('image')
-            .attr('xlink:href', landscapeAsset)
-            .attr('class', 'landscape-badge')
-            .attr('width', 30)
-            .attr('height', 30)
-            .attr('x', function(box) {
-                  return box.w * 0.13;
-                })
-            .attr('y', function(box) {
-                  return box.h / 2 - 30;
+            .attr({'xlink:href': landscapeAsset,
+                  'class': 'landscape-badge',
+                  'width': 30,
+                  'height': 30,
+                  'x': function(box) {return box.w * 0.13;},
+                  'y': function(box) { return box.h / 2 - 30;}
                 });
           }
         });
@@ -675,38 +671,36 @@ YUI.add('juju-topology-service', function(Y) {
           charm_label_padding = 118;
 
       node.select('.name')
-        .attr('style', function(d) {
+        .attr({'style': function(d) {
             // Programmatically size the font.
             // Number derived from service assets:
             // font-size 22px when asset is 224px.
             return 'font-size:' + d.h *
                 (name_size / service_height) + 'px';
-          })
-        .attr('x', function(d) {
-            return d.w / 2;
-          })
-        .attr('y', function(d) {
+          },
+          'x': function(d) { return d.w / 2; },
+          'y': function(d) {
             // Number derived from service assets:
             // padding-top 26px when asset is 224px.
             return d.h * (name_padding / service_height) + d.h *
                 (name_size / service_height) / 2;
+          }
           });
       node.select('.charm-label')
-        .attr('style', function(d) {
+        .attr({'style': function(d) {
             // Programmatically size the font.
             // Number derived from service assets:
             // font-size 16px when asset is 224px.
             return 'font-size:' + d.h *
                 (charm_label_size / service_height) + 'px';
-          })
-        .attr('x', function(d) {
-            return d.w / 2;
-          })
-        .attr('y', function(d) {
+          },
+          'x': function(d) { return d.w / 2;},
+          'y': function(d) {
             // Number derived from service assets:
             // padding-top: 118px when asset is 224px.
             return d.h * (charm_label_padding / service_height) - d.h *
                 (charm_label_size / service_height) / 2;
+          }
           });
 
       // Show whether or not the service is exposed using an indicator.
@@ -714,19 +708,12 @@ YUI.add('juju-topology-service', function(Y) {
         return d.exposed;
       })
         .append('image')
-        .attr('class', 'exposed-indicator on')
-        .attr('xlink:href', '/juju-ui/assets/svgs/exposed.svg')
-        .attr('width', function(d) {
-            return d.w / 6;
-          })
-        .attr('height', function(d) {
-            return d.w / 6;
-          })
-        .attr('x', function(d) {
-            return d.w / 10 * 7;
-          })
-        .attr('y', function(d) {
-            return d.relativeCenter[1] - (d.w / 6) / 2;
+        .attr({'class': 'exposed-indicator on',
+            'xlink:href': '/juju-ui/assets/svgs/exposed.svg',
+            'width': function(d) { return d.w / 6;},
+            'height': function(d) { return d.w / 6;},
+            'x': function(d) { return d.w / 10 * 7;},
+            'y': function(d) { return d.relativeCenter[1] - (d.w / 6) / 2;}
           })
         .append('title')
         .text(function(d) {
@@ -774,17 +761,10 @@ YUI.add('juju-topology-service', function(Y) {
             return 'translate(' + d.relativeCenter + ')';
           });
       node.select('.service-health-mask')
-        .attr('width', function(d) {
-            return d.w / 3;
-          })
-        .attr('height', function(d) {
-            return d.h / 3;
-          })
-        .attr('x', function() {
-            return -d3.select(this).attr('width') / 2;
-          })
-        .attr('y', function() {
-            return -d3.select(this).attr('height') / 2;
+        .attr({'width': function(d) {return d.w / 3;},
+            'height': function(d) { return d.h / 3;},
+            'x': function() { return -d3.select(this).attr('width') / 2;},
+            'y': function() { return -d3.select(this).attr('height') / 2;}
           });
 
       // Remove the path object as the data bound to it will cause some
@@ -807,9 +787,9 @@ YUI.add('juju-topology-service', function(Y) {
             return status_chart_layout(aggregate_list);
           })
         .enter().insert('path', 'image')
-        .attr('d', status_chart_arc)
-        .attr('class', function(d) { return 'status-' + d.data.name; })
-        .attr('fill-rule', 'evenodd')
+        .attr({'d': status_chart_arc,
+            'class': function(d) { return 'status-' + d.data.name;},
+            'fill-rule': 'evenodd'})
         .append('title').text(function(d) {
             return d.data.name;
           });
