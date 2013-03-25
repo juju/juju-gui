@@ -24,6 +24,8 @@ YUI.add('subapp-browser-sidebar', function(Y) {
    */
   ns.Sidebar = Y.Base.create('browser-view-sidebar', Y.View, [], {
     _events: [],
+    _fullscreenTarget: '/bws/fullscreen',
+
     template: views.Templates.sidebar,
     visible: true,
 
@@ -31,8 +33,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      * @attribute events
      *
      */
-    events: {
-    },
+    events: {},
 
     /**
      * Bind the non native DOM events from within the View. This includes
@@ -54,6 +55,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
               this.search.EVT_TOGGLE_VIEWABLE, this._toggleSidebar, this)
       );
     },
+
 
     /**
      * Given a set of Charms generate a CharmSlider widget with that data.
@@ -99,7 +101,9 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           store = this.get('store');
 
       // build widgets used in the template.
-      this.search = new widgets.browser.Search(),
+      this.search = new widgets.browser.Search({
+        fullscreenTarget: this._fullscreenTarget
+      });
       this.search.render(tplNode.one('.bws-search'));
 
       if (typeof container !== 'object') {
