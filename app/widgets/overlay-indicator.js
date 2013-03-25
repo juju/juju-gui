@@ -2,7 +2,8 @@
 
 
 YUI.add('browser-overlay-indicator', function(Y) {
-  var ns = Y.namespace('juju.browser.widgets');
+  var sub = Y.Lang.sub,
+      ns = Y.namespace('juju.browser.widgets');
   ns.OverlayIndicator = Y.Base.create('overlay-indicator', Y.Widget, [], {
 
     /**
@@ -51,8 +52,9 @@ YUI.add('browser-overlay-indicator', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
-      var node_html = '<img/>';
-      var img = Y.Node.create(node_html);
+      var node_html = '<img src={src}>';
+      var img = Y.Node.create(
+          sub(node_html, {src: this.get('loading_image')}));
       img.set('src', '/juju-ui/assets/images/loading-spinner.gif');
       this.get('contentBox').append(img);
     },
@@ -101,7 +103,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
     success: function() {
       this.hide();
       var callback = this.get('success_action');
-      if (Y.Lang.isFunction(callback)) {
+      if (typeof callback === 'function') {
         callback.call(this);
       }
     },
@@ -114,7 +116,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
     error: function() {
       this.hide();
       var callback = this.get('error_action');
-      if (Y.Lang.isFunction(callback)) {
+      if (typeof callback === 'function') {
         callback.call(this);
       }
     }
@@ -151,7 +153,12 @@ YUI.add('browser-overlay-indicator', function(Y) {
        */
       error_action: {
         value: null
+      },
+
+      loading_image: {
+        value: '/juju-ui/assets/images/loading-spinner.gif'
       }
+
     }
   });
 
