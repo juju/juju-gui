@@ -25,11 +25,16 @@
 
     beforeEach(function() {
       addBrowserContainer(Y);
+      window.juju_config = {
+        charmworldURL: 'http://localhost'
+      };
+
     });
 
     afterEach(function() {
       view.destroy();
       Y.one('#subapp-browser').remove(true);
+      delete window.juju_config;
     });
 
     // Ensure the search results are rendered inside the container.
