@@ -582,6 +582,110 @@ YUI.add('juju-env-go', function(Y) {
         endpoint_a: endpoint_a,
         endpoint_b: endpoint_b
       });
+    },
+
+    /**
+       Retrieve charm info.
+
+       @method get_charm
+       @param {String} charmURL The URL of the charm.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), and with a "result" attribute containing information
+        about the charm. The "result" object includes "config" options, a list
+        of "peers", "provides" and "requires", and the charm URL.
+       @return {undefined} Sends a message to the server only.
+     */
+    get_charm: function(charmURL, callback) {
+      var intermediateCallback;
+      if (callback) {
+        // Curry the callback and service.  No context is passed.
+        intermediateCallback = Y.bind(this.handleCharmInfo, null, callback);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'CharmInfo',
+        Params: {CharmURL: charmURL}
+      }, intermediateCallback);
+    },
+
+    /**
+       Transform the data returned from juju-core 'CharmInfo' into that
+       suitable for the user callback.
+
+       @method handleCharmInfo
+       @param {Function} userCallback The callback originally submitted by the
+       call site.
+       @param {Object} data The response returned by the server. An example of
+        the "data.Response" returned by juju-core follows:
+          {
+            'Config': {
+              'Options': {
+                'debug': {
+                  'Default': 'no',
+                  'Description': 'Setting this option to "yes" will ...',
+                  'Title': '',
+                  'Type': 'string'
+                },
+                'engine': {
+                  'Default': 'nginx',
+                  'Description': 'Two web server engines are supported...',
+                  'Title': '',
+                  'Type': 'string'
+                }
+              }
+            },
+            'Meta': {
+              'Categories': null,
+              'Description': u"This will install and setup WordPress...",
+              'Format': 1,
+              'Name': 'wordpress',
+              'OldRevision': 0,
+              'Peers': {
+                'loadbalancer': {
+                  'Interface': 'reversenginx',
+                  'Limit': 1,
+                  'Optional': false,
+                  'Scope': 'global'
+                }
+              },
+              'Provides': {
+                'website': {
+                  'Interface': 'http',
+                  'Limit': 0,
+                  'Optional': false,
+                  'Scope': 'global'
+                }
+              }
+              'Requires': {
+                'cache': {
+                  'Interface': 'memcache',
+                  'Limit': 1,
+                  'Optional': false,
+                  'Scope': 'global'
+                },
+                'db': {
+                  'Interface': 'mysql',
+                  'Limit': 1,
+                  'Optional': false,
+                  'Scope': 'global'
+                }
+              },
+              'Subordinate': false,
+              'Summary': 'WordPress is a full featured web blogging tool...'
+            },
+            'Revision': 10,
+            'URL': 'cs:precise/wordpress-10'
+          }
+       @return {undefined} Nothing.
+     */
+    handleCharmInfo: function(userCallback, data) {
+      var transformedData = {
+        err: data.Error
+      };
+      // Call the original user callback.
+      userCallback(transformedData);
     }
 
   });

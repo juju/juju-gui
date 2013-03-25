@@ -187,8 +187,21 @@ YUI.add('juju-env-python', function(Y) {
         'endpoint_b': endpointToName(endpointB)}, callback, true);
     },
 
-    get_charm: function(charm_url, callback) {
-      this._send_rpc({'op': 'get_charm', 'charm_url': charm_url}, callback);
+    /**
+       Retrieve charm info.
+
+       @method get_charm
+       @param {String} charmURL The URL of the charm.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), and with a "result" attribute containing information
+        about the charm. The "result" object includes "config" options, a list
+        of "peers", "provides" and "requires", and the charm URL.
+       @return {undefined} Sends a message to the server only.
+     */
+    get_charm: function(charmURL, callback) {
+      this._send_rpc({'op': 'get_charm', 'charm_url': charmURL}, callback);
     },
 
     get_service: function(service_name, callback) {
