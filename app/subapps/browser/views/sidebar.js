@@ -56,7 +56,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       );
     },
 
-
     /**
      * Given a set of Charms generate a CharmSlider widget with that data.
      *
