@@ -95,7 +95,7 @@ Rename your newly configured EC2 juju config to be `juju-gui-testing` and run::
   bin/test-charm
 
 How do I view and edit the Jenkins results and configuration?
-------------------------------------------------------------
+-------------------------------------------------------------
 You will need to log into the `QA labs Jenkins server`__ which requires
 `VPN access`__ and a Jenkins account.
 
