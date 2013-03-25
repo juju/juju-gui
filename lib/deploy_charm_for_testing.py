@@ -100,7 +100,8 @@ def main(options=parse, print=print, juju=juju,
     args = options()
     try:
         print('Bootstrapping...')
-        juju('bootstrap --environment juju-gui-testing')
+        juju('bootstrap --environment juju-gui-testing '
+             '--constraints "instance-type=m1.medium"')
         print('Deploying service...')
         options = {'serve-tests': True, 'staging': True, 'secure': False,
                    'juju-gui-source': args.origin}
