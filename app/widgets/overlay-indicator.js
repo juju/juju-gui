@@ -127,11 +127,9 @@ YUI.add('browser-overlay-indicator', function(Y) {
        *
        * @attribute target
        * @type {Y.Node}
-       * @default null
+       * @default undefined
        */
-      target: {
-        value: null
-      },
+      target: {},
 
       /**
        * Callback to fire upon calling success.
@@ -140,9 +138,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
        * @type {function}
        * @default null
        */
-      success_action: {
-        value: null
-      },
+      success_action: {},
 
       /**
        * Callback to fire upon calling error.
@@ -151,10 +147,13 @@ YUI.add('browser-overlay-indicator', function(Y) {
        * @type {function}
        * @default null
        */
-      error_action: {
-        value: null
-      },
+      error_action: {},
 
+      /**
+       * @attribute loading_image
+       * @default '/juju-ui/assets/images/loading-spinner.gif'
+       * @type {string}
+       */
       loading_image: {
         value: '/juju-ui/assets/images/loading-spinner.gif'
       }
