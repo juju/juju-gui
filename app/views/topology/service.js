@@ -79,53 +79,50 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     /**
-      Whether the touchstart event was attached to all of the service nodes
-
-      Required because this view is rendered multiple times and it doesn't
-      appear that touchstart events bubble from svg elements in chrome on
-      android 4.2.2
-
-      @property _touchEventAttached
-      @type {Boolean}
-      @default false
-    */
-    _touchEventAtached: false,
-
-    /**
-      Called on showView or render
-
-      Handles the attaching of the touch events on the service elements. This
-      is required because touchstart does not appear to bubble in Chrome for
+      Attaches the touchstart event handlers for the service elements. This is
+      required because touchstart does not appear to bubble in Chrome for
       Android 4.2.2.
 
-      Known issue: If new service elements are attached they will not have this
-      event attached until it is reloaded
-
-      @method render
+      @method attachTouchstartEvents
+      @param {Array} elements that need the touch event attached from the
+        createServiceNode method.
     */
-    render: function() {
-      var elements = Y.all('.service-status');
-      var topo = this.get('component');
-      if (elements.size() > 1) {
-        if (!this._touchEventAtached) {
-          Y.all('.service').on('touchstart', function(e) {
-            // To execute the serviceClick method under the same context as
-            // click we call it under the touch target context
-            this.serviceClick.call(
-                e.currentTarget.getDOMNode(),
-                // This gets the service model instance from the DOM node
-                topo.service_boxes[
-                    e.currentTarget.one('text tspan.name').get('text')],
-                this,
-                // Specifying the eventt ype to avoid d3.mouse() error
-                'touch'
-            );
-          }, this);
-          this._touchEventAtached = true;
+    attachTouchstartEvents: function(elements) {
+      var topo = this.get('component'),
+          i, element;
+      // Intentionally using a for loop because the iterators also iterate over
+      // the named elements of the array causing it to attach this event listner
+      // to the parentNode making it unresponsive.
+      for (i = 0; i < elements[0].length; i++) {
+        element = elements[0][i];
+        // this simulates a logical XOR operator to deal with the two states
+        // of possible null values
+        if ( (element !== 'null') ? (element !== null) : (element === null) ) {
+          Y.Node(element).on('touchstart', this._touchstartServiceTap, this, topo);
         }
       }
     },
 
+    /**
+      Callback for the touchstart event handlers on the service svg elements
+
+      @method _touchstartServiceClick
+      @param {Object} e event object from tap.
+      @param {Object} topo topography instance reference.
+    */
+    _touchstartServiceTap: function(e, topo) {
+      // To execute the serviceClick method under the same context as
+      // click we call it under the touch target context
+      this.serviceClick.call(
+          e.currentTarget.getDOMNode(),
+          // This gets the service model instance from the DOM node
+          topo.service_boxes[
+              e.currentTarget.one('text tspan.name').get('text')],
+          this,
+          // Specifying the eventt ype to avoid d3.mouse() error
+          'touch'
+      );
+    },
 
     /**
       Handles the click or tap on the service svg elements.
@@ -534,7 +531,7 @@ YUI.add('juju-topology-service', function(Y) {
         .attr('transform', function(d) {
             return d.translateStr;
           })
-        .call(self.createServiceNode);
+        .call(self.createServiceNode, self);
 
       // Update all nodes.
       self.updateServiceNodes(node);
@@ -568,10 +565,11 @@ YUI.add('juju-topology-service', function(Y) {
      * in the update stage.
      *
      * @param {object} node the node to construct.
+     * @param {object} self reference to the view instance
      * @return {null} side effects only.
      * @method createServiceNode
      */
-    createServiceNode: function(node) {
+    createServiceNode: function(node, self) {
       node.append('image')
         .attr('class', 'service-block-image');
 
@@ -596,6 +594,9 @@ YUI.add('juju-topology-service', function(Y) {
       // Add the unit counts, visible only on hover.
       status_chart.append('text')
         .attr('class', 'unit-count hide-count');
+
+      // Manually attach the touchstart event (see method for details)
+      self.attachTouchstartEvents(node);
     },
 
     /**
