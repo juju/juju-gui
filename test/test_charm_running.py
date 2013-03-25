@@ -13,6 +13,11 @@ class TestBasics(browser.TestCase):
     def test_environment_name(self):
         self.load()
         self.handle_browser_warning()
+        # The next line attempts to work around an IE 10 fragility.
+        # The symptom we are trying to avoid is an error as follows:
+        # "JavaScript error (WARNING: The server did not provide any stacktrace
+        # information)""
+        self.wait_for_css_selector('svg')
         body = self.driver.find_element_by_xpath('//body')
         self.assertTrue('Environment on ' in body.text)
 
@@ -20,6 +25,11 @@ class TestBasics(browser.TestCase):
         # The GUI connects to the API backend.
         self.load()
         self.handle_browser_warning()
+        # The next line attempts to work around an IE 10 fragility.
+        # The symptom we are trying to avoid is an error as follows:
+        # "JavaScript error (WARNING: The server did not provide any stacktrace
+        # information)""
+        self.wait_for_css_selector('svg')
         script = 'return app.env.get("connected");'
         self.wait_for_script(script, 'Environment not connected.')
 
@@ -37,6 +47,7 @@ class TestBasics(browser.TestCase):
             if (done == total) or failures:
                 return total, failures
 
+        self.wait_for_css_selector('#mocha-stats')
         total, failures = self.wait_for(
             tests_completed, 'Unable to complete test run.', timeout=60)
         if failures:

@@ -10,18 +10,25 @@ import yaml
 import subprocess
 import os
 
+from retry import retry
+
 juju_command = shelltoolbox.command('juju')
 
 DEFAULT_ORIGIN = 'lp:juju-gui'
 DEFAULT_CHARM = 'cs:~juju-gui/precise/juju-gui'
 
 def juju(s):
-    return juju_command(*s.split())
+    try:
+        return juju_command(*s.split())
+    except subprocess.CalledProcessError as err:
+        print("Error running", repr(s))
+        print(err.output)
+        raise
 
+@retry(subprocess.CalledProcessError, tries=3))
 def get_status():
     """Get the current status info as a JSON document."""
     return juju('status --environment juju-gui-testing --format json')
-
 
 def get_state(get_status=get_status):
     status = json.loads(get_status())

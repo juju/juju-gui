@@ -2,11 +2,13 @@ from __future__ import print_function
 
 import atexit
 import base64
+from functools import wraps
 import getpass
 import httplib
 import json
 import os
 import subprocess
+import sys
 import unittest
 import urlparse
 
@@ -15,6 +17,12 @@ import selenium.webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support import ui
 import shelltoolbox
+
+# Add ../lib to sys.path to get the retry module.
+root_path = os.path.dirname(os.path.dirname(os.path.normpath(__file__)))
+lib_path = os.path.join(root_path, 'lib')
+if lib_path not in sys.path:
+    sys.path.append(lib_path)
 
 from retry import retry
 
@@ -41,7 +49,7 @@ chrome.update(common)
 
 firefox = dict(selenium.webdriver.DesiredCapabilities.FIREFOX)
 firefox['platform'] = 'Linux'
-firefox['version'] = '18'
+firefox['version'] = '19'
 firefox.update(common)
 
 browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
@@ -68,8 +76,22 @@ if os.path.exists('juju-internal-ip'):
 def formatWebDriverError(error):
     msg = []
     msg.append(str(error))
-    msg.append(str(error.stacktrace))
+    if error.stacktrace:
+        msg.append(str(error.stacktrace))
     return '\n'.join(msg)
+
+def webdriverError():
+    """Decorator for formatting web driver exceptions"""
+    def decorator(f):
+        @wraps(f)
+        def format_error(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except WebDriverException as e:
+                print(formatWebDriverError(e))
+                raise e
+        return format_error
+    return decorator
 
 def set_test_result(jobid, passed):
     headers = {'Authorization': 'Basic ' + encoded_credentials}
@@ -138,8 +160,8 @@ class TestCase(unittest.TestCase):
                 error='Browser warning dialog not found.')
             continue_button.click()
 
-    @retry(WebDriverException, format_error=formatWebDriverError)
-    def wait_for(self, condition, error=None, timeout=10):
+    @webdriverError()
+    def wait_for(self, condition, error=None, timeout=30):
         """Wait for condition to be True.
 
         The argument condition is a callable accepting a driver object.
@@ -169,7 +191,7 @@ class TestCase(unittest.TestCase):
         condition = lambda driver: driver.execute_script(script)
         return self.wait_for(condition, error=error, timeout=timeout)
 
-    @retry(subprocess.CalledProcessError)
+    @retry(subprocess.CalledProcessError, tries=2)
     def restart_api(self):
         """Restart the staging API backend.
 
@@ -179,7 +201,7 @@ class TestCase(unittest.TestCase):
         change the internal Juju environment. Such tests should add this
         function as part of their own clean up process.
         """
-        print('retry_api with ip:%s' % internal_ip)
+        print('restart_api with ip:%s' % internal_ip)
         if internal_ip:
             # When an internal ip address is set directly contract
             # the machine in question. This can help route around
