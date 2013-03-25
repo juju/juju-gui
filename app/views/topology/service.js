@@ -56,9 +56,7 @@ YUI.add('juju-topology-service', function(Y) {
         dragstart: 'dragstart',
         drag: 'drag',
         dragend: 'dragend',
-        hideServiceMenu: {callback: function() {
-          this.service_click_actions.hideServiceMenu(null, this);
-        }},
+        hideServiceMenu: 'hideServiceMenu',
         clearState: 'clearStateHandler',
         rescaled: 'updateServiceMenuLocation'
       }
@@ -108,8 +106,7 @@ YUI.add('juju-topology-service', function(Y) {
       //   service_click_action.<action>
       // with the service, the SVG node, and the view
       // as arguments.
-      self.service_click_actions[curr_click_action](
-          box, self, this);
+      self[curr_click_action](box);
     },
 
     serviceDblClick: function(box, self) {
@@ -121,8 +118,8 @@ YUI.add('juju-topology-service', function(Y) {
           service = box.model;
       // The browser sends a click event right before the dblclick one, and it
       // opens the service menu: close it before moving to the service details.
-      self.service_click_actions.hideServiceMenu(null, self);
-      self.service_click_actions.show_service(service, self);
+      self.hideServiceMenu();
+      self.show_service(service);
     },
 
     serviceMouseEnter: function(box, context) {
@@ -212,7 +209,7 @@ YUI.add('juju-topology-service', function(Y) {
       var container = this.get('container'),
           topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
-      this.service_click_actions.hideServiceMenu(null, this);
+      this.hideServiceMenu();
     },
 
     /**
@@ -225,10 +222,8 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = context.get('component');
       var box = topo.get('active_service');
       var service = box.model;
-      context.service_click_actions
-             .hideServiceMenu(box, context);
-      context.service_click_actions
-             .show_service(service, context);
+      context.hideServiceMenu();
+      context.show_service(service);
     },
 
     /**
@@ -240,10 +235,8 @@ YUI.add('juju-topology-service', function(Y) {
       // Get the service element
       var topo = context.get('component');
       var box = topo.get('active_service');
-      context.service_click_actions
-             .hideServiceMenu(box, context);
-      context.service_click_actions
-             .destroyServiceConfirm(box, context);
+      context.hideServiceMenu();
+      context.destroyServiceConfirm(box);
     },
 
     serviceAddRelMouseDown: function(box, context) {
@@ -393,7 +386,7 @@ YUI.add('juju-topology-service', function(Y) {
           .removeClass('active');
 
       if (box.inDrag === views.DRAG_START) {
-        self.service_click_actions.hideServiceMenu(null, self);
+        self.hideServiceMenu();
         box.inDrag = views.DRAG_ACTIVE;
       }
       topo.fire('cancelRelationBuild');
@@ -874,172 +867,162 @@ YUI.add('juju-topology-service', function(Y) {
       }
     },
 
-    /*
-     * Actions to be called on clicking a service.
+    /**
+     * Show (if hidden) or hide (if shown) the service menu.
+     *
+     * @method toggleServiceMenu
+     * @param {object} box The presentation state for the service.
+     * @return {undefined} Side effects only.
      */
-    service_click_actions: {
-      /**
-       * Show (if hidden) or hide (if shown) the service menu.
-       *
-       * @method toggleServiceMenu
-       * @param {object} box The presentation state for the service.
-       * @param {object} view The environment view.
-       * @param {object} context The service context.
-       * @return {undefined} Side effects only.
-       */
-      toggleServiceMenu: function(box, view, context) {
-        var serviceMenu = view.get('container').one('#service-menu');
+    toggleServiceMenu: function(box) {
+      var serviceMenu = this.get('container').one('#service-menu');
 
-        if (serviceMenu.hasClass('active') || !box) {
-          this.hideServiceMenu(null, view);
-        } else {
-          this.showServiceMenu(box, view, context);
+      if (serviceMenu.hasClass('active') || !box) {
+        this.hideServiceMenu();
+      } else {
+        this.showServiceMenu(box);
+      }
+    },
+
+   /**
+     * Show the service menu.
+     *
+     * @method showServiceMenu
+     * @param {object} box The presentation state for the service.
+     * @return {undefined} Side effects only.
+     */
+    showServiceMenu: function(box) {
+      var serviceMenu = this.get('container').one('#service-menu');
+      var topo = this.get('component');
+      var service = box.model;
+      var landscape = topo.get('landscape');
+      var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
+      var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
+      var securityURL, rebootURL;
+
+      // Update landscape links and show/hide as needed.
+      if (landscape) {
+        rebootURL = landscape.getLandscapeURL(service, 'reboot');
+        securityURL = landscape.getLandscapeURL(service, 'security');
+
+        if (rebootURL && service['landscape-needs-reboot']) {
+          landscapeReboot.show().one('a').set('href', rebootURL);
         }
-      },
-
-      /**
-       * Show the service menu.
-       *
-       * @method showServiceMenu
-       * @param {object} box The presentation state for the service.
-       * @param {object} module The service module..
-       * @param {object} context The service context.
-       * @return {undefined} Side effects only.
-       */
-      showServiceMenu: function(box, module, context) {
-        var serviceMenu = module.get('container').one('#service-menu');
-        var topo = module.get('component');
-        var service = box.model;
-        var landscape = topo.get('landscape');
-        var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
-        var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
-        var securityURL, rebootURL;
-
-        // Update landscape links and show/hide as needed.
-        if (landscape) {
-          rebootURL = landscape.getLandscapeURL(service, 'reboot');
-          securityURL = landscape.getLandscapeURL(service, 'security');
-
-          if (rebootURL && service['landscape-needs-reboot']) {
-            landscapeReboot.show().one('a').set('href', rebootURL);
-          }
-          if (securityURL && service['landscape-security-upgrades']) {
-            landscapeSecurity.show().one('a').set('href', securityURL);
-          }
+        if (securityURL && service['landscape-security-upgrades']) {
+          landscapeSecurity.show().one('a').set('href', securityURL);
         }
-
-        if (box && !serviceMenu.hasClass('active')) {
-          topo.set('active_service', box);
-          topo.set('active_context', context);
-          serviceMenu.addClass('active');
-          // We do not want the user destroying the Juju GUI service.
-          if (utils.isGuiService(service)) {
-            serviceMenu.one('.destroy-service').addClass('disabled');
-          }
-          module.updateServiceMenuLocation();
-        }
-      },
-
-      /**
-       * Hide the service menu.
-       *
-       * @method hideServiceMenu
-       * @param {object} box The presentation state for the service (unused).
-       * @param {object} module The service module.
-       * @param {object} context The service context (unused).
-       * @return {undefined} Side effects only.
-       */
-      hideServiceMenu: function(box, module, context) {
-        var serviceMenu = module.get('container').one('#service-menu');
-        var topo = module.get('component');
-
-        if (serviceMenu.hasClass('active')) {
-          serviceMenu.removeClass('active');
-          topo.set('active_service', null);
-          topo.set('active_context', null);
-          // Most services can be destroyed via the GUI.
-          serviceMenu.one('.destroy-service').removeClass('disabled');
-        }
-      },
-
-      /*
-       * View a service
-       *
-       * @method show_service
-       */
-      show_service: function(service, context) {
-        var topo = context.get('component');
-        topo.detachContainer();
-        topo.fire('navigateTo', { url: topo.get('nsRouter').url({
-          gui: '/service/' + service.get('id')
-        }) });
-      },
-
-      /*
-       * Show a dialog before destroying a service
-       *
-       * @method destroyServiceConfirm
-       */
-      destroyServiceConfirm: function(service, view) {
-        // Set service in view.
-        view.set('destroy_service', service.model);
-
-        // Show dialog.
-        view.set('destroy_dialog', views.createModalPanel(
-            'Are you sure you want to destroy the service? ' +
-            'This cannot be undone.',
-            '#destroy-modal-panel',
-            'Destroy Service',
-            Y.bind(function(ev) {
-              ev.preventDefault();
-              var btn = ev.target;
-              btn.set('disabled', true);
-              view.service_click_actions
-              .destroyService(service, view, btn);
-            }, this)));
-      },
-
-      /*
-       * Destroy a service.
-       *
-       * @method destroyService
-       */
-      destroyService: function(_, view, btn) {
-        var env = view.get('component').get('env'),
-            service = view.get('destroy_service');
-        env.destroy_service(service.get('id'),
-                            Y.bind(this._destroyCallback, view,
-                                   service, view, btn));
-      },
-
-      _destroyCallback: function(service, view, btn, ev) {
-        var getModelURL = view.get('component').get('getModelURL'),
-            db = view.get('component').get('db');
-        if (ev.err) {
-          db.notifications.add(
-              new models.Notification({
-                title: 'Error destroying service',
-                message: 'Service name: ' + ev.service_name,
-                level: 'error',
-                link: getModelURL(service),
-                modelId: service
-              }));
-        } else {
-          var relations = db.relations.get_relations_for_service(service);
-          Y.each(relations, function(relation) {
-            relation.destroy();
-          });
-          service.destroy();
-          db.fire('update');
-        }
-        view.get('destroy_dialog').hide();
-        btn.set('disabled', false);
       }
 
+      if (box && !serviceMenu.hasClass('active')) {
+        topo.set('active_service', box);
+        topo.set('active_context', context);
+        serviceMenu.addClass('active');
+        // We do not want the user destroying the Juju GUI service.
+        if (utils.isGuiService(service)) {
+          serviceMenu.one('.destroy-service').addClass('disabled');
+        }
+        this.updateServiceMenuLocation();
+      }
+    },
+
+     /**
+     * Hide the service menu.
+     *
+     * @method hideServiceMenu
+     * @param {object} box The presentation state for the service (unused).
+     * @return {undefined} Side effects only.
+     */
+    hideServiceMenu: function(box) {
+      var serviceMenu = this.get('container').one('#service-menu');
+      var topo = this.get('component');
+
+      if (serviceMenu.hasClass('active')) {
+        serviceMenu.removeClass('active');
+        topo.set('active_service', null);
+        topo.set('active_context', null);
+        // Most services can be destroyed via the GUI.
+        serviceMenu.one('.destroy-service').removeClass('disabled');
+      }
+    },
+
+    /*
+     * View a service
+     *
+     * @method show_service
+     */
+    show_service: function(service) {
+      var topo = this.get('component');
+      var router = topo.get('nsRouter');
+      var getModelURL = topo.get('getModelURL');
+
+      topo.detachContainer();
+      topo.fire('navigateTo', {
+        url: router.url({gui: getModelURL(service)})
+      });
+    },
+
+    /*
+     * Show a dialog before destroying a service
+     *
+     * @method destroyServiceConfirm
+     */
+    destroyServiceConfirm: function(box) {
+      // Set service in view.
+      this.set('destroy_service', box.model);
+
+      // Show dialog.
+      this.set('destroy_dialog', views.createModalPanel(
+          'Are you sure you want to destroy the service? ' +
+          'This cannot be undone.',
+          '#destroy-modal-panel',
+          'Destroy Service',
+          Y.bind(function(ev) {
+            ev.preventDefault();
+            var btn = ev.target;
+            btn.set('disabled', true);
+            this.destroyService(btn);
+          }, this)));
+    },
+
+    /*
+     * Destroy a service.
+     *
+     * @method destroyService
+     */
+    destroyService: function(btn) {
+      var env = this.get('component').get('env'),
+          service = this.get('destroy_service');
+      env.destroy_service(service.get('id'),
+                          Y.bind(this._destroyCallback, this,
+                                 service, btn));
+    },
+
+    _destroyCallback: function(service, btn, ev) {
+      var getModelURL = this.get('component').get('getModelURL'),
+          db = this.get('component').get('db');
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error destroying service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: getModelURL(service),
+              modelId: service
+            }));
+      } else {
+        var relations = db.relations.get_relations_for_service(service);
+        Y.each(relations, function(relation) {
+          relation.destroy();
+        });
+        service.destroy();
+        db.fire('update');
+      }
+      this.get('destroy_dialog').hide();
+      btn.set('disabled', false);
     }
+
   }, {
     ATTRS: {}
-
   });
 
   views.ServiceModule = ServiceModule;
