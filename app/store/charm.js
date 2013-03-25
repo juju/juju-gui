@@ -224,7 +224,7 @@ YUI.add('juju-charm-store', function(Y) {
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
 
-      var res = this._makeRequest('sidebarEditorial', callbacks);
+      var res = this._makeRequest('sidebar_editorial', callbacks);
     }
   }, {
     ATTRS: {

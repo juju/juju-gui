@@ -25,11 +25,17 @@
 
     beforeEach(function() {
       addBrowserContainer(Y);
+      // Mock out a dummy location for the Store used in view instances.
+      window.juju_config = {
+        charmworldURL: 'http://localhost'
+      };
+
     });
 
     afterEach(function() {
       view.destroy();
       Y.one('#subapp-browser').remove(true);
+      delete window.juju_config;
     });
 
     // Ensure the search results are rendered inside the container.
@@ -66,6 +72,7 @@
 
     beforeEach(function() {
       addBrowserContainer(Y);
+      // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
         charmworldURL: 'http://localhost'
       };
