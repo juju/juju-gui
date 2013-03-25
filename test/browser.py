@@ -166,18 +166,19 @@ class TestCase(unittest.TestCase):
     def handle_login(self):
         """Log in."""
         check_script = (
-            'return app.env.failedAuthentication || '
-            'app.env.userIsAuthenticated || '
-            '(app.env.get("connected") && '
-                '(!this.env.getCredentials() ||'
-                ' !this.env.getCredentials().areAvailable));')
+            'return app && app.env && app.env.get("connected") && ('
+                'app.env.failedAuthentication || '
+                'app.env.userIsAuthenticated || '
+                '!this.env.getCredentials() ||'
+                '!this.env.getCredentials().areAvailable);')
         self.wait_for_script(check_script)
         exe = self.driver.execute_script
         if exe('return app.env.userIsAuthenticated;'):
             return
         data = exe(
-            'return [app.env.failedAuthentication, app.env.getCredentials()];')
-        print('Initial authentication state:', data)  # XXX improve
+            'return [app.env.failedAuthentication, '
+                    'app.env.getCredentials()];')
+        print('Unexpected initial authentication state:', data)  # XXX improve
         exe('app.env.failedAuthentication = false;'
             'app.env.setCredentials({user: "admin", password: "admin"});'
             'app.env.login();')

@@ -48,8 +48,13 @@ class TestBasics(browser.TestCase):
                 return total, failures
 
         self.wait_for_css_selector('#mocha-stats')
-        total, failures = self.wait_for(
-            tests_completed, 'Unable to complete test run.', timeout=60)
+        try:
+            total, failures = self.wait_for(
+                tests_completed, 'Unable to complete test run.', timeout=60)
+        except exceptions.TimeoutException:
+            print(self.driver.execute_script(script))
+            raise
+
         if failures:
             msg = '{} failure(s) running {} tests.'.format(failures, total)
             self.fail(msg)
