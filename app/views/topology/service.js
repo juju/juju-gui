@@ -84,30 +84,17 @@ YUI.add('juju-topology-service', function(Y) {
       Android 4.2.2.
 
       @method attachTouchstartEvents
-      @param {Array} elements that need the touch event attached from the
-        createServiceNode method.
+      @param {Object} data D3 data object.
+      @param {DOM Element} node SVG DOM element
     */
-    attachTouchstartEvents: function(elements) {
+    attachTouchstartEvents: function(data, node) {
       var topo = this.get('component'),
-          i, element;
+          yuiNode = Y.Node(node);
 
-      // The topology test doesn't create any nodes which causes this to fail.
-      // It's probably not a bad idea to have this check in regardless.
-      if (elements[0] === undefined) {
-        return;
-      }
-      // Intentionally using a for loop because the iterators also iterate over
-      // the named elements of the array causing it to attach this event listner
-      // to the parentNode making it unresponsive.
-      for (i = 0; i < elements[0].length; i += 1) {
-        element = elements[0][i];
-        // this simulates a logical XOR operator to deal with the two states
-        // of possible null values
-        if ((element !== 'null') ? (element !== null) : (element === null)) {
-          Y.Node(element)
-            .on('touchstart', this._touchstartServiceTap, this, topo);
+        // Do not attach the event to the ghost nodes
+        if (!d3.select(node).classed('pending')) {
+          yuiNode.on('touchstart', this._touchstartServiceTap, this, topo);
         }
-      }
     },
 
     /**
@@ -603,7 +590,9 @@ YUI.add('juju-topology-service', function(Y) {
         .attr('class', 'unit-count hide-count');
 
       // Manually attach the touchstart event (see method for details)
-      self.attachTouchstartEvents(node);
+      node.each(function(data) {
+        self.attachTouchstartEvents(data, this);
+      });
     },
 
     /**
