@@ -22,7 +22,7 @@ Specify the url of the Charmworld instance in the config setting
 
 About Charmworld
 -----------------
-Charmworld is a pyramid web application and is `Charm`_ 'd to run on OpenStack. Documentation for hacking on Charmworld can be found in it's `working tree`_.
+Charmworld is a pyramid web application and is `Charm`_ 'd to run on OpenStack. Documentation for hacking on Charmworld can be found in its `working tree`_.
 
 
 
