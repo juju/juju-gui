@@ -25,7 +25,7 @@ def juju(s):
         print(err.output)
         raise
 
-@retry(subprocess.CalledProcessError, tries=3))
+@retry(subprocess.CalledProcessError, tries=3)
 def get_status():
     """Get the current status info as a JSON document."""
     return juju('status --environment juju-gui-testing --format json')
