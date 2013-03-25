@@ -17,6 +17,7 @@ juju_command = shelltoolbox.command('juju')
 DEFAULT_ORIGIN = 'lp:juju-gui'
 DEFAULT_CHARM = 'cs:~juju-gui/precise/juju-gui'
 
+
 def juju(s):
     try:
         return juju_command(*s.split())
@@ -25,20 +26,24 @@ def juju(s):
         print(err.output)
         raise
 
+
 @retry(subprocess.CalledProcessError, tries=3)
 def get_status():
     """Get the current status info as a JSON document."""
     return juju('status --environment juju-gui-testing --format json')
+
 
 def get_state(get_status=get_status):
     status = json.loads(get_status())
     unit = status['services']['juju-gui']['units']['juju-gui/0']
     return unit['agent-state']
 
+
 def get_machine_state(get_status=get_status):
     status = json.loads(get_status())
     machine = status['machines']['1']['instance-state']
     return machine
+
 
 def make_config_file(options):
     """Create a Juju GUI charm config file. Return the config file object.
@@ -66,12 +71,14 @@ def wait_for_service(get_state=get_state, sleep=time.sleep):
             break
         sleep(10)
 
+
 def wait_for_machine(get_state=get_state, sleep=time.sleep):
     while True:
         state = get_machine_state()
         if state == 'running':
             break
         sleep(5)
+
 
 def make_parser():
     parser = argparse.ArgumentParser(
@@ -80,12 +87,15 @@ def make_parser():
     parser.add_argument('--charm', default=DEFAULT_CHARM)
     return parser
 
+
 def parse():
     p = make_parser()
     return p.parse_args()
 
-def main(options=parse, print=print, juju=juju, wait_for_service=wait_for_service,
-         make_config_file=make_config_file, wait_for_machine=wait_for_machine):
+
+def main(options=parse, print=print, juju=juju,
+        wait_for_service=wait_for_service, make_config_file=make_config_file,
+        wait_for_machine=wait_for_machine):
     """Deploy the Juju GUI service and wait for it to become available."""
     args = options()
     try:

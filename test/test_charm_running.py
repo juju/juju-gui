@@ -69,7 +69,8 @@ class TestDeploy(browser.TestCase):
         return self.wait_for(services_found, 'Services not displayed.')
 
     def test_charm_deploy(self):
-        if self.driver.desired_capabilities['browserName'] == 'internet explorer':
+        browsername = self.driver.desired_capabilities['browserName']
+        if browsername == 'internet explorer':
             # TODO; revisit in the future to see if elements
             # below are properly displayed. As of this writing
             # the elements are found but is_displayed returns False
@@ -105,6 +106,7 @@ class TestDeploy(browser.TestCase):
         # The staging API backend contains already deployed services.
         self.load()
         self.handle_browser_warning()
+        self.handle_login()
         expected = ('haproxy', 'mediawiki', 'memcached', 'mysql', 'wordpress')
         self.assertSetEqual(set(expected), self.get_service_names())
 

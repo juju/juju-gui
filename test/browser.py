@@ -31,7 +31,7 @@ juju = shelltoolbox.command('juju')
 ssh = shelltoolbox.command('ssh')
 
 common = {
-    'command-timeout' : 300,
+    'command-timeout': 300,
     'idle-timeout': 100,
 }
 
@@ -73,12 +73,14 @@ if os.path.exists('juju-internal-ip'):
     with open('juju-internal-ip') as fp:
         internal_ip = fp.read().strip()
 
+
 def formatWebDriverError(error):
     msg = []
     msg.append(str(error))
     if error.stacktrace:
         msg.append(str(error.stacktrace))
     return '\n'.join(msg)
+
 
 def webdriverError():
     """Decorator for formatting web driver exceptions"""
@@ -92,6 +94,7 @@ def webdriverError():
                 raise e
         return format_error
     return decorator
+
 
 def set_test_result(jobid, passed):
     headers = {'Authorization': 'Basic ' + encoded_credentials}
@@ -159,6 +162,26 @@ class TestCase(unittest.TestCase):
                 '#browser-warning input',
                 error='Browser warning dialog not found.')
             continue_button.click()
+
+    def handle_login(self):
+        """Log in."""
+        check_script = (
+            'return app.env.failedAuthentication || '
+            'app.env.userIsAuthenticated || '
+            '(app.env.get("connected") && '
+                '(!this.env.getCredentials() ||'
+                ' !this.env.getCredentials().areAvailable));')
+        self.wait_for_script(check_script)
+        exe = self.driver.execute_script
+        if exe('return app.env.userIsAuthenticated;'):
+            return
+        data = exe(
+            'return [app.env.failedAuthentication, app.env.getCredentials()];')
+        print('Initial authentication state:', data)  # XXX improve
+        exe('app.env.failedAuthentication = false;'
+            'app.env.setCredentials({user: "admin", password: "admin"});'
+            'app.env.login();')
+        self.wait_for_script(check_script)
 
     @webdriverError()
     def wait_for(self, condition, error=None, timeout=30):
