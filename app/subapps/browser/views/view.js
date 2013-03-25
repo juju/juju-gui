@@ -22,9 +22,45 @@ YUI.add('subapp-browser-mainview', function(Y) {
    *
    */
   ns.MainView = Y.Base.create('browser-view-mainview', Y.View, [], {
+    /**
+     * Track events we create for proper cleanup.
+     * @attribute _events
+     * @default []
+     * @type {Array}
+     *
+     */
     _events: [],
+    /**
+     * When we click the fullscreen toggle UX widget, what url do we route to.
+     * We have to dump this into the template because we can't dynamically
+     * showView/navigate from here.
+     *
+     * Views extending this should implement the url path.
+     *
+     * @attribute _fullscreenTarget
+     * @default ''
+     * @type {String}
+     *
+     */
     _fullscreenTarget: '',
+    /**
+     * Extending classes need to specify the template used to render display.
+     *
+     * @attribute template
+     * @default ''
+     * @type {Object}
+     *
+     */
     template: '',
+    /**
+     * Is this view currently visible? Tracked for use with the show/hide
+     * toggle control in the Search widget.
+     *
+     * @attribute visible
+     * @default true
+     * @type {Boolean}
+     *
+     */
     visible: true,
 
     /**

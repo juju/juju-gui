@@ -25,6 +25,7 @@
 
     beforeEach(function() {
       addBrowserContainer(Y);
+      // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
         charmworldURL: 'http://localhost'
       };
@@ -71,6 +72,7 @@
 
     beforeEach(function() {
       addBrowserContainer(Y);
+      // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
         charmworldURL: 'http://localhost'
       };
