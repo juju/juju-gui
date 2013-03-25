@@ -107,7 +107,7 @@ describe('service module events', function() {
       nsRouter: {
         url: function() { return; }
       },
-      getModelURL: function(){}
+      getModelURL: function() {}
     });
     view.render();
     view.rendered();

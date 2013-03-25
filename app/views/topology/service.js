@@ -884,7 +884,7 @@ YUI.add('juju-topology-service', function(Y) {
       }
     },
 
-   /**
+    /**
      * Show the service menu.
      *
      * @method showServiceMenu
@@ -925,7 +925,7 @@ YUI.add('juju-topology-service', function(Y) {
       }
     },
 
-     /**
+    /**
      * Hide the service menu.
      *
      * @method hideServiceMenu
