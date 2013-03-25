@@ -90,7 +90,7 @@ YUI.add('juju-view-unit', function(Y) {
       });
 
       var charmAttrs = charm.getAttrs();
-      var nsRouter = this.get('_nsRouter');
+      var nsRouter = this.get('nsRouter');
 
       container.setHTML(this.template({
         charmUri: nsRouter.url({
@@ -340,9 +340,9 @@ YUI.add('juju-view-unit', function(Y) {
       /**
         Applications router utility methods
 
-        @attribute _nsRouter
+        @attribute nsRouter
       */
-      _nsRouter: {}
+      nsRouter: {}
     }
   });
 

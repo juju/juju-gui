@@ -11,6 +11,10 @@ YUI.add('juju-env-go', function(Y) {
 
   var environments = Y.namespace('juju.environments');
 
+  var endpointToName = function(endpoint) {
+    return endpoint[0] + ':' + endpoint[1].name;
+  };
+
   /**
    * The Go Juju environment.
    *
@@ -466,11 +470,74 @@ YUI.add('juju-env-go', function(Y) {
       });
     },
 
+
+    /**
+       Add a relation between two services.
+
+       @method add_relation
+       @param {Object} endpointA An array of [service, interface]
+         representing one of the endpoints to connect.
+       @param {Object} endpointB An array of [service, interface]
+         representing the other endpoint to connect.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), and with a "endpoint_a" and "endpoint_b" attributes
+        containing the names of the endpoints.
+       @return {undefined} Nothing.
+     */
+    add_relation: function(endpointA, endpointB, callback) {
+      var endpoint_a = endpointToName(endpointA);
+      var endpoint_b = endpointToName(endpointB);
+      var intermediateCallback;
+      if (callback) {
+        intermediateCallback = Y.bind(this.handleAddRelation, null,
+            callback, endpoint_a, endpoint_b);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'AddRelation',
+        Params: {
+          Endpoints: [endpoint_a, endpoint_b]
+        }
+      }, intermediateCallback);
+    },
+
+    /**
+       Transform the data returned from juju-core call to AddRelation
+       to that suitable for the user callback.
+
+       @method handleAddRelation
+       @param {Function} userCallback The callback originally submitted by
+         the call site.
+       @param {string} endpoint_a Name of one of the services in the relation.
+       @param {string} endpoint_b Name of the other service in the relation.
+       @param {Object} data The response returned by the server.
+       @return {undefined} Nothing.
+     */
+    handleAddRelation: function(userCallback, endpoint_a, endpoint_b, data) {
+      var response = data.Response || {};
+      userCallback({
+        request_id: data.RequestId,
+        endpoint_a: endpoint_a,
+        endpoint_b: endpoint_b,
+        err: data.Error,
+        result: {
+          id: response.Id,
+          'interface': response.Interface,
+          scope: response.Scope,
+          endpoints: response.Endpoints
+        }
+      });
+    },
+
     /**
      * Remove the relationship between two services.
      *
-     * @param {string} endpoint_a Name of one of the services in the relation.
-     * @param {string} endpoint_b Name of the other service in the relation.
+     * @param {Object} endpointA An array of [service, interface]
+     *   representing one of the endpoints to connect.
+     * @param {Object} endpointB An array of [service, interface]
+     *   representing the other endpoint to connect.
      * @param {Function} callback A callable that must be called once the
      *  operation is performed. It will receive an object with an "err"
      *  attribute containing a string describing the problem (if an error
@@ -479,7 +546,9 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Nothing.
      * @method remove_relation
      */
-    remove_relation: function(endpoint_a, endpoint_b, callback) {
+    remove_relation: function(endpointA, endpointB, callback) {
+      var endpoint_a = endpointToName(endpointA);
+      var endpoint_b = endpointToName(endpointB);
       var intermediateCallback;
       if (callback) {
         // Curry the endpoints.  No context is passed.

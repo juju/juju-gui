@@ -104,7 +104,7 @@ describe('service module events', function() {
       container: viewContainer,
       db: db,
       env: {},
-      _nsRouter: {
+      nsRouter: {
         url: function() { return; }
       }
     });

@@ -3,7 +3,7 @@
 (function() {
 
   describe('Go Juju environment', function() {
-    var conn, env, juju, msg, utils, Y;
+    var conn, endpointA, endpointB, env, juju, msg, utils, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
@@ -532,52 +532,125 @@
       assert.equal(err, 'service "yoursql" not found');
     });
 
-    it('sends the correct DestroyRelation message', function() {
-      env.remove_relation('mysql', 'wordpress');
+    it('sends the correct AddRelation message', function() {
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.add_relation(endpointA, endpointB);
       var last_message = conn.last_message();
       var expected = {
-        Request: 'DestroyRelation',
         Type: 'Client',
-        RequestId: 1,
-        Params: {Endpoints: ['mysql', 'wordpress']}
+        Request: 'AddRelation',
+        Params: {
+          Endpoints: [
+            'mysql:database',
+            'wordpress:website'
+          ]
+        },
+        RequestId: 1
       };
       assert.deepEqual(expected, last_message);
     });
 
-    it('successfully destroys a relation', function() {
-      var endpoint_a, endpoint_b;
-      env.remove_relation('mysql', 'wordpress', function(data) {
-        endpoint_a = data.endpoint_a;
-        endpoint_b = data.endpoint_b;
+    it('successfully adds a relation', function() {
+      var endpoints, result;
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.add_relation(endpointA, endpointB, function(ev) {
+        result = ev.result;
       });
-      // Mimic response.
+      msg = conn.last_message();
       conn.msg({
-        RequestId: 1,
-        Response: {}
+        RequestId: msg.RequestId,
+        Response: {
+          Id: 'relation-0',
+          Interface: 'http',
+          Scope: 'global',
+          Endpoints: [
+            {'mysql': {'name': 'database'}},
+            {'wordpress': {'name': 'website'}}
+          ]
+        }
       });
-      assert.equal(endpoint_a, 'mysql');
-      assert.equal(endpoint_b, 'wordpress');
+      assert.equal(result.id, 'relation-0');
+      assert.equal(result['interface'], 'http');
+      assert.equal(result.scope, 'global');
+      endpoints = result.endpoints;
+      assert.deepEqual(endpoints[0], {'mysql': {'name': 'database'}});
+      assert.deepEqual(endpoints[1], {'wordpress': {'name': 'website'}});
     });
 
-    it('handles failed attempt to destroy a relation', function() {
-      var endpoint_a, endpoint_b;
-      var err;
-      env.remove_relation('yoursql', 'wordpress', function(data) {
-        endpoint_a = data.endpoint_a;
-        endpoint_b = data.endpoint_b;
-        err = data.err;
+    it('handles failed relation adding', function() {
+      var evt;
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.add_relation(endpointA, endpointB, function(ev) {
+        evt = ev;
       });
-      // Mimic response.
+      msg = conn.last_message();
       conn.msg({
-        RequestId: 1,
-        Error: 'service \"yoursql\" not found'
+        RequestId: msg.RequestId,
+        Error: 'cannot add relation'
       });
-      assert.equal(endpoint_a, 'yoursql');
-      assert.equal(endpoint_b, 'wordpress');
+      assert.equal(evt.err, 'cannot add relation');
+      assert.equal(evt.endpoint_a, 'mysql:database');
+      assert.equal(evt.endpoint_b, 'wordpress:website');
+    });
+
+    it('sends the correct DestroyRelation message', function() {
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.remove_relation(endpointA, endpointB);
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'DestroyRelation',
+        Params: {
+          Endpoints: [
+            'mysql:database',
+            'wordpress:website'
+          ]
+        },
+        RequestId: 1
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully removes a relation', function() {
+      var endpoint_a, endpoint_b;
+      endpointA = ['mysql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.remove_relation(endpointA, endpointB, function(ev) {
+        endpoint_a = ev.endpoint_a;
+        endpoint_b = ev.endpoint_b;
+      });
+      msg = conn.last_message();
+      conn.msg({
+        RequestId: msg.RequestId,
+        Response: {}
+      });
+      assert.equal(endpoint_a, 'mysql:database');
+      assert.equal(endpoint_b, 'wordpress:website');
+    });
+
+    it('handles failed attempt to remove a relation', function() {
+      var endpoint_a, endpoint_b, err;
+      endpointA = ['yoursql', {name: 'database'}];
+      endpointB = ['wordpress', {name: 'website'}];
+      env.remove_relation(endpointA, endpointB, function(ev) {
+        endpoint_a = ev.endpoint_a;
+        endpoint_b = ev.endpoint_b;
+        err = ev.err;
+      });
+      msg = conn.last_message();
+      conn.msg({
+        RequestId: msg.RequestId,
+        Error: 'service "yoursql" not found'
+      });
+      assert.equal(endpoint_a, 'yoursql:database');
+      assert.equal(endpoint_b, 'wordpress:website');
       assert.equal(err, 'service "yoursql" not found');
     });
 
   });
-
 
 })();

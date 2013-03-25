@@ -236,6 +236,9 @@ YUI.add('juju-gui', function(Y) {
      * @param {Object} cfg Application configuration data.
      */
     initializer: function(cfg) {
+      // If no cfg is passed in use a default empty object so we don't blow up
+      // getting at things.
+      cfg = cfg || {};
       // If this flag is true, start the application
       // with the console activated.
       var consoleEnabled = this.get('consoleEnabled');
@@ -274,6 +277,14 @@ YUI.add('juju-gui', function(Y) {
       if (Y.Lang.isValue(environment_node)) {
         environment_node.set('text', environment_name);
       }
+      // Create a charm store.
+      if (this.get('charm_store')) {
+        // This path is for tests.
+        this.charm_store = this.get('charm_store');
+      } else {
+        this.charm_store = new juju.CharmStore({
+          datasource: this.get('charm_store_url')});
+      }
       // Create an environment facade to interact with.
       // Allow "env" as an attribute/option to ease testing.
       if (this.get('env')) {
@@ -303,15 +314,21 @@ YUI.add('juju-gui', function(Y) {
           password: this.get('password'),
           readOnly: this.get('readOnly')
         };
-        this.env = juju.newEnvironment(envOptions, this.get('apiBackend'));
-      }
-      // Create a charm store.
-      if (this.get('charm_store')) {
-        // This path is for tests.
-        this.charm_store = this.get('charm_store');
-      } else {
-        this.charm_store = new juju.CharmStore({
-          datasource: this.get('charm_store_url')});
+        var apiBackend = this.get('apiBackend');
+        // The sandbox mode does not support the Go API (yet?).
+        if (this.get('sandbox') && apiBackend === 'python') {
+          var sandboxModule = Y.namespace('juju.environments.sandbox');
+          var State = Y.namespace('juju.environments').FakeBackend;
+          var state = new State({charmStore: this.charm_store});
+          if (envOptions.user && envOptions.password) {
+            var credentials = {};
+            credentials[envOptions.user] = envOptions.password;
+            state.set('authorizedUsers', credentials);
+          }
+          envOptions.conn = new sandboxModule.ClientConnection(
+              {juju: new sandboxModule.PyJujuAPI({state: state})});
+        }
+        this.env = juju.newEnvironment(envOptions, apiBackend);
       }
       // Create notifications controller
       this.notifications = new juju.NotificationController({
@@ -362,7 +379,7 @@ YUI.add('juju-gui', function(Y) {
       this.enableBehaviors();
 
       this.once('ready', function(e) {
-        if (this.get('socket_url')) {
+        if (this.get('socket_url') || this.get('sandbox')) {
           // Connect to the environment.
           this.env.connect();
         }
@@ -386,13 +403,36 @@ YUI.add('juju-gui', function(Y) {
 
       // Halts the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
-      Y.one('#nav-brand-env').on('click', function(e) {
-        e.halt();
-        this.showRootView();
-      }, this);
+      var navNode = Y.one('#nav-brand-env');
+      // Tests won't have this node.
+      if (navNode) {
+        navNode.on('click', function(e) {
+          e.halt();
+          this.showRootView();
+        }, this);
+      }
 
       // Attach SubApplications
+      // The subapps should share the same db.
+      cfg.db = this.db;
       this.addSubApplications(cfg);
+    },
+
+    /**
+    Release resources and inform subcomponents to do the same.
+
+    @method destructor
+    */
+    destructor: function() {
+      Y.each(
+          [this.env, this.db, this.charm_store, this.notifications,
+           this.landscape],
+          function(o) {
+            if (o && o.destroy) {
+              o.destroy();
+            }
+          }
+      );
     },
 
     /**
@@ -496,7 +536,7 @@ YUI.add('juju-gui', function(Y) {
             unit: unit, db: this.db, env: this.env,
             querystring: req.query,
             landscape: this.landscape,
-            _nsRouter: this._nsRouter });
+            nsRouter: this.nsRouter });
     },
 
     /**
@@ -539,7 +579,7 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         landscape: this.landscape,
         getModelURL: Y.bind(this.getModelURL, this),
-        _nsRouter: this._nsRouter,
+        nsRouter: this.nsRouter,
         querystring: req.query
       }, {}, function(view) {
         // If the view contains a method call fitToWindow,
@@ -607,7 +647,7 @@ YUI.add('juju-gui', function(Y) {
       this.showView('notifications_overview', {
         env: this.env,
         notifications: this.db.notifications,
-        nsRouter: this._nsRouter
+        nsRouter: this.nsRouter
       });
     },
 
@@ -661,7 +701,7 @@ YUI.add('juju-gui', function(Y) {
             {container: Y.one('#notifications'),
               env: this.env,
               notifications: this.db.notifications,
-              nsRouter: this._nsRouter
+              nsRouter: this.nsRouter
             });
         view.instance.render();
       }
@@ -791,7 +831,7 @@ YUI.add('juju-gui', function(Y) {
           view = this.getViewInfo('environment'),
           options = {
             getModelURL: Y.bind(this.getModelURL, this),
-            _nsRouter: this._nsRouter,
+            nsRouter: this.nsRouter,
             /**
              * A simple closure so changes to the value are available.
              *
@@ -915,7 +955,7 @@ YUI.add('juju-gui', function(Y) {
       }
 
       if (matches[idx] && matches[idx].path) {
-        finalPath = this._nsRouter.url({ gui: matches[idx].path });
+        finalPath = this.nsRouter.url({ gui: matches[idx].path });
       }
       return finalPath;
     }
@@ -924,6 +964,8 @@ YUI.add('juju-gui', function(Y) {
     ATTRS: {
       html5: true,
       charm_store: {},
+      charm_store_url: {},
+      charmworldURL: {},
 
       /*
        * Routes
@@ -937,7 +979,7 @@ YUI.add('juju-gui', function(Y) {
        *
        * `namespace`: (optional) when namespace is specified this route should
        *   only match when the URL fragment occurs in that namespace. The
-       *   default namespace (as passed to this._nsRouter) is assumed if no
+       *   default namespace (as passed to this.nsRouter) is assumed if no
        *   namespace  attribute is specified.
        *
        * `model`: `model.name` (required)
@@ -1020,6 +1062,8 @@ YUI.add('juju-gui', function(Y) {
     'juju-controllers',
     'juju-notification-controller',
     'juju-env',
+    'juju-env-fakebackend',
+    'juju-env-sandbox',
     'juju-charm-models',
     'juju-views',
     'juju-view-login',

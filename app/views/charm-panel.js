@@ -326,7 +326,7 @@ YUI.add('juju-charm-panel', function(Y) {
       picker.one('.picker-body').set('text', selected.get('text'));
       // The charm details and summary are user-supplied and may be
       // way too big for the fixed height cells.  Sadly the best we
-      // can do is truncate them with elllipses.
+      // can do is truncate them with ellipses.
       container.all('.charm-detail').ellipsis();
       container.all('.charm-summary').ellipsis({'lines': 2});
       this._setScroll();

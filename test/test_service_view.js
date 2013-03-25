@@ -47,7 +47,7 @@
             exposed: false});
 
       db.services.add([service]);
-      var _nsRouter = Y.namespace('juju').Router('charmstore');
+      var nsRouter = Y.namespace('juju').Router('charmstore');
       var viewMakerMaker = function(ViewPrototype) {
         return function(querystring) {
           if (!Y.Lang.isValue(querystring)) {
@@ -61,7 +61,7 @@
                 getModelURL: function(model, intent) {
                   return model.get('name');
                 },
-                _nsRouter: _nsRouter,
+                nsRouter: nsRouter,
                 querystring: querystring}).render();
         };
       };
