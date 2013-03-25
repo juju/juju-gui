@@ -915,7 +915,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       if (box && !serviceMenu.hasClass('active')) {
         topo.set('active_service', box);
-        topo.set('active_context', context);
+        topo.set('active_context', box.node);
         serviceMenu.addClass('active');
         // We do not want the user destroying the Juju GUI service.
         if (utils.isGuiService(service)) {
@@ -1020,7 +1020,6 @@ YUI.add('juju-topology-service', function(Y) {
       this.get('destroy_dialog').hide();
       btn.set('disabled', false);
     }
-
   }, {
     ATTRS: {}
   });
