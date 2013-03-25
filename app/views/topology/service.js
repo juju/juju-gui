@@ -85,16 +85,16 @@ YUI.add('juju-topology-service', function(Y) {
 
       @method attachTouchstartEvents
       @param {Object} data D3 data object.
-      @param {DOM Element} node SVG DOM element
+      @param {DOM Element} node SVG DOM element.
     */
     attachTouchstartEvents: function(data, node) {
       var topo = this.get('component'),
           yuiNode = Y.Node(node);
 
-        // Do not attach the event to the ghost nodes
-        if (!d3.select(node).classed('pending')) {
-          yuiNode.on('touchstart', this._touchstartServiceTap, this, topo);
-        }
+      // Do not attach the event to the ghost nodes
+      if (!d3.select(node).classed('pending')) {
+        yuiNode.on('touchstart', this._touchstartServiceTap, this, topo);
+      }
     },
 
     /**
