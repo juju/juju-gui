@@ -53,7 +53,7 @@ describe('notifier widget', function() {
   });
 
   it('should be able to display multiple notifications', function() {
-    var number = 10;
+    var number = 5;
     for (var i = 0; i < number; i += 1) {
       makeNotifier();
     }

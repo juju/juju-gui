@@ -79,7 +79,7 @@ YUI.add('browser-charm-small', function(Y) {
 
   }, {
     ATTRS: {
-      title: {value: ''},
+      name: {value: ''},
       description: {value: ''},
       rating: {value: 0},
       iconfile: {value: ''}

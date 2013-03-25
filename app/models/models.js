@@ -126,7 +126,6 @@ YUI.add('juju-models', function(Y) {
   // human maintenance, so verify your assumptions before proceeding from
   // reading this code.
   var ServiceUnit = Y.Base.create('serviceUnit', Y.Model, [], {},
-      //    idAttribute: 'name',
       {
         ATTRS: {
           displayName: {},
@@ -273,12 +272,30 @@ YUI.add('juju-models', function(Y) {
       return (name + '').replace('machine-', '');
     },
 
+    /**
+    Overrides the LazyModelList method to force an id attribute on.
+    LazyModelList wants an "id" to index on.  It's not configurable.
+
+    @method _modelToObject
+    @param {Model|Object} model Model instance to convert.
+    @return {Object} Plain object.
+    @protected
+    **/
+    _modelToObject: function(model) {
+      var result = MachineList.superclass._modelToObject.call(this, model);
+      if (!result.id) {
+        // machine_id shouldn't change, so this should be safe.
+        result.id = result.machine_id;
+      }
+      return result;
+    },
+
     _setDefaultsAndCalculatedValues: function(obj) {
       obj.displayName = this.createDisplayName(obj.id);
     },
 
     add: function() {
-      var result = ServiceUnitList.superclass.add.apply(this, arguments);
+      var result = MachineList.superclass.add.apply(this, arguments);
       if (Y.Lang.isArray(result)) {
         Y.Array.each(result, this._setDefaultsAndCalculatedValues, this);
       } else {
@@ -436,7 +453,7 @@ YUI.add('juju-models', function(Y) {
 
     /*
      * Get Notifications relative to a given model.
-     * Currenly this depends on a mapping between the model
+     * Currently this depends on a mapping between the model
      * class as encoded by its clientId (see Database.getByModelId)
      *
      * [model_list_name, id]
