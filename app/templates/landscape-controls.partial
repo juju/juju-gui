@@ -1,6 +1,6 @@
 <div class="landscape-controls">
     <div class="logo-tab">
-    	<a><i class="sprite landscape_logo_empty"></i></a>
+    	<a><i class="sprite landscape_logo"></i></a>
     </div>
     <div class="machine-control control">
     	<i class="sprite dotted_divider icon-divider"></i>
