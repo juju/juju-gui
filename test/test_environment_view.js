@@ -644,7 +644,7 @@
          // We have to hide the canvas so it does not affect our calculations.
          canvas.setStyle('display', 'none');
          parseInt(svg.getAttribute('height'), 10)
-          .should.be.above(599);
+          .should.be.above(199);
          // Destroy the navbar
          navbar.remove(true);
          viewport.remove(true);

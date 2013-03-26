@@ -307,7 +307,6 @@ YUI.add('d3-components', function(Y) {
       }
       modEvents = modEvents.d3;
       module = this.modules[modName];
-
       Y.each(modEvents, function(handlers, selector) {
         Y.each(handlers, function(handler, trigger) {
           var adapter;

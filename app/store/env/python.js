@@ -380,6 +380,18 @@ YUI.add('juju-env-python', function(Y) {
         retry: retry || false}, callback, true);
     },
 
+    /**
+      Get the available endpoints (by interface) for a collection of
+      services.
+
+      @method get_endpoints
+      @param {Array} services Zero or more currently deployed services for
+          which the endpoints should be collected.  Specifying an empty array
+          indicates that all deployed services should be analyzed.
+      @param {Function} callback A callable that must be called once the
+         operation is performed.
+      @return {undefined} Sends a message to the server only.
+     */
     get_endpoints: function(services, callback) {
       this._send_rpc({'op': 'get_endpoints', 'service_names': services},
                      callback);
