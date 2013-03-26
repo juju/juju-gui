@@ -10,7 +10,7 @@
       Y = YUI(GlobalConfig).use([
         'browser-tabview', 'node', 'node-event-simulate'
       ], function(Y) {
-            done();
+        done();
       });
     });
 
