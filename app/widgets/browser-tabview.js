@@ -1,6 +1,5 @@
 'use strict';
 
-
 /**
  * Provides new tab and tabview widgets with some additional functions for
  * jujugui.
@@ -49,7 +48,6 @@ YUI.add('browser-tabview', function(Y) {
 }, '0.1.0', {
   requires: [
     'array-extras',
-    'base',
     'tabview'
   ]
 });
