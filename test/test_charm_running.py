@@ -39,7 +39,10 @@ class TestBasics(browser.TestCase):
         def tests_completed(driver):
             stats = driver.execute_script('return testRunner.stats;')
             # Return when tests completed or a failure occurred.
-            if stats.get('end') or stats['failures']:
+            # The duration and end values are only specified after the tests
+            # complete. Sometimes only one or the other are available, for
+            # reasons yet to be determined.
+            if stats.get('duration') or stats.get('end') or stats['failures']:
                 return stats['tests'], stats['failures']
 
         self.wait_for_css_selector('#mocha-stats')

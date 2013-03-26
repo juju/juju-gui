@@ -186,10 +186,9 @@ class TestCase(unittest.TestCase):
         exe = self.driver.execute_script
         if exe('return app.env.userIsAuthenticated;'):
             return
-        exe('app.env.failedAuthentication = false;'
-            'app.env.setCredentials({user: "admin", password: "admin"});'
+        exe('app.env.setCredentials({user: "admin", password: "admin"});'
             'app.env.login();')
-        self.wait_for_script(check_script)
+        self.wait_for_script('return app.env.userIsAuthenticated;')
 
     @webdriverError()
     def wait_for(self, condition, error=None, timeout=30):
