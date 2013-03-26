@@ -688,7 +688,7 @@
         err = data.err;
         result = data.result;
       });
-      // Build a response example.
+      // Define a response example.
       var response = {
         Config: {
           Options: {
