@@ -180,8 +180,8 @@ class TestCase(unittest.TestCase):
             'return app && app.env && app.env.get("connected") && ('
                 'app.env.failedAuthentication || '
                 'app.env.userIsAuthenticated || '
-                '!this.env.getCredentials() ||'
-                '!this.env.getCredentials().areAvailable);')
+                '!app.env.getCredentials() ||'
+                '!app.env.getCredentials().areAvailable);')
         self.wait_for_script(check_script)
         exe = self.driver.execute_script
         if exe('return app.env.userIsAuthenticated;'):
