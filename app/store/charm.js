@@ -144,7 +144,7 @@ YUI.add('juju-charm-store', function(Y) {
    *
    */
   ns.Charmworld0 = Y.Base.create('charmworld0', Y.Base, [], {
-    _apiRoot: '/api/0/',
+    _apiRoot: 'api/0/',
 
     /**
      * Send the actual request and handle response from the api.
@@ -180,6 +180,16 @@ YUI.add('juju-charm-store', function(Y) {
           }
         }
       });
+    },
+
+    charm: function(charmID, callbacks, bindScope) {
+      var endpoint = 'charm/' + charmID;
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+
+      var res = this._makeRequest(endpoint, callbacks);
     },
 
     /**

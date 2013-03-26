@@ -21,7 +21,7 @@ YUI.add('subapp-browser', function(Y) {
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
 
     _getSubPath: function(path) {
-      var reLastWord = /(\w+)\/?$/,
+      var reLastWord = /[^\/]*\/?$/,
           lastWords = path.match(reLastWord);
       if (lastWords.length) {
           return lastWords[0].replace('/', '');
@@ -34,12 +34,14 @@ YUI.add('subapp-browser', function(Y) {
      * Generate a standard shared set of cfg all Views can expect to see.
      *
      * @method _getViewCfg
+     * @params {Object} cfg additional config to merge into the default view
+     * config.
      *
      */
-    _getViewCfg: function() {
-      return {
+    _getViewCfg: function(cfg) {
+      return Y.merge(cfg, {
         db: this.get('db')
-      };
+      });
     },
 
     /**

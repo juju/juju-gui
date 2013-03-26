@@ -3,7 +3,9 @@
 
 YUI.add('subapp-browser-fullscreen', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
+      models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
+      browser_widgets = Y.namespace('juju.browser.widgets'),
       widgets = Y.namespace('juju.widgets');
 
 
@@ -35,14 +37,14 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
      */
     _renderEditorialView: function(container) {
       var tpl = this.template(),
-          tpl_node = Y.Node.create(tpl);
+          tplNode = Y.Node.create(tpl);
 
-      this._renderSearchWidget(tpl_node);
+      this._renderSearchWidget(tplNode);
 
       if (!Y.Lang.isValue(container)) {
         container = this.get('container');
       }
-      container.setHTML(tpl_node);
+      container.setHTML(tplNode);
     },
 
     /**
@@ -54,16 +56,28 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
      */
     _renderCharmView: function(container) {
       var tpl = this.template(),
-          tpl_node = Y.Node.create(tpl);
-      this._renderSearchWidget(tpl_node);
+          tplNode = Y.Node.create(tpl);
+      this._renderSearchWidget(tplNode);
 
-      // fetch the charm data from the api.
-      var charmData = this.get('store').
+      // Fetch the charm data from the api.
+      this.get('store').charm(this.get('charmID'), {
+        'success': function(data) {
+          var charm = new models.BrowserCharm(data),
+              charmTpl = views.Templates.browser_charm;
+          tplNode.one('.bws-view-data').setHTML(charmTpl(charm.getAttrs()));
+          container.setHTML(tplNode);
+
+          this.tabview = new browser_widgets.TabView({
+            srcNode: tplNode.one('.tabs')
+          });
+          this.tabview.render();
+        },
+        'failure': this.apiFailure
+        }, this);
 
       if (!Y.Lang.isValue(container)) {
         container = this.get('container');
       }
-      container.setHTML(tpl_node);
     },
 
     /**
@@ -126,6 +140,8 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
 }, '0.1.0', {
   requires: [
     'browser-search-widget',
+    'browser-tabview',
+    'juju-charm-models',
     'subapp-browser-mainview',
     'view'
   ]

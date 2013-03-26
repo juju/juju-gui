@@ -116,6 +116,32 @@ YUI.add('subapp-browser-mainview', function(Y) {
       }
     },
 
+
+    /**
+     * Shared method to generate a message to the user based on a bad api
+     * call.
+     *
+     * @method apiFailure
+     * @param {Object} data the json decoded response text.
+     * @param {Object} request the original io_request object for debugging.
+     *
+     */
+    apiFailure: function(data, request) {
+      var message;
+      if (data && data.type) {
+        message = 'Charm API error of type: ' + data.type;
+      } else {
+        message = 'Charm API server did not respond';
+      }
+      this.get('db').notifications.add(
+          new models.Notification({
+            title: 'Failed to load sidebar content.',
+            message: message,
+            level: 'error'
+          })
+      );
+    },
+
     /**
      * Destroy this view and clear from the dom world.
      *
