@@ -5,7 +5,6 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
-      browser_widgets = Y.namespace('juju.browser.widgets'),
       widgets = Y.namespace('juju.widgets');
 
 
@@ -75,7 +74,7 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
           tplNode.one('.bws-view-data').setHTML(charmTpl(charm.getAttrs()));
           container.setHTML(tplNode);
 
-          this.tabview = new browser_widgets.TabView({
+          this.tabview = new widgets.browser.TabView({
             srcNode: tplNode.one('.tabs')
           });
           this.tabview.render();

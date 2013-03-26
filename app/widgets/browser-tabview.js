@@ -9,14 +9,14 @@
  * @module browser
  * @submodule widgets
  */
-YUI().add('browser-tabview', function(Y) {
-  var ns = Y.namespace('juju.browser.widgets');
+YUI.add('browser-tabview', function(Y) {
+  var ns = Y.namespace('juju.widgets.browser');
 
   /**
    * Tabview provides extra rendering options--it can be rendered with the
    * tabs horizontally rendered like Y.TabView, or vertically.
    *
-   * @class Y.juju.browser.widgets.TabView
+   * @class Y.juju.widgets.browser.TabView
    * @extends {Y.TabView}
    */
   ns.TabView = Y.Base.create('juju-browser-tabview', Y.TabView, [], {
@@ -46,8 +46,9 @@ YUI().add('browser-tabview', function(Y) {
     }
   });
 
-}, '0.1.0', { requires: [
-  'array-extras',
-  'base',
-  'tabview'
-]});
+}, '0.1.0', {
+  requires: [
+    'array-extras',
+    'tabview'
+  ]
+});
