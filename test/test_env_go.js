@@ -2,6 +2,25 @@
 
 (function() {
 
+  describe('Go Juju environment utilities', function() {
+    var environments, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
+        environments = Y.namespace('juju.environments');
+        done();
+      });
+    });
+
+    it('provides a way to lowercase the keys of an object', function() {
+      var obj = {Key1: 'value1', key2: 'value2', MyThirdKey: 'value3'},
+          expected = {key1: 'value1', key2: 'value2', mythirdkey: 'value3'},
+          result = environments.lowerObjectKeys(obj);
+      assert.deepEqual(expected, result);
+    });
+
+  });
+
   describe('Go Juju environment', function() {
     var conn, endpointA, endpointB, env, juju, msg, utils, Y;
 
@@ -740,12 +759,14 @@
         debug: {
           'default': options.debug.Default,
           description: options.debug.Description,
-          type: options.debug.Type
+          type: options.debug.Type,
+          title: options.debug.Title
         },
         engine: {
           'default': options.engine.Default,
           description: options.engine.Description,
-          type: options.engine.Type
+          type: options.engine.Type,
+          title: options.engine.Title
         }
       };
       // Define expected peers.

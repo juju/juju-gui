@@ -16,6 +16,23 @@ YUI.add('juju-env-go', function(Y) {
   };
 
   /**
+     Return an object containing all the key/value pairs of the given "obj",
+     turning all the keys to lower case.
+
+     @method lowerObjectKeys
+     @static
+     @param {Object} obj The input object.
+     @return {Object} The output object, containing lowercased keys.
+   */
+  var lowerObjectKeys = function(obj) {
+    var newObj = {};
+    Y.each(obj, function(value, key) {
+      newObj[key.toLowerCase()] = value;
+    });
+    return newObj;
+  };
+
+  /**
    * The Go Juju environment.
    *
    * This class handles the websocket connection to the GoJuju API backend.
@@ -681,8 +698,37 @@ YUI.add('juju-env-go', function(Y) {
        @return {undefined} Nothing.
      */
     handleCharmInfo: function(userCallback, data) {
+      // Transform subsets of data (config options, peers, provides, requires)
+      // returned by juju-core into that suitable for the user callback.
+      var parseItems = function(items) {
+        var result = {};
+        Y.each(items, function(value, key) {
+          result[key] = lowerObjectKeys(value);
+        });
+        return result;
+      };
+      // Build the transformed data structure.
+      var result,
+          response = data.Response;
+      if (!Y.Object.isEmpty(response)) {
+        var meta = response.Meta;
+        result = {
+          config: {options: parseItems(response.Config.Options)},
+          peers: parseItems(meta.Peers),
+          provides: parseItems(meta.Provides),
+          requires: parseItems(meta.Requires),
+          url: response.URL,
+          revision: response.Revision,
+          description: meta.Description,
+          format: meta.Format,
+          name: meta.Name,
+          subordinate: meta.Subordinate,
+          summary: meta.Summary
+        };
+      }
       var transformedData = {
-        err: data.Error
+        err: data.Error,
+        result: result
       };
       // Call the original user callback.
       userCallback(transformedData);
@@ -691,6 +737,7 @@ YUI.add('juju-env-go', function(Y) {
   });
 
   environments.GoEnvironment = GoEnvironment;
+  environments.lowerObjectKeys = lowerObjectKeys;
 
 }, '0.1.0', {
   requires: [
