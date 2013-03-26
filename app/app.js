@@ -347,7 +347,7 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('providerTypeChange', this.onProviderTypeChange);
 
       // Once the user logs in, we need to redraw.
-      this.env.on('loginComplete', this.onLogin, this);
+      this.env.after('login', this.onLogin, this);
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);
@@ -788,7 +788,7 @@ YUI.add('juju-gui', function(Y) {
       if (evt.data.result) {
         var mask = Y.one('#full-screen-mask');
         if (mask) {
-          mask.hide();
+          mask.setStyle('display', 'none');
           // Stop the animated loading spinner.
           if (spinner) {
             spinner.stop();
