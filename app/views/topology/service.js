@@ -113,7 +113,7 @@ YUI.add('juju-topology-service', function(Y) {
           topo.service_boxes[
               e.currentTarget.one('text tspan.name').get('text')],
           this,
-          // Specifying the eventt ype to avoid d3.mouse() error
+          // Specifying the event ype to avoid d3.mouse() error
           'touch'
       );
     },
