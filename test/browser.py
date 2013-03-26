@@ -187,7 +187,8 @@ class TestCase(unittest.TestCase):
         if exe('return app.env.userIsAuthenticated;'):
             return
         exe('app.env.setCredentials({user: "admin", password: "admin"});'
-            'app.env.login();')
+            'app.env.login();'
+            'Y.one("#full-screen-mask").setStyle("display", "none");')
         self.wait_for_script('return app.env.userIsAuthenticated;')
 
     @webdriverError()

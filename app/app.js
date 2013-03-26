@@ -788,7 +788,7 @@ YUI.add('juju-gui', function(Y) {
       if (evt.data.result) {
         var mask = Y.one('#full-screen-mask');
         if (mask) {
-          mask.setStyle('display', 'none');
+          mask.hide();
           // Stop the animated loading spinner.
           if (spinner) {
             spinner.stop();
