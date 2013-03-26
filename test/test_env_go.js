@@ -13,18 +13,16 @@
       });
     });
 
-    beforeEach(function(done) {
+    beforeEach(function() {
       conn = new utils.SocketStub();
       env = juju.newEnvironment({
         conn: conn, user: 'user', password: 'password'
       }, 'go');
       env.connect();
-      done();
     });
 
-    afterEach(function(done)  {
+    afterEach(function()  {
       env.destroy();
-      done();
     });
 
     it('sends the correct login message', function() {
@@ -47,7 +45,7 @@
       assert.isTrue(env.failedAuthentication);
     });
 
-    it('fires a login event on successful login', function(done) {
+    it('fires a login event on successful login', function() {
       var loginFired = false;
       var result;
       env.on('login', function(evt) {
@@ -59,10 +57,9 @@
       conn.msg({RequestId: 1, Response: {}});
       assert.isTrue(loginFired);
       assert.isTrue(result);
-      done();
     });
 
-    it('fires a login event on failed login', function(done) {
+    it('fires a login event on failed login', function() {
       var loginFired = false;
       var result;
       env.on('login', function(evt) {
@@ -74,7 +71,6 @@
       conn.msg({RequestId: 1, Error: 'Invalid user or password'});
       assert.isTrue(loginFired);
       assert.isFalse(result);
-      done();
     });
 
     it('avoids sending login requests without credentials', function() {
@@ -83,20 +79,28 @@
       assert.equal(0, conn.messages.length);
     });
 
-    it('calls environmentInfo on successful login', function(done) {
+    it('calls environmentInfo and watchAll ofter login', function() {
       env.login();
       // Assume login to be the first request.
       conn.msg({RequestId: 1, Response: {}});
-      var last_message = conn.last_message();
+      var environmentInfoMessage = conn.last_message(2);
       // EnvironmentInfo is the second request.
-      var expected = {
+      var environmentInfoExpected = {
         Type: 'Client',
         Request: 'EnvironmentInfo',
         RequestId: 2,
         Params: {}
       };
-      assert.deepEqual(expected, last_message);
-      done();
+      assert.deepEqual(environmentInfoExpected, environmentInfoMessage);
+      var watchAllMessage = conn.last_message();
+      // EnvironmentInfo is the second request.
+      var watchAllExpected = {
+        Type: 'Client',
+        Request: 'WatchAll',
+        RequestId: 3,
+        Params: {}
+      };
+      assert.deepEqual(watchAllExpected, watchAllMessage);
     });
 
     it('sends the correct request for environment info', function() {
@@ -649,6 +653,191 @@
       assert.equal(endpoint_a, 'yoursql:database');
       assert.equal(endpoint_b, 'wordpress:website');
       assert.equal(err, 'service "yoursql" not found');
+    });
+
+    it('provides for a missing Params', function() {
+      // If no "Params" are provided in an RPC call an empty one is added.
+      var op = {};
+      env._send_rpc(op);
+      assert.deepEqual(op.Params, {});
+    });
+
+    it('can watch all changes', function() {
+      env._watchAll();
+      msg = conn.last_message();
+      assert.equal(msg.Type, 'Client');
+      assert.equal(msg.Request, 'WatchAll');
+    });
+
+    it('can retrieve the next set of environment changes', function() {
+      // This is normally set by _watchAll, we'll fake it here.
+      env._allWatcherId = 42;
+      env._next();
+      msg = conn.last_message();
+      assert.equal(msg.Type, 'AllWatcher');
+      assert.isTrue('Id' in msg.Params);
+      assert.equal(msg.Request, 'Next');
+    });
+
+    it('fires "_rpc_response" message after an RPC response', function(done) {
+      // We don't want the real response, we just want to be sure the event is
+      // fired.
+      env.detach('_rpc_response');
+      env.on('_rpc_response', function(data) {
+        done();
+      });
+      // Calling this sets up the callback.
+      env._next();
+      env._txn_callbacks[env._counter].call(env, {});
+      // The only test assertion is that done (above) is called.
+    });
+
+    it('fires "delta" when handling an RPC response', function(done) {
+      env.detach('delta');
+      var callbackData = {Response: {Deltas: [['service', 'deploy', {}]]}};
+      env.on('delta', function(data) {
+        console.log(data.result);
+        done();
+      });
+      env._handleRpcResponse(callbackData);
+    });
+
+  });
+
+})();
+
+(function() {
+
+  describe('Go Juju environment service entity converter', function() {
+    var environments, utils, Y, converter, entityInfoConverters;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+        environments = Y.namespace('juju.environments');
+        utils = Y.namespace('juju-tests.utils');
+        converter = environments.entityInfoConverters.service;
+        entityInfoConverters = environments.entityInfoConverters;
+        done();
+      });
+    });
+
+
+    it('exists', function() {
+      assert.isTrue('service' in entityInfoConverters);
+    });
+
+    it('converts "Name" to "id"', function() {
+      var converted = converter({Name: 'service name'});
+      assert.isTrue('id' in converted);
+      assert.equal('service name', converted.id);
+    });
+
+    it('converts "Exposed" to "exposed"', function() {
+      var converted = converter({Exposed: true});
+      assert.isTrue('exposed' in converted);
+      assert.isTrue(converted.exposed);
+    });
+
+  });
+
+})();
+
+(function() {
+
+  describe('Go Juju environment unit entity converter', function() {
+    var environments, utils, Y, converter, entityInfoConverters;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+        environments = Y.namespace('juju.environments');
+        utils = Y.namespace('juju-tests.utils');
+        converter = environments.entityInfoConverters.unit;
+        entityInfoConverters = environments.entityInfoConverters;
+        done();
+      });
+    });
+
+
+    it('exists', function() {
+      assert.isTrue('unit' in entityInfoConverters);
+    });
+
+    it('converts "Name" to "id"', function() {
+      var converted = converter({Name: 'unit name'});
+      assert.isTrue('id' in converted);
+      assert.equal('unit name', converted.id);
+    });
+
+    it('converts "Service" to "service"', function() {
+      var converted = converter({Service: 'a service'});
+      assert.isTrue('service' in converted);
+      assert.equal('a service', converted.service);
+    });
+
+  });
+
+})();
+
+(function() {
+
+  describe('Go Juju environment relation entity converter', function() {
+    var environments, utils, Y, converter, entityInfoConverters;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+        environments = Y.namespace('juju.environments');
+        utils = Y.namespace('juju-tests.utils');
+        converter = environments.entityInfoConverters.relation;
+        entityInfoConverters = environments.entityInfoConverters;
+        done();
+      });
+    });
+
+
+    it('exists', function() {
+      assert.isTrue('relation' in entityInfoConverters);
+    });
+
+    it('converts "Name" to "id"', function() {
+      var converted = converter({Key: 'relation name'});
+      assert.isTrue('id' in converted);
+      assert.equal('relation name', converted.id);
+    });
+
+  });
+
+})();
+
+(function() {
+
+  describe('Go Juju environment machine entity converter', function() {
+    var environments, utils, Y, converter, entityInfoConverters;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+        environments = Y.namespace('juju.environments');
+        utils = Y.namespace('juju-tests.utils');
+        converter = environments.entityInfoConverters.machine;
+        entityInfoConverters = environments.entityInfoConverters;
+        done();
+      });
+    });
+
+
+    it('exists', function() {
+      assert.isTrue('machine' in entityInfoConverters);
+    });
+
+    it('converts "Id" to "id"', function() {
+      var converted = converter({Id: 'machine ID'});
+      assert.isTrue('id' in converted);
+      assert.equal('machine ID', converted.id);
+    });
+
+    it('converts "InstanceId" to "instance_id"', function() {
+      var converted = converter({InstanceId: 'instance ID'});
+      assert.isTrue('instance_id' in converted);
+      assert.equal('instance ID', converted.instance_id);
     });
 
   });

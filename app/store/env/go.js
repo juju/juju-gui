@@ -29,6 +29,56 @@ YUI.add('juju-env-go', function(Y) {
 
   GoEnvironment.NAME = 'go-env';
 
+  var entityInfoConverters = {
+    /**
+      Convert a Go style entity info into the expected legacy format.
+
+      @param {Object} entityInfo The JSON entity information from Go.
+      @return {Object} The legacy JSON data that the GUI expects.
+     */
+    service: function(entityInfo) {
+      return {
+        id: entityInfo.Name,
+        exposed: entityInfo.Exposed // XXX and more stuff
+      };
+    },
+    /**
+      Convert a Go style entity info into the expected legacy format.
+
+      @param {Object} entityInfo The JSON entity information from Go.
+      @return {Object} The legacy JSON data that the GUI expects.
+     */
+    unit: function(entityInfo) {
+      return {
+        id: entityInfo.Name,
+        service: entityInfo.Service // XXX and more stuff
+      };
+    },
+    /**
+      Convert a Go style entity info into the expected legacy format.
+
+      @param {Object} entityInfo The JSON entity information from Go.
+      @return {Object} The legacy JSON data that the GUI expects.
+     */
+    relation: function(entityInfo) {
+      return {
+        id: entityInfo.Key // XXX and more stuff
+      };
+    },
+    /**
+      Convert a Go style entity info into the expected legacy format.
+
+      @param {Object} entityInfo The JSON entity information from Go.
+      @return {Object} The legacy JSON data that the GUI expects.
+     */
+    machine: function(entityInfo) {
+      return {
+        id: entityInfo.Id,
+        instance_id: entityInfo.InstanceId // XXX and more stuff
+      };
+    }
+  };
+
   Y.extend(GoEnvironment, environments.BaseEnvironment, {
 
     /**
@@ -41,7 +91,26 @@ YUI.add('juju-env-go', function(Y) {
       // Define the default user name for this environment. It will appear as
       // predefined value in the login mask.
       this.defaultUser = 'user-admin';
+      this.on('_rpc_response', this._handleRpcResponse, this);
     },
+
+    /**
+      XXX FAKE FAKE FAKE, does not do anything.
+
+      Get the available endpoints (by interface) for a collection of
+      services.
+
+      @method get_endpoints
+      @param {Array} services Zero or more currently deployed services for
+          which the endpoints should be collected.  Specifying an empty array
+          indicates that all deployed services should be analyzed.
+      @param {Function} callback A callable that must be called once the
+         operation is performed.
+      @return {undefined} Sends a message to the server only.
+     */
+    get_endpoints: function(services, callback) {
+    },
+
 
     /**
      * See "app.store.env.base.BaseEnvironment.dispatch_result".
@@ -76,8 +145,80 @@ YUI.add('juju-env-go', function(Y) {
         this._txn_callbacks[tid] = callback;
       }
       op.RequestId = tid;
+      if (!op.Params) {
+        op.Params = {};
+      }
       var msg = Y.JSON.stringify(op);
       this.ws.send(msg);
+    },
+
+    /**
+      Begin watching all Juju status.
+
+      @method _watchAll
+      @private
+      @return {undefined} Sends a message to the server only.
+     */
+    _watchAll: function() {
+      this._send_rpc(
+          {
+            Type: 'Client',
+            Request: 'WatchAll'
+          },
+          function(data) {
+            if (data.Error) {
+              console.log('aiiiiie!'); // retry and eventually alert user XXX
+            } else {
+              this._allWatcherId = data.Response.AllWatcherId;
+              this._next();
+            }
+          }
+      );
+    },
+
+    /**
+      Process an incoming response to an RPC request.
+
+      @method _handleRpcResponse
+      @param {Object} data The data returned by the server.
+      @return {undefined} Nothing.
+     */
+    _handleRpcResponse: function(data) {
+      // We do this early to get a response back fast.  Might be a bad
+      // idea. :-)
+      this._next();
+      // data.Deltas has our stuff.  We need to translate delta
+      // events based on the deltas we got.
+      var deltas = [];
+      data.Response.Deltas.forEach(function(delta) {
+        var kind = delta[0], operation = delta[1], entityInfo = delta[2];
+        var converter = entityInfoConverters[kind];
+        deltas.push([kind, operation, converter(entityInfo)]);
+      });
+      this.fire('delta', {data: {result: deltas}});
+    },
+
+    /**
+      Get the next batch of deltas from the Juju status.
+
+      @method _next
+      @private
+      @return {undefined} Sends a message to the server only.
+     */
+    _next: function() {
+      this._send_rpc({
+        Type: 'AllWatcher',
+        Request: 'Next',
+        Params: {
+          Id: this._allWatcherId
+        }
+      }, function(data) {
+        if (data.Error) {
+          console.log('aiiiiie!'); // XXX
+        } else {
+          this.fire('_rpc_response', data);
+        }
+      });
     },
 
     /**
@@ -88,10 +229,12 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Nothing.
      */
     handleLogin: function(data) {
+      this.pendingLoginResponse = false;
       this.userIsAuthenticated = !data.Error;
       if (this.userIsAuthenticated) {
         // If login succeeded retrieve the environment info.
         this.environmentInfo();
+        this._watchAll();
       } else {
         // If the credentials were rejected remove them.
         this.setCredentials(null);
@@ -109,7 +252,7 @@ YUI.add('juju-env-go', function(Y) {
      */
     login: function() {
       // If the user is already authenticated there is nothing to do.
-      if (this.userIsAuthenticated) {
+      if (this.userIsAuthenticated || this.pendingLoginResponse) {
         return;
       }
       var credentials = this.getCredentials();
@@ -122,6 +265,7 @@ YUI.add('juju-env-go', function(Y) {
             Password: credentials.password
           }
         }, this.handleLogin);
+        this.pendingLoginResponse = true;
       } else {
         console.warn('Attempted login without providing credentials.');
         this.fire('login', {data: {result: false}});
@@ -156,8 +300,7 @@ YUI.add('juju-env-go', function(Y) {
     environmentInfo: function() {
       this._send_rpc({
         Type: 'Client',
-        Request: 'EnvironmentInfo',
-        Params: {}
+        Request: 'EnvironmentInfo'
       }, this.handleEnvironmentInfo);
     },
 
@@ -587,6 +730,7 @@ YUI.add('juju-env-go', function(Y) {
   });
 
   environments.GoEnvironment = GoEnvironment;
+  environments.entityInfoConverters = entityInfoConverters;
 
 }, '0.1.0', {
   requires: [

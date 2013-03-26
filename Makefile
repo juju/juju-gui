@@ -237,7 +237,7 @@ $(JAVASCRIPT_LIBRARIES): | node_modules/yui node_modules/d3
 		app/assets/javascripts/d3.v2.min.js
 
 gjslint: virtualenv/bin/gjslint
-	virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
+	virtualenv/bin/gjslint --unix --strict --nojsdoc --jslint_error=all \
 	    --custom_jsdoc_tags module,main,class,method,event,property,attribute,submodule,namespace,extends,config,constructor,static,final,readOnly,writeOnce,optional,required,param,return,for,type,private,protected,requires,default,uses,example,chainable,deprecated,since,async,beta,bubbles,extension,extensionfor,extension_for \
 		-x $(LINT_IGNORE) $(JSFILES)
 
