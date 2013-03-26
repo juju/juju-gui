@@ -30,7 +30,7 @@ class TestBasics(browser.TestCase):
         # "JavaScript error (WARNING: The server did not provide any stacktrace
         # information)""
         self.wait_for_css_selector('svg')
-        script = 'return app.env.get("connected");'
+        script = 'return app && app.env && app.env.get("connected");'
         self.wait_for_script(script, 'Environment not connected.')
 
     def test_gui_unit_tests(self):
@@ -45,9 +45,9 @@ class TestBasics(browser.TestCase):
         self.wait_for_css_selector('#mocha-stats')
         try:
             total, failures = self.wait_for(
-                tests_completed, 'Unable to complete test run.', timeout=60)
+                tests_completed, 'Unable to complete test run.', timeout=90)
         except exceptions.TimeoutException:
-            print(driver.execute_script('return testRunner.stats;')) # XXX
+            print(self.driver.execute_script('return testRunner.stats;')) # XXX
             raise
 
         if failures:
@@ -80,6 +80,7 @@ class TestDeploy(browser.TestCase):
         self.addCleanup(self.restart_api)
         self.load()
         self.handle_browser_warning()
+        self.handle_login()
 
         def charm_panel_loaded(driver):
             """Wait for the charm panel to be ready and displayed."""

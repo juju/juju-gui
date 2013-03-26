@@ -186,10 +186,6 @@ class TestCase(unittest.TestCase):
         exe = self.driver.execute_script
         if exe('return app.env.userIsAuthenticated;'):
             return
-        data = exe(
-            'return [app.env.failedAuthentication, '
-                    'app.env.getCredentials()];')
-        print('Unexpected initial authentication state:', data)  # XXX improve
         exe('app.env.failedAuthentication = false;'
             'app.env.setCredentials({user: "admin", password: "admin"});'
             'app.env.login();')
