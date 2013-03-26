@@ -171,7 +171,6 @@ class TestCase(unittest.TestCase):
                 'app.env.userIsAuthenticated || '
                 '!this.env.getCredentials() ||'
                 '!this.env.getCredentials().areAvailable);')
-        self.wait_for_css_selector('body')
         self.wait_for_script(check_script)
         exe = self.driver.execute_script
         if exe('return app.env.userIsAuthenticated;'):
