@@ -201,7 +201,7 @@ YUI.add('juju-env-python', function(Y) {
        @return {undefined} Sends a message to the server only.
      */
     get_charm: function(charmURL, callback) {
-      this._send_rpc({'op': 'get_charm', 'charm_url': charmURL}, callback);
+      this._send_rpc({op: 'get_charm', charm_url: charmURL}, callback);
     },
 
     get_service: function(service_name, callback) {

@@ -682,12 +682,7 @@
       assert.deepEqual(expected, last_message);
     });
 
-    it('successfully retrieves information about a charm', function() {
-      var err, result;
-      env.get_charm('cs:precise/wordpress-10', function(data) {
-        err = data.err;
-        result = data.result;
-      });
+    it('successfully retrieves information about a charm', function(done) {
       // Define a response example.
       var response = {
         Config: {
@@ -748,11 +743,6 @@
         Revision: 10,
         URL: 'cs:precise/wordpress-10'
       };
-      // Mimic response, assuming CharmInfo to be the first request.
-      conn.msg({
-        RequestId: 1,
-        Response: response
-      });
       // Define expected options.
       var options = response.Config.Options;
       var expectedOptions = {
@@ -807,35 +797,45 @@
           scope: require2.Scope
         }
       };
-      // Ensure the result is correctly generated.
-      assert.isUndefined(err);
-      assert.deepEqual({options: expectedOptions}, result.config);
-      assert.deepEqual(expectedPeers, result.peers);
-      assert.deepEqual(expectedProvides, result.provides);
-      assert.deepEqual(expectedRequires, result.requires);
-      assert.equal(response.URL, result.url);
-      // The result is enriched with additional info returned by juju-core.
-      assert.equal(response.Revision, result.revision);
-      assert.equal(meta.Description, result.description);
-      assert.equal(meta.Format, result.format);
-      assert.equal(meta.Name, result.name);
-      assert.equal(meta.Subordinate, result.subordinate);
-      assert.equal(meta.Summary, result.summary);
+      env.get_charm('cs:precise/wordpress-10', function(data) {
+        var err = data.err,
+            result = data.result;
+        // Ensure the result is correctly generated.
+        assert.isUndefined(err);
+        assert.deepEqual({options: expectedOptions}, result.config);
+        assert.deepEqual(expectedPeers, result.peers);
+        assert.deepEqual(expectedProvides, result.provides);
+        assert.deepEqual(expectedRequires, result.requires);
+        assert.equal(response.URL, result.url);
+        // The result is enriched with additional info returned by juju-core.
+        assert.equal(response.Revision, result.revision);
+        assert.equal(meta.Description, result.description);
+        assert.equal(meta.Format, result.format);
+        assert.equal(meta.Name, result.name);
+        assert.equal(meta.Subordinate, result.subordinate);
+        assert.equal(meta.Summary, result.summary);
+        done();
+      });
+      // Mimic response, assuming CharmInfo to be the first request.
+      conn.msg({
+        RequestId: 1,
+        Response: response
+      });
     });
 
-    it('handles failed attempt to retrieve charm info', function() {
-      var err, result;
+    it('handles failed attempt to retrieve charm info', function(done) {
       env.get_charm('cs:precise/wordpress-10', function(data) {
-        err = data.err;
-        result = data.result;
+        var err = data.err,
+            result = data.result;
+        assert.equal('charm not found', err);
+        assert.isUndefined(result);
+        done();
       });
       // Mimic response, assuming CharmInfo to be the first request.
       conn.msg({
         RequestId: 1,
         Error: 'charm not found'
       });
-      assert.equal('charm not found', err);
-      assert.isUndefined(result);
     });
 
   });

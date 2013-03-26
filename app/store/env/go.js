@@ -25,7 +25,7 @@ YUI.add('juju-env-go', function(Y) {
      @return {Object} The output object, containing lowercased keys.
    */
   var lowerObjectKeys = function(obj) {
-    var newObj = {};
+    var newObj = Object.create(null);
     Y.each(obj, function(value, key) {
       newObj[key.toLowerCase()] = value;
     });
@@ -615,6 +615,8 @@ YUI.add('juju-env-go', function(Y) {
        @return {undefined} Sends a message to the server only.
      */
     get_charm: function(charmURL, callback) {
+      // Since the callback argument of this._send_rpc is optional, if a
+      // callback is not provided, we can leave intermediateCallback undefined.
       var intermediateCallback;
       if (callback) {
         // Curry the callback and service.  No context is passed.
