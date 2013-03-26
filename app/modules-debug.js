@@ -265,7 +265,7 @@ var GlobalConfig = {
         },
 
         'subapp-browser-fullscreen': {
-          fullpath: '/juju-ui/subapps/browser/views/fullscreen.js'
+          fullpath: '/juju-ui/subapps/browser/views/fullscreen.js',
           requires: ['subapp-browser-fullscreen']
         },
 
