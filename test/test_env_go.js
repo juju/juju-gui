@@ -675,8 +675,10 @@
       env._next();
       msg = conn.last_message();
       assert.equal(msg.Type, 'AllWatcher');
-      assert.isTrue('Id' in msg.Params);
       assert.equal(msg.Request, 'Next');
+      assert.isTrue('Id' in msg.Params);
+      // This response is in fact to the sent _next request.
+      assert.equal(msg.Params.Id, env._allWatcherId);
     });
 
     it('fires "_rpc_response" message after an RPC response', function(done) {
@@ -709,12 +711,11 @@
 (function() {
 
   describe('Go Juju environment service entity converter', function() {
-    var environments, utils, Y, converter, entityInfoConverters;
+    var environments, Y, converter, entityInfoConverters;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
         environments = Y.namespace('juju.environments');
-        utils = Y.namespace('juju-tests.utils');
         converter = environments.entityInfoConverters.service;
         entityInfoConverters = environments.entityInfoConverters;
         done();
@@ -745,12 +746,11 @@
 (function() {
 
   describe('Go Juju environment unit entity converter', function() {
-    var environments, utils, Y, converter, entityInfoConverters;
+    var environments, Y, converter, entityInfoConverters;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
         environments = Y.namespace('juju.environments');
-        utils = Y.namespace('juju-tests.utils');
         converter = environments.entityInfoConverters.unit;
         entityInfoConverters = environments.entityInfoConverters;
         done();
@@ -781,12 +781,11 @@
 (function() {
 
   describe('Go Juju environment relation entity converter', function() {
-    var environments, utils, Y, converter, entityInfoConverters;
+    var environments, Y, converter, entityInfoConverters;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
         environments = Y.namespace('juju.environments');
-        utils = Y.namespace('juju-tests.utils');
         converter = environments.entityInfoConverters.relation;
         entityInfoConverters = environments.entityInfoConverters;
         done();
@@ -811,12 +810,11 @@
 (function() {
 
   describe('Go Juju environment machine entity converter', function() {
-    var environments, utils, Y, converter, entityInfoConverters;
+    var environments, Y, converter, entityInfoConverters;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
         environments = Y.namespace('juju.environments');
-        utils = Y.namespace('juju-tests.utils');
         converter = environments.entityInfoConverters.machine;
         entityInfoConverters = environments.entityInfoConverters;
         done();
