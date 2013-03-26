@@ -651,6 +651,172 @@
       assert.equal(err, 'service "yoursql" not found');
     });
 
+    it('sends the correct CharmInfo message', function() {
+      env.get_charm('cs:precise/wordpress-10');
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'CharmInfo',
+        Params: {CharmURL: 'cs:precise/wordpress-10'},
+        RequestId: 1
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully retrieves information about a charm', function() {
+      var err, result;
+      env.get_charm('cs:precise/wordpress-10', function(data) {
+        err = data.err;
+        result = data.result;
+      });
+      // Build a response example.
+      var response = {
+        Config: {
+          Options: {
+            debug: {
+              Default: 'no',
+              Description: 'Setting this option to "yes" will ...',
+              Title: '',
+              Type: 'string'
+            },
+            engine: {
+              Default: 'nginx',
+              Description: 'Two web server engines are supported...',
+              Title: '',
+              Type: 'string'
+            }
+          }
+        },
+        Meta: {
+          Categories: null,
+          Description: 'This will install and setup WordPress...',
+          Format: 1,
+          Name: 'wordpress',
+          OldRevision: 0,
+          Peers: {
+            loadbalancer: {
+              Interface: 'reversenginx',
+              Limit: 1,
+              Optional: false,
+              Scope: 'global'
+            }
+          },
+          Provides: {
+            website: {
+              Interface: 'http',
+              Limit: 0,
+              Optional: false,
+              Scope: 'global'
+            }
+          },
+          Requires: {
+            cache: {
+              Interface: 'memcache',
+              Limit: 1,
+              Optional: false,
+              Scope: 'global'
+            },
+            db: {
+              Interface: 'mysql',
+              Limit: 1,
+              Optional: false,
+              Scope: 'global'
+            }
+          },
+          Subordinate: false,
+          Summary: 'WordPress is a full featured web blogging tool...'
+        },
+        Revision: 10,
+        URL: 'cs:precise/wordpress-10'
+      };
+      // Mimic response, assuming CharmInfo to be the first request.
+      conn.msg({
+        RequestId: 1,
+        Response: response
+      });
+      // Define expected options.
+      var options = response.Config.Options;
+      var expectedOptions = {
+        debug: {
+          'default': options.debug.Default,
+          description: options.debug.Description,
+          type: options.debug.Type
+        },
+        engine: {
+          'default': options.engine.Default,
+          description: options.engine.Description,
+          type: options.engine.Type
+        }
+      };
+      // Define expected peers.
+      var meta = response.Meta;
+      var peer = meta.Peers.loadbalancer;
+      var expectedPeers = {
+        loadbalancer: {
+          interface: peer.Interface,
+          limit: peer.Limit,
+          optional: peer.Optional,
+          scope: peer.Scope
+        }
+      };
+      // Define expected provides.
+      var provide = meta.Provides.website;
+      var expectedProvides = {
+        website: {
+          interface: provide.Interface,
+          limit: provide.Limit,
+          optional: provide.Optional,
+          scope: provide.Scope
+        }
+      };
+      // Define expected requires.
+      var require1 = meta.Requires.cache;
+      var require2 = meta.Requires.db;
+      var expectedRequires = {
+        cache: {
+          interface: require1.Interface,
+          limit: require1.Limit,
+          optional: require1.Optional,
+          scope: require1.Scope
+        },
+        db: {
+          interface: require2.Interface,
+          limit: require2.Limit,
+          optional: require2.Optional,
+          scope: require2.Scope
+        }
+      };
+      // Ensure the result is correctly generated.
+      assert.isUndefined(err);
+      assert.deepEqual({options: expectedOptions}, result.config);
+      assert.deepEqual(expectedPeers, result.peers);
+      assert.deepEqual(expectedProvides, result.provides);
+      assert.deepEqual(expectedRequires, result.requires);
+      assert.equal(response.URL, result.url);
+      // The result is enriched with additional info returned by juju-core.
+      assert.equal(response.Revision, result.revision);
+      assert.equal(meta.Description, result.description);
+      assert.equal(meta.Format, result.format);
+      assert.equal(meta.Name, result.name);
+      assert.equal(meta.Subordinate, result.subordinate);
+      assert.equal(meta.Summary, result.summary);
+    });
+
+    it('handles failed attempt to retrieve charm info', function() {
+      var err, result;
+      env.get_charm('cs:precise/wordpress-10', function(data) {
+        err = data.err;
+        result = data.result;
+      });
+      // Mimic response, assuming CharmInfo to be the first request.
+      conn.msg({
+        RequestId: 1,
+        Error: 'charm not found'
+      });
+      assert.equal('charm not found', err);
+      assert.isUndefined(result);
+    });
+
   });
 
 })();

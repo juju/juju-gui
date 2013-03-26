@@ -638,7 +638,7 @@ YUI.add('juju-env-go', function(Y) {
             },
             'Meta': {
               'Categories': null,
-              'Description': u"This will install and setup WordPress...",
+              'Description': 'This will install and setup WordPress...',
               'Format': 1,
               'Name': 'wordpress',
               'OldRevision': 0,
@@ -657,7 +657,7 @@ YUI.add('juju-env-go', function(Y) {
                   'Optional': false,
                   'Scope': 'global'
                 }
-              }
+              },
               'Requires': {
                 'cache': {
                   'Interface': 'memcache',
