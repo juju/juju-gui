@@ -695,6 +695,8 @@ YUI.add('juju-env-go', function(Y) {
             'Revision': 10,
             'URL': 'cs:precise/wordpress-10'
           }
+        This data will be parsed and transformed before sending the final
+        result to the callback.
        @return {undefined} Nothing.
      */
     handleCharmInfo: function(userCallback, data) {

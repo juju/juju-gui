@@ -774,7 +774,7 @@
       var peer = meta.Peers.loadbalancer;
       var expectedPeers = {
         loadbalancer: {
-          interface: peer.Interface,
+          'interface': peer.Interface,
           limit: peer.Limit,
           optional: peer.Optional,
           scope: peer.Scope
@@ -784,7 +784,7 @@
       var provide = meta.Provides.website;
       var expectedProvides = {
         website: {
-          interface: provide.Interface,
+          'interface': provide.Interface,
           limit: provide.Limit,
           optional: provide.Optional,
           scope: provide.Scope
@@ -795,13 +795,13 @@
       var require2 = meta.Requires.db;
       var expectedRequires = {
         cache: {
-          interface: require1.Interface,
+          'interface': require1.Interface,
           limit: require1.Limit,
           optional: require1.Optional,
           scope: require1.Scope
         },
         db: {
-          interface: require2.Interface,
+          'interface': require2.Interface,
           limit: require2.Limit,
           optional: require2.Optional,
           scope: require2.Scope
