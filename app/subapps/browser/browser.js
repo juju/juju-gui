@@ -20,13 +20,22 @@ YUI.add('subapp-browser', function(Y) {
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
 
+    /**
+     * Some routes might have sub parts that hint to where a user wants focus.
+     * In particular we've got the tabs that might have focus. They are the
+     * last optional component of some of the routes.
+     *
+     * @method _getSubPath
+     * @param {String} path the full path to search for the sub path.
+     *
+     */
     _getSubPath: function(path) {
       var reLastWord = /[^\/]*\/?$/,
           lastWords = path.match(reLastWord);
       if (lastWords.length) {
-          return lastWords[0].replace('/', '');
+        return lastWords[0].replace('/', '');
       } else {
-          return undefined;
+        return undefined;
       }
     },
 
@@ -34,7 +43,7 @@ YUI.add('subapp-browser', function(Y) {
      * Generate a standard shared set of cfg all Views can expect to see.
      *
      * @method _getViewCfg
-     * @params {Object} cfg additional config to merge into the default view
+     * @param {Object} cfg additional config to merge into the default view
      * config.
      *
      */
@@ -56,7 +65,7 @@ YUI.add('subapp-browser', function(Y) {
       },
       fullscreenCharm: {
         type: 'juju.browser.views.FullScreen',
-        preserve: true
+        preserve: false
       },
       sidebar: {
         type: 'juju.browser.views.Sidebar',

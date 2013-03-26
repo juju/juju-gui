@@ -21,6 +21,14 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
 
     template: views.Templates.fullscreen,
 
+    /**
+     * Render out the main search widget and controls shared across various
+     * views.
+     *
+     * @method _renderSearchWidget
+     * @param {Node} node the node to render into.
+     *
+     */
     _renderSearchWidget: function(node) {
       this.search = new widgets.browser.Search({
         fullscreenTarget: this._fullscreenTarget
@@ -73,7 +81,7 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
           this.tabview.render();
         },
         'failure': this.apiFailure
-        }, this);
+      }, this);
 
       if (!Y.Lang.isValue(container)) {
         container = this.get('container');

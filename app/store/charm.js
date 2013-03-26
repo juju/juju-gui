@@ -182,6 +182,15 @@ YUI.add('juju-charm-store', function(Y) {
       });
     },
 
+    /**
+     * Api call to fetch a charm's details.
+     *
+     * @method charm
+     * @param {String} charmID the charm to fetch.
+     * @param {Object} callbacks the success/failure callbacks to use.
+     * @param {Object} bindScopr the scope of *this* in the callbacks.
+     *
+     */
     charm: function(charmID, callbacks, bindScope) {
       var endpoint = 'charm/' + charmID;
       if (bindScope) {
