@@ -2,6 +2,25 @@
 
 (function() {
 
+  describe('Go Juju environment utilities', function() {
+    var environments, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
+        environments = Y.namespace('juju.environments');
+        done();
+      });
+    });
+
+    it('provides a way to lowercase the keys of an object', function() {
+      var obj = {Key1: 'value1', key2: 'value2', MyThirdKey: 'value3'},
+          expected = {key1: 'value1', key2: 'value2', mythirdkey: 'value3'},
+          result = environments.lowerObjectKeys(obj);
+      assert.deepEqual(expected, result);
+    });
+
+  });
+
   describe('Go Juju environment', function() {
     var conn, endpointA, endpointB, env, juju, msg, utils, Y;
 
@@ -653,6 +672,174 @@
       assert.equal(endpoint_a, 'yoursql:database');
       assert.equal(endpoint_b, 'wordpress:website');
       assert.equal(err, 'service "yoursql" not found');
+    });
+
+    it('sends the correct CharmInfo message', function() {
+      env.get_charm('cs:precise/wordpress-10');
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'CharmInfo',
+        Params: {CharmURL: 'cs:precise/wordpress-10'},
+        RequestId: 1
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully retrieves information about a charm', function(done) {
+      // Define a response example.
+      var response = {
+        Config: {
+          Options: {
+            debug: {
+              Default: 'no',
+              Description: 'Setting this option to "yes" will ...',
+              Title: '',
+              Type: 'string'
+            },
+            engine: {
+              Default: 'nginx',
+              Description: 'Two web server engines are supported...',
+              Title: '',
+              Type: 'string'
+            }
+          }
+        },
+        Meta: {
+          Categories: null,
+          Description: 'This will install and setup WordPress...',
+          Format: 1,
+          Name: 'wordpress',
+          OldRevision: 0,
+          Peers: {
+            loadbalancer: {
+              Interface: 'reversenginx',
+              Limit: 1,
+              Optional: false,
+              Scope: 'global'
+            }
+          },
+          Provides: {
+            website: {
+              Interface: 'http',
+              Limit: 0,
+              Optional: false,
+              Scope: 'global'
+            }
+          },
+          Requires: {
+            cache: {
+              Interface: 'memcache',
+              Limit: 1,
+              Optional: false,
+              Scope: 'global'
+            },
+            db: {
+              Interface: 'mysql',
+              Limit: 1,
+              Optional: false,
+              Scope: 'global'
+            }
+          },
+          Subordinate: false,
+          Summary: 'WordPress is a full featured web blogging tool...'
+        },
+        Revision: 10,
+        URL: 'cs:precise/wordpress-10'
+      };
+      // Define expected options.
+      var options = response.Config.Options;
+      var expectedOptions = {
+        debug: {
+          'default': options.debug.Default,
+          description: options.debug.Description,
+          type: options.debug.Type,
+          title: options.debug.Title
+        },
+        engine: {
+          'default': options.engine.Default,
+          description: options.engine.Description,
+          type: options.engine.Type,
+          title: options.engine.Title
+        }
+      };
+      // Define expected peers.
+      var meta = response.Meta;
+      var peer = meta.Peers.loadbalancer;
+      var expectedPeers = {
+        loadbalancer: {
+          'interface': peer.Interface,
+          limit: peer.Limit,
+          optional: peer.Optional,
+          scope: peer.Scope
+        }
+      };
+      // Define expected provides.
+      var provide = meta.Provides.website;
+      var expectedProvides = {
+        website: {
+          'interface': provide.Interface,
+          limit: provide.Limit,
+          optional: provide.Optional,
+          scope: provide.Scope
+        }
+      };
+      // Define expected requires.
+      var require1 = meta.Requires.cache;
+      var require2 = meta.Requires.db;
+      var expectedRequires = {
+        cache: {
+          'interface': require1.Interface,
+          limit: require1.Limit,
+          optional: require1.Optional,
+          scope: require1.Scope
+        },
+        db: {
+          'interface': require2.Interface,
+          limit: require2.Limit,
+          optional: require2.Optional,
+          scope: require2.Scope
+        }
+      };
+      env.get_charm('cs:precise/wordpress-10', function(data) {
+        var err = data.err,
+            result = data.result;
+        // Ensure the result is correctly generated.
+        assert.isUndefined(err);
+        assert.deepEqual({options: expectedOptions}, result.config);
+        assert.deepEqual(expectedPeers, result.peers);
+        assert.deepEqual(expectedProvides, result.provides);
+        assert.deepEqual(expectedRequires, result.requires);
+        assert.equal(response.URL, result.url);
+        // The result is enriched with additional info returned by juju-core.
+        assert.equal(response.Revision, result.revision);
+        assert.equal(meta.Description, result.description);
+        assert.equal(meta.Format, result.format);
+        assert.equal(meta.Name, result.name);
+        assert.equal(meta.Subordinate, result.subordinate);
+        assert.equal(meta.Summary, result.summary);
+        done();
+      });
+      // Mimic response, assuming CharmInfo to be the first request.
+      conn.msg({
+        RequestId: 1,
+        Response: response
+      });
+    });
+
+    it('handles failed attempt to retrieve charm info', function(done) {
+      env.get_charm('cs:precise/wordpress-10', function(data) {
+        var err = data.err,
+            result = data.result;
+        assert.equal('charm not found', err);
+        assert.isUndefined(result);
+        done();
+      });
+      // Mimic response, assuming CharmInfo to be the first request.
+      conn.msg({
+        RequestId: 1,
+        Error: 'charm not found'
+      });
     });
 
     it('provides for a missing Params', function() {

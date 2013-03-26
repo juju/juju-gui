@@ -16,6 +16,23 @@ YUI.add('juju-env-go', function(Y) {
   };
 
   /**
+     Return an object containing all the key/value pairs of the given "obj",
+     turning all the keys to lower case.
+
+     @method lowerObjectKeys
+     @static
+     @param {Object} obj The input object.
+     @return {Object} The output object, containing lowercased keys.
+   */
+  var lowerObjectKeys = function(obj) {
+    var newObj = Object.create(null);
+    Y.each(obj, function(value, key) {
+      newObj[key.toLowerCase()] = value;
+    });
+    return newObj;
+  };
+
+  /**
    * The Go Juju environment.
    *
    * This class handles the websocket connection to the GoJuju API backend.
@@ -725,11 +742,149 @@ YUI.add('juju-env-go', function(Y) {
         endpoint_a: endpoint_a,
         endpoint_b: endpoint_b
       });
+    },
+
+    /**
+       Retrieve charm info.
+
+       @method get_charm
+       @param {String} charmURL The URL of the charm.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), and with a "result" attribute containing information
+        about the charm. The "result" object includes "config" options, a list
+        of "peers", "provides" and "requires", and the charm URL.
+       @return {undefined} Sends a message to the server only.
+     */
+    get_charm: function(charmURL, callback) {
+      // Since the callback argument of this._send_rpc is optional, if a
+      // callback is not provided, we can leave intermediateCallback undefined.
+      var intermediateCallback;
+      if (callback) {
+        // Curry the callback and service.  No context is passed.
+        intermediateCallback = Y.bind(this.handleCharmInfo, null, callback);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'CharmInfo',
+        Params: {CharmURL: charmURL}
+      }, intermediateCallback);
+    },
+
+    /**
+       Transform the data returned from juju-core 'CharmInfo' into that
+       suitable for the user callback.
+
+       @method handleCharmInfo
+       @param {Function} userCallback The callback originally submitted by the
+       call site.
+       @param {Object} data The response returned by the server. An example of
+        the "data.Response" returned by juju-core follows:
+          {
+            'Config': {
+              'Options': {
+                'debug': {
+                  'Default': 'no',
+                  'Description': 'Setting this option to "yes" will ...',
+                  'Title': '',
+                  'Type': 'string'
+                },
+                'engine': {
+                  'Default': 'nginx',
+                  'Description': 'Two web server engines are supported...',
+                  'Title': '',
+                  'Type': 'string'
+                }
+              }
+            },
+            'Meta': {
+              'Categories': null,
+              'Description': 'This will install and setup WordPress...',
+              'Format': 1,
+              'Name': 'wordpress',
+              'OldRevision': 0,
+              'Peers': {
+                'loadbalancer': {
+                  'Interface': 'reversenginx',
+                  'Limit': 1,
+                  'Optional': false,
+                  'Scope': 'global'
+                }
+              },
+              'Provides': {
+                'website': {
+                  'Interface': 'http',
+                  'Limit': 0,
+                  'Optional': false,
+                  'Scope': 'global'
+                }
+              },
+              'Requires': {
+                'cache': {
+                  'Interface': 'memcache',
+                  'Limit': 1,
+                  'Optional': false,
+                  'Scope': 'global'
+                },
+                'db': {
+                  'Interface': 'mysql',
+                  'Limit': 1,
+                  'Optional': false,
+                  'Scope': 'global'
+                }
+              },
+              'Subordinate': false,
+              'Summary': 'WordPress is a full featured web blogging tool...'
+            },
+            'Revision': 10,
+            'URL': 'cs:precise/wordpress-10'
+          }
+        This data will be parsed and transformed before sending the final
+        result to the callback.
+       @return {undefined} Nothing.
+     */
+    handleCharmInfo: function(userCallback, data) {
+      // Transform subsets of data (config options, peers, provides, requires)
+      // returned by juju-core into that suitable for the user callback.
+      var parseItems = function(items) {
+        var result = {};
+        Y.each(items, function(value, key) {
+          result[key] = lowerObjectKeys(value);
+        });
+        return result;
+      };
+      // Build the transformed data structure.
+      var result,
+          response = data.Response;
+      if (!Y.Object.isEmpty(response)) {
+        var meta = response.Meta;
+        result = {
+          config: {options: parseItems(response.Config.Options)},
+          peers: parseItems(meta.Peers),
+          provides: parseItems(meta.Provides),
+          requires: parseItems(meta.Requires),
+          url: response.URL,
+          revision: response.Revision,
+          description: meta.Description,
+          format: meta.Format,
+          name: meta.Name,
+          subordinate: meta.Subordinate,
+          summary: meta.Summary
+        };
+      }
+      var transformedData = {
+        err: data.Error,
+        result: result
+      };
+      // Call the original user callback.
+      userCallback(transformedData);
     }
 
   });
 
   environments.GoEnvironment = GoEnvironment;
+  environments.lowerObjectKeys = lowerObjectKeys;
   environments.entityInfoConverters = entityInfoConverters;
 
 }, '0.1.0', {
