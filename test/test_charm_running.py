@@ -36,23 +36,18 @@ class TestBasics(browser.TestCase):
     def test_gui_unit_tests(self):
         # Ensure Juju GUI unit tests pass.
         self.load('/test/')
-        script = """
-            var stats = testRunner.stats;
-            return [testRunner.total, stats.tests, stats.failures];
-        """
-
         def tests_completed(driver):
-            total, done, failures = driver.execute_script(script)
+            stats = driver.execute_script('return testRunner.stats;')
             # Return when tests completed or a failure occurred.
-            if (done == total) or failures:
-                return total, failures
+            if stats['end'] or stats['failures']:
+                return stats['tests'], stats['failures']
 
         self.wait_for_css_selector('#mocha-stats')
         try:
             total, failures = self.wait_for(
                 tests_completed, 'Unable to complete test run.', timeout=60)
         except exceptions.TimeoutException:
-            print(self.driver.execute_script(script))
+            print(driver.execute_script('return testRunner.stats;')) # XXX
             raise
 
         if failures:
