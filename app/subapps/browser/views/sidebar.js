@@ -19,41 +19,14 @@ YUI.add('subapp-browser-sidebar', function(Y) {
    * Sidebar master view for the gui browser.
    *
    * @class Sidebar
-   * @extends {Y.View}
+   * @extends {juju.browser.views.MainView}
    *
    */
-  ns.Sidebar = Y.Base.create('browser-view-sidebar', Y.View, [], {
-    _events: [],
+  ns.Sidebar = Y.Base.create('browser-view-sidebar', ns.MainView, [], {
+    _fullscreenTarget: '/bws/fullscreen',
+
     template: views.Templates.sidebar,
     visible: true,
-
-    /**
-     * @attribute events
-     *
-     */
-    events: {
-    },
-
-    /**
-     * Bind the non native DOM events from within the View. This includes
-     * watching widgets used for their exposed events.
-     *
-     * @method _bindEvents
-     * @private
-     *
-     */
-    _bindEvents: function() {
-      // Watch the Search widget for changes to the search params.
-      this._events.push(
-          this.search.on(
-              this.search.EVT_UPDATE_SEARCH, this._searchChanged, this)
-      );
-
-      this._events.push(
-          this.search.on(
-              this.search.EVT_TOGGLE_VIEWABLE, this._toggleSidebar, this)
-      );
-    },
 
     /**
      * Given a set of Charms generate a CharmSlider widget with that data.
@@ -99,7 +72,9 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           store = this.get('store');
 
       // build widgets used in the template.
-      this.search = new widgets.browser.Search(),
+      this.search = new widgets.browser.Search({
+        fullscreenTarget: this._fullscreenTarget
+      });
       this.search.render(tplNode.one('.bws-search'));
 
       if (typeof container !== 'object') {
@@ -150,66 +125,15 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     },
 
     /**
-     * When the search term or filter is changed, fetch new data and redraw.
-     *
-     * @method _searchChanged
-     * @param {Event} ev event object from catching changes.
-     * @private
-     *
-     */
-    _searchChanged: function(ev) {
-      console.log('Sidebar search changed.');
-    },
-
-    /**
-     * Toggle the visibility of the sidebar. Bound to nav controls in the
-     * view, however this will be expanded to be controlled from the new
-     * constant nav menu outside of the view once it's completed.
-     *
-     * @method _toggle_sidebar
-     * @param {Event} ev event to trigger the toggle.
-     *
-     */
-    _toggleSidebar: function(ev) {
-      var sidebar = Y.one('#bws-sidebar');
-
-      if (this.visible) {
-        sidebar.hide();
-        this.visible = false;
-      } else {
-        sidebar.show();
-        this.visible = true;
-      }
-    },
-
-    /**
      * Destroy this view and clear from the dom world.
      *
      * @method destructor
      *
      */
     destructor: function() {
-      console.log('sidebar view destructor');
-      Y.Array.each(this._events, function(ev) {
-        ev.detach();
-      });
-
       if (this.slider) {
         this.slider.destroy();
       }
-    },
-
-    /**
-     * General YUI initializer.
-     *
-     * @method initializer
-     * @param {Object} cfg configuration object.
-     *
-     */
-    initializer: function(cfg) {
-      this.set('store', new Y.juju.Charmworld0({
-        'apiHost': window.juju_config.charmworldURL
-      }));
     },
 
     /**
@@ -221,8 +145,8 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     render: function(container) {
       this._renderEditorialView(container);
 
-      // Bind extra events that aren't covered by the Y.View events object.
-      this._bindEvents();
+      // Bind our view to the events from the search widget used for controls.
+      this._bindSearchWidgetEvents();
     }
 
   }, {
@@ -247,6 +171,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     'browser-search-widget',
     'juju-charm-store',
     'juju-models',
+    'subapp-browser-mainview',
     'view'
   ]
 });

@@ -172,6 +172,9 @@ YUI.add('browser-search-widget', function(Y) {
 
   }, {
     ATTRS: {
+      fullscreenTarget: {
+        required: true
+      },
 
       /**
        * @attribute term

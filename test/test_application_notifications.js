@@ -240,9 +240,9 @@ describe('juju application notifications', function() {
         var module = view.topo.modules.ServiceModule;
         // The callback hides the destroy dialog at the end of the process.
         module.set('destroy_dialog', {hide: NO_OP});
-        // The _destroyCallback args are: service, view, confirm button, event.
-        var args = [{}, module, {set: NO_OP}, ERR_EV];
-        module.service_click_actions._destroyCallback.apply(module, args);
+        // The _destroyCallback args are: service, confirm button, event.
+        var args = [{}, {set: NO_OP}, ERR_EV];
+        module._destroyCallback.apply(module, args);
         assert.equal(1, db.notifications.size());
       });
 

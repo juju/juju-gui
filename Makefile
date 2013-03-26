@@ -121,6 +121,7 @@ TEMPLATE_TARGETS=$(shell find app/templates -type f ! -name '.*' ! -name '*.swp'
 SPRITE_SOURCE_FILES=$(shell find app/assets/images -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
 SPRITE_GENERATED_FILES=build-shared/juju-ui/assets/sprite.css \
 	build-shared/juju-ui/assets/sprite.png
+NON_SPRITE_IMAGES=build-shared/juju-ui/assets/images
 BUILD_FILES=build-shared/juju-ui/assets/app.js \
 	build-shared/juju-ui/assets/all-yui.js \
 	build-shared/juju-ui/assets/combined-css/all-static.css
@@ -192,6 +193,10 @@ view-docs: docs
 $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 		$(SPRITE_SOURCE_FILES)
 	node_modules/grunt/bin/grunt spritegen
+
+$(NON_SPRITE_IMAGES): 
+	mkdir -p build-shared/juju-ui/assets/images
+	cp app/assets/images/non-sprites/* build-shared/juju-ui/assets/images/
 
 $(NODE_TARGETS): package.json
 	npm install
@@ -443,7 +448,7 @@ clean-all: clean clean-deps clean-docs
 build: build-prod build-debug build-devel
 
 build-shared: $(APPCACHE) $(NODE_TARGETS) spritegen \
-	  $(BUILD_FILES) build-shared/juju-ui/version.js
+	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js
 
 # build-devel is phony. build-shared, build-debug, and build-common are real.
 build-devel: build-shared

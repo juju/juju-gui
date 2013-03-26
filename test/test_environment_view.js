@@ -711,10 +711,7 @@
          var module = view.topo.modules.RelationModule;
          var sm = view.topo.modules.ServiceModule;
 
-         sm.service_click_actions.toggleServiceMenu(
-             d3.select(service.getDOMNode()).datum(),
-             sm,
-             service);
+         sm.toggleServiceMenu(d3.select(service.getDOMNode()).datum());
          // Mock an event object so that d3.mouse does not throw a NPE.
          d3.event = {};
          add_rel.simulate('click');
