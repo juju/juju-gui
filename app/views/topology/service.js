@@ -57,9 +57,7 @@ YUI.add('juju-topology-service', function(Y) {
         dragstart: 'dragstart',
         drag: 'drag',
         dragend: 'dragend',
-        hideServiceMenu: {callback: function() {
-          this.service_click_actions.hideServiceMenu(null, this);
-        }},
+        hideServiceMenu: 'hideServiceMenu',
         clearState: 'clearStateHandler',
         rescaled: 'updateServiceMenuLocation'
       }
@@ -166,8 +164,7 @@ YUI.add('juju-topology-service', function(Y) {
       //   service_click_action.<action>
       // with the service, the SVG node, and the view
       // as arguments.
-      self.service_click_actions[curr_click_action](
-          box, self, this);
+      self[curr_click_action](box);
     },
 
     serviceDblClick: function(box, self) {
@@ -179,8 +176,8 @@ YUI.add('juju-topology-service', function(Y) {
           service = box.model;
       // The browser sends a click event right before the dblclick one, and it
       // opens the service menu: close it before moving to the service details.
-      self.service_click_actions.hideServiceMenu(null, self);
-      self.service_click_actions.show_service(service, self);
+      self.hideServiceMenu();
+      self.show_service(service);
     },
 
     serviceMouseEnter: function(box, context) {
@@ -270,7 +267,7 @@ YUI.add('juju-topology-service', function(Y) {
       var container = this.get('container'),
           topo = this.get('component');
       container.all('.environment-menu.active').removeClass('active');
-      this.service_click_actions.hideServiceMenu(null, this);
+      this.hideServiceMenu();
     },
 
     /**
@@ -283,10 +280,8 @@ YUI.add('juju-topology-service', function(Y) {
       var topo = context.get('component');
       var box = topo.get('active_service');
       var service = box.model;
-      context.service_click_actions
-             .hideServiceMenu(box, context);
-      context.service_click_actions
-             .show_service(service, context);
+      context.hideServiceMenu();
+      context.show_service(service);
     },
 
     /**
@@ -298,10 +293,8 @@ YUI.add('juju-topology-service', function(Y) {
       // Get the service element
       var topo = context.get('component');
       var box = topo.get('active_service');
-      context.service_click_actions
-             .hideServiceMenu(box, context);
-      context.service_click_actions
-             .destroyServiceConfirm(box, context);
+      context.hideServiceMenu();
+      context.destroyServiceConfirm(box);
     },
 
     serviceAddRelMouseDown: function(box, context) {
@@ -451,7 +444,7 @@ YUI.add('juju-topology-service', function(Y) {
           .removeClass('active');
 
       if (box.inDrag === views.DRAG_START) {
-        self.service_click_actions.hideServiceMenu(null, self);
+        self.hideServiceMenu();
         box.inDrag = views.DRAG_ACTIVE;
       }
       topo.fire('cancelRelationBuild');
@@ -516,11 +509,16 @@ YUI.add('juju-topology-service', function(Y) {
       // enter
       node
         .enter().append('g')
-        .attr('pointer-events', 'all') // IE doesn't drag properly without this.
-        .attr('class', function(d) {
-            return (d.subordinate ? 'subordinate ' : '') +
-                (d.pending ? 'pending ' : '') + 'service';
-          })
+        .attr({
+            'pointer-events': 'all', // IE doesn't drag properly without this.
+            'class': function(d) {
+              return (d.subordinate ? 'subordinate ' : '') +
+                  (d.pending ? 'pending ' : '') + 'service';
+            },
+            'transform': function(d) {
+              return d.translateStr;
+            }})
+          // REVIEW NOTE: transform was called after drag was bound.
         .call(this.dragBehavior)
         .attr('transform', function(d) {
             return d.translateStr;
@@ -572,8 +570,8 @@ YUI.add('juju-topology-service', function(Y) {
         .text(function(d) {return d.displayName; });
 
       node.append('text').append('tspan')
-        .attr('class', 'charm-label')
-        .attr('dy', '3em')
+        .attr({'class': 'charm-label',
+            'dy': '3em'})
         .text(function(d) { return d.charm; });
 
       // Append status charts to service nodes.
@@ -582,8 +580,8 @@ YUI.add('juju-topology-service', function(Y) {
 
       // Add a mask svg
       status_chart.append('image')
-        .attr('xlink:href', '/juju-ui/assets/svgs/service_health_mask.svg')
-        .attr('class', 'service-health-mask');
+        .attr({'xlink:href': '/juju-ui/assets/svgs/service_health_mask.svg',
+            'class': 'service-health-mask'});
 
       // Add the unit counts, visible only on hover.
       status_chart.append('text')
@@ -643,31 +641,28 @@ YUI.add('juju-topology-service', function(Y) {
         .classed('subordinate', true);
 
       // Size the node for drawing.
-      node.attr('width', function(d) {
+      node.attr({'width': function(d) {
         // NB: if a service has zero units, as is possible with
         // subordinates, then default to 1 for proper scaling, as
         // a value of 0 will return a scale of 0 (this does not
         // affect the unit count, just the scale of the service).
         var w = service_scale(d.unit_count || 1);
         d.w = w;
-        return w;
-      })
-        .attr('height', function(d) {
-            var h = service_scale(d.unit_count || 1);
-            d.h = h;
-            return h;
-          });
+        return w;},
+      'height': function(d) {
+        var h = service_scale(d.unit_count || 1);
+        d.h = h;
+        return h;
+      }
+      });
       node.select('.service-block-image')
-        .attr('xlink:href', function(d) {
+        .attr({'xlink:href': function(d) {
             return d.subordinate ?
                 '/juju-ui/assets/svgs/sub_module.svg' :
                 '/juju-ui/assets/svgs/service_module.svg';
-          })
-        .attr('width', function(d) {
-            return d.w;
-          })
-        .attr('height', function(d) {
-            return d.h;
+          },
+          'width': function(d) { return d.w; },
+          'height': function(d) { return d.h; }
           });
 
       // Draw a subordinate relation indicator.
@@ -685,13 +680,13 @@ YUI.add('juju-topology-service', function(Y) {
           });
 
       subRelationIndicator.append('image')
-        .attr('xlink:href', '/juju-ui/assets/svgs/sub_relation.svg')
-        .attr('width', 87)
-        .attr('height', 47);
+        .attr({'xlink:href': '/juju-ui/assets/svgs/sub_relation.svg',
+            'width': 87,
+            'height': 47});
       subRelationIndicator.append('text').append('tspan')
-        .attr('class', 'sub-rel-count')
-        .attr('x', 64)
-        .attr('y', 47 * 0.8);
+        .attr({'class': 'sub-rel-count',
+            'x': 64,
+            'y': 47 * 0.8});
 
       // Landscape badge
       // Remove any existing badge.
@@ -716,15 +711,12 @@ YUI.add('juju-topology-service', function(Y) {
           }
           if (landscapeAsset) {
             d3.select(this).append('image')
-            .attr('xlink:href', landscapeAsset)
-            .attr('class', 'landscape-badge')
-            .attr('width', 30)
-            .attr('height', 30)
-            .attr('x', function(box) {
-                  return box.w * 0.13;
-                })
-            .attr('y', function(box) {
-                  return box.h / 2 - 30;
+            .attr({'xlink:href': landscapeAsset,
+                  'class': 'landscape-badge',
+                  'width': 30,
+                  'height': 30,
+                  'x': function(box) {return box.w * 0.13;},
+                  'y': function(box) { return box.h / 2 - 30;}
                 });
           }
         });
@@ -739,38 +731,36 @@ YUI.add('juju-topology-service', function(Y) {
           charm_label_padding = 118;
 
       node.select('.name')
-        .attr('style', function(d) {
+        .attr({'style': function(d) {
             // Programmatically size the font.
             // Number derived from service assets:
             // font-size 22px when asset is 224px.
             return 'font-size:' + d.h *
                 (name_size / service_height) + 'px';
-          })
-        .attr('x', function(d) {
-            return d.w / 2;
-          })
-        .attr('y', function(d) {
+          },
+          'x': function(d) { return d.w / 2; },
+          'y': function(d) {
             // Number derived from service assets:
             // padding-top 26px when asset is 224px.
             return d.h * (name_padding / service_height) + d.h *
                 (name_size / service_height) / 2;
+          }
           });
       node.select('.charm-label')
-        .attr('style', function(d) {
+        .attr({'style': function(d) {
             // Programmatically size the font.
             // Number derived from service assets:
             // font-size 16px when asset is 224px.
             return 'font-size:' + d.h *
                 (charm_label_size / service_height) + 'px';
-          })
-        .attr('x', function(d) {
-            return d.w / 2;
-          })
-        .attr('y', function(d) {
+          },
+          'x': function(d) { return d.w / 2;},
+          'y': function(d) {
             // Number derived from service assets:
             // padding-top: 118px when asset is 224px.
             return d.h * (charm_label_padding / service_height) - d.h *
                 (charm_label_size / service_height) / 2;
+          }
           });
 
       // Show whether or not the service is exposed using an indicator.
@@ -778,19 +768,12 @@ YUI.add('juju-topology-service', function(Y) {
         return d.exposed;
       })
         .append('image')
-        .attr('class', 'exposed-indicator on')
-        .attr('xlink:href', '/juju-ui/assets/svgs/exposed.svg')
-        .attr('width', function(d) {
-            return d.w / 6;
-          })
-        .attr('height', function(d) {
-            return d.w / 6;
-          })
-        .attr('x', function(d) {
-            return d.w / 10 * 7;
-          })
-        .attr('y', function(d) {
-            return d.relativeCenter[1] - (d.w / 6) / 2;
+        .attr({'class': 'exposed-indicator on',
+            'xlink:href': '/juju-ui/assets/svgs/exposed.svg',
+            'width': function(d) { return d.w / 6;},
+            'height': function(d) { return d.w / 6;},
+            'x': function(d) { return d.w / 10 * 7;},
+            'y': function(d) { return d.relativeCenter[1] - (d.w / 6) / 2;}
           })
         .append('title')
         .text(function(d) {
@@ -838,17 +821,10 @@ YUI.add('juju-topology-service', function(Y) {
             return 'translate(' + d.relativeCenter + ')';
           });
       node.select('.service-health-mask')
-        .attr('width', function(d) {
-            return d.w / 3;
-          })
-        .attr('height', function(d) {
-            return d.h / 3;
-          })
-        .attr('x', function() {
-            return -d3.select(this).attr('width') / 2;
-          })
-        .attr('y', function() {
-            return -d3.select(this).attr('height') / 2;
+        .attr({'width': function(d) {return d.w / 3;},
+            'height': function(d) { return d.h / 3;},
+            'x': function() { return -d3.select(this).attr('width') / 2;},
+            'y': function() { return -d3.select(this).attr('height') / 2;}
           });
 
       // Remove the path object as the data bound to it will cause some
@@ -871,9 +847,9 @@ YUI.add('juju-topology-service', function(Y) {
             return status_chart_layout(aggregate_list);
           })
         .enter().insert('path', 'image')
-        .attr('d', status_chart_arc)
-        .attr('class', function(d) { return 'status-' + d.data.name; })
-        .attr('fill-rule', 'evenodd')
+        .attr({'d': status_chart_arc,
+            'class': function(d) { return 'status-' + d.data.name;},
+            'fill-rule': 'evenodd'})
         .append('title').text(function(d) {
             return d.data.name;
           });
@@ -958,172 +934,161 @@ YUI.add('juju-topology-service', function(Y) {
       }
     },
 
-    /*
-     * Actions to be called on clicking a service.
+    /**
+     * Show (if hidden) or hide (if shown) the service menu.
+     *
+     * @method toggleServiceMenu
+     * @param {object} box The presentation state for the service.
+     * @return {undefined} Side effects only.
      */
-    service_click_actions: {
-      /**
-       * Show (if hidden) or hide (if shown) the service menu.
-       *
-       * @method toggleServiceMenu
-       * @param {object} box The presentation state for the service.
-       * @param {object} view The environment view.
-       * @param {object} context The service context.
-       * @return {undefined} Side effects only.
-       */
-      toggleServiceMenu: function(box, view, context) {
-        var serviceMenu = view.get('container').one('#service-menu');
+    toggleServiceMenu: function(box) {
+      var serviceMenu = this.get('container').one('#service-menu');
 
-        if (serviceMenu.hasClass('active') || !box) {
-          this.hideServiceMenu(null, view);
-        } else {
-          this.showServiceMenu(box, view, context);
+      if (serviceMenu.hasClass('active') || !box) {
+        this.hideServiceMenu();
+      } else {
+        this.showServiceMenu(box);
+      }
+    },
+
+    /**
+     * Show the service menu.
+     *
+     * @method showServiceMenu
+     * @param {object} box The presentation state for the service.
+     * @return {undefined} Side effects only.
+     */
+    showServiceMenu: function(box) {
+      var serviceMenu = this.get('container').one('#service-menu');
+      var topo = this.get('component');
+      var service = box.model;
+      var landscape = topo.get('landscape');
+      var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
+      var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
+      var securityURL, rebootURL;
+
+      // Update landscape links and show/hide as needed.
+      if (landscape) {
+        rebootURL = landscape.getLandscapeURL(service, 'reboot');
+        securityURL = landscape.getLandscapeURL(service, 'security');
+
+        if (rebootURL && service['landscape-needs-reboot']) {
+          landscapeReboot.show().one('a').set('href', rebootURL);
         }
-      },
-
-      /**
-       * Show the service menu.
-       *
-       * @method showServiceMenu
-       * @param {object} box The presentation state for the service.
-       * @param {object} module The service module..
-       * @param {object} context The service context.
-       * @return {undefined} Side effects only.
-       */
-      showServiceMenu: function(box, module, context) {
-        var serviceMenu = module.get('container').one('#service-menu');
-        var topo = module.get('component');
-        var service = box.model;
-        var landscape = topo.get('landscape');
-        var landscapeReboot = serviceMenu.one('.landscape-reboot').hide();
-        var landscapeSecurity = serviceMenu.one('.landscape-security').hide();
-        var securityURL, rebootURL;
-
-        // Update landscape links and show/hide as needed.
-        if (landscape) {
-          rebootURL = landscape.getLandscapeURL(service, 'reboot');
-          securityURL = landscape.getLandscapeURL(service, 'security');
-
-          if (rebootURL && service['landscape-needs-reboot']) {
-            landscapeReboot.show().one('a').set('href', rebootURL);
-          }
-          if (securityURL && service['landscape-security-upgrades']) {
-            landscapeSecurity.show().one('a').set('href', securityURL);
-          }
+        if (securityURL && service['landscape-security-upgrades']) {
+          landscapeSecurity.show().one('a').set('href', securityURL);
         }
-
-        if (box && !serviceMenu.hasClass('active')) {
-          topo.set('active_service', box);
-          topo.set('active_context', context);
-          serviceMenu.addClass('active');
-          // We do not want the user destroying the Juju GUI service.
-          if (utils.isGuiService(service)) {
-            serviceMenu.one('.destroy-service').addClass('disabled');
-          }
-          module.updateServiceMenuLocation();
-        }
-      },
-
-      /**
-       * Hide the service menu.
-       *
-       * @method hideServiceMenu
-       * @param {object} box The presentation state for the service (unused).
-       * @param {object} module The service module.
-       * @param {object} context The service context (unused).
-       * @return {undefined} Side effects only.
-       */
-      hideServiceMenu: function(box, module, context) {
-        var serviceMenu = module.get('container').one('#service-menu');
-        var topo = module.get('component');
-
-        if (serviceMenu.hasClass('active')) {
-          serviceMenu.removeClass('active');
-          topo.set('active_service', null);
-          topo.set('active_context', null);
-          // Most services can be destroyed via the GUI.
-          serviceMenu.one('.destroy-service').removeClass('disabled');
-        }
-      },
-
-      /*
-       * View a service
-       *
-       * @method show_service
-       */
-      show_service: function(service, context) {
-        var topo = context.get('component');
-        topo.detachContainer();
-        topo.fire('navigateTo', { url: topo.get('nsRouter').url({
-          gui: '/service/' + service.get('id')
-        }) });
-      },
-
-      /*
-       * Show a dialog before destroying a service
-       *
-       * @method destroyServiceConfirm
-       */
-      destroyServiceConfirm: function(service, view) {
-        // Set service in view.
-        view.set('destroy_service', service.model);
-
-        // Show dialog.
-        view.set('destroy_dialog', views.createModalPanel(
-            'Are you sure you want to destroy the service? ' +
-            'This cannot be undone.',
-            '#destroy-modal-panel',
-            'Destroy Service',
-            Y.bind(function(ev) {
-              ev.preventDefault();
-              var btn = ev.target;
-              btn.set('disabled', true);
-              view.service_click_actions
-              .destroyService(service, view, btn);
-            }, this)));
-      },
-
-      /*
-       * Destroy a service.
-       *
-       * @method destroyService
-       */
-      destroyService: function(_, view, btn) {
-        var env = view.get('component').get('env'),
-            service = view.get('destroy_service');
-        env.destroy_service(service.get('id'),
-                            Y.bind(this._destroyCallback, view,
-                                   service, view, btn));
-      },
-
-      _destroyCallback: function(service, view, btn, ev) {
-        var getModelURL = view.get('component').get('getModelURL'),
-            db = view.get('component').get('db');
-        if (ev.err) {
-          db.notifications.add(
-              new models.Notification({
-                title: 'Error destroying service',
-                message: 'Service name: ' + ev.service_name,
-                level: 'error',
-                link: getModelURL(service),
-                modelId: service
-              }));
-        } else {
-          var relations = db.relations.get_relations_for_service(service);
-          Y.each(relations, function(relation) {
-            relation.destroy();
-          });
-          service.destroy();
-          db.fire('update');
-        }
-        view.get('destroy_dialog').hide();
-        btn.set('disabled', false);
       }
 
+      if (box && !serviceMenu.hasClass('active')) {
+        topo.set('active_service', box);
+        topo.set('active_context', box.node);
+        serviceMenu.addClass('active');
+        // We do not want the user destroying the Juju GUI service.
+        if (utils.isGuiService(service)) {
+          serviceMenu.one('.destroy-service').addClass('disabled');
+        }
+        this.updateServiceMenuLocation();
+      }
+    },
+
+    /**
+     * Hide the service menu.
+     *
+     * @method hideServiceMenu
+     * @param {object} box The presentation state for the service (unused).
+     * @return {undefined} Side effects only.
+     */
+    hideServiceMenu: function(box) {
+      var serviceMenu = this.get('container').one('#service-menu');
+      var topo = this.get('component');
+
+      if (serviceMenu.hasClass('active')) {
+        serviceMenu.removeClass('active');
+        topo.set('active_service', null);
+        topo.set('active_context', null);
+        // Most services can be destroyed via the GUI.
+        serviceMenu.one('.destroy-service').removeClass('disabled');
+      }
+    },
+
+    /*
+     * View a service
+     *
+     * @method show_service
+     */
+    show_service: function(service) {
+      var topo = this.get('component');
+      var router = topo.get('nsRouter');
+      var getModelURL = topo.get('getModelURL');
+
+      topo.detachContainer();
+      topo.fire('navigateTo', {
+        url: router.url({gui: getModelURL(service)})
+      });
+    },
+
+    /*
+     * Show a dialog before destroying a service
+     *
+     * @method destroyServiceConfirm
+     */
+    destroyServiceConfirm: function(box) {
+      // Set service in view.
+      this.set('destroy_service', box.model);
+
+      // Show dialog.
+      this.set('destroy_dialog', views.createModalPanel(
+          'Are you sure you want to destroy the service? ' +
+          'This cannot be undone.',
+          '#destroy-modal-panel',
+          'Destroy Service',
+          Y.bind(function(ev) {
+            ev.preventDefault();
+            var btn = ev.target;
+            btn.set('disabled', true);
+            this.destroyService(btn);
+          }, this)));
+    },
+
+    /*
+     * Destroy a service.
+     *
+     * @method destroyService
+     */
+    destroyService: function(btn) {
+      var env = this.get('component').get('env'),
+          service = this.get('destroy_service');
+      env.destroy_service(service.get('id'),
+                          Y.bind(this._destroyCallback, this,
+                                 service, btn));
+    },
+
+    _destroyCallback: function(service, btn, ev) {
+      var getModelURL = this.get('component').get('getModelURL'),
+          db = this.get('component').get('db');
+      if (ev.err) {
+        db.notifications.add(
+            new models.Notification({
+              title: 'Error destroying service',
+              message: 'Service name: ' + ev.service_name,
+              level: 'error',
+              link: getModelURL(service),
+              modelId: service
+            }));
+      } else {
+        var relations = db.relations.get_relations_for_service(service);
+        Y.each(relations, function(relation) {
+          relation.destroy();
+        });
+        service.destroy();
+        db.fire('update');
+      }
+      this.get('destroy_dialog').hide();
+      btn.set('disabled', false);
     }
   }, {
     ATTRS: {}
-
   });
 
   views.ServiceModule = ServiceModule;
