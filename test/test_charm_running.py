@@ -96,6 +96,8 @@ class TestDeploy(browser.TestCase):
                 charm_search.click()
             except exceptions.WebDriverException, e:
                 if 'Element is not clickable' in e.msg:
+                    print(e)
+                    print(e.__dict__ if hasattr(e, '__dict__') else 'no dict')
                     return # We will retry
                 else:
                     print(e)
