@@ -19,6 +19,13 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
 
     template: views.Templates.fullscreen,
 
+    _renderSearchWidget: function(node) {
+      this.search = new widgets.browser.Search({
+        fullscreenTarget: this._fullscreenTarget
+      });
+      this.search.render(node.one('.bws-search'));
+    },
+
     /**
      * The default view is the editorial rendering. Render this view out.
      *
@@ -30,10 +37,28 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
       var tpl = this.template(),
           tpl_node = Y.Node.create(tpl);
 
-      this.search = new widgets.browser.Search({
-        fullscreenTarget: this._fullscreenTarget
-      });
-      this.search.render(tpl_node.one('.bws-search'));
+      this._renderSearchWidget(tpl_node);
+
+      if (!Y.Lang.isValue(container)) {
+        container = this.get('container');
+      }
+      container.setHTML(tpl_node);
+    },
+
+    /**
+     * Render the view of a single charm details page.
+     *
+     * @method _renderCharmView
+     * @param {Node} container node to render out to.
+     *
+     */
+    _renderCharmView: function(container) {
+      var tpl = this.template(),
+          tpl_node = Y.Node.create(tpl);
+      this._renderSearchWidget(tpl_node);
+
+      // fetch the charm data from the api.
+      var charmData = this.get('store').
 
       if (!Y.Lang.isValue(container)) {
         container = this.get('container');
@@ -45,10 +70,15 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
      * Render out the view to the DOM.
      *
      * @method render
+     * @param {Node} container optional specific container to render out to.
      *
      */
     render: function(container) {
-      this._renderEditorialView(container);
+      if (this.get('charmID')) {
+        this._renderCharmView(container);
+      } else {
+        this._renderEditorialView(container);
+      }
 
       // Bind our view to the events from the search widget used for controls.
       this._bindSearchWidgetEvents();
@@ -56,6 +86,17 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+       * If this view is called from the point of view of a specific charmId
+       * it'll be set here.
+       *
+       * @attribute charmID
+       * @default undefined
+       * @type {String}
+       *
+       */
+      charmID: {},
+
       /**
        * An instance of the Charmworld API object to hit for any data that
        * needs fetching.
@@ -65,7 +106,20 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
        * @type {Charmworld0}
        *
        */
-      store: {}
+      store: {},
+
+      /**
+       * If this were a route that had a subpath component it's passed into
+       * the view to aid in rendering.
+       *
+       * e.g. /bws/fullscreen/*charmid/hooks to load the hooks tab correctly.
+       *
+       * @attribute subpath
+       * @default undefined
+       * @type {String}
+       *
+       */
+      subpath: {}
     }
   });
 

@@ -20,6 +20,16 @@ YUI.add('subapp-browser', function(Y) {
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
 
+    _getSubPath: function(path) {
+      var reLastWord = /(\w+)\/?$/,
+          lastWords = path.match(reLastWord);
+      if (lastWords.length) {
+          return lastWords[0].replace('/', '');
+      } else {
+          return undefined;
+      }
+    },
+
     /**
      * Generate a standard shared set of cfg all Views can expect to see.
      *
@@ -86,7 +96,11 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreenCharm: function(req, res, next) {
-      this.showView('fullscreenCharm', this._getViewCfg());
+      var subpath = this._getSubPath(req.path);
+      this.showView('fullscreenCharm', this._getViewCfg({
+        charmID: req.params.id,
+        subpath: subpath
+      }));
       next();
     },
 
@@ -123,7 +137,14 @@ YUI.add('subapp-browser', function(Y) {
       routes: {
         value: [
           { path: '/bws/fullscreen/', callbacks: 'fullscreen' },
-          { path: '/bws/fullscreen/:id/', callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/configuration/',
+            callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/hooks/', callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/interfaces/',
+            callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/qa/', callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/readme/', callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/', callbacks: 'fullscreenCharm' },
           { path: '/bws/sidebar/', callbacks: 'sidebar' }
         ]
       }
