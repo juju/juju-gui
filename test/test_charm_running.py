@@ -90,12 +90,16 @@ class TestDeploy(browser.TestCase):
             charm_search = driver.find_element_by_id('charm-search-trigger')
             # Click to open the charm panel.
             # Implicit wait should let this resolve.
+            if not charm_search.is_displayed():
+                print('Maybe should not click yet?')
             try:
                 charm_search.click()
-            except WebDriverException, e:
+            except exceptions.WebDriverException, e:
                 if 'Element is not clickable' in e.msg:
                     return # We will retry
                 else:
+                    print(e)
+                    print(e.__dict__ if hasattr(e, '__dict__') else 'no dict')
                     raise
             return driver.find_element_by_id('juju-search-charm-panel')
 
