@@ -12,7 +12,7 @@ import os
 
 from retry import retry
 
-juju_command = shelltoolbox.command('juju')
+juju_command = shelltoolbox.command('juju', '-v')
 
 DEFAULT_ORIGIN = 'lp:juju-gui'
 DEFAULT_CHARM = 'cs:~juju-gui/precise/juju-gui'
