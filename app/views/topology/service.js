@@ -516,13 +516,9 @@ YUI.add('juju-topology-service', function(Y) {
                   (d.pending ? 'pending ' : '') + 'service';
             },
             'transform': function(d) {
-              return d.translateStr;
-            }})
-          // REVIEW NOTE: transform was called after drag was bound.
+              console.log("Enter Node", node, d, d.translateStr);
+              return d.translateStr;}})
         .call(this.dragBehavior)
-        .attr('transform', function(d) {
-            return d.translateStr;
-          })
         .call(self.createServiceNode, self);
 
       // Update all nodes.
