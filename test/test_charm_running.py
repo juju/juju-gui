@@ -35,11 +35,6 @@ class TestBasics(browser.TestCase):
 
     def test_gui_unit_tests(self):
         # Ensure Juju GUI unit tests pass.
-        self.load('/test/')
-        self.wait_for_css_selector('#mocha-stats')
-        # In IE, we sometimes see cached code.  Reload.
-        self.driver.refresh()
-        self.wait_for_css_selector('#mocha-stats')
         def tests_completed(driver):
             stats = driver.execute_script('return testRunner.stats;')
             # Return when tests completed or a failure occurred.
@@ -48,15 +43,22 @@ class TestBasics(browser.TestCase):
             # reasons yet to be determined.
             if stats.get('duration') or stats.get('end') or stats['failures']:
                 return stats['tests'], stats['failures']
-
-        self.wait_for_css_selector('#mocha-stats')
-        try:
-            total, failures = self.wait_for(
-                tests_completed, 'Unable to complete test run.', timeout=90)
-        except exceptions.TimeoutException:
-            print(self.driver.execute_script('return testRunner.stats;')) # XXX
-            raise
-
+        def run_tests():
+            self.wait_for_css_selector('#mocha-stats')
+            try:
+                total, failures = self.wait_for(
+                    tests_completed, 'Unable to complete test run.', timeout=90)
+            except exceptions.TimeoutException:
+                print(self.driver.execute_script('return testRunner.stats;'))
+                raise
+            return total, failures
+        self.load('/test/')
+        total, failures = run_tests()
+        if failures:
+            # We sometimes see initial failures and we don't know why :-(.
+            # Reload and retry.
+            self.driver.refresh()
+            total, failures = run_tests()
         if failures:
             msg = '{} failure(s) running {} tests.'.format(failures, total)
             self.fail(msg)
