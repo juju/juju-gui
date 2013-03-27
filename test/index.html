@@ -82,7 +82,8 @@
       combine: false
   };
 
-  YUI().use(['node', 'event'], function(Y) {
+  // tabview needs to be here since it doesn't auto load it for some reason.
+  YUI().use(['node', 'event', 'tabview'], function(Y) {
       // Run the tests.
       if (window.mochaPhantomJS) {
           mochaPhantomJS.run();
