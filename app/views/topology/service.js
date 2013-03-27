@@ -515,9 +515,7 @@ YUI.add('juju-topology-service', function(Y) {
               return (d.subordinate ? 'subordinate ' : '') +
                   (d.pending ? 'pending ' : '') + 'service';
             },
-            'transform': function(d) {
-              console.log("Enter Node", node, d, d.translateStr);
-              return d.translateStr;}})
+            'transform': function(d) {return d.translateStr;}})
         .call(this.dragBehavior)
         .call(self.createServiceNode, self);
 
@@ -685,8 +683,8 @@ YUI.add('juju-topology-service', function(Y) {
             'y': 47 * 0.8});
 
       // Landscape badge
-      // Remove any existing badge.
       if (landscape) {
+        // Remove any existing badge.
         node.select('.landscape-badge').remove();
         node.each(function(d) {
           var landscapeAsset;
