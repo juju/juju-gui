@@ -76,7 +76,6 @@ i.sprite {
 
 #viewport-wrapper {
     position: relative;
-    width: 100%;
 }
 
 #vp-left-border {
@@ -1353,10 +1352,9 @@ table tr.highlighted {
         }
 
         .menu-items {
-            height: 26px;
-            padding-top: 6px;
-            padding-left: 38px;
-            background: url(/juju-ui/assets/images/tab_div.png) repeat;
+            padding: 6px 0 6px 38px;
+            background: #dedede url(/juju-ui/assets/images/tab_div.png) repeat-x left bottom;
+            border-top: 1px solid #b6b6b6;
 
             .item {
                 a {
@@ -1382,10 +1380,8 @@ table tr.highlighted {
         }
 
         .controls {
-            float: right;
-
             .control {
-                float: left;
+                float: right;
 
                 .divider {
                     margin-right: 3px;
@@ -1462,8 +1458,14 @@ table tr.highlighted {
     }
 }
 
+ul.menu li,
 div.inline {
   float: left;
+}
+ul.menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 #tooltip {
