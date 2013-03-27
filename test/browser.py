@@ -186,7 +186,8 @@ class TestCase(unittest.TestCase):
         exe = self.driver.execute_script
         if exe('return app.env.userIsAuthenticated;'):
             return
-        exe('app.env.setCredentials({user: "admin", password: "admin"});'
+        exe('document.getElementsByTagName("body")[0].removeChild(document.getElementById("full-screen-mask"));'
+            'app.env.setCredentials({user: "admin", password: "admin"});'
             'app.env.login();')
         self.wait_for_script('return app.env.userIsAuthenticated;')
 

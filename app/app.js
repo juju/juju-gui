@@ -347,7 +347,7 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('providerTypeChange', this.onProviderTypeChange);
 
       // Once the user logs in, we need to redraw.
-      this.env.on('loginComplete', this.onLogin, this);
+      this.env.after('login', this.onLogin, this);
 
       // Feed environment changes directly into the database.
       this.env.on('delta', this.db.on_delta, this.db);

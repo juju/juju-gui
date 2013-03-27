@@ -80,7 +80,6 @@ YUI.add('juju-env-python', function(Y) {
         this.setCredentials(null);
         this.failedAuthentication = true;
       }
-      this.fire('loginComplete', evt);
     },
 
     _dispatch_event: function(evt) {
