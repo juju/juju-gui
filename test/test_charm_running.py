@@ -57,6 +57,9 @@ class TestBasics(browser.TestCase):
         if failures:
             # We sometimes see initial failures and we don't know why :-(.
             # Reload and retry.
+            print(
+                '{} failure(s) running {} tests.  Retrying.'.format(
+                    failures, total))
             self.driver.refresh()
             total, failures = run_tests()
         if failures:
