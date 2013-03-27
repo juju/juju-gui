@@ -36,6 +36,10 @@ class TestBasics(browser.TestCase):
     def test_gui_unit_tests(self):
         # Ensure Juju GUI unit tests pass.
         self.load('/test/')
+        self.wait_for_css_selector('#mocha-stats')
+        # In IE, we sometimes see cached code.  Reload.
+        self.driver.refresh()
+        self.wait_for_css_selector('#mocha-stats')
         def tests_completed(driver):
             stats = driver.execute_script('return testRunner.stats;')
             # Return when tests completed or a failure occurred.
