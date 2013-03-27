@@ -77,12 +77,7 @@ class TestDeploy(browser.TestCase):
 
     def test_charm_deploy(self):
         browsername = self.driver.desired_capabilities['browserName']
-        if browsername == 'internet explorer':
-            # TODO; revisit in the future to see if elements
-            # below are properly displayed. As of this writing
-            # the elements are found but is_displayed returns False
-            # and prevents the click action.
-            return
+
         # A charm can be deployed using the GUI.
         self.addCleanup(self.restart_api)
         self.load()

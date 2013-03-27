@@ -186,7 +186,12 @@ class TestCase(unittest.TestCase):
         exe = self.driver.execute_script
         if exe('return app.env.userIsAuthenticated;'):
             return
-        exe('document.getElementsByTagName("body")[0].removeChild(document.getElementById("full-screen-mask"));'
+        # For some unknown reason in Chrome the crosshatch background does not
+        # allow styles to be set to it after a successfull log in so we need
+        # to destroy that mask manually prior to us logging in so that the
+        # following tests can access the other elements
+        exe('document.getElementsByTagName("body")[0]'
+            '.removeChild(document.getElementById("full-screen-mask"));'
             'app.env.setCredentials({user: "admin", password: "admin"});'
             'app.env.login();')
         self.wait_for_script('return app.env.userIsAuthenticated;')
