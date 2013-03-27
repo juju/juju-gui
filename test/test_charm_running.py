@@ -81,12 +81,11 @@ class TestDeploy(browser.TestCase):
         return self.wait_for(services_found, 'Services not displayed.')
 
     def test_charm_deploy(self):
-        browsername = self.driver.desired_capabilities['browserName']
-
         # A charm can be deployed using the GUI.
         self.addCleanup(self.restart_api)
         self.load()
         self.handle_browser_warning()
+        # The unit tests log us out so we want to make sure we log back in
         self.handle_login()
 
         def charm_panel_loaded(driver):
@@ -94,19 +93,7 @@ class TestDeploy(browser.TestCase):
             charm_search = driver.find_element_by_id('charm-search-trigger')
             # Click to open the charm panel.
             # Implicit wait should let this resolve.
-            if not charm_search.is_displayed():
-                print('Maybe should not click yet?')
-            try:
-                charm_search.click()
-            except exceptions.WebDriverException, e:
-                if 'Element is not clickable' in e.msg:
-                    print(e)
-                    print(e.__dict__ if hasattr(e, '__dict__') else 'no dict')
-                    return # We will retry
-                else:
-                    print(e)
-                    print(e.__dict__ if hasattr(e, '__dict__') else 'no dict')
-                    raise
+            charm_search.click()
             return driver.find_element_by_id('juju-search-charm-panel')
 
         charm_panel = self.wait_for(charm_panel_loaded)

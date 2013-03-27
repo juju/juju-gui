@@ -22,7 +22,7 @@ echo "APP_URL=" ${APP_URL}
 # script will exit with an error code.
 EXIT_CODE=0
 # Run the browser tests against the app.
-for JUJU_GUI_TEST_BROWSER in ${JUJU_GUI_TEST_BROWSERS:-chrome firefox ie}
+for JUJU_GUI_TEST_BROWSER in ${JUJU_GUI_TEST_BROWSERS:-ie firefox chrome}
 do
     export JUJU_GUI_TEST_BROWSER
     echo Launching ${JUJU_GUI_TEST_BROWSER} tests.
