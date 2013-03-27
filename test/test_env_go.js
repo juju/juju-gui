@@ -863,9 +863,9 @@
       msg = conn.last_message();
       assert.equal(msg.Type, 'AllWatcher');
       assert.equal(msg.Request, 'Next');
-      assert.isTrue('Id' in msg.Params);
+      assert.isTrue('Id' in msg);
       // This response is in fact to the sent _next request.
-      assert.equal(msg.Params.Id, env._allWatcherId);
+      assert.equal(msg.Id, env._allWatcherId);
     });
 
     it('fires "_rpc_response" message after an RPC response', function(done) {
@@ -889,6 +889,11 @@
         done();
       });
       env._handleRpcResponse(callbackData);
+    });
+
+    it('the _rpc_response subscription can not have args', function() {
+      assert.equal(env.getEvent('_rpc_response')._subscribers.length, 1);
+      assert.equal(env.getEvent('_rpc_response')._subscribers.args, null);
     });
 
   });
