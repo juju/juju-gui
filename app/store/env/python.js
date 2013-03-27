@@ -187,8 +187,21 @@ YUI.add('juju-env-python', function(Y) {
         'endpoint_b': endpointToName(endpointB)}, callback, true);
     },
 
-    get_charm: function(charm_url, callback) {
-      this._send_rpc({'op': 'get_charm', 'charm_url': charm_url}, callback);
+    /**
+       Retrieve charm info.
+
+       @method get_charm
+       @param {String} charmURL The URL of the charm.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), and with a "result" attribute containing information
+        about the charm. The "result" object includes "config" options, a list
+        of "peers", "provides" and "requires", and the charm URL.
+       @return {undefined} Sends a message to the server only.
+     */
+    get_charm: function(charmURL, callback) {
+      this._send_rpc({op: 'get_charm', charm_url: charmURL}, callback);
     },
 
     get_service: function(service_name, callback) {
@@ -367,6 +380,18 @@ YUI.add('juju-env-python', function(Y) {
         retry: retry || false}, callback, true);
     },
 
+    /**
+      Get the available endpoints (by interface) for a collection of
+      services.
+
+      @method get_endpoints
+      @param {Array} services Zero or more currently deployed services for
+          which the endpoints should be collected.  Specifying an empty array
+          indicates that all deployed services should be analyzed.
+      @param {Function} callback A callable that must be called once the
+         operation is performed.
+      @return {undefined} Sends a message to the server only.
+     */
     get_endpoints: function(services, callback) {
       this._send_rpc({'op': 'get_endpoints', 'service_names': services},
                      callback);

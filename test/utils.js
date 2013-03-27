@@ -10,7 +10,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       this.messages = [];
 
       this.close = function() {
-        //console.log('close stub');
         this.messages = [];
       };
 
@@ -24,16 +23,17 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       };
 
       this.msg = function(m) {
-        //console.log('serializing env msg', m);
         this.onmessage({'data': Y.JSON.stringify(m)});
       };
 
-      this.last_message = function(m) {
-        return this.messages[this.messages.length - 1];
+      this.last_message = function(back) {
+        if (!back) {
+          back = 1;
+        }
+        return this.messages[this.messages.length - back];
       };
 
       this.send = function(m) {
-        //console.log('socket send', m);
         this.messages.push(Y.JSON.parse(m));
       };
 

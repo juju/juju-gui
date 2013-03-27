@@ -16,6 +16,23 @@ YUI.add('juju-env-go', function(Y) {
   };
 
   /**
+     Return an object containing all the key/value pairs of the given "obj",
+     turning all the keys to lower case.
+
+     @method lowerObjectKeys
+     @static
+     @param {Object} obj The input object.
+     @return {Object} The output object, containing lowercased keys.
+   */
+  var lowerObjectKeys = function(obj) {
+    var newObj = Object.create(null);
+    Y.each(obj, function(value, key) {
+      newObj[key.toLowerCase()] = value;
+    });
+    return newObj;
+  };
+
+  /**
    * The Go Juju environment.
    *
    * This class handles the websocket connection to the GoJuju API backend.
@@ -29,6 +46,56 @@ YUI.add('juju-env-go', function(Y) {
 
   GoEnvironment.NAME = 'go-env';
 
+  var entityInfoConverters = {
+    /**
+      Convert a Go style entity info into the expected legacy format.
+
+      @param {Object} entityInfo The JSON entity information from Go.
+      @return {Object} The legacy JSON data that the GUI expects.
+     */
+    service: function(entityInfo) {
+      return {
+        id: entityInfo.Name,
+        exposed: entityInfo.Exposed // XXX and more stuff
+      };
+    },
+    /**
+      Convert a Go style entity info into the expected legacy format.
+
+      @param {Object} entityInfo The JSON entity information from Go.
+      @return {Object} The legacy JSON data that the GUI expects.
+     */
+    unit: function(entityInfo) {
+      return {
+        id: entityInfo.Name,
+        service: entityInfo.Service // XXX and more stuff
+      };
+    },
+    /**
+      Convert a Go style entity info into the expected legacy format.
+
+      @param {Object} entityInfo The JSON entity information from Go.
+      @return {Object} The legacy JSON data that the GUI expects.
+     */
+    relation: function(entityInfo) {
+      return {
+        id: entityInfo.Key // XXX and more stuff
+      };
+    },
+    /**
+      Convert a Go style entity info into the expected legacy format.
+
+      @param {Object} entityInfo The JSON entity information from Go.
+      @return {Object} The legacy JSON data that the GUI expects.
+     */
+    machine: function(entityInfo) {
+      return {
+        id: entityInfo.Id,
+        instance_id: entityInfo.InstanceId // XXX and more stuff
+      };
+    }
+  };
+
   Y.extend(GoEnvironment, environments.BaseEnvironment, {
 
     /**
@@ -41,7 +108,26 @@ YUI.add('juju-env-go', function(Y) {
       // Define the default user name for this environment. It will appear as
       // predefined value in the login mask.
       this.defaultUser = 'user-admin';
+      this.on('_rpc_response', this._handleRpcResponse, this);
     },
+
+    /**
+      XXX FAKE FAKE FAKE, does not do anything.
+
+      Get the available endpoints (by interface) for a collection of
+      services.
+
+      @method get_endpoints
+      @param {Array} services Zero or more currently deployed services for
+          which the endpoints should be collected.  Specifying an empty array
+          indicates that all deployed services should be analyzed.
+      @param {Function} callback A callable that must be called once the
+         operation is performed.
+      @return {undefined} Sends a message to the server only.
+     */
+    get_endpoints: function(services, callback) {
+    },
+
 
     /**
      * See "app.store.env.base.BaseEnvironment.dispatch_result".
@@ -76,8 +162,80 @@ YUI.add('juju-env-go', function(Y) {
         this._txn_callbacks[tid] = callback;
       }
       op.RequestId = tid;
+      if (!op.Params) {
+        op.Params = {};
+      }
       var msg = Y.JSON.stringify(op);
       this.ws.send(msg);
+    },
+
+    /**
+      Begin watching all Juju status.
+
+      @method _watchAll
+      @private
+      @return {undefined} Sends a message to the server only.
+     */
+    _watchAll: function() {
+      this._send_rpc(
+          {
+            Type: 'Client',
+            Request: 'WatchAll'
+          },
+          function(data) {
+            if (data.Error) {
+              console.log('aiiiiie!'); // retry and eventually alert user XXX
+            } else {
+              this._allWatcherId = data.Response.AllWatcherId;
+              this._next();
+            }
+          }
+      );
+    },
+
+    /**
+      Process an incoming response to an RPC request.
+
+      @method _handleRpcResponse
+      @param {Object} data The data returned by the server.
+      @return {undefined} Nothing.
+     */
+    _handleRpcResponse: function(data) {
+      // We do this early to get a response back fast.  Might be a bad
+      // idea. :-)
+      this._next();
+      // data.Deltas has our stuff.  We need to translate delta
+      // events based on the deltas we got.
+      var deltas = [];
+      data.Response.Deltas.forEach(function(delta) {
+        var kind = delta[0], operation = delta[1], entityInfo = delta[2];
+        var converter = entityInfoConverters[kind];
+        deltas.push([kind, operation, converter(entityInfo)]);
+      });
+      this.fire('delta', {data: {result: deltas}});
+    },
+
+    /**
+      Get the next batch of deltas from the Juju status.
+
+      @method _next
+      @private
+      @return {undefined} Sends a message to the server only.
+     */
+    _next: function() {
+      this._send_rpc({
+        Type: 'AllWatcher',
+        Request: 'Next',
+        Params: {
+          Id: this._allWatcherId
+        }
+      }, function(data) {
+        if (data.Error) {
+          console.log('aiiiiie!'); // XXX
+        } else {
+          this.fire('_rpc_response', data);
+        }
+      });
     },
 
     /**
@@ -88,10 +246,12 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Nothing.
      */
     handleLogin: function(data) {
+      this.pendingLoginResponse = false;
       this.userIsAuthenticated = !data.Error;
       if (this.userIsAuthenticated) {
         // If login succeeded retrieve the environment info.
         this.environmentInfo();
+        this._watchAll();
       } else {
         // If the credentials were rejected remove them.
         this.setCredentials(null);
@@ -109,7 +269,7 @@ YUI.add('juju-env-go', function(Y) {
      */
     login: function() {
       // If the user is already authenticated there is nothing to do.
-      if (this.userIsAuthenticated) {
+      if (this.userIsAuthenticated || this.pendingLoginResponse) {
         return;
       }
       var credentials = this.getCredentials();
@@ -122,6 +282,7 @@ YUI.add('juju-env-go', function(Y) {
             Password: credentials.password
           }
         }, this.handleLogin);
+        this.pendingLoginResponse = true;
       } else {
         console.warn('Attempted login without providing credentials.');
         this.fire('login', {data: {result: false}});
@@ -156,8 +317,7 @@ YUI.add('juju-env-go', function(Y) {
     environmentInfo: function() {
       this._send_rpc({
         Type: 'Client',
-        Request: 'EnvironmentInfo',
-        Params: {}
+        Request: 'EnvironmentInfo'
       }, this.handleEnvironmentInfo);
     },
 
@@ -582,11 +742,150 @@ YUI.add('juju-env-go', function(Y) {
         endpoint_a: endpoint_a,
         endpoint_b: endpoint_b
       });
+    },
+
+    /**
+       Retrieve charm info.
+
+       @method get_charm
+       @param {String} charmURL The URL of the charm.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object with an "err"
+        attribute containing a string describing the problem (if an error
+        occurred), and with a "result" attribute containing information
+        about the charm. The "result" object includes "config" options, a list
+        of "peers", "provides" and "requires", and the charm URL.
+       @return {undefined} Sends a message to the server only.
+     */
+    get_charm: function(charmURL, callback) {
+      // Since the callback argument of this._send_rpc is optional, if a
+      // callback is not provided, we can leave intermediateCallback undefined.
+      var intermediateCallback;
+      if (callback) {
+        // Curry the callback and service.  No context is passed.
+        intermediateCallback = Y.bind(this.handleCharmInfo, null, callback);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'CharmInfo',
+        Params: {CharmURL: charmURL}
+      }, intermediateCallback);
+    },
+
+    /**
+       Transform the data returned from juju-core 'CharmInfo' into that
+       suitable for the user callback.
+
+       @method handleCharmInfo
+       @param {Function} userCallback The callback originally submitted by the
+       call site.
+       @param {Object} data The response returned by the server. An example of
+        the "data.Response" returned by juju-core follows:
+          {
+            'Config': {
+              'Options': {
+                'debug': {
+                  'Default': 'no',
+                  'Description': 'Setting this option to "yes" will ...',
+                  'Title': '',
+                  'Type': 'string'
+                },
+                'engine': {
+                  'Default': 'nginx',
+                  'Description': 'Two web server engines are supported...',
+                  'Title': '',
+                  'Type': 'string'
+                }
+              }
+            },
+            'Meta': {
+              'Categories': null,
+              'Description': 'This will install and setup WordPress...',
+              'Format': 1,
+              'Name': 'wordpress',
+              'OldRevision': 0,
+              'Peers': {
+                'loadbalancer': {
+                  'Interface': 'reversenginx',
+                  'Limit': 1,
+                  'Optional': false,
+                  'Scope': 'global'
+                }
+              },
+              'Provides': {
+                'website': {
+                  'Interface': 'http',
+                  'Limit': 0,
+                  'Optional': false,
+                  'Scope': 'global'
+                }
+              },
+              'Requires': {
+                'cache': {
+                  'Interface': 'memcache',
+                  'Limit': 1,
+                  'Optional': false,
+                  'Scope': 'global'
+                },
+                'db': {
+                  'Interface': 'mysql',
+                  'Limit': 1,
+                  'Optional': false,
+                  'Scope': 'global'
+                }
+              },
+              'Subordinate': false,
+              'Summary': 'WordPress is a full featured web blogging tool...'
+            },
+            'Revision': 10,
+            'URL': 'cs:precise/wordpress-10'
+          }
+        This data will be parsed and transformed before sending the final
+        result to the callback.
+       @return {undefined} Nothing.
+     */
+    handleCharmInfo: function(userCallback, data) {
+      // Transform subsets of data (config options, peers, provides, requires)
+      // returned by juju-core into that suitable for the user callback.
+      var parseItems = function(items) {
+        var result = {};
+        Y.each(items, function(value, key) {
+          result[key] = lowerObjectKeys(value);
+        });
+        return result;
+      };
+      // Build the transformed data structure.
+      var result,
+          response = data.Response;
+      if (!Y.Object.isEmpty(response)) {
+        var meta = response.Meta;
+        result = {
+          config: {options: parseItems(response.Config.Options)},
+          peers: parseItems(meta.Peers),
+          provides: parseItems(meta.Provides),
+          requires: parseItems(meta.Requires),
+          url: response.URL,
+          revision: response.Revision,
+          description: meta.Description,
+          format: meta.Format,
+          name: meta.Name,
+          subordinate: meta.Subordinate,
+          summary: meta.Summary
+        };
+      }
+      var transformedData = {
+        err: data.Error,
+        result: result
+      };
+      // Call the original user callback.
+      userCallback(transformedData);
     }
 
   });
 
   environments.GoEnvironment = GoEnvironment;
+  environments.lowerObjectKeys = lowerObjectKeys;
+  environments.entityInfoConverters = entityInfoConverters;
 
 }, '0.1.0', {
   requires: [

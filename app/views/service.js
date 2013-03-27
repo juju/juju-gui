@@ -955,7 +955,7 @@ YUI.add('juju-view-service', function(Y) {
           } else {
             container.setHTML(this.template(this.gatherRenderData()));
             views.utils.updateLandscapeBottomBar(this.get('landscape'),
-                env, service, container, 'service');
+                env, service, container);
           }
           return this;
         },
