@@ -103,7 +103,11 @@ describe('service module events', function() {
     view = new views.environment({
       container: viewContainer,
       db: db,
-      env: {}
+      env: {},
+      nsRouter: {
+        url: function() { return; }
+      },
+      getModelURL: function() {}
     });
     view.render();
     view.rendered();
@@ -122,11 +126,9 @@ describe('service module events', function() {
        var box = topo.service_boxes.haproxy;
        var menu = viewContainer.one('#service-menu');
        assert.isFalse(menu.hasClass('active'));
-       serviceModule.service_click_actions.toggleServiceMenu(
-           box, serviceModule, serviceModule);
+       serviceModule.toggleServiceMenu(box);
        assert(menu.hasClass('active'));
-       serviceModule.service_click_actions.toggleServiceMenu(
-           box, serviceModule, serviceModule);
+       serviceModule.toggleServiceMenu(box);
        assert.isFalse(menu.hasClass('active'));
      });
 
@@ -135,12 +137,10 @@ describe('service module events', function() {
        var box = topo.service_boxes.haproxy;
        var menu = viewContainer.one('#service-menu');
        assert.isFalse(menu.hasClass('active'));
-       serviceModule.service_click_actions.showServiceMenu(
-           box, serviceModule, serviceModule);
+       serviceModule.showServiceMenu(box);
        assert(menu.hasClass('active'));
        // Check no-op.
-       serviceModule.service_click_actions.showServiceMenu(
-           box, serviceModule, serviceModule);
+       serviceModule.showServiceMenu(box);
        assert(menu.hasClass('active'));
      });
 
@@ -164,12 +164,10 @@ describe('service module events', function() {
        });
 
        assert.isFalse(menu.hasClass('active'));
-       serviceModule.service_click_actions.showServiceMenu(
-           box, serviceModule, serviceModule);
+       serviceModule.showServiceMenu(box);
        assert(menu.hasClass('active'));
        // Check no-op.
-       serviceModule.service_click_actions.showServiceMenu(
-           box, serviceModule, serviceModule);
+       serviceModule.showServiceMenu(box);
        assert(menu.hasClass('active'));
 
        // Verify that we have a reboot URL.
@@ -183,15 +181,12 @@ describe('service module events', function() {
      function() {
        var box = topo.service_boxes.haproxy;
        var menu = viewContainer.one('#service-menu');
-       serviceModule.service_click_actions.showServiceMenu(
-           box, serviceModule, serviceModule);
+       serviceModule.showServiceMenu(box);
        assert(menu.hasClass('active'));
-       serviceModule.service_click_actions.hideServiceMenu(
-           null, serviceModule);
+       serviceModule.hideServiceMenu();
        assert.isFalse(menu.hasClass('active'));
        // Check no-op.
-       serviceModule.service_click_actions.hideServiceMenu(
-           null, serviceModule);
+       serviceModule.hideServiceMenu();
        assert.isFalse(menu.hasClass('active'));
      });
 
@@ -211,6 +206,7 @@ describe('service module events', function() {
      function() {
        var service = viewContainer.one('.service');
        var menu = clickService(service);
+
        // Ideally the browser would not send the click event right away...
        assert(menu.hasClass('active'));
        service.simulate('dblclick');
@@ -279,8 +275,7 @@ describe('service module events', function() {
     var menu = view.get('container').one('#service-menu');
     view.topo.set('active_service', service);
 
-    serviceModule.service_click_actions
-                 .toggleServiceMenu(box, serviceModule, serviceModule);
+    serviceModule.toggleServiceMenu(box);
     menu.one('.destroy-service').hasClass('disabled').should.equal(true);
   });
 
@@ -294,9 +289,7 @@ describe('service module events', function() {
         { id: 'wordpress',
           containsPoint: function() { return true; }
         };
-    serviceModule.service_click_actions.fake = function() {
-      called = true;
-    };
+    serviceModule.fake = function() { called = true; };
     serviceModule.set('currentServiceClickAction', 'fake');
     topo.ignoreServiceClick = true;
     serviceModule.serviceClick(d, serviceModule);

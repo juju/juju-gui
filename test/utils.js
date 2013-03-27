@@ -10,7 +10,6 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       this.messages = [];
 
       this.close = function() {
-        //console.log('close stub');
         this.messages = [];
       };
 
@@ -24,16 +23,17 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       };
 
       this.msg = function(m) {
-        //console.log('serializing env msg', m);
         this.onmessage({'data': Y.JSON.stringify(m)});
       };
 
-      this.last_message = function(m) {
-        return this.messages[this.messages.length - 1];
+      this.last_message = function(back) {
+        if (!back) {
+          back = 1;
+        }
+        return this.messages[this.messages.length - back];
       };
 
       this.send = function(m) {
-        //console.log('socket send', m);
         this.messages.push(Y.JSON.parse(m));
       };
 
@@ -57,7 +57,34 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       return function(name, value) {
         attributes[name] = value;
       };
+    },
+
+    makeCharmStore: function() {
+      var data = [];
+      var charmStore = new Y.juju.CharmStore(
+          {datasource: new Y.DataSource.Local({source: data})});
+      var setCharm = function(name) {
+        data[0] = Y.io('data/' + name + '-charmdata.json', {sync: true});
+      };
+      setCharm('wordpress');
+      return {charmStore: charmStore, setCharm: setCharm};
+    },
+
+    makeFakeBackendWithCharmStore: function() {
+      var charmStoreData = jujuTests.utils.makeCharmStore();
+      var fakebackend = new Y.juju.environments.FakeBackend(
+          {charmStore: charmStoreData.charmStore});
+      fakebackend.login('admin', 'password');
+      return {fakebackend: fakebackend, setCharm: charmStoreData.setCharm};
     }
+
   };
 
+}, '0.1.0', {
+  requires: [
+    'io',
+    'datasource-local',
+    'juju-charm-store',
+    'juju-env-fakebackend'
+  ]
 });

@@ -12,7 +12,7 @@
     </div>
     <h1 id="unit-id">{{unit.displayName}} {{landscapeBadge landscape unit 'reboot' 'round'}}{{landscapeBadge landscape unit 'security' 'round'}}</h1>
     <b id="charm-uri">
-      <a href="/charms/charms/{{charm.name}}/json">{{charm.id}}</a>
+      <a href="{{charmUri}}">{{charm.id}}</a>
     </span>
     {{#if unit.is_subordinate}} (subordinate){{/if}}
     <div id="unit-status">
@@ -81,7 +81,7 @@ This unit has no relations.
             <td class="relation-ident">{{ident}}</td>
             <td class="relation-endpoint">
               {{#if far}}
-              <a href="/service/{{far.service}}/relations">{{far.service}}</a>
+              <a href="{{../../serviceRootUri}}{{far.service}}/relations">{{far.service}}</a>
               {{else}}
               (self)
               {{/if}}

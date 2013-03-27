@@ -32,37 +32,20 @@
     });
   });
 
-  var makeFakeBackendWithCharmStore = function(Y, juju, module) {
-    var data = [];
-    var charmStore = new juju.CharmStore(
-        {datasource: new Y.DataSource.Local({source: data})});
-    var setCharm = function(name) {
-      data[0] = Y.io('data/' + name + '-charmdata.json', {sync: true});
-    };
-    setCharm('wordpress');
-    var fakebackend = new module.FakeBackend(
-        {charmStore: charmStore});
-    fakebackend.login('admin', 'password');
-    return {fakebackend: fakebackend, setCharm: setCharm};
-  };
-
   describe('FakeBackend.deploy', function() {
     var requires = [
-      'node', 'juju-env-fakebackend', 'datasource-local', 'io',
-      'juju-charm-store', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, environmentsModule, setCharm, juju, result, callback;
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, setCharm, result, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        environmentsModule = Y.namespace('juju.environments');
-        juju = Y.namespace('juju');
+        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(function() {
-      var setupData = makeFakeBackendWithCharmStore(
-          Y, juju, environmentsModule);
+      var setupData = utils.makeFakeBackendWithCharmStore();
       fakebackend = setupData.fakebackend;
       setCharm = setupData.setCharm;
       result = undefined;
@@ -100,15 +83,19 @@
       assert.isTrue(Y.Lang.isString(attrs.clientId));
       delete attrs.clientId;
       assert.deepEqual(attrs, {
+        aggregated_status: undefined,
         charm: 'cs:precise/wordpress-10',
         config: undefined,
+        constraints: undefined,
         destroyed: false,
+        displayName: 'wordpress',
         exposed: false,
         id: 'wordpress',
         initialized: true,
         name: 'wordpress',
-        displayName: 'wordpress',
-        subordinate: undefined
+        pending: false,
+        subordinate: false,
+        unit_count: undefined
       });
       var units = fakebackend.db.units.get_units_for_service(service);
       assert.lengthOf(units, 1);
@@ -232,22 +219,18 @@
 
   describe('FakeBackend.addUnit', function() {
     var requires = [
-      'node', 'juju-env-fakebackend', 'datasource-local', 'io',
-      'juju-charm-store', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, environmentsModule, setCharm, juju,
-        deployResult, callback;
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, setCharm, deployResult, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        environmentsModule = Y.namespace('juju.environments');
-        juju = Y.namespace('juju');
+        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(function() {
-      var setupData = makeFakeBackendWithCharmStore(
-          Y, juju, environmentsModule);
+      var setupData = utils.makeFakeBackendWithCharmStore();
       fakebackend = setupData.fakebackend;
       setCharm = setupData.setCharm;
       deployResult = undefined;
@@ -332,22 +315,18 @@
 
   describe('FakeBackend.nextChanges', function() {
     var requires = [
-      'node', 'juju-env-fakebackend', 'datasource-local', 'io',
-      'juju-charm-store', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, environmentsModule, setCharm, juju, deployResult,
-        callback;
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, setCharm, deployResult, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
-        environmentsModule = Y.namespace('juju.environments');
-        juju = Y.namespace('juju');
+        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(function() {
-      var setupData = makeFakeBackendWithCharmStore(
-          Y, juju, environmentsModule);
+      var setupData = utils.makeFakeBackendWithCharmStore();
       fakebackend = setupData.fakebackend;
       setCharm = setupData.setCharm;
       deployResult = undefined;
@@ -365,15 +344,7 @@
     });
 
     it('reports no changes initially.', function() {
-      assert.deepEqual(
-          fakebackend.nextChanges(),
-          {
-            services: {},
-            machines: {},
-            units: {},
-            relations: {}
-          }
-      );
+      assert.isNull(fakebackend.nextChanges());
     });
 
     it('reports a call to addUnit correctly.', function() {
@@ -426,15 +397,7 @@
           fakebackend.deploy('cs:wordpress', callback);
           assert.isUndefined(deployResult.error);
           assert.isObject(fakebackend.nextChanges());
-          assert.deepEqual(
-              fakebackend.nextChanges(),
-              {
-                services: {},
-                machines: {},
-                units: {},
-                relations: {}
-              }
-          );
+          assert.isNull(fakebackend.nextChanges());
         }
     );
 

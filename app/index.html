@@ -16,7 +16,7 @@ if (/*@cc_on!@*/false) {
          Also note it this must be the first <meta> to appear. -->
     <meta http-equiv="x-ua-compatible" content="IE=edge">
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="Juju team">
     <link href='https://fonts.googleapis.com/css?family=Ubuntu:400,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
@@ -234,7 +234,7 @@ if (/*@cc_on!@*/false) {
       // function which will be picked up by the setTimeout and the app will
       // start.
       startTheApp = function() {
-        setLoadingMessageText('Trying to connect to the Juju environment');
+        setLoadingMessageText('Connecting to the Juju environment');
         YUI(GlobalConfig).use(['juju-gui'], function(Y) {
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application

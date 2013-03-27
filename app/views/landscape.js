@@ -111,6 +111,7 @@ YUI.add('juju-landscape', function(Y) {
     getLandscapeURL: function(model, intent) {
       var env = this.get('db').environment.get('annotations');
       var url = env['landscape-url'];
+      var modelAnnotation;
 
       if (!url) {
         // If this environment annotation doesn't exist
@@ -120,9 +121,19 @@ YUI.add('juju-landscape', function(Y) {
 
       url += env['landscape-computers'];
       if (model.name === 'service') {
-        url += slash(model.get('annotations')['landscape-computers']);
+        modelAnnotation = model.get('annotations')['landscape-computers'];
+        if (!modelAnnotation) {
+          console.warn('Service missing the landscape-computers annotation!');
+          return undefined;
+        }
+        url += slash(modelAnnotation);
       } else if (model.name === 'serviceUnit') {
-        url += slash(model.annotations['landscape-computer']);
+        modelAnnotation = model.annotations['landscape-computer'];
+        if (!modelAnnotation) {
+          console.warn('Unit missing the landscape-computer annotation!');
+          return undefined;
+        }
+        url += slash(modelAnnotation);
       }
 
       if (!intent) {

@@ -7,7 +7,7 @@
 #OLD_SHELL := $(SHELL)
 #SHELL = $(warning [$@ [32m($^) [34m($?)[m ])$(OLD_SHELL)
 
-# Build a target for JavaScript files.  The find command exclused directories
+# Build a target for JavaScript files.  The find command excludes directories
 # as needed through the -prune directive, and the grep command removes
 # individual unwanted JavaScript and JSON files from the list.
 # find(1) is used here to build a list of JavaScript targets rather than bzr
@@ -31,6 +31,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
 		-e '^app/assets/javascripts/js-yaml\.min\.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket\.js$$' \
+		-e '^app/assets/javascripts/prettify.js$$' \
 		-e '^app/assets/javascripts/gallery-.*\.js$$' \
 		-e '^server.js$$')
 THIRD_PARTY_JS=app/assets/javascripts/reconnecting-websocket.js
@@ -120,6 +121,7 @@ TEMPLATE_TARGETS=$(shell find app/templates -type f ! -name '.*' ! -name '*.swp'
 SPRITE_SOURCE_FILES=$(shell find app/assets/images -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
 SPRITE_GENERATED_FILES=build-shared/juju-ui/assets/sprite.css \
 	build-shared/juju-ui/assets/sprite.png
+NON_SPRITE_IMAGES=build-shared/juju-ui/assets/images
 BUILD_FILES=build-shared/juju-ui/assets/app.js \
 	build-shared/juju-ui/assets/all-yui.js \
 	build-shared/juju-ui/assets/combined-css/all-static.css
@@ -192,6 +194,10 @@ $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 		$(SPRITE_SOURCE_FILES)
 	node_modules/grunt/bin/grunt spritegen
 
+$(NON_SPRITE_IMAGES): 
+	mkdir -p build-shared/juju-ui/assets/images
+	cp app/assets/images/non-sprites/* build-shared/juju-ui/assets/images/
+
 $(NODE_TARGETS): package.json
 	npm install
 	# Keep all targets up to date, not just new/changed ones.
@@ -236,7 +242,7 @@ $(JAVASCRIPT_LIBRARIES): | node_modules/yui node_modules/d3
 		app/assets/javascripts/d3.v2.min.js
 
 gjslint: virtualenv/bin/gjslint
-	virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
+	virtualenv/bin/gjslint --unix --strict --nojsdoc --jslint_error=all \
 	    --custom_jsdoc_tags module,main,class,method,event,property,attribute,submodule,namespace,extends,config,constructor,static,final,readOnly,writeOnce,optional,required,param,return,for,type,private,protected,requires,default,uses,example,chainable,deprecated,since,async,beta,bubbles,extension,extensionfor,extension_for \
 		-x $(LINT_IGNORE) $(JSFILES)
 
@@ -442,7 +448,7 @@ clean-all: clean clean-deps clean-docs
 build: build-prod build-debug build-devel
 
 build-shared: $(APPCACHE) $(NODE_TARGETS) spritegen \
-	  $(BUILD_FILES) build-shared/juju-ui/version.js
+	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js
 
 # build-devel is phony. build-shared, build-debug, and build-common are real.
 build-devel: build-shared

@@ -9,7 +9,7 @@
   };
 
   describe('browser fullscreen view', function() {
-    var browser, FullScreen, views, Y;
+    var browser, FullScreen, view, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -25,16 +25,24 @@
 
     beforeEach(function() {
       addBrowserContainer(Y);
+      // Mock out a dummy location for the Store used in view instances.
+      window.juju_config = {
+        charmworldURL: 'http://localhost'
+      };
+
     });
 
     afterEach(function() {
+      view.destroy();
       Y.one('#subapp-browser').remove(true);
+      delete window.juju_config;
     });
 
     // Ensure the search results are rendered inside the container.
     it('must correctly render the initial browser ui', function() {
-      var container = Y.one('#subapp-browser'),
-          view = new FullScreen();
+      var container = Y.one('#subapp-browser');
+
+      view = new FullScreen();
       view.render(container);
 
       // And the hide button is rendered to the container node.
@@ -47,7 +55,7 @@
 
 
   describe('browser sidebar view', function() {
-    var Y, browser, views, Sidebar;
+    var Y, browser, view, views, Sidebar;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -64,15 +72,36 @@
 
     beforeEach(function() {
       addBrowserContainer(Y);
+      // Mock out a dummy location for the Store used in view instances.
+      window.juju_config = {
+        charmworldURL: 'http://localhost'
+      };
     });
 
     afterEach(function() {
+      view.destroy();
       Y.one('#subapp-browser').remove(true);
+      delete window.juju_config;
     });
 
     it('must correctly render the initial browser ui', function() {
-      var container = Y.one('#subapp-browser'),
-          view = new Sidebar();
+      var container = Y.one('#subapp-browser');
+      view = new Sidebar();
+
+      // mock out the data source on the view so that it won't actually make a
+      // request.
+      var sample_data = {
+        responseText: Y.JSON.stringify({
+          result: {
+            'new': [],
+            slider: []
+          }
+        })
+      };
+
+      view.get('store').set(
+          'datasource',
+          new Y.DataSource.Local({source: sample_data}));
       view.render(container);
 
       // And the hide button is rendered to the container node.

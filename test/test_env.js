@@ -41,4 +41,30 @@
 
   });
 
+  describe('Base Environment', function() {
+    var requires = ['juju-env-base', 'juju-env-sandbox'];
+    var environments, juju, Y, sandboxModule, ClientConnection;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        juju = Y.namespace('juju');
+        environments = juju.environments;
+        sandboxModule = Y.namespace('juju.environments.sandbox');
+        ClientConnection = sandboxModule.ClientConnection;
+        done();
+      });
+    });
+
+    it('calls "open" on connection if available.', function() {
+      var conn = new ClientConnection({juju: {open: function() {}}});
+      var env = new environments.BaseEnvironment({conn: conn});
+      assert.isFalse(conn.connected);
+      assert.isFalse(env.get('connected'));
+      env.connect();
+      assert.isTrue(conn.connected);
+      assert.isTrue(env.get('connected'));
+    });
+
+  });
+
 })();

@@ -75,8 +75,16 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/charm-slider.js'
         },
 
+        'browser-overlay-indicator': {
+          fullpath: '/juju-ui/widgets/overlay-indicator.js'
+        },
+
         'browser-search-widget': {
           fullpath: '/juju-ui/widgets/charm-search.js'
+        },
+
+        'browser-tabview': {
+          fullpath: '/juju-ui/widgets/tabview.js'
         },
 
         'reconnecting-websocket': {
@@ -216,6 +224,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/env/fakebackend.js'
         },
 
+        'juju-env-sandbox': {
+          fullpath: '/juju-ui/store/env/sandbox.js'
+        },
+
         'juju-notification-controller': {
           fullpath: '/juju-ui/store/notifications.js'
         },
@@ -248,6 +260,10 @@ var GlobalConfig = {
         },
 
         // Browser Views
+        'subapp-browser-mainview': {
+          fullpath: '/juju-ui/subapps/browser/views/view.js'
+        },
+
         'subapp-browser-fullscreen': {
           fullpath: '/juju-ui/subapps/browser/views/fullscreen.js'
         },

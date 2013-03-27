@@ -112,17 +112,17 @@ function injectData(app, data) {
 
       // 'service/wordpress/' is the primary route,
       // so other URLs are not returned.
-      app.getModelURL(wordpress).should.equal('/service/wordpress/');
+      app.getModelURL(wordpress).should.equal('/:gui:/service/wordpress/');
       // However, passing 'intent' can force selection of another one.
       app.getModelURL(wordpress, 'config').should.equal(
-          '/service/wordpress/config/');
+          '/:gui:/service/wordpress/config/');
 
       // Service units use argument rewriting (thus not /u/wp/0).
-      app.getModelURL(wp0).should.equal('/unit/wordpress-0/');
+      app.getModelURL(wp0).should.equal('/:gui:/unit/wordpress-0/');
 
       // Charms also require a mapping, but only a name, not a function.
       app.getModelURL(wp_charm).should.equal(
-          '/charms/charms/precise/wordpress-6/json/');
+          '/:gui:/charms/charms/precise/wordpress-6/json/');
     });
 
     it('should display the configured environment name', function() {
@@ -191,6 +191,7 @@ function injectData(app, data) {
 
     it('should avoid trying to login if the env is not connected',
        function(done) {
+         conn.transient_close();
          var app = new Y.juju.App({env: env});
          app.after('ready', function() {
            assert.equal(0, conn.messages.length);
@@ -377,6 +378,45 @@ function injectData(app, data) {
       // Additional deltas should only call get_endpoints once.
       app.db.on_delta({ data: tmp_data });
       get_endpoints_count.should.equal(2);
+    });
+  });
+})();
+
+(function() {
+  describe('Application sandbox', function() {
+    var Y, app, container, utils;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      container = Y.Node.create('<div id="test" class="container"></div>');
+    });
+
+    afterEach(function() {
+      if (app) {
+        app.destroy({remove: true});
+      }
+    });
+
+    it('app instantiates correctly in sandbox mode.', function() {
+      var charmStoreData = utils.makeCharmStore();
+      app = new Y.juju.App(
+          { container: container,
+            viewContainer: container,
+            sandbox: true,
+            apiBackend: 'python',
+            user: 'admin',
+            password: 'admin',
+            charm_store: charmStoreData.charmStore
+          });
+      // This simply walks through the hierarchy to show that all the
+      // necessary parts are there.
+      assert.isObject(app.env.get('conn').get('juju').get('state'));
     });
   });
 })();

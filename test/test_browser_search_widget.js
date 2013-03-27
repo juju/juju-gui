@@ -30,7 +30,7 @@ describe('browser search widget', function() {
     assert.isObject(container.one('.bws-icon'));
   });
 
-  it('should support search chang events', function(done) {
+  it('should support search change events', function(done) {
     // Need a small timeout for the valueChange to pick up the change in the
     // search input.
     this.timeout(200);
