@@ -41,7 +41,7 @@ ie['version'] = '10'
 ie.update(common)
 
 chrome = dict(selenium.webdriver.DesiredCapabilities.CHROME)
-chrome['platform'] = 'Linux'
+chrome['platform'] = 'Windows 2008'
 chrome.update(common)
 # The saucelabs.com folks recommend using the latest version of Chrome because
 # new versions come out so quickly, therefore there is no version specified
