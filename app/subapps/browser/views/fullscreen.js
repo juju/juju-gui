@@ -69,6 +69,7 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
       // Fetch the charm data from the api.
       this.get('store').charm(this.get('charmID'), {
         'success': function(data) {
+          // @todo make sure this instance is tied to the view and destroyed.
           var charm = new models.BrowserCharm(data),
               charmTpl = views.Templates.browser_charm;
           tplNode.one('.bws-view-data').setHTML(charmTpl(charm.getAttrs()));

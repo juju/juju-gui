@@ -22,6 +22,7 @@
 
     afterEach(function() {
       container.remove(true);
+      tabview.destroy();
     });
 
     it('exists', function() {
@@ -30,7 +31,6 @@
 
     it('can be rendered horizontally', function() {
       assert.isFalse(tabview.get('vertical'));
-
       tabview.render(container);
       assert.isNull(container.one('.vertical'));
     });

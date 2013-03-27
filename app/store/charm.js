@@ -188,7 +188,7 @@ YUI.add('juju-charm-store', function(Y) {
      * @method charm
      * @param {String} charmID the charm to fetch.
      * @param {Object} callbacks the success/failure callbacks to use.
-     * @param {Object} bindScopr the scope of *this* in the callbacks.
+     * @param {Object} bindScope the scope of *this* in the callbacks.
      *
      */
     charm: function(charmID, callbacks, bindScope) {
