@@ -41,7 +41,7 @@ ie['version'] = '10'
 ie.update(common)
 
 chrome = dict(selenium.webdriver.DesiredCapabilities.CHROME)
-chrome['platform'] = 'Windows 2008'
+chrome['platform'] = 'Linux'
 chrome.update(common)
 # The saucelabs.com folks recommend using the latest version of Chrome because
 # new versions come out so quickly, therefore there is no version specified
@@ -186,9 +186,9 @@ class TestCase(unittest.TestCase):
         exe = self.driver.execute_script
         if exe('return app.env.userIsAuthenticated;'):
             return
-        exe('app.env.setCredentials({user: "admin", password: "admin"});'
-            'app.env.login();'
-            'yui.one("#full-screen-mask").setStyle("display", "none");')
+        exe('document.getElementsByTagName("body")[0].removeChild(document.getElementById("full-screen-mask"));'
+            'app.env.setCredentials({user: "admin", password: "admin"});'
+            'app.env.login();')
         self.wait_for_script('return app.env.userIsAuthenticated;')
 
     @webdriverError()
