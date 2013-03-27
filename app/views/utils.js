@@ -375,14 +375,12 @@ YUI.add('juju-view-utils', function(Y) {
         });
   };
 
-  utils.updateLandscapeBottomBar = function(landscape, env, model, container,
-      scope) {
+  utils.updateLandscapeBottomBar = function(landscape, env, model, container) {
     // Landscape annotations are stored in a unit's annotations, but just on
     // the object in the case of services/environment.
     var annotations = model.annotations ? model.annotations : model;
     var envAnnotations = env.get ? env.get('annotations') : env;
     var controls = container.one('.landscape-controls').hide();
-    var logo = controls.one('.logo-tab i');
     var machine = controls.one('.machine-control').hide();
     var updates = controls.one('.updates-control').hide();
     var restart = controls.one('.restart-control').hide();
@@ -392,7 +390,6 @@ YUI.add('juju-view-utils', function(Y) {
       machine.show();
       machine.one('a').setAttribute('href',
           landscape.getLandscapeURL(model));
-      logo.setAttribute('class', 'sprite landscape_' + scope);
 
       if (annotations['landscape-security-upgrades']) {
         updates.show();

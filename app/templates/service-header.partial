@@ -46,8 +46,8 @@
         {{/unless}}
       </div>
     </div>
-    <div class="row">
-      <div id="message-area" class="span10"></div>
+    <div class="yui3-g">
+      <div id="message-area" class="yui3-u-10-12"></div>
     </div>
   </div>
 </div>  

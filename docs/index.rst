@@ -19,6 +19,7 @@ Contents:
    process
    browser-testing
    continuous-integration
+   datasources
 
 See also the `code documentation <../../../yuidoc/index.html>`_
 (:ref:`generated separately <embedded-docs>`).

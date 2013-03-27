@@ -112,7 +112,7 @@ YUI.add('juju-view-unit', function(Y) {
         unit_pending: unit_pending,
         relations: relations}));
       views.utils.updateLandscapeBottomBar(this.get('landscape'), env, unit,
-          container, 'unit');
+          container);
       return this;
     },
 

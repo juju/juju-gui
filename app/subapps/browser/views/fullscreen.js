@@ -6,43 +6,34 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets');
 
+
   /**
    * Browser Sub App for the Juju Gui.
    *
    * @class FullScreen
-   * @extends {Y.View}
+   * @extends {juju.browser.views.MainView}
    *
    */
-  ns.FullScreen = Y.Base.create('browser-view-fullscreen', Y.View, [], {
+  ns.FullScreen = Y.Base.create('browser-view-fullscreen', ns.MainView, [], {
+    _fullscreenTarget: '/bws/sidebar',
+
     template: views.Templates.fullscreen,
 
     /**
-     * @attribute events
+     * The default view is the editorial rendering. Render this view out.
+     *
+     * @method _renderEditorialView
+     * @param {Node} container node to render out to.
      *
      */
-    events: {},
-
-    /**
-     * Gereral YUI initializer.
-     *
-     * @method initializer
-     * @param {Object} cfg configuration object.
-     *
-     */
-    initializer: function(cfg) {},
-
-    /**
-     * Render out the view to the DOM.
-     *
-     * @method render
-     *
-     */
-    render: function(container) {
-      var search = new widgets.browser.Search(),
-          tpl = this.template(),
+    _renderEditorialView: function(container) {
+      var tpl = this.template(),
           tpl_node = Y.Node.create(tpl);
 
-      search.render(tpl_node.one('.bws-search'));
+      this.search = new widgets.browser.Search({
+        fullscreenTarget: this._fullscreenTarget
+      });
+      this.search.render(tpl_node.one('.bws-search'));
 
       if (!Y.Lang.isValue(container)) {
         container = this.get('container');
@@ -51,20 +42,37 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
     },
 
     /**
-     * Destroy this view and clear from the dom world.
+     * Render out the view to the DOM.
      *
-     * @method destructor
+     * @method render
      *
      */
-    destructor: function() {}
+    render: function(container) {
+      this._renderEditorialView(container);
+
+      // Bind our view to the events from the search widget used for controls.
+      this._bindSearchWidgetEvents();
+    }
 
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+       * An instance of the Charmworld API object to hit for any data that
+       * needs fetching.
+       *
+       * @attribute store
+       * @default undefined
+       * @type {Charmworld0}
+       *
+       */
+      store: {}
+    }
   });
 
 }, '0.1.0', {
   requires: [
     'browser-search-widget',
+    'subapp-browser-mainview',
     'view'
   ]
 });
