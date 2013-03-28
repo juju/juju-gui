@@ -2,11 +2,13 @@ from __future__ import print_function
 
 import atexit
 import base64
+from functools import wraps
 import getpass
 import httplib
 import json
 import os
 import subprocess
+import sys
 import unittest
 import urlparse
 
@@ -16,6 +18,12 @@ from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.support import ui
 import shelltoolbox
 
+# Add ../lib to sys.path to get the retry module.
+root_path = os.path.dirname(os.path.dirname(os.path.normpath(__file__)))
+lib_path = os.path.join(root_path, 'lib')
+if lib_path not in sys.path:
+    sys.path.append(lib_path)
+
 from retry import retry
 
 
@@ -23,7 +31,7 @@ juju = shelltoolbox.command('juju')
 ssh = shelltoolbox.command('ssh')
 
 common = {
-    'command-timeout' : 300,
+    'command-timeout': 300,
     'idle-timeout': 100,
 }
 
@@ -41,7 +49,7 @@ chrome.update(common)
 
 firefox = dict(selenium.webdriver.DesiredCapabilities.FIREFOX)
 firefox['platform'] = 'Linux'
-firefox['version'] = '18'
+firefox['version'] = '19'
 firefox.update(common)
 
 browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
@@ -65,11 +73,28 @@ if os.path.exists('juju-internal-ip'):
     with open('juju-internal-ip') as fp:
         internal_ip = fp.read().strip()
 
+
 def formatWebDriverError(error):
     msg = []
     msg.append(str(error))
-    msg.append(str(error.stacktrace))
+    if error.stacktrace:
+        msg.append(str(error.stacktrace))
     return '\n'.join(msg)
+
+
+def webdriverError():
+    """Decorator for formatting web driver exceptions"""
+    def decorator(f):
+        @wraps(f)
+        def format_error(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except WebDriverException as e:
+                print(formatWebDriverError(e))
+                raise e
+        return format_error
+    return decorator
+
 
 def set_test_result(jobid, passed):
     headers = {'Authorization': 'Basic ' + encoded_credentials}
@@ -138,8 +163,41 @@ class TestCase(unittest.TestCase):
                 error='Browser warning dialog not found.')
             continue_button.click()
 
-    @retry(WebDriverException, format_error=formatWebDriverError)
-    def wait_for(self, condition, error=None, timeout=10):
+    def wait_for_provider_type(self, error=None, timeout=10):
+        """Wait for a connection using a CSS selector."""
+        # IE is very sensitive to asking for javascript before it is
+        # ready, so we look at a related document element instead.
+        def provider_type(driver):
+            els = driver.find_elements_by_css_selector('#provider-type')
+            if els:
+                return els[0].text
+        return self.wait_for(provider_type, error=error, timeout=timeout)
+
+    def handle_login(self):
+        """Log in."""
+        self.wait_for_provider_type()
+        check_script = (
+            'return app && app.env && app.env.get("connected") && ('
+                'app.env.failedAuthentication || '
+                'app.env.userIsAuthenticated || '
+                '!app.env.getCredentials() ||'
+                '!app.env.getCredentials().areAvailable);')
+        self.wait_for_script(check_script)
+        exe = self.driver.execute_script
+        if exe('return app.env.userIsAuthenticated;'):
+            return
+        # For some unknown reason in Chrome the crosshatch background does not
+        # allow styles to be set to it after a successfull log in so we need
+        # to destroy that mask manually prior to us logging in so that the
+        # following tests can access the other elements
+        exe('document.getElementsByTagName("body")[0]'
+            '.removeChild(document.getElementById("full-screen-mask"));'
+            'app.env.setCredentials({user: "admin", password: "admin"});'
+            'app.env.login();')
+        self.wait_for_script('return app.env.userIsAuthenticated;')
+
+    @webdriverError()
+    def wait_for(self, condition, error=None, timeout=30):
         """Wait for condition to be True.
 
         The argument condition is a callable accepting a driver object.
@@ -169,7 +227,7 @@ class TestCase(unittest.TestCase):
         condition = lambda driver: driver.execute_script(script)
         return self.wait_for(condition, error=error, timeout=timeout)
 
-    @retry(subprocess.CalledProcessError)
+    @retry(subprocess.CalledProcessError, tries=2)
     def restart_api(self):
         """Restart the staging API backend.
 
@@ -179,7 +237,7 @@ class TestCase(unittest.TestCase):
         change the internal Juju environment. Such tests should add this
         function as part of their own clean up process.
         """
-        print('retry_api with ip:%s' % internal_ip)
+        print('restart_api with ip:%s' % internal_ip)
         if internal_ip:
             # When an internal ip address is set directly contract
             # the machine in question. This can help route around

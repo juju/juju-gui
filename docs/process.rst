@@ -156,8 +156,8 @@ Checklist for Making a Stable Release
   reporting the name of the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``.
-- Check that read and execute permissions for all are present on all files
-  and directories, especially in the ``node_modules/`` directory.
+- Check that read permissions for all are present on all files and
+  directories, especially in the ``node_modules/`` directory.
 - Ensure that the ``build-prod/juju-ui/version.js`` file contains a version
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
