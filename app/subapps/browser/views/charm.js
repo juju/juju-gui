@@ -39,26 +39,25 @@ YUI.add('subapp-browser-charmview', function(Y) {
         console.log(file.toLowerCase().slice(0, 6), match);
         console.log(file.toLowerCase().slice(0, 6) === match);
         if (file.toLowerCase().slice(0, 6) === match) {
-            console.log('hit');
-            return true;
+          console.log('hit');
+          return true;
         }
       });
     },
 
     _loadFile: function(container, filename) {
-      this.get('store').file(
-        this.get('charm').get('id'),
-        filename, {
-          'success': function(data) {
-            if (filename.slice(-3) === '.md') {
-              data = Y.Markdown.toHTML(data);
-            }
-            container.setHTML(data);
-          },
-          'failure': function(data, request) {
+      this.get('store').file(this.get('charm').get('id'),
+                             filename, {
+                               'success': function(data) {
+                                 if (filename.slice(-3) === '.md') {
+                                   data = Y.Markdown.toHTML(data);
+                                 }
+                                 container.setHTML(data);
+                               },
+                               'failure': function(data, request) {
 
-          }
-        }
+                               }
+                             }
       );
 
     },
@@ -93,9 +92,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var readme = this._locateReadme();
 
       if (readme) {
-        this._loadFile(
-          tplNode.one('#readme'),
-          readme
+        this._loadFile(tplNode.one('#readme'),
+                       readme
         );
       } else {
         this._noReadme(tplNode.one('#readme'));

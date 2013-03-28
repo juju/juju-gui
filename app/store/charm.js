@@ -205,14 +205,13 @@ YUI.add('juju-charm-store', function(Y) {
      * Fetch the contents of a charm's file.
      *
      * @method file
-     * @param {String} charmID the id of the charm's file we want
-     * @param {String} filename the path/name of the file to fetch content
+     * @param {String} charmID the id of the charm's file we want.
+     * @param {String} filename the path/name of the file to fetch content.
      * for.
      *
      */
     file: function(charmID, filename, callbacks, bindScope) {
       var endpoint = 'charm/' + charmID + '/files/' + filename;
-      debugger;
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
