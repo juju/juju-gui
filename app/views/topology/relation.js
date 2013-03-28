@@ -487,7 +487,7 @@ YUI.add('juju-topology-relation', function(Y) {
         // Remove the relation from the DB.
         db.relations.remove(db.relations.getById(relationId));
         // Redraw the graph and reattach events.
-        topo.update()
+        topo.update();
       }
       view.get('rmrelation_dialog').hide();
       view.get('rmrelation_dialog').destroy();
@@ -726,7 +726,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Firing the update event on the db will properly redraw the
       // graph and reattach events.
-      topo.update()
+      topo.update();
       topo.bindAllD3Events();
 
       // Fire event to add relation in juju.
