@@ -157,7 +157,7 @@ Checklist for Making a Stable Release
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``.
 - Check that read permissions for all are present on all files and
-  directories, especially in the ``node_modules/`` directory.
+  directories. (``find . ! -perm -a+r``)
 - Ensure that the ``build-prod/juju-ui/version.js`` file contains a version
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
@@ -174,58 +174,7 @@ Checklist for Making a Stable Release
   - We want a real QA script for the future.
 
 - Also do the same checks after running the command ``NO_BZR=1 make debug``.
-- For now, we will assume you would like to verify the release on the
-  Launchpad staging server.  As we become more confident with this process,
-  this step may become unnecessary.
-
-  - In the branch, run ``FINAL=1 make dist``.  This will step you through
-    signing the tarball, connecting to Launchpad, and uploading the release.
-
-    - If you have two-factor authentication enabled on Launchpad, the staging
-      server will ask for a one-time password: be sure to have your device
-      available. (If you are a Canonical collaborator, you may try and ask the
-      webops to turn off the two-factor authentication on your Launchpad
-      staging account, but it may not be possible anyway. Go to the ``#u1-as``
-      channel on the Canonical IRC server and ask something like "webops,
-      could you disable 2FA on my staging account?")
-    - When Launchpad asks you what level of permissions to grant, assuming you
-      are running on your own computer that you manage securely, the easiest
-      thing to do is hopefully also reasonably safe: accept that the computer
-      may perform all actions, indefinitely.
-    - If you get a complaint that the "juju-gui" project does not exist, you
-      have an invalid cached Launchpad token. This will most often happen
-      because the staging database has been reset, so your local machine
-      thinks it has a valid token but the staging version of Launchpad has
-      forgotten it.  This error also may happen if you go to Launchpad and
-      explicitly revoke your token's authorization at
-      https://staging.launchpad.net/people/+me/+oauth-tokens (or, if you are
-      encountering this problem on the main, non-staging Launchpad site,
-      https://launchpad.net/people/+me/+oauth-tokens).  To resolve, remove the
-      token from your local machine.  On Ubuntu desktop machines, this can be
-      done by opening the Seahorse password manager (search the dash for
-      "seahorse" or "password"), looking for a password identified as
-      "Password for 'System-wide:
-      Ubuntu(...)@https://api.staging.launchpad.net/ on 'launchpadlib'" (try
-      filtering for "staging.launchpad"), right-clicking on it, and choosing
-      "Delete."
-    - If you get an ERR_CANNOT_FORWARD 115 error from Squid when you try to
-      run the script, it probably is because the Launchpad server is updating.
-      Go to <https://staging.launchpad.net/> to verify.  Try again when
-      Launchpad is back online.
-
-  - Go to <https://staging.launchpad.net/juju-gui/stable> and verify that you
-    see a new release and a new download file.
-  - Download the file and compare it to the original tarball in the
-    ``release/`` directory, verifying that they are identical (hint: use the
-    ``cmp`` command).
-  - This is a final release.  Consider asking others to verify the package on
-    staging. If there are problems, you will have to delete the release from
-    staging, fix the problems and restart the process. However, *do not*
-    reuse the version number that you deleted.  A deleted release is dead,
-    not invisible, and the next, fixed release should increase the revision
-    number.
-
-- Now it is time for the actual, real release.  Head back to your branch and
+- Now it is time to upload the release.  Head back to your branch and
   run ``FINAL=1 PROD=1 make dist``.  The computer will again walk you
   through the process and upload the release, this time to production.
 
@@ -265,8 +214,8 @@ Checklist for Making a Developer Release
   the name of the tarball it made.
 - In an empty temporary directory somewhere else on your system, expand the
   tarball: ``tar xvzf PATH_TO_TARBALL``.
-- Check that read and execute permissions for all are present on all files
-  and directories, especially in the ``node_modules/`` directory.
+- Check that read permissions for all are present on all files and
+  directories. (``find . ! -perm -a+r``)
 - Ensure that the ``build-prod/juju-ui/version.js`` file contains a version
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
@@ -283,52 +232,7 @@ Checklist for Making a Developer Release
   - We want a real QA script for the future.
 
 - Also do the same checks after running the command ``NO_BZR=1 make debug``.
-- For now, we will assume you would like to verify the release on the
-  Launchpad staging server.  As we become more confident with this process,
-  this step may become unnecessary.
-
-  - In the branch, run ``make dist``. This will step you through signing the
-    tarball, connecting to Launchpad, and uploading the release.
-
-    - If you have two-factor authentication enabled on Launchpad, the staging
-      server will ask for a one-time password: be sure to have your device
-      available. (If you are a Canonical collaborator, you may try and ask the
-      webops to turn off the two-factor authentication on your Launchpad
-      staging account, but it may not be possible anyway. Go to the ``#u1-as``
-      channel on the Canonical IRC server and ask something like "webops,
-      could you disable 2FA on my staging account?")
-    - When Launchpad asks you what level of permissions to grant, assuming you
-      are running on your own computer that you manage securely, the easiest
-      thing to do is hopefully also reasonably safe: accept that the computer
-      may perform all actions, indefinitely.
-    - If you get a complaint that the "juju-gui" project does not exist, you
-      have an invalid cached Launchpad token. This will most often happen
-      because the staging database has been reset, so your local machine
-      thinks it has a valid token but the staging version of Launchpad has
-      forgotten it.  This error also may happen if you go to Launchpad and
-      explicitly revoke your token's authorization at
-      https://staging.launchpad.net/people/+me/+oauth-tokens (or, if you are
-      encountering this problem on the main, non-staging Launchpad site,
-      https://launchpad.net/people/+me/+oauth-tokens).  To resolve, remove the
-      token from your local machine.  On Ubuntu desktop machines, this can be
-      done by opening the Seahorse password manager (search the dash for
-      "seahorse" or "password"), looking for a password identified as
-      "Password for 'System-wide:
-      Ubuntu(...)@https://api.staging.launchpad.net/ on 'launchpadlib'" (try
-      filtering for "staging.launchpad"), right-clicking on it, and choosing
-      "Delete."
-    - If you get an ERR_CANNOT_FORWARD 115 error from Squid when you try to
-      run the script, it probably is because the Launchpad server is updating.
-      Go to <https://staging.launchpad.net/> to verify.  Try again when
-      Launchpad is back online.
-
-  - Go to <https://staging.launchpad.net/juju-gui/trunk> and verify that you
-    see a new release and a new download file.
-  - Download the file and compare it to the original tarball in the
-    ``release/`` directory, verifying that they are identical (hint: use the
-    ``cmp`` command).
-
-- Now it is time for the actual, real release.  Head back to your branch and
+- Now it is time to upload the release.  Head back to your branch and
   run ``PROD=1 make dist``.  The computer will again walk you through the
   process and upload the release.
 
