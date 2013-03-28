@@ -737,9 +737,9 @@ YUI.add('juju-topology-relation', function(Y) {
       module.set('currentServiceClickAction', 'hideServiceMenu');
     },
 
-    _addRelationCallback: function(view, relation_id, ev) {
+    _addRelationCallback: function(module, relation_id, ev) {
       console.log('addRelationCallback reached');
-      var topo = view.get('component');
+      var topo = module.get('component');
       var db = topo.get('db');
       var vis = topo.vis;
       // Remove our pending relation from the DB, error or no.
@@ -773,10 +773,8 @@ YUI.add('juju-topology-relation', function(Y) {
           display_name: endpoints[0][1].name
         });
       }
-      // Redraw the graph and reattach events.
-      //db.fire('update');
-      view.get('component').bindAllD3Events();
-      view.update();
+      topo.update();
+      topo.bindAllD3Events();
     },
 
     /*
