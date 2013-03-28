@@ -81,7 +81,7 @@ describe.only('charm container widget', function() {
       }]
     });
     charm_container.render(container);
-    assert.equal('Popular', container.one('h2').get('text'));
+    assert.equal('Popular', container.one('h3').get('text'));
     assert.equal('See 1 more', container.one('.more').get('text'));
   });
 
