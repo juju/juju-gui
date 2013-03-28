@@ -3,7 +3,6 @@
 
 YUI.add('subapp-browser-charmview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
-      models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets');
 
@@ -18,6 +17,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
   ns.BrowserCharmView = Y.Base.create('browser-view-charmview', Y.View, [], {
     template: views.Templates.browser_charm,
 
+    /**
+     * List the DOM based events to watch for in the container.
+     * @attribute events
+     *
+     */
     events: {
       '.changelog .toggle': {
         click: this._toggleLog
@@ -27,10 +31,27 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
     },
 
+    /**
+     * When the 'add' is clicked we need to work on adding the ghost to the
+     * environment.
+     *
+     * @method _addCharmEnvironment
+     * @param {Event} ev the event from the click handler.
+     * @private
+     *
+     */
     _addCharmEnvironment: function(ev) {
       console.log('add the charm to the environment');
     },
 
+    /**
+     * The readme file in a charm can be upper/lower/etc. This helps find a
+     * readme from the list of files in a charm.
+     *
+     * @method _locateReadme
+     * @private
+     *
+     */
     _locateReadme: function() {
       var files = this.get('charm').get('files'),
           match = 'readme';
@@ -45,6 +66,16 @@ YUI.add('subapp-browser-charmview', function(Y) {
       });
     },
 
+    /**
+     * Fetch the contents from a file and drop it into the container
+     * specified.
+     *
+     * @method _loadFile
+     * @param {Node} container the node to set content to.
+     * @param {String} filename the name of the file to fetch from the api.
+     * @private
+     *
+     */
     _loadFile: function(container, filename) {
       this.get('store').file(this.get('charm').get('id'),
                              filename, {
@@ -62,10 +93,25 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
     },
 
+    /**
+     * When there is no readme setup some basic 'nothing found content'.
+     *
+     * @method _noReadme
+     * @param {Node} container the node to drop this default content into.
+     *
+     */
     _noReadme: function(container) {
       container.setHTML('<h3>No Readme Found</h3>');
     },
 
+    /**
+     * Clicking on the open log should toggle the list of log entries.
+     *
+     * @method _toggleLog
+     * @param {Event} ev the click event of the open log control.
+     * @private
+     *
+     */
     _toggleLog: function(ev) {
       console.log('toggle the charm log');
     },
@@ -103,6 +149,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
   }, {
     ATTRS: {
       /**
+       * The charm we're viewing the details of.
        *
        * @attribute charm
        * @default undefined
@@ -111,6 +158,14 @@ YUI.add('subapp-browser-charmview', function(Y) {
        */
       charm: {},
 
+      /**
+       * The store is the api endpoint for fetching data.
+       *
+       * @attribute store
+       * @default undefined
+       * @type {Charmworld0}
+       *
+       */
       store: {}
 
     }
@@ -120,7 +175,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
   requires: [
     'browser-tabview',
     'gallery-markdown',
-    'juju-charm-models',
     'view'
   ]
 });
