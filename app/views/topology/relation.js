@@ -561,8 +561,12 @@ YUI.add('juju-topology-relation', function(Y) {
       var db = this.get('component').get('db');
       var getServiceEndpoints = this.get('component')
                                     .get('getServiceEndpoints');
+
       var endpoints = models.getEndpoints(
           service, getServiceEndpoints(), db);
+
+      // endpoints = db.ServiceEndpoint
+
       // Transform endpoints into a list of relatable services (to the
       // service).
       var possible_relations = Y.Array.map(

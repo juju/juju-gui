@@ -356,6 +356,11 @@ YUI.add('juju-gui', function(Y) {
       this.env.on('delta', this.notifications.generate_notices,
           this.notifications);
 
+      // Handlers for adding and removing services to the service list.
+      this.db.services.after('add', models.serviceAddHandler, this);
+      this.db.services.after('remove', models.serviceRemoveHandler, this);
+      this.db.services.after('*:pendingChange', models.pendingChangedHandler, this);
+
       // When the connection resets, reset the db, re-login (a delta will
       // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', function(ev) {
