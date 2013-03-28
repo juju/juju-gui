@@ -131,3 +131,31 @@ There are quite a number of files which are involved in the CI process::
   lib/deploy_charm_for_testing.py
   test/browser.py
   test/test_charm_running.py
+
+Known issues
+------------
+Unit tests fail
+~~~~~~~~~~~~~~~~
+In reviewing the CI logs you might notice that it says '{} failure(s) running {}
+tests.  Retrying.' This is necessary because periodically a large number of the
+tests will fail claiming an error in the test_charm_configuration.js suite. If
+this happens a sollution is to simply refresh the browser and re-run the tests.
+
+Fragile IE
+~~~~~~~~~~
+IE throws an error without a stacktrace if you attempt to access any javascript
+before it is ready. To remedy this we wait for css elements to be ready before
+accessing the javascript.
+
+Unit tests log us out
+~~~~~~~~~~~~~~~~~~~~~
+The unit tests log us out of the application requiring us to log back in before
+we try to execute any further tests
+
+Crosshatch background won't hide in Chrome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+After the unit tests have logged us out the handle_login() method logs us back
+in in every browser except Chrome. In chrome any attempts to set a style on the
+crosshatch background results in only the `style` tag being added to the
+element. Right now we are destroying that crosshatch node before we attempt to
+log in to allow the tests to continue successfully.
