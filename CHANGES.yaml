@@ -21,6 +21,9 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
+- unreleased:
+- 0.3.1:
+    - Small fixes to release process.
 - 0.3.0:
     - Improved browser support.
     - Beginnings of support for Go Juju.

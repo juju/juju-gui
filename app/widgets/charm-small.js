@@ -11,7 +11,7 @@ YUI.add('browser-charm-small', function(Y) {
 
   var ns = Y.namespace('juju.widgets.browser');
   ns.EVENT_CHARM_ADD = 'charm-small-add';
-  ns.CharmSmall = Y.Base.create('CharmSmall', Y.Widget, [], {
+  ns.CharmSmall = Y.Base.create('CharmSmall', Y.Widget, [Y.WidgetChild], {
 
     _events: [],
     TEMPLATE: Y.namespace('juju.views').Templates['charm-small-widget'],
@@ -91,6 +91,7 @@ YUI.add('browser-charm-small', function(Y) {
     'base',
     'handlebars',
     'juju-templates',
-    'widget'
+    'widget',
+    'widget-child'
   ]
 });
