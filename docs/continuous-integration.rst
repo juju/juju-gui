@@ -138,14 +138,15 @@ Unit tests fail
 ~~~~~~~~~~~~~~~~
 In reviewing the CI logs you might notice that it says '{} failure(s) running {}
 tests.  Retrying.' This is necessary because periodically a large number of the
-tests will fail claiming an error in the test_charm_configuration.js suite. If
-this happens a sollution is to simply refresh the browser and re-run the tests.
+tests will fail claiming an error in the test_charm_configuration.js suite. The
+workaround we found was to refresh the browser and re-run the tests.
 
 Fragile IE
 ~~~~~~~~~~
 IE throws an error without a stacktrace if you attempt to access any javascript
-before it is ready. To remedy this we wait for css elements to be ready before
-accessing the javascript.
+before it is ready or if you try to use xpath to find elements. To remedy this
+we wait for css elements to be ready before accessing the javascript. Two
+methods handle_login() and wait_for_provider_type() can help you with this.
 
 Unit tests log us out
 ~~~~~~~~~~~~~~~~~~~~~
@@ -155,7 +156,7 @@ we try to execute any further tests
 Crosshatch background won't hide in Chrome
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 After the unit tests have logged us out the handle_login() method logs us back
-in in every browser except Chrome. In chrome any attempts to set a style on the
+in in every browser except Chrome. In Chrome any attempts to set a style on the
 crosshatch background results in only the `style` tag being added to the
 element. Right now we are destroying that crosshatch node before we attempt to
 log in to allow the tests to continue successfully.

@@ -26,7 +26,8 @@ def juju(s):
         print(err.output)
         raise
 
-
+# We found that the juju status call fails intermittently in
+# canonistack. This works around that particular fragility.
 @retry(subprocess.CalledProcessError, tries=3)
 def get_status():
     """Get the current status info as a JSON document."""
@@ -102,6 +103,9 @@ def main(options=parse, print=print, juju=juju,
         print('Bootstrapping...')
         juju('bootstrap --environment juju-gui-testing '
              '--constraints instance-type=m1.small')
+            # The default m1.tiny was so small that the improv server would
+            # sometimes fail to start. The m1.medium is more difficult to obtain
+            # on canonistack than m1.small, so m1.small seems to be "just right"
         print('Deploying service...')
         options = {'serve-tests': True, 'staging': True, 'secure': False,
                    'juju-gui-source': args.origin}
