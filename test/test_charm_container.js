@@ -20,7 +20,7 @@ describe('charm container widget', function() {
   });
 
   afterEach(function() {
-    container.remove(true);
+    container.remove().destroy(true);
     if (charm_container) {
       charm_container.destroy();
     }
