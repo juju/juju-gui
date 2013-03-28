@@ -64,27 +64,46 @@
       view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
-            'hooks/install',
+            'hooks/install'
           ],
           id: 'precise/ceph-9'
         })
       });
 
-      view.render(node);
-      view.get('container').should.eql(node);
-
       // Hook up to the callback for the click event.
       view._addCharmEnvironment = function(ev) {
-        debugger;
         ev.preventDefault();
-
         Y.one('#readme h3').get('text').should.eql('No Readme Found');
         done();
       };
 
-      debugger;
+      view.render(node);
+      view.get('container').should.eql(node);
       node.one('.charm input.add').simulate('click');
     });
+
+    it('should catch when the open log is clicked', function(done) {
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install'
+          ],
+          id: 'precise/ceph-9'
+        })
+      });
+
+      // Hook up to the callback for the click event.
+      view._toggleLog = function(ev) {
+        ev.preventDefault();
+        Y.one('#readme h3').get('text').should.eql('No Readme Found');
+        done();
+      };
+
+      view.render(node);
+      view.get('container').should.eql(node);
+      node.one('.changelog .toggle').simulate('click');
+    });
   });
+
 })();
 

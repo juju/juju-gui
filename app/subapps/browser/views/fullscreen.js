@@ -79,7 +79,6 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
             charm: new models.BrowserCharm(data),
             store: this.get('store')
           });
-          debugger;
           charmView.render(tplNode.one('.bws-view-data'));
           container.setHTML(tplNode);
         },

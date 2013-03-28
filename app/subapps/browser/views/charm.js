@@ -24,10 +24,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     events: {
       '.changelog .toggle': {
-        click: this._toggleLog
+        click: '_toggleLog'
       },
       '.charm input.add': {
-        click: this._addCharmEnvironment
+        click: '_addCharmEnvironment'
       }
     },
 
@@ -41,7 +41,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _addCharmEnvironment: function(ev) {
-      debugger;
       console.log('add the charm to the environment');
       ev.preventDefault();
     },
@@ -112,7 +111,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _toggleLog: function(ev) {
-      debugger;
       console.log('toggle the charm log');
     },
 
@@ -127,15 +125,14 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var tpl = this.template(this.get('charm').getAttrs()),
           tplNode = Y.Node.create(tpl);
 
+      container.setHTML(tplNode);
+
       // Allow for specifying the container to use. This should reset the
       // events.
       if (container) {
         this.set('container', container);
       }
 
-      debugger;
-
-      container.setHTML(tplNode);
       this.tabview = new widgets.browser.TabView({
         srcNode: tplNode.one('.tabs')
       });
