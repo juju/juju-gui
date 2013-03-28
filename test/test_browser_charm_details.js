@@ -63,17 +63,17 @@
     it('should be able to display the readme content', function() {
       var fakeStore = new Y.juju.Charmworld0({});
       fakeStore.set('datasource', {
-          sendRequest: function(params) {
-            // Stubbing the server callback value
-            params.callback.success({
-              response: {
-                results: [{
-                  responseText: 'README content.'
-                }]
-              }
-            });
-           }
-        });
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: 'README content.'
+              }]
+            }
+          });
+        }
+      });
 
       view = new CharmView({
         charm: new models.BrowserCharm({
