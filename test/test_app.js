@@ -34,12 +34,14 @@ function injectData(app, data) {
 (function() {
 
   describe('Application basics', function() {
-    var Y, app, container;
+    var Y, app, container, utils, juju, env, conn;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           ['juju-gui', 'juju-tests-utils', 'juju-view-utils'],
           function(Y) {
+            utils = Y.namespace('juju-tests.utils');
+            juju = Y.namespace('juju');
             done();
           });
     });
@@ -54,9 +56,13 @@ function injectData(app, data) {
           .append(Y.Node.create('<span/>')
             .addClass('provider-type'))
           .hide();
+      conn = new utils.SocketStub();
+      env = juju.newEnvironment({conn: conn});
+      env.connect();
       app = new Y.juju.App(
           { container: container,
-            viewContainer: container});
+            viewContainer: container,
+            env: env});
       injectData(app);
     });
 
@@ -108,7 +114,7 @@ function injectData(app, data) {
       // needed to show them.
       var wordpress = app.db.services.getById('wordpress'),
           wp0 = app.db.units.get_units_for_service(wordpress)[0],
-          wp_charm = app.db.charms.add({id: wordpress.get('charm')});
+          wp_charm = app.db.charms.getById(wordpress.get('charm'));
 
       // 'service/wordpress/' is the primary route,
       // so other URLs are not returned.
@@ -339,15 +345,15 @@ function injectData(app, data) {
     });
 
     it('must prefetch charm and service for service pages', function() {
-      injectData(app);
       var _ = expect(
           app.db.charms.getById('cs:precise/wordpress-6')).to.not.exist;
+      injectData(app);
       app.show_service({params: {id: 'wordpress'}, query: {}});
-      // The app made a request of juju for the service info.
-      conn.messages[conn.messages.length - 2].op.should.equal('get_service');
-      // The app also requested juju (not the charm store--see discussion in
-      // app/models/charm.js) for the charm info.
-      conn.last_message().op.should.equal('get_charm');
+      // When the service was added to the service modellist, that triggered
+      // the loading of the charm.
+      conn.messages[conn.messages.length - 2].op.should.equal('get_charm');
+      // The service was later loaded.
+      conn.last_message().op.should.equal('get_service');
       // Tests of the actual load machinery are in the model and env tests, and
       // so are not repeated here.
     });

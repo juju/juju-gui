@@ -193,8 +193,8 @@ describe('notifications', function() {
         env = juju.newEnvironment({conn: conn}),
         app = new Y.juju.App({env: env, container: container}),
         db = app.db,
-        mw = db.services.create({id: 'mediawiki',
-                                    name: 'mediawiki'}),
+        mw = db.services.create({id: 'cs:mediawiki',
+                                 name: 'mediawiki'}),
         notifications = db.notifications,
         view = new views.NotificationsOverview({
                       container: container,
@@ -202,10 +202,10 @@ describe('notifications', function() {
                       app: app,
                       env: env,
                       nsRouter: nsRouter}).render();
-    // we use overview here for testing as it defaults
-    // to showing all notices
+    // We use overview here for testing as it defaults
+    // to showing all notices.
 
-    // we can use app's routing table to derive a link
+    // We can use app's routing table to derive a link.
     notifications.create({title: 'Service Down',
       message: 'Your service has an error',
       link: app.getModelURL(mw)
@@ -215,7 +215,6 @@ describe('notifications', function() {
     link.getAttribute('href').should.equal(
         '/:gui:/service/mediawiki/');
     link.getHTML().should.contain('View Details');
-
 
     // create a new notice passing the link_title
     notifications.create({title: 'Service Down',
