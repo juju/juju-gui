@@ -202,6 +202,41 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
+     * Fetch the contents of a charm's file.
+     *
+     * @method file
+     * @param {String} charmID the id of the charm's file we want
+     * @param {String} filename the path/name of the file to fetch content
+     * for.
+     *
+     */
+    file: function(charmID, filename, callbacks, bindScope) {
+      var endpoint = 'charm/' + charmID + '/files/' + filename;
+      debugger;
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+
+      this.get('datasource').sendRequest({
+        request: endpoint,
+        callback: {
+          success: function(io_request) {
+            callbacks.success(io_request.response.results[0].responseText);
+          },
+          'failure': function(io_request) {
+            var respText = io_request.response.results[0].responseText,
+                res;
+            if (respText) {
+              res = Y.JSON.parse(respText);
+            }
+            callbacks.failure(res, io_request);
+          }
+        }
+      });
+    },
+
+    /**
      * Given a result list, turn that into a BrowserCharmList object for the
      * application to use.
      *
