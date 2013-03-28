@@ -88,7 +88,7 @@ var GlobalConfig = {
         },
 
         'browser-tabview': {
-          fullpath: '/juju-ui/widgets/tabview.js'
+          fullpath: '/juju-ui/widgets/browser-tabview.js'
         },
 
         'reconnecting-websocket': {

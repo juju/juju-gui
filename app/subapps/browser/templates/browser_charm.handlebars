@@ -1,0 +1,61 @@
+<div class="charm">
+    <div class="nav">
+        <a href="">Search Results</a>
+        <a href="">Share</a>
+        <a href="">Add</a>
+    </div>
+
+    <div class="heading">
+        <img src="data:image/svg;base64,{{ icon }}" alt="{{ name }} icon">
+        {{ name }}
+    </div>
+
+    <div class="summary">
+        <h2>Summary</h2>
+        {{ summary }}
+        <h2>Description</h2>
+        {{ description }}
+
+        <div>
+            <a href="#">Source Code</a>
+            <a href="{{ code_source.bugs_link }}">Bugs</a>
+            {{ code_source.location }}
+        </div>
+    </div>
+
+    <div class="metadata">
+        <div>For {{ distro_series }}</div>
+        <div>{{ url }}</div>
+        <div>Tested and passed on providers:
+            <ul>
+                <li>--</li>
+            </ul>
+        </div>
+        <div><span>{{ downloads_in_past_30_days }}</span> downloads in the
+        last 30 days</div>
+    </div>
+
+    <div class="changelog">
+    </div>
+
+    <div class="changelog">
+    </div>
+
+    <div class="tabs">
+        <ul>
+            <li><a href="#readme">Readme</a></li>
+            <li><a href="#interfaces">Interfaces</a></li>
+            <li><a href="#configuration">Configuration</a></li>
+            <li><a href="#qa">Quality</a></li>
+            <li><a href="#hooks">Hooks</a></li>
+        </ul>
+        <div>
+            <div id="#readme">Readme</div>
+            <div id="#interfaces">Interfaces</div>
+            <div id="#configuration">Configuration</div>
+            <div id="#qa">Quality</div>
+            <div id="#hooks">Hooks</div>
+        </div>
+    </div>
+
+</div>

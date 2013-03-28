@@ -3,6 +3,7 @@
 
 YUI.add('subapp-browser-fullscreen', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
+      models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets');
 
@@ -20,6 +21,21 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
     template: views.Templates.fullscreen,
 
     /**
+     * Render out the main search widget and controls shared across various
+     * views.
+     *
+     * @method _renderSearchWidget
+     * @param {Node} node the node to render into.
+     *
+     */
+    _renderSearchWidget: function(node) {
+      this.search = new widgets.browser.Search({
+        fullscreenTarget: this._fullscreenTarget
+      });
+      this.search.render(node.one('.bws-search'));
+    },
+
+    /**
      * The default view is the editorial rendering. Render this view out.
      *
      * @method _renderEditorialView
@@ -28,27 +44,63 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
      */
     _renderEditorialView: function(container) {
       var tpl = this.template(),
-          tpl_node = Y.Node.create(tpl);
+          tplNode = Y.Node.create(tpl);
 
-      this.search = new widgets.browser.Search({
-        fullscreenTarget: this._fullscreenTarget
-      });
-      this.search.render(tpl_node.one('.bws-search'));
+      this._renderSearchWidget(tplNode);
 
       if (!Y.Lang.isValue(container)) {
         container = this.get('container');
       }
-      container.setHTML(tpl_node);
+      container.setHTML(tplNode);
+    },
+
+    /**
+     * Render the view of a single charm details page.
+     *
+     * @method _renderCharmView
+     * @param {Node} container node to render out to.
+     *
+     */
+    _renderCharmView: function(container) {
+      var tpl = this.template(),
+          tplNode = Y.Node.create(tpl);
+      this._renderSearchWidget(tplNode);
+
+      // Fetch the charm data from the api.
+      this.get('store').charm(this.get('charmID'), {
+        'success': function(data) {
+          // @todo make sure this instance is tied to the view and destroyed.
+          var charm = new models.BrowserCharm(data),
+              charmTpl = views.Templates.browser_charm;
+          tplNode.one('.bws-view-data').setHTML(charmTpl(charm.getAttrs()));
+          container.setHTML(tplNode);
+
+          this.tabview = new widgets.browser.TabView({
+            srcNode: tplNode.one('.tabs')
+          });
+          this.tabview.render();
+        },
+        'failure': this.apiFailure
+      }, this);
+
+      if (!Y.Lang.isValue(container)) {
+        container = this.get('container');
+      }
     },
 
     /**
      * Render out the view to the DOM.
      *
      * @method render
+     * @param {Node} container optional specific container to render out to.
      *
      */
     render: function(container) {
-      this._renderEditorialView(container);
+      if (this.get('charmID')) {
+        this._renderCharmView(container);
+      } else {
+        this._renderEditorialView(container);
+      }
 
       // Bind our view to the events from the search widget used for controls.
       this._bindSearchWidgetEvents();
@@ -56,6 +108,17 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+       * If this view is called from the point of view of a specific charmId
+       * it'll be set here.
+       *
+       * @attribute charmID
+       * @default undefined
+       * @type {String}
+       *
+       */
+      charmID: {},
+
       /**
        * An instance of the Charmworld API object to hit for any data that
        * needs fetching.
@@ -65,13 +128,28 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
        * @type {Charmworld0}
        *
        */
-      store: {}
+      store: {},
+
+      /**
+       * If this were a route that had a subpath component it's passed into
+       * the view to aid in rendering.
+       *
+       * e.g. /bws/fullscreen/*charmid/hooks to load the hooks tab correctly.
+       *
+       * @attribute subpath
+       * @default undefined
+       * @type {String}
+       *
+       */
+      subpath: {}
     }
   });
 
 }, '0.1.0', {
   requires: [
     'browser-search-widget',
+    'browser-tabview',
+    'juju-charm-models',
     'subapp-browser-mainview',
     'view'
   ]

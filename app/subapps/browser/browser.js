@@ -21,15 +21,36 @@ YUI.add('subapp-browser', function(Y) {
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
 
     /**
+     * Some routes might have sub parts that hint to where a user wants focus.
+     * In particular we've got the tabs that might have focus. They are the
+     * last optional component of some of the routes.
+     *
+     * @method _getSubPath
+     * @param {String} path the full path to search for the sub path.
+     *
+     */
+    _getSubPath: function(path) {
+      var reLastWord = /[^\/]*\/?$/,
+          lastWords = path.match(reLastWord);
+      if (lastWords.length) {
+        return lastWords[0].replace('/', '');
+      } else {
+        return undefined;
+      }
+    },
+
+    /**
      * Generate a standard shared set of cfg all Views can expect to see.
      *
      * @method _getViewCfg
+     * @param {Object} cfg additional config to merge into the default view
+     * config.
      *
      */
-    _getViewCfg: function() {
-      return {
+    _getViewCfg: function(cfg) {
+      return Y.merge(cfg, {
         db: this.get('db')
-      };
+      });
     },
 
     /**
@@ -44,7 +65,7 @@ YUI.add('subapp-browser', function(Y) {
       },
       fullscreenCharm: {
         type: 'juju.browser.views.FullScreen',
-        preserve: true
+        preserve: false
       },
       sidebar: {
         type: 'juju.browser.views.Sidebar',
@@ -86,7 +107,11 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreenCharm: function(req, res, next) {
-      this.showView('fullscreenCharm', this._getViewCfg());
+      var subpath = this._getSubPath(req.path);
+      this.showView('fullscreenCharm', this._getViewCfg({
+        charmID: req.params.id,
+        subpath: subpath
+      }));
       next();
     },
 
@@ -123,7 +148,14 @@ YUI.add('subapp-browser', function(Y) {
       routes: {
         value: [
           { path: '/bws/fullscreen/', callbacks: 'fullscreen' },
-          { path: '/bws/fullscreen/:id/', callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/configuration/',
+            callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/hooks/', callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/interfaces/',
+            callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/qa/', callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/readme/', callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*id/', callbacks: 'fullscreenCharm' },
           { path: '/bws/sidebar/', callbacks: 'sidebar' }
         ]
       }
