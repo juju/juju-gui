@@ -82,10 +82,10 @@ describe.only('charm container widget', function() {
     });
     charm_container.render(container);
     assert.equal('Popular', container.one('h3').get('text'));
-    assert.equal('See 1 more', container.one('.more').get('text'));
+    assert.equal('See 1 more', container.one('.expand').get('text'));
   });
 
-  it('shows the remaining items when See More is clicked', function() {
+  it('toggle between all or a just few items being shown', function() {
     charm_container = new Y.juju.widgets.browser.CharmContainer({
       name: 'Popular',
       children: [{
@@ -101,8 +101,14 @@ describe.only('charm container widget', function() {
     charm_container.render(container);
     var hidden = container.all('.yui3-charmsmall-hidden');
     assert.equal(1, hidden.size());
-    container.one('.more').simulate('click');
+    container.one('.expand').simulate('click');
     hidden = container.all('.yui3-charmsmall-hidden');
     assert.equal(0, hidden.size());
+    assert.equal('See less', container.one('.expand').get('text'));
+
+    container.one('.expand').simulate('click');
+    hidden = container.all('.yui3-charmsmall-hidden');
+    assert.equal(1, hidden.size());
+    assert.equal('See 1 more', container.one('.expand').get('text'));
   });
 });

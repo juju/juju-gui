@@ -18,16 +18,37 @@ YUI.add('browser-charm-container', function(Y) {
       this.set('extra', extra);
     },
 
+    _hideSomeChildren: function() {
+      var cut_items = this._items.slice(this.get('cutoff'), this.get('total'));
+      Y.Array.each(cut_items, function(item) {
+        item.set('visible', false);
+      });
+      this.set('all_visible', false);
+    },
+
     _showAll: function() {
       Y.Array.each(this._items, function(item) {
         item.show();
       });
+      this.set('all_visible', true);
     },
 
+    _toggleExpand: function (e) {
+      var visible = this.get('all_visible'),
+          expander = e.currentTarget;
+      if (visible) {
+        this._hideSomeChildren();
+        var msg = Y.Lang.sub('See {extra} more', {extra: this.get('extra')});
+        expander.set('text', msg);
+      } else {
+        this._showAll();
+        expander.set('text', 'See less');
+      }
+    },
 
     bindUI: function() {
-      var more = this.get('contentBox').one('.more');
-      this._events.push(more.on('click', this._showAll, this));
+      var expander = this.get('contentBox').one('.expand');
+      this._events.push(expander.on('click', this._toggleExpand, this));
     },
 
     destructor: function() {
@@ -47,13 +68,14 @@ YUI.add('browser-charm-container', function(Y) {
           cb = this.get('contentBox');
       cb.setHTML(content);
       this._childrenContainer = cb.one('.charms');
-      var cut_items = this._items.slice(this.get('cutoff'), this.get('total'));
-      Y.Array.each(cut_items, function(item) {
-        item.set('visible', false);
-      });
+      this._hideSomeChildren();
     }
   }, {
     ATTRS: {
+      all_visible: {
+        value: false
+      },
+
       cutoff: {
         value: 3
       },
