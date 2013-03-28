@@ -2,7 +2,7 @@
 
 
 /**
- * Provide the Charm Small widget.
+ * Provide the Charm Token widget.
  *
  * @module widgets
  * @submodule juju.widgets.browser.charm-small
@@ -10,11 +10,11 @@
 YUI.add('browser-charm-small', function(Y) {
 
   var ns = Y.namespace('juju.widgets.browser');
-  ns.EVENT_CHARM_ADD = 'charm-small-add';
-  ns.CharmSmall = Y.Base.create('CharmSmall', Y.Widget, [], {
+  ns.EVENT_CHARM_ADD = 'charm-token-add';
+  ns.CharmSmall = Y.Base.create('CharmToken', Y.Widget, [], {
 
     _events: [],
-    TEMPLATE: Y.namespace('juju.views').Templates['charm-small-widget'],
+    TEMPLATE: Y.namespace('juju.views').Templates['charm-token'],
 
     /**
      * Set up and bind DOM events.
@@ -79,10 +79,20 @@ YUI.add('browser-charm-small', function(Y) {
 
   }, {
     ATTRS: {
-      name: {value: ''},
-      description: {value: ''},
-      rating: {value: 0},
-      iconfile: {value: ''}
+      commits: {},
+      description: {
+        value: ''
+      },
+      downloads: {},
+      iconfile: {
+        value: ''
+      },
+      name: {
+        value: ''
+      },
+      providers: {
+        value: [] 
+      }
     }
   });
 
