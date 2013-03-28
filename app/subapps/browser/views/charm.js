@@ -26,7 +26,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '.changelog .toggle': {
         click: this._toggleLog
       },
-      '.charm .add': {
+      '.charm input.add': {
         click: this._addCharmEnvironment
       }
     },
@@ -41,7 +41,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _addCharmEnvironment: function(ev) {
+      debugger;
       console.log('add the charm to the environment');
+      ev.preventDefault();
     },
 
     /**
@@ -57,10 +59,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
           match = 'readme';
 
       return Y.Array.find(files, function(file) {
-        console.log(file.toLowerCase().slice(0, 6), match);
-        console.log(file.toLowerCase().slice(0, 6) === match);
         if (file.toLowerCase().slice(0, 6) === match) {
-          console.log('hit');
           return true;
         }
       });
@@ -113,6 +112,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _toggleLog: function(ev) {
+      debugger;
       console.log('toggle the charm log');
     },
 
@@ -127,12 +127,17 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var tpl = this.template(this.get('charm').getAttrs()),
           tplNode = Y.Node.create(tpl);
 
+      // Allow for specifying the container to use.
+      if (container) {
+        this.set('container', container);
+      }
+      container = this.get('container');
+
       container.setHTML(tplNode);
       this.tabview = new widgets.browser.TabView({
         srcNode: tplNode.one('.tabs')
       });
       this.tabview.render();
-      container.setHTML(tplNode);
 
       // Start loading the readme so it's ready to go.
       var readme = this._locateReadme();
@@ -175,6 +180,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
   requires: [
     'browser-tabview',
     'gallery-markdown',
+    'juju-templates',
     'view'
   ]
 });

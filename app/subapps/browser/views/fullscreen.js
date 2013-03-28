@@ -149,6 +149,8 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
     'browser-search-widget',
     'browser-tabview',
     'juju-charm-models',
+    'juju-templates',
+    'juju-views',
     'subapp-browser-charmview',
     'subapp-browser-mainview',
     'view'
