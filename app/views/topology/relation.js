@@ -689,14 +689,18 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /*
-     * Fired when clicking the second service is clicked in the
+     *
+     * Fired when the second service is clicked in the
      * add relation flow.
      *
-     * :param endpoints: array of two endpoints, each in the form
+     * @method addRelationEnd
+     * @param endpoints {Array} array of two endpoints, each in the form
      *   ['service name', {
      *     name: 'endpoint type',
      *     role: 'client or server'
-     *   }]
+     *   }].
+     * @param module {RelationModule}
+     * @return undefined Side-effects only.
      */
     addRelationEnd: function(endpoints, module) {
       // Redisplay all services
