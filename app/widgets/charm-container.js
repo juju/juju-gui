@@ -2,52 +2,77 @@
 
 
 YUI.add('browser-charm-container', function(Y) {
-  var ns = Y.namespace('Y.juju.widgets.browser');
+  var ns = Y.namespace('juju.widgets.browser');
 
   ns.CharmContainer = Y.Base.create('browser-charm-container', Y.Widget, [
     Y.WidgetParent
   ], {
     _events: [],
 
-    TEMPLATE: Y.namespace('juju.views').Templates['charm-small-widget'],
+    TEMPLATE: Y.namespace('juju.views').Templates['charm-container'],
+
+    _afterInit: function() {
+      var cutoff = this.get('cutoff'),
+          total = this._items.length,
+          extra = total - cutoff;
+      this.set('extra', extra);
+    },
+
+    _showAll: function() {
+      Y.Array.each(this._items, function(item) {
+        item.show();
+      });
+    },
+
+
+    bindUI: function() {
+      var more = this.get('contentBox').one('.more');
+      this._events.push(more.on('click', this._showAll, this));
+    },
+
+    destructor: function() {
+      Y.Array.each(this._events, function(e) {
+        e.detach();
+      });
+    },
 
     initializer: function(cfg) {
       ns.CharmContainer.superclass.initializer.apply(this, cfg);
-      var total = this.get('children').size,
-          extra = total - this.get('cutoff');
-      this.set('extra', extra);
-      this.set(
-          'cutoff_children',
-          this.get('children').slize(0,this.get('cutoff')));
+      this._events.push(
+          this.after('initializedChange', this._afterInit, this));
     },
 
     renderUI: function() {
-
+      var content = this.TEMPLATE(this.getAttrs()),
+          cb = this.get('contentBox');
+      cb.setHTML(content);
+      this._childrenContainer = cb.one('.charms');
+      var cut_items = this._items.slice(this.get('cutoff'), this.get('total'));
+      Y.Array.each(cut_items, function(item) {
+        item.set('visible', false);
+      });
     }
   }, {
-    ATTRs: {
-      defaultChildType: {
-        value: Y.juju.widgets.browser.CharmSmall
-      },
-
+    ATTRS: {
       cutoff: {
         value: 3
+      },
+
+      defaultChildType: {
+        value: ns.CharmSmall
       },
 
       extra: {},
 
       name: {
         value: ''
-      },
-
-      cutoff_children: {
-        value: []
       }
     }
   });
 
 }, '0.1.0', {
   requires: [
+    'array',
     'base',
     'browser-charm-small',
     'handlebars',
