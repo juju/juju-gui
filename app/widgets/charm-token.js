@@ -7,7 +7,7 @@
  * @module widgets
  * @submodule juju.widgets.browser.charm-small
  */
-YUI.add('browser-charm-small', function(Y) {
+YUI.add('browser-charm-token', function(Y) {
 
   var ns = Y.namespace('juju.widgets.browser');
   ns.EVENT_CHARM_ADD = 'charm-token-add';

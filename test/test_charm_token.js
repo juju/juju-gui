@@ -6,7 +6,7 @@ describe('charm small widget', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['browser-charm-small', 'node-event-simulate'], function(Y) {
+        ['browser-charm-token', 'node-event-simulate'], function(Y) {
           done();
         });
   });
@@ -20,23 +20,20 @@ describe('charm small widget', function() {
     Y.one('#charm-container').remove(true);
   });
 
-  it('should initialize', function() {
-    var charm = new Y.juju.widgets.browser.CharmSmall();
+  it('exists', function() {
+    var charm = new Y.juju.widgets.browser.CharmToken();
     assert.isObject(charm);
-    assert.equal(charm.get('name'), '');
-    assert.equal(charm.get('description'), '');
-    assert.equal(charm.get('iconfile'), '');
   });
 
-  it('should render with name, rating, and description', function() {
+  it('renders with the right metadata', function() {
     var cfg = {
       name: 'some-charm',
       description: 'some description',
       commits: 1,
-      downloads: 1
-      providers: [] 
+      downloads: 1,
+      providers: []
     };
-    var charm = new Y.juju.widgets.browser.CharmSmall(cfg);
+    var charm = new Y.juju.widgets.browser.CharmToken(cfg);
     charm.render(charm_container);
     var rendered_charm = Y.one('.yui3-charmsmall');
     assert.equal('some-charm', rendered_charm.one('.title a').get('text'));

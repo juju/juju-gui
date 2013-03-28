@@ -67,8 +67,12 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/notifier.js'
         },
 
-        'browser-charm-small': {
-          fullpath: '/juju-ui/widgets/charm-small.js'
+        'browser-charm-token': {
+          fullpath: '/juju-ui/widgets/charm-token.js'
+        },
+
+        'browser-charm-container': {
+          fullpath: '/juju-ui/widgets/charm-container.js'
         },
 
         'browser-charm-slider': {
