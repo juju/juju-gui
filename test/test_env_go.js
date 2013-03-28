@@ -892,8 +892,11 @@
     });
 
     it('the _rpc_response subscription can not have args', function() {
-      assert.equal(env.getEvent('_rpc_response')._subscribers.length, 1);
-      assert.equal(env.getEvent('_rpc_response')._subscribers.args, null);
+      var subscribers = env.getEvent('_rpc_response')._subscribers;
+      // This test assumes that there is only one subscriber.  If we ever have
+      // any more we will need to update this test.
+      assert.equal(subscribers.length, 1);
+      assert.equal(subscribers[0].args, null);
     });
 
   });
