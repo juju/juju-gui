@@ -9,6 +9,7 @@
       Y = YUI(GlobalConfig).use(
           'node-event-simulate',
           'juju-charm-models',
+          'juju-charm-store',
           'node',
           'subapp-browser-charmview',
           function(Y) {
@@ -58,6 +59,36 @@
       view._locateReadme().should.eql('README.md');
     });
 
+
+    it('should be able to display the readme content', function() {
+      var fakeStore = new Y.juju.Charmworld0({});
+      fakeStore.set('datasource', {
+          sendRequest: function(params) {
+            // Stubbing the server callback value
+            params.callback.success({
+              response: {
+                results: [{
+                  responseText: 'README content.'
+                }]
+              }
+            })
+           }
+        });
+
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9'
+        }),
+        store: fakeStore
+      });
+
+      view.render(node);
+      Y.one('#readme').get('text').should.eql('README content.');
+    });
 
     // EVENTS
     it('should catch when the add control is clicked', function(done) {
