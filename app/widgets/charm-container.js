@@ -4,7 +4,7 @@
 YUI.add('browser-charm-container', function(Y) {
   var ns = Y.namespace('juju.widgets.browser');
 
-  ns.CharmContainer = Y.Base.create('browser-charm-container', Y.Widget, [
+  ns.CharmContainer = Y.Base.create('CharmContainer', Y.Widget, [
     Y.WidgetParent
   ], {
     _events: [],
