@@ -95,7 +95,7 @@ Rename your newly configured EC2 juju config to be `juju-gui-testing` and run::
   bin/test-charm
 
 How do I view and edit the Jenkins results and configuration?
-------------------------------------------------------------
+-------------------------------------------------------------
 You will need to log into the `QA labs Jenkins server`__ which requires
 `VPN access`__ and a Jenkins account.
 
@@ -131,3 +131,32 @@ There are quite a number of files which are involved in the CI process::
   lib/deploy_charm_for_testing.py
   test/browser.py
   test/test_charm_running.py
+
+Known issues
+------------
+Unit tests fail
+~~~~~~~~~~~~~~~~
+In reviewing the CI logs you might notice that it says '{} failure(s) running {}
+tests.  Retrying.' This is necessary because periodically a large number of the
+tests will fail claiming an error in the test_charm_configuration.js suite. The
+workaround we found was to refresh the browser and re-run the tests.
+
+Fragile IE
+~~~~~~~~~~
+IE throws an error without a stacktrace if you attempt to access any javascript
+before it is ready or if you try to use xpath to find elements. To remedy this
+we wait for css elements to be ready before accessing the javascript. Two
+methods handle_login() and wait_for_provider_type() can help you with this.
+
+Unit tests log us out
+~~~~~~~~~~~~~~~~~~~~~
+The unit tests log us out of the application requiring us to log back in before
+we try to execute any further tests
+
+Crosshatch background won't hide in Chrome
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+After the unit tests have logged us out the handle_login() method logs us back
+in in every browser except Chrome. In Chrome any attempts to set a style on the
+crosshatch background results in only the `style` tag being added to the
+element. Right now we are destroying that crosshatch node before we attempt to
+log in to allow the tests to continue successfully.

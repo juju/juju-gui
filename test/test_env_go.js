@@ -2,6 +2,25 @@
 
 (function() {
 
+  describe('Go Juju environment utilities', function() {
+    var environments, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
+        environments = Y.namespace('juju.environments');
+        done();
+      });
+    });
+
+    it('provides a way to lowercase the keys of an object', function() {
+      var obj = {Key1: 'value1', key2: 'value2', MyThirdKey: 'value3'},
+          expected = {key1: 'value1', key2: 'value2', mythirdkey: 'value3'},
+          result = environments.lowerObjectKeys(obj);
+      assert.deepEqual(expected, result);
+    });
+
+  });
+
   describe('Go Juju environment', function() {
     var conn, endpointA, endpointB, env, juju, msg, utils, Y;
 
@@ -13,18 +32,16 @@
       });
     });
 
-    beforeEach(function(done) {
+    beforeEach(function() {
       conn = new utils.SocketStub();
       env = juju.newEnvironment({
         conn: conn, user: 'user', password: 'password'
       }, 'go');
       env.connect();
-      done();
     });
 
-    afterEach(function(done)  {
+    afterEach(function()  {
       env.destroy();
-      done();
     });
 
     it('sends the correct login message', function() {
@@ -47,7 +64,7 @@
       assert.isTrue(env.failedAuthentication);
     });
 
-    it('fires a login event on successful login', function(done) {
+    it('fires a login event on successful login', function() {
       var loginFired = false;
       var result;
       env.on('login', function(evt) {
@@ -59,10 +76,9 @@
       conn.msg({RequestId: 1, Response: {}});
       assert.isTrue(loginFired);
       assert.isTrue(result);
-      done();
     });
 
-    it('fires a login event on failed login', function(done) {
+    it('fires a login event on failed login', function() {
       var loginFired = false;
       var result;
       env.on('login', function(evt) {
@@ -74,7 +90,6 @@
       conn.msg({RequestId: 1, Error: 'Invalid user or password'});
       assert.isTrue(loginFired);
       assert.isFalse(result);
-      done();
     });
 
     it('avoids sending login requests without credentials', function() {
@@ -83,20 +98,28 @@
       assert.equal(0, conn.messages.length);
     });
 
-    it('calls environmentInfo on successful login', function(done) {
+    it('calls environmentInfo and watchAll ofter login', function() {
       env.login();
       // Assume login to be the first request.
       conn.msg({RequestId: 1, Response: {}});
-      var last_message = conn.last_message();
+      var environmentInfoMessage = conn.last_message(2);
       // EnvironmentInfo is the second request.
-      var expected = {
+      var environmentInfoExpected = {
         Type: 'Client',
         Request: 'EnvironmentInfo',
         RequestId: 2,
         Params: {}
       };
-      assert.deepEqual(expected, last_message);
-      done();
+      assert.deepEqual(environmentInfoExpected, environmentInfoMessage);
+      var watchAllMessage = conn.last_message();
+      // EnvironmentInfo is the second request.
+      var watchAllExpected = {
+        Type: 'Client',
+        Request: 'WatchAll',
+        RequestId: 3,
+        Params: {}
+      };
+      assert.deepEqual(watchAllExpected, watchAllMessage);
     });
 
     it('sends the correct request for environment info', function() {
@@ -649,6 +672,365 @@
       assert.equal(endpoint_a, 'yoursql:database');
       assert.equal(endpoint_b, 'wordpress:website');
       assert.equal(err, 'service "yoursql" not found');
+    });
+
+    it('sends the correct CharmInfo message', function() {
+      env.get_charm('cs:precise/wordpress-10');
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'CharmInfo',
+        Params: {CharmURL: 'cs:precise/wordpress-10'},
+        RequestId: 1
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully retrieves information about a charm', function(done) {
+      // Define a response example.
+      var response = {
+        Config: {
+          Options: {
+            debug: {
+              Default: 'no',
+              Description: 'Setting this option to "yes" will ...',
+              Title: '',
+              Type: 'string'
+            },
+            engine: {
+              Default: 'nginx',
+              Description: 'Two web server engines are supported...',
+              Title: '',
+              Type: 'string'
+            }
+          }
+        },
+        Meta: {
+          Categories: null,
+          Description: 'This will install and setup WordPress...',
+          Format: 1,
+          Name: 'wordpress',
+          OldRevision: 0,
+          Peers: {
+            loadbalancer: {
+              Interface: 'reversenginx',
+              Limit: 1,
+              Optional: false,
+              Scope: 'global'
+            }
+          },
+          Provides: {
+            website: {
+              Interface: 'http',
+              Limit: 0,
+              Optional: false,
+              Scope: 'global'
+            }
+          },
+          Requires: {
+            cache: {
+              Interface: 'memcache',
+              Limit: 1,
+              Optional: false,
+              Scope: 'global'
+            },
+            db: {
+              Interface: 'mysql',
+              Limit: 1,
+              Optional: false,
+              Scope: 'global'
+            }
+          },
+          Subordinate: false,
+          Summary: 'WordPress is a full featured web blogging tool...'
+        },
+        Revision: 10,
+        URL: 'cs:precise/wordpress-10'
+      };
+      // Define expected options.
+      var options = response.Config.Options;
+      var expectedOptions = {
+        debug: {
+          'default': options.debug.Default,
+          description: options.debug.Description,
+          type: options.debug.Type,
+          title: options.debug.Title
+        },
+        engine: {
+          'default': options.engine.Default,
+          description: options.engine.Description,
+          type: options.engine.Type,
+          title: options.engine.Title
+        }
+      };
+      // Define expected peers.
+      var meta = response.Meta;
+      var peer = meta.Peers.loadbalancer;
+      var expectedPeers = {
+        loadbalancer: {
+          'interface': peer.Interface,
+          limit: peer.Limit,
+          optional: peer.Optional,
+          scope: peer.Scope
+        }
+      };
+      // Define expected provides.
+      var provide = meta.Provides.website;
+      var expectedProvides = {
+        website: {
+          'interface': provide.Interface,
+          limit: provide.Limit,
+          optional: provide.Optional,
+          scope: provide.Scope
+        }
+      };
+      // Define expected requires.
+      var require1 = meta.Requires.cache;
+      var require2 = meta.Requires.db;
+      var expectedRequires = {
+        cache: {
+          'interface': require1.Interface,
+          limit: require1.Limit,
+          optional: require1.Optional,
+          scope: require1.Scope
+        },
+        db: {
+          'interface': require2.Interface,
+          limit: require2.Limit,
+          optional: require2.Optional,
+          scope: require2.Scope
+        }
+      };
+      env.get_charm('cs:precise/wordpress-10', function(data) {
+        var err = data.err,
+            result = data.result;
+        // Ensure the result is correctly generated.
+        assert.isUndefined(err);
+        assert.deepEqual({options: expectedOptions}, result.config);
+        assert.deepEqual(expectedPeers, result.peers);
+        assert.deepEqual(expectedProvides, result.provides);
+        assert.deepEqual(expectedRequires, result.requires);
+        assert.equal(response.URL, result.url);
+        // The result is enriched with additional info returned by juju-core.
+        assert.equal(response.Revision, result.revision);
+        assert.equal(meta.Description, result.description);
+        assert.equal(meta.Format, result.format);
+        assert.equal(meta.Name, result.name);
+        assert.equal(meta.Subordinate, result.subordinate);
+        assert.equal(meta.Summary, result.summary);
+        done();
+      });
+      // Mimic response, assuming CharmInfo to be the first request.
+      conn.msg({
+        RequestId: 1,
+        Response: response
+      });
+    });
+
+    it('handles failed attempt to retrieve charm info', function(done) {
+      env.get_charm('cs:precise/wordpress-10', function(data) {
+        var err = data.err,
+            result = data.result;
+        assert.equal('charm not found', err);
+        assert.isUndefined(result);
+        done();
+      });
+      // Mimic response, assuming CharmInfo to be the first request.
+      conn.msg({
+        RequestId: 1,
+        Error: 'charm not found'
+      });
+    });
+
+    it('provides for a missing Params', function() {
+      // If no "Params" are provided in an RPC call an empty one is added.
+      var op = {};
+      env._send_rpc(op);
+      assert.deepEqual(op.Params, {});
+    });
+
+    it('can watch all changes', function() {
+      env._watchAll();
+      msg = conn.last_message();
+      assert.equal(msg.Type, 'Client');
+      assert.equal(msg.Request, 'WatchAll');
+    });
+
+    it('can retrieve the next set of environment changes', function() {
+      // This is normally set by _watchAll, we'll fake it here.
+      env._allWatcherId = 42;
+      env._next();
+      msg = conn.last_message();
+      assert.equal(msg.Type, 'AllWatcher');
+      assert.equal(msg.Request, 'Next');
+      assert.isTrue('Id' in msg);
+      // This response is in fact to the sent _next request.
+      assert.equal(msg.Id, env._allWatcherId);
+    });
+
+    it('fires "_rpc_response" message after an RPC response', function(done) {
+      // We don't want the real response, we just want to be sure the event is
+      // fired.
+      env.detach('_rpc_response');
+      env.on('_rpc_response', function(data) {
+        done();
+      });
+      // Calling this sets up the callback.
+      env._next();
+      env._txn_callbacks[env._counter].call(env, {});
+      // The only test assertion is that done (above) is called.
+    });
+
+    it('fires "delta" when handling an RPC response', function(done) {
+      env.detach('delta');
+      var callbackData = {Response: {Deltas: [['service', 'deploy', {}]]}};
+      env.on('delta', function(data) {
+        console.log(data.result);
+        done();
+      });
+      env._handleRpcResponse(callbackData);
+    });
+
+    it('the _rpc_response subscription can not have args', function() {
+      var subscribers = env.getEvent('_rpc_response')._subscribers;
+      // This test assumes that there is only one subscriber.  If we ever have
+      // any more we will need to update this test.
+      assert.equal(subscribers.length, 1);
+      assert.equal(subscribers[0].args, null);
+    });
+
+  });
+
+})();
+
+(function() {
+
+  describe('Go Juju environment service entity converter', function() {
+    var environments, Y, converter, entityInfoConverters;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+        environments = Y.namespace('juju.environments');
+        converter = environments.entityInfoConverters.service;
+        entityInfoConverters = environments.entityInfoConverters;
+        done();
+      });
+    });
+
+
+    it('exists', function() {
+      assert.isTrue('service' in entityInfoConverters);
+    });
+
+    it('converts "Name" to "id"', function() {
+      var converted = converter({Name: 'service name'});
+      assert.isTrue('id' in converted);
+      assert.equal('service name', converted.id);
+    });
+
+    it('converts "Exposed" to "exposed"', function() {
+      var converted = converter({Exposed: true});
+      assert.isTrue('exposed' in converted);
+      assert.isTrue(converted.exposed);
+    });
+
+  });
+
+})();
+
+(function() {
+
+  describe('Go Juju environment unit entity converter', function() {
+    var environments, Y, converter, entityInfoConverters;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+        environments = Y.namespace('juju.environments');
+        converter = environments.entityInfoConverters.unit;
+        entityInfoConverters = environments.entityInfoConverters;
+        done();
+      });
+    });
+
+
+    it('exists', function() {
+      assert.isTrue('unit' in entityInfoConverters);
+    });
+
+    it('converts "Name" to "id"', function() {
+      var converted = converter({Name: 'unit name'});
+      assert.isTrue('id' in converted);
+      assert.equal('unit name', converted.id);
+    });
+
+    it('converts "Service" to "service"', function() {
+      var converted = converter({Service: 'a service'});
+      assert.isTrue('service' in converted);
+      assert.equal('a service', converted.service);
+    });
+
+  });
+
+})();
+
+(function() {
+
+  describe('Go Juju environment relation entity converter', function() {
+    var environments, Y, converter, entityInfoConverters;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+        environments = Y.namespace('juju.environments');
+        converter = environments.entityInfoConverters.relation;
+        entityInfoConverters = environments.entityInfoConverters;
+        done();
+      });
+    });
+
+
+    it('exists', function() {
+      assert.isTrue('relation' in entityInfoConverters);
+    });
+
+    it('converts "Name" to "id"', function() {
+      var converted = converter({Key: 'relation name'});
+      assert.isTrue('id' in converted);
+      assert.equal('relation name', converted.id);
+    });
+
+  });
+
+})();
+
+(function() {
+
+  describe('Go Juju environment machine entity converter', function() {
+    var environments, Y, converter, entityInfoConverters;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+        environments = Y.namespace('juju.environments');
+        converter = environments.entityInfoConverters.machine;
+        entityInfoConverters = environments.entityInfoConverters;
+        done();
+      });
+    });
+
+
+    it('exists', function() {
+      assert.isTrue('machine' in entityInfoConverters);
+    });
+
+    it('converts "Id" to "id"', function() {
+      var converted = converter({Id: 'machine ID'});
+      assert.isTrue('id' in converted);
+      assert.equal('machine ID', converted.id);
+    });
+
+    it('converts "InstanceId" to "instance_id"', function() {
+      var converted = converter({InstanceId: 'instance ID'});
+      assert.isTrue('instance_id' in converted);
+      assert.equal('instance ID', converted.instance_id);
     });
 
   });

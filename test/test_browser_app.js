@@ -25,11 +25,17 @@
 
     beforeEach(function() {
       addBrowserContainer(Y);
+      // Mock out a dummy location for the Store used in view instances.
+      window.juju_config = {
+        charmworldURL: 'http://localhost'
+      };
+
     });
 
     afterEach(function() {
       view.destroy();
       Y.one('#subapp-browser').remove(true);
+      delete window.juju_config;
     });
 
     // Ensure the search results are rendered inside the container.
@@ -46,7 +52,15 @@
     });
 
   });
+})();
 
+
+(function() {
+  var addBrowserContainer = function(Y) {
+    var docBody = Y.one(document.body);
+    Y.Node.create('<div id="subapp-browser">' +
+        '</div>').appendTo(docBody);
+  };
 
   describe('browser sidebar view', function() {
     var Y, browser, view, views, Sidebar;
@@ -66,6 +80,7 @@
 
     beforeEach(function() {
       addBrowserContainer(Y);
+      // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
         charmworldURL: 'http://localhost'
       };
@@ -105,7 +120,10 @@
 
   });
 
+})();
 
+
+(function() {
   describe('browser app', function() {
     var Y, browser;
 
@@ -125,7 +143,16 @@
       Y.each(app.get('routes'), function(route) {
         assert.isTrue(typeof app[route.callback] === 'function');
       });
+    });
 
+    it('should be able to determine if the route is a sub path', function() {
+      var app = new browser.Browser(),
+          subpaths = ['configuration', 'hooks', 'interfaces', 'qa', 'readme'];
+
+      Y.Array.each(subpaths, function(path) {
+        var url = '/bws/fullscreen/charm/id/stuff/' + path + '/';
+        app._getSubPath(url).should.eql(path);
+      });
     });
 
   });

@@ -16,7 +16,7 @@ if (/*@cc_on!@*/false) {
          Also note it this must be the first <meta> to appear. -->
     <meta http-equiv="x-ua-compatible" content="IE=edge">
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0 maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="Juju team">
     <link href='https://fonts.googleapis.com/css?family=Ubuntu:400,400italic&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
@@ -127,6 +127,7 @@ if (/*@cc_on!@*/false) {
     <div id="subapp-browser"></div>
     <script src="/juju-ui/assets/javascripts/spin.min.js"></script>
     <script id="app-startup">
+      var app; // Declare early to make IE CI tests more robust.
       startSpinner = function() {
         var opts = {
           lines: 17, // The number of lines to draw

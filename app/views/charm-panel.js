@@ -753,6 +753,7 @@ YUI.add('juju-charm-panel', function(Y) {
             }).length + 1;
             var ghostService = db.services.create({
               id: '(' + charm.get('package_name') + ' ' + serviceCount + ')',
+              annotations: {},
               pending: true,
               charm: charm.get('id'),
               unit_count: 0,  // No units yet.

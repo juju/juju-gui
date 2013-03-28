@@ -121,6 +121,7 @@ TEMPLATE_TARGETS=$(shell find app/templates -type f ! -name '.*' ! -name '*.swp'
 SPRITE_SOURCE_FILES=$(shell find app/assets/images -type f ! -name '.*' ! -name '*.swp' ! -name '*~' ! -name '\#*' -print)
 SPRITE_GENERATED_FILES=build-shared/juju-ui/assets/sprite.css \
 	build-shared/juju-ui/assets/sprite.png
+NON_SPRITE_IMAGES=build-shared/juju-ui/assets/images
 BUILD_FILES=build-shared/juju-ui/assets/app.js \
 	build-shared/juju-ui/assets/all-yui.js \
 	build-shared/juju-ui/assets/combined-css/all-static.css
@@ -193,6 +194,10 @@ $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 		$(SPRITE_SOURCE_FILES)
 	node_modules/grunt/bin/grunt spritegen
 
+$(NON_SPRITE_IMAGES): 
+	mkdir -p build-shared/juju-ui/assets/images
+	cp app/assets/images/non-sprites/* build-shared/juju-ui/assets/images/
+
 $(NODE_TARGETS): package.json
 	npm install
 	# Keep all targets up to date, not just new/changed ones.
@@ -237,7 +242,7 @@ $(JAVASCRIPT_LIBRARIES): | node_modules/yui node_modules/d3
 		app/assets/javascripts/d3.v2.min.js
 
 gjslint: virtualenv/bin/gjslint
-	virtualenv/bin/gjslint --strict --nojsdoc --jslint_error=all \
+	virtualenv/bin/gjslint --unix --strict --nojsdoc --jslint_error=all \
 	    --custom_jsdoc_tags module,main,class,method,event,property,attribute,submodule,namespace,extends,config,constructor,static,final,readOnly,writeOnce,optional,required,param,return,for,type,private,protected,requires,default,uses,example,chainable,deprecated,since,async,beta,bubbles,extension,extensionfor,extension_for \
 		-x $(LINT_IGNORE) $(JSFILES)
 
@@ -443,7 +448,7 @@ clean-all: clean clean-deps clean-docs
 build: build-prod build-debug build-devel
 
 build-shared: $(APPCACHE) $(NODE_TARGETS) spritegen \
-	  $(BUILD_FILES) build-shared/juju-ui/version.js
+	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js
 
 # build-devel is phony. build-shared, build-debug, and build-common are real.
 build-devel: build-shared
@@ -461,10 +466,12 @@ $(APPCACHE): manifest.appcache.in
 # /juju-ui directory existing.  We are vaguely trying to approximate the second
 # one by connecting it to our pertinent versioned files.  The appcache target
 # creates the third, and directories are a bit tricky with Makefiles so we are
-# OK with that.
+# OK with that.  The ULTIMATE_VERSION is used here because we always want the
+# version.js file to reflect the top-most entry in the CHANGES.yaml file,
+# regardless of whether we are doing a "Stable" or "Development" release.
 build-shared/juju-ui/version.js: $(APPCACHE) CHANGES.yaml $(JSFILES) $(TEMPLATE_TARGETS) \
 		$(SPRITE_SOURCE_FILES)
-	echo "var jujuGuiVersionInfo=['$(RELEASE_VERSION)', '$(BZR_REVNO)'];" \
+	echo "var jujuGuiVersionInfo=['$(ULTIMATE_VERSION)', '$(BZR_REVNO)'];" \
 	    > build-shared/juju-ui/version.js
 
 upload_release.py:
