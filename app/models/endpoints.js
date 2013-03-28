@@ -161,7 +161,7 @@ YUI.add('juju-endpoints', function(Y) {
    * @method setupCharmOnLoad
    * @param {Object} charm The charm to watch.
    * @param {String} svcName The name of the service the charm is attached.
-   * @returns {undefined} Nothing.
+   * @return {undefined} Nothing.
    */
   var setupCharmOnLoad = function(charm, svcName) {
     charm.on('load', Y.bind(function(svcName, evt) {
@@ -175,23 +175,22 @@ YUI.add('juju-endpoints', function(Y) {
    * Handle event for a service being added to the services modellist.
    *
    * @method serviceAddHandler
-   * @param {Object} evt The event, containing a model object
+   * @param {Object} evt The event, containing a model object.
    * @return {undefined} Nothing.
    */
   models.serviceAddHandler = function(evt) {
     var svcName = evt.model.get('id');
-    // XXX the service is added but not yet deployed.  We don't know its real
-    // name, just the name of the charm at this point.
     var charm_id = evt.model.get('charm'),
         self = this,
         charm = this.db.charms.getById(charm_id);
 
     // If the charm doesn't exist, add and load it.
     if (!Y.Lang.isValue(charm)) {
-      charm = this.db.charms.add({id: charm_id}).load(this.env,
-        // If views are bound to the charm model, firing "update" is
-        // unnecessary, and potentially even mildly harmful.
-        function(err, result) { self.db.fire('update'); });
+      charm = this.db.charms.add({id: charm_id})
+        .load(this.env,
+          // If views are bound to the charm model, firing "update" is
+          // unnecessary, and potentially even mildly harmful.
+          function(err, result) { self.db.fire('update'); });
     }
 
     // If the service is not a ghost (i.e. 'pending' is false), process it.

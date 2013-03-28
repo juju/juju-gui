@@ -193,7 +193,7 @@ describe('notifications', function() {
         env = juju.newEnvironment({conn: conn}),
         app = new Y.juju.App({env: env, container: container}),
         db = app.db,
-        mw = db.services.create({id: 'cs:mediawiki',
+        mw = db.services.create({id: 'cs:precise/mediawiki',
                                  name: 'mediawiki'}),
         notifications = db.notifications,
         view = new views.NotificationsOverview({
