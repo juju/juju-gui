@@ -127,11 +127,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var tpl = this.template(this.get('charm').getAttrs()),
           tplNode = Y.Node.create(tpl);
 
-      // Allow for specifying the container to use.
+      // Allow for specifying the container to use. This should reset the
+      // events.
       if (container) {
         this.set('container', container);
       }
-      container = this.get('container');
+
+      debugger;
 
       container.setHTML(tplNode);
       this.tabview = new widgets.browser.TabView({
