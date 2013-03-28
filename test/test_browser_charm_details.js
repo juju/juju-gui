@@ -2,7 +2,7 @@
 
 (function() {
 
-  describe.only('browser_charm_view', function() {
+  describe('browser_charm_view', function() {
     var CharmView, models, node, view, views, Y;
 
     before(function(done) {
@@ -71,7 +71,7 @@
                   responseText: 'README content.'
                 }]
               }
-            })
+            });
            }
         });
 
