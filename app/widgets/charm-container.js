@@ -111,7 +111,6 @@ YUI.add('browser-charm-container', function(Y) {
      * @method initializer
      */
     initializer: function(cfg) {
-      ns.CharmContainer.superclass.initializer.apply(this, cfg);
       this._events.push(
           this.after('initializedChange', this._afterInit, this));
     },
