@@ -33,7 +33,7 @@ YUI.add('browser-charm-container', function(Y) {
       this.set('all_visible', true);
     },
 
-    _toggleExpand: function (e) {
+    _toggleExpand: function(e) {
       var visible = this.get('all_visible'),
           expander = e.currentTarget;
       if (visible) {

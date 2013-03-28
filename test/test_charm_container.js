@@ -5,12 +5,13 @@ describe.only('charm container widget', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
-        'array',
-        'browser-charm-container',
-        'browser-charm-small',
-        'node-event-simulate'], function(Y) {
-          done();
-        });
+      'array',
+      'browser-charm-container',
+      'browser-charm-small',
+      'node-event-simulate'],
+    function(Y) {
+      done();
+    });
   });
 
   beforeEach(function() {
@@ -38,7 +39,7 @@ describe.only('charm container widget', function() {
       }]
     });
     assert.equal(3, charm_container.get('cutoff'));
-    assert.equal( 1, charm_container.get('extra'));
+    assert.equal(1, charm_container.get('extra'));
   });
 
   it('only shows items up to the cutoff at first', function() {
@@ -55,8 +56,8 @@ describe.only('charm container widget', function() {
     });
     charm_container.render(container);
     var charms = container.all('.yui3-charmsmall'),
-        shown_charms = charms.slice(0,3),
-        hidden_charms = charms.slice(3,4);
+        shown_charms = charms.slice(0, 3),
+        hidden_charms = charms.slice(3, 4);
     assert.equal(3, shown_charms.size());
     assert.equal(1, hidden_charms.size());
     Y.Array.each(shown_charms, function(charm) {
