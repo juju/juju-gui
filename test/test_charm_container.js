@@ -58,8 +58,6 @@ describe('charm container widget', function() {
     var charms = container.all('.yui3-charmsmall'),
         shown_charms = charms.slice(0, 3),
         hidden_charms = charms.slice(3, 4);
-    assert.equal(3, shown_charms.size());
-    assert.equal(1, hidden_charms.size());
     Y.Array.each(shown_charms, function(charm) {
       assert.isFalse(charm.hasClass('yui3-charmsmall-hidden'));
     });
@@ -104,12 +102,16 @@ describe('charm container widget', function() {
     assert.equal(1, hidden.size());
     container.one('.expand').simulate('click');
     hidden = container.all('.yui3-charmsmall-hidden');
-    assert.equal(0, hidden.size());
+    assert.equal(
+        0, hidden.size(),
+        'Hidden items after all items should be visible.');
     assert.equal('See less', container.one('.expand').get('text'));
 
     container.one('.expand').simulate('click');
     hidden = container.all('.yui3-charmsmall-hidden');
-    assert.equal(1, hidden.size());
+    assert.equal(
+        1, hidden.size(),
+        'No hidden items after extra items should be hidden.');
     assert.equal('See 1 more', container.one('.expand').get('text'));
   });
 });

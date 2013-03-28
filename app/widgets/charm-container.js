@@ -24,6 +24,8 @@ YUI.add('browser-charm-container', function(Y) {
   ], {
 
     TEMPLATE: Y.namespace('juju.views').Templates['charm-container'],
+    SEE_MORE: 'See {extra} more',
+    SEE_LESS: 'See less',
 
     /**
      * Sets up some attributes that are needed before render, but can only be
@@ -49,7 +51,6 @@ YUI.add('browser-charm-container', function(Y) {
       Y.Array.each(cutItems, function(item) {
         item.hide();
       });
-      this.set('allVisible', false);
     },
 
     /**
@@ -61,7 +62,6 @@ YUI.add('browser-charm-container', function(Y) {
       Y.Array.each(this._items, function(item) {
         item.show();
       });
-      this.set('allVisible', true);
     },
 
     /**
@@ -71,15 +71,15 @@ YUI.add('browser-charm-container', function(Y) {
      * @method _toggleExpand
      */
     _toggleExpand: function(e) {
-      var visible = this.get('allVisible'),
+      var invisible = this.get('contentBox').one('.yui3-charmsmall-hidden'),
           expander = e.currentTarget;
-      if (visible) {
-        this._hideSomeChildren();
-        var msg = Y.Lang.sub('See {extra} more', {extra: this.get('extra')});
-        expander.set('text', msg);
-      } else {
+      if (invisible) {
         this._showAll();
-        expander.set('text', 'See less');
+        expander.set('text', this.SEE_LESS);
+      } else {
+        this._hideSomeChildren();
+        var msg = Y.Lang.sub(this.SEE_MORE, {extra: this.get('extra')});
+        expander.set('text', msg);
       }
     },
 
@@ -90,7 +90,7 @@ YUI.add('browser-charm-container', function(Y) {
      */
     bindUI: function() {
       var expander = this.get('contentBox').one('.expand');
-      this.get('_events').push(expander.on('click', this._toggleExpand, this));
+      this._events.push(expander.on('click', this._toggleExpand, this));
     },
 
     /**
@@ -110,7 +110,8 @@ YUI.add('browser-charm-container', function(Y) {
      * @method initializer
      */
     initializer: function(cfg) {
-      this.get('_events').push(
+      this._events = [];
+      this._events.push(
           this.after('initializedChange', this._afterInit, this));
     },
 
@@ -128,24 +129,6 @@ YUI.add('browser-charm-container', function(Y) {
     }
   }, {
     ATTRS: {
-      /**
-       * @attribute _events
-       * @default []
-       * @type {Array}
-       */
-      _events: {
-        value: []
-      },
-
-      /**
-       * @attribute allVisible
-       * @default false
-       * @type {boolean}
-       */
-      allVisible: {
-        value: false
-      },
-
       /**
        * @attribute cutoff
        * @default 3
