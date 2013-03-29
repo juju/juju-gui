@@ -32,6 +32,14 @@ YUI.add('juju-env-go', function(Y) {
     return newObj;
   };
 
+  var cleanUpJSON = function(key, value) {
+    // Blacklist null values.
+    if (value === null) {
+      return undefined;
+    }
+    return value;
+  };
+
   /**
    * The Go Juju environment.
    *
@@ -165,7 +173,8 @@ YUI.add('juju-env-go', function(Y) {
       if (!op.Params) {
         op.Params = {};
       }
-      var msg = Y.JSON.stringify(op);
+      // Serialize the operation using the cleanUpJSON replacer function.
+      var msg = Y.JSON.stringify(op, cleanUpJSON);
       this.ws.send(msg);
     },
 
@@ -885,6 +894,7 @@ YUI.add('juju-env-go', function(Y) {
   environments.GoEnvironment = GoEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
   environments.entityInfoConverters = entityInfoConverters;
+  environments.cleanUpJSON = cleanUpJSON;
 
 }, '0.1.0', {
   requires: [

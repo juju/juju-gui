@@ -21,6 +21,31 @@
 
   });
 
+  describe('Go Juju JSON replacer', function() {
+    var cleanUpJSON, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
+        cleanUpJSON = Y.namespace('juju.environments').cleanUpJSON;
+        done();
+      });
+    });
+
+    it('blacklists null values', function() {
+      assert.isUndefined(cleanUpJSON('mykey', null));
+    });
+
+    it('returns other values as they are', function() {
+      var data = [
+        'mystring', undefined, true, false, 42, ['list', 47.2, true]
+      ];
+      Y.each(data, function(item) {
+        assert.strictEqual(item, cleanUpJSON('mykey', item));
+      });
+    });
+
+  });
+
   describe('Go Juju environment', function() {
     var conn, endpointA, endpointB, env, juju, msg, utils, Y;
 
@@ -267,8 +292,6 @@
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
-          ServiceName: null,
-          Config: null,
           ConfigYAML: config_raw,
           CharmUrl: 'precise/mysql'
         },
