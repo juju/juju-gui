@@ -200,7 +200,8 @@
       });
 
       view.render(node);
-      Y.one('#bws_readme').get('innerHTML').should.eql('<h1>README Header</h1>');
+      Y.one('#bws_readme').get('innerHTML').should.eql(
+          '<h1>README Header</h1>');
     });
   });
 })();
