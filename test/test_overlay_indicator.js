@@ -52,7 +52,7 @@ describe('overlay indicator', function() {
         img = content.one('img');
     var img_url = img.get('src').split('/').slice(3, 7).join('/');
     assert.equal(
-        'juju-ui/assets/images/loading-spinner.gif',
+        'juju-ui/assets/images/non-sprites',
         img_url);
   });
 

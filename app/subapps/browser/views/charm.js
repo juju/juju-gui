@@ -48,6 +48,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       ev.preventDefault();
     },
 
+    /**
+     * Event handler for clicking on a hook filename to load that file.
+     *
+     * @method _loadHookContent
+     * @param {Event} ev the click event created.
+     *
+     */
     _loadHookContent: function(ev) {
       var filename = ev.currentTarget.get('text'),
           node = this.get('container').one('#bws_hooks .filecontent');

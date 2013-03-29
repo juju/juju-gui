@@ -134,6 +134,42 @@
       view.get('container').should.eql(node);
       node.one('.changelog .toggle').simulate('click');
     });
+
+    it('should load a file when the hook filename is clicked', function() {
+      var fakeStore = new Y.juju.Charmworld0({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: 'install hook content.'
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9'
+        }),
+        store: fakeStore
+      });
+
+      view.render(node);
+      Y.one('#bws_hooks').all('ul li a').size().should.eql(2);
+
+      // Click on the hooks install and the content should update.
+      Y.one('#bws_hooks').one('ul li a').simulate('click');
+
+      var content = Y.one('#bws_hooks').one('div.filecontent');
+      content.get('text').should.eql('install hook content.');
+    });
   });
 
 })();
