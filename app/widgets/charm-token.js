@@ -10,8 +10,8 @@
 YUI.add('browser-charm-token', function(Y) {
 
   var ns = Y.namespace('juju.widgets.browser');
-  ns.EVENT_CHARM_ADD = 'charm-token-add';
-  ns.CharmSmall = Y.Base.create('CharmToken', Y.Widget, [], {
+  ns.EVENT_CHARM_ADD = 'charm-small-add';
+  ns.CharmToken = Y.Base.create('CharmToken', Y.Widget, [Y.WidgetChild], {
 
     _events: [],
     TEMPLATE: Y.namespace('juju.views').Templates['charm-token'],
@@ -101,6 +101,7 @@ YUI.add('browser-charm-token', function(Y) {
     'base',
     'handlebars',
     'juju-templates',
-    'widget'
+    'widget',
+    'widget-child'
   ]
 });
