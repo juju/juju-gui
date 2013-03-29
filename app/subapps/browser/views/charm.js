@@ -114,6 +114,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
       console.log('toggle the charm log');
     },
 
+    destructor: function() {
+      if (this.tabview) {
+        this.tabview.destroy();
+      }
+    },
+
     /**
      * Render out the view to the DOM.
      *
@@ -142,11 +148,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var readme = this._locateReadme();
 
       if (readme) {
-        this._loadFile(tplNode.one('#readme'),
+        this._loadFile(tplNode.one('#bws_readme'),
                        readme
         );
       } else {
-        this._noReadme(tplNode.one('#readme'));
+        this._noReadme(tplNode.one('#bws_readme'));
       }
     }
 
