@@ -171,6 +171,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     'browser-search-widget',
     'juju-charm-store',
     'juju-models',
+    'juju-templates',
     'subapp-browser-mainview',
     'view'
   ]

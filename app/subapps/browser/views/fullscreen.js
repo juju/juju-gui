@@ -64,28 +64,27 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
     _renderCharmView: function(container) {
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl);
-      this._renderSearchWidget(tplNode);
 
-      // Fetch the charm data from the api.
+      this._renderSearchWidget(tplNode);
+      // We need to have the template in the DOM for sub views to be able to
+      // expect proper structure.
+      if (!Y.Lang.isValue(container)) {
+        container = this.get('container');
+      }
+      container.setHTML(tplNode);
+
       this.get('store').charm(this.get('charmID'), {
         'success': function(data) {
-          // @todo make sure this instance is tied to the view and destroyed.
-          var charm = new models.BrowserCharm(data),
-              charmTpl = views.Templates.browser_charm;
-          tplNode.one('.bws-view-data').setHTML(charmTpl(charm.getAttrs()));
-          container.setHTML(tplNode);
-
-          this.tabview = new widgets.browser.TabView({
-            srcNode: tplNode.one('.tabs')
+          var charmView = new ns.BrowserCharmView({
+            charm: new models.BrowserCharm(data),
+            store: this.get('store')
           });
-          this.tabview.render();
+          charmView.render(tplNode.one('.bws-view-data'));
+          container.setHTML(tplNode);
         },
         'failure': this.apiFailure
       }, this);
 
-      if (!Y.Lang.isValue(container)) {
-        container = this.get('container');
-      }
     },
 
     /**
@@ -150,6 +149,9 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
     'browser-search-widget',
     'browser-tabview',
     'juju-charm-models',
+    'juju-templates',
+    'juju-views',
+    'subapp-browser-charmview',
     'subapp-browser-mainview',
     'view'
   ]

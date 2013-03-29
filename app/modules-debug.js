@@ -260,10 +260,14 @@ var GlobalConfig = {
         // Browser
         'subapp-browser': {
           fullpath: '/juju-ui/subapps/browser/browser.js',
-          requires: ['subapp-browser-fullscreen']
+          requires: ['subapp-browser-fullscreen', 'subapp-browser-charmview']
         },
 
         // Browser Views
+        'subapp-browser-charmview': {
+          fullpath: '/juju-ui/subapps/browser/views/charm.js'
+        },
+
         'subapp-browser-mainview': {
           fullpath: '/juju-ui/subapps/browser/views/view.js'
         },
