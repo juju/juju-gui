@@ -56,9 +56,10 @@ YUI.add('juju-env-go', function(Y) {
 
      @method cleanUpJSON
      @static
-     @param key The key in the key/value pair passed by Y.JSON.stringify.
-     @param value The value corresponding to the provided key.
-     @return A value that will be serialized in place of the raw value.
+     @param {Object} key The key in the key/value pair passed by
+      Y.JSON.stringify.
+     @param {Object} value The value corresponding to the provided key.
+     @return {Object} A value that will be serialized in place of the raw value.
    */
   var cleanUpJSON = function(key, value) {
     // Blacklist null values.
