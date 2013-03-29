@@ -35,7 +35,7 @@ describe('charm small widget', function() {
     };
     var charm = new Y.juju.widgets.browser.CharmToken(cfg);
     charm.render(charm_container);
-    var rendered_charm = Y.one('.yui3-charmsmall');
+    var rendered_charm = Y.one('.yui3-charmtoken');
     assert.equal('some-charm', rendered_charm.one('.title a').get('text'));
     assert.equal(
         'some description',

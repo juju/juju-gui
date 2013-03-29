@@ -41,7 +41,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
       sliderCharms.each(function(charm) {
         sliderWidgets.push(
-            new Y.juju.widgets.browser.CharmSmall(charm.getAttrs()));
+            new Y.juju.widgets.browser.CharmToken(charm.getAttrs()));
       });
 
       if (sliderWidgets.length) {
@@ -91,13 +91,13 @@ YUI.add('subapp-browser-sidebar', function(Y) {
             this.slider.render(sliderContainer);
           }
 
-          // Add in the charm-smalls for the new as well.
+          // Add in the charm tokens for the new as well.
           var newContainer = container.one('.bws-left .new');
           var newCharms = this.get('store').resultsToCharmlist(
               data.result['new']);
           newCharms.map(function(charm) {
             var node = Y.Node.create('<div>'),
-                widget = new Y.juju.widgets.browser.CharmSmall(
+                widget = new Y.juju.widgets.browser.CharmToken(
                 charm.getAttrs());
             widget.render(node);
             newContainer.append(node);
@@ -167,7 +167,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 }, '0.1.0', {
   requires: [
     'browser-charm-slider',
-    'browser-charm-small',
+    'browser-charm-token',
     'browser-search-widget',
     'juju-charm-store',
     'juju-models',

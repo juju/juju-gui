@@ -2,15 +2,17 @@
 
 
 /**
- * Provide the Charm Token widget.
+ * Provides the Charm Token widget, for display a small unit of charm
+ * information.
  *
+ * @namespace juju
  * @module widgets
- * @submodule juju.widgets.browser.charm-small
+ * @submodule browser
  */
 YUI.add('browser-charm-token', function(Y) {
 
   var ns = Y.namespace('juju.widgets.browser');
-  ns.EVENT_CHARM_ADD = 'charm-small-add';
+  ns.EVENT_CHARM_ADD = 'charm-token-add';
   ns.CharmToken = Y.Base.create('CharmToken', Y.Widget, [Y.WidgetChild], {
 
     _events: [],
