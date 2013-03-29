@@ -713,18 +713,31 @@ YUI.add('juju-env-go', function(Y) {
        @return {undefined} Nothing.
      */
     handleAddRelation: function(userCallback, endpoint_a, endpoint_b, data) {
-      var response = data.Response || {};
+      var result = {};
+      var response = data.Response;
+      if (response !== undefined) {
+        var epGuiA = {};
+        var epGuiB = {};
+        var epJujuA = response.Endpoints[endpoint_a];
+        var epJujuB = response.Endpoints[endpoint_b];
+        var svcNameA = endpoint_a.split(':')[0];
+        var svcNameB = endpoint_b.split(':')[0];
+        epGuiA[svcNameA] = {'name': epJujuA.Name};
+        epGuiB[svcNameB] = {'name': epJujuB.Name};
+        result = {
+          'id': endpoint_a + '-' + endpoint_b,
+          // interface and scope should be the same for both endpoints
+          'interface': epJujuA.Interface,
+          'scope': epJujuA.Scope,
+          'endpoints': [epGuiA, epGuiB]
+        };
+      }
       userCallback({
         request_id: data.RequestId,
         endpoint_a: endpoint_a,
         endpoint_b: endpoint_b,
         err: data.Error,
-        result: {
-          id: response.Id,
-          'interface': response.Interface,
-          scope: response.Scope,
-          endpoints: response.Endpoints
-        }
+        result: result
       });
     },
 
