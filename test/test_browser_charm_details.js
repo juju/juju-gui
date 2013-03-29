@@ -104,7 +104,7 @@
       // Hook up to the callback for the click event.
       view._addCharmEnvironment = function(ev) {
         ev.preventDefault();
-        Y.one('#bws_readme h3').get('text').should.eql('No Readme Found');
+        Y.one('#bws_readme h3').get('text').should.eql('Charm has no README');
         done();
       };
 
@@ -126,7 +126,7 @@
       // Hook up to the callback for the click event.
       view._toggleLog = function(ev) {
         ev.preventDefault();
-        Y.one('#bws_readme h3').get('text').should.eql('No Readme Found');
+        Y.one('#bws_readme h3').get('text').should.eql('Charm has no README');
         done();
       };
 
