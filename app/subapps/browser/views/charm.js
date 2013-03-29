@@ -75,18 +75,20 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _loadFile: function(container, filename) {
-      this.get('store').file(this.get('charm').get('id'),
-                             filename, {
-                               'success': function(data) {
-                                 if (filename.slice(-3) === '.md') {
-                                   data = Y.Markdown.toHTML(data);
-                                 }
-                                 container.setHTML(data);
-                               },
-                               'failure': function(data, request) {
+      this.get('store').file(
+          this.get('charm').get('id'),
+          filename, {
+            'success': function(data) {
+              if (filename.slice(-3) === '.md') {
+                data = Y.Markdown.toHTML(data);
+              } else {
+                container.setHTML(Y.Node.create('<pre/>').setContent(data));
+              }
+            },
+            'failure': function(data, request) {
 
-                               }
-                             }
+            }
+          }
       );
 
     },
