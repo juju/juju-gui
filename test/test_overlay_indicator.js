@@ -50,9 +50,9 @@ describe('overlay indicator', function() {
     var content = indicator.get('boundingBox'),
         test = content.getContent(),
         img = content.one('img');
-    var img_url = img.get('src').split('/').slice(3, 7).join('/');
+    var img_url = img.get('src').split('/').slice(3).join('/');
     assert.equal(
-        'juju-ui/assets/images/non-sprites',
+        'juju-ui/assets/images/non-sprites/loading-spinner.gif',
         img_url);
   });
 

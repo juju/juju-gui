@@ -105,7 +105,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
                 Y.prettify.renderPrettyPrintedFile(container, data);
               } else if (filename.slice(-3) === '.md') {
                 // else if it's a .md file, render the markdown to html.
-                data = Y.Markdown.toHTML(data);
+                container.setHTML(Y.Markdown.toHTML(data));
               } else {
                 // Else just stick the content in a pre so it's blocked.
                 container.setHTML(Y.Node.create('<pre/>').setContent(data));
@@ -223,8 +223,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     * Show/setBusy an indicator for a given node. If it already exists, then
-     * just show it, else create a new one.
+     * Show/setBusy an indicator for a given node. If an indicator is already
+     * attached then just show it, else create a new indicator instance on the
+     * node.
      *
      * @method showIndicator
      * @param {Node} node the node to cover with the indicator.

@@ -170,7 +170,38 @@
       var content = Y.one('#bws_hooks').one('div.filecontent');
       content.get('text').should.eql('install hook content.');
     });
-  });
 
+    it('should be able to render markdown as html', function() {
+      var fakeStore = new Y.juju.Charmworld0({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [{
+                responseText: [
+                  'README Header',
+                  '============='
+                ].join('\n')
+              }]
+            }
+          });
+        }
+      });
+
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'readme.md'
+          ],
+          id: 'precise/ceph-9'
+        }),
+        store: fakeStore
+      });
+
+      view.render(node);
+      Y.one('#bws_readme').get('innerHTML').should.eql('<h1>README Header</h1>');
+    });
+  });
 })();
 
