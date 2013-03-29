@@ -515,14 +515,8 @@ YUI.add('juju-topology-service', function(Y) {
               return (d.subordinate ? 'subordinate ' : '') +
                   (d.pending ? 'pending ' : '') + 'service';
             },
-            'transform': function(d) {
-              return d.translateStr;
-            }})
-          // REVIEW NOTE: transform was called after drag was bound.
+            'transform': function(d) {return d.translateStr;}})
         .call(this.dragBehavior)
-        .attr('transform', function(d) {
-            return d.translateStr;
-          })
         .call(self.createServiceNode, self);
 
       // Update all nodes.
@@ -689,8 +683,8 @@ YUI.add('juju-topology-service', function(Y) {
             'y': 47 * 0.8});
 
       // Landscape badge
-      // Remove any existing badge.
       if (landscape) {
+        // Remove any existing badge.
         node.select('.landscape-badge').remove();
         node.each(function(d) {
           var landscapeAsset;
@@ -1066,7 +1060,8 @@ YUI.add('juju-topology-service', function(Y) {
 
     _destroyCallback: function(service, btn, ev) {
       var getModelURL = this.get('component').get('getModelURL'),
-          db = this.get('component').get('db');
+          topo = this.get('component'),
+          db = topo.get('db');
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
@@ -1082,7 +1077,7 @@ YUI.add('juju-topology-service', function(Y) {
           relation.destroy();
         });
         service.destroy();
-        db.fire('update');
+        topo.update();
       }
       this.get('destroy_dialog').hide();
       btn.set('disabled', false);

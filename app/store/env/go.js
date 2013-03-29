@@ -108,7 +108,7 @@ YUI.add('juju-env-go', function(Y) {
       // Define the default user name for this environment. It will appear as
       // predefined value in the login mask.
       this.defaultUser = 'user-admin';
-      this.on('_rpc_response', this._handleRpcResponse, this);
+      this.on('_rpc_response', this._handleRpcResponse);
     },
 
     /**
@@ -226,9 +226,8 @@ YUI.add('juju-env-go', function(Y) {
       this._send_rpc({
         Type: 'AllWatcher',
         Request: 'Next',
-        Params: {
-          Id: this._allWatcherId
-        }
+        Id: this._allWatcherId,
+        Params: {}
       }, function(data) {
         if (data.Error) {
           console.log('aiiiiie!'); // XXX

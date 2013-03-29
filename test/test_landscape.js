@@ -139,9 +139,8 @@ describe('Landscape integration', function() {
     views.utils.updateLandscapeBottomBar(landscape, env, env, node,
         'environment');
 
-    // We should have the correct logo.
-    node.one('.logo-tab i').hasClass('landscape_environment')
-      .should.equal(true);
+    // We should have the logo.
+    node.one('.logo-tab i').hasClass('landscape_logo').should.equal(true);
     // We should have the correct URL for the machines.
     node.one('.machine-control a').get('href').should
       .equal('http://landscape.com/computers/criteria/environment:test/');
@@ -152,9 +151,6 @@ describe('Landscape integration', function() {
     views.utils.updateLandscapeBottomBar(landscape, env, mysql, node,
         'service');
 
-    // We should have the correct logo.
-    node.one('.logo-tab i').hasClass('landscape_service')
-      .should.equal(true);
     // We should have the correct URL for the machines.
     node.one('.machine-control a').get('href').should.equal('http://' +
         'landscape.com/computers/criteria/environment:test+service:mysql/');
@@ -168,9 +164,6 @@ describe('Landscape integration', function() {
     views.utils.updateLandscapeBottomBar(landscape, env, unit, node,
         'unit');
 
-    // We should have the correct logo.
-    node.one('.logo-tab i').hasClass('landscape_unit')
-      .should.equal(true);
     // We should have the correct URL for the machines.
     node.one('.machine-control a').get('href').should.equal('http://' +
         'landscape.com/computers/criteria/environment:test+unit:mysql-0/');

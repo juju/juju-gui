@@ -247,7 +247,7 @@
     });
 
     it('constructs the api url correctly based on apiHost', function() {
-      var hostname = 'http://localhost',
+      var hostname = 'http://localhost/',
           api = new Y.juju.Charmworld0({
             apiHost: hostname
           }),

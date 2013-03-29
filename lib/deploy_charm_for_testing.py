@@ -10,14 +10,25 @@ import yaml
 import subprocess
 import os
 
-juju_command = shelltoolbox.command('juju')
+from retry import retry
+
+juju_command = shelltoolbox.command('juju', '-v')
 
 DEFAULT_ORIGIN = 'lp:juju-gui'
 DEFAULT_CHARM = 'cs:~juju-gui/precise/juju-gui'
 
-def juju(s):
-    return juju_command(*s.split())
 
+def juju(s):
+    try:
+        return juju_command(*s.split())
+    except subprocess.CalledProcessError as err:
+        print("Error running", repr(s))
+        print(err.output)
+        raise
+
+# We found that the juju status call fails intermittently in
+# canonistack. This works around that particular fragility.
+@retry(subprocess.CalledProcessError, tries=3)
 def get_status():
     """Get the current status info as a JSON document."""
     return juju('status --environment juju-gui-testing --format json')
@@ -28,10 +39,12 @@ def get_state(get_status=get_status):
     unit = status['services']['juju-gui']['units']['juju-gui/0']
     return unit['agent-state']
 
+
 def get_machine_state(get_status=get_status):
     status = json.loads(get_status())
     machine = status['machines']['1']['instance-state']
     return machine
+
 
 def make_config_file(options):
     """Create a Juju GUI charm config file. Return the config file object.
@@ -59,12 +72,14 @@ def wait_for_service(get_state=get_state, sleep=time.sleep):
             break
         sleep(10)
 
+
 def wait_for_machine(get_state=get_state, sleep=time.sleep):
     while True:
         state = get_machine_state()
         if state == 'running':
             break
         sleep(5)
+
 
 def make_parser():
     parser = argparse.ArgumentParser(
@@ -73,17 +88,24 @@ def make_parser():
     parser.add_argument('--charm', default=DEFAULT_CHARM)
     return parser
 
+
 def parse():
     p = make_parser()
     return p.parse_args()
 
-def main(options=parse, print=print, juju=juju, wait_for_service=wait_for_service,
-         make_config_file=make_config_file, wait_for_machine=wait_for_machine):
+
+def main(options=parse, print=print, juju=juju,
+        wait_for_service=wait_for_service, make_config_file=make_config_file,
+        wait_for_machine=wait_for_machine):
     """Deploy the Juju GUI service and wait for it to become available."""
     args = options()
     try:
         print('Bootstrapping...')
-        juju('bootstrap --environment juju-gui-testing')
+        juju('bootstrap --environment juju-gui-testing '
+             '--constraints instance-type=m1.small')
+            # The default m1.tiny was so small that the improv server would
+            # sometimes fail to start. The m1.medium is more difficult to obtain
+            # on canonistack than m1.small, so m1.small seems to be "just right"
         print('Deploying service...')
         options = {'serve-tests': True, 'staging': True, 'secure': False,
                    'juju-gui-source': args.origin}

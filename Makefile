@@ -466,10 +466,12 @@ $(APPCACHE): manifest.appcache.in
 # /juju-ui directory existing.  We are vaguely trying to approximate the second
 # one by connecting it to our pertinent versioned files.  The appcache target
 # creates the third, and directories are a bit tricky with Makefiles so we are
-# OK with that.
+# OK with that.  The ULTIMATE_VERSION is used here because we always want the
+# version.js file to reflect the top-most entry in the CHANGES.yaml file,
+# regardless of whether we are doing a "Stable" or "Development" release.
 build-shared/juju-ui/version.js: $(APPCACHE) CHANGES.yaml $(JSFILES) $(TEMPLATE_TARGETS) \
 		$(SPRITE_SOURCE_FILES)
-	echo "var jujuGuiVersionInfo=['$(RELEASE_VERSION)', '$(BZR_REVNO)'];" \
+	echo "var jujuGuiVersionInfo=['$(ULTIMATE_VERSION)', '$(BZR_REVNO)'];" \
 	    > build-shared/juju-ui/version.js
 
 upload_release.py:
