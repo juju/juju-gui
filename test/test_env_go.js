@@ -35,7 +35,7 @@
       assert.isUndefined(cleanUpJSON('mykey', null));
     });
 
-    it('returns other values as they are', function() {
+    it('returns other allowed values as they are', function() {
       var data = [
         'mystring', undefined, true, false, 42, ['list', 47.2, true]
       ];
@@ -277,10 +277,28 @@
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
+          Config: {},
           CharmUrl: 'precise/mysql'
         },
         RequestId: 1
       };
+      assert.deepEqual(expected, msg);
+    });
+
+    it('successfully deploys a service with a config object', function() {
+      var config = {debug: true, logo: 'example.com/mylogo.png'};
+      var expected = {
+        Type: 'Client',
+        Request: 'ServiceDeploy',
+        Params: {
+          // Configuration values are sent as strings.
+          Config: {debug: 'true', logo: 'example.com/mylogo.png'},
+          CharmUrl: 'precise/mediawiki'
+        },
+        RequestId: 1
+      };
+      env.deploy('precise/mediawiki', null, config);
+      msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
 
@@ -292,6 +310,7 @@
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
+          Config: {},
           ConfigYAML: config_raw,
           CharmUrl: 'precise/mysql'
         },
@@ -361,6 +380,14 @@
         }
       };
       assert.deepEqual(expected, last_message);
+    });
+
+    it('correctly sends all the annotation values as strings', function() {
+      var annotations = {mynumber: 42, mybool: true, mystring: 'string'},
+          expected = {mynumber: '42', mybool: 'true', mystring: 'string'};
+      env.update_annotations('service-apache', annotations);
+      var pairs = conn.last_message().Params.Pairs;
+      assert.deepEqual(expected, pairs);
     });
 
     it('sends correct multiple update_annotations messages', function() {
