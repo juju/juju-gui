@@ -85,15 +85,14 @@ YUI.add('browser-charm-token', function(Y) {
       description: {
         value: ''
       },
-      downloads: {},
-      iconfile: {
-        value: ''
-      },
+      recent_commits: {},
+      recent_downloads: {},
+      icon: {},
       name: {
         value: ''
       },
-      providers: {
-        value: [] 
+      tested_providers: {
+        value: []
       }
     }
   });

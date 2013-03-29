@@ -366,6 +366,7 @@ YUI.add('juju-charm-models', function(Y) {
       rating_numerator: {},
       rating_denominator: {},
       recent_downloads: {},
+      recent_commits: {},
       relations: {},
       requires: {},
       revision: {
