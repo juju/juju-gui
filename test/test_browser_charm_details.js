@@ -87,7 +87,7 @@
       });
 
       view.render(node);
-      Y.one('#readme').get('text').should.eql('README content.');
+      Y.one('#bws_readme').get('text').should.eql('README content.');
     });
 
     // EVENTS
@@ -104,7 +104,7 @@
       // Hook up to the callback for the click event.
       view._addCharmEnvironment = function(ev) {
         ev.preventDefault();
-        Y.one('#readme h3').get('text').should.eql('No Readme Found');
+        Y.one('#bws_readme h3').get('text').should.eql('No Readme Found');
         done();
       };
 
@@ -126,7 +126,7 @@
       // Hook up to the callback for the click event.
       view._toggleLog = function(ev) {
         ev.preventDefault();
-        Y.one('#readme h3').get('text').should.eql('No Readme Found');
+        Y.one('#bws_readme h3').get('text').should.eql('No Readme Found');
         done();
       };
 

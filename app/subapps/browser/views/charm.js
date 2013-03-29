@@ -114,6 +114,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
       console.log('toggle the charm log');
     },
 
+    /**
+     * Clean up after ourselves.
+     *
+     * @method destructor
+     *
+     */
     destructor: function() {
       if (this.tabview) {
         this.tabview.destroy();
