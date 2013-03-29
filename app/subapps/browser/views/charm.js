@@ -99,7 +99,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _noReadme: function(container) {
-      container.setHTML('<h3>No Readme Found</h3>');
+      container.setHTML('<h3>Charm has no README</h3>');
     },
 
     /**
