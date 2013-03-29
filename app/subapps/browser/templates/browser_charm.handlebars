@@ -10,29 +10,31 @@
         {{ name }}
     </div>
 
-    <div class="summary">
-        <h2>Summary</h2>
-        {{ summary }}
-        <h2>Description</h2>
-        {{ description }}
+    <div class="yui3-g-r">
+        <div class="summary yui3-u-1-2">
+            <h2>Summary</h2>
+            {{ summary }}
+            <h2>Description</h2>
+            {{ description }}
 
-        <div>
-            <a href="#">Source Code</a>
-            <a href="{{ code_source.bugs_link }}">Bugs</a>
-            {{ code_source.location }}
+            <div>
+                <a href="#">Source Code</a>
+                <a href="{{ code_source.bugs_link }}">Bugs</a>
+                {{ code_source.location }}
+            </div>
         </div>
-    </div>
 
-    <div class="metadata">
-        <div>For {{ distro_series }}</div>
-        <div>{{ url }}</div>
-        <div>Tested and passed on providers:
-            <ul>
-                <li>--</li>
-            </ul>
+        <div class="metadata yui3-u-1-2">
+            <div>For {{ distro_series }}</div>
+            <div>{{ url }}</div>
+            <div>Tested and passed on providers:
+                <ul>
+                    <li>--</li>
+                </ul>
+            </div>
+            <div><span>{{ downloads_in_past_30_days }}</span> downloads in the
+            last 30 days</div>
         </div>
-        <div><span>{{ downloads_in_past_30_days }}</span> downloads in the
-        last 30 days</div>
     </div>
 
     <div class="changelog">
