@@ -212,7 +212,7 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     file: function(charmID, filename, callbacks, bindScope) {
-      var endpoint = 'charm/' + charmID + '/files/' + filename;
+      var endpoint = 'charm/' + charmID + '/file/' + filename;
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
