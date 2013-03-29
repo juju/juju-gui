@@ -921,6 +921,7 @@ YUI.add('juju-env-go', function(Y) {
 
   environments.GoEnvironment = GoEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
+  environments.stringifyObjectValues = stringifyObjectValues;
   environments.entityInfoConverters = entityInfoConverters;
   environments.cleanUpJSON = cleanUpJSON;
 

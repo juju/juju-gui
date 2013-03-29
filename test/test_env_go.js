@@ -19,6 +19,13 @@
       assert.deepEqual(expected, result);
     });
 
+    it('provides a way to convert object values to strings', function() {
+      var obj = {key1: 42, key2: false, key3: null, key4: 'foo'},
+          expected = {key1: '42', key2: 'false', key3: 'null', key4: 'foo'},
+          result = environments.stringifyObjectValues(obj);
+      assert.deepEqual(expected, result);
+    });
+
   });
 
   describe('Go Juju JSON replacer', function() {
