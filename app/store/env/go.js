@@ -33,6 +33,43 @@ YUI.add('juju-env-go', function(Y) {
   };
 
   /**
+     Return an object containing all the key/value pairs of the given "obj",
+     converting all the values to strings.
+
+     @method stringifyObjectValues
+     @static
+     @param {Object} obj The input object.
+     @return {Object} The output object, containing values as strings.
+   */
+  var stringifyObjectValues = function(obj) {
+    var newObj = Object.create(null);
+    Y.each(obj, function(value, key) {
+      newObj[key] = value + '';
+    });
+    return newObj;
+  };
+
+  /**
+     JSON replacer converting values to be serialized into that suitable
+     to be sent to the juju-core API server. This function can be passed to
+     Y.JSON.stringify in order to clean up data before serialization.
+
+     @method cleanUpJSON
+     @static
+     @param {Object} key The key in the key/value pair passed by
+      Y.JSON.stringify.
+     @param {Object} value The value corresponding to the provided key.
+     @return {Object} A value that will be serialized in place of the raw value.
+   */
+  var cleanUpJSON = function(key, value) {
+    // Blacklist null values.
+    if (value === null) {
+      return undefined;
+    }
+    return value;
+  };
+
+  /**
    * The Go Juju environment.
    *
    * This class handles the websocket connection to the GoJuju API backend.
@@ -165,7 +202,8 @@ YUI.add('juju-env-go', function(Y) {
       if (!op.Params) {
         op.Params = {};
       }
-      var msg = Y.JSON.stringify(op);
+      // Serialize the operation using the cleanUpJSON replacer function.
+      var msg = Y.JSON.stringify(op, cleanUpJSON);
       this.ws.send(msg);
     },
 
@@ -347,7 +385,7 @@ YUI.add('juju-env-go', function(Y) {
             Request: 'ServiceDeploy',
             Params: {
               ServiceName: service_name,
-              Config: config,
+              Config: stringifyObjectValues(config),
               ConfigYAML: config_raw,
               CharmUrl: charm_url,
               NumUnits: num_units
@@ -478,7 +516,7 @@ YUI.add('juju-env-go', function(Y) {
         Request: 'SetAnnotations',
         Params: {
           Tag: entity,
-          Pairs: data
+          Pairs: stringifyObjectValues(data)
         }
       }, intermediateCallback);
     },
@@ -884,7 +922,9 @@ YUI.add('juju-env-go', function(Y) {
 
   environments.GoEnvironment = GoEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
+  environments.stringifyObjectValues = stringifyObjectValues;
   environments.entityInfoConverters = entityInfoConverters;
+  environments.cleanUpJSON = cleanUpJSON;
 
 }, '0.1.0', {
   requires: [
