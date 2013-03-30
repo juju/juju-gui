@@ -15,7 +15,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
    *
    */
   ns.BrowserCharmView = Y.Base.create('browser-view-charmview', Y.View, [
-      widgets.browser.IndicatorManager], {
+    widgets.browser.IndicatorManager], {
+
     template: views.Templates.browser_charm,
 
     /**
