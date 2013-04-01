@@ -1,7 +1,7 @@
 'use strict';
 
 
-describe.only('charm token', function() {
+describe('charm token', function() {
   var charm_container, Y;
 
   before(function(done) {
