@@ -160,7 +160,7 @@
 
   });
 
-  describe.only('sandbox.PyJujuAPI', function() {
+  describe('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models'];
