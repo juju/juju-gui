@@ -519,21 +519,35 @@
     });
 
     it('can add additional units', function(done) {
-      env.after('defaultSeriesChange', function() {
-        var callback = function(result) {
-          console.log(result);
+      state.deploy('cs:wordpress', function(service) {
+        var data = {
+          op: 'add_unit',
+          service_name: 'wordpress',
+          num_units: 2
+        };
+        //Clear out the delta stream
+        state.nextChanges();
+        client.onmessage = function() {
           client.onmessage = function(received) {
-            var service = state.db.services.getById('kumquat');
-            var units = state.db.units.get_units_for_service(service);
-            console.log(units);
+            var units = state.db.units.get_units_for_service(service.service);
             assert.lengthOf(units, 3);
             done();
           };
-          env.get('conn').send(Y.JSON.stringify({
-            op: 'add_unit',
-            serviceName: 'kumquat',
-            numUnits: 2
-          }));
+          client.send(Y.JSON.stringify(data));
+        };
+        client.open();
+      });
+    });
+
+    it('can add additional units (integration)', function(done) {
+      env.after('defaultSeriesChange', function() {
+        var callback = function(result) {
+          env.add_unit('kumquat', 2, function(data) {
+            var service = state.db.services.getById('kumquat');
+            var units = state.db.units.get_units_for_service(service);
+            assert.lengthOf(units, 3);
+            done();
+          });
         };
         env.deploy(
             'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, callback);

@@ -358,9 +358,14 @@ YUI.add('juju-env-sandbox', function(Y) {
       Handles add unit operations from the client.
 
       @method performOp_add_unit
+      @param {Object} data contains serviceName and numUnits required for adding
+        additional units.
     */
     performOp_add_unit: function(data) {
-      this.get('state').addUnit(data.serviceName, data.numUnits);
+      var res = this.get('state').addUnit(data.service_name, data.num_units);
+      data.response = res;
+      // respond with the new data or error
+      this.get('client').receiveNow(data);
     }
 
   });
