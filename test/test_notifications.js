@@ -194,9 +194,10 @@ describe('notifications', function() {
     env.connect();
     var app = new Y.juju.App({env: env, container: container}),
         db = app.db,
-        mw = db.services.create({id: 'mediawiki',
-                                 name: 'mediawiki',
-                                 charm: 'cs:precise/mediawiki-2'}),
+        mw = db.services.create({
+          id: 'mediawiki',
+          name: 'mediawiki',
+          charm: 'cs:precise/mediawiki-2'}),
         notifications = db.notifications,
         view = new views.NotificationsOverview({
                       container: container,
@@ -275,45 +276,45 @@ describe('notifications', function() {
   it('must properly construct title and message based on level from ' +
      'event data',
      function() {
-       var container = Y.Node.create(
-         '<div id="test" class="container"></div>');
-       var conn = new(Y.namespace('juju-tests.utils')).SocketStub();
-       var env = juju.newEnvironment({conn: conn});
-       env.connect();
-       var app = new Y.juju.App({
-         env: env,
-         container: container,
-         viewContainer: container
-       });
-       var environment_delta = {
-         'result': [
-           ['service', 'add', {
-             'charm': 'cs:precise/wordpress-6',
-             'id': 'wordpress'
-           }],
-           ['service', 'add', {
-             'charm': 'cs:precise/mediawiki-3',
-             'id': 'mediawiki'
-           }],
-           ['service', 'add', {
-             'charm': 'cs:precise/mysql-6',
-             'id': 'mysql'
-           }],
-           ['unit', 'add', {
-             'agent-state': 'install-error',
-             'id': 'wordpress/0'
-           }],
-           ['unit', 'add', {
-             'agent-state': 'error',
-             'public-address': '192.168.122.222',
-             'id': 'mysql/0'
-           }],
-           ['unit', 'add', {
-             'public-address': '192.168.122.222',
-             'id': 'mysql/2'
-           }]
-         ],
-         'op': 'delta'
+        var container = Y.Node.create(
+           '<div id="test" class="container"></div>');
+        var conn = new(Y.namespace('juju-tests.utils')).SocketStub();
+        var env = juju.newEnvironment({conn: conn});
+        env.connect();
+        var app = new Y.juju.App({
+          env: env,
+          container: container,
+          viewContainer: container
+        });
+        var environment_delta = {
+          'result': [
+            ['service', 'add', {
+              'charm': 'cs:precise/wordpress-6',
+              'id': 'wordpress'
+            }],
+            ['service', 'add', {
+              'charm': 'cs:precise/mediawiki-3',
+              'id': 'mediawiki'
+            }],
+            ['service', 'add', {
+              'charm': 'cs:precise/mysql-6',
+              'id': 'mysql'
+            }],
+            ['unit', 'add', {
+              'agent-state': 'install-error',
+              'id': 'wordpress/0'
+            }],
+            ['unit', 'add', {
+              'agent-state': 'error',
+              'public-address': '192.168.122.222',
+              'id': 'mysql/0'
+            }],
+            ['unit', 'add', {
+              'public-address': '192.168.122.222',
+              'id': 'mysql/2'
+            }]
+          ],
+          'op': 'delta'
        };
 
        var notifications = app.db.notifications,
