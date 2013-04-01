@@ -1,7 +1,7 @@
 'use strict';
 
 
-describe('charm small widget', function() {
+describe.only('charm token', function() {
   var charm_container, Y;
 
   before(function(done) {

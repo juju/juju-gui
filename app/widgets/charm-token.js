@@ -15,7 +15,6 @@ YUI.add('browser-charm-token', function(Y) {
   ns.EVENT_CHARM_ADD = 'charm-token-add';
   ns.CharmToken = Y.Base.create('CharmToken', Y.Widget, [Y.WidgetChild], {
 
-    _events: [],
     TEMPLATE: Y.namespace('juju.views').Templates['charm-token'],
 
     /**
@@ -23,7 +22,6 @@ YUI.add('browser-charm-token', function(Y) {
      *
      * @method _bind_events
      * @private
-     * @return {undefined} Mutates only.
      */
     _bind_ui: function() {
       var addButton = this.get('contentBox').one('button'),
@@ -38,7 +36,6 @@ YUI.add('browser-charm-token', function(Y) {
      *
      * @method _unbind_events
      * @private
-     * @return {undefined} Mutates only.
      */
     _unbind_ui: function() {
       Y.Array.each(this._events, function(item) {
@@ -51,7 +48,6 @@ YUI.add('browser-charm-token', function(Y) {
      * Clicking add fires the add signal.
      *
      * @method bindUI
-     * @return {undefined} Mutates only.
      */
     bindUI: function() {
       this._unbind_ui();
@@ -62,17 +58,23 @@ YUI.add('browser-charm-token', function(Y) {
      * Destructor
      *
      * @method destructor
-     * @return {undefined} Mutates only.
      */
-    destructor: function(cfg) {
+    destructor: function() {
       this._unbind_ui();
+    },
+    /**
+     * Initializer
+     *
+     * @method initializer
+     */
+    initializer: function(cfg) {
+      this._events = [];
     },
 
     /**
      * Create the nodes required by this widget and attach them to the DOM.
      *
      * @method renderUI
-     * @return {undefined} Mutates only.
      */
     renderUI: function() {
       var content = this.TEMPLATE(this.getAttrs());
