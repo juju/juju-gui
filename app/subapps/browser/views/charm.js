@@ -104,7 +104,15 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _dispatchTabEvents: function(tab) {
       tab.on('selectionChange', function(ev) {
         var tab = ev.newVal.get('content');
-        switch(tab) {
+        switch (tab) {
+          // @todo to be added later. Placed in now to make the linter happy
+          // with the switch statement.
+          case 'Configuration':
+            console.log('not implemented config handler');
+            break;
+          case 'Interfaces':
+            console.log('not implemented interfaces handler');
+            break;
           case 'Quality':
             this._loadQAContent();
             break;
@@ -136,18 +144,22 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _loadQAContent: function() {
+      var node = Y.one('#bws_qa');
+
+      this.showIndicator(node);
       // Only load the QA data once.
       if (!this._qaLoaded) {
         this.get('store').qa(
-          this.get('charm').get('id'), {
-            'success': function(data) {
-              data = this._buildQAData(data);
-              Y.one('#bws_qa').setHTML(this.qatemplate(data));
-            },
-            'failure': function(data, request) {
+            this.get('charm').get('id'), {
+              'success': function(data) {
+                data = this._buildQAData(data);
+                node.setHTML(this.qatemplate(data));
+                this.hideIndicator(node);
+              },
+              'failure': function(data, request) {
 
-            }
-          }, this);
+              }
+            }, this);
       }
     },
 
