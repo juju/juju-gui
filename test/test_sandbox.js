@@ -160,7 +160,7 @@
 
   });
 
-  describe('sandbox.PyJujuAPI', function() {
+  describe.only('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models'];
@@ -516,6 +516,29 @@
       };
       juju.set('deltaInterval', 4);
       client.open();
+    });
+
+    it('can add additional units', function(done) {
+      env.after('defaultSeriesChange', function() {
+        var callback = function(result) {
+          console.log(result);
+          client.onmessage = function(received) {
+            var service = state.db.services.getById('kumquat');
+            var units = state.db.units.get_units_for_service(service);
+            console.log(units);
+            assert.lengthOf(units, 3);
+            done();
+          };
+          env.get('conn').send(Y.JSON.stringify({
+            op: 'add_unit',
+            serviceName: 'kumquat',
+            numUnits: 2
+          }));
+        };
+        env.deploy(
+            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, callback);
+      });
+      env.connect();
     });
 
   });
