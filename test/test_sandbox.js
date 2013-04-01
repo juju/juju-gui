@@ -541,6 +541,8 @@
             assert.lengthOf(units, 3);
             // Does the response object contain the proper data
             assert.deepEqual(data, mock);
+            // Error is undefined
+            assert.isUndefined(data.err);
             done();
           };
           client.send(Y.JSON.stringify(data));
