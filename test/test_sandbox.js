@@ -529,8 +529,18 @@
         state.nextChanges();
         client.onmessage = function() {
           client.onmessage = function(received) {
-            var units = state.db.units.get_units_for_service(service.service);
+            var units = state.db.units.get_units_for_service(service.service),
+                data = Y.JSON.parse(received.data),
+                mock = {
+                  num_units: 2,
+                  service_name: 'wordpress',
+                  op: 'add_unit',
+                  result: ['wordpress/2', 'wordpress/3']
+                };
+            // Do we have enough total units?
             assert.lengthOf(units, 3);
+            // Does the response object contain the proper data
+            assert.deepEqual(data, mock);
             done();
           };
           client.send(Y.JSON.stringify(data));
@@ -538,6 +548,31 @@
         client.open();
       });
     });
+
+    it('throws an error when adding units to an invalid service',
+        function(done) {
+          state.deploy('cs:wordpress', function(service) {
+            var data = {
+              op: 'add_unit',
+              service_name: 'noservice',
+              num_units: 2
+            };
+            //Clear out the delta stream
+            state.nextChanges();
+            client.onmessage = function() {
+              client.onmessage = function(received) {
+                var data = Y.JSON.parse(received.data);
+
+                // If there is no error data.err will be undefined
+                assert.equal(true, !!data.err);
+                done();
+              };
+              client.send(Y.JSON.stringify(data));
+            };
+            client.open();
+          });
+        }
+    );
 
     it('can add additional units (integration)', function(done) {
       env.after('defaultSeriesChange', function() {
@@ -554,6 +589,8 @@
       });
       env.connect();
     });
+
+
 
   });
 

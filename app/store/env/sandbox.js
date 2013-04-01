@@ -363,7 +363,13 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     performOp_add_unit: function(data) {
       var res = this.get('state').addUnit(data.service_name, data.num_units);
-      data.response = res;
+      if (res.error) {
+        data.err = res.error;
+      } else {
+        data.result = Y.Array.map(res.units, function(unit) {
+          return unit.id;
+        });
+      }
       // respond with the new data or error
       this.get('client').receiveNow(data);
     }
