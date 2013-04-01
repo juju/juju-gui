@@ -1,6 +1,17 @@
-<ul>
-{{#each questions}}
-  <li>{{this.name}}</li>
+<h3>Quality Rating: {{total_score}}/{{total_available}}</h3>
 
-{{/each}}
-</ul>
+<p>This charm has scored {{total_score}} out of a maximum of {{total_available}} points on the criteria below.</p>
+
+<div class="qa_data">
+    {{#each questions}}
+        <h3>{{this.name}} <span class="heading_notes">{{this.score}}/{{this.questions.length}} points</span></h3>
+
+        <ul>
+            {{#each this.questions}}
+                <li>
+                    <input type="checkbox" {{#if this.score}}checked="checked"{{/if}} /> {{this.description}}
+                </li>
+            {{/each}}
+        </ul>
+    {{/each}}
+</div>

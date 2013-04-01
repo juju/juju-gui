@@ -61,26 +61,37 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     _buildQAData: function(response_data) {
       var questions = response_data.result.questions,
-          scores = response_data.scores;
+          scores = response_data.scores,
+          total_available = 0,
+          total_score = 0;
+
       Y.Array.each(questions, function(category) {
-        var total = category.questions.length;
         var sum = 0;
+
 
         Y.Array.each(category.questions, function(question, idx) {
           var category_name = category.name,
               question_index = category_name + '_' + idx;
 
           if (scores[category_name] && scores[category_name][question_index]) {
-            question.score = scores[category_name][question_index];
+            var score = parseInt(scores[category_name][question_index], 10);
+            sum += score;
+            category.questions[idx].score = score;
           } else {
-              // If it's unanswered just set to 0 for now. We're only
-              // tracking yes/no in the UX.
-              question.score = 0;
+            category.questions[idx].score = undefined;
           }
         });
+
+        category.score = sum;
+        total_available += category.questions.length;
+        total_score += sum;
       });
 
-      return questions;
+      return {
+        questions: questions,
+        total_available: total_available,
+        total_score: total_score
+      };
     },
 
     /**
@@ -131,7 +142,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
           this.get('charm').get('id'), {
             'success': function(data) {
               data = this._buildQAData(data);
-              Y.one('#bws_qa').setHTML(this.qatemplate({'questions': data}));
+              Y.one('#bws_qa').setHTML(this.qatemplate(data));
             },
             'failure': function(data, request) {
 
