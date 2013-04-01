@@ -126,7 +126,7 @@ YUI.add('browser-charm-token', function(Y) {
         * @type {String}
         */
       icon: {
-        value: '' 
+        value: ''
       },
 
       /**
