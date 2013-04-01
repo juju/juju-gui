@@ -14,8 +14,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
    * @extends {Y.View}
    *
    */
-  ns.BrowserCharmView = Y.Base.create('browser-view-charmview', Y.View, [], {
+  ns.BrowserCharmView = Y.Base.create('browser-view-charmview', Y.View, [
+    widgets.browser.IndicatorManager], {
+
     template: views.Templates.browser_charm,
+    qatemplate: views.Templates.browser_qa,
 
     /**
      * List the DOM based events to watch for in the container.
@@ -49,6 +52,58 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+     * The API retuns the questions and the scores. Combine the data into a
+     * single source to make looping in the handlebars templates nicer.
+     *
+     * @method _buildQAData
+     * @param {Object} response_data the qa data from the store.
+     *
+     */
+    _buildQAData: function(response_data) {
+      var questions = response_data.result.questions,
+          scores = response_data.scores;
+      Y.Array.each(questions, function(category) {
+        var total = category.questions.length;
+        var sum = 0;
+
+        Y.Array.each(category.questions, function(question, idx) {
+          var category_name = category.name,
+              question_index = category_name + '_' + idx;
+
+          if (scores[category_name] && scores[category_name][question_index]) {
+            question.score = scores[category_name][question_index];
+          } else {
+              // If it's unanswered just set to 0 for now. We're only
+              // tracking yes/no in the UX.
+              question.score = 0;
+          }
+        });
+      });
+
+      return questions;
+    },
+
+    /**
+     * Watch the tab control for change events and dispatch accordingly.
+     *
+     * @method _bindTabEvents
+     * @param {TabView} tab the tab control to monitor.
+     *
+     */
+    _dispatchTabEvents: function(tab) {
+      tab.on('selectionChange', function(ev) {
+        var tab = ev.newVal.get('content');
+        switch(tab) {
+          case 'Quality':
+            this._loadQAContent();
+            break;
+          default:
+            break;
+        }
+      }, this);
+    },
+
+    /**
      * Event handler for clicking on a hook filename to load that file.
      *
      * @method _loadHookContent
@@ -61,6 +116,28 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       // Load the file, but make sure we prettify the code.
       this._loadFile(node, filename, true);
+    },
+
+    /**
+     * Load the charm's QA data and fill it into the tab when selected.
+     *
+     * @method _loadQAContent
+     *
+     */
+    _loadQAContent: function() {
+      // Only load the QA data once.
+      if (!this._qaLoaded) {
+        this.get('store').qa(
+          this.get('charm').get('id'), {
+            'success': function(data) {
+              data = this._buildQAData(data);
+              Y.one('#bws_qa').setHTML(this.qatemplate({'questions': data}));
+            },
+            'failure': function(data, request) {
+
+            }
+          }, this);
+      }
     },
 
     /**
@@ -153,24 +230,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (this.tabview) {
         this.tabview.destroy();
       }
-
-      Y.Object.each(this._indicators, function(ind, key) {
-        ind.destroy();
-      });
-    },
-
-    /**
-     * Helper to make sure we can hide an indicator correctly.
-     *
-     * @method hideIndicator
-     * @param {Node} node the container the indicator is currently over.
-     *
-     */
-    hideIndicator: function(node) {
-      var id = node._yuid;
-      if (this.indicators[id]) {
-        this.indicators[id].success();
-      }
     },
 
     /**
@@ -209,6 +268,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
         srcNode: tplNode.one('.tabs')
       });
       this.tabview.render();
+      this._dispatchTabEvents(this.tabview);
 
       // Start loading the readme so it's ready to go.
       var readme = this._locateReadme();
@@ -220,32 +280,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this._noReadme(tplNode.one('#bws_readme'));
       }
-    },
-
-    /**
-     * Show/setBusy an indicator for a given node. If an indicator is already
-     * attached then just show it, else create a new indicator instance on the
-     * node.
-     *
-     * @method showIndicator
-     * @param {Node} node the node to cover with the indicator.
-     *
-     */
-    showIndicator: function(node) {
-      var id = node._yuid;
-
-      if (this.indicators[id]) {
-        this.indicators[id].setBusy();
-      } else {
-        this.indicators[id] = new widgets.browser.OverlayIndicator({
-          target: node
-        });
-
-        this.indicators[id].render();
-        this.indicators[id].setBusy();
-      }
     }
-
   }, {
     ATTRS: {
       /**

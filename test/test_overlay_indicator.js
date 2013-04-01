@@ -1,11 +1,12 @@
 'use strict';
 
 describe('overlay indicator', function() {
-  var container, indicator, Y;
+  var container, indicator, widget, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-overlay-indicator', 'node'],
         function(Y) {
+          widget = Y.juju.widgets.browser;
           done();
         });
   });
@@ -164,4 +165,50 @@ describe('overlay indicator', function() {
     indicator.error();
     assert.isTrue(called);
   });
+
+  it('indicator manager wires into an object properly', function() {
+    var TestClass = Y.Base.create(
+        'testclass',
+        Y.Base,
+        [widget.IndicatorManager]);
+    var test_instance = new TestClass();
+    test_instance._indicators.should.eql({});
+    assert(typeof(test_instance.showIndicator) === 'function');
+    assert(typeof(test_instance.hideIndicator) === 'function');
+  });
+
+  it('indicator manager only creates one indicator per node id', function() {
+    var TestClass = Y.Base.create(
+        'testclass',
+        Y.Base,
+        [widget.IndicatorManager]);
+    var test_instance = new TestClass();
+    test_instance.showIndicator(container);
+    test_instance.showIndicator(container);
+
+    assert(Y.Object.keys(test_instance._indicators).length === 1);
+
+    test_instance.destroy();
+  });
+
+  it('indicator manager handles cleanup', function(done) {
+    var TestClass = Y.Base.create(
+        'testclass',
+        Y.Base,
+        [widget.IndicatorManager], {
+          _destroyIndicators: function() {
+            // override the cleanup method to check it's called.
+            Y.Object.each(this._indicators, function(ind, key) {
+              ind.destroy();
+            });
+            done();
+          }
+        });
+
+    var test_instance = new TestClass();
+    test_instance.showIndicator(container);
+    test_instance.destroy();
+  });
+
+
 });
