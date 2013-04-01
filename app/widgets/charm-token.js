@@ -83,7 +83,6 @@ YUI.add('browser-charm-token', function(Y) {
 
   }, {
     ATTRS: {
-      commits: {},
       description: {
         value: ''
       },

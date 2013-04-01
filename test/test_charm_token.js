@@ -29,9 +29,8 @@ describe.only('charm token', function() {
     var cfg = {
       name: 'some-charm',
       description: 'some description',
-      commits: 1,
-      downloads: 1,
-      providers: []
+      recent_commits: 1,
+      recent_downloads: 1
     };
     var charm = new Y.juju.widgets.browser.CharmToken(cfg);
     charm.render(charm_container);
@@ -40,6 +39,11 @@ describe.only('charm token', function() {
     assert.equal(
         'some description',
         rendered_charm.one('.description').get('text'));
-    assert.equal('1', rendered_charm.one('.rating').get('text'));
+    assert.equal(
+        '1', rendered_charm.one('.downloads').get('text'),
+        'Wrong number of downloads.');
+    assert.equal(
+        '1', rendered_charm.one('.commits').get('text'),
+        'Wrong number of commits.');
   });
 });
