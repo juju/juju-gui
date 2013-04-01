@@ -67,6 +67,7 @@ function injectData(app, data) {
     });
 
     afterEach(function() {
+      app.destroy();
       container.remove(true);
       sessionStorage.setItem('credentials', null);
     });
@@ -83,6 +84,7 @@ function injectData(app, data) {
           var the_username = 'nehi';
           var the_password = 'moonpie';
           // Replace the existing app.
+          app.destroy();
           app = new Y.juju.App(
               { container: container,
                 user: the_username,
@@ -95,6 +97,7 @@ function injectData(app, data) {
 
     it('propagates the readOnly option from the configuration', function() {
       // Replace the existing app.
+      app.destroy();
       app = new Y.juju.App({
         container: container,
         readOnly: true,
@@ -133,6 +136,7 @@ function injectData(app, data) {
 
     it('should display the configured environment name', function() {
       var environment_name = 'This is the environment name.  Deal with it.';
+      app.destroy();
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
@@ -144,6 +148,7 @@ function injectData(app, data) {
 
     it('should show a generic environment name if none configured',
        function() {
+         app.destroy();
          app = new Y.juju.App(
          { container: container,
            viewContainer: container});
