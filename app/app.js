@@ -345,8 +345,9 @@ YUI.add('juju-gui', function(Y) {
 
       // When the provider type and environment names become available, 
       // display them.
-      this.env.after('providerTypeChange', this.onProviderTypeChange);
-      this.env.after('environmentNameChange', this.onEnvironmentNameChange);
+      this.env.after('providerTypeChange', this.onProviderTypeChange, this);
+      this.env.after('environmentNameChange', 
+          this.onEnvironmentNameChange, this);
 
       // Once the user logs in, we need to redraw.
       this.env.after('login', this.onLogin, this);

@@ -186,10 +186,15 @@
       // Assume environmentInfo to be the first request.
       conn.msg({
         RequestId: 1,
-        Response: {DefaultSeries: 'precise', 'ProviderType': 'ec2'}
+        Response: {
+          DefaultSeries: 'precise', 
+          'ProviderType': 'ec2',
+          'Name': 'envname'
+        }
       });
       assert.equal('precise', env.get('defaultSeries'));
       assert.equal('ec2', env.get('providerType'));
+      assert.equal('envname', env.get('environmentName'));
     });
 
     it('sends the correct expose message', function() {
