@@ -120,11 +120,11 @@ YUI.add('browser-charm-token', function(Y) {
        */
       recent_downloads: {},
 
-       /**
-        * @attribute icon
-        * @default ''
-        * @type {String}
-        */
+      /**
+       * @attribute icon
+       * @default ''
+       * @type {String}
+       */
       icon: {
         value: ''
       },
