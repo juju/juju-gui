@@ -56,25 +56,24 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * single source to make looping in the handlebars templates nicer.
      *
      * @method _buildQAData
-     * @param {Object} response_data the qa data from the store.
+     * @param {Object} responseData the qa data from the store.
      *
      */
-    _buildQAData: function(response_data) {
-      var questions = response_data.result.questions,
-          scores = response_data.scores,
-          total_available = 0,
-          total_score = 0;
+    _buildQAData: function(responseData) {
+      var questions = responseData.result.questions,
+          scores = responseData.scores,
+          totalAvailable = 0,
+          totalScore = 0;
 
       Y.Array.each(questions, function(category) {
         var sum = 0;
 
-
         Y.Array.each(category.questions, function(question, idx) {
-          var category_name = category.name,
-              question_index = category_name + '_' + idx;
+          var categoryName = category.name,
+              questionIndex = categoryName + '_' + idx;
 
-          if (scores[category_name] && scores[category_name][question_index]) {
-            var score = parseInt(scores[category_name][question_index], 10);
+          if (scores[categoryName] && scores[categoryName][questionIndex]) {
+            var score = parseInt(scores[categoryName][questionIndex], 10);
             sum += score;
             category.questions[idx].score = score;
           } else {
@@ -83,14 +82,14 @@ YUI.add('subapp-browser-charmview', function(Y) {
         });
 
         category.score = sum;
-        total_available += category.questions.length;
-        total_score += sum;
+        totalAvailable += category.questions.length;
+        totalScore += sum;
       });
 
       return {
         questions: questions,
-        total_available: total_available,
-        total_score: total_score
+        totalAvailable: totalAvailable,
+        totalScore: totalScore
       };
     },
 
