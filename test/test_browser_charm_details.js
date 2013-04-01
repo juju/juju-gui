@@ -219,8 +219,8 @@
 
       // We store a number of summary bits to help the template render the
       // scores correctly.
-      processed.total_available.should.eql(38);
-      processed.total_score.should.eql(13);
+      processed.totalAvailable.should.eql(38);
+      processed.totalScore.should.eql(13);
       processed.questions[0].score.should.eql(3);
     });
 
