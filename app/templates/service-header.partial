@@ -10,25 +10,24 @@
         <span>{{charm_id}}</span>
       </div>
     </div>
-    <div class="menu-items">
-      {{#tabs}}
-      <div class="inline item">
-        <div>
+    <div class="menu-items yui3-g">
+      <ul class="menu yui3-u-1-2">
+        {{#tabs}}
+        <li class="item">
           <a {{#if active}}class="link-active"{{/if}} href="{{href}}">{{title}}
-          </a> 
-        </div>
-        <div {{#if active}}class="active"{{/if}}>
-        </div>
-      </div>
-      {{/tabs}}
-      <div class="controls">
-        {{> service-header-destroy-service }}
+          </a>
+          <div {{#if active}}class="active"{{/if}}>
+          </div>
+        </li>
+        {{/tabs}}
+      </ul>
+      <div class="controls yui3-u-1-2">
         {{#unless serviceIsJujuGUI}}
           <div class="control-expose control">
             <div class="inline">
-	      <img src="/juju-ui/assets/images/bottom_bar_big_div.png" class="divider" />
-	      <span>Expose</span>
-	    </div>
+              <img src="/juju-ui/assets/images/bottom_bar_big_div.png" class="divider" />
+              <span>Expose</span>
+            </div>
             <div class="inline">
             {{#if service.exposed}}
               <img class="unexposeService"
@@ -44,6 +43,7 @@
             </div>
           </div>
         {{/unless}}
+        {{> service-header-destroy-service }}
       </div>
     </div>
     <div class="yui3-g">

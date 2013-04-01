@@ -22,6 +22,16 @@
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
 - unreleased:
+- 0.3.1:
+    - Small fixes to release process.
+- 0.3.0:
+    - Improved browser support.
+    - Beginnings of support for Go Juju.
+    - Changes to the way the websocket URL are specified.
+    - Movement toward continuous integration.
+    - Added "ghost" services to indicate services that are being created.
+    - Improved Landscape graphics.
+    - Many bug fixes and refactorings.
 - 0.2.2:
     - Initial support for in browser environment.
     - Subapp infrastructure.

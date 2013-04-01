@@ -470,7 +470,8 @@ YUI.add('juju-topology-relation', function(Y) {
 
     _removeRelationCallback: function(view,
             relationElement, relationId, confirmButton, ev) {
-      var db = this.get('component').get('db');
+      var topo = this.get('component'),
+          db = topo.get('db');
       var service = this.get('model');
       if (ev.err) {
         db.notifications.add(
@@ -486,7 +487,7 @@ YUI.add('juju-topology-relation', function(Y) {
         // Remove the relation from the DB.
         db.relations.remove(db.relations.getById(relationId));
         // Redraw the graph and reattach events.
-        db.fire('update');
+        topo.update();
       }
       view.get('rmrelation_dialog').hide();
       view.get('rmrelation_dialog').destroy();
@@ -688,28 +689,33 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /*
-     * Fired when clicking the second service is clicked in the
+     *
+     * Fired when the second service is clicked in the
      * add relation flow.
      *
-     * :param endpoints: array of two endpoints, each in the form
+     * @method addRelationEnd
+     * @param endpoints {Array} array of two endpoints, each in the form
      *   ['service name', {
      *     name: 'endpoint type',
      *     role: 'client or server'
-     *   }]
+     *   }].
+     * @param module {RelationModule}
+     * @return undefined Side-effects only.
      */
-    addRelationEnd: function(endpoints, view, context) {
+    addRelationEnd: function(endpoints, module) {
       // Redisplay all services
-      view.cancelRelationBuild();
+      module.cancelRelationBuild();
 
       // Get the vis, and links, build the new relation.
-      var vis = view.get('component').vis;
-      var env = view.get('component').get('env');
-      var db = view.get('component').get('db');
-      var source = view.get('addRelationStart_service');
+      var topo = module.get('component');
+      var vis = topo.vis;
+      var env = topo.get('env');
+      var db = topo.get('db');
+      var source = module.get('addRelationStart_service');
       var relation_id = 'pending-' + endpoints[0][0] + endpoints[1][0];
 
       if (endpoints[0][0] === endpoints[1][0]) {
-        view.set('currentServiceClickAction', 'hideServiceMenu');
+        module.set('currentServiceClickAction', 'hideServiceMenu');
         return;
       }
 
@@ -724,21 +730,20 @@ YUI.add('juju-topology-relation', function(Y) {
 
       // Firing the update event on the db will properly redraw the
       // graph and reattach events.
-      //db.fire('update');
-      view.get('component').bindAllD3Events();
-      view.update();
+      topo.update();
+      topo.bindAllD3Events();
 
       // Fire event to add relation in juju.
       // This needs to specify interface in the future.
       env.add_relation(endpoints[0], endpoints[1],
-          Y.bind(this._addRelationCallback, this, view, relation_id)
+          Y.bind(this._addRelationCallback, this, module, relation_id)
       );
-      view.set('currentServiceClickAction', 'hideServiceMenu');
+      module.set('currentServiceClickAction', 'hideServiceMenu');
     },
 
-    _addRelationCallback: function(view, relation_id, ev) {
+    _addRelationCallback: function(module, relation_id, ev) {
       console.log('addRelationCallback reached');
-      var topo = view.get('component');
+      var topo = module.get('component');
       var db = topo.get('db');
       var vis = topo.vis;
       // Remove our pending relation from the DB, error or no.
@@ -772,10 +777,8 @@ YUI.add('juju-topology-relation', function(Y) {
           display_name: endpoints[0][1].name
         });
       }
-      // Redraw the graph and reattach events.
-      //db.fire('update');
-      view.get('component').bindAllD3Events();
-      view.update();
+      topo.update();
+      topo.bindAllD3Events();
     },
 
     /*

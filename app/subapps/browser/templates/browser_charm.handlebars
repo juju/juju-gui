@@ -1,0 +1,79 @@
+<div class="charm">
+    <div class="nav">
+        <a href="">Search Results</a>
+        <a href="">Share</a>
+        <input class="add" type="button" value="Add" />
+    </div>
+
+    <div class="heading">
+        <img src="data:image/svg;base64,{{ icon }}" alt="{{ name }} icon">
+        {{ name }}
+    </div>
+
+    <div class="yui3-g-r">
+        <div class="summary yui3-u-1-2">
+            <h2>Summary</h2>
+            {{ summary }}
+            <h2>Description</h2>
+            {{ description }}
+
+            <div>
+                <a href="#">Source Code</a>
+                <a href="{{ code_source.bugs_link }}">Bugs</a>
+                {{ code_source.location }}
+            </div>
+        </div>
+
+        <div class="metadata yui3-u-1-2">
+            <div>For {{ distro_series }}</div>
+            <div>{{ url }}</div>
+            <div>Tested and passed on providers:
+                <ul>
+                    <li>--</li>
+                </ul>
+            </div>
+            <div><span>{{ downloads_in_past_30_days }}</span> downloads in the
+            last 30 days</div>
+        </div>
+    </div>
+
+    <div class="changelog">
+        <span class="toggle">Open Log</span>
+    </div>
+
+    <div class="changelog">
+    </div>
+
+    <div class="tabs">
+        <ul>
+            <li><a href="#bws_readme">Readme</a></li>
+            <li><a href="#bws_interfaces">Interfaces</a></li>
+            <li><a href="#bws_configuration">Configuration</a></li>
+            <li><a href="#bws_qa">Quality</a></li>
+            <li><a href="#bws_hooks">Hooks</a></li>
+        </ul>
+        <div>
+            <div id="bws_readme">Readme</div>
+            <div id="bws_interfaces">Interfaces</div>
+            <div id="bws_configuration">Configuration</div>
+            <div id="bws_qa">Quality</div>
+            <div id="bws_hooks">
+                <div class="yui3-g-r">
+                    <div class="yui3-u-1-4">
+                        <ul>
+                        {{#each files}}
+                        <li><a>{{ . }}</a></li>
+                        {{/each}}
+                        </ul>
+                    </div>
+                    <div class="yui3-u-3-4">
+                        <div class="filecontent">
+                          Select a file from the list to view.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

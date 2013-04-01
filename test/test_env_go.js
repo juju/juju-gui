@@ -19,6 +19,38 @@
       assert.deepEqual(expected, result);
     });
 
+    it('provides a way to convert object values to strings', function() {
+      var obj = {key1: 42, key2: false, key3: null, key4: 'foo'},
+          expected = {key1: '42', key2: 'false', key3: 'null', key4: 'foo'},
+          result = environments.stringifyObjectValues(obj);
+      assert.deepEqual(expected, result);
+    });
+
+  });
+
+  describe('Go Juju JSON replacer', function() {
+    var cleanUpJSON, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
+        cleanUpJSON = Y.namespace('juju.environments').cleanUpJSON;
+        done();
+      });
+    });
+
+    it('blacklists null values', function() {
+      assert.isUndefined(cleanUpJSON('mykey', null));
+    });
+
+    it('returns other allowed values as they are', function() {
+      var data = [
+        'mystring', undefined, true, false, 42, ['list', 47.2, true]
+      ];
+      Y.each(data, function(item) {
+        assert.strictEqual(item, cleanUpJSON('mykey', item));
+      });
+    });
+
   });
 
   describe('Go Juju environment', function() {
@@ -252,10 +284,28 @@
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
+          Config: {},
           CharmUrl: 'precise/mysql'
         },
         RequestId: 1
       };
+      assert.deepEqual(expected, msg);
+    });
+
+    it('successfully deploys a service with a config object', function() {
+      var config = {debug: true, logo: 'example.com/mylogo.png'};
+      var expected = {
+        Type: 'Client',
+        Request: 'ServiceDeploy',
+        Params: {
+          // Configuration values are sent as strings.
+          Config: {debug: 'true', logo: 'example.com/mylogo.png'},
+          CharmUrl: 'precise/mediawiki'
+        },
+        RequestId: 1
+      };
+      env.deploy('precise/mediawiki', null, config);
+      msg = conn.last_message();
       assert.deepEqual(expected, msg);
     });
 
@@ -267,8 +317,7 @@
         Type: 'Client',
         Request: 'ServiceDeploy',
         Params: {
-          ServiceName: null,
-          Config: null,
+          Config: {},
           ConfigYAML: config_raw,
           CharmUrl: 'precise/mysql'
         },
@@ -338,6 +387,14 @@
         }
       };
       assert.deepEqual(expected, last_message);
+    });
+
+    it('correctly sends all the annotation values as strings', function() {
+      var annotations = {mynumber: 42, mybool: true, mystring: 'string'},
+          expected = {mynumber: '42', mybool: 'true', mystring: 'string'};
+      env.update_annotations('service-apache', annotations);
+      var pairs = conn.last_message().Params.Pairs;
+      assert.deepEqual(expected, pairs);
     });
 
     it('sends correct multiple update_annotations messages', function() {
@@ -863,9 +920,9 @@
       msg = conn.last_message();
       assert.equal(msg.Type, 'AllWatcher');
       assert.equal(msg.Request, 'Next');
-      assert.isTrue('Id' in msg.Params);
+      assert.isTrue('Id' in msg);
       // This response is in fact to the sent _next request.
-      assert.equal(msg.Params.Id, env._allWatcherId);
+      assert.equal(msg.Id, env._allWatcherId);
     });
 
     it('fires "_rpc_response" message after an RPC response', function(done) {
@@ -889,6 +946,14 @@
         done();
       });
       env._handleRpcResponse(callbackData);
+    });
+
+    it('the _rpc_response subscription can not have args', function() {
+      var subscribers = env.getEvent('_rpc_response')._subscribers;
+      // This test assumes that there is only one subscriber.  If we ever have
+      // any more we will need to update this test.
+      assert.equal(subscribers.length, 1);
+      assert.equal(subscribers[0].args, null);
     });
 
   });

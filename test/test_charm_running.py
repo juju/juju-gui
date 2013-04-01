@@ -13,6 +13,11 @@ class TestBasics(browser.TestCase):
     def test_environment_name(self):
         self.load()
         self.handle_browser_warning()
+        # The next line attempts to work around an IE 10 fragility.
+        # The symptom we are trying to avoid is an error as follows:
+        # "JavaScript error (WARNING: The server did not provide any stacktrace
+        # information)""
+        self.wait_for_css_selector('svg')
         body = self.driver.find_element_by_xpath('//body')
         self.assertTrue('Environment on ' in body.text)
 
@@ -20,25 +25,48 @@ class TestBasics(browser.TestCase):
         # The GUI connects to the API backend.
         self.load()
         self.handle_browser_warning()
-        script = 'return app.env.get("connected");'
+        # The next line attempts to work around an IE 10 fragility.
+        # The symptom we are trying to avoid is an error as follows:
+        # "JavaScript error (WARNING: The server did not provide any stacktrace
+        # information)""
+        self.wait_for_css_selector('svg')
+        script = 'return app && app.env && app.env.get("connected");'
         self.wait_for_script(script, 'Environment not connected.')
 
     def test_gui_unit_tests(self):
         # Ensure Juju GUI unit tests pass.
-        self.load('/test/')
-        script = """
-            var stats = testRunner.stats;
-            return [testRunner.total, stats.tests, stats.failures];
-        """
-
         def tests_completed(driver):
-            total, done, failures = driver.execute_script(script)
+            stats = driver.execute_script('return testRunner.stats;')
             # Return when tests completed or a failure occurred.
-            if (done == total) or failures:
-                return total, failures
+            # The duration and end values are only specified after the tests
+            # complete. Sometimes only one or the other are available, for
+            # reasons yet to be determined.
+            if stats.get('duration') or stats.get('end') or stats['failures']:
+                return stats['tests'], stats['failures']
 
-        total, failures = self.wait_for(
-            tests_completed, 'Unable to complete test run.', timeout=60)
+        def run_tests():
+            self.wait_for_css_selector('#mocha-stats')
+            try:
+                total, failures = self.wait_for(
+                    tests_completed, 'Unable to complete test run.',
+                    timeout=90)
+            except exceptions.TimeoutException:
+                print(self.driver.execute_script('return testRunner.stats;'))
+                raise
+            return total, failures
+        self.load('/test/')
+        for i in range(5):
+            total, failures = run_tests()
+            if failures and i < 4 and total < 100:
+                # XXX bug 1161937 gary 2013-03-29
+                # We sometimes see initial failures and we don't know why :-(.
+                # Reload and retry.
+                print(
+                    '{} failure(s) running {} tests.  Retrying.'.format(
+                        failures, total))
+                self.driver.refresh()
+            else:
+                break
         if failures:
             msg = '{} failure(s) running {} tests.'.format(failures, total)
             self.fail(msg)
@@ -58,16 +86,12 @@ class TestDeploy(browser.TestCase):
         return self.wait_for(services_found, 'Services not displayed.')
 
     def test_charm_deploy(self):
-        if self.driver.desired_capabilities['browserName'] == 'internet explorer':
-            # TODO; revisit in the future to see if elements
-            # below are properly displayed. As of this writing
-            # the elements are found but is_displayed returns False
-            # and prevents the click action.
-            return
         # A charm can be deployed using the GUI.
         self.addCleanup(self.restart_api)
         self.load()
         self.handle_browser_warning()
+        # The unit tests log us out so we want to make sure we log back in
+        self.handle_login()
 
         def charm_panel_loaded(driver):
             """Wait for the charm panel to be ready and displayed."""
@@ -94,6 +118,7 @@ class TestDeploy(browser.TestCase):
         # The staging API backend contains already deployed services.
         self.load()
         self.handle_browser_warning()
+        self.handle_login()
         expected = ('haproxy', 'mediawiki', 'memcached', 'mysql', 'wordpress')
         self.assertSetEqual(set(expected), self.get_service_names())
 

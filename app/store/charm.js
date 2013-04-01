@@ -144,7 +144,7 @@ YUI.add('juju-charm-store', function(Y) {
    *
    */
   ns.Charmworld0 = Y.Base.create('charmworld0', Y.Base, [], {
-    _apiRoot: '/api/0/',
+    _apiRoot: 'api/0/',
 
     /**
      * Send the actual request and handle response from the api.
@@ -170,6 +170,60 @@ YUI.add('juju-charm-store', function(Y) {
             callbacks.success(res);
           },
 
+          'failure': function(io_request) {
+            var respText = io_request.response.results[0].responseText,
+                res;
+            if (respText) {
+              res = Y.JSON.parse(respText);
+            }
+            callbacks.failure(res, io_request);
+          }
+        }
+      });
+    },
+
+    /**
+     * Api call to fetch a charm's details.
+     *
+     * @method charm
+     * @param {String} charmID the charm to fetch.
+     * @param {Object} callbacks the success/failure callbacks to use.
+     * @param {Object} bindScope the scope of *this* in the callbacks.
+     *
+     */
+    charm: function(charmID, callbacks, bindScope) {
+      var endpoint = 'charm/' + charmID;
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+
+      var res = this._makeRequest(endpoint, callbacks);
+    },
+
+    /**
+     * Fetch the contents of a charm's file.
+     *
+     * @method file
+     * @param {String} charmID the id of the charm's file we want.
+     * @param {String} filename the path/name of the file to fetch content.
+     * @param {Object} callbacks the success/failure callbacks.
+     * @param {Object} bindScope the scope for this in the callbacks.
+     *
+     */
+    file: function(charmID, filename, callbacks, bindScope) {
+      var endpoint = 'charm/' + charmID + '/file/' + filename;
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+
+      this.get('datasource').sendRequest({
+        request: endpoint,
+        callback: {
+          success: function(io_request) {
+            callbacks.success(io_request.response.results[0].responseText);
+          },
           'failure': function(io_request) {
             var respText = io_request.response.results[0].responseText,
                 res;
