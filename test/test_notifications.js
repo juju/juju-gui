@@ -189,12 +189,14 @@ describe('notifications', function() {
   it('must be able to include and show object links', function() {
     var container = Y.Node.create('<div id="test">'),
         logoNode = Y.Node.create('<div id="nav-brand-env"></div>'),
-        conn = new(Y.namespace('juju-tests.utils')).SocketStub(),
-        env = juju.newEnvironment({conn: conn}),
-        app = new Y.juju.App({env: env, container: container}),
+        conn = new(Y.namespace('juju-tests.utils')).SocketStub();
+    var env = juju.newEnvironment({conn: conn});
+    env.connect();
+    var app = new Y.juju.App({env: env, container: container}),
         db = app.db,
-        mw = db.services.create({id: 'cs:precise/mediawiki',
-                                 name: 'mediawiki'}),
+        mw = db.services.create({id: 'mediawiki',
+                                 name: 'mediawiki',
+                                 charm: 'cs:precise/mediawiki-2'}),
         notifications = db.notifications,
         view = new views.NotificationsOverview({
                       container: container,
@@ -240,6 +242,7 @@ describe('notifications', function() {
           container: container,
           viewContainer: container
         });
+    env.connect();
     var environment_delta = default_env;
 
     var notifications = app.db.notifications,
@@ -248,7 +251,6 @@ describe('notifications', function() {
           notifications: notifications,
           env: app.env,
           nsRouter: nsRouter}).render();
-
 
     app.env.dispatch_result(environment_delta);
 
@@ -274,8 +276,12 @@ describe('notifications', function() {
      'event data',
      function() {
        var container = Y.Node.create(
-       '<div id="test" class="container"></div>'),
-       app = new Y.juju.App({
+         '<div id="test" class="container"></div>');
+       var conn = new(Y.namespace('juju-tests.utils')).SocketStub();
+       var env = juju.newEnvironment({conn: conn});
+       env.connect();
+       var app = new Y.juju.App({
+         env: env,
          container: container,
          viewContainer: container
        });
