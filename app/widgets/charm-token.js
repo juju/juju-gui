@@ -21,9 +21,9 @@ YUI.add('browser-charm-token', function(Y) {
     /**
      * Set up and bind DOM events.
      *
-     * @method _bindUI
+     * @method _bindEvents
      */
-    _bindUI: function() {
+    _bindEvents: function() {
       var addButton = this.get('contentBox').one('button'),
           addClick = addButton.on('click', function() {
             this.fire(ns.EVENT_CHARM_ADD);
@@ -50,9 +50,9 @@ YUI.add('browser-charm-token', function(Y) {
     /**
      * Detach listeners for DOM events.
      *
-     * @method _unbindUI
+     * @method _unbindEvents
      */
-    _unbindUI: function() {
+    _unbindEvents: function() {
       Y.Array.each(this._events, function(item) {
         item.detach();
       });
@@ -65,8 +65,8 @@ YUI.add('browser-charm-token', function(Y) {
      * @method bindUI
      */
     bindUI: function() {
-      this._unbindUI();
-      this._bindUI();
+      this._unbindEvents();
+      this._bindEvents();
     },
 
     /**
@@ -75,7 +75,7 @@ YUI.add('browser-charm-token', function(Y) {
      * @method destructor
      */
     destructor: function() {
-      this._unbindUI();
+      this._unbindEvents();
     },
 
     /**

@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('charm container widget', function() {
+describe('charm container widget', function() {
   var container, Y, charm_container;
 
   before(function(done) {
