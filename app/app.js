@@ -343,10 +343,10 @@ YUI.add('juju-gui', function(Y) {
       // Notify user attempts to modify the environment without permission.
       this.env.on('permissionDenied', this.onEnvPermissionDenied, this);
 
-      // When the provider type and environment names become available, 
+      // When the provider type and environment names become available,
       // display them.
       this.env.after('providerTypeChange', this.onProviderTypeChange, this);
-      this.env.after('environmentNameChange', 
+      this.env.after('environmentNameChange',
           this.onEnvironmentNameChange, this);
 
       // Once the user logs in, we need to redraw.
@@ -820,7 +820,7 @@ YUI.add('juju-gui', function(Y) {
 
     /**
       Display the Environment Name.
-      
+
       The environment name can arrive asynchronously.  Instead of updating
       the display from the environment view (a separtion of concerns violation),
       we update it here.

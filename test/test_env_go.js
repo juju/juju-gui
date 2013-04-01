@@ -187,7 +187,7 @@
       conn.msg({
         RequestId: 1,
         Response: {
-          DefaultSeries: 'precise', 
+          DefaultSeries: 'precise',
           'ProviderType': 'ec2',
           'Name': 'envname'
         }
