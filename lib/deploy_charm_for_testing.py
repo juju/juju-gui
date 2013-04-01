@@ -26,6 +26,7 @@ def juju(s):
         print(err.output)
         raise
 
+
 # We found that the juju status call fails intermittently in
 # canonistack. This works around that particular fragility.
 @retry(subprocess.CalledProcessError, tries=3)
@@ -99,13 +100,21 @@ def main(options=parse, print=print, juju=juju,
         wait_for_machine=wait_for_machine):
     """Deploy the Juju GUI service and wait for it to become available."""
     args = options()
+    # Get the IP that we should associate with the charm.  This is only used
+    # by Canonistack, and is effectively our flag for that environment.
+    instance_ip = os.environ.get("JUJU_INSTANCE_IP")
     try:
         print('Bootstrapping...')
-        juju('bootstrap --environment juju-gui-testing '
-             '--constraints instance-type=m1.small')
+        if instance_ip:
+            # We are deploying in Canonistack.
             # The default m1.tiny was so small that the improv server would
-            # sometimes fail to start. The m1.medium is more difficult to obtain
-            # on canonistack than m1.small, so m1.small seems to be "just right"
+            # sometimes fail to start. The m1.medium is more difficult to
+            # obtain on canonistack than m1.small, so m1.small seems to be
+            # "just right."
+            juju('bootstrap --environment juju-gui-testing '
+                 '--constraints instance-type=m1.small')
+        else:
+            juju('bootstrap --environment juju-gui-testing')
         print('Deploying service...')
         options = {'serve-tests': True, 'staging': True, 'secure': False,
                    'juju-gui-source': args.origin}
@@ -116,8 +125,6 @@ def main(options=parse, print=print, juju=juju,
 
         print('Waiting for service to start...')
         wait_for_machine()
-        # Fetches the instance ID from the testing instances to apply an IP to
-        instance_ip = os.environ.get("JUJU_INSTANCE_IP")
         if instance_ip:
             print('Assigning JUJU_INSTANCE_IP %s' % instance_ip)
             instance_id = subprocess.check_output(
