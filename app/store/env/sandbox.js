@@ -360,7 +360,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       @method performOp_add_unit
     */
     performOp_add_unit: function(data) {
-        this.get('state').addUnit(data.serviceName, data.numUnits);
+      this.get('state').addUnit(data.serviceName, data.numUnits);
     }
 
   });
