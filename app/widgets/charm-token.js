@@ -23,7 +23,7 @@ YUI.add('browser-charm-token', function(Y) {
      * @method _bind_events
      * @private
      */
-    _bind_ui: function() {
+    _bindUI: function() {
       var addButton = this.get('contentBox').one('button'),
           addClick = addButton.on('click', function() {
             this.fire(ns.EVENT_CHARM_ADD);
@@ -32,12 +32,28 @@ YUI.add('browser-charm-token', function(Y) {
     },
 
     /**
+     * Gets all the attributes for the template. Providers need to be altered
+     * to work with handlebars.
+     *
+     * @method _getTemplateAttrs
+     */
+    _getTemplateAttrs: function() {
+      var data = this.getAttrs(),
+          providers = [];
+      Y.Array.each(data.tested_providers, function(provider) {
+        providers.push({'name': provider});
+      });
+      data.tested_providers = providers;
+      return data;
+    },
+
+    /**
      * Detach listeners for DOM events.
      *
      * @method _unbind_events
      * @private
      */
-    _unbind_ui: function() {
+    _unbindUI: function() {
       Y.Array.each(this._events, function(item) {
         item.detach();
       });
@@ -50,8 +66,8 @@ YUI.add('browser-charm-token', function(Y) {
      * @method bindUI
      */
     bindUI: function() {
-      this._unbind_ui();
-      this._bind_ui();
+      this._unbindUI();
+      this._bindUI();
     },
 
     /**
@@ -77,7 +93,7 @@ YUI.add('browser-charm-token', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
-      var content = this.TEMPLATE(this.getAttrs());
+      var content = this.TEMPLATE(this._getTemplateAttrs());
       this.get('contentBox').setHTML(content);
     }
 

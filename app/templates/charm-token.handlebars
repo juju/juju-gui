@@ -4,7 +4,11 @@
     <a href="/bws/fullscreen/{{ id }}">{{ name }}</a>
   </h3>
   <ul class="providers">
-    {{#providers}}<li>{{ icon }}</li>{{/providers}}    
+    {{#tested_providers}}
+    <li>
+    <img src="/juju-ui/assets/svgs/provider-{{ name }}.svg" />
+    </li>
+    {{/tested_providers}}
   </ul>
   <div class="metadata">
     <span class="downloads">{{recent_downloads}}</span>

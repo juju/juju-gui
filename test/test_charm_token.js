@@ -30,7 +30,8 @@ describe.only('charm token', function() {
       name: 'some-charm',
       description: 'some description',
       recent_commits: 1,
-      recent_downloads: 1
+      recent_downloads: 1,
+      tested_providers: ['ec2']
     };
     var charm = new Y.juju.widgets.browser.CharmToken(cfg);
     charm.render(charm_container);
@@ -45,5 +46,9 @@ describe.only('charm token', function() {
     assert.equal(
         '1', rendered_charm.one('.commits').get('text'),
         'Wrong number of commits.');
+    var actual_url = rendered_charm.one('.providers').one('img').get('src');
+    assert.equal(
+        actual_url.split('/').slice(3).join('/'),
+        'juju-ui/assets/svgs/provider-ec2.svg');
   });
 });
