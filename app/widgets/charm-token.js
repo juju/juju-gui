@@ -20,8 +20,7 @@ YUI.add('browser-charm-token', function(Y) {
     /**
      * Set up and bind DOM events.
      *
-     * @method _bind_events
-     * @private
+     * @method _bindUI
      */
     _bindUI: function() {
       var addButton = this.get('contentBox').one('button'),
@@ -50,8 +49,7 @@ YUI.add('browser-charm-token', function(Y) {
     /**
      * Detach listeners for DOM events.
      *
-     * @method _unbind_events
-     * @private
+     * @method _unbindUI
      */
     _unbindUI: function() {
       Y.Array.each(this._events, function(item) {
@@ -76,7 +74,7 @@ YUI.add('browser-charm-token', function(Y) {
      * @method destructor
      */
     destructor: function() {
-      this._unbind_ui();
+      this._unbindUI();
     },
     /**
      * Initializer
@@ -99,15 +97,52 @@ YUI.add('browser-charm-token', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+       * @attribute description
+       * @default ''
+       * @type {String}
+       */
       description: {
         value: ''
       },
+
+      /**
+       * @attribute recent_commits
+       * @default undefined
+       * @type {Number}
+       */
       recent_commits: {},
+
+      /**
+       * @attribute recent_downloads
+       * @default undefined
+       * @type {Number}
+       */
       recent_downloads: {},
-      icon: {},
+
+       /**
+        * @attribute icon
+        * @default ''
+        * @type {String}
+        */
+      icon: {
+        value: '' 
+      },
+
+      /**
+       * @attribute name
+       * @default ''
+       * @type {String}
+       */
       name: {
         value: ''
       },
+
+      /**
+       * @attribute tested_providers
+       * @default []
+       * @type {Array}
+       */
       tested_providers: {
         value: []
       }
