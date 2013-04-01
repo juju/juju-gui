@@ -251,6 +251,7 @@ YUI.add('juju-env-go', function(Y) {
       if (this.userIsAuthenticated) {
         // If login succeeded retrieve the environment info.
         this.environmentInfo();
+        // Retrieve annotations on the environment.
         this._watchAll();
       } else {
         // If the credentials were rejected remove them.
@@ -304,6 +305,8 @@ YUI.add('juju-env-go', function(Y) {
         var response = data.Response;
         this.set('defaultSeries', response.DefaultSeries);
         this.set('providerType', response.ProviderType);
+        this.set('environmentName', response.Name);
+        this.fire('environmentInfoReceived');
       }
     },
 
