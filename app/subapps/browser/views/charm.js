@@ -101,7 +101,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _dispatchTabEvents: function(tab) {
-      tab.after('selectionChange', function(ev) {
+      this._events.push(tab.after('selectionChange', function(ev) {
         var tab = ev.newVal.get('content');
         switch (tab) {
           // @todo to be added later. Placed in now to make the linter happy
@@ -118,7 +118,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
           default:
             break;
         }
-      }, this);
+      }, this));
     },
 
     /**
@@ -251,6 +251,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (this.tabview) {
         this.tabview.destroy();
       }
+
+      Y.Array.each(this._events, function(ev) {
+        ev.detach();
+      });
     },
 
     /**
@@ -264,6 +268,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // Hold onto references of the indicators used so we can clean them all
       // up. Indicators are keyed on their yuiid so we don't dupe them.
       this.indicators = {};
+      this._events = [];
     },
 
     /**
