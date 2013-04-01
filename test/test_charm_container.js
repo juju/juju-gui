@@ -1,6 +1,6 @@
 'use strict';
 
-describe('charm container widget', function() {
+describe.only('charm container widget', function() {
   var container, Y, charm_container;
 
   before(function(done) {
@@ -85,6 +85,7 @@ describe('charm container widget', function() {
   });
 
   it('toggle between all or a just few items being shown', function() {
+    var hidden;
     charm_container = new Y.juju.widgets.browser.CharmContainer({
       name: 'Popular',
       children: [{
@@ -98,8 +99,7 @@ describe('charm container widget', function() {
       }]
     });
     charm_container.render(container);
-    var hidden = container.all('.yui3-charmtoken-hidden');
-    assert.equal(1, hidden.size());
+
     container.one('.expand').simulate('click');
     hidden = container.all('.yui3-charmtoken-hidden');
     assert.equal(

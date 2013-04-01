@@ -15,6 +15,7 @@ YUI.add('browser-charm-token', function(Y) {
   ns.EVENT_CHARM_ADD = 'charm-token-add';
   ns.CharmToken = Y.Base.create('CharmToken', Y.Widget, [Y.WidgetChild], {
 
+    _events: [],
     TEMPLATE: Y.namespace('juju.views').Templates['charm-token'],
 
     /**
@@ -75,14 +76,6 @@ YUI.add('browser-charm-token', function(Y) {
      */
     destructor: function() {
       this._unbindUI();
-    },
-    /**
-     * Initializer
-     *
-     * @method initializer
-     */
-    initializer: function(cfg) {
-      this._events = [];
     },
 
     /**
