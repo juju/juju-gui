@@ -359,6 +359,7 @@ YUI.add('juju-charm-models', function(Y) {
       metadata: {},
       name: {},
       config: {},
+      icon: {},
       owner: {},
       peers: {},
       proof: {},
