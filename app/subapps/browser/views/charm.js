@@ -102,7 +102,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _dispatchTabEvents: function(tab) {
-      tab.on('selectionChange', function(ev) {
+      tab.after('selectionChange', function(ev) {
         var tab = ev.newVal.get('content');
         switch (tab) {
           // @todo to be added later. Placed in now to make the linter happy
@@ -145,7 +145,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     _loadQAContent: function() {
       var node = Y.one('#bws_qa');
-
       this.showIndicator(node);
       // Only load the QA data once.
       if (!this._qaLoaded) {
