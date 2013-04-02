@@ -162,7 +162,7 @@
       });
 
       view.render(node);
-      Y.one('#bws_hooks').all('ul li a').size().should.eql(2);
+      Y.one('#bws_hooks').all('ul li a').size().should.equal(2);
 
       // Click on the hooks install and the content should update.
       Y.one('#bws_hooks').one('ul li a').simulate('click');
@@ -267,4 +267,3 @@
     });
   });
 })();
-

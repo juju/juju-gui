@@ -224,13 +224,6 @@
       assert.equal(env.get('defaultSeries'), defaultSeries);
     });
 
-    it('can get endpoints for a service', function() {
-      env.get_endpoints(['mysql']);
-      msg = conn.last_message();
-      msg.op.should.equal('get_endpoints');
-      msg.service_names.should.eql(['mysql']);
-    });
-
     it('can update annotations', function() {
       var unit_name = 'mysql/0';
       env.update_annotations(unit_name, {name: 'A'});
@@ -373,10 +366,6 @@
 
     it('allows getting charms if the GUI is read-only', function() {
       assertOperationAllowed('get_charm', ['cs:precise/haproxy']);
-    });
-
-    it('allows retrieving endpoints if the GUI is read-only', function() {
-      assertOperationAllowed('get_endpoints', [['haproxy']]);
     });
 
     it('allows getting services if the GUI is read-only', function() {

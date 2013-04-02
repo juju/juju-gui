@@ -34,12 +34,14 @@ function injectData(app, data) {
 (function() {
 
   describe('Application basics', function() {
-    var Y, app, container;
+    var Y, app, container, utils, juju, env, conn;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           ['juju-gui', 'juju-tests-utils', 'juju-view-utils'],
           function(Y) {
+            utils = Y.namespace('juju-tests.utils');
+            juju = Y.namespace('juju');
             done();
           });
     });
@@ -54,13 +56,18 @@ function injectData(app, data) {
           .append(Y.Node.create('<span/>')
             .addClass('provider-type'))
           .hide();
+      conn = new utils.SocketStub();
+      env = juju.newEnvironment({conn: conn});
+      env.connect();
       app = new Y.juju.App(
           { container: container,
-            viewContainer: container});
+            viewContainer: container,
+            env: env});
       injectData(app);
     });
 
     afterEach(function() {
+      app.destroy();
       container.remove(true);
       sessionStorage.setItem('credentials', null);
     });
@@ -77,6 +84,7 @@ function injectData(app, data) {
           var the_username = 'nehi';
           var the_password = 'moonpie';
           // Replace the existing app.
+          app.destroy();
           app = new Y.juju.App(
               { container: container,
                 user: the_username,
@@ -89,6 +97,7 @@ function injectData(app, data) {
 
     it('propagates the readOnly option from the configuration', function() {
       // Replace the existing app.
+      app.destroy();
       app = new Y.juju.App({
         container: container,
         readOnly: true,
@@ -108,7 +117,7 @@ function injectData(app, data) {
       // needed to show them.
       var wordpress = app.db.services.getById('wordpress'),
           wp0 = app.db.units.get_units_for_service(wordpress)[0],
-          wp_charm = app.db.charms.add({id: wordpress.get('charm')});
+          wp_charm = app.db.charms.getById(wordpress.get('charm'));
 
       // 'service/wordpress/' is the primary route,
       // so other URLs are not returned.
@@ -127,6 +136,7 @@ function injectData(app, data) {
 
     it('should display the configured environment name', function() {
       var environment_name = 'This is the environment name.  Deal with it.';
+      app.destroy();
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
@@ -138,6 +148,7 @@ function injectData(app, data) {
 
     it('should show a generic environment name if none configured',
        function() {
+         app.destroy();
          app = new Y.juju.App(
          { container: container,
            viewContainer: container});
@@ -330,7 +341,6 @@ function injectData(app, data) {
             viewContainer: container,
             env: env,
             charm_store: {} });
-      env.get_endpoints = function() {};
     });
 
     afterEach(function() {
@@ -339,46 +349,19 @@ function injectData(app, data) {
     });
 
     it('must prefetch charm and service for service pages', function() {
-      injectData(app);
       var _ = expect(
           app.db.charms.getById('cs:precise/wordpress-6')).to.not.exist;
+      injectData(app);
       app.show_service({params: {id: 'wordpress'}, query: {}});
-      // The app made a request of juju for the service info.
-      conn.messages[conn.messages.length - 2].op.should.equal('get_service');
-      // The app also requested juju (not the charm store--see discussion in
-      // app/models/charm.js) for the charm info.
-      conn.last_message().op.should.equal('get_charm');
+      // When the service was added to the service modellist, that triggered
+      // the loading of the charm.
+      conn.messages[conn.messages.length - 2].op.should.equal('get_charm');
+      // The service was later loaded.
+      conn.last_message().op.should.equal('get_service');
       // Tests of the actual load machinery are in the model and env tests, and
       // so are not repeated here.
     });
 
-    it('must request endpoints only when necessary', function() {
-      var get_endpoints_count = 0,
-          tmp_data = {
-            result: [
-              ['service', 'add', {
-                'charm': 'cs:precise/mysql-6',
-                'id': 'mysql2'
-              }],
-              ['unit', 'add', {
-                'machine': 0,
-                'agent-state': 'started',
-                'public-address': '192.168.122.222',
-                'id': 'mysql2/0'
-              }]
-            ],
-            op: 'delta'
-          };
-      env.get_endpoints = function(services, callback) {
-        get_endpoints_count += 1;
-      };
-      // Inject default data, should only get_endpoints once.
-      injectData(app);
-      get_endpoints_count.should.equal(1);
-      // Additional deltas should only call get_endpoints once.
-      app.db.on_delta({ data: tmp_data });
-      get_endpoints_count.should.equal(2);
-    });
   });
 })();
 

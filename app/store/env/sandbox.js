@@ -341,13 +341,6 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handles get_endpoints operations from client.  Called by receive.
-    PLACEHOLDER.  This exists to demo existing functionality.
-    **/
-    performOp_get_endpoints: function(data) {
-    },
-
-    /**
     Handles update_annotations operations from client.  Called by receive.
     PLACEHOLDER.  This exists to demo existing functionality.
     **/

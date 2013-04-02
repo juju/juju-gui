@@ -674,7 +674,6 @@
        function() {
          var view = new views.environment({
            container: container,
-           getServiceEndpoints: function() {return {};},
            db: db,
            env: env
          }).render();
@@ -795,15 +794,16 @@
     it('should stop creating a relation if the background is clicked',
         function() {
           var db = new models.Database(),
-              endpoint_map = {'service-1': {requires: [], provides: []}},
+              endpointMap = {'service-1': {requires: [], provides: []}},
               view = new views.environment(
               { container: container,
                 db: db,
-                env: env,
-                getServiceEndpoints: function() {return endpoint_map;}}),
+                env: env}),
               service = new models.Service({ id: 'service-1'});
 
           db.services.add([service]);
+          // Reset the global endpointsMap after adding the service.
+          models.endpointsMap = endpointMap;
           view.render();
 
           // If the user has clicked on the "Add Relation" menu item...
