@@ -53,6 +53,31 @@
 
   });
 
+  describe('Go Juju Entity Tag cleaner', function() {
+    var cleanUpEntityTags, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
+        cleanUpEntityTags = Y.namespace('juju.environments').cleanUpEntityTags;
+        done();
+      });
+    });
+
+    it('cleans up tags from Go juju', function() {
+      assert.equal('mysql', cleanUpEntityTags('service-mysql'));
+      assert.equal('mysql-0', cleanUpEntityTags('unit-mysql-0'));
+      assert.equal('0', cleanUpEntityTags('machine-0'));
+      assert.equal('aws', cleanUpEntityTags('environment-aws'));
+    });
+
+    it('ignores bad values', function() {
+      var data = ['foo', 'bar-baz', '123'];
+      Y.each(data, function(item) {
+        assert.equal(item, cleanUpEntityTags(item));
+      });
+    });
+  });
+
   describe('Go Juju environment', function() {
     var conn, endpointA, endpointB, env, juju, msg, utils, Y;
 

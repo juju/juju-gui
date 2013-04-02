@@ -70,6 +70,22 @@ YUI.add('juju-env-go', function(Y) {
   };
 
   /**
+    Clean up the entity tags, which have the entity type prefixing the entity's
+    name when retrieved from the server in some instances, notably annotations.
+
+    The regular expression removes any non-hyphen characters followed by a
+    hyphen from the beginning of a string.  Thus, service-mysql becomes simply
+    mysql (as the expression matches 'service-').
+
+    @method cleanUpEntityTags
+    @param {String} tag The tag to clean up.
+    @return {String} The tag without the prefix.
+  */
+  var cleanUpEntityTags = function(tag) {
+    return tag.replace(/^(service|unit|machine|environment)-/, '');
+  };
+
+  /**
    * The Go Juju environment.
    *
    * This class handles the websocket connection to the GoJuju API backend.
@@ -140,7 +156,7 @@ YUI.add('juju-env-go', function(Y) {
      */
     annotation: function(entityInfo) {
       return {
-        id: entityInfo.Tag.replace(/^[^\-]+-/, ''),
+        id: cleanUpEntityTags(entityInfo.Tag),
         type: entityInfo.Tag.split('-')[0],
         annotations: entityInfo.Annotations
       };
@@ -513,8 +529,8 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @param {Object} entity The name of a machine, unit, service, or
      *   environment, e.g. '0', 'mysql-0', or 'mysql'.
-     * @param {String{ type The type of entity that is being annotated
-     *   (e.g.: 'service', 'unit', 'machine', 'environment')
+     * @param {String} type The type of entity that is being annotated
+     *   (e.g.: 'service', 'unit', 'machine', 'environment').
      * @param {Object} data A dictionary of key, value pairs.
      * @return {undefined} Nothing.
      * @method update_annotations
@@ -541,8 +557,8 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @param {Object} entity The name of a machine, unit, service, or
      *   environment, e.g. '0', 'mysql-0', or 'mysql'.
-     * @param {String{ type The type of entity that is being annotated
-     *   (e.g.: 'service', 'unit', 'machine', 'environment')
+     * @param {String} type The type of entity that is being annotated
+     *   (e.g.: 'service', 'unit', 'machine', 'environment').
      * @param {Object} keys A list of annotation key names for the
      *   annotations to be deleted.
      * @return {undefined} Nothing.
@@ -592,8 +608,8 @@ YUI.add('juju-env-go', function(Y) {
      *
      * @param {Object} entity The name of a machine, unit, service, or
      *   environment, e.g. '0', 'mysql-0', or 'mysql'.
-     * @param {String{ type The type of entity that is being annotated
-     *   (e.g.: 'service', 'unit', 'machine', 'environment')
+     * @param {String} type The type of entity that is being annotated
+     *   (e.g.: 'service', 'unit', 'machine', 'environment').
      * @return {Object} A dictionary of key,value pairs is returned in the
      *   callback.  The invocation of this command returns nothing.
      * @method get_annotations
@@ -954,6 +970,7 @@ YUI.add('juju-env-go', function(Y) {
   environments.stringifyObjectValues = stringifyObjectValues;
   environments.entityInfoConverters = entityInfoConverters;
   environments.cleanUpJSON = cleanUpJSON;
+  environments.cleanUpEntityTags = cleanUpEntityTags;
 
 }, '0.1.0', {
   requires: [

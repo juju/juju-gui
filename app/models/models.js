@@ -536,21 +536,24 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-    Returns a modelList given the model name and some information about
-    the change that is to take place (required only for annotations).
+      Returns a modelList given the model name and some information about
+      the change that is to take place (required only for annotations).
 
-    @method getModelListByModelName
-    @param {String} modelName The model's name.
-    @param {Object} change An object containing the change information; note
-      that this is only used in the case of modelName being 'annotation'.
-    @return {object} The model list.
-    **/
+      @method getModelListByModelName
+      @param {String} modelName The model's name.
+      @param {Object} change An object containing the change information; note
+        that this is only used in the case of modelName being 'annotation'.
+      @return {Object} The model list.
+    */
     getModelListByModelName: function(modelName, change) {
       if (modelName === 'serviceUnit') {
         modelName = 'unit';
       } else if (modelName === 'annotations') {
         return this.environment;
       } else if (modelName === 'annotation') {
+        // This function may be called with change being either an array of
+        // [changeModel, changeType, { Change data }] or just { Change data }.
+        // Take the appropriate action to get the modelName.
         modelName = Y.Lang.isArray(change) ?
             change[2].type :
             change.type;
