@@ -226,7 +226,7 @@
 
     it('can update annotations', function() {
       var unit_name = 'mysql/0';
-      env.update_annotations(unit_name, {name: 'A'});
+      env.update_annotations(unit_name, 'unit', {name: 'A'});
       msg = conn.last_message();
       msg.op.should.equal('update_annotations');
       msg.entity.should.equal(unit_name);
@@ -235,7 +235,7 @@
 
     it('can get annotations', function() {
       var unit_name = 'mysql/0';
-      env.get_annotations(unit_name);
+      env.get_annotations(unit_name, 'unit');
       msg = conn.last_message();
       msg.op.should.equal('get_annotations');
       msg.entity.should.equal(unit_name);
@@ -244,7 +244,7 @@
     it('can remove annotations with specified keys', function() {
       var unit_name = 'mysql/0';
       var keys = ['key1', 'key2'];
-      env.remove_annotations(unit_name, keys);
+      env.remove_annotations(unit_name, 'unit', keys);
       msg = conn.last_message();
       msg.op.should.equal('remove_annotations');
       msg.entity.should.equal(unit_name);
@@ -253,7 +253,7 @@
 
     it('can remove annotations with no specified keys', function() {
       var unit_name = 'mysql/0';
-      env.remove_annotations(unit_name);
+      env.remove_annotations(unit_name, 'unit');
       msg = conn.last_message();
       msg.op.should.equal('remove_annotations');
       msg.entity.should.equal(unit_name);
@@ -320,7 +320,7 @@
     });
 
     it('denies removing annotations if the GUI is read-only', function() {
-      assertOperationDenied('remove_annotations', ['example', {}]);
+      assertOperationDenied('remove_annotations', ['example', 'type', {}]);
     });
 
     it('denies removing a relation if the GUI is read-only', function() {
@@ -350,7 +350,7 @@
     });
 
     it('denies updating annotations if the GUI is read-only', function() {
-      assertOperationDenied('update_annotations', ['example', {}]);
+      assertOperationDenied('update_annotations', ['example', 'type', {}]);
     });
 
     var assertOperationAllowed = function(operationName, args) {
@@ -361,7 +361,7 @@
     };
 
     it('allows retrieving annotations if the GUI is read-only', function() {
-      assertOperationAllowed('get_annotations', ['example']);
+      assertOperationAllowed('get_annotations', ['example', 'type']);
     });
 
     it('allows getting charms if the GUI is read-only', function() {

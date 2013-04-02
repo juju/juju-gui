@@ -665,7 +665,7 @@ YUI.add('juju-view-utils', function(Y) {
       get: function() {return this['_' + name];},
       set: function(value) {
         this['p' + name] = this['_' + name];
-        this['_' + name] = value;
+        this['_' + name] = parseFloat(value);
       }
     };
   }

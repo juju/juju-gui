@@ -70,6 +70,22 @@ YUI.add('juju-env-go', function(Y) {
   };
 
   /**
+    Clean up the entity tags, which have the entity type prefixing the entity's
+    name when retrieved from the server in some instances, notably annotations.
+
+    The regular expression removes any non-hyphen characters followed by a
+    hyphen from the beginning of a string.  Thus, service-mysql becomes simply
+    mysql (as the expression matches 'service-').
+
+    @method cleanUpEntityTags
+    @param {String} tag The tag to clean up.
+    @return {String} The tag without the prefix.
+  */
+  var cleanUpEntityTags = function(tag) {
+    return tag.replace(/^(service|unit|machine|environment)-/, '');
+  };
+
+  /**
    * The Go Juju environment.
    *
    * This class handles the websocket connection to the GoJuju API backend.
@@ -93,6 +109,7 @@ YUI.add('juju-env-go', function(Y) {
     service: function(entityInfo) {
       return {
         id: entityInfo.Name,
+        charm: entityInfo.CharmURL,
         exposed: entityInfo.Exposed // XXX and more stuff
       };
     },
@@ -129,6 +146,19 @@ YUI.add('juju-env-go', function(Y) {
       return {
         id: entityInfo.Id,
         instance_id: entityInfo.InstanceId // XXX and more stuff
+      };
+    },
+    /**
+      Convert a Go style entity info into the expected legacy format.
+
+      @param {Object} entityInfo The JSON entity information from Go.
+      @return {Object} The legacy JSON data that the GUI expects.
+     */
+    annotation: function(entityInfo) {
+      return {
+        id: cleanUpEntityTags(entityInfo.Tag),
+        type: entityInfo.Tag.split('-')[0],
+        annotations: entityInfo.Annotations
       };
     }
   };
@@ -480,14 +510,14 @@ YUI.add('juju-env-go', function(Y) {
      * Update the annotations for an entity by name.
      *
      * @param {Object} entity The name of a machine, unit, service, or
-     *   environment, e.g. 'machine-0', 'unit-mysql-0', or 'service-mysql'.
-     *   To specify the environment as the entity the magic string
-     *   'environment' is used.
+     *   environment, e.g. '0', 'mysql-0', or 'mysql'.
+     * @param {String} type The type of entity that is being annotated
+     *   (e.g.: 'service', 'unit', 'machine', 'environment').
      * @param {Object} data A dictionary of key, value pairs.
      * @return {undefined} Nothing.
      * @method update_annotations
      */
-    update_annotations: function(entity, data, callback) {
+    update_annotations: function(entity, type, data, callback) {
       var intermediateCallback;
       if (callback) {
         // Curry the callback and entity.  No context is passed.
@@ -498,7 +528,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'SetAnnotations',
         Params: {
-          Tag: entity,
+          Tag: type + '-' + entity,
           Pairs: stringifyObjectValues(data)
         }
       }, intermediateCallback);
@@ -508,15 +538,15 @@ YUI.add('juju-env-go', function(Y) {
      * Remove the annotations for an entity by name.
      *
      * @param {Object} entity The name of a machine, unit, service, or
-     *   environment, e.g. 'machine-0', 'unit-mysql-0', or 'service-mysql'.
-     *   To specify the environment as the entity the magic string
-     *   'environment' is used.
+     *   environment, e.g. '0', 'mysql-0', or 'mysql'.
+     * @param {String} type The type of entity that is being annotated
+     *   (e.g.: 'service', 'unit', 'machine', 'environment').
      * @param {Object} keys A list of annotation key names for the
      *   annotations to be deleted.
      * @return {undefined} Nothing.
      * @method remove_annotations
      */
-    remove_annotations: function(entity, keys, callback) {
+    remove_annotations: function(entity, type, keys, callback) {
       var intermediateCallback;
       if (callback) {
         // Curry the callback and entity.  No context is passed.
@@ -531,7 +561,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'SetAnnotations',
         Params: {
-          Tag: entity,
+          Tag: type + '-' + entity,
           Pairs: data
         }
       }, intermediateCallback);
@@ -559,14 +589,14 @@ YUI.add('juju-env-go', function(Y) {
      * the explicit use of this command should rarely be needed.
      *
      * @param {Object} entity The name of a machine, unit, service, or
-     *   environment, e.g. 'machine-0', 'unit-mysql-0', or 'service-mysql'.
-     *   To specify the environment as the entity the magic string
-     *   'environment' is used.
+     *   environment, e.g. '0', 'mysql-0', or 'mysql'.
+     * @param {String} type The type of entity that is being annotated
+     *   (e.g.: 'service', 'unit', 'machine', 'environment').
      * @return {Object} A dictionary of key,value pairs is returned in the
      *   callback.  The invocation of this command returns nothing.
      * @method get_annotations
      */
-    get_annotations: function(entity, callback) {
+    get_annotations: function(entity, type, callback) {
       var intermediateCallback;
       if (callback) {
         // Curry the callback and entity.  No context is passed.
@@ -577,7 +607,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'GetAnnotations',
         Params: {
-          Tag: entity
+          Tag: type + '-' + entity
         }
       }, intermediateCallback);
     },
@@ -922,6 +952,7 @@ YUI.add('juju-env-go', function(Y) {
   environments.stringifyObjectValues = stringifyObjectValues;
   environments.entityInfoConverters = entityInfoConverters;
   environments.cleanUpJSON = cleanUpJSON;
+  environments.cleanUpEntityTags = cleanUpEntityTags;
 
 }, '0.1.0', {
   requires: [
