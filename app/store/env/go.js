@@ -341,6 +341,7 @@ YUI.add('juju-env-go', function(Y) {
         var response = data.Response;
         this.set('defaultSeries', response.DefaultSeries);
         this.set('providerType', response.ProviderType);
+        this.set('environmentName', response.Name);
       }
     },
 
