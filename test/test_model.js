@@ -541,11 +541,11 @@ describe('juju charm load', function() {
         });
   });
 
-  it('creates an config attribute from options')
+  it('creates an config attribute from options');
 });
 
 
-describe.only('browser charm', function() {
+describe('browser charm', function() {
   var instance, models;
 
   before(function(done) {
@@ -581,14 +581,13 @@ describe.only('browser charm', function() {
 
     var config = instance.get('config');
     config[0].name.should.eql('client-port');
-    config[0].default.should.eql(9160);
     config[0].type.should.eql('int');
     config[1].name.should.eql('cluster-name');
   });
 
   it('config should be undefined if there are no options from the api.', function() {
     instance = new models.BrowserCharm({
-      id: 'precise/cassandra-1',
+      id: 'precise/cassandra-1'
     });
 
     assert(instance.get('config') === undefined);
