@@ -313,6 +313,29 @@ YUI.add('juju-charm-models', function(Y) {
           this.set('recent_commits', cfg.commits_in_last_30_days);
         }
       }
+    },
+    /**
+     * Options is an object but we sometimes need an array of objects in order
+     * to loop through them for display. This method is a helper to transform
+     * the options data into a more handlebars friendly format.
+     *
+     * @method getOptionsAsArray
+     *
+     */
+    getOptionsAsArray: function() {
+      var options = this.get('options');
+      if (options) {
+        var handlebarsFriendly = [];
+        Y.Object.each(options, function(value, key) {
+          // value is the dict of default, description, type. Add the key as
+          // the name for the template.
+          value.name = key;
+          handlebarsFriendly.push(value);
+        });
+        return handlebarsFriendly;
+      } else {
+        return undefined;
+      }
     }
   }, {
     ATTRS: {
@@ -374,8 +397,16 @@ YUI.add('juju-charm-models', function(Y) {
       maintainer: {},
       metadata: {},
       name: {},
-      config: {},
       icon: {},
+      /**
+       * options is the parsed YAML object from config.yaml in a charm.
+       *
+       * @attribute options
+       * @default undefined
+       * @type {Object}
+       *
+       */
+      options: {},
       owner: {},
       peers: {},
       proof: {},

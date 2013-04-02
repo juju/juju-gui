@@ -541,3 +541,54 @@ describe('juju charm load', function() {
         });
   });
 });
+
+
+describe('browser charm', function() {
+  var instance, models;
+
+  before(function(done) {
+    YUI(GlobalConfig).use('juju-models', 'juju-charm-models', function(Y) {
+      models = Y.namespace('juju.models');
+      done();
+    });
+  });
+
+  afterEach(function(done) {
+    instance.destroy();
+    done();
+  });
+
+  it('can parse options into an array for access.', function() {
+    var sample_options = {
+      'client-port': {
+        'default': 9160,
+        'description': 'Port for client communcation',
+        'type': 'int'
+      },
+      'cluster-name': {
+        'default': 'Test Cluster',
+        'description': 'Name of the Cassandra Cluster - do not change yet!',
+        'type': 'string'
+      }
+    };
+
+    instance = new models.BrowserCharm({
+      id: 'precise/cassandra-1',
+      options: sample_options
+    });
+
+    var config = instance.getOptionsAsArray();
+    config[0].name.should.eql('client-port');
+    config[0].type.should.eql('int');
+    config[1].name.should.eql('cluster-name');
+  });
+
+  it('config should be undefined if there are no options.', function() {
+    instance = new models.BrowserCharm({
+      id: 'precise/cassandra-1'
+    });
+
+    assert(instance.getOptionsAsArray() === undefined);
+  });
+
+});
