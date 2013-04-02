@@ -298,6 +298,14 @@ YUI.add('juju-charm-models', function(Y) {
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
 
+    /**
+     * Options is an object but we sometimes need an array of objects in order
+     * to loop through them for display. This method is a helper to transform
+     * the options data into a more handlebars friendly format.
+     *
+     * @method getOptionsAsArray
+     *
+     */
     getOptionsAsArray: function() {
       var options = this.get('options');
       if (options) {
