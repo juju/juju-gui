@@ -160,7 +160,7 @@
 
   });
 
-  describe.only('sandbox.PyJujuAPI', function() {
+  describe('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models'];
@@ -672,12 +672,11 @@
     it('can remove units (integration)', function(done) {
       function removeUnits() {
         var unitNames = ['kumquat/2', 'kumquat/3'];
-        env.remove_units(
-          unitNames, function(data) {
-            assert.equal(data.result, true);
-            assert.deepEqual(data.unit_names, unitNames);
-            done();
-          });
+        env.remove_units(unitNames, function(data) {
+          assert.equal(data.result, true);
+          assert.deepEqual(data.unit_names, unitNames);
+          done();
+        });
       }
       // Generate the services via the integration method then execute the test
       generateIntegrationServices(removeUnits);
@@ -689,12 +688,12 @@
             var data = {
               op: 'remove_units',
               unit_names: ['bar/3']
-            }
+            };
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data);
               assert.equal(data.result, true);
               done();
-            }
+            };
             client.send(Y.JSON.stringify(data));
           }
           // Generate the services base data then execute the test.
@@ -707,13 +706,13 @@
         var data = {
           op: 'remove_units',
           unit_names: ['wordpress/2']
-        }
+        };
         client.onmessage = function(rec) {
           var data = Y.JSON.parse(rec.data);
           assert.equal(Y.Lang.isArray(data.err), true);
           assert.equal(data.err.length, 1);
           done();
-        }
+        };
         state.db.services.getById('wordpress').set('is_subordinate', true);
         client.send(Y.JSON.stringify(data));
       }

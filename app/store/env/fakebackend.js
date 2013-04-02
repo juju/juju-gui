@@ -449,7 +449,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       return {
         error: error,
         warning: warning
-      }
+      };
     }
 
     // getEndpoints: function() {
