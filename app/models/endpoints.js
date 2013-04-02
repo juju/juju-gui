@@ -208,11 +208,11 @@ YUI.add('juju-endpoints', function(Y) {
    * object as indicated by the 'pending' attribute becoming false.  Also
    * handles changes in the service's charm.
    *
-   * @method serviceChangedHandler
+   * @method serviceChangeHandler
    * @param {Object} evt The event, containing the service as the target.
    * @return {undefined} Nothing.
    */
-  models.serviceChangedHandler = function(evt) {
+  models.serviceChangeHandler = function(evt) {
     var charm_id = evt.target.get('charm'),
         charm = this.db.charms.getById(charm_id),
         service = evt.target,
@@ -228,13 +228,26 @@ YUI.add('juju-endpoints', function(Y) {
     }
   };
 
-  // also listen on charm_changed and pending_changed
-
+  /**
+   * Handle event for a service removal.
+   *
+   * @method serviceRemoveHandler
+   * @param {Object} evt The event, containing the service as the target.
+   * @return {undefined} Nothing.
+   */
   models.serviceRemoveHandler = function(evt) {
     var svcName = evt.model.get('id');
     delete(models.endpoints_map[svcName]);
   };
 
+  /**
+   * Flatten the relation metadata.
+   *
+   * @method flatten
+   * @param {Object} meta The relation metadata.
+   * @return {List} A list of objects, where each entry is a hash with a
+   *   'name' key and the key value pairs from the metadata.
+   */
   var flatten = function(meta) {
     var result = [];
     if (Y.Lang.isValue(meta)) {

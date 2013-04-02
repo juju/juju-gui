@@ -358,9 +358,9 @@ YUI.add('juju-gui', function(Y) {
       // Handlers for adding and removing services to the service list.
       this.db.services.after('add', models.serviceAddHandler, this);
       this.db.services.after('remove', models.serviceRemoveHandler, this);
-      this.db.services.after('*:pendingChange', models.serviceChangedHandler,
+      this.db.services.after('*:pendingChange', models.serviceChangeHandler,
           this);
-      this.db.services.after('*:charmChange', models.serviceChangedHandler,
+      this.db.services.after('*:charmChange', models.serviceChangeHandler,
           this);
 
       // When the connection resets, reset the db, re-login (a delta will
