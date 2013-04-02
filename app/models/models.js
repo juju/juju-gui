@@ -9,7 +9,8 @@
 YUI.add('juju-models', function(Y) {
 
   var models = Y.namespace('juju.models'),
-      utils = Y.namespace('juju.views.utils');
+      utils = Y.namespace('juju.views.utils'),
+      handlers = models.handlers;
 
   // This is a helper function used by all of the process_delta methods.
   var _process_delta = function(list, action, change_data, change_base) {
@@ -24,10 +25,7 @@ YUI.add('juju-models', function(Y) {
       // arrives for those objects, they already exist in a skeleton
       // form that needs to be fleshed out.  So, the existing objects
       // are kept and re-used.
-      var data = change_base || {};
-      Y.each(change_data, function(value, name) {
-        data[name.replace('-', '_')] = value;
-      });
+      var data = Y.merge(change_base || {}, change_data);
       if (!Y.Lang.isValue(o)) {
         o = list.add(data);
       } else {
@@ -563,16 +561,24 @@ YUI.add('juju-models', function(Y) {
     },
 
     on_delta: function(delta_evt) {
-      var changes = delta_evt.data.result;
-      var change_type, model_class = null,
-          self = this;
-
-      changes.forEach(
-          Y.bind(function(change) {
-            change_type = change[0];
-            this.getModelListByModelName(change_type).process_delta(
-                change[1], change[2]);
-          }, this));
+      var self = this,
+          changeName,
+          changes = delta_evt.data.result,
+          defaultHandler = handlers.pyDelta,
+          handler,
+          results,
+          modelList,
+          action,
+          data;
+      changes.forEach(function(change) {
+        changeName = change[0];
+        handler = handlers[changeName] || defaultHandler;
+        results = handler(self, changeName, change[1], change[2]);
+        results.forEach(function(result) {
+          modelList = result[0], action = result[1], data = result[2];
+          modelList.process_delta(action, data);
+        });
+      });
       this.services.each(function(service) {
         self.units.update_service_unit_aggregates(service);
       });
@@ -592,6 +598,7 @@ YUI.add('juju-models', function(Y) {
     'datasource-jsonschema',
     'io-base',
     'json-parse',
+    'juju-delta-handlers',
     'juju-endpoints',
     'juju-view-utils',
     'juju-charm-models'

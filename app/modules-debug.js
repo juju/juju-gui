@@ -203,6 +203,11 @@ var GlobalConfig = {
           fullpath: '/juju-ui/models/charm.js'
         },
 
+        'juju-delta-handlers': {
+          fullpath: '/juju-ui/models/handlers.js'
+        },
+
+
         'juju-models': {
           fullpath: '/juju-ui/models/models.js'
         },
