@@ -19,11 +19,12 @@ var juju_config = {
   // url.  For backwards compatibility in the GUI charm, if you provide the
   // socket port and/or protocol *and* the socket_url, the socket_url will be
   // ignored (the port/protocol behavior overrides socket_url).
-  socket_protocol: 'ws',
-  socket_port: 8081,
-  user: 'admin',
-  password: 'admin',
-  apiBackend: 'python', // Value can be 'python' or 'go'.
+  socket_url: 'wss://ec2-174-129-172-225.compute-1.amazonaws.com:17070',
+  //socket_protocol: 'ws',
+  //socket_port: 8081,
+  user: '',
+  password: '',
+  apiBackend: 'go', // Value can be 'python' or 'go'.
   readOnly: false,
   login_help: 'For this demonstration, use the password "admin" to connect.'
 };

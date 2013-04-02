@@ -523,23 +523,40 @@ YUI.add('juju-models', function(Y) {
      * getModelById can be called with either a modelId
      * or model_type, model_id as individual parameters
      */
-    getModelById: function(modelList, id) {
+    getModelById: function(modelList, id, data) {
       if (!Y.Lang.isValue(id)) {
         id = modelList[1];
         modelList = modelList[0];
       }
-      modelList = this.getModelListByModelName(modelList);
+      modelList = this.getModelListByModelName(modelList, data);
       if (!modelList) {
         return undefined;
       }
       return modelList.getById(id);
     },
 
-    getModelListByModelName: function(modelName) {
+    /**
+    Returns a modelList given the model name and some information about
+    the change that is to take place (required only for annotations).
+
+    @method getModelListByModelName
+    @param {String} modelName The model's name.
+    @param {Object} change An object containing the change information; note
+      that this is only used in the case of modelName being 'annotation'.
+    @return {object} The model list.
+    **/
+    getModelListByModelName: function(modelName, change) {
       if (modelName === 'serviceUnit') {
         modelName = 'unit';
       } else if (modelName === 'annotations') {
         return this.environment;
+      } else if (modelName === 'annotation') {
+        modelName = Y.Lang.isArray(change) ?
+            change[2].type :
+            change.type;
+        if (modelName === 'environment') {
+          return this.environment;
+        }
       }
       return this[modelName + 's'];
     },
@@ -550,7 +567,7 @@ YUI.add('juju-models', function(Y) {
           data = change[2],
           model_id = change_kind === 'remove' &&
           data || data.id;
-      return this.getModelById(change_type, model_id);
+      return this.getModelById(change_type, model_id, data);
     },
 
     reset: function() {
@@ -570,7 +587,7 @@ YUI.add('juju-models', function(Y) {
       changes.forEach(
           Y.bind(function(change) {
             change_type = change[0];
-            this.getModelListByModelName(change_type).process_delta(
+            this.getModelListByModelName(change_type, change).process_delta(
                 change[1], change[2]);
           }, this));
       this.services.each(function(service) {
