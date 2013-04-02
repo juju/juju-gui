@@ -674,7 +674,6 @@
        function() {
          var view = new views.environment({
            container: container,
-           getServiceEndpoints: function() {return {};},
            db: db,
            env: env
          }).render();
@@ -799,11 +798,12 @@
               view = new views.environment(
               { container: container,
                 db: db,
-                env: env,
-                getServiceEndpoints: function() {return endpoint_map;}}),
+                env: env}),
               service = new models.Service({ id: 'service-1'});
 
           db.services.add([service]);
+          // Reset the global endpoints_map after adding the service.
+          models.endpoints_map = endpoint_map;
           view.render();
 
           // If the user has clicked on the "Add Relation" menu item...

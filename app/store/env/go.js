@@ -149,24 +149,6 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-      XXX FAKE FAKE FAKE, does not do anything.
-
-      Get the available endpoints (by interface) for a collection of
-      services.
-
-      @method get_endpoints
-      @param {Array} services Zero or more currently deployed services for
-          which the endpoints should be collected.  Specifying an empty array
-          indicates that all deployed services should be analyzed.
-      @param {Function} callback A callable that must be called once the
-         operation is performed.
-      @return {undefined} Sends a message to the server only.
-     */
-    get_endpoints: function(services, callback) {
-    },
-
-
-    /**
      * See "app.store.env.base.BaseEnvironment.dispatch_result".
      *
      * @method dispatch_result

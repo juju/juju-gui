@@ -249,3 +249,114 @@ describe('Endpoints map', function() {
   });
 
 });
+
+describe('Endpoints map handlers', function() {
+  var Y, juju, utils, models, app, conn, env;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(['juju-gui',
+                               'juju-models',
+                               'juju-tests-utils',
+                               'juju-controllers'],
+    function(Y) {
+      juju = Y.namespace('juju');
+      utils = Y.namespace('juju-tests.utils');
+      models = Y.namespace('juju.models');
+      done();
+    });
+  });
+
+  beforeEach(function() {
+      conn = new utils.SocketStub();
+      env = juju.newEnvironment({conn: conn});
+      env.connect();
+      app = new Y.juju.App({env: env});
+      models.endpoints_map = {};
+  });
+
+  afterEach(function() {
+    env.destroy();
+    app.destroy();
+  });
+
+  it('should not update endpoints map when pending services are added', function() {
+    var service_name = 'wordpress';
+    var charm_id = 'cs:precise/wordpress-2';
+    app.db.charms.add({id: charm_id});
+    var charm = app.db.charms.getById(charm_id);
+    charm.loaded = true;
+    app.db.services.add({
+        id: service_name,
+        pending: true,
+        charm: charm_id});
+    models.endpoints_map.should.eql({});
+  });
+
+  it('should update endpoints map when non-pending services are added', function() {
+    var service_name = 'wordpress';
+    var charm_id = 'cs:precise/wordpress-2';
+    app.db.charms.add({id: charm_id});
+    var charm = app.db.charms.getById(charm_id);
+    charm.loaded = true;
+    app.db.services.add({
+        id: service_name,
+        pending: true,
+        charm: charm_id});
+    var svc = app.db.services.getById(service_name);
+    svc.set('pending', false);
+    models.endpoints_map.should.eql({wordpress: {
+      requires: [],
+      provides: []}});
+  });
+
+  it('should update endpoints map when a service\'s charm changes', function() {
+    var service_name = 'wordpress';
+    var charm_id = 'cs:precise/wordpress-2';
+    app.db.charms.add({id: charm_id});
+    var charm = app.db.charms.getById(charm_id);
+    charm.loaded = true;
+    app.db.services.add({
+        id: service_name,
+        pending: true,
+        charm: charm_id});
+    var svc = app.db.services.getById(service_name);
+    svc.set('pending', false);
+    models.endpoints_map.should.eql({wordpress: {
+      requires: [],
+      provides: []}});
+
+    charm_id = 'cs:precise/wordpress-3';
+    app.db.charms.add({id: charm_id});
+    charm = app.db.charms.getById(charm_id);
+    charm.set('provides', {
+      url: {
+        'interface': 'http'
+      }
+    });
+
+    charm.loaded = true;
+    svc.set('charm', charm_id);
+    models.endpoints_map.should.eql({wordpress: {
+      requires: [],
+      provides: [
+        {
+          name: 'url',
+          'interface': 'http'
+        }]}});
+
+  });
+
+  it('should remove service from endpoints map when it is deleted', function() {
+    var service_name = 'wordpress';
+    var charm_id = 'cs:precise/wordpress-2';
+    app.db.charms.add({id: charm_id});
+    app.db.services.add({
+        id: service_name,
+        charm: charm_id});
+    models.endpoints_map = {wordpress: 'foo'};
+    var service = app.db.services.getById(service_name);
+    app.db.services.remove(service);
+    models.endpoints_map.should.eql({});
+  });
+
+});

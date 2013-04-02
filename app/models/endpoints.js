@@ -205,19 +205,20 @@ YUI.add('juju-endpoints', function(Y) {
 
   /**
    * Handle event for a service transitioning from a ghost to a corporeal
-   * object as indicated by the 'pending' attribute becoming false.
+   * object as indicated by the 'pending' attribute becoming false.  Also
+   * handles changes in the service's charm.
    *
-   * @method pendingChangedHandler
+   * @method serviceChangedHandler
    * @param {Object} evt The event, containing the service as the target.
    * @return {undefined} Nothing.
    */
-  models.pendingChangedHandler = function(evt) {
+  models.serviceChangedHandler = function(evt) {
     var charm_id = evt.target.get('charm'),
         charm = this.db.charms.getById(charm_id),
         service = evt.target,
         svcName = service.get('id');
     // Ensure the service is no longer pending.
-    if (!service.get('pending')) {
+    if (service.get('pending')) {
       return;
     }
     if (charm.loaded) {

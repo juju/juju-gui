@@ -341,7 +341,6 @@ function injectData(app, data) {
             viewContainer: container,
             env: env,
             charm_store: {} });
-      env.get_endpoints = function() {};
     });
 
     afterEach(function() {
@@ -363,33 +362,6 @@ function injectData(app, data) {
       // so are not repeated here.
     });
 
-    it('must request endpoints only when necessary', function() {
-      var get_endpoints_count = 0,
-          tmp_data = {
-            result: [
-              ['service', 'add', {
-                'charm': 'cs:precise/mysql-6',
-                'id': 'mysql2'
-              }],
-              ['unit', 'add', {
-                'machine': 0,
-                'agent-state': 'started',
-                'public-address': '192.168.122.222',
-                'id': 'mysql2/0'
-              }]
-            ],
-            op: 'delta'
-          };
-      env.get_endpoints = function(services, callback) {
-        get_endpoints_count += 1;
-      };
-      // Inject default data, should only get_endpoints once.
-      injectData(app);
-      get_endpoints_count.should.equal(1);
-      // Additional deltas should only call get_endpoints once.
-      app.db.on_delta({ data: tmp_data });
-      get_endpoints_count.should.equal(2);
-    });
   });
 })();
 

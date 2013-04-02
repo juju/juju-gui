@@ -560,13 +560,7 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.fire('show', { selection: vis.selectAll('.service') });
 
       var db = this.get('component').get('db');
-      var getServiceEndpoints = this.get('component')
-                                    .get('getServiceEndpoints');
-
-      var endpoints = models.getEndpoints(
-          service, getServiceEndpoints(), db);
-
-      // endpoints = db.ServiceEndpoint
+      var endpoints = models.getEndpoints(service, models.endpoints_map, db);
 
       // Transform endpoints into a list of relatable services (to the
       // service).
