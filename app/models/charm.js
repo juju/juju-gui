@@ -301,15 +301,15 @@ YUI.add('juju-charm-models', function(Y) {
      * Initializer
      *
      * @method initializer
-     * @param {Object} cfg The configuration object. 
+     * @param {Object} cfg The configuration object.
      */
     initializer: function(cfg) {
-      if(cfg) {
-        if(cfg.downloads_in_last_30_days) {
+      if (cfg) {
+        if (cfg.downloads_in_last_30_days) {
           this.set('recent_downloads', cfg.downloads_in_last_30_days);
         }
 
-        if(cfg.commits_in_last_30_days) {
+        if (cfg.commits_in_last_30_days) {
           this.set('recent_commits', cfg.commits_in_last_30_days);
         }
       }
