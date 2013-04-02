@@ -2,6 +2,15 @@
 
 (function() {
 
+  // Helpers
+  // Verify that an expected Error was found.
+  var ERROR = function(errString, done) {
+    return function(result) {
+      assert.equal(errString, result.error);
+      done();
+    }};
+
+
   describe('FakeBackend.login', function() {
     var requires = ['node', 'juju-env-fakebackend'];
     var Y, environmentsModule, fakebackend;
@@ -216,6 +225,87 @@
     });
 
   });
+
+  describe('FakeBackend.getCharm', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, setCharm;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      var setupData = utils.makeFakeBackendWithCharmStore();
+      fakebackend = setupData.fakebackend;
+      setCharm = setupData.setCharm;
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('rejects unauthenticated calls', function(done) {
+      fakebackend.logout();
+      fakebackend.getCharm('cs:wordpress', ERROR('Please log in.', done));
+    });
+
+    it('disallows malformed charm names', function(done) {
+      fakebackend.getCharm('^invalid', ERROR('Invalid charm id.', done));
+    });
+
+    it('successfully returns valid charms', function(done) {
+      fakebackend.getCharm('cs:wordpress', function(charm) {
+         assert.equal(charm.get('name'), 'wordpress');
+         done();
+      });
+    });
+  });
+
+  describe('FakeBackend.getService', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, setCharm;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      var setupData = utils.makeFakeBackendWithCharmStore();
+      fakebackend = setupData.fakebackend;
+      setCharm = setupData.setCharm;
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('rejects unauthenticated calls', function(done) {
+      fakebackend.logout();
+      fakebackend.getService('cs:wordpress', ERROR('Please log in.', done));
+    });
+
+    it('returns an error for a missing service', function(done) {
+      fakebackend.getService('^invalid', ERROR('Invalid service id.', done));
+    });
+
+    it('successfully returns a valid service', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.getService('wordpress', function(service) {
+          assert.equal(service.get('name'), 'wordpress');
+          done();
+        });
+      });
+    });
+  });
+
 
   describe('FakeBackend.addUnit', function() {
     var requires = [

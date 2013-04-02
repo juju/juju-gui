@@ -307,13 +307,37 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     // },
 
-    // getService: function() {
+    /**
+     * @method getService
+     * @param {String} serviceId
+     * @param {Function} callack.
+     * @return undefined.
+     */
+    getService: function(serviceName, callback) {
+      if (!this.get('authenticated')) {
+        return callback(UNAUTHENTICATEDERROR);
+      }
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        callback({error: 'Invalid service id.'});
+      }
+      callback(service);
+    },
 
-    // },
-
-    // getCharm: function() {
-
-    // },
+    /**
+     * @method getCharm
+     * @param {String} charmName
+     * @param {Function} callback.
+     * @return undefined.
+     */
+    getCharm: function(charmName, callback) {
+      if (!this.get('authenticated')) {
+        return callback(UNAUTHENTICATEDERROR);
+      }
+      this._loadCharm(charmName, {
+        success: callback,
+        failure: callback});
+    },
 
     /**
     Add units to the given service.
