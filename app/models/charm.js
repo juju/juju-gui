@@ -297,7 +297,23 @@ YUI.add('juju-charm-models', function(Y) {
    *
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
+    /**
+     * Initializer
+     *
+     * @method initializer
+     * @param {Object} cfg The configuration object.
+     */
+    initializer: function(cfg) {
+      if (cfg) {
+        if (cfg.downloads_in_last_30_days) {
+          this.set('recent_downloads', cfg.downloads_in_last_30_days);
+        }
 
+        if (cfg.commits_in_last_30_days) {
+          this.set('recent_commits', cfg.commits_in_last_30_days);
+        }
+      }
+    },
     /**
      * Options is an object but we sometimes need an array of objects in order
      * to loop through them for display. This method is a helper to transform
@@ -321,7 +337,7 @@ YUI.add('juju-charm-models', function(Y) {
         return undefined;
       }
     }
-  } , {
+  }, {
     ATTRS: {
       id: {
         validator: function(val) {
@@ -346,7 +362,7 @@ YUI.add('juju-charm-models', function(Y) {
         /**
          * Generate the full name of the charm from its attributes.
          *
-         * @method geetter
+         * @method getter
          *
          */
         getter: function() {
@@ -398,6 +414,7 @@ YUI.add('juju-charm-models', function(Y) {
       rating_numerator: {},
       rating_denominator: {},
       recent_downloads: {},
+      recent_commits: {},
       relations: {},
       requires: {},
       revision: {
