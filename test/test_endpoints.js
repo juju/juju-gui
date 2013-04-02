@@ -131,7 +131,7 @@ describe('Endpoints map', function() {
   });
 
   it('should add a service to the map', function() {
-    models.endpoints_map = {};
+    models.endpointsMap = {};
     var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('provides', {
       url: {
@@ -154,7 +154,7 @@ describe('Endpoints map', function() {
       }
     });
     models.addServiceToEndpointsMap('wordpress', charm);
-    models.endpoints_map.should.eql({wordpress: {
+    models.endpointsMap.should.eql({wordpress: {
       provides: [
         {
           name: 'url',
@@ -178,10 +178,11 @@ describe('Endpoints map', function() {
         }
       ]
     }});
+    charm.destroy();
   });
 
   it('should add a service to the map, requires only', function() {
-    models.endpoints_map = {};
+    models.endpointsMap = {};
     var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('requires', {
       db: {
@@ -194,7 +195,7 @@ describe('Endpoints map', function() {
       }
     });
     models.addServiceToEndpointsMap('wordpress', charm);
-    models.endpoints_map.should.eql({wordpress: {
+    models.endpointsMap.should.eql({wordpress: {
       provides: [],
       requires: [
         {
@@ -208,10 +209,11 @@ describe('Endpoints map', function() {
         }
       ]
     }});
+    charm.destroy();
   });
 
   it('should add a service to the map, provides only', function() {
-    models.endpoints_map = {};
+    models.endpointsMap = {};
     var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('provides', {
       url: {
@@ -224,7 +226,7 @@ describe('Endpoints map', function() {
       }
     });
     models.addServiceToEndpointsMap('wordpress', charm);
-    models.endpoints_map.should.eql({wordpress: {
+    models.endpointsMap.should.eql({wordpress: {
       requires: [],
       provides: [
         {
@@ -237,16 +239,18 @@ describe('Endpoints map', function() {
           scope: 'container'
         }
       ] }});
+    charm.destroy();
   });
 
   it('should add a service to the map, neither provides nor requires',
      function() {
-       models.endpoints_map = {};
+       models.endpointsMap = {};
        var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
        models.addServiceToEndpointsMap('wordpress', charm);
-       models.endpoints_map.should.eql({wordpress: {
+       models.endpointsMap.should.eql({wordpress: {
          requires: [],
          provides: []}});
+       charm.destroy();
      });
 
 });
@@ -272,7 +276,7 @@ describe('Endpoints map handlers', function() {
     env = juju.newEnvironment({conn: conn});
     env.connect();
     app = new Y.juju.App({env: env});
-    models.endpoints_map = {};
+    models.endpointsMap = {};
   });
 
   afterEach(function() {
@@ -291,7 +295,8 @@ describe('Endpoints map handlers', function() {
          id: service_name,
          pending: true,
          charm: charm_id});
-       models.endpoints_map.should.eql({});
+       models.endpointsMap.should.eql({});
+       charm.destroy();
      });
 
   it('should update endpoints map when non-pending services are added',
@@ -307,9 +312,10 @@ describe('Endpoints map handlers', function() {
          charm: charm_id});
        var svc = app.db.services.getById(service_name);
        svc.set('pending', false);
-       models.endpoints_map.should.eql({wordpress: {
+       models.endpointsMap.should.eql({wordpress: {
          requires: [],
          provides: []}});
+       charm.destroy();
      });
 
   it('should update endpoints map when a service\'s charm changes', function() {
@@ -324,29 +330,30 @@ describe('Endpoints map handlers', function() {
       charm: charm_id});
     var svc = app.db.services.getById(service_name);
     svc.set('pending', false);
-    models.endpoints_map.should.eql({wordpress: {
+    models.endpointsMap.should.eql({wordpress: {
       requires: [],
       provides: []}});
 
     charm_id = 'cs:precise/wordpress-3';
     app.db.charms.add({id: charm_id});
-    charm = app.db.charms.getById(charm_id);
-    charm.set('provides', {
+    var charm2 = app.db.charms.getById(charm_id);
+    charm2.set('provides', {
       url: {
         'interface': 'http'
       }
     });
 
-    charm.loaded = true;
+    charm2.loaded = true;
     svc.set('charm', charm_id);
-    models.endpoints_map.should.eql({wordpress: {
+    models.endpointsMap.should.eql({wordpress: {
       requires: [],
       provides: [
         {
           name: 'url',
           'interface': 'http'
         }]}});
-
+    charm.destroy();
+    charm2.destroy();
   });
 
   it('should remove service from endpoints map when it is deleted', function() {
@@ -356,10 +363,11 @@ describe('Endpoints map handlers', function() {
     app.db.services.add({
       id: service_name,
       charm: charm_id});
-    models.endpoints_map = {wordpress: 'foo'};
+    models.endpointsMap = {wordpress: 'foo'};
     var service = app.db.services.getById(service_name);
     app.db.services.remove(service);
-    models.endpoints_map.should.eql({});
+    models.endpointsMap.should.eql({});
+    app.db.charms.getById(charm_id).destroy();
   });
 
 });

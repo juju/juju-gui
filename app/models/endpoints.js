@@ -12,7 +12,7 @@ YUI.add('juju-endpoints', function(Y) {
   var models = Y.namespace('juju.models');
   var utils = Y.namespace('juju.views.utils');
 
-  models.endpoints_map = {};
+  models.endpointsMap = {};
 
   /**
    * Find available relation targets for a service.
@@ -235,7 +235,7 @@ YUI.add('juju-endpoints', function(Y) {
    */
   models.serviceRemoveHandler = function(evt) {
     var svcName = evt.model.get('id');
-    delete(models.endpoints_map[svcName]);
+    delete(models.endpointsMap[svcName]);
   };
 
   /**
@@ -266,9 +266,9 @@ YUI.add('juju-endpoints', function(Y) {
   };
 
   var addServiceToEndpointsMap = function(svcName, charm) {
-    models.endpoints_map[svcName] = {};
-    models.endpoints_map[svcName].provides = flatten(charm.get('provides'));
-    models.endpoints_map[svcName].requires = flatten(charm.get('requires'));
+    models.endpointsMap[svcName] = {};
+    models.endpointsMap[svcName].provides = flatten(charm.get('provides'));
+    models.endpointsMap[svcName].requires = flatten(charm.get('requires'));
   };
 
   models.addServiceToEndpointsMap = addServiceToEndpointsMap;
