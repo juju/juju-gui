@@ -14,7 +14,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
    * @extends {Y.View}
    *
    */
-  ns.BrowserCharmView = Y.Base.create('browser-view-charmview', Y.View, [], {
+  ns.BrowserCharmView = Y.Base.create('browser-view-charmview', Y.View, [
+    widgets.browser.IndicatorManager], {
+
     template: views.Templates.browser_charm,
 
     /**
@@ -28,6 +30,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       },
       '.charm input.add': {
         click: '_addCharmEnvironment'
+      },
+      '#bws_hooks ul li a': {
+        click: '_loadHookContent'
       }
     },
 
@@ -43,6 +48,21 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _addCharmEnvironment: function(ev) {
       console.log('add the charm to the environment');
       ev.preventDefault();
+    },
+
+    /**
+     * Event handler for clicking on a hook filename to load that file.
+     *
+     * @method _loadHookContent
+     * @param {Event} ev the click event created.
+     *
+     */
+    _loadHookContent: function(ev) {
+      var filename = ev.currentTarget.get('text'),
+          node = this.get('container').one('#bws_hooks .filecontent');
+
+      // Load the file, but make sure we prettify the code.
+      this._loadFile(node, filename, true);
     },
 
     /**
@@ -74,22 +94,31 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * @private
      *
      */
-    _loadFile: function(container, filename) {
+    _loadFile: function(container, filename, prettify) {
+      // Enable the indicator on the container while we load.
+      this.showIndicator(container);
+
       this.get('store').file(
           this.get('charm').get('id'),
           filename, {
             'success': function(data) {
-              if (filename.slice(-3) === '.md') {
-                data = Y.Markdown.toHTML(data);
+              if (prettify) {
+                // If we say we want JS-prettified, use the prettify module.
+                Y.prettify.renderPrettyPrintedFile(container, data);
+              } else if (filename.slice(-3) === '.md') {
+                // else if it's a .md file, render the markdown to html.
+                container.setHTML(Y.Markdown.toHTML(data));
               } else {
+                // Else just stick the content in a pre so it's blocked.
                 container.setHTML(Y.Node.create('<pre/>').setContent(data));
               }
+
+              this.hideIndicator(container);
             },
             'failure': function(data, request) {
 
             }
-          }
-      );
+          }, this);
 
     },
 
@@ -129,6 +158,19 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+     * Generic YUI initializer. Make sure we track indicators for cleanup.
+     *
+     * @method initializer
+     * @param {Object} cfg configuration object.
+     *
+     */
+    initializer: function(cfg) {
+      // Hold onto references of the indicators used so we can clean them all
+      // up. Indicators are keyed on their yuiid so we don't dupe them.
+      this.indicators = {};
+    },
+
+    /**
      * Render out the view to the DOM.
      *
      * @method render
@@ -163,7 +205,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
         this._noReadme(tplNode.one('#bws_readme'));
       }
     }
-
   }, {
     ATTRS: {
       /**
@@ -191,9 +232,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'browser-overlay-indicator',
     'browser-tabview',
     'gallery-markdown',
     'juju-templates',
+    'juju-views',
+    'prettify',
     'view'
   ]
 });

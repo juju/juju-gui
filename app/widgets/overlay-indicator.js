@@ -3,7 +3,7 @@
 
 YUI.add('browser-overlay-indicator', function(Y) {
   var sub = Y.Lang.sub,
-      ns = Y.namespace('juju.browser.widgets');
+      ns = Y.namespace('juju.widgets.browser');
   ns.OverlayIndicator = Y.Base.create('overlay-indicator', Y.Widget, [], {
 
     /**
@@ -55,7 +55,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
       var node_html = '<img src={src}>';
       var img = Y.Node.create(
           sub(node_html, {src: this.get('loading_image')}));
-      img.set('src', '/juju-ui/assets/images/loading-spinner.gif');
+      img.set('src', '/juju-ui/assets/images/non-sprites/loading-spinner.gif');
       this.get('contentBox').append(img);
     },
 
@@ -160,6 +160,84 @@ YUI.add('browser-overlay-indicator', function(Y) {
 
     }
   });
+
+  /**
+   * Manage indicator instances and make sure they're destroyed.
+   *
+   * @class IndicatorManager
+   *
+   */
+  ns.IndicatorManager = function() {
+    this._initIndicatorManager();
+  };
+
+  ns.IndicatorManager.prototype = {
+    /**
+     * Init during class initialization. Add _indicators and catch destroy
+     * event to clean up indicator instances.
+     *
+     * @method _initIndicatorManager
+     * @private
+     *
+     */
+    _initIndicatorManager: function() {
+      this._indicators = {};
+      this.on('destroy', this._destroyIndicators, this);
+    },
+
+    /**
+     * On destroy, run destroy on any indicator instances we have. This is a
+     * method so we can hook up and test that it's called vs a closure in the
+     * init.
+     *
+     * @method _destroyIndicators
+     * @private
+     *
+     */
+    _destroyIndicators: function() {
+      Y.Object.each(this._indicators, function(ind, key) {
+        ind.destroy();
+      });
+    },
+
+    /**
+     * Show/setBusy an indicator for a given node. If an indicator is already
+     * attached then just show it, else create a new indicator instance on the
+     * node.
+     *
+     * @method showIndicator
+     * @param {Node} node the node to cover with the indicator.
+     *
+     */
+    showIndicator: function(node) {
+      var id = node._yuid;
+
+      if (this._indicators[id]) {
+        this._indicators[id].setBusy();
+      } else {
+        this._indicators[id] = new ns.OverlayIndicator({
+          target: node
+        });
+
+        this._indicators[id].render();
+        this._indicators[id].setBusy();
+      }
+    },
+
+    /**
+     * Helper to make sure we can hide an indicator correctly.
+     *
+     * @method hideIndicator
+     * @param {Node} node the container the indicator is currently over.
+     *
+     */
+    hideIndicator: function(node) {
+      var id = node._yuid;
+      if (this._indicators[id]) {
+        this._indicators[id].success();
+      }
+    }
+  };
 
 }, '0.1.0', { requires: [
   'base',

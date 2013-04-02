@@ -315,7 +315,7 @@ YUI.add('juju-env-go', function(Y) {
           Type: 'Admin',
           Request: 'Login',
           Params: {
-            EntityName: credentials.user,
+            AuthTag: credentials.user,
             Password: credentials.password
           }
         }, this.handleLogin);
@@ -515,7 +515,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'SetAnnotations',
         Params: {
-          EntityId: entity,
+          Tag: entity,
           Pairs: stringifyObjectValues(data)
         }
       }, intermediateCallback);
@@ -548,7 +548,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'SetAnnotations',
         Params: {
-          EntityId: entity,
+          Tag: entity,
           Pairs: data
         }
       }, intermediateCallback);
@@ -594,7 +594,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'GetAnnotations',
         Params: {
-          EntityId: entity
+          Tag: entity
         }
       }, intermediateCallback);
     },

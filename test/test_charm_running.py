@@ -43,25 +43,30 @@ class TestBasics(browser.TestCase):
             # reasons yet to be determined.
             if stats.get('duration') or stats.get('end') or stats['failures']:
                 return stats['tests'], stats['failures']
+
         def run_tests():
             self.wait_for_css_selector('#mocha-stats')
             try:
                 total, failures = self.wait_for(
-                    tests_completed, 'Unable to complete test run.', timeout=90)
+                    tests_completed, 'Unable to complete test run.',
+                    timeout=90)
             except exceptions.TimeoutException:
                 print(self.driver.execute_script('return testRunner.stats;'))
                 raise
             return total, failures
         self.load('/test/')
-        total, failures = run_tests()
-        if failures:
-            # We sometimes see initial failures and we don't know why :-(.
-            # Reload and retry.
-            print(
-                '{} failure(s) running {} tests.  Retrying.'.format(
-                    failures, total))
-            self.driver.refresh()
+        for i in range(5):
             total, failures = run_tests()
+            if failures and i < 4 and total < 100:
+                # XXX bug 1161937 gary 2013-03-29
+                # We sometimes see initial failures and we don't know why :-(.
+                # Reload and retry.
+                print(
+                    '{} failure(s) running {} tests.  Retrying.'.format(
+                        failures, total))
+                self.driver.refresh()
+            else:
+                break
         if failures:
             msg = '{} failure(s) running {} tests.'.format(failures, total)
             self.fail(msg)

@@ -1,11 +1,12 @@
 'use strict';
 
 describe('overlay indicator', function() {
-  var container, indicator, Y;
+  var container, indicator, widget, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-overlay-indicator', 'node'],
         function(Y) {
+          widget = Y.juju.widgets.browser;
           done();
         });
   });
@@ -23,12 +24,12 @@ describe('overlay indicator', function() {
   });
 
   it('exists', function() {
-    indicator = new Y.juju.browser.widgets.OverlayIndicator();
+    indicator = new Y.juju.widgets.browser.OverlayIndicator();
     assert.isObject(indicator);
   });
 
   it('gets target from config', function() {
-    indicator = new Y.juju.browser.widgets.OverlayIndicator(
+    indicator = new Y.juju.widgets.browser.OverlayIndicator(
         {target: container});
     indicator.render();
     assert.equal(container, indicator.get('target'));
@@ -37,28 +38,28 @@ describe('overlay indicator', function() {
   it('appends itself to target parent', function() {
     var child = Y.Node.create('<div/>');
     container.appendChild(child);
-    indicator = new Y.juju.browser.widgets.OverlayIndicator(
+    indicator = new Y.juju.widgets.browser.OverlayIndicator(
         {target: child});
     indicator.render();
     assert.equal(container, indicator.get('boundingBox').get('parentNode'));
   });
 
   it('has a loading icon', function() {
-    indicator = new Y.juju.browser.widgets.OverlayIndicator(
+    indicator = new Y.juju.widgets.browser.OverlayIndicator(
         {target: container});
     indicator.render();
     var content = indicator.get('boundingBox'),
         test = content.getContent(),
         img = content.one('img');
-    var img_url = img.get('src').split('/').slice(3, 7).join('/');
+    var img_url = img.get('src').split('/').slice(3).join('/');
     assert.equal(
-        'juju-ui/assets/images/loading-spinner.gif',
+        'juju-ui/assets/images/non-sprites/loading-spinner.gif',
         img_url);
   });
 
   it('starts invisible', function() {
     // OverlayIndicator widgets should start hidden.
-    indicator = new Y.juju.browser.widgets.OverlayIndicator(
+    indicator = new Y.juju.widgets.browser.OverlayIndicator(
         {target: container});
     indicator.render();
     assert.isFalse(indicator.get('visible'));
@@ -67,7 +68,7 @@ describe('overlay indicator', function() {
   });
 
   it('shows on setBusy', function() {
-    indicator = new Y.juju.browser.widgets.OverlayIndicator(
+    indicator = new Y.juju.widgets.browser.OverlayIndicator(
         {target: container});
     indicator.render();
     indicator.setBusy();
@@ -77,7 +78,7 @@ describe('overlay indicator', function() {
   });
 
   it('size matches on setBusy', function() {
-    indicator = new Y.juju.browser.widgets.OverlayIndicator(
+    indicator = new Y.juju.widgets.browser.OverlayIndicator(
         {target: container});
     indicator.render();
     // Mess with the size of target div.
@@ -102,7 +103,7 @@ describe('overlay indicator', function() {
 
   it('position matches on setBusy', function() {
     // OverlayIndicator should always reposition itself before setBusy.
-    indicator = new Y.juju.browser.widgets.OverlayIndicator(
+    indicator = new Y.juju.widgets.browser.OverlayIndicator(
         {target: container});
     indicator.render();
     // Change the position of target div.
@@ -118,7 +119,7 @@ describe('overlay indicator', function() {
   });
 
   it('hides on success', function() {
-    indicator = new Y.juju.browser.widgets.OverlayIndicator(
+    indicator = new Y.juju.widgets.browser.OverlayIndicator(
         {target: container});
     indicator.render();
     indicator.setBusy();
@@ -130,7 +131,7 @@ describe('overlay indicator', function() {
 
   it('can have a success callback', function() {
     var called = false;
-    indicator = new Y.juju.browser.widgets.OverlayIndicator({
+    indicator = new Y.juju.widgets.browser.OverlayIndicator({
       target: container,
       success_action: function() {
         called = true;
@@ -142,7 +143,7 @@ describe('overlay indicator', function() {
   });
 
   it('hides on error', function() {
-    indicator = new Y.juju.browser.widgets.OverlayIndicator(
+    indicator = new Y.juju.widgets.browser.OverlayIndicator(
         {target: container});
     indicator.render();
     indicator.setBusy();
@@ -154,7 +155,7 @@ describe('overlay indicator', function() {
 
   it('can have an error callback', function() {
     var called = false;
-    indicator = new Y.juju.browser.widgets.OverlayIndicator({
+    indicator = new Y.juju.widgets.browser.OverlayIndicator({
       target: container,
       error_action: function() {
         called = true;
@@ -164,4 +165,50 @@ describe('overlay indicator', function() {
     indicator.error();
     assert.isTrue(called);
   });
+
+  it('indicator manager wires into an object properly', function() {
+    var TestClass = Y.Base.create(
+        'testclass',
+        Y.Base,
+        [widget.IndicatorManager]);
+    var test_instance = new TestClass();
+    test_instance._indicators.should.eql({});
+    assert(typeof(test_instance.showIndicator) === 'function');
+    assert(typeof(test_instance.hideIndicator) === 'function');
+  });
+
+  it('indicator manager only creates one indicator per node id', function() {
+    var TestClass = Y.Base.create(
+        'testclass',
+        Y.Base,
+        [widget.IndicatorManager]);
+    var test_instance = new TestClass();
+    test_instance.showIndicator(container);
+    test_instance.showIndicator(container);
+
+    assert(Y.Object.keys(test_instance._indicators).length === 1);
+
+    test_instance.destroy();
+  });
+
+  it('indicator manager handles cleanup', function(done) {
+    var TestClass = Y.Base.create(
+        'testclass',
+        Y.Base,
+        [widget.IndicatorManager], {
+          _destroyIndicators: function() {
+            // override the cleanup method to check it's called.
+            Y.Object.each(this._indicators, function(ind, key) {
+              ind.destroy();
+            });
+            done();
+          }
+        });
+
+    var test_instance = new TestClass();
+    test_instance.showIndicator(container);
+    test_instance.destroy();
+  });
+
+
 });

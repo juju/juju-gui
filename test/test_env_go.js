@@ -83,7 +83,7 @@
         Type: 'Admin',
         Request: 'Login',
         RequestId: 1,
-        Params: {EntityName: 'user', Password: 'password'}
+        Params: {AuthTag: 'user', Password: 'password'}
       };
       assert.deepEqual(expected, last_message);
     });
@@ -367,7 +367,7 @@
         Type: 'Client',
         Request: 'GetAnnotations',
         RequestId: 1,
-        Params: {EntityId: 'service-apache'}
+        Params: {Tag: 'service-apache'}
       };
       assert.deepEqual(expected, last_message);
     });
@@ -380,7 +380,7 @@
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
-          EntityId: 'service-apache',
+          Tag: 'service-apache',
           Pairs: {
             mykey: 'myvalue'
           }
@@ -408,7 +408,7 @@
           Request: 'SetAnnotations',
           RequestId: 1,
           Params: {
-            EntityId: 'service-apache',
+            Tag: 'service-apache',
             Pairs: {
               key1: 'value1',
               key2: 'value2'
@@ -427,7 +427,7 @@
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
-          EntityId: 'service-apache',
+          Tag: 'service-apache',
           Pairs: {
             key1: ''
           }
@@ -444,7 +444,7 @@
         Request: 'SetAnnotations',
         RequestId: 1,
         Params: {
-          EntityId: 'service-apache',
+          Tag: 'service-apache',
           Pairs: {
             key1: '',
             key2: ''
