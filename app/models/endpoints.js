@@ -234,8 +234,27 @@ YUI.add('juju-endpoints', function(Y) {
     delete(models.endpoints_map[svcName]);
   };
 
-  var addServiceToEndpointsMap = function(svcName, charm) {
-    models.endpoints_map[svcName] = charm;
+  var flatten = function(meta) {
+    var result = [];
+    if (Y.Lang.isValue(meta)) {
+      for (var k in meta) {
+        var rel = {};
+        rel['name'] = k;
+        for (var j in meta[k]) {
+          rel[j] = meta[k][j];
+        }
+        result.push(rel);
+      }
+    }
+    return result;
   };
+
+  var addServiceToEndpointsMap = function(svcName, charm) {
+    models.endpoints_map[svcName] = {};
+    models.endpoints_map[svcName]['provides'] = flatten(charm.get('provides'));
+    models.endpoints_map[svcName]['requires'] = flatten(charm.get('requires'));
+  };
+
+  models.addServiceToEndpointsMap = addServiceToEndpointsMap;
 
 });

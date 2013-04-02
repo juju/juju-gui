@@ -116,3 +116,70 @@ describe('Relation endpoints logic', function() {
 });
 
 
+describe('Endpoints map', function() {
+  var Y, juju, models;
+
+  beforeEach(function(done) {
+    Y = YUI(GlobalConfig).use(['juju-models',
+                               'juju-tests-utils',
+                               'juju-controllers'],
+    function(Y) {
+      juju = Y.namespace('juju');
+      models = Y.namespace('juju.models');
+      done();
+    });
+  });
+
+  it('should add a service to the map', function() {
+    models.endpoints_map = {};
+    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
+    charm.set('provides', {
+      url: {
+        'interface': 'http',
+        optional: 'false'
+      },
+      'logging-dir': {
+        'interface': 'logging',
+        scope: 'container'
+      }
+    });
+    charm.set('requires', {
+      db: {
+        'interface': 'mysql',
+        optional: 'false'
+      },
+      cache: {
+        'interface': 'varnish',
+        optional: 'true'
+      }
+    });
+    models.addServiceToEndpointsMap('wordpress', charm);
+    models.endpoints_map.should.eql({wordpress: {
+      provides: [
+        {
+          name: 'url',
+          'interface': 'http',
+          optional: 'false'
+        }, {
+          name: 'logging-dir',
+          'interface': 'logging',
+          scope: 'container'
+        }
+      ],
+      requires: [
+        {
+          name: 'db',
+          'interface': 'mysql',
+          optional: 'false'
+        }, {
+          name: 'cache',
+          'interface': 'varnish',
+          optional: 'true'
+        }
+      ]
+    }});
+  });
+
+  it('should ', function() {
+  });
+});
