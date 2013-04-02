@@ -203,6 +203,46 @@
       Y.one('#bws_readme').get('innerHTML').should.eql(
           '<h1>README Header</h1>');
     });
+
+    it('_buildQAData properly summerizes the scores', function() {
+      var view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'readme.md'
+          ],
+          id: 'precise/ceph-9'
+        })
+      });
+      var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
+
+      var processed = view._buildQAData(data);
+
+      // We store a number of summary bits to help the template render the
+      // scores correctly.
+      processed.totalAvailable.should.eql(38);
+      processed.totalScore.should.eql(13);
+      processed.questions[0].score.should.eql(3);
+    });
+
+    it('qa content is loaded when the tab is clicked on', function(done) {
+      var view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [],
+          id: 'precise/ceph-9'
+        })
+      });
+      view.render(node);
+
+      view._loadQAContent = function() {
+        // This test is just verifying that we don't timeout. The event fired,
+        // was caught here, and we completed the test run. No assertion to be
+        // found here.
+        done();
+      };
+
+      var qa_tab = Y.one('.tabs li a.bws_qa');
+      qa_tab.simulate('click');
+    });
   });
 })();
 
