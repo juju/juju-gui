@@ -358,7 +358,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       Handles add unit operations from the client.
 
       @method performOp_add_unit
-      @param {Object} data contains service_name and num_units required for
+      @param {Object} data Contains service_name and num_units required for
         adding additional units.
     */
     performOp_add_unit: function(data) {
@@ -378,7 +378,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       Handles the remove unit operations from the client
 
       @method performOp_remove_unit
-      @param {Object} data contains unit_names to remove and a calback.
+      @param {Object} data Contains unit_names to remove and a calback.
     */
     performOp_remove_units: function(data) {
       var res = this.get('state').removeUnits(data.unit_names);
