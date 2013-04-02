@@ -43,6 +43,21 @@ YUI.add('juju-charm-models', function(Y) {
       }
     }
   };
+  /**
+   * Helper to use a setter so that we can set null when the api returns an
+   * empty object.
+   *
+   * @method unsetIfNoValue
+   * @param {Object} val the Object to check if it's empty.
+   *
+   */
+  var unsetIfNoValue = function(val) {
+    if (Y.Object.keys(val).length === 0) {
+      return null;
+    } else {
+      return val;
+    }
+  };
 
   /**
    * Charms, once instantiated and loaded with data from their respective
@@ -297,6 +312,9 @@ YUI.add('juju-charm-models', function(Y) {
    *
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
+
+
+
     /**
      * Initializer
      *
@@ -385,13 +403,7 @@ YUI.add('juju-charm-models', function(Y) {
        *
        */
       options: {
-        setter: function(val) {
-          if (Y.Object.keys(val).length === 0) {
-            return null;
-          } else {
-            return val;
-          }
-        }
+        setter: unsetIfNoValue
       },
       owner: {},
       peers: {},
@@ -402,7 +414,9 @@ YUI.add('juju-charm-models', function(Y) {
       recent_downloads: {},
       recent_commits: {},
       relations: {},
-      requires: {},
+      requires: {
+        setter: unsetIfNoValue
+      },
       revision: {
         /**
          * Parse the revision number out of a string.
