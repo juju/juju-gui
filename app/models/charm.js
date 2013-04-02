@@ -318,7 +318,7 @@ YUI.add('juju-charm-models', function(Y) {
         });
         return handlebarsFriendly;
       } else {
-        return options;
+        return undefined;
       }
     }
   } , {

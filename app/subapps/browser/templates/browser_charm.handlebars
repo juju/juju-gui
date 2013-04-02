@@ -58,11 +58,11 @@
             <div id="bws_configuration">
                 {{#if config}}
                   <dl>
-                  {{#each config}}
+                  {{#config}}
                       <dt><dfn>{{name}}</dfn> <em>({{type}})</em>
                       <dd>{{description}}</dd>
                       <dd>Default: {{default}}</dd>
-                  {{/each}}
+                  {{/config}}
                   </dl>
                 {{else}}
                   <p>This charm does not expose any configuration options.</p>
