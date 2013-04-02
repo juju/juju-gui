@@ -165,7 +165,6 @@ YUI.add('juju-env-python', function(Y) {
       this._send_rpc({
         'op': 'remove_units',
         'unit_names': unit_names}, callback, true);
-
     },
 
     /**

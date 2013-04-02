@@ -416,11 +416,32 @@ YUI.add('juju-env-fakebackend', function(Y) {
         }
       }
       return machines;
-    } // ,
+    },
 
-    // removeUnit: function() {
+    /**
+      Removes the supplied units
 
-    // },
+      @method removeUnits
+      @param {Array} unitNames a list of unit names to be removed.
+    */
+    removeUnits: function(unitNames) {
+      var removedUnit, error;
+
+      Y.Array.some(unitNames, function(unitName) {
+        removedUnit = this.db.units.some(function(unit, index) {
+          if (unit.displayName === unitName) {
+            this.db.units.remove(index);
+            return true;
+          }
+        }, this);
+        if (!removedUnit) {
+          error = {error: unitName + ' does not exist, could not remove.'};
+          return false;
+        }
+      }, this);
+
+      return error || true;
+    }
 
     // getEndpoints: function() {
 

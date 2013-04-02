@@ -160,7 +160,7 @@
 
   });
 
-  describe('sandbox.PyJujuAPI', function() {
+  describe.only('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models'];
@@ -191,6 +191,37 @@
       juju.destroy();
       state.destroy();
     });
+
+    /**
+      Generates the services required for some tests. After the services have
+      been generated it will call the function assigned to the describe closure
+      global property generateServicesCallback.
+
+      This interacts directly with the fakebackend bypassing the environment
+      and should be considered valid if "can add additional units" test passes.
+
+      @method generateServices
+      @param {Function} callback The callback to call after the services have
+        been generated.
+    */
+    function generateServices(callback) {
+      state.deploy('cs:wordpress', function(service) {
+        var data = {
+          op: 'add_unit',
+          service_name: 'wordpress',
+          num_units: 2
+        };
+        state.nextChanges();
+        client.onmessage = function() {
+          client.onmessage = function() {
+            // After done generating the services
+            callback();
+          };
+          client.send(Y.JSON.stringify(data));
+        };
+        client.open();
+      });
+    }
 
     it('opens successfully.', function(done) {
       var isAsync = false;
@@ -592,7 +623,44 @@
       env.connect();
     });
 
+    it('can remove units', function(done) {
+      function removeUnits() {
+        var data = {
+          op: 'remove_units',
+          unit_names: ['wordpress/2', 'wordpress/3']
+        };
+        client.onmessage = function(received) {
+          var data = Y.JSON.parse(received.data),
+              mock = {
+                op: 'remove_units',
+                result: true,
+                unit_names: ['wordpress/2', 'wordpress/3']
+              };
+          // No errors
+          assert.equal(data.result, true);
+          // Returned data object contains all information
+          assert.deepEqual(data, mock);
+          done();
+        };
+        client.send(Y.JSON.stringify(data));
+      }
+      // Generate the services base data and then execute the test
+      generateServices(removeUnits);
+    });
 
+    it('can remove units (integration)', function(done) {
+      // Intentional Fail
+      assert.fail();
+      done();
+    });
+
+    it('throws an error when removing units from an invalid service',
+        function(done) {
+          // Intentional Fail.
+          assert.fail();
+          done();
+        }
+    );
 
   });
 
