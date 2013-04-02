@@ -560,7 +560,7 @@ YUI.add('juju-models', function(Y) {
       this.relations.reset();
       this.units.reset();
       this.notifications.reset();
-      // Reset the endpoints map here.
+      this.endpoints_map = {};
     },
 
     on_delta: function(delta_evt) {
