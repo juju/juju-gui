@@ -622,8 +622,8 @@
         Request: 'AddRelation',
         Params: {
           Endpoints: [
-            'mysql:server',
-            'wordpress:db'
+            'mysql',
+            'wordpress'
           ]
         },
         RequestId: 1
@@ -632,23 +632,21 @@
     });
 
     it('successfully adds a relation', function() {
-      var endpoints, endpoint_a, endpoint_b, relId, result;
+      var endpoints, relId, result;
       var jujuEndpoints = {};
       endpointA = ['mysql', {name: 'server'}];
-      endpoint_a = 'mysql:server';
       endpointB = ['wordpress', {name: 'db'}];
-      endpoint_b = 'wordpress:db';
-      relId = 'mysql:server-wordpress:db';
+      relId = 'mysql-wordpress';
       env.add_relation(endpointA, endpointB, function(ev) {
         result = ev.result;
       });
       msg = conn.last_message();
-      jujuEndpoints[endpoint_a] = {
+      jujuEndpoints.mysql = {
         Name: 'server',
         Interface: 'mysql',
         Scope: 'global'
       };
-      jujuEndpoints[endpoint_b] = {
+      jujuEndpoints.wordpress = {
         Name: 'db',
         Interface: 'mysql',
         Scope: 'global'

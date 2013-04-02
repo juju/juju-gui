@@ -695,7 +695,10 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'AddRelation',
         Params: {
-          Endpoints: [endpoint_a, endpoint_b]
+          Endpoints: [
+            endpoint_a.split(':')[0],
+            endpoint_b.split(':')[0]
+          ]
         }
       }, intermediateCallback);
     },
@@ -715,22 +718,20 @@ YUI.add('juju-env-go', function(Y) {
     handleAddRelation: function(userCallback, endpoint_a, endpoint_b, data) {
       var result = {};
       var response = data.Response;
-      if (response !== undefined) {
-        var epGuiA = {};
-        var epGuiB = {};
-        var epJujuA = response.Endpoints[endpoint_a];
-        var epJujuB = response.Endpoints[endpoint_b];
-        var svcNameA = endpoint_a.split(':')[0];
-        var svcNameB = endpoint_b.split(':')[0];
-        epGuiA[svcNameA] = {'name': epJujuA.Name};
-        epGuiB[svcNameB] = {'name': epJujuB.Name};
-        result = {
-          'id': endpoint_a + '-' + endpoint_b,
-          // interface and scope should be the same for both endpoints
-          'interface': epJujuA.Interface,
-          'scope': epJujuA.Scope,
-          'endpoints': [epGuiA, epGuiB]
-        };
+      if (response) {
+        var serviceNameA = endpoint_a.split(':')[0];
+        var serviceNameB = endpoint_b.split(':')[0];
+        result.endpoints = [];
+        Y.each([serviceNameA, serviceNameB], function(serviceName) {
+          var jujuEndpoint = response.Endpoints[serviceName];
+          var guiEndpoint = {};
+          guiEndpoint[serviceName] = {'name': jujuEndpoint.Name};
+          result.endpoints.push(guiEndpoint);
+        });
+        result.id = serviceNameA + '-' + serviceNameB;
+        // The interface and scope should be the same for both endpoints.
+        result['interface'] = response.Endpoints[serviceNameA].Interface;
+        result.scope = response.Endpoints[serviceNameA].Scope;
       }
       userCallback({
         request_id: data.RequestId,
