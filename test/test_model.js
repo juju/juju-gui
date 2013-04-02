@@ -540,4 +540,58 @@ describe('juju charm load', function() {
           done();
         });
   });
+
+  it('creates an config attribute from options')
+});
+
+
+describe.only('browser charm', function() {
+  var instance, models;
+
+  before(function(done) {
+    YUI(GlobalConfig).use('juju-models', 'juju-charm-models', function(Y) {
+      models = Y.namespace('juju.models');
+      done();
+    });
+  });
+
+  after(function(done) {
+    instance.destroy();
+    done();
+  });
+
+  it('creates a config attribute from the options', function() {
+    var sample_options = {
+      'client-port': {
+        'default': 9160,
+        'description': 'Port for client communcation',
+        'type': 'int'
+      },
+      'cluster-name': {
+        'default': 'Test Cluster',
+        'description': 'Name of the Cassandra Cluster - do not change yet!',
+        'type': 'string'
+      }
+    };
+
+    instance = new models.BrowserCharm({
+      id: 'precise/cassandra-1',
+      options: sample_options
+    });
+
+    var config = instance.get('config');
+    config[0].name.should.eql('client-port');
+    config[0].default.should.eql(9160);
+    config[0].type.should.eql('int');
+    config[1].name.should.eql('cluster-name');
+  });
+
+  it('config should be undefined if there are no options from the api.', function() {
+    instance = new models.BrowserCharm({
+      id: 'precise/cassandra-1',
+    });
+
+    assert(instance.get('config') === undefined);
+  });
+
 });
