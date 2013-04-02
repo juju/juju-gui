@@ -276,8 +276,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     render: function(container) {
-      var tpl = this.template(this.get('charm').getAttrs()),
-          tplNode = Y.Node.create(tpl);
+      var charm = this.get('charm');
+      var tpl = this.template(Y.merge(
+          charm.getAttrs(), {
+            config: charm.getOptionsAsArray()
+          }));
+      var tplNode = Y.Node.create(tpl);
 
       container.setHTML(tplNode);
 

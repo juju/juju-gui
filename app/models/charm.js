@@ -298,7 +298,22 @@ YUI.add('juju-charm-models', function(Y) {
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
 
-  }, {
+    getOptionsAsArray: function() {
+      var options = this.get('options');
+      if (options) {
+        var handlebarsFriendly = [];
+        Y.Object.each(options, function(value, key) {
+          // value is the dict of default, description, type. Add the key as
+          // the name for the template.
+          value.name = key;
+          handlebarsFriendly.push(value);
+        });
+        return handlebarsFriendly;
+      } else {
+        return options;
+      }
+    }
+  } , {
     ATTRS: {
       id: {
         validator: function(val) {
@@ -314,32 +329,6 @@ YUI.add('juju-charm-models', function(Y) {
       },
       charm_store_path: {},
       code_source: {},
-      config: {
-        /**
-         * options are a nested object, however we want to loop through the
-         * options in the template so we must turn the options into a list for
-         * Handlebars to be happy.
-         *
-         * We use a getter since we can't be sure options is set early enough
-         * to use a valueFn.
-         *
-         */
-        getter: function(val) {
-          var options = this.get('options');
-          if (options) {
-            var handlebarsFriendly = [];
-            Y.Object.each(options, function(value, key) {
-              // value is the dict of default, description, type. Add the key as
-              // the name for the template.
-              value.name = key;
-              handlebarsFriendly.push(value);
-            });
-            return handlebarsFriendly;
-          } else {
-            return options;
-          }
-        }
-      },
       date_created: {},
       description: {},
       files: {
@@ -385,6 +374,14 @@ YUI.add('juju-charm-models', function(Y) {
       metadata: {},
       name: {},
       icon: {},
+      /**
+       * options is the parsed YAML object from config.yaml in a charm.
+       *
+       * @attribute options
+       * @default undefined
+       * @type {Object}
+       *
+       */
       options: {},
       owner: {},
       peers: {},

@@ -558,7 +558,7 @@ describe('browser charm', function() {
     done();
   });
 
-  it('creates a config attribute from the options', function() {
+  it('can parse options into an array for access.', function() {
     var sample_options = {
       'client-port': {
         'default': 9160,
@@ -577,7 +577,7 @@ describe('browser charm', function() {
       options: sample_options
     });
 
-    var config = instance.get('config');
+    var config = instance.getOptionsAsArray();
     config[0].name.should.eql('client-port');
     config[0].type.should.eql('int');
     config[1].name.should.eql('cluster-name');
@@ -588,7 +588,7 @@ describe('browser charm', function() {
       id: 'precise/cassandra-1'
     });
 
-    assert(instance.get('config') === undefined);
+    assert(instance.getOptionsAsArray() === undefined);
   });
 
 });
