@@ -320,22 +320,23 @@ YUI.add('juju-charm-models', function(Y) {
          * options in the template so we must turn the options into a list for
          * Handlebars to be happy.
          *
+         * We use a getter since we can't be sure options is set early enough
+         * to use a valueFn.
+         *
          */
         getter: function(val) {
-          debugger;
           var options = this.get('options');
-
           if (options) {
             var handlebarsFriendly = [];
             Y.Object.each(options, function(value, key) {
-                // value is the dict of default, description, type. Add the key as
-                // the name for the template.
-                value.name = key;
-                handlebarsFriendly.push(value);
+              // value is the dict of default, description, type. Add the key as
+              // the name for the template.
+              value.name = key;
+              handlebarsFriendly.push(value);
             });
             return handlebarsFriendly;
           } else {
-              return options;
+            return options;
           }
         }
       },
