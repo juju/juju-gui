@@ -455,7 +455,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * On database changes, update the endpoints map and update the view.
+     * On database changes update the view.
      *
      * @method on_database_changed
      */

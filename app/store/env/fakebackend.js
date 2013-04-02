@@ -422,10 +422,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     // },
 
-    // getEndpoints: function() {
-
-    // },
-
     // updateAnnotations: function() {
 
     // },
