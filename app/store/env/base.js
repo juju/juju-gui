@@ -28,70 +28,70 @@ YUI.add('juju-env-base', function(Y) {
     The websocket URL to connect to.
 
     @attribute socket_url
-    @type string
+    @type {string}
     **/
     'socket_url': {},
     /**
     The connection object.
 
     @attribute conn
-    @type object
+    @type {object}
     **/
     'conn': {},
     /**
     The username used to connect.
 
     @attribute user
-    @type string
+    @type {string}
     **/
     'user': {},
     /**
     The password used to connect.
 
     @attribute password
-    @type string
+    @type {string}
     **/
     'password': {},
     /**
     Whether or not the connection is open.
 
     @attribute connected
-    @type boolean
+    @type {boolean}
     **/
     'connected': {value: false},
     /**
     Whether or not to run in debug mode.
 
     @attribute debug
-    @type boolean
+    @type {boolean}
     **/
     'debug': {value: false},
     /**
     Whether or not to run in read-only mode
 
     @attribute readOnly
-    @type boolean
+    @type {boolean}
     **/
     'readOnly': {value: false},
     /**
     The default series (e.g.: precise) as provided by juju.
 
     @attribute defaultSeries
-    @type string
+    @type {string}
     **/
     'defaultSeries': {},
     /**
     The provider type (e.g.: ec2) as provided by juju.
 
     @attribute providerType
-    @type string
+    @type {string}
     **/
     'providerType': {},
     /**
     The environment name as provided by juju.
 
     @attribute environmentName
-    @type string
+    @type {string}
     **/
     'environmentName': {}
   };

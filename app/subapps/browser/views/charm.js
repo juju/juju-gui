@@ -14,7 +14,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
    * @extends {Y.View}
    *
    */
-  ns.BrowserCharmView = Y.Base.create('browser-view-charmview', Y.View, [], {
+  ns.BrowserCharmView = Y.Base.create('browser-view-charmview', Y.View, [
+    widgets.browser.IndicatorManager], {
+
     template: views.Templates.browser_charm,
 
     /**
@@ -153,24 +155,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (this.tabview) {
         this.tabview.destroy();
       }
-
-      Y.Object.each(this._indicators, function(ind, key) {
-        ind.destroy();
-      });
-    },
-
-    /**
-     * Helper to make sure we can hide an indicator correctly.
-     *
-     * @method hideIndicator
-     * @param {Node} node the container the indicator is currently over.
-     *
-     */
-    hideIndicator: function(node) {
-      var id = node._yuid;
-      if (this.indicators[id]) {
-        this.indicators[id].success();
-      }
     },
 
     /**
@@ -220,32 +204,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this._noReadme(tplNode.one('#bws_readme'));
       }
-    },
-
-    /**
-     * Show/setBusy an indicator for a given node. If an indicator is already
-     * attached then just show it, else create a new indicator instance on the
-     * node.
-     *
-     * @method showIndicator
-     * @param {Node} node the node to cover with the indicator.
-     *
-     */
-    showIndicator: function(node) {
-      var id = node._yuid;
-
-      if (this.indicators[id]) {
-        this.indicators[id].setBusy();
-      } else {
-        this.indicators[id] = new widgets.browser.OverlayIndicator({
-          target: node
-        });
-
-        this.indicators[id].render();
-        this.indicators[id].setBusy();
-      }
     }
-
   }, {
     ATTRS: {
       /**
