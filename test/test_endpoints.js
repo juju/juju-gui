@@ -248,6 +248,4 @@ describe('Endpoints map', function() {
       provides: []}});
   });
 
-  it('should ', function() {
-  });
 });
