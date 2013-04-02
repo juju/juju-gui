@@ -32,21 +32,6 @@ YUI.add('browser-charm-token', function(Y) {
     },
 
     /**
-     * Gets all the attributes for the template. Providers need to be altered
-     * to work with handlebars.
-     *
-     * @method _getTemplateAttrs
-     */
-    _getTemplateAttrs: function(data) {
-      var providers = [];
-      Y.Array.each(data.tested_providers, function(provider) {
-        providers.push({'name': provider});
-      });
-      data.tested_providers = providers;
-      return data;
-    },
-
-    /**
      * Detach listeners for DOM events.
      *
      * @method _unbindEvents
@@ -83,7 +68,7 @@ YUI.add('browser-charm-token', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
-      var content = this.TEMPLATE(this._getTemplateAttrs(this.getAttrs()));
+      var content = this.TEMPLATE(this.getAttrs());
       this.get('contentBox').setHTML(content);
     }
 
@@ -97,20 +82,6 @@ YUI.add('browser-charm-token', function(Y) {
       description: {
         value: ''
       },
-
-      /**
-       * @attribute recent_commits
-       * @default undefined
-       * @type {Number}
-       */
-      recent_commits: {},
-
-      /**
-       * @attribute recent_downloads
-       * @default undefined
-       * @type {Number}
-       */
-      recent_downloads: {},
 
       /**
        * @attribute icon
@@ -131,13 +102,18 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
-       * @attribute tested_providers
-       * @default []
-       * @type {Array}
+       * @attribute recent_commits
+       * @default undefined
+       * @type {Number}
        */
-      tested_providers: {
-        value: []
-      }
+      recent_commits: {},
+
+      /**
+       * @attribute recent_downloads
+       * @default undefined
+       * @type {Number}
+       */
+      recent_downloads: {}
     }
   });
 

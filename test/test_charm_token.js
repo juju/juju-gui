@@ -1,7 +1,7 @@
 'use strict';
 
 
-describe('charm token', function() {
+describe.only('charm token', function() {
   var charm_container, Y;
 
   before(function(done) {
@@ -25,35 +25,19 @@ describe('charm token', function() {
     assert.isObject(charm);
   });
 
-  it('has the right metadata', function() {
+  it('renders with correct metadata', function() {
     var cfg = {
       name: 'some-charm',
       description: 'some description',
-      recent_commits: 1,
-      recent_downloads: 1,
-      tested_providers: ['ec2']
-    };
-    var charm = new Y.juju.widgets.browser.CharmToken(cfg),
-        expected = cfg;
-    expected.tested_providers = [{name: 'ec2'}];
-    assert.equal(expected, charm._getTemplateAttrs(charm.getAttrs()));
-
-  });
-
-  it('renders with provider icons', function() {
-    var cfg = {
-      name: 'some-charm',
-      description: 'some description',
-      recent_commits: 1,
-      recent_downloads: 1,
+      recent_commits: 2,
+      recent_downloads: 3,
       tested_providers: ['ec2']
     };
     var charm = new Y.juju.widgets.browser.CharmToken(cfg);
     charm.render(charm_container);
-    var actual_url = Y.one(
-        '.yui3-charmtoken').one('.providers').one('img').get('src');
+    var metadata = Y.one('.metadata');
     assert.equal(
-        actual_url.split('/').slice(3).join('/'),
-        'juju-ui/assets/svgs/provider-ec2.svg');
+        ' Recent activity: 2 commits 3 downloads ',
+        metadata.get('text').replace(/\s+/g, ' '));
   });
 });

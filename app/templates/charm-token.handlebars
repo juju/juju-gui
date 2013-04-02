@@ -3,20 +3,13 @@
   <h3 class="title">
     <a href="/bws/fullscreen/{{ id }}">{{ name }}</a>
   </h3>
-  <ul class="providers">
-    {{#tested_providers }}
-      <li>
-        <img src="/juju-ui/assets/svgs/provider-{{ name }}.svg" />
-      </li>
-    {{/tested_providers }}
-  </ul>
   <div class="metadata">
-    Activity (30 days)
-    <span class="downloads">
-      <span class="up">&uarr;</span> {{ recent_downloads }}
-    </span>
+    Recent activity: 
     <span class="commits">
-      <span class="down">&darr;</span> {{ recent_commits }} 
+      {{ recent_commits }} commits
+    </span>
+    <span class="downloads">
+      {{ recent_downloads }} downloads
     </span>
   </div>
   <p class="description">{{ description }}</p>
