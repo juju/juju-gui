@@ -180,6 +180,74 @@ describe('Endpoints map', function() {
     }});
   });
 
+  it('should add a service to the map, requires only', function() {
+    models.endpoints_map = {};
+    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
+    charm.set('requires', {
+      db: {
+        'interface': 'mysql',
+        optional: 'false'
+      },
+      cache: {
+        'interface': 'varnish',
+        optional: 'true'
+      }
+    });
+    models.addServiceToEndpointsMap('wordpress', charm);
+    models.endpoints_map.should.eql({wordpress: {
+      provides: [],
+      requires: [
+        {
+          name: 'db',
+          'interface': 'mysql',
+          optional: 'false'
+        }, {
+          name: 'cache',
+          'interface': 'varnish',
+          optional: 'true'
+        }
+      ]
+    }});
+  });
+
+  it('should add a service to the map, provides only', function() {
+    models.endpoints_map = {};
+    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
+    charm.set('provides', {
+      url: {
+        'interface': 'http',
+        optional: 'false'
+      },
+      'logging-dir': {
+        'interface': 'logging',
+        scope: 'container'
+      }
+    });
+    models.addServiceToEndpointsMap('wordpress', charm);
+    models.endpoints_map.should.eql({wordpress: {
+      requires: [],
+      provides: [
+        {
+          name: 'url',
+          'interface': 'http',
+          optional: 'false'
+        }, {
+          name: 'logging-dir',
+          'interface': 'logging',
+          scope: 'container'
+        }
+      ]    }});
+  });
+
+  it('should add a service to the map, neither provides nor requires', function() {
+    models.endpoints_map = {};
+    var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
+    models.addServiceToEndpointsMap('wordpress', charm);
+    models.endpoints_map.should.eql({wordpress: {
+      requires: [],
+      provides: []}});
+  });
+
   it('should ', function() {
   });
 });
