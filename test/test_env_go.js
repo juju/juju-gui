@@ -186,10 +186,15 @@
       // Assume environmentInfo to be the first request.
       conn.msg({
         RequestId: 1,
-        Response: {DefaultSeries: 'precise', 'ProviderType': 'ec2'}
+        Response: {
+          DefaultSeries: 'precise',
+          'ProviderType': 'ec2',
+          'Name': 'envname'
+        }
       });
       assert.equal('precise', env.get('defaultSeries'));
       assert.equal('ec2', env.get('providerType'));
+      assert.equal('envname', env.get('environmentName'));
     });
 
     it('sends the correct expose message', function() {
@@ -613,8 +618,8 @@
     });
 
     it('sends the correct AddRelation message', function() {
-      endpointA = ['mysql', {name: 'database'}];
-      endpointB = ['wordpress', {name: 'website'}];
+      endpointA = ['mysql', {name: 'server'}];
+      endpointB = ['wordpress', {name: 'db'}];
       env.add_relation(endpointA, endpointB);
       var last_message = conn.last_message();
       var expected = {
@@ -622,8 +627,8 @@
         Request: 'AddRelation',
         Params: {
           Endpoints: [
-            'mysql:database',
-            'wordpress:website'
+            'mysql',
+            'wordpress'
           ]
         },
         RequestId: 1
@@ -632,37 +637,44 @@
     });
 
     it('successfully adds a relation', function() {
-      var endpoints, result;
-      endpointA = ['mysql', {name: 'database'}];
-      endpointB = ['wordpress', {name: 'website'}];
+      var endpoints, relId, result;
+      var jujuEndpoints = {};
+      endpointA = ['mysql', {name: 'server'}];
+      endpointB = ['wordpress', {name: 'db'}];
+      relId = 'mysql-wordpress';
       env.add_relation(endpointA, endpointB, function(ev) {
         result = ev.result;
       });
       msg = conn.last_message();
+      jujuEndpoints.mysql = {
+        Name: 'server',
+        Interface: 'mysql',
+        Scope: 'global'
+      };
+      jujuEndpoints.wordpress = {
+        Name: 'db',
+        Interface: 'mysql',
+        Scope: 'global'
+      };
       conn.msg({
         RequestId: msg.RequestId,
         Response: {
-          Id: 'relation-0',
-          Interface: 'http',
-          Scope: 'global',
-          Endpoints: [
-            {'mysql': {'name': 'database'}},
-            {'wordpress': {'name': 'website'}}
-          ]
+          Id: relId,
+          Endpoints: jujuEndpoints
         }
       });
-      assert.equal(result.id, 'relation-0');
-      assert.equal(result['interface'], 'http');
+      assert.equal(result.id, relId);
+      assert.equal(result['interface'], 'mysql');
       assert.equal(result.scope, 'global');
       endpoints = result.endpoints;
-      assert.deepEqual(endpoints[0], {'mysql': {'name': 'database'}});
-      assert.deepEqual(endpoints[1], {'wordpress': {'name': 'website'}});
+      assert.deepEqual(endpoints[0], {'mysql': {'name': 'server'}});
+      assert.deepEqual(endpoints[1], {'wordpress': {'name': 'db'}});
     });
 
     it('handles failed relation adding', function() {
       var evt;
-      endpointA = ['mysql', {name: 'database'}];
-      endpointB = ['wordpress', {name: 'website'}];
+      endpointA = ['mysql', {name: 'server'}];
+      endpointB = ['wordpress', {name: 'db'}];
       env.add_relation(endpointA, endpointB, function(ev) {
         evt = ev;
       });
@@ -672,8 +684,8 @@
         Error: 'cannot add relation'
       });
       assert.equal(evt.err, 'cannot add relation');
-      assert.equal(evt.endpoint_a, 'mysql:database');
-      assert.equal(evt.endpoint_b, 'wordpress:website');
+      assert.equal(evt.endpoint_a, 'mysql:server');
+      assert.equal(evt.endpoint_b, 'wordpress:db');
     });
 
     it('sends the correct DestroyRelation message', function() {

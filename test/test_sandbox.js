@@ -518,6 +518,82 @@
       client.open();
     });
 
+    it('can add additional units', function(done) {
+      state.deploy('cs:wordpress', function(service) {
+        var data = {
+          op: 'add_unit',
+          service_name: 'wordpress',
+          num_units: 2
+        };
+        //Clear out the delta stream
+        state.nextChanges();
+        client.onmessage = function() {
+          client.onmessage = function(received) {
+            var units = state.db.units.get_units_for_service(service.service),
+                data = Y.JSON.parse(received.data),
+                mock = {
+                  num_units: 2,
+                  service_name: 'wordpress',
+                  op: 'add_unit',
+                  result: ['wordpress/2', 'wordpress/3']
+                };
+            // Do we have enough total units?
+            assert.lengthOf(units, 3);
+            // Does the response object contain the proper data
+            assert.deepEqual(data, mock);
+            // Error is undefined
+            assert.isUndefined(data.err);
+            done();
+          };
+          client.send(Y.JSON.stringify(data));
+        };
+        client.open();
+      });
+    });
+
+    it('throws an error when adding units to an invalid service',
+        function(done) {
+          state.deploy('cs:wordpress', function(service) {
+            var data = {
+              op: 'add_unit',
+              service_name: 'noservice',
+              num_units: 2
+            };
+            //Clear out the delta stream
+            state.nextChanges();
+            client.onmessage = function() {
+              client.onmessage = function(received) {
+                var data = Y.JSON.parse(received.data);
+
+                // If there is no error data.err will be undefined
+                assert.equal(true, !!data.err);
+                done();
+              };
+              client.send(Y.JSON.stringify(data));
+            };
+            client.open();
+          });
+        }
+    );
+
+    it('can add additional units (integration)', function(done) {
+      env.after('defaultSeriesChange', function() {
+        var callback = function(result) {
+          env.add_unit('kumquat', 2, function(data) {
+            var service = state.db.services.getById('kumquat');
+            var units = state.db.units.get_units_for_service(service);
+            assert.lengthOf(units, 3);
+            done();
+          });
+        };
+        env.deploy(
+            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, callback);
+      });
+      env.connect();
+    });
+
+
+
   });
 
 })();

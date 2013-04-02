@@ -46,16 +46,28 @@
 
     <div class="tabs">
         <ul>
-            <li><a href="#bws_readme">Readme</a></li>
-            <li><a href="#bws_interfaces">Interfaces</a></li>
-            <li><a href="#bws_configuration">Configuration</a></li>
-            <li><a href="#bws_qa">Quality</a></li>
-            <li><a href="#bws_hooks">Hooks</a></li>
+            <li><a href="#bws_readme" class="bws_readme">Readme</a></li>
+            <li><a href="#bws_interfaces" class="bws_interfaces">Interfaces</a></li>
+            <li><a href="#bws_configuration" class="bws_configuration">Configuration</a></li>
+            <li><a href="#bws_qa" class="bws_qa">Quality</a></li>
+            <li><a href="#bws_hooks" class="bws_hooks">Hooks</a></li>
         </ul>
         <div>
             <div id="bws_readme">Readme</div>
             <div id="bws_interfaces">Interfaces</div>
-            <div id="bws_configuration">Configuration</div>
+            <div id="bws_configuration">
+                {{#if config}}
+                  <dl>
+                  {{#config}}
+                      <dt><dfn>{{name}}</dfn> <em>({{type}})</em>
+                      <dd>{{description}}</dd>
+                      <dd>Default: {{default}}</dd>
+                  {{/config}}
+                  </dl>
+                {{else}}
+                  <p>This charm does not expose any configuration options.</p>
+                {{/if}}
+            </div>
             <div id="bws_qa">Quality</div>
             <div id="bws_hooks">
                 <div class="yui3-g-r">
