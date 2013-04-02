@@ -540,8 +540,6 @@ describe('juju charm load', function() {
           done();
         });
   });
-
-  it('creates an config attribute from options');
 });
 
 
