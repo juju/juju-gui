@@ -585,7 +585,7 @@ describe('browser charm', function() {
     config[1].name.should.eql('cluster-name');
   });
 
-  it('config should be undefined if there are no options from the api.', function() {
+  it('config should be undefined if there are no options.', function() {
     instance = new models.BrowserCharm({
       id: 'precise/cassandra-1'
     });
