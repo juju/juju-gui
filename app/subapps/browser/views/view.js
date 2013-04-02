@@ -185,7 +185,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
 }, '0.1.0', {
   requires: [
     'browser-charm-slider',
-    'browser-charm-small',
+    'browser-charm-token',
     'browser-search-widget',
     'juju-charm-store',
     'juju-models',

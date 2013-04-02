@@ -204,6 +204,28 @@
           '<h1>README Header</h1>');
     });
 
+    it('should display the config data in the config tab', function() {
+      var view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [],
+          id: 'precise/ceph-9',
+          options: {
+            'client-port': {
+              'default': 9160,
+              'description': 'Port for client communcation',
+              'type': 'int'
+            }
+          }
+        })
+      });
+      view.render(node);
+
+      var dds = Y.all('#bws_configuration dd');
+      dds.size().should.eql(2);
+      dds.pop().get('text').should.eql('Default: 9160');
+      dds.pop().get('text').should.eql('Port for client communcation');
+    });
+
     it('_buildQAData properly summerizes the scores', function() {
       var view = new CharmView({
         charm: new models.BrowserCharm({
