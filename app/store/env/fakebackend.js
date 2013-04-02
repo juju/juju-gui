@@ -431,7 +431,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       Y.Array.each(unitNames, function(unitName) {
         service = this.db.services.getById(unitName.split('/')[0]);
-        if (service.get('is_subordinate')) {
+        if (service && service.get('is_subordinate')) {
           error.push(unitName + ' is a subordinate, cannot remove.');
         }
         removedUnit = this.db.units.some(function(unit, index) {

@@ -223,6 +223,27 @@
       });
     }
 
+    /**
+      Same as generateServices but uses the environment integration methods.
+
+      @method generateIntegrationServices
+      @param {Function} callback The callback to call after the services have
+        been generated.
+    */
+    function generateIntegrationServices(callback) {
+      env.after('defaultSeriesChange', function() {
+        var localCb = function(result) {
+          env.add_unit('kumquat', 2, function(data) {
+            // After finished generating integrated services
+            callback();
+          });
+        };
+        env.deploy(
+            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+      });
+      env.connect();
+    }
+
     it('opens successfully.', function(done) {
       var isAsync = false;
       client.onmessage = function(message) {
@@ -629,8 +650,8 @@
           op: 'remove_units',
           unit_names: ['wordpress/2', 'wordpress/3']
         };
-        client.onmessage = function(received) {
-          var data = Y.JSON.parse(received.data),
+        client.onmessage = function(rec) {
+          var data = Y.JSON.parse(rec.data),
               mock = {
                 op: 'remove_units',
                 result: true,
@@ -649,18 +670,56 @@
     });
 
     it('can remove units (integration)', function(done) {
-      // Intentional Fail
-      assert.fail();
-      done();
+      function removeUnits() {
+        var unitNames = ['kumquat/2', 'kumquat/3'];
+        env.remove_units(
+          unitNames, function(data) {
+            assert.equal(data.result, true);
+            assert.deepEqual(data.unit_names, unitNames);
+            done();
+          });
+      }
+      // Generate the services via the integration method then execute the test
+      generateIntegrationServices(removeUnits);
     });
 
-    it('throws an error when removing units from an invalid service',
+    it('allows attempting to remove units from an invalid service',
         function(done) {
-          // Intentional Fail.
-          assert.fail();
-          done();
+          function removeUnit() {
+            var data = {
+              op: 'remove_units',
+              unit_names: ['bar/3']
+            }
+            client.onmessage = function(rec) {
+              var data = Y.JSON.parse(rec.data);
+              assert.equal(data.result, true);
+              done();
+            }
+            client.send(Y.JSON.stringify(data));
+          }
+          // Generate the services base data then execute the test.
+          generateServices(removeUnit);
         }
     );
+
+    it('throws an error if unit is a subordinate', function(done) {
+      function removeUnits() {
+        var data = {
+          op: 'remove_units',
+          unit_names: ['wordpress/2']
+        }
+        client.onmessage = function(rec) {
+          var data = Y.JSON.parse(rec.data);
+          assert.equal(Y.Lang.isArray(data.err), true);
+          assert.equal(data.err.length, 1);
+          done();
+        }
+        state.db.services.getById('wordpress').set('is_subordinate', true);
+        client.send(Y.JSON.stringify(data));
+      }
+      // Generate the services base data then execute the test.
+      generateServices(removeUnits);
+    });
 
   });
 
