@@ -553,7 +553,7 @@ describe('browser charm', function() {
     });
   });
 
-  after(function(done) {
+  afterEach(function(done) {
     instance.destroy();
     done();
   });
