@@ -234,7 +234,9 @@
       view.render(node);
 
       view._loadQAContent = function() {
-        assert(1);
+        // This test is just verifying that we don't timeout. The event fired,
+        // was caught here, and we completed the test run. No assertion to be
+        // found here.
         done();
       };
 
