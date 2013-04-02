@@ -314,6 +314,31 @@ YUI.add('juju-charm-models', function(Y) {
       },
       charm_store_path: {},
       code_source: {},
+      config: {
+        /**
+         * options are a nested object, however we want to loop through the
+         * options in the template so we must turn the options into a list for
+         * Handlebars to be happy.
+         *
+         */
+        getter: function(val) {
+          debugger;
+          var options = this.get('options');
+
+          if (options) {
+            var handlebarsFriendly = [];
+            Y.Object.each(options, function(value, key) {
+                // value is the dict of default, description, type. Add the key as
+                // the name for the template.
+                value.name = key;
+                handlebarsFriendly.push(value);
+            });
+            return handlebarsFriendly;
+          } else {
+              return options;
+          }
+        }
+      },
       date_created: {},
       description: {},
       files: {
@@ -358,8 +383,8 @@ YUI.add('juju-charm-models', function(Y) {
       maintainer: {},
       metadata: {},
       name: {},
-      config: {},
       icon: {},
+      options: {},
       owner: {},
       peers: {},
       proof: {},

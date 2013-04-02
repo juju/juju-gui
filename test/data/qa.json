@@ -1,0 +1,339 @@
+{
+    "_comment": "Comment is added to say this comes from: http://staging.jujucharms.com/api/0/charm/precise/cassandra-2/qa",
+    "result": {
+        "questions": [
+            {
+                "description": "Data Handling", 
+                "name": "data_handling", 
+                "questions": [
+                    {
+                        "description": "Integrate data storage best practices", 
+                        "extended_description": "Backups based on service usage", 
+                        "id": "data_handling_0", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Handle the service's user data", 
+                        "extended_description": "Version control", 
+                        "id": "data_handling_1", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Handle the service's user data", 
+                        "extended_description": "Automated snapshots and backup.", 
+                        "id": "data_handling_2", 
+                        "points": 1
+                    }
+                ]
+            }, 
+            {
+                "description": "Secure", 
+                "name": "secure", 
+                "questions": [
+                    {
+                        "description": "Contain a well tested AppArmor profile", 
+                        "extended_description": "", 
+                        "id": "secure_0", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Conform to security policies of the charm store", 
+                        "extended_description": "Tight access control", 
+                        "id": "secure_1", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Doesn't run as root", 
+                        "extended_description": "", 
+                        "id": "secure_2", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Per instance or service access control", 
+                        "extended_description": "", 
+                        "id": "secure_3", 
+                        "points": 1
+                    }
+                ]
+            }, 
+            {
+                "description": "Reliable", 
+                "name": "reliable", 
+                "questions": [
+                    {
+                        "description": "AWS", 
+                        "extended_description": "", 
+                        "id": "reliable_0", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "HP Cloud", 
+                        "extended_description": "", 
+                        "id": "reliable_1", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "OpenStack", 
+                        "extended_description": "", 
+                        "id": "reliable_2", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "LXC", 
+                        "extended_description": "", 
+                        "id": "reliable_3", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "MAAS", 
+                        "extended_description": "", 
+                        "id": "reliable_4", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Check for integrity from upstream source", 
+                        "extended_description": "", 
+                        "id": "reliable_5", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Fail gracefully if upstream source goes missing", 
+                        "extended_description": "", 
+                        "id": "reliable_6", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Contain a suite of tests with the charm that pass", 
+                        "extended_description": "", 
+                        "id": "reliable_7", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Passes tests from Jenkins on jujucharms.com", 
+                        "extended_description": "", 
+                        "id": "reliable_8", 
+                        "points": 1
+                    }
+                ]
+            }, 
+            {
+                "description": "Scaleable", 
+                "name": "scalable", 
+                "questions": [
+                    {
+                        "description": "Responds to add-unit based on the service's needs", 
+                        "extended_description": "Configuration should not require additional steps to scale horizontally", 
+                        "id": "scalable_0", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Be tested with a real workload, not just a synthetic benchmark", 
+                        "extended_description": "", 
+                        "id": "scalable_1", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "From upstream and existing devops practices for that service", 
+                        "extended_description": "", 
+                        "id": "scalable_2", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Community peer reviewed", 
+                        "extended_description": "", 
+                        "id": "scalable_3", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Have a configure option for most performant configuration if not the default", 
+                        "extended_description": "", 
+                        "id": "scalable_4", 
+                        "points": 1
+                    }
+                ]
+            }, 
+            {
+                "description": "Upstream Friendly", 
+                "name": "upstream", 
+                "questions": [
+                    {
+                        "description": "Follow upstream best practices", 
+                        "extended_description": "Provide an option for a barebones \"pure upstream\" configuration", 
+                        "id": "upstream_0", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Should go lock-step with deployment recommendations", 
+                        "extended_description": "Provide tip-of-trunk testing if feasible", 
+                        "id": "upstream_1", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Fresh charm on release day!", 
+                        "extended_description": "", 
+                        "id": "upstream_2", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Endeavour to be upstream's recommended way to deploy that service in the cloud (website mention or something)", 
+                        "extended_description": "", 
+                        "id": "upstream_3", 
+                        "points": 1
+                    }
+                ]
+            }, 
+            {
+                "description": "Responsive to DevOps Needs", 
+                "name": "responsive", 
+                "questions": [
+                    {
+                        "description": "Allow for easy upgrade via juju upgrade-charm", 
+                        "extended_description": "", 
+                        "id": "responsive_0", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Allow upgrading the service itself.", 
+                        "extended_description": "", 
+                        "id": "responsive_1", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Responsive to user bug reports and concerns", 
+                        "extended_description": "", 
+                        "id": "responsive_2", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Maintainable, easy to read and modify", 
+                        "extended_description": "", 
+                        "id": "responsive_3", 
+                        "points": 1
+                    }
+                ]
+            }, 
+            {
+                "description": "Flexible", 
+                "name": "flexible", 
+                "questions": [
+                    {
+                        "description": "Contain opinionated tuning options", 
+                        "extended_description": "\n                    Examples (depends on the service): \"safe\", \"default\", \"fast\",\n                    \"real fast, not so safe\". Don't expose every configuration,\n                    \"pick that reflect real world usage. Make it so I don't have to read the book.\n                    ", 
+                        "id": "flexible_0", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Use existing interfaces with other charms", 
+                        "extended_description": "Highly relatable", 
+                        "id": "flexible_1", 
+                        "points": 1
+                    }
+                ]
+            }, 
+            {
+                "description": "Easy to Deploy", 
+                "name": "easy_deploy", 
+                "questions": [
+                    {
+                        "description": "README with examples of use for a typical workload", 
+                        "extended_description": "", 
+                        "id": "easy_deploy_0", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "README with examples of use for workloads at scale", 
+                        "extended_description": "", 
+                        "id": "easy_deploy_1", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "README with examples of use recommend best-practice relationships", 
+                        "extended_description": "", 
+                        "id": "easy_deploy_2", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Allow installation from pure upstream source", 
+                        "extended_description": "", 
+                        "id": "easy_deploy_3", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Allow installation from your local source", 
+                        "extended_description": "", 
+                        "id": "easy_deploy_4", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Allow installation from PPA (if available)", 
+                        "extended_description": "", 
+                        "id": "easy_deploy_5", 
+                        "points": 1
+                    }, 
+                    {
+                        "description": "Allow installation from the Ubuntu repository", 
+                        "extended_description": "", 
+                        "id": "easy_deploy_6", 
+                        "points": 1
+                    }
+                ]
+            }
+        ]
+    }, 
+    "scores": {
+        "data_handling": {
+            "data_handling_0": "1", 
+            "data_handling_1": "1", 
+            "data_handling_2": "1"
+        }, 
+        "easy_deploy": {
+            "easy_deploy_0": "0", 
+            "easy_deploy_1": "1", 
+            "easy_deploy_2": "1", 
+            "easy_deploy_3": "0", 
+            "easy_deploy_4": "0", 
+            "easy_deploy_5": "1", 
+            "easy_deploy_6": "1"
+        }, 
+        "flexible": {
+            "flexible_0": "", 
+            "flexible_1": ""
+        }, 
+        "reliable": {
+            "reliable_0": "1", 
+            "reliable_1": "1", 
+            "reliable_2": "0", 
+            "reliable_3": "0", 
+            "reliable_4": "1", 
+            "reliable_5": "", 
+            "reliable_6": "0", 
+            "reliable_7": "0", 
+            "reliable_8": ""
+        }, 
+        "responsive": {
+            "responsive_0": "1", 
+            "responsive_1": "0", 
+            "responsive_2": "0", 
+            "responsive_3": ""
+        }, 
+        "scalable": {
+            "scalable_0": "0", 
+            "scalable_1": "0", 
+            "scalable_2": "0", 
+            "scalable_3": "1", 
+            "scalable_4": "0"
+        }, 
+        "secure": {
+            "secure_0": "0", 
+            "secure_1": "0", 
+            "secure_2": "1", 
+            "secure_3": "0"
+        }, 
+        "upstream": {
+            "upstream_0": "0", 
+            "upstream_1": "0", 
+            "upstream_2": "", 
+            "upstream_3": ""
+        }
+    }
+}

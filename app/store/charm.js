@@ -198,7 +198,7 @@ YUI.add('juju-charm-store', function(Y) {
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
 
-      var res = this._makeRequest(endpoint, callbacks);
+      this._makeRequest(endpoint, callbacks);
     },
 
     /**
@@ -234,6 +234,24 @@ YUI.add('juju-charm-store', function(Y) {
           }
         }
       });
+    },
+
+    /**
+     * Load the QA data for a specific charm.
+     *
+     * @method qa
+     * @param {String} charmID the charm to fetch qa data for.
+     * @param {Object} callbacks the success/failure callbacks to use.
+     * @param {Object} bindScope the scope for 'this' in the callbacks.
+     *
+     */
+    qa: function(charmID, callbacks, bindScope) {
+      var endpoint = 'charm/' + charmID + '/qa';
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+      this._makeRequest(endpoint, callbacks);
     },
 
     /**
@@ -278,7 +296,7 @@ YUI.add('juju-charm-store', function(Y) {
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
 
-      var res = this._makeRequest('sidebar_editorial', callbacks);
+      this._makeRequest('sidebar_editorial', callbacks);
     }
   }, {
     ATTRS: {

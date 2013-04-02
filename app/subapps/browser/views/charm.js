@@ -18,6 +18,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     widgets.browser.IndicatorManager], {
 
     template: views.Templates.browser_charm,
+    qatemplate: views.Templates.browser_qa,
 
     /**
      * List the DOM based events to watch for in the container.
@@ -51,6 +52,73 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+     * The API retuns the questions and the scores. Combine the data into a
+     * single source to make looping in the handlebars templates nicer.
+     *
+     * @method _buildQAData
+     * @param {Object} responseData the qa data from the store.
+     *
+     */
+    _buildQAData: function(responseData) {
+      var questions = responseData.result.questions,
+          scores = responseData.scores,
+          totalAvailable = 0,
+          totalScore = 0;
+
+      Y.Array.each(questions, function(category) {
+        var sum = 0;
+
+        Y.Array.each(category.questions, function(question, idx) {
+          var categoryName = category.name,
+              questionIndex = categoryName + '_' + idx;
+
+          if (scores[categoryName] && scores[categoryName][questionIndex]) {
+            var score = parseInt(scores[categoryName][questionIndex], 10);
+            sum += score;
+            category.questions[idx].score = score;
+          } else {
+            category.questions[idx].score = undefined;
+          }
+        });
+
+        category.score = sum;
+        totalAvailable += category.questions.length;
+        totalScore += sum;
+      });
+
+      return {
+        questions: questions,
+        totalAvailable: totalAvailable,
+        totalScore: totalScore
+      };
+    },
+
+    /**
+     * Watch the tab control for change events and dispatch accordingly.
+     *
+     * @method _bindTabEvents
+     * @param {TabView} tab the tab control to monitor.
+     *
+     */
+    _dispatchTabEvents: function(tab) {
+      this._events.push(tab.after('selectionChange', function(ev) {
+        var tab = ev.newVal.get('content');
+        switch (tab) {
+          // @todo to be added later. Placed in now to make the linter happy
+          // with the switch statement.
+          case 'Interfaces':
+            console.log('not implemented interfaces handler');
+            break;
+          case 'Quality':
+            this._loadQAContent();
+            break;
+          default:
+            break;
+        }
+      }, this));
+    },
+
+    /**
      * Event handler for clicking on a hook filename to load that file.
      *
      * @method _loadHookContent
@@ -63,6 +131,31 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       // Load the file, but make sure we prettify the code.
       this._loadFile(node, filename, true);
+    },
+
+    /**
+     * Load the charm's QA data and fill it into the tab when selected.
+     *
+     * @method _loadQAContent
+     *
+     */
+    _loadQAContent: function() {
+      var node = Y.one('#bws_qa');
+      this.showIndicator(node);
+      // Only load the QA data once.
+      if (!this._qaLoaded) {
+        this.get('store').qa(
+            this.get('charm').get('id'), {
+              'success': function(data) {
+                data = this._buildQAData(data);
+                node.setHTML(this.qatemplate(data));
+                this.hideIndicator(node);
+              },
+              'failure': function(data, request) {
+
+              }
+            }, this);
+      }
     },
 
     /**
@@ -155,6 +248,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (this.tabview) {
         this.tabview.destroy();
       }
+
+      Y.Array.each(this._events, function(ev) {
+        ev.detach();
+      });
     },
 
     /**
@@ -168,6 +265,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // Hold onto references of the indicators used so we can clean them all
       // up. Indicators are keyed on their yuiid so we don't dupe them.
       this.indicators = {};
+      this._events = [];
     },
 
     /**
@@ -178,6 +276,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     render: function(container) {
+      debugger;
       var tpl = this.template(this.get('charm').getAttrs()),
           tplNode = Y.Node.create(tpl);
 
@@ -193,6 +292,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
         srcNode: tplNode.one('.tabs')
       });
       this.tabview.render();
+      this._dispatchTabEvents(this.tabview);
 
       // Start loading the readme so it's ready to go.
       var readme = this._locateReadme();
