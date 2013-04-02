@@ -165,8 +165,6 @@ YUI.add('juju-endpoints', function(Y) {
    */
   var setupCharmOnLoad = function(charm, svcName) {
     charm.on('load', Y.bind(function(svcName, evt) {
-      // var provides = evt.currentTarget.get('provides');
-      // var requires = evt.currentTarget.get('requires');
       addServiceToEndpointsMap(svcName, evt.currentTarget);
     }, null, svcName));
   };
