@@ -4,16 +4,20 @@
     <a href="/bws/fullscreen/{{ id }}">{{ name }}</a>
   </h3>
   <ul class="providers">
-    {{#tested_providers}}
-    <li>
-    <img src="/juju-ui/assets/svgs/provider-{{ name }}.svg" />
-    </li>
-    {{/tested_providers}}
+    {{#tested_providers }}
+      <li>
+        <img src="/juju-ui/assets/svgs/provider-{{ name }}.svg" />
+      </li>
+    {{/tested_providers }}
   </ul>
   <div class="metadata">
     Activity (30 days)
-    <span class="downloads">{{recent_downloads}}</span>
-    <span class="commits">{{recent_commits}}</span>
+    <span class="downloads">
+      <span class="up">&uarr;</span> {{ recent_downloads }}
+    </span>
+    <span class="commits">
+      <span class="down">&darr;</span> {{ recent_commits }} 
+    </span>
   </div>
   <p class="description">{{ description }}</p>
   <button class="hidden">Add</button>

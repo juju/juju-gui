@@ -35,16 +35,20 @@ describe('charm token', function() {
     };
     var charm = new Y.juju.widgets.browser.CharmToken(cfg);
     charm.render(charm_container);
-    var rendered_charm = Y.one('.yui3-charmtoken');
+
+    var rendered_charm = Y.one('.yui3-charmtoken'),
+        downloads = rendered_charm.one('.downloads')._node.childNodes[2],
+        commits = rendered_charm.one('.commits')._node.childNodes[2];
     assert.equal('some-charm', rendered_charm.one('.title a').get('text'));
     assert.equal(
         'some description',
         rendered_charm.one('.description').get('text'));
+    downloads.wholeText.replace(/\s+/g, '');
     assert.equal(
-        '1', rendered_charm.one('.downloads').get('text'),
+        '1', downloads.wholeText.replace(/\s+/g, ''),
         'Wrong number of downloads.');
     assert.equal(
-        '1', rendered_charm.one('.commits').get('text'),
+        '1', commits.wholeText.replace(/\s+/g, ''),
         'Wrong number of commits.');
     var actual_url = rendered_charm.one('.providers').one('img').get('src');
     assert.equal(

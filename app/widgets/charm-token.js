@@ -37,9 +37,8 @@ YUI.add('browser-charm-token', function(Y) {
      *
      * @method _getTemplateAttrs
      */
-    _getTemplateAttrs: function() {
-      var data = this.getAttrs(),
-          providers = [];
+    _getTemplateAttrs: function(data) {
+      var providers = [];
       Y.Array.each(data.tested_providers, function(provider) {
         providers.push({'name': provider});
       });
@@ -84,7 +83,7 @@ YUI.add('browser-charm-token', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
-      var content = this.TEMPLATE(this._getTemplateAttrs());
+      var content = this.TEMPLATE(this._getTemplateAttrs(this.getAttrs()));
       this.get('contentBox').setHTML(content);
     }
 
