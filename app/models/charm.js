@@ -43,6 +43,21 @@ YUI.add('juju-charm-models', function(Y) {
       }
     }
   };
+  /**
+   * Helper to use a setter so that we can set null when the api returns an
+   * empty object.
+   *
+   * @method unsetIfNoValue
+   * @param {Object} val the Object to check if it's empty.
+   *
+   */
+  var unsetIfNoValue = function(val) {
+    if (Y.Object.keys(val).length === 0) {
+      return null;
+    } else {
+      return val;
+    }
+  };
 
   /**
    * Charms, once instantiated and loaded with data from their respective
@@ -298,6 +313,23 @@ YUI.add('juju-charm-models', function(Y) {
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
     /**
+     * Parse the relations ATTR from the api into specific provides/requires
+     * information.
+     *
+     * @method _parseRelations
+     * @param {String} attr the attribute to load from the relations object.
+     *
+     */
+    _parseRelations: function(attr) {
+      var relations = this.get('relations');
+      if (relations && relations[attr]) {
+        return relations[attr];
+      } else {
+        return null;
+      }
+    },
+
+    /**
      * Initializer
      *
      * @method initializer
@@ -312,29 +344,6 @@ YUI.add('juju-charm-models', function(Y) {
         if (cfg.commits_in_last_30_days) {
           this.set('recent_commits', cfg.commits_in_last_30_days);
         }
-      }
-    },
-    /**
-     * Options is an object but we sometimes need an array of objects in order
-     * to loop through them for display. This method is a helper to transform
-     * the options data into a more handlebars friendly format.
-     *
-     * @method getOptionsAsArray
-     *
-     */
-    getOptionsAsArray: function() {
-      var options = this.get('options');
-      if (options) {
-        var handlebarsFriendly = [];
-        Y.Object.each(options, function(value, key) {
-          // value is the dict of default, description, type. Add the key as
-          // the name for the template.
-          value.name = key;
-          handlebarsFriendly.push(value);
-        });
-        return handlebarsFriendly;
-      } else {
-        return undefined;
       }
     }
   }, {
@@ -399,24 +408,71 @@ YUI.add('juju-charm-models', function(Y) {
       name: {},
       icon: {},
       /**
-       * options is the parsed YAML object from config.yaml in a charm.
+       * options is the parsed YAML object from config.yaml in a charm. Do not
+       * set a value if there are no options to be had.
        *
        * @attribute options
        * @default undefined
        * @type {Object}
        *
        */
-      options: {},
+      options: {
+        setter: 'unsetIfNoValue'
+      },
       owner: {},
       peers: {},
       proof: {},
-      provides: {},
+      /**
+       * This attr is a mapper to the relations ATTR in the new API. It's
+       * provided for backwards compatibility with the original Charm model.
+       * This can be removed when Charmworld0 is the one true model used in
+       * all Juju Gui code.
+       *
+       * @attribute provides
+       * @default undefined
+       * @type {Object}
+       *
+       */
+      provides: {
+        /**
+         * provides is a subcomponent of relations in the new api.
+         *
+         * @method provides.getter
+         *
+         */
+        getter: function(value, key) {
+          return this._parseRelations(key);
+        }
+      },
       rating_numerator: {},
       rating_denominator: {},
       recent_downloads: {},
       recent_commits: {},
       relations: {},
-      requires: {},
+
+      /**
+       * This attr is a mapper to the relations ATTR in the new API. It's
+       * provided for backwards compatibility with the original Charm model.
+       *
+       * This can be removed when Charmworld0 is the one true model used in
+       * all Juju Gui code.
+       *
+       * @attribute requires
+       * @default undefined
+       * @type {Object}
+       *
+       */
+      requires: {
+        /**
+         * requires is a subcomponent of relations in the new api.
+         *
+         * @method requires.getter
+         *
+         */
+        getter: function(value, key) {
+          return this._parseRelations(key);
+        }
+      },
       revision: {
         /**
          * Parse the revision number out of a string.

@@ -7,4 +7,36 @@
             display: block;
         }
     }
+    .yui3-tabview-list {
+        border-bottom: 1px solid @bws-border;
+        margin-top: 25px;
+
+        .yui3-tab-label {
+            margin-left: 10px;
+            padding: 7px 15px 9px 15px;
+            .three-image-button-background(
+                "tab_inactive_left.jpg",
+                "tab_inactive_right.jpg",
+                "tab_inactive_centre.jpg"
+                );
+            font-size: 10.5pt;
+            line-height: 10.5pt;
+            text-decoration: none;
+        }
+        .yui3-tab-selected .yui3-tab-label {
+            margin-bottom: -1px;
+            padding-bottom: 10px;
+            .three-image-button-background(
+                "tab_active_left.jpg",
+                "tab_active_right.jpg",
+                "tab_active_centre.jpg"
+                );
+            color: @bws-heading;
+            font-family: @font-family-medium;
+            font-weight: normal;
+        }
+    }
+    .yui3-tab-panel {
+        padding-top: 15px;
+    }
 }
