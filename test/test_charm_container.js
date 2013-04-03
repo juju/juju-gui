@@ -20,10 +20,10 @@ describe('charm container widget', function() {
   });
 
   afterEach(function() {
-    container.remove().destroy(true);
     if (charm_container) {
       charm_container.destroy();
     }
+    container.remove().destroy(true);
   });
 
   it('sets up values according to children and its cutoff', function() {
