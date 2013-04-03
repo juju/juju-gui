@@ -114,4 +114,35 @@ describe('charm container widget', function() {
         'No hidden items after extra items should be hidden.');
     assert.equal('See 1 more', container.one('.expand').get('text'));
   });
+
+  it('handles having no charm tokens', function() {
+    charm_container = new Y.juju.widgets.browser.CharmContainer({name: 'Foo'});
+    charm_container.render(container);
+    var rendered = container.one('.yui3-charmcontainer');
+    assert.equal('Foo', rendered.one('h3').get('text'));
+  });
+
+  it('handles having less charms tokens than its cutoff', function() {
+    charm_container = new Y.juju.widgets.browser.CharmContainer({
+      name: 'Popular',
+      cutoff: 6,
+      children: [{
+        name: 'foo'
+      },{
+        name: 'bar'
+      },{
+        name: 'baz'
+      },{
+        name: 'hob'
+      }]
+    });
+    charm_container.render(container);
+
+    var rendered = container.one('.yui3-charmcontainer');
+    assert.equal('Popular', rendered.one('h3').get('text'));
+    assert.equal(4, container.all('.yui3-charmtoken').size());
+    assert.equal(0, container.all('.yui3-charmtoken-hidden').size());
+    assert.equal(1, charm_container._events.length);
+    assert.isNull(rendered.one('.expand'));
+  });
 });

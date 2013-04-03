@@ -38,6 +38,9 @@ YUI.add('browser-charm-container', function(Y) {
           total = this.size(),
           extra = total - cutoff;
       this.set('extra', extra);
+      if (extra <= 0) {
+        this.set('has_extra', false);
+      }
     },
 
     /**
@@ -89,8 +92,10 @@ YUI.add('browser-charm-container', function(Y) {
      * @method bindUI
      */
     bindUI: function() {
-      var expander = this.get('contentBox').one('.expand');
-      this._events.push(expander.on('click', this._toggleExpand, this));
+      if (this.get('extra') > 0) {
+        var expander = this.get('contentBox').one('.expand');
+        this._events.push(expander.on('click', this._toggleExpand, this));
+      }
     },
 
     /**
@@ -135,7 +140,17 @@ YUI.add('browser-charm-container', function(Y) {
        * @type {Integer}
        */
       cutoff: {
-        value: 3
+        value: 3,
+        /**
+         * Verify the cutoff is non-negative.
+         *
+         * @method validator
+         * @param {Number} val The cutoff value being validated.
+         */
+        validator: function(val) {
+          return (val >= 0);
+        }
+
       },
 
       /**
@@ -153,6 +168,15 @@ YUI.add('browser-charm-container', function(Y) {
        * @type {Integer}
        */
       extra: {},
+
+      /**
+       * @attribute has_extra
+       * @default true
+       * @type {Boolean}
+       */
+      has_extra: {
+        value: true
+      },
 
       /**
        * @attribute name
