@@ -321,12 +321,12 @@ YUI.add('juju-charm-models', function(Y) {
      *
      */
     _parseRelations: function(attr) {
-       var relations = this.get('relations');
-       if (relations && relations[attr]) {
-         return relations[attr];
-       } else {
-         return null;
-       }
+      var relations = this.get('relations');
+      if (relations && relations[attr]) {
+        return relations[attr];
+      } else {
+        return null;
+      }
     },
 
     /**
