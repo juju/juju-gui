@@ -390,21 +390,28 @@ YUI.add('juju-env-sandbox', function(Y) {
       Handles exposing a service request from the client.
 
       @method performOp_expose
-      @param {} data Contains service_name to remove and a callback.
+      @param {Object} data Contains service_name to expose and a callback.
     */
     performOp_expose: function(data) {
       var res = this.get('state').expose(data.service_name);
-        data.err = res.error;
-        data.result = (res.error === undefined);
+
+      data.err = res.error;
+      data.result = (res.error === undefined);
 
       this.get('client').receiveNow(data);
     },
 
     /**
+      Handles unexposing a service request from the client.
+
       @method performOp_unexpose
-      @param {} data
+      @param {Object} data contains service_name to unexpose and a callback.
     */
     performOp_unexpose: function(data) {
+      var res = this.get('state').unexpose(data.service_name);
+
+      data.err = res.error;
+      data.result = (res.error === undefined);
 
       this.get('client').receiveNow(data);
     }
