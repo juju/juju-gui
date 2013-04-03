@@ -559,7 +559,7 @@ YUI.add('juju-env-go', function(Y) {
      *  operation is performed. It will receive an object containing:
      *    err - a string describing the problem (if an error occurred),
      *    service_name - the name of the service,
-     *    results: an object containing all of the configuration data for
+     *    result: an object containing all of the configuration data for
      *      the service.
      * @return {undefined} Sends a message to the server only.
      */
