@@ -184,6 +184,12 @@ YUI.add('juju-delta-handlers', function(Y) {
           kind = tag.split('-')[0],
           modelList = db.getModelListByModelName(kind),
           id = utils.cleanUpEntityTags(tag);
+      if (kind === 'environment') {
+        // For backward compatibility with the legacy delta stream, we must
+        // pass annotations directly to the environment.process_delta method.
+        modelList.process_delta(action, change.Annotations);
+        return;
+      }
       if (kind === 'unit') {
         // Clean up the unit name, e.g. "mysql-42" becomes "mysql/42".
         id = id.replace(/-(\d+)$/, '/$1');
