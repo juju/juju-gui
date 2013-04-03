@@ -511,6 +511,7 @@ YUI.add('juju-charm-models', function(Y) {
   requires: [
     'model',
     'model-list',
-    'juju-charm-id'
+    'juju-charm-id',
+    'juju-view-utils'
   ]
 });
