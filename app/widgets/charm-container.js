@@ -38,9 +38,6 @@ YUI.add('browser-charm-container', function(Y) {
           total = this.size(),
           extra = total - cutoff;
       this.set('extra', extra);
-      if (extra <= 0) {
-        this.set('has_extra', false);
-      }
     },
 
     /**
@@ -92,7 +89,7 @@ YUI.add('browser-charm-container', function(Y) {
      * @method bindUI
      */
     bindUI: function() {
-      if (this.get('extra') > 0) {
+      if (this.get('has_extra')) {
         var expander = this.get('contentBox').one('.expand');
         this._events.push(expander.on('click', this._toggleExpand, this));
       }
@@ -171,11 +168,12 @@ YUI.add('browser-charm-container', function(Y) {
 
       /**
        * @attribute has_extra
-       * @default true
        * @type {Boolean}
        */
       has_extra: {
-        value: true
+        getter: function() {
+          return this.get('extra') > 0;
+        }
       },
 
       /**
