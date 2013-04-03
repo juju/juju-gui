@@ -831,6 +831,17 @@
       var topoGetModelURL = view.topo.get('getModelURL');
       assert.equal('placeholder value', topoGetModelURL());
     });
+
+    it('propagates the endpointsController to the topology', function() {
+      var view = new views.environment({
+        container: container,
+        db: db,
+        endpointsController: 'hidy ho',
+        env: env}).render();
+      var endpointsController = view.topo.get('endpointsController');
+      assert.equal('hidy ho', endpointsController);
+    });
+
   });
 
   describe('view model support infrastructure', function() {

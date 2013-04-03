@@ -505,7 +505,6 @@ YUI.add('juju-gui', function(Y) {
             unit: unit,
             db: this.db,
             env: this.env,
-            endpointsController: this.endpointsController,
             querystring: req.query,
             landscape: this.landscape,
             nsRouter: this.nsRouter });
@@ -552,7 +551,6 @@ YUI.add('juju-gui', function(Y) {
         landscape: this.landscape,
         getModelURL: Y.bind(this.getModelURL, this),
         nsRouter: this.nsRouter,
-        endpointsController: this.endpointsController,
         querystring: req.query
       }, {}, function(view) {
         // If the view contains a method call fitToWindow,
