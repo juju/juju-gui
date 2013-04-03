@@ -1156,12 +1156,12 @@ YUI.add('juju-view-utils', function(Y) {
   Y.Handlebars.registerHelper('arrayObject', function(object, options) {
     var res = '';
     if (object) {
-       Y.Array.each(Y.Object.keys(object), function(key) {
-         res = res + options.fn({
-             key:key,
-             value:object[key]
-         });
-       });
+      Y.Array.each(Y.Object.keys(object), function(key) {
+        res = res + options.fn({
+          key: key,
+          value: object[key]
+        });
+      });
     }
     return res;
   });

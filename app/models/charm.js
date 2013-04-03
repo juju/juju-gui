@@ -418,6 +418,12 @@ YUI.add('juju-charm-models', function(Y) {
        *
        */
       provides: {
+        /**
+         * provides is a subcomponent of relations in the new api.
+         *
+         * @method provides.getter
+         *
+         */
         getter: function() {
           var relations = this.get('relations');
           if (relations.provides) {
@@ -443,6 +449,12 @@ YUI.add('juju-charm-models', function(Y) {
        *
        */
       requires: {
+        /**
+         * requires is a subcomponent of relations in the new api.
+         *
+         * @method requires.getter
+         *
+         */
         getter: function() {
           var relations = this.get('relations');
           if (relations.requires) {
