@@ -274,7 +274,7 @@ describe('Endpoints map', function() {
     controller.endpointsMap.should.eql(testmap);
     controller.reset();
     controller.endpointsMap.should.eql({});
-    });
+  });
 
 });
 
