@@ -1152,6 +1152,20 @@ YUI.add('juju-view-utils', function(Y) {
     return out;
   });
 
+
+  Y.Handlebars.registerHelper('arrayObject', function(object, options) {
+    var res = '';
+    if (object) {
+      Y.Array.each(Y.Object.keys(object), function(key) {
+        res = res + options.fn({
+          key: key,
+          value: object[key]
+        });
+      });
+    }
+    return res;
+  });
+
 }, '0.1.0', {
   requires: ['base-build',
              'handlebars',

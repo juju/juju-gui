@@ -54,15 +54,63 @@
         </ul>
         <div>
             <div id="bws_readme">Readme</div>
-            <div id="bws_interfaces">Interfaces</div>
+            <div id="bws_interfaces">
+                <div class="yui3-g">
+                    <div class="yui3-u-1-3">
+                        <h3>Requires</h3>
+                    </div>
+                    <div class="yui3-u-2-3">
+                        <h3>Related Charms</h3>
+                    </div>
+                    <div class="yui3-u-1 yui3-g">
+                        {{#if requires}}
+                            {{#arrayObject requires}}
+                                <div class="yui3-u-1-3 interface">
+                                    <div>{{value.interface}}</div>
+                                    <div>{{key}}</div>
+                                </div>
+                                <div class="yui3-u-2-3 related">
+                                    ...no related charms yet
+                                </div>
+                            {{/arrayObject}}
+                        {{else}}
+                            <p>This charm does not require any interfaces.</p>
+                        {{/if}}
+                    </div>
+
+                    <div class="yui3-u-1-3">
+                        <h3>Provides</h3>
+                    </div>
+                    <div class="yui3-u-2-3">
+                        <h3>Related Charms</h3>
+                    </div>
+                    <div class="yui3-u-1 yui3-g">
+                        {{#if provides}}
+                            {{#arrayObject provides}}
+                                <div class="yui3-u-1-3 interface">
+                                    <div>{{value.interface}}</div>
+                                    <div>{{key}}</div>
+                                </div>
+                                <div class="yui3-u-2-3 related">
+                                    ...no related charms yet
+                                </div>
+                            {{/arrayObject}}
+                        {{else}}
+                            <p>This charm does not provide any interfaces.</p>
+                        {{/if}}
+
+                    </div>
+                </div>
+
+            </div>
             <div id="bws_configuration">
-                {{#if config}}
+                {{#if options}}
                   <dl>
-                  {{#config}}
-                      <dt><dfn>{{name}}</dfn> <em>({{type}})</em>
-                      <dd>{{description}}</dd>
-                      <dd>Default: {{default}}</dd>
-                  {{/config}}
+                  {{#arrayObject options}}
+                      <dt><dfn>{{key}}</dfn> <em>({{value.type}})</em>
+                      <dd>{{value.description}}</dd>
+                      <dd>Default: {{value.default}}</dd>
+                  {{/arrayObject}}
                   </dl>
                 {{else}}
                   <p>This charm does not expose any configuration options.</p>
