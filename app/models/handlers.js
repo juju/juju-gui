@@ -19,8 +19,8 @@ YUI.add('juju-delta-handlers', function(Y) {
      the environment.
      Each handler must return a sequence of sequences containing:
        - the model or model list to modify (e.g. db.environment, db.services,
-         db.relations, db.units, db.machines, or, in general, an object
-         with a "process_delta" method);
+         db.relations, db.units, db.machines), or, in general, an object
+         with a "process_delta" method;
        - the action ("add", "change" or "remove");
        - the data to be added, changed or removed.
   */
