@@ -90,15 +90,15 @@ YUI.add('juju-endpoints-controller', function(Y) {
         },
 
         /**
-         * Setup on('load') handler for a charm.
+         * Setup once('load') handler for a charm.
          *
-         * @method setupCharmOnLoad
+         * @method setupCharmOnceLoad
          * @param {Object} charm The charm to watch.
          * @param {String} svcName The name of the correpsonding service.
          * @return {undefined} Nothing.
          */
-        setupCharmOnLoad: function(charm, svcName) {
-          charm.on('load', Y.bind(function(svcName, evt) {
+        setupCharmOnceLoad: function(charm, svcName) {
+          charm.once('load', Y.bind(function(svcName, evt) {
             this.addServiceToEndpointsMap(svcName, evt.currentTarget);
           }, null, svcName));
         },
@@ -132,7 +132,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
             if (charm.loaded) {
               this.addServiceToEndpointsMap(svcName, charm);
             } else {
-              this.setupCharmOnLoad(charm, svcName);
+              this.setupCharmOnceLoad(charm, svcName);
             }
           }
         },
@@ -159,7 +159,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
           if (charm.loaded) {
             this.addServiceToEndpointsMap(svcName, charm);
           } else {
-            this.setupCharmOnLoad(charm, svcName);
+            this.setupCharmOnceLoad(charm, svcName);
           }
         },
 
