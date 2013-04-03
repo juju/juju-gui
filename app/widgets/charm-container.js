@@ -3,7 +3,7 @@
 
 /**
  * browser-charm-container provides a container used for categorizing charm
- * small widgets.
+ * tokens.
  *
  * @namespace juju
  * @module widgets
@@ -13,7 +13,7 @@ YUI.add('browser-charm-container', function(Y) {
   var ns = Y.namespace('juju.widgets.browser');
 
   /**
-   * A container for charm small widgets, used to control how many are
+   * A container for charm tokens, used to control how many are
    * displayed and provide categorization.
    *
    * @class CharmContainer
@@ -71,7 +71,7 @@ YUI.add('browser-charm-container', function(Y) {
      * @method _toggleExpand
      */
     _toggleExpand: function(e) {
-      var invisible = this.get('contentBox').one('.yui3-charmsmall-hidden'),
+      var invisible = this.get('contentBox').one('.yui3-charmtoken-hidden'),
           expander = e.currentTarget;
       if (invisible) {
         this._showAll();
@@ -140,11 +140,11 @@ YUI.add('browser-charm-container', function(Y) {
 
       /**
        * @attribute defaultChildType
-       * @default Y.juju.widgets.browser.CharmSmall
+       * @default Y.juju.widgets.browser.CharmToken
        * @type {Function}
        */
       defaultChildType: {
-        value: ns.CharmSmall
+        value: ns.CharmToken
       },
 
       /**
@@ -169,7 +169,7 @@ YUI.add('browser-charm-container', function(Y) {
   requires: [
     'array',
     'base',
-    'browser-charm-small',
+    'browser-charm-token',
     'handlebars',
     'juju-templates',
     'widget',

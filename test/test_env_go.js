@@ -53,6 +53,31 @@
 
   });
 
+  describe('Go Juju Entity Tag cleaner', function() {
+    var cleanUpEntityTags, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
+        cleanUpEntityTags = Y.namespace('juju.environments').cleanUpEntityTags;
+        done();
+      });
+    });
+
+    it('cleans up tags from Go juju', function() {
+      assert.equal('mysql', cleanUpEntityTags('service-mysql'));
+      assert.equal('mysql-0', cleanUpEntityTags('unit-mysql-0'));
+      assert.equal('0', cleanUpEntityTags('machine-0'));
+      assert.equal('aws', cleanUpEntityTags('environment-aws'));
+    });
+
+    it('ignores bad values', function() {
+      var data = ['foo', 'bar-baz', '123'];
+      Y.each(data, function(item) {
+        assert.equal(item, cleanUpEntityTags(item));
+      });
+    });
+  });
+
   describe('Go Juju environment', function() {
     var conn, endpointA, endpointB, env, juju, msg, utils, Y;
 
@@ -186,10 +211,15 @@
       // Assume environmentInfo to be the first request.
       conn.msg({
         RequestId: 1,
-        Response: {DefaultSeries: 'precise', 'ProviderType': 'ec2'}
+        Response: {
+          DefaultSeries: 'precise',
+          'ProviderType': 'ec2',
+          'Name': 'envname'
+        }
       });
       assert.equal('precise', env.get('defaultSeries'));
       assert.equal('ec2', env.get('providerType'));
+      assert.equal('envname', env.get('environmentName'));
     });
 
     it('sends the correct expose message', function() {
@@ -361,7 +391,7 @@
     });
 
     it('sends the correct get_annotations message', function() {
-      env.get_annotations('service-apache');
+      env.get_annotations('apache', 'service');
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -373,7 +403,7 @@
     });
 
     it('sends the correct update_annotations message', function() {
-      env.update_annotations('service-apache', {'mykey': 'myvalue'});
+      env.update_annotations('apache', 'service', {'mykey': 'myvalue'});
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -392,13 +422,13 @@
     it('correctly sends all the annotation values as strings', function() {
       var annotations = {mynumber: 42, mybool: true, mystring: 'string'},
           expected = {mynumber: '42', mybool: 'true', mystring: 'string'};
-      env.update_annotations('service-apache', annotations);
+      env.update_annotations('apache', 'service', annotations);
       var pairs = conn.last_message().Params.Pairs;
       assert.deepEqual(expected, pairs);
     });
 
     it('sends correct multiple update_annotations messages', function() {
-      env.update_annotations('service-apache', {
+      env.update_annotations('apache', 'service', {
         'key1': 'value1',
         'key2': 'value2'
       });
@@ -420,7 +450,7 @@
     });
 
     it('sends the correct remove_annotations message', function() {
-      env.remove_annotations('service-apache', ['key1']);
+      env.remove_annotations('apache', 'service', ['key1']);
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -437,7 +467,7 @@
     });
 
     it('sends the correct remove_annotations message', function() {
-      env.remove_annotations('service-apache', ['key1', 'key2']);
+      env.remove_annotations('apache', 'service', ['key1', 'key2']);
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
@@ -460,7 +490,7 @@
         'key1': 'value1',
         'key2': 'value2'
       };
-      env.get_annotations('service-mysql', function(data) {
+      env.get_annotations('mysql', 'service', function(data) {
         annotations = data.results;
       });
       // Mimic response.
@@ -475,9 +505,10 @@
 
     it('successfully sets annotation', function() {
       var err;
-      env.update_annotations('mysql', {'mykey': 'myvalue'}, function(data) {
-        err = data.err;
-      });
+      env.update_annotations('mysql', 'service', {'mykey': 'myvalue'},
+          function(data) {
+            err = data.err;
+          });
       // Mimic response.
       conn.msg({
         RequestId: 1,
@@ -488,7 +519,7 @@
 
     it('successfully sets annotations', function() {
       var err;
-      env.update_annotations('mysql', {
+      env.update_annotations('mysql', 'service', {
         'key1': 'value1',
         'key2': 'value2'
       }, function(data) {
@@ -504,9 +535,10 @@
 
     it('successfully removes annotations', function() {
       var err;
-      env.remove_annotations('mysql', ['key1', 'key2'], function(data) {
-        err = data.err;
-      });
+      env.remove_annotations('mysql', 'service', ['key1', 'key2'],
+          function(data) {
+            err = data.err;
+          });
       // Mimic response.
       conn.msg({
         RequestId: 1,
@@ -517,7 +549,7 @@
 
     it('correctly handles errors from getting annotations', function() {
       var err;
-      env.get_annotations('service-haproxy', function(data) {
+      env.get_annotations('haproxy', 'service', function(data) {
         err = data.err;
       });
       // Mimic response.
@@ -530,7 +562,7 @@
 
     it('correctly handles errors from setting annotations', function() {
       var err;
-      env.update_annotations('service-haproxy', {
+      env.update_annotations('haproxy', 'service', {
         'key': 'value'
       }, function(data) {
         err = data.err;
@@ -545,7 +577,7 @@
 
     it('correctly handles errors from removing annotations', function() {
       var err;
-      env.remove_annotations('service-haproxy', ['key1', 'key2'],
+      env.remove_annotations('haproxy', 'service', ['key1', 'key2'],
           function(data) {
             err = data.err;
           });

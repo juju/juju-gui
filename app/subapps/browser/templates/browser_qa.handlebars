@@ -1,0 +1,17 @@
+<h3>Quality Rating: {{totalScore}}/{{totalAvailable}}</h3>
+
+<p>This charm has scored {{totalScore}} out of a maximum of {{totalAvailable}} points on the criteria below.</p>
+
+<div class="qa_data">
+    {{#each questions}}
+        <h3>{{description}} <span class="heading_notes">{{score}}/{{questions.length}} points</span></h3>
+
+        <ul>
+            {{#each questions}}
+                <li>
+                    <input type="checkbox" {{#if score}}checked="checked"{{/if}} /> {{description}}
+                </li>
+            {{/each}}
+        </ul>
+    {{/each}}
+</div>

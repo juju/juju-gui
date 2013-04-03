@@ -27,7 +27,7 @@ YUI.add('juju-delta-handlers', function(Y) {
   models.handlers = {
 
     pyDelta: function(db, name, action, changeset) {
-      var modelList = db.getModelListByModelName(name),
+      var modelList = db.getModelListByModelName(name, changeset),
           data;
       if (action === 'add' || action === 'change') {
         data = Object.create(null);

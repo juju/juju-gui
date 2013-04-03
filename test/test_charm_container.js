@@ -7,7 +7,7 @@ describe('charm container widget', function() {
     Y = YUI(GlobalConfig).use([
       'array',
       'browser-charm-container',
-      'browser-charm-small',
+      'browser-charm-token',
       'node-event-simulate'],
     function(Y) {
       done();
@@ -55,14 +55,14 @@ describe('charm container widget', function() {
       }]
     });
     charm_container.render(container);
-    var charms = container.all('.yui3-charmsmall'),
+    var charms = container.all('.yui3-charmtoken'),
         shown_charms = charms.slice(0, 3),
         hidden_charms = charms.slice(3, 4);
     Y.Array.each(shown_charms, function(charm) {
-      assert.isFalse(charm.hasClass('yui3-charmsmall-hidden'));
+      assert.isFalse(charm.hasClass('yui3-charmtoken-hidden'));
     });
     Y.Array.each(hidden_charms, function(charm) {
-      assert.isTrue(charm.hasClass('yui3-charmsmall-hidden'));
+      assert.isTrue(charm.hasClass('yui3-charmtoken-hidden'));
     });
   });
 
@@ -85,6 +85,7 @@ describe('charm container widget', function() {
   });
 
   it('toggle between all or a just few items being shown', function() {
+    var hidden;
     charm_container = new Y.juju.widgets.browser.CharmContainer({
       name: 'Popular',
       children: [{
@@ -98,17 +99,16 @@ describe('charm container widget', function() {
       }]
     });
     charm_container.render(container);
-    var hidden = container.all('.yui3-charmsmall-hidden');
-    assert.equal(1, hidden.size());
+
     container.one('.expand').simulate('click');
-    hidden = container.all('.yui3-charmsmall-hidden');
+    hidden = container.all('.yui3-charmtoken-hidden');
     assert.equal(
         0, hidden.size(),
         'Hidden items after all items should be visible.');
     assert.equal('See less', container.one('.expand').get('text'));
 
     container.one('.expand').simulate('click');
-    hidden = container.all('.yui3-charmsmall-hidden');
+    hidden = container.all('.yui3-charmtoken-hidden');
     assert.equal(
         1, hidden.size(),
         'No hidden items after extra items should be hidden.');

@@ -341,13 +341,6 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handles get_endpoints operations from client.  Called by receive.
-    PLACEHOLDER.  This exists to demo existing functionality.
-    **/
-    performOp_get_endpoints: function(data) {
-    },
-
-    /**
     Handles update_annotations operations from client.  Called by receive.
     PLACEHOLDER.  This exists to demo existing functionality.
     **/
@@ -358,8 +351,8 @@ YUI.add('juju-env-sandbox', function(Y) {
       Handles add unit operations from the client.
 
       @method performOp_add_unit
-      @param {Object} data contains serviceName and numUnits required for adding
-        additional units.
+      @param {Object} data Contains service_name and num_units required for
+        adding additional units.
     */
     performOp_add_unit: function(data) {
       var res = this.get('state').addUnit(data.service_name, data.num_units);
@@ -370,6 +363,25 @@ YUI.add('juju-env-sandbox', function(Y) {
           return unit.id;
         });
       }
+      // respond with the new data or error
+      this.get('client').receiveNow(data);
+    },
+
+    /**
+      Handles the remove unit operations from the client
+
+      @method performOp_remove_unit
+      @param {Object} data Contains unit_names to remove and a calback.
+    */
+    performOp_remove_units: function(data) {
+      var res = this.get('state').removeUnits(data.unit_names);
+      if (res.error.length > 0) {
+        data.err = res.error;
+        data.result = false;
+      } else {
+        data.result = true;
+      }
+
       // respond with the new data or error
       this.get('client').receiveNow(data);
     }
