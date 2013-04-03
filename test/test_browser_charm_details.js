@@ -87,7 +87,7 @@
       });
 
       view.render(node);
-      Y.one('#bws_readme').get('text').should.eql('README content.');
+      Y.one('#bws-readme').get('text').should.eql('README content.');
     });
 
     // EVENTS
@@ -104,7 +104,7 @@
       // Hook up to the callback for the click event.
       view._addCharmEnvironment = function(ev) {
         ev.preventDefault();
-        Y.one('#bws_readme h3').get('text').should.eql('Charm has no README');
+        Y.one('#bws-readme h3').get('text').should.eql('Charm has no README');
         done();
       };
 
@@ -126,7 +126,7 @@
       // Hook up to the callback for the click event.
       view._toggleLog = function(ev) {
         ev.preventDefault();
-        Y.one('#bws_readme h3').get('text').should.eql('Charm has no README');
+        Y.one('#bws-readme h3').get('text').should.eql('Charm has no README');
         done();
       };
 
@@ -200,7 +200,7 @@
       });
 
       view.render(node);
-      Y.one('#bws_readme').get('innerHTML').should.eql(
+      Y.one('#bws-readme').get('innerHTML').should.eql(
           '<h1>README Header</h1>');
     });
 
