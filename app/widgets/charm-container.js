@@ -168,9 +168,14 @@ YUI.add('browser-charm-container', function(Y) {
 
       /**
        * @attribute has_extra
-       * @type {Boolean}
        */
       has_extra: {
+        /**
+         * Check if there are extra charm tokens
+         *
+         * @method getter
+         *
+         */
         getter: function() {
           return this.get('extra') > 0;
         }
