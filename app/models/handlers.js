@@ -182,9 +182,14 @@ YUI.add('juju-delta-handlers', function(Y) {
     annotationInfo: function(db, action, change) {
       var tag = change.Tag,
           kind = tag.split('-')[0],
-          modelList = db.getModelListByModelName(kind);
+          modelList = db.getModelListByModelName(kind),
+          id = utils.cleanUpEntityTags(tag);
+      if (kind === 'unit') {
+        // Clean up the unit name, e.g. "mysql-42" becomes "mysql/42".
+        id = id.replace(/-(\d+)$/, '/$1');
+      }
       var data = {
-        id: utils.cleanUpEntityTags(tag),
+        id: id,
         annotations: change.Annotations
       };
       modelList.process_delta(action, data);

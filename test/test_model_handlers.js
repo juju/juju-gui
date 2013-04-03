@@ -133,6 +133,183 @@
 
     });
 
+
+    describe('serviceInfo handler', function() {
+      var serviceInfo;
+
+      before(function() {
+        serviceInfo = handlers.serviceInfo;
+      });
+
+      it('creates a service in the database', function() {
+        var change = {
+          Name: 'django',
+          CharmURL: 'cs:precise/django-42',
+          Exposed: true
+        };
+        serviceInfo(db, 'add', change);
+        assert.strictEqual(1, db.services.size());
+        // Retrieve the service from the database.
+        var service = db.services.getById('django');
+        assert.strictEqual('cs:precise/django-42', service.get('charm'));
+        assert.isTrue(service.get('exposed'));
+      });
+
+      it('updates a service in the database', function() {
+        db.services.add({
+          id: 'wordpress',
+          charm: 'cs:quantal/wordpress-11',
+          exposed: true
+        });
+        var change = {
+          Name: 'wordpress',
+          CharmURL: 'cs:quantal/wordpress-11',
+          Exposed: false
+        };
+        serviceInfo(db, 'change', change);
+        assert.strictEqual(1, db.services.size());
+        // Retrieve the service from the database.
+        var service = db.services.getById('wordpress');
+        assert.strictEqual('cs:quantal/wordpress-11', service.get('charm'));
+        assert.isFalse(service.get('exposed'));
+      });
+
+    });
+
+
+    describe('relationInfo handler', function() {
+      var relationInfo;
+
+      before(function() {
+        relationInfo = handlers.relationInfo;
+      });
+
+      it('creates a relation in the database', function() {
+        var change = {
+          Key: 'relation-042'
+          // XXX 2013-04-03 frankban: include change.Endpoints.
+        };
+        relationInfo(db, 'add', change);
+        assert.strictEqual(1, db.relations.size());
+        // Retrieve the relation from the database.
+        var relation = db.relations.getById('relation-042');
+        assert.isNotNull(relation);
+      });
+
+    });
+
+
+    describe('machineInfo handler', function() {
+      var machineInfo;
+
+      before(function() {
+        machineInfo = handlers.machineInfo;
+      });
+
+      it('creates a machine in the database', function() {
+        var change = {
+          Id: '1',
+          InstanceId: 'my-machine-instance'
+        };
+        machineInfo(db, 'add', change);
+        assert.strictEqual(1, db.machines.size());
+        // Retrieve the machine from the database.
+        var machine = db.machines.getById('1');
+        assert.strictEqual('my-machine-instance', machine.instance_id);
+      });
+
+      it('updates a machine in the database', function() {
+        db.machines.add({
+          id: '2',
+          instance_id: 'instance-42'
+        });
+        var change = {
+          Id: '2',
+          InstanceId: 'instance-47'
+        };
+        machineInfo(db, 'change', change);
+        assert.strictEqual(1, db.machines.size());
+        // Retrieve the machine from the database.
+        var machine = db.machines.getById('2');
+        assert.strictEqual('instance-47', machine.instance_id);
+      });
+
+    });
+
+
+    describe('annotationInfo handler', function() {
+      var annotationInfo;
+
+      before(function() {
+        annotationInfo = handlers.annotationInfo;
+      });
+
+      it('stores annotations on a service', function() {
+        db.services.add({id: 'django'});
+        var annotations = {'gui-x': '42', 'gui-y': '47'};
+        var change = {
+          Tag: 'service-django',
+          Annotations: annotations
+        };
+        annotationInfo(db, 'add', change);
+        // Retrieve the annotations from the database.
+        var service = db.services.getById('django');
+        assert.deepEqual(annotations, service.get('annotations'));
+      });
+
+      it('stores annotations on a unit', function() {
+        db.units.add({id: 'django/2'});
+        var annotations = {'foo': '42', 'bar': '47'};
+        var change = {
+          Tag: 'unit-django-2',
+          Annotations: annotations
+        };
+        annotationInfo(db, 'add', change);
+        // Retrieve the annotations from the database.
+        var unit = db.units.getById('django/2');
+        assert.deepEqual(annotations, unit.annotations);
+      });
+
+      it('stores annotations on a machine', function() {
+        db.machines.add({id: '1'});
+        var annotations = {'foo': '42', 'bar': '47'};
+        var change = {
+          Tag: 'machine-1',
+          Annotations: annotations
+        };
+        annotationInfo(db, 'add', change);
+        // Retrieve the annotations from the database.
+        var machine = db.machines.getById('1');
+        assert.deepEqual(annotations, machine.annotations);
+      });
+
+      it('stores annotations on the environment', function() {
+        var annotations = {'foo': '42', 'bar': '47'};
+        var change = {
+          Tag: 'environment-foo',
+          Annotations: annotations
+        };
+        annotationInfo(db, 'add', change);
+        // Retrieve the annotations from the database.
+        assert.deepEqual(annotations, db.environment.get('annotations'));
+      });
+
+      it('correctly updates annotations', function() {
+        var initial = {'gui-x': '42'},
+            expected = {'gui-y': '47', 'gui-z': 'Now in 3D!'};
+        db.services.add({id: 'django', annotations: initial});
+        var change = {
+          Tag: 'service-django',
+          Annotations: expected
+        };
+        annotationInfo(db, 'change', change);
+        // Retrieve the annotations from the database.
+        var service = db.services.getById('django');
+        assert.deepEqual(expected, service.get('annotations'));
+      });
+
+    });
+
   });
 
 
