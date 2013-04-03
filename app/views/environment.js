@@ -70,6 +70,7 @@ YUI.add('juju-view-environment', function(Y) {
               landscape: this.get('landscape'),
               getModelURL: this.get('getModelURL'),
               container: container,
+              endpointsController: this.get('endpointsController'),
               nsRouter: this.get('nsRouter')});
             // Bind all the behaviors we need as modules.
             topo.addModule(views.ServiceModule);

@@ -794,16 +794,18 @@
     it('should stop creating a relation if the background is clicked',
         function() {
           var db = new models.Database(),
-              endpointMap = {'service-1': {requires: [], provides: []}},
-              view = new views.environment(
+              endpointsMap = {'service-1': {requires: [], provides: []}};
+          var endpointsController = new Y.Base();
+          endpointsController.endpointsMap = endpointsMap;
+          endpointsController.set('db', db);
+          var view = new views.environment(
               { container: container,
                 db: db,
-                env: env}),
-              service = new models.Service({ id: 'service-1'});
+                endpointsController: endpointsController,
+                env: env});
+          var service = new models.Service({ id: 'service-1'});
 
           db.services.add([service]);
-          // Reset the global endpointsMap after adding the service.
-          models.endpointsMap = endpointMap;
           view.render();
 
           // If the user has clicked on the "Add Relation" menu item...
