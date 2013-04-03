@@ -192,6 +192,58 @@
       state.destroy();
     });
 
+    /**
+      Generates the services required for some tests. After the services have
+      been generated it will call the function assigned to the describe closure
+      global property generateServicesCallback.
+
+      This interacts directly with the fakebackend bypassing the environment
+      and should be considered valid if "can add additional units" test passes.
+
+      @method generateServices
+      @param {Function} callback The callback to call after the services have
+        been generated.
+    */
+    function generateServices(callback) {
+      state.deploy('cs:wordpress', function(service) {
+        var data = {
+          op: 'add_unit',
+          service_name: 'wordpress',
+          num_units: 2
+        };
+        state.nextChanges();
+        client.onmessage = function() {
+          client.onmessage = function() {
+            // After done generating the services
+            callback();
+          };
+          client.send(Y.JSON.stringify(data));
+        };
+        client.open();
+      });
+    }
+
+    /**
+      Same as generateServices but uses the environment integration methods.
+
+      @method generateIntegrationServices
+      @param {Function} callback The callback to call after the services have
+        been generated.
+    */
+    function generateIntegrationServices(callback) {
+      env.after('defaultSeriesChange', function() {
+        var localCb = function(result) {
+          env.add_unit('kumquat', 2, function(data) {
+            // After finished generating integrated services
+            callback();
+          });
+        };
+        env.deploy(
+            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+      });
+      env.connect();
+    }
+
     it('opens successfully.', function(done) {
       var isAsync = false;
       client.onmessage = function(message) {
@@ -592,7 +644,81 @@
       env.connect();
     });
 
+    it('can remove units', function(done) {
+      function removeUnits() {
+        var data = {
+          op: 'remove_units',
+          unit_names: ['wordpress/2', 'wordpress/3']
+        };
+        client.onmessage = function(rec) {
+          var data = Y.JSON.parse(rec.data),
+              mock = {
+                op: 'remove_units',
+                result: true,
+                unit_names: ['wordpress/2', 'wordpress/3']
+              };
+          // No errors
+          assert.equal(data.result, true);
+          // Returned data object contains all information
+          assert.deepEqual(data, mock);
+          done();
+        };
+        client.send(Y.JSON.stringify(data));
+      }
+      // Generate the services base data and then execute the test
+      generateServices(removeUnits);
+    });
 
+    it('can remove units (integration)', function(done) {
+      function removeUnits() {
+        var unitNames = ['kumquat/2', 'kumquat/3'];
+        env.remove_units(unitNames, function(data) {
+          assert.equal(data.result, true);
+          assert.deepEqual(data.unit_names, unitNames);
+          done();
+        });
+      }
+      // Generate the services via the integration method then execute the test
+      generateIntegrationServices(removeUnits);
+    });
+
+    it('allows attempting to remove units from an invalid service',
+        function(done) {
+          function removeUnit() {
+            var data = {
+              op: 'remove_units',
+              unit_names: ['bar/3']
+            };
+            client.onmessage = function(rec) {
+              var data = Y.JSON.parse(rec.data);
+              assert.equal(data.result, true);
+              done();
+            };
+            client.send(Y.JSON.stringify(data));
+          }
+          // Generate the services base data then execute the test.
+          generateServices(removeUnit);
+        }
+    );
+
+    it('throws an error if unit is a subordinate', function(done) {
+      function removeUnits() {
+        var data = {
+          op: 'remove_units',
+          unit_names: ['wordpress/2']
+        };
+        client.onmessage = function(rec) {
+          var data = Y.JSON.parse(rec.data);
+          assert.equal(Y.Lang.isArray(data.err), true);
+          assert.equal(data.err.length, 1);
+          done();
+        };
+        state.db.services.getById('wordpress').set('is_subordinate', true);
+        client.send(Y.JSON.stringify(data));
+      }
+      // Generate the services base data then execute the test.
+      generateServices(removeUnits);
+    });
 
   });
 

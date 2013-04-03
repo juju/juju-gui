@@ -380,7 +380,7 @@ YUI.add('juju-topology-service', function(Y) {
           return;
         }
         topo.get('env').update_annotations(
-            box.id, {'gui-x': box.x, 'gui-y': box.y},
+            box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
             function() {
               box.inDrag = false;
             });

@@ -27,7 +27,7 @@ describe('service module annotations', function() {
         { 'gui-x': 0,
           'gui-y': 0};
     var env = {
-      update_annotations: function(name, data) {
+      update_annotations: function(name, type, data) {
         called = true;
         location['gui-x'] = data['gui-x'];
         location['gui-y'] = data['gui-y'];},

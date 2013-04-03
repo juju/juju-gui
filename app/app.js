@@ -262,7 +262,6 @@ YUI.add('juju-gui', function(Y) {
 
       // Create a client side database to store state.
       this.db = new models.Database();
-      this.serviceEndpoints = {};
 
       // Optional Landscape integration helper.
       this.landscape = new views.Landscape();
@@ -359,6 +358,14 @@ YUI.add('juju-gui', function(Y) {
       this.env.on('delta', this.notifications.generate_notices,
           this.notifications);
 
+      // Handlers for adding and removing services to the service list.
+      this.db.services.after('add', models.serviceAddHandler, this);
+      this.db.services.after('remove', models.serviceRemoveHandler, this);
+      this.db.services.after('*:pendingChange', models.serviceChangeHandler,
+          this);
+      this.db.services.after('*:charmChange', models.serviceChangeHandler,
+          this);
+
       // When the connection resets, reset the db, re-login (a delta will
       // arrive with successful authentication), and redispatch.
       this.env.after('connectedChange', function(ev) {
@@ -451,7 +458,7 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * On database changes, update the endpoints map and update the view.
+     * On database changes update the view.
      *
      * @method on_database_changed
      */
@@ -460,24 +467,6 @@ YUI.add('juju-gui', function(Y) {
 
       var self = this;
       var active = this.get('activeView');
-
-      // Compare endpoints map against db to see if services have been added.
-      var servicesAdded = this.db.services.some(function(service) {
-        return (self.serviceEndpoints[service.get('id')] === undefined);
-      });
-
-      // If there are new services in the DB, pull an updated endpoints map.
-      if (servicesAdded) {
-        this.updateEndpoints();
-      } else {
-        // If any services have been removed, delete them from the map
-        // rather than updating it as a whole.
-        Y.Object.each(this.serviceEndpoints, function(key, value, obj) {
-          if (self.db.services.getById(key) === null) {
-            delete(self.serviceEndpoints[key]);
-          }
-        });
-      }
 
       // Update Landscape annotations.
       this.landscape.update();
@@ -493,27 +482,6 @@ YUI.add('juju-gui', function(Y) {
       } else {
         this.dispatch();
       }
-    },
-
-    /**
-     * When services are added, update the endpoints map.
-     *
-     * @method updateEndpoints
-     */
-    updateEndpoints: function(callback) {
-      var self = this;
-
-      // Defensive code to aid tests. Other systems
-      // do not have to mock enough to get_endpoints below.
-      if (!this.env.get('connected')) {
-        return;
-      }
-      self.env.get_endpoints([], function(evt) {
-        self.serviceEndpoints = evt.result;
-        if (Y.Lang.isFunction(callback)) {
-          callback(self.serviceEndpoints);
-        }
-      });
     },
 
     // Route handlers
@@ -851,13 +819,6 @@ YUI.add('juju-gui', function(Y) {
           options = {
             getModelURL: Y.bind(this.getModelURL, this),
             nsRouter: this.nsRouter,
-            /**
-             * A simple closure so changes to the value are available.
-             *
-             * @method show_environment.options.getServiceEndpoints
-             */
-            getServiceEndpoints: function() {
-              return self.serviceEndpoints;},
             loadService: this.loadService,
             landscape: this.landscape,
             db: this.db,
