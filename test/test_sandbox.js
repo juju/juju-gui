@@ -515,7 +515,7 @@
         });
         done();
       });
-      env.on('delta', db.on_delta, db);
+      env.on('delta', db.onDelta, db);
       env.after('defaultSeriesChange', function() {juju.sendDelta();});
       env.connect();
     });

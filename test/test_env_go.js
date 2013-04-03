@@ -53,31 +53,6 @@
 
   });
 
-  describe('Go Juju Entity Tag cleaner', function() {
-    var cleanUpEntityTags, Y;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
-        cleanUpEntityTags = Y.namespace('juju.environments').cleanUpEntityTags;
-        done();
-      });
-    });
-
-    it('cleans up tags from Go juju', function() {
-      assert.equal('mysql', cleanUpEntityTags('service-mysql'));
-      assert.equal('mysql-0', cleanUpEntityTags('unit-mysql-0'));
-      assert.equal('0', cleanUpEntityTags('machine-0'));
-      assert.equal('aws', cleanUpEntityTags('environment-aws'));
-    });
-
-    it('ignores bad values', function() {
-      var data = ['foo', 'bar-baz', '123'];
-      Y.each(data, function(item) {
-        assert.equal(item, cleanUpEntityTags(item));
-      });
-    });
-  });
-
   describe('Go Juju environment', function() {
     var conn, endpointA, endpointB, env, juju, msg, utils, Y;
 
@@ -999,136 +974,136 @@
 
 })();
 
-(function() {
+// (function() {
 
-  describe('Go Juju environment service entity converter', function() {
-    var environments, Y, converter, entityInfoConverters;
+//   describe('Go Juju environment service entity converter', function() {
+//     var environments, Y, converter, entityInfoConverters;
 
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
-        environments = Y.namespace('juju.environments');
-        converter = environments.entityInfoConverters.service;
-        entityInfoConverters = environments.entityInfoConverters;
-        done();
-      });
-    });
-
-
-    it('exists', function() {
-      assert.isTrue('service' in entityInfoConverters);
-    });
-
-    it('converts "Name" to "id"', function() {
-      var converted = converter({Name: 'service name'});
-      assert.isTrue('id' in converted);
-      assert.equal('service name', converted.id);
-    });
-
-    it('converts "Exposed" to "exposed"', function() {
-      var converted = converter({Exposed: true});
-      assert.isTrue('exposed' in converted);
-      assert.isTrue(converted.exposed);
-    });
-
-  });
-
-})();
-
-(function() {
-
-  describe('Go Juju environment unit entity converter', function() {
-    var environments, Y, converter, entityInfoConverters;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
-        environments = Y.namespace('juju.environments');
-        converter = environments.entityInfoConverters.unit;
-        entityInfoConverters = environments.entityInfoConverters;
-        done();
-      });
-    });
+//     before(function(done) {
+//       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+//         environments = Y.namespace('juju.environments');
+//         converter = environments.entityInfoConverters.service;
+//         entityInfoConverters = environments.entityInfoConverters;
+//         done();
+//       });
+//     });
 
 
-    it('exists', function() {
-      assert.isTrue('unit' in entityInfoConverters);
-    });
+//     it('exists', function() {
+//       assert.isTrue('service' in entityInfoConverters);
+//     });
 
-    it('converts "Name" to "id"', function() {
-      var converted = converter({Name: 'unit name'});
-      assert.isTrue('id' in converted);
-      assert.equal('unit name', converted.id);
-    });
+//     it('converts "Name" to "id"', function() {
+//       var converted = converter({Name: 'service name'});
+//       assert.isTrue('id' in converted);
+//       assert.equal('service name', converted.id);
+//     });
 
-    it('converts "Service" to "service"', function() {
-      var converted = converter({Service: 'a service'});
-      assert.isTrue('service' in converted);
-      assert.equal('a service', converted.service);
-    });
+//     it('converts "Exposed" to "exposed"', function() {
+//       var converted = converter({Exposed: true});
+//       assert.isTrue('exposed' in converted);
+//       assert.isTrue(converted.exposed);
+//     });
 
-  });
+//   });
 
-})();
+// })();
 
-(function() {
+// (function() {
 
-  describe('Go Juju environment relation entity converter', function() {
-    var environments, Y, converter, entityInfoConverters;
+//   describe('Go Juju environment unit entity converter', function() {
+//     var environments, Y, converter, entityInfoConverters;
 
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
-        environments = Y.namespace('juju.environments');
-        converter = environments.entityInfoConverters.relation;
-        entityInfoConverters = environments.entityInfoConverters;
-        done();
-      });
-    });
-
-
-    it('exists', function() {
-      assert.isTrue('relation' in entityInfoConverters);
-    });
-
-    it('converts "Name" to "id"', function() {
-      var converted = converter({Key: 'relation name'});
-      assert.isTrue('id' in converted);
-      assert.equal('relation name', converted.id);
-    });
-
-  });
-
-})();
-
-(function() {
-
-  describe('Go Juju environment machine entity converter', function() {
-    var environments, Y, converter, entityInfoConverters;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
-        environments = Y.namespace('juju.environments');
-        converter = environments.entityInfoConverters.machine;
-        entityInfoConverters = environments.entityInfoConverters;
-        done();
-      });
-    });
+//     before(function(done) {
+//       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+//         environments = Y.namespace('juju.environments');
+//         converter = environments.entityInfoConverters.unit;
+//         entityInfoConverters = environments.entityInfoConverters;
+//         done();
+//       });
+//     });
 
 
-    it('exists', function() {
-      assert.isTrue('machine' in entityInfoConverters);
-    });
+//     it('exists', function() {
+//       assert.isTrue('unit' in entityInfoConverters);
+//     });
 
-    it('converts "Id" to "id"', function() {
-      var converted = converter({Id: 'machine ID'});
-      assert.isTrue('id' in converted);
-      assert.equal('machine ID', converted.id);
-    });
+//     it('converts "Name" to "id"', function() {
+//       var converted = converter({Name: 'unit name'});
+//       assert.isTrue('id' in converted);
+//       assert.equal('unit name', converted.id);
+//     });
 
-    it('converts "InstanceId" to "instance_id"', function() {
-      var converted = converter({InstanceId: 'instance ID'});
-      assert.isTrue('instance_id' in converted);
-      assert.equal('instance ID', converted.instance_id);
-    });
+//     it('converts "Service" to "service"', function() {
+//       var converted = converter({Service: 'a service'});
+//       assert.isTrue('service' in converted);
+//       assert.equal('a service', converted.service);
+//     });
 
-  });
+//   });
 
-})();
+// })();
+
+// (function() {
+
+//   describe('Go Juju environment relation entity converter', function() {
+//     var environments, Y, converter, entityInfoConverters;
+
+//     before(function(done) {
+//       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+//         environments = Y.namespace('juju.environments');
+//         converter = environments.entityInfoConverters.relation;
+//         entityInfoConverters = environments.entityInfoConverters;
+//         done();
+//       });
+//     });
+
+
+//     it('exists', function() {
+//       assert.isTrue('relation' in entityInfoConverters);
+//     });
+
+//     it('converts "Name" to "id"', function() {
+//       var converted = converter({Key: 'relation name'});
+//       assert.isTrue('id' in converted);
+//       assert.equal('relation name', converted.id);
+//     });
+
+//   });
+
+// })();
+
+// (function() {
+
+//   describe('Go Juju environment machine entity converter', function() {
+//     var environments, Y, converter, entityInfoConverters;
+
+//     before(function(done) {
+//       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
+//         environments = Y.namespace('juju.environments');
+//         converter = environments.entityInfoConverters.machine;
+//         entityInfoConverters = environments.entityInfoConverters;
+//         done();
+//       });
+//     });
+
+
+//     it('exists', function() {
+//       assert.isTrue('machine' in entityInfoConverters);
+//     });
+
+//     it('converts "Id" to "id"', function() {
+//       var converted = converter({Id: 'machine ID'});
+//       assert.isTrue('id' in converted);
+//       assert.equal('machine ID', converted.id);
+//     });
+
+//     it('converts "InstanceId" to "instance_id"', function() {
+//       var converted = converter({InstanceId: 'instance ID'});
+//       assert.isTrue('instance_id' in converted);
+//       assert.equal('instance ID', converted.instance_id);
+//     });
+
+//   });
+
+// })();

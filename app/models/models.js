@@ -526,7 +526,7 @@ YUI.add('juju-models', function(Y) {
         id = modelList[1];
         modelList = modelList[0];
       }
-      modelList = this.getModelListByModelName(modelList, data);
+      modelList = this.getModelListByModelName(modelList);
       if (!modelList) {
         return undefined;
       }
@@ -534,30 +534,17 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-      Returns a modelList given the model name and some information about
-      the change that is to take place (required only for annotations).
+      Returns a modelList given the model name.
 
       @method getModelListByModelName
       @param {String} modelName The model's name.
-      @param {Object} change An object containing the change information; note
-        that this is only used in the case of modelName being 'annotation'.
       @return {Object} The model list.
     */
-    getModelListByModelName: function(modelName, change) {
+    getModelListByModelName: function(modelName) {
       if (modelName === 'serviceUnit') {
         modelName = 'unit';
-      } else if (modelName === 'annotations') {
+      } else if (modelName === 'annotations' || modelName === 'environment') {
         return this.environment;
-      } else if (modelName === 'annotation') {
-        // This function may be called with change being either an array of
-        // [changeModel, changeType, { Change data }] or just { Change data }.
-        // Take the appropriate action to get the modelName.
-        modelName = Y.Lang.isArray(change) ?
-            change[2].type :
-            change.type;
-        if (modelName === 'environment') {
-          return this.environment;
-        }
       }
       return this[modelName + 's'];
     },
@@ -581,25 +568,31 @@ YUI.add('juju-models', function(Y) {
       this.endpointsMap = {};
     },
 
-    on_delta: function(delta_evt) {
+    /**
+      Handle the delta stream coming from the API backend.
+      Populate the database according to the changeset included in the delta.
+
+      @method onDelta
+      @param {Event} deltaEvent An event object containig the delta changeset
+       (in the "data.result" attribute).
+      @return {undefined} Nothing.
+    */
+    onDelta: function(deltaEvent) {
       var self = this,
-          changeName,
-          changes = delta_evt.data.result,
-          defaultHandler = handlers.pyDelta,
-          handler,
-          results,
-          modelList,
-          action,
-          data;
+          changes = deltaEvent.data.result,
+          defaultHandler = handlers.pyDelta;
+      // Process delta changes invoking handlers for each change in changeset.
       changes.forEach(function(change) {
-        changeName = change[0];
-        handler = handlers[changeName] || defaultHandler;
-        results = handler(self, changeName, change[1], change[2]);
-        results.forEach(function(result) {
-          modelList = result[0], action = result[1], data = result[2];
-          modelList.process_delta(action, data);
-        });
+        var kind = change[0],
+            action = change[1],
+            data = change[2],
+            handler = defaultHandler;
+        if (handlers.hasOwnProperty(kind)) {
+          handler = handlers[kind];
+        }
+        handler(self, action, data, kind);
       });
+      // Update service unit aggregates.
       this.services.each(function(service) {
         self.units.update_service_unit_aggregates(service);
       });

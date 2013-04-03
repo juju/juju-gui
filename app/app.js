@@ -352,7 +352,7 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('login', this.onLogin, this);
 
       // Feed environment changes directly into the database.
-      this.env.on('delta', this.db.on_delta, this.db);
+      this.env.on('delta', this.db.onDelta, this.db);
 
       // Feed delta changes to the notifications system.
       this.env.on('delta', this.notifications.generate_notices,

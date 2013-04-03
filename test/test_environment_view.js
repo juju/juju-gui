@@ -110,7 +110,7 @@
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
       // annotations, its a direct reference).
-      db.on_delta({data: Y.clone(environment_delta)});
+      db.onDelta({data: Y.clone(environment_delta)});
     });
 
     afterEach(function(done) {
@@ -240,14 +240,14 @@
         validateRelationCount(service, relationModule, 1).should.equal(true);
       });
 
-      db.on_delta({ data: addSubordinate });
+      db.onDelta({ data: addSubordinate });
       view.update();
 
       container.all('.subordinate.service').each(function(service) {
         validateRelationCount(service, relationModule, 1).should.equal(true);
       });
 
-      db.on_delta({ data: addRelation });
+      db.onDelta({ data: addRelation });
       view.update();
 
       validateRelationCount(container.one('.subordinate.service'),
@@ -282,7 +282,7 @@
       };
       view.render();
 
-      db.on_delta({ data: tmp_data });
+      db.onDelta({ data: tmp_data });
       view.render();
 
       container.all('.service').each(function(serviceNode) {
@@ -332,7 +332,7 @@
             chartSizedProperly(service.getDOMNode()).should.equal(true);
           });
 
-          db.on_delta({ data: tmp_data });
+          db.onDelta({ data: tmp_data });
 
           container.all('.service').each(function(service) {
             chartSizedProperly(service.getDOMNode()).should.equal(true);
@@ -407,7 +407,7 @@
           });
 
           // Resize the wordpress service.
-          db.on_delta({ data: tmp_data });
+          db.onDelta({ data: tmp_data });
 
           // Ensure that endpoints still match for all services, now that
           // one service has been resized.  This is the real test here.
@@ -454,7 +454,7 @@
           .should.equal(true);
       });
 
-      db.on_delta({ data: tmp_data });
+      db.onDelta({ data: tmp_data });
       view.render();
 
       container.all('.service').each(function(serviceNode) {
@@ -500,7 +500,7 @@
          match[1].should.eql('100');
          match[2].should.eql('200');
 
-         db.on_delta({ data: tmp_data });
+         db.onDelta({ data: tmp_data });
          view.update();
 
          //On annotation change  position should be updated.

@@ -27,7 +27,7 @@ describe('Relation endpoints logic', function() {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       db = new (Y.namespace('juju.models')).Database();
-      db.on_delta({data: {'op': 'delta', result: sample_env}});
+      db.onDelta({data: {'op': 'delta', result: sample_env}});
       done();
     });
   });
