@@ -312,9 +312,6 @@ YUI.add('juju-charm-models', function(Y) {
    *
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
-
-
-
     /**
      * Initializer
      *
@@ -511,7 +508,6 @@ YUI.add('juju-charm-models', function(Y) {
   requires: [
     'model',
     'model-list',
-    'juju-charm-id',
-    'juju-view-utils'
+    'juju-charm-id'
   ]
 });

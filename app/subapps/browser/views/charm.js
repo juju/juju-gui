@@ -337,6 +337,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'gallery-markdown',
     'juju-templates',
     'juju-views',
+    'juju-view-utils',
     'prettify',
     'view'
   ]
