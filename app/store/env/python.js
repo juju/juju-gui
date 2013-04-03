@@ -203,6 +203,19 @@ YUI.add('juju-env-python', function(Y) {
       this._send_rpc({op: 'get_charm', charm_url: charmURL}, callback);
     },
 
+    /**
+       Get the configuration for the given service.
+
+       @method get_service
+       @param {String} service_name The service name.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object containing:
+          err - a string describing the problem (if an error occurred),
+          service_name - the name of the service,
+          result: an object containing all of the configuration data for
+            the service.
+       @return {undefined} Sends a message to the server only.
+     */
     get_service: function(service_name, callback) {
       this._send_rpc(
           {'op': 'get_service', 'service_name': service_name}, callback);
