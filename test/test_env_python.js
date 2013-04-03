@@ -121,6 +121,43 @@
         request_id: msg.request_id});
     });
 
+    it('successfully gets service configuration', function() {
+      var result, service_name;
+      var expected = {
+        'config': {'cfg_key': 'cfg_val'},
+        'constraints': {'cstr_key': 'cstr_val'}
+      };
+      env.get_service('mysql', function(data) {
+        service_name = data.service_name;
+        result = data.result;
+      });
+      msg = conn.last_message();
+      conn.msg({
+        request_id: msg.request_id,
+        service_name: 'mysql',
+        result: expected
+      });
+      assert.equal(service_name, 'mysql');
+      assert.deepEqual(expected, result);
+    });
+
+    it('handles failed get service', function() {
+      var service_name;
+      var err;
+      env.get_service('yoursql', function(data) {
+        service_name = data.service_name;
+        err = data.err;
+      });
+      msg = conn.last_message();
+      conn.msg({
+        request_id: msg.request_id,
+        service_name: 'yoursql',
+        err: 'service "yoursql" not found'
+      });
+      assert.equal(service_name, 'yoursql');
+      assert.equal(err, 'service "yoursql" not found');
+    });
+
     it('successfully adds a relation', function(done) {
       var endpoints, result;
       endpointA = ['mysql', {name: 'database'}];
