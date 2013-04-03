@@ -426,7 +426,7 @@ YUI.add('juju-charm-models', function(Y) {
          */
         getter: function() {
           var relations = this.get('relations');
-          if (relations.provides) {
+          if (relations && relations.provides) {
             return relations.provides;
           } else {
             return null;
@@ -457,7 +457,7 @@ YUI.add('juju-charm-models', function(Y) {
          */
         getter: function() {
           var relations = this.get('relations');
-          if (relations.requires) {
+          if (relations && relations.requires) {
             return relations.requires;
           } else {
             return null;
