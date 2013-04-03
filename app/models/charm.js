@@ -408,14 +408,49 @@ YUI.add('juju-charm-models', function(Y) {
       owner: {},
       peers: {},
       proof: {},
-      provides: {},
+      /**
+       * This attr is a mapper to the relations ATTR in the new API. It's
+       * provided for backwards compatibility with the original Charm model.
+       *
+       * @attribute provides
+       * @default undefined
+       * @type {Object}
+       *
+       */
+      provides: {
+        getter: function() {
+          var relations = this.get('relations');
+          if (relations.provides) {
+            return relations.provides;
+          } else {
+            return null;
+          }
+        }
+      },
       rating_numerator: {},
       rating_denominator: {},
       recent_downloads: {},
       recent_commits: {},
       relations: {},
+
+      /**
+       * This attr is a mapper to the relations ATTR in the new API. It's
+       * provided for backwards compatibility with the original Charm model.
+       *
+       * @attribute requires
+       * @default undefined
+       * @type {Object}
+       *
+       */
       requires: {
-        setter: unsetIfNoValue
+        getter: function() {
+          var relations = this.get('relations');
+          if (relations.requires) {
+            return relations.requires;
+          } else {
+            return null;
+          }
+        }
       },
       revision: {
         /**
