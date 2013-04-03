@@ -160,7 +160,7 @@
 
   });
 
-  describe('sandbox.PyJujuAPI', function() {
+  describe.only('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models'];
@@ -242,6 +242,23 @@
             'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
       });
       env.connect();
+    }
+
+    function generateAndExposeService(callback) {
+      state.deploy('cs:wordpress', function(data) {
+        var command = {
+          op: 'expose',
+          service_name: data.service.get('name')
+        };
+        state.nextChanges();
+        client.onmessage = function() {
+          client.onmessage = function(rec) {
+            callback(rec);
+          };
+          client.send(Y.JSON.stringify(command));
+        };
+        client.open();
+      }, { unitCount: 1 });
     }
 
     it('opens successfully.', function(done) {
@@ -720,6 +737,97 @@
       generateServices(removeUnits);
     });
 
+    it('can expose a service', function(done) {
+      function checkExposedService(rec) {
+        var data = Y.JSON.parse(rec.data),
+            mock = {
+              op: 'expose',
+              result: true,
+              service_name: 'wordpress'
+            };
+        var service = state.db.services.getById(mock.service_name);
+        assert.equal(service.get('exposed'), true);
+        assert.equal(data.result, true);
+        assert.deepEqual(data, mock);
+        done();
+      }
+      generateAndExposeService(checkExposedService);
+    });
+
+    it('can expose a service (integration)', function(done) {
+      env.after('defaultSeriesChange', function() {
+        var localCb = function(result) {
+          env.expose(result.service_name, function(rec) {
+            var service = state.db.services.getById('kumquat');
+            assert.equal(service.get('exposed'), true);
+            assert.equal(rec.result, true);
+            done();
+          });
+        };
+        env.deploy(
+            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+      });
+      env.connect();
+    });
+
+    it('fails silently when exposing an exposed service', function(done) {
+      function checkExposedService(rec) {
+        var data = Y.JSON.parse(rec.data),
+            service = state.db.services.getById(data.service_name),
+            command = {
+              op: 'expose',
+              service_name: data.service_name
+            };
+        state.nextChanges();
+        client.onmessage = function(rec) {
+          assert.equal(data.err, undefined);
+          assert.equal(service.get('exposed'), true);
+          assert.equal(data.result, true);
+          done();
+        };
+        client.send(Y.JSON.stringify(command));
+      }
+      generateAndExposeService(checkExposedService);
+    });
+
+    it('fails with error when exposing an invalid service name',
+        function(done) {
+          state.deploy('cs:wordpress', function(data) {
+            var command = {
+              op: 'expose',
+              service_name: 'foobar'
+            };
+            state.nextChanges();
+            client.onmessage = function() {
+              client.onmessage = function(rec) {
+                var data = Y.JSON.parse(rec.data);
+                assert.equal(data.result, false);
+                assert.equal(data.err, "'foobar' is an invalid service name.");
+                done();
+              };
+              client.send(Y.JSON.stringify(command));
+            };
+            client.open();
+          }, { unitCount: 1 });
+        }
+    );
+
+    it('can unexpose a service', function(done) {
+      assert.fail();
+      done();
+    });
+
+    it('can unexpose a service (integration)', function(done) {
+      assert.fail();
+      done();
+    });
+
+    it('fails with warning when unexposing a not exposed service',
+        function(done) {
+          assert.fail();
+          done();
+        }
+    );
   });
 
 })();

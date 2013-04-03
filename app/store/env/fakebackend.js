@@ -450,6 +450,41 @@ YUI.add('juju-env-fakebackend', function(Y) {
         error: error,
         warning: warning
       };
+    },
+
+    /**
+      Exposes a service from the supplied string
+
+      @method expose
+      @param {String} serviceName The service name.
+    */
+    expose: function(serviceName) {
+      var service = this.db.services.getById(serviceName),
+          warning, error;
+
+      if (service) {
+        if (!service.get('exposed')) {
+          service.set('exposed', true);
+        } else {
+          warning = "Service '" + serviceName + "' was already exposed.";
+        }
+      } else {
+        error = "'" + serviceName + "' is an invalid service name.";
+      }
+
+      return {
+        error: error,
+        warning: warning
+      };
+    },
+
+    /**
+      @method unexpose
+      @param {String} service The service name.
+    */
+    unexpose: function(service) {
+
+      return;
     }
 
     // updateAnnotations: function() {
@@ -469,14 +504,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
     // },
 
     // removeRelation: function() {
-
-    // },
-
-    // expose: function() {
-
-    // },
-
-    // unexpose: function() {
 
     // },
 
