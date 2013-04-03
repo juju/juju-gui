@@ -75,7 +75,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       this.search = new widgets.browser.Search({
         fullscreenTarget: this._fullscreenTarget
       });
-      this.search.render(tplNode.one('.bws-search'));
+      this.search.render(tplNode.one('.bws-header'));
 
       if (typeof container !== 'object') {
         container = this.get('container');

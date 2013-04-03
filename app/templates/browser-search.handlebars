@@ -1,14 +1,19 @@
 <div class="search-container">
-    <div class="bws-icon">Icon</div>
-    <div class=""><a href="">Charm Browser</a></div>
-    <div class="align-right">
+    <a href="" class="bws-icon">
+        <img src="/juju-ui/assets/images/browser_icon.jpg" alt="Browser" />
+    </a>
+    <a href="" class="bws-title">Charm Browser</a>
+    <div class="bws-searchbox">
         <form>
             <input type="search" name="bws_search"
                 value="{{ term }}"
-                placeholder="Search for a charm..."/>
+                placeholder="Search&hellip;"/>
         </form>
     </div>
-    <div class="toggle-fullscreen align-right">
-        <a href="{{ fullscreenTarget }}">-X-</a>
+    <div class="toggle-fullscreen">
+        <a href="{{ fullscreenTarget }}">
+            <img src="/juju-ui/assets/images/browser_minimize.jpg"
+                alt="Minimize" />
+        </a>
     </div>
 </div>
