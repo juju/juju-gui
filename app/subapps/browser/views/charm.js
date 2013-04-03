@@ -298,11 +298,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var readme = this._locateReadme();
 
       if (readme) {
-        this._loadFile(tplNode.one('#bws_readme'),
+        this._loadFile(tplNode.one('#bws-readme'),
                        readme
         );
       } else {
-        this._noReadme(tplNode.one('#bws_readme'));
+        this._noReadme(tplNode.one('#bws-readme'));
       }
     }
   }, {

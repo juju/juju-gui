@@ -32,7 +32,7 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
       this.search = new widgets.browser.Search({
         fullscreenTarget: this._fullscreenTarget
       });
-      this.search.render(node.one('.bws-search'));
+      this.search.render(node.one('.bws-header'));
     },
 
     /**
