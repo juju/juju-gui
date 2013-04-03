@@ -248,19 +248,17 @@ YUI.add('juju-endpoints', function(Y) {
    */
   var flatten = function(meta) {
     var result = [];
+    var rel;
     if (Y.Lang.isValue(meta)) {
-      for (var k in meta) {
-        if (true) { // Avoid lint warning.
-          var rel = {};
-          rel.name = k;
-          for (var j in meta[k]) {
-            if (true) { // Avoid lint warning.
-              rel[j] = meta[k][j];
-            }
-          }
-          result.push(rel);
-        }
-      }
+
+      Y.each(meta, function(vo, ko){
+        rel = {};
+        rel.name = ko;
+        Y.each(vo, function(vi,ki) {
+          rel[ki] = vi;
+        });
+        result.push(rel);
+      });
     }
     return result;
   };
