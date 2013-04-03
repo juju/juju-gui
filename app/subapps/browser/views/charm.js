@@ -277,10 +277,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     render: function(container) {
       var charm = this.get('charm');
-      var tpl = this.template(Y.merge(
-          charm.getAttrs(), {
-            config: charm.getOptionsAsArray()
-          }));
+      var tpl = this.template(charm.getAttrs());
       var tplNode = Y.Node.create(tpl);
 
       container.setHTML(tplNode);
@@ -301,11 +298,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var readme = this._locateReadme();
 
       if (readme) {
-        this._loadFile(tplNode.one('#bws_readme'),
+        this._loadFile(tplNode.one('#bws-readme'),
                        readme
         );
       } else {
-        this._noReadme(tplNode.one('#bws_readme'));
+        this._noReadme(tplNode.one('#bws-readme'));
       }
     }
   }, {
@@ -340,6 +337,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'gallery-markdown',
     'juju-templates',
     'juju-views',
+    'juju-view-utils',
     'prettify',
     'view'
   ]

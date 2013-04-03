@@ -54,6 +54,7 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     _toggleViewable: function(ev) {
+      ev.halt();
       this.fire(this.EVT_TOGGLE_VIEWABLE);
     },
 

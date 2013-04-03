@@ -89,8 +89,10 @@ YUI.add('browser-charm-container', function(Y) {
      * @method bindUI
      */
     bindUI: function() {
-      var expander = this.get('contentBox').one('.expand');
-      this._events.push(expander.on('click', this._toggleExpand, this));
+      if (this.get('has_extra')) {
+        var expander = this.get('contentBox').one('.expand');
+        this._events.push(expander.on('click', this._toggleExpand, this));
+      }
     },
 
     /**
@@ -135,7 +137,17 @@ YUI.add('browser-charm-container', function(Y) {
        * @type {Integer}
        */
       cutoff: {
-        value: 3
+        value: 3,
+        /**
+         * Verify the cutoff is non-negative.
+         *
+         * @method validator
+         * @param {Number} val The cutoff value being validated.
+         */
+        validator: function(val) {
+          return (val >= 0);
+        }
+
       },
 
       /**
@@ -155,6 +167,21 @@ YUI.add('browser-charm-container', function(Y) {
       extra: {},
 
       /**
+       * @attribute has_extra
+       */
+      has_extra: {
+        /**
+         * Check if there are extra charm tokens
+         *
+         * @method getter
+         *
+         */
+        getter: function() {
+          return this.get('extra') > 0;
+        }
+      },
+
+      /**
        * @attribute name
        * @default ''
        * @type {String}
@@ -168,7 +195,7 @@ YUI.add('browser-charm-container', function(Y) {
 }, '0.1.0', {
   requires: [
     'array',
-    'base',
+    'base-build',
     'browser-charm-token',
     'handlebars',
     'juju-templates',
