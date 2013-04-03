@@ -313,6 +313,23 @@ YUI.add('juju-charm-models', function(Y) {
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
     /**
+     * Parse the relations ATTR from the api into specific provides/requires
+     * information.
+     *
+     * @method _parseRelations
+     * @param {String} attr the attribute to load from the relations object.
+     *
+     */
+    _parseRelations: function(attr) {
+       var relations = this.get('relations');
+       if (relations && relations[attr]) {
+         return relations[attr];
+       } else {
+         return null;
+       }
+    },
+
+    /**
      * Initializer
      *
      * @method initializer
@@ -400,7 +417,7 @@ YUI.add('juju-charm-models', function(Y) {
        *
        */
       options: {
-        setter: unsetIfNoValue
+        setter: 'unsetIfNoValue'
       },
       owner: {},
       peers: {},
@@ -408,6 +425,8 @@ YUI.add('juju-charm-models', function(Y) {
       /**
        * This attr is a mapper to the relations ATTR in the new API. It's
        * provided for backwards compatibility with the original Charm model.
+       * This can be removed when Charmworld0 is the one true model used in
+       * all Juju Gui code.
        *
        * @attribute provides
        * @default undefined
@@ -421,13 +440,8 @@ YUI.add('juju-charm-models', function(Y) {
          * @method provides.getter
          *
          */
-        getter: function() {
-          var relations = this.get('relations');
-          if (relations && relations.provides) {
-            return relations.provides;
-          } else {
-            return null;
-          }
+        getter: function(value, key) {
+          return this._parseRelations(key);
         }
       },
       rating_numerator: {},
@@ -439,6 +453,9 @@ YUI.add('juju-charm-models', function(Y) {
       /**
        * This attr is a mapper to the relations ATTR in the new API. It's
        * provided for backwards compatibility with the original Charm model.
+       *
+       * This can be removed when Charmworld0 is the one true model used in
+       * all Juju Gui code.
        *
        * @attribute requires
        * @default undefined
@@ -452,13 +469,8 @@ YUI.add('juju-charm-models', function(Y) {
          * @method requires.getter
          *
          */
-        getter: function() {
-          var relations = this.get('relations');
-          if (relations && relations.requires) {
-            return relations.requires;
-          } else {
-            return null;
-          }
+        getter: function(value, key) {
+          return this._parseRelations(key);
         }
       },
       revision: {
