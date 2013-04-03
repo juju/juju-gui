@@ -1,40 +1,58 @@
 <div class="charm">
     <div class="nav">
-        <a href="">Search Results</a>
-        <a href="">Share</a>
+        <a href="" class="back">Back</a>
         <input class="add" type="button" value="Add" />
+        <a href="" class="share">
+            <img src="/juju-ui/assets/images/share_icon.jpg" alt="Share" />
+        </a>
     </div>
 
-    <div class="heading">
-        <img src="data:image/svg;base64,{{ icon }}" alt="{{ name }} icon">
-        {{ name }}
+    <div class="heading yui3-g">
+        <div class="yui3-u">
+            <img src="data:image/svg;base64,{{ icon }}" alt="{{ name }} icon">
+        </div>
+        <div class="charm-details yui3-u-1-2">
+            <h1>{{ name }}</h1>
+            <div class="providers">
+                <img src="/juju-ui/assets/images/provider_icons/provider-lxc02.svg"
+                    alt="Provider name" />
+                <img src="/juju-ui/assets/images/provider_icons/provider-openstack.svg"
+                    alt="Provider name" />
+                <img src="/juju-ui/assets/images/provider_icons/provider-hp.svg"
+                    alt="Provider name" />
+                <img src="/juju-ui/assets/images/provider_icons/provider-aws.svg"
+                    alt="Provider name" />
+                <img src="/juju-ui/assets/images/provider_icons/provider-maas.svg"
+                    alt="Provider name" />
+            </div>
+            <dl>
+                <dt>Activity (30 days)</dt>
+                <dd>
+                    <img src="/juju-ui/assets/images/charm_downloads_icon.jpg"
+                        alt="Minimize" />
+                    {{ downloads_in_past_30_days }}
+                    <img src="/juju-ui/assets/images/charm_commits_icon.jpg"
+                        alt="Minimize" />
+                    --
+                </dd>
+                <dt>Ubuntu series</dt>
+                <dd>{{ distro_series }}</dd>
+                <dt>Location</dt>
+                <dd>{{ url }}</dd>
+                <dt>Links</dt>
+                <dd>
+                    <a href="#">Source</a>
+                    <a href="{{ code_source.bugs_link }}">Bugs</a>
+                </dd>
+            </dl>
+        </div>
     </div>
 
-    <div class="yui3-g-r">
-        <div class="summary yui3-u-1-2">
-            <h2>Summary</h2>
-            {{ summary }}
-            <h2>Description</h2>
-            {{ description }}
-
-            <div>
-                <a href="#">Source Code</a>
-                <a href="{{ code_source.bugs_link }}">Bugs</a>
-                {{ code_source.location }}
-            </div>
-        </div>
-
-        <div class="metadata yui3-u-1-2">
-            <div>For {{ distro_series }}</div>
-            <div>{{ url }}</div>
-            <div>Tested and passed on providers:
-                <ul>
-                    <li>--</li>
-                </ul>
-            </div>
-            <div><span>{{ downloads_in_past_30_days }}</span> downloads in the
-            last 30 days</div>
-        </div>
+    <div class="summary">
+        <h2>Summary</h2>
+        {{ summary }}
+        <h2>Description</h2>
+        {{ description }}
     </div>
 
     <div class="changelog">
