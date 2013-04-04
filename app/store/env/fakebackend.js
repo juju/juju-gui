@@ -584,6 +584,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       // Merge new constraints in.
       existing = Y.mix(existing, config, true, undefined, 0, true);
+      //TODO: validate the config.
       // Reassign the attr.
       service.set('config', existing);
       // The callback indicates done, we can pass anything back.
@@ -619,6 +620,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
       // Merge new constraints in.
       existing = Y.mix(existing, constraints, true, undefined, 0, true);
+      // TODO: Validate the constraints.
       // Reassign the attr.
       service.set('constraints', existing);
       this.changes.services[service.get('id')] = [service, true];

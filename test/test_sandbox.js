@@ -796,6 +796,48 @@
       });
     });
 
+    it('can set service config', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be alboe to
+        // pull its data.
+        var op = {
+          op: 'set_config',
+          service_name: 'wordpress',
+          config: {'blog-title': 'Inimical'},
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var service = state.db.services.getById('wordpress');
+          assert.equal(service.get('config')['blog-title'], 'Inimical');
+          // Error should be undefined.
+          done(received.error);
+        };
+        client.send(Y.JSON.stringify(op));
+      });
+    });
+
+    it('can set service constraints', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be alboe to
+        // pull its data.
+        var op = {
+          op: 'set_constraints',
+          service_name: 'wordpress',
+          constraints: ['cpu=2', 'mem=128'],
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var service = state.db.services.getById('wordpress');
+          var constraints = service.get('constraints');
+          assert.equal(constraints.cpu, '2');
+          assert.equal(constraints.mem, '128');
+          // Error should be undefined.
+          done(received.error);
+        };
+        client.send(Y.JSON.stringify(op));
+      });
+    });
+
     it('can expose a service', function(done) {
       function checkExposedService(rec) {
         var data = Y.JSON.parse(rec.data),
