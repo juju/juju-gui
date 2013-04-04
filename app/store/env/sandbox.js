@@ -156,46 +156,46 @@ YUI.add('juju-env-sandbox', function(Y) {
 
   sandboxModule.ClientConnection = ClientConnection;
 
-    /** Helper function method for generating operation methods
+  /** Helper function method for generating operation methods
      * with a callback.
     */
-    var ASYNC_OP = function(context, rpcName, args) {
-      return Y.bind(function(data) {
-        var state = this.get('state');
-        var client = this.get('client');
-        var vargs = Y.Array.map(args, function(i) {
-          return data[i];
-        });
-        var callback = function(reply) {
-          if (reply.error) {
-            data.error = reply.error;
-            data.err = reply.error;
-          } else {
-            data.result = reply.result;
-          }
-          client.receiveNow(data);
-        };
-        // Add our generated callback to arguments.
-        vargs.push(callback);
-        state[rpcName].apply(state, vargs);
-      }, context);
-    };
-
-    var OP = function(context, rpcName, args, data) {
-      var state = context.get('state');
-      var client = context.get('client');
+  var ASYNC_OP = function(context, rpcName, args) {
+    return Y.bind(function(data) {
+      var state = this.get('state');
+      var client = this.get('client');
       var vargs = Y.Array.map(args, function(i) {
         return data[i];
       });
-      var reply  = state[rpcName].apply(state, vargs);
-      if (reply.error) {
-        data.error = reply.error;
-        data.err = reply.error;
-      } else {
-        data.result = reply.result;
-      }
-      client.receiveNow(data);
-    };
+      var callback = function(reply) {
+        if (reply.error) {
+          data.error = reply.error;
+          data.err = reply.error;
+        } else {
+          data.result = reply.result;
+        }
+        client.receiveNow(data);
+      };
+      // Add our generated callback to arguments.
+      vargs.push(callback);
+      state[rpcName].apply(state, vargs);
+    }, context);
+  };
+
+  var OP = function(context, rpcName, args, data) {
+    var state = context.get('state');
+    var client = context.get('client');
+    var vargs = Y.Array.map(args, function(i) {
+      return data[i];
+    });
+    var reply = state[rpcName].apply(state, vargs);
+    if (reply.error) {
+      data.error = reply.error;
+      data.err = reply.error;
+    } else {
+      data.result = reply.result;
+    }
+    client.receiveNow(data);
+  };
 
 
   /**
@@ -441,7 +441,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
       // respond with the new data or error
       this.get('client').receiveNow(data);
-  }
+    }
   });
 
   sandboxModule.PyJujuAPI = PyJujuAPI;

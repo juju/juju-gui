@@ -310,7 +310,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     /**
      * @method getService
-     * @param {String} serviceId
+     * @param {String} serviceId to get.
      * @return {Object} Service Attributes..
      */
     getService: function(serviceName) {
@@ -337,7 +337,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     /**
      * @method getCharm
-     * @param {String} charmName
+     * @param {String} charmName to get.
      * @return {Object} charm attrs..
      */
     getCharm: function(charmName, callback) {
@@ -562,7 +562,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (Y.Lang.isArray(data)) {
         Y.Array.each(data, function(i) {
           var kv = i.split('=');
-          kv[1] && (constraints[kv[0]] = kv[1]);
+          if (kv[1]) {
+            constraints[kv[0]] = kv[1];
+          }
         });
       } else if (data) {
         constraints = data;
