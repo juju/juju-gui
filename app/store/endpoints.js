@@ -41,7 +41,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
          */
         initializer: function(cfg) {
           this._subscriptions = [];
-          this. endpointsMap = {};
+          this.endpointsMap = {};
         },
 
         /**
