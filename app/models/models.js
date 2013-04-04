@@ -9,7 +9,8 @@
 YUI.add('juju-models', function(Y) {
 
   var models = Y.namespace('juju.models'),
-      utils = Y.namespace('juju.views.utils');
+      utils = Y.namespace('juju.views.utils'),
+      handlers = models.handlers;
 
   // This is a helper function used by all of the process_delta methods.
   var _process_delta = function(list, action, change_data, change_base) {
@@ -24,10 +25,7 @@ YUI.add('juju-models', function(Y) {
       // arrives for those objects, they already exist in a skeleton
       // form that needs to be fleshed out.  So, the existing objects
       // are kept and re-used.
-      var data = change_base || {};
-      Y.each(change_data, function(value, name) {
-        data[name.replace('-', '_')] = value;
-      });
+      var data = Y.merge(change_base || {}, change_data);
       if (!Y.Lang.isValue(o)) {
         o = list.add(data);
       } else {
@@ -528,7 +526,7 @@ YUI.add('juju-models', function(Y) {
         id = modelList[1];
         modelList = modelList[0];
       }
-      modelList = this.getModelListByModelName(modelList, data);
+      modelList = this.getModelListByModelName(modelList);
       if (!modelList) {
         return undefined;
       }
@@ -536,30 +534,17 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-      Returns a modelList given the model name and some information about
-      the change that is to take place (required only for annotations).
+      Returns a modelList given the model name.
 
       @method getModelListByModelName
       @param {String} modelName The model's name.
-      @param {Object} change An object containing the change information; note
-        that this is only used in the case of modelName being 'annotation'.
       @return {Object} The model list.
     */
-    getModelListByModelName: function(modelName, change) {
+    getModelListByModelName: function(modelName) {
       if (modelName === 'serviceUnit') {
         modelName = 'unit';
-      } else if (modelName === 'annotations') {
+      } else if (modelName === 'annotations' || modelName === 'environment') {
         return this.environment;
-      } else if (modelName === 'annotation') {
-        // This function may be called with change being either an array of
-        // [changeModel, changeType, { Change data }] or just { Change data }.
-        // Take the appropriate action to get the modelName.
-        modelName = Y.Lang.isArray(change) ?
-            change[2].type :
-            change.type;
-        if (modelName === 'environment') {
-          return this.environment;
-        }
       }
       return this[modelName + 's'];
     },
@@ -582,17 +567,31 @@ YUI.add('juju-models', function(Y) {
       this.notifications.reset();
     },
 
-    on_delta: function(delta_evt) {
-      var changes = delta_evt.data.result;
-      var change_type, model_class = null,
-          self = this;
+    /**
+      Handle the delta stream coming from the API backend.
+      Populate the database according to the changeset included in the delta.
 
-      changes.forEach(
-          Y.bind(function(change) {
-            change_type = change[0];
-            this.getModelListByModelName(change_type, change).process_delta(
-                change[1], change[2]);
-          }, this));
+      @method onDelta
+      @param {Event} deltaEvent An event object containing the delta changeset
+       (in the "data.result" attribute).
+      @return {undefined} Nothing.
+    */
+    onDelta: function(deltaEvent) {
+      var self = this,
+          changes = deltaEvent.data.result,
+          defaultHandler = handlers.pyDelta;
+      // Process delta changes invoking handlers for each change in changeset.
+      changes.forEach(function(change) {
+        var kind = change[0],
+            action = change[1],
+            data = change[2],
+            handler = defaultHandler;
+        if (handlers.hasOwnProperty(kind)) {
+          handler = handlers[kind];
+        }
+        handler(self, action, data, kind);
+      });
+      // Update service unit aggregates.
       this.services.each(function(service) {
         self.units.update_service_unit_aggregates(service);
       });
@@ -612,6 +611,7 @@ YUI.add('juju-models', function(Y) {
     'datasource-jsonschema',
     'io-base',
     'json-parse',
+    'juju-delta-handlers',
     'juju-endpoints',
     'juju-view-utils',
     'juju-charm-models'
