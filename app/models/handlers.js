@@ -31,6 +31,23 @@ YUI.add('juju-delta-handlers', function(Y) {
     */
     cleanUpEntityTags: function(tag) {
       return tag.replace(/^(service|unit|machine|environment)-/, '');
+    },
+
+    /**
+      Return a list of ports represented as "NUM/PROTOCOL", e.g. "80/tcp".
+
+      @method convertOpenPorts
+      @param {Array} ports A list of port objects, each one including the
+       "Number" and "Protocol" attributes.
+      @return {Array} The converted list of ports.
+    */
+    convertOpenPorts: function(ports) {
+      if (!ports) {
+        return [];
+      }
+      return Y.Array.map(ports, function(port) {
+        return port.Number + '/' + port.Protocol;
+      });
     }
 
   };
@@ -91,8 +108,8 @@ YUI.add('juju-delta-handlers', function(Y) {
         machine: change.MachineId,
         agent_state: change.Status,
         public_address: change.PublicAddress,
-        private_address: change.PrivateAddress
-        // XXX 2013-04-03 frankban: include change.Ports.
+        private_address: change.PrivateAddress,
+        open_ports: utils.convertOpenPorts(change.Ports)
       };
       var machineData = {
         id: change.MachineId,
@@ -202,6 +219,7 @@ YUI.add('juju-delta-handlers', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'base'
+    'base',
+    'array-extras'
   ]
 });

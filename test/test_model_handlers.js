@@ -70,8 +70,8 @@
           MachineId: '1',
           Status: 'pending',
           PublicAddress: 'example.com',
-          PrivateAddress: '10.0.0.1'
-          // XXX 2013-04-03 frankban: include change.Ports.
+          PrivateAddress: '10.0.0.1',
+          Ports: [{Number: 80, Protocol: 'tcp'}, {Number: 42, Protocol: 'udp'}]
         };
         unitInfo(db, 'add', change);
         assert.strictEqual(1, db.units.size());
@@ -82,6 +82,7 @@
         assert.strictEqual('pending', unit.agent_state);
         assert.strictEqual('example.com', unit.public_address);
         assert.strictEqual('10.0.0.1', unit.private_address);
+        assert.deepEqual(['80/tcp', '42/udp'], unit.open_ports);
       });
 
       it('updates a unit in the database', function() {
@@ -341,6 +342,30 @@
         Y.each(data, function(item) {
           assert.equal(item, cleanUpEntityTags(item));
         });
+      });
+
+    });
+
+
+    describe('Go Juju ports converter', function() {
+      var convertOpenPorts;
+
+      before(function() {
+        convertOpenPorts = utils.convertOpenPorts;
+      });
+
+      it('correctly returns a list of ports', function() {
+        var ports = [
+          {Number: 80, Protocol: 'tcp'},
+          {Number: 42, Protocol: 'udp'}
+        ];
+        assert.deepEqual(['80/tcp', '42/udp'], convertOpenPorts(ports));
+      });
+
+      it('returns an empty list if there are no ports', function() {
+        assert.deepEqual([], convertOpenPorts([]));
+        assert.deepEqual([], convertOpenPorts(null));
+        assert.deepEqual([], convertOpenPorts(undefined));
       });
 
     });
