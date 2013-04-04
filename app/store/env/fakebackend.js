@@ -543,7 +543,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         error: error,
         warning: warning
       };
-    }
+    },
 
     // updateAnnotations: function() {
 
