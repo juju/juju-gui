@@ -103,14 +103,14 @@
 
       // Hook up to the callback for the click event.
       view._addCharmEnvironment = function(ev) {
-        ev.preventDefault();
+        ev.halt();
         Y.one('#bws-readme h3').get('text').should.eql('Charm has no README');
         done();
       };
 
       view.render(node);
       view.get('container').should.eql(node);
-      node.one('.charm input.add').simulate('click');
+      node.one('.charm .add').simulate('click');
     });
 
     it('should catch when the open log is clicked', function(done) {

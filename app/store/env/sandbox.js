@@ -441,6 +441,36 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
       // respond with the new data or error
       this.get('client').receiveNow(data);
+    },
+
+    /**
+      Handles exposing a service request from the client.
+
+      @method performOp_expose
+      @param {Object} data Contains service_name to expose and a callback.
+    */
+    performOp_expose: function(data) {
+      var res = this.get('state').expose(data.service_name);
+
+      data.err = res.error;
+      data.result = (res.error === undefined);
+
+      this.get('client').receiveNow(data);
+    },
+
+    /**
+      Handles unexposing a service request from the client.
+
+      @method performOp_unexpose
+      @param {Object} data contains service_name to unexpose and a callback.
+    */
+    performOp_unexpose: function(data) {
+      var res = this.get('state').unexpose(data.service_name);
+
+      data.err = res.error;
+      data.result = (res.error === undefined);
+
+      this.get('client').receiveNow(data);
     }
   });
 

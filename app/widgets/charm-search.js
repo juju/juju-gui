@@ -115,7 +115,7 @@ YUI.add('browser-search-widget', function(Y) {
 
 
     /**
-     * destory the widget and unbind all DOM events.
+     * Destroy the widget and unbind all DOM events.
      *
      * @method destructor
      *
