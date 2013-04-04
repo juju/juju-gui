@@ -457,6 +457,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       @method expose
       @param {String} serviceName The service name.
+      @return {Object} An object containing an `error` and `warning` properties
+        which will be undefined if there were no warnings or errors.
     */
     expose: function(serviceName) {
       var service = this.db.services.getById(serviceName),
@@ -483,6 +485,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       @method unexpose
       @param {String} serviceName The service name.
+      @return {Object} An object containing an `error` and `warning` properties
+        which will be undefined if there were no warnings or errors.
     */
     unexpose: function(serviceName) {
       var service = this.db.services.getById(serviceName),

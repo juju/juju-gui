@@ -196,8 +196,9 @@
       Generates the services required for some tests. After the services have
       been generated it will call the supplied callback.
 
-      This interacts directly with the fakebackend bypassing the environment
-      and should be considered valid if "can add additional units" test passes.
+      This interacts directly with the fakebackend bypassing the environment.
+      The test "can add additional units" tests this code directly so as long
+      as it passes you can consider this method valid.
 
       @method generateServices
       @param {Function} callback The callback to call after the services have
