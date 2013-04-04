@@ -160,7 +160,7 @@
 
   });
 
-  describe('sandbox.PyJujuAPI', function() {
+  describe.only('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models'];
@@ -908,6 +908,27 @@
           generateAndExposeService(unexposeService);
         }
     );
+
+    it('can add a relation', function(done) {
+      assert.fail();
+      done();
+    });
+
+    it('can add a relation (integration)', function(done) {
+      assert.fail();
+      done();
+    });
+
+    it('throws an error if only one endpoint is supplied', function(done) {
+      assert.fail();
+      done();
+    });
+
+    it('throws an error if both endpoints are the same', function(done) {
+      assert.fail();
+      done();
+    });
+
   });
 
 })();

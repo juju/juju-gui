@@ -506,6 +506,23 @@ YUI.add('juju-env-fakebackend', function(Y) {
         error: error,
         warning: warning
       };
+    },
+
+    /**
+      Add a relation between two services.
+
+      @method add_relation
+      @param {Object} endpointA An array of [service, interface] representing
+         the first endpoint to connect.
+      @param {Object} endpointB An array of [service, interface] representing
+         the second endpoint to connect.
+      @param {Function} callback A callable that must be called once the
+         operation is performed.
+    */
+    addRelation: function(endpointA, endpointB) {
+
+
+      return;
     }
 
     // updateAnnotations: function() {
@@ -520,9 +537,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     // },
 
-    // addRelation: function() {
 
-    // },
 
     // removeRelation: function() {
 

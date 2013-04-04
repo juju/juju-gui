@@ -414,6 +414,21 @@ YUI.add('juju-env-sandbox', function(Y) {
       data.result = (res.error === undefined);
 
       this.get('client').receiveNow(data);
+    },
+
+    /**
+      Handles adding a relation between two supplied services from the client
+
+      @method performOp_add_relation
+      @param {} data
+    */
+    performOp_add_relation: function(data) {
+      var res = this.get('state').addRelation(data.endpoint_a, data.endpoint_b);
+
+      data.err = res.error;
+      data.result = (res.error === undefined);
+
+      this.get('client').receiveNow(data);
     }
 
   });
