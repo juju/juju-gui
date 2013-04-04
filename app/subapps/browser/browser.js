@@ -15,7 +15,7 @@ YUI.add('subapp-browser', function(Y) {
    * Browser Sub App for the Juju Gui.
    *
    * @class Browser
-   * @extends {Y.juju.SubApp}
+   * @extends {juju.SubApp}
    *
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
