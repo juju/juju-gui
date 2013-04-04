@@ -740,6 +740,7 @@
          assert.equal(4, db.relations.size());
          // restore original getEndpoints function
          models.getEndpoints = existing;
+         view.destroy();
        });
 
     it('must be able to remove a relation between services',
@@ -766,6 +767,7 @@
               .size()
               .should.equal(1);
          view.topo.modules.RelationModule.get('rmrelation_dialog').hide();
+         view.destroy();
        });
 
     it('must not allow removing a subordinate relation between services',
@@ -794,16 +796,18 @@
     it('should stop creating a relation if the background is clicked',
         function() {
           var db = new models.Database(),
-              endpointMap = {'service-1': {requires: [], provides: []}},
-              view = new views.environment(
+              endpointsMap = {'service-1': {requires: [], provides: []}};
+          var fauxController = new Y.Base();
+          fauxController.endpointsMap = endpointsMap;
+          fauxController.set('db', db);
+          var view = new views.environment(
               { container: container,
                 db: db,
-                env: env}),
-              service = new models.Service({ id: 'service-1'});
+                endpointsController: fauxController,
+                env: env});
+          var service = new models.Service({ id: 'service-1'});
 
           db.services.add([service]);
-          // Reset the global endpointsMap after adding the service.
-          models.endpointsMap = endpointMap;
           view.render();
 
           // If the user has clicked on the "Add Relation" menu item...
@@ -815,6 +819,9 @@
           // ...clicking on the background causes the relation drag to stop.
           sm.backgroundClicked();
           assert.isFalse(topo.buildingRelation);
+          view.destroy();
+          db.destroy();
+          fauxController.destroy();
         });
 
     it('propagates the getModelURL function to the topology', function() {
@@ -828,7 +835,20 @@
         getModelURL: getModelURL}).render();
       var topoGetModelURL = view.topo.get('getModelURL');
       assert.equal('placeholder value', topoGetModelURL());
+      view.destroy();
     });
+
+    it('propagates the endpointsController to the topology', function() {
+      var view = new views.environment({
+        container: container,
+        db: db,
+        endpointsController: 'hidy ho',
+        env: env}).render();
+      var endpointsController = view.topo.get('endpointsController');
+      assert.equal('hidy ho', endpointsController);
+      view.destroy();
+    });
+
   });
 
   describe('view model support infrastructure', function() {

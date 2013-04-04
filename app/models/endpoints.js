@@ -12,25 +12,23 @@ YUI.add('juju-endpoints', function(Y) {
   var models = Y.namespace('juju.models');
   var utils = Y.namespace('juju.views.utils');
 
-  models.endpointsMap = {};
-
   /**
    * Find available relation targets for a service.
    *
    * @method getEndpoints
    * @param {Object} svc A service object.
-   * @param {Object} ep_map A mapping of service name to available endpoints
-   *   for the service in the form [{'interface':x, 'name':y, 'role': z}, ...].
-   * @param {Object} db The application database.
+   * @param {Object} controller The endpoints controller.
    *
    * @return {Object} A mapping with keys of valid relation service targets
    *   and values consisting of a list of valid endpoints for each.
    */
-  models.getEndpoints = function(svc, ep_map, db) {
+  models.getEndpoints = function(svc, controller) {
     var targets = {},
         requires = [],
         provides = [],
-        sid = svc.get('id');
+        sid = svc.get('id'),
+        db = controller.get('db'),
+        ep_map = controller.endpointsMap;
 
     /**
      * Convert a service name and its relation endpoint info into a
@@ -154,123 +152,5 @@ YUI.add('juju-endpoints', function(Y) {
     });
     return targets;
   };
-
-  /**
-   * Setup on('load') handler for a charm.
-   *
-   * @method setupCharmOnLoad
-   * @param {Object} charm The charm to watch.
-   * @param {String} svcName The name of the service the charm is attached.
-   * @return {undefined} Nothing.
-   */
-  var setupCharmOnLoad = function(charm, svcName) {
-    charm.on('load', Y.bind(function(svcName, evt) {
-      addServiceToEndpointsMap(svcName, evt.currentTarget);
-    }, null, svcName));
-  };
-
-  /**
-   * Handle event for a service being added to the services modellist.
-   *
-   * @method serviceAddHandler
-   * @param {Object} evt The event, containing a model object.
-   * @return {undefined} Nothing.
-   */
-  models.serviceAddHandler = function(evt) {
-    var svcName = evt.model.get('id');
-    var charm_id = evt.model.get('charm'),
-        self = this,
-        charm = this.db.charms.getById(charm_id);
-
-    // If the charm doesn't exist, add and load it.
-    if (!Y.Lang.isValue(charm)) {
-      charm = this.db.charms.add({id: charm_id})
-        .load(this.env,
-          // If views are bound to the charm model, firing "update" is
-          // unnecessary, and potentially even mildly harmful.
-          function(err, result) { self.db.fire('update'); });
-    }
-
-    // If the service is not a ghost (i.e. 'pending' is false), process it.
-    if (!evt.model.get('pending')) {
-      if (charm.loaded) {
-        addServiceToEndpointsMap(svcName, charm);
-      } else {
-        setupCharmOnLoad(charm, svcName);
-      }
-    }
-  };
-
-  /**
-   * Handle event for a service transitioning from a ghost to a corporeal
-   * object as indicated by the 'pending' attribute becoming false.  Also
-   * handles changes in the service's charm.
-   *
-   * @method serviceChangeHandler
-   * @param {Object} evt The event, containing the service as the target.
-   * @return {undefined} Nothing.
-   */
-  models.serviceChangeHandler = function(evt) {
-    var charm_id = evt.target.get('charm'),
-        charm = this.db.charms.getById(charm_id),
-        service = evt.target,
-        svcName = service.get('id');
-    // Ensure the service is no longer pending.
-    if (service.get('pending')) {
-      return;
-    }
-    if (charm.loaded) {
-      addServiceToEndpointsMap(svcName, charm);
-    } else {
-      setupCharmOnLoad(charm, svcName);
-    }
-  };
-
-  /**
-   * Handle event for a service removal.
-   *
-   * @method serviceRemoveHandler
-   * @param {Object} evt The event, containing the service as the target.
-   * @return {undefined} Nothing.
-   */
-  models.serviceRemoveHandler = function(evt) {
-    var svcName = evt.model.get('id');
-    delete(models.endpointsMap[svcName]);
-  };
-
-  /**
-   * Flatten the relation metadata.
-   *
-   * @method flatten
-   * @param {Object} meta The relation metadata.
-   * @return {List} A list of objects, where each entry is a hash with a
-   *   'name' key and the key value pairs from the metadata.
-   */
-  var flatten = function(meta) {
-    var result = [];
-    if (Y.Lang.isValue(meta)) {
-      for (var k in meta) {
-        if (true) { // Avoid lint warning.
-          var rel = {};
-          rel.name = k;
-          for (var j in meta[k]) {
-            if (true) { // Avoid lint warning.
-              rel[j] = meta[k][j];
-            }
-          }
-          result.push(rel);
-        }
-      }
-    }
-    return result;
-  };
-
-  var addServiceToEndpointsMap = function(svcName, charm) {
-    models.endpointsMap[svcName] = {};
-    models.endpointsMap[svcName].provides = flatten(charm.get('provides'));
-    models.endpointsMap[svcName].requires = flatten(charm.get('requires'));
-  };
-
-  models.addServiceToEndpointsMap = addServiceToEndpointsMap;
 
 });
