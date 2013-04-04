@@ -26,7 +26,8 @@ YUI.add('juju-env', function(Y) {
     var environments = Y.namespace('juju.environments');
     var apiBackends = {
       'go': environments.GoEnvironment,
-      'python': environments.PythonEnvironment
+      'python': environments.PythonEnvironment,
+      'sandbox': environments.SandboxEnvironment
     };
     var backend = apiBackend || DEFAULT_BACKEND;
     var Environment = apiBackends[backend] || apiBackends[DEFAULT_BACKEND];

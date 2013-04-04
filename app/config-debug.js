@@ -24,6 +24,7 @@ var juju_config = {
   user: 'admin',
   password: 'admin',
   apiBackend: 'python', // Value can be 'python' or 'go'.
+  sandbox: true,
   readOnly: false,
   login_help: 'For this demonstration, use the password "admin" to connect.'
 };

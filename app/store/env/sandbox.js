@@ -9,6 +9,7 @@ Sandbox APIs mimicking communications with the Go and Juju backends.
 
 YUI.add('juju-env-sandbox', function(Y) {
 
+  var environments = Y.namespace('juju.environments');
   var sandboxModule = Y.namespace('juju.environments.sandbox');
   var CLOSEDERROR = 'INVALID_STATE_ERR : Connection is closed.';
 
@@ -78,9 +79,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     **/
     receive: function(data) {
       if (this.connected) {
-        // 4 milliseconds is the smallest effective time available to wait.  See
-        // http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers
-        setTimeout(this.receiveNow.bind(this, data, true), 4);
+        Y.soon(this.receiveNow.bind(this, data, true));
       } else {
         throw CLOSEDERROR;
       }
@@ -157,6 +156,51 @@ YUI.add('juju-env-sandbox', function(Y) {
 
   sandboxModule.ClientConnection = ClientConnection;
 
+    /** Helper function method for generating operation methods
+     * with a callback.
+    */
+    var ASYNC_OP = function(context, rpcName, args) {
+      return Y.bind(function(data) {
+        var state = this.get('state');
+        var client = this.get('client');
+        var vargs = Y.Array.map(args, function(i) {
+          return data[i];
+        });
+        var callback = function(reply) {
+          console.log('Sandbox RPC:', rpcName, data, reply);
+          if (reply.error) {
+            data.error = reply.error;
+            data.err = reply.error;
+          } else {
+            data.result = reply.result;
+          }
+          client.receiveNow(data);
+        };
+        // Add our generated callback to arguments.
+        vargs.push(callback);
+        console.log('SanboxRPC calling', rpcName, vargs);
+        state[rpcName].apply(state, vargs);
+      }, context);
+    };
+
+    var OP = function(context, rpcName, args, data) {
+      var state = context.get('state');
+      var client = context.get('client');
+      var vargs = Y.Array.map(args, function(i) {
+        return data[i];
+      });
+      console.log('SanboxRPC calling', rpcName, vargs);
+      var reply  = state[rpcName].apply(state, vargs);
+      if (reply.error) {
+        data.error = reply.error;
+        data.err = reply.error;
+      } else {
+        data.result = reply.result;
+      }
+      client.receiveNow(data);
+    };
+
+
   /**
   A sandbox Juju environment using the Python API.
 
@@ -184,6 +228,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     initializer: function() {
       this.connected = false;
     },
+
 
     /**
     Opens the connection to the sandbox Juju environment.
@@ -372,15 +417,31 @@ YUI.add('juju-env-sandbox', function(Y) {
       }
       // respond with the new data or error
       this.get('client').receiveNow(data);
-    }
+    },
 
+    performOp_get_service: function(data) {
+      OP(this, 'getService', ['service_name'], data);
+    },
+
+    performOp_get_charm: function(data) {
+      ASYNC_OP(this, 'getCharm', ['charm_url'])(data);
+    },
+
+    performOp_set_constraints: function(data) {
+      OP(this, 'setConstraints', ['service_name', 'constraints'], data);
+    },
+
+    performOp_set_config: function(data) {
+      ASYNC_OP(this, 'set_config', ['service_name', 'config'])(data);
+    }
   });
 
-  sandboxModule.PyJujuAPI = PyJujuAPI;
 
+  sandboxModule.PyJujuAPI = PyJujuAPI;
 }, '0.1.0', {
   requires: [
     'base',
+    'timers',
     'json-parse'
   ]
 });

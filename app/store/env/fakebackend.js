@@ -293,6 +293,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         id: options.name,
         name: options.name,
         charm: charm.get('id'),
+        constraints: {},
         exposed: false,
         subordinate: charm.get('is_subordinate'),
         config: options.config
@@ -310,32 +311,38 @@ YUI.add('juju-env-fakebackend', function(Y) {
     /**
      * @method getService
      * @param {String} serviceId
-     * @param {Function} callack.
-     * @return undefined.
+     * @return {Object} Service Attributes..
      */
-    getService: function(serviceName, callback) {
+    getService: function(serviceName) {
+      var self = this;
       if (!this.get('authenticated')) {
-        return callback(UNAUTHENTICATEDERROR);
+        return UNAUTHENTICATEDERROR;
       }
       var service = this.db.services.getById(serviceName);
       if (!service) {
-        callback({error: 'Invalid service id.'});
+        return {error: 'Invalid service id.'};
       }
-      callback(service);
+      var serviceData = service.getAttrs();
+      if (!serviceData.constraints) {
+        serviceData.constraints = {};
+      }
+      return serviceData;
     },
 
     /**
      * @method getCharm
      * @param {String} charmName
-     * @param {Function} callback.
-     * @return undefined.
+     * @return {Object} charm attrs..
      */
     getCharm: function(charmName, callback) {
       if (!this.get('authenticated')) {
         return callback(UNAUTHENTICATEDERROR);
       }
+      var formatCharm = function(charm) {
+        callback({result: charm.getAttrs()});
+      };
       this._loadCharm(charmName, {
-        success: callback,
+        success: formatCharm,
         failure: callback});
     },
 
@@ -440,7 +447,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         }
       }
       return machines;
-    } // ,
+    },
 
     // removeUnit: function() {
 
@@ -478,13 +485,63 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     // },
 
-    // setConfig: function() {
+    setConfig: function(serviceName, config) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        return {error: 'Service "' + serviceName + '" does not exist.'};
+      }
 
-    // },
+      var existing = service.get('config');
+      if (!existing) {
+        existing = {};
+      }
 
-    // setConstraints: function() {
+      if (!config) {
+        config = {};
+      }
+      // Merge new constraints in.
+      existing = Y.mix(existing, config, true, undefined, 0, true);
+      // Reassign the attr.
+      service.set('config', existing);
+      // The callback indicates done, we can pass anything back.
+      this.changes.services[service.get('id')] = [service, true];
+      return {result: existing};
+    },
 
-    // },
+    setConstraints: function(serviceName, data) {
+      var constraints = {};
+
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        return {error: 'Service "' + serviceName + '" does not exist.'};
+      }
+
+      var existing = service.get('constraints');
+      if (!existing) {
+        existing = {};
+      }
+
+      if (Y.Lang.isArray(data)) {
+        Y.Array.each(data, function(i) {
+          var kv = i.split('=');
+          kv[1] && (constraints[kv[0]] = kv[1]);
+        });
+      } else if (data) {
+        constraints = data;
+      }
+      // Merge new constraints in.
+      existing = Y.mix(existing, constraints, true, undefined, 0, true);
+      // Reassign the attr.
+      service.set('constraints', existing);
+      this.changes.services[service.get('id')] = [service, true];
+      return {result: true};
+    }
 
     // resolved: function() {
 

@@ -95,7 +95,7 @@
         aggregated_status: undefined,
         charm: 'cs:precise/wordpress-10',
         config: undefined,
-        constraints: undefined,
+        constraints: {},
         destroyed: false,
         displayName: 'wordpress',
         exposed: false,
@@ -258,8 +258,8 @@
     });
 
     it('successfully returns valid charms', function(done) {
-      fakebackend.getCharm('cs:wordpress', function(charm) {
-         assert.equal(charm.get('name'), 'wordpress');
+      fakebackend.getCharm('cs:wordpress', function(data) {
+         assert.equal(data.result.name, 'wordpress');
          done();
       });
     });
@@ -287,27 +287,127 @@
       fakebackend.destroy();
     });
 
-    it('rejects unauthenticated calls', function(done) {
+    it('rejects unauthenticated calls', function() {
       fakebackend.logout();
-      fakebackend.getService('cs:wordpress', ERROR('Please log in.', done));
+      var result = fakebackend.getService('cs:wordpress');
+      assert.equal(result.error, 'Please log in.');
     });
 
-    it('returns an error for a missing service', function(done) {
-      fakebackend.getService('^invalid', ERROR('Invalid service id.', done));
+    it('returns an error for a missing service', function() {
+      var result = fakebackend.getService('^invalid');
+      assert.equal(result.error, 'Invalid service id.');
     });
 
     it('successfully returns a valid service', function(done) {
       fakebackend.deploy('cs:wordpress', function() {
-        fakebackend.getService('wordpress', function(service) {
-          assert.equal(service.get('name'), 'wordpress');
-          done();
-        });
+        var service = fakebackend.getService('wordpress');
+        assert.equal(service.name, 'wordpress');
+        done();
       });
     });
   });
 
+   describe('FakeBackend.setConfig', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, setCharm;
 
-  describe('FakeBackend.addUnit', function() {
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      var setupData = utils.makeFakeBackendWithCharmStore();
+      fakebackend = setupData.fakebackend;
+      setCharm = setupData.setCharm;
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('rejects unauthenticated calls', function() {
+      fakebackend.logout();
+      var result = fakebackend.setConfig('wordpress', {'foo': 'bar'});
+      assert.equal(result.error, 'Please log in.');
+    });
+
+    it('returns an error for a missing service', function() {
+      var result = fakebackend.setConfig('scaling', {});
+      assert.equal(result.error, 'Service \"scaling\" does not exist.');
+    });
+
+    it('successfully returns a valid service configuration', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.setConfig('wordpress', {'blog-title': 'Silence is Golden.'});
+        var service = fakebackend.getService('wordpress');
+        var config = service.config;
+        assert.equal(config['blog-title'], 'Silence is Golden.');
+        done();
+      });
+    });
+  });
+
+   describe('FakeBackend.setConstraints', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, setCharm;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      var setupData = utils.makeFakeBackendWithCharmStore();
+      fakebackend = setupData.fakebackend;
+      setCharm = setupData.setCharm;
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('rejects unauthenticated calls', function() {
+      fakebackend.logout();
+      var result = fakebackend.setConstraints('wordpress', {'cpu': '4'});
+      assert.equal(result.error, 'Please log in.');
+    });
+
+    it('returns an error for a missing service', function() {
+      var result = fakebackend.setConstraints('scaling', {});
+      assert.equal(result.error, 'Service \"scaling\" does not exist.');
+    });
+
+    it('successfully returns a valid constraints', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.setConstraints('wordpress', {'cpu': '4'});
+        var service = fakebackend.getService('wordpress');
+        var constraints = service.constraints;
+        assert.equal(constraints['cpu'], '4');
+        assert.equal(constraints['mem'], undefined);
+        done();
+      });
+    });
+
+    it('successfully returns a valid constraints as array', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.setConstraints('wordpress', ['cpu=4']);
+        var service = fakebackend.getService('wordpress');
+        var constraints = service.constraints;
+        assert.equal(constraints['cpu'], '4');
+        assert.equal(constraints['mem'], undefined);
+        done();
+      });
+    });
+   });
+
+ describe('FakeBackend.addUnit', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
     var Y, fakebackend, utils, setCharm, deployResult, callback;
