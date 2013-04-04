@@ -84,7 +84,7 @@ describe('charm container widget', function() {
     assert.equal('See 1 more', container.one('.expand').get('text'));
   });
 
-  it('toggle between all or a just few items being shown', function() {
+  it('toggles between all or a just few items being shown', function() {
     var hidden;
     charm_container = new Y.juju.widgets.browser.CharmContainer({
       name: 'Popular',

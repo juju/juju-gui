@@ -13,6 +13,16 @@ YUI.add('browser-charm-container', function(Y) {
   var ns = Y.namespace('juju.widgets.browser');
 
   /**
+    * hasExtra helps conditional rendering of control elements for the charm
+    * token.
+    */
+  Y.Handlebars.registerHelper('hasExtra', function(block) {
+    if (this.extra > 0) {
+      return block.fn(this);
+    }
+  });
+
+  /**
    * A container for charm tokens, used to control how many are
    * displayed and provide categorization.
    *
@@ -89,7 +99,7 @@ YUI.add('browser-charm-container', function(Y) {
      * @method bindUI
      */
     bindUI: function() {
-      if (this.get('has_extra')) {
+      if (this.get('extra') > 0) {
         var expander = this.get('contentBox').one('.expand');
         this._events.push(expander.on('click', this._toggleExpand, this));
       }
@@ -165,21 +175,6 @@ YUI.add('browser-charm-container', function(Y) {
        * @type {Integer}
        */
       extra: {},
-
-      /**
-       * @attribute has_extra
-       */
-      has_extra: {
-        /**
-         * Check if there are extra charm tokens
-         *
-         * @method getter
-         *
-         */
-        getter: function() {
-          return this.get('extra') > 0;
-        }
-      },
 
       /**
        * @attribute name
