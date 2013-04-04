@@ -194,11 +194,11 @@
 
     /**
       Generates the services required for some tests. After the services have
-      been generated it will call the function assigned to the describe closure
-      global property generateServicesCallback.
+      been generated it will call the supplied callback.
 
-      This interacts directly with the fakebackend bypassing the environment
-      and should be considered valid if "can add additional units" test passes.
+      This interacts directly with the fakebackend bypassing the environment.
+      The test "can add additional units" tests this code directly so as long
+      as it passes you can consider this method valid.
 
       @method generateServices
       @param {Function} callback The callback to call after the services have
@@ -225,6 +225,8 @@
 
     /**
       Same as generateServices but uses the environment integration methods.
+      Should be considered valid if "can add additional units (integration)"
+      test passes.
 
       @method generateIntegrationServices
       @param {Function} callback The callback to call after the services have
@@ -236,6 +238,56 @@
           env.add_unit('kumquat', 2, function(data) {
             // After finished generating integrated services
             callback(data);
+          });
+        };
+        env.deploy(
+            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, localCb);
+      });
+      env.connect();
+    }
+
+    /**
+      Generates the services and then exposes them for the un/expose tests.
+      After they have been exposed it calls the supplied callback.
+
+      This interacts directly with the fakebackend bypassing the environment and
+      should be considered valid if "can expose a service" test passes.
+
+      @method generateAndExposeService
+      @param {Function} callback The callback to call after the services have
+        been generated.
+    */
+    function generateAndExposeService(callback) {
+      state.deploy('cs:wordpress', function(data) {
+        var command = {
+          op: 'expose',
+          service_name: data.service.get('name')
+        };
+        state.nextChanges();
+        client.onmessage = function() {
+          client.onmessage = function(rec) {
+            callback(rec);
+          };
+          client.send(Y.JSON.stringify(command));
+        };
+        client.open();
+      }, { unitCount: 1 });
+    }
+
+    /**
+      Same as generateAndExposeService but uses the environment integration
+      methods. Should be considered valid if "can expose a service
+      (integration)" test passes.
+
+      @method generateAndExposeIntegrationService
+      @param {Function} callback The callback to call after the services have
+        been generated.
+    */
+    function generateAndExposeIntegrationService(callback) {
+      env.after('defaultSeriesChange', function() {
+        var localCb = function(result) {
+          env.expose(result.service_name, function(rec) {
+            callback(rec);
           });
         };
         env.deploy(
@@ -704,6 +756,158 @@
       generateServices(removeUnits);
     });
 
+    it('can expose a service', function(done) {
+      function checkExposedService(rec) {
+        var data = Y.JSON.parse(rec.data),
+            mock = {
+              op: 'expose',
+              result: true,
+              service_name: 'wordpress'
+            };
+        var service = state.db.services.getById(mock.service_name);
+        assert.equal(service.get('exposed'), true);
+        assert.equal(data.result, true);
+        assert.deepEqual(data, mock);
+        done();
+      }
+      generateAndExposeService(checkExposedService);
+    });
+
+    it('can expose a service (integration)', function(done) {
+      function checkExposedService(rec) {
+        var service = state.db.services.getById('kumquat');
+        assert.equal(service.get('exposed'), true);
+        assert.equal(rec.result, true);
+        done();
+      }
+      generateAndExposeIntegrationService(checkExposedService);
+    });
+
+    it('fails silently when exposing an exposed service', function(done) {
+      function checkExposedService(rec) {
+        var data = Y.JSON.parse(rec.data),
+            service = state.db.services.getById(data.service_name),
+            command = {
+              op: 'expose',
+              service_name: data.service_name
+            };
+        state.nextChanges();
+        client.onmessage = function(rec) {
+          assert.equal(data.err, undefined);
+          assert.equal(service.get('exposed'), true);
+          assert.equal(data.result, true);
+          done();
+        };
+        client.send(Y.JSON.stringify(command));
+      }
+      generateAndExposeService(checkExposedService);
+    });
+
+    it('fails with error when exposing an invalid service name',
+        function(done) {
+          state.deploy('cs:wordpress', function(data) {
+            var command = {
+              op: 'expose',
+              service_name: 'foobar'
+            };
+            state.nextChanges();
+            client.onmessage = function() {
+              client.onmessage = function(rec) {
+                var data = Y.JSON.parse(rec.data);
+                assert.equal(data.result, false);
+                assert.equal(data.err,
+                   '`foobar` is an invalid service name.');
+                done();
+              };
+              client.send(Y.JSON.stringify(command));
+            };
+            client.open();
+          }, { unitCount: 1 });
+        }
+    );
+
+    it('can unexpose a service', function(done) {
+      function unexposeService(rec) {
+        var data = Y.JSON.parse(rec.data),
+            command = {
+              op: 'unexpose',
+              service_name: data.service_name
+            };
+        state.nextChanges();
+        client.onmessage = function(rec) {
+          var data = Y.JSON.parse(rec.data),
+              service = state.db.services.getById(data.service_name),
+              mock = {
+                op: 'unexpose',
+                result: true,
+                service_name: 'wordpress'
+              };
+          assert.equal(service.get('exposed'), false);
+          assert.deepEqual(data, mock);
+          done();
+        };
+        client.send(Y.JSON.stringify(command));
+      }
+      generateAndExposeService(unexposeService);
+    });
+
+    it('can unexpose a service (integration)', function(done) {
+      function unexposeService(rec) {
+        function localCb(rec) {
+          var service = state.db.services.getById('kumquat');
+          assert.equal(service.get('exposed'), false);
+          assert.equal(rec.result, true);
+          done();
+        }
+        env.unexpose(rec.service_name, localCb);
+      }
+      generateAndExposeIntegrationService(unexposeService);
+    });
+
+    it('fails silently when unexposing a not exposed service',
+        function(done) {
+          state.deploy('cs:wordpress', function(data) {
+            var command = {
+              op: 'unexpose',
+              service_name: data.service.get('name')
+            };
+            state.nextChanges();
+            client.onmessage = function() {
+              client.onmessage = function(rec) {
+                var data = Y.JSON.parse(rec.data),
+                    service = state.db.services.getById(data.service_name);
+                assert.equal(service.get('exposed'), false);
+                assert.equal(data.result, true);
+                assert.equal(data.err, undefined);
+                done();
+              };
+              client.send(Y.JSON.stringify(command));
+            };
+            client.open();
+          }, { unitCount: 1 });
+        }
+    );
+
+    it('fails with error when unexposing an invalid service name',
+        function(done) {
+          function unexposeService(rec) {
+            var data = Y.JSON.parse(rec.data),
+                command = {
+                  op: 'unexpose',
+                  service_name: 'foobar'
+                };
+            state.nextChanges();
+            client.onmessage = function(rec) {
+              var data = Y.JSON.parse(rec.data);
+              assert.equal(data.result, false);
+              assert.equal(data.err, '`foobar` is an invalid service name.');
+              done();
+            };
+            client.send(Y.JSON.stringify(command));
+          }
+          generateAndExposeService(unexposeService);
+        }
+    );
   });
 
 })();
