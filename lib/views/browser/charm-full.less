@@ -28,22 +28,23 @@
 
         .back,
         .add {
+            height: 30px;
             font-size: 10.5pt;
-            line-height: 10.5pt;
+            line-height: 23pt;
             font-family: @font-family-medium;
             font-weight: normal;
+            text-decoration: none;
         }
         .back {
             display: block;
             float: left;
-            padding: 8px 17px 8px 23px;
+            padding: 0 17px 0 23px;
             .three-image-button-background(
                 "browser_back_button_left.jpg",
                 "browser_back_button_right.jpg",
                 "browser_back_button_centre.jpg"
                 );
             color: @bws-heading;
-            text-decoration: none;
         }
         .share,
         .add {
@@ -53,11 +54,11 @@
             margin-right: 10px;
         }
         .add {
-            padding: 8px 22px 8px 32px;
-            .two-image-button-background(
+            padding: 0 22px 0 32px;
+            .three-image-button-background(
                 "browser_add_button_left.jpg",
                 "browser_add_button_right.jpg",
-                @charm-panel-orange
+                "browser_add_button_centre.jpg"
                 );
             border: none;
             color: #fff;
