@@ -446,6 +446,7 @@ describe('Endpoints map handlers', function() {
              requires: []
            }});
 
+         charmStore.destroy();
          done();
        });
 
