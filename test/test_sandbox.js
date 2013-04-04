@@ -213,9 +213,9 @@
         };
         state.nextChanges();
         client.onmessage = function() {
-          client.onmessage = function() {
+          client.onmessage = function(received) {
             // After done generating the services
-            callback();
+            callback(received);
           };
           client.send(Y.JSON.stringify(data));
         };
@@ -235,7 +235,7 @@
         var localCb = function(result) {
           env.add_unit('kumquat', 2, function(data) {
             // After finished generating integrated services
-            callback();
+            callback(data);
           });
         };
         env.deploy(
@@ -571,36 +571,26 @@
     });
 
     it('can add additional units', function(done) {
-      state.deploy('cs:wordpress', function(service) {
-        var data = {
-          op: 'add_unit',
-          service_name: 'wordpress',
-          num_units: 2
-        };
-        //Clear out the delta stream
-        state.nextChanges();
-        client.onmessage = function() {
-          client.onmessage = function(received) {
-            var units = state.db.units.get_units_for_service(service.service),
-                data = Y.JSON.parse(received.data),
-                mock = {
-                  num_units: 2,
-                  service_name: 'wordpress',
-                  op: 'add_unit',
-                  result: ['wordpress/2', 'wordpress/3']
-                };
-            // Do we have enough total units?
-            assert.lengthOf(units, 3);
-            // Does the response object contain the proper data
-            assert.deepEqual(data, mock);
-            // Error is undefined
-            assert.isUndefined(data.err);
-            done();
-          };
-          client.send(Y.JSON.stringify(data));
-        };
-        client.open();
-      });
+      function testForAddedUnits(received) {
+        var service = state.db.services.getById('wordpress'),
+            units = state.db.units.get_units_for_service(service),
+            data = Y.JSON.parse(received.data),
+            mock = {
+              num_units: 2,
+              service_name: 'wordpress',
+              op: 'add_unit',
+              result: ['wordpress/2', 'wordpress/3']
+            };
+        // Do we have enough total units?
+        assert.lengthOf(units, 3);
+        // Does the response object contain the proper data
+        assert.deepEqual(data, mock);
+        // Error is undefined
+        assert.isUndefined(data.err);
+        done();
+      }
+      // Generate the default services and add units
+      generateServices(testForAddedUnits);
     });
 
     it('throws an error when adding units to an invalid service',
@@ -629,19 +619,13 @@
     );
 
     it('can add additional units (integration)', function(done) {
-      env.after('defaultSeriesChange', function() {
-        var callback = function(result) {
-          env.add_unit('kumquat', 2, function(data) {
-            var service = state.db.services.getById('kumquat');
-            var units = state.db.units.get_units_for_service(service);
-            assert.lengthOf(units, 3);
-            done();
-          });
-        };
-        env.deploy(
-            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, callback);
-      });
-      env.connect();
+      function testForAddedUnits(data) {
+        var service = state.db.services.getById('kumquat'),
+            units = state.db.units.get_units_for_service(service);
+        assert.lengthOf(units, 3);
+        done();
+      }
+      generateIntegrationServices(testForAddedUnits);
     });
 
     it('can remove units', function(done) {
