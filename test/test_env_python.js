@@ -142,8 +142,7 @@
     });
 
     it('handles failed get service', function() {
-      var service_name;
-      var err;
+      var err, service_name;
       env.get_service('yoursql', function(data) {
         service_name = data.service_name;
         err = data.err;
@@ -156,6 +155,42 @@
       });
       assert.equal(service_name, 'yoursql');
       assert.equal(err, 'service "yoursql" not found');
+    });
+
+    it('can set a service config', function() {
+      var config = {'cfg-key': 'cfg-val'};
+      env.set_config('mysql', config);
+      msg = conn.last_message();
+      assert.equal(msg.op, 'set_config');
+      assert.equal(msg.service_name, 'mysql');
+      assert.deepEqual(msg.config, config);
+    });
+
+    it('can set a service config from a file', function() {
+      /*jshint multistr:true */
+      var data = 'tuning-level: \nexpert-mojo';
+      /*jshint multistr:false */
+      env.set_config('mysql', null, data);
+      msg = conn.last_message();
+      assert.equal(msg.op, 'set_config');
+      assert.equal(msg.service_name, 'mysql');
+      assert.equal(msg.data, data);
+    });
+
+    it('handles failed set config', function() {
+      var err, service_name;
+      env.set_config('yoursql', {}, null, function(evt) {
+        err = evt.err;
+        service_name = evt.service_name;
+      });
+      msg = conn.last_message();
+      conn.msg({
+        request_id: msg.request_id,
+        service_name: 'yoursql',
+        err: 'service "yoursql" not found'
+      });
+      assert.equal(err, 'service "yoursql" not found');
+      assert.equal(service_name, 'yoursql');
     });
 
     it('successfully adds a relation', function(done) {

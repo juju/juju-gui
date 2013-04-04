@@ -680,6 +680,62 @@ YUI.add('juju-env-go', function(Y) {
       });
     },
 
+    /**
+       Change the configuration of the given service.
+
+       @method set_config
+       @param {String} serviceName The service name.
+       @param {Object} config The charm configuration options.
+       @param {String} data The YAML representation of the charm
+         configuration options. Only one of `config` and `data` should be
+         provided, though `data` takes precedence if it is given.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object containing:
+          err - a string describing the problem (if an error occurred),
+          service_name - the name of the service.
+       @return {undefined} Sends a message to the server only.
+     */
+    set_config: function(serviceName, config, data, callback) {
+      var intermediateCallback, sendData;
+      if (callback) {
+        // Curry the callback and serviceName.  No context is passed.
+        intermediateCallback = Y.bind(this.handleSetConfig, null,
+            callback, serviceName);
+      }
+      sendData = {
+        Type: 'Client',
+        Params: {ServiceName: serviceName}
+      };
+      if (data) {
+        sendData.Request = 'ServiceSetYAML';
+        sendData.Params.ConfigYAML = data;
+      } else {
+        sendData.Request = 'ServiceSet';
+        sendData.Params.Config = stringifyObjectValues(config);
+      }
+      this._send_rpc(sendData, intermediateCallback);
+    },
+
+    /**
+       Transform the data returned from juju-core call to
+       ServiceSet/ServiceSetYAML into that suitable for the user callback.
+
+       @method handleSetConfig
+       @param {Function} userCallback The callback originally submitted by
+         the call site.
+       @param {String} serviceName The name of the service.  Passed in since
+         it is not part of the response.
+       @param {Object} data The response returned by the server.
+       @return {undefined} Nothing.
+     */
+    handleSetConfig: function(userCallback, serviceName, data) {
+      var transformedData = {
+        err: data.Error,
+        service_name: serviceName
+      };
+      // Call the original user callback.
+      userCallback(transformedData);
+    },
 
     /**
        Add a relation between two services.

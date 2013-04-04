@@ -614,7 +614,6 @@
           }
         }
       };
-
       env.get_service('mysql', function(data) {
         service_name = data.service_name;
         result = data.result;
@@ -643,6 +642,9 @@
       assert.equal(service_name, 'yoursql');
       assert.equal(err, 'service "yoursql" not found');
     });
+
+
+
 
     it('sends the correct AddRelation message', function() {
       endpointA = ['mysql', {name: 'server'}];
