@@ -142,7 +142,8 @@
     });
 
     it('handles failed get service', function() {
-      var err, service_name;
+      var service_name;
+      var err;
       env.get_service('yoursql', function(data) {
         service_name = data.service_name;
         err = data.err;

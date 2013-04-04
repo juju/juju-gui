@@ -643,8 +643,54 @@
       assert.equal(err, 'service "yoursql" not found');
     });
 
+    it('can set a service config', function() {
+      env.set_config('mysql', {'cfg-key': 'cfg-val'});
+      msg = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Params: {
+          ServiceName: 'mysql',
+          Config: {
+            'cfg-key': 'cfg-val'
+          }
+        },
+        Request: 'ServiceSet',
+        RequestId: msg.RequestId
+      };
+      assert.deepEqual(expected, msg);
+    });
 
+    it('can set a service config from a file', function() {
+      /*jshint multistr:true */
+      var data = 'tuning-level: \nexpert-mojo';
+      /*jshint multistr:false */
+      env.set_config('mysql', null, data);
+      msg = conn.last_message();
+      var expected = {
+        RequestId: msg.RequestId,
+        Type: 'Client',
+        Request: 'ServiceSetYAML',
+        Params: {
+          ServiceName: 'mysql',
+          ConfigYAML: data
+        }
+      };
+      assert.deepEqual(expected, msg);
+    });
 
+    it('handles failed set config', function() {
+      var err, service_name;
+      env.set_config('yoursql', {}, null, function(evt) {
+        err = evt.err;
+        service_name = evt.service_name;
+      });
+      conn.msg({
+        RequestId: msg.RequestId,
+        Error: 'service "yoursql" not found'
+      });
+      assert.equal(err, 'service "yoursql" not found');
+      assert.equal(service_name, 'yoursql');
+    });
 
     it('sends the correct AddRelation message', function() {
       endpointA = ['mysql', {name: 'server'}];
