@@ -291,7 +291,6 @@
       assert.match(
           result.machines[0].public_address, /^[^.]+\.example\.com$/);
       assert.equal(result.machines[0].agent_state, 'running');
-      assert.equal(result.machines[0].instance_state, 'running');
     });
 
     it('adds multiple units', function() {

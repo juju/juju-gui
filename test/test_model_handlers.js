@@ -119,7 +119,6 @@
         // Retrieve the machine from the database.
         machine = db.machines.getById(1);
         assert.strictEqual('pending', machine.agent_state);
-        assert.strictEqual('pending', machine.instance_state);
         assert.strictEqual('example.com', machine.public_address);
         // Update the machine.
         change.Status = 'started';
@@ -128,7 +127,6 @@
         // Retrieve the machine from the database (again).
         machine = db.machines.getById('1');
         assert.strictEqual('started', machine.agent_state);
-        assert.strictEqual('started', machine.instance_state);
       });
 
     });

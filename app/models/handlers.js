@@ -97,10 +97,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       var machineData = {
         id: change.MachineId,
         public_address: change.PublicAddress,
-        // XXX 2013-04-03 frankban: what's the difference between the agent
-        // state and the instance state in this context?
-        agent_state: change.Status,
-        instance_state: change.Status
+        agent_state: change.Status
       };
       db.units.process_delta(action, unitData);
       db.machines.process_delta(action, machineData);
