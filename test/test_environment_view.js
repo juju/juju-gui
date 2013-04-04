@@ -110,7 +110,7 @@
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
       // annotations, its a direct reference).
-      db.on_delta({data: Y.clone(environment_delta)});
+      db.onDelta({data: Y.clone(environment_delta)});
     });
 
     afterEach(function(done) {
@@ -240,14 +240,14 @@
         validateRelationCount(service, relationModule, 1).should.equal(true);
       });
 
-      db.on_delta({ data: addSubordinate });
+      db.onDelta({ data: addSubordinate });
       view.update();
 
       container.all('.subordinate.service').each(function(service) {
         validateRelationCount(service, relationModule, 1).should.equal(true);
       });
 
-      db.on_delta({ data: addRelation });
+      db.onDelta({ data: addRelation });
       view.update();
 
       validateRelationCount(container.one('.subordinate.service'),
@@ -282,7 +282,7 @@
       };
       view.render();
 
-      db.on_delta({ data: tmp_data });
+      db.onDelta({ data: tmp_data });
       view.render();
 
       container.all('.service').each(function(serviceNode) {
@@ -332,7 +332,7 @@
             chartSizedProperly(service.getDOMNode()).should.equal(true);
           });
 
-          db.on_delta({ data: tmp_data });
+          db.onDelta({ data: tmp_data });
 
           container.all('.service').each(function(service) {
             chartSizedProperly(service.getDOMNode()).should.equal(true);
@@ -407,7 +407,7 @@
           });
 
           // Resize the wordpress service.
-          db.on_delta({ data: tmp_data });
+          db.onDelta({ data: tmp_data });
 
           // Ensure that endpoints still match for all services, now that
           // one service has been resized.  This is the real test here.
@@ -454,7 +454,7 @@
           .should.equal(true);
       });
 
-      db.on_delta({ data: tmp_data });
+      db.onDelta({ data: tmp_data });
       view.render();
 
       container.all('.service').each(function(serviceNode) {
@@ -500,7 +500,7 @@
          match[1].should.eql('100');
          match[2].should.eql('200');
 
-         db.on_delta({ data: tmp_data });
+         db.onDelta({ data: tmp_data });
          view.update();
 
          //On annotation change  position should be updated.
@@ -740,6 +740,7 @@
          assert.equal(4, db.relations.size());
          // restore original getEndpoints function
          models.getEndpoints = existing;
+         view.destroy();
        });
 
     it('must be able to remove a relation between services',
@@ -766,6 +767,7 @@
               .size()
               .should.equal(1);
          view.topo.modules.RelationModule.get('rmrelation_dialog').hide();
+         view.destroy();
        });
 
     it('must not allow removing a subordinate relation between services',
@@ -794,16 +796,18 @@
     it('should stop creating a relation if the background is clicked',
         function() {
           var db = new models.Database(),
-              endpointMap = {'service-1': {requires: [], provides: []}},
-              view = new views.environment(
+              endpointsMap = {'service-1': {requires: [], provides: []}};
+          var fauxController = new Y.Base();
+          fauxController.endpointsMap = endpointsMap;
+          fauxController.set('db', db);
+          var view = new views.environment(
               { container: container,
                 db: db,
-                env: env}),
-              service = new models.Service({ id: 'service-1'});
+                endpointsController: fauxController,
+                env: env});
+          var service = new models.Service({ id: 'service-1'});
 
           db.services.add([service]);
-          // Reset the global endpointsMap after adding the service.
-          models.endpointsMap = endpointMap;
           view.render();
 
           // If the user has clicked on the "Add Relation" menu item...
@@ -815,6 +819,9 @@
           // ...clicking on the background causes the relation drag to stop.
           sm.backgroundClicked();
           assert.isFalse(topo.buildingRelation);
+          view.destroy();
+          db.destroy();
+          fauxController.destroy();
         });
 
     it('propagates the getModelURL function to the topology', function() {
@@ -828,7 +835,20 @@
         getModelURL: getModelURL}).render();
       var topoGetModelURL = view.topo.get('getModelURL');
       assert.equal('placeholder value', topoGetModelURL());
+      view.destroy();
     });
+
+    it('propagates the endpointsController to the topology', function() {
+      var view = new views.environment({
+        container: container,
+        db: db,
+        endpointsController: 'hidy ho',
+        env: env}).render();
+      var endpointsController = view.topo.get('endpointsController');
+      assert.equal('hidy ho', endpointsController);
+      view.destroy();
+    });
+
   });
 
   describe('view model support infrastructure', function() {

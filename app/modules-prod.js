@@ -35,7 +35,8 @@ var GlobalConfig = {
             'juju-env-go',
             'juju-env-python',
             'juju-charm-store',
-            'juju-notification-controller'
+            'juju-notification-controller',
+            'juju-endpoints-controller'
           ]
         },
 

@@ -203,6 +203,11 @@ var GlobalConfig = {
           fullpath: '/juju-ui/models/charm.js'
         },
 
+        'juju-delta-handlers': {
+          fullpath: '/juju-ui/models/handlers.js'
+        },
+
+
         'juju-models': {
           fullpath: '/juju-ui/models/models.js'
         },
@@ -234,6 +239,10 @@ var GlobalConfig = {
 
         'juju-notification-controller': {
           fullpath: '/juju-ui/store/notifications.js'
+        },
+
+        'juju-endpoints-controller': {
+          fullpath: '/juju-ui/store/endpoints.js'
         },
 
         'juju-charm-store': {

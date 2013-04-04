@@ -352,19 +352,17 @@ YUI.add('juju-gui', function(Y) {
       this.env.after('login', this.onLogin, this);
 
       // Feed environment changes directly into the database.
-      this.env.on('delta', this.db.on_delta, this.db);
+      this.env.on('delta', this.db.onDelta, this.db);
 
       // Feed delta changes to the notifications system.
       this.env.on('delta', this.notifications.generate_notices,
           this.notifications);
 
       // Handlers for adding and removing services to the service list.
-      this.db.services.after('add', models.serviceAddHandler, this);
-      this.db.services.after('remove', models.serviceRemoveHandler, this);
-      this.db.services.after('*:pendingChange', models.serviceChangeHandler,
-          this);
-      this.db.services.after('*:charmChange', models.serviceChangeHandler,
-          this);
+      this.endpointsController = new juju.EndpointsController({
+        env: this.env,
+        db: this.db});
+      this.endpointsController.bind();
 
       // When the connection resets, reset the db, re-login (a delta will
       // arrive with successful authentication), and redispatch.
@@ -436,7 +434,7 @@ YUI.add('juju-gui', function(Y) {
     destructor: function() {
       Y.each(
           [this.env, this.db, this.charm_store, this.notifications,
-           this.landscape],
+           this.landscape, this.endpointsController],
           function(o) {
             if (o && o.destroy) {
               o.destroy();
@@ -504,7 +502,9 @@ YUI.add('juju-gui', function(Y) {
           // The querystring is used to handle highlighting relation rows in
           // links from notifications about errors.
           { getModelURL: Y.bind(this.getModelURL, this),
-            unit: unit, db: this.db, env: this.env,
+            unit: unit,
+            db: this.db,
+            env: this.env,
             querystring: req.query,
             landscape: this.landscape,
             nsRouter: this.nsRouter });
@@ -821,6 +821,7 @@ YUI.add('juju-gui', function(Y) {
             nsRouter: this.nsRouter,
             loadService: this.loadService,
             landscape: this.landscape,
+            endpointsController: this.endpointsController,
             db: this.db,
             env: this.env};
 
@@ -1041,6 +1042,7 @@ YUI.add('juju-gui', function(Y) {
     // This alias does not seem to work, including references by hand.
     'juju-controllers',
     'juju-notification-controller',
+    'juju-endpoints-controller',
     'juju-env',
     'juju-env-fakebackend',
     'juju-env-sandbox',

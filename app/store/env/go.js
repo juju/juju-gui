@@ -70,22 +70,6 @@ YUI.add('juju-env-go', function(Y) {
   };
 
   /**
-    Clean up the entity tags, which have the entity type prefixing the entity's
-    name when retrieved from the server in some instances, notably annotations.
-
-    The regular expression removes any non-hyphen characters followed by a
-    hyphen from the beginning of a string.  Thus, service-mysql becomes simply
-    mysql (as the expression matches 'service-').
-
-    @method cleanUpEntityTags
-    @param {String} tag The tag to clean up.
-    @return {String} The tag without the prefix.
-  */
-  var cleanUpEntityTags = function(tag) {
-    return tag.replace(/^(service|unit|machine|environment)-/, '');
-  };
-
-  /**
    * The Go Juju environment.
    *
    * This class handles the websocket connection to the GoJuju API backend.
@@ -98,70 +82,6 @@ YUI.add('juju-env-go', function(Y) {
   }
 
   GoEnvironment.NAME = 'go-env';
-
-  var entityInfoConverters = {
-    /**
-      Convert a Go style entity info into the expected legacy format.
-
-      @param {Object} entityInfo The JSON entity information from Go.
-      @return {Object} The legacy JSON data that the GUI expects.
-     */
-    service: function(entityInfo) {
-      return {
-        id: entityInfo.Name,
-        charm: entityInfo.CharmURL,
-        exposed: entityInfo.Exposed // XXX and more stuff
-      };
-    },
-    /**
-      Convert a Go style entity info into the expected legacy format.
-
-      @param {Object} entityInfo The JSON entity information from Go.
-      @return {Object} The legacy JSON data that the GUI expects.
-     */
-    unit: function(entityInfo) {
-      return {
-        id: entityInfo.Name,
-        service: entityInfo.Service // XXX and more stuff
-      };
-    },
-    /**
-      Convert a Go style entity info into the expected legacy format.
-
-      @param {Object} entityInfo The JSON entity information from Go.
-      @return {Object} The legacy JSON data that the GUI expects.
-     */
-    relation: function(entityInfo) {
-      return {
-        id: entityInfo.Key // XXX and more stuff
-      };
-    },
-    /**
-      Convert a Go style entity info into the expected legacy format.
-
-      @param {Object} entityInfo The JSON entity information from Go.
-      @return {Object} The legacy JSON data that the GUI expects.
-     */
-    machine: function(entityInfo) {
-      return {
-        id: entityInfo.Id,
-        instance_id: entityInfo.InstanceId // XXX and more stuff
-      };
-    },
-    /**
-      Convert a Go style entity info into the expected legacy format.
-
-      @param {Object} entityInfo The JSON entity information from Go.
-      @return {Object} The legacy JSON data that the GUI expects.
-     */
-    annotation: function(entityInfo) {
-      return {
-        id: cleanUpEntityTags(entityInfo.Tag),
-        type: entityInfo.Tag.split('-')[0],
-        annotations: entityInfo.Annotations
-      };
-    }
-  };
 
   Y.extend(GoEnvironment, environments.BaseEnvironment, {
 
@@ -254,13 +174,12 @@ YUI.add('juju-env-go', function(Y) {
       // We do this early to get a response back fast.  Might be a bad
       // idea. :-)
       this._next();
-      // data.Deltas has our stuff.  We need to translate delta
-      // events based on the deltas we got.
+      // data.Deltas has our stuff.  We need to translate the kind of each
+      // change in delta events based on the deltas we got.
       var deltas = [];
       data.Response.Deltas.forEach(function(delta) {
         var kind = delta[0], operation = delta[1], entityInfo = delta[2];
-        var converter = entityInfoConverters[kind];
-        deltas.push([kind, operation, converter(entityInfo)]);
+        deltas.push([kind + 'Info', operation, entityInfo]);
       });
       this.fire('delta', {data: {result: deltas}});
     },
@@ -1006,9 +925,7 @@ YUI.add('juju-env-go', function(Y) {
   environments.GoEnvironment = GoEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
   environments.stringifyObjectValues = stringifyObjectValues;
-  environments.entityInfoConverters = entityInfoConverters;
   environments.cleanUpJSON = cleanUpJSON;
-  environments.cleanUpEntityTags = cleanUpEntityTags;
 
 }, '0.1.0', {
   requires: [
