@@ -41,7 +41,7 @@ YUI.add('juju-delta-handlers', function(Y) {
      performed ("add", "change" or "remove"), the change coming from
      the environment, and a (optional) kind identifying what will be
      changed (e.g. "unit", "service", "unitInfo").
-     Each handler have the responsibility to update the database according to
+     Each handler has the responsibility to update the database according to
      the received change.
   */
   models.handlers = {

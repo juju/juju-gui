@@ -573,7 +573,7 @@ YUI.add('juju-models', function(Y) {
       Populate the database according to the changeset included in the delta.
 
       @method onDelta
-      @param {Event} deltaEvent An event object containig the delta changeset
+      @param {Event} deltaEvent An event object containing the delta changeset
        (in the "data.result" attribute).
       @return {undefined} Nothing.
     */
