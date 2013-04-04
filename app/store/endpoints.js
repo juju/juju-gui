@@ -32,11 +32,17 @@ YUI.add('juju-endpoints-controller', function(Y) {
          * @protected
          * @since 3.5.0
          */
+
         _allowAdHocAttrs: true,
 
-        _subscriptions: [],
-
-        endpointsMap: {},
+        /**
+         * @method initializer
+         * @param {Object} cfg Application configuration data.
+         */
+        initializer: function(cfg) {
+          this._subscriptions = [];
+          this. endpointsMap = {};
+        },
 
         /**
          * Bind events for endpoint processing.
@@ -47,13 +53,18 @@ YUI.add('juju-endpoints-controller', function(Y) {
         bind: function() {
           var db = this.get('db');
 
-          db.services.after('add', this.serviceAddHandler, this);
-          db.services.after('remove', this.serviceRemoveHandler, this);
-          db.services.after('*:pendingChange', this.serviceChangeHandler,
-              this);
-          db.services.after('*:charmChange', this.serviceChangeHandler,
-              this);
-          db.services.after('reset', this.reset, this);
+          this._subscriptions.push(
+              db.services.after('add', this.serviceAddHandler, this));
+          this._subscriptions.push(
+              db.services.after('remove', this.serviceRemoveHandler, this));
+          this._subscriptions.push(
+              db.services.after('*:pendingChange', this.serviceChangeHandler,
+              this));
+          this._subscriptions.push(
+              db.services.after('*:charmChange', this.serviceChangeHandler,
+              this));
+          this._subscriptions.push(
+              db.services.after('reset', this.reset, this));
         },
 
         /**
@@ -72,10 +83,10 @@ YUI.add('juju-endpoints-controller', function(Y) {
         /**
          * Destroy this controller
          *
-         * @method destroy
+         * @method destructor
          * @return {undefined} Nothing.
          */
-        destroy: function() {
+        destructor: function() {
           this.unbind();
         },
 
@@ -118,7 +129,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
           var charm = db.charms.getById(charm_id);
 
           // If the charm doesn't exist, add and load it.
-          if (!Y.Lang.isValue(charm)) {
+          if (!charm) {
             charm = db.charms.add({id: charm_id})
               .load(env,
                 // If views are bound to the charm model, firing "update" is
@@ -172,7 +183,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
          */
         serviceRemoveHandler: function(evt) {
           var svcName = evt.model.get('id');
-          delete(this.endpointsMap[svcName]);
+          delete this.endpointsMap[svcName];
         },
 
         /**

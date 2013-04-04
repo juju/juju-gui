@@ -39,6 +39,7 @@ describe('Relation endpoints logic', function() {
   });
 
   afterEach(function(done) {
+    app.destroy();
     db.destroy();
     env.destroy();
     done();
@@ -143,6 +144,11 @@ describe('Endpoints map', function() {
       controller = new EndpointsController();
       done();
     });
+  });
+
+  afterEach(function(done) {
+    controller.destroy();
+    done();
   });
 
   it('should add a service to the map', function() {
@@ -305,6 +311,7 @@ describe('Endpoints map handlers', function() {
   });
 
   afterEach(function() {
+    controller.destroy();
     env.destroy();
     app.destroy();
   });

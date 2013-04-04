@@ -740,6 +740,7 @@
          assert.equal(4, db.relations.size());
          // restore original getEndpoints function
          models.getEndpoints = existing;
+         view.destroy();
        });
 
     it('must be able to remove a relation between services',
@@ -766,6 +767,7 @@
               .size()
               .should.equal(1);
          view.topo.modules.RelationModule.get('rmrelation_dialog').hide();
+         view.destroy();
        });
 
     it('must not allow removing a subordinate relation between services',
@@ -795,13 +797,13 @@
         function() {
           var db = new models.Database(),
               endpointsMap = {'service-1': {requires: [], provides: []}};
-          var endpointsController = new Y.Base();
-          endpointsController.endpointsMap = endpointsMap;
-          endpointsController.set('db', db);
+          var fauxController = new Y.Base();
+          fauxController.endpointsMap = endpointsMap;
+          fauxController.set('db', db);
           var view = new views.environment(
               { container: container,
                 db: db,
-                endpointsController: endpointsController,
+                endpointsController: fauxController,
                 env: env});
           var service = new models.Service({ id: 'service-1'});
 
@@ -817,6 +819,9 @@
           // ...clicking on the background causes the relation drag to stop.
           sm.backgroundClicked();
           assert.isFalse(topo.buildingRelation);
+          view.destroy();
+          db.destroy();
+          fauxController.destroy();
         });
 
     it('propagates the getModelURL function to the topology', function() {
@@ -830,6 +835,7 @@
         getModelURL: getModelURL}).render();
       var topoGetModelURL = view.topo.get('getModelURL');
       assert.equal('placeholder value', topoGetModelURL());
+      view.destroy();
     });
 
     it('propagates the endpointsController to the topology', function() {
@@ -840,6 +846,7 @@
         env: env}).render();
       var endpointsController = view.topo.get('endpointsController');
       assert.equal('hidy ho', endpointsController);
+      view.destroy();
     });
 
   });
