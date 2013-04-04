@@ -111,7 +111,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
         setupCharmOnceLoad: function(charm, svcName) {
           charm.once('load', Y.bind(function(svcName, evt) {
             this.addServiceToEndpointsMap(svcName, evt.currentTarget);
-          }, null, svcName));
+          }, this, svcName));
         },
 
         /**
@@ -133,7 +133,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
             charm = db.charms.add({id: charm_id})
               .load(env,
                 // If views are bound to the charm model, firing "update" is
-                    // unnecessary, and potentially even mildly harmful.
+                // unnecessary, and potentially even mildly harmful.
                 function(err, result) { db.fire('update'); });
           }
 
