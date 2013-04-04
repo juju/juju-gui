@@ -167,7 +167,6 @@ YUI.add('juju-env-sandbox', function(Y) {
           return data[i];
         });
         var callback = function(reply) {
-          console.log('Sandbox RPC:', rpcName, data, reply);
           if (reply.error) {
             data.error = reply.error;
             data.err = reply.error;
@@ -178,7 +177,6 @@ YUI.add('juju-env-sandbox', function(Y) {
         };
         // Add our generated callback to arguments.
         vargs.push(callback);
-        console.log('SanboxRPC calling', rpcName, vargs);
         state[rpcName].apply(state, vargs);
       }, context);
     };
@@ -189,7 +187,6 @@ YUI.add('juju-env-sandbox', function(Y) {
       var vargs = Y.Array.map(args, function(i) {
         return data[i];
       });
-      console.log('SanboxRPC calling', rpcName, vargs);
       var reply  = state[rpcName].apply(state, vargs);
       if (reply.error) {
         data.error = reply.error;

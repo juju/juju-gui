@@ -326,7 +326,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!serviceData.constraints) {
         serviceData.constraints = {};
       }
-      return serviceData;
+      var relations = this.db.relations.get_relations_for_service(service);
+      var rels = relations.map(function(r) {return r.getAttrs();});
+      // TODO: properly map relations to expected format rather
+      // than this passthrough. Pending on the add/remove relations
+      // branches that will need the same helper code.
+      serviceData.rels = rels;
+      return {result: serviceData};
     },
 
     /**
