@@ -71,11 +71,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           tplNode = Y.Node.create(tpl),
           store = this.get('store');
 
-      // build widgets used in the template.
-      this.search = new widgets.browser.Search({
-        fullscreenTarget: this._fullscreenTarget
-      });
-      this.search.render(tplNode.one('.bws-header'));
+      this._renderSearchWidget(tplNode);
 
       if (typeof container !== 'object') {
         container = this.get('container');
@@ -143,25 +139,17 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     render: function(container) {
-      this._renderEditorialView(container);
-
+      if (this.get('charmID')) {
+        this._renderCharmView(container);
+      } else {
+        this._renderEditorialView(container);
+      }
       // Bind our view to the events from the search widget used for controls.
       this._bindSearchWidgetEvents();
     }
 
   }, {
-    ATTRS: {
-      /**
-       * An instance of the Charmworld API object to hit for any data that
-       * needs fetching.
-       *
-       * @attribute store
-       * @default undefined
-       * @type {Charmworld0}
-       *
-       */
-      store: {}
-    }
+    ATTRS: {}
   });
 
 }, '0.1.0', {
@@ -172,6 +160,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-templates',
+    'subapp-browser-charmview',
     'subapp-browser-mainview',
     'view'
   ]

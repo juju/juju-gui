@@ -15,7 +15,7 @@ YUI.add('subapp-browser', function(Y) {
    * Browser Sub App for the Juju Gui.
    *
    * @class Browser
-   * @extends {Y.juju.SubApp}
+   * @extends {juju.SubApp}
    *
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
@@ -70,8 +70,11 @@ YUI.add('subapp-browser', function(Y) {
       sidebar: {
         type: 'juju.browser.views.Sidebar',
         preserve: true
+      },
+      sidebarCharm: {
+        type: 'juju.browser.views.Sidebar',
+        preserve: false
       }
-
     },
 
     /**
@@ -135,6 +138,24 @@ YUI.add('subapp-browser', function(Y) {
     sidebar: function(req, res, next) {
       this.showView('sidebar', this._getViewCfg());
       next();
+    },
+
+    /**
+     * Render the sidebar view of a specific charm to the client.
+     *
+     * @method sidebarCharm
+     * @param {Request} req current request object.
+     * @param {Response} res current response object.
+     * @param {function} next callable for the next route in the chain.
+     *
+     */
+    sidebarCharm: function(req, res, next) {
+      var subpath = this._getSubPath(req.path);
+      this.showView('sidebarCharm', this._getViewCfg({
+        charmID: req.params.id,
+        subpath: subpath
+      }));
+      next();
     }
 
   }, {
@@ -156,7 +177,17 @@ YUI.add('subapp-browser', function(Y) {
           { path: '/bws/fullscreen/*id/qa/', callbacks: 'fullscreenCharm' },
           { path: '/bws/fullscreen/*id/readme/', callbacks: 'fullscreenCharm' },
           { path: '/bws/fullscreen/*id/', callbacks: 'fullscreenCharm' },
-          { path: '/bws/sidebar/', callbacks: 'sidebar' }
+
+          { path: '/bws/sidebar/', callbacks: 'sidebar' },
+
+          { path: '/bws/sidebar/*id/configuration/',
+            callbacks: 'sidebarCharm' },
+          { path: '/bws/sidebar/*id/hooks/', callbacks: 'sidebarCharm' },
+          { path: '/bws/sidebar/*id/interfaces/',
+            callbacks: 'sidebarCharm' },
+          { path: '/bws/sidebar/*id/qa/', callbacks: 'sidebarCharm' },
+          { path: '/bws/sidebar/*id/readme/', callbacks: 'sidebarCharm' },
+          { path: '/bws/sidebar/*id/', callbacks: 'sidebarCharm' }
         ]
       }
     }
