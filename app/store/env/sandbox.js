@@ -422,7 +422,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     performOp_set_config: function(data) {
-      ASYNC_OP(this, 'set_config', ['service_name', 'config'])(data);
+      ASYNC_OP(this, 'setConfig', ['service_name', 'config'])(data);
     },
 
     /**
