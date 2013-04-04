@@ -165,7 +165,6 @@ YUI.add('juju-env-python', function(Y) {
       this._send_rpc({
         'op': 'remove_units',
         'unit_names': unit_names}, callback, true);
-
     },
 
     /**
@@ -204,6 +203,19 @@ YUI.add('juju-env-python', function(Y) {
       this._send_rpc({op: 'get_charm', charm_url: charmURL}, callback);
     },
 
+    /**
+       Get the configuration for the given service.
+
+       @method get_service
+       @param {String} service_name The service name.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object containing:
+          err - a string describing the problem (if an error occurred),
+          service_name - the name of the service,
+          result: an object containing all of the configuration data for
+            the service.
+       @return {undefined} Sends a message to the server only.
+     */
     get_service: function(service_name, callback) {
       this._send_rpc(
           {'op': 'get_service', 'service_name': service_name}, callback);
@@ -381,33 +393,18 @@ YUI.add('juju-env-python', function(Y) {
     },
 
     /**
-      Get the available endpoints (by interface) for a collection of
-      services.
-
-      @method get_endpoints
-      @param {Array} services Zero or more currently deployed services for
-          which the endpoints should be collected.  Specifying an empty array
-          indicates that all deployed services should be analyzed.
-      @param {Function} callback A callable that must be called once the
-         operation is performed.
-      @return {undefined} Sends a message to the server only.
-     */
-    get_endpoints: function(services, callback) {
-      this._send_rpc({'op': 'get_endpoints', 'service_names': services},
-                     callback);
-    },
-
-    /**
      * Update the annotations for an entity by name.
      *
      * @param {Object} entity The name of a machine, unit, service, or
      *   environment, e.g. '0', 'mysql/0', or 'mysql'.  To specify the
      *   environment as the entity the magic string 'env' is used.
+     * @param {String} type The type of the entity; not used, but required
+     *   for Go compatibility.
      * @param {Object} data A dictionary of key, value pairs.
      * @return {undefined} Nothing.
      * @method update_annotations
      */
-    update_annotations: function(entity, data, callback) {
+    update_annotations: function(entity, type, data, callback) {
       this._send_rpc({
         op: 'update_annotations',
         entity: entity,
@@ -423,11 +420,13 @@ YUI.add('juju-env-python', function(Y) {
      * @param {Object} entity The name of a machine, unit, service, or
      *   environment, e.g. '0', 'mysql/0', or 'mysql'.  To specify the
      *   environment as the entity the magic string 'env' is used.
+     * @param {String} type The type of the entity; not used, but required
+     *   for Go compatibility.
      * @return {Object} A dictionary of key,value pairs is returned in the
      *   callback.  The invocation of this command returns nothing.
      * @method get_annotations
      */
-    get_annotations: function(entity, callback) {
+    get_annotations: function(entity, type, callback) {
       this._send_rpc({
         op: 'get_annotations',
         entity: entity}, callback);
@@ -439,13 +438,15 @@ YUI.add('juju-env-python', function(Y) {
      * @param {Object} entity The name of a machine, unit, service, or
      *   environment, e.g. '0', 'mysql/0', or 'mysql'.  To specify the
      *   environment as the entity the magic string 'env' is used.
+     * @param {String} type The type of the entity; not used, but required
+     *   for Go compatibility.
      * @param {Object} keys An optional list of annotation key names for the
      *   annotations to be deleted.  If no keys are passed, all annotations
      *   for the entity will be removed.
      * @return {undefined} Nothing.
      * @method remove_annotations
      */
-    remove_annotations: function(entity, keys, callback) {
+    remove_annotations: function(entity, type, keys, callback) {
       this._send_rpc({
         op: 'remove_annotations',
         entity: entity,

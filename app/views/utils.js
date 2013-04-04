@@ -665,7 +665,7 @@ YUI.add('juju-view-utils', function(Y) {
       get: function() {return this['_' + name];},
       set: function(value) {
         this['p' + name] = this['_' + name];
-        this['_' + name] = value;
+        this['_' + name] = parseFloat(value);
       }
     };
   }
@@ -1150,6 +1150,20 @@ YUI.add('juju-view-utils', function(Y) {
       out += options.fn({start: ep[0], end: ep[1]});
     });
     return out;
+  });
+
+
+  Y.Handlebars.registerHelper('arrayObject', function(object, options) {
+    var res = '';
+    if (object) {
+      Y.Array.each(Y.Object.keys(object), function(key) {
+        res = res + options.fn({
+          key: key,
+          value: object[key]
+        });
+      });
+    }
+    return res;
   });
 
 }, '0.1.0', {

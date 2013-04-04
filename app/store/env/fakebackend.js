@@ -449,13 +449,39 @@ YUI.add('juju-env-fakebackend', function(Y) {
       return machines;
     },
 
-    // removeUnit: function() {
+    /**
+      Removes the supplied units
 
-    // },
+      @method removeUnits
+      @param {Array} unitNames a list of unit names to be removed.
+    */
+    removeUnits: function(unitNames) {
+      var service, removedUnit,
+          error = [],
+          warning = [];
 
-    // getEndpoints: function() {
+      Y.Array.each(unitNames, function(unitName) {
+        service = this.db.services.getById(unitName.split('/')[0]);
+        if (service && service.get('is_subordinate')) {
+          error.push(unitName + ' is a subordinate, cannot remove.');
+        }
+        removedUnit = this.db.units.some(function(unit, index) {
+          if (unit.displayName === unitName) {
+            this.db.units.remove(index);
+            return true;
+          }
+        }, this);
+        if (!removedUnit) {
+          warning.push(unitName + ' does not exist, cannot remove.');
+        }
+      }, this);
 
-    // },
+      // Return the errors and warnings
+      return {
+        error: error,
+        warning: warning
+      };
+    },
 
     // updateAnnotations: function() {
 

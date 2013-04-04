@@ -87,7 +87,7 @@
       });
 
       view.render(node);
-      Y.one('#bws_readme').get('text').should.eql('README content.');
+      Y.one('#bws-readme').get('text').should.eql('README content.');
     });
 
     // EVENTS
@@ -104,7 +104,7 @@
       // Hook up to the callback for the click event.
       view._addCharmEnvironment = function(ev) {
         ev.preventDefault();
-        Y.one('#bws_readme h3').get('text').should.eql('Charm has no README');
+        Y.one('#bws-readme h3').get('text').should.eql('Charm has no README');
         done();
       };
 
@@ -126,7 +126,7 @@
       // Hook up to the callback for the click event.
       view._toggleLog = function(ev) {
         ev.preventDefault();
-        Y.one('#bws_readme h3').get('text').should.eql('Charm has no README');
+        Y.one('#bws-readme h3').get('text').should.eql('Charm has no README');
         done();
       };
 
@@ -162,7 +162,7 @@
       });
 
       view.render(node);
-      Y.one('#bws_hooks').all('ul li a').size().should.eql(2);
+      Y.one('#bws_hooks').all('ul li a').size().should.equal(2);
 
       // Click on the hooks install and the content should update.
       Y.one('#bws_hooks').one('ul li a').simulate('click');
@@ -200,8 +200,30 @@
       });
 
       view.render(node);
-      Y.one('#bws_readme').get('innerHTML').should.eql(
+      Y.one('#bws-readme').get('innerHTML').should.eql(
           '<h1>README Header</h1>');
+    });
+
+    it('should display the config data in the config tab', function() {
+      var view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [],
+          id: 'precise/ceph-9',
+          options: {
+            'client-port': {
+              'default': 9160,
+              'description': 'Port for client communcation',
+              'type': 'int'
+            }
+          }
+        })
+      });
+      view.render(node);
+
+      var dds = Y.all('#bws_configuration dd');
+      dds.size().should.eql(2);
+      dds.pop().get('text').should.eql('Default: 9160');
+      dds.pop().get('text').should.eql('Port for client communcation');
     });
 
     it('_buildQAData properly summerizes the scores', function() {
@@ -245,4 +267,3 @@
     });
   });
 })();
-

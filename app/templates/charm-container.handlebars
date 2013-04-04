@@ -1,6 +1,8 @@
 <div>
   <h3>{{ name }}</h3>  
-  <div class="expand">See {{ extra }} more</div>
+  {{#has_extra}}
+    <div class="expand">See {{ extra }} more</div>
+  {{/has_extra}}
   <div class="charms">
   </div>
 </div>

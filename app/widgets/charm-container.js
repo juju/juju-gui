@@ -3,7 +3,7 @@
 
 /**
  * browser-charm-container provides a container used for categorizing charm
- * small widgets.
+ * tokens.
  *
  * @namespace juju
  * @module widgets
@@ -13,7 +13,7 @@ YUI.add('browser-charm-container', function(Y) {
   var ns = Y.namespace('juju.widgets.browser');
 
   /**
-   * A container for charm small widgets, used to control how many are
+   * A container for charm tokens, used to control how many are
    * displayed and provide categorization.
    *
    * @class CharmContainer
@@ -71,7 +71,7 @@ YUI.add('browser-charm-container', function(Y) {
      * @method _toggleExpand
      */
     _toggleExpand: function(e) {
-      var invisible = this.get('contentBox').one('.yui3-charmsmall-hidden'),
+      var invisible = this.get('contentBox').one('.yui3-charmtoken-hidden'),
           expander = e.currentTarget;
       if (invisible) {
         this._showAll();
@@ -89,8 +89,10 @@ YUI.add('browser-charm-container', function(Y) {
      * @method bindUI
      */
     bindUI: function() {
-      var expander = this.get('contentBox').one('.expand');
-      this._events.push(expander.on('click', this._toggleExpand, this));
+      if (this.get('has_extra')) {
+        var expander = this.get('contentBox').one('.expand');
+        this._events.push(expander.on('click', this._toggleExpand, this));
+      }
     },
 
     /**
@@ -135,16 +137,26 @@ YUI.add('browser-charm-container', function(Y) {
        * @type {Integer}
        */
       cutoff: {
-        value: 3
+        value: 3,
+        /**
+         * Verify the cutoff is non-negative.
+         *
+         * @method validator
+         * @param {Number} val The cutoff value being validated.
+         */
+        validator: function(val) {
+          return (val >= 0);
+        }
+
       },
 
       /**
        * @attribute defaultChildType
-       * @default Y.juju.widgets.browser.CharmSmall
+       * @default Y.juju.widgets.browser.CharmToken
        * @type {Function}
        */
       defaultChildType: {
-        value: ns.CharmSmall
+        value: ns.CharmToken
       },
 
       /**
@@ -153,6 +165,21 @@ YUI.add('browser-charm-container', function(Y) {
        * @type {Integer}
        */
       extra: {},
+
+      /**
+       * @attribute has_extra
+       */
+      has_extra: {
+        /**
+         * Check if there are extra charm tokens
+         *
+         * @method getter
+         *
+         */
+        getter: function() {
+          return this.get('extra') > 0;
+        }
+      },
 
       /**
        * @attribute name
@@ -168,8 +195,8 @@ YUI.add('browser-charm-container', function(Y) {
 }, '0.1.0', {
   requires: [
     'array',
-    'base',
-    'browser-charm-small',
+    'base-build',
+    'browser-charm-token',
     'handlebars',
     'juju-templates',
     'widget',

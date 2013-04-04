@@ -106,9 +106,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
         switch (tab) {
           // @todo to be added later. Placed in now to make the linter happy
           // with the switch statement.
-          case 'Configuration':
-            console.log('not implemented config handler');
-            break;
           case 'Interfaces':
             console.log('not implemented interfaces handler');
             break;
@@ -279,8 +276,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     render: function(container) {
-      var tpl = this.template(this.get('charm').getAttrs()),
-          tplNode = Y.Node.create(tpl);
+      var charm = this.get('charm');
+      var tpl = this.template(charm.getAttrs());
+      var tplNode = Y.Node.create(tpl);
 
       container.setHTML(tplNode);
 
@@ -300,11 +298,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var readme = this._locateReadme();
 
       if (readme) {
-        this._loadFile(tplNode.one('#bws_readme'),
+        this._loadFile(tplNode.one('#bws-readme'),
                        readme
         );
       } else {
-        this._noReadme(tplNode.one('#bws_readme'));
+        this._noReadme(tplNode.one('#bws-readme'));
       }
     }
   }, {
@@ -339,6 +337,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'gallery-markdown',
     'juju-templates',
     'juju-views',
+    'juju-view-utils',
     'prettify',
     'view'
   ]
