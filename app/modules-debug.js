@@ -241,6 +241,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/notifications.js'
         },
 
+        'juju-endpoints-controller': {
+          fullpath: '/juju-ui/store/endpoints.js'
+        },
+
         'juju-charm-store': {
           fullpath: '/juju-ui/store/charm.js'
         },

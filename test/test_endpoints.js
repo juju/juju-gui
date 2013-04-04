@@ -4,7 +4,7 @@
 // the addition of puppet subordinate relations.
 
 describe('Relation endpoints logic', function() {
-  var Y, juju, db, models, sample_endpoints, sample_env;
+  var Y, juju, utils, db, app, models, sample_endpoints, sample_env, env;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -21,34 +21,44 @@ describe('Relation endpoints logic', function() {
 
   beforeEach(function(done) {
     Y = YUI(GlobalConfig).use(['juju-models',
+                               'juju-gui',
                                'juju-tests-utils',
                                'juju-controllers'],
     function(Y) {
       juju = Y.namespace('juju');
+      utils = Y.namespace('juju-tests.utils');
       models = Y.namespace('juju.models');
-      db = new (Y.namespace('juju.models')).Database();
+      var conn = new utils.SocketStub();
+      env = juju.newEnvironment({conn: conn});
+      env.connect();
+      app = new Y.juju.App({env: env});
+      db = app.db;
       db.onDelta({data: {'op': 'delta', result: sample_env}});
       done();
     });
   });
 
   afterEach(function(done) {
+    app.destroy();
     db.destroy();
+    env.destroy();
     done();
   });
 
   it('should be able to find relatable services', function() {
+    app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('blog-lb'),
         available_svcs = Y.Object.keys(models.getEndpoints(
-            service, sample_endpoints, db));
+            service, app.endpointsController));
     available_svcs.sort();
     available_svcs.should.eql(
         ['mediawiki', 'puppet', 'rsyslog-forwarder', 'wiki-lb', 'wordpress']);
   });
 
   it('should find valid targets including subordinates', function() {
+    app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('memcached'),
-        available = models.getEndpoints(service, sample_endpoints, db),
+        available = models.getEndpoints(service, app.endpointsController),
         available_svcs;
     available_svcs = Y.Object.keys(available);
     available_svcs.sort();
@@ -58,8 +68,9 @@ describe('Relation endpoints logic', function() {
 
   it('should find ambigious targets', function() {
     // Mysql already has both subordinates related.
+    app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('mysql'),
-        available = models.getEndpoints(service, sample_endpoints, db),
+        available = models.getEndpoints(service, app.endpointsController),
         available_svcs = Y.Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(['mediawiki']);
@@ -74,7 +85,7 @@ describe('Relation endpoints logic', function() {
 
     // Demonstrate the inverse retrieval of the same.
     available = models.getEndpoints(
-        db.services.getById('mediawiki'), sample_endpoints, db),
+        db.services.getById('mediawiki'), app.endpointsController);
     available.mysql.should.eql([
       [{name: 'slave', service: 'mediawiki', type: 'mysql'},
        {name: 'db', service: 'mysql', type: 'mysql'}],
@@ -86,8 +97,9 @@ describe('Relation endpoints logic', function() {
   it('should find valid targets for a requires', function() {
     // Wordpress already has one subordinates related (puppet)
     // ..the picture is wrong.. wordpress only has one subordinate
+    app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('wordpress'),
-        available = models.getEndpoints(service, sample_endpoints, db),
+        available = models.getEndpoints(service, app.endpointsController),
         available_svcs = Y.Object.keys(available);
     available_svcs.sort();
     available_svcs.should.eql(
@@ -95,8 +107,9 @@ describe('Relation endpoints logic', function() {
   });
 
   it('should find valid targets for subordinates', function() {
+    app.endpointsController.endpointsMap = sample_endpoints;
     var service = db.services.getById('puppet');
-    var available = models.getEndpoints(service, sample_endpoints, db);
+    var available = models.getEndpoints(service, app.endpointsController);
     var available_svcs = Y.Object.keys(available);
 
     available_svcs.sort();
@@ -104,7 +117,7 @@ describe('Relation endpoints logic', function() {
         ['blog-lb', 'memcached', 'puppetmaster', 'rsyslog', 'wiki-lb']);
 
     service = db.services.getById('rsyslog-forwarder');
-    available = models.getEndpoints(service, sample_endpoints, db);
+    available = models.getEndpoints(service, app.endpointsController);
     available_svcs = Y.Object.keys(available);
 
     available_svcs.sort();
@@ -117,21 +130,29 @@ describe('Relation endpoints logic', function() {
 
 
 describe('Endpoints map', function() {
-  var Y, juju, models;
+  var Y, juju, models, controller;
 
   beforeEach(function(done) {
     Y = YUI(GlobalConfig).use(['juju-models',
                                'juju-tests-utils',
+                               'juju-endpoints-controller',
                                'juju-controllers'],
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
+      var EndpointsController = Y.namespace('juju.EndpointsController');
+      controller = new EndpointsController();
       done();
     });
   });
 
+  afterEach(function(done) {
+    controller.destroy();
+    done();
+  });
+
   it('should add a service to the map', function() {
-    models.endpointsMap = {};
+    controller.endpointsMap = {};
     var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('provides', {
       url: {
@@ -153,8 +174,8 @@ describe('Endpoints map', function() {
         optional: 'true'
       }
     });
-    models.addServiceToEndpointsMap('wordpress', charm);
-    models.endpointsMap.should.eql({wordpress: {
+    controller.addServiceToEndpointsMap('wordpress', charm);
+    controller.endpointsMap.should.eql({wordpress: {
       provides: [
         {
           name: 'url',
@@ -182,7 +203,7 @@ describe('Endpoints map', function() {
   });
 
   it('should add a service to the map, requires only', function() {
-    models.endpointsMap = {};
+    controller.endpointsMap = {};
     var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('requires', {
       db: {
@@ -194,8 +215,8 @@ describe('Endpoints map', function() {
         optional: 'true'
       }
     });
-    models.addServiceToEndpointsMap('wordpress', charm);
-    models.endpointsMap.should.eql({wordpress: {
+    controller.addServiceToEndpointsMap('wordpress', charm);
+    controller.endpointsMap.should.eql({wordpress: {
       provides: [],
       requires: [
         {
@@ -213,7 +234,7 @@ describe('Endpoints map', function() {
   });
 
   it('should add a service to the map, provides only', function() {
-    models.endpointsMap = {};
+    controller.endpointsMap = {};
     var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
     charm.set('provides', {
       url: {
@@ -225,8 +246,8 @@ describe('Endpoints map', function() {
         scope: 'container'
       }
     });
-    models.addServiceToEndpointsMap('wordpress', charm);
-    models.endpointsMap.should.eql({wordpress: {
+    controller.addServiceToEndpointsMap('wordpress', charm);
+    controller.endpointsMap.should.eql({wordpress: {
       requires: [],
       provides: [
         {
@@ -244,24 +265,33 @@ describe('Endpoints map', function() {
 
   it('should add a service to the map, neither provides nor requires',
      function() {
-       models.endpointsMap = {};
+       controller.endpointsMap = {};
        var charm = new models.Charm({id: 'cs:precise/wordpress-2'});
-       models.addServiceToEndpointsMap('wordpress', charm);
-       models.endpointsMap.should.eql({wordpress: {
+       controller.addServiceToEndpointsMap('wordpress', charm);
+       controller.endpointsMap.should.eql({wordpress: {
          requires: [],
          provides: []}});
        charm.destroy();
      });
 
+  it('should reset the map', function() {
+    var testmap = {'columbus': 'sailed the ocean blue'};
+    controller.endpointsMap = testmap;
+    controller.endpointsMap.should.eql(testmap);
+    controller.reset();
+    controller.endpointsMap.should.eql({});
+  });
+
 });
 
 describe('Endpoints map handlers', function() {
-  var Y, juju, utils, models, app, conn, env;
+  var Y, juju, utils, models, app, conn, env, controller;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-gui',
                                'juju-models',
                                'juju-tests-utils',
+                               'juju-endpoints-controller',
                                'juju-controllers'],
     function(Y) {
       juju = Y.namespace('juju');
@@ -276,10 +306,12 @@ describe('Endpoints map handlers', function() {
     env = juju.newEnvironment({conn: conn});
     env.connect();
     app = new Y.juju.App({env: env});
-    models.endpointsMap = {};
+    controller = app.endpointsController;
+    controller.endpointsMap = {};
   });
 
   afterEach(function() {
+    controller.destroy();
     env.destroy();
     app.destroy();
   });
@@ -295,7 +327,7 @@ describe('Endpoints map handlers', function() {
          id: service_name,
          pending: true,
          charm: charm_id});
-       models.endpointsMap.should.eql({});
+       controller.endpointsMap.should.eql({});
        charm.destroy();
      });
 
@@ -312,7 +344,7 @@ describe('Endpoints map handlers', function() {
          charm: charm_id});
        var svc = app.db.services.getById(service_name);
        svc.set('pending', false);
-       models.endpointsMap.should.eql({wordpress: {
+       controller.endpointsMap.should.eql({wordpress: {
          requires: [],
          provides: []}});
        charm.destroy();
@@ -330,7 +362,7 @@ describe('Endpoints map handlers', function() {
       charm: charm_id});
     var svc = app.db.services.getById(service_name);
     svc.set('pending', false);
-    models.endpointsMap.should.eql({wordpress: {
+    controller.endpointsMap.should.eql({wordpress: {
       requires: [],
       provides: []}});
 
@@ -345,7 +377,7 @@ describe('Endpoints map handlers', function() {
 
     charm2.loaded = true;
     svc.set('charm', charm_id);
-    models.endpointsMap.should.eql({wordpress: {
+    controller.endpointsMap.should.eql({wordpress: {
       requires: [],
       provides: [
         {
@@ -363,10 +395,23 @@ describe('Endpoints map handlers', function() {
     app.db.services.add({
       id: service_name,
       charm: charm_id});
-    models.endpointsMap = {wordpress: 'foo'};
+    controller.endpointsMap = {wordpress: 'foo'};
     var service = app.db.services.getById(service_name);
     app.db.services.remove(service);
-    models.endpointsMap.should.eql({});
+    controller.endpointsMap.should.eql({});
+    app.db.charms.getById(charm_id).destroy();
+  });
+
+  it('should reset the map when the services reset', function() {
+    var service_name = 'wordpress';
+    var charm_id = 'cs:precise/wordpress-2';
+    app.db.charms.add({id: charm_id});
+    app.db.services.add({
+      id: service_name,
+      charm: charm_id});
+    controller.endpointsMap = {wordpress: 'foo'};
+    app.db.services.reset();
+    controller.endpointsMap.should.eql({});
     app.db.charms.getById(charm_id).destroy();
   });
 
