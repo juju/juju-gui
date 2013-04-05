@@ -163,11 +163,11 @@ YUI.add('juju-env-sandbox', function(Y) {
      *
      * @method ASYNC_OP
      * @param {Object} context PyJujuAPI Instance.
-     * @param {String} rpcName Name of method on fakebackend
+     * @param {String} rpcName Name of method on fakebackend.
      * @param {Array} args String list of arguments to extract
      *                     from passed data. Used in order
      *                     listed as arguments to the RPC call.
-     * @return undefined sends to client implicitly.
+     * @return {undefined} sends to client implicitly.
     */
   var ASYNC_OP = function(context, rpcName, args) {
     return Y.bind(function(data) {
@@ -441,7 +441,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       OP(this, 'getService', ['service_name'], data);
     },
 
-     /**
+    /**
       get_charm from the client.
 
       @method performOp_get_charm
