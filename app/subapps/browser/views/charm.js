@@ -32,8 +32,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '.charm input.add': {
         click: '_addCharmEnvironment'
       },
-      '#bws_hooks ul li a': {
-        click: '_loadHookContent'
+      '#bws_hooks select': {
+        change: '_loadHookContent'
       }
     },
 
@@ -126,7 +126,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _loadHookContent: function(ev) {
-      var filename = ev.currentTarget.get('text'),
+      var index = ev.currentTarget.get('selectedIndex');
+      var filename = ev.currentTarget.get('options').item(
+            index).getAttribute('value'),
           node = this.get('container').one('#bws_hooks .filecontent');
 
       // Load the file, but make sure we prettify the code.

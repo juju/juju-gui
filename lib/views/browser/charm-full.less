@@ -194,4 +194,29 @@
             }
         }
     }
+    #bws_hooks {
+        select {
+            margin: 6px 0 23px 0;
+        }
+        pre.prettyprint {
+            padding: 0;
+            border: none;
+            font-family: @font-family-mono;
+            font-size: 10pt;
+
+            ol {
+                list-style-position: inside;
+                margin-left: 0;
+
+                li {
+                    padding-left: 20px;
+                    list-style-type: decimal;
+
+                    span:first-child {
+                        margin-left: 10px;
+                    }
+                }
+            }
+        }
+    }
 }
