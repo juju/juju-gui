@@ -84,6 +84,54 @@ YUI.add('subapp-browser-mainview', function(Y) {
     },
 
     /**
+     * Render the view of a single charm details page.
+     *
+     * @method _renderCharmView
+     * @param {Node} container node to render out to.
+     *
+     */
+    _renderCharmView: function(container) {
+      var tpl = this.template(),
+          tplNode = Y.Node.create(tpl);
+
+      this._renderSearchWidget(tplNode);
+      // We need to have the template in the DOM for sub views to be able to
+      // expect proper structure.
+      if (!Y.Lang.isValue(container)) {
+        container = this.get('container');
+      }
+      container.setHTML(tplNode);
+
+      this.get('store').charm(this.get('charmID'), {
+        'success': function(data) {
+          var charmView = new ns.BrowserCharmView({
+            charm: new models.BrowserCharm(data),
+            store: this.get('store')
+          });
+          charmView.render(tplNode.one('.bws-view-data'));
+          container.setHTML(tplNode);
+        },
+        'failure': this.apiFailure
+      }, this);
+
+    },
+
+    /**
+     * Render out the main search widget and controls shared across various
+     * views.
+     *
+     * @method _renderSearchWidget
+     * @param {Node} node the node to render into.
+     *
+     */
+    _renderSearchWidget: function(node) {
+      this.search = new widgets.browser.Search({
+        fullscreenTarget: this._fullscreenTarget
+      });
+      this.search.render(node.one('.bws-header'));
+    },
+
+    /**
      * When the search term or filter is changed, fetch new data and redraw.
      *
      * @method _searchChanged
@@ -170,6 +218,17 @@ YUI.add('subapp-browser-mainview', function(Y) {
   }, {
     ATTRS: {
       /**
+       * If this view is called from the point of view of a specific charmId
+       * it'll be set here.
+       *
+       * @attribute charmID
+       * @default undefined
+       * @type {String}
+       *
+       */
+      charmID: {},
+
+      /**
        * An instance of the Charmworld API object to hit for any data that
        * needs fetching.
        *
@@ -178,7 +237,21 @@ YUI.add('subapp-browser-mainview', function(Y) {
        * @type {Charmworld0}
        *
        */
-      store: {}
+      store: {},
+
+      /**
+       * If this were a route that had a subpath component it's passed into
+       * the view to aid in rendering.
+       *
+       * e.g. /bws/fullscreen/*charmid/hooks to load the hooks tab correctly.
+       *
+       * @attribute subpath
+       * @default undefined
+       * @type {String}
+       *
+       */
+      subpath: {}
+
     }
   });
 

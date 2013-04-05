@@ -29,7 +29,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '.changelog .toggle': {
         click: '_toggleLog'
       },
-      '.charm input.add': {
+      '.charm .add': {
         click: '_addCharmEnvironment'
       },
       '#bws_hooks ul li a': {
@@ -47,8 +47,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _addCharmEnvironment: function(ev) {
+      ev.halt();
       console.log('add the charm to the environment');
-      ev.preventDefault();
     },
 
     /**
