@@ -31,6 +31,39 @@ YUI.add('juju-delta-handlers', function(Y) {
     */
     cleanUpEntityTags: function(tag) {
       return tag.replace(/^(service|unit|machine|environment)-/, '');
+    },
+
+    /**
+      Return a list of ports represented as "NUM/PROTOCOL", e.g. "80/tcp".
+
+      @method convertOpenPorts
+      @param {Array} ports A list of port objects, each one including the
+       "Number" and "Protocol" attributes.
+      @return {Array} The converted list of ports.
+    */
+    convertOpenPorts: function(ports) {
+      if (!ports) {
+        return [];
+      }
+      return Y.Array.map(ports, function(port) {
+        return port.Number + '/' + port.Protocol;
+      });
+    },
+
+    /**
+      Return a list of endpoints suitable for being included in the database.
+
+      @method createEndpoints
+      @param {Array} endpoints A list of endpoints returned by the juju-core
+       delta stream.
+      @return {Array} The converted list of endpoints.
+    */
+    createEndpoints: function(endpoints) {
+      return Y.Array.map(endpoints, function(endpoint) {
+        var relation = endpoint.Relation,
+            data = {role: relation.Role, name: relation.Name};
+        return [endpoint.ServiceName, data];
+      });
     }
 
   };
@@ -91,16 +124,14 @@ YUI.add('juju-delta-handlers', function(Y) {
         machine: change.MachineId,
         agent_state: change.Status,
         public_address: change.PublicAddress,
-        private_address: change.PrivateAddress
-        // XXX 2013-04-03 frankban: include change.Ports.
+        private_address: change.PrivateAddress,
+        open_ports: utils.convertOpenPorts(change.Ports)
+        // XXX 2013-04-05 frankban: missing config and is_subordinate.
       };
       var machineData = {
         id: change.MachineId,
         public_address: change.PublicAddress,
-        // XXX 2013-04-03 frankban: what's the difference between the agent
-        // state and the instance state in this context?
-        agent_state: change.Status,
-        instance_state: change.Status
+        agent_state: change.Status
       };
       db.units.process_delta(action, unitData);
       db.machines.process_delta(action, machineData);
@@ -123,6 +154,8 @@ YUI.add('juju-delta-handlers', function(Y) {
         id: change.Name,
         charm: change.CharmURL,
         exposed: change.Exposed
+        // XXX 2013-04-05 frankban: missing config. Investigate constraints and
+        // subordinate attrs.
       };
       db.services.process_delta(action, data);
     },
@@ -140,9 +173,14 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     relationInfo: function(db, action, change) {
+      var endpoints = change.Endpoints,
+          firstRelation = endpoints[0].Relation;
       var data = {
-        id: change.Key
-        // XXX 2013-04-03 frankban: include change.Endpoints.
+        id: change.Key,
+        // The interface and scope attrs should be the same in both relations.
+        'interface': firstRelation.Interface,
+        scope: firstRelation.Scope,
+        endpoints: utils.createEndpoints(endpoints)
       };
       db.relations.process_delta(action, data);
     },
@@ -205,6 +243,7 @@ YUI.add('juju-delta-handlers', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'base'
+    'base',
+    'array-extras'
   ]
 });

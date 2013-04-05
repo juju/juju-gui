@@ -411,8 +411,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
                 'machine_id': machineId.toString(),
                 'public_address':
                     'addr-' + machineId.toString() + '.example.com',
-                'agent_state': 'running',
-                'instance_state': 'running'}));
+                'agent_state': 'running'}));
         }
       }
       return machines;

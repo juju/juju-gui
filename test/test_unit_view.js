@@ -77,7 +77,6 @@
         displayName: '0',
         agent_state: 'pending',
         instance_id: 'instance-0',
-        instance_state: 'running',
         public_address: '1.2.3.4'};
       db.machines.add([machine]);
       done();
@@ -114,8 +113,6 @@
           'pending');
       container.one('#machine-instance-id').getHTML().should.contain(
           'instance-0');
-      container.one('#machine-instance-state').getHTML().should.contain(
-          'running');
       container.one('#machine-public-address').getHTML().should.contain(
           '1.2.3.4');
     });
