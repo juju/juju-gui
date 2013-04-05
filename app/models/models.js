@@ -250,7 +250,6 @@ YUI.add('juju-models', function(Y) {
       machine_id: {},
       public_address: {},
       instance_id: {},
-      instance_state: {},
       agent_state: {}
     }
   });
