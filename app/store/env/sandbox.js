@@ -9,6 +9,7 @@ Sandbox APIs mimicking communications with the Go and Juju backends.
 
 YUI.add('juju-env-sandbox', function(Y) {
 
+  var environments = Y.namespace('juju.environments');
   var sandboxModule = Y.namespace('juju.environments.sandbox');
   var CLOSEDERROR = 'INVALID_STATE_ERR : Connection is closed.';
 
@@ -78,9 +79,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     **/
     receive: function(data) {
       if (this.connected) {
-        // 4 milliseconds is the smallest effective time available to wait.  See
-        // http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers
-        setTimeout(this.receiveNow.bind(this, data, true), 4);
+        Y.soon(this.receiveNow.bind(this, data, true));
       } else {
         throw CLOSEDERROR;
       }
@@ -157,6 +156,70 @@ YUI.add('juju-env-sandbox', function(Y) {
 
   sandboxModule.ClientConnection = ClientConnection;
 
+  /** Helper function method for generating operation methods
+     * with a callback. Returns a method with a callback wired
+     * in to continue the operation when done. The returned
+     * method should be passed the data mapping to invoke.
+     *
+     * @method ASYNC_OP
+     * @param {Object} context PyJujuAPI Instance.
+     * @param {String} rpcName Name of method on fakebackend.
+     * @param {Array} args String list of arguments to extract
+     *                     from passed data. Used in order
+     *                     listed as arguments to the RPC call.
+     * @return {undefined} sends to client implicitly.
+    */
+  var ASYNC_OP = function(context, rpcName, args) {
+    return Y.bind(function(data) {
+      var state = this.get('state');
+      var client = this.get('client');
+      var vargs = Y.Array.map(args, function(i) {
+        return data[i];
+      });
+      var callback = function(reply) {
+        if (reply.error) {
+          data.error = reply.error;
+          data.err = reply.error;
+        } else {
+          data.result = reply.result;
+        }
+        client.receiveNow(data);
+      };
+      // Add our generated callback to arguments.
+      vargs.push(callback);
+      state[rpcName].apply(state, vargs);
+    }, context);
+  };
+
+  /** Helper method for normalizing error handling
+   * around sync operations with the fakebackend.
+   * Returned method can directly return to the caller.
+   *
+   * @method OP
+   * @param {Object} context PyJujuAPI instance.
+   * @param {String} rpcName name of method on fakebackend to invoke.
+   * @param {Array} args String Array of arguemnts to pass from
+   *                data to fakebackend.
+   * @param {Object} data Operational data to be munged into a fakebackend call.
+   * @return {Object} result depends on underlying rpc method.
+   */
+  var OP = function(context, rpcName, args, data) {
+    var state = context.get('state');
+    var client = context.get('client');
+    var vargs = Y.Array.map(args, function(i) {
+      return data[i];
+    });
+    var reply = state[rpcName].apply(state, vargs);
+    if (reply.error) {
+      data.error = reply.error;
+      data.err = reply.error;
+    } else {
+      data.result = reply.result;
+    }
+    client.receiveNow(data);
+  };
+
+
   /**
   A sandbox Juju environment using the Python API.
 
@@ -184,6 +247,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     initializer: function() {
       this.connected = false;
     },
+
 
     /**
     Opens the connection to the sandbox Juju environment.
@@ -367,6 +431,48 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+      get_service from the client.
+
+      @method performOp_get_service
+      @param {Object} data contains service_name.
+    */
+    performOp_get_service: function(data) {
+      OP(this, 'getService', ['service_name'], data);
+    },
+
+    /**
+      get_charm from the client.
+
+      @method performOp_get_charm
+      @param {Object} data contains service_name.
+    */
+    performOp_get_charm: function(data) {
+      ASYNC_OP(this, 'getCharm', ['charm_url'])(data);
+    },
+
+    /**
+      set_constraints from the client.
+
+      @method performOp_set_constraints
+      @param {Object} data contains service_name and constraints as either a
+                      key/value map or an array of "key=value" strings..
+    */
+    performOp_set_constraints: function(data) {
+      OP(this, 'setConstraints', ['service_name', 'constraints'], data);
+    },
+
+    /**
+      set_config from the client.
+
+      @method performOp_set_config
+      @param {Object} data contains service_name and a config mapping
+                      of key/value pairs.
+    */
+    performOp_set_config: function(data) {
+      ASYNC_OP(this, 'setConfig', ['service_name', 'config'])(data);
+    },
+
+    /**
       Handles the remove unit operations from the client
 
       @method performOp_remove_unit
@@ -380,7 +486,6 @@ YUI.add('juju-env-sandbox', function(Y) {
       } else {
         data.result = true;
       }
-
       // respond with the new data or error
       this.get('client').receiveNow(data);
     },
@@ -414,14 +519,13 @@ YUI.add('juju-env-sandbox', function(Y) {
 
       this.get('client').receiveNow(data);
     }
-
   });
 
   sandboxModule.PyJujuAPI = PyJujuAPI;
-
 }, '0.1.0', {
   requires: [
     'base',
+    'timers',
     'json-parse'
   ]
 });

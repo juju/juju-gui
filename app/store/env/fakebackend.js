@@ -293,6 +293,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         id: options.name,
         name: options.name,
         charm: charm.get('id'),
+        constraints: {},
         exposed: false,
         subordinate: charm.get('is_subordinate'),
         config: options.config
@@ -307,13 +308,52 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     // },
 
-    // getService: function() {
+    /**
+     * Get service attributes.
+     *
+     * @method getService
+     * @param {String} serviceId to get.
+     * @return {Object} Service Attributes..
+     */
+    getService: function(serviceName) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        return {error: 'Invalid service id.'};
+      }
+      var serviceData = service.getAttrs();
+      if (!serviceData.constraints) {
+        serviceData.constraints = {};
+      }
+      var relations = this.db.relations.get_relations_for_service(service);
+      var rels = relations.map(function(r) {return r.getAttrs();});
+      // TODO: properly map relations to expected format rather
+      // than this passthrough. Pending on the add/remove relations
+      // branches that will need the same helper code.
+      serviceData.rels = rels;
+      return {result: serviceData};
+    },
 
-    // },
-
-    // getCharm: function() {
-
-    // },
+    /**
+     * Get Charm data.
+     *
+     * @method getCharm
+     * @param {String} charmName to get.
+     * @return {Object} charm attrs..
+     */
+    getCharm: function(charmName, callback) {
+      if (!this.get('authenticated')) {
+        return callback(UNAUTHENTICATEDERROR);
+      }
+      var formatCharm = function(charm) {
+        callback({result: charm.getAttrs()});
+      };
+      this._loadCharm(charmName, {
+        success: formatCharm,
+        failure: callback});
+    },
 
     /**
     Add units to the given service.
@@ -505,7 +545,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         error: error,
         warning: warning
       };
-    }
+    },
 
     // updateAnnotations: function() {
 
@@ -527,14 +567,67 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     // },
 
-    // setConfig: function() {
+    setConfig: function(serviceName, config) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        return {error: 'Service "' + serviceName + '" does not exist.'};
+      }
 
-    // },
+      var existing = service.get('config');
+      if (!existing) {
+        existing = {};
+      }
 
-    // setConstraints: function() {
+      if (!config) {
+        config = {};
+      }
+      // Merge new constraints in.
+      existing = Y.mix(existing, config, true, undefined, 0, true);
+      //TODO: validate the config.
+      // Reassign the attr.
+      service.set('config', existing);
+      // The callback indicates done, we can pass anything back.
+      this.changes.services[service.get('id')] = [service, true];
+      return {result: existing};
+    },
 
-    // },
+    setConstraints: function(serviceName, data) {
+      var constraints = {};
 
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        return {error: 'Service "' + serviceName + '" does not exist.'};
+      }
+
+      var existing = service.get('constraints');
+      if (!existing) {
+        existing = {};
+      }
+
+      if (Y.Lang.isArray(data)) {
+        Y.Array.each(data, function(i) {
+          var kv = i.split('=');
+          if (kv[1]) {
+            constraints[kv[0]] = kv[1];
+          }
+        });
+      } else if (data) {
+        constraints = data;
+      }
+      // Merge new constraints in.
+      existing = Y.mix(existing, constraints, true, undefined, 0, true);
+      // TODO: Validate the constraints.
+      // Reassign the attr.
+      service.set('constraints', existing);
+      this.changes.services[service.get('id')] = [service, true];
+      return {result: true};
+    }
     // resolved: function() {
 
     // }

@@ -20,12 +20,32 @@
             no-repeat right top;
     background-color: @background-color;
 }
+.heading-font {
+    color: @bws-heading;
+    font-family: @font-family-medium;
+    font-weight: normal;
+    font-size: 10.5pt;
+}
 
 #subapp-browser {
   background-color: #f5f5f5;
   color: @bws-text;
   font-size: 9pt;
 
+    dl {
+      margin: 0;
+
+      dt,
+      dd {
+        margin: 0;
+        padding: 0;
+      }
+      dt {
+        color: @bws-heading;
+        font-family: @font-family-medium;
+        font-weight: normal;
+      }
+    }
   .reset {
     margin: auto;
     text-align: left;
