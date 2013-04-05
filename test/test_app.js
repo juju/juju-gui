@@ -393,6 +393,7 @@ function injectData(app, data) {
             viewContainer: container,
             sandbox: true,
             apiBackend: 'python',
+            consoleEnabled: true,
             user: 'admin',
             password: 'admin',
             charm_store: charmStoreData.charmStore
