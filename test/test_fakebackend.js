@@ -425,7 +425,7 @@
 
           // Finally remove annotations with falsey keys.
           fakebackend.removeAnnotations('wordpress');
-           anno = fakebackend.getAnnotations('wordpress');
+          anno = fakebackend.getAnnotations('wordpress');
           assert.deepEqual(anno, {});
           done();
         });

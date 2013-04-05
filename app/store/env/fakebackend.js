@@ -536,7 +536,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var service = this.db.services.getById(serviceName),
           warning, error;
 
-       if (!this.get('authenticated')) {
+      if (!this.get('authenticated')) {
         return UNAUTHENTICATEDERROR;
       }
       if (service) {
@@ -563,7 +563,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
      * @method updateAnnotations
      * @param {String} entityName to update.
      * @param {Object} annotations key/value map.
-     * @return undefined.
+     * @return {undefined} side-effects only.
      */
     updateAnnotations: function(entityName, annotations) {
       if (!this.get('authenticated')) {
@@ -576,7 +576,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       if (entity.name === 'serviceUnit') {
-        existing =  entity.annotations;
+        existing = entity.annotations;
       } else {
         existing = entity.get('annotations');
       }
@@ -614,8 +614,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
      * for.
      *
      * @method getAnnotations
-     * @param {String} entityName to get annotations for,
-     * @returns {Object} annotations as key/value map.
+     * @param {String} entityName to get annotations for.
+     * @return {Object} annotations as key/value map.
      */
     getAnnotations: function(entityName) {
       if (!this.get('authenticated')) {
@@ -640,9 +640,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
      * @param {String} entityName to remove annotations from.
      * @param {Array} keys (optional) array of {String} keys to remove. If this
      *                is falsey all annotations are removed.
-     * @return undefined.
+     * @return {undefined} side effects only.
      */
-     removeAnnotations: function(entityName, keys) {
+    removeAnnotations: function(entityName, keys) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATEDERROR;
       }
@@ -653,7 +653,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       if (entity.name === 'serviceUnit') {
-        annotations =  entity.annotations;
+        annotations = entity.annotations;
       } else {
         annotations = entity.get('annotations');
       }

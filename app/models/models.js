@@ -541,14 +541,15 @@ YUI.add('juju-models', function(Y) {
      * <name> -> service
      *
      * @method resolveModelByName
-     * @param {Object} Entity name, usually {String}, {Int} possible for machine.
-     * @return {Model}
+     * @param {Object} Entity name, usually {String}, {Int} possible for
+     *                 machine.
+     * @return {Model} resolved by call.
      **/
     resolveModelByName: function(entityName) {
       if (!entityName) {
         return undefined;
       }
-      if (entityName === "env") {
+      if (entityName === 'env') {
         return this.environment;
       }
       var nameAsInt = parseInt(entityName, 10);
