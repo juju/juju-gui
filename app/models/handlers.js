@@ -126,6 +126,7 @@ YUI.add('juju-delta-handlers', function(Y) {
         public_address: change.PublicAddress,
         private_address: change.PrivateAddress,
         open_ports: utils.convertOpenPorts(change.Ports)
+        // XXX 2013-04-05 frankban: missing config and is_subordinate.
       };
       var machineData = {
         id: change.MachineId,
@@ -153,6 +154,8 @@ YUI.add('juju-delta-handlers', function(Y) {
         id: change.Name,
         charm: change.CharmURL,
         exposed: change.Exposed
+        // XXX 2013-04-05 frankban: missing config. Investigate constraints and
+        // subordinate attrs.
       };
       db.services.process_delta(action, data);
     },
