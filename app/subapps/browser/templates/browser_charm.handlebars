@@ -134,13 +134,18 @@
             </div>
             <div id="bws_configuration">
                 {{#if options}}
-                  <dl>
-                  {{#arrayObject options}}
-                      <dt><dfn>{{key}}</dfn> <em>({{value.type}})</em>
-                      <dd>{{value.description}}</dd>
-                      <dd>Default: {{value.default}}</dd>
-                  {{/arrayObject}}
-                  </dl>
+                    <dl>
+                        {{#arrayObject options}}
+                            <dt>
+                                <dfn>{{key}}</dfn>
+                                <em>{{value.type}}</em>
+                            </dt>
+                            <dd>
+                                <div>{{value.description}}</div>
+                                <div>Default: {{value.default}}</div>
+                            </dd>
+                        {{/arrayObject}}
+                    </dl>
                 {{else}}
                   <p>This charm does not expose any configuration options.</p>
                 {{/if}}
