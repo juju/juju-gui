@@ -48,6 +48,22 @@ YUI.add('juju-delta-handlers', function(Y) {
       return Y.Array.map(ports, function(port) {
         return port.Number + '/' + port.Protocol;
       });
+    },
+
+    /**
+      Return a list of endpoints suitable for being included in the database.
+
+      @method createEndpoints
+      @param {Array} endpoints A list of endpoints returned by the juju-core
+       delta stream.
+      @return {Array} The converted list of endpoints.
+    */
+    createEndpoints: function(endpoints) {
+      return Y.Array.map(endpoints, function(endpoint) {
+        var relation = endpoint.Relation,
+            data = {role: relation.Role, name: relation.Name};
+        return [endpoint.ServiceName, data];
+      });
     }
 
   };
@@ -154,9 +170,14 @@ YUI.add('juju-delta-handlers', function(Y) {
       @return {undefined} Nothing.
      */
     relationInfo: function(db, action, change) {
+      var endpoints = change.Endpoints,
+          firstRelation = endpoints[0].Relation;
       var data = {
-        id: change.Key
-        // XXX 2013-04-03 frankban: include change.Endpoints.
+        id: change.Key,
+        // The interface and scope attrs should be the same in both relations.
+        interface: firstRelation.Interface,
+        scope: firstRelation.Scope,
+        endpoints: utils.createEndpoints(endpoints)
       };
       db.relations.process_delta(action, data);
     },

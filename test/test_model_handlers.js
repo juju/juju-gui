@@ -177,22 +177,87 @@
 
 
     describe('relationInfo handler', function() {
-      var relationInfo;
+      var dbEndpoints, deltaEndpoints, relationInfo;
 
       before(function() {
         relationInfo = handlers.relationInfo;
       });
 
+      beforeEach(function() {
+        dbEndpoints = [
+          ['haproxy', {role: 'requirer', name: 'reverseproxy'}],
+          ['wordpress', {role: 'provider', name: 'website'}]
+        ];
+        deltaEndpoints = [
+          {
+            Relation: {
+              Interface: 'http',
+              Limit: 1,
+              Name: 'reverseproxy',
+              Optional: false,
+              Role: 'requirer',
+              Scope: 'global'
+            },
+            ServiceName: 'haproxy'
+          },
+          {
+            Relation: {
+              Interface: 'http',
+              Limit: 0,
+              Name: 'website',
+              Optional: false,
+              Role: 'provider',
+              Scope: 'global'
+            },
+            ServiceName: 'wordpress'
+          }
+        ];
+      });
+
       it('creates a relation in the database', function() {
         var change = {
-          Key: 'relation-042'
-          // XXX 2013-04-03 frankban: include change.Endpoints.
+          Key: 'relation-042',
+          Endpoints: deltaEndpoints
         };
         relationInfo(db, 'add', change);
         assert.strictEqual(1, db.relations.size());
         // Retrieve the relation from the database.
         var relation = db.relations.getById('relation-042');
         assert.isNotNull(relation);
+        assert.strictEqual('http', relation.get('interface'));
+        assert.strictEqual('global', relation.get('scope'));
+        assert.deepEqual(dbEndpoints, relation.get('endpoints'));
+      });
+
+      it('updates a relation in the database', function() {
+        db.relations.add({
+          id: 'relation-042',
+          interface: 'http',
+          scope: 'global',
+          endpoints: dbEndpoints
+        });
+        var firstEndpoint = deltaEndpoints[0],
+            firstRelation = firstEndpoint.Relation;
+        firstEndpoint.ServiceName = 'mysql';
+        firstRelation.Name = 'db';
+        firstRelation.Interface = 'mysql';
+        firstRelation.Scope = 'local';
+        var change = {
+          Key: 'relation-042',
+          Endpoints: deltaEndpoints
+        };
+        var expectedEndpoints = [
+          ['mysql', {role: 'requirer', name: 'db'}],
+          ['wordpress', {role: 'provider', name: 'website'}]
+        ];
+        relationInfo(db, 'change', change);
+        assert.strictEqual(1, db.relations.size());
+        // Retrieve the relation from the database.
+        var relation = db.relations.getById('relation-042');
+        assert.isNotNull(relation);
+        assert.strictEqual('mysql', relation.get('interface'));
+        assert.strictEqual('local', relation.get('scope'));
+        assert.deepEqual(expectedEndpoints, relation.get('endpoints'));
       });
 
     });
@@ -366,6 +431,52 @@
         assert.deepEqual([], convertOpenPorts([]));
         assert.deepEqual([], convertOpenPorts(null));
         assert.deepEqual([], convertOpenPorts(undefined));
+      });
+
+    });
+
+
+    describe('Go Juju endpoints converter', function() {
+      var createEndpoints;
+
+      before(function() {
+        createEndpoints = utils.createEndpoints;
+      });
+
+      it('correctly returns a list of endpoints', function() {
+        var endpoints = [
+          {
+            Relation: {
+              Interface: 'http',
+              Limit: 1,
+              Name: 'reverseproxy',
+              Optional: false,
+              Role: 'requirer',
+              Scope: 'global'
+            },
+            ServiceName: 'haproxy'
+          },
+          {
+            Relation: {
+              Interface: 'http',
+              Limit: 0,
+              Name: 'website',
+              Optional: false,
+              Role: 'provider',
+              Scope: 'global'
+            },
+            ServiceName: 'wordpress'
+          }
+        ];
+        var expected = [
+          ['haproxy', {role: 'requirer', name: 'reverseproxy'}],
+          ['wordpress', {role: 'provider', name: 'website'}]
+        ];
+        assert.deepEqual(expected, createEndpoints(endpoints));
+      });
+
+      it('returns an empty list if there are no endpoints', function() {
+        assert.deepEqual([], createEndpoints([]));
       });
 
     });
