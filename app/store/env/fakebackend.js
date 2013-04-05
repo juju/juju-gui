@@ -43,6 +43,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this.environmentAnnotations = {};
       this._resetChanges();
       this._resetAnnotations();
+      // used for relation id's
+      this._relationCount = 0;
     },
 
     /**
@@ -516,13 +518,70 @@ YUI.add('juju-env-fakebackend', function(Y) {
          the first endpoint to connect.
       @param {Object} endpointB An array of [service, interface] representing
          the second endpoint to connect.
-      @param {Function} callback A callable that must be called once the
-         operation is performed.
     */
     addRelation: function(endpointA, endpointB) {
+      if (endpointB === undefined) {
+        return {error: 'Two endpoints required to set up relation.'};
+      }
 
+      var roleA = endpointA[1].role,
+          roleB = endpointB[1].role,
+          typeA = endpointA[1].name;
 
-      return;
+      if ((endpointA[0] == endpointB[0]) &&
+          ((roleA != 'peer') && (roleB != 'peer'))) {
+        return {error: 'Endpoints are idential but aren\'t peers.'};
+      }
+
+      if ((roleA == roleB) ||
+          (roleA == 'peer' && roleB == 'peer') ||
+          (roleA == 'client' && roleB == 'server') ||
+          (roleA == 'server' && roleB == 'client')) {
+
+      } else {
+        return {error: 'Endpoints have incompatible roles.'};
+      }
+
+      var charmInterface, charmScope;
+
+      this.db.charms.some(getInterface);
+      this.db.charms.some(getScope);
+
+      function getInterface(charm) {
+        if (charm.get('name') == endpointA[0]) {
+          var ci = charm.get('requires')[typeA]['interface'];
+          if (ci !== undefined) {
+            charmInterface = ci;
+            return true;
+          }
+        }
+      }
+
+      function getScope(charm) {
+        if (charm.get('name') == charmInterface) {
+          var cs = charm.get('provides')[typeA].scope;
+          if (cs !== undefined) {
+            charmScope = cs;
+            return true;
+          }
+        }
+      }
+
+      var relation = this.db.relations.create({
+        relation_id: 'relation-' + this._relationCount,
+        type: charmInterface,
+        endpoints: [endpointA, endpointB],
+        pending: false,
+        scope: charmScope || 'global',
+        display_name: typeA
+      });
+
+      if (relation) {
+        this._relationCount += 1;
+        return relation;
+      }
+
+      return false;
     }
 
     // updateAnnotations: function() {

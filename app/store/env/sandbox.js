@@ -423,10 +423,34 @@ YUI.add('juju-env-sandbox', function(Y) {
       @param {} data
     */
     performOp_add_relation: function(data) {
-      var res = this.get('state').addRelation(data.endpoint_a, data.endpoint_b);
+      var res = this.get('state').addRelation(data.endpoint_a, data.endpoint_b),
+          epts = Y.merge(data),
+          eptA = {}, eptB = {}, resData;
 
-      data.err = res.error;
-      data.result = (res.error === undefined);
+      data.endpoint_a = data.endpoint_a[0] + ':' + data.endpoint_a[1].name;
+      data.endpoint_b = data.endpoint_b[0] + ':' + data.endpoint_b[1].name;
+
+      if (res === false) {
+        // If everything checks out but could not create a new relation model
+        data.err = 'Unable to create relation';
+        this.get('client').receiveNow(data);
+        return;
+      } else {
+        data.err = res.error;
+        resData = res.getAttrs();
+      }
+
+      // returned endpoints have a different syntax
+      eptA[epts.endpoint_a[0]] = epts.endpoint_a[1];
+      eptB[epts.endpoint_b[0]] = epts.endpoint_b[1];
+
+      data.result = {
+        endpoints: [eptA, eptB],
+        id: resData.relation_id,
+        // interface is a reserved word
+        'interface': resData.type,
+        scope: resData.scope
+      };
 
       this.get('client').receiveNow(data);
     }

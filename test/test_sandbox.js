@@ -910,11 +910,61 @@
     );
 
     it('can add a relation', function(done) {
+      function localCb() {
+        state.deploy('cs:mysql', function(service) {
+          var data = {
+            op: 'add_relation',
+            endpoint_a: [
+              'wordpress',
+              { name: 'db',
+                role: 'client' }
+            ],
+            endpoint_b: [
+              'mysql',
+              { name: 'db',
+                role: 'server' }
+            ]
+          };
+          client.onmessage = function(rec) {
+            var data = Y.JSON.parse(rec.data),
+                mock = {
+                  endpoint_a: 'wordpress:db',
+                  endpoint_b: 'mysql:db',
+                  op: 'add_relation',
+                  result: {
+                    id: 'relation-0',
+                    'interface': 'mysql',
+                    scope: 'global',
+                    endpoints: [{
+                      wordpress: {
+                        name: 'db',
+                        role: 'client'
+                      }
+                    }, {
+                      mysql: {
+                        name: 'db',
+                        role: 'server'
+                      }
+                    }]
+                  }
+                };
+            assert.equal(data.err, undefined);
+            assert.equal(typeof data.result, 'object');
+            assert.deepEqual(data, mock);
+            done();
+          }
+          client.send(Y.JSON.stringify(data));
+        });
+      }
+      generateServices(localCb);
+    });
+
+    it('can add a relation (integration)', function(done) {
       assert.fail();
       done();
     });
 
-    it('can add a relation (integration)', function(done) {
+    it('does something with subordinate modules', function(done)) {
       assert.fail();
       done();
     });
@@ -925,6 +975,11 @@
     });
 
     it('throws an error if both endpoints are the same', function(done) {
+      assert.fail();
+      done();
+    });
+
+    it('throws an error if endpoints are not relatable', function(done) {
       assert.fail();
       done();
     });
