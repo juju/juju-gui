@@ -178,7 +178,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       var data = {
         id: change.Key,
         // The interface and scope attrs should be the same in both relations.
-        interface: firstRelation.Interface,
+        'interface': firstRelation.Interface,
         scope: firstRelation.Scope,
         endpoints: utils.createEndpoints(endpoints)
       };

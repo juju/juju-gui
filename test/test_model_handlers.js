@@ -232,7 +232,7 @@
       it('updates a relation in the database', function() {
         db.relations.add({
           id: 'relation-042',
-          interface: 'http',
+          'interface': 'http',
           scope: 'global',
           endpoints: dbEndpoints
         });
