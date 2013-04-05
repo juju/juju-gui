@@ -345,6 +345,14 @@
         });
       });
     });
+
+    describe('FakeBackend.Annotations', function() {
+      it('must get annotations from a service');
+      it('must update annotations to a service');
+      it('must remove annotations from a service');
+      it('must update annotations on a unit');
+      it ('must update annotations on the environment');
+    });
   });
 
   describe('FakeBackend.addUnit', function() {
