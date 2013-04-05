@@ -309,12 +309,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
     // },
 
     /**
+     * Get service attributes.
+     *
      * @method getService
      * @param {String} serviceId to get.
      * @return {Object} Service Attributes..
      */
     getService: function(serviceName) {
-      var self = this;
       if (!this.get('authenticated')) {
         return UNAUTHENTICATEDERROR;
       }
@@ -336,6 +337,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
+     * Get Charm data.
+     *
      * @method getCharm
      * @param {String} charmName to get.
      * @return {Object} charm attrs..

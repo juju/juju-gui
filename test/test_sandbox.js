@@ -758,7 +758,7 @@
 
     it('can get a service', function(done) {
       generateServices(function(data) {
-        // Post deploy of wordpress we should be alboe to
+        // Post deploy of wordpress we should be able to
         // pull its data.
         var op = {
           op: 'get_service',
@@ -778,7 +778,7 @@
 
     it('can get a charm', function(done) {
       generateServices(function(data) {
-        // Post deploy of wordpress we should be alboe to
+        // Post deploy of wordpress we should be able to
         // pull its data.
         var op = {
           op: 'get_charm',
@@ -798,7 +798,7 @@
 
     it('can set service config', function(done) {
       generateServices(function(data) {
-        // Post deploy of wordpress we should be alboe to
+        // Post deploy of wordpress we should be able to
         // pull its data.
         var op = {
           op: 'set_config',
@@ -818,7 +818,7 @@
 
     it('can set service constraints', function(done) {
       generateServices(function(data) {
-        // Post deploy of wordpress we should be alboe to
+        // Post deploy of wordpress we should be able to
         // pull its data.
         var op = {
           op: 'set_constraints',
