@@ -220,7 +220,7 @@
       });
       view.render(node);
 
-      var dds = Y.all('#bws_configuration dd');
+      var dds = Y.all('#bws_configuration dd div');
       dds.size().should.eql(2);
       dds.pop().get('text').should.eql('Default: 9160');
       dds.pop().get('text').should.eql('Port for client communcation');
