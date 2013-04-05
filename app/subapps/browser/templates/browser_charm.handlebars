@@ -65,14 +65,14 @@
     <div class="tabs">
         <ul>
             <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
-            <li><a href="#bws_interfaces" class="bws_interfaces">Interfaces</a></li>
-            <li><a href="#bws_configuration" class="bws_configuration">Configuration</a></li>
-            <li><a href="#bws_qa" class="bws_qa">Quality</a></li>
-            <li><a href="#bws_hooks" class="bws_hooks">Hooks</a></li>
+            <li><a href="#bws-interfaces" class="bws-interfaces">Interfaces</a></li>
+            <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
+            <li><a href="#bws-qa" class="bws-qa">Quality</a></li>
+            <li><a href="#bws-hooks" class="bws-hooks">Hooks</a></li>
         </ul>
         <div>
             <div id="bws-readme">Readme</div>
-            <div id="bws_interfaces">
+            <div id="bws-interfaces">
                 <p class="intro">
                     Interfaces determine how this charm relates to other 
                     charms. A relationship between charms can only be made if 
@@ -132,7 +132,7 @@
                     <p>This charm does not provide any interfaces.</p>
                 {{/if}}
             </div>
-            <div id="bws_configuration">
+            <div id="bws-configuration">
                 {{#if options}}
                     <dl>
                         {{#arrayObject options}}
@@ -150,8 +150,8 @@
                   <p>This charm does not expose any configuration options.</p>
                 {{/if}}
             </div>
-            <div id="bws_qa">Quality</div>
-            <div id="bws_hooks">
+            <div id="bws-qa">Quality</div>
+            <div id="bws-hooks">
                 <select>
                     <option>--</option>
                     {{#each files}}

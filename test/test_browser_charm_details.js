@@ -162,14 +162,14 @@
       });
 
       view.render(node);
-      Y.one('#bws_hooks').all('select option').size().should.equal(3);
+      Y.one('#bws-hooks').all('select option').size().should.equal(3);
 
       // Select the hooks install and the content should update.
-      Y.one('#bws_hooks').all('select option').item(2).set(
-        'selected', 'selected');
-      Y.one('#bws_hooks').one('select').simulate('change');
+      Y.one('#bws-hooks').all('select option').item(2).set(
+          'selected', 'selected');
+      Y.one('#bws-hooks').one('select').simulate('change');
 
-      var content = Y.one('#bws_hooks').one('div.filecontent');
+      var content = Y.one('#bws-hooks').one('div.filecontent');
       content.get('text').should.eql('install hook content.');
     });
 
@@ -222,7 +222,7 @@
       });
       view.render(node);
 
-      var dds = Y.all('#bws_configuration dd div');
+      var dds = Y.all('#bws-configuration dd div');
       dds.size().should.eql(2);
       dds.pop().get('text').should.eql('Default: 9160');
       dds.pop().get('text').should.eql('Port for client communcation');
@@ -264,7 +264,7 @@
         done();
       };
 
-      var qa_tab = Y.one('.tabs li a.bws_qa');
+      var qa_tab = Y.one('.tabs li a.bws-qa');
       qa_tab.simulate('click');
     });
   });
