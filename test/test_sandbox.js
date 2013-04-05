@@ -558,8 +558,7 @@
         state.db.machines.each(function(stateMachine) {
           var guiMachine = db.machines.getById(stateMachine.id);
           Y.each(
-              ['agent_state', 'instance_state', 'public_address',
-               'machine_id'],
+              ['agent_state', 'public_address', 'machine_id'],
               function(attrName) {
                 assert.deepEqual(guiMachine[attrName], stateMachine[attrName]);
               }
