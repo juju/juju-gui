@@ -177,10 +177,11 @@
 
 
     describe('relationInfo handler', function() {
-      var dbEndpoints, deltaEndpoints, relationInfo;
+      var dbEndpoints, deltaEndpoints, relationInfo, relationKey;
 
       before(function() {
         relationInfo = handlers.relationInfo;
+        relationKey = 'haproxy:reverseproxy wordpress:website';
       });
 
       beforeEach(function() {
@@ -216,13 +217,13 @@
 
       it('creates a relation in the database', function() {
         var change = {
-          Key: 'relation-042',
+          Key: relationKey,
           Endpoints: deltaEndpoints
         };
         relationInfo(db, 'add', change);
         assert.strictEqual(1, db.relations.size());
         // Retrieve the relation from the database.
-        var relation = db.relations.getById('relation-042');
+        var relation = db.relations.getById(relationKey);
         assert.isNotNull(relation);
         assert.strictEqual('http', relation.get('interface'));
         assert.strictEqual('global', relation.get('scope'));
@@ -231,7 +232,7 @@
 
       it('updates a relation in the database', function() {
         db.relations.add({
-          id: 'relation-042',
+          id: relationKey,
           'interface': 'http',
           scope: 'global',
           endpoints: dbEndpoints
@@ -243,7 +244,7 @@
         firstRelation.Interface = 'mysql';
         firstRelation.Scope = 'local';
         var change = {
-          Key: 'relation-042',
+          Key: relationKey,
           Endpoints: deltaEndpoints
         };
         var expectedEndpoints = [
@@ -253,7 +254,7 @@
         relationInfo(db, 'change', change);
         assert.strictEqual(1, db.relations.size());
         // Retrieve the relation from the database.
-        var relation = db.relations.getById('relation-042');
+        var relation = db.relations.getById(relationKey);
         assert.isNotNull(relation);
         assert.strictEqual('mysql', relation.get('interface'));
         assert.strictEqual('local', relation.get('scope'));
