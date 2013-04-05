@@ -103,7 +103,6 @@
             font-size: 9pt;
         }
     }
-    /* Interfaces */
     #bws_interfaces {
         .intro {
             margin-top: 9px;
@@ -160,6 +159,38 @@
             }
             em {
                 font-weight: normal;
+            }
+        }
+    }
+    #bws_qa {
+        h3 {
+            margin: 16px 0 8px 0;
+
+            .heading_notes {
+                color: @bws-text;
+            }
+            &:first-child {
+                margin-top: 5px;
+            }
+        }
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            li {
+                margin-bottom: 4px;
+                padding-left: 25px;
+                background: transparent
+                    url(/juju-ui/assets/images/quality_cross_icon.jpg)
+                    left center no-repeat;
+                color: @bws-heading;
+                font-family: @font-family-medium;
+
+                &.checked {
+                    background-image:
+                        url(/juju-ui/assets/images/quality_tick_icon.jpg);
+                }
             }
         }
     }
