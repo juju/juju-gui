@@ -514,70 +514,73 @@ YUI.add('juju-env-fakebackend', function(Y) {
       Add a relation between two services.
 
       @method add_relation
-      @param {Object} endpointA An array of [service, interface] representing
-         the first endpoint to connect.
-      @param {Object} endpointB An array of [service, interface] representing
-         the second endpoint to connect.
+      @param {String} endpointA A string representation of the service name
+        and endpoint connection type ie) wordpress:db.
+      @param {String} endpointB A string representation of the service name
+        and endpoint connection type ie) wordpress:db.
     */
     addRelation: function(endpointA, endpointB) {
       if (endpointB === undefined) {
         return {error: 'Two endpoints required to set up relation.'};
       }
 
-      var roleA = endpointA[1].role,
-          roleB = endpointB[1].role,
-          typeA = endpointA[1].name;
-
-      if ((endpointA[0] == endpointB[0]) &&
-          ((roleA != 'peer') && (roleB != 'peer'))) {
-        return {error: 'Endpoints are idential but aren\'t peers.'};
+      function endpointSplit(endpoint) {
+        var epData = endpoint.split(':');
+        return { name: epData[0], type: epData[1] }
       }
 
-      if ((roleA == roleB) ||
-          (roleA == 'peer' && roleB == 'peer') ||
-          (roleA == 'client' && roleB == 'server') ||
-          (roleA == 'server' && roleB == 'client')) {
+      var epAData = endpointSplit(endpointA),
+          epBData = endpointSplit(endpointB),
+          charmA, charmB, charmName, counter = 0;
 
-      } else {
-        return {error: 'Endpoints have incompatible roles.'};
+      if (epAData.type !== epBData.type) {
+        return {error: 'Endpoints need to match.'};
       }
 
-      var charmInterface, charmScope;
+      var charmsFound = this.db.charms.some(function(charm) {
+        charmName = charm.get('name');
+        if (charmName === epAData.name) { charmA = charm; counter += 1; }
+        if (charmName === epBData.name) { charmB = charm; counter += 1; }
+        if (counter === 2) { return true; }
+      });
 
-      this.db.charms.some(getInterface);
-      this.db.charms.some(getScope);
+      if (!charmsFound) { return {error: 'Charm not loaded.'}; }
 
-      function getInterface(charm) {
-        if (charm.get('name') == endpointA[0]) {
-          var ci = charm.get('requires')[typeA]['interface'];
-          if (ci !== undefined) {
-            charmInterface = ci;
-            return true;
+      var charmAEp = charmA.get('requires')[epAData.type],
+          charmBEp = charmB.get('requires')[epBData.type];
+
+      function getInterfaceAndScope(charmEndpoints, charmDatas) {
+        var ci, cs;
+        Y.Array.some(charmEndpoints, function(charmEndpoint, index) {
+          if (charmEndpoint['interface'] === charmDatas[index].name) {
+            ci = charmDatas[index].name;
+            if (charmEndpoint.scope !== undefined) {
+              cs = charmEndpoint.scope;
+            }
           }
-        }
+          if (ci) { return true; }
+        });
+        if (ci) { return {ci: ci, cs: cs}; }
       }
 
-      function getScope(charm) {
-        if (charm.get('name') == charmInterface) {
-          var cs = charm.get('provides')[typeA].scope;
-          if (cs !== undefined) {
-            charmScope = cs;
-            return true;
-          }
-        }
-      }
+      var cics = getInterfaceAndScope(
+                                [charmAEp, charmBEp], [epBData, charmAEp]);
 
+      if (!cics) { return {error: 'No matching interfaces.'}; }
+
+      var relationId = 'relation-' + this._relationCount;
       var relation = this.db.relations.create({
-        relation_id: 'relation-' + this._relationCount,
-        type: charmInterface,
+        relation_id: relationId,
+        type: cics.ci,
         endpoints: [endpointA, endpointB],
         pending: false,
-        scope: charmScope || 'global',
-        display_name: typeA
+        scope: cics.cs || 'global',
+        display_name: epAData.type
       });
 
       if (relation) {
         this._relationCount += 1;
+        this.changes.relations[relationId] = [relation, true];
         return relation;
       }
 

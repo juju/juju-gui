@@ -960,11 +960,29 @@
     });
 
     it('can add a relation (integration)', function(done) {
-      assert.fail();
-      done();
+      function addRelation() {
+        function localCb(rec) {
+console.log(rec);
+          done();
+        }
+        var endpointA = [
+              'wordpress',
+              { name: 'db',
+                role: 'client' }
+            ],
+            endpointB = [
+              'mysql',
+              { name: 'db',
+                role: 'server' }
+            ];
+        env.add_relation(endpointA, endpointB, localCb);
+      }
+      generateIntegrationServices(function() {
+        env.deploy('cs:mysql', undefined, undefined, undefined, 1, addRelation);
+      });
     });
 
-    it('does something with subordinate modules', function(done)) {
+    it('does something with subordinate modules', function(done) {
       assert.fail();
       done();
     });

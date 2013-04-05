@@ -420,29 +420,44 @@ YUI.add('juju-env-sandbox', function(Y) {
       Handles adding a relation between two supplied services from the client
 
       @method performOp_add_relation
-      @param {} data
+      @param {Object | String} data
     */
     performOp_add_relation: function(data) {
-      var res = this.get('state').addRelation(data.endpoint_a, data.endpoint_b),
-          epts = Y.merge(data),
-          eptA = {}, eptB = {}, resData;
 
-      data.endpoint_a = data.endpoint_a[0] + ':' + data.endpoint_a[1].name;
-      data.endpoint_b = data.endpoint_b[0] + ':' + data.endpoint_b[1].name;
+      function endpointToName(endpoint) {
+        // In order to handle the integration tests as well as
+        // being used direclty
+        if (typeof endpoint === 'string') { return endpoint; }
+        return endpoint[0] + ':' + endpoint[1].name;
+      };
+
+      var res = this.get('state').addRelation(
+                                      endpointToName(data.endpoint_a),
+                                      endpointToName(data.endpoint_b));
+      var endpointA = Y.merge(data.endpoint_a),
+          endpointB = Y.merge(data.endpoint_b);
+
+      data.endpoint_a = endpointToName(data.endpoint_a);
+      data.endpoint_b = endpointToName(data.endpoint_b);
 
       if (res === false) {
         // If everything checks out but could not create a new relation model
         data.err = 'Unable to create relation';
         this.get('client').receiveNow(data);
         return;
-      } else {
-        data.err = res.error;
-        resData = res.getAttrs();
       }
 
+      if (res.error) {
+        data.err = res.error;
+        return;
+      }
+
+      var eptA = {}, eptB = {},
+          resData = res.getAttrs();
+
       // returned endpoints have a different syntax
-      eptA[epts.endpoint_a[0]] = epts.endpoint_a[1];
-      eptB[epts.endpoint_b[0]] = epts.endpoint_b[1];
+      eptA[endpointA[0]] = endpointA[1];
+      eptB[endpointB[0]] = endpointB[1];
 
       data.result = {
         endpoints: [eptA, eptB],
