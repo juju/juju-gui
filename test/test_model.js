@@ -183,7 +183,26 @@ describe('juju models', function() {
         service_unit.number.should.equal(5);
       });
 
-  it('must be able to resolve models by modelId', function() {
+  it('must be able to resolve models by modelid', function() {
+    var db = new models.Database();
+
+    db.services.add([{id: 'wordpress'}, {id: 'mediawiki'}]);
+    db.units.add([{id: 'wordpress/0'}, {id: 'wordpress/1'}]);
+
+    var model = db.services.item(0);
+    // single parameter calling
+    db.getModelById([model.name, model.get('id')])
+              .get('id').should.equal('wordpress');
+    // two parameter interface
+    db.getModelById(model.name, model.get('id'))
+              .get('id').should.equal('wordpress');
+
+    var unit = db.units.item(0);
+    db.getModelById([unit.name, unit.id]).id.should.equal('wordpress/0');
+    db.getModelById(unit.name, unit.id).id.should.equal('wordpress/0');
+  });
+
+  it('must be able to resolve models by their name', function() {
     var db = new models.Database();
 
     db.services.add([{id: 'wordpress'}, {id: 'mediawiki'}]);
@@ -191,15 +210,16 @@ describe('juju models', function() {
 
     var model = db.services.item(0);
     // Single parameter calling
-    db.getModelById([model.name, model.get('id')])
+    db.resolveModelByName(model.get('id'))
               .get('id').should.equal('wordpress');
     // Two parameter interface
-    db.getModelById(model.name, model.get('id'))
+    db.resolveModelByName(model.get('id'))
               .get('id').should.equal('wordpress');
 
     var unit = db.units.item(0);
-    db.getModelById([unit.name, unit.id]).id.should.equal('wordpress/0');
-    db.getModelById(unit.name, unit.id).id.should.equal('wordpress/0');
+    db.resolveModelByName(unit.id).id.should.equal('wordpress/0');
+
+    db.resolveModelByName('env').should.equal(db.environment);
   });
 
   it('onDelta should handle remove changes correctly',

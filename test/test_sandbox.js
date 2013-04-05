@@ -989,10 +989,10 @@
           generateAndExposeService(unexposeService);
         }
     );
-  });
 
-  it('should handle service annotation updates');
-  it('should handle environment annotation updates');
-  it('should handle unit annotation updates');
+    it('should handle service annotation updates');
+    it('should handle environment annotation updates');
+    it('should handle unit annotation updates');
+  });
 
 })();
