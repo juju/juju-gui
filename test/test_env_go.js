@@ -12,6 +12,15 @@
       });
     });
 
+    it('provides a way to retrieve a relation key from endpoints', function() {
+      var endpoints = {
+        wordpress: {Name: 'website', Role: 'provider'},
+        haproxy: {Name: 'reverseproxy', Role: 'requirer'}
+      };
+      var key = environments.createRelationKey(endpoints);
+      assert.deepEqual('haproxy:reverseproxy wordpress:website', key);
+    });
+
     it('provides a way to lowercase the keys of an object', function() {
       var obj = {Key1: 'value1', key2: 'value2', MyThirdKey: 'value3'},
           expected = {key1: 'value1', key2: 'value2', mythirdkey: 'value3'},
