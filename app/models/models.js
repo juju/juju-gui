@@ -533,6 +533,37 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
+     * Resolve from an id to a Database entity. The look pattern
+     * is such that
+     * "env" -> environment model
+     * <int> -> machine
+     * <name>/<int> -> unit
+     * <name> -> service
+     *
+     * @method resolveModelByName
+     * @param {Object} Entity name, usually {String}, {Int} possible for machine.
+     * @return {Model}
+     **/
+    resolveModelByName: function(entityName) {
+      if (!entityName) {
+        return undefined;
+      }
+      if (entityName === "env") {
+        return this.environment;
+      }
+      var nameAsInt = parseInt(entityName, 10);
+      if (Y.Lang.isNumber(nameAsInt)) {
+        return this.machines.getById(nameAsInt);
+      }
+
+      if (/\S+\/\d+/.test(entityName)) {
+        return this.units.getById(entityName);
+      }
+
+      return this.services.getById(entityName);
+    },
+
+    /**
       Returns a modelList given the model name.
 
       @method getModelListByModelName

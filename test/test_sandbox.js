@@ -630,7 +630,7 @@
               num_units: 2,
               service_name: 'wordpress',
               op: 'add_unit',
-              result: ['wordpress/2', 'wordpress/3']
+              result: ['wordpress/1', 'wordpress/2']
             };
         // Do we have enough total units?
         assert.lengthOf(units, 3);
@@ -683,14 +683,14 @@
       function removeUnits() {
         var data = {
           op: 'remove_units',
-          unit_names: ['wordpress/2', 'wordpress/3']
+          unit_names: ['wordpress/0', 'wordpress/1']
         };
         client.onmessage = function(rec) {
           var data = Y.JSON.parse(rec.data),
               mock = {
                 op: 'remove_units',
                 result: true,
-                unit_names: ['wordpress/2', 'wordpress/3']
+                unit_names: ['wordpress/0', 'wordpress/1']
               };
           // No errors
           assert.equal(data.result, true);
@@ -706,7 +706,7 @@
 
     it('can remove units (integration)', function(done) {
       function removeUnits() {
-        var unitNames = ['kumquat/2', 'kumquat/3'];
+        var unitNames = ['kumquat/1', 'kumquat/2'];
         env.remove_units(unitNames, function(data) {
           assert.equal(data.result, true);
           assert.deepEqual(data.unit_names, unitNames);
@@ -722,7 +722,7 @@
           function removeUnit() {
             var data = {
               op: 'remove_units',
-              unit_names: ['bar/3']
+              unit_names: ['bar/2']
             };
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data);
@@ -740,7 +740,7 @@
       function removeUnits() {
         var data = {
           op: 'remove_units',
-          unit_names: ['wordpress/2']
+          unit_names: ['wordpress/1']
         };
         client.onmessage = function(rec) {
           var data = Y.JSON.parse(rec.data);

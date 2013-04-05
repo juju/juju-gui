@@ -40,7 +40,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
     **/
     initializer: function() {
       this.db = new models.Database();
-      this.environmentAnnotations = {};
       this._resetChanges();
       this._resetAnnotations();
     },
@@ -102,7 +101,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         units: {},
         relations: {},
         // This is undefined or the environment annotations, if they changed.
-        environment: undefined
+        environment: {}
       };
     },
 
@@ -388,7 +387,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var machines = this._getUnitMachines(numUnits);
 
       for (var i = 0; i < numUnits; i += 1) {
-        var unitId = service.unitSequence += 1;
+        var unitId = service.unitSequence;
         machine = machines[i];
         unit = this.db.units.add({
           'id': serviceName + '/' + unitId,
@@ -398,6 +397,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           'agent_state': 'started'
         });
         units.push(unit);
+        service.unitSequence += 1;
         this.changes.units[unit.id] = [unit, true];
         this.changes.machines[machine.machine_id] = [machine, true];
       }
@@ -503,9 +503,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var service = this.db.services.getById(serviceName),
           warning, error;
 
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+
       if (service) {
         if (!service.get('exposed')) {
           service.set('exposed', true);
+          this.changes.services[service.get('id')] = [service, true];
         } else {
           warning = 'Service `' + serviceName + '` was already exposed.';
         }
@@ -531,9 +536,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var service = this.db.services.getById(serviceName),
           warning, error;
 
+       if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
       if (service) {
         if (service.get('exposed')) {
           service.set('exposed', false);
+          this.changes.services[service.get('id')] = [service, true];
         } else {
           warning = 'Service `' + serviceName + '` is not exposed.';
         }
@@ -547,17 +556,142 @@ YUI.add('juju-env-fakebackend', function(Y) {
       };
     },
 
-    // updateAnnotations: function() {
+    /**
+     * Update annotations for a given entity. This performs a merge of existing
+     * annotations with any new data.
+     *
+     * @method updateAnnotations
+     * @param {String} entityName to update.
+     * @param {Object} annotations key/value map.
+     * @return undefined.
+     */
+    updateAnnotations: function(entityName, annotations) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var entity = this.db.resolveModelByName(entityName);
+      var existing;
+      if (!entity) {
+        return {error: 'Unable to resolve entity: ' + entityName};
+      }
 
-    // },
+      if (entity.name === 'serviceUnit') {
+        existing =  entity.annotations;
+      } else {
+        existing = entity.get('annotations');
+      }
 
-    // getAnnotations: function() {
+      if (existing === undefined) {
+        existing = {};
+      }
 
-    // },
+      annotations = Y.merge(existing, annotations, true, 0, null, true);
 
-    // removeAnnotations: function() {
+      // Apply merged annotations.
+      if (entity.name === 'serviceUnit') {
+        entity.annotations = annotations;
+      } else {
+        entity.set('annotations', annotations);
+      }
 
-    // },
+      // Arrange delta stream updates.
+      var annotationGroup;
+      if (entity.name === 'serviceUnit') {
+        annotationGroup = 'units';
+
+      } else if (entity.name === 'annotations' ||
+                 entity.name === 'environment') {
+        annotationGroup = 'environment';
+      } else {
+        annotationGroup = entity.name + 's';
+      }
+      this.annotations[annotationGroup][entityName] = [entity, true];
+    },
+
+    /**
+     * getAnnotations from an object. This uses standard name resolution (see
+     * db.resolveModelByName) to determine which object to return annotations
+     * for.
+     *
+     * @method getAnnotations
+     * @param {String} entityName to get annotations for,
+     * @returns {Object} annotations as key/value map.
+     */
+    getAnnotations: function(entityName) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var entity = this.db.resolveModelByName(entityName);
+
+      if (!entity) {
+        return {error: 'Unable to resolve entity: ' + entityName};
+      }
+
+      if (entity.name === 'serviceUnit') {
+        return entity.annotations;
+      }
+      return entity.get('annotations');
+    },
+
+    /**
+     * Remove annotations (optional by key) from an entity.
+     *
+     * @method removeAnnotations
+     * @param {String} entityName to remove annotations from.
+     * @param {Array} keys (optional) array of {String} keys to remove. If this
+     *                is falsey all annotations are removed.
+     * @return undefined.
+     */
+     removeAnnotations: function(entityName, keys) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var entity = this.db.resolveModelByName(entityName);
+      var annotations;
+      if (!entity) {
+        return {error: 'Unable to resolve entity: ' + entityName};
+      }
+
+      if (entity.name === 'serviceUnit') {
+        annotations =  entity.annotations;
+      } else {
+        annotations = entity.get('annotations');
+      }
+
+      if (annotations === undefined) {
+        annotations = {};
+      }
+
+      if (keys) {
+        Y.each(keys, function(k) {
+          if (Y.Object.owns(annotations, k)) {
+            delete annotations[k];
+          }
+        });
+      } else {
+        annotations = {};
+      }
+
+      // Apply merged annotations.
+      if (entity.name === 'serviceUnit') {
+        entity.annotations = annotations;
+      } else {
+        entity.set('annotations', annotations);
+      }
+
+      // Arrange delta stream updates.
+      var annotationGroup;
+      if (entity.name === 'serviceUnit') {
+        annotationGroup = 'units';
+
+      } else if (entity.name === 'annotations' ||
+                 entity.name === 'environment') {
+        annotationGroup = 'environment';
+      } else {
+        annotationGroup = entity.name + 's';
+      }
+      this.annotations[annotationGroup][entityName] = [entity, false];
+    },
 
     // addRelation: function() {
 
