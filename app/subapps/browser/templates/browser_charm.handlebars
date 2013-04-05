@@ -73,82 +73,93 @@
         <div>
             <div id="bws-readme">Readme</div>
             <div id="bws_interfaces">
+                <p class="intro">
+                    Interfaces determine how this charm relates to other 
+                    charms. A relationship between charms can only be made if 
+                    they share a common interface. This charm requires certain 
+                    interfaces to be provided by other charms. Similarly, this 
+                    charm provides other interfaces that can be used by 
+                    other charms.
+                </p>
                 <div class="yui3-g">
-                    <div class="yui3-u-1-3">
+                    <div class="interfaces-heading yui3-u-1-3">
                         <h3>Requires</h3>
                     </div>
-                    <div class="yui3-u-2-3">
+                    <div class="interfaces-heading yui3-u-2-3">
                         <h3>Related Charms</h3>
-                    </div>
-                    <div class="yui3-u-1 yui3-g">
-                        {{#if requires}}
-                            {{#arrayObject requires}}
-                                <div class="yui3-u-1-3 interface">
-                                    <div>{{value.interface}}</div>
-                                    <div>{{key}}</div>
-                                </div>
-                                <div class="yui3-u-2-3 related">
-                                    ...no related charms yet
-                                </div>
-                            {{/arrayObject}}
-                        {{else}}
-                            <p>This charm does not require any interfaces.</p>
-                        {{/if}}
-                    </div>
-
-                    <div class="yui3-u-1-3">
-                        <h3>Provides</h3>
-                    </div>
-                    <div class="yui3-u-2-3">
-                        <h3>Related Charms</h3>
-                    </div>
-                    <div class="yui3-u-1 yui3-g">
-                        {{#if provides}}
-                            {{#arrayObject provides}}
-                                <div class="yui3-u-1-3 interface">
-                                    <div>{{value.interface}}</div>
-                                    <div>{{key}}</div>
-                                </div>
-                                <div class="yui3-u-2-3 related">
-                                    ...no related charms yet
-                                </div>
-                            {{/arrayObject}}
-                        {{else}}
-                            <p>This charm does not provide any interfaces.</p>
-                        {{/if}}
-
                     </div>
                 </div>
-
+                {{#if requires}}
+                    <ul class="interface-list">
+                        {{#arrayObject requires}}
+                            <li class="interface-row yui3-g">
+                                <div class="interface yui3-u-1-3">
+                                    <h4>{{value.interface}}</h4>
+                                    <div>{{key}}</div>
+                                </div>
+                                <div class="related yui3-u-2-3">
+                                    &hellip;no related charms yet
+                                </div>
+                            </li>
+                        {{/arrayObject}}
+                    </ul>
+                {{else}}
+                    <p>This charm does not require any interfaces.</p>
+                {{/if}}
+                <div class="yui3-g">
+                    <div class="interfaces-heading yui3-u-1-3">
+                        <h3>Provides</h3>
+                    </div>
+                    <div class="interfaces-heading yui3-u-2-3">
+                        <h3>Related Charms</h3>
+                    </div>
+                </div>
+                {{#if provides}}
+                    <ul class="interface-list">
+                        {{#arrayObject provides}}
+                            <li class="interface-row yui3-g">
+                                <div class="interface yui3-u-1-3">
+                                    <h4>{{value.interface}}</h4>
+                                    <div>{{key}}</div>
+                                </div>
+                                <div class="related yui3-u-2-3">
+                                    &hellip;no related charms yet
+                                </div>
+                            </li>
+                        {{/arrayObject}}
+                    </ul>
+                {{else}}
+                    <p>This charm does not provide any interfaces.</p>
+                {{/if}}
             </div>
             <div id="bws_configuration">
                 {{#if options}}
-                  <dl>
-                  {{#arrayObject options}}
-                      <dt><dfn>{{key}}</dfn> <em>({{value.type}})</em>
-                      <dd>{{value.description}}</dd>
-                      <dd>Default: {{value.default}}</dd>
-                  {{/arrayObject}}
-                  </dl>
+                    <dl>
+                        {{#arrayObject options}}
+                            <dt>
+                                <dfn>{{key}}</dfn>
+                                <em>{{value.type}}</em>
+                            </dt>
+                            <dd>
+                                <div>{{value.description}}</div>
+                                <div>Default: {{value.default}}</div>
+                            </dd>
+                        {{/arrayObject}}
+                    </dl>
                 {{else}}
                   <p>This charm does not expose any configuration options.</p>
                 {{/if}}
             </div>
             <div id="bws_qa">Quality</div>
             <div id="bws_hooks">
-                <div class="yui3-g-r">
-                    <div class="yui3-u-1-4">
-                        <ul>
-                        {{#each files}}
-                        <li><a>{{ . }}</a></li>
-                        {{/each}}
-                        </ul>
-                    </div>
-                    <div class="yui3-u-3-4">
-                        <div class="filecontent">
-                          Select a file from the list to view.
-                        </div>
-                    </div>
+                <select>
+                    <option>--</option>
+                    {{#each files}}
+                        <option value="{{ . }}">{{ . }}</option>
+                    {{/each}}
+                </select>
+                <div class="filecontent">
+                    Select a file from the list to view.
                 </div>
             </div>
         </div>
