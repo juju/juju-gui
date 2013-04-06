@@ -23,8 +23,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
    *
    */
   ns.Sidebar = Y.Base.create('browser-view-sidebar', ns.MainView, [], {
-    // Hold onto charm data so we can pass model instances to other views when
-    // charms are selected.
     _fullscreenTarget: '/bws/fullscreen',
 
     template: views.Templates.sidebar,
@@ -93,7 +91,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     _renderEditorialView: function(container) {
-      // clear any existing cache.
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl),
           store = this.get('store');
@@ -129,6 +126,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           });
 
           // Add the charms to the cache for use in other views.
+          // Start with a reset to empty any current cached models.
           this._cacheCharms.reset(newCharms);
           this._cacheCharms.add(sliderCharms);
         },

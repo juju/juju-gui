@@ -113,13 +113,14 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _renderCharmView: function(container) {
-      // Create/bind the search before we wait for the charm data to load so
-      // that we're prepared for search events in case that request takes a
-      // while or even fails.
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl);
 
+      // Create/bind the search before we wait for the charm data to load so
+      // that we're prepared for search events in case that request takes a
+      // while or even fails.
       this._renderSearchWidget(tplNode);
+
       // We need to have the template in the DOM for sub views to be able to
       // expect proper structure.
       if (!Y.Lang.isValue(container)) {
@@ -129,7 +130,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
       this.get('store').charm(this.get('charmID'), {
         'success': function(data) {
-          this.details = this._renderCharmDetails(
+          this._renderCharmDetails(
               new models.BrowserCharm(data),
               tplNode);
         },
@@ -218,11 +219,15 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     destructor: function() {
-      console.log('sidebar view destructor');
       Y.Array.each(this._events, function(ev) {
         ev.detach();
       });
       this._cacheCharms.destroy();
+
+      // Clean up any details view we might have hanging around.
+      if (this.details) {
+        this.details.destroy(true);
+      }
     },
 
     /**
