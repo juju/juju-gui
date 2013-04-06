@@ -79,8 +79,8 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
       // Show the details view for this model.
       this._renderCharmDetails(
-        model,
-        this.get('container')
+          model,
+          this.get('container')
       );
     },
 
