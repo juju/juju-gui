@@ -99,7 +99,11 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
       if (typeof container !== 'object') {
         container = this.get('container');
+      } else {
+        this.set('container', container);
       }
+
+      container.setHTML(tplNode);
 
       // By default we grab the editorial content from the api to use for
       // display.
@@ -147,8 +151,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           );
         }
       }, this);
-
-      container.setHTML(tplNode);
     },
 
     /**
