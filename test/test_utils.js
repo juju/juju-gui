@@ -543,7 +543,7 @@ describe('utilities', function() {
     });
 
     it('pluralizes correctly', function() {
-      var source =  '{{ pluralize \'foo\' bar }}',
+      var source = '{{ pluralize \'foo\' bar }}',
           template = Y.Handlebars.compile(source),
           context = {bar: 1},
           html = template(context);
@@ -557,13 +557,13 @@ describe('utilities', function() {
       html = template(context);
       assert.equal('foo', html);
 
-      context = {bar: [1,2]};
+      context = {bar: [1, 2]};
       html = template(context);
       assert.equal('foos', html);
     });
 
     it('can pluralize with an alternate word', function() {
-      var source =  '{{ pluralize \'foo\' bar \'fooi\' }}',
+      var source = '{{ pluralize \'foo\' bar \'fooi\' }}',
           template = Y.Handlebars.compile(source),
           context = {bar: 1},
           html = template(context);

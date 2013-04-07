@@ -1166,29 +1166,29 @@ YUI.add('juju-view-utils', function(Y) {
     return res;
   });
 
-  Y.Handlebars.registerHelper(
-      'pluralize', function(word, object, alternate, options) {
-    var plural = false;
-    if (typeof(object) ===  'number') {
-      plural = (object !== 1);
-    }
-    if (object) {
-      if(object.size) {
-        plural = (object.size() !== 1);
-      } else if (object.length) {
-        plural = (object.length !== 1);
-      }
-    }
-    if (plural) {
-      if (typeof(alternate) === 'string') {
-        return alternate;
-      } else {
-        return word + 's';
-      }
-    } else {
-      return word;
-    }
-  });
+  Y.Handlebars.registerHelper('pluralize',
+      function(word, object, alternate, options) {
+        var plural = false;
+        if (typeof(object) === 'number') {
+          plural = (object !== 1);
+        }
+        if (object) {
+          if (object.size) {
+            plural = (object.size() !== 1);
+          } else if (object.length) {
+            plural = (object.length !== 1);
+          }
+        }
+        if (plural) {
+          if (typeof(alternate) === 'string') {
+            return alternate;
+          } else {
+            return word + 's';
+          }
+        } else {
+          return word;
+        }
+      });
 
 }, '0.1.0', {
   requires: ['base-build',
