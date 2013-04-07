@@ -62,7 +62,7 @@
         '</div>').appendTo(docBody);
   };
 
-  describe.only('browser sidebar view', function() {
+  describe('browser sidebar view', function() {
     var Y, browser, view, views, Sidebar;
 
     before(function(done) {
@@ -93,31 +93,31 @@
       delete window.juju_config;
     });
 
-   it('must correctly render the initial browser ui', function() {
-     var container = Y.one('#subapp-browser');
-     view = new Sidebar();
+    it('must correctly render the initial browser ui', function() {
+      var container = Y.one('#subapp-browser');
+      view = new Sidebar();
 
-     // mock out the data source on the view so that it won't actually make a
-     // request.
-     var sample_data = {
-       responseText: Y.JSON.stringify({
-         result: {
-           'new': [],
-           slider: []
-         }
-       })
-     };
+      // mock out the data source on the view so that it won't actually make a
+      // request.
+      var sample_data = {
+        responseText: Y.JSON.stringify({
+          result: {
+            'new': [],
+            slider: []
+          }
+        })
+      };
 
-     view.get('store').set(
-         'datasource',
-         new Y.DataSource.Local({source: sample_data}));
-     view.render(container);
+      view.get('store').set(
+          'datasource',
+          new Y.DataSource.Local({source: sample_data}));
+      view.render(container);
 
-     // And the hide button is rendered to the container node.
-     assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));
-     // Also verify that the search widget has rendered into the view code.
-     assert.isTrue(Y.Lang.isObject(container.one('input')));
-   });
+      // And the hide button is rendered to the container node.
+      assert.isTrue(Y.Lang.isObject(container.one('#bws-sidebar')));
+      // Also verify that the search widget has rendered into the view code.
+      assert.isTrue(Y.Lang.isObject(container.one('input')));
+    });
 
     it('caches models fetched from the api for later use', function() {
       var container = Y.one('#subapp-browser');

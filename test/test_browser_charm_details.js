@@ -269,7 +269,7 @@
     });
 
     it('does not blow up when the scores from the api is null', function() {
-        var view = new CharmView({
+      var view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
             'readme.md'
