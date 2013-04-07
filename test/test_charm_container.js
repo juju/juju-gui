@@ -81,7 +81,9 @@ describe('charm container widget', function() {
     });
     charm_container.render(container);
     assert.equal('Popular', container.one('h3').get('text'));
-    assert.equal('See 1 more', container.one('.expand').get('text'));
+    assert.equal(
+        ' See 1 more result ',
+        container.one('.expand').get('text').replace(/\s+/g, ' '));
   });
 
   it('toggles between all or a just few items being shown', function() {
@@ -105,14 +107,14 @@ describe('charm container widget', function() {
     assert.equal(
         0, hidden.size(),
         'Hidden items after all items should be visible.');
-    assert.equal('See less', container.one('.expand').get('text'));
+    assert.equal('See fewer results', container.one('.expand').get('text'));
 
     container.one('.expand').simulate('click');
     hidden = container.all('.yui3-charmtoken-hidden');
     assert.equal(
         1, hidden.size(),
         'No hidden items after extra items should be hidden.');
-    assert.equal('See 1 more', container.one('.expand').get('text'));
+    assert.equal('See 1 more result', container.one('.expand').get('text'));
   });
 
   it('handles having no charm tokens', function() {
