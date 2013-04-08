@@ -84,17 +84,43 @@ YUI.add('subapp-browser-mainview', function(Y) {
     },
 
     /**
+     * Helper to just render the charm details pane. This is shared in the
+     * sidebar/fullscreen views.
+     *
+     * @method _renderCharmDetails
+     * @param {BrowserCharm} charm model instance to render from.
+     * @param {Node} container node to look for a details div in to render to.
+     *
+     */
+    _renderCharmDetails: function(charm, container) {
+      var detailsNode = container.one('.bws-view-data');
+      // Destroy any current details.
+      if (this.details) {
+        this.details.destroy(true);
+      }
+      this.details = new ns.BrowserCharmView({
+        charm: charm,
+        store: this.get('store')
+      });
+      this.details.render(detailsNode);
+    },
+
+    /**
      * Render the view of a single charm details page.
      *
      * @method _renderCharmView
-     * @param {Node} container node to render out to.
+     * @param {Node} container the node to insert our rendered content into.
      *
      */
     _renderCharmView: function(container) {
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl);
 
+      // Create/bind the search before we wait for the charm data to load so
+      // that we're prepared for search events in case that request takes a
+      // while or even fails.
       this._renderSearchWidget(tplNode);
+
       // We need to have the template in the DOM for sub views to be able to
       // expect proper structure.
       if (!Y.Lang.isValue(container)) {
@@ -104,16 +130,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
       this.get('store').charm(this.get('charmID'), {
         'success': function(data) {
-          var charmView = new ns.BrowserCharmView({
-            charm: new models.BrowserCharm(data),
-            store: this.get('store')
-          });
-          charmView.render(tplNode.one('.bws-view-data'));
-          container.setHTML(tplNode);
+          this._renderCharmDetails(
+              new models.BrowserCharm(data),
+              tplNode);
         },
         'failure': this.apiFailure
       }, this);
-
     },
 
     /**
@@ -197,10 +219,15 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     destructor: function() {
-      console.log('sidebar view destructor');
       Y.Array.each(this._events, function(ev) {
         ev.detach();
       });
+      this._cacheCharms.destroy();
+
+      // Clean up any details view we might have hanging around.
+      if (this.details) {
+        this.details.destroy(true);
+      }
     },
 
     /**
@@ -214,6 +241,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
       this.set('store', new Y.juju.Charmworld0({
         'apiHost': window.juju_config.charmworldURL
       }));
+
+      // Hold onto charm data so we can pass model instances to other views when
+      // charms are selected.
+      this._cacheCharms = new models.BrowserCharmList();
     }
   }, {
     ATTRS: {
