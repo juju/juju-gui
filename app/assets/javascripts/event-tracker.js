@@ -69,5 +69,5 @@ YUI.add('event-tracker', function(Y) {
 
 
 }, '0.1', {
-  requires: ['event']
+  requires: ['base', 'event']
 });
