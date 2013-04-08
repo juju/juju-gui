@@ -194,7 +194,7 @@ $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 		$(SPRITE_SOURCE_FILES)
 	node_modules/grunt/bin/grunt spritegen
 
-$(NON_SPRITE_IMAGES): 
+$(NON_SPRITE_IMAGES):
 	mkdir -p build-shared/juju-ui/assets/images
 	cp app/assets/images/non-sprites/* build-shared/juju-ui/assets/images/
 
@@ -280,7 +280,7 @@ $(BUILD_FILES): $(JSFILES) $(THIRD_PARTY_JS) build-shared/juju-ui/templates.js \
 		app/assets/javascripts/spin.min.js | $(JAVASCRIPT_LIBRARIES)
 	rm -f $(BUILD_FILES)
 	mkdir -p build-shared/juju-ui/assets/combined-css/
-	ln -sf "$(PWD)/node_modules/yui/assets/skins/sam/rail-x.png" \
+	ln -sf "$(PWD)/node_modules/yui/slider-base/assets/skins/sam/rail-x.png" \
 		build-shared/juju-ui/assets/combined-css/rail-x.png
 	bin/merge-files
 	mv *.js.map build-shared/juju-ui/assets/
