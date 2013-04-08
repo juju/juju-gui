@@ -32,8 +32,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       '.charm .add': {
         click: '_addCharmEnvironment'
       },
-      '#bws_hooks ul li a': {
-        click: '_loadHookContent'
+      '#bws-hooks select': {
+        change: '_loadHookContent'
       }
     },
 
@@ -126,8 +126,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _loadHookContent: function(ev) {
-      var filename = ev.currentTarget.get('text'),
-          node = this.get('container').one('#bws_hooks .filecontent');
+      var index = ev.currentTarget.get('selectedIndex');
+      var filename = ev.currentTarget.get('options').item(
+          index).getAttribute('value'),
+          node = this.get('container').one('#bws-hooks .filecontent');
 
       // Load the file, but make sure we prettify the code.
       this._loadFile(node, filename, true);
@@ -140,7 +142,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _loadQAContent: function() {
-      var node = Y.one('#bws_qa');
+      var node = Y.one('#bws-qa');
       this.showIndicator(node);
       // Only load the QA data once.
       if (!this._qaLoaded) {
