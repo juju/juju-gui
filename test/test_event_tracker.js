@@ -8,9 +8,9 @@ describe('EventTracker Extension', function() {
         function(Y) {
           event = Y.Event;
           TestClass = Y.Base.create(
-            'testclass',
-            Y.Base,
-            [event.EventTracker]);
+              'testclass',
+              Y.Base,
+              [event.EventTracker]);
           done();
         });
   });
