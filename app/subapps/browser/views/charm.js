@@ -15,7 +15,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
    *
    */
   ns.BrowserCharmView = Y.Base.create('browser-view-charmview', Y.View, [
-    widgets.browser.IndicatorManager], {
+    widgets.browser.IndicatorManager,
+    Y.Event.EventTracker
+  ], {
 
     template: views.Templates.browser_charm,
     qatemplate: views.Templates.browser_qa,
@@ -102,21 +104,21 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _dispatchTabEvents: function(tab) {
-      this._events.push(tab.after('selectionChange', function(ev) {
-        var tab = ev.newVal.get('content');
-        switch (tab) {
-          // @todo to be added later. Placed in now to make the linter happy
-          // with the switch statement.
-          case 'Interfaces':
-            console.log('not implemented interfaces handler');
-            break;
-          case 'Quality':
-            this._loadQAContent();
-            break;
-          default:
-            break;
-        }
-      }, this));
+      this.evt(
+          tab.after('selectionChange', function(ev) {
+            var tab = ev.newVal.get('content');
+            switch (tab) {
+              case 'Interfaces':
+                console.log('not implemented interfaces handler');
+                break;
+              case 'Quality':
+                this._loadQAContent();
+                break;
+              default:
+                break;
+            }
+          }, this)
+      );
     },
 
     /**
@@ -251,10 +253,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (this.tabview) {
         this.tabview.destroy();
       }
-
-      Y.Array.each(this._events, function(ev) {
-        ev.detach();
-      });
     },
 
     /**
@@ -268,7 +266,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // Hold onto references of the indicators used so we can clean them all
       // up. Indicators are keyed on their yuiid so we don't dupe them.
       this.indicators = {};
-      this._events = [];
     },
 
     /**
@@ -340,6 +337,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
   requires: [
     'browser-overlay-indicator',
     'browser-tabview',
+    'event-tracker',
     'gallery-markdown',
     'juju-templates',
     'juju-views',

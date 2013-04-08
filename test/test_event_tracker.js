@@ -1,17 +1,22 @@
 'use strict';
 
-describe.only('EventTracker Extension', function() {
-  var event, testInstance, Y;
+describe('EventTracker Extension', function() {
+  var event, TestClass, testInstance, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['event-tracker', 'event-dom'],
         function(Y) {
           event = Y.Event;
+          TestClass = Y.Base.create(
+            'testclass',
+            Y.Base,
+            [event.EventTracker]);
           done();
         });
   });
 
   beforeEach(function() {
+    testInstance = new TestClass();
   });
 
   afterEach(function() {
@@ -25,37 +30,25 @@ describe.only('EventTracker Extension', function() {
   });
 
   it('event tracker wires into an object properly', function() {
-    var TestClass = Y.Base.create(
-        'testclass',
-        Y.Base,
-        [event.EventTracker]);
-    var testInstance = new TestClass();
     testInstance._events.should.eql([]);
     assert(typeof(testInstance.evt) === 'function');
   });
 
-  it('event tracker manager handles cleanup', function(done) {
+  it('event tracker should handle cleanup', function() {
     var body = Y.one('body');
-    var TestClass = Y.Base.create(
-        'testclass',
-        Y.Base,
-        [event.EventTracker], {
-          _destroyEvents: function() {
-            // override the cleanup method to check it's called.
-            Y.Object.each(this._events, function(evt, key) {
-              evt.detach();
-            });
-            done();
-          }
-        });
 
-    var testInstance = new TestClass();
+    // start out with no listeners.
+    assert(event.getListeners(body) === null);
+
     // add an event to track/detach.
     var evt = body.on('click', function(ev) {
       // do nothing
     });
+    testInstance.evt(evt);
+    event.getListeners(body).length.should.equal(1);
+
+    // destroying the instance should restore us back to no listeners.
     testInstance.destroy();
-    var listeners = event.getListeners(body);
-    listeners.length.should.equal(0);
+    assert(event.getListeners(body) === null);
   });
 });

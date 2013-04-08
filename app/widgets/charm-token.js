@@ -13,9 +13,10 @@ YUI.add('browser-charm-token', function(Y) {
 
   var ns = Y.namespace('juju.widgets.browser');
   ns.EVENT_CHARM_ADD = 'charm-token-add';
-  ns.CharmToken = Y.Base.create('CharmToken', Y.Widget, [Y.WidgetChild], {
-
-    _events: [],
+  ns.CharmToken = Y.Base.create('CharmToken', Y.Widget, [
+    Y.Event.EventTracker,
+    Y.WidgetChild
+  ], {
     TEMPLATE: Y.namespace('juju.views').Templates['charm-token'],
 
     /**
@@ -28,11 +29,12 @@ YUI.add('browser-charm-token', function(Y) {
           addClick = addButton.on('click', function() {
             this.fire(ns.EVENT_CHARM_ADD);
           });
-      this._events.push(addClick);
+      this.evt(addClick);
     },
 
     /**
-     * Detach listeners for DOM events.
+     * Detach listeners for DOM events. We hook manually into the event
+     * tracker because we want to be able to rebind things.
      *
      * @method _unbindEvents
      */
@@ -51,15 +53,6 @@ YUI.add('browser-charm-token', function(Y) {
     bindUI: function() {
       this._unbindEvents();
       this._bindEvents();
-    },
-
-    /**
-     * Destructor
-     *
-     * @method destructor
-     */
-    destructor: function() {
-      this._unbindEvents();
     },
 
     /**
@@ -120,6 +113,7 @@ YUI.add('browser-charm-token', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
+    'event-tracker',
     'handlebars',
     'juju-templates',
     'widget',

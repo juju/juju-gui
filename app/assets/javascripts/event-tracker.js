@@ -1,5 +1,6 @@
 'use strict';
 
+
 /**
  * Extension for Base to provide a single evt() method to use for all event
  * bindings. These are then auto detached on destroy().
@@ -57,7 +58,7 @@ YUI.add('event-tracker', function(Y) {
      * Track a new event for detaching/destroying later on.
      *
      * @method evt
-     * @param {EventHandle}
+     * @param {EventHandle} handler the event handler to detach later on.
      *
      */
     evt: function(handler) {
