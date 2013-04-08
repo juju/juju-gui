@@ -13,6 +13,12 @@ YUI.add('browser-search-widget', function(Y) {
   var ns = Y.namespace('juju.widgets.browser'),
       templates = Y.namespace('juju.views').Templates;
 
+  console.log('templates', templates);
+  console.log('browser-search', templates['browser-search']);
+  console.log('widget', Y.Widget);
+  console.log('tracker', Y.Event.EventTracker);
+
+
   /**
    * Search widget present in the Charm browser across both fullscreen and
    * sidebar views.
@@ -171,6 +177,7 @@ YUI.add('browser-search-widget', function(Y) {
     'event-tracker',
     'event-valuechange',
     'juju-templates',
+    'juju-views',
     'widget'
   ]
 });

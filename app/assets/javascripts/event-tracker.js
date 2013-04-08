@@ -13,7 +13,8 @@
  *
  */
 YUI.add('event-tracker', function(Y) {
-  var ns = Y.namespace('Event');
+  console.log('event', Y.Event);
+  var ns = Y.Event;
 
   /**
    * Manage event handlers and make sure they're destroyed.
@@ -68,5 +69,5 @@ YUI.add('event-tracker', function(Y) {
 
 
 }, '0.1', {
-  requires: ['base', 'event']
+  requires: ['event']
 });

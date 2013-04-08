@@ -45,7 +45,7 @@ var GlobalConfig = {
         }
       }
     },
-    'event-tracker': {
+    'event_tracker': {
       modules: {
         'event-tracker': {
           fullpath: '/juju-ui/assets/javascripts/event-tracker.js'
