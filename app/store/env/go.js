@@ -16,6 +16,22 @@ YUI.add('juju-env-go', function(Y) {
   };
 
   /**
+     Return the relation key corresponding to the given juju-core endpoints.
+
+     @method createRelationKey
+     @static
+     @param {Object} endpoints The endpoints returned by juju-core API server.
+     @return {String} The resulting relation key.
+   */
+  var createRelationKey = function(endpoints) {
+    var roles = Object.create(null);
+    Y.each(endpoints, function(value, key) {
+      roles[value.Role] = key + ':' + value.Name;
+    });
+    return roles.requirer + ' ' + roles.provider;
+  };
+
+  /**
      Return an object containing all the key/value pairs of the given "obj",
      turning all the keys to lower case.
 
@@ -683,10 +699,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'AddRelation',
         Params: {
-          Endpoints: [
-            endpoint_a.split(':')[0],
-            endpoint_b.split(':')[0]
-          ]
+          Endpoints: [endpoint_a, endpoint_b]
         }
       }, intermediateCallback);
     },
@@ -716,7 +729,7 @@ YUI.add('juju-env-go', function(Y) {
           guiEndpoint[serviceName] = {'name': jujuEndpoint.Name};
           result.endpoints.push(guiEndpoint);
         });
-        result.id = serviceNameA + '-' + serviceNameB;
+        result.id = createRelationKey(response.Endpoints);
         // The interface and scope should be the same for both endpoints.
         result['interface'] = response.Endpoints[serviceNameA].Interface;
         result.scope = response.Endpoints[serviceNameA].Scope;
@@ -922,6 +935,7 @@ YUI.add('juju-env-go', function(Y) {
 
   });
 
+  environments.createRelationKey = createRelationKey;
   environments.GoEnvironment = GoEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
   environments.stringifyObjectValues = stringifyObjectValues;

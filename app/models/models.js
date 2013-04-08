@@ -14,8 +14,24 @@ YUI.add('juju-models', function(Y) {
 
   // This is a helper function used by all of the process_delta methods.
   var _process_delta = function(list, action, change_data, change_base) {
-    var model_id = (action === 'remove') && change_data || change_data.id,
-        o = list.getById(model_id);
+    var instanceId;
+    if (Y.Lang.isObject(change_data)) {
+      if ('id' in change_data) {
+        instanceId = change_data.id;
+      } else {
+        console.warn('Invalid change data in _process_delta:', change_data);
+        return;
+      }
+    } else if (action === 'remove') {
+      // This is a removal request coming from the Python delta stream.
+      // In this case, the change_data is the instance id.
+      instanceId = change_data;
+    } else {
+      console.warn('Invalid change data in _process_delta:', change_data);
+      return;
+    }
+    var instance = list.getById(instanceId),
+        exists = Y.Lang.isValue(instance);
 
     if (action === 'add' || action === 'change') {
       // Client-side requests may create temporary objects in the
@@ -26,22 +42,22 @@ YUI.add('juju-models', function(Y) {
       // form that needs to be fleshed out.  So, the existing objects
       // are kept and re-used.
       var data = Y.merge(change_base || {}, change_data);
-      if (!Y.Lang.isValue(o)) {
-        o = list.add(data);
+      if (!exists) {
+        instance = list.add(data);
       } else {
-        if (o instanceof Y.Model) {
-          o.setAttrs(data);
+        if (instance instanceof Y.Model) {
+          instance.setAttrs(data);
         } else {
           // This must be from a LazyModelList.
           Y.each(data, function(value, key) {
-            o[key] = value;
+            instance[key] = value;
           });
         }
       }
     }
     else if (action === 'remove') {
-      if (Y.Lang.isValue(o)) {
-        list.remove(o);
+      if (exists) {
+        list.remove(instance);
       }
     } else {
       console.warn('Unknown change kind in _process_delta:', action);
@@ -289,6 +305,7 @@ YUI.add('juju-models', function(Y) {
 
     _setDefaultsAndCalculatedValues: function(obj) {
       obj.displayName = this.createDisplayName(obj.id);
+      obj.name = 'machine';
     },
 
     add: function() {
@@ -481,6 +498,41 @@ YUI.add('juju-models', function(Y) {
   models.NotificationList = NotificationList;
 
 
+  /*
+   * Helper methods for interacting with annotations on
+   * entities.
+   *
+   * _annotationProperty is a private mapping indicating
+   * if annotations are store as an attribute or as a
+   * property. A value of true indicates that property
+   * style access should be used.
+   */
+  var _annotationProperty = {
+    serviceUnit: true,
+    machine: true
+  };
+
+  /**
+   * Get annotations for an entity.
+   * @method getAnnotations
+   * @param {Object} Model (or ModelList managed object).
+   * @return {Object} Annotations.
+   */
+  models.getAnnotations = function(entity) {
+    if (_annotationProperty[entity.name]) {
+      return entity.annotations;
+    }
+    return entity.get('annotations');
+  };
+
+  models.setAnnotations = function(entity, annotations) {
+    if (_annotationProperty[entity.name]) {
+      entity.annotations = annotations;
+    } else {
+      entity.set('annotations', annotations);
+    }
+  };
+
   var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
       // Single model for environment database is bound to.
@@ -533,8 +585,7 @@ YUI.add('juju-models', function(Y) {
     },
 
     /**
-     * Resolve from an id to a Database entity. The look pattern
-     * is such that
+     * Resolve from an id to a Database entity. The lookup pattern is such that
      * "env" -> environment model
      * <int> -> machine
      * <name>/<int> -> unit
@@ -552,12 +603,11 @@ YUI.add('juju-models', function(Y) {
       if (entityName === 'env') {
         return this.environment;
       }
-      var nameAsInt = parseInt(entityName, 10);
-      if (Y.Lang.isNumber(nameAsInt)) {
-        return this.machines.getById(nameAsInt);
+      if (/^\d+$/.test(entityName)) {
+        return this.machines.getById(entityName);
       }
 
-      if (/\S+\/\d+/.test(entityName)) {
+      if (/^\S+\/\d+$/.test(entityName)) {
         return this.units.getById(entityName);
       }
 

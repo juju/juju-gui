@@ -100,18 +100,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
         machines: {},
         units: {},
         relations: {},
-        environments: {}
+        annotations: {}
       };
     },
 
     /**
-    Return all of the recently anotated objects.
+      Return all of the recently anotated objects.
 
-    @method nextAnnotations
-    @return {Object} A hash of the keys 'services', 'machines', 'units' and
-      'relations'.  Each of those are hashes from entity identifier to
-      [entity, boolean] where the boolean means either active (true) or
-      removed (false).
+      @method nextAnnotations
+      @return {Object} A hash of the keys 'services', 'machines', 'units',
+      'relations' and 'annotations'.  Each of those are hashes from entity
+      identifier to [entity, boolean] where the boolean means either active
+      (true) or removed (false).
     **/
     nextAnnotations: function() {
       if (!this.get('authenticated')) {
@@ -122,7 +122,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           Y.Object.isEmpty(this.annotations.machines) &&
           Y.Object.isEmpty(this.annotations.units) &&
           Y.Object.isEmpty(this.annotations.relations) &&
-          Y.Object.isEmpty(this.annotations.environments)) {
+          Y.Object.isEmpty(this.annotations.annotations)) {
         result = null;
       } else {
         result = this.annotations;
@@ -584,13 +584,32 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
+     * Helper method to determine where to log annotation
+     * changes relative to a given entity.
+     *
+     * @method _getAnnotationGroup
+     * @param {Object} entity to track.
+     * @return {String} Annotation group name (index into this.annotations).
+     */
+    _getAnnotationGroup: function(entity) {
+      var annotationGroup = {
+        serviceUnit: 'units',
+        environment: 'annotations'
+      }[entity.name];
+      if (!annotationGroup) {
+        annotationGroup = entity.name + 's';
+      }
+      return annotationGroup;
+    },
+
+    /**
      * Update annotations for a given entity. This performs a merge of existing
      * annotations with any new data.
      *
      * @method updateAnnotations
      * @param {String} entityName to update.
      * @param {Object} annotations key/value map.
-     * @return {undefined} side-effects only.
+     * @return {Object} either result or error property.
      */
     updateAnnotations: function(entityName, annotations) {
       if (!this.get('authenticated')) {
@@ -602,38 +621,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return {error: 'Unable to resolve entity: ' + entityName};
       }
 
-      if (entity.name === 'serviceUnit') {
-        existing = entity.annotations;
-      } else {
-        existing = entity.get('annotations');
-      }
-
+      existing = models.getAnnotations(entity);
       if (existing === undefined) {
         existing = {};
       }
 
       annotations = Y.merge(existing, annotations, true, 0, null, true);
-
-      // Apply merged annotations.
-      if (entity.name === 'serviceUnit') {
-        entity.annotations = annotations;
-      } else {
-        entity.set('annotations', annotations);
-      }
+      models.setAnnotations(entity, annotations);
 
       // Arrange delta stream updates.
-      var annotationGroup;
-      if (entity.name === 'serviceUnit') {
-        annotationGroup = 'units';
-
-      } else if (entity.name === 'annotations' ||
-                 entity.name === 'environment') {
-        // Note the 's' for compatibility with other
-        // code paths.
-        annotationGroup = 'environments';
-      } else {
-        annotationGroup = entity.name + 's';
-      }
+      var annotationGroup = this._getAnnotationGroup(entity);
       this.annotations[annotationGroup][entityName] = [entity, true];
       return {result: true};
     },
@@ -657,10 +654,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return {error: 'Unable to resolve entity: ' + entityName};
       }
 
-      if (entity.name === 'serviceUnit') {
-        return {result: entity.annotations};
-      }
-      return {result: entity.get('annotations')};
+      return {result: models.getAnnotations(entity)};
     },
 
     /**
@@ -682,12 +676,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return {error: 'Unable to resolve entity: ' + entityName};
       }
 
-      if (entity.name === 'serviceUnit') {
-        annotations = entity.annotations;
-      } else {
-        annotations = entity.get('annotations');
-      }
-
+      annotations = models.getAnnotations(entity);
       if (annotations === undefined) {
         annotations = {};
       }
@@ -703,24 +692,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       // Apply merged annotations.
-      if (entity.name === 'serviceUnit') {
-        entity.annotations = annotations;
-      } else {
-        entity.set('annotations', annotations);
-      }
+      models.setAnnotations(entity, annotations);
 
       // Arrange delta stream updates.
-      var annotationGroup;
-      if (entity.name === 'serviceUnit') {
-        annotationGroup = 'units';
-
-      } else if (entity.name === 'annotations' ||
-                 entity.name === 'environment') {
-        annotationGroup = 'environment';
-      } else {
-        annotationGroup = entity.name + 's';
-      }
-      this.annotations[annotationGroup][entityName] = [entity, false];
+      var annotationGroup = this._getAnnotationGroup(entity);
+      // Note that we pass true here, even removing an annotation
+      // is recorded as an object change/update.
+      this.annotations[annotationGroup][entityName] = [entity, true];
       return {result: true};
     },
 
@@ -819,9 +797,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
           return (rel.endpoints[0].name === relationName ||
                   rel.endpoints[1].name === relationName);
         });
-        if (!relation) {
+        if (relation.length === 0) {
           return {error: 'Relation ' + relationName + ' not found for ' + unitName};
-        }}
+        }
       }
 
       // No hooks are run in the fakebackend so at this time resolve does

@@ -220,6 +220,9 @@ describe('juju models', function() {
     db.resolveModelByName(unit.id).id.should.equal('wordpress/0');
 
     db.resolveModelByName('env').should.equal(db.environment);
+
+    var machine = db.machines.add({machine_id: '0'});
+    db.resolveModelByName('0').should.equal(machine);
   });
 
   it('onDelta should handle remove changes correctly',

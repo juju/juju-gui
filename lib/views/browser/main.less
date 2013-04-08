@@ -26,6 +26,11 @@
     font-weight: normal;
     font-size: 10.5pt;
 }
+.border-box {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
 
 #subapp-browser {
   background-color: #f5f5f5;
@@ -46,6 +51,12 @@
         font-weight: normal;
       }
     }
+  ul.vertical-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    line-height: 170%;
+  }
   .reset {
     margin: auto;
     text-align: left;

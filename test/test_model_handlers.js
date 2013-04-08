@@ -53,6 +53,24 @@
         assert.isNotNull(db.machines.getById('1'));
       });
 
+      it('automatically handles removals of model lists', function() {
+        db.services.add({
+          id: 'wordpress',
+          charm: 'cs:quantal/wordpress-11',
+          exposed: true
+        });
+        db.units.add({
+          id: 'wordpress/1',
+          agent_state: 'pending',
+          public_address: 'example.com',
+          private_address: '10.0.0.1'
+        });
+        pyDelta(db, 'remove', 'wordpress/1', 'unit');
+        pyDelta(db, 'remove', 'wordpress', 'service');
+        assert.strictEqual(0, db.services.size());
+        assert.strictEqual(0, db.units.size());
+      });
+
     });
 
 
@@ -130,6 +148,23 @@
         assert.strictEqual('started', machine.agent_state);
       });
 
+      it('removes a unit from the database', function() {
+        db.units.add({
+          id: 'django/2',
+          agent_state: 'pending',
+          public_address: 'example.com',
+          private_address: '10.0.0.1'
+        });
+        var change = {
+          Name: 'django/2',
+          Status: 'started',
+          PublicAddress: 'example.com',
+          PrivateAddress: '192.168.0.1'
+        };
+        unitInfo(db, 'remove', change);
+        assert.strictEqual(0, db.units.size());
+      });
+
     });
 
 
@@ -171,6 +206,21 @@
         var service = db.services.getById('wordpress');
         assert.strictEqual('cs:quantal/wordpress-11', service.get('charm'));
         assert.isFalse(service.get('exposed'));
+      });
+
+      it('removes a service from the database', function() {
+        db.services.add({
+          id: 'wordpress',
+          charm: 'cs:quantal/wordpress-11',
+          exposed: true
+        });
+        var change = {
+          Name: 'wordpress',
+          CharmURL: 'cs:quantal/wordpress-11',
+          Exposed: false
+        };
+        serviceInfo(db, 'remove', change);
+        assert.strictEqual(0, db.services.size());
       });
 
     });
@@ -259,6 +309,21 @@
         assert.strictEqual('mysql', relation.get('interface'));
         assert.strictEqual('local', relation.get('scope'));
         assert.deepEqual(expectedEndpoints, relation.get('endpoints'));
+      });
+
+      it('removes a relation from the database', function() {
+        db.relations.add({
+          id: relationKey,
+          'interface': 'http',
+          scope: 'global',
+          endpoints: dbEndpoints
+        });
+        var change = {
+          Key: relationKey,
+          Endpoints: deltaEndpoints
+        };
+        relationInfo(db, 'remove', change);
+        assert.strictEqual(0, db.relations.size());
       });
 
     });

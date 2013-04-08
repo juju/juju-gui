@@ -196,7 +196,9 @@ YUI.add('browser-charm-slider', function(Y) {
       */
     destructor: function() {
       console.log('Clearing slider events');
-      this.get('_events').each(function(event) {
+      // Stop any in-progress timer
+      this.get('timer').cancel();
+      Y.Array.each(this.get('_events'), function(event) {
         event.detach();
       });
     },
