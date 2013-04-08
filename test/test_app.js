@@ -438,7 +438,9 @@ function injectData(app, data) {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
-            socket_url: 'wss://example.com/' });
+            socket_url: 'wss://example.com/',
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(app.env.get('socket_url'), 'wss://example.com/');
     });
 
@@ -446,7 +448,9 @@ function injectData(app, data) {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
-            socket_port: '8080' });
+            socket_port: '8080' ,
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(
           app.env.get('socket_url'),
           'wss://example.net:8080/ws');
@@ -456,7 +460,9 @@ function injectData(app, data) {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
-            socket_protocol: 'ws' });
+            socket_protocol: 'ws',
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(
           app.env.get('socket_url'),
           'ws://example.net:71070/ws');
@@ -467,7 +473,9 @@ function injectData(app, data) {
           { container: container,
             viewContainer: container,
             socket_protocol: 'ws',
-            socket_port: '8080' });
+            socket_port: '8080',
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(
           app.env.get('socket_url'),
           'ws://example.net:8080/ws');
@@ -478,7 +486,9 @@ function injectData(app, data) {
           { container: container,
             viewContainer: container,
             socket_port: '8080',
-            socket_url: 'fnord' });
+            socket_url: 'fnord',
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(
           app.env.get('socket_url'),
           'wss://example.net:8080/ws');
@@ -489,7 +499,9 @@ function injectData(app, data) {
           { container: container,
             viewContainer: container,
             socket_protocol: 'ws',
-            socket_url: 'fnord' });
+            socket_url: 'fnord',
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(
           app.env.get('socket_url'),
           'ws://example.net:71070/ws');

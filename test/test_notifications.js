@@ -205,6 +205,7 @@ describe('notifications', function() {
                       app: app,
                       env: env,
                       nsRouter: nsRouter}).render();
+    app.showView(new Y.View());
     // We use overview here for testing as it defaults
     // to showing all notices.
 
@@ -243,6 +244,7 @@ describe('notifications', function() {
           container: container,
           viewContainer: container
         });
+    app.showView(new Y.View());
     env.connect();
     var environment_delta = default_env;
 
@@ -286,6 +288,7 @@ describe('notifications', function() {
           container: container,
           viewContainer: container
         });
+        app.showView(new Y.View());
         var environment_delta = {
           'result': [
             ['service', 'add', {

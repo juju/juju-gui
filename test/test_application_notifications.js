@@ -250,7 +250,9 @@ describe('juju application notifications', function() {
       function() {
         var logoNode = Y.Node.create('<div id="nav-brand-env"></div>');
         Y.one('body').append(logoNode);
-        var app = new juju.App();
+        var app = new juju.App({
+              conn: {close: function() {}} });
+        app.showView(new Y.View());
         app.env.fire('permissionDenied', {title: 'title', message: 'message'});
         assert.equal(1, app.db.notifications.size());
         logoNode.destroy();
