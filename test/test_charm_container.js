@@ -80,7 +80,7 @@ describe('charm container widget', function() {
       }]
     });
     charm_container.render(container);
-    assert.equal('Popular', container.one('h3').get('text'));
+    assert.equal('Popular (4)', container.one('h3').get('text'));
     assert.isFalse(container.one('.more').hasClass('hidden'));
     assert.isTrue(container.one('.less').hasClass('hidden'));
   });
@@ -88,7 +88,6 @@ describe('charm container widget', function() {
   it('toggles between all or a just few items being shown', function() {
     var hidden;
     charm_container = new Y.juju.widgets.browser.CharmContainer({
-      name: 'Popular',
       children: [{
         name: 'foo'
       },{
@@ -122,7 +121,7 @@ describe('charm container widget', function() {
     charm_container = new Y.juju.widgets.browser.CharmContainer({name: 'Foo'});
     charm_container.render(container);
     var rendered = container.one('.yui3-charmcontainer');
-    assert.equal('Foo', rendered.one('h3').get('text'));
+    assert.equal('Foo (0)', rendered.one('h3').get('text'));
   });
 
   it('handles having less charms tokens than its cutoff', function() {
@@ -142,7 +141,7 @@ describe('charm container widget', function() {
     charm_container.render(container);
 
     var rendered = container.one('.yui3-charmcontainer');
-    assert.equal('Popular', rendered.one('h3').get('text'));
+    assert.equal('Popular (4)', rendered.one('h3').get('text'));
     assert.equal(4, container.all('.yui3-charmtoken').size());
     assert.equal(0, container.all('.yui3-charmtoken-hidden').size());
     assert.equal(1, charm_container._events.length);
