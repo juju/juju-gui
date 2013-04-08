@@ -63,7 +63,7 @@
   };
 
   describe('browser sidebar view', function() {
-    var Y, browser, view, views, Sidebar;
+    var Y, browser, view, views, sampleData, Sidebar;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -75,6 +75,7 @@
             browser = Y.namespace('juju.browser');
             views = Y.namespace('juju.browser.views');
             Sidebar = views.Sidebar;
+            sampleData = Y.io('data/sidebar_editorial.json', {sync: true});
             done();
           });
     });
@@ -99,7 +100,7 @@
 
       // mock out the data source on the view so that it won't actually make a
       // request.
-      var sample_data = {
+      var emptyData = {
         responseText: Y.JSON.stringify({
           result: {
             'new': [],
@@ -110,7 +111,7 @@
 
       view.get('store').set(
           'datasource',
-          new Y.DataSource.Local({source: sample_data}));
+          new Y.DataSource.Local({source: emptyData}));
       view.render(container);
 
       // And the hide button is rendered to the container node.
@@ -126,10 +127,9 @@
 
       // mock out the request data for the editorial view. We want to make
       // sure we're caching the results.
-      var sample_data = Y.io('data/sidebar_editorial.json', {sync: true});
       view.get('store').set(
           'datasource',
-          new Y.DataSource.Local({source: sample_data}));
+          new Y.DataSource.Local({source: sampleData}));
       view.render(container);
 
       view._cacheCharms.size().should.eql(4);
@@ -145,10 +145,9 @@
         done();
       };
 
-      var sample_data = Y.io('data/sidebar_editorial.json', {sync: true});
       view.get('store').set(
           'datasource',
-          new Y.DataSource.Local({source: sample_data}));
+          new Y.DataSource.Local({source: sampleData}));
       view.render(container);
       container.one('.charm-token').simulate('click');
     });
@@ -157,10 +156,9 @@
       var container = Y.one('#subapp-browser');
       view = new Sidebar();
 
-      var sample_data = Y.io('data/sidebar_editorial.json', {sync: true});
       view.get('store').set(
           'datasource',
-          new Y.DataSource.Local({source: sample_data}));
+          new Y.DataSource.Local({source: sampleData}));
       view.render(container);
       container.one('.charm-token').simulate('click');
 

@@ -72,7 +72,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     _handleTokenSelect: function(ev) {
-      var id = ev.currentTarget.getAttribute('data-charmid');
+      var id = ev.currentTarget.getData('charmid');
       var model = this._cacheCharms.getById(id);
 
       // Show the details view for this model.
