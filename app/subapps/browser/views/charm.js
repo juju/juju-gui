@@ -277,9 +277,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * @param {Node} container optional specific container to render out to.
      *
      */
-    render: function(container) {
+    render: function(container, isFullscreen) {
       var charm = this.get('charm');
-      var tpl = this.template(charm.getAttrs());
+      var tplData = charm.getAttrs();
+      tplData.isFullscreen = isFullscreen;
+
+      var tpl = this.template(tplData);
       var tplNode = Y.Node.create(tpl);
 
       container.setHTML(tplNode);

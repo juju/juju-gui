@@ -1,5 +1,5 @@
 <div class="charm yui3-g">
-    <div class="content yui3-u-5-6">
+    <div class="content yui3-u-{{#if isFullscreen}}5-6{{else}}1{{/if}}">
         <div class="nav">
             <a href="" class="back">Back</a>
             <a href="" class="add">Add</a>
@@ -166,13 +166,15 @@
             </div>
         </div>
     </div>
-    <div class="sidebar yui3-u-1-6">
-        <h2>Useful links</h2>
-        <ul class="vertical-links">
-            <li><a href="">Juju community</a></li>
-            <li><a href="">Online resources</a></li>
-            <li><a href="">Write your own Charm</a></li>
-            <li><a href="">Contribute to this Charm</a></li>
-        </ul>
-    </div>
+    {{#if isFullscreen}}
+        <div class="sidebar yui3-u-1-6">
+            <h2>Useful links</h2>
+            <ul class="vertical-links">
+                <li><a href="">Juju community</a></li>
+                <li><a href="">Online resources</a></li>
+                <li><a href="">Write your own Charm</a></li>
+                <li><a href="">Contribute to this Charm</a></li>
+            </ul>
+        </div>
+    {{/if}}
 </div>

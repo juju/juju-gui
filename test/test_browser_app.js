@@ -38,6 +38,11 @@
       delete window.juju_config;
     });
 
+    it('knows that it is fullscreen', function() {
+      view = new FullScreen();
+      view.isFullscreen().should.equal(true);
+    });
+
     // Ensure the search results are rendered inside the container.
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser');
@@ -90,6 +95,11 @@
       view.destroy();
       Y.one('#subapp-browser').remove(true);
       delete window.juju_config;
+    });
+
+    it('knows that it is not fullscreen', function() {
+      view = new Sidebar();
+      view.isFullscreen().should.equal(false);
     });
 
     it('must correctly render the initial browser ui', function() {

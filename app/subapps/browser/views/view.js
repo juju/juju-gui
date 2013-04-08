@@ -108,7 +108,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
             charm: new models.BrowserCharm(data),
             store: this.get('store')
           });
-          charmView.render(tplNode.one('.bws-view-data'));
+          charmView.render(tplNode.one('.bws-view-data'), this.isFullscreen());
           container.setHTML(tplNode);
         },
         'failure': this.apiFailure
@@ -214,7 +214,24 @@ YUI.add('subapp-browser-mainview', function(Y) {
       this.set('store', new Y.juju.Charmworld0({
         'apiHost': window.juju_config.charmworldURL
       }));
+    },
+
+    /**
+     * Check if this view is the fullscreen version to help aid us in
+     * template work.
+     *
+     * @method isFullscreen
+     * @return {{Bool}}
+     *
+     */
+    isFullscreen: function() {
+      if (this.name.indexOf('fullscreen') === -1) {
+        return false;
+      } else {
+        return true;
+      }
     }
+
   }, {
     ATTRS: {
       /**
@@ -227,6 +244,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        */
       charmID: {},
+
 
       /**
        * An instance of the Charmworld API object to hit for any data that
