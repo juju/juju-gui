@@ -126,9 +126,9 @@ YUI.add('browser-charm-container', function(Y) {
         name: this.get('name'),
         hasExtra: this.get('extra') > 0,
         total: this.size()
-      },
-          content = this.TEMPLATE(data),
-          cb = this.get('contentBox');
+      };
+      var content = this.TEMPLATE(data);
+      var cb = this.get('contentBox');
       cb.setHTML(content);
       this._childrenContainer = cb.one('.charms');
       this._hideSomeChildren();
