@@ -72,7 +72,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
           var categoryName = category.name,
               questionIndex = categoryName + '_' + idx;
 
-          if (scores[categoryName] && scores[categoryName][questionIndex]) {
+          if (scores && scores[categoryName] &&
+              scores[categoryName][questionIndex]) {
             var score = parseInt(scores[categoryName][questionIndex], 10);
             sum += score;
             category.questions[idx].score = score;
