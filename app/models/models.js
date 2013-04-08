@@ -14,8 +14,24 @@ YUI.add('juju-models', function(Y) {
 
   // This is a helper function used by all of the process_delta methods.
   var _process_delta = function(list, action, change_data, change_base) {
-    var model_id = (action === 'remove') && change_data || change_data.id,
-        o = list.getById(model_id);
+    var instanceId;
+    if (Y.Lang.isObject(change_data)) {
+      if ('id' in change_data) {
+        instanceId = change_data.id;
+      } else {
+        console.warn('Invalid change data in _process_delta:', change_data);
+        return;
+      }
+    } else if (action === 'remove') {
+      // This is a removal request coming from the Python delta stream.
+      // In this case, the change_data is the instance id.
+      instanceId = change_data;
+    } else {
+      console.warn('Invalid change data in _process_delta:', change_data);
+      return;
+    }
+    var instance = list.getById(instanceId),
+        exists = Y.Lang.isValue(instance);
 
     if (action === 'add' || action === 'change') {
       // Client-side requests may create temporary objects in the
@@ -26,22 +42,22 @@ YUI.add('juju-models', function(Y) {
       // form that needs to be fleshed out.  So, the existing objects
       // are kept and re-used.
       var data = Y.merge(change_base || {}, change_data);
-      if (!Y.Lang.isValue(o)) {
-        o = list.add(data);
+      if (!exists) {
+        instance = list.add(data);
       } else {
-        if (o instanceof Y.Model) {
-          o.setAttrs(data);
+        if (instance instanceof Y.Model) {
+          instance.setAttrs(data);
         } else {
           // This must be from a LazyModelList.
           Y.each(data, function(value, key) {
-            o[key] = value;
+            instance[key] = value;
           });
         }
       }
     }
     else if (action === 'remove') {
-      if (Y.Lang.isValue(o)) {
-        list.remove(o);
+      if (exists) {
+        list.remove(instance);
       }
     } else {
       console.warn('Unknown change kind in _process_delta:', action);
