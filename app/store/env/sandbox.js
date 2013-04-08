@@ -277,11 +277,11 @@ YUI.add('juju-env-sandbox', function(Y) {
     _deltaWhitelist: {
       service: ['charm', 'config', 'constraints', 'exposed', 'id', 'name',
                 'subordinate', 'annotations'],
-      machine: ['agent_state', 'public_address', 'machine_id', 'anotations'],
+      machine: ['agent_state', 'public_address', 'machine_id', 'annotations'],
       unit: ['agent_state', 'machine', 'number', 'service', 'id',
-             'anotations'],
+             'annotations'],
       relation: ['relation_id', 'type', 'endpoints', 'scope'],
-      environment: ['annotations']
+      annotation: ['annotations']
     },
 
     /**
@@ -294,10 +294,6 @@ YUI.add('juju-env-sandbox', function(Y) {
       var state = this.get('state');
       var changes = state.nextChanges();
       var annotations = state.nextAnnotations();
-      // TODO: Identify specific API for handling Annotations
-      // that is compatible with all backends.
-      // For now we merge annotation changes into the existing
-      // changeset.
       if (changes || annotations) {
         if (!changes) {
           changes = annotations;

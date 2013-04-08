@@ -1040,10 +1040,10 @@
           client.onmessage = function(delta) {
             delta = Y.JSON.parse(delta.data);
             assert.equal(delta.op, 'delta');
+            console.log('delta', delta);
             var envChange = Y.Array.find(delta.result, function(change) {
-              return change[0] === 'environment';
+              return change[0] === 'annotation';
             });
-            assert.equal(envChange[0], 'environment');
             assert.equal(envChange[1], 'change');
             assert.deepEqual(envChange[2].annotations, {'foo': 'bar'});
             // Error should be undefined.
