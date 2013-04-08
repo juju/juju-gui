@@ -72,7 +72,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
           var categoryName = category.name,
               questionIndex = categoryName + '_' + idx;
 
-          if (scores[categoryName] && scores[categoryName][questionIndex]) {
+          if (scores && scores[categoryName] &&
+              scores[categoryName][questionIndex]) {
             var score = parseInt(scores[categoryName][questionIndex], 10);
             sum += score;
             category.questions[idx].score = score;
@@ -277,9 +278,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * @param {Node} container optional specific container to render out to.
      *
      */
-    render: function(container) {
+    render: function(container, isFullscreen) {
       var charm = this.get('charm');
-      var tpl = this.template(charm.getAttrs());
+      var tplData = charm.getAttrs();
+      tplData.isFullscreen = isFullscreen;
+
+      var tpl = this.template(tplData);
       var tplNode = Y.Node.create(tpl);
 
       container.setHTML(tplNode);

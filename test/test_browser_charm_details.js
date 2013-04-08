@@ -224,8 +224,8 @@
 
       var dds = Y.all('#bws-configuration dd div');
       dds.size().should.eql(2);
-      dds.pop().get('text').should.eql('Default: 9160');
       dds.pop().get('text').should.eql('Port for client communcation');
+      dds.pop().get('text').should.eql('Default: 9160');
     });
 
     it('_buildQAData properly summerizes the scores', function() {
@@ -266,6 +266,24 @@
 
       var qa_tab = Y.one('.tabs li a.bws-qa');
       qa_tab.simulate('click');
+    });
+
+    it('does not blow up when the scores from the api is null', function() {
+      var view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'readme.md'
+          ],
+          id: 'precise/ceph-9'
+        })
+      });
+      var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
+      // munge the data so that scores is null.
+      data.scores = null;
+
+      var processed = view._buildQAData(data);
+      processed.totalAvailable.should.eql(38);
+      processed.totalScore.should.eql(0);
     });
   });
 })();

@@ -12,6 +12,15 @@
       });
     });
 
+    it('provides a way to retrieve a relation key from endpoints', function() {
+      var endpoints = {
+        wordpress: {Name: 'website', Role: 'provider'},
+        haproxy: {Name: 'reverseproxy', Role: 'requirer'}
+      };
+      var key = environments.createRelationKey(endpoints);
+      assert.deepEqual('haproxy:reverseproxy wordpress:website', key);
+    });
+
     it('provides a way to lowercase the keys of an object', function() {
       var obj = {Key1: 'value1', key2: 'value2', MyThirdKey: 'value3'},
           expected = {key1: 'value1', key2: 'value2', mythirdkey: 'value3'},
@@ -668,18 +677,15 @@
     });
 
     it('sends the correct AddRelation message', function() {
-      endpointA = ['mysql', {name: 'server'}];
-      endpointB = ['wordpress', {name: 'db'}];
+      endpointA = ['haproxy', {name: 'reverseproxy'}];
+      endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB);
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
         Request: 'AddRelation',
         Params: {
-          Endpoints: [
-            'mysql',
-            'wordpress'
-          ]
+          Endpoints: ['haproxy:reverseproxy', 'wordpress:website']
         },
         RequestId: 1
       };
@@ -687,44 +693,44 @@
     });
 
     it('successfully adds a relation', function() {
-      var endpoints, relId, result;
+      var endpoints, relationId, result;
       var jujuEndpoints = {};
-      endpointA = ['mysql', {name: 'server'}];
-      endpointB = ['wordpress', {name: 'db'}];
-      relId = 'mysql-wordpress';
+      endpointA = ['haproxy', {name: 'reverseproxy'}];
+      endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB, function(ev) {
         result = ev.result;
       });
       msg = conn.last_message();
-      jujuEndpoints.mysql = {
-        Name: 'server',
-        Interface: 'mysql',
-        Scope: 'global'
+      jujuEndpoints.haproxy = {
+        Name: 'reverseproxy',
+        Interface: 'http',
+        Scope: 'global',
+        Role: 'requirer'
       };
       jujuEndpoints.wordpress = {
-        Name: 'db',
-        Interface: 'mysql',
-        Scope: 'global'
+        Name: 'website',
+        Interface: 'http',
+        Scope: 'global',
+        Role: 'provider'
       };
       conn.msg({
         RequestId: msg.RequestId,
         Response: {
-          Id: relId,
           Endpoints: jujuEndpoints
         }
       });
-      assert.equal(result.id, relId);
-      assert.equal(result['interface'], 'mysql');
+      assert.equal(result.id, 'haproxy:reverseproxy wordpress:website');
+      assert.equal(result['interface'], 'http');
       assert.equal(result.scope, 'global');
       endpoints = result.endpoints;
-      assert.deepEqual(endpoints[0], {'mysql': {'name': 'server'}});
-      assert.deepEqual(endpoints[1], {'wordpress': {'name': 'db'}});
+      assert.deepEqual(endpoints[0], {'haproxy': {'name': 'reverseproxy'}});
+      assert.deepEqual(endpoints[1], {'wordpress': {'name': 'website'}});
     });
 
     it('handles failed relation adding', function() {
       var evt;
-      endpointA = ['mysql', {name: 'server'}];
-      endpointB = ['wordpress', {name: 'db'}];
+      endpointA = ['haproxy', {name: 'reverseproxy'}];
+      endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB, function(ev) {
         evt = ev;
       });
@@ -734,8 +740,8 @@
         Error: 'cannot add relation'
       });
       assert.equal(evt.err, 'cannot add relation');
-      assert.equal(evt.endpoint_a, 'mysql:server');
-      assert.equal(evt.endpoint_b, 'wordpress:db');
+      assert.equal(evt.endpoint_a, 'haproxy:reverseproxy');
+      assert.equal(evt.endpoint_b, 'wordpress:website');
     });
 
     it('sends the correct DestroyRelation message', function() {

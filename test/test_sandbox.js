@@ -1040,7 +1040,6 @@
           client.onmessage = function(delta) {
             delta = Y.JSON.parse(delta.data);
             assert.equal(delta.op, 'delta');
-            console.log('delta', delta);
             var envChange = Y.Array.find(delta.result, function(change) {
               return change[0] === 'annotation';
             });

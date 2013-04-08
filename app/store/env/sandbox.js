@@ -277,10 +277,11 @@ YUI.add('juju-env-sandbox', function(Y) {
     _deltaWhitelist: {
       service: ['charm', 'config', 'constraints', 'exposed', 'id', 'name',
                 'subordinate', 'annotations'],
-      machine: ['agent_state', 'public_address', 'machine_id', 'annotations'],
+      machine: ['agent_state', 'public_address', 'machine_id', 'id',
+                'annotations'],
       unit: ['agent_state', 'machine', 'number', 'service', 'id',
              'annotations'],
-      relation: ['relation_id', 'type', 'endpoints', 'scope'],
+      relation: ['relation_id', 'type', 'endpoints', 'scope', 'id'],
       annotation: ['annotations']
     },
 

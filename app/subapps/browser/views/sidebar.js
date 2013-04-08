@@ -28,16 +28,21 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     template: views.Templates.sidebar,
     visible: true,
 
+    events: {
+      '.charm-token': {
+        'click': '_handleTokenSelect'
+      }
+    },
+
     /**
      * Given a set of Charms generate a CharmSlider widget with that data.
      *
      * @method _generateSliderWidget
-     * @param {Object} results Object of Charm Data from the API.
+     * @param {Object} sliderCharms BrowserCharmList of Charms from the API.
      *
      */
-    _generateSliderWidget: function(results) {
-      var sliderCharms = this.get('store').resultsToCharmlist(results),
-          sliderWidgets = [];
+    _generateSliderWidget: function(sliderCharms) {
+      var sliderWidgets = [];
 
       sliderCharms.each(function(charm) {
         sliderWidgets.push(
@@ -59,6 +64,25 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     },
 
     /**
+     * Event handler for selecting a charm from a list on the page. Forces a
+     * render of the charm details view for the user.
+     *
+     * @method _handleTokenSelect
+     * @param {Event} ev the click event from the charm token.
+     *
+     */
+    _handleTokenSelect: function(ev) {
+      var id = ev.currentTarget.getData('charmid');
+      var model = this._cacheCharms.getById(id);
+
+      // Show the details view for this model.
+      this._renderCharmDetails(
+          model,
+          this.get('container')
+      );
+    },
+
+    /**
      * Initially we load editorial content to populate the sidebar. Build this
      * content.
      *
@@ -75,14 +99,20 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
       if (typeof container !== 'object') {
         container = this.get('container');
+      } else {
+        this.set('container', container);
       }
+
+      container.setHTML(tplNode);
 
       // By default we grab the editorial content from the api to use for
       // display.
       this.get('store').sidebarEditorial({
         'success': function(data) {
+          var sliderCharms = this.get('store').resultsToCharmlist(
+              data.result.slider);
           var sliderContainer = container.one('.bws-left .slider');
-          this.slider = this._generateSliderWidget(data.result.slider);
+          this.slider = this._generateSliderWidget(sliderCharms);
           if (this.slider) {
             this.slider.render(sliderContainer);
           }
@@ -98,6 +128,11 @@ YUI.add('subapp-browser-sidebar', function(Y) {
             widget.render(node);
             newContainer.append(node);
           });
+
+          // Add the charms to the cache for use in other views.
+          // Start with a reset to empty any current cached models.
+          this._cacheCharms.reset(newCharms);
+          this._cacheCharms.add(sliderCharms);
         },
 
         'failure': function(data, request) {
@@ -116,8 +151,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           );
         }
       }, this);
-
-      container.setHTML(tplNode);
     },
 
     /**

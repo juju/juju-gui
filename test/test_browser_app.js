@@ -38,6 +38,11 @@
       delete window.juju_config;
     });
 
+    it('knows that it is fullscreen', function() {
+      view = new FullScreen();
+      view.isFullscreen().should.equal(true);
+    });
+
     // Ensure the search results are rendered inside the container.
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser');
@@ -63,17 +68,19 @@
   };
 
   describe('browser sidebar view', function() {
-    var Y, browser, view, views, Sidebar;
+    var Y, browser, view, views, sampleData, Sidebar;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'juju-browser',
           'juju-views',
+          'node-event-simulate',
           'subapp-browser-sidebar',
           function(Y) {
             browser = Y.namespace('juju.browser');
             views = Y.namespace('juju.browser.views');
             Sidebar = views.Sidebar;
+            sampleData = Y.io('data/sidebar_editorial.json', {sync: true});
             done();
           });
     });
@@ -92,13 +99,18 @@
       delete window.juju_config;
     });
 
+    it('knows that it is not fullscreen', function() {
+      view = new Sidebar();
+      view.isFullscreen().should.equal(false);
+    });
+
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser');
       view = new Sidebar();
 
       // mock out the data source on the view so that it won't actually make a
       // request.
-      var sample_data = {
+      var emptyData = {
         responseText: Y.JSON.stringify({
           result: {
             'new': [],
@@ -109,7 +121,7 @@
 
       view.get('store').set(
           'datasource',
-          new Y.DataSource.Local({source: sample_data}));
+          new Y.DataSource.Local({source: emptyData}));
       view.render(container);
 
       // And the hide button is rendered to the container node.
@@ -118,8 +130,54 @@
       assert.isTrue(Y.Lang.isObject(container.one('input')));
     });
 
-  });
+    it('caches models fetched from the api for later use', function() {
+      var container = Y.one('#subapp-browser');
+      view = new Sidebar();
+      view._cacheCharms.size().should.eql(0);
 
+      // mock out the request data for the editorial view. We want to make
+      // sure we're caching the results.
+      view.get('store').set(
+          'datasource',
+          new Y.DataSource.Local({source: sampleData}));
+      view.render(container);
+
+      view._cacheCharms.size().should.eql(4);
+    });
+
+    it('handles details event when clicking on a charm token', function(done) {
+      var container = Y.one('#subapp-browser');
+      view = new Sidebar();
+
+      // Test is successful when it completes by hitting this callback we've
+      // over written.
+      view._handleTokenSelect = function(ev) {
+        done();
+      };
+
+      view.get('store').set(
+          'datasource',
+          new Y.DataSource.Local({source: sampleData}));
+      view.render(container);
+      container.one('.charm-token').simulate('click');
+    });
+
+    it('renders details when clicking on a charm token', function() {
+      var container = Y.one('#subapp-browser');
+      view = new Sidebar();
+
+      view.get('store').set(
+          'datasource',
+          new Y.DataSource.Local({source: sampleData}));
+      view.render(container);
+      container.one('.charm-token').simulate('click');
+
+      var details_node = container.one('.bws-view-data');
+      details_node.one('h1').get('text').should.eql('byobu-classroom');
+      details_node.all('.tabs').size().should.eql(1);
+    });
+
+  });
 })();
 
 
