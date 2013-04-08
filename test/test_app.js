@@ -63,6 +63,7 @@ function injectData(app, data) {
           { container: container,
             viewContainer: container,
             env: env});
+      app.showView(new Y.View());
       injectData(app);
     });
 
@@ -89,7 +90,9 @@ function injectData(app, data) {
               { container: container,
                 user: the_username,
                 password: the_password,
-                viewContainer: container});
+                viewContainer: container,
+                conn: {close: function() {}}});
+          app.showView(new Y.View());
           var credentials = app.env.getCredentials();
           credentials.user.should.equal(the_username);
           credentials.password.should.equal(the_password);
@@ -101,7 +104,9 @@ function injectData(app, data) {
       app = new Y.juju.App({
         container: container,
         readOnly: true,
-        viewContainer: container});
+        viewContainer: container,
+        conn: {close: function() {}}});
+      app.showView(new Y.View());
       assert.isTrue(app.env.get('readOnly'));
     });
 
@@ -140,7 +145,9 @@ function injectData(app, data) {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
-            environment_name: environment_name});
+            environment_name: environment_name,
+            conn: {close: function() {}}});
+      app.showView(new Y.View());
       assert.equal(
           container.one('#environment-name').get('text'),
           environment_name);
@@ -151,7 +158,9 @@ function injectData(app, data) {
          app.destroy();
          app = new Y.juju.App(
          { container: container,
-           viewContainer: container});
+           viewContainer: container,
+           conn: {close: function() {}}});
+         app.showView(new Y.View());
          assert.equal(
          container.one('#environment-name').get('text'),
          'Environment');
@@ -204,6 +213,7 @@ function injectData(app, data) {
        function(done) {
          conn.transient_close();
          var app = new Y.juju.App({env: env});
+         app.showView(new Y.View());
          app.after('ready', function() {
            assert.equal(0, conn.messages.length);
            done();
@@ -215,6 +225,7 @@ function injectData(app, data) {
          env.setAttrs({user: 'user', password: 'password'});
          conn.open();
          var app = new Y.juju.App({env: env});
+         // We want to dispatch, so we do not supply the no-op view.
          app.after('ready', function() {
            assert.equal('login', conn.last_message().op);
            done();
@@ -226,6 +237,7 @@ function injectData(app, data) {
          env.setCredentials(null);
          conn.open();
          var app = new Y.juju.App({env: env});
+         app.showView(new Y.View());
          app.after('ready', function() {
            assert.equal(0, conn.messages.length);
            done();
@@ -269,6 +281,7 @@ function injectData(app, data) {
           dispatch_called = false,
           login_called = false,
           noop = function() {return this;};
+      app.showView(new Y.View());
 
       // Mock the database.
       app.db = {
@@ -341,6 +354,7 @@ function injectData(app, data) {
             viewContainer: container,
             env: env,
             charm_store: {} });
+      app.showView(new Y.View());
     });
 
     afterEach(function() {
@@ -398,6 +412,7 @@ function injectData(app, data) {
             password: 'admin',
             charm_store: charmStoreData.charmStore
           });
+      app.showView(new Y.View());
       // This simply walks through the hierarchy to show that all the
       // necessary parts are there.
       assert.isObject(app.env.get('conn').get('juju').get('state'));
