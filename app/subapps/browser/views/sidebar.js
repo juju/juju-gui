@@ -116,7 +116,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
             name: 'Featured Charms',
             cutoff: 1,
             children: sliderCharms.map(function(charm) {
-                return charm.getAttrs(); })
+              return charm.getAttrs(); })
           });
           sliderCharmContainer.render(sliderContainer);
 
@@ -128,7 +128,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
             name: 'New Charms',
             cutoff: 2,
             children: newCharms.map(function(charm) {
-                return charm.getAttrs(); })
+              return charm.getAttrs(); })
           });
           newCharmContainer.render(newContainer);
 
