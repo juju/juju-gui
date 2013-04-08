@@ -351,7 +351,7 @@
         fakebackend.deploy('cs:wordpress', function() {
           var service = fakebackend.getService('wordpress').result;
           assert.equal(service.annotations, undefined);
-          var anno = fakebackend.getAnnotations('wordpress');
+          var anno = fakebackend.getAnnotations('wordpress').result;
           assert.equal(anno, undefined);
           done();
         });
@@ -362,13 +362,13 @@
           fakebackend.updateAnnotations('wordpress',
                                         {'foo': 'bar',
                                           'gone': 'away'});
-          var anno = fakebackend.getAnnotations('wordpress');
+          var anno = fakebackend.getAnnotations('wordpress').result;
           assert.equal(anno.foo, 'bar');
           assert.equal(anno.gone, 'away');
 
           // Apply an update and verify that merge happened.
           fakebackend.updateAnnotations('wordpress', {'gone': 'too far'});
-          anno = fakebackend.getAnnotations('wordpress');
+          anno = fakebackend.getAnnotations('wordpress').result;
           assert.equal(anno.foo, 'bar');
           assert.equal(anno.gone, 'too far');
           done();
@@ -380,13 +380,13 @@
           fakebackend.updateAnnotations('wordpress/0',
                                         {'foo': 'bar',
                                           'gone': 'away'});
-          var anno = fakebackend.getAnnotations('wordpress/0');
+          var anno = fakebackend.getAnnotations('wordpress/0').result;
           assert.equal(anno.foo, 'bar');
           assert.equal(anno.gone, 'away');
 
           // Apply an update and verify that merge happened.
           fakebackend.updateAnnotations('wordpress/0', {'gone': 'too far'});
-          anno = fakebackend.getAnnotations('wordpress/0');
+          anno = fakebackend.getAnnotations('wordpress/0').result;
           assert.equal(anno.foo, 'bar');
           assert.equal(anno.gone, 'too far');
           done();
@@ -397,15 +397,25 @@
         fakebackend.updateAnnotations('env',
                                       {'foo': 'bar',
                                         'gone': 'away'});
-        var anno = fakebackend.getAnnotations('env');
+        var anno = fakebackend.getAnnotations('env').result;
         assert.equal(anno.foo, 'bar');
         assert.equal(anno.gone, 'away');
 
         // Apply an update and verify that merge happened.
         fakebackend.updateAnnotations('env', {'gone': 'too far'});
-        anno = fakebackend.getAnnotations('env');
+        anno = fakebackend.getAnnotations('env').result;
         assert.equal(anno.foo, 'bar');
         assert.equal(anno.gone, 'too far');
+
+        // Verify the annotations on the model directly.
+        anno = fakebackend.db.environment.get('annotations');
+        assert.equal(anno.foo, 'bar');
+        assert.equal(anno.gone, 'too far');
+
+        // Verify changes name it into nextAnnotations
+        var changes = fakebackend.nextAnnotations();
+        assert.deepEqual(changes.environments.env,
+                         [fakebackend.db.environment, true]);
       });
 
       it('must remove annotations from a service', function(done) {
@@ -413,19 +423,19 @@
           fakebackend.updateAnnotations('wordpress',
                                         {'foo': 'bar',
                                           'gone': 'away'});
-          var anno = fakebackend.getAnnotations('wordpress');
+          var anno = fakebackend.getAnnotations('wordpress').result;
           assert.equal(anno.foo, 'bar');
           assert.equal(anno.gone, 'away');
 
           // Remove an annotation and verify that happened.
           fakebackend.removeAnnotations('wordpress', ['gone']);
-          anno = fakebackend.getAnnotations('wordpress');
+          anno = fakebackend.getAnnotations('wordpress').result;
           assert.equal(anno.foo, 'bar');
           assert.equal(anno.gone, undefined);
 
           // Finally remove annotations with falsey keys.
           fakebackend.removeAnnotations('wordpress');
-          anno = fakebackend.getAnnotations('wordpress');
+          anno = fakebackend.getAnnotations('wordpress').result;
           assert.deepEqual(anno, {});
           done();
         });

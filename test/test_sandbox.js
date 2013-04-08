@@ -167,6 +167,8 @@
     var Y, sandboxModule, ClientConnection, PyJujuAPI, environmentsModule,
         state, juju, client, env, utils, cleanups;
 
+    this.timeout(2000); // Long timeouts make async failures hard to detect.
+
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         sandboxModule = Y.namespace('juju.environments.sandbox');
@@ -990,9 +992,97 @@
         }
     );
 
-    it('should handle service annotation updates');
-    it('should handle environment annotation updates');
-    it('should handle unit annotation updates');
+    it('should handle service annotation updates', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be able to
+        // pull its data.
+        var op = {
+          op: 'update_annotations',
+          entity: 'wordpress',
+          data: {'foo': 'bar'},
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var service = state.db.services.getById('wordpress');
+          var annotations = service.get('annotations');
+          assert.equal(annotations.foo, 'bar');
+          // Validate that annotations appear in the delta stream.
+          client.onmessage = function(delta) {
+            delta = Y.JSON.parse(delta.data);
+            assert.equal(delta.op, 'delta');
+            var serviceChange = Y.Array.find(delta.result, function(change) {
+              return change[0] === 'service';
+            });
+            assert.equal(serviceChange[0], 'service');
+            assert.equal(serviceChange[1], 'change');
+            assert.deepEqual(serviceChange[2].annotations, {'foo': 'bar'});
+            // Error should be undefined.
+            done(received.error);
+          };
+          juju.sendDelta();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(op));
+      });
+    });
+
+    it('should handle environment annotation updates', function(done) {
+      generateServices(function(data) {
+        // We only deploy a service here to reuse the env connect/setup
+        // code.
+        // Post deploy of wordpress we should be able to
+        // pull env data.
+        client.onmessage = function(received) {
+          var env = state.db.environment;
+          var annotations = env.get('annotations');
+          assert.equal(annotations.foo, 'bar');
+          // Validate that annotations appear in the delta stream.
+          client.onmessage = function(delta) {
+            delta = Y.JSON.parse(delta.data);
+            assert.equal(delta.op, 'delta');
+            var envChange = Y.Array.find(delta.result, function(change) {
+              return change[0] === 'environment';
+            });
+            assert.equal(envChange[0], 'environment');
+            assert.equal(envChange[1], 'change');
+            assert.deepEqual(envChange[2].annotations, {'foo': 'bar'});
+            // Error should be undefined.
+            done(received.error);
+          };
+          juju.sendDelta();
+        };
+        client.open();
+        client.send(Y.JSON.stringify({
+          op: 'update_annotations',
+          entity: 'env',
+          data: {'foo': 'bar'},
+          request_id: 99
+        }));
+      });
+    });
+
+    it('should handle unit annotation updates', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be able to
+        // pull its data.
+        var op = {
+          op: 'update_annotations',
+          entity: 'wordpress/0',
+          data: {'foo': 'bar'},
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var unit = state.db.units.getById('wordpress/0');
+          var annotations = unit.annotations;
+          assert.equal(annotations.foo, 'bar');
+          // Error should be undefined.
+          done(received.error);
+        };
+        client.open();
+        client.send(Y.JSON.stringify(op));
+      });
+    });
+
   });
 
 })();

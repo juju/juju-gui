@@ -100,10 +100,37 @@ YUI.add('juju-env-fakebackend', function(Y) {
         machines: {},
         units: {},
         relations: {},
-        // This is undefined or the environment annotations, if they changed.
-        environment: {}
+        environments: {}
       };
     },
+
+    /**
+    Return all of the recently anotated objects.
+
+    @method nextAnnotations
+    @return {Object} A hash of the keys 'services', 'machines', 'units' and
+      'relations'.  Each of those are hashes from entity identifier to
+      [entity, boolean] where the boolean means either active (true) or
+      removed (false).
+    **/
+    nextAnnotations: function() {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var result;
+      if (Y.Object.isEmpty(this.annotations.services) &&
+          Y.Object.isEmpty(this.annotations.machines) &&
+          Y.Object.isEmpty(this.annotations.units) &&
+          Y.Object.isEmpty(this.annotations.relations) &&
+          Y.Object.isEmpty(this.annotations.environments)) {
+        result = null;
+      } else {
+        result = this.annotations;
+        this._resetAnnotations();
+      }
+      return result;
+    },
+
 
     /**
     Attempt to log a user in.
@@ -601,11 +628,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       } else if (entity.name === 'annotations' ||
                  entity.name === 'environment') {
-        annotationGroup = 'environment';
+        // Note the 's' for compatibility with other
+        // code paths.
+        annotationGroup = 'environments';
       } else {
         annotationGroup = entity.name + 's';
       }
       this.annotations[annotationGroup][entityName] = [entity, true];
+      return {result: true};
     },
 
     /**
@@ -628,9 +658,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       if (entity.name === 'serviceUnit') {
-        return entity.annotations;
+        return {result: entity.annotations};
       }
-      return entity.get('annotations');
+      return {result: entity.get('annotations')};
     },
 
     /**
@@ -691,6 +721,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         annotationGroup = entity.name + 's';
       }
       this.annotations[annotationGroup][entityName] = [entity, false];
+      return {result: true};
     },
 
     // addRelation: function() {

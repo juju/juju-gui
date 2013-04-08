@@ -276,10 +276,12 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     _deltaWhitelist: {
       service: ['charm', 'config', 'constraints', 'exposed', 'id', 'name',
-                'subordinate'],
-      machine: ['agent_state', 'public_address', 'machine_id'],
-      unit: ['agent_state', 'machine', 'number', 'service', 'id'],
-      relation: ['relation_id', 'type', 'endpoints', 'scope']
+                'subordinate', 'annotations'],
+      machine: ['agent_state', 'public_address', 'machine_id', 'anotations'],
+      unit: ['agent_state', 'machine', 'number', 'service', 'id',
+             'anotations'],
+      relation: ['relation_id', 'type', 'endpoints', 'scope'],
+      environment: ['annotations']
     },
 
     /**
@@ -289,8 +291,22 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Nothing.
     **/
     sendDelta: function() {
-      var changes = this.get('state').nextChanges();
-      // TODO: Add annotations when we have them.
+      var state = this.get('state');
+      var changes = state.nextChanges();
+      var annotations = state.nextAnnotations();
+      // TODO: Identify specific API for handling Annotations
+      // that is compatible with all backends.
+      // For now we merge annotation changes into the existing
+      // changeset.
+      if (changes || annotations) {
+        if (!changes) {
+          changes = annotations;
+        } else {
+          changes = Y.mix(changes, annotations,
+                          true, 0, null, true);
+        }
+      }
+
       if (changes && !changes.error) {
         var deltas = [];
         var response = {op: 'delta', result: deltas};
@@ -404,13 +420,6 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handles update_annotations operations from client.  Called by receive.
-    PLACEHOLDER.  This exists to demo existing functionality.
-    **/
-    performOp_update_annotations: function(data) {
-    },
-
-    /**
       Handles add unit operations from the client.
 
       @method performOp_add_unit
@@ -470,6 +479,16 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     performOp_set_config: function(data) {
       ASYNC_OP(this, 'setConfig', ['service_name', 'config'])(data);
+    },
+
+    /**
+     * Update annotations rpc
+     *
+     * @method performOp_update_annotations
+     * @param {Object} data with entity name and payload.
+     */
+    performOp_update_annotations: function(data) {
+      OP(this, 'updateAnnotations', ['entity', 'data'], data);
     },
 
     /**
