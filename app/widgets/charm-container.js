@@ -34,8 +34,6 @@ YUI.add('browser-charm-container', function(Y) {
   ], {
 
     TEMPLATE: Y.namespace('juju.views').Templates['charm-container'],
-    SEE_MORE: 'See {extra} more {result}',
-    SEE_LESS: 'See fewer results',
 
     /**
      * Sets up some attributes that are needed before render, but can only be
@@ -85,19 +83,12 @@ YUI.add('browser-charm-container', function(Y) {
           expander = e.currentTarget;
       if (invisible) {
         this._showAll();
-        expander.set('text', this.SEE_LESS);
+        expander.one('.more').addClass('hidden');
+        expander.one('.less').removeClass('hidden');
       } else {
         this._hideSomeChildren();
-        var extra = this.get('extra'),
-            result;
-        if (extra !== 1) {
-          result = 'results';
-        } else {
-          result = 'result';
-        }
-        var msg = Y.Lang.sub(
-            this.SEE_MORE, {extra: extra, result: result});
-        expander.set('text', msg);
+        expander.one('.less').addClass('hidden');
+        expander.one('.more').removeClass('hidden');
       }
     },
 
@@ -165,7 +156,6 @@ YUI.add('browser-charm-container', function(Y) {
         validator: function(val) {
           return (val >= 0);
         }
-
       },
 
       /**
