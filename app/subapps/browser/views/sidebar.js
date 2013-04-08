@@ -118,16 +118,20 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           }
 
           // Add in the charm tokens for the new as well.
-          var newContainer = container.one('.bws-left .new');
           var newCharms = this.get('store').resultsToCharmlist(
               data.result['new']);
+          var charm_data = [];
           newCharms.map(function(charm) {
-            var node = Y.Node.create('<div>'),
-                widget = new Y.juju.widgets.browser.CharmToken(
-                charm.getAttrs());
-            widget.render(node);
-            newContainer.append(node);
+            charm_data.push(charm.getAttrs());
           });
+          var newCharmContainer = new Y.juju.widgets.browser.CharmContainer({
+            name: 'New Charms',
+            cutoff: 2,
+            children: charm_data
+          });
+          newCharmContainer.render(container.one('.bws-left .new'));
+
+
 
           // Add the charms to the cache for use in other views.
           // Start with a reset to empty any current cached models.
@@ -187,6 +191,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'browser-charm-container',
     'browser-charm-slider',
     'browser-charm-token',
     'browser-search-widget',
