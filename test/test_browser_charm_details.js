@@ -224,8 +224,8 @@
 
       var dds = Y.all('#bws-configuration dd div');
       dds.size().should.eql(2);
-      dds.pop().get('text').should.eql('Port for client communcation');
       dds.pop().get('text').should.eql('Default: 9160');
+      dds.pop().get('text').should.eql('Port for client communcation');
     });
 
     it('_buildQAData properly summerizes the scores', function() {
