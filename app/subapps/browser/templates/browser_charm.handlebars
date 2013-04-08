@@ -1,167 +1,180 @@
-<div class="charm">
-    <div class="nav">
-        <a href="" class="back">Back</a>
-        <a href="" class="add">Add</a>
-        <a href="" class="share">
-            <img src="/juju-ui/assets/images/share_icon.jpg" alt="Share" />
-        </a>
-    </div>
-
-    <div class="heading yui3-g">
-        <div class="yui3-u">
-            <img src="data:image/svg;base64,{{ icon }}" alt="{{ name }} icon">
+<div class="charm yui3-g">
+    <div class="content yui3-u-{{#if isFullscreen}}5-6{{else}}1{{/if}}">
+        <div class="nav">
+            <a href="" class="back">Back</a>
+            <a href="" class="add">Add</a>
+            <a href="" class="share">
+                <img src="/juju-ui/assets/images/share_icon.jpg" alt="Share" />
+            </a>
         </div>
-        <div class="charm-details yui3-u-1-2">
-            <h1>{{ name }}</h1>
-            <div class="providers">
-                <img src="/juju-ui/assets/images/provider_icons/provider-lxc02.svg"
-                    alt="Provider name" />
-                <img src="/juju-ui/assets/images/provider_icons/provider-openstack.svg"
-                    alt="Provider name" />
-                <img src="/juju-ui/assets/images/provider_icons/provider-hp.svg"
-                    alt="Provider name" />
-                <img src="/juju-ui/assets/images/provider_icons/provider-aws.svg"
-                    alt="Provider name" />
-                <img src="/juju-ui/assets/images/provider_icons/provider-maas.svg"
-                    alt="Provider name" />
+
+        <div class="heading yui3-g">
+            <div class="yui3-u">
+                <img src="data:image/svg;base64,{{ icon }}" alt="{{ name }} icon">
             </div>
-            <dl>
-                <dt>Activity (30 days)</dt>
-                <dd>
-                    <img src="/juju-ui/assets/images/charm_downloads_icon.jpg"
-                        alt="Minimize" />
-                    {{ downloads_in_past_30_days }}
-                    <img src="/juju-ui/assets/images/charm_commits_icon.jpg"
-                        alt="Minimize" />
-                    --
-                </dd>
-                <dt>Ubuntu series</dt>
-                <dd>{{ distro_series }}</dd>
-                <dt>Location</dt>
-                <dd>{{ url }}</dd>
-                <dt>Links</dt>
-                <dd>
-                    <a href="#">Source</a>
-                    <a href="{{ code_source.bugs_link }}">Bugs</a>
-                </dd>
-            </dl>
-        </div>
-    </div>
-
-    <div class="summary">
-        <h2>Summary</h2>
-        {{ summary }}
-        <h2>Description</h2>
-        {{ description }}
-    </div>
-
-    <div class="changelog">
-        <span class="toggle">Open Log</span>
-    </div>
-
-    <div class="changelog">
-    </div>
-
-    <div class="tabs">
-        <ul>
-            <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
-            <li><a href="#bws-interfaces" class="bws-interfaces">Interfaces</a></li>
-            <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
-            <li><a href="#bws-qa" class="bws-qa">Quality</a></li>
-            <li><a href="#bws-hooks" class="bws-hooks">Hooks</a></li>
-        </ul>
-        <div>
-            <div id="bws-readme">Readme</div>
-            <div id="bws-interfaces">
-                <p class="intro">
-                    Interfaces determine how this charm relates to other 
-                    charms. A relationship between charms can only be made if 
-                    they share a common interface. This charm requires certain 
-                    interfaces to be provided by other charms. Similarly, this 
-                    charm provides other interfaces that can be used by 
-                    other charms.
-                </p>
-                <div class="yui3-g">
-                    <div class="interfaces-heading yui3-u-1-3">
-                        <h3>Requires</h3>
-                    </div>
-                    <div class="interfaces-heading yui3-u-2-3">
-                        <h3>Related Charms</h3>
-                    </div>
+            <div class="charm-details yui3-u-1-2">
+                <h1>{{ name }}</h1>
+                <div class="providers">
+                    <img src="/juju-ui/assets/images/provider_icons/provider-lxc02.svg"
+                        alt="Provider name" />
+                    <img src="/juju-ui/assets/images/provider_icons/provider-openstack.svg"
+                        alt="Provider name" />
+                    <img src="/juju-ui/assets/images/provider_icons/provider-hp.svg"
+                        alt="Provider name" />
+                    <img src="/juju-ui/assets/images/provider_icons/provider-aws.svg"
+                        alt="Provider name" />
+                    <img src="/juju-ui/assets/images/provider_icons/provider-maas.svg"
+                        alt="Provider name" />
                 </div>
-                {{#if requires}}
-                    <ul class="interface-list">
-                        {{#arrayObject requires}}
-                            <li class="interface-row yui3-g">
-                                <div class="interface yui3-u-1-3">
-                                    <h4>{{value.interface}}</h4>
-                                    <div>{{key}}</div>
-                                </div>
-                                <div class="related yui3-u-2-3">
-                                    &hellip;no related charms yet
-                                </div>
-                            </li>
-                        {{/arrayObject}}
-                    </ul>
-                {{else}}
-                    <p>This charm does not require any interfaces.</p>
-                {{/if}}
-                <div class="yui3-g">
-                    <div class="interfaces-heading yui3-u-1-3">
-                        <h3>Provides</h3>
-                    </div>
-                    <div class="interfaces-heading yui3-u-2-3">
-                        <h3>Related Charms</h3>
-                    </div>
-                </div>
-                {{#if provides}}
-                    <ul class="interface-list">
-                        {{#arrayObject provides}}
-                            <li class="interface-row yui3-g">
-                                <div class="interface yui3-u-1-3">
-                                    <h4>{{value.interface}}</h4>
-                                    <div>{{key}}</div>
-                                </div>
-                                <div class="related yui3-u-2-3">
-                                    &hellip;no related charms yet
-                                </div>
-                            </li>
-                        {{/arrayObject}}
-                    </ul>
-                {{else}}
-                    <p>This charm does not provide any interfaces.</p>
-                {{/if}}
-            </div>
-            <div id="bws-configuration">
-                {{#if options}}
-                    <dl>
-                        {{#arrayObject options}}
-                            <dt>
-                                <dfn>{{key}}</dfn>
-                                <em>{{value.type}}</em>
-                            </dt>
-                            <dd>
-                                <div>Default: {{value.default}}</div>
-                                <div>{{value.description}}</div>
-                            </dd>
-                        {{/arrayObject}}
-                    </dl>
-                {{else}}
-                  <p>This charm does not expose any configuration options.</p>
-                {{/if}}
-            </div>
-            <div id="bws-qa">Quality</div>
-            <div id="bws-hooks">
-                <select>
-                    <option>--</option>
-                    {{#each files}}
-                        <option value="{{ . }}">{{ . }}</option>
-                    {{/each}}
-                </select>
-                <div class="filecontent">
-                    Select a file from the list to view.
-                </div>
+                <dl>
+                    <dt>Activity (30 days)</dt>
+                    <dd>
+                        <img src="/juju-ui/assets/images/charm_downloads_icon.jpg"
+                            alt="Minimize" />
+                        {{ downloads_in_past_30_days }}
+                        <img src="/juju-ui/assets/images/charm_commits_icon.jpg"
+                            alt="Minimize" />
+                        --
+                    </dd>
+                    <dt>Ubuntu series</dt>
+                    <dd>{{ distro_series }}</dd>
+                    <dt>Location</dt>
+                    <dd>{{ url }}</dd>
+                    <dt>Links</dt>
+                    <dd>
+                        <a href="#">Source</a>
+                        <a href="{{ code_source.bugs_link }}">Bugs</a>
+                    </dd>
+                </dl>
             </div>
         </div>
+
+        <div class="summary">
+            <h2>Summary</h2>
+            {{ summary }}
+            <h2>Description</h2>
+            {{ description }}
+        </div>
+
+        <div class="changelog">
+            <span class="toggle">Open Log</span>
+        </div>
+
+        <div class="changelog">
+        </div>
+
+        <div class="tabs">
+            <ul>
+                <li><a href="#bws-readme" class="bws-readme">Readme</a></li>
+                <li><a href="#bws-interfaces" class="bws-interfaces">Interfaces</a></li>
+                <li><a href="#bws-configuration" class="bws-configuration">Configuration</a></li>
+                <li><a href="#bws-qa" class="bws-qa">Quality</a></li>
+                <li><a href="#bws-hooks" class="bws-hooks">Hooks</a></li>
+            </ul>
+            <div>
+                <div id="bws-readme">Readme</div>
+                <div id="bws-interfaces">
+                    <p class="intro">
+                        Interfaces determine how this charm relates to other 
+                        charms. A relationship between charms can only be made if 
+                        they share a common interface. This charm requires certain 
+                        interfaces to be provided by other charms. Similarly, this 
+                        charm provides other interfaces that can be used by 
+                        other charms.
+                    </p>
+                    <div class="yui3-g">
+                        <div class="interfaces-heading yui3-u-1-3">
+                            <h3>Requires</h3>
+                        </div>
+                        <div class="interfaces-heading yui3-u-2-3">
+                            <h3>Related Charms</h3>
+                        </div>
+                    </div>
+                    {{#if requires}}
+                        <ul class="interface-list">
+                            {{#arrayObject requires}}
+                                <li class="interface-row yui3-g">
+                                    <div class="interface yui3-u-1-3">
+                                        <h4>{{value.interface}}</h4>
+                                        <div>{{key}}</div>
+                                    </div>
+                                    <div class="related yui3-u-2-3">
+                                        &hellip;no related charms yet
+                                    </div>
+                                </li>
+                            {{/arrayObject}}
+                        </ul>
+                    {{else}}
+                        <p>This charm does not require any interfaces.</p>
+                    {{/if}}
+                    <div class="yui3-g">
+                        <div class="interfaces-heading yui3-u-1-3">
+                            <h3>Provides</h3>
+                        </div>
+                        <div class="interfaces-heading yui3-u-2-3">
+                            <h3>Related Charms</h3>
+                        </div>
+                    </div>
+                    {{#if provides}}
+                        <ul class="interface-list">
+                            {{#arrayObject provides}}
+                                <li class="interface-row yui3-g">
+                                    <div class="interface yui3-u-1-3">
+                                        <h4>{{value.interface}}</h4>
+                                        <div>{{key}}</div>
+                                    </div>
+                                    <div class="related yui3-u-2-3">
+                                        &hellip;no related charms yet
+                                    </div>
+                                </li>
+                            {{/arrayObject}}
+                        </ul>
+                    {{else}}
+                        <p>This charm does not provide any interfaces.</p>
+                    {{/if}}
+                </div>
+                <div id="bws-configuration">
+                    {{#if options}}
+                        <dl>
+                            {{#arrayObject options}}
+                                <dt>
+                                    <dfn>{{key}}</dfn>
+                                    <em>{{value.type}}</em>
+                                </dt>
+                                <dd>
+                                    <div>{{value.description}}</div>
+                                    <div>Default: {{value.default}}</div>
+                                </dd>
+                            {{/arrayObject}}
+                        </dl>
+                    {{else}}
+                      <p>This charm does not expose any configuration options.</p>
+                    {{/if}}
+                </div>
+                <div id="bws-qa">Quality</div>
+                <div id="bws-hooks">
+                    <select>
+                        <option>--</option>
+                        {{#each files}}
+                            <option value="{{ . }}">{{ . }}</option>
+                        {{/each}}
+                    </select>
+                    <div class="filecontent">
+                        Select a file from the list to view.
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    {{#if isFullscreen}}
+        <div class="sidebar yui3-u-1-6">
+            <h2>Useful links</h2>
+            <ul class="vertical-links">
+                <li><a href="">Juju community</a></li>
+                <li><a href="">Online resources</a></li>
+                <li><a href="">Write your own Charm</a></li>
+                <li><a href="">Contribute to this Charm</a></li>
+            </ul>
+        </div>
+    {{/if}}
 </div>
