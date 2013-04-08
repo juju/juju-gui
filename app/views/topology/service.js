@@ -105,13 +105,20 @@ YUI.add('juju-topology-service', function(Y) {
     _touchstartServiceTap: function(e, topo) {
       // To execute the serviceClick method under the same context as
       // click we call it under the touch target context
+      var node = e.currentTarget.getDOMNode(),
+          box = d3.select(node).datum();
+      // If we're dragging with two fingers, ignore this as a tap and let drag
+      // take over.
+      if (e.touches.length > 1) {
+        box.tapped = false;
+        return;
+      }
+      box.tapped = true;
       this.serviceClick.call(
-          e.currentTarget.getDOMNode(),
-          // This gets the service model instance from the DOM node
-          topo.service_boxes[
-              e.currentTarget.one('text tspan.name').get('text')],
+          node,
+          box,
           this,
-          // Specifying the event ype to avoid d3.mouse() error
+          // Specifying the event type to avoid d3.mouse() error
           'touch'
       );
     },
@@ -138,6 +145,16 @@ YUI.add('juju-topology-service', function(Y) {
         if (!box.containsPoint(mouse_coords, topo.zoom)) {
           return;
         }
+      } else {
+        // Touch events will also fire a click event about 300ms later. If this
+        // event isn't ignored, the service menu will disappear 300ms after it
+        // appears, so set a flag to ignore that event.
+        box.ignoreNextClick = true;
+      }
+
+      if (box.ignoreNextClick) {
+        box.ignoreNextClick = false;
+        return;
       }
 
       // If the service box is pending, ensure that the charm panel is
@@ -360,6 +377,10 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     dragend: function(box,  self) {
+      if (box.tapped) {
+        box.tapped = false;
+        return;
+      }
       var topo = self.get('component');
       if (topo.buildingRelation) {
         topo.ignoreServiceClick = true;
@@ -405,6 +426,9 @@ YUI.add('juju-topology-service', function(Y) {
      * introduces a timing issue in the tests.]
      **/
     drag: function(box, self, pos, includeTransition) {
+      if (box.tapped) {
+        return;
+      }
       var topo = self.get('component');
       var selection = d3.select(this);
 
