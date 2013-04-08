@@ -84,6 +84,79 @@ YUI.add('subapp-browser-mainview', function(Y) {
     },
 
     /**
+     * Helper to just render the charm details pane. This is shared in the
+     * sidebar/fullscreen views.
+     *
+     * @method _renderCharmDetails
+     * @param {BrowserCharm} charm model instance to render from.
+     * @param {Node} container node to look for a details div in to render to.
+     *
+     */
+    _renderCharmDetails: function(charm, container) {
+      var detailsNode = container.one('.bws-view-data');
+      // Destroy any current details.
+      if (this.details) {
+        this.details.destroy(true);
+      }
+      this.details = new ns.BrowserCharmView({
+        charm: charm,
+        store: this.get('store')
+      });
+      this.details.render(detailsNode);
+    },
+
+    /**
+     * Render the view of a single charm details page.
+     *
+     * @method _renderCharmView
+     * @param {Node} container the node to insert our rendered content into.
+     *
+     */
+    _renderCharmView: function(container) {
+      var tpl = this.template(),
+          tplNode = Y.Node.create(tpl);
+
+      // Create/bind the search before we wait for the charm data to load so
+      // that we're prepared for search events in case that request takes a
+      // while or even fails.
+      this._renderSearchWidget(tplNode);
+
+      // We need to have the template in the DOM for sub views to be able to
+      // expect proper structure.
+      if (!Y.Lang.isValue(container)) {
+        container = this.get('container');
+      }
+      container.setHTML(tplNode);
+
+      this.get('store').charm(this.get('charmID'), {
+        'success': function(data) {
+          var charmView = new ns.BrowserCharmView({
+            charm: new models.BrowserCharm(data),
+            store: this.get('store')
+          });
+          charmView.render(tplNode.one('.bws-view-data'), this.isFullscreen());
+          container.setHTML(tplNode);
+        },
+        'failure': this.apiFailure
+      }, this);
+    },
+
+    /**
+     * Render out the main search widget and controls shared across various
+     * views.
+     *
+     * @method _renderSearchWidget
+     * @param {Node} node the node to render into.
+     *
+     */
+    _renderSearchWidget: function(node) {
+      this.search = new widgets.browser.Search({
+        fullscreenTarget: this._fullscreenTarget
+      });
+      this.search.render(node.one('.bws-header'));
+    },
+
+    /**
      * When the search term or filter is changed, fetch new data and redraw.
      *
      * @method _searchChanged
@@ -149,10 +222,15 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     destructor: function() {
-      console.log('sidebar view destructor');
       Y.Array.each(this._events, function(ev) {
         ev.detach();
       });
+      this._cacheCharms.destroy();
+
+      // Clean up any details view we might have hanging around.
+      if (this.details) {
+        this.details.destroy(true);
+      }
     },
 
     /**
@@ -166,9 +244,42 @@ YUI.add('subapp-browser-mainview', function(Y) {
       this.set('store', new Y.juju.Charmworld0({
         'apiHost': window.juju_config.charmworldURL
       }));
+
+      // Hold onto charm data so we can pass model instances to other views when
+      // charms are selected.
+      this._cacheCharms = new models.BrowserCharmList();
+    },
+
+    /**
+     * Check if this view is the fullscreen version to help aid us in
+     * template work.
+     *
+     * @method isFullscreen
+     * @return {{Bool}}
+     *
+     */
+    isFullscreen: function() {
+      if (this.name.indexOf('fullscreen') === -1) {
+        return false;
+      } else {
+        return true;
+      }
     }
+
   }, {
     ATTRS: {
+      /**
+       * If this view is called from the point of view of a specific charmId
+       * it'll be set here.
+       *
+       * @attribute charmID
+       * @default undefined
+       * @type {String}
+       *
+       */
+      charmID: {},
+
+
       /**
        * An instance of the Charmworld API object to hit for any data that
        * needs fetching.
@@ -178,7 +289,21 @@ YUI.add('subapp-browser-mainview', function(Y) {
        * @type {Charmworld0}
        *
        */
-      store: {}
+      store: {},
+
+      /**
+       * If this were a route that had a subpath component it's passed into
+       * the view to aid in rendering.
+       *
+       * e.g. /bws/fullscreen/*charmid/hooks to load the hooks tab correctly.
+       *
+       * @attribute subpath
+       * @default undefined
+       * @type {String}
+       *
+       */
+      subpath: {}
+
     }
   });
 

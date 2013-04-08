@@ -12,6 +12,15 @@
       });
     });
 
+    it('provides a way to retrieve a relation key from endpoints', function() {
+      var endpoints = {
+        wordpress: {Name: 'website', Role: 'provider'},
+        haproxy: {Name: 'reverseproxy', Role: 'requirer'}
+      };
+      var key = environments.createRelationKey(endpoints);
+      assert.deepEqual('haproxy:reverseproxy wordpress:website', key);
+    });
+
     it('provides a way to lowercase the keys of an object', function() {
       var obj = {Key1: 'value1', key2: 'value2', MyThirdKey: 'value3'},
           expected = {key1: 'value1', key2: 'value2', mythirdkey: 'value3'},
@@ -51,31 +60,6 @@
       });
     });
 
-  });
-
-  describe('Go Juju Entity Tag cleaner', function() {
-    var cleanUpEntityTags, Y;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env-go'], function(Y) {
-        cleanUpEntityTags = Y.namespace('juju.environments').cleanUpEntityTags;
-        done();
-      });
-    });
-
-    it('cleans up tags from Go juju', function() {
-      assert.equal('mysql', cleanUpEntityTags('service-mysql'));
-      assert.equal('mysql-0', cleanUpEntityTags('unit-mysql-0'));
-      assert.equal('0', cleanUpEntityTags('machine-0'));
-      assert.equal('aws', cleanUpEntityTags('environment-aws'));
-    });
-
-    it('ignores bad values', function() {
-      var data = ['foo', 'bar-baz', '123'];
-      Y.each(data, function(item) {
-        assert.equal(item, cleanUpEntityTags(item));
-      });
-    });
   });
 
   describe('Go Juju environment', function() {
@@ -614,7 +598,6 @@
           }
         }
       };
-
       env.get_service('mysql', function(data) {
         service_name = data.service_name;
         result = data.result;
@@ -644,19 +627,65 @@
       assert.equal(err, 'service "yoursql" not found');
     });
 
+    it('can set a service config', function() {
+      env.set_config('mysql', {'cfg-key': 'cfg-val'});
+      msg = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Params: {
+          ServiceName: 'mysql',
+          Config: {
+            'cfg-key': 'cfg-val'
+          }
+        },
+        Request: 'ServiceSet',
+        RequestId: msg.RequestId
+      };
+      assert.deepEqual(expected, msg);
+    });
+
+    it('can set a service config from a file', function() {
+      /*jshint multistr:true */
+      var data = 'tuning-level: \nexpert-mojo';
+      /*jshint multistr:false */
+      env.set_config('mysql', null, data);
+      msg = conn.last_message();
+      var expected = {
+        RequestId: msg.RequestId,
+        Type: 'Client',
+        Request: 'ServiceSetYAML',
+        Params: {
+          ServiceName: 'mysql',
+          ConfigYAML: data
+        }
+      };
+      assert.deepEqual(expected, msg);
+    });
+
+    it('handles failed set config', function() {
+      var err, service_name;
+      env.set_config('yoursql', {}, null, function(evt) {
+        err = evt.err;
+        service_name = evt.service_name;
+      });
+      conn.msg({
+        RequestId: msg.RequestId,
+        Error: 'service "yoursql" not found'
+      });
+      assert.equal(err, 'service "yoursql" not found');
+      assert.equal(service_name, 'yoursql');
+    });
+
     it('sends the correct AddRelation message', function() {
-      endpointA = ['mysql', {name: 'server'}];
-      endpointB = ['wordpress', {name: 'db'}];
+      endpointA = ['haproxy', {name: 'reverseproxy'}];
+      endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB);
       var last_message = conn.last_message();
       var expected = {
         Type: 'Client',
         Request: 'AddRelation',
         Params: {
-          Endpoints: [
-            'mysql',
-            'wordpress'
-          ]
+          Endpoints: ['haproxy:reverseproxy', 'wordpress:website']
         },
         RequestId: 1
       };
@@ -664,44 +693,44 @@
     });
 
     it('successfully adds a relation', function() {
-      var endpoints, relId, result;
+      var endpoints, relationId, result;
       var jujuEndpoints = {};
-      endpointA = ['mysql', {name: 'server'}];
-      endpointB = ['wordpress', {name: 'db'}];
-      relId = 'mysql-wordpress';
+      endpointA = ['haproxy', {name: 'reverseproxy'}];
+      endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB, function(ev) {
         result = ev.result;
       });
       msg = conn.last_message();
-      jujuEndpoints.mysql = {
-        Name: 'server',
-        Interface: 'mysql',
-        Scope: 'global'
+      jujuEndpoints.haproxy = {
+        Name: 'reverseproxy',
+        Interface: 'http',
+        Scope: 'global',
+        Role: 'requirer'
       };
       jujuEndpoints.wordpress = {
-        Name: 'db',
-        Interface: 'mysql',
-        Scope: 'global'
+        Name: 'website',
+        Interface: 'http',
+        Scope: 'global',
+        Role: 'provider'
       };
       conn.msg({
         RequestId: msg.RequestId,
         Response: {
-          Id: relId,
           Endpoints: jujuEndpoints
         }
       });
-      assert.equal(result.id, relId);
-      assert.equal(result['interface'], 'mysql');
+      assert.equal(result.id, 'haproxy:reverseproxy wordpress:website');
+      assert.equal(result['interface'], 'http');
       assert.equal(result.scope, 'global');
       endpoints = result.endpoints;
-      assert.deepEqual(endpoints[0], {'mysql': {'name': 'server'}});
-      assert.deepEqual(endpoints[1], {'wordpress': {'name': 'db'}});
+      assert.deepEqual(endpoints[0], {'haproxy': {'name': 'reverseproxy'}});
+      assert.deepEqual(endpoints[1], {'wordpress': {'name': 'website'}});
     });
 
     it('handles failed relation adding', function() {
       var evt;
-      endpointA = ['mysql', {name: 'server'}];
-      endpointB = ['wordpress', {name: 'db'}];
+      endpointA = ['haproxy', {name: 'reverseproxy'}];
+      endpointB = ['wordpress', {name: 'website'}];
       env.add_relation(endpointA, endpointB, function(ev) {
         evt = ev;
       });
@@ -711,8 +740,8 @@
         Error: 'cannot add relation'
       });
       assert.equal(evt.err, 'cannot add relation');
-      assert.equal(evt.endpoint_a, 'mysql:server');
-      assert.equal(evt.endpoint_b, 'wordpress:db');
+      assert.equal(evt.endpoint_a, 'haproxy:reverseproxy');
+      assert.equal(evt.endpoint_b, 'wordpress:website');
     });
 
     it('sends the correct DestroyRelation message', function() {
@@ -980,8 +1009,19 @@
     it('fires "delta" when handling an RPC response', function(done) {
       env.detach('delta');
       var callbackData = {Response: {Deltas: [['service', 'deploy', {}]]}};
-      env.on('delta', function(data) {
-        console.log(data.result);
+      env.on('delta', function(evt) {
+        console.log(evt.data.result);
+        done();
+      });
+      env._handleRpcResponse(callbackData);
+    });
+
+    it('translates the type of each change in the delta', function(done) {
+      env.detach('delta');
+      var callbackData = {Response: {Deltas: [['service', 'deploy', {}]]}};
+      env.on('delta', function(evt) {
+        var change = evt.data.result[0];
+        assert.deepEqual(['serviceInfo', 'deploy', {}], change);
         done();
       });
       env._handleRpcResponse(callbackData);
@@ -993,140 +1033,6 @@
       // any more we will need to update this test.
       assert.equal(subscribers.length, 1);
       assert.equal(subscribers[0].args, null);
-    });
-
-  });
-
-})();
-
-(function() {
-
-  describe('Go Juju environment service entity converter', function() {
-    var environments, Y, converter, entityInfoConverters;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
-        environments = Y.namespace('juju.environments');
-        converter = environments.entityInfoConverters.service;
-        entityInfoConverters = environments.entityInfoConverters;
-        done();
-      });
-    });
-
-
-    it('exists', function() {
-      assert.isTrue('service' in entityInfoConverters);
-    });
-
-    it('converts "Name" to "id"', function() {
-      var converted = converter({Name: 'service name'});
-      assert.isTrue('id' in converted);
-      assert.equal('service name', converted.id);
-    });
-
-    it('converts "Exposed" to "exposed"', function() {
-      var converted = converter({Exposed: true});
-      assert.isTrue('exposed' in converted);
-      assert.isTrue(converted.exposed);
-    });
-
-  });
-
-})();
-
-(function() {
-
-  describe('Go Juju environment unit entity converter', function() {
-    var environments, Y, converter, entityInfoConverters;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
-        environments = Y.namespace('juju.environments');
-        converter = environments.entityInfoConverters.unit;
-        entityInfoConverters = environments.entityInfoConverters;
-        done();
-      });
-    });
-
-
-    it('exists', function() {
-      assert.isTrue('unit' in entityInfoConverters);
-    });
-
-    it('converts "Name" to "id"', function() {
-      var converted = converter({Name: 'unit name'});
-      assert.isTrue('id' in converted);
-      assert.equal('unit name', converted.id);
-    });
-
-    it('converts "Service" to "service"', function() {
-      var converted = converter({Service: 'a service'});
-      assert.isTrue('service' in converted);
-      assert.equal('a service', converted.service);
-    });
-
-  });
-
-})();
-
-(function() {
-
-  describe('Go Juju environment relation entity converter', function() {
-    var environments, Y, converter, entityInfoConverters;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
-        environments = Y.namespace('juju.environments');
-        converter = environments.entityInfoConverters.relation;
-        entityInfoConverters = environments.entityInfoConverters;
-        done();
-      });
-    });
-
-
-    it('exists', function() {
-      assert.isTrue('relation' in entityInfoConverters);
-    });
-
-    it('converts "Name" to "id"', function() {
-      var converted = converter({Key: 'relation name'});
-      assert.isTrue('id' in converted);
-      assert.equal('relation name', converted.id);
-    });
-
-  });
-
-})();
-
-(function() {
-
-  describe('Go Juju environment machine entity converter', function() {
-    var environments, Y, converter, entityInfoConverters;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
-        environments = Y.namespace('juju.environments');
-        converter = environments.entityInfoConverters.machine;
-        entityInfoConverters = environments.entityInfoConverters;
-        done();
-      });
-    });
-
-
-    it('exists', function() {
-      assert.isTrue('machine' in entityInfoConverters);
-    });
-
-    it('converts "Id" to "id"', function() {
-      var converted = converter({Id: 'machine ID'});
-      assert.isTrue('id' in converted);
-      assert.equal('machine ID', converted.id);
-    });
-
-    it('converts "InstanceId" to "instance_id"', function() {
-      var converted = converter({InstanceId: 'instance ID'});
-      assert.isTrue('instance_id' in converted);
-      assert.equal('instance ID', converted.instance_id);
     });
 
   });

@@ -202,7 +202,7 @@ describe('juju models', function() {
     db.getModelById(unit.name, unit.id).id.should.equal('wordpress/0');
   });
 
-  it('on_delta should handle remove changes correctly',
+  it('onDelta should handle remove changes correctly',
       function() {
         var db = new models.Database();
         var my0 = new models.ServiceUnit({id: 'mysql/0',
@@ -210,7 +210,7 @@ describe('juju models', function() {
         var my1 = new models.ServiceUnit({id: 'mysql/1',
           agent_state: 'pending'});
         db.units.add([my0, my1]);
-        db.on_delta({data: {result: [
+        db.onDelta({data: {result: [
           ['unit', 'remove', 'mysql/1']
         ]}});
         var names = db.units.get('id');
@@ -218,37 +218,37 @@ describe('juju models', function() {
         names[0].should.equal('mysql/0');
       });
 
-  it('on_delta should be able to reuse existing services with add',
+  it('onDelta should be able to reuse existing services with add',
       function() {
         var db = new models.Database();
         var my0 = new models.Service({id: 'mysql', exposed: true});
         db.services.add([my0]);
         // Note that exposed is not set explicitly to false.
-        db.on_delta({data: {result: [
+        db.onDelta({data: {result: [
           ['service', 'add', {id: 'mysql'}]
         ]}});
         my0.get('exposed').should.equal(false);
       });
 
-  it('on_delta should be able to reuse existing units with add',
+  it('onDelta should be able to reuse existing units with add',
       // Units are special because they use the LazyModelList.
       function() {
         var db = new models.Database();
         var my0 = {id: 'mysql/0', agent_state: 'pending'};
         db.units.add([my0]);
-        db.on_delta({data: {result: [
+        db.onDelta({data: {result: [
           ['unit', 'add', {id: 'mysql/0', agent_state: 'another'}]
         ]}});
         my0.agent_state.should.equal('another');
       });
 
-  it('on_delta should reset relation_errors',
+  it('onDelta should reset relation_errors',
       function() {
         var db = new models.Database();
         var my0 = {id: 'mysql/0', relation_errors: {'cache': ['memcached']}};
         db.units.add([my0]);
         // Note that relation_errors is not set.
-        db.on_delta({data: {result: [
+        db.onDelta({data: {result: [
           ['unit', 'change', {id: 'mysql/0'}]
         ]}});
         my0.relation_errors.should.eql({});
