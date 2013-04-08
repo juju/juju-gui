@@ -130,9 +130,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
       this.get('store').charm(this.get('charmID'), {
         'success': function(data) {
-          this._renderCharmDetails(
-              new models.BrowserCharm(data),
-              tplNode);
+          var charmView = new ns.BrowserCharmView({
+            charm: new models.BrowserCharm(data),
+            store: this.get('store')
+          });
+          charmView.render(tplNode.one('.bws-view-data'), this.isFullscreen());
+          container.setHTML(tplNode);
         },
         'failure': this.apiFailure
       }, this);
@@ -245,7 +248,24 @@ YUI.add('subapp-browser-mainview', function(Y) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
+    },
+
+    /**
+     * Check if this view is the fullscreen version to help aid us in
+     * template work.
+     *
+     * @method isFullscreen
+     * @return {{Bool}}
+     *
+     */
+    isFullscreen: function() {
+      if (this.name.indexOf('fullscreen') === -1) {
+        return false;
+      } else {
+        return true;
+      }
     }
+
   }, {
     ATTRS: {
       /**
@@ -258,6 +278,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        */
       charmID: {},
+
 
       /**
        * An instance of the Charmworld API object to hit for any data that
