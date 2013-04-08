@@ -1,5 +1,5 @@
 #subapp-browser .charm {
-    padding: 0 20px 25px 20px; 
+    padding: 0 20px 25px 20px;
 
     a {
         color: @charm-panel-orange;
@@ -13,12 +13,7 @@
     h2,
     h3,
     h4 {
-        font-family: @font-family-medium;
-        font-weight: normal;
-        color: @bws-heading;
-    }
-    h2 {
-            font-size: 10.5pt;
+        .heading-font;
     }
     .nav {
         height: 30px;
@@ -28,12 +23,8 @@
 
         .back,
         .add {
-            height: 30px;
-            font-size: 10.5pt;
-            line-height: 23pt;
-            font-family: @font-family-medium;
-            font-weight: normal;
-            text-decoration: none;
+            .heading-font;
+            line-height: 10.5pt;
         }
         .back {
             display: block;
@@ -81,24 +72,20 @@
                     margin-right: 8px;
                 }
             }
-            dl {
-                margin: 0;
+            dt,
+            dd {
+                font-size: 10.5pt;
+                line-height: 170%;
+            }
+            dt {
+                float: left;
+                margin-right: 5px;
+            }
+            dd {
+                clear: right;
 
-                dt,
-                dd {
-                    font-size: 10.5pt;
-                    line-height: 170%;
-                }
-                dt {
-                    float: left;
-                    margin-right: 5px;
-                }
-                dd {
-                    clear: right;
-
-                    img {
-                        margin-left: 3px;
-                    }
+                img {
+                    margin-left: 3px;
                 }
             }
         }
@@ -113,6 +100,122 @@
         h3,
         h4 {
             font-size: 9pt;
+        }
+    }
+    #bws-interfaces {
+        .intro {
+            margin-top: 9px;
+            margin-bottom: 26px;
+        }
+        .interfaces-heading,
+        .interface,
+        .related {
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            padding: 0 20px;
+        }
+        .interfaces-heading {
+            background-color: #eeeeee;
+            padding-top: 15px;
+            padding-bottom: 15px;
+        }
+        .interface-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            .interface-row {
+                border-bottom: 1px solid @bws-border;
+                padding: 18px 0;
+
+                .interface {
+                    padding-top: 10px;
+                    padding-bottom: 10px;
+                    font-size: 10.5pt;
+                }
+                .related {
+                }
+                &:last-child {
+                    border: none;
+                }
+            }
+        }
+    }
+    #bws-configuration {
+        dt {
+            margin-top: 8px;
+
+            dfn,
+            em {
+                font-style: normal;
+                font-family: @font-family-mono;
+                font-size: 10pt;
+            }
+            dfn {
+                margin-right: 3px;
+                font-weight: bold;
+            }
+            em {
+                font-weight: normal;
+            }
+        }
+    }
+    #bws-qa {
+        h3 {
+            margin: 16px 0 8px 0;
+
+            .heading-notes {
+                color: @bws-text;
+            }
+            &:first-child {
+                margin-top: 5px;
+            }
+        }
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+
+            li {
+                margin-bottom: 4px;
+                padding-left: 25px;
+                background: transparent
+                    url(/juju-ui/assets/images/quality_cross_icon.jpg)
+                    left center no-repeat;
+                color: @bws-heading;
+                font-family: @font-family-medium;
+
+                &.checked {
+                    background-image:
+                        url(/juju-ui/assets/images/quality_tick_icon.jpg);
+                }
+            }
+        }
+    }
+    #bws-hooks {
+        select {
+            margin: 6px 0 23px 0;
+        }
+        pre.prettyprint {
+            padding: 0;
+            border: none;
+            font-family: @font-family-mono;
+            font-size: 10pt;
+
+            ol {
+                list-style-position: inside;
+                margin-left: 0;
+
+                li {
+                    padding-left: 20px;
+                    list-style-type: decimal;
+
+                    span:first-child {
+                        margin-left: 10px;
+                    }
+                }
+            }
         }
     }
 }
