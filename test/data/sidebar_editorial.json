@@ -145,7 +145,7 @@
                 "url": "cs:precise/cassandra-2"
             }
         ], 
-        "slider": [
+        "featured": [
             {
                 "code_source": {
                     "bugs_link": "https://bugs.launchpad.net/charms/precise/+source/byobu-classroom", 
