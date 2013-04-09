@@ -962,7 +962,30 @@
     it('can add a relation (integration)', function(done) {
       function addRelation() {
         function localCb(rec) {
-console.log(rec);
+          var mock = {
+                  endpoint_a: 'wordpress:db',
+                  endpoint_b: 'mysql:db',
+                  op: 'add_relation',
+                  request_id: rec.request_id,
+                  result: {
+                    id: 'relation-0',
+                    'interface': 'mysql',
+                    scope: 'global',
+                    request_id: rec.request_id,
+                    endpoints: [{
+                      wordpress: {
+                        name: 'db'
+                      }
+                    }, {
+                      mysql: {
+                        name: 'db'
+                      }
+                    }]
+                  }
+                };
+          assert.equal(rec.err, undefined);
+          assert.equal(typeof rec.result, 'object');
+          assert.deepEqual(rec.details[0], mock);
           done();
         }
         var endpointA = [

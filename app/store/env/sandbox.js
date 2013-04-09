@@ -423,10 +423,9 @@ YUI.add('juju-env-sandbox', function(Y) {
       @param {Object | String} data
     */
     performOp_add_relation: function(data) {
-
       function endpointToName(endpoint) {
         // In order to handle the integration tests as well as
-        // being used direclty
+        // being used directly
         if (typeof endpoint === 'string') { return endpoint; }
         return endpoint[0] + ':' + endpoint[1].name;
       };
@@ -434,11 +433,30 @@ YUI.add('juju-env-sandbox', function(Y) {
       var res = this.get('state').addRelation(
                                       endpointToName(data.endpoint_a),
                                       endpointToName(data.endpoint_b));
-      var endpointA = Y.merge(data.endpoint_a),
-          endpointB = Y.merge(data.endpoint_b);
+      var endpointA, endpointB;
+      var eptA = {}, eptB = {};
 
-      data.endpoint_a = endpointToName(data.endpoint_a);
-      data.endpoint_b = endpointToName(data.endpoint_b);
+      // Returned endpoints have a different syntax.
+      // The add relation method is called with
+      // differing data formats but we have to
+      // return an identical format.
+      if (typeof data.endpoint_a === 'string') {
+        eptA[data.endpoint_a.split(':')[0]] = {
+          name: res.displayName
+          // cannot return `role` if we aren't provided with it without extra
+          // calculations on the back end. It is also not used anywhere so it
+          // shouldn't be an issue.
+        };
+        eptB[data.endpoint_b.split(':')[0]] = {
+          name: res.displayName
+          // cannot return `role` if we aren't provided with it without extra
+          // calculations on the back end. It is also not used anywhere so it
+          // shouldn't be an issue.
+        };
+      } else {
+        eptA[data.endpoint_a[0]] = data.endpoint_a[1];
+        eptB[data.endpoint_b[0]] = data.endpoint_b[1];
+      }
 
       if (res === false) {
         // If everything checks out but could not create a new relation model
@@ -452,19 +470,16 @@ YUI.add('juju-env-sandbox', function(Y) {
         return;
       }
 
-      var eptA = {}, eptB = {},
-          resData = res.getAttrs();
-
-      // returned endpoints have a different syntax
-      eptA[endpointA[0]] = endpointA[1];
-      eptB[endpointB[0]] = endpointB[1];
+      data.endpoint_a = endpointToName(data.endpoint_a);
+      data.endpoint_b = endpointToName(data.endpoint_b);
 
       data.result = {
         endpoints: [eptA, eptB],
-        id: resData.relation_id,
+        id: res.relationId,
         // interface is a reserved word
-        'interface': resData.type,
-        scope: resData.scope
+        'interface': res.type,
+        scope: res.scope,
+        request_id: data.request_id
       };
 
       this.get('client').receiveNow(data);

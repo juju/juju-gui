@@ -581,7 +581,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (relation) {
         this._relationCount += 1;
         this.changes.relations[relationId] = [relation, true];
-        return relation;
+        return {
+          relationId: relationId,
+          type: cics.ci,
+          endpoints: [endpointA, endpointB],
+          scope: cics.cs || 'global',
+          displayName: epAData.type,
+          relation: relation
+        };
       }
 
       return false;
