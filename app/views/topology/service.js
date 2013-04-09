@@ -16,7 +16,7 @@ YUI.add('juju-topology-service', function(Y) {
 
   /**
    * @class ServiceModule
-   **/
+   */
   var ServiceModule = Y.Base.create('ServiceModule', d3ns.Module, [], {
     events: {
       scene: {
@@ -232,7 +232,7 @@ YUI.add('juju-topology-service', function(Y) {
      * Handle mouseover service status
      *
      * @method serviceStatusMouseOver
-     **/
+     */
     serviceStatusMouseOver: function(box, context) {
       d3.select(this)
         .select('.unit-count')
@@ -403,7 +403,7 @@ YUI.add('juju-topology-service', function(Y) {
      *
      * [At the time of this writing useTransition works in practice but
      * introduces a timing issue in the tests.]
-     **/
+     */
     drag: function(box, self, pos, includeTransition) {
       var topo = self.get('component');
       var selection = d3.select(this);
@@ -535,7 +535,7 @@ YUI.add('juju-topology-service', function(Y) {
      *
      * @method getServiceNode
      * @return  {d3.selection} selection || null.
-     **/
+     */
     getServiceNode: function(id) {
       if (this.node === undefined) {
         return null;

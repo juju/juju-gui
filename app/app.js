@@ -794,7 +794,7 @@ YUI.add('juju-gui', function(Y) {
       we update it here.
 
       @method onEnvironmentNameChange
-    **/
+    */
     onEnvironmentNameChange: function(evt) {
       var environmentName = evt.newValue;
       this.db.environment.set('name', environmentName);

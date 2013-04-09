@@ -5,7 +5,7 @@ An in-memory fake Juju backend and supporting elements.
 
 @module env
 @submodule env.fakebackend
-**/
+*/
 
 YUI.add('juju-env-fakebackend', function(Y) {
 
@@ -15,7 +15,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
   An in-memory fake Juju backend.
 
   @class FakeBackend
-  **/
+  */
   function FakeBackend(config) {
     // Invoke Base constructor, passing through arguments.
     FakeBackend.superclass.constructor.apply(this, arguments);
@@ -37,7 +37,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     @method initializer
     @return {undefined} Nothing.
-    **/
+    */
     initializer: function() {
       this.db = new models.Database();
       this._resetChanges();
@@ -49,7 +49,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     @method _resetChanges
     @return {undefined} Nothing.
-    **/
+    */
     _resetChanges: function() {
       this.changes = {
         // These are hashes of identifier: [object, boolean], where a true
@@ -69,7 +69,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       'relations'.  Each of those are hashes from entity identifier to
       [entity, boolean] where the boolean means either active (true) or
       removed (false).
-    **/
+    */
     nextChanges: function() {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATEDERROR;
@@ -92,7 +92,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     @method _resetAnnotations
     @return {undefined} Nothing.
-    **/
+    */
     _resetAnnotations: function() {
       this.annotations = {
         // These are hashes of identifier: object.
@@ -112,7 +112,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       'relations' and 'annotations'.  Each of those are hashes from entity
       identifier to [entity, boolean] where the boolean means either active
       (true) or removed (false).
-    **/
+    */
     nextAnnotations: function() {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATEDERROR;
@@ -139,7 +139,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @param {String} username The id of the user.
     @param {String} submittedPassword The user-submitted password.
     @return {Bool} True if the authentication was successful.
-    **/
+    */
     login: function(username, submittedPassword) {
       var password = this.get('authorizedUsers')[username],
           authenticated = password === submittedPassword;
@@ -149,7 +149,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     /**
     Log out.  If already logged out, no error is raised.
-    **/
+    */
     logout: function() {
       this.set('authenticated', false);
     },
@@ -173,7 +173,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         string.  You may provide only one of config or configYAML.
       unitCount: The number of units to be deployed.
     @return {undefined} Get the result from the callback.
-    **/
+    */
     deploy: function(charmId, callback, options) {
       if (!this.get('authenticated')) {
         return callback(UNAUTHENTICATEDERROR);
@@ -187,7 +187,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           {
             /**
               Deploy the successfully-obtained charm.
-            **/
+            */
             success: function(charm) {
               self._deployFromCharm(charm, callback, options);
             },
@@ -207,7 +207,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       callable receives the fully loaded charm, and the failure callable
       receives an object with an explanatory "error" attribute.
     @return {undefined} Use the callbacks to handle success or failure.
-    **/
+    */
     _loadCharm: function(charmId, callbacks) {
       var charmIdParts = models.parseCharmId(
           charmId, this.get('defaultSeries'));
@@ -230,7 +230,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             {
               /**
                 Convert the charm data to a charm and use the success callback.
-              **/
+              */
               success: function(data) {
                 var charm = self._getCharmFromData(data);
                 if (callbacks.success) {
@@ -239,7 +239,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               },
               /**
                 Inform the caller of an error using the charm store.
-              **/
+              */
               failure: function(e) {
                 if (callbacks.failure) {
                   callbacks.failure({error: 'Could not contact charm store.'});
@@ -260,7 +260,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @param {Object} data The raw charm information as delivered by the
       charmStore's loadByPath method.
     @return {Object} A matching charm from the db.
-    **/
+    */
     _getCharmFromData: function(data) {
       var charm = this.db.charms.getById(data.store_url);
       if (!charm) {
@@ -291,7 +291,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         string.  You may provide only one of config or configYAML.
       unitCount: The number of units to be deployed.
     @return {undefined} Get the result from the callback.
-    **/
+    */
     _deployFromCharm: function(charm, callback, options) {
       if (!options.name) {
         options.name = charm.get('package_name');
@@ -391,7 +391,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @return {Object} Returns an object either with an "error" attribute
       containing a string describing the problem, or with a "units"
       attribute containing a list of the added units.
-    **/
+    */
     addUnit: function(serviceName, numUnits) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATEDERROR;
@@ -437,7 +437,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @method _getAvailableMachines
     @return {Array} An array of zero or more machines that have been
       previously allocated but that are not currently in use by a unit.
-    **/
+    */
     _getAvailableMachines: function() {
       var machines = [];
       var usedMachineIds = {};
@@ -460,7 +460,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @method _getUnitMachines
     @param {Integer} count The number of units that need machines.
     @return {Array} An array of [count] machines.
-    **/
+    */
     _getUnitMachines: function(count) {
       var machines = [];
       var availableMachines = this._getAvailableMachines();
