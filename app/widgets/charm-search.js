@@ -13,11 +13,6 @@ YUI.add('browser-search-widget', function(Y) {
   var ns = Y.namespace('juju.widgets.browser'),
       templates = Y.namespace('juju.views').Templates;
 
-  console.log('templates', templates);
-  console.log('browser-search', templates['browser-search']);
-  console.log('widget', Y.Widget);
-  console.log('tracker', Y.Event.EventTracker);
-
 
   /**
    * Search widget present in the Charm browser across both fullscreen and
@@ -73,11 +68,11 @@ YUI.add('browser-search-widget', function(Y) {
     bindUI: function() {
       var container = this.get('boundingBox');
 
-      this.evt(
+      this.addEvent(
           container.one('.bws-icon').on(
               'click', this._toggleViewable, this)
       );
-      this.evt(
+      this.addEvent(
           container.one('.toggle-fullscreen').on(
               'click', this._toggleFullScreen, this)
       );
@@ -87,7 +82,7 @@ YUI.add('browser-search-widget', function(Y) {
       // it to update to a specific value. This is how things like clicking
       // categories can work.
       var input = container.one('input');
-      this.evt(
+      this.addEvent(
           input.on('valueChange', function(ev) {
             this.fire(this.EVT_SEARCH_CHANGED);
           }, this)

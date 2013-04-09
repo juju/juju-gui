@@ -29,20 +29,9 @@ YUI.add('browser-charm-token', function(Y) {
           addClick = addButton.on('click', function() {
             this.fire(ns.EVENT_CHARM_ADD);
           });
-      this.evt(addClick);
+      this.addEvent(addClick);
     },
 
-    /**
-     * Detach listeners for DOM events. We hook manually into the event
-     * tracker because we want to be able to rebind things.
-     *
-     * @method _unbindEvents
-     */
-    _unbindEvents: function() {
-      Y.Array.each(this._events, function(item) {
-        item.detach();
-      });
-    },
 
     /**
      * Attach event listeners which bind the UI to the widget state.
@@ -51,7 +40,7 @@ YUI.add('browser-charm-token', function(Y) {
      * @method bindUI
      */
     bindUI: function() {
-      this._unbindEvents();
+      this._detachEvents();
       this._bindEvents();
     },
 

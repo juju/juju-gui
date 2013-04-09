@@ -179,10 +179,10 @@ YUI.add('browser-charm-slider', function(Y) {
 
       var boundingBox = this.get('boundingBox'),
           nav = boundingBox.one('.navigation');
-      this.evt(this.after('render', this._startTimer, this));
-      this.evt(boundingBox.on('mouseenter', this._pauseAutoAdvance, this));
-      this.evt(boundingBox.on('mouseleave', this._pauseAutoAdvance, this));
-      this.evt(nav.delegate('click', function(e) {
+      this.addEvent(this.after('render', this._startTimer, this));
+      this.addEvent(boundingBox.on('mouseenter', this._pauseAutoAdvance, this));
+      this.addEvent(boundingBox.on('mouseleave', this._pauseAutoAdvance, this));
+      this.addEvent(nav.delegate('click', function(e) {
         var index = e.currentTarget.getAttribute('data-index');
         index = parseInt(index, 10);
         this._advanceSlide(index);

@@ -92,7 +92,7 @@ YUI.add('browser-charm-container', function(Y) {
     bindUI: function() {
       if (this.get('has_extra')) {
         var expander = this.get('contentBox').one('.expand');
-        this.evt(expander.on('click', this._toggleExpand, this));
+        this.addEvent(expander.on('click', this._toggleExpand, this));
       }
     },
 
@@ -102,7 +102,7 @@ YUI.add('browser-charm-container', function(Y) {
      * @method initializer
      */
     initializer: function(cfg) {
-      this.evt(
+      this.addEvent(
           this.after('initializedChange', this._afterInit, this)
       );
     },

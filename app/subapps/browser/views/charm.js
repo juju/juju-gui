@@ -104,7 +104,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _dispatchTabEvents: function(tab) {
-      this.evt(
+      this.addEvent(
           tab.after('selectionChange', function(ev) {
             var tab = ev.newVal.get('content');
             switch (tab) {

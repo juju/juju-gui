@@ -31,7 +31,7 @@ describe('EventTracker Extension', function() {
 
   it('event tracker wires into an object properly', function() {
     testInstance._events.should.eql([]);
-    assert(typeof(testInstance.evt) === 'function');
+    assert(typeof(testInstance.addEvent) === 'function');
   });
 
   it('event tracker should handle cleanup', function() {
@@ -44,7 +44,7 @@ describe('EventTracker Extension', function() {
     var evt = body.on('click', function(ev) {
       // do nothing
     });
-    testInstance.evt(evt);
+    testInstance.addEvent(evt);
     event.getListeners(body).length.should.equal(1);
 
     // destroying the instance should restore us back to no listeners.

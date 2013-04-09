@@ -67,12 +67,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _bindSearchWidgetEvents: function() {
       // Watch the Search widget for changes to the search params.
-      this.evt(
+      this.addEvent(
           this.search.on(
               this.search.EVT_UPDATE_SEARCH, this._searchChanged, this)
       );
 
-      this.evt(
+      this.addEvent(
           this.search.on(
               this.search.EVT_TOGGLE_VIEWABLE, this._toggleBrowser, this)
       );
