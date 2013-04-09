@@ -27,7 +27,7 @@ YUI.add('juju-topology', function(Y) {
    *        event is fired. Analogous to d3's zoom event.
    *
    * @class Topology
-   **/
+   */
   var Topology = Y.Base.create('Topology', d3ns.Component, [], {
     initializer: function(options) {
       Topology.superclass.constructor.apply(this, arguments);
@@ -53,7 +53,7 @@ YUI.add('juju-topology', function(Y) {
      *
      * @method attachContainer
      * @chainable
-     **/
+     */
     attachContainer: function() {
       return this;
     },
@@ -63,7 +63,7 @@ YUI.add('juju-topology', function(Y) {
      * is explicitly not chainable.
      *
      * @method detachContainer
-     **/
+     */
     detachContainer: function() {
       return;
     },
@@ -153,16 +153,16 @@ YUI.add('juju-topology', function(Y) {
     ATTRS: {
       /**
        * @property {models.Database} db
-       **/
+       */
       db: {},
       /**
        * @property {store.Environment} env
-       **/
+       */
       env: {},
       /**
        * @property {Array} size
        * A [width, height] tuple representing canvas size.
-       **/
+       */
       size: {value: [640, 480]},
       width: {
         getter: function() {return this.get('size')[0];}
