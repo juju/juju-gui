@@ -13,7 +13,6 @@
  *
  */
 YUI.add('event-tracker', function(Y) {
-  console.log('event', Y.Event);
   var ns = Y.Event;
 
   /**
