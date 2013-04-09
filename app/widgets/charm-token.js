@@ -32,7 +32,6 @@ YUI.add('browser-charm-token', function(Y) {
       this.addEvent(addClick);
     },
 
-
     /**
      * Attach event listeners which bind the UI to the widget state.
      * Clicking add fires the add signal.
