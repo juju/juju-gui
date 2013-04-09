@@ -78,7 +78,7 @@ def lint_comment(lines, code_location):
     initial_indent = len(lines[0].split('/', 1)[0])
     # XXX Once we settle on how to do indenting and if we like ASCII art
     # borders or not, this block of code can be uncommented and tweaked if
-    # neccesary.
+    # necessary.
 #    for line in lines[1:-1]:
 #        if line.strip().startswith('* '):
 #            found('unapproved ASCII art (remove the border of * characters)')
