@@ -82,7 +82,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
         'success': function(data) {
           var featuredCharms = this.get('store').resultsToCharmlist(
               data.result.featured);
-          debugger;
           var featuredContainer = container.one('.bws-left .featured');
           var featuredCharmContainer = new widgets.browser.CharmContainer({
             name: 'Featured Charms',
