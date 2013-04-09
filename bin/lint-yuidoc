@@ -12,7 +12,9 @@ this script will complain if it is not.
 
 import os
 import re
+import string
 import sys
+import textwrap
 
 
 # We don't want to build or integrate with a full JS parser; fortunately we
@@ -37,8 +39,8 @@ def find_docs(line_number, boundary, source):
     """Find the documentation for each function.
 
     In source, search for the documentation fragment starting from line_number
-    and going backwards until boundary. Return its number of lines if found,
-    otherwise zero.
+    and going backwards until boundary. Return the documentation found (as a
+    sequence of lines) or an empty sequence if no documentation was found.
     """
     in_comment = False
     for current_line_number in range(line_number-1, boundary, -1):
@@ -47,16 +49,55 @@ def find_docs(line_number, boundary, source):
             ending_line_number = current_line_number
             in_comment = True
         if source_line.startswith('/**'):
-            # We found a documentation block, return its number of lines.
-            return ending_line_number - current_line_number + 1
+            # We found a documentation block, return it.
+            return source[current_line_number:ending_line_number+1]
         elif source_line.startswith('/*'):
             # False alarm, keep looking.
             in_comment = False
         # If we enter or exit a block while scanning backwards without finding
         # documentation, then there is none to be found.
         if not in_comment and ('{' in source_line or '}' in source_line):
-            return 0
-    return 0
+            return ()
+    return ()
+
+
+def lint_comment(lines, code_location):
+    """Return a sequence of strings describing a particular comment's lint."""
+    # Can an empty comment contain lint?  Who can know?
+    if not lines:
+        return ()
+    lint = []
+    def found(message):
+        lint.append(code_location + ' ' + message)
+
+    if lines[0].strip() != '/**':
+        found('extra characters after the opening comment; just use "/**"')
+    for line in lines:
+        if len(line) > 1 and line[-2] in string.whitespace:
+            found('unnecessary whitespace at the end of the line')
+    initial_indent = len(lines[0].split('/', 1)[0])
+    # XXX Once we settle on how to do indenting and if we like ASCII art
+    # borders or not, this block of code can be uncommented and tweaked if
+    # neccesary.
+#    for line in lines[1:-1]:
+#        if line.strip().startswith('* '):
+#            found('unapproved ASCII art (remove the border of * characters)')
+#            # There is no need to report more than one of these errors per
+#            # function and this condition would trigger the indentation error
+#            # below.
+#            break
+#        if line[initial_indent:initial_indent+2] != '  ':
+#            # Blank lines don't have to be indented.
+#            if line.strip() == '':
+#                continue
+#            found('incorrect indent; the body of a comment should be indented '
+#                'two spaces more than the opening "/**"')
+#            # There is no need to report more than one of these errors per
+#            # function.
+#            break
+    if lines[-1].strip() != '*/':
+        found('extra characters before the closing comment; just use "*/"')
+    return lint
 
 
 def check_file(file_name, undocumented):
@@ -75,32 +116,35 @@ def check_file(file_name, undocumented):
     falsely_undoc_functions = set()
     # Accumulate the total number of doc lines.
     file_num_doc_lines = 0
+    # All the other documenation lint found.
+    other_lint = []
     with open(file_name) as f:
         source = f.readlines()
         boundary = 0
         for function_name, line_number in find_functions(source):
             file_functions.add((file_name, function_name))
-            num_doc_lines = find_docs(line_number, boundary, source)
+            doc_lines = find_docs(line_number, boundary, source)
             boundary = line_number
-
             # Report our findings.
             code_location = '%s:%d "%s"' % (
                 file_name, line_number+1, function_name)
+            # Catalog any intra-comment lint.
+            other_lint.extend(lint_comment(doc_lines, code_location))
             is_undocumented = (file_name, function_name) in undocumented
             # If we found documentation for the function...
-            if num_doc_lines:
-                file_num_doc_lines += num_doc_lines
+            if doc_lines:
+                file_num_doc_lines += len(doc_lines)
                 # If it is listed as an undocumented function...
                 if is_undocumented:
                     #...report the incongruence.
                     falsely_undoc_functions.add(code_location)
             # Otherwise if we found an undocumented function that is not
             # listed as undocumented, report it.
-            elif not num_doc_lines and not is_undocumented:
+            elif not doc_lines and not is_undocumented:
                 missing_doc_functions.add(code_location)
 
     return (file_functions, missing_doc_functions, falsely_undoc_functions,
-        file_num_doc_lines)
+        file_num_doc_lines, other_lint)
 
 
 def read_undocumented_listing(lines):
@@ -146,7 +190,8 @@ def main(argv):
         files = [f for f in files if f.endswith('.js') and f != 'templates.js']
         for file_name in [os.path.join(root, name) for name in files]:
             (file_functions, missing_doc_functions, falsely_undoc_functions,
-                file_num_doc_lines) = check_file(file_name, undocumented)
+                file_num_doc_lines, other_lint) = check_file(
+                    file_name, undocumented)
             all_functions.update(file_functions)
             for code_location in missing_doc_functions:
                 if in_generate_undocumented_file_mode:
@@ -158,6 +203,13 @@ def main(argv):
                 for code_location in falsely_undoc_functions:
                     print code_location, 'erroneously listed as undocumented'
                     found_errors = True
+            else:
+                # Tell the user about other documenation lint that was found.
+                if other_lint:
+                    found_errors = True
+                for lint in other_lint:
+                    print lint
+
             total_num_doc_lines += file_num_doc_lines
 
     if in_generate_undocumented_file_mode:
