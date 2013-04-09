@@ -248,6 +248,28 @@
       fakebackend.destroy();
     });
 
+    describe('FakeBackend.resolved', function(done) {
+
+      it('rejects unauthenticated calls', function() {
+        fakebackend.logout();
+        var result = fakebackend.resolved('wordpress/0');
+        assert.equal(result.error, 'Please log in.');
+      });
+
+      it('reports invalid untis', function() {
+        var result = fakebackend.resolved('wordpress/0');
+        assert.equal(result.error, 'Unit "wordpress/0" does not exist.');
+      });
+
+      it('reports invalid relations', function(done) {
+        fakebackend.deploy('cs:wordpress', function() {
+          var result = fakebackend.resolved('wordpress/0', 'db');
+          assert.equal(result.error, 'Relation db not found for wordpress/0');
+          done();
+        });
+      });
+    });
+
     describe('FakeBackend.getCharm', function() {
       it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();
@@ -345,6 +367,105 @@
         });
       });
     });
+
+    describe('FakeBackend.Annotations', function() {
+      it('must require authentication', function() {
+        fakebackend.logout();
+        var reply = fakebackend.getAnnotations('env');
+        assert.equal(reply.error, 'Please log in.');
+      });
+
+      it('must get annotations from a service', function(done) {
+        fakebackend.deploy('cs:wordpress', function() {
+          var service = fakebackend.getService('wordpress').result;
+          assert.equal(service.annotations, undefined);
+          var anno = fakebackend.getAnnotations('wordpress').result;
+          assert.equal(anno, undefined);
+          done();
+        });
+      });
+
+      it('must update annotations to a service', function(done) {
+        fakebackend.deploy('cs:wordpress', function() {
+          fakebackend.updateAnnotations('wordpress',
+                                        {'foo': 'bar', 'gone': 'away'});
+          var anno = fakebackend.getAnnotations('wordpress').result;
+          assert.equal(anno.foo, 'bar');
+          assert.equal(anno.gone, 'away');
+
+          // Apply an update and verify that merge happened.
+          fakebackend.updateAnnotations('wordpress', {'gone': 'too far'});
+          anno = fakebackend.getAnnotations('wordpress').result;
+          assert.equal(anno.foo, 'bar');
+          assert.equal(anno.gone, 'too far');
+          done();
+        });
+      });
+
+      it('must update annotations on a unit', function(done) {
+        fakebackend.deploy('cs:wordpress', function() {
+          fakebackend.updateAnnotations('wordpress/0',
+                                        {'foo': 'bar', 'gone': 'away'});
+          var anno = fakebackend.getAnnotations('wordpress/0').result;
+          assert.equal(anno.foo, 'bar');
+          assert.equal(anno.gone, 'away');
+
+          // Apply an update and verify that merge happened.
+          fakebackend.updateAnnotations('wordpress/0', {'gone': 'too far'});
+          anno = fakebackend.getAnnotations('wordpress/0').result;
+          assert.equal(anno.foo, 'bar');
+          assert.equal(anno.gone, 'too far');
+          done();
+        });
+      });
+
+      it('must update annotations on the environment', function() {
+        fakebackend.updateAnnotations('env',
+                                      {'foo': 'bar', 'gone': 'away'});
+        var anno = fakebackend.getAnnotations('env').result;
+        assert.equal(anno.foo, 'bar');
+        assert.equal(anno.gone, 'away');
+
+        // Apply an update and verify that merge happened.
+        fakebackend.updateAnnotations('env', {'gone': 'too far'});
+        anno = fakebackend.getAnnotations('env').result;
+        assert.equal(anno.foo, 'bar');
+        assert.equal(anno.gone, 'too far');
+
+        // Verify the annotations on the model directly.
+        anno = fakebackend.db.environment.get('annotations');
+        assert.equal(anno.foo, 'bar');
+        assert.equal(anno.gone, 'too far');
+
+        // Verify changes name it into nextAnnotations
+        var changes = fakebackend.nextAnnotations();
+        assert.deepEqual(changes.annotations.env,
+                         [fakebackend.db.environment, true]);
+      });
+
+      it('must remove annotations from a service', function(done) {
+        fakebackend.deploy('cs:wordpress', function() {
+          fakebackend.updateAnnotations('wordpress',
+                                        {'foo': 'bar', 'gone': 'away'});
+          var anno = fakebackend.getAnnotations('wordpress').result;
+          assert.equal(anno.foo, 'bar');
+          assert.equal(anno.gone, 'away');
+
+          // Remove an annotation and verify that happened.
+          fakebackend.removeAnnotations('wordpress', ['gone']);
+          anno = fakebackend.getAnnotations('wordpress').result;
+          assert.equal(anno.foo, 'bar');
+          assert.equal(anno.gone, undefined);
+
+          // Finally remove annotations with falsey keys.
+          fakebackend.removeAnnotations('wordpress');
+          anno = fakebackend.getAnnotations('wordpress').result;
+          assert.deepEqual(anno, {});
+          done();
+        });
+
+      });
+    });
   });
 
   describe('FakeBackend.addUnit', function() {
@@ -407,10 +528,10 @@
       assert.lengthOf(
           fakebackend.db.units.get_units_for_service(deployResult.service), 2);
       // Units are simple objects, not models.
-      assert.equal(result.units[0].id, 'wordpress/2');
+      assert.equal(result.units[0].id, 'wordpress/1');
       assert.equal(result.units[0].agent_state, 'started');
       assert.deepEqual(
-          result.units[0], fakebackend.db.units.getById('wordpress/2'));
+          result.units[0], fakebackend.db.units.getById('wordpress/1'));
       // Creating units also created/assigned associated machines.  Like units,
       // these are simple objects, not models.
       assert.lengthOf(result.machines, 1);
@@ -432,17 +553,17 @@
       assert.lengthOf(result.units, 5);
       assert.lengthOf(
           fakebackend.db.units.get_units_for_service(deployResult.service), 6);
-      assert.equal(result.units[0].id, 'wordpress/2');
-      assert.equal(result.units[1].id, 'wordpress/3');
-      assert.equal(result.units[2].id, 'wordpress/4');
-      assert.equal(result.units[3].id, 'wordpress/5');
-      assert.equal(result.units[4].id, 'wordpress/6');
+      assert.equal(result.units[0].id, 'wordpress/1');
+      assert.equal(result.units[1].id, 'wordpress/2');
+      assert.equal(result.units[2].id, 'wordpress/3');
+      assert.equal(result.units[3].id, 'wordpress/4');
+      assert.equal(result.units[4].id, 'wordpress/5');
       assert.lengthOf(result.machines, 5);
     });
 
   });
 
-  describe('FakeBackend.nextChanges', function() {
+  describe('FakeBackend.next*', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
     var Y, fakebackend, utils, setCharm, deployResult, callback;
@@ -466,69 +587,106 @@
       fakebackend.destroy();
     });
 
-    it('rejects unauthenticated calls.', function() {
-      fakebackend.logout();
-      var result = fakebackend.nextChanges();
-      assert.equal(result.error, 'Please log in.');
+    describe('FakeBackend.nextChanges', function() {
+      it('rejects unauthenticated calls.', function() {
+        fakebackend.logout();
+        var result = fakebackend.nextChanges();
+        assert.equal(result.error, 'Please log in.');
+      });
+
+      it('reports no changes initially.', function() {
+        assert.isNull(fakebackend.nextChanges());
+      });
+
+      it('reports a call to addUnit correctly.', function() {
+        fakebackend.deploy('cs:wordpress', callback);
+        assert.isUndefined(deployResult.error);
+        assert.isObject(fakebackend.nextChanges());
+        var result = fakebackend.addUnit('wordpress');
+        assert.lengthOf(result.units, 1);
+        var changes = fakebackend.nextChanges();
+        assert.lengthOf(Y.Object.keys(changes.services), 0);
+        assert.lengthOf(Y.Object.keys(changes.units), 1);
+        assert.lengthOf(Y.Object.keys(changes.machines), 1);
+        assert.lengthOf(Y.Object.keys(changes.relations), 0);
+        assert.deepEqual(
+            changes.units['wordpress/1'], [result.units[0], true]);
+        assert.deepEqual(
+            changes.machines[result.machines[0].machine_id],
+            [result.machines[0], true]);
+      });
+
+      it('reports a deploy correctly.', function() {
+        fakebackend.deploy('cs:wordpress', callback);
+        assert.isUndefined(deployResult.error);
+        var changes = fakebackend.nextChanges();
+        assert.lengthOf(Y.Object.keys(changes.services), 1);
+        assert.deepEqual(
+            changes.services.wordpress, [deployResult.service, true]);
+        assert.lengthOf(Y.Object.keys(changes.units), 1);
+        assert.deepEqual(
+            changes.units['wordpress/0'], [deployResult.units[0], true]);
+        assert.lengthOf(Y.Object.keys(changes.machines), 1);
+        assert.deepEqual(
+            changes.machines[deployResult.machines[0].machine_id],
+            [deployResult.machines[0], true]);
+        assert.lengthOf(Y.Object.keys(changes.relations), 0);
+      });
+
+      it('reports a deploy of multiple units correctly.', function() {
+        fakebackend.deploy('cs:wordpress', callback, {unitCount: 5});
+        assert.isUndefined(deployResult.error);
+        var changes = fakebackend.nextChanges();
+        assert.lengthOf(Y.Object.keys(changes.services), 1);
+        assert.lengthOf(Y.Object.keys(changes.units), 5);
+        assert.lengthOf(Y.Object.keys(changes.machines), 5);
+        assert.lengthOf(Y.Object.keys(changes.relations), 0);
+      });
+
+      it('reports no changes when no changes have occurred.',
+          function() {
+            fakebackend.deploy('cs:wordpress', callback);
+            assert.isUndefined(deployResult.error);
+            assert.isObject(fakebackend.nextChanges());
+            assert.isNull(fakebackend.nextChanges());
+          }
+      );
     });
 
-    it('reports no changes initially.', function() {
-      assert.isNull(fakebackend.nextChanges());
+    describe('FakeBackend.nextAnnotations', function() {
+      it('rejects unauthenticated calls.', function() {
+        fakebackend.logout();
+        var result = fakebackend.nextAnnotations();
+        assert.equal(result.error, 'Please log in.');
+      });
+
+      it('reports no changes initially.', function() {
+        assert.isNull(fakebackend.nextAnnotations());
+      });
+
+      it('reports service changes correctly', function(done) {
+        fakebackend.deploy('cs:wordpress', function() {
+          fakebackend.updateAnnotations('wordpress',
+                                        {'foo': 'bar', 'gone': 'away'});
+
+          var changes = fakebackend.nextAnnotations();
+          assert.deepEqual(changes.services.wordpress,
+                           [fakebackend.db.services.getById('wordpress'),
+                true]);
+          done();
+        });
+      });
+
+      it('reports env changes correctly', function() {
+        fakebackend.updateAnnotations('env',
+                                      {'foo': 'bar', 'gone': 'away'});
+
+        // Verify changes name it into nextAnnotations
+        var changes = fakebackend.nextAnnotations();
+        assert.deepEqual(changes.annotations.env,
+                         [fakebackend.db.environment, true]);
+      });
     });
-
-    it('reports a call to addUnit correctly.', function() {
-      fakebackend.deploy('cs:wordpress', callback);
-      assert.isUndefined(deployResult.error);
-      assert.isObject(fakebackend.nextChanges());
-      var result = fakebackend.addUnit('wordpress');
-      assert.lengthOf(result.units, 1);
-      var changes = fakebackend.nextChanges();
-      assert.lengthOf(Y.Object.keys(changes.services), 0);
-      assert.lengthOf(Y.Object.keys(changes.units), 1);
-      assert.lengthOf(Y.Object.keys(changes.machines), 1);
-      assert.lengthOf(Y.Object.keys(changes.relations), 0);
-      assert.deepEqual(
-          changes.units['wordpress/2'], [result.units[0], true]);
-      assert.deepEqual(
-          changes.machines[result.machines[0].machine_id],
-          [result.machines[0], true]);
-    });
-
-    it('reports a deploy correctly.', function() {
-      fakebackend.deploy('cs:wordpress', callback);
-      assert.isUndefined(deployResult.error);
-      var changes = fakebackend.nextChanges();
-      assert.lengthOf(Y.Object.keys(changes.services), 1);
-      assert.deepEqual(
-          changes.services.wordpress, [deployResult.service, true]);
-      assert.lengthOf(Y.Object.keys(changes.units), 1);
-      assert.deepEqual(
-          changes.units['wordpress/1'], [deployResult.units[0], true]);
-      assert.lengthOf(Y.Object.keys(changes.machines), 1);
-      assert.deepEqual(
-          changes.machines[deployResult.machines[0].machine_id],
-          [deployResult.machines[0], true]);
-      assert.lengthOf(Y.Object.keys(changes.relations), 0);
-    });
-
-    it('reports a deploy of multiple units correctly.', function() {
-      fakebackend.deploy('cs:wordpress', callback, {unitCount: 5});
-      assert.isUndefined(deployResult.error);
-      var changes = fakebackend.nextChanges();
-      assert.lengthOf(Y.Object.keys(changes.services), 1);
-      assert.lengthOf(Y.Object.keys(changes.units), 5);
-      assert.lengthOf(Y.Object.keys(changes.machines), 5);
-      assert.lengthOf(Y.Object.keys(changes.relations), 0);
-    });
-
-    it('reports no changes when no changes have occurred since the last call.',
-        function() {
-          fakebackend.deploy('cs:wordpress', callback);
-          assert.isUndefined(deployResult.error);
-          assert.isObject(fakebackend.nextChanges());
-          assert.isNull(fakebackend.nextChanges());
-        }
-    );
-
   });
+
 })();

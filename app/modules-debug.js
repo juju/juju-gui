@@ -45,6 +45,13 @@ var GlobalConfig = {
         }
       }
     },
+    'event_tracker': {
+      modules: {
+        'event-tracker': {
+          fullpath: '/juju-ui/assets/javascripts/event-tracker.js'
+        }
+      }
+    },
     prettify: {
       modules: {
         'prettify': {
@@ -73,10 +80,6 @@ var GlobalConfig = {
 
         'browser-charm-container': {
           fullpath: '/juju-ui/widgets/charm-container.js'
-        },
-
-        'browser-charm-slider': {
-          fullpath: '/juju-ui/widgets/charm-slider.js'
         },
 
         'browser-overlay-indicator': {

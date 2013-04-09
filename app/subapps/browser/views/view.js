@@ -21,15 +21,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
    * @extends {Y.View}
    *
    */
-  ns.MainView = Y.Base.create('browser-view-mainview', Y.View, [], {
-    /**
-     * Track events we create for proper cleanup.
-     * @attribute _events
-     * @default []
-     * @type {Array}
-     *
-     */
-    _events: [],
+  ns.MainView = Y.Base.create('browser-view-mainview', Y.View, [
+    Y.Event.EventTracker
+  ], {
+
     /**
      * When we click the fullscreen toggle UX widget, what url do we route to.
      * We have to dump this into the template because we can't dynamically
@@ -72,29 +67,55 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _bindSearchWidgetEvents: function() {
       // Watch the Search widget for changes to the search params.
-      this._events.push(
+      this.addEvent(
           this.search.on(
               this.search.EVT_UPDATE_SEARCH, this._searchChanged, this)
       );
 
-      this._events.push(
+      this.addEvent(
           this.search.on(
               this.search.EVT_TOGGLE_VIEWABLE, this._toggleBrowser, this)
       );
     },
 
     /**
+     * Helper to just render the charm details pane. This is shared in the
+     * sidebar/fullscreen views.
+     *
+     * @method _renderCharmDetails
+     * @param {BrowserCharm} charm model instance to render from.
+     * @param {Node} container node to look for a details div in to render to.
+     *
+     */
+    _renderCharmDetails: function(charm, container) {
+      var detailsNode = container.one('.bws-view-data');
+      // Destroy any current details.
+      if (this.details) {
+        this.details.destroy(true);
+      }
+      this.details = new ns.BrowserCharmView({
+        charm: charm,
+        store: this.get('store')
+      });
+      this.details.render(detailsNode);
+    },
+
+    /**
      * Render the view of a single charm details page.
      *
      * @method _renderCharmView
-     * @param {Node} container node to render out to.
+     * @param {Node} container the node to insert our rendered content into.
      *
      */
     _renderCharmView: function(container) {
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl);
 
+      // Create/bind the search before we wait for the charm data to load so
+      // that we're prepared for search events in case that request takes a
+      // while or even fails.
       this._renderSearchWidget(tplNode);
+
       // We need to have the template in the DOM for sub views to be able to
       // expect proper structure.
       if (!Y.Lang.isValue(container)) {
@@ -108,12 +129,11 @@ YUI.add('subapp-browser-mainview', function(Y) {
             charm: new models.BrowserCharm(data),
             store: this.get('store')
           });
-          charmView.render(tplNode.one('.bws-view-data'));
+          charmView.render(tplNode.one('.bws-view-data'), this.isFullscreen());
           container.setHTML(tplNode);
         },
         'failure': this.apiFailure
       }, this);
-
     },
 
     /**
@@ -197,10 +217,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     destructor: function() {
-      console.log('sidebar view destructor');
-      Y.Array.each(this._events, function(ev) {
-        ev.detach();
-      });
+      this._cacheCharms.destroy();
+
+      // Clean up any details view we might have hanging around.
+      if (this.details) {
+        this.details.destroy(true);
+      }
     },
 
     /**
@@ -214,7 +236,28 @@ YUI.add('subapp-browser-mainview', function(Y) {
       this.set('store', new Y.juju.Charmworld0({
         'apiHost': window.juju_config.charmworldURL
       }));
+
+      // Hold onto charm data so we can pass model instances to other views when
+      // charms are selected.
+      this._cacheCharms = new models.BrowserCharmList();
+    },
+
+    /**
+     * Check if this view is the fullscreen version to help aid us in
+     * template work.
+     *
+     * @method isFullscreen
+     * @return {{Bool}}
+     *
+     */
+    isFullscreen: function() {
+      if (this.name.indexOf('fullscreen') === -1) {
+        return false;
+      } else {
+        return true;
+      }
     }
+
   }, {
     ATTRS: {
       /**
@@ -227,6 +270,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        */
       charmID: {},
+
 
       /**
        * An instance of the Charmworld API object to hit for any data that
@@ -257,9 +301,9 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'browser-charm-slider',
     'browser-charm-token',
     'browser-search-widget',
+    'event-tracker',
     'juju-charm-store',
     'juju-models',
     'view'

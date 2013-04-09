@@ -29,7 +29,7 @@ describe('charm token', function() {
     var cfg = {
       name: 'some-charm',
       description: 'some description',
-      recent_commits: 2,
+      recent_commits: 1,
       recent_downloads: 3,
       tested_providers: ['ec2']
     };
@@ -37,7 +37,7 @@ describe('charm token', function() {
     charm.render(charm_container);
     var metadata = Y.one('.metadata');
     assert.equal(
-        ' Recent activity: 2 commits 3 downloads ',
+        ' Recent activity: 1 commit 3 downloads ',
         metadata.get('text').replace(/\s+/g, ' '));
   });
 });

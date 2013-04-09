@@ -80,14 +80,14 @@ describe('charm container widget', function() {
       }]
     });
     charm_container.render(container);
-    assert.equal('Popular', container.one('h3').get('text'));
-    assert.equal('See 1 more', container.one('.expand').get('text'));
+    assert.equal('Popular (4)', container.one('h3').get('text'));
+    assert.isFalse(container.one('.more').hasClass('hidden'));
+    assert.isTrue(container.one('.less').hasClass('hidden'));
   });
 
-  it('toggle between all or a just few items being shown', function() {
+  it('toggles between all or just a few items being shown', function() {
     var hidden;
     charm_container = new Y.juju.widgets.browser.CharmContainer({
-      name: 'Popular',
       children: [{
         name: 'foo'
       },{
@@ -105,21 +105,23 @@ describe('charm container widget', function() {
     assert.equal(
         0, hidden.size(),
         'Hidden items after all items should be visible.');
-    assert.equal('See less', container.one('.expand').get('text'));
+    assert.isFalse(container.one('.less').hasClass('hidden'));
+    assert.isTrue(container.one('.more').hasClass('hidden'));
 
     container.one('.expand').simulate('click');
     hidden = container.all('.yui3-charmtoken-hidden');
     assert.equal(
         1, hidden.size(),
         'No hidden items after extra items should be hidden.');
-    assert.equal('See 1 more', container.one('.expand').get('text'));
+    assert.isTrue(container.one('.less').hasClass('hidden'));
+    assert.isFalse(container.one('.more').hasClass('hidden'));
   });
 
   it('handles having no charm tokens', function() {
     charm_container = new Y.juju.widgets.browser.CharmContainer({name: 'Foo'});
     charm_container.render(container);
     var rendered = container.one('.yui3-charmcontainer');
-    assert.equal('Foo', rendered.one('h3').get('text'));
+    assert.equal('Foo (0)', rendered.one('h3').get('text'));
   });
 
   it('handles having less charms tokens than its cutoff', function() {
@@ -139,7 +141,7 @@ describe('charm container widget', function() {
     charm_container.render(container);
 
     var rendered = container.one('.yui3-charmcontainer');
-    assert.equal('Popular', rendered.one('h3').get('text'));
+    assert.equal('Popular (4)', rendered.one('h3').get('text'));
     assert.equal(4, container.all('.yui3-charmtoken').size());
     assert.equal(0, container.all('.yui3-charmtoken-hidden').size());
     assert.equal(1, charm_container._events.length);

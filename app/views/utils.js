@@ -1166,6 +1166,43 @@ YUI.add('juju-view-utils', function(Y) {
     return res;
   });
 
+  /**
+    * pluralize
+    *
+    * pluralize is a handlebar helper that handles pluralization of strings.
+    * The requirement for pluralization is based on the passed in object,
+    * which can be number, array, or object. If a number, it is directly
+    * checked to see if pluralization is needed. Arrays and objects are
+    * checked for length or size attributes, which are then used.
+    *
+    * By default, if pluralization is needed, an 's' is appended to the
+    * string. This handles the regular case (e.g. cat => cats). Irregular
+    * cases are handled by passing in a plural form (e.g. octopus => ocotopi).
+    */
+  Y.Handlebars.registerHelper('pluralize',
+      function(word, object, plural_word, options) {
+        var plural = false;
+        if (typeof(object) === 'number') {
+          plural = (object !== 1);
+        }
+        if (object) {
+          if (object.size) {
+            plural = (object.size() !== 1);
+          } else if (object.length) {
+            plural = (object.length !== 1);
+          }
+        }
+        if (plural) {
+          if (typeof(plural_word) === 'string') {
+            return plural_word;
+          } else {
+            return word + 's';
+          }
+        } else {
+          return word;
+        }
+      });
+
 }, '0.1.0', {
   requires: ['base-build',
              'handlebars',
