@@ -14,7 +14,6 @@ import os
 import re
 import string
 import sys
-import textwrap
 
 
 # We don't want to build or integrate with a full JS parser; fortunately we
