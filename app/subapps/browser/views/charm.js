@@ -4,7 +4,8 @@
 YUI.add('subapp-browser-charmview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       views = Y.namespace('juju.views'),
-      widgets = Y.namespace('juju.widgets');
+      widgets = Y.namespace('juju.widgets'),
+      DATE_FORMAT = '%d/%b/%y';
 
 
   /**
@@ -117,6 +118,30 @@ YUI.add('subapp-browser-charmview', function(Y) {
             break;
         }
       }, this));
+    },
+
+    _formatCommitsForHtml: function(commits) {
+      var prettyCommits = {
+        remaining: []
+      };
+
+      if (commits.length > 0) {
+        prettyCommits.first = commits.shift();
+        prettyCommits.first.prettyDate = Y.Date.format(
+            prettyCommits.first.date, {
+            format: DATE_FORMAT
+        });
+      }
+
+      Y.Array.each(commits, function(commit) {
+        commit.prettyDate = Y.Date.format(
+            commit.date, {
+            format: DATE_FORMAT
+        });
+        prettyCommits.remaining.push(commit);
+      });
+
+      return prettyCommits;
     },
 
     /**
@@ -238,7 +263,23 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _toggleLog: function(ev) {
-      console.log('toggle the charm log');
+      var upArrow = '&uarr;',
+          downArrow = '&darr;',
+          container = this.get('container'),
+          target = ev.currentTarget,
+          state = target.getData('state');
+
+      if (state === 'closed') {
+        // open up the changelog.
+        container.one('.changelog .remaining').removeClass('hidden');
+        target.setData('state', 'open');
+        target.setContent(upArrow);
+      } else {
+        // close up the changelog.
+        container.one('.changelog .remaining').addClass('hidden');
+        target.setData('state', 'closed');
+        target.setContent(downArrow);
+      }
     },
 
     /**
@@ -282,6 +323,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var charm = this.get('charm');
       var tplData = charm.getAttrs();
       tplData.isFullscreen = isFullscreen;
+      tplData.prettyCommits = this._formatCommitsForHtml(tplData.recent_commits);
 
       var tpl = this.template(tplData);
       var tplNode = Y.Node.create(tpl);
@@ -340,6 +382,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
   requires: [
     'browser-overlay-indicator',
     'browser-tabview',
+    'date-format',
     'gallery-markdown',
     'juju-templates',
     'juju-views',

@@ -319,7 +319,7 @@ YUI.add('juju-charm-models', function(Y) {
      *
      */
     _loadRecentCommits: function() {
-      var source = this.get(code_source),
+      var source = this.get('code_source'),
           commits = [];
 
       if (source.revisions) {
@@ -367,12 +367,8 @@ YUI.add('juju-charm-models', function(Y) {
      */
     initializer: function(cfg) {
       if (cfg) {
-        if (cfg.downloads_in_last_30_days) {
-          this.set('recent_downloads', cfg.downloads_in_last_30_days);
-        }
-
-        if (cfg.commits_in_last_30_days) {
-          this.set('recent_commits', cfg.commits_in_last_30_days);
+        if (cfg.downloads_in_past_30_days) {
+          this.set('recent_downloads', cfg.downloads_in_past_30_days);
         }
       }
     }

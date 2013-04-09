@@ -566,8 +566,8 @@ describe('juju charm load', function() {
 });
 
 
-describe('BrowserCharm test', function() {
-  var data, models, Y;
+describe.only('BrowserCharm test', function() {
+  var data, instance, models, sampleData, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -581,20 +581,50 @@ describe('BrowserCharm test', function() {
 
   before(function() {
     sampleData = Y.io('data/browsercharm.json', {sync: true});
+    data = Y.JSON.parse(sampleData.responseText);
   });
 
   beforeEach(function() {
-    data = [];
   });
 
   afterEach(function() {
-    container.destroy();
+    if (instance) {
+        instance.destroy();
+    }
+  });
+
+  it('maps api downloads in 30 days to recent downloads', function() {
+    instance = new models.BrowserCharm(data);
+    instance.get('recent_downloads').should.eql(10);
+  });
+
+  it('maps relations to keep with the original charm model', function() {
+    instance = new models.BrowserCharm(data);
+    var requires = instance.get('requires');
+    requires.balancer.interface.should.eql('http');
+
+    var provides = instance.get('provides');
+    provides.website.interface.should.eql('http');
   });
 
   it('maps revisions nicely for us with converted dates', function() {
-    assert(false);
+    instance = new models.BrowserCharm(data);
+    var commits = instance.get('recent_commits');
+    commits.length.should.equal(10);
 
+    // Check that our commits have the right keys constructed from the api
+    // data provided.
+    var sample = commits[0];
+    assert(Y.Object.hasKey(sample, 'author'));
+    assert(Y.Object.hasKey(sample, 'date'))
+    assert(Y.Object.hasKey(sample, 'message'));
+    assert(Y.Object.hasKey(sample, 'revno'));
+
+    // Commits should be ordered new to old.
+    var checkDate = new Date();
+    Y.Array.each(commits, function(commit) {
+      assert(checkDate > commit.date);
+      checkDate = commit.date;
+    });
   });
-
-
 });
