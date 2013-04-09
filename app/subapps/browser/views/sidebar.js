@@ -112,27 +112,31 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           var sliderCharms = this.get('store').resultsToCharmlist(
               data.result.slider);
           var sliderContainer = container.one('.bws-left .slider');
-          this.slider = this._generateSliderWidget(sliderCharms);
-          if (this.slider) {
-            this.slider.render(sliderContainer);
-          }
+          var sliderCharmContainer = new Y.juju.widgets.browser.CharmContainer({
+            name: 'Featured Charms',
+            cutoff: 1,
+            children: sliderCharms.map(function(charm) {
+              return charm.getAttrs(); })
+          });
+          sliderCharmContainer.render(sliderContainer);
 
           // Add in the charm tokens for the new as well.
           var newContainer = container.one('.bws-left .new');
           var newCharms = this.get('store').resultsToCharmlist(
               data.result['new']);
-          newCharms.map(function(charm) {
-            var node = Y.Node.create('<div>'),
-                widget = new Y.juju.widgets.browser.CharmToken(
-                charm.getAttrs());
-            widget.render(node);
-            newContainer.append(node);
+          var newCharmContainer = new Y.juju.widgets.browser.CharmContainer({
+            name: 'New Charms',
+            cutoff: 2,
+            children: newCharms.map(function(charm) {
+              return charm.getAttrs(); })
           });
+          newCharmContainer.render(newContainer);
 
           // Add the charms to the cache for use in other views.
           // Start with a reset to empty any current cached models.
           this._cacheCharms.reset(newCharms);
           this._cacheCharms.add(sliderCharms);
+          this.charmContainers = [newCharmContainer, sliderCharmContainer];
         },
 
         'failure': function(data, request) {
@@ -163,6 +167,11 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       if (this.slider) {
         this.slider.destroy();
       }
+      if (this.charmContainers) {
+        Y.Array.each(this.charmContainers, function(container) {
+          container.destroy();
+        });
+      }
     },
 
     /**
@@ -187,6 +196,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'browser-charm-container',
     'browser-charm-slider',
     'browser-charm-token',
     'browser-search-widget',
