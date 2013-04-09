@@ -1082,6 +1082,25 @@
       });
     });
 
+    it('should allow unit resolved to be called', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be able to
+        // pull its data.
+        var op = {
+          op: 'resolved',
+          unit_name: 'wordpress/0',
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var parsed = Y.JSON.parse(received.data);
+          assert.equal(parsed.result, true);
+          done(parsed.error);
+        };
+        client.open();
+        client.send(Y.JSON.stringify(op));
+      });
+
+    });
   });
 
 })();

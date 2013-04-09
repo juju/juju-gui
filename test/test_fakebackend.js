@@ -248,6 +248,28 @@
       fakebackend.destroy();
     });
 
+    describe('FakeBackend.resolved', function(done) {
+
+      it('rejects unauthenticated calls', function() {
+        fakebackend.logout();
+        var result = fakebackend.resolved('wordpress/0');
+        assert.equal(result.error, 'Please log in.');
+      });
+
+      it('reports invalid untis', function() {
+        var result = fakebackend.resolved('wordpress/0');
+        assert.equal(result.error, 'Unit "wordpress/0" does not exist.');
+      });
+
+      it('reports invalid relations', function(done) {
+        fakebackend.deploy('cs:wordpress', function() {
+          var result = fakebackend.resolved('wordpress/0', 'db');
+          assert.equal(result.error, 'Relation db not found for wordpress/0');
+          done();
+        });
+      });
+    });
+
     describe('FakeBackend.getCharm', function() {
       it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();
@@ -664,8 +686,6 @@
         assert.deepEqual(changes.annotations.env,
                          [fakebackend.db.environment, true]);
       });
-
-
     });
   });
 
