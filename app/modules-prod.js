@@ -38,10 +38,6 @@ var GlobalConfig = {
             'juju-notification-controller',
             'juju-endpoints-controller'
           ]
-        },
-
-        'juju-gui': {
-          fullpath: '/juju-ui/assets/app.js'
         }
       }
     }
