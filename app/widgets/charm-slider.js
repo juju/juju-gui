@@ -21,7 +21,9 @@ YUI.add('browser-charm-slider', function(Y) {
    * @extends {Y.ScrollView}
    *
    */
-  ns.CharmSlider = new Y.Base.create('browser-charm-slider', Y.ScrollView, [], {
+  ns.CharmSlider = new Y.Base.create('browser-charm-slider', Y.ScrollView, [
+    Y.Event.EventTracker
+  ], {
 
     /**
      * Template for the CharmSlider
@@ -175,13 +177,12 @@ YUI.add('browser-charm-slider', function(Y) {
       //Call the parent bindUI method
       ns.CharmSlider.superclass.bindUI.apply(this);
 
-      var events = this.get('_events'),
-          boundingBox = this.get('boundingBox'),
+      var boundingBox = this.get('boundingBox'),
           nav = boundingBox.one('.navigation');
-      events.push(this.after('render', this._startTimer, this));
-      events.push(boundingBox.on('mouseenter', this._pauseAutoAdvance, this));
-      events.push(boundingBox.on('mouseleave', this._pauseAutoAdvance, this));
-      events.push(nav.delegate('click', function(e) {
+      this.addEvent(this.after('render', this._startTimer, this));
+      this.addEvent(boundingBox.on('mouseenter', this._pauseAutoAdvance, this));
+      this.addEvent(boundingBox.on('mouseleave', this._pauseAutoAdvance, this));
+      this.addEvent(nav.delegate('click', function(e) {
         var index = e.currentTarget.getAttribute('data-index');
         index = parseInt(index, 10);
         this._advanceSlide(index);
@@ -189,18 +190,14 @@ YUI.add('browser-charm-slider', function(Y) {
     },
 
     /**
-      * Detaches events attached during instantiation
+      * Clean up after the widget.
       *
       * @method destructor
       * @private
       */
     destructor: function() {
-      console.log('Clearing slider events');
       // Stop any in-progress timer
       this.get('timer').cancel();
-      Y.Array.each(this.get('_events'), function(event) {
-        event.detach();
-      });
     },
 
     /**
@@ -290,16 +287,6 @@ YUI.add('browser-charm-slider', function(Y) {
       },
 
       /**
-       * @attribute _events
-       * @default []
-       * @type {Array}
-       *
-       */
-      _events: {
-        value: []
-      },
-
-      /**
        * @attribute max
        * @default 5
        * @type {Int}
@@ -326,6 +313,7 @@ YUI.add('browser-charm-slider', function(Y) {
     'array-extras',
     'base',
     'event-mouseenter',
+    'event-tracker',
     'scrollview',
     'scrollview-paginator'
   ]

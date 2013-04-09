@@ -20,6 +20,7 @@ YUI.add('browser-charm-container', function(Y) {
    * @extends {Y.Widget}
    */
   ns.CharmContainer = Y.Base.create('CharmContainer', Y.Widget, [
+    Y.Event.EventTracker,
     Y.WidgetParent
   ], {
 
@@ -92,19 +93,8 @@ YUI.add('browser-charm-container', function(Y) {
     bindUI: function() {
       if (this.get('extra') > 0) {
         var expander = this.get('contentBox').one('.expand');
-        this._events.push(expander.on('click', this._toggleExpand, this));
+        this.addEvent(expander.on('click', this._toggleExpand, this));
       }
-    },
-
-    /**
-     * Destructor
-     *
-     * @method destructor
-     */
-    destructor: function() {
-      Y.Array.each(this._events, function(e) {
-        e.detach();
-      });
     },
 
     /**
@@ -113,9 +103,9 @@ YUI.add('browser-charm-container', function(Y) {
      * @method initializer
      */
     initializer: function(cfg) {
-      this._events = [];
-      this._events.push(
-          this.after('initializedChange', this._afterInit, this));
+      this.addEvent(
+          this.after('initializedChange', this._afterInit, this)
+      );
     },
 
     /**
@@ -187,6 +177,7 @@ YUI.add('browser-charm-container', function(Y) {
     'array',
     'base-build',
     'browser-charm-token',
+    'event-tracker',
     'handlebars',
     'juju-templates',
     'juju-view-utils',
