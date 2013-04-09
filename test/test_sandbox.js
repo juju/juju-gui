@@ -160,7 +160,7 @@
 
   });
 
-  describe.only('sandbox.PyJujuAPI', function() {
+  describe('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
       'juju-models'];
@@ -952,7 +952,7 @@
             assert.equal(typeof data.result, 'object');
             assert.deepEqual(data, mock);
             done();
-          }
+          };
           client.send(Y.JSON.stringify(data));
         });
       }
@@ -963,41 +963,41 @@
       function addRelation() {
         function localCb(rec) {
           var mock = {
-                  endpoint_a: 'wordpress:db',
-                  endpoint_b: 'mysql:db',
-                  op: 'add_relation',
-                  request_id: rec.request_id,
-                  result: {
-                    id: 'relation-0',
-                    'interface': 'mysql',
-                    scope: 'global',
-                    request_id: rec.request_id,
-                    endpoints: [{
-                      wordpress: {
-                        name: 'db'
-                      }
-                    }, {
-                      mysql: {
-                        name: 'db'
-                      }
-                    }]
-                  }
-                };
+            endpoint_a: 'wordpress:db',
+            endpoint_b: 'mysql:db',
+            op: 'add_relation',
+            request_id: rec.request_id,
+            result: {
+              id: 'relation-0',
+              'interface': 'mysql',
+              scope: 'global',
+              request_id: rec.request_id,
+              endpoints: [{
+                wordpress: {
+                  name: 'db'
+                }
+              }, {
+                mysql: {
+                  name: 'db'
+                }
+              }]
+            }
+          };
           assert.equal(rec.err, undefined);
           assert.equal(typeof rec.result, 'object');
           assert.deepEqual(rec.details[0], mock);
           done();
         }
         var endpointA = [
-              'wordpress',
-              { name: 'db',
-                role: 'client' }
-            ],
-            endpointB = [
-              'mysql',
-              { name: 'db',
-                role: 'server' }
-            ];
+          'wordpress',
+          { name: 'db',
+            role: 'client' }
+        ];
+        var endpointB = [
+          'mysql',
+          { name: 'db',
+            role: 'server' }
+        ];
         env.add_relation(endpointA, endpointB, localCb);
       }
       generateIntegrationServices(function() {
@@ -1005,24 +1005,128 @@
       });
     });
 
-    it('does something with subordinate modules', function(done) {
-      assert.fail();
-      done();
+    it('is able to add a relation with a subordinate service', function(done) {
+      function localCb() {
+        state.deploy('cs:puppet', function(service) {
+          var data = {
+            op: 'add_relation',
+            endpoint_a: [
+              'wordpress',
+              { name: 'juju-info',
+                role: 'server' }
+            ],
+            endpoint_b: [
+              'puppet',
+              { name: 'juju-info',
+                role: 'client' }
+            ]
+          };
+
+          client.onmessage = function(rec) {
+            var data = Y.JSON.parse(rec.data),
+                mock = {
+                  endpoint_a: 'wordpress:juju-info',
+                  endpoint_b: 'puppet:juju-info',
+                  op: 'add_relation',
+                  result: {
+                    id: 'relation-0',
+                    'interface': 'puppet',
+                    scope: 'container',
+                    endpoints: [{
+                      wordpress: {
+                        name: 'juju-info',
+                        role: 'server'
+                      }
+                    }, {
+                      puppet: {
+                        name: 'juju-info',
+                        role: 'client'
+                      }
+                    }]
+                  }
+                };
+            assert.equal(data.err, undefined);
+            assert.equal(typeof data.result, 'object');
+            assert.deepEqual(data, mock);
+            done();
+          };
+          client.send(Y.JSON.stringify(data));
+        });
+      }
+      generateServices(localCb);
     });
 
     it('throws an error if only one endpoint is supplied', function(done) {
-      assert.fail();
-      done();
+      function localCb() {
+        var data = {
+          op: 'add_relation',
+          endpoint_a: [
+            'wordpress',
+            { name: 'db',
+              role: 'client' }
+          ]
+        };
+        state.nextChanges();
+        client.onmessage = function(rec) {
+          var data = Y.JSON.parse(rec.data);
+          assert(data.err, 'Two endpoints required to set up relation.');
+          done();
+        };
+        client.send(Y.JSON.stringify(data));
+      }
+      generateServices(localCb);
     });
 
     it('throws an error if both endpoints are the same', function(done) {
-      assert.fail();
-      done();
+      function localCb() {
+        var data = {
+          op: 'add_relation',
+          endpoint_a: [
+            'wordpress',
+            { name: 'db',
+              role: 'client' }
+          ],
+          endpoint_b: [
+            'wordpress',
+            { name: 'db',
+              role: 'server' }
+          ]
+        };
+        state.nextChanges();
+        client.onmessage = function(rec) {
+          var data = Y.JSON.parse(rec.data);
+          assert(data.err, 'Endpoints must be different.');
+          done();
+        };
+        client.send(Y.JSON.stringify(data));
+      }
+      generateServices(localCb);
     });
 
     it('throws an error if endpoints are not relatable', function(done) {
-      assert.fail();
-      done();
+      function localCb() {
+        var data = {
+          op: 'add_relation',
+          endpoint_a: [
+            'wordpress',
+            { name: 'db',
+              role: 'client' }
+          ],
+          endpoint_b: [
+            'mysql',
+            { name: 'foo',
+              role: 'client' }
+          ]
+        };
+        state.nextChanges();
+        client.onmessage = function(rec) {
+          var data = Y.JSON.parse(rec.data);
+          assert(data.err, 'No matching interfaces.');
+          done();
+        };
+        client.send(Y.JSON.stringify(data));
+      }
+      generateServices(localCb);
     });
 
   });

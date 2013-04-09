@@ -420,19 +420,30 @@ YUI.add('juju-env-sandbox', function(Y) {
       Handles adding a relation between two supplied services from the client
 
       @method performOp_add_relation
-      @param {Object | String} data
+      @param {Array | String} data containing either a string in the format
+        wordpress:db or an array in the format
+        ['wordpress', { name: 'db', role: 'client'}].
     */
     performOp_add_relation: function(data) {
+      /**
+        Takes a string endpoint and splits it into usable parts.
+        @method endpointToName
+        @param {String} endpoint the endpoint to split in the format
+          wordpress:db.
+      */
       function endpointToName(endpoint) {
-        // In order to handle the integration tests as well as
-        // being used directly
-        if (typeof endpoint === 'string') { return endpoint; }
+        // In order to handle the integration use case
+        // as well as being used directly.
+        // Or if no endpoint is supplied
+        if ((typeof endpoint === 'string') ||
+            (endpoint === undefined)) { return endpoint; }
+
         return endpoint[0] + ':' + endpoint[1].name;
-      };
+      }
 
       var res = this.get('state').addRelation(
-                                      endpointToName(data.endpoint_a),
-                                      endpointToName(data.endpoint_b));
+          endpointToName(data.endpoint_a),
+          endpointToName(data.endpoint_b));
       var endpointA, endpointB;
       var eptA = {}, eptB = {};
 
@@ -449,13 +460,16 @@ YUI.add('juju-env-sandbox', function(Y) {
         };
         eptB[data.endpoint_b.split(':')[0]] = {
           name: res.displayName
-          // cannot return `role` if we aren't provided with it without extra
-          // calculations on the back end. It is also not used anywhere so it
-          // shouldn't be an issue.
         };
       } else {
-        eptA[data.endpoint_a[0]] = data.endpoint_a[1];
-        eptB[data.endpoint_b[0]] = data.endpoint_b[1];
+        // In order to get a valid error message and formatted data back to the
+        // client if one of these are undefined we need to check first
+        if (data.endpoint_a !== undefined) {
+          eptA[data.endpoint_a[0]] = data.endpoint_a[1];
+        }
+        if (data.endpoint_b !== undefined) {
+          eptB[data.endpoint_b[0]] = data.endpoint_b[1];
+        }
       }
 
       if (res === false) {
@@ -467,6 +481,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
       if (res.error) {
         data.err = res.error;
+        this.get('client').receiveNow(data);
         return;
       }
 

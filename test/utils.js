@@ -72,7 +72,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
               var charmName = path.split('/')[2];
               Y.Array.some(io_request.response.results, function(result) {
                 var data = Y.JSON.parse(result.responseText);
-                if (data.name == charmName) {
+                if (data.name === charmName) {
                   options.success(data);
                   return true;
                 }
@@ -90,7 +90,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
           data.push(Y.io('data/' + name + '-charmdata.json', {sync: true}));
         });
       };
-      setCharms(['wordpress', 'mysql']);
+      setCharms(['wordpress', 'mysql', 'puppet']);
       return {charmStore: charmStore, setCharm: setCharms};
     },
 

@@ -196,6 +196,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             callbacks.failure({error: 'Invalid charm id.'}));
       }
       var charm = this.db.charms.getById(charmId);
+console.log(charmId);
       if (charm) {
         callbacks.success(charm);
       } else {
@@ -524,9 +525,15 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return {error: 'Two endpoints required to set up relation.'};
       }
 
+      /**
+        Takes a string endpoint and splits it into usable parts.
+        @method endpointSplit
+        @param {String} endpoint the endpoint to split in the format
+          wordpress:db.
+      */
       function endpointSplit(endpoint) {
         var epData = endpoint.split(':');
-        return { name: epData[0], type: epData[1] }
+        return { name: epData[0], type: epData[1] };
       }
 
       var epAData = endpointSplit(endpointA),
@@ -537,6 +544,12 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return {error: 'Endpoints need to match.'};
       }
 
+      if (epAData.name === epBData.name) {
+        return {error: 'Endpoints must be different.'};
+      }
+
+      // Loop through the charms that are loaded to make sure that both
+      // endpoints have their charms already deployed into the environment.
       var charmsFound = this.db.charms.some(function(charm) {
         charmName = charm.get('name');
         if (charmName === epAData.name) { charmA = charm; counter += 1; }
@@ -546,13 +559,39 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       if (!charmsFound) { return {error: 'Charm not loaded.'}; }
 
+      /**
+        Pushes juju-info onto the charm's 'provides' to allow for subordination
+        @method addJujuInfo
+        @param {Object} charm a charm model instance.
+      */
+      function addJujuInfo(charm) {
+        var req = charm.get('requires');
+        if (req['juju-info'] === undefined) {
+          req['juju-info'] = {'interface': 'juju-info', 'scope': 'container'};
+          charm.set('requires', req);
+        }
+      }
+      Y.Array.each([charmA, charmB], addJujuInfo);
+
       var charmAEp = charmA.get('requires')[epAData.type],
           charmBEp = charmB.get('requires')[epBData.type];
 
+      /**
+        Loops through the charm endpoint data to determine the interface
+        and scope of the relationship.
+        @method getInterfaceAndScope
+        @param {Array} charmEndpoints Array of charm object 'requires' endpoint
+          types ie) { db: { interface: 'mysql' }} .
+        @param {Array} charmDatas Array of charm data objects from splitting
+          endpoint string above.
+      */
       function getInterfaceAndScope(charmEndpoints, charmDatas) {
         var ci, cs;
         Y.Array.some(charmEndpoints, function(charmEndpoint, index) {
-          if (charmEndpoint['interface'] === charmDatas[index].name) {
+          var charmInterface = charmEndpoint['interface'];
+          // If the interfaces match or if it is a juju-info relationship
+          if ((charmInterface === charmDatas[index].name) ||
+              (charmInterface === 'juju-info')) {
             ci = charmDatas[index].name;
             if (charmEndpoint.scope !== undefined) {
               cs = charmEndpoint.scope;
@@ -563,11 +602,15 @@ YUI.add('juju-env-fakebackend', function(Y) {
         if (ci) { return {ci: ci, cs: cs}; }
       }
 
+      // If there are matching interfaces this will contain an object of the
+      // charm interface type and scope (if supplied).
       var cics = getInterfaceAndScope(
-                                [charmAEp, charmBEp], [epBData, charmAEp]);
+                                      [charmAEp, charmBEp], [epBData, epAData]);
 
       if (!cics) { return {error: 'No matching interfaces.'}; }
 
+      // Assign a unique realtion id which is incremented after every
+      // successfull relation.
       var relationId = 'relation-' + this._relationCount;
       var relation = this.db.relations.create({
         relation_id: relationId,
@@ -580,7 +623,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       if (relation) {
         this._relationCount += 1;
+        // Add the relation to the change delta
         this.changes.relations[relationId] = [relation, true];
+        // Because the sandbox can either be passed a string or an object
+        // we need to return as much information as possible to be able
+        // to rebuild the expected object for both situations.
         return {
           relationId: relationId,
           type: cics.ci,
@@ -591,6 +638,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
         };
       }
 
+      // Fallback error If the relation was not able to be created
+      // for any reason other than what has already been checked for.
       return false;
     }
 
