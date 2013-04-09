@@ -305,6 +305,7 @@ YUI.add('juju-models', function(Y) {
 
     _setDefaultsAndCalculatedValues: function(obj) {
       obj.displayName = this.createDisplayName(obj.id);
+      obj.name = 'machine';
     },
 
     add: function() {
@@ -497,6 +498,41 @@ YUI.add('juju-models', function(Y) {
   models.NotificationList = NotificationList;
 
 
+  /*
+   * Helper methods for interacting with annotations on
+   * entities.
+   *
+   * _annotationProperty is a private mapping indicating
+   * if annotations are store as an attribute or as a
+   * property. A value of true indicates that property
+   * style access should be used.
+   */
+  var _annotationProperty = {
+    serviceUnit: true,
+    machine: true
+  };
+
+  /**
+   * Get annotations for an entity.
+   * @method getAnnotations
+   * @param {Object} Model (or ModelList managed object).
+   * @return {Object} Annotations.
+   */
+  models.getAnnotations = function(entity) {
+    if (_annotationProperty[entity.name]) {
+      return entity.annotations;
+    }
+    return entity.get('annotations');
+  };
+
+  models.setAnnotations = function(entity, annotations) {
+    if (_annotationProperty[entity.name]) {
+      entity.annotations = annotations;
+    } else {
+      entity.set('annotations', annotations);
+    }
+  };
+
   var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
       // Single model for environment database is bound to.
@@ -546,6 +582,36 @@ YUI.add('juju-models', function(Y) {
         return undefined;
       }
       return modelList.getById(id);
+    },
+
+    /**
+     * Resolve from an id to a Database entity. The lookup pattern is such that
+     * "env" -> environment model
+     * <int> -> machine
+     * <name>/<int> -> unit
+     * <name> -> service
+     *
+     * @method resolveModelByName
+     * @param {Object} Entity name, usually {String}, {Int} possible for
+     *                 machine.
+     * @return {Model} resolved by call.
+     **/
+    resolveModelByName: function(entityName) {
+      if (!entityName) {
+        return undefined;
+      }
+      if (entityName === 'env') {
+        return this.environment;
+      }
+      if (/^\d+$/.test(entityName)) {
+        return this.machines.getById(entityName);
+      }
+
+      if (/^\S+\/\d+$/.test(entityName)) {
+        return this.units.getById(entityName);
+      }
+
+      return this.services.getById(entityName);
     },
 
     /**
