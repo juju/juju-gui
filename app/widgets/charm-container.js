@@ -80,15 +80,17 @@ YUI.add('browser-charm-container', function(Y) {
      */
     _toggleExpand: function(e) {
       var invisible = this.get('contentBox').one('.yui3-charmtoken-hidden'),
-          expander = e.currentTarget;
+          expander = e.currentTarget,
+          more = expander.one('.more'),
+          less = expander.one('.less');
       if (invisible) {
         this._showAll();
-        expander.one('.more').addClass('hidden');
-        expander.one('.less').removeClass('hidden');
+        more.addClass('hidden');
+        less.removeClass('hidden');
       } else {
         this._hideSomeChildren();
-        expander.one('.less').addClass('hidden');
-        expander.one('.more').removeClass('hidden');
+        less.addClass('hidden');
+        more.removeClass('hidden');
       }
     },
 

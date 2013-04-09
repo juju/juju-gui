@@ -85,7 +85,7 @@ describe('charm container widget', function() {
     assert.isTrue(container.one('.less').hasClass('hidden'));
   });
 
-  it('toggles between all or a just few items being shown', function() {
+  it('toggles between all or just a few items being shown', function() {
     var hidden;
     charm_container = new Y.juju.widgets.browser.CharmContainer({
       name: 'Popular',
