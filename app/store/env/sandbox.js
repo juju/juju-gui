@@ -489,6 +489,15 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+     * Perform 'resolved' operation.
+     * @method performOp_resolved
+     * @param {Object} data with unitName and optional relation name.
+     */
+    performOp_resolved: function(data) {
+      OP(this, 'resolved', ['unit_name', 'relation_name'], data);
+    },
+
+    /**
       Handles the remove unit operations from the client
 
       @method performOp_remove_unit
