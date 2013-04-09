@@ -20,12 +20,11 @@ YUI.add('browser-charm-container', function(Y) {
    * @extends {Y.Widget}
    */
   ns.CharmContainer = Y.Base.create('CharmContainer', Y.Widget, [
+    Y.Event.EventTracker,
     Y.WidgetParent
   ], {
 
     TEMPLATE: Y.namespace('juju.views').Templates['charm-container'],
-    SEE_MORE: 'See {extra} more',
-    SEE_LESS: 'See less',
 
     /**
      * Sets up some attributes that are needed before render, but can only be
@@ -72,14 +71,17 @@ YUI.add('browser-charm-container', function(Y) {
      */
     _toggleExpand: function(e) {
       var invisible = this.get('contentBox').one('.yui3-charmtoken-hidden'),
-          expander = e.currentTarget;
+          expander = e.currentTarget,
+          more = expander.one('.more'),
+          less = expander.one('.less');
       if (invisible) {
         this._showAll();
-        expander.set('text', this.SEE_LESS);
+        more.addClass('hidden');
+        less.removeClass('hidden');
       } else {
         this._hideSomeChildren();
-        var msg = Y.Lang.sub(this.SEE_MORE, {extra: this.get('extra')});
-        expander.set('text', msg);
+        less.addClass('hidden');
+        more.removeClass('hidden');
       }
     },
 
@@ -89,21 +91,10 @@ YUI.add('browser-charm-container', function(Y) {
      * @method bindUI
      */
     bindUI: function() {
-      if (this.get('has_extra')) {
+      if (this.get('extra') > 0) {
         var expander = this.get('contentBox').one('.expand');
-        this._events.push(expander.on('click', this._toggleExpand, this));
+        this.addEvent(expander.on('click', this._toggleExpand, this));
       }
-    },
-
-    /**
-     * Destructor
-     *
-     * @method destructor
-     */
-    destructor: function() {
-      Y.Array.each(this._events, function(e) {
-        e.detach();
-      });
     },
 
     /**
@@ -112,9 +103,9 @@ YUI.add('browser-charm-container', function(Y) {
      * @method initializer
      */
     initializer: function(cfg) {
-      this._events = [];
-      this._events.push(
-          this.after('initializedChange', this._afterInit, this));
+      this.addEvent(
+          this.after('initializedChange', this._afterInit, this)
+      );
     },
 
     /**
@@ -123,8 +114,13 @@ YUI.add('browser-charm-container', function(Y) {
      * @method renderUI
      */
     renderUI: function() {
-      var content = this.TEMPLATE(this.getAttrs()),
-          cb = this.get('contentBox');
+      var data = {
+        name: this.get('name'),
+        hasExtra: this.get('extra') > 0,
+        total: this.size()
+      };
+      var content = this.TEMPLATE(data);
+      var cb = this.get('contentBox');
       cb.setHTML(content);
       this._childrenContainer = cb.one('.charms');
       this._hideSomeChildren();
@@ -147,7 +143,6 @@ YUI.add('browser-charm-container', function(Y) {
         validator: function(val) {
           return (val >= 0);
         }
-
       },
 
       /**
@@ -167,21 +162,6 @@ YUI.add('browser-charm-container', function(Y) {
       extra: {},
 
       /**
-       * @attribute has_extra
-       */
-      has_extra: {
-        /**
-         * Check if there are extra charm tokens
-         *
-         * @method getter
-         *
-         */
-        getter: function() {
-          return this.get('extra') > 0;
-        }
-      },
-
-      /**
        * @attribute name
        * @default ''
        * @type {String}
@@ -197,8 +177,10 @@ YUI.add('browser-charm-container', function(Y) {
     'array',
     'base-build',
     'browser-charm-token',
+    'event-tracker',
     'handlebars',
     'juju-templates',
+    'juju-view-utils',
     'widget',
     'widget-parent'
   ]

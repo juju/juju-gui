@@ -13,6 +13,7 @@ YUI.add('browser-search-widget', function(Y) {
   var ns = Y.namespace('juju.widgets.browser'),
       templates = Y.namespace('juju.views').Templates;
 
+
   /**
    * Search widget present in the Charm browser across both fullscreen and
    * sidebar views.
@@ -21,9 +22,9 @@ YUI.add('browser-search-widget', function(Y) {
    * @extends {Y.Widget}
    *
    */
-  ns.Search = Y.Base.create('search-widget', Y.Widget, [], {
-    _events: [],
-
+  ns.Search = Y.Base.create('search-widget', Y.Widget, [
+    Y.Event.EventTracker
+  ], {
     EVT_CLEAR_SEARCH: 'clear_search',
     EVT_TOGGLE_VIEWABLE: 'toggle_viewable',
     EVT_TOGGLE_FULLSCREEN: 'toggle_fullscreen',
@@ -59,19 +60,6 @@ YUI.add('browser-search-widget', function(Y) {
     },
 
     /**
-     * detach listeners for dom events.
-     *
-     * @method _unbind_events
-     * @private
-     * @return {undefined} mutates only.
-     */
-    _unbindUI: function() {
-      Y.array.each(this._events, function(item) {
-        item.detach();
-      });
-    },
-
-    /**
      * bind the UI events to the DOM making up the widget control.
      *
      * @method bindUI
@@ -80,11 +68,11 @@ YUI.add('browser-search-widget', function(Y) {
     bindUI: function() {
       var container = this.get('boundingBox');
 
-      this._events.push(
+      this.addEvent(
           container.one('.bws-icon').on(
               'click', this._toggleViewable, this)
       );
-      this._events.push(
+      this.addEvent(
           container.one('.toggle-fullscreen').on(
               'click', this._toggleFullScreen, this)
       );
@@ -94,7 +82,7 @@ YUI.add('browser-search-widget', function(Y) {
       // it to update to a specific value. This is how things like clicking
       // categories can work.
       var input = container.one('input');
-      this._events.push(
+      this.addEvent(
           input.on('valueChange', function(ev) {
             this.fire(this.EVT_SEARCH_CHANGED);
           }, this)
@@ -111,17 +99,6 @@ YUI.add('browser-search-widget', function(Y) {
       var input = this.get('contentBox').one('input');
       input.focus();
       input.set('value', '');
-    },
-
-
-    /**
-     * Destroy the widget and unbind all DOM events.
-     *
-     * @method destructor
-     *
-     */
-    destructor: function() {
-      this._unbindUI();
     },
 
     /**
@@ -192,8 +169,10 @@ YUI.add('browser-search-widget', function(Y) {
   requires: [
     'base',
     'event',
+    'event-tracker',
     'event-valuechange',
     'juju-templates',
+    'juju-views',
     'widget'
   ]
 });

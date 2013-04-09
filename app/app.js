@@ -843,7 +843,7 @@ YUI.add('juju-gui', function(Y) {
     /**
      * Model interactions -> move to db layer
      *
-     * @method load_service
+     * @method loadService
      */
     loadService: function(evt) {
       if (evt.err) {
@@ -857,7 +857,7 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var svc_data = evt.result;
-      var svc = this.db.services.getById(svc_data.name);
+      var svc = this.db.services.getById(evt.service_name);
       if (!svc) {
         console.warn('Could not load service data for',
             evt.service_name, evt);
