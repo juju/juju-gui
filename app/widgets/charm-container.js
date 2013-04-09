@@ -13,6 +13,16 @@ YUI.add('browser-charm-container', function(Y) {
   var ns = Y.namespace('juju.widgets.browser');
 
   /**
+    * hasExtra helps conditional rendering of control elements for the charm
+    * token.
+    */
+  Y.Handlebars.registerHelper('hasExtra', function(block) {
+    if (this.extra > 0) {
+      return block.fn(this);
+    }
+  });
+
+  /**
    * A container for charm tokens, used to control how many are
    * displayed and provide categorization.
    *
@@ -24,8 +34,6 @@ YUI.add('browser-charm-container', function(Y) {
   ], {
 
     TEMPLATE: Y.namespace('juju.views').Templates['charm-container'],
-    SEE_MORE: 'See {extra} more',
-    SEE_LESS: 'See less',
 
     /**
      * Sets up some attributes that are needed before render, but can only be
@@ -72,14 +80,17 @@ YUI.add('browser-charm-container', function(Y) {
      */
     _toggleExpand: function(e) {
       var invisible = this.get('contentBox').one('.yui3-charmtoken-hidden'),
-          expander = e.currentTarget;
+          expander = e.currentTarget,
+          more = expander.one('.more'),
+          less = expander.one('.less');
       if (invisible) {
         this._showAll();
-        expander.set('text', this.SEE_LESS);
+        more.addClass('hidden');
+        less.removeClass('hidden');
       } else {
         this._hideSomeChildren();
-        var msg = Y.Lang.sub(this.SEE_MORE, {extra: this.get('extra')});
-        expander.set('text', msg);
+        less.addClass('hidden');
+        more.removeClass('hidden');
       }
     },
 
@@ -89,7 +100,7 @@ YUI.add('browser-charm-container', function(Y) {
      * @method bindUI
      */
     bindUI: function() {
-      if (this.get('has_extra')) {
+      if (this.get('extra') > 0) {
         var expander = this.get('contentBox').one('.expand');
         this._events.push(expander.on('click', this._toggleExpand, this));
       }
@@ -147,7 +158,6 @@ YUI.add('browser-charm-container', function(Y) {
         validator: function(val) {
           return (val >= 0);
         }
-
       },
 
       /**
@@ -167,21 +177,6 @@ YUI.add('browser-charm-container', function(Y) {
       extra: {},
 
       /**
-       * @attribute has_extra
-       */
-      has_extra: {
-        /**
-         * Check if there are extra charm tokens
-         *
-         * @method getter
-         *
-         */
-        getter: function() {
-          return this.get('extra') > 0;
-        }
-      },
-
-      /**
        * @attribute name
        * @default ''
        * @type {String}
@@ -199,6 +194,7 @@ YUI.add('browser-charm-container', function(Y) {
     'browser-charm-token',
     'handlebars',
     'juju-templates',
+    'juju-view-utils',
     'widget',
     'widget-parent'
   ]

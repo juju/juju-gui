@@ -1,8 +1,15 @@
 <div>
   <h3>{{ name }}</h3>  
-  {{#has_extra}}
-    <div class="expand">See {{ extra }} more</div>
-  {{/has_extra}}
+  {{#hasExtra}}
+  <div class="expand">
+    <span class="more">
+    See {{ this.extra }} more {{pluralize 'result' this.extra}}
+    </span>
+    <span class="less hidden">
+    See fewer results
+    </span>
+  </div>
+  {{/hasExtra}}
   <div class="charms">
   </div>
 </div>

@@ -122,6 +122,7 @@ YUI.add('browser-charm-token', function(Y) {
     'base',
     'handlebars',
     'juju-templates',
+    'juju-view-utils',
     'widget',
     'widget-child'
   ]
