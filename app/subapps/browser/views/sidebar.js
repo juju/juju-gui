@@ -136,6 +136,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           // Start with a reset to empty any current cached models.
           this._cacheCharms.reset(newCharms);
           this._cacheCharms.add(sliderCharms);
+          this.charmContainers = [newCharmContainer, sliderCharmContainer];
         },
 
         'failure': function(data, request) {
@@ -165,6 +166,11 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     destructor: function() {
       if (this.slider) {
         this.slider.destroy();
+      }
+      if (this.charmContainers) {
+        Y.Array.each(this.charmContainers, function(container) {
+          container.destroy();
+        });
       }
     },
 
