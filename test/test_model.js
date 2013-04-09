@@ -564,3 +564,37 @@ describe('juju charm load', function() {
         });
   });
 });
+
+
+describe('BrowserCharm test', function() {
+  var data, models, Y;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use([
+      'io',
+      'juju-charm-models'
+    ], function(Y) {
+      models = Y.namespace('juju.models');
+      done();
+    });
+  });
+
+  before(function() {
+    sampleData = Y.io('data/browsercharm.json', {sync: true});
+  });
+
+  beforeEach(function() {
+    data = [];
+  });
+
+  afterEach(function() {
+    container.destroy();
+  });
+
+  it('maps revisions nicely for us with converted dates', function() {
+    assert(false);
+
+  });
+
+
+});

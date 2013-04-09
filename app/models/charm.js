@@ -313,6 +313,36 @@ YUI.add('juju-charm-models', function(Y) {
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
     /**
+     * Load the recent commits into a format we can use nicely.
+     *
+     * @method _loadRecentCommits
+     *
+     */
+    _loadRecentCommits: function() {
+      var source = this.get(code_source),
+          commits = [];
+
+      if (source.revisions) {
+        Y.Array.each(source.revisions, function(commit) {
+          commits.push({
+            author: {
+              name: commit.authors[0].name,
+              email: commit.authors[0].email
+            },
+            date: new Date(commit.date),
+            message: commit.message,
+            revno: commit.revno
+          });
+        });
+
+        return commits;
+
+      } else {
+        return undefined;
+      }
+    },
+
+    /**
      * Parse the relations ATTR from the api into specific provides/requires
      * information.
      *
@@ -361,6 +391,15 @@ YUI.add('juju-charm-models', function(Y) {
         value: {}
       },
       charm_store_path: {},
+      /**
+       * Object of data about the source for this charm including bugs link,
+       * log, revisions, etc.
+       *
+       * @attribute code_source
+       * @default undefined
+       * @type {Object}
+       *
+       */
       code_source: {},
       date_created: {},
       description: {},
@@ -371,7 +410,7 @@ YUI.add('juju-charm-models', function(Y) {
         /**
          * Generate the full name of the charm from its attributes.
          *
-         * @method getter
+         * @method full_name.getter
          *
          */
         getter: function() {
@@ -446,8 +485,28 @@ YUI.add('juju-charm-models', function(Y) {
       },
       rating_numerator: {},
       rating_denominator: {},
+      /**
+       * Quoted for lazy loading purposes.
+       *
+       * @attribute recent_commits
+       * @default undefined
+       * @type {Array} list of objects for each commit.
+       *
+       */
+      'recent_commits': {
+        valueFn: function () {
+            return this._loadRecentCommits();
+        }
+      },
+      /**
+       * Mapped from the downloads_in_past_30_days in the API.
+       *
+       * @attribute recent_downloads
+       * @default undefined
+       * @type {Int}
+       *
+       */
       recent_downloads: {},
-      recent_commits: {},
       relations: {},
 
       /**
