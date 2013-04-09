@@ -35,35 +35,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     },
 
     /**
-     * Given a set of Charms generate a CharmSlider widget with that data.
-     *
-     * @method _generateSliderWidget
-     * @param {Object} sliderCharms BrowserCharmList of Charms from the API.
-     *
-     */
-    _generateSliderWidget: function(sliderCharms) {
-      var sliderWidgets = [];
-
-      sliderCharms.each(function(charm) {
-        sliderWidgets.push(
-            new Y.juju.widgets.browser.CharmToken(charm.getAttrs()));
-      });
-
-      if (sliderWidgets.length) {
-        var slider = new Y.juju.widgets.browser.CharmSlider({
-          items: Y.Array.map(sliderWidgets, function(widget) {
-            var node = Y.Node.create('<div>');
-            widget.render(node);
-            return node.getHTML();
-          })
-        });
-        return slider;
-      } else {
-        return false;
-      }
-    },
-
-    /**
      * Event handler for selecting a charm from a list on the page. Forces a
      * render of the charm details view for the user.
      *
@@ -109,6 +80,8 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       // display.
       this.get('store').sidebarEditorial({
         'success': function(data) {
+          // XXX: j.c.sackett Apr 9, 2013: Remove all references to "slider"
+          // once Charmworld API is updated
           var sliderCharms = this.get('store').resultsToCharmlist(
               data.result.slider);
           var sliderContainer = container.one('.bws-left .slider');
@@ -164,9 +137,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     destructor: function() {
-      if (this.slider) {
-        this.slider.destroy();
-      }
       if (this.charmContainers) {
         Y.Array.each(this.charmContainers, function(container) {
           container.destroy();
@@ -197,7 +167,6 @@ YUI.add('subapp-browser-sidebar', function(Y) {
 }, '0.1.0', {
   requires: [
     'browser-charm-container',
-    'browser-charm-slider',
     'browser-charm-token',
     'browser-search-widget',
     'juju-charm-store',
