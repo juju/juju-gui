@@ -251,7 +251,7 @@
     describe('FakeBackend.resolved', function(done) {
 
       it('rejects unauthenticated calls', function() {
-        fakebackend.logout()
+        fakebackend.logout();
         var result = fakebackend.resolved('wordpress/0');
         assert.equal(result.error, 'Please log in.');
       });
@@ -268,7 +268,7 @@
           done();
         });
       });
-   });
+    });
 
     describe('FakeBackend.getCharm', function() {
       it('rejects unauthenticated calls', function(done) {

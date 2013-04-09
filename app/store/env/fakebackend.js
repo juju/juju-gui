@@ -777,11 +777,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
      * this validates arguments but doesn't take any real action.
      *
      * @method resolved
-     * @param {String} unitName
-     * @param {String} (optional) relationName
+     * @param {String} unitName tp resp;ve.
+     * @param {String} (optional) relationName to resolve for unit.
      * @return {Object} with result or error.
      */
-     resolved: function(unitName, relationName) {
+    resolved: function(unitName, relationName) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATEDERROR;
       }
@@ -793,12 +793,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (relationName) {
         var service = this.db.services.getById(unit.service);
         var relation = this.db.relations.get_relations_for_service(
-          service).filter(function(rel) {
+            service).filter(function(rel) {
           return (rel.endpoints[0].name === relationName ||
                   rel.endpoints[1].name === relationName);
         });
         if (relation.length === 0) {
-          return {error: 'Relation ' + relationName + ' not found for ' + unitName};
+          return {error: 'Relation ' + relationName +
+                ' not found for ' + unitName};
         }
       }
 
@@ -807,7 +808,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // resolved actually does. We could additionally push the unit into
       // the change set but no change currently takes place.
       return {result: true};
-     }
+    }
 
 
   });
