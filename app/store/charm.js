@@ -332,7 +332,6 @@ YUI.add('juju-charm-store', function(Y) {
   requires: [
     'datasource-io',
     'json-parse',
-    'juju-charm-id',
     'juju-charm-models',
     'querystring-stringify'
   ]
