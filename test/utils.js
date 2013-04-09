@@ -64,27 +64,29 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
 
       // In order to return multiple charms from the fake store we need to
       // monkeypatch this method.
-      Y.juju.CharmStore.prototype.loadByPath = function(path, options) {
-        console.log(path);
-        this.get('datasource').sendRequest({
-          request: path,
-          callback: {
-            success: function(io_request) {
-              var charmName = path.split('/')[2];
-              Y.Array.some(io_request.response.results, function(result) {
-                var data = Y.JSON.parse(result.responseText);
-                if (data.name === charmName) {
-                  options.success(data);
-                  return true;
+      var TestCharmStore = Y.Base.create('test-charm-store',
+          Y.juju.CharmStore, [], {
+            loadByPath: function(path, options) {
+              this.get('datasource').sendRequest({
+                request: path,
+                callback: {
+                  success: function(io_request) {
+                    var charmName = path.split('/')[2];
+                    Y.Array.some(io_request.response.results, function(result) {
+                      var data = Y.JSON.parse(result.responseText);
+                      if (data.name === charmName) {
+                        options.success(data);
+                        return true;
+                      }
+                    });
+                  },
+                  failure: options.failure
                 }
               });
-            },
-            failure: options.failure
-          }
-        });
-      };
+            }
+          });
 
-      var charmStore = new Y.juju.CharmStore(
+      var charmStore = new TestCharmStore(
           {datasource: new Y.DataSource.Local({source: data})});
       var setCharms = function(names) {
         Y.Array.each(names, function(name) {

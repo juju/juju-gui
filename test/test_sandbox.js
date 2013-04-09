@@ -963,7 +963,7 @@
       function addRelation() {
         function localCb(rec) {
           var mock = {
-            endpoint_a: 'wordpress:db',
+            endpoint_a: 'kumquat:db',
             endpoint_b: 'mysql:db',
             op: 'add_relation',
             request_id: rec.request_id,
@@ -973,7 +973,7 @@
               scope: 'global',
               request_id: rec.request_id,
               endpoints: [{
-                wordpress: {
+                kumquat: {
                   name: 'db'
                 }
               }, {
@@ -989,7 +989,7 @@
           done();
         }
         var endpointA = [
-          'wordpress',
+          'kumquat',
           { name: 'db',
             role: 'client' }
         ];
@@ -1070,32 +1070,6 @@
         client.onmessage = function(rec) {
           var data = Y.JSON.parse(rec.data);
           assert(data.err, 'Two endpoints required to set up relation.');
-          done();
-        };
-        client.send(Y.JSON.stringify(data));
-      }
-      generateServices(localCb);
-    });
-
-    it('throws an error if both endpoints are the same', function(done) {
-      function localCb() {
-        var data = {
-          op: 'add_relation',
-          endpoint_a: [
-            'wordpress',
-            { name: 'db',
-              role: 'client' }
-          ],
-          endpoint_b: [
-            'wordpress',
-            { name: 'db',
-              role: 'server' }
-          ]
-        };
-        state.nextChanges();
-        client.onmessage = function(rec) {
-          var data = Y.JSON.parse(rec.data);
-          assert(data.err, 'Endpoints must be different.');
           done();
         };
         client.send(Y.JSON.stringify(data));

@@ -421,6 +421,49 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
+      Takes a string endpoint and splits it into usable parts.
+      @method endpointSplit
+      @param {String} endpoint the endpoint to split in the format
+        wordpress:db.
+    */
+    endpointSplit: function(endpoint) {
+      var epData = endpoint.split(':');
+      return { name: epData[0], type: epData[1] };
+    },
+
+    /**
+      Loops through the charm endpoint data to determine the interface
+      and scope of the relationship.
+
+      @method getInterfaceAndScope
+      @param {Array} charmEndpoints Array of charm object 'requires' endpoint
+        types ie) { db: { interface: 'mysql' }} .
+      @param {Array} charmDatas Array of charm data objects from splitting
+        endpoint string above.
+    */
+    getCharmInterfaceAndScope: function(charmEndpoints, charmDatas) {
+      var sharedInterface, sharedScope;
+      Y.Array.some(charmEndpoints, function(charmEndpoint, index) {
+        var charmInterface = charmEndpoint['interface'];
+        // If the interfaces match or if it is a juju-info relationship
+        if ((charmInterface === charmDatas[index].name) ||
+            (charmInterface === 'juju-info')) {
+          sharedInterface = charmDatas[index].name;
+          if (charmEndpoint.scope !== undefined) {
+            sharedScope = charmEndpoint.scope;
+          }
+        }
+        if (sharedInterface) { return true; }
+      });
+      if (sharedInterface) {
+        return {
+          sharedInterface: sharedInterface,
+          sharedScope: sharedScope
+        };
+      }
+    },
+
+    /**
       Removes the supplied units
 
       @method removeUnits
@@ -520,42 +563,48 @@ YUI.add('juju-env-fakebackend', function(Y) {
         and endpoint connection type ie) wordpress:db.
     */
     addRelation: function(endpointA, endpointB) {
-      if (endpointB === undefined) {
-        return {error: 'Two endpoints required to set up relation.'};
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      if ((typeof endpointA !== 'string') ||
+          (typeof endpointB !== 'string')) {
+        return {error: 'Two string endpoint names' +
+              ' required to establish a relation'};
       }
 
-      /**
-        Takes a string endpoint and splits it into usable parts.
-        @method endpointSplit
-        @param {String} endpoint the endpoint to split in the format
-          wordpress:db.
-      */
-      function endpointSplit(endpoint) {
-        var epData = endpoint.split(':');
-        return { name: epData[0], type: epData[1] };
-      }
-
-      var epAData = endpointSplit(endpointA),
-          epBData = endpointSplit(endpointB),
-          charmA, charmB, charmName, counter = 0;
+      var epAData = this.endpointSplit(endpointA),
+          epBData = this.endpointSplit(endpointB),
+          charmA, charmB, charmId, counter = 0;
 
       if (epAData.type !== epBData.type) {
         return {error: 'Endpoints need to match.'};
       }
 
-      if (epAData.name === epBData.name) {
-        return {error: 'Endpoints must be different.'};
-      }
+      var charmAId, charmBId;
 
-      // Loop through the charms that are loaded to make sure that both
-      // endpoints have their charms already deployed into the environment.
-      var charmsFound = this.db.charms.some(function(charm) {
-        charmName = charm.get('name');
-        if (charmName === epAData.name) { charmA = charm; counter += 1; }
-        if (charmName === epBData.name) { charmB = charm; counter += 1; }
+      // Because the service name and charm name might not match we first need
+      // to find the charm that relates to the service name and use that charmid
+      this.db.services.some(function(service) {
+        if (service.get('name') === epAData.name) {
+          charmAId = service.get('charm');
+          counter += 1;
+        }
+        if (service.get('name') === epBData.name) {
+          charmBId = service.get('charm');
+          counter += 1;
+        }
         if (counter === 2) { return true; }
       });
 
+      counter = 0;
+      var charmsFound = this.db.charms.some(function(charm) {
+        charmId = charm.get('id');
+        if (charmId === charmAId) { charmA = charm; counter += 1; }
+        if (charmId === charmBId) { charmB = charm; counter += 1; }
+        if (counter === 2) { return true; }
+      });
+
+      // This error should never be hit but it's here JIC
       if (!charmsFound) { return {error: 'Charm not loaded.'}; }
 
       /**
@@ -563,6 +612,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
         @method addJujuInfo
         @param {Object} charm a charm model instance.
       */
+      // TODO - do this during the interface and scope check don't attach it
+      // to the charms.
       function addJujuInfo(charm) {
         var req = charm.get('requires');
         if (req['juju-info'] === undefined) {
@@ -575,48 +626,22 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var charmAEp = charmA.get('requires')[epAData.type],
           charmBEp = charmB.get('requires')[epBData.type];
 
-      /**
-        Loops through the charm endpoint data to determine the interface
-        and scope of the relationship.
-        @method getInterfaceAndScope
-        @param {Array} charmEndpoints Array of charm object 'requires' endpoint
-          types ie) { db: { interface: 'mysql' }} .
-        @param {Array} charmDatas Array of charm data objects from splitting
-          endpoint string above.
-      */
-      function getInterfaceAndScope(charmEndpoints, charmDatas) {
-        var ci, cs;
-        Y.Array.some(charmEndpoints, function(charmEndpoint, index) {
-          var charmInterface = charmEndpoint['interface'];
-          // If the interfaces match or if it is a juju-info relationship
-          if ((charmInterface === charmDatas[index].name) ||
-              (charmInterface === 'juju-info')) {
-            ci = charmDatas[index].name;
-            if (charmEndpoint.scope !== undefined) {
-              cs = charmEndpoint.scope;
-            }
-          }
-          if (ci) { return true; }
-        });
-        if (ci) { return {ci: ci, cs: cs}; }
-      }
-
       // If there are matching interfaces this will contain an object of the
       // charm interface type and scope (if supplied).
-      var cics = getInterfaceAndScope(
-                                      [charmAEp, charmBEp], [epBData, epAData]);
+      var cics = this.getCharmInterfaceAndScope(
+          [charmAEp, charmBEp], [epBData, epAData]);
 
       if (!cics) { return {error: 'No matching interfaces.'}; }
 
       // Assign a unique realtion id which is incremented after every
-      // successfull relation.
+      // successful relation.
       var relationId = 'relation-' + this._relationCount;
       var relation = this.db.relations.create({
         relation_id: relationId,
-        type: cics.ci,
+        type: cics.sharedInterface,
         endpoints: [endpointA, endpointB],
         pending: false,
-        scope: cics.cs || 'global',
+        scope: cics.sharedScope || 'global',
         display_name: epAData.type
       });
 
@@ -629,9 +654,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
         // to rebuild the expected object for both situations.
         return {
           relationId: relationId,
-          type: cics.ci,
+          type: cics.sharedInterface,
           endpoints: [endpointA, endpointB],
-          scope: cics.cs || 'global',
+          scope: cics.sharedScope || 'global',
           displayName: epAData.type,
           relation: relation
         };

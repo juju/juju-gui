@@ -299,6 +299,59 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+      Takes a string endpoint and splits it into usable parts.
+      @method endpointToName
+      @param {String} endpoint the endpoint to split in the format
+        wordpress:db.
+    */
+    endpointToName: function(endpoint) {
+      // In order to handle the integration use case
+      // as well as being used directly.
+      // Or if no endpoint is supplied
+      if ((typeof endpoint === 'string') ||
+          (endpoint === undefined)) {
+        return endpoint;
+      }
+
+      return endpoint[0] + ':' + endpoint[1].name;
+    },
+
+    /**
+      Returned endpoints have a different syntax and the relation method is
+      called with differing data formats but we have to return a common format.
+
+      @method normalizeEndpointFormat
+      @param {String | Object} endpointA string or object representation of the
+        endpoint data.
+      @param {String | Object} endpointB string or object representation of the
+        endpoint data.
+      @param {Object} relation instance between the two endpoints.
+    */
+    normalizeEndpointFormat: function(endpointA, endpointB, relation) {
+      var eptA = {}, eptB = {};
+      if (typeof endpointA === 'string') {
+        eptA[endpointA.split(':')[0]] = {
+          name: relation.displayName
+          // cannot return `role` if we aren't provided with it without extra
+          // calculations on the back end. It is also not used anywhere so it
+          // shouldn't be an issue.
+        };
+        eptB[endpointB.split(':')[0]] = {
+          name: relation.displayName
+        };
+      } else {
+        // In order to get a valid error message and formatted data back to the
+        // client if one of these are undefined we need to check first
+        if (endpointA !== undefined) {
+          eptA[endpointA[0]] = endpointA[1];
+        }
+        if (endpointB !== undefined) {
+          eptB[endpointB[0]] = endpointB[1];
+        }
+      }
+      return [eptA, eptB];
+    },
+    /**
     Handles login operations from the client.  Called by "receive".
     client.receive will receive all sent values back, transparently,
     plus a "result" value that will be true or false, representing whether
@@ -425,81 +478,41 @@ YUI.add('juju-env-sandbox', function(Y) {
         ['wordpress', { name: 'db', role: 'client'}].
     */
     performOp_add_relation: function(data) {
-      /**
-        Takes a string endpoint and splits it into usable parts.
-        @method endpointToName
-        @param {String} endpoint the endpoint to split in the format
-          wordpress:db.
-      */
-      function endpointToName(endpoint) {
-        // In order to handle the integration use case
-        // as well as being used directly.
-        // Or if no endpoint is supplied
-        if ((typeof endpoint === 'string') ||
-            (endpoint === undefined)) { return endpoint; }
-
-        return endpoint[0] + ':' + endpoint[1].name;
-      }
-
-      var res = this.get('state').addRelation(
-          endpointToName(data.endpoint_a),
-          endpointToName(data.endpoint_b));
-      var endpointA, endpointB;
-      var eptA = {}, eptB = {};
+      var relation = this.get('state').addRelation(
+          this.endpointToName(data.endpoint_a),
+          this.endpointToName(data.endpoint_b));
 
       // Returned endpoints have a different syntax.
-      // The add relation method is called with
-      // differing data formats but we have to
-      // return an identical format.
-      if (typeof data.endpoint_a === 'string') {
-        eptA[data.endpoint_a.split(':')[0]] = {
-          name: res.displayName
-          // cannot return `role` if we aren't provided with it without extra
-          // calculations on the back end. It is also not used anywhere so it
-          // shouldn't be an issue.
-        };
-        eptB[data.endpoint_b.split(':')[0]] = {
-          name: res.displayName
-        };
-      } else {
-        // In order to get a valid error message and formatted data back to the
-        // client if one of these are undefined we need to check first
-        if (data.endpoint_a !== undefined) {
-          eptA[data.endpoint_a[0]] = data.endpoint_a[1];
-        }
-        if (data.endpoint_b !== undefined) {
-          eptB[data.endpoint_b[0]] = data.endpoint_b[1];
-        }
-      }
+      var endpoints = this.normalizeEndpointFormat(
+          data.endpoint_a, data.endpoint_b, relation);
 
-      if (res === false) {
+      if (relation === false) {
         // If everything checks out but could not create a new relation model
         data.err = 'Unable to create relation';
         this.get('client').receiveNow(data);
         return;
       }
 
-      if (res.error) {
-        data.err = res.error;
-        this.get('client').receiveNow(data);
+      if (relation.error) {
+        data.err = relation.error;
+        this.get('client').receive(data);
         return;
       }
 
-      data.endpoint_a = endpointToName(data.endpoint_a);
-      data.endpoint_b = endpointToName(data.endpoint_b);
+      data.endpoint_a = this.endpointToName(data.endpoint_a);
+      data.endpoint_b = this.endpointToName(data.endpoint_b);
 
       data.result = {
-        endpoints: [eptA, eptB],
-        id: res.relationId,
+        endpoints: endpoints,
+        id: relation.relationId,
         // interface is a reserved word
-        'interface': res.type,
-        scope: res.scope,
+        'interface': relation.type,
+        scope: relation.scope,
         request_id: data.request_id
       };
 
-      this.get('client').receiveNow(data);
+      this.get('client').receive(data);
     }
-
   });
 
   sandboxModule.PyJujuAPI = PyJujuAPI;
