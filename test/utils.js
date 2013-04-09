@@ -65,6 +65,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       // In order to return multiple charms from the fake store we need to
       // monkeypatch this method.
       Y.juju.CharmStore.prototype.loadByPath = function(path, options) {
+        console.log(path);
         this.get('datasource').sendRequest({
           request: path,
           callback: {
@@ -90,7 +91,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
           data.push(Y.io('data/' + name + '-charmdata.json', {sync: true}));
         });
       };
-      setCharms(['wordpress', 'mysql', 'puppet']);
+      setCharms(['wordpress', 'mysql', 'puppet', 'haproxy']);
       return {charmStore: charmStore, setCharm: setCharms};
     },
 

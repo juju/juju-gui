@@ -196,7 +196,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
             callbacks.failure({error: 'Invalid charm id.'}));
       }
       var charm = this.db.charms.getById(charmId);
-console.log(charmId);
       if (charm) {
         callbacks.success(charm);
       } else {
