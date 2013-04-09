@@ -276,10 +276,13 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     _deltaWhitelist: {
       service: ['charm', 'config', 'constraints', 'exposed', 'id', 'name',
-                'subordinate'],
-      machine: ['agent_state', 'public_address', 'machine_id', 'id'],
-      unit: ['agent_state', 'machine', 'number', 'service', 'id'],
-      relation: ['relation_id', 'type', 'endpoints', 'scope', 'id']
+                'subordinate', 'annotations'],
+      machine: ['agent_state', 'public_address', 'machine_id', 'id',
+                'annotations'],
+      unit: ['agent_state', 'machine', 'number', 'service', 'id',
+             'annotations'],
+      relation: ['relation_id', 'type', 'endpoints', 'scope', 'id'],
+      annotation: ['annotations']
     },
 
     /**
@@ -289,8 +292,18 @@ YUI.add('juju-env-sandbox', function(Y) {
     @return {undefined} Nothing.
     **/
     sendDelta: function() {
-      var changes = this.get('state').nextChanges();
-      // TODO: Add annotations when we have them.
+      var state = this.get('state');
+      var changes = state.nextChanges();
+      var annotations = state.nextAnnotations();
+      if (changes || annotations) {
+        if (!changes) {
+          changes = annotations;
+        } else {
+          changes = Y.mix(changes, annotations,
+                          true, 0, null, true);
+        }
+      }
+
       if (changes && !changes.error) {
         var deltas = [];
         var response = {op: 'delta', result: deltas};
@@ -404,13 +417,6 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
-    Handles update_annotations operations from client.  Called by receive.
-    PLACEHOLDER.  This exists to demo existing functionality.
-    **/
-    performOp_update_annotations: function(data) {
-    },
-
-    /**
       Handles add unit operations from the client.
 
       @method performOp_add_unit
@@ -470,6 +476,25 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     performOp_set_config: function(data) {
       ASYNC_OP(this, 'setConfig', ['service_name', 'config'])(data);
+    },
+
+    /**
+     * Update annotations rpc
+     *
+     * @method performOp_update_annotations
+     * @param {Object} data with entity name and payload.
+     */
+    performOp_update_annotations: function(data) {
+      OP(this, 'updateAnnotations', ['entity', 'data'], data);
+    },
+
+    /**
+     * Perform 'resolved' operation.
+     * @method performOp_resolved
+     * @param {Object} data with unitName and optional relation name.
+     */
+    performOp_resolved: function(data) {
+      OP(this, 'resolved', ['unit_name', 'relation_name'], data);
     },
 
     /**

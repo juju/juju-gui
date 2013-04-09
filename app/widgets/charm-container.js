@@ -70,15 +70,17 @@ YUI.add('browser-charm-container', function(Y) {
      */
     _toggleExpand: function(e) {
       var invisible = this.get('contentBox').one('.yui3-charmtoken-hidden'),
-          expander = e.currentTarget;
+          expander = e.currentTarget,
+          more = expander.one('.more'),
+          less = expander.one('.less');
       if (invisible) {
         this._showAll();
-        expander.one('.more').addClass('hidden');
-        expander.one('.less').removeClass('hidden');
+        more.addClass('hidden');
+        less.removeClass('hidden');
       } else {
         this._hideSomeChildren();
-        expander.one('.less').addClass('hidden');
-        expander.one('.more').removeClass('hidden');
+        less.addClass('hidden');
+        more.removeClass('hidden');
       }
     },
 
@@ -126,9 +128,9 @@ YUI.add('browser-charm-container', function(Y) {
         name: this.get('name'),
         hasExtra: this.get('extra') > 0,
         total: this.size()
-      },
-          content = this.TEMPLATE(data),
-          cb = this.get('contentBox');
+      };
+      var content = this.TEMPLATE(data);
+      var cb = this.get('contentBox');
       cb.setHTML(content);
       this._childrenContainer = cb.one('.charms');
       this._hideSomeChildren();
