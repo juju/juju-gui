@@ -5,7 +5,7 @@ Sandbox APIs mimicking communications with the Go and Juju backends.
 
 @module env
 @submodule env.sandbox
-**/
+*/
 
 YUI.add('juju-env-sandbox', function(Y) {
 
@@ -63,6 +63,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     return [eptA, eptB];
   }
 
+  var environments = Y.namespace('juju.environments');
   var sandboxModule = Y.namespace('juju.environments.sandbox');
   var CLOSEDERROR = 'INVALID_STATE_ERR : Connection is closed.';
 
@@ -70,7 +71,7 @@ YUI.add('juju-env-sandbox', function(Y) {
   A client connection for interacting with a sandbox environment.
 
   @class ClientConnection
-  **/
+  */
   function ClientConnection(config) {
     ClientConnection.superclass.constructor.apply(this, arguments);
   }
@@ -87,7 +88,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method initializer
     @return {undefined} Nothing.
-    **/
+    */
     initializer: function() {
       this.connected = false;
     },
@@ -100,7 +101,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} event An object with a JSON string on the "data"
       attribute.
     @return {undefined} Nothing.
-    **/
+    */
     onmessage: function(event) {},
 
     /**
@@ -113,7 +114,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       connection is closed.  This exists to handle a race condition between
       receiveNow and receive, when the connection closes between the two.
     @return {undefined} Nothing.
-    **/
+    */
     receiveNow: function(data, failSilently) {
       if (this.connected) {
         this.onmessage({data: Y.JSON.stringify(data)});
@@ -129,12 +130,10 @@ YUI.add('juju-env-sandbox', function(Y) {
     @method receive
     @param {Object} data An object to be sent as JSON to the listener.
     @return {undefined} Nothing.
-    **/
+    */
     receive: function(data) {
       if (this.connected) {
-        // 4 milliseconds is the smallest effective time available to wait.  See
-        // http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#timers
-        setTimeout(this.receiveNow.bind(this, data, true), 4);
+        Y.soon(this.receiveNow.bind(this, data, true));
       } else {
         throw CLOSEDERROR;
       }
@@ -146,7 +145,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @method send
     @param {String} data A JSON string of the data to be sent.
     @return {undefined} Nothing.
-    **/
+    */
     send: function(data) {
       if (this.connected) {
         this.get('juju').receive(Y.JSON.parse(data));
@@ -161,7 +160,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method onopen
     @return {undefined} Nothing.
-    **/
+    */
     onopen: function() {},
 
     /**
@@ -173,7 +172,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method open
     @return {undefined} Nothing.
-    **/
+    */
     open: function() {
       if (!this.connected) {
         this.connected = true;
@@ -188,7 +187,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method onclose
     @return {undefined} Nothing.
-    **/
+    */
     onclose: function() {},
 
     /**
@@ -198,7 +197,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method close
     @return {undefined} Nothing.
-    **/
+    */
     close: function() {
       if (this.connected) {
         this.connected = false;
@@ -211,11 +210,75 @@ YUI.add('juju-env-sandbox', function(Y) {
 
   sandboxModule.ClientConnection = ClientConnection;
 
+  /** Helper function method for generating operation methods
+     * with a callback. Returns a method with a callback wired
+     * in to continue the operation when done. The returned
+     * method should be passed the data mapping to invoke.
+     *
+     * @method ASYNC_OP
+     * @param {Object} context PyJujuAPI Instance.
+     * @param {String} rpcName Name of method on fakebackend.
+     * @param {Array} args String list of arguments to extract
+     *                     from passed data. Used in order
+     *                     listed as arguments to the RPC call.
+     * @return {undefined} sends to client implicitly.
+    */
+  var ASYNC_OP = function(context, rpcName, args) {
+    return Y.bind(function(data) {
+      var state = this.get('state');
+      var client = this.get('client');
+      var vargs = Y.Array.map(args, function(i) {
+        return data[i];
+      });
+      var callback = function(reply) {
+        if (reply.error) {
+          data.error = reply.error;
+          data.err = reply.error;
+        } else {
+          data.result = reply.result;
+        }
+        client.receiveNow(data);
+      };
+      // Add our generated callback to arguments.
+      vargs.push(callback);
+      state[rpcName].apply(state, vargs);
+    }, context);
+  };
+
+  /** Helper method for normalizing error handling
+   * around sync operations with the fakebackend.
+   * Returned method can directly return to the caller.
+   *
+   * @method OP
+   * @param {Object} context PyJujuAPI instance.
+   * @param {String} rpcName name of method on fakebackend to invoke.
+   * @param {Array} args String Array of arguemnts to pass from
+   *                data to fakebackend.
+   * @param {Object} data Operational data to be munged into a fakebackend call.
+   * @return {Object} result depends on underlying rpc method.
+   */
+  var OP = function(context, rpcName, args, data) {
+    var state = context.get('state');
+    var client = context.get('client');
+    var vargs = Y.Array.map(args, function(i) {
+      return data[i];
+    });
+    var reply = state[rpcName].apply(state, vargs);
+    if (reply.error) {
+      data.error = reply.error;
+      data.err = reply.error;
+    } else {
+      data.result = reply.result;
+    }
+    client.receiveNow(data);
+  };
+
+
   /**
   A sandbox Juju environment using the Python API.
 
   @class PyJujuAPI
-  **/
+  */
   function PyJujuAPI(config) {
     PyJujuAPI.superclass.constructor.apply(this, arguments);
   }
@@ -234,10 +297,11 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method initializer
     @return {undefined} Nothing.
-    **/
+    */
     initializer: function() {
       this.connected = false;
     },
+
 
     /**
     Opens the connection to the sandbox Juju environment.
@@ -246,7 +310,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @method open
     @param {Object} client A ClientConnection.
     @return {undefined} Nothing.
-    **/
+    */
     open: function(client) {
       if (!this.connected) {
         this.connected = true;
@@ -266,11 +330,13 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     _deltaWhitelist: {
       service: ['charm', 'config', 'constraints', 'exposed', 'id', 'name',
-                'subordinate'],
-      machine: ['agent_state', 'instance_state', 'public_address',
-                'machine_id'],
-      unit: ['agent_state', 'machine', 'number', 'service', 'id'],
-      relation: ['relation_id', 'type', 'endpoints', 'scope']
+                'subordinate', 'annotations'],
+      machine: ['agent_state', 'public_address', 'machine_id', 'id',
+                'annotations'],
+      unit: ['agent_state', 'machine', 'number', 'service', 'id',
+             'annotations'],
+      relation: ['relation_id', 'type', 'endpoints', 'scope', 'id'],
+      annotation: ['annotations']
     },
 
     /**
@@ -278,10 +344,20 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method sendDelta
     @return {undefined} Nothing.
-    **/
+    */
     sendDelta: function() {
-      var changes = this.get('state').nextChanges();
-      // TODO: Add annotations when we have them.
+      var state = this.get('state');
+      var changes = state.nextChanges();
+      var annotations = state.nextAnnotations();
+      if (changes || annotations) {
+        if (!changes) {
+          changes = annotations;
+        } else {
+          changes = Y.mix(changes, annotations,
+                          true, 0, null, true);
+        }
+      }
+
       if (changes && !changes.error) {
         var deltas = [];
         var response = {op: 'delta', result: deltas};
@@ -315,7 +391,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method close
     @return {undefined} Nothing.
-    **/
+    */
     close: function() {
       if (this.connected) {
         this.connected = false;
@@ -330,7 +406,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method destructor
     @return {undefined} Nothing.
-    **/
+    */
     destructor: function() {
       this.close(); // Make sure the setInterval is cleared!
     },
@@ -341,7 +417,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @method receive
     @param {Object} data A hash of data sent from the client.
     @return {undefined} Nothing.
-    **/
+    */
     receive: function(data) {
       // Make a shallow copy of the received data because handlers will mutate
       // it to add an "err" or "result".
@@ -361,7 +437,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @method performOp_login
     @param {Object} data A hash minimally of user and password.
     @return {undefined} Nothing.
-    **/
+    */
     performOp_login: function(data) {
       data.result = this.get('state').login(data.user, data.password);
       this.get('client').receive(data);
@@ -377,7 +453,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data A hash minimally of charm_url, and optionally also
       service_name, config, config_raw, and num_units.
     @return {undefined} Nothing.
-    **/
+    */
     performOp_deploy: function(data) {
       var client = this.get('client');
       var callback = function(result) {
@@ -392,13 +468,6 @@ YUI.add('juju-env-sandbox', function(Y) {
         configYAML: data.config_raw,
         unitCount: data.num_units
       });
-    },
-
-    /**
-    Handles update_annotations operations from client.  Called by receive.
-    PLACEHOLDER.  This exists to demo existing functionality.
-    **/
-    performOp_update_annotations: function(data) {
     },
 
     /**
@@ -422,6 +491,67 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+      get_service from the client.
+
+      @method performOp_get_service
+      @param {Object} data contains service_name.
+    */
+    performOp_get_service: function(data) {
+      OP(this, 'getService', ['service_name'], data);
+    },
+
+    /**
+      get_charm from the client.
+
+      @method performOp_get_charm
+      @param {Object} data contains service_name.
+    */
+    performOp_get_charm: function(data) {
+      ASYNC_OP(this, 'getCharm', ['charm_url'])(data);
+    },
+
+    /**
+      set_constraints from the client.
+
+      @method performOp_set_constraints
+      @param {Object} data contains service_name and constraints as either a
+                      key/value map or an array of "key=value" strings..
+    */
+    performOp_set_constraints: function(data) {
+      OP(this, 'setConstraints', ['service_name', 'constraints'], data);
+    },
+
+    /**
+      set_config from the client.
+
+      @method performOp_set_config
+      @param {Object} data contains service_name and a config mapping
+                      of key/value pairs.
+    */
+    performOp_set_config: function(data) {
+      ASYNC_OP(this, 'setConfig', ['service_name', 'config'])(data);
+    },
+
+    /**
+     * Update annotations rpc
+     *
+     * @method performOp_update_annotations
+     * @param {Object} data with entity name and payload.
+     */
+    performOp_update_annotations: function(data) {
+      OP(this, 'updateAnnotations', ['entity', 'data'], data);
+    },
+
+    /**
+     * Perform 'resolved' operation.
+     * @method performOp_resolved
+     * @param {Object} data with unitName and optional relation name.
+     */
+    performOp_resolved: function(data) {
+      OP(this, 'resolved', ['unit_name', 'relation_name'], data);
+    },
+
+    /**
       Handles the remove unit operations from the client
 
       @method performOp_remove_unit
@@ -435,7 +565,6 @@ YUI.add('juju-env-sandbox', function(Y) {
       } else {
         data.result = true;
       }
-
       // respond with the new data or error
       this.get('client').receiveNow(data);
     },
@@ -517,10 +646,10 @@ YUI.add('juju-env-sandbox', function(Y) {
   });
 
   sandboxModule.PyJujuAPI = PyJujuAPI;
-
 }, '0.1.0', {
   requires: [
     'base',
+    'timers',
     'json-parse'
   ]
 });

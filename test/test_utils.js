@@ -531,3 +531,81 @@ describe('utilities', function() {
 
   });
 })();
+
+(function() {
+  describe('template helpers', function() {
+    var Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(['juju-view-utils', 'handlebars'], function(Y) {
+        done();
+      });
+    });
+
+    it('pluralizes correctly', function() {
+      var source = '{{ pluralize \'foo\' bar }}',
+          template = Y.Handlebars.compile(source),
+          context = {bar: 1},
+          html = template(context);
+      assert.equal('foo', html);
+
+      context = {bar: 2};
+      html = template(context);
+      assert.equal('foos', html);
+
+      context = {bar: [1]};
+      html = template(context);
+      assert.equal('foo', html);
+
+      context = {bar: [1, 2]};
+      html = template(context);
+      assert.equal('foos', html);
+    });
+
+    it('can pluralize with an alternate word', function() {
+      var source = '{{ pluralize \'foo\' bar \'fooi\' }}',
+          template = Y.Handlebars.compile(source),
+          context = {bar: 1},
+          html = template(context);
+      assert.equal('foo', html);
+
+      context = {bar: 2};
+      html = template(context);
+      assert.equal('fooi', html);
+    });
+
+    describe('showStatus', function() {
+      var html, obj, template;
+
+      before(function() {
+        template = Y.Handlebars.compile('{{showStatus instance}}');
+      });
+
+      beforeEach(function() {
+        obj = {agent_state: 'started'};
+      });
+
+      it('shows the instance status correctly', function() {
+        html = template({instance: obj});
+        assert.strictEqual(obj.agent_state, html);
+      });
+
+      it('avoids including status info if not present', function() {
+        [undefined, null, ''].forEach(function(info) {
+          obj.agent_state_info = info;
+          html = template({instance: obj});
+          assert.strictEqual(obj.agent_state, html, 'info: ' + info);
+        });
+      });
+
+      it('includes status info if present', function() {
+        obj.agent_state_info = 'some information';
+        html = template({instance: obj});
+        var expected = obj.agent_state + ': ' + obj.agent_state_info;
+        assert.strictEqual(expected, html);
+      });
+
+    });
+
+  });
+})();

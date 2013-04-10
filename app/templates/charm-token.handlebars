@@ -1,15 +1,15 @@
-<div>
+<div class="charm-token" data-charmid="{{id}}">
   <img url="{{ iconfile }}" />
   <h3 class="title">
-    <a href="/bws/fullscreen/{{ id }}">{{ name }}</a>
+    {{ name }}
   </h3>
   <div class="metadata">
     Recent activity: 
     <span class="commits">
-      {{ recent_commits }} commits
+      {{ recent_commits }} {{pluralize 'commit' recent_commits}}
     </span>
     <span class="downloads">
-      {{ recent_downloads }} downloads
+      {{ recent_downloads }} {{pluralize 'download' recent_downloads}}
     </span>
   </div>
   <p class="description">{{ description }}</p>

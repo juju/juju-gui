@@ -648,7 +648,7 @@ YUI.add('juju-view-service', function(Y) {
           });
 
           var generics = ['cpu', 'mem', 'arch'];
-          Y.Object.each(generics, function(idx, gkey) {
+          Y.Object.each(generics, function(gkey) {
             if (!(gkey in constraints)) {
               display_constraints.push({name: gkey, value: ''});
             }

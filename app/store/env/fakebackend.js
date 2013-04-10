@@ -5,7 +5,7 @@ An in-memory fake Juju backend and supporting elements.
 
 @module env
 @submodule env.fakebackend
-**/
+*/
 
 YUI.add('juju-env-fakebackend', function(Y) {
 
@@ -59,7 +59,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
   An in-memory fake Juju backend.
 
   @class FakeBackend
-  **/
+  */
   function FakeBackend(config) {
     // Invoke Base constructor, passing through arguments.
     FakeBackend.superclass.constructor.apply(this, arguments);
@@ -81,10 +81,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     @method initializer
     @return {undefined} Nothing.
-    **/
+    */
     initializer: function() {
       this.db = new models.Database();
-      this.environmentAnnotations = {};
       this._resetChanges();
       this._resetAnnotations();
       // used for relation id's
@@ -96,7 +95,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     @method _resetChanges
     @return {undefined} Nothing.
-    **/
+    */
     _resetChanges: function() {
       this.changes = {
         // These are hashes of identifier: [object, boolean], where a true
@@ -116,7 +115,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       'relations'.  Each of those are hashes from entity identifier to
       [entity, boolean] where the boolean means either active (true) or
       removed (false).
-    **/
+    */
     nextChanges: function() {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATEDERROR;
@@ -139,7 +138,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     @method _resetAnnotations
     @return {undefined} Nothing.
-    **/
+    */
     _resetAnnotations: function() {
       this.annotations = {
         // These are hashes of identifier: object.
@@ -147,10 +146,37 @@ YUI.add('juju-env-fakebackend', function(Y) {
         machines: {},
         units: {},
         relations: {},
-        // This is undefined or the environment annotations, if they changed.
-        environment: undefined
+        annotations: {}
       };
     },
+
+    /**
+      Return all of the recently anotated objects.
+
+      @method nextAnnotations
+      @return {Object} A hash of the keys 'services', 'machines', 'units',
+      'relations' and 'annotations'.  Each of those are hashes from entity
+      identifier to [entity, boolean] where the boolean means either active
+      (true) or removed (false).
+    */
+    nextAnnotations: function() {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var result;
+      if (Y.Object.isEmpty(this.annotations.services) &&
+          Y.Object.isEmpty(this.annotations.machines) &&
+          Y.Object.isEmpty(this.annotations.units) &&
+          Y.Object.isEmpty(this.annotations.relations) &&
+          Y.Object.isEmpty(this.annotations.annotations)) {
+        result = null;
+      } else {
+        result = this.annotations;
+        this._resetAnnotations();
+      }
+      return result;
+    },
+
 
     /**
     Attempt to log a user in.
@@ -159,7 +185,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @param {String} username The id of the user.
     @param {String} submittedPassword The user-submitted password.
     @return {Bool} True if the authentication was successful.
-    **/
+    */
     login: function(username, submittedPassword) {
       var password = this.get('authorizedUsers')[username],
           authenticated = password === submittedPassword;
@@ -169,7 +195,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     /**
     Log out.  If already logged out, no error is raised.
-    **/
+    */
     logout: function() {
       this.set('authenticated', false);
     },
@@ -193,7 +219,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         string.  You may provide only one of config or configYAML.
       unitCount: The number of units to be deployed.
     @return {undefined} Get the result from the callback.
-    **/
+    */
     deploy: function(charmId, callback, options) {
       if (!this.get('authenticated')) {
         return callback(UNAUTHENTICATEDERROR);
@@ -207,7 +233,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           {
             /**
               Deploy the successfully-obtained charm.
-            **/
+            */
             success: function(charm) {
               self._deployFromCharm(charm, callback, options);
             },
@@ -227,7 +253,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       callable receives the fully loaded charm, and the failure callable
       receives an object with an explanatory "error" attribute.
     @return {undefined} Use the callbacks to handle success or failure.
-    **/
+    */
     _loadCharm: function(charmId, callbacks) {
       var charmIdParts = models.parseCharmId(
           charmId, this.get('defaultSeries'));
@@ -250,7 +276,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
             {
               /**
                 Convert the charm data to a charm and use the success callback.
-              **/
+              */
               success: function(data) {
                 var charm = self._getCharmFromData(data);
                 if (callbacks.success) {
@@ -259,7 +285,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               },
               /**
                 Inform the caller of an error using the charm store.
-              **/
+              */
               failure: function(e) {
                 if (callbacks.failure) {
                   callbacks.failure({error: 'Could not contact charm store.'});
@@ -280,7 +306,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @param {Object} data The raw charm information as delivered by the
       charmStore's loadByPath method.
     @return {Object} A matching charm from the db.
-    **/
+    */
     _getCharmFromData: function(data) {
       var charm = this.db.charms.getById(data.store_url);
       if (!charm) {
@@ -311,7 +337,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         string.  You may provide only one of config or configYAML.
       unitCount: The number of units to be deployed.
     @return {undefined} Get the result from the callback.
-    **/
+    */
     _deployFromCharm: function(charm, callback, options) {
       if (!options.name) {
         options.name = charm.get('package_name');
@@ -339,6 +365,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         id: options.name,
         name: options.name,
         charm: charm.get('id'),
+        constraints: {},
         exposed: false,
         subordinate: charm.get('is_subordinate'),
         config: options.config
@@ -353,13 +380,52 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
     // },
 
-    // getService: function() {
+    /**
+     * Get service attributes.
+     *
+     * @method getService
+     * @param {String} serviceId to get.
+     * @return {Object} Service Attributes..
+     */
+    getService: function(serviceName) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        return {error: 'Invalid service id.'};
+      }
+      var serviceData = service.getAttrs();
+      if (!serviceData.constraints) {
+        serviceData.constraints = {};
+      }
+      var relations = this.db.relations.get_relations_for_service(service);
+      var rels = relations.map(function(r) {return r.getAttrs();});
+      // TODO: properly map relations to expected format rather
+      // than this passthrough. Pending on the add/remove relations
+      // branches that will need the same helper code.
+      serviceData.rels = rels;
+      return {result: serviceData};
+    },
 
-    // },
-
-    // getCharm: function() {
-
-    // },
+    /**
+     * Get Charm data.
+     *
+     * @method getCharm
+     * @param {String} charmName to get.
+     * @return {Object} charm attrs..
+     */
+    getCharm: function(charmName, callback) {
+      if (!this.get('authenticated')) {
+        return callback(UNAUTHENTICATEDERROR);
+      }
+      var formatCharm = function(charm) {
+        callback({result: charm.getAttrs()});
+      };
+      this._loadCharm(charmName, {
+        success: formatCharm,
+        failure: callback});
+    },
 
     /**
     Add units to the given service.
@@ -371,7 +437,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @return {Object} Returns an object either with an "error" attribute
       containing a string describing the problem, or with a "units"
       attribute containing a list of the added units.
-    **/
+    */
     addUnit: function(serviceName, numUnits) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATEDERROR;
@@ -394,7 +460,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var machines = this._getUnitMachines(numUnits);
 
       for (var i = 0; i < numUnits; i += 1) {
-        var unitId = service.unitSequence += 1;
+        var unitId = service.unitSequence;
         machine = machines[i];
         unit = this.db.units.add({
           'id': serviceName + '/' + unitId,
@@ -404,6 +470,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           'agent_state': 'started'
         });
         units.push(unit);
+        service.unitSequence += 1;
         this.changes.units[unit.id] = [unit, true];
         this.changes.machines[machine.machine_id] = [machine, true];
       }
@@ -416,7 +483,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @method _getAvailableMachines
     @return {Array} An array of zero or more machines that have been
       previously allocated but that are not currently in use by a unit.
-    **/
+    */
     _getAvailableMachines: function() {
       var machines = [];
       var usedMachineIds = {};
@@ -439,7 +506,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @method _getUnitMachines
     @param {Integer} count The number of units that need machines.
     @return {Array} An array of [count] machines.
-    **/
+    */
     _getUnitMachines: function(count) {
       var machines = [];
       var availableMachines = this._getAvailableMachines();
@@ -457,8 +524,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
                 'machine_id': machineId.toString(),
                 'public_address':
                     'addr-' + machineId.toString() + '.example.com',
-                'agent_state': 'running',
-                'instance_state': 'running'}));
+                'agent_state': 'running'}));
         }
       }
       return machines;
@@ -510,9 +576,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var service = this.db.services.getById(serviceName),
           warning, error;
 
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+
       if (service) {
         if (!service.get('exposed')) {
           service.set('exposed', true);
+          this.changes.services[service.get('id')] = [service, true];
         } else {
           warning = 'Service `' + serviceName + '` was already exposed.';
         }
@@ -538,9 +609,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
       var service = this.db.services.getById(serviceName),
           warning, error;
 
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
       if (service) {
         if (service.get('exposed')) {
           service.set('exposed', false);
+          this.changes.services[service.get('id')] = [service, true];
         } else {
           warning = 'Service `' + serviceName + '` is not exposed.';
         }
@@ -666,24 +741,229 @@ YUI.add('juju-env-fakebackend', function(Y) {
     // removeAnnotations: function() {
 
     // },
+    /**
+     * Helper method to determine where to log annotation
+     * changes relative to a given entity.
+     *
+     * @method _getAnnotationGroup
+     * @param {Object} entity to track.
+     * @return {String} Annotation group name (index into this.annotations).
+     */
+    _getAnnotationGroup: function(entity) {
+      var annotationGroup = {
+        serviceUnit: 'units',
+        environment: 'annotations'
+      }[entity.name];
+      if (!annotationGroup) {
+        annotationGroup = entity.name + 's';
+      }
+      return annotationGroup;
+    },
 
+    /**
+     * Update annotations for a given entity. This performs a merge of existing
+     * annotations with any new data.
+     *
+     * @method updateAnnotations
+     * @param {String} entityName to update.
+     * @param {Object} annotations key/value map.
+     * @return {Object} either result or error property.
+     */
+    updateAnnotations: function(entityName, annotations) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var entity = this.db.resolveModelByName(entityName);
+      var existing;
+      if (!entity) {
+        return {error: 'Unable to resolve entity: ' + entityName};
+      }
 
+      existing = models.getAnnotations(entity);
+      if (existing === undefined) {
+        existing = {};
+      }
+
+      annotations = Y.merge(existing, annotations, true, 0, null, true);
+      models.setAnnotations(entity, annotations);
+
+      // Arrange delta stream updates.
+      var annotationGroup = this._getAnnotationGroup(entity);
+      this.annotations[annotationGroup][entityName] = [entity, true];
+      return {result: true};
+    },
+
+    /**
+     * getAnnotations from an object. This uses standard name resolution (see
+     * db.resolveModelByName) to determine which object to return annotations
+     * for.
+     *
+     * @method getAnnotations
+     * @param {String} entityName to get annotations for.
+     * @return {Object} annotations as key/value map.
+     */
+    getAnnotations: function(entityName) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var entity = this.db.resolveModelByName(entityName);
+
+      if (!entity) {
+        return {error: 'Unable to resolve entity: ' + entityName};
+      }
+
+      return {result: models.getAnnotations(entity)};
+    },
+
+    /**
+     * Remove annotations (optional by key) from an entity.
+     *
+     * @method removeAnnotations
+     * @param {String} entityName to remove annotations from.
+     * @param {Array} keys (optional) array of {String} keys to remove. If this
+     *                is falsey all annotations are removed.
+     * @return {undefined} side effects only.
+     */
+    removeAnnotations: function(entityName, keys) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var entity = this.db.resolveModelByName(entityName);
+      var annotations;
+      if (!entity) {
+        return {error: 'Unable to resolve entity: ' + entityName};
+      }
+
+      annotations = models.getAnnotations(entity);
+      if (annotations === undefined) {
+        annotations = {};
+      }
+
+      if (keys) {
+        Y.each(keys, function(k) {
+          if (Y.Object.owns(annotations, k)) {
+            delete annotations[k];
+          }
+        });
+      } else {
+        annotations = {};
+      }
+
+      // Apply merged annotations.
+      models.setAnnotations(entity, annotations);
+
+      // Arrange delta stream updates.
+      var annotationGroup = this._getAnnotationGroup(entity);
+      // Note that we pass true here, even removing an annotation
+      // is recorded as an object change/update.
+      this.annotations[annotationGroup][entityName] = [entity, true];
+      return {result: true};
+    },
 
     // removeRelation: function() {
 
     // },
 
-    // setConfig: function() {
+    setConfig: function(serviceName, config) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        return {error: 'Service "' + serviceName + '" does not exist.'};
+      }
 
-    // },
+      var existing = service.get('config');
+      if (!existing) {
+        existing = {};
+      }
 
-    // setConstraints: function() {
+      if (!config) {
+        config = {};
+      }
+      // Merge new constraints in.
+      existing = Y.mix(existing, config, true, undefined, 0, true);
+      //TODO: validate the config.
+      // Reassign the attr.
+      service.set('config', existing);
+      // The callback indicates done, we can pass anything back.
+      this.changes.services[service.get('id')] = [service, true];
+      return {result: existing};
+    },
 
-    // },
+    setConstraints: function(serviceName, data) {
+      var constraints = {};
 
-    // resolved: function() {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        return {error: 'Service "' + serviceName + '" does not exist.'};
+      }
 
-    // }
+      var existing = service.get('constraints');
+      if (!existing) {
+        existing = {};
+      }
+
+      if (Y.Lang.isArray(data)) {
+        Y.Array.each(data, function(i) {
+          var kv = i.split('=');
+          if (kv[1]) {
+            constraints[kv[0]] = kv[1];
+          }
+        });
+      } else if (data) {
+        constraints = data;
+      }
+      // Merge new constraints in.
+      existing = Y.mix(existing, constraints, true, undefined, 0, true);
+      // TODO: Validate the constraints.
+      // Reassign the attr.
+      service.set('constraints', existing);
+      this.changes.services[service.get('id')] = [service, true];
+      return {result: true};
+    },
+
+    /**
+     * Mark a unit or a unit relation as resolved. In the fakebackend
+     * this validates arguments but doesn't take any real action.
+     *
+     * @method resolved
+     * @param {String} unitName tp resp;ve.
+     * @param {String} (optional) relationName to resolve for unit.
+     * @return {Object} with result or error.
+     */
+    resolved: function(unitName, relationName) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var unit = this.db.units.getById(unitName);
+      if (!unit) {
+        return {error: 'Unit "' + unitName + '" does not exist.'};
+      }
+
+      if (relationName) {
+        var service = this.db.services.getById(unit.service);
+        var relation = this.db.relations.get_relations_for_service(
+            service).filter(function(rel) {
+          return (rel.endpoints[0].name === relationName ||
+                  rel.endpoints[1].name === relationName);
+        });
+        if (relation.length === 0) {
+          return {error: 'Relation ' + relationName +
+                ' not found for ' + unitName};
+        }
+      }
+
+      // No hooks are run in the fakebackend so at this time resolve does
+      // nothing. We could make it clear error status but that isn't what
+      // resolved actually does. We could additionally push the unit into
+      // the change set but no change currently takes place.
+      return {result: true};
+    }
+
 
   });
 

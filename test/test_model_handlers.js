@@ -31,7 +31,8 @@
           id: 'django/1',
           private_address: '10.0.0.1',
           'public-address': 'example.com',
-          'is-subordinate': true
+          'is-subordinate': true,
+          'hyphens-are-delicious': '42'
         };
         pyDelta(db, 'add', change, 'unit');
         // Retrieve the unit from the database.
@@ -39,6 +40,14 @@
         assert.strictEqual('10.0.0.1', unit.private_address);
         assert.strictEqual('example.com', unit.public_address);
         assert.isTrue(unit.is_subordinate);
+        assert.strictEqual('42', unit.hyphens_are_delicious);
+      });
+
+      it('passes through environment annotations without changes', function() {
+        pyDelta(db, 'change', {'hyphenated-key': 'peanut'}, 'annotations');
+        assert.strictEqual(
+            'peanut',
+            db.environment.get('annotations')['hyphenated-key']);
       });
 
       it('automatically handles changes to different model lists', function() {
@@ -51,6 +60,24 @@
         assert.isNotNull(db.services.getById('django'));
         assert.isNotNull(db.units.getById('django/1'));
         assert.isNotNull(db.machines.getById('1'));
+      });
+
+      it('automatically handles removals of model lists', function() {
+        db.services.add({
+          id: 'wordpress',
+          charm: 'cs:quantal/wordpress-11',
+          exposed: true
+        });
+        db.units.add({
+          id: 'wordpress/1',
+          agent_state: 'pending',
+          public_address: 'example.com',
+          private_address: '10.0.0.1'
+        });
+        pyDelta(db, 'remove', 'wordpress/1', 'unit');
+        pyDelta(db, 'remove', 'wordpress', 'service');
+        assert.strictEqual(0, db.services.size());
+        assert.strictEqual(0, db.units.size());
       });
 
     });
@@ -69,9 +96,10 @@
           Service: 'django',
           MachineId: '1',
           Status: 'pending',
+          StatusInfo: 'info',
           PublicAddress: 'example.com',
-          PrivateAddress: '10.0.0.1'
-          // XXX 2013-04-03 frankban: include change.Ports.
+          PrivateAddress: '10.0.0.1',
+          Ports: [{Number: 80, Protocol: 'tcp'}, {Number: 42, Protocol: 'udp'}]
         };
         unitInfo(db, 'add', change);
         assert.strictEqual(1, db.units.size());
@@ -80,8 +108,10 @@
         assert.strictEqual('django', unit.service);
         assert.strictEqual('1', unit.machine);
         assert.strictEqual('pending', unit.agent_state);
+        assert.strictEqual('info', unit.agent_state_info);
         assert.strictEqual('example.com', unit.public_address);
         assert.strictEqual('10.0.0.1', unit.private_address);
+        assert.deepEqual(['80/tcp', '42/udp'], unit.open_ports);
       });
 
       it('updates a unit in the database', function() {
@@ -118,17 +148,31 @@
         assert.strictEqual(1, db.machines.size());
         // Retrieve the machine from the database.
         machine = db.machines.getById(1);
-        assert.strictEqual('pending', machine.agent_state);
-        assert.strictEqual('pending', machine.instance_state);
         assert.strictEqual('example.com', machine.public_address);
         // Update the machine.
-        change.Status = 'started';
+        change.PublicAddress = 'example.com/foo';
         unitInfo(db, 'change', change);
         assert.strictEqual(1, db.machines.size());
         // Retrieve the machine from the database (again).
         machine = db.machines.getById('1');
-        assert.strictEqual('started', machine.agent_state);
-        assert.strictEqual('started', machine.instance_state);
+        assert.strictEqual('example.com/foo', machine.public_address);
+      });
+
+      it('removes a unit from the database', function() {
+        db.units.add({
+          id: 'django/2',
+          agent_state: 'pending',
+          public_address: 'example.com',
+          private_address: '10.0.0.1'
+        });
+        var change = {
+          Name: 'django/2',
+          Status: 'started',
+          PublicAddress: 'example.com',
+          PrivateAddress: '192.168.0.1'
+        };
+        unitInfo(db, 'remove', change);
+        assert.strictEqual(0, db.units.size());
       });
 
     });
@@ -174,26 +218,122 @@
         assert.isFalse(service.get('exposed'));
       });
 
+      it('removes a service from the database', function() {
+        db.services.add({
+          id: 'wordpress',
+          charm: 'cs:quantal/wordpress-11',
+          exposed: true
+        });
+        var change = {
+          Name: 'wordpress',
+          CharmURL: 'cs:quantal/wordpress-11',
+          Exposed: false
+        };
+        serviceInfo(db, 'remove', change);
+        assert.strictEqual(0, db.services.size());
+      });
+
     });
 
 
     describe('relationInfo handler', function() {
-      var relationInfo;
+      var dbEndpoints, deltaEndpoints, relationInfo, relationKey;
 
       before(function() {
         relationInfo = handlers.relationInfo;
+        relationKey = 'haproxy:reverseproxy wordpress:website';
+      });
+
+      beforeEach(function() {
+        dbEndpoints = [
+          ['haproxy', {role: 'requirer', name: 'reverseproxy'}],
+          ['wordpress', {role: 'provider', name: 'website'}]
+        ];
+        deltaEndpoints = [
+          {
+            Relation: {
+              Interface: 'http',
+              Limit: 1,
+              Name: 'reverseproxy',
+              Optional: false,
+              Role: 'requirer',
+              Scope: 'global'
+            },
+            ServiceName: 'haproxy'
+          },
+          {
+            Relation: {
+              Interface: 'http',
+              Limit: 0,
+              Name: 'website',
+              Optional: false,
+              Role: 'provider',
+              Scope: 'global'
+            },
+            ServiceName: 'wordpress'
+          }
+        ];
       });
 
       it('creates a relation in the database', function() {
         var change = {
-          Key: 'relation-042'
-          // XXX 2013-04-03 frankban: include change.Endpoints.
+          Key: relationKey,
+          Endpoints: deltaEndpoints
         };
         relationInfo(db, 'add', change);
         assert.strictEqual(1, db.relations.size());
         // Retrieve the relation from the database.
-        var relation = db.relations.getById('relation-042');
+        var relation = db.relations.getById(relationKey);
         assert.isNotNull(relation);
+        assert.strictEqual('http', relation.get('interface'));
+        assert.strictEqual('global', relation.get('scope'));
+        assert.deepEqual(dbEndpoints, relation.get('endpoints'));
+      });
+
+      it('updates a relation in the database', function() {
+        db.relations.add({
+          id: relationKey,
+          'interface': 'http',
+          scope: 'global',
+          endpoints: dbEndpoints
+        });
+        var firstEndpoint = deltaEndpoints[0],
+            firstRelation = firstEndpoint.Relation;
+        firstEndpoint.ServiceName = 'mysql';
+        firstRelation.Name = 'db';
+        firstRelation.Interface = 'mysql';
+        firstRelation.Scope = 'local';
+        var change = {
+          Key: relationKey,
+          Endpoints: deltaEndpoints
+        };
+        var expectedEndpoints = [
+          ['mysql', {role: 'requirer', name: 'db'}],
+          ['wordpress', {role: 'provider', name: 'website'}]
+        ];
+        relationInfo(db, 'change', change);
+        assert.strictEqual(1, db.relations.size());
+        // Retrieve the relation from the database.
+        var relation = db.relations.getById(relationKey);
+        assert.isNotNull(relation);
+        assert.strictEqual('mysql', relation.get('interface'));
+        assert.strictEqual('local', relation.get('scope'));
+        assert.deepEqual(expectedEndpoints, relation.get('endpoints'));
+      });
+
+      it('removes a relation from the database', function() {
+        db.relations.add({
+          id: relationKey,
+          'interface': 'http',
+          scope: 'global',
+          endpoints: dbEndpoints
+        });
+        var change = {
+          Key: relationKey,
+          Endpoints: deltaEndpoints
+        };
+        relationInfo(db, 'remove', change);
+        assert.strictEqual(0, db.relations.size());
       });
 
     });
@@ -209,29 +349,39 @@
       it('creates a machine in the database', function() {
         var change = {
           Id: '1',
-          InstanceId: 'my-machine-instance'
+          InstanceId: 'my-machine-instance',
+          Status: 'pending',
+          StatusInfo: 'info'
         };
         machineInfo(db, 'add', change);
         assert.strictEqual(1, db.machines.size());
         // Retrieve the machine from the database.
         var machine = db.machines.getById('1');
         assert.strictEqual('my-machine-instance', machine.instance_id);
+        assert.strictEqual('pending', machine.agent_state);
+        assert.strictEqual('info', machine.agent_state_info);
       });
 
       it('updates a machine in the database', function() {
         db.machines.add({
           id: '2',
-          instance_id: 'instance-42'
+          instance_id: 'instance-42',
+          agent_state: 'error',
+          agent_state_info: 'there is something wrong'
         });
         var change = {
           Id: '2',
-          InstanceId: 'instance-47'
+          InstanceId: 'instance-47',
+          Status: 'running',
+          StatusInfo: ''
         };
         machineInfo(db, 'change', change);
         assert.strictEqual(1, db.machines.size());
         // Retrieve the machine from the database.
         var machine = db.machines.getById('2');
         assert.strictEqual('instance-47', machine.instance_id);
+        assert.strictEqual('running', machine.agent_state);
+        assert.strictEqual('', machine.agent_state_info);
       });
 
     });
@@ -343,6 +493,76 @@
         Y.each(data, function(item) {
           assert.equal(item, cleanUpEntityTags(item));
         });
+      });
+
+    });
+
+
+    describe('Go Juju ports converter', function() {
+      var convertOpenPorts;
+
+      before(function() {
+        convertOpenPorts = utils.convertOpenPorts;
+      });
+
+      it('correctly returns a list of ports', function() {
+        var ports = [
+          {Number: 80, Protocol: 'tcp'},
+          {Number: 42, Protocol: 'udp'}
+        ];
+        assert.deepEqual(['80/tcp', '42/udp'], convertOpenPorts(ports));
+      });
+
+      it('returns an empty list if there are no ports', function() {
+        assert.deepEqual([], convertOpenPorts([]));
+        assert.deepEqual([], convertOpenPorts(null));
+        assert.deepEqual([], convertOpenPorts(undefined));
+      });
+
+    });
+
+
+    describe('Go Juju endpoints converter', function() {
+      var createEndpoints;
+
+      before(function() {
+        createEndpoints = utils.createEndpoints;
+      });
+
+      it('correctly returns a list of endpoints', function() {
+        var endpoints = [
+          {
+            Relation: {
+              Interface: 'http',
+              Limit: 1,
+              Name: 'reverseproxy',
+              Optional: false,
+              Role: 'requirer',
+              Scope: 'global'
+            },
+            ServiceName: 'haproxy'
+          },
+          {
+            Relation: {
+              Interface: 'http',
+              Limit: 0,
+              Name: 'website',
+              Optional: false,
+              Role: 'provider',
+              Scope: 'global'
+            },
+            ServiceName: 'wordpress'
+          }
+        ];
+        var expected = [
+          ['haproxy', {role: 'requirer', name: 'reverseproxy'}],
+          ['wordpress', {role: 'provider', name: 'website'}]
+        ];
+        assert.deepEqual(expected, createEndpoints(endpoints));
+      });
+
+      it('returns an empty list if there are no endpoints', function() {
+        assert.deepEqual([], createEndpoints([]));
       });
 
     });

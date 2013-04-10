@@ -14,8 +14,24 @@ YUI.add('juju-models', function(Y) {
 
   // This is a helper function used by all of the process_delta methods.
   var _process_delta = function(list, action, change_data, change_base) {
-    var model_id = (action === 'remove') && change_data || change_data.id,
-        o = list.getById(model_id);
+    var instanceId;
+    if (Y.Lang.isObject(change_data)) {
+      if ('id' in change_data) {
+        instanceId = change_data.id;
+      } else {
+        console.warn('Invalid change data in _process_delta:', change_data);
+        return;
+      }
+    } else if (action === 'remove') {
+      // This is a removal request coming from the Python delta stream.
+      // In this case, the change_data is the instance id.
+      instanceId = change_data;
+    } else {
+      console.warn('Invalid change data in _process_delta:', change_data);
+      return;
+    }
+    var instance = list.getById(instanceId),
+        exists = Y.Lang.isValue(instance);
 
     if (action === 'add' || action === 'change') {
       // Client-side requests may create temporary objects in the
@@ -26,22 +42,22 @@ YUI.add('juju-models', function(Y) {
       // form that needs to be fleshed out.  So, the existing objects
       // are kept and re-used.
       var data = Y.merge(change_base || {}, change_data);
-      if (!Y.Lang.isValue(o)) {
-        o = list.add(data);
+      if (!exists) {
+        instance = list.add(data);
       } else {
-        if (o instanceof Y.Model) {
-          o.setAttrs(data);
+        if (instance instanceof Y.Model) {
+          instance.setAttrs(data);
         } else {
           // This must be from a LazyModelList.
           Y.each(data, function(value, key) {
-            o[key] = value;
+            instance[key] = value;
           });
         }
       }
     }
     else if (action === 'remove') {
-      if (Y.Lang.isValue(o)) {
-        list.remove(o);
+      if (exists) {
+        list.remove(instance);
       }
     } else {
       console.warn('Unknown change kind in _process_delta:', action);
@@ -53,14 +69,14 @@ YUI.add('juju-models', function(Y) {
    * Environment level annotations.
    *
    * @class Environment
-   **/
+   */
   var Environment = Y.Base.create('environment', Y.Model, [], {
     /**
      * Update the annotations on delta events.
      * We don't support removal of the Environment model.
      *
      * @method process_delta
-     **/
+     */
     process_delta: function(action, data) {
       this.set('annotations', data);
     }
@@ -129,6 +145,7 @@ YUI.add('juju-models', function(Y) {
           displayName: {},
           machine: {},
           agent_state: {},
+          agent_state_info: {},
           // This is empty if there are no relation errors, and otherwise
           // shows only the relations with errors.  The data structure in that
           // case is a hash mapping a local relation name to a list of services
@@ -250,8 +267,8 @@ YUI.add('juju-models', function(Y) {
       machine_id: {},
       public_address: {},
       instance_id: {},
-      instance_state: {},
-      agent_state: {}
+      agent_state: {},
+      agent_state_info: {}
     }
   });
   models.Machine = Machine;
@@ -278,7 +295,7 @@ YUI.add('juju-models', function(Y) {
     @param {Model|Object} model Model instance to convert.
     @return {Object} Plain object.
     @protected
-    **/
+    */
     _modelToObject: function(model) {
       var result = MachineList.superclass._modelToObject.call(this, model);
       if (!result.id) {
@@ -290,6 +307,7 @@ YUI.add('juju-models', function(Y) {
 
     _setDefaultsAndCalculatedValues: function(obj) {
       obj.displayName = this.createDisplayName(obj.id);
+      obj.name = 'machine';
     },
 
     add: function() {
@@ -482,6 +500,41 @@ YUI.add('juju-models', function(Y) {
   models.NotificationList = NotificationList;
 
 
+  /*
+   * Helper methods for interacting with annotations on
+   * entities.
+   *
+   * _annotationProperty is a private mapping indicating
+   * if annotations are store as an attribute or as a
+   * property. A value of true indicates that property
+   * style access should be used.
+   */
+  var _annotationProperty = {
+    serviceUnit: true,
+    machine: true
+  };
+
+  /**
+   * Get annotations for an entity.
+   * @method getAnnotations
+   * @param {Object} Model (or ModelList managed object).
+   * @return {Object} Annotations.
+   */
+  models.getAnnotations = function(entity) {
+    if (_annotationProperty[entity.name]) {
+      return entity.annotations;
+    }
+    return entity.get('annotations');
+  };
+
+  models.setAnnotations = function(entity, annotations) {
+    if (_annotationProperty[entity.name]) {
+      entity.annotations = annotations;
+    } else {
+      entity.set('annotations', annotations);
+    }
+  };
+
   var Database = Y.Base.create('database', Y.Base, [], {
     initializer: function() {
       // Single model for environment database is bound to.
@@ -531,6 +584,36 @@ YUI.add('juju-models', function(Y) {
         return undefined;
       }
       return modelList.getById(id);
+    },
+
+    /**
+     * Resolve from an id to a Database entity. The lookup pattern is such that
+     * "env" -> environment model
+     * <int> -> machine
+     * <name>/<int> -> unit
+     * <name> -> service
+     *
+     * @method resolveModelByName
+     * @param {Object} Entity name, usually {String}, {Int} possible for
+     *                 machine.
+     * @return {Model} resolved by call.
+     */
+    resolveModelByName: function(entityName) {
+      if (!entityName) {
+        return undefined;
+      }
+      if (entityName === 'env') {
+        return this.environment;
+      }
+      if (/^\d+$/.test(entityName)) {
+        return this.machines.getById(entityName);
+      }
+
+      if (/^\S+\/\d+$/.test(entityName)) {
+        return this.units.getById(entityName);
+      }
+
+      return this.services.getById(entityName);
     },
 
     /**

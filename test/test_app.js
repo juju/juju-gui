@@ -63,6 +63,7 @@ function injectData(app, data) {
           { container: container,
             viewContainer: container,
             env: env});
+      app.showView(new Y.View());
       injectData(app);
     });
 
@@ -89,7 +90,9 @@ function injectData(app, data) {
               { container: container,
                 user: the_username,
                 password: the_password,
-                viewContainer: container});
+                viewContainer: container,
+                conn: {close: function() {}}});
+          app.showView(new Y.View());
           var credentials = app.env.getCredentials();
           credentials.user.should.equal(the_username);
           credentials.password.should.equal(the_password);
@@ -101,7 +104,9 @@ function injectData(app, data) {
       app = new Y.juju.App({
         container: container,
         readOnly: true,
-        viewContainer: container});
+        viewContainer: container,
+        conn: {close: function() {}}});
+      app.showView(new Y.View());
       assert.isTrue(app.env.get('readOnly'));
     });
 
@@ -140,7 +145,9 @@ function injectData(app, data) {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
-            environment_name: environment_name});
+            environment_name: environment_name,
+            conn: {close: function() {}}});
+      app.showView(new Y.View());
       assert.equal(
           container.one('#environment-name').get('text'),
           environment_name);
@@ -151,7 +158,9 @@ function injectData(app, data) {
          app.destroy();
          app = new Y.juju.App(
          { container: container,
-           viewContainer: container});
+           viewContainer: container,
+           conn: {close: function() {}}});
+         app.showView(new Y.View());
          assert.equal(
          container.one('#environment-name').get('text'),
          'Environment');
@@ -204,6 +213,7 @@ function injectData(app, data) {
        function(done) {
          conn.transient_close();
          var app = new Y.juju.App({env: env});
+         app.showView(new Y.View());
          app.after('ready', function() {
            assert.equal(0, conn.messages.length);
            done();
@@ -215,6 +225,7 @@ function injectData(app, data) {
          env.setAttrs({user: 'user', password: 'password'});
          conn.open();
          var app = new Y.juju.App({env: env});
+         // We want to dispatch, so we do not supply the no-op view.
          app.after('ready', function() {
            assert.equal('login', conn.last_message().op);
            done();
@@ -226,6 +237,7 @@ function injectData(app, data) {
          env.setCredentials(null);
          conn.open();
          var app = new Y.juju.App({env: env});
+         app.showView(new Y.View());
          app.after('ready', function() {
            assert.equal(0, conn.messages.length);
            done();
@@ -269,6 +281,7 @@ function injectData(app, data) {
           dispatch_called = false,
           login_called = false,
           noop = function() {return this;};
+      app.showView(new Y.View());
 
       // Mock the database.
       app.db = {
@@ -341,6 +354,7 @@ function injectData(app, data) {
             viewContainer: container,
             env: env,
             charm_store: {} });
+      app.showView(new Y.View());
     });
 
     afterEach(function() {
@@ -393,10 +407,12 @@ function injectData(app, data) {
             viewContainer: container,
             sandbox: true,
             apiBackend: 'python',
+            consoleEnabled: true,
             user: 'admin',
             password: 'admin',
             charm_store: charmStoreData.charmStore
           });
+      app.showView(new Y.View());
       // This simply walks through the hierarchy to show that all the
       // necessary parts are there.
       assert.isObject(app.env.get('conn').get('juju').get('state'));
@@ -437,7 +453,9 @@ function injectData(app, data) {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
-            socket_url: 'wss://example.com/' });
+            socket_url: 'wss://example.com/',
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(app.env.get('socket_url'), 'wss://example.com/');
     });
 
@@ -445,7 +463,9 @@ function injectData(app, data) {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
-            socket_port: '8080' });
+            socket_port: '8080' ,
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(
           app.env.get('socket_url'),
           'wss://example.net:8080/ws');
@@ -455,7 +475,9 @@ function injectData(app, data) {
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
-            socket_protocol: 'ws' });
+            socket_protocol: 'ws',
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(
           app.env.get('socket_url'),
           'ws://example.net:71070/ws');
@@ -466,7 +488,9 @@ function injectData(app, data) {
           { container: container,
             viewContainer: container,
             socket_protocol: 'ws',
-            socket_port: '8080' });
+            socket_port: '8080',
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(
           app.env.get('socket_url'),
           'ws://example.net:8080/ws');
@@ -477,7 +501,9 @@ function injectData(app, data) {
           { container: container,
             viewContainer: container,
             socket_port: '8080',
-            socket_url: 'fnord' });
+            socket_url: 'fnord',
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(
           app.env.get('socket_url'),
           'wss://example.net:8080/ws');
@@ -488,10 +514,105 @@ function injectData(app, data) {
           { container: container,
             viewContainer: container,
             socket_protocol: 'ws',
-            socket_url: 'fnord' });
+            socket_url: 'fnord',
+            conn: {close: function() {}} });
+      app.showView(new Y.View());
       assert.equal(
           app.env.get('socket_url'),
           'ws://example.net:71070/ws');
+    });
+
+  });
+})();
+
+
+(function() {
+  describe('app callbacks', function() {
+
+    var Y, juju, utils, app, container, getLocation, destroyMe;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          ['juju-gui', 'juju-tests-utils', 'juju-view-utils'],
+          function(Y) {
+            utils = Y.namespace('juju-tests.utils');
+            juju = Y.namespace('juju');
+            done();
+          });
+    });
+
+    beforeEach(function() {
+      destroyMe = [];
+    });
+
+    afterEach(function() {
+      Y.each(destroyMe, function(thing) {
+        thing.destroy();
+      });
+    });
+
+    it('should show an error on loadService', function() {
+      app = new Y.juju.App({conn: {close: function() {}}});
+      destroyMe.push(app);
+      app.showView(new Y.View());
+      var evt = {
+        err: 'Warning!  Danger!',
+        service_name: 'FakeService'
+      };
+      app.loadService(evt);
+      var notification = app.db.notifications.item(0);
+      assert.strictEqual('Error loading service',
+          notification.get('title'));
+      assert.strictEqual('Service name: FakeService',
+          notification.get('message'));
+    });
+
+    it('should warn on loadService if service doesn\'t exist', function() {
+      app = new Y.juju.App({conn: {close: function() {}}});
+      destroyMe.push(app);
+      app.showView(new Y.View());
+      var evt = {
+        err: '',
+        service_name: 'FakeService'
+      };
+      var warning;
+      var original = console.warn;
+      console.warn = function(msg0, msg1) {
+        warning = msg0 + ' ' + msg1;
+      };
+      app.loadService(evt);
+      app.db.notifications.size().should.equal(0);
+      assert.strictEqual('Could not load service data for FakeService',
+          warning);
+      console.warn = original;
+    });
+
+    it('should set service values', function() {
+      var conn = new utils.SocketStub();
+      var env = juju.newEnvironment({conn: conn});
+      env.connect();
+      app = new Y.juju.App({env: env });
+      destroyMe.push(app);
+      app.showView(new Y.View());
+      var dispatched = false;
+      app.dispatch = function() {
+        dispatched = true;
+      };
+      injectData(app);
+      var svcName = 'wordpress';
+      var svc = app.db.services.getById(svcName);
+      var evt = {
+        err: '',
+        service_name: svcName,
+        result: {
+          config: 'fake config',
+          constraints: 'fake constraints'
+        }
+      };
+      app.loadService(evt);
+      assert.strictEqual('fake config', svc.get('config'));
+      assert.strictEqual('fake constraints', svc.get('constraints'));
+      assert.isTrue(dispatched);
     });
 
   });

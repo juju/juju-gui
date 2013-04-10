@@ -77,7 +77,6 @@
         displayName: '0',
         agent_state: 'pending',
         instance_id: 'instance-0',
-        instance_state: 'running',
         public_address: '1.2.3.4'};
       db.machines.add([machine]);
       done();
@@ -114,8 +113,6 @@
           'pending');
       container.one('#machine-instance-id').getHTML().should.contain(
           'instance-0');
-      container.one('#machine-instance-state').getHTML().should.contain(
-          'running');
       container.one('#machine-public-address').getHTML().should.contain(
           '1.2.3.4');
     });
@@ -287,7 +284,7 @@
       db.notifications.size().should.equal(0);
       env.dispatch_result(msg);
       db.notifications.size().should.equal(1);
-      var notification = db.notifications.toArray()[0];
+      var notification = db.notifications.item(0);
       notification.get('modelId').should.eql(
           ['relation', 'relation-0000000002']);
     });
@@ -301,7 +298,7 @@
       db.notifications.size().should.equal(0);
       env.dispatch_result(msg);
       db.notifications.size().should.equal(1);
-      var notification = db.notifications.toArray()[0];
+      var notification = db.notifications.item(0);
       notification.get('modelId').should.eql(
           ['relation', 'relation-0000000002']);
     });

@@ -16,6 +16,22 @@ YUI.add('juju-env-go', function(Y) {
   };
 
   /**
+     Return the relation key corresponding to the given juju-core endpoints.
+
+     @method createRelationKey
+     @static
+     @param {Object} endpoints The endpoints returned by juju-core API server.
+     @return {String} The resulting relation key.
+   */
+  var createRelationKey = function(endpoints) {
+    var roles = Object.create(null);
+    Y.each(endpoints, function(value, key) {
+      roles[value.Role] = key + ':' + value.Name;
+    });
+    return roles.requirer + ' ' + roles.provider;
+  };
+
+  /**
      Return an object containing all the key/value pairs of the given "obj",
      turning all the keys to lower case.
 
@@ -592,6 +608,9 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Nothing.
      */
     handleGetService: function(userCallback, serviceName, data) {
+      // Set the service name to 'name' for compatibility with other
+      // Juju environments.
+      data.Response.name = data.Response.Service;
       userCallback({
         err: data.Error,
         service_name: serviceName,
@@ -618,7 +637,7 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback, sendData;
       if (callback) {
         // Curry the callback and serviceName.  No context is passed.
-        intermediateCallback = Y.bind(this.handleSetConfig, null,
+        intermediateCallback = Y.bind(this.handleServiceCalls, null,
             callback, serviceName);
       }
       sendData = {
@@ -636,24 +655,28 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-       Transform the data returned from juju-core call to
-       ServiceSet/ServiceSetYAML into that suitable for the user callback.
+       Destroy the given service.
 
-       @method handleSetConfig
-       @param {Function} userCallback The callback originally submitted by
-         the call site.
-       @param {String} serviceName The name of the service.  Passed in since
-         it is not part of the response.
-       @param {Object} data The response returned by the server.
-       @return {undefined} Nothing.
+       @method destroy_service
+       @param {String} serviceName The service name.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object containing:
+          err - a string describing the problem (if an error occurred),
+          service_name - the name of the service.
+       @return {undefined} Sends a message to the server only.
      */
-    handleSetConfig: function(userCallback, serviceName, data) {
-      var transformedData = {
-        err: data.Error,
-        service_name: serviceName
-      };
-      // Call the original user callback.
-      userCallback(transformedData);
+    destroy_service: function(service, callback) {
+      var intermediateCallback;
+      if (callback) {
+        // Curry the callback and service.  No context is passed.
+        intermediateCallback = Y.bind(this.handleServiceCalls, null,
+            callback, service);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'ServiceDestroy',
+        Params: {ServiceName: service}
+      }, intermediateCallback);
     },
 
     /**
@@ -683,10 +706,7 @@ YUI.add('juju-env-go', function(Y) {
         Type: 'Client',
         Request: 'AddRelation',
         Params: {
-          Endpoints: [
-            endpoint_a.split(':')[0],
-            endpoint_b.split(':')[0]
-          ]
+          Endpoints: [endpoint_a, endpoint_b]
         }
       }, intermediateCallback);
     },
@@ -716,7 +736,7 @@ YUI.add('juju-env-go', function(Y) {
           guiEndpoint[serviceName] = {'name': jujuEndpoint.Name};
           result.endpoints.push(guiEndpoint);
         });
-        result.id = serviceNameA + '-' + serviceNameB;
+        result.id = createRelationKey(response.Endpoints);
         // The interface and scope should be the same for both endpoints.
         result['interface'] = response.Endpoints[serviceNameA].Interface;
         result.scope = response.Endpoints[serviceNameA].Scope;
@@ -922,6 +942,7 @@ YUI.add('juju-env-go', function(Y) {
 
   });
 
+  environments.createRelationKey = createRelationKey;
   environments.GoEnvironment = GoEnvironment;
   environments.lowerObjectKeys = lowerObjectKeys;
   environments.stringifyObjectValues = stringifyObjectValues;

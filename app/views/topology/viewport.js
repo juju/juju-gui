@@ -15,7 +15,7 @@ YUI.add('juju-topology-viewport', function(Y) {
 
   /**
    * @class ViewportModule
-   **/
+   */
   views.ViewportModule = Y.Base.create('ViewportModule', d3ns.Module, [], {
 
     events: {

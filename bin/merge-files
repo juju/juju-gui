@@ -41,7 +41,6 @@ require('yui').YUI().use(['yui'], function(Y) {
   // configuration, and should not also be included in the minification.
   var paths = merge.readdir(syspath.join(process.cwd(), 'app'),
     [syspath.join(process.cwd(), 'app/assets'),
-     syspath.join(process.cwd(), 'app/modules-prod.js'),
      syspath.join(process.cwd(), 'app/modules-debug.js'),
      syspath.join(process.cwd(), 'app/config-prod.js'),
      syspath.join(process.cwd(), 'app/config-debug.js')]);
@@ -49,7 +48,7 @@ require('yui').YUI().use(['yui'], function(Y) {
   // templates.js is a generated file. It is not part of the app directory.
   paths.push(syspath.join(process.cwd(), 'build-shared/juju-ui/templates.js'));
 
-  merge.combineJs(paths, 'build-shared/juju-ui/assets/app.js');
+  merge.combineJs(paths, 'build-shared/juju-ui/assets/modules.js');
 
   // Get the paths to the YUI modules that we use.
   var reqs = merge.loadRequires(paths);
@@ -64,9 +63,6 @@ require('yui').YUI().use(['yui'], function(Y) {
   reqs.push('gallery-timer');
   reqs.push('loader-base');
   reqs.push('tabview');
-  // IE conditionals are not resolved automatically by the merge files script
-  // causing our CI tests to fail
-  reqs.push('scrollview-base-ie');
 
   // Get all of the YUI files and their dependencies
   var filesToLoad = merge.getYUIFiles(reqs);
@@ -81,6 +77,7 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/gallery-markdown.js',
     'app/assets/javascripts/gallery-timer.js',
     'app/assets/javascripts/js-yaml.min.js',
+    'app/assets/javascripts/event-tracker.js',
     'app/assets/javascripts/prettify.js',
     'app/assets/javascripts/reconnecting-websocket.js',
     'app/assets/javascripts/sub-app.js'

@@ -27,7 +27,7 @@
       {{#if unit_error}}
         <span class="error">&#x2b1b;</span>
       {{/if}}
-      {{unit.agent_state}}
+      {{showStatus unit}}
     </div>
   </div>
 <div>
@@ -39,15 +39,11 @@
       <tbody>
         <tr>
           <th>agent-state</th>
-          <td id="machine-agent-state">{{machine.agent_state}}</td>
+          <td id="machine-agent-state">{{showStatus machine}}</td>
         </tr>
         <tr>
           <th>instance-id</th>
           <td id="machine-instance-id">{{machine.instance_id}}</td>
-        </tr>
-        <tr>
-          <th>instance-state</th>
-          <td id="machine-instance-state">{{machine.instance_state}}</td>
         </tr>
         <tr>
           <th>public-address</th>

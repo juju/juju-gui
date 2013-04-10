@@ -14,7 +14,8 @@ describe('Namespaced Routing', function() {
   });
 
   beforeEach(function() {
-    app = new juju.App();
+    app = new juju.App({conn: {close: function() {}}});
+    app.showView(new Y.View());
   });
 
   it('should support basic namespaced urls', function() {

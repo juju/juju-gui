@@ -167,6 +167,8 @@
     var Y, sandboxModule, ClientConnection, PyJujuAPI, environmentsModule,
         state, juju, client, env, utils, cleanups;
 
+    this.timeout(2000); // Long timeouts make async failures hard to detect.
+
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
         sandboxModule = Y.namespace('juju.environments.sandbox');
@@ -558,8 +560,7 @@
         state.db.machines.each(function(stateMachine) {
           var guiMachine = db.machines.getById(stateMachine.id);
           Y.each(
-              ['agent_state', 'instance_state', 'public_address',
-               'machine_id'],
+              ['agent_state', 'public_address', 'machine_id'],
               function(attrName) {
                 assert.deepEqual(guiMachine[attrName], stateMachine[attrName]);
               }
@@ -631,7 +632,7 @@
               num_units: 2,
               service_name: 'wordpress',
               op: 'add_unit',
-              result: ['wordpress/2', 'wordpress/3']
+              result: ['wordpress/1', 'wordpress/2']
             };
         // Do we have enough total units?
         assert.lengthOf(units, 3);
@@ -684,14 +685,14 @@
       function removeUnits() {
         var data = {
           op: 'remove_units',
-          unit_names: ['wordpress/2', 'wordpress/3']
+          unit_names: ['wordpress/0', 'wordpress/1']
         };
         client.onmessage = function(rec) {
           var data = Y.JSON.parse(rec.data),
               mock = {
                 op: 'remove_units',
                 result: true,
-                unit_names: ['wordpress/2', 'wordpress/3']
+                unit_names: ['wordpress/0', 'wordpress/1']
               };
           // No errors
           assert.equal(data.result, true);
@@ -707,7 +708,7 @@
 
     it('can remove units (integration)', function(done) {
       function removeUnits() {
-        var unitNames = ['kumquat/2', 'kumquat/3'];
+        var unitNames = ['kumquat/1', 'kumquat/2'];
         env.remove_units(unitNames, function(data) {
           assert.equal(data.result, true);
           assert.deepEqual(data.unit_names, unitNames);
@@ -723,7 +724,7 @@
           function removeUnit() {
             var data = {
               op: 'remove_units',
-              unit_names: ['bar/3']
+              unit_names: ['bar/2']
             };
             client.onmessage = function(rec) {
               var data = Y.JSON.parse(rec.data);
@@ -741,7 +742,7 @@
       function removeUnits() {
         var data = {
           op: 'remove_units',
-          unit_names: ['wordpress/2']
+          unit_names: ['wordpress/1']
         };
         client.onmessage = function(rec) {
           var data = Y.JSON.parse(rec.data);
@@ -754,6 +755,88 @@
       }
       // Generate the services base data then execute the test.
       generateServices(removeUnits);
+    });
+
+    it('can get a service', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be able to
+        // pull its data.
+        var op = {
+          op: 'get_service',
+          service_name: 'wordpress',
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var parsed = Y.JSON.parse(received.data);
+          var service = parsed.result;
+          assert.equal(service.name, 'wordpress');
+          // Error should be undefined.
+          done(received.error);
+        };
+        client.send(Y.JSON.stringify(op));
+      });
+    });
+
+    it('can get a charm', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be able to
+        // pull its data.
+        var op = {
+          op: 'get_charm',
+          charm_url: 'cs:wordpress',
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var parsed = Y.JSON.parse(received.data);
+          var charm = parsed.result;
+          assert.equal(charm.name, 'wordpress');
+          // Error should be undefined.
+          done(received.error);
+        };
+        client.send(Y.JSON.stringify(op));
+      });
+    });
+
+    it('can set service config', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be able to
+        // pull its data.
+        var op = {
+          op: 'set_config',
+          service_name: 'wordpress',
+          config: {'blog-title': 'Inimical'},
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var service = state.db.services.getById('wordpress');
+          assert.equal(service.get('config')['blog-title'], 'Inimical');
+          // Error should be undefined.
+          done(received.error);
+        };
+        client.send(Y.JSON.stringify(op));
+      });
+    });
+
+    it('can set service constraints', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be able to
+        // pull its data.
+        var op = {
+          op: 'set_constraints',
+          service_name: 'wordpress',
+          constraints: ['cpu=2', 'mem=128'],
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var service = state.db.services.getById('wordpress');
+          var constraints = service.get('constraints');
+          assert.equal(constraints.cpu, '2');
+          assert.equal(constraints.mem, '128');
+          // Error should be undefined.
+          done(received.error);
+        };
+        client.send(Y.JSON.stringify(op));
+      });
     });
 
     it('can expose a service', function(done) {
@@ -1101,6 +1184,116 @@
         client.send(Y.JSON.stringify(data));
       }
       generateServices(localCb);
+    });
+
+    it('should handle service annotation updates', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be able to
+        // pull its data.
+        var op = {
+          op: 'update_annotations',
+          entity: 'wordpress',
+          data: {'foo': 'bar'},
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var service = state.db.services.getById('wordpress');
+          var annotations = service.get('annotations');
+          assert.equal(annotations.foo, 'bar');
+          // Validate that annotations appear in the delta stream.
+          client.onmessage = function(delta) {
+            delta = Y.JSON.parse(delta.data);
+            assert.equal(delta.op, 'delta');
+            var serviceChange = Y.Array.find(delta.result, function(change) {
+              return change[0] === 'service';
+            });
+            assert.equal(serviceChange[0], 'service');
+            assert.equal(serviceChange[1], 'change');
+            assert.deepEqual(serviceChange[2].annotations, {'foo': 'bar'});
+            // Error should be undefined.
+            done(received.error);
+          };
+          juju.sendDelta();
+        };
+        client.open();
+        client.send(Y.JSON.stringify(op));
+      });
+    });
+
+    it('should handle environment annotation updates', function(done) {
+      generateServices(function(data) {
+        // We only deploy a service here to reuse the env connect/setup
+        // code.
+        // Post deploy of wordpress we should be able to
+        // pull env data.
+        client.onmessage = function(received) {
+          var env = state.db.environment;
+          var annotations = env.get('annotations');
+          assert.equal(annotations.foo, 'bar');
+          // Validate that annotations appear in the delta stream.
+          client.onmessage = function(delta) {
+            delta = Y.JSON.parse(delta.data);
+            assert.equal(delta.op, 'delta');
+            var envChange = Y.Array.find(delta.result, function(change) {
+              return change[0] === 'annotation';
+            });
+            assert.equal(envChange[1], 'change');
+            assert.deepEqual(envChange[2].annotations, {'foo': 'bar'});
+            // Error should be undefined.
+            done(received.error);
+          };
+          juju.sendDelta();
+        };
+        client.open();
+        client.send(Y.JSON.stringify({
+          op: 'update_annotations',
+          entity: 'env',
+          data: {'foo': 'bar'},
+          request_id: 99
+        }));
+      });
+    });
+
+    it('should handle unit annotation updates', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be able to
+        // pull its data.
+        var op = {
+          op: 'update_annotations',
+          entity: 'wordpress/0',
+          data: {'foo': 'bar'},
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var unit = state.db.units.getById('wordpress/0');
+          var annotations = unit.annotations;
+          assert.equal(annotations.foo, 'bar');
+          // Error should be undefined.
+          done(received.error);
+        };
+        client.open();
+        client.send(Y.JSON.stringify(op));
+      });
+    });
+
+    it('should allow unit resolved to be called', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be able to
+        // pull its data.
+        var op = {
+          op: 'resolved',
+          unit_name: 'wordpress/0',
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var parsed = Y.JSON.parse(received.data);
+          assert.equal(parsed.result, true);
+          done(parsed.error);
+        };
+        client.open();
+        client.send(Y.JSON.stringify(op));
+      });
+
     });
 
   });

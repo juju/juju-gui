@@ -311,7 +311,8 @@ YUI.add('juju-gui', function(Y) {
           socket_url: socketUrl,
           user: this.get('user'),
           password: this.get('password'),
-          readOnly: this.get('readOnly')
+          readOnly: this.get('readOnly'),
+          conn: this.get('conn')
         };
         var apiBackend = this.get('apiBackend');
         // The sandbox mode does not support the Go API (yet?).
@@ -794,7 +795,7 @@ YUI.add('juju-gui', function(Y) {
       we update it here.
 
       @method onEnvironmentNameChange
-    **/
+    */
     onEnvironmentNameChange: function(evt) {
       var environmentName = evt.newValue;
       this.db.environment.set('name', environmentName);
@@ -842,7 +843,7 @@ YUI.add('juju-gui', function(Y) {
     /**
      * Model interactions -> move to db layer
      *
-     * @method load_service
+     * @method loadService
      */
     loadService: function(evt) {
       if (evt.err) {
@@ -856,7 +857,7 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var svc_data = evt.result;
-      var svc = this.db.services.getById(svc_data.name);
+      var svc = this.db.services.getById(evt.service_name);
       if (!svc) {
         console.warn('Could not load service data for',
             evt.service_name, evt);
