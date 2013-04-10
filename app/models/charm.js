@@ -322,7 +322,7 @@ YUI.add('juju-charm-models', function(Y) {
       var source = this.get('code_source'),
           commits = [];
 
-      if (source.revisions) {
+      if (source && source.revisions) {
         Y.Array.each(source.revisions, function(commit) {
           commits.push({
             author: {
@@ -336,7 +336,6 @@ YUI.add('juju-charm-models', function(Y) {
         });
 
         return commits;
-
       } else {
         return undefined;
       }

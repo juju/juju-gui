@@ -125,6 +125,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
         remaining: []
       };
 
+      // No commits then just return an empty list.
+      if (!commits) {
+        return [];
+      }
+
       if (commits.length > 0) {
         prettyCommits.first = commits.shift();
         prettyCommits.first.prettyDate = Y.Date.format(

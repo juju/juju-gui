@@ -566,7 +566,7 @@ describe('juju charm load', function() {
 });
 
 
-describe.only('BrowserCharm test', function() {
+describe('BrowserCharm test', function() {
   var data, instance, models, sampleData, Y;
 
   before(function(done) {
