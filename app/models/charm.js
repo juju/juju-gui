@@ -9,6 +9,8 @@
 
 YUI.add('juju-charm-models', function(Y) {
 
+  var RECENT_DAYS = 30;
+
   var models = Y.namespace('juju.models');
   var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)-(\d+)$/;
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
@@ -313,6 +315,33 @@ YUI.add('juju-charm-models', function(Y) {
    */
   models.BrowserCharm = Y.Base.create('browser-charm', Charm, [], {
     /**
+     * Load the recent commits into a format we can use nicely.
+     *
+     * @method _loadRecentCommits
+     *
+     */
+    _loadRecentCommits: function() {
+      var source = this.get('code_source'),
+          commits = [];
+
+      if (source && source.revisions) {
+        Y.Array.each(source.revisions, function(commit) {
+          commits.push({
+            author: {
+              name: commit.authors[0].name,
+              email: commit.authors[0].email
+            },
+            date: new Date(commit.date),
+            message: commit.message,
+            revno: commit.revno
+          });
+        });
+      }
+
+      return commits;
+    },
+
+    /**
      * Parse the relations ATTR from the api into specific provides/requires
      * information.
      *
@@ -336,14 +365,8 @@ YUI.add('juju-charm-models', function(Y) {
      * @param {Object} cfg The configuration object.
      */
     initializer: function(cfg) {
-      if (cfg) {
-        if (cfg.downloads_in_last_30_days) {
-          this.set('recent_downloads', cfg.downloads_in_last_30_days);
-        }
-
-        if (cfg.commits_in_last_30_days) {
-          this.set('recent_commits', cfg.commits_in_last_30_days);
-        }
+      if (cfg && cfg.downloads_in_past_30_days) {
+        this.set('recent_download_count', cfg.downloads_in_past_30_days);
       }
     }
   }, {
@@ -361,6 +384,15 @@ YUI.add('juju-charm-models', function(Y) {
         value: {}
       },
       charm_store_path: {},
+      /**
+       * Object of data about the source for this charm including bugs link,
+       * log, revisions, etc.
+       *
+       * @attribute code_source
+       * @default undefined
+       * @type {Object}
+       *
+       */
       code_source: {},
       date_created: {},
       description: {},
@@ -371,7 +403,7 @@ YUI.add('juju-charm-models', function(Y) {
         /**
          * Generate the full name of the charm from its attributes.
          *
-         * @method getter
+         * @method full_name.getter
          *
          */
         getter: function() {
@@ -446,8 +478,69 @@ YUI.add('juju-charm-models', function(Y) {
       },
       rating_numerator: {},
       rating_denominator: {},
-      recent_downloads: {},
-      recent_commits: {},
+      /**
+       * @attribute recent_commit_count
+       * @default 0
+       * @type {Int}
+       *
+       */
+      'recent_commit_count': {
+        /**
+         * @method recent_commit_count.valueFn
+         * @return {Int} count of the commits in 'recent' time.
+         *
+         */
+        valueFn: function() {
+          var count = 0,
+              commits = this.get('recent_commits'),
+              today = new Date(),
+              recentAgo = new Date();
+          recentAgo.setDate(today.getDate() - RECENT_DAYS);
+
+          Y.Array.each(commits, function(commit) {
+            if (commit.date > recentAgo) {
+              count += 1;
+            }
+          });
+          return count;
+        }
+      },
+      /**
+       * @attribute recent_commits
+       * @default undefined
+       * @type {Array} list of objects for each commit.
+       *
+       */
+      'recent_commits': {
+        /**
+         * Return the commits of the charm in a format we can live with from
+         * the source code data provided by the api.
+         *
+         * @method recent_commits.valueFn
+         *
+         */
+        valueFn: function() {
+          return this._loadRecentCommits();
+        }
+      },
+      /**
+       * Mapped from the downloads_in_past_30_days in the API.
+       *
+       * @attribute recent_download_count
+       * @default undefined
+       * @type {Int} number of downloads in 'recent' time.
+       *
+       */
+      recent_download_count: {
+        /**
+         * @method recent_download_count.valueFn
+         * @return {Int} the number of downloads in the 'recent' time frame.
+         *
+         */
+        valueFn: function() {
+          return 0;
+        }
+      },
       relations: {},
 
       /**

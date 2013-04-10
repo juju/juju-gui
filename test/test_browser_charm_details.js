@@ -7,6 +7,8 @@
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
+          'datatype-date',
+          'datatype-date-format',
           'node-event-simulate',
           'juju-charm-models',
           'juju-charm-store',
@@ -111,28 +113,6 @@
       view.render(node);
       view.get('container').should.eql(node);
       node.one('.charm .add').simulate('click');
-    });
-
-    it('should catch when the open log is clicked', function(done) {
-      view = new CharmView({
-        charm: new models.BrowserCharm({
-          files: [
-            'hooks/install'
-          ],
-          id: 'precise/ceph-9'
-        })
-      });
-
-      // Hook up to the callback for the click event.
-      view._toggleLog = function(ev) {
-        ev.preventDefault();
-        Y.one('#bws-readme h3').get('text').should.eql('Charm has no README');
-        done();
-      };
-
-      view.render(node);
-      view.get('container').should.eql(node);
-      node.one('.changelog .toggle').simulate('click');
     });
 
     it('should load a file when a hook is selected', function() {
@@ -285,5 +265,45 @@
       processed.totalAvailable.should.eql(38);
       processed.totalScore.should.eql(0);
     });
+
+    it('should catch when the open log is clicked', function(done) {
+      var data = Y.JSON.parse(
+          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      // We don't want any files so we don't have to mock/load them.
+      data.files = [];
+      var view = new CharmView({
+        charm: new models.BrowserCharm(data)
+      });
+
+      // Hook up to the callback for the click event.
+      view._toggleLog = function(ev) {
+        ev.preventDefault();
+        done();
+      };
+
+      view.render(node);
+      view.get('container').should.eql(node);
+      node.one('.changelog .toggle').simulate('click');
+    });
+
+    it('changelog is reformatted and displayed', function() {
+      var fakeStore = new Y.juju.Charmworld0({});
+      var data = Y.JSON.parse(
+          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      // We don't want any files so we don't have to mock/load them.
+      data.files = [];
+      view = new CharmView({
+        charm: new models.BrowserCharm(data)
+      });
+
+      view.render(node);
+      // Basics that we have the right number of nodes.
+      node.all('.commit').size().should.eql(10);
+      node.all('.commit.first').size().should.eql(1);
+
+      // The reminaing starts out hidden.
+      assert(node.one('.changelog .remaining').hasClass('hidden'));
+    });
   });
+
 })();

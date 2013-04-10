@@ -83,18 +83,18 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
-       * @attribute recent_commits
+       * @attribute recent_commit_count
        * @default undefined
        * @type {Number}
        */
-      recent_commits: {},
+      recent_commit_count: {},
 
       /**
-       * @attribute recent_downloads
+       * @attribute recent_download_count
        * @default undefined
        * @type {Number}
        */
-      recent_downloads: {}
+      recent_download_count: {}
     }
   });
 
