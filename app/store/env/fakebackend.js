@@ -24,35 +24,126 @@ YUI.add('juju-env-fakebackend', function(Y) {
   }
 
   /**
+    If either endpoint provides an interface we will use that one to match
+
+    @method getExplicitInterface
+    @param {Array} charmDatas Array of charm data objets from splitting
+      endpoing string.
+    @returns {undefined | Object | String} Returns either a string of the valid
+      endpoint interface, an object containing an error message, or undefined if
+      no explicit endpoint provided.
+  */
+  function getExplicitInterface(charmDatas) {
+    var epType;
+    Y.Array.each(charmDatas, function(charmData) {
+      if (!epType) {
+        if (charmData.type) { epType = charmData.type; }
+      } else {
+        if ((epType !== charmData.type) &&
+            (charmData.type !== undefined)) {
+          epType = {error: 'Endpoints need to match.'};
+        }
+      }
+    });
+    return epType;
+  }
+
+  /**
+    Validates that one of the charms requires and the other provides the
+    requested interface
+
+    @method validateINterface
+    @param {}
+    @param {}
+    @param {}
+    @param {}
+  */
+  function validateInterface(charms, explicitInterface ,epInterface, epScope,
+    epInterfaceIndex) {
+      var cics;
+      if (epInterfaceIndex) {
+        var provides = charms[epInterfaceIndex].get('provides');
+        if (provides[explicitInterface] !== undefined) {
+          if (!epScope) {
+            epScope = provides[explicitInterface].scope;
+          }
+          return {
+            sharedInterface: epInterface,
+            sharedScope: epScope
+          };
+        }
+      } else {
+        Y.Array.some(charms, function(charm, index) {
+          var requires = charm.get('requires');
+          if (requires[explicitInterface] !== undefined) {
+            index = (index > 0) ? 0 : 1;
+            cics = validateInterface(
+              charms,
+              explicitInterface,
+              requires[explicitInterface]['interface'],
+              requires[explicitInterface].scope,
+              index
+            );
+          }
+        });
+      }
+      return cics || false;
+  }
+
+  /**
     Loops through the charm endpoint data to determine the interface
     and scope of the relationship.
 
     @method getCharmInterfaceAndScope
-    @param {Array} charmEndpoints Array of charm object 'requires' endpoint
-      types ie) { db: { interface: 'mysql' }} .
+    @param {Array} charms Array of charm objects.
     @param {Array} charmDatas Array of charm data objects from splitting
-      endpoint string above.
+      endpoint string.
   */
-  function getCharmInterfaceAndScope(charmEndpoints, charmDatas) {
-    var sharedInterface, sharedScope;
-    Y.Array.some(charmEndpoints, function(charmEndpoint, index) {
-      var charmInterface = charmEndpoint['interface'];
-      // If the interfaces match or if it is a juju-info relationship
-      if ((charmInterface === charmDatas[index].name) ||
-          (charmInterface === 'juju-info')) {
-        sharedInterface = charmDatas[index].name;
-        if (charmEndpoint.scope !== undefined) {
-          sharedScope = charmEndpoint.scope;
-        }
+  function getCharmInterfaceAndScope(charms, charmDatas) {
+    var sharedInterface, sharedScope, explicitInterface;
+
+    // Fetch the explicit interface if provided
+    explicitInterface = getExplicitInterface(charmDatas);
+
+    if (explicitInterface.error) { return explicitInterface; }
+    if (typeof explicitInterface === 'string') {
+      //validate interface
+console.log(explicitInterface);
+console.log(charms);
+      var cics = validateInterface(charms, explicitInterface);
+console.log(cics);
+      if (cics) {
+        return {
+          ci: cics.sharedInterface,
+          cs: cics.sharedScope
+        };
+      } else {
+        return {error: 'Specified interfaces do not match'};
       }
-      if (sharedInterface) { return true; }
-    });
-    if (sharedInterface) {
-      return {
-        sharedInterface: sharedInterface,
-        sharedScope: sharedScope
-      };
     }
+    if (explicitInterface === false) {
+      return {};
+    }
+
+    // Y.Array.some(charmEndpoints, function(charmEndpoint, index) {
+    //   var charmInterface = charmEndpoint['interface'];
+    //   // If the interfaces match or if it is a juju-info relationship
+    //   if ((charmInterface === charmDatas[index].name) ||
+    //       (charmInterface === 'juju-info')) {
+    //     sharedInterface = charmDatas[index].name;
+    //     if (charmEndpoint.scope !== undefined) {
+    //       sharedScope = charmEndpoint.scope;
+    //     }
+    //   }
+    //   if (sharedInterface) { return true; }
+    // });
+    // if (sharedInterface) {
+    //   return {
+    //     sharedInterface: sharedInterface,
+    //     sharedScope: sharedScope
+    //   };
+    // }
+    //if (!cics) { return {error: 'No matching interfaces.'}; }
   }
 
   /**
@@ -650,10 +741,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       var endpointData = Y.Array.map([endpointA, endpointB], endpointSplit);
 
-      if (endpointData[0].type !== endpointData[1].type) {
-        return {error: 'Endpoints need to match.'};
-      }
-
       var charmAId, charmBId;
 
       // Because the service name and charm name might not match we first need
@@ -674,27 +761,26 @@ YUI.add('juju-env-fakebackend', function(Y) {
       */
       // TODO - do this during the interface and scope check don't attach it
       // to the charms.
-      function addJujuInfo(charm) {
-        var req = charm.get('requires');
-        if (req['juju-info'] === undefined) {
-          req['juju-info'] = {'interface': 'juju-info', 'scope': 'container'};
-          charm.set('requires', req);
-        }
-      }
-      Y.Array.each(charms, addJujuInfo);
+      // function addJujuInfo(charm) {
+      //   var req = charm.get('requires');
+      //   if (req['juju-info'] === undefined) {
+      //     req['juju-info'] = {'interface': 'juju-info', 'scope': 'container'};
+      //     charm.set('requires', req);
+      //   }
+      // }
+      // Y.Array.each(charms, addJujuInfo);
 
-      var charmEndpoints = [
-        charms[0].get('requires')[endpointData[0].type],
-        charms[1].get('requires')[endpointData[1].type]
-      ];
+      // var charmEndpoints = [
+      //   charms[0].get('requires')[endpointData[0].type],
+      //   charms[1].get('requires')[endpointData[1].type]
+      // ];
 
       // If there are matching interfaces this will contain an object of the
       // charm interface type and scope (if supplied).
-      var cics = getCharmInterfaceAndScope(
-          // The reverse order of the second param is intentional
-          charmEndpoints, [endpointData[1], endpointData[0]]);
+      var cics = getCharmInterfaceAndScope(charms, endpointData);
 
-      if (!cics) { return {error: 'No matching interfaces.'}; }
+      // If there is an error fetching a valid interface and scope
+      if (cics.error) { return cics.error; }
 
       // Assign a unique realtion id which is incremented after every
       // successful relation.

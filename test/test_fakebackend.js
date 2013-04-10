@@ -689,7 +689,7 @@
     });
   });
 
-  describe('FakeBackend.addRelation', function() {
+  describe.only('FakeBackend.addRelation', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
     var Y, fakebackend, utils, setCharm, deployResult, callback;
@@ -733,6 +733,27 @@
                 relationId: 'relation-0',
                 type: 'mysql',
                 endpoints: ['wordpress:db', 'mysql:db'],
+                scope: 'global'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
+    });
+
+    it('can create a relation with an explicit interface (reverse)', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:mysql', function() {
+          var result = fakebackend.addRelation('mysql:db', 'wordpress:db'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'mysql',
+                endpoints: ['mysql:db', 'wordpress:db'],
                 scope: 'global'
               };
           assert.equal(result.error, undefined);
