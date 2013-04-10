@@ -311,7 +311,8 @@ YUI.add('juju-gui', function(Y) {
           socket_url: socketUrl,
           user: this.get('user'),
           password: this.get('password'),
-          readOnly: this.get('readOnly')
+          readOnly: this.get('readOnly'),
+          conn: this.get('conn')
         };
         var apiBackend = this.get('apiBackend');
         // The sandbox mode does not support the Go API (yet?).
@@ -794,7 +795,7 @@ YUI.add('juju-gui', function(Y) {
       we update it here.
 
       @method onEnvironmentNameChange
-    **/
+    */
     onEnvironmentNameChange: function(evt) {
       var environmentName = evt.newValue;
       this.db.environment.set('name', environmentName);

@@ -31,7 +31,8 @@
           id: 'django/1',
           private_address: '10.0.0.1',
           'public-address': 'example.com',
-          'is-subordinate': true
+          'is-subordinate': true,
+          'hyphens-are-delicious': '42'
         };
         pyDelta(db, 'add', change, 'unit');
         // Retrieve the unit from the database.
@@ -39,6 +40,14 @@
         assert.strictEqual('10.0.0.1', unit.private_address);
         assert.strictEqual('example.com', unit.public_address);
         assert.isTrue(unit.is_subordinate);
+        assert.strictEqual('42', unit.hyphens_are_delicious);
+      });
+
+      it('passes through environment annotations without changes', function() {
+        pyDelta(db, 'change', {'hyphenated-key': 'peanut'}, 'annotations');
+        assert.strictEqual(
+            'peanut',
+            db.environment.get('annotations')['hyphenated-key']);
       });
 
       it('automatically handles changes to different model lists', function() {
@@ -87,6 +96,7 @@
           Service: 'django',
           MachineId: '1',
           Status: 'pending',
+          StatusInfo: 'info',
           PublicAddress: 'example.com',
           PrivateAddress: '10.0.0.1',
           Ports: [{Number: 80, Protocol: 'tcp'}, {Number: 42, Protocol: 'udp'}]
@@ -98,6 +108,7 @@
         assert.strictEqual('django', unit.service);
         assert.strictEqual('1', unit.machine);
         assert.strictEqual('pending', unit.agent_state);
+        assert.strictEqual('info', unit.agent_state_info);
         assert.strictEqual('example.com', unit.public_address);
         assert.strictEqual('10.0.0.1', unit.private_address);
         assert.deepEqual(['80/tcp', '42/udp'], unit.open_ports);
@@ -137,15 +148,14 @@
         assert.strictEqual(1, db.machines.size());
         // Retrieve the machine from the database.
         machine = db.machines.getById(1);
-        assert.strictEqual('pending', machine.agent_state);
         assert.strictEqual('example.com', machine.public_address);
         // Update the machine.
-        change.Status = 'started';
+        change.PublicAddress = 'example.com/foo';
         unitInfo(db, 'change', change);
         assert.strictEqual(1, db.machines.size());
         // Retrieve the machine from the database (again).
         machine = db.machines.getById('1');
-        assert.strictEqual('started', machine.agent_state);
+        assert.strictEqual('example.com/foo', machine.public_address);
       });
 
       it('removes a unit from the database', function() {
@@ -339,29 +349,39 @@
       it('creates a machine in the database', function() {
         var change = {
           Id: '1',
-          InstanceId: 'my-machine-instance'
+          InstanceId: 'my-machine-instance',
+          Status: 'pending',
+          StatusInfo: 'info'
         };
         machineInfo(db, 'add', change);
         assert.strictEqual(1, db.machines.size());
         // Retrieve the machine from the database.
         var machine = db.machines.getById('1');
         assert.strictEqual('my-machine-instance', machine.instance_id);
+        assert.strictEqual('pending', machine.agent_state);
+        assert.strictEqual('info', machine.agent_state_info);
       });
 
       it('updates a machine in the database', function() {
         db.machines.add({
           id: '2',
-          instance_id: 'instance-42'
+          instance_id: 'instance-42',
+          agent_state: 'error',
+          agent_state_info: 'there is something wrong'
         });
         var change = {
           Id: '2',
-          InstanceId: 'instance-47'
+          InstanceId: 'instance-47',
+          Status: 'running',
+          StatusInfo: ''
         };
         machineInfo(db, 'change', change);
         assert.strictEqual(1, db.machines.size());
         // Retrieve the machine from the database.
         var machine = db.machines.getById('2');
         assert.strictEqual('instance-47', machine.instance_id);
+        assert.strictEqual('running', machine.agent_state);
+        assert.strictEqual('', machine.agent_state_info);
       });
 
     });
