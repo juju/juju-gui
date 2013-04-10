@@ -497,3 +497,91 @@ function injectData(app, data) {
 
   });
 })();
+
+
+(function() {
+  describe('app callbacks', function() {
+
+    var Y, juju, utils, app, container, getLocation, destroyMe;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          ['juju-gui', 'juju-tests-utils', 'juju-view-utils'],
+          function(Y) {
+            utils = Y.namespace('juju-tests.utils');
+            juju = Y.namespace('juju');
+            done();
+          });
+    });
+
+    beforeEach(function() {
+      destroyMe = [];
+    });
+
+    afterEach(function() {
+      Y.each(destroyMe, function(thing){
+        thing.destroy();
+      });
+    });
+
+    it('should show an error on loadService', function() {
+      app = new Y.juju.App({ });
+      destroyMe.push(app);
+      var evt = {
+        err: "Warning!  Danger!",
+        service_name: "FakeService"
+      };
+      app.loadService(evt);
+      var notification = app.db.notifications.toArray()[0];
+      notification.get('title').should.equal("Error loading service");
+      notification.get('message').should.equal("Service name: FakeService");
+    });
+
+    it('should warn on loadService if service doesn\'t exist', function() {
+      app = new Y.juju.App({ });
+      destroyMe.push(app);
+      var evt = {
+        err: "",
+        service_name: "FakeService"
+      };
+      var warning;
+      var original = console.warn;
+      console.warn = function(msg0, msg1) {
+        warning = msg0 + " " + msg1;
+      };
+      app.loadService(evt);
+      app.db.notifications.size().should.equal(0);
+      warning.should.equal('Could not load service data for FakeService');
+      console.warn = original;
+    });
+
+    it('should set service values', function() {
+      var conn = new utils.SocketStub();
+      var env = juju.newEnvironment({conn: conn});
+      destroyMe.push(env);
+      env.connect();
+      app = new Y.juju.App({env: env });
+      destroyMe.push(app);
+      var dispatched = false;
+      app.dispatch = function(){
+        dispatched = true;
+      };
+      injectData(app);
+      var svcName = 'wordpress';
+      var svc = app.db.services.getById(svcName);
+      var evt = {
+        err: "",
+        service_name: svcName,
+        result: {
+          config: 'fake config',
+          constraints: 'fake constraints'
+        }
+      };
+      app.loadService(evt);
+      svc.get('config').should.eql('fake config');
+      svc.get('constraints').should.eql('fake constraints');
+      dispatched.should.equal(true);
+    });
+
+  });
+})();
