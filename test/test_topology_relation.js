@@ -4,7 +4,8 @@ describe('topology relation module', function() {
   var Y, views, view, container, topo, db;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-topology', 'node', 'node-event-simulate'],
+    Y = YUI(GlobalConfig).use(
+        ['juju-topology', 'node', 'node-event-simulate', 'juju-view-utils'],
         function(Y) {
           views = Y.namespace('juju.views');
           done();
@@ -87,7 +88,8 @@ describe('topology relation module', function() {
       endpoints: [null, null]
     };
     view.removeRelation.call(fauxView, relation, fauxView, undefined);
-    assert.equal(requestedSelector, '#' + relationId);
+    assert.equal(
+        requestedSelector, '#' + views.utils.generateSafeDOMId(relationId));
   });
 
 });
