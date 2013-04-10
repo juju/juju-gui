@@ -676,6 +676,34 @@
       assert.equal(service_name, 'yoursql');
     });
 
+    it('can destroy a service', function() {
+      env.destroy_service('mysql');
+      msg = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Params: {
+          ServiceName: 'mysql'
+        },
+        Request: 'ServiceDestroy',
+        RequestId: msg.RequestId
+      };
+      assert.deepEqual(expected, msg);
+    });
+
+    it('handles failed destroy service', function() {
+      var err, service_name;
+      env.destroy_service('yoursql', function(evt) {
+        err = evt.err;
+        service_name = evt.service_name;
+      });
+      conn.msg({
+        RequestId: msg.RequestId,
+        Error: 'service "yoursql" not found'
+      });
+      assert.equal(err, 'service "yoursql" not found');
+      assert.equal(service_name, 'yoursql');
+    });
+
     it('sends the correct AddRelation message', function() {
       endpointA = ['haproxy', {name: 'reverseproxy'}];
       endpointB = ['wordpress', {name: 'website'}];

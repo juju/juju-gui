@@ -634,7 +634,7 @@ YUI.add('juju-env-go', function(Y) {
       var intermediateCallback, sendData;
       if (callback) {
         // Curry the callback and serviceName.  No context is passed.
-        intermediateCallback = Y.bind(this.handleSetConfig, null,
+        intermediateCallback = Y.bind(this.handleServiceCalls, null,
             callback, serviceName);
       }
       sendData = {
@@ -652,24 +652,28 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
-       Transform the data returned from juju-core call to
-       ServiceSet/ServiceSetYAML into that suitable for the user callback.
+       Destroy the given service.
 
-       @method handleSetConfig
-       @param {Function} userCallback The callback originally submitted by
-         the call site.
-       @param {String} serviceName The name of the service.  Passed in since
-         it is not part of the response.
-       @param {Object} data The response returned by the server.
-       @return {undefined} Nothing.
+       @method destroy_service
+       @param {String} serviceName The service name.
+       @param {Function} callback A callable that must be called once the
+        operation is performed. It will receive an object containing:
+          err - a string describing the problem (if an error occurred),
+          service_name - the name of the service.
+       @return {undefined} Sends a message to the server only.
      */
-    handleSetConfig: function(userCallback, serviceName, data) {
-      var transformedData = {
-        err: data.Error,
-        service_name: serviceName
-      };
-      // Call the original user callback.
-      userCallback(transformedData);
+    destroy_service: function(service, callback) {
+      var intermediateCallback;
+      if (callback) {
+        // Curry the callback and service.  No context is passed.
+        intermediateCallback = Y.bind(this.handleServiceCalls, null,
+            callback, service);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'ServiceDestroy',
+        Params: {ServiceName: service}
+      }, intermediateCallback);
     },
 
     /**

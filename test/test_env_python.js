@@ -194,6 +194,29 @@
       assert.equal(service_name, 'yoursql');
     });
 
+    it('can destroy a service', function() {
+      env.destroy_service('mysql');
+      msg = conn.last_message();
+      assert.equal(msg.op, 'destroy_service');
+      assert.equal(msg.service_name, 'mysql');
+    });
+
+    it('handles failed destroy service', function() {
+      var err, service_name;
+      env.destroy_service('yoursql', function(evt) {
+        err = evt.err;
+        service_name = evt.service_name;
+      });
+      msg = conn.last_message();
+      conn.msg({
+        request_id: msg.request_id,
+        service_name: 'yoursql',
+        err: 'service "yoursql" not found'
+      });
+      assert.equal(err, 'service "yoursql" not found');
+      assert.equal(service_name, 'yoursql');
+    });
+
     it('successfully adds a relation', function(done) {
       var endpoints, result;
       endpointA = ['mysql', {name: 'database'}];
