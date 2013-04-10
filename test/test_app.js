@@ -561,8 +561,10 @@ function injectData(app, data) {
       };
       app.loadService(evt);
       var notification = app.db.notifications.item(0);
-      assert.strictEqual('Error loading service', notification.get('title'));
-      assert.strictEqual('Service name: FakeService', notification.get('message'));
+      assert.strictEqual('Error loading service',
+          notification.get('title'));
+      assert.strictEqual('Service name: FakeService',
+          notification.get('message'));
     });
 
     it('should warn on loadService if service doesn\'t exist', function() {
@@ -580,7 +582,8 @@ function injectData(app, data) {
       };
       app.loadService(evt);
       app.db.notifications.size().should.equal(0);
-      assert.strictEqual('Could not load service data for FakeService', warning);
+      assert.strictEqual('Could not load service data for FakeService',
+          warning);
       console.warn = original;
     });
 
