@@ -519,7 +519,7 @@ function injectData(app, data) {
     });
 
     afterEach(function() {
-      Y.each(destroyMe, function(thing){
+      Y.each(destroyMe, function(thing) {
         thing.destroy();
       });
     });
@@ -528,26 +528,26 @@ function injectData(app, data) {
       app = new Y.juju.App({ });
       destroyMe.push(app);
       var evt = {
-        err: "Warning!  Danger!",
-        service_name: "FakeService"
+        err: 'Warning!  Danger!',
+        service_name: 'FakeService'
       };
       app.loadService(evt);
       var notification = app.db.notifications.toArray()[0];
-      notification.get('title').should.equal("Error loading service");
-      notification.get('message').should.equal("Service name: FakeService");
+      notification.get('title').should.equal('Error loading service');
+      notification.get('message').should.equal('Service name: FakeService');
     });
 
     it('should warn on loadService if service doesn\'t exist', function() {
       app = new Y.juju.App({ });
       destroyMe.push(app);
       var evt = {
-        err: "",
-        service_name: "FakeService"
+        err: '',
+        service_name: 'FakeService'
       };
       var warning;
       var original = console.warn;
       console.warn = function(msg0, msg1) {
-        warning = msg0 + " " + msg1;
+        warning = msg0 + ' ' + msg1;
       };
       app.loadService(evt);
       app.db.notifications.size().should.equal(0);
@@ -563,14 +563,14 @@ function injectData(app, data) {
       app = new Y.juju.App({env: env });
       destroyMe.push(app);
       var dispatched = false;
-      app.dispatch = function(){
+      app.dispatch = function() {
         dispatched = true;
       };
       injectData(app);
       var svcName = 'wordpress';
       var svc = app.db.services.getById(svcName);
       var evt = {
-        err: "",
+        err: '',
         service_name: svcName,
         result: {
           config: 'fake config',
