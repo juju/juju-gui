@@ -7,6 +7,8 @@
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
+          'datatype-date',
+          'datatype-date-format',
           'node-event-simulate',
           'juju-charm-models',
           'juju-charm-store',

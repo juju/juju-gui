@@ -69,14 +69,14 @@ YUI.add('juju-models', function(Y) {
    * Environment level annotations.
    *
    * @class Environment
-   **/
+   */
   var Environment = Y.Base.create('environment', Y.Model, [], {
     /**
      * Update the annotations on delta events.
      * We don't support removal of the Environment model.
      *
      * @method process_delta
-     **/
+     */
     process_delta: function(action, data) {
       this.set('annotations', data);
     }
@@ -293,7 +293,7 @@ YUI.add('juju-models', function(Y) {
     @param {Model|Object} model Model instance to convert.
     @return {Object} Plain object.
     @protected
-    **/
+    */
     _modelToObject: function(model) {
       var result = MachineList.superclass._modelToObject.call(this, model);
       if (!result.id) {
@@ -595,7 +595,7 @@ YUI.add('juju-models', function(Y) {
      * @param {Object} Entity name, usually {String}, {Int} possible for
      *                 machine.
      * @return {Model} resolved by call.
-     **/
+     */
     resolveModelByName: function(entityName) {
       if (!entityName) {
         return undefined;

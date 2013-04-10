@@ -5,7 +5,7 @@ Sandbox APIs mimicking communications with the Go and Juju backends.
 
 @module env
 @submodule env.sandbox
-**/
+*/
 
 YUI.add('juju-env-sandbox', function(Y) {
 
@@ -17,7 +17,7 @@ YUI.add('juju-env-sandbox', function(Y) {
   A client connection for interacting with a sandbox environment.
 
   @class ClientConnection
-  **/
+  */
   function ClientConnection(config) {
     ClientConnection.superclass.constructor.apply(this, arguments);
   }
@@ -34,7 +34,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method initializer
     @return {undefined} Nothing.
-    **/
+    */
     initializer: function() {
       this.connected = false;
     },
@@ -47,7 +47,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} event An object with a JSON string on the "data"
       attribute.
     @return {undefined} Nothing.
-    **/
+    */
     onmessage: function(event) {},
 
     /**
@@ -60,7 +60,7 @@ YUI.add('juju-env-sandbox', function(Y) {
       connection is closed.  This exists to handle a race condition between
       receiveNow and receive, when the connection closes between the two.
     @return {undefined} Nothing.
-    **/
+    */
     receiveNow: function(data, failSilently) {
       if (this.connected) {
         this.onmessage({data: Y.JSON.stringify(data)});
@@ -76,7 +76,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @method receive
     @param {Object} data An object to be sent as JSON to the listener.
     @return {undefined} Nothing.
-    **/
+    */
     receive: function(data) {
       if (this.connected) {
         Y.soon(this.receiveNow.bind(this, data, true));
@@ -91,7 +91,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @method send
     @param {String} data A JSON string of the data to be sent.
     @return {undefined} Nothing.
-    **/
+    */
     send: function(data) {
       if (this.connected) {
         this.get('juju').receive(Y.JSON.parse(data));
@@ -106,7 +106,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method onopen
     @return {undefined} Nothing.
-    **/
+    */
     onopen: function() {},
 
     /**
@@ -118,7 +118,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method open
     @return {undefined} Nothing.
-    **/
+    */
     open: function() {
       if (!this.connected) {
         this.connected = true;
@@ -133,7 +133,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method onclose
     @return {undefined} Nothing.
-    **/
+    */
     onclose: function() {},
 
     /**
@@ -143,7 +143,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method close
     @return {undefined} Nothing.
-    **/
+    */
     close: function() {
       if (this.connected) {
         this.connected = false;
@@ -224,7 +224,7 @@ YUI.add('juju-env-sandbox', function(Y) {
   A sandbox Juju environment using the Python API.
 
   @class PyJujuAPI
-  **/
+  */
   function PyJujuAPI(config) {
     PyJujuAPI.superclass.constructor.apply(this, arguments);
   }
@@ -243,7 +243,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method initializer
     @return {undefined} Nothing.
-    **/
+    */
     initializer: function() {
       this.connected = false;
     },
@@ -256,7 +256,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @method open
     @param {Object} client A ClientConnection.
     @return {undefined} Nothing.
-    **/
+    */
     open: function(client) {
       if (!this.connected) {
         this.connected = true;
@@ -290,7 +290,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method sendDelta
     @return {undefined} Nothing.
-    **/
+    */
     sendDelta: function() {
       var state = this.get('state');
       var changes = state.nextChanges();
@@ -337,7 +337,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method close
     @return {undefined} Nothing.
-    **/
+    */
     close: function() {
       if (this.connected) {
         this.connected = false;
@@ -352,7 +352,7 @@ YUI.add('juju-env-sandbox', function(Y) {
 
     @method destructor
     @return {undefined} Nothing.
-    **/
+    */
     destructor: function() {
       this.close(); // Make sure the setInterval is cleared!
     },
@@ -363,7 +363,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @method receive
     @param {Object} data A hash of data sent from the client.
     @return {undefined} Nothing.
-    **/
+    */
     receive: function(data) {
       // Make a shallow copy of the received data because handlers will mutate
       // it to add an "err" or "result".
@@ -383,7 +383,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @method performOp_login
     @param {Object} data A hash minimally of user and password.
     @return {undefined} Nothing.
-    **/
+    */
     performOp_login: function(data) {
       data.result = this.get('state').login(data.user, data.password);
       this.get('client').receive(data);
@@ -399,7 +399,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     @param {Object} data A hash minimally of charm_url, and optionally also
       service_name, config, config_raw, and num_units.
     @return {undefined} Nothing.
-    **/
+    */
     performOp_deploy: function(data) {
       var client = this.get('client');
       var callback = function(result) {

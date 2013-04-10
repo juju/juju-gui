@@ -18,6 +18,7 @@ describe('application hotkeys', function() {
             container: container,
             viewContainer: container
           });
+          app.showView(new Y.View());
           app.activateHotkeys();
           done();
         });

@@ -32,6 +32,7 @@ describe('Relation endpoints logic', function() {
       env = juju.newEnvironment({conn: conn});
       env.connect();
       app = new Y.juju.App({env: env});
+      app.showView(new Y.View());
       db = app.db;
       db.onDelta({data: {'op': 'delta', result: sample_env}});
       done();
@@ -308,6 +309,7 @@ describe('Endpoints map handlers', function() {
     env = juju.newEnvironment({conn: conn});
     env.connect();
     app = new Y.juju.App({env: env});
+    app.showView(new Y.View());
     controller = app.endpointsController;
     controller.endpointsMap = {};
   });
