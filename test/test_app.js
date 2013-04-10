@@ -525,8 +525,9 @@ function injectData(app, data) {
     });
 
     it('should show an error on loadService', function() {
-      app = new Y.juju.App({ });
+      app = new Y.juju.App({conn: {close: function() {}}});
       destroyMe.push(app);
+      app.showView(new Y.View());
       var evt = {
         err: 'Warning!  Danger!',
         service_name: 'FakeService'
@@ -538,8 +539,9 @@ function injectData(app, data) {
     });
 
     it('should warn on loadService if service doesn\'t exist', function() {
-      app = new Y.juju.App({ });
+      app = new Y.juju.App({conn: {close: function() {}}});
       destroyMe.push(app);
+      app.showView(new Y.View());
       var evt = {
         err: '',
         service_name: 'FakeService'
