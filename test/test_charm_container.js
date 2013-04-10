@@ -123,8 +123,8 @@ describe('charm container widget', function() {
     charm_container.render(container);
     var rendered = container.one('.yui3-charmcontainer');
     assert.equal(
-      'Foo(0)',
-      rendered.one('h3').get('text').replace(/\s/g, ''));
+        'Foo(0)',
+        rendered.one('h3').get('text').replace(/\s/g, ''));
   });
 
   it('handles having less charms tokens than its cutoff', function() {
@@ -145,8 +145,8 @@ describe('charm container widget', function() {
 
     var rendered = container.one('.yui3-charmcontainer');
     assert.equal(
-      'Popular(4)',
-      rendered.one('h3').get('text').replace(/\s/g, ''));
+        'Popular(4)',
+        rendered.one('h3').get('text').replace(/\s/g, ''));
     assert.equal(4, container.all('.yui3-charmtoken').size());
     assert.equal(0, container.all('.yui3-charmtoken-hidden').size());
     assert.equal(1, charm_container._events.length);
