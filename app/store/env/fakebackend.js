@@ -728,7 +728,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // Fallback error If the relation was not able to be created
       // for any reason other than what has already been checked for.
       return false;
-    }
+    },
 
     // updateAnnotations: function() {
 
