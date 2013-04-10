@@ -292,7 +292,7 @@
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm(data)
       });
 

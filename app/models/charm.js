@@ -481,8 +481,6 @@ YUI.add('juju-charm-models', function(Y) {
       rating_numerator: {},
       rating_denominator: {},
       /**
-       * Quoted for lazy loading purposes.
-       *
        * @attribute recent_commits
        * @default undefined
        * @type {Array} list of objects for each commit.
