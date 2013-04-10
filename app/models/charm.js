@@ -485,6 +485,11 @@ YUI.add('juju-charm-models', function(Y) {
        *
        */
       'recent_commit_count': {
+        /**
+         * @method recent_commit_count.valueFn
+         * @return {Int} count of the commits in 'recent' time.
+         *
+         */
         valueFn: function() {
           var count = 0,
               commits = this.get('recent_commits'),
@@ -523,12 +528,17 @@ YUI.add('juju-charm-models', function(Y) {
        *
        * @attribute recent_download_count
        * @default undefined
-       * @type {Int}
+       * @type {Int} number of downloads in 'recent' time.
        *
        */
       recent_download_count: {
+        /**
+         * @method recent_download_count.valueFn
+         * @return {Int}
+         *
+         */
         valueFn: function() {
-          return 0
+          return 0;
         }
       },
       relations: {},
