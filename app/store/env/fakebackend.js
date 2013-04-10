@@ -11,6 +11,50 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
   var models = Y.namespace('juju.models');
   var UNAUTHENTICATEDERROR = {error: 'Please log in.'};
+
+  /**
+    Takes a string endpoint and splits it into usable parts.
+    @method endpointSplit
+    @param {String} endpoint the endpoint to split in the format
+      wordpress:db.
+  */
+  function endpointSplit(endpoint) {
+    var epData = endpoint.split(':');
+    return { name: epData[0], type: epData[1] };
+  }
+
+  /**
+    Loops through the charm endpoint data to determine the interface
+    and scope of the relationship.
+
+    @method getCharmInterfaceAndScope
+    @param {Array} charmEndpoints Array of charm object 'requires' endpoint
+      types ie) { db: { interface: 'mysql' }} .
+    @param {Array} charmDatas Array of charm data objects from splitting
+      endpoint string above.
+  */
+  function getCharmInterfaceAndScope(charmEndpoints, charmDatas) {
+    var sharedInterface, sharedScope;
+    Y.Array.some(charmEndpoints, function(charmEndpoint, index) {
+      var charmInterface = charmEndpoint['interface'];
+      // If the interfaces match or if it is a juju-info relationship
+      if ((charmInterface === charmDatas[index].name) ||
+          (charmInterface === 'juju-info')) {
+        sharedInterface = charmDatas[index].name;
+        if (charmEndpoint.scope !== undefined) {
+          sharedScope = charmEndpoint.scope;
+        }
+      }
+      if (sharedInterface) { return true; }
+    });
+    if (sharedInterface) {
+      return {
+        sharedInterface: sharedInterface,
+        sharedScope: sharedScope
+      };
+    }
+  }
+
   /**
   An in-memory fake Juju backend.
 
@@ -421,49 +465,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-      Takes a string endpoint and splits it into usable parts.
-      @method endpointSplit
-      @param {String} endpoint the endpoint to split in the format
-        wordpress:db.
-    */
-    endpointSplit: function(endpoint) {
-      var epData = endpoint.split(':');
-      return { name: epData[0], type: epData[1] };
-    },
-
-    /**
-      Loops through the charm endpoint data to determine the interface
-      and scope of the relationship.
-
-      @method getInterfaceAndScope
-      @param {Array} charmEndpoints Array of charm object 'requires' endpoint
-        types ie) { db: { interface: 'mysql' }} .
-      @param {Array} charmDatas Array of charm data objects from splitting
-        endpoint string above.
-    */
-    getCharmInterfaceAndScope: function(charmEndpoints, charmDatas) {
-      var sharedInterface, sharedScope;
-      Y.Array.some(charmEndpoints, function(charmEndpoint, index) {
-        var charmInterface = charmEndpoint['interface'];
-        // If the interfaces match or if it is a juju-info relationship
-        if ((charmInterface === charmDatas[index].name) ||
-            (charmInterface === 'juju-info')) {
-          sharedInterface = charmDatas[index].name;
-          if (charmEndpoint.scope !== undefined) {
-            sharedScope = charmEndpoint.scope;
-          }
-        }
-        if (sharedInterface) { return true; }
-      });
-      if (sharedInterface) {
-        return {
-          sharedInterface: sharedInterface,
-          sharedScope: sharedScope
-        };
-      }
-    },
-
-    /**
       Removes the supplied units
 
       @method removeUnits
@@ -572,11 +573,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
               ' required to establish a relation'};
       }
 
-      var epAData = this.endpointSplit(endpointA),
-          epBData = this.endpointSplit(endpointB),
-          charmA, charmB, charmId, counter = 0;
+      var endpointData = Y.Array.map([endpointA, endpointB], endpointSplit);
 
-      if (epAData.type !== epBData.type) {
+      if (endpointData[0].type !== endpointData[1].type) {
         return {error: 'Endpoints need to match.'};
       }
 
@@ -584,28 +583,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       // Because the service name and charm name might not match we first need
       // to find the charm that relates to the service name and use that charmid
-      this.db.services.some(function(service) {
-        if (service.get('name') === epAData.name) {
-          charmAId = service.get('charm');
-          counter += 1;
+      var charms = Y.Array.map(endpointData, function(endpoint) {
+        var service = this.db.services.getById(endpoint.name);
+        if (service) {
+          return this.db.charms.getById(service.get('charm'));
         }
-        if (service.get('name') === epBData.name) {
-          charmBId = service.get('charm');
-          counter += 1;
-        }
-        if (counter === 2) { return true; }
-      });
-
-      counter = 0;
-      var charmsFound = this.db.charms.some(function(charm) {
-        charmId = charm.get('id');
-        if (charmId === charmAId) { charmA = charm; counter += 1; }
-        if (charmId === charmBId) { charmB = charm; counter += 1; }
-        if (counter === 2) { return true; }
-      });
-
+      }, this);
       // This error should never be hit but it's here JIC
-      if (!charmsFound) { return {error: 'Charm not loaded.'}; }
+      if (!charms[0] || !charms[1]) { return {error: 'Charm not loaded.'}; }
 
       /**
         Pushes juju-info onto the charm's 'provides' to allow for subordination
@@ -621,15 +606,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
           charm.set('requires', req);
         }
       }
-      Y.Array.each([charmA, charmB], addJujuInfo);
+      Y.Array.each(charms, addJujuInfo);
 
-      var charmAEp = charmA.get('requires')[epAData.type],
-          charmBEp = charmB.get('requires')[epBData.type];
+      var charmEndpoints = [
+        charms[0].get('requires')[endpointData[0].type],
+        charms[1].get('requires')[endpointData[1].type]
+      ];
 
       // If there are matching interfaces this will contain an object of the
       // charm interface type and scope (if supplied).
-      var cics = this.getCharmInterfaceAndScope(
-          [charmAEp, charmBEp], [epBData, epAData]);
+      var cics = getCharmInterfaceAndScope(
+          // The reverse order of the second param is intentional
+          charmEndpoints, [endpointData[1], endpointData[0]]);
 
       if (!cics) { return {error: 'No matching interfaces.'}; }
 
@@ -642,7 +630,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         endpoints: [endpointA, endpointB],
         pending: false,
         scope: cics.sharedScope || 'global',
-        display_name: epAData.type
+        display_name: endpointData[0].type
       });
 
       if (relation) {
@@ -657,7 +645,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           type: cics.sharedInterface,
           endpoints: [endpointA, endpointB],
           scope: cics.sharedScope || 'global',
-          displayName: epAData.type,
+          displayName: endpointData[0].type,
           relation: relation
         };
       }
