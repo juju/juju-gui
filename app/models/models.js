@@ -41,15 +41,15 @@ YUI.add('juju-models', function(Y) {
       // arrives for those objects, they already exist in a skeleton
       // form that needs to be fleshed out.  So, the existing objects
       // are kept and re-used.
-      var data = Y.merge(change_base || {}, change_data);
       if (!exists) {
+        var data = Y.merge(change_base || {}, change_data);
         instance = list.add(data);
       } else {
         if (instance instanceof Y.Model) {
-          instance.setAttrs(data);
+          instance.setAttrs(change_data);
         } else {
           // This must be from a LazyModelList.
-          Y.each(data, function(value, key) {
+          Y.each(change_data, function(value, key) {
             instance[key] = value;
           });
         }
