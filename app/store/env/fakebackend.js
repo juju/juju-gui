@@ -29,14 +29,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @method getExplicitInterface
     @param {Array} charmDatas Array of charm data objets from splitting
       endpoing string.
-    @returns {undefined | Object | String} Returns either a string of the valid
-      endpoint interface, an object containing an error message, or undefined if
+    @returns {Object | String} Returns either a string of the valid endpoint
+      interface, an object containing an error message, or an empty object if
       no explicit endpoint provided.
   */
   function getExplicitInterface(charmDatas) {
-    var epType;
+    var epType = {};
     Y.Array.each(charmDatas, function(charmData) {
-      if (!epType) {
+      if (typeof epType !== 'string') {
         // If the type hasn't yet been defined assign it the type specified
         // in the supplied charm data.
         if (charmData.type) { epType = charmData.type; }
@@ -66,6 +66,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
       (only used for recursin, do not pass in)..
     @Param {Number} epInterfaceIndex endpoint charm index to check for a
       matching interface on provides  (only used for recursin, do not pass in).
+    @returns {Object | Boolean} An object of the shared interface and scope else
+      false if none are found.
   */
   function validateInterface(charms, explicitInterface ,epInterface, epScope,
     epInterfaceIndex) {
@@ -104,6 +106,42 @@ YUI.add('juju-env-fakebackend', function(Y) {
   }
 
   /**
+    Find the interfaces that are shared between the supplied charms
+
+    @method findSharedInterfaces
+    @param {Array} charms An array of charm instances.
+    @return {Array | Boolean} the matches or false if none.
+  */
+  function findSharedInterfaces(charms) {
+    var keys = {
+      provides: [],
+      requires: [],
+      shared: []
+    };
+    Y.Array.each(charms, function(charm){
+      var provides = charm.get('provides'),
+          requires = charm.get('requires');
+      if (provides['juju-info'] === undefined) {
+        provides['juju-info'] = {'interface': 'juju-info'};
+      }
+      keys.provides.push(Y.Object.keys(provides));
+      keys.requires.push(Y.Object.keys(requires));
+    });
+    Y.Array.each(keys.provides, function(provides, index) {
+      index = (index > 0) ? 0 : 1;
+      Y.Array.each(provides, function(epInterface) {
+        var requires = keys.requires[index],
+            epIndex = requires.indexOf(epInterface);
+        if (epIndex > -1) {
+          keys.shared.push(requires[epIndex]);
+        }
+      });
+    });
+
+    return keys.shared;
+  }
+
+  /**
     Loops through the charm endpoint data to determine the interface
     and scope of the relationship.
 
@@ -113,48 +151,31 @@ YUI.add('juju-env-fakebackend', function(Y) {
       endpoint string.
   */
   function getCharmInterfaceAndScope(charms, charmDatas) {
-    var sharedInterface, sharedScope, explicitInterface;
+    var explicitInterface, cics;
 
     // Fetch the explicit interface if provided
     explicitInterface = getExplicitInterface(charmDatas);
 
     if (explicitInterface.error) { return explicitInterface; }
     if (typeof explicitInterface === 'string') {
-      //validate interface
-
-      var cics = validateInterface(charms, explicitInterface);
-      if (cics) {
-        return {
-          sharedInterface: cics.sharedInterface,
-          sharedScope: cics.sharedScope
-        };
-      } else {
+      // Validate interface
+      cics = validateInterface(charms, explicitInterface);
+      if (!cics) {
         return {error: 'Specified interfaces do not match'};
       }
+    } else {
+      // If there was no explicit interface provided
+      var interfaces = findSharedInterfaces(charms);
+      if (interfaces.length > 1) {
+        return {error: 'Ambiguous relationship is not allowed.'};
+      } else {
+        cics = validateInterface(charms, interfaces[0]);
+      }
     }
-    if (explicitInterface === undefined) {
-      return {};
-    }
-
-    // Y.Array.some(charmEndpoints, function(charmEndpoint, index) {
-    //   var charmInterface = charmEndpoint['interface'];
-    //   // If the interfaces match or if it is a juju-info relationship
-    //   if ((charmInterface === charmDatas[index].name) ||
-    //       (charmInterface === 'juju-info')) {
-    //     sharedInterface = charmDatas[index].name;
-    //     if (charmEndpoint.scope !== undefined) {
-    //       sharedScope = charmEndpoint.scope;
-    //     }
-    //   }
-    //   if (sharedInterface) { return true; }
-    // });
-    // if (sharedInterface) {
-    //   return {
-    //     sharedInterface: sharedInterface,
-    //     sharedScope: sharedScope
-    //   };
-    // }
-    //if (!cics) { return {error: 'No matching interfaces.'}; }
+    return {
+      sharedInterface: cics.sharedInterface,
+      sharedScope: cics.sharedScope
+    };
   }
 
   /**

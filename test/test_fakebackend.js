@@ -853,7 +853,7 @@
       });
     });
 
-    it('can create a relation with a single explicit interface and a subordinate charm (reverse)', function(done) {
+    it('can create a relation with a single explicit interface and a subordinate charm', function(done) {
       fakebackend.deploy('cs:wordpress', function() {
         fakebackend.deploy('cs:puppet', function() {
           var result = fakebackend.addRelation(
@@ -918,7 +918,27 @@
       });
     });
 
-    it('can create a relation with an inferred interface (reverse)');
+    it('can create a relation with an inferred interface (reverse)', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:mysql', function() {
+          var result = fakebackend.addRelation('mysql', 'wordpress'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'mysql',
+                endpoints: ['mysql', 'wordpress'],
+                scope: 'global'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
+    });
+
     it('can create a relation with an inferred subordinate charm');
     it('can create a relation with an inferred subordinate charm (reverse)');
 
