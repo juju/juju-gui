@@ -1,10 +1,32 @@
 .yui3-charmtoken {
-    button.hidden {
-        display: none;
-    }
+    padding: 10px 20px;
 
-    &:hover button.hidden {
-       display: block;
+    .add {
+        float: right;
+
+        .hidden {
+            display: none;
+        }
+    }
+    h3 {
+        color: @bws-heading;
+        font-family: @font-family;
+        font-size: 13.5pt;
+        font-weight: normal;
+    }
+    &:hover {
+        background-color: #eee;
+        cursor: pointer;
+
+        .add {
+           display: block;
+           visibility: visible;
+        }
+    }
+    &.active {
+        padding-right: 14px;
+        background-color: #ddd;
+        border-right: 6px solid @charm-panel-orange;
     }
 }
 
