@@ -365,10 +365,8 @@ YUI.add('juju-charm-models', function(Y) {
      * @param {Object} cfg The configuration object.
      */
     initializer: function(cfg) {
-      if (cfg) {
-        if (cfg.downloads_in_past_30_days) {
-          this.set('recent_downloads', cfg.downloads_in_past_30_days);
-        }
+      if (cfg && cfg.downloads_in_past_30_days) {
+        this.set('recent_downloads', cfg.downloads_in_past_30_days);
       }
     }
   }, {
