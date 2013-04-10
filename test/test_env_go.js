@@ -607,7 +607,8 @@
         RequestId: 1,
         Response: expected
       });
-      expected.name = result.name;
+      expected.name = 'mysql';
+      assert.strictEqual('mysql', service_name);
       assert.deepEqual(expected, result);
     });
 

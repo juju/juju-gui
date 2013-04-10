@@ -533,9 +533,9 @@ function injectData(app, data) {
         service_name: 'FakeService'
       };
       app.loadService(evt);
-      var notification = app.db.notifications.toArray()[0];
-      notification.get('title').should.equal('Error loading service');
-      notification.get('message').should.equal('Service name: FakeService');
+      var notification = app.db.notifications.item(0);
+      assert.strictEqual('Error loading service', notification.get('title'));
+      assert.strictEqual('Service name: FakeService', notification.get('message'));
     });
 
     it('should warn on loadService if service doesn\'t exist', function() {
@@ -553,17 +553,17 @@ function injectData(app, data) {
       };
       app.loadService(evt);
       app.db.notifications.size().should.equal(0);
-      warning.should.equal('Could not load service data for FakeService');
+      assert.strictEqual('Could not load service data for FakeService', warning);
       console.warn = original;
     });
 
     it('should set service values', function() {
       var conn = new utils.SocketStub();
       var env = juju.newEnvironment({conn: conn});
-      destroyMe.push(env);
       env.connect();
       app = new Y.juju.App({env: env });
       destroyMe.push(app);
+      app.showView(new Y.View());
       var dispatched = false;
       app.dispatch = function() {
         dispatched = true;
@@ -580,9 +580,9 @@ function injectData(app, data) {
         }
       };
       app.loadService(evt);
-      svc.get('config').should.eql('fake config');
-      svc.get('constraints').should.eql('fake constraints');
-      dispatched.should.equal(true);
+      assert.strictEqual('fake config', svc.get('config'));
+      assert.strictEqual('fake constraints', svc.get('constraints'));
+      assert.isTrue(dispatched);
     });
 
   });
