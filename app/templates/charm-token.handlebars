@@ -10,12 +10,12 @@
       {{ name }}
     </h3>
     <div class="metadata">
-      Recent activity: 
+      Recent activity:
       <span class="commits">
-        {{ recent_commits }} {{pluralize 'commit' recent_commits}}
+        {{ recent_commit_count }} {{pluralize 'commit' recent_commit_count}}
       </span>
       <span class="downloads">
-        {{ recent_downloads }} {{pluralize 'download' recent_downloads}}
+        {{ recent_download_count }} {{pluralize 'download' recent_download_count}}
       </span>
     </div>
     <p class="description">{{ description }}</p>

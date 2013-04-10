@@ -731,7 +731,6 @@ YUI.add('juju-topology-relation', function(Y) {
       // graph and reattach events.
       topo.update();
       topo.bindAllD3Events();
-
       // Fire event to add relation in juju.
       // This needs to specify interface in the future.
       env.add_relation(endpoints[0], endpoints[1],

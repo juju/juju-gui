@@ -61,13 +61,40 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
 
     makeCharmStore: function() {
       var data = [];
-      var charmStore = new Y.juju.CharmStore(
+
+      // In order to return multiple charms from the fake store we need to
+      // monkeypatch this method.
+      var TestCharmStore = Y.Base.create('test-charm-store',
+          Y.juju.CharmStore, [], {
+            loadByPath: function(path, options) {
+              this.get('datasource').sendRequest({
+                request: path,
+                callback: {
+                  success: function(io_request) {
+                    var charmName = path.split('/')[2];
+                    Y.Array.some(io_request.response.results, function(result) {
+                      var data = Y.JSON.parse(result.responseText);
+                      if (data.name === charmName) {
+                        options.success(data);
+                        return true;
+                      }
+                    });
+                  },
+                  failure: options.failure
+                }
+              });
+            }
+          });
+
+      var charmStore = new TestCharmStore(
           {datasource: new Y.DataSource.Local({source: data})});
-      var setCharm = function(name) {
-        data[0] = Y.io('data/' + name + '-charmdata.json', {sync: true});
+      var setCharms = function(names) {
+        Y.Array.each(names, function(name) {
+          data.push(Y.io('data/' + name + '-charmdata.json', {sync: true}));
+        });
       };
-      setCharm('wordpress');
-      return {charmStore: charmStore, setCharm: setCharm};
+      setCharms(['wordpress', 'mysql', 'puppet', 'haproxy']);
+      return {charmStore: charmStore, setCharm: setCharms};
     },
 
     makeFakeBackendWithCharmStore: function() {

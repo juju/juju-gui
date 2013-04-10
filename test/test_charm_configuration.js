@@ -162,7 +162,7 @@ describe('charm configuration', function() {
        container.one('#service-name').set('value', 'wordpress');
        container.one('#charm-deploy').simulate('click');
        deployed.should.equal(false);
-       var notification = db.notifications.toArray()[0];
+       var notification = db.notifications.item(0);
        notification.get('title').should.equal(
        'Attempting to deploy service wordpress');
        notification.get('message').should.equal(

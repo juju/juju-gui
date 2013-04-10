@@ -93,7 +93,7 @@ YUI.add('browser-charm-container', function(Y) {
      */
     bindUI: function() {
       if (this.get('extra') > 0) {
-        var expander = this.get('contentBox').one('a');
+        var expander = this.get('contentBox').one('a.expandToggle');
         this.addEvent(expander.on('click', this._toggleExpand, this));
       }
     },
