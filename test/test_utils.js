@@ -591,7 +591,7 @@ describe('utilities', function() {
       });
 
       it('avoids including status info if not present', function() {
-        [undefined, null, ''].forEach(function(info){
+        [undefined, null, ''].forEach(function(info) {
           obj.agent_state_info = info;
           html = template({instance: obj});
           assert.strictEqual(obj.agent_state, html, 'info: ' + info);
