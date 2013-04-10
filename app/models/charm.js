@@ -534,7 +534,7 @@ YUI.add('juju-charm-models', function(Y) {
       recent_download_count: {
         /**
          * @method recent_download_count.valueFn
-         * @return {Int}
+         * @return {Int} the number of downloads in the 'recent' time frame.
          *
          */
         valueFn: function() {
