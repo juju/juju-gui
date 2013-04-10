@@ -608,6 +608,9 @@ YUI.add('juju-env-go', function(Y) {
      * @return {undefined} Nothing.
      */
     handleGetService: function(userCallback, serviceName, data) {
+      // Set the service name to 'name' for compatibility with other
+      // Juju environments.
+      data.Response.name = data.Response.Service;
       userCallback({
         err: data.Error,
         service_name: serviceName,

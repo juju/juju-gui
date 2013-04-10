@@ -607,7 +607,8 @@
         RequestId: 1,
         Response: expected
       });
-      assert.equal(service_name, 'mysql');
+      expected.name = 'mysql';
+      assert.strictEqual('mysql', service_name);
       assert.deepEqual(expected, result);
     });
 
@@ -621,7 +622,10 @@
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Error: 'service \"yoursql\" not found'
+        Error: 'service \"yoursql\" not found',
+        Response: {
+          Service: 'yoursql'
+        }
       });
       assert.equal(service_name, 'yoursql');
       assert.equal(err, 'service "yoursql" not found');
