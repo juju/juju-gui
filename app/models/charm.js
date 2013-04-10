@@ -489,8 +489,15 @@ YUI.add('juju-charm-models', function(Y) {
        *
        */
       'recent_commits': {
-        valueFn: function () {
-            return this._loadRecentCommits();
+        /**
+         * Return the commits of the charm in a format we can live with from
+         * the source code data provided by the api.
+         *
+         * @method recent_commits.valueFn
+         *
+         */
+        valueFn: function() {
+          return this._loadRecentCommits();
         }
       },
       /**

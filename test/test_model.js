@@ -589,7 +589,7 @@ describe('BrowserCharm test', function() {
 
   afterEach(function() {
     if (instance) {
-        instance.destroy();
+      instance.destroy();
     }
   });
 
@@ -601,10 +601,11 @@ describe('BrowserCharm test', function() {
   it('maps relations to keep with the original charm model', function() {
     instance = new models.BrowserCharm(data);
     var requires = instance.get('requires');
-    requires.balancer.interface.should.eql('http');
+    // Interface is quoted for lint purposes.
+    requires.balancer['interface'].should.eql('http');
 
     var provides = instance.get('provides');
-    provides.website.interface.should.eql('http');
+    provides.website['interface'].should.eql('http');
   });
 
   it('maps revisions nicely for us with converted dates', function() {
@@ -616,7 +617,7 @@ describe('BrowserCharm test', function() {
     // data provided.
     var sample = commits[0];
     assert(Y.Object.hasKey(sample, 'author'));
-    assert(Y.Object.hasKey(sample, 'date'))
+    assert(Y.Object.hasKey(sample, 'date'));
     assert(Y.Object.hasKey(sample, 'message'));
     assert(Y.Object.hasKey(sample, 'revno'));
 

@@ -120,6 +120,15 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }, this));
     },
 
+    /**
+     * Commits need to be formatted, dates made pretty for the output to the
+     * template. We have to break up the first one from the rest since it's
+     * displayed differently.
+     *
+     * @method _formatCommitsForHtml
+     * @param {Array} commits a list of commit objects.
+     *
+     */
     _formatCommitsForHtml: function(commits) {
       var prettyCommits = {
         remaining: []
@@ -134,15 +143,15 @@ YUI.add('subapp-browser-charmview', function(Y) {
         prettyCommits.first = commits.shift();
         prettyCommits.first.prettyDate = Y.Date.format(
             prettyCommits.first.date, {
-            format: DATE_FORMAT
-        });
+              format: DATE_FORMAT
+            });
       }
 
       Y.Array.each(commits, function(commit) {
         commit.prettyDate = Y.Date.format(
             commit.date, {
-            format: DATE_FORMAT
-        });
+              format: DATE_FORMAT
+            });
         prettyCommits.remaining.push(commit);
       });
 
@@ -328,7 +337,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var charm = this.get('charm');
       var tplData = charm.getAttrs();
       tplData.isFullscreen = isFullscreen;
-      tplData.prettyCommits = this._formatCommitsForHtml(tplData.recent_commits);
+      tplData.prettyCommits = this._formatCommitsForHtml(
+          tplData.recent_commits);
 
       var tpl = this.template(tplData);
       var tplNode = Y.Node.create(tpl);
