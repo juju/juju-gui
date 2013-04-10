@@ -69,6 +69,7 @@ YUI.add('browser-charm-container', function(Y) {
      * @method _toggleExpand
      */
     _toggleExpand: function(e) {
+      e.halt();
       var invisible = this.get('contentBox').one('.yui3-charmtoken-hidden'),
           expander = e.currentTarget;
       if (invisible) {
@@ -89,7 +90,7 @@ YUI.add('browser-charm-container', function(Y) {
      */
     bindUI: function() {
       if (this.get('extra') > 0) {
-        var expander = this.get('contentBox').one('.expand');
+        var expander = this.get('contentBox').one('a');
         this._events.push(expander.on('click', this._toggleExpand, this));
       }
     },

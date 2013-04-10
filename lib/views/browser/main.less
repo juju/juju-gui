@@ -33,7 +33,6 @@
 }
 
 #subapp-browser {
-  background-color: #f5f5f5;
   color: @bws-text;
   font-size: 9pt;
 
@@ -69,7 +68,7 @@
     color: #fff;
 
     .bws-title {
-      margin-left: 11px;
+      margin-left: 8px;
       vertical-align: middle;
       font-size: 19pt;
       color: #fff;
@@ -90,7 +89,8 @@
         margin: 0;
         
         input {
-          height: 10px;
+          .border-box;
+          height: 40px;
           margin: 0;
           padding: 15px 15px 15px 41px;
           .two-image-button-background(
@@ -107,13 +107,29 @@
       }
     }
   }
-
-  #bws-sidebar {
-    border-right: 2px solid @bws-dark;
-    color: @bws-dark;
-  }
-
   #bws-fullscreen {
     width: 100%;
+    background-color: #f5f5f5;
+  }
+  .charmbrowser.sidebar {
+    #bws-sidebar,
+    .bws-view-data {
+      position: relative;
+      background-color: #f5f5f5;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+    #bws-sidebar {
+      z-index: 1;
+      width: 350px;
+
+      .bws-searchbox {
+        float: none;
+        margin: 10px 0 0 0;
+
+        input {
+          width: 100%;
+        }
+      }
+    }
   }
 }
