@@ -84,7 +84,7 @@
       Y = YUI(GlobalConfig).use([
         'juju-views', 'juju-tests-utils', 'juju-env',
         'node-event-simulate', 'juju-gui', 'slider',
-        'landscape', 'dump'
+        'landscape', 'dump', 'juju-view-utils'
       ], function(Y) {
         testUtils = Y.namespace('juju-tests.utils');
         views = Y.namespace('juju.views');
@@ -174,7 +174,7 @@
           // Verify that the node id has been munged as expected from the
           // relation id. This is particularly important for Juju Core.
           var node = container.one(
-            '#' + views.generateSafeRelationId('relation-0000000007'));
+              '#' + views.utils.generateSafeDOMId('relation-0000000007'));
           assert.isNotNull(node);
           assert.isDefined(node);
         });
@@ -758,8 +758,8 @@
            env: env}).render();
 
          var relation = container.one(
-          '#' + views.generateSafeRelationId('relation-0000000001') +
-          ' .rel-label'),
+              '#' + views.utils.generateSafeDOMId('relation-0000000001') +
+              ' .rel-label'),
          dialog_btn,
          panel;
 
@@ -788,8 +788,8 @@
 
          // Get a subordinate relation.
          var relation = container.one(
-          '#' + views.generateSafeRelationId('relation-0000000007') +
-          ' .rel-label'),
+              '#' + views.utils.generateSafeDOMId('relation-0000000007') +
+              ' .rel-label'),
          dialog_btn,
          panel;
 

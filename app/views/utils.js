@@ -12,16 +12,40 @@ YUI.add('juju-view-utils', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils');
 
-  // from stackoverflow: http://goo.gl/PEOgF
-  utils.generateHash = function(string) {
-    return string.split("").reduce(
-      function(hash, character) {
-        hash = ((hash << 5) - hash) + character.charCodeAt(0);
-        return hash & hash;
-      },
-      0
-    );              
+  /*jshint bitwise: false*/
+  /**
+    Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
+
+    @method generateHash
+    @param {String} value The string to hash.
+    @return {Integer} The hash of the string.
+   */
+  var generateHash = function(value) {
+    return value.split('').reduce(
+        function(hash, character) {
+          hash = ((hash << 5) - hash) + character.charCodeAt(0);
+          return hash & hash;
+        },
+        0
+    );
   };
+  /*jshint bitwise: true*/
+  utils.generateHash = generateHash;
+
+  /**
+    Create a stable, safe DOM id given an arbitrary string.
+    See details and discussion in
+    https://bugs.launchpad.net/juju-gui/+bug/1167295
+
+    @method generateSafeDOMId
+    @param {String} value The string to hash.
+    @return {String} The calculated DOM id.
+   */
+  var generateSafeDOMId = function(value) {
+    return (
+        value.replace(/\W/g, '_') + '-' + generateHash(value));
+  };
+  utils.generateSafeDOMId = generateSafeDOMId;
 
   var timestrings = {
     prefixAgo: null,
