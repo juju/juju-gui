@@ -31,7 +31,8 @@
           id: 'django/1',
           private_address: '10.0.0.1',
           'public-address': 'example.com',
-          'is-subordinate': true
+          'is-subordinate': true,
+          'hyphens-are-delicious': '42'
         };
         pyDelta(db, 'add', change, 'unit');
         // Retrieve the unit from the database.
@@ -39,6 +40,14 @@
         assert.strictEqual('10.0.0.1', unit.private_address);
         assert.strictEqual('example.com', unit.public_address);
         assert.isTrue(unit.is_subordinate);
+        assert.strictEqual('42', unit.hyphens_are_delicious);
+      });
+
+      it('passes through environment annotations without changes', function() {
+        pyDelta(db, 'change', {'hyphenated-key': 'peanut'}, 'annotations');
+        assert.strictEqual(
+            'peanut',
+            db.environment.get('annotations')['hyphenated-key']);
       });
 
       it('automatically handles changes to different model lists', function() {

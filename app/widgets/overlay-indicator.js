@@ -157,7 +157,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
       loading_image: {
         value: '/juju-ui/assets/images/loading-spinner.gif'
       }
-
     }
   });
 

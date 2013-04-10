@@ -213,6 +213,20 @@ describe('service module events', function() {
        assert.isFalse(menu.hasClass('active'));
      });
 
+  it('should handle touch/click events properly', function() {
+    var service = viewContainer.one('.service');
+    var menu = viewContainer.one('#service-menu');
+    assert.isFalse(menu.hasClass('active'));
+    serviceModule._touchstartServiceTap({
+      currentTarget: service,
+      touches: [{PageX: 0, PageY: 0}]
+    }, topo);
+    // Touch events should also fire click events, which will be ignored.
+    // Fire one manually here.
+    clickService(service);
+    assert(menu.hasClass('active'));
+  });
+
   it('hides the service menu when the View entry is clicked', function() {
     var menu = clickService(viewContainer.one('.service'));
     // Click the "View" menu entry.

@@ -21,15 +21,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
    * @extends {Y.View}
    *
    */
-  ns.MainView = Y.Base.create('browser-view-mainview', Y.View, [], {
-    /**
-     * Track events we create for proper cleanup.
-     * @attribute _events
-     * @default []
-     * @type {Array}
-     *
-     */
-    _events: [],
+  ns.MainView = Y.Base.create('browser-view-mainview', Y.View, [
+    Y.Event.EventTracker
+  ], {
+
     /**
      * When we click the fullscreen toggle UX widget, what url do we route to.
      * We have to dump this into the template because we can't dynamically
@@ -72,12 +67,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _bindSearchWidgetEvents: function() {
       // Watch the Search widget for changes to the search params.
-      this._events.push(
+      this.addEvent(
           this.search.on(
               this.search.EVT_UPDATE_SEARCH, this._searchChanged, this)
       );
 
-      this._events.push(
+      this.addEvent(
           this.search.on(
               this.search.EVT_TOGGLE_VIEWABLE, this._toggleBrowser, this)
       );
@@ -222,9 +217,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     destructor: function() {
-      Y.Array.each(this._events, function(ev) {
-        ev.detach();
-      });
       this._cacheCharms.destroy();
 
       // Clean up any details view we might have hanging around.
@@ -309,9 +301,9 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'browser-charm-slider',
     'browser-charm-token',
     'browser-search-widget',
+    'event-tracker',
     'juju-charm-store',
     'juju-models',
     'view'

@@ -122,7 +122,7 @@ SPRITE_SOURCE_FILES=$(shell find app/assets/images -type f ! -name '.*' ! -name 
 SPRITE_GENERATED_FILES=build-shared/juju-ui/assets/sprite.css \
 	build-shared/juju-ui/assets/sprite.png
 NON_SPRITE_IMAGES=build-shared/juju-ui/assets/images
-BUILD_FILES=build-shared/juju-ui/assets/app.js \
+BUILD_FILES=build-shared/juju-ui/assets/modules.js \
 	build-shared/juju-ui/assets/all-yui.js \
 	build-shared/juju-ui/assets/combined-css/all-static.css
 JAVASCRIPT_LIBRARIES=app/assets/javascripts/d3.v2.js \
@@ -154,6 +154,7 @@ help:
 	@echo "test-prod: run tests on the cli from the production environment"
 	@echo "test-misc: run tests of project infrastructure bits"
 	@echo "test-server: run tests in the browser from the debug environment"
+	@echo "test-prod-server: run tests in the browser from the prod environment"
 	@echo "prep: beautify and lint the source"
 	@echo "docs: generate project and code documentation"
 	@echo "view-docs: generate both doc sets and view them in the browser"
@@ -290,10 +291,13 @@ build-files: $(BUILD_FILES)
 # This leaves out all of the individual YUI assets, because we can't have them
 # the first time the Makefile is run in a clean tree.
 shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
-	build-$(1)/favicon.ico build-$(1)/index.html \
-	build-$(1)/juju-ui/assets/config.js build-$(1)/juju-ui/assets/modules.js \
-	build-$(1)/juju-ui/assets/images build-$(1)/juju-ui/assets/svgs \
-	build-$(1)/juju-ui/assets/app.js build-$(1)/juju-ui/version.js \
+	build-$(1)/favicon.ico \
+	build-$(1)/index.html \
+	build-$(1)/juju-ui/assets/config.js \
+	build-$(1)/juju-ui/assets/modules.js \
+	build-$(1)/juju-ui/assets/images \
+	build-$(1)/juju-ui/assets/svgs \
+	build-$(1)/juju-ui/version.js \
 	build-$(1)/juju-ui/assets/manifest.appcache \
 	build-$(1)/juju-ui/assets/combined-css/all-static.css \
 	build-$(1)/juju-ui/assets/juju-gui.css \
@@ -303,10 +307,13 @@ shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
 	build-$(1)/juju-ui/assets/all-yui.js
 
 LINK_DEBUG_FILES=$(call shared-link-files-list,debug) \
-	build-debug/juju-ui/app.js build-debug/juju-ui/models \
-	build-debug/juju-ui/store build-debug/juju-ui/subapps \
+	build-debug/juju-ui/app.js \
+	build-debug/juju-ui/models \
+	build-debug/juju-ui/store \
+	build-debug/juju-ui/subapps \
 	build-debug/juju-ui/views \
-	build-debug/juju-ui/widgets build-debug/juju-ui/assets/javascripts \
+	build-debug/juju-ui/widgets \
+	build-debug/juju-ui/assets/javascripts \
 	build-debug/juju-ui/templates.js
 
 LINK_PROD_FILES=$(call shared-link-files-list,prod)
@@ -317,12 +324,10 @@ define link-files
 	ln -sf "$(PWD)/app/favicon.ico" build-$(1)/
 	ln -sf "$(PWD)/app/index.html" build-$(1)/
 	ln -sf "$(PWD)/app/config-$(1).js" build-$(1)/juju-ui/assets/config.js
-	ln -sf "$(PWD)/app/modules-$(1).js" build-$(1)/juju-ui/assets/modules.js
 	ln -sf "$(PWD)/app/assets/images" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/app/assets/svgs" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/app/assets/javascripts" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/version.js" build-$(1)/juju-ui/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/app.js" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/manifest.appcache" \
 		build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/all-static.css" \
@@ -359,6 +364,7 @@ $(LINK_DEBUG_FILES):
 	ln -sf "$(PWD)/app/assets/javascripts/yui/yui/yui-debug.js" \
 		build-debug/juju-ui/assets/all-yui.js
 	ln -sf "$(PWD)/build-shared/juju-ui/templates.js" build-debug/juju-ui/
+	ln -sf "$(PWD)/app/modules-debug.js" build-debug/juju-ui/assets/modules.js
 
 $(LINK_PROD_FILES):
 	$(call link-files,prod)
@@ -368,6 +374,7 @@ $(LINK_PROD_FILES):
 	mkdir -p $(PWD)/build-prod/juju-ui/assets/source
 	ln -s $(PWD)/app $(PWD)/build-prod/juju-ui/assets/source
 	ln -s $(PWD)/node_modules $(PWD)/build-prod/juju-ui/assets/source
+	ln -sf "$(PWD)/build-shared/juju-ui/assets/modules.js" build-prod/juju-ui/assets/modules.js
 
 prep: beautify lint
 
@@ -399,6 +406,9 @@ test-prod: build-prod test-prep
 
 test-server: build-debug test-prep
 	./test-server.sh debug true
+
+test-prod-server: build-prod test-prep
+	./test-server.sh prod true
 
 test-misc:
 	PYTHONPATH=lib python test/test_deploy_charm_for_testing.py

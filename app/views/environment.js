@@ -40,7 +40,7 @@ YUI.add('juju-view-environment', function(Y) {
          *
          * @method update
          * @chainable
-         **/
+         */
         update: function() {
           this.topo.update();
           return this;
@@ -49,7 +49,7 @@ YUI.add('juju-view-environment', function(Y) {
         /**
          * @method render
          * @chainable
-         **/
+         */
         render: function() {
           var container = this.get('container'),
               topo = this.topo;
@@ -91,7 +91,7 @@ YUI.add('juju-view-environment', function(Y) {
          * Render callback handler, triggered from app when the view renders.
          *
          * @method render.rendered
-         **/
+         */
         rendered: function() {
           this.topo.fire('rendered');
           // Bind d3 events (manually).
