@@ -94,10 +94,13 @@ YUI.add('juju-delta-handlers', function(Y) {
     pyDelta: function(db, action, change, kind) {
       var data,
           modelList = db.getModelListByModelName(kind);
-      if (action === 'add' || action === 'change') {
+      // If kind === 'annotations' then this is an environment
+      // annotation, and we don't need to change the values.
+      if (kind !== 'annotations' &&
+          (action === 'add' || action === 'change')) {
         data = Object.create(null);
         Y.each(change, function(value, key) {
-          data[key.replace('-', '_')] = value;
+          data[key.replace(/-/g, '_')] = value;
         });
       } else {
         data = change;
