@@ -284,7 +284,7 @@
       db.notifications.size().should.equal(0);
       env.dispatch_result(msg);
       db.notifications.size().should.equal(1);
-      var notification = db.notifications.toArray()[0];
+      var notification = db.notifications.item(0);
       notification.get('modelId').should.eql(
           ['relation', 'relation-0000000002']);
     });
@@ -298,7 +298,7 @@
       db.notifications.size().should.equal(0);
       env.dispatch_result(msg);
       db.notifications.size().should.equal(1);
-      var notification = db.notifications.toArray()[0];
+      var notification = db.notifications.item(0);
       notification.get('modelId').should.eql(
           ['relation', 'relation-0000000002']);
     });
