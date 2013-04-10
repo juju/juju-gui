@@ -141,6 +141,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       if (commits.length > 0) {
         prettyCommits.first = commits.shift();
+        debugger;
         prettyCommits.first.prettyDate = Y.Date.format(
             prettyCommits.first.date, {
               format: DATE_FORMAT
@@ -397,8 +398,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
   requires: [
     'browser-overlay-indicator',
     'browser-tabview',
-    'date-format',
     'gallery-markdown',
+    'intl',
     'juju-templates',
     'juju-views',
     'juju-view-utils',
