@@ -9,6 +9,8 @@
 
 YUI.add('juju-charm-models', function(Y) {
 
+  var RECENT_DAYS = 30;
+
   var models = Y.namespace('juju.models');
   var charmIdRe = /^(?:(\w+):)?(?:~(\S+)\/)?(\w+)\/(\S+?)-(\d+)$/;
   var idElements = ['scheme', 'owner', 'series', 'package_name', 'revision'];
@@ -334,11 +336,9 @@ YUI.add('juju-charm-models', function(Y) {
             revno: commit.revno
           });
         });
-
-        return commits;
-      } else {
-        return undefined;
       }
+
+      return commits;
     },
 
     /**
@@ -366,7 +366,7 @@ YUI.add('juju-charm-models', function(Y) {
      */
     initializer: function(cfg) {
       if (cfg && cfg.downloads_in_past_30_days) {
-        this.set('recent_downloads', cfg.downloads_in_past_30_days);
+        this.set('recent_download_count', cfg.downloads_in_past_30_days);
       }
     }
   }, {
@@ -479,6 +479,28 @@ YUI.add('juju-charm-models', function(Y) {
       rating_numerator: {},
       rating_denominator: {},
       /**
+       * @attribute recent_commit_count
+       * @default 0
+       * @type {Int}
+       *
+       */
+      'recent_commit_count': {
+        valueFn: function() {
+          var count = 0,
+              commits = this.get('recent_commits'),
+              today = new Date(),
+              recentAgo = new Date();
+          recentAgo.setDate(today.getDate() - RECENT_DAYS);
+
+          Y.Array.each(commits, function(commit) {
+            if (commit.date > recentAgo) {
+              count += 1;
+            }
+          });
+          return count;
+        }
+      },
+      /**
        * @attribute recent_commits
        * @default undefined
        * @type {Array} list of objects for each commit.
@@ -499,12 +521,12 @@ YUI.add('juju-charm-models', function(Y) {
       /**
        * Mapped from the downloads_in_past_30_days in the API.
        *
-       * @attribute recent_downloads
+       * @attribute recent_download_count
        * @default undefined
        * @type {Int}
        *
        */
-      recent_downloads: {},
+      recent_download_count: {},
       relations: {},
 
       /**

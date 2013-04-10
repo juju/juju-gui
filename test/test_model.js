@@ -595,7 +595,7 @@ describe('BrowserCharm test', function() {
 
   it('maps api downloads in 30 days to recent downloads', function() {
     instance = new models.BrowserCharm(data);
-    instance.get('recent_downloads').should.eql(10);
+    instance.get('recent_download_count').should.eql(10);
   });
 
   it('maps relations to keep with the original charm model', function() {
@@ -627,5 +627,19 @@ describe('BrowserCharm test', function() {
       assert(checkDate > commit.date);
       checkDate = commit.date;
     });
+  });
+
+  it('tracks recent commits in the last 30 days', function() {
+    instance = new models.BrowserCharm(data);
+    var commits = instance.get('recent_commits'),
+        today = new Date();
+
+    // adjust the dates on there manually because the tests will be run on
+    // different days throwing things off.
+    commits[0].date.setDate(today.getDate() - 1);
+    commits[1].date.setDate(today.getDate() - 2);
+    commits[2].date.setDate(today.getDate() - 3);
+
+    instance.get('recent_commit_count').should.equal(3);
   });
 });
