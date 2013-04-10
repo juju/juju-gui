@@ -37,8 +37,12 @@ YUI.add('juju-env-fakebackend', function(Y) {
     var epType;
     Y.Array.each(charmDatas, function(charmData) {
       if (!epType) {
+        // If the type hasn't yet been defined assign it the type specified
+        // in the supplied charm data.
         if (charmData.type) { epType = charmData.type; }
       } else {
+        // If the type has been defined then check to make sure that the other
+        // endpoint has the same type or is not defined.
         if ((epType !== charmData.type) &&
             (charmData.type !== undefined)) {
           epType = {error: 'Endpoints need to match.'};
@@ -49,20 +53,29 @@ YUI.add('juju-env-fakebackend', function(Y) {
   }
 
   /**
-    Validates that one of the charms requires and the other provides the
-    requested interface
+    Recursive function that validates that one of the charms requires and the
+    other provides the requested interface and scope if defined.
 
     @method validateINterface
-    @param {}
-    @param {}
-    @param {}
-    @param {}
+    @param {Array} charms Array of charm objects to get endpoint data from
+    @param {String} explicitInterface if the user provided an explicit interface
+      to use for the relation.
+    @param {String} epInterface the endpoint interface name at the specified
+      interface type (only used for recursin, do not pass in).
+    @param {String} epScope the scope provided at the specified interface type
+      (only used for recursin, do not pass in)..
+    @Param {Number} epInterfaceIndex endpoint charm index to check for a
+      matching interface on provides  (only used for recursin, do not pass in).
   */
   function validateInterface(charms, explicitInterface ,epInterface, epScope,
     epInterfaceIndex) {
       var cics;
-      if (epInterfaceIndex) {
+
+      if (typeof epInterfaceIndex === 'number') {
         var provides = charms[epInterfaceIndex].get('provides');
+        // juju-info is implicityly defined in every charms provides so we
+        // simulate that here.
+        provides['juju-info'] = {'interface': 'juju-info'};
         if (provides[explicitInterface] !== undefined) {
           if (!epScope) {
             epScope = provides[explicitInterface].scope;
@@ -108,20 +121,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
     if (explicitInterface.error) { return explicitInterface; }
     if (typeof explicitInterface === 'string') {
       //validate interface
-console.log(explicitInterface);
-console.log(charms);
+
       var cics = validateInterface(charms, explicitInterface);
-console.log(cics);
       if (cics) {
         return {
-          ci: cics.sharedInterface,
-          cs: cics.sharedScope
+          sharedInterface: cics.sharedInterface,
+          sharedScope: cics.sharedScope
         };
       } else {
         return {error: 'Specified interfaces do not match'};
       }
     }
-    if (explicitInterface === false) {
+    if (explicitInterface === undefined) {
       return {};
     }
 
@@ -754,33 +765,12 @@ console.log(cics);
       // This error should never be hit but it's here JIC
       if (!charms[0] || !charms[1]) { return {error: 'Charm not loaded.'}; }
 
-      /**
-        Pushes juju-info onto the charm's 'provides' to allow for subordination
-        @method addJujuInfo
-        @param {Object} charm a charm model instance.
-      */
-      // TODO - do this during the interface and scope check don't attach it
-      // to the charms.
-      // function addJujuInfo(charm) {
-      //   var req = charm.get('requires');
-      //   if (req['juju-info'] === undefined) {
-      //     req['juju-info'] = {'interface': 'juju-info', 'scope': 'container'};
-      //     charm.set('requires', req);
-      //   }
-      // }
-      // Y.Array.each(charms, addJujuInfo);
-
-      // var charmEndpoints = [
-      //   charms[0].get('requires')[endpointData[0].type],
-      //   charms[1].get('requires')[endpointData[1].type]
-      // ];
-
       // If there are matching interfaces this will contain an object of the
       // charm interface type and scope (if supplied).
       var cics = getCharmInterfaceAndScope(charms, endpointData);
 
       // If there is an error fetching a valid interface and scope
-      if (cics.error) { return cics.error; }
+      if (cics.error) { return cics; }
 
       // Assign a unique realtion id which is incremented after every
       // successful relation.

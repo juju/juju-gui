@@ -725,7 +725,7 @@
               ' required to establish a relation');
     });
 
-    it('can create a relation with an explicit interface', function(done) {
+    it('can create a relation with a double explicit interface', function(done) {
       fakebackend.deploy('cs:wordpress', function() {
         fakebackend.deploy('cs:mysql', function() {
           var result = fakebackend.addRelation('wordpress:db', 'mysql:db'),
@@ -746,7 +746,7 @@
       });
     });
 
-    it('can create a relation with an explicit interface (reverse)', function(done) {
+    it('can create a relation with double explicit interface (reverse)', function(done) {
       fakebackend.deploy('cs:wordpress', function() {
         fakebackend.deploy('cs:mysql', function() {
           var result = fakebackend.addRelation('mysql:db', 'wordpress:db'),
@@ -767,14 +767,56 @@
       });
     });
 
-    it('can create a relation with a subordinate charm', function(done) {
+    it('can create a relation with a single explicit interface', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:mysql', function() {
+          var result = fakebackend.addRelation('wordpress:db', 'mysql'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'mysql',
+                endpoints: ['wordpress:db', 'mysql'],
+                scope: 'global'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
+    });
+
+    it('can create a relation with a single explicit interface (reverse)', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:mysql', function() {
+          var result = fakebackend.addRelation('wordpress', 'mysql:db'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'mysql',
+                endpoints: ['wordpress', 'mysql:db'],
+                scope: 'global'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
+    });
+
+    it('can create a relation with a double explicit interface and a subordinate charm', function(done) {
       fakebackend.deploy('cs:wordpress', function() {
         fakebackend.deploy('cs:puppet', function() {
           var result = fakebackend.addRelation(
               'wordpress:juju-info', 'puppet:juju-info'),
               mock = {
                 relationId: 'relation-0',
-                type: 'puppet',
+                type: 'juju-info',
                 endpoints: ['wordpress:juju-info', 'puppet:juju-info'],
                 scope: 'container'
               };
@@ -789,13 +831,97 @@
       });
     });
 
-    it('can create a relation with an inferred subordinate charm', function() {
-      // TODO
+    it('can create a relation with a double explicit interface and a subordinate charm (reverse)', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:puppet', function() {
+          var result = fakebackend.addRelation(
+              'puppet:juju-info', 'wordpress:juju-info'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'juju-info',
+                endpoints: ['puppet:juju-info', 'wordpress:juju-info'],
+                scope: 'container'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
     });
 
-    it('can create a relation with an inferred interface', function() {
-      // TODO
+    it('can create a relation with a single explicit interface and a subordinate charm (reverse)', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:puppet', function() {
+          var result = fakebackend.addRelation(
+              'puppet:juju-info', 'wordpress'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'juju-info',
+                endpoints: ['puppet:juju-info', 'wordpress'],
+                scope: 'container'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
     });
+
+    it('can create a relation with a single explicit interface and a subordinate charm (reverse)', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:puppet', function() {
+          var result = fakebackend.addRelation(
+              'puppet', 'wordpress:juju-info'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'juju-info',
+                endpoints: ['puppet', 'wordpress:juju-info'],
+                scope: 'container'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
+    });
+
+    it('can create a relation with an inferred interface', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:mysql', function() {
+          var result = fakebackend.addRelation('wordpress', 'mysql'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'mysql',
+                endpoints: ['wordpress', 'mysql'],
+                scope: 'global'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
+    });
+
+    it('can create a relation with an inferred interface (reverse)');
+    it('can create a relation with an inferred subordinate charm');
+    it('can create a relation with an inferred subordinate charm (reverse)');
+
 
 
   });
