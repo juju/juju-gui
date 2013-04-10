@@ -121,6 +121,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
     Y.Array.each(charms, function(charm){
       var provides = charm.get('provides'),
           requires = charm.get('requires');
+      // If the provides array isn't defined in the charm we will simulate an
+      // empty provides here for the juju-info interface.
+      if (provides === undefined) { provides = {}; }
       if (provides['juju-info'] === undefined) {
         provides['juju-info'] = {'interface': 'juju-info'};
       }

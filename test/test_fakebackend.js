@@ -939,8 +939,49 @@
       });
     });
 
-    it('can create a relation with an inferred subordinate charm');
-    it('can create a relation with an inferred subordinate charm (reverse)');
+    it('can create a relation with an inferred subordinate charm', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:puppet', function() {
+          var result = fakebackend.addRelation(
+              'puppet', 'wordpress'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'juju-info',
+                endpoints: ['puppet', 'wordpress'],
+                scope: 'container'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
+    });
+
+    it('can create a relation with an inferred subordinate charm (reverse)', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:puppet', function() {
+          var result = fakebackend.addRelation(
+              'wordpress', 'puppet'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'juju-info',
+                endpoints: ['wordpress', 'puppet'],
+                scope: 'container'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
+    });
 
 
 
