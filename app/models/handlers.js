@@ -126,14 +126,14 @@ YUI.add('juju-delta-handlers', function(Y) {
         service: change.Service,
         machine: change.MachineId,
         agent_state: change.Status,
+        agent_state_info: change.StatusInfo,
         public_address: change.PublicAddress,
         private_address: change.PrivateAddress,
         open_ports: utils.convertOpenPorts(change.Ports)
       };
       var machineData = {
         id: change.MachineId,
-        public_address: change.PublicAddress,
-        agent_state: change.Status
+        public_address: change.PublicAddress
       };
       db.units.process_delta(action, unitData);
       db.machines.process_delta(action, machineData);
@@ -201,7 +201,9 @@ YUI.add('juju-delta-handlers', function(Y) {
     machineInfo: function(db, action, change) {
       var data = {
         id: change.Id,
-        instance_id: change.InstanceId
+        instance_id: change.InstanceId,
+        agent_state: change.Status,
+        agent_state_info: change.StatusInfo
       };
       db.machines.process_delta(action, data);
     },
