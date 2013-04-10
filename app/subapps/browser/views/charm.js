@@ -132,6 +132,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _formatCommitsForHtml: function(commits) {
+      var firstTmp;
       var prettyCommits = {
         remaining: []
       };
@@ -142,7 +143,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       if (commits.length > 0) {
-        prettyCommits.first = commits.shift();
+        firstTmp = commits.shift();
+        prettyCommits.first = firstTmp;
         prettyCommits.first.prettyDate = Y.Date.format(
             prettyCommits.first.date, {
               format: DATE_FORMAT
@@ -156,6 +158,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
             });
         prettyCommits.remaining.push(commit);
       });
+
+      // Put our first item back on the commit list.
+      if (firstTmp) {
+        commits.unshift(firstTmp);
+      }
 
       return prettyCommits;
     },

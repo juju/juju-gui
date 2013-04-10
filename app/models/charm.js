@@ -526,7 +526,11 @@ YUI.add('juju-charm-models', function(Y) {
        * @type {Int}
        *
        */
-      recent_download_count: {},
+      recent_download_count: {
+        valueFn: function() {
+          return 0
+        }
+      },
       relations: {},
 
       /**
