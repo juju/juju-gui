@@ -12,6 +12,22 @@
           });
     });
 
+    it('can generate a hash', function() {
+      // We aren't testing the algorithm here, just basic hash characteristics.
+      // It's a number.
+      assert.strictEqual(views.utils.generateHash(''), 0)
+      assert.isNumber(views.utils.generateHash('kumquat'));
+      assert.isNumber(views.utils.generateHash('qumquat'));
+      // It's stable.
+      assert.strictEqual(
+        views.utils.generateHash('kumquat'),
+        views.utils.generateHash('kumquat'));
+      // Different values hash differently.
+      assert.notEqual(
+        views.utils.generateHash('kumquat'),
+        views.utils.generateHash('qumquat'));
+    });
+
     it('should create a confirmation panel',
        function() {
           var confirmed = false;

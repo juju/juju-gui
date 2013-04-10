@@ -14,6 +14,13 @@ YUI.add('juju-topology-relation', function(Y) {
       d3ns = Y.namespace('d3'),
       Templates = views.Templates;
 
+  var generateSafeRelationId = function(relationId) {
+    return (
+      relationId.replace(/\W/g, '_') + '-' + utils.generateHash(relationId));
+  }
+  // Expose for tests.
+  views.generateSafeRelationId = generateSafeRelationId;
+
   /**
    * @class RelationModule
    */
@@ -164,7 +171,7 @@ YUI.add('juju-topology-relation', function(Y) {
         return relation.source.id === service.id ||
             relation.target.id === service.id;
       }), function(relation) {
-        var rel_group = d3.select('#' + relation.id);
+        var rel_group = d3.select('#' + generateSafeRelationId(relation.id));
         var connectors = relation.source
                   .getConnectorPair(relation.target);
         var s = connectors[0];
@@ -199,7 +206,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
       enter.insert('g', 'g.service')
               .attr('id', function(d) {
-            return d.id;
+            return generateSafeRelationId(d.id);
           })
               .attr('class', function(d) {
                 // Mark the rel-group as a subordinate relation if need be.
@@ -461,7 +468,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // At this time, relations may have been redrawn, so here we have to
       // retrieve the relation DOM element again.
       var relationElement = view.get('container')
-        .one('#' + relation.relation_id);
+        .one('#' + generateSafeRelationId(relation.relation_id));
       utils.addSVGClass(relationElement, 'to-remove pending-relation');
       env.remove_relation(relation.endpoints[0], relation.endpoints[1],
           Y.bind(this._removeRelationCallback, this, view,
@@ -747,7 +754,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // Remove our pending relation from the DB, error or no.
       db.relations.remove(
           db.relations.getById(relation_id));
-      vis.select('#' + relation_id).remove();
+      vis.select('#' + generateSafeRelationId(relation_id)).remove();
       if (ev.err) {
         db.notifications.add(
             new models.Notification({

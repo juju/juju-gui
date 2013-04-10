@@ -12,6 +12,17 @@ YUI.add('juju-view-utils', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils');
 
+  // from stackoverflow: http://goo.gl/PEOgF
+  utils.generateHash = function(string) {
+    return string.split("").reduce(
+      function(hash, character) {
+        hash = ((hash << 5) - hash) + character.charCodeAt(0);
+        return hash & hash;
+      },
+      0
+    );              
+  };
+
   var timestrings = {
     prefixAgo: null,
     prefixFromNow: null,

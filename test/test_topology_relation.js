@@ -1,12 +1,14 @@
 'use strict';
 
 describe('topology relation module', function() {
-  var Y, views, view, container, topo, db;
+  var Y, views, view, utils, container, topo, db;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-topology', 'node', 'node-event-simulate'],
+    Y = YUI(GlobalConfig).use(
+      ['juju-topology', 'node', 'node-event-simulate', 'juju-view-utils'],
         function(Y) {
           views = Y.namespace('juju.views');
+          utils = Y.namespace('juju.views.utils');
           done();
         });
   });
@@ -26,6 +28,14 @@ describe('topology relation module', function() {
     if (db) {
       db.destroy();
     }
+  });
+
+  it('can generate safe relation ids', function() {
+    var relationId;
+    relationId = 'foo:Bar relation-00000006!@#';
+    assert.strictEqual(
+      views.generateSafeRelationId(relationId),
+      'foo_Bar_relation_00000006___-' + utils.generateHash(relationId));
   });
 
   it('exposes events', function() {
@@ -87,7 +97,8 @@ describe('topology relation module', function() {
       endpoints: [null, null]
     };
     view.removeRelation.call(fauxView, relation, fauxView, undefined);
-    assert.equal(requestedSelector, '#' + relationId);
+    assert.equal(
+      requestedSelector, '#' + views.generateSafeRelationId(relationId));
   });
 
 });

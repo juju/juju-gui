@@ -170,6 +170,13 @@
                     parseInt(this.getAttribute(e), 10))
                             .should.equal(true);
               }, line);
+
+          // Verify that the node id has been munged as expected from the
+          // relation id. This is particularly important for Juju Core.
+          var node = container.one(
+            '#' + views.generateSafeRelationId('relation-0000000007'));
+          assert.isNotNull(node);
+          assert.isDefined(node);
         });
 
     it('must be able to render subordinate and normal services',
@@ -750,7 +757,9 @@
            db: db,
            env: env}).render();
 
-         var relation = container.one('#relation-0000000001 .rel-label'),
+         var relation = container.one(
+          '#' + views.generateSafeRelationId('relation-0000000001') +
+          ' .rel-label'),
          dialog_btn,
          panel;
 
@@ -778,7 +787,9 @@
            env: env}).render();
 
          // Get a subordinate relation.
-         var relation = container.one('#relation-0000000007 .rel-label'),
+         var relation = container.one(
+          '#' + views.generateSafeRelationId('relation-0000000007') +
+          ' .rel-label'),
          dialog_btn,
          panel;
 
