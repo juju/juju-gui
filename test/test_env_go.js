@@ -672,6 +672,44 @@
         err = evt.err;
         service_name = evt.service_name;
       });
+      msg = conn.last_message();
+      conn.msg({
+        RequestId: msg.RequestId,
+        Error: 'service "yoursql" not found'
+      });
+      assert.equal(err, 'service "yoursql" not found');
+      assert.equal(service_name, 'yoursql');
+    });
+
+    it('can destroy a service', function() {
+      var service_name = '';
+      env.destroy_service('mysql', function(evt) {
+        service_name = evt.service_name;
+      });
+      var expected = {
+        Type: 'Client',
+        Request: 'ServiceDestroy',
+        Params: {
+          ServiceName: 'mysql'
+        },
+        RequestId: msg.RequestId
+      };
+      msg = conn.last_message();
+      conn.msg({
+        RequestId: msg.RequestId,
+        Error: 'service "yoursql" not found'
+      });
+      assert.deepEqual(expected, msg);
+      assert.equal(service_name, 'mysql');
+    });
+
+    it('handles failed destroy service', function() {
+      var err, service_name;
+      env.destroy_service('yoursql', function(evt) {
+        err = evt.err;
+        service_name = evt.service_name;
+      });
+      msg = conn.last_message();
       conn.msg({
         RequestId: msg.RequestId,
         Error: 'service "yoursql" not found'
