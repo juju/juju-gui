@@ -654,7 +654,7 @@ YUI.add('juju-view-utils', function(Y) {
    * @class BoundingBox
    * @param {Module} module Service module.
    * @param {Model} model Service model.
-   **/
+   */
 
   // Internal base object
   var _box = {};
@@ -887,7 +887,7 @@ YUI.add('juju-view-utils', function(Y) {
    * @param {Module} module Typically service module.
    * @param {Model} model Model object.
    * @return {BoundingBox} A Box model.
-   **/
+   */
   function BoundingBox(module, model) {
     var b = Object.create(_box);
     b.module = module;
@@ -909,7 +909,7 @@ YUI.add('juju-view-utils', function(Y) {
    * @param {ModelList} services Service modellist.
    * @param {Object} existing id:box mapping.
    * @return {Object} id:box mapping.
-   **/
+   */
   views.toBoundingBoxes = function(module, services, existing) {
     var result = existing || {};
     Y.each(result, function(val, key, obj) {
@@ -1077,6 +1077,18 @@ YUI.add('juju-view-utils', function(Y) {
         return agent_state;
       });
 
+  /*
+   * Show the status and, if present, the status info of the given db instance.
+   */
+  Y.Handlebars.registerHelper('showStatus', function(instance) {
+    // The "instance" argument is typically a unit or a machine model instance.
+    var result = instance.agent_state;
+    if (instance.agent_state_info) {
+      result += ': ' + instance.agent_state_info;
+    }
+    return result;
+  });
+
   Y.Handlebars.registerHelper('any', function() {
     var conditions = Y.Array(arguments, 0, true),
         options = conditions.pop();
@@ -1125,7 +1137,7 @@ YUI.add('juju-view-utils', function(Y) {
 
   /**
    * Generate a landscape badge using a partial internally.
-   **/
+   */
   Y.Handlebars.registerHelper('landscapeBadge', function(
       landscape, model, intent, hint) {
         if (!landscape) {

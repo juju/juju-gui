@@ -94,10 +94,13 @@ YUI.add('juju-delta-handlers', function(Y) {
     pyDelta: function(db, action, change, kind) {
       var data,
           modelList = db.getModelListByModelName(kind);
-      if (action === 'add' || action === 'change') {
+      // If kind === 'annotations' then this is an environment
+      // annotation, and we don't need to change the values.
+      if (kind !== 'annotations' &&
+          (action === 'add' || action === 'change')) {
         data = Object.create(null);
         Y.each(change, function(value, key) {
-          data[key.replace('-', '_')] = value;
+          data[key.replace(/-/g, '_')] = value;
         });
       } else {
         data = change;
@@ -123,14 +126,14 @@ YUI.add('juju-delta-handlers', function(Y) {
         service: change.Service,
         machine: change.MachineId,
         agent_state: change.Status,
+        agent_state_info: change.StatusInfo,
         public_address: change.PublicAddress,
         private_address: change.PrivateAddress,
         open_ports: utils.convertOpenPorts(change.Ports)
       };
       var machineData = {
         id: change.MachineId,
-        public_address: change.PublicAddress,
-        agent_state: change.Status
+        public_address: change.PublicAddress
       };
       db.units.process_delta(action, unitData);
       db.machines.process_delta(action, machineData);
@@ -198,7 +201,9 @@ YUI.add('juju-delta-handlers', function(Y) {
     machineInfo: function(db, action, change) {
       var data = {
         id: change.Id,
-        instance_id: change.InstanceId
+        instance_id: change.InstanceId,
+        agent_state: change.Status,
+        agent_state_info: change.StatusInfo
       };
       db.machines.process_delta(action, data);
     },

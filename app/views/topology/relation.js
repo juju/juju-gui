@@ -16,7 +16,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
   /**
    * @class RelationModule
-   **/
+   */
   var RelationModule = Y.Base.create('RelationModule', d3ns.Module, [], {
 
     events: {
@@ -813,7 +813,7 @@ YUI.add('juju-topology-relation', function(Y) {
      * @param {object} d The data-bound object (the subordinate).
      * @param {object} self The view.
      * @method subRelBlockClick
-     **/
+     */
     subRelBlockClick: function(d, self) {
       if (self.keepSubRelationsVisible) {
         self.hideSubordinateRelations();

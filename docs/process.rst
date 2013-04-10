@@ -138,6 +138,10 @@ Checklist for Making a Stable Release
 - Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
 - If you are using a pre-existing branch, make sure it is up-to-date:
   ``bzr pull``.
+- Visually QA the GUI against improv both with and without the --landscape
+  switch.  Load the app, open the charm panel, go to an inner page, and make
+  sure there are no 404s or Javascript errors in the console.  Verify that the
+  Landscape icons, links, and badges are present when expected.
 - Verify that the top-most version in ``CHANGES.yaml`` specifies the expected
   version string.  It should be bigger than the most recent version found on
   <https://launchpad.net/juju-gui/stable>.  If the most recent version string

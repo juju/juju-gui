@@ -14,7 +14,7 @@ YUI.add('juju-landscape', function(Y) {
    * Ensure a trailing slash on a string.
    * @method slash
    * @return {String} string with trailing slash.
-   **/
+   */
   function slash(u) {
     if (u.lastIndexOf('/') !== u.length - 1) {
       u += '/';
@@ -32,7 +32,7 @@ YUI.add('juju-landscape', function(Y) {
    * TODO: take set of [a/c] | [d] models and do
    * incremental updates.
    * @class Landscape
-   **/
+   */
   function Landscape() {
     Landscape.superclass.constructor.apply(this, arguments);
   }
@@ -49,7 +49,7 @@ YUI.add('juju-landscape', function(Y) {
      * @default true
      * @protected
      * @since 3.5.0
-     **/
+     */
     _allowAdHocAttrs: true,
 
     /**
@@ -58,7 +58,7 @@ YUI.add('juju-landscape', function(Y) {
      *
      * @method update
      * @chainable
-     ***/
+     */
     update: function() {
       // Roll up information from the unit level
       // to the service level.
@@ -107,7 +107,7 @@ YUI.add('juju-landscape', function(Y) {
      * @param {Model} model to get URL for.
      * @param {String} intent (optional) can be 'security' or 'reboot'.
      * @return {String} URL to access model entity in landscape.
-     **/
+     */
     getLandscapeURL: function(model, intent) {
       var env = this.get('db').environment.get('annotations');
       var url = env['landscape-url'];
@@ -155,7 +155,7 @@ YUI.add('juju-landscape', function(Y) {
      * @param {String} intent 'security' || 'reboot'.
      * @param {String} hint image postfix to use ex _round.
      * @return {Object} {link: {String}, sprite:{String}}.
-     **/
+     */
     getLandscapeBadge: function(model, intent, hint) {
       var badge = {};
       var props = model;
