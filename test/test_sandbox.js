@@ -809,7 +809,7 @@
         };
         client.onmessage = function(received) {
           var parsed = Y.JSON.parse(received.data);
-          assert.deepEqual(parsed.result, {'blog-title': 'Inimical'})
+          assert.deepEqual(parsed.result, {'blog-title': 'Inimical'});
           var service = state.db.services.getById('wordpress');
           assert.equal(service.get('config')['blog-title'], 'Inimical');
           // Error should be undefined.
