@@ -114,35 +114,75 @@ describe('utilities', function() {
     views.humanizeTimestamp(now + 600000).should.equal('10 minutes ago');
   });
 
-  it('shows a relation from the perspective of a service', function() {
-    var db = new models.Database(),
-        service = new models.Service({
-          id: 'mysql',
-          charm: 'cs:mysql',
-          unit_count: 1,
-          loaded: true});
-    db.relations.add({
-      'interface': 'mysql',
-      scope: 'global',
-      endpoints: [
-        ['mysql', {role: 'server', name: 'mydb'}],
-        ['mediawiki', {role: 'client', name: 'db'}]],
-      'id': 'relation-0000000002'
+
+  describe('relations visualization', function() {
+    var db, service;
+
+    before(function() {
+
     });
-    db.services.add([service]);
-    var res = utils.getRelationDataForService(db, service);
-    res.length.should.equal(1);
-    res = res[0];
-    res['interface'].should.eql('mysql');
-    res.scope.should.equal('global');
-    res.id.should.equal('relation-0000000002');
-    res.ident.should.equal('mydb:2');
-    res.near.service.should.equal('mysql');
-    res.near.role.should.equal('server');
-    res.near.name.should.equal('mydb');
-    res.far.service.should.equal('mediawiki');
-    res.far.role.should.equal('client');
-    res.far.name.should.equal('db');
+
+    beforeEach(function() {
+      db = new models.Database();
+      service = new models.Service({
+        id: 'mysql',
+        charm: 'cs:mysql',
+        unit_count: 1,
+        loaded: true
+      });
+      db.services.add(service);
+    });
+
+    it('shows a PyJuju rel from the perspective of a service', function() {
+      db.relations.add({
+        'interface': 'mysql',
+        scope: 'global',
+        endpoints: [
+          ['mysql', {role: 'server', name: 'mydb'}],
+          ['mediawiki', {role: 'client', name: 'db'}]
+        ],
+        'id': 'relation-0000000002'
+      });
+      var results = utils.getRelationDataForService(db, service);
+      assert.strictEqual(1, results.length);
+      var result = results[0];
+      assert.strictEqual('mysql', result['interface']);
+      assert.strictEqual('global', result.scope);
+      assert.strictEqual('relation-0000000002', result.id);
+      assert.strictEqual('mydb:2', result.ident);
+      assert.strictEqual('mysql', result.near.service);
+      assert.strictEqual('server', result.near.role);
+      assert.strictEqual('mydb', result.near.name);
+      assert.strictEqual('mediawiki', result.far.service);
+      assert.strictEqual('client', result.far.role);
+      assert.strictEqual('db', result.far.name);
+    });
+
+    it('shows a juju-core rel from the perspective of a service', function() {
+      db.relations.add({
+        'interface': 'mysql',
+        scope: 'global',
+        endpoints: [
+          ['mysql', {role: 'server', name: 'mydb'}],
+          ['mediawiki', {role: 'client', name: 'db'}]
+        ],
+        'id': 'relation-0000000002'
+      });
+      var results = utils.getRelationDataForService(db, service);
+      assert.strictEqual(1, results.length);
+      var result = results[0];
+      assert.strictEqual('mysql', result['interface']);
+      assert.strictEqual('global', result.scope);
+      assert.strictEqual('relation-0000000002', result.id);
+      assert.strictEqual('mydb:2', result.ident);
+      assert.strictEqual('mysql', result.near.service);
+      assert.strictEqual('server', result.near.role);
+      assert.strictEqual('mydb', result.near.name);
+      assert.strictEqual('mediawiki', result.far.service);
+      assert.strictEqual('client', result.far.role);
+      assert.strictEqual('db', result.far.name);
+    });
+
   });
 
 });
