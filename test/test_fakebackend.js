@@ -753,19 +753,6 @@
     //   });
     // });
 
-    // it('requires the endpoints to match', function(done) {
-    //   // Tests getCharmInterfaceAndScope.
-    //   fakebackend.deploy('cs:wordpress', function() {
-    //     fakebackend.deploy('cs:haproxy', function() {
-    //       var result = fakebackend.addRelation('wordpress:foo', 'haproxy:foo');
-    //       assert.equal(result.error, 'Specified interfaces do not match.');
-    //       done();
-    //     });
-    //   });
-    // });
-
-
-
 
 
 
@@ -784,6 +771,16 @@
         fakebackend.deploy('cs:mysql', function() {
           var result = fakebackend.addRelation('hadoop', 'mysql');
           assert.equal(result.error, 'No shared interfaces.');
+          done();
+        });
+      });
+    });
+
+    it('requires the specified interfaces to match', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:haproxy', function() {
+          var result = fakebackend.addRelation('wordpress:cache', 'haproxy:munin');
+          assert.equal(result.error, 'Specified interfaces do not match.');
           done();
         });
       });
