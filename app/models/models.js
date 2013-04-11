@@ -13,21 +13,21 @@ YUI.add('juju-models', function(Y) {
       handlers = models.handlers;
 
   // This is a helper function used by all of the process_delta methods.
-  var _process_delta = function(list, action, change_data, change_base) {
+  var _processDelta = function(list, action, changeData, changeBase) {
     var instanceId;
-    if (Y.Lang.isObject(change_data)) {
-      if ('id' in change_data) {
-        instanceId = change_data.id;
+    if (Y.Lang.isObject(changeData)) {
+      if ('id' in changeData) {
+        instanceId = changeData.id;
       } else {
-        console.warn('Invalid change data in _process_delta:', change_data);
+        console.warn('Invalid change data in _processDelta:', changeData);
         return;
       }
     } else if (action === 'remove') {
       // This is a removal request coming from the Python delta stream.
-      // In this case, the change_data is the instance id.
-      instanceId = change_data;
+      // In this case, the changeData is the instance id.
+      instanceId = changeData;
     } else {
-      console.warn('Invalid change data in _process_delta:', change_data);
+      console.warn('Invalid change data in _processDelta:', changeData);
       return;
     }
     var instance = list.getById(instanceId),
@@ -42,14 +42,14 @@ YUI.add('juju-models', function(Y) {
       // form that needs to be fleshed out.  So, the existing objects
       // are kept and re-used.
       if (!exists) {
-        var data = Y.merge(change_base || {}, change_data);
+        var data = Y.merge(changeBase || {}, changeData);
         instance = list.add(data);
       } else {
         if (instance instanceof Y.Model) {
-          instance.setAttrs(change_data);
+          instance.setAttrs(changeData);
         } else {
           // This must be from a LazyModelList.
-          Y.each(change_data, function(value, key) {
+          Y.each(changeData, function(value, key) {
             instance[key] = value;
           });
         }
@@ -60,9 +60,10 @@ YUI.add('juju-models', function(Y) {
         list.remove(instance);
       }
     } else {
-      console.warn('Unknown change kind in _process_delta:', action);
+      console.warn('Unknown change kind in _processDelta:', action);
     }
   };
+  models._processDelta = _processDelta; // Exported for testing purposes.
 
   /**
    * Model a single Environment. Serves as a place to collect
@@ -125,7 +126,7 @@ YUI.add('juju-models', function(Y) {
     model: Service,
 
     process_delta: function(action, data) {
-      _process_delta(this, action, data, {exposed: false});
+      _processDelta(this, action, data, {exposed: false});
     }
   }, {
     ATTRS: {
@@ -179,7 +180,7 @@ YUI.add('juju-models', function(Y) {
     },
 
     process_delta: function(action, data) {
-      _process_delta(this, action, data, {relation_errors: {}});
+      _processDelta(this, action, data, {relation_errors: {}});
     },
 
     _setDefaultsAndCalculatedValues: function(obj) {
@@ -321,7 +322,7 @@ YUI.add('juju-models', function(Y) {
     },
 
     process_delta: function(action, data) {
-      _process_delta(this, action, data, {});
+      _processDelta(this, action, data, {});
     }
   }, {
     ATTRS: {}
@@ -348,7 +349,7 @@ YUI.add('juju-models', function(Y) {
     model: Relation,
 
     process_delta: function(action, data) {
-      _process_delta(this, action, data, {});
+      _processDelta(this, action, data, {});
     },
 
     /* Return true if a relation exists for the given endpoint.
