@@ -327,7 +327,7 @@ describe('Endpoints map handlers', function() {
          id: 'wordpress',
          pending: true,
          charm: charm_id});
-       controller.endpointsMap.should.eql({});
+       assert.deepEqual(controller.endpointsMap, {});
        // No charm should have tried to load (see bug 1166222).
        assert.isNull(app.db.charms.getById(charm_id));
      });
