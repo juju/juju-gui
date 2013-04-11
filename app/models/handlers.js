@@ -23,14 +23,24 @@ YUI.add('juju-delta-handlers', function(Y) {
 
       The regular expression removes any non-hyphen characters followed by a
       hyphen from the beginning of a string.  Thus, service-mysql becomes
-      simply mysql (as the expression matches 'service-').
+      simply mysql (as the expression matches 'service-'). This function also
+      converts the unit tag so that "unit-mysql-1" becomes "mysql/1".
 
       @method cleanUpEntityTags
       @param {String} tag The tag to clean up.
       @return {String} The tag without the prefix.
     */
     cleanUpEntityTags: function(tag) {
-      return tag.replace(/^(service|unit|machine|environment)-/, '');
+      var result = tag.replace(/^(service|unit|machine|environment)-/, '');
+      if (!result) {
+        return tag;
+      }
+      var unitPrefix = 'unit-';
+      if (tag.slice(0, unitPrefix.length) === unitPrefix) {
+        // Clean up the unit name, e.g. "mysql-42" becomes "mysql/42".
+        result = result.replace(/-(\d+)$/, '/$1');
+      }
+      return result;
     },
 
     /**
@@ -223,23 +233,23 @@ YUI.add('juju-delta-handlers', function(Y) {
     annotationInfo: function(db, action, change) {
       var tag = change.Tag,
           kind = tag.split('-')[0],
-          modelList = db.getModelListByModelName(kind),
-          id = utils.cleanUpEntityTags(tag);
+          modelOrModelList = db.getModelListByModelName(kind),
+          id = utils.cleanUpEntityTags(tag),
+          instance;
+      // We cannot use the process_delta methods here, because their legacy
+      // behavior is to override the service exposed and unit relation_errors
+      // attributes when they are missing in the change data.
       if (kind === 'environment') {
-        // For backward compatibility with the legacy delta stream, we must
-        // pass annotations directly to the environment.process_delta method.
-        modelList.process_delta(action, change.Annotations);
-        return;
+        instance = modelOrModelList;
+      } else {
+        instance = modelOrModelList.getById(id);
       }
-      if (kind === 'unit') {
-        // Clean up the unit name, e.g. "mysql-42" becomes "mysql/42".
-        id = id.replace(/-(\d+)$/, '/$1');
+      if (instance instanceof Y.Model) {
+        instance.set('annotations', change.Annotations);
+      } else if (instance) {
+        // This must be from a LazyModelList.
+        instance.annotations = change.Annotations;
       }
-      var data = {
-        id: id,
-        annotations: change.Annotations
-      };
-      modelList.process_delta(action, data);
     }
 
   };
