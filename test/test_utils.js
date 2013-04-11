@@ -146,16 +146,21 @@ describe('utilities', function() {
       var results = utils.getRelationDataForService(db, service);
       assert.strictEqual(1, results.length);
       var result = results[0];
-      assert.strictEqual('mysql', result['interface']);
-      assert.strictEqual('global', result.scope);
-      assert.strictEqual('relation-0000000002', result.id);
-      assert.strictEqual('mydb:2', result.ident);
-      assert.strictEqual('mysql', result.near.service);
-      assert.strictEqual('server', result.near.role);
-      assert.strictEqual('mydb', result.near.name);
-      assert.strictEqual('mediawiki', result.far.service);
-      assert.strictEqual('client', result.far.role);
-      assert.strictEqual('db', result.far.name);
+      assert.strictEqual('mysql', result['interface'], 'interface');
+      assert.strictEqual('global', result.scope, 'scope');
+      assert.strictEqual('relation-0000000002', result.id, 'id');
+      assert.strictEqual(
+        utils.generateSafeDOMId('relation-0000000002'),
+        result.elementId,
+        'elementId'
+      );
+      assert.strictEqual('mydb:2', result.ident, 'ident');
+      assert.strictEqual('mysql', result.near.service, 'near service');
+      assert.strictEqual('server', result.near.role, 'near role');
+      assert.strictEqual('mydb', result.near.name, 'near name');
+      assert.strictEqual('mediawiki', result.far.service, 'far service');
+      assert.strictEqual('client', result.far.role, 'far role');
+      assert.strictEqual('db', result.far.name, 'far name');
     });
 
     it('shows a juju-core rel from the perspective of a service', function() {
@@ -163,24 +168,29 @@ describe('utilities', function() {
         'interface': 'mysql',
         scope: 'global',
         endpoints: [
-          ['mysql', {role: 'server', name: 'mydb'}],
-          ['mediawiki', {role: 'client', name: 'db'}]
+          ['mysql', {role: 'provider', name: 'mydb'}],
+          ['mediawiki', {role: 'requirer', name: 'db'}]
         ],
-        'id': 'relation-0000000002'
+        'id': 'mediawiki:db mysql:mydb'
       });
       var results = utils.getRelationDataForService(db, service);
       assert.strictEqual(1, results.length);
       var result = results[0];
-      assert.strictEqual('mysql', result['interface']);
-      assert.strictEqual('global', result.scope);
-      assert.strictEqual('relation-0000000002', result.id);
-      assert.strictEqual('mydb:2', result.ident);
-      assert.strictEqual('mysql', result.near.service);
-      assert.strictEqual('server', result.near.role);
-      assert.strictEqual('mydb', result.near.name);
-      assert.strictEqual('mediawiki', result.far.service);
-      assert.strictEqual('client', result.far.role);
-      assert.strictEqual('db', result.far.name);
+      assert.strictEqual('mysql', result['interface'], 'interface');
+      assert.strictEqual('global', result.scope, 'scope');
+      assert.strictEqual('mediawiki:db mysql:mydb', result.id, 'id');
+      assert.strictEqual(
+        utils.generateSafeDOMId('mediawiki:db mysql:mydb'),
+        result.elementId,
+        'elementId'
+      );
+      assert.strictEqual('mediawiki:db mysql:mydb', result.ident, 'ident');
+      assert.strictEqual('mysql', result.near.service, 'near service');
+      assert.strictEqual('provider', result.near.role, 'near role');
+      assert.strictEqual('mydb', result.near.name, 'near name');
+      assert.strictEqual('mediawiki', result.far.service, 'far service');
+      assert.strictEqual('requirer', result.far.role, 'far role');
+      assert.strictEqual('db', result.far.name, 'far name');
     });
 
   });
