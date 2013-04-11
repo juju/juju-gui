@@ -377,11 +377,13 @@ YUI.add('juju-topology-service', function(Y) {
     },
 
     dragend: function(box,  self) {
+      var topo = self.get('component');
       if (box.tapped) {
         box.tapped = false;
-        return;
+        if (!topo.buildingRelation) {
+          return;
+        }
       }
-      var topo = self.get('component');
       if (topo.buildingRelation) {
         topo.ignoreServiceClick = true;
         topo.fire('addRelationDragEnd');
