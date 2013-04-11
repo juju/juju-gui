@@ -24,7 +24,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       The regular expression removes any non-hyphen characters followed by a
       hyphen from the beginning of a string.  Thus, service-mysql becomes
       simply mysql (as the expression matches 'service-'). This function also
-      convert the unit tag so that "unit-mysql-1" becomes "mysql/1".
+      converts the unit tag so that "unit-mysql-1" becomes "mysql/1".
 
       @method cleanUpEntityTags
       @param {String} tag The tag to clean up.
