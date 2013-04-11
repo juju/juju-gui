@@ -38,7 +38,7 @@ YUI.add('juju-delta-handlers', function(Y) {
       var unitPrefix = 'unit-';
       if (tag.slice(0, unitPrefix.length) === unitPrefix) {
         // Clean up the unit name, e.g. "mysql-42" becomes "mysql/42".
-        result =  result.replace(/-(\d+)$/, '/$1');
+        result = result.replace(/-(\d+)$/, '/$1');
       }
       return result;
     },

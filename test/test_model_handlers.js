@@ -522,11 +522,11 @@
         // Clean up service tags.
         assert.equal('mysql', cleanUpEntityTags('service-mysql'));
         assert.equal(
-          'buildbot-master', cleanUpEntityTags('service-buildbot-master'));
+            'buildbot-master', cleanUpEntityTags('service-buildbot-master'));
         // Clean up unit tags.
-        assert.equal('mysql/0', cleanUpEntityTags('unit-mysql-0'));
+        assert.equal('mysql/47', cleanUpEntityTags('unit-mysql-47'));
         assert.equal(
-          'buildbot-master/47', cleanUpEntityTags('unit-buildbot-master-47'));
+            'buildbot-master/0', cleanUpEntityTags('unit-buildbot-master-0'));
         // Clean up machine tags.
         assert.equal('0', cleanUpEntityTags('machine-0'));
         assert.equal('42', cleanUpEntityTags('machine-42'));
