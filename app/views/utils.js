@@ -1255,6 +1255,21 @@ YUI.add('juju-view-utils', function(Y) {
         }
       });
 
+  /**
+   * Truncate helper to keep text sizes to a specified limit.
+   *
+   * {{truncate field 100}}
+   *
+   */
+  Y.Handlebars.registerHelper('truncate', function(string, length) {
+    if (string && string.length > length) {
+      return Y.Lang.trimRight(string.substring(0, length)) + '...';
+    }
+    else {
+      return string;
+    }
+  });
+
 }, '0.1.0', {
   requires: ['base-build',
              'handlebars',

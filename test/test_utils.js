@@ -649,6 +649,38 @@ describe('utilities', function() {
       assert.equal('fooi', html);
     });
 
+    it('truncates a string', function() {
+      var source = '{{ truncate text 30 }}',
+          template = Y.Handlebars.compile(source),
+          context = {text: 'Lorem ipsum dolor sit amet consectetur'},
+          html = template(context);
+      assert.equal('Lorem ipsum dolor sit amet con...', html);
+    });
+
+    it('truncates a string with a trailing space', function() {
+      var source = '{{ truncate text 30 }}',
+          template = Y.Handlebars.compile(source),
+          context = {text: 'Lorem ipsum dolor sit ametuco sectetur'},
+          html = template(context);
+      assert.equal('Lorem ipsum dolor sit ametuco...', html);
+    });
+
+    it('does not truncate a shorter string', function() {
+      var source = '{{ truncate text 30 }}',
+          template = Y.Handlebars.compile(source),
+          context = {text: 'Lorem ipsum dolor sit amet'},
+          html = template(context);
+      assert.equal('Lorem ipsum dolor sit amet', html);
+    });
+
+    it('truncate handles an undefined value', function() {
+      var source = '{{ truncate text 30 }}is empty',
+          template = Y.Handlebars.compile(source),
+          context = {text: undefined},
+          html = template(context);
+      assert.equal('is empty', html);
+    });
+
     describe('showStatus', function() {
       var html, obj, template;
 
