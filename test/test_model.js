@@ -564,3 +564,30 @@ describe('juju charm load', function() {
         });
   });
 });
+
+describe('delta processing', function() {
+  var _processDelta, modelList, lazyModelList, Y;
+  var requirements = ['model', 'model-list', 'lazy-model-list', 'juju-models'];
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(requirements, function(Y) {
+      _processDelta = Y.namespace('juju.models')._processDelta;
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    modelList = new Y.ModelList();
+    lazyModelList = new Y.LazyModelList();
+  });
+
+  it('creates a model instance', function() {
+    var changeData = {id: 1, foo: 'bar', another_attr: 'value'};
+    _processDelta(modelList, 'add', changeData);
+    assert.strictEqual(1, modelList.size());
+    var model = modelList.getById(1);
+    assert.strictEqual('bar', model.get('foo'));
+    assert.strictEqual('value', model.get('another_attr'));
+  });
+
+});
