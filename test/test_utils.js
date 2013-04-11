@@ -623,6 +623,14 @@ describe('utilities', function() {
       assert.equal('Lorem ipsum dolor sit amet', html);
     });
 
+    it('truncate handles an undefined value', function() {
+      var source = '{{ truncate text 30 }}is empty',
+          template = Y.Handlebars.compile(source),
+          context = {text: undefined},
+          html = template(context);
+      assert.equal('is empty', html);
+    });
+
     describe('showStatus', function() {
       var html, obj, template;
 
