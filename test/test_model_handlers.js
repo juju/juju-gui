@@ -458,6 +458,43 @@
         assert.deepEqual(expected, service.get('annotations'));
       });
 
+      it('does not override the service exposed attr', function() {
+        db.services.add({id: 'django', exposed: true});
+        var annotations = {'gui-x': '42', 'gui-y': '47'};
+        var change = {
+          Tag: 'service-django',
+          Annotations: annotations
+        };
+        annotationInfo(db, 'add', change);
+        // Retrieve the annotations from the database.
+        var service = db.services.getById('django');
+        assert.isTrue(service.get('exposed'));
+      });
+
+      it('does not override the unit relation_errors attr', function() {
+        var relation_errors = {'cache': ['memcached']},
+            annotations = {'foo': '42', 'bar': '47'};
+        db.units.add({id: 'django/2', relation_errors: relation_errors});
+        var change = {
+          Tag: 'unit-django-2',
+          Annotations: annotations
+        };
+        annotationInfo(db, 'add', change);
+        // Retrieve the annotations from the database.
+        var unit = db.units.getById('django/2');
+        assert.deepEqual(relation_errors, unit.relation_errors);
+      });
+
+      it('does not create new model instances', function() {
+        var annotations = {'gui-x': '42', 'gui-y': '47'};
+        var change = {
+          Tag: 'service-django',
+          Annotations: annotations
+        };
+        annotationInfo(db, 'add', change);
+        assert.strictEqual(0, db.services.size());
+      });
+
     });
 
   });
@@ -482,14 +519,24 @@
       });
 
       it('cleans up tags from Go juju', function() {
+        // Clean up service tags.
         assert.equal('mysql', cleanUpEntityTags('service-mysql'));
-        assert.equal('mysql-0', cleanUpEntityTags('unit-mysql-0'));
+        assert.equal(
+          'buildbot-master', cleanUpEntityTags('service-buildbot-master'));
+        // Clean up unit tags.
+        assert.equal('mysql/0', cleanUpEntityTags('unit-mysql-0'));
+        assert.equal(
+          'buildbot-master/47', cleanUpEntityTags('unit-buildbot-master-47'));
+        // Clean up machine tags.
         assert.equal('0', cleanUpEntityTags('machine-0'));
+        assert.equal('42', cleanUpEntityTags('machine-42'));
+        // Clean up environment tags.
         assert.equal('aws', cleanUpEntityTags('environment-aws'));
+        assert.equal('my-env', cleanUpEntityTags('environment-my-env'));
       });
 
       it('ignores bad values', function() {
-        var data = ['foo', 'bar-baz', '123'];
+        var data = ['foo', 'bar-baz', '123', 'unit-', 'service-', 'machine'];
         Y.each(data, function(item) {
           assert.equal(item, cleanUpEntityTags(item));
         });

@@ -466,7 +466,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           'id': serviceName + '/' + unitId,
           'machine': machine.machine_id,
           // The models use underlines, not hyphens (see
-          // app/models/models.js in _processDelta.)
+          // app/models/models.js in _process_delta.)
           'agent_state': 'started'
         });
         units.push(unit);
