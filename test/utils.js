@@ -93,7 +93,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
           data.push(Y.io('data/' + name + '-charmdata.json', {sync: true}));
         });
       };
-      setCharms(['wordpress', 'mysql', 'puppet', 'haproxy']);
+      setCharms(['wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki']);
       return {charmStore: charmStore, setCharm: setCharms};
     },
 

@@ -164,7 +164,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // Validate interface
       cics = validateInterface(charms, explicitInterface);
       if (!cics) {
-        return {error: 'Specified interfaces do not match'};
+        return {error: 'Specified interfaces do not match.'};
       }
     } else {
       // If there was no explicit interface provided
@@ -775,9 +775,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       var endpointData = Y.Array.map([endpointA, endpointB], endpointSplit);
-
-      var charmAId, charmBId;
-
       // Because the service name and charm name might not match we first need
       // to find the charm that relates to the service name and use that charmid
       var charms = Y.Array.map(endpointData, function(endpoint) {
