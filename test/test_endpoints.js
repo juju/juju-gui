@@ -322,17 +322,14 @@ describe('Endpoints map handlers', function() {
 
   it('should not update endpoints map when pending services are added',
      function() {
-       var service_name = 'wordpress';
        var charm_id = 'cs:precise/wordpress-2';
-       app.db.charms.add({id: charm_id});
-       var charm = app.db.charms.getById(charm_id);
-       charm.loaded = true;
        app.db.services.add({
-         id: service_name,
+         id: 'wordpress',
          pending: true,
          charm: charm_id});
        controller.endpointsMap.should.eql({});
-       charm.destroy();
+       // No charm should have tried to load (see bug 1166222).
+       assert.isNull(app.db.charms.getById(charm_id));
      });
 
   it('should update endpoints map when non-pending services are added',
