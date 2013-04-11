@@ -50,7 +50,7 @@ describe('application hotkeys', function() {
   it('should listen for alt-E events', function() {
     var altEtriggered = false;
     app.on('navigateTo', function(ev) {
-      if (ev && ev.url === '/') {
+      if (ev && ev.url === '/:gui:/') {
         altEtriggered = true;
       }
       // Avoid URL change performed by additional listeners.

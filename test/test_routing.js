@@ -46,6 +46,18 @@ describe('Namespaced Routing', function() {
     var u = router.url(match);
     assert(u === '/charms/precise/mediawiki/:inspector:/services/mysql/');
 
+    // Root paths are excluded...
+    u = router.url({foo: '/'});
+    assert.strictEqual(u, '/');
+    u = router.url({foo: '/shazam', bar: '/'});
+    assert.strictEqual(u, '/:foo:/shazam/');
+
+    // ...unless explicitly asked to be included.
+    u = router.url({foo: '/'}, {includeRootPaths: true});
+    assert.strictEqual(u, '/:foo:/');
+    u = router.url({foo: '/shazam', bar: '/'}, {includeRootPaths: true});
+    assert.strictEqual(u, '/:bar:/:foo:/shazam/');
+
     // Sorted keys.
     u = router.url({charmstore: '/', gamma: 'g', a: 'alpha', b: 'beta'});
     assert(u === '/:a:alpha/:b:beta/:gamma:g/');
