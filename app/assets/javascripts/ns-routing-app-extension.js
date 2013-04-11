@@ -167,7 +167,9 @@ YUI.add('ns-routing-app-extension', function(Y) {
       var keys = Y.Object.keys(base).sort();
       Y.each(keys, function(ns) {
         url = slash(url);
-        url += ':' + ns + ':' + base[ns];
+        if (base[ns] !== '/') {
+          url += ':' + ns + ':' + base[ns];
+        }
       });
 
       url = slash(url);
