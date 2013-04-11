@@ -45,11 +45,19 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     _handleTokenSelect: function(ev) {
       var id = ev.currentTarget.getData('charmid');
       var model = this._cacheCharms.getById(id);
+      var container = this.get('container');
+
+      // Deselect the currently selected charm and highlight the new one.
+      var selected_charm = container.one('.yui3-charmtoken.active');
+      if (selected_charm) {
+        selected_charm.removeClass('active');
+      }
+      ev.currentTarget.ancestor('.yui3-charmtoken').addClass('active');
 
       // Show the details view for this model.
       this._renderCharmDetails(
           model,
-          this.get('container')
+          container
       );
     },
 
