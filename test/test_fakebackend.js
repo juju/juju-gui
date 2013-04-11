@@ -368,6 +368,32 @@
       });
     });
 
+    describe('FakeBackend.destroyService', function() {
+      it('rejects unauthenticated calls', function() {
+        fakebackend.logout();
+        var result = fakebackend.destroyService('dummy');
+        assert.equal(result.error, 'Please log in.');
+      });
+
+      it('returns an error for a missing service', function() {
+        var result = fakebackend.destroyService('missing');
+        assert.equal('Invalid service id.', result.error);
+      });
+
+      it('successfully destroys a valid service', function(done) {
+        fakebackend.deploy('cs:wordpress', function(data) {
+          var result = fakebackend.destroyService('wordpress');
+          assert.equal(result.service_name, 'wordpress');
+          assert.isUndefined(result.error);
+          // Ensure the service can no longer be retrieved.
+          result = fakebackend.getService();
+          assert.equal(result.error, 'Invalid service id.');
+          done();
+        });
+      });
+
+    });
+
     describe('FakeBackend.Annotations', function() {
       it('must require authentication', function() {
         fakebackend.logout();
@@ -778,5 +804,6 @@
 
 
   });
+
 
 })();

@@ -376,15 +376,31 @@ YUI.add('juju-env-fakebackend', function(Y) {
       callback(response);
     },
 
-    // destroyService: function() {
+    /**
+     Destroy the named service.
 
-    // },
+     @method destroyService
+     * @param {String} serviceName to destroy.
+     * @return {Object} results With err and service_name.
+     */
+    destroyService: function(serviceName) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        return {error: 'Invalid service id.'};
+      }
+      this.db.services.remove(service);
+      service.destroy();
+      return {service_name: serviceName};
+    },
 
     /**
      * Get service attributes.
      *
      * @method getService
-     * @param {String} serviceId to get.
+     * @param {String} serviceName to get.
      * @return {Object} Service Attributes..
      */
     getService: function(serviceName) {

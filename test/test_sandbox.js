@@ -777,6 +777,38 @@
       });
     });
 
+    it('can destroy a service', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress we should be able to
+        // destroy it.
+        var op = {
+          op: 'destroy_service',
+          service_name: 'wordpress',
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var parsed = Y.JSON.parse(received.data);
+          assert.equal(parsed.service_name, 'wordpress');
+          // Error should be undefined.
+          done(received.error);
+        };
+        client.send(Y.JSON.stringify(op));
+      });
+    });
+
+    it('can destroy a service (integration)', function(done) {
+      function destroyService(rec) {
+        function localCb(rec) {
+          assert.equal(rec.service_name, 'kumquat');
+          var service = state.db.services.getById('kumquat');
+          assert.isNull(service);
+          done();
+        }
+        env.destroy_service(rec.service_name, localCb);
+      }
+      generateAndExposeIntegrationService(destroyService);
+    });
+
     it('can get a charm', function(done) {
       generateServices(function(data) {
         // Post deploy of wordpress we should be able to

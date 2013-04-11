@@ -252,7 +252,7 @@ YUI.add('juju-env-sandbox', function(Y) {
    * @method OP
    * @param {Object} context PyJujuAPI instance.
    * @param {String} rpcName name of method on fakebackend to invoke.
-   * @param {Array} args String Array of arguemnts to pass from
+   * @param {Array} args String Array of arguments to pass from
    *                data to fakebackend.
    * @param {Object} data Operational data to be munged into a fakebackend call.
    * @return {Object} result depends on underlying rpc method.
@@ -498,6 +498,16 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     performOp_get_service: function(data) {
       OP(this, 'getService', ['service_name'], data);
+    },
+
+    /**
+      destroy_service from the client.
+
+      @method performOp_destroy_service
+      @param {Object} data contains service_name.
+    */
+    performOp_destroy_service: function(data) {
+      OP(this, 'destroyService', ['service_name'], data);
     },
 
     /**
