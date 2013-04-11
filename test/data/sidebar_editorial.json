@@ -209,7 +209,7 @@
         "id": "precise\/cassandra-2",
         "is_approved": true,
         "is_new": false,
-        "is_popular": false,
+        "is_popular": true,
         "is_subordinate": false,
         "maintainer": {
           "email": "juan.negron@canonical.com",
