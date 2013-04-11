@@ -1250,6 +1250,20 @@ YUI.add('juju-view-utils', function(Y) {
         }
       });
 
+  /**
+    * truncate
+    *
+    * truncate a string to the provided length and append an ellipsis
+    */
+  Y.Handlebars.registerHelper('truncate', function(string, length) {
+    if (string.length > length) {
+      return Y.Lang.trimRight(string.substring(0, length)) + '...';
+    }
+    else {
+      return string;
+    }
+  });
+
 }, '0.1.0', {
   requires: ['base-build',
              'handlebars',
