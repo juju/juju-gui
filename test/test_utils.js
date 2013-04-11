@@ -33,7 +33,7 @@
       relationId = 'foo:Bar relation-00000006!@#';
       assert.strictEqual(
           views.utils.generateSafeDOMId(relationId),
-          'foo_Bar_relation_00000006___-' +
+          'e-foo_Bar_relation_00000006___-' +
           views.utils.generateHash(relationId));
     });
 

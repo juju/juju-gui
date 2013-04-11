@@ -43,7 +43,7 @@ YUI.add('juju-view-utils', function(Y) {
    */
   var generateSafeDOMId = function(value) {
     return (
-        value.replace(/\W/g, '_') + '-' + generateHash(value));
+        'e-' + value.replace(/\W/g, '_') + '-' + generateHash(value));
   };
   utils.generateSafeDOMId = generateSafeDOMId;
 
