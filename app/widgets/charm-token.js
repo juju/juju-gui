@@ -25,8 +25,9 @@ YUI.add('browser-charm-token', function(Y) {
      * @method _bindEvents
      */
     _bindEvents: function() {
-      var addButton = this.get('contentBox').one('button'),
-          addClick = addButton.on('click', function() {
+      var addButton = this.get('contentBox').one('.add'),
+          addClick = addButton.on('click', function(e) {
+            e.halt();
             this.fire(ns.EVENT_CHARM_ADD);
           });
       this.addEvent(addClick);
@@ -83,18 +84,18 @@ YUI.add('browser-charm-token', function(Y) {
       },
 
       /**
-       * @attribute recent_commits
+       * @attribute recent_commit_count
        * @default undefined
        * @type {Number}
        */
-      recent_commits: {},
+      recent_commit_count: {},
 
       /**
-       * @attribute recent_downloads
+       * @attribute recent_download_count
        * @default undefined
        * @type {Number}
        */
-      recent_downloads: {}
+      recent_download_count: {}
     }
   });
 

@@ -1,7 +1,7 @@
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}5-6{{else}}1{{/if}}">
         <div class="nav">
-            <a href="" class="back">Back</a>
+            <a href="" class="back">{{#if isFullscreen}}Back{{else}}Close{{/if}}</a>
             <a href="" class="add">Add</a>
             <a href="" class="share">
                 <img src="/juju-ui/assets/images/share_icon.jpg" alt="Share" />
@@ -27,14 +27,14 @@
                         alt="Provider name" />
                 </div>
                 <dl>
-                    <dt>Activity (30 days)</dt>
+                    <dt>Recent activity</dt>
                     <dd>
                         <img src="/juju-ui/assets/images/charm_downloads_icon.jpg"
                             alt="Minimize" />
-                        {{ downloads_in_past_30_days }}
+                        {{ recent_download_count }}
                         <img src="/juju-ui/assets/images/charm_commits_icon.jpg"
                             alt="Minimize" />
-                        --
+                        {{ recent_commit_count }}
                     </dd>
                     <dt>Ubuntu series</dt>
                     <dd>{{ distro_series }}</dd>
@@ -57,7 +57,25 @@
         </div>
 
         <div class="changelog">
-            <span class="toggle">Open Log</span>
+            <h2>
+                Change log
+                {{#if recent_commits}}
+                    ({{recent_commits.length}}) <span class="toggle" data-state="closed">&darr;</span>
+                {{/if}}
+            </h2>
+            <div class="commit first">
+                Last commit: {{prettyCommits.first.prettyDate}} {{prettyCommits.first.author.name}}
+                {{prettyCommits.first.message}} - {{prettyCommits.first.revno}}
+            </div>
+
+            <div class="remaining hidden">
+                {{#prettyCommits.remaining}}
+                    <div class="commit">
+                        {{prettyDate}} {{author.name}} {{message}} - {{revno}}
+                    </div>
+                {{/prettyCommits.remaining}}
+            </div>
+
         </div>
 
         <div class="changelog">
@@ -75,11 +93,11 @@
                 <div id="bws-readme">Readme</div>
                 <div id="bws-interfaces">
                     <p class="intro">
-                        Interfaces determine how this charm relates to other 
-                        charms. A relationship between charms can only be made if 
-                        they share a common interface. This charm requires certain 
-                        interfaces to be provided by other charms. Similarly, this 
-                        charm provides other interfaces that can be used by 
+                        Interfaces determine how this charm relates to other
+                        charms. A relationship between charms can only be made if
+                        they share a common interface. This charm requires certain
+                        interfaces to be provided by other charms. Similarly, this
+                        charm provides other interfaces that can be used by
                         other charms.
                     </p>
                     <div class="yui3-g">

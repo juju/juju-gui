@@ -4,7 +4,8 @@
 YUI.add('subapp-browser-charmview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       views = Y.namespace('juju.views'),
-      widgets = Y.namespace('juju.widgets');
+      widgets = Y.namespace('juju.widgets'),
+      DATE_FORMAT = '%d/%b/%y';
 
 
   /**
@@ -119,6 +120,51 @@ YUI.add('subapp-browser-charmview', function(Y) {
             }
           }, this)
       );
+    },
+
+    /**
+     * Commits need to be formatted, dates made pretty for the output to the
+     * template. We have to break up the first one from the rest since it's
+     * displayed differently.
+     *
+     * @method _formatCommitsForHtml
+     * @param {Array} commits a list of commit objects.
+     *
+     */
+    _formatCommitsForHtml: function(commits) {
+      var firstTmp;
+      var prettyCommits = {
+        remaining: []
+      };
+
+      // No commits then just return an empty list.
+      if (!commits) {
+        return [];
+      }
+
+      if (commits.length > 0) {
+        firstTmp = commits.shift();
+        prettyCommits.first = firstTmp;
+        prettyCommits.first.prettyDate = Y.Date.format(
+            prettyCommits.first.date, {
+              format: DATE_FORMAT
+            });
+      }
+
+      Y.Array.each(commits, function(commit) {
+        commit.prettyDate = Y.Date.format(
+            commit.date, {
+              format: DATE_FORMAT
+            });
+        prettyCommits.remaining.push(commit);
+      });
+
+      // Put our first item back on the commit list.
+      if (firstTmp) {
+        commits.unshift(firstTmp);
+      }
+
+      return prettyCommits;
     },
 
     /**
@@ -240,7 +286,23 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _toggleLog: function(ev) {
-      console.log('toggle the charm log');
+      var upArrow = '&uarr;',
+          downArrow = '&darr;',
+          container = this.get('container'),
+          target = ev.currentTarget,
+          state = target.getData('state');
+
+      if (state === 'closed') {
+        // open up the changelog.
+        container.one('.changelog .remaining').removeClass('hidden');
+        target.setData('state', 'open');
+        target.setContent(upArrow);
+      } else {
+        // close up the changelog.
+        container.one('.changelog .remaining').addClass('hidden');
+        target.setData('state', 'closed');
+        target.setContent(downArrow);
+      }
     },
 
     /**
@@ -279,6 +341,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var charm = this.get('charm');
       var tplData = charm.getAttrs();
       tplData.isFullscreen = isFullscreen;
+      tplData.prettyCommits = this._formatCommitsForHtml(
+          tplData.recent_commits);
 
       var tpl = this.template(tplData);
       var tplNode = Y.Node.create(tpl);
@@ -337,6 +401,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
   requires: [
     'browser-overlay-indicator',
     'browser-tabview',
+    'datatype-date',
+    'datatype-date-format',
     'event-tracker',
     'gallery-markdown',
     'juju-templates',
