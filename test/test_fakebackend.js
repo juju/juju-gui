@@ -689,4 +689,94 @@
     });
   });
 
+  describe('FakeBackend.addRelation', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, setCharm, deployResult, callback;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      var setupData = utils.makeFakeBackendWithCharmStore();
+      fakebackend = setupData.fakebackend;
+      setCharm = setupData.setCharm;
+      deployResult = undefined;
+      callback = function(response) { deployResult = response; };
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    it('rejects unauthenticated calls', function() {
+      fakebackend.logout();
+      var result = fakebackend.addRelation();
+      assert.equal(result.error, 'Please log in.');
+    });
+
+    it('requires two string endpoint names', function() {
+      var result = fakebackend.addRelation();
+      assert.equal(result.error, 'Two string endpoint names' +
+              ' required to establish a relation');
+    });
+
+    it('can create a relation with an explicit interface', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:mysql', function() {
+          var result = fakebackend.addRelation('wordpress:db', 'mysql:db'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'mysql',
+                endpoints: ['wordpress:db', 'mysql:db'],
+                scope: 'global'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
+    });
+
+    it('can create a relation with a subordinate charm', function(done) {
+      fakebackend.deploy('cs:wordpress', function() {
+        fakebackend.deploy('cs:puppet', function() {
+          var result = fakebackend.addRelation(
+              'wordpress:juju-info', 'puppet:juju-info'),
+              mock = {
+                relationId: 'relation-0',
+                type: 'puppet',
+                endpoints: ['wordpress:juju-info', 'puppet:juju-info'],
+                scope: 'container'
+              };
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, mock.relationId);
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          done();
+        });
+      });
+    });
+
+    it('can create a relation with an inferred subordinate charm', function() {
+      // TODO
+    });
+
+    it('can create a relation with an inferred interface', function() {
+      // TODO
+    });
+
+
+  });
+
 })();

@@ -11,6 +11,50 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
   var models = Y.namespace('juju.models');
   var UNAUTHENTICATEDERROR = {error: 'Please log in.'};
+
+  /**
+    Takes a string endpoint and splits it into usable parts.
+    @method endpointSplit
+    @param {String} endpoint the endpoint to split in the format
+      wordpress:db.
+  */
+  function endpointSplit(endpoint) {
+    var epData = endpoint.split(':');
+    return { name: epData[0], type: epData[1] };
+  }
+
+  /**
+    Loops through the charm endpoint data to determine the interface
+    and scope of the relationship.
+
+    @method getCharmInterfaceAndScope
+    @param {Array} charmEndpoints Array of charm object 'requires' endpoint
+      types ie) { db: { interface: 'mysql' }} .
+    @param {Array} charmDatas Array of charm data objects from splitting
+      endpoint string above.
+  */
+  function getCharmInterfaceAndScope(charmEndpoints, charmDatas) {
+    var sharedInterface, sharedScope;
+    Y.Array.some(charmEndpoints, function(charmEndpoint, index) {
+      var charmInterface = charmEndpoint['interface'];
+      // If the interfaces match or if it is a juju-info relationship
+      if ((charmInterface === charmDatas[index].name) ||
+          (charmInterface === 'juju-info')) {
+        sharedInterface = charmDatas[index].name;
+        if (charmEndpoint.scope !== undefined) {
+          sharedScope = charmEndpoint.scope;
+        }
+      }
+      if (sharedInterface) { return true; }
+    });
+    if (sharedInterface) {
+      return {
+        sharedInterface: sharedInterface,
+        sharedScope: sharedScope
+      };
+    }
+  }
+
   /**
   An in-memory fake Juju backend.
 
@@ -42,6 +86,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this.db = new models.Database();
       this._resetChanges();
       this._resetAnnotations();
+      // used for relation id's
+      this._relationCount = 0;
     },
 
     /**
@@ -584,6 +630,118 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
+      Add a relation between two services.
+
+      @method add_relation
+      @param {String} endpointA A string representation of the service name
+        and endpoint connection type ie) wordpress:db.
+      @param {String} endpointB A string representation of the service name
+        and endpoint connection type ie) wordpress:db.
+    */
+    addRelation: function(endpointA, endpointB) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      if ((typeof endpointA !== 'string') ||
+          (typeof endpointB !== 'string')) {
+        return {error: 'Two string endpoint names' +
+              ' required to establish a relation'};
+      }
+
+      var endpointData = Y.Array.map([endpointA, endpointB], endpointSplit);
+
+      if (endpointData[0].type !== endpointData[1].type) {
+        return {error: 'Endpoints need to match.'};
+      }
+
+      var charmAId, charmBId;
+
+      // Because the service name and charm name might not match we first need
+      // to find the charm that relates to the service name and use that charmid
+      var charms = Y.Array.map(endpointData, function(endpoint) {
+        var service = this.db.services.getById(endpoint.name);
+        if (service) {
+          return this.db.charms.getById(service.get('charm'));
+        }
+      }, this);
+      // This error should never be hit but it's here JIC
+      if (!charms[0] || !charms[1]) { return {error: 'Charm not loaded.'}; }
+
+      /**
+        Pushes juju-info onto the charm's 'provides' to allow for subordination
+        @method addJujuInfo
+        @param {Object} charm a charm model instance.
+      */
+      // TODO - do this during the interface and scope check don't attach it
+      // to the charms.
+      function addJujuInfo(charm) {
+        var req = charm.get('requires');
+        if (req['juju-info'] === undefined) {
+          req['juju-info'] = {'interface': 'juju-info', 'scope': 'container'};
+          charm.set('requires', req);
+        }
+      }
+      Y.Array.each(charms, addJujuInfo);
+
+      var charmEndpoints = [
+        charms[0].get('requires')[endpointData[0].type],
+        charms[1].get('requires')[endpointData[1].type]
+      ];
+
+      // If there are matching interfaces this will contain an object of the
+      // charm interface type and scope (if supplied).
+      var cics = getCharmInterfaceAndScope(
+          // The reverse order of the second param is intentional
+          charmEndpoints, [endpointData[1], endpointData[0]]);
+
+      if (!cics) { return {error: 'No matching interfaces.'}; }
+
+      // Assign a unique realtion id which is incremented after every
+      // successful relation.
+      var relationId = 'relation-' + this._relationCount;
+      var relation = this.db.relations.create({
+        relation_id: relationId,
+        type: cics.sharedInterface,
+        endpoints: [endpointA, endpointB],
+        pending: false,
+        scope: cics.sharedScope || 'global',
+        display_name: endpointData[0].type
+      });
+
+      if (relation) {
+        this._relationCount += 1;
+        // Add the relation to the change delta
+        this.changes.relations[relationId] = [relation, true];
+        // Because the sandbox can either be passed a string or an object
+        // we need to return as much information as possible to be able
+        // to rebuild the expected object for both situations.
+        return {
+          relationId: relationId,
+          type: cics.sharedInterface,
+          endpoints: [endpointA, endpointB],
+          scope: cics.sharedScope || 'global',
+          displayName: endpointData[0].type,
+          relation: relation
+        };
+      }
+
+      // Fallback error If the relation was not able to be created
+      // for any reason other than what has already been checked for.
+      return false;
+    },
+
+    // updateAnnotations: function() {
+
+    // },
+
+    // getAnnotations: function() {
+
+    // },
+
+    // removeAnnotations: function() {
+
+    // },
+    /**
      * Helper method to determine where to log annotation
      * changes relative to a given entity.
      *
@@ -701,10 +859,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this.annotations[annotationGroup][entityName] = [entity, true];
       return {result: true};
     },
-
-    // addRelation: function() {
-
-    // },
 
     // removeRelation: function() {
 

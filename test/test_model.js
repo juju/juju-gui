@@ -565,6 +565,86 @@ describe('juju charm load', function() {
   });
 });
 
+
+describe('BrowserCharm test', function() {
+  var data, instance, models, sampleData, Y;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use([
+      'io',
+      'juju-charm-models'
+    ], function(Y) {
+      models = Y.namespace('juju.models');
+      done();
+    });
+  });
+
+  before(function() {
+    sampleData = Y.io('data/browsercharm.json', {sync: true});
+    data = Y.JSON.parse(sampleData.responseText);
+  });
+
+  beforeEach(function() {
+  });
+
+  afterEach(function() {
+    if (instance) {
+      instance.destroy();
+    }
+  });
+
+  it('maps api downloads in 30 days to recent downloads', function() {
+    instance = new models.BrowserCharm(data);
+    instance.get('recent_download_count').should.eql(10);
+  });
+
+  it('maps relations to keep with the original charm model', function() {
+    instance = new models.BrowserCharm(data);
+    var requires = instance.get('requires');
+    // Interface is quoted for lint purposes.
+    requires.balancer['interface'].should.eql('http');
+
+    var provides = instance.get('provides');
+    provides.website['interface'].should.eql('http');
+  });
+
+  it('maps revisions nicely for us with converted dates', function() {
+    instance = new models.BrowserCharm(data);
+    var commits = instance.get('recent_commits');
+    commits.length.should.equal(10);
+
+    // Check that our commits have the right keys constructed from the api
+    // data provided.
+    var sample = commits[0];
+    assert(Y.Object.hasKey(sample, 'author'));
+    assert(Y.Object.hasKey(sample, 'date'));
+    assert(Y.Object.hasKey(sample, 'message'));
+    assert(Y.Object.hasKey(sample, 'revno'));
+
+    // Commits should be ordered new to old.
+    var checkDate = new Date();
+    Y.Array.each(commits, function(commit) {
+      assert(checkDate > commit.date);
+      checkDate = commit.date;
+    });
+  });
+
+  it('tracks recent commits in the last 30 days', function() {
+    instance = new models.BrowserCharm(data);
+    var commits = instance.get('recent_commits'),
+        today = new Date();
+
+    // adjust the dates on there manually because the tests will be run on
+    // different days throwing things off.
+    commits[0].date.setDate(today.getDate() - 1);
+    commits[1].date.setDate(today.getDate() - 2);
+    commits[2].date.setDate(today.getDate() - 3);
+
+    instance.get('recent_commit_count').should.equal(3);
+  });
+});
+
+
 describe('delta processing', function() {
   var _processDelta, modelList, lazyModelList, Y;
   var requirements = ['model', 'model-list', 'lazy-model-list', 'juju-models'];

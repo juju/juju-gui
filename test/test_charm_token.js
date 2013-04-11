@@ -29,8 +29,8 @@ describe('charm token', function() {
     var cfg = {
       name: 'some-charm',
       description: 'some description',
-      recent_commits: 1,
-      recent_downloads: 3,
+      recent_commit_count: 1,
+      recent_download_count: 3,
       tested_providers: ['ec2']
     };
     var charm = new Y.juju.widgets.browser.CharmToken(cfg);
