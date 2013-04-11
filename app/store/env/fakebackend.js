@@ -24,35 +24,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
   }
 
   /**
-    If either endpoint provides an interface we will use that one to match
-
-    @method getExplicitInterface
-    @param {Array} charmDatas Array of charm data objets from splitting
-      endpoing string.
-    @returns {Object | String} Returns either a string of the valid endpoint
-      interface, an object containing an error message, or an empty object if
-      no explicit endpoint provided.
-  */
-  function getExplicitInterface(charmDatas) {
-    var epType = {};
-    Y.Array.each(charmDatas, function(charmData) {
-      if (typeof epType !== 'string') {
-        // If the type hasn't yet been defined assign it the type specified
-        // in the supplied charm data.
-        if (charmData.type) { epType = charmData.type; }
-      } else {
-        // If the type has been defined then check to make sure that the other
-        // endpoint has the same type or is not defined.
-        if ((epType !== charmData.type) &&
-            (charmData.type !== undefined)) {
-          epType = {error: 'Endpoints need to match.'};
-        }
-      }
-    });
-    return epType;
-  }
-
-  /**
     Recursive function that validates that one of the charms requires and the
     other provides the requested interface and scope if defined.
 
@@ -113,12 +84,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
     @return {Array | Boolean} the matches or false if none.
   */
   function findSharedInterfaces(charms) {
-    var keys = {
-      provides: [],
-      requires: [],
-      shared: []
-    };
+    var charmRelations = [];
+
     Y.Array.each(charms, function(charm){
+
       var provides = charm.get('provides'),
           requires = charm.get('requires');
       // If the provides array isn't defined in the charm we will simulate an
@@ -127,21 +96,56 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (provides['juju-info'] === undefined) {
         provides['juju-info'] = {'interface': 'juju-info'};
       }
-      keys.provides.push(Y.Object.keys(provides));
-      keys.requires.push(Y.Object.keys(requires));
+      charmRelations.push({
+        provides: provides,
+        requires: requires
+      });
     });
-    Y.Array.each(keys.provides, function(provides, index) {
+
+    Y.Array.each(charmRelations, function(charmRelation, index) {
       index = (index > 0) ? 0 : 1;
-      Y.Array.each(provides, function(epInterface) {
-        var requires = keys.requires[index],
-            epIndex = requires.indexOf(epInterface);
-        if (epIndex > -1) {
-          keys.shared.push(requires[epIndex]);
+      // TODO Reduce to nested iterator
+      Y.Object.each(charmRelation.provides, function(value, key, obj) {
+        var match = Y.Object.some(charmRelations[index].requires, function(value2, key2, obj2) {
+          if (value['interface'] === value2['interface']) {
+            return true;
+          }
+        });
+        if (!match) {
+          delete obj[key];
+        }
+      });
+      Y.Object.each(charmRelation.requires, function(value, key, obj) {
+        var match = Y.Object.some(charmRelations[index].provides, function(value2, key2, obj2) {
+          if (value['interface'] === value2['interface']) {
+            return true;
+          }
+        });
+        if (!match) {
+          delete obj[key];
         }
       });
     });
 
-    return keys.shared;
+    var tests, error;
+    Y.Array.some(charmRelations, function(charmRelation) {
+      if ((Y.Object.size(charmRelation.provides) > 1) ||
+          (Y.Object.size(charmRelation.requires) > 1)) {
+        error = { error: 'Ambiguous relationship is not allowed.' };
+        return true;
+      }
+      if ((Y.Object.size(charmRelation.provides) === 0) &&
+          (Y.Object.size(charmRelation.requires) === 0)) {
+        error = { error: 'No shared interfaces.'};
+        return true;
+      }
+    });
+
+    if (error) {
+      return error;
+    }
+
+    return charmRelations;
   }
 
   /**
@@ -155,30 +159,37 @@ YUI.add('juju-env-fakebackend', function(Y) {
   */
   function getCharmInterfaceAndScope(charms, charmDatas) {
     var explicitInterface, cics;
+    var sharedInterfaces = findSharedInterfaces(charms);
 
-    // Fetch the explicit interface if provided
-    explicitInterface = getExplicitInterface(charmDatas);
-
-    if (explicitInterface.error) { return explicitInterface; }
-    if (typeof explicitInterface === 'string') {
-      // Validate interface
-      cics = validateInterface(charms, explicitInterface);
-      if (!cics) {
-        return {error: 'Specified interfaces do not match.'};
-      }
-    } else {
-      // If there was no explicit interface provided
-      var interfaces = findSharedInterfaces(charms);
-      if (interfaces.length > 1) {
-        return {error: 'Ambiguous relationship is not allowed.'};
-      } else {
-        cics = validateInterface(charms, interfaces[0]);
-      }
+    if (sharedInterfaces.error) {
+      return sharedInterfaces;
     }
-    return {
-      sharedInterface: cics.sharedInterface,
-      sharedScope: cics.sharedScope
-    };
+
+    console.log(sharedInterfaces);
+    return {};
+    // Fetch the explicit interface if provided
+    // explicitInterface = getExplicitInterface(charmDatas);
+
+    // if (explicitInterface.error) { return explicitInterface; }
+    // if (typeof explicitInterface === 'string') {
+    //   // Validate interface
+    //   cics = validateInterface(charms, explicitInterface);
+    //   if (!cics) {
+    //     return {error: 'Specified interfaces do not match.'};
+    //   }
+    // } else {
+    //   // If there was no explicit interface provided
+    //   var interfaces = findSharedInterfaces(charms);
+    //   if (interfaces.length > 1) {
+    //     return {error: 'Ambiguous relationship is not allowed.'};
+    //   } else {
+    //     cics = validateInterface(charms, interfaces[0]);
+    //   }
+    // }
+    // return {
+    //   sharedInterface: cics.sharedInterface,
+    //   sharedScope: cics.sharedScope
+    // };
   }
 
   /**
