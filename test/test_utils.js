@@ -150,9 +150,9 @@ describe('utilities', function() {
       assert.strictEqual('global', result.scope, 'scope');
       assert.strictEqual('relation-0000000002', result.id, 'id');
       assert.strictEqual(
-        utils.generateSafeDOMId('relation-0000000002'),
-        result.elementId,
-        'elementId'
+          utils.generateSafeDOMId('relation-0000000002'),
+          result.elementId,
+          'elementId'
       );
       assert.strictEqual('mydb:2', result.ident, 'ident');
       assert.strictEqual('mysql', result.near.service, 'near service');
@@ -180,9 +180,9 @@ describe('utilities', function() {
       assert.strictEqual('global', result.scope, 'scope');
       assert.strictEqual('mediawiki:db mysql:mydb', result.id, 'id');
       assert.strictEqual(
-        utils.generateSafeDOMId('mediawiki:db mysql:mydb'),
-        result.elementId,
-        'elementId'
+          utils.generateSafeDOMId('mediawiki:db mysql:mydb'),
+          result.elementId,
+          'elementId'
       );
       assert.strictEqual('mediawiki:db mysql:mydb', result.ident, 'ident');
       assert.strictEqual('mysql', result.near.service, 'near service');
