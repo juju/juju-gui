@@ -692,7 +692,7 @@
             description: 'Yada, yada, yada.',
             type: 'string',
             value: null
-          },
+          }
         },
         constraints: undefined
       };
