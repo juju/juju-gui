@@ -35,7 +35,9 @@
     });
 
     afterEach(function() {
-      view.destroy();
+      if (view) {
+        view.destroy();
+      }
       node.remove(true);
       delete window.juju_config;
     });
@@ -277,7 +279,7 @@
 
       // Hook up to the callback for the click event.
       view._toggleLog = function(ev) {
-        ev.preventDefault();
+        ev.halt();
         done();
       };
 
