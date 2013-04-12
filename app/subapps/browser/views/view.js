@@ -271,7 +271,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
        */
       charmID: {},
 
-
       /**
        * An instance of the Charmworld API object to hit for any data that
        * needs fetching.
@@ -295,7 +294,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        */
       subpath: {}
-
     }
   });
 
