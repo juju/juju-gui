@@ -759,7 +759,7 @@
 
     it('can get a service', function(done) {
       generateServices(function(data) {
-        // Post deploy of wordpress we should be able to
+        // Post deploy of wordpress so we should be able to
         // pull its data.
         var op = {
           op: 'get_service',
@@ -779,7 +779,7 @@
 
     it('can destroy a service', function(done) {
       generateServices(function(data) {
-        // Post deploy of wordpress we should be able to
+        // Post deploy of wordpress so we should be able to
         // destroy it.
         var op = {
           op: 'destroy_service',
@@ -788,7 +788,7 @@
         };
         client.onmessage = function(received) {
           var parsed = Y.JSON.parse(received.data);
-          assert.equal(parsed.service_name, 'wordpress');
+          assert.equal(parsed.result, 'wordpress');
           // Error should be undefined.
           done(received.error);
         };
@@ -798,13 +798,13 @@
 
     it('can destroy a service (integration)', function(done) {
       function destroyService(rec) {
-        function localCb(rec) {
-          assert.equal(rec.service_name, 'kumquat');
+        function localCb(rec2) {
+          assert.equal(rec2.result, 'kumquat');
           var service = state.db.services.getById('kumquat');
           assert.isNull(service);
           done();
         }
-        env.destroy_service(rec.service_name, localCb);
+        var result = env.destroy_service(rec.service_name, localCb);
       }
       generateAndExposeIntegrationService(destroyService);
     });
