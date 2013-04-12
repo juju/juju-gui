@@ -80,7 +80,7 @@ YUI.add('subapp-browser', function(Y) {
       },
       fullscreen: {
         type: 'juju.browser.views.FullScreen',
-        preserve: true
+        preserve: false
       },
       fullscreenCharm: {
         type: 'juju.browser.views.FullScreen',
@@ -88,7 +88,7 @@ YUI.add('subapp-browser', function(Y) {
       },
       sidebar: {
         type: 'juju.browser.views.Sidebar',
-        preserve: true
+        preserve: false
       }
     },
 
@@ -154,11 +154,15 @@ YUI.add('subapp-browser', function(Y) {
       console.log('render sidebar');
       debugger;
       this.showView('sidebar', this._getViewCfg({
-        container: '#subapp-browser'
-      }));
+
+      }), {
+        callback: function(view) {
+          debugger;
+          next();
+        }
+      });
       // here no Y.one('#subapp-browser');
       debugger;
-      next();
     },
 
     /**
@@ -175,7 +179,7 @@ YUI.add('subapp-browser', function(Y) {
       debugger;
       this.showView('charmDetails', this._getViewCfg({
         charmID: req.params.id,
-        container: '#bws-view-data'
+        container: Y.one('#bws-view-data')
       }));
       next();
     }
