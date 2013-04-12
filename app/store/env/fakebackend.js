@@ -700,10 +700,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // successful relation.
       var relationId = 'relation-' + this._relationCount;
       var endpoints = Y.Array.map(endpointData, function(endpoint) {
-        var result = [];
-        result.push(endpoint.name);
-        result.push({name: endpoint.type});
-        return result;
+        return [endpoint.name, {name: endpoint.type}];
       });
       var relation = this.db.relations.create({
         relation_id: relationId,
