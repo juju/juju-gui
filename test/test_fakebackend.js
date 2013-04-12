@@ -689,7 +689,7 @@
     });
   });
 
-  describe.only('FakeBackend.addRelation', function() {
+  describe('FakeBackend.addRelation', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
     var Y, fakebackend, utils, setCharm, deployResult, callback;
@@ -720,7 +720,7 @@
           assert.equal(result.error, undefined);
           assert.equal(result.relationId, 'relation-0');
           assert.equal(typeof result.relation, 'object');
-          assert.deepEqual(result.endpoints, relation);
+          assert.deepEqual(result.endpoints, mock.endpoints);
           assert.equal(result.scope, mock.scope);
           assert.equal(result.type, mock.type);
           done();
@@ -728,43 +728,29 @@
       });
     }
 
-// error messages
-    // it('rejects unauthenticated calls', function() {
-    //   fakebackend.logout();
-    //   var result = fakebackend.addRelation();
-    //   assert.equal(result.error, 'Please log in.');
-    // });
-
-    // it('requires two string endpoint names', function() {
-    //   var result = fakebackend.addRelation();
-    //   assert.equal(result.error, 'Two string endpoint names' +
-    //           ' required to establish a relation');
-    // });
-
-    // it('requires the endpoints to match or one be undefined', function(done) {
-    //    // Tests getExplicitInterface. The undefined portion is tested in the
-    //    // following tests when only one interface is explicitly provided.
-    //   fakebackend.deploy('cs:wordpress', function() {
-    //     fakebackend.deploy('cs:mysql', function() {
-    //       var result = fakebackend.addRelation('wordpress:bar', 'mysql:foo');
-    //       assert.equal(result.error, 'Endpoints need to match.');
-    //       done();
-    //     });
-    //   });
-    // });
-
-
-
-
-    it('requires relationships to be explicit if more than one shared interface', function(done) {
-      fakebackend.deploy('cs:mediawiki', function() {
-        fakebackend.deploy('cs:mysql', function() {
-          var result = fakebackend.addRelation('mediawiki', 'mysql');
-          assert.equal(result.error, 'Ambiguous relationship is not allowed.');
-          done();
-        });
-      });
+    it('rejects unauthenticated calls', function() {
+      fakebackend.logout();
+      var result = fakebackend.addRelation();
+      assert.equal(result.error, 'Please log in.');
     });
+
+    it('requires two string endpoint names', function() {
+      var result = fakebackend.addRelation();
+      assert.equal(result.error, 'Two string endpoint names' +
+              ' required to establish a relation');
+    });
+
+    it('requires relationships to be explicit if more than one ' +
+        'shared interface', function(done) {
+          fakebackend.deploy('cs:mediawiki', function() {
+            fakebackend.deploy('cs:mysql', function() {
+              var result = fakebackend.addRelation('mediawiki', 'mysql');
+              assert.equal(result.error,
+                  'Ambiguous relationship is not allowed.');
+              done();
+            });
+          });
+        });
 
     it('throws an error if there are no shared interfaces', function(done) {
       fakebackend.deploy('cs:hadoop', function() {
@@ -779,140 +765,59 @@
     it('requires the specified interfaces to match', function(done) {
       fakebackend.deploy('cs:wordpress', function() {
         fakebackend.deploy('cs:haproxy', function() {
-          var result = fakebackend.addRelation('wordpress:cache', 'haproxy:munin');
+          var result = fakebackend.addRelation(
+              'wordpress:cache', 'haproxy:munin');
           assert.equal(result.error, 'Specified interfaces do not match.');
           done();
         });
       });
     });
 
-    it('can create a relation with a double explicit interface', function(done) {
-      createRelation(
-        ['cs:wordpress', 'cs:mysql'],
-        ['wordpress:db', 'mysql:db'],
-        {type: 'mysql', scope: 'global'},
-        done);
-    });
+    it('can create a relation with a double explicit interface',
+        function(done) {
+          createRelation(
+              ['cs:wordpress', 'cs:mysql'],
+              ['wordpress:db', 'mysql:db'],
+              {type: 'mysql', scope: 'global',
+                endpoints:
+                    [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
+              done);
+        });
 
-    // it('can create a relation with double explicit interface (reverse)', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:mysql'],
-    //     ['mysql:db', 'wordpress:db'],
-    //     {type: 'mysql', scope: 'global'},
-    //     done);
-    // });
+    it('can create a relation with double explicit interface (reverse)',
+        function(done) {
+          createRelation(
+              ['cs:wordpress', 'cs:mysql'],
+              ['mysql:db', 'wordpress:db'],
+              {type: 'mysql', scope: 'global',
+                endpoints:
+                    [['mysql', {name: 'db'}], ['wordpress', {name: 'db'}]]},
+              done);
+        });
 
-    // it('can create a relation with a single explicit interface', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:mysql'],
-    //     ['wordpress:db', 'mysql'],
-    //     {type: 'mysql', scope: 'global'},
-    //     done);
-    // });
+    it('can create a relation with a double explicit interface and a ' +
+        'subordinate charm', function(done) {
+          createRelation(
+              ['cs:wordpress', 'cs:puppet'],
+              ['wordpress:juju-info', 'puppet:juju-info'],
+              {type: 'juju-info', scope: 'container',
+                endpoints:
+                    [['wordpress', {name: 'juju-info'}],
+                      ['puppet', {name: 'juju-info'}]]},
+              done);
+        });
 
-    // it('can create a relation with a single explicit interface (reverse)', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:mysql'],
-    //     ['mysql', 'wordpress:db'],
-    //     {type: 'mysql', scope: 'global'},
-    //     done);
-    // });
-
-    // it('can create a relation with a single explicit interface (other)', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:mysql'],
-    //     ['wordpress', 'mysql:db'],
-    //     {type: 'mysql', scope: 'global'},
-    //     done);
-    // });
-
-    // it('can create a relation with a single explicit interface (other, reverse)', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:mysql'],
-    //     ['mysql:db', 'wordpress'],
-    //     {type: 'mysql', scope: 'global'},
-    //     done);
-    // });
-
-    // it('can create a relation with a double explicit interface and a subordinate charm', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:puppet'],
-    //     ['wordpress:juju-info', 'puppet:juju-info'],
-    //     {type: 'juju-info', scope: 'container'},
-    //     done);
-    // });
-
-    // it('can create a relation with a double explicit interface and a subordinate charm (reverse)', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:puppet'],
-    //     ['puppet:juju-info', 'wordpress:juju-info'],
-    //     {type: 'juju-info', scope: 'container'},
-    //     done);
-    // });
-
-    // it('can create a relation with a single explicit interface and a subordinate charm', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:puppet'],
-    //     ['puppet:juju-info', 'wordpress'],
-    //     {type: 'juju-info', scope: 'container'},
-    //     done);
-    // });
-
-    // it('can create a relation with a single explicit interface and a subordinate charm (other)', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:puppet'],
-    //     ['wordpress', 'puppet:juju-info'],
-    //     {type: 'juju-info', scope: 'container'},
-    //     done);
-    // });
-
-    // it('can create a relation with a single explicit interface and a subordinate charm (reverse)', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:puppet'],
-    //     ['puppet', 'wordpress:juju-info'],
-    //     {type: 'juju-info', scope: 'container'},
-    //     done);
-    // });
-
-    // it('can create a relation with a single explicit interface and a subordinate charm (reverse)', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:puppet'],
-    //     ['wordpress:juju-info', 'puppet'],
-    //     {type: 'juju-info', scope: 'container'},
-    //     done);
-    // });
-
-    // it('can create a relation with an inferred interface', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:mysql'],
-    //     ['wordpress', 'mysql'],
-    //     {type: 'mysql', scope: 'global'},
-    //     done);
-    // });
-
-    // it('can create a relation with an inferred interface (reverse)', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:mysql'],
-    //     ['mysql', 'wordpress'],
-    //     {type: 'mysql', scope: 'global'},
-    //     done);
-    // });
-
-    // it('can create a relation with an inferred subordinate charm', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:puppet'],
-    //     ['wordpress', 'puppet'],
-    //     {type: 'juju-info', scope: 'container'},
-    //     done);
-    // });
-
-    // it('can create a relation with an inferred subordinate charm (reverse)', function(done) {
-    //   createRelation(
-    //     ['cs:wordpress', 'cs:puppet'],
-    //     ['puppet', 'wordpress'],
-    //     {type: 'juju-info', scope: 'container'},
-    //     done);
-    // });
+    it('can create a relation with a double explicit interface and a ' +
+        'subordinate charm (reverse)', function(done) {
+          createRelation(
+              ['cs:wordpress', 'cs:puppet'],
+              ['puppet:juju-info', 'wordpress:juju-info'],
+              {type: 'juju-info', scope: 'container',
+                endpoints:
+                    [['puppet', {name: 'juju-info'}],
+                      ['wordpress', {name: 'juju-info'}]]},
+              done);
+        });
 
   });
 
