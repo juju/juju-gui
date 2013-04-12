@@ -785,7 +785,7 @@ YUI.add('juju-env-go', function(Y) {
       }, intermediateCallback);
     },
 
-    // The constraints that the backend understands.
+    // The constraints that the backend understands.  Used to generate forms.
     genericConstraints: ['cpu-power', 'cpu-cores', 'mem', 'arch'],
 
     /**
@@ -825,6 +825,7 @@ YUI.add('juju-env-go', function(Y) {
        SetServiceConstraints into that suitable for the user callback.
 
        @method handleSetConfig
+       @static
        @param {Function} userCallback The callback originally submitted by
          the call site.
        @param {String} serviceName The name of the service.  Passed in since

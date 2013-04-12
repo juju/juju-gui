@@ -356,7 +356,7 @@ YUI.add('juju-env-python', function(Y) {
         data: data}, callback, true);
     },
 
-    // The constraints that the backend understands.
+    // The constraints that the backend understands.  Used to generate forms.
     genericConstraints: ['cpu', 'mem', 'arch'],
 
     /**
@@ -364,7 +364,7 @@ YUI.add('juju-env-python', function(Y) {
      *
      * @method set_constraints
      * @param {String} service The service name.
-     * @param {Object} constraints The charm constraints.
+     * @param {Object} constraints A hash of charm constraints.
      * @param {Function} callback A callable that must be called once the
          operation is performed.
      * @return {undefined} Sends a message to the server only.
