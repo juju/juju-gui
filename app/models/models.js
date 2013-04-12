@@ -394,7 +394,8 @@ YUI.add('juju-models', function(Y) {
       return this.filter({asList: Boolean(asList)}, function(relation) {
         return Y.Array.some(
             relation.get('endpoints'),
-            function(endpoint) { return endpoint[0] === service_id; });
+            function(endpoint) {
+              return endpoint[0] === service_id; });
       });
     }
   }, {
