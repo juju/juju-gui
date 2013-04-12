@@ -184,7 +184,7 @@ YUI.add('juju-gui', function(Y) {
 
       Y.detachAll('window-alt-E-pressed');
       Y.on('window-alt-E-pressed', function(data) {
-        this.fire('navigateTo', { url: '/' });
+        this.fire('navigateTo', { url: '/:gui:/' });
         data.preventDefault = true;
       }, this);
 

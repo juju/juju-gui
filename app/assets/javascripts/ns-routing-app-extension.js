@@ -146,9 +146,10 @@ YUI.add('ns-routing-app-extension', function(Y) {
      * @param {Object} componets is the result of a parse(url) call.
      * @return {String} url.
      **/
-    url: function(components) {
+    url: function(components, options) {
       var base = Y.mix({}, components);
       var url = '/';
+      options = options || {};
 
       function slash(u) {
         if (u.lastIndexOf('/') !== u.length - 1) {
@@ -167,7 +168,9 @@ YUI.add('ns-routing-app-extension', function(Y) {
       var keys = Y.Object.keys(base).sort();
       Y.each(keys, function(ns) {
         url = slash(url);
-        url += ':' + ns + ':' + base[ns];
+        if (options.includeRootPaths || base[ns] !== '/') {
+          url += ':' + ns + ':' + base[ns];
+        }
       });
 
       url = slash(url);
