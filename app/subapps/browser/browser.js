@@ -9,7 +9,10 @@
  *
  */
 YUI.add('subapp-browser', function(Y) {
-  var ns = Y.namespace('juju.subapps');
+  var ns = Y.namespace('juju.subapps'),
+      store = new Y.juju.Charmworld0({
+        'apiHost': window.juju_config.charmworldURL
+      });
 
   /**
    * Browser Sub App for the Juju Gui.
@@ -19,6 +22,17 @@ YUI.add('subapp-browser', function(Y) {
    *
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
+
+    /**
+      Routes that end with a tab name need to have that tab activated.
+
+    */
+    activateTab: function(req, res, next) {
+      // All tab ids are prefixed with bws
+      var subpath = this._getSubPath(req.path);
+      var tabId = '#bws-' + subpath;
+      Y.one(tabId).click();
+    },
 
     /**
      * Some routes might have sub parts that hint to where a user wants focus.
@@ -49,7 +63,8 @@ YUI.add('subapp-browser', function(Y) {
      */
     _getViewCfg: function(cfg) {
       return Y.merge(cfg, {
-        db: this.get('db')
+        db: this.get('db'),
+        store: store
       });
     },
 
@@ -59,6 +74,10 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     views: {
+      charmDetails: {
+        type: 'juju.browser.views.BrowserCharmView',
+        preserve: false
+      },
       fullscreen: {
         type: 'juju.browser.views.FullScreen',
         preserve: true
@@ -70,10 +89,6 @@ YUI.add('subapp-browser', function(Y) {
       sidebar: {
         type: 'juju.browser.views.Sidebar',
         preserve: true
-      },
-      sidebarCharm: {
-        type: 'juju.browser.views.Sidebar',
-        preserve: false
       }
     },
 
@@ -136,7 +151,13 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
-      this.showView('sidebar', this._getViewCfg());
+      console.log('render sidebar');
+      debugger;
+      this.showView('sidebar', this._getViewCfg({
+        container: '#subapp-browser'
+      }));
+      // here no Y.one('#subapp-browser');
+      debugger;
       next();
     },
 
@@ -149,11 +170,12 @@ YUI.add('subapp-browser', function(Y) {
      * @param {function} next callable for the next route in the chain.
      *
      */
-    sidebarCharm: function(req, res, next) {
-      var subpath = this._getSubPath(req.path);
-      this.showView('sidebarCharm', this._getViewCfg({
+    charmDetails: function(req, res, next) {
+      console.log('render details');
+      debugger;
+      this.showView('charmDetails', this._getViewCfg({
         charmID: req.params.id,
-        subpath: subpath
+        container: '#bws-view-data'
       }));
       next();
     }
@@ -178,16 +200,16 @@ YUI.add('subapp-browser', function(Y) {
           { path: '/bws/fullscreen/*id/readme/', callbacks: 'fullscreenCharm' },
           { path: '/bws/fullscreen/*id/', callbacks: 'fullscreenCharm' },
 
-          { path: '/bws/sidebar/', callbacks: 'sidebar' },
+          { path: '/bws/sidebar/*/', callbacks: 'sidebar' },
+          { path: '/bws/sidebar/*id/', callbacks: 'charmDetails' },
 
           { path: '/bws/sidebar/*id/configuration/',
-            callbacks: 'sidebarCharm' },
-          { path: '/bws/sidebar/*id/hooks/', callbacks: 'sidebarCharm' },
+            callbacks: 'activateTab' },
+          { path: '/bws/sidebar/*id/hooks/', callbacks: 'activateTab' },
           { path: '/bws/sidebar/*id/interfaces/',
-            callbacks: 'sidebarCharm' },
-          { path: '/bws/sidebar/*id/qa/', callbacks: 'sidebarCharm' },
-          { path: '/bws/sidebar/*id/readme/', callbacks: 'sidebarCharm' },
-          { path: '/bws/sidebar/*id/', callbacks: 'sidebarCharm' }
+            callbacks: 'activateTab' },
+          { path: '/bws/sidebar/*id/qa/', callbacks: 'activateTab' },
+          { path: '/bws/sidebar/*id/readme/', callbacks: 'activateTab' }
         ]
       }
     }
@@ -195,6 +217,7 @@ YUI.add('subapp-browser', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'juju-charm-store',
     'sub-app',
     'subapp-browser-fullscreen',
     'subapp-browser-sidebar'

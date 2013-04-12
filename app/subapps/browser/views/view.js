@@ -78,63 +78,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
       );
     },
 
-    /**
-     * Helper to just render the charm details pane. This is shared in the
-     * sidebar/fullscreen views.
-     *
-     * @method _renderCharmDetails
-     * @param {BrowserCharm} charm model instance to render from.
-     * @param {Node} container node to look for a details div in to render to.
-     *
-     */
-    _renderCharmDetails: function(charm, container) {
-      var detailsNode = container.one('.bws-view-data');
-      // Destroy any current details.
-      if (this.details) {
-        this.details.destroy(true);
-      }
-      this.details = new ns.BrowserCharmView({
-        charm: charm,
-        store: this.get('store')
-      });
-      this.details.render(detailsNode);
-    },
-
-    /**
-     * Render the view of a single charm details page.
-     *
-     * @method _renderCharmView
-     * @param {Node} container the node to insert our rendered content into.
-     *
-     */
-    _renderCharmView: function(container) {
-      var tpl = this.template(),
-          tplNode = Y.Node.create(tpl);
-
-      // Create/bind the search before we wait for the charm data to load so
-      // that we're prepared for search events in case that request takes a
-      // while or even fails.
-      this._renderSearchWidget(tplNode);
-
-      // We need to have the template in the DOM for sub views to be able to
-      // expect proper structure.
-      if (!Y.Lang.isValue(container)) {
-        container = this.get('container');
-      }
-      container.setHTML(tplNode);
-
-      this.get('store').charm(this.get('charmID'), {
-        'success': function(data) {
-          var charmView = new ns.BrowserCharmView({
-            charm: new models.BrowserCharm(data),
-            store: this.get('store')
-          });
-          charmView.render(tplNode.one('.bws-view-data'), this.isFullscreen());
-          container.setHTML(tplNode);
-        },
-        'failure': this.apiFailure
-      }, this);
-    },
 
     /**
      * Render out the main search widget and controls shared across various

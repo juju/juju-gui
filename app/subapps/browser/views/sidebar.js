@@ -82,6 +82,8 @@ YUI.add('subapp-browser-sidebar', function(Y) {
         this.set('container', container);
       }
 
+      debugger;
+
       container.setHTML(tplNode);
 
       // By default we grab the editorial content from the api to use for
@@ -89,6 +91,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       this.get('store').sidebarEditorial({
         'success': function(data) {
 
+          debugger;
           // Add featured charms
           var featuredCharms = this.get('store').resultsToCharmlist(
               data.result.featured);
@@ -176,11 +179,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     render: function(container) {
-      if (this.get('charmID')) {
-        this._renderCharmView(container);
-      } else {
-        this._renderEditorialView(container);
-      }
+      this._renderEditorialView(container);
       // Bind our view to the events from the search widget used for controls.
       this._bindSearchWidgetEvents();
     }

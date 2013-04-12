@@ -3,6 +3,7 @@
 
 YUI.add('subapp-browser-charmview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
+      models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
       DATE_FORMAT = '%H:%M %d/%b/%y';
@@ -333,6 +334,40 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.indicators = {};
     },
 
+
+    /**
+     * Helper to just render the charm details pane. This is shared in the
+     * sidebar/fullscreen views.
+     *
+     * @method _renderCharmDetails
+     * @param {BrowserCharm} charm model instance to render from.
+     * @param {Node} container node to look for a details div in to render to.
+     *
+     */
+    _renderCharmDetails: function(charm, container) {
+      var detailsNode = container.one('.bws-view-data');
+      // Destroy any current details.
+      if (this.details) {
+        this.details.destroy(true);
+      }
+      this.details = new ns.BrowserCharmView({
+        charm: charm,
+        store: this.get('store')
+      });
+      this.details.render(detailsNode);
+    },
+
+    /**
+     * Render the view of a single charm details page.
+     *
+     * @method _renderCharmView
+     * @param {Node} container the node to insert our rendered content into.
+     *
+     */
+    _renderCharmView: function(container) {
+    },
+
+
     /**
      * Render out the view to the DOM.
      *
@@ -341,42 +376,53 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     render: function(container, isFullscreen) {
-      var charm = this.get('charm');
-      var tplData = charm.getAttrs();
-      tplData.isFullscreen = isFullscreen;
-      tplData.prettyCommits = this._formatCommitsForHtml(
-          tplData.recent_commits);
+      this.get('store').charm(this.get('charmID'), {
+        'success': function(data) {
+          var charm = new models.BrowserCharm(data);
+          var isFullscreen = false;
+          var tplData = charm.getAttrs();
+          tplData.isFullscreen = isFullscreen;
+          tplData.prettyCommits = this._formatCommitsForHtml(
+              tplData.recent_commits);
 
-      var tpl = this.template(tplData);
-      var tplNode = Y.Node.create(tpl);
+          var tpl = this.template(tplData);
+          var tplNode = Y.Node.create(tpl);
 
-      container.setHTML(tplNode);
+          // Allow for specifying the container to use. This should reset the
+          // events.
+          if (typeof container !== 'object') {
+            container = this.get('container');
+          } else {
+            this.set('container', container);
+          }
 
-      // Allow for specifying the container to use. This should reset the
-      // events.
-      if (container) {
-        this.set('container', container);
-      }
+          debugger;
+          container.one('.bws-view-data').setHTML(tplNode);
 
-      this.tabview = new widgets.browser.TabView({
-        srcNode: tplNode.one('.tabs')
-      });
-      this.tabview.render();
-      this._dispatchTabEvents(this.tabview);
+          this.tabview = new widgets.browser.TabView({
+            srcNode: tplNode.one('.tabs')
+          });
+          this.tabview.render();
+          this._dispatchTabEvents(this.tabview);
 
-      // Start loading the readme so it's ready to go.
-      var readme = this._locateReadme();
+          // Start loading the readme so it's ready to go.
+          var readme = this._locateReadme();
 
-      if (readme) {
-        this._loadFile(tplNode.one('#bws-readme'),
-                       readme
-        );
-      } else {
-        this._noReadme(tplNode.one('#bws-readme'));
-      }
+          if (readme) {
+            this._loadFile(tplNode.one('#bws-readme'),
+                           readme
+            );
+          } else {
+            this._noReadme(tplNode.one('#bws-readme'));
+          }
+        },
+        'failure': this.apiFailure
+      }, this);
+
     }
   }, {
     ATTRS: {
+      charmID: {},
       /**
        * The charm we're viewing the details of.
        *
@@ -408,6 +454,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'datatype-date-format',
     'event-tracker',
     'gallery-markdown',
+    'juju-charm-store',
+    'juju-models',
     'juju-templates',
     'juju-views',
     'juju-view-utils',
