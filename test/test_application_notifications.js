@@ -194,6 +194,7 @@ describe('juju application notifications', function() {
             ancestor: function() {
               return {get: NO_OP};
             },
+            get: NO_OP,
             set: NO_OP
           }
         });
