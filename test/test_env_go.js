@@ -206,6 +206,44 @@
       assert.equal('envname', env.get('environmentName'));
     });
 
+    it('sends the correct AddServiceUnits message', function() {
+      env.add_unit('django', 3);
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'AddServiceUnits',
+        RequestId: 1,
+        Params: {ServiceName: 'django', NumUnits: 3}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully adds units to a service', function(done) {
+      env.add_unit('django', 2, function(data) {
+        assert.strictEqual('django', data.service_name);
+        assert.strictEqual(2, data.num_units);
+        assert.deepEqual(['django/2', 'django/3'], data.result);
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {Units: ['django/2', 'django/3']}
+      });
+    });
+
+    it('handles failures adding units to a service', function(done) {
+      env.add_unit('django', 0, function(data) {
+        assert.strictEqual('must add at least one unit', data.err);
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'must add at least one unit'
+      });
+    });
+
     it('sends the correct expose message', function() {
       env.expose('apache');
       var last_message = conn.last_message();
