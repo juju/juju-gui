@@ -542,11 +542,14 @@ YUI.add('juju-view-utils', function(Y) {
           // far will be undefined or the far endpoint service.
           rel.far = far && {
             service: far[0], role: far[1].role, name: far[1].name};
-          var rel_id = rel.relation_id.split('-')[1];
-          if (isNaN(rel_id)) {
-            rel.ident = rel.relation_id;
+          var relationId = rel.relation_id;
+          if (relationId.indexOf(' ') >= 0) {
+            // This is a Juju Core relation id (the rel id contains a space).
+            rel.ident = relationId;
           } else {
-            rel.ident = near[1].name + ':' + parseInt(rel_id, 10);
+            // This is a Python relation id.
+            var relNumber = relationId.split('-')[1];
+            rel.ident = near[1].name + ':' + parseInt(relNumber, 10);
           }
           rel.elementId = generateSafeDOMId(rel.relation_id);
           return rel;
