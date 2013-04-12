@@ -386,9 +386,31 @@
           assert.equal(result.service_name, 'wordpress');
           assert.isUndefined(result.error);
           // Ensure the service can no longer be retrieved.
-          result = fakebackend.getService();
+          result = fakebackend.getService('wordpress');
           assert.equal(result.error, 'Invalid service id.');
           done();
+        });
+      });
+
+      it('removes relations when destroying a service', function(done) {
+        // Add a couple of services and hook up relations.
+        fakebackend.deploy('cs:wordpress', function(data) {
+          fakebackend.deploy('cs:mysql', function() {
+            var result = fakebackend.addRelation('wordpress:db', 'mysql:db');
+            assert.isUndefined(result.error);
+            var mysql = fakebackend.getService('mysql').result;
+            assert.lengthOf(mysql.rels, 1);
+            // Now destroy one of the services.
+            result = fakebackend.destroyService('wordpress');
+            assert.isUndefined(result.error);
+            // Ensure the destroyed service can no longer be retrieved.
+            result = fakebackend.getService('wordpress');
+            assert.equal(result.error, 'Invalid service id.');
+            // But the other one exists and has no relations.
+            mysql = fakebackend.getService('mysql').result;
+            assert.lengthOf(mysql.rels, 0);
+            done();
+          });
         });
       });
 

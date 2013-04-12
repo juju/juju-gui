@@ -391,6 +391,12 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!service) {
         return {error: 'Invalid service id.'};
       }
+      // Remove all relations for this service.
+      var relations = this.db.relations.get_relations_for_service(service);
+      Y.Array.each(relations, function(rel) {
+        this.db.relations.remove(rel);
+      }, this);
+      // And finally and destroy remove the service.
       this.db.services.remove(service);
       service.destroy();
       return {service_name: serviceName};
