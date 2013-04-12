@@ -18,6 +18,6 @@
         {{ recent_download_count }} {{pluralize 'download' recent_download_count}}
       </span>
     </div>
-    <p class="description">{{ description }}</p>
+    <p class="description">{{truncate description 110 }}</p>
   </div>
 </div>
