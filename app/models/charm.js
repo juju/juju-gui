@@ -490,7 +490,7 @@ YUI.add('juju-charm-models', function(Y) {
          * @return {Int} count of the commits in 'recent' time.
          *
          */
-        valueFn: function() {
+        getter: function() {
           var count = 0,
               commits = this.get('recent_commits'),
               today = new Date(),

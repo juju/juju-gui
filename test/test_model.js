@@ -636,9 +636,10 @@ describe('BrowserCharm test', function() {
 
     // adjust the dates on there manually because the tests will be run on
     // different days throwing things off.
-    commits[0].date.setDate(today.getDate() - 1);
-    commits[1].date.setDate(today.getDate() - 2);
-    commits[2].date.setDate(today.getDate() - 3);
+    Y.each([0, 1, 2], function(index) {
+      commits[index].date = new Date();
+      commits[index].date.setDate(today.getDate() - (1 + index));
+    });
 
     instance.get('recent_commit_count').should.equal(3);
   });
