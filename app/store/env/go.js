@@ -401,6 +401,7 @@ YUI.add('juju-env-go', function(Y) {
      * suitable for the user callback.
      *
      * @method handleAddUnit
+     * @static
      * @param {Function} userCallback The callback originally submitted by the
      * call site.
      * @param {String} service The name of the service.  Passed in since it
