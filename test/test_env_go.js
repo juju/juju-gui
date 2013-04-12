@@ -223,6 +223,7 @@
         assert.strictEqual('django', data.service_name);
         assert.strictEqual(2, data.num_units);
         assert.deepEqual(['django/2', 'django/3'], data.result);
+        assert.isUndefined(data.err);
         done();
       });
       // Mimic response.
@@ -234,6 +235,8 @@
 
     it('handles failures adding units to a service', function(done) {
       env.add_unit('django', 0, function(data) {
+        assert.strictEqual('django', data.service_name);
+        assert.strictEqual(0, data.num_units);
         assert.strictEqual('must add at least one unit', data.err);
         done();
       });

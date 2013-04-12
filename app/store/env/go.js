@@ -368,6 +368,64 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+     * Add units to the provided service.
+     *
+     * @method add_unit
+     * @param {String} service The service to be scaled up.
+     * @param {Integer} numUnits The number of units to be added.
+     * @param {Function} callback A callable that must be called once the
+     *  operation is performed. It will receive an object with an "err"
+     *  attribute containing a string describing the problem (if an error
+     *  occurred), or with the following attributes if everything went well:
+     *    - service_name: the name of the service;
+     *    - num_units: the number of units added;
+     *    - result: a list containing the names of the added units.
+     * @return {undefined} Sends a message to the server only.
+     */
+    add_unit: function(service, numUnits, callback) {
+      var intermediateCallback;
+      if (callback) {
+        // Curry the callback, service and numUnits.  No context is passed.
+        intermediateCallback = Y.bind(this.handleAddUnit, null,
+            callback, service, numUnits);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'AddServiceUnits',
+        Params: {ServiceName: service, NumUnits: numUnits}
+      }, intermediateCallback);
+    },
+
+    /**
+     * Transform the data returned from the juju-core add_unit call into that
+     * suitable for the user callback.
+     *
+     * @method handleAddUnit
+     * @param {Function} userCallback The callback originally submitted by the
+     * call site.
+     * @param {String} service The name of the service.  Passed in since it
+     * is not part of the response.
+     * @param {Integer} numUnits The number of added units.
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleAddUnit: function(userCallback, service, numUnits, data) {
+      var transformedData = {
+        err: data.Error,
+        service_name: service
+      };
+      if (data.Error) {
+        transformedData.num_units = numUnits;
+      } else {
+        var units = data.Response.Units;
+        transformedData.result = units;
+        transformedData.num_units = units.length;
+      }
+      // Call the original user callback.
+      userCallback(transformedData);
+    },
+
+    /**
      * Expose the given service.
      *
      * @method expose
