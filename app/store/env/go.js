@@ -466,7 +466,7 @@ YUI.add('juju-env-go', function(Y) {
       var transformedData = {
         err: data.Error,
         unit_names: unitNames
-      }
+      };
       userCallback(transformedData);
     },
 
