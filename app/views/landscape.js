@@ -128,7 +128,8 @@ YUI.add('juju-landscape', function(Y) {
         }
         url += slash(modelAnnotation);
       } else if (model.name === 'serviceUnit') {
-        modelAnnotation = model.annotations['landscape-computer'];
+        modelAnnotation = (
+            model.annotations && model.annotations['landscape-computer']);
         if (!modelAnnotation) {
           console.warn('Unit missing the landscape-computer annotation!');
           return undefined;

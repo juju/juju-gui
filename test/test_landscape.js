@@ -158,6 +158,14 @@ describe('Landscape integration', function() {
     node.one('.updates-control').getStyle('display').should.equal('none');
     node.one('.restart-control').getStyle('display').should.equal('block');
 
+    // We handle missing annotations on a service.
+    mysql.set('annotations', {});
+    landscape.update();
+    views.utils.updateLandscapeBottomBar(landscape, env, mysql, node,
+        'service');
+    node.one('.machine-control').getStyle('display').should.equal('none');
+
+    // We handle normal unit annotations.
     unit.annotations = {'landscape-computer': '+unit:mysql-0'};
     landscape.update();
 
@@ -170,6 +178,13 @@ describe('Landscape integration', function() {
     // We should have no visible controls.
     node.one('.updates-control').getStyle('display').should.equal('none');
     node.one('.restart-control').getStyle('display').should.equal('none');
+
+    // We handle completely missing annotations on a unit.
+    delete unit.annotations;
+    landscape.update();
+    views.utils.updateLandscapeBottomBar(landscape, env, unit, node,
+        'unit');
+    node.one('.machine-control').getStyle('display').should.equal('none');
 
     node.remove();
   });

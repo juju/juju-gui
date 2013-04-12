@@ -73,7 +73,7 @@
       </thead>
       <tbody>
         {{#relations}}
-          <tr {{#if highlight}}class="highlighted"{{/if}} id="{{relation_id}}">
+          <tr {{#if highlight}}class="highlighted" {{/if}}id="{{elementId}}">
             <td class="relation-ident">{{ident}}</td>
             <td class="relation-endpoint">
               {{#if far}}
@@ -91,9 +91,9 @@
               <div class="unit-button-palette">
                 <form id="{{near.name}}">
                 <button type="button" class="btn resolved-relation-button"
-                  >Resolved</button>
+                  value="{{relation_id}}">Resolved</button>
                 <button type="button" class="btn retry-relation-button"
-                  >Retry</button>
+                  value="{{relation_id}}">Retry</button>
                 </form>
               </div>
               {{/if}}
