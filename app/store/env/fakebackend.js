@@ -699,10 +699,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // Assign a unique realtion id which is incremented after every
       // successful relation.
       var relationId = 'relation-' + this._relationCount;
+      var endpoints = Y.Array.map(endpointData, function(endpoint) {
+        return [endpoint.name, {name: endpoint.type}];
+      });
       var relation = this.db.relations.create({
         relation_id: relationId,
         type: cics.sharedInterface,
-        endpoints: [endpointA, endpointB],
+        endpoints: endpoints,
         pending: false,
         scope: cics.sharedScope || 'global',
         display_name: endpointData[0].type
