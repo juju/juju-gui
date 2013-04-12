@@ -88,7 +88,7 @@
         env: env});
       var redirected = false;
       charmView.on('navigateTo', function(e) {
-        assert.equal('/', e.url);
+        assert.equal('/:gui:/', e.url);
         redirected = true;
       });
       var deployInput = charmView.get('container').one('#charm-deploy');

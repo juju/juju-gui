@@ -422,20 +422,22 @@ YUI.add('juju-view-utils', function(Y) {
 
     if (envAnnotations['landscape-url']) {
       controls.show();
-      machine.show();
-      machine.one('a').setAttribute('href',
-          landscape.getLandscapeURL(model));
+      var baseLandscapeURL = landscape.getLandscapeURL(model);
+      if (baseLandscapeURL) {
+        machine.show();
+        machine.one('a').setAttribute('href', baseLandscapeURL);
 
-      if (annotations['landscape-security-upgrades']) {
-        updates.show();
-        updates.one('a').setAttribute('href',
-            landscape.getLandscapeURL(model, 'security'));
-      }
+        if (annotations['landscape-security-upgrades']) {
+          updates.show();
+          updates.one('a').setAttribute('href',
+              landscape.getLandscapeURL(model, 'security'));
+        }
 
-      if (annotations['landscape-needs-reboot']) {
-        restart.show();
-        restart.one('a').setAttribute('href',
-            landscape.getLandscapeURL(model, 'reboot'));
+        if (annotations['landscape-needs-reboot']) {
+          restart.show();
+          restart.one('a').setAttribute('href',
+              landscape.getLandscapeURL(model, 'reboot'));
+        }
       }
     }
   };
@@ -1249,6 +1251,21 @@ YUI.add('juju-view-utils', function(Y) {
           return word;
         }
       });
+
+  /**
+   * Truncate helper to keep text sizes to a specified limit.
+   *
+   * {{truncate field 100}}
+   *
+   */
+  Y.Handlebars.registerHelper('truncate', function(string, length) {
+    if (string && string.length > length) {
+      return Y.Lang.trimRight(string.substring(0, length)) + '...';
+    }
+    else {
+      return string;
+    }
+  });
 
 }, '0.1.0', {
   requires: ['base-build',
