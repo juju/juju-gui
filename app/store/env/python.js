@@ -356,6 +356,9 @@ YUI.add('juju-env-python', function(Y) {
         data: data}, callback, true);
     },
 
+    // The constraints that the backend understands.
+    genericConstraints: ['cpu', 'mem', 'arch'],
+
     /**
      * Change the constraints of the given service.
      *
@@ -367,10 +370,17 @@ YUI.add('juju-env-python', function(Y) {
      * @return {undefined} Sends a message to the server only.
      */
     set_constraints: function(service, constraints, callback) {
+      // Transform the constraints mapping into a string the backend
+      // understands.
+      var values = [];
+      Y.Object.each(constraints, function(value, name) {
+        values.push(name + '=' + value);
+      });
+
       this._send_rpc({
         op: 'set_constraints',
         service_name: service,
-        constraints: constraints}, callback, true);
+        constraints: values}, callback, true);
     },
 
     /**

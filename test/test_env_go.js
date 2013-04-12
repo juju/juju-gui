@@ -665,18 +665,7 @@
     });
 
     it('successfully gets service configuration', function() {
-      var service_name;
-      var result;
-      var expected = {
-        Service: 'mysql',
-        Charm: 'mysql',
-        Settings: {
-          'binlog-format': {
-            description: 'If binlogging is enabled, etc, etc","type":"string',
-            value: null
-          }
-        }
-      };
+      var service_name, result;
       env.get_service('mysql', function(data) {
         service_name = data.service_name;
         result = data.result;
@@ -684,9 +673,29 @@
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Response: expected
+        Response: {
+          Service: 'mysql',
+          Charm: 'mysql',
+          Settings: {
+            'binlog-format': {
+              description: 'Yada, yada, yada.',
+              type: 'string',
+              value: null
+            }
+          }
+        }
       });
-      expected.name = 'mysql';
+      assert.equal(service_name, 'mysql');
+      var expected = {
+        config: {
+          'binlog-format': {
+            description: 'Yada, yada, yada.',
+            type: 'string',
+            value: null
+          },
+        },
+        constraints: undefined
+      };
       assert.strictEqual('mysql', service_name);
       assert.deepEqual(expected, result);
     });
@@ -708,6 +717,23 @@
       });
       assert.equal(service_name, 'yoursql');
       assert.equal(err, 'service "yoursql" not found');
+    });
+
+    it('can set service constraints', function() {
+      env.set_constraints('mysql', {'cpu-cores': '4'});
+      msg = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'SetServiceConstraints',
+        Params: {
+          ServiceName: 'mysql',
+          Constraints: {
+            'cpu-cores': 4
+          }
+        },
+        RequestId: msg.RequestId
+      };
+      assert.deepEqual(expected, msg);
     });
 
     it('can set a service config', function() {
@@ -1131,7 +1157,6 @@
       env.detach('delta');
       var callbackData = {Response: {Deltas: [['service', 'deploy', {}]]}};
       env.on('delta', function(evt) {
-        console.log(evt.data.result);
         done();
       });
       env._handleRpcResponse(callbackData);
