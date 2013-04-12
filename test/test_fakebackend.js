@@ -383,7 +383,7 @@
       it('successfully destroys a valid service', function(done) {
         fakebackend.deploy('cs:wordpress', function(data) {
           var result = fakebackend.destroyService('wordpress');
-          assert.equal(result.service_name, 'wordpress');
+          assert.equal(result.result, 'wordpress');
           assert.isUndefined(result.error);
           // Ensure the service can no longer be retrieved.
           result = fakebackend.getService('wordpress');
@@ -401,8 +401,9 @@
             var mysql = fakebackend.getService('mysql').result;
             assert.lengthOf(mysql.rels, 1);
             // Now destroy one of the services.
-            result = fakebackend.destroyService('wordpress');
+            result = fakebackend.destroyService('wordpress').result;
             assert.isUndefined(result.error);
+            assert.equal('wordpress', result);
             // Ensure the destroyed service can no longer be retrieved.
             result = fakebackend.getService('wordpress');
             assert.equal(result.error, 'Invalid service id.');

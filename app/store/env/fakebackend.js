@@ -399,7 +399,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // And finally and destroy remove the service.
       this.db.services.remove(service);
       service.destroy();
-      return {service_name: serviceName};
+      return {result: serviceName};
     },
 
     /**
