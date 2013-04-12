@@ -283,7 +283,7 @@
 
       view.render(node);
       view.get('container').should.eql(node);
-      node.one('.changelog .toggle').simulate('click');
+      node.one('.changelog .expandToggle').simulate('click');
     });
 
     it('changelog is reformatted and displayed', function() {
@@ -298,8 +298,8 @@
 
       view.render(node);
       // Basics that we have the right number of nodes.
-      node.all('.commit').size().should.eql(10);
-      node.all('.commit.first').size().should.eql(1);
+      node.all('.remaining li').size().should.eql(9);
+      node.all('.first p').size().should.eql(1);
 
       // The reminaing starts out hidden.
       assert(node.one('.changelog .remaining').hasClass('hidden'));

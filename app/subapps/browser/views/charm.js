@@ -5,7 +5,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
-      DATE_FORMAT = '%d/%b/%y';
+      DATE_FORMAT = '%H:%M %d/%b/%y';
 
 
   /**
@@ -29,7 +29,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     events: {
-      '.changelog .toggle': {
+      '.changelog .expandToggle': {
         click: '_toggleLog'
       },
       '.charm .add': {
@@ -286,22 +286,25 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _toggleLog: function(ev) {
-      var upArrow = '&uarr;',
-          downArrow = '&darr;',
-          container = this.get('container'),
+      ev.halt();
+      var container = this.get('container'),
           target = ev.currentTarget,
-          state = target.getData('state');
+          state = target.getData('state'),
+          more = target.one('.more'),
+          less = target.one('.less');
 
       if (state === 'closed') {
         // open up the changelog.
         container.one('.changelog .remaining').removeClass('hidden');
         target.setData('state', 'open');
-        target.setContent(upArrow);
+        more.addClass('hidden');
+        less.removeClass('hidden');
       } else {
         // close up the changelog.
         container.one('.changelog .remaining').addClass('hidden');
         target.setData('state', 'closed');
-        target.setContent(downArrow);
+        less.addClass('hidden');
+        more.removeClass('hidden');
       }
     },
 
