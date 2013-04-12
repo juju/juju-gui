@@ -82,16 +82,14 @@ YUI.add('subapp-browser-sidebar', function(Y) {
         this.set('container', container);
       }
 
-      debugger;
-
       container.setHTML(tplNode);
+      Y.one('#subapp-browser').append(container);
 
       // By default we grab the editorial content from the api to use for
       // display.
       this.get('store').sidebarEditorial({
         'success': function(data) {
 
-          debugger;
           // Add featured charms
           var featuredCharms = this.get('store').resultsToCharmlist(
               data.result.featured);
@@ -165,11 +163,11 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     destructor: function() {
-      if (this.charmContainers) {
-        Y.Array.each(this.charmContainers, function(container) {
-          container.destroy();
-        });
-      }
+      // if (this.charmContainers) {
+      //   Y.Array.each(this.charmContainers, function(container) {
+      //     container.destroy();
+      //   });
+      // }
     },
 
     /**

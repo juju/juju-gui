@@ -56,6 +56,31 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+     * Shared method to generate a message to the user based on a bad api
+     * call.
+     *
+     * @method apiFailure
+     * @param {Object} data the json decoded response text.
+     * @param {Object} request the original io_request object for debugging.
+     *
+     */
+    apiFailure: function(data, request) {
+      var message;
+      if (data && data.type) {
+        message = 'Charm API error of type: ' + data.type;
+      } else {
+        message = 'Charm API server did not respond';
+      }
+      this.get('db').notifications.add(
+          new models.Notification({
+            title: 'Failed to load sidebar content.',
+            message: message,
+            level: 'error'
+          })
+      );
+    },
+
+    /**
      * The API retuns the questions and the scores. Combine the data into a
      * single source to make looping in the handlebars templates nicer.
      *
@@ -364,22 +389,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * @param {Node} container the node to insert our rendered content into.
      *
      */
-    _renderCharmView: function(container) {
-    },
-
-
-    /**
-     * Render out the view to the DOM.
-     *
-     * @method render
-     * @param {Node} container optional specific container to render out to.
-     *
-     */
-    render: function(container, isFullscreen) {
-      this.get('store').charm(this.get('charmID'), {
-        'success': function(data) {
-          var charm = new models.BrowserCharm(data);
-          var isFullscreen = false;
+    _renderCharmView: function(charm, container, isFullscreen) {
+          this.set('charm', charm);
+          isFullscreen = false;
           var tplData = charm.getAttrs();
           tplData.isFullscreen = isFullscreen;
           tplData.prettyCommits = this._formatCommitsForHtml(
@@ -396,8 +408,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
             this.set('container', container);
           }
 
-          debugger;
-          container.one('.bws-view-data').setHTML(tplNode);
+          Y.one('.bws-view-data').setHTML(tplNode);
 
           this.tabview = new widgets.browser.TabView({
             srcNode: tplNode.one('.tabs')
@@ -415,10 +426,30 @@ YUI.add('subapp-browser-charmview', function(Y) {
           } else {
             this._noReadme(tplNode.one('#bws-readme'));
           }
-        },
-        'failure': this.apiFailure
-      }, this);
+    },
 
+
+    /**
+     * Render out the view to the DOM.
+     *
+     * @method render
+     * @param {Node} container optional specific container to render out to.
+     *
+     */
+    render: function(container, isFullscreen) {
+      if (this.get('charm')) {
+        this._renderCharmView(this.get('charm'), container, isFullscreen);
+      } else {
+        this.get('store').charm(this.get('charmID'), {
+          'success': function(data) {
+            var charm = new models.BrowserCharm(data);
+            this.set('charm', charm);
+            this._renderCharmView(this.get('charm'), container, isFullscreen);
+          },
+          'failure': this.apiFailure
+        }, this);
+
+      }
     }
   }, {
     ATTRS: {
