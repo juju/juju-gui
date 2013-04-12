@@ -432,8 +432,8 @@ YUI.add('juju-env-go', function(Y) {
      * @method remove_units
      * @param {Array} unit_names The units to be removed.
      * @param {Function} callback A callable that must be called once the
-         operation is performed.
-     * @return {undefined} Sends a message to the server only.
+     *   operation is performed. Normalized data, including the unit_names
+     *   is passed to the callback.
      */
     remove_units: function(unit_names, callback) {
       var intermediateCallback;
