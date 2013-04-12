@@ -97,7 +97,7 @@ YUI.add('juju-view-charm-collection', function(Y) {
       // The deploy call generates an event chain leading to a call to
       // `app.on_database_changed()`, which re-dispatches the current view.
       // For this reason we need to redirect to the root page right now.
-      this.fire('navigateTo', {url: '/'});
+      this.fire('navigateTo', {url: '/:gui:/'});
       env.deploy(charmUrl, serviceName, config,
           Y.bind(this._deployCallback, this)
       );

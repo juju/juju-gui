@@ -225,7 +225,8 @@ YUI.add('juju-view-service', function(Y) {
             ));
         this.panel.hide();
         this.panel.destroy();
-        this.fire('navigateTo', {url: '/'});
+        this.fire('navigateTo', {url: '/:gui:/'});
+        db.fire('update');
       }
     }
   };

@@ -422,20 +422,22 @@ YUI.add('juju-view-utils', function(Y) {
 
     if (envAnnotations['landscape-url']) {
       controls.show();
-      machine.show();
-      machine.one('a').setAttribute('href',
-          landscape.getLandscapeURL(model));
+      var baseLandscapeURL = landscape.getLandscapeURL(model);
+      if (baseLandscapeURL) {
+        machine.show();
+        machine.one('a').setAttribute('href', baseLandscapeURL);
 
-      if (annotations['landscape-security-upgrades']) {
-        updates.show();
-        updates.one('a').setAttribute('href',
-            landscape.getLandscapeURL(model, 'security'));
-      }
+        if (annotations['landscape-security-upgrades']) {
+          updates.show();
+          updates.one('a').setAttribute('href',
+              landscape.getLandscapeURL(model, 'security'));
+        }
 
-      if (annotations['landscape-needs-reboot']) {
-        restart.show();
-        restart.one('a').setAttribute('href',
-            landscape.getLandscapeURL(model, 'reboot'));
+        if (annotations['landscape-needs-reboot']) {
+          restart.show();
+          restart.one('a').setAttribute('href',
+              landscape.getLandscapeURL(model, 'reboot'));
+        }
       }
     }
   };

@@ -349,20 +349,23 @@
          destroy.simulate('click');
          var called = false;
          view.on('navigateTo', function(ev) {
-           assert.equal('/', ev.url);
+           assert.equal('/:gui:/', ev.url);
            called = true;
          });
          var callbacks = Y.Object.values(env._txn_callbacks);
          callbacks.length.should.equal(1);
-         // Since we don't have an app to listen to this event and tell the
-         // view to re-render, we need to do it ourselves.
-         db.on('update', view.render, view);
+         var dbUpdated = false;
+         db.on('update', function() {
+           dbUpdated = true;
+         });
          callbacks[0]({result: true});
          var _ = expect(db.services.getById(service.get('id'))).to.not.exist;
          db.relations.map(function(u) {return u.get('id');})
         .should.eql(['relation-0000000001']);
          // Catch show environment event.
          called.should.equal(true);
+         // The db should be updated.
+         dbUpdated.should.equal(true);
        });
 
     it('should send an expose RPC call when exposeService is invoked',
