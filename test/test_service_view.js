@@ -535,7 +535,7 @@
          db.relations.add([rel0, rel1]);
 
          var view = makeServiceRelationsView(),
-             control = container.one('#relation-0');
+             control = container.one('[value=relation-0]');
          control.simulate('click');
          var remove = container.one('#remove-modal-panel .btn-danger');
          remove.simulate('click');
@@ -567,7 +567,7 @@
           db.relations.add([rel0, rel1]);
 
           var view = makeServiceRelationsView(),
-              control = container.one('#relation-1');
+              control = container.one('[value=relation-1]');
           control.simulate('click');
           var remove = container.one('#remove-modal-panel .btn-danger');
           remove.simulate('click');
@@ -602,7 +602,7 @@
          service).length.should.equal(2);
 
           var view = makeServiceRelationsView(),
-              control = container.one('#relation-0');
+              control = container.one('[value=relation-0]');
           control.simulate('click');
           var remove = container.one('#remove-modal-panel .btn-danger');
           remove.simulate('click');
@@ -610,7 +610,7 @@
           db.relations.get_relations_for_service(
          service).length.should.equal(1);
 
-          control = container.one('#relation-1');
+          control = container.one('[value=relation-1]');
           control.simulate('click');
           remove = container.one('#remove-modal-panel .btn-danger');
           remove.simulate('click');
