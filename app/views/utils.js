@@ -12,6 +12,41 @@ YUI.add('juju-view-utils', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils');
 
+  /*jshint bitwise: false*/
+  /**
+    Create a hash of a string. From stackoverflow: http://goo.gl/PEOgF
+
+    @method generateHash
+    @param {String} value The string to hash.
+    @return {Integer} The hash of the string.
+   */
+  var generateHash = function(value) {
+    return value.split('').reduce(
+        function(hash, character) {
+          hash = ((hash << 5) - hash) + character.charCodeAt(0);
+          return hash & hash;
+        },
+        0
+    );
+  };
+  /*jshint bitwise: true*/
+  utils.generateHash = generateHash;
+
+  /**
+    Create a stable, safe DOM id given an arbitrary string.
+    See details and discussion in
+    https://bugs.launchpad.net/juju-gui/+bug/1167295
+
+    @method generateSafeDOMId
+    @param {String} value The string to hash.
+    @return {String} The calculated DOM id.
+   */
+  var generateSafeDOMId = function(value) {
+    return (
+        'e-' + value.replace(/\W/g, '_') + '-' + generateHash(value));
+  };
+  utils.generateSafeDOMId = generateSafeDOMId;
+
   var timestrings = {
     prefixAgo: null,
     prefixFromNow: null,
@@ -387,20 +422,22 @@ YUI.add('juju-view-utils', function(Y) {
 
     if (envAnnotations['landscape-url']) {
       controls.show();
-      machine.show();
-      machine.one('a').setAttribute('href',
-          landscape.getLandscapeURL(model));
+      var baseLandscapeURL = landscape.getLandscapeURL(model);
+      if (baseLandscapeURL) {
+        machine.show();
+        machine.one('a').setAttribute('href', baseLandscapeURL);
 
-      if (annotations['landscape-security-upgrades']) {
-        updates.show();
-        updates.one('a').setAttribute('href',
-            landscape.getLandscapeURL(model, 'security'));
-      }
+        if (annotations['landscape-security-upgrades']) {
+          updates.show();
+          updates.one('a').setAttribute('href',
+              landscape.getLandscapeURL(model, 'security'));
+        }
 
-      if (annotations['landscape-needs-reboot']) {
-        restart.show();
-        restart.one('a').setAttribute('href',
-            landscape.getLandscapeURL(model, 'reboot'));
+        if (annotations['landscape-needs-reboot']) {
+          restart.show();
+          restart.one('a').setAttribute('href',
+              landscape.getLandscapeURL(model, 'reboot'));
+        }
       }
     }
   };
@@ -505,8 +542,16 @@ YUI.add('juju-view-utils', function(Y) {
           // far will be undefined or the far endpoint service.
           rel.far = far && {
             service: far[0], role: far[1].role, name: far[1].name};
-          var rel_id = rel.relation_id.split('-')[1];
-          rel.ident = near[1].name + ':' + parseInt(rel_id, 10);
+          var relationId = rel.relation_id;
+          if (relationId.indexOf(' ') >= 0) {
+            // This is a Juju Core relation id (the rel id contains a space).
+            rel.ident = relationId;
+          } else {
+            // This is a Python relation id.
+            var relNumber = relationId.split('-')[1];
+            rel.ident = near[1].name + ':' + parseInt(relNumber, 10);
+          }
+          rel.elementId = generateSafeDOMId(rel.relation_id);
           return rel;
         });
   };
@@ -1214,6 +1259,21 @@ YUI.add('juju-view-utils', function(Y) {
           return word;
         }
       });
+
+  /**
+   * Truncate helper to keep text sizes to a specified limit.
+   *
+   * {{truncate field 100}}
+   *
+   */
+  Y.Handlebars.registerHelper('truncate', function(string, length) {
+    if (string && string.length > length) {
+      return Y.Lang.trimRight(string.substring(0, length)) + '...';
+    }
+    else {
+      return string;
+    }
+  });
 
 }, '0.1.0', {
   requires: ['base-build',

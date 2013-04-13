@@ -7,18 +7,19 @@
   // for one or the other.
   describe('juju service view', function() {
     var models, Y, container, service, db, conn, env, charm, ENTER, ESC,
-        makeServiceView, makeServiceRelationsView, views, unit;
+        makeServiceView, makeServiceRelationsView, views, unit, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'juju-views', 'juju-models', 'base', 'node', 'json-parse',
           'juju-env', 'node-event-simulate', 'juju-tests-utils', 'event-key',
-          'juju-landscape', 'ns-routing-app-extension',
+          'juju-landscape', 'ns-routing-app-extension', 'juju-view-utils',
           function(Y) {
             ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter;
             ESC = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.esc;
             models = Y.namespace('juju.models');
             views = Y.namespace('juju.views');
+            utils = Y.namespace('juju.views.utils');
             done();
           });
     });
@@ -349,20 +350,23 @@
          destroy.simulate('click');
          var called = false;
          view.on('navigateTo', function(ev) {
-           assert.equal('/', ev.url);
+           assert.equal('/:gui:/', ev.url);
            called = true;
          });
          var callbacks = Y.Object.values(env._txn_callbacks);
          callbacks.length.should.equal(1);
-         // Since we don't have an app to listen to this event and tell the
-         // view to re-render, we need to do it ourselves.
-         db.on('update', view.render, view);
+         var dbUpdated = false;
+         db.on('update', function() {
+           dbUpdated = true;
+         });
          callbacks[0]({result: true});
          var _ = expect(db.services.getById(service.get('id'))).to.not.exist;
          db.relations.map(function(u) {return u.get('id');})
         .should.eql(['relation-0000000001']);
          // Catch show environment event.
          called.should.equal(true);
+         // The db should be updated.
+         dbUpdated.should.equal(true);
        });
 
     it('should send an expose RPC call when exposeService is invoked',
@@ -535,7 +539,7 @@
          db.relations.add([rel0, rel1]);
 
          var view = makeServiceRelationsView(),
-             control = container.one('#relation-0');
+             control = container.one('button[value=relation-0]');
          control.simulate('click');
          var remove = container.one('#remove-modal-panel .btn-danger');
          remove.simulate('click');
@@ -567,7 +571,7 @@
           db.relations.add([rel0, rel1]);
 
           var view = makeServiceRelationsView(),
-              control = container.one('#relation-1');
+              control = container.one('button[value=relation-1]');
           control.simulate('click');
           var remove = container.one('#remove-modal-panel .btn-danger');
           remove.simulate('click');
@@ -602,7 +606,7 @@
          service).length.should.equal(2);
 
           var view = makeServiceRelationsView(),
-              control = container.one('#relation-0');
+              control = container.one('button[value=relation-0]');
           control.simulate('click');
           var remove = container.one('#remove-modal-panel .btn-danger');
           remove.simulate('click');
@@ -610,7 +614,7 @@
           db.relations.get_relations_for_service(
          service).length.should.equal(1);
 
-          control = container.one('#relation-1');
+          control = container.one('button[value=relation-1]');
           control.simulate('click');
           remove = container.one('#remove-modal-panel .btn-danger');
           remove.simulate('click');
@@ -639,8 +643,8 @@
                   });
 
           db.relations.add([rel0, rel1]);
-
-          var view = makeServiceRelationsView({rel_id: 'relation-0'}),
+          var querystringValue = utils.generateSafeDOMId('relation-0'),
+              view = makeServiceRelationsView({rel_id: querystringValue}),
               row = container.one('.highlighted');
           row.one('a').getHTML().should.equal('squid');
           row.one('.btn').get('disabled').should.equal(false);
@@ -666,7 +670,7 @@
                   });
           db.relations.add([rel0, rel1]);
           var view = makeServiceRelationsView(),
-              control = container.one('#relation-0');
+              control = container.one('button[value=relation-0]');
           control.simulate('click');
           var remove = container.one('#remove-modal-panel .btn-danger');
           remove.simulate('click');

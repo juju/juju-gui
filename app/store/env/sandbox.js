@@ -475,7 +475,7 @@ YUI.add('juju-env-sandbox', function(Y) {
                       of key/value pairs.
     */
     performOp_set_config: function(data) {
-      ASYNC_OP(this, 'setConfig', ['service_name', 'config'])(data);
+      OP(this, 'setConfig', ['service_name', 'config'], data);
     },
 
     /**
@@ -569,7 +569,7 @@ YUI.add('juju-env-sandbox', function(Y) {
         this.get('client').receive(data);
         return;
       }
-      // Normalize endpoints
+      // // Normalize endpoints
       var normalizedEndpoints, epA = {}, epB = {};
       epA[relation.endpoints[0][0]] = relation.endpoints[0][1];
       epB[relation.endpoints[1][0]] = relation.endpoints[1][1];

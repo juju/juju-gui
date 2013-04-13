@@ -802,7 +802,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         var result = [];
         result.push(endpoint.name);
         result.push({name: endpoint.type});
-        return result;
+        return [endpoint.name, {name: endpoint.type}];
       });
 
       var relation = this.db.relations.create({

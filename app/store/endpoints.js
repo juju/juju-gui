@@ -115,6 +115,39 @@ YUI.add('juju-endpoints-controller', function(Y) {
         },
 
         /**
+          Generic handler for a service event.  If it is not pending,
+          make sure we have a charm.  If the charm has loaded, set or update
+          the service's endpoints; otherwise, make that happen once the load
+          has completed.
+
+          @method handleServiceEvent
+          @param {object} service A service model.
+          @return {undefined} Nothing.
+         */
+        handleServiceEvent: function(service) {
+          // If the service is not a ghost (that is, 'pending' is false),
+          // process it.
+          if (!service.get('pending')) {
+            var svcName = service.get('id'),
+                db = this.get('db'),
+                charm_id = service.get('charm'),
+                charm = db.charms.getById(charm_id);
+            if (!charm) {
+              charm = db.charms.add({id: charm_id})
+                .load(this.get('env'),
+                  // If views are bound to the charm model, firing "update" is
+                  // unnecessary, and potentially even mildly harmful.
+                  function(err, result) { db.fire('update'); });
+            }
+            if (charm.loaded) {
+              this.addServiceToEndpointsMap(svcName, charm);
+            } else {
+              this.setupCharmOnceLoad(charm, svcName);
+            }
+          }
+        },
+
+        /**
          * Handle event for a service being added to the services modellist.
          *
          * @method serviceAddHandler
@@ -122,30 +155,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
          * @return {undefined} Nothing.
          */
         serviceAddHandler: function(evt) {
-          var db = this.get('db');
-          var env = this.get('env');
-          var svcName = evt.model.get('id');
-          var charm_id = evt.model.get('charm');
-          var charm = db.charms.getById(charm_id);
-
-          // If the charm doesn't exist, add and load it.
-          if (!charm) {
-            charm = db.charms.add({id: charm_id})
-              .load(env,
-                // If views are bound to the charm model, firing "update" is
-                // unnecessary, and potentially even mildly harmful.
-                function(err, result) { db.fire('update'); });
-          }
-
-          // If the service is not a ghost (i.e. 'pending' is false),
-          // process it.
-          if (!evt.model.get('pending')) {
-            if (charm.loaded) {
-              this.addServiceToEndpointsMap(svcName, charm);
-            } else {
-              this.setupCharmOnceLoad(charm, svcName);
-            }
-          }
+          this.handleServiceEvent(evt.model);
         },
 
         /**
@@ -158,20 +168,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
          * @return {undefined} Nothing.
          */
         serviceChangeHandler: function(evt) {
-          var db = this.get('db');
-          var charm_id = evt.target.get('charm'),
-              charm = db.charms.getById(charm_id),
-              service = evt.target,
-              svcName = service.get('id');
-          // Ensure the service is no longer pending.
-          if (service.get('pending')) {
-            return;
-          }
-          if (charm.loaded) {
-            this.addServiceToEndpointsMap(svcName, charm);
-          } else {
-            this.setupCharmOnceLoad(charm, svcName);
-          }
+          this.handleServiceEvent(evt.target);
         },
 
         /**

@@ -80,7 +80,8 @@ describe('charm container widget', function() {
       }]
     });
     charm_container.render(container);
-    assert.equal('Popular (4)', container.one('h3').get('text'));
+    var headingText = container.one('h3 a').get('text').replace(/\s/g, '');
+    assert.equal('Popular(4)', headingText);
     assert.isFalse(container.one('.more').hasClass('hidden'));
     assert.isTrue(container.one('.less').hasClass('hidden'));
   });
@@ -100,7 +101,7 @@ describe('charm container widget', function() {
     });
     charm_container.render(container);
 
-    container.one('.expand').simulate('click');
+    container.one('.expandToggle').simulate('click');
     hidden = container.all('.yui3-charmtoken-hidden');
     assert.equal(
         0, hidden.size(),
@@ -108,7 +109,7 @@ describe('charm container widget', function() {
     assert.isFalse(container.one('.less').hasClass('hidden'));
     assert.isTrue(container.one('.more').hasClass('hidden'));
 
-    container.one('.expand').simulate('click');
+    container.one('.expandToggle').simulate('click');
     hidden = container.all('.yui3-charmtoken-hidden');
     assert.equal(
         1, hidden.size(),
@@ -121,7 +122,9 @@ describe('charm container widget', function() {
     charm_container = new Y.juju.widgets.browser.CharmContainer({name: 'Foo'});
     charm_container.render(container);
     var rendered = container.one('.yui3-charmcontainer');
-    assert.equal('Foo (0)', rendered.one('h3').get('text'));
+    assert.equal(
+        'Foo(0)',
+        rendered.one('h3').get('text').replace(/\s/g, ''));
   });
 
   it('handles having less charms tokens than its cutoff', function() {
@@ -141,7 +144,9 @@ describe('charm container widget', function() {
     charm_container.render(container);
 
     var rendered = container.one('.yui3-charmcontainer');
-    assert.equal('Popular (4)', rendered.one('h3').get('text'));
+    assert.equal(
+        'Popular(4)',
+        rendered.one('h3').get('text').replace(/\s/g, ''));
     assert.equal(4, container.all('.yui3-charmtoken').size());
     assert.equal(0, container.all('.yui3-charmtoken-hidden').size());
     assert.equal(1, charm_container._events.length);

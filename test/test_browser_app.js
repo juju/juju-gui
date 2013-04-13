@@ -142,7 +142,7 @@
           new Y.DataSource.Local({source: sampleData}));
       view.render(container);
 
-      view._cacheCharms.size().should.eql(4);
+      view._cacheCharms.size().should.eql(5);
     });
 
     it('handles details event when clicking on a charm token', function(done) {

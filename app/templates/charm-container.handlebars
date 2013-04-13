@@ -1,15 +1,22 @@
 <div>
-  <h3>{{ name }} ({{ total }})</h3>  
-  {{#if hasExtra}}
-  <div class="expand">
-    <span class="more">
-      &darr;
-    </span>
-    <span class="less hidden">
-      &uarr;
-    </span>
-  </div>
-  {{/if}}
+  <h3 class="section-title">
+    {{#if hasExtra}}
+      <a href="" class="expandToggle">
+    {{/if}}
+      {{ name }} ({{ total }})
+    {{#if hasExtra}}
+        <span class="expand">
+          <span class="more">
+            <img src="/juju-ui/assets/images/expand_icon.jpg" alt="Expand" />
+          </span>
+          <span class="less hidden">
+            <img src="/juju-ui/assets/images/contract_icon.jpg"
+              alt="Contract" />
+          </span>
+        </span>
+      </a>
+    {{/if}}
+  </h3>
   <div class="charms">
   </div>
 </div>

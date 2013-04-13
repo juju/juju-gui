@@ -86,7 +86,7 @@ YUI.add('juju-view-unit', function(Y) {
             far = rel.far || rel.near;
         rel.has_error = !!(match && match.indexOf(far.service) > -1);
         rel.highlight = !!(
-            querystring.rel_id && querystring.rel_id === rel.relation_id);
+            querystring.rel_id && querystring.rel_id === rel.elementId);
       });
 
       var charmAttrs = charm.getAttrs();
@@ -283,19 +283,21 @@ YUI.add('juju-view-unit', function(Y) {
     },
 
     _resolvedRelationCallback: function(button, confirm_button, ev) {
-      views.highlightRow(button.ancestor('tr'), ev.err);
+      var row = button.ancestor('tr');
+      views.highlightRow(row, ev.err);
       if (ev.err) {
         var db = this.get('db'),
             getModelURL = this.get('getModelURL'),
             unit = this.get('unit'),
-            relation_id = button.ancestor('tr').get('id'),
-            relation = db.relations.getById(relation_id);
+            relation_id = button.get('value'),
+            relation = db.relations.getById(relation_id),
+            elementId = row.get('id');
         db.notifications.add(
             new models.Notification({
               title: 'Error resolving relation',
               message: 'Could not resolve a unit relation',
               level: 'error',
-              link: getModelURL(unit) + '?rel_id=' + relation_id,
+              link: getModelURL(unit) + '?rel_id=' + elementId,
               modelId: relation
             })
         );
@@ -316,16 +318,18 @@ YUI.add('juju-view-unit', function(Y) {
       env.resolved(
           unit.id, relation_name, true,
           function(ev) {
-            views.highlightRow(button.ancestor('tr'), ev.err);
+            var row = button.ancestor('tr');
+            views.highlightRow(row, ev.err);
             if (ev.err) {
-              var relation_id = button.ancestor('tr').get('id'),
-                  relation = db.relations.getById(relation_id);
+              var relation_id = button.get('value'),
+                  relation = db.relations.getById(relation_id),
+                  elementId = row.get('id');
               db.notifications.add(
                   new models.Notification({
                     title: 'Error retrying relation',
                     message: 'Could not retry a unit relation',
                     level: 'error',
-                    link: getModelURL(unit) + '?rel_id=' + relation_id,
+                    link: getModelURL(unit) + '?rel_id=' + elementId,
                     modelId: relation
                   })
               );

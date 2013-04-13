@@ -45,11 +45,19 @@ YUI.add('subapp-browser-sidebar', function(Y) {
     _handleTokenSelect: function(ev) {
       var id = ev.currentTarget.getData('charmid');
       var model = this._cacheCharms.getById(id);
+      var container = this.get('container');
+
+      // Deselect the currently selected charm and highlight the new one.
+      var selected_charm = container.one('.yui3-charmtoken.active');
+      if (selected_charm) {
+        selected_charm.removeClass('active');
+      }
+      ev.currentTarget.ancestor('.yui3-charmtoken').addClass('active');
 
       // Show the details view for this model.
       this._renderCharmDetails(
           model,
-          this.get('container')
+          container
       );
     },
 
@@ -80,6 +88,8 @@ YUI.add('subapp-browser-sidebar', function(Y) {
       // display.
       this.get('store').sidebarEditorial({
         'success': function(data) {
+
+          // Add featured charms
           var featuredCharms = this.get('store').resultsToCharmlist(
               data.result.featured);
           var featuredContainer = container.one('.bws-left .featured');
@@ -90,6 +100,18 @@ YUI.add('subapp-browser-sidebar', function(Y) {
               return charm.getAttrs(); })
           });
           featuredCharmContainer.render(featuredContainer);
+
+          // Add popular charms
+          var popularCharms = this.get('store').resultsToCharmlist(
+              data.result.popular);
+          var popularContainer = container.one('.bws-left .popular');
+          var popularCharmContainer = new widgets.browser.CharmContainer({
+            name: 'Popular Charms',
+            cutoff: 2,
+            children: popularCharms.map(function(charm) {
+              return charm.getAttrs(); })
+          });
+          popularCharmContainer.render(popularContainer);
 
           // Add in the charm tokens for the new as well.
           var newContainer = container.one('.bws-left .new');
@@ -106,8 +128,13 @@ YUI.add('subapp-browser-sidebar', function(Y) {
           // Add the charms to the cache for use in other views.
           // Start with a reset to empty any current cached models.
           this._cacheCharms.reset(newCharms);
+          this._cacheCharms.add(popularCharms);
           this._cacheCharms.add(featuredCharms);
-          this.charmContainers = [newCharmContainer, featuredCharmContainer];
+          this.charmContainers = [
+            featuredCharmContainer,
+            newCharmContainer,
+            popularCharmContainer
+          ];
         },
 
         'failure': function(data, request) {

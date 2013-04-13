@@ -55,7 +55,7 @@
 </div>
 
 {{#unless relations}}
-This unit has no relations.
+<div class="yui3-u">This unit has no relations.</div>
 {{else}}
 <div id="relations" class="yui3-g">
   <div class="yui3-u-1">
@@ -73,7 +73,7 @@ This unit has no relations.
       </thead>
       <tbody>
         {{#relations}}
-          <tr {{#if highlight}}class="highlighted"{{/if}} id="{{relation_id}}">
+          <tr {{#if highlight}}class="highlighted" {{/if}}id="{{elementId}}">
             <td class="relation-ident">{{ident}}</td>
             <td class="relation-endpoint">
               {{#if far}}
@@ -91,9 +91,9 @@ This unit has no relations.
               <div class="unit-button-palette">
                 <form id="{{near.name}}">
                 <button type="button" class="btn resolved-relation-button"
-                  >Resolved</button>
+                  value="{{relation_id}}">Resolved</button>
                 <button type="button" class="btn retry-relation-button"
-                  >Retry</button>
+                  value="{{relation_id}}">Retry</button>
                 </form>
               </div>
               {{/if}}

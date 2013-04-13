@@ -872,6 +872,7 @@ g.unit {
     background-clip: padding-box;
     outline: none;
     font-weight: normal;
+    letter-spacing: normal;
     .yui3-widget-bd {
         margin-bottom: 1em;
     }
@@ -1236,8 +1237,8 @@ g.unit {
     }
 }
 
-table tr.highlighted {
-   background: pink;
+table tr.highlighted td {
+   background-color: pink !important;
 }
 
 #destroy-service {
@@ -1648,5 +1649,6 @@ ul.menu {
 @import "browser/charm-full.less";
 @import "browser/charm-token.less";
 @import "browser/overlay-indicator.less";
+@import "browser/section-title.less";
 @import "browser/tabview.less";
 

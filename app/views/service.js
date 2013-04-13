@@ -225,7 +225,8 @@ YUI.add('juju-view-service', function(Y) {
             ));
         this.panel.hide();
         this.panel.destroy();
-        this.fire('navigateTo', {url: '/'});
+        this.fire('navigateTo', {url: '/:gui:/'});
+        db.fire('update');
       }
     }
   };
@@ -440,7 +441,7 @@ YUI.add('juju-view-service', function(Y) {
               querystring = this.get('querystring');
           var relation_data = utils.getRelationDataForService(db, service);
           Y.each(relation_data, function(rel) {
-            if (rel.relation_id === querystring.rel_id) {
+            if (rel.elementId === querystring.rel_id) {
               rel.highlight = true;
             }
           });
@@ -535,7 +536,7 @@ YUI.add('juju-view-service', function(Y) {
                   message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
                   level: 'error',
                   link: getModelURL(service) + 'relations?rel_id=' +
-                      relation.get('id'),
+                      rm_button.get('id'),
                   modelId: relation
                 })
             );
