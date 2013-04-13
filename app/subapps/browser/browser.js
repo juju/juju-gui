@@ -83,20 +83,19 @@ YUI.add('subapp-browser', function(Y) {
       }
     },
 
-    /**
-      Routes that end with a tab name need to have that tab activated.
-
-    */
-    // activateTab: function(req, res, next) {
-    //   // All tab ids are prefixed with bws
-    //   debugger;
-    //   var subpath = this._getSubPath(req.path);
-    //   var tabId = '#bws-' + subpath;
-    //   Y.one(tabId).click();
-    // },
-
     destructor: function() {
       this._cacheCharms.destroy();
+    },
+
+    renderEditorial: function (req, res, next) {
+      console.log('render editorial');
+      var view = new Y.juju.browser.views.EditorialView(
+        this._getViewCfg()
+      );
+      view.render(Y.one('#subapp-browser .bws-content'));
+      // Add any sidebar charms to the running cache.
+      this._cacheCharms.add(view._cacheCharms);
+      next();
     },
 
     /**
@@ -159,7 +158,7 @@ YUI.add('subapp-browser', function(Y) {
       if (!this._sidebar) {
         this._sidebar = this.showView('sidebar', this._getViewCfg(), {
           callback: function(view) {
-            this._cacheCharms = view._cacheCharms;
+            this.renderEditorial(req, res, next);
             next();
           }
         });
@@ -215,6 +214,7 @@ YUI.add('subapp-browser', function(Y) {
           { path: '/bws/fullscreen/*id/readme/', callbacks: 'fullscreenCharm' },
           { path: '/bws/fullscreen/*id/', callbacks: 'fullscreenCharm' },
 
+          { path: '/bws/sidebar/', callbacks: 'sidebar' },
           { path: '/bws/sidebar/*/', callbacks: 'sidebar' },
           { path: '/bws/sidebar/*id/', callbacks: 'charmDetails' }
           // { path: '/bws/sidebar/*id/:tabID', callbacks: 'activateTab' }
@@ -229,7 +229,9 @@ YUI.add('subapp-browser', function(Y) {
     'juju-charm-store',
     'juju-models',
     'sub-app',
+    'subapp-browser-charmview',
+    'subapp-browser-editorial',
     'subapp-browser-fullscreen',
-    'subapp-browser-sidebar'
+    'subapp-browser-sidebar',
   ]
 });
