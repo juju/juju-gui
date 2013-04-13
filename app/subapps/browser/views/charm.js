@@ -378,7 +378,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
           tplData.recent_commits);
 
       var tpl = this.template(tplData);
-      debugger;
       var tplNode = container.setHTML(tpl);
 
       // Set the content then update the container so that it reload
@@ -411,7 +410,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     render: function(isFullscreen) {
-      debugger;
       if (this.get('charm')) {
         this._renderCharmView(this.get('charm'), isFullscreen);
       } else {

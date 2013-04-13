@@ -225,7 +225,6 @@ YUI.add('subapp-browser', function(Y) {
           { path: '/bws/sidebar/', callbacks: 'sidebar' },
           { path: '/bws/sidebar/*/', callbacks: 'sidebar' },
           { path: '/bws/sidebar/*id/', callbacks: 'charmDetails' }
-
         ]
       }
     }
