@@ -89,13 +89,14 @@ YUI.add('subapp-browser', function(Y) {
 
     renderEditorial: function (req, res, next) {
       console.log('render editorial');
-      var view = new Y.juju.browser.views.EditorialView(
-        this._getViewCfg()
-      );
-      view.render(Y.one('#subapp-browser .bws-content'));
-      // Add any sidebar charms to the running cache.
-      this._cacheCharms.add(view._cacheCharms);
-      next();
+      if (!this._editorial) {
+        this._editorial = new Y.juju.browser.views.EditorialView(
+          this._getViewCfg()
+        );
+        this._editorial.render(Y.one('#subapp-browser .bws-content'));
+        // Add any sidebar charms to the running cache.
+        this._cacheCharms.add(this._editorial._cacheCharms);
+      }
     },
 
     /**
@@ -154,7 +155,12 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
-      console.log('render sidebar');
+      // Clean up any details we've got.
+      if (this._details) {
+        this._details.destroy(true);
+        Y.one('.bws-view-data').empty();
+      }
+
       if (!this._sidebar) {
         this._sidebar = this.showView('sidebar', this._getViewCfg(), {
           callback: function(view) {
@@ -162,6 +168,8 @@ YUI.add('subapp-browser', function(Y) {
             next();
           }
         });
+      } else {
+        next();
       }
     },
 
@@ -187,10 +195,10 @@ YUI.add('subapp-browser', function(Y) {
         extraCfg.charm = model;
       }
 
-      var view = new Y.juju.browser.views.BrowserCharmView(
+      this._details = new Y.juju.browser.views.BrowserCharmView(
         this._getViewCfg(extraCfg)
       );
-      view.render();
+      this._details.render(Y.one('.bws-view-data'));
       next();
     }
 
@@ -232,6 +240,6 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-charmview',
     'subapp-browser-editorial',
     'subapp-browser-fullscreen',
-    'subapp-browser-sidebar',
+    'subapp-browser-sidebar'
   ]
 });
