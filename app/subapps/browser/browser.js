@@ -157,8 +157,7 @@ YUI.add('subapp-browser', function(Y) {
     sidebar: function(req, res, next) {
       // Clean up any details we've got.
       if (this._details) {
-        this._details.destroy(true);
-        Y.one('.bws-view-data').empty();
+        this._details.destroy({remove: true});
       }
 
       if (!this._sidebar) {
@@ -186,7 +185,8 @@ YUI.add('subapp-browser', function(Y) {
       console.log('render details');
       var charmID = req.params.id;
       var extraCfg = {
-        charmID: charmID
+        charmID: charmID,
+        container: Y.Node.create('<div class="charmview"/>')
       };
       // Gotten from the sidebar creating the cache.
       var model = this._cacheCharms.getById(charmID);
@@ -198,7 +198,7 @@ YUI.add('subapp-browser', function(Y) {
       this._details = new Y.juju.browser.views.BrowserCharmView(
         this._getViewCfg(extraCfg)
       );
-      this._details.render(Y.one('.bws-view-data'));
+      this._details.render();
       next();
     }
 
@@ -225,7 +225,6 @@ YUI.add('subapp-browser', function(Y) {
           { path: '/bws/sidebar/', callbacks: 'sidebar' },
           { path: '/bws/sidebar/*/', callbacks: 'sidebar' },
           { path: '/bws/sidebar/*id/', callbacks: 'charmDetails' }
-          // { path: '/bws/sidebar/*id/:tabID', callbacks: 'activateTab' }
 
         ]
       }

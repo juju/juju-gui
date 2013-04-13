@@ -312,7 +312,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     _toggleLog: function(ev) {
-      debugger;
       ev.halt();
       var container = this.get('container'),
           target = ev.currentTarget,
@@ -369,18 +368,22 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     _renderCharmView: function(charm, isFullscreen) {
       this.set('charm', charm);
+
       isFullscreen = false;
-      var tplData = charm.getAttrs();
+      var tplData = charm.getAttrs(),
+          container = this.get('container');
+
       tplData.isFullscreen = isFullscreen;
       tplData.prettyCommits = this._formatCommitsForHtml(
           tplData.recent_commits);
 
       var tpl = this.template(tplData);
-      var tplNode = Y.Node.create(tpl);
+      debugger;
+      var tplNode = container.setHTML(tpl);
 
       // Set the content then update the container so that it reload
       // events.
-      this.get('container').setHTML(tplNode);
+      Y.one('.bws-view-data').setHTML(tplNode);
 
       this.tabview = new widgets.browser.TabView({
         srcNode: tplNode.one('.tabs')
@@ -400,7 +403,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
     },
 
-
     /**
      * Render out the view to the DOM.
      *
@@ -408,11 +410,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * @param {Node} container optional specific container to render out to.
      *
      */
-    render: function(container, isFullscreen) {
-      if (container) {
-        this.set('container', container);
-      }
-
+    render: function(isFullscreen) {
+      debugger;
       if (this.get('charm')) {
         this._renderCharmView(this.get('charm'), isFullscreen);
       } else {
@@ -466,6 +465,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'juju-templates',
     'juju-views',
     'juju-view-utils',
+    'node',
     'prettify',
     'view'
   ]
