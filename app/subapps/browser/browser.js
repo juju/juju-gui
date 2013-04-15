@@ -112,7 +112,8 @@ YUI.add('subapp-browser', function(Y) {
           'callback': function(view) {
             // if the fullscreen isn't the last part of the path, then ignore the
             // editorial content.
-            if (this._getSubPath(req.path) !== 'fullscreen') {
+            debugger;
+            if (this._getSubPath(req.path) === 'fullscreen') {
               this.renderEditorial(req, res, next);
             }
             next();
@@ -136,7 +137,8 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     renderEditorial: function(req, res, next) {
-      var containerID = this.get('container'),
+      var container = this.get('container'),
+          editorialContainer,
           extraCfg = {};
 
       if (req.path.indexOf('fullscreen') !== -1) {
@@ -145,21 +147,22 @@ YUI.add('subapp-browser', function(Y) {
         // is shared. So if the url is /fullscreen show editorial content, but
         // if it's not, there's something else handling displaying the
         // view-data.
-        containerID += ' .bws-view-data';
+        editorialContainer = container.one(' .bws-view-data');
         extraCfg.isFullscreen = true;
-
       } else {
         // If this is the sidebar view, then the editorial content goes into a
         // different div since we can view both editorial content and
         // view-data (such as a charm details) side by side.
-        containerID += ' .bws-content';
+        editorialContainer = container.one('.bws-content');
       }
+
+      debugger;
 
       if (!this._editorial) {
         this._editorial = new Y.juju.browser.views.EditorialView(
             this._getViewCfg(extraCfg));
 
-        this._editorial.render(Y.one(containerID));
+        this._editorial.render(editorialContainer);
         // Add any sidebar charms to the running cache.
         this._cacheCharms.add(this._editorial._cacheCharms);
       }
