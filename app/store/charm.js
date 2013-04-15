@@ -205,7 +205,7 @@ YUI.add('juju-charm-store', function(Y) {
      * Api call to search charms
      *
      * @method search
-     * @param {String} text the search text 
+     * @param {String} text the search text.
      */
     search: function(text, callbacks, bindScope) {
       var endpoint = 'charms';
