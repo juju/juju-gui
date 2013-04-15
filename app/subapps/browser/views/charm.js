@@ -403,11 +403,14 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     * Render out the view to the DOM.
-     *
-     * @method render
-     * @param {Node} container optional specific container to render out to.
-     *
+       Render out the view to the DOM.
+
+       The View might be given either a charmID, which means go fetch the
+       charm data, or a charm model instance, in which case the view has the
+       data it needs to render.
+
+       @method render
+
      */
     render: function() {
       var isFullscreen = this.get('isFullscreen');
@@ -423,12 +426,18 @@ YUI.add('subapp-browser-charmview', function(Y) {
           },
           'failure': this.apiFailure
         }, this);
-
       }
     }
   }, {
     ATTRS: {
+      /**
+         @attribute charmID
+         @default undefined
+         @type {Int}
+
+       */
       charmID: {},
+
       /**
        * The charm we're viewing the details of.
        *
@@ -439,6 +448,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
        */
       charm: {},
 
+      /**
+         @attribute isFullscreen
+         @default false
+         @type {Boolean}
+
+       */
       ifFullscreen: {
         value: false
       },

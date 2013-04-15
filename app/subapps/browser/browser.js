@@ -222,10 +222,22 @@ YUI.add('subapp-browser', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+         @attribute container
+         @default '#subapp-browser'
+         @type {String}
+
+       */
       container: {
         value: '#subapp-browser'
       },
 
+      /**
+         @attribute store
+         @default Charmworld0
+         @type {Charmworld0}
+
+       */
       store: {
         /**
           method store.valueFn
@@ -243,6 +255,12 @@ YUI.add('subapp-browser', function(Y) {
         }
       },
 
+      /**
+         @attribute routes
+         @default Array of subapp routes.
+         @type {Array}
+
+       */
       routes: {
         value: [
           { path: '/bws/fullscreen/', callbacks: 'fullscreen' },
@@ -255,6 +273,12 @@ YUI.add('subapp-browser', function(Y) {
         ]
       },
 
+      /**
+         @attribute urlNamespace
+         @default 'charmstore'
+         @type {String}
+
+       */
       urlNamespace: {
         value: 'charmstore'
       }
