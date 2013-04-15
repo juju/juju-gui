@@ -10,10 +10,7 @@
  */
 YUI.add('subapp-browser', function(Y) {
   var ns = Y.namespace('juju.subapps'),
-      models = Y.namespace('juju.models'),
-      store = new Y.juju.Charmworld0({
-        'apiHost': window.juju_config.charmworldURL
-      });
+      models = Y.namespace('juju.models');
 
   /**
    * Browser Sub App for the Juju Gui.
@@ -53,7 +50,7 @@ YUI.add('subapp-browser', function(Y) {
     _getViewCfg: function(cfg) {
       return Y.merge(cfg, {
         db: this.get('db'),
-        store: store
+        store: this.get('store')
       });
     },
 
@@ -77,6 +74,12 @@ YUI.add('subapp-browser', function(Y) {
       }
     },
 
+    /**
+       Cleanup after ourselves on destroy.
+
+       @method destructor
+
+     */
     destructor: function() {
       this._cacheCharms.destroy();
     },
@@ -109,7 +112,7 @@ YUI.add('subapp-browser', function(Y) {
 
       if (!this._fullscreen) {
         this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
-          callback: function(view) {
+          'callback': function(view) {
             this.renderEditorial(req, res, next);
             next();
           }
@@ -119,6 +122,18 @@ YUI.add('subapp-browser', function(Y) {
       }
     },
 
+    /**
+      Render editorial content into the parent view when required.
+
+      The parent view is either fullscreen/sidebar which determines how the
+      editorial content is to be rendered.
+
+      @method renderEditorial
+      @param {Request} req current request object.
+      @param {Response} res current response object.
+      @param {function} next callable for the next route in the chain.
+
+     */
     renderEditorial: function(req, res, next) {
       var containerID = '#subapp-browser',
           extraCfg = {};
@@ -163,7 +178,7 @@ YUI.add('subapp-browser', function(Y) {
 
       if (!this._sidebar) {
         this._sidebar = this.showView('sidebar', this._getViewCfg(), {
-          callback: function(view) {
+          'callback': function(view) {
             this.renderEditorial(req, res, next);
             next();
           }
@@ -213,9 +228,21 @@ YUI.add('subapp-browser', function(Y) {
       container: {
         value: '#subapp-browser'
       },
-      urlNamespace: {
-        value: 'charmstore'
+
+      store: {
+        valueFn: function() {
+          var url = '';
+          if (!window.juju_config || ! window.juju_config.charmworldURL) {
+            console.error('No juju config to fetch charmworld store url');
+          } else {
+            url = window.juju_config.charmworldURL;
+          }
+          return new Y.juju.Charmworld0({
+            'apiHost': url
+          });
+        }
       },
+
       routes: {
         value: [
           { path: '/bws/fullscreen/', callbacks: 'fullscreen' },
@@ -226,7 +253,12 @@ YUI.add('subapp-browser', function(Y) {
           { path: '/bws/sidebar/*/', callbacks: 'sidebar' },
           { path: '/bws/sidebar/*id/', callbacks: 'charmDetails' }
         ]
+      },
+
+      urlNamespace: {
+        value: 'charmstore'
       }
+
     }
   });
 

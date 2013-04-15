@@ -24,8 +24,7 @@
 
     beforeEach(function() {
       var docBody = Y.one(document.body);
-      Y.Node.create('<div id="testcontent">' +
-          '</div>').appendTo(docBody);
+      Y.Node.create('<div id=testcontent><div class="bws-view-data"></div></div>').appendTo(docBody);
 
       // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
@@ -87,10 +86,11 @@
           ],
           id: 'precise/ceph-9'
         }),
+        container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
       });
 
-      view.render(node);
+      view.render();
       Y.one('#bws-readme').get('text').should.eql('README content.');
     });
 
@@ -102,7 +102,8 @@
             'hooks/install'
           ],
           id: 'precise/ceph-9'
-        })
+        }),
+        container: Y.Node.create('<div class="charmview"/>')
       });
 
       // Hook up to the callback for the click event.
@@ -112,8 +113,7 @@
         done();
       };
 
-      view.render(node);
-      view.get('container').should.eql(node);
+      view.render();
       node.one('.charm .add').simulate('click');
     });
 
@@ -140,10 +140,11 @@
           ],
           id: 'precise/ceph-9'
         }),
+        container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
       });
 
-      view.render(node);
+      view.render();
       Y.one('#bws-hooks').all('select option').size().should.equal(3);
 
       // Select the hooks install and the content should update.
@@ -180,10 +181,11 @@
           ],
           id: 'precise/ceph-9'
         }),
+        container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
       });
 
-      view.render(node);
+      view.render();
       Y.one('#bws-readme').get('innerHTML').should.eql(
           '<h1>README Header</h1>');
     });
@@ -200,9 +202,10 @@
               'type': 'int'
             }
           }
-        })
+        }),
+        container: Y.Node.create('<div class="charmview"/>')
       });
-      view.render(node);
+      view.render();
 
       var dds = Y.all('#bws-configuration dd div');
       dds.size().should.eql(2);
@@ -235,9 +238,10 @@
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9'
-        })
+        }),
+        container: Y.Node.create('<div class="charmview"/>')
       });
-      view.render(node);
+      view.render();
 
       view._loadQAContent = function() {
         // This test is just verifying that we don't timeout. The event fired,
@@ -274,7 +278,8 @@
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
       var view = new CharmView({
-        charm: new models.BrowserCharm(data)
+        charm: new models.BrowserCharm(data),
+        container: Y.Node.create('<div class="charmview"/>')
       });
 
       // Hook up to the callback for the click event.
@@ -283,9 +288,8 @@
         done();
       };
 
-      view.render(node);
-      view.get('container').should.eql(node);
-      node.one('.changelog .expandToggle').simulate('click');
+      view.render();
+      node.one('.changelog .expand').simulate('click');
     });
 
     it('changelog is reformatted and displayed', function() {
@@ -295,10 +299,11 @@
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
       view = new CharmView({
-        charm: new models.BrowserCharm(data)
+        charm: new models.BrowserCharm(data),
+        container: Y.Node.create('<div class="charmview"/>')
       });
 
-      view.render(node);
+      view.render();
       // Basics that we have the right number of nodes.
       node.all('.remaining li').size().should.eql(9);
       node.all('.first p').size().should.eql(1);
