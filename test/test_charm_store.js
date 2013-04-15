@@ -281,7 +281,7 @@
 
     });
 
-    it.only('handles searching correctly', function(done) {
+    it('handles searching correctly', function(done) {
       var hostname = 'http://localhost',
           api = new Y.juju.Charmworld0({
             apiHost: hostname
