@@ -1092,8 +1092,8 @@
                     'interface': 'juju-info',
                     scope: 'container',
                     endpoints: [
-                      {wordpress: {name: 'juju-info'}},
-                      {puppet: {name: 'juju-info'}}
+                      {puppet: {name: 'juju-info'}},
+                      {wordpress: {name: 'juju-info'}}
                     ]
                   }
                 };
