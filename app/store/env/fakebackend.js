@@ -380,8 +380,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
      Destroy the named service.
 
      @method destroyService
-     * @param {String} serviceName to destroy.
-     * @return {Object} results With err and service_name.
+     @param {String} serviceName to destroy.
+     @return {Object} results With err and service_name.
      */
     destroyService: function(serviceName) {
       if (!this.get('authenticated')) {
@@ -396,7 +396,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
       Y.Array.each(relations, function(rel) {
         this.db.relations.remove(rel);
       }, this);
-      // And finally and destroy remove the service.
+      // Remove units for this service.
+      var unitNames = Y.Array.map(this.db.units.get_units_for_service(service),
+          function(unit) {
+            return unit.id;
+          });
+      var result = this.removeUnits(unitNames);
+      if (result.error.length > 0) {
+        return {error: 'Error removing units: ' + result.error};
+      } else if (result.warning.length > 0) {
+        return {error: 'Warning removing units: ' + result.warning};
+      }
+      // And finally destroy and remove the service.
       this.db.services.remove(service);
       service.destroy();
       return {result: serviceName};

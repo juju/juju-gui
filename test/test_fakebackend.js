@@ -415,6 +415,20 @@
         });
       });
 
+      it('removes units when destroying a service', function(done) {
+        fakebackend.deploy('cs:wordpress', function(data) {
+          var service = fakebackend.db.services.getById('wordpress');
+          var units = fakebackend.db.units.get_units_for_service(service);
+          assert.lengthOf(units, 1);
+          var result = fakebackend.destroyService('wordpress');
+          assert.equal(result.result, 'wordpress');
+          assert.isUndefined(result.error);
+          units = fakebackend.db.units.get_units_for_service(service);
+          assert.lengthOf(units, 0);
+          done();
+        });
+      });
+
     });
 
     describe('FakeBackend.Annotations', function() {
