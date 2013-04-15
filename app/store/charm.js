@@ -202,6 +202,21 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
+     * Api call to search charms
+     *
+     * @method search
+     * @param {String} text the search text 
+     */
+    search: function(text, callbacks, bindScope) {
+      var endpoint = 'charms';
+      if (bindScope) {
+        callbacks.success = Y.bind(callbacks.success, bindScope);
+        callbacks.failure = Y.bind(callbacks.failure, bindScope);
+      }
+      this._makeRequest(endpoint, callbacks, {text: text});
+    },
+
+    /**
      * Fetch the contents of a charm's file.
      *
      * @method file
