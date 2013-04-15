@@ -230,6 +230,9 @@ YUI.add('subapp-browser', function(Y) {
       },
 
       store: {
+        /**
+          method store.valueFn
+        */
         valueFn: function() {
           var url = '';
           if (!window.juju_config || ! window.juju_config.charmworldURL) {
