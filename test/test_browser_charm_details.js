@@ -23,8 +23,13 @@
     });
 
     beforeEach(function() {
-      var docBody = Y.one(document.body);
-      Y.Node.create('<div id=testcontent><div class="bws-view-data"></div></div>').appendTo(docBody);
+      var docBody = Y.one(document.body),
+          testcontent = [
+            '<div id=testcontent><div class="bws-view-data">',
+            '</div></div>'
+          ].join();
+
+      Y.Node.create(testcontent).appendTo(docBody);
 
       // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
