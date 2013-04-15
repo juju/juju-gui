@@ -728,6 +728,8 @@
     it('can create a relation with an explicit interface', function(done) {
       fakebackend.deploy('cs:wordpress', function() {
         fakebackend.deploy('cs:mysql', function() {
+          var mysql = fakebackend.getService('mysql').result;
+          assert.lengthOf(mysql.rels, 0);
           var result = fakebackend.addRelation('wordpress:db', 'mysql:db'),
               mock = {
                 relationId: 'relation-0',
@@ -741,6 +743,8 @@
           assert.deepEqual(result.endpoints, mock.endpoints);
           assert.equal(result.scope, mock.scope);
           assert.equal(result.type, mock.type);
+          mysql = fakebackend.getService('mysql').result;
+          assert.lengthOf(mysql.rels, 1);
           done();
         });
       });

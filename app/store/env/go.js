@@ -427,6 +427,50 @@ YUI.add('juju-env-go', function(Y) {
     },
 
     /**
+     * Remove units from a service.
+     *
+     * @method remove_units
+     * @param {Array} unit_names The units to be removed.
+     * @param {Function} callback A callable that must be called once the
+     *   operation is performed. Normalized data, including the unit_names
+     *   is passed to the callback.
+     */
+    remove_units: function(unit_names, callback) {
+      var intermediateCallback;
+      if (callback) {
+        // Curry the callback and unit_names.  No context is passed.
+        intermediateCallback = Y.bind(this.handleRemoveUnits, null,
+            callback, unit_names);
+      }
+      this._send_rpc({
+        Type: 'Client',
+        Request: 'DestroyServiceUnits',
+        Params: {UnitNames: unit_names}
+      }, intermediateCallback);
+    },
+
+    /**
+     * Transform the data returned from the juju-core remove_units call into
+     * that suitable for the user callback.
+     *
+     * @method handleRemoveUnits
+     * @static
+     * @param {Function} userCallback The callback originally submitted by the
+     * call site.
+     * @param {Array} unitNames The names of the removed units.  Passed in
+     * since it is not part of the response.
+     * @param {Object} data The response returned by the server.
+     * @return {undefined} Nothing.
+     */
+    handleRemoveUnits: function(userCallback, unitNames, data) {
+      var transformedData = {
+        err: data.Error,
+        unit_names: unitNames
+      };
+      userCallback(transformedData);
+    },
+
+    /**
      * Expose the given service.
      *
      * @method expose

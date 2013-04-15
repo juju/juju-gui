@@ -247,6 +247,44 @@
       });
     });
 
+    it('sends the correct DestroyServiceUnits message', function() {
+      env.remove_units(['django/2', 'django/3']);
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'DestroyServiceUnits',
+        RequestId: 1,
+        Params: {UnitNames: ['django/2', 'django/3']}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully removes units from a service', function(done) {
+      env.remove_units(['django/2', 'django/3'], function(data) {
+        assert.deepEqual(['django/2', 'django/3'], data.unit_names);
+        assert.isUndefined(data.err);
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {}
+      });
+    });
+
+    it('handles failures removing units from a service', function(done) {
+      env.remove_units(['django/2'], function(data) {
+        assert.deepEqual(['django/2'], data.unit_names);
+        assert.strictEqual('unit django/2 does not exist', data.err);
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'unit django/2 does not exist'
+      });
+    });
+
     it('sends the correct expose message', function() {
       env.expose('apache');
       var last_message = conn.last_message();
