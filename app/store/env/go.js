@@ -717,7 +717,10 @@ YUI.add('juju-env-go', function(Y) {
       userCallback({
         err: data.Error,
         service_name: serviceName,
-        result: data.Response
+        result: {
+          config: (data.Response || {}).Settings,
+          constraints: (data.Response || {}).Constraints
+        }
       });
     },
 
@@ -780,6 +783,63 @@ YUI.add('juju-env-go', function(Y) {
         Request: 'ServiceDestroy',
         Params: {ServiceName: service}
       }, intermediateCallback);
+    },
+
+    // The constraints that the backend understands.  Used to generate forms.
+    genericConstraints: ['cpu-power', 'cpu-cores', 'mem', 'arch'],
+
+    /**
+       Change the constraints of the given service.
+
+       @method set_constraints
+       @param {String} serviceName The service name.
+       @param {Object} constraints The new service constraints.
+       @param {Function} callback A callable that must be called once the
+        operation is performed.
+       @return {undefined} Sends a message to the server only.
+    */
+    set_constraints: function(serviceName, constraints, callback) {
+      var intermediateCallback, sendData;
+      if (callback) {
+        // Curry the callback and serviceName.  No context is passed.
+        intermediateCallback = Y.bind(this.handleSetConstraints, null,
+            callback, serviceName);
+      }
+      // Some of the constraints have to be numbers.
+      Y.Array.each(['cpu-cores', 'cpu-power', 'mem'], function(key) {
+        constraints[key] = parseInt(constraints[key], 10) || undefined;
+      });
+      sendData = {
+        Type: 'Client',
+        Request: 'SetServiceConstraints',
+        Params: {
+          ServiceName: serviceName,
+          Constraints: constraints
+        }
+      };
+      this._send_rpc(sendData, intermediateCallback);
+    },
+
+    /**
+       Transform the data returned from juju-core call to
+       SetServiceConstraints into that suitable for the user callback.
+
+       @method handleSetConfig
+       @static
+       @param {Function} userCallback The callback originally submitted by
+         the call site.
+       @param {String} serviceName The name of the service.  Passed in since
+         it is not part of the response.
+       @param {Object} data The response returned by the server.
+       @return {undefined} Nothing.
+    */
+    handleSetConstraints: function(userCallback, serviceName, data) {
+      var transformedData = {
+        err: data.Error,
+        service_name: serviceName
+      };
+      // Call the original user callback.
+      userCallback(transformedData);
     },
 
     /**

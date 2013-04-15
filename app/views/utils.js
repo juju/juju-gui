@@ -519,6 +519,19 @@ YUI.add('juju-view-utils', function(Y) {
 
   utils.SERVER_ERROR_MESSAGE = 'An error ocurred.';
 
+  /**
+     Check whether or not the given relationId represents a PyJuju relation.
+
+     @method isPythonRelation
+     @static
+     @param {String} relationId The relation identifier.
+     @return {Bool} True if the id represents a PyJuju relation,
+      False otherwise.
+   */
+  utils.isPythonRelation = function(relationId) {
+    var regex = /^relation-\d+$/;
+    return regex.test(relationId);
+  };
 
   utils.getRelationDataForService = function(db, service) {
     // Return a list of objects representing the `near` and `far`
@@ -543,13 +556,13 @@ YUI.add('juju-view-utils', function(Y) {
           rel.far = far && {
             service: far[0], role: far[1].role, name: far[1].name};
           var relationId = rel.relation_id;
-          if (relationId.indexOf(' ') >= 0) {
-            // This is a Juju Core relation id (the rel id contains a space).
-            rel.ident = relationId;
-          } else {
+          if (utils.isPythonRelation(relationId)) {
             // This is a Python relation id.
             var relNumber = relationId.split('-')[1];
             rel.ident = near[1].name + ':' + parseInt(relNumber, 10);
+          } else {
+            // This is a Juju Core relation id.
+            rel.ident = relationId;
           }
           rel.elementId = generateSafeDOMId(rel.relation_id);
           return rel;

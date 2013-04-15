@@ -1,22 +1,17 @@
 {
   "author": "Juju Developers",
-  "name": "juju-ui",
-  "description": "Juju GUI",
-  "version": "0.0.1",
-  "homepage": "http://launchpad.net/juju-ui",
+  "name": "juju-gui",
+  "description": "Juju GUI build dependencies",
+  "version": "0.1.0",
+  "homepage": "http://launchpad.net/juju-gui",
   "repository": {
     "type": "bzr",
-    "url": "lp:juju-ui"
-  },
-  "engines": {
-    "node": ">=0.10"
+    "url": "lp:juju-gui"
   },
   "dependencies": {
-    "cryptojs": ">= 2.5.3"
-  },
-  "devDependencies": {
+    "cryptojs": ">= 2.5.3",
     "d3": "<3.0.0",
-    "yui": "==3.9.1",
+    "yui": "3.9.1",
     "mocha": "1.8.x",
     "express": "3.x",
     "expect.js": "0.1.2",
@@ -34,6 +29,5 @@
     "grunt": "0.3.17",
     "node-spritesheet": "0.4.0",
     "node-minify": "0.7.x"
-  },
-  "optionalDependencies": {}
+  }
 }

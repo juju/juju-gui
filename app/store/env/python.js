@@ -356,21 +356,31 @@ YUI.add('juju-env-python', function(Y) {
         data: data}, callback, true);
     },
 
+    // The constraints that the backend understands.  Used to generate forms.
+    genericConstraints: ['cpu', 'mem', 'arch'],
+
     /**
      * Change the constraints of the given service.
      *
      * @method set_constraints
      * @param {String} service The service name.
-     * @param {Object} constraints The charm constraints.
+     * @param {Object} constraints A hash of charm constraints.
      * @param {Function} callback A callable that must be called once the
          operation is performed.
      * @return {undefined} Sends a message to the server only.
      */
     set_constraints: function(service, constraints, callback) {
+      // Transform the constraints mapping into a string the backend
+      // understands.
+      var values = [];
+      Y.Object.each(constraints, function(value, name) {
+        values.push(name + '=' + value);
+      });
+
       this._send_rpc({
         op: 'set_constraints',
         service_name: service,
-        constraints: constraints}, callback, true);
+        constraints: values}, callback, true);
     },
 
     /**
