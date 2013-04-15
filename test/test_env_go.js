@@ -206,6 +206,85 @@
       assert.equal('envname', env.get('environmentName'));
     });
 
+    it('sends the correct AddServiceUnits message', function() {
+      env.add_unit('django', 3);
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'AddServiceUnits',
+        RequestId: 1,
+        Params: {ServiceName: 'django', NumUnits: 3}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully adds units to a service', function(done) {
+      env.add_unit('django', 2, function(data) {
+        assert.strictEqual('django', data.service_name);
+        assert.strictEqual(2, data.num_units);
+        assert.deepEqual(['django/2', 'django/3'], data.result);
+        assert.isUndefined(data.err);
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {Units: ['django/2', 'django/3']}
+      });
+    });
+
+    it('handles failures adding units to a service', function(done) {
+      env.add_unit('django', 0, function(data) {
+        assert.strictEqual('django', data.service_name);
+        assert.strictEqual(0, data.num_units);
+        assert.strictEqual('must add at least one unit', data.err);
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'must add at least one unit'
+      });
+    });
+
+    it('sends the correct DestroyServiceUnits message', function() {
+      env.remove_units(['django/2', 'django/3']);
+      var last_message = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'DestroyServiceUnits',
+        RequestId: 1,
+        Params: {UnitNames: ['django/2', 'django/3']}
+      };
+      assert.deepEqual(expected, last_message);
+    });
+
+    it('successfully removes units from a service', function(done) {
+      env.remove_units(['django/2', 'django/3'], function(data) {
+        assert.deepEqual(['django/2', 'django/3'], data.unit_names);
+        assert.isUndefined(data.err);
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Response: {}
+      });
+    });
+
+    it('handles failures removing units from a service', function(done) {
+      env.remove_units(['django/2'], function(data) {
+        assert.deepEqual(['django/2'], data.unit_names);
+        assert.strictEqual('unit django/2 does not exist', data.err);
+        done();
+      });
+      // Mimic response.
+      conn.msg({
+        RequestId: 1,
+        Error: 'unit django/2 does not exist'
+      });
+    });
+
     it('sends the correct expose message', function() {
       env.expose('apache');
       var last_message = conn.last_message();
@@ -586,18 +665,7 @@
     });
 
     it('successfully gets service configuration', function() {
-      var service_name;
-      var result;
-      var expected = {
-        Service: 'mysql',
-        Charm: 'mysql',
-        Settings: {
-          'binlog-format': {
-            description: 'If binlogging is enabled, etc, etc","type":"string',
-            value: null
-          }
-        }
-      };
+      var service_name, result;
       env.get_service('mysql', function(data) {
         service_name = data.service_name;
         result = data.result;
@@ -605,9 +673,29 @@
       // Mimic response.
       conn.msg({
         RequestId: 1,
-        Response: expected
+        Response: {
+          Service: 'mysql',
+          Charm: 'mysql',
+          Settings: {
+            'binlog-format': {
+              description: 'Yada, yada, yada.',
+              type: 'string',
+              value: null
+            }
+          }
+        }
       });
-      expected.name = 'mysql';
+      assert.equal(service_name, 'mysql');
+      var expected = {
+        config: {
+          'binlog-format': {
+            description: 'Yada, yada, yada.',
+            type: 'string',
+            value: null
+          }
+        },
+        constraints: undefined
+      };
       assert.strictEqual('mysql', service_name);
       assert.deepEqual(expected, result);
     });
@@ -629,6 +717,23 @@
       });
       assert.equal(service_name, 'yoursql');
       assert.equal(err, 'service "yoursql" not found');
+    });
+
+    it('can set service constraints', function() {
+      env.set_constraints('mysql', {'cpu-cores': '4'});
+      msg = conn.last_message();
+      var expected = {
+        Type: 'Client',
+        Request: 'SetServiceConstraints',
+        Params: {
+          ServiceName: 'mysql',
+          Constraints: {
+            'cpu-cores': 4
+          }
+        },
+        RequestId: msg.RequestId
+      };
+      assert.deepEqual(expected, msg);
     });
 
     it('can set a service config', function() {
@@ -1052,7 +1157,6 @@
       env.detach('delta');
       var callbackData = {Response: {Deltas: [['service', 'deploy', {}]]}};
       env.on('delta', function(evt) {
-        console.log(evt.data.result);
         done();
       });
       env._handleRpcResponse(callbackData);
