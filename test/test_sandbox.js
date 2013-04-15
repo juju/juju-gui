@@ -759,7 +759,7 @@
 
     it('can get a service', function(done) {
       generateServices(function(data) {
-        // Post deploy of wordpress we should be able to
+        // Post deploy of wordpress so we should be able to
         // pull its data.
         var op = {
           op: 'get_service',
@@ -775,6 +775,38 @@
         };
         client.send(Y.JSON.stringify(op));
       });
+    });
+
+    it('can destroy a service', function(done) {
+      generateServices(function(data) {
+        // Post deploy of wordpress so we should be able to
+        // destroy it.
+        var op = {
+          op: 'destroy_service',
+          service_name: 'wordpress',
+          request_id: 99
+        };
+        client.onmessage = function(received) {
+          var parsed = Y.JSON.parse(received.data);
+          assert.equal(parsed.result, 'wordpress');
+          // Error should be undefined.
+          done(received.error);
+        };
+        client.send(Y.JSON.stringify(op));
+      });
+    });
+
+    it('can destroy a service (integration)', function(done) {
+      function destroyService(rec) {
+        function localCb(rec2) {
+          assert.equal(rec2.result, 'kumquat');
+          var service = state.db.services.getById('kumquat');
+          assert.isNull(service);
+          done();
+        }
+        var result = env.destroy_service(rec.service_name, localCb);
+      }
+      generateAndExposeIntegrationService(destroyService);
     });
 
     it('can get a charm', function(done) {
