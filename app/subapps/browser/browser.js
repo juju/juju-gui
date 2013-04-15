@@ -105,8 +105,6 @@ YUI.add('subapp-browser', function(Y) {
      */
     fullscreen: function(req, res, next) {
       console.log('render fullscreen');
-      debugger;
-
       var isFullscreen = true;
 
       if (!this._fullscreen) {
@@ -122,7 +120,6 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     renderEditorial: function(req, res, next) {
-      debugger;
       var containerID = '#subapp-browser',
           extraCfg = {};
 
