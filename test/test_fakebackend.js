@@ -368,6 +368,69 @@
       });
     });
 
+    describe('FakeBackend.destroyService', function() {
+      it('rejects unauthenticated calls', function() {
+        fakebackend.logout();
+        var result = fakebackend.destroyService('dummy');
+        assert.equal(result.error, 'Please log in.');
+      });
+
+      it('returns an error for a missing service', function() {
+        var result = fakebackend.destroyService('missing');
+        assert.equal('Invalid service id.', result.error);
+      });
+
+      it('successfully destroys a valid service', function(done) {
+        fakebackend.deploy('cs:wordpress', function(data) {
+          var result = fakebackend.destroyService('wordpress');
+          assert.equal(result.result, 'wordpress');
+          assert.isUndefined(result.error);
+          // Ensure the service can no longer be retrieved.
+          result = fakebackend.getService('wordpress');
+          assert.equal(result.error, 'Invalid service id.');
+          done();
+        });
+      });
+
+      it('removes relations when destroying a service', function(done) {
+        // Add a couple of services and hook up relations.
+        fakebackend.deploy('cs:wordpress', function(data) {
+          fakebackend.deploy('cs:mysql', function() {
+            var result = fakebackend.addRelation('wordpress:db', 'mysql:db');
+            assert.isUndefined(result.error);
+            var mysql = fakebackend.getService('mysql').result;
+            assert.lengthOf(mysql.rels, 1);
+            // Now destroy one of the services.
+            result = fakebackend.destroyService('wordpress').result;
+            assert.isUndefined(result.error);
+            assert.equal('wordpress', result);
+            // Ensure the destroyed service can no longer be retrieved.
+            result = fakebackend.getService('wordpress');
+            assert.equal(result.error, 'Invalid service id.');
+            // But the other one exists and has no relations.
+            mysql = fakebackend.getService('mysql').result;
+            assert.lengthOf(mysql.rels, 0);
+            done();
+          });
+        });
+      });
+
+      it('removes units when destroying a service', function(done) {
+        fakebackend.deploy('cs:wordpress', function(data) {
+          var service = fakebackend.db.services.getById('wordpress');
+          var units = fakebackend.db.units.get_units_for_service(service);
+          assert.lengthOf(units, 1);
+          var result = fakebackend.destroyService('wordpress');
+          assert.equal(result.result, 'wordpress');
+          assert.isUndefined(result.error);
+          units = fakebackend.db.units.get_units_for_service(service);
+          assert.lengthOf(units, 0);
+          done();
+        });
+      });
+
+    });
+
     describe('FakeBackend.Annotations', function() {
       it('must require authentication', function() {
         fakebackend.logout();
@@ -728,6 +791,8 @@
     it('can create a relation with an explicit interface', function(done) {
       fakebackend.deploy('cs:wordpress', function() {
         fakebackend.deploy('cs:mysql', function() {
+          var mysql = fakebackend.getService('mysql').result;
+          assert.lengthOf(mysql.rels, 0);
           var result = fakebackend.addRelation('wordpress:db', 'mysql:db'),
               mock = {
                 relationId: 'relation-0',
@@ -741,6 +806,8 @@
           assert.deepEqual(result.endpoints, mock.endpoints);
           assert.equal(result.scope, mock.scope);
           assert.equal(result.type, mock.type);
+          mysql = fakebackend.getService('mysql').result;
+          assert.lengthOf(mysql.rels, 1);
           done();
         });
       });
@@ -778,5 +845,6 @@
 
 
   });
+
 
 })();

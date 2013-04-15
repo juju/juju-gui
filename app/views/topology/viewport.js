@@ -15,6 +15,13 @@ YUI.add('juju-topology-viewport', function(Y) {
 
   /**
    * @class ViewportModule
+   *
+   * Emitted events:
+   *
+   *  beforePageSizeRecalculation:
+   *  afterPageSizeRecalculation: events fired before and after the environment
+   *                              graph is resized to allow other sized items
+   *                              to calculate what they need.
    */
   views.ViewportModule = Y.Base.create('ViewportModule', d3ns.Module, [], {
 

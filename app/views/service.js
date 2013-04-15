@@ -565,24 +565,14 @@ YUI.add('juju-view-service', function(Y) {
           var service = this.get('model'),
               container = this.get('container'),
               env = this.get('env');
-
-          var values = (function() {
-            var result = [],
-                map = utils.getElementsValuesMapping(
-                    container, '.constraint-field');
-
-            Y.Object.each(map, function(value, name) {
-              result.push(name + '=' + value);
-            });
-
-            return result;
-          })();
+          var constraints = utils.getElementsValuesMapping(
+              container, '.constraint-field');
 
           // Disable the "Update" button while the RPC call is outstanding.
           container.one('#save-service-constraints')
             .set('disabled', 'disabled');
           env.set_constraints(service.get('id'),
-              values,
+              constraints,
               Y.bind(this._setConstraintsCallback, this, container)
           );
         },
@@ -631,6 +621,7 @@ YUI.add('juju-view-service', function(Y) {
          */
         gatherRenderData: function() {
           var service = this.get('model'),
+              env = this.get('env'),
               constraints = service.get('constraints'),
               display_constraints = [];
 
@@ -648,8 +639,7 @@ YUI.add('juju-view-service', function(Y) {
             }
           });
 
-          var generics = ['cpu', 'mem', 'arch'];
-          Y.Object.each(generics, function(gkey) {
+          Y.Array.each(env.genericConstraints, function(gkey) {
             if (!(gkey in constraints)) {
               display_constraints.push({name: gkey, value: ''});
             }
