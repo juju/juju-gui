@@ -283,11 +283,11 @@
 
     it('handles searching correctly', function(done) {
       var hostname = 'http://localhost',
+          data = [],
           url;
       var api = new Y.juju.Charmworld0({
-            apiHost: hostname
-          }),
-          data = [];
+        apiHost: hostname
+      });
       data.push({
         responseText: Y.JSON.stringify({
           name: 'foo'
