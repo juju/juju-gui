@@ -245,7 +245,8 @@ $(JAVASCRIPT_LIBRARIES): | node_modules/yui node_modules/d3
 gjslint: virtualenv/bin/gjslint
 	virtualenv/bin/gjslint --unix --strict --nojsdoc --jslint_error=all \
 	    --custom_jsdoc_tags module,main,class,method,event,property,attribute,submodule,namespace,extends,config,constructor,static,final,readOnly,writeOnce,optional,required,param,return,for,type,private,protected,requires,default,uses,example,chainable,deprecated,since,async,beta,bubbles,extension,extensionfor,extension_for \
-		-x $(LINT_IGNORE) $(JSFILES)
+		-x $(LINT_IGNORE) $(JSFILES) \
+	    | sed -n '0,/^Found /p'| sed '/^Found /q1' # less garbage output
 
 jshint: node_modules/jshint
 	node_modules/jshint/bin/hint $(JSFILES)
@@ -257,10 +258,11 @@ yuidoc-lint: $(JSFILES)
 	bin/lint-yuidoc
 
 recess: node_modules/recess
-	# We need to grep for "Perfect" because recess does not set a non-zero
-	# exit code if it rejects a file.  If this fails, run the recess command
-	# below without the grep to get recess' report.
-	node_modules/recess/bin/recess lib/views/stylesheet.less --config recess.json | grep -q Perfect
+	@# We need to grep for "Perfect" because recess does not set a
+	@# non-zero exit code if it rejects a file.  If this fails, run the
+	@# recess command below without the grep to get recess' report.
+	node_modules/recess/bin/recess lib/views/stylesheet.less \
+	    --config recess.json | grep -q Perfect
 
 lint: test-prep gjslint jshint recess yuidoc-lint test-filtering
 

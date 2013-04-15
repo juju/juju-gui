@@ -639,7 +639,7 @@ YUI.add('juju-view-service', function(Y) {
             }
           });
 
-          Y.Object.each(env.genericConstraints, function(gkey) {
+          Y.Array.each(env.genericConstraints, function(gkey) {
             if (!(gkey in constraints)) {
               display_constraints.push({name: gkey, value: ''});
             }
