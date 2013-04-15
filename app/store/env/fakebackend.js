@@ -376,15 +376,48 @@ YUI.add('juju-env-fakebackend', function(Y) {
       callback(response);
     },
 
-    // destroyService: function() {
+    /**
+     Destroy the named service.
 
-    // },
+     @method destroyService
+     @param {String} serviceName to destroy.
+     @return {Object} results With err and service_name.
+     */
+    destroyService: function(serviceName) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      var service = this.db.services.getById(serviceName);
+      if (!service) {
+        return {error: 'Invalid service id.'};
+      }
+      // Remove all relations for this service.
+      var relations = this.db.relations.get_relations_for_service(service);
+      Y.Array.each(relations, function(rel) {
+        this.db.relations.remove(rel);
+      }, this);
+      // Remove units for this service.
+      var unitNames = Y.Array.map(this.db.units.get_units_for_service(service),
+          function(unit) {
+            return unit.id;
+          });
+      var result = this.removeUnits(unitNames);
+      if (result.error.length > 0) {
+        return {error: 'Error removing units: ' + result.error};
+      } else if (result.warning.length > 0) {
+        return {error: 'Warning removing units: ' + result.warning};
+      }
+      // And finally destroy and remove the service.
+      this.db.services.remove(service);
+      service.destroy();
+      return {result: serviceName};
+    },
 
     /**
      * Get service attributes.
      *
      * @method getService
-     * @param {String} serviceId to get.
+     * @param {String} serviceName to get.
      * @return {Object} Service Attributes..
      */
     getService: function(serviceName) {
@@ -541,6 +574,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
           error = [],
           warning = [];
 
+      // XXX: BradCrittenden 2013-04-15: Remove units should optionally remove
+      // the corresponding machines.
       Y.Array.each(unitNames, function(unitName) {
         service = this.db.services.getById(unitName.split('/')[0]);
         if (service && service.get('is_subordinate')) {
