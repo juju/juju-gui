@@ -115,12 +115,36 @@ describe('utilities', function() {
   });
 
 
-  describe('relations visualization', function() {
-    var db, service;
+  describe('isPythonRelation', function() {
+    var isPythonRelation;
 
     before(function() {
-
+      isPythonRelation = utils.isPythonRelation;
     });
+
+    it('identifies PyJuju relations', function() {
+      var relations = ['relation-0000000002', 'relation-42', 'relation-0'];
+      relations.forEach(function(relation) {
+        assert.isTrue(isPythonRelation(relation), relation);
+      });
+    });
+
+    it('identifies juju-core relations', function() {
+      var relations = [
+        'wordpress:loadbalancer',
+        'haproxy:reverseproxy wordpress:website',
+        'relation-0000000002:mysql'
+      ];
+      relations.forEach(function(relation) {
+        assert.isFalse(isPythonRelation(relation), relation);
+      });
+    });
+
+  });
+
+
+  describe('relations visualization', function() {
+    var db, service;
 
     beforeEach(function() {
       db = new models.Database();
