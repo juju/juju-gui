@@ -24,7 +24,6 @@ YUI.add('subapp-browser', function(Y) {
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
 
-
     /**
      * Some routes might have sub parts that hint to where a user wants focus.
      * In particular we've got the tabs that might have focus. They are the
