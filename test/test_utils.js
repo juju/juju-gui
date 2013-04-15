@@ -410,7 +410,7 @@ describe('utilities', function() {
       var states = ['install-error', 'foo-error', '-error', 'error'];
       states.forEach(function(state) {
         var unit = makeUnit(state);
-        assert.strictEqual('error', simplifyState(unit));
+        assert.strictEqual('error', simplifyState(unit), state);
       });
     });
 
@@ -418,7 +418,7 @@ describe('utilities', function() {
       var states = ['pending', 'installed', 'waiting', 'stopped'];
       states.forEach(function(state) {
         var unit = makeUnit(state);
-        assert.strictEqual('pending', simplifyState(unit));
+        assert.strictEqual('pending', simplifyState(unit), state);
       });
     });
 
