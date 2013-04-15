@@ -107,7 +107,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
-      console.log('render fullscreen');
       var isFullscreen = true;
 
       if (!this._fullscreen) {
@@ -198,8 +197,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     charmDetails: function(req, res, next) {
-      console.log('render details');
-
       var charmID = req.params.id;
       var extraCfg = {
         charmID: charmID,
