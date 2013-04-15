@@ -569,7 +569,8 @@ YUI.add('juju-env-sandbox', function(Y) {
         this.get('client').receive(data);
         return;
       }
-      // // Normalize endpoints
+      // Normalize endpoints so that they are in the format
+      // serviceName: { name: 'interface-name' }
       var normalizedEndpoints, epA = {}, epB = {};
       epA[relation.endpoints[0][0]] = relation.endpoints[0][1];
       epB[relation.endpoints[1][0]] = relation.endpoints[1][1];
