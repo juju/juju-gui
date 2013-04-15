@@ -30,6 +30,7 @@ YUI.add('subapp-browser-sidebar', function(Y) {
      *
      */
     render: function(container) {
+      debugger;
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl);
 

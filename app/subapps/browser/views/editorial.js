@@ -46,6 +46,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
      *
      */
     render: function(container) {
+      debugger;
       var tpl = this.template(this.getAttrs()),
           tplNode = Y.Node.create(tpl),
           store = this.get('store');
@@ -60,6 +61,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
       // display.
       this.get('store').sidebarEditorial({
         'success': function(data) {
+          debugger;
           // Add featured charms
           var featuredCharms = this.get('store').resultsToCharmlist(
               data.result.featured);

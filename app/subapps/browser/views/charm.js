@@ -409,7 +409,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * @param {Node} container optional specific container to render out to.
      *
      */
-    render: function(isFullscreen) {
+    render: function() {
+      var isFullscreen = this.get('isFullscreen');
+
       if (this.get('charm')) {
         this._renderCharmView(this.get('charm'), isFullscreen);
       } else {
@@ -436,6 +438,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        */
       charm: {},
+
+      ifFullscreen: {
+        value: false
+      },
 
       /**
        * The store is the api endpoint for fetching data.

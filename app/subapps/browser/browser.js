@@ -86,11 +86,10 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
+      console.log('render fullscreen');
+      debugger;
+
       var isFullscreen = true;
-      // Clean up any details we've got.
-      if (this._fullscreen) {
-        this._fullscreen.destroy({remove: true});
-      }
 
       if (!this._fullscreen) {
         this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
@@ -105,11 +104,27 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     renderEditorial: function(req, res, next) {
-      console.log('render editorial');
+      debugger;
+      var containerID = '#subapp-browser',
+          extraCfg = {};
+
+      if (req.path.indexOf('fullscreen') !== -1) {
+        containerID += ' .bws-view-data';
+        extraCfg.isFullscreen = true;
+
+        // if the fullscreen isn't the last part of the path, then ignore the
+        // editorial content.
+        var parts = [];
+        
+      } else {
+        containerID += ' .bws-content';
+      }
+
       if (!this._editorial) {
         this._editorial = new Y.juju.browser.views.EditorialView(
-            this._getViewCfg());
-        this._editorial.render(Y.one('#subapp-browser .bws-content'));
+            this._getViewCfg(extraCfg));
+
+        this._editorial.render(Y.one(containerID));
         // Add any sidebar charms to the running cache.
         this._cacheCharms.add(this._editorial._cacheCharms);
       }
@@ -153,11 +168,17 @@ YUI.add('subapp-browser', function(Y) {
      */
     charmDetails: function(req, res, next) {
       console.log('render details');
+
       var charmID = req.params.id;
       var extraCfg = {
         charmID: charmID,
         container: Y.Node.create('<div class="charmview"/>')
       };
+
+      if (req.path.indexOf('fullscreen') !== -1) {
+        extraCfg.isFullscreen = true;
+      }
+
       // Gotten from the sidebar creating the cache.
       var model = this._cacheCharms.getById(charmID);
 

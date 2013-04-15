@@ -26,13 +26,16 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
      *
      */
     render: function(container) {
+      debugger;
       var tpl = this.template(),
           tplNode = Y.Node.create(tpl);
 
       this._renderSearchWidget(tplNode);
 
-      if (!Y.Lang.isValue(container)) {
+      if (typeof container !== 'object') {
         container = this.get('container');
+      } else {
+        this.set('container', container);
       }
       container.setHTML(tplNode);
       // Bind our view to the events from the search widget used for controls.
