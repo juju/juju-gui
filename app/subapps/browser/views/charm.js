@@ -363,7 +363,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * Render the view of a single charm details page.
      *
      * @method _renderCharmView
-     * @param {Node} container the node to insert our rendered content into.
+     * @param {BrowserCharm} charm the charm model instance to view.
+     * @param {Boolean} isFullscreen is this display for the fullscreen
+     * experiecne?
      *
      */
     _renderCharmView: function(charm, isFullscreen) {

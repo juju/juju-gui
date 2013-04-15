@@ -110,7 +110,11 @@ YUI.add('subapp-browser', function(Y) {
       if (!this._fullscreen) {
         this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
           'callback': function(view) {
-            this.renderEditorial(req, res, next);
+            // if the fullscreen isn't the last part of the path, then ignore the
+            // editorial content.
+            if (this._getSubPath(req.path) !== 'fullscreen') {
+              this.renderEditorial(req, res, next);
+            }
             next();
           }
         });
@@ -144,11 +148,6 @@ YUI.add('subapp-browser', function(Y) {
         containerID += ' .bws-view-data';
         extraCfg.isFullscreen = true;
 
-        // if the fullscreen isn't the last part of the path, then ignore the
-        // editorial content.
-        if (this._getSubPath(req.path) !== 'fullscreen') {
-          return;
-        }
       } else {
         // If this is the sidebar view, then the editorial content goes into a
         // different div since we can view both editorial content and
