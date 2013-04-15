@@ -806,7 +806,7 @@ YUI.add('juju-env-go', function(Y) {
             callback, serviceName);
       }
       // Some of the constraints have to be numbers.
-      Y.Object.each(['cpu-cores', 'cpu-power', 'mem'], function(key) {
+      Y.Array.each(['cpu-cores', 'cpu-power', 'mem'], function(key) {
         constraints[key] = parseInt(constraints[key], 10) || undefined;
       });
       sendData = {
