@@ -574,6 +574,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
           error = [],
           warning = [];
 
+      // XXX: BradCrittenden 2013-04-15: Remove units should optionally remove
+      // the corresponding machines.
       Y.Array.each(unitNames, function(unitName) {
         service = this.db.services.getById(unitName.split('/')[0]);
         if (service && service.get('is_subordinate')) {
