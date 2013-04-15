@@ -206,6 +206,8 @@ YUI.add('juju-charm-store', function(Y) {
      *
      * @method search
      * @param {String} text the search text.
+     * @param {Object} callbacks the success/failure callbacks to use.
+     * @param {Object} bindScope the scope of *this* in the callbacks.
      */
     search: function(text, callbacks, bindScope) {
       var endpoint = 'charms';
