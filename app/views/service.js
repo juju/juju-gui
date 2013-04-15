@@ -441,7 +441,7 @@ YUI.add('juju-view-service', function(Y) {
               querystring = this.get('querystring');
           var relation_data = utils.getRelationDataForService(db, service);
           Y.each(relation_data, function(rel) {
-            if (rel.relation_id === querystring.rel_id) {
+            if (rel.elementId === querystring.rel_id) {
               rel.highlight = true;
             }
           });
@@ -536,7 +536,7 @@ YUI.add('juju-view-service', function(Y) {
                   message: 'Relation ' + ev.endpoint_a + ' to ' + ev.endpoint_b,
                   level: 'error',
                   link: getModelURL(service) + 'relations?rel_id=' +
-                      relation.get('id'),
+                      rm_button.get('id'),
                   modelId: relation
                 })
             );
@@ -565,24 +565,14 @@ YUI.add('juju-view-service', function(Y) {
           var service = this.get('model'),
               container = this.get('container'),
               env = this.get('env');
-
-          var values = (function() {
-            var result = [],
-                map = utils.getElementsValuesMapping(
-                    container, '.constraint-field');
-
-            Y.Object.each(map, function(value, name) {
-              result.push(name + '=' + value);
-            });
-
-            return result;
-          })();
+          var constraints = utils.getElementsValuesMapping(
+              container, '.constraint-field');
 
           // Disable the "Update" button while the RPC call is outstanding.
           container.one('#save-service-constraints')
             .set('disabled', 'disabled');
           env.set_constraints(service.get('id'),
-              values,
+              constraints,
               Y.bind(this._setConstraintsCallback, this, container)
           );
         },
@@ -631,6 +621,7 @@ YUI.add('juju-view-service', function(Y) {
          */
         gatherRenderData: function() {
           var service = this.get('model'),
+              env = this.get('env'),
               constraints = service.get('constraints'),
               display_constraints = [];
 
@@ -648,8 +639,7 @@ YUI.add('juju-view-service', function(Y) {
             }
           });
 
-          var generics = ['cpu', 'mem', 'arch'];
-          Y.Object.each(generics, function(gkey) {
+          Y.Object.each(env.genericConstraints, function(gkey) {
             if (!(gkey in constraints)) {
               display_constraints.push({name: gkey, value: ''});
             }

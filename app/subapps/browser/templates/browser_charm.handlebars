@@ -47,6 +47,52 @@
             </div>
         </div>
 
+        <div class="changelog">
+            <h3 class="section-title">
+                {{#if recent_commits}}
+                    <a href="" class="expandToggle" data-state="closed">
+                {{/if}}
+                    Change log
+                {{#if recent_commits}}
+                    <span class="expand">
+                        <span class="more">
+                            <img src="/juju-ui/assets/images/expand_icon.jpg"
+                                alt="Expand" />
+                        </span>
+                        <span class="less hidden">
+                            <img src="/juju-ui/assets/images/contract_icon.jpg"
+                                alt="Contract" />
+                            </span>
+                        </span>
+                    </a>
+                {{/if}}
+            </h3>
+            {{#if recent_commits}}
+                <div class="first">
+                    <h4>Latest change</h4>
+                    <p>
+                    {{prettyCommits.first.prettyDate}}
+                    {{prettyCommits.first.author.name}}
+                    {{prettyCommits.first.message}}
+                    (revno{{prettyCommits.first.revno}})
+                    </p>
+                </div>
+                <div class="remaining hidden">
+                    <h4>Earlier changes</h4>
+                    <ul>
+                        {{#prettyCommits.remaining}}
+                            <li>
+                                {{prettyDate}} {{author.name}} {{message}}
+                                (revno{{revno}})
+                            </li>
+                        {{/prettyCommits.remaining}}
+                    </ul>
+                </div>
+            {{else}}
+                <p>No change history exists.</p>
+            {{/if}}
+        </div>
+
         <div class="summary">
             <h2>Summary</h2>
             {{ summary }}
@@ -56,31 +102,6 @@
             {{else}}
                 {{ truncate description 300 }}
             {{/if}}
-        </div>
-
-        <div class="changelog">
-            <h2>
-                Change log
-                {{#if recent_commits}}
-                    ({{recent_commits.length}}) <span class="toggle" data-state="closed">&darr;</span>
-                {{/if}}
-            </h2>
-            <div class="commit first">
-                Last commit: {{prettyCommits.first.prettyDate}} {{prettyCommits.first.author.name}}
-                {{prettyCommits.first.message}} - {{prettyCommits.first.revno}}
-            </div>
-
-            <div class="remaining hidden">
-                {{#prettyCommits.remaining}}
-                    <div class="commit">
-                        {{prettyDate}} {{author.name}} {{message}} - {{revno}}
-                    </div>
-                {{/prettyCommits.remaining}}
-            </div>
-
-        </div>
-
-        <div class="changelog">
         </div>
 
         <div class="tabs">

@@ -3,15 +3,16 @@
 (function() {
   describe('juju unit view', function() {
     var views, machine, models, Y, container, service, unit, db,
-        conn, juju, env, charm, testUtils, makeView, nsRouter;
+        conn, juju, env, charm, testUtils, makeView, nsRouter, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'juju-views', 'juju-models', 'base', 'node', 'json-parse',
           'juju-env', 'node-event-simulate', 'juju-tests-utils',
-          'juju-landscape', 'ns-routing-app-extension',
+          'juju-landscape', 'ns-routing-app-extension', 'juju-view-utils',
           function(Y) {
             views = Y.namespace('juju.views');
+            utils = Y.namespace('juju.views.utils');
             models = Y.namespace('juju.models');
             testUtils = Y.namespace('juju-tests.utils');
             conn = new testUtils.SocketStub();
@@ -244,7 +245,8 @@
     });
 
     it('should show highlighted relation rows', function() {
-      var view = makeView({rel_id: 'relation-0000000002'});
+      var querystringValue = utils.generateSafeDOMId('relation-0000000002'),
+          view = makeView({rel_id: querystringValue});
       container.one('#relations tbody tr').hasClass('highlighted')
         .should.equal(true);
     });
