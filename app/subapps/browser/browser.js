@@ -107,8 +107,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
-      var isFullscreen = true;
-
       if (!this._fullscreen) {
         this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
           'callback': function(view) {
@@ -134,10 +132,15 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     renderEditorial: function(req, res, next) {
-      var containerID = '#subapp-browser',
+      var containerID = this.get('container'),
           extraCfg = {};
 
       if (req.path.indexOf('fullscreen') !== -1) {
+        // The fullscreen view requires that there be no editorial content if
+        // we're looking at a specific charm. The div we dump our content into
+        // is shared. So if the url is /fullscreen show editorial content, but
+        // if it's not, there's something else handling displaying the
+        // view-data.
         containerID += ' .bws-view-data';
         extraCfg.isFullscreen = true;
 
@@ -147,6 +150,9 @@ YUI.add('subapp-browser', function(Y) {
           return;
         }
       } else {
+        // If this is the sidebar view, then the editorial content goes into a
+        // different div since we can view both editorial content and
+        // view-data (such as a charm details) side by side.
         containerID += ' .bws-content';
       }
 
@@ -176,6 +182,11 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       if (!this._sidebar) {
+        // Whenever the sidebar view is rendered it needs some editorial
+        // content to display to the user. We only need once instance though,
+        // so only render it on the first view. As users click on charm to
+        // charm and we generate urls /sidebar/precise/xxx we don't want to
+        // re-render the sidebar content.
         this._sidebar = this.showView('sidebar', this._getViewCfg(), {
           'callback': function(view) {
             this.renderEditorial(req, res, next);
@@ -203,6 +214,8 @@ YUI.add('subapp-browser', function(Y) {
         container: Y.Node.create('<div class="charmview"/>')
       };
 
+      // The details view needs to know if we're using a fullscreen template
+      // or the sidebar version.
       if (req.path.indexOf('fullscreen') !== -1) {
         extraCfg.isFullscreen = true;
       }
@@ -240,7 +253,13 @@ YUI.add('subapp-browser', function(Y) {
        */
       store: {
         /**
+          We keep one instance of the store and will work on caching results
+          at the app level so that routes can share api calls. However, in
+          tests there's no config for talking to the api so we have to watch
+          out in test runs and allow the store to be broken.
+
           method store.valueFn
+
         */
         valueFn: function() {
           var url = '';
@@ -263,6 +282,7 @@ YUI.add('subapp-browser', function(Y) {
        */
       routes: {
         value: [
+          // Double routes are needed to catch /fullscreen and /fullscreen/
           { path: '/bws/fullscreen/', callbacks: 'fullscreen' },
           { path: '/bws/fullscreen/*/', callbacks: 'fullscreen' },
           { path: '/bws/fullscreen/*id/', callbacks: 'charmDetails' },

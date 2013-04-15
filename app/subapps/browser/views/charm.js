@@ -369,7 +369,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _renderCharmView: function(charm, isFullscreen) {
       this.set('charm', charm);
 
-      isFullscreen = false;
       var tplData = charm.getAttrs(),
           container = this.get('container');
 
