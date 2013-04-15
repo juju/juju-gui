@@ -24,47 +24,34 @@ YUI.add('juju-env-fakebackend', function(Y) {
   }
 
   /**
-    Validates that the requested interfaces match and returns that data.
+    Returns the matching interface from the two given charms.  If no
+    interfaces match, return a hash with an "error" attribute.
 
-    @method validateInterface
-    @param {Array} charms An array of charm instances.
+    @method findMatchingInterface
     @param {Object} sharedInterfaces The shared interface data extracted from
       findSharedInterfaces.
     @param {Array} charmDatas The parsed string data from the supplied relation
       endpoints.
     @return {Object} The interface data or an error object.
   */
-  function validateInterface(charms, sharedInterfaces, charmDatas) {
-    var interfaces = [
-      sharedInterfaces[charmDatas[0].name].provides[charmDatas[0].type],
-      sharedInterfaces[charmDatas[1].name].requires[charmDatas[1].type],
-      sharedInterfaces[charmDatas[1].name].provides[charmDatas[1].type],
-      sharedInterfaces[charmDatas[0].name].requires[charmDatas[0].type]
-    ];
-
-    // Check to make sure there are matching interfaces.
-    // This was reduced from a more complex method to allow implicit relations
-    if ((interfaces[0] !== undefined) && (interfaces[1] !== undefined)) {
-      if (interfaces[0]['interface'] !== interfaces[1]['interface']) {
-        return {error: 'Specified interfaces do not match.'};
-      } else {
-        return {
-          sharedInterface: interfaces[0]['interface'],
-          sharedScope: interfaces[0].scope
-        };
+  function findMatchingInterface(sharedInterfaces, charmDatas) {
+    var result = Y.Array.reduce([0, 1], function (result, providedIndex) {
+      if (result) {
+        return result;
       }
-    } else if ((interfaces[2] !== undefined) && (interfaces[3] !== undefined)) {
-      if (interfaces[2]['interface'] !== interfaces[3]['interface']) {
-        return {error: 'Specified interfaces do not match.'};
-      } else {
-        return {
-          sharedInterface: interfaces[2]['interface'],
-          sharedScope: interfaces[2].scope
-        };
+      var requiredIndex = (!providedIndex) + 0,
+          required = charmDatas[requiredIndex],
+          provided = charmDatas[providedIndex],
+          requires = sharedInterfaces[required.name].requires[required.type],
+          provides = sharedInterfaces[provided.name].requires[provided.type];
+      if (requires && provides) {
+        if requires['interface'] !== provides['interface'] {
+          return {error: 'Specified interfaces do not match.'};
+        }
+        return required;
       }
-    } else {
-      return {error: 'Specified interfaces do not match.'};
-    }
+    };
+    return result || {error: 'Specified interfaces do not match.'};
   }
 
   /**
@@ -171,15 +158,15 @@ YUI.add('juju-env-fakebackend', function(Y) {
       return sharedInterfaces;
     }
 
-    cics = validateInterface(charms, sharedInterfaces, charmData);
+    cics = findMatchingInterface(sharedInterfaces, charmData);
 
     if (cics.error) {
       return cics;
     }
 
-    return {
-      sharedInterface: cics.sharedInterface,
-      sharedScope: cics.sharedScope
+    return { // XXX
+      sharedInterface: cics['interface'],
+      sharedScope: cics.scope
     };
   }
 
