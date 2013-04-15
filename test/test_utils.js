@@ -385,7 +385,7 @@ describe('utilities', function() {
     it('should translate service states correctly', function() {
       function assertState(state, expected) {
         var unit = {agent_state: state};
-        assert.equal(utils.simplifyState(unit), expected);
+        assert.equal(expected, utils.simplifyState(unit));
       }
       // "started" is turned into "running"
       assertState('started', 'running');

@@ -1023,14 +1023,14 @@ YUI.add('juju-view-utils', function(Y) {
    * If a state ends in "-error" or is simply "error" then it is an error
    * state, if it is "started" then it is "running", otherwise it is "pending".
    */
-  utils.simplifyState = function(unit) {
+  utils.simplifyState = function(unit, ignoreRelationErrors) {
     var state = unit.agent_state;
-    if ('started' === state && unit.relation_errors &&
-        Y.Object.keys(unit.relation_errors).length) {
-      state = 'relation-error';
-    }
-
     if (state === 'started') {
+      if (!ignoreRelationErrors &&
+          unit.relation_errors &&
+          Y.Object.size(unit.relation_errors)) {
+        return 'error';
+      }
       return 'running';
     }
     if ((/-?error$/).test(state)) {
