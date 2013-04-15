@@ -106,8 +106,7 @@
                 <div id="bws-readme">Readme</div>
                 <div id="bws-interfaces">
                     <p class="intro">
-                        {{#if requires}}
-                        {{else}}
+                        {{#unless requires}}
                             {{#if provides}}
                                 Interfaces determine how this charm relates to
                                 other charms. A relationship between charms can
@@ -121,15 +120,14 @@
                                 other charms. A relationship between charms can
                                 only be made if they share a common interface.
                                 </p>
-                                <p>
-                                This charm does not have any interfaces.
+                                <p>This charm does not have any interfaces.</p>
                             {{/if}}
-                        {{/if}}
+                        {{/unless}}
                     </p>
                     {{#if requires}}
                         <div class="yui3-g">
                             <div class="interfaces-heading yui3-u-1">
-                                <h3>Requires</h3>
+                                <h3>Requiress</h3>
                             </div>
                         </div>
                         <ul class="interface-list">
@@ -167,7 +165,7 @@
                         charm to best suit your deployment. You can change the 
                         default configuration settings either before or after 
                         you have deployed the charm, if necessary.
-                    </p
+                    </p>
                     {{#if options}}
                         <dl>
                             {{#arrayObject options}}
