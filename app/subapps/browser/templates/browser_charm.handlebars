@@ -14,24 +14,12 @@
             </div>
             <div class="charm-details yui3-u-1-2">
                 <h1>{{ name }}</h1>
-                <div class="providers">
-                    <img src="/juju-ui/assets/images/provider_icons/provider-lxc02.svg"
-                        alt="Provider name" />
-                    <img src="/juju-ui/assets/images/provider_icons/provider-openstack.svg"
-                        alt="Provider name" />
-                    <img src="/juju-ui/assets/images/provider_icons/provider-hp.svg"
-                        alt="Provider name" />
-                    <img src="/juju-ui/assets/images/provider_icons/provider-aws.svg"
-                        alt="Provider name" />
-                    <img src="/juju-ui/assets/images/provider_icons/provider-maas.svg"
-                        alt="Provider name" />
-                </div>
                 <dl>
                     <dt>Recent activity</dt>
                     <dd>
-                        {{ recent_download_count }}
+                        <strong>{{ recent_download_count }}</strong>
                         {{pluralize 'download' recent_download_count}},
-                        {{ recent_commit_count }}
+                        <strong>{{ recent_commit_count }}</strong>
                         {{pluralize 'commit' recent_commit_count}}
                     </dd>
                     <dt>Ubuntu series</dt>
@@ -95,13 +83,15 @@
 
         <div class="summary">
             <h2>Summary</h2>
-            {{ summary }}
+            <p>{{ summary }}</p>
             <h2>Description</h2>
-            {{#if isFullscreen}}
-                {{ description }}
-            {{else}}
-                {{ truncate description 300 }}
-            {{/if}}
+            <p>
+                {{#if isFullscreen}}
+                    {{ description }}
+                {{else}}
+                    {{ truncate description 300 }}
+                {{/if}}
+            </p>
         </div>
 
         <div class="tabs">
@@ -116,19 +106,32 @@
                 <div id="bws-readme">Readme</div>
                 <div id="bws-interfaces">
                     <p class="intro">
-                        Interfaces determine how this charm relates to other
-                        charms. A relationship between charms can only be made if
-                        they share a common interface. This charm requires certain
-                        interfaces to be provided by other charms. Similarly, this
-                        charm provides other interfaces that can be used by
-                        other charms.
+                        {{#if requires}}
+                        {{else}}
+                            {{#if provides}}
+                                Interfaces determine how this charm relates to
+                                other charms. A relationship between charms can
+                                only be made if they share a common interface.
+                                This charm requires certain interfaces to be
+                                provided by other charms. Similarly, this charm
+                                provides other interfaces that can be used by
+                                other charms.
+                            {{else}}
+                                Interfaces determine how this charm relates to
+                                other charms. A relationship between charms can
+                                only be made if they share a common interface.
+                                </p>
+                                <p>
+                                This charm does not have any interfaces.
+                            {{/if}}
+                        {{/if}}
                     </p>
-                    <div class="yui3-g">
-                        <div class="interfaces-heading yui3-u-1">
-                            <h3>Requires</h3>
-                        </div>
-                    </div>
                     {{#if requires}}
+                        <div class="yui3-g">
+                            <div class="interfaces-heading yui3-u-1">
+                                <h3>Requires</h3>
+                            </div>
+                        </div>
                         <ul class="interface-list">
                             {{#arrayObject requires}}
                                 <li class="interface-row yui3-g">
@@ -139,15 +142,13 @@
                                 </li>
                             {{/arrayObject}}
                         </ul>
-                    {{else}}
-                        <p>This charm does not require any interfaces.</p>
                     {{/if}}
-                    <div class="yui3-g">
-                        <div class="interfaces-heading yui3-u-1">
-                            <h3>Provides</h3>
-                        </div>
-                    </div>
                     {{#if provides}}
+                        <div class="yui3-g">
+                            <div class="interfaces-heading yui3-u-1">
+                                <h3>Provides</h3>
+                            </div>
+                        </div>
                         <ul class="interface-list">
                             {{#arrayObject provides}}
                                 <li class="interface-row yui3-g">
@@ -158,11 +159,15 @@
                                 </li>
                             {{/arrayObject}}
                         </ul>
-                    {{else}}
-                        <p>This charm does not provide any interfaces.</p>
                     {{/if}}
                 </div>
                 <div id="bws-configuration">
+                    <p class="intro">
+                        These are the ways in which you can configure this 
+                        charm to best suit your deployment. You can change the 
+                        default configuration settings either before or after 
+                        you have deployed the charm, if necessary.
+                    </p
                     {{#if options}}
                         <dl>
                             {{#arrayObject options}}
@@ -172,7 +177,7 @@
                                 </dt>
                                 <dd>
                                     <div>Default: {{value.default}}</div>
-                                    <div>{{value.description}}</div>
+                                    <p>{{value.description}}</p>
                                 </dd>
                             {{/arrayObject}}
                         </dl>
@@ -182,6 +187,15 @@
                 </div>
                 <div id="bws-qa">Quality</div>
                 <div id="bws-hooks">
+                    <p class="intro">
+                        Hooks are the pieces of code that comprise the charm. 
+                        A particular hook responds to specific events that Juju
+                        gives the charm, e.g. when there’s a change in the 
+                        environment or an administrator has made a change to 
+                        its configuration. Hooks are of interest mainly to 
+                        charm authors and advanced users. Select a hook below 
+                        to view its code.
+                    </p>
                     <select>
                         <option>--</option>
                         {{#each files}}

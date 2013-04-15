@@ -37,7 +37,7 @@ describe('charm token', function() {
     charm.render(charm_container);
     var metadata = Y.one('.metadata');
     assert.equal(
-        ' Recent activity: 1 commit 3 downloads ',
+        ' 1 commit, 3 downloads ',
         metadata.get('text').replace(/\s+/g, ' '));
   });
 });
