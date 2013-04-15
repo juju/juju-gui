@@ -110,9 +110,8 @@ YUI.add('subapp-browser', function(Y) {
       if (!this._fullscreen) {
         this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
           'callback': function(view) {
-            // if the fullscreen isn't the last part of the path, then ignore the
-            // editorial content.
-            debugger;
+            // if the fullscreen isn't the last part of the path, then ignore
+            // the editorial content.
             if (this._getSubPath(req.path) === 'fullscreen') {
               this.renderEditorial(req, res, next);
             }
@@ -155,8 +154,6 @@ YUI.add('subapp-browser', function(Y) {
         // view-data (such as a charm details) side by side.
         editorialContainer = container.one('.bws-content');
       }
-
-      debugger;
 
       if (!this._editorial) {
         this._editorial = new Y.juju.browser.views.EditorialView(
