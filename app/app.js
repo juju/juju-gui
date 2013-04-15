@@ -707,7 +707,7 @@ YUI.add('juju-gui', function(Y) {
           this.env.login();
           return;
         }
-      // After re-aranging the execution order of our routes to suppor the new
+      // After re-arranging the execution order of our routes to support the new
       // :gui: namespace we were unable to log out on prod build in Ubuntu
       // chrome. It appeared to be because credentials was null so the log in
       // form was never shown - this handles that edge case.
