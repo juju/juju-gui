@@ -2,7 +2,7 @@
   <div class="well yui3-u-1">
     <div class="unit-button-palette">
       <form>
-        {{#if unit_error}}
+        {{#if hasErrors}}
           <button type="button" class="btn" id="resolved-unit-button">Resolved</button>
           <button type="button" class="btn" id="retry-unit-button">Retry</button>
         {{/if}}
@@ -18,13 +18,13 @@
     <div id="unit-status">
       {{unit_ip_description}}
       {{#unit_ip_description}}|{{/unit_ip_description}}
-      {{#if unit_running}}
+      {{#if isRunning}}
         <span class="running">&#x25B6;</span>
       {{/if}}
-      {{#if unit_pending}}
+      {{#if isPending}}
         <span class="pending">&#x2b24;</span>
       {{/if}}
-      {{#if unit_error}}
+      {{#if hasErrors}}
         <span class="error">&#x2b1b;</span>
       {{/if}}
       {{showStatus unit}}
