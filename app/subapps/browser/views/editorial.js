@@ -25,6 +25,28 @@ YUI.add('subapp-browser-editorial', function(Y) {
   ns.EditorialView = Y.Base.create('browser-view-sidebar', Y.View, [], {
     template: views.Templates.editorial,
 
+    events: {
+      '.charm-token': {
+        click: '_handleCharmSelection'
+      }
+    },
+
+    _handleCharmSelection: function(ev) {
+      debugger;
+      var charm = ev.currentTarget;
+      var charmID = charm.getData('charmid');
+
+      var newRoute = [
+        'bws',
+        this.get('isFullscreen') ? 'fullscreen' : 'sidebar',
+        charmID
+      ].join('/');
+
+      this.fire('viewNavigate', {
+        url: newRoute
+      });
+    },
+
     /**
      * General YUI initializer.
      *
@@ -45,16 +67,10 @@ YUI.add('subapp-browser-editorial', function(Y) {
      * @param {Node} container An optional node to override where it's going.
      *
      */
-    render: function(container) {
+    render: function() {
       var tpl = this.template(this.getAttrs()),
           tplNode = Y.Node.create(tpl),
           store = this.get('store');
-
-      if (typeof container !== 'object') {
-        container = this.get('container');
-      } else {
-        this.set('container', container);
-      }
 
       // By default we grab the editorial content from the api to use for
       // display.
@@ -96,7 +112,9 @@ YUI.add('subapp-browser-editorial', function(Y) {
           });
           newCharmContainer.render(newContainer);
 
-          container.setHTML(tplNode);
+          var container = this.get('container')
+          container.append(tplNode);
+          this.get('renderTo').setHTML(container);
 
           // Add the charms to the cache for use in other views.
           // Start with a reset to empty any current cached models.
@@ -146,6 +164,9 @@ YUI.add('subapp-browser-editorial', function(Y) {
     ATTRS: {
       isFullscreen: {
         value: false
+      },
+      renderTo: {
+
       },
       store: {
 

@@ -82,6 +82,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     destructor: function() {
       this._cacheCharms.destroy();
+
     },
 
     /**
@@ -95,6 +96,12 @@ YUI.add('subapp-browser', function(Y) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
+
+      // Listen for navigate events from any views we're rendering.
+      this.on('*:viewNavigate', function(ev) {
+        debugger;
+        this.navigate(ev.url, ev.options);
+      });
     },
 
     /**
@@ -146,20 +153,21 @@ YUI.add('subapp-browser', function(Y) {
         // is shared. So if the url is /fullscreen show editorial content, but
         // if it's not, there's something else handling displaying the
         // view-data.
-        editorialContainer = container.one(' .bws-view-data');
+        extraCfg.renderTo = container.one(' .bws-view-data');
         extraCfg.isFullscreen = true;
       } else {
         // If this is the sidebar view, then the editorial content goes into a
         // different div since we can view both editorial content and
         // view-data (such as a charm details) side by side.
-        editorialContainer = container.one('.bws-content');
+        extraCfg.renderTo = container.one('.bws-content');
       }
 
       if (!this._editorial) {
         this._editorial = new Y.juju.browser.views.EditorialView(
             this._getViewCfg(extraCfg));
 
-        this._editorial.render(editorialContainer);
+        this._editorial.render();
+        this.addTarget(this._editorial);
         // Add any sidebar charms to the running cache.
         this._cacheCharms.add(this._editorial._cacheCharms);
       }
@@ -177,6 +185,7 @@ YUI.add('subapp-browser', function(Y) {
     sidebar: function(req, res, next) {
       // Clean up any details we've got.
       if (this._details) {
+        this.removeTarget(this._details);
         this._details.destroy({remove: true});
       }
 
@@ -238,10 +247,10 @@ YUI.add('subapp-browser', function(Y) {
       this._details = new Y.juju.browser.views.BrowserCharmView(
           this._getViewCfg(extraCfg));
       this._details.render();
+      this.addTarget(this._details);
       // Make sure we show the bws-view-data div that the details renders
       // into.
       Y.one('.bws-view-data').show();
-
       next();
     }
 
