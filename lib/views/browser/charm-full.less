@@ -1,6 +1,6 @@
 #subapp-browser .charm {
     display: table;
-    padding: 0 0 0 20px;
+    width: 100%;
 
     a {
         color: @charm-panel-orange;
@@ -22,7 +22,7 @@
         display: table-cell;
     }
     .content {
-        padding: 0 20px 25px 0;
+        padding: 0 20px 25px 20px;
     }
     .nav {
         height: 30px;
@@ -75,14 +75,6 @@
             h1 {
                 font-size: 23pt;
             }
-            .providers {
-                margin: 7px 0 10px 0;
-
-                img {
-                    width: 30px;
-                    margin-right: 8px;
-                }
-            }
             dt,
             dd {
                 font-size: 10.5pt;
@@ -111,6 +103,7 @@
         }
         .section-title {
             margin-bottom: 10px;
+            background: transparent;
         }
         .remaining {
             margin-top: 10px;
@@ -131,6 +124,14 @@
     .summary {
         padding-top: 12px;
         border-top: 1px solid @bws-border;
+
+        h2 {
+            margin-top: 10px;
+            line-height: 20pt;
+        }
+        p {
+            margin: 0;
+        }
     }
     #bws-readme {
         h1,
@@ -279,4 +280,9 @@
 
 #bws-fullscreen .charm {
     width: 100%;
+}
+.sidebar .charm {
+    p {
+        width: 66.666%;
+    }
 }

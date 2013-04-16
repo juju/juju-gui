@@ -289,7 +289,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
             }
           }, this);
-
     },
 
     /**
