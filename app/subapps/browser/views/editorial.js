@@ -31,6 +31,14 @@ YUI.add('subapp-browser-editorial', function(Y) {
       }
     },
 
+    /**
+        When selecting a charm from the list make sure we re-route the app to
+        the details view with that charm selected.
+
+        @method _handleCharmSelection
+        @param {Event} ev the click event handler for the charm selected.
+
+     */
     _handleCharmSelection: function(ev) {
       var charm = ev.currentTarget;
       var charmID = charm.getData('charmid');

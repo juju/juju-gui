@@ -12,9 +12,6 @@ YUI.add('subapp-browser', function(Y) {
   var ns = Y.namespace('juju.subapps'),
       models = Y.namespace('juju.models');
 
-
-  var StateManager =
-
   /**
    * Browser Sub App for the Juju Gui.
    *
@@ -24,21 +21,29 @@ YUI.add('subapp-browser', function(Y) {
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
 
+    /**
+        Given the current subapp state, generate a url to pass up to the
+        routing code to route to.
+
+        @method _getStateUrl
+        @param {Object} change the values to change in the current state.
+
+     */
     _getStateUrl: function(change) {
-        var urlParts = ['/bws'];
+      var urlParts = ['/bws'];
 
-        this._viewState = Y.merge(this._viewState, change);
+      this._viewState = Y.merge(this._viewState, change);
 
-        urlParts.push(this._viewState.viewmode);
-        if (this._viewState.search) {
-          urlParts.push('search');
-        }
-        if(this._viewState.charmID) {
-          urlParts.push(this._viewState.charmID);
-        }
+      urlParts.push(this._viewState.viewmode);
+      if (this._viewState.search) {
+        urlParts.push('search');
+      }
+      if (this._viewState.charmID) {
+        urlParts.push(this._viewState.charmID);
+      }
 
-        // Always end on a /
-        return urlParts.join('/');
+      // Always end on a /
+      return urlParts.join('/');
     },
 
     /**
@@ -75,6 +80,12 @@ YUI.add('subapp-browser', function(Y) {
       });
     },
 
+    /**
+       Create an initial subapp state for later url generation.
+
+       @method _initState
+
+     */
     _initState: function() {
       this._viewState = {
         viewmode: 'sidebar',
@@ -152,7 +163,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     destructor: function() {
       this._cacheCharms.destroy();
-
+      delete this._viewState;
     },
 
     /**
@@ -204,7 +215,6 @@ YUI.add('subapp-browser', function(Y) {
       });
     },
 
-
     /**
       Render editorial content into the parent view when required.
 
@@ -218,6 +228,7 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     renderEditorial: function(req, res, next) {
+      // If loading the interesting content then it's not a search going on.
       this._viewState.search = false;
       var container = this.get('container'),
           editorialContainer,
@@ -248,6 +259,15 @@ YUI.add('subapp-browser', function(Y) {
       this._cacheCharms.add(this._editorial._cacheCharms);
     },
 
+    /**
+        Dispatch to the correct viewmode based on the route that was hit.
+
+       @method routeView
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
+
+     */
     routeView: function(req, res, next) {
       this[req.params.viewmode](req, res, next);
     },
@@ -263,9 +283,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     sidebar: function(req, res, next) {
       this._viewState.viewmode = 'sidebar';
-      // if (this._fullscreen) {
-      //   this._fullscreen.destroy();
-      // }
+
       // Clean up any details we've got.
       if (this._details) {
         this._details.destroy({remove: true});

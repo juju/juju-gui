@@ -81,9 +81,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
           this.search.on(
               this.search.EVT_TOGGLE_FULLSCREEN, this._toggleFullscreen, this)
       );
-
     },
-
 
     /**
      * Render out the main search widget and controls shared across various
@@ -134,6 +132,14 @@ YUI.add('subapp-browser-mainview', function(Y) {
       }
     },
 
+    /**
+        Upon clicking the fullscreen toggle icon make sure we re-route to the
+        new form of the UX.
+
+        @method _toggleFullscreen
+        @param {Event} ev the click event handler on the button.
+
+     */
     _toggleFullscreen: function(ev) {
       ev.halt();
       var change = {

@@ -196,16 +196,20 @@ YUI.add('subapp-browser-charmview', function(Y) {
       return prettyCommits;
     },
 
+    /**
+        Handle the back button being clicked on from the header of the
+        details.
 
+        @method _handleBack
+        @param {Event} ev the click event handler.
+
+     */
     _handleBack: function(ev) {
-       ev.halt();
-       var newRoute = [
-        'bws',
-        this.get('isFullscreen') ? 'fullscreen' : 'sidebar'
-      ].join('/');
-
+      ev.halt();
       this.fire('viewNavigate', {
-        url: newRoute
+        change: {
+          charmID: undefined
+        }
       });
     },
 
