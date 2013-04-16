@@ -1022,5 +1022,73 @@
 
   });
 
+  describe.only('FakeBackend.removeRelation', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils, setCharm, deployResult, callback;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      var setupData = utils.makeFakeBackendWithCharmStore();
+      fakebackend = setupData.fakebackend;
+      setCharm = setupData.setCharm;
+      deployResult = undefined;
+      callback = function(response) { deployResult = response; };
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    function createAndRemoveRelation(charms, relation,
+        removeRelation, mock, done) {
+          fakebackend.deploy(charms[0], function() {
+            fakebackend.deploy(charms[1], function() {
+              fakebackend.addRelation.apply(fakebackend, relation);
+              var result = fakebackend.removeRelation.apply(
+                  fakebackend, removeRelation);
+
+              assert.equal(result.error, undefined);
+              assert.equal(result.relationId, 'relation-0');
+              assert.equal(typeof result.relation, 'object');
+              assert.deepEqual(result.endpoints, mock.endpoints);
+              assert.equal(result.scope, mock.scope);
+              assert.equal(result.type, mock.type);
+              done();
+            });
+          });
+    }
+
+    it('rejects unauthenticated calls', function() {
+      fakebackend.logout();
+      var result = fakebackend.addRelation();
+      assert.equal(result.error, 'Please log in.');
+    });
+
+    it('requires two string endpoint names', function() {
+      var result = fakebackend.addRelation();
+      assert.equal(result.error, 'Two string endpoint names' +
+              ' required to establish a relation');
+    });
+
+    it('removes a relation when supplied with two string endpoints',
+        function(done) {
+          createAndRemoveRelation(
+              ['cs:wordpress', 'cs:mysql'],
+              ['wordpress:db', 'mysql:db'],
+              ['wordpress:db', 'mysql:db'],
+              {},
+              done);
+        });
+
+    it('throws an error if the relationship does not exist');
+
+  });
 
 })();

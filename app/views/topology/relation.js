@@ -470,6 +470,7 @@ YUI.add('juju-topology-relation', function(Y) {
 
     _removeRelationCallback: function(view,
             relationElement, relationId, confirmButton, ev) {
+console.log(ev);
       var topo = this.get('component'),
           db = topo.get('db');
       var service = this.get('model');

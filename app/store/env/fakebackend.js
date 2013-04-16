@@ -83,6 +83,33 @@ YUI.add('juju-env-fakebackend', function(Y) {
   }
 
   /**
+    Takes two string endpoints and splits it into usable parts.
+
+    @method parseEndpointStrings
+    @param {Array} endpoints an array of endpoint strings
+      to split in the format wordpress:db.
+    @param {Object} context the context to execute the parsing under.
+    @return {Object} A hash with four keys: service (the associated
+      service model), charm (the associated charm model for the
+      service), name (the user-defined service name), and type (the
+      charm-author-defined relation type name).
+  */
+  function parseEndpointStrings(endpoints, context) {
+      return Y.Array.map(endpoints,
+          function(endpoint) {
+            var epData = endpoint.split(':'),
+                result = { name: epData[0], type: epData[1] };
+            result.service = this.db.services.getById(result.name);
+            if (result.service) {
+              result.charm = this.db.charms.getById(
+                  result.service.get('charm'));
+            }
+            return result;
+          },
+          context);
+  }
+
+  /**
   An in-memory fake Juju backend.
 
   @class FakeBackend
@@ -694,7 +721,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     /**
       Add a relation between two services.
 
-      @method add_relation
+      @method addRelation
       @param {String} endpointA A string representation of the service name
         and endpoint connection type ie) wordpress:db.
       @param {String} endpointB A string representation of the service name
@@ -710,29 +737,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
               ' required to establish a relation'};
       }
 
-      var endpointData = Y.Array.map(
-          [endpointA, endpointB],
-          /**
-            Takes a string endpoint and splits it into usable parts.
-            @method endpointSplit
-            @param {String} endpoint the endpoint to split in the format
-              wordpress:db.
-            @return {Object} A hash with four keys: service (the associated
-              service model), charm (the associated charm model for the
-              service), name (the user-defined service name), and type (the
-              charm-author-defined relation type name).
-          */
-          function(endpoint) {
-            var epData = endpoint.split(':'),
-                result = { name: epData[0], type: epData[1] };
-            result.service = this.db.services.getById(result.name);
-            if (result.service) {
-              result.charm = this.db.charms.getById(
-                  result.service.get('charm'));
-            }
-            return result;
-          },
-          this);
+      // Parses the endpoint strings to extract all required data.
+      var endpointData = parseEndpointStrings([endpointA, endpointB], this);
 
       // This error should never be hit but it's here JIC
       if (!endpointData[0].charm || !endpointData[1].charm) {
@@ -791,6 +797,57 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // Fallback error If the relation was not able to be created
       // for any reason other than what has already been checked for.
       return false;
+    },
+
+    /*
+      Removes a relation between two services.
+
+      @method removeRelation
+      @param {String} endpointA A string representation of the service name
+        and endpoint connection type ie) wordpress:db.
+      @param {String} endpointB A string representation of the service name
+        and endpoint connection type ie) wordpress:db.
+    */
+    removeRelation: function(endpointA, endpointB) {
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+      if ((typeof endpointA !== 'string') ||
+          (typeof endpointB !== 'string')) {
+        return {error: 'Two string endpoint names' +
+              ' required to establish a relation'};
+      }
+
+      // Parses the endpoint strings to extract all required data.
+      var endpointData = parseEndpointStrings([endpointA, endpointB], this);
+
+      // This error should never be hit but it's here JIC
+      if (!endpointData[0].charm || !endpointData[1].charm) {
+        return {error: 'Charm not loaded.'};
+      }
+
+      var relation;
+      this.db.relations.some(function(rel) {
+        var relAttrs = rel.getAttrs(),
+            endpoints = relAttrs.endpoints,
+            relationId = relAttrs.relation_id;
+        return [0, 1].some(function(index) {
+          // Check to see if the service names match an existing relation
+          if ((endpoints[index][0] === endpointData[0].name) &&
+              (endpoints[!index + 0][0] === endpointData[1].name)) {
+            // Check to see if the interface names match
+            if ((endpoints[index][1].name === endpointData[0].type) &&
+                (endpoints[!index + 0][1].name === endpointData[1].type)) {
+              relation = relationId;
+              console.log('matching');
+              return true;
+            }
+          }
+        });
+      });
+
+      console.log(relation);
+      return {};
     },
 
     // updateAnnotations: function() {
@@ -922,10 +979,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this.annotations[annotationGroup][entityName] = [entity, true];
       return {result: true};
     },
-
-    // removeRelation: function() {
-
-    // },
 
     setConfig: function(serviceName, config) {
       if (!this.get('authenticated')) {
