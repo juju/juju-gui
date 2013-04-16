@@ -9,60 +9,6 @@ Sandbox APIs mimicking communications with the Go and Juju backends.
 
 YUI.add('juju-env-sandbox', function(Y) {
 
-  /**
-    Takes a string endpoint and splits it into usable parts.
-    @method endpointToName
-    @param {String} endpoint the endpoint to split in the format
-      wordpress:db.
-  */
-  function endpointToName(endpoint) {
-    // In order to handle the integration use case
-    // as well as being used directly.
-    // Or if no endpoint is supplied
-    if ((typeof endpoint === 'string') ||
-        (endpoint === undefined)) {
-      return endpoint;
-    }
-
-    return endpoint[0] + ':' + endpoint[1].name;
-  }
-
-  /**
-    Returned endpoints have a different syntax and the relation method is
-    called with differing data formats but we have to return a common format.
-
-    @method normalizeEndpointFormat
-    @param {String | Object} endpointA string or object representation of the
-      endpoint data.
-    @param {String | Object} endpointB string or object representation of the
-      endpoint data.
-    @param {Object} relation instance between the two endpoints.
-  */
-  function normalizeEndpointFormat(endpointA, endpointB, relation) {
-    var eptA = {}, eptB = {};
-    if (typeof endpointA === 'string') {
-      eptA[endpointA.split(':')[0]] = {
-        name: relation.displayName
-        // cannot return `role` if we aren't provided with it without extra
-        // calculations on the back end. It is also not used anywhere so it
-        // shouldn't be an issue.
-      };
-      eptB[endpointB.split(':')[0]] = {
-        name: relation.displayName
-      };
-    } else {
-      // In order to get a valid error message and formatted data back to the
-      // client if one of these are undefined we need to check first
-      if (endpointA !== undefined) {
-        eptA[endpointA[0]] = endpointA[1];
-      }
-      if (endpointB !== undefined) {
-        eptB[endpointB[0]] = endpointB[1];
-      }
-    }
-    return [eptA, eptB];
-  }
-
   var environments = Y.namespace('juju.environments');
   var sandboxModule = Y.namespace('juju.environments.sandbox');
   var CLOSEDERROR = 'INVALID_STATE_ERR : Connection is closed.';
@@ -619,12 +565,7 @@ YUI.add('juju-env-sandbox', function(Y) {
     */
     performOp_add_relation: function(data) {
       var relation = this.get('state').addRelation(
-          endpointToName(data.endpoint_a),
-          endpointToName(data.endpoint_b));
-
-      // Returned endpoints have a different syntax.
-      var endpoints = normalizeEndpointFormat(
-          data.endpoint_a, data.endpoint_b, relation);
+          data.endpoint_a, data.endpoint_b);
 
       if (relation === false) {
         // If everything checks out but could not create a new relation model
@@ -638,12 +579,14 @@ YUI.add('juju-env-sandbox', function(Y) {
         this.get('client').receive(data);
         return;
       }
-
-      data.endpoint_a = endpointToName(data.endpoint_a);
-      data.endpoint_b = endpointToName(data.endpoint_b);
+      // Normalize endpoints so that they are in the format
+      // serviceName: { name: 'interface-name' }
+      var normalizedEndpoints, epA = {}, epB = {};
+      epA[relation.endpoints[0][0]] = relation.endpoints[0][1];
+      epB[relation.endpoints[1][0]] = relation.endpoints[1][1];
 
       data.result = {
-        endpoints: endpoints,
+        endpoints: [epA, epB],
         id: relation.relationId,
         // interface is a reserved word
         'interface': relation.type,
