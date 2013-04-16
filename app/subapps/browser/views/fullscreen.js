@@ -16,29 +16,7 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
    *
    */
   ns.FullScreen = Y.Base.create('browser-view-fullscreen', ns.MainView, [], {
-    _fullscreenTarget: '/bws/sidebar',
-
     template: views.Templates.fullscreen,
-
-
-    /**
-     * The default view is the editorial rendering. Render this view out.
-     *
-     * @method _renderEditorialView
-     * @param {Node} container node to render out to.
-     *
-     */
-    _renderEditorialView: function(container) {
-      var tpl = this.template(),
-          tplNode = Y.Node.create(tpl);
-
-      this._renderSearchWidget(tplNode);
-
-      if (!Y.Lang.isValue(container)) {
-        container = this.get('container');
-      }
-      container.setHTML(tplNode);
-    },
 
     /**
      * Render out the view to the DOM.
@@ -48,12 +26,17 @@ YUI.add('subapp-browser-fullscreen', function(Y) {
      *
      */
     render: function(container) {
-      if (this.get('charmID')) {
-        this._renderCharmView(container);
-      } else {
-        this._renderEditorialView(container);
-      }
+      var tpl = this.template(),
+          tplNode = Y.Node.create(tpl);
 
+      this._renderSearchWidget(tplNode);
+
+      if (typeof container !== 'object') {
+        container = this.get('container');
+      } else {
+        this.set('container', container);
+      }
+      container.setHTML(tplNode);
       // Bind our view to the events from the search widget used for controls.
       this._bindSearchWidgetEvents();
     }

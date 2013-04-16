@@ -1,7 +1,7 @@
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}5-6{{else}}1{{/if}}">
         <div class="nav">
-            <a href="" class="back">{{#if isFullscreen}}Back{{else}}Close{{/if}}</a>
+            <a href="/bws/sidebar/" class="back">{{#if isFullscreen}}Back{{else}}Close{{/if}}</a>
             <a href="" class="add">Add</a>
             <a href="" class="share">
                 <img src="/juju-ui/assets/images/share_icon.jpg" alt="Share" />
@@ -35,12 +35,22 @@
             </div>
         </div>
 
-        <div class="changelog">
-            <h3 class="section-title">
-                {{#if recent_commits}}
-                    <a href="" class="expandToggle" data-state="closed">
+        <div class="summary">
+            <h2>Summary</h2>
+            <p>{{ summary }}</p>
+            <h2>Description</h2>
+            <p>
+                {{#if isFullscreen}}
+                    {{ description }}
+                {{else}}
+                    {{ truncate description 300 }}
                 {{/if}}
-                    Change log
+            </p>
+        </div>
+
+        <div class="changelog">
+            <h3 class="section-title" data-state="closed">
+                Change log
                 {{#if recent_commits}}
                     <span class="expand">
                         <span class="more">
@@ -52,17 +62,16 @@
                                 alt="Contract" />
                             </span>
                         </span>
-                    </a>
                 {{/if}}
             </h3>
             {{#if recent_commits}}
                 <div class="first">
-                    <h4>Latest change</h4>
                     <p>
-                    {{prettyCommits.first.prettyDate}}
-                    {{prettyCommits.first.author.name}}
-                    {{prettyCommits.first.message}}
-                    (revno{{prettyCommits.first.revno}})
+                        Latest change:
+                        {{prettyCommits.first.prettyDate}}
+                        {{prettyCommits.first.author.name}}
+                        {{prettyCommits.first.message}} -
+                        <a href="">REVNO{{prettyCommits.first.revno}}</a>
                     </p>
                 </div>
                 <div class="remaining hidden">
@@ -79,19 +88,6 @@
             {{else}}
                 <p>No change history exists.</p>
             {{/if}}
-        </div>
-
-        <div class="summary">
-            <h2>Summary</h2>
-            <p>{{ summary }}</p>
-            <h2>Description</h2>
-            <p>
-                {{#if isFullscreen}}
-                    {{ description }}
-                {{else}}
-                    {{ truncate description 300 }}
-                {{/if}}
-            </p>
         </div>
 
         <div class="tabs">

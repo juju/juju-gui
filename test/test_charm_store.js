@@ -281,6 +281,39 @@
 
     });
 
+    it('handles searching correctly', function(done) {
+      var hostname = 'http://localhost',
+          data = [],
+          url;
+      var api = new Y.juju.Charmworld0({
+        apiHost: hostname
+      });
+      data.push({
+        responseText: Y.JSON.stringify({
+          name: 'foo'
+        })
+      });
+      // Create a monkeypatched datasource we can use to track the generated
+      // apiEndpoint
+      var datasource = new Y.DataSource.Local({source: data});
+      datasource.realSendRequest = datasource.sendRequest;
+      datasource.sendRequest = function(params) {
+        url = params.request;
+        datasource.realSendRequest(params);
+      };
+
+      api.set('datasource', datasource);
+      var result = api.search('foo', {
+        success: function(data) {
+          assert.equal('charms?text=foo', url);
+          assert.equal('foo', data.name);
+          done();
+        },
+        failure: function(data, request) {
+        }
+      }, this);
+      api.destroy();
+    });
   });
 
 })();
