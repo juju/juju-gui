@@ -893,7 +893,7 @@ YUI.add('juju-env-go', function(Y) {
       console.log(userCallback);
       userCallback({
         op: 'resolved',
-        err: !!data.Error,
+        err: data.Error,
         unit_name: unitName
       });
     },

@@ -1205,7 +1205,7 @@
       var unit_name = 'mysql/0';
       env.resolved(unit_name, null, true, function(result) {
         assert.equal(result.op, 'resolved');
-        assert.isTrue(result.err);
+        assert.equal(result.err, 'badness');
         done();
       });
       msg = conn.last_message();
