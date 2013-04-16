@@ -130,53 +130,6 @@
       assert.isTrue(Y.Lang.isObject(container.one('input')));
     });
 
-    it('caches models fetched from the api for later use', function() {
-      var container = Y.one('#subapp-browser');
-      view = new Sidebar();
-      view._cacheCharms.size().should.eql(0);
-
-      // mock out the request data for the editorial view. We want to make
-      // sure we're caching the results.
-      view.get('store').set(
-          'datasource',
-          new Y.DataSource.Local({source: sampleData}));
-      view.render(container);
-
-      view._cacheCharms.size().should.eql(5);
-    });
-
-    it('handles details event when clicking on a charm token', function(done) {
-      var container = Y.one('#subapp-browser');
-      view = new Sidebar();
-
-      // Test is successful when it completes by hitting this callback we've
-      // over written.
-      view._handleTokenSelect = function(ev) {
-        done();
-      };
-
-      view.get('store').set(
-          'datasource',
-          new Y.DataSource.Local({source: sampleData}));
-      view.render(container);
-      container.one('.charm-token').simulate('click');
-    });
-
-    it('renders details when clicking on a charm token', function() {
-      var container = Y.one('#subapp-browser');
-      view = new Sidebar();
-
-      view.get('store').set(
-          'datasource',
-          new Y.DataSource.Local({source: sampleData}));
-      view.render(container);
-      container.one('.charm-token').simulate('click');
-
-      var details_node = container.one('.bws-view-data');
-      details_node.one('h1').get('text').should.eql('byobu-classroom');
-      details_node.all('.tabs').size().should.eql(1);
-    });
-
   });
 })();
 
