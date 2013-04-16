@@ -2,11 +2,15 @@
 
 
 describe('search view', function() {
-  var Y;
+  var searchView,
+      views,
+      Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['subapp-browser-searchview'], function(Y) {
+          views = Y.namespace('juju.browser.views');
+          searchView = views.BrowserSearchView;
           done();
         });
   });
@@ -18,6 +22,6 @@ describe('search view', function() {
   });
 
   it.only('exists', function() {
-    assert.isObject(Y.juju.views.browser.BrowserSearchView());
+    assert.isObject(new searchView());
   });
 });
