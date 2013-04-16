@@ -12,6 +12,9 @@ YUI.add('subapp-browser', function(Y) {
   var ns = Y.namespace('juju.subapps'),
       models = Y.namespace('juju.models');
 
+
+  var StateManager =
+
   /**
    * Browser Sub App for the Juju Gui.
    *
@@ -20,6 +23,24 @@ YUI.add('subapp-browser', function(Y) {
    *
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
+
+    _getStateUrl: function(change) {
+        debugger;
+        var urlParts = ['bws'];
+
+        this._viewState = Y.merge(this._viewState, change);
+
+        urlParts.push(this._viewState.viewmode);
+        if (this._viewState.search) {
+          urlParts.push('search');
+        }
+        if(this._viewState.charmID) {
+          urlParts.push(this._viewState.charmID);
+        }
+
+        return urlParts.join('/');
+    },
+
     /**
      * Some routes might have sub parts that hint to where a user wants focus.
      * In particular we've got the tabs that might have focus. They are the
@@ -52,6 +73,15 @@ YUI.add('subapp-browser', function(Y) {
         db: this.get('db'),
         store: this.get('store')
       });
+    },
+
+    _initState: function() {
+      this._viewState = {
+        viewmode: 'sidebar',
+        search: false,
+        charmID: undefined,
+        query: {}
+  };
     },
 
     /**
@@ -97,10 +127,15 @@ YUI.add('subapp-browser', function(Y) {
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
 
+      this._initState();
+
       // Listen for navigate events from any views we're rendering.
       this.on('*:viewNavigate', function(ev) {
-        debugger;
-        this.navigate(ev.url, ev.options);
+        if (ev.url) {
+          this.navigate(ev.url, ev.options);
+        } else if (ev.change) {
+          this.navigate(this._getStateUrl(ev.change));
+        }
       });
     },
 
@@ -114,6 +149,11 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
+      this._viewState.viewmode = 'fullscreen';
+      if (this._sidebar) {
+        this._sidebar.destroy();
+      }
+
       if (!this._fullscreen) {
         this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
           'callback': function(view) {
@@ -143,6 +183,7 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     renderEditorial: function(req, res, next) {
+      this._viewState.search = false;
       var container = this.get('container'),
           editorialContainer,
           extraCfg = {};
@@ -153,7 +194,7 @@ YUI.add('subapp-browser', function(Y) {
         // is shared. So if the url is /fullscreen show editorial content, but
         // if it's not, there's something else handling displaying the
         // view-data.
-        extraCfg.renderTo = container.one(' .bws-view-data');
+        extraCfg.renderTo = container.one('.bws-view-data');
         extraCfg.isFullscreen = true;
       } else {
         // If this is the sidebar view, then the editorial content goes into a
@@ -167,11 +208,7 @@ YUI.add('subapp-browser', function(Y) {
             this._getViewCfg(extraCfg));
 
         this._editorial.render();
-        this.addTarget(this._editorial);
-        // this._editorial.on('viewNavigate', function(ev) {
-        //   debugger;
-        //   this.navigate(ev.url, ev.options);
-        // });
+        this._editorial.addTarget(this);
 
         // Add any sidebar charms to the running cache.
         this._cacheCharms.add(this._editorial._cacheCharms);
@@ -188,9 +225,12 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
+      this._viewState.viewmode = 'sidebar';
+      if (this._fullscreen) {
+        this._fullscreen.destroy();
+      }
       // Clean up any details we've got.
       if (this._details) {
-        this.removeTarget(this._details);
         this._details.destroy({remove: true});
       }
 
@@ -231,6 +271,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     charmDetails: function(req, res, next) {
       var charmID = req.params.id;
+      this._viewState.charmID = charmID;
       var extraCfg = {
         charmID: charmID,
         container: Y.Node.create('<div class="charmview"/>')
@@ -252,7 +293,7 @@ YUI.add('subapp-browser', function(Y) {
       this._details = new Y.juju.browser.views.BrowserCharmView(
           this._getViewCfg(extraCfg));
       this._details.render();
-      this.addTarget(this._details);
+      this._details.addTarget(this);
       // Make sure we show the bws-view-data div that the details renders
       // into.
       Y.one('.bws-view-data').show();

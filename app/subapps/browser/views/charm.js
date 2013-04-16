@@ -38,6 +38,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       },
       '#bws-hooks select': {
         change: '_loadHookContent'
+      },
+      '.nav .back': {
+        click: '_handleBack'
       }
     },
 
@@ -191,6 +194,19 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       return prettyCommits;
+    },
+
+
+    _handleBack: function(ev) {
+       ev.halt();
+       var newRoute = [
+        'bws',
+        this.get('isFullscreen') ? 'fullscreen' : 'sidebar'
+      ].join('/');
+
+      this.fire('viewNavigate', {
+        url: newRoute
+      });
     },
 
     /**

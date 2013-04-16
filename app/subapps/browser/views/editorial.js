@@ -32,19 +32,13 @@ YUI.add('subapp-browser-editorial', function(Y) {
     },
 
     _handleCharmSelection: function(ev) {
-      debugger;
       var charm = ev.currentTarget;
       var charmID = charm.getData('charmid');
 
-      var newRoute = [
-        'bws',
-        this.get('isFullscreen') ? 'fullscreen' : 'sidebar',
-        charmID
-      ].join('/');
-
       this.fire('viewNavigate', {
-        url: newRoute,
-        emitFacade: true
+        change: {
+          charmID: charmID
+        }
       });
     },
 
@@ -59,10 +53,6 @@ YUI.add('subapp-browser-editorial', function(Y) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
-      this.publish('viewNavigate', {
-        emitFacade: true,
-        broadcast: 1
-      });
     },
 
     /**
@@ -117,7 +107,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           });
           newCharmContainer.render(newContainer);
 
-          var container = this.get('container')
+          var container = this.get('container');
           container.append(tplNode);
           this.get('renderTo').setHTML(container);
 

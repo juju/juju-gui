@@ -76,6 +76,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
           this.search.on(
               this.search.EVT_TOGGLE_VIEWABLE, this._toggleBrowser, this)
       );
+
+      this.addEvent(
+          this.search.on(
+              this.search.EVT_TOGGLE_FULLSCREEN, this._toggleFullscreen, this)
+      );
+
     },
 
 
@@ -127,6 +133,14 @@ YUI.add('subapp-browser-mainview', function(Y) {
       }
     },
 
+    _toggleFullscreen: function(ev) {
+      var change = {
+        viewmode: this.isFullscreen() ? 'sidebar' : 'fullscreen'
+      }
+      this.fire('viewNavigate', {
+        change: change
+      });
+    },
 
     /**
      * Shared method to generate a message to the user based on a bad api
