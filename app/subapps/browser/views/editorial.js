@@ -69,7 +69,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
 
       // By default we grab the editorial content from the api to use for
       // display.
-      this.get('store').sidebarEditorial({
+      this.get('store').interesting({
         'success': function(data) {
           // Add featured charms
           var featuredCharms = this.get('store').resultsToCharmlist(

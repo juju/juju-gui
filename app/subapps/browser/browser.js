@@ -81,7 +81,7 @@ YUI.add('subapp-browser', function(Y) {
         search: false,
         charmID: undefined,
         query: {}
-  };
+      };
     },
 
     /**
@@ -101,164 +101,6 @@ YUI.add('subapp-browser', function(Y) {
       sidebar: {
         type: 'juju.browser.views.Sidebar',
         preserve: false
-      }
-    },
-
-    /**
-       Cleanup after ourselves on destroy.
-
-       @method destructor
-
-     */
-    destructor: function() {
-      this._cacheCharms.destroy();
-
-    },
-
-    /**
-     * General app initializer
-     *
-     * @method initializer
-     * @param {Object} cfg general init config object.
-     *
-     */
-    initializer: function(cfg) {
-      // Hold onto charm data so we can pass model instances to other views when
-      // charms are selected.
-      this._cacheCharms = new models.BrowserCharmList();
-
-      this._initState();
-
-      // Listen for navigate events from any views we're rendering.
-      this.on('*:viewNavigate', function(ev) {
-        var url;
-        if (ev.url) {
-          url = ev.url;
-        } else if (ev.change) {
-          url = this._getStateUrl(ev.change);
-        }
-        this.navigate(url);
-      });
-    },
-
-    /**
-     * Render the fullscreen view to the client.
-     *
-     * @method fullscreen
-     * @param {Request} req current request object.
-     * @param {Response} res current response object.
-     * @param {function} next callable for the next route in the chain.
-     *
-     */
-    fullscreen: function(req, res, next) {
-      this._viewState.viewmode = 'fullscreen';
-      if (this._sidebar) {
-        this._sidebar.destroy();
-      }
-
-      if (!this._fullscreen) {
-        this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
-          'callback': function(view) {
-            // if the fullscreen isn't the last part of the path, then ignore
-            // the editorial content.
-            if (this._getSubPath(req.path) === 'fullscreen') {
-              this.renderEditorial(req, res, next);
-            }
-            next();
-          }
-        });
-      } else {
-        next();
-      }
-    },
-
-    /**
-      Render editorial content into the parent view when required.
-
-      The parent view is either fullscreen/sidebar which determines how the
-      editorial content is to be rendered.
-
-      @method renderEditorial
-      @param {Request} req current request object.
-      @param {Response} res current response object.
-      @param {function} next callable for the next route in the chain.
-
-     */
-    renderEditorial: function(req, res, next) {
-      this._viewState.search = false;
-      var container = this.get('container'),
-          editorialContainer,
-          extraCfg = {};
-
-      if (req.path.indexOf('fullscreen') !== -1) {
-        // The fullscreen view requires that there be no editorial content if
-        // we're looking at a specific charm. The div we dump our content into
-        // is shared. So if the url is /fullscreen show editorial content, but
-        // if it's not, there's something else handling displaying the
-        // view-data.
-        extraCfg.renderTo = container.one('.bws-view-data');
-        extraCfg.isFullscreen = true;
-      } else {
-        // If this is the sidebar view, then the editorial content goes into a
-        // different div since we can view both editorial content and
-        // view-data (such as a charm details) side by side.
-        extraCfg.renderTo = container.one('.bws-content');
-      }
-
-      if (!this._editorial) {
-        this._editorial = new Y.juju.browser.views.EditorialView(
-            this._getViewCfg(extraCfg));
-
-        this._editorial.render();
-        this._editorial.addTarget(this);
-
-        // Add any sidebar charms to the running cache.
-        this._cacheCharms.add(this._editorial._cacheCharms);
-      }
-    },
-
-    /**
-     * Handle the route for the sidebar view.
-     *
-     * @method sidebar
-     * @param {Request} req current request object.
-     * @param {Response} res current response object.
-     * @param {function} next callable for the next route in the chain.
-     *
-     */
-    sidebar: function(req, res, next) {
-      this._viewState.viewmode = 'sidebar';
-      if (this._fullscreen) {
-        this._fullscreen.destroy();
-      }
-      // Clean up any details we've got.
-      if (this._details) {
-        this._details.destroy({remove: true});
-      }
-
-      // If the sidebar is the final part of the route, then hide the div for
-      // viewing the charm details.
-      if (this._getSubPath(req.path) === 'sidebar') {
-        var detailsNode = Y.one('.bws-view-data');
-        if (detailsNode) {
-          detailsNode.hide();
-        }
-      }
-
-      if (!this._sidebar) {
-        // Whenever the sidebar view is rendered it needs some editorial
-        // content to display to the user. We only need once instance though,
-        // so only render it on the first view. As users click on charm to
-        // charm and we generate urls /sidebar/precise/xxx we don't want to
-        // re-render the sidebar content.
-        this._sidebar = this.showView('sidebar', this._getViewCfg(), {
-          'callback': function(view) {
-            this.renderEditorial(req, res, next);
-            next();
-          }
-        });
-      } else {
-        next();
       }
     },
 
@@ -302,10 +144,154 @@ YUI.add('subapp-browser', function(Y) {
       next();
     },
 
+    /**
+       Cleanup after ourselves on destroy.
+
+       @method destructor
+
+     */
+    destructor: function() {
+      this._cacheCharms.destroy();
+
+    },
+
+    /**
+     * Render the fullscreen view to the client.
+     *
+     * @method fullscreen
+     * @param {Request} req current request object.
+     * @param {Response} res current response object.
+     * @param {function} next callable for the next route in the chain.
+     *
+     */
+    fullscreen: function(req, res, next) {
+      this._viewState.viewmode = 'fullscreen';
+      this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
+        'callback': function(view) {
+          // if the fullscreen isn't the last part of the path, then ignore
+          // the editorial content.
+          if (this._getSubPath(req.path) === 'fullscreen') {
+            this.renderEditorial(req, res, next);
+          }
+          next();
+        }
+      });
+    },
+
+    /**
+     * General app initializer
+     *
+     * @method initializer
+     * @param {Object} cfg general init config object.
+     *
+     */
+    initializer: function(cfg) {
+      // Hold onto charm data so we can pass model instances to other views when
+      // charms are selected.
+      this._cacheCharms = new models.BrowserCharmList();
+
+      this._initState();
+
+      // Listen for navigate events from any views we're rendering.
+      this.on('*:viewNavigate', function(ev) {
+        var url;
+        if (ev.url) {
+          url = ev.url;
+        } else if (ev.change) {
+          url = this._getStateUrl(ev.change);
+        }
+        this.navigate(url);
+      });
+    },
+
+
+    /**
+      Render editorial content into the parent view when required.
+
+      The parent view is either fullscreen/sidebar which determines how the
+      editorial content is to be rendered.
+
+      @method renderEditorial
+      @param {Request} req current request object.
+      @param {Response} res current response object.
+      @param {function} next callable for the next route in the chain.
+
+     */
+    renderEditorial: function(req, res, next) {
+      this._viewState.search = false;
+      var container = this.get('container'),
+          editorialContainer,
+          extraCfg = {};
+
+      if (req.path.indexOf('fullscreen') !== -1) {
+        // The fullscreen view requires that there be no editorial content if
+        // we're looking at a specific charm. The div we dump our content into
+        // is shared. So if the url is /fullscreen show editorial content, but
+        // if it's not, there's something else handling displaying the
+        // view-data.
+        extraCfg.renderTo = container.one('.bws-view-data');
+        extraCfg.isFullscreen = true;
+      } else {
+        // If this is the sidebar view, then the editorial content goes into a
+        // different div since we can view both editorial content and
+        // view-data (such as a charm details) side by side.
+        extraCfg.renderTo = container.one('.bws-content');
+      }
+
+      this._editorial = new Y.juju.browser.views.EditorialView(
+          this._getViewCfg(extraCfg));
+
+      this._editorial.render();
+      this._editorial.addTarget(this);
+
+      // Add any sidebar charms to the running cache.
+      this._cacheCharms.add(this._editorial._cacheCharms);
+    },
+
     routeView: function(req, res, next) {
       this[req.params.viewmode](req, res, next);
-    }
+    },
 
+    /**
+     * Handle the route for the sidebar view.
+     *
+     * @method sidebar
+     * @param {Request} req current request object.
+     * @param {Response} res current response object.
+     * @param {function} next callable for the next route in the chain.
+     *
+     */
+    sidebar: function(req, res, next) {
+      this._viewState.viewmode = 'sidebar';
+      // if (this._fullscreen) {
+      //   this._fullscreen.destroy();
+      // }
+      // Clean up any details we've got.
+      if (this._details) {
+        this._details.destroy({remove: true});
+      }
+
+      // If the sidebar is the final part of the route, then hide the div for
+      // viewing the charm details.
+      if (this._getSubPath(req.path) === 'sidebar') {
+        var detailsNode = Y.one('.bws-view-data');
+        if (detailsNode) {
+          detailsNode.hide();
+        }
+      }
+
+      // Whenever the sidebar view is rendered it needs some editorial
+      // content to display to the user. We only need once instance though,
+      // so only render it on the first view. As users click on charm to
+      // charm and we generate urls /sidebar/precise/xxx we don't want to
+      // re-render the sidebar content.
+      this._sidebar = this.showView('sidebar', this._getViewCfg(), {
+        'callback': function(view) {
+          this.renderEditorial(req, res, next);
+          next();
+        }
+      });
+    }
   }, {
     ATTRS: {
       /**
