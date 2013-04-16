@@ -165,9 +165,8 @@ YUI.add('juju-delta-handlers', function(Y) {
       var data = {
         id: change.Name,
         charm: change.CharmURL,
-        exposed: change.Exposed
-        // XXX 2013-04-05 (bug 1169167) frankban: missing config and
-        // constraints.
+        exposed: change.Exposed,
+        constraints: change.Constraints || {}
       };
       db.services.process_delta(action, data);
     },

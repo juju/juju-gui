@@ -6,7 +6,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
-      DATE_FORMAT = '%H:%M %d/%b/%y';
+      DATE_FORMAT = '%d/%b/%y';
 
 
   /**
