@@ -149,6 +149,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
+      debugger;
       this._viewState.viewmode = 'fullscreen';
       if (this._sidebar) {
         this._sidebar.destroy();
@@ -279,7 +280,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // The details view needs to know if we're using a fullscreen template
       // or the sidebar version.
-      if (req.path.indexOf('fullscreen') !== -1) {
+      if (req.params.viewmode === 'fullscreen') {
         extraCfg.isFullscreen = true;
       }
 
@@ -298,6 +299,11 @@ YUI.add('subapp-browser', function(Y) {
       // into.
       Y.one('.bws-view-data').show();
       next();
+    },
+
+    router: function(req, res, next) {
+      debugger;
+      this[req.params.viewmode].call(this, req, res, next);
     }
 
   }, {
@@ -350,13 +356,8 @@ YUI.add('subapp-browser', function(Y) {
       routes: {
         value: [
           // Double routes are needed to catch /fullscreen and /fullscreen/
-          { path: '/bws/fullscreen/', callbacks: 'fullscreen' },
-          { path: '/bws/fullscreen/*/', callbacks: 'fullscreen' },
-          { path: '/bws/fullscreen/*id/', callbacks: 'charmDetails' },
-
-          { path: '/bws/sidebar/', callbacks: 'sidebar' },
-          { path: '/bws/sidebar/*/', callbacks: 'sidebar' },
-          { path: '/bws/sidebar/*id/', callbacks: 'charmDetails' }
+          { path: '/bws/:viewmode/*', callbacks: 'router' },
+          { path: '/bws/:viewmode/*id/', callbacks: 'charmDetails'}
         ]
       },
 
