@@ -168,6 +168,11 @@ YUI.add('subapp-browser', function(Y) {
 
         this._editorial.render();
         this.addTarget(this._editorial);
+        this._editorial.on('viewNavigate', function(ev) {
+          debugger;
+          this.navigate(ev.url, ev.options);
+        });
+
         // Add any sidebar charms to the running cache.
         this._cacheCharms.add(this._editorial._cacheCharms);
       }
