@@ -25,7 +25,6 @@ YUI.add('subapp-browser', function(Y) {
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
 
     _getStateUrl: function(change) {
-        debugger;
         var urlParts = ['bws'];
 
         this._viewState = Y.merge(this._viewState, change);
@@ -149,7 +148,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
-      debugger;
       this._viewState.viewmode = 'fullscreen';
       if (this._sidebar) {
         this._sidebar.destroy();
@@ -302,7 +300,6 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     router: function(req, res, next) {
-      debugger;
       this[req.params.viewmode].call(this, req, res, next);
     }
 
