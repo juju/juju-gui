@@ -222,8 +222,6 @@ YUI.add('subapp-browser', function(Y) {
         container: Y.Node.create('<div class="charmview"/>')
       };
 
-
-
       // The details view needs to know if we're using a fullscreen template
       // or the sidebar version.
       if (req.path.indexOf('fullscreen') !== -1) {
