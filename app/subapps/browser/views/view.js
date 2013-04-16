@@ -122,6 +122,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _toggleBrowser: function(ev) {
+      ev.halt();
       var sidebar = Y.one('.charmbrowser');
 
       if (this.visible) {
@@ -134,9 +135,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
     },
 
     _toggleFullscreen: function(ev) {
+      ev.halt();
       var change = {
         viewmode: this.isFullscreen() ? 'sidebar' : 'fullscreen'
-      }
+      };
       this.fire('viewNavigate', {
         change: change
       });

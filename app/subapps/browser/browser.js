@@ -137,7 +137,6 @@ YUI.add('subapp-browser', function(Y) {
         } else if (ev.change) {
           url = this._getStateUrl(ev.change);
         }
-        debugger;
         this.navigate(url);
       });
     },
@@ -152,7 +151,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
-      debugger;
       this._viewState.viewmode = 'fullscreen';
       if (this._sidebar) {
         this._sidebar.destroy();
@@ -229,7 +227,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
-      debugger;
       this._viewState.viewmode = 'sidebar';
       if (this._fullscreen) {
         this._fullscreen.destroy();
@@ -275,7 +272,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     charmDetails: function(req, res, next) {
-      debugger;
       var charmID = req.params.id;
       this._viewState.charmID = charmID;
       var extraCfg = {
@@ -307,7 +303,6 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     routeView: function(req, res, next) {
-      debugger;
       this[req.params.viewmode](req, res, next);
     }
 
