@@ -180,6 +180,15 @@ YUI.add('subapp-browser', function(Y) {
         this._details.destroy({remove: true});
       }
 
+      // If the sidebar is the final part of the route, then hide the div for
+      // viewing the charm details.
+      if (this._getSubPath(req.path) === 'sidebar') {
+        var detailsNode = Y.one('.bws-view-data');
+        if (detailsNode) {
+          detailsNode.hide();
+        }
+      }
+
       if (!this._sidebar) {
         // Whenever the sidebar view is rendered it needs some editorial
         // content to display to the user. We only need once instance though,
@@ -229,6 +238,10 @@ YUI.add('subapp-browser', function(Y) {
       this._details = new Y.juju.browser.views.BrowserCharmView(
           this._getViewCfg(extraCfg));
       this._details.render();
+      // Make sure we show the bws-view-data div that the details renders
+      // into.
+      Y.one('.bws-view-data').show();
+
       next();
     }
 
