@@ -33,8 +33,14 @@
 }
 
 #subapp-browser {
+  bottom: 50px;
   color: @bws-text;
   font-size: 9pt;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  width: 100%;
 
     dl {
       margin: 0;
@@ -64,6 +70,13 @@
     margin: auto;
     text-align: left;
     width: 90%;
+  }
+  .bws-view-data {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
   }
   .bws-header {
     position: relative;
@@ -112,20 +125,25 @@
     }
   }
   #bws-fullscreen {
-    width: 100%;
-    background-color: #f5f5f5;
+    .bws-view-data {
+      top: 60px;
+      right: 0;
+      background-color: #f5f5f5;
+    }
   }
   .charmbrowser.sidebar {
-    display: table;
-
     #bws-sidebar,
     .bws-view-data {
-      position: relative;
-      display: table-cell;
+      left: 25%;
       background-color: #f5f5f5;
     }
     #bws-sidebar {
       z-index: 1;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      overflow: auto;
       min-width: 350px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 

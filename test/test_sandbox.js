@@ -1031,16 +1031,8 @@
         state.deploy('cs:mysql', function(service) {
           var data = {
             op: 'add_relation',
-            endpoint_a: [
-              'wordpress',
-              { name: 'db',
-                role: 'client' }
-            ],
-            endpoint_b: [
-              'mysql',
-              { name: 'db',
-                role: 'server' }
-            ]
+            endpoint_a: 'wordpress:db',
+            endpoint_b: 'mysql:db'
           };
           client.onmessage = function(rec) {
             var data = Y.JSON.parse(rec.data),
@@ -1052,19 +1044,13 @@
                     id: 'relation-0',
                     'interface': 'mysql',
                     scope: 'global',
-                    endpoints: [{
-                      wordpress: {
-                        name: 'db',
-                        role: 'client'
-                      }
-                    }, {
-                      mysql: {
-                        name: 'db',
-                        role: 'server'
-                      }
-                    }]
+                    endpoints: [
+                      {wordpress: {name: 'db'}},
+                      {mysql: {name: 'db'}}
+                    ]
                   }
                 };
+
             assert.equal(data.err, undefined);
             assert.equal(typeof data.result, 'object');
             assert.deepEqual(data, mock);
@@ -1089,17 +1075,13 @@
               'interface': 'mysql',
               scope: 'global',
               request_id: rec.request_id,
-              endpoints: [{
-                kumquat: {
-                  name: 'db'
-                }
-              }, {
-                mysql: {
-                  name: 'db'
-                }
-              }]
+              endpoints: [
+                {kumquat: {name: 'db'}},
+                {mysql: {name: 'db'}}
+              ]
             }
           };
+
           assert.equal(rec.err, undefined);
           assert.equal(typeof rec.result, 'object');
           assert.deepEqual(rec.details[0], mock);
@@ -1127,16 +1109,8 @@
         state.deploy('cs:puppet', function(service) {
           var data = {
             op: 'add_relation',
-            endpoint_a: [
-              'wordpress',
-              { name: 'juju-info',
-                role: 'server' }
-            ],
-            endpoint_b: [
-              'puppet',
-              { name: 'juju-info',
-                role: 'client' }
-            ]
+            endpoint_a: 'wordpress:juju-info',
+            endpoint_b: 'puppet:juju-info'
           };
 
           client.onmessage = function(rec) {
@@ -1147,19 +1121,12 @@
                   op: 'add_relation',
                   result: {
                     id: 'relation-0',
-                    'interface': 'puppet',
+                    'interface': 'juju-info',
                     scope: 'container',
-                    endpoints: [{
-                      wordpress: {
-                        name: 'juju-info',
-                        role: 'server'
-                      }
-                    }, {
-                      puppet: {
-                        name: 'juju-info',
-                        role: 'client'
-                      }
-                    }]
+                    endpoints: [
+                      {puppet: {name: 'juju-info'}},
+                      {wordpress: {name: 'juju-info'}}
+                    ]
                   }
                 };
             assert.equal(data.err, undefined);
@@ -1177,11 +1144,7 @@
       function localCb() {
         var data = {
           op: 'add_relation',
-          endpoint_a: [
-            'wordpress',
-            { name: 'db',
-              role: 'client' }
-          ]
+          endpoint_a: 'wordpress:db'
         };
         state.nextChanges();
         client.onmessage = function(rec) {
@@ -1198,16 +1161,8 @@
       function localCb() {
         var data = {
           op: 'add_relation',
-          endpoint_a: [
-            'wordpress',
-            { name: 'db',
-              role: 'client' }
-          ],
-          endpoint_b: [
-            'mysql',
-            { name: 'foo',
-              role: 'client' }
-          ]
+          endpoint_a: 'wordpress:db',
+          endpoint_b: 'mysql:foo'
         };
         state.nextChanges();
         client.onmessage = function(rec) {

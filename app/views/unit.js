@@ -72,9 +72,7 @@ YUI.add('juju-view-unit', function(Y) {
         unit_ip_description = ip_description_chunks.join(' | ');
       }
 
-      var unit_error = /-error/.test(unit.agent_state),
-          unit_running = unit.agent_state === 'started',
-          unit_pending = !(unit_running || unit_error);
+      var state = utils.simplifyState(unit, true); // Ignore relations errors.
 
       var relation_errors = unit.relation_errors || {},
           relations = utils.getRelationDataForService(db, service),
@@ -107,9 +105,9 @@ YUI.add('juju-view-unit', function(Y) {
         disabled_remove: service.get('unit_count') <= 1,
         charm: charmAttrs,
         machine: db.machines.getById(unit.machine),
-        unit_error: unit_error,
-        unit_running: unit_running,
-        unit_pending: unit_pending,
+        hasErrors: state === 'error',
+        isRunning: state === 'running',
+        isPending: state === 'pending',
         relations: relations}));
       views.utils.updateLandscapeBottomBar(this.get('landscape'), env, unit,
           container);
@@ -218,10 +216,9 @@ YUI.add('juju-view-unit', function(Y) {
         service.set('unit_count', service.get('unit_count') - 1);
         this.remove_panel.destroy();
         this.fire('navigateTo',
-            { service: service, url: '/service/' +
-                  service.get('displayName') + '/'});
+            {url: this.get('nsRouter').url(
+                {gui: '/service/' + service.get('displayName') + '/'})});
       }
-
       btn.set('disabled', false);
     },
 

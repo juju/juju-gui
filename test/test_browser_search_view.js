@@ -17,5 +17,7 @@ describe('search view', function() {
   afterEach(function() {
   });
 
-  it('exists');
+  it.only('exists', function() {
+    assert.isObject(Y.juju.views.browser.BrowserSearchView());
+  });
 });

@@ -3,9 +3,10 @@
 
 YUI.add('subapp-browser-charmview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
+      models = Y.namespace('juju.models'),
       views = Y.namespace('juju.views'),
       widgets = Y.namespace('juju.widgets'),
-      DATE_FORMAT = '%H:%M %d/%b/%y';
+      DATE_FORMAT = '%d/%b/%y';
 
 
   /**
@@ -29,7 +30,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     events: {
-      '.changelog .expandToggle': {
+      '.changelog h3.section-title': {
         click: '_toggleLog'
       },
       '.charm .add': {
@@ -52,6 +53,31 @@ YUI.add('subapp-browser-charmview', function(Y) {
     _addCharmEnvironment: function(ev) {
       ev.halt();
       console.log('add the charm to the environment');
+    },
+
+    /**
+     * Shared method to generate a message to the user based on a bad api
+     * call.
+     *
+     * @method apiFailure
+     * @param {Object} data the json decoded response text.
+     * @param {Object} request the original io_request object for debugging.
+     *
+     */
+    apiFailure: function(data, request) {
+      var message;
+      if (data && data.type) {
+        message = 'Charm API error of type: ' + data.type;
+      } else {
+        message = 'Charm API server did not respond';
+      }
+      this.get('db').notifications.add(
+          new models.Notification({
+            title: 'Failed to load sidebar content.',
+            message: message,
+            level: 'error'
+          })
+      );
     },
 
     /**
@@ -263,7 +289,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
             }
           }, this);
-
     },
 
     /**
@@ -334,29 +359,30 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     * Render out the view to the DOM.
+     * Render the view of a single charm details page.
      *
-     * @method render
-     * @param {Node} container optional specific container to render out to.
+     * @method _renderCharmView
+     * @param {BrowserCharm} charm the charm model instance to view.
+     * @param {Boolean} isFullscreen is this display for the fullscreen
+     * experiecne?
      *
      */
-    render: function(container, isFullscreen) {
-      var charm = this.get('charm');
-      var tplData = charm.getAttrs();
+    _renderCharmView: function(charm, isFullscreen) {
+      this.set('charm', charm);
+
+      var tplData = charm.getAttrs(),
+          container = this.get('container');
+
       tplData.isFullscreen = isFullscreen;
       tplData.prettyCommits = this._formatCommitsForHtml(
           tplData.recent_commits);
 
       var tpl = this.template(tplData);
-      var tplNode = Y.Node.create(tpl);
+      var tplNode = container.setHTML(tpl);
 
-      container.setHTML(tplNode);
-
-      // Allow for specifying the container to use. This should reset the
+      // Set the content then update the container so that it reload
       // events.
-      if (container) {
-        this.set('container', container);
-      }
+      Y.one('.bws-view-data').setHTML(tplNode);
 
       this.tabview = new widgets.browser.TabView({
         srcNode: tplNode.one('.tabs')
@@ -374,9 +400,44 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this._noReadme(tplNode.one('#bws-readme'));
       }
+    },
+
+    /**
+       Render out the view to the DOM.
+
+       The View might be given either a charmID, which means go fetch the
+       charm data, or a charm model instance, in which case the view has the
+       data it needs to render.
+
+       @method render
+
+     */
+    render: function() {
+      var isFullscreen = this.get('isFullscreen');
+
+      if (this.get('charm')) {
+        this._renderCharmView(this.get('charm'), isFullscreen);
+      } else {
+        this.get('store').charm(this.get('charmID'), {
+          'success': function(data) {
+            var charm = new models.BrowserCharm(data);
+            this.set('charm', charm);
+            this._renderCharmView(this.get('charm'), isFullscreen);
+          },
+          'failure': this.apiFailure
+        }, this);
+      }
     }
   }, {
     ATTRS: {
+      /**
+         @attribute charmID
+         @default undefined
+         @type {Int}
+
+       */
+      charmID: {},
+
       /**
        * The charm we're viewing the details of.
        *
@@ -386,6 +447,16 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        */
       charm: {},
+
+      /**
+         @attribute isFullscreen
+         @default false
+         @type {Boolean}
+
+       */
+      ifFullscreen: {
+        value: false
+      },
 
       /**
        * The store is the api endpoint for fetching data.
@@ -408,9 +479,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'datatype-date-format',
     'event-tracker',
     'gallery-markdown',
+    'juju-charm-store',
+    'juju-models',
     'juju-templates',
     'juju-views',
     'juju-view-utils',
+    'node',
     'prettify',
     'view'
   ]
