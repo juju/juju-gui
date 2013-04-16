@@ -59,51 +59,42 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
       };
     },
 
-    makeCharmStore: function() {
-      var data = [];
+    _cached_charms: (function() {
+      var charms = {},
+          names = [
+            'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop'];
+      Y.Array.each(names, function(name) {
+        charms[name] = Y.JSON.parse(
+            Y.io('data/' + name + '-charmdata.json', {sync: true}).responseText);
+      });
+      return charms;
+    })(),
 
-      // In order to return multiple charms from the fake store we need to
-      // monkeypatch this method.
-      var TestCharmStore = Y.Base.create('test-charm-store',
-          Y.juju.CharmStore, [], {
-            loadByPath: function(path, options) {
-              this.get('datasource').sendRequest({
-                request: path,
-                callback: {
-                  success: function(io_request) {
-                    var charmName = path.split('/')[2];
-                    Y.Array.some(io_request.response.results, function(result) {
-                      var data = Y.JSON.parse(result.responseText);
-                      if (data.name === charmName) {
-                        options.success(data);
-                        return true;
-                      }
-                    });
-                  },
-                  failure: options.failure
+    TestCharmStore: Y.Base.create(
+        'test-charm-store', Y.juju.CharmStore, [], {
+          loadByPath: function(path, options) {
+            var charmName = path.split('/')[2];
+            var found = Y.Array.some(
+                Y.Object.values(jujuTests.utils._cached_charms),
+                function(data) {
+                  if (data.name === charmName) {
+                    options.success(data);
+                    return true;
+                  }
                 }
-              });
+            );
+            if (!found) {
+              options.failure();
             }
-          });
-
-      var charmStore = new TestCharmStore(
-          {datasource: new Y.DataSource.Local({source: data})});
-      var setCharms = function(names) {
-        Y.Array.each(names, function(name) {
-          data.push(Y.io('data/' + name + '-charmdata.json', {sync: true}));
-        });
-      };
-      setCharms(['wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki',
-        'hadoop']);
-      return {charmStore: charmStore, setCharm: setCharms};
-    },
+          }
+        }
+    ),
 
     makeFakeBackendWithCharmStore: function() {
-      var charmStoreData = jujuTests.utils.makeCharmStore();
       var fakebackend = new Y.juju.environments.FakeBackend(
-          {charmStore: charmStoreData.charmStore});
+          {charmStore: new jujuTests.utils.TestCharmStore()});
       fakebackend.login('admin', 'password');
-      return {fakebackend: fakebackend, setCharm: charmStoreData.setCharm};
+      return fakebackend;
     }
 
   };
