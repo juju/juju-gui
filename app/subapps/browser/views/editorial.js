@@ -43,7 +43,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
       ].join('/');
 
       this.fire('viewNavigate', {
-        url: newRoute
+        url: newRoute,
+        emitFacade: true
       });
     },
 
@@ -58,6 +59,10 @@ YUI.add('subapp-browser-editorial', function(Y) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
+      this.publish('viewNavigate', {
+        emitFacade: true,
+        broadcast: 1
+      });
     },
 
     /**
