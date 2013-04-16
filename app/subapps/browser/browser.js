@@ -177,6 +177,8 @@ YUI.add('subapp-browser', function(Y) {
      */
     fullscreen: function(req, res, next) {
       this._viewState.viewmode = 'fullscreen';
+      this.get('container').setStyle('display', 'block');
+
       this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
         'callback': function(view) {
           // if the fullscreen isn't the last part of the path, then ignore
@@ -200,7 +202,6 @@ YUI.add('subapp-browser', function(Y) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
-
       this._initState();
 
       // Listen for navigate events from any views we're rendering.
@@ -283,7 +284,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     sidebar: function(req, res, next) {
       this._viewState.viewmode = 'sidebar';
-
+      this.get('container').setStyle('display', 'block');
       // Clean up any details we've got.
       if (this._details) {
         this._details.destroy({remove: true});
