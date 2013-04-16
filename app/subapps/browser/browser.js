@@ -25,7 +25,7 @@ YUI.add('subapp-browser', function(Y) {
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
 
     _getStateUrl: function(change) {
-        var urlParts = ['bws'];
+        var urlParts = ['/bws'];
 
         this._viewState = Y.merge(this._viewState, change);
 
@@ -37,6 +37,7 @@ YUI.add('subapp-browser', function(Y) {
           urlParts.push(this._viewState.charmID);
         }
 
+        // Always end on a /
         return urlParts.join('/');
     },
 
@@ -130,11 +131,14 @@ YUI.add('subapp-browser', function(Y) {
 
       // Listen for navigate events from any views we're rendering.
       this.on('*:viewNavigate', function(ev) {
+        var url;
         if (ev.url) {
-          this.navigate(ev.url, ev.options);
+          url = ev.url;
         } else if (ev.change) {
-          this.navigate(this._getStateUrl(ev.change));
+          url = this._getStateUrl(ev.change);
         }
+        debugger;
+        this.navigate(url);
       });
     },
 
@@ -148,6 +152,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
+      debugger;
       this._viewState.viewmode = 'fullscreen';
       if (this._sidebar) {
         this._sidebar.destroy();
@@ -224,6 +229,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
+      debugger;
       this._viewState.viewmode = 'sidebar';
       if (this._fullscreen) {
         this._fullscreen.destroy();
@@ -269,6 +275,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     charmDetails: function(req, res, next) {
+      debugger;
       var charmID = req.params.id;
       this._viewState.charmID = charmID;
       var extraCfg = {
@@ -299,8 +306,9 @@ YUI.add('subapp-browser', function(Y) {
       next();
     },
 
-    router: function(req, res, next) {
-      this[req.params.viewmode].call(this, req, res, next);
+    routeView: function(req, res, next) {
+      debugger;
+      this[req.params.viewmode](req, res, next);
     }
 
   }, {
@@ -353,7 +361,7 @@ YUI.add('subapp-browser', function(Y) {
       routes: {
         value: [
           // Double routes are needed to catch /fullscreen and /fullscreen/
-          { path: '/bws/:viewmode/*', callbacks: 'router' },
+          { path: '/bws/:viewmode/*', callbacks: 'routeView' },
           { path: '/bws/:viewmode/*id/', callbacks: 'charmDetails'}
         ]
       },
