@@ -828,9 +828,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       var relation;
       this.db.relations.some(function(rel) {
-        var relAttrs = rel.getAttrs(),
-            endpoints = relAttrs.endpoints,
-            relationId = relAttrs.relation_id;
+        var endpoints = rel.getAttrs().endpoints;
         return [0, 1].some(function(index) {
           // Check to see if the service names match an existing relation
           if ((endpoints[index][0] === endpointData[0].name) &&
@@ -838,16 +836,22 @@ YUI.add('juju-env-fakebackend', function(Y) {
             // Check to see if the interface names match
             if ((endpoints[index][1].name === endpointData[0].type) &&
                 (endpoints[!index + 0][1].name === endpointData[1].type)) {
-              relation = relationId;
-              console.log('matching');
+              relation = rel;
               return true;
             }
           }
         });
       });
 
-      console.log(relation);
-      return {};
+      if (relation) {
+        // remove the relation from the relation db model list
+        var result = this.db.relations.remove(relation);
+        // add this change to the delta
+        this.changes.relations[relation.get('id')] = [relation, false];
+        return result;
+      } else {
+        return {error: 'Relationship does not exist'};
+      }
     },
 
     // updateAnnotations: function() {

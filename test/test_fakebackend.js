@@ -1054,12 +1054,8 @@
               var result = fakebackend.removeRelation.apply(
                   fakebackend, removeRelation);
 
-              assert.equal(result.error, undefined);
-              assert.equal(result.relationId, 'relation-0');
-              assert.equal(typeof result.relation, 'object');
-              assert.deepEqual(result.endpoints, mock.endpoints);
-              assert.equal(result.scope, mock.scope);
-              assert.equal(result.type, mock.type);
+              assert.equal(result.error, mock.error);
+              assert.equal(typeof result, 'object');
               done();
             });
           });
@@ -1087,7 +1083,53 @@
               done);
         });
 
-    it('throws an error if the relationship does not exist');
+    it('removes a relation when supplied with two string endpoints (reverse)',
+        function(done) {
+          createAndRemoveRelation(
+              ['cs:wordpress', 'cs:mysql'],
+              ['wordpress:db', 'mysql:db'],
+              ['mysql:db', 'wordpress:db'],
+              {},
+              done);
+        });
+
+    it('removes a relation when supplied with two different string endpoints',
+        function(done) {
+          createAndRemoveRelation(
+              ['cs:mediawiki', 'cs:haproxy'],
+              ['mediawiki:website', 'haproxy:reverseproxy'],
+              ['mediawiki:website', 'haproxy:reverseproxy'],
+              {},
+              done);
+        });
+
+    it('removes a relation when supplied with two different string endpoints',
+        function(done) {
+          createAndRemoveRelation(
+              ['cs:mediawiki', 'cs:haproxy'],
+              ['mediawiki:website', 'haproxy:reverseproxy'],
+              ['haproxy:reverseproxy', 'mediawiki:website'],
+              {},
+              done);
+        });
+
+    it('throws an error if the charms do not exist', function(done) {
+        createAndRemoveRelation(
+            ['cs:mediawiki', 'cs:haproxy'],
+            ['mediawiki:website', 'haproxy:reverseproxy'],
+            ['wordpress:db', 'mysql:db'],
+            {error: 'Charm not loaded.'},
+            done);
+    })
+
+    it('throws an error if the relationship does not exist', function(done) {
+      createAndRemoveRelation(
+          ['cs:wordpress', 'cs:mysql'],
+          ['wordpress:db', 'mysql:db'],
+          ['wordpress:bar', 'mysql:baz'],
+          {error: 'Relationship does not exist'},
+          done);
+    });
 
   });
 
