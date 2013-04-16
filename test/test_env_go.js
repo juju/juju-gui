@@ -1181,6 +1181,41 @@
       assert.equal(subscribers[0].args, null);
     });
 
+    it('can resolve a problem with a unit', function() {
+      var unit_name = 'mysql/0';
+      env.resolved(unit_name);
+      msg = conn.last_message();
+      assert.equal(msg.Type, 'Client');
+      assert.equal(msg.Request, 'Resolved');
+      assert.equal(msg.Params.UnitName, 'mysql/0');
+      assert.isFalse(msg.Params.Retry);
+    });
+
+    it('can retry a problem with a unit', function() {
+      var unit_name = 'mysql/0';
+      env.resolved(unit_name, null, true);
+      msg = conn.last_message();
+      assert.equal(msg.Type, 'Client');
+      assert.equal(msg.Request, 'Resolved');
+      assert.equal(msg.Params.UnitName, 'mysql/0');
+      assert.isTrue(msg.Params.Retry);
+    });
+
+    it('can provide a callback', function(done) {
+      var unit_name = 'mysql/0';
+      env.resolved(unit_name, null, true, function(result) {
+        assert.equal(result.op, 'resolved');
+        assert.isTrue(result.err);
+        done();
+      });
+      msg = conn.last_message();
+      env.dispatch_result({
+        RequestId: msg.RequestId,
+        Error: 'badness',
+        Response: {}
+      });
+    });
+
   });
 
 })();
