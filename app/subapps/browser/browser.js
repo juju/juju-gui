@@ -103,17 +103,23 @@ YUI.add('subapp-browser', function(Y) {
      */
     _stateChanged: function(field) {
       if (this._oldState[field] === this._viewState[field]) {
-          return false;
+        return false;
       } else {
-          return true;
+        return true;
       }
     },
 
+    /**
+        Update the oldState with the viewState now that we're done processing
+        the request.
+
+        @method _saveState
+
+     */
     _saveState: function() {
       this._oldState = Y.merge(
           this._oldState,
-          this._viewState
-      );
+          this._viewState);
     },
 
     /**
@@ -254,7 +260,8 @@ YUI.add('subapp-browser', function(Y) {
     renderEditorial: function(req, res, next) {
       // Update the editorial if either the search field changed or the
       // viewmode changed.
-      if (!this._viewState.search && (this._stateChanged('search') || this._stateChanged('viewmode'))) {
+      if (!this._viewState.search &&
+          (this._stateChanged('search') || this._stateChanged('viewmode'))) {
         // If loading the interesting content then it's not a search going on.
         var container = this.get('container'),
             editorialContainer,
@@ -306,7 +313,8 @@ YUI.add('subapp-browser', function(Y) {
       if ((this._stateChanged('charmID') || this._stateChanged('viewmode')) &&
           this._viewState.charmID) {
         this.renderCharmDetails(req, res, next);
-      } else if (this._stateChanged('search') || this._stateChanged('viewmode')) {
+      } else if (this._stateChanged('search') ||
+                 this._stateChanged('viewmode')) {
         // We need to render the editorial content if the search has been
         // changed or the viewmode has changed and there is no charmID.
         // Ex: /sidebar/search to /sidebar/ or /fullscreen/charmid
