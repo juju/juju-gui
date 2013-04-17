@@ -65,7 +65,8 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
             'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop'];
       Y.Array.each(names, function(name) {
         charms[name] = Y.JSON.parse(
-            Y.io('data/' + name + '-charmdata.json', {sync: true}).responseText);
+            Y.io('data/' + name + '-charmdata.json', {sync: true})
+            .responseText);
       });
       return charms;
     })(),
@@ -81,8 +82,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
                     options.success(data);
                     return true;
                   }
-                }
-            );
+                });
             if (!found) {
               options.failure();
             }
