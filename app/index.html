@@ -161,7 +161,7 @@ if (/*@cc_on!@*/false) {
 
       isBrowserSupported = function(agent) {
         // At the moment only Chrome is supported.
-        return (/Chrome/.test(agent));
+        return (/Chrome|Firefox/.test(agent));
       };
 
       getDocument = function() {
