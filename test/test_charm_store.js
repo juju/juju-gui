@@ -256,7 +256,7 @@
       ds.get('source').should.eql('http://localhost/api/0/');
     });
 
-    it('handles loading sidebarEditorial correctly', function(done) {
+    it('handles loading interesting content correctly', function(done) {
       var hostname = 'http://localhost',
           api = new Y.juju.Charmworld0({
             apiHost: hostname
@@ -270,7 +270,7 @@
       });
       api.set('datasource', new Y.DataSource.Local({source: data}));
 
-      var sidebar = api.sidebarEditorial({
+      var sidebar = api.interesting({
         success: function(data) {
           data.summary.should.equal('wowza');
           done();
