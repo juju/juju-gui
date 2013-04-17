@@ -107,6 +107,8 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
+      this.get('container').setStyle('display', 'block');
+
       if (!this._fullscreen) {
         this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
           'callback': function(view) {
@@ -175,6 +177,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
+      this.get('container').setStyle('display', 'block');
       // Clean up any details we've got.
       if (this._details) {
         this._details.destroy({remove: true});
