@@ -83,33 +83,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
   }
 
   /**
-    Takes two string endpoints and splits it into usable parts.
-
-    @method parseEndpointStrings
-    @param {Array} endpoints an array of endpoint strings
-      to split in the format wordpress:db.
-    @param {Object} context the context to execute the parsing under.
-    @return {Object} A hash with four keys: service (the associated
-      service model), charm (the associated charm model for the
-      service), name (the user-defined service name), and type (the
-      charm-author-defined relation type name).
-  */
-  function parseEndpointStrings(endpoints, context) {
-    return Y.Array.map(endpoints,
-        function(endpoint) {
-          var epData = endpoint.split(':'),
-              result = { name: epData[0], type: epData[1] };
-          result.service = this.db.services.getById(result.name);
-          if (result.service) {
-            result.charm = this.db.charms.getById(
-                result.service.get('charm'));
-          }
-          return result;
-        },
-        context);
-  }
-
-  /**
   An in-memory fake Juju backend.
 
   @class FakeBackend
@@ -229,6 +202,31 @@ YUI.add('juju-env-fakebackend', function(Y) {
         this._resetAnnotations();
       }
       return result;
+    },
+
+    /**
+      Takes two string endpoints and splits it into usable parts.
+
+      @method parseEndpointStrings
+      @param {Array} endpoints an array of endpoint strings
+        to split in the format wordpress:db.
+      @return {Object} A hash with four keys: service (the associated
+        service model), charm (the associated charm model for the
+        service), name (the user-defined service name), and type (the
+        charm-author-defined relation type name).
+    */
+    parseEndpointStrings: function(endpoints) {
+      return Y.Array.map(endpoints,
+          function(endpoint) {
+            var epData = endpoint.split(':'),
+                result = { name: epData[0], type: epData[1] };
+            result.service = this.db.services.getById(result.name);
+            if (result.service) {
+              result.charm = this.db.charms.getById(
+                  result.service.get('charm'));
+            }
+            return result;
+          }, this);
     },
 
 
@@ -738,7 +736,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       // Parses the endpoint strings to extract all required data.
-      var endpointData = parseEndpointStrings([endpointA, endpointB], this);
+      var endpointData = this.parseEndpointStrings([endpointA, endpointB]);
 
       // This error should never be hit but it's here JIC
       if (!endpointData[0].charm || !endpointData[1].charm) {
@@ -819,7 +817,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
 
       // Parses the endpoint strings to extract all required data.
-      var endpointData = parseEndpointStrings([endpointA, endpointB], this);
+      var endpointData = this.parseEndpointStrings([endpointA, endpointB]);
 
       // This error should never be hit but it's here JIC
       if (!endpointData[0].charm || !endpointData[1].charm) {
