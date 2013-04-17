@@ -1039,12 +1039,12 @@ YUI.add('juju-topology-service', function(Y) {
      */
     show_service: function(service) {
       var topo = this.get('component');
-      var router = topo.get('nsRouter');
+      var nsRouter = topo.get('nsRouter');
       var getModelURL = topo.get('getModelURL');
 
       topo.detachContainer();
       topo.fire('navigateTo', {
-        url: router.url({gui: getModelURL(service)})
+        url: nsRouter.url({gui: getModelURL(service)})
       });
     },
 
