@@ -301,7 +301,7 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Fetch the sidebar editoral content from the charmworld api.
+     * Fetch the interesting landing content from the charmworld api.
      *
      * @method interesting
      * @return {Object} data loaded from the api call.

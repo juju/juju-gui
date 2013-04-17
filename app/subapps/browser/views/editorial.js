@@ -140,7 +140,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           }
           this.get('db').notifications.add(
               new models.Notification({
-                title: 'Failed to load sidebar content.',
+                title: 'Failed to load landing page content.',
                 message: message,
                 level: 'error'
               })
