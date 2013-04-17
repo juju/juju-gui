@@ -529,7 +529,7 @@ YUI.add('juju-topology-service', function(Y) {
                           .filter(function(boundingBox) {
                             return !Y.Lang.isNumber(boundingBox.x);
                           });
-      if (new_services.length) {
+      if (new_services) {
         this.tree.nodes({children: new_services});
       }
       // enter
