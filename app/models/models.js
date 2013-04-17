@@ -147,8 +147,8 @@ YUI.add('juju-models', function(Y) {
       @method alive
       @return {Y.ModelList} The model instances having life === 'alive'.
     */
-    alive: function () {
-      return this.filter({asList: true}, function (model) {
+    alive: function() {
+      return this.filter({asList: true}, function(model) {
         return model.isAlive();
       });
     },
