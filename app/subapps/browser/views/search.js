@@ -18,10 +18,15 @@ YUI.add('subapp-browser-searchview', function(Y) {
     Y.Event.EventTracker
   ], {
 
-    _renderSearchResults: function(text, container) {
+    _renderSearchResults: function(container) {
+      // Don't render search results if the view has never been rendered.
+      if (!this.get('rendered')) {
+        return;
+      }
       if(!container) {
         container = this.get('container');
       }
+      var text = this.get('text');
       this.get('store').search(text, {
         'success': function(data) {
           var results = this.get('store').resultsToCharmlist(data.result);
@@ -33,12 +38,16 @@ YUI.add('subapp-browser-searchview', function(Y) {
       }, this);
     },
 
+    initializer: function() {
+      this.addEvent(this.after('textChange', this._renderSearchResults));
+    },
+
     render: function(container) {
+      this.set('rendered', true);
       if(container) {
         this.set('container', container);
       }
-      var text = this.get('text');
-      this._renderSearchResults(text);
+      this._renderSearchResults();
     }
   }, {
     ATTRS: {
@@ -51,6 +60,9 @@ YUI.add('subapp-browser-searchview', function(Y) {
        */
       container: {},
 
+      rendered: {
+        value: false
+      },
       /**
        * An instance of the Charmworld API object to hit for any data that
        * needs fetching.
@@ -70,6 +82,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
        * @type {String}
        */
       text: {}
+
     }
   });
 

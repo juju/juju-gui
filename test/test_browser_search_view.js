@@ -1,7 +1,7 @@
 'use strict';
 
 
-describe.only('search view', function() {
+describe('search view', function() {
   var apiURL,
       container,
       view,
@@ -23,7 +23,7 @@ describe.only('search view', function() {
     window.juju_config = {charmworldURL: 'http://localhost'};
     container = Y.Node.create('<div id="container"></div>');
     Y.one('body').append(container);
-    view = new Y.juju.browser.views.BrowserSearchView();
+    view = new Y.juju.browser.views.BrowserSearchView({text: 'foo'});
     //
     // Create monkeypatched store to verify right method is called.
     apiURL = '';
@@ -62,7 +62,6 @@ describe.only('search view', function() {
   });
 
   it('renders correctly', function() {
-    view.set('text', 'foo');
     view.render(container);
     assert.equal(container, view.get('container'));
     assert.equal('charms?text=foo', apiURL);
@@ -71,5 +70,10 @@ describe.only('search view', function() {
     assert.equal(charmText.replace(/\s+/g, ''), 'bar');
   });
 
-  it('rerenders on textChange');
+  it('requeries on textChange', function() {
+    view.render(container);
+    assert.equal('charms?text=foo', apiURL);
+    view.set('text', 'bar');
+    assert.equal('charms?text=bar', apiURL);
+  });
 });
