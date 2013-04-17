@@ -11,19 +11,25 @@
 YUI.add('subapp-browser-searchview', function(Y) {
   var ns = Y.namespace('juju.browser.views'),
       views = Y.namespace('juju.views'),
-      widgets = Y.namespace('juju.widgets');
+      widgets = Y.namespace('juju.widgets'),
+      models = Y.namespace('juju.models');
 
   ns.BrowserSearchView = Y.Base.create('browser-view-searchview', Y.View, [
-    widgets.browser.IndicatorManager,
     Y.Event.EventTracker
   ], {
 
+    /**
+     * Renders the search results from the the store query.
+     *
+     * @method _renderSearchResults
+     * @param {Y.Node} container Optional container to render results to.
+     */
     _renderSearchResults: function(container) {
       // Don't render search results if the view has never been rendered.
       if (!this.get('rendered')) {
         return;
       }
-      if(!container) {
+      if (!container) {
         container = this.get('container');
       }
       var text = this.get('text');
@@ -34,17 +40,54 @@ YUI.add('subapp-browser-searchview', function(Y) {
             var ct = new widgets.browser.CharmToken(charm.getAttrs());
             ct.render(container);
           });
-        }
+        },
+        'failure': this.apiFailure
       }, this);
     },
 
+    /**
+     * Generates a message to the user based on a bad api call.
+     *
+     * @method apiFailure
+     * @param {Object} data the json decoded response text.
+     * @param {Object} request the original io_request object for debugging.
+     *
+     */
+    apiFailure: function(data, request) {
+      var message;
+      if (data && data.type) {
+        message = 'Charm API error of type: ' + data.type;
+      } else {
+        message = 'Charm API server did not respond';
+      }
+      this.get('db').notifications.add(
+          new models.Notification({
+            title: 'Failed to load search results.',
+            message: message,
+            level: 'error'
+          })
+      );
+    },
+
+    /**
+     * Initializer
+     *
+     * @method initializer
+     */
     initializer: function() {
       this.addEvent(this.after('textChange', this._renderSearchResults));
     },
 
+    /**
+     * Renders the searchview, rendering search results for the view's search
+     * text.
+     *
+     * @method
+     * @param {container} The view's container to render to.
+     */
     render: function(container) {
       this.set('rendered', true);
-      if(container) {
+      if (container) {
         this.set('container', container);
       }
       this._renderSearchResults();
@@ -60,9 +103,18 @@ YUI.add('subapp-browser-searchview', function(Y) {
        */
       container: {},
 
+      /**
+       * Whether the view had been rendered; used to avoid rendering before a
+       * render call with the textChange event.
+       *
+       * @attribute rendered
+       * @default false
+       * @type {boolean}
+       */
       rendered: {
         value: false
       },
+
       /**
        * An instance of the Charmworld API object to hit for any data that
        * needs fetching.
@@ -82,7 +134,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
        * @type {String}
        */
       text: {}
-
     }
   });
 

@@ -9,13 +9,13 @@ describe('search view', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-      'json',
-      'juju-charm-store',
-      'node',
-      'subapp-browser-searchview',
-      function(Y) {
-        done();
-      });
+        'json',
+        'juju-charm-store',
+        'node',
+        'subapp-browser-searchview',
+        function(Y) {
+          done();
+        });
   });
 
   beforeEach(function() {
