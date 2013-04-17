@@ -204,7 +204,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         delete incoming[this.defaultNamespace];
       }
       url = this.url(Y.mix(orig, incoming, true, Y.Object.keys(incoming)),
-        true); // excludeRootPaths
+          true); // excludeRootPaths
       return url;
 
     }
