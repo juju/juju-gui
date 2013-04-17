@@ -76,7 +76,11 @@ YUI.add('subapp-browser-searchview', function(Y) {
      * @method initializer
      */
     initializer: function() {
-      this.addEvent(this.after('textChange', this._renderSearchResults));
+      this.addEvent(
+          this.after('textChange', function(e) {
+            var container = e.currentTarget.get('container');
+            this._renderSearchResults(container);
+          }));
     },
 
     /**
