@@ -179,7 +179,7 @@
     });
 
     beforeEach(function() {
-      state = utils.makeFakeBackendWithCharmStore().fakebackend;
+      state = utils.makeFakeBackendWithCharmStore();
       juju = new sandboxModule.PyJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
       env = new environmentsModule.PythonEnvironment({conn: client});

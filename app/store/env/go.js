@@ -194,7 +194,9 @@ YUI.add('juju-env-go', function(Y) {
       // change in delta events based on the deltas we got.
       var deltas = [];
       data.Response.Deltas.forEach(function(delta) {
-        var kind = delta[0], operation = delta[1], entityInfo = delta[2];
+        var kind = delta[0],
+            operation = delta[1],
+            entityInfo = delta[2];
         deltas.push([kind + 'Info', operation, entityInfo]);
       });
       this.fire('delta', {data: {result: deltas}});
@@ -385,7 +387,7 @@ YUI.add('juju-env-go', function(Y) {
     add_unit: function(service, numUnits, callback) {
       var intermediateCallback;
       if (callback) {
-        // Curry the callback, service and numUnits.  No context is passed.
+        // Capture the callback, service and numUnits.  No context is passed.
         intermediateCallback = Y.bind(this.handleAddUnit, null,
             callback, service, numUnits);
       }
@@ -438,7 +440,7 @@ YUI.add('juju-env-go', function(Y) {
     remove_units: function(unit_names, callback) {
       var intermediateCallback;
       if (callback) {
-        // Curry the callback and unit_names.  No context is passed.
+        // Capture the callback and unit_names.  No context is passed.
         intermediateCallback = Y.bind(this.handleRemoveUnits, null,
             callback, unit_names);
       }
@@ -485,7 +487,7 @@ YUI.add('juju-env-go', function(Y) {
     expose: function(service, callback) {
       var intermediateCallback;
       if (callback) {
-        // Curry the callback and service.  No context is passed.
+        // Capture the callback and service.  No context is passed.
         intermediateCallback = Y.bind(this.handleServiceCalls, null,
             callback, service);
       }
@@ -511,7 +513,7 @@ YUI.add('juju-env-go', function(Y) {
     unexpose: function(service, callback) {
       var intermediateCallback;
       if (callback) {
-        // Curry the callback and service.  No context is passed.
+        // Capture the callback and service.  No context is passed.
         intermediateCallback = Y.bind(
             this.handleServiceCalls, null, callback, service);
       }
@@ -558,7 +560,7 @@ YUI.add('juju-env-go', function(Y) {
     update_annotations: function(entity, type, data, callback) {
       var intermediateCallback;
       if (callback) {
-        // Curry the callback and entity.  No context is passed.
+        // Capture the callback and entity.  No context is passed.
         intermediateCallback = Y.bind(this.handleSetAnnotations, null,
             callback, entity);
       }
@@ -587,7 +589,7 @@ YUI.add('juju-env-go', function(Y) {
     remove_annotations: function(entity, type, keys, callback) {
       var intermediateCallback;
       if (callback) {
-        // Curry the callback and entity.  No context is passed.
+        // Capture the callback and entity.  No context is passed.
         intermediateCallback = Y.bind(this.handleSetAnnotations, null,
             callback, entity);
       }
@@ -637,7 +639,7 @@ YUI.add('juju-env-go', function(Y) {
     get_annotations: function(entity, type, callback) {
       var intermediateCallback;
       if (callback) {
-        // Curry the callback and entity.  No context is passed.
+        // Capture the callback and entity.  No context is passed.
         intermediateCallback = Y.bind(this.handleGetAnnotations, null,
             callback, entity);
       }
@@ -685,7 +687,7 @@ YUI.add('juju-env-go', function(Y) {
     get_service: function(serviceName, callback) {
       var intermediateCallback;
       if (callback) {
-        // Curry the callback and serviceName.  No context is passed.
+        // Capture the callback and serviceName.  No context is passed.
         intermediateCallback = Y.bind(this.handleGetService, null,
             callback, serviceName);
       }
@@ -742,7 +744,7 @@ YUI.add('juju-env-go', function(Y) {
     set_config: function(serviceName, config, data, callback) {
       var intermediateCallback, sendData;
       if (callback) {
-        // Curry the callback and serviceName.  No context is passed.
+        // Capture the callback and serviceName.  No context is passed.
         intermediateCallback = Y.bind(this.handleServiceCalls, null,
             callback, serviceName);
       }
@@ -774,7 +776,7 @@ YUI.add('juju-env-go', function(Y) {
     destroy_service: function(service, callback) {
       var intermediateCallback;
       if (callback) {
-        // Curry the callback and service.  No context is passed.
+        // Capture the callback and service.  No context is passed.
         intermediateCallback = Y.bind(this.handleServiceCalls, null,
             callback, service);
       }
@@ -801,7 +803,7 @@ YUI.add('juju-env-go', function(Y) {
     set_constraints: function(serviceName, constraints, callback) {
       var intermediateCallback, sendData;
       if (callback) {
-        // Curry the callback and serviceName.  No context is passed.
+        // Capture the callback and serviceName.  No context is passed.
         intermediateCallback = Y.bind(this.handleSetConstraints, null,
             callback, serviceName);
       }
@@ -840,6 +842,60 @@ YUI.add('juju-env-go', function(Y) {
       };
       // Call the original user callback.
       userCallback(transformedData);
+    },
+
+    /**
+      Mark the given unit or relation problem as resolved.
+
+      @method resolved
+      @param {String} unitName The unit name.
+      @param {String} relationName The relation name (ignored).
+      @param {Boolean} retry Whether or not to retry the unit/relation.
+      @param {Function} callback A callable that must be called once the
+        operation is performed.
+      @return {undefined} Sends a message to the server only.
+    */
+    resolved: function(unitName, relationName, retry, callback) {
+      // Resolving a unit/relation pair is not supported by the Go back-end, so
+      // relationName is ignored here.
+      var intermediateCallback, sendData;
+      if (callback) {
+        // Capture the callback and relationName.  No context is passed.
+        intermediateCallback = Y.bind(this.handleResolved, null, callback,
+            unitName);
+      }
+      sendData = {
+        Type: 'Client',
+        Request: 'Resolved',
+        Params: {
+          UnitName: unitName,
+          Retry: !!retry
+        }
+      };
+      this._send_rpc(sendData, intermediateCallback);
+    },
+
+    /**
+      Transform the data returned from juju-core call to Resolved into that
+      suitable for the user callback.
+
+      @method handleResolved
+      @static
+      @param {Function} userCallback The callback originally submitted by the
+        call site.
+      @param {String} unitName The name of the unit.  Passed in since it is not
+        part of the response.
+      @param {Object} data The response returned by the server.
+      @return {undefined} Nothing.
+    */
+    handleResolved: function(userCallback, unitName, data) {
+      // Translate the callback data and call the user's callback.
+      console.log(userCallback);
+      userCallback({
+        op: 'resolved',
+        err: data.Error,
+        unit_name: unitName
+      });
     },
 
     /**
@@ -933,7 +989,7 @@ YUI.add('juju-env-go', function(Y) {
       var endpoint_b = endpointToName(endpointB);
       var intermediateCallback;
       if (callback) {
-        // Curry the endpoints.  No context is passed.
+        // Capture the endpoints.  No context is passed.
         intermediateCallback = Y.bind(this.handleRemoveRelation, null,
                                       callback, endpoint_a, endpoint_b);
       }
@@ -984,7 +1040,7 @@ YUI.add('juju-env-go', function(Y) {
       // callback is not provided, we can leave intermediateCallback undefined.
       var intermediateCallback;
       if (callback) {
-        // Curry the callback and service.  No context is passed.
+        // Capture the callback and service.  No context is passed.
         intermediateCallback = Y.bind(this.handleCharmInfo, null, callback);
       }
       this._send_rpc({

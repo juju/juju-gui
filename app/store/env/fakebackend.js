@@ -341,6 +341,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
         delete data.bzr_branch;
         delete data.last_change;
         data.id = data.store_url;
+        data.is_subordinate = data.subordinate;
+        delete data.subordinate;
         charm = this.db.charms.add(data);
       }
       return charm;
