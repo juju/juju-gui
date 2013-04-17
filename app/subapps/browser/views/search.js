@@ -36,6 +36,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
       this.get('store').search(text, {
         'success': function(data) {
           var results = this.get('store').resultsToCharmlist(data.result);
+          container.empty();
           results.map(function(charm) {
             var ct = new widgets.browser.CharmToken(charm.getAttrs());
             ct.render(container);
