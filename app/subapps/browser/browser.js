@@ -217,7 +217,6 @@ YUI.add('subapp-browser', function(Y) {
      */
     renderCharmDetails: function(req, res, next) {
       var charmID = req.params.id;
-      this._viewState.charmID = charmID;
       var extraCfg = {
         charmID: charmID,
         container: Y.Node.create('<div class="charmview"/>')
@@ -225,7 +224,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // The details view needs to know if we're using a fullscreen template
       // or the sidebar version.
-      if (req.params.viewmode === 'fullscreen') {
+      if (this._viewState.viewmode === 'fullscreen') {
         extraCfg.isFullscreen = true;
       }
 
@@ -258,39 +257,34 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     renderEditorial: function(req, res, next) {
-      // Update the editorial if either the search field changed or the
-      // viewmode changed.
-      if (!this._viewState.search &&
-          (this._stateChanged('search') || this._stateChanged('viewmode'))) {
-        // If loading the interesting content then it's not a search going on.
-        var container = this.get('container'),
-            editorialContainer,
-            extraCfg = {};
+      // If loading the interesting content then it's not a search going on.
+      var container = this.get('container'),
+          editorialContainer,
+          extraCfg = {};
 
-        if (req.path.indexOf('fullscreen') !== -1) {
-          // The fullscreen view requires that there be no editorial content if
-          // we're looking at a specific charm. The div we dump our content into
-          // is shared. So if the url is /fullscreen show editorial content, but
-          // if it's not, there's something else handling displaying the
-          // view-data.
-          extraCfg.renderTo = container.one('.bws-view-data');
-          extraCfg.isFullscreen = true;
-        } else {
-          // If this is the sidebar view, then the editorial content goes into a
-          // different div since we can view both editorial content and
-          // view-data (such as a charm details) side by side.
-          extraCfg.renderTo = container.one('.bws-content');
-        }
-
-        this._editorial = new Y.juju.browser.views.EditorialView(
-            this._getViewCfg(extraCfg));
-
-        this._editorial.render();
-        this._editorial.addTarget(this);
-
-        // Add any sidebar charms to the running cache.
-        this._cacheCharms.add(this._editorial._cacheCharms);
+      if (this._viewState.viewmode === 'fullscreen') {
+        // The fullscreen view requires that there be no editorial content if
+        // we're looking at a specific charm. The div we dump our content into
+        // is shared. So if the url is /fullscreen show editorial content, but
+        // if it's not, there's something else handling displaying the
+        // view-data.
+        extraCfg.renderTo = container.one('.bws-view-data');
+        extraCfg.isFullscreen = true;
+      } else {
+        // If this is the sidebar view, then the editorial content goes into a
+        // different div since we can view both editorial content and
+        // view-data (such as a charm details) side by side.
+        extraCfg.renderTo = container.one('.bws-content');
       }
+
+      this._editorial = new Y.juju.browser.views.EditorialView(
+          this._getViewCfg(extraCfg));
+
+      this._editorial.render();
+      this._editorial.addTarget(this);
+
+      // Add any sidebar charms to the running cache.
+      this._cacheCharms.add(this._editorial._cacheCharms);
     },
 
     /**
@@ -303,13 +297,16 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
-      // If we've switched to viewmode sidebar, we need to render it.
+      // If we've switched to viewmode fullscreen, we need to render it.
+      // We know the viewmode is already fullscreen because we're in this
+      // function.
       if (this._stateChanged('viewmode')) {
         this.get('container').setStyle('display', 'block');
-
         this._fullscreen = this.showView('fullscreen', this._getViewCfg());
       }
 
+      // If we've changed the charmID or the viewmode has changed and we have
+      // a charmID, render charmDetails.
       if ((this._stateChanged('charmID') || this._stateChanged('viewmode')) &&
           this._viewState.charmID) {
         this.renderCharmDetails(req, res, next);
@@ -351,6 +348,8 @@ YUI.add('subapp-browser', function(Y) {
         this.renderEditorial(req, res, next);
       }
 
+      // If we've changed the charmID or the viewmode has changed and we have
+      // a charmID, render charmDetails.
       if ((this._stateChanged('charmID') || this._stateChanged('viewmode')) &&
           this._viewState.charmID) {
         this.renderCharmDetails(req, res, next);
@@ -358,7 +357,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // If the sidebar is the final part of the route, then hide the div for
       // viewing the charm details.
-      if (this._getSubPath(req.path) === 'sidebar') {
+      if (!this._viewState.charmID) {
         var detailsNode = Y.one('.bws-view-data');
         if (detailsNode) {
           detailsNode.hide();
