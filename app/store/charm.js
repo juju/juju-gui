@@ -301,19 +301,19 @@ YUI.add('juju-charm-store', function(Y) {
     },
 
     /**
-     * Fetch the sidebar editoral content from the charmworld api.
+     * Fetch the interesting landing content from the charmworld api.
      *
-     * @method sidebarEditorial
+     * @method interesting
      * @return {Object} data loaded from the api call.
      *
      */
-    sidebarEditorial: function(callbacks, bindScope) {
+    interesting: function(callbacks, bindScope) {
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
 
-      this._makeRequest('sidebar_editorial', callbacks);
+      this._makeRequest('charms/interesting', callbacks);
     }
   }, {
     ATTRS: {

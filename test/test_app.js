@@ -401,7 +401,6 @@ function injectData(app, data) {
     });
 
     it('app instantiates correctly in sandbox mode.', function() {
-      var charmStoreData = utils.makeCharmStore();
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
@@ -410,7 +409,7 @@ function injectData(app, data) {
             consoleEnabled: true,
             user: 'admin',
             password: 'admin',
-            charm_store: charmStoreData.charmStore
+            charm_store: new utils.TestCharmStore()
           });
       app.showView(new Y.View());
       // This simply walks through the hierarchy to show that all the

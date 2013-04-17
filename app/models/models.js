@@ -91,7 +91,26 @@ YUI.add('juju-models', function(Y) {
   });
   models.Environment = Environment;
 
-  var Service = Y.Base.create('service', Y.Model, [], {}, {
+  var ALIVE = 'alive';
+
+  var Service = Y.Base.create('service', Y.Model, [], {
+
+    /**
+      Return true if this service life is "alive", false otherwise.
+
+      A model instance is alive if its life cycle (i.e. the "life" attribute)
+      is set to "alive". Other possible values, as they arrive from the
+      juju-core delta stream, are "dying" and "dead", in which cases the
+      service is not considered alive.
+
+      @method isAlive
+      @return {Boolean} Whether this service is alive.
+     */
+    isAlive: function() {
+      return this.get('life') === ALIVE;
+    }
+
+  }, {
     ATTRS: {
       displayName: {
         /**
@@ -115,6 +134,9 @@ YUI.add('juju-models', function(Y) {
       pending: {
         value: false
       },
+      life: {
+        value: ALIVE
+      },
       unit_count: {},
       aggregated_status: {}
     }
@@ -123,6 +145,18 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
     model: Service,
+
+    /**
+      Return a list of alive model instances.
+
+      @method alive
+      @return {Y.ModelList} The model instances having life === 'alive'.
+    */
+    alive: function() {
+      return this.filter({asList: true}, function(model) {
+        return model.isAlive();
+      });
+    },
 
     process_delta: function(action, data) {
       _process_delta(this, action, data, {exposed: false});

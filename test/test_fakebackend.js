@@ -45,7 +45,7 @@
   describe('FakeBackend.deploy', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, setCharm, result, callback;
+    var Y, fakebackend, utils, result, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
@@ -55,9 +55,7 @@
     });
 
     beforeEach(function() {
-      var setupData = utils.makeFakeBackendWithCharmStore();
-      fakebackend = setupData.fakebackend;
-      setCharm = setupData.setCharm;
+      fakebackend = utils.makeFakeBackendWithCharmStore();
       result = undefined;
       callback = function(response) { result = response; };
     });
@@ -104,6 +102,7 @@
         initialized: true,
         name: 'wordpress',
         pending: false,
+        life: 'alive',
         subordinate: false,
         unit_count: undefined
       });
@@ -229,7 +228,7 @@
   describe('FakeBackend.uniformOperations', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, setCharm;
+    var Y, fakebackend, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
@@ -239,9 +238,7 @@
     });
 
     beforeEach(function() {
-      var setupData = utils.makeFakeBackendWithCharmStore();
-      fakebackend = setupData.fakebackend;
-      setCharm = setupData.setCharm;
+      fakebackend = utils.makeFakeBackendWithCharmStore();
     });
 
     afterEach(function() {
@@ -283,6 +280,14 @@
       it('successfully returns valid charms', function(done) {
         fakebackend.getCharm('cs:wordpress', function(data) {
           assert.equal(data.result.name, 'wordpress');
+          done();
+        });
+      });
+
+      it('loads subordinate charms properly', function(done) {
+        fakebackend.getCharm('cs:puppet', function(data) {
+          assert.equal(data.result.name, 'puppet');
+          assert.isTrue(data.result.is_subordinate);
           done();
         });
       });
@@ -534,7 +539,7 @@
   describe('FakeBackend.addUnit', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, setCharm, deployResult, callback;
+    var Y, fakebackend, utils, deployResult, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
@@ -544,9 +549,7 @@
     });
 
     beforeEach(function() {
-      var setupData = utils.makeFakeBackendWithCharmStore();
-      fakebackend = setupData.fakebackend;
-      setCharm = setupData.setCharm;
+      fakebackend = utils.makeFakeBackendWithCharmStore();
       deployResult = undefined;
       callback = function(response) { deployResult = response; };
     });
@@ -629,7 +632,7 @@
   describe('FakeBackend.next*', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, setCharm, deployResult, callback;
+    var Y, fakebackend, utils, deployResult, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
@@ -639,9 +642,7 @@
     });
 
     beforeEach(function() {
-      var setupData = utils.makeFakeBackendWithCharmStore();
-      fakebackend = setupData.fakebackend;
-      setCharm = setupData.setCharm;
+      fakebackend = utils.makeFakeBackendWithCharmStore();
       deployResult = undefined;
       callback = function(response) { deployResult = response; };
     });
@@ -755,7 +756,7 @@
   describe('FakeBackend.addRelation', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, setCharm, deployResult, callback;
+    var Y, fakebackend, utils, deployResult, callback;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
@@ -765,9 +766,7 @@
     });
 
     beforeEach(function() {
-      var setupData = utils.makeFakeBackendWithCharmStore();
-      fakebackend = setupData.fakebackend;
-      setCharm = setupData.setCharm;
+      fakebackend = utils.makeFakeBackendWithCharmStore();
       deployResult = undefined;
       callback = function(response) { deployResult = response; };
     });
@@ -1025,7 +1024,7 @@
   describe('FakeBackend.removeRelation', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
-    var Y, fakebackend, utils, setCharm, deployResult, callback;
+    var Y, fakebackend, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(requires, function(Y) {
@@ -1035,11 +1034,7 @@
     });
 
     beforeEach(function() {
-      var setupData = utils.makeFakeBackendWithCharmStore();
-      fakebackend = setupData.fakebackend;
-      setCharm = setupData.setCharm;
-      deployResult = undefined;
-      callback = function(response) { deployResult = response; };
+      fakebackend = utils.makeFakeBackendWithCharmStore();
     });
 
     afterEach(function() {
