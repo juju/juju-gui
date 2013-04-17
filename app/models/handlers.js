@@ -158,7 +158,6 @@ YUI.add('juju-delta-handlers', function(Y) {
       @param {String} action The operation to be performed
        ("add", "change" or "remove").
       @param {Object} change The JSON entity information.
-      @param {String} kind The delta event type.
       @return {undefined} Nothing.
      */
     serviceInfo: function(db, action, change) {
@@ -169,6 +168,13 @@ YUI.add('juju-delta-handlers', function(Y) {
         constraints: change.Constraints || {}
       };
       db.services.process_delta(action, data);
+      if (action != 'remove') {
+        var service = db.services.getById(change.Name);
+        var serviceConfig = service.get('config') || {};
+        var changeConfig = change.Config || {};
+        var combined = Y.merge(serviceConfig, changeConfig);
+        service.set('config', combined);
+      }
     },
 
     /**
