@@ -193,7 +193,8 @@
           Name: 'django',
           CharmURL: 'cs:precise/django-42',
           Exposed: true,
-          Constraints: constraints
+          Constraints: constraints,
+          Life: 'alive'
         };
         serviceInfo(db, 'add', change);
         assert.strictEqual(1, db.services.size());
@@ -202,6 +203,7 @@
         assert.strictEqual('cs:precise/django-42', service.get('charm'));
         assert.isTrue(service.get('exposed'));
         assert.deepEqual(constraints, service.get('constraints'));
+        assert.strictEqual('alive', service.get('life'));
       });
 
       it('updates a service in the database', function() {
@@ -213,7 +215,8 @@
         var change = {
           Name: 'wordpress',
           CharmURL: 'cs:quantal/wordpress-11',
-          Exposed: false
+          Exposed: false,
+          Life: 'dying'
         };
         serviceInfo(db, 'change', change);
         assert.strictEqual(1, db.services.size());
@@ -221,6 +224,7 @@
         var service = db.services.getById('wordpress');
         assert.strictEqual('cs:quantal/wordpress-11', service.get('charm'));
         assert.isFalse(service.get('exposed'));
+        assert.strictEqual('dying', service.get('life'));
       });
 
       it('if constraints are not in the change stream they are {}',
