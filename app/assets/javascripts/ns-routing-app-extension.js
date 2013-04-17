@@ -2,20 +2,20 @@
 
 YUI.add('ns-routing-app-extension', function(Y) {
 
-  function _trim(s, chr, leading, trailing) {
+  function _trim(s, char, leading, trailing) {
     // remove leading, trailing char.
-    while (leading && s && s.indexOf(chr) === 0) {
+    while (leading && s && s.indexOf(char) === 0) {
       s = s.slice(1, s.length);
     }
-    while (trailing && s && s.lastIndexOf(chr) === (s.length - 1)) {
+    while (trailing && s && s.lastIndexOf(char) === (s.length - 1)) {
       s = s.slice(0, s.length - 1);
     }
     return s;
   }
 
-  function trim(s, chr) { return _trim(s, chr, true, true); }
-  function rtrim(s, chr) { return _trim(s, chr, false, true); }
-  function ltrim(s, chr) { return _trim(s, chr, true, false); }
+  function trim(s, char) { return _trim(s, char, true, true); }
+  function rtrim(s, char) { return _trim(s, char, false, true); }
+  function ltrim(s, char) { return _trim(s, char, true, false); }
 
   /**
    * Return a sorted array of namespace, url pairs.
@@ -204,7 +204,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
         delete incoming[this.defaultNamespace];
       }
       url = this.url(Y.mix(orig, incoming, true, Y.Object.keys(incoming)),
-          true); // excludeRootPaths
+          {excludeRootPaths: true});
       return url;
 
     }

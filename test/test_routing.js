@@ -92,6 +92,8 @@ describe('Namespaced Routing', function() {
      function() {
        var router = juju.Router('charmstore');
        var url, parts;
+       url = router.combine('/foo/bar', '/:inspector:/');
+       url.should.equal('/foo/bar/');
        url = router.combine('/foo/bar', '/:inspector:/foo/');
        url.should.equal('/foo/bar/:inspector:/foo/');
      });
