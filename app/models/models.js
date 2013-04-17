@@ -91,6 +91,8 @@ YUI.add('juju-models', function(Y) {
   });
   models.Environment = Environment;
 
+  var ALIVE = 'alive';
+
   var Service = Y.Base.create('service', Y.Model, [], {
 
     /**
@@ -100,7 +102,7 @@ YUI.add('juju-models', function(Y) {
       @return {Boolean} Whether this service is alive.
      */
     isAlive: function() {
-      return this.get('life') === 'alive';
+      return this.get('life') === ALIVE;
     }
 
   }, {
@@ -128,7 +130,7 @@ YUI.add('juju-models', function(Y) {
         value: false
       },
       life: {
-        value: 'alive'
+        value: ALIVE
       },
       unit_count: {},
       aggregated_status: {}
