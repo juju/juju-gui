@@ -25,12 +25,6 @@ YUI.add('browser-charm-token', function(Y) {
      * @method _bindEvents
      */
     _bindEvents: function() {
-      var addButton = this.get('contentBox').one('.add'),
-          addClick = addButton.on('click', function(e) {
-            e.halt();
-            this.fire(ns.EVENT_CHARM_ADD);
-          });
-      this.addEvent(addClick);
     },
 
     /**
