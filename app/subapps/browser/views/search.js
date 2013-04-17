@@ -26,11 +26,11 @@ YUI.add('subapp-browser-searchview', function(Y) {
         'success': function(data) {
           var results = this.get('store').resultsToCharmlist(data.result);
           results.map(function(charm) {
-            var ct = widgets.CharmToken(charm.getAttrs());
+            var ct = new widgets.browser.CharmToken(charm.getAttrs());
             ct.render(container);
           });
         }
-      });
+      }, this);
     },
 
     render: function(container) {

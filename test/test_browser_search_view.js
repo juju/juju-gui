@@ -1,31 +1,75 @@
 'use strict';
 
 
-describe('search view', function() {
-  var SearchView,
-      views,
+describe.only('search view', function() {
+  var apiURL,
+      container,
+      view,
       Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['subapp-browser-searchview'], function(Y) {
-          views = Y.namespace('juju.browser.views');
-          SearchView = views.BrowserSearchView;
-          done();
-        });
+      'json',
+      'juju-charm-store',
+      'node',
+      'subapp-browser-searchview',
+      function(Y) {
+        done();
+      });
   });
 
   beforeEach(function() {
+    // Mock out a dummy location for the Store used in view instances.
+    window.juju_config = {charmworldURL: 'http://localhost'};
+    container = Y.Node.create('<div id="container"></div>');
+    Y.one('body').append(container);
+    view = new Y.juju.browser.views.BrowserSearchView();
+    //
+    // Create monkeypatched store to verify right method is called.
+    apiURL = '';
+    var fakeStore = new Y.juju.Charmworld0({});
+    var sampleData = {
+      result: [{
+        id: 'foo/bar-2',
+        name: 'bar',
+        description: 'some charm named bar'
+      }]
+    };
+    fakeStore.set('datasource', {
+      sendRequest: function(params) {
+        // Stubbing the server callback value
+        apiURL = params.request;
+        params.callback.success({
+          response: {
+            results: [{
+              responseText: Y.JSON.stringify(sampleData)
+            }]
+          }
+        });
+      }
+    });
+    view.set('store', fakeStore);
   });
 
   afterEach(function() {
+    delete window.juju_config;
+    view.destroy();
+    container.remove(true);
   });
 
   it('exists', function() {
-    assert.isObject(new SearchView());
+    assert.isObject(view);
   });
 
-  it('renders correctly');
+  it('renders correctly', function() {
+    view.set('text', 'foo');
+    view.render(container);
+    assert.equal(container, view.get('container'));
+    assert.equal('charms?text=foo', apiURL);
+    assert.equal(1, Y.all('.yui3-charmtoken').size());
+    var charmText = Y.one('.yui3-charmtoken').one('h3').get('text');
+    assert.equal(charmText.replace(/\s+/g, ''), 'bar');
+  });
 
   it('rerenders on textChange');
 });
