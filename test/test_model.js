@@ -643,3 +643,38 @@ describe('BrowserCharm test', function() {
     instance.get('recent_commit_count').should.equal(3);
   });
 });
+
+
+describe('service models', function() {
+  var models, list, django, rails, mysql;
+
+  before(function(done) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
+      models = Y.namespace('juju.models');
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    django = new models.Service({id: 'django'});
+    rails = new models.Service({id: 'rails', life: 'dying'});
+    mysql = new models.Service({id: 'mysql', life: 'dead'});
+    list = new models.ServiceList({items: [rails, django, mysql]});
+  });
+
+  it('instances identify if they are alive', function() {
+    assert.isTrue(django.isAlive());
+  });
+
+  it('instances identify if they are not alive (dying or dead)', function() {
+    assert.isFalse(rails.isAlive());
+    assert.isFalse(mysql.isAlive());
+  });
+
+  it('can be filtered so that it returns only alive models', function() {
+    var filtered = list.alive();
+    assert.strictEqual(1, filtered.size());
+    assert.deepEqual([django], filtered.toArray());
+  });
+
+});

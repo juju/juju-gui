@@ -91,7 +91,19 @@ YUI.add('juju-models', function(Y) {
   });
   models.Environment = Environment;
 
-  var Service = Y.Base.create('service', Y.Model, [], {}, {
+  var Service = Y.Base.create('service', Y.Model, [], {
+
+    /**
+      Return true if this service life is "alive", false otherwise.
+
+      @method isAlive
+      @return {Boolean} Whether this service is alive.
+     */
+    isAlive: function() {
+      return this.get('life') === 'alive';
+    }
+
+  }, {
     ATTRS: {
       displayName: {
         /**
@@ -115,6 +127,9 @@ YUI.add('juju-models', function(Y) {
       pending: {
         value: false
       },
+      life: {
+        value: 'alive'
+      },
       unit_count: {},
       aggregated_status: {}
     }
@@ -123,6 +138,18 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
     model: Service,
+
+    /**
+      Return a list of alive model instances.
+
+      @method alive
+      @return {Y.ModelList} The model instances having life === 'alive'.
+    */
+    alive: function () {
+      return this.filter({asList: true}, function (model) {
+        return model.isAlive();
+      });
+    },
 
     process_delta: function(action, data) {
       _process_delta(this, action, data, {exposed: false});
