@@ -559,9 +559,8 @@ YUI.add('juju-env-sandbox', function(Y) {
       Handles adding a relation between two supplied services from the client
 
       @method performOp_add_relation
-      @param {Array | String} data containing either a string in the format
-        wordpress:db or an array in the format
-        ['wordpress', { name: 'db', role: 'client'}].
+      @param {Object} data Object contains the operation, two endpoint strings
+        and request id.
     */
     performOp_add_relation: function(data) {
       var relation = this.get('state').addRelation(
@@ -595,7 +594,28 @@ YUI.add('juju-env-sandbox', function(Y) {
       };
 
       this.get('client').receive(data);
+    },
+
+    /**
+      Handles removing a relation between two supplied services from the client
+
+      @method performOp_remove_relation
+      @param {Object} data Object contains the operation, two endpoint strings
+        and request id.
+    */
+    performOp_remove_relation: function(data) {
+      var relation = this.get('state').removeRelation(
+          data.endpoint_a, data.endpoint_b);
+
+      if (relation.error) {
+        data.err = relation.error;
+      } else {
+        data.result = true;
+      }
+
+      this.get('client').receive(data);
     }
+
   });
 
   sandboxModule.PyJujuAPI = PyJujuAPI;
