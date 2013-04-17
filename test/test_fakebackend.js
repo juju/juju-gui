@@ -102,6 +102,7 @@
         initialized: true,
         name: 'wordpress',
         pending: false,
+        life: 'alive',
         subordinate: false,
         unit_count: undefined
       });
