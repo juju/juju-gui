@@ -663,6 +663,7 @@ describe('service models', function() {
   });
 
   it('instances identify if they are alive', function() {
+    // This test also verifies that the default state is "alive".
     assert.isTrue(django.isAlive());
   });
 
