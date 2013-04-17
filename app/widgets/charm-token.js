@@ -20,25 +20,6 @@ YUI.add('browser-charm-token', function(Y) {
     TEMPLATE: Y.namespace('juju.views').Templates['charm-token'],
 
     /**
-     * Set up and bind DOM events.
-     *
-     * @method _bindEvents
-     */
-    _bindEvents: function() {
-    },
-
-    /**
-     * Attach event listeners which bind the UI to the widget state.
-     * Clicking add fires the add signal.
-     *
-     * @method bindUI
-     */
-    bindUI: function() {
-      this._detachEvents();
-      this._bindEvents();
-    },
-
-    /**
      * Create the nodes required by this widget and attach them to the DOM.
      *
      * @method renderUI
