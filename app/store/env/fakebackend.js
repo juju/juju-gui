@@ -95,18 +95,18 @@ YUI.add('juju-env-fakebackend', function(Y) {
       charm-author-defined relation type name).
   */
   function parseEndpointStrings(endpoints, context) {
-      return Y.Array.map(endpoints,
-          function(endpoint) {
-            var epData = endpoint.split(':'),
-                result = { name: epData[0], type: epData[1] };
-            result.service = this.db.services.getById(result.name);
-            if (result.service) {
-              result.charm = this.db.charms.getById(
-                  result.service.get('charm'));
-            }
-            return result;
-          },
-          context);
+    return Y.Array.map(endpoints,
+        function(endpoint) {
+          var epData = endpoint.split(':'),
+              result = { name: epData[0], type: epData[1] };
+          result.service = this.db.services.getById(result.name);
+          if (result.service) {
+            result.charm = this.db.charms.getById(
+                result.service.get('charm'));
+          }
+          return result;
+        },
+        context);
   }
 
   /**
@@ -799,7 +799,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       return false;
     },
 
-    /*
+    /**
       Removes a relation between two services.
 
       @method removeRelation
@@ -984,6 +984,15 @@ YUI.add('juju-env-fakebackend', function(Y) {
       return {result: true};
     },
 
+    /**
+      Sets the configuration settings on the supplied service to the supplied
+      config object while leaving the settings untouched if they are not in the
+      supplied config.
+
+      @method setConfig
+      @param {String} serviceName the service id.
+      @param {Object} config properties to set.
+    */
     setConfig: function(serviceName, config) {
       if (!this.get('authenticated')) {
         return UNAUTHENTICATEDERROR;
@@ -1011,6 +1020,15 @@ YUI.add('juju-env-fakebackend', function(Y) {
       return {result: existing};
     },
 
+    /**
+      Sets the constraints on a service to restrict the type of machine to be
+      used for the service.
+
+      @method setConstraints
+      @param {String} serviceName the service id.
+      @param {Object | Array} data either an array of strings "foo=bar" or an
+      object {foo: 'bar'}.
+    */
     setConstraints: function(serviceName, data) {
       var constraints = {};
 

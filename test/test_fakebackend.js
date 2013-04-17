@@ -1022,7 +1022,7 @@
 
   });
 
-  describe.only('FakeBackend.removeRelation', function() {
+  describe('FakeBackend.removeRelation', function() {
     var requires = [
       'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
     var Y, fakebackend, utils, setCharm, deployResult, callback;
@@ -1048,17 +1048,17 @@
 
     function createAndRemoveRelation(charms, relation,
         removeRelation, mock, done) {
-          fakebackend.deploy(charms[0], function() {
-            fakebackend.deploy(charms[1], function() {
-              fakebackend.addRelation.apply(fakebackend, relation);
-              var result = fakebackend.removeRelation.apply(
-                  fakebackend, removeRelation);
+      fakebackend.deploy(charms[0], function() {
+        fakebackend.deploy(charms[1], function() {
+          fakebackend.addRelation.apply(fakebackend, relation);
+          var result = fakebackend.removeRelation.apply(
+              fakebackend, removeRelation);
 
-              assert.equal(result.error, mock.error);
-              assert.equal(typeof result, 'object');
-              done();
-            });
-          });
+          assert.equal(result.error, mock.error);
+          assert.equal(typeof result, 'object');
+          done();
+        });
+      });
     }
 
     it('rejects unauthenticated calls', function() {
@@ -1114,13 +1114,13 @@
         });
 
     it('throws an error if the charms do not exist', function(done) {
-        createAndRemoveRelation(
-            ['cs:mediawiki', 'cs:haproxy'],
-            ['mediawiki:website', 'haproxy:reverseproxy'],
-            ['wordpress:db', 'mysql:db'],
-            {error: 'Charm not loaded.'},
-            done);
-    })
+      createAndRemoveRelation(
+          ['cs:mediawiki', 'cs:haproxy'],
+          ['mediawiki:website', 'haproxy:reverseproxy'],
+          ['wordpress:db', 'mysql:db'],
+          {error: 'Charm not loaded.'},
+          done);
+    });
 
     it('throws an error if the relationship does not exist', function(done) {
       createAndRemoveRelation(
