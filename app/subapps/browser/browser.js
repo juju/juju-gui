@@ -107,9 +107,11 @@ YUI.add('subapp-browser', function(Y) {
         charmID: undefined,
         query: {}
       };
+
       // Keep track of a last state to see if we should redraw or not.
-      this._viewState = this._previousState;
-      this._viewState.viewmode = 'sidebar';
+      this._viewState = Y.merge(this._previousState, {
+        viewmode: 'sidebar'
+      });
     },
 
     /**
@@ -321,15 +323,15 @@ YUI.add('subapp-browser', function(Y) {
         if (detailsNode) {
           detailsNode.hide();
         }
-      }
-
-      if (this._stateChanged('viewmode')) {
-        this._viewState.viewmode = 'sidebar';
-        this.get('container').setStyle('display', 'block');
         // Clean up any details we've got.
         if (this._details) {
           this._details.destroy({remove: true});
         }
+      }
+
+      if (this._stateChanged('viewmode')) {
+        this.get('container').setStyle('display', 'block');
+
 
         // Whenever the sidebar view is rendered it needs some editorial
         // content to display to the user. We only need once instance though,
