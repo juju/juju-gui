@@ -49,26 +49,32 @@
         </div>
 
         <div class="changelog">
-            <h3 class="section-title" data-state="closed">
+            <h3 class="section-title">
+                {{#if recent_commits}}
+                    <a href="" class="expandToggle" data-state="closed">
+                {{/if}}
                 Change log
                 {{#if recent_commits}}
-                    <span class="expand">
-                        <span class="more">
-                            <img src="/juju-ui/assets/images/expand_icon.jpg"
-                                alt="Expand" />
-                        </span>
-                        <span class="less hidden">
-                            <img src="/juju-ui/assets/images/contract_icon.jpg"
-                                alt="Contract" />
+                        <span class="expand">
+                            <span class="more">
+                                <img src="/juju-ui/assets/images/expand_icon.jpg"
+                                    alt="Expand" />
+                            </span>
+                            <span class="less hidden">
+                                <img src="/juju-ui/assets/images/contract_icon.jpg"
+                                    alt="Contract" />
                             </span>
                         </span>
+                    </a>
                 {{/if}}
             </h3>
             {{#if recent_commits}}
                 <div class="first">
                     <p>
                         Latest change:
-                        {{prettyCommits.first.prettyDate}}
+                        <span class="date">
+                            {{prettyCommits.first.prettyDate}}
+                        </span>
                         {{prettyCommits.first.author.name}}
                         {{prettyCommits.first.message}} -
                         <a href="">REVNO{{prettyCommits.first.revno}}</a>
@@ -79,8 +85,9 @@
                     <ul>
                         {{#prettyCommits.remaining}}
                             <li>
-                                {{prettyDate}} {{author.name}} {{message}}
-                                (revno{{revno}})
+                                <span class="date">{{prettyDate}}</span>
+                                {{author.name}} {{message}} -
+                                <a href="">REVNO{{revno}}</a>
                             </li>
                         {{/prettyCommits.remaining}}
                     </ul>

@@ -795,7 +795,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // belonging to this service.
       self.subordinateRelationsForService(d)
     .forEach(function(p) {
-            utils.addSVGClass('#' + p.id, 'active');
+            utils.addSVGClass('#' + utils.generateSafeDOMId(p.id), 'active');
           });
     },
 

@@ -30,7 +30,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     events: {
-      '.changelog h3.section-title': {
+      '.changelog h3 .expandToggle': {
         click: '_toggleLog'
       },
       '.charm .add': {
