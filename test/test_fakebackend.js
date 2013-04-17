@@ -102,6 +102,7 @@
         initialized: true,
         name: 'wordpress',
         pending: false,
+        life: 'alive',
         subordinate: false,
         unit_count: undefined
       });
@@ -1020,5 +1021,111 @@
 
   });
 
+  describe('FakeBackend.removeRelation', function() {
+    var requires = [
+      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var Y, fakebackend, utils;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(requires, function(Y) {
+        utils = Y.namespace('juju-tests.utils');
+        done();
+      });
+    });
+
+    beforeEach(function() {
+      fakebackend = utils.makeFakeBackendWithCharmStore();
+    });
+
+    afterEach(function() {
+      fakebackend.destroy();
+    });
+
+    function createAndRemoveRelation(charms, relation,
+        removeRelation, mock, done) {
+      fakebackend.deploy(charms[0], function() {
+        fakebackend.deploy(charms[1], function() {
+          fakebackend.addRelation.apply(fakebackend, relation);
+          var result = fakebackend.removeRelation.apply(
+              fakebackend, removeRelation);
+
+          assert.equal(result.error, mock.error);
+          assert.equal(typeof result, 'object');
+          done();
+        });
+      });
+    }
+
+    it('rejects unauthenticated calls', function() {
+      fakebackend.logout();
+      var result = fakebackend.addRelation();
+      assert.equal(result.error, 'Please log in.');
+    });
+
+    it('requires two string endpoint names', function() {
+      var result = fakebackend.addRelation();
+      assert.equal(result.error, 'Two string endpoint names' +
+              ' required to establish a relation');
+    });
+
+    it('removes a relation when supplied with two string endpoints',
+        function(done) {
+          createAndRemoveRelation(
+              ['cs:wordpress', 'cs:mysql'],
+              ['wordpress:db', 'mysql:db'],
+              ['wordpress:db', 'mysql:db'],
+              {},
+              done);
+        });
+
+    it('removes a relation when supplied with two string endpoints (reverse)',
+        function(done) {
+          createAndRemoveRelation(
+              ['cs:wordpress', 'cs:mysql'],
+              ['wordpress:db', 'mysql:db'],
+              ['mysql:db', 'wordpress:db'],
+              {},
+              done);
+        });
+
+    it('removes a relation when supplied with two different string endpoints',
+        function(done) {
+          createAndRemoveRelation(
+              ['cs:mediawiki', 'cs:haproxy'],
+              ['mediawiki:website', 'haproxy:reverseproxy'],
+              ['mediawiki:website', 'haproxy:reverseproxy'],
+              {},
+              done);
+        });
+
+    it('removes a relation when supplied with two different string endpoints',
+        function(done) {
+          createAndRemoveRelation(
+              ['cs:mediawiki', 'cs:haproxy'],
+              ['mediawiki:website', 'haproxy:reverseproxy'],
+              ['haproxy:reverseproxy', 'mediawiki:website'],
+              {},
+              done);
+        });
+
+    it('throws an error if the charms do not exist', function(done) {
+      createAndRemoveRelation(
+          ['cs:mediawiki', 'cs:haproxy'],
+          ['mediawiki:website', 'haproxy:reverseproxy'],
+          ['wordpress:db', 'mysql:db'],
+          {error: 'Charm not loaded.'},
+          done);
+    });
+
+    it('throws an error if the relationship does not exist', function(done) {
+      createAndRemoveRelation(
+          ['cs:wordpress', 'cs:mysql'],
+          ['wordpress:db', 'mysql:db'],
+          ['wordpress:bar', 'mysql:baz'],
+          {error: 'Relationship does not exist'},
+          done);
+    });
+
+  });
 
 })();

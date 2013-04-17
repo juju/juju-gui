@@ -311,4 +311,23 @@ describe('service module events', function() {
     // The flag is reset when encountered and ignored.
     assert.isFalse(topo.ignoreServiceClick);
   });
+
+  it('should hide dying or dead services', function() {
+    var haproxy = db.services.getById('haproxy'); // Added in beforeEach.
+    db.services.add([
+      {id: 'rails', life: 'dying'},
+      {id: 'mysql', life: 'dead'}
+    ]);
+    var django = db.services.add({id: 'django'});
+    serviceModule.update();
+    var boxes = topo.service_boxes;
+    // There are four services in total.
+    assert.strictEqual(4, db.services.size());
+    // But only two of those are actually displayed.
+    assert.strictEqual(2, Y.Object.size(boxes));
+    // And they are the alive ones.
+    assert.deepPropertyVal(boxes, 'haproxy.model', haproxy);
+    assert.deepPropertyVal(boxes, 'django.model', django);
+  });
+
 });

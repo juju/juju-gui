@@ -53,20 +53,24 @@
         width: 25%;
     }
   }
-    dl {
-      margin: 0;
 
-      dt,
-      dd {
-        margin: 0;
-        padding: 0;
-      }
-      dt {
-        color: @bws-heading;
-        font-family: @font-family-medium;
-        font-weight: normal;
-      }
+  a {
+    color: @charm-panel-orange;
+  }
+  dl {
+    margin: 0;
+
+    dt,
+    dd {
+      margin: 0;
+      padding: 0;
     }
+    dt {
+      color: @bws-heading;
+      font-family: @font-family-medium;
+      font-weight: normal;
+    }
+  }
   strong {
     font-family: @font-family-medium;
     font-weight: normal;
@@ -167,6 +171,16 @@
 
         input {
           width: 100%;
+        }
+      }
+      .section-title a {
+        color: @bws-heading;
+      }
+      .yui3-charmtoken {
+        float: none;
+
+        .charm-token {
+          color: @bws-text;
         }
       }
     }

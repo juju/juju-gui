@@ -166,6 +166,7 @@ YUI.add('juju-delta-handlers', function(Y) {
         id: change.Name,
         charm: change.CharmURL,
         exposed: change.Exposed,
+        life: change.Life,
         constraints: change.Constraints || {}
       };
       db.services.process_delta(action, data);
