@@ -747,6 +747,11 @@ YUI.add('juju-env-go', function(Y) {
        @return {undefined} Sends a message to the server only.
      */
     set_config: function(serviceName, config, data, callback) {
+
+      if ((Y.Lang.isValue(config) && Y.Lang.isValue(data)) ||
+          (!Y.Lang.isValue(config) && !Y.Lang.isValue(data))) {
+        throw 'Exactly one of config and data must be provided';
+      }
       var intermediateCallback, sendData;
       if (callback) {
         // Capture the callback and serviceName.  No context is passed.
