@@ -1375,7 +1375,6 @@ YUI.add('juju-charm-panel', function(Y) {
       container.setStyle('display', 'none');
       var pos = calculatePanelPosition();
       container.setStyle('display', 'block');
-      container.setX(pos.x);
       if (pos.height) {
         var height = pos.height - panelHeightOffset[activePanelName];
         container.setStyle('height', pos.height + 'px');
