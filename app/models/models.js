@@ -91,7 +91,40 @@ YUI.add('juju-models', function(Y) {
   });
   models.Environment = Environment;
 
-  var Service = Y.Base.create('service', Y.Model, [], {}, {
+  var ALIVE = 'alive';
+
+  var Service = Y.Base.create('service', Y.Model, [], {
+
+    /**
+      Return true if this service life is "alive", false otherwise.
+
+      A model instance is alive if its life cycle (i.e. the "life" attribute)
+      is set to "alive". Other possible values, as they arrive from the
+      juju-core delta stream, are "dying" and "dead", in which cases the
+      service is not considered alive.
+
+      @method isAlive
+      @return {Boolean} Whether this service is alive.
+     */
+    isAlive: function() {
+      return this.get('life') === ALIVE;
+    },
+
+    /**
+      Return true if one or more units in this service are in an error state.
+
+      Return false otherwise.
+
+      @method hasErrors
+      @return {Boolean} Whether one or more unit are in an error state.
+     */
+    hasErrors: function() {
+      var aggregates = this.get('aggregated_status') || {},
+          errors = aggregates.error || false;
+      return errors && errors >= 1;
+    }
+
+  }, {
     ATTRS: {
       displayName: {
         /**
@@ -115,6 +148,9 @@ YUI.add('juju-models', function(Y) {
       pending: {
         value: false
       },
+      life: {
+        value: ALIVE
+      },
       unit_count: {},
       aggregated_status: {}
     }
@@ -123,6 +159,23 @@ YUI.add('juju-models', function(Y) {
 
   var ServiceList = Y.Base.create('serviceList', Y.ModelList, [], {
     model: Service,
+
+    /**
+      Return a list of visible model instances.
+
+      A model instance is visible when it is alive or when, even if it is dying
+      or dead, one or more of its units are in an error state.
+      In the latter case, we want to still display the service in order to
+      allow users to retry or resolve its units.
+
+      @method alive
+      @return {Y.ModelList} The resulting visible model instances.
+    */
+    visible: function() {
+      return this.filter({asList: true}, function(model) {
+        return model.isAlive() || model.hasErrors();
+      });
+    },
 
     process_delta: function(action, data) {
       _process_delta(this, action, data, {exposed: false});

@@ -195,7 +195,8 @@
           CharmURL: 'cs:precise/django-42',
           Exposed: true,
           Constraints: constraints,
-          Config: config
+          Config: config,
+          Life: 'alive'
         };
         serviceInfo(db, 'add', change);
         assert.strictEqual(1, db.services.size());
@@ -208,6 +209,7 @@
         // in the delta stream.  The full config will be gotten via a call to
         // get_service.
         assert.deepEqual(config, service.get('config'));
+        assert.strictEqual('alive', service.get('life'));
       });
 
       it('updates a service in the database', function() {
@@ -219,7 +221,8 @@
         var change = {
           Name: 'wordpress',
           CharmURL: 'cs:quantal/wordpress-11',
-          Exposed: false
+          Exposed: false,
+          Life: 'dying'
         };
         serviceInfo(db, 'change', change);
         assert.strictEqual(1, db.services.size());
@@ -227,6 +230,7 @@
         var service = db.services.getById('wordpress');
         assert.strictEqual('cs:quantal/wordpress-11', service.get('charm'));
         assert.isFalse(service.get('exposed'));
+        assert.strictEqual('dying', service.get('life'));
       });
 
       it('if constraints are not in the change stream they are {}',

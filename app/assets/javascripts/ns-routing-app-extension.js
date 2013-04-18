@@ -168,7 +168,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
       var keys = Y.Object.keys(base).sort();
       Y.each(keys, function(ns) {
         url = slash(url);
-        if (options.includeRootPaths || base[ns] !== '/') {
+        if (!(base[ns] === '/' && options.excludeRootPaths)) {
           url += ':' + ns + ':' + base[ns];
         }
       });
@@ -203,14 +203,15 @@ YUI.add('ns-routing-app-extension', function(Y) {
         // original value).
         delete incoming[this.defaultNamespace];
       }
-      url = this.url(Y.mix(orig, incoming, true, Y.Object.keys(incoming)));
+      url = this.url(Y.mix(orig, incoming, true, Y.Object.keys(incoming)),
+          {excludeRootPaths: true});
       return url;
 
     }
   };
 
   /**
-    Adds namespaced routing functionality to a Y.App instance
+    Add namespaced routing functionality to a Y.App instance.
 
     @class NSRouter
     @extension App

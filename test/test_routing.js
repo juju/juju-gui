@@ -1,4 +1,3 @@
-
 'use strict';
 
 describe('Namespaced Routing', function() {
@@ -46,16 +45,16 @@ describe('Namespaced Routing', function() {
     var u = router.url(match);
     assert(u === '/charms/precise/mediawiki/:inspector:/services/mysql/');
 
-    // Root paths are excluded...
-    u = router.url({foo: '/'});
+    // Root paths have to be explicitly excluded...
+    u = router.url({foo: '/'}, {excludeRootPaths: true});
     assert.strictEqual(u, '/');
-    u = router.url({foo: '/shazam', bar: '/'});
+    u = router.url({foo: '/shazam', bar: '/'}, {excludeRootPaths: true});
     assert.strictEqual(u, '/:foo:/shazam/');
 
-    // ...unless explicitly asked to be included.
-    u = router.url({foo: '/'}, {includeRootPaths: true});
+    // ...otherwise they are included by default.
+    u = router.url({foo: '/'});
     assert.strictEqual(u, '/:foo:/');
-    u = router.url({foo: '/shazam', bar: '/'}, {includeRootPaths: true});
+    u = router.url({foo: '/shazam', bar: '/'});
     assert.strictEqual(u, '/:bar:/:foo:/shazam/');
 
     // Sorted keys.
@@ -71,7 +70,6 @@ describe('Namespaced Routing', function() {
     u = router.url({gamma: 'g', a: 'alpha', b: 'beta'});
     assert(u === '/:a:alpha/:b:beta/:gamma:g/');
   });
-
 
   it('should support a default namespace', function() {
     var router = juju.Router('charmstore');
@@ -90,15 +88,15 @@ describe('Namespaced Routing', function() {
     url.should.equal('/bar/:extra:happens/');
   });
 
-
   it('should be able to cleanly combine urls preserving untouched namespaces',
      function() {
        var router = juju.Router('charmstore');
        var url, parts;
+       url = router.combine('/foo/bar', '/:inspector:/');
+       url.should.equal('/foo/bar/');
        url = router.combine('/foo/bar', '/:inspector:/foo/');
        url.should.equal('/foo/bar/:inspector:/foo/');
      });
-
 
   it('should be able to split qualified urls', function() {
     var router = juju.Router('playground');
