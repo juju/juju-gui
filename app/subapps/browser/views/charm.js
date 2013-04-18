@@ -38,6 +38,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       },
       '#bws-hooks select': {
         change: '_loadHookContent'
+      },
+      '.nav .back': {
+        click: '_handleBack'
       }
     },
 
@@ -191,6 +194,23 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
 
       return prettyCommits;
+    },
+
+    /**
+        Handle the back button being clicked on from the header of the
+        details.
+
+        @method _handleBack
+        @param {Event} ev the click event handler.
+
+     */
+    _handleBack: function(ev) {
+      ev.halt();
+      this.fire('viewNavigate', {
+        change: {
+          charmID: undefined
+        }
+      });
     },
 
     /**
