@@ -220,7 +220,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
         var string = '';
 
         // Given the count, check which prefix we should be using.
-        switch(counts[check]) {
+        switch (counts[check]) {
           case 0:
             string += prefixes[0];
             break;
@@ -236,7 +236,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
         // And finally, if the index is > 0, we need to camel case the start
         // of the string as well.
-        if(idx > 0) {
+        if (idx > 0) {
           build += string.charAt(0).toUpperCase() + string.slice(1);
         } else {
           build += string;
