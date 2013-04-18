@@ -1,19 +1,18 @@
-<div class="charm-token yui3-g" data-charmid="{{id}}">
-  <div class="yui3-u-1-4">
-    <img url="{{ iconfile }}" alt="Icon" />
-  </div>
-  <div class="yui3-u-3-4">
-    <a href="" class="add hidden">
-      <img src="/juju-ui/assets/images/sidebar_add_icon.jpg" alt="Add" />
-    </a>
-    <h3 class="title">
-      {{ name }}
-    </h3>
-    <div class="metadata">
-        {{ recent_commit_count }} {{pluralize 'commit' recent_commit_count}},
-        {{ recent_download_count }}
-        {{pluralize 'download' recent_download_count}}
+<a href="/bws/sidebar/{{id}}"
+    class="charm-token yui3-g"
+    data-charmid="{{id}}">
+    <div class="yui3-u-1-4">
+        <img url="{{ iconfile }}" alt="Icon" />
     </div>
-    <p class="description">{{truncate description 110 }}</p>
-  </div>
-</div>
+    <div class="yui3-u-3-4">
+        <h3 class="title">
+            {{ name }}
+        </h3>
+        <div class="metadata">
+                {{ recent_commit_count }} {{pluralize 'commit' recent_commit_count}},
+                {{ recent_download_count }}
+                {{pluralize 'download' recent_download_count}}
+        </div>
+        <p class="description">{{truncate description 110 }}</p>
+    </div>
+</a>

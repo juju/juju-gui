@@ -179,17 +179,22 @@
 
 
     describe('serviceInfo handler', function() {
-      var serviceInfo;
+      var serviceInfo, constraints;
 
       before(function() {
         serviceInfo = handlers.serviceInfo;
+        constraints = {
+          'arch': '',
+          'cpu-cores': 4};
       });
 
       it('creates a service in the database', function() {
         var change = {
           Name: 'django',
           CharmURL: 'cs:precise/django-42',
-          Exposed: true
+          Exposed: true,
+          Constraints: constraints,
+          Life: 'alive'
         };
         serviceInfo(db, 'add', change);
         assert.strictEqual(1, db.services.size());
@@ -197,6 +202,8 @@
         var service = db.services.getById('django');
         assert.strictEqual('cs:precise/django-42', service.get('charm'));
         assert.isTrue(service.get('exposed'));
+        assert.deepEqual(constraints, service.get('constraints'));
+        assert.strictEqual('alive', service.get('life'));
       });
 
       it('updates a service in the database', function() {
@@ -208,7 +215,8 @@
         var change = {
           Name: 'wordpress',
           CharmURL: 'cs:quantal/wordpress-11',
-          Exposed: false
+          Exposed: false,
+          Life: 'dying'
         };
         serviceInfo(db, 'change', change);
         assert.strictEqual(1, db.services.size());
@@ -216,6 +224,47 @@
         var service = db.services.getById('wordpress');
         assert.strictEqual('cs:quantal/wordpress-11', service.get('charm'));
         assert.isFalse(service.get('exposed'));
+        assert.strictEqual('dying', service.get('life'));
+      });
+
+      it('if constraints are not in the change stream they are {}',
+         function() {
+           db.services.add({
+             id: 'wordpress',
+             charm: 'cs:quantal/wordpress-11',
+             exposed: true
+           });
+           var change = {
+             Name: 'wordpress',
+             CharmURL: 'cs:quantal/wordpress-11',
+             Exposed: false
+           };
+           serviceInfo(db, 'change', change);
+           assert.strictEqual(1, db.services.size());
+           // Retrieve the service from the database.
+           var service = db.services.getById('wordpress');
+           assert.deepEqual({}, service.get('constraints'));
+         });
+
+      it('handles constraint changes', function() {
+        db.services.add({
+          id: 'wordpress',
+          charm: 'cs:quantal/wordpress-11',
+          exposed: true,
+          constraints: constraints
+        });
+        var changedConstraints = {'arch': 'i386'};
+        var change = {
+          Name: 'wordpress',
+          CharmURL: 'cs:quantal/wordpress-11',
+          Exposed: false,
+          Constraints: changedConstraints
+        };
+        serviceInfo(db, 'change', change);
+        assert.strictEqual(1, db.services.size());
+        // Retrieve the service from the database.
+        var service = db.services.getById('wordpress');
+        assert.deepEqual(changedConstraints, service.get('constraints'));
       });
 
       it('removes a service from the database', function() {

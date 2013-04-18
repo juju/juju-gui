@@ -179,7 +179,7 @@
     });
 
     beforeEach(function() {
-      state = utils.makeFakeBackendWithCharmStore().fakebackend;
+      state = utils.makeFakeBackendWithCharmStore();
       juju = new sandboxModule.PyJujuAPI({state: state});
       client = new sandboxModule.ClientConnection({juju: juju});
       env = new environmentsModule.PythonEnvironment({conn: client});
@@ -222,6 +222,30 @@
           client.send(Y.JSON.stringify(data));
         };
         client.open();
+      });
+    }
+
+    function generateAndRelateServices(charms, relation,
+        removeRelation, mock, done) {
+      state.deploy(charms[0], function() {
+        state.deploy(charms[1], function() {
+          client.onmessage = function() {
+            var data = {
+              op: 'add_relation',
+              endpoint_a: relation[0],
+              endpoint_b: relation[1]
+            };
+            client.onmessage = function(rec) {
+              var data = Y.JSON.parse(rec.data);
+              assert.equal(data.err, mock.err);
+              assert.equal(data.endpoint_a, mock.endpoint_a);
+              assert.equal(data.endpoint_b, mock.endpoint_b);
+              done();
+            };
+            client.send(Y.JSON.stringify(data));
+          };
+          client.open();
+        });
       });
     }
 
@@ -1173,6 +1197,69 @@
         client.send(Y.JSON.stringify(data));
       }
       generateServices(localCb);
+    });
+
+    it('can remove a relation', function(done) {
+      generateAndRelateServices(
+          ['cs:wordpress', 'cs:mysql'],
+          ['wordpress:db', 'mysql:db'],
+          ['wordpress:db', 'mysql:db'],
+          {endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
+          done);
+    });
+
+    it('can remove a relation(integration)', function(done) {
+      var endpoints = [
+        ['kumquat',
+          { name: 'db',
+            role: 'client' }],
+        ['mysql',
+          { name: 'db',
+            role: 'server' }]
+      ];
+
+      env.after('defaultSeriesChange', function() {
+        function localCb(result) {
+          var mock = {
+            endpoint_a: 'kumquat:db',
+            endpoint_b: 'mysql:db',
+            op: 'remove_relation',
+            request_id: 4,
+            result: true
+          };
+          assert.deepEqual(result.details[0], mock);
+          done();
+        }
+        env.deploy(
+            'cs:wordpress', 'kumquat', {llama: 'pajama'}, null, 1, function() {
+              env.deploy('cs:mysql', null, null, null, 1, function() {
+                env.add_relation(endpoints[0], endpoints[1], function() {
+                  env.remove_relation(endpoints[0], endpoints[1], localCb);
+                });
+              });
+            });
+      });
+      env.connect();
+    });
+
+    it('throws an error if the charms do not exist', function(done) {
+      generateAndRelateServices(
+          ['cs:wordpress', 'cs:mysql'],
+          ['wordpress:db', 'mysql:db'],
+          ['wordpress:db', 'mysql:db'],
+          {error: 'Charm not loaded.',
+            endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
+          done);
+    });
+
+    it('throws an error if the relationship does not exist', function(done) {
+      generateAndRelateServices(
+          ['cs:wordpress', 'cs:mysql'],
+          ['wordpress:db', 'mysql:db'],
+          ['wordpress:db', 'mysql:db'],
+          {error: 'Relationship does not exist',
+            endpoint_a: 'wordpress:db', endpoint_b: 'mysql:db'},
+          done);
     });
 
     it('should handle service annotation updates', function(done) {

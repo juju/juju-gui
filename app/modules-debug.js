@@ -290,6 +290,15 @@ var GlobalConfig = {
 
         'subapp-browser-sidebar': {
           fullpath: '/juju-ui/subapps/browser/views/sidebar.js',
+          requires: [
+            'subapp-browser-editorial',
+            'subapp-browser-mainview',
+            'subapp-browser-charmview'
+          ]
+        },
+
+        'subapp-browser-editorial': {
+          fullpath: '/juju-ui/subapps/browser/views/editorial.js',
           requires: ['subapp-browser-sidebar']
         },
 
