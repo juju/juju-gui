@@ -723,7 +723,7 @@ YUI.add('juju-charm-panel', function(Y) {
         initializer: function() {
           this.bindModelView(this.get('model'));
           this.after('heightChange', this._setScroll);
-          this.after('changePanel', this._clearGhostService);
+          this.on('panelRemoved', this._clearGhostService);
         },
 
         /**
@@ -748,6 +748,12 @@ YUI.add('juju-charm-panel', function(Y) {
 
             // Create a 'ghost' service to represent what will be deployed.
             var db = this.get('db');
+            // Remove the other pending services if required.
+            db.services.each(function(service) {
+              if (service.get('pending')) {
+                service.destroy();
+              }
+            });
             var serviceCount = db.services.filter(function(service) {
               return service.get('charm') === charm.get('id');
             }).length + 1;
@@ -1222,6 +1228,10 @@ YUI.add('juju-charm-panel', function(Y) {
       var newPanel = panels[config.name];
       if (!Y.Lang.isValue(newPanel)) {
         throw 'Developer error: Unknown panel name ' + config.name;
+      }
+      if (activePanelName) {
+        // Give to the old panel the possibility to clean things up.
+        panels[activePanelName].fire('panelRemoved');
       }
       activePanelName = config.name;
       container.get('children').remove();
