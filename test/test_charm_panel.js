@@ -255,6 +255,11 @@ describe('charm panel', function() {
     });
 
     it('updates his name on blur', function() {
+      if (Y.UA.ie === 10) {
+        // IE10 Can't simulate blur at time of writing.
+        // See https://github.com/yui/yui3/issues/489
+        return;
+      }
       startDeployment();
       var serviceNameNode = Y.one('#service-name');
       assert.strictEqual(serviceName, serviceNameNode.get('value'));
