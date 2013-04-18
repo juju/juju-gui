@@ -24,7 +24,7 @@ YUI.add('juju-topology-relation', function(Y) {
    *   menu, etc.)
    * - *hideServiceMenu:* hides the service menu after the 'Add Relation' item
    *   was clicked.
-   * - *fade:* fades services that are not valid endpoints for a pending 
+   * - *fade:* fades services that are not valid endpoints for a pending
    *   relation.
    * - *show:* show faded services at 100% opacity again.
    * - *resized:* ensures that menus are positioned properly.
@@ -115,7 +115,7 @@ YUI.add('juju-topology-relation', function(Y) {
           Update the endpoints for relations when services are moved.
 
           @event updateLinkEndpoints
-          @param {Object} service The service which has had its position 
+          @param {Object} service The service which has had its position
                                   updated.
         */
         serviceMoved: 'updateLinkEndpoints',

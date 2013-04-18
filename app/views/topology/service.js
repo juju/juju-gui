@@ -15,8 +15,8 @@ YUI.add('juju-topology-service', function(Y) {
       Templates = views.Templates;
 
   /**
-   * Manages service rendering and events. 
-   * 
+   * Manages service rendering and events.
+   *
    * ## Emitted events:
    *
    * - *clearState:* clears all possible states that the environment view can be
@@ -29,11 +29,12 @@ YUI.add('juju-topology-service', function(Y) {
    *   pending relation line to follow the mouse again.
    * - *addRelationDrag:*
    * - *addRelationDragStart:*
-   * - *addRelationDragEnd:* fired when creating a relation through the long-click
-   *   process, when moving the cursor over the environment, and when dropping the
-   *   endpoint on a valid service.
-   * - *cancelRelationBuild:* fired when dropping a pending relation line started
-   *   through the long-click method somewhere other than a valid service.
+   * - *addRelationDragEnd:* fired when creating a relation through the long-
+   *   click process, when moving the cursor over the environment, and when
+   *   dropping the endpoint on a valid service.
+   * - *cancelRelationBuild:* fired when dropping a pending relation line
+   *   started through the long-click method somewhere other than a valid
+   *   service.
    * - *serviceMoved:* fired when a service block is dragged so that relation
    *   endpoints can follow it.
    * - *navigateTo:* fired when clicking the "View Service" menu item or when

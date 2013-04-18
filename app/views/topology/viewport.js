@@ -19,8 +19,8 @@ YUI.add('juju-topology-viewport', function(Y) {
    * ## Emitted events:
    *
    * - *beforePageSizeRecalculation:*
-   * - *afterPageSizeRecalculation:* events fired before and after the 
-   *   environment graph is resized to allow other sized itemsto 
+   * - *afterPageSizeRecalculation:* events fired before and after the
+   *   environment graph is resized to allow other sized itemsto
    *   calculate what they need.
    *
    * @class ViewportModule
