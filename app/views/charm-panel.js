@@ -1181,7 +1181,6 @@ YUI.add('juju-charm-panel', function(Y) {
                 db: app.db,
                 charms: charms,
                 charmStore: charmStore }),
-        defaultSeries = null,
         descriptionPanelNode = Y.Node.create(),
         descriptionPanel = new CharmDescriptionView(
               { container: descriptionPanelNode,
@@ -1429,14 +1428,15 @@ YUI.add('juju-charm-panel', function(Y) {
       deploy: deploy,
 
       /**
-       * Set the default charm series.
+       * Set the default charm series in the search and description panels.
        *
        * @method setDefaultSeries
+       * @param {String} series The name of the default series.
+       * @return {undefined} Nothing.
        */
       setDefaultSeries: function(series) {
         charmsSearchPanel.set('defaultSeries', series);
         descriptionPanel.set('defaultSeries', series);
-        defaultSeries = series;
       }
     };
   }
