@@ -15,11 +15,11 @@ YUI.add('juju-topology-service', function(Y) {
       Templates = views.Templates;
 
   /**
-   * Manages service rendering and events.
+   * Manage service rendering and events.
    *
    * ## Emitted events:
    *
-   * - *clearState:* clears all possible states that the environment view can be
+   * - *clearState:* clear all possible states that the environment view can be
    *   in as it pertains to actions (building a relation, viewing
    *   a service menu, etc.)
    * - *snapToService:* fired when mousing over a service, causing the pending
@@ -122,19 +122,19 @@ YUI.add('juju-topology-service', function(Y) {
         */
         dragend: 'dragend',
         /**
-          Hides a service's click-actions menu.
+          Hide a service's click-actions menu.
 
           @event hideServiceMenu
         */
         hideServiceMenu: 'hideServiceMenu',
         /**
-          Clears view state as pertaining to services.
+          Clear view state as pertaining to services.
 
           @event clearState
         */
         clearState: 'clearStateHandler',
         /**
-          Updates the service menu location.
+          Update the service menu location.
 
           @event rescaled
         */

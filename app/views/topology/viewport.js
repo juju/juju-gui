@@ -14,7 +14,7 @@ YUI.add('juju-topology-viewport', function(Y) {
       d3ns = Y.namespace('d3');
 
   /**
-   * Manages panning and zooming events on the canvas.
+   * Manage panning and zooming events on the canvas.
    *
    * ## Emitted events:
    *
