@@ -676,11 +676,11 @@
         Response: {
           Service: 'mysql',
           Charm: 'mysql',
-          Settings: {
+          Config: {
             'binlog-format': {
               description: 'Yada, yada, yada.',
               type: 'string',
-              value: null
+              value: 'gzip'
             }
           }
         }
@@ -688,11 +688,7 @@
       assert.equal(service_name, 'mysql');
       var expected = {
         config: {
-          'binlog-format': {
-            description: 'Yada, yada, yada.',
-            type: 'string',
-            value: null
-          }
+          'binlog-format': 'gzip'
         },
         constraints: undefined
       };

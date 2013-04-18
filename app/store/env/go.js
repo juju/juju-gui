@@ -716,11 +716,16 @@ YUI.add('juju-env-go', function(Y) {
       // Set the service name to 'name' for compatibility with other
       // Juju environments.
       data.Response.name = data.Response.Service;
+      var config = (data.Response || {}).Config;
+      var transformedConfig = {};
+      Y.each(config, function(value, key) {
+        transformedConfig[key] = value.value;
+      });
       userCallback({
         err: data.Error,
         service_name: serviceName,
         result: {
-          config: (data.Response || {}).Settings,
+          config: transformedConfig,
           constraints: (data.Response || {}).Constraints
         }
       });
