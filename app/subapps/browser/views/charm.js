@@ -197,56 +197,53 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * Determine which intro copy to display depending on the number
      * of interfaces.
      *
+     *  The goal is to build a property string like: noRequiresNoProvides
+     *
      * @method _getInterfaceIntroFlag
      * @param {Array} commits a list of commit objects.
      *
      */
     _getInterfaceIntroFlag: function(requires, provides) {
       var interfaceIntro = {},
-          requiresCount = 0,
-          providesCount = 0;
+          prefixes = ['no', 'one', 'many'],
+          build = '';
 
-      if (requires) {
-          requiresCount = Y.Object.keys(requires).length;
-      }
-      if (provides) {
-          providesCount = Y.Object.keys(provides).length;
-      }
+      // Which prefix is used is based on the number of each item we check.
+      var counts = {
+        requires: requires ? Y.Object.keys(requires).length : 0,
+        provides: provides ? Y.Object.keys(provides).length : 0
+      };
 
-      if (requiresCount === 0) {
-        if (providesCount === 0){
-            interfaceIntro.noRequiresNoProvides = true;
-        }
-        else if (providesCount === 1){
-            interfaceIntro.noRequiresOneProvides = true;
-        }
-        else if (providesCount > 1){
-            interfaceIntro.noRequiresManyProvides = true;
-        }
-      }
-      else if (requiresCount === 1) {
-        if (providesCount === 0){
-            interfaceIntro.oneRequiresNoProvides = true;
-        }
-        else if (providesCount === 1){
-            interfaceIntro.oneRequiresOneProvides = true;
-        }
-        else if (providesCount > 1){
-            interfaceIntro.oneRequiresManyProvides = true;
-        }
-      }
-      else if (requiresCount > 1) {
-        if (providesCount === 0){
-            interfaceIntro.manyRequiresNoProvides = true;
-        }
-        else if (providesCount === 1){
-            interfaceIntro.manyRequiresOneProvides = true;
-        }
-        else if (providesCount > 1){
-            interfaceIntro.manyRequiresManyProvides = true;
-        }
-      }
+      // Go through both requires and provides and build a string to be used
+      // for generating our attribute such as 'noRequiresNoProvides'.
+      Y.Array.each(['requires', 'provides'], function(check, idx) {
+        var string = '';
 
+        // Given the count, check which prefix we should be using.
+        switch(counts[check]) {
+          case 0:
+            string += prefixes[0];
+            break;
+          case 1:
+            string += prefixes[1];
+            break;
+          default:
+            string += prefixes[2];
+        }
+
+        // Append the name of the field we're checking, but upper cased.
+        string += check.charAt(0).toUpperCase() + check.slice(1);
+
+        // And finally, if the index is > 0, we need to camel case the start
+        // of the string as well.
+        if(idx > 0) {
+          build += string.charAt(0).toUpperCase() + string.slice(1);
+        } else {
+          build += string;
+        }
+      });
+
+      interfaceIntro[build] = true;
       return interfaceIntro;
     },
 
