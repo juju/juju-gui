@@ -154,71 +154,127 @@ describe('charm panel', function() {
          .should.equal('Service name');
       });
 
-  it('must show a ghosted service only when configuring a new charm',
-     function() {
-        if (Y.UA.ie === 10) {
-          // IE10 Can't simulate blur at time of writing.
-          return;
+
+  describe('service ghost', function() {
+    var app, db, env, panel, serviceName, store;
+
+    before(function() {
+      serviceName = 'membase';
+      // Mock the relevant environment calls.
+      env = {
+        deploy: function(url, service, config, config_raw, units, callback) {
+          callback({err: false});
+        },
+        update_annotations: function() {
+          return true;
         }
-        var db = new models.Database(),
-            panel = Y.namespace('juju.views').CharmPanel.getInstance({
-              charm_store: new juju.CharmStore({datasource: {
-                sendRequest: function(params) {
-                  // Mocking the server callback value
-                  params.callback.success({
-                    response: {
-                      results: [{
-                        responseText: searchResult
-                      }]
-                    }
-                  });
-                }
-              }}),
-              app: {
-                db: db,
-                views: {
-                  environment: {}
-                },
-                env: {
-                  deploy: function() {
-                    arguments[5]({ err: false });
-                  },
-                  update_annotations: function() {
-                    return true;
-                  }
-                }
-              },
-              testing: true
-            }),
-            node = panel.node,
-            charm = db.charms.add({id: 'cs:precise/membase-6'});
-        charm.loaded = true;
-        panel.show();
-        var field = Y.one('#charm-search-field');
-        field.set('value', 'aaa');
-        field.simulate('keydown', { keyCode: ENTER });
-        node.one('a.charm-detail').simulate('click');
-        node.one('.btn-primary').simulate('click');
-        // Test that a ghosted service was created in the db.
-        db.services.size().should.equal(1);
-        db.services.item(0).get('pending').should.equal(true);
-        // Test that the ghosted service is removed on cancel.
-        node.one('.btn.cancel').simulate('click');
-        db.services.size().should.equal(0);
-        field.set('value', 'aaa');
-        field.simulate('keydown', { keyCode: ENTER });
-        node.one('a.charm-detail').simulate('click');
-        node.one('.btn-primary').simulate('click');
-        // Test that the ghost name is updated on blur.
-        var serviceName = Y.one('#service-name');
-        serviceName.set('value', 'foo');
-        serviceName.simulate('blur');
-        db.services.item(0).get('id').should.equal('(foo)');
-        // Test that the ghosted service is no longer ghosted on deploy.
-        node.one('.btn-primary').simulate('click');
-        db.services.item(0).get('pending').should.equal(false);
-     });
+      };
+      // Mock the charm store.
+      store = new juju.CharmStore({
+        datasource: {
+          sendRequest: function(params) {
+            params.callback.success({
+              response: {results: [{responseText: searchResult}]}
+            });
+          }
+        }
+      });
+    });
+
+    beforeEach(function() {
+      db = new models.Database();
+      app = {db: db, views: {environment: {}}, env: env};
+      panel = views.CharmPanel.getInstance({charm_store: store, app: app});
+      panel.show();
+    });
+
+    // Search for a charm using the charm search input.
+    var search = function(contents) {
+      var field = Y.one('#charm-search-field');
+      field.set('value', contents);
+      field.simulate('keydown', {keyCode: ENTER});
+    };
+
+    // Start deploying a charm, without confirming.
+    var startDeployment = function() {
+      search(serviceName);
+      var node = panel.node;
+      node.one('a.charm-detail').simulate('click');
+      node.one('.btn-primary').simulate('click');
+    };
+
+    // Cancel an unconfirmed deployment.
+    var cancelDeployment = function() {
+      panel.node.one('.btn.cancel').simulate('click');
+    };
+
+    // Confirm a charm deployment.
+    var confirmDeployment = function() {
+      panel.node.one('.btn-primary').simulate('click');
+    };
+
+    it('is created in the database when deployment is started', function() {
+      startDeployment();
+      assert.strictEqual(1, db.services.size());
+      var service = db.services.item(0);
+      assert.isTrue(service.get('pending'));
+      assert.include(service.get('id'), serviceName);
+    });
+
+    it('is removed from the database if deployment is cancelled', function() {
+      startDeployment();
+      assert.strictEqual(1, db.services.size());
+      cancelDeployment();
+      assert.strictEqual(0, db.services.size());
+      assert.isNull(Y.one('#service-name'));
+    });
+
+    it('is removed from the database if the charm search is used', function() {
+      startDeployment();
+      assert.strictEqual(1, db.services.size());
+      search('foo bar');
+      assert.strictEqual(0, db.services.size());
+      assert.isNull(Y.one('#service-name'));
+    });
+
+    it('is removed from the database if another ghost is created', function() {
+      // Pending services will be removed.
+      db.services.add([
+        {id: 'mysql', pending: true},
+        {id: 'rails', pending: true}
+      ]);
+      // A deployed service will be preserved.
+      var django = db.services.add({id: 'django', pendiong: false});
+      startDeployment();
+      assert.strictEqual(2, db.services.size());
+      // The pending services have been removed.
+      assert.isNull(db.services.getById('mysql'));
+      assert.isNull(db.services.getById('rails'));
+      // The deployed service has been preserved.
+      assert.deepEqual(django, db.services.getById('django'));
+    });
+
+    it('updates his name on blur', function() {
+      startDeployment();
+      var serviceNameNode = Y.one('#service-name');
+      assert.strictEqual(serviceName, serviceNameNode.get('value'));
+      serviceNameNode.simulate('blur');
+      var expected = '(' + serviceName + ')';
+      assert.strictEqual(expected, db.services.item(0).get('id'));
+    });
+
+    it('is no longer ghosted on deploy', function() {
+      startDeployment();
+      confirmDeployment();
+      var service = db.services.item(0);
+      assert.isFalse(service.get('pending'));
+      assert.include(service.get('id'), serviceName);
+    });
+
+  });
+
 });
+
 
 describe('charm description', function() {
   var Y, models, views, juju, conn, env, container, db, app, charm,
