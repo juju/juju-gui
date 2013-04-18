@@ -93,7 +93,9 @@ YUI.add('juju-endpoints', function(Y) {
     }
 
     // Now check every other service to see if it can be a valid target.
-    db.services.each(function(tgt) {
+    Y.each(db.services.filter(function(endpoint) {
+      return !endpoint.get('pending');
+    }), function(tgt) {
       var tid = tgt.get('id'),
           tprovides = ep_map[tid].provides.concat();
 

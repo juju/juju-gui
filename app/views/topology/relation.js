@@ -557,7 +557,10 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.buildingRelation = true;
       this.clickAddRelation = true;
 
-      topo.fire('show', { selection: vis.selectAll('.service') });
+      topo.fire('show', { 
+        selection: vis.selectAll('.service')
+          .filter(function(d) { return !d.pending; })
+      });
 
       var db = topo.get('db');
       var endpointsController = topo.get('endpointsController');
