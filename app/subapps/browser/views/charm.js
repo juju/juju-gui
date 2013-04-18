@@ -168,6 +168,63 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+     * Determine which intro copy to display depending on the number
+     * of interfaces.
+     *
+     * @method _getInterfaceIntroFlag
+     * @param {Array} commits a list of commit objects.
+     *
+     */
+    _getInterfaceIntroFlag: function(requires, provides) {
+      var interfaceIntro = {},
+          requiresCount = 0,
+          providesCount = 0;
+
+      if (requires) {
+          requiresCount = Y.Object.keys(requires).length;
+      }
+      if (provides) {
+          providesCount = Y.Object.keys(provides).length;
+      }
+
+      if (requiresCount === 0) {
+        if (providesCount === 0){
+            interfaceIntro.noRequiresNoProvides = true;
+        }
+        else if (providesCount === 1){
+            interfaceIntro.noRequiresOneProvides = true;
+        }
+        else if (providesCount > 1){
+            interfaceIntro.noRequiresManyProvides = true;
+        }
+      }
+      else if (requiresCount === 1) {
+        if (providesCount === 0){
+            interfaceIntro.oneRequiresNoProvides = true;
+        }
+        else if (providesCount === 1){
+            interfaceIntro.oneRequiresOneProvides = true;
+        }
+        else if (providesCount > 1){
+            interfaceIntro.oneRequiresManyProvides = true;
+        }
+      }
+      else if (requiresCount > 1) {
+        if (providesCount === 0){
+            interfaceIntro.manyRequiresNoProvides = true;
+        }
+        else if (providesCount === 1){
+            interfaceIntro.manyRequiresOneProvides = true;
+        }
+        else if (providesCount > 1){
+            interfaceIntro.manyRequiresManyProvides = true;
+        }
+      }
+
+      return interfaceIntro;
+    },
+
+    /**
      * Event handler for clicking on a hook filename to load that file.
      *
      * @method _loadHookContent
@@ -346,6 +403,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       tplData.isFullscreen = isFullscreen;
       tplData.prettyCommits = this._formatCommitsForHtml(
           tplData.recent_commits);
+      tplData.interfaceIntro = this._getInterfaceIntroFlag(
+          tplData.requires, tplData.provides);
 
       var tpl = this.template(tplData);
       var tplNode = Y.Node.create(tpl);
