@@ -14,14 +14,16 @@ YUI.add('juju-topology-viewport', function(Y) {
       d3ns = Y.namespace('d3');
 
   /**
+   * Manages panning and zooming events on the canvas.
+   *
+   * ## Emitted events:
+   *
+   * - *beforePageSizeRecalculation:*
+   * - *afterPageSizeRecalculation:* events fired before and after the 
+   *   environment graph is resized to allow other sized itemsto 
+   *   calculate what they need.
+   *
    * @class ViewportModule
-   *
-   * Emitted events:
-   *
-   *  beforePageSizeRecalculation:
-   *  afterPageSizeRecalculation: events fired before and after the environment
-   *                              graph is resized to allow other sized items
-   *                              to calculate what they need.
    */
   views.ViewportModule = Y.Base.create('ViewportModule', d3ns.Module, [], {
 

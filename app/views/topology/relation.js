@@ -15,18 +15,21 @@ YUI.add('juju-topology-relation', function(Y) {
       Templates = views.Templates;
 
   /**
+   * Manages relation rendering and events.
+   *
+   * ## Emitted events:
+   *
+   * - *clearState:* clears all possible states that the environment view can
+   *   be in as it pertains to actions (building a relation, viewing a service
+   *   menu, etc.)
+   * - *hideServiceMenu:* hides the service menu after the 'Add Relation' item
+   *   was clicked.
+   * - *fade:* fades services that are not valid endpoints for a pending 
+   *   relation.
+   * - *show:* show faded services at 100% opacity again.
+   * - *resized:* ensures that menus are positioned properly.
+   *
    * @class RelationModule
-   *
-   * Emitted events:
-   *
-   *  clearState: clears all possible states that the environment view can be
-   *              in as it pertains to actions (building a relation, viewing
-   *              a service menu, etc.)
-   *  hideServiceMenu: hides the service menu after the 'Add Relation' item
-   *                   was clicked.
-   *  fade: fades services that are not valid endpoints for a pending relation.
-   *  show: show faded services at 100% opacity again.
-   *  resized: ensures that menus are positioned properly.
    */
   var RelationModule = Y.Base.create('RelationModule', d3ns.Module, [], {
 
@@ -870,7 +873,7 @@ YUI.add('juju-topology-relation', function(Y) {
       // belonging to this service.
       self.subordinateRelationsForService(d)
     .forEach(function(p) {
-            utils.addSVGClass('#' + p.id, 'active');
+            utils.addSVGClass('#' + utils.generateSafeDOMId(p.id), 'active');
           });
     },
 

@@ -311,4 +311,30 @@ describe('service module events', function() {
     // The flag is reset when encountered and ignored.
     assert.isFalse(topo.ignoreServiceClick);
   });
+
+  it('should show only visible services', function() {
+    var haproxy = db.services.getById('haproxy'); // Added in beforeEach.
+    db.services.add([
+      {id: 'rails', life: 'dying'},
+      {id: 'mysql', life: 'dead'}
+    ]);
+    var django = db.services.add({id: 'django'});
+    var wordpress = db.services.add({
+      id: 'wordpress',
+      life: 'dying',
+      aggregated_status: {error: 42}
+    });
+    serviceModule.update();
+    var boxes = topo.service_boxes;
+    // There are five services in total.
+    assert.strictEqual(5, db.services.size(), 'total');
+    // But only three of those are actually displayed.
+    assert.strictEqual(3, Y.Object.size(boxes), 'displayed');
+    // And they are the visible ones.
+    assert.deepPropertyVal(boxes, 'haproxy.model', haproxy);
+    assert.deepPropertyVal(boxes, 'django.model', django);
+    // Service wordpress is displayed because it has units in an error state.
+    assert.deepPropertyVal(boxes, 'wordpress.model', wordpress);
+  });
+
 });

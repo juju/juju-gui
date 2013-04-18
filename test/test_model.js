@@ -643,3 +643,63 @@ describe('BrowserCharm test', function() {
     instance.get('recent_commit_count').should.equal(3);
   });
 });
+
+
+describe('service models', function() {
+  var models, list, django, rails, wordpress, mysql;
+
+  before(function(done) {
+    YUI(GlobalConfig).use(['juju-models'], function(Y) {
+      models = Y.namespace('juju.models');
+      done();
+    });
+  });
+
+  beforeEach(function() {
+    django = new models.Service({id: 'django'});
+    rails = new models.Service({
+      id: 'rails',
+      life: 'dying',
+      aggregated_status: {}
+    });
+    wordpress = new models.Service({
+      id: 'wordpress',
+      life: 'dying',
+      aggregated_status: {error: 42}
+    });
+    mysql = new models.Service({
+      id: 'mysql',
+      life: 'dead',
+      aggregated_status: {error: 0}
+    });
+    list = new models.ServiceList({items: [rails, django, wordpress, mysql]});
+  });
+
+  it('instances identify if they are alive', function() {
+    // This test also verifies that the default state is "alive".
+    assert.isTrue(django.isAlive());
+  });
+
+  it('instances identify if they are not alive (dying or dead)', function() {
+    assert.isFalse(rails.isAlive(), rails.get('id'));
+    assert.isFalse(wordpress.isAlive(), wordpress.get('id'));
+    assert.isFalse(mysql.isAlive(), mysql.get('id'));
+  });
+
+  it('instances identify if they have errors', function() {
+    assert.isTrue(wordpress.hasErrors());
+  });
+
+  it('instances identify if they do not have errors', function() {
+    assert.isFalse(django.hasErrors(), django.get('id'));
+    assert.isFalse(rails.hasErrors(), rails.get('id'));
+    assert.isFalse(mysql.hasErrors(), mysql.get('id'));
+  });
+
+  it('can be filtered so that it returns only visible models', function() {
+    var filtered = list.visible();
+    assert.strictEqual(2, filtered.size());
+    assert.deepEqual([django, wordpress], filtered.toArray());
+  });
+
+});
