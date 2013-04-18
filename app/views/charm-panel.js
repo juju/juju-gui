@@ -1181,6 +1181,7 @@ YUI.add('juju-charm-panel', function(Y) {
                 db: app.db,
                 charms: charms,
                 charmStore: charmStore }),
+        defaultSeries = null,
         descriptionPanelNode = Y.Node.create(),
         descriptionPanel = new CharmDescriptionView(
               { container: descriptionPanelNode,
@@ -1331,6 +1332,23 @@ YUI.add('juju-charm-panel', function(Y) {
     }
 
     /**
+     * Show the deploy/configuration panel for a charm.
+     *
+     * @method deploy
+     * @param {String} charmUrl The URL of the charm to configure/deploy.
+     * @return {undefined} Nothing.
+     */
+    function deploy(charm, options) {
+      debugger
+      charms.add(charm);
+      setPanel({
+        name: 'configuration',
+        charmId: charm.get('id')
+      });
+      show();
+    }
+
+    /**
      * Show the charm panel if it is hidden, hide it otherwise.
      *
      * @method toggle
@@ -1408,15 +1426,17 @@ YUI.add('juju-charm-panel', function(Y) {
       toggle: toggle,
       show: show,
       node: container,
+      deploy: deploy,
 
       /**
-       * Set the default charm series in the search and description panels.
+       * Set the default charm series.
        *
        * @method setDefaultSeries
        */
       setDefaultSeries: function(series) {
         charmsSearchPanel.set('defaultSeries', series);
         descriptionPanel.set('defaultSeries', series);
+        defaultSeries = series;
       }
     };
   }

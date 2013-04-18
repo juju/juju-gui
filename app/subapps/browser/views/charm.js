@@ -350,13 +350,29 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      * @method initializer
      * @param {Object} cfg configuration object.
-     *
+     * @return {undefined} Nothing.
      */
     initializer: function(cfg) {
       // Hold onto references of the indicators used so we can clean them all
       // up. Indicators are keyed on their yuiid so we don't dupe them.
       this.indicators = {};
     },
+
+    /**
+     Begin the service creation process by showing the service configuration
+     form.
+
+     @method on_charm_add
+     @param {Object} evt The event details.
+     @return {undefined} Nothing.
+    */
+    on_charm_add: function(evt) {
+      evt.halt();
+      var browserCharm = this.get('charm');
+      var charm = new models.Charm(browserCharm.getAttrs());
+      app.charmPanel.deploy(charm);
+    },
+
 
     /**
      * Render the view of a single charm details page.
@@ -383,6 +399,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // Set the content then update the container so that it reload
       // events.
       Y.one('.bws-view-data').setHTML(tplNode);
+
+      container.one('.add').on(
+          'click', Y.bind(this.on_charm_add, this));
 
       this.tabview = new widgets.browser.TabView({
         srcNode: tplNode.one('.tabs')
