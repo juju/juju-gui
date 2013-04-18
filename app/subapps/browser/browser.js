@@ -9,7 +9,8 @@
  *
  */
 YUI.add('subapp-browser', function(Y) {
-  var ns = Y.namespace('juju.subapps');
+  var ns = Y.namespace('juju.subapps'),
+      models = Y.namespace('juju.models');
 
   /**
    * Browser Sub App for the Juju Gui.
@@ -19,7 +20,6 @@ YUI.add('subapp-browser', function(Y) {
    *
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
-
     /**
      * Some routes might have sub parts that hint to where a user wants focus.
      * In particular we've got the tabs that might have focus. They are the
@@ -49,7 +49,8 @@ YUI.add('subapp-browser', function(Y) {
      */
     _getViewCfg: function(cfg) {
       return Y.merge(cfg, {
-        db: this.get('db')
+        db: this.get('db'),
+        store: this.get('store')
       });
     },
 
@@ -59,22 +60,28 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     views: {
-      fullscreen: {
-        type: 'juju.browser.views.FullScreen',
-        preserve: true
+      charmDetails: {
+        type: 'juju.browser.views.BrowserCharmView',
+        preserve: false
       },
-      fullscreenCharm: {
+      fullscreen: {
         type: 'juju.browser.views.FullScreen',
         preserve: false
       },
       sidebar: {
         type: 'juju.browser.views.Sidebar',
-        preserve: true
-      },
-      sidebarCharm: {
-        type: 'juju.browser.views.Sidebar',
         preserve: false
       }
+    },
+
+    /**
+       Cleanup after ourselves on destroy.
+
+       @method destructor
+
+     */
+    destructor: function() {
+      this._cacheCharms.destroy();
     },
 
     /**
@@ -84,7 +91,11 @@ YUI.add('subapp-browser', function(Y) {
      * @param {Object} cfg general init config object.
      *
      */
-    initializer: function(cfg) {},
+    initializer: function(cfg) {
+      // Hold onto charm data so we can pass model instances to other views when
+      // charms are selected.
+      this._cacheCharms = new models.BrowserCharmList();
+    },
 
     /**
      * Render the fullscreen view to the client.
@@ -96,35 +107,63 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     fullscreen: function(req, res, next) {
-      this.showView('fullscreen', this._getViewCfg());
-      next();
+      if (!this._fullscreen) {
+        this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
+          'callback': function(view) {
+            // if the fullscreen isn't the last part of the path, then ignore
+            // the editorial content.
+            if (this._getSubPath(req.path) === 'fullscreen') {
+              this.renderEditorial(req, res, next);
+            }
+            next();
+          }
+        });
+      } else {
+        next();
+      }
     },
 
     /**
-     * Render the fullscreen view of a specific charm to the client.
-     *
-     * @method fullscreenCharm
-     * @param {Request} req current request object.
-     * @param {Response} res current response object.
-     * @param {function} next callable for the next route in the chain.
-     *
-     */
-    fullscreenCharm: function(req, res, next) {
-      var subpath = this._getSubPath(req.path);
-      this.showView('fullscreenCharm', this._getViewCfg({
-        charmID: req.params.id,
-        subpath: subpath
-      }));
-      next();
-    },
+      Render editorial content into the parent view when required.
 
-    /**
-     * Destroy the subapp instance.
-     *
-     * @method destructor
-     *
+      The parent view is either fullscreen/sidebar which determines how the
+      editorial content is to be rendered.
+
+      @method renderEditorial
+      @param {Request} req current request object.
+      @param {Response} res current response object.
+      @param {function} next callable for the next route in the chain.
+
      */
-    destructor: function() {},
+    renderEditorial: function(req, res, next) {
+      var container = this.get('container'),
+          editorialContainer,
+          extraCfg = {};
+
+      if (req.path.indexOf('fullscreen') !== -1) {
+        // The fullscreen view requires that there be no editorial content if
+        // we're looking at a specific charm. The div we dump our content into
+        // is shared. So if the url is /fullscreen show editorial content, but
+        // if it's not, there's something else handling displaying the
+        // view-data.
+        editorialContainer = container.one(' .bws-view-data');
+        extraCfg.isFullscreen = true;
+      } else {
+        // If this is the sidebar view, then the editorial content goes into a
+        // different div since we can view both editorial content and
+        // view-data (such as a charm details) side by side.
+        editorialContainer = container.one('.bws-content');
+      }
+
+      if (!this._editorial) {
+        this._editorial = new Y.juju.browser.views.EditorialView(
+            this._getViewCfg(extraCfg));
+
+        this._editorial.render(editorialContainer);
+        // Add any sidebar charms to the running cache.
+        this._cacheCharms.add(this._editorial._cacheCharms);
+      }
+    },
 
     /**
      * Handle the route for the sidebar view.
@@ -136,8 +175,35 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
-      this.showView('sidebar', this._getViewCfg());
-      next();
+      // Clean up any details we've got.
+      if (this._details) {
+        this._details.destroy({remove: true});
+      }
+
+      // If the sidebar is the final part of the route, then hide the div for
+      // viewing the charm details.
+      if (this._getSubPath(req.path) === 'sidebar') {
+        var detailsNode = Y.one('.bws-view-data');
+        if (detailsNode) {
+          detailsNode.hide();
+        }
+      }
+
+      if (!this._sidebar) {
+        // Whenever the sidebar view is rendered it needs some editorial
+        // content to display to the user. We only need once instance though,
+        // so only render it on the first view. As users click on charm to
+        // charm and we generate urls /sidebar/precise/xxx we don't want to
+        // re-render the sidebar content.
+        this._sidebar = this.showView('sidebar', this._getViewCfg(), {
+          'callback': function(view) {
+            this.renderEditorial(req, res, next);
+            next();
+          }
+        });
+      } else {
+        next();
+      }
     },
 
     /**
@@ -149,53 +215,116 @@ YUI.add('subapp-browser', function(Y) {
      * @param {function} next callable for the next route in the chain.
      *
      */
-    sidebarCharm: function(req, res, next) {
-      var subpath = this._getSubPath(req.path);
-      this.showView('sidebarCharm', this._getViewCfg({
-        charmID: req.params.id,
-        subpath: subpath
-      }));
+    charmDetails: function(req, res, next) {
+      var charmID = req.params.id;
+      var extraCfg = {
+        charmID: charmID,
+        container: Y.Node.create('<div class="charmview"/>')
+      };
+
+      // The details view needs to know if we're using a fullscreen template
+      // or the sidebar version.
+      if (req.path.indexOf('fullscreen') !== -1) {
+        extraCfg.isFullscreen = true;
+      }
+
+      // Gotten from the sidebar creating the cache.
+      var model = this._cacheCharms.getById(charmID);
+
+      if (model) {
+        extraCfg.charm = model;
+      }
+
+      this._details = new Y.juju.browser.views.BrowserCharmView(
+          this._getViewCfg(extraCfg));
+      this._details.render();
+      // Make sure we show the bws-view-data div that the details renders
+      // into.
+      Y.one('.bws-view-data').show();
+
       next();
     }
 
   }, {
     ATTRS: {
+      /**
+         @attribute container
+         @default '#subapp-browser'
+         @type {String}
+
+       */
       container: {
         value: '#subapp-browser'
       },
-      urlNamespace: {
-        value: 'charmstore'
+
+      /**
+         @attribute store
+         @default Charmworld0
+         @type {Charmworld0}
+
+       */
+      store: {
+        /**
+          We keep one instance of the store and will work on caching results
+          at the app level so that routes can share api calls. However, in
+          tests there's no config for talking to the api so we have to watch
+          out in test runs and allow the store to be broken.
+
+          method store.valueFn
+
+        */
+        valueFn: function() {
+          var url = '';
+          if (!window.juju_config || ! window.juju_config.charmworldURL) {
+            console.error('No juju config to fetch charmworld store url');
+          } else {
+            url = window.juju_config.charmworldURL;
+          }
+          return new Y.juju.Charmworld0({
+            'apiHost': url
+          });
+        }
       },
+
+      /**
+         @attribute routes
+         @default Array of subapp routes.
+         @type {Array}
+
+       */
       routes: {
         value: [
+          // Double routes are needed to catch /fullscreen and /fullscreen/
           { path: '/bws/fullscreen/', callbacks: 'fullscreen' },
-          { path: '/bws/fullscreen/*id/configuration/',
-            callbacks: 'fullscreenCharm' },
-          { path: '/bws/fullscreen/*id/hooks/', callbacks: 'fullscreenCharm' },
-          { path: '/bws/fullscreen/*id/interfaces/',
-            callbacks: 'fullscreenCharm' },
-          { path: '/bws/fullscreen/*id/qa/', callbacks: 'fullscreenCharm' },
-          { path: '/bws/fullscreen/*id/readme/', callbacks: 'fullscreenCharm' },
-          { path: '/bws/fullscreen/*id/', callbacks: 'fullscreenCharm' },
+          { path: '/bws/fullscreen/*/', callbacks: 'fullscreen' },
+          { path: '/bws/fullscreen/*id/', callbacks: 'charmDetails' },
 
           { path: '/bws/sidebar/', callbacks: 'sidebar' },
-
-          { path: '/bws/sidebar/*id/configuration/',
-            callbacks: 'sidebarCharm' },
-          { path: '/bws/sidebar/*id/hooks/', callbacks: 'sidebarCharm' },
-          { path: '/bws/sidebar/*id/interfaces/',
-            callbacks: 'sidebarCharm' },
-          { path: '/bws/sidebar/*id/qa/', callbacks: 'sidebarCharm' },
-          { path: '/bws/sidebar/*id/readme/', callbacks: 'sidebarCharm' },
-          { path: '/bws/sidebar/*id/', callbacks: 'sidebarCharm' }
+          { path: '/bws/sidebar/*/', callbacks: 'sidebar' },
+          { path: '/bws/sidebar/*id/', callbacks: 'charmDetails' }
         ]
+      },
+
+      /**
+         @attribute urlNamespace
+         @default 'charmstore'
+         @type {String}
+
+       */
+      urlNamespace: {
+        value: 'charmstore'
       }
+
     }
   });
 
 }, '0.1.0', {
   requires: [
+    'juju-charm-store',
+    'juju-models',
     'sub-app',
+    'subapp-browser-charmview',
+    'subapp-browser-editorial',
     'subapp-browser-fullscreen',
     'subapp-browser-sidebar'
   ]

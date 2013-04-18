@@ -223,16 +223,13 @@
       container.one('#remove-unit-button').simulate('click');
       container.one('#remove-modal-panel .btn-danger')
          .simulate('click');
-      var called_event = null;
       view.on('navigateTo', function(ev) {
-        assert.equal('/service/mysql/', ev.url);
-        called_event = ev;
+        assert.equal('/:gui:/service/mysql/', ev.url);
       });
       var msg = conn.last_message();
       msg.result = true;
       env.dispatch_result(msg);
       var _ = expect(db.units.getById(unit.id)).to.not.exist;
-      called_event.service.should.equal(service);
     });
 
     it('should show unit errors on the page with action buttons', function() {

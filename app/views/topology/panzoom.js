@@ -30,7 +30,17 @@ YUI.add('juju-topology-panzoom', function(Y) {
         '#zoom-in-btn': {click: 'zoom_in'}
       },
       yui: {
+        /**
+          Fired when the canvas is zoomed.
+
+          @event zoom
+        */
         zoom: 'zoomHandler',
+        /**
+          Build pan and zoom functionality when the canvas is rendered.
+
+          @event rendered
+        */
         rendered: 'renderedHandler'
       }
     },
