@@ -686,11 +686,11 @@ describe('service models', function() {
     assert.isFalse(mysql.isAlive(), mysql.get('id'));
   });
 
-  it('instances identify if they they have errors', function() {
+  it('instances identify if they have errors', function() {
     assert.isTrue(wordpress.hasErrors());
   });
 
-  it('instances identify if they they do not have errors', function() {
+  it('instances identify if they do not have errors', function() {
     assert.isFalse(django.hasErrors(), django.get('id'));
     assert.isFalse(rails.hasErrors(), rails.get('id'));
     assert.isFalse(mysql.hasErrors(), mysql.get('id'));
