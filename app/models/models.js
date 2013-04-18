@@ -108,6 +108,20 @@ YUI.add('juju-models', function(Y) {
      */
     isAlive: function() {
       return this.get('life') === ALIVE;
+    },
+
+    /**
+      Return true if one or more units in this service are in an error state.
+
+      Return false otherwise.
+
+      @method hasErrors
+      @return {Boolean} Whether one or more unit are in an error state.
+     */
+    hasErrors: function() {
+      var aggregates = this.get('aggregated_status') || {},
+          errors = aggregates.error || false;
+      return errors && errors >= 1;
     }
 
   }, {
@@ -147,14 +161,19 @@ YUI.add('juju-models', function(Y) {
     model: Service,
 
     /**
-      Return a list of alive model instances.
+      Return a list of visible model instances.
+
+      A model instance is visible when it is alive or when, even if it is dying
+      or dead, one or more of its units are in an error state.
+      In the latter case, we want to still display the service in order to
+      allow users to retry or resolve its units.
 
       @method alive
-      @return {Y.ModelList} The model instances having life === 'alive'.
+      @return {Y.ModelList} The resulting visible model instances.
     */
-    alive: function() {
+    visible: function() {
       return this.filter({asList: true}, function(model) {
-        return model.isAlive();
+        return model.isAlive() || model.hasErrors();
       });
     },
 
