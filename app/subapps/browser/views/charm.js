@@ -45,17 +45,26 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     * When the 'add' is clicked we need to work on adding the ghost to the
-     * environment.
+     * Begin the service creation process by showing the service configuration
+     * form.
      *
      * @method _addCharmEnvironment
      * @param {Event} ev the event from the click handler.
+     * @return {undefined} Nothing.
      * @private
      *
      */
     _addCharmEnvironment: function(ev) {
       ev.halt();
-      console.log('add the charm to the environment');
+      var browserCharm = this.get('charm');
+      var charm = new models.Charm(browserCharm.getAttrs());
+      if (this.get('isFullscreen')) {
+        this.fire('viewNavigate',
+            {change: {viewmode: 'sidebar', charmID: null}});
+      } else {
+        this.fire('viewNavigate', {change: {charmID: null}});
+      }
+      this.get('deploy').call(null, charm);
     },
 
     /**
@@ -432,28 +441,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     Begin the service creation process by showing the service configuration
-     form.
-
-     @method on_charm_add
-     @param {Object} evt The event details.
-     @return {undefined} Nothing.
-    */
-    on_charm_add: function(evt) {
-      evt.halt();
-      var browserCharm = this.get('charm');
-      var charm = new models.Charm(browserCharm.getAttrs());
-      if (this.get('isFullscreen')) {
-        this.fire('viewNavigate',
-            {change: {viewmode: 'sidebar', charmID: null}});
-      } else {
-        this.fire('viewNavigate', {change: {charmID: null}});
-      }
-      this.get('deploy').call(null, charm);
-    },
-
-
-    /**
      * Render the view of a single charm details page.
      *
      * @method _renderCharmView
@@ -480,9 +467,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       // Set the content then update the container so that it reload
       // events.
       Y.one('.bws-view-data').setHTML(tplNode);
-
-      container.one('.add').on(
-          'click', Y.bind(this.on_charm_add, this));
 
       this.tabview = new widgets.browser.TabView({
         srcNode: tplNode.one('.tabs')

@@ -56,6 +56,14 @@
       assert.isTrue(Y.Lang.isObject(container.one('input')));
     });
 
+    it('calls the deploy function when "Add" is clicked', function() {
+      var container = Y.one('#subapp-browser');
+      var add_button = container.one('a.add');
+      debugger
+      view = new FullScreen();
+      view.render(container);
+    });
+
   });
 })();
 
