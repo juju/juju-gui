@@ -167,7 +167,7 @@
     });
   });
 
-  describe.only('browser subapp display tree', function() {
+  describe('browser subapp display tree', function() {
     var Y, browser, hits, ns, resetHits;
 
     before(function(done) {
@@ -343,7 +343,7 @@
       var req = {
         path: '/bws/sidebar/',
         params: {
-          viewmode: 'sidebar',
+          viewmode: 'sidebar'
         }
       };
       browser.routeView(req, undefined, function() {});
@@ -382,7 +382,7 @@
       req = {
         path: '/bws/sidebar/',
         params: {
-          viewmode: 'sidebar',
+          viewmode: 'sidebar'
         }
       };
 
@@ -395,7 +395,7 @@
       var req = {
         path: '/bws/fullscreen/',
         params: {
-          viewmode: 'fullscreen',
+          viewmode: 'fullscreen'
         }
       };
       browser.routeView(req, undefined, function() {});
@@ -434,7 +434,7 @@
       req = {
         path: '/bws/fullscreen/',
         params: {
-          viewmode: 'fullscreen',
+          viewmode: 'fullscreen'
         }
       };
 

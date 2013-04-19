@@ -117,24 +117,20 @@ YUI.add('subapp-browser', function(Y) {
       this._viewState = Y.merge(this._oldState, {});
     },
 
+    /**
+      Determine if we should render the charm details based on the current
+      state.
+
+      @return {Boolean} true if should show.
+
+    */
     _showCharm: function() {
       if (
           this._viewState.charmID &&
           (
-            this._stateChanged('charmID') ||
-            this._stateChanged('viewmode')
+           this._stateChanged('charmID') ||
+           this._stateChanged('viewmode')
           )
-      ) {
-          return true;
-      } else {
-          return false;
-      }
-    },
-
-    _showEditorial: function () {
-      if (
-        !this._viewState.search &&
-        this._stateChanged('viewmode')
       ) {
         return true;
       } else {
@@ -142,18 +138,42 @@ YUI.add('subapp-browser', function(Y) {
       }
     },
 
-    _showSearch: function() {
+    /**
+      Determine if we should render the editorial content based on the current
+      state.
+
+      @return {Boolean} true if should show.
+
+    */
+    _showEditorial: function() {
       if (
-         this._viewState.search &&
-         (
-             this._stateChanged('search') ||
-             this._stateChanged('viewmode') ||
-             this._stateChanged('querystring')
-         )
+          !this._viewState.search &&
+          this._stateChanged('viewmode')
       ) {
         return true;
       } else {
-          return false;
+        return false;
+      }
+    },
+    /**
+      Determine if we should render the search results based on the current
+      state.
+
+      @return {Boolean} true if should show.
+
+    */
+    _showSearch: function() {
+      if (
+          this._viewState.search &&
+          (
+           this._stateChanged('search') ||
+           this._stateChanged('viewmode') ||
+           this._stateChanged('querystring')
+          )
+      ) {
+        return true;
+      } else {
+        return false;
       }
     },
 
