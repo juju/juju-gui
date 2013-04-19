@@ -21,6 +21,29 @@ YUI.add('subapp-browser', function(Y) {
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     /**
+        Show or hide the details panel.
+
+        @method _detailsVisible
+        @param {Boolean} visible set the panel to hide or show.
+
+     */
+    _detailsVisible: function(visible) {
+      var detailsNode = Y.one('.bws-view-data'),
+          browserNode = Y.one('#subapp-browser'),
+          detailsClass = 'details-panel';
+      if (detailsNode) {
+        if (visible) {
+          detailsNode.show();
+          browserNode.addClass(detailsClass);
+        }
+        else {
+          detailsNode.hide();
+          browserNode.removeClass(detailsClass);
+        }
+      }
+    },
+
+    /**
         Given the current subapp state, generate a url to pass up to the
         routing code to route to.
 
@@ -301,7 +324,6 @@ YUI.add('subapp-browser', function(Y) {
       // We know the viewmode is already fullscreen because we're in this
       // function.
       if (this._stateChanged('viewmode')) {
-        this.get('container').setStyle('display', 'block');
         this._fullscreen = this.showView('fullscreen', this._getViewCfg());
       }
 
@@ -309,6 +331,7 @@ YUI.add('subapp-browser', function(Y) {
       // a charmID, render charmDetails.
       if ((this._stateChanged('charmID') || this._stateChanged('viewmode')) &&
           this._viewState.charmID) {
+        this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
       } else if (this._stateChanged('search') ||
                  this._stateChanged('viewmode')) {
@@ -336,7 +359,6 @@ YUI.add('subapp-browser', function(Y) {
     sidebar: function(req, res, next) {
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._stateChanged('viewmode')) {
-        this.get('container').setStyle('display', 'block');
         this._sidebar = this.showView('sidebar', this._getViewCfg());
       }
 
@@ -352,12 +374,14 @@ YUI.add('subapp-browser', function(Y) {
       // a charmID, render charmDetails.
       if ((this._stateChanged('charmID') || this._stateChanged('viewmode')) &&
           this._viewState.charmID) {
+        this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
       }
 
       // If the sidebar is the final part of the route, then hide the div for
       // viewing the charm details.
       if (!this._viewState.charmID) {
+        this._detailsVisible(false);
         var detailsNode = Y.one('.bws-view-data');
         if (detailsNode) {
           detailsNode.hide();
