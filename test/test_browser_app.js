@@ -156,16 +156,286 @@
       });
     });
 
-    it('should be able to determine if the route is a sub path', function() {
-      var app = new browser.Browser(),
-          subpaths = ['configuration', 'hooks', 'interfaces', 'qa', 'readme'];
+  });
 
-      Y.Array.each(subpaths, function(path) {
-        var url = '/bws/fullscreen/charm/id/stuff/' + path + '/';
-        app._getSubPath(url).should.eql(path);
+  describe('browser subapp display tree', function() {
+    var Y, browser, hits, ns, resetHits;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          'app-subapp-extension',
+          'juju-views',
+          'juju-browser',
+          'subapp-browser', function(Y) {
+            browser = Y.namespace('juju.subapps');
+
+            resetHits = function() {
+              hits = {
+                fullscreen: false,
+                sidebar: false,
+                renderCharmDetails: false,
+                renderEditorial: false,
+                renderSearchResults: false
+              };
+            };
+            done();
+          });
+    });
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          'juju-views',
+          'juju-browser',
+          'subapp-browser', function(Y) {
+            ns = Y.namespace('juju.subapps');
+            done();
+          });
+    });
+
+    beforeEach(function() {
+      var docBody = Y.one(document.body);
+      Y.Node.create('<div id="subapp-browser">' +
+          '</div>').appendTo(docBody);
+
+      // Track which render functions are hit.
+      resetHits();
+
+      // Mock out a dummy location for the Store used in view instances.
+      window.juju_config = {
+        charmworldURL: 'http://localhost'
+      };
+
+      browser = new ns.Browser();
+      // Block out each render target so we only track it was hit.
+      browser.renderCharmDetails = function() {
+        hits.renderCharmDetails = true;
+      };
+      browser.renderEditorial = function() {
+        hits.renderEditorial = true;
+      };
+      browser.renderSearchResults = function() {
+        hits.renderSearchResults = true;
+      };
+      // showView needs to be hacked because it does the rendering of
+      // fullscreen/sidebar.
+      browser.showView = function(view) {
+        hits[view] = true;
+      };
+    });
+
+    afterEach(function() {
+      browser.destroy();
+      Y.one('#subapp-browser').remove(true);
+    });
+
+    it('bws-sidebar dispatches correctly', function() {
+      var req = {
+        path: '/bws/sidebar/',
+        params: {
+          viewmode: 'sidebar'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderEditorial: true
       });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('bws-sidebar-charmid dispatches correctly', function() {
+      var req = {
+        path: '/bws/sidebar/precise/apache2-2',
+        params: {
+          viewmode: 'sidebar',
+          id: 'precise/apache2-2'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderEditorial: true,
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('bws-sidebar-search-charmid dispatches correctly', function() {
+      var req = {
+        path: '/bws/sidebar/search/precise/apache2-2',
+        params: {
+          viewmode: 'sidebar',
+          id: 'precise/apache2-2'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderSearchResults: true,
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('bws-fullscreen dispatches correctly', function() {
+      var req = {
+        path: '/bws/fullscreen/',
+        params: {
+          viewmode: 'fullscreen'
+        }
+      };
+      var expected = Y.merge(hits, {
+        fullscreen: true,
+        renderEditorial: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('fullscreen-charmid dispatches correctly', function() {
+      var req = {
+        path: '/bws/fullscreen/precise/apache2-2',
+        params: {
+          viewmode: 'fullscreen',
+          id: 'precise/apache2-2'
+        }
+      };
+      var expected = Y.merge(hits, {
+        fullscreen: true,
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('fullscreen-search-charmid dispatches correctly', function() {
+      var req = {
+        path: '/bws/fullscreen/search/precise/apache2-2',
+        params: {
+          viewmode: 'fullscreen',
+          id: 'precise/apache2-2'
+        }
+      };
+      var expected = Y.merge(hits, {
+        fullscreen: true,
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('sidebar to sidebar-charmid dispatches correctly', function() {
+      var req = {
+        path: '/bws/sidebar/',
+        params: {
+          viewmode: 'sidebar'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Now route through to the charmid from here and we should not hit the
+      // editorial content again.
+      resetHits();
+      req = {
+        path: '/bws/sidebar/precise/apache2-2',
+        params: {
+          viewmode: 'sidebar',
+          id: 'precise/apache2-2'
+        }
+      };
+
+      var expected = Y.merge(hits, {
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('sidebar-details to sidebar dispatchse correctly', function() {
+      var req = {
+        path: '/bws/sidebar/precise/apache2-2',
+        params: {
+          viewmode: 'sidebar',
+          id: 'precise/apache2-2'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Reset the hits and we should not redraw anything to update the view.
+      resetHits();
+      req = {
+        path: '/bws/sidebar/',
+        params: {
+          viewmode: 'sidebar'
+        }
+      };
+
+      var expected = Y.merge(hits, {});
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('fullscreen to fullscreen-details dispatches correctly', function() {
+      var req = {
+        path: '/bws/fullscreen/',
+        params: {
+          viewmode: 'fullscreen'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Now route through to the charmid from here and we should not hit the
+      // editorial content again.
+      resetHits();
+      req = {
+        path: '/bws/fullscreen/precise/apache2-2',
+        params: {
+          viewmode: 'fullscreen',
+          id: 'precise/apache2-2'
+        }
+      };
+
+      var expected = Y.merge(hits, {
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('fullscreen-details to fullscreen renders editorial', function() {
+      var req = {
+        path: '/bws/fullscreen/precise/apache2-2',
+        params: {
+          viewmode: 'fullscreen',
+          id: 'precise/apache2-2'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Reset the hits and we should not redraw anything to update the view.
+      resetHits();
+      req = {
+        path: '/bws/fullscreen/',
+        params: {
+          viewmode: 'fullscreen'
+        }
+      };
+
+      var expected = Y.merge(hits, {
+        renderEditorial: true
+      });
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
     });
 
   });
-
 })();
+
