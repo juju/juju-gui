@@ -183,6 +183,7 @@ describe('charm panel', function() {
 
     beforeEach(function() {
       db = new models.Database();
+      // Mock the base application.
       app = {db: db, views: {environment: {}}, env: env};
       panel = views.CharmPanel.getInstance({charm_store: store, app: app});
       panel.show();
