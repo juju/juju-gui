@@ -349,6 +349,10 @@ YUI.add('juju-env-python', function(Y) {
      * @return {undefined} Sends a message to the server only.
      */
     set_config: function(service, config, data, callback) {
+      if ((Y.Lang.isValue(config) && Y.Lang.isValue(data)) ||
+          (!Y.Lang.isValue(config) && !Y.Lang.isValue(data))) {
+        throw 'Exactly one of config and data must be provided';
+      }
       this._send_rpc({
         op: 'set_config',
         service_name: service,

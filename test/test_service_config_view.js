@@ -134,7 +134,7 @@
         var save_button = container.one('#save-service-config');
         save_button.get('disabled').should.equal(shouldBe);
       };
-      env.set_config = function(service, config, callback) {
+      env.set_config = function(service, config, data, callback) {
         assertButtonDisabled(true);
         callback(ev);
       };
@@ -153,7 +153,7 @@
       var ev = {err: true},
           view = makeView(),
           alert_ = container.one('#message-area>.alert');
-      env.set_config = function(service, config, callback) {
+      env.set_config = function(service, config, data, callback) {
         callback(ev);
       };
 
@@ -192,7 +192,7 @@
         // Mock function
         // view.saveConfig() calls it as part of its internal
         // "success" callback
-        env.set_config = function(service, config, callback) {
+        env.set_config = function(service, config, data, callback) {
           callback(ev);
         };
         var ev = {err: false},

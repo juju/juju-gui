@@ -818,6 +818,7 @@ YUI.add('juju-view-service', function(Y) {
             env.set_config(
                 service.get('id'),
                 new_values,
+                null,
                 Y.bind(this._setConfigCallback, this, container)
             );
 
