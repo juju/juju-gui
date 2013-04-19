@@ -363,7 +363,7 @@ YUI.add('juju-gui', function(Y) {
       this.endpointsController = new juju.EndpointsController({
         env: this.env,
         db: this.db,
-        app: this});
+        loadService: Y.bind(this.loadService, this)});
       this.endpointsController.bind();
 
       // When the connection resets, reset the db, re-login (a delta will
