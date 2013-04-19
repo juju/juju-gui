@@ -15,10 +15,10 @@ YUI.add('juju-topology-panzoom', function(Y) {
   /**
    * Handle PanZoom within a Topology.
    *
-   * Emitted events:
+   * ## Emitted events:
    *
-   *  rescaled: post-zoom event, after the scene has been rescaled,
-   *            queried object positions should be accurate.
+   * - *rescaled:* post-zoom event, after the scene has been rescaled,
+   *   queried object positions should be accurate.
    *
    * @class PanZoomModule
    */
@@ -30,7 +30,17 @@ YUI.add('juju-topology-panzoom', function(Y) {
         '#zoom-in-btn': {click: 'zoom_in'}
       },
       yui: {
+        /**
+          Fired when the canvas is zoomed.
+
+          @event zoom
+        */
         zoom: 'zoomHandler',
+        /**
+          Build pan and zoom functionality when the canvas is rendered.
+
+          @event rendered
+        */
         rendered: 'renderedHandler'
       }
     },
