@@ -53,6 +53,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
         bind: function() {
           var db = this.get('db');
 
+          // Event handlers for endpoint management.
           this._subscriptions.push(
               db.services.after('add', this.serviceAddHandler, this));
           this._subscriptions.push(
@@ -65,6 +66,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
               this));
           this._subscriptions.push(
               db.services.after('reset', this.reset, this));
+
         },
 
         /**
@@ -127,14 +129,22 @@ YUI.add('juju-endpoints-controller', function(Y) {
         handleServiceEvent: function(service) {
           // If the service is not a ghost (that is, 'pending' is false),
           // process it.
+
           if (!service.get('pending')) {
+
             var svcName = service.get('id'),
                 db = this.get('db'),
                 charm_id = service.get('charm'),
-                charm = db.charms.getById(charm_id);
+                charm = db.charms.getById(charm_id),
+                loadService = this.get('loadService'),
+                env = this.get('env');
+
+            // Call get_service to reload the service and get the full config.
+            env.get_service(service.get('id'), loadService);
+
             if (!charm) {
               charm = db.charms.add({id: charm_id})
-                .load(this.get('env'),
+                .load(env,
                   // If views are bound to the charm model, firing "update" is
                   // unnecessary, and potentially even mildly harmful.
                   function(err, result) { db.fire('update'); });
