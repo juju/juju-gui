@@ -557,6 +557,9 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.buildingRelation = true;
       this.clickAddRelation = true;
 
+      // make sure all services are shown (not faded or hidden), except for
+      // those in pending state, which are ghost services that have not been
+      // created yet.
       topo.fire('show', {
         selection: vis.selectAll('.service')
           .filter(function(d) { return !d.pending; })

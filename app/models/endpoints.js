@@ -92,7 +92,9 @@ YUI.add('juju-endpoints', function(Y) {
           sid, {'interface': 'juju-info', 'name': 'juju-info'}));
     }
 
-    // Now check every other service to see if it can be a valid target.
+    // Now check every other service to see if it can be a valid target,
+    // ensuring that we skip pending (ghost) services, which will not have
+    // a provides attribute by filtering out services with pending === true.
     Y.each(db.services.filter(function(endpoint) {
       return !endpoint.get('pending');
     }), function(tgt) {
