@@ -798,8 +798,8 @@ YUI.add('juju-charm-panel', function(Y) {
             focus: 'showDescription',
             blur: 'hideDescription'
           },
-          'input.config-field[type=checkbox]': {
-            click: function(evt) {evt.target.focus();}},
+          'input.config-field[type=checkbox]': {click: function(evt) {
+            evt.target.focus();}},
           '#service-name': {blur: 'updateGhostServiceName'}
         },
 

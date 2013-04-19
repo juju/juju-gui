@@ -425,6 +425,7 @@ YUI.add('juju-gui', function(Y) {
       // Attach SubApplications
       // The subapps should share the same db.
       cfg.db = this.db;
+      cfg.deploy = this.charmPanel.deploy;
       this.addSubApplications(cfg);
     },
 

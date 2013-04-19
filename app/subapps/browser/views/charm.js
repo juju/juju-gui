@@ -445,7 +445,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var charm = new models.Charm(browserCharm.getAttrs());
       if (this.get('isFullscreen')) {
         this.fire('viewNavigate',
-          {change: {viewmode: 'sidebar', charmID: null}});
+            {change: {viewmode: 'sidebar', charmID: null}});
       } else {
         this.fire('viewNavigate', {change: {charmID: null}});
       }

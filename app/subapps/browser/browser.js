@@ -281,7 +281,7 @@ YUI.add('subapp-browser', function(Y) {
       var extraCfg = {
         charmID: charmID,
         container: Y.Node.create('<div class="charmview"/>'),
-        deploy: Y.bind(app.charmPanel.deploy, this.charmPanel)
+        deploy: this.get('deploy')
       };
 
       // The details view needs to know if we're using a fullscreen template
