@@ -21,10 +21,10 @@ YUI.add('juju-topology', function(Y) {
    * is watch/event like behavior, fire an event and place the logic in a
    * module.
    *
-   * Emitted events:
+   * ## Emitted events:
    *
-   *  zoom: When the zoom level of the canvas changes a 'zoom'
-   *        event is fired. Analogous to d3's zoom event.
+   * - zoom: When the zoom level of the canvas changes a 'zoom'
+   *   event is fired. Analogous to d3's zoom event.
    *
    * @class Topology
    */
