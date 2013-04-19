@@ -353,7 +353,7 @@ YUI.add('juju-topology-service', function(Y) {
       var vis = topo.vis;
       var db = topo.get('db');
 
-      views.toBoundingBoxes(this, db.services.alive(), topo.service_boxes);
+      views.toBoundingBoxes(this, db.services.visible(), topo.service_boxes);
 
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
@@ -389,6 +389,9 @@ YUI.add('juju-topology-service', function(Y) {
         topo.fire('addRelationDragEnd');
       }
       else {
+        // If the service hasn't been dragged (in the case of long-click to add
+        // relation, or a double-fired event) or the old and new coordinates
+        // are the same, exit.
         if (!box.inDrag ||
             (box.oldX === box.x &&
              box.oldY === box.y)) {
@@ -442,6 +445,8 @@ YUI.add('juju-topology-service', function(Y) {
         self.longClickTimer.cancel();
       }
       // Translate the service (and, potentially, menu).
+      // If a position was provided, update the box's coordinates and the
+      // selection's bound data.
       if (pos) {
         box.x = pos.x;
         box.y = pos.y;
@@ -465,10 +470,9 @@ YUI.add('juju-topology-service', function(Y) {
         self.updateServiceMenuLocation();
       }
 
-      // Clear any state while dragging.
+      // Remove any active menus.
       self.get('container').all('.environment-menu.active')
           .removeClass('active');
-
       if (box.inDrag === views.DRAG_START) {
         self.hideServiceMenu();
         box.inDrag = views.DRAG_ACTIVE;
@@ -529,7 +533,7 @@ YUI.add('juju-topology-service', function(Y) {
                           .filter(function(boundingBox) {
                             return !Y.Lang.isNumber(boundingBox.x);
                           });
-      if (new_services) {
+      if (new_services.length > 0) {
         this.tree.nodes({children: new_services});
       }
       // enter
@@ -639,15 +643,22 @@ YUI.add('juju-topology-service', function(Y) {
             x, y;
 
         if (!annotations) {return;}
+
+        // If there are x/y annotations on the service model and they are
+        // different from the node's current x/y coordinates, update the
+        // node, as the annotations may have been set in another session.
         x = annotations['gui-x'],
         y = annotations['gui-y'];
         if (!d ||
             (x !== undefined && x !== d.x) &&
             (y !== undefined && y !== d.y)) {
-          // Delete gui-x and gui-y from annotations
-          // as we use the values.
+          // Delete gui-x and gui-y from annotations as we use the values.
+          // This is to prevent deltas coming in on a service while it is
+          // being dragged from resetting its position during the drag.
           delete annotations['gui-x'];
           delete annotations['gui-y'];
+          // Only update position if we're not already in a drag state (the
+          // current drag supercedes any previous annotations).
           if (!d.inDrag) {
             self.drag.call(this, d, self, {x: x, y: y});
           }
