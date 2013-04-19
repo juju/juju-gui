@@ -128,11 +128,11 @@
       view.render();
       topo = view.topo;
 
-      topo.once('beforePageSizeRecalculation', function() {
+      Y.once('beforePageSizeRecalculation', function() {
         // This event must be fired.
         beforeResizeEventFired = true;
       });
-      topo.once('afterPageSizeRecalculation', function() {
+      Y.once('afterPageSizeRecalculation', function() {
         // This event must be fired.
         assert.isTrue(beforeResizeEventFired);
         done();
