@@ -362,7 +362,8 @@ YUI.add('juju-gui', function(Y) {
       // Handlers for adding and removing services to the service list.
       this.endpointsController = new juju.EndpointsController({
         env: this.env,
-        db: this.db});
+        db: this.db,
+        loadService: Y.bind(this.loadService, this)});
       this.endpointsController.bind();
 
       // When the connection resets, reset the db, re-login (a delta will

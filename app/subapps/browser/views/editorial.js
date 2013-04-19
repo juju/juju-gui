@@ -25,6 +25,31 @@ YUI.add('subapp-browser-editorial', function(Y) {
   ns.EditorialView = Y.Base.create('browser-view-sidebar', Y.View, [], {
     template: views.Templates.editorial,
 
+    events: {
+      '.charm-token': {
+        click: '_handleCharmSelection'
+      }
+    },
+
+    /**
+        When selecting a charm from the list make sure we re-route the app to
+        the details view with that charm selected.
+
+        @method _handleCharmSelection
+        @param {Event} ev the click event handler for the charm selected.
+
+     */
+    _handleCharmSelection: function(ev) {
+      var charm = ev.currentTarget;
+      var charmID = charm.getData('charmid');
+
+      this.fire('viewNavigate', {
+        change: {
+          charmID: charmID
+        }
+      });
+    },
+
     /**
      * General YUI initializer.
      *
@@ -45,16 +70,10 @@ YUI.add('subapp-browser-editorial', function(Y) {
      * @param {Node} container An optional node to override where it's going.
      *
      */
-    render: function(container) {
+    render: function() {
       var tpl = this.template(this.getAttrs()),
           tplNode = Y.Node.create(tpl),
           store = this.get('store');
-
-      if (typeof container !== 'object') {
-        container = this.get('container');
-      } else {
-        this.set('container', container);
-      }
 
       // By default we grab the editorial content from the api to use for
       // display.
@@ -96,7 +115,9 @@ YUI.add('subapp-browser-editorial', function(Y) {
           });
           newCharmContainer.render(newContainer);
 
-          container.setHTML(tplNode);
+          var container = this.get('container');
+          container.append(tplNode);
+          this.get('renderTo').setHTML(container);
 
           // Add the charms to the cache for use in other views.
           // Start with a reset to empty any current cached models.
@@ -144,9 +165,37 @@ YUI.add('subapp-browser-editorial', function(Y) {
     }
   }, {
     ATTRS: {
+      /**
+       * Is this rendering of the editorial view for fullscreen or sidebar
+       * purposes?
+       *
+       * @attribute isFullscreen
+       * @default false
+       * @type {Boolean}
+       *
+       */
       isFullscreen: {
         value: false
       },
+      /**
+       * What is the container node we should render our container into?
+       *
+       * @attribute renderTo
+       * @default undefined
+       * @type {Node}
+       *
+       */
+      renderTo: {
+
+      },
+      /**
+       * The Charmworld0 Api store instance for loading content.
+       *
+       * @attribute store
+       * @default undefined
+       * @type {Charmworld0}
+       *
+       */
       store: {
 
       }

@@ -1,8 +1,12 @@
 <a href="/bws/sidebar/{{id}}"
     class="charm-token yui3-g"
     data-charmid="{{id}}">
-    <span class="yui3-u-1-4">
-        <img url="{{ iconfile }}" alt="Icon" />
+    <span class="yui3-u">
+        {{#if iconfile }}
+            <img src="data:image/svg;base64,{{ iconfile }}" alt="{{ name }} icon">
+        {{else}}
+            <div class="charm-icon"></div>
+        {{/if}}
     </span>
     <span class="yui3-u-3-4">
         <span class="title">

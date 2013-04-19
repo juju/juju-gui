@@ -3,7 +3,7 @@
 @bws-heading: @bws-dark;
 @bws-text: #808080;
 @bws-border: #dddddd;
-@bws-sidebar-width: 25%;
+@bws-sidebar-width: 350px;
 
 /* Mixins */
 .three-image-button-background(@left-image, @right-image, @centre-image) {
@@ -50,7 +50,7 @@
     box-shadow: none;
 
     .charmbrowser.sidebar #bws-sidebar {
-        width: 25%;
+        width: @bws-sidebar-width;
     }
   }
 
@@ -91,7 +91,9 @@
     top: 0;
     bottom: 0;
     left: 0;
-    overflow: auto;
+    right: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .bws-header {
     position: relative;
@@ -162,7 +164,6 @@
       left: 0;
       overflow: auto;
       width: 100%;
-      min-width: 350px;
       box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 
       .bws-searchbox {

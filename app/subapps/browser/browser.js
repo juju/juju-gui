@@ -21,45 +21,11 @@ YUI.add('subapp-browser', function(Y) {
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     /**
-     * Some routes might have sub parts that hint to where a user wants focus.
-     * In particular we've got the tabs that might have focus. They are the
-     * last optional component of some of the routes.
-     *
-     * @method _getSubPath
-     * @param {String} path the full path to search for the sub path.
-     *
-     */
-    _getSubPath: function(path) {
-      var reLastWord = /[^\/]*\/?$/,
-          lastWords = path.match(reLastWord);
-      if (lastWords.length) {
-        return lastWords[0].replace('/', '');
-      } else {
-        return undefined;
-      }
-    },
+        Show or hide the details panel.
 
-    /**
-     * Generate a standard shared set of cfg all Views can expect to see.
-     *
-     * @method _getViewCfg
-     * @param {Object} cfg additional config to merge into the default view
-     * config.
-     *
-     */
-    _getViewCfg: function(cfg) {
-      return Y.merge(cfg, {
-        db: this.get('db'),
-        store: this.get('store')
-      });
-    },
+        @method _detailsVisible
+        @param {Boolean} visible set the panel to hide or show.
 
-    /**
-     * Show or hide the details panel.
-     *
-     * @method _detailsVisible
-     * @param {Boolean} visible set the panel to hide or show.
-     *
      */
     _detailsVisible: function(visible) {
       var detailsNode = Y.one('.bws-view-data'),
@@ -78,15 +44,183 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+        Given the current subapp state, generate a url to pass up to the
+        routing code to route to.
+
+        @method _getStateUrl
+        @param {Object} change the values to change in the current state.
+
+     */
+    _getStateUrl: function(change) {
+      var urlParts = ['/bws'];
+      this._oldState = this._viewState;
+      this._viewState = Y.merge(this._viewState, change);
+
+      urlParts.push(this._viewState.viewmode);
+      if (this._viewState.search) {
+        urlParts.push('search');
+      }
+      if (this._viewState.charmID) {
+        urlParts.push(this._viewState.charmID);
+      }
+
+      // Always end on a /
+      return urlParts.join('/');
+    },
+
+    /**
+     * Generate a standard shared set of cfg all Views can expect to see.
+     *
+     * @method _getViewCfg
+     * @param {Object} cfg additional config to merge into the default view
+     * config.
+     *
+     */
+    _getViewCfg: function(cfg) {
+      return Y.merge(cfg, {
+        db: this.get('db'),
+        store: this.get('store')
+      });
+    },
+
+    /**
+       Create an initial subapp state for later url generation.
+
+       @method _initState
+
+     */
+    _initState: function() {
+      this._oldState = {
+        viewmode: null,
+        search: null,
+        charmID: null
+      };
+      this._viewState = Y.merge(this._oldState, {});
+    },
+
+    /**
+      Determine if we should render the charm details based on the current
+      state.
+
+      @return {Boolean} true if should show.
+
+    */
+    _shouldShowCharm: function() {
+      if (
+          this._viewState.charmID &&
+          (
+           this._hasStateChanged('charmID') ||
+           this._hasStateChanged('viewmode')
+          )
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    /**
+      Determine if we should render the editorial content based on the current
+      state.
+
+      @return {Boolean} true if should show.
+
+    */
+    _shouldShowEditorial: function() {
+      if (
+          !this._viewState.search &&
+          this._hasStateChanged('viewmode')
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    /**
+      Determine if we should render the search results based on the current
+      state.
+
+      @return {Boolean} true if should show.
+
+    */
+    _shouldShowSearch: function() {
+      if (
+          this._viewState.search &&
+          (
+           this._hasStateChanged('search') ||
+           this._hasStateChanged('viewmode') ||
+           this._hasStateChanged('querystring')
+          )
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    /**
+      Verify that a particular part of the state has changed.
+
+      @method _hasStateChanged
+      @param {String} field the part of the state to check.
+
+     */
+    _hasStateChanged: function(field) {
+      if (this._oldState[field] === this._viewState[field]) {
+        return false;
+      } else {
+        return true;
+      }
+    },
+
+    /**
+      Update the oldState with the viewState now that we're done processing
+      the request.
+
+      @method _saveState
+
+     */
+    _saveState: function() {
+      this._oldState = Y.merge(
+          this._oldState,
+          this._viewState);
+    },
+
+    /**
+       Given the params in the route determine what the new state is going to
+       be.
+
+       @method _updateState
+       @param {String} path the requested path.
+       @param {Object} params the params from the request payload.
+
+     */
+    _updateState: function(path, params) {
+      // Update the viewmode. Every request has a viewmode.
+      this._viewState.viewmode = params.viewmode;
+
+      // Check for a charm id in the request.
+      if (params.id) {
+        this._viewState.charmID = params.id;
+      } else {
+        this._viewState.charmID = null;
+      }
+
+      // Check for search in the request.
+      if (path.indexOf('search') !== -1) {
+        this._viewState.search = true;
+      } else {
+        this._viewState.search = false;
+      }
+    },
+
+    /**
      * The available Views run from this sub app.
      * @attribute views
      *
      */
     views: {
-      charmDetails: {
-        type: 'juju.browser.views.BrowserCharmView',
-        preserve: false
-      },
       fullscreen: {
         type: 'juju.browser.views.FullScreen',
         preserve: false
@@ -105,6 +239,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     destructor: function() {
       this._cacheCharms.destroy();
+      delete this._viewState;
     },
 
     /**
@@ -118,34 +253,53 @@ YUI.add('subapp-browser', function(Y) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
+      this._initState();
+
+      // Listen for navigate events from any views we're rendering.
+      this.on('*:viewNavigate', function(ev) {
+        var url;
+        if (ev.url) {
+          url = ev.url;
+        } else if (ev.change) {
+          url = this._getStateUrl(ev.change);
+        }
+        this.navigate(url);
+      });
     },
 
     /**
-     * Render the fullscreen view to the client.
+     * Render the sidebar view of a specific charm to the client.
      *
-     * @method fullscreen
+     * @method sidebarCharm
      * @param {Request} req current request object.
      * @param {Response} res current response object.
      * @param {function} next callable for the next route in the chain.
      *
      */
-    fullscreen: function(req, res, next) {
-      this.get('container').setStyle('display', 'block');
+    renderCharmDetails: function(req, res, next) {
+      var charmID = req.params.id;
+      var extraCfg = {
+        charmID: charmID,
+        container: Y.Node.create('<div class="charmview"/>')
+      };
 
-      if (!this._fullscreen) {
-        this._fullscreen = this.showView('fullscreen', this._getViewCfg(), {
-          'callback': function(view) {
-            // if the fullscreen isn't the last part of the path, then ignore
-            // the editorial content.
-            if (this._getSubPath(req.path) === 'fullscreen') {
-              this.renderEditorial(req, res, next);
-            }
-            next();
-          }
-        });
-      } else {
-        next();
+      // The details view needs to know if we're using a fullscreen template
+      // or the sidebar version.
+      if (this._viewState.viewmode === 'fullscreen') {
+        extraCfg.isFullscreen = true;
       }
+
+      // Gotten from the sidebar creating the cache.
+      var model = this._cacheCharms.getById(charmID);
+
+      if (model) {
+        extraCfg.charm = model;
+      }
+
+      this._details = new Y.juju.browser.views.BrowserCharmView(
+          this._getViewCfg(extraCfg));
+      this._details.render();
+      this._details.addTarget(this);
     },
 
     /**
@@ -161,33 +315,79 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     renderEditorial: function(req, res, next) {
+      // If loading the interesting content then it's not a search going on.
       var container = this.get('container'),
           editorialContainer,
           extraCfg = {};
 
-      if (req.path.indexOf('fullscreen') !== -1) {
+      if (this._viewState.viewmode === 'fullscreen') {
         // The fullscreen view requires that there be no editorial content if
         // we're looking at a specific charm. The div we dump our content into
         // is shared. So if the url is /fullscreen show editorial content, but
         // if it's not, there's something else handling displaying the
         // view-data.
-        editorialContainer = container.one(' .bws-view-data');
+        extraCfg.renderTo = container.one('.bws-view-data');
         extraCfg.isFullscreen = true;
       } else {
         // If this is the sidebar view, then the editorial content goes into a
         // different div since we can view both editorial content and
         // view-data (such as a charm details) side by side.
-        editorialContainer = container.one('.bws-content');
+        extraCfg.renderTo = container.one('.bws-content');
       }
 
-      if (!this._editorial) {
-        this._editorial = new Y.juju.browser.views.EditorialView(
-            this._getViewCfg(extraCfg));
+      this._editorial = new Y.juju.browser.views.EditorialView(
+          this._getViewCfg(extraCfg));
 
-        this._editorial.render(editorialContainer);
-        // Add any sidebar charms to the running cache.
-        this._cacheCharms.add(this._editorial._cacheCharms);
+      this._editorial.render();
+      this._editorial.addTarget(this);
+
+      // Add any sidebar charms to the running cache.
+      this._cacheCharms.add(this._editorial._cacheCharms);
+    },
+
+    /**
+      Place holder for a method to render out search so we can test url parsing
+
+    */
+    renderSearchResults: function(req, res, next) {
+      console.log('rendered search results.');
+    },
+
+    /**
+     * Render the fullscreen view to the client.
+     *
+     * @method fullscreen
+     * @param {Request} req current request object.
+     * @param {Response} res current response object.
+     * @param {function} next callable for the next route in the chain.
+     *
+     */
+    fullscreen: function(req, res, next) {
+      // If we've switched to viewmode fullscreen, we need to render it.
+      // We know the viewmode is already fullscreen because we're in this
+      // function.
+      if (this._hasStateChanged('viewmode')) {
+        Y.one('#subapp-browser').setStyle('display', 'block');
+        this._fullscreen = this.showView('fullscreen', this._getViewCfg());
       }
+
+      // If we've changed the charmID or the viewmode has changed and we have
+      // a charmID, render charmDetails.
+      if (this._shouldShowCharm()) {
+        this._detailsVisible(true);
+        this.renderCharmDetails(req, res, next);
+      } else if (this._shouldShowSearch()) {
+        // Render search results if search is in the url and the viewmode or
+        // the search has been changed in the state.
+        this.renderSearchResults(req, res, next);
+      } else {
+        // Else render the editorial content.
+        this.renderEditorial(req, res, next);
+      }
+
+      // Sync that the state has changed.
+      this._saveState();
+      next();
     },
 
     /**
@@ -200,72 +400,61 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     sidebar: function(req, res, next) {
-      this.get('container').setStyle('display', 'block');
-      // Clean up any details we've got.
-      if (this._details) {
-        this._details.destroy({remove: true});
+      // If we've switched to viewmode sidebar, we need to render it.
+      if (this._hasStateChanged('viewmode')) {
+        Y.one('#subapp-browser').setStyle('display', 'block');
+        this._sidebar = this.showView('sidebar', this._getViewCfg());
+      }
+
+      // Render search results if search is in the url and the viewmode or the
+      // search has been changed in the state.
+      if (this._shouldShowSearch()) {
+        this.renderSearchResults(req, res, next);
+      }
+
+      if (this._shouldShowEditorial()) {
+        this.renderEditorial(req, res, next);
+      }
+
+      // If we've changed the charmID or the viewmode has changed and we have
+      // a charmID, render charmDetails.
+      if (this._shouldShowCharm()) {
+        this._detailsVisible(true);
+        this.renderCharmDetails(req, res, next);
       }
 
       // If the sidebar is the final part of the route, then hide the div for
       // viewing the charm details.
-      if (this._getSubPath(req.path) === 'sidebar') {
+      if (!this._viewState.charmID) {
         this._detailsVisible(false);
+        var detailsNode = Y.one('.bws-view-data');
+        if (detailsNode) {
+          detailsNode.hide();
+        }
+        // Clean up any details we've got.
+        if (this._details) {
+          this._details.destroy({remove: true});
+        }
       }
 
-      if (!this._sidebar) {
-        // Whenever the sidebar view is rendered it needs some editorial
-        // content to display to the user. We only need once instance though,
-        // so only render it on the first view. As users click on charm to
-        // charm and we generate urls /sidebar/precise/xxx we don't want to
-        // re-render the sidebar content.
-        this._sidebar = this.showView('sidebar', this._getViewCfg(), {
-          'callback': function(view) {
-            this.renderEditorial(req, res, next);
-            next();
-          }
-        });
-      } else {
-        next();
-      }
+      // Sync that the state has changed.
+      this._saveState();
+      next();
     },
 
     /**
-     * Render the sidebar view of a specific charm to the client.
-     *
-     * @method sidebarCharm
-     * @param {Request} req current request object.
-     * @param {Response} res current response object.
-     * @param {function} next callable for the next route in the chain.
-     *
+        Dispatch to the correct viewmode based on the route that was hit.
+
+       @method routeView
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
+
      */
-    charmDetails: function(req, res, next) {
-      var charmID = req.params.id;
-      var extraCfg = {
-        charmID: charmID,
-        container: Y.Node.create('<div class="charmview"/>')
-      };
-
-      // The details view needs to know if we're using a fullscreen template
-      // or the sidebar version.
-      if (req.path.indexOf('fullscreen') !== -1) {
-        extraCfg.isFullscreen = true;
-      }
-
-      // Gotten from the sidebar creating the cache.
-      var model = this._cacheCharms.getById(charmID);
-
-      if (model) {
-        extraCfg.charm = model;
-      }
-
-      this._details = new Y.juju.browser.views.BrowserCharmView(
-          this._getViewCfg(extraCfg));
-      this._details.render();
-      // Make sure we show the bws-view-data div that the details renders
-      // into.
-      this._detailsVisible(true);
-
-      next();
+    routeView: function(req, res, next) {
+      // Update the state for the rest of things to figure out what to do.
+      this._updateState(req.path, req.params);
+      this[req.params.viewmode](req, res, next);
     }
 
   }, {
@@ -318,13 +507,10 @@ YUI.add('subapp-browser', function(Y) {
       routes: {
         value: [
           // Double routes are needed to catch /fullscreen and /fullscreen/
-          { path: '/bws/fullscreen/', callbacks: 'fullscreen' },
-          { path: '/bws/fullscreen/*/', callbacks: 'fullscreen' },
-          { path: '/bws/fullscreen/*id/', callbacks: 'charmDetails' },
-
-          { path: '/bws/sidebar/', callbacks: 'sidebar' },
-          { path: '/bws/sidebar/*/', callbacks: 'sidebar' },
-          { path: '/bws/sidebar/*id/', callbacks: 'charmDetails' }
+          { path: '/bws/:viewmode/', callbacks: 'routeView' },
+          { path: '/bws/:viewmode/search/', callbacks: 'routeView' },
+          { path: '/bws/:viewmode/search/*id/', callbacks: 'routeView' },
+          { path: '/bws/:viewmode/*id/', callbacks: 'routeView' }
         ]
       },
 
