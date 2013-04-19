@@ -165,7 +165,175 @@
         app._getSubPath(url).should.eql(path);
       });
     });
-
   });
 
+  describe.only('browser subapp display tree', function() {
+    var Y, browser, hits, ns;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          'app-subapp-extension',
+          'juju-views',
+          'juju-browser',
+          'subapp-browser', function(Y) {
+            browser = Y.namespace('juju.subapps');
+            done();
+          });
+    });
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use(
+          'juju-views',
+          'juju-browser',
+          'subapp-browser', function(Y) {
+            ns = Y.namespace('juju.subapps');
+            done();
+          });
+    });
+
+    beforeEach(function() {
+      var docBody = Y.one(document.body);
+      Y.Node.create('<div id="subapp-browser">' +
+          '</div>').appendTo(docBody);
+
+      // Track which render functions are hit.
+      hits = {
+        fullscreen: false,
+        sidebar: false,
+        renderCharmDetails: false,
+        renderEditorial: false,
+        renderSearchResults: false
+      };
+
+      // Mock out a dummy location for the Store used in view instances.
+      window.juju_config = {
+        charmworldURL: 'http://localhost'
+      };
+
+      browser = new ns.Browser();
+      // Block out each render target so we only track it was hit.
+      browser.renderCharmDetails = function() {
+        hits.renderCharmDetails = true;
+      };
+      browser.renderEditorial = function() {
+        hits.renderEditorial = true;
+      };
+      browser.renderSearchResults = function() {
+        hits.renderSearchResults = true;
+      };
+      // showView needs to be hacked because it does the rendering of
+      // fullscreen/sidebar.
+      browser.showView = function(view) {
+        hits[view] = true;
+      };
+    });
+
+    afterEach(function() {
+      browser.destroy();
+      Y.one('#subapp-browser').remove(true);
+    });
+
+    it('check bws-sidebar', function() {
+      var req = {
+        path: '/bws/sidebar/',
+        params: {
+          viewmode: 'sidebar'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderEditorial: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('check bws-sidebar-charmid', function() {
+      var req = {
+        path: '/bws/sidebar/precise/apache2-2',
+        params: {
+          viewmode: 'sidebar',
+          id: 'precise/apache2-2'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderEditorial: true,
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('check bws-sidebar-search-charmid', function() {
+      var req = {
+        path: '/bws/sidebar/search/precise/apache2-2',
+        params: {
+          viewmode: 'sidebar',
+          id: 'precise/apache2-2'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderSearchResults: true,
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('check bws-fullscreen', function() {
+      var req = {
+        path: '/bws/fullscreen/',
+        params: {
+          viewmode: 'fullscreen'
+        }
+      };
+      var expected = Y.merge(hits, {
+        fullscreen: true,
+        renderEditorial: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('check bws-fullscreen-charmid', function() {
+      var req = {
+        path: '/bws/fullscreen/precise/apache2-2',
+        params: {
+          viewmode: 'fullscreen',
+          id: 'precise/apache2-2'
+        }
+      };
+      var expected = Y.merge(hits, {
+        fullscreen: true,
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('check bws-fullscreen-search-charmid', function() {
+      var req = {
+        path: '/bws/fullscreen/search/precise/apache2-2',
+        params: {
+          viewmode: 'sidebar',
+          id: 'precise/apache2-2'
+        }
+      };
+      var expected = Y.merge(hits, {
+        fullscreen: true,
+        renderSearchResults: true,
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+  });
 })();

@@ -179,10 +179,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     views: {
-      charmDetails: {
-        type: 'juju.browser.views.BrowserCharmView',
-        preserve: false
-      },
       fullscreen: {
         type: 'juju.browser.views.FullScreen',
         preserve: false
@@ -311,6 +307,14 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+      Place holder for a method to render out search so we can test url parsing
+
+    */
+    renderSearchResults: function(req, res, next) {
+      console.log('rendered search results.')
+    },
+
+    /**
      * Render the fullscreen view to the client.
      *
      * @method fullscreen
@@ -324,6 +328,7 @@ YUI.add('subapp-browser', function(Y) {
       // We know the viewmode is already fullscreen because we're in this
       // function.
       if (this._stateChanged('viewmode')) {
+        Y.one('#subapp-browser').setStyle('display', 'block');
         this._fullscreen = this.showView('fullscreen', this._getViewCfg());
       }
 
@@ -333,8 +338,17 @@ YUI.add('subapp-browser', function(Y) {
           this._viewState.charmID) {
         this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
-      } else if (this._stateChanged('search') ||
-                 this._stateChanged('viewmode')) {
+      } else if (this._viewState.search &&
+          (this._stateChanged('search') || this._stateChanged('viewmode')))
+        // Render search results if search is in the url and the viewmode or
+        // the search has been changed in the state.
+        this.renderSearchResults(req, res, next);
+      } else {
+        // Else render the editorial content.
+        this.renderEditorial(req, res, next);
+      }
+
+
         // We need to render the editorial content if the search has been
         // changed or the viewmode has changed and there is no charmID.
         // Ex: /sidebar/search to /sidebar/ or /fullscreen/charmid
@@ -359,14 +373,17 @@ YUI.add('subapp-browser', function(Y) {
     sidebar: function(req, res, next) {
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._stateChanged('viewmode')) {
+        Y.one('#subapp-browser').setStyle('display', 'block');
         this._sidebar = this.showView('sidebar', this._getViewCfg());
       }
 
-      // We need to render the editorial content if the search has been
-      // changed or the viewmode has changed.
-      // Ex: /sidebar/search to /sidebar/ or /fullscreen/charmid
-      // /sidebar/charmid
-      if (this._stateChanged('search') || this._stateChanged('viewmode')) {
+      // Render search results if search is in the url and the viewmode or the
+      // search has been changed in the state.
+      if (this._viewState.search &&
+          (this._stateChanged('search') || this._stateChanged('viewmode'))) {
+        this.renderSearchResults(req, res, next);
+      } else {
+        // Else render the editorial content.
         this.renderEditorial(req, res, next);
       }
 
