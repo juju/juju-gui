@@ -5,7 +5,21 @@
         display: block;
         color: @bws-text;
 
-        h3 {
+        .charm-icon {
+            width: 64px;
+            height: 64px;
+            margin-right: 16px;
+            background: transparent
+                    url(/juju-ui/assets/images/charm_64.png)
+                    left top no-repeat;
+        }
+        .title,
+        .metadata,
+        .description {
+            display: block;
+        }
+        .title {
+            margin-bottom: 5px;
             color: @bws-heading;
             font-family: @font-family;
             font-size: 13.5pt;
@@ -18,12 +32,6 @@
     }
     &:hover {
         background-color: #eee;
-        cursor: pointer;
-
-        .add {
-           display: block;
-           visibility: visible;
-        }
     }
     &.active {
         padding-right: 14px;

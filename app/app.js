@@ -184,7 +184,7 @@ YUI.add('juju-gui', function(Y) {
 
       Y.detachAll('window-alt-E-pressed');
       Y.on('window-alt-E-pressed', function(data) {
-        this.fire('navigateTo', { url: '/:gui:/' });
+        this.fire('navigateTo', {url: this.nsRouter.url({gui: '/'})});
         data.preventDefault = true;
       }, this);
 
@@ -362,7 +362,8 @@ YUI.add('juju-gui', function(Y) {
       // Handlers for adding and removing services to the service list.
       this.endpointsController = new juju.EndpointsController({
         env: this.env,
-        db: this.db});
+        db: this.db,
+        loadService: Y.bind(this.loadService, this)});
       this.endpointsController.bind();
 
       // When the connection resets, reset the db, re-login (a delta will
@@ -551,6 +552,7 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         landscape: this.landscape,
         getModelURL: Y.bind(this.getModelURL, this),
+        loadService: Y.bind(this.loadService, this),
         nsRouter: this.nsRouter,
         querystring: req.query
       }, {}, function(view) {
@@ -820,7 +822,7 @@ YUI.add('juju-gui', function(Y) {
           options = {
             getModelURL: Y.bind(this.getModelURL, this),
             nsRouter: this.nsRouter,
-            loadService: this.loadService,
+            loadService: Y.bind(this.loadService, this),
             landscape: this.landscape,
             endpointsController: this.endpointsController,
             db: this.db,

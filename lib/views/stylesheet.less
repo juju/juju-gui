@@ -249,7 +249,7 @@ i.sprite {
 }
 
 #main {
-
+    overflow: hidden;
 }
 
 #overview {
@@ -927,6 +927,7 @@ g.unit {
     z-index: 999;
     padding: 0;
     top: 70px;
+    right: 0;
     height: 100px;
     position: absolute;
     width: @charm-panel-width;
@@ -1488,7 +1489,7 @@ ul.menu {
   border-left: 1px solid @charm-panel-configure-color - #333;
   background-color: @charm-panel-configure-color;
   height: 90px;
-  width: @charm-panel-width - @charm-panel-padding-left;
+  width: @charm-panel-width - @charm-panel-padding-left - 1px;
   padding-left: @charm-panel-padding-left;
   .title {
     font-weight: lighter;
@@ -1641,6 +1642,10 @@ ul.menu {
     }
 }
 
+.alert {
+    letter-spacing: normal;
+}
+
 /** SubApps **/
 @import "browser/main.less";
 
@@ -1651,4 +1656,3 @@ ul.menu {
 @import "browser/overlay-indicator.less";
 @import "browser/section-title.less";
 @import "browser/tabview.less";
-

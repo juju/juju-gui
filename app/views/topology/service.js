@@ -15,6 +15,31 @@ YUI.add('juju-topology-service', function(Y) {
       Templates = views.Templates;
 
   /**
+   * Manage service rendering and events.
+   *
+   * ## Emitted events:
+   *
+   * - *clearState:* clear all possible states that the environment view can be
+   *   in as it pertains to actions (building a relation, viewing
+   *   a service menu, etc.)
+   * - *snapToService:* fired when mousing over a service, causing the pending
+   *   relation dragline to snap to the service rather than
+   *   following the mouse.
+   * - *snapOutOfService:* fired when mousing out of a service, causing the
+   *   pending relation line to follow the mouse again.
+   * - *addRelationDrag:*
+   * - *addRelationDragStart:*
+   * - *addRelationDragEnd:* fired when creating a relation through the long-
+   *   click process, when moving the cursor over the environment, and when
+   *   dropping the endpoint on a valid service.
+   * - *cancelRelationBuild:* fired when dropping a pending relation line
+   *   started through the long-click method somewhere other than a valid
+   *   service.
+   * - *serviceMoved:* fired when a service block is dragged so that relation
+   *   endpoints can follow it.
+   * - *navigateTo:* fired when clicking the "View Service" menu item or when
+   *   double-clicking a service.
+   *
    * @class ServiceModule
    */
   var ServiceModule = Y.Base.create('ServiceModule', d3ns.Module, [], {
@@ -51,14 +76,68 @@ YUI.add('juju-topology-service', function(Y) {
         }
       },
       yui: {
+        /**
+          Show a hidden service (set opacity to 1.0).
+
+          @event show
+          @param {Object} An object with a d3 selection attribute.
+        */
         show: 'show',
+        /**
+          Hide a given service (set opacity to 0).
+
+          @event hide
+          @param {Object} An object with a d3 selection attribute.
+        */
         hide: 'hide',
+        /**
+          Fade a given service (set opacity to 0.2).
+
+          @event fade
+          @param {Object} An object with a d3 selection attribute.
+        */
         fade: 'fade',
+        /**
+          Start the service drag process or the add-relation dragline process.
+
+          @event dragstart
+          @param {Object} box The service box that's being dragged.
+          @param {Object} self This class.
+        */
         dragstart: 'dragstart',
+        /**
+          Event fired while a service is being dragged or dragline being moved.
+
+          @event drag
+          @param {Object} box The service box that's being dragged.
+          @param {Object} self This class.
+        */
         drag: 'drag',
+        /**
+          Event fired after a service is being dragged or dragline being moved.
+
+          @event dragend
+          @param {Object} box The service box that's being dragged.
+          @param {Object} self This class.
+        */
         dragend: 'dragend',
+        /**
+          Hide a service's click-actions menu.
+
+          @event hideServiceMenu
+        */
         hideServiceMenu: 'hideServiceMenu',
+        /**
+          Clear view state as pertaining to services.
+
+          @event clearState
+        */
         clearState: 'clearStateHandler',
+        /**
+          Update the service menu location.
+
+          @event rescaled
+        */
         rescaled: 'updateServiceMenuLocation'
       }
     },
@@ -353,7 +432,7 @@ YUI.add('juju-topology-service', function(Y) {
       var vis = topo.vis;
       var db = topo.get('db');
 
-      views.toBoundingBoxes(this, db.services.alive(), topo.service_boxes);
+      views.toBoundingBoxes(this, db.services.visible(), topo.service_boxes);
 
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
@@ -389,6 +468,9 @@ YUI.add('juju-topology-service', function(Y) {
         topo.fire('addRelationDragEnd');
       }
       else {
+        // If the service hasn't been dragged (in the case of long-click to add
+        // relation, or a double-fired event) or the old and new coordinates
+        // are the same, exit.
         if (!box.inDrag ||
             (box.oldX === box.x &&
              box.oldY === box.y)) {
@@ -442,6 +524,8 @@ YUI.add('juju-topology-service', function(Y) {
         self.longClickTimer.cancel();
       }
       // Translate the service (and, potentially, menu).
+      // If a position was provided, update the box's coordinates and the
+      // selection's bound data.
       if (pos) {
         box.x = pos.x;
         box.y = pos.y;
@@ -465,10 +549,9 @@ YUI.add('juju-topology-service', function(Y) {
         self.updateServiceMenuLocation();
       }
 
-      // Clear any state while dragging.
+      // Remove any active menus.
       self.get('container').all('.environment-menu.active')
           .removeClass('active');
-
       if (box.inDrag === views.DRAG_START) {
         self.hideServiceMenu();
         box.inDrag = views.DRAG_ACTIVE;
@@ -529,7 +612,7 @@ YUI.add('juju-topology-service', function(Y) {
                           .filter(function(boundingBox) {
                             return !Y.Lang.isNumber(boundingBox.x);
                           });
-      if (new_services) {
+      if (new_services.length > 0) {
         this.tree.nodes({children: new_services});
       }
       // enter
@@ -639,15 +722,22 @@ YUI.add('juju-topology-service', function(Y) {
             x, y;
 
         if (!annotations) {return;}
+
+        // If there are x/y annotations on the service model and they are
+        // different from the node's current x/y coordinates, update the
+        // node, as the annotations may have been set in another session.
         x = annotations['gui-x'],
         y = annotations['gui-y'];
         if (!d ||
             (x !== undefined && x !== d.x) &&
             (y !== undefined && y !== d.y)) {
-          // Delete gui-x and gui-y from annotations
-          // as we use the values.
+          // Delete gui-x and gui-y from annotations as we use the values.
+          // This is to prevent deltas coming in on a service while it is
+          // being dragged from resetting its position during the drag.
           delete annotations['gui-x'];
           delete annotations['gui-y'];
+          // Only update position if we're not already in a drag state (the
+          // current drag supercedes any previous annotations).
           if (!d.inDrag) {
             self.drag.call(this, d, self, {x: x, y: y});
           }
@@ -1039,12 +1129,12 @@ YUI.add('juju-topology-service', function(Y) {
      */
     show_service: function(service) {
       var topo = this.get('component');
-      var router = topo.get('nsRouter');
+      var nsRouter = topo.get('nsRouter');
       var getModelURL = topo.get('getModelURL');
 
       topo.detachContainer();
       topo.fire('navigateTo', {
-        url: router.url({gui: getModelURL(service)})
+        url: nsRouter.url({gui: getModelURL(service)})
       });
     },
 

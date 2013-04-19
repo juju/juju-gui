@@ -21,6 +21,29 @@ YUI.add('subapp-browser', function(Y) {
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     /**
+        Show or hide the details panel.
+
+        @method _detailsVisible
+        @param {Boolean} visible set the panel to hide or show.
+
+     */
+    _detailsVisible: function(visible) {
+      var detailsNode = Y.one('.bws-view-data'),
+          browserNode = Y.one('#subapp-browser'),
+          detailsClass = 'details-panel';
+      if (detailsNode) {
+        if (visible) {
+          detailsNode.show();
+          browserNode.addClass(detailsClass);
+        }
+        else {
+          detailsNode.hide();
+          browserNode.removeClass(detailsClass);
+        }
+      }
+    },
+
+    /**
         Given the current subapp state, generate a url to pass up to the
         routing code to route to.
 
@@ -46,25 +69,6 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Some routes might have sub parts that hint to where a user wants focus.
-     * In particular we've got the tabs that might have focus. They are the
-     * last optional component of some of the routes.
-     *
-     * @method _getSubPath
-     * @param {String} path the full path to search for the sub path.
-     *
-     */
-    _getSubPath: function(path) {
-      var reLastWord = /[^\/]*\/?$/,
-          lastWords = path.match(reLastWord);
-      if (lastWords.length) {
-        return lastWords[0].replace('/', '');
-      } else {
-        return undefined;
-      }
-    },
-
-    /**
      * Generate a standard shared set of cfg all Views can expect to see.
      *
      * @method _getViewCfg
@@ -87,21 +91,82 @@ YUI.add('subapp-browser', function(Y) {
      */
     _initState: function() {
       this._oldState = {
-        viewmode: undefined,
-        search: undefined,
-        charmID: undefined
+        viewmode: null,
+        search: null,
+        charmID: null
       };
       this._viewState = Y.merge(this._oldState, {});
     },
 
     /**
-        Verify that a particular part of the state has changed.
+      Determine if we should render the charm details based on the current
+      state.
 
-        @method _stateChanged
-        @param {String} field the part of the state to check.
+      @return {Boolean} true if should show.
+
+    */
+    _shouldShowCharm: function() {
+      if (
+          this._viewState.charmID &&
+          (
+           this._hasStateChanged('charmID') ||
+           this._hasStateChanged('viewmode')
+          )
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    /**
+      Determine if we should render the editorial content based on the current
+      state.
+
+      @return {Boolean} true if should show.
+
+    */
+    _shouldShowEditorial: function() {
+      if (
+          !this._viewState.search &&
+          this._hasStateChanged('viewmode')
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    /**
+      Determine if we should render the search results based on the current
+      state.
+
+      @return {Boolean} true if should show.
+
+    */
+    _shouldShowSearch: function() {
+      if (
+          this._viewState.search &&
+          (
+           this._hasStateChanged('search') ||
+           this._hasStateChanged('viewmode') ||
+           this._hasStateChanged('querystring')
+          )
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    /**
+      Verify that a particular part of the state has changed.
+
+      @method _hasStateChanged
+      @param {String} field the part of the state to check.
 
      */
-    _stateChanged: function(field) {
+    _hasStateChanged: function(field) {
       if (this._oldState[field] === this._viewState[field]) {
         return false;
       } else {
@@ -110,10 +175,10 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-        Update the oldState with the viewState now that we're done processing
-        the request.
+      Update the oldState with the viewState now that we're done processing
+      the request.
 
-        @method _saveState
+      @method _saveState
 
      */
     _saveState: function() {
@@ -123,13 +188,13 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Given the params in the route determine what the new state is going to
-     * be.
-     *
-     * @method _updateState
-     * @param {String} path the requested path.
-     * @param {Object} params the params from the request payload.
-     *
+       Given the params in the route determine what the new state is going to
+       be.
+
+       @method _updateState
+       @param {String} path the requested path.
+       @param {Object} params the params from the request payload.
+
      */
     _updateState: function(path, params) {
       // Update the viewmode. Every request has a viewmode.
@@ -139,7 +204,7 @@ YUI.add('subapp-browser', function(Y) {
       if (params.id) {
         this._viewState.charmID = params.id;
       } else {
-        this._viewState.charmID = undefined;
+        this._viewState.charmID = null;
       }
 
       // Check for search in the request.
@@ -156,10 +221,6 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     views: {
-      charmDetails: {
-        type: 'juju.browser.views.BrowserCharmView',
-        preserve: false
-      },
       fullscreen: {
         type: 'juju.browser.views.FullScreen',
         preserve: false
@@ -239,9 +300,6 @@ YUI.add('subapp-browser', function(Y) {
           this._getViewCfg(extraCfg));
       this._details.render();
       this._details.addTarget(this);
-      // Make sure we show the bws-view-data div that the details renders
-      // into.
-      Y.one('.bws-view-data').show();
     },
 
     /**
@@ -288,6 +346,14 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+      Place holder for a method to render out search so we can test url parsing
+
+    */
+    renderSearchResults: function(req, res, next) {
+      console.log('rendered search results.');
+    },
+
+    /**
      * Render the fullscreen view to the client.
      *
      * @method fullscreen
@@ -300,22 +366,22 @@ YUI.add('subapp-browser', function(Y) {
       // If we've switched to viewmode fullscreen, we need to render it.
       // We know the viewmode is already fullscreen because we're in this
       // function.
-      if (this._stateChanged('viewmode')) {
-        this.get('container').setStyle('display', 'block');
+      if (this._hasStateChanged('viewmode')) {
+        Y.one('#subapp-browser').setStyle('display', 'block');
         this._fullscreen = this.showView('fullscreen', this._getViewCfg());
       }
 
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
-      if ((this._stateChanged('charmID') || this._stateChanged('viewmode')) &&
-          this._viewState.charmID) {
+      if (this._shouldShowCharm()) {
+        this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
-      } else if (this._stateChanged('search') ||
-                 this._stateChanged('viewmode')) {
-        // We need to render the editorial content if the search has been
-        // changed or the viewmode has changed and there is no charmID.
-        // Ex: /sidebar/search to /sidebar/ or /fullscreen/charmid
-        // /sidebar/charmid
+      } else if (this._shouldShowSearch()) {
+        // Render search results if search is in the url and the viewmode or
+        // the search has been changed in the state.
+        this.renderSearchResults(req, res, next);
+      } else if (!this._viewState.charmID) {
+        // Render the editorial in fullscreen only if we don't have a charmid
         this.renderEditorial(req, res, next);
       }
 
@@ -335,29 +401,32 @@ YUI.add('subapp-browser', function(Y) {
      */
     sidebar: function(req, res, next) {
       // If we've switched to viewmode sidebar, we need to render it.
-      if (this._stateChanged('viewmode')) {
-        this.get('container').setStyle('display', 'block');
+      if (this._hasStateChanged('viewmode')) {
+        Y.one('#subapp-browser').setStyle('display', 'block');
         this._sidebar = this.showView('sidebar', this._getViewCfg());
       }
 
-      // We need to render the editorial content if the search has been
-      // changed or the viewmode has changed.
-      // Ex: /sidebar/search to /sidebar/ or /fullscreen/charmid
-      // /sidebar/charmid
-      if (this._stateChanged('search') || this._stateChanged('viewmode')) {
+      // Render search results if search is in the url and the viewmode or the
+      // search has been changed in the state.
+      if (this._shouldShowSearch()) {
+        this.renderSearchResults(req, res, next);
+      }
+
+      if (this._shouldShowEditorial()) {
         this.renderEditorial(req, res, next);
       }
 
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
-      if ((this._stateChanged('charmID') || this._stateChanged('viewmode')) &&
-          this._viewState.charmID) {
+      if (this._shouldShowCharm()) {
+        this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
       }
 
       // If the sidebar is the final part of the route, then hide the div for
       // viewing the charm details.
       if (!this._viewState.charmID) {
+        this._detailsVisible(false);
         var detailsNode = Y.one('.bws-view-data');
         if (detailsNode) {
           detailsNode.hide();
