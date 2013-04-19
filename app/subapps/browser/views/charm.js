@@ -367,10 +367,16 @@ YUI.add('subapp-browser-charmview', function(Y) {
      @return {undefined} Nothing.
     */
     on_charm_add: function(evt) {
+      debugger
       evt.halt();
       var browserCharm = this.get('charm');
       var charm = new models.Charm(browserCharm.getAttrs());
-      app.charmPanel.deploy(charm);
+      if (this.get('isFullscreen')) {
+        app.fire('navigateTo', {url: app.nsRouter.url({gui: '/'})}); // XXX Why doesn't / work?
+      } else {
+        app.fire('navigateTo', {url: '/bws/sidebar/'});
+      }
+      //app.charmPanel.deploy(charm);
     },
 
 
@@ -473,7 +479,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
          @type {Boolean}
 
        */
-      ifFullscreen: {
+      isFullscreen: {
         value: false
       },
 

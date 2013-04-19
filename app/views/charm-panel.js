@@ -1338,7 +1338,6 @@ YUI.add('juju-charm-panel', function(Y) {
      * @return {undefined} Nothing.
      */
     function deploy(charm, options) {
-      debugger
       charms.add(charm);
       setPanel({
         name: 'configuration',
