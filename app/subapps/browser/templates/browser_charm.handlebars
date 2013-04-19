@@ -10,7 +10,11 @@
 
         <div class="heading yui3-g">
             <div class="yui3-u">
-                <img src="data:image/svg;base64,{{ icon }}" alt="{{ name }} icon">
+                {{#if icon }}
+                    <img src="data:image/svg;base64,{{ icon }}" alt="{{ name }} icon">
+                {{else}}
+                   <div class="charm-icon"></div>
+                {{/if}}
             </div>
             <div class="charm-details yui3-u-1-2">
                 <h1>{{ name }}</h1>
