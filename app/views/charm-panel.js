@@ -1350,8 +1350,11 @@ YUI.add('juju-charm-panel', function(Y) {
         name: 'configuration',
         charmId: charm.get('id')
       });
-      container.one('.btn.cancel').once('click', hide);
-      container.one('.btn.deploy').once('click', hide);
+      // Since we are showing the configure/deploy panel ex nihilo, then we
+      // want the panel to disappear when the deploy completes or is candled,
+      // but just this once (i.e., they should work normally if the user opens
+      // the panel via a charm search).
+      panels.configuration.once('panelRemoved', hide);
       show();
     }
 
@@ -1388,7 +1391,6 @@ YUI.add('juju-charm-panel', function(Y) {
      * @return {undefined} Nothing.
      */
     function updatePanelPosition() {
-      debugger;
       container.setStyle('display', 'none');
       var pos = calculatePanelPosition();
       container.setStyle('display', 'block');
