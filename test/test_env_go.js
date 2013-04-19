@@ -734,15 +734,15 @@
 
     it('must error if neither data nor config are passed', function() {
       assert.throws(
-        function() {env.set_config('mysql', undefined, undefined);},
-        'Exactly one of config and data must be provided');
+          function() {env.set_config('mysql', undefined, undefined);},
+          'Exactly one of config and data must be provided');
     });
 
     it('must error if both data and config are passed', function() {
       assert.throws(
-        function(){
-          env.set_config('mysql', {'cfg-key': 'cfg-val'}, 'YAMLBEBAML');},
-        'Exactly one of config and data must be provided');
+          function() {
+            env.set_config('mysql', {'cfg-key': 'cfg-val'}, 'YAMLBEBAML');},
+          'Exactly one of config and data must be provided');
     });
 
     it('can set a service config', function() {
