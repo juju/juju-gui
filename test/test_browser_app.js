@@ -156,15 +156,6 @@
       });
     });
 
-    it('should be able to determine if the route is a sub path', function() {
-      var app = new browser.Browser(),
-          subpaths = ['configuration', 'hooks', 'interfaces', 'qa', 'readme'];
-
-      Y.Array.each(subpaths, function(path) {
-        var url = '/bws/fullscreen/charm/id/stuff/' + path + '/';
-        app._getSubPath(url).should.eql(path);
-      });
-    });
   });
 
   describe('browser subapp display tree', function() {
@@ -444,7 +435,6 @@
       browser.routeView(req, undefined, function() {});
       assert.deepEqual(hits, expected);
     });
-
 
   });
 })();

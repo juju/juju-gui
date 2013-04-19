@@ -69,25 +69,6 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Some routes might have sub parts that hint to where a user wants focus.
-     * In particular we've got the tabs that might have focus. They are the
-     * last optional component of some of the routes.
-     *
-     * @method _getSubPath
-     * @param {String} path the full path to search for the sub path.
-     *
-     */
-    _getSubPath: function(path) {
-      var reLastWord = /[^\/]*\/?$/,
-          lastWords = path.match(reLastWord);
-      if (lastWords.length) {
-        return lastWords[0].replace('/', '');
-      } else {
-        return undefined;
-      }
-    },
-
-    /**
      * Generate a standard shared set of cfg all Views can expect to see.
      *
      * @method _getViewCfg
@@ -110,9 +91,9 @@ YUI.add('subapp-browser', function(Y) {
      */
     _initState: function() {
       this._oldState = {
-        viewmode: undefined,
-        search: undefined,
-        charmID: undefined
+        viewmode: null,
+        search: null,
+        charmID: null
       };
       this._viewState = Y.merge(this._oldState, {});
     },
@@ -155,6 +136,7 @@ YUI.add('subapp-browser', function(Y) {
         return false;
       }
     },
+
     /**
       Determine if we should render the search results based on the current
       state.
@@ -178,10 +160,10 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-        Verify that a particular part of the state has changed.
+      Verify that a particular part of the state has changed.
 
-        @method _stateChanged
-        @param {String} field the part of the state to check.
+      @method _stateChanged
+      @param {String} field the part of the state to check.
 
      */
     _stateChanged: function(field) {
@@ -193,10 +175,10 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-        Update the oldState with the viewState now that we're done processing
-        the request.
+      Update the oldState with the viewState now that we're done processing
+      the request.
 
-        @method _saveState
+      @method _saveState
 
      */
     _saveState: function() {
@@ -206,13 +188,13 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Given the params in the route determine what the new state is going to
-     * be.
-     *
-     * @method _updateState
-     * @param {String} path the requested path.
-     * @param {Object} params the params from the request payload.
-     *
+       Given the params in the route determine what the new state is going to
+       be.
+
+       @method _updateState
+       @param {String} path the requested path.
+       @param {Object} params the params from the request payload.
+
      */
     _updateState: function(path, params) {
       // Update the viewmode. Every request has a viewmode.
@@ -222,7 +204,7 @@ YUI.add('subapp-browser', function(Y) {
       if (params.id) {
         this._viewState.charmID = params.id;
       } else {
-        this._viewState.charmID = undefined;
+        this._viewState.charmID = null;
       }
 
       // Check for search in the request.
@@ -434,7 +416,6 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       if (this._showEditorial()) {
-        // Else render the editorial content.
         this.renderEditorial(req, res, next);
       }
 
