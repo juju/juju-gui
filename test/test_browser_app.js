@@ -158,7 +158,7 @@
 
   });
 
-  describe('browser subapp display tree', function() {
+  describe.only('browser subapp display tree', function() {
     var Y, browser, hits, ns, resetHits;
 
     before(function(done) {
@@ -432,6 +432,7 @@
       var expected = Y.merge(hits, {
         renderEditorial: true
       });
+
       browser.routeView(req, undefined, function() {});
       assert.deepEqual(hits, expected);
     });
