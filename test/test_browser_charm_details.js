@@ -316,6 +316,204 @@
       // The reminaing starts out hidden.
       assert(node.one('.changelog .remaining').hasClass('hidden'));
     });
+
+    it('_getInterfaceIntroFlag sets the flag for no requires, no provides',
+        function() {
+          var charm = new models.BrowserCharm({
+            files: [],
+            id: 'precise/ceph-9',
+            relations: {
+              'provides': {
+              },
+              'requires': {
+              }
+            }
+          });
+          var view = new CharmView({
+            charm: charm
+          });
+          var interfaceIntro = view._getInterfaceIntroFlag(
+              charm.get('requires'), charm.get('provides'));
+          assert(Y.Object.hasKey(interfaceIntro, 'noRequiresNoProvides'));
+        });
+
+    it('_getInterfaceIntroFlag sets the flag for no requires, 1 provides',
+        function() {
+          var charm = new models.BrowserCharm({
+            files: [],
+            id: 'precise/ceph-9',
+            relations: {
+              'provides': {
+                'foo': {}
+              },
+              'requires': {
+              }
+            }
+          });
+          var view = new CharmView({
+            charm: charm
+          });
+          var interfaceIntro = view._getInterfaceIntroFlag(
+              charm.get('requires'), charm.get('provides'));
+          assert(Y.Object.hasKey(interfaceIntro, 'noRequiresOneProvides'));
+        });
+
+    it('_getInterfaceIntroFlag sets the flag for no requires, many provides',
+        function() {
+          var charm = new models.BrowserCharm({
+            files: [],
+            id: 'precise/ceph-9',
+            relations: {
+              'provides': {
+                'foo': {},
+                'two': {}
+              },
+              'requires': {
+              }
+            }
+          });
+          var view = new CharmView({
+            charm: charm
+          });
+          var interfaceIntro = view._getInterfaceIntroFlag(
+              charm.get('requires'), charm.get('provides'));
+          assert(Y.Object.hasKey(interfaceIntro, 'noRequiresManyProvides'));
+        });
+
+    it('_getInterfaceIntroFlag sets the flag for 1 requires, no provides',
+        function() {
+          var charm = new models.BrowserCharm({
+            files: [],
+            id: 'precise/ceph-9',
+            relations: {
+              'provides': {
+              },
+              'requires': {
+                'foo': {}
+              }
+            }
+          });
+          var view = new CharmView({
+            charm: charm
+          });
+          var interfaceIntro = view._getInterfaceIntroFlag(
+              charm.get('requires'), charm.get('provides'));
+          assert(Y.Object.hasKey(interfaceIntro, 'oneRequiresNoProvides'));
+        });
+
+    it('_getInterfaceIntroFlag sets the flag for 1 requires, 1 provides',
+        function() {
+          var charm = new models.BrowserCharm({
+            files: [],
+            id: 'precise/ceph-9',
+            relations: {
+              'provides': {
+                'foo': {}
+              },
+              'requires': {
+                'foo': {}
+              }
+            }
+          });
+          var view = new CharmView({
+            charm: charm
+          });
+          var interfaceIntro = view._getInterfaceIntroFlag(
+              charm.get('requires'), charm.get('provides'));
+          assert(Y.Object.hasKey(interfaceIntro, 'oneRequiresOneProvides'));
+        });
+
+    it('_getInterfaceIntroFlag sets the flag for 1 requires, many provides',
+        function() {
+          var charm = new models.BrowserCharm({
+            files: [],
+            id: 'precise/ceph-9',
+            relations: {
+              'provides': {
+                'foo': {},
+                'two': {}
+              },
+              'requires': {
+                'foo': {}
+              }
+            }
+          });
+          var view = new CharmView({
+            charm: charm
+          });
+          var interfaceIntro = view._getInterfaceIntroFlag(
+              charm.get('requires'), charm.get('provides'));
+          assert(Y.Object.hasKey(interfaceIntro, 'oneRequiresManyProvides'));
+        });
+
+    it('_getInterfaceIntroFlag sets the flag for many requires, no provides',
+        function() {
+          var charm = new models.BrowserCharm({
+            files: [],
+            id: 'precise/ceph-9',
+            relations: {
+              'provides': {
+              },
+              'requires': {
+                'foo': {},
+                'two': {}
+              }
+            }
+          });
+          var view = new CharmView({
+            charm: charm
+          });
+          var interfaceIntro = view._getInterfaceIntroFlag(
+              charm.get('requires'), charm.get('provides'));
+          assert(Y.Object.hasKey(interfaceIntro, 'manyRequiresNoProvides'));
+        });
+
+    it('_getInterfaceIntroFlag sets the flag for many requires, 1 provides',
+        function() {
+          var charm = new models.BrowserCharm({
+            files: [],
+            id: 'precise/ceph-9',
+            relations: {
+              'provides': {
+                'foo': {}
+              },
+              'requires': {
+                'foo': {},
+                'two': {}
+              }
+            }
+          });
+          var view = new CharmView({
+            charm: charm
+          });
+          var interfaceIntro = view._getInterfaceIntroFlag(
+              charm.get('requires'), charm.get('provides'));
+          assert(Y.Object.hasKey(interfaceIntro, 'manyRequiresOneProvides'));
+        });
+
+    it('_getInterfaceIntroFlag sets the flag for many requires, many provides',
+        function() {
+          var charm = new models.BrowserCharm({
+            files: [],
+            id: 'precise/ceph-9',
+            relations: {
+              'provides': {
+                'foo': {},
+                'two': {}
+              },
+              'requires': {
+                'foo': {},
+                'two': {}
+              }
+            }
+          });
+          var view = new CharmView({
+            charm: charm
+          });
+          var interfaceIntro = view._getInterfaceIntroFlag(
+              charm.get('requires'), charm.get('provides'));
+          assert(Y.Object.hasKey(interfaceIntro, 'manyRequiresManyProvides'));
+        });
   });
 
 })();
