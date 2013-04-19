@@ -55,6 +55,29 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+     * Show or hide the details panel.
+     *
+     * @method _detailsVisible
+     * @param {Boolean} visible set the panel to hide or show.
+     *
+     */
+    _detailsVisible: function(visible) {
+      var detailsNode = Y.one('.bws-view-data'),
+          browserNode = Y.one('#subapp-browser'),
+          detailsClass = 'details-panel';
+      if (detailsNode) {
+        if (visible) {
+          detailsNode.show();
+          browserNode.addClass(detailsClass);
+        }
+        else {
+          detailsNode.hide();
+          browserNode.removeClass(detailsClass);
+        }
+      }
+    },
+
+    /**
      * The available Views run from this sub app.
      * @attribute views
      *
@@ -186,10 +209,7 @@ YUI.add('subapp-browser', function(Y) {
       // If the sidebar is the final part of the route, then hide the div for
       // viewing the charm details.
       if (this._getSubPath(req.path) === 'sidebar') {
-        var detailsNode = Y.one('.bws-view-data');
-        if (detailsNode) {
-          detailsNode.hide();
-        }
+        this._detailsVisible(false);
       }
 
       if (!this._sidebar) {
@@ -243,7 +263,7 @@ YUI.add('subapp-browser', function(Y) {
       this._details.render();
       // Make sure we show the bws-view-data div that the details renders
       // into.
-      Y.one('.bws-view-data').show();
+      this._detailsVisible(true);
 
       next();
     }

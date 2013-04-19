@@ -5,7 +5,13 @@
         display: block;
         color: @bws-text;
 
-        h3 {
+        .title,
+        .metadata,
+        .description {
+            display: block;
+        }
+        .title {
+            margin-bottom: 5px;
             color: @bws-heading;
             font-family: @font-family;
             font-size: 13.5pt;
@@ -18,12 +24,6 @@
     }
     &:hover {
         background-color: #eee;
-        cursor: pointer;
-
-        .add {
-           display: block;
-           visibility: visible;
-        }
     }
     &.active {
         padding-right: 14px;
