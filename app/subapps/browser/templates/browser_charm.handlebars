@@ -10,7 +10,11 @@
 
         <div class="heading yui3-g">
             <div class="yui3-u">
-                <img src="data:image/svg;base64,{{ icon }}" alt="{{ name }} icon">
+                {{#if icon }}
+                    <img src="data:image/svg;base64,{{ icon }}" alt="{{ name }} icon">
+                {{else}}
+                   <div class="charm-icon"></div>
+                {{/if}}
             </div>
             <div class="charm-details yui3-u-1-2">
                 <h1>{{ name }}</h1>
@@ -109,28 +113,41 @@
                 <div id="bws-readme">Readme</div>
                 <div id="bws-interfaces">
                     <p class="intro">
-                        {{#unless requires}}
-                            {{#if provides}}
-                                Interfaces determine how this charm relates to
-                                other charms. A relationship between charms can
-                                only be made if they share a common interface.
-                                This charm requires certain interfaces to be
-                                provided by other charms. Similarly, this charm
-                                provides other interfaces that can be used by
-                                other charms.
-                            {{else}}
-                                Interfaces determine how this charm relates to
-                                other charms. A relationship between charms can
-                                only be made if they share a common interface.
-                                </p>
-                                <p>This charm does not have any interfaces.</p>
-                            {{/if}}
-                        {{/unless}}
+                        Interfaces determine how this charm relates to other charms. A relationship between charms can only be made if they share a common interface. 
+                        {{#if interfaceIntro.noRequiresNoProvides}}
+                            <br />
+                            <br />
+                            This charm does not have any interfaces.
+                        {{/if}}
+                        {{#if interfaceIntro.noRequiresOneProvides}}
+                            This charm provides only one interface to another charm.
+                        {{/if}}
+                        {{#if interfaceIntro.noRequiresManyProvides}}
+                            This charm requires no interfaces to be provided by other charms, but provides several interfaces that can be used by other charms.
+                        {{/if}}
+                        {{#if interfaceIntro.oneRequiresNoProvides}}
+                            This charm requires only one interface to be provided by another charm.
+                        {{/if}}
+                        {{#if interfaceIntro.oneRequiresOneProvides}}
+                            This charm requires only one interface to be provided by another charm. Similarly, this charm provides one interface that can be used by other charms.
+                        {{/if}}
+                        {{#if interfaceIntro.oneRequiresManyProvides}}
+                            This charm requires only one interface to be provided by another charm, but provides several interfaces that can be used by other charms.
+                        {{/if}}
+                        {{#if interfaceIntro.manyRequiresNoProvides}}
+                            This charm requires certain interfaces to be provided by other charms, but provides no interfaces itself.
+                        {{/if}}
+                        {{#if interfaceIntro.manyRequiresOneProvides}}
+                            This charm requires certain interfaces to be provided by other charms, but provides only one interface to another charm.
+                        {{/if}}
+                        {{#if interfaceIntro.manyRequiresManyProvides}}
+                            This charm requires certain interfaces to be provided by other charms. Similarly, this charm provides other interfaces that can be used by other charms.
+                        {{/if}}
                     </p>
                     {{#if requires}}
                         <div class="yui3-g">
                             <div class="interfaces-heading yui3-u-1">
-                                <h3>Requiress</h3>
+                                <h3>Requires</h3>
                             </div>
                         </div>
                         <ul class="interface-list">
