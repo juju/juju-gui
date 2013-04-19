@@ -225,7 +225,7 @@ YUI.add('juju-view-service', function(Y) {
             ));
         this.panel.hide();
         this.panel.destroy();
-        this.fire('navigateTo', {url: '/:gui:/'});
+        this.fire('navigateTo', {url: this.get('nsRouter').url({gui: '/'})});
         db.fire('update');
       }
     }
@@ -818,6 +818,7 @@ YUI.add('juju-view-service', function(Y) {
             env.set_config(
                 service.get('id'),
                 new_values,
+                null,
                 Y.bind(this._setConfigCallback, this, container)
             );
 

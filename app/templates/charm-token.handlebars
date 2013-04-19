@@ -1,18 +1,22 @@
 <a href="/bws/sidebar/{{id}}"
     class="charm-token yui3-g"
     data-charmid="{{id}}">
-    <div class="yui3-u-1-4">
-        <img url="{{ iconfile }}" alt="Icon" />
-    </div>
-    <div class="yui3-u-3-4">
-        <h3 class="title">
+    <span class="yui3-u">
+        {{#if iconfile }}
+            <img src="data:image/svg;base64,{{ iconfile }}" alt="{{ name }} icon">
+        {{else}}
+            <div class="charm-icon"></div>
+        {{/if}}
+    </span>
+    <span class="yui3-u-3-4">
+        <span class="title">
             {{ name }}
-        </h3>
-        <div class="metadata">
+        </span>
+        <span class="metadata">
                 {{ recent_commit_count }} {{pluralize 'commit' recent_commit_count}},
                 {{ recent_download_count }}
                 {{pluralize 'download' recent_download_count}}
-        </div>
-        <p class="description">{{truncate description 110 }}</p>
-  </div>
+        </span>
+        <span class="description">{{truncate description 110 }}</span>
+    </span>
 </a>

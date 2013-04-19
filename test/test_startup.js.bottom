@@ -26,8 +26,8 @@
       assert.isTrue(isBrowserSupported('Chrome'));
     });
 
-    it('knows that Firefox is not supported', function() {
-      assert.isFalse(isBrowserSupported('Firefox'));
+    it('knows that Firefox is supported', function() {
+      assert.isTrue(isBrowserSupported('Firefox'));
     });
 
     it('knows that IE is not supported', function() {

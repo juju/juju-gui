@@ -14,6 +14,15 @@ YUI.add('juju-topology-viewport', function(Y) {
       d3ns = Y.namespace('d3');
 
   /**
+   * Manage panning and zooming events on the canvas.
+   *
+   * ## Emitted events:
+   *
+   * - *beforePageSizeRecalculation:*
+   * - *afterPageSizeRecalculation:* events fired before and after the
+   *   environment graph is resized to allow other sized itemsto
+   *   calculate what they need.
+   *
    * @class ViewportModule
    */
   views.ViewportModule = Y.Base.create('ViewportModule', d3ns.Module, [], {
@@ -89,12 +98,12 @@ YUI.add('juju-topology-viewport', function(Y) {
       }
       var topo = this.get('component');
       var zoomPlane = container.one('.zoom-plane');
-      topo.fire('beforePageSizeRecalculation');
+      Y.fire('beforePageSizeRecalculation');
       // This sets the minimum viewport size - y was reduced to 200 to render
       // properly on 7" tablets in horizontal view.
       var dimensions = utils.getEffectiveViewportSize(true, 800, 200);
       this.setAllTheDimensions(dimensions, canvas, svg, topo, zoomPlane);
-      topo.fire('afterPageSizeRecalculation');
+      Y.fire('afterPageSizeRecalculation');
     }
 
   }, {

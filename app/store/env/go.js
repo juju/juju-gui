@@ -716,11 +716,16 @@ YUI.add('juju-env-go', function(Y) {
       // Set the service name to 'name' for compatibility with other
       // Juju environments.
       data.Response.name = data.Response.Service;
+      var config = (data.Response || {}).Config;
+      var transformedConfig = {};
+      Y.each(config, function(value, key) {
+        transformedConfig[key] = value.value;
+      });
       userCallback({
         err: data.Error,
         service_name: serviceName,
         result: {
-          config: (data.Response || {}).Settings,
+          config: transformedConfig,
           constraints: (data.Response || {}).Constraints
         }
       });
@@ -742,6 +747,11 @@ YUI.add('juju-env-go', function(Y) {
        @return {undefined} Sends a message to the server only.
      */
     set_config: function(serviceName, config, data, callback) {
+
+      if ((Y.Lang.isValue(config) && Y.Lang.isValue(data)) ||
+          (!Y.Lang.isValue(config) && !Y.Lang.isValue(data))) {
+        throw 'Exactly one of config and data must be provided';
+      }
       var intermediateCallback, sendData;
       if (callback) {
         // Capture the callback and serviceName.  No context is passed.

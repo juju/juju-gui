@@ -15,6 +15,20 @@ YUI.add('juju-topology-relation', function(Y) {
       Templates = views.Templates;
 
   /**
+   * Manage relation rendering and events.
+   *
+   * ## Emitted events:
+   *
+   * - *clearState:* clear all possible states that the environment view can
+   *   be in as it pertains to actions (building a relation, viewing a service
+   *   menu, etc.)
+   * - *hideServiceMenu:* hide the service menu after the 'Add Relation' item
+   *   was clicked.
+   * - *fade:* fade services that are not valid endpoints for a pending
+   *   relation.
+   * - *show:* show faded services at 100% opacity again.
+   * - *resized:* ensure that menus are positioned properly.
+   *
    * @class RelationModule
    */
   var RelationModule = Y.Base.create('RelationModule', d3ns.Module, [], {
@@ -51,16 +65,80 @@ YUI.add('juju-topology-relation', function(Y) {
         }
       },
       yui: {
+        /**
+          Ensure the dragline follows the cursor when moved.
+
+          @event addRelationDrag
+        */
         addRelationDrag: 'addRelationDrag',
+        /**
+          Complete adding a relation when dragging to create it.
+
+          @event addRelationDragEnd
+          @param {Object} box The starting service's BoxModel.
+        */
         addRelationDragEnd: 'addRelationDragEnd',
+        /**
+          Begin the process of adding a relation when dragging to create it.
+
+          @event addRelationDragStart
+          @param {Object} box The ending service's BoxModel.
+        */
         addRelationDragStart: 'addRelationDragStart',
+        /**
+          Cancel building a relation when dragging to create it.
+
+          @event cancelRelationBuild
+          @param {Object} box The starting service's BoxModel.
+        */
         cancelRelationBuild: 'cancelRelationBuild',
+        /**
+          Clear view state as pertaining to relations.
+
+          @event clearState
+        */
         clearState: 'clearState',
+        /**
+          Ensure that mousemove events bubble to canvas when moving over a
+          relation line/label.
+
+          @event mouseMove
+        */
         mouseMove: 'mouseMoveHandler',
+        /**
+          Render relations at an appropriate time.
+
+          @event rendered
+        */
         rendered: 'renderedHandler',
+        /**
+          Update the endpoints for relations when services are moved.
+
+          @event updateLinkEndpoints
+          @param {Object} service The service which has had its position
+                                  updated.
+        */
         serviceMoved: 'updateLinkEndpoints',
+        /**
+          Update relations after services are rendered.
+
+          @event servicesRendered
+          @param {Object} service The model for the service that was moved.
+        */
         servicesRendered: 'updateLinks',
+        /**
+          Ensure the dragline follows the cursor outside of services.
+
+          @event snapOutOfService
+        */
         snapOutOfService: 'snapOutOfService',
+        /**
+          Ensure the dragline snaps to service when the cursor is inside one.
+
+          @event snapToService
+          @param {Object} d The service model wrapped in a BoxModel object.
+          @param {Object} rect The SVG rect element for the service.
+        */
         snapToService: 'snapToService'
       }
     },
@@ -557,7 +635,13 @@ YUI.add('juju-topology-relation', function(Y) {
       topo.buildingRelation = true;
       this.clickAddRelation = true;
 
-      topo.fire('show', { selection: vis.selectAll('.service') });
+      // make sure all services are shown (not faded or hidden), except for
+      // those in pending state, which are ghost services that have not been
+      // created yet.
+      topo.fire('show', {
+        selection: vis.selectAll('.service')
+          .filter(function(d) { return !d.pending; })
+      });
 
       var db = topo.get('db');
       var endpointsController = topo.get('endpointsController');

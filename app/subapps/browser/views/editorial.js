@@ -165,12 +165,37 @@ YUI.add('subapp-browser-editorial', function(Y) {
     }
   }, {
     ATTRS: {
+      /**
+       * Is this rendering of the editorial view for fullscreen or sidebar
+       * purposes?
+       *
+       * @attribute isFullscreen
+       * @default false
+       * @type {Boolean}
+       *
+       */
       isFullscreen: {
         value: false
       },
+      /**
+       * What is the container node we should render our container into?
+       *
+       * @attribute renderTo
+       * @default undefined
+       * @type {Node}
+       *
+       */
       renderTo: {
 
       },
+      /**
+       * The Charmworld0 Api store instance for loading content.
+       *
+       * @attribute store
+       * @default undefined
+       * @type {Charmworld0}
+       *
+       */
       store: {
 
       }
