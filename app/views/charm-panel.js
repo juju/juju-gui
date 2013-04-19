@@ -1266,13 +1266,6 @@ YUI.add('juju-charm-panel', function(Y) {
     // The panel starts with the "charmsSearchPanel" visible.
     setPanel({name: 'charms'});
 
-    // Update position if we resize the window.
-    subscriptions.push(Y.on('windowresize', function(e) {
-      if (isPanelVisible) {
-        updatePanelPosition();
-      }
-    }));
-
     /**
      * Hide the charm panel.
      * Set isPanelVisible to false.
