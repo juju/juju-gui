@@ -194,6 +194,60 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+     * Determine which intro copy to display depending on the number
+     * of interfaces.
+     *
+     *  The goal is to build a property string like: noRequiresNoProvides
+     *
+     * @method _getInterfaceIntroFlag
+     * @param {Array} commits a list of commit objects.
+     *
+     */
+    _getInterfaceIntroFlag: function(requires, provides) {
+      var interfaceIntro = {},
+          prefixes = ['no', 'one', 'many'],
+          build = '';
+
+      // Which prefix is used is based on the number of each item we check.
+      var counts = {
+        requires: requires ? Y.Object.keys(requires).length : 0,
+        provides: provides ? Y.Object.keys(provides).length : 0
+      };
+
+      // Go through both requires and provides and build a string to be used
+      // for generating our attribute such as 'noRequiresNoProvides'.
+      Y.Array.each(['requires', 'provides'], function(check, idx) {
+        var string = '';
+
+        // Given the count, check which prefix we should be using.
+        switch (counts[check]) {
+          case 0:
+            string += prefixes[0];
+            break;
+          case 1:
+            string += prefixes[1];
+            break;
+          default:
+            string += prefixes[2];
+        }
+
+        // Append the name of the field we're checking, but upper cased.
+        string += check.charAt(0).toUpperCase() + check.slice(1);
+
+        // And finally, if the index is > 0, we need to camel case the start
+        // of the string as well.
+        if (idx > 0) {
+          build += string.charAt(0).toUpperCase() + string.slice(1);
+        } else {
+          build += string;
+        }
+      });
+
+      interfaceIntro[build] = true;
+      return interfaceIntro;
+    },
+
+    /**
      * Event handler for clicking on a hook filename to load that file.
      *
      * @method _loadHookContent
@@ -376,6 +430,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
       tplData.isFullscreen = isFullscreen;
       tplData.prettyCommits = this._formatCommitsForHtml(
           tplData.recent_commits);
+      tplData.interfaceIntro = this._getInterfaceIntroFlag(
+          tplData.requires, tplData.provides);
 
       var tpl = this.template(tplData);
       var tplNode = container.setHTML(tpl);
