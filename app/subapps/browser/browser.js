@@ -117,6 +117,46 @@ YUI.add('subapp-browser', function(Y) {
       this._viewState = Y.merge(this._oldState, {});
     },
 
+    _showCharm: function() {
+      if (
+          this._viewState.charmID &&
+          (
+            this._stateChanged('charmID') ||
+            this._stateChanged('viewmode')
+          )
+      ) {
+          return true;
+      } else {
+          return false;
+      }
+    },
+
+    _showEditorial: function () {
+      if (
+        !this._viewState.search &&
+        this._stateChanged('viewmode')
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+
+    _showSearch: function() {
+      if (
+         this._viewState.search &&
+         (
+             this._stateChanged('search') ||
+             this._stateChanged('viewmode') ||
+             this._stateChanged('querystring')
+         )
+      ) {
+        return true;
+      } else {
+          return false;
+      }
+    },
+
     /**
         Verify that a particular part of the state has changed.
 
@@ -311,7 +351,7 @@ YUI.add('subapp-browser', function(Y) {
 
     */
     renderSearchResults: function(req, res, next) {
-      console.log('rendered search results.')
+      console.log('rendered search results.');
     },
 
     /**
@@ -334,25 +374,15 @@ YUI.add('subapp-browser', function(Y) {
 
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
-      if ((this._stateChanged('charmID') || this._stateChanged('viewmode')) &&
-          this._viewState.charmID) {
+      if (this._showCharm()) {
         this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
-      } else if (this._viewState.search &&
-          (this._stateChanged('search') || this._stateChanged('viewmode')))
+      } else if (this._showSearch()) {
         // Render search results if search is in the url and the viewmode or
         // the search has been changed in the state.
         this.renderSearchResults(req, res, next);
       } else {
         // Else render the editorial content.
-        this.renderEditorial(req, res, next);
-      }
-
-
-        // We need to render the editorial content if the search has been
-        // changed or the viewmode has changed and there is no charmID.
-        // Ex: /sidebar/search to /sidebar/ or /fullscreen/charmid
-        // /sidebar/charmid
         this.renderEditorial(req, res, next);
       }
 
@@ -379,18 +409,18 @@ YUI.add('subapp-browser', function(Y) {
 
       // Render search results if search is in the url and the viewmode or the
       // search has been changed in the state.
-      if (this._viewState.search &&
-          (this._stateChanged('search') || this._stateChanged('viewmode'))) {
+      if (this._showSearch()) {
         this.renderSearchResults(req, res, next);
-      } else {
+      }
+
+      if (this._showEditorial()) {
         // Else render the editorial content.
         this.renderEditorial(req, res, next);
       }
 
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
-      if ((this._stateChanged('charmID') || this._stateChanged('viewmode')) &&
-          this._viewState.charmID) {
+      if (this._showCharm()) {
         this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
       }

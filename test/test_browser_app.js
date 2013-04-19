@@ -168,7 +168,7 @@
   });
 
   describe.only('browser subapp display tree', function() {
-    var Y, browser, hits, ns;
+    var Y, browser, hits, ns, resetHits;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -177,6 +177,16 @@
           'juju-browser',
           'subapp-browser', function(Y) {
             browser = Y.namespace('juju.subapps');
+
+            resetHits = function() {
+              hits = {
+                fullscreen: false,
+                sidebar: false,
+                renderCharmDetails: false,
+                renderEditorial: false,
+                renderSearchResults: false
+              };
+            };
             done();
           });
     });
@@ -197,13 +207,7 @@
           '</div>').appendTo(docBody);
 
       // Track which render functions are hit.
-      hits = {
-        fullscreen: false,
-        sidebar: false,
-        renderCharmDetails: false,
-        renderEditorial: false,
-        renderSearchResults: false
-      };
+      resetHits();
 
       // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
@@ -322,18 +326,126 @@
       var req = {
         path: '/bws/fullscreen/search/precise/apache2-2',
         params: {
-          viewmode: 'sidebar',
+          viewmode: 'fullscreen',
           id: 'precise/apache2-2'
         }
       };
       var expected = Y.merge(hits, {
         fullscreen: true,
-        renderSearchResults: true,
+        renderCharmDetails: true
       });
 
       browser.routeView(req, undefined, function() {});
       assert.deepEqual(hits, expected);
     });
 
+    it('sidebar to details does no rerender sidebar', function() {
+      var req = {
+        path: '/bws/sidebar/',
+        params: {
+          viewmode: 'sidebar',
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Now route through to the charmid from here and we should not hit the
+      // editorial content again.
+      resetHits();
+      req = {
+        path: '/bws/sidebar/precise/apache2-2',
+        params: {
+          viewmode: 'sidebar',
+          id: 'precise/apache2-2'
+        }
+      };
+
+      var expected = Y.merge(hits, {
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('sidebar details to sidebar does no rerender sidebar', function() {
+      var req = {
+        path: '/bws/sidebar/precise/apache2-2',
+        params: {
+          viewmode: 'sidebar',
+          id: 'precise/apache2-2'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Reset the hits and we should not redraw anything to update the view.
+      resetHits();
+      req = {
+        path: '/bws/sidebar/',
+        params: {
+          viewmode: 'sidebar',
+        }
+      };
+
+      var expected = Y.merge(hits, {});
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('fullscreen to details does not render editorial', function() {
+      var req = {
+        path: '/bws/fullscreen/',
+        params: {
+          viewmode: 'fullscreen',
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Now route through to the charmid from here and we should not hit the
+      // editorial content again.
+      resetHits();
+      req = {
+        path: '/bws/fullscreen/precise/apache2-2',
+        params: {
+          viewmode: 'fullscreen',
+          id: 'precise/apache2-2'
+        }
+      };
+
+      var expected = Y.merge(hits, {
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('fullscreen details to fullscreen renders editorial', function() {
+      var req = {
+        path: '/bws/fullscreen/precise/apache2-2',
+        params: {
+          viewmode: 'fullscreen',
+          id: 'precise/apache2-2'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Reset the hits and we should not redraw anything to update the view.
+      resetHits();
+      req = {
+        path: '/bws/fullscreen/',
+        params: {
+          viewmode: 'fullscreen',
+        }
+      };
+
+      var expected = Y.merge(hits, {
+        renderEditorial: true
+      });
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+
   });
 })();
+
