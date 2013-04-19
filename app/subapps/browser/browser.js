@@ -105,12 +105,12 @@ YUI.add('subapp-browser', function(Y) {
       @return {Boolean} true if should show.
 
     */
-    _showCharm: function() {
+    _shouldShowCharm: function() {
       if (
           this._viewState.charmID &&
           (
-           this._stateChanged('charmID') ||
-           this._stateChanged('viewmode')
+           this._hasStateChanged('charmID') ||
+           this._hasStateChanged('viewmode')
           )
       ) {
         return true;
@@ -126,10 +126,10 @@ YUI.add('subapp-browser', function(Y) {
       @return {Boolean} true if should show.
 
     */
-    _showEditorial: function() {
+    _shouldShowEditorial: function() {
       if (
           !this._viewState.search &&
-          this._stateChanged('viewmode')
+          this._hasStateChanged('viewmode')
       ) {
         return true;
       } else {
@@ -144,13 +144,13 @@ YUI.add('subapp-browser', function(Y) {
       @return {Boolean} true if should show.
 
     */
-    _showSearch: function() {
+    _shouldShowSearch: function() {
       if (
           this._viewState.search &&
           (
-           this._stateChanged('search') ||
-           this._stateChanged('viewmode') ||
-           this._stateChanged('querystring')
+           this._hasStateChanged('search') ||
+           this._hasStateChanged('viewmode') ||
+           this._hasStateChanged('querystring')
           )
       ) {
         return true;
@@ -162,11 +162,11 @@ YUI.add('subapp-browser', function(Y) {
     /**
       Verify that a particular part of the state has changed.
 
-      @method _stateChanged
+      @method _hasStateChanged
       @param {String} field the part of the state to check.
 
      */
-    _stateChanged: function(field) {
+    _hasStateChanged: function(field) {
       if (this._oldState[field] === this._viewState[field]) {
         return false;
       } else {
@@ -300,9 +300,6 @@ YUI.add('subapp-browser', function(Y) {
           this._getViewCfg(extraCfg));
       this._details.render();
       this._details.addTarget(this);
-      // Make sure we show the bws-view-data div that the details renders
-      // into.
-      Y.one('.bws-view-data').show();
     },
 
     /**
@@ -369,17 +366,17 @@ YUI.add('subapp-browser', function(Y) {
       // If we've switched to viewmode fullscreen, we need to render it.
       // We know the viewmode is already fullscreen because we're in this
       // function.
-      if (this._stateChanged('viewmode')) {
+      if (this._hasStateChanged('viewmode')) {
         Y.one('#subapp-browser').setStyle('display', 'block');
         this._fullscreen = this.showView('fullscreen', this._getViewCfg());
       }
 
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
-      if (this._showCharm()) {
+      if (this._shouldShowCharm()) {
         this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
-      } else if (this._showSearch()) {
+      } else if (this._shouldShowSearch()) {
         // Render search results if search is in the url and the viewmode or
         // the search has been changed in the state.
         this.renderSearchResults(req, res, next);
@@ -404,24 +401,24 @@ YUI.add('subapp-browser', function(Y) {
      */
     sidebar: function(req, res, next) {
       // If we've switched to viewmode sidebar, we need to render it.
-      if (this._stateChanged('viewmode')) {
+      if (this._hasStateChanged('viewmode')) {
         Y.one('#subapp-browser').setStyle('display', 'block');
         this._sidebar = this.showView('sidebar', this._getViewCfg());
       }
 
       // Render search results if search is in the url and the viewmode or the
       // search has been changed in the state.
-      if (this._showSearch()) {
+      if (this._shouldShowSearch()) {
         this.renderSearchResults(req, res, next);
       }
 
-      if (this._showEditorial()) {
+      if (this._shouldShowEditorial()) {
         this.renderEditorial(req, res, next);
       }
 
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
-      if (this._showCharm()) {
+      if (this._shouldShowCharm()) {
         this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
       }

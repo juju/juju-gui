@@ -228,7 +228,7 @@
       Y.one('#subapp-browser').remove(true);
     });
 
-    it('check bws-sidebar', function() {
+    it('bws-sidebar dispatches correctly', function() {
       var req = {
         path: '/bws/sidebar/',
         params: {
@@ -244,7 +244,7 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('check bws-sidebar-charmid', function() {
+    it('bws-sidebar-charmid dispatches correctly', function() {
       var req = {
         path: '/bws/sidebar/precise/apache2-2',
         params: {
@@ -262,7 +262,7 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('check bws-sidebar-search-charmid', function() {
+    it('bws-sidebar-search-charmid dispatches correctly', function() {
       var req = {
         path: '/bws/sidebar/search/precise/apache2-2',
         params: {
@@ -280,7 +280,7 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('check bws-fullscreen', function() {
+    it('bws-fullscreen dispatches correctly', function() {
       var req = {
         path: '/bws/fullscreen/',
         params: {
@@ -296,7 +296,7 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('check bws-fullscreen-charmid', function() {
+    it('fullscreen-charmid dispatches correctly', function() {
       var req = {
         path: '/bws/fullscreen/precise/apache2-2',
         params: {
@@ -313,7 +313,7 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('check bws-fullscreen-search-charmid', function() {
+    it('fullscreen-search-charmid dispatches correctly', function() {
       var req = {
         path: '/bws/fullscreen/search/precise/apache2-2',
         params: {
@@ -330,7 +330,7 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('sidebar to details does no rerender sidebar', function() {
+    it('sidebar to sidebar-charmid dispatches correctly', function() {
       var req = {
         path: '/bws/sidebar/',
         params: {
@@ -358,7 +358,7 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('sidebar details to sidebar does no rerender sidebar', function() {
+    it('sidebar-details to sidebar dispatchse correctly', function() {
       var req = {
         path: '/bws/sidebar/precise/apache2-2',
         params: {
@@ -382,7 +382,7 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('fullscreen to details does not render editorial', function() {
+    it('fullscreen to fullscreen-details dispatches correctly', function() {
       var req = {
         path: '/bws/fullscreen/',
         params: {
@@ -410,7 +410,7 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('fullscreen details to fullscreen renders editorial', function() {
+    it('fullscreen-details to fullscreen renders editorial', function() {
       var req = {
         path: '/bws/fullscreen/precise/apache2-2',
         params: {
