@@ -1392,8 +1392,10 @@ YUI.add('juju-charm-panel', function(Y) {
      * be incorrect.
      *
      * @method updatePanelPosition
+     * @return {undefined} Nothing.
      */
     function updatePanelPosition() {
+      debugger;
       container.setStyle('display', 'none');
       var pos = calculatePanelPosition();
       container.setStyle('display', 'block');

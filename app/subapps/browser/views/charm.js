@@ -444,15 +444,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
       var browserCharm = this.get('charm');
       var charm = new models.Charm(browserCharm.getAttrs());
       if (this.get('isFullscreen')) {
-        app.fire('navigateTo', {url: '/bws/sidebar/'});
-        // TODO This should really navigate to the closed subapp state, but
-        // that doesn't exist yet, so this is the best we can do right now.
-        //this.fire('viewNavigate', {
-        //  change: {viewmode: 'sidebar', charmID: null}});
+        //app.fire('navigateTo', {url: '/bws/sidebar/'});
+        this.fire('viewNavigate', {
+          change: {viewmode: 'sidebar', charmID: null}});
       } else {
-        app.fire('navigateTo', {url: '/bws/sidebar/'});
-        // TODO After Rick's branch lands remove the above and use the below.
-        // this.fire('viewNavigate', {change: {charmID: null}});
+        //app.fire('navigateTo', {url: '/bws/sidebar/'});
+        this.fire('viewNavigate', {change: {charmID: null}});
       }
       app.charmPanel.deploy(charm);
     },
