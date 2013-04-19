@@ -449,7 +449,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this.fire('viewNavigate', {change: {charmID: null}});
       }
-      app.charmPanel.deploy(charm);
+      this.get('deploy').call(null, charm);
     },
 
 
@@ -566,7 +566,18 @@ YUI.add('subapp-browser-charmview', function(Y) {
        * @type {Charmworld0}
        *
        */
-      store: {}
+      store: {},
+
+      /**
+       * The "deploy" function prompts the user for service configuration and
+       * deploys a service.
+       *
+       * @attribute deploy
+       * @default undefined
+       * @type {Function}
+       *
+       */
+      deploy: {}
 
     }
   });
