@@ -158,7 +158,7 @@
 
   });
 
-  describe.only('browser subapp display tree', function() {
+  describe('browser subapp display tree', function() {
     var Y, browser, hits, ns, resetHits;
 
     before(function(done) {
