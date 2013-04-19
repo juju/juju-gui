@@ -794,10 +794,12 @@ YUI.add('juju-charm-panel', function(Y) {
           '.charm-section h4': {click: toggleSectionVisibility},
           '.config-file-upload-widget': {change: 'onFileChange'},
           '.config-file-upload-overlay': {click: 'onOverlayClick'},
-          '.config-field': {focus: 'showDescription',
-            blur: 'hideDescription'},
-          'input.config-field[type=checkbox]':
-              {click: function(evt) {evt.target.focus();}},
+          '.config-field': {
+            focus: 'showDescription',
+            blur: 'hideDescription'
+          },
+          'input.config-field[type=checkbox]': {
+            click: function(evt) {evt.target.focus();}},
           '#service-name': {blur: 'updateGhostServiceName'}
         },
 
@@ -1348,11 +1350,15 @@ YUI.add('juju-charm-panel', function(Y) {
      * @return {undefined} Nothing.
      */
     function deploy(charm, options) {
+      // If a charm is passed in, then assume it is fully loaded.
+      charm.loaded = true;
       charms.add(charm);
       setPanel({
         name: 'configuration',
         charmId: charm.get('id')
       });
+      container.one('.btn.cancel').once('click', hide);
+      container.one('.btn.deploy').once('click', hide);
       show();
     }
 
