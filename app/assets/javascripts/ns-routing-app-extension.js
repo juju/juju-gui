@@ -261,9 +261,18 @@ YUI.add('ns-routing-app-extension', function(Y) {
       Y.Router override methods to enable namespace routing
     */
 
+    /**
+      Overwrites the default navigate method and passes through to the private
+      navigate method
+
+      @method navigate
+      @param {String} url to navigate to.
+      @param {Object} options to use when navigating and dispatching the url.
+    */
     navigate: function(url, options) {
       this._navigate(url, options);
     },
+
     /**
      * NS aware navigate wrapper. This has the feature
      * of preserving existing namespaces in the URL.  In other words, you can
@@ -286,7 +295,7 @@ YUI.add('ns-routing-app-extension', function(Y) {
           result += '?' + qs;
         }
       }
-      if (Y.App.prototype._navigate.call(this, url, options)) {
+      if (Y.App.prototype._navigate.call(this, result, options)) {
         return true;
       }
       return false;
