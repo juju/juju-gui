@@ -44,6 +44,7 @@ describe('browser search widget', function() {
       // now trigger the event and make sure that it fired to our custom
       // watcher outside the widget.
       triggered.should.eql(true);
+      assert.equal('test', this.get('text'));
       done();
     });
 
@@ -62,18 +63,7 @@ describe('browser search widget', function() {
 
   it('should supports clearing search string', function() {
     var search = new Search({
-      term: 'test'
-    });
-    search.render(container);
-    container.one('input').get('value').should.eql('test');
-
-    search.clearSearch();
-    container.one('input').get('value').should.eql('');
-  });
-
-  it('should supports clearing search string', function() {
-    var search = new Search({
-      term: 'test'
+      text: 'test'
     });
     search.render(container);
     container.one('input').get('value').should.eql('test');
@@ -109,5 +99,4 @@ describe('browser search widget', function() {
     toggle.simulate('click');
     triggered.should.eql(true);
   });
-
 });
