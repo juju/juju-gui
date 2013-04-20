@@ -1,7 +1,7 @@
 'use strict';
 
 
-describe.only('browser search widget', function() {
+describe('browser search widget', function() {
   var Y, container, Search;
 
   before(function(done) {
@@ -44,6 +44,7 @@ describe.only('browser search widget', function() {
       // now trigger the event and make sure that it fired to our custom
       // watcher outside the widget.
       triggered.should.eql(true);
+      assert.equal('test', this.get('text'));
       done();
     });
 

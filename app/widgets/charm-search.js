@@ -83,6 +83,8 @@ YUI.add('browser-search-widget', function(Y) {
       var input = container.one('input');
       this.addEvent(
           input.on('valueChange', function(ev) {
+            var val = ev.currentTarget.get('value');
+            this.set('text', val);
             this.fire(this.EVT_SEARCH_CHANGED);
           }, this)
       );
