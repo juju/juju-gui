@@ -1,7 +1,7 @@
 'use strict';
 
 
-describe('browser search widget', function() {
+describe.only('browser search widget', function() {
   var Y, container, Search;
 
   before(function(done) {
@@ -62,7 +62,7 @@ describe('browser search widget', function() {
 
   it('should supports clearing search string', function() {
     var search = new Search({
-      term: 'test'
+      text: 'test'
     });
     search.render(container);
     container.one('input').get('value').should.eql('test');
@@ -73,7 +73,7 @@ describe('browser search widget', function() {
 
   it('should supports clearing search string', function() {
     var search = new Search({
-      term: 'test'
+      text: 'test'
     });
     search.render(container);
     container.one('input').get('value').should.eql('test');

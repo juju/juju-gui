@@ -1,8 +1,7 @@
 'use strict';
 
 
-/**
- * The widget used across Browser view to manage the search box and the
+/** * The widget used across Browser view to manage the search box and the
  * controls for selecting which view you're in.
  *
  * @module widgets
@@ -155,13 +154,14 @@ YUI.add('browser-search-widget', function(Y) {
       },
 
       /**
-       * @attribute term
-       * @default undefined
+       * The search text.
+       * 
+       * @attribute text 
+       * @default ''
        * @type {String}
        *
        */
-      term: {}
-
+      text: {}
     }
   });
 
