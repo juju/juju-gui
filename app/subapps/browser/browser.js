@@ -206,7 +206,7 @@ YUI.add('subapp-browser', function(Y) {
       this._viewState.viewmode = params.viewmode;
 
       // Check for a charm id in the request.
-      if (params.id) {
+      if (params.id && params.id !== 'search') {
         this._viewState.charmID = params.id;
       } else {
         this._viewState.charmID = null;
@@ -355,7 +355,9 @@ YUI.add('subapp-browser', function(Y) {
 
     */
     renderSearchResults: function(req, res, next) {
-      console.log('rendered search results.');
+      var qs = this._viewState.querystring;
+
+      console.log('rendered search results. qs: ' + qs);
     },
 
     /**
