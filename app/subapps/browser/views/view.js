@@ -107,7 +107,17 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _searchChanged: function(ev) {
-      console.log('search changed.');
+      // NB: This is temporary; eventually filtering will include categories,
+      // and the Filter object will handle qs generation. But it's an unwieldy
+      // url to parse while we only support text search.
+      var qs =  Y.QueryString.stringify({text: ev.details[0]});
+      var change = {
+        search: true,
+        querystring: qs
+      };
+      this.fire('viewNavigate', {
+        change: change
+      });
     },
 
     /**
@@ -269,6 +279,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
     'event-tracker',
     'juju-charm-store',
     'juju-models',
+    'querystring-stringify',
     'view'
   ]
 });

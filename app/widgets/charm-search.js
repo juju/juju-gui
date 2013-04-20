@@ -32,6 +32,10 @@ YUI.add('browser-search-widget', function(Y) {
 
     TEMPLATE: templates['browser-search'],
 
+    _handleSubmit: function(ev) {
+      ev.halt();
+      this.fire(this.EVT_UPDATE_SEARCH, this.get('text'));
+    },
     /**
      * Expose to the outside world that we've got a request to go fullscreen.
      *
@@ -74,6 +78,10 @@ YUI.add('browser-search-widget', function(Y) {
       this.addEvent(
           container.one('.toggle-fullscreen').on(
               'click', this._toggleFullScreen, this)
+      );
+      this.addEvent(
+          container.one('form').on(
+              'submit', this._handleSubmit, this)
       );
 
       // Note that the search could be updated either from our internal input

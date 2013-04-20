@@ -63,9 +63,14 @@ YUI.add('subapp-browser', function(Y) {
       if (this._viewState.charmID) {
         urlParts.push(this._viewState.charmID);
       }
-
-      // Always end on a /
-      return urlParts.join('/');
+      var url = urlParts.join('/');
+      if (this._viewState.querystring) {
+        url = Y.Lang.sub('{ url }?{ qs }', {
+          url: url,
+          qs: this._viewState.querystring
+        });
+      }
+      return url;
     },
 
     /**
