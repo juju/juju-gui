@@ -261,6 +261,9 @@ YUI.add('ns-routing-app-extension', function(Y) {
       Y.Router override methods to enable namespace routing
     */
 
+    navigate: function(url, options) {
+      this._navigate(url, options);
+    },
     /**
      * NS aware navigate wrapper. This has the feature
      * of preserving existing namespaces in the URL.  In other words, you can
@@ -284,24 +287,9 @@ YUI.add('ns-routing-app-extension', function(Y) {
         }
       }
       if (Y.App.prototype._navigate.call(this, url, options)) {
-        // Queue/Save the entire URL, not just the new fragment.
-        this._queue(result, true);
         return true;
       }
       return false;
-    },
-
-    /**
-     * Null-queue for NS routing. The 1ms delay in the queue presents problems
-     * and is unnecessary for our supported browsers, so we save URLs as they
-     * come.
-     *
-     * Overrides superclass, formalizes dependency on HTML5 paths.
-     * @method _queue
-     **/
-    _queue: function() {
-      // Sync Invocation
-      this._save.apply(this, arguments);
     },
 
     /**
