@@ -72,17 +72,6 @@ describe('browser search widget', function() {
     container.one('input').get('value').should.eql('');
   });
 
-  it('should supports clearing search string', function() {
-    var search = new Search({
-      text: 'test'
-    });
-    search.render(container);
-    container.one('input').get('value').should.eql('test');
-
-    search.clearSearch();
-    container.one('input').get('value').should.eql('');
-  });
-
   it('should fire a toggle fullscreen event when expand clicked', function() {
     var search = new Search(),
         triggered = false;
@@ -110,5 +99,4 @@ describe('browser search widget', function() {
     toggle.simulate('click');
     triggered.should.eql(true);
   });
-
 });
