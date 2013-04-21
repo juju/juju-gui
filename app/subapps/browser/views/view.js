@@ -170,19 +170,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     apiFailure: function(data, request) {
-      var message;
-      if (data && data.type) {
-        message = 'Charm API error of type: ' + data.type;
-      } else {
-        message = 'Charm API server did not respond';
-      }
-      this.get('db').notifications.add(
-          new models.Notification({
-            title: 'Failed to load sidebar content.',
-            message: message,
-            level: 'error'
-          })
-      );
+      Y.juju.browser.views.utils.apiFaiure(data, request, this);
     },
 
     /**
@@ -280,6 +268,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
     'juju-charm-store',
     'juju-models',
     'querystring-stringify',
+    'subapp-browser-view-utils',
     'view'
   ]
 });
