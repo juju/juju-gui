@@ -1343,7 +1343,9 @@ YUI.add('juju-charm-panel', function(Y) {
      * @return {undefined} Nothing.
      */
     function deploy(charm) {
-      // If a charm is passed in, then it will be loaded.
+      // Any passed-in charm is fully loaded but the caller doesn't know about
+      // the charm panel's internal detail of marking loaded charms, so we will
+      // do the marking here.
       charm.loaded = true;
       charms.add(charm);
       // Show the configuration panel.

@@ -525,6 +525,17 @@ YUI.add('subapp-browser', function(Y) {
         value: 'charmstore'
       }
 
+      /**
+         The "deploy" function prompts the user for service configuration and
+         deploys a service.
+
+         @attribute deploy
+         @default undefined
+         @type {Function}
+
+       */
+      deploy: {}
+
     }
   });
 
