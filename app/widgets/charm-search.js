@@ -37,7 +37,7 @@ YUI.add('browser-search-widget', function(Y) {
      * search.
      *
      * @method _handleSubmit
-     * @param {Event} ev the submit event 
+     * @param {Event} ev the submit event.
      */
     _handleSubmit: function(ev) {
       ev.halt();
