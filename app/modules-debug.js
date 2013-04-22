@@ -277,7 +277,8 @@ var GlobalConfig = {
 
         // Browser Views
         'subapp-browser-charmview': {
-          fullpath: '/juju-ui/subapps/browser/views/charm.js'
+          fullpath: '/juju-ui/subapps/browser/views/charm.js',
+          requires: ['subapp-browser-view-utils']
         },
 
         'subapp-browser-mainview': {
@@ -286,6 +287,10 @@ var GlobalConfig = {
 
         'subapp-browser-fullscreen': {
           fullpath: '/juju-ui/subapps/browser/views/fullscreen.js'
+        },
+
+        'subapp-browser-searchview': {
+          fullpath: '/juju-ui/subapps/browser/views/search.js'
         },
 
         'subapp-browser-sidebar': {
@@ -300,6 +305,11 @@ var GlobalConfig = {
         'subapp-browser-editorial': {
           fullpath: '/juju-ui/subapps/browser/views/editorial.js',
           requires: ['subapp-browser-sidebar']
+        },
+
+        //Browser view utils
+        'subapp-browser-view-utils': {
+          fullpath: '/juju-ui/subapps/browser/views/utils.js'
         },
 
         //Browser Models
