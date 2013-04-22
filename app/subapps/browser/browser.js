@@ -28,17 +28,13 @@ YUI.add('subapp-browser', function(Y) {
 
      */
     _detailsVisible: function(visible) {
-      var detailsNode = Y.one('.bws-view-data'),
-          browserNode = Y.one('#subapp-browser'),
-          detailsClass = 'details-panel';
+      var detailsNode = Y.one('.bws-view-data');
       if (detailsNode) {
         if (visible) {
           detailsNode.show();
-          browserNode.addClass(detailsClass);
         }
         else {
           detailsNode.hide();
-          browserNode.removeClass(detailsClass);
         }
       }
     },
