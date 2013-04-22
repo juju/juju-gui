@@ -51,6 +51,17 @@ YUI.add('subapp-browser-editorial', function(Y) {
     },
 
     /**
+     * Generates a message to the user based on a bad api call.
+     *
+     * @method apiFailure
+     * @param {Object} data the json decoded response text.
+     * @param {Object} request the original io_request object for debugging.
+     *
+     */
+    apiFailure: function(data, request) {
+      Y.juju.browser.views.utils.apiFailure(data, request, this);
+    },
+    /**
      * General YUI initializer.
      *
      * @method initializer
@@ -131,24 +142,11 @@ YUI.add('subapp-browser-editorial', function(Y) {
           ];
         },
 
-        'failure': function(data, request) {
-          var message;
-          if (data && data.type) {
-            message = 'Charm API error of type: ' + data.type;
-          } else {
-            message = 'Charm API server did not respond';
-          }
-          this.get('db').notifications.add(
-              new models.Notification({
-                title: 'Failed to load landing page content.',
-                message: message,
-                level: 'error'
-              })
-          );
-        }
+        'failure': this.apiFailure
       }, this);
     },
 
+    /*
     /**
      * Destroy this view and clear from the dom world.
      *
@@ -210,6 +208,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-templates',
+    'subapp-browser-view-utils',
     'view'
   ]
 });
