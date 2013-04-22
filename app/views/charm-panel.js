@@ -1342,18 +1342,19 @@ YUI.add('juju-charm-panel', function(Y) {
      * @param {String} charmUrl The URL of the charm to configure/deploy.
      * @return {undefined} Nothing.
      */
-    function deploy(charm, options) {
-      // If a charm is passed in, then assume it is fully loaded.
+    function deploy(charm) {
+      // If a charm is passed in, then it will be loaded.
       charm.loaded = true;
       charms.add(charm);
+      // Show the configuration panel.
       setPanel({
         name: 'configuration',
         charmId: charm.get('id')
       });
-      // Since we are showing the configure/deploy panel ex nihilo, then we
-      // want the panel to disappear when the deploy completes or is candled,
-      // but just this once (i.e., they should work normally if the user opens
-      // the panel via a charm search).
+      // Since we are showing the configure/deploy panel ex nihilo, we want the
+      // panel to disappear when the deploy completes or is candled, but just
+      // this once (i.e., they should work normally if the user opens the panel
+      // via a charm search).
       panels.configuration.once('panelRemoved', hide);
       show();
     }
