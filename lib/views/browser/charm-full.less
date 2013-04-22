@@ -11,12 +11,12 @@
     h4 {
         .heading-font;
     }
-    .content,
-    .sidebar {
-        .border-box;
-        display: table-cell;
+    p {
+        width: 66.666%;
     }
     .content {
+        .border-box;
+        display: table-cell;
         padding: 0 20px 25px 20px;
     }
     .nav {
@@ -262,26 +262,9 @@
             }
         }
     }
-    .sidebar {
-        padding-left: 20px;
-        background-color: #eeeeee;
-
-        h2 {
-            .heading-font;
-            margin-bottom: 16px;
-            padding: 14px 0 4px 0;
-            border-bottom: 1px solid @bws-border;
-            color: @bws-heading;
-            font-family: @font-family;
-            font-size: 14pt;
-        }
-        .vertical-links li {
-            padding-bottom: 5px;
-        }
-    }
 }
-.sidebar .charm {
+#bws-fullscreen .charm {
     p {
-        width: 66.666%;
+        width: 100%;
     }
 }

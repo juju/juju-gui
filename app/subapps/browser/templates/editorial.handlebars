@@ -1,9 +1,21 @@
-<div id="bws_editorial">
+<div id="bws_editorial" {{#if isFullscreen}}class="yui3-g"{{/if}}>
     {{#if isFullscreen}}
-        <p>Some static content</p>
+        <div class="content yui3-u-5-6">
     {{/if}}
 
     <div class="featured"></div>
     <div class="popular"></div>
     <div class="new"></div>
+
+    {{#if isFullscreen}}
+        </div>
+        <div class="content-sidebar yui3-u-1-6">
+            <h2>Useful links</h2>
+            <ul class="vertical-links">
+                <li><a href="">Juju community</a></li>
+                <li><a href="">Online resources</a></li>
+                <li><a href="">Write your own Charm</a></li>
+            </ul>
+        </div>
+    {{/if}}
 </div>
