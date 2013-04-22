@@ -32,6 +32,13 @@ YUI.add('browser-search-widget', function(Y) {
 
     TEMPLATE: templates['browser-search'],
 
+    /**
+     * Halt page reload from form submit and let the app know we have a new
+     * search.
+     *
+     * @method _handleSubmit
+     * @param {Event} ev the submit event 
+     */
     _handleSubmit: function(ev) {
       ev.halt();
       this.fire(this.EVT_UPDATE_SEARCH, this.get('text'));
