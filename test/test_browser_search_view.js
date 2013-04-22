@@ -18,7 +18,8 @@ describe('search view', function() {
         });
   });
 
-  beforeEach(function() { // Mock out a dummy location for the Store used in view instances.
+  beforeEach(function() {
+    // Mock out a dummy location for the Store used in view instances.
     window.juju_config = {charmworldURL: 'http://localhost'};
     container = Y.Node.create('<div id="container"></div>');
     Y.one('body').append(container);
