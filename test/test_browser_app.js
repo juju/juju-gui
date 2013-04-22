@@ -56,17 +56,6 @@
       assert.isTrue(Y.Lang.isObject(container.one('input')));
     });
 
-    it('_addCharmEnvironment displays the configuration panel', function(done) {
-      view = new FullScreen();
-      var faux_charm = 'faux charm';
-      view.set('charm', faux_charm);
-      view.set('deploy', function(charm) {
-        assert.equal(charm, faux_charm);
-        done();
-      });
-      view._addCharmEnvironment({halt: function() {}});
-    });
-
   });
 })();
 
