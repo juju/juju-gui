@@ -45,6 +45,10 @@ class TestBasics(browser.TestCase):
                 return stats['tests'], stats['failures']
 
         def run_tests():
+            # Ensure the window receives focus. In Firefox, blur/focus unit
+            # tests fail if the window in which they are running is not
+            # focused. See https://bugzilla.mozilla.org/show_bug.cgi?id=566671
+            self.driver.execute_script('window.focus();')
             self.wait_for_css_selector('#mocha-stats')
             try:
                 total, failures = self.wait_for(
