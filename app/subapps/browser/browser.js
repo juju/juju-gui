@@ -358,9 +358,15 @@ YUI.add('subapp-browser', function(Y) {
      * @param {function} next callable for the next route in the chain.
      */
     renderSearch: function(req, res, next) {
-      var query = Y.QueryString.parse(this._viewState.querystring),
-          container = this.get('container'),
-          extraCfg = {};
+      var container = this.get('container'),
+          extraCfg = {},
+          query;
+      if (this._viewState.querystring) {
+        query = Y.QueryString.parse();
+      } else {
+        // If there's no querystring, we need a default "empty" search.
+        query = {text: ''};
+      }
 
       if (this._viewState.viewmode === 'fullscreen') {
         extraCfg.renderTo = container.one('.bws-view-data');

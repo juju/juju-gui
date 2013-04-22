@@ -175,7 +175,7 @@
                 sidebar: false,
                 renderCharmDetails: false,
                 renderEditorial: false,
-                renderSearchResults: false
+                renderSearch: false
               };
             };
             done();
@@ -213,8 +213,8 @@
       browser.renderEditorial = function() {
         hits.renderEditorial = true;
       };
-      browser.renderSearchResults = function() {
-        hits.renderSearchResults = true;
+      browser.renderSearch = function() {
+        hits.renderSearch = true;
       };
       // showView needs to be hacked because it does the rendering of
       // fullscreen/sidebar.
@@ -272,7 +272,7 @@
       };
       var expected = Y.merge(hits, {
         sidebar: true,
-        renderSearchResults: true,
+        renderSearch: true,
         renderCharmDetails: true
       });
 
