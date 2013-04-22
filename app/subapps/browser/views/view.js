@@ -161,19 +161,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
     },
 
     /**
-     * Shared method to generate a message to the user based on a bad api
-     * call.
-     *
-     * @method apiFailure
-     * @param {Object} data the json decoded response text.
-     * @param {Object} request the original io_request object for debugging.
-     *
-     */
-    apiFailure: function(data, request) {
-      Y.juju.browser.views.utils.apiFaiure(data, request, this);
-    },
-
-    /**
      * Destroy this view and clear from the dom world.
      *
      * @method destructor
@@ -268,7 +255,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
     'juju-charm-store',
     'juju-models',
     'querystring-stringify',
-    'subapp-browser-view-utils',
     'view'
   ]
 });
