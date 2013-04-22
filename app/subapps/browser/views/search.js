@@ -25,6 +25,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
      * @param {Y.Node} container Optional container to render results to.
      */
     _renderSearchResults: function(results) {
+      debugger;
       var target = this.get('renderTo'),
           tpl = this.template({count: results.size()}),
           tplNode = Y.Node.create(tpl),
