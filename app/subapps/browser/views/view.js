@@ -110,7 +110,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
       // NB: This is temporary; eventually filtering will include categories,
       // and the Filter object will handle qs generation. But it's an unwieldy
       // url to parse while we only support text search.
-      var qs =  Y.QueryString.stringify({text: ev.details[0]});
+      var qs = Y.QueryString.stringify({text: ev.details[0]});
       var change = {
         search: true,
         querystring: qs

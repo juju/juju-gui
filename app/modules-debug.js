@@ -277,7 +277,7 @@ var GlobalConfig = {
 
         // Browser Views
         'subapp-browser-charmview': {
-          fullpath: '/juju-ui/subapps/browser/views/charm.js',
+          fullpath: '/juju-ui/subapps/browser/views/charm.js'
         },
 
         'subapp-browser-searchview': {
@@ -306,7 +306,7 @@ var GlobalConfig = {
         },
 
         'subapp-browser-editorial': {
-          fullpath: '/juju-ui/subapps/browser/views/editorial.js',
+          fullpath: '/juju-ui/subapps/browser/views/editorial.js'
         },
 
         //Browser view utils

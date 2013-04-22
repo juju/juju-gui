@@ -165,11 +165,10 @@ YUI.add('browser-search-widget', function(Y) {
 
       /**
        * The search text.
-       * 
-       * @attribute text 
+       *
+       * @attribute text
        * @default ''
        * @type {String}
-       *
        */
       text: {}
     }
