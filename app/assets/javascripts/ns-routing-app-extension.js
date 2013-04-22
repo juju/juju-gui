@@ -262,18 +262,6 @@ YUI.add('ns-routing-app-extension', function(Y) {
     */
 
     /**
-      Overwrites the default navigate method and passes through to the private
-      navigate method
-
-      @method navigate
-      @param {String} url to navigate to.
-      @param {Object} options to use when navigating and dispatching the url.
-    */
-    navigate: function(url, options) {
-      this._navigate(url, options);
-    },
-
-    /**
      * NS aware navigate wrapper. This has the feature
      * of preserving existing namespaces in the URL.  In other words, you can
      * provide only a single namespace value, and all other namespaces are
