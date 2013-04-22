@@ -61,7 +61,7 @@ describe('browser search widget', function() {
     container.one('input').get('value').should.eql('test');
   });
 
-  it('should supports clearing search string', function() {
+  it('should support clearing search string', function() {
     var search = new Search({
       text: 'test'
     });
