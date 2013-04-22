@@ -49,6 +49,7 @@ describe('search view', function() {
       }
     });
     view.set('store', fakeStore);
+    view.set('renderTo', container);
   });
 
   afterEach(function() {
@@ -62,18 +63,10 @@ describe('search view', function() {
   });
 
   it('renders correctly', function() {
-    view.render(container);
-    assert.equal(container, view.get('container'));
+    view.render();
     assert.equal('charms?text=foo', apiURL);
     assert.equal(1, Y.all('.yui3-charmtoken').size());
-    var charmText = Y.one('.yui3-charmtoken').one('h3').get('text');
+    var charmText = Y.one('.yui3-charmtoken').one('.title').get('text');
     assert.equal(charmText.replace(/\s+/g, ''), 'bar');
-  });
-
-  it('requeries on textChange', function() {
-    view.render(container);
-    assert.equal('charms?text=foo', apiURL);
-    view.set('text', 'bar');
-    assert.equal('charms?text=bar', apiURL);
   });
 });
