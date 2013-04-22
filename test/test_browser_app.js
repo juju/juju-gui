@@ -440,6 +440,33 @@
       var expected = Y.merge(hits, {
         renderEditorial: true
       });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('sidebar to fullscreen dispatches correctly', function() {
+      var req = {
+        path: '/bws/sidebar',
+        params: {
+          viewmode: 'sidebar'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Reset the hits and we should not redraw anything to update the view.
+      resetHits();
+      req = {
+        path: '/bws/fullscreen/',
+        params: {
+          viewmode: 'fullscreen'
+        }
+      };
+
+      var expected = Y.merge(hits, {
+        fullscreen: true,
+        renderEditorial: true
+      });
       browser.routeView(req, undefined, function() {});
       assert.deepEqual(hits, expected);
     });

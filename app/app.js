@@ -553,6 +553,7 @@ YUI.add('juju-gui', function(Y) {
         env: this.env,
         landscape: this.landscape,
         getModelURL: Y.bind(this.getModelURL, this),
+        loadService: Y.bind(this.loadService, this),
         nsRouter: this.nsRouter,
         querystring: req.query
       }, {}, function(view) {
@@ -822,7 +823,7 @@ YUI.add('juju-gui', function(Y) {
           options = {
             getModelURL: Y.bind(this.getModelURL, this),
             nsRouter: this.nsRouter,
-            loadService: this.loadService,
+            loadService: Y.bind(this.loadService, this),
             landscape: this.landscape,
             endpointsController: this.endpointsController,
             db: this.db,

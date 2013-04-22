@@ -381,8 +381,8 @@ YUI.add('subapp-browser', function(Y) {
         // Render search results if search is in the url and the viewmode or
         // the search has been changed in the state.
         this.renderSearchResults(req, res, next);
-      } else {
-        // Else render the editorial content.
+      } else if (!this._viewState.charmID) {
+        // Render the editorial in fullscreen only if we don't have a charmid
         this.renderEditorial(req, res, next);
       }
 
