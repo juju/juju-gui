@@ -63,6 +63,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
     apiFailure: function(data, request) {
       this._apiFailure(data, request, 'Failed to load sidebar content.');
     },
+
     /**
      * General YUI initializer.
      *
@@ -148,7 +149,6 @@ YUI.add('subapp-browser-editorial', function(Y) {
       }, this);
     },
 
-    /*
     /**
      * Destroy this view and clear from the dom world.
      *
@@ -172,33 +172,28 @@ YUI.add('subapp-browser-editorial', function(Y) {
        * @attribute isFullscreen
        * @default false
        * @type {Boolean}
-       *
        */
       isFullscreen: {
         value: false
       },
+
       /**
        * What is the container node we should render our container into?
        *
        * @attribute renderTo
        * @default undefined
        * @type {Node}
-       *
        */
-      renderTo: {
+      renderTo: {},
 
-      },
       /**
        * The Charmworld0 Api store instance for loading content.
        *
        * @attribute store
        * @default undefined
        * @type {Charmworld0}
-       *
        */
-      store: {
-
-      }
+      store: {}
     }
   });
 
