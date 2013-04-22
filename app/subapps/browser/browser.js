@@ -348,15 +348,16 @@ YUI.add('subapp-browser', function(Y) {
     /**
      * Render search results
      *
-     * @method renderSearch
+     * @method renderSearchResults
      * @param {Request} req current request object.
      * @param {Response} res current response object.
      * @param {function} next callable for the next route in the chain.
      */
-    renderSearch: function(req, res, next) {
+    renderSearchResults: function(req, res, next) {
       var container = this.get('container'),
           extraCfg = {},
           query;
+      //XXX jcsackett: This should use req, not viewstate
       if (this._viewState.querystring) {
         query = Y.QueryString.parse();
       } else {
@@ -364,7 +365,7 @@ YUI.add('subapp-browser', function(Y) {
         query = {text: ''};
       }
 
-      if (this._viewState.viewmode === 'fullscreen') {
+      if (req.params.viewmode === 'fullscreen') {
         extraCfg.renderTo = container.one('.bws-view-data');
         extraCfg.isFullscreen = true;
       } else {
@@ -403,7 +404,7 @@ YUI.add('subapp-browser', function(Y) {
       } else if (this._shouldShowSearch()) {
         // Render search results if search is in the url and the viewmode or
         // the search has been changed in the state.
-        this.renderSearch(req, res, next);
+        this.renderSearchResults(req, res, next);
       } else if (!this._viewState.charmID) {
         // Render the editorial in fullscreen only if we don't have a charmid
         this.renderEditorial(req, res, next);
@@ -433,7 +434,7 @@ YUI.add('subapp-browser', function(Y) {
       // Render search results if search is in the url and the viewmode or the
       // search has been changed in the state.
       if (this._shouldShowSearch()) {
-        this.renderSearch(req, res, next);
+        this.renderSearchResults(req, res, next);
       }
 
       if (this._shouldShowEditorial()) {
