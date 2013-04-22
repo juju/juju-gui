@@ -523,7 +523,7 @@ YUI.add('subapp-browser', function(Y) {
        */
       urlNamespace: {
         value: 'charmstore'
-      }
+      },
 
       /**
          The "deploy" function prompts the user for service configuration and
