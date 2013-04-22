@@ -64,7 +64,7 @@
         assert.equal(charm, faux_charm);
         done();
       });
-      view._addCharmEnvironment({halt: function() {}})
+      view._addCharmEnvironment({halt: function() {}});
     });
 
   });
