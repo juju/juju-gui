@@ -1134,7 +1134,7 @@ YUI.add('juju-topology-service', function(Y) {
 
       topo.detachContainer();
       topo.fire('navigateTo', {
-        url: nsRouter.url({gui: getModelURL(service)})
+        url: getModelURL(service)
       });
     },
 

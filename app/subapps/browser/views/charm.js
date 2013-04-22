@@ -45,17 +45,26 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     * When the 'add' is clicked we need to work on adding the ghost to the
-     * environment.
+     * Begin the service creation process by showing the service configuration
+     * form.
      *
      * @method _addCharmEnvironment
      * @param {Event} ev the event from the click handler.
+     * @return {undefined} Nothing.
      * @private
      *
      */
     _addCharmEnvironment: function(ev) {
       ev.halt();
-      console.log('add the charm to the environment');
+      var browserCharm = this.get('charm');
+      var charm = new models.Charm(browserCharm.getAttrs());
+      if (this.get('isFullscreen')) {
+        this.fire('viewNavigate',
+            {change: {viewmode: 'sidebar', charmID: null}});
+      } else {
+        this.fire('viewNavigate', {change: {charmID: null}});
+      }
+      this.get('deploy').call(null, charm);
     },
 
     /**
@@ -423,7 +432,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      * @method initializer
      * @param {Object} cfg configuration object.
-     *
+     * @return {undefined} Nothing.
      */
     initializer: function(cfg) {
       // Hold onto references of the indicators used so we can clean them all
@@ -529,7 +538,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
          @type {Boolean}
 
        */
-      ifFullscreen: {
+      isFullscreen: {
         value: false
       },
 
@@ -541,7 +550,18 @@ YUI.add('subapp-browser-charmview', function(Y) {
        * @type {Charmworld0}
        *
        */
-      store: {}
+      store: {},
+
+      /**
+       * The "deploy" function prompts the user for service configuration and
+       * deploys a service.
+       *
+       * @attribute deploy
+       * @default undefined
+       * @type {Function}
+       *
+       */
+      deploy: {}
 
     }
   });

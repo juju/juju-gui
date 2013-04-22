@@ -26,7 +26,9 @@ YUI.add('browser-charm-token', function(Y) {
      */
     renderUI: function() {
       var content = this.TEMPLATE(this.getAttrs());
-      this.get('contentBox').setHTML(content);
+      var container = this.get('contentBox');
+      container.setHTML(content);
+      container.ancestor('.yui3-charmtoken').addClass('yui3-u');
     }
 
   }, {

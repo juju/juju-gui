@@ -794,10 +794,12 @@ YUI.add('juju-charm-panel', function(Y) {
           '.charm-section h4': {click: toggleSectionVisibility},
           '.config-file-upload-widget': {change: 'onFileChange'},
           '.config-file-upload-overlay': {click: 'onOverlayClick'},
-          '.config-field': {focus: 'showDescription',
-            blur: 'hideDescription'},
-          'input.config-field[type=checkbox]':
-              {click: function(evt) {evt.target.focus();}},
+          '.config-field': {
+            focus: 'showDescription',
+            blur: 'hideDescription'
+          },
+          'input.config-field[type=checkbox]': {click: function(evt) {
+            evt.target.focus();}},
           '#service-name': {blur: 'updateGhostServiceName'}
         },
 
@@ -1131,7 +1133,7 @@ YUI.add('juju-charm-panel', function(Y) {
                         serviceName, 'service',
                         { 'gui-x': ghostService.get('x'),
                           'gui-y': ghostService.get('y') },
-                        function() { 
+                        function() {
                           ghostService.set('x', undefined);
                           ghostService.set('y', undefined);
                         });
@@ -1337,6 +1339,32 @@ YUI.add('juju-charm-panel', function(Y) {
     }
 
     /**
+     * Show the deploy/configuration panel for a charm.
+     *
+     * @method deploy
+     * @param {String} charmUrl The URL of the charm to configure/deploy.
+     * @return {undefined} Nothing.
+     */
+    function deploy(charm) {
+      // Any passed-in charm is fully loaded but the caller doesn't know about
+      // the charm panel's internal detail of marking loaded charms, so we will
+      // do the marking here.
+      charm.loaded = true;
+      charms.add(charm);
+      // Show the configuration panel.
+      setPanel({
+        name: 'configuration',
+        charmId: charm.get('id')
+      });
+      // Since we are showing the configure/deploy panel ex nihilo, we want the
+      // panel to disappear when the deploy completes or is candled, but just
+      // this once (i.e., they should work normally if the user opens the panel
+      // via a charm search).
+      panels.configuration.once('panelRemoved', hide);
+      show();
+    }
+
+    /**
      * Show the charm panel if it is hidden, hide it otherwise.
      *
      * @method toggle
@@ -1366,6 +1394,7 @@ YUI.add('juju-charm-panel', function(Y) {
      * be incorrect.
      *
      * @method updatePanelPosition
+     * @return {undefined} Nothing.
      */
     function updatePanelPosition() {
       container.setStyle('display', 'none');
@@ -1413,11 +1442,14 @@ YUI.add('juju-charm-panel', function(Y) {
       toggle: toggle,
       show: show,
       node: container,
+      deploy: deploy,
 
       /**
        * Set the default charm series in the search and description panels.
        *
        * @method setDefaultSeries
+       * @param {String} series The name of the default series.
+       * @return {undefined} Nothing.
        */
       setDefaultSeries: function(series) {
         charmsSearchPanel.set('defaultSeries', series);
