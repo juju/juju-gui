@@ -18,8 +18,7 @@ describe('search view', function() {
         });
   });
 
-  beforeEach(function() {
-    // Mock out a dummy location for the Store used in view instances.
+  beforeEach(function() { // Mock out a dummy location for the Store used in view instances.
     window.juju_config = {charmworldURL: 'http://localhost'};
     container = Y.Node.create('<div id="container"></div>');
     Y.one('body').append(container);
@@ -68,5 +67,11 @@ describe('search view', function() {
     assert.equal(1, Y.all('.yui3-charmtoken').size());
     var charmText = Y.one('.yui3-charmtoken').one('.title').get('text');
     assert.equal(charmText.replace(/\s+/g, ''), 'bar');
+  });
+
+  it('handles empty text for search', function() {
+    view.set('text', '');
+    view.render();
+    assert.equal('charms?text=', apiURL);
   });
 });
