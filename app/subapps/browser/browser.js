@@ -273,9 +273,9 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Render the sidebar view of a specific charm to the client.
+     * Render the charm details view
      *
-     * @method sidebarCharm
+     * @method renderCharmDetails
      * @param {Request} req current request object.
      * @param {Response} res current response object.
      * @param {function} next callable for the next route in the chain.
@@ -322,7 +322,6 @@ YUI.add('subapp-browser', function(Y) {
     renderEditorial: function(req, res, next) {
       // If loading the interesting content then it's not a search going on.
       var container = this.get('container'),
-          editorialContainer,
           extraCfg = {};
 
       if (this._viewState.viewmode === 'fullscreen') {
@@ -351,13 +350,29 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      Place holder for a method to render out search so we can test url parsing
+     * Render search results
+     *
+     * @method renderSearch
+     * @param {Request} req current request object.
+     * @param {Response} res current response object.
+     * @param {function} next callable for the next route in the chain.
+     */
+    renderSearch: function(req, res, next) {
+      var query = Y.QueryString.parse(this._viewState.querystring),
+          container = this.get('container'),
+          extraCfg = {};
 
-    */
-    renderSearchResults: function(req, res, next) {
-      var qs = this._viewState.querystring;
-
-      console.log('rendered search results. qs: ' + qs);
+      if (this._viewState.viewmode === 'fullscreen') {
+        extraCfg.renderTo = container.one('.bws-view-data');
+        extraCfg.isFullscreen = true;
+      } else {
+        extraCfg.renderTo = container.one('.bws-content');
+      }
+      extraCfg.text = query.text;
+      this._search = new Y.juju.browser.views.BrowserSearchView(
+          this._getViewCfg(extraCfg));
+      this._search.render();
+      this._search.addTarget(this);
     },
 
     /**
@@ -386,7 +401,7 @@ YUI.add('subapp-browser', function(Y) {
       } else if (this._shouldShowSearch()) {
         // Render search results if search is in the url and the viewmode or
         // the search has been changed in the state.
-        this.renderSearchResults(req, res, next);
+        this.renderSearch(req, res, next);
       } else if (!this._viewState.charmID) {
         // Render the editorial in fullscreen only if we don't have a charmid
         this.renderEditorial(req, res, next);
@@ -416,7 +431,7 @@ YUI.add('subapp-browser', function(Y) {
       // Render search results if search is in the url and the viewmode or the
       // search has been changed in the state.
       if (this._shouldShowSearch()) {
-        this.renderSearchResults(req, res, next);
+        this.renderSearch(req, res, next);
       }
 
       if (this._shouldShowEditorial()) {
@@ -538,10 +553,12 @@ YUI.add('subapp-browser', function(Y) {
   requires: [
     'juju-charm-store',
     'juju-models',
+    'querystring-parse',
     'sub-app',
     'subapp-browser-charmview',
     'subapp-browser-editorial',
     'subapp-browser-fullscreen',
+    'subapp-browser-searchview',
     'subapp-browser-sidebar'
   ]
 });

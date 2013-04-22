@@ -17,33 +17,24 @@ YUI.add('subapp-browser-searchview', function(Y) {
   ns.BrowserSearchView = Y.Base.create('browser-view-searchview', Y.View, [
     Y.Event.EventTracker
   ], {
-
+    template: views.Templates.search,
     /**
      * Renders the search results from the the store query.
      *
      * @method _renderSearchResults
      * @param {Y.Node} container Optional container to render results to.
      */
-    _renderSearchResults: function(container) {
-      // Don't render search results if the view has never been rendered.
-      if (!this.get('rendered')) {
-        return;
-      }
-      if (!container) {
-        container = this.get('container');
-      }
-      var text = this.get('text');
-      this.get('store').search(text, {
-        'success': function(data) {
-          var results = this.get('store').resultsToCharmlist(data.result);
-          container.empty();
-          results.map(function(charm) {
-            var ct = new widgets.browser.CharmToken(charm.getAttrs());
-            ct.render(container);
-          });
-        },
-        'failure': this.apiFailure
-      }, this);
+    _renderSearchResults: function(results) {
+      var target = this.get('renderTo'),
+          tpl = this.template({count: results.size()}),
+          tplNode = Y.Node.create(tpl),
+          container = tplNode.one('.search-results');
+
+      results.map(function(charm) {
+        var ct = new widgets.browser.CharmToken(charm.getAttrs());
+        ct.render(container);
+      });
+      target.setHTML(tplNode);
     },
 
     /**
@@ -55,70 +46,35 @@ YUI.add('subapp-browser-searchview', function(Y) {
      *
      */
     apiFailure: function(data, request) {
-      var message;
-      if (data && data.type) {
-        message = 'Charm API error of type: ' + data.type;
-      } else {
-        message = 'Charm API server did not respond';
-      }
-      this.get('db').notifications.add(
-          new models.Notification({
-            title: 'Failed to load search results.',
-            message: message,
-            level: 'error'
-          })
-      );
-    },
-
-    /**
-     * Initializer
-     *
-     * @method initializer
-     */
-    initializer: function() {
-      this.addEvent(
-          this.after('textChange', function(e) {
-            var container = e.currentTarget.get('container');
-            this._renderSearchResults(container);
-          }));
+      Y.juju.browser.views.utils.apiFailure(data, request, this);
     },
 
     /**
      * Renders the searchview, rendering search results for the view's search
      * text.
      *
-     * @method
-     * @param {container} The view's container to render to.
+     * @method render
      */
-    render: function(container) {
-      this.set('rendered', true);
-      if (container) {
-        this.set('container', container);
-      }
-      this._renderSearchResults();
+    render: function() {
+      var text = this.get('text');
+      this.get('store').search(text, {
+        'success': function(data) {
+          var results = this.get('store').resultsToCharmlist(data.result);
+          this._renderSearchResults(results);
+        },
+        'failure': this.apiFailure
+      }, this);
     }
   }, {
     ATTRS: {
       /**
-       * The container node for the view.
+       * The container node the view is rendering to.
        *
-       * @attribute container
+       * @attribute renderTo
        * @default undefined
        * @type {Y.Node}
        */
-      container: {},
-
-      /**
-       * Whether the view had been rendered; used to avoid rendering before a
-       * render call with the textChange event.
-       *
-       * @attribute rendered
-       * @default false
-       * @type {boolean}
-       */
-      rendered: {
-        value: false
-      },
+      renderTo: {},
 
       /**
        * An instance of the Charmworld API object to hit for any data that
@@ -148,6 +104,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
     'browser-overlay-indicator',
     'base-build',
     'browser-charm-token',
+    'subapp-browser-view-utils',
     'view'
   ]
 });
