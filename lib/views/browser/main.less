@@ -4,6 +4,7 @@
 @bws-text: #808080;
 @bws-border: #dddddd;
 @bws-sidebar-width: 350px;
+@bws-header-height: 60px;
 
 /* Mixins */
 .three-image-button-background(@left-image, @right-image, @centre-image) {
@@ -35,24 +36,8 @@
 
 #subapp-browser {
   display: none;
-  bottom: 50px;
   color: @bws-text;
   font-size: 9pt;
-  left: 0;
-  overflow: hidden;
-  position: absolute;
-  top: 0;
-  width: @bws-sidebar-width;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-
-  &.details-panel {
-    width: 100%;
-    box-shadow: none;
-
-    .charmbrowser.sidebar #bws-sidebar {
-        width: @bws-sidebar-width;
-    }
-  }
 
   a {
     color: @charm-panel-orange;
@@ -86,14 +71,11 @@
     text-align: left;
     width: 90%;
   }
-  .bws-view-data {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
+  .section-title a {
+    color: @bws-heading;
+  }
+  .charm-token {
+    color: @bws-text;
   }
   .bws-header {
     position: relative;
@@ -141,49 +123,58 @@
       }
     }
   }
+  #bws-sidebar .bws-content,
+  .bws-view-data,
+  #bws-sidebar,
+  #bws-fullscreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+  }
+  .bws-view-data,
+  #bws-sidebar,
+  #bws-fullscreen {
+    bottom: 50px;
+    background-color: #f5f5f5;
+  }
+  .bws-view-data,
+  #bws-sidebar .bws-content {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
   #bws-fullscreen {
     .bws-view-data {
-      top: 60px;
-      right: 0;
-      background-color: #f5f5f5;
-    }
-  }
-  .charmbrowser.sidebar {
-    #bws-sidebar,
-    .bws-view-data {
-      background-color: #f5f5f5;
-    }
-    .bws-view-data {
-      left: @bws-sidebar-width;
-    }
-    #bws-sidebar {
-      z-index: 1;
-      position: absolute;
-      top: 0;
+      top: @bws-header-height;
       bottom: 0;
       left: 0;
-      overflow: auto;
-      width: 100%;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+  }
+  #bws-sidebar {
+    z-index: 1;
+    right: auto;
+    width: @bws-sidebar-width;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 
-      .bws-searchbox {
-        float: none;
-        margin: 10px 0 0 0;
+    .bws-searchbox {
+      float: none;
+      margin: 10px 0 0 0;
 
-        input {
-          width: 100%;
-        }
-      }
-      .section-title a {
-        color: @bws-heading;
-      }
-      .yui3-charmtoken {
-        float: none;
-
-        .charm-token {
-          color: @bws-text;
-        }
+      input {
+        width: 100%;
       }
     }
+    .bws-content {
+      top: 110px;
+
+      .yui3-charmtoken {
+        width: 100%;
+      }
+    }
+  }
+  .bws-view-data {
+    left: @bws-sidebar-width;
   }
 }
