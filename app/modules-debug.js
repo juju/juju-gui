@@ -305,11 +305,6 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/editorial.js'
         },
 
-        //Browser view utils
-        'subapp-browser-view-utils': {
-          fullpath: '/juju-ui/subapps/browser/views/utils.js'
-        },
-
         //Browser Models
         'juju-browser-models': {
           fullpath: '/juju-ui/models/browser.js'

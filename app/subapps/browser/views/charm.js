@@ -18,7 +18,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
    */
   ns.BrowserCharmView = Y.Base.create('browser-view-charmview', Y.View, [
     widgets.browser.IndicatorManager,
-    Y.Event.EventTracker
+    Y.Event.EventTracker,
+    views.utils.apiFailingView
   ], {
 
     template: views.Templates.browser_charm,
@@ -68,7 +69,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     apiFailure: function(data, request) {
-      Y.juju.browser.views.utils.apiFailure(data, request, this);
+      this._apiFailure(data, request, 'Failed to load charm details.');
     },
 
     /**
@@ -549,7 +550,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
     'juju-view-utils',
     'node',
     'prettify',
-    'subapp-browser-view-utils',
     'view'
   ]
 });

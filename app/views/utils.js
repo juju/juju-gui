@@ -1,15 +1,16 @@
 'use strict';
 
+
 /**
  * The view utils.
  *
  * @module views
  * @submodule views.utils
  */
-
 YUI.add('juju-view-utils', function(Y) {
 
   var views = Y.namespace('juju.views'),
+      models = Y.namespace('juju.models'),
       utils = Y.namespace('juju.views.utils');
 
   /*jshint bitwise: false*/
@@ -1288,13 +1289,54 @@ YUI.add('juju-view-utils', function(Y) {
     }
   });
 
+  /**
+   * Extension for views to provide an apiFailure method.
+   *
+   * @class apiFailure
+   */
+  utils.apiFailingView = function() {
+    this._initAPIFailingView();
+  };
+  utils.apiFailingView.prototype = {
+    _initAPIFailingView: function() {},
+
+    /**
+     * Shared method to generate a message to the user based on a bad api
+     * call from a view.
+     *
+     * @method apiFailure
+     * @param {Object} data the json decoded response text.
+     * @param {Object} request the original io_request object for debugging.
+     * @param {String} title the title for the generated notification.
+     */
+    _apiFailure: function(data, request, title) {
+      var message;
+      if (data && data.type) {
+        message = 'Charm API error of type: ' + data.type;
+      } else {
+        message = 'Charm API server did not respond';
+      }
+      if (!title) {
+        title = 'Unidentified API failure';
+      }
+      this.get('db').notifications.add(
+          new models.Notification({
+            title: title,
+            message: message,
+            level: 'error'
+          })
+      );
+    }
+  };
 }, '0.1.0', {
-  requires: ['base-build',
-             'handlebars',
-             'node',
-             'view',
-             'panel',
-             'json-stringify',
-             'gallery-markdown',
-             'datatype-date-format']
+  requires: [
+    'base-build',
+    'handlebars',
+    'node',
+    'view',
+    'panel',
+    'json-stringify',
+    'gallery-markdown',
+    'datatype-date-format'
+  ]
 });

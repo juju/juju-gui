@@ -15,7 +15,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
       models = Y.namespace('juju.models');
 
   ns.BrowserSearchView = Y.Base.create('browser-view-searchview', Y.View, [
-    Y.Event.EventTracker
+    views.utils.apiFailingView
   ], {
     template: views.Templates.search,
     /**
@@ -46,7 +46,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
      *
      */
     apiFailure: function(data, request) {
-      Y.juju.browser.views.utils.apiFailure(data, request, this);
+      this._apiFailure(data, request, 'Failed to load search results.');
     },
 
     /**
@@ -100,11 +100,11 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
 }, '0.1.0', {
   requires: [
-    'event-tracker',
-    'browser-overlay-indicator',
     'base-build',
     'browser-charm-token',
-    'subapp-browser-view-utils',
+    'browser-overlay-indicator',
+    'event-tracker',
+    'juju-view-utils',
     'view'
   ]
 });

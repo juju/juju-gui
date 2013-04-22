@@ -22,7 +22,9 @@ YUI.add('subapp-browser-editorial', function(Y) {
    * @extends {juju.browser.views.Editorial}
    *
    */
-  ns.EditorialView = Y.Base.create('browser-view-sidebar', Y.View, [], {
+  ns.EditorialView = Y.Base.create('browser-view-sidebar', Y.View, [
+    views.utils.apiFailingView
+  ], {
     template: views.Templates.editorial,
 
     events: {
@@ -59,7 +61,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
      *
      */
     apiFailure: function(data, request) {
-      Y.juju.browser.views.utils.apiFailure(data, request, this);
+      this._apiFailure(data, request, 'Failed to load sidebar content.');
     },
     /**
      * General YUI initializer.
@@ -208,7 +210,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-templates',
-    'subapp-browser-view-utils',
+    'juju-view-utils',
     'view'
   ]
 });
