@@ -276,7 +276,8 @@ YUI.add('subapp-browser', function(Y) {
       var charmID = req.params.id;
       var extraCfg = {
         charmID: charmID,
-        container: Y.Node.create('<div class="charmview"/>')
+        container: Y.Node.create('<div class="charmview"/>'),
+        deploy: this.get('deploy')
       };
 
       // The details view needs to know if we're using a fullscreen template
@@ -518,7 +519,18 @@ YUI.add('subapp-browser', function(Y) {
        */
       urlNamespace: {
         value: 'charmstore'
-      }
+      },
+
+      /**
+         The "deploy" function prompts the user for service configuration and
+         deploys a service.
+
+         @attribute deploy
+         @default undefined
+         @type {Function}
+
+       */
+      deploy: {}
 
     }
   });
