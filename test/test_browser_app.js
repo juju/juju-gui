@@ -149,7 +149,9 @@
     });
 
     afterEach(function() {
-      app.destroy();
+      if (app) {
+        app.destroy();
+      }
     });
 
     it('verify that route callables exist', function() {

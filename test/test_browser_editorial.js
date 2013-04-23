@@ -3,7 +3,7 @@
 (function() {
 
   describe('browser_editorial', function() {
-    var EditorialView, models, node, sampleData, view, views, Y;
+    var EditorialView, fakeStore, models, node, sampleData, view, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -39,10 +39,13 @@
       }
       node.remove(true);
       delete window.juju_config;
+      if (fakeStore) {
+        fakeStore.destroy();
+      }
     });
 
     it('renders sidebar with hidden charms', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      fakeStore = new Y.juju.Charmworld0({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -62,7 +65,7 @@
     });
 
     it('renders fullscreen w/o hidden charms', function() {
-      var fakeStore = new Y.juju.Charmworld0({});
+      fakeStore = new Y.juju.Charmworld0({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -83,7 +86,7 @@
     });
 
     it('clicking a charm navigates for fullscreen', function(done) {
-      var fakeStore = new Y.juju.Charmworld0({});
+      fakeStore = new Y.juju.Charmworld0({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
@@ -112,7 +115,7 @@
     });
 
     it('clicking a charm navigates for sidebar', function(done) {
-      var fakeStore = new Y.juju.Charmworld0({});
+      fakeStore = new Y.juju.Charmworld0({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
           // Stubbing the server callback value
