@@ -1134,8 +1134,8 @@ YUI.add('juju-charm-panel', function(Y) {
                         { 'gui-x': ghostService.get('x'),
                           'gui-y': ghostService.get('y') },
                         function() {
-                          ghostService.set('x', undefined);
-                          ghostService.set('y', undefined);
+                          ghostService.removeAttr('x');
+                          ghostService.removeAttr('y');
                         });
                   }
                   // Update the ghost service to match the configuration.
