@@ -22,6 +22,14 @@
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
 - unreleased:
+- 0.4.0:
+    - Support for Juju Core (Go Juju).
+    - New "sandbox" mode for in-browser-memory fake juju (set sandbox: true in config.js).
+    - Support for Firefox.
+    - Support for Landscape integration.
+    - Many bug fixes.
+    - Continuous integration support.
+    - Progress towards new charm browser UX (hidden for now).
 - 0.3.1:
     - Small fixes to release process.
 - 0.3.0:

@@ -165,8 +165,8 @@ describe('charm panel', function() {
         deploy: function(url, service, config, config_raw, units, callback) {
           callback({err: false});
         },
-        update_annotations: function() {
-          return true;
+        update_annotations: function(service, type, annotations, callback) {
+          callback({err: false});
         }
       };
       // Mock the charm store.
@@ -271,10 +271,16 @@ describe('charm panel', function() {
 
     it('is no longer ghosted on deploy', function() {
       startDeployment();
-      confirmDeployment();
+      // Fake a service drag to test that the service is cleaned on deploy.
       var service = db.services.item(0);
+      service.setAttrs({'x': 123, 'y': 321});
+      service.set('dragged', true);
+      confirmDeployment();
       assert.isFalse(service.get('pending'));
       assert.include(service.get('id'), serviceName);
+      // Test that data used in dragging the ghost is removed.
+      assert.equal(undefined, service.get('x'));
+      assert.equal(undefined, service.get('y'));
     });
 
   });

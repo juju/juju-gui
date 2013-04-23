@@ -121,6 +121,29 @@
       node.one('.charm .add').simulate('click');
     });
 
+
+    it('_addCharmEnvironment displays the config panel', function(done) {
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install'
+          ],
+          id: 'precise/ceph-9'
+        }),
+        container: Y.Node.create('<div class="charmview"/>')
+      });
+      view.set('deploy', function(charm) {
+        // The charm passed in is not a BrowserCharm but a charm-panel charm.
+        var browserCharm = view.get('charm');
+        assert.notDeepEqual(charm, browserCharm);
+        var madeCharm = new models.Charm(browserCharm.getAttrs());
+        assert.equal(charm.get('id'), madeCharm.get('id'));
+        done();
+      });
+      view._addCharmEnvironment({halt: function() {}});
+    });
+
+
     it('should load a file when a hook is selected', function() {
       var fakeStore = new Y.juju.Charmworld0({});
       fakeStore.set('datasource', {
