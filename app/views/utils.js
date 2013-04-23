@@ -618,9 +618,14 @@ YUI.add('juju-view-utils', function(Y) {
         var defaultValue = schema[field_name]['default'];
         var numLines = 0;
         if (defaultValue && defaultValue.split) {
+          // XXX: BradCrittenden 2013-04-23 bug=1171980: This isMultiLine flag
+          // is a work-around for recognizing configuration fields that need
+          // multiline input.  Since Juju does not have a configuration type
+          // to differentiate between a simple string and multiline text this
+          // is the best we can do.  The referenced bug was filed against
+          // juju-core to request a 'text' type, which will make this hack
+          // redundant.
           numLines = defaultValue.split('\n').length;
-          // For simplicity, numLines will be 0 if not multi-line or 2 or more
-          // if there are multiple lines.
           entry.isMultiLine = (numLines > 1);
         }
         entry.rows = numLines;
