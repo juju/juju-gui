@@ -21,6 +21,7 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
+- unreleased:
 - 0.4.0:
     - Support for Juju Core (Go Juju).
     - New "sandbox" mode for in-browser-memory fake juju (set sandbox: true in config.js).
