@@ -617,7 +617,7 @@ YUI.add('juju-view-utils', function(Y) {
       } else {
         var defaultValue = schema[field_name]['default'];
         var numLines = 0;
-        if (defaultValue  && defaultValue.split) {
+        if (defaultValue && defaultValue.split) {
           numLines = defaultValue.split('\n').length;
           // For simplicity, numLines will be 0 if not multi-line or 2 or more
           // if there are multiple lines.
