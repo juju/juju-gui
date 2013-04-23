@@ -508,7 +508,7 @@ describe('utilities', function() {
         a_bool: {
           type: 'boolean',
           name: 'present',
-          default: 'something'
+          'default': 'something'
         }
       };
 
@@ -535,7 +535,7 @@ describe('utilities', function() {
         a_bool: {
           type: 'string',
           name: 'thing',
-          default: 'something'
+          'default': 'something'
         }
       };
 
@@ -550,7 +550,7 @@ describe('utilities', function() {
         a_bool: {
           type: 'string',
           name: 'thing',
-          default: 'something\nmore'
+          'default': 'something\nmore'
         }
       };
 
@@ -566,7 +566,7 @@ describe('utilities', function() {
         a_bool: {
           type: 'string',
           name: 'thing',
-          default: 'something\neven\nmore'
+          'default': 'something\neven\nmore'
         }
       };
 
@@ -582,7 +582,7 @@ describe('utilities', function() {
         a_bool: {
           type: 'int',
           name: 'thing',
-          default: 100
+          'default': 100
         }
       };
 
@@ -597,7 +597,7 @@ describe('utilities', function() {
         a_bool: {
           type: 'float',
           name: 'thing',
-          default: 10.0
+          'default': 10.0
         }
       };
 

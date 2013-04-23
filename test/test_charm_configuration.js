@@ -16,7 +16,7 @@ describe('charm configuration', function() {
                         option2:
                             { name: 'option2',
                               type: 'int',
-                              description: 'Option Two'}                      }
+                              description: 'Option Two'} }
                 }
           };
 
@@ -123,10 +123,10 @@ describe('charm configuration', function() {
     };
     var options = modCharmConfig.config.options;
     // Set default values appropriate for each input type.
-    options.option0.default = 'a single-line string';
-    options.option1.default = 'checked';
-    options.option2.default = 100;
-    options.option3.default = 'A string\nthat spans\nmultiple lines.';
+    options.option0['default'] = 'a single-line string';
+    options.option1['default'] = 'checked';
+    options.option2['default'] = 100;
+    options.option3['default'] = 'A string\nthat spans\nmultiple lines.';
     charm.setAttrs(modCharmConfig);
     charm.loaded = true;
     view.render();
@@ -211,7 +211,7 @@ describe('charm configuration', function() {
       name: 'option3',
       type: 'string',
       description: 'Option Three',
-      default: 'A string\nthat spans\nmultiple lines.'
+      'default': 'A string\nthat spans\nmultiple lines.'
     };
     charm.setAttrs(modCharmConfig);
     charm.loaded = true;
