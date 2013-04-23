@@ -1298,6 +1298,11 @@ YUI.add('juju-view-utils', function(Y) {
     this._initAPIFailingView();
   };
   utils.apiFailingView.prototype = {
+    /**
+     * Constructor
+     *
+     * @method _initAPIFailingView
+     */
     _initAPIFailingView: function() {},
 
     /**
