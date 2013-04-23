@@ -32,15 +32,23 @@
             line-height: 23pt;
         }
         .back {
+            .three-image-button-background(
+                "browser_back_button_left.png",
+                "browser_back_button_right.png",
+                "browser_back_button_centre.png"
+                );
             display: block;
             float: left;
-            padding: 0 17px 0 23px;
-            .three-image-button-background(
-                "browser_back_button_left.jpg",
-                "browser_back_button_right.jpg",
-                "browser_back_button_centre.jpg"
-                );
+            padding: 0 12px 0 11px;
             color: @bws-heading;
+
+            &:hover {
+                background-position: left bottom, right bottom, left bottom;
+            }
+            img {
+                margin-right: 9px;
+                vertical-align: baseline;
+            }
         }
         .share,
         .add {
