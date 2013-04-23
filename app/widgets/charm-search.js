@@ -1,7 +1,8 @@
 'use strict';
 
 
-/** * The widget used across Browser view to manage the search box and the
+/**
+ * The widget used across Browser view to manage the search box and the
  * controls for selecting which view you're in.
  *
  * @module widgets
@@ -98,8 +99,7 @@ YUI.add('browser-search-widget', function(Y) {
       var input = container.one('input');
       this.addEvent(
           input.on('valueChange', function(ev) {
-            var val = ev.currentTarget.get('value');
-            this.set('text', val);
+            this.set('text', ev.newVal);
             this.fire(this.EVT_SEARCH_CHANGED);
           }, this)
       );

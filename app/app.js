@@ -401,15 +401,15 @@ YUI.add('juju-gui', function(Y) {
       }, this);
 
       // Create the CharmPanel instance once the app is initialized.
-      var popup = views.CharmPanel.getInstance({
+      this.charmPanel = views.CharmPanel.getInstance({
         charm_store: this.charm_store,
         env: this.env,
         app: this
       });
-      popup.setDefaultSeries(this.env.get('defaultSeries'));
-      this.env.after('defaultSeriesChange', function(ev) {
-        popup.setDefaultSeries(ev.newVal);
-      });
+      this.charmPanel.setDefaultSeries(this.env.get('defaultSeries'));
+      this.env.after('defaultSeriesChange', Y.bind(function(ev) {
+        this.charmPanel.setDefaultSeries(ev.newVal);
+      }, this));
 
       // Halts the default navigation on the juju logo to allow us to show
       // the real root view without namespaces
@@ -425,6 +425,7 @@ YUI.add('juju-gui', function(Y) {
       // Attach SubApplications
       // The subapps should share the same db.
       cfg.db = this.db;
+      cfg.deploy = this.charmPanel.deploy;
       this.addSubApplications(cfg);
     },
 

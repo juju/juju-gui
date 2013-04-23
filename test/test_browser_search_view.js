@@ -69,4 +69,10 @@ describe('search view', function() {
     var charmText = Y.one('.yui3-charmtoken').one('.title').get('text');
     assert.equal(charmText.replace(/\s+/g, ''), 'bar');
   });
+
+  it('handles empty text for search', function() {
+    view.set('text', '');
+    view.render();
+    assert.equal('charms?text=', apiURL);
+  });
 });
