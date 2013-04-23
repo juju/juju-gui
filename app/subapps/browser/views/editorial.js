@@ -52,6 +52,13 @@ YUI.add('subapp-browser-editorial', function(Y) {
       });
     },
 
+    /**
+      Update the node in the editorial list marked as 'active'.
+
+      @method _updateActive
+      @param {Node} clickTarget the charm-token clicked on to activate.
+
+    */
     _updateActive: function(clickTarget) {
       // Remove the active class from any nodes that have it.
       Y.all('.yui3-charmtoken.active').removeClass('active');
