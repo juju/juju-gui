@@ -278,7 +278,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
           node = this.get('container').one('#bws-hooks .filecontent');
 
       // Load the file, but make sure we prettify the code.
-      this._loadFile(node, filename, true);
+      if (filename) {
+        this._loadFile(node, filename, true);
+      }
     },
 
     /**
