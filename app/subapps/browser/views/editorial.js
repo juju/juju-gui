@@ -22,7 +22,9 @@ YUI.add('subapp-browser-editorial', function(Y) {
    * @extends {juju.browser.views.Editorial}
    *
    */
-  ns.EditorialView = Y.Base.create('browser-view-sidebar', Y.View, [], {
+  ns.EditorialView = Y.Base.create('browser-view-sidebar', Y.View, [
+    views.utils.apiFailingView
+  ], {
     template: views.Templates.editorial,
 
     events: {
@@ -156,21 +158,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           }
         },
 
-        'failure': function(data, request) {
-          var message;
-          if (data && data.type) {
-            message = 'Charm API error of type: ' + data.type;
-          } else {
-            message = 'Charm API server did not respond';
-          }
-          this.get('db').notifications.add(
-              new models.Notification({
-                title: 'Failed to load landing page content.',
-                message: message,
-                level: 'error'
-              })
-          );
-        }
+        'failure': this.apiFailure
       }, this);
     },
 
@@ -209,7 +197,6 @@ YUI.add('subapp-browser-editorial', function(Y) {
        * @attribute isFullscreen
        * @default false
        * @type {Boolean}
-       *
        */
       isFullscreen: {
         value: false
@@ -221,11 +208,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
        * @attribute renderTo
        * @default undefined
        * @type {Node}
-       *
        */
-      renderTo: {
-
-      },
+      renderTo: {},
 
       /**
        * The Charmworld0 Api store instance for loading content.
@@ -233,11 +217,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
        * @attribute store
        * @default undefined
        * @type {Charmworld0}
-       *
        */
-      store: {
-
-      }
+      store: {}
     }
   });
 
@@ -249,6 +230,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
     'juju-charm-store',
     'juju-models',
     'juju-templates',
+    'juju-view-utils',
     'view'
   ]
 });

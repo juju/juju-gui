@@ -18,7 +18,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
    */
   ns.BrowserCharmView = Y.Base.create('browser-view-charmview', Y.View, [
     widgets.browser.IndicatorManager,
-    Y.Event.EventTracker
+    Y.Event.EventTracker,
+    views.utils.apiFailingView
   ], {
 
     template: views.Templates.browser_charm,
@@ -77,19 +78,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      *
      */
     apiFailure: function(data, request) {
-      var message;
-      if (data && data.type) {
-        message = 'Charm API error of type: ' + data.type;
-      } else {
-        message = 'Charm API server did not respond';
-      }
-      this.get('db').notifications.add(
-          new models.Notification({
-            title: 'Failed to load sidebar content.',
-            message: message,
-            level: 'error'
-          })
-      );
+      this._apiFailure(data, request, 'Failed to load charm details.');
     },
 
     /**
@@ -289,7 +278,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
           node = this.get('container').one('#bws-hooks .filecontent');
 
       // Load the file, but make sure we prettify the code.
-      this._loadFile(node, filename, true);
+      if (filename) {
+        this._loadFile(node, filename, true);
+      }
     },
 
     /**

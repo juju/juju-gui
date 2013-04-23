@@ -46,7 +46,6 @@
       delete window.juju_config;
     });
 
-    // Ensure the search results are rendered inside the container.
     it('should be able to locate a readme file', function() {
       view = new CharmView({
         charm: new models.BrowserCharm({

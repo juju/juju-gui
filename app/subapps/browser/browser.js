@@ -59,9 +59,14 @@ YUI.add('subapp-browser', function(Y) {
       if (this._viewState.charmID) {
         urlParts.push(this._viewState.charmID);
       }
-
-      // Always end on a /
-      return urlParts.join('/');
+      var url = urlParts.join('/');
+      if (this._viewState.querystring) {
+        url = Y.Lang.sub('{ url }?{ qs }', {
+          url: url,
+          qs: this._viewState.querystring
+        });
+      }
+      return url;
     },
 
     /**
@@ -197,7 +202,7 @@ YUI.add('subapp-browser', function(Y) {
       this._viewState.viewmode = params.viewmode;
 
       // Check for a charm id in the request.
-      if (params.id) {
+      if (params.id && params.id !== 'search') {
         this._viewState.charmID = params.id;
       } else {
         this._viewState.charmID = null;
@@ -264,9 +269,9 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Render the sidebar view of a specific charm to the client.
+     * Render the charm details view
      *
-     * @method sidebarCharm
+     * @method renderCharmDetails
      * @param {Request} req current request object.
      * @param {Response} res current response object.
      * @param {function} next callable for the next route in the chain.
@@ -314,7 +319,6 @@ YUI.add('subapp-browser', function(Y) {
     renderEditorial: function(req, res, next) {
       // If loading the interesting content then it's not a search going on.
       var container = this.get('container'),
-          editorialContainer,
           extraCfg = {};
 
       if (this._viewState.viewmode === 'fullscreen') {
@@ -349,11 +353,35 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      Place holder for a method to render out search so we can test url parsing
-
-    */
+     * Render search results
+     *
+     * @method renderSearchResults
+     * @param {Request} req current request object.
+     * @param {Response} res current response object.
+     * @param {function} next callable for the next route in the chain.
+     */
     renderSearchResults: function(req, res, next) {
-      console.log('rendered search results.');
+      var container = this.get('container'),
+          extraCfg = {},
+          query;
+      if (this._viewState.querystring) {
+        query = Y.QueryString.parse(this._viewState.querystring);
+      } else {
+        // If there's no querystring, we need a default "empty" search.
+        query = {text: ''};
+      }
+
+      if (req.params.viewmode === 'fullscreen') {
+        extraCfg.renderTo = container.one('.bws-view-data');
+        extraCfg.isFullscreen = true;
+      } else {
+        extraCfg.renderTo = container.one('.bws-content');
+      }
+      extraCfg.text = query.text;
+      this._search = new Y.juju.browser.views.BrowserSearchView(
+          this._getViewCfg(extraCfg));
+      this._search.render();
+      this._search.addTarget(this);
     },
 
     /**
@@ -545,10 +573,12 @@ YUI.add('subapp-browser', function(Y) {
   requires: [
     'juju-charm-store',
     'juju-models',
+    'querystring-parse',
     'sub-app',
     'subapp-browser-charmview',
     'subapp-browser-editorial',
     'subapp-browser-fullscreen',
+    'subapp-browser-searchview',
     'subapp-browser-sidebar'
   ]
 });

@@ -34,6 +34,17 @@ YUI.add('browser-search-widget', function(Y) {
     TEMPLATE: templates['browser-search'],
 
     /**
+     * Halt page reload from form submit and let the app know we have a new
+     * search.
+     *
+     * @method _handleSubmit
+     * @param {Event} ev the submit event.
+     */
+    _handleSubmit: function(ev) {
+      ev.halt();
+      this.fire(this.EVT_UPDATE_SEARCH, this.get('text'));
+    },
+    /**
      * Expose to the outside world that we've got a request to go fullscreen.
      *
      * @method _toggleFullScreen
@@ -42,6 +53,7 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     _toggleFullScreen: function(ev) {
+      ev.halt();
       this.fire(this.EVT_TOGGLE_FULLSCREEN);
     },
 
@@ -76,6 +88,10 @@ YUI.add('browser-search-widget', function(Y) {
           container.one('.toggle-fullscreen').on(
               'click', this._toggleFullScreen, this)
       );
+      this.addEvent(
+          container.one('form').on(
+              'submit', this._handleSubmit, this)
+      );
 
       // Note that the search could be updated either from our internal input
       // control, or it could come from someone outside of the widget asking
@@ -84,6 +100,7 @@ YUI.add('browser-search-widget', function(Y) {
       var input = container.one('input');
       this.addEvent(
           input.on('valueChange', function(ev) {
+            this.set('text', ev.newVal);
             this.fire(this.EVT_SEARCH_CHANGED);
           }, this)
       );
@@ -155,13 +172,13 @@ YUI.add('browser-search-widget', function(Y) {
       },
 
       /**
-       * @attribute term
-       * @default undefined
-       * @type {String}
+       * The search text.
        *
+       * @attribute text
+       * @default ''
+       * @type {String}
        */
-      term: {}
-
+      text: {}
     }
   });
 
