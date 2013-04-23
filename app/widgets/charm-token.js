@@ -19,6 +19,23 @@ YUI.add('browser-charm-token', function(Y) {
   ], {
     TEMPLATE: Y.namespace('juju.views').Templates['charm-token'],
 
+     /**
+       Setter for the boundingBox attribute
+
+       **Override vs YUI to prevent node id setting based on BrowserCharm**
+
+       @method _setBB
+       @private
+       @param Node/String
+       @return Node
+      */
+     _setBB: function(node) {
+         // Blank out the ID part of the boundingBox. We don't want the
+         // charm-token id="" to be set based on the actual BrowserCharm model
+         // data passed in.
+         return this._setBox(undefined, node, this.BOUNDING_TEMPLATE, true);
+     },
+
     /**
      * Create the nodes required by this widget and attach them to the DOM.
      *
@@ -50,6 +67,12 @@ YUI.add('browser-charm-token', function(Y) {
       icon: {
         value: ''
       },
+
+      /**
+        The id of the charm to render
+
+      */
+      id: {},
 
       /**
        * @attribute name
