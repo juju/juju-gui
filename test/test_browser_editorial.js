@@ -2,7 +2,7 @@
 
 (function() {
 
-  describe.only('browser_editorial', function() {
+  describe('browser_editorial', function() {
     var EditorialView, models, node, sampleData, view, views, Y;
 
     before(function(done) {
