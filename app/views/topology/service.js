@@ -875,7 +875,9 @@ YUI.add('juju-topology-service', function(Y) {
 
       // Show whether or not the service is exposed using an indicator.
       node.filter(function(d) {
-        return d.exposed;
+        return d.exposed &&
+            d3.select(this)
+                .select('.exposed-indicator').empty();
       })
         .append('image')
         .attr({'class': 'exposed-indicator on',
