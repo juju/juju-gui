@@ -2,7 +2,7 @@
 
 (function() {
 
-  describe('browser_editorial', function() {
+  describe.only('browser_editorial', function() {
     var EditorialView, models, node, sampleData, view, views, Y;
 
     before(function(done) {
@@ -103,8 +103,8 @@
 
       view.on('viewNavigate', function(ev) {
         ev.halt();
-        assert(ev.viewmode === 'fullscreen');
-        assert(ev.charmID === 'precise/ceph-7');
+        assert(ev.change.viewmode === 'fullscreen');
+        assert(ev.change.charmID === 'precise/ceph-7');
         done();
       });
 
@@ -131,8 +131,8 @@
 
       view.on('viewNavigate', function(ev) {
         ev.halt();
-        assert(ev.viewmode === 'sidebar');
-        assert(ev.charmID === 'precise/ceph-7');
+        assert(ev.change.viewmode === 'sidebar');
+        assert(ev.change.charmID === 'precise/ceph-7');
         done();
       });
 
