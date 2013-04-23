@@ -45,6 +45,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
       var charm = ev.currentTarget;
       var charmID = charm.getData('charmid');
 
+      // Update the UI for the active one.
+      this._updateActive(ev.currentTarget);
       this.fire('viewNavigate', {
         change: {
           charmID: charmID
@@ -53,12 +55,25 @@ YUI.add('subapp-browser-editorial', function(Y) {
     },
 
     /**
+      Update the node in the editorial list marked as 'active'.
+
+      @method _updateActive
+      @param {Node} clickTarget the charm-token clicked on to activate.
+
+    */
+    _updateActive: function(clickTarget) {
+      // Remove the active class from any nodes that have it.
+      Y.all('.yui3-charmtoken.active').removeClass('active');
+
+      // Add it to the current node.
+      clickTarget.ancestor('.yui3-charmtoken').addClass('active');
+    },
+
+    /**
      * Generates a message to the user based on a bad api call.
-     *
      * @method apiFailure
      * @param {Object} data the json decoded response text.
      * @param {Object} request the original io_request object for debugging.
-     *
      */
     apiFailure: function(data, request) {
       this._apiFailure(data, request, 'Failed to load sidebar content.');
@@ -143,6 +158,14 @@ YUI.add('subapp-browser-editorial', function(Y) {
             newCharmContainer,
             popularCharmContainer
           ];
+
+          // Set the active charm if available.
+          var active = this.get('activeID');
+          if (active) {
+            this._updateActive(
+                container.one('.charm-token[data-charmid="' + active + '"]')
+            );
+          }
         },
 
         'failure': this.apiFailure
@@ -165,6 +188,18 @@ YUI.add('subapp-browser-editorial', function(Y) {
     }
   }, {
     ATTRS: {
+      /**
+       * The charm id to start out selected as active.
+       *
+       * @attribute setActive
+       * @default undefined
+       * @type {String}
+       *
+       */
+      activeID: {
+
+      },
+
       /**
        * Is this rendering of the editorial view for fullscreen or sidebar
        * purposes?
