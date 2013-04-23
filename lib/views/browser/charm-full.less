@@ -58,14 +58,22 @@
             margin-right: 10px;
         }
         .add {
-            padding: 0 22px 0 32px;
             .three-image-button-background(
-                "browser_add_button_left.jpg",
-                "browser_add_button_right.jpg",
-                "browser_add_button_centre.jpg"
+                "browser_add_button_left.png",
+                "browser_add_button_right.png",
+                "browser_add_button_centre.png"
                 );
+            padding: 0 22px 0 32px;
             border: none;
             color: #fff;
+
+            &:hover {
+                background-position: left center, right center, left center;
+            }
+            &:active {
+                background-position: left bottom, right bottom, left bottom;
+                color: #202020;
+            }
         }
     }
     .heading {
