@@ -107,7 +107,17 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _searchChanged: function(ev) {
-      console.log('search changed.');
+      // NB: This is temporary; eventually filtering will include categories,
+      // and the Filter object will handle qs generation. But it's an unwieldy
+      // url to parse while we only support text search.
+      var qs = Y.QueryString.stringify({text: ev.details[0]});
+      var change = {
+        search: true,
+        querystring: qs
+      };
+      this.fire('viewNavigate', {
+        change: change
+      });
     },
 
     /**
@@ -148,31 +158,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
       this.fire('viewNavigate', {
         change: change
       });
-    },
-
-    /**
-     * Shared method to generate a message to the user based on a bad api
-     * call.
-     *
-     * @method apiFailure
-     * @param {Object} data the json decoded response text.
-     * @param {Object} request the original io_request object for debugging.
-     *
-     */
-    apiFailure: function(data, request) {
-      var message;
-      if (data && data.type) {
-        message = 'Charm API error of type: ' + data.type;
-      } else {
-        message = 'Charm API server did not respond';
-      }
-      this.get('db').notifications.add(
-          new models.Notification({
-            title: 'Failed to load sidebar content.',
-            message: message,
-            level: 'error'
-          })
-      );
     },
 
     /**
@@ -269,6 +254,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
     'event-tracker',
     'juju-charm-store',
     'juju-models',
+    'querystring-stringify',
     'view'
   ]
 });
