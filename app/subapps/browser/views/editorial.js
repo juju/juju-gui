@@ -70,6 +70,16 @@ YUI.add('subapp-browser-editorial', function(Y) {
     },
 
     /**
+     * Generates a message to the user based on a bad api call.
+     * @method apiFailure
+     * @param {Object} data the json decoded response text.
+     * @param {Object} request the original io_request object for debugging.
+     */
+    apiFailure: function(data, request) {
+      this._apiFailure(data, request, 'Failed to load sidebar content.');
+    },
+
+    /**
      * General YUI initializer.
      *
      * @method initializer
