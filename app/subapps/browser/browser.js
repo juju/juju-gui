@@ -335,7 +335,7 @@ YUI.add('subapp-browser', function(Y) {
       // If there's a selected charm we need to pass that info onto the View
       // to render it selected.
       if (this._viewState.charmID) {
-        extraCfg.activeID = this._viewState.charmID
+        extraCfg.activeID = this._viewState.charmID;
       }
 
       this._editorial = new Y.juju.browser.views.EditorialView(
