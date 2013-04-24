@@ -790,10 +790,9 @@
       });
       db.charms.add([charm]);
       var serviceConfig = {};
-      Y.Object.each(charmConfig.options, function(v,k)
-          {
-            serviceConfig[k] = v['default'];
-          });
+      Y.Object.each(charmConfig.options, function(v, k) {
+        serviceConfig[k] = v['default'];
+      });
       service = new models.Service(
           { id: 'mysql',
             charm: 'cs:precise/mysql-7',
