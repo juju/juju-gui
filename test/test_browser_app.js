@@ -468,6 +468,10 @@
       assert.deepEqual(hits, expected);
     });
 
+    it('need to add tests for search related urls fullscreen/etc querystring', function() {
+        assert(false);
+    });
+
   });
 })();
 
