@@ -373,9 +373,8 @@ YUI.add('juju-gui', function(Y) {
           this.db.reset();
           this.env.userIsAuthenticated = false;
           // Do not attempt environment login without credentials.
-          var user = this.env.get('user');
-          var password = this.env.get('password');
-          if (Y.Lang.isValue(user) && Y.Lang.isValue(password)) {
+          var credentials = this.env.getCredentials();
+          if (credentials && credentials.areAvailable) {
             this.env.login();
           }
           this.dispatch();
@@ -670,32 +669,32 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var credentials = this.env.getCredentials();
-      if (credentials) {
-        if (!credentials.areAvailable) {
-          // If there are no stored credentials, the user is prompted for some.
-          this.show_login();
-        } else if (!this.env.userIsAuthenticated) {
-          // If there are credentials available and there has not been
-          // a successful login attempt, try to log in.
-          this.env.login();
-          return;
-        }
-      // After re-arranging the execution order of our routes to support the new
-      // :gui: namespace we were unable to log out on prod build in Ubuntu
+      // After re-arranging the execution order of our routes to support the
+      // new :gui: namespace we were unable to log out on prod build in Ubuntu
       // chrome. It appeared to be because credentials was null so the log in
       // form was never shown - this handles that edge case.
-      } else {
+      var noCredentials = !(credentials && credentials.areAvailable);
+      if (noCredentials) {
+        // If there are no stored credentials, the user is prompted for some.
         this.show_login();
       }
-      // If there has not been a successful login attempt and there are no
-      // credentials, do not let the route dispatch proceed.
       if (!this.env.userIsAuthenticated) {
-        if (this.loggingOut) {
+        // If there has not been a successful login attempt, do not let the
+        // route dispatch proceed.
+        if (noCredentials && this.loggingOut) {
+          // Handle logging out.
           this.loggingOut = false;
           this.showRootView();
         }
+        // At this point, there can be credentials available, but there has not
+        // been a successful login attempt. Assuming this can happen only
+        // at the beginning of the auth process, and that the auth process
+        // always starts right after the environment is connected, we can just
+        // return here, because the connectedChange subscriber should take
+        // care of performing a login attempt.
         return;
       }
+      // The route dispatch can proceed if the user is authenticated.
       next();
     },
 
