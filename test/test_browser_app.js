@@ -163,7 +163,7 @@
 
   });
 
-  describe.only('browser subapp display tree', function() {
+  describe('browser subapp display tree', function() {
     var Y, browser, hits, ns, resetHits;
 
     before(function(done) {
@@ -482,14 +482,40 @@
 
       // Reset the hits and we should not redraw anything to update the view.
       resetHits();
-      req = {
+      req.query.text = 'test2';
+
+      var expected = Y.merge(hits, {
+        renderSearchResults: true
+      });
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('no change to query string does not redraw', function() {
+      var req = {
         path: '/bws/fullscreen/search/',
         params: {
           viewmode: 'fullscreen'
-          id: 'charm/id'
         },
         query: {
-          text: 'test2'
+          text: 'test'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Reset the hits and we should not redraw anything to update the view.
+      resetHits();
+
+      var expected = Y.merge(hits);
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('no querystring still searched', function() {
+      var req = {
+        path: '/bws/fullscreen/search/',
+        params: {
+          viewmode: 'fullscreen'
         }
       };
 
@@ -497,6 +523,7 @@
         fullscreen: true,
         renderSearchResults: true
       });
+
       browser.routeView(req, undefined, function() {});
       assert.deepEqual(hits, expected);
     });
