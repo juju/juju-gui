@@ -27,6 +27,7 @@ describe('charm token', function() {
 
   it('renders with correct metadata', function() {
     var cfg = {
+      id: 'test',
       name: 'some-charm',
       description: 'some description',
       recent_commit_count: 1,
@@ -39,5 +40,6 @@ describe('charm token', function() {
     assert.equal(
         ' 1 commit, 3 downloads ',
         metadata.get('text').replace(/\s+/g, ' '));
+    charm.get('boundingBox').getAttribute('id').should.not.eql('test');
   });
 });

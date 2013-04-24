@@ -16,8 +16,7 @@ describe('charm configuration', function() {
                         option2:
                             { name: 'option2',
                               type: 'int',
-                              description: 'Option Two'}
-                      }
+                              description: 'Option Two'} }
                 }
           };
 
@@ -109,6 +108,35 @@ describe('charm configuration', function() {
     received_charm_url.should.equal('cs:precise/mysql-7');
   });
 
+  it('must recognized multi-line string defaults', function() {
+    var charm = new models.Charm({id: 'precise/mysql-7'});
+    var db = new models.Database();
+    var view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm,
+          db: db});
+    var modCharmConfig = Y.clone(charmConfig);
+    modCharmConfig.config.options.option3 = {
+      name: 'option3',
+      type: 'string',
+      description: 'Option Three'
+    };
+    var options = modCharmConfig.config.options;
+    // Set default values appropriate for each input type.
+    options.option0['default'] = 'a single-line string';
+    options.option1['default'] = 'checked';
+    options.option2['default'] = 100;
+    options.option3['default'] = 'A string\nthat spans\nmultiple lines.';
+    charm.setAttrs(modCharmConfig);
+    charm.loaded = true;
+    view.render();
+    container.all('div.control-label').get('text').should.eql(
+        ['Service name', 'Number of units', 'option0 (string)',
+         'option1', 'option2 (int)', 'option3 (string)']);
+    assert.equal('text', container.one('#input-option0').get('type'));
+    assert.equal('textarea', container.one('#input-option3').get('type'));
+  });
+
   it('must deploy a charm with the custom configuration', function() {
     var deployed = false,
         received_charm_url,
@@ -177,14 +205,23 @@ describe('charm configuration', function() {
           model: charm,
           db: db,
           tooltipDelay: 0 });
-    charm.setAttrs(charmConfig);
+
+    var modCharmConfig = Y.clone(charmConfig);
+    modCharmConfig.config.options.option3 = {
+      name: 'option3',
+      type: 'string',
+      description: 'Option Three',
+      'default': 'A string\nthat spans\nmultiple lines.'
+    };
+    charm.setAttrs(modCharmConfig);
     charm.loaded = true;
     view.render();
     var tooltip = view.tooltip,
-        controls = container.all('.control-group input');
+        controls = container.all('.control-group input'),
+        textareaControl = container.all('.control-group textarea');
     tooltip.get('srcNode').get('text').should.equal('');
 
-    // There are five control groups, the three corresponding to the options
+    // There are six control groups, the four corresponding to the options
     // shown above and two preceding, service name and number of units.
     // Simulate mouse moves into the different control groups and see the tool
     // tip text change.
@@ -201,6 +238,11 @@ describe('charm configuration', function() {
     controls.item(1).blur();
     controls.item(3).focus();
     tooltip.get('srcNode').get('text').should.equal('Option Zero');
+    tooltip.get('visible').should.equal(true);
+    // Now ensure it works in a textarea too.
+    controls.item(3).blur();
+    textareaControl.item(0).focus();
+    tooltip.get('srcNode').get('text').should.equal('Option Three');
     tooltip.get('visible').should.equal(true);
   });
 

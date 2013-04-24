@@ -1095,11 +1095,10 @@ g.unit {
             .controls {
                 margin-left: auto;
                 margin-right: 0;
-                input[type=text] {
+                input[type=text], textarea {
                     color: @text-entry-color;
                     font-style: italic;
                     font-size: 12px;
-                    height: 15px;
                     width: 250px;
                     margin: 0;
                     .create-border-radius(6px);
@@ -1107,6 +1106,10 @@ g.unit {
                     // mixin args.
                     @box-shadow: 0 1px 3px #959595 inset, 0 1px 0 white;
                     .create-box-shadow(@box-shadow);
+		    input[type=text] {
+			height: 15px;
+		    }
+
                 }
                 input[type=checkbox] {
                     margin-left: 1ex;

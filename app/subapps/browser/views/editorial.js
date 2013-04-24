@@ -25,6 +25,19 @@ YUI.add('subapp-browser-editorial', function(Y) {
   ns.EditorialView = Y.Base.create('browser-view-sidebar', Y.View, [
     views.utils.apiFailingView
   ], {
+    // How many of each charm container do we show by default.
+    cutoffs: {
+      sidebar: {
+        featured: 1,
+        popular: 2,
+        'new': 2
+      },
+      fullscreen: {
+        featured: 10,
+        popular: 10,
+        'new': 10
+      }
+    },
     template: views.Templates.editorial,
 
     events: {
@@ -42,23 +55,45 @@ YUI.add('subapp-browser-editorial', function(Y) {
 
      */
     _handleCharmSelection: function(ev) {
+      ev.halt();
       var charm = ev.currentTarget;
       var charmID = charm.getData('charmid');
 
-      this.fire('viewNavigate', {
-        change: {
-          charmID: charmID
-        }
-      });
+      // Update the UI for the active one.
+      this._updateActive(ev.currentTarget);
+      var change = {
+        charmID: charmID
+      };
+
+      if (this.get('isFullscreen')) {
+        change.viewmode = 'fullscreen';
+      } else {
+        change.viewmode = 'sidebar';
+      }
+
+      this.fire('viewNavigate', {change: change});
+    },
+
+    /**
+      Update the node in the editorial list marked as 'active'.
+
+      @method _updateActive
+      @param {Node} clickTarget the charm-token clicked on to activate.
+
+    */
+    _updateActive: function(clickTarget) {
+      // Remove the active class from any nodes that have it.
+      Y.all('.yui3-charmtoken.active').removeClass('active');
+
+      // Add it to the current node.
+      clickTarget.ancestor('.yui3-charmtoken').addClass('active');
     },
 
     /**
      * Generates a message to the user based on a bad api call.
-     *
      * @method apiFailure
      * @param {Object} data the json decoded response text.
      * @param {Object} request the original io_request object for debugging.
-     *
      */
     apiFailure: function(data, request) {
       this._apiFailure(data, request, 'Failed to load sidebar content.');
@@ -93,13 +128,19 @@ YUI.add('subapp-browser-editorial', function(Y) {
       // display.
       this.get('store').interesting({
         'success': function(data) {
+          var cutoffs;
           // Add featured charms
           var featuredCharms = this.get('store').resultsToCharmlist(
               data.result.featured);
           var featuredContainer = tplNode.one('.featured');
+          if (this.get('isFullscreen')) {
+            cutoffs = this.cutoffs.fullscreen;
+          } else {
+            cutoffs = this.cutoffs.sidebar;
+          }
           var featuredCharmContainer = new widgets.browser.CharmContainer({
             name: 'Featured Charms',
-            cutoff: 1,
+            cutoff: cutoffs.featured,
             children: featuredCharms.map(function(charm) {
               return charm.getAttrs(); })
           });
@@ -111,7 +152,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var popularContainer = tplNode.one('.popular');
           var popularCharmContainer = new widgets.browser.CharmContainer({
             name: 'Popular Charms',
-            cutoff: 2,
+            cutoff: cutoffs.popular,
             children: popularCharms.map(function(charm) {
               return charm.getAttrs(); })
           });
@@ -123,7 +164,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
               data.result['new']);
           var newCharmContainer = new widgets.browser.CharmContainer({
             name: 'New Charms',
-            cutoff: 2,
+            cutoff: cutoffs['new'],
             children: newCharms.map(function(charm) {
               return charm.getAttrs(); })
           });
@@ -143,6 +184,14 @@ YUI.add('subapp-browser-editorial', function(Y) {
             newCharmContainer,
             popularCharmContainer
           ];
+
+          // Set the active charm if available.
+          var active = this.get('activeID');
+          if (active) {
+            this._updateActive(
+                container.one('.charm-token[data-charmid="' + active + '"]')
+            );
+          }
         },
 
         'failure': this.apiFailure
@@ -165,6 +214,18 @@ YUI.add('subapp-browser-editorial', function(Y) {
     }
   }, {
     ATTRS: {
+      /**
+       * The charm id to start out selected as active.
+       *
+       * @attribute setActive
+       * @default undefined
+       * @type {String}
+       *
+       */
+      activeID: {
+
+      },
+
       /**
        * Is this rendering of the editorial view for fullscreen or sidebar
        * purposes?

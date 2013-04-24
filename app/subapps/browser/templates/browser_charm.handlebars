@@ -1,7 +1,10 @@
 <div class="charm yui3-g">
     <div class="content yui3-u-{{#if isFullscreen}}5-6{{else}}1{{/if}}">
         <div class="nav">
-            <a href="" class="back">{{#if isFullscreen}}Back{{else}}Close{{/if}}</a>
+            <a href="" class="back">
+                <img src="/juju-ui/assets/images/browser_back_button_arrow.png"
+                    alt="<" />Back
+            </a>
             <a href="" class="add">Add</a>
             <a href="" class="share">
                 <img src="/juju-ui/assets/images/share_icon.jpg" alt="Share" />
@@ -11,7 +14,7 @@
         <div class="heading yui3-g">
             <div class="yui3-u">
                 {{#if icon }}
-                    <img src="data:image/svg;base64,{{ icon }}" alt="{{ name }} icon">
+                    <img src="data:image/svg+xml;base64,{{ icon }}" alt="{{ name }} icon">
                 {{else}}
                    <div class="charm-icon"></div>
                 {{/if}}
@@ -215,13 +218,12 @@
                         to view its code.
                     </p>
                     <select>
-                        <option>--</option>
+                        <option>Select --</option>
                         {{#each files}}
                             <option value="{{ . }}">{{ . }}</option>
                         {{/each}}
                     </select>
                     <div class="filecontent">
-                        Select a file from the list to view.
                     </div>
                 </div>
             </div>
