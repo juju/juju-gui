@@ -362,8 +362,8 @@ YUI.add('juju-gui', function(Y) {
       // Handlers for adding and removing services to the service list.
       this.endpointsController = new juju.EndpointsController({
         env: this.env,
-        db: this.db,
-        loadService: Y.bind(this.loadService, this)});
+        db: this.db
+      });
       this.endpointsController.bind();
 
       // When the connection resets, reset the db, re-login (a delta will
@@ -373,9 +373,8 @@ YUI.add('juju-gui', function(Y) {
           this.db.reset();
           this.env.userIsAuthenticated = false;
           // Do not attempt environment login without credentials.
-          var user = this.env.get('user');
-          var password = this.env.get('password');
-          if (Y.Lang.isValue(user) && Y.Lang.isValue(password)) {
+          var credentials = this.env.getCredentials();
+          if (credentials && credentials.areAvailable) {
             this.env.login();
           }
           this.dispatch();
@@ -498,7 +497,6 @@ YUI.add('juju-gui', function(Y) {
         // Once the unit is loaded we need to get the full details of the
         // service.  Otherwise the relations data will not be available.
         var service = this.db.services.getById(unit.service);
-        this._prefetch_service(service);
       }
       this.showView(
           'unit',
@@ -514,46 +512,17 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-     * @method _prefetch_service
-     * @private
-     */
-    _prefetch_service: function(service) {
-      // Only prefetch once. We redispatch to the service view
-      // after we have status.
-      if (!service || service.get('prefetch')) { return; }
-      service.set('prefetch', true);
-
-      // Prefetch service details for service subviews.
-      if (Y.Lang.isValue(service)) {
-        if (!service.get('loaded')) {
-          this.env.get_service(
-              service.get('id'), Y.bind(this.loadService, this));
-        }
-        var charm_id = service.get('charm'),
-            self = this;
-        if (!Y.Lang.isValue(this.db.charms.getById(charm_id))) {
-          this.db.charms.add({id: charm_id}).load(this.env,
-              // If views are bound to the charm model, firing "update" is
-              // unnecessary, and potentially even mildly harmful.
-              function(err, result) { self.db.fire('update'); });
-        }
-      }
-    },
-
-    /**
      * @method _buildServiceView
      * @private
      */
     _buildServiceView: function(req, viewName) {
       var service = this.db.services.getById(req.params.id);
-      this._prefetch_service(service);
       this.showView(viewName, {
         model: service,
         db: this.db,
         env: this.env,
         landscape: this.landscape,
         getModelURL: Y.bind(this.getModelURL, this),
-        loadService: Y.bind(this.loadService, this),
         nsRouter: this.nsRouter,
         querystring: req.query
       }, {}, function(view) {
@@ -700,32 +669,32 @@ YUI.add('juju-gui', function(Y) {
         return;
       }
       var credentials = this.env.getCredentials();
-      if (credentials) {
-        if (!credentials.areAvailable) {
-          // If there are no stored credentials, the user is prompted for some.
-          this.show_login();
-        } else if (!this.env.userIsAuthenticated) {
-          // If there are credentials available and there has not been
-          // a successful login attempt, try to log in.
-          this.env.login();
-          return;
-        }
-      // After re-arranging the execution order of our routes to support the new
-      // :gui: namespace we were unable to log out on prod build in Ubuntu
+      // After re-arranging the execution order of our routes to support the
+      // new :gui: namespace we were unable to log out on prod build in Ubuntu
       // chrome. It appeared to be because credentials was null so the log in
       // form was never shown - this handles that edge case.
-      } else {
+      var noCredentials = !(credentials && credentials.areAvailable);
+      if (noCredentials) {
+        // If there are no stored credentials, the user is prompted for some.
         this.show_login();
       }
-      // If there has not been a successful login attempt and there are no
-      // credentials, do not let the route dispatch proceed.
       if (!this.env.userIsAuthenticated) {
-        if (this.loggingOut) {
+        // If there has not been a successful login attempt, do not let the
+        // route dispatch proceed.
+        if (noCredentials && this.loggingOut) {
+          // Handle logging out.
           this.loggingOut = false;
           this.showRootView();
         }
+        // At this point, there can be credentials available, but there has not
+        // been a successful login attempt. Assuming this can happen only
+        // at the beginning of the auth process, and that the auth process
+        // always starts right after the environment is connected, we can just
+        // return here, because the connectedChange subscriber should take
+        // care of performing a login attempt.
         return;
       }
+      // The route dispatch can proceed if the user is authenticated.
       next();
     },
 
@@ -823,7 +792,6 @@ YUI.add('juju-gui', function(Y) {
           options = {
             getModelURL: Y.bind(this.getModelURL, this),
             nsRouter: this.nsRouter,
-            loadService: Y.bind(this.loadService, this),
             landscape: this.landscape,
             endpointsController: this.endpointsController,
             db: this.db,
@@ -841,38 +809,6 @@ YUI.add('juju-gui', function(Y) {
         render: true
       });
       next();
-    },
-
-    /**
-     * Model interactions -> move to db layer
-     *
-     * @method loadService
-     */
-    loadService: function(evt) {
-      if (evt.err) {
-        this.db.notifications.add(
-            new models.Notification({
-              title: 'Error loading service',
-              message: 'Service name: ' + evt.service_name,
-              level: 'error'
-            })
-        );
-        return;
-      }
-      var svc_data = evt.result;
-      var svc = this.db.services.getById(evt.service_name);
-      if (!svc) {
-        console.warn('Could not load service data for',
-            evt.service_name, evt);
-        return;
-      }
-      // We intentionally ignore svc_data.rels.  We rely on the delta stream
-      // for relation data instead.
-      svc.setAttrs({'config': svc_data.config,
-        'constraints': svc_data.constraints,
-        'loaded': true,
-        'prefetch': false});
-      this.dispatch();
     },
 
     /**

@@ -38,7 +38,7 @@ describe('charm token', function() {
     charm.render(charm_container);
     var metadata = Y.one('.metadata');
     assert.equal(
-        ' 1 commit, 3 downloads ',
+        ' 3 downloads, 1 commit ',
         metadata.get('text').replace(/\s+/g, ' '));
     charm.get('boundingBox').getAttribute('id').should.not.eql('test');
   });

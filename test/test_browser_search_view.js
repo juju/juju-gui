@@ -12,6 +12,7 @@ describe('search view', function() {
         'json',
         'juju-charm-store',
         'node',
+        'node-event-simulate',
         'subapp-browser-searchview',
         function(Y) {
           done();
@@ -75,4 +76,27 @@ describe('search view', function() {
     view.render();
     assert.equal('charms?text=', apiURL);
   });
+
+  it('clicking a charm navigates for fullscreen', function(done) {
+    view.render();
+    view.on('viewNavigate', function(ev) {
+      ev.halt();
+      assert(ev.change.charmID === 'foo/bar-2');
+      done();
+    });
+
+    container.one('.charm-token').simulate('click');
+  });
+
+  it('clicking a charm navigates for sidebar', function(done) {
+    view.render();
+    view.on('viewNavigate', function(ev) {
+      ev.halt();
+      assert(ev.change.charmID === 'foo/bar-2');
+      done();
+    });
+
+    container.one('.charm-token').simulate('click');
+  });
+
 });
