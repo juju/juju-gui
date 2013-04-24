@@ -776,7 +776,7 @@
       db = new models.Database();
       var charmConfig = {
         options: {
-          a_bool: {name: 'bob', type: 'boolean', 'default': 'on'},
+          a_bool: {name: 'bob', type: 'boolean', 'default': true},
           an_int: {type: 'int', 'default': 10},
           a_float: {type: 'float', 'default': 1.0},
           a_string: {type: 'string', 'default': 'howdy'},

@@ -508,7 +508,7 @@ describe('utilities', function() {
         an_entry: {
           type: 'boolean',
           name: 'present',
-          'default': 'something'
+          'default': true
         }
       };
 
