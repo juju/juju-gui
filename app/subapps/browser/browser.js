@@ -195,7 +195,7 @@ YUI.add('subapp-browser', function(Y) {
      * be.
      *
      * @method _updateState
-     * @param {Object} req the request payload
+     * @param {Object} req the request payload.
      *
      */
     _updateState: function(req) {
