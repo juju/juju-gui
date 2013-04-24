@@ -137,7 +137,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
                 env = this.get('env');
 
             if (!service.get('loaded')) {
-            // Call get_service to reload the service and get the full config.
+              // Call get_service to reload the service and get the full config.
               env.get_service(
                   service.get('id'), Y.bind(this.loadService, this));
             }
@@ -157,12 +157,20 @@ YUI.add('juju-endpoints-controller', function(Y) {
           }
         },
 
+        /**
+          Callback from handlerServiceEvent get_service() call which handles
+          setting the missing service attrs after a service has been added
+          to the environment.
+
+          @method loadService
+          @param {Object} e event object returned from env.get_service().
+        */
         loadService: function(e) {
           var db = this.get('db');
 
           if (e.err) {
             db.notifications.add(
-                new models.Notification({
+                new Y.juju.models.Notification({
                   title: 'Error loading service',
                   message: 'Service name: ' + e.service_name,
                   level: 'error'
