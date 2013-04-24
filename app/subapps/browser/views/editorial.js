@@ -60,16 +60,13 @@ YUI.add('subapp-browser-editorial', function(Y) {
       var charmID = charm.getData('charmid');
 
       // Update the UI for the active one.
-      this._updateActive(ev.currentTarget);
+      if (!this.get('isFullscreen')) {
+        this._updateActive(ev.currentTarget);
+      }
+
       var change = {
         charmID: charmID
       };
-
-      if (this.get('isFullscreen')) {
-        change.viewmode = 'fullscreen';
-      } else {
-        change.viewmode = 'sidebar';
-      }
 
       this.fire('viewNavigate', {change: change});
     },

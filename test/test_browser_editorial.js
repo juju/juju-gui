@@ -106,7 +106,6 @@
 
       view.on('viewNavigate', function(ev) {
         ev.halt();
-        assert(ev.change.viewmode === 'fullscreen');
         assert(ev.change.charmID === 'precise/ceph-7');
         done();
       });
@@ -134,7 +133,6 @@
 
       view.on('viewNavigate', function(ev) {
         ev.halt();
-        assert(ev.change.viewmode === 'sidebar');
         assert(ev.change.charmID === 'precise/ceph-7');
         done();
       });
