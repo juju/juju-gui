@@ -493,6 +493,124 @@ describe('utilities', function() {
 })();
 
 (function() {
+  describe('utils.extractServiceSettings', function() {
+    var utils, Y;
+
+    before(function(done) {
+      Y = YUI(GlobalConfig).use('juju-views', function(Y) {
+        utils = Y.namespace('juju.views.utils');
+        done();
+      });
+    });
+
+    it('should identify booleans with default', function() {
+      var schema = {
+        a_bool: {
+          type: 'boolean',
+          name: 'present',
+          'default': 'something'
+        }
+      };
+
+      var settings = utils.extractServiceSettings(schema);
+      assert.isTrue(settings[0].isBool);
+      assert.equal('checked', settings[0].value);
+    });
+
+    it('should identify booleans without default', function() {
+      var schema = {
+        a_bool: {
+          type: 'boolean',
+          name: 'present'
+        }
+      };
+
+      var settings = utils.extractServiceSettings(schema);
+      assert.isTrue(settings[0].isBool);
+      assert.equal('', settings[0].value);
+    });
+
+    it('should identify text input with simple default', function() {
+      var schema = {
+        a_bool: {
+          type: 'string',
+          name: 'thing',
+          'default': 'something'
+        }
+      };
+
+      var settings = utils.extractServiceSettings(schema);
+      assert.isUndefined(settings[0].isBool);
+      assert.equal('something', settings[0].value);
+      assert.isFalse(settings[0].isMultiLine);
+    });
+
+    it('should identify text input with two line default', function() {
+      var schema = {
+        a_bool: {
+          type: 'string',
+          name: 'thing',
+          'default': 'something\nmore'
+        }
+      };
+
+      var settings = utils.extractServiceSettings(schema);
+      assert.isUndefined(settings[0].isBool);
+      assert.equal('something\nmore', settings[0].value);
+      assert.isTrue(settings[0].isMultiLine);
+      assert.equal(2, settings[0].rows);
+    });
+
+    it('should identify text input with multi-line default', function() {
+      var schema = {
+        a_bool: {
+          type: 'string',
+          name: 'thing',
+          'default': 'something\neven\nmore'
+        }
+      };
+
+      var settings = utils.extractServiceSettings(schema);
+      assert.isUndefined(settings[0].isBool);
+      assert.equal('something\neven\nmore', settings[0].value);
+      assert.isTrue(settings[0].isMultiLine);
+      assert.equal(3, settings[0].rows);
+    });
+
+    it('should identify ints', function() {
+      var schema = {
+        a_bool: {
+          type: 'int',
+          name: 'thing',
+          'default': 100
+        }
+      };
+
+      var settings = utils.extractServiceSettings(schema);
+      assert.isUndefined(settings[0].isBool);
+      assert.equal(100, settings[0].value);
+      assert.isUndefined(settings[0].isMultiLine);
+    });
+
+    it('should identify floats', function() {
+      var schema = {
+        a_bool: {
+          type: 'float',
+          name: 'thing',
+          'default': 10.0
+        }
+      };
+
+      var settings = utils.extractServiceSettings(schema);
+      assert.isUndefined(settings[0].isBool);
+      assert.equal(10.0, settings[0].value);
+      assert.isUndefined(settings[0].isMultiLine);
+    });
+
+  });
+})();
+
+(function() {
   describe('utils.isGuiCharmUrl', function() {
 
     var utils, Y;
