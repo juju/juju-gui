@@ -468,6 +468,66 @@
       assert.deepEqual(hits, expected);
     });
 
+    it('changing the query string dispatches correctly', function() {
+      var req = {
+        path: '/bws/fullscreen/search/',
+        params: {
+          viewmode: 'fullscreen'
+        },
+        query: {
+          text: 'test'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Reset the hits and we should not redraw anything to update the view.
+      resetHits();
+      req.query.text = 'test2';
+
+      var expected = Y.merge(hits, {
+        renderSearchResults: true
+      });
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('no change to query string does not redraw', function() {
+      var req = {
+        path: '/bws/fullscreen/search/',
+        params: {
+          viewmode: 'fullscreen'
+        },
+        query: {
+          text: 'test'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Reset the hits and we should not redraw anything to update the view.
+      resetHits();
+
+      var expected = Y.merge(hits);
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('no querystring still searched', function() {
+      var req = {
+        path: '/bws/fullscreen/search/',
+        params: {
+          viewmode: 'fullscreen'
+        }
+      };
+
+      var expected = Y.merge(hits, {
+        fullscreen: true,
+        renderSearchResults: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
   });
 })();
 

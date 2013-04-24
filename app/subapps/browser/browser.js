@@ -92,9 +92,10 @@ YUI.add('subapp-browser', function(Y) {
      */
     _initState: function() {
       this._oldState = {
-        viewmode: null,
+        charmID: null,
+        querystring: null,
         search: null,
-        charmID: null
+        viewmode: null
       };
       this._viewState = Y.merge(this._oldState, {});
     },
@@ -151,7 +152,8 @@ YUI.add('subapp-browser', function(Y) {
           (
            this._hasStateChanged('search') ||
            this._hasStateChanged('viewmode') ||
-           this._hasStateChanged('querystring')
+           this._hasStateChanged('querystring') ||
+           (this._hasStateChanged('charmID') && !this._viewState.charmID)
           )
       ) {
         return true;
@@ -206,7 +208,9 @@ YUI.add('subapp-browser', function(Y) {
 
       // Check for a charm id in the request.
       if (params.id && params.id !== 'search') {
-        this._viewState.charmID = params.id;
+        // Make sure we clear out any accidental matching of search/ in the
+        // url.
+        this._viewState.charmID = params.id.replace(/^search\//, '');
       } else {
         this._viewState.charmID = null;
       }
@@ -218,11 +222,13 @@ YUI.add('subapp-browser', function(Y) {
         this._viewState.search = false;
       }
 
-      // Check for a querystring
-      if (req.query) {
-        this._viewState.querystring = Y.QueryString.stringify(req.query);
+      // Check if there's a query string to set.
+      if (query) {
+        // Store it as a straight string.
+        this._viewState.querystring = Y.QueryString.stringify(query);
+      } else {
+        this._viewState.querystring = null;
       }
-
     },
 
     /**
@@ -287,7 +293,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     renderCharmDetails: function(req, res, next) {
-      var charmID = req.params.id;
+      var charmID = this._viewState.charmID;
       var extraCfg = {
         charmID: charmID,
         container: Y.Node.create('<div class="charmview"/>'),
@@ -411,6 +417,20 @@ YUI.add('subapp-browser', function(Y) {
         this._fullscreen = this.showView('fullscreen', this._getViewCfg());
       }
 
+      // Regardless of the results below we need to clear out the old
+      // subviews.
+      if (this._editorial) {
+        this._editorial.destroy();
+      }
+
+      if (this._details) {
+        this._details.destroy();
+      }
+
+      if (this._search) {
+        this._search.destroy();
+      }
+
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
       if (this._shouldShowCharm()) {
@@ -423,6 +443,9 @@ YUI.add('subapp-browser', function(Y) {
         // Render search results if search is in the url and the viewmode or
         // the search has been changed in the state.
         this.renderSearchResults(req, res, next);
+      } else if (!this._viewState.search && !this._viewState.charmID) {
+        // Render the editorial in fullscreen only if we don't have a charmid
+        this.renderEditorial(req, res, next);
       }
 
       // Sync that the state has changed.
@@ -449,10 +472,20 @@ YUI.add('subapp-browser', function(Y) {
       // Render search results if search is in the url and the viewmode or the
       // search has been changed in the state.
       if (this._shouldShowSearch()) {
+        // Showing search implies that other sidebar content is destroyed.
+        if (this._editorial) {
+          this._editorial.destroy();
+        }
+
         this.renderSearchResults(req, res, next);
       }
 
       if (this._shouldShowEditorial()) {
+        // Showing editorial implies that other sidebar content is destroyed.
+        if (this._search) {
+          this._search.destroy();
+        }
+
         this.renderEditorial(req, res, next);
       }
 
@@ -463,7 +496,7 @@ YUI.add('subapp-browser', function(Y) {
         this.renderCharmDetails(req, res, next);
       }
 
-      // If the sidebar is the final part of the route, then hide the div for
+      // If no details in the route then hide the div for
       // viewing the charm details.
       if (!this._viewState.charmID) {
         this._detailsVisible(false);
