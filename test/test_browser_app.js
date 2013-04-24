@@ -163,7 +163,7 @@
 
   });
 
-  describe('browser subapp display tree', function() {
+  describe.only('browser subapp display tree', function() {
     var Y, browser, hits, ns, resetHits;
 
     before(function(done) {
@@ -468,8 +468,37 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('need to add tests for search related urls fullscreen/etc querystring', function() {
-        assert(false);
+    it('changing the query string dispatches correctly', function() {
+      var req = {
+        path: '/bws/fullscreen/search/',
+        params: {
+          viewmode: 'fullscreen'
+        },
+        query: {
+          text: 'test'
+        }
+      };
+      browser.routeView(req, undefined, function() {});
+
+      // Reset the hits and we should not redraw anything to update the view.
+      resetHits();
+      req = {
+        path: '/bws/fullscreen/search/',
+        params: {
+          viewmode: 'fullscreen'
+          id: 'charm/id'
+        },
+        query: {
+          text: 'test2'
+        }
+      };
+
+      var expected = Y.merge(hits, {
+        fullscreen: true,
+        renderSearchResults: true
+      });
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
     });
 
   });
