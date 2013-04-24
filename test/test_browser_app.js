@@ -511,7 +511,7 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('no querystring still searched', function() {
+    it('handles searches with no querystring', function() {
       var req = {
         path: '/bws/fullscreen/search/',
         params: {
