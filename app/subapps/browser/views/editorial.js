@@ -33,9 +33,9 @@ YUI.add('subapp-browser-editorial', function(Y) {
         'new': 2
       },
       fullscreen: {
-        featured: 10,
-        popular: 10,
-        'new': 10
+        featured: 6,
+        popular: 3,
+        'new': 3
       }
     },
     template: views.Templates.editorial,
