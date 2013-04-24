@@ -379,8 +379,8 @@ YUI.add('subapp-browser', function(Y) {
       var container = this.get('container'),
           extraCfg = {},
           query;
-      if (req.query) {
-        query = req.query;
+      if (this._viewState.querystring) {
+        query = Y.QueryString.parse(this._viewState.querystring);
       } else {
         // If there's no querystring, we need a default "empty" search.
         query = {text: ''};
@@ -436,9 +436,6 @@ YUI.add('subapp-browser', function(Y) {
       if (this._shouldShowCharm()) {
         this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
-      } else if (!this._viewState.charmID) {
-        // Render the editorial in fullscreen only if we don't have a charmid
-        this.renderEditorial(req, res, next);
       } else if (this._shouldShowSearch()) {
         // Render search results if search is in the url and the viewmode or
         // the search has been changed in the state.
