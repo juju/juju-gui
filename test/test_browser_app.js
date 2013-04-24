@@ -68,7 +68,7 @@
   };
 
   describe('browser sidebar view', function() {
-    var Y, browser, view, views, sampleData, Sidebar;
+    var Y, browser, view, views, Sidebar;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -80,7 +80,6 @@
             browser = Y.namespace('juju.browser');
             views = Y.namespace('juju.browser.views');
             Sidebar = views.Sidebar;
-            sampleData = Y.io('data/sidebar_editorial.json', {sync: true});
             done();
           });
     });
@@ -136,7 +135,7 @@
 
 (function() {
   describe('browser app', function() {
-    var Y, browser;
+    var Y, app, browser;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -149,8 +148,14 @@
           });
     });
 
+    afterEach(function() {
+      if (app) {
+        app.destroy();
+      }
+    });
+
     it('verify that route callables exist', function() {
-      var app = new browser.Browser();
+      app = new browser.Browser();
       Y.each(app.get('routes'), function(route) {
         assert.isTrue(typeof app[route.callback] === 'function');
       });

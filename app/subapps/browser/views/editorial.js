@@ -25,6 +25,19 @@ YUI.add('subapp-browser-editorial', function(Y) {
   ns.EditorialView = Y.Base.create('browser-view-sidebar', Y.View, [
     views.utils.apiFailingView
   ], {
+    // How many of each charm container do we show by default.
+    cutoffs: {
+      sidebar: {
+        featured: 1,
+        popular: 2,
+        'new': 2
+      },
+      fullscreen: {
+        featured: 10,
+        popular: 10,
+        'new': 10
+      }
+    },
     template: views.Templates.editorial,
 
     events: {
@@ -42,16 +55,23 @@ YUI.add('subapp-browser-editorial', function(Y) {
 
      */
     _handleCharmSelection: function(ev) {
+      ev.halt();
       var charm = ev.currentTarget;
       var charmID = charm.getData('charmid');
 
       // Update the UI for the active one.
       this._updateActive(ev.currentTarget);
-      this.fire('viewNavigate', {
-        change: {
-          charmID: charmID
-        }
-      });
+      var change = {
+        charmID: charmID
+      };
+
+      if (this.get('isFullscreen')) {
+        change.viewmode = 'fullscreen';
+      } else {
+        change.viewmode = 'sidebar';
+      }
+
+      this.fire('viewNavigate', {change: change});
     },
 
     /**
@@ -108,13 +128,19 @@ YUI.add('subapp-browser-editorial', function(Y) {
       // display.
       this.get('store').interesting({
         'success': function(data) {
+          var cutoffs;
           // Add featured charms
           var featuredCharms = this.get('store').resultsToCharmlist(
               data.result.featured);
           var featuredContainer = tplNode.one('.featured');
+          if (this.get('isFullscreen')) {
+            cutoffs = this.cutoffs.fullscreen;
+          } else {
+            cutoffs = this.cutoffs.sidebar;
+          }
           var featuredCharmContainer = new widgets.browser.CharmContainer({
             name: 'Featured Charms',
-            cutoff: 1,
+            cutoff: cutoffs.featured,
             children: featuredCharms.map(function(charm) {
               return charm.getAttrs(); })
           });
@@ -126,7 +152,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var popularContainer = tplNode.one('.popular');
           var popularCharmContainer = new widgets.browser.CharmContainer({
             name: 'Popular Charms',
-            cutoff: 2,
+            cutoff: cutoffs.popular,
             children: popularCharms.map(function(charm) {
               return charm.getAttrs(); })
           });
@@ -138,7 +164,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
               data.result['new']);
           var newCharmContainer = new widgets.browser.CharmContainer({
             name: 'New Charms',
-            cutoff: 2,
+            cutoff: cutoffs['new'],
             children: newCharms.map(function(charm) {
               return charm.getAttrs(); })
           });
