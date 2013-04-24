@@ -599,12 +599,12 @@ YUI.add('juju-view-utils', function(Y) {
 
    @method extractServiceSettings
    @param {Object} schema The schema for a charm.
-   @param {Dict} config An optional dict of configuration values for
+   @param {Object} config An optional object of configuration values for
      the service.  If it isn't given, the defaults from the charm are used.
      If the config is passed it must complete in that it contains values for
      all entries in the schema.  The value of entries in the schema that
      are not in the config will be undefined.
-   @return {List} An array of settings for use in the template.
+   @return {Array} An array of settings for use in the template.
    */
   utils.extractServiceSettings = function(schema, config) {
     var settings = [];
