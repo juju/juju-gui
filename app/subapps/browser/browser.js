@@ -379,8 +379,8 @@ YUI.add('subapp-browser', function(Y) {
       var container = this.get('container'),
           extraCfg = {},
           query;
-      if (this._viewState.querystring) {
-        query = Y.QueryString.parse(this._viewState.querystring);
+      if (req.query) {
+        query = req.query;
       } else {
         // If there's no querystring, we need a default "empty" search.
         query = {text: ''};
