@@ -21,11 +21,11 @@ YUI.add('subapp-browser', function(Y) {
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     /**
-        Show or hide the details panel.
-
-        @method _detailsVisible
-        @param {Boolean} visible set the panel to hide or show.
-
+     *  Show or hide the details panel.
+     * 
+     *  @method _detailsVisible
+     *  @param {Boolean} visible set the panel to hide or show.
+     * 
      */
     _detailsVisible: function(visible) {
       var detailsNode = Y.one('.bws-view-data');
@@ -40,12 +40,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-        Given the current subapp state, generate a url to pass up to the
-        routing code to route to.
-
-        @method _getStateUrl
-        @param {Object} change the values to change in the current state.
-
+     *  Given the current subapp state, generate a url to pass up to the
+     *  routing code to route to.
+     * 
+     *  @method _getStateUrl
+     *  @param {Object} change the values to change in the current state.
+     * 
      */
     _getStateUrl: function(change) {
       var urlParts = ['/bws'];
@@ -85,10 +85,10 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-       Create an initial subapp state for later url generation.
-
-       @method _initState
-
+     * Create an initial subapp state for later url generation.
+     *
+     * @method _initState
+     *
      */
     _initState: function() {
       this._oldState = {
@@ -100,12 +100,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      Determine if we should render the charm details based on the current
-      state.
-
-      @return {Boolean} true if should show.
-
-    */
+     * Determine if we should render the charm details based on the current
+     * state.
+     *
+     * @return {Boolean} true if should show.
+     *
+     */
     _shouldShowCharm: function() {
       if (
           this._viewState.charmID &&
@@ -121,12 +121,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-      Determine if we should render the editorial content based on the current
-      state.
-
-      @return {Boolean} true if should show.
-
-    */
+     * Determine if we should render the editorial content based on the current
+     * state.
+     *
+     * @return {Boolean} true if should show.
+     *
+     */
     _shouldShowEditorial: function() {
       if (
           !this._viewState.search &&
@@ -193,12 +193,15 @@ YUI.add('subapp-browser', function(Y) {
        be.
 
        @method _updateState
-       @param {String} path the requested path.
-       @param {Object} params the params from the request payload.
+       @param {Object} req the request payload
 
      */
-    _updateState: function(path, params) {
+    _updateState: function(req) {
       // Update the viewmode. Every request has a viewmode.
+      var path = req.path,
+          params = req.params,
+          query = req.query;
+
       this._viewState.viewmode = params.viewmode;
 
       // Check for a charm id in the request.
@@ -214,6 +217,12 @@ YUI.add('subapp-browser', function(Y) {
       } else {
         this._viewState.search = false;
       }
+
+      // Check for a querystring
+      if (req.query) {
+        this._viewState.querystring = Y.QueryString.stringify(req.query);
+      }
+
     },
 
     /**
@@ -358,9 +367,8 @@ YUI.add('subapp-browser', function(Y) {
       var container = this.get('container'),
           extraCfg = {},
           query;
-      //XXX jcsackett: This should use req, not viewstate
-      if (this._viewState.querystring) {
-        query = Y.QueryString.parse(this._viewState.querystring);
+      if (req.query) {
+        query = req.query;
       } else {
         // If there's no querystring, we need a default "empty" search.
         query = {text: ''};
@@ -402,13 +410,13 @@ YUI.add('subapp-browser', function(Y) {
       if (this._shouldShowCharm()) {
         this._detailsVisible(true);
         this.renderCharmDetails(req, res, next);
+      } else if (!this._viewState.charmID) {
+        // Render the editorial in fullscreen only if we don't have a charmid
+        this.renderEditorial(req, res, next);
       } else if (this._shouldShowSearch()) {
         // Render search results if search is in the url and the viewmode or
         // the search has been changed in the state.
         this.renderSearchResults(req, res, next);
-      } else if (!this._viewState.charmID) {
-        // Render the editorial in fullscreen only if we don't have a charmid
-        this.renderEditorial(req, res, next);
       }
 
       // Sync that the state has changed.
@@ -479,7 +487,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     routeView: function(req, res, next) {
       // Update the state for the rest of things to figure out what to do.
-      this._updateState(req.path, req.params);
+      this._updateState(req);
       this[req.params.viewmode](req, res, next);
     }
 
@@ -568,7 +576,7 @@ YUI.add('subapp-browser', function(Y) {
   requires: [
     'juju-charm-store',
     'juju-models',
-    'querystring-parse',
+    'querystring',
     'sub-app',
     'subapp-browser-charmview',
     'subapp-browser-editorial',
