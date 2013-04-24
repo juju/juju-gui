@@ -211,8 +211,7 @@ function injectData(app, data) {
     });
 
     afterEach(function(done) {
-      container.remove();
-      container.destroy();
+      container.remove().destroy(true);
       sessionStorage.setItem('credentials', null);
       Y.each(destroyMe, function(item) {
         item.destroy();
