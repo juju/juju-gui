@@ -2,30 +2,27 @@
 
 
 /**
- * SubApp for the Browser
- *
- * @module juju
- * @submodule subapps
- *
+   SubApp for the Browser
+
+   @module juju
+   @submodule subapps
  */
 YUI.add('subapp-browser', function(Y) {
   var ns = Y.namespace('juju.subapps'),
       models = Y.namespace('juju.models');
 
   /**
-   * Browser Sub App for the Juju Gui.
-   *
-   * @class Browser
-   * @extends {juju.SubApp}
-   *
+     Browser Sub App for the Juju Gui.
+
+     @class Browser
+     @extends {juju.SubApp}
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     /**
-     *  Show or hide the details panel.
-     *
-     *  @method _detailsVisible
-     *  @param {Boolean} visible set the panel to hide or show.
-     *
+        Show or hide the details panel.
+
+        @method _detailsVisible
+        @param {Boolean} visible set the panel to hide or show.
      */
     _detailsVisible: function(visible) {
       var detailsNode = Y.one('.bws-view-data');
@@ -40,12 +37,11 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     *  Given the current subapp state, generate a url to pass up to the
-     *  routing code to route to.
-     *
-     *  @method _getStateUrl
-     *  @param {Object} change the values to change in the current state.
-     *
+        Given the current subapp state, generate a url to pass up to the
+        routing code to route to.
+
+        @method _getStateUrl
+        @param {Object} change the values to change in the current state.
      */
     _getStateUrl: function(change) {
       var urlParts = ['/bws'];
@@ -70,12 +66,11 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Generate a standard shared set of cfg all Views can expect to see.
-     *
-     * @method _getViewCfg
-     * @param {Object} cfg additional config to merge into the default view
-     * config.
-     *
+       Generate a standard shared set of cfg all Views can expect to see.
+
+       @method _getViewCfg
+       @param {Object} cfg additional config to merge into the default view
+       config.
      */
     _getViewCfg: function(cfg) {
       return Y.merge(cfg, {
@@ -85,10 +80,9 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Create an initial subapp state for later url generation.
-     *
-     * @method _initState
-     *
+       Create an initial subapp state for later url generation.
+
+       @method _initState
      */
     _initState: function() {
       this._oldState = {
@@ -101,11 +95,10 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Determine if we should render the charm details based on the current
-     * state.
-     *
-     * @return {Boolean} true if should show.
-     *
+       Determine if we should render the charm details based on the current
+       state.
+
+       @return {Boolean} true if should show.
      */
     _shouldShowCharm: function() {
       if (
@@ -122,11 +115,10 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Determine if we should render the editorial content based on the current
-     * state.
-     *
-     * @return {Boolean} true if should show.
-     *
+       Determine if we should render the editorial content based on the current
+       state.
+
+       @return {Boolean} true if should show.
      */
     _shouldShowEditorial: function() {
       if (
@@ -140,11 +132,10 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Determine if we should render the search results based on the current
-     * state.
-     *
-     * @return {Boolean} true if should show.
-     *
+       Determine if we should render the search results based on the current
+       state.
+
+       @return {Boolean} true if should show.
      */
     _shouldShowSearch: function() {
       if (
@@ -163,11 +154,10 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Verify that a particular part of the state has changed.
-     *
-     * @method _hasStateChanged
-     * @param {String} field the part of the state to check.
-     *
+       Verify that a particular part of the state has changed.
+
+       @method _hasStateChanged
+       @param {String} field the part of the state to check.
      */
     _hasStateChanged: function(field) {
       if (this._oldState[field] === this._viewState[field]) {
@@ -178,11 +168,10 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Update the oldState with the viewState now that we're done processing
-     * the request.
-     *
-     * @method _saveState
-     *
+       Update the oldState with the viewState now that we're done processing
+       the request.
+
+       @method _saveState
      */
     _saveState: function() {
       this._oldState = Y.merge(
@@ -191,12 +180,11 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Given the params in the route determine what the new state is going to
-     * be.
-     *
-     * @method _updateState
-     * @param {Object} req the request payload.
-     *
+       Given the params in the route determine what the new state is going to
+       be.
+
+       @method _updateState
+       @param {Object} req the request payload.
      */
     _updateState: function(req) {
       // Update the viewmode. Every request has a viewmode.
@@ -232,9 +220,8 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * The available Views run from this sub app.
-     * @attribute views
-     *
+       The available Views run from this sub app.
+       @attribute views
      */
     views: {
       fullscreen: {
@@ -248,10 +235,9 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Cleanup after ourselves on destroy.
-     *
-     * @method destructor
-     *
+       Cleanup after ourselves on destroy.
+
+       @method destructor
      */
     destructor: function() {
       this._cacheCharms.destroy();
@@ -259,11 +245,10 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * General app initializer
-     *
-     * @method initializer
-     * @param {Object} cfg general init config object.
-     *
+       General app initializer
+
+       @method initializer
+       @param {Object} cfg general init config object.
      */
     initializer: function(cfg) {
       // Hold onto charm data so we can pass model instances to other views when
@@ -284,13 +269,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Render the charm details view
-     *
-     * @method renderCharmDetails
-     * @param {Request} req current request object.
-     * @param {Response} res current response object.
-     * @param {function} next callable for the next route in the chain.
-     *
+       Render the charm details view
+
+       @method renderCharmDetails
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
      */
     renderCharmDetails: function(req, res, next) {
       var charmID = this._viewState.charmID;
@@ -320,16 +304,15 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Render editorial content into the parent view when required.
-     *
-     * The parent view is either fullscreen/sidebar which determines how the
-     * editorial content is to be rendered.
-     *
-     * @method renderEditorial
-     * @param {Request} req current request object.
-     * @param {Response} res current response object.
-     * @param {function} next callable for the next route in the chain.
-     *
+       Render editorial content into the parent view when required.
+
+       The parent view is either fullscreen/sidebar which determines how the
+       editorial content is to be rendered.
+
+       @method renderEditorial
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
      */
     renderEditorial: function(req, res, next) {
       // If loading the interesting content then it's not a search going on.
@@ -368,12 +351,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Render search results
-     *
-     * @method renderSearchResults
-     * @param {Request} req current request object.
-     * @param {Response} res current response object.
-     * @param {function} next callable for the next route in the chain.
+       Render search results
+
+       @method renderSearchResults
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
      */
     renderSearchResults: function(req, res, next) {
       var container = this.get('container'),
@@ -400,13 +383,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Render the fullscreen view to the client.
-     *
-     * @method fullscreen
-     * @param {Request} req current request object.
-     * @param {Response} res current response object.
-     * @param {function} next callable for the next route in the chain.
-     *
+       Render the fullscreen view to the client.
+
+       @method fullscreen
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
      */
     fullscreen: function(req, res, next) {
       // If we've switched to viewmode fullscreen, we need to render it.
@@ -451,13 +433,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Handle the route for the sidebar view.
-     *
-     * @method sidebar
-     * @param {Request} req current request object.
-     * @param {Response} res current response object.
-     * @param {function} next callable for the next route in the chain.
-     *
+       Handle the route for the sidebar view.
+
+       @method sidebar
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
      */
     sidebar: function(req, res, next) {
       // If we've switched to viewmode sidebar, we need to render it.
@@ -513,13 +494,12 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
-     * Dispatch to the correct viewmode based on the route that was hit.
-     *
-     * @method routeView
-     * @param {Request} req current request object.
-     * @param {Response} res current response object.
-     * @param {function} next callable for the next route in the chain.
-     *
+       Dispatch to the correct viewmode based on the route that was hit.
+
+       @method routeView
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
      */
     routeView: function(req, res, next) {
       // Update the state for the rest of things to figure out what to do.
@@ -530,30 +510,27 @@ YUI.add('subapp-browser', function(Y) {
   }, {
     ATTRS: {
       /**
-       * @attribute container
-       * @default '#subapp-browser'
-       * @type {String}
-       *
+         @attribute container
+         @default '#subapp-browser'
+         @type {String}
        */
       container: {
         value: '#subapp-browser'
       },
 
       /**
-       * @attribute store
-       * @default Charmworld0
-       * @type {Charmworld0}
-       *
+         @attribute store
+         @default Charmworld0
+         @type {Charmworld0}
        */
       store: {
         /**
-         * We keep one instance of the store and will work on caching results
-         * at the app level so that routes can share api calls. However, in
-         * tests there's no config for talking to the api so we have to watch
-         * out in test runs and allow the store to be broken.
-         *
-         * method store.valueFn
-         *
+           We keep one instance of the store and will work on caching results
+           at the app level so that routes can share api calls. However, in
+           tests there's no config for talking to the api so we have to watch
+           out in test runs and allow the store to be broken.
+
+           method store.valueFn
         */
         valueFn: function() {
           var url = '';
@@ -569,10 +546,9 @@ YUI.add('subapp-browser', function(Y) {
       },
 
       /**
-       * @attribute routes
-       * @default Array of subapp routes.
-       * @type {Array}
-       *
+         @attribute routes
+         @default Array of subapp routes.
+         @type {Array}
        */
       routes: {
         value: [
@@ -585,23 +561,21 @@ YUI.add('subapp-browser', function(Y) {
       },
 
       /**
-       * @attribute urlNamespace
-       * @default 'charmstore'
-       * @type {String}
-       *
+         @attribute urlNamespace
+         @default 'charmstore'
+         @type {String}
        */
       urlNamespace: {
         value: 'charmstore'
       },
 
       /**
-       * The "deploy" function prompts the user for service configuration and
-       * deploys a service.
-       *
-       * @attribute deploy
-       * @default undefined
-       * @type {Function}
-       *
+         The "deploy" function prompts the user for service configuration and
+         deploys a service.
+
+         @attribute deploy
+         @default undefined
+         @type {Function}
        */
       deploy: {}
 
