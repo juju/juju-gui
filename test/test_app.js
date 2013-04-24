@@ -186,10 +186,11 @@ function injectData(app, data) {
 
   describe('Application authentication', function() {
     var ENV_VIEW_NAME, FAKE_VIEW_NAME, LOGIN_VIEW_NAME;
-    var conn, destroyMe, env, juju, utils, Y;
+    var conn, container, destroyMe, env, juju, utils, Y;
+    var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views'];
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
         utils = Y.namespace('juju-tests.utils');
         juju = Y.namespace('juju');
         ENV_VIEW_NAME = 'EnvironmentView';
@@ -200,6 +201,8 @@ function injectData(app, data) {
     });
 
     beforeEach(function(done) {
+      container = Y.Node.create('<div/>').hide();
+      Y.one('body').append(container);
       conn = new utils.SocketStub();
       env = juju.newEnvironment({conn: conn});
       env.setCredentials({user: 'user', password: 'password'});
@@ -207,7 +210,9 @@ function injectData(app, data) {
       done();
     });
 
-    afterEach(function(done)  {
+    afterEach(function(done) {
+      container.remove();
+      container.destroy();
       sessionStorage.setItem('credentials', null);
       Y.each(destroyMe, function(item) {
         item.destroy();
@@ -217,7 +222,7 @@ function injectData(app, data) {
 
     // Create and return a new app. If connect is True, also connect the env.
     var makeApp = function(connect) {
-      var app = new Y.juju.App({env: env});
+      var app = new Y.juju.App({env: env, viewContainer: container});
       var fakeView = new Y.View();
       fakeView.name = FAKE_VIEW_NAME;
       app.showView(fakeView);
@@ -228,38 +233,34 @@ function injectData(app, data) {
       return app;
     };
 
-    it('should avoid trying to login if the env is not connected',
-       function(done) {
-         var app = makeApp(false); // Create a disconnected app.
-         app.after('ready', function() {
-           assert.equal(0, conn.messages.length);
-           assert.equal(FAKE_VIEW_NAME, app.get('activeView').name);
-           done();
-         });
-       });
+    it('avoids trying to login if the env is not connected', function(done) {
+      var app = makeApp(false); // Create a disconnected app.
+      app.after('ready', function() {
+        assert.equal(0, conn.messages.length);
+        assert.equal(FAKE_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
 
-    it('should try to login if the env connection is established',
-       function(done) {
-         var app = makeApp(true); // Create a connected app.
-         app.after('ready', function() {
-           assert.equal(1, conn.messages.length);
-           assert.equal('login', conn.last_message().op);
-           assert.equal(FAKE_VIEW_NAME, app.get('activeView').name);
-           done();
-         });
-       });
+    it('tries to login if the env connection is established', function(done) {
+      var app = makeApp(true); // Create a connected app.
+      app.after('ready', function() {
+        assert.equal(1, conn.messages.length);
+        assert.equal('login', conn.last_message().op);
+        assert.equal(FAKE_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
 
-    it('should not try to login if user and password are not provided',
-       function(done) {
-         env.setCredentials(null);
-         var app = makeApp(true); // Create a connected app.
-         app.after('ready', function() {
-           assert.equal(0, conn.messages.length);
-           // The active view is the login page.
-           assert.equal(LOGIN_VIEW_NAME, app.get('activeView').name);
-           done();
-         });
-       });
+    it('avoids trying to login without credentials', function(done) {
+      env.setCredentials(null);
+      var app = makeApp(true); // Create a connected app.
+      app.after('ready', function() {
+        assert.equal(0, conn.messages.length);
+        assert.equal(LOGIN_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
 
     it('displays the login view if credentials are not valid', function(done) {
       var app = makeApp(true); // Create a connected app.
@@ -268,7 +269,6 @@ function injectData(app, data) {
         conn.msg({op: 'login', result: false});
         assert.equal(1, conn.messages.length);
         assert.equal('login', conn.last_message().op);
-        // The active view is the login page.
         assert.equal(LOGIN_VIEW_NAME, app.get('activeView').name);
         done();
       });
@@ -281,7 +281,6 @@ function injectData(app, data) {
         conn.msg({op: 'login', result: true});
         assert.equal(1, conn.messages.length);
         assert.equal('login', conn.last_message().op);
-        // The active view is the topology.
         assert.equal(ENV_VIEW_NAME, app.get('activeView').name);
         done();
       });
