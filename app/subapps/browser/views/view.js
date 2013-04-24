@@ -131,15 +131,12 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _toggleBrowser: function(ev) {
       ev.halt();
-      var sidebar = Y.one('.charmbrowser');
 
-      if (this.visible) {
-        sidebar.hide();
-        this.visible = false;
-      } else {
-        sidebar.show();
-        this.visible = true;
-      }
+      this.fire('viewNavigate', {
+        change: {
+          viewmode: 'minimized'
+        }
+      });
     },
 
     /**
