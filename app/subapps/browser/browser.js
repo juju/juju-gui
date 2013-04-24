@@ -466,10 +466,10 @@ YUI.add('subapp-browser', function(Y) {
       // Render search results if search is in the url and the viewmode or the
       // search has been changed in the state.
       if (this._shouldShowSearch()) {
-          // Showing search implies that other sidebar content is destroyed.
-          if (this._editorial) {
-            this._editorial.destroy();
-          }
+        // Showing search implies that other sidebar content is destroyed.
+        if (this._editorial) {
+          this._editorial.destroy();
+        }
 
         this.renderSearchResults(req, res, next);
       }
