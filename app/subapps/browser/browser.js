@@ -474,7 +474,7 @@ YUI.add('subapp-browser', function(Y) {
         this.renderCharmDetails(req, res, next);
       }
 
-      // If no details in the route then hide the div for
+      // If there are no details in the route then hide the div for
       // viewing the charm details.
       if (!this._viewState.charmID) {
         this._detailsVisible(false);
