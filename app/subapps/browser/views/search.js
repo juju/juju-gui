@@ -17,7 +17,52 @@ YUI.add('subapp-browser-searchview', function(Y) {
   ns.BrowserSearchView = Y.Base.create('browser-view-searchview', Y.View, [
     views.utils.apiFailingView
   ], {
+    events: {
+      '.charm-token': {
+        click: '_handleCharmSelection'
+      }
+    },
+
     template: views.Templates.search,
+
+    /**
+        When selecting a charm from the list make sure we re-route the app to
+        the details view with that charm selected.
+
+        @method _handleCharmSelection
+        @param {Event} ev the click event handler for the charm selected.
+
+     */
+    _handleCharmSelection: function(ev) {
+      ev.halt();
+      var charm = ev.currentTarget;
+      var charmID = charm.getData('charmid');
+
+      // Update the UI for the active one.
+      if (!this.get('isFullscreen')) {
+        this._updateActive(ev.currentTarget);
+      }
+      var change = {
+        charmID: charmID
+      };
+      this.fire('viewNavigate', {change: change});
+    },
+
+    /**
+      Update the node in the editorial list marked as 'active'.
+
+      @method _updateActive
+      @param {Node} clickTarget the charm-token clicked on to activate.
+
+    */
+    _updateActive: function(clickTarget) {
+      // Remove the active class from any nodes that have it.
+      Y.all('.yui3-charmtoken.active').removeClass('active');
+
+      // Add it to the current node.
+      clickTarget.ancestor('.yui3-charmtoken').addClass('active');
+    },
+
     /**
      * Renders the search results from the the store query.
      *
@@ -29,6 +74,9 @@ YUI.add('subapp-browser-searchview', function(Y) {
           tpl = this.template({count: results.size()}),
           tplNode = Y.Node.create(tpl),
           container = tplNode.one('.search-results');
+
+      // Set the container so that our events will delegate based off of it.
+      this.set('container', container);
 
       results.map(function(charm) {
         var ct = new widgets.browser.CharmToken(charm.getAttrs());
