@@ -71,7 +71,11 @@
           // Stubbing the server callback value
           params.callback.success({
             response: {
-              results: [sampleData]
+              results: [
+                featured: [],
+                popular: [],
+                'new': []
+              ]
             }
           });
         }

@@ -85,8 +85,13 @@ YUI.add('browser-search-widget', function(Y) {
               'click', this._toggleViewable, this)
       );
       this.addEvent(
-          container.one('.toggle-fullscreen').on(
-              'click', this._toggleFullScreen, this)
+          Y.delegate(
+              'click',
+              this._toggleFullScreen,
+              Y.config.doc,
+              '.toggle-fullscreen',
+              this
+              )
       );
       this.addEvent(
           container.one('form').on(
