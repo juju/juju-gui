@@ -774,13 +774,32 @@
       container = Y.Node.create('<div/>').hide();
       Y.one('#main').append(container);
       db = new models.Database();
-      charm = new models.Charm({id: 'cs:precise/mysql-7', description: 'A DB'});
+      var charmConfig = {
+        options: {
+          a_bool: {name: 'bob', type: 'boolean', 'default': 'on'},
+          an_int: {type: 'int', 'default': 10},
+          a_float: {type: 'float', 'default': 1.0},
+          a_string: {type: 'string', 'default': 'howdy'},
+          some_text: {type: 'string', 'default': 'hidey\nho'}
+        }
+      };
+      charm = new models.Charm({
+        id: 'cs:precise/mysql-7',
+        description: 'A DB',
+        config: charmConfig
+      });
       db.charms.add([charm]);
+      var serviceConfig = {};
+      Y.Object.each(charmConfig.options, function(v,k)
+          {
+            serviceConfig[k] = v['default'];
+          });
       service = new models.Service(
           { id: 'mysql',
             charm: 'cs:precise/mysql-7',
             unit_count: db.units.size(),
             loaded: true,
+            config: serviceConfig,
             exposed: false});
 
       db.services.add([service]);
@@ -823,5 +842,35 @@
       assert.equal(renderData.serviceIsJujuGUI, false);
     });
 
+    it('shows the correct widget types using charm defaults', function() {
+      var renderData = view.gatherRenderData();
+      var settings = renderData.settings;
+
+      assert.equal('a_bool', settings[0].name);
+      assert.isTrue(settings[0].isBool);
+      assert.isUndefined(settings[0].isMultiLine);
+      assert.equal('checked', settings[0].value);
+
+      assert.equal('an_int', settings[1].name);
+      assert.isUndefined(settings[1].isBool);
+      assert.isUndefined(settings[1].isMultiLine);
+      assert.equal(10, settings[1].value);
+
+      assert.equal('a_float', settings[2].name);
+      assert.isUndefined(settings[2].isBool);
+      assert.isUndefined(settings[2].isMultiLine);
+      assert.equal(1.0, settings[2].value);
+
+      assert.equal('a_string', settings[3].name);
+      assert.isUndefined(settings[3].isBool);
+      assert.isFalse(settings[3].isMultiLine);
+      assert.equal('howdy', settings[3].value);
+
+      assert.equal('some_text', settings[4].name);
+      assert.isUndefined(settings[4].isBool);
+      assert.isTrue(settings[4].isMultiLine);
+      assert.equal('hidey\nho', settings[4].value);
+      assert.equal(2, settings[4].rows);
+    });
   });
 })();

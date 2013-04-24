@@ -594,11 +594,30 @@ YUI.add('juju-view-utils', function(Y) {
     return result;
   };
 
-  /*
-   * Given a charm schema, return a template-friendly array describing it.
+  /**
+   Return a template-friendly array of settings.
+
+   @method extractServiceSettings
+   @param {Object} schema The schema for a charm.
+   @param {Dict} config An optional dict of configuration values for
+     the service.  If it isn't given the defaults from the charm are used.
+     If the config is passed it must complete in that it contains values for
+     all entries in the schema.  The value of entries in the schema that
+     are not in the config will be undefined.
+   @return {List} An array of settings for use in the template.
    */
-  utils.extractServiceSettings = function(schema) {
+  utils.extractServiceSettings = function(schema, config) {
     var settings = [];
+
+    if (!config) {
+      // If no separate service config is given, use the defaults from the
+      // schema.
+      config = {};
+      Y.Object.each(schema, function(v,k) {
+        config[k] = v['default'];
+      });
+    }
+
     Y.Object.each(schema, function(field_def, field_name) {
       var entry = {
         'name': field_name
@@ -607,7 +626,7 @@ YUI.add('juju-view-utils', function(Y) {
       if (schema[field_name].type === 'boolean') {
         entry.isBool = true;
 
-        if (schema[field_name]['default']) {
+        if (config[field_name]) {
           // The "checked" string will be used inside an input tag
           // like <input id="id" type="checkbox" checked>
           entry.value = 'checked';
@@ -616,9 +635,9 @@ YUI.add('juju-view-utils', function(Y) {
           entry.value = '';
         }
       } else {
-        var defaultValue = schema[field_name]['default'];
+        var value = config[field_name];
         var numLines = 0;
-        if (defaultValue && defaultValue.split) {
+        if (value && value.split) {
           // XXX: BradCrittenden 2013-04-23 bug=1171980: This isMultiLine flag
           // is a work-around for recognizing configuration fields that need
           // multiline input.  Since Juju does not have a configuration type
@@ -626,11 +645,11 @@ YUI.add('juju-view-utils', function(Y) {
           // is the best we can do.  The referenced bug was filed against
           // juju-core to request a 'text' type, which will make this hack
           // redundant.
-          numLines = defaultValue.split('\n').length;
+          numLines = value.split('\n').length;
           entry.isMultiLine = (numLines > 1);
         }
         entry.rows = numLines;
-        entry.value = defaultValue;
+        entry.value = value;
       }
       settings.push(Y.mix(entry, field_def));
     });

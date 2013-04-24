@@ -505,7 +505,7 @@ describe('utilities', function() {
 
     it('should identify booleans with default', function() {
       var schema = {
-        a_bool: {
+        an_entry: {
           type: 'boolean',
           name: 'present',
           'default': 'something'
@@ -519,7 +519,7 @@ describe('utilities', function() {
 
     it('should identify booleans without default', function() {
       var schema = {
-        a_bool: {
+        an_entry: {
           type: 'boolean',
           name: 'present'
         }
@@ -532,7 +532,7 @@ describe('utilities', function() {
 
     it('should identify text input with simple default', function() {
       var schema = {
-        a_bool: {
+        an_entry: {
           type: 'string',
           name: 'thing',
           'default': 'something'
@@ -547,7 +547,7 @@ describe('utilities', function() {
 
     it('should identify text input with two line default', function() {
       var schema = {
-        a_bool: {
+        an_entry: {
           type: 'string',
           name: 'thing',
           'default': 'something\nmore'
@@ -563,7 +563,7 @@ describe('utilities', function() {
 
     it('should identify text input with multi-line default', function() {
       var schema = {
-        a_bool: {
+        an_entry: {
           type: 'string',
           name: 'thing',
           'default': 'something\neven\nmore'
@@ -579,7 +579,7 @@ describe('utilities', function() {
 
     it('should identify ints', function() {
       var schema = {
-        a_bool: {
+        an_entry: {
           type: 'int',
           name: 'thing',
           'default': 100
@@ -594,7 +594,7 @@ describe('utilities', function() {
 
     it('should identify floats', function() {
       var schema = {
-        a_bool: {
+        an_entry: {
           type: 'float',
           name: 'thing',
           'default': 10.0
@@ -607,6 +607,46 @@ describe('utilities', function() {
       assert.isUndefined(settings[0].isMultiLine);
     });
 
+    it('should use config values if passed', function() {
+      var schema = {
+        a_string: {
+          type: 'string',
+          name: 'thing',
+          'default': 'something\neven\nmore'
+        },
+        another_string: {
+          type: 'string',
+          name: 'thing2',
+          'default': 'schema default'
+        },
+        a_float: {
+          type: 'float',
+          name: 'another thing',
+          'default': 10.0
+        }
+
+      };
+
+      var serviceConfig = {
+        a_string: 'service value',
+        some_other_thing: 'junk',
+        a_float: 3.14159
+      };
+
+      var settings = utils.extractServiceSettings(schema, serviceConfig);
+      assert.isUndefined(settings[0].isBool);
+      assert.equal('service value', settings[0].value);
+      assert.isFalse(settings[0].isMultiLine);
+
+      // The service config value is not complete in that it does not have an
+      // entry for 'another_string'.  As such, the value returned for that
+      // entry is undefined.
+      assert.isUndefined(settings[1].value);
+
+      assert.isUndefined(settings[2].isBool);
+      assert.equal(3.14159, settings[2].value);
+      assert.isUndefined(settings[2].isMultiLine);
+    });
   });
 })();
 
