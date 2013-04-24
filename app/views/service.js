@@ -700,33 +700,10 @@ YUI.add('juju-view-service', function(Y) {
           var getModelURL = this.get('getModelURL');
           var charm_config = charm.get('config');
           var schema = charm_config && charm_config.options;
-          var settings = [];
           var charm_id = service.get('charm');
           var field_def;
 
-          Y.Object.each(schema, function(field_def, field_name) {
-            var entry = {
-              'name': field_name
-            };
-
-            if (schema[field_name].type === 'boolean') {
-              entry.isBool = true;
-
-              if (config[field_name]) {
-                // The "checked" string will be used inside an input tag
-                // like <input id="id" type="checkbox" checked>
-                entry.value = 'checked';
-              } else {
-                // The output will be <input id="id" type="checkbox">
-                entry.value = '';
-              }
-
-            } else {
-              entry.value = config[field_name];
-            }
-
-            settings.push(Y.mix(entry, field_def));
-          });
+          var settings = utils.extractServiceSettings(schema, config);
 
           return {
             viewName: 'config',
