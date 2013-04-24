@@ -373,9 +373,8 @@ YUI.add('juju-gui', function(Y) {
           this.db.reset();
           this.env.userIsAuthenticated = false;
           // Do not attempt environment login without credentials.
-          var user = this.env.get('user');
-          var password = this.env.get('password');
-          if (Y.Lang.isValue(user) && Y.Lang.isValue(password)) {
+          var credentials = this.env.getCredentials();
+          if (credentials && credentials.areAvailable) {
             this.env.login();
           }
           this.dispatch();
@@ -707,7 +706,7 @@ YUI.add('juju-gui', function(Y) {
         } else if (!this.env.userIsAuthenticated) {
           // If there are credentials available and there has not been
           // a successful login attempt, try to log in.
-          this.env.login();
+          // this.env.login();
           return;
         }
       // After re-arranging the execution order of our routes to support the new
