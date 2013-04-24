@@ -13,9 +13,10 @@
             {{ name }}
         </span>
         <span class="metadata">
-                {{ recent_commit_count }} {{pluralize 'commit' recent_commit_count}},
-                {{ recent_download_count }}
-                {{pluralize 'download' recent_download_count}}
+                <strong>{{ recent_download_count }}</strong>
+                {{pluralize 'download' recent_download_count}},
+                <strong>{{ recent_commit_count }}</strong>
+                {{pluralize 'commit' recent_commit_count}}
         </span>
         <span class="description">{{truncate description 110 }}</span>
     </span>
