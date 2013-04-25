@@ -56,7 +56,7 @@
       assert.isTrue(Y.Lang.isObject(container.one('input')));
     });
 
-    it('reroutes to minimized when the toggled', function(done) {
+    it('reroutes to minimized when toggled', function(done) {
       var container = Y.one('#subapp-browser');
       view = new FullScreen();
       view.on('viewNavigate', function(ev) {
@@ -114,7 +114,7 @@
       view.isFullscreen().should.equal(false);
     });
 
-    it('reroutes to minimized when the toggled', function(done) {
+    it('reroutes to minimized when toggled', function(done) {
       var container = Y.one('#subapp-browser');
       view = new Sidebar();
       view.on('viewNavigate', function(ev) {
