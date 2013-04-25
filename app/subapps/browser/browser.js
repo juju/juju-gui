@@ -627,7 +627,10 @@ YUI.add('subapp-browser', function(Y) {
 
        */
       minNode: {
-        // The min node needs to be tracked and only loaded once.
+        /**
+          Find the minNode and cache it for later use.
+
+        */
         valueFn: function() {
           return Y.one('#subapp-browser-min');
         }
