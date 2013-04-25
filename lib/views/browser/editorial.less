@@ -6,6 +6,41 @@
         .border-box;
         display: table-cell;
 
+        .intro {
+            display: table;
+            margin: 20px;
+
+            .copy,
+            .video {
+                .border-box;
+                display: table-cell;
+            }
+            .copy {
+                padding: 0 20px 20px 20px;
+                background-color: #fff;
+
+                h1 {
+                    .heading-font;
+                    margin: 17px 0 15px 0;
+                    font-size: 26pt;
+                    color: @charm-panel-orange;
+                }
+                p {
+                    margin-bottom: 15px;
+                    font-size: 10.5pt;
+                }
+                .canvas-link {
+                    margin-top: 15px;
+                    text-decoration: underline;
+                    font-family: @font-family-medium;
+                    color: @bws-heading;
+                    font-size: 10.5pt;
+                }
+            }
+            .video {
+                background-color: #ddd;
+            }
+        }
         .yui3-charmtoken {
             width: 33.33333%;
             min-width: 320px;
