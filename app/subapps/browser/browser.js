@@ -419,6 +419,34 @@ YUI.add('subapp-browser', function(Y) {
     },
 
     /**
+       Minimized state shows the button to open back up, but that's it. It's
+       purely a viewmode change and we keep all the old content/state in the
+       old div.
+
+       @method minimized
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
+
+     */
+    minimized: function(req, res, next) {
+      // We only need to run the view once.
+      if (!this._minimized) {
+        this._minimized = new Y.juju.browser.views.MinimizedView();
+        this._minimized.render();
+        this._minimized.addTarget(this);
+      }
+
+      this._minimized.set(
+          'oldViewMode',
+          this._oldState.viewmode ? this._oldState.viewmode : 'sidebar');
+
+      // Hide the main UX component.
+      this.get('container').hide();
+      Y.one('#subapp-browser-min').show();
+    },
+
+    /**
        Handle the route for the sidebar view.
 
        @method sidebar
@@ -577,6 +605,7 @@ YUI.add('subapp-browser', function(Y) {
     'subapp-browser-charmview',
     'subapp-browser-editorial',
     'subapp-browser-fullscreen',
+    'subapp-browser-minimized',
     'subapp-browser-searchview',
     'subapp-browser-sidebar'
   ]
