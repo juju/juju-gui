@@ -127,9 +127,9 @@ YUI.add('juju-endpoints-controller', function(Y) {
           @return {undefined} Nothing.
          */
         handleServiceEvent: function(service) {
-          // var db = this.get('db'),
-          //     servicePromise = db.services.getFullService(service.get('id')),
-          //     self = this;
+          var db = this.get('db'),
+              servicePromise = db.services.getFullService(service.get('id')),
+              self = this;
 
           // servicePromise.then(
           //   function(service) {
@@ -157,17 +157,18 @@ YUI.add('juju-endpoints-controller', function(Y) {
             }
 
             if (!charm) {
-              charm = db.charms.add({id: charm_id})
-                .load(env,
-                  // If views are bound to the charm model, firing "update" is
-                  // unnecessary, and potentially even mildly harmful.
-                  function(err, result) { db.fire('update'); });
+              db.charms.getFullCharm(charm_id);
+              // charm = db.charms.add({id: charm_id})
+              //   .load(env,
+              //     // If views are bound to the charm model, firing "update" is
+              //     // unnecessary, and potentially even mildly harmful.
+              //     function(err, result) { db.fire('update'); });
             }
-            if (charm.loaded) {
-              this.addServiceToEndpointsMap(svcName, charm);
-            } else {
-              this.setupCharmOnceLoad(charm, svcName);
-            }
+            // if (charm.loaded) {
+            //   this.addServiceToEndpointsMap(svcName, charm);
+            // } else {
+            //   this.setupCharmOnceLoad(charm, svcName);
+            // }
           }
         },
 

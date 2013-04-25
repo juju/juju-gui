@@ -299,9 +299,49 @@ YUI.add('juju-charm-models', function(Y) {
    * @class CharmList
    */
   var CharmList = Y.Base.create('charmList', Y.ModelList, [], {
-    model: Charm
+    model: Charm,
+    /**
+    */
+    getFullCharm: function(charmId) {
+      return new Y.Promise(
+          // this is being bound to pass additional information into the fn
+          Y.bind(function(charmId, db, env, resolve, reject) {
+            // If the charm data hasn't been fetched yet, fetch it. We aren't
+            // resolving here on purpose because this is a side effect.
+            var charm = this.getById(charmId);
+            if (charm) {
+              resolve(charm);
+            } else {
+              this.add({id: charmId}).load(env,
+                  // If views are bound to the charm model, firing "update" is
+                  // unnecessary, and potentially even mildly harmful.
+                  function(err, charm) {
+                    db.fire('update');
+                    resolve(charm);
+                  });
+            }
+          }, this, charmId, this.get('db'), this.get('env')));
+    }
   }, {
-    ATTRS: {}
+    ATTRS: {
+      /**
+        Refernce to the client env.
+
+        @attribute env
+        @type {Y.Base}
+        @default undefined
+      */
+      env: {},
+
+      /**
+        Refence to the client db.
+
+        @attribute db
+        @type {Y.Base}
+        @default undefined
+      */
+      db: {}
+    }
   });
   models.CharmList = CharmList;
 

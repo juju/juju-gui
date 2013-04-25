@@ -190,7 +190,6 @@ YUI.add('juju-models', function(Y) {
       var service = this.getById(serviceId);
       // If the service and all data has already been loaded, resolve.
       if (service && service.get('loaded')) {
-        fetchCharmData();
         resolve(service);
         return;
       }
@@ -207,7 +206,6 @@ YUI.add('juju-models', function(Y) {
               'constraints': result.result.constraints,
               'loaded': true
             });
-            fetchCharmData();
             resolve(service);
           }
         });
@@ -670,7 +668,9 @@ YUI.add('juju-models', function(Y) {
       this.services = new ServiceList({
         db: this
       });
-      this.charms = new models.CharmList();
+      this.charms = new models.CharmList({
+        db: this
+      });
       this.relations = new RelationList();
       this.notifications = new NotificationList();
 
@@ -818,6 +818,7 @@ YUI.add('juju-models', function(Y) {
       env: {
         setter: function(val) {
           this.services.set('env', val);
+          this.charms.set('env', val);
         }
       }
     }
