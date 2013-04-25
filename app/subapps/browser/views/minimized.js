@@ -40,6 +40,8 @@ YUI.add('subapp-browser-minimized', function(Y) {
     _toggleViewState: function(ev) {
       ev.halt();
 
+      this.get('container').hide();
+
       this.fire('viewNavigate', {
         change: {
           viewmode: this.get('oldViewMode')
