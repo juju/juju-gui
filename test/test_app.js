@@ -180,9 +180,9 @@ function injectData(app, data) {
 
     it('hides the browser subapp on some urls', function() {
       var app = new Y.juju.App({
-          container: container,
-          viewContainer: container,
-          conn: {close: function() {}}
+        container: container,
+        viewContainer: container,
+        conn: {close: function() {}}
       });
 
       var checkUrls = [{
@@ -211,7 +211,7 @@ function injectData(app, data) {
 
         app.checkShowBrowser(req, undefined, next);
         app.get('subApps').charmstore.hidden.should.eql(check.hidden);
-      })
+      });
     });
 
   });
