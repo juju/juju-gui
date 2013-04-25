@@ -135,56 +135,15 @@ YUI.add('juju-endpoints-controller', function(Y) {
                 self = this;
 
             servicePromise.then(
-              function(data) {
-                self.addServiceToEndpointsMap(
-                    data.service.get('name'), data.charm);
-              },
-              function(err) {
-                console.warn(
-                    'there was an error fetching the service information', err);
-              }
+                function(data) {
+                  self.addServiceToEndpointsMap(
+                      data.service.get('id'), data.charm);
+                },
+                function(err) {
+                  console.warn('Unable to fetch service information', err);
+                }
             );
           }
-        },
-
-        /**
-          Callback from handlerServiceEvent get_service() call which handles
-          setting the missing service attrs after a service has been added
-          to the environment.
-
-          @method loadService
-          @param {Object} e event object returned from env.get_service().
-        */
-        loadService: function(e) {
-          var db = this.get('db');
-
-          if (e.err) {
-            db.notifications.add(
-                new Y.juju.models.Notification({
-                  title: 'Error loading service',
-                  message: 'Service name: ' + e.service_name,
-                  level: 'error'
-                })
-            );
-            return;
-          }
-          var serviceData = e.result;
-          // get the service model
-          var service = db.services.getById(e.service_name);
-          if (!service) {
-            console.warn('Could not load service data for',
-                e.service_name, e);
-            return;
-          }
-          // We intentionally ignore serviceData.rels.
-          // We rely on the delta stream for relation data instead.
-          service.setAttrs({
-            'config': serviceData.config,
-            'constraints': serviceData.constraints,
-            'loaded': true
-          });
-
-          this.handleServiceEvent(service);
         },
 
         /**

@@ -301,6 +301,11 @@ YUI.add('juju-charm-models', function(Y) {
   var CharmList = Y.Base.create('charmList', Y.ModelList, [], {
     model: Charm,
     /**
+      Returns a promise for the full data charm model
+
+      @method getFullCharm
+      @param {String} charmId The charmId that you want to populate.
+      @return {Y.Promise} A promise for the charm model.
     */
     getFullCharm: function(charmId) {
       return new Y.Promise(
@@ -309,15 +314,15 @@ YUI.add('juju-charm-models', function(Y) {
             // If the charm data hasn't been fetched yet, fetch it. We aren't
             // resolving here on purpose because this is a side effect.
             var charm = this.getById(charmId);
-            if (charm) {
+            if (charm && charm.loaded) {
               resolve(charm);
             } else {
-              this.add({id: charmId}).load(env,
+              charm = this.add({id: charmId}).load(env,
                   // If views are bound to the charm model, firing "update" is
                   // unnecessary, and potentially even mildly harmful.
-                  function(err, charm) {
+                  function(err, data) {
                     db.fire('update');
-                    resolve(charm);
+                    resolve(db.charms.getById(charmId));
                   });
             }
           }, this, charmId, this.get('db'), this.get('env')));

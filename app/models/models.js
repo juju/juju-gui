@@ -165,13 +165,13 @@ YUI.add('juju-models', function(Y) {
 
       @method getFullService
       @param {String} serviceId A string ID for the service to fetch.
-      @return {Y.Promise} A promise for fully populated service data
+      @return {Y.Promise} A promise for fully populated service data.
     */
     getFullService: function(serviceId) {
       return new Y.Promise(
           // this is being bound to pass additional information into the fn
           Y.bind(this._servicePromise, this, serviceId,
-            this.get('db'), this.get('env')));
+              this.get('db'), this.get('env')));
     },
 
     /**
@@ -701,7 +701,7 @@ YUI.add('juju-models', function(Y) {
       returns a promise that you can use to know when it's ready to go.
 
       @method populateService
-      @param {String} serviceId The service id to populate
+      @param {String} serviceId The service id to populate.
     */
     populateService: function(serviceId) {
       var services = this.services,
@@ -712,14 +712,8 @@ YUI.add('juju-models', function(Y) {
             services.getFullService(serviceId).then(function(service) {
               charms.getFullCharm(service.get('charm')).then(function(charm) {
                 resolve({service: service, charm: charm});
-              },
-              function(error) {
-                reject(error);
-              });
-            },
-            function(error) {
-              reject(error);
-            });
+              }, reject);
+            }, reject);
           }, this, serviceId, this.get('db'), this.get('env')));
     },
 
