@@ -399,20 +399,6 @@ YUI.add('subapp-browser', function(Y) {
         this._fullscreen = this.showView('fullscreen', this._getViewCfg());
       }
 
-      // Regardless of the results below we need to clear out the old
-      // subviews.
-      if (this._editorial) {
-        this._editorial.destroy();
-      }
-
-      if (this._details) {
-        this._details.destroy();
-      }
-
-      if (this._search) {
-        this._search.destroy();
-      }
-
       // If we've changed the charmID or the viewmode has changed and we have
       // a charmID, render charmDetails.
       if (this._shouldShowCharm()) {
