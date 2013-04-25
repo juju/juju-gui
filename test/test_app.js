@@ -33,7 +33,7 @@ function injectData(app, data) {
 
 (function() {
 
-  describe.only('Application basics', function() {
+  describe('Application basics', function() {
     var Y, app, container, utils, juju, env, conn;
 
     before(function(done) {
