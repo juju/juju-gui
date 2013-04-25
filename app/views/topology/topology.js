@@ -32,7 +32,7 @@ YUI.add('juju-topology', function(Y) {
     initializer: function(options) {
       Topology.superclass.constructor.apply(this, arguments);
       this.options = Y.mix(options || {
-        minZoom: .25,
+        minZoom: 0.25,
         maxZoom: 2,
         minSlider: 25,
         maxSlider: 200
