@@ -288,6 +288,7 @@ YUI.add('juju-gui', function(Y) {
       // Allow "env" as an attribute/option to ease testing.
       if (this.get('env')) {
         this.env = this.get('env');
+        this.db.set('env', this.env);
       } else {
         // Calculate the socket_url.
         var socketUrl = this.get('socket_url');
@@ -329,6 +330,7 @@ YUI.add('juju-gui', function(Y) {
               {juju: new sandboxModule.PyJujuAPI({state: state})});
         }
         this.env = juju.newEnvironment(envOptions, apiBackend);
+        this.db.set('env', this.env);
       }
       // Create notifications controller
       this.notifications = new juju.NotificationController({

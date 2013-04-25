@@ -161,6 +161,61 @@ YUI.add('juju-models', function(Y) {
     model: Service,
 
     /**
+      Returns a promise which will return a full service data set or an error
+
+      @method getFullService
+      @param {String} serviceId A string ID for the service to fetch.
+      @return {Y.Promise} A promise for fully populated service data
+    */
+    getFullService: function(serviceId) {
+      return new Y.Promise(
+          // this is being bound to pass additional information into the fn
+          Y.bind(this._servicePromise, this, serviceId,
+            this.get('db'), this.get('env')));
+    },
+
+    /**
+      Promise executor function for resolving a service model
+
+      @method _servicePromise
+      @param {String} serviceId of the service model to pull.
+      @param {Object} db object reference.
+      @param {Object} env object reference.
+      @param {Function} resolve function passed in by promise.
+      @param {Function} reject function passed in by promise.
+      @protected
+    */
+    _servicePromise: function(serviceId, db, env, resolve, reject) {
+      // `this` points to the serviceList
+      var service = this.getById(serviceId);
+      // If the service and all data has already been loaded, resolve.
+      if (service && service.get('loaded')) {
+        fetchCharmData();
+        resolve(service);
+        return;
+      }
+
+      if (!service || !service.get('loaded')) {
+        env.get_service(serviceId, function(result) {
+          if (result.err) {
+            // The service doesn't exist
+            reject(result);
+          } else {
+            var service = db.services.getById(result.service_name);
+            service.setAttrs({
+              'config': result.result.config,
+              'constraints': result.result.constraints,
+              'loaded': true
+            });
+            fetchCharmData();
+            resolve(service);
+          }
+        });
+      }
+    },
+
+
+    /**
       Return a list of visible model instances.
 
       A model instance is visible when it is alive or when, even if it is dying
@@ -182,8 +237,26 @@ YUI.add('juju-models', function(Y) {
     }
   }, {
     ATTRS: {
+      /**
+        Refernce to the client env.
+
+        @attribute env
+        @type {Y.Base}
+        @default undefined
+      */
+      env: {},
+
+      /**
+        Refence to the client db.
+
+        @attribute db
+        @type {Y.Base}
+        @default undefined
+      */
+      db: {}
     }
   });
+
   models.ServiceList = ServiceList;
 
   // This model is barely used.  Units are in a lazy model list, so we
@@ -594,7 +667,9 @@ YUI.add('juju-models', function(Y) {
     initializer: function() {
       // Single model for environment database is bound to.
       this.environment = new Environment();
-      this.services = new ServiceList();
+      this.services = new ServiceList({
+        db: this
+      });
       this.charms = new models.CharmList();
       this.relations = new RelationList();
       this.notifications = new NotificationList();
@@ -718,6 +793,7 @@ YUI.add('juju-models', function(Y) {
       var self = this,
           changes = deltaEvent.data.result,
           defaultHandler = handlers.pyDelta;
+
       // Process delta changes invoking handlers for each change in changeset.
       changes.forEach(function(change) {
         var kind = change[0],
@@ -729,6 +805,7 @@ YUI.add('juju-models', function(Y) {
         }
         handler(self, action, data, kind);
       });
+
       // Update service unit aggregates.
       this.services.each(function(service) {
         self.units.update_service_unit_aggregates(service);
@@ -736,6 +813,14 @@ YUI.add('juju-models', function(Y) {
       this.fire('update');
     }
 
+  }, {
+    ATTRS: {
+      env: {
+        setter: function(val) {
+          this.services.set('env', val);
+        }
+      }
+    }
   });
 
   models.Database = Database;
@@ -752,6 +837,7 @@ YUI.add('juju-models', function(Y) {
     'juju-delta-handlers',
     'juju-endpoints',
     'juju-view-utils',
-    'juju-charm-models'
+    'juju-charm-models',
+    'promise'
   ]
 });

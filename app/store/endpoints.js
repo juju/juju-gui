@@ -127,8 +127,22 @@ YUI.add('juju-endpoints-controller', function(Y) {
           @return {undefined} Nothing.
          */
         handleServiceEvent: function(service) {
+          // var db = this.get('db'),
+          //     servicePromise = db.services.getFullService(service.get('id')),
+          //     self = this;
+
+          // servicePromise.then(
+          //   function(service) {
+          //     var serviceId = service.get('id');
+
+          //   },
+          //   function(err) {
+
+          //   }
+          // );
           // If the service is not a ghost (that is, 'pending' is false),
           // process it.
+
           if (!service.get('pending')) {
             var svcName = service.get('id'),
                 db = this.get('db'),
