@@ -777,6 +777,10 @@ YUI.add('juju-gui', function(Y) {
     /**
        Determine if the browser should be visible or not.
 
+       When hitting internal :gui: views, the browser needs to disappear
+       entirely from the UX for users. However, when we pop back it needs to
+       appear back in the previous state.
+
        @method showBrowser
        @param {Request} req current request object.
        @param {Response} res current response object.
@@ -791,11 +795,10 @@ YUI.add('juju-gui', function(Y) {
         var charmstore = subapps.charmstore;
         if (url.match(match) || url.match('logout')) {
           charmstore.hidden = true;
-          charmstore.updateVisible();
         } else {
           charmstore.hidden = false;
-          charmstore.updateVisible();
         }
+        charmstore.updateVisible();
       }
 
       next();
