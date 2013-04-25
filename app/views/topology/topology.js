@@ -32,8 +32,10 @@ YUI.add('juju-topology', function(Y) {
     initializer: function(options) {
       Topology.superclass.constructor.apply(this, arguments);
       this.options = Y.mix(options || {
-        minZoom: 25,
-        maxZoom: 200
+        minZoom: .25,
+        maxZoom: 2,
+        minSlider: 25,
+        maxSlider: 200
       });
 
       // Build a service.id -> BoundingBox map for services.
@@ -103,11 +105,7 @@ YUI.add('juju-topology', function(Y) {
                           .attr('height', height)
                           .attr('pointer-events', 'all')
                           .call(this.zoom)
-                          .on('dblclick.zoom', null)
-                          .on('DOMMouseScroll.zoom', function(evt) {
-                            self.fire('zoom', d3.event);})
-                          .on('mousewheel.zoom', function(evt) {
-                            self.fire('zoom', d3.event);});
+                          .on('dblclick.zoom', null);
 
       vis = svg.append('svg:g');
       this.vis = vis;
@@ -183,7 +181,8 @@ YUI.add('juju-topology', function(Y) {
 
       translate: {
         getter: function() {return this.zoom.translate();},
-        setter: function(v) {this.zoom.translate(v);}}
+        setter: function(v) {this.zoom.translate(v);}
+      }
     }
 
   });

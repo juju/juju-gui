@@ -50,12 +50,12 @@ YUI.add('juju-topology-panzoom', function(Y) {
           options = topo.options;
 
       this.toScale = d3.scale.linear()
-                            .domain([options.minZoom, options.maxZoom])
-                            .range([0.25, 2])
+                            .domain([options.minSlider, options.maxSlider])
+                            .range([options.minZoom, options.maxZoom])
                             .clamp(true);
       this.toSlider = d3.scale.linear()
-                            .domain([0.25, 2])
-                            .range([options.minZoom, options.maxZoom])
+                            .domain([options.minZoom, options.maxZoom])
+                            .range([options.minSlider, options.maxSlider])
                             .clamp(true);
     },
 
@@ -71,8 +71,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
       }
 
       slider = new Y.Slider({
-        min: options.minZoom,
-        max: options.maxZoom,
+        min: options.minSlider,
+        max: options.maxSlider,
         value: this.toSlider(currentScale)
       });
       // XXX: selection to module option
@@ -94,25 +94,10 @@ YUI.add('juju-topology-panzoom', function(Y) {
      * @method zoomHandler
      */
     zoomHandler: function(evt) {
-      var slider = this.slider,
-          topo = this.get('component'),
-          height = topo.get('height'),
-          width = topo.get('width'),
-          options = topo.options;
+      var slider = this.slider;
 
       if (!this.slider) {
         return;
-      }
-
-      // If this is a scroll wheel event translate
-      // delta and apply to scale.
-      if (evt.sourceEvent && evt.sourceEvent.type === 'mousewheel') {
-        evt = evt.sourceEvent;
-      }
-      if (evt.type === 'mousewheel') {
-        var delta = (evt.wheelDelta > 0) ? 0.1 : -0.1;
-        evt.scale = (topo.get('scale') + delta);
-        evt.translate = topo.get('translate');
       }
       slider._set('value', this.toSlider(evt.scale));
       this.rescale(evt);
