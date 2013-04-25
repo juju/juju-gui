@@ -127,48 +127,23 @@ YUI.add('juju-endpoints-controller', function(Y) {
           @return {undefined} Nothing.
          */
         handleServiceEvent: function(service) {
-          var db = this.get('db'),
-              servicePromise = db.services.getFullService(service.get('id')),
-              self = this;
-
-          // servicePromise.then(
-          //   function(service) {
-          //     var serviceId = service.get('id');
-
-          //   },
-          //   function(err) {
-
-          //   }
-          // );
           // If the service is not a ghost (that is, 'pending' is false),
           // process it.
-
           if (!service.get('pending')) {
-            var svcName = service.get('id'),
-                db = this.get('db'),
-                charm_id = service.get('charm'),
-                charm = db.charms.getById(charm_id),
-                env = this.get('env');
+            var db = this.get('db'),
+                servicePromise = db.populateService(service.get('id')),
+                self = this;
 
-            if (!service.get('loaded')) {
-              // Call get_service to reload the service and get the full config.
-              env.get_service(
-                  service.get('id'), Y.bind(this.loadService, this));
-            }
-
-            if (!charm) {
-              db.charms.getFullCharm(charm_id);
-              // charm = db.charms.add({id: charm_id})
-              //   .load(env,
-              //     // If views are bound to the charm model, firing "update" is
-              //     // unnecessary, and potentially even mildly harmful.
-              //     function(err, result) { db.fire('update'); });
-            }
-            // if (charm.loaded) {
-            //   this.addServiceToEndpointsMap(svcName, charm);
-            // } else {
-            //   this.setupCharmOnceLoad(charm, svcName);
-            // }
+            servicePromise.then(
+              function(data) {
+                self.addServiceToEndpointsMap(
+                    data.service.get('name'), data.charm);
+              },
+              function(err) {
+                console.warn(
+                    'there was an error fetching the service information', err);
+              }
+            );
           }
         },
 

@@ -696,6 +696,33 @@ YUI.add('juju-models', function(Y) {
       };
     },
 
+    /**
+      Populates the service and charm data for the supplied service id and
+      returns a promise that you can use to know when it's ready to go.
+
+      @method populateService
+      @param {String} serviceId The service id to populate
+    */
+    populateService: function(serviceId) {
+      var services = this.services,
+          charms = this.charms;
+      return new Y.Promise(
+          // this is being bound to pass additional information into the fn
+          Y.bind(function(serviceId, db, env, resolve, reject) {
+            services.getFullService(serviceId).then(function(service) {
+              charms.getFullCharm(service.get('charm')).then(function(charm) {
+                resolve({service: service, charm: charm});
+              },
+              function(error) {
+                reject(error);
+              });
+            },
+            function(error) {
+              reject(error);
+            });
+          }, this, serviceId, this.get('db'), this.get('env')));
+    },
+
     /*
      * Model Id is a [db[model_list_name], model.get('id')]
      * sequence that can be used to lookup models relative
