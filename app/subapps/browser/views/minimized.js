@@ -41,6 +41,7 @@ YUI.add('subapp-browser-minimized', function(Y) {
       ev.halt();
 
       this.get('container').hide();
+      Y.one('#subapp-browser').show();
 
       this.fire('viewNavigate', {
         change: {
