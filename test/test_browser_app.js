@@ -591,6 +591,7 @@
       minNode.getComputedStyle('display').should.eql('none');
       browserNode.getComputedStyle('display').should.eql('none');
     });
+
   });
 })();
 

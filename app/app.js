@@ -781,19 +781,19 @@ YUI.add('juju-gui', function(Y) {
        entirely from the UX for users. However, when we pop back it needs to
        appear back in the previous state.
 
-       @method showBrowser
+       @method checkShowBrowser
        @param {Request} req current request object.
        @param {Response} res current response object.
        @param {function} next callable for the next route in the chain.
      */
-    showBrowser: function(req, res, next) {
+    checkShowBrowser: function(req, res, next) {
       var url = req.url,
-          match = /:gui:\/(charms|service|unit)/;
+          match = /(logout|:gui:\/(charms|service|unit))/;
       var subapps = this.get('subApps');
 
       if (subapps && subapps.charmstore) {
         var charmstore = subapps.charmstore;
-        if (url.match(match) || url.match('logout')) {
+        if (url.match(match)) {
           charmstore.hidden = true;
         } else {
           charmstore.hidden = false;
@@ -954,7 +954,7 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_notifications_view'},
           // Root.
           { path: '*', callbacks: 'show_environment'},
-          { path: '*', callbacks: 'showBrowser'},
+          { path: '*', callbacks: 'checkShowBrowser'},
           // Charms.
           { path: '/charms/',
             callbacks: 'show_charm_collection',
