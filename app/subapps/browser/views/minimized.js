@@ -24,7 +24,7 @@ YUI.add('subapp-browser-minimized', function(Y) {
 
     events: {
       '.bws-icon': {
-         click: '_toggleViewState'
+        click: '_toggleViewState'
       }
     },
 

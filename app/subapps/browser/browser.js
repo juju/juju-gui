@@ -452,8 +452,8 @@ YUI.add('subapp-browser', function(Y) {
       }
 
       this._minimized.set(
-        'oldViewMode',
-        this._oldState.viewmode ? this._oldState.viewmode : 'sidebar');
+          'oldViewMode',
+          this._oldState.viewmode ? this._oldState.viewmode : 'sidebar');
 
       // Hide the main UX component.
       this.get('container').hide();
