@@ -28,7 +28,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
     // How many of each charm container do we show by default.
     cutoffs: {
       sidebar: {
-        featured: 1,
+        featured: 2,
         popular: 2,
         'new': 2
       },
