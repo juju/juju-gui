@@ -185,7 +185,7 @@
 
   });
 
-  describe('browser subapp display tree', function() {
+  describe.only('browser subapp display tree', function() {
     var Y, browser, hits, ns, resetHits;
 
     before(function(done) {
@@ -222,8 +222,8 @@
 
     beforeEach(function() {
       var docBody = Y.one(document.body);
-      Y.Node.create('<div id="subapp-browser">' +
-          '</div>').appendTo(docBody);
+      Y.Node.create('<div id="subapp-browser-min"><div id="subapp-browser">' +
+          '</div></div>').appendTo(docBody);
 
       // Track which render functions are hit.
       resetHits();
@@ -570,6 +570,27 @@
       assert.deepEqual(hits, expected);
     });
 
+    it('when hidden the browser avoids routing', function() {
+      browser.hidden = true;
+
+      var req = {
+        path: '/bws/minimized',
+        params: {
+          viewmode: 'minimized'
+        }
+      };
+      var expected = Y.merge(hits);
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+
+      // And both nodes are hidden.
+      var minNode = Y.one('#subapp-browser-min');
+      var browserNode = Y.one('#subapp-browser');
+
+      minNode.getComputedStyle('display').should.eql('none');
+      browserNode.getComputedStyle('display').should.eql('none');
+    });
   });
 })();
 

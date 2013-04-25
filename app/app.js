@@ -775,6 +775,30 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+       Determine if the browser should be visible or not.
+
+       @method showBrowser
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
+     */
+    showBrowser: function(req, res, next) {
+      var url = req.url,
+          match = /:gui:\/(charms|service|unit)/;
+      var charmstore = this.get('subApps').charmstore;
+
+      if (url.match(match)) {
+        charmstore.hidden = true;
+        charmstore.updateVisible();
+      } else {
+        charmstore.hidden = false;
+        charmstore.updateVisible();
+      }
+
+      next();
+    },
+
+    /**
       Shows the root view of the application erasing all namespaces
 
       @method showRootView
@@ -924,6 +948,7 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_notifications_view'},
           // Root.
           { path: '*', callbacks: 'show_environment'},
+          { path: '*', callbacks: 'showBrowser'},
           // Charms.
           { path: '/charms/',
             callbacks: 'show_charm_collection',
