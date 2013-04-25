@@ -534,6 +534,14 @@ YUI.add('subapp-browser', function(Y) {
       var minview = this.get('minNode'),
           browser = this.get('container');
 
+      // In app tests these divs don't exist so ignore them if both aren't
+      // there carry on. The container is created through the subapp, but not
+      // the minview.
+      if (!minview) {
+        console.log('No browser subapp min div available.');
+        return;
+      }
+
       if (this.hidden) {
         browser.hide();
         minview.hide();

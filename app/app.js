@@ -785,14 +785,17 @@ YUI.add('juju-gui', function(Y) {
     showBrowser: function(req, res, next) {
       var url = req.url,
           match = /:gui:\/(charms|service|unit)/;
-      var charmstore = this.get('subApps').charmstore;
+      var subapps = this.get('subApps');
 
-      if (url.match(match)) {
-        charmstore.hidden = true;
-        charmstore.updateVisible();
-      } else {
-        charmstore.hidden = false;
-        charmstore.updateVisible();
+      if (subapps && subapps.charmstore) {
+        var charmstore = subapps.charmstore;
+        if (url.match(match) || url.match('logout')) {
+          charmstore.hidden = true;
+          charmstore.updateVisible();
+        } else {
+          charmstore.hidden = false;
+          charmstore.updateVisible();
+        }
       }
 
       next();
