@@ -284,6 +284,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/view.js'
         },
 
+        'subapp-browser-minimized': {
+          fullpath: '/juju-ui/subapps/browser/views/minimized.js'
+        },
+
         'subapp-browser-fullscreen': {
           fullpath: '/juju-ui/subapps/browser/views/fullscreen.js'
         },

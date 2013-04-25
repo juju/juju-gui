@@ -28,14 +28,14 @@ YUI.add('subapp-browser-editorial', function(Y) {
     // How many of each charm container do we show by default.
     cutoffs: {
       sidebar: {
-        featured: 1,
+        featured: 2,
         popular: 2,
         'new': 2
       },
       fullscreen: {
-        featured: 10,
-        popular: 10,
-        'new': 10
+        featured: 6,
+        popular: 3,
+        'new': 3
       }
     },
     template: views.Templates.editorial,
@@ -60,16 +60,13 @@ YUI.add('subapp-browser-editorial', function(Y) {
       var charmID = charm.getData('charmid');
 
       // Update the UI for the active one.
-      this._updateActive(ev.currentTarget);
+      if (!this.get('isFullscreen')) {
+        this._updateActive(ev.currentTarget);
+      }
+
       var change = {
         charmID: charmID
       };
-
-      if (this.get('isFullscreen')) {
-        change.viewmode = 'fullscreen';
-      } else {
-        change.viewmode = 'sidebar';
-      }
 
       this.fire('viewNavigate', {change: change});
     },

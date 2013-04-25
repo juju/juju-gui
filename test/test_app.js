@@ -185,69 +185,179 @@ function injectData(app, data) {
 (function() {
 
   describe('Application authentication', function() {
-    var conn, env, juju, utils, Y;
+    var ENV_VIEW_NAME, FAKE_VIEW_NAME, LOGIN_VIEW_NAME;
+    var conn, container, destroyMe, env, juju, utils, Y;
+    var requirements = ['juju-gui', 'juju-tests-utils', 'juju-views'];
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-gui', 'juju-tests-utils'], function(Y) {
+      Y = YUI(GlobalConfig).use(requirements, function(Y) {
         utils = Y.namespace('juju-tests.utils');
         juju = Y.namespace('juju');
+        ENV_VIEW_NAME = 'EnvironmentView';
+        FAKE_VIEW_NAME = 'FakeView';
+        LOGIN_VIEW_NAME = 'LoginView';
         done();
       });
     });
 
     beforeEach(function(done) {
+      container = Y.Node.create('<div/>').hide();
+      Y.one('body').append(container);
       conn = new utils.SocketStub();
       env = juju.newEnvironment({conn: conn});
-      env.connect();
       env.setCredentials({user: 'user', password: 'password'});
+      destroyMe = [env];
       done();
     });
 
-    afterEach(function(done)  {
+    afterEach(function(done) {
+      container.remove().destroy(true);
       sessionStorage.setItem('credentials', null);
-      env.destroy();
+      Y.each(destroyMe, function(item) {
+        item.destroy();
+      });
       done();
     });
 
-    it('should avoid trying to login if the env is not connected',
-       function(done) {
-         conn.transient_close();
-         var app = new Y.juju.App({env: env});
-         app.showView(new Y.View());
-         app.after('ready', function() {
-           assert.equal(0, conn.messages.length);
-           done();
-         });
-       });
+    // Create and return a new app. If connect is True, also connect the env.
+    var makeApp = function(connect) {
+      var app = new Y.juju.App({env: env, viewContainer: container});
+      var fakeView = new Y.View();
+      fakeView.name = FAKE_VIEW_NAME;
+      app.showView(fakeView);
+      if (connect) {
+        env.connect();
+      }
+      destroyMe.push(app);
+      return app;
+    };
 
-    it('should try to login if the env connection is established',
-       function(done) {
-         env.setAttrs({user: 'user', password: 'password'});
-         conn.open();
-         var app = new Y.juju.App({env: env});
-         // We want to dispatch, so we do not supply the no-op view.
-         app.after('ready', function() {
-           assert.equal('login', conn.last_message().op);
-           done();
-         });
-       });
+    it('avoids trying to login if the env is not connected', function(done) {
+      var app = makeApp(false); // Create a disconnected app.
+      app.after('ready', function() {
+        assert.equal(0, conn.messages.length);
+        assert.equal(FAKE_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
 
-    it('should not try to login if user and password are not provided',
-       function(done) {
-         env.setCredentials(null);
-         conn.open();
-         var app = new Y.juju.App({env: env});
-         app.showView(new Y.View());
-         app.after('ready', function() {
-           assert.equal(0, conn.messages.length);
-           done();
-         });
-       });
+    it('tries to login if the env connection is established', function(done) {
+      var app = makeApp(true); // Create a connected app.
+      app.after('ready', function() {
+        assert.equal(1, conn.messages.length);
+        assert.equal('login', conn.last_message().op);
+        assert.equal(FAKE_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
+
+    it('avoids trying to login without credentials', function(done) {
+      env.setCredentials(null);
+      var app = makeApp(true); // Create a connected app.
+      app.after('ready', function() {
+        assert.equal(0, conn.messages.length);
+        assert.equal(LOGIN_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
+
+    it('displays the login view if credentials are not valid', function(done) {
+      var app = makeApp(true); // Create a connected app.
+      app.after('ready', function() {
+        // Mimic a login failed response.
+        conn.msg({op: 'login', result: false});
+        assert.equal(1, conn.messages.length);
+        assert.equal('login', conn.last_message().op);
+        assert.equal(LOGIN_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
+
+    it('displays the env view if credentials are valid', function(done) {
+      var app = makeApp(true); // Create a connected app.
+      app.after('ready', function() {
+        // Mimic a login successful response.
+        conn.msg({op: 'login', result: true});
+        assert.equal(1, conn.messages.length);
+        assert.equal('login', conn.last_message().op);
+        assert.equal(ENV_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
+
+    it('tries to log in on first connection', function(done) {
+      // This is the case when credential are stashed.
+      var app = makeApp(false); // Create a disconnected app.
+      app.after('ready', function() {
+        assert.equal(FAKE_VIEW_NAME, app.get('activeView').name);
+        env.connect();
+        assert.equal(1, conn.messages.length);
+        assert.equal('login', conn.last_message().op);
+        assert.equal(FAKE_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
+
+    it('displays the login view on first connection', function(done) {
+      // This is the case when credential are not stashed.
+      env.setCredentials(null);
+      var app = makeApp(false); // Create a disconnected app.
+      app.after('ready', function() {
+        assert.equal(FAKE_VIEW_NAME, app.get('activeView').name);
+        env.connect();
+        assert.equal(0, conn.messages.length);
+        assert.equal(LOGIN_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
+
+    it('tries to re-login on disconnections', function(done) {
+      // This is the case when credential are stashed.
+      var app = makeApp(true); // Create a connected app.
+      app.after('ready', function() {
+        // Disconnect and reconnect the WebSocket.
+        conn.transient_close();
+        conn.open();
+        assert.equal(2, conn.messages.length);
+        Y.each(conn.messages, function(message) {
+          assert.equal('login', message.op);
+        });
+        assert.equal(FAKE_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
+
+    it('displays the login view on disconnections', function(done) {
+      // This is the case when credential are not stashed.
+      env.setCredentials(null);
+      var app = makeApp(true); // Create a connected app.
+      app.after('ready', function() {
+        conn.msg({op: 'login', result: true});
+        assert.equal(ENV_VIEW_NAME, app.get('activeView').name);
+        conn.transient_close();
+        conn.open();
+        assert.equal(0, conn.messages.length);
+        assert.equal(LOGIN_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
+    });
 
     it('should allow logging out', function() {
+      env.connect();
       env.logout();
       assert.equal(false, env.userIsAuthenticated);
       assert.equal(null, env.getCredentials());
+    });
+
+    it('displays the login view after logging out', function(done) {
+      var app = makeApp(true); // Create a connected app.
+      app.after('ready', function() {
+        conn.msg({op: 'login', result: true});
+        assert.equal(ENV_VIEW_NAME, app.get('activeView').name);
+        app.logout();
+        assert.equal(LOGIN_VIEW_NAME, app.get('activeView').name);
+        done();
+      });
     });
 
   });
@@ -324,56 +434,6 @@ function injectData(app, data) {
       reset_called.should.equal(true);
       dispatch_called.should.equal(true);
       login_called.should.equal(true);
-    });
-
-  });
-})();
-
-
-(function() {
-
-  describe('Application prefetching', function() {
-    var Y, conn, env, app, container;
-
-    before(function(done) {
-      console.log('Loading App prefetch test code');
-      Y = YUI(GlobalConfig).use(
-          ['juju-gui', 'juju-views', 'juju-tests-utils'], function(Y) {
-            done();
-          });
-    });
-
-    beforeEach(function() {
-      conn = new (Y.namespace('juju-tests.utils')).SocketStub(),
-      env = Y.juju.newEnvironment({conn: conn});
-      env.connect();
-      conn.open();
-      container = Y.Node.create('<div id="test" class="container"></div>');
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            env: env,
-            charm_store: {} });
-      app.showView(new Y.View());
-    });
-
-    afterEach(function() {
-      container.destroy();
-      app.destroy();
-    });
-
-    it('must prefetch charm and service for service pages', function() {
-      var _ = expect(
-          app.db.charms.getById('cs:precise/wordpress-6')).to.not.exist;
-      injectData(app);
-      app.show_service({params: {id: 'wordpress'}, query: {}});
-      // When the service was added to the service modellist, that triggered
-      // the loading of the charm.
-      conn.messages[conn.messages.length - 2].op.should.equal('get_charm');
-      // The service was later loaded.
-      conn.last_message().op.should.equal('get_service');
-      // Tests of the actual load machinery are in the model and env tests, and
-      // so are not repeated here.
     });
 
   });
@@ -519,99 +579,6 @@ function injectData(app, data) {
       assert.equal(
           app.env.get('socket_url'),
           'ws://example.net:71070/ws');
-    });
-
-  });
-})();
-
-
-(function() {
-  describe('app callbacks', function() {
-
-    var Y, juju, utils, app, container, getLocation, destroyMe;
-
-    before(function(done) {
-      Y = YUI(GlobalConfig).use(
-          ['juju-gui', 'juju-tests-utils', 'juju-view-utils'],
-          function(Y) {
-            utils = Y.namespace('juju-tests.utils');
-            juju = Y.namespace('juju');
-            done();
-          });
-    });
-
-    beforeEach(function() {
-      destroyMe = [];
-    });
-
-    afterEach(function() {
-      Y.each(destroyMe, function(thing) {
-        thing.destroy();
-      });
-    });
-
-    it('should show an error on loadService', function() {
-      app = new Y.juju.App({conn: {close: function() {}}});
-      destroyMe.push(app);
-      app.showView(new Y.View());
-      var evt = {
-        err: 'Warning!  Danger!',
-        service_name: 'FakeService'
-      };
-      app.loadService(evt);
-      var notification = app.db.notifications.item(0);
-      assert.strictEqual('Error loading service',
-          notification.get('title'));
-      assert.strictEqual('Service name: FakeService',
-          notification.get('message'));
-    });
-
-    it('should warn on loadService if service doesn\'t exist', function() {
-      app = new Y.juju.App({conn: {close: function() {}}});
-      destroyMe.push(app);
-      app.showView(new Y.View());
-      var evt = {
-        err: '',
-        service_name: 'FakeService'
-      };
-      var warning;
-      var original = console.warn;
-      console.warn = function(msg0, msg1) {
-        warning = msg0 + ' ' + msg1;
-      };
-      app.loadService(evt);
-      app.db.notifications.size().should.equal(0);
-      assert.strictEqual('Could not load service data for FakeService',
-          warning);
-      console.warn = original;
-    });
-
-    it('should set service values', function() {
-      var conn = new utils.SocketStub();
-      var env = juju.newEnvironment({conn: conn});
-      env.connect();
-      app = new Y.juju.App({env: env });
-      destroyMe.push(app);
-      app.showView(new Y.View());
-      var dispatched = false;
-      app.dispatch = function() {
-        dispatched = true;
-      };
-      injectData(app);
-      var svcName = 'wordpress';
-      var svc = app.db.services.getById(svcName);
-      var evt = {
-        err: '',
-        service_name: svcName,
-        result: {
-          config: 'fake config',
-          constraints: 'fake constraints'
-        }
-      };
-      app.loadService(evt);
-      assert.strictEqual('fake config', svc.get('config'));
-      assert.strictEqual('fake constraints', svc.get('constraints'));
-      assert.isTrue(dispatched);
     });
 
   });
