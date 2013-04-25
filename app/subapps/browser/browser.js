@@ -457,7 +457,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // Hide the main UX component.
       this.get('container').hide();
-      Y.one('#subapp-browser').show();
+      Y.one('#subapp-browser-min').show();
     },
 
     /**
