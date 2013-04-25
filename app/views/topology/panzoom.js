@@ -96,10 +96,14 @@ YUI.add('juju-topology-panzoom', function(Y) {
     zoomHandler: function(evt) {
       var slider = this.slider;
 
-      if (!this.slider) {
+      // Don't zoom if we don't have a slider yet.
+      if (!slider) {
         return;
       }
+      // Set the slider value to match our new zoom level.
       slider._set('value', this.toSlider(evt.scale));
+      // Let rescale handle the actual transformation; evt.scale and
+      // evt.translate have both been set by D3 at this point.
       this.rescale(evt);
     },
 
@@ -172,8 +176,6 @@ YUI.add('juju-topology-panzoom', function(Y) {
       if (!vis) {
         return;
       }
-
-      evt.scale = this.toSlider(evt.scale) / 100.0;
 
       // Store the current value of scale so that it can be restored later.
       topo.set('scale', evt.scale);
