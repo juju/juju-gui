@@ -519,7 +519,7 @@ YUI.add('subapp-browser', function(Y) {
         req.params = {};
       }
 
-      if(!req.params.viewmode) {
+      if (!req.params.viewmode) {
         req.params.viewmode = 'sidebar';
       }
 
@@ -532,7 +532,7 @@ YUI.add('subapp-browser', function(Y) {
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
         // see if we care about this viewmode.
-        if(this.viewmodes.indexOf(req.params.viewmode) != -1) {
+        if (this.viewmodes.indexOf(req.params.viewmode) !== -1) {
           this[req.params.viewmode](req, res, next);
         } else {
           // Let the next route go on.
