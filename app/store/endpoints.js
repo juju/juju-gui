@@ -207,6 +207,9 @@ YUI.add('juju-endpoints-controller', function(Y) {
               this.flatten(charm.get('provides'));
           this.endpointsMap[svcName].requires =
               this.flatten(charm.get('requires'));
+          // this was added to be able to test that the endpoint
+          // was successful with the new promises
+          this.fire('endpointMapAdded');
         }
       });
 
