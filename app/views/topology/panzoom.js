@@ -50,12 +50,12 @@ YUI.add('juju-topology-panzoom', function(Y) {
           options = topo.options;
 
       this.toScale = d3.scale.linear()
-                            .domain([options.minZoom, options.maxZoom])
-                            .range([0.25, 2])
+                            .domain([options.minSlider, options.maxSlider])
+                            .range([options.minZoom, options.maxZoom])
                             .clamp(true);
       this.toSlider = d3.scale.linear()
-                            .domain([0.25, 2])
-                            .range([options.minZoom, options.maxZoom])
+                            .domain([options.minZoom, options.maxZoom])
+                            .range([options.minSlider, options.maxSlider])
                             .clamp(true);
     },
 
@@ -71,8 +71,8 @@ YUI.add('juju-topology-panzoom', function(Y) {
       }
 
       slider = new Y.Slider({
-        min: options.minZoom,
-        max: options.maxZoom,
+        min: options.minSlider,
+        max: options.maxSlider,
         value: this.toSlider(currentScale)
       });
       // XXX: selection to module option
@@ -94,27 +94,16 @@ YUI.add('juju-topology-panzoom', function(Y) {
      * @method zoomHandler
      */
     zoomHandler: function(evt) {
-      var slider = this.slider,
-          topo = this.get('component'),
-          height = topo.get('height'),
-          width = topo.get('width'),
-          options = topo.options;
+      var slider = this.slider;
 
-      if (!this.slider) {
+      // Don't zoom if we don't have a slider yet.
+      if (!slider) {
         return;
       }
-
-      // If this is a scroll wheel event translate
-      // delta and apply to scale.
-      if (evt.sourceEvent && evt.sourceEvent.type === 'mousewheel') {
-        evt = evt.sourceEvent;
-      }
-      if (evt.type === 'mousewheel') {
-        var delta = (evt.wheelDelta > 0) ? 0.1 : -0.1;
-        evt.scale = (topo.get('scale') + delta);
-        evt.translate = topo.get('translate');
-      }
+      // Set the slider value to match our new zoom level.
       slider._set('value', this.toSlider(evt.scale));
+      // Let rescale handle the actual transformation; evt.scale and
+      // evt.translate have both been set by D3 at this point.
       this.rescale(evt);
     },
 
@@ -188,7 +177,9 @@ YUI.add('juju-topology-panzoom', function(Y) {
         return;
       }
 
-      evt.scale = this.toSlider(evt.scale) / 100.0;
+      // Ensure that we're definitely within bounds by coercing the scale
+      // to fit within our range.
+      evt.scale = this.toScale(this.toSlider(evt.scale));
 
       // Store the current value of scale so that it can be restored later.
       topo.set('scale', evt.scale);

@@ -775,6 +775,36 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+       Determine if the browser should be visible or not.
+
+       When hitting internal :gui: views, the browser needs to disappear
+       entirely from the UX for users. However, when we pop back it needs to
+       appear back in the previous state.
+
+       @method checkShowBrowser
+       @param {Request} req current request object.
+       @param {Response} res current response object.
+       @param {function} next callable for the next route in the chain.
+     */
+    checkShowBrowser: function(req, res, next) {
+      var url = req.url,
+          match = /(logout|:gui:\/(charms|service|unit))/;
+      var subapps = this.get('subApps');
+
+      if (subapps && subapps.charmstore) {
+        var charmstore = subapps.charmstore;
+        if (url.match(match)) {
+          charmstore.hidden = true;
+        } else {
+          charmstore.hidden = false;
+        }
+        charmstore.updateVisible();
+      }
+
+      next();
+    },
+
+    /**
       Shows the root view of the application erasing all namespaces
 
       @method showRootView
@@ -924,6 +954,7 @@ YUI.add('juju-gui', function(Y) {
           { path: '*', callbacks: 'show_notifications_view'},
           // Root.
           { path: '*', callbacks: 'show_environment'},
+          { path: '*', callbacks: 'checkShowBrowser'},
           // Charms.
           { path: '/charms/',
             callbacks: 'show_charm_collection',
