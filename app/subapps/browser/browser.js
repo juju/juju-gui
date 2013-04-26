@@ -18,6 +18,9 @@ YUI.add('subapp-browser', function(Y) {
      @extends {juju.SubApp}
    */
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
+    // Mark the entire subapp has hidden.
+    hidden: false,
+
     /**
         Show or hide the details panel.
 
@@ -395,7 +398,6 @@ YUI.add('subapp-browser', function(Y) {
       // We know the viewmode is already fullscreen because we're in this
       // function.
       if (this._hasStateChanged('viewmode')) {
-        Y.one('#subapp-browser').setStyle('display', 'block');
         this._fullscreen = this.showView('fullscreen', this._getViewCfg());
       }
 
@@ -440,10 +442,6 @@ YUI.add('subapp-browser', function(Y) {
       this._minimized.set(
           'oldViewMode',
           this._oldState.viewmode ? this._oldState.viewmode : 'sidebar');
-
-      // Hide the main UX component.
-      this.get('container').hide();
-      Y.one('#subapp-browser-min').show();
     },
 
     /**
@@ -457,7 +455,6 @@ YUI.add('subapp-browser', function(Y) {
     sidebar: function(req, res, next) {
       // If we've switched to viewmode sidebar, we need to render it.
       if (this._hasStateChanged('viewmode')) {
-        Y.one('#subapp-browser').setStyle('display', 'block');
         this._sidebar = this.showView('sidebar', this._getViewCfg());
       }
 
@@ -518,9 +515,49 @@ YUI.add('subapp-browser', function(Y) {
     routeView: function(req, res, next) {
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
-      this[req.params.viewmode](req, res, next);
-    }
 
+      // Once the state is updated determine visibility of our Nodes.
+      this.updateVisible();
+
+      // Don't bother routing if we're hidden.
+      if (!this.hidden) {
+        this[req.params.viewmode](req, res, next);
+      }
+    },
+
+    /**
+      Based on the viewmode and the hidden check what divs we should be
+      showing or hiding.
+
+    */
+    updateVisible: function() {
+      var minview = this.get('minNode'),
+          browser = this.get('container');
+
+      // In app tests these divs don't exist so ignore them if both aren't
+      // there carry on. The container is created through the subapp, but not
+      // the minview.
+      if (!minview) {
+        console.log('No browser subapp min div available.');
+        return;
+      }
+
+      if (this.hidden) {
+        browser.hide();
+        minview.hide();
+      } else {
+        if (this._viewState.viewmode === 'minimized') {
+          minview.show();
+          browser.hide();
+        } else {
+          minview.hide();
+          browser.show();
+          // @todo remove this when the browser is in the default view since
+          // we'll be using the hidden/minimized to move it back.
+          this.get('container').setStyle('display', 'block');
+        }
+      }
+    }
   }, {
     ATTRS: {
       /**
@@ -591,7 +628,23 @@ YUI.add('subapp-browser', function(Y) {
          @default undefined
          @type {Function}
        */
-      deploy: {}
+      deploy: {},
+
+      /**
+         @attribute minNode
+         @default Node
+         @type {Node}
+
+       */
+      minNode: {
+        /**
+          Find the minNode and cache it for later use.
+
+        */
+        valueFn: function() {
+          return Y.one('#subapp-browser-min');
+        }
+      }
 
     }
   });

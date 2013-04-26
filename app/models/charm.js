@@ -417,8 +417,6 @@ YUI.add('juju-charm-models', function(Y) {
         }
       },
       is_approved: {},
-      is_new: {},
-      is_popular: {},
       is_subordinate: {},
       last_change: {
         /**
