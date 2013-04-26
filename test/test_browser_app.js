@@ -79,7 +79,7 @@
   };
 
   describe('browser sidebar view', function() {
-    var Y, browser, models, view, views, Sidebar;
+    var Y, browser, view, views, Sidebar;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
