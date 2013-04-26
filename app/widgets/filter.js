@@ -19,9 +19,11 @@ YUI.add('browser-filter-widget', function(Y) {
    * @extends {Y.Widget}
    */
   ns.Filter = Y.Base.create('Filter', Y.Widget, [Y.Event.EventTracker], {
+    EVT_UPDATE_FILTERS: 'update_filters',
+    EVT_FILTERS_CHANGED: 'filters_changed',
     template: views.Templates.filters,
 
-    _updateFilters: function(e) {
+    _changeFilters: function(e) {
       var target = e.currentTarget,
           val = target.get('value'),
           filter_type = target.get('parentNode').get('parentNode').get('id');
@@ -37,16 +39,28 @@ YUI.add('browser-filter-widget', function(Y) {
             data.filter(function(item) {
               return item !== val; }));
       }
+      this.fire(this.EVT_FILTERS_CHANGED);
+    },
+
+    _handleSubmit: function(e) {
+      e.halt();
+      this.fire(this.EVT_UPDATE_FILTERS, this.get('data'));
     },
 
     initializer: function() {
       this.set('data', new models.Filter());
+      this.publish(this.EVT_UPDATE_FILTERS);
     },
 
     bindUI: function() {
+      var cb = this.get('contentBox');
       this.addEvent(
-        this.get('contentBox').one('form').delegate(
-          'click', this._updateFilters, 'input[type="checkbox"]', this)
+        cb.one('form').delegate(
+          'click', this._changeFilters, 'input[type="checkbox"]', this)
+      );
+      this.addEvent(
+         cb.one('form').on(
+              'submit', this._handleSubmit, this)
       );
     },
 
