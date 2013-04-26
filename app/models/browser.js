@@ -35,6 +35,7 @@ YUI.add('juju-browser-models', function(Y) {
     'miscellaneous': 'Miscellaneous'
   };
 
+  // Scopes are not in scope for current design.
   ns.FILTER_SCOPES = {
     'public': 'Public Charms',
     'deployed': 'Deployed to Environment'

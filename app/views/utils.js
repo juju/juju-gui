@@ -1322,6 +1322,23 @@ YUI.add('juju-view-utils', function(Y) {
   });
 
   /**
+    Converts a set of filter data (e.g. FILTER_TYPES) into form checkboxes
+   */
+  Y.Handlebars.registerHelper('filter_to_form', function(filter_data) {
+    var filter_values = Object.keys(filter_data);
+    var filter_names = filter_values.map(function(key) {
+      return filter_data[key];
+    });
+    var html = [];
+    for(var i=0; i<filter_values.length; i+=1) {
+      html.push(Y.Lang.sub(
+          '{ name } <input type="checkbox" value="{ val } />"',
+          {name: filter_names[i], val: filter_values[i]}));
+    }
+    return new Y.Handlebars.SafeString(html.join(''));
+  });
+
+ /**
    * Extension for views to provide an apiFailure method.
    *
    * @class apiFailure

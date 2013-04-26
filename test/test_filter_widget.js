@@ -19,8 +19,32 @@ describe('filter widget', function() {
     container.remove(true);
   });
 
-  it.only('exists', function() {
+  it('initializes correctly', function() {
     var filter = new Y.juju.widgets.browser.Filter();
     assert.isObject(filter);
+    assert.isObject(filter.get('data'));
+  });
+
+  it.only('renders provided filter names', function() {
+    var filter_data = {
+      categories: {
+        test: 'foo'
+      },
+      providers: {
+        test: 'bar'
+      },
+      series: {
+        test: 'spoo'
+      },
+      types: {
+        test: 'fleem'
+      }
+    };
+    var filter = new Y.juju.widgets.browser.Filter(filter_data);
+    filter.render(container);
+
+    // There is one checkbox for each filter type
+    debugger;
+    assert.equal(4, container.all('input').size());
   });
 });
