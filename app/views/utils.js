@@ -1332,7 +1332,7 @@ YUI.add('juju-view-utils', function(Y) {
     var html = [];
     for(var i=0; i<filter_values.length; i+=1) {
       html.push(Y.Lang.sub(
-          '{ name } <input type="checkbox" value="{ val } />"',
+          '{ name } <input type="checkbox" value="{ val }" />',
           {name: filter_names[i], val: filter_values[i]}));
     }
     return new Y.Handlebars.SafeString(html.join(''));

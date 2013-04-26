@@ -25,7 +25,7 @@ describe('filter widget', function() {
     assert.isObject(filter.get('data'));
   });
 
-  it.only('renders provided filter names', function() {
+  it('renders provided filter names', function() {
     var filter_data = {
       categories: {
         test: 'foo'
@@ -43,8 +43,17 @@ describe('filter widget', function() {
     var filter = new Y.juju.widgets.browser.Filter(filter_data);
     filter.render(container);
 
-    // There is one checkbox for each filter type
-    debugger;
-    assert.equal(4, container.all('input').size());
+    var checkboxes = container.all('input');
+    assert.equal(4, checkboxes.size());
+    checkboxes.each(function(box) {
+      assert.equal('test', box.get('value'));
+    });
+    ['foo', 'bar', 'spoo', 'fleem'].map(function(item) {
+      assert.notEqual(-1, container.get('text').indexOf(item));
+    });
   });
+
+  it('renders checkboxes selected when appropriate');
+  it('keeps track of selected checkboxes');
+  it('notifies listeners when the filters have been submitted');
 });
