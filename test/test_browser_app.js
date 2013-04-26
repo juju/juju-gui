@@ -191,7 +191,7 @@
 
   });
 
-  describe('browser subapp display tree', function() {
+  describe.only('browser subapp display tree', function() {
     var Y, browser, hits, ns, resetHits;
 
     before(function(done) {
@@ -303,6 +303,41 @@
       var expected = Y.merge(hits, {
         sidebar: true,
         renderEditorial: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('search is not a valid charm id', function() {
+      var req = {
+        path: '/sidebar/search',
+        params: {
+          viewmode: 'sidebar',
+          id: 'search'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderSearchResults: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('search is not a valid part of a charm id', function() {
+      var req = {
+        path: '/sidebar/search/precise/cassandra-1',
+        params: {
+          viewmode: 'sidebar',
+          id: 'search/precise/cassandra-1'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderSearchResults: true,
+        renderCharmDetails: true
       });
 
       browser.routeView(req, undefined, function() {});
