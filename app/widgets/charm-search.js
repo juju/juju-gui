@@ -72,6 +72,36 @@ YUI.add('browser-search-widget', function(Y) {
     },
 
     /**
+     * Set the form to active so that we can change the search appearance.
+     *
+     * @method _setActive
+     * @private
+     *
+     */
+    _setActive: function() {
+      var form = this.get('boundingBox').one('form').addClass('active');
+    },
+
+    /**
+     * Toggle the active state depending on the content in the search box.
+     *
+     * @method _toggleActive
+     * @private
+     *
+     */
+    _toggleActive: function() {
+      var form = this.get('boundingBox').one('form'),
+          value = form.one('input').get('value');
+
+      if (value === '') {
+        form.removeClass('active');
+      }
+      else {
+        form.addClass('active');
+      }
+    },
+
+    /**
      * bind the UI events to the DOM making up the widget control.
      *
      * @method bindUI
@@ -91,6 +121,23 @@ YUI.add('browser-search-widget', function(Y) {
       this.addEvent(
           container.one('form').on(
               'submit', this._handleSubmit, this)
+      );
+      this.addEvent(
+          container.one('input').on(
+              'focus', this._setActive, this)
+      );
+      this.addEvent(
+          container.one('input').on(
+              'blur', this._toggleActive, this)
+      );
+      this.addEvent(
+          container.one('.delete').on(
+              'click',
+              function(ev) {
+                ev.halt();
+                this.clearSearch();
+              },
+              this)
       );
 
       // Note that the search could be updated either from our internal input
