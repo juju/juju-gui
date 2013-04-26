@@ -279,6 +279,36 @@
       assert.deepEqual(hits, expected);
     });
 
+    it('viewmodes we do not support do not route', function() {
+      var req = {
+        path: '/ignoreme/',
+        params: {
+          viewmode: 'ignoreme'
+        }
+      };
+      var expected = Y.merge(hits);
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('viewmodes we not a valid charm id', function() {
+      var req = {
+        path: '/sidebar/',
+        params: {
+          viewmode: 'sidebar',
+          id: 'sidebar'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderEditorial: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
     it('/sidebar dispatches correctly', function() {
       var req = {
         path: '/sidebar/',
@@ -628,7 +658,6 @@
       minNode.getComputedStyle('display').should.eql('none');
       browserNode.getComputedStyle('display').should.eql('none');
     });
-
   });
 })();
 

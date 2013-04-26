@@ -539,6 +539,12 @@ YUI.add('subapp-browser', function(Y) {
         req.params.viewmode = 'sidebar';
       }
 
+      // If the viewmode isn't found, it's not one of our urls. Carry on.
+      if (this.viewmodes.indexOf(req.params.viewmode) === -1) {
+        next();
+        return
+      }
+
       // for the route /sidebar|minimized|fullscreen it picks up the *id route
       // as well. Catch that here and make sure we set that to viewmode and no
       // id in the params.
@@ -553,13 +559,10 @@ YUI.add('subapp-browser', function(Y) {
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
-        // see if we care about this viewmode.
-        if (this.viewmodes.indexOf(req.params.viewmode) !== -1) {
-          this[req.params.viewmode](req, res, next);
-        } else {
-          // Let the next route go on.
-          next();
-        }
+        this[req.params.viewmode](req, res, next);
+      } else {
+        // Let the next route go on.
+        next();
       }
     },
 
