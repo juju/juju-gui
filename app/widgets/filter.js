@@ -18,16 +18,43 @@ YUI.add('browser-filter-widget', function(Y) {
    * @class
    * @extends {Y.Widget}
    */
-  ns.Filter = Y.Base.create('Filter', Y.Widget, [], {
+  ns.Filter = Y.Base.create('Filter', Y.Widget, [Y.Event.EventTracker], {
     template: views.Templates.filters,
+
+    _updateFilters: function(e) {
+      var target = e.currentTarget,
+          val = target.get('value'),
+          filter_type = target.get('parentNode').get('parentNode').get('id');
+      filter_type = filter_type.replace('search-filter-', '');
+      var filter_data = this.get('data');
+      if (target.get('checked')) {
+        filter_data.get(filter_type).push(val);
+
+      } else {
+        var data = filter_data.get(filter_type);
+        filter_data.set(
+            filter_type,
+            data.filter(function(item) {
+              return item !== val; }));
+      }
+    },
+
     initializer: function() {
       this.set('data', new models.Filter());
+    },
+
+    bindUI: function() {
+      this.addEvent(
+        this.get('contentBox').one('form').delegate(
+          'click', this._updateFilters, 'input[type="checkbox"]', this)
+      );
     },
 
     renderUI: function() {
       var tplNode = this.template(this.getAttrs());
       this.get('contentBox').setHTML(tplNode);
     }
+
   }, {
     ATTRS: {
       categories: {
@@ -57,7 +84,7 @@ YUI.add('browser-filter-widget', function(Y) {
 }, '0.1.0', {
   requires: [
     'base-build',
-    //'event-tracker',
+    'event-tracker',
     'juju-templates',
     'juju-browser-models',
     'juju-view-utils',

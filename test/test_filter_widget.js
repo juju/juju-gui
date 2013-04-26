@@ -1,6 +1,6 @@
 'use strict';
 
-describe('filter widget', function() {
+describe.only('filter widget', function() {
   var container, Y;
 
   before(function(done) {
@@ -25,7 +25,7 @@ describe('filter widget', function() {
     assert.isObject(filter.get('data'));
   });
 
-  it('renders provided filter names', function() {
+  it('renders provided filters', function() {
     var filter_data = {
       categories: {
         test: 'foo'
@@ -43,7 +43,7 @@ describe('filter widget', function() {
     var filter = new Y.juju.widgets.browser.Filter(filter_data);
     filter.render(container);
 
-    var checkboxes = container.all('input');
+    var checkboxes = container.all('input[type="checkbox"]');
     assert.equal(4, checkboxes.size());
     checkboxes.each(function(box) {
       assert.equal('test', box.get('value'));
@@ -53,25 +53,29 @@ describe('filter widget', function() {
     });
   });
 
-  it.only('renders checkboxes selected when appropriate', function() {
+  it('keeps track of selected checkboxes', function() {
     var filter_data = {
       categories: {
-        'foo': 'Bar',
-        'spoo': 'Fleem'
+        test: 'foo'
       },
-      data: {
-        categories: ['foo']
+      providers: {
+        test: 'bar'
+      },
+      series: {
+        test: 'spoo'
+      },
+      types: {
+        test: 'fleem'
       }
     };
     var filter = new Y.juju.widgets.browser.Filter(filter_data);
     filter.render(container);
-    var checked = container.one(':checked'),
-        unchecked = container.one(':unchecked');
-    assert.equal('foo', checked.get('value'));
-    assert.equal('spoo', unchecked.get('value'));
-  });
+    container.one('input[type="checkbox"]').simulate('click');
+    assert.notEqual(-1, filter.get('data').get('type').indexOf('test'));
 
-  it('keeps track of selected checkboxes');
+    container.one('input[type="checkbox"]').simulate('click');
+    assert.equal(-1, filter.get('data').get('type').indexOf('test'));
+  });
 
   it('notifies listeners when the filters have been submitted');
 });

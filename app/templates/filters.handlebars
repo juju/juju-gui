@@ -1,18 +1,18 @@
 <form>
-  <div>
-    <span>Charm type</span>
-    {{filter_to_form types}}
-  </div>
-  <div>
-    <span>Charm categories</span>
+  <ul id="search-filter-type">
+    Charm type
+    {{filter_to_form types "Charm type"}}
+  </ul>
+  <ul id="search-filter-category">
+    Charm categories
     {{filter_to_form categories}}
-  </div>
-  <div>
-    <span>Ubuntu series</span>
+  </ul>
+  <ul id="search-filter-series">
+    Ubuntu series
     {{filter_to_form series}}
-  </div>
-  <div>
-    <span>Providers</span>
+  </ul>
+  <ul id="search-filter-provider">
+    Providers
     {{filter_to_form providers}}
-  </div>
+  </ul>
 </form>
