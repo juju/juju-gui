@@ -47,7 +47,7 @@ YUI.add('subapp-browser', function(Y) {
         @param {Object} change the values to change in the current state.
      */
     _getStateUrl: function(change) {
-      var urlParts = ['/bws'];
+      var urlParts = [];
       this._oldState = this._viewState;
       this._viewState = Y.merge(this._viewState, change);
 
@@ -513,6 +513,15 @@ YUI.add('subapp-browser', function(Y) {
        @param {function} next callable for the next route in the chain.
      */
     routeView: function(req, res, next) {
+      // If there is no viewmode, assume it's sidebar.
+      if (!req.params) {
+        req.params = {};
+      }
+
+      if(!req.params.viewmode) {
+        req.params.viewmode = 'sidebar';
+      }
+
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
 
@@ -603,11 +612,14 @@ YUI.add('subapp-browser', function(Y) {
        */
       routes: {
         value: [
-          // Double routes are needed to catch /fullscreen and /fullscreen/
-          { path: '/bws/:viewmode/', callbacks: 'routeView' },
-          { path: '/bws/:viewmode/search/', callbacks: 'routeView' },
-          { path: '/bws/:viewmode/search/*id/', callbacks: 'routeView' },
-          { path: '/bws/:viewmode/*id/', callbacks: 'routeView' }
+          // Show the sidebar on all places if its not manually shut off or
+          // turned into a fullscreen route.
+          { path: '*', callbacks: 'routeView'},
+          { path: '/*id/', callbacks: 'routeView'},
+          { path: '/:viewmode/', callbacks: 'routeView' },
+          { path: '/:viewmode/search/', callbacks: 'routeView' },
+          { path: '/:viewmode/search/*id/', callbacks: 'routeView' },
+          { path: '/:viewmode/*id/', callbacks: 'routeView' }
         ]
       },
 

@@ -185,7 +185,7 @@
 
   });
 
-  describe('browser subapp display tree', function() {
+  describe.only('browser subapp display tree', function() {
     var Y, browser, hits, ns, resetHits;
 
     before(function(done) {
@@ -259,9 +259,23 @@
       Y.one('#subapp-browser').remove(true);
     });
 
-    it('bws-sidebar dispatches correctly', function() {
+
+    it('/ dispatches correctly', function() {
       var req = {
-        path: '/bws/sidebar/',
+        path: '/',
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderEditorial: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('/sidebar dispatches correctly', function() {
+      var req = {
+        path: '/sidebar/',
         params: {
           viewmode: 'sidebar'
         }
@@ -275,9 +289,26 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('bws-sidebar-charmid dispatches correctly', function() {
+    it('/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/sidebar/precise/apache2-2',
+        path: '/precise/apache2-2',
+        params: {
+          id: 'precise/apache2-2'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderEditorial: true,
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('/sidebar/charmid dispatches correctly', function() {
+      var req = {
+        path: '/sidebar/precise/apache2-2',
         params: {
           viewmode: 'sidebar',
           id: 'precise/apache2-2'
@@ -293,9 +324,9 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('bws-sidebar-search-charmid dispatches correctly', function() {
+    it('/sidebar/search/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/sidebar/search/precise/apache2-2',
+        path: '/sidebar/search/precise/apache2-2',
         params: {
           viewmode: 'sidebar',
           id: 'precise/apache2-2'
@@ -311,9 +342,9 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('bws-fullscreen dispatches correctly', function() {
+    it('/fullscreen dispatches correctly', function() {
       var req = {
-        path: '/bws/fullscreen/',
+        path: '/fullscreen/',
         params: {
           viewmode: 'fullscreen'
         }
@@ -327,9 +358,9 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('fullscreen-charmid dispatches correctly', function() {
+    it('/fullscreen/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/fullscreen/precise/apache2-2',
+        path: '/fullscreen/precise/apache2-2',
         params: {
           viewmode: 'fullscreen',
           id: 'precise/apache2-2'
@@ -344,9 +375,9 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('fullscreen-search-charmid dispatches correctly', function() {
+    it('/fullscreen/search/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/fullscreen/search/precise/apache2-2',
+        path: '/fullscreen/search/precise/apache2-2',
         params: {
           viewmode: 'fullscreen',
           id: 'precise/apache2-2'
@@ -361,9 +392,9 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('sidebar to sidebar-charmid dispatches correctly', function() {
+    it('/sidebar to /sidebar/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/sidebar/',
+        path: '/sidebar/',
         params: {
           viewmode: 'sidebar'
         }
@@ -374,7 +405,7 @@
       // editorial content again.
       resetHits();
       req = {
-        path: '/bws/sidebar/precise/apache2-2',
+        path: '/sidebar/precise/apache2-2',
         params: {
           viewmode: 'sidebar',
           id: 'precise/apache2-2'
@@ -389,9 +420,9 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('sidebar-details to sidebar dispatchse correctly', function() {
+    it('/sidebar/charmid to /sidebar dispatchse correctly', function() {
       var req = {
-        path: '/bws/sidebar/precise/apache2-2',
+        path: '/sidebar/precise/apache2-2',
         params: {
           viewmode: 'sidebar',
           id: 'precise/apache2-2'
@@ -402,7 +433,7 @@
       // Reset the hits and we should not redraw anything to update the view.
       resetHits();
       req = {
-        path: '/bws/sidebar/',
+        path: '/sidebar/',
         params: {
           viewmode: 'sidebar'
         }
@@ -413,9 +444,9 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('fullscreen to fullscreen-details dispatches correctly', function() {
+    it('/fullscreen to /fullscreen/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/fullscreen/',
+        path: '/fullscreen/',
         params: {
           viewmode: 'fullscreen'
         }
@@ -426,7 +457,7 @@
       // editorial content again.
       resetHits();
       req = {
-        path: '/bws/fullscreen/precise/apache2-2',
+        path: '/fullscreen/precise/apache2-2',
         params: {
           viewmode: 'fullscreen',
           id: 'precise/apache2-2'
@@ -441,9 +472,9 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('fullscreen-details to fullscreen renders editorial', function() {
+    it('/fullscreen/details to /fullscreen renders editorial', function() {
       var req = {
-        path: '/bws/fullscreen/precise/apache2-2',
+        path: '/fullscreen/precise/apache2-2',
         params: {
           viewmode: 'fullscreen',
           id: 'precise/apache2-2'
@@ -454,7 +485,7 @@
       // Reset the hits and we should not redraw anything to update the view.
       resetHits();
       req = {
-        path: '/bws/fullscreen/',
+        path: '/fullscreen/',
         params: {
           viewmode: 'fullscreen'
         }
@@ -468,9 +499,9 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('sidebar to fullscreen dispatches correctly', function() {
+    it('/sidebar to /fullscreen dispatches correctly', function() {
       var req = {
-        path: '/bws/sidebar',
+        path: '/sidebar',
         params: {
           viewmode: 'sidebar'
         }
@@ -480,7 +511,7 @@
       // Reset the hits and we should not redraw anything to update the view.
       resetHits();
       req = {
-        path: '/bws/fullscreen/',
+        path: '/fullscreen/',
         params: {
           viewmode: 'fullscreen'
         }
@@ -496,7 +527,7 @@
 
     it('changing the query string dispatches correctly', function() {
       var req = {
-        path: '/bws/fullscreen/search/',
+        path: '/fullscreen/search/',
         params: {
           viewmode: 'fullscreen'
         },
@@ -519,7 +550,7 @@
 
     it('no change to query string does not redraw', function() {
       var req = {
-        path: '/bws/fullscreen/search/',
+        path: '/fullscreen/search/',
         params: {
           viewmode: 'fullscreen'
         },
@@ -537,9 +568,9 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('handles searches with no querystring', function() {
+    it('searches without a query string function', function() {
       var req = {
-        path: '/bws/fullscreen/search/',
+        path: '/fullscreen/search/',
         params: {
           viewmode: 'fullscreen'
         }
@@ -554,9 +585,9 @@
       assert.deepEqual(hits, expected);
     });
 
-    it('routes to the minimized view', function() {
+    it('/minimized dispatches correctly', function() {
       var req = {
-        path: '/bws/minimized',
+        path: '/minimized',
         params: {
           viewmode: 'minimized'
         }
@@ -574,7 +605,7 @@
       browser.hidden = true;
 
       var req = {
-        path: '/bws/minimized',
+        path: '/minimized',
         params: {
           viewmode: 'minimized'
         }
