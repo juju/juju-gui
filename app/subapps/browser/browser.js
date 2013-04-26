@@ -157,6 +157,22 @@ YUI.add('subapp-browser', function(Y) {
       }
     },
 
+    _stripViewMode: function(id) {
+      var match = /^(sidebar|fullscreen|minimized)/;
+
+      if (id && id.match(match)) {
+        // Strip it out.
+        id = id.replace(match, '');
+
+        // if the id is now empty, set it to null.
+        if (id === '') {
+          id = null;
+        }
+      }
+
+      return id
+    },
+
     /**
        Verify that a particular part of the state has changed.
 
@@ -522,6 +538,12 @@ YUI.add('subapp-browser', function(Y) {
       if (!req.params.viewmode) {
         req.params.viewmode = 'sidebar';
       }
+
+      // for the route /sidebar|minimized|fullscreen it picks up the *id route
+      // as well. Catch that here and make sure we set that to viewmode and no
+      // id in the params.
+      var id = this._stripViewMode(req.params.id);
+      req.params.id = id;
 
       // Update the state for the rest of things to figure out what to do.
       this._updateState(req);
