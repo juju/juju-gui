@@ -29,36 +29,43 @@
         border-bottom: 1px solid @bws-border;
 
         .back,
+        .share,
         .add {
             .heading-font;
+            display: block;
             height: 30px;
             line-height: 23pt;
         }
+        .share,
         .back {
             .three-image-button-background(
                 "browser_back_button_left.png",
                 "browser_back_button_right.png",
                 "browser_back_button_centre.png"
                 );
-            display: block;
-            float: left;
-            padding: 0 12px 0 11px;
             color: @bws-heading;
-
-            &:hover {
-                background-position: left bottom, right bottom, left bottom;
-            }
-            img {
-                margin-right: 9px;
-                vertical-align: baseline;
-            }
         }
         .share,
         .add {
             float: right;
         }
+        .back {
+            float: left;
+            padding: 0 12px 0 11px;
+
+            img {
+                margin-right: 9px;
+                vertical-align: baseline;
+            }
+        }
         .share {
             margin-right: 10px;
+            padding: 0 10px 0 7px;
+
+            img {
+                margin-right: 11px;
+                vertical-align: middle;
+            }
         }
         .add {
             .three-image-button-background(
@@ -66,17 +73,8 @@
                 "browser_add_button_right.png",
                 "browser_add_button_centre.png"
                 );
-            padding: 0 22px 0 32px;
-            border: none;
+            padding: 0 27px;
             color: #fff;
-
-            &:hover {
-                background-position: left center, right center, left center;
-            }
-            &:active {
-                background-position: left bottom, right bottom, left bottom;
-                color: #202020;
-            }
         }
     }
     .heading {
