@@ -601,12 +601,12 @@ YUI.add('subapp-browser', function(Y) {
         */
         valueFn: function() {
           var cfg = {
-            nop: false,
+            noop: false,
             apiHost: ''
           };
           if (!window.juju_config || ! window.juju_config.charmworldURL) {
             console.error('No juju config to fetch charmworld store url');
-            cfg.nop = true;
+            cfg.noop = true;
           } else {
             cfg.apiHost = window.juju_config.charmworldURL;
           }
