@@ -166,7 +166,7 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     _stripViewMode: function(id) {
-      var match = /^(sidebar|fullscreen|minimized)/;
+      var match = /^(sidebar|fullscreen|minimized)\/?(search)?/;
 
       if (id && id.match(match)) {
         // Strip it out.
@@ -224,9 +224,7 @@ YUI.add('subapp-browser', function(Y) {
 
       // Check for a charm id in the request.
       if (params.id && params.id !== 'search') {
-        // Make sure we clear out any accidental matching of search/ in the
-        // url.
-        this._viewState.charmID = params.id.replace(/^search\//, '');
+        this._viewState.charmID = params.id;
       } else {
         this._viewState.charmID = null;
       }
