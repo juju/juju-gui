@@ -1,10 +1,11 @@
 'use strict';
 
 describe('service module annotations', function() {
-  var db, juju, models, viewContainer, views, Y, serviceModule;
+  var db, juju, models, utils, viewContainer, views, Y, serviceModule;
   var called, location;
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
+      'juju-tests-utils',
       'juju-models',
       'juju-views',
       'juju-gui',
@@ -12,15 +13,14 @@ describe('service module annotations', function() {
     function(Y) {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
       views = Y.namespace('juju.views');
       done();
     });
   });
 
   beforeEach(function() {
-    viewContainer = Y.Node.create('<div />');
-    viewContainer.appendTo(Y.one('body'));
-    viewContainer.hide();
+    viewContainer = utils.makeContainer(),
     db = new models.Database();
     called = false;
     location =
@@ -77,10 +77,11 @@ describe('service module annotations', function() {
 });
 
 describe('service module events', function() {
-  var db, juju, models, serviceModule, topo,
+  var db, juju, models, serviceModule, topo, utils,
       view, viewContainer, views, Y;
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
+      'juju-tests-utils',
       'juju-landscape',
       'juju-models',
       'juju-views',
@@ -91,13 +92,13 @@ describe('service module events', function() {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
+      utils = Y.namespace('juju-tests.utils');
       done();
     });
   });
 
   beforeEach(function() {
-    viewContainer = Y.Node.create('<div />');
-    viewContainer.appendTo(Y.one('body'));
+    viewContainer = utils.makeContainer();
     db = new models.Database();
     db.services.add({id: 'haproxy'});
     view = new views.environment({

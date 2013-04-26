@@ -104,8 +104,7 @@
     });
 
     beforeEach(function() {
-      container = Y.Node.create('<div />').setStyle('visibility', 'hidden');
-      Y.one('body').prepend(container);
+      container = testUtils.makeContainer();
       db = new models.Database();
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
@@ -119,6 +118,27 @@
       env._txn_callbacks = {};
       conn.messages = [];
       done();
+    });
+
+
+    it('should display help text when canvas is empty', function(done) {
+      // Use a db w/o the delta loaded
+      db = new models.Database();
+      var view = new views.environment({container: container, db: db}),
+          topo,
+          beforeResizeEventFired = false;
+      view.render();
+      topo = view.topo;
+
+      // Verify we have help text.
+      var help = container.one('#environment-help');
+      assert.ok(help);
+      // Add a service
+      db.onDelta({data: Y.clone(environment_delta)});
+
+      help = container.one('#environment-help');
+      help.should.not.be.visible;
+
     });
 
     it('must handle the window resize event', function(done) {

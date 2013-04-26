@@ -52,7 +52,9 @@ YUI.add('juju-view-environment', function(Y) {
          */
         render: function() {
           var container = this.get('container'),
-              topo = this.topo;
+              topo = this.topo,
+              db = this.get('db'),
+              self = this;
 
           // If we need the initial HTML template, take care of that.
           if (!this._rendered) {
@@ -83,10 +85,46 @@ YUI.add('juju-view-environment', function(Y) {
             this.topo = topo;
           }
 
-          topo.render();
-          return this;
+         topo.recordSubscription(
+           'ServiceModule', db.services.on('remove', Y.bind(this.updateIndicator, this)));
+
+         topo.recordSubscription(
+           'ServiceModule', db.services.on('add', Y.bind(this.updateIndicator, this)));
+
+         topo.render();
+         topo.once('rendered', this.updateIndicator);
+         return this;
         },
 
+        /**
+         * Support for canvas help function (when canvas is empty).
+         *
+         * @method updateIndicator
+         */
+        updateIndicator: function() {
+          var container = this.get('container'),
+              db = this.get('db');
+
+          if (!this._indicator) {
+            this._indicator = new Y.juju.widgets.browser.OverlayIndicator(
+              {target: container});
+          }
+          var indicator = this._indicator;
+          var services = db.services;
+          // Apply service filtering for GUI.
+          //
+          if (services.size() < 1) {
+            // Select the template to render.
+            // Static for now.
+            var template = Templates.emptyCanvas;
+            indicator.render();
+            indicator.setBusy();
+            indicator.get('contentBox').setHTML(
+              template({canvasHelpId: 'environment-help'}));
+          } else {
+            indicator.success();
+          }
+        },
         /**
          * Render callback handler, triggered from app when the view renders.
          *
@@ -114,6 +152,7 @@ YUI.add('juju-view-environment', function(Y) {
   requires: ['juju-templates',
              'juju-view-utils',
              'juju-models',
+             'browser-overlay-indicator',
              'juju-topology',
              'base-build',
              'handlebars-base',
