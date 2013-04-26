@@ -145,8 +145,6 @@
     ], 
     "id": "precise/apache2-6", 
     "is_approved": true, 
-    "is_new": false, 
-    "is_popular": false, 
     "is_subordinate": false, 
     "maintainer": {
         "email": "liam.young@canonical.com", 
