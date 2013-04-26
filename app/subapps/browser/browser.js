@@ -157,6 +157,14 @@ YUI.add('subapp-browser', function(Y) {
       }
     },
 
+    /**
+     * Strip the viewmode from the charmid when processing to check for proper
+     * routing.
+     *
+     * @method _stripViewMode
+     * @param {String} id the req.param.id found.
+     *
+     */
     _stripViewMode: function(id) {
       var match = /^(sidebar|fullscreen|minimized)/;
 
