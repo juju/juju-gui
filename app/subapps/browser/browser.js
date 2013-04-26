@@ -602,9 +602,6 @@ YUI.add('subapp-browser', function(Y) {
           minview.hide();
           browser.show();
         }
-        // @todo remove this when the browser is in the default view since
-        // we'll be using the hidden/minimized to move it back.
-        this.get('container').setStyle('display', 'block');
       }
     }
   }, {
