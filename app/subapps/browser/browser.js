@@ -170,7 +170,7 @@ YUI.add('subapp-browser', function(Y) {
         }
       }
 
-      return id
+      return id;
     },
 
     /**
@@ -542,7 +542,7 @@ YUI.add('subapp-browser', function(Y) {
       // If the viewmode isn't found, it's not one of our urls. Carry on.
       if (this.viewmodes.indexOf(req.params.viewmode) === -1) {
         next();
-        return
+        return;
       }
 
       // for the route /sidebar|minimized|fullscreen it picks up the *id route
