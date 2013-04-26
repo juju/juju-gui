@@ -103,20 +103,6 @@ YUI.add('juju-endpoints-controller', function(Y) {
         },
 
         /**
-         * Setup once('load') handler for a charm.
-         *
-         * @method setupCharmOnceLoad
-         * @param {Object} charm The charm to watch.
-         * @param {String} svcName The name of the correpsonding service.
-         * @return {undefined} Nothing.
-         */
-        setupCharmOnceLoad: function(charm, svcName) {
-          charm.once('load', Y.bind(function(svcName, evt) {
-            this.addServiceToEndpointsMap(svcName, evt.currentTarget);
-          }, this, svcName));
-        },
-
-        /**
           Generic handler for a service event.  If it is not pending,
           make sure we have a charm.  If the charm has loaded, set or update
           the service's endpoints; otherwise, make that happen once the load

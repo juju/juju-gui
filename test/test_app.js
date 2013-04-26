@@ -59,10 +59,11 @@ function injectData(app, data) {
       conn = new utils.SocketStub();
       env = juju.newEnvironment({conn: conn});
       env.connect();
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            env: env});
+      app = new Y.juju.App({
+        container: container,
+        viewContainer: container,
+        env: env
+      });
       app.showView(new Y.View());
       injectData(app);
     });
@@ -105,7 +106,8 @@ function injectData(app, data) {
         container: container,
         readOnly: true,
         viewContainer: container,
-        conn: {close: function() {}}});
+        conn: {close: function() {}}
+      });
       app.showView(new Y.View());
       assert.isTrue(app.env.get('readOnly'));
     });
@@ -121,8 +123,7 @@ function injectData(app, data) {
       // Take handles to database objects and ensure we can route to the view
       // needed to show them.
       var wordpress = app.db.services.getById('wordpress'),
-          wp0 = app.db.units.get_units_for_service(wordpress)[0],
-          wp_charm = app.db.charms.getById(wordpress.get('charm'));
+          wp0 = app.db.units.get_units_for_service(wordpress)[0];
 
       // 'service/wordpress/' is the primary route,
       // so other URLs are not returned.
@@ -134,8 +135,11 @@ function injectData(app, data) {
       // Service units use argument rewriting (thus not /u/wp/0).
       app.getModelURL(wp0).should.equal('/:gui:/unit/wordpress-0/');
 
+      var wpCharmName = wordpress.get('charm');
+      app.db.charms.add({id: wpCharmName});
+      var wpCharm = app.db.charms.getById(wpCharmName);
       // Charms also require a mapping, but only a name, not a function.
-      app.getModelURL(wp_charm).should.equal(
+      app.getModelURL(wpCharm).should.equal(
           '/:gui:/charms/charms/precise/wordpress-6/json/');
     });
 
