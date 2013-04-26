@@ -166,8 +166,9 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     _stripViewMode: function(id) {
-      var match = /^(sidebar|fullscreen|minimized)\/?(search)?/;
+      var match = /^(sidebar|fullscreen|minimized|search)\/?(search)?/;
 
+      debugger;
       if (id && id.match(match)) {
         // Strip it out.
         id = id.replace(match, '');
