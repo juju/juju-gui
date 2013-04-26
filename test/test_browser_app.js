@@ -56,6 +56,17 @@
       assert.isTrue(Y.Lang.isObject(container.one('input')));
     });
 
+    it('reroutes to minimized when toggled', function(done) {
+      var container = Y.one('#subapp-browser');
+      view = new FullScreen();
+      view.on('viewNavigate', function(ev) {
+        assert(ev.change.viewmode === 'minimized');
+        done();
+      });
+      view.render(container);
+      container.one('.bws-icon').simulate('click');
+    });
+
   });
 })();
 
@@ -101,6 +112,17 @@
     it('knows that it is not fullscreen', function() {
       view = new Sidebar();
       view.isFullscreen().should.equal(false);
+    });
+
+    it('reroutes to minimized when toggled', function(done) {
+      var container = Y.one('#subapp-browser');
+      view = new Sidebar();
+      view.on('viewNavigate', function(ev) {
+        assert(ev.change.viewmode === 'minimized');
+        done();
+      });
+      view.render(container);
+      container.one('.bws-icon').simulate('click');
     });
 
     it('must correctly render the initial browser ui', function() {
@@ -177,6 +199,7 @@
             resetHits = function() {
               hits = {
                 fullscreen: false,
+                minimized: false,
                 sidebar: false,
                 renderCharmDetails: false,
                 renderEditorial: false,
@@ -199,8 +222,8 @@
 
     beforeEach(function() {
       var docBody = Y.one(document.body);
-      Y.Node.create('<div id="subapp-browser">' +
-          '</div>').appendTo(docBody);
+      Y.Node.create('<div id="subapp-browser-min"><div id="subapp-browser">' +
+          '</div></div>').appendTo(docBody);
 
       // Track which render functions are hit.
       resetHits();
@@ -220,6 +243,9 @@
       };
       browser.renderSearchResults = function() {
         hits.renderSearchResults = true;
+      };
+      browser.minimized = function() {
+        hits.minimized = true;
       };
       // showView needs to be hacked because it does the rendering of
       // fullscreen/sidebar.
@@ -526,6 +552,44 @@
 
       browser.routeView(req, undefined, function() {});
       assert.deepEqual(hits, expected);
+    });
+
+    it('routes to the minimized view', function() {
+      var req = {
+        path: '/bws/minimized',
+        params: {
+          viewmode: 'minimized'
+        }
+      };
+
+      var expected = Y.merge(hits, {
+        minimized: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('when hidden the browser avoids routing', function() {
+      browser.hidden = true;
+
+      var req = {
+        path: '/bws/minimized',
+        params: {
+          viewmode: 'minimized'
+        }
+      };
+      var expected = Y.merge(hits);
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+
+      // And both nodes are hidden.
+      var minNode = Y.one('#subapp-browser-min');
+      var browserNode = Y.one('#subapp-browser');
+
+      minNode.getComputedStyle('display').should.eql('none');
+      browserNode.getComputedStyle('display').should.eql('none');
     });
 
   });

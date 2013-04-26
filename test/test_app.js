@@ -178,6 +178,42 @@ function injectData(app, data) {
       );
     });
 
+    it('hides the browser subapp on some urls', function() {
+      var app = new Y.juju.App({
+        container: container,
+        viewContainer: container,
+        conn: {close: function() {}}
+      });
+
+      var checkUrls = [{
+        url: ':gui:/service/memcached/',
+        hidden: true
+      }, {
+        url: ':gui:/charms/precise/memcached-1/json/',
+        hidden: true
+      }, {
+        url: ':gui:/unit/mediawiki-7/',
+        hidden: true
+      }, {
+        url: '/logout',
+        hidden: true
+      }, {
+        url: '/',
+        hidden: false
+      }, {
+        url: '/fullscreen',
+        hidden: false
+      }];
+
+      Y.Array.each(checkUrls, function(check) {
+        var req = {url: check.url};
+        var next = function() {};
+        app.checkShowBrowser(req, undefined, next);
+        app.get('subApps').charmstore.hidden.should.eql(check.hidden);
+      });
+      app.destroy();
+    });
+
   });
 })();
 
@@ -359,7 +395,6 @@ function injectData(app, data) {
         done();
       });
     });
-
   });
 })();
 
