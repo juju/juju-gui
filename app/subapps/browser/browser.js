@@ -20,6 +20,7 @@ YUI.add('subapp-browser', function(Y) {
   ns.Browser = Y.Base.create('subapp-browser', Y.juju.SubApp, [], {
     // Mark the entire subapp has hidden.
     hidden: false,
+    viewmodes: ['minimized', 'fullscreen', 'sidebar'],
 
     /**
         Show or hide the details panel.
@@ -530,7 +531,13 @@ YUI.add('subapp-browser', function(Y) {
 
       // Don't bother routing if we're hidden.
       if (!this.hidden) {
-        this[req.params.viewmode](req, res, next);
+        // see if we care about this viewmode.
+        if(this.viewmodes.indexOf(req.params.viewmode) != -1) {
+          this[req.params.viewmode](req, res, next);
+        } else {
+          // Let the next route go on.
+          next();
+        }
       }
     },
 
@@ -593,15 +600,17 @@ YUI.add('subapp-browser', function(Y) {
            method store.valueFn
         */
         valueFn: function() {
-          var url = '';
+          var cfg = {
+            nop: false,
+            apiHost: ''
+          };
           if (!window.juju_config || ! window.juju_config.charmworldURL) {
             console.error('No juju config to fetch charmworld store url');
+            cfg.nop = true;
           } else {
-            url = window.juju_config.charmworldURL;
+            cfg.apiHost = window.juju_config.charmworldURL;
           }
-          return new Y.juju.Charmworld0({
-            'apiHost': url
-          });
+          return new Y.juju.Charmworld0(cfg);
         }
       },
 

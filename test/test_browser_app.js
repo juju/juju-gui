@@ -79,11 +79,12 @@
   };
 
   describe('browser sidebar view', function() {
-    var Y, browser, view, views, Sidebar;
+    var Y, browser, models, view, views, Sidebar;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'juju-browser',
+          'juju-models',
           'juju-views',
           'node-event-simulate',
           'subapp-browser-sidebar',
@@ -127,7 +128,11 @@
 
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser');
-      view = new Sidebar();
+      view = new Sidebar({
+        store: new Y.juju.Charmworld0({
+          apiHost: 'http://localhost'
+        })
+      });
 
       // mock out the data source on the view so that it won't actually make a
       // request.
@@ -140,6 +145,7 @@
         })
       };
 
+      // Override the store to not call the dummy localhost address.
       view.get('store').set(
           'datasource',
           new Y.DataSource.Local({source: emptyData}));
@@ -185,7 +191,7 @@
 
   });
 
-  describe.only('browser subapp display tree', function() {
+  describe('browser subapp display tree', function() {
     var Y, browser, hits, ns, resetHits;
 
     before(function(done) {
@@ -262,7 +268,7 @@
 
     it('/ dispatches correctly', function() {
       var req = {
-        path: '/',
+        path: '/'
       };
       var expected = Y.merge(hits, {
         sidebar: true,

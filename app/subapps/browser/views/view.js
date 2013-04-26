@@ -180,10 +180,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     initializer: function(cfg) {
-      this.set('store', new Y.juju.Charmworld0({
-        'apiHost': window.juju_config.charmworldURL
-      }));
-
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
