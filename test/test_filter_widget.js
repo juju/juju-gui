@@ -53,7 +53,25 @@ describe('filter widget', function() {
     });
   });
 
-  it('renders checkboxes selected when appropriate');
+  it.only('renders checkboxes selected when appropriate', function() {
+    var filter_data = {
+      categories: {
+        'foo': 'Bar',
+        'spoo': 'Fleem'
+      },
+      data: {
+        categories: ['foo']
+      }
+    };
+    var filter = new Y.juju.widgets.browser.Filter(filter_data);
+    filter.render(container);
+    var checked = container.one(':checked'),
+        unchecked = container.one(':unchecked');
+    assert.equal('foo', checked.get('value'));
+    assert.equal('spoo', unchecked.get('value'));
+  });
+
   it('keeps track of selected checkboxes');
+
   it('notifies listeners when the filters have been submitted');
 });
