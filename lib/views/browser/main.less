@@ -15,6 +15,13 @@
             no-repeat right top,
             url("/juju-ui/assets/images/@{centre-image}")
             repeat-x left top;
+
+    &:hover {
+      background-position: left center, right center, left center;
+    }
+    &:active {
+      background-position: left bottom, right bottom, left bottom;
+    }
 }
 .two-image-button-background(@left-image, @right-image, @background-color) {
     background: url("/juju-ui/assets/images/@{left-image}")
@@ -102,14 +109,21 @@
       top: 10px;
       padding-left: 21px;
       background: transparent url(/juju-ui/assets/images/header_nav_border.jpg)
-                  repeat-y left top;
+          repeat-y left top;
 
       .toggle-fullscreen {
         display: block;
         width: 40px;
         height: 40px;
         background: transparent url(/juju-ui/assets/images/browser_min_max.png)
-                  no-repeat left top;
+            no-repeat 0 0;
+
+        &:hover {
+          background-position: 0 -60px;
+        }
+        &:active {
+          background-position: 0 -120px;
+        }
       }
     }
     .bws-searchbox {
@@ -166,7 +180,14 @@
       left: 0;
     }
     .toggle-fullscreen {
-      background-position: left bottom;
+      background-position: 0 -180px;
+
+        &:hover {
+          background-position: 0 -240px;
+        }
+        &:active {
+          background-position: 0 -300px;
+        }
     }
   }
   #bws-sidebar {
@@ -198,8 +219,5 @@
   }
   .bws-view-data {
     left: @bws-sidebar-width;
-  }
-  .toggle-fullscreen {
-    background-position: left top;
   }
 }
