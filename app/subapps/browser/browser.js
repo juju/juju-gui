@@ -166,9 +166,10 @@ YUI.add('subapp-browser', function(Y) {
      *
      */
     _stripViewMode: function(id) {
+      // Clear out any parts of /sidebar/search, /sidebar, or /search from the
+      // id. See if we still really have an id.
       var match = /^(sidebar|fullscreen|minimized|search)\/?(search)?/;
 
-      debugger;
       if (id && id.match(match)) {
         // Strip it out.
         id = id.replace(match, '');
