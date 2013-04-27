@@ -396,6 +396,29 @@ YUI.add('juju-charm-models', function(Y) {
       code_source: {},
       date_created: {},
       description: {},
+      'failingProviders': {
+        valueFn: function() {
+          var failing = [],
+              providers = this.get('tested_providers');
+          Y.Object.each(providers, function(value, key) {
+            if (value !== 'SUCCESS') {
+              failing.push(key);
+
+              // We test openstack on HP. If it fails on openstack, it's
+              // failing on HP as well so add that.
+              if (key === 'openstack') {
+                failing.push('hp');
+              }
+            }
+          });
+
+          if (failing.length > 0) {
+            return failing;
+          } else {
+            return null;
+          }
+        }
+      },
       files: {
         value: {}
       },

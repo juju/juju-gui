@@ -10,6 +10,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
 
   /**
+    Register a helper into handlebars to display the provider icons
+
+  */
+
+
+  /**
    * View for the Charm details UI.
    *
    * @class CharmView

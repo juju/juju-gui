@@ -12,6 +12,14 @@
             </a>
         </div>
 
+        {{#if failingProviders}}
+            <div class="provider-warning">Currently fails on
+              {{#failingProviders}}
+                <img src="/juju-ui/assets/images/provider_icons/provider-{{.}}.svg" />
+              {{/failingProviders}}
+            </div>
+        {{/if}}
+
         <div class="heading yui3-g">
             <div class="yui3-u">
                 {{#if icon }}
