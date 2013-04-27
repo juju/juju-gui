@@ -8,13 +8,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       widgets = Y.namespace('juju.widgets'),
       DATE_FORMAT = '%d/%b/%y';
 
-
-  /**
-    Register a helper into handlebars to display the provider icons
-
-  */
-
-
   /**
    * View for the Charm details UI.
    *
