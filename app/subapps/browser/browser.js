@@ -49,6 +49,15 @@ YUI.add('subapp-browser', function(Y) {
     _getStateUrl: function(change) {
       var urlParts = ['/bws'];
       this._oldState = this._viewState;
+
+      // If there are changes to the filters, we need to update our filter
+      // object first, and then generate a new query string for the state to
+      // track.
+      if (change.filter) {
+        this._filter.update(change.filter);
+        change.querystring = this._filter.genQueryString();
+      }
+
       this._viewState = Y.merge(this._viewState, change);
 
       urlParts.push(this._viewState.viewmode);
@@ -78,6 +87,7 @@ YUI.add('subapp-browser', function(Y) {
     _getViewCfg: function(cfg) {
       return Y.merge(cfg, {
         db: this.get('db'),
+        filters: this._filter.getFilterData(),
         store: this.get('store')
       });
     },
@@ -170,21 +180,6 @@ YUI.add('subapp-browser', function(Y) {
       }
     },
 
-    _updateFilters: function(ev) {
-      debugger;
-
-      // The filter object has been updated by someone and we've gotten here
-      // by watching for changes on it's ATTRS.
-      var change = {
-        search: true,
-        querystring: this._filters.genQueryString()
-      };
-
-      this.fire('viewNavigate', {
-        change: change
-      });
-    },
-
     /**
        Update the oldState with the viewState now that we're done processing
        the request.
@@ -236,13 +231,8 @@ YUI.add('subapp-browser', function(Y) {
         this._viewState.querystring = null;
       }
 
-      if (!this._filters) {
-        debugger;
-        this._filters = models.browser.getFilter(query);
-        this._filters.on('change', this._updateFilters)
-      }
+      this._filter.update(query);
     },
-
 
     /**
        The available Views run from this sub app.
@@ -280,7 +270,7 @@ YUI.add('subapp-browser', function(Y) {
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
       this._initState();
-;
+      this._filter = new models.browser.Filter();
 
       // Listen for navigate events from any views we're rendering.
       this.on('*:viewNavigate', function(ev) {
@@ -402,7 +392,6 @@ YUI.add('subapp-browser', function(Y) {
       } else {
         extraCfg.renderTo = container.one('.bws-content');
       }
-      extraCfg.query = query;
 
       this._search = new Y.juju.browser.views.BrowserSearchView(
           this._getViewCfg(extraCfg));

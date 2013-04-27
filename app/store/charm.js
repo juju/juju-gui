@@ -216,7 +216,7 @@ YUI.add('juju-charm-store', function(Y) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
-      this._makeRequest(endpoint, callbacks, filters.getFilterData());
+      this._makeRequest(endpoint, callbacks, filters);
     },
 
     /**

@@ -88,17 +88,23 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
     _renderFilterWidget: function(container) {
       this.filters = new widgets.browser.Filter({
-        filters: models.browser.getFilter()
+        filters: this.get('filters')
       });
 
       if (!this.get('isFullscreen')) {
         return;
       }
       this.filters.render(container);
-      this.addEvent(
-          this.filters.on(
-              this.filters.EVT_FILTERS_CHANGED, this._searchChanged, this)
-      );
+      this.filters.on(this.filters.EV_FILTER_CHANGED, function(ev) {
+        var filters = this.get('filters');
+        filters[ev.change.field] = ev.change.value;
+        var change = {
+          filter: {
+          }
+        }
+        change['filter'][ev.change.field] = ev.change.value;
+        this.fire('viewNavigate', {change: change});
+      }, this);
     },
 
     /**
@@ -120,9 +126,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
      * @method render
      */
     render: function() {
-      // Based on the current filters set.
-      var filters = models.browser.getFilter();
-      this.get('store').search(filters, {
+      this.get('store').search(this.get('filters'), {
         'success': function(data) {
           var results = this.get('store').resultsToCharmlist(data.result);
           this._renderSearchResults(results);

@@ -75,6 +75,11 @@ YUI.add('subapp-browser-mainview', function(Y) {
           this.search.on(
               this.search.EVT_TOGGLE_FULLSCREEN, this._toggleFullscreen, this)
       );
+
+      this.addEvent(
+          this.search.on(
+              this.search.EVT_SEARCH_CHANGED, this._searchChanged, this)
+      );
     },
 
     /**
@@ -87,19 +92,29 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _renderSearchWidget: function(node) {
       this.search = new widgets.browser.Search({
+        filters: this.get('filters'),
         fullscreenTarget: this._fullscreenTarget
       });
       this.search.render(node.one('.bws-header'));
     },
 
+    _searchChanged: function(ev) {
+      var change = {
+          filter: {
+              text: ev.newVal
+          }
+      }
+      this.fire('viewNavigate', {change: change});
+    },
+
     /**
-     * Toggle the visibility of the browser. Bound to nav controls in the
-     * view, however this will be expanded to be controlled from the new
-     * constant nav menu outside of the view once it's completed.
-     *
-     * @method _toggle_sidebar
-     * @param {Event} ev event to trigger the toggle.
-     *
+       Toggle the visibility of the browser. Bound to nav controls in the
+       view, however this will be expanded to be controlled from the new
+       constant nav menu outside of the view once it's completed.
+
+       @method _toggle_sidebar
+       @param {Event} ev event to trigger the toggle.
+
      */
     _toggleBrowser: function(ev) {
       ev.halt();
@@ -112,11 +127,11 @@ YUI.add('subapp-browser-mainview', function(Y) {
     },
 
     /**
-        Upon clicking the fullscreen toggle icon make sure we re-route to the
-        new form of the UX.
+      Upon clicking the fullscreen toggle icon make sure we re-route to the
+      new form of the UX.
 
-        @method _toggleFullscreen
-        @param {Event} ev the click event handler on the button.
+      @method _toggleFullscreen
+      @param {Event} ev the click event handler on the button.
 
      */
     _toggleFullscreen: function(ev) {
@@ -189,6 +204,8 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        */
       charmID: {},
+
+      filters: {},
 
       /**
        * An instance of the Charmworld API object to hit for any data that

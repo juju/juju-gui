@@ -29,7 +29,6 @@ YUI.add('browser-search-widget', function(Y) {
     EVT_CLEAR_SEARCH: 'clear_search',
     EVT_TOGGLE_VIEWABLE: 'toggle_viewable',
     EVT_TOGGLE_FULLSCREEN: 'toggle_fullscreen',
-    EVT_UPDATE_SEARCH: 'update_search',
     EVT_SEARCH_CHANGED: 'search_changed',
 
     TEMPLATE: templates['browser-search'],
@@ -43,8 +42,14 @@ YUI.add('browser-search-widget', function(Y) {
      */
     _handleSubmit: function(ev) {
       ev.halt();
-      this.fire(this.EVT_UPDATE_SEARCH, this.get('data'));
+      var form = this.get('boundingBox').one('form'),
+          value = form.one('input').get('value');
+
+      this.fire(this.EVT_SEARCH_CHANGED, {
+        newVal: value
+      });
     },
+
     /**
      * Expose to the outside world that we've got a request to go fullscreen.
      *
@@ -141,16 +146,14 @@ YUI.add('browser-search-widget', function(Y) {
               this)
       );
 
-      // Note that the search could be updated either from our internal input
-      // control, or it could come from someone outside of the widget asking
-      // it to update to a specific value. This is how things like clicking
-      // categories can work.
-      var input = container.one('input');
-      this.addEvent(
-          input.on('valueChange', function(ev) {
-            this.get('filters').set('text', ev.newVal);
-          }, this)
-      );
+      // var input = container.one('input');
+      // this.addEvent(
+      //     input.on('valueChange', function(ev) {
+      //       this.fire(this.EV_SEARCH_CHANGED, {
+      //         newVal: ev.newVal
+      //       });
+      //     }, this)
+      // );
     },
 
     /**
@@ -183,7 +186,6 @@ YUI.add('browser-search-widget', function(Y) {
       this.publish(this.EVT_TOGGLE_VIEWABLE);
       this.publish(this.EVT_TOGGLE_FULLSCREEN);
       this.publish(this.EVT_SEARCH_CHANGED);
-      this.set('filters', models.getFilter());
     },
 
     /**
@@ -194,7 +196,7 @@ YUI.add('browser-search-widget', function(Y) {
      */
     renderUI: function() {
       var data = Y.merge(this.getAttrs(), {
-        filters: this.get('filters').getAttrs()
+        filters: this.get('filters')
       });
       this.get('contentBox').setHTML(
           this.TEMPLATE(data)
@@ -223,7 +225,7 @@ YUI.add('browser-search-widget', function(Y) {
 
   }, {
     ATTRS: {
-      filters: { },
+      filters: {},
       fullscreenTarget: {
         required: true
       }

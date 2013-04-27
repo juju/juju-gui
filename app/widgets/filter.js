@@ -19,6 +19,7 @@ YUI.add('browser-filter-widget', function(Y) {
    * @extends {Y.Widget}
    */
   ns.Filter = Y.Base.create('Filter', Y.Widget, [Y.Event.EventTracker], {
+    EV_FILTER_CHANGED: 'filter_changed',
     template: views.Templates.filters,
 
     _changeFilters: function(e) {
@@ -27,16 +28,27 @@ YUI.add('browser-filter-widget', function(Y) {
           filter_type = target.get('parentNode').get('parentNode').get('id');
 
       filter_type = filter_type.replace('search-filter-', '');
-      var filters = models.browser.getFilter();
 
       if (target.get('checked')) {
-        filters.get(filter_type).push(val);
+        var filters = this.get('filters')
+        filters[filter_type].push(val);
+        this.fire(this.EV_FILTER_CHANGED, {
+          change: {
+            field: filter_type,
+            value: filters[filter_type]
+          }
+        });
       } else {
-        var filter = filters.get(filter_type);
-        filters.set(
-            filter_type,
-            filter.filter(function(item) {
-              return item !== val; }));
+        var filter = this.get('filters')[filter_type]
+        filter = filter.filter(function(item) {
+            return item !== val;
+        });
+        this.fire(this.EV_FILTER_CHANGED, {
+          change: {
+            field: filter_type,
+            value: filter
+          }
+        });
       }
     },
 
@@ -67,7 +79,7 @@ YUI.add('browser-filter-widget', function(Y) {
             res.push({
               name: val,
               value: key,
-              checked: filters.get('category').indexOf(key) !== -1 ? true : false
+              checked: filters.category.indexOf(key) !== -1 ? true : false
             });
           });
           return res;
@@ -82,7 +94,7 @@ YUI.add('browser-filter-widget', function(Y) {
             res.push({
               name: val,
               value: key,
-              checked: filters.get('provider').indexOf(key) !== -1 ? true : false
+              checked: filters.provider.indexOf(key) !== -1 ? true : false
             });
           });
           return res;
@@ -96,7 +108,7 @@ YUI.add('browser-filter-widget', function(Y) {
             res.push({
               name: val,
               value: key,
-              checked: filters.get('series').indexOf(key) !== -1 ? true : false
+              checked: filters.series.indexOf(key) !== -1 ? true : false
             });
           });
           return res;
@@ -110,7 +122,7 @@ YUI.add('browser-filter-widget', function(Y) {
             res.push({
               name: val,
               value: key,
-              checked: filters.get('type').indexOf(key) !== -1 ? true : false
+              checked: filters.type.indexOf(key) !== -1 ? true : false
             });
           });
           return res;
