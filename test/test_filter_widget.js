@@ -76,6 +76,4 @@ describe.only('filter widget', function() {
     container.one('input[type="checkbox"]').simulate('click');
     assert.equal(-1, filter.get('data').get('type').indexOf('test'));
   });
-
-  it('notifies listeners when the filters have been submitted');
 });
