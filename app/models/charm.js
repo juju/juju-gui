@@ -413,6 +413,7 @@ YUI.add('juju-charm-models', function(Y) {
           });
 
           if (failing.length > 0) {
+
             return failing;
           } else {
             return null;

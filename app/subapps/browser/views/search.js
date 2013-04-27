@@ -60,7 +60,9 @@ YUI.add('subapp-browser-searchview', function(Y) {
       Y.all('.yui3-charmtoken.active').removeClass('active');
 
       // Add it to the current node.
-      clickTarget.ancestor('.yui3-charmtoken').addClass('active');
+      if (clickTarget) {
+        clickTarget.ancestor('.yui3-charmtoken').addClass('active');
+      }
     },
 
     /**
@@ -95,6 +97,24 @@ YUI.add('subapp-browser-searchview', function(Y) {
      */
     apiFailure: function(data, request) {
       this._apiFailure(data, request, 'Failed to load search results.');
+    },
+
+    /**
+     * General YUI initializer.
+     *
+     * @method initializer
+     * @param {Object} cfg configuration object.
+     *
+     */
+    initializer: function(cfg) {
+      this.on('activeIDChange', function (ev) {
+        var id = ev.newVal;
+        if (id) {
+          id = this.get('container').one(
+              '.charm-token[data-charmid="' + id + '"]');
+        }
+        this._updateActive(id);
+      });
     },
 
     /**

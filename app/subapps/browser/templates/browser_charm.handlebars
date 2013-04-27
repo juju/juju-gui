@@ -15,7 +15,8 @@
         {{#if failingProviders}}
             <div class="provider-warning">Currently fails on
               {{#failingProviders}}
-                <img src="/juju-ui/assets/images/provider_icons/provider-{{.}}.svg" />
+                <img src="/juju-ui/assets/images/provider_icons/provider-{{.}}.svg"
+                    title="tests currently fail on {{.}}"/>
               {{/failingProviders}}
             </div>
         {{/if}}
@@ -125,7 +126,7 @@
                 <div id="bws-readme">Readme</div>
                 <div id="bws-interfaces">
                     <p class="intro">
-                        Interfaces determine how this charm relates to other charms. A relationship between charms can only be made if they share a common interface. 
+                        Interfaces determine how this charm relates to other charms. A relationship between charms can only be made if they share a common interface.
                         {{#if interfaceIntro.noRequiresNoProvides}}
                             <br />
                             <br />
@@ -193,9 +194,9 @@
                 </div>
                 <div id="bws-configuration">
                     <p class="intro">
-                        These are the ways in which you can configure this 
-                        charm to best suit your deployment. You can change the 
-                        default configuration settings either before or after 
+                        These are the ways in which you can configure this
+                        charm to best suit your deployment. You can change the
+                        default configuration settings either before or after
                         you have deployed the charm, if necessary.
                     </p>
                     {{#if options}}
@@ -218,12 +219,12 @@
                 <div id="bws-qa">Quality</div>
                 <div id="bws-hooks">
                     <p class="intro">
-                        Hooks are the pieces of code that comprise the charm. 
+                        Hooks are the pieces of code that comprise the charm.
                         A particular hook responds to specific events that Juju
-                        gives the charm, e.g. when there’s a change in the 
-                        environment or an administrator has made a change to 
-                        its configuration. Hooks are of interest mainly to 
-                        charm authors and advanced users. Select a hook below 
+                        gives the charm, e.g. when there’s a change in the
+                        environment or an administrator has made a change to
+                        its configuration. Hooks are of interest mainly to
+                        charm authors and advanced users. Select a hook below
                         to view its code.
                     </p>
                     <select>
