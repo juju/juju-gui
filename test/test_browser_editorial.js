@@ -161,7 +161,7 @@
       node.all('.yui3-charmtoken.active').size().should.equal(1);
     });
 
-    it('unsetting the activeID will remove the active', function() {
+    it('unsetting the activeID will remove the active markings', function() {
       fakeStore = new Y.juju.Charmworld0({});
       fakeStore.set('datasource', {
         sendRequest: function(params) {
