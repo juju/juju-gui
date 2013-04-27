@@ -31,6 +31,11 @@ YUI.add('juju-view-environment', function(Y) {
             preventable: false});
         },
 
+        /**
+         * Framework level cleanup. This helps
+         * tests run a little more cleanly.
+         * @method destructor.
+         */
         destructor: function() {
           if (this._indicator) {
             this._indicator.get('contentBox').remove(true);
@@ -91,15 +96,17 @@ YUI.add('juju-view-environment', function(Y) {
             this.topo = topo;
           }
 
-         topo.recordSubscription(
-           'ServiceModule', db.services.after('remove', Y.bind(this.updateIndicator, this)));
+          topo.recordSubscription(
+              'ServiceModule',
+              db.services.after('remove', Y.bind(this.updateIndicator, this)));
 
-         topo.recordSubscription(
-           'ServiceModule', db.services.after('add', Y.bind(this.updateIndicator, this)));
+          topo.recordSubscription(
+              'ServiceModule',
+              db.services.after('add', Y.bind(this.updateIndicator, this)));
 
-         topo.render();
-         topo.once('rendered', Y.bind(this.updateIndicator, this));
-         return this;
+          topo.render();
+          topo.once('rendered', Y.bind(this.updateIndicator, this));
+          return this;
         },
 
         /**
@@ -113,7 +120,7 @@ YUI.add('juju-view-environment', function(Y) {
 
           if (!this._indicator) {
             this._indicator = new Y.juju.widgets.browser.OverlayIndicator(
-              {target: container});
+                {target: container});
           }
           var indicator = this._indicator;
           var services = db.services;
@@ -129,7 +136,7 @@ YUI.add('juju-view-environment', function(Y) {
             indicator.render();
             indicator.setBusy();
             indicator.get('contentBox').setHTML(
-              template({canvasHelpId: 'environment-help'}));
+                template({canvasHelpId: 'environment-help'}));
           } else {
             indicator.success();
           }
