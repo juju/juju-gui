@@ -78,6 +78,7 @@ YUI.add('subapp-browser', function(Y) {
     _getViewCfg: function(cfg) {
       return Y.merge(cfg, {
         db: this.get('db'),
+        filters: this._filters,
         store: this.get('store')
       });
     },
@@ -217,6 +218,7 @@ YUI.add('subapp-browser', function(Y) {
       if (query) {
         // Store it as a straight string.
         this._viewState.querystring = Y.QueryString.stringify(query);
+        this._filters.update(query);
       } else {
         this._viewState.querystring = null;
       }
@@ -258,6 +260,7 @@ YUI.add('subapp-browser', function(Y) {
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
       this._initState();
+      this._filters = new models.browser.Filter();
 
       // Listen for navigate events from any views we're rendering.
       this.on('*:viewNavigate', function(ev) {
@@ -370,7 +373,7 @@ YUI.add('subapp-browser', function(Y) {
         query = req.query;
       } else {
         // If there's no querystring, we need a default "empty" search.
-        query = {text: ''};
+        query = '';
       }
 
       if (req.params.viewmode === 'fullscreen') {
@@ -379,7 +382,7 @@ YUI.add('subapp-browser', function(Y) {
       } else {
         extraCfg.renderTo = container.one('.bws-content');
       }
-      extraCfg.text = query.text;
+      extraCfg.query = query;
       this._search = new Y.juju.browser.views.BrowserSearchView(
           this._getViewCfg(extraCfg));
       this._search.render();
@@ -652,6 +655,7 @@ YUI.add('subapp-browser', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'juju-browser-models',
     'juju-charm-store',
     'juju-models',
     'querystring',

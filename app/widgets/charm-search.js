@@ -194,9 +194,17 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     renderUI: function() {
+      var data = Y.merge(this.getAttrs(), {
+        filters: this.get('filters').getAttrs()
+      });
       this.get('contentBox').setHTML(
-          this.TEMPLATE(this.getAttrs())
+          this.TEMPLATE(data)
       );
+
+      // If there's an existing search term, make sure we toggle active.
+      if (data.filters.text) {
+        this._toggleActive();
+      }
     },
 
     /**
@@ -217,6 +225,7 @@ YUI.add('browser-search-widget', function(Y) {
   }, {
     ATTRS: {
       data: {},
+      filters: {},
       fullscreenTarget: {
         required: true
       }

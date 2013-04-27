@@ -28,15 +28,15 @@ YUI.add('browser-filter-widget', function(Y) {
           val = target.get('value'),
           filter_type = target.get('parentNode').get('parentNode').get('id');
       filter_type = filter_type.replace('search-filter-', '');
-      var filter_data = this.get('data');
+      var filter_data = this.get('filters');
       if (target.get('checked')) {
         filter_data.get(filter_type).push(val);
 
       } else {
-        var data = filter_data.get(filter_type);
+        var filters = filter_data.get(filter_type);
         filter_data.set(
             filter_type,
-            data.filter(function(item) {
+            filters.filter(function(item) {
               return item !== val; }));
       }
       this.fire(this.EVT_FILTERS_CHANGED);
@@ -44,11 +44,10 @@ YUI.add('browser-filter-widget', function(Y) {
 
     _handleSubmit: function(e) {
       e.halt();
-      this.fire(this.EVT_UPDATE_FILTERS, this.get('data'));
+      this.fire(this.EVT_UPDATE_FILTERS, this.get('filters'));
     },
 
     initializer: function() {
-      this.set('data', models.getFilter());
       this.publish(this.EVT_UPDATE_FILTERS);
     },
 
@@ -71,25 +70,61 @@ YUI.add('browser-filter-widget', function(Y) {
 
   }, {
     ATTRS: {
-      categories: {
-        valueFn: function() {
-          return models.FILTER_TYPES;
+      'categories': {
+        getter: function() {
+          var filters = this.get('filters');
+          var res = [];
+          Y.Object.each(models.FILTER_CATEGORIES, function(val, key) {
+            res.push({
+              name: val,
+              value: key,
+              checked: filters.get('category').indexOf(key) !== -1 ? true : false
+            });
+          });
+          return res;
         }
       },
-      data: {},
-      providers: {
-        valueFn: function() {
-          return models.FILTER_PROVIDERS;
+      'filters': {},
+      'providers': {
+        getter: function() {
+          var filters = this.get('filters');
+          var res = [];
+          Y.Object.each(models.FILTER_PROVIDERS, function(val, key) {
+            res.push({
+              name: val,
+              value: key,
+              checked: filters.get('provider').indexOf(key) !== -1 ? true : false
+            });
+          });
+          return res;
         }
       },
-      series: {
-        valueFn: function() {
-          return models.FILTER_SERIES;
+      'series': {
+        getter: function() {
+          var filters = this.get('filters');
+          var res = [];
+          Y.Object.each(models.FILTER_SERIES, function(val, key) {
+            res.push({
+              name: val,
+              value: key,
+              checked: filters.get('series').indexOf(key) !== -1 ? true : false
+            });
+          });
+          return res;
         }
       },
-      types: {
-        valueFn: function() {
-          return models.FILTER_TYPES;
+      'types': {
+        getter: function() {
+          var filters = this.get('filters');
+          var res = [];
+          Y.Object.each(models.FILTER_TYPES, function(val, key) {
+            res.push({
+              name: val,
+              value: key,
+              checked: filters.get('type').indexOf(key) !== -1 ? true : false
+            });
+          });
+          return res;
         }
       }
     }

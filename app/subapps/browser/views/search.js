@@ -50,7 +50,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
     /**
       Update the node in the editorial list marked as 'active'.
-
       @method _updateActive
       @param {Node} clickTarget the charm-token clicked on to activate.
 
@@ -87,7 +86,10 @@ YUI.add('subapp-browser-searchview', function(Y) {
     },
 
     _renderFilterWidget: function(container) {
-      this.filters = new widgets.browser.Filter();
+      this.filters = new widgets.browser.Filter({
+        filters: this.get('filters')
+      });
+
       if (!this.get('isFullscreen')) {
         return;
       }
@@ -113,8 +115,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
      * @method render
      */
     render: function() {
-      var text = this.get('text');
-      this.get('store').search(text, {
+      var filters = this.get('filters');
+      this.get('store').search(filters, {
         'success': function(data) {
           var results = this.get('store').resultsToCharmlist(data.result);
           this._renderSearchResults(results);
@@ -145,13 +147,13 @@ YUI.add('subapp-browser-searchview', function(Y) {
       store: {},
 
       /**
-       * The text being searched on
+       * The search data object which is a Filter instance.
        *
-       * @attribute text
-       * @default ''
-       * @type {String}
+       * @attribute filters
+       * @default undefined
+       * @type {Filter}
        */
-      text: {}
+      filters: {}
     }
   });
 
@@ -161,6 +163,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
     'browser-charm-token',
     'browser-overlay-indicator',
     'event-tracker',
+    'juju-browser-models',
     'juju-view-utils',
     'view'
   ]

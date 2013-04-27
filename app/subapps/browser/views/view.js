@@ -93,6 +93,7 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _renderSearchWidget: function(node) {
       this.search = new widgets.browser.Search({
+        filters: this.get('filters'),
         fullscreenTarget: this._fullscreenTarget
       });
       this.search.render(node.one('.bws-header'));
@@ -217,6 +218,8 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        */
       charmID: {},
+
+      filters: {},
 
       /**
        * An instance of the Charmworld API object to hit for any data that

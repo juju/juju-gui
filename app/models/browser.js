@@ -21,9 +21,7 @@ YUI.add('juju-browser-models', function(Y) {
    *
    */
   ns.FILTER_TYPES = {
-    'approved': 'Approved Charms',
-    'community': 'Community Charms',
-    'environment': 'Environment Charms'
+    'approved': 'Reviewed Charms'
   };
 
   ns.FILTER_CATEGORIES = {
@@ -48,9 +46,9 @@ YUI.add('juju-browser-models', function(Y) {
 
   ns.FILTER_PROVIDERS = {
     'aws': 'AWS/EC2',
-    'openstack': 'Openstack',
     'hp': 'HP Cloud',
-    'lxc': 'LXC'
+    'lxc': 'LXC',
+    'openstack': 'Openstack'
   };
 
 
@@ -71,12 +69,6 @@ YUI.add('juju-browser-models', function(Y) {
      *
      */
     _setDefaults: function() {
-      this.set('category', Y.Object.keys(ns.FILTER_CATEGORIES));
-      this.set('provider', [
-        'aws',
-        'openstack'
-      ]);
-      this.set('scope', ['public']);
       this.set('series', ['precise']);
       this.set('type', ['approved']);
     },
@@ -89,7 +81,11 @@ YUI.add('juju-browser-models', function(Y) {
      *
      */
     genQueryString: function() {
-      var filterData = {
+      return Y.QueryString.stringify(this.getFilterData());
+    },
+
+    getFilterData: function() {
+      return {
         category: this.get('category'),
         provider: this.get('provider'),
         scope: this.get('scope'),
@@ -97,8 +93,6 @@ YUI.add('juju-browser-models', function(Y) {
         text: this.get('text'),
         type: this.get('type')
       };
-
-      return Y.QueryString.stringify(filterData);
     },
 
     /**
@@ -110,7 +104,29 @@ YUI.add('juju-browser-models', function(Y) {
      */
     initializer: function(cfg) {
       this._setDefaults();
+    },
+
+    update: function(update) {
+      // Update each manually as we might get an Array or a single value from
+      // the query string update.
+      var arrayVals = [
+        'category', 'provider', 'scope', 'series', 'type'
+      ];
+
+      Y.Array.each(arrayVals, function(key) {
+        if (!update[key]) {
+          // set a default empty array
+          this.get(key, []);
+        } else if (update[key] && typeof update[key] === 'string') {
+          this.set(key, [update[key]]);
+        } else {
+          this.set(key, update[key]);
+        }
+      }, this);
+
+      this.set('text', update.text);
     }
+
   }, {
     ATTRS: {
       category: {
@@ -145,6 +161,6 @@ YUI.add('juju-browser-models', function(Y) {
 }, '0.1.0', {
   requires: [
     'model',
-    'querystring-stringify'
+    'querystring'
   ]
 });

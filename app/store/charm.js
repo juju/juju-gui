@@ -209,13 +209,13 @@ YUI.add('juju-charm-store', function(Y) {
      * @param {Object} callbacks the success/failure callbacks to use.
      * @param {Object} bindScope the scope of *this* in the callbacks.
      */
-    search: function(text, callbacks, bindScope) {
+    search: function(filters, callbacks, bindScope) {
       var endpoint = 'charms';
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
         callbacks.failure = Y.bind(callbacks.failure, bindScope);
       }
-      this._makeRequest(endpoint, callbacks, {text: text});
+      this._makeRequest(endpoint, callbacks, filters.getFilterData());
     },
 
     /**
