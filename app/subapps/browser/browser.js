@@ -319,7 +319,6 @@ YUI.add('subapp-browser', function(Y) {
      */
     renderEditorial: function(req, res, next) {
       // If loading the interesting content then it's not a search going on.
-      debugger;
       var container = this.get('container'),
           extraCfg = {};
 

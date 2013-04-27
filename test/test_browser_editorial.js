@@ -158,8 +158,6 @@
         activeID: 'precise/ceph-7'
       });
       view.render();
-      debugger;
-
       node.all('.yui3-charmtoken.active').size().should.equal(1);
     });
 
