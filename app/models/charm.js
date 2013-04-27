@@ -397,6 +397,11 @@ YUI.add('juju-charm-models', function(Y) {
       date_created: {},
       description: {},
       'failingProviders': {
+        /**
+         * @method failingProviders.valueFn
+         * @return {Array} the list of failing provider names.
+         *
+         */
         valueFn: function() {
           var failing = [],
               providers = this.get('tested_providers');
