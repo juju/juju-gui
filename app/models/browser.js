@@ -94,6 +94,7 @@ YUI.add('juju-browser-models', function(Y) {
         provider: this.get('provider'),
         scope: this.get('scope'),
         series: this.get('series'),
+        text: this.get('text'),
         type: this.get('type')
       };
 
@@ -124,11 +125,22 @@ YUI.add('juju-browser-models', function(Y) {
       series: {
         value: []
       },
+      text: {
+        value: ''
+      },
       type: {
         value: []
       }
     }
   });
+
+  ns._filter = null;
+  ns.getFilter = function() {
+    if(!ns._filter) {
+      ns._filter = new ns.Filter();
+    }
+    return ns._filter;
+  };
 
 }, '0.1.0', {
   requires: [

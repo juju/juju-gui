@@ -48,7 +48,7 @@ YUI.add('browser-filter-widget', function(Y) {
     },
 
     initializer: function() {
-      this.set('data', new models.Filter());
+      this.set('data', models.getFilter());
       this.publish(this.EVT_UPDATE_FILTERS);
     },
 
