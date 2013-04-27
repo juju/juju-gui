@@ -112,7 +112,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
 
       // Watch for changse to the activeID so that we can mark/unmark active
       // as required.
-      this.on('activeIDChange', function (ev) {
+      this.on('activeIDChange', function(ev) {
         var id = ev.newVal;
         if (id) {
           id = this.get('container').one(

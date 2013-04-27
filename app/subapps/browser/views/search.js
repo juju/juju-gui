@@ -107,7 +107,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
      *
      */
     initializer: function(cfg) {
-      this.on('activeIDChange', function (ev) {
+      this.on('activeIDChange', function(ev) {
         var id = ev.newVal;
         if (id) {
           id = this.get('container').one(
