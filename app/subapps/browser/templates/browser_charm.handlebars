@@ -13,11 +13,12 @@
         </div>
 
         {{#if failingProviders}}
-            <div class="provider-warning">Currently fails on
-              {{#failingProviders}}
-                <img src="/juju-ui/assets/images/provider_icons/provider-{{.}}.svg"
-                    title="tests currently fail on {{.}}"/>
-              {{/failingProviders}}
+            <div class="provider-warning"><i class="sprite alert_icon2"></i>
+                Currently fails on
+                {{#failingProviders}}
+                    <img src="/juju-ui/assets/images/provider_icons/provider-{{.}}.svg"
+                        title="tests currently fail on {{.}}"/>
+                {{/failingProviders}}
             </div>
         {{/if}}
 
