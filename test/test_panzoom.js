@@ -1,7 +1,7 @@
 'use strict';
 
 describe('pan zoom module', function() {
-  var db, juju, models, viewContainer, views, Y, pz, topo, vis;
+  var db, juju, models, utils, viewContainer, views, Y, pz, topo, vis;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
@@ -15,14 +15,13 @@ describe('pan zoom module', function() {
       juju = Y.namespace('juju');
       models = Y.namespace('juju.models');
       views = Y.namespace('juju.views');
+      utils = Y.namespace('juju-tests.utils');
       done();
     });
   });
 
   beforeEach(function() {
-    viewContainer = Y.Node.create('<div />');
-    viewContainer.appendTo(Y.one('body'));
-    viewContainer.hide();
+    viewContainer = utils.makeContainer();
     db = new models.Database();
     var view = new views.environment({container: viewContainer, db: db});
     view.render();

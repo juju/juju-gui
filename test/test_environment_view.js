@@ -121,25 +121,34 @@
     });
 
 
-    it('should display help text when canvas is empty', function(done) {
+    it('should display help text when canvas is empty', function() {
       // Use a db w/o the delta loaded
       db = new models.Database();
       var view = new views.environment({container: container, db: db}),
           topo,
           beforeResizeEventFired = false;
-      view.render();
+      view.render().rendered();
       topo = view.topo;
 
       // Verify we have help text.
-      var help = container.one('#environment-help');
+      var help = Y.one('#environment-help');
       assert.ok(help);
-      // Add a service
-      db.onDelta({data: Y.clone(environment_delta)});
-
-      help = container.one('#environment-help');
-      help.should.not.be.visible;
-
+      view._indicator.get('contentBox').remove(true);
     });
+
+
+    it('should not display help text when canvas is populated', function() {
+      var view = new views.environment({container: container, db: db}),
+          topo,
+          beforeResizeEventFired = false;
+      view.render().rendered();
+      topo = view.topo;
+
+      // Verify we have help text.
+      assert.isFalse(view._indicator.get('visible'));
+      view._indicator.get('contentBox').remove(true);
+    });
+
 
     it('must handle the window resize event', function(done) {
       var view = new views.environment({container: container, db: db}),

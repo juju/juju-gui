@@ -31,6 +31,12 @@ YUI.add('juju-view-environment', function(Y) {
             preventable: false});
         },
 
+        destructor: function() {
+          if (this._indicator) {
+            this._indicator.get('contentBox').remove(true);
+          }
+        },
+
         /**
          * Wrapper around topo.update. Rather than re-rendering a whole
          * topology, the view can require data updates when needed.
@@ -86,13 +92,13 @@ YUI.add('juju-view-environment', function(Y) {
           }
 
          topo.recordSubscription(
-           'ServiceModule', db.services.on('remove', Y.bind(this.updateIndicator, this)));
+           'ServiceModule', db.services.after('remove', Y.bind(this.updateIndicator, this)));
 
          topo.recordSubscription(
-           'ServiceModule', db.services.on('add', Y.bind(this.updateIndicator, this)));
+           'ServiceModule', db.services.after('add', Y.bind(this.updateIndicator, this)));
 
          topo.render();
-         topo.once('rendered', this.updateIndicator);
+         topo.once('rendered', Y.bind(this.updateIndicator, this));
          return this;
         },
 
@@ -101,7 +107,7 @@ YUI.add('juju-view-environment', function(Y) {
          *
          * @method updateIndicator
          */
-        updateIndicator: function() {
+        updateIndicator: function(evt) {
           var container = this.get('container'),
               db = this.get('db');
 
@@ -112,8 +118,11 @@ YUI.add('juju-view-environment', function(Y) {
           var indicator = this._indicator;
           var services = db.services;
           // Apply service filtering for GUI.
-          //
-          if (services.size() < 1) {
+          services = services.filter({asList: true}, function(s) {
+            return !utils.isGuiService(s);
+          });
+          var size = services.size();
+          if (size === 0) {
             // Select the template to render.
             // Static for now.
             var template = Templates.emptyCanvas;
