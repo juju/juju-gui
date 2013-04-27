@@ -55,8 +55,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
       var node_html = '<img src="{src}">';
       var img = Y.Node.create(
           sub(node_html, {src: this.get('loading_image')}));
-      //img.set('src',
-      //'/juju-ui/assets/images/non-sprites/loading-spinner.gif');
       this.get('contentBox').append(img);
     },
 
@@ -157,7 +155,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
        */
       loading_image: {
         value: '/juju-ui/assets/images/non-sprites/loading-spinner.gif'
-        //value: '/juju-ui/assets/images/loading-spinner.gif'
       }
     }
   });
