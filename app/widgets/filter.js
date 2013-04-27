@@ -30,7 +30,7 @@ YUI.add('browser-filter-widget', function(Y) {
       filter_type = filter_type.replace('search-filter-', '');
 
       if (target.get('checked')) {
-        var filters = this.get('filters')
+        var filters = this.get('filters');
         filters[filter_type].push(val);
         this.fire(this.EV_FILTER_CHANGED, {
           change: {
@@ -39,9 +39,9 @@ YUI.add('browser-filter-widget', function(Y) {
           }
         });
       } else {
-        var filter = this.get('filters')[filter_type]
+        var filter = this.get('filters')[filter_type];
         filter = filter.filter(function(item) {
-            return item !== val;
+          return item !== val;
         });
         this.fire(this.EV_FILTER_CHANGED, {
           change: {

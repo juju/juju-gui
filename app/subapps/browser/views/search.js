@@ -101,8 +101,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
         var change = {
           filter: {
           }
-        }
-        change['filter'][ev.change.field] = ev.change.value;
+        };
+        change.filter[ev.change.field] = ev.change.value;
         this.fire('viewNavigate', {change: change});
       }, this);
     },

@@ -100,10 +100,10 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
     _searchChanged: function(ev) {
       var change = {
-          filter: {
-              text: ev.newVal
-          }
-      }
+        filter: {
+          text: ev.newVal
+        }
+      };
       this.fire('viewNavigate', {change: change});
     },
 
