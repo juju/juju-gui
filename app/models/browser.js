@@ -104,9 +104,15 @@ YUI.add('juju-browser-models', function(Y) {
      */
     initializer: function(cfg) {
       this._setDefaults();
+
+      if (cfg) {
+        // we've got initial data we need to load into proper arrays and
+        // such.
+        this._update(cfg);
+      }
     },
 
-    update: function(update) {
+    _update: function(data) {
       // Update each manually as we might get an Array or a single value from
       // the query string update.
       var arrayVals = [
@@ -114,17 +120,17 @@ YUI.add('juju-browser-models', function(Y) {
       ];
 
       Y.Array.each(arrayVals, function(key) {
-        if (!update[key]) {
+        if (!data[key]) {
           // set a default empty array
           this.get(key, []);
-        } else if (update[key] && typeof update[key] === 'string') {
-          this.set(key, [update[key]]);
+        } else if (data[key] && typeof data[key] === 'string') {
+          this.set(key, [data[key]]);
         } else {
-          this.set(key, update[key]);
+          this.set(key, data[key]);
         }
       }, this);
 
-      this.set('text', update.text);
+      this.set('text', data.text);
     }
 
   }, {
@@ -151,9 +157,10 @@ YUI.add('juju-browser-models', function(Y) {
   });
 
   ns._filter = null;
-  ns.getFilter = function() {
+  ns.getFilter = function(initData) {
+    debugger;
     if (!ns._filter) {
-      ns._filter = new ns.Filter();
+      ns._filter = new ns.Filter(initData);
     }
     return ns._filter;
   };

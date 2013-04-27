@@ -148,8 +148,7 @@ YUI.add('browser-search-widget', function(Y) {
       var input = container.one('input');
       this.addEvent(
           input.on('valueChange', function(ev) {
-            this.get('data').set('text', ev.newVal);
-            this.fire(this.EVT_SEARCH_CHANGED);
+            this.get('filters').set('text', ev.newVal);
           }, this)
       );
     },
@@ -184,7 +183,7 @@ YUI.add('browser-search-widget', function(Y) {
       this.publish(this.EVT_TOGGLE_VIEWABLE);
       this.publish(this.EVT_TOGGLE_FULLSCREEN);
       this.publish(this.EVT_SEARCH_CHANGED);
-      this.set('data', models.getFilter());
+      this.set('filters', models.getFilter());
     },
 
     /**
@@ -224,8 +223,7 @@ YUI.add('browser-search-widget', function(Y) {
 
   }, {
     ATTRS: {
-      data: {},
-      filters: {},
+      filters: { },
       fullscreenTarget: {
         required: true
       }

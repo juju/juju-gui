@@ -15,7 +15,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
       models = Y.namespace('juju.models');
 
   ns.BrowserSearchView = Y.Base.create('browser-view-searchview', Y.View, [
-    views.utils.apiFailingView
+    views.utils.apiFailingView,
+    Y.Event.EventTracker
   ], {
     events: {
       '.charm-token': {
@@ -87,13 +88,17 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
     _renderFilterWidget: function(container) {
       this.filters = new widgets.browser.Filter({
-        filters: this.get('filters')
+        filters: models.browser.getFilter()
       });
 
       if (!this.get('isFullscreen')) {
         return;
       }
       this.filters.render(container);
+      this.addEvent(
+          this.filters.on(
+              this.filters.EVT_FILTERS_CHANGED, this._searchChanged, this)
+      );
     },
 
     /**
@@ -115,7 +120,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
      * @method render
      */
     render: function() {
-      var filters = this.get('filters');
+      // Based on the current filters set.
+      var filters = models.browser.getFilter();
       this.get('store').search(filters, {
         'success': function(data) {
           var results = this.get('store').resultsToCharmlist(data.result);

@@ -155,6 +155,7 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     _makeRequest: function(apiEndpoint, callbacks, args) {
+      debugger;
       // Any query string args need to be put onto the endpoint for calling.
       if (args) {
         apiEndpoint = apiEndpoint + '?' + Y.QueryString.stringify(args);

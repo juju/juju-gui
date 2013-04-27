@@ -19,36 +19,25 @@ YUI.add('browser-filter-widget', function(Y) {
    * @extends {Y.Widget}
    */
   ns.Filter = Y.Base.create('Filter', Y.Widget, [Y.Event.EventTracker], {
-    EVT_UPDATE_FILTERS: 'update_filters',
-    EVT_FILTERS_CHANGED: 'filters_changed',
     template: views.Templates.filters,
 
     _changeFilters: function(e) {
       var target = e.currentTarget,
           val = target.get('value'),
           filter_type = target.get('parentNode').get('parentNode').get('id');
-      filter_type = filter_type.replace('search-filter-', '');
-      var filter_data = this.get('filters');
-      if (target.get('checked')) {
-        filter_data.get(filter_type).push(val);
 
+      filter_type = filter_type.replace('search-filter-', '');
+      var filters = models.browser.getFilter();
+
+      if (target.get('checked')) {
+        filters.get(filter_type).push(val);
       } else {
-        var filters = filter_data.get(filter_type);
-        filter_data.set(
+        var filter = filters.get(filter_type);
+        filters.set(
             filter_type,
-            filters.filter(function(item) {
+            filter.filter(function(item) {
               return item !== val; }));
       }
-      this.fire(this.EVT_FILTERS_CHANGED);
-    },
-
-    _handleSubmit: function(e) {
-      e.halt();
-      this.fire(this.EVT_UPDATE_FILTERS, this.get('filters'));
-    },
-
-    initializer: function() {
-      this.publish(this.EVT_UPDATE_FILTERS);
     },
 
     bindUI: function() {

@@ -66,12 +66,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
      *
      */
     _bindSearchWidgetEvents: function() {
-      // Watch the Search widget for changes to the search params.
-      this.addEvent(
-          this.search.on(
-              this.search.EVT_UPDATE_SEARCH, this._searchChanged, this)
-      );
-
       this.addEvent(
           this.search.on(
               this.search.EVT_TOGGLE_VIEWABLE, this._toggleBrowser, this)
@@ -93,32 +87,9 @@ YUI.add('subapp-browser-mainview', function(Y) {
      */
     _renderSearchWidget: function(node) {
       this.search = new widgets.browser.Search({
-        filters: this.get('filters'),
         fullscreenTarget: this._fullscreenTarget
       });
       this.search.render(node.one('.bws-header'));
-    },
-
-    /**
-     * When the search term or filter is changed, fetch new data and redraw.
-     *
-     * @method _searchChanged
-     * @param {Event} ev event object from catching changes.
-     * @private
-     *
-     */
-    _searchChanged: function(ev) {
-      // NB: This is temporary; eventually filtering will include categories,
-      // and the Filter object will handle qs generation. But it's an unwieldy
-      // url to parse while we only support text search.
-      var data = ev.details[0];
-      var change = {
-        search: true,
-        querystring: data.genQueryString()
-      };
-      this.fire('viewNavigate', {
-        change: change
-      });
     },
 
     /**
@@ -218,8 +189,6 @@ YUI.add('subapp-browser-mainview', function(Y) {
        *
        */
       charmID: {},
-
-      filters: {},
 
       /**
        * An instance of the Charmworld API object to hit for any data that
