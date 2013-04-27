@@ -11,6 +11,7 @@
  */
 YUI.add('browser-search-widget', function(Y) {
   var ns = Y.namespace('juju.widgets.browser'),
+      models = Y.namespace('juju.models.browser'),
       templates = Y.namespace('juju.views').Templates;
 
 
@@ -42,7 +43,7 @@ YUI.add('browser-search-widget', function(Y) {
      */
     _handleSubmit: function(ev) {
       ev.halt();
-      this.fire(this.EVT_UPDATE_SEARCH, this.get('text'));
+      this.fire(this.EVT_UPDATE_SEARCH, this.get('data'));
     },
     /**
      * Expose to the outside world that we've got a request to go fullscreen.
@@ -147,7 +148,7 @@ YUI.add('browser-search-widget', function(Y) {
       var input = container.one('input');
       this.addEvent(
           input.on('valueChange', function(ev) {
-            this.set('text', ev.newVal);
+            this.get('data').set('text', ev.newVal);
             this.fire(this.EVT_SEARCH_CHANGED);
           }, this)
       );
@@ -183,6 +184,7 @@ YUI.add('browser-search-widget', function(Y) {
       this.publish(this.EVT_TOGGLE_VIEWABLE);
       this.publish(this.EVT_TOGGLE_FULLSCREEN);
       this.publish(this.EVT_SEARCH_CHANGED);
+      this.set('data', models.getFilter());
     },
 
     /**
@@ -214,27 +216,21 @@ YUI.add('browser-search-widget', function(Y) {
 
   }, {
     ATTRS: {
+      data: {},
       fullscreenTarget: {
         required: true
-      },
-
-      /**
-       * The search text.
-       *
-       * @attribute text
-       * @default ''
-       * @type {String}
-       */
-      text: {}
+      }
     }
   });
 
 }, '0.1.0', {
   requires: [
     'base',
+    'browser-filter-widget',
     'event',
     'event-tracker',
     'event-valuechange',
+    'juju-browser-models',
     'juju-templates',
     'juju-views',
     'widget'
