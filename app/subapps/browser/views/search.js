@@ -67,13 +67,13 @@ YUI.add('subapp-browser-searchview', function(Y) {
      * Renders the search results from the the store query.
      *
      * @method _renderSearchResults
-     * @param {Y.Node} container Optional container to render results to.
      */
     _renderSearchResults: function(results) {
       var target = this.get('renderTo'),
           tpl = this.template({count: results.size()}),
           tplNode = Y.Node.create(tpl),
-          container = tplNode.one('.search-results');
+          container = tplNode.one('.search-results'),
+          filter_container = tplNode.one('.search-filters');
 
       // Set the container so that our events will delegate based off of it.
       this.set('container', container);
@@ -82,7 +82,16 @@ YUI.add('subapp-browser-searchview', function(Y) {
         var ct = new widgets.browser.CharmToken(charm.getAttrs());
         ct.render(container);
       });
+      this._renderFilterWidget(filter_container);
       target.setHTML(tplNode);
+    },
+
+    _renderFilterWidget: function(container) {
+      this.filters = new widgets.browser.Filter();
+      if (!this.get('isFullscreen')) {
+        return;
+      }
+      this.filters.render(container);
     },
 
     /**

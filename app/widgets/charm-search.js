@@ -185,6 +185,7 @@ YUI.add('browser-search-widget', function(Y) {
 }, '0.1.0', {
   requires: [
     'base',
+    'browser-filter-widget',
     'event',
     'event-tracker',
     'event-valuechange',
