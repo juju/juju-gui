@@ -55,11 +55,11 @@ YUI.add('browser-filter-widget', function(Y) {
     bindUI: function() {
       var cb = this.get('contentBox');
       this.addEvent(
-        cb.one('form').delegate(
-          'click', this._changeFilters, 'input[type="checkbox"]', this)
+          cb.one('form').delegate(
+              'click', this._changeFilters, 'input[type="checkbox"]', this)
       );
       this.addEvent(
-         cb.one('form').on(
+          cb.one('form').on(
               'submit', this._handleSubmit, this)
       );
     },
@@ -86,12 +86,12 @@ YUI.add('browser-filter-widget', function(Y) {
         valueFn: function() {
           return models.FILTER_SERIES;
         }
-       },
+      },
       types: {
         valueFn: function() {
           return models.FILTER_TYPES;
         }
-       }
+      }
     }
   });
 

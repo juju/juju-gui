@@ -1331,14 +1331,14 @@ YUI.add('juju-view-utils', function(Y) {
       return filter_data[key];
     });
     var html = [];
-    for(var i=0; i<filter_values.length; i+=1) {
+    for (var i = 0; i < filter_values.length; i += 1) {
       html.push(Y.Lang.sub(
           tpl, {name: filter_names[i], val: filter_values[i]}));
     }
     return new Y.Handlebars.SafeString(html.join('\n'));
   });
 
- /**
+  /**
    * Extension for views to provide an apiFailure method.
    *
    * @class apiFailure

@@ -136,7 +136,7 @@ YUI.add('juju-browser-models', function(Y) {
 
   ns._filter = null;
   ns.getFilter = function() {
-    if(!ns._filter) {
+    if (!ns._filter) {
       ns._filter = new ns.Filter();
     }
     return ns._filter;

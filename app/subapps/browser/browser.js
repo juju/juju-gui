@@ -365,7 +365,7 @@ YUI.add('subapp-browser', function(Y) {
       var container = this.get('container'),
           extraCfg = {},
           query;
-      debugger;
+
       if (req.query) {
         query = req.query;
       } else {
