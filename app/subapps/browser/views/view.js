@@ -213,7 +213,22 @@ YUI.add('subapp-browser-mainview', function(Y) {
        */
       charmID: {},
 
-      filters: {},
+      /**
+         The list of filters to be used in the rendering of the view.
+
+         This is always handed down from the subapp, but default to something
+         sane for tests and just in case.
+
+         @attribute filters
+         @default {Object}
+         @type {Object}
+
+       */
+      filters: {
+          value: {
+              text: ''
+          }
+      },
 
       /**
        * An instance of the Charmworld API object to hit for any data that

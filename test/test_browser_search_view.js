@@ -24,7 +24,9 @@ describe('search view', function() {
     window.juju_config = {charmworldURL: 'http://localhost'};
     container = Y.Node.create('<div id="container"></div>');
     Y.one('body').append(container);
-    view = new Y.juju.browser.views.BrowserSearchView({text: 'foo'});
+    view = new Y.juju.browser.views.BrowserSearchView({
+        filters: {text: 'foo'}
+    });
     //
     // Create monkeypatched store to verify right method is called.
     apiURL = '';
@@ -72,7 +74,7 @@ describe('search view', function() {
   });
 
   it('handles empty text for search', function() {
-    view.set('text', '');
+    view.set('filters', {text: ''});
     view.render();
     assert.equal('charms?text=', apiURL);
   });

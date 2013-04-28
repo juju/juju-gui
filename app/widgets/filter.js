@@ -111,6 +111,9 @@ YUI.add('browser-filter-widget', function(Y) {
         getter: function() {
           var filters = this.get('filters');
           var res = [];
+          if (!filters || !filters.category) {
+              return res;
+          }
           Y.Object.each(models.FILTER_CATEGORIES, function(val, key) {
             res.push({
               name: val,
@@ -148,6 +151,9 @@ YUI.add('browser-filter-widget', function(Y) {
         getter: function() {
           var filters = this.get('filters');
           var res = [];
+          if (!filters || !filters.provider) {
+              return res;
+          }
           Y.Object.each(models.FILTER_PROVIDERS, function(val, key) {
             res.push({
               name: val,
@@ -176,6 +182,9 @@ YUI.add('browser-filter-widget', function(Y) {
         getter: function() {
           var filters = this.get('filters');
           var res = [];
+          if (!filters || !filters.series) {
+              return res;
+          }
           Y.Object.each(models.FILTER_SERIES, function(val, key) {
             res.push({
               name: val,
@@ -204,6 +213,9 @@ YUI.add('browser-filter-widget', function(Y) {
         getter: function() {
           var filters = this.get('filters');
           var res = [];
+          if (!filters || !filters.type) {
+              return res;
+          }
           Y.Object.each(models.FILTER_TYPES, function(val, key) {
             res.push({
               name: val,

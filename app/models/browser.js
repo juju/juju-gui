@@ -93,7 +93,7 @@ YUI.add('juju-browser-models', function(Y) {
 
      */
     getFilterData: function() {
-      return {
+      var res = {
         category: this.get('category'),
         provider: this.get('provider'),
         scope: this.get('scope'),
@@ -101,6 +101,14 @@ YUI.add('juju-browser-models', function(Y) {
         text: this.get('text'),
         type: this.get('type')
       };
+
+      Y.Object.each(res, function(val, key) {
+        // Ignore text.
+        if (key != 'text' && val.length === 0) {
+          delete res[key];
+        }
+      });
+      return res;
     },
 
     /**
@@ -135,6 +143,11 @@ YUI.add('juju-browser-models', function(Y) {
 
      */
     update: function(data) {
+      // If you don't give a real object then pass.
+      if (!data || typeof data !== 'object') {
+        return;
+      }
+
       // Update each manually as we might get an Array or a single value from
       // the query string update.
       var arrayVals = [

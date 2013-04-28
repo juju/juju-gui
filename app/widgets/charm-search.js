@@ -145,15 +145,6 @@ YUI.add('browser-search-widget', function(Y) {
               },
               this)
       );
-
-      // var input = container.one('input');
-      // this.addEvent(
-      //     input.on('valueChange', function(ev) {
-      //       this.fire(this.EV_SEARCH_CHANGED, {
-      //         newVal: ev.newVal
-      //       });
-      //     }, this)
-      // );
     },
 
     /**
@@ -225,7 +216,24 @@ YUI.add('browser-search-widget', function(Y) {
 
   }, {
     ATTRS: {
-      filters: {},
+      /**
+         @attribute filters
+         @default {Object} text: ''
+         @type {Object}
+
+       */
+      filters: {
+         value: {
+           text: ''
+         }
+      },
+      /**
+         @attribute fullscreeTarget
+         @default undefined
+         @type {Node}
+         @required true
+
+       */
       fullscreenTarget: {
         required: true
       }

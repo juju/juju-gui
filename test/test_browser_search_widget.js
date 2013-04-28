@@ -30,29 +30,6 @@ describe('browser search widget', function() {
     assert.isObject(container.one('.bws-icon'));
   });
 
-  it('should support search change events', function(done) {
-    // Need a small timeout for the valueChange to pick up the change in the
-    // search input.
-    this.timeout(200);
-    var search = new Search();
-    search.render(container);
-
-    var triggered = false;
-
-    search.on(search.EVT_SEARCH_CHANGED, function(ev) {
-      triggered = true;
-      // now trigger the event and make sure that it fired to our custom
-      // watcher outside the widget.
-      triggered.should.eql(true);
-      assert.equal('test', this.get('data').get('text'));
-      done();
-    });
-
-    var input = container.one('input');
-    input.focus();
-    input.set('value', 'test');
-  });
-
   it('should support setting search string', function() {
     var search = new Search();
     search.render(container);
@@ -63,7 +40,9 @@ describe('browser search widget', function() {
 
   it('should support clearing search string', function() {
     var search = new Search({
-      text: 'test'
+      filters: {
+        text: 'test'
+      }
     });
     search.render(container);
     container.one('input').get('value').should.eql('test');
