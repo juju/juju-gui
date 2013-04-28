@@ -303,7 +303,7 @@
       };
 
       api.set('datasource', datasource);
-      var result = api.search('foo', {
+      var result = api.search({text: 'foo'}, {
         success: function(data) {
           assert.equal('charms?text=foo', url);
           assert.equal('foo', data.name);

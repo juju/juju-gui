@@ -2,18 +2,18 @@
   <div>
       <h2>Charm type</h2>
       <ul id="search-filter-type">
-        {{#types}}
+        {{#type}}
         <li><input type="checkbox" value="{{ value }}" {{#if checked}}checked="checked"{{/if}} />{{name}}</li>
-        {{/types}}
+        {{/type}}
       </ul>
   </div>
 
   <div>
       <h2>Charm categories</h2>
       <ul id="search-filter-category">
-        {{#categories}}
+        {{#category}}
         <li><input type="checkbox" value="{{ value }}" {{#if checked}}checked="checked"{{/if}} />{{name}}</li>
-        {{/categories}}
+        {{/category}}
       </ul>
   </div>
 
@@ -30,9 +30,9 @@
       <h2>Providers</h2>
 
       <ul id="search-filter-providers">
-        {{#providers}}
+        {{#provider}}
         <li><input type="checkbox" value="{{ value }}" {{#if checked}}checked="checked"{{/if}} />{{name}}</li>
-        {{/providers}}
+        {{/provider}}
       </ul>
   </div>
 

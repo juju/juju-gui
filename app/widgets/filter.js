@@ -33,33 +33,39 @@ YUI.add('browser-filter-widget', function(Y) {
 
      */
     _changeFilters: function(e) {
-      var target = e.currentTarget,
-          val = target.get('value'),
-          filter_type = target.get('parentNode').get('parentNode').get('id');
+      var filters = this.get('filters'),
+          target = e.currentTarget,
+          val = target.get('value');
 
-      filter_type = filter_type.replace('search-filter-', '');
+      var filterType = target.get('parentNode').get('parentNode').get('id');
+      filterType = filterType.replace('search-filter-', '');
+
+      var filterValue = this.get(filterType);
 
       if (target.get('checked')) {
-        var filters = this.get('filters');
-        filters[filter_type].push(val);
+        filters[filterType].push(val);
+        filterValue.push(val);
+
+        // update our filters data.
         this.fire(this.EV_FILTER_CHANGED, {
           change: {
-            field: filter_type,
-            value: filters[filter_type]
+            field: filterType,
+            value: filters[filterType]
           }
         });
       } else {
-        var filter = this.get('filters')[filter_type];
-        filter = filter.filter(function(item) {
+        filterValue = filters[filterType].filter(function(item) {
           return item !== val;
         });
+        filters[filterType] = filterValue;
         this.fire(this.EV_FILTER_CHANGED, {
           change: {
-            field: filter_type,
-            value: filter
+            field: filterType,
+            value: filters[filterType]
           }
         });
       }
+
     },
 
     /**
@@ -99,7 +105,7 @@ YUI.add('browser-filter-widget', function(Y) {
        * @type {Array}
        *
        */
-      'categories': {
+      'category': {
         /**
            Given the list of filters available, which of ours are set or not
            set.
@@ -139,7 +145,7 @@ YUI.add('browser-filter-widget', function(Y) {
        * @type {Array}
        *
        */
-      'providers': {
+      'provider': {
         /**
            Given the list of filters available, which of ours are set or not
            set.
@@ -201,7 +207,7 @@ YUI.add('browser-filter-widget', function(Y) {
        * @type {Array}
        *
        */
-      'types': {
+      'type': {
         /**
            Given the list of filters available, which of ours are set or not
            set.

@@ -104,7 +104,7 @@ YUI.add('juju-browser-models', function(Y) {
 
       Y.Object.each(res, function(val, key) {
         // Ignore text.
-        if (key != 'text' && val.length === 0) {
+        if (key !== 'text' && val.length === 0) {
           delete res[key];
         }
       });

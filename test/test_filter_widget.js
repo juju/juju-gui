@@ -20,60 +20,80 @@ describe('filter widget', function() {
   });
 
   it('initializes correctly', function() {
-    var filter = new Y.juju.widgets.browser.Filter();
-    assert.isObject(filter);
-    assert.isObject(filter.get('data'));
+    var filter = new Y.juju.widgets.browser.Filter({
+      filters: {
+        text: 'foo',
+        type: 'approved',
+        category: ['databases', 'app_servers']
+      }
+    });
+    assert.isObject(filter.get('filters'));
+    var categories = filter.get('category');
+
+    filter.get('category')[0].value.should.eql('databases');
+    filter.get('category')[0].name.should.eql('Databases');
+    filter.get('category')[0].checked.should.eql(true);
+
+    filter.get('type')[0].name.should.eql('Reviewed Charms');
+    filter.get('type')[0].value.should.eql('approved');
+    filter.get('type')[0].checked.should.eql(true);
   });
 
   it('renders provided filters', function() {
-    var filter_data = {
-      categories: {
-        test: 'foo'
-      },
-      providers: {
-        test: 'bar'
-      },
-      series: {
-        test: 'spoo'
-      },
-      types: {
-        test: 'fleem'
+    var filter = new Y.juju.widgets.browser.Filter({
+      filters: {
+        text: 'foo',
+        type: ['approved'],
+        category: ['databases', 'app_servers']
       }
-    };
-    var filter = new Y.juju.widgets.browser.Filter(filter_data);
+    });
     filter.render(container);
 
-    var checkboxes = container.all('input[type="checkbox"]');
-    assert.equal(4, checkboxes.size());
-    checkboxes.each(function(box) {
-      assert.equal('test', box.get('value'));
-    });
-    ['foo', 'bar', 'spoo', 'fleem'].map(function(item) {
-      assert.notEqual(-1, container.get('text').indexOf(item));
-    });
+    var checked = container.all('input[checked="checked"]');
+    assert(checked.size() === 3);
+
   });
 
-  it('keeps track of selected checkboxes', function() {
-    var filter_data = {
-      categories: {
-        test: 'foo'
-      },
-      providers: {
-        test: 'bar'
-      },
-      series: {
-        test: 'spoo'
-      },
-      types: {
-        test: 'fleem'
+  it('unchecking an input fires a search changed event', function(done) {
+    var filter = new Y.juju.widgets.browser.Filter({
+      filters: {
+        text: 'foo',
+        type: ['approved'],
+        category: ['databases', 'app_servers']
       }
-    };
-    var filter = new Y.juju.widgets.browser.Filter(filter_data);
+    });
     filter.render(container);
-    container.one('input[type="checkbox"]').simulate('click');
-    assert.notEqual(-1, filter.get('data').get('type').indexOf('test'));
 
-    container.one('input[type="checkbox"]').simulate('click');
-    assert.equal(-1, filter.get('data').get('type').indexOf('test'));
+    filter.on(filter.EV_FILTER_CHANGED, function(ev) {
+      assert.isObject(ev.change);
+      ev.change.field.should.eql('type');
+      ev.change.value.should.eql([]);
+      done();
+    });
+
+    var ftype = container.one('input[value="approved"]');
+    ftype.simulate('click');
   });
+
+  it('unchecking an input fires a search changed event', function(done) {
+    var filter = new Y.juju.widgets.browser.Filter({
+      filters: {
+        text: 'foo',
+        type: ['approved'],
+        category: ['app_servers']
+      }
+    });
+    filter.render(container);
+
+    filter.on(filter.EV_FILTER_CHANGED, function(ev) {
+      assert.isObject(ev.change);
+      ev.change.field.should.eql('category');
+      ev.change.value.should.eql(['app_servers', 'databases']);
+      done();
+    });
+
+    var ftype = container.one('input[value="databases"]');
+    ftype.simulate('click');
+  });
+
 });
