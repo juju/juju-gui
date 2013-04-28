@@ -2,23 +2,24 @@
 
 
 /**
- * Provides the filter widget, for selecting filters on search.
- *
- * @namespace juju
- * @module widgets
- * @submodule browser
+   Provides the filter widget, for selecting filters on search.
+
+   @namespace juju
+   @module widgets
+   @submodule browser
  */
 YUI.add('browser-filter-widget', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models.browser'),
       ns = Y.namespace('juju.widgets.browser');
   /**
-   * Filter widget
-   *
-   * @class
-   * @extends {Y.Widget}
-   * @event EV_FILTER_CHANGED when the filter values have changed will fire
-   * with a change object stating what field/value is updated.
+     Filter widget
+
+     @class
+     @extends {Y.Widget}
+     @event EV_FILTER_CHANGED when the filter values have changed will fire
+     with a change object stating what field/value is updated.
+
    */
   ns.Filter = Y.Base.create('Filter', Y.Widget, [Y.Event.EventTracker], {
     EV_FILTER_CHANGED: 'filter_changed',
@@ -43,6 +44,8 @@ YUI.add('browser-filter-widget', function(Y) {
       var filterValue = this.get(filterType);
 
       if (target.get('checked')) {
+        // In this case we've checked a new filter that needs to be added to
+        // the correct property.
         filters[filterType].push(val);
         filterValue.push(val);
 
@@ -54,6 +57,8 @@ YUI.add('browser-filter-widget', function(Y) {
           }
         });
       } else {
+        // Otherwise we're unchecking a filter and need to remove it from the
+        // list and determine if that list is now empty.
         filterValue = filters[filterType].filter(function(item) {
           return item !== val;
         });
@@ -80,10 +85,6 @@ YUI.add('browser-filter-widget', function(Y) {
           cb.one('form').delegate(
               'click', this._changeFilters, 'input[type="checkbox"]', this)
       );
-      this.addEvent(
-          cb.one('form').on(
-              'submit', this._handleSubmit, this)
-      );
     },
 
     /**
@@ -100,10 +101,10 @@ YUI.add('browser-filter-widget', function(Y) {
   }, {
     ATTRS: {
       /**
-       * @attribute categories
-       * @default See models.browser.Filter
-       * @type {Array}
-       *
+         @attribute categories
+         @default See models.browser.Filter
+         @type {Array}
+
        */
       'category': {
         /**
@@ -130,20 +131,26 @@ YUI.add('browser-filter-widget', function(Y) {
           return res;
         }
       },
+
       /**
-       * An object of the combined filters for all of the properties we track.
-       *
-       * @attribute filters
-       * @default See models.browser.Filter
-       * @type {Object}
-       *
+         An object of the combined filters for all of the properties we track.
+
+         This is the primary source of data as the other's are basically for
+         the template to use to generate the ul's of the various filter
+         options.
+
+         @attribute filters
+         @default See models.browser.Filter
+         @type {Object}
+
        */
       'filters': {},
+
       /**
-       * @attribute providers
-       * @default See models.browser.Filter
-       * @type {Array}
-       *
+         @attribute providers
+         @default See models.browser.Filter
+         @type {Array}
+
        */
       'provider': {
         /**
@@ -170,11 +177,12 @@ YUI.add('browser-filter-widget', function(Y) {
           return res;
         }
       },
+
       /**
-       * @attribute series
-       * @default See models.browser.Filter
-       * @type {Array}
-       *
+         @attribute series
+         @default See models.browser.Filter
+         @type {Array}
+
        */
       'series': {
         /**
@@ -201,11 +209,12 @@ YUI.add('browser-filter-widget', function(Y) {
           return res;
         }
       },
+
       /**
-       * @attribute types
-       * @default See models.browser.Filter
-       * @type {Array}
-       *
+         @attribute types
+         @default See models.browser.Filter
+         @type {Array}
+
        */
       'type': {
         /**

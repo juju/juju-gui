@@ -85,6 +85,10 @@ YUI.add('subapp-browser', function(Y) {
        config.
      */
     _getViewCfg: function(cfg) {
+      // We always add the _filter data to every request because most of them
+      // need to know if there's a search term for rendering the search
+      // input and later the charm details will need to know for selecting
+      // the proper backup icon.
       return Y.merge(cfg, {
         db: this.get('db'),
         filters: this._filter.getFilterData(),
@@ -376,15 +380,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     renderSearchResults: function(req, res, next) {
       var container = this.get('container'),
-          extraCfg = {},
-          query;
-
-      if (req.query) {
-        query = req.query;
-      } else {
-        // If there's no querystring, we need a default "empty" search.
-        query = '';
-      }
+          extraCfg = {};
 
       if (req.params.viewmode === 'fullscreen') {
         extraCfg.renderTo = container.one('.bws-view-data');

@@ -33,12 +33,6 @@ YUI.add('juju-browser-models', function(Y) {
     'miscellaneous': 'Miscellaneous'
   };
 
-  // Scopes are not in scope for current design.
-  ns.FILTER_SCOPES = {
-    'public': 'Public Charms',
-    'deployed': 'Deployed to Environment'
-  };
-
   ns.FILTER_SERIES = {
     'quantal': '12.10 Quantal Quetzal',
     'precise': '12.04 LTS Precise Pangolin'
@@ -96,12 +90,15 @@ YUI.add('juju-browser-models', function(Y) {
       var res = {
         category: this.get('category'),
         provider: this.get('provider'),
-        scope: this.get('scope'),
         series: this.get('series'),
         text: this.get('text'),
         type: this.get('type')
       };
 
+      // We want to ignore filter properties that are empty to avoid
+      // generating query strings that look like &&&type=approved.
+      // text is exempt since we can have a text=&type=approved to search for
+      // all reviewed charms.
       Y.Object.each(res, function(val, key) {
         // Ignore text.
         if (key !== 'text' && val.length === 0) {
@@ -123,7 +120,9 @@ YUI.add('juju-browser-models', function(Y) {
 
       if (cfg) {
         // we've got initial data we need to load into proper arrays and
-        // such.
+        // such. We use this update because it turns strings from the query
+        // string into a proper array when there is only one selection from
+        // the filter group.
         this.update(cfg);
       }
     },
@@ -151,7 +150,7 @@ YUI.add('juju-browser-models', function(Y) {
       // Update each manually as we might get an Array or a single value from
       // the query string update.
       var arrayVals = [
-        'category', 'provider', 'scope', 'series', 'type'
+        'category', 'provider', 'series', 'type'
       ];
 
       Y.Array.each(arrayVals, function(key) {
@@ -177,9 +176,6 @@ YUI.add('juju-browser-models', function(Y) {
       provider: {
         value: []
       },
-      scope: {
-        value: []
-      },
       series: {
         value: []
       },
@@ -196,6 +192,6 @@ YUI.add('juju-browser-models', function(Y) {
 }, '0.1.0', {
   requires: [
     'model',
-    'querystring'
+    'querystring-stringify'
   ]
 });

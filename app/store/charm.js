@@ -205,7 +205,7 @@ YUI.add('juju-charm-store', function(Y) {
      * Api call to search charms
      *
      * @method search
-     * @param {String} text the search text.
+     * @param {Object} filters the filters data object for search.
      * @param {Object} callbacks the success/failure callbacks to use.
      * @param {Object} bindScope the scope of *this* in the callbacks.
      */

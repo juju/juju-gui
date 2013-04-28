@@ -11,7 +11,6 @@
  */
 YUI.add('browser-search-widget', function(Y) {
   var ns = Y.namespace('juju.widgets.browser'),
-      models = Y.namespace('juju.models.browser'),
       templates = Y.namespace('juju.views').Templates;
 
 
@@ -186,9 +185,7 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     renderUI: function() {
-      var data = Y.merge(this.getAttrs(), {
-        filters: this.get('filters')
-      });
+      var data = this.getAttrs();
       this.get('contentBox').setHTML(
           this.TEMPLATE(data)
       );
@@ -247,7 +244,6 @@ YUI.add('browser-search-widget', function(Y) {
     'event',
     'event-tracker',
     'event-valuechange',
-    'juju-browser-models',
     'juju-templates',
     'juju-views',
     'widget'
