@@ -111,6 +111,13 @@ YUI.add('subapp-browser-searchview', function(Y) {
       target.setHTML(this.get('container'));
     },
 
+    /**
+       Render the filter controls widget into the search page.
+
+       @method _renderfilterWidget
+       @param {Node} container the node to drop the filter control into.
+
+     */
     _renderFilterWidget: function(container) {
       this.filters = new widgets.browser.Filter({
         filters: this.get('filters')

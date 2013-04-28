@@ -98,6 +98,13 @@ YUI.add('subapp-browser-mainview', function(Y) {
       this.search.render(node.one('.bws-header'));
     },
 
+    /**
+       When search box text has changed navigate away.
+
+       @method _searchChanged
+       @param {Event} ev the form submit event.
+
+     */
     _searchChanged: function(ev) {
       var change = {
         search: true,

@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('filter widget', function() {
+describe('filter widget', function() {
   var container, Y;
 
   before(function(done) {

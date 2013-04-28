@@ -74,16 +74,24 @@ YUI.add('juju-browser-models', function(Y) {
     },
 
     /**
-     * Given the current filters, generate a query string to use for api
-     * calls.
-     *
-     * @method genQueryString
-     *
+       Given the current filters, generate a query string to use for api
+       calls.
+
+       @method genQueryString
+
      */
     genQueryString: function() {
       return Y.QueryString.stringify(this.getFilterData());
     },
 
+    /**
+       Helper to generate a nice object from all of the properties we track as
+       filters.
+
+       @method getFilterData
+       @return {Object} each filter and it's current list of values.
+
+     */
     getFilterData: function() {
       return {
         category: this.get('category'),
@@ -112,6 +120,20 @@ YUI.add('juju-browser-models', function(Y) {
       }
     },
 
+    /**
+       Update the current filters given an update object that's keyed on the
+       property and the new values to use for it.
+
+       This is used to help pre-populate the filters from the url on an
+       initial url load (a shared searc link) as well as updates from the
+       widgets that turn into change events that make sure we update the
+       current set of filters based on the changes detected in widgets lower
+       in the stack.
+
+       @method update
+       @param {Object} data the properties to update.
+
+     */
     update: function(data) {
       // Update each manually as we might get an Array or a single value from
       // the query string update.

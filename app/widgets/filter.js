@@ -17,11 +17,21 @@ YUI.add('browser-filter-widget', function(Y) {
    *
    * @class
    * @extends {Y.Widget}
+   * @event EV_FILTER_CHANGED when the filter values have changed will fire
+   * with a change object stating what field/value is updated.
    */
   ns.Filter = Y.Base.create('Filter', Y.Widget, [Y.Event.EventTracker], {
     EV_FILTER_CHANGED: 'filter_changed',
     template: views.Templates.filters,
 
+    /**
+       When the filter inputs have changed, update the filters based on the
+       current state and fire an event to let everyone know.
+
+       @method _changeFilters
+       @param {Event} e The change event from the inputs in the filter.
+
+     */
     _changeFilters: function(e) {
       var target = e.currentTarget,
           val = target.get('value'),
@@ -52,6 +62,12 @@ YUI.add('browser-filter-widget', function(Y) {
       }
     },
 
+    /**
+       Widget UI binding.
+
+       @method bindUI
+
+     */
     bindUI: function() {
       var cb = this.get('contentBox');
       this.addEvent(
@@ -64,6 +80,12 @@ YUI.add('browser-filter-widget', function(Y) {
       );
     },
 
+    /**
+      Widget render method.
+
+      @method renderUI
+
+     */
     renderUI: function() {
       var tplNode = this.template(this.getAttrs());
       this.get('contentBox').setHTML(tplNode);
@@ -71,7 +93,21 @@ YUI.add('browser-filter-widget', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+       * @attribute categories
+       * @default See models.browser.Filter
+       * @type {Array}
+       *
+       */
       'categories': {
+        /**
+           Given the list of filters available, which of ours are set or not
+           set.
+
+           @method categories.getter
+           @return {Array} list of the categories set.
+
+         */
         getter: function() {
           var filters = this.get('filters');
           var res = [];
@@ -85,8 +121,30 @@ YUI.add('browser-filter-widget', function(Y) {
           return res;
         }
       },
+      /**
+       * An object of the combined filters for all of the properties we track.
+       *
+       * @attribute filters
+       * @default See models.browser.Filter
+       * @type {Object}
+       *
+       */
       'filters': {},
+      /**
+       * @attribute providers
+       * @default See models.browser.Filter
+       * @type {Array}
+       *
+       */
       'providers': {
+        /**
+           Given the list of filters available, which of ours are set or not
+           set.
+
+           @method providers.getter
+           @return {Array} list of the providers set.
+
+         */
         getter: function() {
           var filters = this.get('filters');
           var res = [];
@@ -100,7 +158,21 @@ YUI.add('browser-filter-widget', function(Y) {
           return res;
         }
       },
+      /**
+       * @attribute series
+       * @default See models.browser.Filter
+       * @type {Array}
+       *
+       */
       'series': {
+        /**
+           Given the list of filters available, which of ours are set or not
+           set.
+
+           @method series.getter
+           @return {Array} list of the series set.
+
+         */
         getter: function() {
           var filters = this.get('filters');
           var res = [];
@@ -114,7 +186,21 @@ YUI.add('browser-filter-widget', function(Y) {
           return res;
         }
       },
+      /**
+       * @attribute types
+       * @default See models.browser.Filter
+       * @type {Array}
+       *
+       */
       'types': {
+        /**
+           Given the list of filters available, which of ours are set or not
+           set.
+
+           @method types.getter
+           @return {Array} list of the types set.
+
+         */
         getter: function() {
           var filters = this.get('filters');
           var res = [];
