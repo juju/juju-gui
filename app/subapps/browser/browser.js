@@ -47,7 +47,6 @@ YUI.add('subapp-browser', function(Y) {
         @param {Object} change the values to change in the current state.
      */
     _getStateUrl: function(change) {
-      debugger;
       var urlParts = ['/bws'];
       this._oldState = this._viewState;
 
