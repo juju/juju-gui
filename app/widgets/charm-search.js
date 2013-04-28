@@ -223,9 +223,9 @@ YUI.add('browser-search-widget', function(Y) {
 
        */
       filters: {
-         value: {
-           text: ''
-         }
+        value: {
+          text: ''
+        }
       },
       /**
          @attribute fullscreeTarget

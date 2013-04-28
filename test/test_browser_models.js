@@ -25,7 +25,7 @@
     it('constructs a valid query string based on settings.', function() {
       var filter = new Filter();
       filter.genQueryString().should.equal(
-        'series=precise&text=&type=approved');
+          'series=precise&text=&type=approved');
 
       filter.set('series', []);
       // Google and Firefox think that the string should start with the first

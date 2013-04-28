@@ -225,9 +225,9 @@ YUI.add('subapp-browser-mainview', function(Y) {
 
        */
       filters: {
-          value: {
-              text: ''
-          }
+        value: {
+          text: ''
+        }
       },
 
       /**

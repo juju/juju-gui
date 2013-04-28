@@ -25,7 +25,7 @@ describe('search view', function() {
     container = Y.Node.create('<div id="container"></div>');
     Y.one('body').append(container);
     view = new Y.juju.browser.views.BrowserSearchView({
-        filters: {text: 'foo'}
+      filters: {text: 'foo'}
     });
     //
     // Create monkeypatched store to verify right method is called.
