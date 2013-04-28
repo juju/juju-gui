@@ -1,7 +1,15 @@
 <div id="bws-search" class="yui3-g">
   <div class="yui3-u-1">
     <h3 class="section-title"><strong>{{ count }}</strong> results found</h3>
+    {{#unless isFullscreen}}
+        <div class="filterControl"> ^ Hide filters</div>
+    {{/unless}}
   </div>
-  <div class="search-filters yui3-u-1-4"></div>
-  <div class="search-results yui3-u-3-4"></div>
+  <div class="search-filters {{#if isFullscreen}} yui3-u-1-4 {{else}} yui3-u-1 collapsed {{/if}} ">
+
+  </div>
+  <div class="search-results {{#if isFullscreen}}yui3-u-3-4{{/if}}">
+
+
+  </div>
 </div>

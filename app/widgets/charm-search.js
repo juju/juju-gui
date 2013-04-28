@@ -42,6 +42,7 @@ YUI.add('browser-search-widget', function(Y) {
      */
     _handleSubmit: function(ev) {
       ev.halt();
+      debugger;
       var form = this.get('boundingBox').one('form'),
           value = form.one('input').get('value');
 

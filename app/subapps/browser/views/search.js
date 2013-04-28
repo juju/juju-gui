@@ -21,6 +21,9 @@ YUI.add('subapp-browser-searchview', function(Y) {
     events: {
       '.charm-token': {
         click: '_handleCharmSelection'
+      },
+      '.filterControl': {
+        click: '_toggleFilters'
       }
     },
 
@@ -50,6 +53,28 @@ YUI.add('subapp-browser-searchview', function(Y) {
     },
 
     /**
+     * Show/hide the filters based on the click of this control.
+     *
+     * @method _toggleFilters
+     * @param {Event} ev The click event from YUI.
+     *
+     */
+    _toggleFilters: function(ev) {
+      var control = ev.currentTarget;
+      var hidden = control.hasClass('less');
+      debugger;
+      if (hidden) {
+        control.setContent(' ^ Hide filters');
+        control.removeClass('less');
+        this.get('container').one('.search-filters').show();
+      } else {
+        control.setContent(' v Show filters');
+        control.addClass('less');
+        this.get('container').one('.search-filters').hide();
+      }
+    },
+
+    /**
       Update the node in the editorial list marked as 'active'.
       @method _updateActive
       @param {Node} clickTarget the charm-token clicked on to activate.
@@ -70,20 +95,21 @@ YUI.add('subapp-browser-searchview', function(Y) {
      */
     _renderSearchResults: function(results) {
       var target = this.get('renderTo'),
-          tpl = this.template({count: results.size()}),
+          tpl = this.template({
+              count: results.size(),
+              isFullscreen: this.get('isFullscreen')
+          }),
           tplNode = Y.Node.create(tpl),
-          container = tplNode.one('.search-results'),
+          results_container = tplNode.one('.search-results'),
           filter_container = tplNode.one('.search-filters');
-
-      // Set the container so that our events will delegate based off of it.
-      this.set('container', container);
 
       results.map(function(charm) {
         var ct = new widgets.browser.CharmToken(charm.getAttrs());
-        ct.render(container);
+        ct.render(results_container);
       });
       this._renderFilterWidget(filter_container);
-      target.setHTML(tplNode);
+      this.get('container').setHTML(tplNode);
+      target.setHTML(this.get('container'));
     },
 
     _renderFilterWidget: function(container) {
@@ -91,14 +117,12 @@ YUI.add('subapp-browser-searchview', function(Y) {
         filters: this.get('filters')
       });
 
-      if (!this.get('isFullscreen')) {
-        return;
-      }
       this.filters.render(container);
       this.filters.on(this.filters.EV_FILTER_CHANGED, function(ev) {
         var filters = this.get('filters');
         filters[ev.change.field] = ev.change.value;
         var change = {
+          search: true,
           filter: {
           }
         };
@@ -136,6 +160,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
     }
   }, {
     ATTRS: {
+      isFullscreen: {},
+
       /**
        * The container node the view is rendering to.
        *
