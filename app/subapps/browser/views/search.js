@@ -145,8 +145,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
       this.filters.render(container);
       this.addEvent(
-        this.filters.on(
-            this.filters.EV_FILTER_CHANGED, this._filterChanged, this)
+          this.filters.on(
+              this.filters.EV_FILTER_CHANGED, this._filterChanged, this)
       );
     },
 
