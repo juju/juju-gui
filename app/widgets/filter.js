@@ -46,6 +46,9 @@ YUI.add('browser-filter-widget', function(Y) {
       if (target.get('checked')) {
         // In this case we've checked a new filter that needs to be added to
         // the correct property.
+        if (!filters[filterType]) {
+          filters[filterType] = [];
+        }
         filters[filterType].push(val);
         filterValue.push(val);
 

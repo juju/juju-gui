@@ -52,7 +52,8 @@ describe('filter widget', function() {
     assert(checked.size() === 3);
   });
 
-  it('unchecking an input fires a search changed event', function(done) {
+  it('checking an input fires a search changed event', function(done) {
+
     instance.render(container);
 
     handle = instance.on(instance.EV_FILTER_CHANGED, function(ev) {
@@ -63,6 +64,22 @@ describe('filter widget', function() {
     });
 
     var ftype = container.one('input[value="approved"]');
+    ftype.simulate('click');
+  });
+
+  it('checking input not in current filters fires correctly', function(done) {
+
+    instance.render(container);
+
+    handle = instance.on(instance.EV_FILTER_CHANGED, function(ev) {
+      assert.isObject(ev.change);
+      ev.change.field.should.eql('series');
+      ev.change.value.should.eql(['precise']);
+      done();
+    });
+
+
+    var ftype = container.one('input[value="precise"]');
     ftype.simulate('click');
   });
 
