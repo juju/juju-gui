@@ -62,7 +62,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
     _toggleFilters: function(ev) {
       var control = ev.currentTarget;
       var hidden = control.hasClass('less');
-      debugger;
       if (hidden) {
         control.setContent(' ^ Hide filters');
         control.removeClass('less');
