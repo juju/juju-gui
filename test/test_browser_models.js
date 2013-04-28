@@ -2,7 +2,7 @@
 
 (function() {
 
-  describe.only('browser filter model', function() {
+  describe('browser filter model', function() {
     var browser, Filter, models, Y;
 
     before(function(done) {
