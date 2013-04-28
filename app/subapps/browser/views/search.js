@@ -95,8 +95,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
     _renderSearchResults: function(results) {
       var target = this.get('renderTo'),
           tpl = this.template({
-              count: results.size(),
-              isFullscreen: this.get('isFullscreen')
+            count: results.size(),
+            isFullscreen: this.get('isFullscreen')
           }),
           tplNode = Y.Node.create(tpl),
           results_container = tplNode.one('.search-results'),
