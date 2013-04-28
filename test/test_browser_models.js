@@ -2,7 +2,7 @@
 
 (function() {
 
-  describe('browser filter model', function() {
+  describe.only('browser filter model', function() {
     var browser, Filter, models, Y;
 
     before(function(done) {
@@ -37,6 +37,27 @@
       }
 
       qstring.should.equal('text=&type=approved');
+    });
+
+    it('updates string values into an array', function() {
+      var filter = new Filter({
+        text: 'one'
+      });
+
+      filter.update({category: 'databases'});
+      filter.get('category').should.eql(['databases']);
+      // While the text is left along
+      filter.get('text').should.eql('one');
+    });
+
+    it('updates text when empty', function() {
+      var filter = new Filter({
+        text: 'one'
+      });
+
+      filter.get('text').should.eql('one');
+      filter.update({text: ''});
+      filter.get('text').should.equal('');
     });
   });
 

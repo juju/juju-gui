@@ -163,7 +163,7 @@ YUI.add('juju-browser-models', function(Y) {
         }
       }, this);
 
-      if (data.text) {
+      if (Y.Object.hasKey(data, 'text')) {
         this.set('text', data.text);
       }
     }
