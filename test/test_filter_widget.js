@@ -78,7 +78,6 @@ describe('filter widget', function() {
       done();
     });
 
-
     var ftype = container.one('input[value="precise"]');
     ftype.simulate('click');
   });

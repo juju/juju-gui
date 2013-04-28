@@ -50,7 +50,6 @@ YUI.add('browser-filter-widget', function(Y) {
           filters[filterType] = [];
         }
         filters[filterType].push(val);
-        filterValue.push(val);
 
         // update our filters data.
         this.fire(this.EV_FILTER_CHANGED, {
