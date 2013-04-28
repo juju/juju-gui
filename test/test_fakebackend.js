@@ -505,10 +505,10 @@
         assert.equal(anno.foo, 'bar');
         assert.equal(anno.gone, 'too far');
 
-        // Verify changes name it into nextAnnotations
+        // Verify changes make it into nextAnnotations
         var changes = fakebackend.nextAnnotations();
         assert.deepEqual(changes.annotations.env,
-                         [fakebackend.db.environment, true]);
+                         fakebackend.db.environment);
       });
 
       it('must remove annotations from a service', function(done) {
@@ -735,8 +735,7 @@
 
           var changes = fakebackend.nextAnnotations();
           assert.deepEqual(changes.services.wordpress,
-                           [fakebackend.db.services.getById('wordpress'),
-                true]);
+                           fakebackend.db.services.getById('wordpress'));
           done();
         });
       });
@@ -748,7 +747,7 @@
         // Verify changes name it into nextAnnotations
         var changes = fakebackend.nextAnnotations();
         assert.deepEqual(changes.annotations.env,
-                         [fakebackend.db.environment, true]);
+                         fakebackend.db.environment);
       });
     });
   });
