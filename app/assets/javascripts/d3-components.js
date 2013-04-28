@@ -346,6 +346,9 @@ YUI.add('d3-components', function(Y) {
      * @chainable
      **/
     recordSubscription: function(module, subscription) {
+      if (typeof module === 'string') {
+        module = this.modules[module];
+      }
       if (!(module.name in this.events)) {
         throw 'Unable able to recordSubscription, module not added.';
       }

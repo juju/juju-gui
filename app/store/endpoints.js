@@ -143,8 +143,12 @@ YUI.add('juju-endpoints-controller', function(Y) {
             }
 
             if (!charm) {
-              charm = db.charms.add({id: charm_id})
-                .load(env,
+              // XXX: temp hack to work around failures here;
+              charm = db.charms.add({id: charm_id});
+              if (!charm) {
+                charm = db.charms.getById(charm_id);
+              }
+              charm.load(env,
                   // If views are bound to the charm model, firing "update" is
                   // unnecessary, and potentially even mildly harmful.
                   function(err, result) { db.fire('update'); });

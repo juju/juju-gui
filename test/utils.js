@@ -5,6 +5,14 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
   var jujuTests = Y.namespace('juju-tests');
 
   jujuTests.utils = {
+    makeContainer: function() {
+      var container = Y.Node.create('<div>');
+      container.appendTo(document.body);
+      container.setStyle('position', 'absolute');
+      container.setStyle('top', '-10000px');
+      container.setStyle('left', '-10000px');
+      return container;
+    },
 
     SocketStub: function() {
       this.messages = [];
@@ -102,6 +110,7 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
 }, '0.1.0', {
   requires: [
     'io',
+    'node',
     'datasource-local',
     'juju-charm-store',
     'juju-env-fakebackend'
