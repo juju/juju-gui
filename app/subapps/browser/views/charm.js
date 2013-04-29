@@ -8,7 +8,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
       widgets = Y.namespace('juju.widgets'),
       DATE_FORMAT = '%d/%b/%y';
 
-
   /**
    * View for the Charm details UI.
    *

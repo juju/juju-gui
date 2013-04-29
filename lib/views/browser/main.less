@@ -15,6 +15,13 @@
             no-repeat right top,
             url("/juju-ui/assets/images/@{centre-image}")
             repeat-x left top;
+
+    &:hover {
+      background-position: left center, right center, left center;
+    }
+    &:active {
+      background-position: left bottom, right bottom, left bottom;
+    }
 }
 .two-image-button-background(@left-image, @right-image, @background-color) {
     background: url("/juju-ui/assets/images/@{left-image}")
@@ -101,14 +108,21 @@
       top: 10px;
       padding-left: 21px;
       background: transparent url(/juju-ui/assets/images/header_nav_border.jpg)
-                  repeat-y left top;
+          repeat-y left top;
 
       .toggle-fullscreen {
         display: block;
         width: 40px;
         height: 40px;
         background: transparent url(/juju-ui/assets/images/browser_min_max.png)
-                  no-repeat left top;
+            no-repeat 0 0;
+
+        &:hover {
+          background-position: 0 -60px;
+        }
+        &:active {
+          background-position: 0 -120px;
+        }
       }
     }
     .bws-searchbox {
@@ -117,24 +131,106 @@
 
       form {
         margin: 0;
-        
+        position: relative;
+
+        .search,
+        .delete {
+          position: absolute;
+          left: 10px;
+        }
+        .search {
+          top: 10px;
+        }
+        .delete {
+          display: none;
+          top: 9px;
+        }
         input {
           .border-box;
+          .two-image-button-background(
+            "browser_searchbox_left.png",
+            "browser_searchbox_right.png",
+            #fff
+            );
           height: 40px;
           margin: 0;
           padding: 15px 15px 15px 41px;
-          .two-image-button-background(
-            "browser_searchbox_left.jpg",
-            "browser_searchbox_right.jpg",
-            #fff
-            );
           border: none;
           border-radius: 0;
           font-size: 10pt;
           font-style: italic;
           color: #c8c8c8;
         }
+
+        &.active {
+          input {
+            padding-top: 14px;
+            color: @bws-heading;
+            background-position: left bottom, right bottom;
+            font-size: 12pt;
+            font-style: normal;
+          }
+          .search {
+            display: none;
+          }
+          .delete {
+            display: block;
+          }
+        }
       }
+    }
+  }
+  #bws-search {
+    .search-title {
+      padding: 16px 20px;
+      background-color: transparent;
+      border-bottom: 1px solid #ccc;
+      font-size: 20pt;
+      font-weight: normal;
+    }
+    .filters {
+      .border-box;
+      padding: 0 20px;
+      background-color: #ddd;
+
+      .filterControl {
+        display: block;
+        padding: 5px 0;
+        color: @bws-heading;
+        font-size: 14pt;
+      }
+
+      .search-filters {
+        padding: 20px 0;
+        border-top: 1px dotted #bbb;
+
+        h4 {
+          font-size: 10.5pt;
+        }
+        ul {
+          margin: 0;
+          padding: 0;
+          list-style: none;
+
+          li {
+            margin-bottom: 4px;
+          }
+        }
+        input {
+          margin-right: 10px;
+        }
+      }
+    }
+    .search-results {
+      .border-box;
+      padding: 10px 20px;
+    }
+  }
+  #bws-search,
+  #bws-editorial {
+    .yui3-charmtoken {
+      width: 33.33333%;
+      min-width: 320px;
     }
   }
   #bws-sidebar .bws-content,
@@ -165,7 +261,20 @@
       left: 0;
     }
     .toggle-fullscreen {
-      background-position: left bottom;
+      background-position: 0 -180px;
+
+        &:hover {
+          background-position: 0 -240px;
+        }
+        &:active {
+          background-position: 0 -300px;
+        }
+    }
+    #bws-search {
+      .filters,
+      .search-filters {
+        border: none;
+      }
     }
   }
   #bws-sidebar {
@@ -197,8 +306,5 @@
   }
   .bws-view-data {
     left: @bws-sidebar-width;
-  }
-  .toggle-fullscreen {
-    background-position: left top;
   }
 }

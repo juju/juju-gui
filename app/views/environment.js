@@ -52,7 +52,9 @@ YUI.add('juju-view-environment', function(Y) {
          */
         render: function() {
           var container = this.get('container'),
-              topo = this.topo;
+              topo = this.topo,
+              db = this.get('db'),
+              self = this;
 
           // If we need the initial HTML template, take care of that.
           if (!this._rendered) {
@@ -83,10 +85,36 @@ YUI.add('juju-view-environment', function(Y) {
             this.topo = topo;
           }
 
+          topo.recordSubscription(
+              'ServiceModule',
+              db.services.after('remove', Y.bind(this.updateIndicator, this)));
+
+          topo.recordSubscription(
+              'ServiceModule',
+              db.services.after('add', Y.bind(this.updateIndicator, this)));
+
           topo.render();
+          topo.once('rendered', Y.bind(this.updateIndicator, this));
           return this;
         },
 
+        /**
+         * Support for canvas help function (when canvas is empty).
+         *
+         * @method updateIndicator
+         */
+        updateIndicator: function(evt) {
+          var helpText = this.get('container').one('#environment-help'),
+              db = this.get('db'),
+              services = db.services;
+          if (helpText) {
+            if (services.size() === 0) {
+              helpText.show(true);
+            } else {
+              helpText.hide(true);
+            }
+          }
+        },
         /**
          * Render callback handler, triggered from app when the view renders.
          *

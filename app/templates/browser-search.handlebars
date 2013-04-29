@@ -3,8 +3,13 @@
     <a href="" class="bws-title">Charm Browser</a>
     <div class="bws-searchbox">
         <form>
+            <img src="/juju-ui/assets/images/browser_searchbox_search_icon.png"
+                alt="Search" class="search" />
+            <a href="" class="delete">
+                <img src="/juju-ui/assets/images/browser_searchbox_delete_icon.png"
+                    alt="Delete" /></a>
             <input type="search" name="bws-search"
-                value="{{ text }}"
+                value="{{ filters.text }}"
                 placeholder="Search&hellip;"/>
         </form>
     </div>

@@ -7,16 +7,33 @@
             </a>
             <a href="" class="add">Add</a>
             <a href="" class="share">
-                <img src="/juju-ui/assets/images/share_icon.jpg" alt="Share" />
+                <img src="/juju-ui/assets/images/browser_share_button_icon.png"
+                    alt="Share" />Share
             </a>
         </div>
 
+        {{#if failingProviders}}
+            <div class="provider-warning"><i class="sprite alert_icon2"></i>
+                <span>Currently fails on</span>
+                {{#failingProviders}}
+                    <img src="/juju-ui/assets/images/provider_icons/provider-{{.}}.svg"
+                        title="tests currently fail on {{.}}"/>
+                {{/failingProviders}}
+            </div>
+        {{/if}}
+
         <div class="heading yui3-g">
             <div class="yui3-u">
+                {{#if is_approved}}
+                    <i class="sprite badge-approved"></i>
+                {{/if}}
+
                 {{#if icon }}
-                    <img src="data:image/svg+xml;base64,{{ icon }}" alt="{{ name }} icon">
+                    <img src="data:image/svg+xml;base64,{{ icon }}" alt="{{ name }}"
+                        class="charm-icon provided">
                 {{else}}
-                   <div class="charm-icon"></div>
+                   <div class="charm-icon">
+                   </div>
                 {{/if}}
             </div>
             <div class="charm-details yui3-u-1-2">
@@ -64,11 +81,11 @@
                 {{#if recent_commits}}
                         <span class="expand">
                             <span class="more">
-                                <img src="/juju-ui/assets/images/expand_icon.jpg"
+                                <img src="/juju-ui/assets/images/expand_icon.png"
                                     alt="Expand" />
                             </span>
                             <span class="less hidden">
-                                <img src="/juju-ui/assets/images/contract_icon.jpg"
+                                <img src="/juju-ui/assets/images/contract_icon.png"
                                     alt="Contract" />
                             </span>
                         </span>
@@ -116,7 +133,7 @@
                 <div id="bws-readme">Readme</div>
                 <div id="bws-interfaces">
                     <p class="intro">
-                        Interfaces determine how this charm relates to other charms. A relationship between charms can only be made if they share a common interface. 
+                        Interfaces determine how this charm relates to other charms. A relationship between charms can only be made if they share a common interface.
                         {{#if interfaceIntro.noRequiresNoProvides}}
                             <br />
                             <br />
@@ -184,9 +201,9 @@
                 </div>
                 <div id="bws-configuration">
                     <p class="intro">
-                        These are the ways in which you can configure this 
-                        charm to best suit your deployment. You can change the 
-                        default configuration settings either before or after 
+                        These are the ways in which you can configure this
+                        charm to best suit your deployment. You can change the
+                        default configuration settings either before or after
                         you have deployed the charm, if necessary.
                     </p>
                     {{#if options}}
@@ -209,12 +226,12 @@
                 <div id="bws-qa">Quality</div>
                 <div id="bws-hooks">
                     <p class="intro">
-                        Hooks are the pieces of code that comprise the charm. 
+                        Hooks are the pieces of code that comprise the charm.
                         A particular hook responds to specific events that Juju
-                        gives the charm, e.g. when there’s a change in the 
-                        environment or an administrator has made a change to 
-                        its configuration. Hooks are of interest mainly to 
-                        charm authors and advanced users. Select a hook below 
+                        gives the charm, e.g. when there’s a change in the
+                        environment or an administrator has made a change to
+                        its configuration. Hooks are of interest mainly to
+                        charm authors and advanced users. Select a hook below
                         to view its code.
                     </p>
                     <select>
