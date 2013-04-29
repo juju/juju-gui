@@ -19,6 +19,9 @@
                 {{else}}
                    <div class="charm-icon"></div>
                 {{/if}}
+                {{#if is_approved}}
+                    <i class="sprite badge-approved"></i>
+                {{/if}}
             </div>
             <div class="charm-details yui3-u-1-2">
                 <h1>{{ name }}</h1>
