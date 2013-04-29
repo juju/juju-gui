@@ -210,9 +210,12 @@ var GlobalConfig = {
           fullpath: '/juju-ui/models/handlers.js'
         },
 
-
         'juju-models': {
           fullpath: '/juju-ui/models/models.js'
+        },
+
+        'model-controller': {
+          fullpath: '/juju-ui/models/model-controller.js'
         },
 
         // Connectivity

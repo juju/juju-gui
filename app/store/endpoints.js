@@ -116,8 +116,8 @@ YUI.add('juju-endpoints-controller', function(Y) {
           // If the service is not a ghost (that is, 'pending' is false),
           // process it.
           if (!service.get('pending')) {
-            var db = this.get('db'),
-                servicePromise = db.populateService(service.get('id')),
+            var mController = this.get('modelController'),
+                servicePromise = mController.populateService(service.get('id')),
                 self = this;
 
             servicePromise.then(
@@ -209,8 +209,38 @@ YUI.add('juju-endpoints-controller', function(Y) {
               this.flatten(charm.get('requires'));
           // this was added to be able to test that the endpoint
           // was successful with the new promises
+          /**
+            Fired after an endpoint was added to the endpointsMap property
+
+            @event endpointMapAdded
+          */
           this.fire('endpointMapAdded');
         }
+      }, {
+        /**
+          Reference to the client env.
+
+          @attribute env
+          @type {Y.Base}
+          @default undefined
+        */
+        env: {},
+
+        /**
+          Reference to the client db.
+
+          @attribute db
+          @type {Y.Base}
+          @default undefined
+        */
+        db: {},
+        /**
+
+          @attribute modelController
+          @type {Y.juju.ModelController}
+          @default undefined
+        */
+        modelController: {}
       });
 
   juju.EndpointsController = EndpointsController;
