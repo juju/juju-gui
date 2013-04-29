@@ -1,15 +1,26 @@
 <div id="bws-search" class="yui3-g">
   <div class="yui3-u-1">
-    <h3 class="section-title"><strong>{{ count }}</strong> results found</h3>
-    {{#unless isFullscreen}}
-        <div class="filterControl"> ^ Hide filters</div>
-    {{/unless}}
+    <h3 class="search-title"><strong>{{ count }}</strong> results found</h3>
   </div>
-  <div class="search-filters {{#if isFullscreen}} yui3-u-1-4 {{else}} yui3-u-1 collapsed {{/if}} ">
-
+  <div class="filters {{#if isFullscreen}} yui3-u-1-4 {{else}} yui3-u-1 collapsed {{/if}}">
+    {{#unless isFullscreen}}
+      <a href="" class="filterControl">
+        Hide filters
+        <span class="expand">
+          <span class="more">
+            <img src="/juju-ui/assets/images/expand_icon.png"
+                alt="Expand" />
+          </span>
+          <span class="less">
+            <img src="/juju-ui/assets/images/contract_icon.png"
+                alt="Contract" />
+          </span>
+        </span>
+      </a>
+    {{/unless}}
+    <div class="search-filters">
+    </div>
   </div>
   <div class="search-results {{#if isFullscreen}}yui3-u-3-4{{/if}}">
-
-
   </div>
 </div>
