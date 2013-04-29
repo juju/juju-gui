@@ -114,7 +114,7 @@ YUI.add('juju-browser-models', function(Y) {
      *
      * @method initializer
      * @param {Object} cfg object attrs override.
-     * @return {undefined}
+     * @return {undefined} nadda.
      *
      */
     initializer: function(cfg) {
@@ -141,7 +141,7 @@ YUI.add('juju-browser-models', function(Y) {
 
        @method update
        @param {Object} data the properties to update.
-       @return {undefined} nadda
+       @return {undefined} nadda.
 
      */
     update: function(data) {
