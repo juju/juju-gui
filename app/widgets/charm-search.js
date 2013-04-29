@@ -28,7 +28,6 @@ YUI.add('browser-search-widget', function(Y) {
     EVT_CLEAR_SEARCH: 'clear_search',
     EVT_TOGGLE_VIEWABLE: 'toggle_viewable',
     EVT_TOGGLE_FULLSCREEN: 'toggle_fullscreen',
-    EVT_UPDATE_SEARCH: 'update_search',
     EVT_SEARCH_CHANGED: 'search_changed',
 
     TEMPLATE: templates['browser-search'],
@@ -42,8 +41,14 @@ YUI.add('browser-search-widget', function(Y) {
      */
     _handleSubmit: function(ev) {
       ev.halt();
-      this.fire(this.EVT_UPDATE_SEARCH, this.get('text'));
+      var form = this.get('boundingBox').one('form'),
+          value = form.one('input').get('value');
+
+      this.fire(this.EVT_SEARCH_CHANGED, {
+        newVal: value
+      });
     },
+
     /**
      * Expose to the outside world that we've got a request to go fullscreen.
      *
@@ -139,18 +144,6 @@ YUI.add('browser-search-widget', function(Y) {
               },
               this)
       );
-
-      // Note that the search could be updated either from our internal input
-      // control, or it could come from someone outside of the widget asking
-      // it to update to a specific value. This is how things like clicking
-      // categories can work.
-      var input = container.one('input');
-      this.addEvent(
-          input.on('valueChange', function(ev) {
-            this.set('text', ev.newVal);
-            this.fire(this.EVT_SEARCH_CHANGED);
-          }, this)
-      );
     },
 
     /**
@@ -192,9 +185,15 @@ YUI.add('browser-search-widget', function(Y) {
      *
      */
     renderUI: function() {
+      var data = this.getAttrs();
       this.get('contentBox').setHTML(
-          this.TEMPLATE(this.getAttrs())
+          this.TEMPLATE(data)
       );
+
+      // If there's an existing search term, make sure we toggle active.
+      if (data.filters.text) {
+        this._toggleActive();
+      }
     },
 
     /**
@@ -214,24 +213,34 @@ YUI.add('browser-search-widget', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+         @attribute filters
+         @default {Object} text: ''
+         @type {Object}
+
+       */
+      filters: {
+        value: {
+          text: ''
+        }
+      },
+      /**
+         @attribute fullscreeTarget
+         @default undefined
+         @type {Node}
+         @required true
+
+       */
       fullscreenTarget: {
         required: true
-      },
-
-      /**
-       * The search text.
-       *
-       * @attribute text
-       * @default ''
-       * @type {String}
-       */
-      text: {}
+      }
     }
   });
 
 }, '0.1.0', {
   requires: [
     'base',
+    'browser-filter-widget',
     'event',
     'event-tracker',
     'event-valuechange',

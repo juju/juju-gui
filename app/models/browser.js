@@ -21,9 +21,7 @@ YUI.add('juju-browser-models', function(Y) {
    *
    */
   ns.FILTER_TYPES = {
-    'approved': 'Approved Charms',
-    'community': 'Community Charms',
-    'environment': 'Environment Charms'
+    'approved': 'Reviewed Charms'
   };
 
   ns.FILTER_CATEGORIES = {
@@ -35,11 +33,6 @@ YUI.add('juju-browser-models', function(Y) {
     'miscellaneous': 'Miscellaneous'
   };
 
-  ns.FILTER_SCOPES = {
-    'public': 'Public Charms',
-    'deployed': 'Deployed to Environment'
-  };
-
   ns.FILTER_SERIES = {
     'quantal': '12.10 Quantal Quetzal',
     'precise': '12.04 LTS Precise Pangolin'
@@ -47,9 +40,9 @@ YUI.add('juju-browser-models', function(Y) {
 
   ns.FILTER_PROVIDERS = {
     'aws': 'AWS/EC2',
-    'openstack': 'Openstack',
     'hp': 'HP Cloud',
-    'lxc': 'LXC'
+    'lxc': 'LXC',
+    'openstack': 'Openstack'
   };
 
 
@@ -70,33 +63,50 @@ YUI.add('juju-browser-models', function(Y) {
      *
      */
     _setDefaults: function() {
-      this.set('category', Y.Object.keys(ns.FILTER_CATEGORIES));
-      this.set('provider', [
-        'aws',
-        'openstack'
-      ]);
-      this.set('scope', ['public']);
       this.set('series', ['precise']);
       this.set('type', ['approved']);
     },
 
     /**
-     * Given the current filters, generate a query string to use for api
-     * calls.
-     *
-     * @method genQueryString
-     *
+       Given the current filters, generate a query string to use for api
+       calls.
+
+       @method genQueryString
+       @return {String} generated query string.
+
      */
     genQueryString: function() {
-      var filterData = {
+      return Y.QueryString.stringify(this.getFilterData());
+    },
+
+    /**
+       Helper to generate a nice object from all of the properties we track as
+       filters.
+
+       @method getFilterData
+       @return {Object} each filter and it's current list of values.
+
+     */
+    getFilterData: function() {
+      var res = {
         category: this.get('category'),
         provider: this.get('provider'),
-        scope: this.get('scope'),
         series: this.get('series'),
+        text: this.get('text'),
         type: this.get('type')
       };
 
-      return Y.QueryString.stringify(filterData);
+      // We want to ignore filter properties that are empty to avoid
+      // generating query strings that look like &&&type=approved.
+      // text is exempt since we can have a text=&type=approved to search for
+      // all reviewed charms.
+      Y.Object.each(res, function(val, key) {
+        // Ignore text.
+        if (key !== 'text' && val.length === 0) {
+          delete res[key];
+        }
+      });
+      return res;
     },
 
     /**
@@ -104,11 +114,63 @@ YUI.add('juju-browser-models', function(Y) {
      *
      * @method initializer
      * @param {Object} cfg object attrs override.
+     * @return {undefined} nadda.
      *
      */
     initializer: function(cfg) {
       this._setDefaults();
+
+      if (cfg) {
+        // we've got initial data we need to load into proper arrays and
+        // such. We use this update because it turns strings from the query
+        // string into a proper array when there is only one selection from
+        // the filter group.
+        this.update(cfg);
+      }
+    },
+
+    /**
+       Update the current filters given an update object that's keyed on the
+       property and the new values to use for it.
+
+       This is used to help pre-populate the filters from the url on an
+       initial url load (a shared searc link) as well as updates from the
+       widgets that turn into change events that make sure we update the
+       current set of filters based on the changes detected in widgets lower
+       in the stack.
+
+       @method update
+       @param {Object} data the properties to update.
+       @return {undefined} nadda.
+
+     */
+    update: function(data) {
+      // If you don't give a real object then pass.
+      if (!data || typeof data !== 'object') {
+        return;
+      }
+
+      // Update each manually as we might get an Array or a single value from
+      // the query string update.
+      var arrayVals = [
+        'category', 'provider', 'series', 'type'
+      ];
+
+      Y.Array.each(arrayVals, function(key) {
+        if (data[key]) {
+          if (data[key] && typeof data[key] === 'string') {
+            this.set(key, [data[key]]);
+          } else {
+            this.set(key, data[key]);
+          }
+        }
+      }, this);
+
+      if (Y.Object.hasKey(data, 'text')) {
+        this.set('text', data.text);
+      }
     }
+
   }, {
     ATTRS: {
       category: {
@@ -117,17 +179,18 @@ YUI.add('juju-browser-models', function(Y) {
       provider: {
         value: []
       },
-      scope: {
-        value: []
-      },
       series: {
         value: []
+      },
+      text: {
+        value: ''
       },
       type: {
         value: []
       }
     }
   });
+
 
 }, '0.1.0', {
   requires: [
