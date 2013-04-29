@@ -140,6 +140,50 @@
       node.one('.charm-token').simulate('click');
     });
 
+    it('setting the activeID marks the div active', function() {
+      fakeStore = new Y.juju.Charmworld0({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [sampleData]
+            }
+          });
+        }
+      });
+      view = new EditorialView({
+        renderTo: Y.one('.bws-content'),
+        store: fakeStore,
+        activeID: 'precise/ceph-7'
+      });
+      view.render();
+      node.all('.yui3-charmtoken.active').size().should.equal(1);
+    });
+
+    it('unsetting the activeID will remove the active markings', function() {
+      fakeStore = new Y.juju.Charmworld0({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [sampleData]
+            }
+          });
+        }
+      });
+      view = new EditorialView({
+        renderTo: Y.one('.bws-content'),
+        store: fakeStore,
+        activeID: 'precise/ceph-7'
+      });
+      view.render();
+
+      view.set('activeID', null);
+      node.all('.yui3-charmtoken.active').size().should.equal(0);
+    });
+
   });
 
 })();
