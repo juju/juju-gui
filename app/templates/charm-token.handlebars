@@ -2,10 +2,14 @@
     class="charm-token yui3-g"
     data-charmid="{{id}}">
     <span class="yui3-u">
+        {{#if is_approved}}
+            <i class="sprite badge-approved"></i>
+        {{/if}}
         {{#if icon}}
             <img src="data:image/svg+xml;base64,{{ icon }}" alt="{{ name }} icon" class="icon">
         {{else}}
-            <div class="charm-icon"></div>
+            <div class="charm-icon">
+            </div>
         {{/if}}
     </span>
     <span class="yui3-u-5-7">

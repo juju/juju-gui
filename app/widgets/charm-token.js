@@ -77,6 +77,14 @@ YUI.add('browser-charm-token', function(Y) {
       id: {},
 
       /**
+         @attribute is_approved
+         @default undefined
+         @type {Boolean}
+
+       */
+      is_approved: {},
+
+      /**
        * @attribute name
        * @default ''
        * @type {String}
