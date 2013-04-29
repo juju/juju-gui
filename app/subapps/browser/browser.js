@@ -497,6 +497,17 @@ YUI.add('subapp-browser', function(Y) {
         if (this._details) {
           this._details.destroy({remove: true});
         }
+
+        // Update the activeID on the editorial/search results.
+        if (this._editorial) {
+          this._editorial.set('activeID', null);
+        }
+        if (this._search) {
+          this._search.set('activeID', null);
+        }
+
+
+
       }
 
       // Sync that the state has changed.
