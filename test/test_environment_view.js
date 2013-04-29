@@ -104,8 +104,7 @@
     });
 
     beforeEach(function() {
-      container = Y.Node.create('<div />').setStyle('visibility', 'hidden');
-      Y.one('body').prepend(container);
+      container = testUtils.makeContainer();
       db = new models.Database();
       // Use a clone to avoid any mutation
       // to the input set (as happens with processed
@@ -120,6 +119,35 @@
       conn.messages = [];
       done();
     });
+
+
+    it('should display help text when canvas is empty', function() {
+      // Use a db w/o the delta loaded
+      db = new models.Database();
+      var view = new views.environment({container: container, db: db}),
+          topo,
+          beforeResizeEventFired = false;
+      view.render().rendered();
+      topo = view.topo;
+
+      // Verify we have help text.
+      var help = Y.one('#environment-help');
+      assert.strictEqual(help.getStyle('display'), 'block');
+    });
+
+
+    it('should not display help text when canvas is populated', function() {
+      var view = new views.environment({container: container, db: db}),
+          topo,
+          beforeResizeEventFired = false;
+      view.render().rendered();
+      topo = view.topo;
+
+      // Verify we do not have help text.
+      var help = Y.one('#environment-help');
+      assert.strictEqual(help.getStyle('display'), 'none');
+    });
+
 
     it('must handle the window resize event', function(done) {
       var view = new views.environment({container: container, db: db}),
