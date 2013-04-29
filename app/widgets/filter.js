@@ -127,7 +127,7 @@ YUI.add('browser-filter-widget', function(Y) {
             res.push({
               name: val,
               value: key,
-              checked: filters.category.indexOf(key) !== -1 ? true : false
+              checked: filters.category.indexOf(key) !== -1
             });
           });
           return res;
@@ -173,7 +173,7 @@ YUI.add('browser-filter-widget', function(Y) {
             res.push({
               name: val,
               value: key,
-              checked: filters.provider.indexOf(key) !== -1 ? true : false
+              checked: filters.provider.indexOf(key) !== -1
             });
           });
           return res;
@@ -205,7 +205,7 @@ YUI.add('browser-filter-widget', function(Y) {
             res.push({
               name: val,
               value: key,
-              checked: filters.series.indexOf(key) !== -1 ? true : false
+              checked: filters.series.indexOf(key) !== -1
             });
           });
           return res;
@@ -237,7 +237,7 @@ YUI.add('browser-filter-widget', function(Y) {
             res.push({
               name: val,
               value: key,
-              checked: filters.type.indexOf(key) !== -1 ? true : false
+              checked: filters.type.indexOf(key) !== -1
             });
           });
           return res;

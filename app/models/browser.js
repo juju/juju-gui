@@ -72,6 +72,7 @@ YUI.add('juju-browser-models', function(Y) {
        calls.
 
        @method genQueryString
+       @return {String} generated query string.
 
      */
     genQueryString: function() {
@@ -113,6 +114,7 @@ YUI.add('juju-browser-models', function(Y) {
      *
      * @method initializer
      * @param {Object} cfg object attrs override.
+     * @returns {undefined}
      *
      */
     initializer: function(cfg) {
@@ -139,6 +141,7 @@ YUI.add('juju-browser-models', function(Y) {
 
        @method update
        @param {Object} data the properties to update.
+       @return {undefined}
 
      */
     update: function(data) {
