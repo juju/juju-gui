@@ -81,7 +81,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
     _toggleFilters: function(ev) {
       ev.halt();
 
-      debugger;
       var control = ev.currentTarget;
       var newTarget = control.hasClass('less') ? 'more' : 'less';
       newTarget = this.get('container').one('.filterControl .' + newTarget);
