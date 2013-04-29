@@ -106,7 +106,9 @@ YUI.add('subapp-browser-searchview', function(Y) {
       Y.all('.yui3-charmtoken.active').removeClass('active');
 
       // Add it to the current node.
-      clickTarget.ancestor('.yui3-charmtoken').addClass('active');
+      if (clickTarget) {
+        clickTarget.ancestor('.yui3-charmtoken').addClass('active');
+      }
     },
 
     /**
@@ -166,10 +168,28 @@ YUI.add('subapp-browser-searchview', function(Y) {
     },
 
     /**
-       Renders the searchview, rendering search results for the view's search
-       text.
+     * General YUI initializer.
+     *
+     * @method initializer
+     * @param {Object} cfg configuration object.
+     *
+     */
+    initializer: function(cfg) {
+      this.on('activeIDChange', function(ev) {
+        var id = ev.newVal;
+        if (id) {
+          id = this.get('container').one(
+              '.charm-token[data-charmid="' + id + '"]');
+        }
+        this._updateActive(id);
+      });
+    },
 
-       @method render
+    /**
+     * Renders the searchview, rendering search results for the view's search
+     * text.
+     *
+     * @method render
      */
     render: function() {
       // This is only rendered once from the subapp and so the filters is the
