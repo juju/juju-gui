@@ -22,7 +22,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
       '.charm-token': {
         click: '_handleCharmSelection'
       },
-      '.filterControl': {
+      '.filterControl a': {
         click: '_toggleFilters'
       }
     },
@@ -80,15 +80,18 @@ YUI.add('subapp-browser-searchview', function(Y) {
      */
     _toggleFilters: function(ev) {
       ev.halt();
+
+      debugger;
       var control = ev.currentTarget;
-      var hidden = control.hasClass('less');
-      if (!hidden) {
-        control.addClass('less');
-        control.one('.direction').setContent('Hide');
+      var newTarget = control.hasClass('less') ? 'more' : 'less';
+      newTarget = this.get('container').one('.filterControl .' + newTarget);
+
+      control.hide();
+      newTarget.show();
+
+      if (newTarget.hasClass('less')) {
         this.get('container').one('.search-filters').show();
       } else {
-        control.removeClass('less');
-        control.one('.direction').setContent('Show');
         this.get('container').one('.search-filters').hide();
       }
     },

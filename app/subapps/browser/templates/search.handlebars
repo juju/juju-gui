@@ -4,19 +4,14 @@
   </div>
   <div class="filters {{#if isFullscreen}} yui3-u-1-4 {{else}} yui3-u-1 collapsed {{/if}}">
     {{#unless isFullscreen}}
-      <a href="" class="filterControl">
-        <span class="direction">Show</span> filters
-        <span class="expand">
-          <span class="more">
-            <img src="/juju-ui/assets/images/expand_icon.png"
-                alt="Expand" />
-          </span>
-          <span class="less">
-            <img src="/juju-ui/assets/images/contract_icon.png"
-                alt="Contract" />
-          </span>
-        </span>
-      </a>
+        <div class="filterControl">
+            <a href="" class="filterControl more">
+                Show Filters <img src="/juju-ui/assets/images/expand_icon.png" alt="expand"</img>
+            </a>
+            <a href="" class="filterControl less" style="display: none;">
+                Hide Filters <img src="/juju-ui/assets/images/contract_icon.png" alt="collapse"</img>
+            </a>
+        </div>
     {{/unless}}
     <div class="search-filters" {{#unless isFullscreen}}style="display: none;"{{/unless}}>
     </div>
