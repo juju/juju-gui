@@ -221,6 +221,30 @@ YUI.add('juju-env-sandbox', function(Y) {
 
 
   /**
+  Given attrs or a model object and a whitelist of desired attributes,
+  return an attrs hash of only the desired attributes.
+
+  @method _getDeltaAttrs
+  @private
+  @param {Object} attrs A models or attrs hash.
+  @param {Array} whitelist A list of desired attributes.
+  @return {Object} A hash of the whitelisted attributes of the attrs object.
+  */
+  var _getDeltaAttrs = function(attrs, whitelist) {
+    if (attrs.getAttrs) {
+      attrs = attrs.getAttrs();
+    }
+    // For fuller verisimilitude, we could convert some of the
+    // underlines in the attribute names to dashes.  That is currently
+    // unnecessary.
+    var filtered = {};
+    Y.each(whitelist, function(name) {
+      filtered[name] = attrs[name];
+    });
+    return filtered;
+  };
+
+  /**
   A sandbox Juju environment using the Python API.
 
   @class PyJujuAPI
@@ -294,38 +318,36 @@ YUI.add('juju-env-sandbox', function(Y) {
     sendDelta: function() {
       var state = this.get('state');
       var changes = state.nextChanges();
-      var annotations = state.nextAnnotations();
-      if (changes || annotations) {
-        if (!changes) {
-          changes = annotations;
-        } else {
-          changes = Y.mix(changes, annotations,
-                          true, 0, null, true);
-        }
+      if (changes && changes.error) {
+        changes = null;
       }
-
-      if (changes && !changes.error) {
+      var annotations = state.nextAnnotations();
+      if (annotations && annotations.error) {
+        annotations = null;
+      }
+      if (changes || annotations) {
         var deltas = [];
         var response = {op: 'delta', result: deltas};
         Y.each(this._deltaWhitelist, function(whitelist, changeType) {
-          Y.each(changes[changeType + 's'], function(change) {
-            var attrs = change[0];
-            if (attrs.getAttrs) {
-              attrs = attrs.getAttrs();
-            }
-            var filtered = {};
-            Y.each(whitelist, function(name) {
-              filtered[name] = attrs[name];
+          var collectionName = changeType + 's';
+          if (changes) {
+            Y.each(changes[collectionName], function(change) {
+              var attrs = _getDeltaAttrs(change[0], whitelist);
+              var action = change[1] ? 'change' : 'remove';
+              // The unit changeType is actually "serviceUnit" in the Python
+              // stream.  Our model code handles either, so we're not modifying
+              // it for now.
+              deltas.push([changeType, action, attrs]);
             });
-            // For fuller verisimilitude, we could convert some of the
-            // underlines in the attribute names to dashes.  That is currently
-            // unnecessary.
-            var action = change[1] ? 'change' : 'remove';
-            // The unit changeType is actually "serviceUnit" in the Python
-            // stream.  Our model code handles either, so we're not modifying
-            // it for now.
-            deltas.push([changeType, action, filtered]);
-          });
+          }
+          if (annotations) {
+            Y.each(annotations[changeType + 's'], function(attrs, key) {
+              if (!changes || !changes[key]) {
+                attrs = _getDeltaAttrs(attrs, whitelist);
+                deltas.push([changeType, 'change', attrs]);
+              }
+            });
+          }
         });
         this.get('client').receiveNow(response);
       }
