@@ -95,6 +95,8 @@ endif
 RELEASE_NAME=juju-gui-$(RELEASE_VERSION)
 RELEASE_FILE=releases/$(RELEASE_NAME).tgz
 RELEASE_SIGNATURE=releases/$(RELEASE_NAME).asc
+NPM_CACHE_VERSION=$(shell date +%s)# Seconds since the epoch.
+NPM_CACHE_FILE=$(CURDIR)/releases/npm-cache-$(NPM_CACHE_VERSION).tgz
 # Is the branch being released a branch of trunk?
 ifndef BRANCH_IS_GOOD
 ifndef IS_TRUNK_BRANCH
@@ -198,6 +200,8 @@ $(SPRITE_GENERATED_FILES): node_modules/grunt node_modules/node-spritesheet \
 $(NON_SPRITE_IMAGES):
 	mkdir -p build-shared/juju-ui/assets/images
 	cp app/assets/images/non-sprites/* build-shared/juju-ui/assets/images/
+
+install-npm-packages: $(NODE_TARGETS)
 
 $(NODE_TARGETS): package.json
 	npm install
@@ -531,7 +535,40 @@ else
 	@echo "Please run this target without the NO_BZR flag defined if you"
 	@echo "wish to upload a release."
 	@echo
-	@echo "See the README for more information"
+	@echo "See docs/process.rst for more information"
+	@echo
+	@false
+endif
+
+npm-cache:
+ifdef BRANCH_IS_GOOD
+	# We store the NPM cache file in the "releases" directory.  It is kind
+	# of like a release.
+	mkdir -p releases
+	# Remove any old cache or generated cache archives.
+	rm -f releases/npm-cache-*.tgz*
+	rm -rf temp-npm-cache
+	# We have to get rid of all installed NPM packages so they will be
+	# reinstalled into the (presently) empty cache.
+	$(MAKE) clean-all
+	# Install all the NPM packages, overriding the NPM cache.
+	$(MAKE) npm_config_cache=temp-npm-cache install-npm-packages
+	(cd temp-npm-cache && tar czvf $(NPM_CACHE_FILE) .)
+	rm -rf temp-npm-cache
+	gpg --armor --sign --detach-sig $(NPM_CACHE_FILE)
+	python2 upload_release.py juju-gui npm-cache $(NPM_CACHE_VERSION) \
+	    $(NPM_CACHE_FILE) $(LAUNCHPAD_API_ROOT)
+else
+	@echo "**************************************************************"
+	@echo "**************** NPM CACHE GENERATION FAILED *****************"
+	@echo "**************************************************************"
+	@echo
+	@echo "To create and upload an NPM cache file to Launchpad you must"
+	@echo "be in a branch of lp:juju-gui without uncommitted/unpushed"
+	@echo "changes, or you must override one of the pertinent variable "
+	@echo "names to force an upload."
+	@echo
+	@echo "See docs/process.rst for more information"
 	@echo
 	@false
 endif
@@ -550,8 +587,9 @@ appcache-force: appcache-touch $(APPCACHE)
 # targets are alphabetically sorted, they like it that way :-)
 .PHONY: appcache-force appcache-touch beautify build build-files \
 	build-devel clean clean-all clean-deps clean-docs code-doc debug \
-	devel docs dist gjslint help jshint lint main-doc prep prod recess \
-	server spritegen test test-debug test-prep test-prod undocumented \
-	view-code-doc view-docs view-main-doc yuidoc-lint
+	devel docs dist gjslint help install-npm-packages jshint lint \
+	main-doc npm-cache npm-cache-file npm-cache-file-signature prep prod \
+	recess server spritegen test test-debug test-prep test-prod \
+	undocumented view-code-doc view-docs view-main-doc yuidoc-lint
 
 .DEFAULT_GOAL := all

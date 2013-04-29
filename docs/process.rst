@@ -254,6 +254,26 @@ Checklist for Making a Developer Release
 
 You are done!
 
+Making NPM Cache Files
+======================
+
+We use archives of NPM caches to speed up deployment of non-release
+branches of the Juju GUI via charm.  This section describes how to
+update the cache file stored in Launchpad.
+
+Checklist for Uploading a Cache File
+------------------------------------
+
+- Get a clean branch of the trunk:: ``bzr branch lp:juju-gui``.
+- If you are using a pre-existing branch, make sure it is up-to-date:
+  ``bzr pull``.
+- Run the tests and verify they pass: ``make test-prod`` and then
+  ``make test-debug``.
+- Create the tarball: ``PROD=1 make npm-cache``.  The cache
+  file (and a signature thereof) will be created and uploaded to
+  Launchpad.  If you wish to upload to staging.launchpad.net instead,
+  omit "PROD=1".
+
 Checklist for Running a Daily Meeting
 =====================================
 
