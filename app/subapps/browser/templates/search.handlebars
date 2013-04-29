@@ -5,7 +5,7 @@
   <div class="filters {{#if isFullscreen}} yui3-u-1-4 {{else}} yui3-u-1 collapsed {{/if}}">
     {{#unless isFullscreen}}
       <a href="" class="filterControl">
-        Hide filters
+        <span class="direction">Show</span> filters
         <span class="expand">
           <span class="more">
             <img src="/juju-ui/assets/images/expand_icon.png"
@@ -18,7 +18,7 @@
         </span>
       </a>
     {{/unless}}
-    <div class="search-filters">
+    <div class="search-filters" {{#unless ifFullscreen}}style="display: none;"{{/unless}}>
     </div>
   </div>
   <div class="search-results {{#if isFullscreen}}yui3-u-3-4{{/if}}">

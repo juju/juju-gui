@@ -82,11 +82,13 @@ YUI.add('subapp-browser-searchview', function(Y) {
       ev.halt();
       var control = ev.currentTarget;
       var hidden = control.hasClass('less');
-      if (hidden) {
-        control.removeClass('less');
+      if (!hidden) {
+        control.addClass('less');
+        control.one('.direction').setContent('Hide')
         this.get('container').one('.search-filters').show();
       } else {
-        control.addClass('less');
+        control.removeClass('less');
+        control.one('.direction').setContent('Show')
         this.get('container').one('.search-filters').hide();
       }
     },
