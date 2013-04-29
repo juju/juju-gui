@@ -14,7 +14,7 @@
 
         {{#if failingProviders}}
             <div class="provider-warning"><i class="sprite alert_icon2"></i>
-                Currently fails on
+                <span>Currently fails on</span>
                 {{#failingProviders}}
                     <img src="/juju-ui/assets/images/provider_icons/provider-{{.}}.svg"
                         title="tests currently fail on {{.}}"/>
