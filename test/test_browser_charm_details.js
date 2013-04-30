@@ -536,6 +536,23 @@
               charm.get('requires'), charm.get('provides'));
           assert(Y.Object.hasKey(interfaceIntro, 'manyRequiresManyProvides'));
         });
+
+    it('displays a provider warning due to failed tests', function() {
+      var fakeStore = new Y.juju.Charmworld0({});
+      var data = Y.JSON.parse(
+          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      // We don't want any files so we don't have to mock/load them.
+      data.files = [];
+      view = new CharmView({
+        charm: new models.BrowserCharm(data),
+        container: Y.Node.create('<div class="charmview"/>')
+      });
+
+      view.render();
+      // Basics that we have the right number of nodes.
+      node.all('.provider-warning').size().should.eql(1);
+      node.all('.provider-warning img').size().should.eql(4);
+    });
   });
 
 })();

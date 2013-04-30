@@ -49,6 +49,15 @@ YUI.add('subapp-browser', function(Y) {
     _getStateUrl: function(change) {
       var urlParts = ['/bws'];
       this._oldState = this._viewState;
+
+      // If there are changes to the filters, we need to update our filter
+      // object first, and then generate a new query string for the state to
+      // track.
+      if (change.filter) {
+        this._filter.update(change.filter);
+        change.querystring = this._filter.genQueryString();
+      }
+
       this._viewState = Y.merge(this._viewState, change);
 
       urlParts.push(this._viewState.viewmode);
@@ -76,8 +85,13 @@ YUI.add('subapp-browser', function(Y) {
        config.
      */
     _getViewCfg: function(cfg) {
+      // We always add the _filter data to every request because most of them
+      // need to know if there's a search term for rendering the search
+      // input and later the charm details will need to know for selecting
+      // the proper backup icon.
       return Y.merge(cfg, {
         db: this.get('db'),
+        filters: this._filter.getFilterData(),
         store: this.get('store')
       });
     },
@@ -220,6 +234,8 @@ YUI.add('subapp-browser', function(Y) {
       } else {
         this._viewState.querystring = null;
       }
+
+      this._filter.update(query);
     },
 
     /**
@@ -258,6 +274,7 @@ YUI.add('subapp-browser', function(Y) {
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
       this._initState();
+      this._filter = new models.browser.Filter();
 
       // Listen for navigate events from any views we're rendering.
       this.on('*:viewNavigate', function(ev) {
@@ -363,14 +380,7 @@ YUI.add('subapp-browser', function(Y) {
      */
     renderSearchResults: function(req, res, next) {
       var container = this.get('container'),
-          extraCfg = {},
-          query;
-      if (req.query) {
-        query = req.query;
-      } else {
-        // If there's no querystring, we need a default "empty" search.
-        query = {text: ''};
-      }
+          extraCfg = {};
 
       if (req.params.viewmode === 'fullscreen') {
         extraCfg.renderTo = container.one('.bws-view-data');
@@ -378,9 +388,10 @@ YUI.add('subapp-browser', function(Y) {
       } else {
         extraCfg.renderTo = container.one('.bws-content');
       }
-      extraCfg.text = query.text;
+
       this._search = new Y.juju.browser.views.BrowserSearchView(
           this._getViewCfg(extraCfg));
+
       this._search.render();
       this._search.addTarget(this);
     },
@@ -497,6 +508,17 @@ YUI.add('subapp-browser', function(Y) {
         if (this._details) {
           this._details.destroy({remove: true});
         }
+
+        // Update the activeID on the editorial/search results.
+        if (this._editorial) {
+          this._editorial.set('activeID', null);
+        }
+        if (this._search) {
+          this._search.set('activeID', null);
+        }
+
+
+
       }
 
       // Sync that the state has changed.
@@ -651,6 +673,7 @@ YUI.add('subapp-browser', function(Y) {
 
 }, '0.1.0', {
   requires: [
+    'juju-browser-models',
     'juju-charm-store',
     'juju-models',
     'querystring',

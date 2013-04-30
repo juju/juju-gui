@@ -83,7 +83,9 @@ YUI.add('subapp-browser-editorial', function(Y) {
       Y.all('.yui3-charmtoken.active').removeClass('active');
 
       // Add it to the current node.
-      clickTarget.ancestor('.yui3-charmtoken').addClass('active');
+      if (clickTarget) {
+        clickTarget.ancestor('.yui3-charmtoken').addClass('active');
+      }
     },
 
     /**
@@ -107,6 +109,17 @@ YUI.add('subapp-browser-editorial', function(Y) {
       // Hold onto charm data so we can pass model instances to other views when
       // charms are selected.
       this._cacheCharms = new models.BrowserCharmList();
+
+      // Watch for changse to the activeID so that we can mark/unmark active
+      // as required.
+      this.on('activeIDChange', function(ev) {
+        var id = ev.newVal;
+        if (id) {
+          id = this.get('container').one(
+              '.charm-token[data-charmid="' + id + '"]');
+        }
+        this._updateActive(id);
+      });
     },
 
     /**

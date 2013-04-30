@@ -82,6 +82,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/widgets/charm-container.js'
         },
 
+        'browser-filter-widget': {
+          fullpath: '/juju-ui/widgets/filter.js'
+        },
+
         'browser-overlay-indicator': {
           fullpath: '/juju-ui/widgets/overlay-indicator.js'
         },

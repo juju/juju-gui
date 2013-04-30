@@ -752,7 +752,6 @@ YUI.add('juju-models', function(Y) {
     'juju-delta-handlers',
     'juju-endpoints',
     'juju-view-utils',
-    'juju-charm-models',
-    'promise'
+    'juju-charm-models'
   ]
 });

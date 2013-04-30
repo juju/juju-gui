@@ -342,7 +342,9 @@ describe('Endpoints map handlers', function() {
          pending: true,
          charm: charm_id});
        // This timeout is here because we now add the endpoints async via
-       // a response from a promise so in 100ms if it's not there, it won't be.
+       // a response from a promise so checking for an id will always be null
+       // immediately after requesting it. So in 100ms if it's not there,
+       // it won't be because the code would have had a chance to execute.
        setTimeout(function() {
          assert.deepEqual(controller.endpointsMap, {});
          // No charm should have tried to load (see bug 1166222).

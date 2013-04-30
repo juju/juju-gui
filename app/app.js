@@ -371,7 +371,6 @@ YUI.add('juju-gui', function(Y) {
 
       // Handlers for adding and removing services to the service list.
       this.endpointsController = new juju.EndpointsController({
-        env: this.env,
         db: this.db,
         modelController: this.modelController
       });
