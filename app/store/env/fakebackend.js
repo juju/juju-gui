@@ -183,8 +183,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       @method nextAnnotations
       @return {Object} A hash of the keys 'services', 'machines', 'units',
       'relations' and 'annotations'.  Each of those are hashes from entity
-      identifier to [entity, boolean] where the boolean means either active
-      (true) or removed (false).
+      identifier to entity.
     */
     nextAnnotations: function() {
       if (!this.get('authenticated')) {
@@ -913,7 +912,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       // Arrange delta stream updates.
       var annotationGroup = this._getAnnotationGroup(entity);
-      this.annotations[annotationGroup][entityName] = [entity, true];
+      this.annotations[annotationGroup][entityName] = entity;
       return {result: true};
     },
 
@@ -978,9 +977,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       // Arrange delta stream updates.
       var annotationGroup = this._getAnnotationGroup(entity);
-      // Note that we pass true here, even removing an annotation
-      // is recorded as an object change/update.
-      this.annotations[annotationGroup][entityName] = [entity, true];
+      this.annotations[annotationGroup][entityName] = entity;
       return {result: true};
     },
 

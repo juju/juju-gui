@@ -180,10 +180,8 @@ YUI.add('juju-models', function(Y) {
     process_delta: function(action, data) {
       _process_delta(this, action, data, {exposed: false});
     }
-  }, {
-    ATTRS: {
-    }
   });
+
   models.ServiceList = ServiceList;
 
   // This model is barely used.  Units are in a lazy model list, so we
@@ -718,6 +716,7 @@ YUI.add('juju-models', function(Y) {
       var self = this,
           changes = deltaEvent.data.result,
           defaultHandler = handlers.pyDelta;
+
       // Process delta changes invoking handlers for each change in changeset.
       changes.forEach(function(change) {
         var kind = change[0],
@@ -729,6 +728,7 @@ YUI.add('juju-models', function(Y) {
         }
         handler(self, action, data, kind);
       });
+
       // Update service unit aggregates.
       this.services.each(function(service) {
         self.units.update_service_unit_aggregates(service);
@@ -752,6 +752,7 @@ YUI.add('juju-models', function(Y) {
     'juju-delta-handlers',
     'juju-endpoints',
     'juju-view-utils',
-    'juju-charm-models'
+    'juju-charm-models',
+    'promise'
   ]
 });

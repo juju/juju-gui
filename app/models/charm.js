@@ -300,8 +300,6 @@ YUI.add('juju-charm-models', function(Y) {
    */
   var CharmList = Y.Base.create('charmList', Y.ModelList, [], {
     model: Charm
-  }, {
-    ATTRS: {}
   });
   models.CharmList = CharmList;
 
