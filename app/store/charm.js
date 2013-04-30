@@ -155,6 +155,12 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     _makeRequest: function(apiEndpoint, callbacks, args) {
+      // If we're in the noop state, just call the error callback.
+      if (this.get('noop')) {
+        callbacks.failure('noop failure');
+        return;
+      }
+
       // Any query string args need to be put onto the endpoint for calling.
       if (args) {
         apiEndpoint = apiEndpoint + '?' + Y.QueryString.stringify(args);
@@ -229,6 +235,12 @@ YUI.add('juju-charm-store', function(Y) {
      *
      */
     file: function(charmID, filename, callbacks, bindScope) {
+      // If we're in the noop state, just call the error callback.
+      if (this.get('noop')) {
+        callbacks.failure('noop failure');
+        return;
+      }
+
       var endpoint = 'charm/' + charmID + '/file/' + filename;
       if (bindScope) {
         callbacks.success = Y.bind(callbacks.success, bindScope);
@@ -341,7 +353,23 @@ YUI.add('juju-charm-store', function(Y) {
        * @type {Datasource}
        *
        */
-      datasource: {}
+      datasource: {},
+
+      /**
+        If there's no config we end up setting noop on the store so that tests
+        that don't need to worry about the browser can safely ignore it.
+
+        We do log a console error, so those will occur on these tests to help
+        make it easy to catch an issue when you don't mean to noop the store.
+
+        @attribute noop
+        @default false
+        @type {Boolean}
+
+       */
+      noop: {
+        value: false
+      }
     }
   });
 
