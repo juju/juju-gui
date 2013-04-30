@@ -15,7 +15,7 @@ YUI.add('juju-endpoints-controller', function(Y) {
    * This controller manages the endpoints for services, handling the events
    * for the services ModelList and maintaining the endpoints map.
    *
-   * EndpointsController({env: Environment, db: Database})
+   * EndpointsController({db: Database})
    *
    * @class EndpointsController
    */
@@ -218,15 +218,6 @@ YUI.add('juju-endpoints-controller', function(Y) {
         }
       }, {
         /**
-          Reference to the client env.
-
-          @attribute env
-          @type {Y.Base}
-          @default undefined
-        */
-        env: {},
-
-        /**
           Reference to the client db.
 
           @attribute db
@@ -234,7 +225,9 @@ YUI.add('juju-endpoints-controller', function(Y) {
           @default undefined
         */
         db: {},
+
         /**
+          Reference to the modelController instance
 
           @attribute modelController
           @type {Y.juju.ModelController}

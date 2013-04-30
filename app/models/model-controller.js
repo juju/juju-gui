@@ -2,13 +2,13 @@
 
 YUI.add('model-controller', function(Y) {
   /**
-    Provides a collection of utility methods to interact with the db and other
-    models to avoid needing to pass the environments and other instances arounc
+    Provides a collection of utility methods to interact
+    with the db and it's models.
 
     @class ModelController
     @constructor
   */
-  var ModelController = Y.Base.create('model-controller', Y.Base, [], {
+  var ModelController = Y.Base.create('juju-model-controller', Y.Base, [], {
 
     /**
       Returns a promise for a fully populated charm model.
@@ -23,8 +23,6 @@ YUI.add('model-controller', function(Y) {
 
       return new Y.Promise(
           function(resolve, reject) {
-            // If the charm data hasn't been fetched yet, fetch it. We aren't
-            // resolving here on purpose because this is a side effect.
             var charm = db.charms.getById(charmId);
             if (charm && charm.loaded) {
               resolve(charm);
