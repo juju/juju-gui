@@ -12,7 +12,8 @@ var juju_config = {
   // SubApps.
   consoleEnabled: true,
   charm_store_url: 'http://jujucharms.com/',
-  charmworldURL: 'http://staging.jujucharms.com/',
+  charmworldURL: 'http://127.0.0.1:2464/',
+  // charmworldURL: 'http://staging.jujucharms.com/',
   // The config has three socket settings.  socket_port and socket_protocol
   // modify the current application url to determine the websocket url (always
   // adding "/ws" as the final path).  socket_url sets the entire websocket

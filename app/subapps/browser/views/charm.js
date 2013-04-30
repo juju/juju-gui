@@ -542,6 +542,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
        *
        */
       renderTo: {
+        /**
+         * @method renderTo.valueFn
+         * @return {Node} the renderTo node.
+         *
+         */
         valueFn: function() {
           return Y.one('.bws-view-data');
         }
