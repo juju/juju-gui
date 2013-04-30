@@ -19,13 +19,15 @@ YUI.add('service-view-promise-support', function(Y) {
     */
     initializer: function(cfg) {
       this.after('modelChange', function() {
-console.log('model changed');
         this.render();
       }, this);
 
-      cfg.service.then(
-          Y.bind(this._serviceDataReceived, this),
-          Y.bind(this._noServiceAvailable, this));
+      if (Y.Promise.isPromise(cfg.service)) {
+        cfg.service.then(
+            Y.bind(this._serviceDataReceived, this),
+            Y.bind(this._noServiceAvailable, this));
+      }
+
     },
     /**
       Resolve callback for the model promise which sets the model
@@ -35,7 +37,6 @@ console.log('model changed');
       @param {Object} model service model instance.
     */
     _serviceDataReceived: function(models) {
-console.log('service received');
       // set the model with the data returned from the promise
       this.set('model', models.service);
     },
@@ -47,7 +48,6 @@ console.log('service received');
       @method _noServiceAvailable
     */
     _noServiceAvailable: function() {
-console.log('no service received');
       this.get('db').notifications.add(
           new Y.juju.models.Notification({
             title: 'Service is not available',
@@ -98,20 +98,13 @@ console.log('no service received');
       @return {Object} view instance.
     */
     render: function() {
-console.log('rendering');
       var container = this.get('container');
       var service = this.get('model');
       var db = this.get('db');
       var env = db.environment.get('annotations');
-console.log(service);
-if (service) {
-console.log(service.get('loaded'));
-}
       if (!service || !service.get('loaded')) {
-console.log('rendering loading');
         this.renderLoading();
       } else {
-console.log('rendering data');
         this.renderData();
       }
       return this;

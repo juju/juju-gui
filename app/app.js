@@ -526,10 +526,17 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     _buildServiceView: function(req, viewName) {
-      //var service = this.db.services.getById(req.params.id);
+      // The following if-check is a little kludge to avoid a flash between
+      // changing views if the data is already available.
+      var model, service = this.db.services.getById(req.params.id);
+      if (service && service.get('loaded')) {
+        model = service;
+      } else {
+        service = this.modelController.getServiceWithCharm(req.params.id);
+      }
       this.showView(viewName, {
-        //model: service,
-        service: this.modelController.getServiceWithCharm(req.params.id),
+        model: model,
+        service: service,
         db: this.db,
         env: this.env,
         landscape: this.landscape,

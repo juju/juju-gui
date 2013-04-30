@@ -417,7 +417,9 @@ YUI.add('juju-view-service', function(Y) {
    * @class ServiceRelationsView
    */
   views.service_relations = Y.Base.create(
-      'ServiceRelationsView', ServiceViewBase, [views.JujuBaseView], {
+      'ServiceRelationsView', ServiceViewBase, [
+        views.JujuBaseView,
+        views.extensions.serviceViewPromiseSupport], {
 
         template: Templates['service-relations'],
 
@@ -460,18 +462,6 @@ YUI.add('juju-view-service', function(Y) {
             serviceIsJujuGUI: utils.isGuiCharmUrl(charm_id),
             serviceRemoteUri: this.get('nsRouter').url({ gui: '/service/'})
           };
-        },
-
-        render: function() {
-          var container = this.get('container');
-          var service = this.get('model');
-          if (!service || !service.get('loaded')) {
-            container.setHTML('<div class="alert">Loading...</div>');
-            console.log('waiting on service data');
-          } else {
-            container.setHTML(this.template(this.gatherRenderData()));
-          }
-          return this;
         },
 
         confirmRemoved: function(ev) {
@@ -553,7 +543,9 @@ YUI.add('juju-view-service', function(Y) {
    * @class ServiceConstraintsView
    */
   views.service_constraints = Y.Base.create(
-      'ServiceConstraintsView', ServiceViewBase, [views.JujuBaseView], {
+      'ServiceConstraintsView', ServiceViewBase, [
+        views.JujuBaseView,
+        views.extensions.serviceViewPromiseSupport], {
 
         template: Templates['service-constraints'],
 
@@ -660,12 +652,6 @@ YUI.add('juju-view-service', function(Y) {
             charm_id: charm_id,
             serviceIsJujuGUI: utils.isGuiCharmUrl(charm_id)
           };
-        },
-
-        render: function() {
-          var container = this.get('container');
-          container.setHTML(this.template(this.gatherRenderData()));
-          return this;
         }
 
       });
