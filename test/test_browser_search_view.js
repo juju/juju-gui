@@ -73,6 +73,21 @@ describe('search view', function() {
     assert.equal(charmText.replace(/\s+/g, ''), 'bar');
   });
 
+  it('shows and hides an indicator', function(done) {
+    var hit = 0;
+    view.render();
+    view.showIndicator = function() {
+      hit += 1;
+    };
+    view.hideIndicator = function() {
+      hit += 1;
+      hit.should.equal(2);
+      done();
+    };
+    view.render();
+  });
+
+
   it('handles empty text for search', function() {
     view.set('filters', {text: ''});
     view.render();

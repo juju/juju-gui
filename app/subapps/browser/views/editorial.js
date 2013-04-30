@@ -23,7 +23,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
    *
    */
   ns.EditorialView = Y.Base.create('browser-view-sidebar', Y.View, [
-    views.utils.apiFailingView
+    views.utils.apiFailingView,
+    widgets.browser.IndicatorManager
   ], {
     // How many of each charm container do we show by default.
     cutoffs: {
@@ -134,6 +135,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
           tplNode = Y.Node.create(tpl),
           store = this.get('store');
 
+      this.showIndicator(this.get('renderTo'));
+
       // By default we grab the editorial content from the api to use for
       // display.
       this.get('store').interesting({
@@ -183,6 +186,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
           var container = this.get('container');
           container.append(tplNode);
           this.get('renderTo').setHTML(container);
+          this.hideIndicator(this.get('renderTo'));
 
           // Add the charms to the cache for use in other views.
           // Start with a reset to empty any current cached models.
@@ -272,6 +276,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
   requires: [
     'browser-charm-container',
     'browser-charm-token',
+    'browser-overlay-indicator',
     'browser-search-widget',
     'juju-charm-store',
     'juju-models',

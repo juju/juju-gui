@@ -1363,6 +1363,11 @@ YUI.add('juju-view-utils', function(Y) {
             level: 'error'
           })
       );
+      // If there's a spinning indicator on the View then make sure to hide
+      // it.
+      if (this.hideIndicator && this.get('renderTo')) {
+        this.hideIndicator(this.get('renderTo'));
+      }
     }
   };
 }, '0.1.0', {
