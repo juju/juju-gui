@@ -95,8 +95,9 @@ endif
 RELEASE_NAME=juju-gui-$(RELEASE_VERSION)
 RELEASE_FILE=releases/$(RELEASE_NAME).tgz
 RELEASE_SIGNATURE=releases/$(RELEASE_NAME).asc
-NPM_CACHE_VERSION=$(shell date +%s)# Seconds since the epoch.
+NPM_CACHE_VERSION=$(BZR_REVNO)
 NPM_CACHE_FILE=$(CURDIR)/releases/npm-cache-$(NPM_CACHE_VERSION).tgz
+NPM_SIGNATURE=$(NPM_CACHE_FILE).asc
 # Is the branch being released a branch of trunk?
 ifndef BRANCH_IS_GOOD
 ifndef IS_TRUNK_BRANCH
@@ -540,8 +541,12 @@ else
 	@false
 endif
 
-npm-cache:
-ifdef BRANCH_IS_GOOD
+$(NPM_SIGNATURE): $(NPM_CACHE_FILE)
+	gpg --armor --sign --detach-sig $(NPM_CACHE_FILE)
+
+npm-cache-file: $(NPM_CACHE_FILE)
+
+$(NPM_CACHE_FILE):
 	# We store the NPM cache file in the "releases" directory.  It is kind
 	# of like a release.
 	mkdir -p releases
@@ -555,7 +560,9 @@ ifdef BRANCH_IS_GOOD
 	$(MAKE) npm_config_cache=temp-npm-cache install-npm-packages
 	(cd temp-npm-cache && tar czvf $(NPM_CACHE_FILE) .)
 	rm -rf temp-npm-cache
-	gpg --armor --sign --detach-sig $(NPM_CACHE_FILE)
+
+npm-cache: $(NPM_CACHE_FILE) $(NPM_SIGNATURE)
+ifdef BRANCH_IS_GOOD
 	python2 upload_release.py juju-gui npm-cache $(NPM_CACHE_VERSION) \
 	    $(NPM_CACHE_FILE) $(LAUNCHPAD_API_ROOT)
 else
@@ -588,8 +595,8 @@ appcache-force: appcache-touch $(APPCACHE)
 .PHONY: appcache-force appcache-touch beautify build build-files \
 	build-devel clean clean-all clean-deps clean-docs code-doc debug \
 	devel docs dist gjslint help install-npm-packages jshint lint \
-	main-doc npm-cache npm-cache-file npm-cache-file-signature prep prod \
-	recess server spritegen test test-debug test-prep test-prod \
-	undocumented view-code-doc view-docs view-main-doc yuidoc-lint
+	main-doc npm-cache npm-cache-file prep prod recess server spritegen \
+	test test-debug test-prep test-prod undocumented view-code-doc \
+	view-docs view-main-doc yuidoc-lint
 
 .DEFAULT_GOAL := all
