@@ -2,7 +2,7 @@
 
 describe('Model Controller Promises', function() {
   var modelController, yui, env, db, conn, environment, load, serviceError,
-      getService;
+      getService, cleanups, aEach;
 
   before(function(done) {
     YUI(GlobalConfig).use(
@@ -12,6 +12,7 @@ describe('Model Controller Promises', function() {
           yui = Y;
           load = Y.juju.models.Charm.prototype.load;
           getService = environments.PythonEnvironment.prototype.get_service;
+          aEach = Y.Array.each;
           done();
         });
   });
@@ -26,14 +27,17 @@ describe('Model Controller Promises', function() {
       db: db,
       env: env
     });
+    cleanups = [];
   });
 
   afterEach(function() {
-    env.destroy();
-    db.destroy();
-    // conn has no destroy method
-    modelController.destroy();
     serviceError = false;
+    aEach([env, db, modelController], function(instance) {
+      instance.destroy();
+    });
+    yui.Array.each(cleanups, function(cleanup) {
+      cleanup();
+    });
   });
 
   /**
@@ -48,6 +52,7 @@ describe('Model Controller Promises', function() {
       assert.deepEqual(env, environment);
       callback();
     };
+    cleanups.push(restoreLoad);
   }
 
   /**
@@ -85,6 +90,7 @@ describe('Model Controller Promises', function() {
         }
       });
     };
+    cleanups.push(restoreGetService);
   }
 
   /**
@@ -97,7 +103,7 @@ describe('Model Controller Promises', function() {
     yui.juju.environments.PythonEnvironment.prototype.get_service = getService;
   }
 
-  it('will return a promise with a stored populated charm', function(done) {
+  it('will return a promise with a stored loaded charm', function(done) {
     // this tests the first resolve path
     var charmId = 'cs:precise/wordpress-7',
         charm = db.charms.add({id: charmId});
@@ -117,7 +123,7 @@ describe('Model Controller Promises', function() {
         });
   });
 
-  it('will return a promise with a populated charm', function(done) {
+  it('will return a promise with a loaded charm', function(done) {
     // This tests the second resolve path
     clobberLoad();
     var charmId = 'cs:precise/wordpress-7',
@@ -127,17 +133,15 @@ describe('Model Controller Promises', function() {
     promise.then(
         function(charm) {
           assert(charm.get('package_name'), 'wordpress');
-          restoreLoad();
           done();
         },
         function() {
           assert.fail('This should not have failed.');
-          restoreLoad();
           done();
         });
   });
 
-  it('will return a promise with a stored populated service', function(done) {
+  it('will return a promise with a stored loaded service', function(done) {
     // This tests the first resolve path
     var serviceId = 'wordpress',
         service = db.services.add({
@@ -159,7 +163,7 @@ describe('Model Controller Promises', function() {
 
   });
 
-  it('will return a promise with a populated service', function(done) {
+  it('will return a promise with a loaded service', function(done) {
     // This tests the second resolve path
     clobberGetService();
     var serviceId = 'wordpress',
@@ -170,12 +174,10 @@ describe('Model Controller Promises', function() {
         function(service) {
           assert(service.get('id'), serviceId);
           assert(!!db.services.getById(serviceId), true);
-          restoreGetService();
           done();
         },
         function() {
           assert.fail('This should not have failed.');
-          restoreGetService();
           done();
         });
   });
@@ -190,17 +192,15 @@ describe('Model Controller Promises', function() {
     promise.then(
         function() {
           assert.fail('This should not have been successful.');
-          restoreGetService();
           done();
         },
         function(err) {
           assert(err.err, true);
-          restoreGetService();
           done();
         });
   });
 
-  it('will return a promise with a populated charm and service',
+  it('will return a promise with a loaded charm and service',
       function(done) {
         clobberLoad();
         clobberGetService();
@@ -219,16 +219,11 @@ describe('Model Controller Promises', function() {
               assert(result.charm.get('id'), charmId);
               assert(!!db.services.getById(serviceId), true);
               assert(!!db.charms.getById(charmId), true);
-              restoreLoad();
-              restoreGetService();
               done();
             },
             function() {
               assert.fail('This should not have failed.');
-              restoreLoad();
-              restoreGetService();
               done();
             });
-
       });
 });
