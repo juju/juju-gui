@@ -1,24 +1,25 @@
 'use strict';
 
-describe.only('Model Controller Promises', function() {
+describe('Model Controller Promises', function() {
   var modelController, yui, env, db, conn, environment, load, serviceError,
       getService;
 
   before(function(done) {
     YUI(GlobalConfig).use(
-      'juju-models', 'model-controller', 'juju-charm-models',
-      'juju-view-environment', 'juju-tests-utils', function(Y) {
-      yui = Y;
-      load = Y.juju.models.Charm.prototype.load;
-      getService = Y.juju.environments.PythonEnvironment.prototype.get_service;
-      done();
-    });
+        'juju-models', 'model-controller', 'juju-charm-models',
+        'juju-view-environment', 'juju-tests-utils', function(Y) {
+          var environments = Y.juju.environments;
+          yui = Y;
+          load = Y.juju.models.Charm.prototype.load;
+          getService = environments.PythonEnvironment.prototype.get_service;
+          done();
+        });
   });
 
   beforeEach(function() {
     conn = new yui['juju-tests'].utils.SocketStub();
     environment = env = yui.juju.newEnvironment(
-          {conn: conn});
+        {conn: conn});
     db = new yui.juju.models.Database();
     env.connect();
     modelController = new yui.juju.ModelController({
@@ -69,21 +70,21 @@ describe.only('Model Controller Promises', function() {
   function clobberGetService() {
     yui.juju.environments.PythonEnvironment.prototype.get_service = function(
         serviceName, callback) {
-          assert(typeof serviceName, 'string');
-          // This is to test the error reject path of the getService tests
-          if (serviceError === true) {
-            callback({err: true});
-          }
-          // This adds the service for the getService success path
-          db.services.add({id: serviceName});
-          callback({
-            service_name: serviceName,
-            result: {
-              config: '',
-              constraints: ''
-            }
-          });
-        };
+      assert(typeof serviceName, 'string');
+      // This is to test the error reject path of the getService tests
+      if (serviceError === true) {
+        callback({err: true});
+      }
+      // This adds the service for the getService success path
+      db.services.add({id: serviceName});
+      callback({
+        service_name: serviceName,
+        result: {
+          config: '',
+          constraints: ''
+        }
+      });
+    };
   }
 
   /**
@@ -200,34 +201,34 @@ describe.only('Model Controller Promises', function() {
   });
 
   it('will return a promise with a populated charm and service',
-    function(done) {
-      clobberLoad();
-      clobberGetService();
-      var serviceId = 'wordpress',
-          charmId = 'cs:precise/wordpress-7';
-      db.services.add({
-        id: serviceId,
-        loaded: true,
-        charm: charmId
-      });
-      var promise = modelController.getServiceWithCharm(serviceId);
-      assert(yui.Promise.isPromise(promise), true);
-      promise.then(
-        function(result) {
-          assert(result.service.get('id'), serviceId);
-          assert(result.charm.get('id'), charmId);
-          assert(!!db.services.getById(serviceId), true);
-          assert(!!db.charms.getById(charmId), true);
-          restoreLoad();
-          restoreGetService();
-          done();
-        },
-        function() {
-          assert.fail('This should not have failed.');
-          restoreLoad();
-          restoreGetService();
-          done();
+      function(done) {
+        clobberLoad();
+        clobberGetService();
+        var serviceId = 'wordpress',
+            charmId = 'cs:precise/wordpress-7';
+        db.services.add({
+          id: serviceId,
+          loaded: true,
+          charm: charmId
         });
+        var promise = modelController.getServiceWithCharm(serviceId);
+        assert(yui.Promise.isPromise(promise), true);
+        promise.then(
+            function(result) {
+              assert(result.service.get('id'), serviceId);
+              assert(result.charm.get('id'), charmId);
+              assert(!!db.services.getById(serviceId), true);
+              assert(!!db.charms.getById(charmId), true);
+              restoreLoad();
+              restoreGetService();
+              done();
+            },
+            function() {
+              assert.fail('This should not have failed.');
+              restoreLoad();
+              restoreGetService();
+              done();
+            });
 
-    });
+      });
 });
