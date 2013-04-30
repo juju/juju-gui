@@ -64,6 +64,34 @@
       assert(node.all('.yui3-charmtoken-hidden').size() > 0);
     });
 
+    it('shows and hides an indicator', function(done) {
+      var hit = 0;
+      fakeStore = new Y.juju.Charmworld0({});
+      fakeStore.set('datasource', {
+        sendRequest: function(params) {
+          // Stubbing the server callback value
+          params.callback.success({
+            response: {
+              results: [sampleData]
+            }
+          });
+        }
+      });
+      view = new EditorialView({
+        renderTo: Y.one('.bws-content'),
+        store: fakeStore
+      });
+      view.showIndicator = function() {
+        hit += 1;
+      };
+      view.hideIndicator = function() {
+        hit += 1;
+        hit.should.equal(2);
+        done();
+      };
+      view.render();
+    });
+
     it('renders fullscreen 14/22 charms hidden', function() {
       fakeStore = new Y.juju.Charmworld0({});
       fakeStore.set('datasource', {
