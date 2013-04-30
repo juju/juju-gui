@@ -164,7 +164,8 @@ var GlobalConfig = {
         },
 
         'juju-view-service': {
-          fullpath: '/juju-ui/views/service.js'
+          fullpath: '/juju-ui/views/service.js',
+          requires: ['service-view-promise-support']
         },
 
         'juju-view-unit': {
@@ -199,6 +200,12 @@ var GlobalConfig = {
             'juju-view-charm-collection',
             'juju-landscape'
           ]
+        },
+
+        // View extensions
+
+        'service-view-promise-support': {
+          fullpath: '/juju-ui/views/extensions/service-view-promise-support.js'
         },
 
         // Models

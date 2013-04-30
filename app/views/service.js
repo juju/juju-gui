@@ -674,7 +674,9 @@ YUI.add('juju-view-service', function(Y) {
    * @class ServiceConfigView
    */
   views.service_config = Y.Base.create(
-      'ServiceConfigView', ServiceViewBase, [views.JujuBaseView], {
+      'ServiceConfigView', ServiceViewBase, [
+        views.JujuBaseView,
+        views.extensions.serviceViewPromiseSupport], {
 
         template: Templates['service-config'],
 
@@ -715,18 +717,6 @@ YUI.add('juju-view-service', function(Y) {
             serviceModel: service,
             serviceIsJujuGUI: utils.isGuiCharmUrl(charm_id)
           };
-        },
-
-        render: function() {
-          var container = this.get('container');
-          var service = this.get('model');
-          if (!service || !service.get('loaded')) {
-            container.setHTML('<div class="alert">Loading...</div>');
-            console.log('waiting on service data');
-          } else {
-            container.setHTML(this.template(this.gatherRenderData()));
-          }
-          return this;
         },
 
         showErrors: function(errors) {
@@ -856,8 +846,9 @@ YUI.add('juju-view-service', function(Y) {
   /**
    * @class ServiceView
    */
-  var ServiceView = Y.Base.create('ServiceView', ServiceViewBase,
-      [views.JujuBaseView], {
+  var ServiceView = Y.Base.create('ServiceView', ServiceViewBase, [
+        views.JujuBaseView,
+        views.extensions.serviceViewPromiseSupport], {
 
         template: Templates.service,
 
@@ -905,21 +896,6 @@ YUI.add('juju-view-service', function(Y) {
             units: this.filterUnits(filter_state, units),
             states: state_data
           };
-        },
-
-        render: function() {
-          var container = this.get('container');
-          var service = this.get('model');
-          var env = this.get('db').environment.get('annotations');
-          if (!service || !service.get('loaded')) {
-            container.setHTML('<div class="alert">Loading...</div>');
-            console.log('waiting on service data');
-          } else {
-            container.setHTML(this.template(this.gatherRenderData()));
-            views.utils.updateLandscapeBottomBar(this.get('landscape'),
-                env, service, container);
-          }
-          return this;
         },
 
         filterUnits: function(filter_state, units) {

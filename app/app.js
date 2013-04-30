@@ -526,9 +526,10 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     _buildServiceView: function(req, viewName) {
-      var service = this.db.services.getById(req.params.id);
+      //var service = this.db.services.getById(req.params.id);
       this.showView(viewName, {
-        model: service,
+        //model: service,
+        service: this.modelController.getServiceWithCharm(req.params.id),
         db: this.db,
         env: this.env,
         landscape: this.landscape,
