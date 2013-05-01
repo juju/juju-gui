@@ -454,7 +454,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       if (Y.Object.isEmpty(tplData.requires)) {
         tplData.requires = false;
       }
-      if (Y.Object.isEmpty(tplData.provides)){
+      if (Y.Object.isEmpty(tplData.provides)) {
         tplData.provides = false;
       }
 
