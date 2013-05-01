@@ -17,7 +17,7 @@ describe('filter widget', function() {
       filters: {
         text: 'foo',
         type: ['approved'],
-        category: ['databases', 'app_servers']
+        category: ['databases', 'app-servers']
       }
     });
   });
@@ -88,7 +88,7 @@ describe('filter widget', function() {
     handle = instance.on(instance.EV_FILTER_CHANGED, function(ev) {
       assert.isObject(ev.change);
       ev.change.field.should.eql('category');
-      ev.change.value.should.eql(['app_servers']);
+      ev.change.value.should.eql(['app-servers']);
       done();
     });
 
