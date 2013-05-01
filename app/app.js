@@ -252,6 +252,8 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
+      this.renderEnvironment = true;
+
       // This attribute is used by the namespaced URL tracker.
       // _routeSeen is part of a mechanism to prevent non-namespaced routes
       // from being processed multiple times when multiple namespaces are
@@ -526,30 +528,41 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     _buildServiceView: function(req, viewName) {
-      // The following if-check is a little kludge to avoid a flash between
-      // changing views if the data is already available.
-      var model, service = this.db.services.getById(req.params.id);
-      if (service && service.get('loaded')) {
-        model = service;
-      } else {
-        service = this.modelController.getServiceWithCharm(req.params.id);
-      }
-      this.showView(viewName, {
-        model: model,
-        service: service,
-        db: this.db,
-        env: this.env,
-        landscape: this.landscape,
-        getModelURL: Y.bind(this.getModelURL, this),
-        nsRouter: this.nsRouter,
-        querystring: req.query
-      }, {}, function(view) {
-        // If the view contains a method call fitToWindow,
-        // we will execute it after getting the view rendered.
-        if (view.fitToWindow) {
-          view.fitToWindow();
-        }
-      });
+      var self = this,
+          options = {
+            db: this.db,
+            env: this.env,
+            landscape: this.landscape,
+            getModelURL: Y.bind(self.getModelURL, this),
+            nsRouter: this.nsRouter,
+            querystring: req.query
+          };
+      // Give the page 100 milliseconds to try and load the model
+      // before we show a loading screen.
+      // Calling update allows showView to be called multiple times but
+      // only have it's config updated not re-rendered.
+      var handle = setTimeout(function() {
+        self.showView(viewName, options, { update: true });
+      }, 100);
+
+      var promise = this.modelController.getServiceWithCharm(req.params.id);
+      promise.then(
+          function(models) {
+            clearTimeout(handle);
+            options.model = models.service;
+            self.showView(viewName, options, { update: true });
+          },
+          function() {
+            clearTimeout(handle);
+            self.showView(viewName, options, { update: true },
+                function(view) {
+                  // This is to handle the story where a service is destroyed
+                  // while it is being viewed.
+                  if (typeof view.noServiceAvailable === 'function') {
+                    view.noServiceAvailable();
+                  }
+                });
+          });
     },
 
     /**
@@ -799,12 +812,12 @@ YUI.add('juju-gui', function(Y) {
        entirely from the UX for users. However, when we pop back it needs to
        appear back in the previous state.
 
-       @method checkShowBrowser
+       @method checkShowEnvOrBrowser
        @param {Request} req current request object.
        @param {Response} res current response object.
        @param {function} next callable for the next route in the chain.
      */
-    checkShowBrowser: function(req, res, next) {
+    checkShowEnvOrBrowser: function(req, res, next) {
       var url = req.url,
           match = /(logout|:gui:\/(charms|service|unit))/;
       var subapps = this.get('subApps');
@@ -813,8 +826,10 @@ YUI.add('juju-gui', function(Y) {
         var charmstore = subapps.charmstore;
         if (url.match(match)) {
           charmstore.hidden = true;
+          this.renderEnvironment = false;
         } else {
           charmstore.hidden = false;
+          this.renderEnvironment = true;
         }
         charmstore.updateVisible();
       }
@@ -835,6 +850,9 @@ YUI.add('juju-gui', function(Y) {
      * @method show_environment
      */
     show_environment: function(req, res, next) {
+      if (!this.renderEnvironment) {
+        next(); return;
+      }
       var self = this,
           view = this.getViewInfo('environment'),
           options = {
@@ -970,9 +988,8 @@ YUI.add('juju-gui', function(Y) {
           // Called on each request.
           { path: '*', callbacks: 'check_user_credentials'},
           { path: '*', callbacks: 'show_notifications_view'},
-          // Root.
+          { path: '*', callbacks: 'checkShowEnvOrBrowser'},
           { path: '*', callbacks: 'show_environment'},
-          { path: '*', callbacks: 'checkShowBrowser'},
           // Charms.
           { path: '/charms/',
             callbacks: 'show_charm_collection',

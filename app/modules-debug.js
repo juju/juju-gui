@@ -202,12 +202,6 @@ var GlobalConfig = {
           ]
         },
 
-        // View extensions
-
-        'service-view-promise-support': {
-          fullpath: '/juju-ui/views/extensions/service-view-promise-support.js'
-        },
-
         // Models
         'juju-endpoints': {
           fullpath: '/juju-ui/models/endpoints.js'

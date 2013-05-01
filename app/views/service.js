@@ -409,7 +409,74 @@ YUI.add('juju-view-service', function(Y) {
             viewContainer.set('offsetHeight', size);
             Y.fire('afterPageSizeRecalculation');
           }
+        },
+
+        /**
+          Reject callback for the model promise which creates an error
+          notification and then redirects the user to the evironment view
+
+          @method noServiceAvailable
+        */
+        noServiceAvailable: function() {
+          this.get('db').notifications.add(
+              new Y.juju.models.Notification({
+                title: 'Service is not available',
+                message: 'The service you are trying to view does not exist',
+                level: 'error'
+              })
+          );
+
+          this.fire('navigateTo', {
+            url: this.get('nsRouter').url({gui: '/'})
+          });
+        },
+
+        /**
+          Shared rendering method to render the loading service data view
+
+          @method renderLoading
+        */
+        renderLoading: function() {
+          var container = this.get('container');
+          container.setHTML('<div class="alert">Loading service details...</div>');
+          console.log('waiting on service data');
+        },
+
+        /**
+          Shared rendering method to render the service data view
+
+          @method renderData
+        */
+        renderData: function() {
+          var container = this.get('container');
+          var service = this.get('model');
+          var db = this.get('db');
+          var env = db.environment.get('annotations');
+          container.setHTML(this.template(this.gatherRenderData()));
+          this.fitToWindow();
+          // to be able to use this same method for all service views
+          if (container.one('.landscape-controls')) {
+            Y.juju.views.utils.updateLandscapeBottomBar(this.get('landscape'),
+                env, service, container);
+          }
+        },
+
+        /**
+          Shared render method to be used in service detail views
+
+          @method render
+          @return {Object} view instance.
+        */
+        render: function() {
+          var model = this.get('model');
+          if (!model) {
+            this.renderLoading();
+          } else {
+            this.renderData();
+          }
+          return this;
         }
+
       });
   views.serviceBase = ServiceViewBase;
 
@@ -418,8 +485,7 @@ YUI.add('juju-view-service', function(Y) {
    */
   views.service_relations = Y.Base.create(
       'ServiceRelationsView', ServiceViewBase, [
-        views.JujuBaseView,
-        views.extensions.serviceViewPromiseSupport], {
+        views.JujuBaseView], {
 
         template: Templates['service-relations'],
 
@@ -544,8 +610,7 @@ YUI.add('juju-view-service', function(Y) {
    */
   views.service_constraints = Y.Base.create(
       'ServiceConstraintsView', ServiceViewBase, [
-        views.JujuBaseView,
-        views.extensions.serviceViewPromiseSupport], {
+        views.JujuBaseView], {
 
         template: Templates['service-constraints'],
 
@@ -661,8 +726,7 @@ YUI.add('juju-view-service', function(Y) {
    */
   views.service_config = Y.Base.create(
       'ServiceConfigView', ServiceViewBase, [
-        views.JujuBaseView,
-        views.extensions.serviceViewPromiseSupport], {
+        views.JujuBaseView], {
 
         template: Templates['service-config'],
 
@@ -833,8 +897,7 @@ YUI.add('juju-view-service', function(Y) {
    * @class ServiceView
    */
   var ServiceView = Y.Base.create('ServiceView', ServiceViewBase, [
-        views.JujuBaseView,
-        views.extensions.serviceViewPromiseSupport], {
+        views.JujuBaseView], {
 
         template: Templates.service,
 
