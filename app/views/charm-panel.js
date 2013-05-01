@@ -13,6 +13,7 @@ YUI.add('juju-charm-panel', function(Y) {
   var views = Y.namespace('juju.views'),
       utils = Y.namespace('juju.views.utils'),
       models = Y.namespace('juju.models'),
+      plugins = Y.namespace('juju.plugins'),
       // This will hold objects that can be used to detach the subscriptions
       // when the charm panel is destroyed.
       subscriptions = [],
@@ -740,6 +741,13 @@ YUI.add('juju-charm-panel', function(Y) {
             container.setHTML(this.template(
                 { charm: charm.getAttrs(),
                   settings: settings}));
+
+            // Plug in the textarea resizer.
+            Y.all('textarea.config-field').plug(plugins.ResizingTextarea,
+                { max_height: 200,
+                  min_height: 28,
+                  single_line: true});
+
             // Set up entry description overlay.
             this.setupOverlay(container);
             // This does not work via delegation.
@@ -1498,6 +1506,7 @@ YUI.add('juju-charm-panel', function(Y) {
     'view',
     'juju-view-utils',
     'juju-templates',
+    'resizing-textarea',
     'node',
     'handlebars',
     'event-hover',
