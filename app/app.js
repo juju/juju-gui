@@ -502,25 +502,61 @@ YUI.add('juju-gui', function(Y) {
      * @method show_unit
      */
     show_unit: function(req) {
+console.log('show unit');
       // This replacement honors service names that have a hyphen in them.
-      var unit_id = req.params.id.replace(/^(\S+)-(\d+)$/, '$1/$2');
-      var unit = this.db.units.getById(unit_id);
-      if (unit) {
-        // Once the unit is loaded we need to get the full details of the
-        // service.  Otherwise the relations data will not be available.
-        var service = this.db.services.getById(unit.service);
-      }
-      this.showView(
-          'unit',
-          // The querystring is used to handle highlighting relation rows in
-          // links from notifications about errors.
-          { getModelURL: Y.bind(this.getModelURL, this),
-            unit: unit,
+      var unitId = req.params.id.replace(/^(\S+)-(\d+)$/, '$1/$2');
+      var serviceId = unitId.split('/')[0];
+      var self = this,
+          options = {
+            getModelURL: Y.bind(this.getModelURL, this),
             db: this.db,
             env: this.env,
             querystring: req.query,
             landscape: this.landscape,
-            nsRouter: this.nsRouter });
+            nsRouter: this.nsRouter
+          };
+
+      var handle = setTimeout(function() {
+        self.showView('unit', options, { update: true });
+      }, 100);
+
+      var promise = this.modelController.getService(serviceId);
+      promise.then(
+          function(models) {
+console.log('1');
+            clearTimeout(handle);
+            var unit = self.db.units.getById(unitId);
+            if (unit) {
+console.log('unit');
+              options.unit = unit;
+              self.showView('unit', options);
+            } else {
+console.log('nounit');
+debugger;
+              self.db.notifications.add(
+                  new Y.juju.models.Notification({
+                    title: 'Unit is not available',
+                    message: 'The unit you are trying to view does not exist',
+                    level: 'error'
+                  })
+              );
+              self.fire('navigateTo', {url: self.nsRouter.url(
+                  {gui: '/service/' + serviceId})});
+            }
+          },
+          // If there is no service available
+          function() {
+console.log('2');
+            clearTimeout(handle);
+            self.db.notifications.add(
+                new Y.juju.models.Notification({
+                  title: 'Service is not available',
+                  message: 'The service you are trying to view does not exist',
+                  level: 'error'
+                })
+            );
+            self.fire('navigateTo', {url: self.nsRouter.url({gui: '/'})});
+          });
     },
 
     /**
