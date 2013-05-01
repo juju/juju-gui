@@ -1381,10 +1381,11 @@
      * This callback is appended to any calling arguments
      *
      * @method P
-     * @param {Object} context Calling context
-     * @param {String} methodName name of method on context to invoke
-     * @param {Arguments} arguments Additional arguments passed to resolved method.
-     * @return {Promise} a Y.Promise object
+     * @param {Object} context Calling context.
+     * @param {String} methodName name of method on context to invoke.
+     * @param {Arguments} arguments Additional arguments passed
+     *        to resolved method.
+     * @return {Promise} a Y.Promise object.
      */
     function P(context, methodName) {
       var slice = Array.prototype.slice;
@@ -1398,7 +1399,8 @@
           } else {
             resolve(result);
           }
-        }
+        };
+
         args.push(resultHandler);
         var result = method.apply(context, args);
         if (result !== undefined) {
@@ -1406,24 +1408,52 @@
           return resultHandler(result);
         }
       });
-    };
+    }
 
     it('should support export', function(done) {
-      this.timeout(450);
+      this.timeout(250);
 
       client.open();
-      P(state, 'deploy', 'cs:wordpress')
-       .then(P(state, 'deploy', 'cs:mysql'))
-       .then(P(state, 'addRelation', 'wordpress:db', 'mysql:db'))
+      new P(state, 'deploy', 'cs:wordpress')
+       .then(new P(state, 'deploy', 'cs:mysql'))
+       .then(new P(state, 'addRelation', 'wordpress:db', 'mysql:db'))
        .then(function() {
-         client.onmessage = function(result) {
-           var data = Y.JSON.parse(result.data).result;
-           assert.equal(data.services[0].name, 'wordpress');
-           done();
-         };
-         client.send(Y.JSON.stringify({op: 'export'}));
-       });
-   });
+            client.onmessage = function(result) {
+              var data = Y.JSON.parse(result.data).result;
+              assert.equal(data.services[0].name, 'wordpress');
+              done();
+            };
+            client.send(Y.JSON.stringify({op: 'exportEnvironment'}));
+          });
+    });
+
+    it('should support import', function(done) {
+      this.timeout(300);
+      var fixture = utils.loadFixture('data/sample-fakebackend.json', false);
+
+      client.onmessage = function() {
+        client.onmessage = function(result) {
+          var data = Y.JSON.parse(result.data).result;
+          assert.isTrue(data);
+
+          // Verify that we can now an find expected entry
+          // in the database.
+          assert.isNotNull(state.db.services.getById('wordpress'));
+
+          var changes = state.nextChanges();
+          console.log('changes', changes);
+          // Validate the delta includes imported services.
+          assert.include(changes.services, 'wordpress');
+          assert.include(changes.services, 'mysql');
+          // validate relation was added/updated.
+          assert.include(changes.relations, 'relation-0');
+          done();
+        };
+        client.send(Y.JSON.stringify({op: 'importEnvironment',
+                             envData: fixture}));
+      };
+      client.open();
+    });
 
   });
 

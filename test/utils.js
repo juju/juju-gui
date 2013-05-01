@@ -103,14 +103,31 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
           {charmStore: new jujuTests.utils.TestCharmStore()});
       fakebackend.login('admin', 'password');
       return fakebackend;
-    }
+    },
 
+    /**
+     * Util to load a fixture (typically as 'data/filename.json').
+     *
+     * @method loadFixture
+     * @param {String} url to synchronously load.
+     * @param {Boolean} parseJSON when true return will be processed
+     *                  as a JSON blob before returning.
+     * @return {Object} fixture data resulting from call.
+     */
+    loadFixture: function(url, parseJson) {
+      var response = Y.io(url, {sync: true}).responseText;
+      if (parseJson) {
+        response = Y.JSON.parse(response);
+      }
+      return response;
+    }
   };
 
 }, '0.1.0', {
   requires: [
     'io',
     'node',
+    'json-parse',
     'datasource-local',
     'juju-charm-store',
     'juju-env-fakebackend'

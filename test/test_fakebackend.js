@@ -226,8 +226,7 @@
   });
 
   describe('FakeBackend.uniformOperations', function() {
-    var requires = [
-      'io', 'json-parse', 'array-extras', 'node',
+    var requires = ['node',
       'juju-tests-utils', 'juju-models', 'juju-charm-models'];
     var Y, fakebackend, utils;
 
@@ -261,10 +260,6 @@
       });
     }
 
-    function loadFixture(url) {
-      return Y.io(url, {sync: true}).responseText;
-    }
-
     describe('FakeBackend.exportEnvironment', function(done) {
 
       it('rejects unauthenticated calls', function() {
@@ -275,11 +270,11 @@
 
       it('successfully exports env data', function(done) {
         createRelation(
-          ['cs:wordpress', 'cs:mysql'],
-          ['wordpress:db', 'mysql:db'],
-          { type: 'mysql', scope: 'global',
-            endpoints:
-              [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
+            ['cs:wordpress', 'cs:mysql'],
+            ['wordpress:db', 'mysql:db'],
+            { type: 'mysql', scope: 'global',
+              endpoints:
+                  [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
             done,
             function(result, done) {
               var data = fakebackend.exportEnvironment().result;
@@ -300,14 +295,14 @@
       });
 
       it('successfully imports v0 data', function(done) {
-        var fixture = loadFixture('data/sample-improv.json');
+        var fixture = utils.loadFixture('data/sample-improv.json', false);
         fakebackend.importEnvironment(fixture);
         assert.isNotNull(fakebackend.db.services.getById('wordpress'));
         done();
       });
 
       it('successfully imports v1 data', function(done) {
-        var fixture = loadFixture('data/sample-fakebackend.json');
+        var fixture = utils.loadFixture('data/sample-fakebackend.json', false);
         fakebackend.importEnvironment(fixture);
         assert.isNotNull(fakebackend.db.services.getById('wordpress'));
         done();

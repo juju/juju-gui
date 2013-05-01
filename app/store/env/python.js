@@ -268,9 +268,9 @@ YUI.add('juju-env-python', function(Y) {
      * @method export
      * @return {String} Sends a message to the server only.
      */
-    export: function(callback) {
+    exportEnvironment: function(callback) {
       this._send_rpc(
-          {'op': 'export', }, callback, true);
+          {'op': 'exportEnvironment'}, callback, true);
     },
 
 
