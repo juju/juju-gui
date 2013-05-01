@@ -451,6 +451,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
 
+      if (Y.Object.isEmpty(tplData.requires)) {
+        tplData.requires = false;
+      }
+      if (Y.Object.isEmpty(tplData.provides)) {
+        tplData.provides = false;
+      }
+
       var tpl = this.template(tplData);
       var tplNode = container.setHTML(tpl);
 
