@@ -50,7 +50,6 @@ describe('charm token', function() {
 
     // and the css class should be on the token once rendered.
     charm.render(charm_container);
-    debugger;
     charm_container.one('.charm-token').hasClass('small').should.equal(true);
   });
 

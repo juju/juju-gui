@@ -155,7 +155,11 @@ YUI.add('subapp-browser-editorial', function(Y) {
             name: 'Featured Charms',
             cutoff: cutoffs.featured,
             children: featuredCharms.map(function(charm) {
-              return charm.getAttrs(); })
+              return charm.getAttrs();
+            }),
+            additionalChildConfig: {
+              size: this.get('isFullscreen') ? 'large' : 'small'
+            }
           });
           featuredCharmContainer.render(featuredContainer);
 
@@ -167,7 +171,11 @@ YUI.add('subapp-browser-editorial', function(Y) {
             name: 'Popular Charms',
             cutoff: cutoffs.popular,
             children: popularCharms.map(function(charm) {
-              return charm.getAttrs(); })
+              return charm.getAttrs();
+            }),
+            additionalChildConfig: {
+              size: this.get('isFullscreen') ? 'large' : 'small'
+            }
           });
           popularCharmContainer.render(popularContainer);
 
@@ -179,7 +187,11 @@ YUI.add('subapp-browser-editorial', function(Y) {
             name: 'New Charms',
             cutoff: cutoffs['new'],
             children: newCharms.map(function(charm) {
-              return charm.getAttrs(); })
+              return charm.getAttrs();
+            }),
+            additionalChildConfig: {
+              size: this.get('isFullscreen') ? 'large' : 'small'
+            }
           });
           newCharmContainer.render(newContainer);
 

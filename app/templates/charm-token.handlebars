@@ -3,7 +3,8 @@
     data-charmid="{{id}}">
     <span class="yui3-u">
         {{#if is_approved}}
-            <i class="sprite badge-approved"></i>
+            <i class="sprite badge-approved"
+                title="This charm has been reviewed."></i>
         {{/if}}
         {{#if icon}}
             <img src="data:image/svg+xml;base64,{{ icon }}" alt="{{ name }} icon" class="icon">

@@ -1,6 +1,6 @@
 'use strict';
 
-describe.only('charm container widget', function() {
+describe('charm container widget', function() {
   var container, Y, charm_container, CharmContainer;
 
   before(function(done) {
@@ -10,7 +10,7 @@ describe.only('charm container widget', function() {
       'browser-charm-token',
       'node-event-simulate'],
     function(Y) {
-      CharmContainer = Y.juju.widgets.browser.CharmContainer
+      CharmContainer = Y.juju.widgets.browser.CharmContainer;
       done();
     });
   });
@@ -162,11 +162,18 @@ describe.only('charm container widget', function() {
         name: 'foo'
       },{
         name: 'bar'
-      }]
+      }],
+      additionalChildConfig: {
+        size: 'large'
+      }
     });
 
-    debugger;
-    // charm_container.render(container);
+    charm_container.render(container);
+    var tokens = container.all('.charm-token');
 
+    tokens.size().should.equal(2);
+    Y.Array.each(tokens, function(token) {
+      token.hasClass('large').should.equal(true);
+    });
   });
 });

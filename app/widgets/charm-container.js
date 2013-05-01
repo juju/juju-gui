@@ -107,6 +107,12 @@ YUI.add('browser-charm-container', function(Y) {
       this.addEvent(
           this.after('initializedChange', this._afterInit, this)
       );
+
+      if (cfg.additionalChildConfig) {
+        this.on('addChild', function(ev) {
+          ev.child.setAttrs(cfg.additionalChildConfig);
+        });
+      }
     },
 
     /**
@@ -132,7 +138,7 @@ YUI.add('browser-charm-container', function(Y) {
          Any config passed here will be merged with each child's config in
          order to support adjusting the config data.
 
-         @attribute additionalChildconfig
+         @attribute additionalChildConfig
          @default {}
          @type {Object}
 

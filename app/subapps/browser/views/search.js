@@ -129,9 +129,12 @@ YUI.add('subapp-browser-searchview', function(Y) {
           filter_container = tplNode.one('.search-filters');
 
       results.map(function(charm) {
-        var ct = new widgets.browser.CharmToken(charm.getAttrs());
+        var ct = new widgets.browser.CharmToken(Y.merge(
+            charm.getAttrs(), {
+              size: this.get('isFullscreen') ? 'large' : 'small'
+            }));
         ct.render(results_container);
-      });
+      }, this);
       this._renderFilterWidget(filter_container);
       this.get('container').setHTML(tplNode);
       target.setHTML(this.get('container'));
