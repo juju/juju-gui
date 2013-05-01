@@ -444,7 +444,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       var tplData = charm.getAttrs(),
           container = this.get('container');
-
       tplData.isFullscreen = isFullscreen;
       tplData.prettyCommits = this._formatCommitsForHtml(
           tplData.recent_commits);
@@ -463,7 +462,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       // Set the content then update the container so that it reload
       // events.
-      this.get('renderTo').setHTML(tplNode);
+      var renderTo = this.get('renderTo');
+      renderTo.setHTML(tplNode);
 
       this.tabview = new widgets.browser.TabView({
         srcNode: tplNode.one('.tabs')
@@ -481,6 +481,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this._noReadme(tplNode.one('#bws-readme'));
       }
+      // XXX: Ideally we shouldn't have to do this; resetting the container
+      // with .empty or something before rendering the charm view should work.
+      // But it doesn't so we scroll the nav bar into view, load the charm
+      // view at the top of the content.
+      renderTo.one('.nav').scrollIntoView();
     },
 
     /**

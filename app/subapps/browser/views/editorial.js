@@ -96,7 +96,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
      * @param {Object} request the original io_request object for debugging.
      */
     apiFailure: function(data, request) {
-      this._apiFailure(data, request, 'Failed to load sidebar content.');
+      this._apiFailure(data, request, 'Failed to load editorial content.');
     },
 
     /**
