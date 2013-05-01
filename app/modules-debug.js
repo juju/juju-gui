@@ -52,6 +52,13 @@ var GlobalConfig = {
         }
       }
     },
+    'resizing_textarea': {
+      modules: {
+        'resizing-textarea': {
+          fullpath: '/juju-ui/assets/javascripts/resizing_textarea.js'
+        }
+      }
+    },
     prettify: {
       modules: {
         'prettify': {
