@@ -481,8 +481,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this._noReadme(tplNode.one('#bws-readme'));
       }
-      // Scroll the nav bar into view, so we load the charm view at the top of
-      // the content.
+      // XXX: Ideally we shouldn't have to do this; resetting the container
+      // with .empty or something before rendering the charm view should work.
+      // But it doesn't so we scroll the nav bar into view, load the charm
+      // view at the top of the content.
       renderTo.one('.nav').scrollIntoView();
     },
 

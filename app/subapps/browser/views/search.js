@@ -135,8 +135,10 @@ YUI.add('subapp-browser-searchview', function(Y) {
       this._renderFilterWidget(filter_container);
       this.get('container').setHTML(tplNode);
       target.setHTML(this.get('container'));
-      // Scroll the heading into view to ensure view renders at the top of the
-      // content.
+      // XXX: We shouldn't have to do this; calling .empty before rending
+      // should reset where the node's overflow is scrolled to, but it
+      // doesn't. Se we scroll the heading into view to ensure the view
+      // renders at the top of the content.
       target.one('.search-title').scrollIntoView();
     },
 
