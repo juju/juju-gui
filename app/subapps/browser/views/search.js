@@ -134,6 +134,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
       this._renderFilterWidget(filter_container);
       this.get('container').setHTML(tplNode);
       target.setHTML(this.get('container'));
+      target.one('.search-title').scrollIntoView();
     },
 
     /**

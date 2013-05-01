@@ -444,7 +444,6 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       var tplData = charm.getAttrs(),
           container = this.get('container');
-
       tplData.isFullscreen = isFullscreen;
       tplData.prettyCommits = this._formatCommitsForHtml(
           tplData.recent_commits);
@@ -456,7 +455,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       // Set the content then update the container so that it reload
       // events.
-      Y.one('.bws-view-data').setHTML(tplNode);
+      var viewData = Y.one('.bws-view-data');
+      viewData.setHTML(tplNode);
 
       this.tabview = new widgets.browser.TabView({
         srcNode: tplNode.one('.tabs')
@@ -474,6 +474,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this._noReadme(tplNode.one('#bws-readme'));
       }
+      // Scroll the nav bar into view, so we load the charm view at the top of
+      // the content.
+      viewData.one('.nav').scrollIntoView();
     },
 
     /**
