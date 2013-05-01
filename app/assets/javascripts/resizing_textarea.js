@@ -2,6 +2,12 @@
 
 /**
  Textarea resizing plugin.  Taken from Launchpad.  Original copyright follows.
+ Usage example:
+    target.plug(Y.juju.plugins.ResizingTextarea, {
+      skip_animations: true
+    });
+ @module juju.plugins
+ @submodule ResizingTextarea
  */
 
 
@@ -313,7 +319,7 @@ YUI.add('resizing-textarea', function(Y) {
     }
   });
 
-  // add onto the formwidget namespace
+  // add onto the namespace
   module.ResizingTextarea = ResizingTextarea;
 
 }, '0.1', {
