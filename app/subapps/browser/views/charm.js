@@ -450,6 +450,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
 
+      if (Y.Object.isEmpty(tplData.requires)) {
+        tplData.requires = false;
+      }
+      if (Y.Object.isEmpty(tplData.provides)) {
+        tplData.provides = false;
+      }
+
       var tpl = this.template(tplData);
       var tplNode = container.setHTML(tpl);
 
@@ -491,15 +498,18 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     render: function() {
       var isFullscreen = this.get('isFullscreen');
+      this.showIndicator(this.get('renderTo'));
 
       if (this.get('charm')) {
         this._renderCharmView(this.get('charm'), isFullscreen);
+        this.hideIndicator(this.get('renderTo'));
       } else {
         this.get('store').charm(this.get('charmID'), {
           'success': function(data) {
             var charm = new models.BrowserCharm(data);
             this.set('charm', charm);
             this._renderCharmView(this.get('charm'), isFullscreen);
+            this.hideIndicator(this.get('renderTo'));
           },
           'failure': this.apiFailure
         }, this);
@@ -533,6 +543,23 @@ YUI.add('subapp-browser-charmview', function(Y) {
        */
       isFullscreen: {
         value: false
+      },
+
+      /**
+       * @attribute renderTo
+       * @default {Node} .bws-view-data node.
+       * @type {Node}
+       *
+       */
+      renderTo: {
+        /**
+         * @method renderTo.valueFn
+         * @return {Node} the renderTo node.
+         *
+         */
+        valueFn: function() {
+          return Y.one('.bws-view-data');
+        }
       },
 
       /**

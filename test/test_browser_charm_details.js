@@ -553,6 +553,30 @@
       node.all('.provider-warning').size().should.eql(1);
       node.all('.provider-warning img').size().should.eql(4);
     });
+
+    it('shows and hides an indicator', function(done) {
+      var hit = 0;
+
+      var fakeStore = new Y.juju.Charmworld0({});
+      var data = Y.JSON.parse(
+          Y.io('data/browsercharm.json', {sync: true}).responseText);
+      // We don't want any files so we don't have to mock/load them.
+      data.files = [];
+      view = new CharmView({
+        charm: new models.BrowserCharm(data),
+        container: Y.Node.create('<div class="charmview"/>')
+      });
+
+      view.showIndicator = function() {
+        hit += 1;
+      };
+      view.hideIndicator = function() {
+        hit += 1;
+        hit.should.equal(2);
+        done();
+      };
+      view.render();
+    });
   });
 
 })();

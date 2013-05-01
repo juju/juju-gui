@@ -16,6 +16,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
 
   ns.BrowserSearchView = Y.Base.create('browser-view-searchview', Y.View, [
     views.utils.apiFailingView,
+    widgets.browser.IndicatorManager,
     Y.Event.EventTracker
   ], {
     events: {
@@ -195,6 +196,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
      * @method render
      */
     render: function() {
+      this.showIndicator(this.get('renderTo'));
       // This is only rendered once from the subapp and so the filters is the
       // initial set from the application. All subsequent renders go through
       // the subapp so we don't have to keep the filters in sync here.
@@ -204,6 +206,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
         'success': function(data) {
           var results = this.get('store').resultsToCharmlist(data.result);
           this._renderSearchResults(results);
+          this.hideIndicator(this.get('renderTo'));
         },
         'failure': this.apiFailure
       }, this);

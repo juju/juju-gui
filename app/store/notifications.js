@@ -19,7 +19,10 @@ YUI.add('juju-notification-controller', function(Y) {
       return 'removed';
     }
     else { // Unexpected operation.
-      console.log('Unexpected operation.', op);
+      if (op !== 'change') {
+        // pyJuju uses change.
+        console.log('Unexpected operation:' + op);
+      }
       return 'changed';
     }
   };

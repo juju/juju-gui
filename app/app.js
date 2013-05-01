@@ -267,6 +267,11 @@ YUI.add('juju-gui', function(Y) {
       this.landscape = new views.Landscape();
       this.landscape.set('db', this.db);
 
+      // Set up a new modelController instance
+      this.modelController = new juju.ModelController({
+        db: this.db
+      });
+
       // Update the on-screen environment name provided in the configuration or
       // a default if none is configured.
       var environment_name = this.get('environment_name') || 'Environment',
@@ -330,6 +335,11 @@ YUI.add('juju-gui', function(Y) {
         }
         this.env = juju.newEnvironment(envOptions, apiBackend);
       }
+
+      // Set the env in the model controller here so
+      // that we know that it's been setup.
+      this.modelController.set('env', this.env);
+
       // Create notifications controller
       this.notifications = new juju.NotificationController({
         app: this,
@@ -361,8 +371,8 @@ YUI.add('juju-gui', function(Y) {
 
       // Handlers for adding and removing services to the service list.
       this.endpointsController = new juju.EndpointsController({
-        env: this.env,
-        db: this.db
+        db: this.db,
+        modelController: this.modelController
       });
       this.endpointsController.bind();
 
@@ -1031,5 +1041,6 @@ YUI.add('juju-gui', function(Y) {
     'app-subapp-extension',
     'sub-app',
     'subapp-browser',
-    'event-touch']
+    'event-touch',
+    'model-controller']
 });

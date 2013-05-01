@@ -52,6 +52,13 @@ var GlobalConfig = {
         }
       }
     },
+    'resizing_textarea': {
+      modules: {
+        'resizing-textarea': {
+          fullpath: '/juju-ui/assets/javascripts/resizing_textarea.js'
+        }
+      }
+    },
     prettify: {
       modules: {
         'prettify': {
@@ -214,9 +221,12 @@ var GlobalConfig = {
           fullpath: '/juju-ui/models/handlers.js'
         },
 
-
         'juju-models': {
           fullpath: '/juju-ui/models/models.js'
+        },
+
+        'model-controller': {
+          fullpath: '/juju-ui/models/model-controller.js'
         },
 
         // Connectivity
