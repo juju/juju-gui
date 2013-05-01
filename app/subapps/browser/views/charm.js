@@ -462,8 +462,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       // Set the content then update the container so that it reload
       // events.
-      var viewData = Y.one('.bws-view-data');
-      viewData.setHTML(tplNode);
+      var renderTo = this.get('renderTo');
+      renderTo.setHTML(tplNode);
 
       this.tabview = new widgets.browser.TabView({
         srcNode: tplNode.one('.tabs')
@@ -483,7 +483,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
       }
       // Scroll the nav bar into view, so we load the charm view at the top of
       // the content.
-      viewData.one('.nav').scrollIntoView();
+      renderTo.one('.nav').scrollIntoView();
     },
 
     /**
