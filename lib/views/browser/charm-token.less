@@ -6,20 +6,31 @@
         display: block;
         color: @bws-text;
 
-        .charm-icon {
+        &.large .charm-icon, &.large .icon {
+            width: 96px;
+            height: 96px;
+            margin-right: 16px;
+        }
+
+        &.small .charm-icon, &.small .icon {
             width: 64px;
             height: 64px;
             margin-right: 16px;
+        }
+
+        &.small .charm-icon {
             background: transparent
                     url(/juju-ui/assets/images/charm_64.png)
                     left top no-repeat;
+
         }
 
-        .icon {
-            width: 64px;
-            height: 64px;
-            margin-right: 16px;
+        &.large .charm-icon {
+            background: transparent
+                    url(/juju-ui/assets/images/charm_96.png)
+                    left top no-repeat;
         }
+
 
         i.badge-approved {
             position: absolute;
