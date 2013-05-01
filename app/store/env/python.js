@@ -265,13 +265,26 @@ YUI.add('juju-env-python', function(Y) {
     /**
      * Export data from the environment.
      *
-     * @method export
+     * @method exportEnvironment
      * @return {String} Sends a message to the server only.
      */
     exportEnvironment: function(callback) {
       this._send_rpc(
           {'op': 'exportEnvironment'}, callback, true);
     },
+
+    /**
+     * Import data to the environment.
+     *
+     * @method importEnvironment
+     * @param {String} envData JSON blob to import.
+     * @return {String} Sends a message to the server only.
+     */
+    importEnvironment: function(envData, callback) {
+      this._send_rpc(
+          {'op': 'importEnvironment', envData: envData}, callback, true);
+    },
+
 
 
     /**

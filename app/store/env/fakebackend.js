@@ -1184,9 +1184,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-   * Import Improv/jitsu styled exports
-   * @method importEnvironment_v0
-   */
+     * Import Improv/jitsu styled exports
+     * @method importEnvironment_v0
+     */
     importEnvironment_v0: function(data) {
       // Rewrite version 0 data to v1 and pass along.
       // - This involves replacing the incoming relation
@@ -1210,9 +1210,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
       return this.importEnvironment_v1(data);
     },
 
-    /** Import fakebackend exported data
-   * @method importEnvironment_v1
-   */
+    /**
+     * Import fakebackend exported data
+     * @method importEnvironment_v1
+     */
     importEnvironment_v1: function(data) {
       var self = this;
 
@@ -1248,6 +1249,12 @@ YUI.add('juju-env-fakebackend', function(Y) {
       Y.each(data.services, function(serviceData) {
         var s = self.db.services.add(serviceData);
         self.changes.services[s.get('id')] = [s, true];
+        if (serviceData.exposed) {
+          self.expose(s.get('id'));
+        }
+        if (serviceData.unit_count) {
+          self.addUnit(s.get('id'), serviceData.unit_count);
+        }
         var annotations = s.get('annotations');
         if (annotations) {
           self.annotations.services[s.get('id')] = annotations;

@@ -1414,6 +1414,7 @@
       this.timeout(250);
 
       client.open();
+      // jshint is insisting on these 'new' prefixes.
       new P(state, 'deploy', 'cs:wordpress')
        .then(new P(state, 'deploy', 'cs:mysql'))
        .then(new P(state, 'addRelation', 'wordpress:db', 'mysql:db'))
@@ -1441,7 +1442,6 @@
           assert.isNotNull(state.db.services.getById('wordpress'));
 
           var changes = state.nextChanges();
-          console.log('changes', changes);
           // Validate the delta includes imported services.
           assert.include(changes.services, 'wordpress');
           assert.include(changes.services, 'mysql');

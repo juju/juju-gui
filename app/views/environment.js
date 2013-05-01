@@ -80,6 +80,7 @@ YUI.add('juju-view-environment', function(Y) {
             topo.addModule(views.ViewportModule);
             topo.addModule(views.RelationModule);
             topo.addModule(views.LandscapeModule);
+            topo.addModule(views.ImportExportModule);
 
             topo.addTarget(this);
             this.topo = topo;
