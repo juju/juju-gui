@@ -51,7 +51,9 @@ YUI.add('juju-topology-importexport', function(Y) {
           // event wrrapper so we extract it directly
           // from the DOM event.
           var evt = d3.event,
-              env = self.get('component').get('env'),
+              topo = self.get('component'),
+              notifications = topo.get('db').notifications,
+              env = topo.get('env'),
               fileSources = evt._event.dataTransfer.files;
 
           Y.Array.each(fileSources, function(file) {
@@ -60,8 +62,12 @@ YUI.add('juju-topology-importexport', function(Y) {
             reader.onload = (function(fileData) {
               return function(e) {
                 // Import each into the environment
-                console.log('onload', e);
                 env.importEnvironment(e.target.result);
+                notifications.add({
+                  title: 'Imported Environment',
+                  message: 'Import from "' + file.name + '" successful',
+                  level: 'important'
+                });
               };
             })(file);
             reader.readAsText(file);

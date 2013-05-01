@@ -1374,7 +1374,7 @@
     /**
      * Utility method to turn _some_ callback
      * styled async methods into Promises.
-     * It doesn't this by supplying a simple
+     * It does this by supplying a simple
      * adaptor that can handle {error:...}
      * and {result: ... } returns.
      *
@@ -1387,7 +1387,7 @@
      *        to resolved method.
      * @return {Promise} a Y.Promise object.
      */
-    function P(context, methodName) {
+    function promise(context, methodName) {
       var slice = Array.prototype.slice;
       var args = slice.call(arguments, 2);
       var method = context[methodName];
@@ -1415,9 +1415,9 @@
 
       client.open();
       // jshint is insisting on these 'new' prefixes.
-      new P(state, 'deploy', 'cs:wordpress')
-       .then(new P(state, 'deploy', 'cs:mysql'))
-       .then(new P(state, 'addRelation', 'wordpress:db', 'mysql:db'))
+      promise(state, 'deploy', 'cs:wordpress')
+       .then(promise(state, 'deploy', 'cs:mysql'))
+       .then(promise(state, 'addRelation', 'wordpress:db', 'mysql:db'))
        .then(function() {
             client.onmessage = function(result) {
               var data = Y.JSON.parse(result.data).result;
