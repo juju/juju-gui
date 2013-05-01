@@ -134,6 +134,8 @@ YUI.add('subapp-browser-searchview', function(Y) {
       this._renderFilterWidget(filter_container);
       this.get('container').setHTML(tplNode);
       target.setHTML(this.get('container'));
+      // Scroll the heading into view to ensure view renders at the top of the
+      // content.
       target.one('.search-title').scrollIntoView();
     },
 
