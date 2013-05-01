@@ -163,7 +163,7 @@
   describe('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
-      'juju-models'];
+      'juju-models', 'promise'];
     var Y, sandboxModule, ClientConnection, PyJujuAPI, environmentsModule,
         state, juju, client, env, utils, cleanups;
 
@@ -1369,8 +1369,61 @@
         client.open();
         client.send(Y.JSON.stringify(op));
       });
-
     });
+
+    /**
+     * Utility method to turn _some_ callback
+     * styled async methods into Promises.
+     * It doesn't this by supplying a simple
+     * adaptor that can handle {error:...}
+     * and {result: ... } returns.
+     *
+     * This callback is appended to any calling arguments
+     *
+     * @method P
+     * @param {Object} context Calling context
+     * @param {String} methodName name of method on context to invoke
+     * @param {Arguments} arguments Additional arguments passed to resolved method.
+     * @return {Promise} a Y.Promise object
+     */
+    function P(context, methodName) {
+      var slice = Array.prototype.slice;
+      var args = slice.call(arguments, 2);
+      var method = context[methodName];
+
+      return Y.Promise(function(resolve, reject) {
+        var resultHandler = function(result) {
+          if (result.err || result.error) {
+            reject(result.err || result.error);
+          } else {
+            resolve(result);
+          }
+        }
+        args.push(resultHandler);
+        var result = method.apply(context, args);
+        if (result !== undefined) {
+          // The method returned right away.
+          return resultHandler(result);
+        }
+      });
+    };
+
+    it('should support export', function(done) {
+      this.timeout(450);
+
+      client.open();
+      P(state, 'deploy', 'cs:wordpress')
+       .then(P(state, 'deploy', 'cs:mysql'))
+       .then(P(state, 'addRelation', 'wordpress:db', 'mysql:db'))
+       .then(function() {
+         client.onmessage = function(result) {
+           var data = Y.JSON.parse(result.data).result;
+           assert.equal(data.services[0].name, 'wordpress');
+           done();
+         };
+         client.send(Y.JSON.stringify({op: 'export'}));
+       });
+   });
 
   });
 

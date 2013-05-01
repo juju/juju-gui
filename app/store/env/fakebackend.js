@@ -1097,8 +1097,155 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // resolved actually does. We could additionally push the unit into
       // the change set but no change currently takes place.
       return {result: true};
+    },
+
+
+  /**
+   * Export environment state
+   *
+   * @method exportEnvironment
+   * @return {String} JSON description of env data.
+   */
+  exportEnvironment: function() {
+    var self = this,
+        serviceList = this.db.services,
+        relationList = this.db.relations,
+        result = {meta: {
+          exportFormat: 1.0,
+          },
+          services: [], relations: []},
+        blackLists = {
+          service: ['id', 'aggregated_status', 'clientId', 'initialized',
+            'destroyed', 'pending'],
+          relation: ['id', 'relation_id', 'clientId', 'initialized',
+            'destroyed', 'pending']
+        };
+
+    if (!this.get('authenticated')) {
+      return UNAUTHENTICATEDERROR;
     }
 
+    serviceList.each(function (s) {
+      var serviceData = s.getAttrs();
+      if (serviceData.pending === true) {
+        return;
+      }
+      Y.each(blackLists.service, function(key) {
+        if (key in serviceData) {
+          delete serviceData[key];
+        }
+      // Add in initial unit count.
+      serviceData.unit_count = self.db.units
+          .get_units_for_service(s).length || 1;
+      });
+      result.services.push(serviceData);
+    });
+
+    relationList.each(function(r) {
+      var relationData = r.getAttrs();
+      if (relationData.pending === true) {
+        return;
+      }
+       Y.each(blackLists.relation, function(key) {
+        if (key in relationData) {
+          delete relationData[key];
+        }
+      });
+      result.relations.push(relationData);
+    });
+
+    return {result: result};
+  },
+
+  /**
+   * Import JSON data to populate the fakebackend
+   * @method importEnvironment
+   * @param {String} JSON data to load
+   * @return {Object} with error or result: true.
+   */
+  importEnvironment: function(jsonData) {
+    if (!this.get('authenticated')) {
+      return UNAUTHENTICATEDERROR;
+    }
+    var data = JSON.parse(jsonData),
+        version = 0,
+        importImpl;
+    // Dispatch to the correct version after inspecting the JSON data.
+    if (data.meta && data.meta.exportFormat) {
+      version = data.meta.exportFormat;
+    }
+
+    // Might have to check for float and sub '.' with '_'.
+    importImpl = this['importEnvironment_v' + version];
+    if (!importImpl) {
+      return {error: 'Unknown or unspported import format: ' + version};
+    }
+    importImpl.call(this, data);
+  },
+
+  /**
+   * Import Improv/jitsu styled exports
+   * @method importEnvironment_v0
+   */
+  importEnvironment_v0: function(data) {
+    // Rewrite version 0 data to v1 and pass along.
+    // - This involves replacing the incoming relation
+    //    data with a massaged version.
+        var relations = [];
+    Y.each(data.relations, function(relationData) {
+    var relData = {endpoints: []};
+    Y.Array.each(relationData, function(r) {
+      var ep = [];
+      relData.type = r[1];
+      ep.push(r[0]);
+      ep.push({name: r[2],
+              role: r[3]});
+      relData.endpoints.push(ep);
+    });
+    relations.push(relData);
+   });
+
+    // Overwrite relations with our new structure.
+    data.relations = relations;
+    return this.importEnvironment_v1(data);
+  },
+
+  /** Import fakebackend exported data
+   * @method importEnvironment_v1
+   */
+  importEnvironment_v1: function(data) {
+    var self = this;
+
+    // Assign missing service ids.
+    // TODO: assign new ids for import data?
+    // Track import source as meta.stackName
+    // and update matches?
+    Y.each(data.services, function(s) {
+      if (s.name && !s.id) {
+        s.id = s.name;
+      }
+    });
+
+    // TODO: This method will need to check for conflicts
+    // at some point and implement a handling policy
+    // (which can be as simple as returning an error, skipping
+    // the import or merging the data).
+    Y.each(data.services, function(serviceData) {
+      var s = self.db.services.add(serviceData);
+      self.changes.services[s.get('id')] = [s, true];
+      var annotations = s.get('annotations');
+      if (annotations) {
+        self.annotations.services[s.get('id')] = annotations;
+      }
+    });
+
+    Y.each(data.relations, function(relationData) {
+      var r = self.db.relations.add(relationData);
+      self.changes.relations[r.get('relation_id')] = [r, true];
+    });
+
+   return {result: true};
+  }
 
   });
 

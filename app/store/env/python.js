@@ -263,6 +263,18 @@ YUI.add('juju-env-python', function(Y) {
     },
 
     /**
+     * Export data from the environment.
+     *
+     * @method export
+     * @return {String} Sends a message to the server only.
+     */
+    export: function(callback) {
+      this._send_rpc(
+          {'op': 'export', }, callback, true);
+    },
+
+
+    /**
      * Attempt to log the user in.  Credentials must have been previously
      * stored on the environment.
      *
