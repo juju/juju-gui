@@ -129,6 +129,19 @@ YUI.add('browser-charm-container', function(Y) {
   }, {
     ATTRS: {
       /**
+         Any config passed here will be merged with each child's config in
+         order to support adjusting the config data.
+
+         @attribute additionalChildconfig
+         @default {}
+         @type {Object}
+
+       */
+      additionalChildConfig: {
+        value: {}
+      },
+
+      /**
        * @attribute cutoff
        * @default 3
        * @type {Integer}

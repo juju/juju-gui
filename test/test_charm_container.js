@@ -1,7 +1,7 @@
 'use strict';
 
-describe('charm container widget', function() {
-  var container, Y, charm_container;
+describe.only('charm container widget', function() {
+  var container, Y, charm_container, CharmContainer;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -10,6 +10,7 @@ describe('charm container widget', function() {
       'browser-charm-token',
       'node-event-simulate'],
     function(Y) {
+      CharmContainer = Y.juju.widgets.browser.CharmContainer
       done();
     });
   });
@@ -151,5 +152,21 @@ describe('charm container widget', function() {
     assert.equal(0, container.all('.yui3-charmtoken-hidden').size());
     assert.equal(1, charm_container._events.length);
     assert.isNull(rendered.one('.expand'));
+  });
+
+  it('allows setting the size on all charms it contains', function() {
+    charm_container = new CharmContainer({
+      name: 'Popular',
+      cutoff: 6,
+      children: [{
+        name: 'foo'
+      },{
+        name: 'bar'
+      }]
+    });
+
+    debugger;
+    // charm_container.render(container);
+
   });
 });

@@ -2,11 +2,12 @@
 
 
 describe('charm token', function() {
-  var charm_container, Y;
+  var charm_container, CharmToken, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['browser-charm-token', 'node-event-simulate'], function(Y) {
+          CharmToken = Y.juju.widgets.browser.CharmToken;
           done();
         });
   });
@@ -21,7 +22,7 @@ describe('charm token', function() {
   });
 
   it('exists', function() {
-    var charm = new Y.juju.widgets.browser.CharmToken();
+    var charm = new CharmToken();
     assert.isObject(charm);
   });
 
@@ -34,7 +35,7 @@ describe('charm token', function() {
       recent_download_count: 3,
       tested_providers: ['ec2']
     };
-    var charm = new Y.juju.widgets.browser.CharmToken(cfg);
+    var charm = new CharmToken(cfg);
     charm.render(charm_container);
     var metadata = Y.one('.metadata');
     assert.equal(
@@ -42,4 +43,27 @@ describe('charm token', function() {
         metadata.get('text').replace(/\s+/g, ' '));
     charm.get('boundingBox').getAttribute('id').should.not.eql('test');
   });
+
+  it('sets a default of small size', function() {
+    var charm = new CharmToken();
+    charm.get('size').should.eql('small');
+
+    // and the css class should be on the token once rendered.
+    charm.render(charm_container);
+    debugger;
+    charm_container.one('.charm-token').hasClass('small').should.equal(true);
+  });
+
+  it('allows setting a large size', function() {
+    var charm = new CharmToken({
+      size: 'large'
+    });
+    charm.get('size').should.eql('large');
+
+    // and the css class should be on the token once rendered.
+    charm.render(charm_container);
+    charm_container.one('.charm-token').hasClass('large').should.equal(true);
+  });
+
+
 });
