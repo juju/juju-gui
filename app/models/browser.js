@@ -89,7 +89,7 @@ YUI.add('juju-browser-models', function(Y) {
      */
     getFilterData: function() {
       var res = {
-        category: this.get('category'),
+        categories: this.get('categories'),
         provider: this.get('provider'),
         series: this.get('series'),
         text: this.get('text'),
@@ -153,7 +153,7 @@ YUI.add('juju-browser-models', function(Y) {
       // Update each manually as we might get an Array or a single value from
       // the query string update.
       var arrayVals = [
-        'category', 'provider', 'series', 'type'
+        'categories', 'provider', 'series', 'type'
       ];
 
       Y.Array.each(arrayVals, function(key) {
@@ -173,7 +173,7 @@ YUI.add('juju-browser-models', function(Y) {
 
   }, {
     ATTRS: {
-      category: {
+      categories: {
         value: []
       },
       provider: {
