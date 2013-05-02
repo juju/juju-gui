@@ -171,7 +171,8 @@ var GlobalConfig = {
         },
 
         'juju-view-service': {
-          fullpath: '/juju-ui/views/service.js'
+          fullpath: '/juju-ui/views/service.js',
+          requires: ['service-view-promise-support']
         },
 
         'juju-view-unit': {
