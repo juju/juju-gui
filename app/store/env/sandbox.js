@@ -542,7 +542,7 @@ YUI.add('juju-env-sandbox', function(Y) {
      * @method performOp_importEnvironment
      */
     performOp_importEnvironment: function(data) {
-      OP(this, 'importEnvironment', ['envData'], data);
+      ASYNC_OP(this, 'importEnvironment', ['envData'])(data);
     },
 
     /**

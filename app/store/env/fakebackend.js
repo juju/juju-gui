@@ -338,6 +338,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
                 Inform the caller of an error using the charm store.
               */
               failure: function(e) {
+                console.warn('error loading charm: ' + e);
                 if (callbacks.failure) {
                   callbacks.failure({error: 'Could not contact charm store.'});
                 }
@@ -1099,6 +1100,29 @@ YUI.add('juju-env-fakebackend', function(Y) {
       return {result: true};
     },
 
+    /**
+     * Utility to promise to load a charm.
+     * @method _promiseCharm
+     * @param {String} charmURL.
+     * @return {Promise} resolving with charm model.
+     */
+    _promiseCharm: function(charmId) {
+      var self = this;
+
+      return Y.Promise(function(resolve, reject) {
+        self._loadCharm(charmId, {
+          success: function(result) {
+            console.log("got charm", result);
+            resolve(result);
+          },
+          failure: function(result) {
+            console.error(result);
+            reject(result);
+          }
+        });
+      });
+    },
+
 
     /**
    * Export environment state
@@ -1163,9 +1187,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
    * @param {String} JSON data to load.
    * @return {Object} with error or result: true.
    */
-    importEnvironment: function(jsonData) {
+    importEnvironment: function(jsonData, callback) {
       if (!this.get('authenticated')) {
-        return UNAUTHENTICATEDERROR;
+        return callback(UNAUTHENTICATEDERROR);
       }
       var data = JSON.parse(jsonData),
           version = 0,
@@ -1178,16 +1202,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // Might have to check for float and sub '.' with '_'.
       importImpl = this['importEnvironment_v' + version];
       if (!importImpl) {
-        return {error: 'Unknown or unspported import format: ' + version};
+        return callback({error: 'Unknown or unspported import format: ' + version});
       }
-      return importImpl.call(this, data);
+      importImpl.call(this, data, callback);
     },
 
     /**
      * Import Improv/jitsu styled exports
      * @method importEnvironment_v0
      */
-    importEnvironment_v0: function(data) {
+    importEnvironment_v0: function(data, callback) {
       // Rewrite version 0 data to v1 and pass along.
       // - This involves replacing the incoming relation
       //    data with a massaged version.
@@ -1207,16 +1231,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       // Overwrite relations with our new structure.
       data.relations = relations;
-      return this.importEnvironment_v1(data);
+      this.importEnvironment_v1(data, callback);
     },
 
     /**
      * Import fakebackend exported data
      * @method importEnvironment_v1
      */
-    importEnvironment_v1: function(data) {
+    importEnvironment_v1: function(data, callback) {
       var self = this;
-
+      var charms = [];
       // Review NOTES: In the next section I
       // assign ids and so on. Its possible to
       // call the deploy and addRelation methods
@@ -1233,6 +1257,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
       Y.each(data.services, function(s) {
         if (s.name && !s.id) {
           s.id = s.name;
+          charms.push(self._promiseCharm(s.charm));
         }
       });
 
@@ -1246,27 +1271,31 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // at some point and implement a handling policy
       // (which can be as simple as returning an error, skipping
       // the import or merging the data).
-      Y.each(data.services, function(serviceData) {
-        var s = self.db.services.add(serviceData);
-        self.changes.services[s.get('id')] = [s, true];
-        if (serviceData.exposed) {
-          self.expose(s.get('id'));
-        }
-        if (serviceData.unit_count) {
-          self.addUnit(s.get('id'), serviceData.unit_count);
-        }
-        var annotations = s.get('annotations');
-        if (annotations) {
-          self.annotations.services[s.get('id')] = annotations;
-        }
-      });
+      Y.batch.apply(self, charms) // resolve all the charms
+      .then(function() {
+        Y.each(data.services, function(serviceData) {
+          var s = self.db.services.add(serviceData);
+          self.changes.services[s.get('id')] = [s, true];
+          if (serviceData.exposed) {
+            self.expose(s.get('id'));
+          }
+          if (serviceData.unit_count) {
+            self.addUnit(s.get('id'), serviceData.unit_count);
+          }
+          var annotations = s.get('annotations');
+          if (annotations) {
+            self.annotations.services[s.get('id')] = annotations;
+          }
+        });
 
-      Y.each(data.relations, function(relationData) {
-        var r = self.db.relations.add(relationData);
-        self.changes.relations[r.get('relation_id')] = [r, true];
+        Y.each(data.relations, function(relationData) {
+          var r = self.db.relations.add(relationData);
+          self.changes.relations[r.get('relation_id')] = [r, true];
+        });
+      })
+      .then(function() {
+        return callback({result: true});
       });
-
-      return {result: true};
     }
 
   });
@@ -1277,6 +1306,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
   requires: [
     'base',
     'js-yaml',
-    'juju-models'
+    'juju-models',
+    'promise'
   ]
 });

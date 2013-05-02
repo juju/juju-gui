@@ -70,7 +70,8 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     _cached_charms: (function() {
       var charms = {},
           names = [
-            'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop'];
+            'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop',
+            'memcached'];
       Y.Array.each(names, function(name) {
         charms[name] = Y.JSON.parse(
             Y.io('data/' + name + '-charmdata.json', {sync: true})
@@ -83,19 +84,16 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         'test-charm-store', Y.juju.CharmStore, [], {
           loadByPath: function(path, options) {
             var charmName = path.split('/')[2];
-            var found = Y.Array.some(
-                Y.Object.values(jujuTests.utils._cached_charms),
-                function(data) {
-                  if (data.name === charmName) {
-                    options.success(data);
-                    return true;
-                  }
-                });
-            if (!found) {
-              options.failure();
+            // Ignore version as changing across all
+            // testing artifacts is a pain.
+            charmName = charmName.split('-', 1);
+            if (charmName in jujuTests.utils._cached_charms) {
+              options.success(jujuTests.utils._cached_charms[charmName]);
+            } else {
+              options.failure(new Error('Unable to load charm ' + charmName));
             }
-          }
-        }
+       }
+    }
     ),
 
     makeFakeBackendWithCharmStore: function() {

@@ -288,25 +288,31 @@
 
     describe('FakeBackend.importEnvironment', function(done) {
 
-      it('rejects unauthenticated calls', function() {
+      it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();
-        var result = fakebackend.importEnvironment();
-        assert.equal(result.error, 'Please log in.');
+        var result = fakebackend.importEnvironment("", function(result) {
+          assert.equal(result.error, 'Please log in.');
+          done();
+        });
       });
 
       it('successfully imports v0 data', function(done) {
         var fixture = utils.loadFixture('data/sample-improv.json', false);
-        fakebackend.importEnvironment(fixture);
-        assert.isNotNull(fakebackend.db.services.getById('wordpress'));
-        done();
-      });
+        fakebackend.importEnvironment(fixture, function(result) {
+          assert.isTrue(result.result);
+          assert.isNotNull(fakebackend.db.services.getById('wordpress'));
+          done();
+        });
+     });
 
       it('successfully imports v1 data', function(done) {
         var fixture = utils.loadFixture('data/sample-fakebackend.json', false);
-        fakebackend.importEnvironment(fixture);
-        assert.isNotNull(fakebackend.db.services.getById('wordpress'));
-        done();
-      });
+        fakebackend.importEnvironment(fixture, function(result) {
+          assert.isTrue(result.result);
+          assert.isNotNull(fakebackend.db.services.getById('wordpress'));
+          done();
+        });
+     });
     });
 
 
