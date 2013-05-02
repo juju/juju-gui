@@ -77,6 +77,12 @@
     list-style: none;
     line-height: 170%;
   }
+  .badge-approved {
+    display: block;
+    position: absolute;
+    background-position: left top;
+    bacground-repeat: no-repeat;
+  }
   .reset {
     margin: auto;
     text-align: left;
@@ -137,39 +143,32 @@
         .search,
         .delete {
           position: absolute;
-          left: 10px;
         }
         .search {
-          top: 10px;
+          top: 11px;
+          left: 13px;
         }
         .delete {
           display: none;
           top: 9px;
+          left: 10px;
         }
         input {
           .border-box;
-          .two-image-button-background(
-            "browser_searchbox_left.png",
-            "browser_searchbox_right.png",
-            #fff
-            );
+          width: 300px;
           height: 40px;
           margin: 0;
-          padding: 15px 15px 15px 41px;
+          padding: 12px 12px 12px 39px;
+          background-color: #fff;
           border: none;
-          border-radius: 0;
-          font-size: 10pt;
-          font-style: italic;
-          color: #c8c8c8;
+          border-radius: 4px;
+          font-size: 12pt;
+          color: #bbb;
         }
 
         &.active {
           input {
-            padding-top: 14px;
             color: @bws-heading;
-            background-position: left bottom, right bottom;
-            font-size: 12pt;
-            font-style: normal;
           }
           .search {
             display: none;
@@ -247,9 +246,12 @@
   .bws-view-data,
   #bws-sidebar,
   #bws-fullscreen {
-    z-index: 1;
-    bottom: @canvas-footer-nav-height;
     background-color: #f5f5f5;
+    z-index: 1;
+  }
+  .bws-view-data,
+  #bws-sidebar {
+    bottom: @canvas-footer-nav-height;
   }
   .bws-view-data,
   #bws-sidebar .bws-content {
