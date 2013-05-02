@@ -82,10 +82,10 @@ YUI.add('model-controller', function(Y) {
       Populates the service and charm data for the supplied service id and
       returns a promise that you can use to know when it's ready to go.
 
-      @method populateService
+      @method getServiceWithCharm
       @param {String} serviceId The service id to populate.
     */
-    populateService: function(serviceId) {
+    getServiceWithCharm: function(serviceId) {
       var db = this.get('db'),
           env = this.get('env'),
           mController = this;

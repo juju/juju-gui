@@ -105,7 +105,20 @@ YUI.add('browser-charm-token', function(Y) {
        * @default undefined
        * @type {Number}
        */
-      recent_download_count: {}
+      recent_download_count: {},
+
+      /**
+         Supports size attributes of small and large that turn into the css
+         class around the charm token.
+
+         @attribute size
+         @default SIZE_SMALL
+         @type {String}
+
+       */
+      size: {
+        value: 'small'
+      }
     }
   });
 

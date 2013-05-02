@@ -1,9 +1,10 @@
 <a href="/bws/sidebar/{{id}}"
-    class="charm-token yui3-g"
+    class="charm-token yui3-g {{size}}"
     data-charmid="{{id}}">
     <span class="yui3-u">
         {{#if is_approved}}
-            <i class="sprite badge-approved"></i>
+            <i class="sprite badge-approved"
+                title="This charm has been reviewed."></i>
         {{/if}}
         {{#if icon}}
             <img src="data:image/svg+xml;base64,{{ icon }}" alt="{{ name }} icon" class="icon">

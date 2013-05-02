@@ -1,6 +1,8 @@
 <div id="bws-search" class="yui3-g">
   <div class="yui3-u-1">
-    <h3 class="search-title"><strong>{{ count }}</strong> results found</h3>
+    <h3 class="search-title">
+      <strong>{{ count }}</strong> {{ pluralize 'result' count }} found
+    </h3>
   </div>
   <div class="filters {{#if isFullscreen}} yui3-u-1-4 {{else}} yui3-u-1 collapsed {{/if}}">
     {{#unless isFullscreen}}

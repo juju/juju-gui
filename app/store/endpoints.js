@@ -117,7 +117,8 @@ YUI.add('juju-endpoints-controller', function(Y) {
           // process it.
           if (!service.get('pending')) {
             var mController = this.get('modelController'),
-                servicePromise = mController.populateService(service.get('id')),
+                servicePromise = mController.getServiceWithCharm(
+                    service.get('id')),
                 self = this;
 
             servicePromise.then(

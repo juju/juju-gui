@@ -84,7 +84,7 @@ YUI.add('browser-filter-widget', function(Y) {
     bindUI: function() {
       var cb = this.get('contentBox');
       this.addEvent(
-          cb.one('form').delegate(
+          cb.delegate(
               'click', this._changeFilters, 'input[type="checkbox"]', this)
       );
     },
