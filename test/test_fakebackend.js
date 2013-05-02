@@ -290,7 +290,7 @@
 
       it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();
-        var result = fakebackend.importEnvironment("", function(result) {
+        var result = fakebackend.importEnvironment('', function(result) {
           assert.equal(result.error, 'Please log in.');
           done();
         });
@@ -303,7 +303,7 @@
           assert.isNotNull(fakebackend.db.services.getById('wordpress'));
           done();
         });
-     });
+      });
 
       it('successfully imports v1 data', function(done) {
         var fixture = utils.loadFixture('data/sample-fakebackend.json', false);
@@ -312,7 +312,7 @@
           assert.isNotNull(fakebackend.db.services.getById('wordpress'));
           done();
         });
-     });
+      });
     });
 
 

@@ -1103,7 +1103,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
     /**
      * Utility to promise to load a charm.
      * @method _promiseCharm
-     * @param {String} charmURL.
+     * @param {String} charmURL to load.
      * @return {Promise} resolving with charm model.
      */
     _promiseCharm: function(charmId) {
@@ -1196,7 +1196,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // Might have to check for float and sub '.' with '_'.
       importImpl = this['importEnvironment_v' + version];
       if (!importImpl) {
-        return callback({error: 'Unknown or unspported import format: ' + version});
+        return callback({
+          error: 'Unknown or unspported import format: ' + version});
       }
       importImpl.call(this, data, callback);
     },
@@ -1267,29 +1268,29 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // the import or merging the data).
       Y.batch.apply(self, charms) // resolve all the charms
       .then(function() {
-        Y.each(data.services, function(serviceData) {
-          var s = self.db.services.add(serviceData);
-          self.changes.services[s.get('id')] = [s, true];
-          if (serviceData.exposed) {
-            self.expose(s.get('id'));
-          }
-          if (serviceData.unit_count) {
-            self.addUnit(s.get('id'), serviceData.unit_count);
-          }
-          var annotations = s.get('annotations');
-          if (annotations) {
-            self.annotations.services[s.get('id')] = annotations;
-          }
-        });
+            Y.each(data.services, function(serviceData) {
+              var s = self.db.services.add(serviceData);
+              self.changes.services[s.get('id')] = [s, true];
+              if (serviceData.exposed) {
+                self.expose(s.get('id'));
+              }
+              if (serviceData.unit_count) {
+                self.addUnit(s.get('id'), serviceData.unit_count);
+              }
+              var annotations = s.get('annotations');
+              if (annotations) {
+                self.annotations.services[s.get('id')] = annotations;
+              }
+            });
 
-        Y.each(data.relations, function(relationData) {
-          var r = self.db.relations.add(relationData);
-          self.changes.relations[r.get('relation_id')] = [r, true];
-        });
-      })
+            Y.each(data.relations, function(relationData) {
+              var r = self.db.relations.add(relationData);
+              self.changes.relations[r.get('relation_id')] = [r, true];
+            });
+          })
       .then(function() {
-        return callback({result: true});
-      });
+            return callback({result: true});
+          });
     }
 
   });

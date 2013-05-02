@@ -95,8 +95,8 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
             } else {
               options.failure(new Error('Unable to load charm ' + charmName));
             }
-       }
-    }
+          }
+        }
     ),
 
     makeFakeBackendWithCharmStore: function() {

@@ -8,9 +8,9 @@ describe('charm token', function() {
     Y = YUI(GlobalConfig).use(
         ['browser-charm-token', 'node-event-simulate',
          'juju-tests-utils'], function(Y) {
-           CharmToken = Y.juju.widgets.browser.CharmToken;
-           done();
-         });
+          CharmToken = Y.juju.widgets.browser.CharmToken;
+          done();
+        });
   });
 
   beforeEach(function() {
