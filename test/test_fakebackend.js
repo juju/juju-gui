@@ -287,6 +287,7 @@
     });
 
     describe('FakeBackend.importEnvironment', function(done) {
+      this.timeout(300);
 
       it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();
@@ -301,6 +302,10 @@
         fakebackend.importEnvironment(fixture, function(result) {
           assert.isTrue(result.result);
           assert.isNotNull(fakebackend.db.services.getById('wordpress'));
+
+          // Verify that the charms have been loaded.
+          assert.isNotNull(fakebackend.db.charms.getById(
+            'cs:precise/wordpress-10'));
           done();
         });
       });

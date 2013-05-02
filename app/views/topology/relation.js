@@ -550,7 +550,6 @@ YUI.add('juju-topology-relation', function(Y) {
             relationElement, relationId, confirmButton, ev) {
       var topo = this.get('component'),
           db = topo.get('db');
-      var service = this.get('model');
       if (ev.err) {
         db.notifications.add(
             new models.Notification({
@@ -824,7 +823,6 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     _addRelationCallback: function(module, relation_id, ev) {
-      console.log('addRelationCallback reached');
       var topo = module.get('component');
       var db = topo.get('db');
       var vis = topo.vis;

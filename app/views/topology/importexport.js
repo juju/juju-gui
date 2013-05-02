@@ -57,7 +57,6 @@ YUI.add('juju-topology-importexport', function(Y) {
               fileSources = evt._event.dataTransfer.files;
 
           Y.Array.each(fileSources, function(file) {
-            console.log('reader for', file);
             var reader = new FileReader();
             reader.onload = (function(fileData) {
               return function(e) {

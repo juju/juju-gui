@@ -1101,17 +1101,22 @@ YUI.add('juju-env-fakebackend', function(Y) {
     },
 
     /**
-     * Utility to promise to load a charm.
-     * @method _promiseCharm
-     * @param {String} charmURL to load.
-     * @return {Promise} resolving with charm model.
+     * Utility to promise to load a charm for serviceData.
+     * @method _promiseCharmForService
+     * @param {Object} serviceData to load charm for. seviceData is the
+     *        imported service attributes, so .charm should be the charm
+     *        url.
+     * @return {Promise} resolving with [charm model, serviceData].
      */
-    _promiseCharm: function(charmId) {
-      var self = this;
+    _promiseCharmForService: function(serviceData) {
+      var self = this,
+          charmId = serviceData.charm;
 
       return Y.Promise(function(resolve, reject) {
         self._loadCharm(charmId, {
-          success: resolve,
+          success: function(charm) {
+            resolve([charm, serviceData]);
+          },
           failure: reject
         });
       });
@@ -1250,9 +1255,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // Track import source as meta.stackName
       // and update matches?
       Y.each(data.services, function(s) {
+        charms.push(self._promiseCharmForService(s));
         if (s.name && !s.id) {
           s.id = s.name;
-          charms.push(self._promiseCharm(s.charm));
         }
       });
 
@@ -1267,6 +1272,16 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // (which can be as simple as returning an error, skipping
       // the import or merging the data).
       Y.batch.apply(self, charms) // resolve all the charms
+      .then(function(charms) {
+        // charm version requested from an import will return
+        // the current (rather than pinned) version from the store.
+        // update the service to include the returned charm version.
+        Y.Array.each(charms, function(data) {
+          var charm = data[0],
+              serviceData = data[1];
+          serviceData.charm = charm.get('id');
+        });
+      })
       .then(function() {
             Y.each(data.services, function(serviceData) {
               var s = self.db.services.add(serviceData);
