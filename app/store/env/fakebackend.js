@@ -1273,15 +1273,15 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // the import or merging the data).
       Y.batch.apply(self, charms) // resolve all the charms
       .then(function(charms) {
-        // charm version requested from an import will return
-        // the current (rather than pinned) version from the store.
-        // update the service to include the returned charm version.
-        Y.Array.each(charms, function(data) {
-          var charm = data[0],
-              serviceData = data[1];
-          serviceData.charm = charm.get('id');
-        });
-      })
+            // charm version requested from an import will return
+            // the current (rather than pinned) version from the store.
+            // update the service to include the returned charm version.
+            Y.Array.each(charms, function(data) {
+              var charm = data[0],
+                  serviceData = data[1];
+              serviceData.charm = charm.get('id');
+            });
+          })
       .then(function() {
             Y.each(data.services, function(serviceData) {
               var s = self.db.services.add(serviceData);
