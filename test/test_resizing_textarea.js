@@ -262,12 +262,12 @@ describe('textarea autosize plugin', function() {
         'The height should still be at 200px');
   });
 
-  it('one line shoudl size to single em', function() {
-    // Passing a one line in the cfg should limit the height to 1em even
+  it('one line should size to single em', function() {
+    // Passing single_line in the cfg should limit the height to 1em even
     // though a normal textarea would be two lines tall.
 
     target2 = Y.Node.create(
-        '<textarea style="height: 1em; overflow: hidden; resize: none; ' +
+        '<textarea style="height: 28px; overflow: hidden; resize: none; ' +
         '  width: auto;">' +
         '</textarea>');
     container.append(target2);
@@ -280,12 +280,12 @@ describe('textarea autosize plugin', function() {
 
     target.plug(Y.juju.plugins.ResizingTextarea, {
       skip_animations: true,
-      single_line: true
+      single_line: 28
     });
 
     var initial_height = get_height(target);
     assert.equal(sample_height, initial_height,
-        'The initial height should be 1em');
+        'The initial height should be 28px');
 
     // After adding a bunch of text and removing it, we should be back
     // at one em height.

@@ -243,8 +243,8 @@ describe('charm configuration', function() {
     // The input controls are service-name, number-units, the upload widget,
     // and the boolean and int.
     assert.equal(inputControls.size(), 4);
-    // The textarea has the real one and two clones used for resizing.
-    assert.equal(textareaControls.size(), 3);
+    // The textarea has the real one and a clone used for resizing.
+    assert.equal(textareaControls.size(), 2);
     inputControls.item(0).focus();
     tooltip.get('srcNode').get('text').should.equal(
         'Name of the service to be deployed.  Must be unique.');

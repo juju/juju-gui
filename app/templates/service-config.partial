@@ -19,7 +19,7 @@
       {{else}}
         <div class="control-label" for="{{name}}">{{name}} ({{type}})</div>
         <div class="controls">
-          <textarea class="config-field yo" id="input-{{name}}" name="{{name}}">{{value}}</textarea>
+          <textarea class="config-field" id="input-{{name}}" name="{{name}}">{{value}}</textarea>
         </div>
       {{/if}}
     {{/if}}

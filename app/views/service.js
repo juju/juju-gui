@@ -16,6 +16,7 @@ YUI.add('juju-view-service', function(Y) {
   var views = Y.namespace('juju.views'),
       Templates = views.Templates,
       models = Y.namespace('juju.models'),
+      plugins = Y.namespace('juju.plugins'),
       utils = Y.namespace('juju.views.utils');
 
   /**
@@ -725,6 +726,16 @@ YUI.add('juju-view-service', function(Y) {
             console.log('waiting on service data');
           } else {
             container.setHTML(this.template(this.gatherRenderData()));
+            // Plug in the textarea resizer.
+            // XXX bac: the min_height and single_line are bogus.
+            // Also, the initial height is being set wrong if the textarea is
+            // pre-populated.
+            container.all('textarea.config-field').plug(plugins.ResizingTextarea,
+                { max_height: 200,
+                  min_height: 18,
+                  // XXX bac: We set single_line to be 18px but it then gets
+                  // inflated such that our config-fields are actually 28px.
+                  single_line: false});
           }
           return this;
         },
