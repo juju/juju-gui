@@ -746,8 +746,6 @@ YUI.add('juju-charm-panel', function(Y) {
             container.all('textarea.config-field').plug(plugins.ResizingTextarea,
                 { max_height: 200,
                   min_height: 28,
-                  // XXX bac: We set single_line to be 18px but it then gets
-                  // inflated such that our config-fields are actually 28px.
                   single_line: 18});
 
             // Set up entry description overlay.
