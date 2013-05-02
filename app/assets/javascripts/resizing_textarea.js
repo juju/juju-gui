@@ -86,7 +86,8 @@ YUI.add('resizing-textarea', function(Y) {
     /**
      * single_line says that at the minimum, it should show up as a
      * single-line textarea. This is used by tools such as the inline edit
-     * widget.
+     * widget.  The value is either falsy or the height in px for the single
+     * line.
      *
      * @property single_line
      */
@@ -144,7 +145,10 @@ YUI.add('resizing-textarea', function(Y) {
       // Clear any input so we know it's only one line tall.
       clone_one.set('value', 'one');
       node.get('parentNode').appendChild(clone_one);
-      return clone_one.get('scrollHeight');
+      var height = clone_one.get('scrollHeight');
+      clone_one.remove(true);
+      return height;
+
     },
 
     /**
@@ -282,7 +286,7 @@ YUI.add('resizing-textarea', function(Y) {
         // Force height if we're only one line and the single_line attr
         // is set.
         this.t_area.setStyles({
-          height: '1em',
+          height: this.get('single_line'),
           overflow: 'hidden'
         });
       } else if (this._prev_scroll_height !== scroll_height) {

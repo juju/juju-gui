@@ -16,6 +16,7 @@ YUI.add('juju-view-service', function(Y) {
   var views = Y.namespace('juju.views'),
       Templates = views.Templates,
       models = Y.namespace('juju.models'),
+      plugins = Y.namespace('juju.plugins'),
       utils = Y.namespace('juju.views.utils');
 
   /**
@@ -727,6 +728,20 @@ YUI.add('juju-view-service', function(Y) {
             container.setHTML(this.template(this.gatherRenderData()));
           }
           return this;
+        },
+
+        /**
+         Attach the plugins.  Must be called after the container
+         has been added to the DOM.
+
+         @method attachPlugins
+         */
+        attachPlugins: function() {
+          var container = this.get('container');
+          container.all('textarea.config-field').plug(plugins.ResizingTextarea,
+              { max_height: 200,
+                min_height: 18,
+                single_line: 18});
         },
 
         showErrors: function(errors) {

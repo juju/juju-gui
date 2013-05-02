@@ -536,8 +536,14 @@ YUI.add('juju-gui', function(Y) {
         nsRouter: this.nsRouter,
         querystring: req.query
       }, {}, function(view) {
-        // If the view contains a method call fitToWindow,
-        // we will execute it after getting the view rendered.
+        // If the view contains a method call fitToWindow and/or
+        // we will execute them after getting the view rendered and all of the
+        // entities added to the DOM.  The method attachPlugins hooks up
+        // required plugins and fitToWindow resizes as required by the window
+        // dimensions.
+        if (view.attachPlugins) {
+          view.attachPlugins();
+        }
         if (view.fitToWindow) {
           view.fitToWindow();
         }

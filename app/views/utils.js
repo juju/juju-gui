@@ -577,6 +577,12 @@ YUI.add('juju-view-utils', function(Y) {
   utils.getElementsValuesMapping = function(container, selector) {
     var result = {};
     container.all(selector).each(function(el) {
+
+      var name = el.get('name');
+      // Unnamed elements are resizing textarea artifacts.  Skip them.
+      if (!name) {
+        return;
+      }
       var value = null;
       if (el.getAttribute('type') === 'checkbox') {
         value = el.get('checked');
@@ -635,21 +641,12 @@ YUI.add('juju-view-utils', function(Y) {
           entry.value = '';
         }
       } else {
-        var value = config[field_name];
-        var numLines = 0;
-        if (value && value.split) {
-          // XXX: BradCrittenden 2013-04-23 bug=1171980: This isMultiLine flag
-          // is a work-around for recognizing configuration fields that need
-          // multiline input.  Since Juju does not have a configuration type
-          // to differentiate between a simple string and multiline text this
-          // is the best we can do.  The referenced bug was filed against
-          // juju-core to request a 'text' type, which will make this hack
-          // redundant.
-          numLines = value.split('\n').length;
-          entry.isMultiLine = (numLines > 1);
+        if (schema[field_name].type === 'int' ||
+            schema[field_name].type === 'float') {
+          entry.isNumeric = true;
         }
-        entry.rows = numLines;
-        entry.value = value;
+
+        entry.value = config[field_name];
       }
       settings.push(Y.mix(entry, field_def));
     });
