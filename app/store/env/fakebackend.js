@@ -1114,6 +1114,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       return Y.Promise(function(resolve, reject) {
         self._loadCharm(charmId, {
+          /**
+           * Callback to return resolved charm
+           * as associated serviceData (so it can
+           * be updated if version changed).
+           *
+           * @method success
+           */
           success: function(charm) {
             resolve([charm, serviceData]);
           },

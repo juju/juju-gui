@@ -305,7 +305,7 @@
 
           // Verify that the charms have been loaded.
           assert.isNotNull(fakebackend.db.charms.getById(
-            'cs:precise/wordpress-10'));
+              'cs:precise/wordpress-10'));
           done();
         });
       });
