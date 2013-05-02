@@ -514,14 +514,16 @@ YUI.add('juju-gui', function(Y) {
             landscape: this.landscape,
             nsRouter: this.nsRouter
           };
-
+      // Give the page 100 milliseconds to try and load the model
+      // before we show a loading screen.
       var handle = setTimeout(function() {
-        self.showView('unit', options, { update: true });
+        self.showView('unit', options);
       }, 100);
 
       var promise = this.modelController.getService(serviceId);
       promise.then(
-          // If there is a service available
+          // If there is a service available then we need to check if the unit
+          // is available.
           function(models) {
             clearTimeout(handle);
             var unit = self.db.units.getById(unitId);
@@ -529,8 +531,8 @@ YUI.add('juju-gui', function(Y) {
               options.unit = unit;
               self.showView('unit', options);
             } else {
-              // Show a notification and then redirect to the service
-              // if there is no unit available
+              // If there is no unit available in this service then we show
+              // a notification and then redirect to the service.
               self.db.notifications.add(
                   new Y.juju.models.Notification({
                     title: 'Unit is not available',
@@ -542,7 +544,9 @@ YUI.add('juju-gui', function(Y) {
                   {gui: '/service/' + serviceId})});
             }
           },
-          // If there is no service available
+          // If there is no service available then there definitely is no unit
+          // available so we create a notification and redirect the user to the
+          // environment view.
           function() {
             clearTimeout(handle);
             self.db.notifications.add(
@@ -572,10 +576,8 @@ YUI.add('juju-gui', function(Y) {
           };
       // Give the page 100 milliseconds to try and load the model
       // before we show a loading screen.
-      // Calling update allows showView to be called multiple times but
-      // only have it's config updated not re-rendered.
       var handle = setTimeout(function() {
-        self.showView(viewName, options, { update: true });
+        self.showView(viewName, options);
       }, 100);
 
       var promise = this.modelController.getServiceWithCharm(req.params.id);
@@ -583,14 +585,18 @@ YUI.add('juju-gui', function(Y) {
           function(models) {
             clearTimeout(handle);
             options.model = models.service;
+            // Calling update allows showView to be called multiple times but
+            // only have its config updated not re-rendered.
             self.showView(viewName, options, { update: true });
           },
           function() {
             clearTimeout(handle);
             self.showView(viewName, options, { update: true },
                 function(view) {
-                  // This is to handle the story where a service is destroyed
-                  // while it is being viewed.
+                  // At this point the service view could be in loading state
+                  // or showing details but the service has become unavailable
+                  // or was never available. This calls a method on the view
+                  // to redirect to the environment and to create a notification
                   if (typeof view.noServiceAvailable === 'function') {
                     view.noServiceAvailable();
                   }
@@ -862,6 +868,9 @@ YUI.add('juju-gui', function(Y) {
         var charmstore = subapps.charmstore;
         if (url.match(match)) {
           charmstore.hidden = true;
+          // XXX At some point in the near future we will add the ability to
+          // route on root namespaced paths and this check will no longer
+          // be needed
           this.renderEnvironment = false;
         } else {
           charmstore.hidden = false;
