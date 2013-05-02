@@ -759,6 +759,7 @@
       Y = YUI(GlobalConfig).use(
           'juju-views', 'juju-models', 'base', 'node', 'json-parse',
           'juju-env', 'node-event-simulate', 'juju-tests-utils', 'event-key',
+          'resizing-textarea',
           function(Y) {
             models = Y.namespace('juju.models');
             views = Y.namespace('juju.views');
@@ -851,10 +852,12 @@
 
       assert.equal('an_int', settings[1].name);
       assert.isUndefined(settings[1].isBool);
+      assert.isTrue(settings[1].isNumeric);
       assert.equal(10, settings[1].value);
 
       assert.equal('a_float', settings[2].name);
       assert.isUndefined(settings[2].isBool);
+      assert.isTrue(settings[2].isNumeric);
       assert.equal(1.0, settings[2].value);
 
       assert.equal('a_string', settings[3].name);
@@ -865,5 +868,21 @@
       assert.isUndefined(settings[4].isBool);
       assert.equal('hidey\nho', settings[4].value);
     });
+
+    it('attaches the resizing plugin to the textareas', function() {
+      view.render();
+      var textareas = container.all('textarea.config-field');
+      assert.equal(textareas.size(), 2);
+      assert.isUndefined(textareas.item(0).resizingTextarea);
+      assert.isUndefined(textareas.item(1).resizingTextarea);
+      view.attachPlugins();
+      textareas = container.all('textarea.config-field');
+      // Clones will have been created after each real
+      // textarea, so the actual ones are the even numbered.
+      assert.equal(textareas.size(), 4);
+      assert.isDefined(textareas.item(0).resizingTextarea);
+      assert.isDefined(textareas.item(2).resizingTextarea);
+    });
+
   });
 })();

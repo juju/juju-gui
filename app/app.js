@@ -538,6 +538,9 @@ YUI.add('juju-gui', function(Y) {
       }, {}, function(view) {
         // If the view contains a method call fitToWindow,
         // we will execute it after getting the view rendered.
+        if (view.attachPlugins) {
+          view.attachPlugins();
+        }
         if (view.fitToWindow) {
           view.fitToWindow();
         }

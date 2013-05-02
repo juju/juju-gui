@@ -117,11 +117,11 @@ describe('charm configuration', function() {
           db: db});
     var modCharmConfig = Y.clone(charmConfig);
     modCharmConfig.config.options.option3 = {
-       name: 'option3',
-       type: 'float',
-       description: 'Option Three'
-     };
-     charm.setAttrs(modCharmConfig);
+      name: 'option3',
+      type: 'float',
+      description: 'Option Three'
+    };
+    charm.setAttrs(modCharmConfig);
     var options = charmConfig.config.options;
     // Set default values appropriate for each input type.
     options.option0['default'] = 'a single-line string';
@@ -236,32 +236,32 @@ describe('charm configuration', function() {
     charm.loaded = true;
     view.render();
     var tooltip = view.tooltip,
-        inputControls = container.all('.control-group input.config-field'),
-        textareaControls = container.all('.control-group textarea.config-field');
+        inputCtls = container.all('.control-group input.config-field'),
+        textareaCtls = container.all('.control-group textarea.config-field');
     tooltip.get('srcNode').get('text').should.equal('');
 
     // The input controls are service-name, number-units, the upload widget,
     // and the boolean and int.
-    assert.equal(inputControls.size(), 4);
+    assert.equal(inputCtls.size(), 4);
     // The textarea has the real one and a clone used for resizing.
-    assert.equal(textareaControls.size(), 2);
-    inputControls.item(0).focus();
+    assert.equal(textareaCtls.size(), 2);
+    inputCtls.item(0).focus();
     tooltip.get('srcNode').get('text').should.equal(
         'Name of the service to be deployed.  Must be unique.');
     tooltip.get('visible').should.equal(true);
-    inputControls.item(0).blur();
+    inputCtls.item(0).blur();
     tooltip.get('visible').should.equal(false);
-    inputControls.item(1).focus();
+    inputCtls.item(1).focus();
     tooltip.get('srcNode').get('text').should.equal(
         'Number of units to deploy for this service.');
     tooltip.get('visible').should.equal(true);
-    inputControls.item(1).blur();
-    inputControls.item(2).focus();
+    inputCtls.item(1).blur();
+    inputCtls.item(2).focus();
     tooltip.get('srcNode').get('text').should.equal('Option One');
     tooltip.get('visible').should.equal(true);
     // Now ensure it works in a textarea too.
-    inputControls.item(2).blur();
-    textareaControls.item(0).focus();
+    inputCtls.item(2).blur();
+    textareaCtls.item(0).focus();
     tooltip.get('srcNode').get('text').should.equal('Option Zero');
     tooltip.get('visible').should.equal(true);
   });

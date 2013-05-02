@@ -742,8 +742,10 @@ YUI.add('juju-charm-panel', function(Y) {
                 { charm: charm.getAttrs(),
                   settings: settings}));
 
-            // Plug in the textarea resizer.
-            container.all('textarea.config-field').plug(plugins.ResizingTextarea,
+            // Plug in the textarea resizer.  This action can only done after
+            // the container is added to the DOM.
+            container.all('textarea.config-field')
+              .plug(plugins.ResizingTextarea,
                 { max_height: 200,
                   min_height: 28,
                   single_line: 18});

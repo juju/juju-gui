@@ -726,16 +726,22 @@ YUI.add('juju-view-service', function(Y) {
             console.log('waiting on service data');
           } else {
             container.setHTML(this.template(this.gatherRenderData()));
-            // Plug in the textarea resizer.
-            // XXX bac: the min_height and single_line are bogus.
-            // Also, the initial height is being set wrong if the textarea is
-            // pre-populated.
-            container.all('textarea.config-field').plug(plugins.ResizingTextarea,
-                { max_height: 200,
-                  min_height: 18,
-                  single_line: false});
           }
           return this;
+        },
+
+        /**
+         Attach the plugins.  Must be called after the container
+         has been added to the DOM.
+
+         @method attachPlugins
+         */
+        attachPlugins: function() {
+          var container = this.get('container');
+          container.all('textarea.config-field').plug(plugins.ResizingTextarea,
+              { max_height: 200,
+                min_height: 18,
+                single_line: 18});
         },
 
         showErrors: function(errors) {
