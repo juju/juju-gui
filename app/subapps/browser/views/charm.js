@@ -444,19 +444,26 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       var tplData = charm.getAttrs(),
           container = this.get('container');
-
       tplData.isFullscreen = isFullscreen;
       tplData.prettyCommits = this._formatCommitsForHtml(
           tplData.recent_commits);
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
 
+      if (Y.Object.isEmpty(tplData.requires)) {
+        tplData.requires = false;
+      }
+      if (Y.Object.isEmpty(tplData.provides)) {
+        tplData.provides = false;
+      }
+
       var tpl = this.template(tplData);
       var tplNode = container.setHTML(tpl);
 
       // Set the content then update the container so that it reload
       // events.
-      Y.one('.bws-view-data').setHTML(tplNode);
+      var renderTo = this.get('renderTo');
+      renderTo.setHTML(tplNode);
 
       this.tabview = new widgets.browser.TabView({
         srcNode: tplNode.one('.tabs')
@@ -474,6 +481,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
       } else {
         this._noReadme(tplNode.one('#bws-readme'));
       }
+      // XXX: Ideally we shouldn't have to do this; resetting the container
+      // with .empty or something before rendering the charm view should work.
+      // But it doesn't so we scroll the nav bar into view, load the charm
+      // view at the top of the content.
+      renderTo.one('.nav').scrollIntoView();
     },
 
     /**
@@ -488,15 +500,18 @@ YUI.add('subapp-browser-charmview', function(Y) {
      */
     render: function() {
       var isFullscreen = this.get('isFullscreen');
+      this.showIndicator(this.get('renderTo'));
 
       if (this.get('charm')) {
         this._renderCharmView(this.get('charm'), isFullscreen);
+        this.hideIndicator(this.get('renderTo'));
       } else {
         this.get('store').charm(this.get('charmID'), {
           'success': function(data) {
             var charm = new models.BrowserCharm(data);
             this.set('charm', charm);
             this._renderCharmView(this.get('charm'), isFullscreen);
+            this.hideIndicator(this.get('renderTo'));
           },
           'failure': this.apiFailure
         }, this);
@@ -530,6 +545,23 @@ YUI.add('subapp-browser-charmview', function(Y) {
        */
       isFullscreen: {
         value: false
+      },
+
+      /**
+       * @attribute renderTo
+       * @default {Node} .bws-view-data node.
+       * @type {Node}
+       *
+       */
+      renderTo: {
+        /**
+         * @method renderTo.valueFn
+         * @return {Node} the renderTo node.
+         *
+         */
+        valueFn: function() {
+          return Y.one('.bws-view-data');
+        }
       },
 
       /**

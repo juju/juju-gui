@@ -25,7 +25,8 @@
         <div class="heading yui3-g">
             <div class="yui3-u">
                 {{#if is_approved}}
-                    <i class="sprite badge-approved"></i>
+                    <span class="badge-approved"
+                        title="This charm has been reviewed."></span>
                 {{/if}}
 
                 {{#if icon }}
@@ -105,6 +106,9 @@
                     </p>
                 </div>
                 <div class="remaining hidden">
+                    <p class="maintainer">
+                        Maintained by {{ maintainer.name }}
+                    </p>
                     <h4>Earlier changes</h4>
                     <ul>
                         {{#prettyCommits.remaining}}

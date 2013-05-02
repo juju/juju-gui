@@ -2,6 +2,14 @@
     display: table;
     width: 100%;
 
+    .changelog li,
+    .changelog p,
+    .charm-details,
+    .yui3-tabview-panel {
+        a:hover {
+            text-decoration: underline;
+        }
+    }
     a.yui3-tab-label {
         color: @bws-text;
     }
@@ -14,8 +22,9 @@
     h4 {
         .heading-font;
     }
+    li,
     p {
-        width: 66.666%;
+        max-width: 66.666%;
     }
     .provider-warning {
         height: 20px;
@@ -101,15 +110,17 @@
             background: transparent
                     url(/juju-ui/assets/images/charm_160.png)
                     left top no-repeat;
+
             &.provided {
               background: none;
             }
         }
-
-        i.badge-approved {
-            position: absolute;
-            margin-left: -15px;
-            margin-top: -15px;
+        .badge-approved {
+            width: 57px;
+            height: 57px;
+            margin-top: -13px;
+            margin-left: -14px;
+            background-image: url(/juju-ui/assets/images/badge_approved_57.png);
         }
 
         .charm-details {
@@ -161,6 +172,9 @@
         }
         p {
             margin: 0;
+        }
+        .maintainer {
+            margin-bottom: 10px;
         }
         .date {
             margin-right: 3pt;

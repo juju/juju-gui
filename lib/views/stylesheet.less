@@ -281,6 +281,10 @@ svg {
 #environment-help {
   color: #757575;
   text-align: center;
+  /* This is absolute so that it does not push the svg down when it is
+     visible.  That's important for animations hiding and showing this help,
+     and if we want the help to appear when a service is present (such as the
+     GUI itself). */
   position: absolute;
   overflow: hidden;
   padding: 0;
@@ -291,7 +295,7 @@ svg {
   pointer-events: none;
   div.vertical-center-floater {
     height: 50%;
-    margin-bottom: -225px;
+    margin-bottom: -250px;
     margin-top: 0;
     min-height: 225px;
   }
@@ -1651,14 +1655,14 @@ ul.menu {
     }
 
     #loading-message-text {
-        font-family: Ubuntu Medium, Helvetica, Arial;
+        font-family: @font-family-medium;
         font-size: 10pt;
     }
 
     #login-form {
         .header {
             font-size: 10pt;
-            font-family: Ubuntu Medium, Helvetica, Arial;
+            font-family: @font-family-medium;
         }
     }
 
@@ -1669,7 +1673,7 @@ ul.menu {
             float: left;
         }
         h4 {
-            font-family: Ubuntu Medium, Helvetica, Arial;
+            font-family: @font-family-medium;
             font-size: 10pt;
             line-height: 10pt;
         }

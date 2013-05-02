@@ -6,27 +6,48 @@
         display: block;
         color: @bws-text;
 
-        .charm-icon {
-            width: 64px;
-            height: 64px;
-            margin-right: 16px;
-            background: transparent
+        &.small {
+            .charm-icon,
+            .icon {
+                width: 64px;
+                height: 64px;
+                margin-right: 16px;
+            }
+            .charm-icon {
+                background: transparent
                     url(/juju-ui/assets/images/charm_64.png)
                     left top no-repeat;
+            }
+            .badge-approved {
+                width: 22px;
+                height: 22px;
+                margin-top: -6px;
+                margin-left: -6px;
+                background-image:
+                    url(/juju-ui/assets/images/badge_approved_22.png);
+            }
         }
-
-        .icon {
-            width: 64px;
-            height: 64px;
-            margin-right: 16px;
+        &.large {
+            .charm-icon,
+            .icon {
+                width: 96px;
+                height: 96px;
+                margin-right: 16px;
+            }
+            .charm-icon {
+                background: transparent
+                    url(/juju-ui/assets/images/charm_96.png)
+                    left top no-repeat;
+            }
+            .badge-approved {
+                width: 40px;
+                height: 40px;
+                margin-top: -9px;
+                margin-left: -10px;
+                background-image:
+                    url(/juju-ui/assets/images/badge_approved_40.png);
+            }
         }
-
-        i.badge-approved {
-            position: absolute;
-            margin-left: -20px;
-            margin-top: -20px;
-        }
-
         .title,
         .metadata,
         .description {

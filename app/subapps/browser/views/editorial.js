@@ -23,7 +23,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
    *
    */
   ns.EditorialView = Y.Base.create('browser-view-sidebar', Y.View, [
-    views.utils.apiFailingView
+    views.utils.apiFailingView,
+    widgets.browser.IndicatorManager
   ], {
     // How many of each charm container do we show by default.
     cutoffs: {
@@ -95,7 +96,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
      * @param {Object} request the original io_request object for debugging.
      */
     apiFailure: function(data, request) {
-      this._apiFailure(data, request, 'Failed to load sidebar content.');
+      this._apiFailure(data, request, 'Failed to load editorial content.');
     },
 
     /**
@@ -134,6 +135,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
           tplNode = Y.Node.create(tpl),
           store = this.get('store');
 
+      this.showIndicator(this.get('renderTo'));
+
       // By default we grab the editorial content from the api to use for
       // display.
       this.get('store').interesting({
@@ -148,41 +151,55 @@ YUI.add('subapp-browser-editorial', function(Y) {
           } else {
             cutoffs = this.cutoffs.sidebar;
           }
-          var featuredCharmContainer = new widgets.browser.CharmContainer({
-            name: 'Featured Charms',
-            cutoff: cutoffs.featured,
-            children: featuredCharms.map(function(charm) {
-              return charm.getAttrs(); })
-          });
+
+          var containerCfg = {
+            additionalChildConfig: {
+              size: this.get('isFullscreen') ? 'large' : 'small'
+            }
+          };
+
+          var featuredCharmContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'Featured Charms',
+                cutoff: cutoffs.featured,
+                children: featuredCharms.map(function(charm) {
+                  return charm.getAttrs();
+                })},
+              containerCfg));
           featuredCharmContainer.render(featuredContainer);
 
           // Add popular charms
           var popularCharms = this.get('store').resultsToCharmlist(
               data.result.popular);
           var popularContainer = tplNode.one('.popular');
-          var popularCharmContainer = new widgets.browser.CharmContainer({
-            name: 'Popular Charms',
-            cutoff: cutoffs.popular,
-            children: popularCharms.map(function(charm) {
-              return charm.getAttrs(); })
-          });
+          var popularCharmContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'Popular Charms',
+                cutoff: cutoffs.popular,
+                children: popularCharms.map(function(charm) {
+                  return charm.getAttrs();
+                })},
+              containerCfg));
           popularCharmContainer.render(popularContainer);
 
           // Add in the charm tokens for the new as well.
           var newContainer = tplNode.one('.new');
           var newCharms = this.get('store').resultsToCharmlist(
               data.result['new']);
-          var newCharmContainer = new widgets.browser.CharmContainer({
-            name: 'New Charms',
-            cutoff: cutoffs['new'],
-            children: newCharms.map(function(charm) {
-              return charm.getAttrs(); })
-          });
+          var newCharmContainer = new widgets.browser.CharmContainer(
+              Y.merge({
+                name: 'New Charms',
+                cutoff: cutoffs['new'],
+                children: newCharms.map(function(charm) {
+                  return charm.getAttrs();
+                })},
+              containerCfg));
           newCharmContainer.render(newContainer);
 
           var container = this.get('container');
           container.append(tplNode);
           this.get('renderTo').setHTML(container);
+          this.hideIndicator(this.get('renderTo'));
 
           // Add the charms to the cache for use in other views.
           // Start with a reset to empty any current cached models.
@@ -272,6 +289,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
   requires: [
     'browser-charm-container',
     'browser-charm-token',
+    'browser-overlay-indicator',
     'browser-search-widget',
     'juju-charm-store',
     'juju-models',
