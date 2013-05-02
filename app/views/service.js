@@ -733,8 +733,6 @@ YUI.add('juju-view-service', function(Y) {
             container.all('textarea.config-field').plug(plugins.ResizingTextarea,
                 { max_height: 200,
                   min_height: 18,
-                  // XXX bac: We set single_line to be 18px but it then gets
-                  // inflated such that our config-fields are actually 28px.
                   single_line: false});
           }
           return this;
