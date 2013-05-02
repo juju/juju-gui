@@ -547,20 +547,6 @@ describe('utilities', function() {
       assert.equal('something', settings[0].value);
     });
 
-    it('should trim trailing whitespace the value if a string', function() {
-      var schema = {
-        an_entry: {
-          type: 'string',
-          name: 'thing',
-          'default': ' something\nmore  \n \n'
-        }
-      };
-
-      var settings = utils.extractServiceSettings(schema);
-      assert.isUndefined(settings[0].isBool);
-      assert.equal(' something\nmore', settings[0].value);
-    });
-
     it('should identify ints', function() {
       var schema = {
         an_entry: {

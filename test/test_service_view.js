@@ -781,7 +781,7 @@
           an_int: {type: 'int', 'default': 10},
           a_float: {type: 'float', 'default': 1.0},
           a_string: {type: 'string', 'default': 'howdy'},
-          some_text: {type: 'string', 'default': 'hidey\nho\n\n'}
+          some_text: {type: 'string', 'default': 'hidey\nho'}
         }
       };
       charm = new models.Charm({
