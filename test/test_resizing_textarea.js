@@ -73,7 +73,7 @@ describe('textarea autosize plugin', function() {
    *
    */
   function get_height(target) {
-    return clean_size(target.getComputedStyle('height')) + ie_fudge;;
+    return clean_size(target.getComputedStyle('height')) + ie_fudge;
   }
 
   /**
