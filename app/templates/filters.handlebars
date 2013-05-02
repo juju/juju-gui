@@ -12,12 +12,12 @@
 
   <div>
       <h4>Charm categories</h4>
-      <ul id="search-filter-category">
-        {{#category}}
+      <ul id="search-filter-categories">
+        {{#categories}}
             <li><input type="checkbox" value="{{ value }}"
                 {{#if checked}}checked="checked"{{/if}} />{{name}}
             </li>
-        {{/category}}
+        {{/categories}}
       </ul>
   </div>
 

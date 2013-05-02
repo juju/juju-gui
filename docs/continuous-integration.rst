@@ -134,6 +134,28 @@ There are quite a number of files which are involved in the CI process::
 
 Known issues
 ------------
+Image Id's Change
+~~~~~~~~~~~~~~~~~
+If the chosen image that we are using becomes unusable or is removed the CI will
+fail almost instantly with the error::
+
+  ERROR Unexpected 400:
+  '{"badRequest": {"message": "Can not find requested image", "code": 400}}'
+
+To fix this you need to change the default-image-id in the environments.yaml
+file for the jujugui-merger account on Jenkins.
+
+The documentation says to use `euca-describe-images` but canonistack does not
+accept those id's so you need to run `nova image-list` and choose one of the
+hash style id's.
+
+The current image name that we use is::
+
+  ubuntu-released/ubuntu-precise-12.04-amd64-server-20130411.1-disk1.img
+
+If this one is not available pick the closest one which represents a public
+release image on precise(12.04) 64bit.
+
 Unit tests fail
 ~~~~~~~~~~~~~~~~
 In reviewing the CI logs you might notice that it says '{} failure(s) running {}

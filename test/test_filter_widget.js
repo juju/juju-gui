@@ -17,7 +17,7 @@ describe('filter widget', function() {
       filters: {
         text: 'foo',
         type: ['approved'],
-        category: ['databases', 'app_servers']
+        categories: ['databases', 'app-servers']
       }
     });
   });
@@ -34,11 +34,11 @@ describe('filter widget', function() {
 
   it('initializes correctly', function() {
     assert.isObject(instance.get('filters'));
-    var categories = instance.get('category');
+    var categories = instance.get('categories');
 
-    instance.get('category')[0].value.should.eql('databases');
-    instance.get('category')[0].name.should.eql('Databases');
-    instance.get('category')[0].checked.should.eql(true);
+    instance.get('categories')[0].value.should.eql('databases');
+    instance.get('categories')[0].name.should.eql('Databases');
+    instance.get('categories')[0].checked.should.eql(true);
 
     instance.get('type')[0].name.should.eql('Reviewed Charms');
     instance.get('type')[0].value.should.eql('approved');
@@ -87,8 +87,8 @@ describe('filter widget', function() {
 
     handle = instance.on(instance.EV_FILTER_CHANGED, function(ev) {
       assert.isObject(ev.change);
-      ev.change.field.should.eql('category');
-      ev.change.value.should.eql(['app_servers']);
+      ev.change.field.should.eql('categories');
+      ev.change.value.should.eql(['app-servers']);
       done();
     });
 
