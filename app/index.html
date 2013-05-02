@@ -236,7 +236,12 @@ if (/*@cc_on!@*/false) {
       // start.
       startTheApp = function() {
         setLoadingMessageText('Connecting to the Juju environment');
-        YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+
+        // The QueryString module must be included before any Y.App code so
+        // that the Y.Router will decode query strings with Y.QueryString
+        // (which supports lists of values in the querystring) vs the
+        // Y.Router._parseQuery which does not support list values.
+        YUI(GlobalConfig).use(['querystring', 'juju-gui'], function(Y) {
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application
           // in production. Unit tests should call it manually.
