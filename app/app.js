@@ -502,7 +502,6 @@ YUI.add('juju-gui', function(Y) {
      * @method show_unit
      */
     show_unit: function(req) {
-console.log('show unit');
       // This replacement honors service names that have a hyphen in them.
       var unitId = req.params.id.replace(/^(\S+)-(\d+)$/, '$1/$2');
       var serviceId = unitId.split('/')[0];
@@ -522,17 +521,16 @@ console.log('show unit');
 
       var promise = this.modelController.getService(serviceId);
       promise.then(
+          // If there is a service available
           function(models) {
-console.log('1');
             clearTimeout(handle);
             var unit = self.db.units.getById(unitId);
             if (unit) {
-console.log('unit');
               options.unit = unit;
               self.showView('unit', options);
             } else {
-console.log('nounit');
-debugger;
+              // Show a notification and then redirect to the service
+              // if there is no unit available
               self.db.notifications.add(
                   new Y.juju.models.Notification({
                     title: 'Unit is not available',
@@ -546,7 +544,6 @@ debugger;
           },
           // If there is no service available
           function() {
-console.log('2');
             clearTimeout(handle);
             self.db.notifications.add(
                 new Y.juju.models.Notification({
@@ -842,18 +839,21 @@ console.log('2');
     },
 
     /**
-       Determine if the browser should be visible or not.
+       Determine if the browser or environment should be rendered or not.
 
        When hitting internal :gui: views, the browser needs to disappear
        entirely from the UX for users. However, when we pop back it needs to
        appear back in the previous state.
 
-       @method checkShowEnvOrBrowser
+       The environment only needs to render when another full page view isn't
+       visible.
+
+       @method toggleStaticViews
        @param {Request} req current request object.
        @param {Response} res current response object.
        @param {function} next callable for the next route in the chain.
      */
-    checkShowEnvOrBrowser: function(req, res, next) {
+    toggleStaticViews: function(req, res, next) {
       var url = req.url,
           match = /(logout|:gui:\/(charms|service|unit))/;
       var subapps = this.get('subApps');
@@ -1024,7 +1024,7 @@ console.log('2');
           // Called on each request.
           { path: '*', callbacks: 'check_user_credentials'},
           { path: '*', callbacks: 'show_notifications_view'},
-          { path: '*', callbacks: 'checkShowEnvOrBrowser'},
+          { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
           // Charms.
           { path: '/charms/',

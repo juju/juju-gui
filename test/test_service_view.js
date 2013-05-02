@@ -731,21 +731,19 @@
     });
 
     it('loading message if the service is not loaded (service)', function() {
-      var view = makeServiceView();
-      view.get('model').set('loaded', false);
+      var view = new Y.juju.views.service();
       view.render();
-      var html = container.getHTML();
-      assert.match(html, /Loading\.\.\./);
+      var html = view.get('container').getHTML();
+      assert.match(html, /Loading/);
     });
 
     it('loading message if the service is not loaded (relations)', function() {
       // This would ideally be in its own suite; see the XXX at top of this
       // file.
-      var view = makeServiceRelationsView();
-      view.get('model').set('loaded', false);
+      var view = new Y.juju.views.service_relations();
       view.render();
-      var html = container.getHTML();
-      assert.match(html, /Loading\.\.\./);
+      var html = view.get('container').getHTML();
+      assert.match(html, /Loading/);
     });
 
   });
@@ -823,10 +821,10 @@
     });
 
     it('displays a loading message if the service is not loaded', function() {
-      view.get('model').set('loaded', false);
+      view.set('model', undefined);
       view.render();
       var html = container.getHTML();
-      assert.match(html, /Loading\.\.\./);
+      assert.match(html, /Loading/);
     });
 
     it('displays no loading message if the service is loaded', function() {
