@@ -1380,7 +1380,7 @@
      *
      * This callback is appended to any calling arguments
      *
-     * @method P
+     * @method promise
      * @param {Object} context Calling context.
      * @param {String} methodName name of method on context to invoke.
      * @param {Arguments} arguments Additional arguments passed
@@ -1414,7 +1414,6 @@
       this.timeout(250);
 
       client.open();
-      // jshint is insisting on these 'new' prefixes.
       promise(state, 'deploy', 'cs:wordpress')
        .then(promise(state, 'deploy', 'cs:mysql'))
        .then(promise(state, 'addRelation', 'wordpress:db', 'mysql:db'))
@@ -1437,7 +1436,7 @@
           var data = Y.JSON.parse(result.data).result;
           assert.isTrue(data);
 
-          // Verify that we can now an find expected entry
+          // Verify that we can now find an expected entry
           // in the database.
           assert.isNotNull(state.db.services.getById('wordpress'));
 

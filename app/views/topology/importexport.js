@@ -22,18 +22,18 @@ YUI.add('juju-topology-importexport', function(Y) {
         events: {
           scene: {
             '.zoom-plane': {
-              dragenter: 'ignore',
-              dragover: 'ignore',
-              drop: 'handleFileDrop'
+              dragenter: '_ignore',
+              dragover: '_ignore',
+              drop: '_handleFileDrop'
             }
           }
         },
 
         /**
          * Ingore some of the drag events.
-         * @method ignore
+         * @method _ignore
          */
-        ignore: function(box, module) {
+        _ignore: function(box, module) {
           var evt = d3.event;
           evt.preventDefault();
           evt.stopPropagation();
@@ -42,9 +42,9 @@ YUI.add('juju-topology-importexport', function(Y) {
         /**
          * Handle file drops with HTML5 reader api
          *
-         * @method handleFileDrop
+         * @method _handleFileDrop
          */
-        handleFileDrop: function(box, self) {
+        _handleFileDrop: function(box, self) {
           // This handler uses the HTML5 File
           // API for DnD support. This event
           // doesn't properly appear in the YUI

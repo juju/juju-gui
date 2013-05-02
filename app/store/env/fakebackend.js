@@ -1131,11 +1131,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
 
     /**
-   * Export environment state
-   *
-   * @method exportEnvironment
-   * @return {String} JSON description of env data.
-   */
+     * Export environment state
+     *
+     * @method exportEnvironment
+     * @return {String} JSON description of env data.
+     */
     exportEnvironment: function() {
       var self = this,
           serviceList = this.db.services,
