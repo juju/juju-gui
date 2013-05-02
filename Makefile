@@ -270,7 +270,7 @@ recess: node_modules/recess
 	node_modules/recess/bin/recess lib/views/stylesheet.less \
 	    --config recess.json | grep -q Perfect
 
-lint: test-prep gjslint jshint recess yuidoc-lint test-filtering
+lint: test-prep jshint gjslint recess yuidoc-lint test-filtering
 
 virtualenv/bin/python:
 	virtualenv virtualenv
