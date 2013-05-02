@@ -587,6 +587,12 @@ YUI.add('juju-gui', function(Y) {
       // Give the page 100 milliseconds to try and load the model
       // before we show a loading screen.
       var handle = setTimeout(function() {
+        // XXX There is an issue which causes this to be the only view rendered
+        // if there is a service model available when trying to view
+        // an invalid unit by manually entering in the url. The following line
+        // will be null under normal circumstances causing the script to run
+        // as usual.
+        options.model = self.db.services.getById(req.params.id);
         self.showView(viewName, options, attachPlugins);
       }, 100);
 
