@@ -1111,14 +1111,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
 
       return Y.Promise(function(resolve, reject) {
         self._loadCharm(charmId, {
-          success: function(result) {
-            console.log("got charm", result);
-            resolve(result);
-          },
-          failure: function(result) {
-            console.error(result);
-            reject(result);
-          }
+          success: resolve,
+          failure: reject
         });
       });
     },
