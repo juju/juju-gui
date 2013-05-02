@@ -44,8 +44,8 @@
         text: 'one'
       });
 
-      filter.update({category: 'databases'});
-      filter.get('category').should.eql(['databases']);
+      filter.update({categories: 'databases'});
+      filter.get('categories').should.eql(['databases']);
       // While the text is left along
       filter.get('text').should.eql('one');
     });

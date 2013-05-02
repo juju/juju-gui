@@ -26,11 +26,11 @@ YUI.add('juju-browser-models', function(Y) {
 
   ns.FILTER_CATEGORIES = {
     'databases': 'Databases',
-    'file_servers': 'File Servers',
-    'app_servers': 'App Servers',
-    'cache_proxy': 'Cache/Proxy',
+    'file-servers': 'File Servers',
+    'app-servers': 'App Servers',
+    'cache-proxy': 'Cache/Proxy',
     'applications': 'Applications',
-    'miscellaneous': 'Miscellaneous'
+    'misc': 'Miscellaneous'
   };
 
   ns.FILTER_SERIES = {
@@ -89,7 +89,7 @@ YUI.add('juju-browser-models', function(Y) {
      */
     getFilterData: function() {
       var res = {
-        category: this.get('category'),
+        categories: this.get('categories'),
         provider: this.get('provider'),
         series: this.get('series'),
         text: this.get('text'),
@@ -153,7 +153,7 @@ YUI.add('juju-browser-models', function(Y) {
       // Update each manually as we might get an Array or a single value from
       // the query string update.
       var arrayVals = [
-        'category', 'provider', 'series', 'type'
+        'categories', 'provider', 'series', 'type'
       ];
 
       Y.Array.each(arrayVals, function(key) {
@@ -173,18 +173,53 @@ YUI.add('juju-browser-models', function(Y) {
 
   }, {
     ATTRS: {
-      category: {
+      /**
+        The categories of charm to search filter the search to.
+
+        @attribute categories
+        @default []
+        @type {Array}
+       */
+      categories: {
         value: []
       },
+      /**
+        The providers for charms to filter to.
+
+        @attribute provider
+        @default []
+        @type {Array}
+       */
       provider: {
         value: []
       },
+      /**
+        The series to filter to for the search.
+
+        @attribute series
+        @default []
+        @type {Array}
+       */
       series: {
         value: []
       },
+      /**
+        The text to search for.
+
+        @attribute text
+        @default ''
+        @type {String}
+       */
       text: {
         value: ''
       },
+      /**
+        The type of charms to filter to.
+
+        @attribute type
+        @default []
+        @type {Array}
+       */
       type: {
         value: []
       }

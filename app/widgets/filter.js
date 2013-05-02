@@ -108,7 +108,7 @@ YUI.add('browser-filter-widget', function(Y) {
          @type {Array}
 
        */
-      'category': {
+      'categories': {
         /**
            Given the list of filters available, which of ours are set or not
            set.
@@ -120,14 +120,14 @@ YUI.add('browser-filter-widget', function(Y) {
         getter: function() {
           var filters = this.get('filters');
           var res = [];
-          if (!filters || !filters.category) {
-            filters = {category: []};
+          if (!filters || !filters.categories) {
+            filters = {categories: []};
           }
           Y.Object.each(models.FILTER_CATEGORIES, function(val, key) {
             res.push({
               name: val,
               value: key,
-              checked: filters.category.indexOf(key) !== -1
+              checked: filters.categories.indexOf(key) !== -1
             });
           });
           return res;
