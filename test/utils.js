@@ -5,8 +5,11 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
   var jujuTests = Y.namespace('juju-tests');
 
   jujuTests.utils = {
-    makeContainer: function() {
+    makeContainer: function(id) {
       var container = Y.Node.create('<div>');
+      if (id) {
+        container.set('id', id);
+      }
       container.appendTo(document.body);
       container.setStyle('position', 'absolute');
       container.setStyle('top', '-10000px');
