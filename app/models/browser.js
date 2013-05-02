@@ -173,18 +173,53 @@ YUI.add('juju-browser-models', function(Y) {
 
   }, {
     ATTRS: {
+      /**
+        The categories of charm to search filter the search to.
+
+        @attribute categories
+        @default []
+        @type {Array}
+       */
       categories: {
         value: []
       },
+      /**
+        The providers for charms to filter to.
+
+        @attribute provider
+        @default []
+        @type {Array}
+       */
       provider: {
         value: []
       },
+      /**
+        The series to filter to for the search.
+
+        @attribute series
+        @default []
+        @type {Array}
+       */
       series: {
         value: []
       },
+      /**
+        The text to search for.
+
+        @attribute text
+        @default ''
+        @type {String}
+       */
       text: {
         value: ''
       },
+      /**
+        The type of charms to filter to.
+
+        @attribute type
+        @default []
+        @type {Array}
+       */
       type: {
         value: []
       }
