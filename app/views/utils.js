@@ -646,12 +646,7 @@ YUI.add('juju-view-utils', function(Y) {
           entry.isNumeric = true;
         }
 
-        var value = config[field_name];
-        if (value && value.trimRight) {
-          entry.value = value.trimRight();
-        } else {
-          entry.value = value;
-        }
+        entry.value = config[field_name];
       }
       settings.push(Y.mix(entry, field_def));
     });
