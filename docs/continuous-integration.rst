@@ -149,6 +149,13 @@ The documentation says to use `euca-describe-images` but canonistack does not
 accept those id's so you need to run `nova image-list` and choose one of the
 hash style id's.
 
+The current image name that we use is::
+
+  ubuntu-released/ubuntu-precise-12.04-amd64-server-20130411.1-disk1.img
+
+If this one is not available pick the closest one which represents a public
+release image on precise(12.04) 64bit.
+
 Unit tests fail
 ~~~~~~~~~~~~~~~~
 In reviewing the CI logs you might notice that it says '{} failure(s) running {}
