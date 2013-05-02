@@ -514,6 +514,7 @@ describe('utilities', function() {
 
       var settings = utils.extractServiceSettings(schema);
       assert.isTrue(settings[0].isBool);
+      assert.isUndefined(settings[0].isNumeric);
       assert.equal('checked', settings[0].value);
     });
 
@@ -527,6 +528,7 @@ describe('utilities', function() {
 
       var settings = utils.extractServiceSettings(schema);
       assert.isTrue(settings[0].isBool);
+      assert.isUndefined(settings[0].isNumeric);
       assert.equal('', settings[0].value);
     });
 
@@ -541,40 +543,22 @@ describe('utilities', function() {
 
       var settings = utils.extractServiceSettings(schema);
       assert.isUndefined(settings[0].isBool);
+      assert.isUndefined(settings[0].isNumeric);
       assert.equal('something', settings[0].value);
-      assert.isFalse(settings[0].isMultiLine);
     });
 
-    it('should identify text input with two line default', function() {
+    it('should trim trailing whitespace the value if a string', function() {
       var schema = {
         an_entry: {
           type: 'string',
           name: 'thing',
-          'default': 'something\nmore'
+          'default': ' something\nmore  \n \n'
         }
       };
 
       var settings = utils.extractServiceSettings(schema);
       assert.isUndefined(settings[0].isBool);
-      assert.equal('something\nmore', settings[0].value);
-      assert.isTrue(settings[0].isMultiLine);
-      assert.equal(2, settings[0].rows);
-    });
-
-    it('should identify text input with multi-line default', function() {
-      var schema = {
-        an_entry: {
-          type: 'string',
-          name: 'thing',
-          'default': 'something\neven\nmore'
-        }
-      };
-
-      var settings = utils.extractServiceSettings(schema);
-      assert.isUndefined(settings[0].isBool);
-      assert.equal('something\neven\nmore', settings[0].value);
-      assert.isTrue(settings[0].isMultiLine);
-      assert.equal(3, settings[0].rows);
+      assert.equal(' something\nmore', settings[0].value);
     });
 
     it('should identify ints', function() {
@@ -588,8 +572,8 @@ describe('utilities', function() {
 
       var settings = utils.extractServiceSettings(schema);
       assert.isUndefined(settings[0].isBool);
+      assert.isTrue(settings[0].isNumeric);
       assert.equal(100, settings[0].value);
-      assert.isUndefined(settings[0].isMultiLine);
     });
 
     it('should identify floats', function() {
@@ -603,8 +587,8 @@ describe('utilities', function() {
 
       var settings = utils.extractServiceSettings(schema);
       assert.isUndefined(settings[0].isBool);
+      assert.isTrue(settings[0].isNumeric);
       assert.equal(10.0, settings[0].value);
-      assert.isUndefined(settings[0].isMultiLine);
     });
 
     it('should use config values if passed', function() {
@@ -636,7 +620,6 @@ describe('utilities', function() {
       var settings = utils.extractServiceSettings(schema, serviceConfig);
       assert.isUndefined(settings[0].isBool);
       assert.equal('service value', settings[0].value);
-      assert.isFalse(settings[0].isMultiLine);
 
       // The service config value is not complete in that it does not have an
       // entry for 'another_string'.  As such, the value returned for that
@@ -645,7 +628,6 @@ describe('utilities', function() {
 
       assert.isUndefined(settings[2].isBool);
       assert.equal(3.14159, settings[2].value);
-      assert.isUndefined(settings[2].isMultiLine);
     });
   });
 })();

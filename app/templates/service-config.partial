@@ -10,16 +10,16 @@
             id="input-{{name}}" {{value}}/>
       </div>
     {{else}}
-      {{#if isMultiLine}}
-        <div class="control-label" for="{{name}}">{{name}} ({{type}})</div>
-        <div class="controls">
-          <textarea class="config-field" rows={{rows}} id="input-{{name}}" name="{{name}}">{{value}}</textarea>
-        </div>
-      {{else}}
+      {{#if isNumeric}}
         <div class="control-label" for="{{name}}">{{name}} ({{type}})</div>
         <div class="controls">
           <input class="config-field" type="text" name="{{name}}"
               id="input-{{name}}" value="{{value}}"/>
+        </div>
+      {{else}}
+        <div class="control-label" for="{{name}}">{{name}} ({{type}})</div>
+        <div class="controls">
+          <textarea class="config-field" id="input-{{name}}" name="{{name}}">{{value}}</textarea>
         </div>
       {{/if}}
     {{/if}}

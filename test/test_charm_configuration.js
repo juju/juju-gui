@@ -108,7 +108,7 @@ describe('charm configuration', function() {
     received_charm_url.should.equal('cs:precise/mysql-7');
   });
 
-  it('must recognized multi-line string defaults', function() {
+  it('must use the correct input type', function() {
     var charm = new models.Charm({id: 'precise/mysql-7'});
     var db = new models.Database();
     var view = new views.CharmConfigurationView(
@@ -117,24 +117,50 @@ describe('charm configuration', function() {
           db: db});
     var modCharmConfig = Y.clone(charmConfig);
     modCharmConfig.config.options.option3 = {
-      name: 'option3',
-      type: 'string',
-      description: 'Option Three'
-    };
-    var options = modCharmConfig.config.options;
+       name: 'option3',
+       type: 'float',
+       description: 'Option Three'
+     };
+     charm.setAttrs(modCharmConfig);
+    var options = charmConfig.config.options;
     // Set default values appropriate for each input type.
     options.option0['default'] = 'a single-line string';
     options.option1['default'] = 'checked';
     options.option2['default'] = 100;
-    options.option3['default'] = 'A string\nthat spans\nmultiple lines.';
+    options.option2['default'] = 10.9;
     charm.setAttrs(modCharmConfig);
     charm.loaded = true;
     view.render();
     container.all('div.control-label').get('text').should.eql(
         ['Service name', 'Number of units', 'option0 (string)',
-         'option1', 'option2 (int)', 'option3 (string)']);
-    assert.equal('text', container.one('#input-option0').get('type'));
-    assert.equal('textarea', container.one('#input-option3').get('type'));
+         'option1', 'option2 (int)', 'option3 (float)']);
+
+    assert.equal('textarea', container.one('#input-option0').get('type'));
+    assert.equal('checkbox', container.one('#input-option1').get('type'));
+    assert.equal('text', container.one('#input-option2').get('type'));
+    assert.equal('text', container.one('#input-option3').get('type'));
+  });
+
+  it('textareas must have resizing plugin', function() {
+    var charm = new models.Charm({id: 'precise/mysql-7'});
+    var db = new models.Database();
+    var view = new views.CharmConfigurationView(
+        { container: container,
+          model: charm,
+          db: db});
+    var options = charmConfig.config.options;
+    // Set default values appropriate for each input type.
+    options.option0['default'] = 'a single-line string';
+    options.option1['default'] = 'checked';
+    options.option2['default'] = 100;
+    charm.setAttrs(charmConfig);
+    charm.loaded = true;
+    view.render();
+    // Textareas must have the ResizingTextarea plugin.
+    assert.isDefined(container.one('#input-option0').resizingTextarea);
+    // But not the other input types.
+    assert.isUndefined(container.one('#input-option1').resizingTextarea);
+    assert.isUndefined(container.one('#input-option2').resizingTextarea);
   });
 
   it('must deploy a charm with the custom configuration', function() {
@@ -206,43 +232,37 @@ describe('charm configuration', function() {
           db: db,
           tooltipDelay: 0 });
 
-    var modCharmConfig = Y.clone(charmConfig);
-    modCharmConfig.config.options.option3 = {
-      name: 'option3',
-      type: 'string',
-      description: 'Option Three',
-      'default': 'A string\nthat spans\nmultiple lines.'
-    };
-    charm.setAttrs(modCharmConfig);
+    charm.setAttrs(charmConfig);
     charm.loaded = true;
     view.render();
     var tooltip = view.tooltip,
-        controls = container.all('.control-group input'),
-        textareaControl = container.all('.control-group textarea');
+        inputControls = container.all('.control-group input.config-field'),
+        textareaControls = container.all('.control-group textarea.config-field');
     tooltip.get('srcNode').get('text').should.equal('');
 
-    // There are six control groups, the four corresponding to the options
-    // shown above and two preceding, service name and number of units.
-    // Simulate mouse moves into the different control groups and see the tool
-    // tip text change.
-    controls.item(0).focus();
+    // The input controls are service-name, number-units, the upload widget,
+    // and the boolean and int.
+    assert.equal(inputControls.size(), 4);
+    // The textarea has the real one and a clone used for resizing.
+    assert.equal(textareaControls.size(), 2);
+    inputControls.item(0).focus();
     tooltip.get('srcNode').get('text').should.equal(
         'Name of the service to be deployed.  Must be unique.');
     tooltip.get('visible').should.equal(true);
-    controls.item(0).blur();
+    inputControls.item(0).blur();
     tooltip.get('visible').should.equal(false);
-    controls.item(1).focus();
+    inputControls.item(1).focus();
     tooltip.get('srcNode').get('text').should.equal(
         'Number of units to deploy for this service.');
     tooltip.get('visible').should.equal(true);
-    controls.item(1).blur();
-    controls.item(3).focus();
-    tooltip.get('srcNode').get('text').should.equal('Option Zero');
+    inputControls.item(1).blur();
+    inputControls.item(2).focus();
+    tooltip.get('srcNode').get('text').should.equal('Option One');
     tooltip.get('visible').should.equal(true);
     // Now ensure it works in a textarea too.
-    controls.item(3).blur();
-    textareaControl.item(0).focus();
-    tooltip.get('srcNode').get('text').should.equal('Option Three');
+    inputControls.item(2).blur();
+    textareaControls.item(0).focus();
+    tooltip.get('srcNode').get('text').should.equal('Option Zero');
     tooltip.get('visible').should.equal(true);
   });
 

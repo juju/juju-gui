@@ -237,6 +237,7 @@ if (/*@cc_on!@*/false) {
       startTheApp = function() {
         setLoadingMessageText('Connecting to the Juju environment');
         YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+          debugger;
           app = new Y.juju.App(juju_config);
           // We need to activate the hotkeys when running the application
           // in production. Unit tests should call it manually.

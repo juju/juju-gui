@@ -526,6 +526,7 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     _buildServiceView: function(req, viewName) {
+      debugger;
       var service = this.db.services.getById(req.params.id);
       this.showView(viewName, {
         model: service,
@@ -538,6 +539,12 @@ YUI.add('juju-gui', function(Y) {
       }, {}, function(view) {
         // If the view contains a method call fitToWindow,
         // we will execute it after getting the view rendered.
+        debugger;
+        if (view.tareas) {
+          Y.Array.each(view.tareas, function(tarea) {
+            tarea.resize();
+          })
+        }
         if (view.fitToWindow) {
           view.fitToWindow();
         }
