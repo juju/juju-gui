@@ -121,7 +121,7 @@ class TestStaging(browser.TestCase, DeployTestMixin):
         self.addCleanup(self.restart_api)
         self.load()
         self.handle_browser_warning()
-        # The unit tests log us out so we want to make sure we log back in
+        # The unit tests log us out so we want to make sure we log back in.
         self.handle_login()
         self.deploy('appflower')
 
@@ -156,7 +156,10 @@ class TestSandbox(browser.TestCase, DeployTestMixin):
         # The sandbox mode is able to deploy a charm.
         self.load()
         self.handle_browser_warning()
+        self.handle_login()
         self.deploy('appflower')
+
+# TODO: intermittent deploy failures.
 
 
 if __name__ == '__main__':
