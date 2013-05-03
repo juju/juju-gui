@@ -840,6 +840,7 @@ YUI.add('juju-gui', function(Y) {
             nsRouter: this.nsRouter,
             landscape: this.landscape,
             endpointsController: this.endpointsController,
+            useDragDropImport: this.get('sandbox') || false,
             db: this.db,
             env: this.env};
 

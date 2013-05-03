@@ -58,7 +58,8 @@ YUI.add('juju-notifications', function(Y) {
           // Show error notifications only if the DOM contain the notifier box.
           if (notifierBox &&
               !notification.get('isDelta') &&
-              notification.get('level') === 'error') {
+              (notification.get('level') === 'error' ||
+               notification.get('level') === 'important')) {
             new widgets.Notifier({
               title: notification.get('title'),
               message: notification.get('message')

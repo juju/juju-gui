@@ -263,6 +263,31 @@ YUI.add('juju-env-python', function(Y) {
     },
 
     /**
+     * Export data from the environment.
+     *
+     * @method exportEnvironment
+     * @return {undefined} Sends a message to the server only.
+     */
+    exportEnvironment: function(callback) {
+      this._send_rpc(
+          {'op': 'exportEnvironment'}, callback, true);
+    },
+
+    /**
+     * Import data to the environment.
+     *
+     * @method importEnvironment
+     * @param {String} envData JSON blob to import.
+     * @return {undefined} Sends a message to the server only.
+     */
+    importEnvironment: function(envData, callback) {
+      this._send_rpc(
+          {'op': 'importEnvironment', envData: envData}, callback, true);
+    },
+
+
+
+    /**
      * Attempt to log the user in.  Credentials must have been previously
      * stored on the environment.
      *

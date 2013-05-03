@@ -6,19 +6,20 @@ describe('charm token', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['browser-charm-token', 'node-event-simulate'], function(Y) {
+        ['browser-charm-token', 'node-event-simulate',
+         'juju-tests-utils'], function(Y) {
           CharmToken = Y.juju.widgets.browser.CharmToken;
           done();
         });
   });
 
   beforeEach(function() {
-    charm_container = Y.Node.create('<div id="charm-container"></div>');
-    Y.one(document.body).prepend(charm_container);
+    charm_container = Y.namespace('juju-tests.utils')
+                       .makeContainer('charm-container');
   });
 
   afterEach(function() {
-    Y.one('#charm-container').remove(true);
+    charm_container.remove(true);
   });
 
   it('exists', function() {

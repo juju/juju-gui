@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "exportFormat": 1
+  },
+  "services": [
+    {
+      "id": "wordpress",
+      "displayName": "wordpress",
+      "name": "wordpress",
+      "charm": "cs:precise/wordpress-10",
+      "constraints": {},
+      "exposed": false,
+      "subordinate": false,
+      "life": "alive",
+      "unit_count": 1
+    },
+    {
+      "id": "mysql",
+      "displayName": "mysql",
+      "name": "mysql",
+      "charm": "cs:precise/mysql-16",
+      "constraints": {},
+      "exposed": false,
+      "subordinate": false,
+      "life": "alive",
+      "unit_count": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "mysql",
+      "endpoints": [
+        [
+          "wordpress",
+          {
+            "name": "db"
+          }
+        ],
+        [
+          "mysql",
+          {
+            "name": "db"
+          }
+        ]
+      ],
+      "scope": "global",
+      "display_name": "db"
+    }
+  ]
+}

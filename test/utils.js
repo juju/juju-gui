@@ -5,8 +5,11 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
   var jujuTests = Y.namespace('juju-tests');
 
   jujuTests.utils = {
-    makeContainer: function() {
+    makeContainer: function(id) {
       var container = Y.Node.create('<div>');
+      if (id) {
+        container.set('id', id);
+      }
       container.appendTo(document.body);
       container.setStyle('position', 'absolute');
       container.setStyle('top', '-10000px');
@@ -70,7 +73,8 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
     _cached_charms: (function() {
       var charms = {},
           names = [
-            'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop'];
+            'wordpress', 'mysql', 'puppet', 'haproxy', 'mediawiki', 'hadoop',
+            'memcached'];
       Y.Array.each(names, function(name) {
         charms[name] = Y.JSON.parse(
             Y.io('data/' + name + '-charmdata.json', {sync: true})
@@ -83,16 +87,13 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
         'test-charm-store', Y.juju.CharmStore, [], {
           loadByPath: function(path, options) {
             var charmName = path.split('/')[2];
-            var found = Y.Array.some(
-                Y.Object.values(jujuTests.utils._cached_charms),
-                function(data) {
-                  if (data.name === charmName) {
-                    options.success(data);
-                    return true;
-                  }
-                });
-            if (!found) {
-              options.failure();
+            // Ignore version as changing across all
+            // testing artifacts is a pain.
+            charmName = charmName.split('-', 1);
+            if (charmName in jujuTests.utils._cached_charms) {
+              options.success(jujuTests.utils._cached_charms[charmName]);
+            } else {
+              options.failure(new Error('Unable to load charm ' + charmName));
             }
           }
         }
@@ -103,14 +104,31 @@ YUI(GlobalConfig).add('juju-tests-utils', function(Y) {
           {charmStore: new jujuTests.utils.TestCharmStore()});
       fakebackend.login('admin', 'password');
       return fakebackend;
-    }
+    },
 
+    /**
+     * Util to load a fixture (typically as 'data/filename.json').
+     *
+     * @method loadFixture
+     * @param {String} url to synchronously load.
+     * @param {Boolean} parseJSON when true return will be processed
+     *                  as a JSON blob before returning.
+     * @return {Object} fixture data resulting from call.
+     */
+    loadFixture: function(url, parseJson) {
+      var response = Y.io(url, {sync: true}).responseText;
+      if (parseJson) {
+        response = Y.JSON.parse(response);
+      }
+      return response;
+    }
   };
 
 }, '0.1.0', {
   requires: [
     'io',
     'node',
+    'json-parse',
     'datasource-local',
     'juju-charm-store',
     'juju-env-fakebackend'

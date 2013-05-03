@@ -338,6 +338,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
                 Inform the caller of an error using the charm store.
               */
               failure: function(e) {
+                console.warn('error loading charm: ' + e);
                 if (callbacks.failure) {
                   callbacks.failure({error: 'Could not contact charm store.'});
                 }
@@ -1097,8 +1098,207 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // resolved actually does. We could additionally push the unit into
       // the change set but no change currently takes place.
       return {result: true};
-    }
+    },
 
+    /**
+     * Utility to promise to load a charm for serviceData.
+     * @method _promiseCharmForService
+     * @param {Object} serviceData to load charm for. seviceData is the
+     *        imported service attributes, so .charm should be the charm
+     *        url.
+     * @return {Promise} resolving with [charm model, serviceData].
+     */
+    _promiseCharmForService: function(serviceData) {
+      var self = this,
+          charmId = serviceData.charm;
+
+      return Y.Promise(function(resolve, reject) {
+        self._loadCharm(charmId, {
+          /**
+           * Callback to return resolved charm
+           * as associated serviceData (so it can
+           * be updated if version changed).
+           *
+           * @method success
+           */
+          success: function(charm) {
+            resolve([charm, serviceData]);
+          },
+          failure: reject
+        });
+      });
+    },
+
+
+    /**
+     * Export environment state
+     *
+     * @method exportEnvironment
+     * @return {String} JSON description of env data.
+     */
+    exportEnvironment: function() {
+      var self = this,
+          serviceList = this.db.services,
+          relationList = this.db.relations,
+          result = {meta: {
+            exportFormat: 1.0
+          },
+          services: [], relations: []},
+          blackLists = {
+            service: ['id', 'aggregated_status', 'clientId', 'initialized',
+              'destroyed', 'pending'],
+            relation: ['id', 'relation_id', 'clientId', 'initialized',
+              'destroyed', 'pending']
+          };
+
+      if (!this.get('authenticated')) {
+        return UNAUTHENTICATEDERROR;
+      }
+
+      serviceList.each(function(s) {
+        var serviceData = s.getAttrs();
+        if (serviceData.pending === true) {
+          return;
+        }
+        Y.each(blackLists.service, function(key) {
+          if (key in serviceData) {
+            delete serviceData[key];
+          }
+          // Add in initial unit count.
+          serviceData.unit_count = self.db.units
+          .get_units_for_service(s).length || 1;
+        });
+        result.services.push(serviceData);
+      });
+
+      relationList.each(function(r) {
+        var relationData = r.getAttrs();
+        if (relationData.pending === true) {
+          return;
+        }
+        Y.each(blackLists.relation, function(key) {
+          if (key in relationData) {
+            delete relationData[key];
+          }
+        });
+        result.relations.push(relationData);
+      });
+
+      return {result: result};
+    },
+
+    /**
+   * Import JSON data to populate the fakebackend
+   * @method importEnvironment
+   * @param {String} JSON data to load.
+   * @return {Object} with error or result: true.
+   */
+    importEnvironment: function(jsonData, callback) {
+      if (!this.get('authenticated')) {
+        return callback(UNAUTHENTICATEDERROR);
+      }
+      var data = JSON.parse(jsonData),
+          version = 0,
+          importImpl;
+      // Dispatch to the correct version after inspecting the JSON data.
+      if (data.meta && data.meta.exportFormat) {
+        version = data.meta.exportFormat;
+      }
+
+      // Might have to check for float and sub '.' with '_'.
+      importImpl = this['importEnvironment_v' + version];
+      if (!importImpl) {
+        return callback({
+          error: 'Unknown or unspported import format: ' + version});
+      }
+      importImpl.call(this, data, callback);
+    },
+
+    /**
+     * Import Improv/jitsu styled exports
+     * @method importEnvironment_v0
+     */
+    importEnvironment_v0: function(data, callback) {
+      // Rewrite version 0 data to v1 and pass along.
+      // - This involves replacing the incoming relation
+      //    data with a massaged version.
+      var relations = [];
+      Y.each(data.relations, function(relationData) {
+        var relData = {endpoints: []};
+        Y.Array.each(relationData, function(r) {
+          var ep = [];
+          relData.type = r[1];
+          ep.push(r[0]);
+          ep.push({name: r[2],
+            role: r[3]});
+          relData.endpoints.push(ep);
+        });
+        relations.push(relData);
+      });
+
+      // Overwrite relations with our new structure.
+      data.relations = relations;
+      this.importEnvironment_v1(data, callback);
+    },
+
+    /**
+     * Import fakebackend exported data
+     * @method importEnvironment_v1
+     */
+    importEnvironment_v1: function(data, callback) {
+      var self = this;
+      var charms = [];
+
+      // Generate an Array of promises to load charms.
+      Y.each(data.services, function(s) {
+        charms.push(self._promiseCharmForService(s));
+        if (s.name && !s.id) {
+          s.id = s.name;
+        }
+      });
+
+      // Assign relation_ids
+      Y.each(data.relations, function(r) {
+        r.relation_id = 'relation-' + self._relationCount;
+        self._relationCount += 1;
+      });
+
+      Y.batch.apply(self, charms) // resolve all the charms
+      .then(function(charms) {
+            // Charm version requested from an import will return
+            // the current (rather than pinned) version from the store.
+            // update the service to include the returned charm version.
+            Y.Array.each(charms, function(data) {
+              var charm = data[0],
+                  serviceData = data[1];
+              serviceData.charm = charm.get('id');
+            });
+          })
+      .then(function() {
+            Y.each(data.services, function(serviceData) {
+              var s = self.db.services.add(serviceData);
+              self.changes.services[s.get('id')] = [s, true];
+              if (serviceData.exposed) {
+                self.expose(s.get('id'));
+              }
+              if (serviceData.unit_count) {
+                self.addUnit(s.get('id'), serviceData.unit_count);
+              }
+              var annotations = s.get('annotations');
+              if (annotations) {
+                self.annotations.services[s.get('id')] = annotations;
+              }
+            });
+
+            Y.each(data.relations, function(relationData) {
+              var r = self.db.relations.add(relationData);
+              self.changes.relations[r.get('relation_id')] = [r, true];
+            });
+          })
+      .then(function() {
+            return callback({result: true});
+          });
+    }
 
   });
 
@@ -1108,6 +1308,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
   requires: [
     'base',
     'js-yaml',
-    'juju-models'
+    'juju-models',
+    'promise'
   ]
 });

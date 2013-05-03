@@ -226,8 +226,8 @@
   });
 
   describe('FakeBackend.uniformOperations', function() {
-    var requires = [
-      'node', 'juju-tests-utils', 'juju-models', 'juju-charm-models'];
+    var requires = ['node',
+      'juju-tests-utils', 'juju-models', 'juju-charm-models'];
     var Y, fakebackend, utils;
 
     before(function(done) {
@@ -244,6 +244,82 @@
     afterEach(function() {
       fakebackend.destroy();
     });
+
+    function createRelation(charms, relation, mock, done, callback) {
+      fakebackend.deploy(charms[0], function() {
+        fakebackend.deploy(charms[1], function() {
+          var result = fakebackend.addRelation.apply(fakebackend, relation);
+          assert.equal(result.error, undefined);
+          assert.equal(result.relationId, 'relation-0');
+          assert.equal(typeof result.relation, 'object');
+          assert.deepEqual(result.endpoints, mock.endpoints);
+          assert.equal(result.scope, mock.scope);
+          assert.equal(result.type, mock.type);
+          callback(result, done);
+        });
+      });
+    }
+
+    describe('FakeBackend.exportEnvironment', function(done) {
+
+      it('rejects unauthenticated calls', function() {
+        fakebackend.logout();
+        var result = fakebackend.exportEnvironment();
+        assert.equal(result.error, 'Please log in.');
+      });
+
+      it('successfully exports env data', function(done) {
+        createRelation(
+            ['cs:wordpress', 'cs:mysql'],
+            ['wordpress:db', 'mysql:db'],
+            { type: 'mysql', scope: 'global',
+              endpoints:
+                  [['wordpress', {name: 'db'}], ['mysql', {name: 'db'}]]},
+            done,
+            function(result, done) {
+              var data = fakebackend.exportEnvironment().result;
+              assert.equal(data.meta.exportFormat, 1.0);
+              assert.equal(data.services[0].name, 'wordpress');
+              assert.equal(data.relations[0].display_name, 'db');
+              done();
+            });
+      });
+    });
+
+    describe('FakeBackend.importEnvironment', function(done) {
+      this.timeout(300);
+
+      it('rejects unauthenticated calls', function(done) {
+        fakebackend.logout();
+        var result = fakebackend.importEnvironment('', function(result) {
+          assert.equal(result.error, 'Please log in.');
+          done();
+        });
+      });
+
+      it('successfully imports v0 data', function(done) {
+        var fixture = utils.loadFixture('data/sample-improv.json', false);
+        fakebackend.importEnvironment(fixture, function(result) {
+          assert.isTrue(result.result);
+          assert.isNotNull(fakebackend.db.services.getById('wordpress'));
+
+          // Verify that the charms have been loaded.
+          assert.isNotNull(fakebackend.db.charms.getById(
+              'cs:precise/wordpress-10'));
+          done();
+        });
+      });
+
+      it('successfully imports v1 data', function(done) {
+        var fixture = utils.loadFixture('data/sample-fakebackend.json', false);
+        fakebackend.importEnvironment(fixture, function(result) {
+          assert.isTrue(result.result);
+          assert.isNotNull(fakebackend.db.services.getById('wordpress'));
+          done();
+        });
+      });
+    });
+
 
     describe('FakeBackend.resolved', function(done) {
 

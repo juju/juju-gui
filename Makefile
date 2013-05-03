@@ -160,6 +160,7 @@ help:
 	@echo "test-prod-server: run tests in the browser from the prod environment"
 	@echo "prep: beautify and lint the source"
 	@echo "docs: generate project and code documentation"
+	@echo "check: run checks used by lbox""
 	@echo "view-docs: generate both doc sets and view them in the browser"
 	@echo "help: this description"
 	@echo "Other targets are available, see the Makefile."
@@ -269,7 +270,7 @@ recess: node_modules/recess
 	node_modules/recess/bin/recess lib/views/stylesheet.less \
 	    --config recess.json | grep -q Perfect
 
-lint: test-prep gjslint jshint recess yuidoc-lint test-filtering
+lint: test-prep jshint gjslint recess yuidoc-lint test-filtering
 
 virtualenv/bin/python:
 	virtualenv virtualenv
@@ -384,6 +385,8 @@ $(LINK_PROD_FILES):
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/modules.js" build-prod/juju-ui/assets/modules.js
 
 prep: beautify lint
+
+check: lint test-prod test-debug test-misc
 
 test/extracted_startup_code: app/index.html
 	# Pull the JS out of the index so we can run tests against it.

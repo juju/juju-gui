@@ -163,7 +163,7 @@
   describe('sandbox.PyJujuAPI', function() {
     var requires = [
       'juju-env-sandbox', 'juju-tests-utils', 'juju-env-python',
-      'juju-models'];
+      'juju-models', 'promise'];
     var Y, sandboxModule, ClientConnection, PyJujuAPI, environmentsModule,
         state, juju, client, env, utils, cleanups;
 
@@ -1369,7 +1369,89 @@
         client.open();
         client.send(Y.JSON.stringify(op));
       });
+    });
 
+    /**
+     * Utility method to turn _some_ callback
+     * styled async methods into Promises.
+     * It does this by supplying a simple
+     * adaptor that can handle {error:...}
+     * and {result: ... } returns.
+     *
+     * This callback is appended to any calling arguments
+     *
+     * @method promise
+     * @param {Object} context Calling context.
+     * @param {String} methodName name of method on context to invoke.
+     * @param {Arguments} arguments Additional arguments passed
+     *        to resolved method.
+     * @return {Promise} a Y.Promise object.
+     */
+    function promise(context, methodName) {
+      var slice = Array.prototype.slice;
+      var args = slice.call(arguments, 2);
+      var method = context[methodName];
+
+      return Y.Promise(function(resolve, reject) {
+        var resultHandler = function(result) {
+          if (result.err || result.error) {
+            reject(result.err || result.error);
+          } else {
+            resolve(result);
+          }
+        };
+
+        args.push(resultHandler);
+        var result = method.apply(context, args);
+        if (result !== undefined) {
+          // The method returned right away.
+          return resultHandler(result);
+        }
+      });
+    }
+
+    it('should support export', function(done) {
+      this.timeout(250);
+
+      client.open();
+      promise(state, 'deploy', 'cs:wordpress')
+       .then(promise(state, 'deploy', 'cs:mysql'))
+       .then(promise(state, 'addRelation', 'wordpress:db', 'mysql:db'))
+       .then(function() {
+            client.onmessage = function(result) {
+              var data = Y.JSON.parse(result.data).result;
+              assert.equal(data.services[0].name, 'wordpress');
+              done();
+            };
+            client.send(Y.JSON.stringify({op: 'exportEnvironment'}));
+          });
+    });
+
+    it('should support import', function(done) {
+      this.timeout(300);
+      var fixture = utils.loadFixture('data/sample-fakebackend.json', false);
+
+      client.onmessage = function() {
+        client.onmessage = function(result) {
+          var data = Y.JSON.parse(result.data).result;
+          assert.isTrue(data);
+
+          // Verify that we can now find an expected entry
+          // in the database.
+          assert.isNotNull(state.db.services.getById('wordpress'));
+
+          var changes = state.nextChanges();
+          // Validate the delta includes imported services.
+          assert.include(changes.services, 'wordpress');
+          assert.include(changes.services, 'mysql');
+          // validate relation was added/updated.
+          assert.include(changes.relations, 'relation-0');
+          done();
+        };
+        client.send(Y.JSON.stringify({op: 'importEnvironment',
+                             envData: fixture}));
+      };
+      client.open();
     });
 
   });

@@ -530,6 +530,22 @@ YUI.add('juju-env-sandbox', function(Y) {
     },
 
     /**
+     * Perform 'export' operation.
+     * @method performOp_export
+     */
+    performOp_exportEnvironment: function(data) {
+      OP(this, 'exportEnvironment', [], data);
+    },
+
+    /**
+     * Perform 'import' operation.
+     * @method performOp_importEnvironment
+     */
+    performOp_importEnvironment: function(data) {
+      ASYNC_OP(this, 'importEnvironment', ['envData'])(data);
+    },
+
+    /**
       Handles the remove unit operations from the client
 
       @method performOp_remove_unit
