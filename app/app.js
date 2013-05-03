@@ -252,6 +252,8 @@ YUI.add('juju-gui', function(Y) {
         }
       }
 
+      this.renderEnvironment = true;
+
       // This attribute is used by the namespaced URL tracker.
       // _routeSeen is part of a mechanism to prevent non-namespaced routes
       // from being processed multiple times when multiple namespaces are
@@ -501,24 +503,61 @@ YUI.add('juju-gui', function(Y) {
      */
     show_unit: function(req) {
       // This replacement honors service names that have a hyphen in them.
-      var unit_id = req.params.id.replace(/^(\S+)-(\d+)$/, '$1/$2');
-      var unit = this.db.units.getById(unit_id);
-      if (unit) {
-        // Once the unit is loaded we need to get the full details of the
-        // service.  Otherwise the relations data will not be available.
-        var service = this.db.services.getById(unit.service);
-      }
-      this.showView(
-          'unit',
-          // The querystring is used to handle highlighting relation rows in
-          // links from notifications about errors.
-          { getModelURL: Y.bind(this.getModelURL, this),
-            unit: unit,
+      var unitId = req.params.id.replace(/^(\S+)-(\d+)$/, '$1/$2');
+      var serviceId = unitId.split('/')[0];
+      var self = this,
+          options = {
+            getModelURL: Y.bind(this.getModelURL, this),
             db: this.db,
             env: this.env,
             querystring: req.query,
             landscape: this.landscape,
-            nsRouter: this.nsRouter });
+            nsRouter: this.nsRouter
+          };
+      // Give the page 100 milliseconds to try and load the model
+      // before we show a loading screen.
+      var handle = setTimeout(function() {
+        self.showView('unit', options);
+      }, 100);
+
+      var promise = this.modelController.getService(serviceId);
+      promise.then(
+          // If there is a service available then we need to check if the unit
+          // is available.
+          function(models) {
+            clearTimeout(handle);
+            var unit = self.db.units.getById(unitId);
+            if (unit) {
+              options.unit = unit;
+              self.showView('unit', options);
+            } else {
+              // If there is no unit available in this service then we show
+              // a notification and then redirect to the service.
+              self.db.notifications.add(
+                  new Y.juju.models.Notification({
+                    title: 'Unit is not available',
+                    message: 'The unit you are trying to view does not exist',
+                    level: 'error'
+                  })
+              );
+              self.fire('navigateTo', {url: self.nsRouter.url(
+                  {gui: '/service/' + serviceId})});
+            }
+          },
+          // If there is no service available then there definitely is no unit
+          // available so we create a notification and redirect the user to the
+          // environment view.
+          function() {
+            clearTimeout(handle);
+            self.db.notifications.add(
+                new Y.juju.models.Notification({
+                  title: 'Service is not available',
+                  message: 'The service you are trying to view does not exist',
+                  level: 'error'
+                })
+            );
+            self.fire('navigateTo', {url: self.nsRouter.url({gui: '/'})});
+          });
     },
 
     /**
@@ -526,28 +565,50 @@ YUI.add('juju-gui', function(Y) {
      * @private
      */
     _buildServiceView: function(req, viewName) {
-      var service = this.db.services.getById(req.params.id);
-      this.showView(viewName, {
-        model: service,
-        db: this.db,
-        env: this.env,
-        landscape: this.landscape,
-        getModelURL: Y.bind(this.getModelURL, this),
-        nsRouter: this.nsRouter,
-        querystring: req.query
-      }, {}, function(view) {
-        // If the view contains a method call fitToWindow and/or
-        // we will execute them after getting the view rendered and all of the
-        // entities added to the DOM.  The method attachPlugins hooks up
-        // required plugins and fitToWindow resizes as required by the window
-        // dimensions.
+      var self = this,
+          options = {
+            db: this.db,
+            env: this.env,
+            landscape: this.landscape,
+            getModelURL: Y.bind(self.getModelURL, this),
+            nsRouter: this.nsRouter,
+            querystring: req.query
+          };
+      var attachPlugins = function(view) {
+        // attachPlugins handles attaching things like the textarea autosizer
+        // after the views have rendered.
         if (view.attachPlugins) {
           view.attachPlugins();
         }
-        if (view.fitToWindow) {
-          view.fitToWindow();
-        }
-      });
+      };
+      // Give the page 100 milliseconds to try and load the model
+      // before we show a loading screen.
+      var handle = setTimeout(function() {
+        self.showView(viewName, options, attachPlugins);
+      }, 100);
+
+      var promise = this.modelController.getServiceWithCharm(req.params.id);
+      promise.then(
+          function(models) {
+            clearTimeout(handle);
+            options.model = models.service;
+            // Calling update allows showView to be called multiple times but
+            // only have its config updated not re-rendered.
+            self.showView(viewName, options, { update: true }, attachPlugins);
+          },
+          function() {
+            clearTimeout(handle);
+            self.showView(viewName, options, { update: true },
+                function(view) {
+                  // At this point the service view could be in loading state
+                  // or showing details but the service has become unavailable
+                  // or was never available. This calls a method on the view
+                  // to redirect to the environment and to create a notification
+                  if (typeof view.noServiceAvailable === 'function') {
+                    view.noServiceAvailable();
+                  }
+                });
+          });
     },
 
     /**
@@ -791,18 +852,21 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
-       Determine if the browser should be visible or not.
+       Determine if the browser or environment should be rendered or not.
 
        When hitting internal :gui: views, the browser needs to disappear
        entirely from the UX for users. However, when we pop back it needs to
        appear back in the previous state.
 
-       @method checkShowBrowser
+       The environment only needs to render when another full page view isn't
+       visible.
+
+       @method toggleStaticViews
        @param {Request} req current request object.
        @param {Response} res current response object.
        @param {function} next callable for the next route in the chain.
      */
-    checkShowBrowser: function(req, res, next) {
+    toggleStaticViews: function(req, res, next) {
       var url = req.url,
           match = /(logout|:gui:\/(charms|service|unit))/;
       var subapps = this.get('subApps');
@@ -811,8 +875,13 @@ YUI.add('juju-gui', function(Y) {
         var charmstore = subapps.charmstore;
         if (url.match(match)) {
           charmstore.hidden = true;
+          // XXX At some point in the near future we will add the ability to
+          // route on root namespaced paths and this check will no longer
+          // be needed
+          this.renderEnvironment = false;
         } else {
           charmstore.hidden = false;
+          this.renderEnvironment = true;
         }
         charmstore.updateVisible();
       }
@@ -833,6 +902,9 @@ YUI.add('juju-gui', function(Y) {
      * @method show_environment
      */
     show_environment: function(req, res, next) {
+      if (!this.renderEnvironment) {
+        next(); return;
+      }
       var self = this,
           view = this.getViewInfo('environment'),
           options = {
@@ -969,9 +1041,8 @@ YUI.add('juju-gui', function(Y) {
           // Called on each request.
           { path: '*', callbacks: 'check_user_credentials'},
           { path: '*', callbacks: 'show_notifications_view'},
-          // Root.
+          { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
-          { path: '*', callbacks: 'checkShowBrowser'},
           // Charms.
           { path: '/charms/',
             callbacks: 'show_charm_collection',

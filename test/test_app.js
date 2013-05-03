@@ -212,7 +212,7 @@ function injectData(app, data) {
       Y.Array.each(checkUrls, function(check) {
         var req = {url: check.url};
         var next = function() {};
-        app.checkShowBrowser(req, undefined, next);
+        app.toggleStaticViews(req, undefined, next);
         app.get('subApps').charmstore.hidden.should.eql(check.hidden);
       });
       app.destroy();
