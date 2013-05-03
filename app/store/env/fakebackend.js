@@ -854,17 +854,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
     },
 
-    // updateAnnotations: function() {
-
-    // },
-
-    // getAnnotations: function() {
-
-    // },
-
-    // removeAnnotations: function() {
-
-    // },
     /**
      * Helper method to determine where to log annotation
      * changes relative to a given entity.

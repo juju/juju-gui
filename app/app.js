@@ -332,6 +332,11 @@ YUI.add('juju-gui', function(Y) {
           }
           envOptions.conn = new sandboxModule.ClientConnection(
               {juju: new sandboxModule.PyJujuAPI({state: state})});
+          if (this.get('simulateEvents')) {
+            var Simulator = Y.namespace('juju.environments').Simulator;
+            this._simulator = new Simulator({state: state});
+            this._simulator.start();
+          }
         }
         this.env = juju.newEnvironment(envOptions, apiBackend);
       }
@@ -1033,6 +1038,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-endpoints-controller',
     'juju-env',
     'juju-env-fakebackend',
+    'juju-fakebackend-simulator',
     'juju-env-sandbox',
     'juju-charm-models',
     'juju-views',
