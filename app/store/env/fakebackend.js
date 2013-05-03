@@ -1219,8 +1219,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
           relData.type = r[1];
           ep.push(r[0]);
           ep.push({name: r[2],
-            role: r[3]});
+                  role: r[3]});
           relData.endpoints.push(ep);
+          relData.scope = r[4];
         });
         relations.push(relData);
       });
@@ -1261,6 +1262,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
               var charm = data[0],
                   serviceData = data[1];
               serviceData.charm = charm.get('id');
+
+            // If this is a subordinate mark the serviceData as such
+            if (charm.get('is_subordinate')) {
+              serviceData.subordinate = true;
+            }
             });
           })
       .then(function() {
