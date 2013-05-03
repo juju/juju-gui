@@ -51,8 +51,8 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
           var annotations = service.get('annotations') || {};
           var sid = service.get('id');
           if (!annotations['landscape-computers']) {
-            annotations['landscape-computers'] = '/computers/criteria/service:' +
-              sid + '+environment:demonstration';
+            annotations['landscape-computers'] = '/computers/' +
+                'criteria/service:' + sid + '+environment:demonstration';
             context.state.updateAnnotations(sid, annotations);
           }
         });
@@ -100,7 +100,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
               context.state.removeUnits([unit.id]);
             }
           }
-      });
+        });
       }
     },
 
@@ -154,14 +154,14 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
 
         context.selection.each(function(s) {
           var annotations = s.get('annotations') || {};
-          var x = annotations['gui-x'],
-              mirror;;
+          var x = annotations['gui-x'];
           if (!Y.Lang.isNumber(x)) {
             return;
           }
           // Mirror relative x position on canvas.
-          mirror = width - x;
-          annotations['gui-x'] = mirror;
+          // TODO: Should move by box center point (except this
+          // is a toy).
+          annotations['gui-x'] = width - x;
           context.state.updateAnnotations(s.get('id'), annotations);
         });
       }
@@ -232,10 +232,10 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       // Also filter out any 'pending' items.
       if (context.selection !== undefined) {
         context.selection = context.selection.filter(
-          {asList: true}, function(model) {
-          return (model.pending ||
+            {asList: true}, function(model) {
+              return (model.pending ||
                   (model.get && model.get('pending'))) !== true;
-        });
+            });
       }
 
       if (select.random) {

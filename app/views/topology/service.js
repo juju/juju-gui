@@ -586,7 +586,7 @@ YUI.add('juju-topology-service', function(Y) {
                           return Math.max(d.unit_count, 1);
                         })
                       .padding(300);
-     }
+      }
 
       if (!this.dragBehavior) {
         this.dragBehavior = d3.behavior.drag()
@@ -618,10 +618,10 @@ YUI.add('juju-topology-service', function(Y) {
         // (but only do this if there is no existing annotations).
         Y.each(new_services, function(box) {
           topo.get('env').update_annotations(
-            box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
-            function() {
-              box.inDrag = false;
-            });
+              box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
+              function() {
+                box.inDrag = false;
+              });
         });
 
       }

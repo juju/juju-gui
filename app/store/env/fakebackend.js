@@ -638,7 +638,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         removedUnit = this.db.units.some(function(unit, index) {
           if (unit.displayName === unitName) {
             this.db.units.remove(index);
-            this.changes['units'][unit.id] = [unit, false];
+            this.changes.units[unit.id] = [unit, false];
             return true;
           }
         }, this);
@@ -1220,7 +1220,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           relData.type = r[1];
           ep.push(r[0]);
           ep.push({name: r[2],
-                  role: r[3]});
+            role: r[3]});
           relData.endpoints.push(ep);
           relData.scope = r[4];
         });
@@ -1264,10 +1264,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
                   serviceData = data[1];
               serviceData.charm = charm.get('id');
 
-            // If this is a subordinate mark the serviceData as such
-            if (charm.get('is_subordinate')) {
-              serviceData.subordinate = true;
-            }
+              // If this is a subordinate mark the serviceData as such
+              if (charm.get('is_subordinate')) {
+                serviceData.subordinate = true;
+              }
             });
           })
       .then(function() {
