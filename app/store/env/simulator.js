@@ -45,12 +45,25 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       },
 
       run: function(context) {
+        // Make sure services all have annotation
+        // (Apart from selection)
+        context.state.db.services.each(function(service) {
+          var annotations = service.get('annotations') || {};
+          var sid = service.get('id');
+          if (!annotations['landscape-computers']) {
+            annotations['landscape-computers'] = '/computers/criteria/service:' +
+              sid + '+environment:demonstration';
+            context.state.updateAnnotations(sid, annotations);
+          }
+        });
+
         context.selection.each(function(unit) {
           // Toggle landscape attributes as though they
           var annotations = unit.annotations || {};
           var changed = false;
           if (!annotations['landscape-computer']) {
             annotations['landscape-computer'] = '+unit:' + unit.urlName;
+            changed = true;
           }
 
           // Toggle some annotations.
@@ -68,6 +81,26 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
             context.state.updateAnnotations(unit.id, annotations);
           }
         });
+      }
+    },
+
+    unitCounts: {
+      select: {
+        list: 'services',
+        random: 0.1
+      },
+      run: function(context) {
+        context.selection.each(function(service) {
+          if (RAND(0.5)) {
+            context.state.addUnit(service.get('id'), 1);
+          } else {
+            var units = context.state.db.units.get_units_for_service(service);
+            if (units.length > 1) {
+              var unit = units[units.length - 1];
+              context.state.removeUnits([unit.id]);
+            }
+          }
+      });
       }
     },
 
@@ -94,6 +127,43 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
           context.state.changes.units[unit.id] = [unit, true];
         });
 
+      }
+    },
+
+    /*
+     This one is a toy playing with position annotations
+     */
+    position: {
+      threshold: 0.01,
+      start: function(context) {
+        // Not sensitive to size changes.
+        // Reach across time and space to look at... client-side.
+        var canvas = Y.one('body'),
+            width = canvas.getDOMNode().getClientRects()[0].width;
+        this.set('width', width);
+      },
+
+
+      select: {
+        list: 'services'
+      },
+
+      run: function(context) {
+        var width = context.width,
+            center = context.center;
+
+        context.selection.each(function(s) {
+          var annotations = s.get('annotations') || {};
+          var x = annotations['gui-x'],
+              mirror;;
+          if (!Y.Lang.isNumber(x)) {
+            return;
+          }
+          // Mirror relative x position on canvas.
+          mirror = width - x;
+          annotations['gui-x'] = mirror;
+          context.state.updateAnnotations(s.get('id'), annotations);
+        });
       }
     }
 
@@ -135,9 +205,13 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
     },
 
     start: function() {
-      var context = this.getContext();
+      var context = this.getContext(),
+          self = this;
       if (context.start) {
-        context.start(context);
+        context.state.onceAfter('authenticatedChange', function() {
+          // TODO: Validate that its actually true.
+          context.start.call(self, context);
+        });
       }
     },
 
@@ -155,6 +229,15 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         // filter should return {asList: true}
         context.selection = select.filter(context);
       }
+      // Also filter out any 'pending' items.
+      if (context.selection !== undefined) {
+        context.selection = context.selection.filter(
+          {asList: true}, function(model) {
+          return (model.pending ||
+                  (model.get && model.get('pending'))) !== true;
+        });
+      }
+
       if (select.random) {
         // This requires that a selection is present.
         context.selection = context.selection.filter(
@@ -167,11 +250,14 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
     run: function() {
       var context = this.getContext();
 
+      if (context.threshold !== undefined && !RAND(context.threshold)) {
+        return;
+      }
       // Update selection to act on.
       if (context.select) {
         this.select(context);
       }
-      context.run(context);
+      context.run.call(this, context);
     }
   });
 

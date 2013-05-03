@@ -586,7 +586,7 @@ YUI.add('juju-topology-service', function(Y) {
                           return Math.max(d.unit_count, 1);
                         })
                       .padding(300);
-      }
+     }
 
       if (!this.dragBehavior) {
         this.dragBehavior = d3.behavior.drag()
@@ -614,6 +614,16 @@ YUI.add('juju-topology-service', function(Y) {
                           });
       if (new_services.length > 0) {
         this.tree.nodes({children: new_services});
+        // Update annotations settings position on backend
+        // (but only do this if there is no existing annotations).
+        Y.each(new_services, function(box) {
+          topo.get('env').update_annotations(
+            box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
+            function() {
+              box.inDrag = false;
+            });
+        });
+
       }
       // enter
       node
@@ -721,7 +731,9 @@ YUI.add('juju-topology-service', function(Y) {
             annotations = service.get('annotations'),
             x, y;
 
-        if (!annotations) {return;}
+        if (!annotations) {
+          return;
+        }
 
         // If there are x/y annotations on the service model and they are
         // different from the node's current x/y coordinates, update the
@@ -729,17 +741,18 @@ YUI.add('juju-topology-service', function(Y) {
         x = annotations['gui-x'],
         y = annotations['gui-y'];
         if (!d ||
-            (x !== undefined && x !== d.x) &&
+            (x !== undefined && x !== d.x) ||
             (y !== undefined && y !== d.y)) {
           // Delete gui-x and gui-y from annotations as we use the values.
           // This is to prevent deltas coming in on a service while it is
           // being dragged from resetting its position during the drag.
+
           delete annotations['gui-x'];
           delete annotations['gui-y'];
           // Only update position if we're not already in a drag state (the
           // current drag supercedes any previous annotations).
           if (!d.inDrag) {
-            self.drag.call(this, d, self, {x: x, y: y});
+            self.drag.call(this, d, self, {x: x, y: y}, true);
           }
         }});
 
