@@ -10,6 +10,7 @@ import os
 import subprocess
 import sys
 import unittest
+import urllib2
 import urlparse
 
 import selenium
@@ -61,7 +62,7 @@ browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
 config = {
     'username': 'juju-gui',
     'access-key': '0a3b7821-93ed-4a2d-abdb-f34854eeaba3',
-   }
+}
 
 credentials = ':'.join([config['username'], config['access-key']])
 encoded_credentials = base64.encodestring(credentials)[:-1]
@@ -132,10 +133,8 @@ class TestCase(unittest.TestCase):
                 driver.session_id)
             # We want to tell saucelabs when all the tests are done.
             atexit.register(driver.quit)
-
-    def setUp(self):
-        self.app_url = os.environ['APP_URL']
-        self.driver = driver
+        cls.app_url = os.environ['APP_URL']
+        cls.driver = driver
 
     def run(self, result=None):
         self.last_result = result
@@ -178,10 +177,11 @@ class TestCase(unittest.TestCase):
         self.wait_for_provider_type()
         check_script = (
             'return app && app.env && app.env.get("connected") && ('
-                'app.env.failedAuthentication || '
-                'app.env.userIsAuthenticated || '
-                '!app.env.getCredentials() ||'
-                '!app.env.getCredentials().areAvailable);')
+            'app.env.failedAuthentication || '
+            'app.env.userIsAuthenticated || '
+            '!app.env.getCredentials() ||'
+            '!app.env.getCredentials().areAvailable);'
+        )
         self.wait_for_script(check_script)
         exe = self.driver.execute_script
         if exe('return app.env.userIsAuthenticated;'):
@@ -196,18 +196,20 @@ class TestCase(unittest.TestCase):
             'app.env.login();')
         self.wait_for_script('return app.env.userIsAuthenticated;')
 
+    @classmethod
     @webdriverError()
-    def wait_for(self, condition, error=None, timeout=30):
+    def wait_for(cls, condition, error=None, timeout=30):
         """Wait for condition to be True.
 
         The argument condition is a callable accepting a driver object.
         Fail printing the provided error if timeout is exceeded.
         Otherwise, return the value returned by the condition call.
         """
-        wait = ui.WebDriverWait(self.driver, timeout)
+        wait = ui.WebDriverWait(cls.driver, timeout)
         return wait.until(condition, error)
 
-    def wait_for_css_selector(self, selector, error=None, timeout=10):
+    @classmethod
+    def wait_for_css_selector(cls, selector, error=None, timeout=10):
         """Wait until the provided CSS selector is found.
 
         Fail printing the provided error if timeout is exceeded.
@@ -215,17 +217,44 @@ class TestCase(unittest.TestCase):
         """
         condition = lambda driver: driver.find_elements_by_css_selector(
             selector)
-        elements = self.wait_for(condition, error=error, timeout=timeout)
+        elements = cls.wait_for(condition, error=error, timeout=timeout)
         return elements[0]
 
-    def wait_for_script(self, script, error=None, timeout=20):
+    @classmethod
+    def wait_for_script(cls, script, error=None, timeout=20):
         """Wait for the given JavaScript snippet to return a True value.
 
         Fail printing the provided error if timeout is exceeded.
         Otherwise, return the value returned by the script.
         """
         condition = lambda driver: driver.execute_script(script)
-        return self.wait_for(condition, error=error, timeout=timeout)
+        return cls.wait_for(condition, error=error, timeout=timeout)
+
+    @classmethod
+    def wait_for_config(cls, contents, error=None, timeout=30):
+        """Wait for the given contents to be present in the GUI config.
+
+        Fail printing the provided error if timeout is exceeded.
+        Otherwise, return the value returned by the script.
+        """
+        config_url = urlparse.urljoin(cls.app_url, '/juju-ui/assets/config.js')
+
+        def condition(driver):
+            """Return True if contents are found in the given URL."""
+            try:
+                response = urllib2.urlopen(config_url)
+            except IOError:
+                return False
+            return contents in response.read()
+        return cls.wait_for(condition, error=error, timeout=timeout)
+
+    @classmethod
+    @retry(subprocess.CalledProcessError, tries=2)
+    def change_options(cls, options):
+        """Change the charm config options."""
+        args = ['{}={}'.format(key, value) for key, value in options.items()]
+        print('setting new options:', ', '.join(args))
+        juju('set', '-e', 'juju-gui-testing', 'juju-gui', *args)
 
     @retry(subprocess.CalledProcessError, tries=2)
     def restart_api(self):
@@ -237,14 +266,15 @@ class TestCase(unittest.TestCase):
         change the internal Juju environment. Such tests should add this
         function as part of their own clean up process.
         """
-        print('restart_api with ip:%s' % internal_ip)
         if internal_ip:
+            print('restarting API backend with ip:%s' % internal_ip)
             # When an internal ip address is set directly contract
             # the machine in question. This can help route around
             # firewalls and provider issues in some cases.
             ssh('ubuntu@%s' % internal_ip,
                 'sudo', 'service', 'juju-api-improv', 'restart')
         else:
+            print('restarting API backend using juju ssh')
             juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
                  'sudo', 'service', 'juju-api-improv', 'restart')
         self.load()
