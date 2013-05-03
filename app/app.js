@@ -575,11 +575,8 @@ YUI.add('juju-gui', function(Y) {
             querystring: req.query
           };
       var attachPlugins = function(view) {
-        // If the view contains a method call fitToWindow and/or
-        // we will execute them after getting the view rendered and all of the
-        // entities added to the DOM.  The method attachPlugins hooks up
-        // required plugins and fitToWindow resizes as required by the window
-        // dimensions.
+        // attachPlugins handles attaching things like the textarea autosizer
+        // after the views have rendered.
         if (view.attachPlugins) {
           view.attachPlugins();
         }
@@ -587,12 +584,6 @@ YUI.add('juju-gui', function(Y) {
       // Give the page 100 milliseconds to try and load the model
       // before we show a loading screen.
       var handle = setTimeout(function() {
-        // XXX There is an issue which causes this to be the only view rendered
-        // if there is a service model available when trying to view
-        // an invalid unit by manually entering in the url. The following line
-        // will be null under normal circumstances causing the script to run
-        // as usual.
-        options.model = self.db.services.getById(req.params.id);
         self.showView(viewName, options, attachPlugins);
       }, 100);
 
