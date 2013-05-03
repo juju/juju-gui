@@ -208,6 +208,7 @@ YUI.add('browser-overlay-indicator', function(Y) {
      *
      */
     showIndicator: function(node) {
+      debugger;
       var id = node._yuid;
 
       if (this._indicators[id]) {
