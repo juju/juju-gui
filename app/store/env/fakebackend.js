@@ -638,6 +638,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
         removedUnit = this.db.units.some(function(unit, index) {
           if (unit.displayName === unitName) {
             this.db.units.remove(index);
+            this.changes['units'][unit.id] = [unit, false];
             return true;
           }
         }, this);
