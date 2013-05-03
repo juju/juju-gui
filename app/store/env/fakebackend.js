@@ -1248,19 +1248,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
     importEnvironment_v1: function(data, callback) {
       var self = this;
       var charms = [];
-      // Review NOTES: In the next section I
-      // assign ids and so on. Its possible to
-      // call the deploy and addRelation methods
-      // directly to set all this up (and in some
-      // sense thats better) but for now this is all
-      // sync code (and in some sense just a prototype).
-      // A final version should call the methods with a
-      // real promise chain.
 
-      // Assign missing service ids.
-      // TODO: assign new ids for import data?
-      // Track import source as meta.stackName
-      // and update matches?
+      // Generate an Array of promises to load charms.
       Y.each(data.services, function(s) {
         charms.push(self._promiseCharmForService(s));
         if (s.name && !s.id) {
@@ -1274,13 +1263,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
         self._relationCount += 1;
       });
 
-      // TODO: This method will need to check for conflicts
-      // at some point and implement a handling policy
-      // (which can be as simple as returning an error, skipping
-      // the import or merging the data).
       Y.batch.apply(self, charms) // resolve all the charms
       .then(function(charms) {
-            // charm version requested from an import will return
+            // Charm version requested from an import will return
             // the current (rather than pinned) version from the store.
             // update the service to include the returned charm version.
             Y.Array.each(charms, function(data) {
