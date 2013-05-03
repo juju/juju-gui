@@ -255,11 +255,11 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/env/fakebackend.js'
         },
 
-         'juju-fakebackend-simulator': {
+        'juju-fakebackend-simulator': {
           fullpath: '/juju-ui/store/env/simulator.js'
         },
 
-       'juju-env-sandbox': {
+        'juju-env-sandbox': {
           fullpath: '/juju-ui/store/env/sandbox.js'
         },
 

@@ -58,19 +58,19 @@
               random: 1.0, // Trigger the random path, but 100% of the time.
               filter: function(context) {
                 var selection = context.selection.filter(
-                  {asList: true},
-                  function(service) {
-                    // Filter down to a list of one for testing.
-                    return service.get('id') === 'wordpress';
-                  });
+                    {asList: true},
+                    function(service) {
+                      // Filter down to a list of one for testing.
+                      return service.get('id') === 'wordpress';
+                    });
                 return selection;
               }},
-              run: function(context) {
-                context.selection.each(function(service) {
-                  // Add 10 units
-                  context.state.addUnit(service.get('id'), 10);
-                });
-              }
+            run: function(context) {
+              context.selection.each(function(service) {
+                // Add 10 units
+                context.state.addUnit(service.get('id'), 10);
+              });
+            }
           }}});
 
       simulator.on('tick', function() {
@@ -81,8 +81,8 @@
         done();
       });
 
-     assert.equal(units.length, 1);
-     simulator.start();
+      assert.equal(units.length, 1);
+      simulator.start();
     });
 
   });

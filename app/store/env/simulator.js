@@ -33,9 +33,9 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         envAnno['landscape-url'] = 'http://landscape.com';
         envAnno['landscape-computers'] = '/computers/criteria/environment:test';
         envAnno['landscape-reboot-alert-url'] =
-          '+alert:computer-reboot/info#power';
+            '+alert:computer-reboot/info#power';
         envAnno['landscape-security-alert-url'] =
-          '+alert:security-upgrades/packages/list?filter=security';
+            '+alert:security-upgrades/packages/list?filter=security';
         context.state.updateAnnotations('env', envAnno);
       },
 
@@ -56,12 +56,12 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
           // Toggle some annotations.
           if (RAND(0.3)) {
             annotations['landscape-needs-reboot'] = !annotations[
-              'landscape-needs-reboot'];
-              changed = true;
+                'landscape-needs-reboot'];
+            changed = true;
           }
           if (RAND(0.3)) {
             annotations['landscape-security-upgrades'] = !annotations[
-              'landscape-security-upgrades'];
+                'landscape-security-upgrades'];
             changed = true;
           }
           if (changed) {
@@ -110,24 +110,24 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
   }
   Agent.NAME = 'Agent';
   Agent.ATTRS = {
- };
+  };
 
   Y.extend(Agent, Y.Base, {
     /**
       This tells `Y.Base` that it should create ad-hoc attributes for config
       properties passed to Model's constructor. This makes it possible to
-      instantiate a model and set a bunch of attributes without having to subclass
-      `Y.Model` and declare all those attributes first.
+      instantiate a model and set a bunch of attributes without having to
+      subclass `Y.Model` and declare all those attributes first.
 
       @property _allowAdHocAttrs
-      @type Boolean
+      @type {Boolean}
       @default true
       @protected
       @since 3.5.0
-     **/
+     */
     _allowAdHocAttrs: true,
 
-    getContext: function () {
+    getContext: function() {
       var context = this.getAttrs();
       delete context.initialized;
       delete context.destroyed;
@@ -158,9 +158,9 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       if (select.random) {
         // This requires that a selection is present.
         context.selection = context.selection.filter(
-          {asList: true}, function () {
-          return Math.random() <= select.random;
-        });
+            {asList: true}, function() {
+              return Math.random() <= select.random;
+            });
       }
     },
 
@@ -227,7 +227,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
     Cleanup on destruction.
     @method destructor
     */
-    destructor : function() {
+    destructor: function() {
       this.stop();
     },
 

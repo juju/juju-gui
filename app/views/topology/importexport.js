@@ -58,7 +58,7 @@ YUI.add('juju-topology-importexport', function(Y) {
 
           Y.Array.each(fileSources, function(file) {
             var reader = new FileReader();
-            reader.onload =  function(e) {
+            reader.onload = function(e) {
               // Import each into the environment
               console.log('Importing ' + file.name);
               env.importEnvironment(e.target.result);
