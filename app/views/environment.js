@@ -75,7 +75,7 @@ YUI.add('juju-view-environment', function(Y) {
               endpointsController: this.get('endpointsController'),
               nsRouter: this.get('nsRouter')});
             // Bind all the behaviors we need as modules.
-            topo.addModule(views.ServiceModule);
+            topo.addModule(views.ServiceModule, {useTransitions: true});
             topo.addModule(views.PanZoomModule);
             topo.addModule(views.ViewportModule);
             topo.addModule(views.RelationModule);

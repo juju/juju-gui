@@ -104,7 +104,10 @@ describe('service module events', function() {
     view = new views.environment({
       container: viewContainer,
       db: db,
-      env: {},
+      env:{
+        update_annotations: function() {},
+        get: function() {}
+      },
       nsRouter: {
         url: function() { return; }
       },
