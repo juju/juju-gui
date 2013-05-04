@@ -1312,7 +1312,6 @@
               delta = Y.JSON.parse(delta.data);
               assert.equal(delta.op, 'delta');
               var envChange = Y.Array.find(delta.result, function(change) {
-                console.log("change", change);
                 return change[0] === 'annotations';
               });
               assert.equal(envChange[1], 'change');
