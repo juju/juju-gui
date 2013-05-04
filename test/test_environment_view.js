@@ -122,7 +122,7 @@
         },
         getModelURL: function() {}
       });
-   });
+    });
 
     afterEach(function(done) {
       container.remove(true);
@@ -527,7 +527,7 @@
               'id': 'wordpress',
               'annotations': {'gui-x': 374.1, 'gui-y': 211.2}
             }
-        ]]
+          ]]
       };
       // IE uses a space delimiter, not a comma.
       var properTransform = /translate\((\d+\.?\d*)[, ](\d+\.?\d*)\)/;

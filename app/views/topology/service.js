@@ -620,10 +620,10 @@ YUI.add('juju-topology-service', function(Y) {
           var existing = box.model.get('annotations') || {};
           if (!existing && !existing['gui-x']) {
             topo.get('env').update_annotations(
-              box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
-              function() {
-                box.inDrag = false;
-              });
+                box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
+                function() {
+                  box.inDrag = false;
+                });
           }
         });
 
@@ -755,7 +755,8 @@ YUI.add('juju-topology-service', function(Y) {
           // Only update position if we're not already in a drag state (the
           // current drag supercedes any previous annotations).
           if (!d.inDrag) {
-            self.drag.call(this, d, self, {x: x, y: y}, self.get('useTransitions'));
+            self.drag.call(this, d, self, {x: x, y: y},
+                           self.get('useTransitions'));
           }
         }});
 

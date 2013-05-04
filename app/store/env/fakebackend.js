@@ -631,17 +631,19 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // XXX: BradCrittenden 2013-04-15: Remove units should optionally remove
       // the corresponding machines.
       Y.Array.each(unitNames, function(unitName) {
+        removedUnit = false;
         service = this.db.services.getById(unitName.split('/')[0]);
         if (service && service.get('is_subordinate')) {
           error.push(unitName + ' is a subordinate, cannot remove.');
+        } else {
+          removedUnit = this.db.units.some(function(unit, index) {
+            if (unit.displayName === unitName) {
+              this.db.units.remove(index);
+              this.changes.units[unit.id] = [unit, false];
+              return true;
+            }
+          }, this);
         }
-        removedUnit = this.db.units.some(function(unit, index) {
-          if (unit.displayName === unitName) {
-            this.db.units.remove(index);
-            this.changes.units[unit.id] = [unit, false];
-            return true;
-          }
-        }, this);
         if (!removedUnit) {
           warning.push(unitName + ' does not exist, cannot remove.');
         }
