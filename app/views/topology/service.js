@@ -813,8 +813,6 @@ YUI.add('juju-topology-service', function(Y) {
 
       // Landscape badge
       if (landscape) {
-        // Remove any existing badge.
-        node.select('.landscape-badge').remove();
         node.each(function(d) {
           var landscapeAsset;
           var securityBadge = landscape.getLandscapeBadge(
@@ -832,15 +830,29 @@ YUI.add('juju-topology-service', function(Y) {
             landscapeAsset =
                 '/juju-ui/assets/images/landscape_restart_round.png';
           }
-          if (landscapeAsset) {
-            d3.select(this).append('image')
-            .attr({'xlink:href': landscapeAsset,
-                  'class': 'landscape-badge',
-                  'width': 30,
-                  'height': 30,
-                  'x': function(box) {return box.w * 0.13;},
-                  'y': function(box) { return box.h / 2 - 30;}
-                });
+          if (landscapeAsset !== undefined) {
+            // If we would draw something that is already
+            // present, continue
+            var existing = Y.one(this).one('.landscape-badge'),
+                target;
+
+            if (!existing) {
+              existing = d3.select(this).append('image');
+              existing.attr({
+                'class': 'landscape-badge',
+                'width': 30,
+                'height': 30
+              });
+            }
+            existing = d3.select(this).select('.landscape-badge');
+            existing.attr({
+              'xlink:href': landscapeAsset,
+              'x': function(box) {return box.w * 0.13;},
+              'y': function(box) { return box.h / 2 - 30;}
+            });
+          } else {
+            // Remove any existing badge.
+            d3.select(this).select('.landscape-badge').remove();
           }
         });
       }
