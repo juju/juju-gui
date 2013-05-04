@@ -145,27 +145,27 @@ YUI.add('juju-gui', function(Y) {
      */
     keybindings: {
       'A-s': {
-        target: "#charm-search-field",
+        target: '#charm-search-field',
         focus: true,
         help: 'Select the charm Search'
       },
       'S-/': {
-          target: "#shortcut-help",
-          toggle: true,
-          callback: function(evt, target) {
-            // This could be its own view.
-            if (target && !target.getHTML().length) {
-              var bindings = [];
-              Y.each(this.keybindings, function(v, k) {
-                if (v.help) {
-                  bindings.push({key: k, help: v.help});
-                }
-              });
-              target.setHTML(
+        target: '#shortcut-help',
+        toggle: true,
+        callback: function(evt, target) {
+          // This could be its own view.
+          if (target && !target.getHTML().length) {
+            var bindings = [];
+            Y.each(this.keybindings, function(v, k) {
+              if (v.help) {
+                bindings.push({key: k, help: v.help});
+              }
+            });
+            target.setHTML(
                 views.Templates.shortcuts({bindings: bindings}));
-            }
-          },
-          help: 'Display this help'
+          }
+        },
+        help: 'Display this help'
       },
       'A-e': {
         callback: function(evt) {
@@ -174,7 +174,7 @@ YUI.add('juju-gui', function(Y) {
         help: 'Navigate to the Environment overview.'
       },
       'esc': {
-        callback: function(){
+        callback: function() {
           // Explicitly hide anything we might care about.
           Y.one('#shortcut-help').hide();
         },
@@ -219,9 +219,9 @@ YUI.add('juju-gui', function(Y) {
      */
     activateHotkeys: function() {
       var key_map = {
-            '/': 191, '?': 63,
-            enter: 13, esc: 27, backspace: 8,
-            tab: 9, pageup: 33, pagedown: 34};
+        '/': 191, '?': 63,
+        enter: 13, esc: 27, backspace: 8,
+        tab: 9, pageup: 33, pagedown: 34};
       var code_map = {};
       Y.each(key_map, function(v, k) {
         code_map[v] = k;
@@ -229,9 +229,9 @@ YUI.add('juju-gui', function(Y) {
       Y.one(window).on('keydown', function(evt) {
         //Normalize key-code
         var symbolic = [];
-        evt.ctrlKey && symbolic.push('C');
-        evt.altKey && symbolic.push('A');
-        evt.shiftKey && symbolic.push('S');
+        if (evt.ctrlKey) { symbolic.push('C');}
+        if (evt.altKey) { symbolic.push('A');}
+        if (evt.shiftKey) { symbolic.push('S');}
         symbolic.push(code_map[evt.keyCode] ||
                       String.fromCharCode(evt.keyCode).toLowerCase());
         var trigger = symbolic.join('-');
@@ -247,7 +247,7 @@ YUI.add('juju-gui', function(Y) {
           evt.stopPropagation();
           evt.preventDefault();
         }
-     }, this);
+      }, this);
     },
 
     /**
