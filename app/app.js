@@ -189,6 +189,10 @@ YUI.add('juju-gui', function(Y) {
           var loc = Y.getLocation();
           var parts = loc.pathname.split('/');
           var next;
+          function filter(m) {
+            return m.path !== '*';
+          }
+
           while (parts) {
             parts = parts.slice(0, parts.length - 2);
             next = parts.join('/');
@@ -197,9 +201,7 @@ YUI.add('juju-gui', function(Y) {
             }
             // See if this would match a route.
             var match = this.match(next);
-            match = Y.Array.filter(match, function(m) {
-              return m.path !== "*";
-            });
+            match = Y.Array.filter(match, filter);
             if (match.length) {
               this.fire('navigateTo', {url: next});
               return;

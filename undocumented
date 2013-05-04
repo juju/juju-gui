@@ -1,6 +1,8 @@
+app/app.js:185 "callback"
 app/app.js:177 "callback"
 app/app.js:171 "callback"
 app/app.js:155 "callback"
+app/app.js:192 "filter"
 app/store/charm.js:166 "success"
 app/store/charm.js:241 "success"
 app/store/charm.js:330 "setter"
