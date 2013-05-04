@@ -120,6 +120,70 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+     * Declarative keybindings on the window object.
+     *
+     * Prefix supported are:
+     *   C - Control
+     *   A - Alt
+     *   S - Shift
+     *
+     * Followed by a lowercase letter. For example
+     *
+     * A-s is the 'Alt + s' keybinding.
+     *
+     * This maps to an object which has the following behavior.
+     *
+     * target: {String} CSS selector of one element
+     * focus: {Boolean} Focus the element.
+     * toggle: {Boolean} Toggle element visibility.
+     * callback: {Function} Taking (event, target).
+     * help: {String} Help text to display in popup.
+     *
+     * All are optional.
+     *
+     *
+     */
+    keybindings: {
+      'A-s': {
+        target: "#charm-search-field",
+        focus: true,
+        help: 'Select the charm Search'
+      },
+      'S-/': {
+          target: "#shortcut-help",
+          toggle: true,
+          callback: function(evt, target) {
+            // This could be its own view.
+            if (target && !target.getHTML().length) {
+              var bindings = [];
+              Y.each(this.keybindings, function(v, k) {
+                if (v.help) {
+                  bindings.push({key: k, help: v.help});
+                }
+              });
+              target.setHTML(
+                views.Templates.shortcuts({bindings: bindings}));
+            }
+          },
+          help: 'Display this help'
+      },
+      'A-e': {
+        callback: function(evt) {
+          this.fire('navigateTo', {url: '/:gui:/'});
+        },
+        help: 'Navigate to the Environment overview.'
+      },
+      'esc': {
+        callback: function(){
+          // Explicitly hide anything we might care about.
+          Y.one('#shortcut-help').hide();
+        },
+        help: 'Cancel current action'
+      }
+
+    },
+
+    /**
      * Data driven behaviors
      *
      * Placeholder for real behaviors associated with DOM Node data-*
@@ -154,81 +218,36 @@ YUI.add('juju-gui', function(Y) {
      * @method activateHotkeys
      */
     activateHotkeys: function() {
-      Y.one(window).on('keydown', function(ev) {
-        var key = [],
-            keyStr = null,
-            data = { preventDefault: false };
-        if (ev.altKey) {
-          key.push('alt');
-        } else if (ev.ctrlKey) {
-          key.push('ctrl');
-        } else if (ev.shiftKey) {
-          key.push('shift');
-        }
-        if (key.length === 0 &&
-            // If we have no modifier, check if this is a function or the ESC
-            // key. If it is not one of these keys, do nothing.
-            !(ev.keyCode >= 112 && ev.keyCode <= 123 || ev.keyCode === 27)) {
-          return; //nothing to do
-        }
-        keyStr = keyCodeToString(ev.keyCode);
-        if (!keyStr) {
-          keyStr = ev.keyCode;
-        }
-        key.push(keyStr);
-        Y.fire('window-' + key.join('-') + '-pressed', data);
-        if (data.preventDefault) {
-          ev.preventDefault();
-        }
+      var key_map = {
+            '/': 191, '?': 63,
+            enter: 13, esc: 27, backspace: 8,
+            tab: 9, pageup: 33, pagedown: 34};
+      var code_map = {};
+      Y.each(key_map, function(v, k) {
+        code_map[v] = k;
       });
-
-      Y.detachAll('window-alt-E-pressed');
-      Y.on('window-alt-E-pressed', function(data) {
-        this.fire('navigateTo', {url: this.nsRouter.url({gui: '/'})});
-        data.preventDefault = true;
-      }, this);
-
-      Y.detachAll('window-alt-S-pressed');
-      Y.on('window-alt-S-pressed', function(data) {
-        var field = Y.one('#charm-search-field');
-        if (field) {
-          field.focus();
+      Y.one(window).on('keydown', function(evt) {
+        //Normalize key-code
+        var symbolic = [];
+        evt.ctrlKey && symbolic.push('C');
+        evt.altKey && symbolic.push('A');
+        evt.shiftKey && symbolic.push('S');
+        symbolic.push(code_map[evt.keyCode] ||
+                      String.fromCharCode(evt.keyCode).toLowerCase());
+        var trigger = symbolic.join('-');
+        var spec = this.keybindings[trigger];
+        if (spec) {
+          var target = Y.one(spec.target);
+          if (target) {
+            if (spec.toggle) { target.toggleView(); }
+            if (spec.focus) { target.focus(); }
+          }
+          if (spec.callback) { spec.callback.call(this, evt, target); }
+          // If we handled the event nothing else has to.
+          evt.stopPropagation();
+          evt.preventDefault();
         }
-        data.preventDefault = true;
-      }, this);
-
-      /**
-       * Transform a numeric keyCode value to its string version. Example:
-       * 16 returns 'shift'.
-       *
-       * @param {number} keyCode The numeric value of a key.
-       * @return {string} The string version of the given keyCode.
-       * @method keyCodeToString
-       */
-      function keyCodeToString(keyCode) {
-        if (keyCode === 16) {
-          return 'shift';
-        }
-        if (keyCode === 17) {
-          return 'control';
-        }
-        if (keyCode === 18) {
-          return 'alt';
-        }
-        if (keyCode === 27) {
-          return 'esc';
-        }
-        // Numbers or Letters
-        if (keyCode >= 48 && keyCode <= 57 || //Numbers
-            keyCode >= 65 && keyCode <= 90) { //Letters
-          return String.fromCharCode(keyCode);
-        }
-        //F1 -> F12
-        if (keyCode >= 112 && keyCode <= 123) {
-          return 'F' + (keyCode - 111);
-        }
-        return null;
-      }
+     }, this);
     },
 
     /**
@@ -1119,6 +1138,7 @@ YUI.add('juju-gui', function(Y) {
     'app-subapp-extension',
     'sub-app',
     'subapp-browser',
+    'event-key',
     'event-touch',
     'model-controller']
 });

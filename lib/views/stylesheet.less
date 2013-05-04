@@ -278,6 +278,31 @@ svg {
   cursor: move;
 }
 
+#shortcut-help {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 8%;
+  bottom: 10%;
+  opacity: 0.85;
+  z-index: 10;
+  .create-border-radius('black');
+  .create-box-shadow(-2px 4px 4px 0 rgba(0, 0, 0, 0.5));
+ 
+  background-color: black;
+  color: white;
+
+  .binding {
+    color: green;
+  }
+
+  table {
+    padding: 2em;
+    margin: 2em;
+  }
+
+}
+
 #environment-help {
   color: #757575;
   text-align: center;
