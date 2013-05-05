@@ -198,6 +198,11 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
      */
     _allowAdHocAttrs: true,
 
+    /**
+     Prepare context used in callbacks.
+
+     @method getContext
+    */
     getContext: function() {
       var context = this.getAttrs();
       delete context.initialized;
@@ -205,6 +210,11 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       return context;
     },
 
+    /**
+     Start lifecycle handler. Triggered by simulator.
+
+     @method start
+     */
     start: function() {
       var context = this.getContext();
 
@@ -217,6 +227,11 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       this.set('started', true);
     },
 
+    /**
+     Select handler. Triggered in Simulator.run
+
+     @method select
+     */
     select: function(context) {
       var select = context.select;
       var db = context.state.db;
@@ -249,6 +264,11 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       }
     },
 
+    /**
+     Agent runtime controller. Called by Simulator.run automatically.
+
+     @method run
+     */
     run: function() {
       var context = this.getContext();
 
@@ -361,7 +381,14 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       this.stop();
     },
 
-    _updateAgents: function(evt) {
+    /**
+     Utility to generate Agent instances from
+     Agent specs (see agents attribute)
+
+     @method _updateAgents
+     @return {undefined} side-effects only.
+     */
+    _updateAgents: function() {
       var decls = this.get('agents');
       var state = this.get('state');
       var agents = {};
