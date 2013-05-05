@@ -8,19 +8,19 @@
       random: 1.0, // Trigger the random path, but 100% of the time.
       filter: function(context) {
         var selection = context.selection.filter(
-          {asList: true},
-          function(service) {
-            // Filter down to a list of one for testing.
-            return service.get('id') === 'wordpress';
-          });
-          return selection;
+            {asList: true},
+            function(service) {
+              // Filter down to a list of one for testing.
+              return service.get('id') === 'wordpress';
+            });
+        return selection;
       }},
-      run: function(context) {
-        context.selection.each(function(service) {
-          // Add 10 units
-          context.state.addUnit(service.get('id'), 10);
-        });
-      }
+    run: function(context) {
+      context.selection.each(function(service) {
+        // Add 10 units
+        context.state.addUnit(service.get('id'), 10);
+      });
+    }
   };
 
   describe('FakeBackend.simulator', function() {
@@ -69,23 +69,18 @@
           agents: {test: test_agent || SAMPLE_AGENT}});
         var agent = simulator._agents.test;
 
-          simulator.on('tick', function() {
-            callback.call(agent);
-            done();
-          });
-          simulator.start();
+        simulator.on('tick', function() {
+          callback.call(agent);
+          done();
+        });
+        simulator.start();
       });
     }
 
-    function unauthedAgentShould() {
-      state.logout();
-      return agentShould(arguments);
-    };
-
-        agentShould('should be able to spawn a simulation engine', function() {
-        // and the default simulator should tick when running.
-        // the state was properly assigned.
-        assert.equal(this.get('state'), state);
+    agentShould('should be able to spawn a simulation engine', function() {
+      // and the default simulator should tick when running.
+      // the state was properly assigned.
+      assert.equal(this.get('state'), state);
     });
 
     agentShould('should be able to run decalred agents', function() {

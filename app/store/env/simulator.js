@@ -288,25 +288,25 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
                          starting selection.
 
           filter: {Function} Called with context (so context.selection is
-          available). Should return a ModelList.filter({asList: true}, function())
-          styled selection.
+          available). Should return a ModelList.filter({asList: true},
+          function()) styled selection.
 
-          random: {Float} 0..1 (optional) Narrow existing selection to
-                  a random subset.
+          random: {Float} 0..1 (optional) Narrow existing selection to a random
+          subset.
 
-  threshold: {Float} optional 0..1 range probability that agent should run
-             on a given interval.
+  threshold: {Float} optional 0..1 range probability that agent should run on a
+  given interval.
 
-  run: {Function}(context) Do agent work. This method will first prepare a selection
-       if one is defined and then trigger the provided callback with (context).
-       This should perform mutations using the 'state' (FakeBackend) API directly
-       or taking care to make sure the delta stream is properly handled should
-       no API be available.
+  run: {Function}(context) Do agent work. This method will first prepare a
+  selection if one is defined and then trigger the provided callback with
+  (context).  This should perform mutations using the 'state' (FakeBackend) API
+  directly or taking care to make sure the delta stream is properly handled
+  should no API be available.
 
-  `context` passed to these methods represents the current attribute values of the
-  agent as well as `state` which is a handle to the backend (FakeBackend) API.
-  Callbacks are invoked with the generate Agent class and can directly store
-  attributes on the class in the normal Y.Base ways.
+  `context` passed to these methods represents the current attribute values of
+  the agent as well as `state` which is a handle to the backend (FakeBackend)
+  API.  Callbacks are invoked with the generate Agent class and can directly
+  store attributes on the class in the normal Y.Base ways.
 
   @class Simulator
   */
