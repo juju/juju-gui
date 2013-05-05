@@ -134,7 +134,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
      This one is a toy playing with position annotations
      */
     position: {
-      threshold: 0.0,
+      threshold: 0.0, // Disabled by default.
       start: function(context) {
         // Not sensitive to size changes.
         // Reach across time and space to look at... client-side.
@@ -180,6 +180,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
   }
   Agent.NAME = 'Agent';
   Agent.ATTRS = {
+    started: {value: false}
   };
 
   Y.extend(Agent, Y.Base, {
@@ -205,14 +206,15 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
     },
 
     start: function() {
-      var context = this.getContext(),
-          self = this;
-      if (context.start) {
-        context.state.onceAfter('authenticatedChange', function() {
-          // TODO: Validate that its actually true.
-          context.start.call(self, context);
-        });
+      var context = this.getContext();
+
+      if (this.get('started') === true) {
+        return;
       }
+      if (context.start) {
+        context.start.call(this, context);
+      }
+      this.set('started', true);
     },
 
     select: function(context) {
@@ -238,7 +240,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
             });
       }
 
-      if (select.random) {
+      if (select.random !== undefined) {
         // This requires that a selection is present.
         context.selection = context.selection.filter(
             {asList: true}, function() {
@@ -256,8 +258,14 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       // Update selection to act on.
       if (context.select) {
         this.select(context);
+        this.set('selection', context.selection);
       }
-      context.run.call(this, context);
+      if (context.run) {
+        // `run` should logically always exist,
+        // however some tests are very simple to
+        // write w/o it.
+        context.run.call(this, context);
+      }
     }
   });
 
@@ -362,7 +370,6 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         spec = spec || {};
         spec.state = state;
         agents[name] = new Agent(spec);
-        agents[name].start();
       });
       this._agents = agents;
     },
@@ -376,24 +383,30 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
     start: function() {
       var self = this,
           state = this.get('state');
+
       if (this._scheduler) {
         // Already started, so restart.
         this.stop();
       }
 
-      var scheduler = function() {
-        Y.each(self._agents, function(agent, name) {
-          agent.run(state);
-        });
+      var tick = function() {
+        if (state.get('authenticated') === true) {
+          Y.each(self._agents, function(agent, name) {
+            if (agent.get('started') !== true) {
+              agent.start.call(agent);
+            }
+            agent.run.call(agent);
+          });
+        }
         self.fire('tick');
       };
 
       this._scheduler = Y.later(self.get('interval'),
-                                self, scheduler, undefined,
+                                self, tick, undefined,
                                 true);
 
       // Invoke on start as well.
-      scheduler();
+      tick();
       return this;
 
     },
