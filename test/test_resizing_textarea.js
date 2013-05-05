@@ -10,7 +10,7 @@
 
 describe('textarea autosize plugin', function() {
 
-  var Y, test_text, container, textarea, target, target2, ie_fudge;
+  var Y, test_text, container, textarea, target, target2, kludge;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use([
@@ -31,11 +31,13 @@ describe('textarea autosize plugin', function() {
 
       // XXX: BradCrittenden 2013-05-02 bug=1175781: This work-around
       // is just temporary.  The root cause needs to be found and fixed.
-      ie_fudge = 0;
-      if (Y.UA.ie === 10) {
+      // The test check properties are inverted and will need to be fixed.
+      kludge = 0;
+      if (Y.UA.ie === 10 || Y.UA.gecko) {
         // IE10 Computes sizes wrong.
-        ie_fudge = 6;
+        kludge = 6;
       }
+
       done();
     });
   });
@@ -73,7 +75,7 @@ describe('textarea autosize plugin', function() {
    *
    */
   function get_height(target) {
-    return clean_size(target.getComputedStyle('height')) + ie_fudge;
+    return clean_size(target.getComputedStyle('height')) + kludge;
   }
 
   /**
@@ -235,7 +237,7 @@ describe('textarea autosize plugin', function() {
     });
 
     target.show();
-    var current_height = get_height(target) - ie_fudge;
+    var current_height = get_height(target) - kludge;
     assert.equal(300, current_height,
         'The height should start out at 300px per the min_height cfg');
   });
