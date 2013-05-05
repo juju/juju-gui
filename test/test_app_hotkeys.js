@@ -34,6 +34,7 @@ describe('application hotkeys', function() {
 
   afterEach(function() {
     container.remove(true);
+    app.destroy({remove: true});
   });
 
   it('should listen for "?" events', function() {

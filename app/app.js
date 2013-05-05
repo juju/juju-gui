@@ -179,39 +179,7 @@ YUI.add('juju-gui', function(Y) {
           Y.one('#shortcut-help').hide();
         },
         help: 'Cancel current action'
-      },
-      'u': {
-        help: 'Navigate up a level',
-        callback: function(evt) {
-          // Our url namespace doesn't favor this
-          // model, but I wanted to write it.
-          // Happy to abandom in review.
-          var loc = Y.getLocation();
-          var parts = loc.pathname.split('/');
-          var next;
-          function filter(m) {
-            return m.path !== '*';
-          }
-
-          while (parts) {
-            parts = parts.slice(0, parts.length - 2);
-            next = parts.join('/');
-            if (!parts.length) {
-              break;
-            }
-            // See if this would match a route.
-            var match = this.match(next);
-            match = Y.Array.filter(match, filter);
-            if (match.length) {
-              this.fire('navigateTo', {url: next});
-              return;
-            }
-          }
-          // Nothing matched.
-          this.fire('navigateTo', {url: '/:gui:/'});
-        }
       }
-
     },
 
     /**
