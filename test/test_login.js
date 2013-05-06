@@ -113,7 +113,6 @@
 
     afterEach(function() {
       env.destroy();
-      //mask.remove(true);
       container.remove(true);
       sessionStorage.setItem('credentials', null);
     });
