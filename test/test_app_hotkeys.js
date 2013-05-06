@@ -44,6 +44,7 @@ describe('application hotkeys', function() {
     });
     var help = Y.one('#shortcut-help');
     assert.equal(help.getStyle('display'), 'block');
+    help.hide();
   });
 
   it('should listen for Alt-S key events', function() {

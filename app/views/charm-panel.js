@@ -1231,7 +1231,7 @@ YUI.add('juju-charm-panel', function(Y) {
         ENTER = Y.Node.DOM_EVENTS.key.eventDef.KEY_MAP.enter,
         activePanelName;
 
-    Y.one(document.body).append(container);
+    Y.one(config.container || document.body).append(container);
     container.hide();
 
     /**

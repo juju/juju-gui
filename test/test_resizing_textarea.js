@@ -15,6 +15,7 @@ describe('textarea autosize plugin', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'resizing-textarea',
+      'juju-tests-utils',
       'node-event-simulate'],
     function(Y) {
 
@@ -43,10 +44,9 @@ describe('textarea autosize plugin', function() {
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div id="container"></div>');
+    container = Y.namespace('juju-tests.utils').makeContainer('container');
     textarea = Y.Node.create('<textarea class="autosize"></textarea>');
     container.append(textarea);
-    Y.one(document.body).prepend(container);
     target = undefined;
     target2 = undefined;
   });
