@@ -33,8 +33,8 @@ describe('charm panel', function() {
     // The charms panel needs these elements
     container = Y.namespace('juju-tests.utils').makeContainer('test-container');
     container.append(
-      Y.Node.create('<div id="charm-search-test">' +
-                    '<div id="charm-search-icon"><i></i></div>' +
+        Y.Node.create('<div id="charm-search-test">' +
+        '<div id="charm-search-icon"><i></i></div>' +
                     '<div id="content"></div>' +
                     '<input type="text" id="charm-search-field" />' +
                     '</div>'));
@@ -193,7 +193,7 @@ describe('charm panel', function() {
       // Mock the base application.
       app = {db: db, views: {environment: {}}, env: env};
       panel = views.CharmPanel.getInstance({container: container,
-                                           charm_store: store, app: app});
+        charm_store: store, app: app});
       panel.show();
     });
 
@@ -473,12 +473,12 @@ describe('charm panel filtering', function() {
     conn.open();
     container = Y.namespace('juju-tests.utils').makeContainer('container');
     container.append(
-      Y.Node.create('<div />')
+        Y.Node.create('<div />')
       .setAttribute('id', 'charm-search-test').append(
         Y.Node.create('<input />')
         .setAttribute('type', 'text')
         .setAttribute('id', 'charm-search-field')
-      )
+        )
     );
     db = new models.Database();
     charms = db.charms.add([

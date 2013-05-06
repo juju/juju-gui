@@ -5,11 +5,11 @@ describe('overlay indicator', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-overlay-indicator',
-                              'juju-tests-utils', 'node'],
-        function(Y) {
-          widget = Y.juju.widgets.browser;
-          done();
-        });
+      'juju-tests-utils', 'node'],
+    function(Y) {
+      widget = Y.juju.widgets.browser;
+      done();
+    });
   });
 
   beforeEach(function() {

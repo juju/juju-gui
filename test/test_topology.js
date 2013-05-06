@@ -3,13 +3,13 @@
 describe('topology', function() {
   var Y, NS, views,
       TestModule, modA, state,
-      container, topo, utils
-      models,
-      db;
+      container, topo, utils,
+      models, db;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-topology',
                                'd3-components',
+                               'juju-tests-utils',
                                'node',
                                'node-event-simulate'],
     function(Y) {

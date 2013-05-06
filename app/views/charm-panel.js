@@ -1335,7 +1335,6 @@ YUI.add('juju-charm-panel', function(Y) {
           }
         }
         container.setStyles({opacity: 0, display: 'block'});
-        console.log("showing panel with container", container, container.getDOMNode());
         container.show(true);
         isPanelVisible = true;
         if (app.views.environment.instance) {

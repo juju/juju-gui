@@ -5,8 +5,8 @@ describe('prettify', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['node',
-                              'juju-tests-utils',
-                              'prettify'], function(Y) {
+      'juju-tests-utils',
+      'prettify'], function(Y) {
       done();
     });
   });

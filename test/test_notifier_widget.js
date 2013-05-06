@@ -6,10 +6,10 @@ describe('notifier widget', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['notifier',
-                              'juju-tests-utils',
-                              'node-event-simulate'], function(Y) {
-          Notifier = Y.namespace('juju.widgets').Notifier;
-          done();
+      'juju-tests-utils',
+      'node-event-simulate'], function(Y) {
+      Notifier = Y.namespace('juju.widgets').Notifier;
+      done();
     });
   });
 

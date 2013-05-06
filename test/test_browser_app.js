@@ -2,7 +2,7 @@
 
 (function() {
 
- describe('browser fullscreen view', function() {
+  describe('browser fullscreen view', function() {
     var browser, container, FullScreen, view, views, Y;
 
     before(function(done) {
@@ -108,10 +108,10 @@
       container.remove(true);
     });
 
-  var addBrowserContainer = function(Y) {
-    Y.Node.create('<div id="subapp-browser">' +
-        '</div>').appendTo(container);
-  };
+    var addBrowserContainer = function(Y) {
+      Y.Node.create('<div id="subapp-browser">' +
+          '</div>').appendTo(container);
+    };
 
 
     it('knows that it is not fullscreen', function() {
