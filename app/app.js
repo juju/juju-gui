@@ -173,6 +173,18 @@ YUI.add('juju-gui', function(Y) {
         },
         help: 'Navigate to the Environment overview.'
       },
+      'S-d': {
+        callback: function(evt) {
+          this.env.exportEnvironment(function(r) {
+            var exportData = JSON.stringify(r.result, undefined, 2);
+            var exportBlob = new Blob([exportData],
+                                      {type: 'application/json;charset=utf-8'});
+            saveAs(exportBlob, 'export.json');
+          });
+        },
+        help: 'Export the environment'
+
+      },
       'esc': {
         callback: function() {
           // Explicitly hide anything we might care about.

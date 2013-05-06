@@ -55,24 +55,45 @@ YUI.add('juju-topology-importexport', function(Y) {
               notifications = topo.get('db').notifications,
               env = topo.get('env'),
               fileSources = evt._event.dataTransfer.files;
-
-          Y.Array.each(fileSources, function(file) {
-            var reader = new FileReader();
-            reader.onload = (function(fileData) {
-              return function(e) {
-                // Import each into the environment
-                env.importEnvironment(e.target.result);
-                notifications.add({
-                  title: 'Imported Environment',
-                  message: 'Import from "' + file.name + '" successful',
-                  level: 'important'
-                });
-              };
-            })(file);
-            reader.readAsText(file);
-          });
+          if (fileSources.length) {
+            Y.Array.each(fileSources, function(file) {
+              var reader = new FileReader();
+              reader.onload = (function(fileData) {
+                return function(e) {
+                  // Import each into the environment
+                  env.importEnvironment(e.target.result);
+                  notifications.add({
+                    title: 'Imported Environment',
+                    message: 'Import from "' + file.name + '" successful',
+                    level: 'important'
+                  });
+                };
+              })(file);
+              reader.readAsText(file);
+            });
+          } else {
+            console.log("using clipboard path");
+            env.importEnvironment(evt._event.dataTransfer.getData('Text'));
+          }
           evt.preventDefault();
           evt.stopPropagation();
+        },
+
+        update: function() {
+          if (!this._dragHandle) {
+            var env = this.get('component').get('env');
+            this._dragHandle = Y.one('#environment-name')
+                                .on('dragstart', function(evt) {
+                                  env.exportEnvironment(function(r) {
+                                    var ev = evt._event;
+                                    ev.dataTransfer.dragEffect = 'copy';
+                                    var json = JSON.stringify(r.result, undefined, 2);
+                                    ev.dataTransfer.setData('Text', json);
+                                  });
+                                  evt.stopPropagation();
+                                }, this);
+          }
+          ImportExportModule.superclass.update.call(this);
         }
       }, {
         ATTRS: {}
