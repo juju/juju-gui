@@ -1,7 +1,7 @@
 'use strict';
 
 describe('charm panel', function() {
-  var Y, models, views, juju, ENTER,
+  var Y, container, models, views, juju, ENTER,
       searchResult = '{"results": [{"data_url": "this is my URL", ' +
       '"name": "membase", "series": "precise", "summary": ' +
       '"Membase Server", "relevance": 8.728194117350437, ' +
@@ -31,23 +31,27 @@ describe('charm panel', function() {
 
   beforeEach(function() {
     // The charms panel needs these elements
-    var docBody = Y.one(document.body);
-    Y.Node.create('<div id="charm-search-test">' +
-        '<div id="charm-search-icon"><i></i></div>' +
-        '<div id="content"></div>' +
-        '<input type="text" id="charm-search-field" />' +
-        '</div>').appendTo(docBody);
+    container = Y.namespace('juju-tests.utils').makeContainer('test-container');
+    container.append(
+      Y.Node.create('<div id="charm-search-test">' +
+                    '<div id="charm-search-icon"><i></i></div>' +
+                    '<div id="content"></div>' +
+                    '<input type="text" id="charm-search-field" />' +
+                    '</div>'));
   });
 
   afterEach(function() {
     Y.namespace('juju.views').CharmPanel.killInstance();
-    Y.one('#charm-search-test').remove(true);
+    if (container) {
+      container.remove(true);
+    }
   });
 
   it('must be able to show and hide the panel', function() {
     var panel = Y.namespace('juju.views').CharmPanel
           .getInstance({
           testing: true,
+          container: container,
           app: { views: { environment: {}}}
         }),
         container = panel.node;
@@ -65,6 +69,7 @@ describe('charm panel', function() {
   it('must be able to search', function() {
     var searchTriggered = false,
         panel = Y.namespace('juju.views').CharmPanel.getInstance({
+          container: container,
           charm_store: new juju.CharmStore({datasource: {
             sendRequest: function(params) {
               searchTriggered = true;
@@ -95,6 +100,7 @@ describe('charm panel', function() {
   it('must be able to trigger charm details', function() {
     var db = new models.Database(),
         panel = Y.namespace('juju.views').CharmPanel.getInstance({
+          container: container,
           charm_store: new juju.CharmStore({datasource: {
             sendRequest: function(params) {
               // Mocking the server callback value
@@ -126,6 +132,7 @@ describe('charm panel', function() {
      'configuration panel', function() {
         var db = new models.Database(),
             panel = Y.namespace('juju.views').CharmPanel.getInstance({
+              container: container,
               charm_store: new juju.CharmStore({datasource: {
                 sendRequest: function(params) {
                   // Mocking the server callback value
@@ -185,7 +192,8 @@ describe('charm panel', function() {
       db = new models.Database();
       // Mock the base application.
       app = {db: db, views: {environment: {}}, env: env};
-      panel = views.CharmPanel.getInstance({charm_store: store, app: app});
+      panel = views.CharmPanel.getInstance({container: container,
+                                           charm_store: store, app: app});
       panel.show();
     });
 
@@ -322,8 +330,7 @@ describe('charm description', function() {
     env = Y.namespace('juju').newEnvironment({conn: conn});
     env.connect();
     conn.open();
-    container = Y.Node.create('<div id="test-container" />');
-    Y.one('#main').append(container);
+    container = Y.namespace('juju-tests.utils').makeContainer('test-container');
     db = new models.Database();
     charm = db.charms.add({ id: 'cs:precise/mysql-7' });
     charms = new models.CharmList(),
@@ -464,17 +471,15 @@ describe('charm panel filtering', function() {
     env = Y.namespace('juju').newEnvironment({conn: conn});
     env.connect();
     conn.open();
-    Y.one('#main')
-        .append(
-            Y.Node.create('<div />')
-              .setAttribute('id', 'charm-search-test').append(
-                Y.Node.create('<input />')
-                  .setAttribute('type', 'text')
-                  .setAttribute('id', 'charm-search-field')
-            )
-        );
-    container = Y.Node.create('<div />');
-    Y.one('#main').append(container);
+    container = Y.namespace('juju-tests.utils').makeContainer('container');
+    container.append(
+      Y.Node.create('<div />')
+      .setAttribute('id', 'charm-search-test').append(
+        Y.Node.create('<input />')
+        .setAttribute('type', 'text')
+        .setAttribute('id', 'charm-search-field')
+      )
+    );
     db = new models.Database();
     charms = db.charms.add([
       { id: 'cs:precise/mysql-7' },

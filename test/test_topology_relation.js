@@ -1,21 +1,22 @@
 'use strict';
 
 describe('topology relation module', function() {
-  var Y, views, view, container, topo, db;
+  var Y, utils, views, view, container, topo, db;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['juju-topology', 'node', 'node-event-simulate', 'juju-view-utils'],
+        ['juju-tests-utils', 'juju-topology', 'node', 'node-event-simulate', 'juju-view-utils'],
         function(Y) {
           views = Y.namespace('juju.views');
+          utils = Y.namespace('juju-tests.utils');
           done();
         });
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div/>')
-      .setStyle('visibility', 'hidden');
+    container = utils.makeContainer();
     view = new views.RelationModule();
+
   });
 
   afterEach(function() {

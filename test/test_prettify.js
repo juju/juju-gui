@@ -4,14 +4,15 @@ describe('prettify', function() {
   var container, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['node', 'prettify'], function(Y) {
+    Y = YUI(GlobalConfig).use(['node',
+                              'juju-tests-utils',
+                              'prettify'], function(Y) {
       done();
     });
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div id="container"></div>');
-    Y.one('body').prepend(container);
+    container = Y.namespace('juju-tests.utils').makeContainer('container');
   });
 
   afterEach(function() {
