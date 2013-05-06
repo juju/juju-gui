@@ -91,6 +91,7 @@
       assert.isTrue(Y.Lang.isString(attrs.clientId));
       delete attrs.clientId;
       assert.deepEqual(attrs, {
+        annotations: {},
         aggregated_status: undefined,
         charm: 'cs:precise/wordpress-10',
         config: undefined,
@@ -520,9 +521,9 @@
       it('must get annotations from a service', function(done) {
         fakebackend.deploy('cs:wordpress', function() {
           var service = fakebackend.getService('wordpress').result;
-          assert.equal(service.annotations, undefined);
+          assert.deepEqual(service.annotations, {});
           var anno = fakebackend.getAnnotations('wordpress').result;
-          assert.equal(anno, undefined);
+          assert.deepEqual(anno, {});
           done();
         });
       });

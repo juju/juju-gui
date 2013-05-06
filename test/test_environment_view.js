@@ -532,11 +532,10 @@
       // IE uses a space delimiter, not a comma.
       var properTransform = /translate\((\d+\.?\d*)[, ](\d+\.?\d*)\)/;
       var node, match;
-
-      view.render();
+      view.createTopology();
       // For testing position isn't testable with transitions on.
       view.topo.modules.ServiceModule.set('useTransitions', false);
-
+      view.render();
 
       // Test values from initial load.
       node = view.topo.modules.ServiceModule.getServiceNode('wordpress');

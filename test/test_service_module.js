@@ -39,6 +39,7 @@ describe('service module annotations', function() {
     view.render();
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
+    serviceModule.set('useTransitions', false);
   });
 
   afterEach(function() {
