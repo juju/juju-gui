@@ -5,14 +5,15 @@ describe('filter widget', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['browser-filter-widget', 'node-event-simulate'], function(Y) {
+        ['browser-filter-widget',
+          'juju-tests-utils',
+          'node-event-simulate'], function(Y) {
           done();
         });
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div></div>');
-    Y.one(document.body).prepend(container);
+    container = Y.namespace('juju-tests.utils').makeContainer('container');
     instance = new Y.juju.widgets.browser.Filter({
       filters: {
         text: 'foo',

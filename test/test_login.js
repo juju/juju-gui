@@ -104,9 +104,9 @@
       env = juju.newEnvironment({conn: conn});
       env.connect();
       conn.open();
-      container = Y.one('body').appendChild('<div/>');
-      // Needed by the render method.
-      mask = Y.one('body').appendChild('<div/>').set('id', 'full-screen-mask');
+      container = utils.makeContainer();
+      mask = Y.Node.create('<div id="full-screen-mask"/>');
+      mask.appendTo(document.body);
       loginView = new views.login(
           {container: container, env: env, help_text: 'Help text'});
     });
@@ -114,7 +114,6 @@
     afterEach(function() {
       env.destroy();
       container.remove(true);
-      mask.remove(true);
       sessionStorage.setItem('credentials', null);
     });
 

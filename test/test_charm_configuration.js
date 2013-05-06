@@ -40,8 +40,8 @@ describe('charm configuration', function() {
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div id="juju-search-charm-panel" />');
-    Y.one('#main').append(container);
+    container = Y.namespace('juju-tests.utils')
+                 .makeContainer('juju-search-charm-panel');
     db = new models.Database();
     makeView = function(charm, env) {
       return new views.CharmConfigurationView(

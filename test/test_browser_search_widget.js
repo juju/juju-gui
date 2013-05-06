@@ -6,6 +6,7 @@ describe('browser search widget', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['browser-search-widget',
+      'juju-tests-utils',
                                'event-simulate',
                                'node-event-simulate',
                                'node'], function(Y) {
@@ -15,8 +16,7 @@ describe('browser search widget', function() {
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div id="container"></div>');
-    Y.one('body').prepend(container);
+    container = Y.namespace('juju-tests.utils').makeContainer('container');
   });
 
   afterEach(function() {

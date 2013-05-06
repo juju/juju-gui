@@ -47,10 +47,8 @@ describe('juju application notifications', function() {
       'node-event-simulate',
       'ns-routing-app-extension'],
     function(Y) {
-      viewContainer = Y.Node.create('<div />');
-      viewContainer.appendTo(Y.one('body'));
-      viewContainer.hide();
-
+      viewContainer = Y.namespace('juju-tests.utils')
+        .makeContainer('container');
       db = new models.Database();
       nsRouter = Y.namespace('juju').Router('charmstore');
 
