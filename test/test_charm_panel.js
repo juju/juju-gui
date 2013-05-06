@@ -54,16 +54,16 @@ describe('charm panel', function() {
           container: container,
           app: { views: { environment: {}}}
         }),
-        container = panel.node;
-    container.getStyle('display').should.equal('none');
+        node = panel.node;
+    node.getStyle('display').should.equal('none');
     panel.show();
-    container.getStyle('display').should.equal('block');
+    node.getStyle('display').should.equal('block');
     panel.hide();
-    container.getStyle('display').should.equal('none');
+    node.getStyle('display').should.equal('none');
     panel.toggle();
-    container.getStyle('display').should.equal('block');
+    node.getStyle('display').should.equal('block');
     panel.toggle();
-    container.getStyle('display').should.equal('none');
+    node.getStyle('display').should.equal('none');
   });
 
   it('must be able to search', function() {
