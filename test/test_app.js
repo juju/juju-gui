@@ -212,7 +212,7 @@ function injectData(app, data) {
       Y.Array.each(checkUrls, function(check) {
         var req = {url: check.url};
         var next = function() {};
-        app.checkShowBrowser(req, undefined, next);
+        app.toggleStaticViews(req, undefined, next);
         app.get('subApps').charmstore.hidden.should.eql(check.hidden);
       });
       app.destroy();
@@ -241,8 +241,7 @@ function injectData(app, data) {
     });
 
     beforeEach(function(done) {
-      container = Y.Node.create('<div/>').hide();
-      Y.one('body').append(container);
+      container = utils.makeContainer('container');
       conn = new utils.SocketStub();
       env = juju.newEnvironment({conn: conn});
       env.setCredentials({user: 'user', password: 'password'});
@@ -251,7 +250,7 @@ function injectData(app, data) {
     });
 
     afterEach(function(done) {
-      container.remove().destroy(true);
+      container.remove(true);
       sessionStorage.setItem('credentials', null);
       Y.each(destroyMe, function(item) {
         item.destroy();

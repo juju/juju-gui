@@ -511,7 +511,7 @@ describe('Service config handlers', function() {
     conn = new utils.SocketStub();
     env = juju.newEnvironment({conn: conn});
     env.connect();
-    app = new Y.juju.App({env: env});
+    app = new Y.juju.App({env: env, consoleEnabled: true });
     destroyMe.push(app);
     app.showView(new Y.View());
     controller = app.endpointsController;
@@ -568,7 +568,7 @@ describe('Service config handlers', function() {
     var charm2 = app.db.charms.add({id: charm_id, loaded: true});
     destroyMe.push(charm2);
     svc.set('charm', charm_id);
-    assert.equal(2, conn.messages.length);
+    assert.equal(1, conn.messages.length);
     assert.equal('get_service', conn.last_message().op);
   });
 

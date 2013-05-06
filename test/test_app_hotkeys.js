@@ -1,41 +1,53 @@
 'use strict';
 
 describe('application hotkeys', function() {
-  var app, container, windowNode, Y;
+  var app, container, env, windowNode, Y;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
         ['juju-gui', 'juju-tests-utils', 'node-event-simulate'], function(Y) {
-          var env = {
+          env = {
             after: function() {},
             get: function() {},
             on: function() {},
             set: function() {}
           };
           windowNode = Y.one(window);
-          app = new Y.juju.App({
-            env: env,
-            container: container,
-            viewContainer: container
-          });
-          app.showView(new Y.View());
-          app.activateHotkeys();
           done();
         });
 
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div/>');
+    container = Y.namespace('juju-tests.utils').makeContainer();
+    app = new Y.juju.App({
+      env: env,
+      container: container,
+      viewContainer: container
+    });
+    app.showView(new Y.View());
+    app.activateHotkeys();
+
     Y.one('#main').append(container);
     app.render();
   });
 
   afterEach(function() {
     container.remove(true);
+    app.destroy({remove: true});
   });
 
-  it('should listen for alt-S events', function() {
+  it('should listen for "?" events', function() {
+    windowNode.simulate('keydown', {
+      keyCode: 191, // "/" key.
+      shiftKey: true
+    });
+    var help = Y.one('#shortcut-help');
+    assert.equal(help.getStyle('display'), 'block');
+    help.hide();
+  });
+
+  it('should listen for Alt-S key events', function() {
     var searchInput = Y.Node.create('<input/>');
     searchInput.set('id', 'charm-search-field');
     container.append(searchInput);

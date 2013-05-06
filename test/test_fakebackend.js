@@ -287,7 +287,6 @@
     });
 
     describe('FakeBackend.importEnvironment', function(done) {
-      this.timeout(300);
 
       it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();

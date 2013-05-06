@@ -11,6 +11,42 @@ YUI.add('model-controller', function(Y) {
   var ModelController = Y.Base.create('juju-model-controller', Y.Base, [], {
 
     /**
+      Inits promise object stores.
+
+      @method initializer
+    */
+    initializer: function() {
+      this._charmPromises = {};
+      this._servicePromises = {};
+      this._serviceCharmPromises = {};
+    },
+
+    /**
+      Stores promises for a short period of time as a way to avoid multiple
+      instantiations when the application dispatches before the promises return
+
+      @method _getPromise
+      @param {String} key The id of the charm/service which will be used to
+        store and find the promise in the objects.
+      @param {Object} store Object which stores the various promises of a
+        specific type.
+      @param {Function} fn Promise executor function.
+      @return {Y.Promise} Stored promise matching the provided key.
+    */
+    _getPromise: function(key, store, fn) {
+      var promise = store[key];
+      if (!promise) {
+        store[key] = promise = new Y.Promise(fn);
+        var cleanUp = function() {
+          delete store[key];
+        };
+        promise.then(cleanUp, cleanUp);
+      }
+      return promise;
+    },
+
+
+    /**
       Returns a promise for a fully populated charm model.
 
       @method getCharm
@@ -21,7 +57,8 @@ YUI.add('model-controller', function(Y) {
       var db = this.get('db'),
           env = this.get('env');
 
-      return new Y.Promise(
+      return this._getPromise(
+          charmId, this._charmPromises,
           function(resolve, reject) {
             var charm = db.charms.getById(charmId);
             if (charm && charm.loaded) {
@@ -49,7 +86,8 @@ YUI.add('model-controller', function(Y) {
       var db = this.get('db'),
           env = this.get('env');
 
-      return new Y.Promise(
+      return this._getPromise(
+          serviceId, this._servicePromises,
           function(resolve, reject) {
             // `this` points to the serviceList
             var service = db.services.getById(serviceId);
@@ -90,8 +128,8 @@ YUI.add('model-controller', function(Y) {
           env = this.get('env'),
           mController = this;
 
-      return new Y.Promise(
-          // this is being bound to pass additional information into the fn
+      return this._getPromise(
+          serviceId, this._serviceCharmPromises,
           function(resolve, reject) {
             mController.getService(serviceId).then(function(service) {
               mController.getCharm(service.get('charm')).then(function(charm) {
