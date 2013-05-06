@@ -5,7 +5,8 @@ describe('topology relation module', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(
-        ['juju-tests-utils', 'juju-topology', 'node', 'node-event-simulate', 'juju-view-utils'],
+        ['juju-tests-utils', 'juju-topology', 'node',
+          'node-event-simulate', 'juju-view-utils'],
         function(Y) {
           views = Y.namespace('juju.views');
           utils = Y.namespace('juju-tests.utils');

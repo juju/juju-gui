@@ -71,7 +71,8 @@
     };
 
     before(function(done) {
-      Y = YUI(GlobalConfig).use(['juju-views', 'juju-tests-utils'], function(Y) {
+      Y = YUI(GlobalConfig).use(['juju-views',
+        'juju-tests-utils'], function(Y) {
         views = Y.namespace('juju.views');
         CharmCollectionView = views.charm_collection;
         // Use a local charm store.
@@ -105,7 +106,8 @@
 
     // Ensure the search results are rendered inside the container.
     it('must correctly render the search results', function() {
-      var container = Y.namespace('juju-tests.utils').makeContainer('test-container');
+      var container = Y.namespace('juju-tests.utils')
+        .makeContainer('test-container');
       var MyView = Y.Base.create('MyView', CharmCollectionView, [], {
         // Overriding to check the results as they are rendered in
         // the container. Subclassing is required because render() is

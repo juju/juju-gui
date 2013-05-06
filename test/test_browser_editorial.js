@@ -3,7 +3,8 @@
 (function() {
 
   describe('browser_editorial', function() {
-    var container, EditorialView, fakeStore, models, node, sampleData, view, views, Y;
+    var container, EditorialView, fakeStore, models,
+        node, sampleData, view, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
