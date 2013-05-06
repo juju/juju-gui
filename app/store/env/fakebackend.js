@@ -539,6 +539,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!service) {
         return {error: 'Service "' + serviceName + '" does not exist.'};
       }
+      if (service && service.get('is_subordinate')) {
+        return {error: unitName + ' is a subordinate, cannot add unit(s).'};
+      }
       if (!Y.Lang.isValue(service.unitSequence)) {
         service.unitSequence = 0;
       }

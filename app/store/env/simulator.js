@@ -147,6 +147,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
      */
     position: {
       threshold: 0.0, // Disabled by default.
+
       start: function(context) {
         // Not sensitive to size changes.
         // Reach across time and space to look at... client-side.
@@ -164,6 +165,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
 
       run: function(context) {
         var width = context.width,
+            height = context.height,
             center = context.center;
 
         var axis = RAND(0.5) && 'x' || 'y';
@@ -178,10 +180,11 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
           // Mirror relative x position on canvas.
           // TODO: Should move by box center point (except this
           // is a toy).
-          if (axis === 'x')
+          if (axis === 'x') {
             annotations['gui-x'] = width - x;
-          else
+          } else {
             annotations['gui-y'] = height - y;
+          }
           context.state.updateAnnotations(s.get('id'), annotations);
         });
       }
