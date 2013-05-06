@@ -138,6 +138,7 @@ YUI.add('juju-models', function(Y) {
       name: {},
       charm: {},
       config: {},
+      annotations: {value: {}},
       constraints: {},
       exposed: {
         value: false

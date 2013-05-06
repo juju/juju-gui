@@ -37,6 +37,31 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         envAnno['landscape-security-alert-url'] =
             '+alert:security-upgrades/packages/list?filter=security';
         context.state.updateAnnotations('env', envAnno);
+        context.serviceAnnotations(context);
+
+     },
+
+      serviceAnnotations: function(context) {
+        context.state.db.services.each(function(service) {
+          var annotations = service.get('annotations') || {};
+          var sid = service.get('id');
+          if (!annotations['landscape-computers']) {
+            annotations['landscape-computers'] = '/computers/' +
+                'criteria/service:' + sid + '+environment:demonstration';
+            context.state.updateAnnotations(sid, annotations);
+          }
+        });
+      },
+
+      unitAnnotations: function(context) {
+        context.state.db.units.each(function(unit) {
+          // Toggle landscape attributes as though they
+          var annotations = unit.annotations || {};
+          if (!annotations['landscape-computer']) {
+            annotations['landscape-computer'] = '+unit:' + unit.urlName;
+            context.state.updateAnnotations(unit.id, annotations);
+          }
+        });
       },
 
       select: {
@@ -47,26 +72,13 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
       run: function(context) {
         // Make sure services all have annotation
         // (Apart from selection)
-        context.state.db.services.each(function(service) {
-          var annotations = service.get('annotations') || {};
-          var sid = service.get('id');
-          if (!annotations['landscape-computers']) {
-            annotations['landscape-computers'] = '/computers/' +
-                'criteria/service:' + sid + '+environment:demonstration';
-            context.state.updateAnnotations(sid, annotations);
-          }
-        });
+        context.serviceAnnotations(context);
+        context.unitAnnotations(context);
 
         context.selection.each(function(unit) {
-          // Toggle landscape attributes as though they
-          var annotations = unit.annotations || {};
-          var changed = false;
-          if (!annotations['landscape-computer']) {
-            annotations['landscape-computer'] = '+unit:' + unit.urlName;
-            changed = true;
-          }
-
-          // Toggle some annotations.
+           var annotations = unit.annotations || {};
+           var changed = false;
+         // Toggle some annotations.
           if (RAND(0.3)) {
             annotations['landscape-needs-reboot'] = !annotations[
                 'landscape-needs-reboot'];
@@ -139,8 +151,10 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         // Not sensitive to size changes.
         // Reach across time and space to look at... client-side.
         var canvas = Y.one('body'),
-            width = canvas.getDOMNode().getClientRects()[0].width;
+            width = canvas.getDOMNode().getClientRects()[0].width,
+            height = canvas.getDOMNode().getClientRects()[0].height;
         this.set('width', width);
+        this.set('height', height);
       },
 
 
@@ -152,21 +166,26 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         var width = context.width,
             center = context.center;
 
+        var axis = RAND(0.5) && 'x' || 'y';
+
         context.selection.each(function(s) {
           var annotations = s.get('annotations') || {};
           var x = annotations['gui-x'];
+          var y = annotations['gui-y'];
           if (!Y.Lang.isNumber(x)) {
             return;
           }
           // Mirror relative x position on canvas.
           // TODO: Should move by box center point (except this
           // is a toy).
-          annotations['gui-x'] = width - x;
+          if (axis === 'x')
+            annotations['gui-x'] = width - x;
+          else
+            annotations['gui-y'] = height - y;
           context.state.updateAnnotations(s.get('id'), annotations);
         });
       }
     }
-
   };
 
   /**

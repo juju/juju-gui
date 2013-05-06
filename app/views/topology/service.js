@@ -257,7 +257,7 @@ YUI.add('juju-topology-service', function(Y) {
       var curr_click_action = self.get('currentServiceClickAction');
 
       // Fire the action named in the following scheme:
-      //   service_click_action.<action>
+      //   <action>
       // with the service, the SVG node, and the view
       // as arguments.
       self[curr_click_action](box);
