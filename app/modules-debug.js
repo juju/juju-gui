@@ -21,6 +21,9 @@ var GlobalConfig = {
   // Use Rollups
   combine: false,
 
+  // Don't load YUI CSS from YUI servers.
+  fetchCSS: false,
+
   groups: {
     gallery: {
       modules: {
