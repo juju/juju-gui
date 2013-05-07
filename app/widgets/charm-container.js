@@ -71,11 +71,8 @@ YUI.add('browser-charm-container', function(Y) {
      * @method _selectLast
      */
     _selectLast: function() {
-      var contentBox = this.get('contentBox'),
-          existing = contentBox.one('.yui3-charmtoken.last');
-      if (existing) {
-        existing.removeClass('last');
-      }
+      var contentBox = this.get('contentBox');
+      contentBox.all('.yui3-charmtoken.last').removeClass('last');
       contentBox.all('.yui3-charmtoken:not(.yui3-charmtoken-hidden)').slice(
           -1).addClass('last');
     },
