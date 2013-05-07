@@ -354,7 +354,9 @@ YUI.add('juju-env-sandbox', function(Y) {
             });
           }
         });
-        this.get('client').receiveNow(response);
+        if (deltas.length) {
+          this.get('client').receiveNow(response);
+        }
       }
     },
 

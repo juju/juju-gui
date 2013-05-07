@@ -62,7 +62,7 @@ YUI.add('juju-notifications', function(Y) {
                notification.get('level') === 'important')) {
             new widgets.Notifier({
               title: notification.get('title'),
-              message: notification.get('message')
+              message: new Y.Handlebars.SafeString(notification.get('message'))
             }).render(notifierBox);
           }
         },

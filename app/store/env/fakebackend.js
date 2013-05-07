@@ -338,9 +338,13 @@ YUI.add('juju-env-fakebackend', function(Y) {
                 Inform the caller of an error using the charm store.
               */
               failure: function(e) {
-                console.warn('error loading charm: ' + e);
+                // This is most likely an IOError stemming from an
+                // invalid charm pointing to a bad URL and a read of a
+                // 404 giving an error at this level. IOError isn't user
+                // facing so we log the warning.
+                console.warn('error loading charm: ' + e.error);
                 if (callbacks.failure) {
-                  callbacks.failure({error: 'Could not contact charm store.'});
+                  callbacks.failure({error: 'Error interacting with Charm store.'});
                 }
               }
             }
@@ -1286,7 +1290,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
                 self.addUnit(s.get('id'), serviceData.unit_count);
               }
               var annotations = s.get('annotations');
-              if (annotations) {
+
+              function empty(obj) {
+                for (name in obj) {
+                  return false;
+                }
+                return true;
+              }
+              if (annotations && !empty(annotations)) {
                 self.annotations.services[s.get('id')] = annotations;
               }
             });
@@ -1298,6 +1309,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
           })
       .then(function() {
             return callback({result: true});
+          }, function(reason) {
+            return callback(reason);
           });
     }
 
