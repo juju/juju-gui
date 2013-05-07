@@ -6,6 +6,7 @@ describe('charm container widget', function() {
   before(function(done) {
     Y = YUI(GlobalConfig).use([
       'array',
+      'juju-tests-utils',
       'browser-charm-container',
       'browser-charm-token',
       'node-event-simulate'],
@@ -16,8 +17,7 @@ describe('charm container widget', function() {
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div id="container"></div>');
-    Y.one(document.body).prepend(charm_container);
+    container = Y.namespace('juju-tests.utils').makeContainer('container');
   });
 
   afterEach(function() {
