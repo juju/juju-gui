@@ -2,19 +2,14 @@
 
 (function() {
 
-  var addBrowserContainer = function(Y) {
-    var docBody = Y.one(document.body);
-    Y.Node.create('<div id="subapp-browser">' +
-        '</div>').appendTo(docBody);
-  };
-
   describe('browser fullscreen view', function() {
-    var browser, FullScreen, view, views, Y;
+    var browser, container, FullScreen, view, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'juju-views',
           'juju-browser',
+          'juju-tests-utils',
           'subapp-browser-fullscreen', function(Y) {
             browser = Y.namespace('juju.browser');
             views = Y.namespace('juju.browser.views');
@@ -24,6 +19,7 @@
     });
 
     beforeEach(function() {
+      container = Y.namespace('juju-tests.utils').makeContainer('container');
       addBrowserContainer(Y);
       // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
@@ -32,10 +28,16 @@
 
     });
 
+    var addBrowserContainer = function(Y) {
+      Y.Node.create('<div id="subapp-browser">' +
+                    '</div>').appendTo(container);
+    };
+
     afterEach(function() {
       view.destroy();
       Y.one('#subapp-browser').remove(true);
       delete window.juju_config;
+      container.remove(true);
     });
 
     it('knows that it is fullscreen', function() {
@@ -72,20 +74,15 @@
 
 
 (function() {
-  var addBrowserContainer = function(Y) {
-    var docBody = Y.one(document.body);
-    Y.Node.create('<div id="subapp-browser">' +
-        '</div>').appendTo(docBody);
-  };
-
   describe('browser sidebar view', function() {
-    var Y, browser, view, views, Sidebar;
+    var Y, browser, container, view, views, Sidebar;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'juju-browser',
           'juju-models',
           'juju-views',
+          'juju-tests-utils',
           'node-event-simulate',
           'subapp-browser-sidebar',
           function(Y) {
@@ -97,6 +94,7 @@
     });
 
     beforeEach(function() {
+      container = Y.namespace('juju-tests.utils').makeContainer('container');
       addBrowserContainer(Y);
       // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
@@ -108,7 +106,14 @@
       view.destroy();
       Y.one('#subapp-browser').remove(true);
       delete window.juju_config;
+      container.remove(true);
     });
+
+    var addBrowserContainer = function(Y) {
+      Y.Node.create('<div id="subapp-browser">' +
+          '</div>').appendTo(container);
+    };
+
 
     it('knows that it is not fullscreen', function() {
       view = new Sidebar();
@@ -192,7 +197,7 @@
   });
 
   describe('browser subapp display tree', function() {
-    var Y, browser, hits, ns, resetHits;
+    var Y, browser, container, hits, ns, resetHits;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -220,6 +225,7 @@
       Y = YUI(GlobalConfig).use(
           'juju-views',
           'juju-browser',
+          'juju-tests-utils',
           'subapp-browser', function(Y) {
             ns = Y.namespace('juju.subapps');
             done();
@@ -227,9 +233,9 @@
     });
 
     beforeEach(function() {
-      var docBody = Y.one(document.body);
+      container = Y.namespace('juju-tests.utils').makeContainer('container');
       Y.Node.create('<div id="subapp-browser-min"><div id="subapp-browser">' +
-          '</div></div>').appendTo(docBody);
+          '</div></div>').appendTo(container);
 
       // Track which render functions are hit.
       resetHits();

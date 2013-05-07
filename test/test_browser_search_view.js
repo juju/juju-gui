@@ -11,6 +11,7 @@ describe('search view', function() {
     Y = YUI(GlobalConfig).use(
         'json',
         'juju-charm-store',
+        'juju-tests-utils',
         'node',
         'node-event-simulate',
         'subapp-browser-searchview',
@@ -22,8 +23,7 @@ describe('search view', function() {
   beforeEach(function() {
     // Mock out a dummy location for the Store used in view instances.
     window.juju_config = {charmworldURL: 'http://localhost'};
-    container = Y.Node.create('<div id="container"></div>');
-    Y.one('body').append(container);
+    container = Y.namespace('juju-tests.utils').makeContainer('container');
     view = new Y.juju.browser.views.BrowserSearchView({
       filters: {text: 'foo'}
     });
