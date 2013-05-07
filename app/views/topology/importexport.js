@@ -92,6 +92,9 @@ YUI.add('juju-topology-importexport', function(Y) {
                                   });
                                   evt.stopPropagation();
                                 }, this);
+            this.get('component')
+                .recordSubscription(this, this._dragHandle);
+
           }
           ImportExportModule.superclass.update.call(this);
         }
