@@ -87,11 +87,12 @@ YUI.add('juju-topology-importexport', function(Y) {
                                   env.exportEnvironment(function(r) {
                                     var ev = evt._event;
                                     ev.dataTransfer.dragEffect = 'copy';
-                                    var json = JSON.stringify(r.result, undefined, 2);
+                                    var json = JSON.stringify(r.result);
                                     ev.dataTransfer.setData('Text', json);
                                   });
                                   evt.stopPropagation();
                                 }, this);
+
             this.get('component')
                 .recordSubscription(this, this._dragHandle);
 
