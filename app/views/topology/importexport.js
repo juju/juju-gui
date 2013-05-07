@@ -72,26 +72,29 @@ YUI.add('juju-topology-importexport', function(Y) {
               reader.readAsText(file);
             });
           } else {
-            console.log("using clipboard path");
             env.importEnvironment(evt._event.dataTransfer.getData('Text'));
           }
           evt.preventDefault();
           evt.stopPropagation();
         },
 
+        /**
+         * Update lifecycle phase
+         * @method update
+         */
         update: function() {
           if (!this._dragHandle) {
             var env = this.get('component').get('env');
             this._dragHandle = Y.one('#environment-name')
                                 .on('dragstart', function(evt) {
-                                  env.exportEnvironment(function(r) {
-                                    var ev = evt._event;
-                                    ev.dataTransfer.dragEffect = 'copy';
-                                    var json = JSON.stringify(r.result);
-                                    ev.dataTransfer.setData('Text', json);
-                                  });
-                                  evt.stopPropagation();
-                                }, this);
+                  env.exportEnvironment(function(r) {
+                    var ev = evt._event;
+                    ev.dataTransfer.dragEffect = 'copy';
+                    var json = JSON.stringify(r.result);
+                    ev.dataTransfer.setData('Text', json);
+                  });
+                  evt.stopPropagation();
+                }, this);
 
             this.get('component')
                 .recordSubscription(this, this._dragHandle);
