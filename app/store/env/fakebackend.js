@@ -344,7 +344,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
                 // facing so we log the warning.
                 console.warn('error loading charm: ' + e.error);
                 if (callbacks.failure) {
-                  callbacks.failure({error: 'Error interacting with Charm store.'});
+                  callbacks.failure({error:
+                        'Error interacting with Charm store.'});
                 }
               }
             }
@@ -1291,13 +1292,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
               }
               var annotations = s.get('annotations');
 
-              function empty(obj) {
-                for (name in obj) {
-                  return false;
-                }
-                return true;
-              }
-              if (annotations && !empty(annotations)) {
+              if (annotations && !Y.Object.isEmpty(annotations)) {
                 self.annotations.services[s.get('id')] = annotations;
               }
             });

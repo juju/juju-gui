@@ -178,7 +178,7 @@
         options.failure({boo: 'hiss'});
       };
       fakebackend.deploy('cs:wordpress', callback);
-      assert.equal(result.error, 'Could not contact charm store.');
+      assert.equal(result.error, 'Error interacting with Charm store.');
     });
 
     it('honors the optional service name', function() {

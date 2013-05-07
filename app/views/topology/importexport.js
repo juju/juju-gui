@@ -62,21 +62,22 @@ YUI.add('juju-topology-importexport', function(Y) {
               // Import each into the environment
               console.log('Importing ' + file.name);
               env.importEnvironment(e.target.result, function(result) {
-                  if (!result.error) {
-                    notifications.add({
-                      title: 'Imported Environment',
-                      message: 'Import from "' + file.name + '" successful',
-                      level: 'important'
-                    });
-                  } else {
-                    notifications.add({
-                      title: 'Import Environment Failed',
-                      message: 'Import from "' + file.name + '" failed.<br/>' + result.error,
-                      level: 'error'
-                    });
-                  }
+                if (!result.error) {
+                  notifications.add({
+                    title: 'Imported Environment',
+                    message: 'Import from "' + file.name + '" successful',
+                    level: 'important'
+                  });
+                } else {
+                  notifications.add({
+                    title: 'Import Environment Failed',
+                    message: 'Import from "' + file.name +
+                        '" failed.<br/>' + result.error,
+                    level: 'error'
+                  });
+                }
               });
-           };
+            };
             reader.onerror = function(err) {
               console.warn(err);
             };
