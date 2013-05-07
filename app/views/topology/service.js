@@ -844,15 +844,15 @@ YUI.add('juju-topology-service', function(Y) {
               existing = d3.select(this).append('image');
               existing.attr({
                 'class': 'landscape-badge',
-                'width': 30,
-                'height': 30
+                'width': 32,
+                'height': 32
               });
             }
             existing = d3.select(this).select('.landscape-badge');
             existing.attr({
               'xlink:href': landscapeAsset,
               'x': function(box) {return box.w * 0.13;},
-              'y': function(box) { return box.h / 2 - 30;}
+              'y': function(box) {return box.relativeCenter[1] - (32/2);}
             });
           } else {
             // Remove any existing badge.
@@ -903,23 +903,30 @@ YUI.add('juju-topology-service', function(Y) {
           });
 
       // Show whether or not the service is exposed using an indicator.
-      node.filter(function(d) {
-        return d.exposed &&
-            d3.select(this)
-                .select('.exposed-indicator').empty();
-      })
-        .append('image')
+      var exposed = node.filter(function(d) {
+        console.log("expose filter", d);
+        return d.exposed;
+      });
+      exposed.each(function(d) {
+        var existing = Y.one(this).one('.exposed-indicator');
+        if (!existing) {
+          existing = d3.select(this).append('image')
         .attr({'class': 'exposed-indicator on',
             'xlink:href': '/juju-ui/assets/svgs/exposed.svg',
-            'width': function(d) { return d.w / 6;},
-            'height': function(d) { return d.w / 6;},
-            'x': function(d) { return d.w / 10 * 7;},
-            'y': function(d) { return d.relativeCenter[1] - (d.w / 6) / 2;}
+            'width': 32,
+            'height': 32,
           })
         .append('title')
         .text(function(d) {
             return d.exposed ? 'Exposed' : '';
           });
+        }
+        existing = d3.select(this).select('.exposed-indicator')
+        .attr({
+          'x': function(d) { return d.w / 10 * 7;},
+          'y': function(d) { return d.relativeCenter[1] - (32/2);}
+        });
+      });
 
       // Remove exposed indicator from nodes that are no longer exposed.
       node.filter(function(d) {
