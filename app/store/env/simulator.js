@@ -39,8 +39,13 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         context.state.updateAnnotations('env', envAnno);
         context.serviceAnnotations(context);
 
-     },
+      },
 
+      /**
+      Annotate services as if connected to landscape.
+
+      @method serviceAnnotations
+       */
       serviceAnnotations: function(context) {
         context.state.db.services.each(function(service) {
           var annotations = service.get('annotations') || {};
@@ -53,6 +58,11 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         });
       },
 
+      /**
+      Annotate units as if connected to landscape.
+
+      @method unitAnnotations
+       */
       unitAnnotations: function(context) {
         context.state.db.units.each(function(unit) {
           // Toggle landscape attributes as though they
@@ -76,9 +86,9 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
         context.unitAnnotations(context);
 
         context.selection.each(function(unit) {
-           var annotations = unit.annotations || {};
-           var changed = false;
-         // Toggle some annotations.
+          var annotations = unit.annotations || {};
+          var changed = false;
+          // Toggle some annotations.
           if (RAND(0.3)) {
             annotations['landscape-needs-reboot'] = !annotations[
                 'landscape-needs-reboot'];
