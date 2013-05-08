@@ -174,7 +174,7 @@ class TestCase(unittest.TestCase):
 
     def handle_login(self):
         """Log in."""
-        self.wait_for_provider_type()
+        self.wait_for_provider_type(error='Provider type not found.')
         check_script = (
             'return app && app.env && app.env.get("connected") && ('
             'app.env.failedAuthentication || '
@@ -231,7 +231,7 @@ class TestCase(unittest.TestCase):
         return cls.wait_for(condition, error=error, timeout=timeout)
 
     @classmethod
-    def wait_for_config(cls, contents, error=None, timeout=30):
+    def wait_for_config(cls, contents, error=None, timeout=200):
         """Wait for the given contents to be present in the GUI config.
 
         Fail printing the provided error if timeout is exceeded.
