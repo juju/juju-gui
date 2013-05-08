@@ -2,7 +2,7 @@ YUI.add('unscaled-pack-layout', function(Y) {
   // A method assignment helper for hierarchy subclasses.
   // Taken from d3.layout.hierarchy
   function d3_layout_hierarchyRebind(object, hierarchy) {
-    d3.rebind(object, hierarchy, "sort", "children", "value");
+    d3.rebind(object, hierarchy, 'sort', 'children', 'value');
 
     // Add an alias for links, for convenience.
     object.links = d3_layout_hierarchyLinks;
@@ -36,8 +36,8 @@ YUI.add('unscaled-pack-layout', function(Y) {
       var children = node.children;
       if (children && (n = children.length)) {
         var child,
-          previousChild = null,
-                        i = -1,
+            previousChild = null,
+            i = -1,
                         n;
         while (++i < n) {
           child = children[i];
@@ -84,7 +84,7 @@ YUI.add('unscaled-pack-layout', function(Y) {
       }
 
       // Scale the layout to fit the requested size.
-      d3_layout_packTransform(root, (w + padding) / 2, 
+      d3_layout_packTransform(root, (w + padding) / 2,
           (h + padding / 2) / 2, 1 / k);
 
       // d3.layout.hierarchy, by defualt, creates a node with the original
@@ -209,8 +209,10 @@ YUI.add('unscaled-pack-layout', function(Y) {
 
           // Update node chain.
           if (isect) {
-            if (s1 < s2 || (s1 == s2 && b.r < a.r)) d3_layout_packSplice(a, b = j);
-            else d3_layout_packSplice(a = k, b);
+            if (s1 < s2 || (s1 == s2 && b.r < a.r))
+              d3_layout_packSplice(a, b = j);
+            else
+              d3_layout_packSplice(a = k, b);
             i--;
           } else {
             d3_layout_packInsert(a, c);
@@ -267,7 +269,8 @@ YUI.add('unscaled-pack-layout', function(Y) {
       da *= da;
       db *= db;
       var x = .5 + (db - da) / (2 * dc),
-          y = Math.sqrt(Math.max(0, 2 * da * (db + dc) - (db -= dc) * db - da * da)) / (2 * dc);
+          y = Math.sqrt(Math.max(0, 2 * da * (db + dc) - (db -= dc) *
+          db - da * da)) / (2 * dc);
       c.x = a.x + x * dx + y * dy;
       c.y = a.y + x * dy - y * dx;
     } else {
@@ -275,6 +278,6 @@ YUI.add('unscaled-pack-layout', function(Y) {
       c.y = a.y;
     }
   }
-}, "0.0.1", {
+}, '0.0.1', {
   requires: ['d3']
 });
