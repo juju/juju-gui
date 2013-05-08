@@ -4,6 +4,9 @@ var GlobalConfig = {
   ignoreRegistered: true,
   base: '/juju-ui/assets/',
 
+  // Don't load YUI CSS from YUI servers.
+  fetchCSS: false,
+
   // Please use this object only for defining new aliases.
   // You can add the fullpath to the libraries in "modules-debug.js".
   groups: {

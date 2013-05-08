@@ -50,7 +50,6 @@ chrome.update(common)
 
 firefox = dict(selenium.webdriver.DesiredCapabilities.FIREFOX)
 firefox['platform'] = 'Linux'
-firefox['version'] = '19'
 firefox.update(common)
 
 browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
