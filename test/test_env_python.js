@@ -399,8 +399,11 @@
       assert.equal(operationName, warning[1].op);
       // The callback received an error.
       assert.isTrue(errorRaised);
-      // A *permissionDenied* was fired by the environment.
-      assert.isTrue(permissionDeniedFired);
+      // A *permissionDenied* was fired by the environment, or it was silenced.
+      var silent = Y.Array.some(env.get('_silentFailureOps'), function(v) {
+        return v === warning[1].op;
+      });
+      assert.isTrue(permissionDeniedFired || silent);
       // Restore the original *console.warn*.
       console.warn = original;
     };
