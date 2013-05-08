@@ -7,7 +7,7 @@ YUI.add('unscaled-pack-layout', function(Y) {
     // Add an alias for links, for convenience.
     object.links = d3_layout_hierarchyLinks;
 
-    // If the new API is used, enabling inlining.
+    // If the new API is used, enable inlining.
     object.nodes = function(d) {
       d3_layout_hierarchyInline = true;
       return (object.nodes = object)(d);
