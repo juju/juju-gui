@@ -93,7 +93,20 @@ YUI.add('juju-env-base', function(Y) {
       @attribute environmentName
       @type {string}
     */
-    'environmentName': {}
+    'environmentName': {},
+
+    /**
+      Operations that are prohibited in read-only mode, but which should fail
+      silently because the failure message is not important to the user.
+
+      @attribute _silentFailureOps
+      @type {array}
+    */
+    '_silentFailureOps': {
+      value: [
+        'update_annotations'
+      ]
+    }
   };
 
   Y.extend(BaseEnvironment, Y.Base, {
@@ -198,8 +211,13 @@ YUI.add('juju-env-base', function(Y) {
       var title = 'Permission denied';
       var message = ('GUI is in read-only mode and this operation ' +
           'requires an environment modification');
+      var silent = Y.Array.some(this.get('_silentFailureOps'), function(v) {
+        return v === op.op;
+      });
       console.warn(title + ': ' + message + '. Attempted operation: ', op);
-      this.fire('permissionDenied', {title: title, message: message, op: op});
+      if (!silent) {
+        this.fire('permissionDenied', {title: title, message: message, op: op});
+      }
     },
 
     /**
