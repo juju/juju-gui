@@ -22,6 +22,12 @@ YUI.add('subapp-browser-searchview', function(Y) {
         Y.Event.EventTracker], {
         template: views.Templates.search,
 
+        /**
+           Watch for changes to the filters to update results.
+
+           @method _bindEvents
+
+         */
         _bindEvents: function() {
           this.events['.filterControl a'] = {
             click: '_toggleFilters'

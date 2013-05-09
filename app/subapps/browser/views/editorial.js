@@ -47,8 +47,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
         },
 
         /**
-            When selecting a charm from the list make sure we re-route the app to
-            the details view with that charm selected.
+            When selecting a charm from the list make sure we re-route the app
+            to the details view with that charm selected.
 
             @method _handleCharmSelection
             @param {Event} ev the click event handler for the charm selected.
@@ -106,8 +106,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
          *
          */
         initializer: function(cfg) {
-          // Hold onto charm data so we can pass model instances to other views when
-          // charms are selected.
+          // Hold onto charm data so we can pass model instances to other
+          // views when charms are selected.
           this._cacheCharms = new models.BrowserCharmList();
 
           // Watch for changse to the activeID so that we can mark/unmark active
@@ -126,7 +126,8 @@ YUI.add('subapp-browser-editorial', function(Y) {
          * Load the editorial content into the container specified.
          *
          * @method render
-         * @param {Node} container An optional node to override where it's going.
+         * @param {Node} container An optional node to override where it's
+         * going.
          *
          */
         render: function() {

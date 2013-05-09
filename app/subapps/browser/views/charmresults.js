@@ -34,6 +34,12 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       }
     },
 
+    /**
+       Watch for selecting a charm in the results.
+
+       @method _bindEvents
+
+     */
     _bindEvents: function() {
       // Watch for changse to the activeID so that we can mark/unmark active
       // as required.
