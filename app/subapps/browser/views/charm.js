@@ -152,7 +152,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * Creates the bazaar url for the charm.
      *
      * @method _getSourceLink
-     * @param {Object} charm The charm data. 
+     * @param {Object} charm The charm data.
      */
     _getSourceLink: function(charm) {
       var url = charm.get('code_source').location;
