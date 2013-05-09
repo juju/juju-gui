@@ -140,6 +140,14 @@ YUI.add('subapp-browser-searchview', function(Y) {
           var results = this.get('store').resultsToCharmlist(data.result);
           this._renderSearchResults(results);
           this.hideIndicator(this.get('renderTo'));
+
+          // Set the active charm if available.
+          var active = this.get('activeID');
+          if (active) {
+            this._updateActive(
+                this.get('container').one('.charm-token[data-charmid="' + active + '"]')
+            );
+          }
         },
         'failure': this.apiFailure
       }, this);
