@@ -83,7 +83,7 @@
       assert.equal(this.get('state'), state);
     });
 
-    agentShould('should be able to run decalred agents', function() {
+    agentShould('should be able to run declared agents', function() {
       // Verify that our sample agent
       // added units.
       var db = state.db,

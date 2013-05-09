@@ -1264,6 +1264,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
         self._relationCount += 1;
       });
 
+      // Convert all the promises to load charms into resolved
+      // charms passing them to the next 'then'.
+      // The entire chain of then has an errback returning
+      // the failure mode to the user (which becomes a notification).
       Y.batch.apply(self, charms) // resolve all the charms
       .then(function(charms) {
             // Charm version requested from an import will return

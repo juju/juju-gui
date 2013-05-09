@@ -393,7 +393,7 @@ YUI.add('juju-fakebackend-simulator', function(Y) {
        */
       this.publish('tick');
 
-      // WHen our agents property changes
+      // When our agents property changes
       // regenerate our agents mapping.
       if (this.get('useDefaultAgents')) {
         var agents = this.get('agents') || {};
