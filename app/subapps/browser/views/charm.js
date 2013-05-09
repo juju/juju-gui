@@ -149,6 +149,18 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+     * Creates the bazaar url for the charm.
+     *
+     * @method _getSourceLink
+     * @param {Object} charm The charm data. 
+     */
+    _getSourceLink: function(charm) {
+      var url = charm.get('code_source').location;
+      url = url.replace('lp:', 'http://bazaar.launchpad.net/');
+      return url + '/files';
+    },
+
+    /**
      * Commits need to be formatted, dates made pretty for the output to the
      * template. We have to break up the first one from the rest since it's
      * displayed differently.
@@ -449,6 +461,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
           tplData.recent_commits);
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
+      tplData.source_link = this._getSourceLink(charm);
 
       if (Y.Object.isEmpty(tplData.requires)) {
         tplData.requires = false;
