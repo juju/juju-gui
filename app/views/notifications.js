@@ -60,9 +60,13 @@ YUI.add('juju-notifications', function(Y) {
               !notification.get('isDelta') &&
               (notification.get('level') === 'error' ||
                notification.get('level') === 'important')) {
+            var msg = notification.get('message');
+            if (msg) {
+              msg = new Y.Handlebars.SafeString(msg);
+            }
             new widgets.Notifier({
               title: notification.get('title'),
-              message: notification.get('message')
+              message: msg
             }).render(notifierBox);
           }
         },

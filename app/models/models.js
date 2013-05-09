@@ -138,6 +138,12 @@ YUI.add('juju-models', function(Y) {
       name: {},
       charm: {},
       config: {},
+      // Annotations on service are an empty dict
+      // rather than undefined. This helps make
+      // some checks in the code simpler to write.
+      // Units still default to undefined as a way
+      // to help support scale.
+      annotations: {value: {}},
       constraints: {},
       exposed: {
         value: false
