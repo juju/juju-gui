@@ -53,7 +53,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'foo' }
         })
       });
       view._locateReadme().should.eql('readme.rst');
@@ -88,7 +89,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'foo '}
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -105,7 +107,8 @@
           files: [
             'hooks/install'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -128,7 +131,8 @@
           files: [
             'hooks/install'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -165,7 +169,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -206,7 +211,8 @@
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -222,6 +228,7 @@
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9',
+          code_source: { location: 'foo' },
           options: {
             'client-port': {
               'default': 9160,
@@ -246,7 +253,8 @@
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'foo' }
         })
       });
       var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
@@ -264,7 +272,8 @@
       var view = new CharmView({
         charm: new models.BrowserCharm({
           files: [],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -287,7 +296,8 @@
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'foo' }
         })
       });
       var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
