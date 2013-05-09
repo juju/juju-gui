@@ -163,7 +163,7 @@ class TestCase(unittest.TestCase):
                 error='Browser warning dialog not found.')
             continue_button.click()
 
-    def wait_for_provider_type(self, error=None, timeout=10):
+    def wait_for_provider_type(self, error=None, timeout=60):
         """Wait for a connection using a CSS selector."""
         # IE is very sensitive to asking for javascript before it is
         # ready, so we look at a related document element instead.

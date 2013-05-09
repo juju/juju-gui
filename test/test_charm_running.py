@@ -159,8 +159,6 @@ class TestSandbox(browser.TestCase, DeployTestMixin):
         self.handle_login()
         self.deploy('appflower')
 
-# TODO: intermittent deploy failures.
-
 
 if __name__ == '__main__':
     unittest.main()
