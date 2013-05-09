@@ -580,7 +580,7 @@ YUI.add('juju-topology-service', function(Y) {
       }
 
       if (!this.tree) {
-        this.tree = d3.layout.pack()
+        this.tree = d3.layout.unscaledPack()
                       .size([width, height])
                       .value(function(d) {
                           return Math.max(d.unit_count, 1);
@@ -1247,6 +1247,7 @@ YUI.add('juju-topology-service', function(Y) {
     'd3-components',
     'juju-templates',
     'juju-models',
-    'juju-env'
+    'juju-env',
+    'unscaled-pack-layout'
   ]
 });
