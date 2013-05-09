@@ -14,21 +14,18 @@ YUI.add('subapp-browser-searchview', function(Y) {
       widgets = Y.namespace('juju.widgets'),
       models = Y.namespace('juju.models');
 
-  ns.BrowserSearchView = Y.Base.create('browser-view-searchview', Y.View, [
+  ns.BrowserSearchView = Y.Base.create('browser-view-searchview', ns.CharmResults, [
     views.utils.apiFailingView,
     widgets.browser.IndicatorManager,
     Y.Event.EventTracker
   ], {
-    events: {
-      '.charm-token': {
-        click: '_handleCharmSelection'
-      },
-      '.filterControl a': {
-        click: '_toggleFilters'
-      }
-    },
-
     template: views.Templates.search,
+
+    _bindEvents: function() {
+      this.events['.filterControl a'] = {
+        click: '_toggleFilters'
+      };
+    },
 
     /**
        When a filter is changed, catch the event and build a change object for
@@ -46,29 +43,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
         filter: {}
       };
       change.filter[ev.change.field] = ev.change.value;
-      this.fire('viewNavigate', {change: change});
-    },
-
-    /**
-        When selecting a charm from the list make sure we re-route the app to
-        the details view with that charm selected.
-
-        @method _handleCharmSelection
-        @param {Event} ev the click event handler for the charm selected.
-
-     */
-    _handleCharmSelection: function(ev) {
-      ev.halt();
-      var charm = ev.currentTarget;
-      var charmID = charm.getData('charmid');
-
-      // Update the UI for the active one.
-      if (!this.get('isFullscreen')) {
-        this._updateActive(ev.currentTarget);
-      }
-      var change = {
-        charmID: charmID
-      };
       this.fire('viewNavigate', {change: change});
     },
 
@@ -93,22 +67,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
         this.get('container').one('.search-filters').show();
       } else {
         this.get('container').one('.search-filters').hide();
-      }
-    },
-
-    /**
-      Update the node in the editorial list marked as 'active'.
-      @method _updateActive
-      @param {Node} clickTarget the charm-token clicked on to activate.
-
-    */
-    _updateActive: function(clickTarget) {
-      // Remove the active class from any nodes that have it.
-      Y.all('.yui3-charmtoken.active').removeClass('active');
-
-      // Add it to the current node.
-      if (clickTarget) {
-        clickTarget.ancestor('.yui3-charmtoken').addClass('active');
       }
     },
 
@@ -165,36 +123,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
     },
 
     /**
-       Generates a message to the user based on a bad api call.
-
-       @method apiFailure
-       @param {Object} data the json decoded response text.
-       @param {Object} request the original io_request object for debugging.
-
-     */
-    apiFailure: function(data, request) {
-      this._apiFailure(data, request, 'Failed to load search results.');
-    },
-
-    /**
-     * General YUI initializer.
-     *
-     * @method initializer
-     * @param {Object} cfg configuration object.
-     *
-     */
-    initializer: function(cfg) {
-      this.on('activeIDChange', function(ev) {
-        var id = ev.newVal;
-        if (id) {
-          id = this.get('container').one(
-              '.charm-token[data-charmid="' + id + '"]');
-        }
-        this._updateActive(id);
-      });
-    },
-
-    /**
      * Renders the searchview, rendering search results for the view's search
      * text.
      *
@@ -218,28 +146,6 @@ YUI.add('subapp-browser-searchview', function(Y) {
     }
   }, {
     ATTRS: {
-      isFullscreen: {},
-
-      /**
-         The container node the view is rendering to.
-
-         @attribute renderTo
-         @default undefined
-         @type {Y.Node}
-       */
-      renderTo: {},
-
-      /**
-         An instance of the Charmworld API object to hit for any data that
-         needs fetching.
-
-         @attribute store
-         @default undefined
-         @type {Charmworld0}
-
-       */
-      store: {},
-
       /**
          The search data object which is a Filter instance.
 
@@ -256,10 +162,9 @@ YUI.add('subapp-browser-searchview', function(Y) {
     'base-build',
     'browser-charm-token',
     'browser-filter-widget',
-    'browser-overlay-indicator',
     'event-tracker',
     'juju-browser-models',
     'juju-view-utils',
-    'view'
+    'subapp-browser-charmresults'
   ]
 });

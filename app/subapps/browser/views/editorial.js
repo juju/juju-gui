@@ -22,10 +22,10 @@ YUI.add('subapp-browser-editorial', function(Y) {
    * @extends {juju.browser.views.Editorial}
    *
    */
-  ns.EditorialView = Y.Base.create('browser-view-sidebar', Y.View, [
-    views.utils.apiFailingView,
-    widgets.browser.IndicatorManager
-  ], {
+  ns.EditorialView = Y.Base.create('browser-view-sidebar', ns.CharmResults,
+    [], {
+    template: views.Templates.editorial,
+
     // How many of each charm container do we show by default.
     cutoffs: {
       sidebar: {
@@ -39,7 +39,6 @@ YUI.add('subapp-browser-editorial', function(Y) {
         'new': 3
       }
     },
-    template: views.Templates.editorial,
 
     events: {
       '.charm-token': {
@@ -237,64 +236,20 @@ YUI.add('subapp-browser-editorial', function(Y) {
           container.destroy();
         });
       }
-      this._cacheCharms.destroy();
     }
   }, {
-    ATTRS: {
-      /**
-       * The charm id to start out selected as active.
-       *
-       * @attribute setActive
-       * @default undefined
-       * @type {String}
-       *
-       */
-      activeID: {
-
-      },
-
-      /**
-       * Is this rendering of the editorial view for fullscreen or sidebar
-       * purposes?
-       *
-       * @attribute isFullscreen
-       * @default false
-       * @type {Boolean}
-       */
-      isFullscreen: {
-        value: false
-      },
-
-      /**
-       * What is the container node we should render our container into?
-       *
-       * @attribute renderTo
-       * @default undefined
-       * @type {Node}
-       */
-      renderTo: {},
-
-      /**
-       * The Charmworld0 Api store instance for loading content.
-       *
-       * @attribute store
-       * @default undefined
-       * @type {Charmworld0}
-       */
-      store: {}
-    }
+    ATTRS: {}
   });
 
 }, '0.1.0', {
   requires: [
     'browser-charm-container',
     'browser-charm-token',
-    'browser-overlay-indicator',
     'browser-search-widget',
     'juju-charm-store',
     'juju-models',
     'juju-templates',
     'juju-view-utils',
-    'view'
+    'subapp-browser-charmresults'
   ]
 });
