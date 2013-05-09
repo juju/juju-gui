@@ -161,6 +161,17 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+     * Creates the url for a given revision of the charm.
+     *
+     * @method _getRevnoLink
+     * @param {String} source_link The charm's source_link.
+     * @param {String} revno The charm commit's revision number.
+     */
+    _getRevnoLink: function(source_link, revno) {
+      return source_link.replace('files', 'revision/') + revno;
+    },
+
+    /**
      * Commits need to be formatted, dates made pretty for the output to the
      * template. We have to break up the first one from the rest since it's
      * displayed differently.
@@ -169,7 +180,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * @param {Array} commits a list of commit objects.
      *
      */
-    _formatCommitsForHtml: function(commits) {
+    _formatCommitsForHtml: function(commits, source_link) {
       var firstTmp;
       var prettyCommits = {
         remaining: []
@@ -188,14 +199,17 @@ YUI.add('subapp-browser-charmview', function(Y) {
               format: DATE_FORMAT
             });
       }
+      prettyCommits.first.revno_link = this._getRevnoLink(
+          source_link, prettyCommits.first.revno);
 
       Y.Array.each(commits, function(commit) {
         commit.prettyDate = Y.Date.format(
             commit.date, {
               format: DATE_FORMAT
             });
+        commit.revno_link = this._getRevnoLink(source_link, commit.revno);
         prettyCommits.remaining.push(commit);
-      });
+      }, this);
 
       // Put our first item back on the commit list.
       if (firstTmp) {
@@ -455,13 +469,15 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.set('charm', charm);
 
       var tplData = charm.getAttrs(),
-          container = this.get('container');
+          container = this.get('container'),
+          source_link = this._getSourceLink(charm);
+
       tplData.isFullscreen = isFullscreen;
+      tplData.source_link = this._getSourceLink(charm);
       tplData.prettyCommits = this._formatCommitsForHtml(
-          tplData.recent_commits);
+          tplData.recent_commits, source_link);
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
-      tplData.source_link = this._getSourceLink(charm);
 
       if (Y.Object.isEmpty(tplData.requires)) {
         tplData.requires = false;
