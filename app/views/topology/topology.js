@@ -149,13 +149,20 @@ YUI.add('juju-topology', function(Y) {
       return db.services.getById(boundingBox.id);
     },
 
+    /**
+      Builds a coordinate which is outside of the current topology's service
+      boxes.
+
+      @method servicePointOutside
+      @return {array} An x/y coordinate pair.
+    */
     servicePointOutside: function() {
       var existingBoxes = Y.Object.values(this.service_boxes)
         .filter(function(box) {
-          return Y.Lang.isNumber(box.x)
-        });
+            return Y.Lang.isNumber(box.x);
+          });
       return utils.pointOutside(
-          utils.serviceBoxesToVertices(existingBoxes), 
+          utils.serviceBoxesToVertices(existingBoxes),
           this.get('servicePadding'));
     }
   }, {
