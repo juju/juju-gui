@@ -958,8 +958,8 @@ YUI.add('juju-gui', function(Y) {
 
       This allows us to use the :flags: object to set either boolean or string
       feature flags to control various features in the app.  A simple /<flag>/
-      will set that flag as true in the global flags variable.  A 
-      /<flag>=<val>/ will set that flag to that value in the global flags 
+      will set that flag as true in the global flags variable.  A
+      /<flag>=<val>/ will set that flag to that value in the global flags
       variable.
 
       @method featureFlags
