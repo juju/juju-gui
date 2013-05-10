@@ -107,9 +107,8 @@ YUI.add('d3-components', function(Y) {
       if (!(ModClassOrInstance instanceof Module)) {
         module = new ModClassOrInstance();
       }
-      module.setAttrs({
-        component: this,
-        options: config});
+      config.component = this;
+      module.setAttrs(config);
 
       this.modules[module.name] = module;
 

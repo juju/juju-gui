@@ -5,17 +5,18 @@ describe('notifier widget', function() {
   var Notifier, notifierBox, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['notifier', 'node-event-simulate'], function(Y) {
-          Notifier = Y.namespace('juju.widgets').Notifier;
-          done();
+    Y = YUI(GlobalConfig).use(['notifier',
+      'juju-tests-utils',
+      'node-event-simulate'], function(Y) {
+      Notifier = Y.namespace('juju.widgets').Notifier;
+      done();
     });
   });
 
   // Create the notifier box and attach it as first element of the body.
   beforeEach(function() {
-    notifierBox = Y.Node.create('<div id="notifier-box"></div>');
-    notifierBox.setStyle('display', 'none');
-    Y.one('body').prepend(notifierBox);
+    notifierBox = Y.namespace('juju-tests.utils')
+    .makeContainer('notifier-box');
   });
 
   // Destroy the notifier box created in beforeEach.

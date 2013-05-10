@@ -4,19 +4,20 @@
 (function() {
 
   describe('tabview', function() {
-    var container, Y, tabview;
+    var container, Y, tabview, utils;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use([
+        'juju-tests-utils',
         'browser-tabview', 'node', 'node-event-simulate'
       ], function(Y) {
+        utils = Y.namespace('juju-tests.utils');
         done();
       });
     });
 
     beforeEach(function() {
-      container = Y.Node.create('<div id="container"></div>');
-      Y.one('body').prepend(container);
+      container = utils.makeContainer('container');
       tabview = new Y.juju.widgets.browser.TabView();
     });
 

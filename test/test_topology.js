@@ -3,19 +3,20 @@
 describe('topology', function() {
   var Y, NS, views,
       TestModule, modA, state,
-      container, topo,
-      models,
-      db;
+      container, topo, utils,
+      models, db;
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['juju-topology',
                                'd3-components',
+                               'juju-tests-utils',
                                'node',
                                'node-event-simulate'],
     function(Y) {
       NS = Y.namespace('d3');
       views = Y.namespace('juju.views');
       models = Y.namespace('juju.models');
+      utils = Y.namespace('juju-tests.utils');
 
       TestModule = Y.Base.create('TestModule', NS.Module, [], {
         events: {
@@ -44,12 +45,11 @@ describe('topology', function() {
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div/>')
-                 .setStyle('visibility', 'hidden')
-                 .append(Y.Node.create('<button/>')
-                 .addClass('thing'))
-                 .append(Y.Node.create('<button/>')
-                 .addClass('target'));
+    container = utils.makeContainer();
+    container.append(Y.Node.create('<button/>')
+             .addClass('thing'))
+             .append(Y.Node.create('<button/>')
+             .addClass('target'));
     state = {};
   });
 

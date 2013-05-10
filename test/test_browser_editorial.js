@@ -3,11 +3,13 @@
 (function() {
 
   describe('browser_editorial', function() {
-    var EditorialView, fakeStore, models, node, sampleData, view, views, Y;
+    var container, EditorialView, fakeStore, models,
+        node, sampleData, view, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'node-event-simulate',
+          'juju-tests-utils',
           'subapp-browser-editorial',
           function(Y) {
             views = Y.namespace('juju.browser.views');
@@ -18,13 +20,13 @@
     });
 
     beforeEach(function() {
-      var docBody = Y.one(document.body),
-          testcontent = [
-            '<div id=testcontent><div class="bws-view-data">',
-            '</div><div class="bws-content"></div></div>'
-          ].join();
+      container = Y.namespace('juju-tests.utils').makeContainer('container');
+      var testcontent = [
+        '<div id=testcontent><div class="bws-view-data">',
+        '</div><div class="bws-content"></div></div>'
+      ].join();
 
-      Y.Node.create(testcontent).appendTo(docBody);
+      Y.Node.create(testcontent).appendTo(container);
 
       // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
@@ -42,6 +44,7 @@
       if (fakeStore) {
         fakeStore.destroy();
       }
+      container.remove(true);
     });
 
     it('renders sidebar with hidden charms', function() {

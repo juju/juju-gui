@@ -21,6 +21,9 @@ var GlobalConfig = {
   // Use Rollups
   combine: false,
 
+  // Don't load YUI CSS from YUI servers.
+  fetchCSS: false,
+
   groups: {
     gallery: {
       modules: {
@@ -119,6 +122,10 @@ var GlobalConfig = {
 
         'sub-app': {
           fullpath: '/juju-ui/assets/javascripts/sub-app.js'
+        },
+
+        'unscaled-pack-layout': {
+          fullpath: '/juju-ui/assets/javascripts/unscaled-pack-layout.js'
         },
 
         // Views
@@ -253,6 +260,10 @@ var GlobalConfig = {
 
         'juju-env-fakebackend': {
           fullpath: '/juju-ui/store/env/fakebackend.js'
+        },
+
+        'juju-fakebackend-simulator': {
+          fullpath: '/juju-ui/store/env/simulator.js'
         },
 
         'juju-env-sandbox': {

@@ -50,6 +50,7 @@ YUI.add('browser-charm-container', function(Y) {
       Y.Array.each(cutItems, function(item) {
         item.hide();
       });
+      this._selectLast();
     },
 
     /**
@@ -61,6 +62,19 @@ YUI.add('browser-charm-container', function(Y) {
       Y.Array.each(this._items, function(item) {
         item.show();
       });
+      this._selectLast();
+    },
+
+    /**
+     * Add class to the last visible node.
+     *
+     * @method _selectLast
+     */
+    _selectLast: function() {
+      var contentBox = this.get('contentBox');
+      contentBox.all('.yui3-charmtoken.last').removeClass('last');
+      contentBox.all('.yui3-charmtoken:not(.yui3-charmtoken-hidden)').slice(
+          -1).addClass('last');
     },
 
     /**
@@ -131,6 +145,15 @@ YUI.add('browser-charm-container', function(Y) {
       cb.setHTML(content);
       this._childrenContainer = cb.one('.charms');
       this._hideSomeChildren();
+    },
+
+    /**
+     * Sets the DOM to the widget's initial state.
+     *
+     * @method syncUI
+     */
+    syncUI: function() {
+      this._selectLast();
     }
   }, {
     ATTRS: {
