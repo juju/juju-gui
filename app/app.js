@@ -960,7 +960,10 @@ YUI.add('juju-gui', function(Y) {
       feature flags to control various features in the app.  A simple /<flag>/
       will set that flag as true in the global flags variable.  A
       /<flag>=<val>/ will set that flag to that value in the global flags
-      variable.
+      variable. An example usage would be to turn on the ability to drag-and-
+      drop a feature by wrapping that feature code in something like:
+
+        if (flags['gui.featuredrag.enable']) { ... }
 
       @method featureFlags
       @param {object} req The request object.
@@ -976,12 +979,15 @@ YUI.add('juju-gui', function(Y) {
           // Allow setting a specific value other than true.
           if (flag.indexOf('=') !== -1) {
             flagKey = flag.split('=', 1);
-            // Maintain possible '=' characters in the value.
+            // Maintain possible '=' characters in the value.  This ensures
+            // that values are always either true or strings, rather than
+            // an array.
             flagValue = flag.split('=').splice(1).join('=');
           }
           buildFlags[flagKey] = flagValue;
         }
       });
+      // Access the global variable through `window`.
       window.flags = buildFlags;
       next();
     },
