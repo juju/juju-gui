@@ -1,5 +1,8 @@
 'use strict';
 
+// A global variable required for testing feature flags.
+var flags = {};
+
 describe('Namespaced Routing', function() {
   var Y, juju, app;
 
@@ -130,6 +133,15 @@ describe('Namespaced Routing', function() {
     app._navigate('/', { overrideAllNamespaces: true });
     result.should.equal('/');
     Y.getLocation = oldGetLocation;
+  });
+
+  it('should allow a feature flags namespace', function() {
+    assert.deepEqual({}, flags);
+    // Use the route callback directly.
+    app.featureFlags({path: '/foo/bar=baz/'}, undefined, function() {});
+    assert.deepEqual({foo: true, bar: 'baz'}, flags);
+    app.featureFlags({path: '/foo/'}, undefined, function() {});
+    assert.deepEqual({foo: true}, flags);
   });
 
 });

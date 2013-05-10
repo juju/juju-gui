@@ -953,6 +953,25 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
+    featureFlags: function(req, res, next) {
+      var buildFlags = {};
+      Y.Array.each(req.path.split('/'), function(flag) {
+        if (flag.length > 0) {
+          var flagKey = flag;
+          var flagValue= true;
+          // Allow setting a specific value other than true.
+          if (flag.indexOf('=') !== -1) {
+            flagKey = flag.split('=', 1);
+            // Maintain possible '=' characters in the value.
+            flagValue = flag.split('=').splice(1).join('=');
+          }
+          buildFlags[flagKey] = flagValue;
+        }
+      });
+      window.flags = buildFlags;
+      next();
+    },
+
     /**
      * Object routing support
      *
@@ -1104,6 +1123,8 @@ YUI.add('juju-gui', function(Y) {
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit',
             namespace: 'gui'},
+          // Feature flags.
+          { path: '*', callbacks: 'featureFlags', namespace: 'flags' },
           // Logout.
           { path: '/logout/', callbacks: 'logout'}
         ]
