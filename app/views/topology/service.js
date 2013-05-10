@@ -613,7 +613,16 @@ YUI.add('juju-topology-service', function(Y) {
                             return !Y.Lang.isNumber(boundingBox.x);
                           });
       if (new_services.length > 0) {
-        this.tree.nodes({children: new_services});
+        if (new_services.length === 1 && new_services[0].model.get('pending')) {
+          var coords = topo.servicePointOutside();
+          new_services[0].x = coords[0];
+          new_services[0].y = coords[1];
+          new_services[0].model.set('x', coords[0]);
+          new_services[0].model.set('y', coords[1]);
+          new_services[0].model.set('dragged', true);
+        } else {
+          this.tree.nodes({children: new_services});
+        }
         // Update annotations settings position on backend
         // (but only do this if there is no existing annotations).
         Y.each(new_services, function(box) {

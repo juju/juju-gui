@@ -157,6 +157,9 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/topology/importexport.js'
         },
 
+        'juju-topology-utils': {
+          fullpath: '/juju-ui/views/topology/utils.js'
+        },
 
         'juju-topology': {
           fullpath: '/juju-ui/views/topology/topology.js'
