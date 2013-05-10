@@ -953,12 +953,26 @@ YUI.add('juju-gui', function(Y) {
       next();
     },
 
+    /**
+      Feature flags support in URL routing.
+
+      This allows us to use the :flags: object to set either boolean or string
+      feature flags to control various features in the app.  A simple /<flag>/
+      will set that flag as true in the global flags variable.  A 
+      /<flag>=<val>/ will set that flag to that value in the global flags 
+      variable.
+
+      @method featureFlags
+      @param {object} req The request object.
+      @param {object} res The response object.
+      @param {function} next The next callback.
+    */
     featureFlags: function(req, res, next) {
       var buildFlags = {};
       Y.Array.each(req.path.split('/'), function(flag) {
         if (flag.length > 0) {
           var flagKey = flag;
-          var flagValue= true;
+          var flagValue = true;
           // Allow setting a specific value other than true.
           if (flag.indexOf('=') !== -1) {
             flagKey = flag.split('=', 1);
