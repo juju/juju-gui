@@ -965,6 +965,15 @@ YUI.add('juju-gui', function(Y) {
 
         if (flags['gui.featuredrag.enable']) { ... }
 
+      From the LaunchPad feature flags documentation:
+
+      > As a general rule, each switch should be checked only once or only a
+      > few time in the codebase. We don't want to disable the same thing in
+      > the ui, the model, and the database.
+      >
+      > The name looks like dotted python identifiers, with the form
+      > APP.FEATURE.EFFECT. The value is a Unicode string.
+
       @method featureFlags
       @param {object} req The request object.
       @param {object} res The response object.
