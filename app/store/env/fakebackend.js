@@ -338,9 +338,14 @@ YUI.add('juju-env-fakebackend', function(Y) {
                 Inform the caller of an error using the charm store.
               */
               failure: function(e) {
-                console.warn('error loading charm: ' + e);
+                // This is most likely an IOError stemming from an
+                // invalid charm pointing to a bad URL and a read of a
+                // 404 giving an error at this level. IOError isn't user
+                // facing so we log the warning.
+                console.warn('error loading charm: ' + e.error);
                 if (callbacks.failure) {
-                  callbacks.failure({error: 'Could not contact charm store.'});
+                  callbacks.failure({error:
+                        'Error interacting with Charm store.'});
                 }
               }
             }
@@ -539,6 +544,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       if (!service) {
         return {error: 'Service "' + serviceName + '" does not exist.'};
       }
+      if (service && service.get('is_subordinate')) {
+        return {error: serviceName + ' is a subordinate, cannot add unit(s).'};
+      }
       if (!Y.Lang.isValue(service.unitSequence)) {
         service.unitSequence = 0;
       }
@@ -631,16 +639,19 @@ YUI.add('juju-env-fakebackend', function(Y) {
       // XXX: BradCrittenden 2013-04-15: Remove units should optionally remove
       // the corresponding machines.
       Y.Array.each(unitNames, function(unitName) {
+        removedUnit = false;
         service = this.db.services.getById(unitName.split('/')[0]);
         if (service && service.get('is_subordinate')) {
           error.push(unitName + ' is a subordinate, cannot remove.');
+        } else {
+          removedUnit = this.db.units.some(function(unit, index) {
+            if (unit.displayName === unitName) {
+              this.db.units.remove(index);
+              this.changes.units[unit.id] = [unit, false];
+              return true;
+            }
+          }, this);
         }
-        removedUnit = this.db.units.some(function(unit, index) {
-          if (unit.displayName === unitName) {
-            this.db.units.remove(index);
-            return true;
-          }
-        }, this);
         if (!removedUnit) {
           warning.push(unitName + ' does not exist, cannot remove.');
         }
@@ -854,17 +865,6 @@ YUI.add('juju-env-fakebackend', function(Y) {
       }
     },
 
-    // updateAnnotations: function() {
-
-    // },
-
-    // getAnnotations: function() {
-
-    // },
-
-    // removeAnnotations: function() {
-
-    // },
     /**
      * Helper method to determine where to log annotation
      * changes relative to a given entity.
@@ -1232,6 +1232,7 @@ YUI.add('juju-env-fakebackend', function(Y) {
           ep.push({name: r[2],
             role: r[3]});
           relData.endpoints.push(ep);
+          relData.scope = r[4];
         });
         relations.push(relData);
       });
@@ -1263,6 +1264,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
         self._relationCount += 1;
       });
 
+      // Convert all the promises to load charms into resolved
+      // charms passing them to the next 'then'.
+      // The entire chain of then has an errback returning
+      // the failure mode to the user (which becomes a notification).
       Y.batch.apply(self, charms) // resolve all the charms
       .then(function(charms) {
             // Charm version requested from an import will return
@@ -1272,6 +1277,11 @@ YUI.add('juju-env-fakebackend', function(Y) {
               var charm = data[0],
                   serviceData = data[1];
               serviceData.charm = charm.get('id');
+
+              // If this is a subordinate mark the serviceData as such
+              if (charm.get('is_subordinate')) {
+                serviceData.subordinate = true;
+              }
             });
           })
       .then(function() {
@@ -1285,7 +1295,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
                 self.addUnit(s.get('id'), serviceData.unit_count);
               }
               var annotations = s.get('annotations');
-              if (annotations) {
+
+              if (annotations && !Y.Object.isEmpty(annotations)) {
                 self.annotations.services[s.get('id')] = annotations;
               }
             });
@@ -1297,6 +1308,8 @@ YUI.add('juju-env-fakebackend', function(Y) {
           })
       .then(function() {
             return callback({result: true});
+          }, function(reason) {
+            return callback(reason);
           });
     }
 

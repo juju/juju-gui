@@ -63,6 +63,29 @@ YUI.add('juju-view-environment', function(Y) {
             this._rendered = true;
           }
 
+          topo = this.createTopology();
+          topo.recordSubscription(
+              'ServiceModule',
+              db.services.after('remove',
+                                Y.bind(this.updateHelpIndicator, this)));
+
+          topo.recordSubscription(
+              'ServiceModule',
+              db.services.after('add', Y.bind(this.updateHelpIndicator, this)));
+
+          topo.render();
+          topo.once('rendered', Y.bind(this.updateHelpIndicator, this));
+          return this;
+        },
+
+        /**
+          createTopology, called automatically.
+
+          @method createTopology
+         */
+        createTopology: function() {
+          var container = this.get('container'),
+              topo = this.topo;
           if (!topo) {
             topo = new views.Topology();
             topo.setAttrs({
@@ -75,7 +98,7 @@ YUI.add('juju-view-environment', function(Y) {
               endpointsController: this.get('endpointsController'),
               nsRouter: this.get('nsRouter')});
             // Bind all the behaviors we need as modules.
-            topo.addModule(views.ServiceModule);
+            topo.addModule(views.ServiceModule, {useTransitions: true});
             topo.addModule(views.PanZoomModule);
             topo.addModule(views.ViewportModule);
             topo.addModule(views.RelationModule);
@@ -87,26 +110,15 @@ YUI.add('juju-view-environment', function(Y) {
             topo.addTarget(this);
             this.topo = topo;
           }
-
-          topo.recordSubscription(
-              'ServiceModule',
-              db.services.after('remove', Y.bind(this.updateIndicator, this)));
-
-          topo.recordSubscription(
-              'ServiceModule',
-              db.services.after('add', Y.bind(this.updateIndicator, this)));
-
-          topo.render();
-          topo.once('rendered', Y.bind(this.updateIndicator, this));
-          return this;
+          return topo;
         },
 
         /**
          * Support for canvas help function (when canvas is empty).
          *
-         * @method updateIndicator
+         * @method updateHelpIndicator
          */
-        updateIndicator: function(evt) {
+        updateHelpIndicator: function(evt) {
           var helpText = this.get('container').one('#environment-help'),
               db = this.get('db'),
               services = db.services;

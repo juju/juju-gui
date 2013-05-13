@@ -39,6 +39,7 @@ describe('service module annotations', function() {
     view.render();
     view.rendered();
     serviceModule = view.topo.modules.ServiceModule;
+    serviceModule.set('useTransitions', false);
   });
 
   afterEach(function() {
@@ -104,7 +105,10 @@ describe('service module events', function() {
     view = new views.environment({
       container: viewContainer,
       db: db,
-      env: {},
+      env: {
+        update_annotations: function() {},
+        get: function() {}
+      },
       nsRouter: {
         url: function() { return; }
       },

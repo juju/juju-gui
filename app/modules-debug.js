@@ -124,6 +124,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/sub-app.js'
         },
 
+        'unscaled-pack-layout': {
+          fullpath: '/juju-ui/assets/javascripts/unscaled-pack-layout.js'
+        },
+
         // Views
         'juju-landscape': {
           fullpath: '/juju-ui/views/landscape.js'
@@ -256,6 +260,10 @@ var GlobalConfig = {
 
         'juju-env-fakebackend': {
           fullpath: '/juju-ui/store/env/fakebackend.js'
+        },
+
+        'juju-fakebackend-simulator': {
+          fullpath: '/juju-ui/store/env/simulator.js'
         },
 
         'juju-env-sandbox': {

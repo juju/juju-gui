@@ -344,12 +344,19 @@ YUI.add('juju-env-sandbox', function(Y) {
             Y.each(annotations[changeType + 's'], function(attrs, key) {
               if (!changes || !changes[key]) {
                 attrs = _getDeltaAttrs(attrs, whitelist);
+                // Special case environment handling.
+                if (changeType === 'annotation') {
+                  changeType = 'annotations';
+                  attrs = attrs.annotations;
+                }
                 deltas.push([changeType, 'change', attrs]);
               }
             });
           }
         });
-        this.get('client').receiveNow(response);
+        if (deltas.length) {
+          this.get('client').receiveNow(response);
+        }
       }
     },
 
