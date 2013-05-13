@@ -40,54 +40,6 @@ YUI.add('subapp-browser-editorial', function(Y) {
           }
         },
 
-        events: {
-          '.charm-token': {
-            click: '_handleCharmSelection'
-          }
-        },
-
-        /**
-            When selecting a charm from the list make sure we re-route the app
-            to the details view with that charm selected.
-
-            @method _handleCharmSelection
-            @param {Event} ev the click event handler for the charm selected.
-
-         */
-        _handleCharmSelection: function(ev) {
-          ev.halt();
-          var charm = ev.currentTarget;
-          var charmID = charm.getData('charmid');
-
-          // Update the UI for the active one.
-          if (!this.get('isFullscreen')) {
-            this._updateActive(ev.currentTarget);
-          }
-
-          var change = {
-            charmID: charmID
-          };
-
-          this.fire('viewNavigate', {change: change});
-        },
-
-        /**
-          Update the node in the editorial list marked as 'active'.
-
-          @method _updateActive
-          @param {Node} clickTarget the charm-token clicked on to activate.
-
-        */
-        _updateActive: function(clickTarget) {
-          // Remove the active class from any nodes that have it.
-          Y.all('.yui3-charmtoken.active').removeClass('active');
-
-          // Add it to the current node.
-          if (clickTarget) {
-            clickTarget.ancestor('.yui3-charmtoken').addClass('active');
-          }
-        },
-
         /**
          * Generates a message to the user based on a bad api call.
          * @method apiFailure
@@ -96,30 +48,6 @@ YUI.add('subapp-browser-editorial', function(Y) {
          */
         apiFailure: function(data, request) {
           this._apiFailure(data, request, 'Failed to load editorial content.');
-        },
-
-        /**
-         * General YUI initializer.
-         *
-         * @method initializer
-         * @param {Object} cfg configuration object.
-         *
-         */
-        initializer: function(cfg) {
-          // Hold onto charm data so we can pass model instances to other
-          // views when charms are selected.
-          this._cacheCharms = new models.BrowserCharmList();
-
-          // Watch for changse to the activeID so that we can mark/unmark active
-          // as required.
-          this.on('activeIDChange', function(ev) {
-            var id = ev.newVal;
-            if (id) {
-              id = this.get('container').one(
-                  '.charm-token[data-charmid="' + id + '"]');
-            }
-            this._updateActive(id);
-          });
         },
 
         /**
