@@ -149,10 +149,11 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     * Creates the bazaar url for the charm.
-     *
-     * @method _getSourceLink
-     * @param {Object} charm The charm data.
+       Creates the bazaar url for the charm.
+      
+       @method _getSourceLink
+       @private
+       @param {Object} charm The charm data.
      */
     _getSourceLink: function(charm) {
       var url = charm.get('code_source').location;
@@ -161,14 +162,15 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
-     * Creates the url for a given revision of the charm.
-     *
-     * @method _getRevnoLink
-     * @param {String} source_link The charm's source_link.
-     * @param {String} revno The charm commit's revision number.
+       Creates the url for a given revision of the charm.
+      
+       @method _getRevnoLink
+       @private
+       @param {String} sourceLink The charm's source_link.
+       @param {String} revno The charm commit's revision number.
      */
-    _getRevnoLink: function(source_link, revno) {
-      return source_link.replace('files', 'revision/') + revno;
+    _getRevnoLink: function(sourceLink, revno) {
+      return sourceLink.replace('files', 'revision/') + revno;
     },
 
     /**
@@ -180,7 +182,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * @param {Array} commits a list of commit objects.
      *
      */
-    _formatCommitsForHtml: function(commits, source_link) {
+    _formatCommitsForHtml: function(commits, sourceLink) {
       var firstTmp;
       var prettyCommits = {
         remaining: []
@@ -199,7 +201,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
               format: DATE_FORMAT
             });
         prettyCommits.first.revno_link = this._getRevnoLink(
-            source_link, prettyCommits.first.revno);
+            sourceLink, prettyCommits.first.revno);
       }
 
       Y.Array.each(commits, function(commit) {
@@ -207,7 +209,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
             commit.date, {
               format: DATE_FORMAT
             });
-        commit.revno_link = this._getRevnoLink(source_link, commit.revno);
+        commit.revno_link = this._getRevnoLink(sourceLink, commit.revno);
         prettyCommits.remaining.push(commit);
       }, this);
 
@@ -470,12 +472,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       var tplData = charm.getAttrs(),
           container = this.get('container'),
-          source_link = this._getSourceLink(charm);
+          sourceLink = this._getSourceLink(charm);
 
       tplData.isFullscreen = isFullscreen;
-      tplData.source_link = this._getSourceLink(charm);
+      tplData.sourceLink = this._getSourceLink(charm);
       tplData.prettyCommits = this._formatCommitsForHtml(
-          tplData.recent_commits, source_link);
+          tplData.recent_commits, sourceLink);
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
 
