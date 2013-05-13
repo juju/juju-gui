@@ -16,13 +16,17 @@ YUI.add('subapp-browser-charmresults', function(Y) {
 
 
   /**
-   * Charm results view.
-   *
-   * The Editorial and the Search results view share some basic info.
-   *
-   * @class CharmReults
-   * @extends {juju.browser.views.CharmResults}
-   *
+     Charm results view.
+
+     The Editorial and the Search results view share some basic info. This
+     View is there to provide common handling of events shared in both uses.
+     Since this view is incomplete (has no render, template, etc.) it's not
+     tested directly, but through the SearchView and the EditorialView which
+     verify both rendering and expected event behavior.
+
+     @class CharmReults
+     @extends {juju.browser.views.CharmResults}
+
    */
   ns.CharmResults = Y.Base.create('browser-view-charmresults', Y.View, [
     views.utils.apiFailingView,

@@ -14,6 +14,13 @@ YUI.add('subapp-browser-searchview', function(Y) {
       widgets = Y.namespace('juju.widgets'),
       models = Y.namespace('juju.models');
 
+  /**
+     Search results display view.
+
+     @class BrowserSearchView
+     @extends {juju.browser.views.CharmResults}
+
+   */
   ns.BrowserSearchView = Y.Base.create(
       'browser-view-searchview',
       ns.CharmResults, [

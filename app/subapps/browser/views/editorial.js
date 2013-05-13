@@ -19,7 +19,7 @@ YUI.add('subapp-browser-editorial', function(Y) {
    * Editorial view for landing pages.
    *
    * @class Editorial
-   * @extends {juju.browser.views.Editorial}
+   * @extends {juju.browser.views.CharmResults}
    *
    */
   ns.EditorialView = Y.Base.create('browser-view-sidebar', ns.CharmResults, [],
