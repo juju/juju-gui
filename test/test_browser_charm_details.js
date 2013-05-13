@@ -56,7 +56,7 @@
             'readme.rst'
           ],
           id: 'precise/ceph-9',
-          code_source: { location: 'foo' }
+          code_source: { location: 'lp:~foo' }
         })
       });
       view._locateReadme().should.eql('readme.rst');
@@ -69,6 +69,24 @@
       view._locateReadme().should.eql('README.md');
     });
 
+
+    it.only('can generate source and revno links from its charm', function() {
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo'}
+        })
+      });
+      var url = view._getSourceLink();
+      assert.equal('http://bazaar.launchpad.net/~foo/files', url);
+      assert.equal(
+        'http://bazaar.launchpad.net/~foo/revision/1',
+        view._getRevnoLink(url, 1));
+    });
 
     it('should be able to display the readme content', function() {
       var fakeStore = new Y.juju.Charmworld0({});
@@ -92,7 +110,7 @@
             'readme.rst'
           ],
           id: 'precise/ceph-9',
-          code_source: { location: 'foo '}
+          code_source: { location: 'lp:~foo'}
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -105,12 +123,11 @@
     // EVENTS
     it('should catch when the add control is clicked', function(done) {
       view = new CharmView({
-        charm: new models.BrowserCharm({
-          files: [
+        charm: new models.BrowserCharm({ files: [
             'hooks/install'
           ],
           id: 'precise/ceph-9',
-          code_source: { location: 'foo' }
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -134,7 +151,7 @@
             'hooks/install'
           ],
           id: 'precise/ceph-9',
-          code_source: { location: 'foo' }
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -172,7 +189,7 @@
             'readme.rst'
           ],
           id: 'precise/ceph-9',
-          code_source: { location: 'foo' }
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -214,7 +231,7 @@
             'readme.md'
           ],
           id: 'precise/ceph-9',
-          code_source: { location: 'foo' }
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -230,7 +247,7 @@
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9',
-          code_source: { location: 'foo' },
+          code_source: { location: 'lp:~foo' },
           options: {
             'client-port': {
               'default': 9160,
@@ -256,7 +273,7 @@
             'readme.md'
           ],
           id: 'precise/ceph-9',
-          code_source: { location: 'foo' }
+          code_source: { location: 'lp:~foo' }
         })
       });
       var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
@@ -275,7 +292,7 @@
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9',
-          code_source: { location: 'foo' }
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -299,7 +316,7 @@
             'readme.md'
           ],
           id: 'precise/ceph-9',
-          code_source: { location: 'foo' }
+          code_source: { location: 'lp:~foo' }
         })
       });
       var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);

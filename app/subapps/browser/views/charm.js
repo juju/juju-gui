@@ -153,10 +153,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
       
        @method _getSourceLink
        @private
-       @param {Object} charm The charm data.
      */
-    _getSourceLink: function(charm) {
-      var url = charm.get('code_source').location;
+    _getSourceLink: function() {
+      var url = this.get('charm').get('code_source').location;
       url = url.replace('lp:', 'http://bazaar.launchpad.net/');
       return url + '/files';
     },
@@ -472,10 +471,10 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
       var tplData = charm.getAttrs(),
           container = this.get('container'),
-          sourceLink = this._getSourceLink(charm);
+          sourceLink = this._getSourceLink();
 
       tplData.isFullscreen = isFullscreen;
-      tplData.sourceLink = this._getSourceLink(charm);
+      tplData.sourceLink = sourceLink;
       tplData.prettyCommits = this._formatCommitsForHtml(
           tplData.recent_commits, sourceLink);
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
