@@ -2,6 +2,11 @@
 
 YUI.add('ns-routing-app-extension', function(Y) {
 
+  // The QueryString module must be the parser used in Y.Router that it will
+  // decode query strings with lists of values in the querystring vs the
+  // Y.Router._parseQuery which does not support list values.
+  Y.Router._parseQuery = Y.QueryString.parse;
+
   function _trim(s, char, leading, trailing) {
     // remove leading, trailing char.
     while (leading && s && s.indexOf(char) === 0) {
@@ -482,8 +487,6 @@ YUI.add('ns-routing-app-extension', function(Y) {
       this._routes.push(routeData);
       return this;
     }
-
-
   };
 
   Y.namespace('juju').Router = function(defaultNamespace) {
@@ -495,5 +498,9 @@ YUI.add('ns-routing-app-extension', function(Y) {
   Y.namespace('juju').NSRouter = NSRouter;
 
 }, '0.1.0', {
-  requires: ['oop']
+  requires: [
+    'querystring-parse',
+    'oop',
+    'router'
+  ]
 });
