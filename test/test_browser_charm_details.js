@@ -87,6 +87,49 @@
           view._getRevnoLink(url, 1));
     });
 
+    it('can generate useful display data for commits', function() {
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9',
+          code_source: {
+            location: 'lp:~foo'
+          }
+        })
+      });
+      var revisions = [
+        {
+          authors: [{
+            email: 'jdoe@example.com',
+            name: 'John Doe'
+          }],
+          date: '2013-05-02T10:05:32Z',
+          message: 'The fnord had too much fleem.',
+          revno: 1
+        },
+        {
+          authors: [{
+            email: 'jdoe@example.com',
+            name: 'John Doe'
+          }],
+          date: '2013-05-02T10:05:45Z',
+          message: 'Fnord needed more fleem.',
+          revno: 2
+        }
+      ];
+      var commits = view._formatCommitsForHtml(
+          revisions, view._getSourceLink());
+      assert.equal(
+          'http://bazaar.launchpad.net/~foo/revision/1',
+          commits.first.revnoLink);
+      assert.equal(
+          'http://bazaar.launchpad.net/~foo/revision/2',
+          commits.remaining[0].revnoLink);
+    });
+
     it('should be able to display the readme content', function() {
       var fakeStore = new Y.juju.Charmworld0({});
       fakeStore.set('datasource', {

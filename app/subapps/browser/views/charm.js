@@ -199,7 +199,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
             prettyCommits.first.date, {
               format: DATE_FORMAT
             });
-        prettyCommits.first.revno_link = this._getRevnoLink(
+        prettyCommits.first.revnoLink = this._getRevnoLink(
             sourceLink, prettyCommits.first.revno);
       }
 
@@ -208,7 +208,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
             commit.date, {
               format: DATE_FORMAT
             });
-        commit.revno_link = this._getRevnoLink(sourceLink, commit.revno);
+        commit.revnoLink = this._getRevnoLink(sourceLink, commit.revno);
         prettyCommits.remaining.push(commit);
       }, this);
 
