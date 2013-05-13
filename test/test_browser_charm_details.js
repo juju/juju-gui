@@ -69,8 +69,7 @@
       view._locateReadme().should.eql('README.md');
     });
 
-
-    it.only('can generate source and revno links from its charm', function() {
+    it('can generate source and revno links from its charm', function() {
       view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
@@ -84,8 +83,8 @@
       var url = view._getSourceLink();
       assert.equal('http://bazaar.launchpad.net/~foo/files', url);
       assert.equal(
-        'http://bazaar.launchpad.net/~foo/revision/1',
-        view._getRevnoLink(url, 1));
+          'http://bazaar.launchpad.net/~foo/revision/1',
+          view._getRevnoLink(url, 1));
     });
 
     it('should be able to display the readme content', function() {
@@ -123,7 +122,8 @@
     // EVENTS
     it('should catch when the add control is clicked', function(done) {
       view = new CharmView({
-        charm: new models.BrowserCharm({ files: [
+        charm: new models.BrowserCharm({
+          files: [
             'hooks/install'
           ],
           id: 'precise/ceph-9',

@@ -150,7 +150,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
     /**
        Creates the bazaar url for the charm.
-      
+
        @method _getSourceLink
        @private
      */
@@ -162,7 +162,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
 
     /**
        Creates the url for a given revision of the charm.
-      
+
        @method _getRevnoLink
        @private
        @param {String} sourceLink The charm's source_link.
