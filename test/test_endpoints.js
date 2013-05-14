@@ -20,7 +20,8 @@ describe('Relation endpoints logic', function() {
 
 
   beforeEach(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-models',
+    Y = YUI(GlobalConfig).use(['juju-views',
+                               'juju-models',
                                'juju-gui',
                                'juju-tests-utils',
                                'juju-controllers'],
