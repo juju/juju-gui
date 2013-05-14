@@ -149,6 +149,17 @@ YUI.add('juju-gui', function(Y) {
         focus: true,
         help: 'Select the charm Search'
       },
+      'S-d': {
+        callback: function(evt) {
+          this.env.exportEnvironment(function(r) {
+            var exportData = JSON.stringify(r.result, undefined, 2);
+            var exportBlob = new Blob([exportData],
+                                      {type: 'application/json;charset=utf-8'});
+            saveAs(exportBlob, 'export.json');
+          });
+        },
+        help: 'Export the environment'
+      },
       'S-/': {
         target: '#shortcut-help',
         toggle: true,
@@ -1139,5 +1150,7 @@ YUI.add('juju-gui', function(Y) {
     'subapp-browser',
     'event-key',
     'event-touch',
-    'model-controller']
+    'model-controller',
+    'FileSaver'
+  ]
 });

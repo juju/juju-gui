@@ -73,6 +73,15 @@ var GlobalConfig = {
         }
       }
     },
+
+    filesaver: {
+      modules: {
+        'FileSaver': {
+          fullpath: '/juju-ui/assets/javascripts/FileSaver.js'
+        }
+      }
+    },
+
     juju: {
       modules: {
         // Primitives
