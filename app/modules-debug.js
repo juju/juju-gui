@@ -318,6 +318,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/subapps/browser/views/minimized.js'
         },
 
+        'subapp-browser-charmresults': {
+          fullpath: '/juju-ui/subapps/browser/views/charmresults.js'
+        },
+
         'subapp-browser-fullscreen': {
           fullpath: '/juju-ui/subapps/browser/views/fullscreen.js'
         },
