@@ -131,7 +131,6 @@ BUILD_FILES=build-shared/juju-ui/assets/modules.js \
 JAVASCRIPT_LIBRARIES=app/assets/javascripts/d3.v2.js \
 	app/assets/javascripts/d3.v2.min.js app/assets/javascripts/yui
 DATE=$(shell date -u)
-APPCACHE=build-shared/juju-ui/assets/manifest.appcache
 
 # Some environments, notably sudo, do not populate the default PWD environment
 # variable, which is used to set $(PWD).  Worse, in some situations, such as
@@ -306,7 +305,6 @@ shared-link-files-list=build-$(1)/juju-ui/assets/combined-css \
 	build-$(1)/juju-ui/assets/images \
 	build-$(1)/juju-ui/assets/svgs \
 	build-$(1)/juju-ui/version.js \
-	build-$(1)/juju-ui/assets/manifest.appcache \
 	build-$(1)/juju-ui/assets/combined-css/all-static.css \
 	build-$(1)/juju-ui/assets/juju-gui.css \
 	build-$(1)/juju-ui/assets/sprite.css \
@@ -336,8 +334,6 @@ define link-files
 	ln -sf "$(PWD)/app/assets/svgs" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/app/assets/javascripts" build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/version.js" build-$(1)/juju-ui/
-	ln -sf "$(PWD)/build-shared/juju-ui/assets/manifest.appcache" \
-		build-$(1)/juju-ui/assets/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/all-static.css" \
 		build-$(1)/juju-ui/assets/combined-css/
 	ln -sf "$(PWD)/build-shared/juju-ui/assets/combined-css/rail-x.png" \
@@ -467,7 +463,7 @@ clean-all: clean clean-deps clean-docs
 
 build: build-prod build-debug build-devel
 
-build-shared: $(APPCACHE) $(NODE_TARGETS) spritegen \
+build-shared: build-shared/juju-ui/assets $(NODE_TARGETS) spritegen \
 	  $(NON_SPRITE_IMAGES) $(BUILD_FILES) build-shared/juju-ui/version.js
 
 # build-devel is phony. build-shared, build-debug, and build-common are real.
@@ -477,20 +473,18 @@ build-debug: build-shared | $(LINK_DEBUG_FILES)
 
 build-prod: build-shared | $(LINK_PROD_FILES)
 
-$(APPCACHE): manifest.appcache.in
+build-shared/juju-ui/assets:
 	mkdir -p build-shared/juju-ui/assets
-	cp manifest.appcache.in $(APPCACHE)
-	sed -re 's/^\# TIMESTAMP .+$$/\# TIMESTAMP $(DATE)/' -i $(APPCACHE)
 
 # This really depends on CHANGES.yaml, the bzr revno changing, and the build
 # /juju-ui directory existing.  We are vaguely trying to approximate the second
-# one by connecting it to our pertinent versioned files.  The appcache target
-# creates the third, and directories are a bit tricky with Makefiles so we are
-# OK with that.  The ULTIMATE_VERSION is used here because we always want the
-# version.js file to reflect the top-most entry in the CHANGES.yaml file,
-# regardless of whether we are doing a "Stable" or "Development" release.
-build-shared/juju-ui/version.js: $(APPCACHE) CHANGES.yaml $(JSFILES) $(TEMPLATE_TARGETS) \
-		$(SPRITE_SOURCE_FILES)
+# one by connecting it to our pertinent versioned files.  The first target
+# creates the last directory, and directories are a bit tricky with Makefiles 
+# so we are OK with that.  The ULTIMATE_VERSION is used here because we always 
+# want the version.js file to reflect the top-most entry in the CHANGES.yaml 
+# file, regardless of whether we are doing a "Stable" or "Development" release.
+build-shared/juju-ui/version.js: build-shared/juju-ui/assets CHANGES.yaml \
+		$(JSFILES) $(TEMPLATE_TARGETS) $(SPRITE_SOURCE_FILES)
 	echo "var jujuGuiVersionInfo=['$(ULTIMATE_VERSION)', '$(BZR_REVNO)'];" \
 	    > build-shared/juju-ui/version.js
 
@@ -583,23 +577,11 @@ else
 	@false
 endif
 
-appcache: $(APPCACHE)
-
-# A target used only for forcibly updating the appcache.
-appcache-touch:
-	touch app/index.html
-	touch manifest.appcache.in
-
-# This is the real target.  appcache-touch needs to be executed before
-# appcache, and this provides the correct order.
-appcache-force: appcache-touch $(APPCACHE)
-
 # targets are alphabetically sorted, they like it that way :-)
-.PHONY: appcache-force appcache-touch beautify build build-files \
-	build-devel clean clean-all clean-deps clean-docs code-doc debug \
-	devel docs dist gjslint help install-npm-packages jshint lint \
-	main-doc npm-cache npm-cache-file prep prod recess server spritegen \
-	test test-debug test-prep test-prod undocumented view-code-doc \
-	view-docs view-main-doc yuidoc-lint
+.PHONY: beautify build build-files build-devel clean clean-all clean-deps \
+	clean-docs code-doc debug devel docs dist gjslint help \
+	install-npm-packages jshint lint main-doc npm-cache npm-cache-file \
+	prep prod recess server spritegen test test-debug test-prep test-prod \
+	undocumented view-code-doc view-docs view-main-doc yuidoc-lint
 
 .DEFAULT_GOAL := all
