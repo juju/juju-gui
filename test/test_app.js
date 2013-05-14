@@ -354,7 +354,7 @@ function injectData(app, data) {
         assert.equal(e.data.result, true);
         Y.juju.App.onLogin = oldOnLogin;
         done();
-      }
+      };
       var app = new Y.juju.App({ env: env, viewContainer: container });
       env.connect();
       app.env.userIsAuthenticated = true;
