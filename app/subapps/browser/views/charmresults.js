@@ -30,7 +30,8 @@ YUI.add('subapp-browser-charmresults', function(Y) {
    */
   ns.CharmResults = Y.Base.create('browser-view-charmresults', Y.View, [
     views.utils.apiFailingView,
-    widgets.browser.IndicatorManager
+    widgets.browser.IndicatorManager,
+    Y.Event.EventTracker
   ], {
     events: {
       '.charm-token': {
@@ -47,14 +48,16 @@ YUI.add('subapp-browser-charmresults', function(Y) {
     _bindEvents: function() {
       // Watch for changse to the activeID so that we can mark/unmark active
       // as required.
-      this.on('activeIDChange', function(ev) {
-        var id = ev.newVal;
-        if (id) {
-          id = this.get('container').one(
-              '.charm-token[data-charmid="' + id + '"]');
-        }
-        this._updateActive(id);
-      });
+      this.addEvent(
+          this.on('activeIDChange', function(ev) {
+            var id = ev.newVal;
+            if (id) {
+              id = this.get('container').one(
+                  '.charm-token[data-charmid="' + id + '"]');
+            }
+            this._updateActive(id);
+          })
+      );
     },
 
     /**
@@ -99,15 +102,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
       }
     },
 
-    /**
-     * Generates a message to the user based on a bad api call.
-     * @method apiFailure
-     * @param {Object} data the json decoded response text.
-     * @param {Object} request the original io_request object for debugging.
-     */
-    apiFailure: function(data, request) {
-      this._apiFailure(data, request, 'Failed to load editorial content.');
-    },
+
 
     /**
      * General YUI initializer.
@@ -142,9 +137,7 @@ YUI.add('subapp-browser-charmresults', function(Y) {
        * @type {String}
        *
        */
-      activeID: {
-
-      },
+      activeID: {},
 
       /**
        * Is this rendering of the editorial view for fullscreen or sidebar

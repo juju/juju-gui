@@ -23,10 +23,7 @@ YUI.add('subapp-browser-searchview', function(Y) {
    */
   ns.BrowserSearchView = Y.Base.create(
       'browser-view-searchview',
-      ns.CharmResults, [
-        views.utils.apiFailingView,
-        widgets.browser.IndicatorManager,
-        Y.Event.EventTracker], {
+      ns.CharmResults, [], {
         template: views.Templates.search,
 
         /**
@@ -134,6 +131,16 @@ YUI.add('subapp-browser-searchview', function(Y) {
               this.filters.on(
                   this.filters.EV_FILTER_CHANGED, this._filterChanged, this)
           );
+        },
+
+        /**
+         * Generates a message to the user based on a bad api call.
+         * @method apiFailure
+         * @param {Object} data the json decoded response text.
+         * @param {Object} request the original io_request object for debugging.
+         */
+        apiFailure: function(data, request) {
+          this._apiFailure(data, request, 'Failed to load search results.');
         },
 
         /**
