@@ -872,7 +872,7 @@ YUI.add('juju-gui', function(Y) {
        @method toggleStaticViews
        @param {Request} req current request object.
        @param {Response} res current response object.
-       @param {function} next callable for the next route Rin the chain.
+       @param {function} next callable for the next route in the chain.
      */
     toggleStaticViews: function(req, res, next) {
       var url = req.url,

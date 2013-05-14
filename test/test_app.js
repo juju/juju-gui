@@ -168,12 +168,6 @@ function injectData(app, data) {
         }),
         environment_name: environment_name
       });
-      // app = new Y.juju.App(
-      //     { container: container,
-      //       viewContainer: container,
-      //       environment_name: environment_name,
-      //       conn: {close: function() {}}});
-      // app.showView(new Y.View());
       assert.equal(
           container.one('#environment-name').get('text'),
           environment_name);
