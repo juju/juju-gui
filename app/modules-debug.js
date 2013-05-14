@@ -124,6 +124,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/assets/javascripts/sub-app.js'
         },
 
+        'unscaled-pack-layout': {
+          fullpath: '/juju-ui/assets/javascripts/unscaled-pack-layout.js'
+        },
+
         // Views
         'juju-landscape': {
           fullpath: '/juju-ui/views/landscape.js'
@@ -153,6 +157,9 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/topology/importexport.js'
         },
 
+        'juju-topology-utils': {
+          fullpath: '/juju-ui/views/topology/utils.js'
+        },
 
         'juju-topology': {
           fullpath: '/juju-ui/views/topology/topology.js'
@@ -258,6 +265,10 @@ var GlobalConfig = {
           fullpath: '/juju-ui/store/env/fakebackend.js'
         },
 
+        'juju-fakebackend-simulator': {
+          fullpath: '/juju-ui/store/env/simulator.js'
+        },
+
         'juju-env-sandbox': {
           fullpath: '/juju-ui/store/env/sandbox.js'
         },
@@ -308,6 +319,10 @@ var GlobalConfig = {
 
         'subapp-browser-minimized': {
           fullpath: '/juju-ui/subapps/browser/views/minimized.js'
+        },
+
+        'subapp-browser-charmresults': {
+          fullpath: '/juju-ui/subapps/browser/views/charmresults.js'
         },
 
         'subapp-browser-fullscreen': {

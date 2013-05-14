@@ -352,6 +352,11 @@ YUI.add('juju-gui', function(Y) {
           }
           envOptions.conn = new sandboxModule.ClientConnection(
               {juju: new sandboxModule.PyJujuAPI({state: state})});
+          if (this.get('simulateEvents')) {
+            var Simulator = Y.namespace('juju.environments').Simulator;
+            this._simulator = new Simulator({state: state});
+            this._simulator.start();
+          }
         }
         this.env = juju.newEnvironment(envOptions, apiBackend);
       }
@@ -939,6 +944,54 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+      Feature flags support in URL routing.
+
+      This allows us to use the :flags: NS to set either boolean or string
+      feature flags to control various features in the app.  A simple /<flag>/
+      will set that flag as true in the global flags variable.  A
+      /<flag>=<val>/ will set that flag to that value in the global flags
+      variable. An example usage would be to turn on the ability to drag-and-
+      drop a feature by wrapping that feature code in something like:
+
+        if (flags['gui.featuredrag.enable']) { ... }
+
+      From the LaunchPad feature flags documentation:
+
+      > As a general rule, each switch should be checked only once or only a
+      > few time in the codebase. We don't want to disable the same thing in
+      > the ui, the model, and the database.
+      >
+      > The name looks like dotted python identifiers, with the form
+      > APP.FEATURE.EFFECT. The value is a Unicode string.
+
+      @method featureFlags
+      @param {object} req The request object.
+      @param {object} res The response object.
+      @param {function} next The next callback.
+    */
+    featureFlags: function(req, res, next) {
+      var buildFlags = {};
+      Y.Array.each(req.path.split('/'), function(flag) {
+        if (flag.length > 0) {
+          var flagKey = flag;
+          var flagValue = true;
+          // Allow setting a specific value other than true.
+          if (flag.indexOf('=') !== -1) {
+            flagKey = flag.split('=', 1);
+            // Maintain possible '=' characters in the value.  This ensures
+            // that values are always either true or strings, rather than
+            // an array.
+            flagValue = flag.split('=').splice(1).join('=');
+          }
+          buildFlags[flagKey] = flagValue;
+        }
+      });
+      // Access the global variable through `window`.
+      window.flags = buildFlags;
+      next();
+    },
+
+    /**
      * Object routing support
      *
      * This utility helps map from model objects to routes
@@ -1089,6 +1142,8 @@ YUI.add('juju-gui', function(Y) {
             reverse_map: {id: 'urlName'},
             model: 'serviceUnit',
             namespace: 'gui'},
+          // Feature flags.
+          { path: '*', callbacks: 'featureFlags', namespace: 'flags' },
           // Authorization
           { path: '/login/', callbacks: 'showLogin' }
         ]
@@ -1112,6 +1167,7 @@ YUI.add('juju-gui', function(Y) {
     'juju-endpoints-controller',
     'juju-env',
     'juju-env-fakebackend',
+    'juju-fakebackend-simulator',
     'juju-env-sandbox',
     'juju-charm-models',
     'juju-views',
