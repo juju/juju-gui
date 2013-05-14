@@ -9,7 +9,8 @@
 YUI.add('juju-topology', function(Y) {
   var views = Y.namespace('juju.views'),
       models = Y.namespace('juju.models'),
-      d3ns = Y.namespace('d3');
+      d3ns = Y.namespace('d3'),
+      utils = Y.namespace('juju.topology.utils');
 
   /**
    * Topology models and renders the SVG of the envionment topology
@@ -146,6 +147,25 @@ YUI.add('juju-topology', function(Y) {
     serviceForBox: function(boundingBox) {
       var db = this.get('db');
       return db.services.getById(boundingBox.id);
+    },
+
+    /**
+      Builds a coordinate which is outside of the current topology's service
+      boxes.
+
+      @method servicePointOutside
+      @return {array} An x/y coordinate pair.
+    */
+    servicePointOutside: function() {
+      // Existing service boxes are those with x/y attributes set.
+      var existingBoxes = Y.Object.values(this.service_boxes)
+        .filter(function(box) {
+            return box.x !== undefined;
+          });
+      // Find a point outside of the set of existing service boxes.
+      return utils.pointOutside(
+          utils.serviceBoxesToVertices(existingBoxes),
+          this.get('servicePadding'));
     }
   }, {
     ATTRS: {
@@ -162,6 +182,7 @@ YUI.add('juju-topology', function(Y) {
        * A [width, height] tuple representing canvas size.
        */
       size: {value: [640, 480]},
+      servicePadding: {value: 300},
       width: {
         getter: function() {return this.get('size')[0];}
       },
@@ -207,6 +228,7 @@ YUI.add('juju-topology', function(Y) {
     'juju-topology-panzoom',
     'juju-topology-viewport',
     'juju-topology-landscape',
-    'juju-topology-importexport'
+    'juju-topology-importexport',
+    'juju-topology-utils'
   ]
 });
