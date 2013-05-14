@@ -56,72 +56,84 @@ function injectData(app, data) {
           .append(Y.Node.create('<span/>')
             .addClass('provider-type'))
           .hide();
-      conn = new utils.SocketStub();
-      env = juju.newEnvironment({
-        conn: conn});
-      env.connect();
-      app = new Y.juju.App({
-        container: container,
-        viewContainer: container,
-        env: env
+
+    });
+
+    afterEach(function(done) {
+      app.after('destroy', function() {
+        container.remove(true);
+        sessionStorage.setItem('credentials', null);
+        done();
       });
+
+      app.destroy();
+    });
+
+    function constructAppInstance(config) {
+      config = config || {};
+      if (config.env && config.env.connect) {
+        config.env.connect();
+      }
+      config.container = container;
+      config.viewContainer = container;
+
+      app = new Y.juju.App(config);
       app.navigate = function() {};
       app.showView(new Y.View());
       injectData(app);
-    });
-
-    afterEach(function() {
-      if (typeof app.destroy === 'function') {
-        app.destroy();
-      }
-      container.remove(true);
-      sessionStorage.setItem('credentials', null);
-    });
+      return app;
+    }
 
     it('should not have login credentials if missing from the configuration',
         function() {
-          app.render();
+          constructAppInstance({
+            env: juju.newEnvironment({ conn: new utils.SocketStub() })
+          });
           assert.equal(app.env.get('user'), undefined);
           assert.equal(app.env.get('password'), undefined);
         });
 
     it('should propagate login credentials from the configuration',
-        function() {
+        function(done) {
           var the_username = 'nehi';
           var the_password = 'moonpie';
-          // Replace the existing app.
           app = new Y.juju.App(
               { container: container,
                 user: the_username,
                 password: the_password,
                 viewContainer: container,
                 conn: {close: function() {}}});
-          app.showView(new Y.View());
-          var credentials = app.env.getCredentials();
-          credentials.user.should.equal(the_username);
-          credentials.password.should.equal(the_password);
+          app.after('ready', function() {
+            var credentials = app.env.getCredentials();
+            credentials.user.should.equal(the_username);
+            credentials.password.should.equal(the_password);
+            done();
+          });
         });
 
     it('propagates the readOnly option from the configuration', function() {
-      // Replace the existing app.
       app = new Y.juju.App({
         container: container,
         readOnly: true,
         viewContainer: container,
         conn: {close: function() {}}
       });
-      app.showView(new Y.View());
       assert.isTrue(app.env.get('readOnly'));
     });
 
     it('should produce a valid index', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
       var container = app.get('container');
-      app.render();
       container.getAttribute('id').should.equal('test-container');
       container.getAttribute('class').should.include('container');
     });
 
     it('should be able to route objects to internal URLs', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
       // Take handles to database objects and ensure we can route to the view
       // needed to show them.
       var wordpress = app.db.services.getById('wordpress'),
@@ -147,12 +159,21 @@ function injectData(app, data) {
 
     it('should display the configured environment name', function() {
       var environment_name = 'This is the environment name.  Deal with it.';
-      app = new Y.juju.App(
-          { container: container,
-            viewContainer: container,
-            environment_name: environment_name,
-            conn: {close: function() {}}});
-      app.showView(new Y.View());
+      constructAppInstance({
+        env: juju.newEnvironment({
+          conn: {
+            send: function() {},
+            close: function() {}
+          }
+        }),
+        environment_name: environment_name
+      });
+      // app = new Y.juju.App(
+      //     { container: container,
+      //       viewContainer: container,
+      //       environment_name: environment_name,
+      //       conn: {close: function() {}}});
+      // app.showView(new Y.View());
       assert.equal(
           container.one('#environment-name').get('text'),
           environment_name);
@@ -160,17 +181,23 @@ function injectData(app, data) {
 
     it('should show a generic environment name if none configured',
        function() {
-         app = new Y.juju.App(
-         { container: container,
-           viewContainer: container,
-           conn: {close: function() {}}});
-         app.showView(new Y.View());
+         constructAppInstance({
+           env: juju.newEnvironment({
+             conn: {
+               send: function() {},
+               close: function() {}
+             }
+           })
+         });
          assert.equal(
          container.one('#environment-name').get('text'),
          'Environment');
        });
 
     it('should show the provider type, when available', function() {
+      constructAppInstance({
+        env: juju.newEnvironment({ conn: new utils.SocketStub() })
+      });
       var providerType = 'excellent provider';
       // Since no provider type has been set yet, none is displayed.
       assert.equal('', container.one('.provider-type').get('text'));
@@ -183,10 +210,13 @@ function injectData(app, data) {
     });
 
     it('hides the browser subapp on some urls', function() {
-      app = new Y.juju.App({
-        container: container,
-        viewContainer: container,
-        conn: {close: function() {}}
+      constructAppInstance({
+        env: juju.newEnvironment({
+          conn: {
+            send: function() {},
+            close: function() {}
+          }
+        })
       });
 
       var checkUrls = [{
