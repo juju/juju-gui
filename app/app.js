@@ -151,6 +151,7 @@ YUI.add('juju-gui', function(Y) {
       },
       'S-d': {
         callback: function(evt) {
+          /* global saveAs: false */
           this.env.exportEnvironment(function(r) {
             var exportData = JSON.stringify(r.result, undefined, 2);
             var exportBlob = new Blob([exportData],

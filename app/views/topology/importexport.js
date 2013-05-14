@@ -71,7 +71,7 @@ YUI.add('juju-topology-importexport', function(Y) {
                     notifications.add({
                       title: 'Import Environment Failed',
                       message: 'Import from "' + file.name +
-                        '" failed.<br/>' + result.error,
+                          '" failed.<br/>' + result.error,
                       level: 'error'
                     });
                   }
