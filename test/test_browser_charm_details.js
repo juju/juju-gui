@@ -220,7 +220,7 @@
     });
 
     it('should display the config data in the config tab', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9',
@@ -243,7 +243,7 @@
     });
 
     it('_buildQAData properly summerizes the scores', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
             'readme.md'
@@ -263,7 +263,7 @@
     });
 
     it('qa content is loaded when the tab is clicked on', function(done) {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9'
@@ -284,7 +284,7 @@
     });
 
     it('does not blow up when the scores from the api is null', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
             'readme.md'
@@ -306,7 +306,7 @@
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm(data),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -353,7 +353,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -374,7 +374,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -396,7 +396,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -417,7 +417,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -439,7 +439,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -462,7 +462,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -484,7 +484,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -507,7 +507,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -531,7 +531,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(

@@ -30,7 +30,7 @@ function injectData(app, data) {
   app.env.dispatch_result(d);
   return app;
 }
-/*
+
 (function() {
 
   describe('Application basics', function() {
@@ -38,7 +38,7 @@ function injectData(app, data) {
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
-          ['juju-gui', 'juju-tests-utils', 'juju-view-utils'],
+          ['juju-gui', 'juju-tests-utils', 'juju-view-utils', 'juju-views'],
           function(Y) {
             utils = Y.namespace('juju-tests.utils');
             juju = Y.namespace('juju');
@@ -71,7 +71,9 @@ function injectData(app, data) {
     });
 
     afterEach(function() {
-      app.destroy();
+      if (typeof app.destroy === 'function') {
+        app.destroy();
+      }
       container.remove(true);
       sessionStorage.setItem('credentials', null);
     });
@@ -88,7 +90,6 @@ function injectData(app, data) {
           var the_username = 'nehi';
           var the_password = 'moonpie';
           // Replace the existing app.
-          app.destroy();
           app = new Y.juju.App(
               { container: container,
                 user: the_username,
@@ -103,7 +104,6 @@ function injectData(app, data) {
 
     it('propagates the readOnly option from the configuration', function() {
       // Replace the existing app.
-      app.destroy();
       app = new Y.juju.App({
         container: container,
         readOnly: true,
@@ -147,7 +147,6 @@ function injectData(app, data) {
 
     it('should display the configured environment name', function() {
       var environment_name = 'This is the environment name.  Deal with it.';
-      app.destroy();
       app = new Y.juju.App(
           { container: container,
             viewContainer: container,
@@ -161,7 +160,6 @@ function injectData(app, data) {
 
     it('should show a generic environment name if none configured',
        function() {
-         app.destroy();
          app = new Y.juju.App(
          { container: container,
            viewContainer: container,
@@ -185,7 +183,7 @@ function injectData(app, data) {
     });
 
     it('hides the browser subapp on some urls', function() {
-      var app = new Y.juju.App({
+      app = new Y.juju.App({
         container: container,
         viewContainer: container,
         conn: {close: function() {}}
@@ -217,13 +215,12 @@ function injectData(app, data) {
         app.toggleStaticViews(req, undefined, next);
         app.get('subApps').charmstore.hidden.should.eql(check.hidden);
       });
-      app.destroy();
     });
 
   });
 })();
-*/
-/*
+
+
 (function() {
 
   describe('Application authentication', function() {
@@ -370,7 +367,7 @@ function injectData(app, data) {
 
   });
 })();
-*/
+
 (function() {
 
   describe('Application Connection State', function() {

@@ -19,7 +19,7 @@ var juju_config = {
   // url.  For backwards compatibility in the GUI charm, if you provide the
   // socket port and/or protocol *and* the socket_url, the socket_url will be
   // ignored (the port/protocol behavior overrides socket_url).
-  socket_proZocol: 'ws',
+  socket_protocol: 'ws',
   socket_port: 8081,
   user: 'admin',
   password: 'admin',
