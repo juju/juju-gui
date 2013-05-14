@@ -25,6 +25,8 @@ var juju_config = {
   password: 'admin',
   apiBackend: 'python', // Value can be 'python' or 'go'.
   sandbox: true,
+  // When in sandbox mode should we create events to simulate a live env.
+  simulateEvents: true,
   readOnly: false,
   login_help: 'For this demonstration, use the password "admin" to connect.'
 };

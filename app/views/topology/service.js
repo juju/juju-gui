@@ -257,7 +257,7 @@ YUI.add('juju-topology-service', function(Y) {
       var curr_click_action = self.get('currentServiceClickAction');
 
       // Fire the action named in the following scheme:
-      //   service_click_action.<action>
+      //   <action>
       // with the service, the SVG node, and the view
       // as arguments.
       self[curr_click_action](box);
@@ -580,7 +580,7 @@ YUI.add('juju-topology-service', function(Y) {
       }
 
       if (!this.tree) {
-        this.tree = d3.layout.pack()
+        this.tree = d3.layout.unscaledPack()
                       .size([width, height])
                       .value(function(d) {
                           return Math.max(d.unit_count, 1);
@@ -613,7 +613,38 @@ YUI.add('juju-topology-service', function(Y) {
                             return !Y.Lang.isNumber(boundingBox.x);
                           });
       if (new_services.length > 0) {
-        this.tree.nodes({children: new_services});
+        // If the there is only one new service and it's pending (as in, it was
+        // added via the charm panel as a ghost), position it intelligently and
+        // set its position coordinates such that they'll be saved when the
+        // service is actually created.  Otherwise, rely on our pack layout (as
+        // in the case of opening an unannotated environment for the first
+        // time).
+        if (new_services.length === 1 && new_services[0].model.get('pending')) {
+          // Get a coordinate outside the cluster of existing services.
+          var coords = topo.servicePointOutside();
+          // Set the coordinates on both the box model and the service model.
+          new_services[0].x = coords[0];
+          new_services[0].y = coords[1];
+          new_services[0].model.set('x', coords[0]);
+          new_services[0].model.set('y', coords[1]);
+          // This ensures that the x/y coordinates will be saved as annotations.
+          new_services[0].model.set('dragged', true);
+        } else {
+          this.tree.nodes({children: new_services});
+        }
+        // Update annotations settings position on backend
+        // (but only do this if there is no existing annotations).
+        Y.each(new_services, function(box) {
+          var existing = box.model.get('annotations') || {};
+          if (!existing && !existing['gui-x']) {
+            topo.get('env').update_annotations(
+                box.id, 'service', {'gui-x': box.x, 'gui-y': box.y},
+                function() {
+                  box.inDrag = false;
+                });
+          }
+        });
+
       }
       // enter
       node
@@ -721,7 +752,9 @@ YUI.add('juju-topology-service', function(Y) {
             annotations = service.get('annotations'),
             x, y;
 
-        if (!annotations) {return;}
+        if (!annotations) {
+          return;
+        }
 
         // If there are x/y annotations on the service model and they are
         // different from the node's current x/y coordinates, update the
@@ -729,17 +762,19 @@ YUI.add('juju-topology-service', function(Y) {
         x = annotations['gui-x'],
         y = annotations['gui-y'];
         if (!d ||
-            (x !== undefined && x !== d.x) &&
+            (x !== undefined && x !== d.x) ||
             (y !== undefined && y !== d.y)) {
           // Delete gui-x and gui-y from annotations as we use the values.
           // This is to prevent deltas coming in on a service while it is
           // being dragged from resetting its position during the drag.
+
           delete annotations['gui-x'];
           delete annotations['gui-y'];
           // Only update position if we're not already in a drag state (the
           // current drag supercedes any previous annotations).
           if (!d.inDrag) {
-            self.drag.call(this, d, self, {x: x, y: y});
+            self.drag.call(this, d, self, {x: x, y: y},
+                           self.get('useTransitions'));
           }
         }});
 
@@ -800,8 +835,6 @@ YUI.add('juju-topology-service', function(Y) {
 
       // Landscape badge
       if (landscape) {
-        // Remove any existing badge.
-        node.select('.landscape-badge').remove();
         node.each(function(d) {
           var landscapeAsset;
           var securityBadge = landscape.getLandscapeBadge(
@@ -819,15 +852,29 @@ YUI.add('juju-topology-service', function(Y) {
             landscapeAsset =
                 '/juju-ui/assets/images/landscape_restart_round.png';
           }
-          if (landscapeAsset) {
-            d3.select(this).append('image')
-            .attr({'xlink:href': landscapeAsset,
-                  'class': 'landscape-badge',
-                  'width': 30,
-                  'height': 30,
-                  'x': function(box) {return box.w * 0.13;},
-                  'y': function(box) { return box.h / 2 - 30;}
-                });
+          if (landscapeAsset !== undefined) {
+            // If we would draw something that is already
+            // present, continue
+            var existing = Y.one(this).one('.landscape-badge'),
+                target;
+
+            if (!existing) {
+              existing = d3.select(this).append('image');
+              existing.attr({
+                'class': 'landscape-badge',
+                'width': 32,
+                'height': 32
+              });
+            }
+            existing = d3.select(this).select('.landscape-badge');
+            existing.attr({
+              'xlink:href': landscapeAsset,
+              'x': function(box) {return box.w * 0.13;},
+              'y': function(box) {return box.relativeCenter[1] - (32 / 2);}
+            });
+          } else {
+            // Remove any existing badge.
+            d3.select(this).select('.landscape-badge').remove();
           }
         });
       }
@@ -874,23 +921,29 @@ YUI.add('juju-topology-service', function(Y) {
           });
 
       // Show whether or not the service is exposed using an indicator.
-      node.filter(function(d) {
-        return d.exposed &&
-            d3.select(this)
-                .select('.exposed-indicator').empty();
-      })
-        .append('image')
+      var exposed = node.filter(function(d) {
+        return d.exposed;
+      });
+      exposed.each(function(d) {
+        var existing = Y.one(this).one('.exposed-indicator');
+        if (!existing) {
+          existing = d3.select(this).append('image')
         .attr({'class': 'exposed-indicator on',
-            'xlink:href': '/juju-ui/assets/svgs/exposed.svg',
-            'width': function(d) { return d.w / 6;},
-            'height': function(d) { return d.w / 6;},
-            'x': function(d) { return d.w / 10 * 7;},
-            'y': function(d) { return d.relativeCenter[1] - (d.w / 6) / 2;}
-          })
+                'xlink:href': '/juju-ui/assets/svgs/exposed.svg',
+                'width': 32,
+                'height': 32
+              })
         .append('title')
         .text(function(d) {
-            return d.exposed ? 'Exposed' : '';
-          });
+                return d.exposed ? 'Exposed' : '';
+              });
+        }
+        existing = d3.select(this).select('.exposed-indicator')
+        .attr({
+              'x': function(d) { return d.w / 10 * 7;},
+              'y': function(d) { return d.relativeCenter[1] - (32 / 2);}
+            });
+      });
 
       // Remove exposed indicator from nodes that are no longer exposed.
       node.filter(function(d) {
@@ -1212,6 +1265,7 @@ YUI.add('juju-topology-service', function(Y) {
     'd3-components',
     'juju-templates',
     'juju-models',
-    'juju-env'
+    'juju-env',
+    'unscaled-pack-layout'
   ]
 });

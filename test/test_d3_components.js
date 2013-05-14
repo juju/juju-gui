@@ -6,6 +6,7 @@ describe('d3-components', function() {
 
   before(function(done) {
     Y = YUI(GlobalConfig).use(['d3-components',
+      'juju-tests-utils',
       'node',
       'node-event-simulate'],
     function(Y) {
@@ -37,10 +38,11 @@ describe('d3-components', function() {
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div id="test" style="visibility: hidden">' +
-                              '<button class="thing"></button>' +
-                              '<button class="target"></button>' +
-                              '</div>');
+    container = Y.namespace('juju-tests.utils').makeContainer('container');
+    container.append(Y.Node.create('<button/>')
+             .addClass('thing'))
+             .append(Y.Node.create('<button/>')
+             .addClass('target'));
     state = {};
   });
 

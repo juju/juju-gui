@@ -1,2 +1,3 @@
 app/assets/javascripts/prettify.js
 app/assets/javascripts/FileSaver.js
+app/assets/javascripts/unscaled-pack-layout.js

@@ -58,17 +58,25 @@ YUI.add('juju-topology-importexport', function(Y) {
           if (fileSources.length) {
             Y.Array.each(fileSources, function(file) {
               var reader = new FileReader();
-              reader.onload = (function(fileData) {
-                return function(e) {
-                  // Import each into the environment
-                  env.importEnvironment(e.target.result);
-                  notifications.add({
-                    title: 'Imported Environment',
-                    message: 'Import from "' + file.name + '" successful',
-                    level: 'important'
-                  });
-                };
-              })(file);
+              reader.onload = function(e) {
+                // Import each into the environment
+                env.importEnvironment(e.target.result, function(result) {
+                  if (!result.error) {
+                    notifications.add({
+                      title: 'Imported Environment',
+                      message: 'Import from "' + file.name + '" successful',
+                      level: 'important'
+                    });
+                  } else {
+                    notifications.add({
+                      title: 'Import Environment Failed',
+                      message: 'Import from "' + file.name +
+                        '" failed.<br/>' + result.error,
+                      level: 'error'
+                    });
+                  }
+                });
+              };
               reader.readAsText(file);
             });
           } else {

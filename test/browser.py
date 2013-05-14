@@ -49,7 +49,8 @@ chrome.update(common)
 
 firefox = dict(selenium.webdriver.DesiredCapabilities.FIREFOX)
 firefox['platform'] = 'Linux'
-firefox['version'] = '19'
+# Removing this version causes the FireFox CI deployment tests to fail
+firefox['version'] = '20'
 firefox.update(common)
 
 browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)

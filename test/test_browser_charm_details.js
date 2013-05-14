@@ -3,7 +3,7 @@
 (function() {
 
   describe('browser_charm_view', function() {
-    var CharmView, models, node, view, views, Y;
+    var container, CharmView, models, node, view, views, Y;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(
@@ -12,6 +12,7 @@
           'node-event-simulate',
           'juju-charm-models',
           'juju-charm-store',
+          'juju-tests-utils',
           'node',
           'subapp-browser-charmview',
           function(Y) {
@@ -23,13 +24,13 @@
     });
 
     beforeEach(function() {
-      var docBody = Y.one(document.body),
-          testcontent = [
-            '<div id=testcontent><div class="bws-view-data">',
-            '</div></div>'
-          ].join();
+      container = Y.namespace('juju-tests.utils').makeContainer('container');
+      var testcontent = [
+        '<div id=testcontent><div class="bws-view-data">',
+        '</div></div>'
+      ].join();
 
-      Y.Node.create(testcontent).appendTo(docBody);
+      Y.Node.create(testcontent).appendTo(container);
 
       // Mock out a dummy location for the Store used in view instances.
       window.juju_config = {
@@ -44,6 +45,7 @@
       }
       node.remove(true);
       delete window.juju_config;
+      container.remove(true);
     });
 
     it('should be able to locate a readme file', function() {
@@ -53,7 +55,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         })
       });
       view._locateReadme().should.eql('readme.rst');
@@ -66,6 +69,66 @@
       view._locateReadme().should.eql('README.md');
     });
 
+    it('can generate source and revno links from its charm', function() {
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo'}
+        })
+      });
+      var url = view._getSourceLink();
+      assert.equal('http://bazaar.launchpad.net/~foo/files', url);
+      assert.equal(
+          'http://bazaar.launchpad.net/~foo/revision/1',
+          view._getRevnoLink(url, 1));
+    });
+
+    it('can generate useful display data for commits', function() {
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9',
+          code_source: {
+            location: 'lp:~foo'
+          }
+        })
+      });
+      var revisions = [
+        {
+          authors: [{
+            email: 'jdoe@example.com',
+            name: 'John Doe'
+          }],
+          date: '2013-05-02T10:05:32Z',
+          message: 'The fnord had too much fleem.',
+          revno: 1
+        },
+        {
+          authors: [{
+            email: 'jdoe@example.com',
+            name: 'John Doe'
+          }],
+          date: '2013-05-02T10:05:45Z',
+          message: 'Fnord needed more fleem.',
+          revno: 2
+        }
+      ];
+      var commits = view._formatCommitsForHtml(
+          revisions, view._getSourceLink());
+      assert.equal(
+          'http://bazaar.launchpad.net/~foo/revision/1',
+          commits.first.revnoLink);
+      assert.equal(
+          'http://bazaar.launchpad.net/~foo/revision/2',
+          commits.remaining[0].revnoLink);
+    });
 
     it('should be able to display the readme content', function() {
       var fakeStore = new Y.juju.Charmworld0({});
@@ -88,7 +151,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo'}
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -105,7 +169,8 @@
           files: [
             'hooks/install'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -128,7 +193,8 @@
           files: [
             'hooks/install'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -165,7 +231,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -206,7 +273,8 @@
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -222,6 +290,7 @@
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' },
           options: {
             'client-port': {
               'default': 9160,
@@ -246,7 +315,8 @@
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         })
       });
       var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
@@ -264,7 +334,8 @@
       var view = new CharmView({
         charm: new models.BrowserCharm({
           files: [],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -287,7 +358,8 @@
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         })
       });
       var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);

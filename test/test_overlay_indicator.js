@@ -4,16 +4,16 @@ describe('overlay indicator', function() {
   var container, indicator, widget, Y;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['browser-overlay-indicator', 'node'],
-        function(Y) {
-          widget = Y.juju.widgets.browser;
-          done();
-        });
+    Y = YUI(GlobalConfig).use(['browser-overlay-indicator',
+      'juju-tests-utils', 'node'],
+    function(Y) {
+      widget = Y.juju.widgets.browser;
+      done();
+    });
   });
 
   beforeEach(function() {
-    container = Y.Node.create('<div id="container"></div>');
-    Y.one('body').prepend(container);
+    container = Y.namespace('juju-tests.utils').makeContainer('container');
   });
 
   afterEach(function() {
