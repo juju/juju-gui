@@ -86,7 +86,6 @@
     });
 
     it('sends the correct login message', function() {
-      assert.deepEqual(expected, last_message);
       env.handleLogin = function() {};
       env.login();
       var last_message = conn.last_message();
@@ -96,6 +95,7 @@
         RequestId: 1,
         Params: {AuthTag: 'user', Password: 'password'}
       };
+      assert.deepEqual(expected, last_message);
     });
 
     it('resets the user and password if they are not valid', function() {
