@@ -613,12 +613,21 @@ YUI.add('juju-topology-service', function(Y) {
                             return !Y.Lang.isNumber(boundingBox.x);
                           });
       if (new_services.length > 0) {
+        // If the there is only one new service and it's pending (as in, it was
+        // added via the charm panel as a ghost), position it intelligently and
+        // set its position coordinates such that they'll be saved when the
+        // service is actually created.  Otherwise, rely on our pack layout (as
+        // in the case of opening an unannotated environment for the first
+        // time).
         if (new_services.length === 1 && new_services[0].model.get('pending')) {
+          // Get a coordinate outside the cluster of existing services.
           var coords = topo.servicePointOutside();
+          // Set the coordinates on both the box model and the service model.
           new_services[0].x = coords[0];
           new_services[0].y = coords[1];
           new_services[0].model.set('x', coords[0]);
           new_services[0].model.set('y', coords[1]);
+          // This ensures that the x/y coordinates will be saved as annotations.
           new_services[0].model.set('dragged', true);
         } else {
           this.tree.nodes({children: new_services});

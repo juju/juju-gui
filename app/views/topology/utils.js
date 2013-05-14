@@ -5,7 +5,7 @@ YUI.add('juju-topology-utils', function(Y) {
   var utils = Y.namespace('juju.topology.utils');
 
   /**
-    Find a point outside of a given list of vertices, used for placing
+    Find a point outside of a given list of vertices. This is used for placing
     a new service block on an existing environment.
 
     @method pointOutside
@@ -19,7 +19,7 @@ YUI.add('juju-topology-utils', function(Y) {
       of collected vertices.
 
       @param {array} vertices A list of all vertices.
-      @param {number} padding An integer to use in padding.
+      @param {number} padding The padding around existing vertices in pixels.
       @return {array} An x/y coordinate pair.
     */
     function _exteriorToHull(vertices, padding) {
@@ -41,12 +41,17 @@ YUI.add('juju-topology-utils', function(Y) {
       return [furthestVertex[0] + padding, furthestVertex[1]];
     }
 
+    // d3.geom.hull, used by _exteriorToHull() requires at least three points.
+    // We can solve other cases easily.
     switch (vertices.length) {
       case 0:
+        // Default to padding away from the origin.
         return [padding, padding];
       case 1:
+        // Pad to the right of the existing service.
         return [vertices[0][0] + padding, vertices[0][1]];
       case 2:
+        // Pad to the right of the right-most existing service.
         return [
           (vertices[0][0] > vertices[1][0] ?
            vertices[0][0] : vertices[1][0]) + padding,
@@ -54,6 +59,8 @@ YUI.add('juju-topology-utils', function(Y) {
            vertices[0][1] : vertices[1][1])
         ];
       default:
+        // Pad to the right of the convex hull of existing services
+        // (specifically the service furthest from the origin).
         return _exteriorToHull(vertices, padding);
     }
   };

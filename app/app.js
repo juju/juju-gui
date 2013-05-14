@@ -352,7 +352,7 @@ YUI.add('juju-gui', function(Y) {
           }
           envOptions.conn = new sandboxModule.ClientConnection(
               {juju: new sandboxModule.PyJujuAPI({state: state})});
-          if (this.get('simulateEvents')) {
+          if (this.get('simulateEvents') || flags.simulate) {
             var Simulator = Y.namespace('juju.environments').Simulator;
             this._simulator = new Simulator({state: state});
             this._simulator.start();

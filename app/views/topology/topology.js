@@ -157,10 +157,12 @@ YUI.add('juju-topology', function(Y) {
       @return {array} An x/y coordinate pair.
     */
     servicePointOutside: function() {
+      // Existing service boxes are those with x/y attributes set.
       var existingBoxes = Y.Object.values(this.service_boxes)
         .filter(function(box) {
-            return Y.Lang.isNumber(box.x);
+            return box.x !== undefined;
           });
+      // Find a point outside of the set of existing service boxes.
       return utils.pointOutside(
           utils.serviceBoxesToVertices(existingBoxes),
           this.get('servicePadding'));
