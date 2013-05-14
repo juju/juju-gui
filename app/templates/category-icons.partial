@@ -1,0 +1,55 @@
+<div class="categories">
+    <h3 class="{{#unless isFullscreen}}section-title{{/unless}}">
+        Browse by category
+    </h3>
+    <ul>
+        <li>
+            <a href="">
+                <img
+                    src="/juju-ui/assets/images/category_icons/category-database.svg"
+                    alt="Databases" />
+                <span>Databases</span>
+            </a>
+        </li>
+        <li>
+            <a href="">
+                <img
+                    src="/juju-ui/assets/images/category_icons/category-file-server.svg"
+                    alt="File Servers" />
+                <span>File Servers</span>
+            </a>
+        </li>
+        <li>
+            <a href="">
+                <img
+                    src="/juju-ui/assets/images/category_icons/category-application.svg"
+                    alt="Applications" />
+                <span>Applications</span>
+            </a>
+        </li>
+        <li>
+            <a href="">
+                <img
+                    src="/juju-ui/assets/images/category_icons/category-cache-proxy.svg"
+                    alt="Cache/Proxy" />
+                <span>Cache/Proxy</span>
+            </a>
+        </li>
+        <li>
+            <a href="">
+                <img
+                    src="/juju-ui/assets/images/category_icons/category-app-server.svg"
+                    alt="App Servers" />
+                <span>App Servers</span>
+            </a>
+        </li>
+        <li>
+            <a href="">
+                <img
+                    src="/juju-ui/assets/images/category_icons/category-misc.svg"
+                    alt="Miscellaneous" />
+                <span>Miscellaneous</span>
+            </a>
+        </li>
+    </ul>
+</div>
