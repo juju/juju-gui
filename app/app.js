@@ -169,7 +169,7 @@ YUI.add('juju-gui', function(Y) {
       },
       'A-e': {
         callback: function(evt) {
-          this.fire('navigateTo', { url: '/:gui:/' });
+          this.fire('navigateTo', {url: '/:gui:/'});
         },
         help: 'Navigate to the Environment overview.'
       },
@@ -412,6 +412,7 @@ YUI.add('juju-gui', function(Y) {
           if (credentials && credentials.areAvailable) {
             this.env.login();
           }
+          this.dispatch();
         }
       }, this);
 
@@ -454,8 +455,6 @@ YUI.add('juju-gui', function(Y) {
           this.showRootView();
         }, this);
       }
-
-      Y.one('#logout-trigger').on('click', this.logout, this);
 
       // Attach SubApplications
       // The subapps should share the same db.
@@ -564,8 +563,8 @@ YUI.add('juju-gui', function(Y) {
                     level: 'error'
                   })
               );
-              self.navigate(self.nsRouter.url(
-                  {gui: '/service/' + serviceId}));
+              self.fire('navigateTo', {url: self.nsRouter.url(
+                  {gui: '/service/' + serviceId})});
             }
           },
           // If there is no service available then there definitely is no unit
@@ -580,7 +579,7 @@ YUI.add('juju-gui', function(Y) {
                   level: 'error'
                 })
             );
-            self.navigate(self.nsRouter.url({gui: '/'}));
+            self.fire('navigateTo', {url: self.nsRouter.url({gui: '/'})});
           });
     },
 
@@ -699,10 +698,10 @@ YUI.add('juju-gui', function(Y) {
     /**
      * Show the login screen.
      *
-     * @method showLogin
+     * @method show_login
      * @return {undefined} Nothing.
      */
-    showLogin: function() {
+    show_login: function() {
       this.showView('login', {
         env: this.env,
         help_text: this.get('login_help')
@@ -722,15 +721,11 @@ YUI.add('juju-gui', function(Y) {
      * @return {undefined} Nothing.
      */
     logout: function(req) {
-      // Clears out the topology local database on log out
-      // because we clear out the environment database as well.
-      // The order of these is important because we need to tell
-      // the env to log out after it's navigated to make sure that
-      // it always shows the login screen
-      this.views.environment.instance.topo.update();
-      this.navigate('/login/', { overrideAllNamespaces: true });
       this.env.logout();
-      return;
+      this.show_login();
+      // This flag will trigger a URL reset in check_user_credentials as the
+      // routing finishes.
+      this.loggingOut = true;
     },
 
     // Persistent Views
@@ -760,13 +755,13 @@ YUI.add('juju-gui', function(Y) {
     /**
      * Ensure that the current user has authenticated.
      *
-     * @method checkUserCredentials
+     * @method check_user_credentials
      * @param {Object} req The request.
      * @param {Object} res ???
      * @param {Object} next The next route handler.
      *
      */
-    checkUserCredentials: function(req, res, next) {
+    check_user_credentials: function(req, res, next) {
       // If the Juju environment is not connected, exit without letting the
       // route dispatch proceed. On env connection change, the app will
       // re-dispatch and this route callback will be executed again.
@@ -780,12 +775,26 @@ YUI.add('juju-gui', function(Y) {
       // form was never shown - this handles that edge case.
       var noCredentials = !(credentials && credentials.areAvailable);
       if (noCredentials) {
-        // If there are no stored credentials redirect to the login page
-        if (req.path !== '/login/') {
-          this.navigate('/login/');
-          return;
-        }
+        // If there are no stored credentials, the user is prompted for some.
+        this.show_login();
       }
+      if (!this.env.userIsAuthenticated) {
+        // If there has not been a successful login attempt, do not let the
+        // route dispatch proceed.
+        if (noCredentials && this.loggingOut) {
+          // Handle logging out.
+          this.loggingOut = false;
+          this.showRootView();
+        }
+        // At this point, there can be credentials available, but there has not
+        // been a successful login attempt. Assuming this can happen only
+        // at the beginning of the auth process, and that the auth process
+        // always starts right after the environment is connected, we can just
+        // return here, because the connectedChange subscriber should take
+        // care of performing a login attempt.
+        return;
+      }
+      // The route dispatch can proceed if the user is authenticated.
       next();
     },
 
@@ -821,11 +830,17 @@ YUI.add('juju-gui', function(Y) {
      */
     onLogin: function(evt) {
       if (evt.data.result) {
-        // Navigates to / overriding all namespaces
-        this.showRootView();
-        return;
+        var mask = Y.one('#full-screen-mask');
+        if (mask) {
+          mask.hide();
+          // Stop the animated loading spinner.
+          if (spinner) {
+            spinner.stop();
+          }
+        }
+        this.dispatch();
       } else {
-        this.showLogin();
+        this.show_login();
       }
     },
 
@@ -912,14 +927,6 @@ YUI.add('juju-gui', function(Y) {
     show_environment: function(req, res, next) {
       if (!this.renderEnvironment) {
         next(); return;
-      }
-      var mask = Y.one('#full-screen-mask');
-      if (mask) {
-        mask.hide();
-        // Stop the animated loading spinner.
-        if (spinner) {
-          spinner.stop();
-        }
       }
       var self = this,
           view = this.getViewInfo('environment'),
@@ -1103,7 +1110,7 @@ YUI.add('juju-gui', function(Y) {
       routes: {
         value: [
           // Called on each request.
-          { path: '*', callbacks: 'checkUserCredentials'},
+          { path: '*', callbacks: 'check_user_credentials'},
           { path: '*', callbacks: 'show_notifications_view'},
           { path: '*', callbacks: 'toggleStaticViews'},
           { path: '*', callbacks: 'show_environment'},
@@ -1147,8 +1154,8 @@ YUI.add('juju-gui', function(Y) {
             namespace: 'gui'},
           // Feature flags.
           { path: '*', callbacks: 'featureFlags', namespace: 'flags' },
-          // Authorization
-          { path: '/login/', callbacks: 'showLogin' }
+          // Logout.
+          { path: '/logout/', callbacks: 'logout'}
         ]
       }
     }

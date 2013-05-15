@@ -20,8 +20,7 @@ describe('Relation endpoints logic', function() {
 
 
   beforeEach(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-views',
-                               'juju-models',
+    Y = YUI(GlobalConfig).use(['juju-models',
                                'juju-gui',
                                'juju-tests-utils',
                                'juju-controllers'],
@@ -33,7 +32,6 @@ describe('Relation endpoints logic', function() {
       env = juju.newEnvironment({conn: conn});
       env.connect();
       app = new Y.juju.App({env: env});
-      app.navigate = function() { return true; };
       app.showView(new Y.View());
       db = app.db;
       db.onDelta({data: {'op': 'delta', result: sample_env}});

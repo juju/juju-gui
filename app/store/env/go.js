@@ -227,7 +227,7 @@ YUI.add('juju-env-go', function(Y) {
     /**
      * React to the results of sending a login message to the server.
      *
-     * @method handleLogin
+     * @method handleLoginEvent
      * @param {Object} data The response returned by the server.
      * @return {undefined} Nothing.
      */
