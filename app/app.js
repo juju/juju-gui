@@ -947,7 +947,7 @@ YUI.add('juju-gui', function(Y) {
             nsRouter: this.nsRouter,
             landscape: this.landscape,
             endpointsController: this.endpointsController,
-            useDragDropImport: this.get('sandbox') && window.flags.dndexport,
+            useDragDropImport: this.get('sandbox'),
             db: this.db,
             env: this.env};
 
@@ -985,6 +985,17 @@ YUI.add('juju-gui', function(Y) {
       >
       > The name looks like dotted python identifiers, with the form
       > APP.FEATURE.EFFECT. The value is a Unicode string.
+
+    A shortened version of key can be used if they follow this pattern:
+    - The feature flag applies to the gui.
+    - The presence of the flag indicates Boolean enablement
+    - The (default) absence of the flag indicates the feature will be
+    unavailable.
+
+   If those conditions are met then you may simply use the descriptive name of
+   the feature taking care it uniquely defines the feature. An example is
+   rather than specifying gui.dndexport.enable you can specify dndexport as a
+   flag.
 
       @method featureFlags
       @param {object} req The request object.
