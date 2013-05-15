@@ -100,31 +100,7 @@ def parse():
     return p.parse_args()
 
 def parse_image_data(data):
-    """
-    Parse the image data from nova image-list.
-
-    >>> data = "| abc-123 | ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img | ACTIVE | |"
-    >>> print(parse_image_data(data))
-    ('abc-123', 'ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img')
-    >>> data = "|  | ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img | ACTIVE | |"
-    >>> print(parse_image_data(data))
-    (None, None)
-    >>> data = "| hij-123 | ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img | ACTIVE | |"
-    >>> print(parse_image_data(data))
-    (None, None)
-    >>> data = "| abc-123 | ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img | INACTIVE | |"
-    >>> print(parse_image_data(data))
-    (None, None)
-    >>> data = "| abc-123 | smoser-proposed/ubuntu-precise-12.04-amd64-20130526.img | ACTIVE | |"
-    >>> print(parse_image_data(data))
-    (None, None)
-    >>> data = []
-    >>> data.append("| abc-123 | ubuntu-released/ubuntu-precise-12.04-amd64-20130426.img | ACTIVE | |")
-    >>> data.append("| def-123 | smoser-proposed/ubuntu-precise-12.04-amd64-20130501.img | ACTIVE | |")
-    >>> data.append("| fad-123 | ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img | ACTIVE | |")
-    >>> print(parse_image_data('\\n'.join(data)))
-    ('fad-123', 'ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img')
-    """
+    """Parse the image data from nova image-list."""
     img_regex = re.compile(
         '^\| ([0-9a-f\-]+) \| ' +
         '(ubuntu\-released\/ubuntu\-precise\-12\.04\-amd64[\w\-\.\/]+)\s+\|' +
@@ -136,11 +112,7 @@ def parse_image_data(data):
     return None, None
 
 def get_image_id():
-    # nova image-list |grep ubuntu-precise-12.04-amd64-server | \
-    #  tail -1 |awk '{print $2}'
-    """
-    Get the most recent image (ubuntu released, precise, amd64).
-    """
+    """Get the most recent image (ubuntu released, precise, amd64)."""
     image_data = run(*'nova --no-cache image-list'.split())
     if not image_data:
         return None
@@ -165,7 +137,8 @@ def make_environments_yaml():
 
 def main(options=parse, print=print, juju=juju,
         wait_for_service=wait_for_service, make_config_file=make_config_file,
-        wait_for_machine=wait_for_machine):
+        wait_for_machine=wait_for_machine,
+        make_environments_yaml=make_environments_yaml):
     """Deploy the Juju GUI service and wait for it to become available."""
     args = options()
 
