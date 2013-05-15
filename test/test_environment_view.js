@@ -3,7 +3,7 @@
 (function() {
 
   describe('juju environment view', function() {
-    var views, models, Y, container, service, db, conn,
+    var view, views, models, Y, container, service, db, conn,
         juju, env, testUtils;
 
     var environment_delta = {
@@ -110,6 +110,18 @@
       // to the input set (as happens with processed
       // annotations, its a direct reference).
       db.onDelta({data: Y.clone(environment_delta)});
+      view = new views.environment({
+        container: container,
+        db: db,
+        env: {
+          update_annotations: function() {},
+          get: function() {}
+        },
+        nsRouter: {
+          url: function() { return; }
+        },
+        getModelURL: function() {}
+      });
     });
 
     afterEach(function(done) {
@@ -124,8 +136,8 @@
     it('should display help text when canvas is empty', function() {
       // Use a db w/o the delta loaded
       db = new models.Database();
-      var view = new views.environment({container: container, db: db}),
-          topo,
+      view.set('db', db);
+      var topo,
           beforeResizeEventFired = false;
       view.render().rendered();
       topo = view.topo;
@@ -137,8 +149,7 @@
 
 
     it('should not display help text when canvas is populated', function() {
-      var view = new views.environment({container: container, db: db}),
-          topo,
+      var topo,
           beforeResizeEventFired = false;
       view.render().rendered();
       topo = view.topo;
@@ -150,8 +161,7 @@
 
 
     it('must handle the window resize event', function(done) {
-      var view = new views.environment({container: container, db: db}),
-          topo,
+      var topo,
           beforeResizeEventFired = false;
       view.render();
       topo = view.topo;
@@ -506,43 +516,41 @@
       });
     });
 
-    it('must be able to use position annotations',
-       function() {
-         var view = new views.environment({
-           container: container,
-           db: db,
-           env: env
-         });
-         var tmp_data = {
-           op: 'delta',
-           result: [
-             ['service', 'add',
-               {
-                 'subordinate': true,
-                 'charm': 'cs:precise/wordpress-6',
-                 'id': 'wordpress',
-                 'annotations': {'gui-x': 374.1, 'gui-y': 211.2}
-               }]]};
-         // IE uses a space delimiter, not a comma.
-         var properTransform = /translate\((\d+\.?\d*)[, ](\d+\.?\d*)\)/;
-         var node, match;
+    it('must be able to use position annotations', function() {
+      var tmp_data = {
+        op: 'delta',
+        result: [
+          ['service', 'add',
+            {
+              'subordinate': true,
+              'charm': 'cs:precise/wordpress-6',
+              'id': 'wordpress',
+              'annotations': {'gui-x': 374.1, 'gui-y': 211.2}
+            }
+          ]]
+      };
+      // IE uses a space delimiter, not a comma.
+      var properTransform = /translate\((\d+\.?\d*)[, ](\d+\.?\d*)\)/;
+      var node, match;
+      view.createTopology();
+      // For testing position isn't testable with transitions on.
+      view.topo.modules.ServiceModule.set('useTransitions', false);
+      view.render();
 
-         view.render();
+      // Test values from initial load.
+      node = view.topo.modules.ServiceModule.getServiceNode('wordpress');
+      match = node.getAttribute('transform').match(properTransform);
+      match[1].should.eql('100');
+      match[2].should.eql('200');
 
-         // Test values from initial load.
-         node = view.topo.modules.ServiceModule.getServiceNode('wordpress');
-         match = node.getAttribute('transform').match(properTransform);
-         match[1].should.eql('100');
-         match[2].should.eql('200');
+      db.onDelta({ data: tmp_data });
+      view.update();
 
-         db.onDelta({ data: tmp_data });
-         view.update();
-
-         //On annotation change  position should be updated.
-         match = node.getAttribute('transform').match(properTransform);
-         match[1].should.eql('374.1');
-         match[2].should.eql('211.2');
-       });
+      //On annotation change  position should be updated.
+      match = node.getAttribute('transform').match(properTransform);
+      match[1].should.eql('374.1');
+      match[2].should.eql('211.2');
+    });
 
     it('must be able to use Landscape annotations', function() {
       var landscape = new views.Landscape();

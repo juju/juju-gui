@@ -1,12 +1,13 @@
 'use strict';
 
+// A global variable required for testing feature flags.
+var flags = {};
+
 describe('Namespaced Routing', function() {
   var Y, juju, app;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-routing',
-                               'juju-gui'],
-    function(Y) {
+    Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
       juju = Y.namespace('juju');
       done();
     });
@@ -130,6 +131,36 @@ describe('Namespaced Routing', function() {
     app._navigate('/', { overrideAllNamespaces: true });
     result.should.equal('/');
     Y.getLocation = oldGetLocation;
+  });
+
+  it('should allow a feature flags namespace', function() {
+    assert.deepEqual({}, flags);
+    // Use the route callback directly.
+    app.featureFlags({path: '/foo/bar=baz/'}, undefined, function() {});
+    assert.deepEqual({foo: true, bar: 'baz'}, flags);
+    app.featureFlags({path: '/foo/bar=baz=bar/'}, undefined, function() {});
+    assert.deepEqual({foo: true, bar: 'baz=bar'}, flags);
+    app.featureFlags({path: '/foo/'}, undefined, function() {});
+    assert.deepEqual({foo: true}, flags);
+  });
+
+});
+
+describe('Juju Gui Routing', function() {
+  var Y, juju, app;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      juju = Y.namespace('juju');
+      done();
+    });
+
+  });
+
+  it('should monkey patch Y.Router with querystring parser', function() {
+    var testString = 'category=databases&category=file_servers';
+    Y.Router._parseQuery(testString).should.eql(
+        {category: ['databases', 'file_servers']});
   });
 
 });

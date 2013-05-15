@@ -149,6 +149,30 @@ YUI.add('subapp-browser-charmview', function(Y) {
     },
 
     /**
+       Creates the bazaar url for the charm.
+
+       @method _getSourceLink
+       @private
+     */
+    _getSourceLink: function() {
+      var url = this.get('charm').get('code_source').location;
+      url = url.replace('lp:', 'http://bazaar.launchpad.net/');
+      return url + '/files';
+    },
+
+    /**
+       Creates the url for a given revision of the charm.
+
+       @method _getRevnoLink
+       @private
+       @param {String} sourceLink The charm's source_link.
+       @param {String} revno The charm commit's revision number.
+     */
+    _getRevnoLink: function(sourceLink, revno) {
+      return sourceLink.replace('files', 'revision/') + revno;
+    },
+
+    /**
      * Commits need to be formatted, dates made pretty for the output to the
      * template. We have to break up the first one from the rest since it's
      * displayed differently.
@@ -157,7 +181,7 @@ YUI.add('subapp-browser-charmview', function(Y) {
      * @param {Array} commits a list of commit objects.
      *
      */
-    _formatCommitsForHtml: function(commits) {
+    _formatCommitsForHtml: function(commits, sourceLink) {
       var firstTmp;
       var prettyCommits = {
         remaining: []
@@ -175,6 +199,8 @@ YUI.add('subapp-browser-charmview', function(Y) {
             prettyCommits.first.date, {
               format: DATE_FORMAT
             });
+        prettyCommits.first.revnoLink = this._getRevnoLink(
+            sourceLink, prettyCommits.first.revno);
       }
 
       Y.Array.each(commits, function(commit) {
@@ -182,8 +208,9 @@ YUI.add('subapp-browser-charmview', function(Y) {
             commit.date, {
               format: DATE_FORMAT
             });
+        commit.revnoLink = this._getRevnoLink(sourceLink, commit.revno);
         prettyCommits.remaining.push(commit);
-      });
+      }, this);
 
       // Put our first item back on the commit list.
       if (firstTmp) {
@@ -443,10 +470,13 @@ YUI.add('subapp-browser-charmview', function(Y) {
       this.set('charm', charm);
 
       var tplData = charm.getAttrs(),
-          container = this.get('container');
+          container = this.get('container'),
+          sourceLink = this._getSourceLink();
+
       tplData.isFullscreen = isFullscreen;
+      tplData.sourceLink = sourceLink;
       tplData.prettyCommits = this._formatCommitsForHtml(
-          tplData.recent_commits);
+          tplData.recent_commits, sourceLink);
       tplData.interfaceIntro = this._getInterfaceIntroFlag(
           tplData.requires, tplData.provides);
 

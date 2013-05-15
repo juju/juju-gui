@@ -91,6 +91,7 @@
       assert.isTrue(Y.Lang.isString(attrs.clientId));
       delete attrs.clientId;
       assert.deepEqual(attrs, {
+        annotations: {},
         aggregated_status: undefined,
         charm: 'cs:precise/wordpress-10',
         config: undefined,
@@ -177,7 +178,7 @@
         options.failure({boo: 'hiss'});
       };
       fakebackend.deploy('cs:wordpress', callback);
-      assert.equal(result.error, 'Could not contact charm store.');
+      assert.equal(result.error, 'Error interacting with Charm store.');
     });
 
     it('honors the optional service name', function() {
@@ -287,7 +288,6 @@
     });
 
     describe('FakeBackend.importEnvironment', function(done) {
-
       it('rejects unauthenticated calls', function(done) {
         fakebackend.logout();
         var result = fakebackend.importEnvironment('', function(result) {
@@ -521,9 +521,9 @@
       it('must get annotations from a service', function(done) {
         fakebackend.deploy('cs:wordpress', function() {
           var service = fakebackend.getService('wordpress').result;
-          assert.equal(service.annotations, undefined);
+          assert.deepEqual(service.annotations, {});
           var anno = fakebackend.getAnnotations('wordpress').result;
-          assert.equal(anno, undefined);
+          assert.deepEqual(anno, {});
           done();
         });
       });
