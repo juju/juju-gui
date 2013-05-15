@@ -44,17 +44,12 @@ describe('overlay indicator', function() {
     assert.equal(container, indicator.get('boundingBox').get('parentNode'));
   });
 
-  it('has a loading icon', function() {
+  it('has a spinner', function() {
     indicator = new Y.juju.widgets.browser.OverlayIndicator(
         {target: container});
     indicator.render();
-    var content = indicator.get('boundingBox'),
-        test = content.getContent(),
-        img = content.one('img');
-    var img_url = img.get('src').split('/').slice(3).join('/');
-    assert.equal(
-        'juju-ui/assets/images/non-sprites/loading-spinner.gif',
-        img_url);
+    indicator.setBusy();
+    assert.isObject(container.one('.spinner'));
   });
 
   it('starts invisible', function() {
