@@ -62,10 +62,14 @@ config.yaml file in the charm's root directory.
 
 Running the tests on Canonistack
 --------------------------------
-The Jenkins slave which runs our CI has a Juju environments.yaml file with
-juju-testing-gui defined::
+The Jenkins slave which runs our CI creates a Juju environments.yaml file with
+juju-testing-gui defined based on a template file::
 
-  /home/jujugui-merger/.juju/environments.yaml
+  /home/jujugui-merger/.juju/environments.yaml.template
+
+The template has one slot, which is populated with the most current machine
+image that matches our needs (ubuntu-relased, precise, amd64).  The template
+is processed by the lib/deploy_charm_for_testing.py script.
 
 After bootstrapping the juju environment it deploys the Juju GUI charm with the
 following configuration properties::
@@ -155,6 +159,9 @@ The current image name that we use is::
 
 If this one is not available pick the closest one which represents a public
 release image on precise(12.04) 64bit.
+
+On the Jenkins machine you can run 'find-latest-image.sh' to get the
+machine id.
 
 Unit tests fail
 ~~~~~~~~~~~~~~~~

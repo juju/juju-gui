@@ -2,17 +2,22 @@ from __future__ import print_function
 
 import argparse
 import json
-import shelltoolbox
+from shelltoolbox import (
+    command,
+    run,
+    )
 import sys
 import time
 import tempfile
 import yaml
 import subprocess
 import os
+import os.path
+import re
 
 from retry import retry
 
-juju_command = shelltoolbox.command('juju', '-v')
+juju_command = command('juju', '-v')
 
 DEFAULT_ORIGIN = 'lp:juju-gui'
 DEFAULT_CHARM = 'cs:~juju-gui/precise/juju-gui'
@@ -94,12 +99,80 @@ def parse():
     p = make_parser()
     return p.parse_args()
 
+def parse_image_data(data):
+    """
+    Parse the image data from nova image-list.
+
+    >>> data = "| abc-123 | ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img | ACTIVE | |"
+    >>> print(parse_image_data(data))
+    ('abc-123', 'ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img')
+    >>> data = "|  | ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img | ACTIVE | |"
+    >>> print(parse_image_data(data))
+    (None, None)
+    >>> data = "| hij-123 | ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img | ACTIVE | |"
+    >>> print(parse_image_data(data))
+    (None, None)
+    >>> data = "| abc-123 | ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img | INACTIVE | |"
+    >>> print(parse_image_data(data))
+    (None, None)
+    >>> data = "| abc-123 | smoser-proposed/ubuntu-precise-12.04-amd64-20130526.img | ACTIVE | |"
+    >>> print(parse_image_data(data))
+    (None, None)
+    >>> data = []
+    >>> data.append("| abc-123 | ubuntu-released/ubuntu-precise-12.04-amd64-20130426.img | ACTIVE | |")
+    >>> data.append("| def-123 | smoser-proposed/ubuntu-precise-12.04-amd64-20130501.img | ACTIVE | |")
+    >>> data.append("| fad-123 | ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img | ACTIVE | |")
+    >>> print(parse_image_data('\\n'.join(data)))
+    ('fad-123', 'ubuntu-released/ubuntu-precise-12.04-amd64-20130526.img')
+    """
+    img_regex = re.compile(
+        '^\| ([0-9a-f\-]+) \| ' +
+        '(ubuntu\-released\/ubuntu\-precise\-12\.04\-amd64[\w\-\.\/]+)\s+\|' +
+        ' ACTIVE \|.*$',
+        flags=re.MULTILINE)
+    matches = img_regex.findall(data)
+    if len(matches):
+        return matches[-1]
+    return None, None
+
+def get_image_id():
+    # nova image-list |grep ubuntu-precise-12.04-amd64-server | \
+    #  tail -1 |awk '{print $2}'
+    """
+    Get the most recent image (ubuntu released, precise, amd64).
+    """
+    image_data = run(*'nova --no-cache image-list'.split())
+    if not image_data:
+        return None
+    image_id, description = parse_image_data(image_data)
+    print("Using image {} ({})".format(image_id, description))
+    return image_id
+
+def make_environments_yaml():
+    juju_dir = os.path.expanduser("~/.juju")
+    template_fn = os.path.join(juju_dir, "environments.yaml.template")
+    if not os.path.exists(template_fn):
+        # The template file does not exist, so just use the existing
+        # environments.yaml file.
+        return
+    image_id = get_image_id()
+    if image_id is None:
+        raise Exception("No matching image found.")
+    with open(template_fn) as f:
+        template = f.read()
+    with open(os.path.join(juju_dir, "environments.yaml"), "w") as f:
+        f.write(template.format(image_id=image_id))
 
 def main(options=parse, print=print, juju=juju,
         wait_for_service=wait_for_service, make_config_file=make_config_file,
         wait_for_machine=wait_for_machine):
     """Deploy the Juju GUI service and wait for it to become available."""
     args = options()
+
+    # Create a new environments.yaml file but only if an appropriate template
+    # is found.
+    make_environments_yaml()
+
     # Get the IP that we should associate with the charm.  This is only used
     # by Canonistack, and is effectively our flag for that environment.
     instance_ip = os.environ.get("JUJU_INSTANCE_IP")
