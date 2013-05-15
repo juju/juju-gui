@@ -29,6 +29,7 @@ JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	| grep -Ev -e '^manifest\.json$$' \
 		-e '^app/assets/javascripts/d3\.v2(\.min)?\.js$$' \
 		-e '^app/assets/javascripts/spin\.min\.js$$' \
+		-e '^app/assets/javascripts/spinner\.js$$' \
 		-e '^app/assets/javascripts/js-yaml\.min\.js$$' \
 		-e '^app/assets/javascripts/reconnecting-websocket\.js$$' \
 		-e '^app/assets/javascripts/prettify.js$$' \
