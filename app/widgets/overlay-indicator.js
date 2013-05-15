@@ -13,7 +13,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
      */
     initializer: function(cfg) {
       this.hide();
-      debugger;
       this._spinner = Y.spinner.getSpinner();
     },
 
@@ -49,18 +48,6 @@ YUI.add('browser-overlay-indicator', function(Y) {
     },
 
     /**
-     * Build the indicator overlay itself.
-     *
-     * @method renderUI
-     */
-    renderUI: function() {
-      //var node_html = '<img src="{src}">';
-      //var img = Y.Node.create(
-          //sub(node_html, {src: this.get('loading_image')}));
-      //this.get('contentBox').append(img);
-    },
-
-    /**
      * Sets up event listeners.
      *
      * @method bindUI
@@ -93,7 +80,8 @@ YUI.add('browser-overlay-indicator', function(Y) {
      * @method setBusy
      */
     setBusy: function() {
-      this._spinner.spin(this.get('contentBox'));
+      var target = this.get('target').getDOMNode();
+      this._spinner.spin(target);
       this.show();
     },
 
