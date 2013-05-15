@@ -53,7 +53,7 @@
                     <dd>{{ url }}</dd>
                     <dt>Links</dt>
                     <dd>
-                        <a href="#">Source</a>
+                        <a href="{{ source_link }}">Source</a>
                         <a href="{{ code_source.bugs_link }}">Bugs</a>
                     </dd>
                 </dl>
@@ -102,7 +102,9 @@
                         </span>
                         {{prettyCommits.first.author.name}}
                         {{prettyCommits.first.message}} -
-                        <a href="">REVNO{{prettyCommits.first.revno}}</a>
+                        <a href="{{ prettyCommits.first.revnoLink }}">
+                          REVNO{{prettyCommits.first.revno}}
+                        </a>
                     </p>
                 </div>
                 <div class="remaining hidden">
@@ -115,7 +117,7 @@
                             <li>
                                 <span class="date">{{prettyDate}}</span>
                                 {{author.name}} {{message}} -
-                                <a href="">REVNO{{revno}}</a>
+                                <a href="{{ revnoLink }}">REVNO{{revno}}</a>
                             </li>
                         {{/prettyCommits.remaining}}
                     </ul>

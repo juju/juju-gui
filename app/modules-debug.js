@@ -157,6 +157,9 @@ var GlobalConfig = {
           fullpath: '/juju-ui/views/topology/importexport.js'
         },
 
+        'juju-topology-utils': {
+          fullpath: '/juju-ui/views/topology/utils.js'
+        },
 
         'juju-topology': {
           fullpath: '/juju-ui/views/topology/topology.js'
@@ -316,6 +319,10 @@ var GlobalConfig = {
 
         'subapp-browser-minimized': {
           fullpath: '/juju-ui/subapps/browser/views/minimized.js'
+        },
+
+        'subapp-browser-charmresults': {
+          fullpath: '/juju-ui/subapps/browser/views/charmresults.js'
         },
 
         'subapp-browser-fullscreen': {

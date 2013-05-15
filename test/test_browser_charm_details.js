@@ -55,7 +55,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         })
       });
       view._locateReadme().should.eql('readme.rst');
@@ -68,6 +69,66 @@
       view._locateReadme().should.eql('README.md');
     });
 
+    it('can generate source and revno links from its charm', function() {
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo'}
+        })
+      });
+      var url = view._getSourceLink();
+      assert.equal('http://bazaar.launchpad.net/~foo/files', url);
+      assert.equal(
+          'http://bazaar.launchpad.net/~foo/revision/1',
+          view._getRevnoLink(url, 1));
+    });
+
+    it('can generate useful display data for commits', function() {
+      view = new CharmView({
+        charm: new models.BrowserCharm({
+          files: [
+            'hooks/install',
+            'readme.rst'
+          ],
+          id: 'precise/ceph-9',
+          code_source: {
+            location: 'lp:~foo'
+          }
+        })
+      });
+      var revisions = [
+        {
+          authors: [{
+            email: 'jdoe@example.com',
+            name: 'John Doe'
+          }],
+          date: '2013-05-02T10:05:32Z',
+          message: 'The fnord had too much fleem.',
+          revno: 1
+        },
+        {
+          authors: [{
+            email: 'jdoe@example.com',
+            name: 'John Doe'
+          }],
+          date: '2013-05-02T10:05:45Z',
+          message: 'Fnord needed more fleem.',
+          revno: 2
+        }
+      ];
+      var commits = view._formatCommitsForHtml(
+          revisions, view._getSourceLink());
+      assert.equal(
+          'http://bazaar.launchpad.net/~foo/revision/1',
+          commits.first.revnoLink);
+      assert.equal(
+          'http://bazaar.launchpad.net/~foo/revision/2',
+          commits.remaining[0].revnoLink);
+    });
 
     it('should be able to display the readme content', function() {
       var fakeStore = new Y.juju.Charmworld0({});
@@ -90,7 +151,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo'}
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -107,7 +169,8 @@
           files: [
             'hooks/install'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -130,7 +193,8 @@
           files: [
             'hooks/install'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -167,7 +231,8 @@
             'hooks/install',
             'readme.rst'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -208,7 +273,8 @@
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>'),
         store: fakeStore
@@ -220,10 +286,11 @@
     });
 
     it('should display the config data in the config tab', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' },
           options: {
             'client-port': {
               'default': 9160,
@@ -243,12 +310,13 @@
     });
 
     it('_buildQAData properly summerizes the scores', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         })
       });
       var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
@@ -263,10 +331,11 @@
     });
 
     it('qa content is loaded when the tab is clicked on', function(done) {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         }),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -284,12 +353,13 @@
     });
 
     it('does not blow up when the scores from the api is null', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
             'readme.md'
           ],
-          id: 'precise/ceph-9'
+          id: 'precise/ceph-9',
+          code_source: { location: 'lp:~foo' }
         })
       });
       var data = Y.JSON.parse(Y.io('data/qa.json', {sync: true}).responseText);
@@ -306,7 +376,7 @@
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm(data),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -353,7 +423,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -374,7 +444,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -396,7 +466,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -417,7 +487,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -439,7 +509,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -462,7 +532,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -484,7 +554,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -507,7 +577,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -531,7 +601,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(

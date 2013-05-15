@@ -7,9 +7,7 @@ describe('Namespaced Routing', function() {
   var Y, juju, app;
 
   before(function(done) {
-    Y = YUI(GlobalConfig).use(['juju-routing',
-                               'juju-gui'],
-    function(Y) {
+    Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
       juju = Y.namespace('juju');
       done();
     });
@@ -144,6 +142,25 @@ describe('Namespaced Routing', function() {
     assert.deepEqual({foo: true, bar: 'baz=bar'}, flags);
     app.featureFlags({path: '/foo/'}, undefined, function() {});
     assert.deepEqual({foo: true}, flags);
+  });
+
+});
+
+describe('Juju Gui Routing', function() {
+  var Y, juju, app;
+
+  before(function(done) {
+    Y = YUI(GlobalConfig).use(['juju-gui'], function(Y) {
+      juju = Y.namespace('juju');
+      done();
+    });
+
+  });
+
+  it('should monkey patch Y.Router with querystring parser', function() {
+    var testString = 'category=databases&category=file_servers';
+    Y.Router._parseQuery(testString).should.eql(
+        {category: ['databases', 'file_servers']});
   });
 
 });
