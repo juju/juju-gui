@@ -271,7 +271,8 @@ YUI.add('juju-gui', function(Y) {
       }
 
       this.renderEnvironment = true;
-      // If this property has a value in it then navigate to it after logging in
+      // If this property has a value other than '/' then
+      // navigate to it after logging in.
       this.redirectPath = '/';
 
       // This attribute is used by the namespaced URL tracker.
@@ -504,15 +505,15 @@ YUI.add('juju-gui', function(Y) {
      */
     on_database_changed: function(evt) {
       Y.log(evt, 'debug', 'App: Database changed');
-      // Database changed event is fired when the user logs in but we deal with
-      // that case manually so we don't need to dispatch the whole application
-      // this whole handler can be removed once we go to model bound views.
+      // Database changed event is fired when the user logs-in but we deal with
+      // that case manually so we don't need to dispatch the whole application.
+      // This whole handler can be removed once we go to model bound views.
       if (window.location.pathname.match(/login/)) {
         return;
       }
 
       // This timeout helps to reduce the number of needless dispatches from
-      // upwards of 8 to 2. At least until we can move to the model bound views
+      // upwards of 8 to 2. At least until we can move to the model bound views.
       if (this.dbChangedTimer) {
         this.dbChangedTimer.cancel();
       }
@@ -850,7 +851,7 @@ YUI.add('juju-gui', function(Y) {
     onLogin: function(e) {
       if (e.data.result) {
         // We need to save the url to continue on to without redirecting
-        // to root if there is extra path details.
+        // to root if there are extra path details.
 
         this.hideMask();
         var originalPath = window.location.pathname;
