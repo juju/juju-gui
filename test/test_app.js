@@ -288,6 +288,7 @@ function injectData(app, data) {
         viewContainer: container,
         consoleEnabled: true
       });
+      app.navigate = function() { return true; };
       if (fakeview) {
         var fakeView = new Y.View();
         fakeView.name = FAKE_VIEW_NAME;
