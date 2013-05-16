@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-import atexit
 import base64
 from functools import wraps
 import getpass
@@ -142,7 +141,6 @@ class TestCase(unittest.TestCase):
         driver.implicitly_wait(20)
         driver.set_script_timeout(30)
         # We want to tell saucelabs when all the tests are done.
-        #atexit.register(driver.quit)
         cls.app_url = os.environ['APP_URL']
         cls.driver = driver
 
