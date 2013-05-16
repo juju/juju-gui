@@ -115,6 +115,11 @@ class TestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        # The Selenium web driver is instantiated here for each test case.
+        # This way the suite should be more reliable, especially when running
+        # Firefox tests, in which cases the GUI WebSocket connection is often
+        # problematic (i.e. connection errors) when switching from the sandbox
+        # mode back to the staging backend.
         if browser_name == 'local':
             # If the browser name is 'local', start a local Firefox.
             driver = selenium.webdriver.Firefox(capabilities=firefox)
