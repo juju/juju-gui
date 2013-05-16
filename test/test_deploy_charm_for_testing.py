@@ -149,7 +149,7 @@ class TestScript(unittest.TestCase):
         self.assertEqual('lp:foo', options['juju-gui-source'])
 
 class TestParseImageData(unittest.TestCase):
-    """Test the image data parsing."""
+    """Test the nova machine image data parsing."""
 
     valid_prefix = "ubuntu-released/ubuntu-precise-12.04-amd64"
 
