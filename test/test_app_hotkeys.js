@@ -59,7 +59,7 @@ describe('application hotkeys', function() {
     assert.equal(searchInput, Y.one(document.activeElement));
   });
 
-  it('should listen for alt-E events', function() {
+  it('should listen for alt-E events', function(done) {
     var altEtriggered = false;
     app.on('navigateTo', function(ev) {
       if (ev && ev.url === '/:gui:/') {
@@ -67,12 +67,13 @@ describe('application hotkeys', function() {
       }
       // Avoid URL change performed by additional listeners.
       ev.stopImmediatePropagation();
+      assert.isTrue(altEtriggered);
+      done();
     });
     windowNode.simulate('keydown', {
       keyCode: 69, // "E" key.
       altKey: true
     });
-    assert.isTrue(altEtriggered);
   });
 
 });

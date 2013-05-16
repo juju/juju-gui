@@ -69,11 +69,14 @@ credentials = ':'.join([config['username'], config['access-key']])
 encoded_credentials = base64.encodestring(credentials)[:-1]
 # This is saucelabs.com credentials and API endpoint rolled into a URL.
 command_executor = 'http://%s@ondemand.saucelabs.com:80/wd/hub' % credentials
-driver = None
 internal_ip = None
 if os.path.exists('juju-internal-ip'):
     with open('juju-internal-ip') as fp:
         internal_ip = fp.read().strip()
+
+# We sometimes run the tests under different browsers, if none is
+# specified, use Chrome.
+browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'chrome')
 
 
 def formatWebDriverError(error):
@@ -113,11 +116,13 @@ class TestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        global driver  # We only want one because they are expensive to set up.
-        if driver is None:
-            # We sometimes run the tests under different browsers, if none is
-            # specified, use Chrome.
-            browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'chrome')
+        if browser_name == 'local':
+            # If the browser name is 'local', start a local Firefox.
+            driver = selenium.webdriver.Firefox(capabilities=firefox)
+            cls.remote_driver = False
+            print('Browser: local Firefox')
+        else:
+            # Otherwise, set up a Saucelabs remote driver.
             capabilities = browser_capabilities[browser_name].copy()
             capabilities['name'] = 'Juju GUI'
             user = getpass.getuser()
@@ -125,25 +130,34 @@ class TestCase(unittest.TestCase):
             driver = selenium.webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor=command_executor)
-            # Enable implicit waits for all browsers (DOM polling behavior)
-            driver.implicitly_wait(20)
-            driver.set_script_timeout(30)
-
-            print('Browser:', browser_name)
-            print('Test run details at https://saucelabs.com/jobs/' +
-                driver.session_id)
-            # We want to tell saucelabs when all the tests are done.
-            atexit.register(driver.quit)
+            cls.remote_driver = True
+            details = 'https://saucelabs.com/jobs/' + driver.session_id
+            print(
+                '* Browser: {}'.format(browser_name),
+                '* Testcase: {}'.format(cls.__name__),
+                '* Details: {}'.format(details),
+                sep='\n'
+            )
+        # Enable implicit waits for all browsers (DOM polling behavior)
+        driver.implicitly_wait(20)
+        driver.set_script_timeout(30)
+        # We want to tell saucelabs when all the tests are done.
+        #atexit.register(driver.quit)
         cls.app_url = os.environ['APP_URL']
         cls.driver = driver
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
 
     def run(self, result=None):
         self.last_result = result
         super(TestCase, self).run(result)
 
     def tearDown(self):
-        successful = self.last_result.wasSuccessful()
-        set_test_result(driver.session_id, successful)
+        if self.remote_driver:
+            successful = self.last_result.wasSuccessful()
+            set_test_result(self.driver.session_id, successful)
 
     def load(self, path='/'):
         """Load a page using the current Selenium driver."""
@@ -254,7 +268,7 @@ class TestCase(unittest.TestCase):
     def change_options(cls, options):
         """Change the charm config options."""
         args = ['{}={}'.format(key, value) for key, value in options.items()]
-        print('setting new options:', ', '.join(args))
+        print('- setting new options:', ', '.join(args))
         juju('set', '-e', 'juju-gui-testing', 'juju-gui', *args)
 
     @retry(subprocess.CalledProcessError, tries=2)
@@ -268,19 +282,20 @@ class TestCase(unittest.TestCase):
         function as part of their own clean up process.
         """
         if internal_ip:
-            print('restarting API backend with ip:%s' % internal_ip)
+            print('\n- restarting API backend with ip:%s...' % internal_ip)
             # When an internal ip address is set directly contract
             # the machine in question. This can help route around
             # firewalls and provider issues in some cases.
             ssh('ubuntu@%s' % internal_ip,
                 'sudo', 'service', 'juju-api-improv', 'restart')
         else:
-            print('restarting API backend using juju ssh')
+            print('\n- restarting API backend using juju ssh...')
             juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
                  'sudo', 'service', 'juju-api-improv', 'restart')
         self.load()
         self.handle_browser_warning()
         self.wait_for_script(
-            'return app.env.get("connected");',
+            'return app && app.env.get("connected");',
             error='Impossible to connect to the API backend after restart.',
             timeout=30)
+        print('- done')

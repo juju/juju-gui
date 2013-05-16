@@ -9,11 +9,11 @@
 # If FAIL_FAST is set to 1 in the environment the testing loop
 # will exit when the first tested browser returns a failure
 # rather than trying them all.
-python lib/deploy_charm_for_testing.py "$@"
-if [ $? -ne 0 ]; then
-    echo "Unable to deploy Charm"
-    exit 1
-fi
+# python lib/deploy_charm_for_testing.py "$@"
+# if [ $? -ne 0 ]; then
+#     echo "Unable to deploy Charm"
+#     exit 1
+# fi
 
 # Figure out the URL of the APP.
 export APP_URL=http://`juju status -e juju-gui-testing | grep public-address: | cut -d: -f2 | cut -c2-`

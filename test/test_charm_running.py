@@ -100,8 +100,10 @@ class DeployTestMixin(object):
             charm_search.click()
             return driver.find_element_by_id('juju-search-charm-panel')
 
-        charm_panel = self.wait_for(charm_panel_loaded)
-        # Deploy appflower.
+        charm_panel = self.wait_for(
+            charm_panel_loaded, error='Unable to load charm panel.')
+
+        # Deploy a charm.
         deploy_button = charm_panel.find_element_by_css_selector(
             # See http://www.w3.org/TR/css3-selectors/#attribute-substrings
             'button.deploy[data-url*={}]'.format(charm_name))
@@ -109,9 +111,17 @@ class DeployTestMixin(object):
         # Click to confirm deployment.
         charm_panel.find_element_by_id('charm-deploy').click()
 
+        # Zoom out so that it is possible to see the deployed service in
+        # Saucelabs.  This also seems to fix a Firefox bug preventing the name
+        # of the service to be retrieved if the associated element is not
+        # displayed.
+        zoom_out = self.driver.find_element_by_id('zoom-out-btn')
+        for _ in range(2):
+            zoom_out.click()
+
         def service_deployed(driver):
             return charm_name in self.get_service_names()
-        self.wait_for(service_deployed, 'Service not deployed.')
+        self.wait_for(service_deployed, error='Service not deployed.')
 
 
 class TestStaging(browser.TestCase, DeployTestMixin):
@@ -125,13 +135,13 @@ class TestStaging(browser.TestCase, DeployTestMixin):
         self.handle_login()
         self.deploy('appflower')
 
-    def test_staging_services(self):
+    def test_initial_services(self):
         # The staging API backend contains already deployed services.
         self.load()
         self.handle_browser_warning()
         self.handle_login()
         expected = ('haproxy', 'mediawiki', 'memcached', 'mysql', 'wordpress')
-        self.assertSetEqual(set(expected), self.get_service_names())
+        self.assertEqual(set(expected), self.get_service_names())
 
 
 class TestSandbox(browser.TestCase, DeployTestMixin):
@@ -146,11 +156,11 @@ class TestSandbox(browser.TestCase, DeployTestMixin):
 
     @classmethod
     def tearDownClass(cls):
-        super(TestSandbox, cls).tearDownClass()
         # Restore staging mode.
         cls.change_options({'sandbox': False})
         cls.wait_for_config(
             'sandbox: false', error='Unable to restore staging mode.')
+        super(TestSandbox, cls).tearDownClass()
 
     def test_charm_deploy(self):
         # The sandbox mode is able to deploy a charm.
