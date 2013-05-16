@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-import atexit
 import base64
 from functools import wraps
 import getpass
@@ -10,6 +9,7 @@ import os
 import subprocess
 import sys
 import unittest
+import urllib2
 import urlparse
 
 import selenium
@@ -62,17 +62,20 @@ browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
 config = {
     'username': 'juju-gui',
     'access-key': '0a3b7821-93ed-4a2d-abdb-f34854eeaba3',
-   }
+}
 
 credentials = ':'.join([config['username'], config['access-key']])
 encoded_credentials = base64.encodestring(credentials)[:-1]
 # This is saucelabs.com credentials and API endpoint rolled into a URL.
 command_executor = 'http://%s@ondemand.saucelabs.com:80/wd/hub' % credentials
-driver = None
 internal_ip = None
 if os.path.exists('juju-internal-ip'):
     with open('juju-internal-ip') as fp:
         internal_ip = fp.read().strip()
+
+# We sometimes run the tests under different browsers, if none is
+# specified, use Chrome.
+browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'chrome')
 
 
 def formatWebDriverError(error):
@@ -103,7 +106,12 @@ def set_test_result(jobid, passed):
     body = json.dumps({'passed': passed})
     connection = httplib.HTTPConnection('saucelabs.com')
     connection.request('PUT', url, body, headers=headers)
-    if connection.getresponse().status != 200:
+    response = connection.getresponse()
+    status = response.status
+    if status != 200:
+        print('Error connecting to saucelabs.com.  Status: {}'.format(status))
+        print(response.reason)
+        print(response.read())
         raise RuntimeError('Unable to send test result to saucelabs.com')
 
 
@@ -112,11 +120,18 @@ class TestCase(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        global driver  # We only want one because they are expensive to set up.
-        if driver is None:
-            # We sometimes run the tests under different browsers, if none is
-            # specified, use Chrome.
-            browser_name = os.getenv('JUJU_GUI_TEST_BROWSER', 'chrome')
+        # The Selenium web driver is instantiated here for each test case.
+        # This way the suite should be more reliable, especially when running
+        # Firefox tests, in which cases the GUI WebSocket connection is often
+        # problematic (i.e. connection errors) when switching from the sandbox
+        # mode back to the staging backend.
+        if browser_name == 'local':
+            # If the browser name is 'local', start a local Firefox.
+            driver = selenium.webdriver.Firefox(capabilities=firefox)
+            cls.remote_driver = False
+            print('Browser: local Firefox')
+        else:
+            # Otherwise, set up a Saucelabs remote driver.
             capabilities = browser_capabilities[browser_name].copy()
             capabilities['name'] = 'Juju GUI'
             user = getpass.getuser()
@@ -124,27 +139,33 @@ class TestCase(unittest.TestCase):
             driver = selenium.webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor=command_executor)
-            # Enable implicit waits for all browsers (DOM polling behavior)
-            driver.implicitly_wait(20)
-            driver.set_script_timeout(30)
+            cls.remote_driver = True
+            details = 'https://saucelabs.com/jobs/' + driver.session_id
+            print(
+                '* Browser: {}'.format(browser_name),
+                '* Testcase: {}'.format(cls.__name__),
+                '* Details: {}'.format(details),
+                sep='\n'
+            )
+        # Enable implicit waits for all browsers (DOM polling behavior)
+        driver.implicitly_wait(20)
+        driver.set_script_timeout(30)
+        # We want to tell saucelabs when all the tests are done.
+        cls.app_url = os.environ['APP_URL']
+        cls.driver = driver
 
-            print('Browser:', browser_name)
-            print('Test run details at https://saucelabs.com/jobs/' +
-                driver.session_id)
-            # We want to tell saucelabs when all the tests are done.
-            atexit.register(driver.quit)
-
-    def setUp(self):
-        self.app_url = os.environ['APP_URL']
-        self.driver = driver
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
 
     def run(self, result=None):
         self.last_result = result
         super(TestCase, self).run(result)
 
     def tearDown(self):
-        successful = self.last_result.wasSuccessful()
-        set_test_result(driver.session_id, successful)
+        if self.remote_driver:
+            successful = self.last_result.wasSuccessful()
+            set_test_result(self.driver.session_id, successful)
 
     def load(self, path='/'):
         """Load a page using the current Selenium driver."""
@@ -164,7 +185,7 @@ class TestCase(unittest.TestCase):
                 error='Browser warning dialog not found.')
             continue_button.click()
 
-    def wait_for_provider_type(self, error=None, timeout=10):
+    def wait_for_provider_type(self, error=None, timeout=60):
         """Wait for a connection using a CSS selector."""
         # IE is very sensitive to asking for javascript before it is
         # ready, so we look at a related document element instead.
@@ -176,13 +197,14 @@ class TestCase(unittest.TestCase):
 
     def handle_login(self):
         """Log in."""
-        self.wait_for_provider_type()
+        self.wait_for_provider_type(error='Provider type not found.')
         check_script = (
             'return app && app.env && app.env.get("connected") && ('
-                'app.env.failedAuthentication || '
-                'app.env.userIsAuthenticated || '
-                '!app.env.getCredentials() ||'
-                '!app.env.getCredentials().areAvailable);')
+            'app.env.failedAuthentication || '
+            'app.env.userIsAuthenticated || '
+            '!app.env.getCredentials() ||'
+            '!app.env.getCredentials().areAvailable);'
+        )
         self.wait_for_script(check_script)
         exe = self.driver.execute_script
         if exe('return app.env.userIsAuthenticated;'):
@@ -197,18 +219,20 @@ class TestCase(unittest.TestCase):
             'app.env.login();')
         self.wait_for_script('return app.env.userIsAuthenticated;')
 
+    @classmethod
     @webdriverError()
-    def wait_for(self, condition, error=None, timeout=30):
+    def wait_for(cls, condition, error=None, timeout=30):
         """Wait for condition to be True.
 
         The argument condition is a callable accepting a driver object.
         Fail printing the provided error if timeout is exceeded.
         Otherwise, return the value returned by the condition call.
         """
-        wait = ui.WebDriverWait(self.driver, timeout)
+        wait = ui.WebDriverWait(cls.driver, timeout)
         return wait.until(condition, error)
 
-    def wait_for_css_selector(self, selector, error=None, timeout=10):
+    @classmethod
+    def wait_for_css_selector(cls, selector, error=None, timeout=10):
         """Wait until the provided CSS selector is found.
 
         Fail printing the provided error if timeout is exceeded.
@@ -216,17 +240,44 @@ class TestCase(unittest.TestCase):
         """
         condition = lambda driver: driver.find_elements_by_css_selector(
             selector)
-        elements = self.wait_for(condition, error=error, timeout=timeout)
+        elements = cls.wait_for(condition, error=error, timeout=timeout)
         return elements[0]
 
-    def wait_for_script(self, script, error=None, timeout=20):
+    @classmethod
+    def wait_for_script(cls, script, error=None, timeout=20):
         """Wait for the given JavaScript snippet to return a True value.
 
         Fail printing the provided error if timeout is exceeded.
         Otherwise, return the value returned by the script.
         """
         condition = lambda driver: driver.execute_script(script)
-        return self.wait_for(condition, error=error, timeout=timeout)
+        return cls.wait_for(condition, error=error, timeout=timeout)
+
+    @classmethod
+    def wait_for_config(cls, contents, error=None, timeout=200):
+        """Wait for the given contents to be present in the GUI config.
+
+        Fail printing the provided error if timeout is exceeded.
+        Otherwise, return the value returned by the script.
+        """
+        config_url = urlparse.urljoin(cls.app_url, '/juju-ui/assets/config.js')
+
+        def condition(driver):
+            """Return True if contents are found in the given URL."""
+            try:
+                response = urllib2.urlopen(config_url)
+            except IOError:
+                return False
+            return contents in response.read()
+        return cls.wait_for(condition, error=error, timeout=timeout)
+
+    @classmethod
+    @retry(subprocess.CalledProcessError, tries=2)
+    def change_options(cls, options):
+        """Change the charm config options."""
+        args = ['{}={}'.format(key, value) for key, value in options.items()]
+        print('- setting new options:', ', '.join(args))
+        juju('set', '-e', 'juju-gui-testing', 'juju-gui', *args)
 
     @retry(subprocess.CalledProcessError, tries=2)
     def restart_api(self):
@@ -238,19 +289,21 @@ class TestCase(unittest.TestCase):
         change the internal Juju environment. Such tests should add this
         function as part of their own clean up process.
         """
-        print('restart_api with ip:%s' % internal_ip)
         if internal_ip:
+            print('\n- restarting API backend with ip:%s...' % internal_ip)
             # When an internal ip address is set directly contract
             # the machine in question. This can help route around
             # firewalls and provider issues in some cases.
             ssh('ubuntu@%s' % internal_ip,
                 'sudo', 'service', 'juju-api-improv', 'restart')
         else:
+            print('\n- restarting API backend using juju ssh...')
             juju('ssh', '-e', 'juju-gui-testing', 'juju-gui/0',
                  'sudo', 'service', 'juju-api-improv', 'restart')
         self.load()
         self.handle_browser_warning()
         self.wait_for_script(
-            'return app.env.get("connected");',
+            'return app && app.env.get("connected");',
             error='Impossible to connect to the API backend after restart.',
             timeout=30)
+        print('- done')
