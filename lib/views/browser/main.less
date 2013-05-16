@@ -3,7 +3,8 @@
 @bws-heading: @bws-dark;
 @bws-text: #808080;
 @bws-border: #dddddd;
-@bws-sidebar-width: 350px;
+@bws-sidebar-width: 25%;
+@bws-sidebar-min-width: 350px;
 @bws-header-height: 60px;
 @canvas-footer-nav-height: 50px;
 
@@ -285,6 +286,7 @@
     z-index: 2;
     right: auto;
     width: @bws-sidebar-width;
+    min-width: @bws-sidebar-min-width;
     overflow: hidden;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 
@@ -317,5 +319,10 @@
   }
   .bws-view-data {
     left: @bws-sidebar-width;
+  }
+}
+@media screen and (max-width: 1400px) {
+  #subapp-browser .bws-view-data {
+    left: @bws-sidebar-min-width;
   }
 }
