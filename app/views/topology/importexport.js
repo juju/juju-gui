@@ -55,36 +55,61 @@ YUI.add('juju-topology-importexport', function(Y) {
               notifications = topo.get('db').notifications,
               env = topo.get('env'),
               fileSources = evt._event.dataTransfer.files;
-
-          Y.Array.each(fileSources, function(file) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-              // Import each into the environment
-              console.log('Importing ' + file.name);
-              env.importEnvironment(e.target.result, function(result) {
-                if (!result.error) {
-                  notifications.add({
-                    title: 'Imported Environment',
-                    message: 'Import from "' + file.name + '" successful',
-                    level: 'important'
-                  });
-                } else {
-                  notifications.add({
-                    title: 'Import Environment Failed',
-                    message: 'Import from "' + file.name +
-                        '" failed.<br/>' + result.error,
-                    level: 'error'
-                  });
-                }
-              });
-            };
-            reader.onerror = function(err) {
-              console.warn(err);
-            };
-            reader.readAsText(file);
-          });
+          if (fileSources.length) {
+            Y.Array.each(fileSources, function(file) {
+              var reader = new FileReader();
+              reader.onload = function(e) {
+                // Import each into the environment
+                env.importEnvironment(e.target.result, function(result) {
+                  if (!result.error) {
+                    notifications.add({
+                      title: 'Imported Environment',
+                      message: 'Import from "' + file.name + '" successful',
+                      level: 'important'
+                    });
+                  } else {
+                    notifications.add({
+                      title: 'Import Environment Failed',
+                      message: 'Import from "' + file.name +
+                          '" failed.<br/>' + result.error,
+                      level: 'error'
+                    });
+                  }
+                });
+              };
+              reader.readAsText(file);
+            });
+          } else {
+            env.importEnvironment(evt._event.dataTransfer.getData('Text'));
+          }
           evt.preventDefault();
           evt.stopPropagation();
+        },
+
+        /**
+         * Update lifecycle phase
+         * @method update
+         */
+        update: function() {
+          // Check the feature flag
+          if (!this._dragHandle && window.flags.dndexport) {
+            var env = this.get('component').get('env');
+            this._dragHandle = Y.one('#environment-name')
+                                .on('dragstart', function(evt) {
+                  env.exportEnvironment(function(r) {
+                    var ev = evt._event;
+                    ev.dataTransfer.dragEffect = 'copy';
+                    var json = JSON.stringify(r.result);
+                    ev.dataTransfer.setData('Text', json);
+                  });
+                  evt.stopPropagation();
+                }, this);
+
+            this.get('component')
+                .recordSubscription(this, this._dragHandle);
+
+          }
+          ImportExportModule.superclass.update.call(this);
         }
       }, {
         ATTRS: {}

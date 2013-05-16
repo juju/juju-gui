@@ -81,6 +81,7 @@ require('yui').YUI().use(['yui'], function(Y) {
     'app/assets/javascripts/prettify.js',
     'app/assets/javascripts/reconnecting-websocket.js',
     'app/assets/javascripts/resizing_textarea.js',
+    'app/assets/javascripts/FileSaver.js',
     'app/assets/javascripts/sub-app.js',
     'app/assets/javascripts/unscaled-pack-layout.js'
   ]);
