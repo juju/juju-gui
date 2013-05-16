@@ -69,7 +69,8 @@ juju-testing-gui defined based on a template file::
 
 The template has one slot, which is populated with the most current machine
 image that matches our needs (ubuntu-relased, precise, amd64).  The template
-is processed by the lib/deploy_charm_for_testing.py script.
+is processed by the lib/deploy_charm_for_testing.py script.  If the template
+does not exist then an environments.yaml must be present and it will be used.
 
 After bootstrapping the juju environment it deploys the Juju GUI charm with the
 following configuration properties::
@@ -140,6 +141,9 @@ Known issues
 ------------
 Image Id's Change
 ~~~~~~~~~~~~~~~~~
+
+(This issue should be deprecated but is left here for reference.)
+
 If the chosen image that we are using becomes unusable or is removed the CI will
 fail almost instantly with the error::
 
@@ -155,13 +159,15 @@ hash style id's.
 
 The current image name that we use is::
 
-  ubuntu-released/ubuntu-precise-12.04-amd64-server-20130411.1-disk1.img
+  ubuntu-released/ubuntu-precise-12.04-amd64-server-<date>-disk1.img
 
 If this one is not available pick the closest one which represents a public
 release image on precise(12.04) 64bit.
 
-On the Jenkins machine you can run 'find-latest-image.sh' to get the
-machine id.
+You can run 'bin/find-latest-image.sh' to get a machine id to use.  It is
+entered as the 'default-image-id' in environments.yaml if you are not allowing
+it to be update automatically as described previously.
+
 
 Unit tests fail
 ~~~~~~~~~~~~~~~~

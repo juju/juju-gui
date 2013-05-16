@@ -126,6 +126,7 @@ def make_environments_yaml():
     if not os.path.exists(template_fn):
         # The template file does not exist, so just use the existing
         # environments.yaml file.
+        print("Using existing environments.yaml file since no template was found.")
         return
     image_id = get_image_id()
     if image_id is None:
