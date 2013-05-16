@@ -283,6 +283,9 @@ YUI.add('juju-gui', function(Y) {
       }
 
       this.renderEnvironment = true;
+      // If this property has a value other than '/' then
+      // navigate to it after logging in.
+      this.redirectPath = '/';
 
       // This attribute is used by the namespaced URL tracker.
       // _routeSeen is part of a mechanism to prevent non-namespaced routes
@@ -423,6 +426,8 @@ YUI.add('juju-gui', function(Y) {
           var credentials = this.env.getCredentials();
           if (credentials && credentials.areAvailable) {
             this.env.login();
+          } else {
+            this.checkUserCredentials();
           }
         }
       }, this);
@@ -512,8 +517,30 @@ YUI.add('juju-gui', function(Y) {
      */
     on_database_changed: function(evt) {
       Y.log(evt, 'debug', 'App: Database changed');
+      // Database changed event is fired when the user logs-in but we deal with
+      // that case manually so we don't need to dispatch the whole application.
+      // This whole handler can be removed once we go to model bound views.
+      if (window.location.pathname.match(/login/)) {
+        return;
+      }
 
-      var self = this;
+      // This timeout helps to reduce the number of needless dispatches from
+      // upwards of 8 to 2. At least until we can move to the model bound views.
+      if (this.dbChangedTimer) {
+        this.dbChangedTimer.cancel();
+      }
+      this.dbChangedTimer = Y.later(100, this, this._dbChangedHandler);
+      return;
+    },
+
+    /**
+      After the db has changed and the timer has timed out to reduce repeat
+      calls then this is called to handle the db updates.
+
+      @method _dbChangedHandler
+      @private
+    */
+    _dbChangedHandler: function() {
       var active = this.get('activeView');
 
       // Update Landscape annotations.
@@ -740,7 +767,6 @@ YUI.add('juju-gui', function(Y) {
       // the env to log out after it's navigated to make sure that
       // it always shows the login screen
       this.views.environment.instance.topo.update();
-      this.navigate('/login/', { overrideAllNamespaces: true });
       this.env.logout();
       return;
     },
@@ -793,8 +819,11 @@ YUI.add('juju-gui', function(Y) {
       var noCredentials = !(credentials && credentials.areAvailable);
       if (noCredentials) {
         // If there are no stored credentials redirect to the login page
-        if (req.path !== '/login/') {
-          this.navigate('/login/');
+        if (!req || req.path !== '/login/') {
+          // Set the original requested path in the event the user has
+          // to log in before continuing.
+          this.redirectPath = window.location.pathname;
+          this.navigate('/login/', { overrideAllNamespaces: true });
           return;
         }
       }
@@ -828,16 +857,49 @@ YUI.add('juju-gui', function(Y) {
      * it fires a login event, to which this responds.
      *
      * @method onLogin
-     * @param {Object} evt An event object (with a "data.result" attribute).
+     * @param {Object} e An event object (with a "data.result" attribute).
      * @private
      */
-    onLogin: function(evt) {
-      if (evt.data.result) {
-        // Navigates to / overriding all namespaces
-        this.showRootView();
-        return;
+    onLogin: function(e) {
+      if (e.data.result) {
+        // We need to save the url to continue on to without redirecting
+        // to root if there are extra path details.
+
+        this.hideMask();
+        var originalPath = window.location.pathname;
+        if (originalPath !== '/' && !originalPath.match(/\/login\//)) {
+          this.redirectPath = originalPath;
+        }
+        if (originalPath.match(/login/) && this.redirectPath === '/') {
+          setTimeout(
+              Y.bind(this.showRootView, this), 0);
+          return;
+        } else {
+          var nsRouter = this.nsRouter;
+          this.navigate(
+              nsRouter.url(nsRouter.parse(this.redirectPath)),
+              {overrideAllNamespaces: true});
+          this.redirectPath = null;
+          return;
+        }
       } else {
         this.showLogin();
+      }
+    },
+
+    /**
+      Hides the fullscreen mask and stops the spinner.
+
+      @method hideMask
+    */
+    hideMask: function() {
+      var mask = Y.one('#full-screen-mask');
+      if (mask) {
+        mask.hide();
+        // Stop the animated loading spinner.
+        if (spinner) {
+          spinner.stop();
+        }
       }
     },
 
@@ -925,14 +987,7 @@ YUI.add('juju-gui', function(Y) {
       if (!this.renderEnvironment) {
         next(); return;
       }
-      var mask = Y.one('#full-screen-mask');
-      if (mask) {
-        mask.hide();
-        // Stop the animated loading spinner.
-        if (spinner) {
-          spinner.stop();
-        }
-      }
+      this.hideMask();
       var self = this,
           view = this.getViewInfo('environment'),
           options = {

@@ -204,6 +204,11 @@ YUI.add('juju-topology-relation', function(Y) {
         if (pair.length === 2) {
           var source = pair[0][1];
           var target = pair[1][1];
+          // If it hasn't finished resolving the charm data then return
+          // and wait for the next db update to update.
+          if (!source || !target) {
+            return;
+          }
           var decoratedRelation = views.DecoratedRelation(
               relation, source, target);
           // Copy the relation type to the box.
