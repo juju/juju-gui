@@ -207,10 +207,9 @@
             font-size: 9pt;
             line-height: 150%;
         }
-        pre {
-          border: none;
-          font-family: @font-family-mono;
-          padding: 0;
+        ul {
+            list-style-type: disc;
+            padding-left: 2em;
         }
     }
     #bws-interfaces {
@@ -226,10 +225,6 @@
             padding-bottom: 15px;
         }
         .interface-list {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-
             .interface-row {
                 border-bottom: 1px solid @bws-border;
                 padding: 18px 0;
@@ -238,8 +233,6 @@
                     padding-top: 10px;
                     padding-bottom: 10px;
                     font-size: 10.5pt;
-                }
-                .related {
                 }
                 &:last-child {
                     border: none;
@@ -277,24 +270,18 @@
                 margin-top: 5px;
             }
         }
-        ul {
-            margin: 0;
-            padding: 0;
-            list-style: none;
+        li {
+            margin-bottom: 4px;
+            padding-left: 25px;
+            background: transparent
+                url(/juju-ui/assets/images/quality_cross_icon.jpg)
+                left center no-repeat;
+            color: @bws-heading;
+            font-family: @font-family-medium;
 
-            li {
-                margin-bottom: 4px;
-                padding-left: 25px;
-                background: transparent
-                    url(/juju-ui/assets/images/quality_cross_icon.jpg)
-                    left center no-repeat;
-                color: @bws-heading;
-                font-family: @font-family-medium;
-
-                &.checked {
-                    background-image:
-                        url(/juju-ui/assets/images/quality_tick_icon.jpg);
-                }
+            &.checked {
+                background-image:
+                    url(/juju-ui/assets/images/quality_tick_icon.jpg);
             }
         }
     }
@@ -303,11 +290,6 @@
             margin: 6px 0 23px 0;
         }
         pre.prettyprint {
-            padding: 0;
-            border: none;
-            font-family: @font-family-mono;
-            font-size: 10pt;
-
             ol {
                 list-style-position: inside;
                 margin-left: 0;
