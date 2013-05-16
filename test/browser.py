@@ -106,7 +106,12 @@ def set_test_result(jobid, passed):
     body = json.dumps({'passed': passed})
     connection = httplib.HTTPConnection('saucelabs.com')
     connection.request('PUT', url, body, headers=headers)
-    if connection.getresponse().status != 200:
+    response = connection.getresponse()
+    status = response.status
+    if status != 200:
+        print('Error connecting to saucelabs.com.  Status: {}'.format(status))
+        print(response.reason)
+        print(response.read())
         raise RuntimeError('Unable to send test result to saucelabs.com')
 
 
