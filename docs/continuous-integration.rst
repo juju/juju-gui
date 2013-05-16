@@ -39,7 +39,9 @@ configuration::
 
   bin/test-charm
   JUJU_GUI_TEST_BROWSERS: "chrome firefox ie" {String} The browsers to run the
-  test suite on.
+  test suite on.  Tests are run remotely using Saucelabs by default.  If you
+  want to use a local web driver (Firefox) instead, set JUJU_GUI_TEST_BROWSERS
+  to local, e.g. ``JUJU_GUI_TEST_BROWSERS=local bin/test-charm``.
   FAIL_FAST: 0 {Integer} Set to 1 to exit when first browser returns a failure
   rather than completing all of the tests.
 
