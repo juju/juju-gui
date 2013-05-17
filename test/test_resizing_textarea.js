@@ -316,4 +316,21 @@ describe('textarea autosize plugin', function() {
         'The updated final height should be 1em');
   });
 
+  it('should change by single line height when focus changes', function() {
+    target = Y.Node.create(
+        '<textarea style="width: auto;">Initial text</textarea>');
+    container.append(target);
+    target.plug(Y.juju.plugins.ResizingTextarea, {
+      skip_animations: true,
+      single_line: 28
+    });
+    var orig_height = get_height(target);
+    target.focus();
+    var focused_height = get_height(target);
+    assert.isTrue(focused_height > orig_height);
+    target.blur();
+    var blurred_height = get_height(target);
+    assert.equal(orig_height, blurred_height);
+  });
+
 });

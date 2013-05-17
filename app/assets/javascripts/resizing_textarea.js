@@ -255,6 +255,8 @@ YUI.add('resizing-textarea', function(Y) {
       var that = this;
       this.t_area = this.get('host');
 
+      this.hasFocus = false;
+
       // We need to clean the px of any defaults passed in.
       this.set('min_height', this._clean_size(this.get('min_height')));
       this.set('max_height', this._clean_size(this.get('max_height')));
@@ -269,6 +271,21 @@ YUI.add('resizing-textarea', function(Y) {
       // pasting and such.
       this.t_area.on('valueChange', function(e) {
         this._run_change(e.newVal);
+      }, this);
+
+      // On focus ensure the area is big enough to accomodate the addition of
+      // another line so that it won't bounce around.
+      this.t_area.on('focus', function(e) {
+        var value = this.t_area.get('value');
+        this.hasFocus = true;
+        this.resize();
+      }, this);
+
+      this.t_area.on('blur', function(e) {
+        // Change _prev_scroll_height to force a resize.
+        this._prev_scroll_height = 0;
+        this.hasFocus = false;
+        this.resize();
       }, this);
 
       // We also want to handle adjusting if the user resizes their browser.
@@ -297,6 +314,10 @@ YUI.add('resizing-textarea', function(Y) {
       // changed.
       this._update_clone_width();
       var scroll_height = this.clone.get('scrollHeight');
+
+      if (this.hasFocus) {
+        scroll_height += this._single_line_height;
+      }
 
       if (this.get('single_line') &&
           this._single_line_height >= scroll_height &&
