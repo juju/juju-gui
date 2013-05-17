@@ -17,6 +17,7 @@
 # a developer may not be working in a bzr repository.
 JSFILES=$(shell find . -wholename './node_modules*' -prune \
 	-o -wholename './build*' -prune \
+	-o -wholename './.bzr*' -prune \
 	-o -wholename './docs*' -prune \
 	-o -wholename './test/assets*' -prune \
 	-o -wholename './yuidoc*' -prune \
