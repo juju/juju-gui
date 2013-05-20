@@ -784,7 +784,10 @@ YUI.add('juju-gui', function(Y) {
       // The order of these is important because we need to tell
       // the env to log out after it's navigated to make sure that
       // it always shows the login screen
-      this.views.environment.instance.topo.update();
+      var environmentInstance = this.views.environment.instance;
+      if (environmentInstance) {
+        environmentInstance.topo.update();
+      }
       this.env.logout();
       return;
     },
