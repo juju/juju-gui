@@ -59,6 +59,12 @@ YUI.add('subapp-browser-charmview', function(Y) {
       },
       '.nav .back': {
         click: '_handleBack'
+      },
+      '.tabs .yui3-tab-label': {
+        click: function(ev) {
+          // Stop the app from trying to route these links.
+          ev.halt();
+        }
       }
     },
 

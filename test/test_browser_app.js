@@ -98,6 +98,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
     before(function(done) {
       Y = YUI(GlobalConfig).use(
           'juju-browser',
+          'juju-models',
           'juju-views',
           'juju-tests-utils',
           'node-event-simulate',
@@ -150,7 +151,11 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('must correctly render the initial browser ui', function() {
       var container = Y.one('#subapp-browser');
-      view = new Sidebar();
+      view = new Sidebar({
+        store: new Y.juju.Charmworld0({
+          apiHost: 'http://localhost'
+        })
+      });
 
       // mock out the data source on the view so that it won't actually make a
       // request.
@@ -163,6 +168,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
         })
       };
 
+      // Override the store to not call the dummy localhost address.
       view.get('store').set(
           'datasource',
           new Y.DataSource.Local({source: emptyData}));
@@ -283,9 +289,88 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       Y.one('#subapp-browser').remove(true);
     });
 
-    it('bws-sidebar dispatches correctly', function() {
+
+    it('/ dispatches correctly', function() {
       var req = {
-        path: '/bws/sidebar/',
+        path: '/'
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderEditorial: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('viewmodes we do not support do not route', function() {
+      var req = {
+        path: '/ignoreme/',
+        params: {
+          viewmode: 'ignoreme'
+        }
+      };
+      var expected = Y.merge(hits);
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('viewmodes we not a valid charm id', function() {
+      var req = {
+        path: '/sidebar/',
+        params: {
+          viewmode: 'sidebar',
+          id: 'sidebar'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderEditorial: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('search is not a valid charm id', function() {
+      var req = {
+        path: '/sidebar/search',
+        params: {
+          viewmode: 'sidebar',
+          id: 'search'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderSearchResults: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('search is not a valid part of a charm id', function() {
+      var req = {
+        path: '/sidebar/search/precise/cassandra-1',
+        params: {
+          viewmode: 'sidebar',
+          id: 'search/precise/cassandra-1'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderSearchResults: true,
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('/sidebar dispatches correctly', function() {
+      var req = {
+        path: '/sidebar/',
         params: {
           viewmode: 'sidebar'
         }
@@ -299,9 +384,26 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('bws-sidebar-charmid dispatches correctly', function() {
+    it('/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/sidebar/precise/apache2-2',
+        path: '/precise/apache2-2',
+        params: {
+          id: 'precise/apache2-2'
+        }
+      };
+      var expected = Y.merge(hits, {
+        sidebar: true,
+        renderEditorial: true,
+        renderCharmDetails: true
+      });
+
+      browser.routeView(req, undefined, function() {});
+      assert.deepEqual(hits, expected);
+    });
+
+    it('/sidebar/charmid dispatches correctly', function() {
+      var req = {
+        path: '/sidebar/precise/apache2-2',
         params: {
           viewmode: 'sidebar',
           id: 'precise/apache2-2'
@@ -317,9 +419,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('bws-sidebar-search-charmid dispatches correctly', function() {
+    it('/sidebar/search/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/sidebar/search/precise/apache2-2',
+        path: '/sidebar/search/precise/apache2-2',
         params: {
           viewmode: 'sidebar',
           id: 'precise/apache2-2'
@@ -335,9 +437,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('bws-fullscreen dispatches correctly', function() {
+    it('/fullscreen dispatches correctly', function() {
       var req = {
-        path: '/bws/fullscreen/',
+        path: '/fullscreen/',
         params: {
           viewmode: 'fullscreen'
         }
@@ -351,9 +453,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('fullscreen-charmid dispatches correctly', function() {
+    it('/fullscreen/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/fullscreen/precise/apache2-2',
+        path: '/fullscreen/precise/apache2-2',
         params: {
           viewmode: 'fullscreen',
           id: 'precise/apache2-2'
@@ -368,9 +470,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('fullscreen-search-charmid dispatches correctly', function() {
+    it('/fullscreen/search/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/fullscreen/search/precise/apache2-2',
+        path: '/fullscreen/search/precise/apache2-2',
         params: {
           viewmode: 'fullscreen',
           id: 'precise/apache2-2'
@@ -385,9 +487,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('sidebar to sidebar-charmid dispatches correctly', function() {
+    it('/sidebar to /sidebar/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/sidebar/',
+        path: '/sidebar/',
         params: {
           viewmode: 'sidebar'
         }
@@ -398,7 +500,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // editorial content again.
       resetHits();
       req = {
-        path: '/bws/sidebar/precise/apache2-2',
+        path: '/sidebar/precise/apache2-2',
         params: {
           viewmode: 'sidebar',
           id: 'precise/apache2-2'
@@ -413,9 +515,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('sidebar-details to sidebar dispatchse correctly', function() {
+    it('/sidebar/charmid to /sidebar dispatchse correctly', function() {
       var req = {
-        path: '/bws/sidebar/precise/apache2-2',
+        path: '/sidebar/precise/apache2-2',
         params: {
           viewmode: 'sidebar',
           id: 'precise/apache2-2'
@@ -426,7 +528,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Reset the hits and we should not redraw anything to update the view.
       resetHits();
       req = {
-        path: '/bws/sidebar/',
+        path: '/sidebar/',
         params: {
           viewmode: 'sidebar'
         }
@@ -437,9 +539,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('fullscreen to fullscreen-details dispatches correctly', function() {
+    it('/fullscreen to /fullscreen/charmid dispatches correctly', function() {
       var req = {
-        path: '/bws/fullscreen/',
+        path: '/fullscreen/',
         params: {
           viewmode: 'fullscreen'
         }
@@ -450,7 +552,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // editorial content again.
       resetHits();
       req = {
-        path: '/bws/fullscreen/precise/apache2-2',
+        path: '/fullscreen/precise/apache2-2',
         params: {
           viewmode: 'fullscreen',
           id: 'precise/apache2-2'
@@ -465,9 +567,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('fullscreen-details to fullscreen renders editorial', function() {
+    it('/fullscreen/details to /fullscreen renders editorial', function() {
       var req = {
-        path: '/bws/fullscreen/precise/apache2-2',
+        path: '/fullscreen/precise/apache2-2',
         params: {
           viewmode: 'fullscreen',
           id: 'precise/apache2-2'
@@ -478,7 +580,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Reset the hits and we should not redraw anything to update the view.
       resetHits();
       req = {
-        path: '/bws/fullscreen/',
+        path: '/fullscreen/',
         params: {
           viewmode: 'fullscreen'
         }
@@ -492,9 +594,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('sidebar to fullscreen dispatches correctly', function() {
+    it('/sidebar to /fullscreen dispatches correctly', function() {
       var req = {
-        path: '/bws/sidebar',
+        path: '/sidebar',
         params: {
           viewmode: 'sidebar'
         }
@@ -504,7 +606,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       // Reset the hits and we should not redraw anything to update the view.
       resetHits();
       req = {
-        path: '/bws/fullscreen/',
+        path: '/fullscreen/',
         params: {
           viewmode: 'fullscreen'
         }
@@ -520,7 +622,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('changing the query string dispatches correctly', function() {
       var req = {
-        path: '/bws/fullscreen/search/',
+        path: '/fullscreen/search/',
         params: {
           viewmode: 'fullscreen'
         },
@@ -543,7 +645,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
 
     it('no change to query string does not redraw', function() {
       var req = {
-        path: '/bws/fullscreen/search/',
+        path: '/fullscreen/search/',
         params: {
           viewmode: 'fullscreen'
         },
@@ -561,9 +663,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('handles searches with no querystring', function() {
+    it('searches without a query string function', function() {
       var req = {
-        path: '/bws/fullscreen/search/',
+        path: '/fullscreen/search/',
         params: {
           viewmode: 'fullscreen'
         }
@@ -578,9 +680,9 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.deepEqual(hits, expected);
     });
 
-    it('routes to the minimized view', function() {
+    it('/minimized dispatches correctly', function() {
       var req = {
-        path: '/bws/minimized',
+        path: '/minimized',
         params: {
           viewmode: 'minimized'
         }
@@ -598,7 +700,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       browser.hidden = true;
 
       var req = {
-        path: '/bws/minimized',
+        path: '/minimized',
         params: {
           viewmode: 'minimized'
         }
@@ -615,7 +717,6 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       minNode.getComputedStyle('display').should.eql('none');
       browserNode.getComputedStyle('display').should.eql('none');
     });
-
   });
 })();
 

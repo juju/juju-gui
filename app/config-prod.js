@@ -30,7 +30,7 @@ var juju_config = {
   // SubApps.
   consoleEnabled: false,
   charm_store_url: 'http://jujucharms.com/',
-  charmworldURL: 'http://staging.jujucharms.com/',
+  charmworldURL: 'http://manage.jujucharms.com/',
   // The config has three socket settings.  socket_port and socket_protocol
   // modify the current application url to determine the websocket url (always
   // adding "/ws" as the final path).  socket_url sets the entire websocket
@@ -42,7 +42,9 @@ var juju_config = {
   user: undefined,
   password: undefined,
   apiBackend: 'python', // Value can be 'python' or 'go'.
-  sandbox: false,
+  sandbox: true,
+  // When in sandbox mode should we create events to simulate a live env.
+  simulateEvents: false,
   readOnly: false,
   login_help: (
       'The password is the admin-secret from the Juju environment.  This can ' +
