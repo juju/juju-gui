@@ -432,7 +432,10 @@ YUI.add('juju-topology-service', function(Y) {
       var vis = topo.vis;
       var db = topo.get('db');
 
-      views.toBoundingBoxes(this, db.services.visible(), topo.service_boxes);
+      var visibleServices = db.services.visible();
+      views.toBoundingBoxes(this, visibleServices, topo.service_boxes);
+      // Break a reference cycle that results in uncollectable objects leaking.
+      visibleServices.reset();
 
       // Nodes are mapped by modelId tuples.
       this.node = vis.selectAll('.service')
