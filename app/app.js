@@ -779,11 +779,11 @@ YUI.add('juju-gui', function(Y) {
      * @return {undefined} Nothing.
      */
     logout: function(req) {
-      // Clears out the topology local database on log out
-      // because we clear out the environment database as well.
-      // The order of these is important because we need to tell
-      // the env to log out after it's navigated to make sure that
-      // it always shows the login screen
+      // If the environment view is instantiated, clear out the topology local
+      // database on log out, because we clear out the environment database as
+      // well. The order of these is important because we need to tell
+      // the env to log out after it is navigated to make sure that
+      // it always shows the login screen.
       var environmentInstance = this.views.environment.instance;
       if (environmentInstance) {
         environmentInstance.topo.update();
