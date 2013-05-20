@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 var spinner;
@@ -149,6 +167,18 @@ YUI.add('juju-gui', function(Y) {
         focus: true,
         help: 'Select the charm Search'
       },
+      'S-d': {
+        callback: function(evt) {
+          /* global saveAs: false */
+          this.env.exportEnvironment(function(r) {
+            var exportData = JSON.stringify(r.result, undefined, 2);
+            var exportBlob = new Blob([exportData],
+                                      {type: 'application/json;charset=utf-8'});
+            saveAs(exportBlob, 'export.json');
+          });
+        },
+        help: 'Export the environment'
+      },
       'S-/': {
         target: '#shortcut-help',
         toggle: true,
@@ -271,6 +301,9 @@ YUI.add('juju-gui', function(Y) {
       }
 
       this.renderEnvironment = true;
+      // If this property has a value other than '/' then
+      // navigate to it after logging in.
+      this.redirectPath = '/';
 
       // This attribute is used by the namespaced URL tracker.
       // _routeSeen is part of a mechanism to prevent non-namespaced routes
@@ -411,6 +444,8 @@ YUI.add('juju-gui', function(Y) {
           var credentials = this.env.getCredentials();
           if (credentials && credentials.areAvailable) {
             this.env.login();
+          } else {
+            this.checkUserCredentials();
           }
         }
       }, this);
@@ -500,8 +535,30 @@ YUI.add('juju-gui', function(Y) {
      */
     on_database_changed: function(evt) {
       Y.log(evt, 'debug', 'App: Database changed');
+      // Database changed event is fired when the user logs-in but we deal with
+      // that case manually so we don't need to dispatch the whole application.
+      // This whole handler can be removed once we go to model bound views.
+      if (window.location.pathname.match(/login/)) {
+        return;
+      }
 
-      var self = this;
+      // This timeout helps to reduce the number of needless dispatches from
+      // upwards of 8 to 2. At least until we can move to the model bound views.
+      if (this.dbChangedTimer) {
+        this.dbChangedTimer.cancel();
+      }
+      this.dbChangedTimer = Y.later(100, this, this._dbChangedHandler);
+      return;
+    },
+
+    /**
+      After the db has changed and the timer has timed out to reduce repeat
+      calls then this is called to handle the db updates.
+
+      @method _dbChangedHandler
+      @private
+    */
+    _dbChangedHandler: function() {
       var active = this.get('activeView');
 
       // Update Landscape annotations.
@@ -728,7 +785,6 @@ YUI.add('juju-gui', function(Y) {
       // the env to log out after it's navigated to make sure that
       // it always shows the login screen
       this.views.environment.instance.topo.update();
-      this.navigate('/login/', { overrideAllNamespaces: true });
       this.env.logout();
       return;
     },
@@ -781,8 +837,11 @@ YUI.add('juju-gui', function(Y) {
       var noCredentials = !(credentials && credentials.areAvailable);
       if (noCredentials) {
         // If there are no stored credentials redirect to the login page
-        if (req.path !== '/login/') {
-          this.navigate('/login/');
+        if (!req || req.path !== '/login/') {
+          // Set the original requested path in the event the user has
+          // to log in before continuing.
+          this.redirectPath = window.location.pathname;
+          this.navigate('/login/', { overrideAllNamespaces: true });
           return;
         }
       }
@@ -816,16 +875,49 @@ YUI.add('juju-gui', function(Y) {
      * it fires a login event, to which this responds.
      *
      * @method onLogin
-     * @param {Object} evt An event object (with a "data.result" attribute).
+     * @param {Object} e An event object (with a "data.result" attribute).
      * @private
      */
-    onLogin: function(evt) {
-      if (evt.data.result) {
-        // Navigates to / overriding all namespaces
-        this.showRootView();
-        return;
+    onLogin: function(e) {
+      if (e.data.result) {
+        // We need to save the url to continue on to without redirecting
+        // to root if there are extra path details.
+
+        this.hideMask();
+        var originalPath = window.location.pathname;
+        if (originalPath !== '/' && !originalPath.match(/\/login\//)) {
+          this.redirectPath = originalPath;
+        }
+        if (originalPath.match(/login/) && this.redirectPath === '/') {
+          setTimeout(
+              Y.bind(this.showRootView, this), 0);
+          return;
+        } else {
+          var nsRouter = this.nsRouter;
+          this.navigate(
+              nsRouter.url(nsRouter.parse(this.redirectPath)),
+              {overrideAllNamespaces: true});
+          this.redirectPath = null;
+          return;
+        }
       } else {
         this.showLogin();
+      }
+    },
+
+    /**
+      Hides the fullscreen mask and stops the spinner.
+
+      @method hideMask
+    */
+    hideMask: function() {
+      var mask = Y.one('#full-screen-mask');
+      if (mask) {
+        mask.hide();
+        // Stop the animated loading spinner.
+        if (spinner) {
+          spinner.stop();
+        }
       }
     },
 
@@ -913,14 +1005,7 @@ YUI.add('juju-gui', function(Y) {
       if (!this.renderEnvironment) {
         next(); return;
       }
-      var mask = Y.one('#full-screen-mask');
-      if (mask) {
-        mask.hide();
-        // Stop the animated loading spinner.
-        if (spinner) {
-          spinner.stop();
-        }
-      }
+      this.hideMask();
       var self = this,
           view = this.getViewInfo('environment'),
           options = {
@@ -928,7 +1013,7 @@ YUI.add('juju-gui', function(Y) {
             nsRouter: this.nsRouter,
             landscape: this.landscape,
             endpointsController: this.endpointsController,
-            useDragDropImport: this.get('sandbox') || false,
+            useDragDropImport: this.get('sandbox'),
             db: this.db,
             env: this.env};
 
@@ -966,6 +1051,17 @@ YUI.add('juju-gui', function(Y) {
       >
       > The name looks like dotted python identifiers, with the form
       > APP.FEATURE.EFFECT. The value is a Unicode string.
+
+    A shortened version of key can be used if they follow this pattern:
+    - The feature flag applies to the gui.
+    - The presence of the flag indicates Boolean enablement
+    - The (default) absence of the flag indicates the feature will be
+    unavailable.
+
+   If those conditions are met then you may simply use the descriptive name of
+   the feature taking care it uniquely defines the feature. An example is
+   rather than specifying gui.dndexport.enable you can specify dndexport as a
+   flag.
 
       @method featureFlags
       @param {object} req The request object.
@@ -1188,5 +1284,7 @@ YUI.add('juju-gui', function(Y) {
     'subapp-browser',
     'event-key',
     'event-touch',
-    'model-controller']
+    'model-controller',
+    'FileSaver'
+  ]
 });
