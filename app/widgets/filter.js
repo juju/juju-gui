@@ -33,7 +33,7 @@ YUI.add('browser-filter-widget', function(Y) {
   /**
      Filter widget
 
-     @class
+     @class Filter
      @extends {Y.Widget}
      @event EV_FILTER_CHANGED when the filter values have changed will fire
      with a change object stating what field/value is updated.
