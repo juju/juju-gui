@@ -30,7 +30,10 @@ import urlparse
 
 import selenium
 import selenium.webdriver
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import (
+    TimeoutException,
+    WebDriverException,
+)
 from selenium.webdriver.support import ui
 import shelltoolbox
 
@@ -330,7 +333,12 @@ class TestCase(unittest.TestCase):
         """
         url = urlparse.urljoin(cls.app_url, path)
         condition = lambda driver: driver.current_url == url
-        return cls.wait_for(condition, error=error, timeout=timeout)
+        try:
+            cls.wait_for(condition, error=error, timeout=timeout)
+        except TimeoutException:
+            current = cls.driver.current_url
+            print('Expected: {}\nCurrent: {}'.format(url, current))
+            raise
 
     @classmethod
     @retry(subprocess.CalledProcessError, tries=2)
