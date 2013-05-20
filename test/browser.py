@@ -211,6 +211,26 @@ class TestCase(unittest.TestCase):
                 return els[0].text
         return self.wait_for(provider_type, error=error, timeout=timeout)
 
+    def login(self, password='admin'):
+        """Log in into the application.
+
+        Assume the currently displayed view is the login page.
+        """
+        # For some reason, the login form is considered not visible to the
+        # user by Selenium, which consequently denies clicking or sending
+        # keys to form fields. This behavior is overridden using JavaScript.
+        script = """
+            var loginForm = document.querySelector('#login-form form');
+            loginForm.querySelector('input[type=password]').value = '{}';
+            loginForm.querySelector('input[type=submit]').click();
+        """.format(password)
+        self.driver.execute_script(script)
+
+    def logout(self):
+        """Log out from the application, clicking the "logout" link."""
+        logout_link = self.driver.find_element_by_id('logout-trigger')
+        logout_link.click()
+
     def handle_login(self):
         """Log in."""
         self.wait_for_provider_type(error='Provider type not found.')
@@ -285,6 +305,16 @@ class TestCase(unittest.TestCase):
             except IOError:
                 return False
             return contents in response.read()
+        return cls.wait_for(condition, error=error, timeout=timeout)
+
+    @classmethod
+    def wait_for_path(cls, path, error=None, timeout=30):
+        """Wait for the given path to be the current one.
+
+        Fail printing the provided error if timeout is exceeded.
+        """
+        url = urlparse.urljoin(cls.app_url, path)
+        condition = lambda driver: driver.current_url == url
         return cls.wait_for(condition, error=error, timeout=timeout)
 
     @classmethod

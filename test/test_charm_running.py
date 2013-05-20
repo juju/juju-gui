@@ -26,7 +26,7 @@ class TestBasics(browser.TestCase):
         self.load()
         self.assertTrue('Juju Admin' in self.driver.title)
 
-    def test_environment_name(self):
+    def ___test_environment_name(self):
         self.load()
         self.handle_browser_warning()
         # The next line attempts to work around an IE 10 fragility.
@@ -37,7 +37,7 @@ class TestBasics(browser.TestCase):
         body = self.driver.find_element_by_xpath('//body')
         self.assertTrue('Environment on ' in body.text)
 
-    def test_environment_connection(self):
+    def ___test_environment_connection(self):
         # The GUI connects to the API backend.
         self.load()
         self.handle_browser_warning()
@@ -49,7 +49,7 @@ class TestBasics(browser.TestCase):
         script = 'return app && app.env && app.env.get("connected");'
         self.wait_for_script(script, 'Environment not connected.')
 
-    def test_gui_unit_tests(self):
+    def ___test_gui_unit_tests(self):
         # Ensure Juju GUI unit tests pass.
         def tests_completed(driver):
             stats = driver.execute_script('return testRunner.stats;')
@@ -142,7 +142,7 @@ class DeployTestMixin(object):
 
 class TestStaging(browser.TestCase, DeployTestMixin):
 
-    def test_charm_deploy(self):
+    def ___test_charm_deploy(self):
         # A charm can be deployed using the GUI.
         self.addCleanup(self.restart_api)
         self.load()
@@ -151,7 +151,7 @@ class TestStaging(browser.TestCase, DeployTestMixin):
         self.handle_login()
         self.deploy('appflower')
 
-    def test_initial_services(self):
+    def ___test_initial_services(self):
         # The staging API backend contains already deployed services.
         self.load()
         self.handle_browser_warning()
@@ -159,31 +159,72 @@ class TestStaging(browser.TestCase, DeployTestMixin):
         expected = ('haproxy', 'mediawiki', 'memcached', 'mysql', 'wordpress')
         self.assertEqual(set(expected), self.get_service_names())
 
-
-class TestSandbox(browser.TestCase, DeployTestMixin):
-
-    @classmethod
-    def setUpClass(cls):
-        super(TestSandbox, cls).setUpClass()
-        # Switch to sandbox mode.
-        cls.change_options({'sandbox': True})
-        cls.wait_for_config(
-            'sandbox: true', error='Unable to switch to sandbox mode.')
-
-    @classmethod
-    def tearDownClass(cls):
-        # Restore staging mode.
-        cls.change_options({'sandbox': False})
-        cls.wait_for_config(
-            'sandbox: false', error='Unable to restore staging mode.')
-        super(TestSandbox, cls).tearDownClass()
-
-    def test_charm_deploy(self):
-        # The sandbox mode is able to deploy a charm.
-        self.load()
+    def ___test_service_view(self):
+        # The service detail page is correctly displayed.
+        self.load('/:gui:/service/haproxy/')  # Navigate to haproxy details.
         self.handle_browser_warning()
         self.handle_login()
-        self.deploy('appflower')
+        service_view = self.driver.find_element_by_class_name('service-view')
+        header = service_view.text.splitlines()[0]
+        self.assertEqual('haproxy', header)
+
+    def ___test_unit_view(self):
+        # The unit detail page is correctly displayed.
+        pass
+        self.load('/:gui:/unit/haproxy-0/')  # Navigate to unit details.
+        self.handle_browser_warning()
+        self.handle_login()
+        header = self.driver.find_element_by_tag_name('h1').text
+        self.assertEqual('haproxy/0', header)
+
+    def test_authentication(self):
+        # It is possible to coherently login to and logout from the app.
+        paths = ('/', '/:gui:/service/haproxy/', '/:gui:/unit/haproxy-0/')
+        for path in paths:
+            self.load(path)
+            self.handle_browser_warning()
+            self.handle_login()
+            # Check the initial URL.
+            self.wait_for_path(
+                path, error='Not in the initial path: {}'.format(path))
+            # Logout.
+            self.logout()
+            # Check redirection to /login/.
+            self.wait_for_path(
+                '/login/',
+                error='Redirection to /login/ failed from {}'.format(path)
+            )
+            # Login.
+            self.login()
+            # Ensure we are in the initial URL again.
+            self.wait_for_path(
+                path, error='Post login redirection to {} failed'.format(path))
+
+
+# class TestSandbox(browser.TestCase, DeployTestMixin):
+
+#     @classmethod
+#     def setUpClass(cls):
+#         super(TestSandbox, cls).setUpClass()
+#         # Switch to sandbox mode.
+#         cls.change_options({'sandbox': True})
+#         cls.wait_for_config(
+#             'sandbox: true', error='Unable to switch to sandbox mode.')
+
+#     @classmethod
+#     def tearDownClass(cls):
+#         # Restore staging mode.
+#         cls.change_options({'sandbox': False})
+#         cls.wait_for_config(
+#             'sandbox: false', error='Unable to restore staging mode.')
+#         super(TestSandbox, cls).tearDownClass()
+
+#     def test_charm_deploy(self):
+#         # The sandbox mode is able to deploy a charm.
+#         self.load()
+#         self.handle_browser_warning()
+#         self.handle_login()
+#         self.deploy('appflower')
 
 
 if __name__ == '__main__':
