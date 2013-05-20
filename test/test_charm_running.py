@@ -159,23 +159,23 @@ class TestStaging(browser.TestCase, DeployTestMixin):
         expected = ('haproxy', 'mediawiki', 'memcached', 'mysql', 'wordpress')
         self.assertEqual(set(expected), self.get_service_names())
 
-    def ___test_service_view(self):
+    def test_service_view(self):
         # The service detail page is correctly displayed.
         self.load('/:gui:/service/haproxy/')  # Navigate to haproxy details.
         self.handle_browser_warning()
         self.handle_login()
-        service_view = self.driver.find_element_by_class_name('service-view')
-        header = service_view.text.splitlines()[0]
-        self.assertEqual('haproxy', header)
+        service_name = self.driver.find_element_by_id(
+            'service-display-name').text
+        self.assertEqual('haproxy', service_name)
 
-    def ___test_unit_view(self):
+    def test_unit_view(self):
         # The unit detail page is correctly displayed.
         pass
         self.load('/:gui:/unit/haproxy-0/')  # Navigate to unit details.
         self.handle_browser_warning()
         self.handle_login()
-        header = self.driver.find_element_by_tag_name('h1').text
-        self.assertEqual('haproxy/0', header)
+        unit_name = self.driver.find_element_by_tag_name('h1').text
+        self.assertEqual('haproxy/0', unit_name)
 
     def test_authentication(self):
         # It is possible to coherently login to and logout from the app.
