@@ -161,7 +161,7 @@ class TestStaging(browser.TestCase, DeployTestMixin):
 
     def test_service_view(self):
         # The service detail page is correctly displayed.
-        self.load('/:gui:/service/haproxy/')  # Navigate to haproxy details.
+        self.load('/:gui:/service/haproxy/')  # Navigate to service details.
         self.handle_browser_warning()
         self.handle_login()
 

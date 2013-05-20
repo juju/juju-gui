@@ -117,10 +117,6 @@ def get_capabilities(browser_name):
     }
     desired = selenium.webdriver.DesiredCapabilities
     choices = {
-        'ie': (
-            desired.INTERNETEXPLORER,
-            {'platform': 'Windows 2012', 'version': '10'},
-        ),
         'chrome': (
             desired.CHROME,
             # The saucelabs.com folks recommend using the latest version of
@@ -134,6 +130,10 @@ def get_capabilities(browser_name):
             # to fail.
             {'platform': 'Linux', 'version': '20'},
         ),
+        'ie': (
+            desired.INTERNETEXPLORER,
+            {'platform': 'Windows 2012', 'version': '10'},
+        ),
     }
     if browser_name in choices:
         base, updates = choices[browser_name]
@@ -142,6 +142,29 @@ def get_capabilities(browser_name):
         capabilities.update(updates)
         return capabilities
     sys.exit('No such web driver: {}'.format(browser_name))
+
+
+def make_local_driver(browser_name, capabilities):
+    """Return a local Selenium driver instance.
+
+    The driver will be set up using the given capabilities.
+    """
+    choices = {
+        'chrome': (
+            selenium.webdriver.Chrome,
+            {'desired_capabilities': capabilities},
+        ),
+        'firefox': (
+            selenium.webdriver.Firefox,
+            {'capabilities': capabilities},
+        ),
+        'ie': (
+            selenium.webdriver.Ie,
+            {'capabilities': capabilities},
+        ),
+    }
+    driver_class, kwargs = choices[browser_name]
+    return driver_class(**kwargs)
 
 
 class TestCase(unittest.TestCase):
@@ -156,13 +179,11 @@ class TestCase(unittest.TestCase):
         # mode back to the staging backend.
         local_prefix = 'local-'
         if browser_name.startswith(local_prefix):
-            # If the browser name has the "local-" prefix, i.e. it is
-            # "local-chrome', "local-firefox" or "local-ie",
-            # start the corresponding local driver.
+            # If the browser name has the "local-" prefix, i.e. "local-chrome',
+            # "local-firefox" or "local-ie", start the associated local driver.
             name = browser_name[len(local_prefix):]
             capabilities = get_capabilities(name)
-            klass = getattr(selenium.webdriver, name).webdriver.WebDriver
-            driver = klass(capabilities=capabilities)
+            driver = make_local_driver(name, capabilities)
             cls.remote_driver = False
             print('Browser: local {}'.format(name))
         else:
