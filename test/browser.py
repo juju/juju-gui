@@ -46,31 +46,6 @@ from retry import retry
 juju = shelltoolbox.command('juju')
 ssh = shelltoolbox.command('ssh')
 
-common = {
-    'command-timeout': 300,
-    'idle-timeout': 100,
-}
-
-ie = dict(selenium.webdriver.DesiredCapabilities.INTERNETEXPLORER)
-ie['platform'] = 'Windows 2012'
-ie['version'] = '10'
-ie.update(common)
-
-chrome = dict(selenium.webdriver.DesiredCapabilities.CHROME)
-chrome['platform'] = 'Linux'
-chrome.update(common)
-# The saucelabs.com folks recommend using the latest version of Chrome because
-# new versions come out so quickly, therefore there is no version specified
-# here.
-
-firefox = dict(selenium.webdriver.DesiredCapabilities.FIREFOX)
-firefox['platform'] = 'Linux'
-# Removing this version causes the FireFox CI deployment tests to fail
-firefox['version'] = '20'
-firefox.update(common)
-
-browser_capabilities = dict(ie=ie, chrome=chrome, firefox=firefox)
-
 # Given the limited capabilities that the credentials impart (primarily the
 # ability to run a web browser via Sauce Labs) and that anyone can sign up for
 # their own credentials at no cost, it seems like an appropriate handling of
@@ -131,6 +106,41 @@ def set_test_result(jobid, passed):
         raise RuntimeError('Unable to send test result to saucelabs.com')
 
 
+def get_capabilities(browser_name):
+    """Return the Selenium driver capabilities for the given browser_name."""
+    common = {
+        'command-timeout': 300,
+        'idle-timeout': 100,
+    }
+    desired = selenium.webdriver.DesiredCapabilities
+    choices = {
+        'ie': (
+            desired.INTERNETEXPLORER,
+            {'platform': 'Windows 2012', 'version': '10'},
+        ),
+        'chrome': (
+            desired.CHROME,
+            # The saucelabs.com folks recommend using the latest version of
+            # Chrome because new versions come out so quickly, therefore there
+            # is no version specified here.
+            {'platform': 'Linux'},
+        ),
+        'firefox': (
+            desired.FIREFOX,
+            # Removing the version below causes the FireFox CI deployment tests
+            # to fail.
+            {'platform': 'Linux', 'version': '20'},
+        ),
+    }
+    if browser_name in choices:
+        base, updates = choices[browser_name]
+        capabilities = dict(base)
+        capabilities.update(common)
+        capabilities.update(updates)
+        return capabilities
+    sys.exit('No such web driver: {}'.format(browser_name))
+
+
 class TestCase(unittest.TestCase):
     """Helper base class that supports running browser tests."""
 
@@ -141,17 +151,22 @@ class TestCase(unittest.TestCase):
         # Firefox tests, in which cases the GUI WebSocket connection is often
         # problematic (i.e. connection errors) when switching from the sandbox
         # mode back to the staging backend.
-        if browser_name == 'local':
-            # If the browser name is 'local', start a local Firefox.
-            driver = selenium.webdriver.Firefox(capabilities=firefox)
+        local_prefix = 'local-'
+        if browser_name.startswith(local_prefix):
+            # If the browser name has the "local-" prefix, i.e. it is
+            # "local-chrome', "local-firefox" or "local-ie",
+            # start the corresponding local driver.
+            name = browser_name[len(local_prefix):]
+            capabilities = get_capabilities(name)
+            klass = getattr(selenium.webdriver, name).webdriver.WebDriver
+            driver = klass(capabilities=capabilities)
             cls.remote_driver = False
-            print('Browser: local Firefox')
+            print('Browser: local {}'.format(name))
         else:
             # Otherwise, set up a Saucelabs remote driver.
-            capabilities = browser_capabilities[browser_name].copy()
-            capabilities['name'] = 'Juju GUI'
+            capabilities = get_capabilities(browser_name)
             user = getpass.getuser()
-            capabilities['tags'] = [user]
+            capabilities.update({'name': 'Juju GUI', 'tags': user})
             driver = selenium.webdriver.Remote(
                 desired_capabilities=capabilities,
                 command_executor=command_executor)
