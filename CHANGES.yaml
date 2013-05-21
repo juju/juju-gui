@@ -21,10 +21,30 @@
 # Release identifiers in this file should always be "unreleased" or
 # [NUMBER].[NUMBER].[NUMBER] per http://semver.org/ .
 
-- unreleased:
+- 0.5.0:
+    - Visual styling fixes.
+    - Many small bugfixes.
+    - Internal code reorganization and refactoring.
+    - Configuration values can now be multi-line.  The text entry widget
+      automatically grows to accomodate multiple lines.
+    - Mousewheel zoom now works in firefox.
+    - The environment view now shows some help text when the canvas is empty.
+    - Changes to support faster deplyoment of the GUI charm (make npm-cache).
+    - Experimental keyboard shortcuts.  These will certainly change in the
+      future so don't train your fingers just yet.
+    - Experimental import/output functionality.  Also sure to change.
+    - No longer reports trivial errors caused by being in restricted
+      (read-only) mode.  E.g., moving a service does not generate an error.
+    - Much nicer default layout of the services.
+    - Remvoed HTML5 application cache as it was causing more problems than it
+      was solving.
+    - Added licensing info to project (AGPL).
+    - Fixed a memory leak in the code that reacts to changes coming from the
+      Juju environment.
 - 0.4.0:
     - Support for Juju Core (Go Juju).
-    - New "sandbox" mode for in-browser-memory fake juju (set sandbox: true in config.js).
+    - New "sandbox" mode for in-browser-memory fake juju (set sandbox: true in
+      config.js).
     - Support for Firefox.
     - Support for Landscape integration.
     - Many bug fixes.
