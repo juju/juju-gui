@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 /**
@@ -296,6 +314,23 @@ describe('textarea autosize plugin', function() {
     update_content(target, '');
     assert.equal(sample_height, get_height(target),
         'The updated final height should be 1em');
+  });
+
+  it('should change by single line height when focus changes', function() {
+    target = Y.Node.create(
+        '<textarea style="width: auto;">Initial text</textarea>');
+    container.append(target);
+    target.plug(Y.juju.plugins.ResizingTextarea, {
+      skip_animations: true,
+      single_line: 28
+    });
+    var orig_height = get_height(target);
+    target.focus();
+    var focused_height = get_height(target);
+    assert.isTrue(focused_height > orig_height);
+    target.blur();
+    var blurred_height = get_height(target);
+    assert.equal(orig_height, blurred_height);
   });
 
 });

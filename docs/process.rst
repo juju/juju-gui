@@ -165,9 +165,9 @@ Checklist for Making a Stable Release
 - Ensure that the ``build-prod/juju-ui/version.js`` file contains a version
   string that combines the value in the branch's ``CHANGES.yaml`` with the
   branch's revno.
+- Start the ``improv.py`` script as described in the HACKING file.
 - While still in the directory where you extracted the tar file, run the
   command: ``NO_BZR=1 make prod``.
-- Start the ``improv.py`` script as described in the HACKING file.
 - Go to the URL shown in the terminal.
 - In Chrome and Firefox, QA the application.
 

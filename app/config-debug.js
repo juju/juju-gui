@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 var juju_config = {
   // These are blacklisted config items not passed into subapps mounted into
   // the main App.
@@ -12,7 +30,7 @@ var juju_config = {
   // SubApps.
   consoleEnabled: true,
   charm_store_url: 'http://jujucharms.com/',
-  charmworldURL: 'http://staging.jujucharms.com/',
+  charmworldURL: 'https://manage.jujucharms.com/',
   // The config has three socket settings.  socket_port and socket_protocol
   // modify the current application url to determine the websocket url (always
   // adding "/ws" as the final path).  socket_url sets the entire websocket
@@ -26,7 +44,8 @@ var juju_config = {
   apiBackend: 'python', // Value can be 'python' or 'go'.
   sandbox: true,
   // When in sandbox mode should we create events to simulate a live env.
-  simulateEvents: true,
+  // You can also use the :flags:/simulateEvents feature flag.
+  simulateEvents: false,
   readOnly: false,
   login_help: 'For this demonstration, use the password "admin" to connect.'
 };

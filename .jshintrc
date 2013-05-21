@@ -124,7 +124,8 @@
     "jsyaml",
     "consoleManager",
     "it",
-    "YUI"
+    "YUI",
+    "saveAs"
   ],
   // "indent"        : 2,        // Specify indentation spacing
   "quotmark": "single"
