@@ -209,7 +209,7 @@ class TestAuthentication(browser.TestCase):
         # Login.
         self.login()
         # Ensure we are in the initial URL again.
-        self.wait_for_path( path, error='Post login redirection failed.')
+        self.wait_for_path(path, error='Post login redirection failed.')
         self.assertTrue(self.is_authenticated(), 'after logging in again')
 
     def test_root_page(self):
