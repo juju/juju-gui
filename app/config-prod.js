@@ -42,7 +42,7 @@ var juju_config = {
   user: undefined,
   password: undefined,
   apiBackend: 'python', // Value can be 'python' or 'go'.
-  sandbox: false,
+  sandbox: true,
   readOnly: false,
   login_help: (
       'The password is the admin-secret from the Juju environment.  This can ' +
