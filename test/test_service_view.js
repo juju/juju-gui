@@ -891,7 +891,7 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       assert.equal(textareas.size(), 2);
       assert.isUndefined(textareas.item(0).resizingTextarea);
       assert.isUndefined(textareas.item(1).resizingTextarea);
-      view.attachPlugins();
+      view.containerAttached();
       textareas = container.all('textarea.config-field');
       // Clones will have been created after each real
       // textarea, so the actual ones are the even numbered.

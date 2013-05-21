@@ -671,17 +671,18 @@ YUI.add('juju-gui', function(Y) {
             nsRouter: this.nsRouter,
             querystring: req.query
           };
-      var attachPlugins = function(view) {
-        // attachPlugins handles attaching things like the textarea autosizer
-        // after the views have rendered.
-        if (view.attachPlugins) {
-          view.attachPlugins();
+      var containerAttached = function(view) {
+        // containerAttached handles attaching things like the textarea
+        // autosizer after the views have rendered and the view's container
+        // has attached to the DOM.
+        if (view.containerAttached) {
+          view.containerAttached();
         }
       };
       // Give the page 100 milliseconds to try and load the model
       // before we show a loading screen.
       var handle = setTimeout(function() {
-        self.showView(viewName, options, attachPlugins);
+        self.showView(viewName, options, containerAttached);
       }, 100);
 
       var promise = this.modelController.getServiceWithCharm(req.params.id);
@@ -691,7 +692,7 @@ YUI.add('juju-gui', function(Y) {
             options.model = models.service;
             // Calling update allows showView to be called multiple times but
             // only have its config updated not re-rendered.
-            self.showView(viewName, options, { update: true }, attachPlugins);
+            self.showView(viewName, options, { update: true }, containerAttached);
           },
           function() {
             clearTimeout(handle);

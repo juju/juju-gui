@@ -407,6 +407,10 @@ YUI.add('juju-view-service', function(Y) {
           return tabs;
         },
 
+        containerAttached: function() {
+          this.fitToWindow();
+        },
+
         fitToWindow: function() {
           function getHeight(node) {
             if (!node) {
@@ -473,7 +477,6 @@ YUI.add('juju-view-service', function(Y) {
           var db = this.get('db');
           var env = db.environment.get('annotations');
           container.setHTML(this.template(this.gatherRenderData()));
-          this.fitToWindow();
           // to be able to use this same method for all service views
           if (container.one('.landscape-controls')) {
             Y.juju.views.utils.updateLandscapeBottomBar(this.get('landscape'),
@@ -793,9 +796,10 @@ YUI.add('juju-view-service', function(Y) {
          Attach the plugins.  Must be called after the container
          has been added to the DOM.
 
-         @method attachPlugins
+         @method containerAttached
          */
-        attachPlugins: function() {
+        containerAttached: function() {
+          this.constructor.superclass.containerAttached.call(this);
           var container = this.get('container');
           container.all('textarea.config-field').plug(plugins.ResizingTextarea,
               { max_height: 200,
