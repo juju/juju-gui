@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 (function() {
@@ -286,7 +304,7 @@
     });
 
     it('should display the config data in the config tab', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9',
@@ -310,7 +328,7 @@
     });
 
     it('_buildQAData properly summerizes the scores', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
             'readme.md'
@@ -331,7 +349,7 @@
     });
 
     it('qa content is loaded when the tab is clicked on', function(done) {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [],
           id: 'precise/ceph-9',
@@ -353,7 +371,7 @@
     });
 
     it('does not blow up when the scores from the api is null', function() {
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm({
           files: [
             'readme.md'
@@ -376,7 +394,7 @@
           Y.io('data/browsercharm.json', {sync: true}).responseText);
       // We don't want any files so we don't have to mock/load them.
       data.files = [];
-      var view = new CharmView({
+      view = new CharmView({
         charm: new models.BrowserCharm(data),
         container: Y.Node.create('<div class="charmview"/>')
       });
@@ -423,7 +441,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -444,7 +462,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -466,7 +484,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -487,7 +505,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -509,7 +527,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -532,7 +550,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -554,7 +572,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -577,7 +595,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(
@@ -601,7 +619,7 @@
               }
             }
           });
-          var view = new CharmView({
+          view = new CharmView({
             charm: charm
           });
           var interfaceIntro = view._getInterfaceIntroFlag(

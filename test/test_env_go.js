@@ -1,3 +1,21 @@
+/*
+This file is part of the Juju GUI, which lets users view and manage Juju
+environments within a graphical interface (https://launchpad.net/juju-gui).
+Copyright (C) 2012-2013 Canonical Ltd.
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License version 3, as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranties of MERCHANTABILITY,
+SATISFACTORY QUALITY, or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Affero
+General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along
+with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 'use strict';
 
 (function() {
@@ -63,7 +81,7 @@
   });
 
   describe('Go Juju environment', function() {
-    var conn, endpointA, endpointB, env, juju, msg, utils, Y;
+    var conn, endpointA, endpointB, env, juju, msg, utils, Y, oldHandleLogin;
 
     before(function(done) {
       Y = YUI(GlobalConfig).use(['juju-env', 'juju-tests-utils'], function(Y) {
@@ -85,7 +103,25 @@
       env.destroy();
     });
 
+    var noopHandleLogin = function() {
+      // In order to avoid rewriting all of these go tests we need to destroy
+      // the env created in the beforeEach
+      env.destroy();
+      oldHandleLogin = Y.juju.environments.GoEnvironment.handleLogin;
+      Y.juju.environments.GoEnvironment.handleLogin = function() {};
+      conn = new utils.SocketStub();
+      env = juju.newEnvironment({
+        conn: conn, user: 'user', password: 'password'
+      }, 'go');
+      env.connect();
+    };
+
+    var resetHandleLogin = function() {
+      Y.juju.environments.GoEnvironment.handleLogin = oldHandleLogin;
+    };
+
     it('sends the correct login message', function() {
+      noopHandleLogin();
       env.login();
       var last_message = conn.last_message();
       var expected = {
@@ -95,6 +131,7 @@
         Params: {AuthTag: 'user', Password: 'password'}
       };
       assert.deepEqual(expected, last_message);
+      resetHandleLogin();
     });
 
     it('resets the user and password if they are not valid', function() {

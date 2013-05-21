@@ -39,7 +39,10 @@ configuration::
 
   bin/test-charm
   JUJU_GUI_TEST_BROWSERS: "chrome firefox ie" {String} The browsers to run the
-  test suite on.
+  test suite on.  Tests are run remotely using Saucelabs by default.  If you
+  want to use a local web driver instead, add the "local-" prefix to the
+  browser name(s) in JUJU_GUI_TEST_BROWSERS, e.g.:
+  ``JUJU_GUI_TEST_BROWSERS="local-firefox local-chrome" bin/test-charm``.
   FAIL_FAST: 0 {Integer} Set to 1 to exit when first browser returns a failure
   rather than completing all of the tests.
 
@@ -62,10 +65,15 @@ config.yaml file in the charm's root directory.
 
 Running the tests on Canonistack
 --------------------------------
-The Jenkins slave which runs our CI has a Juju environments.yaml file with
-juju-testing-gui defined::
+The Jenkins slave which runs our CI creates a Juju environments.yaml file with
+juju-testing-gui defined based on a template file::
 
-  /home/jujugui-merger/.juju/environments.yaml
+  /home/jujugui-merger/.juju/environments.yaml.template
+
+The template has one slot, which is populated with the most current machine
+image that matches our needs (ubuntu-relased, precise, amd64).  The template
+is processed by the lib/deploy_charm_for_testing.py script.  If the template
+does not exist then an environments.yaml must be present and it will be used.
 
 After bootstrapping the juju environment it deploys the Juju GUI charm with the
 following configuration properties::
@@ -136,6 +144,9 @@ Known issues
 ------------
 Image Id's Change
 ~~~~~~~~~~~~~~~~~
+
+(This issue should be deprecated but is left here for reference.)
+
 If the chosen image that we are using becomes unusable or is removed the CI will
 fail almost instantly with the error::
 
@@ -151,10 +162,15 @@ hash style id's.
 
 The current image name that we use is::
 
-  ubuntu-released/ubuntu-precise-12.04-amd64-server-20130411.1-disk1.img
+  ubuntu-released/ubuntu-precise-12.04-amd64-server-<date>-disk1.img
 
 If this one is not available pick the closest one which represents a public
 release image on precise(12.04) 64bit.
+
+You can run 'bin/find-latest-image.sh' to get a machine id to use.  It is
+entered as the 'default-image-id' in environments.yaml if you are not allowing
+it to be update automatically as described previously.
+
 
 Unit tests fail
 ~~~~~~~~~~~~~~~~

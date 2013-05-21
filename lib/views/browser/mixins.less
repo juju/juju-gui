@@ -1,0 +1,34 @@
+/* Mixins */
+.three-image-button-background(@left-image, @right-image, @centre-image) {
+    background: url("/juju-ui/assets/images/@{left-image}")
+            no-repeat left top,
+            url("/juju-ui/assets/images/@{right-image}")
+            no-repeat right top,
+            url("/juju-ui/assets/images/@{centre-image}")
+            repeat-x left top;
+
+    &:hover {
+      background-position: left center, right center, left center;
+    }
+    &:active {
+      background-position: left bottom, right bottom, left bottom;
+    }
+}
+.two-image-button-background(@left-image, @right-image, @background-color) {
+    background: url("/juju-ui/assets/images/@{left-image}")
+            no-repeat left top,
+            url("/juju-ui/assets/images/@{right-image}")
+            no-repeat right top;
+    background-color: @background-color;
+}
+.heading-font {
+    color: @bws-heading;
+    font-family: @font-family-medium;
+    font-weight: normal;
+    font-size: 10.5pt;
+}
+.border-box {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
