@@ -415,6 +415,9 @@ svg {
             }
             &.add-relation {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_relation.png);
+                .disabled {
+                    color: red;
+                }
             }
             &.destroy-service {
                 background-image: url(/juju-ui/assets/images/icons/icon_noshadow_destroy.png);
@@ -1177,9 +1180,9 @@ g.unit {
                     // mixin args.
                     @box-shadow: 0 1px 3px #959595 inset, 0 1px 0 white;
                     .create-box-shadow(@box-shadow);
-		    input[type=text] {
-			height: 15px;
-		    }
+                    input[type=text] {
+                        height: 15px;
+                    }
 
                 }
                 input[type=checkbox] {

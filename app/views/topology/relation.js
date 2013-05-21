@@ -704,9 +704,9 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /*
-         * Fired when clicking the first service in the add relation
-         * flow.
-         */
+     * Fired when clicking the first service in the add relation
+     * flow.
+     */
     addRelationStart: function(m, view, context) {
       var topo = view.get('component');
       var service = topo.serviceForBox(m);
@@ -716,9 +716,9 @@ YUI.add('juju-topology-relation', function(Y) {
     },
 
     /*
-         * Test if the pending relation is ambiguous.  Display a menu if so,
-         * create the relation if not.
-         */
+     * Test if the pending relation is ambiguous.  Display a menu if so,
+     * create the relation if not.
+     */
     ambiguousAddRelationCheck: function(m, view, context) {
       var endpoints = view.get(
           'addRelationStart_possibleEndpoints')[m.id];

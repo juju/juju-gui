@@ -133,6 +133,9 @@ YUI.add('juju-env-fakebackend', function(Y) {
       this._resetAnnotations();
       // used for relation id's
       this._relationCount = 0;
+      // Delay to use before completing a charm load.  Used for interactive
+      // testing.
+      this.charmLoadDelay = 7000;
     },
 
     /**
@@ -530,7 +533,10 @@ YUI.add('juju-env-fakebackend', function(Y) {
         return callback(UNAUTHENTICATEDERROR);
       }
       var formatCharm = function(charm) {
-        callback({result: charm.getAttrs()});
+        // Simulate a delay in the charm loading for testing.
+        setTimeout(function() {
+          callback({result: charm.getAttrs()});
+        }, this.charmLoadDelay);
       };
       this._loadCharm(charmName, {
         success: formatCharm,

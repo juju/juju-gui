@@ -411,6 +411,26 @@ YUI.add('juju-topology-service', function(Y) {
       context.destroyServiceConfirm(box);
     },
 
+    /**
+     Is building relations allowed at this time?
+
+     @method allowBuildRelation
+     @param {Object} topo The topology.
+     @param {Object} service The service to be tested.
+     @return {Boolean} True if building of relation is allowed.
+     */
+    allowBuildRelation: function(topo, service) {
+      var charm = topo.get('db').charms.getById(service.get('charm'));
+      return charm && charm.loaded;
+    },
+
+    /**
+     Service add relation mouse down handler.
+
+     @method serviceAddRelMouseDown
+     @param {Object} box The service box that's been clicked.
+     @param {Object} context The current context.
+     */
     serviceAddRelMouseDown: function(box, context) {
       if (box.pending) {
         return;
@@ -424,6 +444,10 @@ YUI.add('juju-topology-service', function(Y) {
           return;
         }
 
+        if (!context.allowBuildRelation(topo, box.model)) {
+          return;
+        }
+
         // Sometimes mouseover is fired after the mousedown, so ensure
         // we have the correct event in d3.event for d3.mouse().
         d3.event = e;
@@ -433,6 +457,13 @@ YUI.add('juju-topology-service', function(Y) {
       }, [box, evt], false);
     },
 
+    /**
+     Service add relation mouse up handler.
+
+     @method serviceAddRelMouseUp
+     @param {Object} box The service box that's been clicked.
+     @param {Object} context The current context.
+     */
     serviceAddRelMouseUp: function(box, context) {
       // Cancel the long-click timer if it exists.
       if (context.longClickTimer) {
@@ -1167,6 +1198,15 @@ YUI.add('juju-topology-service', function(Y) {
         topo.set('active_service', box);
         topo.set('active_context', box.node);
         serviceMenu.addClass('active');
+
+        // Disable the 'Build Relation' link if the charm has not yet loaded.
+        var addRelation = serviceMenu.one('.add-relation');
+        if (this.allowBuildRelation(topo, service)) {
+          addRelation.removeClass('disabled');
+        } else {
+          addRelation.addClass('disabled');
+        }
+
         // We do not want the user destroying the Juju GUI service.
         if (utils.isGuiService(service)) {
           serviceMenu.one('.destroy-service').addClass('disabled');

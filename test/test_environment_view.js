@@ -731,6 +731,28 @@ with this program.  If not, see <http://www.gnu.org/licenses/>.
       done();
     });
 
+    it('must show Build Relation as disabled if charm is not loaded',
+       function() {
+         var view = new views.environment({
+           container: container,
+           db: db,
+           env: env
+         }).render();
+         var service = container.one('.service'),
+             add_rel = container.one('.add-relation'),
+             after_evt;
+
+         // Toggle the service menu for the Add Relation button.
+         var module = view.topo.modules.RelationModule;
+         var sm = view.topo.modules.ServiceModule;
+
+         sm.toggleServiceMenu(d3.select(service.getDOMNode()).datum());
+         // Mock an event object so that d3.mouse does not throw a NPE.
+         d3.event = {};
+         assert.isTrue(add_rel.hasClass('disabled'));
+       });
+
+
     it('must be able to add a relation from the service menu',
        function() {
          var view = new views.environment({
