@@ -159,6 +159,71 @@ class TestStaging(browser.TestCase, DeployTestMixin):
         expected = ('haproxy', 'mediawiki', 'memcached', 'mysql', 'wordpress')
         self.assertEqual(set(expected), self.get_service_names())
 
+    def test_service_view(self):
+        # The service detail page is correctly displayed.
+        self.load('/:gui:/service/haproxy/')  # Navigate to service details.
+        self.handle_browser_warning()
+        self.handle_login()
+
+        def service_name_displayed(driver):
+            node = driver.find_element_by_id('service-display-name')
+            try:
+                return node.text
+            except exceptions.StaleElementReferenceException:
+                # Perhaps the page has changed since it was looked up.
+                return False
+
+        service_name = self.wait_for(
+            service_name_displayed, error='Service name not displayed.')
+        self.assertEqual('haproxy', service_name)
+
+    def test_unit_view(self):
+        # The unit detail page is correctly displayed.
+        self.load('/:gui:/unit/haproxy-0/')  # Navigate to unit details.
+        self.handle_browser_warning()
+        self.handle_login()
+        unit_name = self.driver.find_element_by_tag_name('h1').text
+        self.assertEqual('haproxy/0', unit_name)
+
+
+class TestAuthentication(browser.TestCase):
+
+    def is_authenticated(self):
+        """Return True if the user is authenticated, False otherwise."""
+        script = 'return app.env.userIsAuthenticated;'
+        return self.driver.execute_script(script)
+
+    def process_path(self, path):
+        """Load the given path, log out, log in again."""
+        self.load(path)
+        self.handle_browser_warning()
+        self.handle_login()
+        # Check the initial URL.
+        self.wait_for_path(path, error='Not in the initial path.')
+        self.assertTrue(self.is_authenticated(), 'initial state')
+        # Logout.
+        self.logout()
+        # Check redirection to /login/.
+        self.wait_for_path('/login/', error='Redirection to /login/ failed.')
+        self.assertFalse(self.is_authenticated(), 'after logging out')
+        # Login.
+        self.login()
+        # Ensure we are in the initial URL again.
+        self.wait_for_path(path, error='Post login redirection failed.')
+        self.assertTrue(self.is_authenticated(), 'after logging in again')
+
+    def test_root_page(self):
+        # It is possible to login to and logout from the root page.
+        self.process_path('/')
+
+    def test_service_page(self):
+        # It is possible to login to and logout from the service detail view.
+        self.process_path('/:gui:/service/haproxy/')
+
+    def test_unit_page(self):
+        # It is possible to login to and logout from the unit detail view.
+        self.process_path('/:gui:/unit/haproxy-0/')
+
 
 class TestSandbox(browser.TestCase, DeployTestMixin):
 
