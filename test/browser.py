@@ -120,8 +120,8 @@ def get_capabilities(browser_name):
         'chrome': (
             desired.CHROME,
             # The saucelabs.com folks recommend using the latest version of
-            # Chrome because new versions come out so quickly, therefore there
-            # is no version specified here.
+            # Chrome because new versions come out so quickly.
+            # Therefore, there is no version specified here.
             {'platform': 'Linux'},
         ),
         'firefox': (

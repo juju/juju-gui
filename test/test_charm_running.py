@@ -179,7 +179,6 @@ class TestStaging(browser.TestCase, DeployTestMixin):
 
     def test_unit_view(self):
         # The unit detail page is correctly displayed.
-        pass
         self.load('/:gui:/unit/haproxy-0/')  # Navigate to unit details.
         self.handle_browser_warning()
         self.handle_login()
