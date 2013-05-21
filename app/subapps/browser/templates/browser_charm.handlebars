@@ -2,8 +2,12 @@
     <div class="content yui3-u-{{#if isFullscreen}}5-6{{else}}1{{/if}}">
         <div class="nav">
             <a href="" class="back">
-                <img src="/juju-ui/assets/images/browser_back_button_arrow.png"
-                    alt="&lt;" />Back
+                {{#if isFullscreen}}
+                    <img src="/juju-ui/assets/images/browser_back_button_arrow.png"
+                        alt="&lt;" />Back
+                {{else}}
+                    Close
+                {{/if}}
             </a>
             <a href="" class="add">Add</a>
             <a href="" class="share">
@@ -255,7 +259,7 @@
     {{#if isFullscreen}}
         <div class="content-sidebar yui3-u-1-6">
             <h2>Useful links</h2>
-            <ul class="vertical-links">
+            <ul>
                 <li><a href="">Juju community</a></li>
                 <li><a href="">Online resources</a></li>
                 <li><a href="">Write your own Charm</a></li>
