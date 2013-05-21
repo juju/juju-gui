@@ -223,6 +223,7 @@
     z-index: 2;
     right: auto;
     width: @bws-sidebar-width;
+    min-width: @bws-sidebar-min-width;
     overflow: hidden;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 
@@ -255,5 +256,10 @@
   }
   .bws-view-data {
     left: @bws-sidebar-width;
+  }
+}
+@media screen and (max-width: 1400px) {
+  #subapp-browser .bws-view-data {
+    left: @bws-sidebar-min-width;
   }
 }
