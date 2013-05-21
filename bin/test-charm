@@ -60,13 +60,13 @@ run_tests() {
             exit 1;
         fi
     done
-    return retcode
+    exit $retcode
 }
 
 on_exit() {
     # Destroy the environment, releasing the resources.
     echo "Quitting..."
-    #yes | juju destroy-environment -e $ENV
+    yes | juju destroy-environment -e $ENV
     # Cleanup old internal IP address file if
     # one was created (in deploy for testing).
     if [ -e juju-internal-ip ]; then
@@ -80,5 +80,5 @@ trap on_exit EXIT
 # Launch the script.
 bootstrap_and_deploy $@
 export APP_URL=`get_app_url`
-echo "APP_URL = $APP_URL"
-exit `run_tests`
+echo "Env: $ENV\nAPP_URL: $APP_URL"
+run_tests

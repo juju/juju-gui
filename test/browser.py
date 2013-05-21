@@ -128,7 +128,7 @@ def get_capabilities(browser_name):
             desired.FIREFOX,
             # Removing the version below causes the FireFox CI deployment tests
             # to fail.
-            {'platform': 'Linux', 'version': '20'},
+            {'platform': 'Linux', 'version': '16'},
         ),
         'ie': (
             desired.INTERNETEXPLORER,
@@ -167,6 +167,12 @@ def make_local_driver(browser_name, capabilities):
     return driver_class(**kwargs)
 
 
+def get_browser_name(driver):
+    """Return the name and version of the browser used by the given driver."""
+    version = driver.capabilities.get('version', 'unknown version')
+    return '{} {}'.format(driver.name.title(), version)
+
+
 class TestCase(unittest.TestCase):
     """Helper base class that supports running browser tests."""
 
@@ -183,9 +189,9 @@ class TestCase(unittest.TestCase):
             # "local-firefox" or "local-ie", start the associated local driver.
             name = browser_name[len(local_prefix):]
             capabilities = get_capabilities(name)
-            driver = make_local_driver(name, capabilities)
+            driver, version = make_local_driver(name, capabilities)
             cls.remote_driver = False
-            print('Browser: local {}'.format(name))
+            print('Browser: local {}'.format(get_browser_name(driver)))
         else:
             # Otherwise, set up a Saucelabs remote driver.
             capabilities = get_capabilities(browser_name)
@@ -197,7 +203,7 @@ class TestCase(unittest.TestCase):
             cls.remote_driver = True
             details = 'https://saucelabs.com/jobs/' + driver.session_id
             print(
-                '* Browser: {}'.format(browser_name),
+                '* Browser: {}'.format(get_browser_name(driver)),
                 '* Testcase: {}'.format(cls.__name__),
                 '* Details: {}'.format(details),
                 sep='\n'
