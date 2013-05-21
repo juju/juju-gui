@@ -385,13 +385,11 @@ YUI.add('juju-gui', function(Y) {
           }
           envOptions.conn = new sandboxModule.ClientConnection(
               {juju: new sandboxModule.PyJujuAPI({state: state})});
-          if (this.get('simulateEvents')) {
-            var Simulator = Y.namespace('juju.environments').Simulator;
-            this._simulator = new Simulator({state: state});
-            this._simulator.start();
-          }
         }
         this.env = juju.newEnvironment(envOptions, apiBackend);
+      }
+      if (this.get('simulateEvents')) {
+        this.simulateEvents();
       }
 
       // Set the env in the model controller here so
@@ -497,6 +495,24 @@ YUI.add('juju-gui', function(Y) {
       cfg.db = this.db;
       cfg.deploy = this.charmPanel.deploy;
       this.addSubApplications(cfg);
+    },
+
+    /**
+    Start the simulator if it can start and it has not already been started.
+
+    @method simulateEvents
+    */
+    simulateEvents: function() {
+      if (!this._simulator && this.env) {
+        var conn = this.env.get('conn');
+        var juju = conn && conn.get('juju');
+        var state = juju && juju.get('state');
+        if (state) {
+          var Simulator = Y.namespace('juju.environments').Simulator;
+          this._simulator = new Simulator({state: state});
+          this._simulator.start();
+        }
+      }
     },
 
     /**
@@ -655,17 +671,18 @@ YUI.add('juju-gui', function(Y) {
             nsRouter: this.nsRouter,
             querystring: req.query
           };
-      var attachPlugins = function(view) {
-        // attachPlugins handles attaching things like the textarea autosizer
-        // after the views have rendered.
-        if (view.attachPlugins) {
-          view.attachPlugins();
+      var containerAttached = function(view) {
+        // containerAttached handles attaching things like the textarea
+        // autosizer after the views have rendered and the view's container
+        // has attached to the DOM.
+        if (view.containerAttached) {
+          view.containerAttached();
         }
       };
       // Give the page 100 milliseconds to try and load the model
       // before we show a loading screen.
       var handle = setTimeout(function() {
-        self.showView(viewName, options, attachPlugins);
+        self.showView(viewName, options, containerAttached);
       }, 100);
 
       var promise = this.modelController.getServiceWithCharm(req.params.id);
@@ -675,7 +692,8 @@ YUI.add('juju-gui', function(Y) {
             options.model = models.service;
             // Calling update allows showView to be called multiple times but
             // only have its config updated not re-rendered.
-            self.showView(viewName, options, { update: true }, attachPlugins);
+            self.showView(
+                viewName, options, { update: true }, containerAttached);
           },
           function() {
             clearTimeout(handle);
@@ -1094,6 +1112,21 @@ YUI.add('juju-gui', function(Y) {
     },
 
     /**
+    Handle flags that start or initialize things.
+
+    @method reactToFlags
+    @param {object} req The request object.
+    @param {object} res The response object.
+    @param {function} next The next callback.
+    */
+    reactToFlags: function(req, res, next) {
+      if (window.flags.simulateEvents) {
+        this.simulateEvents();
+      }
+      next();
+    },
+
+    /**
      * Object routing support
      *
      * This utility helps map from model objects to routes
@@ -1246,6 +1279,7 @@ YUI.add('juju-gui', function(Y) {
             namespace: 'gui'},
           // Feature flags.
           { path: '*', callbacks: 'featureFlags', namespace: 'flags' },
+          { path: '*', callbacks: 'reactToFlags', namespace: 'flags' },
           // Authorization
           { path: '/login/', callbacks: 'showLogin' }
         ]
