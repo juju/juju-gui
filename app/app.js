@@ -692,7 +692,8 @@ YUI.add('juju-gui', function(Y) {
             options.model = models.service;
             // Calling update allows showView to be called multiple times but
             // only have its config updated not re-rendered.
-            self.showView(viewName, options, { update: true }, containerAttached);
+            self.showView(
+                viewName, options, { update: true }, containerAttached);
           },
           function() {
             clearTimeout(handle);
@@ -1116,7 +1117,7 @@ YUI.add('juju-gui', function(Y) {
     @param {function} next The next callback.
     */
     reactToFlags: function(req, res, next) {
-      if (flags.simulateEvents) {
+      if (window.flags.simulateEvents) {
         this.simulateEvents();
       }
       next();

@@ -407,6 +407,12 @@ YUI.add('juju-view-service', function(Y) {
           return tabs;
         },
 
+        /**
+        Fit to window.  Must be called after the container
+        has been added to the DOM.
+
+        @method containerAttached
+        */
         containerAttached: function() {
           this.fitToWindow();
         },
