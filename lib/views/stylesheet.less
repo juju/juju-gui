@@ -995,7 +995,8 @@ g.unit {
     }
 }
 
-#juju-search-charm-panel {
+#juju-search-charm-panel,
+.yui3-juju-inspector {
     .customize-scrollbar;
     display: block;
     z-index: 999;
@@ -1011,6 +1012,7 @@ g.unit {
     border-bottom: darkgray solid 1px;
     .create-box-shadow(inset 0 -1px 0 lightgray);
 
+    .charm-panel-configure,
     .charm-panel-configure .btn {
         float: right;
     }
@@ -1742,3 +1744,4 @@ ul.menu {
 @import "browser/overlay-indicator.less";
 @import "browser/section-title.less";
 @import "browser/tabview.less";
+@import "juju-inspector.less";
